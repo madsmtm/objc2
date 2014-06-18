@@ -54,3 +54,9 @@ impl NSString {
 		}
 	}
 }
+
+impl Str for NSString {
+	fn as_slice<'a>(&'a self) -> &'a str {
+		self.as_str()
+	}
+}
