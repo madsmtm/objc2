@@ -1,8 +1,6 @@
-use std::hash;
 use std::ptr;
 
-use runtime::{Messageable, Object};
-use foundation::INSObject;
+use runtime::{Messageable, Object, Sel, objc_msgSend};
 
 #[unsafe_no_drop_flag]
 pub struct Id {
@@ -16,6 +14,16 @@ impl Id {
 
 	pub fn is_nil(&self) -> bool {
 		self.ptr.is_null()
+	}
+
+	unsafe fn retain(&self) {
+		let retain = Sel::register("retain");
+		objc_msgSend(self.as_ptr(), retain);
+	}
+
+	unsafe fn release(&self) {
+		let release = Sel::register("release");
+		objc_msgSend(self.as_ptr(), release);
 	}
 
 	pub unsafe fn from_ptr(ptr: *Object) -> Id {
@@ -35,8 +43,6 @@ impl Messageable for Id {
 	}
 }
 
-impl INSObject for Id { }
-
 impl Clone for Id {
 	fn clone(&self) -> Id {
 		unsafe {
@@ -53,20 +59,6 @@ impl Drop for Id {
 			}
 			self.ptr = ptr::null();
 		}
-	}
-}
-
-impl PartialEq for Id {
-	fn eq(&self, other: &Id) -> bool {
-		self.is_equal(other)
-	}
-}
-
-impl Eq for Id { }
-
-impl<S: hash::Writer> hash::Hash<S> for Id {
-	fn hash(&self, state: &mut S) {
-		self.hash_code().hash(state);
 	}
 }
 
