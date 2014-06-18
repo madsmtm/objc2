@@ -1,8 +1,10 @@
+use std::fmt;
 use std::hash;
 use std::mem;
 
 use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
 use id::{Id, FromId};
+use super::{INSString, NSString};
 
 pub trait INSObject : Messageable {
 	fn hash_code(&self) -> uint {
@@ -19,6 +21,14 @@ pub trait INSObject : Messageable {
 			objc_msgSend(self.as_ptr(), is_equal, other.as_ptr())
 		};
 		!result.is_null()
+	}
+
+	fn description(&self) -> NSString {
+		let description = Sel::register("description");
+		unsafe {
+			let result = objc_msgSend(self.as_ptr(), description);
+			FromId::from_ptr(result)
+		}
 	}
 }
 
@@ -52,6 +62,12 @@ impl Eq for NSObject { }
 impl<S: hash::Writer> hash::Hash<S> for NSObject {
 	fn hash(&self, state: &mut S) {
 		self.hash_code().hash(state);
+	}
+}
+
+impl fmt::Show for NSObject {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		self.description().as_str().fmt(f)
 	}
 }
 
