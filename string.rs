@@ -1,7 +1,7 @@
 use std::mem;
 use std::str::raw::c_str_to_static_slice;
 
-use runtime::{Messageable, Object, Sel, objc_msgSend};
+use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
 use id::{Id, FromId};
 use super::INSObject;
 
@@ -35,3 +35,22 @@ impl FromId for NSString {
 impl INSObject for NSString { }
 
 impl INSString for NSString { }
+
+impl NSString {
+	fn class() -> Class {
+		Class::get("NSString")
+	}
+
+	pub fn from_str(string: &str) -> NSString {
+		let class = NSString::class();
+		let alloc = Sel::register("alloc");
+		let init_with_bytes = Sel::register("initWithBytes:length:encoding:");
+		let utf8_encoding = 4u;
+		unsafe {
+			let obj = objc_msgSend(class.as_ptr(), alloc);
+			let obj = objc_msgSend(obj, init_with_bytes, string.as_ptr(),
+				string.len(), utf8_encoding);
+			FromId::from_retained_ptr(obj)
+		}
+	}
+}
