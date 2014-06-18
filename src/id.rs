@@ -12,10 +12,6 @@ impl Id {
 		Id { ptr: ptr::null() }
 	}
 
-	pub fn is_nil(&self) -> bool {
-		self.ptr.is_null()
-	}
-
 	unsafe fn retain(&self) {
 		let retain = Sel::register("retain");
 		objc_msgSend(self.as_ptr(), retain);
