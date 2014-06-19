@@ -3,11 +3,15 @@ use id::{Id, FromId};
 use super::{INSCopying, INSObject};
 
 pub trait INSEnumerator<T: FromId> : INSObject {
-	fn next_object(&mut self) -> T {
+	fn next_object(&mut self) -> Option<T> {
 		let next_object = Sel::register("nextObject");
-		unsafe {
-			let result = objc_msgSend(self.as_ptr(), next_object);
-			FromId::from_ptr(result)
+		let obj = unsafe {
+			objc_msgSend(self.as_ptr(), next_object)
+		};
+		if obj.is_null() {
+			None
+		} else {
+			Some(unsafe { FromId::from_ptr(obj) })
 		}
 	}
 }
@@ -35,12 +39,7 @@ impl<'a, T: FromId> INSEnumerator<T> for NSEnumerator<'a, T> { }
 
 impl<'a, T: FromId + Messageable> Iterator<T> for NSEnumerator<'a, T> {
 	fn next(&mut self) -> Option<T> {
-		let next = self.next_object();
-		if next.is_nil() {
-			None
-		} else {
-			Some(next)
-		}
+		self.next_object()
 	}
 }
 
