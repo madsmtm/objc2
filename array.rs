@@ -1,6 +1,6 @@
 use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
 use id::{Id, FromId};
-use super::INSObject;
+use super::{INSCopying, INSObject};
 
 pub trait INSEnumerator<T: FromId> : INSObject {
 	fn next_object(&mut self) -> T {
@@ -82,6 +82,8 @@ impl<T> FromId for NSArray<T> {
 impl<T> INSObject for NSArray<T> { }
 
 impl<T: FromId> INSArray<T> for NSArray<T> { }
+
+impl<T> INSCopying<NSArray<T>> for NSArray<T> { }
 
 impl<T> NSArray<T> {
 	fn class() -> Class {

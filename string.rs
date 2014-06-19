@@ -5,6 +5,16 @@ use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
 use id::{Id, FromId};
 use super::INSObject;
 
+pub trait INSCopying<T: FromId> : INSObject {
+	fn copy(&self) -> T {
+		let copy = Sel::register("copy");
+		unsafe {
+			let obj = objc_msgSend(self.as_ptr(), copy);
+			FromId::from_retained_ptr(obj)
+		}
+	}
+}
+
 pub trait INSString : INSObject {
 	fn as_str<'a>(&'a self) -> &'a str {
 		let utf8_string = Sel::register("UTF8String");
@@ -35,6 +45,8 @@ impl FromId for NSString {
 impl INSObject for NSString { }
 
 impl INSString for NSString { }
+
+impl INSCopying<NSString> for NSString { }
 
 impl NSString {
 	fn class() -> Class {
