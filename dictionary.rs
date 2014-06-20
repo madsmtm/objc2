@@ -1,10 +1,19 @@
 use std::cmp::min;
+use std::mem;
 
 use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
 use id::{Id, FromId};
 use super::{INSCopying, INSObject};
 
 pub trait INSDictionary<K: Messageable, V: FromId> : INSObject {
+	fn count(&self) -> uint {
+		let count = Sel::register("count");
+		unsafe {
+			let result = objc_msgSend(self.as_ptr(), count);
+			mem::transmute(result)
+		}
+	}
+
 	fn object_for(&self, key: &K) -> Option<V> {
 		let object_for = Sel::register("objectForKey:");
 		unsafe {
@@ -76,5 +85,11 @@ impl<K, V: Messageable> NSDictionary<K, V> {
 		unsafe {
 			NSDictionary::from_ptrs(key_ptrs.as_slice(), val_ptrs.as_slice())
 		}
+	}
+}
+
+impl<K: Messageable, V: FromId> Collection for NSDictionary<K, V> {
+	fn len(&self) -> uint {
+		self.count()
 	}
 }
