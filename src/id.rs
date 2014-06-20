@@ -68,4 +68,20 @@ pub trait FromId {
 	unsafe fn from_retained_ptr(ptr: *Object) -> Self {
 		FromId::from_id(Id::from_retained_ptr(ptr))
 	}
+
+	unsafe fn maybe_from_ptr(ptr: *Object) -> Option<Self> {
+		if ptr.is_null() {
+			None
+		} else {
+			Some(FromId::from_ptr(ptr))
+		}
+	}
+
+	unsafe fn maybe_from_retained_ptr(ptr: *Object) -> Option<Self> {
+		if ptr.is_null() {
+			None
+		} else {
+			Some(FromId::from_retained_ptr(ptr))
+		}
+	}
 }
