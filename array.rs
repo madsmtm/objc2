@@ -5,13 +5,9 @@ use super::{INSCopying, INSObject};
 pub trait INSEnumerator<T: FromId> : INSObject {
 	fn next_object(&mut self) -> Option<T> {
 		let next_object = Sel::register("nextObject");
-		let obj = unsafe {
-			objc_msgSend(self.as_ptr(), next_object)
-		};
-		if obj.is_null() {
-			None
-		} else {
-			Some(unsafe { FromId::from_ptr(obj) })
+		unsafe {
+			let obj = objc_msgSend(self.as_ptr(), next_object);
+			FromId::maybe_from_ptr(obj)
 		}
 	}
 }

@@ -7,13 +7,9 @@ use super::{INSCopying, INSObject};
 pub trait INSDictionary<K: Messageable, V: FromId> : INSObject {
 	fn object_for(&self, key: &K) -> Option<V> {
 		let object_for = Sel::register("objectForKey:");
-		let obj = unsafe {
-			objc_msgSend(self.as_ptr(), object_for, key.as_ptr())
-		};
-		if obj.is_null() {
-			None
-		} else {
-			Some(unsafe { FromId::from_ptr(obj) })
+		unsafe {
+			let obj = objc_msgSend(self.as_ptr(), object_for, key.as_ptr());
+			FromId::maybe_from_ptr(obj)
 		}
 	}
 }
