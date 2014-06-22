@@ -2,11 +2,13 @@ use std::fmt;
 use std::hash;
 use std::mem;
 
-use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
-use id::{Id, FromId};
+use runtime::{Messageable, Object, Sel, objc_msgSend};
+use id::{class, ClassName, Id, FromId};
 use super::{INSString, NSString};
 
-pub trait INSObject : Messageable {
+pub trait INSObject : Messageable + FromId {
+	fn class_name() -> ClassName<Self>;
+
 	fn hash_code(&self) -> uint {
 		let hash = Sel::register("hash");
 		unsafe {
@@ -30,6 +32,17 @@ pub trait INSObject : Messageable {
 			FromId::from_ptr(result)
 		}
 	}
+
+	fn new() -> Self {
+		let cls = class::<Self>();
+		let alloc = Sel::register("alloc");
+		let init = Sel::register("init");
+		unsafe {
+			let obj = objc_msgSend(cls.as_ptr(), alloc);
+			let obj = objc_msgSend(obj, init);
+			FromId::from_retained_ptr(obj)
+		}
+	}
 }
 
 #[deriving(Clone)]
@@ -49,7 +62,11 @@ impl FromId for NSObject {
 	}
 }
 
-impl INSObject for NSObject { }
+impl INSObject for NSObject {
+	fn class_name() -> ClassName<NSObject> {
+		ClassName::from_str("NSObject")
+	}
+}
 
 impl PartialEq for NSObject {
 	fn eq(&self, other: &NSObject) -> bool {
@@ -68,22 +85,5 @@ impl<S: hash::Writer> hash::Hash<S> for NSObject {
 impl fmt::Show for NSObject {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		self.description().as_str().fmt(f)
-	}
-}
-
-impl NSObject {
-	fn class() -> Class {
-		Class::get("NSObject")
-	}
-
-	pub fn new() -> NSObject {
-		let class = NSObject::class();
-		let alloc = Sel::register("alloc");
-		let init = Sel::register("init");
-		unsafe {
-			let obj = objc_msgSend(class.as_ptr(), alloc);
-			let obj = objc_msgSend(obj, init);
-			FromId::from_retained_ptr(obj)
-		}
 	}
 }

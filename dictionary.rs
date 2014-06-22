@@ -1,8 +1,8 @@
 use std::cmp::min;
 use std::mem;
 
-use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
-use id::{Id, FromId};
+use runtime::{Messageable, Object, Sel, objc_msgSend};
+use id::{class, ClassName, Id, FromId};
 use super::{INSCopying, INSObject};
 
 pub trait INSDictionary<K: Messageable, V: FromId> : INSObject {
@@ -40,28 +40,17 @@ impl<K, V> FromId for NSDictionary<K, V> {
 	}
 }
 
-impl<K, V> INSObject for NSDictionary<K, V> { }
+impl<K, V> INSObject for NSDictionary<K, V> {
+	fn class_name() -> ClassName<NSDictionary<K, V>> {
+		ClassName::from_str("NSDictionary")
+	}
+}
 
 impl<K: Messageable, V: FromId> INSDictionary<K, V> for NSDictionary<K, V> { }
 
 impl<K, V> NSDictionary<K, V> {
-	fn class() -> Class {
-		Class::get("NSDictionary")
-	}
-
-	pub fn new() -> NSDictionary<K, V> {
-		let class = NSDictionary::<K, V>::class();
-		let alloc = Sel::register("alloc");
-		let init = Sel::register("init");
-		unsafe {
-			let obj = objc_msgSend(class.as_ptr(), alloc);
-			let obj = objc_msgSend(obj, init);
-			FromId::from_retained_ptr(obj)
-		}
-	}
-
 	unsafe fn from_ptrs(keys: &[*Object], vals: &[*Object]) -> NSDictionary<K, V> {
-		let class = NSDictionary::<K, V>::class();
+		let class = class::<NSDictionary<K, V>>();
 		let alloc = Sel::register("alloc");
 		let init = Sel::register("initWithObjects:forKeys:count:");
 		let count = min(keys.len(), vals.len());

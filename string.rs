@@ -1,8 +1,8 @@
 use std::mem;
 use std::str::raw::c_str_to_static_slice;
 
-use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
-use id::{Id, FromId};
+use runtime::{Messageable, Object, Sel, objc_msgSend};
+use id::{class, ClassName, Id, FromId};
 use super::INSObject;
 
 pub trait INSCopying<T: FromId> : INSObject {
@@ -42,19 +42,19 @@ impl FromId for NSString {
 	}
 }
 
-impl INSObject for NSString { }
+impl INSObject for NSString {
+	fn class_name() -> ClassName<NSString> {
+		ClassName::from_str("NSString")
+	}
+}
 
 impl INSString for NSString { }
 
 impl INSCopying<NSString> for NSString { }
 
 impl NSString {
-	fn class() -> Class {
-		Class::get("NSString")
-	}
-
 	pub fn from_str(string: &str) -> NSString {
-		let class = NSString::class();
+		let class = class::<NSString>();
 		let alloc = Sel::register("alloc");
 		let init_with_bytes = Sel::register("initWithBytes:length:encoding:");
 		let utf8_encoding = 4u;

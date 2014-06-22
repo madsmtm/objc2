@@ -1,7 +1,7 @@
 use std::mem;
 
-use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
-use id::{Id, FromId};
+use runtime::{Messageable, Object, Sel, objc_msgSend};
+use id::{class, ClassName, Id, FromId};
 use super::{INSCopying, INSObject};
 
 pub trait INSEnumerator<T: FromId> : INSObject {
@@ -31,7 +31,11 @@ impl<'a, T> FromId for NSEnumerator<'a, T> {
 	}
 }
 
-impl<'a, T> INSObject for NSEnumerator<'a, T> { }
+impl<'a, T> INSObject for NSEnumerator<'a, T> {
+	fn class_name() -> ClassName<NSEnumerator<'a, T>> {
+		ClassName::from_str("NSEnumerator")
+	}
+}
 
 impl<'a, T: FromId> INSEnumerator<T> for NSEnumerator<'a, T> { }
 
@@ -84,19 +88,19 @@ impl<T> FromId for NSArray<T> {
 	}
 }
 
-impl<T> INSObject for NSArray<T> { }
+impl<T> INSObject for NSArray<T> {
+	fn class_name() -> ClassName<NSArray<T>> {
+		ClassName::from_str("NSArray")
+	}
+}
 
 impl<T: FromId> INSArray<T> for NSArray<T> { }
 
 impl<T> INSCopying<NSArray<T>> for NSArray<T> { }
 
 impl<T> NSArray<T> {
-	fn class() -> Class {
-		Class::get("NSArray")
-	}
-
 	unsafe fn from_ptrs(ptrs: &[*Object]) -> NSArray<T> {
-		let class = NSArray::<T>::class();
+		let class = class::<NSArray<T>>();
 		let alloc = Sel::register("alloc");
 		let init_with_objects = Sel::register("initWithObjects:count:");
 
