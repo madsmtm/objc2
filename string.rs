@@ -23,6 +23,19 @@ pub trait INSString : INSObject {
 			c_str_to_static_slice(mem::transmute(result))
 		}
 	}
+
+	fn from_str(string: &str) -> Self {
+		let cls = class::<Self>();
+		let alloc = Sel::register("alloc");
+		let init = Sel::register("initWithBytes:length:encoding:");
+		let utf8_encoding = 4u;
+		unsafe {
+			let obj = objc_msgSend(cls.as_ptr(), alloc);
+			let obj = objc_msgSend(obj, init, string.as_ptr(), string.len(),
+				utf8_encoding);
+			FromId::from_retained_ptr(obj)
+		}
+	}
 }
 
 #[deriving(Clone)]
@@ -51,21 +64,6 @@ impl INSObject for NSString {
 impl INSString for NSString { }
 
 impl INSCopying<NSString> for NSString { }
-
-impl NSString {
-	pub fn from_str(string: &str) -> NSString {
-		let class = class::<NSString>();
-		let alloc = Sel::register("alloc");
-		let init_with_bytes = Sel::register("initWithBytes:length:encoding:");
-		let utf8_encoding = 4u;
-		unsafe {
-			let obj = objc_msgSend(class.as_ptr(), alloc);
-			let obj = objc_msgSend(obj, init_with_bytes, string.as_ptr(),
-				string.len(), utf8_encoding);
-			FromId::from_retained_ptr(obj)
-		}
-	}
-}
 
 impl Str for NSString {
 	fn as_slice<'a>(&'a self) -> &'a str {

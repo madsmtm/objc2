@@ -45,7 +45,7 @@ impl<'a, T: FromId + Messageable> Iterator<T> for NSEnumerator<'a, T> {
 	}
 }
 
-pub trait INSArray<T: FromId> : INSObject {
+pub trait INSArray<T: INSObject> : INSObject {
 	fn count(&self) -> uint {
 		let count = Sel::register("count");
 		unsafe {
@@ -67,6 +67,26 @@ pub trait INSArray<T: FromId> : INSObject {
 		unsafe {
 			let result = objc_msgSend(self.as_ptr(), object_enumerator);
 			FromId::from_ptr(result)
+		}
+	}
+
+	unsafe fn from_ptrs(ptrs: &[*Object]) -> Self {
+		let class = class::<Self>();
+		let alloc = Sel::register("alloc");
+		let init = Sel::register("initWithObjects:count:");
+
+		let obj = objc_msgSend(class.as_ptr(), alloc);
+		let obj = objc_msgSend(obj, init, ptrs.as_ptr(), ptrs.len());
+		FromId::from_retained_ptr(obj)
+	}
+
+	fn from_slice(slice: &[T]) -> Self {
+		let mut ptrs: Vec<*Object> = Vec::with_capacity(slice.len());
+		for obj in slice.iter() {
+			ptrs.push(unsafe { obj.as_ptr() });
+		}
+		unsafe {
+			INSArray::from_ptrs(ptrs.as_slice())
 		}
 	}
 }
@@ -94,36 +114,11 @@ impl<T> INSObject for NSArray<T> {
 	}
 }
 
-impl<T: FromId> INSArray<T> for NSArray<T> { }
+impl<T: INSObject> INSArray<T> for NSArray<T> { }
 
 impl<T> INSCopying<NSArray<T>> for NSArray<T> { }
 
-impl<T> NSArray<T> {
-	unsafe fn from_ptrs(ptrs: &[*Object]) -> NSArray<T> {
-		let class = class::<NSArray<T>>();
-		let alloc = Sel::register("alloc");
-		let init_with_objects = Sel::register("initWithObjects:count:");
-
-		let obj = objc_msgSend(class.as_ptr(), alloc);
-		let obj = objc_msgSend(obj, init_with_objects, ptrs.as_ptr(),
-			ptrs.len());
-		FromId::from_retained_ptr(obj)
-	}
-}
-
-impl<T: Messageable> NSArray<T> {
-	pub fn from_slice(slice: &[T]) -> NSArray<T> {
-		let mut ptrs: Vec<*Object> = Vec::with_capacity(slice.len());
-		for obj in slice.iter() {
-			ptrs.push(unsafe { obj.as_ptr() });
-		}
-		unsafe {
-			NSArray::from_ptrs(ptrs.as_slice())
-		}
-	}
-}
-
-impl<T: FromId> Collection for NSArray<T> {
+impl<T: INSObject> Collection for NSArray<T> {
 	fn len(&self) -> uint {
 		self.count()
 	}

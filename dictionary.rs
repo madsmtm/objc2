@@ -5,7 +5,7 @@ use runtime::{Messageable, Object, Sel, objc_msgSend};
 use id::{class, ClassName, Id, FromId};
 use super::{INSCopying, INSObject};
 
-pub trait INSDictionary<K: Messageable, V: FromId> : INSObject {
+pub trait INSDictionary<K: Messageable, V: INSObject> : INSObject {
 	fn count(&self) -> uint {
 		let count = Sel::register("count");
 		unsafe {
@@ -19,6 +19,31 @@ pub trait INSDictionary<K: Messageable, V: FromId> : INSObject {
 		unsafe {
 			let obj = objc_msgSend(self.as_ptr(), object_for, key.as_ptr());
 			FromId::maybe_from_ptr(obj)
+		}
+	}
+
+	unsafe fn from_ptrs(keys: &[*Object], vals: &[*Object]) -> Self {
+		let class = class::<Self>();
+		let alloc = Sel::register("alloc");
+		let init = Sel::register("initWithObjects:forKeys:count:");
+		let count = min(keys.len(), vals.len());
+
+		let obj = objc_msgSend(class.as_ptr(), alloc);
+		let obj = objc_msgSend(obj, init, vals.as_ptr(), keys.as_ptr(), count);
+		FromId::from_retained_ptr(obj)
+	}
+
+	fn from_keys_and_objects<T: INSCopying<K>>(keys: &[T], vals: &[V]) -> Self {
+		let mut key_ptrs = Vec::with_capacity(keys.len());
+		for key in keys.iter() {
+			key_ptrs.push(unsafe { key.as_ptr() });
+		}
+		let mut val_ptrs = Vec::with_capacity(vals.len());
+		for val in vals.iter() {
+			val_ptrs.push(unsafe { val.as_ptr() });
+		}
+		unsafe {
+			INSDictionary::from_ptrs(key_ptrs.as_slice(), val_ptrs.as_slice())
 		}
 	}
 }
@@ -46,38 +71,9 @@ impl<K, V> INSObject for NSDictionary<K, V> {
 	}
 }
 
-impl<K: Messageable, V: FromId> INSDictionary<K, V> for NSDictionary<K, V> { }
+impl<K: Messageable, V: INSObject> INSDictionary<K, V> for NSDictionary<K, V> { }
 
-impl<K, V> NSDictionary<K, V> {
-	unsafe fn from_ptrs(keys: &[*Object], vals: &[*Object]) -> NSDictionary<K, V> {
-		let class = class::<NSDictionary<K, V>>();
-		let alloc = Sel::register("alloc");
-		let init = Sel::register("initWithObjects:forKeys:count:");
-		let count = min(keys.len(), vals.len());
-
-		let obj = objc_msgSend(class.as_ptr(), alloc);
-		let obj = objc_msgSend(obj, init, vals.as_ptr(), keys.as_ptr(), count);
-		FromId::from_retained_ptr(obj)
-	}
-}
-
-impl<K, V: Messageable> NSDictionary<K, V> {
-	pub fn from_keys_and_objects<T: INSCopying<K>>(keys: &[T], vals: &[V]) -> NSDictionary<K, V> {
-		let mut key_ptrs = Vec::with_capacity(keys.len());
-		for key in keys.iter() {
-			key_ptrs.push(unsafe { key.as_ptr() });
-		}
-		let mut val_ptrs = Vec::with_capacity(vals.len());
-		for val in vals.iter() {
-			val_ptrs.push(unsafe { val.as_ptr() });
-		}
-		unsafe {
-			NSDictionary::from_ptrs(key_ptrs.as_slice(), val_ptrs.as_slice())
-		}
-	}
-}
-
-impl<K: Messageable, V: FromId> Collection for NSDictionary<K, V> {
+impl<K: Messageable, V: INSObject> Collection for NSDictionary<K, V> {
 	fn len(&self) -> uint {
 		self.count()
 	}
