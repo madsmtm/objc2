@@ -1,6 +1,7 @@
 use std::ptr;
 
-use runtime::{Messageable, Object, Sel, objc_msgSend};
+use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
+use foundation::INSObject;
 
 #[unsafe_no_drop_flag]
 pub struct Id {
@@ -84,4 +85,23 @@ pub trait FromId {
 			Some(FromId::from_retained_ptr(ptr))
 		}
 	}
+}
+
+pub struct ClassName<T> {
+	name: &'static str,
+}
+
+impl<T> ClassName<T> {
+	pub fn from_str(name: &'static str) -> ClassName<T> {
+		ClassName { name: name }
+	}
+
+	pub fn as_str(&self) -> &'static str {
+		self.name
+	}
+}
+
+pub fn class<T: INSObject>() -> Class {
+	let name: ClassName<T> = INSObject::class_name();
+	Class::get(name.as_str())
 }
