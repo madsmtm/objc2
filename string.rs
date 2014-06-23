@@ -1,7 +1,7 @@
 use std::str::raw::c_str_to_static_slice;
 
-use runtime::{Messageable, Object, Sel, objc_msgSend};
-use id::{class, ClassName, Id, FromId};
+use runtime::{Messageable, Sel, objc_msgSend};
+use id::{class, FromId};
 use super::INSObject;
 
 pub trait INSCopying<T: FromId> : INSObject {
@@ -37,28 +37,7 @@ pub trait INSString : INSObject {
 	}
 }
 
-#[deriving(Clone)]
-pub struct NSString {
-	ptr: Id,
-}
-
-impl Messageable for NSString {
-	unsafe fn as_ptr(&self) -> *Object {
-		self.ptr.as_ptr()
-	}
-}
-
-impl FromId for NSString {
-	unsafe fn from_id(id: Id) -> NSString {
-		NSString { ptr: id }
-	}
-}
-
-impl INSObject for NSString {
-	fn class_name() -> ClassName<NSString> {
-		ClassName::from_str("NSString")
-	}
-}
+object_struct!(NSString)
 
 impl INSString for NSString { }
 

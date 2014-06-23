@@ -1,8 +1,5 @@
-use std::fmt;
-use std::hash;
-
-use runtime::{Messageable, Object, Sel, objc_msgSend};
-use id::{class, ClassName, Id, FromId};
+use runtime::{Messageable, Sel, objc_msgSend};
+use id::{class, ClassName, FromId};
 use super::{INSString, NSString};
 
 pub trait INSObject : Messageable + FromId {
@@ -44,45 +41,4 @@ pub trait INSObject : Messageable + FromId {
 	}
 }
 
-#[deriving(Clone)]
-pub struct NSObject {
-	ptr: Id,
-}
-
-impl Messageable for NSObject {
-	unsafe fn as_ptr(&self) -> *Object {
-		self.ptr.as_ptr()
-	}
-}
-
-impl FromId for NSObject {
-	unsafe fn from_id(id: Id) -> NSObject {
-		NSObject { ptr: id }
-	}
-}
-
-impl INSObject for NSObject {
-	fn class_name() -> ClassName<NSObject> {
-		ClassName::from_str("NSObject")
-	}
-}
-
-impl PartialEq for NSObject {
-	fn eq(&self, other: &NSObject) -> bool {
-		self.is_equal(other)
-	}
-}
-
-impl Eq for NSObject { }
-
-impl<S: hash::Writer> hash::Hash<S> for NSObject {
-	fn hash(&self, state: &mut S) {
-		self.hash_code().hash(state);
-	}
-}
-
-impl fmt::Show for NSObject {
-	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-		self.description().as_str().fmt(f)
-	}
-}
+object_struct!(NSObject)
