@@ -1,7 +1,7 @@
 use std::cmp::min;
 
 use runtime::{Messageable, Object, Sel, objc_msgSend};
-use id::{class, ClassName, Id, FromId};
+use id::{class, FromId};
 use super::{INSCopying, INSObject};
 
 pub trait INSDictionary<K: Messageable, V: INSObject> : INSObject {
@@ -47,28 +47,7 @@ pub trait INSDictionary<K: Messageable, V: INSObject> : INSObject {
 	}
 }
 
-#[deriving(Clone)]
-pub struct NSDictionary<K, V> {
-	ptr: Id,
-}
-
-impl<K, V> Messageable for NSDictionary<K, V> {
-	unsafe fn as_ptr(&self) -> *Object {
-		self.ptr.as_ptr()
-	}
-}
-
-impl<K, V> FromId for NSDictionary<K, V> {
-	unsafe fn from_id(id: Id) -> NSDictionary<K, V> {
-		NSDictionary { ptr: id }
-	}
-}
-
-impl<K, V> INSObject for NSDictionary<K, V> {
-	fn class_name() -> ClassName<NSDictionary<K, V>> {
-		ClassName::from_str("NSDictionary")
-	}
-}
+object_struct!(NSDictionary<K, V>)
 
 impl<K: Messageable, V: INSObject> INSDictionary<K, V> for NSDictionary<K, V> { }
 

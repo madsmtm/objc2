@@ -89,28 +89,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 	}
 }
 
-#[deriving(Clone)]
-pub struct NSArray<T> {
-	ptr: Id,
-}
-
-impl<T> Messageable for NSArray<T> {
-	unsafe fn as_ptr(&self) -> *Object {
-		self.ptr.as_ptr()
-	}
-}
-
-impl<T> FromId for NSArray<T> {
-	unsafe fn from_id(id: Id) -> NSArray<T> {
-		NSArray { ptr: id }
-	}
-}
-
-impl<T> INSObject for NSArray<T> {
-	fn class_name() -> ClassName<NSArray<T>> {
-		ClassName::from_str("NSArray")
-	}
-}
+object_struct!(NSArray<T>)
 
 impl<T: INSObject> INSArray<T> for NSArray<T> { }
 
