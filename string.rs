@@ -1,4 +1,3 @@
-use std::mem;
 use std::str::raw::c_str_to_static_slice;
 
 use runtime::{Messageable, Object, Sel, objc_msgSend};
@@ -20,7 +19,7 @@ pub trait INSString : INSObject {
 		let utf8_string = Sel::register("UTF8String");
 		unsafe {
 			let result = objc_msgSend(self.as_ptr(), utf8_string);
-			c_str_to_static_slice(mem::transmute(result))
+			c_str_to_static_slice(result as *i8)
 		}
 	}
 

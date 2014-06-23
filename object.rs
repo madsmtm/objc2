@@ -1,6 +1,5 @@
 use std::fmt;
 use std::hash;
-use std::mem;
 
 use runtime::{Messageable, Object, Sel, objc_msgSend};
 use id::{class, ClassName, Id, FromId};
@@ -11,10 +10,10 @@ pub trait INSObject : Messageable + FromId {
 
 	fn hash_code(&self) -> uint {
 		let hash = Sel::register("hash");
-		unsafe {
-			let result = objc_msgSend(self.as_ptr(), hash);
-			mem::transmute(result)
-		}
+		let result = unsafe {
+			objc_msgSend(self.as_ptr(), hash)
+		};
+		result as uint
 	}
 
 	fn is_equal<T: INSObject>(&self, other: &T) -> bool {

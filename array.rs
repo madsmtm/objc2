@@ -1,5 +1,3 @@
-use std::mem;
-
 use runtime::{Messageable, Object, Sel, objc_msgSend};
 use id::{class, ClassName, Id, FromId};
 use super::{INSCopying, INSObject};
@@ -48,10 +46,10 @@ impl<'a, T: FromId + Messageable> Iterator<T> for NSEnumerator<'a, T> {
 pub trait INSArray<T: INSObject> : INSObject {
 	fn count(&self) -> uint {
 		let count = Sel::register("count");
-		unsafe {
-			let result = objc_msgSend(self.as_ptr(), count);
-			mem::transmute(result)
-		}
+		let result = unsafe {
+			objc_msgSend(self.as_ptr(), count)
+		};
+		result as uint
 	}
 
 	fn object_at(&self, index: uint) -> T {
