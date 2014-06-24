@@ -1,12 +1,11 @@
-use runtime::{Messageable, Object, Sel, objc_msgSend};
+use runtime::{Messageable, Object};
 use id::{class, ClassName, Id, FromId};
 use super::{INSCopying, INSObject};
 
 pub trait INSEnumerator<T: FromId> : INSObject {
 	fn next_object(&mut self) -> Option<T> {
-		let next_object = Sel::register("nextObject");
 		unsafe {
-			let obj = objc_msgSend(self.as_ptr(), next_object);
+			let obj = msg_send![self.as_ptr() nextObject];
 			FromId::maybe_from_ptr(obj)
 		}
 	}
@@ -45,36 +44,30 @@ impl<'a, T: FromId + Messageable> Iterator<T> for NSEnumerator<'a, T> {
 
 pub trait INSArray<T: INSObject> : INSObject {
 	fn count(&self) -> uint {
-		let count = Sel::register("count");
 		let result = unsafe {
-			objc_msgSend(self.as_ptr(), count)
+			msg_send![self.as_ptr() count]
 		};
 		result as uint
 	}
 
 	fn object_at(&self, index: uint) -> T {
-		let object_at = Sel::register("objectAtIndex:");
 		unsafe {
-			let result = objc_msgSend(self.as_ptr(), object_at, index);
+			let result = msg_send![self.as_ptr() objectAtIndex:index];
 			FromId::from_ptr(result)
 		}
 	}
 
 	fn object_enumerator<'a>(&'a self) -> NSEnumerator<'a, T> {
-		let object_enumerator = Sel::register("objectEnumerator");
 		unsafe {
-			let result = objc_msgSend(self.as_ptr(), object_enumerator);
+			let result = msg_send![self.as_ptr() objectEnumerator];
 			FromId::from_ptr(result)
 		}
 	}
 
 	unsafe fn from_ptrs(ptrs: &[*Object]) -> Self {
-		let class = class::<Self>();
-		let alloc = Sel::register("alloc");
-		let init = Sel::register("initWithObjects:count:");
-
-		let obj = objc_msgSend(class.as_ptr(), alloc);
-		let obj = objc_msgSend(obj, init, ptrs.as_ptr(), ptrs.len());
+		let cls = class::<Self>();
+		let obj = msg_send![cls.as_ptr() alloc];
+		let obj = msg_send![obj initWithObjects:ptrs.as_ptr() count:ptrs.len()];
 		FromId::from_retained_ptr(obj)
 	}
 

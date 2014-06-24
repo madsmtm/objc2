@@ -1,34 +1,31 @@
 use std::cmp::min;
 
-use runtime::{Messageable, Object, Sel, objc_msgSend};
+use runtime::{Messageable, Object};
 use id::{class, FromId};
 use super::{INSCopying, INSObject};
 
 pub trait INSDictionary<K: Messageable, V: INSObject> : INSObject {
 	fn count(&self) -> uint {
-		let count = Sel::register("count");
 		let result = unsafe {
-			objc_msgSend(self.as_ptr(), count)
+			msg_send![self.as_ptr() count]
 		};
 		result as uint
 	}
 
 	fn object_for(&self, key: &K) -> Option<V> {
-		let object_for = Sel::register("objectForKey:");
 		unsafe {
-			let obj = objc_msgSend(self.as_ptr(), object_for, key.as_ptr());
+			let obj = msg_send![self.as_ptr() objectForKey:key.as_ptr()];
 			FromId::maybe_from_ptr(obj)
 		}
 	}
 
 	unsafe fn from_ptrs(keys: &[*Object], vals: &[*Object]) -> Self {
-		let class = class::<Self>();
-		let alloc = Sel::register("alloc");
-		let init = Sel::register("initWithObjects:forKeys:count:");
+		let cls = class::<Self>();
 		let count = min(keys.len(), vals.len());
-
-		let obj = objc_msgSend(class.as_ptr(), alloc);
-		let obj = objc_msgSend(obj, init, vals.as_ptr(), keys.as_ptr(), count);
+		let obj = msg_send![cls.as_ptr() alloc];
+		let obj = msg_send![obj initWithObjects:vals.as_ptr()
+		                                forKeys:keys.as_ptr()
+		                                  count:count];
 		FromId::from_retained_ptr(obj)
 	}
 
