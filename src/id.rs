@@ -1,6 +1,6 @@
 use std::ptr;
 
-use runtime::{Class, Messageable, Object, Sel, objc_msgSend};
+use runtime::{Class, Messageable, Object};
 use foundation::INSObject;
 
 #[unsafe_no_drop_flag]
@@ -14,13 +14,11 @@ impl Id {
 	}
 
 	unsafe fn retain(&self) {
-		let retain = Sel::register("retain");
-		objc_msgSend(self.as_ptr(), retain);
+		msg_send![self.as_ptr() retain];
 	}
 
 	unsafe fn release(&self) {
-		let release = Sel::register("release");
-		objc_msgSend(self.as_ptr(), release);
+		msg_send![self.as_ptr() release];
 	}
 
 	pub unsafe fn from_ptr(ptr: *Object) -> Id {
