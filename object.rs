@@ -1,8 +1,8 @@
 use runtime::Messageable;
-use id::{class, ClassName, FromId};
-use super::{INSString, NSString};
+use id::{class, ClassName, Id};
+use super::NSString;
 
-pub trait INSObject : Messageable + FromId {
+pub trait INSObject : Messageable {
 	fn class_name() -> ClassName<Self>;
 
 	fn hash_code(&self) -> uint {
@@ -19,19 +19,19 @@ pub trait INSObject : Messageable + FromId {
 		!result.is_null()
 	}
 
-	fn description(&self) -> NSString {
+	fn description(&self) -> Id<NSString> {
 		unsafe {
 			let result = msg_send![self.as_ptr() description];
-			FromId::from_ptr(result)
+			Id::from_ptr(result as *NSString)
 		}
 	}
 
-	fn new() -> Self {
+	fn new() -> Id<Self> {
 		let cls = class::<Self>();
 		unsafe {
 			let obj = msg_send![cls.as_ptr() alloc];
 			let obj = msg_send![obj init];
-			FromId::from_retained_ptr(obj)
+			Id::from_retained_ptr(obj as *Self)
 		}
 	}
 }

@@ -1,14 +1,14 @@
 use std::str::raw::c_str_to_static_slice;
 
-use runtime::{Messageable};
-use id::{class, FromId};
+use runtime::Messageable;
+use id::{class, Id};
 use super::INSObject;
 
-pub trait INSCopying<T: FromId> : INSObject {
-	fn copy(&self) -> T {
+pub trait INSCopying<T> : INSObject {
+	fn copy(&self) -> Id<T> {
 		unsafe {
 			let obj = msg_send![self.as_ptr() copy];
-			FromId::from_retained_ptr(obj)
+			Id::from_retained_ptr(obj as *Self)
 		}
 	}
 }
@@ -21,7 +21,7 @@ pub trait INSString : INSObject {
 		}
 	}
 
-	fn from_str(string: &str) -> Self {
+	fn from_str(string: &str) -> Id<Self> {
 		let cls = class::<Self>();
 		let utf8_encoding = 4u;
 		unsafe {
@@ -29,7 +29,7 @@ pub trait INSString : INSObject {
 			let obj = msg_send![obj initWithBytes:string.as_ptr()
 			                               length:string.len()
 			                             encoding:utf8_encoding];
-			FromId::from_retained_ptr(obj)
+			Id::from_retained_ptr(obj as *Self)
 		}
 	}
 }
