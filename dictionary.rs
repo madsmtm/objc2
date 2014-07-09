@@ -51,3 +51,9 @@ impl<K: Messageable, V> Collection for NSDictionary<K, V> {
 		self.count()
 	}
 }
+
+impl<K: Messageable, V> Map<K, V> for NSDictionary<K, V> {
+	fn find<'a>(&'a self, key: &K) -> Option<&'a V> {
+		self.object_for(key)
+	}
+}
