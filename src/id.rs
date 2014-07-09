@@ -12,22 +12,9 @@ pub struct Id<T> {
 }
 
 impl<T> Id<T> {
-	pub fn nil() -> Id<T> {
-		Id { ptr: ptr::null() }
-	}
-
-	unsafe fn retain(&self) {
-		msg_send![self.as_ptr() retain];
-	}
-
-	unsafe fn release(&self) {
-		msg_send![self.as_ptr() release];
-	}
-
 	pub unsafe fn from_ptr(ptr: *T) -> Id<T> {
-		let id = Id { ptr: ptr };
-		id.retain();
-		id
+		msg_send![ptr as *Object retain];
+		Id::from_retained_ptr(ptr)
 	}
 
 	pub unsafe fn from_retained_ptr(ptr: *T) -> Id<T> {
@@ -54,7 +41,7 @@ impl<T> Drop for Id<T> {
 	fn drop(&mut self) {
 		if !self.ptr.is_null() {
 			unsafe {
-				self.release();
+				msg_send![self.as_ptr() release];
 			}
 			self.ptr = ptr::null();
 		}
