@@ -1,5 +1,6 @@
 use std::fmt;
 use std::hash;
+use std::mem;
 use std::ptr;
 
 use runtime::{Class, Messageable, Object};
@@ -87,6 +88,24 @@ impl<S: hash::Writer, T: hash::Hash<S>> hash::Hash<S> for Id<T> {
 impl<T: fmt::Show> fmt::Show for Id<T> {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		self.deref().fmt(f)
+	}
+}
+
+pub trait IdVector<T> {
+	fn as_refs_slice<'a>(&'a self) -> &'a [&'a T];
+
+	fn as_ptrs_slice<'a>(&'a self) -> &'a [*T] {
+		unsafe {
+			mem::transmute(self.as_refs_slice())
+		}
+	}
+}
+
+impl<T> IdVector<T> for Vec<Id<T>> {
+	fn as_refs_slice<'a>(&'a self) -> &'a [&'a T] {
+		unsafe {
+			mem::transmute(self.as_slice())
+		}
 	}
 }
 
