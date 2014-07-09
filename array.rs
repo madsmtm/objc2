@@ -1,7 +1,10 @@
-use runtime::{Messageable, Object};
-use id::{class, ClassName, Id, FromId};
+use std::mem;
+
+use runtime::Messageable;
+use id::{class, Id, IdVector};
 use super::{INSCopying, INSObject};
 
+/*
 pub trait INSEnumerator<T: FromId> : INSObject {
 	fn next_object(&mut self) -> Option<T> {
 		unsafe {
@@ -41,6 +44,7 @@ impl<'a, T: FromId + Messageable> Iterator<T> for NSEnumerator<'a, T> {
 		self.next_object()
 	}
 }
+*/
 
 pub trait INSArray<T: INSObject> : INSObject {
 	fn count(&self) -> uint {
@@ -50,34 +54,33 @@ pub trait INSArray<T: INSObject> : INSObject {
 		result as uint
 	}
 
-	fn object_at(&self, index: uint) -> T {
+	fn object_at<'a>(&'a self, index: uint) -> &'a T {
 		unsafe {
 			let result = msg_send![self.as_ptr() objectAtIndex:index];
-			FromId::from_ptr(result)
+			mem::transmute(result)
 		}
 	}
 
+/*
 	fn object_enumerator<'a>(&'a self) -> NSEnumerator<'a, T> {
 		unsafe {
 			let result = msg_send![self.as_ptr() objectEnumerator];
 			FromId::from_ptr(result)
 		}
 	}
+*/
 
-	unsafe fn from_ptrs(ptrs: &[*Object]) -> Self {
+	unsafe fn from_refs(refs: &[&T]) -> Id<Self> {
 		let cls = class::<Self>();
 		let obj = msg_send![cls.as_ptr() alloc];
-		let obj = msg_send![obj initWithObjects:ptrs.as_ptr() count:ptrs.len()];
-		FromId::from_retained_ptr(obj)
+		let obj = msg_send![obj initWithObjects:refs.as_ptr() count:refs.len()];
+		Id::from_retained_ptr(obj as *Self)
 	}
 
-	fn from_slice(slice: &[T]) -> Self {
-		let mut ptrs: Vec<*Object> = Vec::with_capacity(slice.len());
-		for obj in slice.iter() {
-			ptrs.push(unsafe { obj.as_ptr() });
-		}
+	fn from_vec(vec: Vec<Id<T>>) -> Id<Self> {
+		let refs = vec.as_refs_slice();
 		unsafe {
-			INSArray::from_ptrs(ptrs.as_slice())
+			INSArray::from_refs(refs)
 		}
 	}
 }
