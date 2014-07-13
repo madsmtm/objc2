@@ -8,14 +8,14 @@ use super::{INSCopying, INSObject};
 pub trait INSDictionary<K: Messageable, V> : INSObject {
 	fn count(&self) -> uint {
 		let result = unsafe {
-			msg_send![self.as_ptr() count]
+			msg_send![self count]
 		};
 		result as uint
 	}
 
 	fn object_for<'a>(&'a self, key: &K) -> Option<&'a V> {
 		unsafe {
-			let obj = msg_send![self.as_ptr() objectForKey:key.as_ptr()];
+			let obj = msg_send![self objectForKey:key.as_ptr()];
 			if obj.is_null() {
 				None
 			} else {
@@ -27,7 +27,7 @@ pub trait INSDictionary<K: Messageable, V> : INSObject {
 	unsafe fn from_refs<T: INSCopying<K>>(keys: &[&T], vals: &[&V]) -> Id<Self> {
 		let cls = class::<Self>();
 		let count = min(keys.len(), vals.len());
-		let obj = msg_send![cls.as_ptr() alloc];
+		let obj = msg_send![cls alloc];
 		let obj = msg_send![obj initWithObjects:vals.as_ptr()
 		                                forKeys:keys.as_ptr()
 		                                  count:count];

@@ -1,6 +1,6 @@
 use std::mem;
 
-use runtime::{Messageable, Object};
+use runtime::Object;
 use id::{class, Id, IdVector};
 use super::{INSCopying, INSObject};
 
@@ -17,7 +17,7 @@ impl<'a, T> NSEnumerator<'a, T> {
 impl<'a, T> Iterator<&'a T> for NSEnumerator<'a, T> {
 	fn next(&mut self) -> Option<&'a T> {
 		unsafe {
-			let obj = msg_send![self.id.as_ptr() nextObject];
+			let obj = msg_send![self.id nextObject];
 			if obj.is_null() {
 				None
 			} else {
@@ -30,28 +30,28 @@ impl<'a, T> Iterator<&'a T> for NSEnumerator<'a, T> {
 pub trait INSArray<T: INSObject> : INSObject {
 	fn count(&self) -> uint {
 		let result = unsafe {
-			msg_send![self.as_ptr() count]
+			msg_send![self count]
 		};
 		result as uint
 	}
 
 	fn object_at<'a>(&'a self, index: uint) -> &'a T {
 		unsafe {
-			let result = msg_send![self.as_ptr() objectAtIndex:index];
+			let result = msg_send![self objectAtIndex:index];
 			mem::transmute(result)
 		}
 	}
 
 	fn object_enumerator<'a>(&'a self) -> NSEnumerator<'a, T> {
 		unsafe {
-			let result = msg_send![self.as_ptr() objectEnumerator];
+			let result = msg_send![self objectEnumerator];
 			NSEnumerator::from_ptr(result)
 		}
 	}
 
 	unsafe fn from_refs(refs: &[&T]) -> Id<Self> {
 		let cls = class::<Self>();
-		let obj = msg_send![cls.as_ptr() alloc];
+		let obj = msg_send![cls alloc];
 		let obj = msg_send![obj initWithObjects:refs.as_ptr() count:refs.len()];
 		Id::from_retained_ptr(obj as *Self)
 	}
