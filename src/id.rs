@@ -3,7 +3,7 @@ use std::hash;
 use std::mem;
 use std::ptr;
 
-use runtime::{Class, Messageable, Object};
+use runtime::{Class, Messageable};
 use foundation::INSObject;
 
 #[unsafe_no_drop_flag]
@@ -11,9 +11,9 @@ pub struct Id<T> {
 	ptr: *T,
 }
 
-impl<T> Id<T> {
+impl<T: Messageable> Id<T> {
 	pub unsafe fn from_ptr(ptr: *T) -> Id<T> {
-		msg_send![ptr as *Object retain];
+		msg_send![&*ptr retain];
 		Id::from_retained_ptr(ptr)
 	}
 
@@ -22,13 +22,7 @@ impl<T> Id<T> {
 	}
 }
 
-impl<T> Messageable for Id<T> {
-	unsafe fn as_ptr(&self) -> *Object {
-		self.ptr as *Object
-	}
-}
-
-impl<T> Clone for Id<T> {
+impl<T: Messageable> Clone for Id<T> {
 	fn clone(&self) -> Id<T> {
 		unsafe {
 			Id::from_ptr(self.ptr)
@@ -37,13 +31,13 @@ impl<T> Clone for Id<T> {
 }
 
 #[unsafe_destructor]
-impl<T> Drop for Id<T> {
+impl<T: Messageable> Drop for Id<T> {
 	fn drop(&mut self) {
 		if !self.ptr.is_null() {
+			let ptr = mem::replace(&mut self.ptr, ptr::null());
 			unsafe {
-				msg_send![self release];
+				msg_send![&*ptr release];
 			}
-			self.ptr = ptr::null();
 		}
 	}
 }
