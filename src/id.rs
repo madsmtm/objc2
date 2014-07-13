@@ -41,7 +41,7 @@ impl<T> Drop for Id<T> {
 	fn drop(&mut self) {
 		if !self.ptr.is_null() {
 			unsafe {
-				msg_send![self.as_ptr() release];
+				msg_send![self release];
 			}
 			self.ptr = ptr::null();
 		}
