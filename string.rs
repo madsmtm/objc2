@@ -3,7 +3,7 @@ use std::str::raw::c_str_to_static_slice;
 use id::{class, Id};
 use super::INSObject;
 
-pub trait INSCopying<T> : INSObject {
+pub trait INSCopying<T: INSObject> : INSObject {
 	fn copy(&self) -> Id<T> {
 		unsafe {
 			let obj = msg_send![self copy];
