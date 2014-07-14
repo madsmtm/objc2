@@ -37,3 +37,39 @@ pub trait INSObject : Messageable {
 }
 
 object_struct!(NSObject)
+
+#[cfg(test)]
+mod tests {
+	use id::{ClassName, Id};
+	use foundation::INSString;
+	use super::{INSObject, NSObject};
+
+	#[test]
+	fn test_class_name() {
+		let name: ClassName<NSObject> = INSObject::class_name();
+		assert!(name.as_str() == "NSObject");
+	}
+
+	#[test]
+	fn test_is_equal() {
+		let obj1: Id<NSObject> = INSObject::new();
+		assert!(obj1.is_equal(obj1.deref()));
+
+		let obj2: Id<NSObject> = INSObject::new();
+		assert!(!obj1.is_equal(obj2.deref()));
+	}
+
+	#[test]
+	fn test_hash_code() {
+		let obj: Id<NSObject> = INSObject::new();
+		assert!(obj.hash_code() == obj.hash_code());
+	}
+
+	#[test]
+	fn test_description() {
+		let obj: Id<NSObject> = INSObject::new();
+		let description = obj.description();
+		let expected = format!("<NSObject: {}>", obj.deref() as *NSObject);
+		assert!(description.as_str() == expected.as_slice());
+	}
+}
