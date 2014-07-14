@@ -1,7 +1,7 @@
 use std::cmp::min;
 use std::mem;
 
-use id::{class, Id, IdVector};
+use {class, Id, IdVector};
 use super::{INSCopying, INSObject};
 
 pub trait INSDictionary<K: INSObject, V> : INSObject {

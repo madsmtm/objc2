@@ -1,5 +1,5 @@
 use runtime::Messageable;
-use id::{class, ClassName, Id};
+use {class, ClassName, Id};
 use super::NSString;
 
 pub trait INSObject : Messageable {
@@ -40,7 +40,7 @@ object_struct!(NSObject)
 
 #[cfg(test)]
 mod tests {
-	use id::{ClassName, Id};
+	use {ClassName, Id};
 	use foundation::INSString;
 	use super::{INSObject, NSObject};
 

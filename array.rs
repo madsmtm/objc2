@@ -1,7 +1,7 @@
 use std::mem;
 
 use runtime::Object;
-use id::{class, Id, IdVector};
+use {class, Id, IdVector};
 use super::{INSCopying, INSObject};
 
 pub struct NSEnumerator<'a, T> {
