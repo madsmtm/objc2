@@ -3,8 +3,7 @@ use std::hash;
 use std::mem;
 use std::ptr;
 
-use runtime::{Class, Messageable};
-use foundation::INSObject;
+use runtime::Messageable;
 
 #[unsafe_no_drop_flag]
 pub struct Id<T> {
@@ -88,23 +87,4 @@ impl<T> IdVector<T> for Vec<Id<T>> {
 			mem::transmute(self.as_slice())
 		}
 	}
-}
-
-pub struct ClassName<T> {
-	name: &'static str,
-}
-
-impl<T> ClassName<T> {
-	pub fn from_str(name: &'static str) -> ClassName<T> {
-		ClassName { name: name }
-	}
-
-	pub fn as_str(&self) -> &'static str {
-		self.name
-	}
-}
-
-pub fn class<T: INSObject>() -> Class {
-	let name: ClassName<T> = INSObject::class_name();
-	Class::get(name.as_str())
 }
