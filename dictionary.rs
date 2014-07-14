@@ -1,11 +1,10 @@
 use std::cmp::min;
 use std::mem;
 
-use runtime::Messageable;
 use id::{class, Id, IdVector};
 use super::{INSCopying, INSObject};
 
-pub trait INSDictionary<K: Messageable, V> : INSObject {
+pub trait INSDictionary<K: INSObject, V> : INSObject {
 	fn count(&self) -> uint {
 		let result = unsafe {
 			msg_send![self count]
@@ -44,15 +43,15 @@ pub trait INSDictionary<K: Messageable, V> : INSObject {
 
 object_struct!(NSDictionary<K, V>)
 
-impl<K: Messageable, V> INSDictionary<K, V> for NSDictionary<K, V> { }
+impl<K: INSObject, V> INSDictionary<K, V> for NSDictionary<K, V> { }
 
-impl<K: Messageable, V> Collection for NSDictionary<K, V> {
+impl<K: INSObject, V> Collection for NSDictionary<K, V> {
 	fn len(&self) -> uint {
 		self.count()
 	}
 }
 
-impl<K: Messageable, V> Map<K, V> for NSDictionary<K, V> {
+impl<K: INSObject, V> Map<K, V> for NSDictionary<K, V> {
 	fn find<'a>(&'a self, key: &K) -> Option<&'a V> {
 		self.object_for(key)
 	}
