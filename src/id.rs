@@ -3,7 +3,7 @@ use std::hash;
 use std::mem;
 use std::ptr;
 
-use runtime::Message;
+use runtime::{Message, Object, ToMessage};
 
 #[unsafe_no_drop_flag]
 pub struct Id<T> {
@@ -12,12 +12,18 @@ pub struct Id<T> {
 
 impl<T: Message> Id<T> {
 	pub unsafe fn from_ptr(ptr: *T) -> Id<T> {
-		msg_send![&*ptr retain];
+		msg_send![ptr retain];
 		Id::from_retained_ptr(ptr)
 	}
 
 	pub unsafe fn from_retained_ptr(ptr: *T) -> Id<T> {
 		Id { ptr: ptr }
+	}
+}
+
+impl<T: Message> ToMessage for Id<T> {
+	fn as_ptr(&self) -> *Object {
+		self.ptr.as_ptr()
 	}
 }
 
@@ -35,7 +41,7 @@ impl<T: Message> Drop for Id<T> {
 		if !self.ptr.is_null() {
 			let ptr = mem::replace(&mut self.ptr, ptr::null());
 			unsafe {
-				msg_send![&*ptr release];
+				msg_send![ptr release];
 			}
 		}
 	}
