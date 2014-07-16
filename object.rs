@@ -1,8 +1,8 @@
-use runtime::Messageable;
+use runtime::Message;
 use {class, ClassName, Id};
 use super::NSString;
 
-pub trait INSObject : Messageable {
+pub trait INSObject : Message {
 	fn class_name() -> ClassName<Self>;
 
 	fn hash_code(&self) -> uint {
