@@ -81,7 +81,7 @@ pub trait IdVector<T> {
 	}
 }
 
-impl<T> IdVector<T> for Vec<Id<T>> {
+impl<T, V: Vector<Id<T>>> IdVector<T> for V {
 	fn as_refs_slice<'a>(&'a self) -> &'a [&'a T] {
 		unsafe {
 			mem::transmute(self.as_slice())
