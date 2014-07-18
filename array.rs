@@ -1,9 +1,15 @@
 use std::kinds::marker::ContravariantLifetime;
 use std::mem;
+use std::ptr;
 
 use runtime::Object;
 use {class, Id, IdVector};
 use super::{INSCopying, INSObject};
+
+pub struct NSRange {
+	pub location: uint,
+	pub length: uint,
+}
 
 pub struct NSEnumerator<'a, T> {
 	id: Id<Object>,
@@ -60,6 +66,19 @@ pub trait INSArray<T: INSObject> : INSObject {
 			INSArray::from_refs(refs)
 		}
 	}
+
+	fn objects_in_range<'a>(&'a self, start: uint, len: uint) -> Vec<&'a T> {
+		let vec: Vec<*T> = Vec::from_elem(len, ptr::null());
+		let range = NSRange { location: start, length: len };
+		unsafe {
+			msg_send![self getObjects:vec.as_ptr() range:range];
+			mem::transmute(vec)
+		}
+	}
+
+	fn to_vec<'a>(&'a self) -> Vec<&'a T> {
+		self.objects_in_range(0, self.count())
+	}
 }
 
 object_struct!(NSArray<T>)
@@ -106,5 +125,22 @@ mod tests {
 		assert!(array.object_enumerator()
 		             .enumerate()
 		             .all(|(i, obj)| obj == array.object_at(i)));
+	}
+
+	#[test]
+	fn test_objects_in_range() {
+		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
+		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+
+		let middle_objs = array.objects_in_range(1, 2);
+		assert!(middle_objs.len() == 2);
+		assert!(*middle_objs.get(0) == array.object_at(1));
+		assert!(*middle_objs.get(1) == array.object_at(2));
+
+		let empty_objs = array.objects_in_range(1, 0);
+		assert!(empty_objs.len() == 0);
+
+		let all_objs = array.objects_in_range(0, 4);
+		assert!(all_objs.len() == 4);
 	}
 }
