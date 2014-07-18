@@ -1,3 +1,4 @@
+use std::kinds::marker::ContravariantLifetime;
 use std::mem;
 
 use runtime::Object;
@@ -6,11 +7,12 @@ use super::{INSCopying, INSObject};
 
 pub struct NSEnumerator<'a, T> {
 	id: Id<Object>,
+	marker: ContravariantLifetime<'a>,
 }
 
 impl<'a, T> NSEnumerator<'a, T> {
 	unsafe fn from_ptr(ptr: *Object) -> NSEnumerator<'a, T> {
-		NSEnumerator { id: Id::from_ptr(ptr) }
+		NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
 	}
 }
 
