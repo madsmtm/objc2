@@ -77,3 +77,38 @@ impl<T: INSObject> Collection for NSArray<T> {
 		self.count()
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use {Id};
+	use foundation::{INSObject, NSObject};
+	use super::{INSArray, NSArray};
+
+	#[test]
+	fn test_count() {
+		let empty_array: Id<NSArray<NSObject>> = INSObject::new();
+		assert!(empty_array.count() == 0);
+
+		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
+		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+		assert!(array.count() == 4);
+	}
+
+	#[test]
+	fn test_object_at() {
+		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
+		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+		assert!(array.object_at(0) != array.object_at(3));
+	}
+
+	#[test]
+	fn test_object_enumerator() {
+		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
+		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+
+		assert!(array.object_enumerator().count() == 4);
+		assert!(array.object_enumerator()
+		             .enumerate()
+		             .all(|(i, obj)| obj == array.object_at(i)));
+	}
+}
