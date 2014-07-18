@@ -19,12 +19,8 @@ impl<'a, T> NSEnumerator<'a, T> {
 impl<'a, T> Iterator<&'a T> for NSEnumerator<'a, T> {
 	fn next(&mut self) -> Option<&'a T> {
 		unsafe {
-			let obj = msg_send![self.id nextObject];
-			if obj.is_null() {
-				None
-			} else {
-				Some(mem::transmute(obj))
-			}
+			let obj = msg_send![self.id nextObject] as *T;
+			obj.to_option()
 		}
 	}
 }
@@ -39,8 +35,8 @@ pub trait INSArray<T: INSObject> : INSObject {
 
 	fn object_at<'a>(&'a self, index: uint) -> &'a T {
 		unsafe {
-			let result = msg_send![self objectAtIndex:index];
-			mem::transmute(result)
+			let result = msg_send![self objectAtIndex:index] as *T;
+			&*result
 		}
 	}
 

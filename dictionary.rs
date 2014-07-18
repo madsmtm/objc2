@@ -1,5 +1,4 @@
 use std::cmp::min;
-use std::mem;
 
 use {class, Id, IdVector};
 use super::{INSCopying, INSObject};
@@ -14,12 +13,8 @@ pub trait INSDictionary<K: INSObject, V> : INSObject {
 
 	fn object_for<'a>(&'a self, key: &K) -> Option<&'a V> {
 		unsafe {
-			let obj = msg_send![self objectForKey:key.as_ptr()];
-			if obj.is_null() {
-				None
-			} else {
-				Some(mem::transmute(obj))
-			}
+			let obj = msg_send![self objectForKey:key.as_ptr()] as *V;
+			obj.to_option()
 		}
 	}
 
