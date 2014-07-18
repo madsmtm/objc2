@@ -94,3 +94,25 @@ impl<T, V: Vector<Id<T>>> IdVector<T> for V {
 		}
 	}
 }
+
+pub trait IntoIdVector<T> {
+	unsafe fn into_id_vec(self) -> Vec<Id<T>>;
+}
+
+impl<T: Message> IntoIdVector<T> for Vec<*T> {
+	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
+		for &ptr in self.iter() {
+			msg_send![ptr retain];
+		}
+		mem::transmute(self)
+	}
+}
+
+impl<'a, T: Message> IntoIdVector<T> for Vec<&'a T> {
+	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
+		for &obj in self.iter() {
+			msg_send![obj retain];
+		}
+		mem::transmute(self)
+	}
+}
