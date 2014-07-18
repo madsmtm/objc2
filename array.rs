@@ -3,7 +3,7 @@ use std::mem;
 use std::ptr;
 
 use runtime::Object;
-use {class, Id, IdVector};
+use {class, Id, IdVector, IntoIdVector};
 use super::{INSCopying, INSObject};
 
 pub struct NSRange {
@@ -79,6 +79,13 @@ pub trait INSArray<T: INSObject> : INSObject {
 	fn to_vec<'a>(&'a self) -> Vec<&'a T> {
 		self.objects_in_range(0, self.count())
 	}
+
+	fn into_vec(array: Id<Self>) -> Vec<Id<T>> {
+		let vec = array.to_vec();
+		unsafe {
+			vec.into_id_vec()
+		}
+	}
 }
 
 object_struct!(NSArray<T>)
@@ -142,5 +149,14 @@ mod tests {
 
 		let all_objs = array.objects_in_range(0, 4);
 		assert!(all_objs.len() == 4);
+	}
+
+	#[test]
+	fn test_into_vec() {
+		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
+		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+
+		let vec = INSArray::into_vec(array);
+		assert!(vec.len() == 4);
 	}
 }
