@@ -51,3 +51,33 @@ impl<K: INSObject, V> Map<K, V> for NSDictionary<K, V> {
 		self.object_for(key)
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use {Id};
+	use foundation::{INSObject, INSString, NSObject, NSString};
+	use super::{INSDictionary, NSDictionary};
+
+	fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
+		let string: Id<NSString> = INSString::from_str(key);
+		let obj: Id<NSObject> = INSObject::new();
+		INSDictionary::from_keys_and_objects(&[&*string], vec![obj])
+	}
+
+	#[test]
+	fn test_count() {
+		let dict = sample_dict("abcd");
+		assert!(dict.count() == 1);
+	}
+
+	#[test]
+	fn test_object_for() {
+		let dict = sample_dict("abcd");
+
+		let string: Id<NSString> = INSString::from_str("abcd");
+		assert!(dict.object_for(&*string).is_some());
+
+		let string: Id<NSString> = INSString::from_str("abcde");
+		assert!(dict.object_for(&*string).is_none());
+	}
+}
