@@ -1,9 +1,9 @@
 use std::cmp::min;
 
 use {class, Id, IdVector};
-use super::{INSCopying, INSObject};
+use super::{INSArray, INSCopying, INSObject, NSArray};
 
-pub trait INSDictionary<K: INSObject, V> : INSObject {
+pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 	fn count(&self) -> uint {
 		let result = unsafe {
 			msg_send![self count]
@@ -16,6 +16,20 @@ pub trait INSDictionary<K: INSObject, V> : INSObject {
 			let obj = msg_send![self objectForKey:key.as_ptr()] as *V;
 			obj.to_option()
 		}
+	}
+
+	fn all_keys<'a>(&'a self) -> Vec<&'a K> {
+		let keys = unsafe {
+			&*(msg_send![self allKeys] as *NSArray<K>)
+		};
+		keys.to_vec()
+	}
+
+	fn all_values<'a>(&'a self) -> Vec<&'a V> {
+		let vals = unsafe {
+			&*(msg_send![self allValues] as *NSArray<V>)
+		};
+		vals.to_vec()
 	}
 
 	unsafe fn from_refs<T: INSCopying<K>>(keys: &[&T], vals: &[&V]) -> Id<Self> {
@@ -38,15 +52,15 @@ pub trait INSDictionary<K: INSObject, V> : INSObject {
 
 object_struct!(NSDictionary<K, V>)
 
-impl<K: INSObject, V> INSDictionary<K, V> for NSDictionary<K, V> { }
+impl<K: INSObject, V: INSObject> INSDictionary<K, V> for NSDictionary<K, V> { }
 
-impl<K: INSObject, V> Collection for NSDictionary<K, V> {
+impl<K: INSObject, V: INSObject> Collection for NSDictionary<K, V> {
 	fn len(&self) -> uint {
 		self.count()
 	}
 }
 
-impl<K: INSObject, V> Map<K, V> for NSDictionary<K, V> {
+impl<K: INSObject, V: INSObject> Map<K, V> for NSDictionary<K, V> {
 	fn find<'a>(&'a self, key: &K) -> Option<&'a V> {
 		self.object_for(key)
 	}
@@ -79,5 +93,22 @@ mod tests {
 
 		let string: Id<NSString> = INSString::from_str("abcde");
 		assert!(dict.object_for(&*string).is_none());
+	}
+
+	#[test]
+	fn test_all_keys() {
+		let dict = sample_dict("abcd");
+		let keys = dict.all_keys();
+
+		assert!(keys.len() == 1);
+		assert!(keys.get(0).as_str() == "abcd");
+	}
+
+	#[test]
+	fn test_all_values() {
+		let dict = sample_dict("abcd");
+		let vals = dict.all_values();
+
+		assert!(vals.len() == 1);
 	}
 }
