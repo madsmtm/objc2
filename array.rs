@@ -106,27 +106,29 @@ mod tests {
 	use foundation::{INSObject, NSObject};
 	use super::{INSArray, NSArray};
 
+	fn sample_array(len: uint) -> Id<NSArray<NSObject>> {
+		let vec: Vec<Id<NSObject>> = Vec::from_fn(len, |_| INSObject::new());
+		INSArray::from_vec(vec)
+	}
+
 	#[test]
 	fn test_count() {
 		let empty_array: Id<NSArray<NSObject>> = INSObject::new();
 		assert!(empty_array.count() == 0);
 
-		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
-		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+		let array = sample_array(4);
 		assert!(array.count() == 4);
 	}
 
 	#[test]
 	fn test_object_at() {
-		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
-		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+		let array = sample_array(4);
 		assert!(array.object_at(0) != array.object_at(3));
 	}
 
 	#[test]
 	fn test_object_enumerator() {
-		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
-		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+		let array = sample_array(4);
 
 		assert!(array.object_enumerator().count() == 4);
 		assert!(array.object_enumerator()
@@ -136,8 +138,7 @@ mod tests {
 
 	#[test]
 	fn test_objects_in_range() {
-		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
-		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+		let array = sample_array(4);
 
 		let middle_objs = array.objects_in_range(1, 2);
 		assert!(middle_objs.len() == 2);
@@ -153,8 +154,7 @@ mod tests {
 
 	#[test]
 	fn test_into_vec() {
-		let vec: Vec<Id<NSObject>> = Vec::from_fn(4, |_| INSObject::new());
-		let array: Id<NSArray<NSObject>> = INSArray::from_vec(vec);
+		let array = sample_array(4);
 
 		let vec = INSArray::into_vec(array);
 		assert!(vec.len() == 4);
