@@ -1,6 +1,8 @@
 use std::cmp::min;
+use std::mem;
+use std::ptr;
 
-use {class, Id, IdVector};
+use {class, Id, IdVector, IntoIdVector};
 use super::{INSArray, INSCopying, INSObject, NSArray};
 
 pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
@@ -32,6 +34,16 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 		vals.to_vec()
 	}
 
+	fn keys_and_objects<'a>(&'a self) -> (Vec<&'a K>, Vec<&'a V>) {
+		let len = self.count();
+		let keys: Vec<*K> = Vec::from_elem(len, ptr::null());
+		let objs: Vec<*V> = Vec::from_elem(len, ptr::null());
+		unsafe {
+			msg_send![self getObjects:objs.as_ptr() andKeys:keys.as_ptr()];
+			(mem::transmute(keys), mem::transmute(objs))
+		}
+	}
+
 	unsafe fn from_refs<T: INSCopying<K>>(keys: &[&T], vals: &[&V]) -> Id<Self> {
 		let cls = class::<Self>();
 		let count = min(keys.len(), vals.len());
@@ -46,6 +58,13 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 		let vals_refs = vals.as_refs_slice();
 		unsafe {
 			INSDictionary::from_refs(keys, vals_refs)
+		}
+	}
+
+	fn into_keys_and_objects(dict: Id<Self>) -> (Vec<Id<K>>, Vec<Id<V>>) {
+		let (keys, objs) = dict.keys_and_objects();
+		unsafe {
+			(keys.into_id_vec(), objs.into_id_vec())
 		}
 	}
 }
@@ -110,5 +129,16 @@ mod tests {
 		let vals = dict.all_values();
 
 		assert!(vals.len() == 1);
+	}
+
+	#[test]
+	fn test_keys_and_objects() {
+		let dict = sample_dict("abcd");
+		let (keys, objs) = dict.keys_and_objects();
+
+		assert!(keys.len() == 1);
+		assert!(objs.len() == 1);
+		assert!(keys.get(0).as_str() == "abcd");
+		assert!(*objs.get(0) == dict.object_for(*keys.get(0)).unwrap());
 	}
 }
