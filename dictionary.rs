@@ -61,10 +61,33 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 		}
 	}
 
+	fn from_arrays<T: INSCopying<K>>(keys: &NSArray<T>, objs: Id<NSArray<V>>) -> Id<Self> {
+		let cls = class::<Self>();
+		unsafe {
+			let obj = msg_send![cls alloc];
+			let obj = msg_send![obj initWithObjects:&*objs forKeys:keys];
+			Id::from_retained_ptr(obj as *Self)
+		}
+	}
+
 	fn into_keys_and_objects(dict: Id<Self>) -> (Vec<Id<K>>, Vec<Id<V>>) {
 		let (keys, objs) = dict.keys_and_objects();
 		unsafe {
 			(keys.into_id_vec(), objs.into_id_vec())
+		}
+	}
+
+	fn into_keys_array(dict: Id<Self>) -> Id<NSArray<K>> {
+		unsafe {
+			let keys = msg_send![dict allKeys] as *NSArray<K>;
+			Id::from_ptr(keys)
+		}
+	}
+
+	fn into_values_array(dict: Id<Self>) -> Id<NSArray<V>> {
+		unsafe {
+			let vals = msg_send![dict allValues] as *NSArray<V>;
+			Id::from_ptr(vals)
 		}
 	}
 }
@@ -88,7 +111,7 @@ impl<K: INSObject, V: INSObject> Map<K, V> for NSDictionary<K, V> {
 #[cfg(test)]
 mod tests {
 	use {Id};
-	use foundation::{INSObject, INSString, NSObject, NSString};
+	use foundation::{INSArray, INSObject, INSString, NSArray, NSObject, NSString};
 	use super::{INSDictionary, NSDictionary};
 
 	fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
@@ -140,5 +163,17 @@ mod tests {
 		assert!(objs.len() == 1);
 		assert!(keys.get(0).as_str() == "abcd");
 		assert!(*objs.get(0) == dict.object_for(*keys.get(0)).unwrap());
+	}
+
+	#[test]
+	fn test_from_arrays() {
+		let key: Id<NSString> = INSString::from_str("abcd");
+		let keys: Id<NSArray<NSString>> = INSArray::from_vec(vec![key]);
+		let val: Id<NSObject> = INSObject::new();
+		let vals: Id<NSArray<NSObject>> = INSArray::from_vec(vec![val]);
+
+		let dict: Id<NSDictionary<NSString, NSObject>> =
+			INSDictionary::from_arrays(&*keys, vals);
+		assert!(dict.count() == 1);
 	}
 }
