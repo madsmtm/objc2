@@ -3,7 +3,7 @@ use std::mem;
 use std::ptr;
 
 use {class, Id, IdVector, IntoIdVector};
-use super::{INSArray, INSCopying, INSObject, NSArray};
+use super::{INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
 
 pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 	fn count(&self) -> uint {
@@ -32,6 +32,20 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 			&*(msg_send![self allValues] as *NSArray<V>)
 		};
 		vals.to_vec()
+	}
+
+	fn key_enumerator<'a>(&'a self) -> NSEnumerator<'a, K> {
+		unsafe {
+			let result = msg_send![self keyEnumerator];
+			NSEnumerator::from_ptr(result)
+		}
+	}
+
+	fn object_enumerator<'a>(&'a self) -> NSEnumerator<'a, V> {
+		unsafe {
+			let result = msg_send![self objectEnumerator];
+			NSEnumerator::from_ptr(result)
+		}
 	}
 
 	fn keys_and_objects<'a>(&'a self) -> (Vec<&'a K>, Vec<&'a V>) {
@@ -163,6 +177,19 @@ mod tests {
 		assert!(objs.len() == 1);
 		assert!(keys.get(0).as_str() == "abcd");
 		assert!(*objs.get(0) == dict.object_for(*keys.get(0)).unwrap());
+	}
+
+	#[test]
+	fn test_key_enumerator() {
+		let dict = sample_dict("abcd");
+		assert!(dict.key_enumerator().count() == 1);
+		assert!(dict.key_enumerator().next().unwrap().as_str() == "abcd");
+	}
+
+	#[test]
+	fn test_object_enumerator() {
+		let dict = sample_dict("abcd");
+		assert!(dict.object_enumerator().count() == 1);
 	}
 
 	#[test]

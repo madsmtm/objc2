@@ -17,7 +17,7 @@ pub struct NSEnumerator<'a, T> {
 }
 
 impl<'a, T> NSEnumerator<'a, T> {
-	unsafe fn from_ptr(ptr: *Object) -> NSEnumerator<'a, T> {
+	pub unsafe fn from_ptr(ptr: *Object) -> NSEnumerator<'a, T> {
 		NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
 	}
 }
