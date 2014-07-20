@@ -1,9 +1,15 @@
-use runtime::Message;
+use runtime::{Class, Message, ToMessage, object_getClass};
 use {class, ClassName, Id};
 use super::NSString;
 
 pub trait INSObject : Message {
 	fn class_name() -> ClassName<Self>;
+
+	fn class(&self) -> Class {
+		unsafe {
+			object_getClass(self.as_ptr())
+		}
+	}
 
 	fn hash_code(&self) -> uint {
 		let result = unsafe {
@@ -26,6 +32,23 @@ pub trait INSObject : Message {
 		}
 	}
 
+	fn is_kind_of(&self, cls: Class) -> bool {
+		let result = unsafe {
+			msg_send![self isKindOfClass:cls]
+		};
+		!result.is_null()
+	}
+
+	fn as_object<'a, T: INSObject>(&'a self) -> Option<&'a T> {
+		let cls = class::<T>();
+		if self.is_kind_of(cls) {
+			let ptr = self as *Self as *T;
+			Some(unsafe { &*ptr })
+		} else {
+			None
+		}
+	}
+
 	fn new() -> Id<Self> {
 		let cls = class::<Self>();
 		unsafe {
@@ -40,14 +63,21 @@ object_struct!(NSObject)
 
 #[cfg(test)]
 mod tests {
-	use {ClassName, Id};
-	use foundation::INSString;
+	use {class, ClassName, Id};
+	use foundation::{INSString, NSString};
 	use super::{INSObject, NSObject};
 
 	#[test]
 	fn test_class_name() {
 		let name: ClassName<NSObject> = INSObject::class_name();
 		assert!(name.as_str() == "NSObject");
+	}
+
+	#[test]
+	fn test_class() {
+		let obj: Id<NSObject> = INSObject::new();
+		let cls = obj.class();
+		assert!(cls.name() == "NSObject");
 	}
 
 	#[test]
@@ -71,5 +101,23 @@ mod tests {
 		let description = obj.description();
 		let expected = format!("<NSObject: {}>", obj.deref() as *NSObject);
 		assert!(description.as_str() == expected.as_slice());
+	}
+
+	#[test]
+	fn test_is_kind_of() {
+		let obj: Id<NSObject> = INSObject::new();
+		assert!(obj.is_kind_of(class::<NSObject>()));
+		assert!(!obj.is_kind_of(class::<NSString>()));
+	}
+
+	#[test]
+	fn test_as_object() {
+		let obj: Id<NSObject> = INSObject::new();
+		let as_str: Option<&NSString> = obj.as_object();
+		assert!(as_str.is_none());
+
+		let string: Id<NSString> = INSObject::new();
+		let as_obj: Option<&NSObject> = string.as_object();
+		assert!(as_obj.is_some());
 	}
 }
