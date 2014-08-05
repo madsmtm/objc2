@@ -48,7 +48,7 @@ impl<T: Message> Drop for Id<T> {
 }
 
 impl<T> Deref<T> for Id<T> {
-	fn deref<'a>(&'a self) -> &'a T {
+	fn deref(&self) -> &T {
 		unsafe { &*self.ptr }
 	}
 }
@@ -78,11 +78,11 @@ impl<T: fmt::Show> fmt::Show for Id<T> {
 }
 
 pub trait IdVector<T> {
-	fn as_refs_slice<'a>(&'a self) -> &'a [&'a T];
+	fn as_refs_slice(&self) -> &[&T];
 }
 
 impl<T, V: Vector<Id<T>>> IdVector<T> for V {
-	fn as_refs_slice<'a>(&'a self) -> &'a [&'a T] {
+	fn as_refs_slice(&self) -> &[&T] {
 		unsafe {
 			mem::transmute(self.as_slice())
 		}
