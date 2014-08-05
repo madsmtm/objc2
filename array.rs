@@ -1,6 +1,5 @@
 use std::kinds::marker::ContravariantLifetime;
 use std::mem;
-use std::ptr;
 
 use runtime::Object;
 use {class, Id, IdVector, IntoIdVector};
@@ -72,7 +71,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 	}
 
 	fn objects_in_range(&self, start: uint, len: uint) -> Vec<&T> {
-		let vec: Vec<*mut T> = Vec::from_elem(len, ptr::mut_null());
+		let vec: Vec<*mut T> = Vec::from_elem(len, RawPtr::null());
 		let range = NSRange { location: start, length: len };
 		unsafe {
 			msg_send![self getObjects:vec.as_ptr() range:range];
