@@ -7,22 +7,22 @@ use runtime::{Message, Object, ToMessage};
 
 #[unsafe_no_drop_flag]
 pub struct Id<T> {
-	ptr: *T,
+	ptr: *mut T,
 }
 
 impl<T: Message> Id<T> {
-	pub unsafe fn from_ptr(ptr: *T) -> Id<T> {
+	pub unsafe fn from_ptr(ptr: *mut T) -> Id<T> {
 		msg_send![ptr retain];
 		Id::from_retained_ptr(ptr)
 	}
 
-	pub unsafe fn from_retained_ptr(ptr: *T) -> Id<T> {
+	pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T> {
 		Id { ptr: ptr }
 	}
 }
 
 impl<T: Message> ToMessage for Id<T> {
-	fn as_ptr(&self) -> *Object {
+	fn as_ptr(&self) -> *mut Object {
 		self.ptr.as_ptr()
 	}
 }
@@ -39,7 +39,7 @@ impl<T: Message> Clone for Id<T> {
 impl<T: Message> Drop for Id<T> {
 	fn drop(&mut self) {
 		if !self.ptr.is_null() {
-			let ptr = mem::replace(&mut self.ptr, ptr::null());
+			let ptr = mem::replace(&mut self.ptr, ptr::mut_null());
 			unsafe {
 				msg_send![ptr release];
 			}
@@ -79,12 +79,6 @@ impl<T: fmt::Show> fmt::Show for Id<T> {
 
 pub trait IdVector<T> {
 	fn as_refs_slice<'a>(&'a self) -> &'a [&'a T];
-
-	fn as_ptrs_slice<'a>(&'a self) -> &'a [*T] {
-		unsafe {
-			mem::transmute(self.as_refs_slice())
-		}
-	}
 }
 
 impl<T, V: Vector<Id<T>>> IdVector<T> for V {
@@ -99,7 +93,7 @@ pub trait IntoIdVector<T> {
 	unsafe fn into_id_vec(self) -> Vec<Id<T>>;
 }
 
-impl<T: Message> IntoIdVector<T> for Vec<*T> {
+impl<T: Message> IntoIdVector<T> for Vec<*mut T> {
 	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
 		for &ptr in self.iter() {
 			msg_send![ptr retain];
