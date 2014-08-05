@@ -13,7 +13,7 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 		result as uint
 	}
 
-	fn object_for<'a>(&'a self, key: &K) -> Option<&'a V> {
+	fn object_for(&self, key: &K) -> Option<&V> {
 		unsafe {
 			let obj = msg_send![self objectForKey:key.as_ptr()] as *mut V;
 			if obj.is_null() {
@@ -24,35 +24,35 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 		}
 	}
 
-	fn all_keys<'a>(&'a self) -> Vec<&'a K> {
+	fn all_keys(&self) -> Vec<&K> {
 		let keys = unsafe {
 			&*(msg_send![self allKeys] as *mut NSArray<K>)
 		};
 		keys.to_vec()
 	}
 
-	fn all_values<'a>(&'a self) -> Vec<&'a V> {
+	fn all_values(&self) -> Vec<&V> {
 		let vals = unsafe {
 			&*(msg_send![self allValues] as *mut NSArray<V>)
 		};
 		vals.to_vec()
 	}
 
-	fn key_enumerator<'a>(&'a self) -> NSEnumerator<'a, K> {
+	fn key_enumerator(&self) -> NSEnumerator<K> {
 		unsafe {
 			let result = msg_send![self keyEnumerator];
 			NSEnumerator::from_ptr(result)
 		}
 	}
 
-	fn object_enumerator<'a>(&'a self) -> NSEnumerator<'a, V> {
+	fn object_enumerator(&self) -> NSEnumerator<V> {
 		unsafe {
 			let result = msg_send![self objectEnumerator];
 			NSEnumerator::from_ptr(result)
 		}
 	}
 
-	fn keys_and_objects<'a>(&'a self) -> (Vec<&'a K>, Vec<&'a V>) {
+	fn keys_and_objects(&self) -> (Vec<&K>, Vec<&V>) {
 		let len = self.count();
 		let keys: Vec<*mut K> = Vec::from_elem(len, ptr::mut_null());
 		let objs: Vec<*mut V> = Vec::from_elem(len, ptr::mut_null());
@@ -121,7 +121,7 @@ impl<K: INSObject, V: INSObject> Collection for NSDictionary<K, V> {
 }
 
 impl<K: INSObject, V: INSObject> Map<K, V> for NSDictionary<K, V> {
-	fn find<'a>(&'a self, key: &K) -> Option<&'a V> {
+	fn find(&self, key: &K) -> Option<&V> {
 		self.object_for(key)
 	}
 }

@@ -13,7 +13,7 @@ pub trait INSCopying<T: INSObject> : INSObject {
 }
 
 pub trait INSString : INSObject {
-	fn as_str<'a>(&'a self) -> &'a str {
+	fn as_str(&self) -> &str {
 		unsafe {
 			let result = msg_send![self UTF8String];
 			c_str_to_static_slice(result as *const i8)
@@ -40,7 +40,7 @@ impl INSString for NSString { }
 impl INSCopying<NSString> for NSString { }
 
 impl Str for NSString {
-	fn as_slice<'a>(&'a self) -> &'a str {
+	fn as_slice(&self) -> &str {
 		self.as_str()
 	}
 }

@@ -43,14 +43,14 @@ pub trait INSArray<T: INSObject> : INSObject {
 		result as uint
 	}
 
-	fn object_at<'a>(&'a self, index: uint) -> &'a T {
+	fn object_at(&self, index: uint) -> &T {
 		unsafe {
 			let result = msg_send![self objectAtIndex:index] as *mut T;
 			&*result
 		}
 	}
 
-	fn object_enumerator<'a>(&'a self) -> NSEnumerator<'a, T> {
+	fn object_enumerator(&self) -> NSEnumerator<T> {
 		unsafe {
 			let result = msg_send![self objectEnumerator];
 			NSEnumerator::from_ptr(result)
@@ -71,7 +71,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 		}
 	}
 
-	fn objects_in_range<'a>(&'a self, start: uint, len: uint) -> Vec<&'a T> {
+	fn objects_in_range(&self, start: uint, len: uint) -> Vec<&T> {
 		let vec: Vec<*mut T> = Vec::from_elem(len, ptr::mut_null());
 		let range = NSRange { location: start, length: len };
 		unsafe {
@@ -80,7 +80,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 		}
 	}
 
-	fn to_vec<'a>(&'a self) -> Vec<&'a T> {
+	fn to_vec(&self) -> Vec<&T> {
 		self.objects_in_range(0, self.count())
 	}
 

@@ -39,7 +39,7 @@ pub trait INSObject : Message {
 		!result.is_null()
 	}
 
-	fn as_object<'a, T: INSObject>(&'a self) -> Option<&'a T> {
+	fn as_object<T: INSObject>(&self) -> Option<&T> {
 		let cls = class::<T>();
 		if self.is_kind_of(cls) {
 			let ptr = self as *const Self as *mut T;
