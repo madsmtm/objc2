@@ -15,21 +15,25 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 
 	fn object_for<'a>(&'a self, key: &K) -> Option<&'a V> {
 		unsafe {
-			let obj = msg_send![self objectForKey:key.as_ptr()] as *V;
-			obj.to_option()
+			let obj = msg_send![self objectForKey:key.as_ptr()] as *mut V;
+			if obj.is_null() {
+				None
+			} else {
+				Some(&*obj)
+			}
 		}
 	}
 
 	fn all_keys<'a>(&'a self) -> Vec<&'a K> {
 		let keys = unsafe {
-			&*(msg_send![self allKeys] as *NSArray<K>)
+			&*(msg_send![self allKeys] as *mut NSArray<K>)
 		};
 		keys.to_vec()
 	}
 
 	fn all_values<'a>(&'a self) -> Vec<&'a V> {
 		let vals = unsafe {
-			&*(msg_send![self allValues] as *NSArray<V>)
+			&*(msg_send![self allValues] as *mut NSArray<V>)
 		};
 		vals.to_vec()
 	}
@@ -50,8 +54,8 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 
 	fn keys_and_objects<'a>(&'a self) -> (Vec<&'a K>, Vec<&'a V>) {
 		let len = self.count();
-		let keys: Vec<*K> = Vec::from_elem(len, ptr::null());
-		let objs: Vec<*V> = Vec::from_elem(len, ptr::null());
+		let keys: Vec<*mut K> = Vec::from_elem(len, ptr::mut_null());
+		let objs: Vec<*mut V> = Vec::from_elem(len, ptr::mut_null());
 		unsafe {
 			msg_send![self getObjects:objs.as_ptr() andKeys:keys.as_ptr()];
 			(mem::transmute(keys), mem::transmute(objs))
@@ -65,7 +69,7 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 		let obj = msg_send![obj initWithObjects:vals.as_ptr()
 		                                forKeys:keys.as_ptr()
 		                                  count:count];
-		Id::from_retained_ptr(obj as *Self)
+		Id::from_retained_ptr(obj as *mut Self)
 	}
 
 	fn from_keys_and_objects<T: INSCopying<K>>(keys: &[&T], vals: Vec<Id<V>>) -> Id<Self> {
@@ -80,7 +84,7 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 		unsafe {
 			let obj = msg_send![cls alloc];
 			let obj = msg_send![obj initWithObjects:&*objs forKeys:keys];
-			Id::from_retained_ptr(obj as *Self)
+			Id::from_retained_ptr(obj as *mut Self)
 		}
 	}
 
@@ -93,14 +97,14 @@ pub trait INSDictionary<K: INSObject, V: INSObject> : INSObject {
 
 	fn into_keys_array(dict: Id<Self>) -> Id<NSArray<K>> {
 		unsafe {
-			let keys = msg_send![dict allKeys] as *NSArray<K>;
+			let keys = msg_send![dict allKeys] as *mut NSArray<K>;
 			Id::from_ptr(keys)
 		}
 	}
 
 	fn into_values_array(dict: Id<Self>) -> Id<NSArray<V>> {
 		unsafe {
-			let vals = msg_send![dict allValues] as *NSArray<V>;
+			let vals = msg_send![dict allValues] as *mut NSArray<V>;
 			Id::from_ptr(vals)
 		}
 	}

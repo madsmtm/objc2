@@ -28,7 +28,7 @@ pub trait INSObject : Message {
 	fn description(&self) -> Id<NSString> {
 		unsafe {
 			let result = msg_send![self description];
-			Id::from_ptr(result as *NSString)
+			Id::from_ptr(result as *mut NSString)
 		}
 	}
 
@@ -42,7 +42,7 @@ pub trait INSObject : Message {
 	fn as_object<'a, T: INSObject>(&'a self) -> Option<&'a T> {
 		let cls = class::<T>();
 		if self.is_kind_of(cls) {
-			let ptr = self as *Self as *T;
+			let ptr = self as *const Self as *mut T;
 			Some(unsafe { &*ptr })
 		} else {
 			None
@@ -54,7 +54,7 @@ pub trait INSObject : Message {
 		unsafe {
 			let obj = msg_send![cls alloc];
 			let obj = msg_send![obj init];
-			Id::from_retained_ptr(obj as *Self)
+			Id::from_retained_ptr(obj as *mut Self)
 		}
 	}
 }
@@ -99,7 +99,7 @@ mod tests {
 	fn test_description() {
 		let obj: Id<NSObject> = INSObject::new();
 		let description = obj.description();
-		let expected = format!("<NSObject: {}>", obj.deref() as *NSObject);
+		let expected = format!("<NSObject: {}>", obj.deref() as *const NSObject);
 		assert!(description.as_str() == expected.as_slice());
 	}
 

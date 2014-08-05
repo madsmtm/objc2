@@ -17,7 +17,7 @@ pub struct NSEnumerator<'a, T> {
 }
 
 impl<'a, T> NSEnumerator<'a, T> {
-	pub unsafe fn from_ptr(ptr: *Object) -> NSEnumerator<'a, T> {
+	pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
 		NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
 	}
 }
@@ -25,8 +25,12 @@ impl<'a, T> NSEnumerator<'a, T> {
 impl<'a, T> Iterator<&'a T> for NSEnumerator<'a, T> {
 	fn next(&mut self) -> Option<&'a T> {
 		unsafe {
-			let obj = msg_send![self.id nextObject] as *T;
-			obj.to_option()
+			let obj = msg_send![self.id nextObject] as *mut T;
+			if obj.is_null() {
+				None
+			} else {
+				Some(&*obj)
+			}
 		}
 	}
 }
@@ -41,7 +45,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 
 	fn object_at<'a>(&'a self, index: uint) -> &'a T {
 		unsafe {
-			let result = msg_send![self objectAtIndex:index] as *T;
+			let result = msg_send![self objectAtIndex:index] as *mut T;
 			&*result
 		}
 	}
@@ -57,7 +61,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 		let cls = class::<Self>();
 		let obj = msg_send![cls alloc];
 		let obj = msg_send![obj initWithObjects:refs.as_ptr() count:refs.len()];
-		Id::from_retained_ptr(obj as *Self)
+		Id::from_retained_ptr(obj as *mut Self)
 	}
 
 	fn from_vec(vec: Vec<Id<T>>) -> Id<Self> {
@@ -68,7 +72,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 	}
 
 	fn objects_in_range<'a>(&'a self, start: uint, len: uint) -> Vec<&'a T> {
-		let vec: Vec<*T> = Vec::from_elem(len, ptr::null());
+		let vec: Vec<*mut T> = Vec::from_elem(len, ptr::mut_null());
 		let range = NSRange { location: start, length: len };
 		unsafe {
 			msg_send![self getObjects:vec.as_ptr() range:range];

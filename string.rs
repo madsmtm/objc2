@@ -7,7 +7,7 @@ pub trait INSCopying<T: INSObject> : INSObject {
 	fn copy(&self) -> Id<T> {
 		unsafe {
 			let obj = msg_send![self copy];
-			Id::from_retained_ptr(obj as *Self)
+			Id::from_retained_ptr(obj as *mut T)
 		}
 	}
 }
@@ -16,7 +16,7 @@ pub trait INSString : INSObject {
 	fn as_str<'a>(&'a self) -> &'a str {
 		unsafe {
 			let result = msg_send![self UTF8String];
-			c_str_to_static_slice(result as *i8)
+			c_str_to_static_slice(result as *const i8)
 		}
 	}
 
@@ -28,7 +28,7 @@ pub trait INSString : INSObject {
 			let obj = msg_send![obj initWithBytes:string.as_ptr()
 			                               length:string.len()
 			                             encoding:utf8_encoding];
-			Id::from_retained_ptr(obj as *Self)
+			Id::from_retained_ptr(obj as *mut Self)
 		}
 	}
 }
