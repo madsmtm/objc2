@@ -104,6 +104,12 @@ impl<T: INSObject> Collection for NSArray<T> {
 	}
 }
 
+impl<T: INSObject> Index<uint, T> for NSArray<T> {
+	fn index(&self, index: &uint) -> &T {
+		self.object_at(*index)
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use {Id};

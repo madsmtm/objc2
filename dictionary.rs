@@ -126,6 +126,12 @@ impl<K: INSObject, V: INSObject> Map<K, V> for NSDictionary<K, V> {
 	}
 }
 
+impl<K: INSObject, V: INSObject> Index<K, V> for NSDictionary<K, V> {
+	fn index(&self, index: &K) -> &V {
+		self.object_for(index).unwrap()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use {Id};
