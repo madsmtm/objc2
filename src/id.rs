@@ -1,7 +1,6 @@
 use std::fmt;
 use std::hash;
 use std::mem;
-use std::ptr;
 
 use runtime::{Message, Object, ToMessage};
 
@@ -39,7 +38,7 @@ impl<T: Message> Clone for Id<T> {
 impl<T: Message> Drop for Id<T> {
 	fn drop(&mut self) {
 		if !self.ptr.is_null() {
-			let ptr = mem::replace(&mut self.ptr, ptr::mut_null());
+			let ptr = mem::replace(&mut self.ptr, RawPtr::null());
 			unsafe {
 				msg_send![ptr release];
 			}
