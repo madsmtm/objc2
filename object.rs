@@ -69,8 +69,8 @@ mod tests {
 
 	#[test]
 	fn test_class_name() {
-		let name: ClassName<NSObject> = INSObject::class_name();
-		assert!(name.as_str() == "NSObject");
+		let ClassName(name): ClassName<NSObject> = INSObject::class_name();
+		assert!(name == "NSObject");
 	}
 
 	#[test]
