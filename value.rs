@@ -6,6 +6,7 @@ use super::{INSCopying, INSObject};
 
 pub trait INSValue<T: Copy + Encode> : INSObject {
 	fn value(&self) -> T {
+		assert!(self.encoding() == encode::<T>());
 		unsafe {
 			let value = mem::uninitialized::<T>();
 			msg_send![self getValue:&value];
