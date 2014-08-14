@@ -1,4 +1,4 @@
-use runtime::{Class, Message, ToMessage, object_getClass};
+use runtime::{Class, Message, ToMessage};
 use {class, ClassName, Id};
 use super::NSString;
 
@@ -6,9 +6,8 @@ pub trait INSObject : Message {
 	fn class_name() -> ClassName<Self>;
 
 	fn class(&self) -> Class {
-		unsafe {
-			object_getClass(self.as_ptr())
-		}
+		let obj = unsafe { &*self.as_ptr() };
+		obj.class()
 	}
 
 	fn hash_code(&self) -> uint {
