@@ -5,7 +5,7 @@ use super::NSString;
 pub trait INSObject : Message {
 	fn class_name() -> ClassName<Self>;
 
-	fn class(&self) -> Class {
+	fn class(&self) -> &Class {
 		let obj = unsafe { &*self.as_ptr() };
 		obj.class()
 	}
@@ -31,7 +31,7 @@ pub trait INSObject : Message {
 		}
 	}
 
-	fn is_kind_of(&self, cls: Class) -> bool {
+	fn is_kind_of(&self, cls: &Class) -> bool {
 		let result = unsafe {
 			msg_send![self isKindOfClass:cls]
 		};
