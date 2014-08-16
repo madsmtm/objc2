@@ -46,14 +46,6 @@ impl<T: Message> ToMessage for Id<T> {
 	}
 }
 
-impl<T: Message> Clone for Id<T> {
-	fn clone(&self) -> Id<T> {
-		unsafe {
-			Id::from_ptr(self.ptr)
-		}
-	}
-}
-
 #[unsafe_destructor]
 impl<T: Message> Drop for Id<T> {
 	fn drop(&mut self) {
