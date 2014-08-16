@@ -2,7 +2,8 @@ use std::fmt;
 use std::hash;
 use std::mem;
 
-use runtime::{Message, Object, ToMessage};
+use runtime::{Message, Object};
+use {ToMessage};
 
 #[unsafe_no_drop_flag]
 pub struct Id<T> {
