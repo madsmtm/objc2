@@ -84,8 +84,8 @@ impl<T: PartialEq> PartialEq for Id<T> {
 
 impl<T: Eq> Eq for Id<T> { }
 
-impl<S: hash::Writer, T: hash::Hash<S>> hash::Hash<S> for Id<T> {
-	fn hash(&self, state: &mut S) {
+impl<T: hash::Hash> hash::Hash for Id<T> {
+	fn hash(&self, state: &mut hash::sip::SipState) {
 		self.deref().hash(state)
 	}
 }
