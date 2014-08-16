@@ -12,12 +12,31 @@ pub struct Id<T> {
 
 impl<T: Message> Id<T> {
 	pub unsafe fn from_ptr(ptr: *mut T) -> Id<T> {
-		msg_send![ptr retain];
-		Id::from_retained_ptr(ptr)
+		match Id::maybe_from_ptr(ptr) {
+			Some(id) => id,
+			None => fail!("Attempted to construct an Id from a null pointer"),
+		}
 	}
 
 	pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T> {
-		Id { ptr: ptr }
+		match Id::maybe_from_retained_ptr(ptr) {
+			Some(id) => id,
+			None => fail!("Attempted to construct an Id from a null pointer"),
+		}
+	}
+
+	pub unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Id<T>> {
+		// objc_msgSend is a no-op on null pointers
+		msg_send![ptr retain];
+		Id::maybe_from_retained_ptr(ptr)
+	}
+
+	pub unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Id<T>> {
+		if ptr.is_null() {
+			None
+		} else {
+			Some(Id { ptr: ptr })
+		}
 	}
 }
 
