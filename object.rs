@@ -1,4 +1,4 @@
-use runtime::{Class, Message, ToMessage};
+use runtime::{Class, Message, Object};
 use {class, ClassName, Id};
 use super::NSString;
 
@@ -6,7 +6,7 @@ pub trait INSObject : Message {
 	fn class_name() -> ClassName<Self>;
 
 	fn class(&self) -> &Class {
-		let obj = unsafe { &*self.as_ptr() };
+		let obj = unsafe { &*(self as *const _ as *const Object) };
 		obj.class()
 	}
 
@@ -19,7 +19,7 @@ pub trait INSObject : Message {
 
 	fn is_equal<T: INSObject>(&self, other: &T) -> bool {
 		let result = unsafe {
-			msg_send![self isEqual:other.as_ptr()]
+			msg_send![self isEqual:other]
 		};
 		!result.is_null()
 	}
@@ -41,7 +41,7 @@ pub trait INSObject : Message {
 	fn as_object<T: INSObject>(&self) -> Option<&T> {
 		let cls = class::<T>();
 		if self.is_kind_of(cls) {
-			let ptr = self as *const Self as *mut T;
+			let ptr = self as *const _ as *const T;
 			Some(unsafe { &*ptr })
 		} else {
 			None
