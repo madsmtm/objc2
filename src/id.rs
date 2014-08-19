@@ -34,6 +34,16 @@ pub struct Id<T> {
 	ptr: *mut T,
 }
 
+impl<T: Message> Id<T> {
+	pub fn share(mut self) -> ShareId<T> {
+		let ptr = self.ptr;
+		self.ptr = RawPtr::null();
+		unsafe {
+			Identifier::from_retained_ptr(ptr)
+		}
+	}
+}
+
 impl<T: Message> Identifier<T> for Id<T> {
 	unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Id<T>> {
 		if ptr.is_null() {
@@ -87,6 +97,77 @@ impl<T: hash::Hash> hash::Hash for Id<T> {
 }
 
 impl<T: fmt::Show> fmt::Show for Id<T> {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		self.deref().fmt(f)
+	}
+}
+
+#[unsafe_no_drop_flag]
+pub struct ShareId<T> {
+	ptr: *mut T,
+}
+
+impl<T: Message> Identifier<T> for ShareId<T> {
+	unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<ShareId<T>> {
+		if ptr.is_null() {
+			None
+		} else {
+			Some(ShareId { ptr: ptr })
+		}
+	}
+}
+
+impl<T: Message> ToMessage for ShareId<T> {
+	fn as_ptr(&self) -> *mut Object {
+		self.ptr.as_ptr()
+	}
+}
+
+impl<T: Message> Clone for ShareId<T> {
+	fn clone(&self) -> ShareId<T> {
+		unsafe {
+			Identifier::from_ptr(self.ptr)
+		}
+	}
+}
+
+#[unsafe_destructor]
+impl<T: Message> Drop for ShareId<T> {
+	fn drop(&mut self) {
+		if !self.ptr.is_null() {
+			let ptr = mem::replace(&mut self.ptr, RawPtr::null());
+			unsafe {
+				msg_send![ptr release];
+			}
+		}
+	}
+}
+
+impl<T> Deref<T> for ShareId<T> {
+	fn deref(&self) -> &T {
+		unsafe { &*self.ptr }
+	}
+}
+
+impl<T: PartialEq> PartialEq for ShareId<T> {
+	fn eq(&self, other: &ShareId<T>) -> bool {
+		self.deref() == other.deref()
+	}
+
+	fn ne(&self, other: &ShareId<T>) -> bool {
+		self.deref() != other.deref()
+	}
+}
+
+impl<T: Eq> Eq for ShareId<T> { }
+
+impl<T: hash::Hash> hash::Hash for ShareId<T> {
+	fn hash(&self, state: &mut hash::sip::SipState) {
+		self.deref().hash(state)
+	}
+}
+
+impl<T: fmt::Show> fmt::Show for ShareId<T> {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		self.deref().fmt(f)
 	}
