@@ -96,7 +96,7 @@ pub trait IdVector<T> {
 	fn as_refs_slice(&self) -> &[&T];
 }
 
-impl<T, V: Vector<Id<T>>> IdVector<T> for V {
+impl<T, I: Identifier<T>, V: Vector<I>> IdVector<T> for V {
 	fn as_refs_slice(&self) -> &[&T] {
 		unsafe {
 			mem::transmute(self.as_slice())
@@ -104,12 +104,12 @@ impl<T, V: Vector<Id<T>>> IdVector<T> for V {
 	}
 }
 
-pub trait IntoIdVector<T> {
-	unsafe fn into_id_vec(self) -> Vec<Id<T>>;
+pub trait IntoIdVector<T, I: Identifier<T>> {
+	unsafe fn into_id_vec(self) -> Vec<I>;
 }
 
-impl<T: Message> IntoIdVector<T> for Vec<*mut T> {
-	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
+impl<T: Message, I: Identifier<T>> IntoIdVector<T, I> for Vec<*mut T> {
+	unsafe fn into_id_vec(self) -> Vec<I> {
 		for &ptr in self.iter() {
 			msg_send![ptr retain];
 		}
@@ -117,8 +117,8 @@ impl<T: Message> IntoIdVector<T> for Vec<*mut T> {
 	}
 }
 
-impl<'a, T: Message> IntoIdVector<T> for Vec<&'a T> {
-	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
+impl<'a, T: Message, I: Identifier<T>> IntoIdVector<T, I> for Vec<&'a T> {
+	unsafe fn into_id_vec(self) -> Vec<I> {
 		for &obj in self.iter() {
 			msg_send![obj retain];
 		}
