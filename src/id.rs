@@ -5,35 +5,37 @@ use std::mem;
 use runtime::{Message, Object};
 use {ToMessage};
 
-pub trait Identifier<T: Message> { }
+pub trait Identifier<T: Message> {
+	unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Self>;
+
+	unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Self> {
+		// objc_msgSend is a no-op on null pointers
+		msg_send![ptr retain];
+		Identifier::maybe_from_retained_ptr(ptr)
+	}
+
+	unsafe fn from_retained_ptr(ptr: *mut T) -> Self {
+		match Identifier::maybe_from_retained_ptr(ptr) {
+			Some(id) => id,
+			None => fail!("Attempted to construct an Id from a null pointer"),
+		}
+	}
+
+	unsafe fn from_ptr(ptr: *mut T) -> Self {
+		match Identifier::maybe_from_ptr(ptr) {
+			Some(id) => id,
+			None => fail!("Attempted to construct an Id from a null pointer"),
+		}
+	}
+}
 
 #[unsafe_no_drop_flag]
 pub struct Id<T> {
 	ptr: *mut T,
 }
 
-impl<T: Message> Id<T> {
-	pub unsafe fn from_ptr(ptr: *mut T) -> Id<T> {
-		match Id::maybe_from_ptr(ptr) {
-			Some(id) => id,
-			None => fail!("Attempted to construct an Id from a null pointer"),
-		}
-	}
-
-	pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T> {
-		match Id::maybe_from_retained_ptr(ptr) {
-			Some(id) => id,
-			None => fail!("Attempted to construct an Id from a null pointer"),
-		}
-	}
-
-	pub unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Id<T>> {
-		// objc_msgSend is a no-op on null pointers
-		msg_send![ptr retain];
-		Id::maybe_from_retained_ptr(ptr)
-	}
-
-	pub unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Id<T>> {
+impl<T: Message> Identifier<T> for Id<T> {
+	unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Id<T>> {
 		if ptr.is_null() {
 			None
 		} else {
@@ -41,8 +43,6 @@ impl<T: Message> Id<T> {
 		}
 	}
 }
-
-impl<T: Message> Identifier<T> for Id<T> { }
 
 impl<T: Message> ToMessage for Id<T> {
 	fn as_ptr(&self) -> *mut Object {
