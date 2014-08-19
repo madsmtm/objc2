@@ -1,5 +1,5 @@
 use runtime::{Class, Message, Object};
-use {class, ClassName, Id};
+use {class, ClassName, Id, Identifier};
 use super::NSString;
 
 pub trait INSObject : Message {
@@ -27,7 +27,7 @@ pub trait INSObject : Message {
 	fn description(&self) -> Id<NSString> {
 		unsafe {
 			let result = msg_send![self description];
-			Id::from_ptr(result as *mut NSString)
+			Identifier::from_ptr(result as *mut NSString)
 		}
 	}
 
@@ -53,7 +53,7 @@ pub trait INSObject : Message {
 		unsafe {
 			let obj = msg_send![cls alloc];
 			let obj = msg_send![obj init];
-			Id::from_retained_ptr(obj as *mut Self)
+			Identifier::from_retained_ptr(obj as *mut Self)
 		}
 	}
 }

@@ -17,7 +17,10 @@ pub struct NSEnumerator<'a, T> {
 
 impl<'a, T> NSEnumerator<'a, T> {
 	pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
-		NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
+		NSEnumerator {
+			id: Identifier::from_ptr(ptr),
+			marker: ContravariantLifetime,
+		}
 	}
 }
 
@@ -60,7 +63,7 @@ pub trait INSArray<T: INSObject, I: Identifier<T>> : INSObject {
 		let cls = class::<Self>();
 		let obj = msg_send![cls alloc];
 		let obj = msg_send![obj initWithObjects:refs.as_ptr() count:refs.len()];
-		Id::from_retained_ptr(obj as *mut Self)
+		Identifier::from_retained_ptr(obj as *mut Self)
 	}
 
 	fn from_vec(vec: Vec<I>) -> Id<Self> {

@@ -68,7 +68,7 @@ pub trait INSDictionary<K: INSObject, V: INSObject, I: Identifier<V>> : INSObjec
 		let obj = msg_send![obj initWithObjects:vals.as_ptr()
 		                                forKeys:keys.as_ptr()
 		                                  count:count];
-		Id::from_retained_ptr(obj as *mut Self)
+		Identifier::from_retained_ptr(obj as *mut Self)
 	}
 
 	fn from_keys_and_objects<T: INSCopying<K>>(keys: &[&T], vals: Vec<I>) -> Id<Self> {

@@ -1,7 +1,7 @@
 use std::mem;
 use std::str::raw::c_str_to_static_slice;
 
-use {class, encode, Encode, Id};
+use {class, encode, Encode, Id, Identifier};
 use super::{INSCopying, INSObject};
 
 pub trait INSValue<T: Copy + Encode> : INSObject {
@@ -27,7 +27,7 @@ pub trait INSValue<T: Copy + Encode> : INSObject {
 		encoding.with_c_str(|encoding| unsafe {
 			let obj = msg_send![cls alloc];
 			let obj = msg_send![obj initWithBytes:value objCType:encoding];
-			Id::from_retained_ptr(obj as *mut Self)
+			Identifier::from_retained_ptr(obj as *mut Self)
 		})
 	}
 }
