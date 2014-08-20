@@ -143,6 +143,26 @@ impl<T: INSObject> Index<uint, T> for NSArray<T> {
 	}
 }
 
+pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
+	fn add_object(&mut self, obj: Id<T, O>) {
+		unsafe {
+			msg_send![self addObject:obj];
+		}
+	}
+
+	fn insert_object_at(&mut self, index: uint, obj: Id<T, O>) {
+		unsafe {
+			msg_send![self insertObject:obj atIndex:index];
+		}
+	}
+
+	fn remove_object_at(&mut self, index: uint) {
+		unsafe {
+			msg_send![self removeObjectAtIndex:index];
+		}
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use {Id};
