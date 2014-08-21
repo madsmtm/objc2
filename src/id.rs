@@ -5,6 +5,8 @@ use std::mem;
 use runtime::{Message, Object};
 use {ToMessage};
 
+pub trait Identifier<T: Message> { }
+
 #[unsafe_no_drop_flag]
 pub struct Id<T> {
 	ptr: *mut T,
@@ -39,6 +41,8 @@ impl<T: Message> Id<T> {
 		}
 	}
 }
+
+impl<T: Message> Identifier<T> for Id<T> { }
 
 impl<T: Message> ToMessage for Id<T> {
 	fn as_ptr(&self) -> *mut Object {
