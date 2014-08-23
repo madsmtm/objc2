@@ -177,7 +177,7 @@ pub trait IdVector<T> {
 	fn as_refs_slice(&self) -> &[&T];
 }
 
-impl<T, I: Identifier<T>, V: Vector<I>> IdVector<T> for V {
+impl<T, I: Identifier<T>, V: Slice<I>> IdVector<T> for V {
 	fn as_refs_slice(&self) -> &[&T] {
 		unsafe {
 			mem::transmute(self.as_slice())
