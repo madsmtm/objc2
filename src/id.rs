@@ -13,11 +13,11 @@ impl Ownership for Owned { }
 impl Ownership for Shared { }
 
 #[unsafe_no_drop_flag]
-pub struct Id<T, O = Owned> {
+pub struct Id<T: Message, O: Ownership = Owned> {
 	ptr: *mut T,
 }
 
-impl<T: Message, O> Id<T, O> {
+impl<T: Message, O: Ownership> Id<T, O> {
 	pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
 		match Id::maybe_from_ptr(ptr) {
 			Some(id) => id,
@@ -55,14 +55,14 @@ impl<T: Message> Id<T, Owned> {
 	}
 }
 
-impl<T: Message, O> ToMessage for Id<T, O> {
+impl<T: Message, O: Ownership> ToMessage for Id<T, O> {
 	fn as_ptr(&self) -> *mut Object {
 		self.ptr.as_ptr()
 	}
 }
 
 #[unsafe_destructor]
-impl<T: Message, O> Drop for Id<T, O> {
+impl<T: Message, O: Ownership> Drop for Id<T, O> {
 	fn drop(&mut self) {
 		if !self.ptr.is_null() {
 			let ptr = mem::replace(&mut self.ptr, RawPtr::null());
@@ -73,13 +73,13 @@ impl<T: Message, O> Drop for Id<T, O> {
 	}
 }
 
-impl<T, O> Deref<T> for Id<T, O> {
+impl<T: Message, O: Ownership> Deref<T> for Id<T, O> {
 	fn deref(&self) -> &T {
 		unsafe { &*self.ptr }
 	}
 }
 
-impl<T: PartialEq, O> PartialEq for Id<T, O> {
+impl<T: Message + PartialEq, O: Ownership> PartialEq for Id<T, O> {
 	fn eq(&self, other: &Id<T, O>) -> bool {
 		self.deref() == other.deref()
 	}
@@ -89,15 +89,15 @@ impl<T: PartialEq, O> PartialEq for Id<T, O> {
 	}
 }
 
-impl<T: Eq, O> Eq for Id<T, O> { }
+impl<T: Message + Eq, O: Ownership> Eq for Id<T, O> { }
 
-impl<T: hash::Hash, O> hash::Hash for Id<T, O> {
+impl<T: Message + hash::Hash, O: Ownership> hash::Hash for Id<T, O> {
 	fn hash(&self, state: &mut hash::sip::SipState) {
 		self.deref().hash(state)
 	}
 }
 
-impl<T: fmt::Show, O> fmt::Show for Id<T, O> {
+impl<T: Message + fmt::Show, O: Ownership> fmt::Show for Id<T, O> {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		self.deref().fmt(f)
 	}
@@ -109,7 +109,7 @@ pub trait IdVector<T> {
 	fn as_refs_slice(&self) -> &[&T];
 }
 
-impl<T, V: Slice<Id<T>>> IdVector<T> for V {
+impl<T: Message, V: Slice<Id<T>>> IdVector<T> for V {
 	fn as_refs_slice(&self) -> &[&T] {
 		unsafe {
 			mem::transmute(self.as_slice())
