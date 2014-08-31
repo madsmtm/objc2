@@ -163,11 +163,25 @@ pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
 	}
 }
 
+object_struct!(NSMutableArray<T>)
+
+impl<T: INSObject> INSArray<T, Owned> for NSMutableArray<T> { }
+
+impl<T: INSObject> INSOwnedArray<T> for NSMutableArray<T> { }
+
+impl<T: INSObject> INSMutableArray<T, Owned> for NSMutableArray<T> { }
+
+impl<T: INSObject> Collection for NSMutableArray<T> {
+	fn len(&self) -> uint {
+		self.count()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use {Id};
 	use foundation::{INSObject, NSObject};
-	use super::{INSArray, NSArray};
+	use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
 
 	fn sample_array(len: uint) -> Id<NSArray<NSObject>> {
 		let vec: Vec<Id<NSObject>> = Vec::from_fn(len, |_| INSObject::new());
@@ -221,5 +235,15 @@ mod tests {
 
 		let vec = INSArray::into_vec(array);
 		assert!(vec.len() == 4);
+	}
+
+	#[test]
+	fn test_add_object() {
+		let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
+		let obj: Id<NSObject> = INSObject::new();
+		array.deref_mut().add_object(obj);
+
+		assert!(array.len() == 1);
+		assert!(array.object_at(0) == array.object_at(0));
 	}
 }
