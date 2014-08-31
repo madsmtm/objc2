@@ -1,6 +1,6 @@
 use std::cell::UnsafeCell;
 
-use {Identifier, ShareId, ToMessage};
+use {Id, ShareId, ToMessage};
 use runtime::{Message, Object};
 
 #[allow(ctypes)]
@@ -32,7 +32,7 @@ impl<T: Message> WeakId<T> {
 		unsafe {
 			let loc = self.ptr.get() as *mut *mut Object;
 			let obj = objc_loadWeakRetained(loc);
-			Identifier::maybe_from_retained_ptr(obj as *mut T)
+			Id::maybe_from_retained_ptr(obj as *mut T)
 		}
 	}
 }
