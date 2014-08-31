@@ -109,7 +109,7 @@ pub trait IdVector<T> {
 	fn as_refs_slice(&self) -> &[&T];
 }
 
-impl<T: Message, V: Slice<Id<T>>> IdVector<T> for V {
+impl<T: Message, O: Ownership, V: Slice<Id<T, O>>> IdVector<T> for V {
 	fn as_refs_slice(&self) -> &[&T] {
 		unsafe {
 			mem::transmute(self.as_slice())
@@ -118,11 +118,11 @@ impl<T: Message, V: Slice<Id<T>>> IdVector<T> for V {
 }
 
 pub trait IntoIdVector<T> {
-	unsafe fn into_id_vec(self) -> Vec<Id<T>>;
+	unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>>;
 }
 
 impl<T: Message> IntoIdVector<T> for Vec<*mut T> {
-	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
+	unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>> {
 		for &ptr in self.iter() {
 			msg_send![ptr retain];
 		}
@@ -131,7 +131,7 @@ impl<T: Message> IntoIdVector<T> for Vec<*mut T> {
 }
 
 impl<'a, T: Message> IntoIdVector<T> for Vec<&'a T> {
-	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
+	unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>> {
 		for &obj in self.iter() {
 			msg_send![obj retain];
 		}
