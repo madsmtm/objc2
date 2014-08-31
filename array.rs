@@ -2,7 +2,7 @@ use std::kinds::marker::ContravariantLifetime;
 use std::mem;
 
 use runtime::Object;
-use {class, Id, IdVector, IntoIdVector};
+use {class, Id, IdVector, IntoIdVector, Owned, Ownership};
 use super::{INSCopying, INSObject};
 
 pub struct NSRange {
@@ -34,7 +34,7 @@ impl<'a, T> Iterator<&'a T> for NSEnumerator<'a, T> {
 	}
 }
 
-pub trait INSArray<T: INSObject> : INSObject {
+pub trait INSArray<T: INSObject, O: Ownership> : INSObject {
 	fn count(&self) -> uint {
 		let result = unsafe {
 			msg_send![self count]
@@ -63,7 +63,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 		Id::from_retained_ptr(obj as *mut Self)
 	}
 
-	fn from_vec(vec: Vec<Id<T>>) -> Id<Self> {
+	fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self> {
 		let refs = vec.as_refs_slice();
 		unsafe {
 			INSArray::from_refs(refs)
@@ -83,7 +83,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 		self.objects_in_range(0, self.count())
 	}
 
-	fn into_vec(array: Id<Self>) -> Vec<Id<T>> {
+	fn into_vec(array: Id<Self>) -> Vec<Id<T, O>> {
 		let vec = array.to_vec();
 		unsafe {
 			vec.into_id_vec()
@@ -93,7 +93,7 @@ pub trait INSArray<T: INSObject> : INSObject {
 
 object_struct!(NSArray<T>)
 
-impl<T: INSObject> INSArray<T> for NSArray<T> { }
+impl<T: INSObject> INSArray<T, Owned> for NSArray<T> { }
 
 impl<T> INSCopying<NSArray<T>> for NSArray<T> { }
 
