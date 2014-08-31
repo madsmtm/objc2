@@ -2,7 +2,7 @@ use std::kinds::marker::ContravariantLifetime;
 use std::mem;
 
 use runtime::Object;
-use {class, Id, IdVector, IntoIdVector, Owned, Ownership};
+use {class, Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
 use super::{INSCopying, INSObject};
 
 pub struct NSRange {
@@ -91,9 +91,43 @@ pub trait INSArray<T: INSObject, O: Ownership> : INSObject {
 	}
 }
 
+pub trait INSOwnedArray<T: INSObject> : INSArray<T, Owned> {
+	fn mut_object_at(&mut self, index: uint) -> &mut T {
+		unsafe {
+			let result = msg_send![self objectAtIndex:index] as *mut T;
+			&mut *result
+		}
+	}
+}
+
+pub trait INSSharedArray<T: INSObject> : INSArray<T, Shared> {
+	fn shared_object_at(&self, index: uint) -> ShareId<T> {
+		let obj = self.object_at(index);
+		unsafe {
+			Id::from_ptr(obj as *const _ as *mut T)
+		}
+	}
+
+	fn from_slice(slice: &[ShareId<T>]) -> Id<Self> {
+		let refs = slice.as_refs_slice();
+		unsafe {
+			INSArray::from_refs(refs)
+		}
+	}
+
+	fn to_shared_vec(&self) -> Vec<ShareId<T>> {
+		let vec = self.to_vec();
+		unsafe {
+			vec.into_id_vec()
+		}
+	}
+}
+
 object_struct!(NSArray<T>)
 
 impl<T: INSObject> INSArray<T, Owned> for NSArray<T> { }
+
+impl<T: INSObject> INSOwnedArray<T> for NSArray<T> { }
 
 impl<T> INSCopying<NSArray<T>> for NSArray<T> { }
 
