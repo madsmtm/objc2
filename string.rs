@@ -1,13 +1,13 @@
 use std::str::raw::c_str_to_static_slice;
 
-use {class, Id, Identifier};
+use {class, Id};
 use super::INSObject;
 
 pub trait INSCopying<T: INSObject> : INSObject {
 	fn copy(&self) -> Id<T> {
 		unsafe {
 			let obj = msg_send![self copy];
-			Identifier::from_retained_ptr(obj as *mut T)
+			Id::from_retained_ptr(obj as *mut T)
 		}
 	}
 }
@@ -28,7 +28,7 @@ pub trait INSString : INSObject {
 			let obj = msg_send![obj initWithBytes:string.as_ptr()
 			                               length:string.len()
 			                             encoding:utf8_encoding];
-			Identifier::from_retained_ptr(obj as *mut Self)
+			Id::from_retained_ptr(obj as *mut Self)
 		}
 	}
 }

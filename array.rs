@@ -2,7 +2,7 @@ use std::kinds::marker::ContravariantLifetime;
 use std::mem;
 
 use runtime::Object;
-use {class, Id, Identifier, IdVector, IntoIdVector};
+use {class, Id, IdVector, IntoIdVector};
 use super::{INSCopying, INSObject};
 
 pub struct NSRange {
@@ -17,10 +17,7 @@ pub struct NSEnumerator<'a, T> {
 
 impl<'a, T> NSEnumerator<'a, T> {
 	pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
-		NSEnumerator {
-			id: Identifier::from_ptr(ptr),
-			marker: ContravariantLifetime,
-		}
+		NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
 	}
 }
 
@@ -37,7 +34,7 @@ impl<'a, T> Iterator<&'a T> for NSEnumerator<'a, T> {
 	}
 }
 
-pub trait INSArray<T: INSObject, I: Identifier<T>> : INSObject {
+pub trait INSArray<T: INSObject> : INSObject {
 	fn count(&self) -> uint {
 		let result = unsafe {
 			msg_send![self count]
@@ -63,10 +60,10 @@ pub trait INSArray<T: INSObject, I: Identifier<T>> : INSObject {
 		let cls = class::<Self>();
 		let obj = msg_send![cls alloc];
 		let obj = msg_send![obj initWithObjects:refs.as_ptr() count:refs.len()];
-		Identifier::from_retained_ptr(obj as *mut Self)
+		Id::from_retained_ptr(obj as *mut Self)
 	}
 
-	fn from_vec(vec: Vec<I>) -> Id<Self> {
+	fn from_vec(vec: Vec<Id<T>>) -> Id<Self> {
 		let refs = vec.as_refs_slice();
 		unsafe {
 			INSArray::from_refs(refs)
@@ -86,7 +83,7 @@ pub trait INSArray<T: INSObject, I: Identifier<T>> : INSObject {
 		self.objects_in_range(0, self.count())
 	}
 
-	fn into_vec(array: Id<Self>) -> Vec<I> {
+	fn into_vec(array: Id<Self>) -> Vec<Id<T>> {
 		let vec = array.to_vec();
 		unsafe {
 			vec.into_id_vec()
@@ -96,7 +93,7 @@ pub trait INSArray<T: INSObject, I: Identifier<T>> : INSObject {
 
 object_struct!(NSArray<T>)
 
-impl<T: INSObject> INSArray<T, Id<T>> for NSArray<T> { }
+impl<T: INSObject> INSArray<T> for NSArray<T> { }
 
 impl<T> INSCopying<NSArray<T>> for NSArray<T> { }
 
