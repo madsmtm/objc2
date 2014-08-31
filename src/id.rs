@@ -5,47 +5,33 @@ use std::mem;
 use runtime::{Message, Object};
 use {ToMessage};
 
-pub trait Identifier<T: Message> {
-	unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Self>;
-
-	unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Self> {
-		// objc_msgSend is a no-op on null pointers
-		msg_send![ptr retain];
-		Identifier::maybe_from_retained_ptr(ptr)
-	}
-
-	unsafe fn from_retained_ptr(ptr: *mut T) -> Self {
-		match Identifier::maybe_from_retained_ptr(ptr) {
-			Some(id) => id,
-			None => fail!("Attempted to construct an Id from a null pointer"),
-		}
-	}
-
-	unsafe fn from_ptr(ptr: *mut T) -> Self {
-		match Identifier::maybe_from_ptr(ptr) {
-			Some(id) => id,
-			None => fail!("Attempted to construct an Id from a null pointer"),
-		}
-	}
-}
-
 #[unsafe_no_drop_flag]
 pub struct Id<T> {
 	ptr: *mut T,
 }
 
 impl<T: Message> Id<T> {
-	pub fn share(mut self) -> ShareId<T> {
-		let ptr = self.ptr;
-		self.ptr = RawPtr::null();
-		unsafe {
-			Identifier::from_retained_ptr(ptr)
+	pub unsafe fn from_ptr(ptr: *mut T) -> Id<T> {
+		match Id::maybe_from_ptr(ptr) {
+			Some(id) => id,
+			None => fail!("Attempted to construct an Id from a null pointer"),
 		}
 	}
-}
 
-impl<T: Message> Identifier<T> for Id<T> {
-	unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Id<T>> {
+	pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T> {
+		match Id::maybe_from_retained_ptr(ptr) {
+			Some(id) => id,
+			None => fail!("Attempted to construct an Id from a null pointer"),
+		}
+	}
+
+	pub unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Id<T>> {
+		// objc_msgSend is a no-op on null pointers
+		msg_send![ptr retain];
+		Id::maybe_from_retained_ptr(ptr)
+	}
+
+	pub unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Id<T>> {
 		if ptr.is_null() {
 			None
 		} else {
@@ -102,82 +88,11 @@ impl<T: fmt::Show> fmt::Show for Id<T> {
 	}
 }
 
-#[unsafe_no_drop_flag]
-pub struct ShareId<T> {
-	ptr: *mut T,
-}
-
-impl<T: Message> Identifier<T> for ShareId<T> {
-	unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<ShareId<T>> {
-		if ptr.is_null() {
-			None
-		} else {
-			Some(ShareId { ptr: ptr })
-		}
-	}
-}
-
-impl<T: Message> ToMessage for ShareId<T> {
-	fn as_ptr(&self) -> *mut Object {
-		self.ptr.as_ptr()
-	}
-}
-
-impl<T: Message> Clone for ShareId<T> {
-	fn clone(&self) -> ShareId<T> {
-		unsafe {
-			Identifier::from_ptr(self.ptr)
-		}
-	}
-}
-
-#[unsafe_destructor]
-impl<T: Message> Drop for ShareId<T> {
-	fn drop(&mut self) {
-		if !self.ptr.is_null() {
-			let ptr = mem::replace(&mut self.ptr, RawPtr::null());
-			unsafe {
-				msg_send![ptr release];
-			}
-		}
-	}
-}
-
-impl<T> Deref<T> for ShareId<T> {
-	fn deref(&self) -> &T {
-		unsafe { &*self.ptr }
-	}
-}
-
-impl<T: PartialEq> PartialEq for ShareId<T> {
-	fn eq(&self, other: &ShareId<T>) -> bool {
-		self.deref() == other.deref()
-	}
-
-	fn ne(&self, other: &ShareId<T>) -> bool {
-		self.deref() != other.deref()
-	}
-}
-
-impl<T: Eq> Eq for ShareId<T> { }
-
-impl<T: hash::Hash> hash::Hash for ShareId<T> {
-	fn hash(&self, state: &mut hash::sip::SipState) {
-		self.deref().hash(state)
-	}
-}
-
-impl<T: fmt::Show> fmt::Show for ShareId<T> {
-	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-		self.deref().fmt(f)
-	}
-}
-
 pub trait IdVector<T> {
 	fn as_refs_slice(&self) -> &[&T];
 }
 
-impl<T, I: Identifier<T>, V: Slice<I>> IdVector<T> for V {
+impl<T, V: Slice<Id<T>>> IdVector<T> for V {
 	fn as_refs_slice(&self) -> &[&T] {
 		unsafe {
 			mem::transmute(self.as_slice())
@@ -185,12 +100,12 @@ impl<T, I: Identifier<T>, V: Slice<I>> IdVector<T> for V {
 	}
 }
 
-pub trait IntoIdVector<T, I: Identifier<T>> {
-	unsafe fn into_id_vec(self) -> Vec<I>;
+pub trait IntoIdVector<T> {
+	unsafe fn into_id_vec(self) -> Vec<Id<T>>;
 }
 
-impl<T: Message, I: Identifier<T>> IntoIdVector<T, I> for Vec<*mut T> {
-	unsafe fn into_id_vec(self) -> Vec<I> {
+impl<T: Message> IntoIdVector<T> for Vec<*mut T> {
+	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
 		for &ptr in self.iter() {
 			msg_send![ptr retain];
 		}
@@ -198,8 +113,8 @@ impl<T: Message, I: Identifier<T>> IntoIdVector<T, I> for Vec<*mut T> {
 	}
 }
 
-impl<'a, T: Message, I: Identifier<T>> IntoIdVector<T, I> for Vec<&'a T> {
-	unsafe fn into_id_vec(self) -> Vec<I> {
+impl<'a, T: Message> IntoIdVector<T> for Vec<&'a T> {
+	unsafe fn into_id_vec(self) -> Vec<Id<T>> {
 		for &obj in self.iter() {
 			msg_send![obj retain];
 		}
