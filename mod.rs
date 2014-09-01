@@ -1,6 +1,7 @@
 pub use self::array::{
 	INSArray, INSMutableArray, INSOwnedArray, INSSharedArray,
 	NSArray, NSEnumerator, NSMutableArray, NSRange,
+	NSMutableSharedArray, NSSharedArray,
 };
 pub use self::dictionary::{INSDictionary, NSDictionary};
 pub use self::object::{INSObject, NSObject};

@@ -1,4 +1,4 @@
-use std::kinds::marker::ContravariantLifetime;
+use std::kinds::marker::{ContravariantLifetime, NoCopy};
 use std::mem;
 
 use runtime::Object;
@@ -145,25 +145,33 @@ pub trait INSSharedArray<T: INSObject> : INSArray<T, Shared> {
 	}
 }
 
-object_struct!(NSArray<T>)
+pub struct NSArray<T, O = Owned> {
+	nocopy: NoCopy,
+}
 
-impl<T: INSObject> INSArray<T, Owned> for NSArray<T> { }
+object_impl!(NSArray<T, O>)
 
-impl<T: INSObject> INSOwnedArray<T> for NSArray<T> { }
+impl<T: INSObject, O: Ownership> INSArray<T, O> for NSArray<T, O> { }
 
-impl<T> INSCopying<NSArray<T>> for NSArray<T> { }
+impl<T: INSObject> INSOwnedArray<T> for NSArray<T, Owned> { }
 
-impl<T: INSObject> Collection for NSArray<T> {
+impl<T: INSObject> INSSharedArray<T> for NSArray<T, Shared> { }
+
+impl<T> INSCopying<NSSharedArray<T>> for NSArray<T, Shared> { }
+
+impl<T: INSObject, O: Ownership> Collection for NSArray<T, O> {
 	fn len(&self) -> uint {
 		self.count()
 	}
 }
 
-impl<T: INSObject> Index<uint, T> for NSArray<T> {
+impl<T: INSObject, O: Ownership> Index<uint, T> for NSArray<T, O> {
 	fn index(&self, index: &uint) -> &T {
 		self.object_at(*index)
 	}
 }
+
+pub type NSSharedArray<T> = NSArray<T, Shared>;
 
 pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
 	fn add_object(&mut self, obj: Id<T, O>) {
@@ -219,32 +227,40 @@ pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
 	}
 }
 
-object_struct!(NSMutableArray<T>)
+pub struct NSMutableArray<T, O = Owned> {
+	nocopy: NoCopy,
+}
 
-impl<T: INSObject> INSArray<T, Owned> for NSMutableArray<T> { }
+object_impl!(NSMutableArray<T, O>)
 
-impl<T: INSObject> INSOwnedArray<T> for NSMutableArray<T> { }
+impl<T: INSObject, O: Ownership> INSArray<T, O> for NSMutableArray<T, O> { }
 
-impl<T: INSObject> INSMutableArray<T, Owned> for NSMutableArray<T> { }
+impl<T: INSObject> INSOwnedArray<T> for NSMutableArray<T, Owned> { }
 
-impl<T: INSObject> Collection for NSMutableArray<T> {
+impl<T: INSObject> INSSharedArray<T> for NSMutableArray<T, Shared> { }
+
+impl<T: INSObject, O: Ownership> INSMutableArray<T, O> for NSMutableArray<T, O> { }
+
+impl<T: INSObject> INSCopying<NSSharedArray<T>> for NSMutableArray<T, Shared> { }
+
+impl<T: INSObject, O: Ownership> Collection for NSMutableArray<T, O> {
 	fn len(&self) -> uint {
 		self.count()
 	}
 }
 
-impl<T: INSObject> Mutable for NSMutableArray<T> {
+impl<T: INSObject, O: Ownership> Mutable for NSMutableArray<T, O> {
 	fn clear(&mut self) {
 		self.remove_all_objects();
 	}
 }
 
-impl<T: INSObject> MutableSeq<Id<T>> for NSMutableArray<T> {
-	fn push(&mut self, value: Id<T>) {
+impl<T: INSObject, O: Ownership> MutableSeq<Id<T, O>> for NSMutableArray<T, O> {
+	fn push(&mut self, value: Id<T, O>) {
 		self.add_object(value);
 	}
 
-	fn pop(&mut self) -> Option<Id<T>> {
+	fn pop(&mut self) -> Option<Id<T, O>> {
 		if self.is_empty() {
 			None
 		} else {
@@ -252,6 +268,14 @@ impl<T: INSObject> MutableSeq<Id<T>> for NSMutableArray<T> {
 		}
 	}
 }
+
+impl<T: INSObject, O: Ownership> Index<uint, T> for NSMutableArray<T, O> {
+	fn index(&self, index: &uint) -> &T {
+		self.object_at(*index)
+	}
+}
+
+pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 
 #[cfg(test)]
 mod tests {
