@@ -65,6 +65,12 @@ impl<T: Message, O: Ownership> ToMessage for Id<T, O> {
 	}
 }
 
+impl<T: Message> Clone for Id<T, Shared> {
+	fn clone(&self) -> ShareId<T> {
+		unsafe { Id::from_ptr(self.ptr) }
+	}
+}
+
 #[unsafe_destructor]
 impl<T: Message, O: Ownership> Drop for Id<T, O> {
 	fn drop(&mut self) {
