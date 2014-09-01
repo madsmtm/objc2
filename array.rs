@@ -44,8 +44,30 @@ pub trait INSArray<T: INSObject, O: Ownership> : INSObject {
 
 	fn object_at(&self, index: uint) -> &T {
 		unsafe {
-			let result = msg_send![self objectAtIndex:index] as *mut T;
-			&*result
+			let obj = msg_send![self objectAtIndex:index] as *const T;
+			&*obj
+		}
+	}
+
+	fn first_object(&self) -> Option<&T> {
+		unsafe {
+			let obj = msg_send![self firstObject] as *const T;
+			if obj.is_null() {
+				None
+			} else {
+				Some(&*obj)
+			}
+		}
+	}
+
+	fn last_object(&self) -> Option<&T> {
+		unsafe {
+			let obj = msg_send![self lastObject] as *const T;
+			if obj.is_null() {
+				None
+			} else {
+				Some(&*obj)
+			}
 		}
 	}
 
@@ -201,6 +223,12 @@ mod tests {
 	fn test_object_at() {
 		let array = sample_array(4);
 		assert!(array.object_at(0) != array.object_at(3));
+		assert!(array.first_object().unwrap() == array.object_at(0));
+		assert!(array.last_object().unwrap() == array.object_at(3));
+
+		let empty_array: Id<NSArray<NSObject>> = INSObject::new();
+		assert!(empty_array.first_object().is_none());
+		assert!(empty_array.last_object().is_none());
 	}
 
 	#[test]
