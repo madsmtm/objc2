@@ -178,9 +178,43 @@ pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
 		}
 	}
 
-	fn remove_object_at(&mut self, index: uint) {
+	fn replace_object_at(&mut self, index: uint, obj: Id<T, O>) -> Id<T, O> {
+		let old_obj = unsafe {
+			let obj = self.object_at(index);
+			Id::from_ptr(obj as *const _ as *mut T)
+		};
+		unsafe {
+			msg_send![self replaceObjectAtIndex:index withObject:obj];
+		}
+		old_obj
+	}
+
+	fn remove_object_at(&mut self, index: uint) -> Id<T, O> {
+		let obj = unsafe {
+			let obj = self.object_at(index);
+			Id::from_ptr(obj as *const _ as *mut T)
+		};
 		unsafe {
 			msg_send![self removeObjectAtIndex:index];
+		}
+		obj
+	}
+
+	fn remove_last_object(&mut self) -> Id<T, O> {
+		let obj = self.last_object().map(|obj| unsafe {
+			Id::from_ptr(obj as *const _ as *mut T)
+		});
+		unsafe {
+			msg_send![self removeLastObject];
+		}
+		// removeLastObject would have failed if the array is empty,
+		// so we know this won't be None
+		obj.unwrap()
+	}
+
+	fn remove_all_objects(&mut self) {
+		unsafe {
+			msg_send![self removeAllObjects];
 		}
 	}
 }
@@ -196,6 +230,26 @@ impl<T: INSObject> INSMutableArray<T, Owned> for NSMutableArray<T> { }
 impl<T: INSObject> Collection for NSMutableArray<T> {
 	fn len(&self) -> uint {
 		self.count()
+	}
+}
+
+impl<T: INSObject> Mutable for NSMutableArray<T> {
+	fn clear(&mut self) {
+		self.remove_all_objects();
+	}
+}
+
+impl<T: INSObject> MutableSeq<Id<T>> for NSMutableArray<T> {
+	fn push(&mut self, value: Id<T>) {
+		self.add_object(value);
+	}
+
+	fn pop(&mut self) -> Option<Id<T>> {
+		if self.is_empty() {
+			None
+		} else {
+			Some(self.remove_last_object())
+		}
 	}
 }
 
@@ -273,5 +327,38 @@ mod tests {
 
 		assert!(array.len() == 1);
 		assert!(array.object_at(0) == array.object_at(0));
+
+		let obj: Id<NSObject> = INSObject::new();
+		array.deref_mut().insert_object_at(0, obj);
+		assert!(array.len() == 2);
+	}
+
+	#[test]
+	fn test_replace_object() {
+		let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
+		let obj: Id<NSObject> = INSObject::new();
+		array.deref_mut().add_object(obj);
+
+		let obj: Id<NSObject> = INSObject::new();
+		let old_obj = array.deref_mut().replace_object_at(0, obj);
+		assert!(&*old_obj != array.object_at(0));
+	}
+
+	#[test]
+	fn test_remove_object() {
+		let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
+		for _ in range(0u, 4) {
+			let obj: Id<NSObject> = INSObject::new();
+			array.deref_mut().add_object(obj);
+		}
+
+		array.deref_mut().remove_object_at(1);
+		assert!(array.len() == 3);
+
+		array.deref_mut().remove_last_object();
+		assert!(array.len() == 2);
+
+		array.deref_mut().remove_all_objects();
+		assert!(array.is_empty());
 	}
 }
