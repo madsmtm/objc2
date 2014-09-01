@@ -3,7 +3,7 @@ use std::mem;
 
 use runtime::Object;
 use {class, Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
-use super::{INSCopying, INSObject};
+use super::{INSCopying, INSMutableCopying, INSObject};
 
 pub struct NSRange {
 	pub location: uint,
@@ -159,6 +159,8 @@ impl<T: INSObject> INSSharedArray<T> for NSArray<T, Shared> { }
 
 impl<T> INSCopying<NSSharedArray<T>> for NSArray<T, Shared> { }
 
+impl<T> INSMutableCopying<NSMutableSharedArray<T>> for NSArray<T, Shared> { }
+
 impl<T: INSObject, O: Ownership> Collection for NSArray<T, O> {
 	fn len(&self) -> uint {
 		self.count()
@@ -241,7 +243,9 @@ impl<T: INSObject> INSSharedArray<T> for NSMutableArray<T, Shared> { }
 
 impl<T: INSObject, O: Ownership> INSMutableArray<T, O> for NSMutableArray<T, O> { }
 
-impl<T: INSObject> INSCopying<NSSharedArray<T>> for NSMutableArray<T, Shared> { }
+impl<T> INSCopying<NSSharedArray<T>> for NSMutableArray<T, Shared> { }
+
+impl<T> INSMutableCopying<NSMutableSharedArray<T>> for NSMutableArray<T, Shared> { }
 
 impl<T: INSObject, O: Ownership> Collection for NSMutableArray<T, O> {
 	fn len(&self) -> uint {

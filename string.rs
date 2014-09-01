@@ -12,6 +12,15 @@ pub trait INSCopying<T: INSObject> : INSObject {
 	}
 }
 
+pub trait INSMutableCopying<T: INSObject> : INSObject {
+	fn mutable_copy(&self) -> Id<T> {
+		unsafe {
+			let obj = msg_send![self mutableCopy];
+			Id::from_retained_ptr(obj as *mut T)
+		}
+	}
+}
+
 pub trait INSString : INSObject {
 	fn as_str(&self) -> &str {
 		unsafe {
