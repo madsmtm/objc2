@@ -25,11 +25,7 @@ impl<'a, T> Iterator<&'a T> for NSEnumerator<'a, T> {
 	fn next(&mut self) -> Option<&'a T> {
 		unsafe {
 			let obj = msg_send![self.id nextObject] as *mut T;
-			if obj.is_null() {
-				None
-			} else {
-				Some(&*obj)
-			}
+			obj.as_ref()
 		}
 	}
 }
@@ -52,22 +48,14 @@ pub trait INSArray<T: INSObject, O: Ownership> : INSObject {
 	fn first_object(&self) -> Option<&T> {
 		unsafe {
 			let obj = msg_send![self firstObject] as *const T;
-			if obj.is_null() {
-				None
-			} else {
-				Some(&*obj)
-			}
+			obj.as_ref()
 		}
 	}
 
 	fn last_object(&self) -> Option<&T> {
 		unsafe {
 			let obj = msg_send![self lastObject] as *const T;
-			if obj.is_null() {
-				None
-			} else {
-				Some(&*obj)
-			}
+			obj.as_ref()
 		}
 	}
 

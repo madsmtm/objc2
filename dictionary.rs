@@ -15,11 +15,7 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
 	fn object_for(&self, key: &K) -> Option<&V> {
 		unsafe {
 			let obj = msg_send![self objectForKey:key] as *mut V;
-			if obj.is_null() {
-				None
-			} else {
-				Some(&*obj)
-			}
+			obj.as_ref()
 		}
 	}
 
