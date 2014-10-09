@@ -115,15 +115,21 @@ impl<T: Message + fmt::Show, O: Ownership> fmt::Show for Id<T, O> {
 
 pub type ShareId<T> = Id<T, Shared>;
 
-pub trait IdVector<T> {
+pub trait IdVector<T> for Sized? {
 	fn as_refs_slice(&self) -> &[&T];
 }
 
-impl<T: Message, O: Ownership, V: Slice<Id<T, O>>> IdVector<T> for V {
+impl<T: Message, O: Ownership> IdVector<T> for [Id<T, O>] {
 	fn as_refs_slice(&self) -> &[&T] {
 		unsafe {
-			mem::transmute(self.as_slice())
+			mem::transmute(self)
 		}
+	}
+}
+
+impl<T: Message, O: Ownership> IdVector<T> for Vec<Id<T, O>> {
+	fn as_refs_slice(&self) -> &[&T] {
+		self.as_slice().as_refs_slice()
 	}
 }
 
