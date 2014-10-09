@@ -339,13 +339,13 @@ mod tests {
 	fn test_add_object() {
 		let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
 		let obj: Id<NSObject> = INSObject::new();
-		array.deref_mut().add_object(obj);
+		array.add_object(obj);
 
 		assert!(array.len() == 1);
 		assert!(array.object_at(0) == array.object_at(0));
 
 		let obj: Id<NSObject> = INSObject::new();
-		array.deref_mut().insert_object_at(0, obj);
+		array.insert_object_at(0, obj);
 		assert!(array.len() == 2);
 	}
 
@@ -353,10 +353,10 @@ mod tests {
 	fn test_replace_object() {
 		let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
 		let obj: Id<NSObject> = INSObject::new();
-		array.deref_mut().add_object(obj);
+		array.add_object(obj);
 
 		let obj: Id<NSObject> = INSObject::new();
-		let old_obj = array.deref_mut().replace_object_at(0, obj);
+		let old_obj = array.replace_object_at(0, obj);
 		assert!(&*old_obj != array.object_at(0));
 	}
 
@@ -365,16 +365,16 @@ mod tests {
 		let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
 		for _ in range(0u, 4) {
 			let obj: Id<NSObject> = INSObject::new();
-			array.deref_mut().add_object(obj);
+			array.add_object(obj);
 		}
 
-		array.deref_mut().remove_object_at(1);
+		array.remove_object_at(1);
 		assert!(array.len() == 3);
 
-		array.deref_mut().remove_last_object();
+		array.remove_last_object();
 		assert!(array.len() == 2);
 
-		array.deref_mut().remove_all_objects();
+		array.remove_all_objects();
 		assert!(array.is_empty());
 	}
 }
