@@ -53,10 +53,6 @@ impl<T: Message> Id<T, Owned> {
 			mem::transmute(self)
 		}
 	}
-
-	pub fn deref_mut(&mut self) -> &mut T {
-		unsafe { &mut *self.ptr }
-	}
 }
 
 impl<T: Message, O: Ownership> ToMessage for Id<T, O> {
@@ -86,6 +82,12 @@ impl<T: Message, O: Ownership> Drop for Id<T, O> {
 impl<T: Message, O: Ownership> Deref<T> for Id<T, O> {
 	fn deref(&self) -> &T {
 		unsafe { &*self.ptr }
+	}
+}
+
+impl<T: Message> DerefMut<T> for Id<T, Owned> {
+	fn deref_mut(&mut self) -> &mut T {
+		unsafe { &mut *self.ptr }
 	}
 }
 
