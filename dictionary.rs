@@ -139,7 +139,7 @@ mod tests {
 		let keys = dict.all_keys();
 
 		assert!(keys.len() == 1);
-		assert!(keys.get(0).as_str() == "abcd");
+		assert!(keys[0].as_str() == "abcd");
 	}
 
 	#[test]
@@ -157,8 +157,8 @@ mod tests {
 
 		assert!(keys.len() == 1);
 		assert!(objs.len() == 1);
-		assert!(keys.get(0).as_str() == "abcd");
-		assert!(*objs.get(0) == dict.object_for(*keys.get(0)).unwrap());
+		assert!(keys[0].as_str() == "abcd");
+		assert!(objs[0] == dict.object_for(keys[0]).unwrap());
 	}
 
 	#[test]

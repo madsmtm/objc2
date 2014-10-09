@@ -317,8 +317,8 @@ mod tests {
 
 		let middle_objs = array.objects_in_range(1, 2);
 		assert!(middle_objs.len() == 2);
-		assert!(*middle_objs.get(0) == array.object_at(1));
-		assert!(*middle_objs.get(1) == array.object_at(2));
+		assert!(middle_objs[0] == array.object_at(1));
+		assert!(middle_objs[1] == array.object_at(2));
 
 		let empty_objs = array.objects_in_range(1, 0);
 		assert!(empty_objs.len() == 0);
