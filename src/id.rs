@@ -21,14 +21,14 @@ impl<T: Message, O: Ownership> Id<T, O> {
 	pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
 		match Id::maybe_from_ptr(ptr) {
 			Some(id) => id,
-			None => fail!("Attempted to construct an Id from a null pointer"),
+			None => panic!("Attempted to construct an Id from a null pointer"),
 		}
 	}
 
 	pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
 		match Id::maybe_from_retained_ptr(ptr) {
 			Some(id) => id,
-			None => fail!("Attempted to construct an Id from a null pointer"),
+			None => panic!("Attempted to construct an Id from a null pointer"),
 		}
 	}
 
