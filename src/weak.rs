@@ -3,7 +3,7 @@ use std::cell::UnsafeCell;
 use {Id, ShareId, ToMessage};
 use runtime::{Message, Object};
 
-#[allow(ctypes)]
+#[allow(improper_ctypes)]
 #[link(name = "Foundation", kind = "framework")]
 extern {
 	fn objc_storeWeak(location: *mut *mut Object, obj: *mut Object) -> *mut Object;
