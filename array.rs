@@ -149,12 +149,6 @@ impl<T> INSCopying<NSSharedArray<T>> for NSArray<T, Shared> { }
 
 impl<T> INSMutableCopying<NSMutableSharedArray<T>> for NSArray<T, Shared> { }
 
-impl<T: INSObject, O: Ownership> Collection for NSArray<T, O> {
-	fn len(&self) -> uint {
-		self.count()
-	}
-}
-
 impl<T: INSObject, O: Ownership> Index<uint, T> for NSArray<T, O> {
 	fn index(&self, index: &uint) -> &T {
 		self.object_at(*index)
@@ -234,32 +228,6 @@ impl<T: INSObject, O: Ownership> INSMutableArray<T, O> for NSMutableArray<T, O> 
 impl<T> INSCopying<NSSharedArray<T>> for NSMutableArray<T, Shared> { }
 
 impl<T> INSMutableCopying<NSMutableSharedArray<T>> for NSMutableArray<T, Shared> { }
-
-impl<T: INSObject, O: Ownership> Collection for NSMutableArray<T, O> {
-	fn len(&self) -> uint {
-		self.count()
-	}
-}
-
-impl<T: INSObject, O: Ownership> Mutable for NSMutableArray<T, O> {
-	fn clear(&mut self) {
-		self.remove_all_objects();
-	}
-}
-
-impl<T: INSObject, O: Ownership> MutableSeq<Id<T, O>> for NSMutableArray<T, O> {
-	fn push(&mut self, value: Id<T, O>) {
-		self.add_object(value);
-	}
-
-	fn pop(&mut self) -> Option<Id<T, O>> {
-		if self.is_empty() {
-			None
-		} else {
-			Some(self.remove_last_object())
-		}
-	}
-}
 
 impl<T: INSObject, O: Ownership> Index<uint, T> for NSMutableArray<T, O> {
 	fn index(&self, index: &uint) -> &T {
@@ -341,12 +309,12 @@ mod tests {
 		let obj: Id<NSObject> = INSObject::new();
 		array.add_object(obj);
 
-		assert!(array.len() == 1);
+		assert!(array.count() == 1);
 		assert!(array.object_at(0) == array.object_at(0));
 
 		let obj: Id<NSObject> = INSObject::new();
 		array.insert_object_at(0, obj);
-		assert!(array.len() == 2);
+		assert!(array.count() == 2);
 	}
 
 	#[test]
@@ -369,12 +337,12 @@ mod tests {
 		}
 
 		array.remove_object_at(1);
-		assert!(array.len() == 3);
+		assert!(array.count() == 3);
 
 		array.remove_last_object();
-		assert!(array.len() == 2);
+		assert!(array.count() == 2);
 
 		array.remove_all_objects();
-		assert!(array.is_empty());
+		assert!(array.count() == 0);
 	}
 }

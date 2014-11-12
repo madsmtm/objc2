@@ -86,18 +86,6 @@ object_struct!(NSDictionary<K, V>)
 
 impl<K: INSObject, V: INSObject> INSDictionary<K, V, Owned> for NSDictionary<K, V> { }
 
-impl<K: INSObject, V: INSObject> Collection for NSDictionary<K, V> {
-	fn len(&self) -> uint {
-		self.count()
-	}
-}
-
-impl<K: INSObject, V: INSObject> Map<K, V> for NSDictionary<K, V> {
-	fn find(&self, key: &K) -> Option<&V> {
-		self.object_for(key)
-	}
-}
-
 impl<K: INSObject, V: INSObject> Index<K, V> for NSDictionary<K, V> {
 	fn index(&self, index: &K) -> &V {
 		self.object_for(index).unwrap()
