@@ -22,6 +22,8 @@ macro_rules! object_impl(
 	($name:ident $(,$t:ident)*) => (
 		impl<$($t),*> ::objc::runtime::Message for $name<$($t),*> { }
 
+		encode_message_impl!("@", $name $(, $t)*)
+
 		impl<$($t),*> ::objc_foundation::INSObject for $name<$($t),*> {
 			fn class_name() -> ::objc_foundation::ClassName<$name<$($t),*>> {
 				::objc_foundation::ClassName(stringify!($name))
