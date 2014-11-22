@@ -129,12 +129,6 @@ impl<T: Message, O: Ownership> IdVector<T> for [Id<T, O>] {
 	}
 }
 
-impl<T: Message, O: Ownership> IdVector<T> for Vec<Id<T, O>> {
-	fn as_refs_slice(&self) -> &[&T] {
-		self.as_slice().as_refs_slice()
-	}
-}
-
 pub trait IntoIdVector<T> {
 	unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>>;
 }
