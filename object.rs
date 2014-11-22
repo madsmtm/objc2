@@ -1,5 +1,5 @@
-use objc::runtime::{Class, Message, Object};
-use objc::Id;
+use objc::runtime::{Class, Object};
+use objc::{Id, Message};
 
 use NSString;
 

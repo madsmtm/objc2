@@ -20,7 +20,7 @@ macro_rules! object_impl(
 		object_impl!($name, $($t),+)
 	);
 	($name:ident $(,$t:ident)*) => (
-		impl<$($t),*> ::objc::runtime::Message for $name<$($t),*> { }
+		impl<$($t),*> ::objc::Message for $name<$($t),*> { }
 
 		encode_message_impl!("@", $name $(, $t)*)
 
