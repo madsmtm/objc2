@@ -2,8 +2,7 @@ use std::fmt;
 use std::hash;
 use std::mem;
 
-use runtime::Message;
-use ToMessage;
+use {Message, ToMessage};
 
 pub struct Owned;
 pub struct Shared;

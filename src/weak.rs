@@ -1,7 +1,7 @@
 use std::cell::UnsafeCell;
 
-use {Id, ShareId, ToMessage};
-use runtime::{Message, Object};
+use {Id, ShareId, Message, ToMessage};
+use runtime::Object;
 
 #[allow(improper_ctypes)]
 #[link(name = "Foundation", kind = "framework")]
