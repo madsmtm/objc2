@@ -1,6 +1,7 @@
-use runtime::{Class, Message, Object};
-use {class, ClassName, Id};
-use super::NSString;
+use objc::runtime::{Class, Message, Object};
+use objc::Id;
+
+use NSString;
 
 pub trait INSObject : Message {
 	fn class_name() -> ClassName<Self>;
@@ -60,11 +61,21 @@ pub trait INSObject : Message {
 
 object_struct!(NSObject)
 
+pub struct ClassName<T>(pub &'static str);
+
+pub fn class<T: INSObject>() -> &'static Class {
+	let ClassName(name): ClassName<T> = INSObject::class_name();
+	match Class::get(name) {
+		Some(cls) => cls,
+		None => panic!("Class {} not found", name),
+	}
+}
+
 #[cfg(test)]
 mod tests {
-	use {class, ClassName, Id};
-	use foundation::{INSString, NSString};
-	use super::{INSObject, NSObject};
+	use objc::Id;
+	use {INSString, NSString};
+	use super::{class, ClassName, INSObject, NSObject};
 
 	#[test]
 	fn test_class_name() {

@@ -1,8 +1,9 @@
 use std::cmp::min;
 use std::mem;
 
-use {class, Id, IdVector, IntoIdVector, Owned, Ownership};
-use super::{INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
+use objc::{Id, IdVector, IntoIdVector, Owned, Ownership};
+
+use {class, INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
 
 pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
 	fn count(&self) -> uint {
@@ -94,8 +95,8 @@ impl<K: INSObject, V: INSObject> Index<K, V> for NSDictionary<K, V> {
 
 #[cfg(test)]
 mod tests {
-	use {Id};
-	use foundation::{INSObject, INSString, NSObject, NSString};
+	use objc::{Id};
+	use {INSObject, INSString, NSObject, NSString};
 	use super::{INSDictionary, NSDictionary};
 
 	fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {

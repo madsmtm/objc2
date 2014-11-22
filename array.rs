@@ -1,9 +1,10 @@
 use std::kinds::marker::{ContravariantLifetime, NoCopy};
 use std::mem;
 
-use runtime::Object;
-use {class, Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
-use super::{INSCopying, INSMutableCopying, INSObject};
+use objc::runtime::Object;
+use objc::{Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
+
+use {class, INSCopying, INSMutableCopying, INSObject};
 
 pub struct NSRange {
 	pub location: uint,
@@ -239,8 +240,8 @@ pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 
 #[cfg(test)]
 mod tests {
-	use {Id};
-	use foundation::{INSObject, NSObject};
+	use objc::{Id};
+	use {INSObject, NSObject};
 	use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
 
 	fn sample_array(len: uint) -> Id<NSArray<NSObject>> {

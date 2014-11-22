@@ -1,7 +1,8 @@
 use std::str::raw::c_str_to_static_slice;
 
-use {class, Id};
-use super::INSObject;
+use objc::Id;
+
+use {class, INSObject};
 
 pub trait INSCopying<T: INSObject> : INSObject {
 	fn copy(&self) -> Id<T> {

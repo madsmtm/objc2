@@ -1,8 +1,9 @@
 use std::mem;
 use std::str::raw::c_str_to_static_slice;
 
-use {class, encode, Encode, Id};
-use super::{INSCopying, INSObject};
+use objc::{encode, Encode, Id};
+
+use {class, INSCopying, INSObject};
 
 pub trait INSValue<T: Copy + Encode> : INSObject {
 	fn value(&self) -> T {
@@ -40,8 +41,8 @@ impl<T> INSCopying<NSValue<T>> for NSValue<T> { }
 
 #[cfg(test)]
 mod tests {
-	use {encode, Id};
-	use super::{INSValue, NSValue};
+	use objc::{encode, Id};
+	use {INSValue, NSValue};
 
 	#[test]
 	fn test_value() {

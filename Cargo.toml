@@ -1,0 +1,11 @@
+[package]
+name = "objc_foundation"
+version = "0.0.0"
+authors = ["Steven Sheldon"]
+
+[lib]
+name = "objc_foundation"
+path = "lib.rs"
+
+[dependencies.objc]
+path = "../core"
