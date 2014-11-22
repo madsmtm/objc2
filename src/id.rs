@@ -2,8 +2,8 @@ use std::fmt;
 use std::hash;
 use std::mem;
 
-use runtime::{Message, Object};
-use {ToMessage};
+use runtime::Message;
+use ToMessage;
 
 pub struct Owned;
 pub struct Shared;
@@ -55,9 +55,9 @@ impl<T: Message> Id<T, Owned> {
 	}
 }
 
-impl<T: Message, O: Ownership> ToMessage for Id<T, O> {
-	fn as_ptr(&self) -> *mut Object {
-		self.ptr.as_ptr()
+impl<T: Message, O: Ownership> ToMessage<T> for Id<T, O> {
+	fn as_ptr(&self) -> *mut T {
+		self.ptr
 	}
 }
 
@@ -133,20 +133,8 @@ pub trait IntoIdVector<T> {
 	unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>>;
 }
 
-impl<T: Message> IntoIdVector<T> for Vec<*mut T> {
+impl<T: Message, R: ToMessage<T>> IntoIdVector<T> for Vec<R> {
 	unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>> {
-		for &ptr in self.iter() {
-			msg_send![ptr retain];
-		}
-		mem::transmute(self)
-	}
-}
-
-impl<'a, T: Message> IntoIdVector<T> for Vec<&'a T> {
-	unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>> {
-		for &obj in self.iter() {
-			msg_send![obj retain];
-		}
-		mem::transmute(self)
+		self.map_in_place(|obj| Id::from_ptr(obj.as_ptr()))
 	}
 }
