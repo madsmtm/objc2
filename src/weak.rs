@@ -50,17 +50,22 @@ impl<T> Drop for WeakId<T> {
 #[cfg(test)]
 mod tests {
 	use {Id};
-	use foundation::{INSObject, NSObject};
+	use runtime::{Class, Object};
 	use super::WeakId;
 
 	#[test]
 	fn test_weak() {
-		let obj: Id<NSObject> = INSObject::new();
+		let cls = Class::get("NSObject").unwrap();
+		let obj = unsafe {
+			let obj = msg_send![cls alloc];
+			let obj = msg_send![obj init];
+			Id::from_retained_ptr(obj)
+		};
 		let obj = obj.share();
 
 		let weak = WeakId::new(&obj);
 		let strong = weak.load().unwrap();
-		assert!(strong == obj);
+		assert!(&*strong as *const Object == &*obj as *const Object);
 		drop(strong);
 
 		drop(obj);
