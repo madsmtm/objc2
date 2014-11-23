@@ -11,6 +11,8 @@ extern {
 	fn objc_destroyWeak(addr: *mut *mut Object);
 }
 
+/// A pointer type for a weak reference to an Objective-C reference counted
+/// object.
 pub struct WeakId<T> {
 	// Our pointer must have the same address even if we are moved, so Box it.
 	// Although loading the WeakId may modify the pointer, it is thread safe,
@@ -19,6 +21,7 @@ pub struct WeakId<T> {
 }
 
 impl<T: Message> WeakId<T> {
+	/// Construct a new `WeakId` referencing the given `ShareId`.
 	pub fn new(obj: &ShareId<T>) -> WeakId<T> {
 		let ptr = box UnsafeCell::new(RawPtr::null());
 		unsafe {
@@ -28,6 +31,8 @@ impl<T: Message> WeakId<T> {
 		WeakId { ptr: ptr }
 	}
 
+	/// Load a `ShareId` from the `WeakId` if the object still exists.
+	/// Returns `None` if the object has been deallocated.
 	pub fn load(&self) -> Option<ShareId<T>> {
 		unsafe {
 			let loc = self.ptr.get() as *mut *mut Object;

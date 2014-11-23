@@ -11,12 +11,26 @@ pub trait Ownership { }
 impl Ownership for Owned { }
 impl Ownership for Shared { }
 
+/// A pointer type for Objective-C's reference counted objects. The object of
+/// an `Id` is retained and sent a `release` message when the `Id` is dropped.
+///
+/// An `Id` may be either `Owned` or `Shared`, represented by the types `Id`
+/// and `ShareId`, respectively. If owned, there are no other references to the
+/// object and the `Id` can be mutably dereferenced. `ShareId`, however, can
+/// only be immutably dereferenced because there may be other references to the
+/// object, but a `ShareId` can be cloned to provide more references to the
+/// object. An owned `Id` can be "downgraded" freely to a `ShareId`, but there
+/// is no way to safely upgrade back.
 #[unsafe_no_drop_flag]
 pub struct Id<T: Message, O: Ownership = Owned> {
 	ptr: *mut T,
 }
 
 impl<T: Message, O: Ownership> Id<T, O> {
+	/// Constructs an `Id` from a pointer to an unretained object and
+	/// retains it. Panics if the pointer is null.
+	/// Unsafe because the pointer must be to a valid object and
+	/// the caller must ensure the ownership is correct.
 	pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
 		match Id::maybe_from_ptr(ptr) {
 			Some(id) => id,
@@ -24,6 +38,11 @@ impl<T: Message, O: Ownership> Id<T, O> {
 		}
 	}
 
+	/// Constructs an `Id` from a pointer to a retained object; this won't
+	/// retain the pointer, so the caller must ensure the object has a +1
+	/// retain count. Panics if the pointer is null.
+	/// Unsafe because the pointer must be to a valid object and
+	/// the caller must ensure the ownership is correct.
 	pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
 		match Id::maybe_from_retained_ptr(ptr) {
 			Some(id) => id,
@@ -31,12 +50,21 @@ impl<T: Message, O: Ownership> Id<T, O> {
 		}
 	}
 
+	/// Constructs an `Id` from a pointer to an unretained object and
+	/// retains it if the pointer isn't null, otherwise returns None.
+	/// Unsafe because the pointer must be to a valid object and
+	/// the caller must ensure the ownership is correct.
 	pub unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Id<T, O>> {
 		// objc_msgSend is a no-op on null pointers
 		msg_send![ptr retain];
 		Id::maybe_from_retained_ptr(ptr)
 	}
 
+	/// Constructs an `Id` from a pointer to a retained object if the pointer
+	/// isn't null, otherwise returns None. This won't retain the pointer,
+	/// so the caller must ensure the object has a +1 retain count.
+	/// Unsafe because the pointer must be to a valid object and
+	/// the caller must ensure the ownership is correct.
 	pub unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Id<T, O>> {
 		if ptr.is_null() {
 			None
@@ -47,6 +75,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
 }
 
 impl<T: Message> Id<T, Owned> {
+	/// "Downgrade" an owned `Id` to a `ShareId`, allowing it to be cloned.
 	pub fn share(self) -> ShareId<T> {
 		unsafe {
 			mem::transmute(self)
@@ -114,9 +143,12 @@ impl<T: Message + fmt::Show, O: Ownership> fmt::Show for Id<T, O> {
 	}
 }
 
+/// A convenient alias for a shared `Id`.
 pub type ShareId<T> = Id<T, Shared>;
 
+/// Extension methods for slices containing `Id`s.
 pub trait IdVector<T> for Sized? {
+	/// Convert a slice of `Id`s into a slice of references
 	fn as_refs_slice(&self) -> &[&T];
 }
 
@@ -128,7 +160,12 @@ impl<T: Message, O: Ownership> IdVector<T> for [Id<T, O>] {
 	}
 }
 
+/// Trait to convert to a vector of `Id`s by consuming self.
 pub trait IntoIdVector<T> {
+	/// Converts to a vector of `Id`s by consuming self, retaining each object
+	/// contained in self.
+	/// Unsafe because the caller must ensure the `Id`s are constructed from
+	/// valid objects and the ownership of the resulting `Id`s is correct.
 	unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>>;
 }
 
