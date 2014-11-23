@@ -1,5 +1,4 @@
 use std::cmp::min;
-use std::mem;
 
 use objc::{Id, IdVector, IntoIdVector, Owned, Ownership};
 
@@ -54,7 +53,9 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
 		let objs: Vec<*mut V> = Vec::from_elem(len, RawPtr::null());
 		unsafe {
 			msg_send![self getObjects:objs.as_ptr() andKeys:keys.as_ptr()];
-			(mem::transmute(keys), mem::transmute(objs))
+			let keys = keys.map_in_place(|ptr| &*ptr);
+			let objs = objs.map_in_place(|ptr| &*ptr);
+			(keys, objs)
 		}
 	}
 

@@ -1,5 +1,4 @@
 use std::kinds::marker::{ContravariantLifetime, NoCopy};
-use std::mem;
 
 use objc::runtime::Object;
 use objc::{Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
@@ -86,7 +85,7 @@ pub trait INSArray<T: INSObject, O: Ownership> : INSObject {
 		let range = NSRange { location: start, length: len };
 		unsafe {
 			msg_send![self getObjects:vec.as_ptr() range:range];
-			mem::transmute(vec)
+			vec.map_in_place(|ptr| &*ptr)
 		}
 	}
 
