@@ -83,9 +83,11 @@ impl<T: Message, O: Ownership> Id<T, O> {
 impl<T: Message> Id<T, Owned> {
 	/// "Downgrade" an owned `Id` to a `ShareId`, allowing it to be cloned.
 	pub fn share(self) -> ShareId<T> {
+		let ptr = self.ptr;
 		unsafe {
-			mem::transmute(self)
+			mem::forget(self);
 		}
+		Id { ptr: ptr }
 	}
 }
 
@@ -97,7 +99,11 @@ impl<T: Message, O: Ownership> ToMessage<T> for Id<T, O> {
 
 impl<T: Message> Clone for Id<T, Shared> {
 	fn clone(&self) -> ShareId<T> {
-		unsafe { Id::from_ptr(self.ptr) }
+		let ptr = self.ptr;
+		unsafe {
+			msg_send![ptr retain];
+		}
+		Id { ptr: ptr }
 	}
 }
 
