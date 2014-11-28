@@ -7,9 +7,9 @@
 extern crate objc;
 
 pub use self::array::{
-	INSArray, INSMutableArray, INSOwnedArray, INSSharedArray,
-	NSArray, NSEnumerator, NSMutableArray, NSRange,
-	NSMutableSharedArray, NSSharedArray,
+    INSArray, INSMutableArray, INSOwnedArray, INSSharedArray,
+    NSArray, NSEnumerator, NSMutableArray, NSRange,
+    NSMutableSharedArray, NSSharedArray,
 };
 pub use self::dictionary::{INSDictionary, NSDictionary};
 pub use self::object::{class, ClassName, INSObject, NSObject};
@@ -26,5 +26,5 @@ mod value;
 
 // Shim to re-export under the objc_foundation:: path for macros
 mod objc_foundation {
-	pub use super::*;
+    pub use super::*;
 }
