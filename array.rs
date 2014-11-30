@@ -5,6 +5,13 @@ use objc::{Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
 
 use {class, INSCopying, INSMutableCopying, INSObject};
 
+#[repr(C)]
+pub enum NSComparisonResult {
+    Ascending  = -1i,
+    Same       = 0i,
+    Descending = 1i,
+}
+
 pub struct NSRange {
     pub location: uint,
     pub length: uint,
@@ -209,6 +216,14 @@ pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
             msg_send![self removeAllObjects];
         }
     }
+
+    fn sort_with_context<C>(&mut self,
+            compare: extern fn(&T, &T, Option<&C>) -> NSComparisonResult,
+            context: Option<&C>) {
+        unsafe {
+            msg_send![self sortUsingFunction:compare context:context];
+        }
+    }
 }
 
 pub struct NSMutableArray<T, O = Owned> {
@@ -240,8 +255,11 @@ pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 #[cfg(test)]
 mod tests {
     use objc::{Id};
-    use {INSObject, NSObject};
-    use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
+    use {INSObject, INSString, NSObject, NSString};
+    use super::{
+        INSArray, INSMutableArray,
+        NSArray, NSMutableArray, NSComparisonResult
+    };
 
     fn sample_array(len: uint) -> Id<NSArray<NSObject>> {
         let vec: Vec<Id<NSObject>> = Vec::from_fn(len, |_| INSObject::new());
@@ -344,5 +362,31 @@ mod tests {
 
         array.remove_all_objects();
         assert!(array.count() == 0);
+    }
+
+    #[test]
+    fn test_sort() {
+        let strings: Vec<Id<NSString>> = vec![
+            INSString::from_str("hello"),
+            INSString::from_str("hi"),
+        ];
+        let mut strings: Id<NSMutableArray<_>> = INSArray::from_vec(strings);
+
+        extern fn compare_strings_by_len(s1: &NSString, s2: &NSString,
+                _: Option<&()>) -> NSComparisonResult {
+            let s1_len = s1.as_str().len();
+            let s2_len = s2.as_str().len();
+            if s1_len < s2_len {
+                NSComparisonResult::Ascending
+            } else if s1_len == s2_len {
+                NSComparisonResult::Same
+            } else {
+                NSComparisonResult::Descending
+            }
+        }
+
+        strings.sort_with_context(compare_strings_by_len, None);
+        assert!(strings[0].as_str() == "hi");
+        assert!(strings[1].as_str() == "hello");
     }
 }
