@@ -12,6 +12,24 @@ pub enum NSComparisonResult {
     Descending = 1i,
 }
 
+impl NSComparisonResult {
+    pub fn from_ordering(order: Ordering) -> NSComparisonResult {
+        match order {
+            Less => NSComparisonResult::Ascending,
+            Equal => NSComparisonResult::Same,
+            Greater => NSComparisonResult::Descending,
+        }
+    }
+
+    pub fn as_ordering(&self) -> Ordering {
+        match *self {
+            NSComparisonResult::Ascending => Less,
+            NSComparisonResult::Same => Equal,
+            NSComparisonResult::Descending => Greater,
+        }
+    }
+}
+
 pub struct NSRange {
     pub location: uint,
     pub length: uint,
@@ -374,15 +392,8 @@ mod tests {
 
         extern fn compare_strings_by_len(s1: &NSString, s2: &NSString,
                 _: Option<&()>) -> NSComparisonResult {
-            let s1_len = s1.as_str().len();
-            let s2_len = s2.as_str().len();
-            if s1_len < s2_len {
-                NSComparisonResult::Ascending
-            } else if s1_len == s2_len {
-                NSComparisonResult::Same
-            } else {
-                NSComparisonResult::Descending
-            }
+            let order = s1.as_str().len().cmp(&s2.as_str().len());
+            NSComparisonResult::from_ordering(order)
         }
 
         strings.sort_with_context(compare_strings_by_len, None);

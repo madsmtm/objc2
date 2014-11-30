@@ -8,7 +8,7 @@ extern crate objc;
 
 pub use self::array::{
     INSArray, INSMutableArray, INSOwnedArray, INSSharedArray,
-    NSArray, NSEnumerator, NSMutableArray, NSRange,
+    NSArray, NSComparisonResult, NSEnumerator, NSMutableArray, NSRange,
     NSMutableSharedArray, NSSharedArray,
 };
 pub use self::dictionary::{INSDictionary, NSDictionary};
