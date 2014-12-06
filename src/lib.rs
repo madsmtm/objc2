@@ -25,7 +25,6 @@ struct Block<C: Clone> {
 
 impl<C: Clone> Block<C> {
     pub fn new(invoke: unsafe extern fn(&mut Block<C>, ...), context: C) -> Block<C> {
-        println!("{}", _NSConcreteStackBlock.name());
         Block {
             isa: &_NSConcreteStackBlock,
             // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
