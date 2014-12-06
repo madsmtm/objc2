@@ -3,6 +3,11 @@ name = "objc_test_utils"
 version = "0.0.0"
 authors = ["Steven Sheldon"]
 
+build = "build.rs"
+
 [lib]
 name = "objc_test_utils"
 path = "lib.rs"
+
+[build-dependencies]
+gcc = "0.1.0"

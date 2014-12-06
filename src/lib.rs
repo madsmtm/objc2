@@ -84,3 +84,23 @@ impl<C: Clone> BlockDescriptor<C> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::mem;
+    use objc_test_utils::invoke_int_block;
+    use super::Block;
+
+    #[test]
+    fn test_create_block() {
+        extern fn block_get_int(block: &Block<int>) -> int {
+            block.context
+        }
+
+        let result = unsafe {
+            let block = Block::new(mem::transmute(block_get_int), 13i);
+            invoke_int_block(mem::transmute(&block))
+        };
+        assert!(result == 13);
+    }
+}
