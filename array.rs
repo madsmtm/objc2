@@ -235,11 +235,16 @@ pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
         }
     }
 
-    fn sort_with_context<C>(&mut self,
-            compare: extern fn(&T, &T, Option<&C>) -> NSComparisonResult,
-            context: Option<&C>) {
+    fn sort_by(&mut self, compare: |&T, &T| -> Ordering) {
+        extern fn compare_with_closure<T>(obj1: &T, obj2: &T,
+                compare: &mut |&T, &T| -> Ordering) -> NSComparisonResult {
+            NSComparisonResult::from_ordering((*compare)(obj1, obj2))
+        }
+
+        let mut closure = compare;
         unsafe {
-            msg_send![self sortUsingFunction:compare context:context];
+            msg_send![self sortUsingFunction:compare_with_closure::<T>
+                                     context:&mut closure];
         }
     }
 }
@@ -390,13 +395,7 @@ mod tests {
         ];
         let mut strings: Id<NSMutableArray<_>> = INSArray::from_vec(strings);
 
-        extern fn compare_strings_by_len(s1: &NSString, s2: &NSString,
-                _: Option<&()>) -> NSComparisonResult {
-            let order = s1.as_str().len().cmp(&s2.as_str().len());
-            NSComparisonResult::from_ordering(order)
-        }
-
-        strings.sort_with_context(compare_strings_by_len, None);
+        strings.sort_by(|s1, s2| s1.as_str().len().cmp(&s2.as_str().len()));
         assert!(strings[0].as_str() == "hi");
         assert!(strings[1].as_str() == "hello");
     }
