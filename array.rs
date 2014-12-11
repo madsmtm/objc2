@@ -279,10 +279,7 @@ pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 mod tests {
     use objc::{Id};
     use {INSObject, INSString, NSObject, NSString};
-    use super::{
-        INSArray, INSMutableArray,
-        NSArray, NSMutableArray, NSComparisonResult
-    };
+    use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
 
     fn sample_array(len: uint) -> Id<NSArray<NSObject>> {
         let vec: Vec<Id<NSObject>> = Vec::from_fn(len, |_| INSObject::new());

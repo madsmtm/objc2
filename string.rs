@@ -1,4 +1,4 @@
-use std::str::raw::c_str_to_static_slice;
+use std::str::from_c_str;
 
 use objc::Id;
 
@@ -26,7 +26,7 @@ pub trait INSString : INSObject {
     fn as_str(&self) -> &str {
         unsafe {
             let result = msg_send![self UTF8String];
-            c_str_to_static_slice(result as *const i8)
+            from_c_str(result as *const i8)
         }
     }
 

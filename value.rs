@@ -1,5 +1,5 @@
 use std::mem;
-use std::str::raw::c_str_to_static_slice;
+use std::str::from_c_str;
 
 use objc::{encode, Encode, Id};
 
@@ -18,7 +18,7 @@ pub trait INSValue<T: Copy + Encode> : INSObject {
     fn encoding(&self) -> &str {
         unsafe {
             let result = msg_send![self objCType] as *const i8;
-            c_str_to_static_slice(result)
+            from_c_str(result)
         }
     }
 
