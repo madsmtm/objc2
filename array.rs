@@ -1,4 +1,4 @@
-use std::kinds::marker::{ContravariantLifetime, NoCopy};
+use std::kinds::marker::ContravariantLifetime;
 
 use objc::runtime::Object;
 use objc::{Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
@@ -6,6 +6,7 @@ use objc::{Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
 use {class, INSCopying, INSMutableCopying, INSObject};
 
 #[repr(C)]
+#[deriving(Copy)]
 pub enum NSComparisonResult {
     Ascending  = -1i,
     Same       = 0i,
@@ -30,6 +31,8 @@ impl NSComparisonResult {
     }
 }
 
+#[repr(C)]
+#[deriving(Copy)]
 pub struct NSRange {
     pub location: uint,
     pub length: uint,
@@ -158,9 +161,8 @@ pub trait INSSharedArray<T: INSObject> : INSArray<T, Shared> {
     }
 }
 
-pub struct NSArray<T, O = Owned> {
-    nocopy: NoCopy,
-}
+#[allow(missing_copy_implementations)]
+pub enum NSArray<T, O = Owned> { }
 
 object_impl!(NSArray<T, O>)
 
@@ -249,9 +251,8 @@ pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
     }
 }
 
-pub struct NSMutableArray<T, O = Owned> {
-    nocopy: NoCopy,
-}
+#[allow(missing_copy_implementations)]
+pub enum NSMutableArray<T, O = Owned> { }
 
 object_impl!(NSMutableArray<T, O>)
 

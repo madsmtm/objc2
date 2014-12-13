@@ -6,9 +6,8 @@ macro_rules! object_struct(
         object_struct!($name, $($t),+)
     );
     ($name:ident $(,$t:ident)*) => (
-        pub struct $name<$($t),*> {
-            nocopy: ::std::kinds::marker::NoCopy,
-        }
+        #[allow(missing_copy_implementations)]
+        pub enum $name<$($t),*> { }
 
         object_impl!($name $(,$t)*)
     );
