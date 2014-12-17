@@ -237,15 +237,15 @@ pub trait INSMutableArray<T: INSObject, O: Ownership> : INSArray<T, O> {
         }
     }
 
-    fn sort_by(&mut self, compare: |&T, &T| -> Ordering) {
-        extern fn compare_with_closure<T>(obj1: &T, obj2: &T,
-                compare: &mut |&T, &T| -> Ordering) -> NSComparisonResult {
+    fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {
+        extern fn compare_with_closure<T, F: FnMut(&T, &T) -> Ordering>(
+                obj1: &T, obj2: &T, compare: &mut F) -> NSComparisonResult {
             NSComparisonResult::from_ordering((*compare)(obj1, obj2))
         }
 
         let mut closure = compare;
         unsafe {
-            msg_send![self sortUsingFunction:compare_with_closure::<T>
+            msg_send![self sortUsingFunction:compare_with_closure::<T, F>
                                      context:&mut closure];
         }
     }
