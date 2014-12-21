@@ -17,6 +17,18 @@ pub trait BlockArguments {
     fn invoke_block<R>(self, block: &Block<Self, R>) -> R;
 }
 
+impl BlockArguments for () {
+    fn invoke_block<R>(self, block: &Block<(), R>) -> R {
+        let invoke: unsafe extern fn(*mut Block<(), R>) -> R = unsafe {
+            mem::transmute(block.invoke)
+        };
+        let block_ptr = block as *const _ as *mut _;
+        unsafe {
+            invoke(block_ptr)
+        }
+    }
+}
+
 #[repr(C)]
 pub struct Block<A: BlockArguments, R> {
     isa: *const Class,
