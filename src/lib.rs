@@ -13,18 +13,38 @@ extern {
     static _NSConcreteStackBlock: Class;
 }
 
+pub type BlockInvoke<A, R> =
+    unsafe extern fn(*mut Block<A, R>, ...) -> R;
+
+pub type ConcreteBlockInvoke<A, R, C> =
+    unsafe extern fn(*mut ConcreteBlock<A, R, C>, ...) -> R;
+
 pub trait BlockArguments {
-    fn invoke_block<R>(self, block: &Block<Self, R>) -> R;
+    fn call_block<R>(self, block: &Block<Self, R>) -> R;
+
+    fn invoke_for_concrete_block<R, C: Clone>() -> ConcreteBlockInvoke<Self, R, C>;
 }
 
 impl BlockArguments for () {
-    fn invoke_block<R>(self, block: &Block<(), R>) -> R {
+    fn call_block<R>(self, block: &Block<(), R>) -> R {
         let invoke: unsafe extern fn(*mut Block<(), R>) -> R = unsafe {
             mem::transmute(block.invoke)
         };
         let block_ptr = block as *const _ as *mut _;
         unsafe {
             invoke(block_ptr)
+        }
+    }
+
+    fn invoke_for_concrete_block<R, C: Clone>() -> ConcreteBlockInvoke<(), R, C> {
+        unsafe extern fn concrete_block_invoke_args0<R, C: Clone>(
+                block_ptr: *mut ConcreteBlock<(), R, C>) -> R {
+            let block = &*block_ptr;
+            (block.rust_invoke)(&block.context, ())
+        }
+
+        unsafe {
+            mem::transmute(concrete_block_invoke_args0::<R, C>)
         }
     }
 }
@@ -34,7 +54,7 @@ pub struct Block<A: BlockArguments, R> {
     isa: *const Class,
     flags: c_int,
     _reserved: c_int,
-    invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
+    invoke: BlockInvoke<A, R>,
 }
 
 impl<A: BlockArguments, R> Block<A, R> {
@@ -46,7 +66,7 @@ impl<A: BlockArguments, R> Block<A, R> {
     }
 
     pub fn call(&self, args: A) -> R {
-        args.invoke_block(self)
+        args.call_block(self)
     }
 }
 
@@ -56,23 +76,27 @@ impl<A: BlockArguments, R> Message for Block<A, R> { }
 struct ConcreteBlock<A: BlockArguments, R, C: Clone> {
     base: Block<A, R>,
     descriptor: *const BlockDescriptor<ConcreteBlock<A, R, C>>,
-    pub context: C,
+    rust_invoke: fn (&C, A) -> R,
+    context: C,
 }
 
 impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
-    pub fn new(invoke: unsafe extern fn(&ConcreteBlock<A, R, C>, ...) -> R, context: C) -> ConcreteBlock<A, R, C> {
+    pub fn new(invoke: fn (&C, A) -> R, context: C) -> ConcreteBlock<A, R, C> {
+        let extern_invoke: ConcreteBlockInvoke<A, R, C> =
+            BlockArguments::invoke_for_concrete_block();
         ConcreteBlock {
             base: Block {
                 isa: &_NSConcreteStackBlock,
                 // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
                 flags: 1 << 25,
                 _reserved: 0,
-                invoke: unsafe { mem::transmute(invoke) },
+                invoke: unsafe { mem::transmute(extern_invoke) },
             },
             // TODO: don't leak memory here
             descriptor: unsafe {
                 mem::transmute(box BlockDescriptor::<A, R, C>::new())
             },
+            rust_invoke: invoke,
             context: context,
         }
     }
@@ -80,8 +104,7 @@ impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
 
 impl<A: BlockArguments, R, C: Clone> Clone for ConcreteBlock<A, R, C> {
     fn clone(&self) -> ConcreteBlock<A, R, C> {
-        let invoke = unsafe { mem::transmute(self.base.invoke) };
-        ConcreteBlock::new(invoke, self.context.clone())
+        ConcreteBlock::new(self.rust_invoke, self.context.clone())
     }
 }
 
@@ -124,13 +147,12 @@ mod tests {
 
     #[test]
     fn test_create_block() {
-        extern fn block_get_int(block: &ConcreteBlock<(), int, int>) -> int {
-            block.context
+        fn block_get_int(context: &int, _args: ()) -> int {
+            *context
         }
 
         let result = unsafe {
-            let block: ConcreteBlock<(), int, int> =
-                ConcreteBlock::new(mem::transmute(block_get_int), 13i);
+            let block = ConcreteBlock::new(block_get_int, 13i);
             invoke_int_block(mem::transmute(&block))
         };
         assert!(result == 13);
