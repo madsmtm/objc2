@@ -14,6 +14,14 @@ extern {
 }
 
 #[repr(C)]
+pub struct Block<A, R> {
+    isa: *const Class,
+    flags: c_int,
+    _reserved: c_int,
+    invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
+}
+
+#[repr(C)]
 struct ConcreteBlock<C: Clone> {
     isa: *const Class,
     flags: c_int,
