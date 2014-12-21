@@ -38,10 +38,19 @@ pub struct Block<A: BlockArguments, R> {
 }
 
 impl<A: BlockArguments, R> Block<A, R> {
+    pub fn copy(&self) -> Id<Block<A, R>> {
+        unsafe {
+            let block = msg_send![self copy] as *mut Block<A, R>;
+            Id::from_retained_ptr(block)
+        }
+    }
+
     pub fn call(&self, args: A) -> R {
         args.invoke_block(self)
     }
 }
+
+impl<A: BlockArguments, R> Message for Block<A, R> { }
 
 #[repr(C)]
 struct ConcreteBlock<C: Clone> {
