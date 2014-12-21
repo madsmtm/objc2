@@ -13,12 +13,22 @@ extern {
     static _NSConcreteStackBlock: Class;
 }
 
+pub trait BlockArguments {
+    fn invoke_block<R>(self, block: &Block<Self, R>) -> R;
+}
+
 #[repr(C)]
-pub struct Block<A, R> {
+pub struct Block<A: BlockArguments, R> {
     isa: *const Class,
     flags: c_int,
     _reserved: c_int,
     invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
+}
+
+impl<A: BlockArguments, R> Block<A, R> {
+    pub fn call(&self, args: A) -> R {
+        args.invoke_block(self)
+    }
 }
 
 #[repr(C)]
