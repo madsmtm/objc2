@@ -53,72 +53,65 @@ impl<A: BlockArguments, R> Block<A, R> {
 impl<A: BlockArguments, R> Message for Block<A, R> { }
 
 #[repr(C)]
-struct ConcreteBlock<C: Clone> {
-    isa: *const Class,
-    flags: c_int,
-    _reserved: c_int,
-    pub invoke: unsafe extern fn(&mut ConcreteBlock<C>, ...),
-    descriptor: *const BlockDescriptor<C>,
+struct ConcreteBlock<A: BlockArguments, R, C: Clone> {
+    base: Block<A, R>,
+    descriptor: *const BlockDescriptor<ConcreteBlock<A, R, C>>,
     pub context: C,
 }
 
-impl<C: Clone> ConcreteBlock<C> {
-    pub fn new(invoke: unsafe extern fn(&mut ConcreteBlock<C>, ...), context: C) -> ConcreteBlock<C> {
+impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
+    pub fn new(invoke: unsafe extern fn(&ConcreteBlock<A, R, C>, ...) -> R, context: C) -> ConcreteBlock<A, R, C> {
         ConcreteBlock {
-            isa: &_NSConcreteStackBlock,
-            // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
-            flags: 1 << 25,
-            _reserved: 0,
-            invoke: invoke,
+            base: Block {
+                isa: &_NSConcreteStackBlock,
+                // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
+                flags: 1 << 25,
+                _reserved: 0,
+                invoke: unsafe { mem::transmute(invoke) },
+            },
             // TODO: don't leak memory here
             descriptor: unsafe {
-                mem::transmute(box BlockDescriptor::<C>::new())
+                mem::transmute(box BlockDescriptor::<A, R, C>::new())
             },
             context: context,
         }
     }
+}
 
-    pub fn copy(&self) -> Id<ConcreteBlock<C>> {
-        unsafe {
-            let block = msg_send![self copy] as *mut ConcreteBlock<C>;
-            Id::from_retained_ptr(block)
-        }
+impl<A: BlockArguments, R, C: Clone> Clone for ConcreteBlock<A, R, C> {
+    fn clone(&self) -> ConcreteBlock<A, R, C> {
+        let invoke = unsafe { mem::transmute(self.base.invoke) };
+        ConcreteBlock::new(invoke, self.context.clone())
     }
 }
 
-impl<C: Clone> Message for ConcreteBlock<C> { }
-
-impl<C: Clone> Clone for ConcreteBlock<C> {
-    fn clone(&self) -> ConcreteBlock<C> {
-        ConcreteBlock::new(self.invoke, self.context.clone())
-    }
-}
-
-unsafe extern fn block_context_dispose<C: Clone>(block: &mut ConcreteBlock<C>) {
+unsafe extern fn block_context_dispose<A: BlockArguments, R, C: Clone>(
+        block: &mut ConcreteBlock<A, R, C>) {
     let mut context = mem::uninitialized();
     ptr::copy_nonoverlapping_memory(&mut context, &block.context, 1);
     drop(context);
 }
 
-unsafe extern fn block_context_copy<C: Clone>(dst: &mut ConcreteBlock<C>, src: &ConcreteBlock<C>) {
+unsafe extern fn block_context_copy<A: BlockArguments, R, C: Clone>(
+        dst: &mut ConcreteBlock<A, R, C>, src: &ConcreteBlock<A, R, C>) {
     dst.context = src.context.clone();
 }
 
 #[repr(C)]
-struct BlockDescriptor<C: Clone> {
+struct BlockDescriptor<B> {
     _reserved: c_ulong,
     block_size: c_ulong,
-    copy_helper: unsafe extern fn(&mut ConcreteBlock<C>, &ConcreteBlock<C>),
-    dispose_helper: unsafe extern fn(&mut ConcreteBlock<C>),
+    copy_helper: unsafe extern fn(&mut B, &B),
+    dispose_helper: unsafe extern fn(&mut B),
 }
 
-impl<C: Clone> BlockDescriptor<C> {
-    pub fn new() -> BlockDescriptor<C> {
+impl<A: BlockArguments, R, C: Clone> BlockDescriptor<ConcreteBlock<A, R, C>> {
+    pub fn new() -> BlockDescriptor<ConcreteBlock<A, R, C>> {
         BlockDescriptor {
             _reserved: 0,
-            block_size: mem::size_of::<ConcreteBlock<C>>() as c_ulong,
-            copy_helper: block_context_copy::<C>,
-            dispose_helper: block_context_dispose::<C>,
+            block_size: mem::size_of::<ConcreteBlock<A, R, C>>() as c_ulong,
+            copy_helper: block_context_copy::<A, R, C>,
+            dispose_helper: block_context_dispose::<A, R, C>,
         }
     }
 }
@@ -131,12 +124,13 @@ mod tests {
 
     #[test]
     fn test_create_block() {
-        extern fn block_get_int(block: &ConcreteBlock<int>) -> int {
+        extern fn block_get_int(block: &ConcreteBlock<(), int, int>) -> int {
             block.context
         }
 
         let result = unsafe {
-            let block = ConcreteBlock::new(mem::transmute(block_get_int), 13i);
+            let block: ConcreteBlock<(), int, int> =
+                ConcreteBlock::new(mem::transmute(block_get_int), 13i);
             invoke_int_block(mem::transmute(&block))
         };
         assert!(result == 13);
