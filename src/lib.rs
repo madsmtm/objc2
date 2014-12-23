@@ -25,29 +25,51 @@ pub trait BlockArguments {
     fn invoke_for_concrete_block<R, C: Clone>() -> ConcreteBlockInvoke<Self, R, C>;
 }
 
-impl BlockArguments for () {
-    fn call_block<R>(self, block: &Block<(), R>) -> R {
-        let invoke: unsafe extern fn(*mut Block<(), R>) -> R = unsafe {
-            mem::transmute(block.invoke)
-        };
-        let block_ptr = block as *const _ as *mut _;
-        unsafe {
-            invoke(block_ptr)
-        }
-    }
+macro_rules! block_args_impl(
+    ($f:ident $(, $a:ident : $t:ident)*) => (
+        impl<$($t),*> BlockArguments for ($($t,)*) {
+            fn call_block<R>(self, block: &Block<($($t,)*), R>) -> R {
+                let invoke: unsafe extern fn(*mut Block<($($t,)*), R> $(, $t)*) -> R = unsafe {
+                    mem::transmute(block.invoke)
+                };
+                let ($($a,)*) = self;
+                let block_ptr = block as *const _ as *mut _;
+                unsafe {
+                    invoke(block_ptr $(, $a)*)
+                }
+            }
 
-    fn invoke_for_concrete_block<R, C: Clone>() -> ConcreteBlockInvoke<(), R, C> {
-        unsafe extern fn concrete_block_invoke_args0<R, C: Clone>(
-                block_ptr: *mut ConcreteBlock<(), R, C>) -> R {
-            let block = &*block_ptr;
-            (block.rust_invoke)(&block.context, ())
-        }
+            fn invoke_for_concrete_block<R, X: Clone>() ->
+                    ConcreteBlockInvoke<($($t,)*), R, X> {
+                unsafe extern fn $f<R, X: Clone $(, $t)*>(
+                        block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
+                        $(, $a: $t)*) -> R {
+                    let args = ($($a,)*);
+                    let block = &*block_ptr;
+                    (block.rust_invoke)(&block.context, args)
+                }
 
-        unsafe {
-            mem::transmute(concrete_block_invoke_args0::<R, C>)
+                unsafe {
+                    mem::transmute($f::<R, X $(, $t)*>)
+                }
+            }
         }
-    }
-}
+    );
+);
+
+block_args_impl!(concrete_block_invoke_args0);
+block_args_impl!(concrete_block_invoke_args1, a: A);
+block_args_impl!(concrete_block_invoke_args2, a: A, b: B);
+block_args_impl!(concrete_block_invoke_args3, a: A, b: B, c: C);
+block_args_impl!(concrete_block_invoke_args4, a: A, b: B, c: C, d: D);
+block_args_impl!(concrete_block_invoke_args5, a: A, b: B, c: C, d: D, e: E);
+block_args_impl!(concrete_block_invoke_args6, a: A, b: B, c: C, d: D, e: E, f: F);
+block_args_impl!(concrete_block_invoke_args7, a: A, b: B, c: C, d: D, e: E, f: F, g: G);
+block_args_impl!(concrete_block_invoke_args8, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
+block_args_impl!(concrete_block_invoke_args9, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
+block_args_impl!(concrete_block_invoke_args10, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
+block_args_impl!(concrete_block_invoke_args11, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K);
+block_args_impl!(concrete_block_invoke_args12, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L);
 
 #[repr(C)]
 pub struct Block<A: BlockArguments, R> {
