@@ -157,17 +157,16 @@ impl<A: BlockArguments, R, C: Clone> Deref<Block<A, R>> for ConcreteBlock<A, R, 
 
 unsafe extern fn block_context_dispose<A: BlockArguments, R, C: Clone>(
         block: &mut ConcreteBlock<A, R, C>) {
-    let mut context = mem::uninitialized();
-    ptr::copy_nonoverlapping_memory(&mut context, &block.context, 1);
-    drop(context);
+    // Read the context from the block and let it drop
+    ptr::read(&block.context);
 }
 
 unsafe extern fn block_context_copy<A: BlockArguments, R, C: Clone>(
         dst: &mut ConcreteBlock<A, R, C>, src: &ConcreteBlock<A, R, C>) {
     // The src block actually gets memmoved to the destination beforehand,
     // but we'll set the function pointer, too, to be safe.
-    dst.rust_invoke = src.rust_invoke;
-    dst.context = src.context.clone();
+    ptr::write(&mut dst.rust_invoke, src.rust_invoke);
+    ptr::write(&mut dst.context, src.context.clone());
 }
 
 #[repr(C)]
