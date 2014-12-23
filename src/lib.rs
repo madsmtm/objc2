@@ -130,6 +130,12 @@ impl<A: BlockArguments, R, C: Clone> Clone for ConcreteBlock<A, R, C> {
     }
 }
 
+impl<A: BlockArguments, R, C: Clone> Deref<Block<A, R>> for ConcreteBlock<A, R, C> {
+    fn deref(&self) -> &Block<A, R> {
+        &self.base
+    }
+}
+
 unsafe extern fn block_context_dispose<A: BlockArguments, R, C: Clone>(
         block: &mut ConcreteBlock<A, R, C>) {
     let mut context = mem::uninitialized();
