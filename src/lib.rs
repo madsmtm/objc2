@@ -1,4 +1,7 @@
-#![allow(dead_code)]
+//! A Rust interface for Objective-C blocks.
+//!
+//! For more information on the specifics of the block implementation, see
+//! Clang's documentation: http://clang.llvm.org/docs/Block-ABI-Apple.html
 
 use std::mem;
 use std::ptr;
@@ -13,15 +16,22 @@ extern {
     static _NSConcreteStackBlock: Class;
 }
 
-pub type BlockInvoke<A, R> =
-    unsafe extern fn(*mut Block<A, R>, ...) -> R;
+/// An invoke function for a `Block`; this is the raw C function called by the
+/// Objective-C runtime.
+type BlockInvoke<A, R> = unsafe extern fn(*mut Block<A, R>, ...) -> R;
 
+/// An invoke function for a `ConcreteBlock`; this is the raw C function called
+/// by the Objective-C runtime.
 pub type ConcreteBlockInvoke<A, R, C> =
     unsafe extern fn(*mut ConcreteBlock<A, R, C>, ...) -> R;
 
+/// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments {
+    /// Calls the given `Block` with self as the arguments.
     fn call_block<R>(self, block: &Block<Self, R>) -> R;
 
+    /// Returns an invoke function for a `ConcreteBlock` that takes this type
+    /// of arguments.
     fn invoke_for_concrete_block<R, C: Clone>() -> ConcreteBlockInvoke<Self, R, C>;
 }
 
@@ -71,6 +81,8 @@ block_args_impl!(concrete_block_invoke_args10, a: A, b: B, c: C, d: D, e: E, f: 
 block_args_impl!(concrete_block_invoke_args11, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K);
 block_args_impl!(concrete_block_invoke_args12, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L);
 
+/// An Objective-C block that takes arguments of `A` when called and
+/// returns a value of `R`.
 #[repr(C)]
 pub struct Block<A: BlockArguments, R> {
     isa: *const Class,
@@ -80,6 +92,7 @@ pub struct Block<A: BlockArguments, R> {
 }
 
 impl<A: BlockArguments, R> Block<A, R> {
+    /// Copy self onto the heap.
     pub fn copy(&self) -> Id<Block<A, R>> {
         unsafe {
             let block = msg_send![self copy] as *mut Block<A, R>;
@@ -87,6 +100,7 @@ impl<A: BlockArguments, R> Block<A, R> {
         }
     }
 
+    /// Call self with the given arguments.
     pub fn call(&self, args: A) -> R {
         args.call_block(self)
     }
@@ -94,8 +108,10 @@ impl<A: BlockArguments, R> Block<A, R> {
 
 impl<A: BlockArguments, R> Message for Block<A, R> { }
 
+/// An Objective-C block whose size is known at compile time and may be
+/// constructed on the stack.
 #[repr(C)]
-struct ConcreteBlock<A: BlockArguments, R, C: Clone> {
+pub struct ConcreteBlock<A: BlockArguments, R, C: Clone> {
     base: Block<A, R>,
     descriptor: *const BlockDescriptor<ConcreteBlock<A, R, C>>,
     rust_invoke: fn (&C, A) -> R,
@@ -103,6 +119,9 @@ struct ConcreteBlock<A: BlockArguments, R, C: Clone> {
 }
 
 impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
+    /// Constructs a `ConcreteBlock` with the given invoke function and context.
+    /// When the block is called, it will return the value that results from
+    /// calling the invoke function with a reference to its context.
     pub fn new(invoke: fn (&C, A) -> R, context: C) -> ConcreteBlock<A, R, C> {
         let extern_invoke: ConcreteBlockInvoke<A, R, C> =
             BlockArguments::invoke_for_concrete_block();
@@ -157,7 +176,7 @@ struct BlockDescriptor<B> {
 }
 
 impl<A: BlockArguments, R, C: Clone> BlockDescriptor<ConcreteBlock<A, R, C>> {
-    pub fn new() -> BlockDescriptor<ConcreteBlock<A, R, C>> {
+    fn new() -> BlockDescriptor<ConcreteBlock<A, R, C>> {
         BlockDescriptor {
             _reserved: 0,
             block_size: mem::size_of::<ConcreteBlock<A, R, C>>() as c_ulong,
