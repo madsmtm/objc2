@@ -125,6 +125,13 @@ impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
     pub fn new(invoke: fn (&C, A) -> R, context: C) -> ConcreteBlock<A, R, C> {
         let extern_invoke: ConcreteBlockInvoke<A, R, C> =
             BlockArguments::invoke_for_concrete_block();
+        // TODO: don't leak memory here
+        let descriptor_ptr = {
+            let descriptor = box BlockDescriptor::<A, R, C>::new();
+            let ptr = &*descriptor as *const _;
+            unsafe { mem::forget(descriptor) };
+            ptr
+        };
         ConcreteBlock {
             base: Block {
                 isa: &_NSConcreteStackBlock,
@@ -133,10 +140,7 @@ impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
                 _reserved: 0,
                 invoke: unsafe { mem::transmute(extern_invoke) },
             },
-            // TODO: don't leak memory here
-            descriptor: unsafe {
-                mem::transmute(box BlockDescriptor::<A, R, C>::new())
-            },
+            descriptor: descriptor_ptr,
             rust_invoke: invoke,
             context: context,
         }
