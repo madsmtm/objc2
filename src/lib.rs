@@ -221,16 +221,16 @@ mod tests {
     }
 
     fn invoke_int_block(block: &Block<(), int>) -> int {
-        let ptr = block as *const _ as *const _;
+        let ptr = block as *const _;
         unsafe {
-            objc_test_utils::invoke_int_block(ptr)
+            objc_test_utils::invoke_int_block(ptr as *const _)
         }
     }
 
     fn invoke_add_block(block: &Block<(int,), int>, a: int) -> int {
-        let ptr = block as *const _ as *const _;
+        let ptr = block as *const _;
         unsafe {
-            objc_test_utils::invoke_add_block(ptr, a)
+            objc_test_utils::invoke_add_block(ptr as *const _, a)
         }
     }
 
