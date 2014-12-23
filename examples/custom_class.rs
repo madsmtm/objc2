@@ -9,7 +9,7 @@ use objc::{ClassDecl, Id};
 use objc::runtime::Object;
 use objc_foundation::{class, INSObject, NSObject};
 
-object_struct!(MYObject)
+object_struct!(MYObject);
 
 impl MYObject {
     fn number(&self) -> uint {

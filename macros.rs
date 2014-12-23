@@ -3,25 +3,25 @@
 #[macro_export]
 macro_rules! object_struct(
     ($name:ident<$($t:ident),+>) => (
-        object_struct!($name, $($t),+)
+        object_struct!($name, $($t),+);
     );
     ($name:ident $(,$t:ident)*) => (
         #[allow(missing_copy_implementations)]
         pub enum $name<$($t),*> { }
 
-        object_impl!($name $(,$t)*)
+        object_impl!($name $(,$t)*);
     );
-)
+);
 
 #[macro_export]
 macro_rules! object_impl(
     ($name:ident<$($t:ident),+>) => (
-        object_impl!($name, $($t),+)
+        object_impl!($name, $($t),+);
     );
     ($name:ident $(,$t:ident)*) => (
         impl<$($t),*> ::objc::Message for $name<$($t),*> { }
 
-        encode_message_impl!("@", $name $(, $t)*)
+        encode_message_impl!("@", $name $(, $t)*);
 
         impl<$($t),*> ::objc_foundation::INSObject for $name<$($t),*> {
             fn class_name() -> ::objc_foundation::ClassName<$name<$($t),*>> {
@@ -52,4 +52,4 @@ macro_rules! object_impl(
             }
         }
     );
-)
+);

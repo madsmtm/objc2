@@ -43,7 +43,7 @@ pub trait INSString : INSObject {
     }
 }
 
-object_struct!(NSString)
+object_struct!(NSString);
 
 impl INSString for NSString { }
 

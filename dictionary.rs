@@ -84,7 +84,7 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
     }
 }
 
-object_struct!(NSDictionary<K, V>)
+object_struct!(NSDictionary<K, V>);
 
 impl<K: INSObject, V: INSObject> INSDictionary<K, V, Owned> for NSDictionary<K, V> { }
 

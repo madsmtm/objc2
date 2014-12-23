@@ -59,7 +59,7 @@ pub trait INSObject : Message {
     }
 }
 
-object_struct!(NSObject)
+object_struct!(NSObject);
 
 pub struct ClassName<T>(pub &'static str);
 
