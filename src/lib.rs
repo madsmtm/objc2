@@ -275,6 +275,24 @@ mod tests {
     }
 
     #[test]
+    fn test_concrete_block_clone() {
+        fn block_get_string_len(context: &String, _args: ()) -> uint {
+            context.len()
+        }
+
+        let s = "Hello!".into_string();
+        let expected_len = s.len();
+        let block = ConcreteBlock::new(block_get_string_len, s);
+        assert!(block.call(()) == expected_len);
+
+        let cloned = block.clone();
+        assert!(cloned.call(()) == expected_len);
+
+        drop(block);
+        assert!(cloned.call(()) == expected_len);
+    }
+
+    #[test]
     fn test_concrete_block_copy() {
         fn block_get_string_len(context: &String, _args: ()) -> uint {
             context.len()
