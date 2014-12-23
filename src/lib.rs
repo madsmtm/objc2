@@ -164,6 +164,9 @@ unsafe extern fn block_context_dispose<A: BlockArguments, R, C: Clone>(
 
 unsafe extern fn block_context_copy<A: BlockArguments, R, C: Clone>(
         dst: &mut ConcreteBlock<A, R, C>, src: &ConcreteBlock<A, R, C>) {
+    // The src block actually gets memmoved to the destination beforehand,
+    // but we'll set the function pointer, too, to be safe.
+    dst.rust_invoke = src.rust_invoke;
     dst.context = src.context.clone();
 }
 
@@ -270,5 +273,23 @@ mod tests {
         let block = ConcreteBlock::new(block_add_int, 5);
         let result = invoke_add_block(&*block, 6);
         assert!(result == 11);
+    }
+
+    #[test]
+    fn test_concrete_block_copy() {
+        fn block_get_string_len(context: &String, _args: ()) -> uint {
+            context.len()
+        }
+
+        let s = "Hello!".into_string();
+        let expected_len = s.len();
+        let block = ConcreteBlock::new(block_get_string_len, s);
+        assert!(block.call(()) == expected_len);
+
+        let copied = block.copy();
+        assert!(copied.call(()) == expected_len);
+
+        drop(block);
+        assert!(copied.call(()) == expected_len);
     }
 }
