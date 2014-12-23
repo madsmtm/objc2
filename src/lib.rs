@@ -169,9 +169,67 @@ impl<A: BlockArguments, R, C: Clone> BlockDescriptor<ConcreteBlock<A, R, C>> {
 
 #[cfg(test)]
 mod tests {
-    use std::mem;
-    use objc_test_utils::invoke_int_block;
-    use super::ConcreteBlock;
+    use Id;
+    use objc_test_utils;
+    use super::{Block, ConcreteBlock};
+
+    fn get_int_block() -> &'static Block<(), int> {
+        unsafe {
+            &*(objc_test_utils::get_int_block() as *const _)
+        }
+    }
+
+    fn get_int_block_with(i: int) -> Id<Block<(), int>> {
+        unsafe {
+            let ptr = objc_test_utils::get_int_block_with(i);
+            Id::from_retained_ptr(ptr as *mut _)
+        }
+    }
+
+    fn get_add_block() -> &'static Block<(int,), int> {
+        unsafe {
+            &*(objc_test_utils::get_add_block() as *const _)
+        }
+    }
+
+    fn get_add_block_with(i: int) -> Id<Block<(int,), int>> {
+        unsafe {
+            let ptr = objc_test_utils::get_add_block_with(i);
+            Id::from_retained_ptr(ptr as *mut _)
+        }
+    }
+
+    fn invoke_int_block(block: &Block<(), int>) -> int {
+        let ptr = block as *const _ as *const _;
+        unsafe {
+            objc_test_utils::invoke_int_block(ptr)
+        }
+    }
+
+    fn invoke_add_block(block: &Block<(int,), int>, a: int) -> int {
+        let ptr = block as *const _ as *const _;
+        unsafe {
+            objc_test_utils::invoke_add_block(ptr, a)
+        }
+    }
+
+    #[test]
+    fn test_call_block() {
+        let block = get_int_block();
+        assert!(block.call(()) == 7);
+
+        let block = get_int_block_with(13);
+        assert!(block.call(()) == 13);
+    }
+
+    #[test]
+    fn test_call_block_args() {
+        let block = get_add_block();
+        assert!(block.call((2,)) == 9);
+
+        let block = get_add_block_with(13);
+        assert!(block.call((2,)) == 15);
+    }
 
     #[test]
     fn test_create_block() {
@@ -179,10 +237,19 @@ mod tests {
             *context
         }
 
-        let result = unsafe {
-            let block = ConcreteBlock::new(block_get_int, 13i);
-            invoke_int_block(mem::transmute(&block))
-        };
+        let block = ConcreteBlock::new(block_get_int, 13);
+        let result = invoke_int_block(&*block);
         assert!(result == 13);
+    }
+
+    #[test]
+    fn test_create_block_args() {
+        fn block_add_int(context: &int, (a,): (int,)) -> int {
+            a + *context
+        }
+
+        let block = ConcreteBlock::new(block_add_int, 5);
+        let result = invoke_add_block(&*block, 6);
+        assert!(result == 11);
     }
 }
