@@ -113,7 +113,7 @@ impl<A: BlockArguments, R> Message for Block<A, R> { }
 #[repr(C)]
 pub struct ConcreteBlock<A: BlockArguments, R, C: Clone> {
     base: Block<A, R>,
-    descriptor: *const BlockDescriptor<ConcreteBlock<A, R, C>>,
+    descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, C>>>,
     rust_invoke: fn (&C, A) -> R,
     context: C,
 }
@@ -125,13 +125,6 @@ impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
     pub fn new(invoke: fn (&C, A) -> R, context: C) -> ConcreteBlock<A, R, C> {
         let extern_invoke: ConcreteBlockInvoke<A, R, C> =
             BlockArguments::invoke_for_concrete_block();
-        // TODO: don't leak memory here
-        let descriptor_ptr = {
-            let descriptor = box BlockDescriptor::<A, R, C>::new();
-            let ptr = &*descriptor as *const _;
-            unsafe { mem::forget(descriptor) };
-            ptr
-        };
         ConcreteBlock {
             base: Block {
                 isa: &_NSConcreteStackBlock,
@@ -140,7 +133,7 @@ impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
                 _reserved: 0,
                 invoke: unsafe { mem::transmute(extern_invoke) },
             },
-            descriptor: descriptor_ptr,
+            descriptor: box BlockDescriptor::<A, R, C>::new(),
             rust_invoke: invoke,
             context: context,
         }
@@ -161,12 +154,15 @@ impl<A: BlockArguments, R, C: Clone> Deref<Block<A, R>> for ConcreteBlock<A, R, 
 
 unsafe extern fn block_context_dispose<A: BlockArguments, R, C: Clone>(
         block: &mut ConcreteBlock<A, R, C>) {
-    // Read the context from the block and let it drop
-    ptr::read(&block.context);
+    // Read the block onto the stack and let it drop
+    ptr::read(block);
 }
 
 unsafe extern fn block_context_copy<A: BlockArguments, R, C: Clone>(
         dst: &mut ConcreteBlock<A, R, C>, src: &ConcreteBlock<A, R, C>) {
+    // Doesn't seem like the descriptor is supposed to change in this function,
+    // but our descriptor isn't static (that's hard), so we just clone the box.
+    ptr::write(&mut dst.descriptor, src.descriptor.clone());
     // The src block actually gets memmoved to the destination beforehand,
     // but we'll set the function pointer, too, to be safe.
     ptr::write(&mut dst.rust_invoke, src.rust_invoke);
@@ -189,6 +185,14 @@ impl<A: BlockArguments, R, C: Clone> BlockDescriptor<ConcreteBlock<A, R, C>> {
             copy_helper: block_context_copy::<A, R, C>,
             dispose_helper: block_context_dispose::<A, R, C>,
         }
+    }
+}
+
+impl<B> Copy for BlockDescriptor<B> { }
+
+impl<B> Clone for BlockDescriptor<B> {
+    fn clone(&self) -> BlockDescriptor<B> {
+        *self
     }
 }
 
