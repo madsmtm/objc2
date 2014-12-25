@@ -111,7 +111,7 @@ impl<A: BlockArguments, R> Message for Block<A, R> { }
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
 #[repr(C)]
-pub struct ConcreteBlock<A: BlockArguments, R, C: Clone> {
+pub struct ConcreteBlock<A: BlockArguments, R, C> {
     base: Block<A, R>,
     descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, C>>>,
     rust_invoke: fn (&C, A) -> R,
@@ -146,13 +146,13 @@ impl<A: BlockArguments, R, C: Clone> Clone for ConcreteBlock<A, R, C> {
     }
 }
 
-impl<A: BlockArguments, R, C: Clone> Deref<Block<A, R>> for ConcreteBlock<A, R, C> {
+impl<A: BlockArguments, R, C> Deref<Block<A, R>> for ConcreteBlock<A, R, C> {
     fn deref(&self) -> &Block<A, R> {
         &self.base
     }
 }
 
-unsafe extern fn block_context_dispose<A: BlockArguments, R, C: Clone>(
+unsafe extern fn block_context_dispose<A: BlockArguments, R, C>(
         block: &mut ConcreteBlock<A, R, C>) {
     // Read the block onto the stack and let it drop
     ptr::read(block);
