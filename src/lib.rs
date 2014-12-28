@@ -276,7 +276,7 @@ mod tests {
             context.len()
         }
 
-        let s = "Hello!".into_string();
+        let s = String::from_str("Hello!");
         let expected_len = s.len();
         let block = ConcreteBlock::new(block_get_string_len, s);
         assert!(block.call(()) == expected_len);
@@ -294,7 +294,7 @@ mod tests {
             context.len()
         }
 
-        let s = "Hello!".into_string();
+        let s = String::from_str("Hello!");
         let expected_len = s.len();
         let block = ConcreteBlock::new(block_get_string_len, s);
         assert!(block.call(()) == expected_len);
