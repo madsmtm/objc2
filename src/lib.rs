@@ -38,8 +38,8 @@ pub trait BlockArguments {
 macro_rules! block_args_impl(
     ($f:ident $(, $a:ident : $t:ident)*) => (
         impl<$($t),*> BlockArguments for ($($t,)*) {
-            fn call_block<R>(self, block: &Block<($($t,)*), R>) -> R {
-                let invoke: unsafe extern fn(*mut Block<($($t,)*), R> $(, $t)*) -> R = unsafe {
+            fn call_block<R>(self, block: &Block<Self, R>) -> R {
+                let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
                     mem::transmute(block.invoke)
                 };
                 let ($($a,)*) = self;
@@ -50,9 +50,9 @@ macro_rules! block_args_impl(
             }
 
             fn invoke_for_concrete_block<R, X>() ->
-                    ConcreteBlockInvoke<($($t,)*), R, X> {
+                    ConcreteBlockInvoke<Self, R, X> {
                 unsafe extern fn $f<R, X $(, $t)*>(
-                        block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
+                        block_ptr: *mut ConcreteBlock<Self, R, X>
                         $(, $a: $t)*) -> R {
                     let args = ($($a,)*);
                     let block = &*block_ptr;
@@ -114,7 +114,7 @@ impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
     /// Constructs a `ConcreteBlock` with the given invoke function and context.
     /// When the block is called, it will return the value that results from
     /// calling the invoke function with a reference to its context.
-    pub fn new(invoke: fn (&C, A) -> R, context: C) -> ConcreteBlock<A, R, C> {
+    pub fn new(invoke: fn (&C, A) -> R, context: C) -> Self {
         let extern_invoke: ConcreteBlockInvoke<A, R, C> =
             BlockArguments::invoke_for_concrete_block();
         ConcreteBlock {
@@ -125,7 +125,7 @@ impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
                 _reserved: 0,
                 invoke: unsafe { mem::transmute(extern_invoke) },
             },
-            descriptor: box BlockDescriptor::<ConcreteBlock<A, R, C>>::new(),
+            descriptor: box BlockDescriptor::<Self>::new(),
             rust_invoke: invoke,
             context: context,
         }
@@ -145,7 +145,7 @@ impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
 }
 
 impl<A: BlockArguments, R, C: Clone> Clone for ConcreteBlock<A, R, C> {
-    fn clone(&self) -> ConcreteBlock<A, R, C> {
+    fn clone(&self) -> Self {
         ConcreteBlock::new(self.rust_invoke, self.context.clone())
     }
 }
