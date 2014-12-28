@@ -90,9 +90,9 @@ pub struct Block<A: BlockArguments, R> {
     invoke: BlockInvoke<A, R>,
 }
 
-impl<A: BlockArguments, R> Block<A, R> {
+impl<A: BlockArguments, R> Fn<A, R> for Block<A, R> {
     /// Call self with the given arguments.
-    pub fn call(&self, args: A) -> R {
+    extern "rust-call" fn call(&self, args: A) -> R {
         args.call_block(self)
     }
 }
@@ -147,6 +147,12 @@ impl<A: BlockArguments, R, F: Fn<A, R> + Clone> Clone for ConcreteBlock<A, R, F>
 impl<A: BlockArguments, R, F> Deref<Block<A, R>> for ConcreteBlock<A, R, F> {
     fn deref(&self) -> &Block<A, R> {
         &self.base
+    }
+}
+
+impl<A: BlockArguments, R, F: Fn<A, R>> Fn<A, R> for ConcreteBlock<A, R, F> {
+    extern "rust-call" fn call(&self, args: A) -> R {
+        self.closure.call(args)
     }
 }
 
@@ -227,19 +233,19 @@ mod tests {
     #[test]
     fn test_call_block() {
         let block = get_int_block();
-        assert!(block.call(()) == 7);
+        assert!((*block)() == 7);
 
         let block = get_int_block_with(13);
-        assert!(block.call(()) == 13);
+        assert!((*block)() == 13);
     }
 
     #[test]
     fn test_call_block_args() {
         let block = get_add_block();
-        assert!(block.call((2,)) == 9);
+        assert!((*block)(2) == 9);
 
         let block = get_add_block_with(13);
-        assert!(block.call((2,)) == 15);
+        assert!((*block)(2) == 15);
     }
 
     #[test]
@@ -261,9 +267,9 @@ mod tests {
         let s = String::from_str("Hello!");
         let expected_len = s.len();
         let block = ConcreteBlock::new(move |&:| s.len());
-        assert!(block.call(()) == expected_len);
+        assert!((*block)() == expected_len);
 
         let copied = block.copy();
-        assert!(copied.call(()) == expected_len);
+        assert!((*copied)() == expected_len);
     }
 }
