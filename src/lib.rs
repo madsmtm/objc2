@@ -22,8 +22,8 @@ type BlockInvoke<A, R> = unsafe extern fn(*mut Block<A, R>, ...) -> R;
 
 /// An invoke function for a `ConcreteBlock`; this is the raw C function called
 /// by the Objective-C runtime.
-pub type ConcreteBlockInvoke<A, R, C> =
-    unsafe extern fn(*mut ConcreteBlock<A, R, C>, ...) -> R;
+pub type ConcreteBlockInvoke<A, R, F> =
+    unsafe extern fn(*mut ConcreteBlock<A, R, F>, ...) -> R;
 
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments {
@@ -32,7 +32,7 @@ pub trait BlockArguments {
 
     /// Returns an invoke function for a `ConcreteBlock` that takes this type
     /// of arguments.
-    fn invoke_for_concrete_block<R, C>() -> ConcreteBlockInvoke<Self, R, C>;
+    fn invoke_for_concrete_block<R, F: Fn<Self, R>>() -> ConcreteBlockInvoke<Self, R, F>;
 }
 
 macro_rules! block_args_impl(
@@ -49,14 +49,13 @@ macro_rules! block_args_impl(
                 }
             }
 
-            fn invoke_for_concrete_block<R, X>() ->
+            fn invoke_for_concrete_block<R, X: Fn<Self, R>>() ->
                     ConcreteBlockInvoke<Self, R, X> {
-                unsafe extern fn $f<R, X $(, $t)*>(
+                unsafe extern fn $f<R, X: Fn<Self, R> $(, $t)*>(
                         block_ptr: *mut ConcreteBlock<Self, R, X>
                         $(, $a: $t)*) -> R {
-                    let args = ($($a,)*);
                     let block = &*block_ptr;
-                    (block.rust_invoke)(&block.context, args)
+                    (block.closure)($($a),*)
                 }
 
                 unsafe {
@@ -103,19 +102,15 @@ impl<A: BlockArguments, R> Message for Block<A, R> { }
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
 #[repr(C)]
-pub struct ConcreteBlock<A: BlockArguments, R, C> {
+pub struct ConcreteBlock<A: BlockArguments, R, F> {
     base: Block<A, R>,
-    descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, C>>>,
-    rust_invoke: fn (&C, A) -> R,
-    context: C,
+    descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, F>>>,
+    closure: F,
 }
 
-impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
-    /// Constructs a `ConcreteBlock` with the given invoke function and context.
-    /// When the block is called, it will return the value that results from
-    /// calling the invoke function with a reference to its context.
-    pub fn new(invoke: fn (&C, A) -> R, context: C) -> Self {
-        let extern_invoke: ConcreteBlockInvoke<A, R, C> =
+impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<A, R, F> {
+    pub fn new(closure: F) -> Self {
+        let extern_invoke: ConcreteBlockInvoke<A, R, F> =
             BlockArguments::invoke_for_concrete_block();
         ConcreteBlock {
             base: Block {
@@ -126,8 +121,7 @@ impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
                 invoke: unsafe { mem::transmute(extern_invoke) },
             },
             descriptor: box BlockDescriptor::<Self>::new(),
-            rust_invoke: invoke,
-            context: context,
+            closure: closure,
         }
     }
 
@@ -144,13 +138,13 @@ impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
     }
 }
 
-impl<A: BlockArguments, R, C: Clone> Clone for ConcreteBlock<A, R, C> {
+impl<A: BlockArguments, R, F: Fn<A, R> + Clone> Clone for ConcreteBlock<A, R, F> {
     fn clone(&self) -> Self {
-        ConcreteBlock::new(self.rust_invoke, self.context.clone())
+        ConcreteBlock::new(self.closure.clone())
     }
 }
 
-impl<A: BlockArguments, R, C> Deref<Block<A, R>> for ConcreteBlock<A, R, C> {
+impl<A: BlockArguments, R, F> Deref<Block<A, R>> for ConcreteBlock<A, R, F> {
     fn deref(&self) -> &Block<A, R> {
         &self.base
     }
@@ -250,53 +244,23 @@ mod tests {
 
     #[test]
     fn test_create_block() {
-        fn block_get_int(context: &int, _args: ()) -> int {
-            *context
-        }
-
-        let block = ConcreteBlock::new(block_get_int, 13);
+        let block = ConcreteBlock::new(|&:| 13);
         let result = invoke_int_block(&*block);
         assert!(result == 13);
     }
 
     #[test]
     fn test_create_block_args() {
-        fn block_add_int(context: &int, (a,): (int,)) -> int {
-            a + *context
-        }
-
-        let block = ConcreteBlock::new(block_add_int, 5);
+        let block = ConcreteBlock::new(|&: a: int| a + 5);
         let result = invoke_add_block(&*block, 6);
         assert!(result == 11);
     }
 
     #[test]
-    fn test_concrete_block_clone() {
-        fn block_get_string_len(context: &String, _args: ()) -> uint {
-            context.len()
-        }
-
-        let s = String::from_str("Hello!");
-        let expected_len = s.len();
-        let block = ConcreteBlock::new(block_get_string_len, s);
-        assert!(block.call(()) == expected_len);
-
-        let cloned = block.clone();
-        assert!(cloned.call(()) == expected_len);
-
-        drop(block);
-        assert!(cloned.call(()) == expected_len);
-    }
-
-    #[test]
     fn test_concrete_block_copy() {
-        fn block_get_string_len(context: &String, _args: ()) -> uint {
-            context.len()
-        }
-
         let s = String::from_str("Hello!");
         let expected_len = s.len();
-        let block = ConcreteBlock::new(block_get_string_len, s);
+        let block = ConcreteBlock::new(move |&:| s.len());
         assert!(block.call(()) == expected_len);
 
         let copied = block.copy();
