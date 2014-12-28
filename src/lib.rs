@@ -92,14 +92,6 @@ pub struct Block<A: BlockArguments, R> {
 }
 
 impl<A: BlockArguments, R> Block<A, R> {
-    /// Copy self onto the heap.
-    pub fn copy(&self) -> Id<Block<A, R>> {
-        unsafe {
-            let block = msg_send![self copy] as *mut Block<A, R>;
-            Id::from_retained_ptr(block)
-        }
-    }
-
     /// Call self with the given arguments.
     pub fn call(&self, args: A) -> R {
         args.call_block(self)
@@ -136,6 +128,16 @@ impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
             descriptor: box BlockDescriptor::<A, R, C>::new(),
             rust_invoke: invoke,
             context: context,
+        }
+    }
+}
+
+impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
+    /// Copy self onto the heap.
+    pub fn copy(self) -> Id<Block<A, R>> {
+        unsafe {
+            let block = msg_send![&self.base copy] as *mut Block<A, R>;
+            Id::from_retained_ptr(block)
         }
     }
 }
@@ -312,9 +314,6 @@ mod tests {
         assert!(block.call(()) == expected_len);
 
         let copied = block.copy();
-        assert!(copied.call(()) == expected_len);
-
-        drop(block);
         assert!(copied.call(()) == expected_len);
     }
 }
