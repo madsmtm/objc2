@@ -32,7 +32,7 @@ pub trait BlockArguments {
 
     /// Returns an invoke function for a `ConcreteBlock` that takes this type
     /// of arguments.
-    fn invoke_for_concrete_block<R, C: Clone>() -> ConcreteBlockInvoke<Self, R, C>;
+    fn invoke_for_concrete_block<R, C>() -> ConcreteBlockInvoke<Self, R, C>;
 }
 
 macro_rules! block_args_impl(
@@ -49,9 +49,9 @@ macro_rules! block_args_impl(
                 }
             }
 
-            fn invoke_for_concrete_block<R, X: Clone>() ->
+            fn invoke_for_concrete_block<R, X>() ->
                     ConcreteBlockInvoke<($($t,)*), R, X> {
-                unsafe extern fn $f<R, X: Clone $(, $t)*>(
+                unsafe extern fn $f<R, X $(, $t)*>(
                         block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
                         $(, $a: $t)*) -> R {
                     let args = ($($a,)*);
@@ -110,7 +110,7 @@ pub struct ConcreteBlock<A: BlockArguments, R, C> {
     context: C,
 }
 
-impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
+impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
     /// Constructs a `ConcreteBlock` with the given invoke function and context.
     /// When the block is called, it will return the value that results from
     /// calling the invoke function with a reference to its context.
@@ -130,13 +130,15 @@ impl<A: BlockArguments, R, C: Clone> ConcreteBlock<A, R, C> {
             context: context,
         }
     }
-}
 
-impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
     /// Copy self onto the heap.
     pub fn copy(self) -> Id<Block<A, R>> {
         unsafe {
             let block = msg_send![&self.base copy] as *mut Block<A, R>;
+            // At this point, our copy helper has been run so the block will
+            // be moved to the heap and we can forget the original block
+            // because the heap block will drop in our dispose helper.
+            mem::forget(self);
             Id::from_retained_ptr(block)
         }
     }
@@ -160,15 +162,9 @@ unsafe extern fn block_context_dispose<A: BlockArguments, R, C>(
     ptr::read(block);
 }
 
-unsafe extern fn block_context_copy<A: BlockArguments, R, C: Clone>(
-        dst: &mut ConcreteBlock<A, R, C>, src: &ConcreteBlock<A, R, C>) {
-    // Doesn't seem like the descriptor is supposed to change in this function,
-    // but our descriptor isn't static (that's hard), so we just clone the box.
-    ptr::write(&mut dst.descriptor, src.descriptor.clone());
-    // The src block actually gets memmoved to the destination beforehand,
-    // but we'll set the function pointer, too, to be safe.
-    ptr::write(&mut dst.rust_invoke, src.rust_invoke);
-    ptr::write(&mut dst.context, src.context.clone());
+unsafe extern fn block_context_copy<A: BlockArguments, R, C>(
+        _dst: &mut ConcreteBlock<A, R, C>, _src: &ConcreteBlock<A, R, C>) {
+    // The runtime memmoves the src block into the dst block, nothing to do
 }
 
 #[repr(C)]
@@ -179,7 +175,7 @@ struct BlockDescriptor<B> {
     dispose_helper: unsafe extern fn(&mut B),
 }
 
-impl<A: BlockArguments, R, C: Clone> BlockDescriptor<ConcreteBlock<A, R, C>> {
+impl<A: BlockArguments, R, C> BlockDescriptor<ConcreteBlock<A, R, C>> {
     fn new() -> BlockDescriptor<ConcreteBlock<A, R, C>> {
         BlockDescriptor {
             _reserved: 0,
@@ -187,14 +183,6 @@ impl<A: BlockArguments, R, C: Clone> BlockDescriptor<ConcreteBlock<A, R, C>> {
             copy_helper: block_context_copy::<A, R, C>,
             dispose_helper: block_context_dispose::<A, R, C>,
         }
-    }
-}
-
-impl<B> Copy for BlockDescriptor<B> { }
-
-impl<B> Clone for BlockDescriptor<B> {
-    fn clone(&self) -> BlockDescriptor<B> {
-        *self
     }
 }
 
