@@ -125,7 +125,7 @@ impl<A: BlockArguments, R, C> ConcreteBlock<A, R, C> {
                 _reserved: 0,
                 invoke: unsafe { mem::transmute(extern_invoke) },
             },
-            descriptor: box BlockDescriptor::<A, R, C>::new(),
+            descriptor: box BlockDescriptor::<ConcreteBlock<A, R, C>>::new(),
             rust_invoke: invoke,
             context: context,
         }
@@ -156,14 +156,12 @@ impl<A: BlockArguments, R, C> Deref<Block<A, R>> for ConcreteBlock<A, R, C> {
     }
 }
 
-unsafe extern fn block_context_dispose<A: BlockArguments, R, C>(
-        block: &mut ConcreteBlock<A, R, C>) {
+unsafe extern fn block_context_dispose<B>(block: &mut B) {
     // Read the block onto the stack and let it drop
     ptr::read(block);
 }
 
-unsafe extern fn block_context_copy<A: BlockArguments, R, C>(
-        _dst: &mut ConcreteBlock<A, R, C>, _src: &ConcreteBlock<A, R, C>) {
+unsafe extern fn block_context_copy<B>(_dst: &mut B, _src: &B) {
     // The runtime memmoves the src block into the dst block, nothing to do
 }
 
@@ -175,13 +173,13 @@ struct BlockDescriptor<B> {
     dispose_helper: unsafe extern fn(&mut B),
 }
 
-impl<A: BlockArguments, R, C> BlockDescriptor<ConcreteBlock<A, R, C>> {
-    fn new() -> BlockDescriptor<ConcreteBlock<A, R, C>> {
+impl<B> BlockDescriptor<B> {
+    fn new() -> BlockDescriptor<B> {
         BlockDescriptor {
             _reserved: 0,
-            block_size: mem::size_of::<ConcreteBlock<A, R, C>>() as c_ulong,
-            copy_helper: block_context_copy::<A, R, C>,
-            dispose_helper: block_context_dispose::<A, R, C>,
+            block_size: mem::size_of::<B>() as c_ulong,
+            copy_helper: block_context_copy::<B>,
+            dispose_helper: block_context_dispose::<B>,
         }
     }
 }
