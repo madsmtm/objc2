@@ -16,15 +16,6 @@ extern {
     static _NSConcreteStackBlock: Class;
 }
 
-/// An invoke function for a `Block`; this is the raw C function called by the
-/// Objective-C runtime.
-type BlockInvoke<A, R> = unsafe extern fn(*mut Block<A, R>, ...) -> R;
-
-/// An invoke function for a `ConcreteBlock`; this is the raw C function called
-/// by the Objective-C runtime.
-pub type ConcreteBlockInvoke<A, R, F> =
-    unsafe extern fn(*mut ConcreteBlock<A, R, F>, ...) -> R;
-
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments {
     /// Calls the given `Block` with self as the arguments.
@@ -32,7 +23,8 @@ pub trait BlockArguments {
 
     /// Returns an invoke function for a `ConcreteBlock` that takes this type
     /// of arguments.
-    fn invoke_for_concrete_block<R, F: Fn<Self, R>>() -> ConcreteBlockInvoke<Self, R, F>;
+    fn invoke_for_concrete_block<R, F: Fn<Self, R>>() ->
+            unsafe extern fn(*mut ConcreteBlock<F>, ...) -> R;
 }
 
 macro_rules! block_args_impl(
@@ -50,9 +42,9 @@ macro_rules! block_args_impl(
             }
 
             fn invoke_for_concrete_block<R, X: Fn<Self, R>>() ->
-                    ConcreteBlockInvoke<Self, R, X> {
+                    unsafe extern fn(*mut ConcreteBlock<X>, ...) -> R {
                 unsafe extern fn $f<R, X: Fn<Self, R> $(, $t)*>(
-                        block_ptr: *mut ConcreteBlock<Self, R, X>
+                        block_ptr: *mut ConcreteBlock<X>
                         $(, $a: $t)*) -> R {
                     let block = &*block_ptr;
                     (block.closure)($($a),*)
@@ -87,7 +79,7 @@ pub struct Block<A: BlockArguments, R> {
     isa: *const Class,
     flags: c_int,
     _reserved: c_int,
-    invoke: BlockInvoke<A, R>,
+    invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
 }
 
 impl<A: BlockArguments, R> Fn<A, R> for Block<A, R> {
@@ -102,24 +94,25 @@ impl<A: BlockArguments, R> Message for Block<A, R> { }
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
 #[repr(C)]
-pub struct ConcreteBlock<A: BlockArguments, R, F> {
-    base: Block<A, R>,
-    descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, F>>>,
+pub struct ConcreteBlock<F> {
+    isa: *const Class,
+    flags: c_int,
+    _reserved: c_int,
+    invoke: unsafe extern fn(*mut ConcreteBlock<F>, ...),
+    descriptor: Box<BlockDescriptor<ConcreteBlock<F>>>,
     closure: F,
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<A, R, F> {
+impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<F> {
     pub fn new(closure: F) -> Self {
-        let extern_invoke: ConcreteBlockInvoke<A, R, F> =
-            BlockArguments::invoke_for_concrete_block();
+        let extern_invoke =
+            BlockArguments::invoke_for_concrete_block::<R, F>();
         ConcreteBlock {
-            base: Block {
-                isa: &_NSConcreteStackBlock,
-                // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
-                flags: 1 << 25,
-                _reserved: 0,
-                invoke: unsafe { mem::transmute(extern_invoke) },
-            },
+            isa: &_NSConcreteStackBlock,
+            // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
+            flags: 1 << 25,
+            _reserved: 0,
+            invoke: unsafe { mem::transmute(extern_invoke) },
             descriptor: box BlockDescriptor::<Self>::new(),
             closure: closure,
         }
@@ -128,7 +121,7 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<A, R, F> {
     /// Copy self onto the heap.
     pub fn copy(self) -> Id<Block<A, R>> {
         unsafe {
-            let block = msg_send![&self.base copy] as *mut Block<A, R>;
+            let block = msg_send![&*self copy] as *mut Block<A, R>;
             // At this point, our copy helper has been run so the block will
             // be moved to the heap and we can forget the original block
             // because the heap block will drop in our dispose helper.
@@ -138,19 +131,20 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<A, R, F> {
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R> + Clone> Clone for ConcreteBlock<A, R, F> {
+impl<A: BlockArguments, R, F: Fn<A, R> + Clone> Clone for ConcreteBlock<F> {
     fn clone(&self) -> Self {
         ConcreteBlock::new(self.closure.clone())
     }
 }
 
-impl<A: BlockArguments, R, F> Deref<Block<A, R>> for ConcreteBlock<A, R, F> {
+impl<A: BlockArguments, R, F: Fn<A, R>> Deref<Block<A, R>> for ConcreteBlock<F> {
     fn deref(&self) -> &Block<A, R> {
-        &self.base
+        let ptr = self as *const _ as *const Block<A, R>;
+        unsafe { &*ptr }
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> Fn<A, R> for ConcreteBlock<A, R, F> {
+impl<A: BlockArguments, R, F: Fn<A, R>> Fn<A, R> for ConcreteBlock<F> {
     extern "rust-call" fn call(&self, args: A) -> R {
         self.closure.call(args)
     }
