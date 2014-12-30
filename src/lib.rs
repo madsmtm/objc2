@@ -104,6 +104,9 @@ pub struct ConcreteBlock<F> {
 }
 
 impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<F> {
+    /// Constructs a `ConcreteBlock` with the given closure.
+    /// When the block is called, it will return the value that results from
+    /// calling the closure.
     pub fn new(closure: F) -> Self {
         let extern_invoke =
             BlockArguments::invoke_for_concrete_block::<R, F>();
