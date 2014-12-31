@@ -154,12 +154,6 @@ impl<A: BlockArguments, R, F: Fn<A, R>> DerefMut<Block<A, R>> for ConcreteBlock<
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> Fn<A, R> for ConcreteBlock<F> {
-    extern "rust-call" fn call(&self, args: A) -> R {
-        self.closure.call(args)
-    }
-}
-
 unsafe extern fn block_context_dispose<B>(block: &mut B) {
     // Read the block onto the stack and let it drop
     ptr::read(block);
