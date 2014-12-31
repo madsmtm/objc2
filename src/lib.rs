@@ -19,7 +19,7 @@ extern {
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments {
     /// Calls the given `Block` with self as the arguments.
-    fn call_block<R>(self, block: &Block<Self, R>) -> R;
+    fn call_block<R>(self, block: &mut Block<Self, R>) -> R;
 
     /// Returns an invoke function for a `ConcreteBlock` that takes this type
     /// of arguments.
@@ -30,14 +30,13 @@ pub trait BlockArguments {
 macro_rules! block_args_impl(
     ($f:ident $(, $a:ident : $t:ident)*) => (
         impl<$($t),*> BlockArguments for ($($t,)*) {
-            fn call_block<R>(self, block: &Block<Self, R>) -> R {
+            fn call_block<R>(self, block: &mut Block<Self, R>) -> R {
                 let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
                     mem::transmute(block.invoke)
                 };
                 let ($($a,)*) = self;
-                let block_ptr = block as *const _ as *mut _;
                 unsafe {
-                    invoke(block_ptr $(, $a)*)
+                    invoke(block $(, $a)*)
                 }
             }
 
@@ -82,9 +81,10 @@ pub struct Block<A: BlockArguments, R> {
     invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
 }
 
-impl<A: BlockArguments, R> Fn<A, R> for Block<A, R> {
+// TODO: impl FnMut when it's possible
+impl<A: BlockArguments, R> Block<A, R> {
     /// Call self with the given arguments.
-    extern "rust-call" fn call(&self, args: A) -> R {
+    pub fn call(&mut self, args: A) -> R {
         args.call_block(self)
     }
 }
@@ -147,6 +147,13 @@ impl<A: BlockArguments, R, F: Fn<A, R>> Deref<Block<A, R>> for ConcreteBlock<F> 
     }
 }
 
+impl<A: BlockArguments, R, F: Fn<A, R>> DerefMut<Block<A, R>> for ConcreteBlock<F> {
+    fn deref_mut(&mut self) -> &mut Block<A, R> {
+        let ptr = self as *mut _ as *mut Block<A, R>;
+        unsafe { &mut *ptr }
+    }
+}
+
 impl<A: BlockArguments, R, F: Fn<A, R>> Fn<A, R> for ConcreteBlock<F> {
     extern "rust-call" fn call(&self, args: A) -> R {
         self.closure.call(args)
@@ -187,22 +194,10 @@ mod tests {
     use objc_test_utils;
     use super::{Block, ConcreteBlock};
 
-    fn get_int_block() -> &'static Block<(), int> {
-        unsafe {
-            &*(objc_test_utils::get_int_block() as *const _)
-        }
-    }
-
     fn get_int_block_with(i: int) -> Id<Block<(), int>> {
         unsafe {
             let ptr = objc_test_utils::get_int_block_with(i);
             Id::from_retained_ptr(ptr as *mut _)
-        }
-    }
-
-    fn get_add_block() -> &'static Block<(int,), int> {
-        unsafe {
-            &*(objc_test_utils::get_add_block() as *const _)
         }
     }
 
@@ -213,60 +208,54 @@ mod tests {
         }
     }
 
-    fn invoke_int_block(block: &Block<(), int>) -> int {
-        let ptr = block as *const _;
+    fn invoke_int_block(block: &mut Block<(), int>) -> int {
+        let ptr = block as *mut _;
         unsafe {
-            objc_test_utils::invoke_int_block(ptr as *const _)
+            objc_test_utils::invoke_int_block(ptr as *mut _)
         }
     }
 
-    fn invoke_add_block(block: &Block<(int,), int>, a: int) -> int {
-        let ptr = block as *const _;
+    fn invoke_add_block(block: &mut Block<(int,), int>, a: int) -> int {
+        let ptr = block as *mut _;
         unsafe {
-            objc_test_utils::invoke_add_block(ptr as *const _, a)
+            objc_test_utils::invoke_add_block(ptr as *mut _, a)
         }
     }
 
     #[test]
     fn test_call_block() {
-        let block = get_int_block();
-        assert!((*block)() == 7);
-
-        let block = get_int_block_with(13);
-        assert!((*block)() == 13);
+        let mut block = get_int_block_with(13);
+        assert!(block.call(()) == 13);
     }
 
     #[test]
     fn test_call_block_args() {
-        let block = get_add_block();
-        assert!((*block)(2) == 9);
-
-        let block = get_add_block_with(13);
-        assert!((*block)(2) == 15);
+        let mut block = get_add_block_with(13);
+        assert!(block.call((2,)) == 15);
     }
 
     #[test]
     fn test_create_block() {
-        let block = ConcreteBlock::new(|&:| 13);
-        let result = invoke_int_block(&*block);
+        let mut block = ConcreteBlock::new(|&:| 13);
+        let result = invoke_int_block(&mut *block);
         assert!(result == 13);
     }
 
     #[test]
     fn test_create_block_args() {
-        let block = ConcreteBlock::new(|&: a: int| a + 5);
-        let result = invoke_add_block(&*block, 6);
+        let mut block = ConcreteBlock::new(|&: a: int| a + 5);
+        let result = invoke_add_block(&mut *block, 6);
         assert!(result == 11);
     }
 
     #[test]
     fn test_concrete_block_copy() {
         let s = String::from_str("Hello!");
-        let expected_len = s.len();
-        let block = ConcreteBlock::new(move |&:| s.len());
-        assert!((*block)() == expected_len);
+        let expected_len = s.len() as int;
+        let mut block = ConcreteBlock::new(move |&:| s.len() as int);
+        assert!(invoke_int_block(&mut *block) == expected_len);
 
-        let copied = block.copy();
-        assert!((*copied)() == expected_len);
+        let mut copied = block.copy();
+        assert!(invoke_int_block(&mut *copied) == expected_len);
     }
 }
