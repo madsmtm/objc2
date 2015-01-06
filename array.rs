@@ -1,4 +1,6 @@
+use std::cmp::Ordering;
 use std::kinds::marker::ContravariantLifetime;
+use std::ops::Index;
 
 use objc::runtime::Object;
 use objc::{Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
@@ -6,7 +8,7 @@ use objc::{Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
 use {class, INSCopying, INSMutableCopying, INSObject};
 
 #[repr(C)]
-#[deriving(Copy)]
+#[derive(Copy)]
 pub enum NSComparisonResult {
     Ascending  = -1i,
     Same       = 0i,
@@ -16,23 +18,23 @@ pub enum NSComparisonResult {
 impl NSComparisonResult {
     pub fn from_ordering(order: Ordering) -> NSComparisonResult {
         match order {
-            Less => NSComparisonResult::Ascending,
-            Equal => NSComparisonResult::Same,
-            Greater => NSComparisonResult::Descending,
+            Ordering::Less => NSComparisonResult::Ascending,
+            Ordering::Equal => NSComparisonResult::Same,
+            Ordering::Greater => NSComparisonResult::Descending,
         }
     }
 
     pub fn as_ordering(&self) -> Ordering {
         match *self {
-            NSComparisonResult::Ascending => Less,
-            NSComparisonResult::Same => Equal,
-            NSComparisonResult::Descending => Greater,
+            NSComparisonResult::Ascending => Ordering::Less,
+            NSComparisonResult::Same => Ordering::Equal,
+            NSComparisonResult::Descending => Ordering::Greater,
         }
     }
 }
 
 #[repr(C)]
-#[deriving(Copy)]
+#[derive(Copy)]
 pub struct NSRange {
     pub location: uint,
     pub length: uint,
@@ -49,7 +51,9 @@ impl<'a, T> NSEnumerator<'a, T> {
     }
 }
 
-impl<'a, T> Iterator<&'a T> for NSEnumerator<'a, T> {
+impl<'a, T> Iterator for NSEnumerator<'a, T> {
+    type Item = &'a T;
+
     fn next(&mut self) -> Option<&'a T> {
         unsafe {
             let obj = msg_send![self.id nextObject] as *mut T;
@@ -109,12 +113,13 @@ pub trait INSArray<T: INSObject, O: Ownership> : INSObject {
     }
 
     fn objects_in_range(&self, start: uint, len: uint) -> Vec<&T> {
-        let vec: Vec<*mut T> = Vec::from_elem(len, RawPtr::null());
+        let mut vec: Vec<&T> = Vec::with_capacity(len);
         let range = NSRange { location: start, length: len };
         unsafe {
             msg_send![self getObjects:vec.as_ptr() range:range];
-            vec.map_in_place(|ptr| &*ptr)
+            vec.set_len(len);
         }
+        vec
     }
 
     fn to_vec(&self) -> Vec<&T> {
@@ -176,7 +181,9 @@ impl<T> INSCopying<NSSharedArray<T>> for NSArray<T, Shared> { }
 
 impl<T> INSMutableCopying<NSMutableSharedArray<T>> for NSArray<T, Shared> { }
 
-impl<T: INSObject, O: Ownership> Index<uint, T> for NSArray<T, O> {
+impl<T: INSObject, O: Ownership> Index<uint> for NSArray<T, O> {
+    type Output = T;
+
     fn index(&self, index: &uint) -> &T {
         self.object_at(*index)
     }
@@ -268,7 +275,9 @@ impl<T> INSCopying<NSSharedArray<T>> for NSMutableArray<T, Shared> { }
 
 impl<T> INSMutableCopying<NSMutableSharedArray<T>> for NSMutableArray<T, Shared> { }
 
-impl<T: INSObject, O: Ownership> Index<uint, T> for NSMutableArray<T, O> {
+impl<T: INSObject, O: Ownership> Index<uint> for NSMutableArray<T, O> {
+    type Output = T;
+
     fn index(&self, index: &uint) -> &T {
         self.object_at(*index)
     }
@@ -283,7 +292,10 @@ mod tests {
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
 
     fn sample_array(len: uint) -> Id<NSArray<NSObject>> {
-        let vec: Vec<Id<NSObject>> = Vec::from_fn(len, |_| INSObject::new());
+        let mut vec: Vec<Id<NSObject>> = Vec::with_capacity(len);
+        for _ in range(0, len) {
+            vec.push(INSObject::new());
+        }
         INSArray::from_vec(vec)
     }
 

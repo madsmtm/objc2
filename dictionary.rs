@@ -1,4 +1,5 @@
 use std::cmp::min;
+use std::ops::Index;
 
 use objc::{Id, IdVector, IntoIdVector, Owned, Ownership};
 
@@ -49,14 +50,14 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
 
     fn keys_and_objects(&self) -> (Vec<&K>, Vec<&V>) {
         let len = self.count();
-        let keys: Vec<*mut K> = Vec::from_elem(len, RawPtr::null());
-        let objs: Vec<*mut V> = Vec::from_elem(len, RawPtr::null());
+        let mut keys: Vec<&K> = Vec::with_capacity(len);
+        let mut objs: Vec<&V> = Vec::with_capacity(len);
         unsafe {
             msg_send![self getObjects:objs.as_ptr() andKeys:keys.as_ptr()];
-            let keys = keys.map_in_place(|ptr| &*ptr);
-            let objs = objs.map_in_place(|ptr| &*ptr);
-            (keys, objs)
+            keys.set_len(len);
+            objs.set_len(len);
         }
+        (keys, objs)
     }
 
     unsafe fn from_refs<T: INSCopying<K>>(keys: &[&T], vals: &[&V]) -> Id<Self> {
@@ -88,7 +89,9 @@ object_struct!(NSDictionary<K, V>);
 
 impl<K: INSObject, V: INSObject> INSDictionary<K, V, Owned> for NSDictionary<K, V> { }
 
-impl<K: INSObject, V: INSObject> Index<K, V> for NSDictionary<K, V> {
+impl<K: INSObject, V: INSObject> Index<K> for NSDictionary<K, V> {
+    type Output = V;
+
     fn index(&self, index: &K) -> &V {
         self.object_for(index).unwrap()
     }

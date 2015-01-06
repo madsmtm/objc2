@@ -1,7 +1,7 @@
 #![crate_name = "objc_foundation"]
 #![crate_type = "lib"]
 
-#![feature(default_type_params, globs, phase, macro_rules)]
+#![feature(associated_types, default_type_params, globs, phase, macro_rules)]
 
 #[phase(plugin, link)]
 extern crate objc;

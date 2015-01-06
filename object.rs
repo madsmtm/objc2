@@ -93,10 +93,10 @@ mod tests {
     #[test]
     fn test_is_equal() {
         let obj1: Id<NSObject> = INSObject::new();
-        assert!(obj1.is_equal(obj1.deref()));
+        assert!(obj1.is_equal(&*obj1));
 
         let obj2: Id<NSObject> = INSObject::new();
-        assert!(!obj1.is_equal(obj2.deref()));
+        assert!(!obj1.is_equal(&*obj2));
     }
 
     #[test]
@@ -109,7 +109,7 @@ mod tests {
     fn test_description() {
         let obj: Id<NSObject> = INSObject::new();
         let description = obj.description();
-        let expected = format!("<NSObject: {}>", obj.deref() as *const NSObject);
+        let expected = format!("<NSObject: {}>", &*obj as *const NSObject);
         assert!(description.as_str() == expected.as_slice());
     }
 

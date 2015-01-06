@@ -1,3 +1,4 @@
+use std::c_str::ToCStr;
 use std::mem;
 use std::str::from_c_str;
 
