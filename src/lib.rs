@@ -4,6 +4,7 @@
 //! Clang's documentation: http://clang.llvm.org/docs/Block-ABI-Apple.html
 
 use std::mem;
+use std::ops::{Deref, DerefMut};
 use std::ptr;
 use libc::{c_int, c_ulong};
 
@@ -140,14 +141,16 @@ impl<A: BlockArguments, R, F: Fn<A, R> + Clone> Clone for ConcreteBlock<F> {
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> Deref<Block<A, R>> for ConcreteBlock<F> {
+impl<A: BlockArguments, R, F: Fn<A, R>> Deref for ConcreteBlock<F> {
+    type Target = Block<A, R>;
+
     fn deref(&self) -> &Block<A, R> {
         let ptr = self as *const _ as *const Block<A, R>;
         unsafe { &*ptr }
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> DerefMut<Block<A, R>> for ConcreteBlock<F> {
+impl<A: BlockArguments, R, F: Fn<A, R>> DerefMut for ConcreteBlock<F> {
     fn deref_mut(&mut self) -> &mut Block<A, R> {
         let ptr = self as *mut _ as *mut Block<A, R>;
         unsafe { &mut *ptr }
