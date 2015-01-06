@@ -1,6 +1,8 @@
 use std::fmt;
 use std::hash;
 use std::mem;
+use std::ops::{Deref, DerefMut};
+use std::ptr;
 
 use {Message, ToMessage};
 
@@ -113,7 +115,7 @@ impl<T: Message> Clone for Id<T, Shared> {
 impl<T: Message, O: Ownership> Drop for Id<T, O> {
     fn drop(&mut self) {
         if !self.ptr.is_null() {
-            let ptr = mem::replace(&mut self.ptr, RawPtr::null());
+            let ptr = mem::replace(&mut self.ptr, ptr::null_mut());
             unsafe {
                 msg_send![ptr release];
             }
@@ -121,13 +123,15 @@ impl<T: Message, O: Ownership> Drop for Id<T, O> {
     }
 }
 
-impl<T: Message, O: Ownership> Deref<T> for Id<T, O> {
+impl<T: Message, O: Ownership> Deref for Id<T, O> {
+    type Target = T;
+
     fn deref(&self) -> &T {
         unsafe { &*self.ptr }
     }
 }
 
-impl<T: Message> DerefMut<T> for Id<T, Owned> {
+impl<T: Message> DerefMut for Id<T, Owned> {
     fn deref_mut(&mut self) -> &mut T {
         unsafe { &mut *self.ptr }
     }
