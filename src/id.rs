@@ -165,7 +165,7 @@ impl<T: Message + fmt::Show, O: Ownership> fmt::Show for Id<T, O> {
 pub type ShareId<T> = Id<T, Shared>;
 
 /// Extension methods for slices containing `Id`s.
-pub trait IdVector<T> for Sized? {
+pub trait IdVector<T> {
     /// Convert a slice of `Id`s into a slice of references
     fn as_refs_slice(&self) -> &[&T];
 }
