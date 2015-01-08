@@ -1,4 +1,4 @@
-use std::c_str::ToCStr;
+use std::ffi::CString;
 use std::mem;
 use std::str::from_c_str;
 
@@ -25,12 +25,13 @@ pub trait INSValue<T: Copy + Encode> : INSObject {
 
     fn from_value(value: &T) -> Id<Self> {
         let cls = class::<Self>();
-        let encoding = encode::<T>();
-        encoding.with_c_str(|encoding| unsafe {
+        let encoding = CString::from_slice(encode::<T>().as_bytes());
+        unsafe {
             let obj = msg_send![cls alloc];
-            let obj = msg_send![obj initWithBytes:value objCType:encoding];
+            let obj = msg_send![obj initWithBytes:value
+                                         objCType:encoding.as_ptr()];
             Id::from_retained_ptr(obj as *mut Self)
-        })
+        }
     }
 }
 

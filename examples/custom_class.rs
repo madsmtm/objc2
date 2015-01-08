@@ -1,8 +1,8 @@
 #![feature(phase)]
 
-#[phase(plugin, link)]
+#[macro_use]
 extern crate objc;
-#[phase(plugin, link)]
+#[macro_use]
 extern crate objc_foundation;
 
 use objc::{ClassDecl, Id};

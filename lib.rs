@@ -1,9 +1,7 @@
 #![crate_name = "objc_foundation"]
 #![crate_type = "lib"]
 
-#![feature(associated_types, default_type_params, globs, phase, macro_rules)]
-
-#[phase(plugin, link)]
+#[macro_use]
 extern crate objc;
 
 pub use self::array::{
