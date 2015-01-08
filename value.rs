@@ -1,6 +1,6 @@
-use std::ffi::CString;
+use std::ffi::{CString, self};
 use std::mem;
-use std::str::from_c_str;
+use std::str;
 
 use objc::{encode, Encode, Id};
 
@@ -19,7 +19,9 @@ pub trait INSValue<T: Copy + Encode> : INSObject {
     fn encoding(&self) -> &str {
         unsafe {
             let result = msg_send![self objCType] as *const i8;
-            from_c_str(result)
+            let bytes = ffi::c_str_to_bytes(&result);
+            let s = str::from_utf8(bytes).unwrap();
+            mem::transmute(s)
         }
     }
 

@@ -1,4 +1,6 @@
-use std::str::from_c_str;
+use std::ffi;
+use std::mem;
+use std::str;
 
 use objc::Id;
 
@@ -25,8 +27,10 @@ pub trait INSMutableCopying<T: INSObject> : INSObject {
 pub trait INSString : INSObject {
     fn as_str(&self) -> &str {
         unsafe {
-            let result = msg_send![self UTF8String];
-            from_c_str(result as *const i8)
+            let result = msg_send![self UTF8String] as *const i8;
+            let bytes = ffi::c_str_to_bytes(&result);
+            let s = str::from_utf8(bytes).unwrap();
+            mem::transmute(s)
         }
     }
 
