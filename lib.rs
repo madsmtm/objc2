@@ -14,6 +14,7 @@ pub use self::object::{class, ClassName, INSObject, NSObject};
 pub use self::string::{INSCopying, INSMutableCopying, INSString, NSString};
 pub use self::value::{INSValue, NSValue};
 
+#[macro_use]
 mod macros;
 
 mod array;
@@ -21,8 +22,3 @@ mod dictionary;
 mod object;
 mod string;
 mod value;
-
-// Shim to re-export under the objc_foundation:: path for macros
-mod objc_foundation {
-    pub use super::*;
-}

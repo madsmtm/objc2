@@ -1,7 +1,5 @@
-#![macro_escape]
-
 #[macro_export]
-macro_rules! object_struct(
+macro_rules! object_struct {
     ($name:ident<$($t:ident),+>) => (
         object_struct!($name, $($t),+);
     );
@@ -11,10 +9,10 @@ macro_rules! object_struct(
 
         object_impl!($name $(,$t)*);
     );
-);
+}
 
 #[macro_export]
-macro_rules! object_impl(
+macro_rules! object_impl {
     ($name:ident<$($t:ident),+>) => (
         object_impl!($name, $($t),+);
     );
@@ -23,15 +21,15 @@ macro_rules! object_impl(
 
         encode_message_impl!("@", $name $(, $t)*);
 
-        impl<$($t),*> ::objc_foundation::INSObject for $name<$($t),*> {
-            fn class_name() -> ::objc_foundation::ClassName<$name<$($t),*>> {
-                ::objc_foundation::ClassName(stringify!($name))
+        impl<$($t),*> $crate::INSObject for $name<$($t),*> {
+            fn class_name() -> $crate::ClassName<$name<$($t),*>> {
+                $crate::ClassName(stringify!($name))
             }
         }
 
         impl<$($t),*> ::std::cmp::PartialEq for $name<$($t),*> {
             fn eq(&self, other: &$name<$($t),*>) -> bool {
-                use objc_foundation::INSObject;
+                use $crate::INSObject;
                 self.is_equal(other)
             }
         }
@@ -40,16 +38,16 @@ macro_rules! object_impl(
 
         impl<$($t),*> ::std::hash::Hash for $name<$($t),*> {
             fn hash(&self, state: &mut ::std::hash::sip::SipState) {
-                use objc_foundation::INSObject;
+                use $crate::INSObject;
                 self.hash_code().hash(state);
             }
         }
 
         impl<$($t),*> ::std::fmt::Show for $name<$($t),*> {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-                use objc_foundation::{INSObject, INSString};
+                use $crate::{INSObject, INSString};
                 self.description().as_str().fmt(f)
             }
         }
     );
-);
+}
