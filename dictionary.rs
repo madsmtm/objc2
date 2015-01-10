@@ -8,42 +8,42 @@ use {class, INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
 pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
     fn count(&self) -> uint {
         let result = unsafe {
-            msg_send![self count]
+            msg_send![self, count]
         };
         result as uint
     }
 
     fn object_for(&self, key: &K) -> Option<&V> {
         unsafe {
-            let obj = msg_send![self objectForKey:key] as *mut V;
+            let obj = msg_send![self, objectForKey:key] as *mut V;
             obj.as_ref()
         }
     }
 
     fn all_keys(&self) -> Vec<&K> {
         let keys = unsafe {
-            &*(msg_send![self allKeys] as *mut NSArray<K>)
+            &*(msg_send![self, allKeys] as *mut NSArray<K>)
         };
         keys.to_vec()
     }
 
     fn all_values(&self) -> Vec<&V> {
         let vals = unsafe {
-            &*(msg_send![self allValues] as *mut NSArray<V>)
+            &*(msg_send![self, allValues] as *mut NSArray<V>)
         };
         vals.to_vec()
     }
 
     fn key_enumerator(&self) -> NSEnumerator<K> {
         unsafe {
-            let result = msg_send![self keyEnumerator];
+            let result = msg_send![self, keyEnumerator];
             NSEnumerator::from_ptr(result)
         }
     }
 
     fn object_enumerator(&self) -> NSEnumerator<V> {
         unsafe {
-            let result = msg_send![self objectEnumerator];
+            let result = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)
         }
     }
@@ -53,7 +53,7 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
         let mut keys: Vec<&K> = Vec::with_capacity(len);
         let mut objs: Vec<&V> = Vec::with_capacity(len);
         unsafe {
-            msg_send![self getObjects:objs.as_ptr() andKeys:keys.as_ptr()];
+            msg_send![self, getObjects:objs.as_ptr() andKeys:keys.as_ptr()];
             keys.set_len(len);
             objs.set_len(len);
         }
@@ -63,10 +63,10 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
     unsafe fn from_refs<T: INSCopying<K>>(keys: &[&T], vals: &[&V]) -> Id<Self> {
         let cls = class::<Self>();
         let count = min(keys.len(), vals.len());
-        let obj = msg_send![cls alloc];
-        let obj = msg_send![obj initWithObjects:vals.as_ptr()
-                                        forKeys:keys.as_ptr()
-                                          count:count];
+        let obj = msg_send![cls, alloc];
+        let obj = msg_send![obj, initWithObjects:vals.as_ptr()
+                                         forKeys:keys.as_ptr()
+                                           count:count];
         Id::from_retained_ptr(obj as *mut Self)
     }
 

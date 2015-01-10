@@ -13,28 +13,28 @@ pub trait INSObject : Message {
 
     fn hash_code(&self) -> uint {
         let result = unsafe {
-            msg_send![self hash]
+            msg_send![self, hash]
         };
         result as uint
     }
 
     fn is_equal<T: INSObject>(&self, other: &T) -> bool {
         let result = unsafe {
-            msg_send![self isEqual:other]
+            msg_send![self, isEqual:other]
         };
         !result.is_null()
     }
 
     fn description(&self) -> Id<NSString> {
         unsafe {
-            let result = msg_send![self description];
+            let result = msg_send![self, description];
             Id::from_ptr(result as *mut NSString)
         }
     }
 
     fn is_kind_of(&self, cls: &Class) -> bool {
         let result = unsafe {
-            msg_send![self isKindOfClass:cls]
+            msg_send![self, isKindOfClass:cls]
         };
         !result.is_null()
     }
@@ -52,8 +52,8 @@ pub trait INSObject : Message {
     fn new() -> Id<Self> {
         let cls = class::<Self>();
         unsafe {
-            let obj = msg_send![cls alloc];
-            let obj = msg_send![obj init];
+            let obj = msg_send![cls, alloc];
+            let obj = msg_send![obj, init];
             Id::from_retained_ptr(obj as *mut Self)
         }
     }

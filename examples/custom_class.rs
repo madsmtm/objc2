@@ -59,7 +59,7 @@ fn main() {
     println!("Number: {}", obj.number());
 
     unsafe {
-        msg_send![obj setNumber:12u];
+        msg_send![obj, setNumber:12u];
     }
     println!("Number: {}", obj.number());
 }

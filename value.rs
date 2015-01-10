@@ -11,14 +11,14 @@ pub trait INSValue<T: Copy + Encode> : INSObject {
         assert!(self.encoding() == encode::<T>());
         unsafe {
             let value = mem::uninitialized::<T>();
-            msg_send![self getValue:&value];
+            msg_send![self, getValue:&value];
             value
         }
     }
 
     fn encoding(&self) -> &str {
         unsafe {
-            let result = msg_send![self objCType] as *const i8;
+            let result = msg_send![self, objCType] as *const i8;
             let bytes = ffi::c_str_to_bytes(&result);
             let s = str::from_utf8(bytes).unwrap();
             mem::transmute(s)
@@ -29,9 +29,9 @@ pub trait INSValue<T: Copy + Encode> : INSObject {
         let cls = class::<Self>();
         let encoding = CString::from_slice(encode::<T>().as_bytes());
         unsafe {
-            let obj = msg_send![cls alloc];
-            let obj = msg_send![obj initWithBytes:value
-                                         objCType:encoding.as_ptr()];
+            let obj = msg_send![cls, alloc];
+            let obj = msg_send![obj, initWithBytes:value
+                                          objCType:encoding.as_ptr()];
             Id::from_retained_ptr(obj as *mut Self)
         }
     }
