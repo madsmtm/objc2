@@ -24,7 +24,7 @@ pub struct WeakId<T> {
 impl<T: Message> WeakId<T> {
     /// Construct a new `WeakId` referencing the given `ShareId`.
     pub fn new(obj: &ShareId<T>) -> WeakId<T> {
-        let ptr = box UnsafeCell::new(ptr::null());
+        let ptr = Box::new(UnsafeCell::new(ptr::null()));
         unsafe {
             let loc = ptr.get() as *mut *mut Object;
             objc_storeWeak(loc, obj.as_ptr() as *mut Object);

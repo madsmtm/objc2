@@ -1,10 +1,21 @@
 use std::fmt;
-use std::hash;
+use std::hash::{Hash, Hasher};
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr;
 
 use {Message, ToMessage};
+use runtime::{Object, Sel, self};
+
+unsafe fn retain<T: Message>(ptr: *mut T) {
+    let sel = Sel::register("retain");
+    runtime::objc_msgSend(ptr as *mut Object, sel);
+}
+
+unsafe fn release<T: Message>(ptr: *mut T) {
+    let sel = Sel::register("release");
+    runtime::objc_msgSend(ptr as *mut Object, sel);
+}
 
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
@@ -66,7 +77,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// the caller must ensure the ownership is correct.
     pub unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Id<T, O>> {
         // objc_msgSend is a no-op on null pointers
-        msg_send![ptr retain];
+        retain(ptr);
         Id::maybe_from_retained_ptr(ptr)
     }
 
@@ -105,7 +116,7 @@ impl<T: Message> Clone for Id<T, Shared> {
     fn clone(&self) -> ShareId<T> {
         let ptr = self.ptr;
         unsafe {
-            msg_send![ptr retain];
+            retain(ptr);
         }
         Id { ptr: ptr }
     }
@@ -117,7 +128,7 @@ impl<T: Message, O: Ownership> Drop for Id<T, O> {
         if !self.ptr.is_null() {
             let ptr = mem::replace(&mut self.ptr, ptr::null_mut());
             unsafe {
-                msg_send![ptr release];
+                release(ptr);
             }
         }
     }
@@ -149,8 +160,8 @@ impl<T: Message + PartialEq, O: Ownership> PartialEq for Id<T, O> {
 
 impl<T: Message + Eq, O: Ownership> Eq for Id<T, O> { }
 
-impl<T: Message + hash::Hash, O: Ownership> hash::Hash for Id<T, O> {
-    fn hash(&self, state: &mut hash::sip::SipState) {
+impl<H: Hasher, T: Message + Hash<H>, O: Ownership> Hash<H> for Id<T, O> {
+    fn hash(&self, state: &mut H) {
         self.deref().hash(state)
     }
 }
