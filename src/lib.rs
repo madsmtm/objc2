@@ -93,7 +93,7 @@ impl<A: BlockArguments, R> Block<A, R> {
     }
 }
 
-impl<A: BlockArguments, R> Message for Block<A, R> { }
+unsafe impl<A: BlockArguments, R> Message for Block<A, R> { }
 
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
