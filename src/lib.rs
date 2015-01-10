@@ -8,7 +8,7 @@ use std::ops::{Deref, DerefMut};
 use std::ptr;
 use libc::{c_int, c_ulong};
 
-use runtime::{Class, Object, Sel, self};
+use runtime::Class;
 use {Id, Message};
 
 #[allow(improper_ctypes)]
@@ -127,17 +127,12 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<A, R, F> {
     /// Copy self onto the heap.
     pub fn copy(self) -> Id<Block<A, R>> {
         unsafe {
-            let mut block = self;
-            let copied = {
-                let sel = Sel::register("copy");
-                let ptr = &mut block.base as *mut _ as *mut Object;
-                runtime::objc_msgSend(ptr, sel) as *mut Block<A, R>
-            };
+            let block = msg_send![&self.base, copy] as *mut Block<A, R>;
             // At this point, our copy helper has been run so the block will
             // be moved to the heap and we can forget the original block
             // because the heap block will drop in our dispose helper.
-            mem::forget(block);
-            Id::from_retained_ptr(copied)
+            mem::forget(self);
+            Id::from_retained_ptr(block)
         }
     }
 }
