@@ -191,28 +191,28 @@ mod tests {
     use objc_test_utils;
     use super::{Block, ConcreteBlock};
 
-    fn get_int_block_with(i: int) -> Id<Block<(), int>> {
+    fn get_int_block_with(i: i32) -> Id<Block<(), i32>> {
         unsafe {
             let ptr = objc_test_utils::get_int_block_with(i);
             Id::from_retained_ptr(ptr as *mut _)
         }
     }
 
-    fn get_add_block_with(i: int) -> Id<Block<(int,), int>> {
+    fn get_add_block_with(i: i32) -> Id<Block<(i32,), i32>> {
         unsafe {
             let ptr = objc_test_utils::get_add_block_with(i);
             Id::from_retained_ptr(ptr as *mut _)
         }
     }
 
-    fn invoke_int_block(block: &mut Block<(), int>) -> int {
+    fn invoke_int_block(block: &mut Block<(), i32>) -> i32 {
         let ptr = block as *mut _;
         unsafe {
             objc_test_utils::invoke_int_block(ptr as *mut _)
         }
     }
 
-    fn invoke_add_block(block: &mut Block<(int,), int>, a: int) -> int {
+    fn invoke_add_block(block: &mut Block<(i32,), i32>, a: i32) -> i32 {
         let ptr = block as *mut _;
         unsafe {
             objc_test_utils::invoke_add_block(ptr as *mut _, a)
@@ -240,7 +240,7 @@ mod tests {
 
     #[test]
     fn test_create_block_args() {
-        let mut block = ConcreteBlock::new(|&: a: int| a + 5);
+        let mut block = ConcreteBlock::new(|&: a: i32| a + 5);
         let result = invoke_add_block(&mut *block, 6);
         assert!(result == 11);
     }
@@ -248,8 +248,8 @@ mod tests {
     #[test]
     fn test_concrete_block_copy() {
         let s = String::from_str("Hello!");
-        let expected_len = s.len() as int;
-        let mut block = ConcreteBlock::new(move |&:| s.len() as int);
+        let expected_len = s.len() as i32;
+        let mut block = ConcreteBlock::new(move |&:| s.len() as i32);
         assert!(invoke_int_block(&mut *block) == expected_len);
 
         let mut copied = block.copy();
