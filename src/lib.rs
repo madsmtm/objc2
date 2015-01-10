@@ -8,7 +8,7 @@ use std::ops::{Deref, DerefMut};
 use std::ptr;
 use libc::{c_int, c_ulong};
 
-use runtime::Class;
+use runtime::{Class, Object, Sel, self};
 use {Id, Message};
 
 #[allow(improper_ctypes)]
@@ -29,7 +29,10 @@ pub trait BlockArguments {
 }
 
 macro_rules! block_args_impl(
-    ($f:ident $(, $a:ident : $t:ident)*) => (
+    ($f:ident) => (
+        block_args_impl!($f,);
+    );
+    ($f:ident, $($a:ident : $t:ident),*) => (
         impl<$($t),*> BlockArguments for ($($t,)*) {
             fn call_block<R>(self, block: &mut Block<Self, R>) -> R {
                 let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
@@ -117,7 +120,7 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<F> {
             flags: 1 << 25,
             _reserved: 0,
             invoke: unsafe { mem::transmute(extern_invoke) },
-            descriptor: box BlockDescriptor::<Self>::new(),
+            descriptor: Box::new(BlockDescriptor::<Self>::new()),
             closure: closure,
         }
     }
@@ -125,12 +128,17 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<F> {
     /// Copy self onto the heap.
     pub fn copy(self) -> Id<Block<A, R>> {
         unsafe {
-            let block = msg_send![&*self copy] as *mut Block<A, R>;
+            let mut block = self;
+            let copied = {
+                let sel = Sel::register("copy");
+                let ptr = &mut *block as *mut Block<A, R> as *mut Object;
+                runtime::objc_msgSend(ptr, sel) as *mut Block<A, R>
+            };
             // At this point, our copy helper has been run so the block will
             // be moved to the heap and we can forget the original block
             // because the heap block will drop in our dispose helper.
-            mem::forget(self);
-            Id::from_retained_ptr(block)
+            mem::forget(block);
+            Id::from_retained_ptr(copied)
         }
     }
 }
