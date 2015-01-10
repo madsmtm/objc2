@@ -25,7 +25,7 @@ pub trait BlockArguments {
     /// Returns an invoke function for a `ConcreteBlock` that takes this type
     /// of arguments.
     fn invoke_for_concrete_block<R, F: Fn<Self, R>>() ->
-            unsafe extern fn(*mut ConcreteBlock<F>, ...) -> R;
+            unsafe extern fn(*mut ConcreteBlock<Self, R, F>, ...) -> R;
 }
 
 macro_rules! block_args_impl(
@@ -45,9 +45,9 @@ macro_rules! block_args_impl(
             }
 
             fn invoke_for_concrete_block<R, X: Fn<Self, R>>() ->
-                    unsafe extern fn(*mut ConcreteBlock<X>, ...) -> R {
+                    unsafe extern fn(*mut ConcreteBlock<Self, R, X>, ...) -> R {
                 unsafe extern fn $f<R, X: Fn<Self, R> $(, $t)*>(
-                        block_ptr: *mut ConcreteBlock<X>
+                        block_ptr: *mut ConcreteBlock<Self, R, X>
                         $(, $a: $t)*) -> R {
                     let block = &*block_ptr;
                     (block.closure)($($a),*)
@@ -98,16 +98,13 @@ impl<A: BlockArguments, R> Message for Block<A, R> { }
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
 #[repr(C)]
-pub struct ConcreteBlock<F> {
-    isa: *const Class,
-    flags: c_int,
-    _reserved: c_int,
-    invoke: unsafe extern fn(*mut ConcreteBlock<F>, ...),
-    descriptor: Box<BlockDescriptor<ConcreteBlock<F>>>,
+pub struct ConcreteBlock<A: BlockArguments, R, F> {
+    base: Block<A, R>,
+    descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, F>>>,
     closure: F,
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<F> {
+impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<A, R, F> {
     /// Constructs a `ConcreteBlock` with the given closure.
     /// When the block is called, it will return the value that results from
     /// calling the closure.
@@ -115,11 +112,13 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<F> {
         let extern_invoke =
             BlockArguments::invoke_for_concrete_block::<R, F>();
         ConcreteBlock {
-            isa: &_NSConcreteStackBlock,
-            // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
-            flags: 1 << 25,
-            _reserved: 0,
-            invoke: unsafe { mem::transmute(extern_invoke) },
+            base: Block {
+                isa: &_NSConcreteStackBlock,
+                // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
+                flags: 1 << 25,
+                _reserved: 0,
+                invoke: unsafe { mem::transmute(extern_invoke) },
+            },
             descriptor: Box::new(BlockDescriptor::<Self>::new()),
             closure: closure,
         }
@@ -131,7 +130,7 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<F> {
             let mut block = self;
             let copied = {
                 let sel = Sel::register("copy");
-                let ptr = &mut *block as *mut Block<A, R> as *mut Object;
+                let ptr = &mut block.base as *mut _ as *mut Object;
                 runtime::objc_msgSend(ptr, sel) as *mut Block<A, R>
             };
             // At this point, our copy helper has been run so the block will
@@ -143,25 +142,23 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<F> {
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R> + Clone> Clone for ConcreteBlock<F> {
+impl<A: BlockArguments, R, F: Fn<A, R> + Clone> Clone for ConcreteBlock<A, R, F> {
     fn clone(&self) -> Self {
         ConcreteBlock::new(self.closure.clone())
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> Deref for ConcreteBlock<F> {
+impl<A: BlockArguments, R, F: Fn<A, R>> Deref for ConcreteBlock<A, R, F> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Block<A, R> {
-        let ptr = self as *const _ as *const Block<A, R>;
-        unsafe { &*ptr }
+        &self.base
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> DerefMut for ConcreteBlock<F> {
+impl<A: BlockArguments, R, F: Fn<A, R>> DerefMut for ConcreteBlock<A, R, F> {
     fn deref_mut(&mut self) -> &mut Block<A, R> {
-        let ptr = self as *mut _ as *mut Block<A, R>;
-        unsafe { &mut *ptr }
+        &mut self.base
     }
 }
 
