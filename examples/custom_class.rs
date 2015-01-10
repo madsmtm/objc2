@@ -10,16 +10,16 @@ use objc_foundation::{class, INSObject, NSObject};
 object_struct!(MYObject);
 
 impl MYObject {
-    fn number(&self) -> uint {
+    fn number(&self) -> u32 {
         let obj = unsafe {
             &*(self as *const _ as *const Object)
         };
         unsafe {
-            *obj.get_ivar::<uint>("_number")
+            *obj.get_ivar::<u32>("_number")
         }
     }
 
-    fn set_number(&mut self, number: uint) {
+    fn set_number(&mut self, number: u32) {
         let obj = unsafe {
             &mut *(self as *mut _ as *mut Object)
         };
@@ -32,14 +32,14 @@ impl MYObject {
         let superclass = class::<NSObject>();
         let mut decl = ClassDecl::new(superclass, "MYObject").unwrap();
 
-        decl.add_ivar::<uint>("_number");
+        decl.add_ivar::<u32>("_number");
         decl.add_method(method!(
-            (&mut MYObject)this, setNumber:(uint)number; {
+            (&mut MYObject)this, setNumber:(u32)number; {
                 this.set_number(number);
             }
         ));
         decl.add_method(method!(
-            (&MYObject)this, number -> uint, {
+            (&MYObject)this, number -> u32, {
                 this.number()
             }
         ));
@@ -57,7 +57,7 @@ fn main() {
     println!("Number: {}", obj.number());
 
     unsafe {
-        msg_send![obj, setNumber:12u];
+        msg_send![obj, setNumber:12u32];
     }
     println!("Number: {}", obj.number());
 }
