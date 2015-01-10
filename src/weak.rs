@@ -63,8 +63,8 @@ mod tests {
     fn test_weak() {
         let cls = Class::get("NSObject").unwrap();
         let obj = unsafe {
-            let obj = msg_send![cls alloc];
-            let obj = msg_send![obj init];
+            let obj = msg_send![cls, alloc];
+            let obj = msg_send![obj, init];
             Id::from_retained_ptr(obj)
         };
         let obj = obj.share();
