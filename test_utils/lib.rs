@@ -1,6 +1,7 @@
 #![crate_name = "objc_test_utils"]
 #![crate_type = "lib"]
 
+#[allow(unstable)]
 extern crate libc;
 
 use libc::c_void;
