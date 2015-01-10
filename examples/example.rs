@@ -8,16 +8,16 @@ use objc_foundation::{NSArray, NSDictionary, NSObject, NSString,
 fn main() {
     // Create and compare NSObjects
     let obj: Id<NSObject> = INSObject::new();
-    println!("{} == {}? {}", obj, obj, obj == obj);
+    println!("{:?} == {:?}? {:?}", obj, obj, obj == obj);
 
     let obj2: Id<NSObject> = INSObject::new();
-    println!("{} == {}? {}", obj, obj2, obj == obj2);
+    println!("{:?} == {:?}? {:?}", obj, obj2, obj == obj2);
 
     // Create an NSArray from a Vec
     let objs = vec![obj, obj2];
     let array: Id<NSArray<NSObject>> = INSArray::from_vec(objs);
     for obj in array.object_enumerator() {
-        println!("{}", obj);
+        println!("{:?}", obj);
     }
     println!("{}", array.count());
 
@@ -36,6 +36,6 @@ fn main() {
     let vals = vec![obj];
     let dict: Id<NSDictionary<NSString, NSObject>> =
         INSDictionary::from_keys_and_objects(keys, vals);
-    println!("{}", dict.object_for(&*string));
+    println!("{:?}", dict.object_for(&*string));
     println!("{}", dict.count());
 }

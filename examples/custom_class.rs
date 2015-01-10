@@ -1,5 +1,3 @@
-#![feature(phase)]
-
 #[macro_use]
 extern crate objc;
 #[macro_use]
@@ -41,7 +39,7 @@ impl MYObject {
             }
         ));
         decl.add_method(method!(
-            (&MYObject)this, number -> uint {
+            (&MYObject)this, number -> uint, {
                 this.number()
             }
         ));
@@ -53,7 +51,7 @@ impl MYObject {
 fn main() {
     MYObject::register();
     let mut obj: Id<MYObject> = INSObject::new();
-    println!("{}", obj);
+    println!("{:?}", obj);
 
     obj.set_number(7);
     println!("Number: {}", obj.number());
