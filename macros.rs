@@ -1,9 +1,12 @@
 #[macro_export]
 macro_rules! object_struct {
+    ($name:ident) => (
+        object_struct!($name,);
+    );
     ($name:ident<$($t:ident),+>) => (
         object_struct!($name, $($t),+);
     );
-    ($name:ident $(,$t:ident)*) => (
+    ($name:ident, $($t:ident),*) => (
         #[allow(missing_copy_implementations)]
         pub enum $name<$($t),*> { }
 
@@ -13,10 +16,13 @@ macro_rules! object_struct {
 
 #[macro_export]
 macro_rules! object_impl {
+    ($name:ident) => (
+        object_impl!($name,);
+    );
     ($name:ident<$($t:ident),+>) => (
         object_impl!($name, $($t),+);
     );
-    ($name:ident $(,$t:ident)*) => (
+    ($name:ident, $($t:ident),*) => (
         impl<$($t),*> ::objc::Message for $name<$($t),*> { }
 
         encode_message_impl!("@", $name $(, $t)*);
@@ -36,8 +42,9 @@ macro_rules! object_impl {
 
         impl<$($t),*> ::std::cmp::Eq for $name<$($t),*> { }
 
-        impl<$($t),*> ::std::hash::Hash for $name<$($t),*> {
-            fn hash(&self, state: &mut ::std::hash::sip::SipState) {
+        impl<H: ::std::hash::Hasher + ::std::hash::Writer, $($t),*>
+                ::std::hash::Hash<H> for $name<$($t),*> {
+            fn hash(&self, state: &mut H) {
                 use $crate::INSObject;
                 self.hash_code().hash(state);
             }

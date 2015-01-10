@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use std::kinds::marker::ContravariantLifetime;
+use std::marker::ContravariantLifetime;
 use std::ops::Index;
 
 use objc::runtime::Object;

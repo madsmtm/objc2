@@ -109,7 +109,7 @@ mod tests {
     fn test_description() {
         let obj: Id<NSObject> = INSObject::new();
         let description = obj.description();
-        let expected = format!("<NSObject: {}>", &*obj as *const NSObject);
+        let expected = format!("<NSObject: {:?}>", &*obj as *const NSObject);
         assert!(description.as_str() == expected.as_slice());
     }
 
