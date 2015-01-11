@@ -1,7 +1,11 @@
 [package]
 name = "objc_test_utils"
-version = "0.0.0"
+version = "0.0.1"
 authors = ["Steven Sheldon"]
+
+description = "Utilities for testing Objective-C interop."
+repository = "http://github.com/SSheldon/rust-objc"
+documentation = "http://ssheldon.github.io/rust-objc/objc_test_utils/"
 
 build = "build.rs"
 
@@ -10,4 +14,4 @@ name = "objc_test_utils"
 path = "lib.rs"
 
 [build-dependencies]
-gcc = "0.1.4"
+gcc = "0.1"
