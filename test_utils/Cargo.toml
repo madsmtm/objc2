@@ -6,6 +6,7 @@ authors = ["Steven Sheldon"]
 description = "Utilities for testing Objective-C interop."
 repository = "http://github.com/SSheldon/rust-objc"
 documentation = "http://ssheldon.github.io/rust-objc/objc_test_utils/"
+license = "MIT"
 
 build = "build.rs"
 
