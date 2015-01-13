@@ -6,11 +6,13 @@ use objc::{encode, Encode, Id};
 
 use {class, INSCopying, INSObject};
 
-pub trait INSValue<T: Copy + Encode> : INSObject {
-    fn value(&self) -> T {
-        assert!(self.encoding() == encode::<T>());
+pub trait INSValue : INSObject {
+    type Value: Copy + Encode;
+
+    fn value(&self) -> Self::Value {
+        assert!(self.encoding() == encode::<Self::Value>());
         unsafe {
-            let value = mem::uninitialized::<T>();
+            let value = mem::uninitialized::<Self::Value>();
             msg_send![self, getValue:&value];
             value
         }
@@ -25,9 +27,9 @@ pub trait INSValue<T: Copy + Encode> : INSObject {
         }
     }
 
-    fn from_value(value: &T) -> Id<Self> {
+    fn from_value(value: &Self::Value) -> Id<Self> {
         let cls = class::<Self>();
-        let encoding = CString::from_slice(encode::<T>().as_bytes());
+        let encoding = CString::from_slice(encode::<Self::Value>().as_bytes());
         unsafe {
             let obj = msg_send![cls, alloc];
             let obj = msg_send![obj, initWithBytes:value
@@ -39,9 +41,13 @@ pub trait INSValue<T: Copy + Encode> : INSObject {
 
 object_struct!(NSValue<T>);
 
-impl<T: Copy + Encode> INSValue<T> for NSValue<T> { }
+impl<T: Copy + Encode> INSValue for NSValue<T> {
+    type Value = T;
+}
 
-impl<T> INSCopying<NSValue<T>> for NSValue<T> { }
+impl<T> INSCopying for NSValue<T> {
+    type Output = NSValue<T>;
+}
 
 #[cfg(test)]
 mod tests {

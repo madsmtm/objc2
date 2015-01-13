@@ -5,7 +5,11 @@ use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership};
 
 use {class, INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
 
-pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
+pub trait INSDictionary : INSObject {
+    type Key: INSObject;
+    type Value: INSObject;
+    type Own: Ownership;
+
     fn count(&self) -> uint {
         let result = unsafe {
             msg_send![self, count]
@@ -13,45 +17,45 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
         result as uint
     }
 
-    fn object_for(&self, key: &K) -> Option<&V> {
+    fn object_for(&self, key: &Self::Key) -> Option<&Self::Value> {
         unsafe {
-            let obj = msg_send![self, objectForKey:key] as *mut V;
+            let obj = msg_send![self, objectForKey:key] as *mut Self::Value;
             obj.as_ref()
         }
     }
 
-    fn all_keys(&self) -> Vec<&K> {
+    fn all_keys(&self) -> Vec<&Self::Key> {
         let keys = unsafe {
-            &*(msg_send![self, allKeys] as *mut NSArray<K>)
+            &*(msg_send![self, allKeys] as *mut NSArray<Self::Key>)
         };
         keys.to_vec()
     }
 
-    fn all_values(&self) -> Vec<&V> {
+    fn all_values(&self) -> Vec<&Self::Value> {
         let vals = unsafe {
-            &*(msg_send![self, allValues] as *mut NSArray<V>)
+            &*(msg_send![self, allValues] as *mut NSArray<Self::Value>)
         };
         vals.to_vec()
     }
 
-    fn key_enumerator(&self) -> NSEnumerator<K> {
+    fn key_enumerator(&self) -> NSEnumerator<Self::Key> {
         unsafe {
             let result = msg_send![self, keyEnumerator];
             NSEnumerator::from_ptr(result)
         }
     }
 
-    fn object_enumerator(&self) -> NSEnumerator<V> {
+    fn object_enumerator(&self) -> NSEnumerator<Self::Value> {
         unsafe {
             let result = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)
         }
     }
 
-    fn keys_and_objects(&self) -> (Vec<&K>, Vec<&V>) {
+    fn keys_and_objects(&self) -> (Vec<&Self::Key>, Vec<&Self::Value>) {
         let len = self.count();
-        let mut keys: Vec<&K> = Vec::with_capacity(len);
-        let mut objs: Vec<&V> = Vec::with_capacity(len);
+        let mut keys: Vec<&Self::Key> = Vec::with_capacity(len);
+        let mut objs: Vec<&Self::Value> = Vec::with_capacity(len);
         unsafe {
             msg_send![self, getObjects:objs.as_ptr() andKeys:keys.as_ptr()];
             keys.set_len(len);
@@ -60,7 +64,8 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
         (keys, objs)
     }
 
-    unsafe fn from_refs<T: INSCopying<K>>(keys: &[&T], vals: &[&V]) -> Id<Self> {
+    unsafe fn from_refs<T: INSCopying<Output=Self::Key>>(
+            keys: &[&T], vals: &[&Self::Value]) -> Id<Self> {
         let cls = class::<Self>();
         let count = min(keys.len(), vals.len());
         let obj = msg_send![cls, alloc];
@@ -70,14 +75,16 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
         Id::from_retained_ptr(obj as *mut Self)
     }
 
-    fn from_keys_and_objects<T: INSCopying<K>>(keys: &[&T], vals: Vec<Id<V, O>>) -> Id<Self> {
+    fn from_keys_and_objects<T: INSCopying<Output=Self::Key>>(
+            keys: &[&T], vals: Vec<Id<Self::Value, Self::Own>>) -> Id<Self> {
         let vals_refs = vals.as_refs_slice();
         unsafe {
             INSDictionary::from_refs(keys, vals_refs)
         }
     }
 
-    fn into_keys_and_objects(dict: Id<Self>) -> (Vec<Id<K>>, Vec<Id<V, O>>) {
+    fn into_keys_and_objects(dict: Id<Self>) -> (
+            Vec<Id<Self::Key>>, Vec<Id<Self::Value, Self::Own>>) {
         let (keys, objs) = dict.keys_and_objects();
         unsafe {
             (keys.into_id_vec(), objs.into_id_vec())
@@ -87,7 +94,11 @@ pub trait INSDictionary<K: INSObject, V: INSObject, O: Ownership> : INSObject {
 
 object_struct!(NSDictionary<K, V>);
 
-impl<K: INSObject, V: INSObject> INSDictionary<K, V, Owned> for NSDictionary<K, V> { }
+impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {
+    type Key = K;
+    type Value = V;
+    type Own = Owned;
+}
 
 impl<K: INSObject, V: INSObject> Index<K> for NSDictionary<K, V> {
     type Output = V;

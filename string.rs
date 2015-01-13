@@ -6,20 +6,24 @@ use objc::Id;
 
 use {class, INSObject};
 
-pub trait INSCopying<T: INSObject> : INSObject {
-    fn copy(&self) -> Id<T> {
+pub trait INSCopying : INSObject {
+    type Output: INSObject;
+
+    fn copy(&self) -> Id<Self::Output> {
         unsafe {
             let obj = msg_send![self, copy];
-            Id::from_retained_ptr(obj as *mut T)
+            Id::from_retained_ptr(obj as *mut Self::Output)
         }
     }
 }
 
-pub trait INSMutableCopying<T: INSObject> : INSObject {
-    fn mutable_copy(&self) -> Id<T> {
+pub trait INSMutableCopying : INSObject {
+    type Output: INSObject;
+
+    fn mutable_copy(&self) -> Id<Self::Output> {
         unsafe {
             let obj = msg_send![self, mutableCopy];
-            Id::from_retained_ptr(obj as *mut T)
+            Id::from_retained_ptr(obj as *mut Self::Output)
         }
     }
 }
@@ -51,7 +55,9 @@ object_struct!(NSString);
 
 impl INSString for NSString { }
 
-impl INSCopying<NSString> for NSString { }
+impl INSCopying for NSString {
+    type Output = NSString;
+}
 
 impl Str for NSString {
     fn as_slice(&self) -> &str {
