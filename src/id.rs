@@ -95,7 +95,9 @@ impl<T: Message> Id<T, Owned> {
     }
 }
 
-impl<T: Message, O: Ownership> ToMessage<T> for Id<T, O> {
+impl<T: Message, O: Ownership> ToMessage for Id<T, O> {
+    type Target = T;
+
     fn as_ptr(&self) -> *mut T {
         self.ptr
     }
@@ -165,12 +167,16 @@ impl<T: Message + fmt::Show, O: Ownership> fmt::Show for Id<T, O> {
 pub type ShareId<T> = Id<T, Shared>;
 
 /// Extension methods for slices containing `Id`s.
-pub trait IdVector<T> {
+pub trait IdSlice {
+    type Item;
+
     /// Convert a slice of `Id`s into a slice of references
-    fn as_refs_slice(&self) -> &[&T];
+    fn as_refs_slice(&self) -> &[&Self::Item];
 }
 
-impl<T: Message, O: Ownership> IdVector<T> for [Id<T, O>] {
+impl<T: Message, O: Ownership> IdSlice for [Id<T, O>] {
+    type Item = T;
+
     fn as_refs_slice(&self) -> &[&T] {
         unsafe {
             mem::transmute(self)
@@ -179,16 +185,20 @@ impl<T: Message, O: Ownership> IdVector<T> for [Id<T, O>] {
 }
 
 /// Trait to convert to a vector of `Id`s by consuming self.
-pub trait IntoIdVector<T> {
+pub trait IntoIdVector {
+    type Item;
+
     /// Converts to a vector of `Id`s by consuming self, retaining each object
     /// contained in self.
     /// Unsafe because the caller must ensure the `Id`s are constructed from
     /// valid objects and the ownership of the resulting `Id`s is correct.
-    unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>>;
+    unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<Self::Item, O>>;
 }
 
-impl<T: Message, R: ToMessage<T>> IntoIdVector<T> for Vec<R> {
-    unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<T, O>> {
+impl<R: ToMessage> IntoIdVector for Vec<R> {
+    type Item = R::Target;
+
+    unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<R::Target, O>> {
         self.map_in_place(|obj| Id::from_ptr(obj.as_ptr()))
     }
 }
