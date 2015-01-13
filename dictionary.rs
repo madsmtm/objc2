@@ -1,7 +1,7 @@
 use std::cmp::min;
 use std::ops::Index;
 
-use objc::{Id, IdVector, IntoIdVector, Owned, Ownership};
+use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership};
 
 use {class, INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
 

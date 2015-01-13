@@ -3,7 +3,7 @@ use std::marker::ContravariantLifetime;
 use std::ops::Index;
 
 use objc::runtime::Object;
-use objc::{Id, IdVector, IntoIdVector, Owned, Ownership, Shared, ShareId};
+use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, Shared, ShareId};
 
 use {class, INSCopying, INSMutableCopying, INSObject};
 
