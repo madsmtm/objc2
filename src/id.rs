@@ -32,11 +32,11 @@ impl Ownership for Shared { }
 /// object. An owned `Id` can be "downgraded" freely to a `ShareId`, but there
 /// is no way to safely upgrade back.
 #[unsafe_no_drop_flag]
-pub struct Id<T: Message, O: Ownership = Owned> {
+pub struct Id<T, O = Owned> where T: Message, O: Ownership {
     ptr: *mut T,
 }
 
-impl<T: Message, O: Ownership> Id<T, O> {
+impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// Constructs an `Id` from a pointer to an unretained object and
     /// retains it. Panics if the pointer is null.
     /// Unsafe because the pointer must be to a valid object and
@@ -84,7 +84,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     }
 }
 
-impl<T: Message> Id<T, Owned> {
+impl<T> Id<T, Owned> where T: Message {
     /// "Downgrade" an owned `Id` to a `ShareId`, allowing it to be cloned.
     pub fn share(self) -> ShareId<T> {
         let ptr = self.ptr;
@@ -95,7 +95,7 @@ impl<T: Message> Id<T, Owned> {
     }
 }
 
-impl<T: Message, O: Ownership> ToMessage for Id<T, O> {
+impl<T, O> ToMessage for Id<T, O> where T: Message, O: Ownership {
     type Target = T;
 
     fn as_ptr(&self) -> *mut T {
@@ -103,7 +103,7 @@ impl<T: Message, O: Ownership> ToMessage for Id<T, O> {
     }
 }
 
-impl<T: Message> Clone for Id<T, Shared> {
+impl<T> Clone for Id<T, Shared> where T: Message {
     fn clone(&self) -> ShareId<T> {
         let ptr = self.ptr;
         unsafe {
@@ -114,7 +114,7 @@ impl<T: Message> Clone for Id<T, Shared> {
 }
 
 #[unsafe_destructor]
-impl<T: Message, O: Ownership> Drop for Id<T, O> {
+impl<T, O> Drop for Id<T, O> where T: Message, O: Ownership {
     fn drop(&mut self) {
         if !self.ptr.is_null() {
             let ptr = mem::replace(&mut self.ptr, ptr::null_mut());
@@ -125,7 +125,7 @@ impl<T: Message, O: Ownership> Drop for Id<T, O> {
     }
 }
 
-impl<T: Message, O: Ownership> Deref for Id<T, O> {
+impl<T, O> Deref for Id<T, O> where T: Message, O: Ownership {
     type Target = T;
 
     fn deref(&self) -> &T {
@@ -133,13 +133,13 @@ impl<T: Message, O: Ownership> Deref for Id<T, O> {
     }
 }
 
-impl<T: Message> DerefMut for Id<T, Owned> {
+impl<T> DerefMut for Id<T, Owned> where T: Message {
     fn deref_mut(&mut self) -> &mut T {
         unsafe { &mut *self.ptr }
     }
 }
 
-impl<T: Message + PartialEq, O: Ownership> PartialEq for Id<T, O> {
+impl<T, O> PartialEq for Id<T, O> where T: Message + PartialEq, O: Ownership {
     fn eq(&self, other: &Id<T, O>) -> bool {
         self.deref() == other.deref()
     }
@@ -149,15 +149,16 @@ impl<T: Message + PartialEq, O: Ownership> PartialEq for Id<T, O> {
     }
 }
 
-impl<T: Message + Eq, O: Ownership> Eq for Id<T, O> { }
+impl<T, O> Eq for Id<T, O> where T: Message + Eq, O: Ownership { }
 
-impl<H: Hasher, T: Message + Hash<H>, O: Ownership> Hash<H> for Id<T, O> {
+impl<H, T, O> Hash<H> for Id<T, O>
+        where H: Hasher, T: Message + Hash<H>, O: Ownership {
     fn hash(&self, state: &mut H) {
         self.deref().hash(state)
     }
 }
 
-impl<T: Message + fmt::Show, O: Ownership> fmt::Show for Id<T, O> {
+impl<T, O> fmt::Show for Id<T, O> where T: Message + fmt::Show, O: Ownership {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.deref().fmt(f)
     }
@@ -174,7 +175,7 @@ pub trait IdSlice {
     fn as_refs_slice(&self) -> &[&Self::Item];
 }
 
-impl<T: Message, O: Ownership> IdSlice for [Id<T, O>] {
+impl<T, O> IdSlice for [Id<T, O>] where T: Message, O: Ownership {
     type Item = T;
 
     fn as_refs_slice(&self) -> &[&T] {
@@ -192,13 +193,13 @@ pub trait IntoIdVector {
     /// contained in self.
     /// Unsafe because the caller must ensure the `Id`s are constructed from
     /// valid objects and the ownership of the resulting `Id`s is correct.
-    unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<Self::Item, O>>;
+    unsafe fn into_id_vec<O>(self) -> Vec<Id<Self::Item, O>> where O: Ownership;
 }
 
 impl<R: ToMessage> IntoIdVector for Vec<R> {
     type Item = R::Target;
 
-    unsafe fn into_id_vec<O: Ownership>(self) -> Vec<Id<R::Target, O>> {
+    unsafe fn into_id_vec<O>(self) -> Vec<Id<R::Target, O>> where O: Ownership {
         self.map_in_place(|obj| Id::from_ptr(obj.as_ptr()))
     }
 }

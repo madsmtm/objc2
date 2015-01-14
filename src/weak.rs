@@ -21,7 +21,7 @@ pub struct WeakId<T> {
     ptr: Box<UnsafeCell<*const T>>,
 }
 
-impl<T: Message> WeakId<T> {
+impl<T> WeakId<T> where T: Message {
     /// Construct a new `WeakId` referencing the given `ShareId`.
     pub fn new(obj: &ShareId<T>) -> WeakId<T> {
         let ptr = Box::new(UnsafeCell::new(ptr::null()));
