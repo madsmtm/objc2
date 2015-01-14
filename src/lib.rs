@@ -24,8 +24,9 @@ pub trait BlockArguments {
 
     /// Returns an invoke function for a `ConcreteBlock` that takes this type
     /// of arguments.
-    fn invoke_for_concrete_block<R, F: Fn<Self, R>>() ->
-            unsafe extern fn(*mut ConcreteBlock<Self, R, F>, ...) -> R;
+    fn invoke_for_concrete_block<R, F>() ->
+            unsafe extern fn(*mut ConcreteBlock<Self, R, F>, ...) -> R
+            where F: Fn<Self, R>;
 }
 
 macro_rules! block_args_impl(
@@ -44,11 +45,13 @@ macro_rules! block_args_impl(
                 }
             }
 
-            fn invoke_for_concrete_block<R, X: Fn<Self, R>>() ->
-                    unsafe extern fn(*mut ConcreteBlock<Self, R, X>, ...) -> R {
-                unsafe extern fn $f<R, X: Fn<Self, R> $(, $t)*>(
+            fn invoke_for_concrete_block<R, X>() ->
+                    unsafe extern fn(*mut ConcreteBlock<Self, R, X>, ...) -> R
+                    where X: Fn<Self, R> {
+                unsafe extern fn $f<R, X $(, $t)*>(
                         block_ptr: *mut ConcreteBlock<Self, R, X>
-                        $(, $a: $t)*) -> R {
+                        $(, $a: $t)*) -> R
+                        where X: Fn<Self, R> {
                     let block = &*block_ptr;
                     (block.closure)($($a),*)
                 }
@@ -78,7 +81,7 @@ block_args_impl!(concrete_block_invoke_args12, a: A, b: B, c: C, d: D, e: E, f: 
 /// An Objective-C block that takes arguments of `A` when called and
 /// returns a value of `R`.
 #[repr(C)]
-pub struct Block<A: BlockArguments, R> {
+pub struct Block<A, R> where A: BlockArguments {
     isa: *const Class,
     flags: c_int,
     _reserved: c_int,
@@ -86,25 +89,25 @@ pub struct Block<A: BlockArguments, R> {
 }
 
 // TODO: impl FnMut when it's possible
-impl<A: BlockArguments, R> Block<A, R> {
+impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
     /// Call self with the given arguments.
     pub fn call(&mut self, args: A) -> R {
         args.call_block(self)
     }
 }
 
-unsafe impl<A: BlockArguments, R> Message for Block<A, R> { }
+unsafe impl<A, R> Message for Block<A, R> where A: BlockArguments { }
 
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
 #[repr(C)]
-pub struct ConcreteBlock<A: BlockArguments, R, F> {
+pub struct ConcreteBlock<A, R, F> where A: BlockArguments {
     base: Block<A, R>,
     descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, F>>>,
     closure: F,
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<A, R, F> {
+impl<A, R, F> ConcreteBlock<A, R, F> where A: BlockArguments, F: Fn<A, R> {
     /// Constructs a `ConcreteBlock` with the given closure.
     /// When the block is called, it will return the value that results from
     /// calling the closure.
@@ -137,13 +140,15 @@ impl<A: BlockArguments, R, F: Fn<A, R>> ConcreteBlock<A, R, F> {
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R> + Clone> Clone for ConcreteBlock<A, R, F> {
+impl<A, R, F> Clone for ConcreteBlock<A, R, F>
+        where A: BlockArguments, F: Fn<A, R> + Clone {
     fn clone(&self) -> Self {
         ConcreteBlock::new(self.closure.clone())
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> Deref for ConcreteBlock<A, R, F> {
+impl<A, R, F> Deref for ConcreteBlock<A, R, F>
+        where A: BlockArguments, F: Fn<A, R> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Block<A, R> {
@@ -151,7 +156,8 @@ impl<A: BlockArguments, R, F: Fn<A, R>> Deref for ConcreteBlock<A, R, F> {
     }
 }
 
-impl<A: BlockArguments, R, F: Fn<A, R>> DerefMut for ConcreteBlock<A, R, F> {
+impl<A, R, F> DerefMut for ConcreteBlock<A, R, F>
+        where A: BlockArguments, F: Fn<A, R> {
     fn deref_mut(&mut self) -> &mut Block<A, R> {
         &mut self.base
     }
