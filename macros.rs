@@ -25,7 +25,9 @@ macro_rules! object_impl {
     ($name:ident, $($t:ident),*) => (
         unsafe impl<$($t),*> ::objc::Message for $name<$($t),*> { }
 
-        encode_message_impl!("@", $name $(, $t)*);
+        impl<$($t),*> ::objc::EncodePtr for $name<$($t),*> {
+            fn ptr_code() -> &'static str { "@" }
+        }
 
         impl<$($t),*> $crate::INSObject for $name<$($t),*> {
             fn class_name() -> &'static str {
