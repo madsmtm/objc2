@@ -65,9 +65,12 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// Unsafe because the pointer must be to a valid object and
     /// the caller must ensure the ownership is correct.
     pub unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Id<T, O>> {
-        // objc_msgSend is a no-op on null pointers
-        let _: () = msg_send![ptr, retain];
-        Id::maybe_from_retained_ptr(ptr)
+        if ptr.is_null() {
+            None
+        } else {
+            let ptr = msg_send![ptr, retain];
+            Some(Id { ptr: ptr })
+        }
     }
 
     /// Constructs an `Id` from a pointer to a retained object if the pointer
@@ -111,10 +114,9 @@ impl<T, O> ToMessage for Id<T, O> where T: Message, O: Ownership {
 
 impl<T> Clone for Id<T, Shared> where T: Message {
     fn clone(&self) -> ShareId<T> {
-        let ptr = self.ptr;
-        unsafe {
-            let _: () = msg_send![ptr, retain];
-        }
+        let ptr = unsafe {
+            msg_send![self.ptr, retain]
+        };
         Id { ptr: ptr }
     }
 }
