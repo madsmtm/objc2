@@ -4,7 +4,7 @@ use objc::{Id, Message};
 use NSString;
 
 pub trait INSObject : Message {
-    fn class_name() -> ClassName<Self>;
+    fn class_name() -> &'static str;
 
     fn class(&self) -> &Class {
         let obj = unsafe { &*(self as *const _ as *const Object) };
@@ -58,10 +58,8 @@ pub trait INSObject : Message {
 
 object_struct!(NSObject);
 
-pub struct ClassName<T>(pub &'static str);
-
 pub fn class<T: INSObject>() -> &'static Class {
-    let ClassName(name): ClassName<T> = INSObject::class_name();
+    let name = <T as INSObject>::class_name();
     match Class::get(name) {
         Some(cls) => cls,
         None => panic!("Class {} not found", name),
@@ -72,12 +70,11 @@ pub fn class<T: INSObject>() -> &'static Class {
 mod tests {
     use objc::Id;
     use {INSString, NSString};
-    use super::{class, ClassName, INSObject, NSObject};
+    use super::{class, INSObject, NSObject};
 
     #[test]
     fn test_class_name() {
-        let ClassName(name): ClassName<NSObject> = INSObject::class_name();
-        assert!(name == "NSObject");
+        assert!(<NSObject as INSObject>::class_name() == "NSObject");
     }
 
     #[test]

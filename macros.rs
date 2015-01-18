@@ -28,8 +28,8 @@ macro_rules! object_impl {
         encode_message_impl!("@", $name $(, $t)*);
 
         impl<$($t),*> $crate::INSObject for $name<$($t),*> {
-            fn class_name() -> $crate::ClassName<$name<$($t),*>> {
-                $crate::ClassName(stringify!($name))
+            fn class_name() -> &'static str {
+                stringify!($name)
             }
         }
 
