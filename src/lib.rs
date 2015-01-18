@@ -130,7 +130,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> where A: BlockArguments, F: Fn<A, R> {
     /// Copy self onto the heap.
     pub fn copy(self) -> Id<Block<A, R>> {
         unsafe {
-            let block = msg_send![&self.base, copy] as *mut Block<A, R>;
+            let block: *mut Block<A, R> = msg_send![&self.base, copy];
             // At this point, our copy helper has been run so the block will
             // be moved to the heap and we can forget the original block
             // because the heap block will drop in our dispose helper.
