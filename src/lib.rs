@@ -9,7 +9,7 @@ use std::ptr;
 use libc::{c_int, c_ulong};
 
 use runtime::Class;
-use {Id, Message};
+use {EncodePtr, Id, Message};
 
 #[allow(improper_ctypes)]
 #[link(name = "Foundation", kind = "framework")]
@@ -97,6 +97,10 @@ impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
 }
 
 unsafe impl<A, R> Message for Block<A, R> where A: BlockArguments { }
+
+impl<A, R> EncodePtr for Block<A, R> {
+    fn ptr_code() -> &'static str { "@?" }
+}
 
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
