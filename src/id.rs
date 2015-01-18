@@ -66,7 +66,7 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// the caller must ensure the ownership is correct.
     pub unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Id<T, O>> {
         // objc_msgSend is a no-op on null pointers
-        msg_send![ptr, retain];
+        let _: () = msg_send![ptr, retain];
         Id::maybe_from_retained_ptr(ptr)
     }
 
@@ -107,7 +107,7 @@ impl<T> Clone for Id<T, Shared> where T: Message {
     fn clone(&self) -> ShareId<T> {
         let ptr = self.ptr;
         unsafe {
-            msg_send![ptr, retain];
+            let _: () = msg_send![ptr, retain];
         }
         Id { ptr: ptr }
     }
@@ -119,7 +119,7 @@ impl<T, O> Drop for Id<T, O> where T: Message, O: Ownership {
         if !self.ptr.is_null() {
             let ptr = mem::replace(&mut self.ptr, ptr::null_mut());
             unsafe {
-                msg_send![ptr, release];
+                let _: () = msg_send![ptr, release];
             }
         }
     }
