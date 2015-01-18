@@ -4,7 +4,7 @@ use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr;
 
-use {Message, ToMessage};
+use {Encode, EncodePtr, Message, ToMessage};
 
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
@@ -92,6 +92,12 @@ impl<T> Id<T, Owned> where T: Message {
             mem::forget(self);
         }
         Id { ptr: ptr }
+    }
+}
+
+impl<T, O> Encode for Id<T, O> where T: Message, O: Ownership {
+    fn code() -> &'static str {
+        <T as EncodePtr>::ptr_code()
     }
 }
 
