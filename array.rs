@@ -56,7 +56,7 @@ impl<'a, T> Iterator for NSEnumerator<'a, T> {
 
     fn next(&mut self) -> Option<&'a T> {
         unsafe {
-            let obj = msg_send![self.id, nextObject] as *mut T;
+            let obj: *mut T = msg_send![self.id, nextObject];
             obj.as_ref()
         }
     }
@@ -67,45 +67,45 @@ pub trait INSArray : INSObject {
     type Own: Ownership;
 
     fn count(&self) -> uint {
-        let result = unsafe {
+        unsafe {
             msg_send![self, count]
-        };
-        result as uint
+        }
     }
 
     fn object_at(&self, index: uint) -> &Self::Item {
         unsafe {
-            let obj = msg_send![self, objectAtIndex:index] as *const Self::Item;
+            let obj: *const Self::Item = msg_send![self, objectAtIndex:index];
             &*obj
         }
     }
 
     fn first_object(&self) -> Option<&Self::Item> {
         unsafe {
-            let obj = msg_send![self, firstObject] as *const Self::Item;
+            let obj: *const Self::Item = msg_send![self, firstObject];
             obj.as_ref()
         }
     }
 
     fn last_object(&self) -> Option<&Self::Item> {
         unsafe {
-            let obj = msg_send![self, lastObject] as *const Self::Item;
+            let obj: *const Self::Item = msg_send![self, lastObject];
             obj.as_ref()
         }
     }
 
     fn object_enumerator(&self) -> NSEnumerator<Self::Item> {
         unsafe {
-            let result = msg_send![self, objectEnumerator];
+            let result: *mut Object = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)
         }
     }
 
     unsafe fn from_refs(refs: &[&Self::Item]) -> Id<Self> {
         let cls = class::<Self>();
-        let obj = msg_send![cls, alloc];
-        let obj = msg_send![obj, initWithObjects:refs.as_ptr() count:refs.len()];
-        Id::from_retained_ptr(obj as *mut Self)
+        let obj: *mut Self = msg_send![cls, alloc];
+        let obj: *mut Self = msg_send![obj, initWithObjects:refs.as_ptr()
+                                                      count:refs.len()];
+        Id::from_retained_ptr(obj)
     }
 
     fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self> {
@@ -119,7 +119,7 @@ pub trait INSArray : INSObject {
         let mut vec: Vec<&Self::Item> = Vec::with_capacity(len);
         let range = NSRange { location: start, length: len };
         unsafe {
-            msg_send![self, getObjects:vec.as_ptr() range:range];
+            let _: () = msg_send![self, getObjects:vec.as_ptr() range:range];
             vec.set_len(len);
         }
         vec
@@ -140,7 +140,7 @@ pub trait INSArray : INSObject {
 pub trait INSOwnedArray : INSArray<Own=Owned> {
     fn mut_object_at(&mut self, index: uint) -> &mut Self::Item {
         unsafe {
-            let result = msg_send![self, objectAtIndex:index] as *mut Self::Item;
+            let result: *mut Self::Item = msg_send![self, objectAtIndex:index];
             &mut *result
         }
     }
@@ -204,13 +204,13 @@ pub type NSSharedArray<T> = NSArray<T, Shared>;
 pub trait INSMutableArray : INSArray {
     fn add_object(&mut self, obj: Id<Self::Item, Self::Own>) {
         unsafe {
-            msg_send![self, addObject:obj];
+            let _: () = msg_send![self, addObject:obj];
         }
     }
 
     fn insert_object_at(&mut self, index: uint, obj: Id<Self::Item, Self::Own>) {
         unsafe {
-            msg_send![self, insertObject:obj atIndex:index];
+            let _: () = msg_send![self, insertObject:obj atIndex:index];
         }
     }
 
@@ -221,7 +221,8 @@ pub trait INSMutableArray : INSArray {
             Id::from_ptr(obj as *const _ as *mut Self::Item)
         };
         unsafe {
-            msg_send![self, replaceObjectAtIndex:index withObject:obj];
+            let _: () = msg_send![self, replaceObjectAtIndex:index
+                                                  withObject:obj];
         }
         old_obj
     }
@@ -232,7 +233,7 @@ pub trait INSMutableArray : INSArray {
             Id::from_ptr(obj as *const _ as *mut Self::Item)
         };
         unsafe {
-            msg_send![self, removeObjectAtIndex:index];
+            let _: () = msg_send![self, removeObjectAtIndex:index];
         }
         obj
     }
@@ -242,7 +243,7 @@ pub trait INSMutableArray : INSArray {
             Id::from_ptr(obj as *const _ as *mut Self::Item)
         });
         unsafe {
-            msg_send![self, removeLastObject];
+            let _: () = msg_send![self, removeLastObject];
         }
         // removeLastObject would have failed if the array is empty,
         // so we know this won't be None
@@ -251,7 +252,7 @@ pub trait INSMutableArray : INSArray {
 
     fn remove_all_objects(&mut self) {
         unsafe {
-            msg_send![self, removeAllObjects];
+            let _: () = msg_send![self, removeAllObjects];
         }
     }
 
@@ -263,8 +264,8 @@ pub trait INSMutableArray : INSArray {
 
         let mut closure = compare;
         unsafe {
-            msg_send![self, sortUsingFunction:compare_with_closure::<Self::Item, F>
-                                      context:&mut closure];
+            let _: () = msg_send![self, sortUsingFunction:compare_with_closure::<Self::Item, F>
+                                                  context:&mut closure];
         }
     }
 }

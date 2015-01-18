@@ -11,8 +11,8 @@ pub trait INSCopying : INSObject {
 
     fn copy(&self) -> Id<Self::Output> {
         unsafe {
-            let obj = msg_send![self, copy];
-            Id::from_retained_ptr(obj as *mut Self::Output)
+            let obj: *mut Self::Output = msg_send![self, copy];
+            Id::from_retained_ptr(obj)
         }
     }
 }
@@ -22,8 +22,8 @@ pub trait INSMutableCopying : INSObject {
 
     fn mutable_copy(&self) -> Id<Self::Output> {
         unsafe {
-            let obj = msg_send![self, mutableCopy];
-            Id::from_retained_ptr(obj as *mut Self::Output)
+            let obj: *mut Self::Output = msg_send![self, mutableCopy];
+            Id::from_retained_ptr(obj)
         }
     }
 }
@@ -31,7 +31,7 @@ pub trait INSMutableCopying : INSObject {
 pub trait INSString : INSObject {
     fn as_str(&self) -> &str {
         unsafe {
-            let result = msg_send![self, UTF8String] as *const i8;
+            let result: *const i8 = msg_send![self, UTF8String];
             let bytes = ffi::c_str_to_bytes(&result);
             let s = str::from_utf8(bytes).unwrap();
             mem::transmute(s)
@@ -42,11 +42,11 @@ pub trait INSString : INSObject {
         let cls = class::<Self>();
         let utf8_encoding = 4u;
         unsafe {
-            let obj = msg_send![cls, alloc];
-            let obj = msg_send![obj, initWithBytes:string.as_ptr()
-                                            length:string.len()
-                                          encoding:utf8_encoding];
-            Id::from_retained_ptr(obj as *mut Self)
+            let obj: *mut Self = msg_send![cls, alloc];
+            let obj: *mut Self = msg_send![obj, initWithBytes:string.as_ptr()
+                                                       length:string.len()
+                                                     encoding:utf8_encoding];
+            Id::from_retained_ptr(obj)
         }
     }
 }

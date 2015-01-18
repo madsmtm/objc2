@@ -11,29 +11,30 @@ pub trait INSDictionary : INSObject {
     type Own: Ownership;
 
     fn count(&self) -> uint {
-        let result = unsafe {
+        unsafe {
             msg_send![self, count]
-        };
-        result as uint
+        }
     }
 
     fn object_for(&self, key: &Self::Key) -> Option<&Self::Value> {
         unsafe {
-            let obj = msg_send![self, objectForKey:key] as *mut Self::Value;
+            let obj: *mut Self::Value = msg_send![self, objectForKey:key];
             obj.as_ref()
         }
     }
 
     fn all_keys(&self) -> Vec<&Self::Key> {
         let keys = unsafe {
-            &*(msg_send![self, allKeys] as *mut NSArray<Self::Key>)
+            let keys: *mut NSArray<Self::Key> = msg_send![self, allKeys];
+            &*keys
         };
         keys.to_vec()
     }
 
     fn all_values(&self) -> Vec<&Self::Value> {
         let vals = unsafe {
-            &*(msg_send![self, allValues] as *mut NSArray<Self::Value>)
+            let vals: *mut NSArray<Self::Value> = msg_send![self, allValues];
+            &*vals
         };
         vals.to_vec()
     }
@@ -57,7 +58,8 @@ pub trait INSDictionary : INSObject {
         let mut keys: Vec<&Self::Key> = Vec::with_capacity(len);
         let mut objs: Vec<&Self::Value> = Vec::with_capacity(len);
         unsafe {
-            msg_send![self, getObjects:objs.as_ptr() andKeys:keys.as_ptr()];
+            let _: () = msg_send![self, getObjects:objs.as_ptr()
+                                           andKeys:keys.as_ptr()];
             keys.set_len(len);
             objs.set_len(len);
         }
@@ -68,11 +70,11 @@ pub trait INSDictionary : INSObject {
             keys: &[&T], vals: &[&Self::Value]) -> Id<Self> {
         let cls = class::<Self>();
         let count = min(keys.len(), vals.len());
-        let obj = msg_send![cls, alloc];
-        let obj = msg_send![obj, initWithObjects:vals.as_ptr()
-                                         forKeys:keys.as_ptr()
-                                           count:count];
-        Id::from_retained_ptr(obj as *mut Self)
+        let obj: *mut Self = msg_send![cls, alloc];
+        let obj: *mut Self = msg_send![obj, initWithObjects:vals.as_ptr()
+                                                    forKeys:keys.as_ptr()
+                                                      count:count];
+        Id::from_retained_ptr(obj)
     }
 
     fn from_keys_and_objects<T: INSCopying<Output=Self::Key>>(
