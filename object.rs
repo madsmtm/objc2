@@ -18,9 +18,10 @@ pub trait INSObject : Message {
     }
 
     fn is_equal<T: INSObject>(&self, other: &T) -> bool {
-        unsafe {
+        let result: i8 = unsafe {
             msg_send![self, isEqual:other]
-        }
+        };
+        result != 0
     }
 
     fn description(&self) -> Id<NSString> {
@@ -31,9 +32,10 @@ pub trait INSObject : Message {
     }
 
     fn is_kind_of(&self, cls: &Class) -> bool {
-        unsafe {
+        let result: i8 = unsafe {
             msg_send![self, isKindOfClass:cls]
-        }
+        };
+        result != 0
     }
 
     fn as_object<T: INSObject>(&self) -> Option<&T> {

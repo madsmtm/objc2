@@ -45,13 +45,13 @@ pub struct NSEnumerator<'a, T> {
     marker: ContravariantLifetime<'a>,
 }
 
-impl<'a, T> NSEnumerator<'a, T> {
+impl<'a, T: INSObject> NSEnumerator<'a, T> {
     pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
         NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
     }
 }
 
-impl<'a, T> Iterator for NSEnumerator<'a, T> {
+impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
