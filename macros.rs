@@ -30,8 +30,12 @@ macro_rules! object_impl {
         }
 
         impl<$($t),*> $crate::INSObject for $name<$($t),*> {
-            fn class_name() -> &'static str {
-                stringify!($name)
+            fn class() -> &'static ::objc::runtime::Class {
+                let name = stringify!($name);
+                match ::objc::runtime::Class::get(name) {
+                    Some(cls) => cls,
+                    None => panic!("Class {} not found", name),
+                }
             }
         }
 

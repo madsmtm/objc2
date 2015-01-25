@@ -4,15 +4,7 @@ use objc::{Id, Message};
 use NSString;
 
 pub trait INSObject : Message {
-    fn class_name() -> &'static str;
-
-    fn class() -> &'static Class {
-        let name = <Self as INSObject>::class_name();
-        match Class::get(name) {
-            Some(cls) => cls,
-            None => panic!("Class {} not found", name),
-        }
-    }
+    fn class() -> &'static Class;
 
     fn hash_code(&self) -> uint {
         unsafe {
@@ -68,11 +60,6 @@ mod tests {
     use objc::Id;
     use {INSString, NSString};
     use super::{INSObject, NSObject};
-
-    #[test]
-    fn test_class_name() {
-        assert!(<NSObject as INSObject>::class_name() == "NSObject");
-    }
 
     #[test]
     fn test_is_equal() {
