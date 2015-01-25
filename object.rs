@@ -1,15 +1,10 @@
-use objc::runtime::{Class, Object};
+use objc::runtime::Class;
 use objc::{Id, Message};
 
 use NSString;
 
 pub trait INSObject : Message {
     fn class_name() -> &'static str;
-
-    fn class(&self) -> &Class {
-        let obj = unsafe { &*(self as *const _ as *const Object) };
-        obj.class()
-    }
 
     fn hash_code(&self) -> uint {
         unsafe {
@@ -77,13 +72,6 @@ mod tests {
     #[test]
     fn test_class_name() {
         assert!(<NSObject as INSObject>::class_name() == "NSObject");
-    }
-
-    #[test]
-    fn test_class() {
-        let obj: Id<NSObject> = INSObject::new();
-        let cls = obj.class();
-        assert!(cls.name() == "NSObject");
     }
 
     #[test]
