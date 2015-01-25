@@ -33,16 +33,6 @@ pub trait INSObject : Message {
         result != 0
     }
 
-    fn as_object<T: INSObject>(&self) -> Option<&T> {
-        let cls = <T as INSObject>::class();
-        if self.is_kind_of(cls) {
-            let ptr = self as *const _ as *const T;
-            Some(unsafe { &*ptr })
-        } else {
-            None
-        }
-    }
-
     fn new() -> Id<Self> {
         let cls = <Self as INSObject>::class();
         unsafe {
@@ -89,16 +79,5 @@ mod tests {
         let obj: Id<NSObject> = INSObject::new();
         assert!(obj.is_kind_of(<NSObject as INSObject>::class()));
         assert!(!obj.is_kind_of(<NSString as INSObject>::class()));
-    }
-
-    #[test]
-    fn test_as_object() {
-        let obj: Id<NSObject> = INSObject::new();
-        let as_str: Option<&NSString> = obj.as_object();
-        assert!(as_str.is_none());
-
-        let string: Id<NSString> = INSObject::new();
-        let as_obj: Option<&NSObject> = string.as_object();
-        assert!(as_obj.is_some());
     }
 }
