@@ -27,12 +27,12 @@ pub trait INSValue : INSObject {
         }
     }
 
-    fn from_value(value: &Self::Value) -> Id<Self> {
+    fn from_value(value: Self::Value) -> Id<Self> {
         let cls = <Self as INSObject>::class();
         let encoding = CString::from_slice(encode::<Self::Value>().as_bytes());
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytes:value
+            let obj: *mut Self = msg_send![obj, initWithBytes:&value
                                                      objCType:encoding.as_ptr()];
             Id::from_retained_ptr(obj)
         }
@@ -56,8 +56,8 @@ mod tests {
 
     #[test]
     fn test_value() {
-        let val: Id<NSValue<uint>> = INSValue::from_value(&13);
+        let val: Id<NSValue<u32>> = INSValue::from_value(13);
         assert!(val.value() == 13);
-        assert!(val.encoding() == encode::<uint>());
+        assert!(val.encoding() == encode::<u32>());
     }
 }
