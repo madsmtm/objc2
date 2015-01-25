@@ -1,5 +1,5 @@
 use std::fmt;
-use std::hash::{Hash, Hasher};
+use std::hash;
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr;
@@ -159,14 +159,14 @@ impl<T, O> PartialEq for Id<T, O> where T: Message + PartialEq, O: Ownership {
 
 impl<T, O> Eq for Id<T, O> where T: Message + Eq, O: Ownership { }
 
-impl<H, T, O> Hash<H> for Id<T, O>
-        where H: Hasher, T: Message + Hash<H>, O: Ownership {
+impl<H, T, O> hash::Hash<H> for Id<T, O>
+        where H: hash::Hasher, T: Message + hash::Hash<H>, O: Ownership {
     fn hash(&self, state: &mut H) {
         self.deref().hash(state)
     }
 }
 
-impl<T, O> fmt::Show for Id<T, O> where T: Message + fmt::Show, O: Ownership {
+impl<T, O> fmt::Debug for Id<T, O> where T: Message + fmt::Debug, O: Ownership {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.deref().fmt(f)
     }
