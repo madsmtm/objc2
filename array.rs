@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 use std::marker::ContravariantLifetime;
-use std::ops::Index;
+use std::ops::{Index, Range};
 
 use objc::runtime::Object;
 use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, Shared, ShareId};
@@ -38,6 +38,17 @@ impl NSComparisonResult {
 pub struct NSRange {
     pub location: usize,
     pub length: usize,
+}
+
+impl NSRange {
+    pub fn from_range(range: Range<usize>) -> NSRange {
+        assert!(range.end >= range.start);
+        NSRange { location: range.start, length: range.end - range.start }
+    }
+
+    pub fn as_range(&self) -> Range<usize> {
+        Range { start: self.location, end: self.location + self.length }
+    }
 }
 
 pub struct NSEnumerator<'a, T> {
@@ -115,18 +126,18 @@ pub trait INSArray : INSObject {
         }
     }
 
-    fn objects_in_range(&self, start: usize, len: usize) -> Vec<&Self::Item> {
-        let mut vec: Vec<&Self::Item> = Vec::with_capacity(len);
-        let range = NSRange { location: start, length: len };
+    fn objects_in_range(&self, range: Range<usize>) -> Vec<&Self::Item> {
+        let range = NSRange::from_range(range);
+        let mut vec: Vec<&Self::Item> = Vec::with_capacity(range.length);
         unsafe {
             let _: () = msg_send![self, getObjects:vec.as_ptr() range:range];
-            vec.set_len(len);
+            vec.set_len(range.length);
         }
         vec
     }
 
     fn to_vec(&self) -> Vec<&Self::Item> {
-        self.objects_in_range(0, self.count())
+        self.objects_in_range(0..self.count())
     }
 
     fn into_vec(array: Id<Self>) -> Vec<Id<Self::Item, Self::Own>> {
@@ -353,15 +364,15 @@ mod tests {
     fn test_objects_in_range() {
         let array = sample_array(4);
 
-        let middle_objs = array.objects_in_range(1, 2);
+        let middle_objs = array.objects_in_range(1..3);
         assert!(middle_objs.len() == 2);
         assert!(middle_objs[0] == array.object_at(1));
         assert!(middle_objs[1] == array.object_at(2));
 
-        let empty_objs = array.objects_in_range(1, 0);
+        let empty_objs = array.objects_in_range(1..1);
         assert!(empty_objs.len() == 0);
 
-        let all_objs = array.objects_in_range(0, 4);
+        let all_objs = array.objects_in_range(0..4);
         assert!(all_objs.len() == 4);
     }
 
