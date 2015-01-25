@@ -6,7 +6,7 @@ use NSString;
 pub trait INSObject : Message {
     fn class() -> &'static Class;
 
-    fn hash_code(&self) -> uint {
+    fn hash_code(&self) -> usize {
         unsafe {
             msg_send![self, hash]
         }

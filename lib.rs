@@ -1,7 +1,6 @@
 #![crate_name = "objc_foundation"]
 #![crate_type = "lib"]
 
-#![feature(int_uint)]
 #![allow(unstable)]
 
 #[macro_use]

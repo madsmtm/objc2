@@ -7,12 +7,12 @@ use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, Shared, ShareId};
 
 use {INSCopying, INSMutableCopying, INSObject};
 
-#[repr(C)]
+#[repr(isize)]
 #[derive(Copy)]
 pub enum NSComparisonResult {
-    Ascending  = -1i,
-    Same       = 0i,
-    Descending = 1i,
+    Ascending  = -1,
+    Same       = 0,
+    Descending = 1,
 }
 
 impl NSComparisonResult {
@@ -36,8 +36,8 @@ impl NSComparisonResult {
 #[repr(C)]
 #[derive(Copy)]
 pub struct NSRange {
-    pub location: uint,
-    pub length: uint,
+    pub location: usize,
+    pub length: usize,
 }
 
 pub struct NSEnumerator<'a, T> {
@@ -66,13 +66,13 @@ pub trait INSArray : INSObject {
     type Item: INSObject;
     type Own: Ownership;
 
-    fn count(&self) -> uint {
+    fn count(&self) -> usize {
         unsafe {
             msg_send![self, count]
         }
     }
 
-    fn object_at(&self, index: uint) -> &Self::Item {
+    fn object_at(&self, index: usize) -> &Self::Item {
         unsafe {
             let obj: *const Self::Item = msg_send![self, objectAtIndex:index];
             &*obj
@@ -115,7 +115,7 @@ pub trait INSArray : INSObject {
         }
     }
 
-    fn objects_in_range(&self, start: uint, len: uint) -> Vec<&Self::Item> {
+    fn objects_in_range(&self, start: usize, len: usize) -> Vec<&Self::Item> {
         let mut vec: Vec<&Self::Item> = Vec::with_capacity(len);
         let range = NSRange { location: start, length: len };
         unsafe {
@@ -138,7 +138,7 @@ pub trait INSArray : INSObject {
 }
 
 pub trait INSOwnedArray : INSArray<Own=Owned> {
-    fn mut_object_at(&mut self, index: uint) -> &mut Self::Item {
+    fn mut_object_at(&mut self, index: usize) -> &mut Self::Item {
         unsafe {
             let result: *mut Self::Item = msg_send![self, objectAtIndex:index];
             &mut *result
@@ -147,7 +147,7 @@ pub trait INSOwnedArray : INSArray<Own=Owned> {
 }
 
 pub trait INSSharedArray : INSArray<Own=Shared> {
-    fn shared_object_at(&self, index: uint) -> ShareId<Self::Item> {
+    fn shared_object_at(&self, index: usize) -> ShareId<Self::Item> {
         let obj = self.object_at(index);
         unsafe {
             Id::from_ptr(obj as *const _ as *mut Self::Item)
@@ -191,10 +191,10 @@ impl<T> INSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableSharedArray<T>;
 }
 
-impl<T: INSObject, O: Ownership> Index<uint> for NSArray<T, O> {
+impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
     type Output = T;
 
-    fn index(&self, index: &uint) -> &T {
+    fn index(&self, index: &usize) -> &T {
         self.object_at(*index)
     }
 }
@@ -208,13 +208,13 @@ pub trait INSMutableArray : INSArray {
         }
     }
 
-    fn insert_object_at(&mut self, index: uint, obj: Id<Self::Item, Self::Own>) {
+    fn insert_object_at(&mut self, index: usize, obj: Id<Self::Item, Self::Own>) {
         unsafe {
             let _: () = msg_send![self, insertObject:obj atIndex:index];
         }
     }
 
-    fn replace_object_at(&mut self, index: uint, obj: Id<Self::Item, Self::Own>) ->
+    fn replace_object_at(&mut self, index: usize, obj: Id<Self::Item, Self::Own>) ->
             Id<Self::Item, Self::Own> {
         let old_obj = unsafe {
             let obj = self.object_at(index);
@@ -227,7 +227,7 @@ pub trait INSMutableArray : INSArray {
         old_obj
     }
 
-    fn remove_object_at(&mut self, index: uint) -> Id<Self::Item, Self::Own> {
+    fn remove_object_at(&mut self, index: usize) -> Id<Self::Item, Self::Own> {
         let obj = unsafe {
             let obj = self.object_at(index);
             Id::from_ptr(obj as *const _ as *mut Self::Item)
@@ -294,10 +294,10 @@ impl<T> INSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableSharedArray<T>;
 }
 
-impl<T: INSObject, O: Ownership> Index<uint> for NSMutableArray<T, O> {
+impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     type Output = T;
 
-    fn index(&self, index: &uint) -> &T {
+    fn index(&self, index: &usize) -> &T {
         self.object_at(*index)
     }
 }
@@ -310,7 +310,7 @@ mod tests {
     use {INSObject, INSString, NSObject, NSString};
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
 
-    fn sample_array(len: uint) -> Id<NSArray<NSObject>> {
+    fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
         let mut vec: Vec<Id<NSObject>> = Vec::with_capacity(len);
         for _ in range(0, len) {
             vec.push(INSObject::new());
@@ -401,7 +401,7 @@ mod tests {
     #[test]
     fn test_remove_object() {
         let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
-        for _ in range(0u, 4) {
+        for _ in range(0, 4) {
             let obj: Id<NSObject> = INSObject::new();
             array.add_object(obj);
         }

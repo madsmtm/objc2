@@ -10,7 +10,7 @@ pub trait INSDictionary : INSObject {
     type Value: INSObject;
     type Own: Ownership;
 
-    fn count(&self) -> uint {
+    fn count(&self) -> usize {
         unsafe {
             msg_send![self, count]
         }

@@ -28,10 +28,10 @@ pub trait INSMutableCopying : INSObject {
     }
 }
 
-static UTF8_ENCODING: uint = 4;
+static UTF8_ENCODING: usize = 4;
 
 pub trait INSString : INSObject {
-    fn len(&self) -> uint {
+    fn len(&self) -> usize {
         unsafe {
             msg_send![self, lengthOfBytesUsingEncoding:UTF8_ENCODING]
         }
