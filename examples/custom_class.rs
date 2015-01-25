@@ -5,7 +5,7 @@ extern crate objc_foundation;
 
 use objc::{ClassDecl, Id};
 use objc::runtime::Object;
-use objc_foundation::{class, INSObject, NSObject};
+use objc_foundation::{INSObject, NSObject};
 
 object_struct!(MYObject);
 
@@ -29,7 +29,7 @@ impl MYObject {
     }
 
     fn register() {
-        let superclass = class::<NSObject>();
+        let superclass = <NSObject as INSObject>::class();
         let mut decl = ClassDecl::new(superclass, "MYObject").unwrap();
 
         decl.add_ivar::<u32>("_number");

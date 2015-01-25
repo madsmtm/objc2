@@ -6,6 +6,14 @@ use NSString;
 pub trait INSObject : Message {
     fn class_name() -> &'static str;
 
+    fn class() -> &'static Class {
+        let name = <Self as INSObject>::class_name();
+        match Class::get(name) {
+            Some(cls) => cls,
+            None => panic!("Class {} not found", name),
+        }
+    }
+
     fn hash_code(&self) -> uint {
         unsafe {
             msg_send![self, hash]
@@ -34,7 +42,7 @@ pub trait INSObject : Message {
     }
 
     fn as_object<T: INSObject>(&self) -> Option<&T> {
-        let cls = class::<T>();
+        let cls = <T as INSObject>::class();
         if self.is_kind_of(cls) {
             let ptr = self as *const _ as *const T;
             Some(unsafe { &*ptr })
@@ -44,7 +52,7 @@ pub trait INSObject : Message {
     }
 
     fn new() -> Id<Self> {
-        let cls = class::<Self>();
+        let cls = <Self as INSObject>::class();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, init];
@@ -55,19 +63,11 @@ pub trait INSObject : Message {
 
 object_struct!(NSObject);
 
-pub fn class<T: INSObject>() -> &'static Class {
-    let name = <T as INSObject>::class_name();
-    match Class::get(name) {
-        Some(cls) => cls,
-        None => panic!("Class {} not found", name),
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use objc::Id;
     use {INSString, NSString};
-    use super::{class, INSObject, NSObject};
+    use super::{INSObject, NSObject};
 
     #[test]
     fn test_class_name() {
@@ -100,8 +100,8 @@ mod tests {
     #[test]
     fn test_is_kind_of() {
         let obj: Id<NSObject> = INSObject::new();
-        assert!(obj.is_kind_of(class::<NSObject>()));
-        assert!(!obj.is_kind_of(class::<NSString>()));
+        assert!(obj.is_kind_of(<NSObject as INSObject>::class()));
+        assert!(!obj.is_kind_of(<NSString as INSObject>::class()));
     }
 
     #[test]

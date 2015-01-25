@@ -3,7 +3,7 @@ use std::ops::Index;
 
 use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership};
 
-use {class, INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
+use {INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
 
 pub trait INSDictionary : INSObject {
     type Key: INSObject;
@@ -68,7 +68,7 @@ pub trait INSDictionary : INSObject {
 
     unsafe fn from_refs<T: INSCopying<Output=Self::Key>>(
             keys: &[&T], vals: &[&Self::Value]) -> Id<Self> {
-        let cls = class::<Self>();
+        let cls = <Self as INSObject>::class();
         let count = min(keys.len(), vals.len());
         let obj: *mut Self = msg_send![cls, alloc];
         let obj: *mut Self = msg_send![obj, initWithObjects:vals.as_ptr()

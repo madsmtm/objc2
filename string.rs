@@ -4,7 +4,7 @@ use std::str;
 
 use objc::Id;
 
-use {class, INSObject};
+use INSObject;
 
 pub trait INSCopying : INSObject {
     type Output: INSObject;
@@ -39,7 +39,7 @@ pub trait INSString : INSObject {
     }
 
     fn from_str(string: &str) -> Id<Self> {
-        let cls = class::<Self>();
+        let cls = <Self as INSObject>::class();
         let utf8_encoding = 4u;
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];

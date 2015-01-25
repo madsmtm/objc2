@@ -5,7 +5,7 @@ use std::ops::Index;
 use objc::runtime::Object;
 use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, Shared, ShareId};
 
-use {class, INSCopying, INSMutableCopying, INSObject};
+use {INSCopying, INSMutableCopying, INSObject};
 
 #[repr(C)]
 #[derive(Copy)]
@@ -101,7 +101,7 @@ pub trait INSArray : INSObject {
     }
 
     unsafe fn from_refs(refs: &[&Self::Item]) -> Id<Self> {
-        let cls = class::<Self>();
+        let cls = <Self as INSObject>::class();
         let obj: *mut Self = msg_send![cls, alloc];
         let obj: *mut Self = msg_send![obj, initWithObjects:refs.as_ptr()
                                                       count:refs.len()];

@@ -4,7 +4,7 @@ use std::str;
 
 use objc::{encode, Encode, Id};
 
-use {class, INSCopying, INSObject};
+use {INSCopying, INSObject};
 
 pub trait INSValue : INSObject {
     type Value: Copy + Encode;
@@ -28,7 +28,7 @@ pub trait INSValue : INSObject {
     }
 
     fn from_value(value: &Self::Value) -> Id<Self> {
-        let cls = class::<Self>();
+        let cls = <Self as INSObject>::class();
         let encoding = CString::from_slice(encode::<Self::Value>().as_bytes());
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
