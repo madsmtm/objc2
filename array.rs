@@ -312,7 +312,7 @@ mod tests {
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
         let mut vec: Vec<Id<NSObject>> = Vec::with_capacity(len);
-        for _ in range(0, len) {
+        for _ in 0..len {
             vec.push(INSObject::new());
         }
         INSArray::from_vec(vec)
@@ -401,7 +401,7 @@ mod tests {
     #[test]
     fn test_remove_object() {
         let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
-        for _ in range(0, 4) {
+        for _ in 0..4 {
             let obj: Id<NSObject> = INSObject::new();
             array.add_object(obj);
         }
