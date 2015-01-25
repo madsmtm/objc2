@@ -52,10 +52,10 @@ macro_rules! object_impl {
             }
         }
 
-        impl<$($t),*> ::std::fmt::Show for $name<$($t),*> {
+        impl<$($t),*> ::std::fmt::Debug for $name<$($t),*> {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                 use $crate::{INSObject, INSString};
-                self.description().as_str().fmt(f)
+                ::std::fmt::Debug::fmt(self.description().as_str(), f)
             }
         }
     );
