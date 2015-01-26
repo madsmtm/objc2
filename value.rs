@@ -12,8 +12,8 @@ pub trait INSValue : INSObject {
     fn value(&self) -> Self::Value {
         assert!(self.encoding() == encode::<Self::Value>());
         unsafe {
-            let value = mem::uninitialized::<Self::Value>();
-            let _: () = msg_send![self, getValue:&value];
+            let mut value = mem::uninitialized::<Self::Value>();
+            let _: () = msg_send![self, getValue:&mut value];
             value
         }
     }
