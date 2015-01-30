@@ -1,7 +1,7 @@
 #![crate_name = "objc_foundation"]
 #![crate_type = "lib"]
 
-#![allow(unstable)]
+#![feature(core, hash, std_misc)]
 
 #[macro_use]
 extern crate objc;
