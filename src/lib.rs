@@ -26,7 +26,7 @@ pub trait BlockArguments {
     /// of arguments.
     fn invoke_for_concrete_block<R, F>() ->
             unsafe extern fn(*mut ConcreteBlock<Self, R, F>, ...) -> R
-            where F: Fn<Self, R>;
+            where F: Fn<Self, Output=R>;
 }
 
 macro_rules! block_args_impl(
@@ -47,11 +47,11 @@ macro_rules! block_args_impl(
 
             fn invoke_for_concrete_block<R, X>() ->
                     unsafe extern fn(*mut ConcreteBlock<Self, R, X>, ...) -> R
-                    where X: Fn<Self, R> {
+                    where X: Fn<Self, Output=R> {
                 unsafe extern fn $f<R, X $(, $t)*>(
                         block_ptr: *mut ConcreteBlock<Self, R, X>
                         $(, $a: $t)*) -> R
-                        where X: Fn<Self, R> {
+                        where X: Fn<Self, Output=R> {
                     let block = &*block_ptr;
                     (block.closure)($($a),*)
                 }
@@ -111,7 +111,8 @@ pub struct ConcreteBlock<A, R, F> where A: BlockArguments {
     closure: F,
 }
 
-impl<A, R, F> ConcreteBlock<A, R, F> where A: BlockArguments, F: Fn<A, R> {
+impl<A, R, F> ConcreteBlock<A, R, F>
+        where A: BlockArguments, F: Fn<A, Output=R> {
     /// Constructs a `ConcreteBlock` with the given closure.
     /// When the block is called, it will return the value that results from
     /// calling the closure.
@@ -147,14 +148,14 @@ impl<A, R, F> ConcreteBlock<A, R, F> where A: BlockArguments, F: Fn<A, R> {
 }
 
 impl<A, R, F> Clone for ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: Fn<A, R> + Clone {
+        where A: BlockArguments, F: Fn<A, Output=R> + Clone {
     fn clone(&self) -> Self {
         ConcreteBlock::new(self.closure.clone())
     }
 }
 
 impl<A, R, F> Deref for ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: Fn<A, R> {
+        where A: BlockArguments, F: Fn<A, Output=R> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Block<A, R> {
@@ -163,7 +164,7 @@ impl<A, R, F> Deref for ConcreteBlock<A, R, F>
 }
 
 impl<A, R, F> DerefMut for ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: Fn<A, R> {
+        where A: BlockArguments, F: Fn<A, Output=R> {
     fn deref_mut(&mut self) -> &mut Block<A, R> {
         &mut self.base
     }
