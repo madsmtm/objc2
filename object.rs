@@ -1,5 +1,5 @@
 use objc::runtime::Class;
-use objc::{Id, Message};
+use objc::{Id, Message, ShareId};
 
 use NSString;
 
@@ -19,7 +19,7 @@ pub trait INSObject : Message {
         result != 0
     }
 
-    fn description(&self) -> Id<NSString> {
+    fn description(&self) -> ShareId<NSString> {
         unsafe {
             let result: *mut NSString = msg_send![self, description];
             Id::from_ptr(result)

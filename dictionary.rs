@@ -1,7 +1,7 @@
 use std::cmp::min;
 use std::ops::Index;
 
-use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership};
+use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, ShareId};
 
 use {INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
 
@@ -85,8 +85,8 @@ pub trait INSDictionary : INSObject {
         }
     }
 
-    fn into_keys_and_objects(dict: Id<Self>) -> (
-            Vec<Id<Self::Key>>, Vec<Id<Self::Value, Self::Own>>) {
+    fn into_keys_and_objects(dict: Id<Self>) ->
+            (Vec<ShareId<Self::Key>>, Vec<Id<Self::Value, Self::Own>>) {
         let (keys, objs) = dict.keys_and_objects();
         unsafe {
             (keys.into_id_vec(), objs.into_id_vec())

@@ -2,14 +2,14 @@ use std::mem;
 use std::slice;
 use std::str;
 
-use objc::Id;
+use objc::{Id, ShareId};
 
 use INSObject;
 
 pub trait INSCopying : INSObject {
     type Output: INSObject;
 
-    fn copy(&self) -> Id<Self::Output> {
+    fn copy(&self) -> ShareId<Self::Output> {
         unsafe {
             let obj: *mut Self::Output = msg_send![self, copy];
             Id::from_retained_ptr(obj)
