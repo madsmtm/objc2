@@ -247,14 +247,14 @@ mod tests {
     #[test]
     fn test_create_block() {
         let mut block = ConcreteBlock::new(|&:| 13);
-        let result = invoke_int_block(&mut *block);
+        let result = invoke_int_block(&mut block);
         assert!(result == 13);
     }
 
     #[test]
     fn test_create_block_args() {
         let mut block = ConcreteBlock::new(|&: a: i32| a + 5);
-        let result = invoke_add_block(&mut *block, 6);
+        let result = invoke_add_block(&mut block, 6);
         assert!(result == 11);
     }
 
@@ -263,9 +263,9 @@ mod tests {
         let s = String::from_str("Hello!");
         let expected_len = s.len() as i32;
         let mut block = ConcreteBlock::new(move |&:| s.len() as i32);
-        assert!(invoke_int_block(&mut *block) == expected_len);
+        assert!(invoke_int_block(&mut block) == expected_len);
 
         let mut copied = block.copy();
-        assert!(invoke_int_block(&mut *copied) == expected_len);
+        assert!(invoke_int_block(&mut copied) == expected_len);
     }
 }
