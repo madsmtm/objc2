@@ -148,10 +148,10 @@ mod tests {
         let dict = sample_dict("abcd");
 
         let string: Id<NSString> = INSString::from_str("abcd");
-        assert!(dict.object_for(&*string).is_some());
+        assert!(dict.object_for(&string).is_some());
 
         let string: Id<NSString> = INSString::from_str("abcde");
-        assert!(dict.object_for(&*string).is_none());
+        assert!(dict.object_for(&string).is_none());
     }
 
     #[test]
