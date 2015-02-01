@@ -1,9 +1,10 @@
 use std::cmp::min;
 use std::ops::Index;
+use std::ptr;
 
-use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, ShareId};
+use objc::{Id, IdSlice, Owned, Ownership};
 
-use {INSArray, INSCopying, INSObject, NSArray, NSEnumerator};
+use {INSArray, INSCopying, INSObject, NSArray, NSSharedArray, NSEnumerator};
 
 pub trait INSDictionary : INSObject {
     type Key: INSObject;
@@ -23,20 +24,39 @@ pub trait INSDictionary : INSObject {
         }
     }
 
-    fn all_keys(&self) -> Vec<&Self::Key> {
-        let keys = unsafe {
-            let keys: *mut NSArray<Self::Key> = msg_send![self, allKeys];
-            &*keys
-        };
-        keys.to_vec()
+    fn keys(&self) -> Vec<&Self::Key> {
+        let len = self.count();
+        let mut keys: Vec<&Self::Key> = Vec::with_capacity(len);
+        unsafe {
+            let _: () = msg_send![self, getObjects:ptr::null_mut::<Self::Value>()
+                                           andKeys:keys.as_mut_ptr()];
+            keys.set_len(len);
+        }
+        keys
     }
 
-    fn all_values(&self) -> Vec<&Self::Value> {
-        let vals = unsafe {
-            let vals: *mut NSArray<Self::Value> = msg_send![self, allValues];
-            &*vals
-        };
-        vals.to_vec()
+    fn values(&self) -> Vec<&Self::Value> {
+        let len = self.count();
+        let mut vals: Vec<&Self::Value> = Vec::with_capacity(len);
+        unsafe {
+            let _: () = msg_send![self, getObjects:vals.as_mut_ptr()
+                                           andKeys:ptr::null_mut::<Self::Key>()];
+            vals.set_len(len);
+        }
+        vals
+    }
+
+    fn keys_and_objects(&self) -> (Vec<&Self::Key>, Vec<&Self::Value>) {
+        let len = self.count();
+        let mut keys: Vec<&Self::Key> = Vec::with_capacity(len);
+        let mut objs: Vec<&Self::Value> = Vec::with_capacity(len);
+        unsafe {
+            let _: () = msg_send![self, getObjects:objs.as_mut_ptr()
+                                           andKeys:keys.as_mut_ptr()];
+            keys.set_len(len);
+            objs.set_len(len);
+        }
+        (keys, objs)
     }
 
     fn key_enumerator(&self) -> NSEnumerator<Self::Key> {
@@ -53,17 +73,11 @@ pub trait INSDictionary : INSObject {
         }
     }
 
-    fn keys_and_objects(&self) -> (Vec<&Self::Key>, Vec<&Self::Value>) {
-        let len = self.count();
-        let mut keys: Vec<&Self::Key> = Vec::with_capacity(len);
-        let mut objs: Vec<&Self::Value> = Vec::with_capacity(len);
+    fn keys_array(&self) -> Id<NSSharedArray<Self::Key>> {
         unsafe {
-            let _: () = msg_send![self, getObjects:objs.as_ptr()
-                                           andKeys:keys.as_ptr()];
-            keys.set_len(len);
-            objs.set_len(len);
+            let keys: *mut NSSharedArray<Self::Key> = msg_send![self, allKeys];
+            Id::from_ptr(keys)
         }
-        (keys, objs)
     }
 
     unsafe fn from_refs<T>(keys: &[&T], vals: &[&Self::Value]) -> Id<Self>
@@ -86,11 +100,10 @@ pub trait INSDictionary : INSObject {
         }
     }
 
-    fn into_keys_and_objects(dict: Id<Self>) ->
-            (Vec<ShareId<Self::Key>>, Vec<Id<Self::Value, Self::Own>>) {
-        let (keys, objs) = dict.keys_and_objects();
+    fn into_values_array(dict: Id<Self>) -> Id<NSArray<Self::Value, Self::Own>> {
         unsafe {
-            (keys.into_id_vec(), objs.into_id_vec())
+            let vals = msg_send![dict, allValues];
+            Id::from_ptr(vals)
         }
     }
 }
@@ -115,7 +128,7 @@ impl<K, V> Index<K> for NSDictionary<K, V> where K: INSObject, V: INSObject {
 #[cfg(test)]
 mod tests {
     use objc::{Id};
-    use {INSObject, INSString, NSObject, NSString};
+    use {INSArray, INSObject, INSString, NSObject, NSString};
     use super::{INSDictionary, NSDictionary};
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
@@ -142,18 +155,18 @@ mod tests {
     }
 
     #[test]
-    fn test_all_keys() {
+    fn test_keys() {
         let dict = sample_dict("abcd");
-        let keys = dict.all_keys();
+        let keys = dict.keys();
 
         assert!(keys.len() == 1);
         assert!(keys[0].as_str() == "abcd");
     }
 
     #[test]
-    fn test_all_values() {
+    fn test_values() {
         let dict = sample_dict("abcd");
-        let vals = dict.all_values();
+        let vals = dict.values();
 
         assert!(vals.len() == 1);
     }
@@ -180,5 +193,17 @@ mod tests {
     fn test_object_enumerator() {
         let dict = sample_dict("abcd");
         assert!(dict.object_enumerator().count() == 1);
+    }
+
+    #[test]
+    fn test_arrays() {
+        let dict = sample_dict("abcd");
+
+        let keys = dict.keys_array();
+        assert!(keys.count() == 1);
+        assert!(keys.object_at(0).as_str() == "abcd");
+
+        let objs = INSDictionary::into_values_array(dict);
+        assert!(objs.count() == 1);
     }
 }
