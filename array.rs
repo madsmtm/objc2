@@ -56,13 +56,13 @@ pub struct NSEnumerator<'a, T> {
     marker: ContravariantLifetime<'a>,
 }
 
-impl<'a, T: INSObject> NSEnumerator<'a, T> {
+impl<'a, T> NSEnumerator<'a, T> where T: INSObject {
     pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
         NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
     }
 }
 
-impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
+impl<'a, T> Iterator for NSEnumerator<'a, T> where T: INSObject {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
@@ -185,14 +185,14 @@ pub enum NSArray<T, O = Owned> { }
 
 object_impl!(NSArray<T, O>);
 
-impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
+impl<T, O> INSArray for NSArray<T, O> where T: INSObject, O: Ownership {
     type Item = T;
     type Own = O;
 }
 
-impl<T: INSObject> INSOwnedArray for NSArray<T, Owned> { }
+impl<T> INSOwnedArray for NSArray<T, Owned> where T: INSObject { }
 
-impl<T: INSObject> INSSharedArray for NSArray<T, Shared> { }
+impl<T> INSSharedArray for NSArray<T, Shared> where T: INSObject { }
 
 impl<T> INSCopying for NSArray<T, Shared> {
     type Output = NSSharedArray<T>;
@@ -202,7 +202,7 @@ impl<T> INSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableSharedArray<T>;
 }
 
-impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
+impl<T, O> Index<usize> for NSArray<T, O> where T: INSObject, O: Ownership {
     type Output = T;
 
     fn index(&self, index: &usize) -> &T {
@@ -267,9 +267,11 @@ pub trait INSMutableArray : INSArray {
         }
     }
 
-    fn sort_by<F: FnMut(&Self::Item, &Self::Item) -> Ordering>(&mut self, compare: F) {
-        extern fn compare_with_closure<T, F: FnMut(&T, &T) -> Ordering>(
-                obj1: &T, obj2: &T, compare: &mut F) -> NSComparisonResult {
+    fn sort_by<F>(&mut self, compare: F)
+            where F: FnMut(&Self::Item, &Self::Item) -> Ordering {
+        extern fn compare_with_closure<T, F>(obj1: &T, obj2: &T,
+                compare: &mut F) -> NSComparisonResult
+                where F: FnMut(&T, &T) -> Ordering {
             NSComparisonResult::from_ordering((*compare)(obj1, obj2))
         }
 
@@ -286,16 +288,17 @@ pub enum NSMutableArray<T, O = Owned> { }
 
 object_impl!(NSMutableArray<T, O>);
 
-impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
+impl<T, O> INSArray for NSMutableArray<T, O> where T: INSObject, O: Ownership {
     type Item = T;
     type Own = O;
 }
 
-impl<T: INSObject> INSOwnedArray for NSMutableArray<T, Owned> { }
+impl<T> INSOwnedArray for NSMutableArray<T, Owned> where T: INSObject { }
 
-impl<T: INSObject> INSSharedArray for NSMutableArray<T, Shared> { }
+impl<T> INSSharedArray for NSMutableArray<T, Shared> where T: INSObject { }
 
-impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> { }
+impl<T, O> INSMutableArray for NSMutableArray<T, O>
+        where T: INSObject, O: Ownership { }
 
 impl<T> INSCopying for NSMutableArray<T, Shared> {
     type Output = NSSharedArray<T>;
@@ -305,7 +308,8 @@ impl<T> INSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableSharedArray<T>;
 }
 
-impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
+impl<T, O> Index<usize> for NSMutableArray<T, O>
+        where T: INSObject, O: Ownership {
     type Output = T;
 
     fn index(&self, index: &usize) -> &T {

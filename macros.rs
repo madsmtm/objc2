@@ -48,8 +48,8 @@ macro_rules! object_impl {
 
         impl<$($t),*> ::std::cmp::Eq for $name<$($t),*> { }
 
-        impl<H: ::std::hash::Hasher + ::std::hash::Writer, $($t),*>
-                ::std::hash::Hash<H> for $name<$($t),*> {
+        impl<H, $($t),*> ::std::hash::Hash<H> for $name<$($t),*>
+                where H: ::std::hash::Hasher + ::std::hash::Writer {
             fn hash(&self, state: &mut H) {
                 use $crate::INSObject;
                 self.hash_code().hash(state);

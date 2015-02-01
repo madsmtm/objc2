@@ -41,7 +41,7 @@ pub trait INSValue : INSObject {
 
 object_struct!(NSValue<T>);
 
-impl<T: Copy + Encode> INSValue for NSValue<T> {
+impl<T> INSValue for NSValue<T> where T: Copy + Encode {
     type Value = T;
 }
 

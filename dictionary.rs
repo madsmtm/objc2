@@ -66,8 +66,8 @@ pub trait INSDictionary : INSObject {
         (keys, objs)
     }
 
-    unsafe fn from_refs<T: INSCopying<Output=Self::Key>>(
-            keys: &[&T], vals: &[&Self::Value]) -> Id<Self> {
+    unsafe fn from_refs<T>(keys: &[&T], vals: &[&Self::Value]) -> Id<Self>
+            where T: INSCopying<Output=Self::Key> {
         let cls = <Self as INSObject>::class();
         let count = min(keys.len(), vals.len());
         let obj: *mut Self = msg_send![cls, alloc];
@@ -77,8 +77,9 @@ pub trait INSDictionary : INSObject {
         Id::from_retained_ptr(obj)
     }
 
-    fn from_keys_and_objects<T: INSCopying<Output=Self::Key>>(
-            keys: &[&T], vals: Vec<Id<Self::Value, Self::Own>>) -> Id<Self> {
+    fn from_keys_and_objects<T>(keys: &[&T],
+            vals: Vec<Id<Self::Value, Self::Own>>) -> Id<Self>
+            where T: INSCopying<Output=Self::Key> {
         let vals_refs = vals.as_refs_slice();
         unsafe {
             INSDictionary::from_refs(keys, vals_refs)
@@ -96,13 +97,14 @@ pub trait INSDictionary : INSObject {
 
 object_struct!(NSDictionary<K, V>);
 
-impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {
+impl<K, V> INSDictionary for NSDictionary<K, V>
+        where K: INSObject, V: INSObject {
     type Key = K;
     type Value = V;
     type Own = Owned;
 }
 
-impl<K: INSObject, V: INSObject> Index<K> for NSDictionary<K, V> {
+impl<K, V> Index<K> for NSDictionary<K, V> where K: INSObject, V: INSObject {
     type Output = V;
 
     fn index(&self, index: &K) -> &V {

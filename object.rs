@@ -12,7 +12,7 @@ pub trait INSObject : Message {
         }
     }
 
-    fn is_equal<T: INSObject>(&self, other: &T) -> bool {
+    fn is_equal<T>(&self, other: &T) -> bool where T: INSObject {
         let result: i8 = unsafe {
             msg_send![self, isEqual:other]
         };
