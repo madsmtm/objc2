@@ -1,4 +1,4 @@
-#![feature(core, hash)]
+#![feature(hash)]
 
 #[macro_use]
 extern crate objc;

@@ -1,3 +1,5 @@
+#![feature(core)]
+
 extern crate objc;
 extern crate objc_foundation;
 
