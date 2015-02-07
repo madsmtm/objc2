@@ -33,7 +33,8 @@ struct. For example, to create a block that adds two `i32`s, we could write:
 
 ```
 let block = ConcreteBlock::new(|a: i32, b: i32| a + b);
-let block = block.copy();
+let mut block = block.copy();
+assert!(block.call((5, 8)) == 13);
 ```
 
 It is important to copy your block to the heap (with the `copy` method) before
