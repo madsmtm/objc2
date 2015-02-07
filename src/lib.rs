@@ -260,7 +260,7 @@ mod tests {
 
     #[test]
     fn test_concrete_block_copy() {
-        let s = String::from_str("Hello!");
+        let s = "Hello!".to_string();
         let expected_len = s.len() as i32;
         let mut block = ConcreteBlock::new(move |&:| s.len() as i32);
         assert!(invoke_int_block(&mut block) == expected_len);
