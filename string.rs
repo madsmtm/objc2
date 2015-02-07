@@ -1,4 +1,3 @@
-use std::mem;
 use std::slice;
 use std::str;
 
@@ -44,9 +43,8 @@ pub trait INSString : INSObject {
         };
         let len = self.len();
         unsafe {
-            let bytes = slice::from_raw_buf(&bytes, len);
-            let s = str::from_utf8(bytes).unwrap();
-            mem::transmute(s)
+            let bytes = slice::from_raw_parts(bytes, len);
+            str::from_utf8(bytes).unwrap()
         }
     }
 
