@@ -7,5 +7,5 @@ authors = ["Steven Sheldon"]
 name = "objc_foundation"
 path = "lib.rs"
 
-[dependencies.objc]
-path = "../core"
+[dependencies]
+objc = "0.0"
