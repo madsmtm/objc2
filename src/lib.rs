@@ -21,19 +21,10 @@ extern {
 pub trait BlockArguments {
     /// Calls the given `Block` with self as the arguments.
     fn call_block<R>(self, block: &mut Block<Self, R>) -> R;
-
-    /// Returns an invoke function for a `ConcreteBlock` that takes this type
-    /// of arguments.
-    fn invoke_for_concrete_block<R, F>() ->
-            unsafe extern fn(*mut ConcreteBlock<Self, R, F>, ...) -> R
-            where F: Fn<Self, Output=R>;
 }
 
-macro_rules! block_args_impl(
-    ($f:ident) => (
-        block_args_impl!($f,);
-    );
-    ($f:ident, $($a:ident : $t:ident),*) => (
+macro_rules! block_args_impl {
+    ($($a:ident : $t:ident),*) => (
         impl<$($t),*> BlockArguments for ($($t,)*) {
             fn call_block<R>(self, block: &mut Block<Self, R>) -> R {
                 let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
@@ -44,39 +35,23 @@ macro_rules! block_args_impl(
                     invoke(block $(, $a)*)
                 }
             }
-
-            fn invoke_for_concrete_block<R, X>() ->
-                    unsafe extern fn(*mut ConcreteBlock<Self, R, X>, ...) -> R
-                    where X: Fn<Self, Output=R> {
-                unsafe extern fn $f<R, X $(, $t)*>(
-                        block_ptr: *mut ConcreteBlock<Self, R, X>
-                        $(, $a: $t)*) -> R
-                        where X: Fn<Self, Output=R> {
-                    let block = &*block_ptr;
-                    (block.closure)($($a),*)
-                }
-
-                unsafe {
-                    mem::transmute($f::<R, X $(, $t)*>)
-                }
-            }
         }
     );
-);
+}
 
-block_args_impl!(concrete_block_invoke_args0);
-block_args_impl!(concrete_block_invoke_args1, a: A);
-block_args_impl!(concrete_block_invoke_args2, a: A, b: B);
-block_args_impl!(concrete_block_invoke_args3, a: A, b: B, c: C);
-block_args_impl!(concrete_block_invoke_args4, a: A, b: B, c: C, d: D);
-block_args_impl!(concrete_block_invoke_args5, a: A, b: B, c: C, d: D, e: E);
-block_args_impl!(concrete_block_invoke_args6, a: A, b: B, c: C, d: D, e: E, f: F);
-block_args_impl!(concrete_block_invoke_args7, a: A, b: B, c: C, d: D, e: E, f: F, g: G);
-block_args_impl!(concrete_block_invoke_args8, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
-block_args_impl!(concrete_block_invoke_args9, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
-block_args_impl!(concrete_block_invoke_args10, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
-block_args_impl!(concrete_block_invoke_args11, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K);
-block_args_impl!(concrete_block_invoke_args12, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L);
+block_args_impl!();
+block_args_impl!(a: A);
+block_args_impl!(a: A, b: B);
+block_args_impl!(a: A, b: B, c: C);
+block_args_impl!(a: A, b: B, c: C, d: D);
+block_args_impl!(a: A, b: B, c: C, d: D, e: E);
+block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F);
+block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G);
+block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
+block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
+block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
+block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K);
+block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L);
 
 /// An Objective-C block that takes arguments of `A` when called and
 /// returns a value of `R`.
@@ -102,6 +77,49 @@ impl<A, R> EncodePtr for Block<A, R> {
     fn ptr_code() -> &'static str { "@?" }
 }
 
+pub trait IntoConcreteBlock<A, R> where A: BlockArguments {
+    fn into_concrete_block(self) -> ConcreteBlock<A, R, Self>;
+}
+
+macro_rules! concrete_block_impl {
+    ($f:ident) => (
+        concrete_block_impl!($f,);
+    );
+    ($f:ident, $($a:ident : $t:ident),*) => (
+        impl<$($t,)* R, X> IntoConcreteBlock<($($t,)*), R> for X
+                where X: Fn($($t,)*) -> R {
+            fn into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
+                unsafe extern fn $f<$($t,)* R, X>(
+                        block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
+                        $(, $a: $t)*) -> R
+                        where X: Fn($($t,)*) -> R {
+                    let block = &*block_ptr;
+                    (block.closure)($($a),*)
+                }
+
+                unsafe {
+                    ConcreteBlock::with_invoke(
+                        mem::transmute($f::<$($t,)* R, X>), self)
+                }
+            }
+        }
+    );
+}
+
+concrete_block_impl!(concrete_block_invoke_args0);
+concrete_block_impl!(concrete_block_invoke_args1, a: A);
+concrete_block_impl!(concrete_block_invoke_args2, a: A, b: B);
+concrete_block_impl!(concrete_block_invoke_args3, a: A, b: B, c: C);
+concrete_block_impl!(concrete_block_invoke_args4, a: A, b: B, c: C, d: D);
+concrete_block_impl!(concrete_block_invoke_args5, a: A, b: B, c: C, d: D, e: E);
+concrete_block_impl!(concrete_block_invoke_args6, a: A, b: B, c: C, d: D, e: E, f: F);
+concrete_block_impl!(concrete_block_invoke_args7, a: A, b: B, c: C, d: D, e: E, f: F, g: G);
+concrete_block_impl!(concrete_block_invoke_args8, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
+concrete_block_impl!(concrete_block_invoke_args9, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
+concrete_block_impl!(concrete_block_invoke_args10, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
+concrete_block_impl!(concrete_block_invoke_args11, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K);
+concrete_block_impl!(concrete_block_invoke_args12, a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L);
+
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
 #[repr(C)]
@@ -112,22 +130,30 @@ pub struct ConcreteBlock<A, R, F> where A: BlockArguments {
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: Fn<A, Output=R> {
+        where A: BlockArguments, F: IntoConcreteBlock<A, R> {
     /// Constructs a `ConcreteBlock` with the given closure.
     /// When the block is called, it will return the value that results from
     /// calling the closure.
     pub fn new(closure: F) -> Self {
-        let extern_invoke =
-            BlockArguments::invoke_for_concrete_block::<R, F>();
+        closure.into_concrete_block()
+    }
+}
+
+impl<A, R, F> ConcreteBlock<A, R, F> where A: BlockArguments {
+    /// Constructs a `ConcreteBlock` with the given invoke function and closure.
+    /// Unsafe because the caller must ensure the invoke function takes the
+    /// correct arguments.
+    unsafe fn with_invoke(invoke: unsafe extern fn(*mut Self, ...) -> R,
+            closure: F) -> Self {
         ConcreteBlock {
             base: Block {
                 isa: &_NSConcreteStackBlock,
                 // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
                 flags: 1 << 25,
                 _reserved: 0,
-                invoke: unsafe { mem::transmute(extern_invoke) },
+                invoke: mem::transmute(invoke),
             },
-            descriptor: Box::new(BlockDescriptor::<Self>::new()),
+            descriptor: Box::new(BlockDescriptor::new()),
             closure: closure,
         }
     }
@@ -148,14 +174,17 @@ impl<A, R, F> ConcreteBlock<A, R, F>
 }
 
 impl<A, R, F> Clone for ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: Fn<A, Output=R> + Clone {
+        where A: BlockArguments, F: Clone {
     fn clone(&self) -> Self {
-        ConcreteBlock::new(self.closure.clone())
+        unsafe {
+            ConcreteBlock::with_invoke(mem::transmute(self.invoke),
+                self.closure.clone())
+        }
     }
 }
 
 impl<A, R, F> Deref for ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: Fn<A, Output=R> {
+        where A: BlockArguments {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Block<A, R> {
@@ -164,7 +193,7 @@ impl<A, R, F> Deref for ConcreteBlock<A, R, F>
 }
 
 impl<A, R, F> DerefMut for ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: Fn<A, Output=R> {
+        where A: BlockArguments {
     fn deref_mut(&mut self) -> &mut Block<A, R> {
         &mut self.base
     }
