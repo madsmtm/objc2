@@ -1,4 +1,5 @@
 use std::marker::ContravariantLifetime;
+use libc::c_ulong;
 
 use objc::Id;
 use objc::runtime::Object;
@@ -25,4 +26,26 @@ impl<'a, T> Iterator for NSEnumerator<'a, T> where T: INSObject {
             obj.as_ref()
         }
     }
+}
+
+trait INSFastEnumeration: INSObject {
+    type Item: INSObject;
+
+    fn enumerator(&self) -> NSFastEnumerator<Self::Item> {
+        NSFastEnumerator {
+            object: unsafe { &*(self as *const Self as *const Object) },
+        }
+    }
+}
+
+#[repr(C)]
+struct NSFastEnumerationState {
+    state: c_ulong,
+    items_ptr: *mut *const Object,
+    mutations_ptr: *mut c_ulong,
+    extra: [c_ulong; 5],
+}
+
+struct NSFastEnumerator<'a, T> {
+    object: &'a Object,
 }
