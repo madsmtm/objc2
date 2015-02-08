@@ -1,11 +1,10 @@
 use std::cmp::Ordering;
-use std::marker::ContravariantLifetime;
 use std::ops::{Index, Range};
 
 use objc::runtime::Object;
 use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, Shared, ShareId};
 
-use {INSCopying, INSMutableCopying, INSObject};
+use {INSCopying, INSMutableCopying, INSObject, NSEnumerator};
 
 #[repr(isize)]
 #[derive(Copy)]
@@ -48,28 +47,6 @@ impl NSRange {
 
     pub fn as_range(&self) -> Range<usize> {
         Range { start: self.location, end: self.location + self.length }
-    }
-}
-
-pub struct NSEnumerator<'a, T> {
-    id: Id<Object>,
-    marker: ContravariantLifetime<'a>,
-}
-
-impl<'a, T> NSEnumerator<'a, T> where T: INSObject {
-    pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
-        NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
-    }
-}
-
-impl<'a, T> Iterator for NSEnumerator<'a, T> where T: INSObject {
-    type Item = &'a T;
-
-    fn next(&mut self) -> Option<&'a T> {
-        unsafe {
-            let obj: *mut T = msg_send![self.id, nextObject];
-            obj.as_ref()
-        }
     }
 }
 
