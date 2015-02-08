@@ -3,6 +3,7 @@
 
 #![feature(core, hash, std_misc)]
 
+extern crate libc;
 #[macro_use]
 extern crate objc;
 

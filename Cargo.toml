@@ -8,4 +8,5 @@ name = "objc_foundation"
 path = "lib.rs"
 
 [dependencies]
+libc = "0.1"
 objc = "0.0"

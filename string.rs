@@ -1,5 +1,6 @@
 use std::slice;
 use std::str;
+use libc::c_char;
 
 use objc::{Id, ShareId};
 
@@ -38,7 +39,7 @@ pub trait INSString : INSObject {
 
     fn as_str(&self) -> &str {
         let bytes = unsafe {
-            let bytes: *const i8 = msg_send![self, UTF8String];
+            let bytes: *const c_char = msg_send![self, UTF8String];
             bytes as *const u8
         };
         let len = self.len();

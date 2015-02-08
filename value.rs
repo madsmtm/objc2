@@ -1,6 +1,7 @@
 use std::ffi::{CString, self};
 use std::mem;
 use std::str;
+use libc::c_char;
 
 use objc::{encode, Encode, Id};
 
@@ -20,7 +21,7 @@ pub trait INSValue : INSObject {
 
     fn encoding(&self) -> &str {
         unsafe {
-            let result: *const i8 = msg_send![self, objCType];
+            let result: *const c_char = msg_send![self, objCType];
             let bytes = ffi::c_str_to_bytes(&result);
             let s = str::from_utf8(bytes).unwrap();
             mem::transmute(s)
