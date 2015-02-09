@@ -28,7 +28,7 @@ pub trait INSMutableCopying : INSObject {
     }
 }
 
-static UTF8_ENCODING: usize = 4;
+const UTF8_ENCODING: usize = 4;
 
 pub trait INSString : INSObject {
     fn len(&self) -> usize {
