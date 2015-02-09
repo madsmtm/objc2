@@ -13,7 +13,7 @@ pub use self::array::{
     NSMutableSharedArray, NSSharedArray,
 };
 pub use self::dictionary::{INSDictionary, NSDictionary};
-pub use self::enumerator::NSEnumerator;
+pub use self::enumerator::{INSFastEnumeration, NSEnumerator, NSFastEnumerator};
 pub use self::object::{INSObject, NSObject};
 pub use self::string::{INSCopying, INSMutableCopying, INSString, NSString};
 pub use self::value::{INSValue, NSValue};

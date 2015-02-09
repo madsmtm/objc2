@@ -4,7 +4,7 @@ use std::ops::{Index, Range};
 use objc::runtime::Object;
 use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, Shared, ShareId};
 
-use {INSCopying, INSMutableCopying, INSObject, NSEnumerator};
+use {INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
 #[repr(isize)]
 #[derive(Copy)]
@@ -179,6 +179,10 @@ impl<T> INSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableSharedArray<T>;
 }
 
+impl<T, O> INSFastEnumeration for NSArray<T, O> where T: INSObject {
+    type Item = T;
+}
+
 impl<T, O> Index<usize> for NSArray<T, O> where T: INSObject, O: Ownership {
     type Output = T;
 
@@ -283,6 +287,10 @@ impl<T> INSCopying for NSMutableArray<T, Shared> {
 
 impl<T> INSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableSharedArray<T>;
+}
+
+impl<T, O> INSFastEnumeration for NSMutableArray<T, O> where T: INSObject {
+    type Item = T;
 }
 
 impl<T, O> Index<usize> for NSMutableArray<T, O>

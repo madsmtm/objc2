@@ -30,7 +30,7 @@ impl<'a, T> Iterator for NSEnumerator<'a, T> where T: INSObject {
     }
 }
 
-trait INSFastEnumeration: INSObject {
+pub trait INSFastEnumeration: INSObject {
     type Item: INSObject;
 
     fn enumerator(&self) -> NSFastEnumerator<Self::Item> {
@@ -48,7 +48,7 @@ struct NSFastEnumerationState<T> {
 
 const FAST_ENUM_BUF_SIZE: usize = 16;
 
-struct NSFastEnumerator<'a, T> {
+pub struct NSFastEnumerator<'a, T> {
     object: &'a Object,
 
     ptr: *const *const T,

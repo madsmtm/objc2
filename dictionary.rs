@@ -4,7 +4,10 @@ use std::ptr;
 
 use objc::{Id, IdSlice, Owned, Ownership};
 
-use {INSArray, INSCopying, INSObject, NSArray, NSSharedArray, NSEnumerator};
+use {
+    INSArray, INSFastEnumeration, INSCopying, INSObject,
+    NSArray, NSSharedArray, NSEnumerator,
+};
 
 pub trait INSDictionary : INSObject {
     type Key: INSObject;
@@ -115,6 +118,10 @@ impl<K, V> INSDictionary for NSDictionary<K, V>
     type Key = K;
     type Value = V;
     type Own = Owned;
+}
+
+impl<K, V> INSFastEnumeration for NSDictionary<K, V> where K: INSObject {
+    type Item = K;
 }
 
 impl<K, V> Index<K> for NSDictionary<K, V> where K: INSObject, V: INSObject {
