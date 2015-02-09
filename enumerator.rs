@@ -33,8 +33,8 @@ impl<'a, T> Iterator for NSEnumerator<'a, T> where T: INSObject {
 pub trait INSFastEnumeration: INSObject {
     type Item: INSObject;
 
-    fn enumerator(&self) -> NSFastEnumerator<Self::Item> {
-        NSFastEnumerator::<Self::Item>::new(self)
+    fn enumerator(&self) -> NSFastEnumerator<Self> {
+        NSFastEnumerator::new(self)
     }
 }
 
@@ -48,20 +48,20 @@ struct NSFastEnumerationState<T> {
 
 const FAST_ENUM_BUF_SIZE: usize = 16;
 
-pub struct NSFastEnumerator<'a, T> {
-    object: &'a Object,
+pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration> {
+    object: &'a C,
 
-    ptr: *const *const T,
-    end: *const *const T,
+    ptr: *const *const C::Item,
+    end: *const *const C::Item,
 
-    state: NSFastEnumerationState<T>,
-    buf: [*const T; FAST_ENUM_BUF_SIZE],
+    state: NSFastEnumerationState<C::Item>,
+    buf: [*const C::Item; FAST_ENUM_BUF_SIZE],
 }
 
-impl<'a, T> NSFastEnumerator<'a, T> where T: INSObject {
-    fn new<C: INSFastEnumeration>(object: &C) -> NSFastEnumerator<C::Item> {
+impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
+    fn new(object: &C) -> NSFastEnumerator<C> {
         NSFastEnumerator {
-            object: unsafe { &*(object as *const C as *const Object) },
+            object: object,
 
             ptr: ptr::null(),
             end: ptr::null(),
@@ -91,7 +91,7 @@ impl<'a, T> NSFastEnumerator<'a, T> where T: INSObject {
             if let Some(mutations) = mutations {
                 assert!(mutations == unsafe { *self.state.mutations_ptr },
                     "Mutation detected during enumeration of object {:?}",
-                    self.object);
+                    self.object as *const C);
             }
 
             self.ptr = self.state.items_ptr;
@@ -105,10 +105,10 @@ impl<'a, T> NSFastEnumerator<'a, T> where T: INSObject {
     }
 }
 
-impl<'a, T> Iterator for NSFastEnumerator<'a, T> where T: INSObject {
-    type Item = &'a T;
+impl<'a, C: INSFastEnumeration> Iterator for NSFastEnumerator<'a, C> {
+    type Item = &'a C::Item;
 
-    fn next(&mut self) -> Option<&'a T> {
+    fn next(&mut self) -> Option<&'a C::Item> {
         if self.ptr == self.end && !self.update_buf() {
             None
         } else {
