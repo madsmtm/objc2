@@ -1,6 +1,7 @@
 use std::marker::ContravariantLifetime;
 use std::mem;
 use std::ptr;
+use std::slice;
 use libc::c_ulong;
 
 use objc::Id;
@@ -46,6 +47,22 @@ struct NSFastEnumerationState<T> {
     extra: [c_ulong; 5],
 }
 
+fn enumerate<'a, 'b: 'a, C: INSFastEnumeration>(object: &'b C,
+        state: &mut NSFastEnumerationState<C::Item>,
+        buf: &'a mut [*const C::Item]) -> Option<&'a [*const C::Item]> {
+    let count: usize = unsafe {
+        msg_send![object, countByEnumeratingWithState:state
+                                              objects:buf.as_mut_ptr()
+                                                count:buf.len()]
+    };
+
+    if count > 0 {
+        unsafe { Some(slice::from_raw_parts(state.items_ptr, count)) }
+    } else {
+        None
+    }
+}
+
 const FAST_ENUM_BUF_SIZE: usize = 16;
 
 pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration> {
@@ -80,13 +97,8 @@ impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
             None
         };
 
-        let count: usize = unsafe {
-            msg_send![self.object, countByEnumeratingWithState:&mut self.state
-                                                       objects:self.buf.as_mut_ptr()
-                                                         count:self.buf.len()]
-        };
-
-        if count > 0 {
+        let next_buf = enumerate(self.object, &mut self.state, &mut self.buf);
+        if let Some(buf) = next_buf {
             // Check if the collection was mutated
             if let Some(mutations) = mutations {
                 assert!(mutations == unsafe { *self.state.mutations_ptr },
@@ -94,8 +106,8 @@ impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
                     self.object as *const C);
             }
 
-            self.ptr = self.state.items_ptr;
-            self.end = unsafe { self.ptr.offset(count as isize) };
+            self.ptr = buf.as_ptr();
+            self.end = unsafe { self.ptr.offset(buf.len() as isize) };
             true
         } else {
             self.ptr = ptr::null();
