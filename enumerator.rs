@@ -125,6 +125,7 @@ impl<'a, T> Iterator for NSFastEnumerator<'a, T> where T: INSObject {
 mod tests {
     use objc::Id;
     use {INSArray, INSValue, NSArray, NSValue};
+    use super::INSFastEnumeration;
 
     #[test]
     fn test_enumerator() {
@@ -135,6 +136,18 @@ mod tests {
         assert!(enumerator.count() == 4);
 
         let enumerator = array.object_enumerator();
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.value() == i as u32));
+    }
+
+    #[test]
+    fn test_fast_enumerator() {
+        let vec: Vec<Id<NSValue<u32>>> = (0..4).map(INSValue::from_value).collect();
+        let array: Id<NSArray<_>> = INSArray::from_vec(vec);
+
+        let enumerator = array.enumerator();
+        assert!(enumerator.count() == 4);
+
+        let enumerator = array.enumerator();
         assert!(enumerator.enumerate().all(|(i, obj)| obj.value() == i as u32));
     }
 }
