@@ -5,12 +5,10 @@
 extern { }
 
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.
-#[allow(missing_copy_implementations)]
 pub enum IntBlock { }
 
 /// A block that takes one integer argument, adds to it, and returns the sum:
 /// `int32_t (^)(int32_t)`.
-#[allow(missing_copy_implementations)]
 pub enum AddBlock { }
 
 #[link(name="block_utils", kind="static")]
