@@ -55,7 +55,6 @@ use libc::{c_int, c_ulong};
 use runtime::{Class, Object};
 use {EncodePtr, Id, Message};
 
-#[allow(improper_ctypes)]
 #[link(name = "Foundation", kind = "framework")]
 extern {
     static _NSConcreteStackBlock: Class;
