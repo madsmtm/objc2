@@ -4,7 +4,6 @@ use std::ptr;
 use {Id, ShareId, Message, ToMessage};
 use runtime::Object;
 
-#[allow(improper_ctypes)]
 #[link(name = "Foundation", kind = "framework")]
 extern {
     fn objc_storeWeak(location: *mut *mut Object, obj: *mut Object) -> *mut Object;
