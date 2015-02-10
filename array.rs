@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::ops::{Index, Range};
 
 use objc::runtime::Object;
-use objc::{Id, IdSlice, IntoIdVector, Owned, Ownership, Shared, ShareId};
+use objc::{Id, IdSlice, Owned, Ownership, Shared, ShareId};
 
 use {INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
@@ -118,10 +118,9 @@ pub trait INSArray : INSObject {
     }
 
     fn into_vec(array: Id<Self>) -> Vec<Id<Self::Item, Self::Own>> {
-        let vec = array.to_vec();
-        unsafe {
-            vec.into_id_vec()
-        }
+        array.to_vec().map_in_place(|obj| unsafe {
+            Id::from_ptr(obj as *const Self::Item as *mut Self::Item)
+        })
     }
 }
 
@@ -150,10 +149,9 @@ pub trait INSSharedArray : INSArray<Own=Shared> {
     }
 
     fn to_shared_vec(&self) -> Vec<ShareId<Self::Item>> {
-        let vec = self.to_vec();
-        unsafe {
-            vec.into_id_vec()
-        }
+        self.to_vec().map_in_place(|obj| unsafe {
+            Id::from_ptr(obj as *const Self::Item as *mut Self::Item)
+        })
     }
 }
 
