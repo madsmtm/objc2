@@ -47,10 +47,9 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// Unsafe because the pointer must be to a valid object and
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
-        match Id::maybe_from_ptr(ptr) {
-            Some(id) => id,
-            None => panic!("Attempted to construct an Id from a null pointer"),
-        }
+        assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
+        let ptr = objc_retain(ptr as *mut Object) as *mut T;
+        Id { ptr: ptr }
     }
 
     /// Constructs an `Id` from a pointer to a retained object; this won't
@@ -59,36 +58,8 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// Unsafe because the pointer must be to a valid object and
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
-        match Id::maybe_from_retained_ptr(ptr) {
-            Some(id) => id,
-            None => panic!("Attempted to construct an Id from a null pointer"),
-        }
-    }
-
-    /// Constructs an `Id` from a pointer to an unretained object and
-    /// retains it if the pointer isn't null, otherwise returns None.
-    /// Unsafe because the pointer must be to a valid object and
-    /// the caller must ensure the ownership is correct.
-    pub unsafe fn maybe_from_ptr(ptr: *mut T) -> Option<Id<T, O>> {
-        if ptr.is_null() {
-            None
-        } else {
-            let ptr = objc_retain(ptr as *mut Object) as *mut T;
-            Some(Id { ptr: ptr })
-        }
-    }
-
-    /// Constructs an `Id` from a pointer to a retained object if the pointer
-    /// isn't null, otherwise returns None. This won't retain the pointer,
-    /// so the caller must ensure the object has a +1 retain count.
-    /// Unsafe because the pointer must be to a valid object and
-    /// the caller must ensure the ownership is correct.
-    pub unsafe fn maybe_from_retained_ptr(ptr: *mut T) -> Option<Id<T, O>> {
-        if ptr.is_null() {
-            None
-        } else {
-            Some(Id { ptr: ptr })
-        }
+        assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
+        Id { ptr: ptr }
     }
 }
 

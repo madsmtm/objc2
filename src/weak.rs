@@ -36,8 +36,12 @@ impl<T> WeakId<T> where T: Message {
     pub fn load(&self) -> Option<ShareId<T>> {
         unsafe {
             let loc = self.ptr.get() as *mut *mut Object;
-            let obj = objc_loadWeakRetained(loc);
-            Id::maybe_from_retained_ptr(obj as *mut T)
+            let obj = objc_loadWeakRetained(loc) as *mut T;
+            if obj.is_null() {
+                None
+            } else {
+                Some(Id::from_retained_ptr(obj))
+            }
         }
     }
 }
