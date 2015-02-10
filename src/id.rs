@@ -74,7 +74,7 @@ impl<T> Id<T, Owned> where T: Message {
     }
 }
 
-impl<T, O> Encode for Id<T, O> where T: Message, O: Ownership {
+impl<T, O> Encode for Id<T, O> where T: Message + EncodePtr, O: Ownership {
     fn code() -> &'static str {
         <T as EncodePtr>::ptr_code()
     }
