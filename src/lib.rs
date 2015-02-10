@@ -100,7 +100,7 @@ block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: 
 /// An Objective-C block that takes arguments of `A` when called and
 /// returns a value of `R`.
 #[repr(C)]
-pub struct Block<A, R> where A: BlockArguments {
+pub struct Block<A, R> {
     isa: *const Class,
     flags: c_int,
     _reserved: c_int,
@@ -115,7 +115,7 @@ impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
     }
 }
 
-unsafe impl<A, R> Message for Block<A, R> where A: BlockArguments { }
+unsafe impl<A, R> Message for Block<A, R> { }
 
 impl<A, R> EncodePtr for Block<A, R> {
     fn ptr_code() -> &'static str { "@?" }
@@ -167,7 +167,7 @@ concrete_block_impl!(concrete_block_invoke_args12, a: A, b: B, c: C, d: D, e: E,
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
 #[repr(C)]
-pub struct ConcreteBlock<A, R, F> where A: BlockArguments {
+pub struct ConcreteBlock<A, R, F> {
     base: Block<A, R>,
     descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, F>>>,
     closure: F,
@@ -183,7 +183,7 @@ impl<A, R, F> ConcreteBlock<A, R, F>
     }
 }
 
-impl<A, R, F> ConcreteBlock<A, R, F> where A: BlockArguments {
+impl<A, R, F> ConcreteBlock<A, R, F> {
     /// Constructs a `ConcreteBlock` with the given invoke function and closure.
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
@@ -217,8 +217,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> where A: BlockArguments {
     }
 }
 
-impl<A, R, F> Clone for ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: Clone {
+impl<A, R, F> Clone for ConcreteBlock<A, R, F> where F: Clone {
     fn clone(&self) -> Self {
         unsafe {
             ConcreteBlock::with_invoke(mem::transmute(self.invoke),
@@ -227,8 +226,7 @@ impl<A, R, F> Clone for ConcreteBlock<A, R, F>
     }
 }
 
-impl<A, R, F> Deref for ConcreteBlock<A, R, F>
-        where A: BlockArguments {
+impl<A, R, F> Deref for ConcreteBlock<A, R, F> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Block<A, R> {
@@ -236,8 +234,7 @@ impl<A, R, F> Deref for ConcreteBlock<A, R, F>
     }
 }
 
-impl<A, R, F> DerefMut for ConcreteBlock<A, R, F>
-        where A: BlockArguments {
+impl<A, R, F> DerefMut for ConcreteBlock<A, R, F> {
     fn deref_mut(&mut self) -> &mut Block<A, R> {
         &mut self.base
     }
