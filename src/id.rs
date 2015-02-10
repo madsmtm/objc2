@@ -197,3 +197,34 @@ impl<T, O> IdSlice for [Id<T, O>] where T: Message, O: Ownership {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use runtime::{Class, Object};
+    use super::Id;
+
+    fn retain_count(obj: &Object) -> usize {
+        unsafe { msg_send![obj, retainCount] }
+    }
+
+    #[test]
+    fn test_clone() {
+        let cls = Class::get("NSObject").unwrap();
+        let obj = unsafe {
+            let obj: *mut Object = msg_send![cls, alloc];
+            let obj: *mut Object = msg_send![obj, init];
+            Id::from_retained_ptr(obj)
+        };
+        assert!(retain_count(&obj) == 1);
+
+        let obj = obj.share();
+        assert!(retain_count(&obj) == 1);
+
+        let cloned = obj.clone();
+        assert!(retain_count(&cloned) == 2);
+        assert!(retain_count(&obj) == 2);
+
+        drop(obj);
+        assert!(retain_count(&cloned) == 1);
+    }
+}
