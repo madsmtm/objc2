@@ -7,7 +7,6 @@ macro_rules! object_struct {
         object_struct!($name, $($t),+);
     );
     ($name:ident, $($t:ident),*) => (
-        #[allow(missing_copy_implementations)]
         pub enum $name<$($t),*> { }
 
         object_impl!($name $(,$t)*);

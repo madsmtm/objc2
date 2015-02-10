@@ -155,7 +155,6 @@ pub trait INSSharedArray : INSArray<Own=Shared> {
     }
 }
 
-#[allow(missing_copy_implementations)]
 pub enum NSArray<T, O = Owned> { }
 
 object_impl!(NSArray<T, O>);
@@ -262,7 +261,6 @@ pub trait INSMutableArray : INSArray {
     }
 }
 
-#[allow(missing_copy_implementations)]
 pub enum NSMutableArray<T, O = Owned> { }
 
 object_impl!(NSMutableArray<T, O>);
