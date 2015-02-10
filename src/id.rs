@@ -5,6 +5,13 @@ use std::ops::{Deref, DerefMut};
 use std::ptr;
 
 use {Encode, EncodePtr, Message, ToMessage};
+use runtime::Object;
+
+#[link(name = "Foundation", kind = "framework")]
+extern {
+    fn objc_retain(obj: *mut Object) -> *mut Object;
+    fn objc_release(obj: *mut Object);
+}
 
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
@@ -66,7 +73,7 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
         if ptr.is_null() {
             None
         } else {
-            let ptr = msg_send![ptr, retain];
+            let ptr = objc_retain(ptr as *mut Object) as *mut T;
             Some(Id { ptr: ptr })
         }
     }
@@ -113,7 +120,7 @@ impl<T, O> ToMessage for Id<T, O> where T: Message, O: Ownership {
 impl<T> Clone for Id<T, Shared> where T: Message {
     fn clone(&self) -> ShareId<T> {
         let ptr = unsafe {
-            msg_send![self.ptr, retain]
+            objc_retain(self.ptr as *mut Object) as *mut T
         };
         Id { ptr: ptr }
     }
@@ -125,7 +132,7 @@ impl<T, O> Drop for Id<T, O> where T: Message, O: Ownership {
         if !self.ptr.is_null() {
             let ptr = mem::replace(&mut self.ptr, ptr::null_mut());
             unsafe {
-                let _: () = msg_send![ptr, release];
+                objc_release(ptr as *mut Object);
             }
         }
     }
