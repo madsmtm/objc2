@@ -1,9 +1,9 @@
 use objc::runtime::Class;
-use objc::{Id, Message, ShareId};
+use objc::{EncodePtr, Id, Message, ShareId};
 
 use NSString;
 
-pub trait INSObject : Message {
+pub trait INSObject : Message + EncodePtr {
     fn class() -> &'static Class;
 
     fn hash_code(&self) -> usize {
