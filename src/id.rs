@@ -192,22 +192,3 @@ impl<T, O> IdSlice for [Id<T, O>] where T: Message, O: Ownership {
         }
     }
 }
-
-/// Trait to convert to a vector of `Id`s by consuming self.
-pub trait IntoIdVector {
-    type Item;
-
-    /// Converts to a vector of `Id`s by consuming self, retaining each object
-    /// contained in self.
-    /// Unsafe because the caller must ensure the `Id`s are constructed from
-    /// valid objects and the ownership of the resulting `Id`s is correct.
-    unsafe fn into_id_vec<O>(self) -> Vec<Id<Self::Item, O>> where O: Ownership;
-}
-
-impl<R: ToMessage> IntoIdVector for Vec<R> {
-    type Item = R::Target;
-
-    unsafe fn into_id_vec<O>(self) -> Vec<Id<R::Target, O>> where O: Ownership {
-        self.map_in_place(|obj| Id::from_ptr(obj.as_ptr()))
-    }
-}
