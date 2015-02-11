@@ -200,7 +200,9 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
             closure: closure,
         }
     }
+}
 
+impl<A, R, F> ConcreteBlock<A, R, F> where F: 'static {
     /// Copy self onto the heap.
     pub fn copy(self) -> Id<Block<A, R>> {
         unsafe {
@@ -342,7 +344,7 @@ mod tests {
     fn test_concrete_block_stack_copy() {
         fn make_block() -> Id<Block<(), i32>> {
             let x = 7;
-            let block = ConcreteBlock::new(|| x);
+            let block = ConcreteBlock::new(move || x);
             block.copy()
         }
 
