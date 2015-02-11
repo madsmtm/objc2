@@ -22,6 +22,7 @@ pub use self::value::{INSValue, NSValue};
 mod macros;
 
 mod array;
+mod data;
 mod dictionary;
 mod enumerator;
 mod object;
