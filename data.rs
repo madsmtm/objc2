@@ -108,19 +108,62 @@ impl INSMutableCopying for NSMutableData {
 mod tests {
     use objc::Id;
     use INSObject;
-    use super::{INSData, NSData};
+    use super::{INSData, INSMutableData, NSData, NSMutableData};
 
     #[test]
     fn test_bytes() {
-        let bytes = [3u8, 7, 16, 52, 112, 19];
+        let bytes = [3, 7, 16, 52, 112, 19];
         let data: Id<NSData> = INSData::with_bytes(&bytes);
         assert!(data.len() == bytes.len());
-        assert!(data.bytes() == bytes.as_slice());
+        assert!(data.bytes() == bytes);
     }
 
     #[test]
     fn test_no_bytes() {
         let data: Id<NSData> = INSObject::new();
         assert!(Some(data.bytes()).is_some());
+    }
+
+    #[test]
+    fn test_bytes_mut() {
+        let mut data: Id<NSMutableData> = INSData::with_bytes(&[7, 16]);
+        data.bytes_mut()[0] = 3;
+        assert!(data.bytes() == [3, 16]);
+    }
+
+    #[test]
+    fn test_set_len() {
+        let mut data: Id<NSMutableData> = INSData::with_bytes(&[7, 16]);
+        data.set_len(4);
+        assert!(data.len() == 4);
+        assert!(data.bytes() == [7, 16, 0, 0]);
+
+        data.set_len(1);
+        assert!(data.len() == 1);
+        assert!(data.bytes() == [7]);
+    }
+
+    #[test]
+    fn test_append() {
+        let mut data: Id<NSMutableData> = INSData::with_bytes(&[7, 16]);
+        data.append(&[3, 52]);
+        assert!(data.len() == 4);
+        assert!(data.bytes() == [7, 16, 3, 52]);
+    }
+
+    #[test]
+    fn test_replace() {
+        let mut data: Id<NSMutableData> = INSData::with_bytes(&[7, 16]);
+        data.replace_range(0..0, &[3]);
+        assert!(data.bytes() == [3, 7, 16]);
+
+        data.replace_range(1..2, &[52, 13]);
+        assert!(data.bytes() == [3, 52, 13, 16]);
+
+        data.replace_range(2..4, &[6]);
+        assert!(data.bytes() == [3, 52, 6]);
+
+        data.set_bytes(&[8, 17]);
+        assert!(data.bytes() == [8, 17]);
     }
 }
