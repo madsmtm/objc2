@@ -1,8 +1,10 @@
+use std::mem;
 use std::ops::Range;
 use std::slice;
 use libc::c_void;
 
 use objc::Id;
+use objc::block::{Block, ConcreteBlock};
 use {INSObject, INSCopying, INSMutableCopying, NSRange};
 
 pub trait INSData : INSObject {
@@ -31,6 +33,27 @@ pub trait INSData : INSObject {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:bytes.as_ptr()
                                                        length:bytes.len()];
+            Id::from_retained_ptr(obj)
+        }
+    }
+
+    fn from_vec(bytes: Vec<u8>) -> Id<Self> {
+        let capacity = bytes.capacity();
+        let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
+            // Recreate the Vec and let it drop
+            let _ = Vec::from_raw_parts(bytes as *mut u8, len, capacity);
+        });
+        let mut dealloc = dealloc.copy();
+        let dealloc: &mut Block<(*mut c_void, usize), ()> = &mut dealloc;
+
+        let mut bytes = bytes;
+        let cls = <Self as INSObject>::class();
+        unsafe {
+            let obj: *mut Self = msg_send![cls, alloc];
+            let obj: *mut Self = msg_send![obj, initWithBytesNoCopy:bytes.as_mut_ptr()
+                                                             length:bytes.len()
+                                                        deallocator:dealloc];
+            mem::forget(bytes);
             Id::from_retained_ptr(obj)
         }
     }
@@ -165,5 +188,14 @@ mod tests {
 
         data.set_bytes(&[8, 17]);
         assert!(data.bytes() == [8, 17]);
+    }
+
+    #[test]
+    fn test_from_vec() {
+        let bytes = vec![3, 7, 16];
+        let bytes_ptr = bytes.as_ptr();
+
+        let data: Id<NSData> = INSData::from_vec(bytes);
+        assert!(data.bytes().as_ptr() == bytes_ptr);
     }
 }
