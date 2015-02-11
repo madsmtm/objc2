@@ -13,10 +13,15 @@ pub trait INSData : INSObject {
     }
 
     fn bytes(&self) -> &[u8] {
-        let len = self.len();
+        let ptr: *const c_void = unsafe { msg_send![self, bytes] };
+        // The bytes pointer may be null for length zero
+        let (ptr, len) = if ptr.is_null() {
+            (0x1 as *const u8, 0)
+        } else {
+            (ptr as *const u8, self.len())
+        };
         unsafe {
-            let ptr: *const c_void = msg_send![self, bytes];
-            slice::from_raw_parts(ptr as *const u8, len)
+            slice::from_raw_parts(ptr, len)
         }
     }
 
@@ -45,10 +50,15 @@ impl INSMutableCopying for NSData {
 
 pub trait INSMutableData : INSData {
     fn bytes_mut(&mut self) -> &mut [u8] {
-        let len = self.len();
+        let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
+        // The bytes pointer may be null for length zero
+        let (ptr, len) = if ptr.is_null() {
+            (0x1 as *mut u8, 0)
+        } else {
+            (ptr as *mut u8, self.len())
+        };
         unsafe {
-            let ptr: *mut c_void = msg_send![self, bytes];
-            slice::from_raw_parts_mut(ptr as *mut u8, len)
+            slice::from_raw_parts_mut(ptr, len)
         }
     }
 
@@ -97,6 +107,7 @@ impl INSMutableCopying for NSMutableData {
 #[cfg(test)]
 mod tests {
     use objc::Id;
+    use INSObject;
     use super::{INSData, NSData};
 
     #[test]
@@ -105,5 +116,11 @@ mod tests {
         let data: Id<NSData> = INSData::with_bytes(&bytes);
         assert!(data.len() == bytes.len());
         assert!(data.bytes() == bytes.as_slice());
+    }
+
+    #[test]
+    fn test_no_bytes() {
+        let data: Id<NSData> = INSObject::new();
+        assert!(Some(data.bytes()).is_some());
     }
 }
