@@ -12,6 +12,7 @@ pub use self::array::{
     NSArray, NSComparisonResult, NSMutableArray, NSRange,
     NSMutableSharedArray, NSSharedArray,
 };
+pub use self::data::{INSData, INSMutableData, NSData, NSMutableData};
 pub use self::dictionary::{INSDictionary, NSDictionary};
 pub use self::enumerator::{INSFastEnumeration, NSEnumerator, NSFastEnumerator};
 pub use self::object::{INSObject, NSObject};
