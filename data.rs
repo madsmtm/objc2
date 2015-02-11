@@ -2,7 +2,7 @@ use std::slice;
 use libc::c_void;
 
 use objc::Id;
-use INSObject;
+use {INSObject, INSCopying};
 
 pub trait INSData : INSObject {
     fn len(&self) -> usize {
@@ -27,5 +27,27 @@ pub trait INSData : INSObject {
                                                        length:bytes.len()];
             Id::from_retained_ptr(obj)
         }
+    }
+}
+
+object_struct!(NSData);
+
+impl INSData for NSData { }
+
+impl INSCopying for NSData {
+    type Output = NSData;
+}
+
+#[cfg(test)]
+mod tests {
+    use objc::Id;
+    use super::{INSData, NSData};
+
+    #[test]
+    fn test_bytes() {
+        let bytes = [3u8, 7, 16, 52, 112, 19];
+        let data: Id<NSData> = INSData::with_bytes(&bytes);
+        assert!(data.len() == bytes.len());
+        assert!(data.bytes() == bytes.as_slice());
     }
 }
