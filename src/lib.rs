@@ -337,4 +337,16 @@ mod tests {
         let mut copied = block.copy();
         assert!(invoke_int_block(&mut copied) == expected_len);
     }
+
+    #[test]
+    fn test_concrete_block_stack_copy() {
+        fn make_block() -> Id<Block<(), i32>> {
+            let x = 7;
+            let block = ConcreteBlock::new(|| x);
+            block.copy()
+        }
+
+        let mut block = make_block();
+        assert!(invoke_int_block(&mut block) == 7);
+    }
 }
