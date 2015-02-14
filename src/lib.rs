@@ -120,8 +120,10 @@ impl<A, R> EncodePtr for Block<A, R> {
     fn ptr_code() -> &'static str { "@?" }
 }
 
-pub trait IntoConcreteBlock<A, R> where A: BlockArguments {
-    fn into_concrete_block(self) -> ConcreteBlock<A, R, Self>;
+pub trait IntoConcreteBlock<A> where A: BlockArguments {
+    type Ret;
+
+    fn into_concrete_block(self) -> ConcreteBlock<A, Self::Ret, Self>;
 }
 
 macro_rules! concrete_block_impl {
@@ -129,8 +131,10 @@ macro_rules! concrete_block_impl {
         concrete_block_impl!($f,);
     );
     ($f:ident, $($a:ident : $t:ident),*) => (
-        impl<$($t,)* R, X> IntoConcreteBlock<($($t,)*), R> for X
+        impl<$($t,)* R, X> IntoConcreteBlock<($($t,)*)> for X
                 where X: Fn($($t,)*) -> R {
+            type Ret = R;
+
             fn into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
                 unsafe extern fn $f<$($t,)* R, X>(
                         block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
@@ -173,7 +177,7 @@ pub struct ConcreteBlock<A, R, F> {
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F>
-        where A: BlockArguments, F: IntoConcreteBlock<A, R> {
+        where A: BlockArguments, F: IntoConcreteBlock<A, Ret=R> {
     /// Constructs a `ConcreteBlock` with the given closure.
     /// When the block is called, it will return the value that results from
     /// calling the closure.
