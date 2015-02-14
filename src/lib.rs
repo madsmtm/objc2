@@ -271,61 +271,33 @@ impl<B> BlockDescriptor<B> {
 
 #[cfg(test)]
 mod tests {
+    use test_utils;
     use Id;
-    use objc_test_utils;
     use super::{Block, ConcreteBlock};
-
-    fn get_int_block_with(i: i32) -> Id<Block<(), i32>> {
-        unsafe {
-            let ptr = objc_test_utils::get_int_block_with(i);
-            Id::from_retained_ptr(ptr as *mut _)
-        }
-    }
-
-    fn get_add_block_with(i: i32) -> Id<Block<(i32,), i32>> {
-        unsafe {
-            let ptr = objc_test_utils::get_add_block_with(i);
-            Id::from_retained_ptr(ptr as *mut _)
-        }
-    }
-
-    fn invoke_int_block(block: &mut Block<(), i32>) -> i32 {
-        let ptr = block as *mut _;
-        unsafe {
-            objc_test_utils::invoke_int_block(ptr as *mut _)
-        }
-    }
-
-    fn invoke_add_block(block: &mut Block<(i32,), i32>, a: i32) -> i32 {
-        let ptr = block as *mut _;
-        unsafe {
-            objc_test_utils::invoke_add_block(ptr as *mut _, a)
-        }
-    }
 
     #[test]
     fn test_call_block() {
-        let mut block = get_int_block_with(13);
+        let mut block = test_utils::get_int_block_with(13);
         assert!(block.call(()) == 13);
     }
 
     #[test]
     fn test_call_block_args() {
-        let mut block = get_add_block_with(13);
+        let mut block = test_utils::get_add_block_with(13);
         assert!(block.call((2,)) == 15);
     }
 
     #[test]
     fn test_create_block() {
         let mut block = ConcreteBlock::new(|| 13);
-        let result = invoke_int_block(&mut block);
+        let result = test_utils::invoke_int_block(&mut block);
         assert!(result == 13);
     }
 
     #[test]
     fn test_create_block_args() {
         let mut block = ConcreteBlock::new(|a: i32| a + 5);
-        let result = invoke_add_block(&mut block, 6);
+        let result = test_utils::invoke_add_block(&mut block, 6);
         assert!(result == 11);
     }
 
@@ -334,10 +306,10 @@ mod tests {
         let s = "Hello!".to_string();
         let expected_len = s.len() as i32;
         let mut block = ConcreteBlock::new(move || s.len() as i32);
-        assert!(invoke_int_block(&mut block) == expected_len);
+        assert!(test_utils::invoke_int_block(&mut block) == expected_len);
 
         let mut copied = block.copy();
-        assert!(invoke_int_block(&mut copied) == expected_len);
+        assert!(test_utils::invoke_int_block(&mut copied) == expected_len);
     }
 
     #[test]
@@ -349,6 +321,6 @@ mod tests {
         }
 
         let mut block = make_block();
-        assert!(invoke_int_block(&mut block) == 7);
+        assert!(test_utils::invoke_int_block(&mut block) == 7);
     }
 }
