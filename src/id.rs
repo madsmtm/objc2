@@ -171,8 +171,8 @@ impl<T, O> IdSlice for [Id<T, O>] where T: Message, O: Ownership {
 
 #[cfg(test)]
 mod tests {
-    use runtime::{Class, Object};
-    use super::Id;
+    use runtime::Object;
+    use test_utils;
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
@@ -180,12 +180,7 @@ mod tests {
 
     #[test]
     fn test_clone() {
-        let cls = Class::get("NSObject").unwrap();
-        let obj = unsafe {
-            let obj: *mut Object = msg_send![cls, alloc];
-            let obj: *mut Object = msg_send![obj, init];
-            Id::from_retained_ptr(obj)
-        };
+        let obj = test_utils::sample_object();
         assert!(retain_count(&obj) == 1);
 
         let obj = obj.share();
