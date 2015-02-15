@@ -1,15 +1,14 @@
-#![feature(hash)]
-
 #[macro_use]
 extern crate objc;
-#[macro_use]
 extern crate objc_foundation;
 
-use objc::{ClassDecl, Id};
-use objc::runtime::Object;
+use std::sync::{Once, ONCE_INIT};
+
+use objc::{ClassDecl, EncodePtr, Id, Message, MethodDecl};
+use objc::runtime::{Class, Object, Sel};
 use objc_foundation::{INSObject, NSObject};
 
-object_struct!(MYObject);
+pub enum MYObject { }
 
 impl MYObject {
     fn number(&self) -> u32 {
@@ -29,34 +28,53 @@ impl MYObject {
             obj.set_ivar("_number", number);
         }
     }
+}
 
-    fn register() {
-        let superclass = <NSObject as INSObject>::class();
-        let mut decl = ClassDecl::new(superclass, "MYObject").unwrap();
+unsafe impl Message for MYObject { }
 
-        decl.add_ivar::<u32>("_number");
-        decl.add_method(method!(
-            (&mut MYObject)this, setNumber:(u32)number; {
+impl EncodePtr for MYObject {
+    fn ptr_code() -> &'static str { "@" }
+}
+
+static MYOBJECT_REGISTER_CLASS: Once = ONCE_INIT;
+
+impl INSObject for MYObject {
+    fn class() -> &'static Class {
+        MYOBJECT_REGISTER_CLASS.call_once(|| {
+            let superclass = <NSObject as INSObject>::class();
+            let mut decl = ClassDecl::new(superclass, "MYObject").unwrap();
+            assert!(decl.add_ivar::<u32>("_number"));
+
+            // Add ObjC methods for getting and setting the number
+            extern fn my_object_set_number(this: &mut MYObject, _cmd: Sel, number: u32) {
                 this.set_number(number);
             }
-        ));
-        decl.add_method(method!(
-            (&MYObject)this, number -> u32, {
+            let method = MethodDecl::new(sel!(setNumber:),
+                my_object_set_number as extern fn(&mut MYObject, Sel, u32));
+            assert!(decl.add_method(method.unwrap()));
+
+            extern fn my_object_get_number(this: &MYObject, _cmd: Sel) -> u32 {
                 this.number()
             }
-        ));
+            let method = MethodDecl::new(sel!(number),
+                my_object_get_number as extern fn(&MYObject, Sel) -> u32);
+            assert!(decl.add_method(method.unwrap()));
 
-        decl.register();
+            decl.register();
+        });
+
+        Class::get("MYObject").unwrap()
     }
 }
 
 fn main() {
-    MYObject::register();
     let mut obj: Id<MYObject> = INSObject::new();
-    println!("{:?}", obj);
 
     obj.set_number(7);
-    println!("Number: {}", obj.number());
+    println!("Number: {}", unsafe {
+        let number: u32 = msg_send![obj, number];
+        number
+    });
 
     unsafe {
         let _: () = msg_send![obj, setNumber:12u32];
