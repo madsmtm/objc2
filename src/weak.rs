@@ -4,7 +4,7 @@ use std::ptr;
 use {Id, ShareId, Message, ToMessage};
 use runtime::Object;
 
-#[link(name = "Foundation", kind = "framework")]
+#[link(name = "objc", kind = "dylib")]
 extern {
     fn objc_storeWeak(location: *mut *mut Object, obj: *mut Object) -> *mut Object;
     fn objc_loadWeakRetained(location: *mut *mut Object) -> *mut Object;

@@ -7,7 +7,7 @@ use std::ptr;
 use {Encode, EncodePtr, Message, ToMessage};
 use runtime::Object;
 
-#[link(name = "Foundation", kind = "framework")]
+#[link(name = "objc", kind = "dylib")]
 extern {
     fn objc_retain(obj: *mut Object) -> *mut Object;
     fn objc_release(obj: *mut Object);
