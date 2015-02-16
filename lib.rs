@@ -19,6 +19,9 @@ pub use self::object::{INSObject, NSObject};
 pub use self::string::{INSCopying, INSMutableCopying, INSString, NSString};
 pub use self::value::{INSValue, NSValue};
 
+#[link(name = "Foundation", kind = "framework")]
+extern { }
+
 #[macro_use]
 mod macros;
 
