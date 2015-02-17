@@ -3,7 +3,7 @@ use objc::{EncodePtr, Id, Message, ShareId};
 
 use NSString;
 
-pub trait INSObject : Message + EncodePtr {
+pub trait INSObject : 'static + Message + EncodePtr {
     fn class() -> &'static Class;
 
     fn hash_code(&self) -> usize {
