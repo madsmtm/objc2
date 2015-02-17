@@ -8,7 +8,7 @@ use objc::{encode, Encode, Id};
 use {INSCopying, INSObject};
 
 pub trait INSValue : INSObject {
-    type Value: Copy + Encode;
+    type Value: 'static + Copy + Encode;
 
     fn value(&self) -> Self::Value {
         assert!(self.encoding() == encode::<Self::Value>());
@@ -42,7 +42,7 @@ pub trait INSValue : INSObject {
 
 object_struct!(NSValue<T>);
 
-impl<T> INSValue for NSValue<T> where T: Copy + Encode {
+impl<T> INSValue for NSValue<T> where T: 'static + Copy + Encode {
     type Value = T;
 }
 
