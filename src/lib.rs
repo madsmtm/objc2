@@ -52,7 +52,7 @@ use std::ptr;
 use libc::{c_int, c_ulong};
 
 use runtime::{Class, Object};
-use {EncodePtr, Id, Message};
+use {Id, Message};
 
 #[link(name = "Foundation", kind = "framework")]
 extern {
@@ -121,9 +121,7 @@ impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
 
 unsafe impl<A, R> Message for Block<A, R> { }
 
-impl<A, R> EncodePtr for Block<A, R> {
-    fn ptr_code() -> &'static str { "@?" }
-}
+encode_message_impl!("@?", Block, A, R);
 
 /// Types that may be converted into a `ConcreteBlock`.
 pub trait IntoConcreteBlock<A> where A: BlockArguments {
