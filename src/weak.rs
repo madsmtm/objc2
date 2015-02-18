@@ -26,7 +26,7 @@ impl<T> WeakId<T> where T: Message {
         let ptr = Box::new(UnsafeCell::new(ptr::null()));
         unsafe {
             let loc = ptr.get() as *mut *mut Object;
-            objc_storeWeak(loc, obj.as_ptr() as *mut Object);
+            objc_storeWeak(loc, obj.as_id_ptr());
         }
         WeakId { ptr: ptr }
     }
