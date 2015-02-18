@@ -57,8 +57,28 @@ macro_rules! object_impl {
     ($name:ident, $($t:ident),*) => (
         unsafe impl<$($t),*> ::objc::Message for $name<$($t),*> { }
 
-        impl<$($t),*> ::objc::EncodePtr for $name<$($t),*> {
-            fn ptr_code() -> &'static str { "@" }
+        impl<'a $(, $t)*> ::objc::Encode for &'a $name<$($t),*> {
+            fn code() -> &'static str { "@" }
+        }
+
+        impl<'a $(, $t)*> ::objc::Encode for &'a mut $name<$($t),*> {
+            fn code() -> &'static str { "@" }
+        }
+
+        impl<'a $(, $t)*> ::objc::Encode for Option<&'a $name<$($t),*>> {
+            fn code() -> &'static str { "@" }
+        }
+
+        impl<'a $(, $t)*> ::objc::Encode for Option<&'a mut $name<$($t),*>> {
+            fn code() -> &'static str { "@" }
+        }
+
+        impl<$($t),*> ::objc::Encode for *const $name<$($t),*> {
+            fn code() -> &'static str { "@" }
+        }
+
+        impl<$($t),*> ::objc::Encode for *mut $name<$($t),*> {
+            fn code() -> &'static str { "@" }
         }
     );
 }

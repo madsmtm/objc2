@@ -4,7 +4,7 @@ extern crate objc_foundation;
 
 use std::sync::{Once, ONCE_INIT};
 
-use objc::{EncodePtr, Message};
+use objc::Message;
 use objc::declare::ClassDecl;
 use objc::runtime::{Class, Object, Sel};
 use objc_foundation::{INSObject, NSObject};
@@ -32,10 +32,6 @@ impl MYObject {
 }
 
 unsafe impl Message for MYObject { }
-
-impl EncodePtr for MYObject {
-    fn ptr_code() -> &'static str { "@" }
-}
 
 static MYOBJECT_REGISTER_CLASS: Once = ONCE_INIT;
 

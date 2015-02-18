@@ -1,5 +1,5 @@
 use objc::runtime::{BOOL, Class, NO};
-use objc::{EncodePtr, Id, Message, ShareId};
+use objc::{Id, Message, ShareId};
 
 use NSString;
 
@@ -9,7 +9,7 @@ use NSString;
  pointer to an Object pointer, because dynamically-sized types can have fat
  pointers (two words) instead of real pointers.
  */
-pub trait INSObject : 'static + Sized + Message + EncodePtr {
+pub trait INSObject : 'static + Sized + Message {
     fn class() -> &'static Class;
 
     fn hash_code(&self) -> usize {
