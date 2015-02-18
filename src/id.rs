@@ -81,10 +81,8 @@ impl<T, O> Encode for Id<T, O> where T: Message + EncodePtr, O: Ownership {
 }
 
 impl<T, O> ToMessage for Id<T, O> where T: Message, O: Ownership {
-    type Target = T;
-
-    fn as_ptr(&self) -> *mut T {
-        self.ptr
+    fn as_id_ptr(&self) -> *mut Object {
+        self.ptr as *mut Object
     }
 }
 
