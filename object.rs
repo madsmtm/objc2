@@ -3,7 +3,13 @@ use objc::{EncodePtr, Id, Message, ShareId};
 
 use NSString;
 
-pub trait INSObject : 'static + Message + EncodePtr {
+/*
+ The Sized bound is unfortunate; ideally, objc objects would not be
+ treated as Sized. However, rust won't allow casting a dynamically-sized type
+ pointer to an Object pointer, because dynamically-sized types can have fat
+ pointers (two words) instead of real pointers.
+ */
+pub trait INSObject : 'static + Sized + Message + EncodePtr {
     fn class() -> &'static Class;
 
     fn hash_code(&self) -> usize {
