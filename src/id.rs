@@ -46,7 +46,7 @@ impl Ownership for Shared { }
 /// object. An owned `Id` can be "downgraded" freely to a `ShareId`, but there
 /// is no way to safely upgrade back.
 #[unsafe_no_drop_flag]
-pub struct Id<T, O = Owned> where T: Message, O: Ownership {
+pub struct Id<T, O = Owned> {
     ptr: *mut T,
     own: PhantomData<O>,
 }
@@ -88,13 +88,13 @@ impl<T> Id<T, Owned> where T: Message {
     }
 }
 
-impl<T, O> Encode for Id<T, O> where T: Message + EncodePtr, O: Ownership {
+impl<T, O> Encode for Id<T, O> where T: EncodePtr {
     fn code() -> &'static str {
         <T as EncodePtr>::ptr_code()
     }
 }
 
-impl<T, O> ToMessage for Id<T, O> where T: Message, O: Ownership {
+impl<T, O> ToMessage for Id<T, O> where T: Message {
     fn as_id_ptr(&self) -> *mut Object {
         self.ptr as *mut Object
     }
@@ -110,7 +110,7 @@ impl<T> Clone for Id<T, Shared> where T: Message {
 }
 
 #[unsafe_destructor]
-impl<T, O> Drop for Id<T, O> where T: Message, O: Ownership {
+impl<T, O> Drop for Id<T, O> where T: Message {
     fn drop(&mut self) {
         if !self.ptr.is_null() {
             let ptr = mem::replace(&mut self.ptr, ptr::null_mut());
@@ -121,7 +121,7 @@ impl<T, O> Drop for Id<T, O> where T: Message, O: Ownership {
     }
 }
 
-impl<T, O> Deref for Id<T, O> where T: Message, O: Ownership {
+impl<T, O> Deref for Id<T, O> {
     type Target = T;
 
     fn deref(&self) -> &T {
@@ -129,13 +129,13 @@ impl<T, O> Deref for Id<T, O> where T: Message, O: Ownership {
     }
 }
 
-impl<T> DerefMut for Id<T, Owned> where T: Message {
+impl<T> DerefMut for Id<T, Owned> {
     fn deref_mut(&mut self) -> &mut T {
         unsafe { &mut *self.ptr }
     }
 }
 
-impl<T, O> PartialEq for Id<T, O> where T: Message + PartialEq, O: Ownership {
+impl<T, O> PartialEq for Id<T, O> where T: PartialEq {
     fn eq(&self, other: &Id<T, O>) -> bool {
         self.deref() == other.deref()
     }
@@ -145,15 +145,15 @@ impl<T, O> PartialEq for Id<T, O> where T: Message + PartialEq, O: Ownership {
     }
 }
 
-impl<T, O> Eq for Id<T, O> where T: Message + Eq, O: Ownership { }
+impl<T, O> Eq for Id<T, O> where T: Eq { }
 
-impl<T, O> hash::Hash for Id<T, O> where T: Message + hash::Hash, O: Ownership {
+impl<T, O> hash::Hash for Id<T, O> where T: hash::Hash {
     fn hash<H>(&self, state: &mut H) where H: hash::Hasher {
         self.deref().hash(state)
     }
 }
 
-impl<T, O> fmt::Debug for Id<T, O> where T: Message + fmt::Debug, O: Ownership {
+impl<T, O> fmt::Debug for Id<T, O> where T: fmt::Debug {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.deref().fmt(f)
     }
@@ -170,7 +170,7 @@ pub trait IdSlice {
     fn as_refs_slice(&self) -> &[&Self::Item];
 }
 
-impl<T, O> IdSlice for [Id<T, O>] where T: Message, O: Ownership {
+impl<T, O> IdSlice for [Id<T, O>] {
     type Item = T;
 
     fn as_refs_slice(&self) -> &[&T] {
