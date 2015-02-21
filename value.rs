@@ -1,4 +1,4 @@
-use std::ffi::{CString, self};
+use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 use std::mem;
 use std::str;
@@ -24,15 +24,14 @@ pub trait INSValue : INSObject {
     fn encoding(&self) -> &str {
         unsafe {
             let result: *const c_char = msg_send![self, objCType];
-            let bytes = ffi::c_str_to_bytes(&result);
-            let s = str::from_utf8(bytes).unwrap();
-            mem::transmute(s)
+            let s = CStr::from_ptr(result);
+            str::from_utf8(s.to_bytes()).unwrap()
         }
     }
 
     fn from_value(value: Self::Value) -> Id<Self> {
         let cls = <Self as INSObject>::class();
-        let encoding = CString::from_slice(encode::<Self::Value>().as_bytes());
+        let encoding = CString::new(encode::<Self::Value>()).unwrap();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:&value
