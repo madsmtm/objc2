@@ -1,8 +1,10 @@
 use std::cmp::min;
+use std::marker::PhantomData;
 use std::ops::Index;
 use std::ptr;
 
-use objc::{Id, IdSlice, Owned, Ownership};
+use objc::{Id, IdSlice, Owned, Ownership, ShareId};
+use objc::runtime::Class;
 
 use {
     INSArray, INSFastEnumeration, INSCopying, INSObject,
@@ -111,7 +113,18 @@ pub trait INSDictionary : INSObject {
     }
 }
 
-object_struct!(NSDictionary<K, V>);
+pub struct NSDictionary<K, V> {
+    key: PhantomData<ShareId<K>>,
+    obj: PhantomData<Id<V>>,
+}
+
+object_impl!(NSDictionary<K, V>);
+
+impl<K, V> INSObject for NSDictionary<K, V> where K: INSObject, V: INSObject {
+    fn class() -> &'static Class {
+        Class::get("NSDictionary").unwrap()
+    }
+}
 
 impl<K, V> INSDictionary for NSDictionary<K, V>
         where K: INSObject, V: INSObject {
@@ -120,7 +133,8 @@ impl<K, V> INSDictionary for NSDictionary<K, V>
     type Own = Owned;
 }
 
-impl<K, V> INSFastEnumeration for NSDictionary<K, V> where K: INSObject {
+impl<K, V> INSFastEnumeration for NSDictionary<K, V>
+        where K: INSObject, V: INSObject {
     type Item = K;
 }
 

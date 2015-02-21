@@ -1,4 +1,4 @@
-use std::marker::ContravariantLifetime;
+use std::marker::PhantomData;
 use std::mem;
 use std::ptr;
 use std::slice;
@@ -9,14 +9,14 @@ use objc::runtime::Object;
 
 use INSObject;
 
-pub struct NSEnumerator<'a, T> {
+pub struct NSEnumerator<'a, T> where T: INSObject {
     id: Id<Object>,
-    marker: ContravariantLifetime<'a>,
+    item: PhantomData<&'a T>,
 }
 
 impl<'a, T> NSEnumerator<'a, T> where T: INSObject {
     pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
-        NSEnumerator { id: Id::from_ptr(ptr), marker: ContravariantLifetime }
+        NSEnumerator { id: Id::from_ptr(ptr), item: PhantomData }
     }
 }
 

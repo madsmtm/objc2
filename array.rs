@@ -1,8 +1,9 @@
 use std::cmp::Ordering;
+use std::marker::PhantomData;
 use std::ops::{Index, Range};
 
-use objc::runtime::Object;
 use objc::{Id, IdSlice, Owned, Ownership, Shared, ShareId};
+use objc::runtime::{Class, Object};
 
 use {INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
@@ -155,9 +156,17 @@ pub trait INSSharedArray : INSArray<Own=Shared> {
     }
 }
 
-pub enum NSArray<T, O = Owned> { }
+pub struct NSArray<T, O = Owned> {
+    item: PhantomData<Id<T, O>>,
+}
 
 object_impl!(NSArray<T, O>);
+
+impl<T, O> INSObject for NSArray<T, O> where T: INSObject, O: Ownership {
+    fn class() -> &'static Class {
+        Class::get("NSArray").unwrap()
+    }
+}
 
 impl<T, O> INSArray for NSArray<T, O> where T: INSObject, O: Ownership {
     type Item = T;
@@ -168,15 +177,16 @@ impl<T> INSOwnedArray for NSArray<T, Owned> where T: INSObject { }
 
 impl<T> INSSharedArray for NSArray<T, Shared> where T: INSObject { }
 
-impl<T> INSCopying for NSArray<T, Shared> {
+impl<T> INSCopying for NSArray<T, Shared> where T: INSObject {
     type Output = NSSharedArray<T>;
 }
 
-impl<T> INSMutableCopying for NSArray<T, Shared> {
+impl<T> INSMutableCopying for NSArray<T, Shared> where T: INSObject {
     type Output = NSMutableSharedArray<T>;
 }
 
-impl<T, O> INSFastEnumeration for NSArray<T, O> where T: INSObject {
+impl<T, O> INSFastEnumeration for NSArray<T, O>
+        where T: INSObject, O: Ownership {
     type Item = T;
 }
 
@@ -261,9 +271,17 @@ pub trait INSMutableArray : INSArray {
     }
 }
 
-pub enum NSMutableArray<T, O = Owned> { }
+pub struct NSMutableArray<T, O = Owned> {
+    item: PhantomData<Id<T, O>>,
+}
 
 object_impl!(NSMutableArray<T, O>);
+
+impl<T, O> INSObject for NSMutableArray<T, O> where T: INSObject, O: Ownership {
+    fn class() -> &'static Class {
+        Class::get("NSMutableArray").unwrap()
+    }
+}
 
 impl<T, O> INSArray for NSMutableArray<T, O> where T: INSObject, O: Ownership {
     type Item = T;
@@ -277,15 +295,16 @@ impl<T> INSSharedArray for NSMutableArray<T, Shared> where T: INSObject { }
 impl<T, O> INSMutableArray for NSMutableArray<T, O>
         where T: INSObject, O: Ownership { }
 
-impl<T> INSCopying for NSMutableArray<T, Shared> {
+impl<T> INSCopying for NSMutableArray<T, Shared> where T: INSObject {
     type Output = NSSharedArray<T>;
 }
 
-impl<T> INSMutableCopying for NSMutableArray<T, Shared> {
+impl<T> INSMutableCopying for NSMutableArray<T, Shared> where T: INSObject {
     type Output = NSMutableSharedArray<T>;
 }
 
-impl<T, O> INSFastEnumeration for NSMutableArray<T, O> where T: INSObject {
+impl<T, O> INSFastEnumeration for NSMutableArray<T, O>
+        where T: INSObject, O: Ownership {
     type Item = T;
 }
 

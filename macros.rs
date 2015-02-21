@@ -10,23 +10,6 @@ macro_rules! object_struct {
         pub enum $name<$($t),*> { }
 
         object_impl!($name $(,$t)*);
-    );
-}
-
-#[macro_export]
-macro_rules! object_impl {
-    ($name:ident) => (
-        object_impl!($name,);
-    );
-    ($name:ident<$($t:ident),+>) => (
-        object_impl!($name, $($t),+);
-    );
-    ($name:ident, $($t:ident),*) => (
-        unsafe impl<$($t),*> ::objc::Message for $name<$($t),*> { }
-
-        impl<$($t),*> ::objc::EncodePtr for $name<$($t),*> {
-            fn ptr_code() -> &'static str { "@" }
-        }
 
         impl<$($t),*> $crate::INSObject for $name<$($t),*> {
             fn class() -> &'static ::objc::runtime::Class {
@@ -47,9 +30,8 @@ macro_rules! object_impl {
 
         impl<$($t),*> ::std::cmp::Eq for $name<$($t),*> { }
 
-        impl<H, $($t),*> ::std::hash::Hash<H> for $name<$($t),*>
-                where H: ::std::hash::Hasher + ::std::hash::Writer {
-            fn hash(&self, state: &mut H) {
+        impl<$($t),*> ::std::hash::Hash for $name<$($t),*> {
+            fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
                 use $crate::INSObject;
                 self.hash_code().hash(state);
             }
@@ -60,6 +42,23 @@ macro_rules! object_impl {
                 use $crate::{INSObject, INSString};
                 ::std::fmt::Debug::fmt(self.description().as_str(), f)
             }
+        }
+    );
+}
+
+#[macro_export]
+macro_rules! object_impl {
+    ($name:ident) => (
+        object_impl!($name,);
+    );
+    ($name:ident<$($t:ident),+>) => (
+        object_impl!($name, $($t),+);
+    );
+    ($name:ident, $($t:ident),*) => (
+        unsafe impl<$($t),*> ::objc::Message for $name<$($t),*> { }
+
+        impl<$($t),*> ::objc::EncodePtr for $name<$($t),*> {
+            fn ptr_code() -> &'static str { "@" }
         }
     );
 }

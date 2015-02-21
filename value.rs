@@ -1,9 +1,11 @@
 use std::ffi::{CString, self};
+use std::marker::PhantomData;
 use std::mem;
 use std::str;
 use libc::c_char;
 
 use objc::{encode, Encode, Id};
+use objc::runtime::Class;
 
 use {INSCopying, INSObject};
 
@@ -40,13 +42,23 @@ pub trait INSValue : INSObject {
     }
 }
 
-object_struct!(NSValue<T>);
+pub struct NSValue<T> {
+    value: PhantomData<T>,
+}
+
+object_impl!(NSValue<T>);
+
+impl<T> INSObject for NSValue<T> where T: 'static {
+    fn class() -> &'static Class {
+        Class::get("NSValue").unwrap()
+    }
+}
 
 impl<T> INSValue for NSValue<T> where T: 'static + Copy + Encode {
     type Value = T;
 }
 
-impl<T> INSCopying for NSValue<T> {
+impl<T> INSCopying for NSValue<T> where T: 'static {
     type Output = NSValue<T>;
 }
 
