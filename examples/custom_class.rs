@@ -4,7 +4,8 @@ extern crate objc_foundation;
 
 use std::sync::{Once, ONCE_INIT};
 
-use objc::{ClassDecl, EncodePtr, Id, Message, MethodDecl};
+use objc::{EncodePtr, Id, Message};
+use objc::declare::{ClassDecl, MethodDecl};
 use objc::runtime::{Class, Object, Sel};
 use objc_foundation::{INSObject, NSObject};
 
