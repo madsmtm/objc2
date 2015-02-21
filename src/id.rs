@@ -188,8 +188,11 @@ impl<T, O> IdSlice for [Id<T, O>] {
 
 #[cfg(test)]
 mod tests {
+    use std::mem;
+
     use runtime::Object;
     use test_utils;
+    use super::Id;
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
@@ -209,5 +212,12 @@ mod tests {
 
         drop(obj);
         assert!(retain_count(&cloned) == 1);
+    }
+
+    #[test]
+    fn test_size() {
+        let id_size = mem::size_of::<Id<Object>>();
+        let ptr_size = mem::size_of::<*const Object>();
+        assert!(id_size == ptr_size);
     }
 }
