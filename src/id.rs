@@ -14,6 +14,14 @@ extern {
     fn objc_release(obj: *mut Object);
 }
 
+unsafe fn retain<T: Message>(ptr: *mut T) -> *mut T {
+    objc_retain(ptr as *mut Object) as *mut T
+}
+
+unsafe fn release<T: Message>(ptr: *mut T) {
+    objc_release(ptr as *mut Object);
+}
+
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
 pub enum Owned { }
@@ -54,7 +62,7 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
-        let ptr = objc_retain(ptr as *mut Object) as *mut T;
+        let ptr = retain(ptr);
         Id::from_ptr_unchecked(ptr)
     }
 
@@ -95,7 +103,7 @@ impl<T, O> ToMessage for Id<T, O> where T: Message, O: Ownership {
 impl<T> Clone for Id<T, Shared> where T: Message {
     fn clone(&self) -> ShareId<T> {
         unsafe {
-            let ptr = objc_retain(self.ptr as *mut Object) as *mut T;
+            let ptr = retain(self.ptr);
             Id::from_ptr_unchecked(ptr)
         }
     }
@@ -107,7 +115,7 @@ impl<T, O> Drop for Id<T, O> where T: Message, O: Ownership {
         if !self.ptr.is_null() {
             let ptr = mem::replace(&mut self.ptr, ptr::null_mut());
             unsafe {
-                objc_release(ptr as *mut Object);
+                release(ptr);
             }
         }
     }
