@@ -121,6 +121,12 @@ impl<T, O> Drop for Id<T, O> where T: Message {
     }
 }
 
+unsafe impl<T, O> Sync for Id<T, O> where T: Sync { }
+
+unsafe impl<T> Send for Id<T, Owned> where T: Send { }
+
+unsafe impl<T> Send for Id<T, Shared> where T: Sync { }
+
 impl<T, O> Deref for Id<T, O> {
     type Target = T;
 

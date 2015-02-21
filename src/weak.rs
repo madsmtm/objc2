@@ -56,6 +56,10 @@ impl<T> Drop for WeakId<T> {
     }
 }
 
+unsafe impl<T> Sync for WeakId<T> where T: Sync { }
+
+unsafe impl<T> Send for WeakId<T> where T: Sync { }
+
 #[cfg(test)]
 mod tests {
     use runtime::Object;
