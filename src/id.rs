@@ -1,5 +1,6 @@
 use std::fmt;
 use std::hash;
+use std::marker::{MarkerTrait, PhantomData};
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr;
@@ -22,7 +23,7 @@ pub enum Shared { }
 
 /// A type that marks what type of ownership a struct has over the object(s)
 /// it contains; specifically, either `Owned` or `Shared`.
-pub trait Ownership { }
+pub trait Ownership : MarkerTrait { }
 impl Ownership for Owned { }
 impl Ownership for Shared { }
 
@@ -39,9 +40,14 @@ impl Ownership for Shared { }
 #[unsafe_no_drop_flag]
 pub struct Id<T, O = Owned> where T: Message, O: Ownership {
     ptr: *mut T,
+    own: PhantomData<O>,
 }
 
 impl<T, O> Id<T, O> where T: Message, O: Ownership {
+    unsafe fn from_ptr_unchecked(ptr: *mut T) -> Id<T, O> {
+        Id { ptr: ptr, own: PhantomData }
+    }
+
     /// Constructs an `Id` from a pointer to an unretained object and
     /// retains it. Panics if the pointer is null.
     /// Unsafe because the pointer must be to a valid object and
@@ -49,7 +55,7 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
         let ptr = objc_retain(ptr as *mut Object) as *mut T;
-        Id { ptr: ptr }
+        Id::from_ptr_unchecked(ptr)
     }
 
     /// Constructs an `Id` from a pointer to a retained object; this won't
@@ -59,18 +65,18 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
-        Id { ptr: ptr }
+        Id::from_ptr_unchecked(ptr)
     }
 }
 
 impl<T> Id<T, Owned> where T: Message {
     /// "Downgrade" an owned `Id` to a `ShareId`, allowing it to be cloned.
     pub fn share(self) -> ShareId<T> {
-        let ptr = self.ptr;
         unsafe {
+            let ptr = self.ptr;
             mem::forget(self);
+            Id::from_ptr_unchecked(ptr)
         }
-        Id { ptr: ptr }
     }
 }
 
@@ -88,10 +94,10 @@ impl<T, O> ToMessage for Id<T, O> where T: Message, O: Ownership {
 
 impl<T> Clone for Id<T, Shared> where T: Message {
     fn clone(&self) -> ShareId<T> {
-        let ptr = unsafe {
-            objc_retain(self.ptr as *mut Object) as *mut T
-        };
-        Id { ptr: ptr }
+        unsafe {
+            let ptr = objc_retain(self.ptr as *mut Object) as *mut T;
+            Id::from_ptr_unchecked(ptr)
+        }
     }
 }
 
@@ -133,9 +139,8 @@ impl<T, O> PartialEq for Id<T, O> where T: Message + PartialEq, O: Ownership {
 
 impl<T, O> Eq for Id<T, O> where T: Message + Eq, O: Ownership { }
 
-impl<H, T, O> hash::Hash<H> for Id<T, O>
-        where H: hash::Hasher, T: Message + hash::Hash<H>, O: Ownership {
-    fn hash(&self, state: &mut H) {
+impl<T, O> hash::Hash for Id<T, O> where T: Message + hash::Hash, O: Ownership {
+    fn hash<H>(&self, state: &mut H) where H: hash::Hasher {
         self.deref().hash(state)
     }
 }
