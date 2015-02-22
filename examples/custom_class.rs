@@ -44,7 +44,7 @@ impl INSObject for MYObject {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = <NSObject as INSObject>::class();
             let mut decl = ClassDecl::new(superclass, "MYObject").unwrap();
-            assert!(decl.add_ivar::<u32>("_number"));
+            decl.add_ivar::<u32>("_number");
 
             // Add ObjC methods for getting and setting the number
             extern fn my_object_set_number(this: &mut MYObject, _cmd: Sel, number: u32) {
@@ -52,14 +52,14 @@ impl INSObject for MYObject {
             }
             let method = MethodDecl::new(sel!(setNumber:),
                 my_object_set_number as extern fn(&mut MYObject, Sel, u32));
-            assert!(decl.add_method(method.unwrap()));
+            decl.add_method(method.unwrap());
 
             extern fn my_object_get_number(this: &MYObject, _cmd: Sel) -> u32 {
                 this.number()
             }
             let method = MethodDecl::new(sel!(number),
                 my_object_get_number as extern fn(&MYObject, Sel) -> u32);
-            assert!(decl.add_method(method.unwrap()));
+            decl.add_method(method.unwrap());
 
             decl.register();
         });
