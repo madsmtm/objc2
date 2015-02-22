@@ -170,6 +170,7 @@ pub type ShareId<T> = Id<T, Shared>;
 
 /// Extension methods for slices containing `Id`s.
 pub trait IdSlice {
+    /// The type of the items in the slice.
     type Item;
 
     /// Convert a slice of `Id`s into a slice of references
