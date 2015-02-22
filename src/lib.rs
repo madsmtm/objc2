@@ -18,8 +18,7 @@ int32_t sum(int32_t (^block)(int32_t, int32_t)) {
 We could write it in Rust as the following:
 
 ```
-use objc::block::Block;
-
+# use objc::block::Block;
 fn sum(block: &mut Block<(i32, i32), i32>) -> i32 {
     block.call((5, 8))
 }
@@ -34,8 +33,7 @@ Creating a block to pass to Objective-C can be done with the `ConcreteBlock`
 struct. For example, to create a block that adds two `i32`s, we could write:
 
 ```
-use objc::block::ConcreteBlock;
-
+# use objc::block::ConcreteBlock;
 let block = ConcreteBlock::new(|a: i32, b: i32| a + b);
 let mut block = block.copy();
 assert!(block.call((5, 8)) == 13);
