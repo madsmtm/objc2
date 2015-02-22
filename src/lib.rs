@@ -120,9 +120,12 @@ impl<A, R> EncodePtr for Block<A, R> {
     fn ptr_code() -> &'static str { "@?" }
 }
 
+/// Types that may be converted into a `ConcreteBlock`.
 pub trait IntoConcreteBlock<A> where A: BlockArguments {
+    /// The return type of the resulting `ConcreteBlock`.
     type Ret;
 
+    /// Consumes self to create a `ConcreteBlock`.
     fn into_concrete_block(self) -> ConcreteBlock<A, Self::Ret, Self>;
 }
 
