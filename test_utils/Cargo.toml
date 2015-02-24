@@ -1,6 +1,6 @@
 [package]
 name = "objc_test_utils"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Steven Sheldon"]
 
 description = "Utilities for testing Objective-C interop."
