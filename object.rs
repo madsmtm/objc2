@@ -1,4 +1,4 @@
-use objc::runtime::Class;
+use objc::runtime::{BOOL, Class, NO};
 use objc::{EncodePtr, Id, Message, ShareId};
 
 use NSString;
@@ -19,10 +19,10 @@ pub trait INSObject : 'static + Sized + Message + EncodePtr {
     }
 
     fn is_equal<T>(&self, other: &T) -> bool where T: INSObject {
-        let result: i8 = unsafe {
+        let result: BOOL = unsafe {
             msg_send![self, isEqual:other]
         };
-        result != 0
+        result != NO
     }
 
     fn description(&self) -> ShareId<NSString> {
@@ -33,10 +33,10 @@ pub trait INSObject : 'static + Sized + Message + EncodePtr {
     }
 
     fn is_kind_of(&self, cls: &Class) -> bool {
-        let result: i8 = unsafe {
+        let result: BOOL = unsafe {
             msg_send![self, isKindOfClass:cls]
         };
-        result != 0
+        result != NO
     }
 
     fn new() -> Id<Self> {
