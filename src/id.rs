@@ -90,7 +90,7 @@ impl<T> Id<T, Owned> where T: Message {
 
 impl<T, O> Encode for Id<T, O> where T: EncodePtr {
     fn code() -> &'static str {
-        <T as EncodePtr>::ptr_code()
+        T::ptr_code()
     }
 }
 
