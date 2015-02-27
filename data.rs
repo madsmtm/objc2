@@ -28,7 +28,7 @@ pub trait INSData : INSObject {
     }
 
     fn with_bytes(bytes: &[u8]) -> Id<Self> {
-        let cls = <Self as INSObject>::class();
+        let cls = Self::class();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:bytes.as_ptr()
@@ -47,7 +47,7 @@ pub trait INSData : INSObject {
         let dealloc: &mut Block<(*mut c_void, usize), ()> = &mut dealloc;
 
         let mut bytes = bytes;
-        let cls = <Self as INSObject>::class();
+        let cls = Self::class();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytesNoCopy:bytes.as_mut_ptr()
@@ -129,34 +129,33 @@ impl INSMutableCopying for NSMutableData {
 
 #[cfg(test)]
 mod tests {
-    use objc::Id;
     use INSObject;
     use super::{INSData, INSMutableData, NSData, NSMutableData};
 
     #[test]
     fn test_bytes() {
         let bytes = [3, 7, 16, 52, 112, 19];
-        let data: Id<NSData> = INSData::with_bytes(&bytes);
+        let data = NSData::with_bytes(&bytes);
         assert!(data.len() == bytes.len());
         assert!(data.bytes() == bytes);
     }
 
     #[test]
     fn test_no_bytes() {
-        let data: Id<NSData> = INSObject::new();
+        let data = NSData::new();
         assert!(Some(data.bytes()).is_some());
     }
 
     #[test]
     fn test_bytes_mut() {
-        let mut data: Id<NSMutableData> = INSData::with_bytes(&[7, 16]);
+        let mut data = NSMutableData::with_bytes(&[7, 16]);
         data.bytes_mut()[0] = 3;
         assert!(data.bytes() == [3, 16]);
     }
 
     #[test]
     fn test_set_len() {
-        let mut data: Id<NSMutableData> = INSData::with_bytes(&[7, 16]);
+        let mut data = NSMutableData::with_bytes(&[7, 16]);
         data.set_len(4);
         assert!(data.len() == 4);
         assert!(data.bytes() == [7, 16, 0, 0]);
@@ -168,7 +167,7 @@ mod tests {
 
     #[test]
     fn test_append() {
-        let mut data: Id<NSMutableData> = INSData::with_bytes(&[7, 16]);
+        let mut data = NSMutableData::with_bytes(&[7, 16]);
         data.append(&[3, 52]);
         assert!(data.len() == 4);
         assert!(data.bytes() == [7, 16, 3, 52]);
@@ -176,7 +175,7 @@ mod tests {
 
     #[test]
     fn test_replace() {
-        let mut data: Id<NSMutableData> = INSData::with_bytes(&[7, 16]);
+        let mut data = NSMutableData::with_bytes(&[7, 16]);
         data.replace_range(0..0, &[3]);
         assert!(data.bytes() == [3, 7, 16]);
 
@@ -195,7 +194,7 @@ mod tests {
         let bytes = vec![3, 7, 16];
         let bytes_ptr = bytes.as_ptr();
 
-        let data: Id<NSData> = INSData::from_vec(bytes);
+        let data = NSData::from_vec(bytes);
         assert!(data.bytes().as_ptr() == bytes_ptr);
     }
 }

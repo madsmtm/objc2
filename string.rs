@@ -50,7 +50,7 @@ pub trait INSString : INSObject {
     }
 
     fn from_str(string: &str) -> Id<Self> {
-        let cls = <Self as INSObject>::class();
+        let cls = Self::class();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:string.as_ptr()
@@ -77,13 +77,12 @@ impl Str for NSString {
 
 #[cfg(test)]
 mod tests {
-    use objc::Id;
     use super::{INSCopying, INSString, NSString};
 
     #[test]
     fn test_utf8() {
         let expected = "ประเทศไทย中华Việt Nam";
-        let s: Id<NSString> = INSString::from_str(expected);
+        let s = NSString::from_str(expected);
         assert!(s.len() == expected.len());
         assert!(s.as_str() == expected);
     }
@@ -91,14 +90,14 @@ mod tests {
     #[test]
     fn test_interior_nul() {
         let expected = "Hello\0World";
-        let s: Id<NSString> = INSString::from_str(expected);
+        let s = NSString::from_str(expected);
         assert!(s.len() == expected.len());
         assert!(s.as_str() == expected);
     }
 
     #[test]
     fn test_copy() {
-        let s: Id<NSString> = INSString::from_str("Hello!");
+        let s = NSString::from_str("Hello!");
         let copied = s.copy();
         assert!(copied.as_str() == s.as_str());
     }

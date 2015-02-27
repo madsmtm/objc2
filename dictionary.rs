@@ -31,7 +31,7 @@ pub trait INSDictionary : INSObject {
 
     fn keys(&self) -> Vec<&Self::Key> {
         let len = self.count();
-        let mut keys: Vec<&Self::Key> = Vec::with_capacity(len);
+        let mut keys = Vec::with_capacity(len);
         unsafe {
             let _: () = msg_send![self, getObjects:ptr::null_mut::<Self::Value>()
                                            andKeys:keys.as_mut_ptr()];
@@ -42,7 +42,7 @@ pub trait INSDictionary : INSObject {
 
     fn values(&self) -> Vec<&Self::Value> {
         let len = self.count();
-        let mut vals: Vec<&Self::Value> = Vec::with_capacity(len);
+        let mut vals = Vec::with_capacity(len);
         unsafe {
             let _: () = msg_send![self, getObjects:vals.as_mut_ptr()
                                            andKeys:ptr::null_mut::<Self::Key>()];
@@ -53,8 +53,8 @@ pub trait INSDictionary : INSObject {
 
     fn keys_and_objects(&self) -> (Vec<&Self::Key>, Vec<&Self::Value>) {
         let len = self.count();
-        let mut keys: Vec<&Self::Key> = Vec::with_capacity(len);
-        let mut objs: Vec<&Self::Value> = Vec::with_capacity(len);
+        let mut keys = Vec::with_capacity(len);
+        let mut objs = Vec::with_capacity(len);
         unsafe {
             let _: () = msg_send![self, getObjects:objs.as_mut_ptr()
                                            andKeys:keys.as_mut_ptr()];
@@ -87,7 +87,7 @@ pub trait INSDictionary : INSObject {
 
     unsafe fn from_refs<T>(keys: &[&T], vals: &[&Self::Value]) -> Id<Self>
             where T: INSCopying<Output=Self::Key> {
-        let cls = <Self as INSObject>::class();
+        let cls = Self::class();
         let count = min(keys.len(), vals.len());
         let obj: *mut Self = msg_send![cls, alloc];
         let obj: *mut Self = msg_send![obj, initWithObjects:vals.as_ptr()
@@ -153,9 +153,9 @@ mod tests {
     use super::{INSDictionary, NSDictionary};
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
-        let string: Id<NSString> = INSString::from_str(key);
-        let obj: Id<NSObject> = INSObject::new();
-        INSDictionary::from_keys_and_objects(&[&*string], vec![obj])
+        let string = NSString::from_str(key);
+        let obj = NSObject::new();
+        NSDictionary::from_keys_and_objects(&[&*string], vec![obj])
     }
 
     #[test]
@@ -168,10 +168,10 @@ mod tests {
     fn test_object_for() {
         let dict = sample_dict("abcd");
 
-        let string: Id<NSString> = INSString::from_str("abcd");
+        let string = NSString::from_str("abcd");
         assert!(dict.object_for(&string).is_some());
 
-        let string: Id<NSString> = INSString::from_str("abcde");
+        let string = NSString::from_str("abcde");
         assert!(dict.object_for(&string).is_none());
     }
 

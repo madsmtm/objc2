@@ -30,7 +30,7 @@ pub trait INSValue : INSObject {
     }
 
     fn from_value(value: Self::Value) -> Id<Self> {
-        let cls = <Self as INSObject>::class();
+        let cls = Self::class();
         let encoding = CString::new(encode::<Self::Value>()).unwrap();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
@@ -63,12 +63,12 @@ impl<T> INSCopying for NSValue<T> where T: 'static {
 
 #[cfg(test)]
 mod tests {
-    use objc::{encode, Id};
+    use objc::encode;
     use {INSValue, NSValue};
 
     #[test]
     fn test_value() {
-        let val: Id<NSValue<u32>> = INSValue::from_value(13);
+        let val = NSValue::from_value(13u32);
         assert!(val.value() == 13);
         assert!(val.encoding() == encode::<u32>());
     }

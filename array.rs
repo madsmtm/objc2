@@ -90,7 +90,7 @@ pub trait INSArray : INSObject {
     }
 
     unsafe fn from_refs(refs: &[&Self::Item]) -> Id<Self> {
-        let cls = <Self as INSObject>::class();
+        let cls = Self::class();
         let obj: *mut Self = msg_send![cls, alloc];
         let obj: *mut Self = msg_send![obj, initWithObjects:refs.as_ptr()
                                                       count:refs.len()];
@@ -106,7 +106,7 @@ pub trait INSArray : INSObject {
 
     fn objects_in_range(&self, range: Range<usize>) -> Vec<&Self::Item> {
         let range = NSRange::from_range(range);
-        let mut vec: Vec<&Self::Item> = Vec::with_capacity(range.length);
+        let mut vec = Vec::with_capacity(range.length);
         unsafe {
             let _: () = msg_send![self, getObjects:vec.as_ptr() range:range];
             vec.set_len(range.length);
@@ -326,16 +326,16 @@ mod tests {
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
-        let mut vec: Vec<Id<NSObject>> = Vec::with_capacity(len);
+        let mut vec = Vec::with_capacity(len);
         for _ in 0..len {
-            vec.push(INSObject::new());
+            vec.push(NSObject::new());
         }
-        INSArray::from_vec(vec)
+        NSArray::from_vec(vec)
     }
 
     #[test]
     fn test_count() {
-        let empty_array: Id<NSArray<NSObject>> = INSObject::new();
+        let empty_array = NSArray::<NSObject>::new();
         assert!(empty_array.count() == 0);
 
         let array = sample_array(4);
@@ -390,35 +390,34 @@ mod tests {
 
     #[test]
     fn test_add_object() {
-        let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
-        let obj: Id<NSObject> = INSObject::new();
+        let mut array = NSMutableArray::new();
+        let obj = NSObject::new();
         array.add_object(obj);
 
         assert!(array.count() == 1);
         assert!(array.object_at(0) == array.object_at(0));
 
-        let obj: Id<NSObject> = INSObject::new();
+        let obj = NSObject::new();
         array.insert_object_at(0, obj);
         assert!(array.count() == 2);
     }
 
     #[test]
     fn test_replace_object() {
-        let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
-        let obj: Id<NSObject> = INSObject::new();
+        let mut array = NSMutableArray::new();
+        let obj = NSObject::new();
         array.add_object(obj);
 
-        let obj: Id<NSObject> = INSObject::new();
+        let obj = NSObject::new();
         let old_obj = array.replace_object_at(0, obj);
         assert!(&*old_obj != array.object_at(0));
     }
 
     #[test]
     fn test_remove_object() {
-        let mut array: Id<NSMutableArray<NSObject>> = INSObject::new();
+        let mut array = NSMutableArray::new();
         for _ in 0..4 {
-            let obj: Id<NSObject> = INSObject::new();
-            array.add_object(obj);
+            array.add_object(NSObject::new());
         }
 
         array.remove_object_at(1);
@@ -433,11 +432,11 @@ mod tests {
 
     #[test]
     fn test_sort() {
-        let strings: Vec<Id<NSString>> = vec![
-            INSString::from_str("hello"),
-            INSString::from_str("hi"),
+        let strings = vec![
+            NSString::from_str("hello"),
+            NSString::from_str("hi"),
         ];
-        let mut strings: Id<NSMutableArray<_>> = INSArray::from_vec(strings);
+        let mut strings = NSMutableArray::from_vec(strings);
 
         strings.sort_by(|s1, s2| s1.as_str().len().cmp(&s2.as_str().len()));
         assert!(strings[0].as_str() == "hi");

@@ -4,7 +4,7 @@ extern crate objc_foundation;
 
 use std::sync::{Once, ONCE_INIT};
 
-use objc::{EncodePtr, Id, Message};
+use objc::{EncodePtr, Message};
 use objc::declare::{ClassDecl, MethodDecl};
 use objc::runtime::{Class, Object, Sel};
 use objc_foundation::{INSObject, NSObject};
@@ -17,7 +17,7 @@ impl MYObject {
             &*(self as *const _ as *const Object)
         };
         unsafe {
-            *obj.get_ivar::<u32>("_number")
+            *obj.get_ivar("_number")
         }
     }
 
@@ -42,7 +42,7 @@ static MYOBJECT_REGISTER_CLASS: Once = ONCE_INIT;
 impl INSObject for MYObject {
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
-            let superclass = <NSObject as INSObject>::class();
+            let superclass = NSObject::class();
             let mut decl = ClassDecl::new(superclass, "MYObject").unwrap();
             decl.add_ivar::<u32>("_number");
 
@@ -69,7 +69,7 @@ impl INSObject for MYObject {
 }
 
 fn main() {
-    let mut obj: Id<MYObject> = INSObject::new();
+    let mut obj = MYObject::new();
 
     obj.set_number(7);
     println!("Number: {}", unsafe {
