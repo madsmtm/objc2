@@ -5,7 +5,7 @@ extern crate objc_foundation;
 use std::sync::{Once, ONCE_INIT};
 
 use objc::{EncodePtr, Message};
-use objc::declare::{ClassDecl, MethodDecl};
+use objc::declare::ClassDecl;
 use objc::runtime::{Class, Object, Sel};
 use objc_foundation::{INSObject, NSObject};
 
@@ -50,16 +50,14 @@ impl INSObject for MYObject {
             extern fn my_object_set_number(this: &mut MYObject, _cmd: Sel, number: u32) {
                 this.set_number(number);
             }
-            let method = MethodDecl::new(sel!(setNumber:),
+            decl.add_method(sel!(setNumber:),
                 my_object_set_number as extern fn(&mut MYObject, Sel, u32));
-            decl.add_method(method.unwrap());
 
             extern fn my_object_get_number(this: &MYObject, _cmd: Sel) -> u32 {
                 this.number()
             }
-            let method = MethodDecl::new(sel!(number),
+            decl.add_method(sel!(number),
                 my_object_get_number as extern fn(&MYObject, Sel) -> u32);
-            decl.add_method(method.unwrap());
 
             decl.register();
         });
