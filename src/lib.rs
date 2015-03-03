@@ -45,6 +45,7 @@ to be copied once, and we can enforce this in Rust, but if Objective-C code
 were to copy it twice we could have a double free.
 */
 
+use std::marker::PhantomData;
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr;
@@ -69,7 +70,8 @@ macro_rules! block_args_impl {
         impl<$($t),*> BlockArguments for ($($t,)*) {
             fn call_block<R>(self, block: &mut Block<Self, R>) -> R {
                 let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
-                    mem::transmute(block.invoke)
+                    let base = &*(block as *mut _ as *mut BlockBase<Self, R>);
+                    mem::transmute(base.invoke)
                 };
                 let ($($a,)*) = self;
                 unsafe {
@@ -94,14 +96,19 @@ block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
 block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K);
 block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L);
 
-/// An Objective-C block that takes arguments of `A` when called and
-/// returns a value of `R`.
 #[repr(C)]
-pub struct Block<A, R> {
+struct BlockBase<A, R> {
     isa: *const Class,
     flags: c_int,
     _reserved: c_int,
     invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
+}
+
+/// An Objective-C block that takes arguments of `A` when called and
+/// returns a value of `R`.
+#[repr(C)]
+pub struct Block<A, R> {
+    _base: PhantomData<BlockBase<A, R>>,
 }
 
 // TODO: impl FnMut when it's possible
@@ -172,7 +179,7 @@ concrete_block_impl!(concrete_block_invoke_args12, a: A, b: B, c: C, d: D, e: E,
 /// constructed on the stack.
 #[repr(C)]
 pub struct ConcreteBlock<A, R, F> {
-    base: Block<A, R>,
+    base: BlockBase<A, R>,
     descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, F>>>,
     closure: F,
 }
@@ -194,7 +201,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     unsafe fn with_invoke(invoke: unsafe extern fn(*mut Self, ...) -> R,
             closure: F) -> Self {
         ConcreteBlock {
-            base: Block {
+            base: BlockBase {
                 isa: &_NSConcreteStackBlock,
                 // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
                 flags: 1 << 25,
@@ -212,7 +219,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> where F: 'static {
     pub fn copy(self) -> Id<Block<A, R>> {
         unsafe {
             // The copy method is declared as returning an object pointer.
-            let block: *mut Object = msg_send![&self.base, copy];
+            let block: *mut Object = msg_send![&*self, copy];
             let block = block as *mut Block<A, R>;
             // At this point, our copy helper has been run so the block will
             // be moved to the heap and we can forget the original block
@@ -226,7 +233,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> where F: 'static {
 impl<A, R, F> Clone for ConcreteBlock<A, R, F> where F: Clone {
     fn clone(&self) -> Self {
         unsafe {
-            ConcreteBlock::with_invoke(mem::transmute(self.invoke),
+            ConcreteBlock::with_invoke(mem::transmute(self.base.invoke),
                 self.closure.clone())
         }
     }
@@ -236,13 +243,13 @@ impl<A, R, F> Deref for ConcreteBlock<A, R, F> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Block<A, R> {
-        &self.base
+        unsafe { &*(&self.base as *const _ as *const Block<A, R>) }
     }
 }
 
 impl<A, R, F> DerefMut for ConcreteBlock<A, R, F> {
     fn deref_mut(&mut self) -> &mut Block<A, R> {
-        &mut self.base
+        unsafe { &mut *(&mut self.base as *mut _ as *mut Block<A, R>) }
     }
 }
 
