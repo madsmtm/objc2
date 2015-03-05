@@ -5,7 +5,7 @@ use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr;
 
-use {Encode, EncodePtr, Message, ToMessage};
+use {Message, ToMessage};
 use runtime::Object;
 
 #[link(name = "objc", kind = "dylib")]
@@ -85,12 +85,6 @@ impl<T> Id<T, Owned> where T: Message {
             mem::forget(self);
             Id::from_ptr_unchecked(ptr)
         }
-    }
-}
-
-impl<T, O> Encode for Id<T, O> where T: EncodePtr {
-    fn code() -> &'static str {
-        T::ptr_code()
     }
 }
 
