@@ -162,25 +162,6 @@ impl<T, O> fmt::Debug for Id<T, O> where T: fmt::Debug {
 /// A convenient alias for a shared `Id`.
 pub type ShareId<T> = Id<T, Shared>;
 
-/// Extension methods for slices containing `Id`s.
-pub trait IdSlice {
-    /// The type of the items in the slice.
-    type Item;
-
-    /// Convert a slice of `Id`s into a slice of references
-    fn as_refs_slice(&self) -> &[&Self::Item];
-}
-
-impl<T, O> IdSlice for [Id<T, O>] {
-    type Item = T;
-
-    fn as_refs_slice(&self) -> &[&T] {
-        unsafe {
-            mem::transmute(self)
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use std::mem;
