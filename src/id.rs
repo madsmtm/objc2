@@ -3,7 +3,6 @@ use std::hash;
 use std::marker::{PhantomData, PhantomFn};
 use std::mem;
 use std::ops::{Deref, DerefMut};
-use std::ptr;
 
 use {Message, ToMessage};
 use runtime::Object;
@@ -45,7 +44,6 @@ impl Ownership for Shared { }
 /// object, but a `ShareId` can be cloned to provide more references to the
 /// object. An owned `Id` can be "downgraded" freely to a `ShareId`, but there
 /// is no way to safely upgrade back.
-#[unsafe_no_drop_flag]
 pub struct Id<T, O = Owned> {
     ptr: *mut T,
     own: PhantomData<O>,
@@ -106,11 +104,8 @@ impl<T> Clone for Id<T, Shared> where T: Message {
 #[unsafe_destructor]
 impl<T, O> Drop for Id<T, O> where T: Message {
     fn drop(&mut self) {
-        if !self.ptr.is_null() {
-            let ptr = mem::replace(&mut self.ptr, ptr::null_mut());
-            unsafe {
-                release(ptr);
-            }
+        unsafe {
+            release(self.ptr);
         }
     }
 }
@@ -164,11 +159,8 @@ pub type ShareId<T> = Id<T, Shared>;
 
 #[cfg(test)]
 mod tests {
-    use std::mem;
-
     use runtime::Object;
     use test_utils;
-    use super::Id;
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
@@ -188,12 +180,5 @@ mod tests {
 
         drop(obj);
         assert!(retain_count(&cloned) == 1);
-    }
-
-    #[test]
-    fn test_size() {
-        let id_size = mem::size_of::<Id<Object>>();
-        let ptr_size = mem::size_of::<*const Object>();
-        assert!(id_size == ptr_size);
     }
 }
