@@ -119,9 +119,9 @@ pub trait INSArray : INSObject {
     }
 
     fn into_vec(array: Id<Self>) -> Vec<Id<Self::Item, Self::Own>> {
-        array.to_vec().map_in_place(|obj| unsafe {
+        array.to_vec().into_iter().map(|obj| unsafe {
             Id::from_ptr(obj as *const Self::Item as *mut Self::Item)
-        })
+        }).collect()
     }
 }
 
@@ -150,9 +150,9 @@ pub trait INSSharedArray : INSArray<Own=Shared> {
     }
 
     fn to_shared_vec(&self) -> Vec<ShareId<Self::Item>> {
-        self.to_vec().map_in_place(|obj| unsafe {
+        self.to_vec().into_iter().map(|obj| unsafe {
             Id::from_ptr(obj as *const Self::Item as *mut Self::Item)
-        })
+        }).collect()
     }
 }
 
