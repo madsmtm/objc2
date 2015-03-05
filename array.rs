@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::marker::PhantomData;
 use std::ops::{Index, Range};
 
-use objc::{Id, IdSlice, Owned, Ownership, Shared, ShareId};
+use objc::{Id, Owned, Ownership, Shared, ShareId};
 use objc::runtime::{Class, Object};
 
 use {INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
@@ -98,9 +98,9 @@ pub trait INSArray : INSObject {
     }
 
     fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self> {
-        let refs = vec.as_refs_slice();
+        let refs: Vec<&Self::Item> = vec.iter().map(|obj| &**obj).collect();
         unsafe {
-            INSArray::from_refs(refs)
+            INSArray::from_refs(&refs)
         }
     }
 
@@ -143,9 +143,9 @@ pub trait INSSharedArray : INSArray<Own=Shared> {
     }
 
     fn from_slice(slice: &[ShareId<Self::Item>]) -> Id<Self> {
-        let refs = slice.as_refs_slice();
+        let refs: Vec<&Self::Item> = slice.iter().map(|obj| &**obj).collect();
         unsafe {
-            INSArray::from_refs(refs)
+            INSArray::from_refs(&refs)
         }
     }
 

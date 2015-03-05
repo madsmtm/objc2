@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use std::ops::Index;
 use std::ptr;
 
-use objc::{Id, IdSlice, Owned, Ownership, ShareId};
+use objc::{Id, Owned, Ownership, ShareId};
 use objc::runtime::Class;
 
 use {
@@ -99,9 +99,9 @@ pub trait INSDictionary : INSObject {
     fn from_keys_and_objects<T>(keys: &[&T],
             vals: Vec<Id<Self::Value, Self::Own>>) -> Id<Self>
             where T: INSCopying<Output=Self::Key> {
-        let vals_refs = vals.as_refs_slice();
+        let vals_refs: Vec<&Self::Value> = vals.iter().map(|obj| &**obj).collect();
         unsafe {
-            INSDictionary::from_refs(keys, vals_refs)
+            INSDictionary::from_refs(keys, &vals_refs)
         }
     }
 
