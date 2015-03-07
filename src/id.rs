@@ -4,7 +4,7 @@ use std::marker::{PhantomData, PhantomFn};
 use std::mem;
 use std::ops::{Deref, DerefMut};
 
-use {Message, ToMessage};
+use Message;
 use runtime::Object;
 
 #[link(name = "objc", kind = "dylib")]
@@ -83,12 +83,6 @@ impl<T> Id<T, Owned> where T: Message {
             mem::forget(self);
             Id::from_ptr_unchecked(ptr)
         }
-    }
-}
-
-impl<T, O> ToMessage for Id<T, O> where T: Message {
-    fn as_id_ptr(&self) -> *mut Object {
-        self.ptr as *mut Object
     }
 }
 

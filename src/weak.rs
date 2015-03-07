@@ -1,7 +1,7 @@
 use std::cell::UnsafeCell;
 use std::ptr;
 
-use {Id, ShareId, Message, ToMessage};
+use {Id, ShareId, Message};
 use runtime::Object;
 
 #[link(name = "objc", kind = "dylib")]
@@ -26,7 +26,7 @@ impl<T> WeakId<T> where T: Message {
         let ptr = Box::new(UnsafeCell::new(ptr::null()));
         unsafe {
             let loc = ptr.get() as *mut *mut Object;
-            objc_storeWeak(loc, obj.as_id_ptr());
+            objc_storeWeak(loc, &**obj as *const T as *mut Object);
         }
         WeakId { ptr: ptr }
     }
