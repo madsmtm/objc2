@@ -4,7 +4,7 @@ use std::mem;
 use std::str;
 use libc::c_char;
 
-use objc::{encode, Encode, Id};
+use objc::{Encode, Id};
 use objc::runtime::Class;
 
 use {INSCopying, INSObject};
@@ -13,7 +13,7 @@ pub trait INSValue : INSObject {
     type Value: 'static + Copy + Encode;
 
     fn value(&self) -> Self::Value {
-        assert!(encode::<Self::Value>() == self.encoding());
+        assert!(Self::Value::encode() == self.encoding());
         unsafe {
             let mut value = mem::uninitialized::<Self::Value>();
             let _: () = msg_send![self, getValue:&mut value];
@@ -31,7 +31,7 @@ pub trait INSValue : INSObject {
 
     fn from_value(value: Self::Value) -> Id<Self> {
         let cls = Self::class();
-        let encoding = encode::<Self::Value>();
+        let encoding = Self::Value::encode();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:&value
@@ -63,13 +63,13 @@ impl<T> INSCopying for NSValue<T> where T: 'static {
 
 #[cfg(test)]
 mod tests {
-    use objc::encode;
+    use objc::Encode;
     use {INSValue, NSValue};
 
     #[test]
     fn test_value() {
         let val = NSValue::from_value(13u32);
         assert!(val.value() == 13);
-        assert!(encode::<u32>() == val.encoding());
+        assert!(u32::encode() == val.encoding());
     }
 }
