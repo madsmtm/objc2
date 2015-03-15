@@ -203,13 +203,13 @@ pub type NSSharedArray<T> = NSArray<T, Shared>;
 pub trait INSMutableArray : INSArray {
     fn add_object(&mut self, obj: Id<Self::Item, Self::Own>) {
         unsafe {
-            let _: () = msg_send![self, addObject:obj];
+            let _: () = msg_send![self, addObject:&*obj];
         }
     }
 
     fn insert_object_at(&mut self, index: usize, obj: Id<Self::Item, Self::Own>) {
         unsafe {
-            let _: () = msg_send![self, insertObject:obj atIndex:index];
+            let _: () = msg_send![self, insertObject:&*obj atIndex:index];
         }
     }
 
@@ -221,7 +221,7 @@ pub trait INSMutableArray : INSArray {
         };
         unsafe {
             let _: () = msg_send![self, replaceObjectAtIndex:index
-                                                  withObject:obj];
+                                                  withObject:&*obj];
         }
         old_obj
     }
