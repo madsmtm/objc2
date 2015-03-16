@@ -13,7 +13,7 @@ pub trait INSValue : INSObject {
     type Value: 'static + Copy + Encode;
 
     fn value(&self) -> Self::Value {
-        assert!(Self::Value::encode() == self.encoding());
+        assert!(Self::Value::encode().as_str() == self.encoding());
         unsafe {
             let mut value = mem::uninitialized::<Self::Value>();
             let _: () = msg_send![self, getValue:&mut value];
@@ -70,6 +70,6 @@ mod tests {
     fn test_value() {
         let val = NSValue::from_value(13u32);
         assert!(val.value() == 13);
-        assert!(u32::encode() == val.encoding());
+        assert!(u32::encode().as_str() == val.encoding());
     }
 }
