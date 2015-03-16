@@ -34,8 +34,10 @@ pub trait Ownership : 'static + PhantomFn<Self> { }
 impl Ownership for Owned { }
 impl Ownership for Shared { }
 
-/// A pointer type for Objective-C's reference counted objects. The object of
-/// an `Id` is retained and sent a `release` message when the `Id` is dropped.
+/// A pointer type for Objective-C's reference counted objects.
+///
+/// The object of an `Id` is retained and sent a `release` message when
+/// the `Id` is dropped.
 ///
 /// An `Id` may be either `Owned` or `Shared`, represented by the types `Id`
 /// and `ShareId`, respectively. If owned, there are no other references to the
