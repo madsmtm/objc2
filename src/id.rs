@@ -1,7 +1,6 @@
 use std::fmt;
 use std::hash;
 use std::marker::{PhantomData, PhantomFn};
-use std::mem;
 use std::ops::{Deref, DerefMut};
 
 use Message;
@@ -13,12 +12,14 @@ extern {
     fn objc_release(obj: *mut Object);
 }
 
-unsafe fn retain<T: Message>(ptr: *mut T) -> *mut T {
-    objc_retain(ptr as *mut Object) as *mut T
-}
+struct StrongPtr(*mut Object);
 
-unsafe fn release<T: Message>(ptr: *mut T) {
-    objc_release(ptr as *mut Object);
+impl Drop for StrongPtr {
+    fn drop(&mut self) {
+        unsafe {
+            objc_release(self.0);
+        }
+    }
 }
 
 /// A type used to mark that a struct owns the object(s) it contains,
@@ -47,13 +48,14 @@ impl Ownership for Shared { }
 /// object. An owned `Id` can be "downgraded" freely to a `ShareId`, but there
 /// is no way to safely upgrade back.
 pub struct Id<T, O = Owned> {
-    ptr: *mut T,
+    ptr: StrongPtr,
+    item: PhantomData<T>,
     own: PhantomData<O>,
 }
 
 impl<T, O> Id<T, O> where T: Message, O: Ownership {
-    unsafe fn from_ptr_unchecked(ptr: *mut T) -> Id<T, O> {
-        Id { ptr: ptr, own: PhantomData }
+    unsafe fn new(ptr: StrongPtr) -> Id<T, O> {
+        Id { ptr: ptr, item: PhantomData, own: PhantomData }
     }
 
     /// Constructs an `Id` from a pointer to an unretained object and
@@ -62,8 +64,7 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
-        let ptr = retain(ptr);
-        Id::from_ptr_unchecked(ptr)
+        Id::new(StrongPtr(objc_retain(ptr as *mut Object)))
     }
 
     /// Constructs an `Id` from a pointer to a retained object; this won't
@@ -73,35 +74,22 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
-        Id::from_ptr_unchecked(ptr)
+        Id::new(StrongPtr(ptr as *mut Object))
     }
 }
 
 impl<T> Id<T, Owned> where T: Message {
     /// "Downgrade" an owned `Id` to a `ShareId`, allowing it to be cloned.
     pub fn share(self) -> ShareId<T> {
-        unsafe {
-            let ptr = self.ptr;
-            mem::forget(self);
-            Id::from_ptr_unchecked(ptr)
-        }
+        let Id { ptr, .. } = self;
+        unsafe { Id::new(ptr) }
     }
 }
 
 impl<T> Clone for Id<T, Shared> where T: Message {
     fn clone(&self) -> ShareId<T> {
         unsafe {
-            let ptr = retain(self.ptr);
-            Id::from_ptr_unchecked(ptr)
-        }
-    }
-}
-
-#[unsafe_destructor]
-impl<T, O> Drop for Id<T, O> where T: Message {
-    fn drop(&mut self) {
-        unsafe {
-            release(self.ptr);
+            Id::new(StrongPtr(objc_retain(self.ptr.0)))
         }
     }
 }
@@ -116,13 +104,13 @@ impl<T, O> Deref for Id<T, O> {
     type Target = T;
 
     fn deref(&self) -> &T {
-        unsafe { &*self.ptr }
+        unsafe { &*(self.ptr.0 as *mut T) }
     }
 }
 
 impl<T> DerefMut for Id<T, Owned> {
     fn deref_mut(&mut self) -> &mut T {
-        unsafe { &mut *self.ptr }
+        unsafe { &mut *(self.ptr.0 as *mut T) }
     }
 }
 
