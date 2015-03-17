@@ -1,4 +1,5 @@
 use std::cell::UnsafeCell;
+use std::marker::PhantomData;
 use std::ptr;
 
 use {Id, ShareId, Message};
@@ -11,47 +12,59 @@ extern {
     fn objc_destroyWeak(addr: *mut *mut Object);
 }
 
+// Our pointer must have the same address even if we are moved, so Box it.
+// Although loading the WeakPtr may modify the pointer, it is thread safe,
+// so we must use an UnsafeCell to get a *mut without self being mutable.
+struct WeakPtr(Box<UnsafeCell<*mut Object>>);
+
+impl WeakPtr {
+    fn new(obj: *mut Object) -> WeakPtr {
+        let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
+        unsafe {
+            objc_storeWeak(ptr.get(), obj);
+        }
+        WeakPtr(ptr)
+    }
+
+    fn load(&self) -> *mut Object {
+        unsafe {
+            objc_loadWeakRetained(self.0.get())
+        }
+    }
+}
+
+impl Drop for WeakPtr {
+    fn drop(&mut self) {
+        unsafe {
+            objc_destroyWeak(self.0.get());
+        }
+    }
+}
+
 /// A pointer type for a weak reference to an Objective-C reference counted
 /// object.
 pub struct WeakId<T> {
-    // Our pointer must have the same address even if we are moved, so Box it.
-    // Although loading the WeakId may modify the pointer, it is thread safe,
-    // so we must use an UnsafeCell to get a *mut without self being mutable.
-    ptr: Box<UnsafeCell<*const T>>,
+    ptr: WeakPtr,
+    item: PhantomData<T>,
 }
 
 impl<T> WeakId<T> where T: Message {
     /// Construct a new `WeakId` referencing the given `ShareId`.
     pub fn new(obj: &ShareId<T>) -> WeakId<T> {
-        let ptr = Box::new(UnsafeCell::new(ptr::null()));
-        unsafe {
-            let loc = ptr.get() as *mut *mut Object;
-            objc_storeWeak(loc, &**obj as *const T as *mut Object);
+        WeakId {
+            ptr: WeakPtr::new(&**obj as *const T as *mut Object),
+            item: PhantomData,
         }
-        WeakId { ptr: ptr }
     }
 
     /// Load a `ShareId` from the `WeakId` if the object still exists.
     /// Returns `None` if the object has been deallocated.
     pub fn load(&self) -> Option<ShareId<T>> {
-        unsafe {
-            let loc = self.ptr.get() as *mut *mut Object;
-            let obj = objc_loadWeakRetained(loc) as *mut T;
-            if obj.is_null() {
-                None
-            } else {
-                Some(Id::from_retained_ptr(obj))
-            }
-        }
-    }
-}
-
-#[unsafe_destructor]
-impl<T> Drop for WeakId<T> {
-    fn drop(&mut self) {
-        unsafe {
-            let loc = self.ptr.get() as *mut *mut Object;
-            objc_destroyWeak(loc);
+        let obj = self.ptr.load();
+        if obj.is_null() {
+            None
+        } else {
+            unsafe { Some(Id::from_retained_ptr(obj as *mut T)) }
         }
     }
 }
