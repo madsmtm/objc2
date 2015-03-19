@@ -13,19 +13,15 @@ pub enum MYObject { }
 
 impl MYObject {
     fn number(&self) -> u32 {
-        let obj = unsafe {
-            &*(self as *const _ as *const Object)
-        };
         unsafe {
+            let obj = &*(self as *const _ as *const Object);
             *obj.get_ivar("_number")
         }
     }
 
     fn set_number(&mut self, number: u32) {
-        let obj = unsafe {
-            &mut *(self as *mut _ as *mut Object)
-        };
         unsafe {
+            let obj =  &mut *(self as *mut _ as *mut Object);
             obj.set_ivar("_number", number);
         }
     }
@@ -43,17 +39,20 @@ impl INSObject for MYObject {
             decl.add_ivar::<u32>("_number");
 
             // Add ObjC methods for getting and setting the number
-            extern fn my_object_set_number(this: &mut MYObject, _cmd: Sel, number: u32) {
-                this.set_number(number);
+            extern fn my_object_set_number(this: &mut Object, _cmd: Sel, number: u32) {
+                unsafe { this.set_ivar("_number", number); }
             }
-            decl.add_method(sel!(setNumber:),
-                my_object_set_number as extern fn(&mut MYObject, Sel, u32));
 
-            extern fn my_object_get_number(this: &MYObject, _cmd: Sel) -> u32 {
-                this.number()
+            extern fn my_object_get_number(this: &Object, _cmd: Sel) -> u32 {
+                unsafe { *this.get_ivar("_number") }
             }
-            decl.add_method(sel!(number),
-                my_object_get_number as extern fn(&MYObject, Sel) -> u32);
+
+            unsafe {
+                decl.add_method(sel!(setNumber:),
+                    my_object_set_number as extern fn(&mut Object, Sel, u32));
+                decl.add_method(sel!(number),
+                    my_object_get_number as extern fn(&Object, Sel) -> u32);
+            }
 
             decl.register();
         });
