@@ -102,8 +102,8 @@ impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
             // Check if the collection was mutated
             if let Some(mutations) = mutations {
                 assert!(mutations == unsafe { *self.state.mutations_ptr },
-                    "Mutation detected during enumeration of object {:?}",
-                    self.object as *const C);
+                    "Mutation detected during enumeration of object {:p}",
+                    self.object);
             }
 
             self.ptr = buf.as_ptr();

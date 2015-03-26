@@ -48,10 +48,10 @@ impl INSObject for MYObject {
             }
 
             unsafe {
-                decl.add_method(sel!(setNumber:),
-                    my_object_set_number as extern fn(&mut Object, Sel, u32));
-                decl.add_method(sel!(number),
-                    my_object_get_number as extern fn(&Object, Sel) -> u32);
+                let set_number: extern fn(&mut Object, Sel, u32) = my_object_set_number;
+                decl.add_method(sel!(setNumber:), set_number);
+                let get_number: extern fn(&Object, Sel) -> u32 = my_object_get_number;
+                decl.add_method(sel!(number), get_number);
             }
 
             decl.register();
