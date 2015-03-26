@@ -51,8 +51,9 @@ pub struct WeakId<T> {
 impl<T> WeakId<T> where T: Message {
     /// Construct a new `WeakId` referencing the given `ShareId`.
     pub fn new(obj: &ShareId<T>) -> WeakId<T> {
+        let obj_ptr: *const T = &**obj;
         WeakId {
-            ptr: WeakPtr::new(&**obj as *const T as *mut Object),
+            ptr: WeakPtr::new(obj_ptr as *mut Object),
             item: PhantomData,
         }
     }
@@ -85,7 +86,9 @@ mod tests {
 
         let weak = WeakId::new(&obj);
         let strong = weak.load().unwrap();
-        assert!(&*strong as *const Object == &*obj as *const Object);
+        let strong_ptr: *const Object = &*strong;
+        let obj_ptr: *const Object = &*obj;
+        assert!(strong_ptr == obj_ptr);
         drop(strong);
 
         drop(obj);
