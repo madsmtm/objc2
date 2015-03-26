@@ -123,33 +123,33 @@ pub trait INSArray : INSObject {
             Id::from_ptr(obj as *const Self::Item as *mut Self::Item)
         }).collect()
     }
-}
 
-pub trait INSOwnedArray : INSArray<Own=Owned> {
-    fn mut_object_at(&mut self, index: usize) -> &mut Self::Item {
+    fn mut_object_at(&mut self, index: usize) -> &mut Self::Item
+            where Self: INSArray<Own=Owned> {
         unsafe {
             let result: *mut Self::Item = msg_send![self, objectAtIndex:index];
             &mut *result
         }
     }
-}
 
-pub trait INSSharedArray : INSArray<Own=Shared> {
-    fn shared_object_at(&self, index: usize) -> ShareId<Self::Item> {
+    fn shared_object_at(&self, index: usize) -> ShareId<Self::Item>
+            where Self: INSArray<Own=Shared> {
         let obj = self.object_at(index);
         unsafe {
             Id::from_ptr(obj as *const _ as *mut Self::Item)
         }
     }
 
-    fn from_slice(slice: &[ShareId<Self::Item>]) -> Id<Self> {
+    fn from_slice(slice: &[ShareId<Self::Item>]) -> Id<Self>
+            where Self: INSArray<Own=Shared> {
         let refs: Vec<&Self::Item> = slice.iter().map(|obj| &**obj).collect();
         unsafe {
             INSArray::from_refs(&refs)
         }
     }
 
-    fn to_shared_vec(&self) -> Vec<ShareId<Self::Item>> {
+    fn to_shared_vec(&self) -> Vec<ShareId<Self::Item>>
+            where Self: INSArray<Own=Shared> {
         self.to_vec().into_iter().map(|obj| unsafe {
             Id::from_ptr(obj as *const Self::Item as *mut Self::Item)
         }).collect()
@@ -172,10 +172,6 @@ impl<T, O> INSArray for NSArray<T, O> where T: INSObject, O: Ownership {
     type Item = T;
     type Own = O;
 }
-
-impl<T> INSOwnedArray for NSArray<T, Owned> where T: INSObject { }
-
-impl<T> INSSharedArray for NSArray<T, Shared> where T: INSObject { }
 
 impl<T> INSCopying for NSArray<T, Shared> where T: INSObject {
     type Output = NSSharedArray<T>;
@@ -287,10 +283,6 @@ impl<T, O> INSArray for NSMutableArray<T, O> where T: INSObject, O: Ownership {
     type Item = T;
     type Own = O;
 }
-
-impl<T> INSOwnedArray for NSMutableArray<T, Owned> where T: INSObject { }
-
-impl<T> INSSharedArray for NSMutableArray<T, Shared> where T: INSObject { }
 
 impl<T, O> INSMutableArray for NSMutableArray<T, O>
         where T: INSObject, O: Ownership { }

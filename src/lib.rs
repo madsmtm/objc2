@@ -8,7 +8,7 @@ extern crate libc;
 extern crate objc;
 
 pub use self::array::{
-    INSArray, INSMutableArray, INSOwnedArray, INSSharedArray,
+    INSArray, INSMutableArray,
     NSArray, NSComparisonResult, NSMutableArray, NSRange,
     NSMutableSharedArray, NSSharedArray,
 };
