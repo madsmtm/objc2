@@ -138,7 +138,7 @@ impl<K, V> INSFastEnumeration for NSDictionary<K, V>
     type Item = K;
 }
 
-impl<K, V> Index<K> for NSDictionary<K, V> where K: INSObject, V: INSObject {
+impl<'a, K, V> Index<&'a K> for NSDictionary<K, V> where K: INSObject, V: INSObject {
     type Output = V;
 
     fn index(&self, index: &K) -> &V {

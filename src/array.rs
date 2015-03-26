@@ -189,8 +189,8 @@ impl<T, O> INSFastEnumeration for NSArray<T, O>
 impl<T, O> Index<usize> for NSArray<T, O> where T: INSObject, O: Ownership {
     type Output = T;
 
-    fn index(&self, index: &usize) -> &T {
-        self.object_at(*index)
+    fn index(&self, index: usize) -> &T {
+        self.object_at(index)
     }
 }
 
@@ -304,8 +304,8 @@ impl<T, O> Index<usize> for NSMutableArray<T, O>
         where T: INSObject, O: Ownership {
     type Output = T;
 
-    fn index(&self, index: &usize) -> &T {
-        self.object_at(*index)
+    fn index(&self, index: usize) -> &T {
+        self.object_at(index)
     }
 }
 
