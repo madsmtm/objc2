@@ -76,7 +76,7 @@ mod tests {
         let obj = NSObject::new();
         let description = obj.description();
         let expected = format!("<NSObject: {:p}>", &*obj);
-        assert!(description.as_str() == expected.as_slice());
+        assert!(description.as_str() == &*expected);
     }
 
     #[test]

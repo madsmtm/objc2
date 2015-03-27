@@ -69,12 +69,6 @@ impl INSCopying for NSString {
     type Output = NSString;
 }
 
-impl Str for NSString {
-    fn as_slice(&self) -> &str {
-        self.as_str()
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::{INSCopying, INSString, NSString};
