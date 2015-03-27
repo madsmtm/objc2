@@ -25,7 +25,7 @@ pub trait INSDictionary : INSObject {
     fn object_for(&self, key: &Self::Key) -> Option<&Self::Value> {
         unsafe {
             let obj: *mut Self::Value = msg_send![self, objectForKey:key];
-            obj.as_ref()
+            if obj.is_null() { None } else { Some(&*obj) }
         }
     }
 

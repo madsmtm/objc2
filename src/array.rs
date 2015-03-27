@@ -71,14 +71,14 @@ pub trait INSArray : INSObject {
     fn first_object(&self) -> Option<&Self::Item> {
         unsafe {
             let obj: *const Self::Item = msg_send![self, firstObject];
-            obj.as_ref()
+            if obj.is_null() { None } else { Some(&*obj) }
         }
     }
 
     fn last_object(&self) -> Option<&Self::Item> {
         unsafe {
             let obj: *const Self::Item = msg_send![self, lastObject];
-            obj.as_ref()
+            if obj.is_null() { None } else { Some(&*obj) }
         }
     }
 

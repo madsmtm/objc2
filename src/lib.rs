@@ -1,8 +1,6 @@
 #![crate_name = "objc_foundation"]
 #![crate_type = "lib"]
 
-#![feature(core)]
-
 extern crate libc;
 #[macro_use]
 extern crate objc;
