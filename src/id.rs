@@ -1,6 +1,6 @@
 use std::fmt;
 use std::hash;
-use std::marker::{PhantomData, PhantomFn};
+use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
 
 use Message;
@@ -31,7 +31,7 @@ pub enum Shared { }
 
 /// A type that marks what type of ownership a struct has over the object(s)
 /// it contains; specifically, either `Owned` or `Shared`.
-pub trait Ownership : 'static + PhantomFn<Self> { }
+pub trait Ownership : 'static + Sized { }
 impl Ownership for Owned { }
 impl Ownership for Shared { }
 
