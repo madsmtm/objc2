@@ -8,7 +8,7 @@ use objc::runtime::{Class, Object};
 use {INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
 #[repr(isize)]
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub enum NSComparisonResult {
     Ascending  = -1,
     Same       = 0,
@@ -34,7 +34,7 @@ impl NSComparisonResult {
 }
 
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub struct NSRange {
     pub location: usize,
     pub length: usize,
