@@ -138,6 +138,12 @@ impl<T, O> fmt::Debug for Id<T, O> where T: fmt::Debug {
     }
 }
 
+impl<T, O> fmt::Pointer for Id<T, O> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Pointer::fmt(&self.ptr.0, f)
+    }
+}
+
 /// A convenient alias for a shared `Id`.
 pub type ShareId<T> = Id<T, Shared>;
 
