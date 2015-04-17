@@ -6,3 +6,7 @@ authors = ["Steven Sheldon"]
 [dependencies]
 libc = "0.1"
 objc = "0.1"
+
+[dev-dependencies.objc_test_utils]
+version = "0.0"
+path = "test_utils"
