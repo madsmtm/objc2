@@ -45,14 +45,18 @@ to be copied once, and we can enforce this in Rust, but if Objective-C code
 were to copy it twice we could have a double free.
 */
 
+extern crate libc;
+#[macro_use]
+extern crate objc;
+
 use std::marker::PhantomData;
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr;
 use libc::{c_int, c_ulong};
 
-use runtime::{Class, Object};
-use Id;
+use objc::runtime::{Class, Object};
+use objc::{Message, Id};
 
 #[link(name = "Foundation", kind = "framework")]
 extern {
@@ -118,6 +122,8 @@ impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
         args.call_block(self)
     }
 }
+
+unsafe impl<A, R> Message for Block<A, R> { }
 
 /// Types that may be converted into a `ConcreteBlock`.
 pub trait IntoConcreteBlock<A> where A: BlockArguments {
