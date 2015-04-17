@@ -4,6 +4,7 @@
 extern crate libc;
 #[macro_use]
 extern crate objc;
+extern crate block;
 
 pub use self::array::{
     INSArray, INSMutableArray,

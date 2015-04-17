@@ -4,7 +4,7 @@ use std::slice;
 use libc::c_void;
 
 use objc::Id;
-use objc::block::{Block, ConcreteBlock};
+use block::{Block, ConcreteBlock};
 use {INSObject, INSCopying, INSMutableCopying, NSRange};
 
 pub trait INSData : INSObject {

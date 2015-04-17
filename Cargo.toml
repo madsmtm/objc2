@@ -9,3 +9,4 @@ name = "objc_foundation"
 [dependencies]
 libc = "0.1"
 objc = "0.1"
+block = "0.0"
