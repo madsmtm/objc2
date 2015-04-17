@@ -1,7 +1,7 @@
 #![crate_name = "objc_test_utils"]
 #![crate_type = "lib"]
 
-#[link(name = "Foundation", kind = "framework")]
+#[link(name = "System", kind = "dylib")]
 extern { }
 
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.

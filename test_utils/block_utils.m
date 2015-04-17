@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <Block.h>
 
 typedef int32_t (^IntBlock)();
 typedef int32_t (^AddBlock)(int32_t);
@@ -8,7 +9,7 @@ IntBlock get_int_block() {
 }
 
 IntBlock get_int_block_with(int32_t i) {
-    return [^{ return i; } copy];
+    return Block_copy(^{ return i; });
 }
 
 AddBlock get_add_block() {
@@ -16,7 +17,7 @@ AddBlock get_add_block() {
 }
 
 AddBlock get_add_block_with(int32_t i) {
-    return [^(int32_t a) { return a + i; } copy];
+    return Block_copy(^(int32_t a) { return a + i; });
 }
 
 int32_t invoke_int_block(IntBlock block) {
