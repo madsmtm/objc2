@@ -46,8 +46,6 @@ were to copy it twice we could have a double free.
 */
 
 extern crate libc;
-#[macro_use]
-extern crate objc;
 
 #[cfg(test)]
 extern crate objc_test_utils;
@@ -56,14 +54,14 @@ use std::marker::PhantomData;
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::ptr;
-use libc::{c_int, c_ulong};
+use libc::{c_int, c_ulong, c_void};
 
-use objc::runtime::{Class, Object};
-use objc::{Message, Id};
-
-#[link(name = "Foundation", kind = "framework")]
+#[link(name = "System", kind = "dylib")]
 extern {
-    static _NSConcreteStackBlock: Class;
+    static _NSConcreteStackBlock: ();
+
+    fn _Block_copy(block: *const c_void) -> *mut c_void;
+    fn _Block_release(block: *const c_void);
 }
 
 /// Types that may be used as the arguments to an Objective-C block.
@@ -105,7 +103,7 @@ block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: 
 
 #[repr(C)]
 struct BlockBase<A, R> {
-    isa: *const Class,
+    isa: *const (),
     flags: c_int,
     _reserved: c_int,
     invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
@@ -126,7 +124,42 @@ impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
     }
 }
 
-unsafe impl<A, R> Message for Block<A, R> { }
+pub struct IdBlock<A, R> {
+    ptr: *mut Block<A, R>,
+}
+
+impl<A, R> IdBlock<A, R> {
+    pub unsafe fn new(ptr: *mut Block<A, R>) -> Self {
+        IdBlock { ptr: ptr }
+    }
+
+    pub unsafe fn copy(ptr: *mut Block<A, R>) -> Self {
+        let ptr = _Block_copy(ptr as *const c_void) as *mut Block<A, R>;
+        IdBlock { ptr: ptr }
+    }
+}
+
+impl<A, R> Deref for IdBlock<A, R> {
+    type Target = Block<A, R>;
+
+    fn deref(&self) -> &Block<A, R> {
+        unsafe { &*self.ptr }
+    }
+}
+
+impl<A, R> DerefMut for IdBlock<A, R> {
+    fn deref_mut(&mut self) -> &mut Block<A, R> {
+        unsafe { &mut *self.ptr }
+    }
+}
+
+impl<A, R> Drop for IdBlock<A, R> {
+    fn drop(&mut self) {
+        unsafe {
+            _Block_release(self.ptr as *const c_void);
+        }
+    }
+}
 
 /// Types that may be converted into a `ConcreteBlock`.
 pub trait IntoConcreteBlock<A> where A: BlockArguments {
@@ -219,16 +252,16 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
 
 impl<A, R, F> ConcreteBlock<A, R, F> where F: 'static {
     /// Copy self onto the heap.
-    pub fn copy(self) -> Id<Block<A, R>> {
+    pub fn copy(self) -> IdBlock<A, R> {
         unsafe {
-            // The copy method is declared as returning an object pointer.
-            let block: *mut Object = msg_send![&*self, copy];
-            let block = block as *mut Block<A, R>;
+            let mut block = self;
+            let ptr: *mut Block<A, R> = &mut *block;
+            let copied = IdBlock::copy(ptr);
             // At this point, our copy helper has been run so the block will
             // be moved to the heap and we can forget the original block
             // because the heap block will drop in our dispose helper.
-            mem::forget(self);
-            Id::from_retained_ptr(block)
+            mem::forget(block);
+            copied
         }
     }
 }
@@ -286,21 +319,20 @@ impl<B> BlockDescriptor<B> {
 
 #[cfg(test)]
 mod tests {
-    use objc::Id;
     use objc_test_utils;
-    use super::{Block, ConcreteBlock};
+    use super::{Block, ConcreteBlock, IdBlock};
 
-    fn get_int_block_with(i: i32) -> Id<Block<(), i32>> {
+    fn get_int_block_with(i: i32) -> IdBlock<(), i32> {
         unsafe {
             let ptr = objc_test_utils::get_int_block_with(i);
-            Id::from_retained_ptr(ptr as *mut _)
+            IdBlock::new(ptr as *mut _)
         }
     }
 
-    fn get_add_block_with(i: i32) -> Id<Block<(i32,), i32>> {
+    fn get_add_block_with(i: i32) -> IdBlock<(i32,), i32> {
         unsafe {
             let ptr = objc_test_utils::get_add_block_with(i);
-            Id::from_retained_ptr(ptr as *mut _)
+            IdBlock::new(ptr as *mut _)
         }
     }
 
@@ -357,7 +389,7 @@ mod tests {
 
     #[test]
     fn test_concrete_block_stack_copy() {
-        fn make_block() -> Id<Block<(), i32>> {
+        fn make_block() -> IdBlock<(), i32> {
             let x = 7;
             let block = ConcreteBlock::new(move || x);
             block.copy()
