@@ -1,9 +1,6 @@
 #![crate_name = "objc_test_utils"]
 #![crate_type = "lib"]
 
-#[link(name = "System", kind = "dylib")]
-extern { }
-
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.
 pub enum IntBlock { }
 
@@ -11,7 +8,6 @@ pub enum IntBlock { }
 /// `int32_t (^)(int32_t)`.
 pub enum AddBlock { }
 
-#[link(name="block_utils", kind="static")]
 extern {
     /// Returns a pointer to a global `IntBlock` that returns 7.
     pub fn get_int_block() -> *mut IntBlock;
