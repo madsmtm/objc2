@@ -255,8 +255,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> where F: 'static {
     pub fn copy(self) -> IdBlock<A, R> {
         unsafe {
             let mut block = self;
-            let ptr: *mut Block<A, R> = &mut *block;
-            let copied = IdBlock::copy(ptr);
+            let copied = IdBlock::copy(&mut *block);
             // At this point, our copy helper has been run so the block will
             // be moved to the heap and we can forget the original block
             // because the heap block will drop in our dispose helper.
