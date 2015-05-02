@@ -2,8 +2,8 @@ use std::cmp::Ordering;
 use std::marker::PhantomData;
 use std::ops::{Index, Range};
 
-use objc::{Id, Owned, Ownership, Shared, ShareId};
 use objc::runtime::{Class, Object};
+use objc_id::{Id, Owned, Ownership, Shared, ShareId};
 
 use {INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
@@ -315,7 +315,7 @@ pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 
 #[cfg(test)]
 mod tests {
-    use objc::{Id};
+    use objc_id::Id;
     use {INSObject, INSString, NSObject, NSString};
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
 

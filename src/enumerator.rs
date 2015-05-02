@@ -4,8 +4,8 @@ use std::ptr;
 use std::slice;
 use libc::c_ulong;
 
-use objc::Id;
 use objc::runtime::Object;
+use objc_id::Id;
 
 use INSObject;
 

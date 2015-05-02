@@ -1,5 +1,6 @@
+use objc::Message;
 use objc::runtime::{BOOL, Class, NO};
-use objc::{Id, Message, ShareId};
+use objc_id::{Id, ShareId};
 
 use NSString;
 

@@ -2,7 +2,7 @@ use std::slice;
 use std::str;
 use libc::c_char;
 
-use objc::{Id, ShareId};
+use objc_id::{Id, ShareId};
 
 use INSObject;
 

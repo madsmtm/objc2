@@ -3,8 +3,8 @@ use std::marker::PhantomData;
 use std::ops::Index;
 use std::ptr;
 
-use objc::{Id, Owned, Ownership, ShareId};
 use objc::runtime::Class;
+use objc_id::{Id, Owned, Ownership, ShareId};
 
 use {
     INSArray, INSFastEnumeration, INSCopying, INSObject,
@@ -148,7 +148,7 @@ impl<'a, K, V> Index<&'a K> for NSDictionary<K, V> where K: INSObject, V: INSObj
 
 #[cfg(test)]
 mod tests {
-    use objc::{Id};
+    use objc_id::Id;
     use {INSArray, INSObject, INSString, NSObject, NSString};
     use super::{INSDictionary, NSDictionary};
 

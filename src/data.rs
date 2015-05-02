@@ -3,7 +3,7 @@ use std::ops::Range;
 use std::slice;
 use libc::c_void;
 
-use objc::Id;
+use objc_id::Id;
 use block::{Block, ConcreteBlock};
 use {INSObject, INSCopying, INSMutableCopying, NSRange};
 

@@ -4,8 +4,9 @@ use std::mem;
 use std::str;
 use libc::c_char;
 
-use objc::{Encode, Id};
+use objc::Encode;
 use objc::runtime::Class;
+use objc_id::Id;
 
 use {INSCopying, INSObject};
 
