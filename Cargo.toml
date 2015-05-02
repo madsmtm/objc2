@@ -15,6 +15,7 @@ exclude = [".gitignore"]
 [dependencies]
 libc = "0.1"
 objc = "0.1"
+objc_id = "0.0"
 
 [dev-dependencies.objc_test_utils]
 version = "0.0"

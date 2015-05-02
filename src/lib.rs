@@ -48,6 +48,7 @@ were to copy it twice we could have a double free.
 extern crate libc;
 #[macro_use]
 extern crate objc;
+extern crate objc_id;
 
 #[cfg(test)]
 extern crate objc_test_utils;
@@ -58,8 +59,9 @@ use std::ops::{Deref, DerefMut};
 use std::ptr;
 use libc::{c_int, c_ulong};
 
+use objc::Message;
 use objc::runtime::{Class, Object};
-use objc::{Message, Id};
+use objc_id::Id;
 
 #[link(name = "Foundation", kind = "framework")]
 extern {
@@ -286,7 +288,7 @@ impl<B> BlockDescriptor<B> {
 
 #[cfg(test)]
 mod tests {
-    use objc::Id;
+    use objc_id::Id;
     use objc_test_utils;
     use super::{Block, ConcreteBlock};
 
