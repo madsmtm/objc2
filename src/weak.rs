@@ -2,8 +2,10 @@ use std::cell::UnsafeCell;
 use std::marker::PhantomData;
 use std::ptr;
 
-use {Id, ShareId, Message};
-use runtime::Object;
+use objc::Message;
+use objc::runtime::Object;
+
+use {Id, ShareId};
 
 #[link(name = "objc", kind = "dylib")]
 extern {
@@ -76,13 +78,18 @@ unsafe impl<T> Send for WeakId<T> where T: Sync { }
 
 #[cfg(test)]
 mod tests {
-    use runtime::Object;
-    use test_utils;
+    use objc::runtime::{Class, Object};
+    use {Id, ShareId};
     use super::WeakId;
 
     #[test]
     fn test_weak() {
-        let obj = test_utils::sample_object().share();
+        let cls = Class::get("NSObject").unwrap();
+        let obj: ShareId<Object> = unsafe {
+            let obj: *mut Object = msg_send![cls, alloc];
+            let obj: *mut Object = msg_send![obj, init];
+            Id::from_retained_ptr(obj)
+        };
 
         let weak = WeakId::new(&obj);
         let strong = weak.load().unwrap();

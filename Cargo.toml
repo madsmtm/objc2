@@ -2,3 +2,6 @@
 name = "objc_id"
 version = "0.0.0"
 authors = ["Steven Sheldon"]
+
+[dependencies]
+objc = "0.1"

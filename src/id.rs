@@ -3,8 +3,8 @@ use std::hash;
 use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
 
-use Message;
-use runtime::Object;
+use objc::Message;
+use objc::runtime::Object;
 
 #[link(name = "objc", kind = "dylib")]
 extern {
@@ -149,8 +149,8 @@ pub type ShareId<T> = Id<T, Shared>;
 
 #[cfg(test)]
 mod tests {
-    use runtime::Object;
-    use test_utils;
+    use objc::runtime::{Class, Object};
+    use super::Id;
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
@@ -158,7 +158,12 @@ mod tests {
 
     #[test]
     fn test_clone() {
-        let obj = test_utils::sample_object();
+        let cls = Class::get("NSObject").unwrap();
+        let obj: Id<Object> = unsafe {
+            let obj: *mut Object = msg_send![cls, alloc];
+            let obj: *mut Object = msg_send![obj, init];
+            Id::from_retained_ptr(obj)
+        };
         assert!(retain_count(&obj) == 1);
 
         let obj = obj.share();
