@@ -1,0 +1,4 @@
+[package]
+name = "objc_exception"
+version = "0.0.0"
+authors = ["Steven Sheldon"]
