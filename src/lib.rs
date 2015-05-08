@@ -18,36 +18,41 @@ pub unsafe fn throw(exception: *mut c_void) -> ! {
     unreachable!();
 }
 
-unsafe fn function_and_context<F>(closure: *mut F) ->
-        (extern fn(*mut c_void), *mut c_void)
+unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut c_void>
         where F: FnOnce() {
-    unsafe extern fn try_objc_execute_closure<F>(closure: *mut F)
+    extern fn try_objc_execute_closure<F>(closure: &mut Option<F>)
             where F: FnOnce() {
-        (ptr::read(closure))();
+        // This is always passed Some, so it's safe to unwrap
+        let closure = closure.take().unwrap();
+        closure();
     }
 
-    (mem::transmute(try_objc_execute_closure::<F>), closure as *mut c_void)
+    // Wrap the closure in an Option so it can be taken
+    let mut closure = Some(closure);
+    let f = mem::transmute(try_objc_execute_closure::<F>);
+    let context = &mut closure as *mut _ as *mut c_void;
+
+    let mut exception = ptr::null_mut();
+    let success = RustObjCExceptionTryCatch(f, context, &mut exception);
+
+    if success == 0 {
+        Ok(())
+    } else {
+        Err(exception)
+    }
 }
 
 pub unsafe fn try<F, R>(closure: F) -> Result<R, *mut c_void>
         where F: FnOnce() -> R {
-    let mut result = mem::uninitialized();
-    let result_ptr: *mut R = &mut result;
-    let mut closure = move || {
-        ptr::write(result_ptr, closure());
+    let mut value = None;
+    let result = {
+        let value_ref = &mut value;
+        try_no_ret(move || {
+            *value_ref = Some(closure());
+        })
     };
-
-    let mut exception = ptr::null_mut();
-    let (f, context) = function_and_context(&mut closure);
-    let success = RustObjCExceptionTryCatch(f, context, &mut exception);
-    mem::forget(closure);
-
-    if success == 0 {
-        Ok(result)
-    } else {
-        mem::forget(result);
-        Err(exception)
-    }
+    // If the try succeeded, this was set so it's safe to unwrap
+    result.map(|_| value.unwrap())
 }
 
 #[cfg(test)]
