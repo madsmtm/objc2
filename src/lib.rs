@@ -1,3 +1,5 @@
+//! Rust interface for Objective-C's `@throw` and `@try`/`@catch` statements.
+
 extern crate libc;
 
 use std::mem;
@@ -13,6 +15,10 @@ extern {
             context: *mut c_void, error: *mut *mut c_void) -> c_int;
 }
 
+/// Throws an Objective-C exception.
+/// The argument must be a pointer to an Objective-C object.
+///
+/// Unsafe because this unwinds from Objective-C.
 pub unsafe fn throw(exception: *mut c_void) -> ! {
     RustObjCExceptionThrow(exception);
     unreachable!();
@@ -42,6 +48,15 @@ unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut c_void>
     }
 }
 
+/// Tries to execute the given closure and catches an Objective-C exception
+/// if one is thrown.
+///
+/// Returns a `Result` that is either `Ok` if the closure succeeded without an
+/// exception being thrown, or an `Err` with a pointer to an exception if one
+/// was thrown. The exception is retained and so must be released.
+///
+/// Unsafe because this encourages unwinding through the closure from
+/// Objective-C, which is not safe.
 pub unsafe fn try<F, R>(closure: F) -> Result<R, *mut c_void>
         where F: FnOnce() -> R {
     let mut value = None;
