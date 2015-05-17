@@ -43,8 +43,8 @@ pub trait INSData : INSObject {
             // Recreate the Vec and let it drop
             let _ = Vec::from_raw_parts(bytes as *mut u8, len, capacity);
         });
-        let mut dealloc = dealloc.copy();
-        let dealloc: &mut Block<(*mut c_void, usize), ()> = &mut dealloc;
+        let dealloc = dealloc.copy();
+        let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;
 
         let mut bytes = bytes;
         let cls = Self::class();
