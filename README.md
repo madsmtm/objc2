@@ -17,7 +17,7 @@ int32_t sum(int32_t (^block)(int32_t, int32_t)) {
 We could write it in Rust as the following:
 
 ``` rust
-fn sum(block: &mut Block<(i32, i32), i32>) -> i32 {
+unsafe fn sum(block: &Block<(i32, i32), i32>) -> i32 {
     block.call((5, 8))
 }
 ```
@@ -32,8 +32,8 @@ struct. For example, to create a block that adds two `i32`s, we could write:
 
 ``` rust
 let block = ConcreteBlock::new(|a: i32, b: i32| a + b);
-let mut block = block.copy();
-assert!(block.call((5, 8)) == 13);
+let block = block.copy();
+assert!(unsafe { block.call((5, 8)) } == 13);
 ```
 
 It is important to copy your block to the heap (with the `copy` method) before
