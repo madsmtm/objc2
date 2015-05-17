@@ -67,6 +67,9 @@ extern {
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments {
     /// Calls the given `Block` with self as the arguments.
+    ///
+    /// Unsafe because `block` must point to a valid `Block` and this invokes
+    /// foreign code whose safety the compiler cannot verify.
     unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R;
 }
 
@@ -114,9 +117,13 @@ pub struct Block<A, R> {
     _base: PhantomData<BlockBase<A, R>>,
 }
 
-// TODO: impl FnMut when it's possible
 impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
     /// Call self with the given arguments.
+    ///
+    /// Unsafe because this invokes foreign code that the caller must verify
+    /// doesn't violate any of Rust's safety rules. For example, if this block
+    /// is shared with multiple references, the caller must ensure that calling
+    /// it will not cause a data race.
     pub unsafe fn call(&self, args: A) -> R {
         args.call_block(self as *const _ as *mut _)
     }
@@ -251,7 +258,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F> where F: 'static {
-    /// Copy self onto the heap.
+    /// Copy self onto the heap as an `RcBlock`.
     pub fn copy(self) -> RcBlock<A, R> {
         unsafe {
             let mut block = self;
