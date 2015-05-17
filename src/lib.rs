@@ -67,21 +67,19 @@ extern {
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments {
     /// Calls the given `Block` with self as the arguments.
-    fn call_block<R>(self, block: &mut Block<Self, R>) -> R;
+    unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R;
 }
 
 macro_rules! block_args_impl {
     ($($a:ident : $t:ident),*) => (
         impl<$($t),*> BlockArguments for ($($t,)*) {
-            fn call_block<R>(self, block: &mut Block<Self, R>) -> R {
-                let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
-                    let base = &*(block as *mut _ as *mut BlockBase<Self, R>);
-                    mem::transmute(base.invoke)
+            unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R {
+                let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = {
+                    let base = block as *mut BlockBase<Self, R>;
+                    mem::transmute((*base).invoke)
                 };
                 let ($($a,)*) = self;
-                unsafe {
-                    invoke(block $(, $a)*)
-                }
+                invoke(block $(, $a)*)
             }
         }
     );
@@ -120,7 +118,9 @@ pub struct Block<A, R> {
 impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
     /// Call self with the given arguments.
     pub fn call(&mut self, args: A) -> R {
-        args.call_block(self)
+        unsafe {
+            args.call_block(self)
+        }
     }
 }
 
