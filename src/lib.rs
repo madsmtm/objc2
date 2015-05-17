@@ -129,15 +129,25 @@ impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
     }
 }
 
+/// A reference-counted Objective-C block.
 pub struct RcBlock<A, R> {
     ptr: *mut Block<A, R>,
 }
 
 impl<A, R> RcBlock<A, R> {
+    /// Construct an `RcBlock` for the given block without copying it.
+    /// The caller must ensure the block has a +1 reference count.
+    ///
+    /// Unsafe because `ptr` must point to a valid `Block` and must have a +1
+    /// reference count or it will be overreleased when the `RcBlock` is
+    /// dropped.
     pub unsafe fn new(ptr: *mut Block<A, R>) -> Self {
         RcBlock { ptr: ptr }
     }
 
+    /// Constructs an `RcBlock` by copying the given block.
+    ///
+    /// Unsafe because `ptr` must point to a valid `Block`.
     pub unsafe fn copy(ptr: *mut Block<A, R>) -> Self {
         let ptr = _Block_copy(ptr as *const c_void) as *mut Block<A, R>;
         RcBlock { ptr: ptr }
