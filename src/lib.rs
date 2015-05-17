@@ -122,22 +122,30 @@ impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
     }
 }
 
-pub struct IdBlock<A, R> {
+pub struct RcBlock<A, R> {
     ptr: *mut Block<A, R>,
 }
 
-impl<A, R> IdBlock<A, R> {
+impl<A, R> RcBlock<A, R> {
     pub unsafe fn new(ptr: *mut Block<A, R>) -> Self {
-        IdBlock { ptr: ptr }
+        RcBlock { ptr: ptr }
     }
 
     pub unsafe fn copy(ptr: *mut Block<A, R>) -> Self {
         let ptr = _Block_copy(ptr as *const c_void) as *mut Block<A, R>;
-        IdBlock { ptr: ptr }
+        RcBlock { ptr: ptr }
     }
 }
 
-impl<A, R> Deref for IdBlock<A, R> {
+impl<A, R> Clone for RcBlock<A, R> {
+    fn clone(&self) -> RcBlock<A, R> {
+        unsafe {
+            RcBlock::copy(self.ptr)
+        }
+    }
+}
+
+impl<A, R> Deref for RcBlock<A, R> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Block<A, R> {
@@ -145,13 +153,7 @@ impl<A, R> Deref for IdBlock<A, R> {
     }
 }
 
-impl<A, R> DerefMut for IdBlock<A, R> {
-    fn deref_mut(&mut self) -> &mut Block<A, R> {
-        unsafe { &mut *self.ptr }
-    }
-}
-
-impl<A, R> Drop for IdBlock<A, R> {
+impl<A, R> Drop for RcBlock<A, R> {
     fn drop(&mut self) {
         unsafe {
             _Block_release(self.ptr as *const c_void);
@@ -250,10 +252,10 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
 
 impl<A, R, F> ConcreteBlock<A, R, F> where F: 'static {
     /// Copy self onto the heap.
-    pub fn copy(self) -> IdBlock<A, R> {
+    pub fn copy(self) -> RcBlock<A, R> {
         unsafe {
             let mut block = self;
-            let copied = IdBlock::copy(&mut *block);
+            let copied = RcBlock::copy(&mut *block);
             // At this point, our copy helper has been run so the block will
             // be moved to the heap and we can forget the original block
             // because the heap block will drop in our dispose helper.
@@ -317,19 +319,19 @@ impl<B> BlockDescriptor<B> {
 #[cfg(test)]
 mod tests {
     use objc_test_utils;
-    use super::{Block, ConcreteBlock, IdBlock};
+    use super::{Block, ConcreteBlock, RcBlock};
 
-    fn get_int_block_with(i: i32) -> IdBlock<(), i32> {
+    fn get_int_block_with(i: i32) -> RcBlock<(), i32> {
         unsafe {
             let ptr = objc_test_utils::get_int_block_with(i);
-            IdBlock::new(ptr as *mut _)
+            RcBlock::new(ptr as *mut _)
         }
     }
 
-    fn get_add_block_with(i: i32) -> IdBlock<(i32,), i32> {
+    fn get_add_block_with(i: i32) -> RcBlock<(i32,), i32> {
         unsafe {
             let ptr = objc_test_utils::get_add_block_with(i);
-            IdBlock::new(ptr as *mut _)
+            RcBlock::new(ptr as *mut _)
         }
     }
 
@@ -390,7 +392,7 @@ mod tests {
 
     #[test]
     fn test_concrete_block_stack_copy() {
-        fn make_block() -> IdBlock<(), i32> {
+        fn make_block() -> RcBlock<(), i32> {
             let x = 7;
             let block = ConcreteBlock::new(move || x);
             block.copy()
