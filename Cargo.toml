@@ -1,6 +1,6 @@
 [package]
 name = "block"
-version = "0.0.2"
+version = "0.1.0"
 authors = ["Steven Sheldon"]
 
 description = "Rust interface for Apple's C language extension of blocks."
