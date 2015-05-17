@@ -19,7 +19,7 @@ We could write it in Rust as the following:
 
 ```
 # use block::Block;
-fn sum(block: &mut Block<(i32, i32), i32>) -> i32 {
+unsafe fn sum(block: &Block<(i32, i32), i32>) -> i32 {
     block.call((5, 8))
 }
 ```
@@ -35,8 +35,8 @@ struct. For example, to create a block that adds two `i32`s, we could write:
 ```
 # use block::ConcreteBlock;
 let block = ConcreteBlock::new(|a: i32, b: i32| a + b);
-let mut block = block.copy();
-assert!(block.call((5, 8)) == 13);
+let block = block.copy();
+assert!(unsafe { block.call((5, 8)) } == 13);
 ```
 
 It is important to copy your block to the heap (with the `copy` method) before
@@ -117,10 +117,8 @@ pub struct Block<A, R> {
 // TODO: impl FnMut when it's possible
 impl<A: BlockArguments, R> Block<A, R> where A: BlockArguments {
     /// Call self with the given arguments.
-    pub fn call(&mut self, args: A) -> R {
-        unsafe {
-            args.call_block(self)
-        }
+    pub unsafe fn call(&self, args: A) -> R {
+        args.call_block(self as *const _ as *mut _)
     }
 }
 
@@ -335,15 +333,15 @@ mod tests {
         }
     }
 
-    fn invoke_int_block(block: &mut Block<(), i32>) -> i32 {
-        let ptr = block as *mut _;
+    fn invoke_int_block(block: &Block<(), i32>) -> i32 {
+        let ptr = block as *const _;
         unsafe {
             objc_test_utils::invoke_int_block(ptr as *mut _)
         }
     }
 
-    fn invoke_add_block(block: &mut Block<(i32,), i32>, a: i32) -> i32 {
-        let ptr = block as *mut _;
+    fn invoke_add_block(block: &Block<(i32,), i32>, a: i32) -> i32 {
+        let ptr = block as *const _;
         unsafe {
             objc_test_utils::invoke_add_block(ptr as *mut _, a)
         }
@@ -351,27 +349,31 @@ mod tests {
 
     #[test]
     fn test_call_block() {
-        let mut block = get_int_block_with(13);
-        assert!(block.call(()) == 13);
+        let block = get_int_block_with(13);
+        unsafe {
+            assert!(block.call(()) == 13);
+        }
     }
 
     #[test]
     fn test_call_block_args() {
-        let mut block = get_add_block_with(13);
-        assert!(block.call((2,)) == 15);
+        let block = get_add_block_with(13);
+        unsafe {
+            assert!(block.call((2,)) == 15);
+        }
     }
 
     #[test]
     fn test_create_block() {
-        let mut block = ConcreteBlock::new(|| 13);
-        let result = invoke_int_block(&mut block);
+        let block = ConcreteBlock::new(|| 13);
+        let result = invoke_int_block(&block);
         assert!(result == 13);
     }
 
     #[test]
     fn test_create_block_args() {
-        let mut block = ConcreteBlock::new(|a: i32| a + 5);
-        let result = invoke_add_block(&mut block, 6);
+        let block = ConcreteBlock::new(|a: i32| a + 5);
+        let result = invoke_add_block(&block, 6);
         assert!(result == 11);
     }
 
@@ -379,11 +381,11 @@ mod tests {
     fn test_concrete_block_copy() {
         let s = "Hello!".to_string();
         let expected_len = s.len() as i32;
-        let mut block = ConcreteBlock::new(move || s.len() as i32);
-        assert!(invoke_int_block(&mut block) == expected_len);
+        let block = ConcreteBlock::new(move || s.len() as i32);
+        assert!(invoke_int_block(&block) == expected_len);
 
-        let mut copied = block.copy();
-        assert!(invoke_int_block(&mut copied) == expected_len);
+        let copied = block.copy();
+        assert!(invoke_int_block(&copied) == expected_len);
     }
 
     #[test]
@@ -394,7 +396,7 @@ mod tests {
             block.copy()
         }
 
-        let mut block = make_block();
-        assert!(invoke_int_block(&mut block) == 7);
+        let block = make_block();
+        assert!(invoke_int_block(&block) == 7);
     }
 }
