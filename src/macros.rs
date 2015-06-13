@@ -1,16 +1,12 @@
 macro_rules! object_struct {
     ($name:ident) => (
-        object_struct!($name,);
-    );
-    ($name:ident<$($t:ident),+>) => (
-        object_struct!($name, $($t),+);
-    );
-    ($name:ident, $($t:ident),*) => (
-        pub enum $name<$($t),*> { }
+        pub struct $name {
+            _private: (),
+        }
 
-        object_impl!($name $(,$t)*);
+        object_impl!($name);
 
-        impl<$($t),*> $crate::INSObject for $name<$($t),*> {
+        impl $crate::INSObject for $name {
             fn class() -> &'static ::objc::runtime::Class {
                 let name = stringify!($name);
                 match ::objc::runtime::Class::get(name) {
@@ -20,23 +16,23 @@ macro_rules! object_struct {
             }
         }
 
-        impl<$($t),*> ::std::cmp::PartialEq for $name<$($t),*> {
-            fn eq(&self, other: &$name<$($t),*>) -> bool {
+        impl ::std::cmp::PartialEq for $name {
+            fn eq(&self, other: &Self) -> bool {
                 use $crate::INSObject;
                 self.is_equal(other)
             }
         }
 
-        impl<$($t),*> ::std::cmp::Eq for $name<$($t),*> { }
+        impl ::std::cmp::Eq for $name { }
 
-        impl<$($t),*> ::std::hash::Hash for $name<$($t),*> {
+        impl ::std::hash::Hash for $name {
             fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
                 use $crate::INSObject;
                 self.hash_code().hash(state);
             }
         }
 
-        impl<$($t),*> ::std::fmt::Debug for $name<$($t),*> {
+        impl ::std::fmt::Debug for $name {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                 use $crate::{INSObject, INSString};
                 ::std::fmt::Debug::fmt(self.description().as_str(), f)
