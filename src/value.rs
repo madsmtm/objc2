@@ -4,7 +4,7 @@ use std::mem;
 use std::str;
 use libc::c_char;
 
-use objc::Encode;
+use objc::{Encode, Encoding};
 use objc::runtime::Class;
 use objc_id::Id;
 
@@ -14,7 +14,7 @@ pub trait INSValue : INSObject {
     type Value: 'static + Copy + Encode;
 
     fn value(&self) -> Self::Value {
-        assert!(Self::Value::encode().as_str() == self.encoding());
+        assert!(Self::Value::encode() == self.encoding());
         unsafe {
             let mut value = mem::uninitialized::<Self::Value>();
             let _: () = msg_send![self, getValue:&mut value];
@@ -22,11 +22,12 @@ pub trait INSValue : INSObject {
         }
     }
 
-    fn encoding(&self) -> &str {
+    fn encoding(&self) -> Encoding {
         unsafe {
             let result: *const c_char = msg_send![self, objCType];
             let s = CStr::from_ptr(result);
-            str::from_utf8(s.to_bytes()).unwrap()
+            let s = str::from_utf8(s.to_bytes()).unwrap();
+            Encoding::from_str(s)
         }
     }
 
@@ -71,6 +72,6 @@ mod tests {
     fn test_value() {
         let val = NSValue::from_value(13u32);
         assert!(val.value() == 13);
-        assert!(u32::encode().as_str() == val.encoding());
+        assert!(u32::encode() == val.encoding());
     }
 }
