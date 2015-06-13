@@ -11,6 +11,17 @@ use {
     NSArray, NSSharedArray, NSEnumerator,
 };
 
+unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D>
+        where D: INSDictionary, T: INSCopying<Output=D::Key> {
+    let cls = D::class();
+    let count = min(keys.len(), vals.len());
+    let obj: *mut D = msg_send![cls, alloc];
+    let obj: *mut D = msg_send![obj, initWithObjects:vals.as_ptr()
+                                             forKeys:keys.as_ptr()
+                                               count:count];
+    Id::from_retained_ptr(obj)
+}
+
 pub trait INSDictionary : INSObject {
     type Key: INSObject;
     type Value: INSObject;
@@ -85,23 +96,12 @@ pub trait INSDictionary : INSObject {
         }
     }
 
-    unsafe fn from_refs<T>(keys: &[&T], vals: &[&Self::Value]) -> Id<Self>
-            where T: INSCopying<Output=Self::Key> {
-        let cls = Self::class();
-        let count = min(keys.len(), vals.len());
-        let obj: *mut Self = msg_send![cls, alloc];
-        let obj: *mut Self = msg_send![obj, initWithObjects:vals.as_ptr()
-                                                    forKeys:keys.as_ptr()
-                                                      count:count];
-        Id::from_retained_ptr(obj)
-    }
-
     fn from_keys_and_objects<T>(keys: &[&T],
             vals: Vec<Id<Self::Value, Self::Own>>) -> Id<Self>
             where T: INSCopying<Output=Self::Key> {
         let vals_refs: Vec<&Self::Value> = vals.iter().map(|obj| &**obj).collect();
         unsafe {
-            INSDictionary::from_refs(keys, &vals_refs)
+            from_refs(keys, &vals_refs)
         }
     }
 

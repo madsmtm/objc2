@@ -51,6 +51,14 @@ impl NSRange {
     }
 }
 
+unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A> where A: INSArray {
+    let cls = A::class();
+    let obj: *mut A = msg_send![cls, alloc];
+    let obj: *mut A = msg_send![obj, initWithObjects:refs.as_ptr()
+                                               count:refs.len()];
+    Id::from_retained_ptr(obj)
+}
+
 pub trait INSArray : INSObject {
     type Item: INSObject;
     type Own: Ownership;
@@ -89,18 +97,10 @@ pub trait INSArray : INSObject {
         }
     }
 
-    unsafe fn from_refs(refs: &[&Self::Item]) -> Id<Self> {
-        let cls = Self::class();
-        let obj: *mut Self = msg_send![cls, alloc];
-        let obj: *mut Self = msg_send![obj, initWithObjects:refs.as_ptr()
-                                                      count:refs.len()];
-        Id::from_retained_ptr(obj)
-    }
-
     fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self> {
         let refs: Vec<&Self::Item> = vec.iter().map(|obj| &**obj).collect();
         unsafe {
-            INSArray::from_refs(&refs)
+            from_refs(&refs)
         }
     }
 
@@ -145,7 +145,7 @@ pub trait INSArray : INSObject {
             where Self: INSArray<Own=Shared> {
         let refs: Vec<&Self::Item> = slice.iter().map(|obj| &**obj).collect();
         unsafe {
-            INSArray::from_refs(&refs)
+            from_refs(&refs)
         }
     }
 
