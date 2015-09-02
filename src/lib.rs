@@ -65,7 +65,7 @@ extern {
 }
 
 /// Types that may be used as the arguments to an Objective-C block.
-pub trait BlockArguments {
+pub trait BlockArguments: Sized {
     /// Calls the given `Block` with self as the arguments.
     ///
     /// Unsafe because `block` must point to a valid `Block` and this invokes
@@ -179,7 +179,7 @@ impl<A, R> Drop for RcBlock<A, R> {
 }
 
 /// Types that may be converted into a `ConcreteBlock`.
-pub trait IntoConcreteBlock<A> where A: BlockArguments {
+pub trait IntoConcreteBlock<A>: Sized where A: BlockArguments {
     /// The return type of the resulting `ConcreteBlock`.
     type Ret;
 
