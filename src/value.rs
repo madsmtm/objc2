@@ -1,3 +1,4 @@
+use std::any::Any;
 use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 use std::mem;
@@ -49,17 +50,17 @@ pub struct NSValue<T> {
 
 object_impl!(NSValue<T>);
 
-impl<T> INSObject for NSValue<T> where T: 'static {
+impl<T> INSObject for NSValue<T> where T: Any {
     fn class() -> &'static Class {
         Class::get("NSValue").unwrap()
     }
 }
 
-impl<T> INSValue for NSValue<T> where T: 'static + Copy + Encode {
+impl<T> INSValue for NSValue<T> where T: Any + Copy + Encode {
     type Value = T;
 }
 
-impl<T> INSCopying for NSValue<T> where T: 'static {
+impl<T> INSCopying for NSValue<T> where T: Any {
     type Output = NSValue<T>;
 }
 

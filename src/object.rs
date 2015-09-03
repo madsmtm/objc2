@@ -1,3 +1,5 @@
+use std::any::Any;
+
 use objc::Message;
 use objc::runtime::{BOOL, Class, NO};
 use objc_id::{Id, ShareId};
@@ -10,7 +12,7 @@ use NSString;
  pointer to an Object pointer, because dynamically-sized types can have fat
  pointers (two words) instead of real pointers.
  */
-pub trait INSObject : 'static + Sized + Message {
+pub trait INSObject : Any + Sized + Message {
     fn class() -> &'static Class;
 
     fn hash_code(&self) -> usize {
