@@ -1,3 +1,4 @@
+use std::any::Any;
 use std::fmt;
 use std::hash;
 use std::marker::PhantomData;
@@ -31,7 +32,7 @@ pub enum Shared { }
 
 /// A type that marks what type of ownership a struct has over the object(s)
 /// it contains; specifically, either `Owned` or `Shared`.
-pub trait Ownership : 'static { }
+pub trait Ownership: Any { }
 impl Ownership for Owned { }
 impl Ownership for Shared { }
 
