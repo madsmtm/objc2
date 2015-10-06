@@ -56,9 +56,11 @@ use std::ops::{Deref, DerefMut};
 use std::ptr;
 use libc::{c_int, c_ulong, c_void};
 
+enum Class { }
+
 #[link(name = "System", kind = "dylib")]
 extern {
-    static _NSConcreteStackBlock: ();
+    static _NSConcreteStackBlock: Class;
 
     fn _Block_copy(block: *const c_void) -> *mut c_void;
     fn _Block_release(block: *const c_void);
@@ -104,7 +106,7 @@ block_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: 
 
 #[repr(C)]
 struct BlockBase<A, R> {
-    isa: *const (),
+    isa: *const Class,
     flags: c_int,
     _reserved: c_int,
     invoke: unsafe extern fn(*mut Block<A, R>, ...) -> R,
