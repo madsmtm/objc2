@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! object_struct {
     ($name:ident) => (
         pub struct $name {
@@ -41,6 +42,7 @@ macro_rules! object_struct {
     );
 }
 
+#[macro_export]
 macro_rules! object_impl {
     ($name:ident) => (
         object_impl!($name,);
