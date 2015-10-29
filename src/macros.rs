@@ -5,7 +5,7 @@ macro_rules! object_struct {
             _private: (),
         }
 
-        object_impl!($name);
+        unsafe impl ::objc::Message for $name { }
 
         impl $crate::INSObject for $name {
             fn class() -> &'static ::objc::runtime::Class {
@@ -42,7 +42,6 @@ macro_rules! object_struct {
     );
 }
 
-#[macro_export]
 macro_rules! object_impl {
     ($name:ident) => (
         object_impl!($name,);
