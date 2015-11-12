@@ -13,16 +13,19 @@ extern {
             context: *mut c_void, error: *mut *mut c_void) -> c_int;
 }
 
+/// An opaque type representing any Objective-C object thrown as an exception.
+pub enum Exception { }
+
 /// Throws an Objective-C exception.
 /// The argument must be a pointer to an Objective-C object.
 ///
 /// Unsafe because this unwinds from Objective-C.
-pub unsafe fn throw(exception: *mut c_void) -> ! {
-    RustObjCExceptionThrow(exception);
+pub unsafe fn throw(exception: *mut Exception) -> ! {
+    RustObjCExceptionThrow(exception as *mut _);
     unreachable!();
 }
 
-unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut c_void>
+unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut Exception>
         where F: FnOnce() {
     extern fn try_objc_execute_closure<F>(closure: &mut Option<F>)
             where F: FnOnce() {
@@ -42,7 +45,7 @@ unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut c_void>
     if success == 0 {
         Ok(())
     } else {
-        Err(exception)
+        Err(exception as *mut _)
     }
 }
 
@@ -55,7 +58,7 @@ unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut c_void>
 ///
 /// Unsafe because this encourages unwinding through the closure from
 /// Objective-C, which is not safe.
-pub unsafe fn try<F, R>(closure: F) -> Result<R, *mut c_void>
+pub unsafe fn try<F, R>(closure: F) -> Result<R, *mut Exception>
         where F: FnOnce() -> R {
     let mut value = None;
     let result = {
