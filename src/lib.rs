@@ -45,16 +45,14 @@ to be copied once, and we can enforce this in Rust, but if Objective-C code
 were to copy it twice we could have a double free.
 */
 
-extern crate libc;
-
 #[cfg(test)]
 extern crate objc_test_utils;
 
 use std::marker::PhantomData;
 use std::mem;
 use std::ops::{Deref, DerefMut};
+use std::os::raw::{c_int, c_ulong, c_void};
 use std::ptr;
-use libc::{c_int, c_ulong, c_void};
 
 enum Class { }
 

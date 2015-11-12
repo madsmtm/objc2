@@ -12,9 +12,6 @@ license = "MIT"
 
 exclude = [".gitignore"]
 
-[dependencies]
-libc = ">= 0.1, < 0.3"
-
 [dev-dependencies.objc_test_utils]
 version = "0.0"
 path = "test_utils"
