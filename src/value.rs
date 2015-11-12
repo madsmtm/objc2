@@ -2,8 +2,8 @@ use std::any::Any;
 use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 use std::mem;
+use std::os::raw::c_char;
 use std::str;
-use libc::c_char;
 
 use objc::{Encode, Encoding};
 use objc::runtime::Class;

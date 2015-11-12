@@ -1,6 +1,6 @@
+use std::os::raw::c_char;
 use std::slice;
 use std::str;
-use libc::c_char;
 
 use objc_id::{Id, ShareId};
 

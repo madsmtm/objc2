@@ -1,7 +1,7 @@
 use std::mem;
 use std::ops::Range;
+use std::os::raw::c_void;
 use std::slice;
-use libc::c_void;
 
 use objc_id::Id;
 use block::{Block, ConcreteBlock};

@@ -12,7 +12,6 @@ license = "MIT"
 exclude = [".gitignore"]
 
 [dependencies]
-libc = ">= 0.1, < 0.3"
 block = "0.1"
 objc = "0.1"
 objc_id = "0.0"
