@@ -1,10 +1,8 @@
 //! Rust interface for Objective-C's `@throw` and `@try`/`@catch` statements.
 
-extern crate libc;
-
 use std::mem;
+use std::os::raw::{c_int, c_void};
 use std::ptr;
-use libc::{c_int, c_void};
 
 #[link(name = "objc", kind = "dylib")]
 extern { }
