@@ -1,6 +1,6 @@
 [package]
 name = "objc_exception"
-version = "0.0.2"
+version = "0.1.0"
 authors = ["Steven Sheldon"]
 
 description = "Rust interface for Objective-C's throw and try/catch statements."
