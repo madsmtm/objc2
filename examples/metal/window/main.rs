@@ -27,6 +27,21 @@ use winit::os::macos::WindowExt;
 use std::ffi::CStr;
 use std::mem;
 
+trait CAMetalDrawable {
+    unsafe fn texture(self) -> id;
+    unsafe fn layer(self) -> id;
+}
+
+impl CAMetalDrawable for id {
+    unsafe fn texture(self) -> id {
+        msg_send![self, texture]
+    }
+
+    unsafe fn layer(self) -> id {
+        msg_send![self, layer]
+    }
+}
+
 trait CAMetalLayer {
     unsafe fn layer(_: Self) -> id {
         msg_send![class("CAMetalLayer"), layer]
@@ -37,6 +52,11 @@ trait CAMetalLayer {
 
     unsafe fn pixelFormat(self) -> id;
     unsafe fn setPixelFormat_(self, format: MTLPixelFormat);
+
+    unsafe fn drawableSize(self) -> NSSize;
+    unsafe fn setDrawableSize(self, drawableSize: NSSize);
+
+    unsafe fn nextDrawable(self) -> id;
 }
 
 impl CAMetalLayer for id {
@@ -55,13 +75,36 @@ impl CAMetalLayer for id {
     unsafe fn setPixelFormat_(self, format: MTLPixelFormat) {
         msg_send![self, setPixelFormat:format]
     }
+
+    unsafe fn drawableSize(self) -> NSSize {
+        msg_send![self, drawableSize]
+    }
+
+    unsafe fn setDrawableSize(self, drawableSize: NSSize) {
+        msg_send![self, setDrawableSize:drawableSize]
+    }
+
+    unsafe fn nextDrawable(self) -> id {
+        msg_send![self, nextDrawable]
+    }
+}
+
+unsafe fn prepare_renderpass_descriptor(descriptor: id, texture: id) {
+    let color_attachment = descriptor.colorAttachments().objectAtIndexedSubscript(0 as NSUInteger);
+
+    color_attachment.setTexture(texture);
+    color_attachment.setLoadAction(MTLLoadAction::MTLLoadActionClear);
+    color_attachment.setClearColor(MTLClearColor::new(0.5, 0.2, 0.2, 1.0));
+    color_attachment.setStoreAction(MTLStoreAction::MTLStoreActionStore);
 }
 
 fn main() {
-    let window = winit::WindowBuilder::new().with_title("Metal".into()).build().unwrap();
+    let glutin_window = winit::WindowBuilder::new()
+        .with_dimensions(800, 600)
+        .with_title("Metal".into()).build().unwrap();
 
     unsafe {
-        let window: id = mem::transmute(window.get_nswindow());
+        let window: id = mem::transmute(glutin_window.get_nswindow());
         let device = MTLCreateSystemDefaultDevice();
 
         let layer = CAMetalLayer::layer(nil);
@@ -75,14 +118,40 @@ fn main() {
 
         println!("device: {:?}", CStr::from_ptr(device.name().UTF8String()));
         println!("threadgroup: {:?}", device.maxThreadsPerThreadgroup());
-    }
 
-    loop {
-        for event in window.poll_events() {
-            match event {
-                winit::Event::Closed => break,
-                _ => ()
+        let mut drawable = nil;
+        let renderpass_descriptor = MTLRenderPassDescriptor::renderPassDescriptor(nil); 
+
+        let commandqueue = device.newCommandQueue();
+
+        loop {
+            for event in glutin_window.poll_events() {
+                match event {
+                    winit::Event::Closed => break,
+                    _ => ()
+                }
             }
+
+            let pool = NSAutoreleasePool::new(nil);
+
+            drawable = if drawable == nil {
+                layer.nextDrawable()
+            } else {
+                drawable
+            };
+
+            let commandbuffer = commandqueue.commandBuffer();
+
+            prepare_renderpass_descriptor(renderpass_descriptor, CAMetalDrawable::texture(drawable));
+
+            let draw_size = glutin_window.get_inner_size().unwrap();
+            layer.setDrawableSize(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
+
+            commandbuffer.presentDrawable(drawable);
+            commandbuffer.commit();
+
+            drawable = nil;
+            pool.drain();
         }
     }
 }
