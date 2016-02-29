@@ -27,18 +27,16 @@ use winit::os::macos::WindowExt;
 use std::ffi::CStr;
 use std::mem;
 
-trait CAMetalDrawable {
-    unsafe fn texture(self) -> id;
-    unsafe fn layer(self) -> id;
-}
+#[derive(Copy, Clone)]
+struct CAMetalDrawable(id);
 
-impl CAMetalDrawable for id {
+impl CAMetalDrawable {
     unsafe fn texture(self) -> id {
-        msg_send![self, texture]
+        msg_send![self.0, texture]
     }
 
     unsafe fn layer(self) -> id {
-        msg_send![self, layer]
+        msg_send![self.0, layer]
     }
 }
 
@@ -56,7 +54,7 @@ trait CAMetalLayer {
     unsafe fn drawableSize(self) -> NSSize;
     unsafe fn setDrawableSize(self, drawableSize: NSSize);
 
-    unsafe fn nextDrawable(self) -> id;
+    unsafe fn nextDrawable(self) -> CAMetalDrawable;
 }
 
 impl CAMetalLayer for id {
@@ -84,8 +82,8 @@ impl CAMetalLayer for id {
         msg_send![self, setDrawableSize:drawableSize]
     }
 
-    unsafe fn nextDrawable(self) -> id {
-        msg_send![self, nextDrawable]
+    unsafe fn nextDrawable(self) -> CAMetalDrawable {
+        CAMetalDrawable(msg_send![self, nextDrawable])
     }
 }
 
@@ -111,7 +109,7 @@ fn main() {
         layer.setDevice_(device);
         layer.setPixelFormat_(MTLPixelFormat::MTLPixelFormatBGRA8Unorm);
 
-        let view = window.contentView(); 
+        let view = window.contentView();
         view.setWantsBestResolutionOpenGLSurface_(YES);
         view.setWantsLayer(YES);
         view.setLayer(layer);
@@ -119,8 +117,8 @@ fn main() {
         println!("device: {:?}", CStr::from_ptr(device.name().UTF8String()));
         println!("threadgroup: {:?}", device.maxThreadsPerThreadgroup());
 
-        let mut drawable = nil;
-        let renderpass_descriptor = MTLRenderPassDescriptor::renderPassDescriptor(nil); 
+        let mut drawable = None;
+        let renderpass_descriptor = MTLRenderPassDescriptor::renderPassDescriptor(nil);
 
         let commandqueue = device.newCommandQueue();
 
@@ -134,23 +132,24 @@ fn main() {
 
             let pool = NSAutoreleasePool::new(nil);
 
-            drawable = if drawable == nil {
-                layer.nextDrawable()
-            } else {
-                drawable
+            match drawable {
+                Some(_) => {},
+                None => drawable = Some(layer.nextDrawable())
             };
 
+            prepare_renderpass_descriptor(renderpass_descriptor, drawable.unwrap().texture());
+         
             let commandbuffer = commandqueue.commandBuffer();
-
-            prepare_renderpass_descriptor(renderpass_descriptor, CAMetalDrawable::texture(drawable));
+            let encoder = commandbuffer.renderCommandEncoderWithDescriptor(renderpass_descriptor);
+            encoder.endEncoding();
 
             let draw_size = glutin_window.get_inner_size().unwrap();
             layer.setDrawableSize(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
 
-            commandbuffer.presentDrawable(drawable);
+            commandbuffer.presentDrawable(drawable.unwrap().0);
             commandbuffer.commit();
 
-            drawable = nil;
+            drawable = None;
             pool.drain();
         }
     }
