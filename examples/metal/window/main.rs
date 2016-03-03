@@ -114,6 +114,9 @@ fn main() {
         view.setWantsLayer(YES);
         view.setLayer(layer);
 
+        let draw_size = glutin_window.get_inner_size().unwrap();
+        layer.setDrawableSize(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
+
         println!("device: {:?}", CStr::from_ptr(device.name().UTF8String()));
         println!("threadgroup: {:?}", device.maxThreadsPerThreadgroup());
 
@@ -130,7 +133,7 @@ fn main() {
                 }
             }
 
-            let pool = NSAutoreleasePool::new(nil);
+            //let pool = NSAutoreleasePool::new(nil);
 
             match drawable {
                 Some(_) => {},
@@ -138,19 +141,20 @@ fn main() {
             };
 
             prepare_renderpass_descriptor(renderpass_descriptor, drawable.unwrap().texture());
-         
-            let commandbuffer = commandqueue.commandBuffer();
+
+            let commandbuffer: id = commandqueue.commandBuffer();
             let encoder = commandbuffer.renderCommandEncoderWithDescriptor(renderpass_descriptor);
             encoder.endEncoding();
-
-            let draw_size = glutin_window.get_inner_size().unwrap();
-            layer.setDrawableSize(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
 
             commandbuffer.presentDrawable(drawable.unwrap().0);
             commandbuffer.commit();
 
+            let _: () = msg_send![encoder, release];
+            let _: () = msg_send![commandbuffer, release];
+
+            let _: () = msg_send![drawable.unwrap().0, release];
+
             drawable = None;
-            pool.drain();
         }
     }
 }
