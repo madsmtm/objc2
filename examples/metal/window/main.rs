@@ -88,7 +88,7 @@ impl CAMetalLayer for id {
 }
 
 unsafe fn prepare_renderpass_descriptor(descriptor: id, texture: id) {
-    let color_attachment = descriptor.colorAttachments().objectAtIndexedSubscript(0 as NSUInteger);
+    let color_attachment = MTLRenderPassColorAttachmentDescriptorArray::objectAtIndexedSubscript(MTLRenderPassDescriptor::colorAttachments(descriptor), 0 as NSUInteger);
 
     color_attachment.setTexture(texture);
     color_attachment.setLoadAction(MTLLoadAction::MTLLoadActionClear);
@@ -117,7 +117,7 @@ fn main() {
         let draw_size = glutin_window.get_inner_size().unwrap();
         layer.setDrawableSize(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
 
-        println!("device: {:?}", CStr::from_ptr(device.name().UTF8String()));
+        println!("device: {:?}", CStr::from_ptr(MTLDevice::name(device).UTF8String()));
         println!("threadgroup: {:?}", device.maxThreadsPerThreadgroup());
 
         let mut drawable = None;
