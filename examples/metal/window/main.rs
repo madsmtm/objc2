@@ -87,6 +87,14 @@ impl CAMetalLayer for id {
     }
 }
 
+/*unsafe fn prepare_pipeline_state(library: id) -> id {
+    let vert = library.newFunctionFromName();
+
+    let frag = library.newFunctionFromName();
+
+
+}*/
+
 unsafe fn prepare_renderpass_descriptor(descriptor: id, texture: id) {
     let color_attachment = MTLRenderPassColorAttachmentDescriptorArray::objectAtIndexedSubscript(MTLRenderPassDescriptor::colorAttachments(descriptor), 0 as NSUInteger);
 
@@ -121,9 +129,14 @@ fn main() {
         println!("threadgroup: {:?}", device.maxThreadsPerThreadgroup());
 
         let mut drawable = None;
+
+        let library = device.newDefaultLibrary();
+
+//        let renderpipeline = prepare_pipeline_state(library);
         let renderpass_descriptor = MTLRenderPassDescriptor::renderPassDescriptor(nil);
 
         let commandqueue = device.newCommandQueue();
+        let library = device.newDefaultLibrary();
 
         loop {
             for event in glutin_window.poll_events() {
