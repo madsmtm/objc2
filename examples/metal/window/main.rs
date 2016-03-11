@@ -10,6 +10,7 @@ extern crate objc;
 extern crate cocoa;
 extern crate metal;
 extern crate winit;
+extern crate objc_id;
 
 use cocoa::base::{selector, id, class, nil, BOOL, NO, YES};
 use cocoa::foundation::{NSUInteger, NSRect, NSPoint, NSSize,
@@ -19,6 +20,8 @@ use cocoa::appkit::{NSApp,
                     NSWindow, NSTitledWindowMask, NSBackingStoreBuffered,
                     NSMenu, NSMenuItem, NSRunningApplication, NSView,
                     NSApplicationActivateIgnoringOtherApps};
+
+use objc_id::{ShareId, Id};
 
 use metal::*;
 
@@ -31,7 +34,7 @@ use std::mem;
 struct CAMetalDrawable(id);
 
 impl CAMetalDrawable {
-    unsafe fn texture(self) -> id {
+    unsafe fn texture(self) -> MTLTexture {
         msg_send![self.0, texture]
     }
 
@@ -46,7 +49,7 @@ trait CAMetalLayer {
     }
 
     unsafe fn device(self) -> id;
-    unsafe fn setDevice_(self, device: id);
+    unsafe fn setDevice_(self, device: ShareId<MTLDevice>);
 
     unsafe fn pixelFormat(self) -> id;
     unsafe fn setPixelFormat_(self, format: MTLPixelFormat);
@@ -62,7 +65,7 @@ impl CAMetalLayer for id {
         msg_send![self, device]
     }
 
-    unsafe fn setDevice_(self, device: id) {
+    unsafe fn setDevice_(self, device: ShareId<MTLDevice>) {
         msg_send![self, setDevice:device]
     }
 
@@ -87,21 +90,29 @@ impl CAMetalLayer for id {
     }
 }
 
-/*unsafe fn prepare_pipeline_state(library: id) -> id {
-    let vert = library.newFunctionFromName();
+fn prepare_pipeline_state<'a>(device: &'a Id<MTLDevice>, library: Id<MTLLibrary>) -> &'a MTLRenderPipelineState {
+    let vert = library.get_function("triangle_vertex").unwrap();
+    let frag = library.get_function("triangle_fragment").unwrap();
 
-    let frag = library.newFunctionFromName();
 
 
-}*/
+    let pipeline_state_descriptor = MTLRenderPipelineDescriptor::new();
+    pipeline_state_descriptor.set_vertex_function(vert);
+    pipeline_state_descriptor.set_fragment_function(frag);
+    pipeline_state_descriptor.color_attachments().object_at(0).set_pixel_format(MTLPixelFormat::BGRA8Unorm);
 
-unsafe fn prepare_renderpass_descriptor(descriptor: id, texture: id) {
-    let color_attachment = MTLRenderPassColorAttachmentDescriptorArray::objectAtIndexedSubscript(MTLRenderPassDescriptor::colorAttachments(descriptor), 0 as NSUInteger);
+    let pipeline_state = device.new_render_pipeline_state(pipeline_state_descriptor).unwrap();
 
-    color_attachment.setTexture(texture);
-    color_attachment.setLoadAction(MTLLoadAction::MTLLoadActionClear);
-    color_attachment.setClearColor(MTLClearColor::new(0.5, 0.2, 0.2, 1.0));
-    color_attachment.setStoreAction(MTLStoreAction::MTLStoreActionStore);
+    pipeline_state
+}
+
+fn prepare_render_pass_descriptor(descriptor: &MTLRenderPassDescriptor, texture: MTLTexture) {
+    let color_attachment = descriptor.color_attachments().object_at(0);
+
+    color_attachment.set_texture(texture);
+    color_attachment.set_load_action(MTLLoadAction::Clear);
+    color_attachment.set_clear_color(MTLClearColor::new(0.5, 0.2, 0.2, 1.0));
+    color_attachment.set_store_action(MTLStoreAction::Store);
 }
 
 fn main() {
@@ -111,11 +122,11 @@ fn main() {
 
     unsafe {
         let window: id = mem::transmute(glutin_window.get_nswindow());
-        let device = MTLCreateSystemDefaultDevice();
+        let device = create_system_default_device().share();
 
         let layer = CAMetalLayer::layer(nil);
-        layer.setDevice_(device);
-        layer.setPixelFormat_(MTLPixelFormat::MTLPixelFormatBGRA8Unorm);
+        layer.setDevice_(device.clone());
+        layer.setPixelFormat_(MTLPixelFormat::BGRA8Unorm);
 
         let view = window.contentView();
         view.setWantsBestResolutionOpenGLSurface_(YES);
@@ -125,18 +136,21 @@ fn main() {
         let draw_size = glutin_window.get_inner_size().unwrap();
         layer.setDrawableSize(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
 
-        println!("device: {:?}", CStr::from_ptr(MTLDevice::name(device).UTF8String()));
-        println!("threadgroup: {:?}", device.maxThreadsPerThreadgroup());
-
         let mut drawable = None;
 
-        let library = device.newDefaultLibrary();
+        let library = device.new_default_library();
+        let render_pass_descriptor = MTLRenderPassDescriptor::render_pass_descriptor();
+        let command_queue = device.new_command_queue();
 
-//        let renderpipeline = prepare_pipeline_state(library);
-        let renderpass_descriptor = MTLRenderPassDescriptor::renderPassDescriptor(nil);
+        let vbuf = {
+            let vertex_data = [
+                 -0.5, -0.5, 1.0, 0.0, 0.0,
+                  0.5, -0.5, 0.0, 1.0, 0.0,
+                  0.0,  0.5, 0.0, 0.0, 1.0,
+            ];
 
-        let commandqueue = device.newCommandQueue();
-        let library = device.newDefaultLibrary();
+            device.new_buffer(mem::transmute(vertex_data.as_ptr()), vertex_data.len() * mem::size_of::<f32>(), MTLResourceOptionCPUCacheModeDefault)
+        };
 
         loop {
             for event in glutin_window.poll_events() {
@@ -153,17 +167,14 @@ fn main() {
                 None => drawable = Some(layer.nextDrawable())
             };
 
-            prepare_renderpass_descriptor(renderpass_descriptor, drawable.unwrap().texture());
+            prepare_render_pass_descriptor(&render_pass_descriptor, drawable.unwrap().texture());
 
-            let commandbuffer: id = commandqueue.commandBuffer();
-            let encoder = commandbuffer.renderCommandEncoderWithDescriptor(renderpass_descriptor);
-            encoder.endEncoding();
+            let command_buffer = command_queue.new_command_buffer();
+            let encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
+            encoder.end_encoding();
 
-            commandbuffer.presentDrawable(drawable.unwrap().0);
-            commandbuffer.commit();
-
-            let _: () = msg_send![encoder, release];
-            let _: () = msg_send![commandbuffer, release];
+            command_buffer.present_drawable(drawable.unwrap().0);
+            command_buffer.commit();
 
             let _: () = msg_send![drawable.unwrap().0, release];
 
