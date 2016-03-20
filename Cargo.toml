@@ -1,6 +1,6 @@
 [package]
 name = "objc-foundation"
-version = "0.0.4"
+version = "0.1.0"
 authors = ["Steven Sheldon"]
 
 description = "Rust wrapper for Objective-C's Foundation framework."
