@@ -34,9 +34,10 @@ unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut Exception>
         closure();
     }
 
+    let f: extern fn(&mut Option<F>) = try_objc_execute_closure;
+    let f: extern fn(*mut c_void) = mem::transmute(f);
     // Wrap the closure in an Option so it can be taken
     let mut closure = Some(closure);
-    let f = mem::transmute(try_objc_execute_closure::<F>);
     let context = &mut closure as *mut _ as *mut c_void;
 
     let mut exception = ptr::null_mut();
