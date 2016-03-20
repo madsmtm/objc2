@@ -35,7 +35,7 @@ impl INSObject for MYObject {
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
-            let mut decl = ClassDecl::new(superclass, "MYObject").unwrap();
+            let mut decl = ClassDecl::new("MYObject", superclass).unwrap();
             decl.add_ivar::<u32>("_number");
 
             // Add ObjC methods for getting and setting the number
