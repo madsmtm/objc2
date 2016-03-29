@@ -206,8 +206,11 @@ macro_rules! concrete_block_impl {
                 }
 
                 unsafe {
-                    ConcreteBlock::with_invoke(
-                        mem::transmute($f::<$($t,)* R, X>), self)
+                    let f: unsafe extern "C" fn(*mut ConcreteBlock<($($t,)*), R, X>
+                                                $(, $a: $t)*) -> R = $f::<$($t,)* R, X>;
+                    let f: unsafe extern "C" fn(*mut ConcreteBlock<($($t,)*), R, X>, ...) -> R =
+                        mem::transmute(f);
+                    ConcreteBlock::with_invoke(f, self)
                 }
             }
         }
