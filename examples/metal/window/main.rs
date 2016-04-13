@@ -80,8 +80,6 @@ fn main() {
         let draw_size = glutin_window.get_inner_size().unwrap();
         layer.set_drawable_size(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
 
-        let mut drawable = None;
-
         let library = device.new_default_library();
         let render_pass_descriptor = MTLRenderPassDescriptor::alloc().init();
         let command_queue = device.new_command_queue();
@@ -107,25 +105,18 @@ fn main() {
                 }
             }
 
-            //let pool = NSAutoreleasePool::new(nil);
+            if let Some(drawable) = layer.next_drawable() { 
+                prepare_render_pass_descriptor(render_pass_descriptor, drawable.texture());
 
-            match drawable {
-                Some(_) => {},
-                None => drawable = Some(layer.next_drawable())
-            };
+                let command_buffer = command_queue.new_command_buffer();
+                let encoder = command_buffer.new_render_command_encoder(render_pass_descriptor);
+                encoder.end_encoding();
 
-            prepare_render_pass_descriptor(render_pass_descriptor, drawable.unwrap().texture());
+                command_buffer.present_drawable(drawable);
+                command_buffer.commit();
 
-            let command_buffer = command_queue.new_command_buffer();
-            let encoder = command_buffer.new_render_command_encoder(render_pass_descriptor);
-            encoder.end_encoding();
-
-            command_buffer.present_drawable(drawable.unwrap());
-            command_buffer.commit();
-
-            //let _: () = msg_send![drawable.unwrap().0, release];
-
-            drawable = None;
+                drawable.release();
+            }
         }
     }
 }
