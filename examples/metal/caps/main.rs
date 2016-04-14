@@ -12,7 +12,8 @@ use metal::*;
 fn main() {
     let device = create_system_default_device();
 
-    println!("Device name: {:?}", device.name());
+    println!("Vendor: {:?}", device.vendor());
+    println!("Family: {:?}", device.family_name());
     println!("Max threads per threadgroup: {:?}", device.max_threads_per_threadgroup());
     println!("Integrated GPU: {:?}", device.is_low_power());
     println!("Headless: {:?}", device.is_headless());

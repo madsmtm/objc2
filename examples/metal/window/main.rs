@@ -81,14 +81,15 @@ fn main() {
         layer.set_drawable_size(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
 
         let library = device.new_default_library();
+        let pipeline_state = prepare_pipeline_state(device, library);
         let render_pass_descriptor = MTLRenderPassDescriptor::alloc().init();
         let command_queue = device.new_command_queue();
 
         let vbuf = {
             let vertex_data = [
-                 -0.5, -0.5, 1.0, 0.0, 0.0,
-                  0.5, -0.5, 0.0, 1.0, 0.0,
-                  0.0,  0.5, 0.0, 0.0, 1.0,
+                  0.0f32,  0.5, 1.0, 0.0, 0.0,
+                 -0.5, -0.5, 0.0, 1.0, 0.0,
+                  0.5,  0.5, 0.0, 0.0, 1.0,
             ];
 
             device.new_buffer(
@@ -110,11 +111,16 @@ fn main() {
 
                 let command_buffer = command_queue.new_command_buffer();
                 let encoder = command_buffer.new_render_command_encoder(render_pass_descriptor);
+                encoder.set_render_pipeline_state(pipeline_state);
+                encoder.set_vertex_buffer(0, 0, vbuf);
+                encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
                 encoder.end_encoding();
 
                 command_buffer.present_drawable(drawable);
                 command_buffer.commit();
 
+                encoder.release();
+                command_buffer.release();
                 drawable.release();
             }
         }
