@@ -106,7 +106,7 @@ fn main() {
                 }
             }
 
-            if let Some(drawable) = layer.next_drawable() { 
+            if let Some(drawable) = layer.next_drawable() {
                 prepare_render_pass_descriptor(render_pass_descriptor, drawable.texture());
 
                 let command_buffer = command_queue.new_command_buffer();
