@@ -92,7 +92,7 @@ fn main() {
                   0.5,  0.5, 0.0, 0.0, 1.0,
             ];
 
-            device.new_buffer(
+            device.new_buffer_with_data(
                 mem::transmute(vertex_data.as_ptr()),
                 (vertex_data.len() * mem::size_of::<f32>()) as u64,
                 MTLResourceOptionCPUCacheModeDefault)
