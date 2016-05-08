@@ -1,0 +1,6 @@
+language: rust
+rust:
+  - stable
+  - nightly
+os: osx
+sudo: false
