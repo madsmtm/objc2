@@ -56,7 +56,10 @@ use std::ptr;
 
 enum Class { }
 
-#[link(name = "System", kind = "dylib")]
+#[cfg_attr(any(target_os = "macos", target_os = "ios"),
+           link(name = "System", kind = "dylib"))]
+#[cfg_attr(not(any(target_os = "macos", target_os = "ios")),
+           link(name = "BlocksRuntime", kind = "dylib"))]
 extern {
     static _NSConcreteStackBlock: Class;
 

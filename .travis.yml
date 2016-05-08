@@ -2,7 +2,9 @@ language: rust
 rust:
   - stable
   - nightly
-os: osx
+os:
+  - osx
+  - linux
 env:
   - IOS_ARCHS=""
 matrix:
@@ -14,3 +16,8 @@ matrix:
 sudo: false
 install: ./travis_install.sh
 script: ./travis_test.sh
+addons:
+  apt:
+    packages:
+      - libblocksruntime-dev
+      - libdispatch-dev
