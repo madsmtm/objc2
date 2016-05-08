@@ -10,7 +10,13 @@ repository = "http://github.com/SSheldon/rust-block"
 documentation = "http://ssheldon.github.io/rust-objc/block/"
 license = "MIT"
 
-exclude = [".gitignore"]
+exclude = [
+  ".gitignore",
+  ".travis.yml",
+  "travis_install.sh",
+  "travis_test.sh",
+  "tests-ios/**",
+]
 
 [dev-dependencies.objc_test_utils]
 version = "0.0"
