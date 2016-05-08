@@ -46,7 +46,7 @@ were to copy it twice we could have a double free.
 */
 
 #[cfg(test)]
-extern crate objc_test_utils;
+mod test_utils;
 
 use std::marker::PhantomData;
 use std::mem;
@@ -335,36 +335,8 @@ impl<B> BlockDescriptor<B> {
 
 #[cfg(test)]
 mod tests {
-    use objc_test_utils;
-    use super::{Block, ConcreteBlock, RcBlock};
-
-    fn get_int_block_with(i: i32) -> RcBlock<(), i32> {
-        unsafe {
-            let ptr = objc_test_utils::get_int_block_with(i);
-            RcBlock::new(ptr as *mut _)
-        }
-    }
-
-    fn get_add_block_with(i: i32) -> RcBlock<(i32,), i32> {
-        unsafe {
-            let ptr = objc_test_utils::get_add_block_with(i);
-            RcBlock::new(ptr as *mut _)
-        }
-    }
-
-    fn invoke_int_block(block: &Block<(), i32>) -> i32 {
-        let ptr = block as *const _;
-        unsafe {
-            objc_test_utils::invoke_int_block(ptr as *mut _)
-        }
-    }
-
-    fn invoke_add_block(block: &Block<(i32,), i32>, a: i32) -> i32 {
-        let ptr = block as *const _;
-        unsafe {
-            objc_test_utils::invoke_add_block(ptr as *mut _, a)
-        }
-    }
+    use test_utils::*;
+    use super::{ConcreteBlock, RcBlock};
 
     #[test]
     fn test_call_block() {
