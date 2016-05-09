@@ -20,4 +20,3 @@ addons:
   apt:
     packages:
       - libblocksruntime-dev
-      - libdispatch-dev
