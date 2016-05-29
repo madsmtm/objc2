@@ -17,4 +17,5 @@ fn main() {
     println!("Max threads per threadgroup: {:?}", device.max_threads_per_threadgroup());
     println!("Integrated GPU: {:?}", device.is_low_power());
     println!("Headless: {:?}", device.is_headless());
+    println!("D24S8: {:?}", device.d24_s8_supported());
 }
