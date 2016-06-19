@@ -261,9 +261,11 @@ pub trait INSMutableArray : INSArray {
             NSComparisonResult::from_ordering((*compare)(obj1, obj2))
         }
 
+        let f: extern fn(&Self::Item, &Self::Item, &mut F) -> NSComparisonResult =
+            compare_with_closure;
         let mut closure = compare;
         unsafe {
-            let _: () = msg_send![self, sortUsingFunction:compare_with_closure::<Self::Item, F>
+            let _: () = msg_send![self, sortUsingFunction:f
                                                   context:&mut closure];
         }
     }
