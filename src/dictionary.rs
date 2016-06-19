@@ -44,7 +44,7 @@ pub trait INSDictionary : INSObject {
         let len = self.count();
         let mut keys = Vec::with_capacity(len);
         unsafe {
-            let _: () = msg_send![self, getObjects:ptr::null_mut::<Self::Value>()
+            let _: () = msg_send![self, getObjects:ptr::null_mut::<&Self::Value>()
                                            andKeys:keys.as_mut_ptr()];
             keys.set_len(len);
         }
@@ -56,7 +56,7 @@ pub trait INSDictionary : INSObject {
         let mut vals = Vec::with_capacity(len);
         unsafe {
             let _: () = msg_send![self, getObjects:vals.as_mut_ptr()
-                                           andKeys:ptr::null_mut::<Self::Key>()];
+                                           andKeys:ptr::null_mut::<&Self::Key>()];
             vals.set_len(len);
         }
         vals

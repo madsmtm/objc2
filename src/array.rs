@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 use std::marker::PhantomData;
 use std::ops::{Index, Range};
+use std::os::raw::c_void;
 
 use objc::runtime::{Class, Object};
 use objc_id::{Id, Owned, Ownership, Shared, ShareId};
@@ -264,9 +265,11 @@ pub trait INSMutableArray : INSArray {
         let f: extern fn(&Self::Item, &Self::Item, &mut F) -> NSComparisonResult =
             compare_with_closure;
         let mut closure = compare;
+        let closure_ptr: *mut F = &mut closure;
+        let context = closure_ptr as *mut c_void;
         unsafe {
             let _: () = msg_send![self, sortUsingFunction:f
-                                                  context:&mut closure];
+                                                  context:context];
         }
     }
 }

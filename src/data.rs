@@ -29,9 +29,10 @@ pub trait INSData : INSObject {
 
     fn with_bytes(bytes: &[u8]) -> Id<Self> {
         let cls = Self::class();
+        let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytes:bytes.as_ptr()
+            let obj: *mut Self = msg_send![obj, initWithBytes:bytes_ptr
                                                        length:bytes.len()];
             Id::from_retained_ptr(obj)
         }
@@ -47,10 +48,11 @@ pub trait INSData : INSObject {
         let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;
 
         let mut bytes = bytes;
+        let bytes_ptr = bytes.as_mut_ptr() as *mut c_void;
         let cls = Self::class();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytesNoCopy:bytes.as_mut_ptr()
+            let obj: *mut Self = msg_send![obj, initWithBytesNoCopy:bytes_ptr
                                                              length:bytes.len()
                                                         deallocator:dealloc];
             mem::forget(bytes);
@@ -92,17 +94,19 @@ pub trait INSMutableData : INSData {
     }
 
     fn append(&mut self, bytes: &[u8]) {
+        let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
-            let _: () = msg_send![self, appendBytes:bytes.as_ptr()
+            let _: () = msg_send![self, appendBytes:bytes_ptr
                                              length:bytes.len()];
         }
     }
 
     fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
         let range = NSRange::from_range(range);
+        let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
             let _: () = msg_send![self, replaceBytesInRange:range
-                                                  withBytes:bytes.as_ptr()
+                                                  withBytes:bytes_ptr
                                                      length:bytes.len()];
         }
     }

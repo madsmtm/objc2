@@ -1,4 +1,4 @@
-use std::os::raw::c_char;
+use std::os::raw::{c_char, c_void};
 use std::slice;
 use std::str;
 
@@ -51,9 +51,10 @@ pub trait INSString : INSObject {
 
     fn from_str(string: &str) -> Id<Self> {
         let cls = Self::class();
+        let bytes = string.as_ptr() as *const c_void;
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytes:string.as_ptr()
+            let obj: *mut Self = msg_send![obj, initWithBytes:bytes
                                                        length:string.len()
                                                      encoding:UTF8_ENCODING];
             Id::from_retained_ptr(obj)

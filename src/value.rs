@@ -2,7 +2,7 @@ use std::any::Any;
 use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 use std::mem;
-use std::os::raw::c_char;
+use std::os::raw::{c_char, c_void};
 use std::str;
 
 use objc::{Encode, Encoding};
@@ -18,7 +18,9 @@ pub trait INSValue : INSObject {
         assert!(Self::Value::encode() == self.encoding());
         unsafe {
             let mut value = mem::uninitialized::<Self::Value>();
-            let _: () = msg_send![self, getValue:&mut value];
+            let value_ptr: *mut Self::Value = &mut value;
+            let bytes = value_ptr as *mut c_void;
+            let _: () = msg_send![self, getValue:bytes];
             value
         }
     }
@@ -34,10 +36,12 @@ pub trait INSValue : INSObject {
 
     fn from_value(value: Self::Value) -> Id<Self> {
         let cls = Self::class();
+        let value_ptr: *const Self::Value = &value;
+        let bytes = value_ptr as *const c_void;
         let encoding = CString::new(Self::Value::encode().as_str()).unwrap();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytes:&value
+            let obj: *mut Self = msg_send![obj, initWithBytes:bytes
                                                      objCType:encoding.as_ptr()];
             Id::from_retained_ptr(obj)
         }
