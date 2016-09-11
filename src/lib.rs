@@ -10,6 +10,14 @@ impl fmt::Display for Int {
     }
 }
 
+pub struct Pointer<T>(T);
+impl<T: Encoding> Encoding for Pointer<T> { }
+impl<T: fmt::Display> fmt::Display for Pointer<T> {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "^{}", self.0)
+    }
+}
+
 trait ParserCompletion {
     fn did_parse<E: 'static + Encoding>(self, encoding: E);
 }
@@ -65,6 +73,11 @@ mod tests {
     #[test]
     fn test_int_display() {
         assert_eq!(Int.to_string(), "i");
+    }
+
+    #[test]
+    fn test_pointer_display() {
+        assert_eq!(Pointer(Int).to_string(), "^i");
     }
 
     #[test]
