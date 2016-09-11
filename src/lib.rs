@@ -56,25 +56,18 @@ impl<C: ParserCompletion> Parser<C> {
     }
 }
 
-struct BoxedEncodingCompletion<F> {
-    f: F,
-}
-
-impl<F> ParserCompletion for BoxedEncodingCompletion<F>
-        where F: FnOnce(Box<Encoding>) {
-    fn did_parse<E: 'static + Encoding>(self, encoding: E) {
-        (self.f)(Box::new(encoding))
-    }
-}
-
 pub fn parse(input: &str) -> Box<Encoding> {
+    struct BoxedEncodingCompletion<'a>(&'a mut Option<Box<Encoding>>);
+
+    impl<'a> ParserCompletion for BoxedEncodingCompletion<'a> {
+        fn did_parse<E: 'static + Encoding>(self, encoding: E) {
+            *self.0 = Some(Box::new(encoding))
+        }
+    }
+
     let mut enc = None;
     {
-        let enc_ref = &mut enc;
-        let callback = |e| {
-            *enc_ref = Some(e);
-        };
-        let completion = BoxedEncodingCompletion { f: callback };
+        let completion = BoxedEncodingCompletion(&mut enc);
         let parser = Parser { completion: completion };
         parser.parse(input);
     }
