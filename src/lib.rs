@@ -1,6 +1,6 @@
 use std::fmt;
 
-pub trait Encoding { }
+pub trait Encoding: fmt::Display { }
 
 pub struct Int;
 impl Encoding for Int { }
@@ -20,7 +20,16 @@ struct Parser<C> {
 
 impl<C: ParserCompletion> Parser<C> {
     fn parse(self, input: &str) {
-        self.completion.did_parse(Int);
+        let mut chars = input.chars();
+        let c = match chars.next() {
+            Some(c) => c,
+            None => return,
+        };
+
+        match c {
+            'i' => self.completion.did_parse(Int),
+            _ => (),
+        }
     }
 }
 
@@ -56,5 +65,10 @@ mod tests {
     #[test]
     fn test_int_display() {
         assert_eq!(Int.to_string(), "i");
+    }
+
+    #[test]
+    fn test_parse_int() {
+        assert_eq!(parse("i").to_string(), "i");
     }
 }
