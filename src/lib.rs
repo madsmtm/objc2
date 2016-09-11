@@ -3,11 +3,10 @@ use std::fmt;
 pub trait Encoding { }
 
 pub struct Int;
-
 impl Encoding for Int { }
-impl fmt::Debug for Int {
+impl fmt::Display for Int {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Debug::fmt(&'i', formatter)
+        fmt::Display::fmt(&'i', formatter)
     }
 }
 
@@ -48,4 +47,14 @@ pub fn parse(input: &str) -> Box<Encoding> {
         parser.parse(input);
     }
     enc.unwrap()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_int_display() {
+        assert_eq!(Int.to_string(), "i");
+    }
 }
