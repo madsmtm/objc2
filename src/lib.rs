@@ -36,8 +36,23 @@ impl<C: ParserCompletion> Parser<C> {
 
         match c {
             'i' => self.completion.did_parse(Int),
+            '^' => self.parse_pointer(chars.as_str()),
             _ => (),
         }
+    }
+
+    fn parse_pointer(self, input: &str) {
+        struct PointerCompletion<C>(C);
+
+        impl<C: ParserCompletion> ParserCompletion for PointerCompletion<C> {
+            fn did_parse<E: 'static + Encoding>(self, encoding: E) {
+                self.0.did_parse(Pointer(encoding));
+            }
+        }
+
+        let completion = PointerCompletion(self.completion);
+        let parser = Parser { completion: completion };
+        parser.parse(input);
     }
 }
 
