@@ -6,7 +6,7 @@
 // copied, modified, or distributed except according to those terms.
 
 extern crate cocoa;
-extern crate metal;
+extern crate metal_rs as metal;
 extern crate winit;
 #[macro_use]
 extern crate objc;

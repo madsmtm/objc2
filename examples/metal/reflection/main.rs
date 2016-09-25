@@ -5,7 +5,7 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-extern crate metal;
+extern crate metal_rs as metal;
 
 use metal::*;
 
@@ -45,8 +45,8 @@ fn main() {
     let device = create_system_default_device();
 
     let options = MTLCompileOptions::new();
-    let library = device.new_library_with_source(PROGRAM, options);
-    let (vs, ps) = (library.get_function("vs").unwrap(), library.get_function("ps").unwrap());
+    let library = device.new_library_with_source(PROGRAM, options).unwrap();
+    let (vs, ps) = (library.get_function("vs"), library.get_function("ps"));
 
     let vertex_desc = MTLVertexDescriptor::new();
 
