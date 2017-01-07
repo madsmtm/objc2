@@ -1,3 +1,4 @@
+use std::fmt;
 use std::os::raw::{c_char, c_void};
 use std::slice;
 use std::str;
@@ -68,6 +69,12 @@ impl INSString for NSString { }
 
 impl INSCopying for NSString {
     type Output = NSString;
+}
+
+impl fmt::Display for NSString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(self.as_str(), f)
+    }
 }
 
 #[cfg(test)]
