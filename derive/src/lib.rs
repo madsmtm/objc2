@@ -18,11 +18,12 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
     // Build the impl
     let name = &ast.ident;
     let link_name = format!("OBJC_CLASS_$_{}", name);
+    let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
     let gen = quote! {
-        unsafe impl ::objc::Message for #name { }
+        unsafe impl #impl_generics ::objc::Message for #name #ty_generics #where_clause { }
 
-        impl ::objc_foundation::INSObject for #name {
+        impl #impl_generics ::objc_foundation::INSObject for #name #ty_generics #where_clause {
             fn class() -> &'static ::objc::runtime::Class {
                 extern {
                     #[link_name = #link_name]
