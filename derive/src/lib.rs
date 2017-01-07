@@ -27,7 +27,7 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
     ).to_tokens(&mut gen);
 
     quote!(
-        impl #impl_generics ::objc_foundation::INSObject for #name #ty_generics #where_clause {
+        impl #impl_generics INSObject for #name #ty_generics #where_clause {
             fn class() -> &'static ::objc::runtime::Class {
                 extern {
                     #[link_name = #link_name]
@@ -43,8 +43,7 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
     quote!(
         impl #impl_generics ::std::cmp::PartialEq for #name #ty_generics #where_clause {
             fn eq(&self, other: &Self) -> bool {
-                use ::objc_foundation::INSObject;
-                self.is_equal(other)
+                INSObject::is_equal(self, other)
             }
         }
     ).to_tokens(&mut gen);
@@ -52,8 +51,7 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
     quote!(
         impl #impl_generics ::std::hash::Hash for #name #ty_generics #where_clause {
             fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
-                use ::objc_foundation::INSObject;
-                self.hash_code().hash(state);
+                INSObject::hash_code(self).hash(state);
             }
         }
     ).to_tokens(&mut gen);
@@ -61,8 +59,8 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
     quote!(
         impl #impl_generics ::std::fmt::Debug for #name #ty_generics #where_clause {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-                use ::objc_foundation::{INSObject, INSString};
-                ::std::fmt::Debug::fmt(self.description().as_str(), f)
+                let s = INSObject::description(self);
+                ::std::fmt::Display::fmt(&*s, f)
             }
         }
     ).to_tokens(&mut gen);
