@@ -17,15 +17,19 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
 
     // Build the impl
     let name = &ast.ident;
+    let link_name = format!("OBJC_CLASS_$_{}", name);
+
     let gen = quote! {
         unsafe impl ::objc::Message for #name { }
 
         impl ::objc_foundation::INSObject for #name {
             fn class() -> &'static ::objc::runtime::Class {
-                let name = stringify!(#name);
-                match ::objc::runtime::Class::get(name) {
-                    Some(cls) => cls,
-                    None => panic!("Class {} not found", name),
+                extern {
+                    #[link_name = #link_name]
+                    static OBJC_CLASS: ::objc::runtime::Class;
+                }
+                unsafe {
+                    &OBJC_CLASS
                 }
             }
         }
