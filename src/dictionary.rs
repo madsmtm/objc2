@@ -7,7 +7,7 @@ use objc::runtime::Class;
 use objc_id::{Id, Owned, Ownership, ShareId};
 
 use {
-    INSArray, INSFastEnumeration, INSCopying, INSObject,
+    INSFastEnumeration, INSCopying, INSObject,
     NSArray, NSSharedArray, NSEnumerator,
 };
 
