@@ -1,12 +1,12 @@
-#![recursion_limit = "128"]
 #![feature(proc_macro, proc_macro_lib)]
 
 extern crate proc_macro;
-extern crate syn;
 #[macro_use]
 extern crate quote;
+extern crate syn;
 
 use proc_macro::TokenStream;
+use quote::{Tokens, ToTokens};
 
 #[proc_macro_derive(INSObject)]
 pub fn impl_object(input: TokenStream) -> TokenStream {
@@ -21,9 +21,12 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
     let link_name = format!("OBJC_CLASS_$_{}", name);
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
-    let gen = quote! {
+    let mut gen = Tokens::new();
+    quote!(
         unsafe impl #impl_generics ::objc::Message for #name #ty_generics #where_clause { }
+    ).to_tokens(&mut gen);
 
+    quote!(
         impl #impl_generics ::objc_foundation::INSObject for #name #ty_generics #where_clause {
             fn class() -> &'static ::objc::runtime::Class {
                 extern {
@@ -35,28 +38,34 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
                 }
             }
         }
+    ).to_tokens(&mut gen);
 
+    quote!(
         impl #impl_generics ::std::cmp::PartialEq for #name #ty_generics #where_clause {
             fn eq(&self, other: &Self) -> bool {
                 use ::objc_foundation::INSObject;
                 self.is_equal(other)
             }
         }
+    ).to_tokens(&mut gen);
 
+    quote!(
         impl #impl_generics ::std::hash::Hash for #name #ty_generics #where_clause {
             fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
                 use ::objc_foundation::INSObject;
                 self.hash_code().hash(state);
             }
         }
+    ).to_tokens(&mut gen);
 
+    quote!(
         impl #impl_generics ::std::fmt::Debug for #name #ty_generics #where_clause {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                 use ::objc_foundation::{INSObject, INSString};
                 ::std::fmt::Debug::fmt(self.description().as_str(), f)
             }
         }
-    };
+    ).to_tokens(&mut gen);
 
     // Return the generated impl
     gen.parse().unwrap()
