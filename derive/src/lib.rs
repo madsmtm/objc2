@@ -1,3 +1,4 @@
+#![recursion_limit = "128"]
 #![feature(proc_macro, proc_macro_lib)]
 
 extern crate proc_macro;
@@ -32,6 +33,27 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
                 unsafe {
                     &OBJC_CLASS
                 }
+            }
+        }
+
+        impl #impl_generics ::std::cmp::PartialEq for #name #ty_generics #where_clause {
+            fn eq(&self, other: &Self) -> bool {
+                use ::objc_foundation::INSObject;
+                self.is_equal(other)
+            }
+        }
+
+        impl #impl_generics ::std::hash::Hash for #name #ty_generics #where_clause {
+            fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
+                use ::objc_foundation::INSObject;
+                self.hash_code().hash(state);
+            }
+        }
+
+        impl #impl_generics ::std::fmt::Debug for #name #ty_generics #where_clause {
+            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                use ::objc_foundation::{INSObject, INSString};
+                ::std::fmt::Debug::fmt(self.description().as_str(), f)
             }
         }
     };
