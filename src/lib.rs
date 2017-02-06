@@ -74,6 +74,29 @@ impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
     }
 }
 
+pub struct Struct<'a, T> where T: EncodingTuple {
+    name: &'a str,
+    fields: T,
+}
+
+impl<'a, T> Encoding for Struct<'a, T> where T: EncodingTuple {
+    fn as_struct(&self) -> Option<StructDescriptor> {
+        Some(StructDescriptor::new(self.name, &self.fields))
+    }
+}
+
+impl<'a, T> fmt::Display for Struct<'a, T> where T: EncodingTuple {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "{{{}=", self.name)?;
+        for i in 0.. {
+            if let Some(e) = self.fields.encoding_at(i) {
+                write!(formatter, "{}", e)?;
+            } else { break; }
+        }
+        write!(formatter, "}}")
+    }
+}
+
 enum StructFields<'a> {
     Static(&'a EncodingTuple),
     Parsed(&'a str),
@@ -153,7 +176,10 @@ mod tests {
     #[test]
     fn test_static_struct() {
         let f = (Primitive::Char, Primitive::Int);
-        let mut s = StructDescriptor::new("CGPoint", &f);
+        let s = Struct { name: "CGPoint", fields: f };
+        assert_eq!(s.to_string(), "{CGPoint=ci}");
+
+        let mut s = s.as_struct().unwrap();
         assert_eq!(s.name(), "CGPoint");
         assert_eq!(s.next_field().unwrap().to_string(), "c");
         assert_eq!(s.next_field().unwrap().to_string(), "i");
