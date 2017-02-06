@@ -2,8 +2,45 @@ use std::fmt;
 
 pub trait Encoding: fmt::Display {
     fn as_primitive(&self) -> Option<Primitive> { None }
-    fn as_pointer(&self) -> Option<(&Encoding, bool)> { None }
-    fn as_struct(&self) -> Option<StructDescriptor> { None }
+    fn as_pointer(&self) -> Option<(EncodeFoo, bool)> { None }
+    fn as_struct(&self) -> Option<(&str, FieldsIterator)> { None }
+}
+
+pub enum EncodeFoo<'a> {
+    Static(&'a Encoding),
+    Parsed(Primitive),
+}
+
+impl<'a> Encoding for EncodeFoo<'a> {
+    fn as_primitive(&self) -> Option<Primitive> {
+        match *self {
+            EncodeFoo::Static(ref e) => e.as_primitive(),
+            EncodeFoo::Parsed(ref e) => e.as_primitive(),
+        }
+    }
+
+    fn as_pointer(&self) -> Option<(EncodeFoo, bool)> {
+        match *self {
+            EncodeFoo::Static(ref e) => e.as_pointer(),
+            EncodeFoo::Parsed(ref e) => e.as_pointer(),
+        }
+    }
+
+    fn as_struct(&self) -> Option<(&str, FieldsIterator)> {
+        match *self {
+            EncodeFoo::Static(ref e) => e.as_struct(),
+            EncodeFoo::Parsed(ref e) => e.as_struct(),
+        }
+    }
+}
+
+impl<'a> fmt::Display for EncodeFoo<'a> {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            EncodeFoo::Static(ref e) => fmt::Display::fmt(e, formatter),
+            EncodeFoo::Parsed(ref e) => fmt::Display::fmt(e, formatter),
+        }
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -49,8 +86,8 @@ pub struct Pointer<T> where T: Encoding {
 }
 
 impl<T> Encoding for Pointer<T> where T: Encoding {
-    fn as_pointer(&self) -> Option<(&Encoding, bool)> {
-        Some((&self.t, self.is_const))
+    fn as_pointer(&self) -> Option<(EncodeFoo, bool)> {
+        Some((EncodeFoo::Static(&self.t), self.is_const))
     }
 }
 
@@ -80,8 +117,8 @@ pub struct Struct<'a, T> where T: EncodingTuple {
 }
 
 impl<'a, T> Encoding for Struct<'a, T> where T: EncodingTuple {
-    fn as_struct(&self) -> Option<StructDescriptor> {
-        Some(StructDescriptor::new(self.name, &self.fields))
+    fn as_struct(&self) -> Option<(&str, FieldsIterator)> {
+        Some((self.name, FieldsIterator::new(&self.fields)))
     }
 }
 
@@ -97,51 +134,36 @@ impl<'a, T> fmt::Display for Struct<'a, T> where T: EncodingTuple {
     }
 }
 
-enum StructFields<'a> {
-    Static(&'a EncodingTuple),
+pub enum FieldsIterator<'a> {
+    Static(&'a EncodingTuple, u8),
     Parsed(&'a str),
 }
 
-pub struct StructDescriptor<'a> {
-    name: &'a str,
-    fields: StructFields<'a>,
-    index: u8,
-    current: Option<Primitive>,
+impl<'a> FieldsIterator<'a> {
+    pub fn new(fields: &EncodingTuple) -> FieldsIterator {
+        FieldsIterator::Static(fields, 0)
+    }
+
+    fn parse(fields: &str) -> FieldsIterator {
+        FieldsIterator::Parsed(fields)
+    }
 }
 
-impl<'a> StructDescriptor<'a> {
-    pub fn new<'b>(name: &'b str, fields: &'b EncodingTuple) -> StructDescriptor<'b> {
-        StructDescriptor {
-            name: name,
-            fields: StructFields::Static(fields),
-            index: 0,
-            current: None,
-        }
-    }
+impl<'a> Iterator for FieldsIterator<'a> {
+    type Item = EncodeFoo<'a>;
 
-    fn parse<'b>(name: &'b str, fields: &'b str) -> StructDescriptor<'b> {
-        StructDescriptor {
-            name: name,
-            fields: StructFields::Parsed(fields),
-            index: 0,
-            current: None,
-        }
-    }
+    fn next(&mut self) -> Option<EncodeFoo<'a>> {
+        use FieldsIterator::*;
 
-    pub fn name(&self) -> &str {
-        self.name
-    }
-
-    pub fn next_field(&mut self) -> Option<&Encoding> {
-        let index = self.index;
-        self.index += 1;
-        match self.fields {
-            StructFields::Static(tup) => tup.encoding_at(index),
-            StructFields::Parsed(s) => {
+        match *self {
+            Static(tup, index) => {
+                *self = Static(tup, index + 1);
+                tup.encoding_at(index).map(|e| EncodeFoo::Static(e))
+            },
+            Parsed(s) => {
                 let (enc, remaining) = parse(s);
-                self.current = enc;
-                self.fields = StructFields::Parsed(remaining);
-                self.current.as_ref().map(|e| e as &Encoding)
+                *self = Parsed(remaining);
+                enc.map(|e| EncodeFoo::Parsed(e))
             },
         }
     }
@@ -179,19 +201,18 @@ mod tests {
         let s = Struct { name: "CGPoint", fields: f };
         assert_eq!(s.to_string(), "{CGPoint=ci}");
 
-        let mut s = s.as_struct().unwrap();
-        assert_eq!(s.name(), "CGPoint");
-        assert_eq!(s.next_field().unwrap().to_string(), "c");
-        assert_eq!(s.next_field().unwrap().to_string(), "i");
-        assert!(s.next_field().is_none());
+        let (name, mut fields) = s.as_struct().unwrap();
+        assert_eq!(name, "CGPoint");
+        assert_eq!(fields.next().unwrap().to_string(), "c");
+        assert_eq!(fields.next().unwrap().to_string(), "i");
+        assert!(fields.next().is_none());
     }
 
     #[test]
     fn test_parsed_struct() {
-        let mut s = StructDescriptor::parse("CGPoint", "ci");
-        assert_eq!(s.name(), "CGPoint");
-        assert_eq!(s.next_field().unwrap().to_string(), "c");
-        assert_eq!(s.next_field().unwrap().to_string(), "i");
-        assert!(s.next_field().is_none());
+        let mut fields = FieldsIterator::parse("ci");
+        assert_eq!(fields.next().unwrap().to_string(), "c");
+        assert_eq!(fields.next().unwrap().to_string(), "i");
+        assert!(fields.next().is_none());
     }
 }
