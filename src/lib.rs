@@ -1,77 +1,61 @@
 use std::fmt;
 
-pub trait Encoding: fmt::Display { }
+pub trait Encoding: fmt::Display {
+    fn as_primitive(&self) -> Option<Primitive> { None }
+    fn as_pointer(&self) -> Option<(&Encoding, bool)> { None }
+}
 
-pub struct Int;
-impl Encoding for Int { }
-impl fmt::Display for Int {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(&'i', formatter)
+#[derive(Clone, Copy)]
+pub enum Primitive {
+    Char,
+    Short,
+    Int,
+    LongLong,
+    UChar,
+    UShort,
+    UInt,
+    ULongLong,
+    Float,
+    Double,
+    Bool,
+    Void,
+    Object,
+    Class,
+    Sel,
+    Unknown,
+}
+
+impl Encoding for Primitive {
+    fn as_primitive(&self) -> Option<Primitive> {
+        Some(*self)
     }
 }
 
-pub struct Pointer<T>(T);
-impl<T: Encoding> Encoding for Pointer<T> { }
-impl<T: fmt::Display> fmt::Display for Pointer<T> {
+impl fmt::Display for Primitive {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "^{}", self.0)
-    }
-}
-
-trait ParserCompletion {
-    fn did_parse<E: 'static + Encoding>(self, encoding: E);
-}
-
-struct Parser<C> {
-    completion: C,
-}
-
-impl<C: ParserCompletion> Parser<C> {
-    fn parse(self, input: &str) {
-        let mut chars = input.chars();
-        let c = match chars.next() {
-            Some(c) => c,
-            None => return,
+        let s = match *self {
+            Primitive::Int => "i",
+            _ => panic!(),
         };
-
-        match c {
-            'i' => self.completion.did_parse(Int),
-            '^' => self.parse_pointer(chars.as_str()),
-            _ => (),
-        }
-    }
-
-    fn parse_pointer(self, input: &str) {
-        struct PointerCompletion<C>(C);
-
-        impl<C: ParserCompletion> ParserCompletion for PointerCompletion<C> {
-            fn did_parse<E: 'static + Encoding>(self, encoding: E) {
-                self.0.did_parse(Pointer(encoding));
-            }
-        }
-
-        let completion = PointerCompletion(self.completion);
-        let parser = Parser { completion: completion };
-        parser.parse(input);
+        fmt::Display::fmt(s, formatter)
     }
 }
 
-pub fn parse(input: &str) -> Box<Encoding> {
-    struct BoxedEncodingCompletion<'a>(&'a mut Option<Box<Encoding>>);
+pub struct Pointer<T> where T: Encoding {
+    t: T,
+    is_const: bool,
+}
 
-    impl<'a> ParserCompletion for BoxedEncodingCompletion<'a> {
-        fn did_parse<E: 'static + Encoding>(self, encoding: E) {
-            *self.0 = Some(Box::new(encoding))
-        }
+impl<T> Encoding for Pointer<T> where T: Encoding {
+    fn as_pointer(&self) -> Option<(&Encoding, bool)> {
+        Some((&self.t, self.is_const))
     }
+}
 
-    let mut enc = None;
-    {
-        let completion = BoxedEncodingCompletion(&mut enc);
-        let parser = Parser { completion: completion };
-        parser.parse(input);
+impl<T> fmt::Display for Pointer<T> where T: Encoding {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "{}^{}", if self.is_const {"r"} else {""}, self.t)
     }
-    enc.unwrap()
 }
 
 #[cfg(test)]
@@ -80,16 +64,12 @@ mod tests {
 
     #[test]
     fn test_int_display() {
-        assert_eq!(Int.to_string(), "i");
+        assert_eq!(Primitive::Int.to_string(), "i");
     }
 
     #[test]
     fn test_pointer_display() {
-        assert_eq!(Pointer(Int).to_string(), "^i");
-    }
-
-    #[test]
-    fn test_parse_int() {
-        assert_eq!(parse("i").to_string(), "i");
+        let e = Pointer { t: Primitive::Int, is_const: false };
+        assert_eq!(e.to_string(), "^i");
     }
 }
