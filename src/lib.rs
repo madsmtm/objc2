@@ -11,25 +11,13 @@ pub enum EncodeFoo<'a> {
     Parsed(Primitive),
 }
 
-impl<'a> Encoding for EncodeFoo<'a> {
-    fn as_primitive(&self) -> Option<Primitive> {
-        match *self {
-            EncodeFoo::Static(ref e) => e.as_primitive(),
-            EncodeFoo::Parsed(ref e) => e.as_primitive(),
-        }
-    }
+impl<'a> Deref for EncodeFoo<'a> {
+    type Target = (Encoding + 'a);
 
-    fn as_pointer(&self) -> Option<(EncodeFoo, bool)> {
+    fn deref(&self) -> &(Encoding + 'a) {
         match *self {
-            EncodeFoo::Static(ref e) => e.as_pointer(),
-            EncodeFoo::Parsed(ref e) => e.as_pointer(),
-        }
-    }
-
-    fn as_struct(&self) -> Option<(&str, FieldsIterator)> {
-        match *self {
-            EncodeFoo::Static(ref e) => e.as_struct(),
-            EncodeFoo::Parsed(ref e) => e.as_struct(),
+            EncodeFoo::Static(e) => e,
+            EncodeFoo::Parsed(ref e) => e,
         }
     }
 }
@@ -37,7 +25,7 @@ impl<'a> Encoding for EncodeFoo<'a> {
 impl<'a> fmt::Display for EncodeFoo<'a> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            EncodeFoo::Static(ref e) => fmt::Display::fmt(e, formatter),
+            EncodeFoo::Static(e) => fmt::Display::fmt(e, formatter),
             EncodeFoo::Parsed(ref e) => fmt::Display::fmt(e, formatter),
         }
     }
