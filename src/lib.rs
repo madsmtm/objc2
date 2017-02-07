@@ -30,7 +30,7 @@ impl<'a> Descriptor<'a> {
 
 pub enum EncodeFoo<'a> {
     Static(&'a Encoding),
-    Parsed(Primitive),
+    Parsed(StrEncoding<&'a str>),
 }
 
 impl<'a> Deref for EncodeFoo<'a> {
@@ -185,14 +185,32 @@ impl<'a> Iterator for FieldsIterator<'a> {
     }
 }
 
-fn parse(s: &str) -> (Option<Primitive>, &str) {
-    if s.len() == 0 {
-        return (None, s);
+fn parse(s: &str) -> (Option<StrEncoding<&str>>, &str) {
+    if s.len() >= 1 {
+        (Some(StrEncoding { buf: &s[..1] }), &s[1..])
+    } else {
+        (None, s)
     }
-    match s.as_bytes()[0] {
-        b'c' => (Some(Primitive::Char), &s[1..]),
-        b'i' => (Some(Primitive::Int), &s[1..]),
-        _ => (None, s),
+}
+
+pub struct StrEncoding<S> where S: AsRef<str> {
+    buf: S,
+}
+
+impl<S> Encoding for StrEncoding<S> where S: AsRef<str> {
+    fn descriptor(&self) -> Descriptor {
+        let e = match self.buf.as_ref().as_bytes()[0] {
+            b'c' => Primitive::Char,
+            b'i' => Primitive::Int,
+            _ => panic!(),
+        };
+        Descriptor::Primitive(e)
+    }
+}
+
+impl<S> fmt::Display for StrEncoding<S> where S: AsRef<str> {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(self.buf.as_ref(), formatter)
     }
 }
 
