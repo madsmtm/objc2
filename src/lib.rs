@@ -1,9 +1,14 @@
 use std::fmt;
+use std::ops::Deref;
 
 pub trait Encoding: fmt::Display {
-    fn as_primitive(&self) -> Option<Primitive> { None }
-    fn as_pointer(&self) -> Option<(EncodeFoo, bool)> { None }
-    fn as_struct(&self) -> Option<(&str, FieldsIterator)> { None }
+    fn descriptor(&self) -> Descriptor;
+}
+
+pub enum Descriptor<'a> {
+    Primitive(Primitive),
+    Pointer(EncodeFoo<'a>, bool),
+    Struct(&'a str, FieldsIterator<'a>),
 }
 
 pub enum EncodeFoo<'a> {
@@ -52,8 +57,8 @@ pub enum Primitive {
 }
 
 impl Encoding for Primitive {
-    fn as_primitive(&self) -> Option<Primitive> {
-        Some(*self)
+    fn descriptor(&self) -> Descriptor {
+        Descriptor::Primitive(*self)
     }
 }
 
@@ -74,8 +79,8 @@ pub struct Pointer<T> where T: Encoding {
 }
 
 impl<T> Encoding for Pointer<T> where T: Encoding {
-    fn as_pointer(&self) -> Option<(EncodeFoo, bool)> {
-        Some((EncodeFoo::Static(&self.t), self.is_const))
+    fn descriptor(&self) -> Descriptor {
+        Descriptor::Pointer(EncodeFoo::Static(&self.t), self.is_const)
     }
 }
 
@@ -105,8 +110,8 @@ pub struct Struct<'a, T> where T: EncodingTuple {
 }
 
 impl<'a, T> Encoding for Struct<'a, T> where T: EncodingTuple {
-    fn as_struct(&self) -> Option<(&str, FieldsIterator)> {
-        Some((self.name, FieldsIterator::new(&self.fields)))
+    fn descriptor(&self) -> Descriptor {
+        Descriptor::Struct(self.name, FieldsIterator::new(&self.fields))
     }
 }
 
@@ -189,7 +194,10 @@ mod tests {
         let s = Struct { name: "CGPoint", fields: f };
         assert_eq!(s.to_string(), "{CGPoint=ci}");
 
-        let (name, mut fields) = s.as_struct().unwrap();
+        let (name, mut fields) = match s.descriptor() {
+            Descriptor::Struct(name, fields) => (name, fields),
+            _ => panic!("Descriptor was not a struct"),
+        };
         assert_eq!(name, "CGPoint");
         assert_eq!(fields.next().unwrap().to_string(), "c");
         assert_eq!(fields.next().unwrap().to_string(), "i");
