@@ -11,6 +11,23 @@ pub enum Descriptor<'a> {
     Struct(&'a str, FieldsIterator<'a>),
 }
 
+impl<'a> Descriptor<'a> {
+    fn eq(self, other: Descriptor) -> bool {
+        match (self, other) {
+            (Descriptor::Primitive(p1), Descriptor::Primitive(p2)) => {
+                p1 == p2
+            },
+            (Descriptor::Pointer(e1, c1), Descriptor::Pointer(e2, c2)) => {
+                c1 == c2 && e1 == e2
+            },
+            (Descriptor::Struct(n1, f1), Descriptor::Struct(n2, f2)) => {
+                n1 == n2 && f1.eq(f2)
+            }
+            _ => false,
+        }
+    }
+}
+
 pub enum EncodeFoo<'a> {
     Static(&'a Encoding),
     Parsed(Primitive),
@@ -36,7 +53,13 @@ impl<'a> fmt::Display for EncodeFoo<'a> {
     }
 }
 
-#[derive(Clone, Copy)]
+impl<'a> PartialEq for EncodeFoo<'a> {
+    fn eq(&self, other: &EncodeFoo) -> bool {
+        self.descriptor().eq(other.descriptor())
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Primitive {
     Char,
     Short,
@@ -210,5 +233,25 @@ mod tests {
         assert_eq!(fields.next().unwrap().to_string(), "c");
         assert_eq!(fields.next().unwrap().to_string(), "i");
         assert!(fields.next().is_none());
+    }
+
+    #[test]
+    fn test_descriptor_eq() {
+        let i = Primitive::Int;
+        let c = Primitive::Char;
+
+        assert!(i.descriptor().eq(i.descriptor()));
+        assert!(!i.descriptor().eq(c.descriptor()));
+
+        let p = Pointer { t: i, is_const: false };
+        assert!(p.descriptor().eq(p.descriptor()));
+        assert!(!p.descriptor().eq(i.descriptor()));
+
+        let s = Struct { name: "CGPoint", fields: (c, i) };
+        assert!(s.descriptor().eq(s.descriptor()));
+        assert!(!s.descriptor().eq(i.descriptor()));
+
+        let sd = Descriptor::Struct("CGPoint", FieldsIterator::parse("ci"));
+        assert!(s.descriptor().eq(sd));
     }
 }
