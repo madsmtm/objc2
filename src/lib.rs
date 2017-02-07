@@ -197,14 +197,32 @@ pub struct StrEncoding<S> where S: AsRef<str> {
     buf: S,
 }
 
+impl<S> StrEncoding<S> where S: AsRef<str> {
+    fn new_unchecked(s: S) -> StrEncoding<S> {
+        StrEncoding { buf: s }
+    }
+}
+
 impl<S> Encoding for StrEncoding<S> where S: AsRef<str> {
     fn descriptor(&self) -> Descriptor {
-        let e = match self.buf.as_ref().as_bytes()[0] {
-            b'c' => Primitive::Char,
-            b'i' => Primitive::Int,
+        match self.buf.as_ref() {
+            s if s.starts_with('{') => {
+                let sep_pos = s.find('=').unwrap();
+                let f = FieldsIterator::parse(&s[sep_pos + 1..s.len() - 1]);
+                Descriptor::Struct(&s[1..sep_pos], f)
+            },
+            s if s.starts_with('^') => {
+                let e = StrEncoding::new_unchecked(&s[1..]);
+                Descriptor::Pointer(EncodeFoo::Parsed(e), false)
+            },
+            s if s.starts_with("r^") => {
+                let e = StrEncoding::new_unchecked(&s[2..]);
+                Descriptor::Pointer(EncodeFoo::Parsed(e), true)
+            },
+            "c" => Descriptor::Primitive(Primitive::Char),
+            "i" => Descriptor::Primitive(Primitive::Int),
             _ => panic!(),
-        };
-        Descriptor::Primitive(e)
+        }
     }
 }
 
@@ -247,7 +265,13 @@ mod tests {
 
     #[test]
     fn test_parsed_struct() {
-        let mut fields = FieldsIterator::parse("ci");
+        let s = StrEncoding::new_unchecked("{CGPoint=ci}");
+
+        let (name, mut fields) = match s.descriptor() {
+            Descriptor::Struct(name, fields) => (name, fields),
+            _ => panic!("Descriptor was not a struct"),
+        };
+        assert_eq!(name, "CGPoint");
         assert_eq!(fields.next().unwrap().to_string(), "c");
         assert_eq!(fields.next().unwrap().to_string(), "i");
         assert!(fields.next().is_none());
@@ -269,7 +293,8 @@ mod tests {
         assert!(s.descriptor().eq(s.descriptor()));
         assert!(!s.descriptor().eq(i.descriptor()));
 
-        let sd = Descriptor::Struct("CGPoint", FieldsIterator::parse("ci"));
-        assert!(s.descriptor().eq(sd));
+        let s2 = StrEncoding::new_unchecked("{CGPoint=ci}");
+        assert!(s2.descriptor().eq(s2.descriptor()));
+        assert!(s.descriptor().eq(s2.descriptor()));
     }
 }
