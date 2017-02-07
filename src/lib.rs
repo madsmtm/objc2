@@ -7,7 +7,7 @@ pub trait Encoding: fmt::Display {
 
 pub enum Descriptor<'a> {
     Primitive(Primitive),
-    Pointer(EncodeFoo<'a>, bool),
+    Pointer(AnyEncoding<'a>, bool),
     Struct(&'a str, FieldsIterator<'a>),
 }
 
@@ -28,33 +28,33 @@ impl<'a> Descriptor<'a> {
     }
 }
 
-pub enum EncodeFoo<'a> {
+pub enum AnyEncoding<'a> {
     Static(&'a Encoding),
     Parsed(StrEncoding<&'a str>),
 }
 
-impl<'a> Deref for EncodeFoo<'a> {
+impl<'a> Deref for AnyEncoding<'a> {
     type Target = (Encoding + 'a);
 
     fn deref(&self) -> &(Encoding + 'a) {
         match *self {
-            EncodeFoo::Static(e) => e,
-            EncodeFoo::Parsed(ref e) => e,
+            AnyEncoding::Static(e) => e,
+            AnyEncoding::Parsed(ref e) => e,
         }
     }
 }
 
-impl<'a> fmt::Display for EncodeFoo<'a> {
+impl<'a> fmt::Display for AnyEncoding<'a> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            EncodeFoo::Static(e) => fmt::Display::fmt(e, formatter),
-            EncodeFoo::Parsed(ref e) => fmt::Display::fmt(e, formatter),
+            AnyEncoding::Static(e) => fmt::Display::fmt(e, formatter),
+            AnyEncoding::Parsed(ref e) => fmt::Display::fmt(e, formatter),
         }
     }
 }
 
-impl<'a> PartialEq for EncodeFoo<'a> {
-    fn eq(&self, other: &EncodeFoo) -> bool {
+impl<'a> PartialEq for AnyEncoding<'a> {
+    fn eq(&self, other: &AnyEncoding) -> bool {
         self.descriptor().eq(other.descriptor())
     }
 }
@@ -103,7 +103,7 @@ pub struct Pointer<T> where T: Encoding {
 
 impl<T> Encoding for Pointer<T> where T: Encoding {
     fn descriptor(&self) -> Descriptor {
-        Descriptor::Pointer(EncodeFoo::Static(&self.t), self.is_const)
+        Descriptor::Pointer(AnyEncoding::Static(&self.t), self.is_const)
     }
 }
 
@@ -166,20 +166,20 @@ impl<'a> FieldsIterator<'a> {
 }
 
 impl<'a> Iterator for FieldsIterator<'a> {
-    type Item = EncodeFoo<'a>;
+    type Item = AnyEncoding<'a>;
 
-    fn next(&mut self) -> Option<EncodeFoo<'a>> {
+    fn next(&mut self) -> Option<AnyEncoding<'a>> {
         use FieldsIterator::*;
 
         match *self {
             Static(tup, index) => {
                 *self = Static(tup, index + 1);
-                tup.encoding_at(index).map(|e| EncodeFoo::Static(e))
+                tup.encoding_at(index).map(|e| AnyEncoding::Static(e))
             },
             Parsed(s) => {
                 let (enc, remaining) = parse(s);
                 *self = Parsed(remaining);
-                enc.map(|e| EncodeFoo::Parsed(e))
+                enc.map(|e| AnyEncoding::Parsed(e))
             },
         }
     }
@@ -213,11 +213,11 @@ impl<S> Encoding for StrEncoding<S> where S: AsRef<str> {
             },
             s if s.starts_with('^') => {
                 let e = StrEncoding::new_unchecked(&s[1..]);
-                Descriptor::Pointer(EncodeFoo::Parsed(e), false)
+                Descriptor::Pointer(AnyEncoding::Parsed(e), false)
             },
             s if s.starts_with("r^") => {
                 let e = StrEncoding::new_unchecked(&s[2..]);
-                Descriptor::Pointer(EncodeFoo::Parsed(e), true)
+                Descriptor::Pointer(AnyEncoding::Parsed(e), true)
             },
             "c" => Descriptor::Primitive(Primitive::Char),
             "i" => Descriptor::Primitive(Primitive::Int),
