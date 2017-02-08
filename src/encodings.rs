@@ -1,7 +1,7 @@
 use std::fmt;
 
 use Encoding;
-use descriptor::{Descriptor, AnyEncoding, FieldsIterator};
+use descriptor::{Descriptor, DescriptorKind, AnyEncoding, FieldsIterator};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Primitive {
@@ -25,7 +25,7 @@ pub enum Primitive {
 
 impl Encoding for Primitive {
     fn descriptor(&self) -> Descriptor {
-        Descriptor::Primitive(*self)
+        DescriptorKind::Primitive(*self).into()
     }
 }
 
@@ -53,7 +53,7 @@ impl<T> Pointer<T> where T: Encoding {
 
 impl<T> Encoding for Pointer<T> where T: Encoding {
     fn descriptor(&self) -> Descriptor {
-        Descriptor::Pointer(AnyEncoding::Static(&self.t), self.is_const)
+        DescriptorKind::Pointer(AnyEncoding::Static(&self.t), self.is_const).into()
     }
 }
 
@@ -90,7 +90,7 @@ impl<'a, T> Struct<'a, T> where T: EncodingTuple {
 
 impl<'a, T> Encoding for Struct<'a, T> where T: EncodingTuple {
     fn descriptor(&self) -> Descriptor {
-        Descriptor::Struct(self.name, FieldsIterator::new(&self.fields))
+        DescriptorKind::Struct(self.name, FieldsIterator::new(&self.fields)).into()
     }
 }
 

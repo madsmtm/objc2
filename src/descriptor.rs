@@ -5,22 +5,32 @@ use Encoding;
 use encodings::{EncodingTuple, Primitive};
 use parse::{StrEncoding, parse};
 
-pub enum Descriptor<'a> {
+pub enum DescriptorKind<'a> {
     Primitive(Primitive),
     Pointer(AnyEncoding<'a>, bool),
     Struct(&'a str, FieldsIterator<'a>),
 }
 
+impl<'a> DescriptorKind<'a> {
+    pub fn into(self) -> Descriptor<'a> {
+        Descriptor(self)
+    }
+}
+
+pub struct Descriptor<'a>(DescriptorKind<'a>);
+
 impl<'a> Descriptor<'a> {
     pub fn eq(self, other: Descriptor) -> bool {
-        match (self, other) {
-            (Descriptor::Primitive(p1), Descriptor::Primitive(p2)) => {
+        use self::DescriptorKind::*;
+
+        match (self.0, other.0) {
+            (Primitive(p1), Primitive(p2)) => {
                 p1 == p2
             },
-            (Descriptor::Pointer(e1, c1), Descriptor::Pointer(e2, c2)) => {
+            (Pointer(e1, c1), Pointer(e2, c2)) => {
                 c1 == c2 && e1 == e2
             },
-            (Descriptor::Struct(n1, f1), Descriptor::Struct(n2, f2)) => {
+            (Struct(n1, f1), Struct(n2, f2)) => {
                 n1 == n2 && f1.eq(f2)
             }
             _ => false,
@@ -106,8 +116,8 @@ mod tests {
         let s = Struct::new("CGPoint", f);
         assert_eq!(s.to_string(), "{CGPoint=ci}");
 
-        let (name, mut fields) = match s.descriptor() {
-            Descriptor::Struct(name, fields) => (name, fields),
+        let (name, mut fields) = match s.descriptor().0 {
+            DescriptorKind::Struct(name, fields) => (name, fields),
             _ => panic!("Descriptor was not a struct"),
         };
         assert_eq!(name, "CGPoint");
@@ -120,8 +130,8 @@ mod tests {
     fn test_parsed_struct() {
         let s = StrEncoding::new_unchecked("{CGPoint=ci}");
 
-        let (name, mut fields) = match s.descriptor() {
-            Descriptor::Struct(name, fields) => (name, fields),
+        let (name, mut fields) = match s.descriptor().0 {
+            DescriptorKind::Struct(name, fields) => (name, fields),
             _ => panic!("Descriptor was not a struct"),
         };
         assert_eq!(name, "CGPoint");
