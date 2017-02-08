@@ -77,26 +77,30 @@ impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
     }
 }
 
-pub struct Struct<'a, T> where T: EncodingTuple {
-    name: &'a str,
+pub struct Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+    name: S,
     fields: T,
 }
 
-impl<'a, T> Struct<'a, T> where T: EncodingTuple {
-    pub fn new(name: &'a str, fields: T) -> Struct<'a, T> {
+impl<S, T> Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+    pub fn new(name: S, fields: T) -> Struct<S, T> {
         Struct { name: name, fields: fields }
     }
-}
 
-impl<'a, T> Encoding for Struct<'a, T> where T: EncodingTuple {
-    fn descriptor(&self) -> Descriptor {
-        DescriptorKind::Struct(self.name, FieldsIterator::new(&self.fields)).into()
+    fn name(&self) -> &str {
+        self.name.as_ref()
     }
 }
 
-impl<'a, T> fmt::Display for Struct<'a, T> where T: EncodingTuple {
+impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+    fn descriptor(&self) -> Descriptor {
+        DescriptorKind::Struct(self.name(), FieldsIterator::new(&self.fields)).into()
+    }
+}
+
+impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "{{{}=", self.name)?;
+        write!(formatter, "{{{}=", self.name())?;
         for i in 0.. {
             if let Some(e) = self.fields.encoding_at(i) {
                 write!(formatter, "{}", e)?;
