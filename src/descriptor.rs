@@ -1,6 +1,9 @@
 use std::fmt;
 use std::ops::Deref;
-use super::{Encoding, EncodingTuple, Primitive, StrEncoding, parse};
+
+use Encoding;
+use encodings::{EncodingTuple, Primitive};
+use parse::{StrEncoding, parse};
 
 pub enum Descriptor<'a> {
     Primitive(Primitive),
@@ -75,7 +78,7 @@ impl<'a> Iterator for FieldsIterator<'a> {
     type Item = AnyEncoding<'a>;
 
     fn next(&mut self) -> Option<AnyEncoding<'a>> {
-        use FieldsIterator::*;
+        use self::FieldsIterator::*;
 
         match *self {
             Static(tup, index) => {
