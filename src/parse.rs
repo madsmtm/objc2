@@ -50,22 +50,3 @@ impl<S> fmt::Display for StrEncoding<S> where S: AsRef<str> {
         fmt::Display::fmt(self.buf.as_ref(), formatter)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_parsed_struct() {
-        let s = StrEncoding::new_unchecked("{CGPoint=ci}");
-
-        let (name, mut fields) = match s.descriptor() {
-            Descriptor::Struct(name, fields) => (name, fields),
-            _ => panic!("Descriptor was not a struct"),
-        };
-        assert_eq!(name, "CGPoint");
-        assert_eq!(fields.next().unwrap().to_string(), "c");
-        assert_eq!(fields.next().unwrap().to_string(), "i");
-        assert!(fields.next().is_none());
-    }
-}
