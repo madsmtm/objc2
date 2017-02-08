@@ -23,6 +23,29 @@ pub enum Primitive {
     Unknown,
 }
 
+impl Primitive {
+    fn code(self) -> &'static str {
+        match self {
+            Primitive::Char      => "c",
+            Primitive::Short     => "s",
+            Primitive::Int       => "i",
+            Primitive::LongLong  => "q",
+            Primitive::UChar     => "C",
+            Primitive::UShort    => "S",
+            Primitive::UInt      => "I",
+            Primitive::ULongLong => "Q",
+            Primitive::Float     => "f",
+            Primitive::Double    => "d",
+            Primitive::Bool      => "B",
+            Primitive::Void      => "v",
+            Primitive::Object    => "@",
+            Primitive::Class     => "#",
+            Primitive::Sel       => ":",
+            Primitive::Unknown   => "?",
+        }
+    }
+}
+
 impl Encoding for Primitive {
     fn descriptor(&self) -> Descriptor {
         DescriptorKind::Primitive(*self).into()
@@ -31,12 +54,7 @@ impl Encoding for Primitive {
 
 impl fmt::Display for Primitive {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        let s = match *self {
-            Primitive::Char => "c",
-            Primitive::Int => "i",
-            _ => panic!(),
-        };
-        fmt::Display::fmt(s, formatter)
+        fmt::Display::fmt(self.code(), formatter)
     }
 }
 
