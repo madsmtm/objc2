@@ -3,7 +3,7 @@ use std::ops::Deref;
 
 use Encoding;
 use encodings::{EncodingTuple, Primitive};
-use parse::{StrEncoding, parse};
+use parse::{StrEncoding, chomp};
 
 pub enum DescriptorKind<'a> {
     Primitive(Primitive),
@@ -96,9 +96,9 @@ impl<'a> Iterator for FieldsIterator<'a> {
                 tup.encoding_at(index).map(|e| AnyEncoding::Static(e))
             },
             Parsed(s) => {
-                let (enc, remaining) = parse(s);
+                let (enc, remaining) = chomp(s);
                 *self = Parsed(remaining);
-                enc.map(|e| AnyEncoding::Parsed(e))
+                enc.map(|e| AnyEncoding::Parsed(StrEncoding::new_unchecked(e)))
             },
         }
     }

@@ -4,7 +4,7 @@ use Encoding;
 use descriptor::{Descriptor, DescriptorKind, AnyEncoding, FieldsIterator};
 use encodings::Primitive;
 
-fn chomp(s: &str) -> (Option<&str>, &str) {
+pub fn chomp(s: &str) -> (Option<&str>, &str) {
     let head_len = chomp_ptr(s)
         .or_else(|| chomp_struct(s))
         .or_else(|| {
@@ -63,14 +63,6 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
         "c" => (Some(Primitive::Char), t),
         "i" => (Some(Primitive::Int), t),
         _ => (None, s),
-    }
-}
-
-pub fn parse(s: &str) -> (Option<StrEncoding<&str>>, &str) {
-    if let (Some(h), t) = chomp(s) {
-        (Some(StrEncoding::new_unchecked(h)), t)
-    } else {
-        (None, s)
     }
 }
 
