@@ -98,6 +98,24 @@ fn parse(s: &str) -> ParseResult {
     }
 }
 
+fn is_valid(s: &str) -> bool {
+    match parse(s) {
+        ParseResult::Primitive(_) => true,
+        ParseResult::Pointer(s) => is_valid(s),
+        ParseResult::Struct(_, mut fields) => {
+            while !fields.is_empty() {
+                let (h, t) = chomp(fields);
+                if h.map_or(false, is_valid) {
+                    return false;
+                }
+                fields = t;
+            }
+            true
+        }
+        ParseResult::Error => false,
+    }
+}
+
 pub struct StrEncoding<S> where S: AsRef<str> {
     buf: S,
 }
