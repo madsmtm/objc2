@@ -66,6 +66,38 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
     }
 }
 
+enum ParseResult<'a> {
+    Primitive(Primitive),
+    Pointer(&'a str),
+    Struct(&'a str, &'a str),
+    Error,
+}
+
+fn parse(s: &str) -> ParseResult {
+    if s.starts_with('{') {
+        if !s.ends_with('}') {
+            ParseResult::Error
+        } else if let Some(sep_pos) = s.find('=') {
+            let name = &s[1..sep_pos];
+            let fields = &s[sep_pos + 1..s.len() - 1];
+            ParseResult::Struct(name, fields)
+        } else {
+            ParseResult::Error
+        }
+    } else if s.starts_with('^') {
+        ParseResult::Pointer(&s[1..])
+    } else {
+        let (h, t) = chomp_primitive(s);
+        if !t.is_empty() {
+            ParseResult::Error
+        } else if let Some(p) = h {
+            ParseResult::Primitive(p)
+        } else {
+            ParseResult::Error
+        }
+    }
+}
+
 pub struct StrEncoding<S> where S: AsRef<str> {
     buf: S,
 }
@@ -78,19 +110,17 @@ impl<S> StrEncoding<S> where S: AsRef<str> {
 
 impl<S> Encoding for StrEncoding<S> where S: AsRef<str> {
     fn descriptor(&self) -> Descriptor {
-        let kind = match self.buf.as_ref() {
-            s if s.starts_with('{') => {
-                let sep_pos = s.find('=').unwrap();
-                let f = FieldsIterator::parse(&s[sep_pos + 1..s.len() - 1]);
-                DescriptorKind::Struct(&s[1..sep_pos], f)
-            },
-            s if s.starts_with('^') => {
-                let e = StrEncoding::new_unchecked(&s[1..]);
+        let kind = match parse(self.buf.as_ref()) {
+            ParseResult::Primitive(p) => DescriptorKind::Primitive(p),
+            ParseResult::Pointer(s) => {
+                let e = StrEncoding::new_unchecked(s);
                 DescriptorKind::Pointer(AnyEncoding::Parsed(e))
             },
-            "c" => DescriptorKind::Primitive(Primitive::Char),
-            "i" => DescriptorKind::Primitive(Primitive::Int),
-            _ => panic!(),
+            ParseResult::Struct(name, fields) => {
+                let f = FieldsIterator::parse(fields);
+                DescriptorKind::Struct(name, f)
+            }
+            ParseResult::Error => panic!(),
         };
         kind.into()
     }
