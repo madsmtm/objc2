@@ -101,3 +101,26 @@ impl<S> fmt::Display for StrEncoding<S> where S: AsRef<str> {
         fmt::Display::fmt(self.buf.as_ref(), formatter)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_chomp() {
+        let (h, t) = chomp("{A={B=ci^{C=c}}ci}c^i{C=c}");
+        assert_eq!(h, Some("{A={B=ci^{C=c}}ci}"));
+
+        let (h, t) = chomp(t);
+        assert_eq!(h, Some("c"));
+
+        let (h, t) = chomp(t);
+        assert_eq!(h, Some("^i"));
+
+        let (h, t) = chomp(t);
+        assert_eq!(h, Some("{C=c}"));
+
+        let (h, _) = chomp(t);
+        assert_eq!(h, None);
+    }
+}
