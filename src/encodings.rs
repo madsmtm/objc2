@@ -58,26 +58,23 @@ impl fmt::Display for Primitive {
     }
 }
 
-pub struct Pointer<T> where T: Encoding {
-    t: T,
-    is_const: bool,
-}
+pub struct Pointer<T>(T) where T: Encoding;
 
 impl<T> Pointer<T> where T: Encoding {
-    pub fn new(pointee: T, is_const: bool) -> Pointer<T> {
-        Pointer { t: pointee, is_const: is_const }
+    pub fn new(pointee: T) -> Pointer<T> {
+        Pointer(pointee)
     }
 }
 
 impl<T> Encoding for Pointer<T> where T: Encoding {
     fn descriptor(&self) -> Descriptor {
-        DescriptorKind::Pointer(AnyEncoding::Static(&self.t), self.is_const).into()
+        DescriptorKind::Pointer(AnyEncoding::Static(&self.0)).into()
     }
 }
 
 impl<T> fmt::Display for Pointer<T> where T: Encoding {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "{}^{}", if self.is_const {"r"} else {""}, self.t)
+        write!(formatter, "^{}", self.0)
     }
 }
 
@@ -139,7 +136,7 @@ mod tests {
 
     #[test]
     fn test_pointer_display() {
-        let e = Pointer::new(Primitive::Int, false);
+        let e = Pointer::new(Primitive::Int);
         assert_eq!(e.to_string(), "^i");
     }
 }

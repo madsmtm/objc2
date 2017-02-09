@@ -32,11 +32,7 @@ impl<S> Encoding for StrEncoding<S> where S: AsRef<str> {
             },
             s if s.starts_with('^') => {
                 let e = StrEncoding::new_unchecked(&s[1..]);
-                DescriptorKind::Pointer(AnyEncoding::Parsed(e), false)
-            },
-            s if s.starts_with("r^") => {
-                let e = StrEncoding::new_unchecked(&s[2..]);
-                DescriptorKind::Pointer(AnyEncoding::Parsed(e), true)
+                DescriptorKind::Pointer(AnyEncoding::Parsed(e))
             },
             "c" => DescriptorKind::Primitive(Primitive::Char),
             "i" => DescriptorKind::Primitive(Primitive::Int),

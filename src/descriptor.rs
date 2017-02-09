@@ -7,7 +7,7 @@ use parse::{StrEncoding, parse};
 
 pub enum DescriptorKind<'a> {
     Primitive(Primitive),
-    Pointer(AnyEncoding<'a>, bool),
+    Pointer(AnyEncoding<'a>),
     Struct(&'a str, FieldsIterator<'a>),
 }
 
@@ -27,8 +27,8 @@ impl<'a> Descriptor<'a> {
             (Primitive(p1), Primitive(p2)) => {
                 p1 == p2
             },
-            (Pointer(e1, c1), Pointer(e2, c2)) => {
-                c1 == c2 && e1 == e2
+            (Pointer(e1), Pointer(e2)) => {
+                e1 == e2
             },
             (Struct(n1, f1), Struct(n2, f2)) => {
                 n1 == n2 && f1.eq(f2)
@@ -148,7 +148,7 @@ mod tests {
         assert!(i.descriptor().eq(i.descriptor()));
         assert!(!i.descriptor().eq(c.descriptor()));
 
-        let p = Pointer::new(i, false);
+        let p = Pointer::new(i);
         assert!(p.descriptor().eq(p.descriptor()));
         assert!(!p.descriptor().eq(i.descriptor()));
 
