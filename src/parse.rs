@@ -219,8 +219,7 @@ impl Encoding for StrStructEncoding {
 
     fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
-            // TODO: construct a comparator here
-            false
+            self.name() == s.name() && s.fields_eq(self.fields())
         } else {
             false
         }
@@ -265,6 +264,16 @@ impl<'a> Iterator for StrFields<'a> {
             self.fields = t;
             Some(StrEncoding::new_unchecked(h.unwrap()))
         }
+    }
+}
+
+impl<'a> FieldsComparator for StrFields<'a> {
+    fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
+        self.next().map_or(false, |e| e.eq_encoding(other))
+    }
+
+    fn is_finished(&self) -> bool {
+        self.fields.is_empty()
     }
 }
 
