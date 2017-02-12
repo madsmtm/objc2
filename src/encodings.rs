@@ -124,9 +124,7 @@ impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
     }
 
     fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
-        write!(formatter, "{}", self.0)?;
-        write!(formatter, "{}", self.1)?;
-        Ok(())
+        write!(formatter, "{}{}", self.0, self.1)
     }
 
     fn encoding_at_eq<T: ?Sized + Encoding>(&self, index: u8, other: &T) -> bool {
