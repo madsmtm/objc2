@@ -201,6 +201,12 @@ impl StrStructEncoding {
     fn new_unchecked(s: &str) -> &StrStructEncoding {
         unsafe { mem::transmute(s) }
     }
+
+    fn fields(&self) -> StrFields {
+        let sep_pos = (self.0).0.find('=').unwrap();
+        let fields = &(self.0).0[sep_pos + 1..(self.0).0.len() - 1];
+        StrFields { fields: fields }
+    }
 }
 
 impl Encoding for StrStructEncoding {
@@ -228,16 +234,10 @@ impl StructEncoding for StrStructEncoding {
     }
 
     fn fields_eq<F: FieldsComparator>(&self, mut other: F) -> bool {
-        let sep_pos = (self.0).0.find('=').unwrap();
-        let mut fields = &(self.0).0[sep_pos + 1..(self.0).0.len() - 1];
-
-        while !fields.is_empty() {
-            let (h, t) = chomp(fields);
-            let enc = StrEncoding::new_unchecked(h.unwrap());
+        for enc in self.fields() {
             if !other.eq_next(enc) {
                 return false;
             }
-            fields = t;
         }
 
         other.is_finished()
@@ -247,6 +247,24 @@ impl StructEncoding for StrStructEncoding {
 impl fmt::Display for StrStructEncoding {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.0, formatter)
+    }
+}
+
+struct StrFields<'a> {
+    fields: &'a str,
+}
+
+impl<'a> Iterator for StrFields<'a> {
+    type Item = &'a StrEncoding;
+
+    fn next(&mut self) -> Option<&'a StrEncoding> {
+        if self.fields.is_empty() {
+            None
+        } else {
+            let (h, t) = chomp(self.fields);
+            self.fields = t;
+            Some(StrEncoding::new_unchecked(h.unwrap()))
+        }
     }
 }
 
