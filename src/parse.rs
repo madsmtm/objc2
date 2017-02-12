@@ -116,17 +116,17 @@ fn is_valid(s: &str) -> bool {
     }
 }
 
-pub struct StrEncoding<S> where S: AsRef<str> {
+pub struct StringEncoding<S> where S: AsRef<str> {
     buf: S,
 }
 
-impl<S> StrEncoding<S> where S: AsRef<str> {
-    pub fn new_unchecked(s: S) -> StrEncoding<S> {
-        StrEncoding { buf: s }
+impl<S> StringEncoding<S> where S: AsRef<str> {
+    pub fn new_unchecked(s: S) -> StringEncoding<S> {
+        StringEncoding { buf: s }
     }
 }
 
-impl<S> fmt::Display for StrEncoding<S> where S: AsRef<str> {
+impl<S> fmt::Display for StringEncoding<S> where S: AsRef<str> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(self.buf.as_ref(), formatter)
     }
