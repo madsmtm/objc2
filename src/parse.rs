@@ -1,6 +1,5 @@
 use std::fmt;
 use std::mem;
-use std::ops::Deref;
 
 use {Encoding, PointerEncoding, StructEncoding, FieldsComparator};
 use descriptor::Descriptor;
@@ -127,7 +126,7 @@ fn is_valid(s: &str) -> bool {
     }
 }
 
-pub struct StrEncoding(str);
+pub struct StrEncoding<S = str>(S) where S: ?Sized + AsRef<str>;
 
 impl StrEncoding {
     pub fn new_unchecked(s: &str) -> &StrEncoding {
@@ -135,12 +134,24 @@ impl StrEncoding {
     }
 }
 
-impl Encoding for StrEncoding {
+impl<S> StrEncoding<S> where S: AsRef<str> {
+    pub fn from_buf_unchecked(s: S) -> StrEncoding<S> {
+        StrEncoding(s)
+    }
+}
+
+impl<S> StrEncoding<S> where S: ?Sized + AsRef<str> {
+    fn as_str(&self) -> &str {
+        self.0.as_ref()
+    }
+}
+
+impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
     type Pointer = StrPointerEncoding;
     type Struct = StrStructEncoding;
 
     fn descriptor(&self) -> Descriptor<StrPointerEncoding, StrStructEncoding> {
-        let s = &self.0;
+        let s = self.as_str();
         match parse(s) {
             ParseResult::Primitive(p) => Descriptor::Primitive(p),
             ParseResult::Pointer =>
@@ -156,9 +167,9 @@ impl Encoding for StrEncoding {
     }
 }
 
-impl fmt::Display for StrEncoding {
+impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(&self.0, formatter)
+        fmt::Display::fmt(self.as_str(), formatter)
     }
 }
 
@@ -286,43 +297,6 @@ impl<'a> FieldsComparator for StrFields<'a> {
 
     fn is_finished(&self) -> bool {
         self.fields.is_empty()
-    }
-}
-
-pub struct StringEncoding<S> where S: AsRef<str> {
-    buf: S,
-}
-
-impl<S> StringEncoding<S> where S: AsRef<str> {
-    pub fn new_unchecked(s: S) -> StringEncoding<S> {
-        StringEncoding { buf: s }
-    }
-}
-
-impl<S> Deref for StringEncoding<S> where S: AsRef<str> {
-    type Target = StrEncoding;
-
-    fn deref(&self) -> &StrEncoding {
-        StrEncoding::new_unchecked(self.buf.as_ref())
-    }
-}
-
-impl<S> Encoding for StringEncoding<S> where S: AsRef<str> {
-    type Pointer = StrPointerEncoding;
-    type Struct = StrStructEncoding;
-
-    fn descriptor(&self) -> Descriptor<StrPointerEncoding, StrStructEncoding> {
-        (**self).descriptor()
-    }
-
-    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
-        self.descriptor().eq_encoding(other)
-    }
-}
-
-impl<S> fmt::Display for StringEncoding<S> where S: AsRef<str> {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(self.buf.as_ref(), formatter)
     }
 }
 

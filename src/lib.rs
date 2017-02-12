@@ -6,7 +6,6 @@ use std::fmt;
 
 pub use descriptor::Descriptor;
 pub use encodings::{Primitive, Pointer, Struct, EncodingTuple};
-pub use parse::StringEncoding;
 
 pub trait Encoding: fmt::Display {
     type Pointer: ?Sized + PointerEncoding;
