@@ -1,6 +1,6 @@
 use std::fmt;
 
-use Encoding;
+use {Encoding, PointerEncoding, StructEncoding, FieldsComparator};
 use descriptor::{Descriptor, DescriptorKind, AnyEncoding, FieldsIterator};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -72,6 +72,14 @@ impl<T> Encoding for Pointer<T> where T: Encoding {
     }
 }
 
+impl<T> PointerEncoding for Pointer<T> where T: Encoding {
+    type Pointee = T;
+
+    fn pointee(&self) -> &T {
+        &self.0
+    }
+}
+
 impl<T> fmt::Display for Pointer<T> where T: Encoding {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "^{}", self.0)
@@ -101,16 +109,30 @@ impl<S, T> Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     pub fn new(name: S, fields: T) -> Struct<S, T> {
         Struct { name: name, fields: fields }
     }
-
-    fn name(&self) -> &str {
-        self.name.as_ref()
-    }
 }
 
 impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     fn descriptor(&self) -> Descriptor {
         DescriptorKind::Struct(self.name(), FieldsIterator::new(&self.fields)).into()
     }
+}
+
+impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+    fn name(&self) -> &str {
+        self.name.as_ref()
+    }
+
+    fn fields_eq<F: FieldsComparator>(&self, mut other: F) -> bool {
+        for i in 0.. {
+            if let Some(e) = self.fields.encoding_at(i) {
+                if !other.eq_next(e) {
+                    return false;
+                }
+            } else { break; }
+        }
+        other.is_finished()
+    }
+
 }
 
 impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
