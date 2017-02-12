@@ -129,13 +129,13 @@ fn is_valid(s: &str) -> bool {
 pub struct StrEncoding<S = str>(S) where S: ?Sized + AsRef<str>;
 
 impl StrEncoding {
-    pub fn new_unchecked(s: &str) -> &StrEncoding {
+    fn from_str_unchecked(s: &str) -> &StrEncoding {
         unsafe { mem::transmute(s) }
     }
 }
 
 impl<S> StrEncoding<S> where S: AsRef<str> {
-    pub fn from_buf_unchecked(s: S) -> StrEncoding<S> {
+    pub fn new_unchecked(s: S) -> StrEncoding<S> {
         StrEncoding(s)
     }
 }
@@ -155,9 +155,9 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
         match parse(s) {
             ParseResult::Primitive(p) => Descriptor::Primitive(p),
             ParseResult::Pointer =>
-                Descriptor::Pointer(StrPointerEncoding::new_unchecked(s)),
+                Descriptor::Pointer(StrPointerEncoding::from_str_unchecked(s)),
             ParseResult::Struct =>
-                Descriptor::Struct(StrStructEncoding::new_unchecked(s)),
+                Descriptor::Struct(StrStructEncoding::from_str_unchecked(s)),
             ParseResult::Error => panic!(),
         }
     }
@@ -176,7 +176,7 @@ impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
 pub struct StrPointerEncoding(StrEncoding);
 
 impl StrPointerEncoding {
-    fn new_unchecked(s: &str) -> &StrPointerEncoding {
+    fn from_str_unchecked(s: &str) -> &StrPointerEncoding {
         unsafe { mem::transmute(s) }
     }
 }
@@ -202,7 +202,7 @@ impl PointerEncoding for StrPointerEncoding {
     type Pointee = StrEncoding;
 
     fn pointee(&self) -> &StrEncoding {
-        StrEncoding::new_unchecked(&(self.0).0[1..])
+        StrEncoding::from_str_unchecked(&self.0.as_str()[1..])
     }
 }
 
@@ -215,12 +215,12 @@ impl fmt::Display for StrPointerEncoding {
 pub struct StrStructEncoding(StrEncoding);
 
 impl StrStructEncoding {
-    fn new_unchecked(s: &str) -> &StrStructEncoding {
+    fn from_str_unchecked(s: &str) -> &StrStructEncoding {
         unsafe { mem::transmute(s) }
     }
 
     fn contents(&self) -> (&str, StrFields) {
-        let s = &(self.0).0;
+        let s = self.0.as_str();
         let (name, fields) = parse_struct(s).unwrap();
         (name, StrFields { fields: fields })
     }
@@ -285,7 +285,7 @@ impl<'a> Iterator for StrFields<'a> {
         } else {
             let (h, t) = chomp(self.fields);
             self.fields = t;
-            Some(StrEncoding::new_unchecked(h.unwrap()))
+            Some(StrEncoding::from_str_unchecked(h.unwrap()))
         }
     }
 }
@@ -324,7 +324,7 @@ mod tests {
 
     #[test]
     fn test_parsed_struct() {
-        let s = StrStructEncoding::new_unchecked("{CGPoint=ci}");
+        let s = StrStructEncoding::from_str_unchecked("{CGPoint=ci}");
 
         let (name, mut fields) = s.contents();
         assert_eq!(name, "CGPoint");

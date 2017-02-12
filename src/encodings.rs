@@ -292,7 +292,7 @@ mod tests {
         assert!(!s.eq_encoding(&i));
 
         let s2 = StrEncoding::new_unchecked("{CGPoint=ci}");
-        assert!(s2.eq_encoding(s2));
-        assert!(s.eq_encoding(s2));
+        assert!(s2.eq_encoding(&s2));
+        assert!(s.eq_encoding(&s2));
     }
 }
