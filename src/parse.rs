@@ -219,7 +219,7 @@ impl Encoding for StrStructEncoding {
 
     fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
-            self.name() == s.name() && s.fields_eq(self.fields())
+            s.eq_struct(self.name(), self.fields())
         } else {
             false
         }
@@ -232,7 +232,11 @@ impl StructEncoding for StrStructEncoding {
         &(self.0).0[1..sep_pos]
     }
 
-    fn fields_eq<F: FieldsComparator>(&self, mut other: F) -> bool {
+    fn eq_struct<F: FieldsComparator>(&self, name: &str, mut other: F) -> bool {
+        if self.name() != name {
+            return false;
+        }
+
         for enc in self.fields() {
             if !other.eq_next(enc) {
                 return false;

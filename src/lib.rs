@@ -24,7 +24,7 @@ pub trait FieldsComparator {
 
 pub trait StructEncoding: Encoding {
     fn name(&self) -> &str;
-    fn fields_eq<T: FieldsComparator>(&self, T) -> bool;
+    fn eq_struct<T: FieldsComparator>(&self, name: &str, fields: T) -> bool;
 }
 
 pub trait PointerEncoding: Encoding {

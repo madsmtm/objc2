@@ -187,8 +187,7 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
-            self.name() == s.name() &&
-                s.fields_eq(EncodingTupleComparator::new(&self.fields))
+            s.eq_struct(self.name(), EncodingTupleComparator::new(&self.fields))
         } else {
             false
         }
@@ -200,10 +199,9 @@ impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple
         self.name.as_ref()
     }
 
-    fn fields_eq<F: FieldsComparator>(&self, other: F) -> bool {
-        self.fields.eq(other)
+    fn eq_struct<F: FieldsComparator>(&self, name: &str, fields: F) -> bool {
+        self.name() == name && self.fields.eq(fields)
     }
-
 }
 
 impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
@@ -242,7 +240,7 @@ impl StructEncoding for Never {
         match self { }
     }
 
-    fn fields_eq<T: FieldsComparator>(&self, _: T) -> bool {
+    fn eq_struct<T: FieldsComparator>(&self, _: &str, _: T) -> bool {
         match self { }
     }
 }
