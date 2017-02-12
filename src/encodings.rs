@@ -87,7 +87,7 @@ impl<T> Encoding for Pointer<T> where T: Encoding {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Pointer(p) = other.descriptor() {
-            self.0.eq_encoding(p)
+            self.0.eq_encoding(p.pointee())
         } else {
             false
         }
