@@ -102,12 +102,18 @@ fn parse_struct(s: &str) -> Option<(&str, &str)> {
     }
 }
 
-/*
 fn is_valid(s: &str) -> bool {
     match parse(s) {
         ParseResult::Primitive(_) => true,
-        ParseResult::Pointer(s) => is_valid(s),
-        ParseResult::Struct(_, mut fields) => {
+        ParseResult::Pointer => {
+            let pointee = &s[1..];
+            is_valid(pointee)
+        },
+        ParseResult::Struct => {
+            let mut fields = match parse_struct(s) {
+                Some((_, fields)) => fields,
+                _ => return false,
+            };
             while !fields.is_empty() {
                 let (h, t) = chomp(fields);
                 if h.map_or(false, is_valid) {
@@ -120,7 +126,6 @@ fn is_valid(s: &str) -> bool {
         ParseResult::Error => false,
     }
 }
-*/
 
 pub struct StrEncoding(str);
 
