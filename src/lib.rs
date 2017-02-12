@@ -9,8 +9,8 @@ pub use encodings::{Primitive, Pointer, Struct, EncodingTuple};
 pub use parse::StringEncoding;
 
 pub trait Encoding: fmt::Display {
-    type Pointer: PointerEncoding;
-    type Struct: StructEncoding;
+    type Pointer: ?Sized + PointerEncoding;
+    type Struct: ?Sized + StructEncoding;
 
     fn descriptor(&self) -> Descriptor<Self::Pointer, Self::Struct>;
 }
@@ -26,7 +26,7 @@ pub trait StructEncoding: Encoding {
 }
 
 pub trait PointerEncoding: Encoding {
-    type Pointee: Encoding;
+    type Pointee: ?Sized + Encoding;
 
     fn pointee(&self) -> &Self::Pointee;
 }

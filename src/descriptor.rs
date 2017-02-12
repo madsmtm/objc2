@@ -2,8 +2,8 @@ use {PointerEncoding, StructEncoding};
 use encodings::Primitive;
 
 pub enum Descriptor<'a, P, S>
-        where P: 'a + PointerEncoding,
-              S: 'a + StructEncoding {
+        where P: 'a + ?Sized + PointerEncoding,
+              S: 'a + ?Sized + StructEncoding {
     Primitive(Primitive),
     Pointer(&'a P),
     Struct(&'a S),

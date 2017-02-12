@@ -1,8 +1,9 @@
-#![allow(dead_code)]
-
 use std::fmt;
+use std::mem;
 
-use encodings::Primitive;
+use {Encoding, PointerEncoding};
+use descriptor::Descriptor;
+use encodings::{Primitive, Never};
 
 pub fn chomp(s: &str) -> (Option<&str>, &str) {
     let head_len = chomp_ptr(s)
@@ -66,6 +67,7 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
     }
 }
 
+/*
 enum ParseResult<'a> {
     Primitive(Primitive),
     Pointer(&'a str),
@@ -113,6 +115,68 @@ fn is_valid(s: &str) -> bool {
             true
         }
         ParseResult::Error => false,
+    }
+}
+*/
+
+pub struct StrEncoding(str);
+
+impl StrEncoding {
+    pub fn new_unchecked(s: &str) -> &StrEncoding {
+        unsafe { mem::transmute(s) }
+    }
+}
+
+impl Encoding for StrEncoding {
+    type Pointer = StrPointerEncoding;
+    type Struct = Never;
+
+    fn descriptor(&self) -> Descriptor<StrPointerEncoding, Never> {
+        if self.0.starts_with("^") {
+            Descriptor::Pointer(StrPointerEncoding::new_unchecked(&self.0))
+        } else {
+            match chomp_primitive(&self.0) {
+                (Some(p), t) if t.is_empty() => Descriptor::Primitive(p),
+                _ => panic!(),
+            }
+        }
+    }
+}
+
+impl fmt::Display for StrEncoding {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(&self.0, formatter)
+    }
+}
+
+pub struct StrPointerEncoding(StrEncoding);
+
+impl StrPointerEncoding {
+    fn new_unchecked(s: &str) -> &StrPointerEncoding {
+        unsafe { mem::transmute(s) }
+    }
+}
+
+impl Encoding for StrPointerEncoding {
+    type Pointer = StrPointerEncoding;
+    type Struct = Never;
+
+    fn descriptor(&self) -> Descriptor<StrPointerEncoding, Never> {
+        Descriptor::Pointer(self)
+    }
+}
+
+impl PointerEncoding for StrPointerEncoding {
+    type Pointee = StrEncoding;
+
+    fn pointee(&self) -> &StrEncoding {
+        StrEncoding::new_unchecked(&(self.0).0[1..])
+    }
+}
+
+impl fmt::Display for StrPointerEncoding {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(&self.0, formatter)
     }
 }
 
