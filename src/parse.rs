@@ -335,4 +335,15 @@ mod tests {
         let (h, _) = chomp(t);
         assert_eq!(h, None);
     }
+
+    #[test]
+    fn test_parsed_struct() {
+        let s = StrStructEncoding::new_unchecked("{CGPoint=ci}");
+        assert_eq!(s.name(), "CGPoint");
+
+        let mut fields = s.fields();
+        assert_eq!(fields.next().unwrap().to_string(), "c");
+        assert_eq!(fields.next().unwrap().to_string(), "i");
+        assert!(fields.next().is_none());
+    }
 }
