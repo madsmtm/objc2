@@ -1,30 +1,12 @@
-use std::ops::Deref;
-
 use {PointerEncoding, StructEncoding};
 use encodings::Primitive;
-
-pub enum MaybeOwned<'a, T: 'a> {
-    Borrowed(&'a T),
-    Owned(T),
-}
-
-impl<'a, T: 'a> Deref for MaybeOwned<'a, T> {
-    type Target = T;
-
-    fn deref(&self) -> &T {
-        match *self {
-            MaybeOwned::Borrowed(t) => t,
-            MaybeOwned::Owned(ref t) => t,
-        }
-    }
-}
 
 pub enum Descriptor<'a, P, S>
         where P: 'a + PointerEncoding,
               S: 'a + StructEncoding {
     Primitive(Primitive),
-    Pointer(MaybeOwned<'a, P>),
-    Struct(MaybeOwned<'a, S>),
+    Pointer(&'a P),
+    Struct(&'a S),
 }
 
 #[cfg(test)]

@@ -1,7 +1,7 @@
 use std::fmt;
 
 use {Encoding, PointerEncoding, StructEncoding, FieldsComparator};
-use descriptor::{Descriptor, MaybeOwned};
+use descriptor::Descriptor;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Primitive {
@@ -74,7 +74,7 @@ impl<T> Encoding for Pointer<T> where T: Encoding {
     type Struct = Never;
 
     fn descriptor(&self) -> Descriptor<Self, Never> {
-        Descriptor::Pointer(MaybeOwned::Borrowed(self))
+        Descriptor::Pointer(self)
     }
 }
 
@@ -126,7 +126,7 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     type Struct = Self;
 
     fn descriptor(&self) -> Descriptor<Never, Self> {
-        Descriptor::Struct(MaybeOwned::Borrowed(self))
+        Descriptor::Struct(self)
     }
 }
 

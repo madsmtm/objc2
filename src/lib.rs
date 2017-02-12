@@ -4,7 +4,7 @@ mod parse;
 
 use std::fmt;
 
-pub use descriptor::{MaybeOwned, Descriptor};
+pub use descriptor::Descriptor;
 pub use encodings::{Primitive, Pointer, Struct, EncodingTuple};
 pub use parse::StringEncoding;
 
