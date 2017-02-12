@@ -1,7 +1,7 @@
 use std::fmt;
 use std::mem;
 
-use {Encoding, PointerEncoding};
+use {Encoding, PointerEncoding, StructEncoding, FieldsComparator};
 use descriptor::Descriptor;
 use encodings::{Primitive, Never};
 
@@ -129,11 +129,13 @@ impl StrEncoding {
 
 impl Encoding for StrEncoding {
     type Pointer = StrPointerEncoding;
-    type Struct = Never;
+    type Struct = StrStructEncoding;
 
-    fn descriptor(&self) -> Descriptor<StrPointerEncoding, Never> {
+    fn descriptor(&self) -> Descriptor<StrPointerEncoding, StrStructEncoding> {
         if self.0.starts_with("^") {
             Descriptor::Pointer(StrPointerEncoding::new_unchecked(&self.0))
+        } else if self.0.starts_with("{") {
+            Descriptor::Struct(StrStructEncoding::new_unchecked(&self.0))
         } else {
             match chomp_primitive(&self.0) {
                 (Some(p), t) if t.is_empty() => Descriptor::Primitive(p),
@@ -175,6 +177,52 @@ impl PointerEncoding for StrPointerEncoding {
 }
 
 impl fmt::Display for StrPointerEncoding {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(&self.0, formatter)
+    }
+}
+
+pub struct StrStructEncoding(StrEncoding);
+
+impl StrStructEncoding {
+    fn new_unchecked(s: &str) -> &StrStructEncoding {
+        unsafe { mem::transmute(s) }
+    }
+}
+
+impl Encoding for StrStructEncoding {
+    type Pointer = Never;
+    type Struct = StrStructEncoding;
+
+    fn descriptor(&self) -> Descriptor<Never, StrStructEncoding> {
+        Descriptor::Struct(self)
+    }
+}
+
+impl StructEncoding for StrStructEncoding {
+    fn name(&self) -> &str {
+        let sep_pos = (self.0).0.find('=').unwrap();
+        &(self.0).0[1..sep_pos]
+    }
+
+    fn fields_eq<F: FieldsComparator>(&self, mut other: F) -> bool {
+        let sep_pos = (self.0).0.find('=').unwrap();
+        let mut fields = &(self.0).0[sep_pos + 1..(self.0).0.len() - 1];
+
+        while !fields.is_empty() {
+            let (h, t) = chomp(fields);
+            let enc = StrEncoding::new_unchecked(h.unwrap());
+            if !other.eq_next(enc) {
+                return false;
+            }
+            fields = t;
+        }
+
+        other.is_finished()
+    }
+}
+
+impl fmt::Display for StrStructEncoding {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.0, formatter)
     }
