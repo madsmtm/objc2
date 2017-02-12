@@ -13,6 +13,8 @@ pub trait Encoding: fmt::Display {
     type Struct: ?Sized + StructEncoding;
 
     fn descriptor(&self) -> Descriptor<Self::Pointer, Self::Struct>;
+
+    fn eq_encoding<T: ?Sized + Encoding>(&self, &T) -> bool;
 }
 
 pub trait FieldsComparator {

@@ -53,6 +53,14 @@ impl Encoding for Primitive {
     fn descriptor(&self) -> Descriptor<Never, Never> {
         Descriptor::Primitive(*self)
     }
+
+    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
+        if let Descriptor::Primitive(p) = other.descriptor() {
+            *self == p
+        } else {
+            false
+        }
+    }
 }
 
 impl fmt::Display for Primitive {
@@ -75,6 +83,14 @@ impl<T> Encoding for Pointer<T> where T: Encoding {
 
     fn descriptor(&self) -> Descriptor<Self, Never> {
         Descriptor::Pointer(self)
+    }
+
+    fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
+        if let Descriptor::Pointer(p) = other.descriptor() {
+            self.0.eq_encoding(p)
+        } else {
+            false
+        }
     }
 }
 
@@ -128,6 +144,15 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     fn descriptor(&self) -> Descriptor<Never, Self> {
         Descriptor::Struct(self)
     }
+
+    fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
+        if let Descriptor::Struct(s) = other.descriptor() {
+            // TODO: construct a comparator here
+            false
+        } else {
+            false
+        }
+    }
 }
 
 impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
@@ -156,6 +181,10 @@ impl Encoding for Never {
     type Struct = Never;
 
     fn descriptor(&self) -> Descriptor<Never, Never> {
+        match self { }
+    }
+
+    fn eq_encoding<T: ?Sized + Encoding>(&self, _: &T) -> bool {
         match self { }
     }
 }

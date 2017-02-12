@@ -143,6 +143,10 @@ impl Encoding for StrEncoding {
             }
         }
     }
+
+    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
+        self.descriptor().eq_encoding(other)
+    }
 }
 
 impl fmt::Display for StrEncoding {
@@ -165,6 +169,14 @@ impl Encoding for StrPointerEncoding {
 
     fn descriptor(&self) -> Descriptor<StrPointerEncoding, Never> {
         Descriptor::Pointer(self)
+    }
+
+    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
+        if let Descriptor::Pointer(p) = other.descriptor() {
+            self.pointee().eq_encoding(p)
+        } else {
+            false
+        }
     }
 }
 
@@ -196,6 +208,15 @@ impl Encoding for StrStructEncoding {
 
     fn descriptor(&self) -> Descriptor<Never, StrStructEncoding> {
         Descriptor::Struct(self)
+    }
+
+    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
+        if let Descriptor::Struct(s) = other.descriptor() {
+            // TODO: construct a comparator here
+            false
+        } else {
+            false
+        }
     }
 }
 
