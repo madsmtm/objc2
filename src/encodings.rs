@@ -112,6 +112,10 @@ pub trait EncodingTuple {
     fn eq<F: FieldsComparator>(&self, F) -> bool;
 
     fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
+
+    fn encoding_at_eq<T: ?Sized + Encoding>(&self, u8, &T) -> bool;
+
+    fn len(&self) -> u8;
 }
 
 impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
@@ -124,6 +128,16 @@ impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
         write!(formatter, "{}", self.1)?;
         Ok(())
     }
+
+    fn encoding_at_eq<T: ?Sized + Encoding>(&self, index: u8, other: &T) -> bool {
+        match index {
+            0 => self.0.eq_encoding(other),
+            1 => self.1.eq_encoding(other),
+            _ => false,
+        }
+    }
+
+    fn len(&self) -> u8 { 2 }
 }
 
 pub struct Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
