@@ -1,5 +1,6 @@
 use std::fmt;
 use std::mem;
+use std::ops::Deref;
 
 use {Encoding, PointerEncoding, StructEncoding, FieldsComparator};
 use descriptor::Descriptor;
@@ -256,6 +257,27 @@ pub struct StringEncoding<S> where S: AsRef<str> {
 impl<S> StringEncoding<S> where S: AsRef<str> {
     pub fn new_unchecked(s: S) -> StringEncoding<S> {
         StringEncoding { buf: s }
+    }
+}
+
+impl<S> Deref for StringEncoding<S> where S: AsRef<str> {
+    type Target = StrEncoding;
+
+    fn deref(&self) -> &StrEncoding {
+        StrEncoding::new_unchecked(self.buf.as_ref())
+    }
+}
+
+impl<S> Encoding for StringEncoding<S> where S: AsRef<str> {
+    type Pointer = StrPointerEncoding;
+    type Struct = StrStructEncoding;
+
+    fn descriptor(&self) -> Descriptor<StrPointerEncoding, StrStructEncoding> {
+        (**self).descriptor()
+    }
+
+    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
+        self.descriptor().eq_encoding(other)
     }
 }
 
