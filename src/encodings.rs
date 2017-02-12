@@ -140,6 +140,34 @@ impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
     fn len(&self) -> u8 { 2 }
 }
 
+struct EncodingTupleComparator<'a, T> where T: 'a + EncodingTuple {
+    encs: &'a T,
+    index: u8,
+}
+
+impl<'a, T> EncodingTupleComparator<'a, T> where T: 'a + EncodingTuple {
+    fn new(encs: &'a T) -> EncodingTupleComparator<'a, T> {
+        EncodingTupleComparator { encs: encs, index: 0 }
+    }
+}
+
+impl<'a, T> FieldsComparator for EncodingTupleComparator<'a, T>
+        where T: 'a + EncodingTuple {
+    fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
+        let index = self.index;
+        if index < self.encs.len() {
+            self.index += 1;
+            self.encs.encoding_at_eq(index, other)
+        } else {
+            false
+        }
+    }
+
+    fn is_finished(&self) -> bool {
+        self.index >= self.encs.len()
+    }
+}
+
 pub struct Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     name: S,
     fields: T,
@@ -161,8 +189,8 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
-            // TODO: construct a comparator here
-            false
+            self.name() == s.name() &&
+                s.fields_eq(EncodingTupleComparator::new(&self.fields))
         } else {
             false
         }
