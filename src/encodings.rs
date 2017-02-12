@@ -1,7 +1,7 @@
 use std::fmt;
 
 use {Encoding, PointerEncoding, StructEncoding, FieldsComparator};
-use descriptor::{Descriptor, DescriptorKind, AnyEncoding, FieldsIterator};
+use descriptor::{Descriptor, MaybeOwned};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Primitive {
@@ -47,8 +47,11 @@ impl Primitive {
 }
 
 impl Encoding for Primitive {
-    fn descriptor(&self) -> Descriptor {
-        DescriptorKind::Primitive(*self).into()
+    type Pointer = Never;
+    type Struct = Never;
+
+    fn descriptor(&self) -> Descriptor<Never, Never> {
+        Descriptor::Primitive(*self)
     }
 }
 
@@ -67,8 +70,11 @@ impl<T> Pointer<T> where T: Encoding {
 }
 
 impl<T> Encoding for Pointer<T> where T: Encoding {
-    fn descriptor(&self) -> Descriptor {
-        DescriptorKind::Pointer(AnyEncoding::Static(&self.0)).into()
+    type Pointer = Self;
+    type Struct = Never;
+
+    fn descriptor(&self) -> Descriptor<Self, Never> {
+        Descriptor::Pointer(MaybeOwned::Borrowed(self))
     }
 }
 
@@ -87,16 +93,20 @@ impl<T> fmt::Display for Pointer<T> where T: Encoding {
 }
 
 pub trait EncodingTuple {
-    fn encoding_at(&self, i: u8) -> Option<&Encoding>;
+    fn eq<F: FieldsComparator>(&self, F) -> bool;
+
+    fn fmt_all(&self, &mut fmt::Formatter) -> fmt::Result;
 }
 
 impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
-    fn encoding_at(&self, i: u8) -> Option<&Encoding> {
-        match i {
-            0 => Some(&self.0),
-            1 => Some(&self.1),
-            _ => None,
-        }
+    fn eq<F: FieldsComparator>(&self, mut fields: F) -> bool {
+        fields.eq_next(&self.0) && fields.eq_next(&self.1) && fields.is_finished()
+    }
+
+    fn fmt_all(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "{}", self.0)?;
+        write!(formatter, "{}", self.1)?;
+        Ok(())
     }
 }
 
@@ -112,8 +122,11 @@ impl<S, T> Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
 }
 
 impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
-    fn descriptor(&self) -> Descriptor {
-        DescriptorKind::Struct(self.name(), FieldsIterator::new(&self.fields)).into()
+    type Pointer = Never;
+    type Struct = Self;
+
+    fn descriptor(&self) -> Descriptor<Never, Self> {
+        Descriptor::Struct(MaybeOwned::Borrowed(self))
     }
 }
 
@@ -122,15 +135,8 @@ impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple
         self.name.as_ref()
     }
 
-    fn fields_eq<F: FieldsComparator>(&self, mut other: F) -> bool {
-        for i in 0.. {
-            if let Some(e) = self.fields.encoding_at(i) {
-                if !other.eq_next(e) {
-                    return false;
-                }
-            } else { break; }
-        }
-        other.is_finished()
+    fn fields_eq<F: FieldsComparator>(&self, other: F) -> bool {
+        self.fields.eq(other)
     }
 
 }
@@ -138,12 +144,43 @@ impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple
 impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "{{{}=", self.name())?;
-        for i in 0.. {
-            if let Some(e) = self.fields.encoding_at(i) {
-                write!(formatter, "{}", e)?;
-            } else { break; }
-        }
+        self.fields.fmt_all(formatter)?;
         write!(formatter, "}}")
+    }
+}
+
+pub enum Never { }
+
+impl Encoding for Never {
+    type Pointer = Never;
+    type Struct = Never;
+
+    fn descriptor(&self) -> Descriptor<Never, Never> {
+        match self { }
+    }
+}
+
+impl PointerEncoding for Never {
+    type Pointee = Never;
+
+    fn pointee(&self) -> &Never {
+        match self { }
+    }
+}
+
+impl StructEncoding for Never {
+    fn name(&self) -> &str {
+        match self { }
+    }
+
+    fn fields_eq<T: FieldsComparator>(&self, _: T) -> bool {
+        match self { }
+    }
+}
+
+impl fmt::Display for Never  {
+    fn fmt(&self, _: &mut fmt::Formatter) -> fmt::Result {
+        match self { }
     }
 }
 

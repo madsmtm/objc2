@@ -4,12 +4,15 @@ mod parse;
 
 use std::fmt;
 
-pub use descriptor::Descriptor;
+pub use descriptor::{MaybeOwned, Descriptor};
 pub use encodings::{Primitive, Pointer, Struct, EncodingTuple};
 pub use parse::StrEncoding;
 
 pub trait Encoding: fmt::Display {
-    fn descriptor(&self) -> Descriptor;
+    type Pointer: PointerEncoding;
+    type Struct: StructEncoding;
+
+    fn descriptor(&self) -> Descriptor<Self::Pointer, Self::Struct>;
 }
 
 pub trait FieldsComparator {

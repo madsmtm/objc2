@@ -1,7 +1,7 @@
+#![allow(dead_code)]
+
 use std::fmt;
 
-use Encoding;
-use descriptor::{Descriptor, DescriptorKind, AnyEncoding, FieldsIterator};
 use encodings::Primitive;
 
 pub fn chomp(s: &str) -> (Option<&str>, &str) {
@@ -123,24 +123,6 @@ pub struct StrEncoding<S> where S: AsRef<str> {
 impl<S> StrEncoding<S> where S: AsRef<str> {
     pub fn new_unchecked(s: S) -> StrEncoding<S> {
         StrEncoding { buf: s }
-    }
-}
-
-impl<S> Encoding for StrEncoding<S> where S: AsRef<str> {
-    fn descriptor(&self) -> Descriptor {
-        let kind = match parse(self.buf.as_ref()) {
-            ParseResult::Primitive(p) => DescriptorKind::Primitive(p),
-            ParseResult::Pointer(s) => {
-                let e = StrEncoding::new_unchecked(s);
-                DescriptorKind::Pointer(AnyEncoding::Parsed(e))
-            },
-            ParseResult::Struct(name, fields) => {
-                let f = FieldsIterator::parse(fields);
-                DescriptorKind::Struct(name, f)
-            }
-            ParseResult::Error => panic!(),
-        };
-        kind.into()
     }
 }
 
