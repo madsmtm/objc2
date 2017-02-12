@@ -111,7 +111,7 @@ impl<T> fmt::Display for Pointer<T> where T: Encoding {
 pub trait EncodingTuple {
     fn eq<F: FieldsComparator>(&self, F) -> bool;
 
-    fn fmt_all(&self, &mut fmt::Formatter) -> fmt::Result;
+    fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
 }
 
 impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
@@ -119,7 +119,7 @@ impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
         fields.eq_next(&self.0) && fields.eq_next(&self.1) && fields.is_finished()
     }
 
-    fn fmt_all(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
         write!(formatter, "{}", self.0)?;
         write!(formatter, "{}", self.1)?;
         Ok(())
@@ -169,7 +169,7 @@ impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple
 impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "{{{}=", self.name())?;
-        self.fields.fmt_all(formatter)?;
+        self.fields.write_all(formatter)?;
         write!(formatter, "}}")
     }
 }
