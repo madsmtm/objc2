@@ -7,7 +7,7 @@ use encodings::Never;
 use super::{chomp, parse_struct};
 use super::encoding::StrEncoding;
 
-pub struct StrStructEncoding(StrEncoding);
+pub struct StrStructEncoding(str);
 
 impl StrStructEncoding {
     pub fn from_str_unchecked(s: &str) -> &StrStructEncoding {
@@ -15,8 +15,7 @@ impl StrStructEncoding {
     }
 
     fn contents(&self) -> (&str, StrFields) {
-        let s = self.0.as_str();
-        let (name, fields) = parse_struct(s).unwrap();
+        let (name, fields) = parse_struct(&self.0).unwrap();
         (name, StrFields { fields: fields })
     }
 }

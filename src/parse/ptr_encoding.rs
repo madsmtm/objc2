@@ -6,7 +6,7 @@ use descriptor::Descriptor;
 use encodings::Never;
 use super::encoding::StrEncoding;
 
-pub struct StrPointerEncoding(StrEncoding);
+pub struct StrPointerEncoding(str);
 
 impl StrPointerEncoding {
     pub fn from_str_unchecked(s: &str) -> &StrPointerEncoding {
@@ -35,7 +35,7 @@ impl PointerEncoding for StrPointerEncoding {
     type Pointee = StrEncoding;
 
     fn pointee(&self) -> &StrEncoding {
-        StrEncoding::from_str_unchecked(&self.0.as_str()[1..])
+        StrEncoding::from_str_unchecked(&self.0[1..])
     }
 }
 
