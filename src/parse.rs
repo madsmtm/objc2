@@ -68,27 +68,18 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
     }
 }
 
-/*
-enum ParseResult<'a> {
+enum ParseResult {
     Primitive(Primitive),
-    Pointer(&'a str),
-    Struct(&'a str, &'a str),
+    Pointer,
+    Struct,
     Error,
 }
 
 fn parse(s: &str) -> ParseResult {
-    if s.starts_with('{') {
-        if !s.ends_with('}') {
-            ParseResult::Error
-        } else if let Some(sep_pos) = s.find('=') {
-            let name = &s[1..sep_pos];
-            let fields = &s[sep_pos + 1..s.len() - 1];
-            ParseResult::Struct(name, fields)
-        } else {
-            ParseResult::Error
-        }
+    if s.starts_with('{') && s.ends_with('}') {
+        ParseResult::Struct
     } else if s.starts_with('^') {
-        ParseResult::Pointer(&s[1..])
+        ParseResult::Pointer
     } else {
         let (h, t) = chomp_primitive(s);
         if !t.is_empty() {
@@ -101,6 +92,17 @@ fn parse(s: &str) -> ParseResult {
     }
 }
 
+fn parse_struct(s: &str) -> Option<(&str, &str)> {
+    if let Some(sep_pos) = s.find('=') {
+        let name = &s[1..sep_pos];
+        let fields = &s[sep_pos + 1..s.len() - 1];
+        Some((name, fields))
+    } else {
+        None
+    }
+}
+
+/*
 fn is_valid(s: &str) -> bool {
     match parse(s) {
         ParseResult::Primitive(_) => true,
@@ -133,15 +135,14 @@ impl Encoding for StrEncoding {
     type Struct = StrStructEncoding;
 
     fn descriptor(&self) -> Descriptor<StrPointerEncoding, StrStructEncoding> {
-        if self.0.starts_with("^") {
-            Descriptor::Pointer(StrPointerEncoding::new_unchecked(&self.0))
-        } else if self.0.starts_with("{") {
-            Descriptor::Struct(StrStructEncoding::new_unchecked(&self.0))
-        } else {
-            match chomp_primitive(&self.0) {
-                (Some(p), t) if t.is_empty() => Descriptor::Primitive(p),
-                _ => panic!(),
-            }
+        let s = &self.0;
+        match parse(s) {
+            ParseResult::Primitive(p) => Descriptor::Primitive(p),
+            ParseResult::Pointer =>
+                Descriptor::Pointer(StrPointerEncoding::new_unchecked(s)),
+            ParseResult::Struct =>
+                Descriptor::Struct(StrStructEncoding::new_unchecked(s)),
+            ParseResult::Error => panic!(),
         }
     }
 
@@ -204,9 +205,7 @@ impl StrStructEncoding {
 
     fn contents(&self) -> (&str, StrFields) {
         let s = &(self.0).0;
-        let sep_pos = s.find('=').unwrap();
-        let name = &s[1..sep_pos];
-        let fields = &s[sep_pos + 1..s.len() - 1];
+        let (name, fields) = parse_struct(s).unwrap();
         (name, StrFields { fields: fields })
     }
 }
