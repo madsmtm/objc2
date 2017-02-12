@@ -202,10 +202,12 @@ impl StrStructEncoding {
         unsafe { mem::transmute(s) }
     }
 
-    fn fields(&self) -> StrFields {
-        let sep_pos = (self.0).0.find('=').unwrap();
-        let fields = &(self.0).0[sep_pos + 1..(self.0).0.len() - 1];
-        StrFields { fields: fields }
+    fn contents(&self) -> (&str, StrFields) {
+        let s = &(self.0).0;
+        let sep_pos = s.find('=').unwrap();
+        let name = &s[1..sep_pos];
+        let fields = &s[sep_pos + 1..s.len() - 1];
+        (name, StrFields { fields: fields })
     }
 }
 
@@ -219,7 +221,8 @@ impl Encoding for StrStructEncoding {
 
     fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
-            s.eq_struct(self.name(), self.fields())
+            let (name, fields) = self.contents();
+            s.eq_struct(name, fields)
         } else {
             false
         }
@@ -228,22 +231,12 @@ impl Encoding for StrStructEncoding {
 
 impl StructEncoding for StrStructEncoding {
     fn name(&self) -> &str {
-        let sep_pos = (self.0).0.find('=').unwrap();
-        &(self.0).0[1..sep_pos]
+        self.contents().0
     }
 
-    fn eq_struct<F: FieldsComparator>(&self, name: &str, mut other: F) -> bool {
-        if self.name() != name {
-            return false;
-        }
-
-        for enc in self.fields() {
-            if !other.eq_next(enc) {
-                return false;
-            }
-        }
-
-        other.is_finished()
+    fn eq_struct<F: FieldsComparator>(&self, other_name: &str, other_fields: F) -> bool {
+        let (name, fields) = self.contents();
+        name == other_name && fields.eq(other_fields)
     }
 }
 
@@ -255,6 +248,17 @@ impl fmt::Display for StrStructEncoding {
 
 struct StrFields<'a> {
     fields: &'a str,
+}
+
+impl<'a> StrFields<'a> {
+    fn eq<F: FieldsComparator>(self, mut other: F) -> bool {
+        for enc in self {
+            if !other.eq_next(enc) {
+                return false;
+            }
+        }
+        other.is_finished()
+    }
 }
 
 impl<'a> Iterator for StrFields<'a> {
@@ -343,9 +347,9 @@ mod tests {
     #[test]
     fn test_parsed_struct() {
         let s = StrStructEncoding::new_unchecked("{CGPoint=ci}");
-        assert_eq!(s.name(), "CGPoint");
 
-        let mut fields = s.fields();
+        let (name, mut fields) = s.contents();
+        assert_eq!(name, "CGPoint");
         assert_eq!(fields.next().unwrap().to_string(), "c");
         assert_eq!(fields.next().unwrap().to_string(), "i");
         assert!(fields.next().is_none());
