@@ -56,6 +56,14 @@ encodings_impl!(0 => a: A);
 encodings_impl!(0 => a: A, 1 => b: B);
 encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C);
 encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I, 9 => j: J);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I, 9 => j: J, 10 => k: K);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I, 9 => j: J, 10 => k: K, 11 => l: L);
 
 pub trait EncodingsComparator {
     fn eq_next<T: ?Sized + Encoding>(&mut self, &T) -> bool;
