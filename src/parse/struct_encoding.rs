@@ -1,7 +1,7 @@
 use std::fmt;
 use std::mem;
 
-use {Encoding, StructEncoding, FieldsComparator};
+use {Encoding, StructEncoding, EncodingsComparator};
 use descriptor::Descriptor;
 use encodings::Never;
 use super::{chomp, parse_struct};
@@ -43,7 +43,7 @@ impl StructEncoding for StrStructEncoding {
         self.contents().0
     }
 
-    fn eq_struct<F: FieldsComparator>(&self, other_name: &str, other_fields: F) -> bool {
+    fn eq_struct<C: EncodingsComparator>(&self, other_name: &str, other_fields: C) -> bool {
         let (name, fields) = self.contents();
         name == other_name && fields.eq(other_fields)
     }
@@ -60,7 +60,7 @@ struct StrFields<'a> {
 }
 
 impl<'a> StrFields<'a> {
-    fn eq<F: FieldsComparator>(self, mut other: F) -> bool {
+    fn eq<C: EncodingsComparator>(self, mut other: C) -> bool {
         for enc in self {
             if !other.eq_next(enc) {
                 return false;
@@ -84,7 +84,7 @@ impl<'a> Iterator for StrFields<'a> {
     }
 }
 
-impl<'a> FieldsComparator for StrFields<'a> {
+impl<'a> EncodingsComparator for StrFields<'a> {
     fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
         self.next().map_or(false, |e| e.eq_encoding(other))
     }

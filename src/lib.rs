@@ -7,7 +7,7 @@ use std::fmt;
 
 pub use descriptor::Descriptor;
 pub use encodings::{Primitive, Pointer, Struct};
-pub use multi::{EncodingTuple, FieldsComparator};
+pub use multi::{Encodings, EncodingsComparator};
 pub use parse::StrEncoding;
 
 pub trait Encoding: fmt::Display {
@@ -21,7 +21,7 @@ pub trait Encoding: fmt::Display {
 
 pub trait StructEncoding: Encoding {
     fn name(&self) -> &str;
-    fn eq_struct<T: FieldsComparator>(&self, name: &str, fields: T) -> bool;
+    fn eq_struct<T: EncodingsComparator>(&self, name: &str, fields: T) -> bool;
 }
 
 pub trait PointerEncoding: Encoding {

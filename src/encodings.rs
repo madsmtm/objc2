@@ -2,7 +2,7 @@ use std::fmt;
 
 use {Encoding, PointerEncoding, StructEncoding};
 use descriptor::Descriptor;
-use multi::{EncodingTuple, EncodingTupleComparator, FieldsComparator};
+use multi::{Encodings, EncodingsComparator, EncodingTupleComparator};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Primitive {
@@ -110,18 +110,18 @@ impl<T> fmt::Display for Pointer<T> where T: Encoding {
 }
 
 
-pub struct Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+pub struct Struct<S, T> where S: AsRef<str>, T: Encodings {
     name: S,
     fields: T,
 }
 
-impl<S, T> Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+impl<S, T> Struct<S, T> where S: AsRef<str>, T: Encodings {
     pub fn new(name: S, fields: T) -> Struct<S, T> {
         Struct { name: name, fields: fields }
     }
 }
 
-impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
     type Pointer = Never;
     type Struct = Self;
 
@@ -138,17 +138,17 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
     }
 }
 
-impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
     fn name(&self) -> &str {
         self.name.as_ref()
     }
 
-    fn eq_struct<F: FieldsComparator>(&self, name: &str, fields: F) -> bool {
+    fn eq_struct<C: EncodingsComparator>(&self, name: &str, fields: C) -> bool {
         self.name() == name && self.fields.eq(fields)
     }
 }
 
-impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: EncodingTuple {
+impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: Encodings {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "{{{}=", self.name())?;
         self.fields.write_all(formatter)?;
@@ -184,7 +184,7 @@ impl StructEncoding for Never {
         match self { }
     }
 
-    fn eq_struct<T: FieldsComparator>(&self, _: &str, _: T) -> bool {
+    fn eq_struct<C: EncodingsComparator>(&self, _: &str, _: C) -> bool {
         match self { }
     }
 }

@@ -2,18 +2,18 @@ use std::fmt;
 
 use Encoding;
 
-pub trait EncodingTuple {
-    fn eq<F: FieldsComparator>(&self, F) -> bool;
-
-    fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
+pub trait Encodings {
+    fn eq<C: EncodingsComparator>(&self, C) -> bool;
 
     fn encoding_at_eq<T: ?Sized + Encoding>(&self, u8, &T) -> bool;
 
     fn len(&self) -> u8;
+
+    fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
 }
 
-impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
-    fn eq<F: FieldsComparator>(&self, mut fields: F) -> bool {
+impl<A, B> Encodings for (A, B) where A: Encoding, B: Encoding {
+    fn eq<C: EncodingsComparator>(&self, mut fields: C) -> bool {
         fields.eq_next(&self.0) && fields.eq_next(&self.1) && fields.is_finished()
     }
 
@@ -32,24 +32,24 @@ impl<A, B> EncodingTuple for (A, B) where A: Encoding, B: Encoding {
     fn len(&self) -> u8 { 2 }
 }
 
-pub trait FieldsComparator {
+pub trait EncodingsComparator {
     fn eq_next<T: ?Sized + Encoding>(&mut self, &T) -> bool;
     fn is_finished(&self) -> bool;
 }
 
-pub struct EncodingTupleComparator<'a, T> where T: 'a + EncodingTuple {
+pub struct EncodingTupleComparator<'a, T> where T: 'a + Encodings {
     encs: &'a T,
     index: u8,
 }
 
-impl<'a, T> EncodingTupleComparator<'a, T> where T: 'a + EncodingTuple {
+impl<'a, T> EncodingTupleComparator<'a, T> where T: 'a + Encodings {
     pub fn new(encs: &'a T) -> EncodingTupleComparator<'a, T> {
         EncodingTupleComparator { encs: encs, index: 0 }
     }
 }
 
-impl<'a, T> FieldsComparator for EncodingTupleComparator<'a, T>
-        where T: 'a + EncodingTuple {
+impl<'a, T> EncodingsComparator for EncodingTupleComparator<'a, T>
+        where T: 'a + Encodings {
     fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
         let index = self.index;
         if index < self.encs.len() {
