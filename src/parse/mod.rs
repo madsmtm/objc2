@@ -10,7 +10,9 @@ pub use self::struct_encoding::StrStructEncoding;
 
 pub fn chomp(s: &str) -> (Option<&str>, &str) {
     let head_len = chomp_ptr(s)
-        .or_else(|| chomp_struct(s))
+        .or_else(|| chomp_nested_delims(s, '[', ']'))
+        .or_else(|| chomp_nested_delims(s, '{', '}'))
+        .or_else(|| chomp_nested_delims(s, '(', ')'))
         .or_else(|| {
             if let (Some(_), t) = chomp_primitive(s) {
                 Some(s.len() - t.len())
@@ -36,16 +38,16 @@ fn chomp_ptr(s: &str) -> Option<usize> {
     }
 }
 
-fn chomp_struct(s: &str) -> Option<usize> {
-    if !s.starts_with("{") {
+fn chomp_nested_delims(s: &str, open: char, close: char) -> Option<usize> {
+    if !s.starts_with(open) {
         return None;
     }
 
     let mut depth = 1;
-    for (i, b) in s.bytes().enumerate().skip(1) {
-        if b == b'{' {
+    for (i, c) in s.char_indices().skip(1) {
+        if c == open {
             depth += 1;
-        } else if b == b'}' {
+        } else if c == close {
             depth -= 1;
         }
 
@@ -84,15 +86,21 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
 enum ParseResult {
     Primitive(Primitive),
     Pointer,
+    Array,
     Struct,
+    Union,
     Error,
 }
 
 fn parse(s: &str) -> ParseResult {
-    if s.starts_with('{') && s.ends_with('}') {
-        ParseResult::Struct
-    } else if s.starts_with('^') {
+    if s.starts_with('^') {
         ParseResult::Pointer
+    } else if s.starts_with('[') && s.ends_with(']') {
+        ParseResult::Array
+    } else if s.starts_with('{') && s.ends_with('}') {
+        ParseResult::Struct
+    } else if s.starts_with('(') && s.ends_with(')') {
+        ParseResult::Union
     } else {
         let (h, t) = chomp_primitive(s);
         if !t.is_empty() {
@@ -110,6 +118,20 @@ fn parse_struct(s: &str) -> Option<(&str, &str)> {
         let name = &s[1..sep_pos];
         let fields = &s[sep_pos + 1..s.len() - 1];
         Some((name, fields))
+    } else {
+        None
+    }
+}
+
+fn parse_array(s: &str) -> Option<(u32, &str)> {
+    if let Some(sep_pos) = s.find('^') {
+        let len = &s[1..sep_pos];
+        let item = &s[sep_pos + 1..s.len() - 1];
+        if let Ok(len) = len.parse() {
+            Some((len, item))
+        } else {
+            None
+        }
     } else {
         None
     }
@@ -136,6 +158,8 @@ fn is_valid(s: &str) -> bool {
             }
             true
         }
+        ParseResult::Array |
+        ParseResult::Union |
         ParseResult::Error => false,
     }
 }
@@ -157,6 +181,42 @@ mod tests {
 
         let (h, t) = chomp(t);
         assert_eq!(h, Some("{C=c}"));
+
+        let (h, _) = chomp(t);
+        assert_eq!(h, None);
+    }
+
+    #[test]
+    fn test_chomp_delims() {
+        let (h, t) = chomp("{A=(B=ci)ci}[12^{C=c}]c(D=ci)i");
+        assert_eq!(h, Some("{A=(B=ci)ci}"));
+
+        let (h, t) = chomp(t);
+        assert_eq!(h, Some("[12^{C=c}]"));
+
+        let (h, t) = chomp(t);
+        assert_eq!(h, Some("c"));
+
+        let (h, t) = chomp(t);
+        assert_eq!(h, Some("(D=ci)"));
+
+        let (h, t) = chomp(t);
+        assert_eq!(h, Some("i"));
+
+        let (h, _) = chomp(t);
+        assert_eq!(h, None);
+    }
+
+    #[test]
+    fn test_chomp_bad_delims() {
+        let (h, _) = chomp("{A={B=ci}ci");
+        assert_eq!(h, None);
+
+        let (h, t) = chomp("{A=(B=ci}[12^{C=c})]");
+        assert_eq!(h, Some("{A=(B=ci}"));
+
+        let (h, t) = chomp(t);
+        assert_eq!(h, Some("[12^{C=c})]"));
 
         let (h, _) = chomp(t);
         assert_eq!(h, None);

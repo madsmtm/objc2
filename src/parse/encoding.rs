@@ -38,6 +38,8 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
                 Descriptor::Pointer(StrPointerEncoding::from_str_unchecked(s)),
             ParseResult::Struct =>
                 Descriptor::Struct(StrStructEncoding::from_str_unchecked(s)),
+            ParseResult::Array |
+            ParseResult::Union |
             ParseResult::Error => panic!(),
         }
     }
