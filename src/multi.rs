@@ -12,25 +12,50 @@ pub trait Encodings {
     fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
 }
 
-impl<A, B> Encodings for (A, B) where A: Encoding, B: Encoding {
-    fn eq<C: EncodingsComparator>(&self, mut fields: C) -> bool {
-        fields.eq_next(&self.0) && fields.eq_next(&self.1) && fields.is_finished()
-    }
-
-    fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
-        write!(formatter, "{}{}", self.0, self.1)
-    }
-
-    fn encoding_at_eq<T: ?Sized + Encoding>(&self, index: u8, other: &T) -> bool {
-        match index {
-            0 => self.0.eq_encoding(other),
-            1 => self.1.eq_encoding(other),
-            _ => false,
-        }
-    }
-
-    fn len(&self) -> u8 { 2 }
+macro_rules! count_idents {
+    () => (0);
+    ($a:ident) => (1);
+    ($a:ident, $($b:ident),+) => (1 + count_idents!($($b),*));
 }
+
+macro_rules! fmt_repeat {
+    () => ("");
+    ($a:ident) => ("{}");
+    ($a:ident, $($b:ident),+) => (concat!("{}", fmt_repeat!($($b),*)));
+}
+
+macro_rules! encodings_impl {
+    ($($i:expr => $a:ident : $t:ident),*) => (
+        #[allow(unused)]
+        impl<$($t: Encoding),*> Encodings for ($($t,)*) {
+            fn eq<X: EncodingsComparator>(&self, mut fields: X) -> bool {
+                let ($(ref $a,)*) = *self;
+                $(fields.eq_next($a) &&)* fields.is_finished()
+            }
+
+            fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
+                let ($(ref $a,)*) = *self;
+                write!(formatter, fmt_repeat!($($t),*), $($a),*)
+            }
+
+            fn encoding_at_eq<T: ?Sized + Encoding>(&self, index: u8, other: &T) -> bool {
+                let ($(ref $a,)*) = *self;
+                match index {
+                    $($i => $a.eq_encoding(other),)*
+                    _ => false,
+                }
+            }
+
+            fn len(&self) -> u8 { count_idents!($($t),*) }
+        }
+    );
+}
+
+encodings_impl!();
+encodings_impl!(0 => a: A);
+encodings_impl!(0 => a: A, 1 => b: B);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C);
+encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D);
 
 pub trait EncodingsComparator {
     fn eq_next<T: ?Sized + Encoding>(&mut self, &T) -> bool;
