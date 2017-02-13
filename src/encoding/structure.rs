@@ -48,3 +48,32 @@ impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: Encodings {
         write!(formatter, "}}")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use encoding::Primitive;
+    use parse::StrEncoding;
+    use super::*;
+
+    #[test]
+    fn test_static_struct() {
+        let f = (Primitive::Char, Primitive::Int);
+        let s = Struct::new("CGPoint", f);
+        assert_eq!(s.name(), "CGPoint");
+        assert_eq!(s.to_string(), "{CGPoint=ci}");
+    }
+
+    #[test]
+    fn test_eq_encoding() {
+        let i = Primitive::Int;
+        let c = Primitive::Char;
+
+        let s = Struct::new("CGPoint", (c, i));
+        assert!(s.eq_encoding(&s));
+        assert!(!s.eq_encoding(&i));
+
+        let s2 = StrEncoding::new_unchecked("{CGPoint=ci}");
+        assert!(s2.eq_encoding(&s2));
+        assert!(s.eq_encoding(&s2));
+    }
+}

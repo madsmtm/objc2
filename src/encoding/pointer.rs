@@ -40,3 +40,24 @@ impl<T> fmt::Display for Pointer<T> where T: Encoding {
         write!(formatter, "^{}", self.0)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use encoding::Primitive;
+    use super::*;
+
+    #[test]
+    fn test_pointer_display() {
+        let e = Pointer::new(Primitive::Int);
+        assert_eq!(e.to_string(), "^i");
+    }
+
+    #[test]
+    fn test_eq_encoding() {
+        let i = Primitive::Int;
+
+        let p = Pointer::new(i);
+        assert!(p.eq_encoding(&p));
+        assert!(!p.eq_encoding(&i));
+    }
+}

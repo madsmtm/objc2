@@ -67,3 +67,22 @@ impl fmt::Display for Primitive {
         fmt::Display::fmt(self.code(), formatter)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_int_display() {
+        assert_eq!(Primitive::Int.to_string(), "i");
+    }
+
+    #[test]
+    fn test_eq_encoding() {
+        let i = Primitive::Int;
+        let c = Primitive::Char;
+
+        assert!(i.eq_encoding(&i));
+        assert!(!i.eq_encoding(&c));
+    }
+}
