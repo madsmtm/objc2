@@ -20,29 +20,7 @@ pub enum Primitive {
     Class,
     Sel,
     Unknown,
-}
-
-impl Primitive {
-    fn code(self) -> &'static str {
-        match self {
-            Primitive::Char      => "c",
-            Primitive::Short     => "s",
-            Primitive::Int       => "i",
-            Primitive::LongLong  => "q",
-            Primitive::UChar     => "C",
-            Primitive::UShort    => "S",
-            Primitive::UInt      => "I",
-            Primitive::ULongLong => "Q",
-            Primitive::Float     => "f",
-            Primitive::Double    => "d",
-            Primitive::Bool      => "B",
-            Primitive::Void      => "v",
-            Primitive::Object    => "@",
-            Primitive::Class     => "#",
-            Primitive::Sel       => ":",
-            Primitive::Unknown   => "?",
-        }
-    }
+    BitField(u32),
 }
 
 impl Encoding for Primitive {
@@ -64,7 +42,28 @@ impl Encoding for Primitive {
 
 impl fmt::Display for Primitive {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(self.code(), formatter)
+        let code = match *self {
+            Primitive::Char      => "c",
+            Primitive::Short     => "s",
+            Primitive::Int       => "i",
+            Primitive::LongLong  => "q",
+            Primitive::UChar     => "C",
+            Primitive::UShort    => "S",
+            Primitive::UInt      => "I",
+            Primitive::ULongLong => "Q",
+            Primitive::Float     => "f",
+            Primitive::Double    => "d",
+            Primitive::Bool      => "B",
+            Primitive::Void      => "v",
+            Primitive::Object    => "@",
+            Primitive::Class     => "#",
+            Primitive::Sel       => ":",
+            Primitive::Unknown   => "?",
+            Primitive::BitField(b) => {
+                return write!(formatter, "b{}", b);
+            }
+        };
+        fmt::Display::fmt(code, formatter)
     }
 }
 

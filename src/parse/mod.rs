@@ -66,6 +66,17 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
     match h {
         "c" => (Some(Primitive::Char), t),
         "i" => (Some(Primitive::Int), t),
+        "b" => {
+            // Chomp until we hit a non-digit
+            let (num, t) = match t.find(|c: char| !c.is_digit(10)) {
+                Some(i) => t.split_at(i),
+                None => (t, ""),
+            };
+            match num.parse() {
+                Ok(b) => (Some(Primitive::BitField(b)), t),
+                Err(_) => (None, s),
+            }
+        }
         _ => (None, s),
     }
 }
@@ -149,5 +160,28 @@ mod tests {
 
         let (h, _) = chomp(t);
         assert_eq!(h, None);
+    }
+
+    #[test]
+    fn test_parse_bitfield() {
+        match parse("b32") {
+            ParseResult::Primitive(Primitive::BitField(32)) => (),
+            _ => panic!("Bit field parsed incorrectly"),
+        };
+
+        match parse("b-32") {
+            ParseResult::Error => (),
+            _ => panic!("Invalid bit field was accepted"),
+        };
+
+        match chomp_primitive("b32b32") {
+            (Some(Primitive::BitField(32)), "b32") => (),
+            _ => panic!("Bit field wasn't chomped correctly"),
+        };
+
+        match chomp_primitive("bb32") {
+            (None, "bb32") => (),
+            _ => panic!("Invalid bit field was chomped"),
+        };
     }
 }
