@@ -1,9 +1,7 @@
 use std::fmt;
 use std::mem;
 
-use {Encoding, PointerEncoding};
-use descriptor::Descriptor;
-use encodings::Never;
+use encoding::{Descriptor, Encoding, PointerEncoding, Never};
 use super::encoding::StrEncoding;
 
 pub struct StrPointerEncoding(str);

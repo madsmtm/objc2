@@ -1,8 +1,7 @@
 use std::fmt;
 use std::mem;
 
-use Encoding;
-use descriptor::Descriptor;
+use encoding::{Descriptor, Encoding};
 use super::{parse, ParseResult};
 use super::ptr_encoding::StrPointerEncoding;
 use super::struct_encoding::StrStructEncoding;

@@ -1,0 +1,69 @@
+use std::fmt;
+
+use super::{Descriptor, Encoding, Never};
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum Primitive {
+    Char,
+    Short,
+    Int,
+    LongLong,
+    UChar,
+    UShort,
+    UInt,
+    ULongLong,
+    Float,
+    Double,
+    Bool,
+    Void,
+    Object,
+    Class,
+    Sel,
+    Unknown,
+}
+
+impl Primitive {
+    fn code(self) -> &'static str {
+        match self {
+            Primitive::Char      => "c",
+            Primitive::Short     => "s",
+            Primitive::Int       => "i",
+            Primitive::LongLong  => "q",
+            Primitive::UChar     => "C",
+            Primitive::UShort    => "S",
+            Primitive::UInt      => "I",
+            Primitive::ULongLong => "Q",
+            Primitive::Float     => "f",
+            Primitive::Double    => "d",
+            Primitive::Bool      => "B",
+            Primitive::Void      => "v",
+            Primitive::Object    => "@",
+            Primitive::Class     => "#",
+            Primitive::Sel       => ":",
+            Primitive::Unknown   => "?",
+        }
+    }
+}
+
+impl Encoding for Primitive {
+    type Pointer = Never;
+    type Struct = Never;
+
+    fn descriptor(&self) -> Descriptor<Never, Never> {
+        Descriptor::Primitive(*self)
+    }
+
+    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
+        if let Descriptor::Primitive(p) = other.descriptor() {
+            *self == p
+        } else {
+            false
+        }
+    }
+}
+
+impl fmt::Display for Primitive {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(self.code(), formatter)
+    }
+}

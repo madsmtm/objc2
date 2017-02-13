@@ -1,9 +1,8 @@
 use std::fmt;
 use std::mem;
 
-use {Encoding, StructEncoding, EncodingsComparator};
-use descriptor::Descriptor;
-use encodings::Never;
+use encoding::{Descriptor, Encoding, StructEncoding, Never};
+use multi::EncodingsComparator;
 use super::{chomp, parse_struct};
 use super::encoding::StrEncoding;
 

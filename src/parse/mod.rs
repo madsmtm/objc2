@@ -2,7 +2,7 @@ mod encoding;
 mod ptr_encoding;
 mod struct_encoding;
 
-use encodings::Primitive;
+use encoding::Primitive;
 
 pub use self::encoding::StrEncoding;
 pub use self::ptr_encoding::StrPointerEncoding;
