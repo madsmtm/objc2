@@ -5,7 +5,7 @@ mod structure;
 
 use std::fmt;
 
-use multi::EncodingsComparator;
+use multi::Encodings;
 
 pub use self::never::Never;
 pub use self::pointer::Pointer;
@@ -28,8 +28,9 @@ pub trait PointerEncoding: Encoding {
 }
 
 pub trait StructEncoding: Encoding {
-    fn name(&self) -> &str;
-    fn eq_struct<T: EncodingsComparator>(&self, name: &str, fields: T) -> bool;
+    type Fields: ?Sized + Encodings;
+
+    fn fields(&self) -> (&str, &Self::Fields);
 }
 
 pub enum Descriptor<'a, P, S>

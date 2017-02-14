@@ -2,7 +2,7 @@ use std::fmt;
 use std::mem;
 
 use encoding::{Descriptor, Encoding, StructEncoding, Never};
-use multi::{Encodings, EncodingsComparator};
+use multi::Encodings;
 use super::parse_struct;
 use super::multi::{StrFields, StrFieldsIter};
 
@@ -11,11 +11,6 @@ pub struct StrStructEncoding(str);
 impl StrStructEncoding {
     pub fn from_str_unchecked(s: &str) -> &StrStructEncoding {
         unsafe { mem::transmute(s) }
-    }
-
-    fn contents(&self) -> (&str, &StrFields) {
-        let (name, fields) = parse_struct(&self.0).unwrap();
-        (name, StrFields::from_str_unchecked(fields))
     }
 }
 
@@ -29,8 +24,9 @@ impl Encoding for StrStructEncoding {
 
     fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
-            let (name, fields) = self.contents();
-            s.eq_struct(name, StrFieldsIter::new(fields))
+            let (name, fields) = self.fields();
+            let (other_name, other_fields) = s.fields();
+            other_name == name && other_fields.eq(StrFieldsIter::new(fields))
         } else {
             false
         }
@@ -38,13 +34,11 @@ impl Encoding for StrStructEncoding {
 }
 
 impl StructEncoding for StrStructEncoding {
-    fn name(&self) -> &str {
-        self.contents().0
-    }
+    type Fields = StrFields;
 
-    fn eq_struct<C: EncodingsComparator>(&self, other_name: &str, other_fields: C) -> bool {
-        let (name, fields) = self.contents();
-        name == other_name && fields.eq(other_fields)
+    fn fields(&self) -> (&str, &StrFields) {
+        let (name, fields) = parse_struct(&self.0).unwrap();
+        (name, StrFields::from_str_unchecked(fields))
     }
 }
 
@@ -62,7 +56,7 @@ mod tests {
     fn test_parsed_struct() {
         let s = StrStructEncoding::from_str_unchecked("{CGPoint=ci}");
 
-        let (name, fields) = s.contents();
+        let (name, fields) = s.fields();
         assert_eq!(name, "CGPoint");
 
         let mut fields = StrFieldsIter::new(fields);

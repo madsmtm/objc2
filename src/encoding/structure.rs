@@ -1,7 +1,7 @@
 use std::fmt;
 
 use super::{Descriptor, Encoding, StructEncoding, Never};
-use multi::{EncodingsComparator, IndexEncodings, IndexEncodingsComparator};
+use multi::{Encodings, IndexEncodings, IndexEncodingsComparator};
 
 pub struct Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     name: S,
@@ -11,6 +11,10 @@ pub struct Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
 impl<S, T> Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     pub fn new(name: S, fields: T) -> Struct<S, T> {
         Struct { name: name, fields: fields }
+    }
+
+    fn name(&self) -> &str {
+        self.name.as_ref()
     }
 }
 
@@ -24,7 +28,9 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
-            s.eq_struct(self.name(), IndexEncodingsComparator::new(&self.fields))
+            let (name, fields) = s.fields();
+            name == self.name() &&
+                fields.eq(IndexEncodingsComparator::new(&self.fields))
         } else {
             false
         }
@@ -32,12 +38,10 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
 }
 
 impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
-    fn name(&self) -> &str {
-        self.name.as_ref()
-    }
+    type Fields = T;
 
-    fn eq_struct<C: EncodingsComparator>(&self, name: &str, fields: C) -> bool {
-        self.name() == name && self.fields.eq(fields)
+    fn fields(&self) -> (&str, &T) {
+        (self.name(), &self.fields)
     }
 }
 

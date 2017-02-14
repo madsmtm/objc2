@@ -1,7 +1,6 @@
 use std::fmt;
 
 use super::{Descriptor, Encoding, PointerEncoding, StructEncoding};
-use multi::EncodingsComparator;
 
 pub enum Never { }
 
@@ -27,11 +26,9 @@ impl PointerEncoding for Never {
 }
 
 impl StructEncoding for Never {
-    fn name(&self) -> &str {
-        match self { }
-    }
+    type Fields = ();
 
-    fn eq_struct<C: EncodingsComparator>(&self, _: &str, _: C) -> bool {
+    fn fields(&self) -> (&str, &()) {
         match self { }
     }
 }
