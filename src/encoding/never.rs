@@ -1,12 +1,13 @@
 use std::fmt;
 
-use super::{Descriptor, Encoding, PointerEncoding, StructEncoding};
+use multi::{Encodings, EncodingsComparator};
+use super::{Descriptor, Encoding};
 
 pub enum Never { }
 
 impl Encoding for Never {
-    type Pointer = Never;
-    type Struct = Never;
+    type PointerTarget = Never;
+    type StructFields = Never;
 
     fn descriptor(&self) -> Descriptor<Never, Never> {
         match self { }
@@ -17,18 +18,12 @@ impl Encoding for Never {
     }
 }
 
-impl PointerEncoding for Never {
-    type Target = Never;
-
-    fn target(&self) -> &Never {
+impl Encodings for Never {
+    fn eq<C: EncodingsComparator>(&self, _: C) -> bool {
         match self { }
     }
-}
 
-impl StructEncoding for Never {
-    type Fields = ();
-
-    fn fields(&self) -> (&str, &()) {
+    fn write_all<W: fmt::Write>(&self, _: &mut W) -> fmt::Result {
         match self { }
     }
 }

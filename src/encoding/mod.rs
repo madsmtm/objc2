@@ -13,42 +13,18 @@ pub use self::primitive::Primitive;
 pub use self::structure::Struct;
 
 pub trait Encoding: fmt::Display {
-    type Pointer: ?Sized + PointerEncoding;
-    type Struct: ?Sized + StructEncoding;
+    type PointerTarget: ?Sized + Encoding;
+    type StructFields: ?Sized + Encodings;
 
-    fn descriptor(&self) -> Descriptor<Self::Pointer, Self::Struct>;
+    fn descriptor(&self) -> Descriptor<Self::PointerTarget, Self::StructFields>;
 
     fn eq_encoding<T: ?Sized + Encoding>(&self, &T) -> bool;
 }
 
-pub trait PointerEncoding: Encoding {
-    type Target: ?Sized + Encoding;
-
-    fn target(&self) -> &Self::Target;
-}
-
-pub trait StructEncoding: Encoding {
-    type Fields: ?Sized + Encodings;
-
-    fn fields(&self) -> (&str, &Self::Fields);
-}
-
-pub enum Descriptor<'a, P, S>
-        where P: 'a + ?Sized + PointerEncoding,
-              S: 'a + ?Sized + StructEncoding {
+pub enum Descriptor<'a, T, F>
+        where T: 'a + ?Sized + Encoding,
+              F: 'a + ?Sized + Encodings {
     Primitive(Primitive),
-    Pointer(&'a P),
-    Struct(&'a S),
-}
-
-impl<'a, P, S> Descriptor<'a, P, S>
-        where P: 'a + ?Sized + PointerEncoding,
-              S: 'a + ?Sized + StructEncoding {
-    pub fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
-        match *self {
-            Descriptor::Primitive(p) => p.eq_encoding(other),
-            Descriptor::Pointer(p) => p.eq_encoding(other),
-            Descriptor::Struct(s) => s.eq_encoding(other),
-        }
-    }
+    Pointer(&'a T),
+    Struct(&'a str, &'a F),
 }

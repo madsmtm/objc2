@@ -1,6 +1,6 @@
 use std::fmt;
 
-use super::{Descriptor, Encoding, PointerEncoding, Never};
+use super::{Descriptor, Encoding, Never};
 
 pub struct Pointer<T>(T) where T: Encoding;
 
@@ -11,27 +11,19 @@ impl<T> Pointer<T> where T: Encoding {
 }
 
 impl<T> Encoding for Pointer<T> where T: Encoding {
-    type Pointer = Self;
-    type Struct = Never;
+    type PointerTarget = T;
+    type StructFields = Never;
 
-    fn descriptor(&self) -> Descriptor<Self, Never> {
-        Descriptor::Pointer(self)
+    fn descriptor(&self) -> Descriptor<T, Never> {
+        Descriptor::Pointer(&self.0)
     }
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
-        if let Descriptor::Pointer(p) = other.descriptor() {
-            self.0.eq_encoding(p.target())
+        if let Descriptor::Pointer(t) = other.descriptor() {
+            self.0.eq_encoding(t)
         } else {
             false
         }
-    }
-}
-
-impl<T> PointerEncoding for Pointer<T> where T: Encoding {
-    type Target = T;
-
-    fn target(&self) -> &T {
-        &self.0
     }
 }
 

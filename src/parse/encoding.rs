@@ -3,8 +3,6 @@ use std::mem;
 
 use encoding::{Descriptor, Encoding};
 use super::{parse, ParseResult};
-use super::ptr_encoding::StrPointerEncoding;
-use super::struct_encoding::StrStructEncoding;
 
 pub struct StrEncoding<S = str>(S) where S: ?Sized + AsRef<str>;
 
@@ -26,6 +24,7 @@ impl<S> StrEncoding<S> where S: ?Sized + AsRef<str> {
     }
 }
 
+/*
 impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
     type Pointer = StrPointerEncoding;
     type Struct = StrStructEncoding;
@@ -48,6 +47,7 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
         self.descriptor().eq_encoding(other)
     }
 }
+*/
 
 impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {

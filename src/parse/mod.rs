@@ -1,13 +1,9 @@
 mod encoding;
-mod multi;
-mod ptr_encoding;
-mod struct_encoding;
+// mod multi;
 
 use encoding::Primitive;
 
 pub use self::encoding::StrEncoding;
-pub use self::ptr_encoding::StrPointerEncoding;
-pub use self::struct_encoding::StrStructEncoding;
 
 pub fn chomp(s: &str) -> (Option<&str>, &str) {
     let head_len = chomp_ptr(s)

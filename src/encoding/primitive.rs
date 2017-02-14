@@ -27,8 +27,8 @@ pub enum Primitive {
 }
 
 impl Encoding for Primitive {
-    type Pointer = Never;
-    type Struct = Never;
+    type PointerTarget = Never;
+    type StructFields = Never;
 
     fn descriptor(&self) -> Descriptor<Never, Never> {
         Descriptor::Primitive(*self)

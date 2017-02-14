@@ -1,6 +1,6 @@
 use std::fmt;
 
-use super::{Descriptor, Encoding, StructEncoding, Never};
+use super::{Descriptor, Encoding, Never};
 use multi::{Encodings, IndexEncodings, IndexEncodingsComparator};
 
 pub struct Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
@@ -19,29 +19,20 @@ impl<S, T> Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
 }
 
 impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
-    type Pointer = Never;
-    type Struct = Self;
+    type PointerTarget = Never;
+    type StructFields = T;
 
-    fn descriptor(&self) -> Descriptor<Never, Self> {
-        Descriptor::Struct(self)
+    fn descriptor(&self) -> Descriptor<Never, T> {
+        Descriptor::Struct(self.name(), &self.fields)
     }
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
-        if let Descriptor::Struct(s) = other.descriptor() {
-            let (name, fields) = s.fields();
+        if let Descriptor::Struct(name, fields) = other.descriptor() {
             name == self.name() &&
                 fields.eq(IndexEncodingsComparator::new(&self.fields))
         } else {
             false
         }
-    }
-}
-
-impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
-    type Fields = T;
-
-    fn fields(&self) -> (&str, &T) {
-        (self.name(), &self.fields)
     }
 }
 
