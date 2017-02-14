@@ -1,5 +1,5 @@
 mod encoding;
-// mod multi;
+mod multi;
 
 use encoding::Primitive;
 

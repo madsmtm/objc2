@@ -2,7 +2,9 @@ use std::fmt;
 use std::mem;
 
 use encoding::{Descriptor, Encoding};
+use multi::Encodings;
 use super::{parse, ParseResult};
+use super::multi::{StrFields, StrFieldsIter};
 
 pub struct StrEncoding<S = str>(S) where S: ?Sized + AsRef<str>;
 
@@ -24,33 +26,58 @@ impl<S> StrEncoding<S> where S: ?Sized + AsRef<str> {
     }
 }
 
-/*
 impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
-    type Pointer = StrPointerEncoding;
-    type Struct = StrStructEncoding;
+    type PointerTarget = StrEncoding;
+    type StructFields = StrFields;
 
-    fn descriptor(&self) -> Descriptor<StrPointerEncoding, StrStructEncoding> {
+    fn descriptor(&self) -> Descriptor<StrEncoding, StrFields> {
         let s = self.as_str();
         match parse(s) {
             ParseResult::Primitive(p) => Descriptor::Primitive(p),
-            ParseResult::Pointer =>
-                Descriptor::Pointer(StrPointerEncoding::from_str_unchecked(s)),
-            ParseResult::Struct =>
-                Descriptor::Struct(StrStructEncoding::from_str_unchecked(s)),
-            ParseResult::Array |
-            ParseResult::Union |
+            ParseResult::Pointer(t) =>
+                Descriptor::Pointer(StrEncoding::from_str_unchecked(t)),
+            ParseResult::Struct(name, fields) =>
+                Descriptor::Struct(name, StrFields::from_str_unchecked(fields)),
+            ParseResult::Array(..) |
             ParseResult::Error => panic!(),
         }
     }
 
     fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
-        self.descriptor().eq_encoding(other)
+        use Descriptor::*;
+        match (self.descriptor(), other.descriptor()) {
+            (Primitive(p1), Primitive(p2)) => p1 == p2,
+            (Pointer(t1), Pointer(t2)) => t1.eq_encoding(t2),
+            (Struct(n1, f1), Struct(n2, f2)) =>
+                n1 == n2 && f2.eq(StrFieldsIter::new(f1)),
+            _ => false,
+        }
     }
 }
-*/
 
 impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(self.as_str(), formatter)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parsed_struct() {
+        let s = StrEncoding::from_str_unchecked("{CGPoint=ci}");
+
+        let (name, fields) = match s.descriptor() {
+            Descriptor::Struct(name, fields) => (name, fields),
+            _ => panic!("Descriptor was not a struct"),
+        };
+        assert_eq!(name, "CGPoint");
+
+        let mut fields = StrFieldsIter::new(fields);
+        assert_eq!(fields.next().unwrap().to_string(), "c");
+        assert_eq!(fields.next().unwrap().to_string(), "i");
+        assert!(fields.next().is_none());
     }
 }
