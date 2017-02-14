@@ -5,8 +5,8 @@ use super::{Descriptor, Encoding, PointerEncoding, Never};
 pub struct Pointer<T>(T) where T: Encoding;
 
 impl<T> Pointer<T> where T: Encoding {
-    pub fn new(pointee: T) -> Pointer<T> {
-        Pointer(pointee)
+    pub fn new(target: T) -> Pointer<T> {
+        Pointer(target)
     }
 }
 
@@ -20,7 +20,7 @@ impl<T> Encoding for Pointer<T> where T: Encoding {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Pointer(p) = other.descriptor() {
-            self.0.eq_encoding(p.pointee())
+            self.0.eq_encoding(p.target())
         } else {
             false
         }
@@ -28,9 +28,9 @@ impl<T> Encoding for Pointer<T> where T: Encoding {
 }
 
 impl<T> PointerEncoding for Pointer<T> where T: Encoding {
-    type Pointee = T;
+    type Target = T;
 
-    fn pointee(&self) -> &T {
+    fn target(&self) -> &T {
         &self.0
     }
 }

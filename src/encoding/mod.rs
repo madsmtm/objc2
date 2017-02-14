@@ -21,15 +21,15 @@ pub trait Encoding: fmt::Display {
     fn eq_encoding<T: ?Sized + Encoding>(&self, &T) -> bool;
 }
 
+pub trait PointerEncoding: Encoding {
+    type Target: ?Sized + Encoding;
+
+    fn target(&self) -> &Self::Target;
+}
+
 pub trait StructEncoding: Encoding {
     fn name(&self) -> &str;
     fn eq_struct<T: EncodingsComparator>(&self, name: &str, fields: T) -> bool;
-}
-
-pub trait PointerEncoding: Encoding {
-    type Pointee: ?Sized + Encoding;
-
-    fn pointee(&self) -> &Self::Pointee;
 }
 
 pub enum Descriptor<'a, P, S>

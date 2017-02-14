@@ -19,9 +19,9 @@ impl Encoding for Never {
 }
 
 impl PointerEncoding for Never {
-    type Pointee = Never;
+    type Target = Never;
 
-    fn pointee(&self) -> &Never {
+    fn target(&self) -> &Never {
         match self { }
     }
 }

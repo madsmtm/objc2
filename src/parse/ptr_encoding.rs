@@ -22,7 +22,7 @@ impl Encoding for StrPointerEncoding {
 
     fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
         if let Descriptor::Pointer(p) = other.descriptor() {
-            self.pointee().eq_encoding(p)
+            self.target().eq_encoding(p)
         } else {
             false
         }
@@ -30,9 +30,9 @@ impl Encoding for StrPointerEncoding {
 }
 
 impl PointerEncoding for StrPointerEncoding {
-    type Pointee = StrEncoding;
+    type Target = StrEncoding;
 
-    fn pointee(&self) -> &StrEncoding {
+    fn target(&self) -> &StrEncoding {
         StrEncoding::from_str_unchecked(&self.0[1..])
     }
 }

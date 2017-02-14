@@ -141,8 +141,8 @@ fn is_valid(s: &str) -> bool {
     match parse(s) {
         ParseResult::Primitive(_) => true,
         ParseResult::Pointer => {
-            let pointee = &s[1..];
-            is_valid(pointee)
+            let target = &s[1..];
+            is_valid(target)
         },
         ParseResult::Struct => {
             let mut fields = match parse_struct(s) {
