@@ -1,20 +1,20 @@
 use std::fmt;
 
 use super::{Descriptor, Encoding, StructEncoding, Never};
-use multi::{Encodings, EncodingsComparator, EncodingTupleComparator};
+use multi::{EncodingsComparator, IndexEncodings, IndexEncodingsComparator};
 
-pub struct Struct<S, T> where S: AsRef<str>, T: Encodings {
+pub struct Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     name: S,
     fields: T,
 }
 
-impl<S, T> Struct<S, T> where S: AsRef<str>, T: Encodings {
+impl<S, T> Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     pub fn new(name: S, fields: T) -> Struct<S, T> {
         Struct { name: name, fields: fields }
     }
 }
 
-impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
+impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     type Pointer = Never;
     type Struct = Self;
 
@@ -24,14 +24,14 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
-            s.eq_struct(self.name(), EncodingTupleComparator::new(&self.fields))
+            s.eq_struct(self.name(), IndexEncodingsComparator::new(&self.fields))
         } else {
             false
         }
     }
 }
 
-impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
+impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     fn name(&self) -> &str {
         self.name.as_ref()
     }
@@ -41,7 +41,7 @@ impl<S, T> StructEncoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
     }
 }
 
-impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: Encodings {
+impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "{{{}=", self.name())?;
         self.fields.write_all(formatter)?;

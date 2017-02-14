@@ -4,12 +4,12 @@ use Encoding;
 
 pub trait Encodings {
     fn eq<C: EncodingsComparator>(&self, C) -> bool;
-
-    fn encoding_at_eq<T: ?Sized + Encoding>(&self, u8, &T) -> bool;
-
-    fn len(&self) -> u8;
-
     fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
+}
+
+pub trait IndexEncodings: Encodings {
+    fn encoding_at_eq<T: ?Sized + Encoding>(&self, u8, &T) -> bool;
+    fn len(&self) -> u8;
 }
 
 macro_rules! count_idents {
@@ -26,8 +26,8 @@ macro_rules! fmt_repeat {
 
 macro_rules! encodings_impl {
     ($($i:expr => $a:ident : $t:ident),*) => (
-        #[allow(unused)]
         impl<$($t: Encoding),*> Encodings for ($($t,)*) {
+            #[allow(unused)]
             fn eq<X: EncodingsComparator>(&self, mut fields: X) -> bool {
                 let ($(ref $a,)*) = *self;
                 $(fields.eq_next($a) &&)* fields.is_finished()
@@ -37,7 +37,10 @@ macro_rules! encodings_impl {
                 let ($(ref $a,)*) = *self;
                 write!(formatter, fmt_repeat!($($t),*), $($a),*)
             }
+        }
 
+        impl<$($t: Encoding),*> IndexEncodings for ($($t,)*) {
+            #[allow(unused)]
             fn encoding_at_eq<T: ?Sized + Encoding>(&self, index: u8, other: &T) -> bool {
                 let ($(ref $a,)*) = *self;
                 match index {
@@ -70,19 +73,19 @@ pub trait EncodingsComparator {
     fn is_finished(&self) -> bool;
 }
 
-pub struct EncodingTupleComparator<'a, T> where T: 'a + Encodings {
+pub struct IndexEncodingsComparator<'a, T> where T: 'a + IndexEncodings {
     encs: &'a T,
     index: u8,
 }
 
-impl<'a, T> EncodingTupleComparator<'a, T> where T: 'a + Encodings {
-    pub fn new(encs: &'a T) -> EncodingTupleComparator<'a, T> {
-        EncodingTupleComparator { encs: encs, index: 0 }
+impl<'a, T> IndexEncodingsComparator<'a, T> where T: 'a + IndexEncodings {
+    pub fn new(encs: &'a T) -> IndexEncodingsComparator<'a, T> {
+        IndexEncodingsComparator { encs: encs, index: 0 }
     }
 }
 
-impl<'a, T> EncodingsComparator for EncodingTupleComparator<'a, T>
-        where T: 'a + Encodings {
+impl<'a, T> EncodingsComparator for IndexEncodingsComparator<'a, T>
+        where T: 'a + IndexEncodings {
     fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
         let index = self.index;
         if index < self.encs.len() {
