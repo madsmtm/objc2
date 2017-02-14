@@ -97,11 +97,9 @@ fn parse(s: &str) -> ParseResult {
         } else if let Some(sep_pos) = s.find('^') {
             let len = &s[1..sep_pos];
             let item = &s[sep_pos + 1..s.len() - 1];
-            if let Ok(len) = len.parse() {
-                ParseResult::Array(len, item)
-            } else {
-                ParseResult::Error
-            }
+            len.parse()
+                .map(|len| ParseResult::Array(len, item))
+                .unwrap_or(ParseResult::Error)
         } else {
             ParseResult::Error
         }
