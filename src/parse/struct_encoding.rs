@@ -2,9 +2,9 @@ use std::fmt;
 use std::mem;
 
 use encoding::{Descriptor, Encoding, StructEncoding, Never};
-use multi::EncodingsComparator;
-use super::{chomp, parse_struct};
-use super::encoding::StrEncoding;
+use multi::{Encodings, EncodingsComparator};
+use super::parse_struct;
+use super::multi::{StrFields, StrFieldsIter};
 
 pub struct StrStructEncoding(str);
 
@@ -13,9 +13,9 @@ impl StrStructEncoding {
         unsafe { mem::transmute(s) }
     }
 
-    fn contents(&self) -> (&str, StrFields) {
+    fn contents(&self) -> (&str, &StrFields) {
         let (name, fields) = parse_struct(&self.0).unwrap();
-        (name, StrFields { fields: fields })
+        (name, StrFields::from_str_unchecked(fields))
     }
 }
 
@@ -30,7 +30,7 @@ impl Encoding for StrStructEncoding {
     fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
         if let Descriptor::Struct(s) = other.descriptor() {
             let (name, fields) = self.contents();
-            s.eq_struct(name, fields)
+            s.eq_struct(name, StrFieldsIter::new(fields))
         } else {
             false
         }
@@ -54,45 +54,6 @@ impl fmt::Display for StrStructEncoding {
     }
 }
 
-struct StrFields<'a> {
-    fields: &'a str,
-}
-
-impl<'a> StrFields<'a> {
-    fn eq<C: EncodingsComparator>(self, mut other: C) -> bool {
-        for enc in self {
-            if !other.eq_next(enc) {
-                return false;
-            }
-        }
-        other.is_finished()
-    }
-}
-
-impl<'a> Iterator for StrFields<'a> {
-    type Item = &'a StrEncoding;
-
-    fn next(&mut self) -> Option<&'a StrEncoding> {
-        if self.fields.is_empty() {
-            None
-        } else {
-            let (h, t) = chomp(self.fields);
-            self.fields = t;
-            Some(StrEncoding::from_str_unchecked(h.unwrap()))
-        }
-    }
-}
-
-impl<'a> EncodingsComparator for StrFields<'a> {
-    fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
-        self.next().map_or(false, |e| e.eq_encoding(other))
-    }
-
-    fn is_finished(&self) -> bool {
-        self.fields.is_empty()
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -101,8 +62,10 @@ mod tests {
     fn test_parsed_struct() {
         let s = StrStructEncoding::from_str_unchecked("{CGPoint=ci}");
 
-        let (name, mut fields) = s.contents();
+        let (name, fields) = s.contents();
         assert_eq!(name, "CGPoint");
+
+        let mut fields = StrFieldsIter::new(fields);
         assert_eq!(fields.next().unwrap().to_string(), "c");
         assert_eq!(fields.next().unwrap().to_string(), "i");
         assert!(fields.next().is_none());

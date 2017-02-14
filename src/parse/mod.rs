@@ -1,4 +1,5 @@
 mod encoding;
+mod multi;
 mod ptr_encoding;
 mod struct_encoding;
 
