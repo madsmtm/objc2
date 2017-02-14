@@ -80,24 +80,41 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
     }
 }
 
-enum ParseResult {
+enum ParseResult<'a> {
     Primitive(Primitive),
-    Pointer,
-    Array,
-    Struct,
-    Union,
+    Pointer(&'a str),
+    Array(u32, &'a str),
+    Struct(&'a str, &'a str),
     Error,
 }
 
 fn parse(s: &str) -> ParseResult {
     if s.starts_with('^') {
-        ParseResult::Pointer
-    } else if s.starts_with('[') && s.ends_with(']') {
-        ParseResult::Array
-    } else if s.starts_with('{') && s.ends_with('}') {
-        ParseResult::Struct
-    } else if s.starts_with('(') && s.ends_with(')') {
-        ParseResult::Union
+        ParseResult::Pointer(&s[1..])
+    } else if s.starts_with('[') {
+        if !s.ends_with(']') {
+            ParseResult::Error
+        } else if let Some(sep_pos) = s.find('^') {
+            let len = &s[1..sep_pos];
+            let item = &s[sep_pos + 1..s.len() - 1];
+            if let Ok(len) = len.parse() {
+                ParseResult::Array(len, item)
+            } else {
+                ParseResult::Error
+            }
+        } else {
+            ParseResult::Error
+        }
+    } else if s.starts_with('{') {
+        if !s.ends_with('}') {
+            ParseResult::Error
+        } else if let Some(sep_pos) = s.find('=') {
+            let name = &s[1..sep_pos];
+            let fields = &s[sep_pos + 1..s.len() - 1];
+            ParseResult::Struct(name, fields)
+        } else {
+            ParseResult::Error
+        }
     } else {
         let (h, t) = chomp_primitive(s);
         if !t.is_empty() {
@@ -110,42 +127,11 @@ fn parse(s: &str) -> ParseResult {
     }
 }
 
-fn parse_struct(s: &str) -> Option<(&str, &str)> {
-    if let Some(sep_pos) = s.find('=') {
-        let name = &s[1..sep_pos];
-        let fields = &s[sep_pos + 1..s.len() - 1];
-        Some((name, fields))
-    } else {
-        None
-    }
-}
-
-fn parse_array(s: &str) -> Option<(u32, &str)> {
-    if let Some(sep_pos) = s.find('^') {
-        let len = &s[1..sep_pos];
-        let item = &s[sep_pos + 1..s.len() - 1];
-        if let Ok(len) = len.parse() {
-            Some((len, item))
-        } else {
-            None
-        }
-    } else {
-        None
-    }
-}
-
 fn is_valid(s: &str) -> bool {
     match parse(s) {
         ParseResult::Primitive(_) => true,
-        ParseResult::Pointer => {
-            let target = &s[1..];
-            is_valid(target)
-        },
-        ParseResult::Struct => {
-            let mut fields = match parse_struct(s) {
-                Some((_, fields)) => fields,
-                _ => return false,
-            };
+        ParseResult::Pointer(s) => is_valid(s),
+        ParseResult::Struct(_, mut fields) => {
             while !fields.is_empty() {
                 let (h, t) = chomp(fields);
                 if h.map_or(false, is_valid) {
@@ -155,8 +141,7 @@ fn is_valid(s: &str) -> bool {
             }
             true
         }
-        ParseResult::Array |
-        ParseResult::Union |
+        ParseResult::Array(..) |
         ParseResult::Error => false,
     }
 }
