@@ -12,9 +12,11 @@ impl<T> Pointer<T> where T: Encoding {
 
 impl<T> Encoding for Pointer<T> where T: Encoding {
     type PointerTarget = T;
+    type ArrayItem = Never;
     type StructFields = Never;
+    type UnionMembers = Never;
 
-    fn descriptor(&self) -> Descriptor<T, Never> {
+    fn descriptor(&self) -> Descriptor<T, Never, Never, Never> {
         Descriptor::Pointer(&self.0)
     }
 

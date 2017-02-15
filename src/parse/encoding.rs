@@ -1,7 +1,7 @@
 use std::fmt;
 use std::mem;
 
-use encoding::{Descriptor, Encoding};
+use encoding::{Descriptor, Encoding, Never};
 use multi::Encodings;
 use super::{parse, ParseResult};
 use super::multi::{StrFields, StrFieldsIter};
@@ -28,9 +28,11 @@ impl<S> StrEncoding<S> where S: ?Sized + AsRef<str> {
 
 impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
     type PointerTarget = StrEncoding;
+    type ArrayItem = Never;
     type StructFields = StrFields;
+    type UnionMembers = Never;
 
-    fn descriptor(&self) -> Descriptor<StrEncoding, StrFields> {
+    fn descriptor(&self) -> Descriptor<StrEncoding, Never, StrFields, Never> {
         let s = self.as_str();
         match parse(s) {
             ParseResult::Primitive(p) => Descriptor::Primitive(p),

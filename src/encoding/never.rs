@@ -7,9 +7,11 @@ pub enum Never { }
 
 impl Encoding for Never {
     type PointerTarget = Never;
+    type ArrayItem = Never;
     type StructFields = Never;
+    type UnionMembers = Never;
 
-    fn descriptor(&self) -> Descriptor<Never, Never> {
+    fn descriptor(&self) -> Descriptor<Never, Never, Never, Never> {
         match self { }
     }
 

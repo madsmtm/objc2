@@ -20,9 +20,11 @@ impl<S, T> Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
 
 impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     type PointerTarget = Never;
+    type ArrayItem = Never;
     type StructFields = T;
+    type UnionMembers = Never;
 
-    fn descriptor(&self) -> Descriptor<Never, T> {
+    fn descriptor(&self) -> Descriptor<Never, Never, T, Never> {
         Descriptor::Struct(self.name(), &self.fields)
     }
 
