@@ -42,7 +42,7 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
                 Descriptor::Array(len, StrEncoding::from_str_unchecked(item)),
             ParseResult::Struct(name, fields) =>
                 Descriptor::Struct(name, StrFields::from_str_unchecked(fields)),
-            ParseResult::Error => panic!(),
+            ParseResult::Error => panic!("Failed to parse an encoding from {:?}", s),
         }
     }
 

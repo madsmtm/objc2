@@ -46,9 +46,12 @@ impl<'a> Iterator for StrFieldsIter<'a> {
         if self.fields.is_empty() {
             None
         } else {
-            let (h, t) = chomp(self.fields);
+            let (h, t) = match chomp(self.fields) {
+                (Some(h), t) => (h, t),
+                (None, t) => panic!("Failed to parse an encoding from {:?}", t),
+            };
             self.fields = t;
-            Some(StrEncoding::from_str_unchecked(h.unwrap()))
+            Some(StrEncoding::from_str_unchecked(h))
         }
     }
 }
