@@ -62,22 +62,40 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
     }
 
     let (h, t) = s.split_at(1);
-    match h {
-        "c" => (Some(Primitive::Char), t),
-        "i" => (Some(Primitive::Int), t),
+    let primitive = match h {
+        "c" => Primitive::Char,
+        "s" => Primitive::Short,
+        "i" => Primitive::Int,
+        "l" => Primitive::Long,
+        "q" => Primitive::LongLong,
+        "C" => Primitive::UChar,
+        "S" => Primitive::UShort,
+        "I" => Primitive::UInt,
+        "L" => Primitive::ULong,
+        "Q" => Primitive::ULongLong,
+        "f" => Primitive::Float,
+        "d" => Primitive::Double,
+        "B" => Primitive::Bool,
+        "v" => Primitive::Void,
+        "*" => Primitive::String,
+        "@" => Primitive::Object,
+        "#" => Primitive::Class,
+        ":" => Primitive::Sel,
+        "?" => Primitive::Unknown,
         "b" => {
             // Chomp until we hit a non-digit
             let (num, t) = match t.find(|c: char| !c.is_digit(10)) {
                 Some(i) => t.split_at(i),
                 None => (t, ""),
             };
-            match num.parse() {
+            return match num.parse() {
                 Ok(b) => (Some(Primitive::BitField(b)), t),
                 Err(_) => (None, s),
-            }
+            };
         }
-        _ => (None, s),
-    }
+        _ => return (None, s),
+    };
+    (Some(primitive), t)
 }
 
 enum ParseResult<'a> {
