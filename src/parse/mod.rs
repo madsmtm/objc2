@@ -151,7 +151,7 @@ fn is_valid(s: &str) -> bool {
         ParseResult::Struct(_, mut fields) => {
             while !fields.is_empty() {
                 let (h, t) = chomp(fields);
-                if h.map_or(false, is_valid) {
+                if !h.map_or(false, is_valid) {
                     return false;
                 }
                 fields = t;
@@ -241,5 +241,13 @@ mod tests {
             (None, "bb32") => (),
             _ => panic!("Invalid bit field was chomped"),
         };
+    }
+
+    #[test]
+    fn test_validation() {
+        assert!(is_valid("c"));
+        assert!(is_valid("{A={B=ci^{C=c}}ci}"));
+        assert!(!is_valid("z"));
+        assert!(!is_valid("{A=[12^{C=c}}]"));
     }
 }

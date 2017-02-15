@@ -3,18 +3,34 @@ use std::mem;
 
 use encoding::{Descriptor, Encoding, Never};
 use multi::Encodings;
-use super::{parse, ParseResult};
+use super::{is_valid, parse, ParseResult};
 use super::multi::{StrFields, StrFieldsIter};
 
 pub struct StrEncoding<S = str>(S) where S: ?Sized + AsRef<str>;
 
 impl StrEncoding {
+    pub fn from_str(s: &str) -> Option<&StrEncoding> {
+        if is_valid(s) {
+            Some(StrEncoding::from_str_unchecked(s))
+        } else {
+            None
+        }
+    }
+
     pub fn from_str_unchecked(s: &str) -> &StrEncoding {
         unsafe { mem::transmute(s) }
     }
 }
 
 impl<S> StrEncoding<S> where S: AsRef<str> {
+    pub fn new(s: S) -> Option<StrEncoding<S>> {
+        if is_valid(s.as_ref()) {
+            Some(StrEncoding::new_unchecked(s))
+        } else {
+            None
+        }
+    }
+
     pub fn new_unchecked(s: S) -> StrEncoding<S> {
         StrEncoding(s)
     }
