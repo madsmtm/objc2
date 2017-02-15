@@ -68,24 +68,54 @@ encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F
 encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I, 9 => j: J, 10 => k: K);
 encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I, 9 => j: J, 10 => k: K, 11 => l: L);
 
+impl<T> Encodings for [T] where T: Encoding {
+    fn eq<C: EncodingsComparator>(&self, mut comparator: C) -> bool {
+        for enc in self {
+            if !comparator.eq_next(enc) {
+                return false;
+            }
+        }
+        comparator.is_finished()
+    }
+
+    fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
+        for enc in self {
+            write!(formatter, "{}", enc)?;
+        }
+        Ok(())
+    }
+}
+
+impl<T> IndexEncodings for [T] where T: Encoding {
+    fn encoding_at_eq<E: ?Sized + Encoding>(&self, index: u8, other: &E) -> bool {
+        self.get(index as usize).map_or(false, |e| e.eq_encoding(other))
+    }
+
+    fn len(&self) -> u8 {
+        self.len() as u8
+    }
+}
+
 pub trait EncodingsComparator {
     fn eq_next<T: ?Sized + Encoding>(&mut self, &T) -> bool;
     fn is_finished(&self) -> bool;
 }
 
-pub struct IndexEncodingsComparator<'a, T> where T: 'a + IndexEncodings {
+pub struct IndexEncodingsComparator<'a, T>
+        where T: 'a + ?Sized + IndexEncodings {
     encs: &'a T,
     index: u8,
 }
 
-impl<'a, T> IndexEncodingsComparator<'a, T> where T: 'a + IndexEncodings {
+impl<'a, T> IndexEncodingsComparator<'a, T>
+        where T: 'a + ?Sized + IndexEncodings {
     pub fn new(encs: &'a T) -> IndexEncodingsComparator<'a, T> {
         IndexEncodingsComparator { encs: encs, index: 0 }
     }
 }
 
 impl<'a, T> EncodingsComparator for IndexEncodingsComparator<'a, T>
-        where T: 'a + IndexEncodings {
+        where T: 'a + ?Sized + IndexEncodings {
     fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
         let index = self.index;
         if index < self.encs.len() {
