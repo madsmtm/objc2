@@ -28,19 +28,20 @@ impl<S> StrEncoding<S> where S: ?Sized + AsRef<str> {
 
 impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
     type PointerTarget = StrEncoding;
-    type ArrayItem = Never;
+    type ArrayItem = StrEncoding;
     type StructFields = StrFields;
     type UnionMembers = Never;
 
-    fn descriptor(&self) -> Descriptor<StrEncoding, Never, StrFields, Never> {
+    fn descriptor(&self) -> Descriptor<StrEncoding, StrEncoding, StrFields, Never> {
         let s = self.as_str();
         match parse(s) {
             ParseResult::Primitive(p) => Descriptor::Primitive(p),
             ParseResult::Pointer(t) =>
                 Descriptor::Pointer(StrEncoding::from_str_unchecked(t)),
+            ParseResult::Array(len, item) =>
+                Descriptor::Array(len, StrEncoding::from_str_unchecked(item)),
             ParseResult::Struct(name, fields) =>
                 Descriptor::Struct(name, StrFields::from_str_unchecked(fields)),
-            ParseResult::Array(..) |
             ParseResult::Error => panic!(),
         }
     }
@@ -50,6 +51,8 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
         match (self.descriptor(), other.descriptor()) {
             (Primitive(p1), Primitive(p2)) => p1 == p2,
             (Pointer(t1), Pointer(t2)) => t1.eq_encoding(t2),
+            (Array(l1, i1), Array(l2, i2)) =>
+                l1 == l2 && i1.eq_encoding(i2),
             (Struct(n1, f1), Struct(n2, f2)) =>
                 n1 == n2 && f2.eq(StrFieldsIter::new(f1)),
             _ => false,
@@ -65,7 +68,14 @@ impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
 
 #[cfg(test)]
 mod tests {
+    use encoding::{Array, Primitive};
     use super::*;
+
+    #[test]
+    fn test_parsed_array() {
+        let a = StrEncoding::from_str_unchecked("[12^i]");
+        assert!(a.eq_encoding(&Array::new(12, Primitive::Int)));
+    }
 
     #[test]
     fn test_parsed_struct() {

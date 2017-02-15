@@ -129,6 +129,7 @@ fn is_valid(s: &str) -> bool {
     match parse(s) {
         ParseResult::Primitive(_) => true,
         ParseResult::Pointer(s) => is_valid(s),
+        ParseResult::Array(_, s) => is_valid(s),
         ParseResult::Struct(_, mut fields) => {
             while !fields.is_empty() {
                 let (h, t) = chomp(fields);
@@ -139,7 +140,6 @@ fn is_valid(s: &str) -> bool {
             }
             true
         }
-        ParseResult::Array(..) |
         ParseResult::Error => false,
     }
 }

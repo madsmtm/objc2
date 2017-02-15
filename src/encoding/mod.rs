@@ -1,3 +1,4 @@
+mod array;
 mod never;
 mod pointer;
 mod primitive;
@@ -7,6 +8,7 @@ use std::fmt;
 
 use multi::Encodings;
 
+pub use self::array::Array;
 pub use self::never::Never;
 pub use self::pointer::Pointer;
 pub use self::primitive::Primitive;
