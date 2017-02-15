@@ -15,8 +15,13 @@ impl StrFields {
 }
 
 impl Encodings for StrFields {
-    fn eq<C: EncodingsComparator>(&self, comparator: C) -> bool {
-        StrFieldsIter::new(self).eq(comparator)
+    fn eq<C: EncodingsComparator>(&self, mut comparator: C) -> bool {
+        for enc in StrFieldsIter::new(self) {
+            if !comparator.eq_next(enc) {
+                return false;
+            }
+        }
+        comparator.is_finished()
     }
 
     fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
@@ -31,15 +36,6 @@ pub struct StrFieldsIter<'a> {
 impl<'a> StrFieldsIter<'a> {
     pub fn new(fields: &StrFields) -> StrFieldsIter {
         StrFieldsIter { fields: &fields.0 }
-    }
-
-    fn eq<C: EncodingsComparator>(self, mut other: C) -> bool {
-        for enc in self {
-            if !other.eq_next(enc) {
-                return false;
-            }
-        }
-        other.is_finished()
     }
 }
 
