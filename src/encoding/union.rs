@@ -1,7 +1,8 @@
 use core::fmt;
 
-use super::{Descriptor, Encoding, Never};
 use multi::{Encodings, IndexEncodings};
+use super::{Descriptor, Encoding};
+use super::never::Never;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Union<S, T> where S: AsRef<str>, T: IndexEncodings {

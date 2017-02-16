@@ -1,6 +1,7 @@
 use core::fmt;
 
-use super::{Descriptor, Encoding, Never};
+use super::{Descriptor, Encoding};
+use super::never::Never;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Pointer<T>(T) where T: Encoding;

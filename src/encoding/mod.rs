@@ -10,7 +10,6 @@ use core::fmt;
 use multi::Encodings;
 
 pub use self::array::Array;
-pub use self::never::Never;
 pub use self::pointer::Pointer;
 pub use self::primitive::Primitive;
 pub use self::structure::Struct;
