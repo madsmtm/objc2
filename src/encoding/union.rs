@@ -1,7 +1,7 @@
 use core::fmt;
 
 use super::{Descriptor, Encoding, Never};
-use multi::{Encodings, IndexEncodings, IndexEncodingsComparator};
+use multi::{Encodings, IndexEncodings};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Union<S, T> where S: AsRef<str>, T: IndexEncodings {
@@ -31,8 +31,7 @@ impl<S, T> Encoding for Union<S, T> where S: AsRef<str>, T: IndexEncodings {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Union(name, members) = other.descriptor() {
-            name == self.name() &&
-                members.eq(IndexEncodingsComparator::new(&self.members))
+            name == self.name() && members.eq(self.members.comparator())
         } else {
             false
         }

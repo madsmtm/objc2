@@ -10,6 +10,10 @@ pub trait Encodings {
 pub trait IndexEncodings: Encodings {
     fn encoding_at_eq<T: ?Sized + Encoding>(&self, u8, &T) -> bool;
     fn len(&self) -> u8;
+
+    fn comparator(&self) -> IndexEncodingsComparator<Self> {
+        IndexEncodingsComparator { encs: self, index: 0 }
+    }
 }
 
 macro_rules! count_idents {
@@ -109,13 +113,6 @@ pub struct IndexEncodingsComparator<'a, T>
         where T: 'a + ?Sized + IndexEncodings {
     encs: &'a T,
     index: u8,
-}
-
-impl<'a, T> IndexEncodingsComparator<'a, T>
-        where T: 'a + ?Sized + IndexEncodings {
-    pub fn new(encs: &'a T) -> IndexEncodingsComparator<'a, T> {
-        IndexEncodingsComparator { encs: encs, index: 0 }
-    }
 }
 
 impl<'a, T> EncodingsComparator for IndexEncodingsComparator<'a, T>
