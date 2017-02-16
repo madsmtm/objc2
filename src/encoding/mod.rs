@@ -3,6 +3,7 @@ mod never;
 mod pointer;
 mod primitive;
 mod structure;
+mod union;
 
 use std::fmt;
 
@@ -13,6 +14,7 @@ pub use self::never::Never;
 pub use self::pointer::Pointer;
 pub use self::primitive::Primitive;
 pub use self::structure::Struct;
+pub use self::union::Union;
 
 pub trait Encoding: fmt::Display {
     type PointerTarget: ?Sized + Encoding;

@@ -3,6 +3,6 @@ mod multi;
 mod parse;
 
 pub use encoding::{Descriptor, Encoding};
-pub use encoding::{Primitive, Pointer, Array, Struct};
+pub use encoding::{Primitive, Pointer, Array, Struct, Union};
 pub use multi::{Encodings, EncodingsComparator};
 pub use parse::StrEncoding;
