@@ -1,7 +1,7 @@
 use std::fmt;
 use std::mem;
 
-use encoding::{Descriptor, Encoding, Never};
+use encoding::{Descriptor, Encoding};
 use multi::Encodings;
 use super::{is_valid, parse, ParseResult};
 use super::multi::{StrFields, StrFieldsIter};
@@ -47,9 +47,9 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
     type PointerTarget = StrEncoding;
     type ArrayItem = StrEncoding;
     type StructFields = StrFields;
-    type UnionMembers = Never;
+    type UnionMembers = StrFields;
 
-    fn descriptor(&self) -> Descriptor<StrEncoding, StrEncoding, StrFields, Never> {
+    fn descriptor(&self) -> Descriptor<StrEncoding, StrEncoding, StrFields, StrFields> {
         let s = self.as_str();
         match parse(s) {
             ParseResult::Primitive(p) => Descriptor::Primitive(p),
@@ -59,6 +59,8 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
                 Descriptor::Array(len, StrEncoding::from_str_unchecked(item)),
             ParseResult::Struct(name, fields) =>
                 Descriptor::Struct(name, StrFields::from_str_unchecked(fields)),
+            ParseResult::Union(name, members) =>
+                Descriptor::Union(name, StrFields::from_str_unchecked(members)),
             ParseResult::Error => panic!("Failed to parse an encoding from {:?}", s),
         }
     }
@@ -72,6 +74,8 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
                 l1 == l2 && i1.eq_encoding(i2),
             (Struct(n1, f1), Struct(n2, f2)) =>
                 n1 == n2 && f2.eq(StrFieldsIter::new(f1)),
+            (Union(n1, m1), Union(n2, m2)) =>
+                n1 == n2 && m2.eq(StrFieldsIter::new(m1)),
             _ => false,
         }
     }

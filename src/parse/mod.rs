@@ -112,6 +112,7 @@ enum ParseResult<'a> {
     Pointer(&'a str),
     Array(u32, &'a str),
     Struct(&'a str, &'a str),
+    Union(&'a str, &'a str),
     Error,
 }
 
@@ -139,6 +140,10 @@ fn parse(s: &str) -> ParseResult {
         parse_parts(s, '{', '=', '}')
             .map(|(name, fields)| ParseResult::Struct(name, fields))
             .unwrap_or(ParseResult::Error)
+    } else if s.starts_with('(') {
+        parse_parts(s, '(', '=', ')')
+            .map(|(name, members)| ParseResult::Union(name, members))
+            .unwrap_or(ParseResult::Error)
     } else {
         match chomp_primitive(s) {
             (Some(p), t) if t.is_empty() => ParseResult::Primitive(p),
@@ -150,15 +155,18 @@ fn parse(s: &str) -> ParseResult {
 fn is_valid(s: &str) -> bool {
     match parse(s) {
         ParseResult::Primitive(_) => true,
-        ParseResult::Pointer(s) => is_valid(s),
-        ParseResult::Array(_, s) => is_valid(s),
-        ParseResult::Struct(_, mut fields) => {
-            while !fields.is_empty() {
-                let (h, t) = chomp(fields);
+        ParseResult::Pointer(s) |
+        ParseResult::Array(_, s) => {
+            is_valid(s)
+        }
+        ParseResult::Struct(_, mut members) |
+        ParseResult::Union(_, mut members) => {
+            while !members.is_empty() {
+                let (h, t) = chomp(members);
                 if !h.map_or(false, is_valid) {
                     return false;
                 }
-                fields = t;
+                members = t;
             }
             true
         }
