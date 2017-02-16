@@ -5,6 +5,16 @@ use encoding::Primitive;
 
 pub use self::encoding::StrEncoding;
 
+const QUALIFIERS: &'static [char] = &[
+    'r', // const
+    'n', // in
+    'N', // inout
+    'o', // out
+    'O', // bycopy
+    'R', // byref
+    'V', // oneway
+];
+
 pub fn chomp(s: &str) -> (Option<&str>, &str) {
     let head_len = chomp_ptr(s)
         .or_else(|| chomp_nested_delims(s, '[', ']'))
@@ -108,6 +118,9 @@ enum ParseResult<'a> {
 }
 
 fn parse(s: &str) -> ParseResult {
+    // strip qualifiers
+    let s = s.trim_left_matches(QUALIFIERS);
+
     if s.starts_with('^') {
         ParseResult::Pointer(&s[1..])
     } else if s.starts_with('[') {
@@ -232,5 +245,11 @@ mod tests {
         assert!(is_valid("{A={B=ci^{C=c}}ci}"));
         assert!(!is_valid("z"));
         assert!(!is_valid("{A=[12^{C=c}}]"));
+    }
+
+    #[test]
+    fn test_qualifiers() {
+        assert_eq!(parse("Vv"), ParseResult::Primitive(Primitive::Void));
+        assert_eq!(parse("r*"), ParseResult::Primitive(Primitive::String));
     }
 }
