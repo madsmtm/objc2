@@ -10,4 +10,4 @@ mod parse;
 pub use encoding::{Descriptor, Encoding};
 pub use encoding::{Primitive, Pointer, Array, Struct, Union};
 pub use multi::{Encodings, EncodingsComparator, IndexEncodings};
-pub use parse::StrEncoding;
+pub use parse::{StrEncoding, ParseEncodingError};

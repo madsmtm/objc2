@@ -3,7 +3,7 @@ mod multi;
 
 use encoding::Primitive;
 
-pub use self::encoding::StrEncoding;
+pub use self::encoding::{StrEncoding, ParseEncodingError};
 
 const QUALIFIERS: &'static [char] = &[
     'r', // const
@@ -15,7 +15,7 @@ const QUALIFIERS: &'static [char] = &[
     'V', // oneway
 ];
 
-pub fn chomp(s: &str) -> (Option<&str>, &str) {
+fn chomp(s: &str) -> (Option<&str>, &str) {
     let head_len = chomp_ptr(s)
         .or_else(|| chomp_nested_delims(s, '[', ']'))
         .or_else(|| chomp_nested_delims(s, '{', '}'))
