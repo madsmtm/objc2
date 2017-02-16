@@ -115,6 +115,15 @@ enum ParseResult<'a> {
     Error,
 }
 
+fn parse_parts(s: &str, open: char, sep: char, close: char)
+        -> Option<(&str, &str)> {
+    if s.starts_with(open) && s.ends_with(close) {
+        s.find(sep).map(|i| (&s[1..i], &s[i + 1..s.len() - 1]))
+    } else {
+        None
+    }
+}
+
 fn parse(s: &str) -> ParseResult {
     // strip qualifiers
     let s = s.trim_left_matches(QUALIFIERS);
@@ -122,27 +131,14 @@ fn parse(s: &str) -> ParseResult {
     if s.starts_with('^') {
         ParseResult::Pointer(&s[1..])
     } else if s.starts_with('[') {
-        if !s.ends_with(']') {
-            ParseResult::Error
-        } else if let Some(sep_pos) = s.find('^') {
-            let len = &s[1..sep_pos];
-            let item = &s[sep_pos + 1..s.len() - 1];
-            len.parse()
-                .map(|len| ParseResult::Array(len, item))
-                .unwrap_or(ParseResult::Error)
-        } else {
-            ParseResult::Error
-        }
+        parse_parts(s, '[', '^', ']')
+            .and_then(|(len, item)| len.parse().map(|len| (len, item)).ok())
+            .map(|(len, item)| ParseResult::Array(len, item))
+            .unwrap_or(ParseResult::Error)
     } else if s.starts_with('{') {
-        if !s.ends_with('}') {
-            ParseResult::Error
-        } else if let Some(sep_pos) = s.find('=') {
-            let name = &s[1..sep_pos];
-            let fields = &s[sep_pos + 1..s.len() - 1];
-            ParseResult::Struct(name, fields)
-        } else {
-            ParseResult::Error
-        }
+        parse_parts(s, '{', '=', '}')
+            .map(|(name, fields)| ParseResult::Struct(name, fields))
+            .unwrap_or(ParseResult::Error)
     } else {
         match chomp_primitive(s) {
             (Some(p), t) if t.is_empty() => ParseResult::Primitive(p),
