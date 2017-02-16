@@ -50,20 +50,18 @@ fn chomp_nested_delims(s: &str, open: char, close: char) -> Option<usize> {
         return None;
     }
 
-    let mut depth = 1;
-    for (i, c) in s.char_indices().skip(1) {
+    let mut depth = 0;
+    let close_index = s.find(|c: char| {
         if c == open {
             depth += 1;
         } else if c == close {
             depth -= 1;
         }
-
-        if depth == 0 {
-            return Some(i + 1);
-        }
-    }
-
-    None
+        // when the depth hits 0, we've found the close delim
+        depth == 0
+    });
+    // the total length is 1 more than the index of the close delim
+    close_index.map(|i| i + 1)
 }
 
 fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
@@ -218,6 +216,9 @@ mod tests {
     #[test]
     fn test_chomp_bad_delims() {
         let (h, _) = chomp("{A={B=ci}ci");
+        assert_eq!(h, None);
+
+        let (h, _) = chomp("}A=ci{ci");
         assert_eq!(h, None);
 
         let (h, t) = chomp("{A=(B=ci}[12^{C=c})]");
