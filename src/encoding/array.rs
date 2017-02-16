@@ -2,6 +2,7 @@ use std::fmt;
 
 use super::{Descriptor, Encoding, Never};
 
+#[derive(Clone, Copy, Debug)]
 pub struct Array<T> where T: Encoding {
     len: u32,
     item: T,

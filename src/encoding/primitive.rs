@@ -2,7 +2,7 @@ use std::fmt;
 
 use super::{Descriptor, Encoding, Never};
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Primitive {
     Char,
     Short,

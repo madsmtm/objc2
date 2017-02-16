@@ -98,6 +98,7 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
     (Some(primitive), t)
 }
 
+#[derive(Debug, PartialEq, Eq)]
 enum ParseResult<'a> {
     Primitive(Primitive),
     Pointer(&'a str),
@@ -218,25 +219,11 @@ mod tests {
 
     #[test]
     fn test_parse_bitfield() {
-        match parse("b32") {
-            ParseResult::Primitive(Primitive::BitField(32)) => (),
-            _ => panic!("Bit field parsed incorrectly"),
-        };
-
-        match parse("b-32") {
-            ParseResult::Error => (),
-            _ => panic!("Invalid bit field was accepted"),
-        };
-
-        match chomp_primitive("b32b32") {
-            (Some(Primitive::BitField(32)), "b32") => (),
-            _ => panic!("Bit field wasn't chomped correctly"),
-        };
-
-        match chomp_primitive("bb32") {
-            (None, "bb32") => (),
-            _ => panic!("Invalid bit field was chomped"),
-        };
+        assert_eq!(parse("b32"), ParseResult::Primitive(Primitive::BitField(32)));
+        assert_eq!(parse("b-32"), ParseResult::Error);
+        assert_eq!(parse("b32f"), ParseResult::Error);
+        assert_eq!(chomp_primitive("b32b32"), (Some(Primitive::BitField(32)), "b32"));
+        assert_eq!(chomp_primitive("bb32"), (None, "bb32"));
     }
 
     #[test]

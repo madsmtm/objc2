@@ -3,6 +3,7 @@ use std::fmt;
 use multi::{Encodings, EncodingsComparator};
 use super::{Descriptor, Encoding};
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Never { }
 
 impl Encoding for Never {

@@ -28,6 +28,7 @@ pub trait Encoding: fmt::Display {
     fn eq_encoding<T: ?Sized + Encoding>(&self, &T) -> bool;
 }
 
+#[derive(Clone, Copy, Debug)]
 pub enum Descriptor<'a, T, I, F, M>
         where T: 'a + ?Sized + Encoding,
               I: 'a + ?Sized + Encoding,

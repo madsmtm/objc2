@@ -6,6 +6,7 @@ use multi::Encodings;
 use super::{is_valid, parse, ParseResult};
 use super::multi::{StrFields, StrFieldsIter};
 
+#[derive(Clone, Copy, Debug)]
 pub struct StrEncoding<S = str>(S) where S: ?Sized + AsRef<str>;
 
 impl StrEncoding {

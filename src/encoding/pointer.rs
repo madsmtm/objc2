@@ -2,6 +2,7 @@ use std::fmt;
 
 use super::{Descriptor, Encoding, Never};
 
+#[derive(Clone, Copy, Debug)]
 pub struct Pointer<T>(T) where T: Encoding;
 
 impl<T> Pointer<T> where T: Encoding {

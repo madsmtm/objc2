@@ -6,6 +6,7 @@ use multi::{Encodings, EncodingsComparator};
 use super::chomp;
 use super::encoding::StrEncoding;
 
+#[derive(Debug)]
 pub struct StrFields(str);
 
 impl StrFields {

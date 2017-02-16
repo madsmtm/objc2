@@ -3,6 +3,7 @@ use std::fmt;
 use super::{Descriptor, Encoding, Never};
 use multi::{Encodings, IndexEncodings, IndexEncodingsComparator};
 
+#[derive(Clone, Copy, Debug)]
 pub struct Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     name: S,
     fields: T,
