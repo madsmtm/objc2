@@ -1,7 +1,7 @@
 use core::fmt;
 
+use {Descriptor, Encoding};
 use multi::{Encodings, IndexEncodings};
-use super::{Descriptor, Encoding};
 use super::never::Never;
 
 #[derive(Clone, Copy, Debug)]

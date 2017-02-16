@@ -1,7 +1,7 @@
 use core::fmt;
 use core::mem;
 
-use encoding::{Descriptor, Encoding};
+use {Descriptor, Encoding};
 use multi::Encodings;
 use super::{is_valid, parse, ParseResult};
 use super::multi::{StrFields, StrFieldsIter};

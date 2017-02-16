@@ -1,6 +1,6 @@
 use core::fmt;
 
-use super::{Descriptor, Encoding};
+use {Descriptor, Encoding};
 use super::never::Never;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

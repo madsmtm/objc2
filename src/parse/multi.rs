@@ -1,7 +1,7 @@
 use core::fmt;
 use core::mem;
 
-use encoding::Encoding;
+use Encoding;
 use multi::{Encodings, EncodingsComparator};
 use super::chomp;
 use super::encoding::StrEncoding;
