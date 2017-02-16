@@ -132,13 +132,9 @@ fn parse(s: &str) -> ParseResult {
             ParseResult::Error
         }
     } else {
-        let (h, t) = chomp_primitive(s);
-        if !t.is_empty() {
-            ParseResult::Error
-        } else if let Some(p) = h {
-            ParseResult::Primitive(p)
-        } else {
-            ParseResult::Error
+        match chomp_primitive(s) {
+            (Some(p), t) if t.is_empty() => ParseResult::Primitive(p),
+            _ => ParseResult::Error,
         }
     }
 }
