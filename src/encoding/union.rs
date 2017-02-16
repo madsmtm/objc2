@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 
 use super::{Descriptor, Encoding, Never};
 use multi::{Encodings, IndexEncodings, IndexEncodingsComparator};
@@ -49,6 +49,7 @@ impl<S, T> fmt::Display for Union<S, T> where S: AsRef<str>, T: IndexEncodings {
 
 #[cfg(test)]
 mod tests {
+    use std::string::ToString;
     use encoding::Primitive;
     use parse::StrEncoding;
     use super::*;

@@ -1,5 +1,5 @@
-use std::fmt;
-use std::mem;
+use core::fmt;
+use core::mem;
 
 use encoding::Encoding;
 use multi::{Encodings, EncodingsComparator};

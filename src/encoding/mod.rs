@@ -5,7 +5,7 @@ mod primitive;
 mod structure;
 mod union;
 
-use std::fmt;
+use core::fmt;
 
 use multi::Encodings;
 

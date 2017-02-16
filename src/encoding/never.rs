@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 
 use multi::{Encodings, EncodingsComparator};
 use super::{Descriptor, Encoding};

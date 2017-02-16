@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 
 use Encoding;
 
@@ -92,7 +92,11 @@ impl<T> IndexEncodings for [T] where T: Encoding {
     }
 
     fn len(&self) -> u8 {
-        self.len() as u8
+        // For some reason in no_std self.len() is ambiguous
+        // between SliceExt and ExactSizeIterator
+        fn get_len<T>(s: &[T]) -> usize { s.len() }
+
+        get_len(self) as u8
     }
 }
 

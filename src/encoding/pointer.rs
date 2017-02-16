@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 
 use super::{Descriptor, Encoding, Never};
 
@@ -38,6 +38,7 @@ impl<T> fmt::Display for Pointer<T> where T: Encoding {
 
 #[cfg(test)]
 mod tests {
+    use std::string::ToString;
     use encoding::Primitive;
     use super::*;
 

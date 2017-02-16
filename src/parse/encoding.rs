@@ -1,5 +1,5 @@
-use std::fmt;
-use std::mem;
+use core::fmt;
+use core::mem;
 
 use encoding::{Descriptor, Encoding};
 use multi::Encodings;
@@ -118,8 +118,8 @@ mod tests {
         assert_eq!(name, "CGPoint");
 
         let mut fields = StrFieldsIter::new(fields);
-        assert_eq!(fields.next().unwrap().to_string(), "c");
-        assert_eq!(fields.next().unwrap().to_string(), "i");
+        assert_eq!(fields.next().unwrap().as_str(), "c");
+        assert_eq!(fields.next().unwrap().as_str(), "i");
         assert!(fields.next().is_none());
     }
 }

@@ -1,3 +1,8 @@
+#![no_std]
+
+#[cfg(test)]
+extern crate std;
+
 mod encoding;
 mod multi;
 mod parse;

@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 
 use super::{Descriptor, Encoding, Never};
 
@@ -77,6 +77,7 @@ impl fmt::Display for Primitive {
 
 #[cfg(test)]
 mod tests {
+    use std::string::ToString;
     use super::*;
 
     #[test]
