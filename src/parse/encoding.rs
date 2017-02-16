@@ -7,14 +7,23 @@ use super::{is_valid, parse, ParseResult};
 use super::multi::{StrFields, StrFieldsIter};
 
 #[derive(Clone, Copy, Debug)]
+pub struct ParseEncodingError<S>(S) where S: AsRef<str>;
+
+impl<S> fmt::Display for ParseEncodingError<S> where S: AsRef<str> {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "Invalid encoding: {:?}", self.0.as_ref())
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
 pub struct StrEncoding<S = str>(S) where S: ?Sized + AsRef<str>;
 
 impl StrEncoding {
-    pub fn from_str(s: &str) -> Option<&StrEncoding> {
+    pub fn from_str(s: &str) -> Result<&StrEncoding, ParseEncodingError<&str>> {
         if is_valid(s) {
-            Some(StrEncoding::from_str_unchecked(s))
+            Ok(StrEncoding::from_str_unchecked(s))
         } else {
-            None
+            Err(ParseEncodingError(s))
         }
     }
 
@@ -24,11 +33,11 @@ impl StrEncoding {
 }
 
 impl<S> StrEncoding<S> where S: AsRef<str> {
-    pub fn new(s: S) -> Option<StrEncoding<S>> {
+    pub fn new(s: S) -> Result<StrEncoding<S>, ParseEncodingError<S>> {
         if is_valid(s.as_ref()) {
-            Some(StrEncoding::new_unchecked(s))
+            Ok(StrEncoding::new_unchecked(s))
         } else {
-            None
+            Err(ParseEncodingError(s))
         }
     }
 
