@@ -16,7 +16,7 @@ impl StrFields {
 }
 
 impl Encodings for StrFields {
-    fn each<F: EncodingIterateCallback>(&self, mut callback: F) {
+    fn each<F: EncodingIterateCallback>(&self, callback: &mut F) {
         for enc in StrFieldsIter::new(self) {
             if callback.call(enc) { break; }
         }

@@ -7,7 +7,7 @@ pub trait EncodingIterateCallback {
 }
 
 pub trait Encodings {
-    fn each<F: EncodingIterateCallback>(&self, F);
+    fn each<F: EncodingIterateCallback>(&self, &mut F);
 
     fn eq<C: EncodingsComparator>(&self, C) -> bool;
     fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
@@ -38,7 +38,7 @@ macro_rules! encodings_impl {
     ($($i:expr => $a:ident : $t:ident),*) => (
         #[allow(unused)]
         impl<$($t: Encoding),*> Encodings for ($($t,)*) {
-            fn each<X: EncodingIterateCallback>(&self, mut callback: X) {
+            fn each<X: EncodingIterateCallback>(&self, callback: &mut X) {
                 let ($(ref $a,)*) = *self;
                 $(if callback.call($a) { return; })*
             }
@@ -84,7 +84,7 @@ encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F
 encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I, 9 => j: J, 10 => k: K, 11 => l: L);
 
 impl<T> Encodings for [T] where T: Encoding {
-    fn each<F: EncodingIterateCallback>(&self, mut callback: F) {
+    fn each<F: EncodingIterateCallback>(&self, callback: &mut F) {
         for enc in self {
             if callback.call(enc) { break; }
         }

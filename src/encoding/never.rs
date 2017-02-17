@@ -22,7 +22,7 @@ impl Encoding for Never {
 }
 
 impl Encodings for Never {
-    fn each<F: EncodingIterateCallback>(&self, _: F) {
+    fn each<F: EncodingIterateCallback>(&self, _: &mut F) {
         match self { }
     }
 
