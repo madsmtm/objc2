@@ -1,7 +1,7 @@
 use core::fmt;
 
 use {Descriptor, Encoding};
-use multi::{Encodings, EncodingIterateCallback};
+use multi::{Encodings, EncodingsIterateCallback};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Never { }
@@ -22,7 +22,7 @@ impl Encoding for Never {
 }
 
 impl Encodings for Never {
-    fn each<F: EncodingIterateCallback>(&self, _: &mut F) {
+    fn each<F: EncodingsIterateCallback>(&self, _: &mut F) {
         match self { }
     }
 

@@ -2,7 +2,7 @@ use core::fmt;
 use core::mem;
 
 use Encoding;
-use multi::{Encodings, EncodingIterateCallback};
+use multi::{Encodings, EncodingsIterateCallback};
 use super::chomp;
 use super::encoding::StrEncoding;
 
@@ -16,7 +16,7 @@ impl StrFields {
 }
 
 impl Encodings for StrFields {
-    fn each<F: EncodingIterateCallback>(&self, callback: &mut F) {
+    fn each<F: EncodingsIterateCallback>(&self, callback: &mut F) {
         for enc in StrFieldsIter::new(self) {
             if callback.call(enc) { break; }
         }
@@ -78,7 +78,7 @@ impl<'a> StrFieldsComparator<'a> {
     }
 }
 
-impl<'a> EncodingIterateCallback for StrFieldsComparator<'a> {
+impl<'a> EncodingsIterateCallback for StrFieldsComparator<'a> {
     fn call<T: ?Sized + Encoding>(&mut self, encoding: &T) -> bool {
         if !self.iter.next().map_or(false, |e| e.eq_encoding(encoding)) {
             self.all_equal = false;

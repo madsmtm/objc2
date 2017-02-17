@@ -2,12 +2,12 @@ use core::fmt;
 
 use Encoding;
 
-pub trait EncodingIterateCallback {
+pub trait EncodingsIterateCallback {
     fn call<T: ?Sized + Encoding>(&mut self, &T) -> bool;
 }
 
 pub trait Encodings {
-    fn each<F: EncodingIterateCallback>(&self, &mut F);
+    fn each<F: EncodingsIterateCallback>(&self, &mut F);
 
     fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool;
 
@@ -39,7 +39,7 @@ macro_rules! encodings_impl {
     ($($i:expr => $a:ident : $t:ident),*) => (
         #[allow(unused)]
         impl<$($t: Encoding),*> Encodings for ($($t,)*) {
-            fn each<X: EncodingIterateCallback>(&self, callback: &mut X) {
+            fn each<X: EncodingsIterateCallback>(&self, callback: &mut X) {
                 let ($(ref $a,)*) = *self;
                 $(if callback.call($a) { return; })*
             }
@@ -81,7 +81,7 @@ encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F
 encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I, 9 => j: J, 10 => k: K, 11 => l: L);
 
 impl<T> Encodings for [T] where T: Encoding {
-    fn each<F: EncodingIterateCallback>(&self, callback: &mut F) {
+    fn each<F: EncodingsIterateCallback>(&self, callback: &mut F) {
         for enc in self {
             if callback.call(enc) { break; }
         }
@@ -130,7 +130,7 @@ impl<'a, T> IndexEncodingsComparator<'a, T>
     }
 }
 
-impl<'a, T> EncodingIterateCallback for IndexEncodingsComparator<'a, T>
+impl<'a, T> EncodingsIterateCallback for IndexEncodingsComparator<'a, T>
         where T: 'a + ?Sized + IndexEncodings {
     fn call<E: ?Sized + Encoding>(&mut self, encoding: &E) -> bool {
         let index = self.index;
@@ -169,7 +169,7 @@ impl<'a, W> EncodingsWriter<'a, W> where W: 'a + fmt::Write {
     }
 }
 
-impl<'a, W> EncodingIterateCallback for EncodingsWriter<'a, W>
+impl<'a, W> EncodingsIterateCallback for EncodingsWriter<'a, W>
         where W: 'a + fmt::Write {
     fn call<E: ?Sized + Encoding>(&mut self, encoding: &E) -> bool {
         self.result = write!(self.writer, "{}", encoding);
