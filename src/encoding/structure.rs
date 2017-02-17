@@ -29,14 +29,6 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
     fn descriptor(&self) -> Descriptor<Never, Never, T, Never> {
         Descriptor::Struct(self.name(), &self.fields)
     }
-
-    fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
-        if let Descriptor::Struct(name, fields) = other.descriptor() {
-            self.name() == name && self.fields.eq_encodings(fields)
-        } else {
-            false
-        }
-    }
 }
 
 impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: Encodings {

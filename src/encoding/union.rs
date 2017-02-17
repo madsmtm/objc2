@@ -29,14 +29,6 @@ impl<S, T> Encoding for Union<S, T> where S: AsRef<str>, T: Encodings {
     fn descriptor(&self) -> Descriptor<Never, Never, Never, T> {
         Descriptor::Union(self.name(), &self.members)
     }
-
-    fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
-        if let Descriptor::Union(name, members) = other.descriptor() {
-            self.name() == name && self.members.eq_encodings(members)
-        } else {
-            false
-        }
-    }
 }
 
 impl<S, T> fmt::Display for Union<S, T> where S: AsRef<str>, T: Encodings {

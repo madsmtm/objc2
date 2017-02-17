@@ -15,10 +15,6 @@ impl Encoding for Never {
     fn descriptor(&self) -> Descriptor<Never, Never, Never, Never> {
         match self { }
     }
-
-    fn eq_encoding<T: ?Sized + Encoding>(&self, _: &T) -> bool {
-        match self { }
-    }
 }
 
 impl Encodings for Never {

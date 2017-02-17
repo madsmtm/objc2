@@ -2,7 +2,6 @@ use core::fmt;
 use core::mem;
 
 use {Descriptor, Encoding};
-use multi::Encodings;
 use super::{is_valid, parse, ParseResult};
 use super::multi::StrFields;
 
@@ -71,21 +70,6 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
             ParseResult::Union(name, members) =>
                 Descriptor::Union(name, StrFields::from_str_unchecked(members)),
             ParseResult::Error => panic!("Failed to parse an encoding from {:?}", s),
-        }
-    }
-
-    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
-        use Descriptor::*;
-        match (self.descriptor(), other.descriptor()) {
-            (Primitive(p1), Primitive(p2)) => p1 == p2,
-            (Pointer(t1), Pointer(t2)) => t1.eq_encoding(t2),
-            (Array(l1, i1), Array(l2, i2)) =>
-                l1 == l2 && i1.eq_encoding(i2),
-            (Struct(n1, f1), Struct(n2, f2)) =>
-                n1 == n2 && f1.eq_encodings(f2),
-            (Union(n1, m1), Union(n2, m2)) =>
-                n1 == n2 && m1.eq_encodings(m2),
-            _ => false,
         }
     }
 }

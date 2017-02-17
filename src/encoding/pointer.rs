@@ -21,14 +21,6 @@ impl<T> Encoding for Pointer<T> where T: Encoding {
     fn descriptor(&self) -> Descriptor<T, Never, Never, Never> {
         Descriptor::Pointer(&self.0)
     }
-
-    fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
-        if let Descriptor::Pointer(t) = other.descriptor() {
-            self.0.eq_encoding(t)
-        } else {
-            false
-        }
-    }
 }
 
 impl<T> fmt::Display for Pointer<T> where T: Encoding {

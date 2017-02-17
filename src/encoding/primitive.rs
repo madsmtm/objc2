@@ -36,14 +36,6 @@ impl Encoding for Primitive {
     fn descriptor(&self) -> Descriptor<Never, Never, Never, Never> {
         Descriptor::Primitive(*self)
     }
-
-    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
-        if let Descriptor::Primitive(p) = other.descriptor() {
-            *self == p
-        } else {
-            false
-        }
-    }
 }
 
 impl fmt::Display for Primitive {

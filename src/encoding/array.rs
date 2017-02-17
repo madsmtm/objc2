@@ -24,14 +24,6 @@ impl<T> Encoding for Array<T> where T: Encoding {
     fn descriptor(&self) -> Descriptor<Never, T, Never, Never> {
         Descriptor::Array(self.len, &self.item)
     }
-
-    fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
-        if let Descriptor::Array(len, item) = other.descriptor() {
-            self.len == len && self.item.eq_encoding(item)
-        } else {
-            false
-        }
-    }
 }
 
 impl<T> fmt::Display for Array<T> where T: Encoding {
