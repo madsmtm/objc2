@@ -2,15 +2,27 @@ use core::fmt;
 
 use Encoding;
 
+/// Types that can be used as callbacks while iterating over `Encodings`.
+///
+/// A special trait is necessary rather than a normal closure because
+/// the type of each `Encoding` may be different.
 pub trait EncodingsIterateCallback {
+    /// This method is called for each encoding of an `Encodings`.
+    /// The return value indicates whether iteration should stop;
+    /// return `true` to stop the iteration before completion.
     fn call<T: ?Sized + Encoding>(&mut self, &T) -> bool;
 }
 
+/// Types that represent a collection of `Encoding`s.
 pub trait Encodings {
+    /// Iterates over the encodings of Self,
+    /// calling the provided callback for each.
     fn each<F: EncodingsIterateCallback>(&self, &mut F);
 
+    /// Returns whether Self is equal to the given encodings,
     fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool;
 
+    /// Writes each encoding of Self in order to the given writer.
     fn write_all<W: fmt::Write>(&self, writer: &mut W) -> fmt::Result {
         let mut writer = EncodingsWriter::new(writer);
         self.each(&mut writer);
