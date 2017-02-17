@@ -13,6 +13,12 @@ impl StrFields {
     pub fn from_str_unchecked(s: &str) -> &StrFields {
         unsafe { mem::transmute(s) }
     }
+
+    pub fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool {
+        let mut comparator = StrFieldsComparator::new(self);
+        encs.each(&mut comparator);
+        comparator.was_equal()
+    }
 }
 
 impl Encodings for StrFields {
@@ -36,12 +42,12 @@ impl Encodings for StrFields {
     }
 }
 
-pub struct StrFieldsIter<'a> {
+struct StrFieldsIter<'a> {
     fields: &'a str,
 }
 
 impl<'a> StrFieldsIter<'a> {
-    pub fn new(fields: &StrFields) -> StrFieldsIter {
+    fn new(fields: &StrFields) -> StrFieldsIter {
         StrFieldsIter { fields: &fields.0 }
     }
 }
@@ -63,12 +69,47 @@ impl<'a> Iterator for StrFieldsIter<'a> {
     }
 }
 
-impl<'a> EncodingsComparator for StrFieldsIter<'a> {
-    fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
-        self.next().map_or(false, |e| e.eq_encoding(other))
+struct StrFieldsComparator<'a> {
+    iter: StrFieldsIter<'a>,
+    all_equal: bool,
+}
+
+impl<'a> StrFieldsComparator<'a> {
+    fn new(fields: &StrFields) -> StrFieldsComparator {
+        StrFieldsComparator {
+            iter: StrFieldsIter::new(fields),
+            all_equal: true,
+        }
     }
 
-    fn is_finished(&self) -> bool {
-        self.fields.is_empty()
+    fn was_equal(mut self) -> bool {
+        self.all_equal && self.iter.next().is_none()
+    }
+}
+
+impl<'a> EncodingIterateCallback for StrFieldsComparator<'a> {
+    fn call<T: ?Sized + Encoding>(&mut self, encoding: &T) -> bool {
+        if !self.iter.next().map_or(false, |e| e.eq_encoding(encoding)) {
+            self.all_equal = false;
+            // stop iteration
+            true
+        } else {
+            // don't stop iteration
+            false
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_iter_fields() {
+        let fields = StrFields::from_str_unchecked("ci");
+        let mut fields = StrFieldsIter::new(fields);
+        assert_eq!(fields.next().unwrap().as_str(), "c");
+        assert_eq!(fields.next().unwrap().as_str(), "i");
+        assert!(fields.next().is_none());
     }
 }

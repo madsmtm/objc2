@@ -2,9 +2,8 @@ use core::fmt;
 use core::mem;
 
 use {Descriptor, Encoding};
-use multi::Encodings;
 use super::{is_valid, parse, ParseResult};
-use super::multi::{StrFields, StrFieldsIter};
+use super::multi::StrFields;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ParseEncodingError<S>(S) where S: AsRef<str>;
@@ -82,9 +81,9 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
             (Array(l1, i1), Array(l2, i2)) =>
                 l1 == l2 && i1.eq_encoding(i2),
             (Struct(n1, f1), Struct(n2, f2)) =>
-                n1 == n2 && f2.eq(StrFieldsIter::new(f1)),
+                n1 == n2 && f1.eq_encodings(f2),
             (Union(n1, m1), Union(n2, m2)) =>
-                n1 == n2 && m2.eq(StrFieldsIter::new(m1)),
+                n1 == n2 && m1.eq_encodings(m2),
             _ => false,
         }
     }
@@ -98,7 +97,7 @@ impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
 
 #[cfg(test)]
 mod tests {
-    use encoding::{Array, Primitive};
+    use encoding::{Array, Primitive, Struct};
     use super::*;
 
     #[test]
@@ -109,17 +108,8 @@ mod tests {
 
     #[test]
     fn test_parsed_struct() {
-        let s = StrEncoding::from_str_unchecked("{CGPoint=ci}");
-
-        let (name, fields) = match s.descriptor() {
-            Descriptor::Struct(name, fields) => (name, fields),
-            _ => panic!("Descriptor was not a struct"),
-        };
-        assert_eq!(name, "CGPoint");
-
-        let mut fields = StrFieldsIter::new(fields);
-        assert_eq!(fields.next().unwrap().as_str(), "c");
-        assert_eq!(fields.next().unwrap().as_str(), "i");
-        assert!(fields.next().is_none());
+        let parsed = StrEncoding::from_str_unchecked("{CGPoint=ci}");
+        let expected = Struct::new("CGPoint", (Primitive::Char, Primitive::Int));
+        assert!(parsed.eq_encoding(&expected));
     }
 }
