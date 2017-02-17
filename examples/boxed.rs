@@ -2,15 +2,44 @@ extern crate objc_encode;
 
 use std::fmt;
 
-use objc_encode::{Encoding, Encodings, Descriptor};
+use objc_encode::{Encoding, Encodings, EncodingsIterateCallback, Descriptor};
+use objc_encode::{StrEncoding, ParseEncodingError};
 use objc_encode::encoding::Primitive;
 
+#[derive(Debug)]
 enum BoxedEncoding {
     Primitive(Primitive),
     Pointer(Box<BoxedEncoding>),
     Array(u32, Box<BoxedEncoding>),
     Struct(String, Vec<BoxedEncoding>),
     Union(String, Vec<BoxedEncoding>),
+}
+
+impl BoxedEncoding {
+    fn from_encoding<T: ?Sized + Encoding>(encoding: &T) -> BoxedEncoding {
+        use BoxedEncoding::*;
+        match encoding.descriptor() {
+            Descriptor::Primitive(p) => Primitive(p),
+            Descriptor::Pointer(t) =>
+                Pointer(Box::new(BoxedEncoding::from_encoding(t))),
+            Descriptor::Array(len, item) =>
+                Array(len, Box::new(BoxedEncoding::from_encoding(item))),
+            Descriptor::Struct(name, fields) => {
+                let mut collector = BoxedEncodingsCollector::new();
+                fields.each(&mut collector);
+                Struct(name.to_string(), collector.into_encodings())
+            }
+            Descriptor::Union(name, members) => {
+                let mut collector = BoxedEncodingsCollector::new();
+                members.each(&mut collector);
+                Union(name.to_string(), collector.into_encodings())
+            }
+        }
+    }
+
+    fn from_str(s: &str) -> Result<BoxedEncoding, ParseEncodingError<&str>> {
+        StrEncoding::from_str(s).map(|e| BoxedEncoding::from_encoding(e))
+    }
 }
 
 impl Encoding for BoxedEncoding {
@@ -52,6 +81,27 @@ impl fmt::Display for BoxedEncoding {
     }
 }
 
+struct BoxedEncodingsCollector {
+    encs: Vec<BoxedEncoding>,
+}
+
+impl BoxedEncodingsCollector {
+    fn new() -> BoxedEncodingsCollector {
+        BoxedEncodingsCollector { encs: Vec::new() }
+    }
+
+    fn into_encodings(self) -> Vec<BoxedEncoding> {
+        self.encs
+    }
+}
+
+impl EncodingsIterateCallback for BoxedEncodingsCollector {
+    fn call<T: ?Sized + Encoding>(&mut self, encoding: &T) -> bool {
+        self.encs.push(BoxedEncoding::from_encoding(encoding));
+        false
+    }
+}
+
 fn main() {
     let enc = BoxedEncoding::Struct("CGPoint".to_string(), vec![
         BoxedEncoding::Primitive(Primitive::Char),
@@ -62,12 +112,6 @@ fn main() {
     let enc = BoxedEncoding::Pointer(Box::new(enc));
     println!("{}", enc);
 
-    let enc = BoxedEncoding::Array(12, Box::new(enc));
-    println!("{}", enc);
-
-    let enc = BoxedEncoding::Union("CGSize".to_string(), vec![
-        BoxedEncoding::Primitive(Primitive::Int),
-        enc,
-    ]);
-    println!("{}", enc);
+    let enc = BoxedEncoding::from_str("{CGPoint=ci}");
+    println!("{:?}", enc);
 }
