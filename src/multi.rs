@@ -9,19 +9,13 @@ pub trait EncodingIterateCallback {
 pub trait Encodings {
     fn each<F: EncodingIterateCallback>(&self, &mut F);
 
-    fn eq<C: EncodingsComparator>(&self, C) -> bool;
+    fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool;
     fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
 }
 
-pub trait IndexEncodings: Encodings {
+trait IndexEncodings: Encodings {
     fn encoding_at_eq<T: ?Sized + Encoding>(&self, u8, &T) -> bool;
     fn len(&self) -> u8;
-
-    fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool {
-        let mut comparator = IndexEncodingsComparator::new(self);
-        encs.each(&mut comparator);
-        comparator.was_equal()
-    }
 }
 
 macro_rules! count_idents {
@@ -45,9 +39,10 @@ macro_rules! encodings_impl {
                 $(if callback.call($a) { return; })*
             }
 
-            fn eq<X: EncodingsComparator>(&self, mut fields: X) -> bool {
-                let ($(ref $a,)*) = *self;
-                $(fields.eq_next($a) &&)* fields.is_finished()
+            fn eq_encodings<X: ?Sized + Encodings>(&self, encs: &X) -> bool {
+                let mut comparator = IndexEncodingsComparator::new(self);
+                encs.each(&mut comparator);
+                comparator.was_equal()
             }
 
             fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
@@ -92,13 +87,10 @@ impl<T> Encodings for [T] where T: Encoding {
         }
     }
 
-    fn eq<C: EncodingsComparator>(&self, mut comparator: C) -> bool {
-        for enc in self {
-            if !comparator.eq_next(enc) {
-                return false;
-            }
-        }
-        comparator.is_finished()
+    fn eq_encodings<E: ?Sized + Encodings>(&self, encs: &E) -> bool {
+        let mut comparator = IndexEncodingsComparator::new(self);
+        encs.each(&mut comparator);
+        comparator.was_equal()
     }
 
     fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
@@ -121,11 +113,6 @@ impl<T> IndexEncodings for [T] where T: Encoding {
 
         get_len(self) as u8
     }
-}
-
-pub trait EncodingsComparator {
-    fn eq_next<T: ?Sized + Encoding>(&mut self, &T) -> bool;
-    fn is_finished(&self) -> bool;
 }
 
 struct IndexEncodingsComparator<'a, T>

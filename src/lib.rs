@@ -11,7 +11,7 @@ mod parse;
 use core::fmt;
 
 pub use encode::Encode;
-pub use multi::{Encodings, EncodingsComparator, IndexEncodings};
+pub use multi::Encodings;
 pub use parse::{StrEncoding, ParseEncodingError};
 
 pub trait Encoding: fmt::Display {

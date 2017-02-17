@@ -1,7 +1,7 @@
 use core::fmt;
 
 use {Descriptor, Encoding};
-use multi::{Encodings, EncodingsComparator, EncodingIterateCallback};
+use multi::{Encodings, EncodingIterateCallback};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Never { }
@@ -26,7 +26,7 @@ impl Encodings for Never {
         match self { }
     }
 
-    fn eq<C: EncodingsComparator>(&self, _: C) -> bool {
+    fn eq_encodings<E: ?Sized + Encodings>(&self, _: &E) -> bool {
         match self { }
     }
 

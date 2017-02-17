@@ -1,16 +1,16 @@
 use core::fmt;
 
 use {Descriptor, Encoding};
-use multi::{Encodings, IndexEncodings};
+use multi::Encodings;
 use super::never::Never;
 
 #[derive(Clone, Copy, Debug)]
-pub struct Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
+pub struct Struct<S, T> where S: AsRef<str>, T: Encodings {
     name: S,
     fields: T,
 }
 
-impl<S, T> Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
+impl<S, T> Struct<S, T> where S: AsRef<str>, T: Encodings {
     pub fn new(name: S, fields: T) -> Struct<S, T> {
         Struct { name: name, fields: fields }
     }
@@ -20,7 +20,7 @@ impl<S, T> Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     }
 }
 
-impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
+impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
     type PointerTarget = Never;
     type ArrayItem = Never;
     type StructFields = T;
@@ -39,7 +39,7 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
     }
 }
 
-impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
+impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: Encodings {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "{{{}=", self.name())?;
         self.fields.write_all(formatter)?;

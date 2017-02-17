@@ -1,16 +1,16 @@
 use core::fmt;
 
 use {Descriptor, Encoding};
-use multi::{Encodings, IndexEncodings};
+use multi::Encodings;
 use super::never::Never;
 
 #[derive(Clone, Copy, Debug)]
-pub struct Union<S, T> where S: AsRef<str>, T: IndexEncodings {
+pub struct Union<S, T> where S: AsRef<str>, T: Encodings {
     name: S,
     members: T,
 }
 
-impl<S, T> Union<S, T> where S: AsRef<str>, T: IndexEncodings {
+impl<S, T> Union<S, T> where S: AsRef<str>, T: Encodings {
     pub fn new(name: S, members: T) -> Union<S, T> {
         Union { name: name, members: members }
     }
@@ -20,7 +20,7 @@ impl<S, T> Union<S, T> where S: AsRef<str>, T: IndexEncodings {
     }
 }
 
-impl<S, T> Encoding for Union<S, T> where S: AsRef<str>, T: IndexEncodings {
+impl<S, T> Encoding for Union<S, T> where S: AsRef<str>, T: Encodings {
     type PointerTarget = Never;
     type ArrayItem = Never;
     type StructFields = Never;
@@ -39,7 +39,7 @@ impl<S, T> Encoding for Union<S, T> where S: AsRef<str>, T: IndexEncodings {
     }
 }
 
-impl<S, T> fmt::Display for Union<S, T> where S: AsRef<str>, T: IndexEncodings {
+impl<S, T> fmt::Display for Union<S, T> where S: AsRef<str>, T: Encodings {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "({}=", self.name())?;
         self.members.write_all(formatter)?;

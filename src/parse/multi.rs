@@ -2,7 +2,7 @@ use core::fmt;
 use core::mem;
 
 use Encoding;
-use multi::{Encodings, EncodingsComparator, EncodingIterateCallback};
+use multi::{Encodings, EncodingIterateCallback};
 use super::chomp;
 use super::encoding::StrEncoding;
 
@@ -13,12 +13,6 @@ impl StrFields {
     pub fn from_str_unchecked(s: &str) -> &StrFields {
         unsafe { mem::transmute(s) }
     }
-
-    pub fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool {
-        let mut comparator = StrFieldsComparator::new(self);
-        encs.each(&mut comparator);
-        comparator.was_equal()
-    }
 }
 
 impl Encodings for StrFields {
@@ -28,13 +22,10 @@ impl Encodings for StrFields {
         }
     }
 
-    fn eq<C: EncodingsComparator>(&self, mut comparator: C) -> bool {
-        for enc in StrFieldsIter::new(self) {
-            if !comparator.eq_next(enc) {
-                return false;
-            }
-        }
-        comparator.is_finished()
+    fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool {
+        let mut comparator = StrFieldsComparator::new(self);
+        encs.each(&mut comparator);
+        comparator.was_equal()
     }
 
     fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
