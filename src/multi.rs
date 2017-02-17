@@ -17,8 +17,10 @@ pub trait IndexEncodings: Encodings {
     fn encoding_at_eq<T: ?Sized + Encoding>(&self, u8, &T) -> bool;
     fn len(&self) -> u8;
 
-    fn comparator(&self) -> IndexEncodingsComparator<Self> {
-        IndexEncodingsComparator { encs: self, index: 0 }
+    fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool {
+        let mut comparator = IndexEncodingsComparator::new(self);
+        encs.each(&mut comparator);
+        comparator.was_equal()
     }
 }
 
@@ -126,25 +128,45 @@ pub trait EncodingsComparator {
     fn is_finished(&self) -> bool;
 }
 
-pub struct IndexEncodingsComparator<'a, T>
+struct IndexEncodingsComparator<'a, T>
         where T: 'a + ?Sized + IndexEncodings {
     encs: &'a T,
     index: u8,
+    all_equal: bool,
 }
 
-impl<'a, T> EncodingsComparator for IndexEncodingsComparator<'a, T>
+impl<'a, T> IndexEncodingsComparator<'a, T>
         where T: 'a + ?Sized + IndexEncodings {
-    fn eq_next<E: ?Sized + Encoding>(&mut self, other: &E) -> bool {
-        let index = self.index;
-        if index < self.encs.len() {
-            self.index += 1;
-            self.encs.encoding_at_eq(index, other)
-        } else {
-            false
+    fn new(encs: &T) -> IndexEncodingsComparator<T> {
+        IndexEncodingsComparator {
+            encs: encs,
+            index: 0,
+            all_equal: true,
         }
     }
 
-    fn is_finished(&self) -> bool {
-        self.index >= self.encs.len()
+    fn was_equal(self) -> bool {
+        self.all_equal && self.index == self.encs.len()
+    }
+}
+
+impl<'a, T> EncodingIterateCallback for IndexEncodingsComparator<'a, T>
+        where T: 'a + ?Sized + IndexEncodings {
+    fn call<E: ?Sized + Encoding>(&mut self, encoding: &E) -> bool {
+        let index = self.index;
+        if index >= self.encs.len() {
+            // stop iteration
+            return true;
+        }
+
+        self.index += 1;
+        if !self.encs.encoding_at_eq(index, encoding) {
+            self.all_equal = false;
+            // stop iteration
+            true
+        } else {
+            // don't stop iteration
+            false
+        }
     }
 }

@@ -32,7 +32,7 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: IndexEncodings {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Struct(name, fields) = other.descriptor() {
-            name == self.name() && fields.eq(self.fields.comparator())
+            self.name() == name && self.fields.eq_encodings(fields)
         } else {
             false
         }

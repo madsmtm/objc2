@@ -32,7 +32,7 @@ impl<S, T> Encoding for Union<S, T> where S: AsRef<str>, T: IndexEncodings {
 
     fn eq_encoding<E: ?Sized + Encoding>(&self, other: &E) -> bool {
         if let Descriptor::Union(name, members) = other.descriptor() {
-            name == self.name() && members.eq(self.members.comparator())
+            self.name() == name && self.members.eq_encodings(members)
         } else {
             false
         }
