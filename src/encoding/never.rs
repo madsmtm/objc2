@@ -29,10 +29,6 @@ impl Encodings for Never {
     fn eq_encodings<E: ?Sized + Encodings>(&self, _: &E) -> bool {
         match self { }
     }
-
-    fn write_all<W: fmt::Write>(&self, _: &mut W) -> fmt::Result {
-        match self { }
-    }
 }
 
 impl fmt::Display for Never  {

@@ -10,7 +10,12 @@ pub trait Encodings {
     fn each<F: EncodingIterateCallback>(&self, &mut F);
 
     fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool;
-    fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
+
+    fn write_all<W: fmt::Write>(&self, writer: &mut W) -> fmt::Result {
+        let mut writer = EncodingsWriter::new(writer);
+        self.each(&mut writer);
+        writer.result()
+    }
 }
 
 trait IndexEncodings: Encodings {
@@ -43,11 +48,6 @@ macro_rules! encodings_impl {
                 let mut comparator = IndexEncodingsComparator::new(self);
                 encs.each(&mut comparator);
                 comparator.was_equal()
-            }
-
-            fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
-                let ($(ref $a,)*) = *self;
-                write!(formatter, fmt_repeat!($($t),*), $($a),*)
             }
         }
 
@@ -91,13 +91,6 @@ impl<T> Encodings for [T] where T: Encoding {
         let mut comparator = IndexEncodingsComparator::new(self);
         encs.each(&mut comparator);
         comparator.was_equal()
-    }
-
-    fn write_all<W: fmt::Write>(&self, formatter: &mut W) -> fmt::Result {
-        for enc in self {
-            write!(formatter, "{}", enc)?;
-        }
-        Ok(())
     }
 }
 
@@ -155,5 +148,32 @@ impl<'a, T> EncodingIterateCallback for IndexEncodingsComparator<'a, T>
             // don't stop iteration
             false
         }
+    }
+}
+
+struct EncodingsWriter<'a, W> where W: 'a + fmt::Write {
+    writer: &'a mut W,
+    result: fmt::Result,
+}
+
+impl<'a, W> EncodingsWriter<'a, W> where W: 'a + fmt::Write {
+    fn new(writer: &mut W) -> EncodingsWriter<W> {
+        EncodingsWriter {
+            writer: writer,
+            result: Ok(()),
+        }
+    }
+
+    fn result(self) -> fmt::Result {
+        self.result
+    }
+}
+
+impl<'a, W> EncodingIterateCallback for EncodingsWriter<'a, W>
+        where W: 'a + fmt::Write {
+    fn call<E: ?Sized + Encoding>(&mut self, encoding: &E) -> bool {
+        self.result = write!(self.writer, "{}", encoding);
+        // stop iteration if we hit an error
+        self.result.is_err()
     }
 }
