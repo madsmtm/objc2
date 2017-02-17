@@ -2,7 +2,7 @@ use core::fmt;
 use core::mem;
 
 use Encoding;
-use multi::{Encodings, EncodingsComparator};
+use multi::{Encodings, EncodingsComparator, EncodingIterateCallback};
 use super::chomp;
 use super::encoding::StrEncoding;
 
@@ -16,6 +16,12 @@ impl StrFields {
 }
 
 impl Encodings for StrFields {
+    fn each<F: EncodingIterateCallback>(&self, mut callback: F) {
+        for enc in StrFieldsIter::new(self) {
+            if callback.call(enc) { break; }
+        }
+    }
+
     fn eq<C: EncodingsComparator>(&self, mut comparator: C) -> bool {
         for enc in StrFieldsIter::new(self) {
             if !comparator.eq_next(enc) {

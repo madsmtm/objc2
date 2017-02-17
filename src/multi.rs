@@ -2,7 +2,13 @@ use core::fmt;
 
 use Encoding;
 
+pub trait EncodingIterateCallback {
+    fn call<T: ?Sized + Encoding>(&mut self, &T) -> bool;
+}
+
 pub trait Encodings {
+    fn each<F: EncodingIterateCallback>(&self, F);
+
     fn eq<C: EncodingsComparator>(&self, C) -> bool;
     fn write_all<W: fmt::Write>(&self, &mut W) -> fmt::Result;
 }
@@ -30,8 +36,13 @@ macro_rules! fmt_repeat {
 
 macro_rules! encodings_impl {
     ($($i:expr => $a:ident : $t:ident),*) => (
+        #[allow(unused)]
         impl<$($t: Encoding),*> Encodings for ($($t,)*) {
-            #[allow(unused)]
+            fn each<X: EncodingIterateCallback>(&self, mut callback: X) {
+                let ($(ref $a,)*) = *self;
+                $(if callback.call($a) { return; })*
+            }
+
             fn eq<X: EncodingsComparator>(&self, mut fields: X) -> bool {
                 let ($(ref $a,)*) = *self;
                 $(fields.eq_next($a) &&)* fields.is_finished()
@@ -73,6 +84,12 @@ encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F
 encodings_impl!(0 => a: A, 1 => b: B, 2 => c: C, 3 => d: D, 4 => e: E, 5 => f: F, 6 => g: G, 7 => h: H, 8 => i: I, 9 => j: J, 10 => k: K, 11 => l: L);
 
 impl<T> Encodings for [T] where T: Encoding {
+    fn each<F: EncodingIterateCallback>(&self, mut callback: F) {
+        for enc in self {
+            if callback.call(enc) { break; }
+        }
+    }
+
     fn eq<C: EncodingsComparator>(&self, mut comparator: C) -> bool {
         for enc in self {
             if !comparator.eq_next(enc) {
