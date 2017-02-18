@@ -86,7 +86,13 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
         "B" => Primitive::Bool,
         "v" => Primitive::Void,
         "*" => Primitive::String,
-        "@" => Primitive::Object,
+        "@" => {
+            // Special handling for blocks
+            if t.starts_with('?') {
+                return (Some(Primitive::Block), &t[1..]);
+            }
+            Primitive::Object
+        }
         "#" => Primitive::Class,
         ":" => Primitive::Sel,
         "?" => Primitive::Unknown,
@@ -233,6 +239,14 @@ mod tests {
 
         let (h, _) = chomp(t);
         assert_eq!(h, None);
+    }
+
+    #[test]
+    fn test_parse_block() {
+        assert_eq!(parse("@?"), ParseResult::Primitive(Primitive::Block));
+        assert_eq!(parse("@??"), ParseResult::Error);
+        assert_eq!(chomp_primitive("@?c"), (Some(Primitive::Block), "c"));
+        assert_eq!(chomp_primitive("@c?"), (Some(Primitive::Object), "c?"));
     }
 
     #[test]
