@@ -3,8 +3,8 @@ extern crate objc_encode;
 use std::fmt;
 
 use objc_encode::{Encoding, Encodings, EncodingsIterateCallback, Descriptor};
-use objc_encode::{StrEncoding, ParseEncodingError};
 use objc_encode::encoding::Primitive;
+use objc_encode::parse::{StrEncoding, ParseEncodingError};
 
 #[derive(Debug)]
 enum BoxedEncoding {

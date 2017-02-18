@@ -6,13 +6,12 @@ extern crate std;
 pub mod encoding;
 mod encode;
 mod multi;
-mod parse;
+pub mod parse;
 
 use core::fmt;
 
 pub use encode::Encode;
 pub use multi::{Encodings, EncodingsIterateCallback};
-pub use parse::{StrEncoding, ParseEncodingError};
 
 pub trait Encoding: fmt::Display {
     type PointerTarget: ?Sized + Encoding;
