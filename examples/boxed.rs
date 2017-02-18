@@ -62,22 +62,7 @@ impl Encoding for BoxedEncoding {
 
 impl fmt::Display for BoxedEncoding {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        use BoxedEncoding::*;
-        match *self {
-            Primitive(p) => write!(formatter, "{}", p),
-            Pointer(ref t) => write!(formatter, "^{}", t),
-            Array(len, ref item) => write!(formatter, "[{}{}]", len, item),
-            Struct(ref name, ref fields) => {
-                write!(formatter, "{{{}=", name)?;
-                fields.write_all(formatter)?;
-                write!(formatter, "}}")
-            },
-            Union(ref name, ref members) => {
-                write!(formatter, "({}=", name)?;
-                members.write_all(formatter)?;
-                write!(formatter, ")")
-            },
-        }
+        self.write(formatter)
     }
 }
 

@@ -184,7 +184,7 @@ impl<'a, W> EncodingsWriter<'a, W> where W: 'a + fmt::Write {
 impl<'a, W> EncodingsIterateCallback for EncodingsWriter<'a, W>
         where W: 'a + fmt::Write {
     fn call<E: ?Sized + Encoding>(&mut self, encoding: &E) -> bool {
-        self.result = write!(self.writer, "{}", encoding);
+        self.result = encoding.write(self.writer);
         // stop iteration if we hit an error
         self.result.is_err()
     }

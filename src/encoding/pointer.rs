@@ -25,7 +25,7 @@ impl<T> Encoding for Pointer<T> where T: Encoding {
 
 impl<T> fmt::Display for Pointer<T> where T: Encoding {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "^{}", self.0)
+        self.write(formatter)
     }
 }
 

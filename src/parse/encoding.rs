@@ -72,11 +72,15 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
             ParseResult::Error => panic!("Failed to parse an encoding from {:?}", s),
         }
     }
+
+    fn write<W: fmt::Write>(&self, writer: &mut W) -> fmt::Result {
+        writer.write_str(self.as_str())
+    }
 }
 
 impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Display::fmt(self.as_str(), formatter)
+        self.write(formatter)
     }
 }
 

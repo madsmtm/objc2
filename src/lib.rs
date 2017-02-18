@@ -13,7 +13,7 @@ use core::fmt;
 pub use encode::Encode;
 pub use multi::{Encodings, EncodingsIterateCallback};
 
-pub trait Encoding: fmt::Display {
+pub trait Encoding {
     type PointerTarget: ?Sized + Encoding;
     type ArrayItem: ?Sized + Encoding;
     type StructFields: ?Sized + Encodings;
@@ -36,6 +36,32 @@ pub trait Encoding: fmt::Display {
             (Union(n1, m1), Union(n2, m2)) =>
                 n1 == n2 && m1.eq_encodings(m2),
             _ => false,
+        }
+    }
+
+    fn write<W: fmt::Write>(&self, writer: &mut W) -> fmt::Result {
+        use Descriptor::*;
+        match self.descriptor() {
+            Primitive(p) => write!(writer, "{}", p),
+            Pointer(t) => {
+                writer.write_char('^')?;
+                t.write(writer)
+            }
+            Array(len, item) => {
+                write!(writer, "[{}", len)?;
+                item.write(writer)?;
+                writer.write_char(']')
+            }
+            Struct(name, fields) => {
+                write!(writer, "{{{}=", name)?;
+                fields.write_all(writer)?;
+                writer.write_char('}')
+            }
+            Union(name, members) => {
+                write!(writer, "({}=", name)?;
+                members.write_all(writer)?;
+                writer.write_char(')')
+            }
         }
     }
 }

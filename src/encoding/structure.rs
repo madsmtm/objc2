@@ -33,9 +33,7 @@ impl<S, T> Encoding for Struct<S, T> where S: AsRef<str>, T: Encodings {
 
 impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: Encodings {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "{{{}=", self.name())?;
-        self.fields.write_all(formatter)?;
-        write!(formatter, "}}")
+        self.write(formatter)
     }
 }
 
