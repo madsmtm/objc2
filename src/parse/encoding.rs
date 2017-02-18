@@ -3,7 +3,7 @@ use core::mem;
 
 use {Descriptor, Encoding};
 use super::{is_valid, parse, ParseResult};
-use super::multi::StrFields;
+use super::multi::StrEncodings;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ParseEncodingError<S>(S) where S: AsRef<str>;
@@ -54,10 +54,10 @@ impl<S> StrEncoding<S> where S: ?Sized + AsRef<str> {
 impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
     type PointerTarget = StrEncoding;
     type ArrayItem = StrEncoding;
-    type StructFields = StrFields;
-    type UnionMembers = StrFields;
+    type StructFields = StrEncodings;
+    type UnionMembers = StrEncodings;
 
-    fn descriptor(&self) -> Descriptor<StrEncoding, StrEncoding, StrFields, StrFields> {
+    fn descriptor(&self) -> Descriptor<StrEncoding, StrEncoding, StrEncodings, StrEncodings> {
         let s = self.as_str();
         match parse(s) {
             ParseResult::Primitive(p) => Descriptor::Primitive(p),
@@ -66,9 +66,9 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
             ParseResult::Array(len, item) =>
                 Descriptor::Array(len, StrEncoding::from_str_unchecked(item)),
             ParseResult::Struct(name, fields) =>
-                Descriptor::Struct(name, StrFields::from_str_unchecked(fields)),
+                Descriptor::Struct(name, StrEncodings::from_str_unchecked(fields)),
             ParseResult::Union(name, members) =>
-                Descriptor::Union(name, StrFields::from_str_unchecked(members)),
+                Descriptor::Union(name, StrEncodings::from_str_unchecked(members)),
             ParseResult::Error => panic!("Failed to parse an encoding from {:?}", s),
         }
     }

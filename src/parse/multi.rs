@@ -7,23 +7,23 @@ use super::chomp;
 use super::encoding::StrEncoding;
 
 #[derive(Debug)]
-pub struct StrFields(str);
+pub struct StrEncodings(str);
 
-impl StrFields {
-    pub fn from_str_unchecked(s: &str) -> &StrFields {
+impl StrEncodings {
+    pub fn from_str_unchecked(s: &str) -> &StrEncodings {
         unsafe { mem::transmute(s) }
     }
 }
 
-impl Encodings for StrFields {
+impl Encodings for StrEncodings {
     fn each<F: EncodingsIterateCallback>(&self, callback: &mut F) {
-        for enc in StrFieldsIter::new(self) {
+        for enc in StrEncodingsIter::new(self) {
             if callback.call(enc) { break; }
         }
     }
 
     fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool {
-        let mut comparator = StrFieldsComparator::new(self);
+        let mut comparator = StrEncodingsComparator::new(self);
         encs.each(&mut comparator);
         comparator.was_equal()
     }
@@ -33,17 +33,17 @@ impl Encodings for StrFields {
     }
 }
 
-struct StrFieldsIter<'a> {
+struct StrEncodingsIter<'a> {
     fields: &'a str,
 }
 
-impl<'a> StrFieldsIter<'a> {
-    fn new(fields: &StrFields) -> StrFieldsIter {
-        StrFieldsIter { fields: &fields.0 }
+impl<'a> StrEncodingsIter<'a> {
+    fn new(fields: &StrEncodings) -> StrEncodingsIter {
+        StrEncodingsIter { fields: &fields.0 }
     }
 }
 
-impl<'a> Iterator for StrFieldsIter<'a> {
+impl<'a> Iterator for StrEncodingsIter<'a> {
     type Item = &'a StrEncoding;
 
     fn next(&mut self) -> Option<&'a StrEncoding> {
@@ -60,15 +60,15 @@ impl<'a> Iterator for StrFieldsIter<'a> {
     }
 }
 
-struct StrFieldsComparator<'a> {
-    iter: StrFieldsIter<'a>,
+struct StrEncodingsComparator<'a> {
+    iter: StrEncodingsIter<'a>,
     all_equal: bool,
 }
 
-impl<'a> StrFieldsComparator<'a> {
-    fn new(fields: &StrFields) -> StrFieldsComparator {
-        StrFieldsComparator {
-            iter: StrFieldsIter::new(fields),
+impl<'a> StrEncodingsComparator<'a> {
+    fn new(fields: &StrEncodings) -> StrEncodingsComparator {
+        StrEncodingsComparator {
+            iter: StrEncodingsIter::new(fields),
             all_equal: true,
         }
     }
@@ -78,7 +78,7 @@ impl<'a> StrFieldsComparator<'a> {
     }
 }
 
-impl<'a> EncodingsIterateCallback for StrFieldsComparator<'a> {
+impl<'a> EncodingsIterateCallback for StrEncodingsComparator<'a> {
     fn call<T: ?Sized + Encoding>(&mut self, encoding: &T) -> bool {
         if !self.iter.next().map_or(false, |e| e.eq_encoding(encoding)) {
             self.all_equal = false;
@@ -97,8 +97,8 @@ mod tests {
 
     #[test]
     fn test_iter_fields() {
-        let fields = StrFields::from_str_unchecked("ci");
-        let mut fields = StrFieldsIter::new(fields);
+        let fields = StrEncodings::from_str_unchecked("ci");
+        let mut fields = StrEncodingsIter::new(fields);
         assert_eq!(fields.next().unwrap().as_str(), "c");
         assert_eq!(fields.next().unwrap().as_str(), "i");
         assert!(fields.next().is_none());
