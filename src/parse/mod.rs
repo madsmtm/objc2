@@ -15,31 +15,18 @@ const QUALIFIERS: &'static [char] = &[
     'V', // oneway
 ];
 
-fn chomp(s: &str) -> (Option<&str>, &str) {
-    let head_len = chomp_ptr(s)
+fn chomp(s: &str) -> Option<(&str, &str)> {
+    chomp_ptr(s)
         .or_else(|| chomp_nested_delims(s, '[', ']'))
         .or_else(|| chomp_nested_delims(s, '{', '}'))
         .or_else(|| chomp_nested_delims(s, '(', ')'))
-        .or_else(|| {
-            if let (Some(_), t) = chomp_primitive(s) {
-                Some(s.len() - t.len())
-            } else {
-                None
-            }
-        });
-
-    if let Some(head_len) = head_len {
-        let (h, t) = s.split_at(head_len);
-        (Some(h), t)
-    } else {
-        (None, s)
-    }
+        .or_else(|| chomp_primitive(s).map(|(_, t)| s.len() - t.len()))
+        .map(|head_len| s.split_at(head_len))
 }
 
 fn chomp_ptr(s: &str) -> Option<usize> {
     if s.starts_with("^") {
-        let (h, _) = chomp(&s[1..]);
-        h.map(|h| h.len() + 1)
+        chomp(&s[1..]).map(|(h, _)| h.len() + 1)
     } else {
         None
     }
@@ -64,9 +51,9 @@ fn chomp_nested_delims(s: &str, open: char, close: char) -> Option<usize> {
     close_index.map(|i| i + 1)
 }
 
-fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
+fn chomp_primitive(s: &str) -> Option<(Primitive, &str)> {
     if s.is_empty() {
-        return (None, s);
+        return None;
     }
 
     let (h, t) = s.split_at(1);
@@ -89,7 +76,7 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
         "@" => {
             // Special handling for blocks
             if t.starts_with('?') {
-                return (Some(Primitive::Block), &t[1..]);
+                return Some((Primitive::Block, &t[1..]));
             }
             Primitive::Object
         }
@@ -97,26 +84,20 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
         ":" => Primitive::Sel,
         "?" => Primitive::Unknown,
         "b" => {
-            return match chomp_number(t) {
-                (Some(b), t) => (Some(Primitive::BitField(b)), t),
-                (None, _) => (None, s),
-            };
+            return chomp_number(t).map(|(b, t)| (Primitive::BitField(b), t));
         }
-        _ => return (None, s),
+        _ => return None,
     };
-    (Some(primitive), t)
+    Some((primitive, t))
 }
 
-fn chomp_number(s: &str) -> (Option<u32>, &str) {
+fn chomp_number(s: &str) -> Option<(u32, &str)> {
     // Chomp until we hit a non-digit
     let (num, t) = match s.find(|c: char| !c.is_digit(10)) {
         Some(i) => s.split_at(i),
         None => (s, ""),
     };
-    match num.parse() {
-        Ok(n) => (Some(n), t),
-        Err(_) => (None, s),
-    }
+    num.parse().map(|n| (n, t)).ok()
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -147,10 +128,10 @@ fn parse(s: &str) -> ParseResult {
     } else if s.starts_with('[') {
         if !s.ends_with(']') {
             ParseResult::Error
-        } else if let (Some(len), item) = chomp_number(&s[1..s.len() - 1]) {
-            ParseResult::Array(len, item)
         } else {
-            ParseResult::Error
+            chomp_number(&s[1..s.len() - 1])
+                .map(|(len, item)| ParseResult::Array(len, item))
+                .unwrap_or(ParseResult::Error)
         }
     } else if s.starts_with('{') {
         parse_parts(s, '{', '=', '}')
@@ -162,7 +143,7 @@ fn parse(s: &str) -> ParseResult {
             .unwrap_or(ParseResult::Error)
     } else {
         match chomp_primitive(s) {
-            (Some(p), t) if t.is_empty() => ParseResult::Primitive(p),
+            Some((p, t)) if t.is_empty() => ParseResult::Primitive(p),
             _ => ParseResult::Error,
         }
     }
@@ -178,11 +159,10 @@ fn is_valid(s: &str) -> bool {
         ParseResult::Struct(_, mut members) |
         ParseResult::Union(_, mut members) => {
             while !members.is_empty() {
-                let (h, t) = chomp(members);
-                if !h.map_or(false, is_valid) {
-                    return false;
-                }
-                members = t;
+                members = match chomp(members) {
+                    Some((h, t)) if is_valid(h) => t,
+                    _ => return false,
+                };
             }
             true
         }
@@ -194,69 +174,45 @@ fn is_valid(s: &str) -> bool {
 mod tests {
     use super::*;
 
+    fn assert_chomped(mut s: &str, expected: &[&str]) {
+        for expected in expected.iter().cloned() {
+            let (h, t) = chomp(s).unwrap();
+            assert_eq!(h, expected);
+            s = t;
+        }
+        assert!(s.is_empty());
+    }
+
     #[test]
     fn test_chomp() {
-        let (h, t) = chomp("{A={B=ci^{C=c}}ci}c^i{C=c}");
-        assert_eq!(h, Some("{A={B=ci^{C=c}}ci}"));
-
-        let (h, t) = chomp(t);
-        assert_eq!(h, Some("c"));
-
-        let (h, t) = chomp(t);
-        assert_eq!(h, Some("^i"));
-
-        let (h, t) = chomp(t);
-        assert_eq!(h, Some("{C=c}"));
-
-        let (h, _) = chomp(t);
-        assert_eq!(h, None);
+        let s = "{A={B=ci^{C=c}}ci}c^i{C=c}";
+        let expected = ["{A={B=ci^{C=c}}ci}", "c", "^i", "{C=c}"];
+        assert_chomped(s, &expected);
     }
 
     #[test]
     fn test_chomp_delims() {
-        let (h, t) = chomp("{A=(B=ci)ci}[12{C=c}]c(D=ci)i");
-        assert_eq!(h, Some("{A=(B=ci)ci}"));
-
-        let (h, t) = chomp(t);
-        assert_eq!(h, Some("[12{C=c}]"));
-
-        let (h, t) = chomp(t);
-        assert_eq!(h, Some("c"));
-
-        let (h, t) = chomp(t);
-        assert_eq!(h, Some("(D=ci)"));
-
-        let (h, t) = chomp(t);
-        assert_eq!(h, Some("i"));
-
-        let (h, _) = chomp(t);
-        assert_eq!(h, None);
+        let s = "{A=(B=ci)ci}[12{C=c}]c(D=ci)i";
+        let expected = ["{A=(B=ci)ci}", "[12{C=c}]", "c", "(D=ci)", "i"];
+        assert_chomped(s, &expected);
     }
 
     #[test]
     fn test_chomp_bad_delims() {
-        let (h, _) = chomp("{A={B=ci}ci");
-        assert_eq!(h, None);
+        assert_eq!(chomp("{A={B=ci}ci"), None);
+        assert_eq!(chomp("}A=ci{ci"), None);
 
-        let (h, _) = chomp("}A=ci{ci");
-        assert_eq!(h, None);
-
-        let (h, t) = chomp("{A=(B=ci}[12{C=c})]");
-        assert_eq!(h, Some("{A=(B=ci}"));
-
-        let (h, t) = chomp(t);
-        assert_eq!(h, Some("[12{C=c})]"));
-
-        let (h, _) = chomp(t);
-        assert_eq!(h, None);
+        let s = "{A=(B=ci}[12{C=c})]";
+        let expected = ["{A=(B=ci}", "[12{C=c})]"];
+        assert_chomped(s, &expected);
     }
 
     #[test]
     fn test_parse_block() {
         assert_eq!(parse("@?"), ParseResult::Primitive(Primitive::Block));
         assert_eq!(parse("@??"), ParseResult::Error);
-        assert_eq!(chomp_primitive("@?c"), (Some(Primitive::Block), "c"));
-        assert_eq!(chomp_primitive("@c?"), (Some(Primitive::Object), "c?"));
+        assert_eq!(chomp_primitive("@?c"), Some((Primitive::Block, "c")));
+        assert_eq!(chomp_primitive("@c?"), Some((Primitive::Object, "c?")));
     }
 
     #[test]
@@ -264,8 +220,8 @@ mod tests {
         assert_eq!(parse("b32"), ParseResult::Primitive(Primitive::BitField(32)));
         assert_eq!(parse("b-32"), ParseResult::Error);
         assert_eq!(parse("b32f"), ParseResult::Error);
-        assert_eq!(chomp_primitive("b32b32"), (Some(Primitive::BitField(32)), "b32"));
-        assert_eq!(chomp_primitive("bb32"), (None, "bb32"));
+        assert_eq!(chomp_primitive("b32b32"), Some((Primitive::BitField(32), "b32")));
+        assert_eq!(chomp_primitive("bb32"), None);
     }
 
     #[test]

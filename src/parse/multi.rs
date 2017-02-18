@@ -51,8 +51,8 @@ impl<'a> Iterator for StrEncodingsIter<'a> {
             None
         } else {
             let (h, t) = match chomp(self.fields) {
-                (Some(h), t) => (h, t),
-                (None, t) => panic!("Failed to parse an encoding from {:?}", t),
+                Some((h, t)) => (h, t),
+                None => panic!("Failed to parse an encoding from {:?}", self.fields),
             };
             self.fields = t;
             Some(StrEncoding::from_str_unchecked(h))
