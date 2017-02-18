@@ -41,7 +41,7 @@ pub trait Encoding: fmt::Display {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Debug)]
 pub enum Descriptor<'a, T, I, F, M>
         where T: 'a + ?Sized + Encoding,
               I: 'a + ?Sized + Encoding,
@@ -52,4 +52,20 @@ pub enum Descriptor<'a, T, I, F, M>
     Array(u32, &'a I),
     Struct(&'a str, &'a F),
     Union(&'a str, &'a M),
+}
+
+impl<'a, T, I, F, M> Copy for Descriptor<'a, T, I, F, M>
+        where T: 'a + ?Sized + Encoding,
+              I: 'a + ?Sized + Encoding,
+              F: 'a + ?Sized + Encodings,
+              M: 'a + ?Sized + Encodings { }
+
+impl<'a, T, I, F, M> Clone for Descriptor<'a, T, I, F, M>
+        where T: 'a + ?Sized + Encoding,
+              I: 'a + ?Sized + Encoding,
+              F: 'a + ?Sized + Encodings,
+              M: 'a + ?Sized + Encodings {
+    fn clone(&self) -> Descriptor<'a, T, I, F, M> {
+        *self
+    }
 }
