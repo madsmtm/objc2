@@ -204,11 +204,11 @@ mod tests {
 
     #[test]
     fn test_chomp_delims() {
-        let (h, t) = chomp("{A=(B=ci)ci}[12^{C=c}]c(D=ci)i");
+        let (h, t) = chomp("{A=(B=ci)ci}[12{C=c}]c(D=ci)i");
         assert_eq!(h, Some("{A=(B=ci)ci}"));
 
         let (h, t) = chomp(t);
-        assert_eq!(h, Some("[12^{C=c}]"));
+        assert_eq!(h, Some("[12{C=c}]"));
 
         let (h, t) = chomp(t);
         assert_eq!(h, Some("c"));
@@ -231,11 +231,11 @@ mod tests {
         let (h, _) = chomp("}A=ci{ci");
         assert_eq!(h, None);
 
-        let (h, t) = chomp("{A=(B=ci}[12^{C=c})]");
+        let (h, t) = chomp("{A=(B=ci}[12{C=c})]");
         assert_eq!(h, Some("{A=(B=ci}"));
 
         let (h, t) = chomp(t);
-        assert_eq!(h, Some("[12^{C=c})]"));
+        assert_eq!(h, Some("[12{C=c})]"));
 
         let (h, _) = chomp(t);
         assert_eq!(h, None);
@@ -263,7 +263,7 @@ mod tests {
         assert!(is_valid("c"));
         assert!(is_valid("{A={B=ci^{C=c}}ci}"));
         assert!(!is_valid("z"));
-        assert!(!is_valid("{A=[12^{C=c}}]"));
+        assert!(!is_valid("{A=[12{C=c}}]"));
     }
 
     #[test]

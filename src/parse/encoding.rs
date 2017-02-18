@@ -87,7 +87,7 @@ mod tests {
 
     #[test]
     fn test_parsed_array() {
-        let a = StrEncoding::from_str_unchecked("[12^i]");
+        let a = StrEncoding::from_str_unchecked("[12i]");
         assert!(a.eq_encoding(&Array::new(12, Primitive::Int)));
     }
 

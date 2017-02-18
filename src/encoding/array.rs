@@ -41,6 +41,6 @@ mod tests {
     #[test]
     fn test_array_display() {
         let e = Array::new(12, Primitive::Int);
-        assert_eq!(e.to_string(), "[12^i]");
+        assert_eq!(e.to_string(), "[12i]");
     }
 }
