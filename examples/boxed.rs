@@ -66,7 +66,7 @@ impl fmt::Display for BoxedEncoding {
         match *self {
             Primitive(p) => write!(formatter, "{}", p),
             Pointer(ref t) => write!(formatter, "^{}", t),
-            Array(len, ref item) => write!(formatter, "[{}^{}]", len, item),
+            Array(len, ref item) => write!(formatter, "[{}{}]", len, item),
             Struct(ref name, ref fields) => {
                 write!(formatter, "{{{}=", name)?;
                 fields.write_all(formatter)?;

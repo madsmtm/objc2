@@ -28,7 +28,7 @@ impl<T> Encoding for Array<T> where T: Encoding {
 
 impl<T> fmt::Display for Array<T> where T: Encoding {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "[{}^{}]", self.len, self.item)
+        write!(formatter, "[{}{}]", self.len, self.item)
     }
 }
 

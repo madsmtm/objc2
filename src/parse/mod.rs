@@ -145,10 +145,13 @@ fn parse(s: &str) -> ParseResult {
     if s.starts_with('^') {
         ParseResult::Pointer(&s[1..])
     } else if s.starts_with('[') {
-        parse_parts(s, '[', '^', ']')
-            .and_then(|(len, item)| len.parse().map(|len| (len, item)).ok())
-            .map(|(len, item)| ParseResult::Array(len, item))
-            .unwrap_or(ParseResult::Error)
+        if !s.ends_with(']') {
+            ParseResult::Error
+        } else if let (Some(len), item) = chomp_number(&s[1..s.len() - 1]) {
+            ParseResult::Array(len, item)
+        } else {
+            ParseResult::Error
+        }
     } else if s.starts_with('{') {
         parse_parts(s, '{', '=', '}')
             .map(|(name, fields)| ParseResult::Struct(name, fields))
