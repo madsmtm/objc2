@@ -97,19 +97,26 @@ fn chomp_primitive(s: &str) -> (Option<Primitive>, &str) {
         ":" => Primitive::Sel,
         "?" => Primitive::Unknown,
         "b" => {
-            // Chomp until we hit a non-digit
-            let (num, t) = match t.find(|c: char| !c.is_digit(10)) {
-                Some(i) => t.split_at(i),
-                None => (t, ""),
-            };
-            return match num.parse() {
-                Ok(b) => (Some(Primitive::BitField(b)), t),
-                Err(_) => (None, s),
+            return match chomp_number(t) {
+                (Some(b), t) => (Some(Primitive::BitField(b)), t),
+                (None, _) => (None, s),
             };
         }
         _ => return (None, s),
     };
     (Some(primitive), t)
+}
+
+fn chomp_number(s: &str) -> (Option<u32>, &str) {
+    // Chomp until we hit a non-digit
+    let (num, t) = match s.find(|c: char| !c.is_digit(10)) {
+        Some(i) => s.split_at(i),
+        None => (s, ""),
+    };
+    match num.parse() {
+        Ok(n) => (Some(n), t),
+        Err(_) => (None, s),
+    }
 }
 
 #[derive(Debug, PartialEq, Eq)]
