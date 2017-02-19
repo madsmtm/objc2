@@ -189,3 +189,19 @@ impl<'a, W> EncodingsIterateCallback for EncodingsWriter<'a, W>
         self.result.is_err()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use encoding::Primitive;
+    use super::*;
+
+    #[test]
+    fn test_index_eq() {
+        let a = (Primitive::Int, Primitive::Char);
+        let b = (Primitive::Int,);
+        assert!(a.eq_encodings(&a));
+        assert!(b.eq_encodings(&b));
+        assert!(!a.eq_encodings(&b));
+        assert!(!b.eq_encodings(&a));
+    }
+}
