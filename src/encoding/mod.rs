@@ -1,3 +1,5 @@
+//! Types for statically defined encodings.
+
 mod array;
 mod never;
 mod pointer;

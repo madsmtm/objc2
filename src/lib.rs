@@ -15,16 +15,16 @@ pub use multi::{Encodings, EncodingsIterateCallback};
 
 /// An Objective-C type encoding.
 pub trait Encoding {
-    /// The type of `Encoding` that Self will use if it is an encoding of
+    /// The type of `Encoding` that Self will use if it is an encoding for
     /// a pointer to describe its target.
     type PointerTarget: ?Sized + Encoding;
-    /// The type of `Encoding` that Self will use if it is an encoding of
+    /// The type of `Encoding` that Self will use if it is an encoding for
     /// an array to describe its items.
     type ArrayItem: ?Sized + Encoding;
-    /// The type of `Encodings` that Self will use if it is an encoding of
+    /// The type of `Encodings` that Self will use if it is an encoding for
     /// a struct to describe its fields.
     type StructFields: ?Sized + Encodings;
-    /// The type of `Encodings` that Self will use if it is an encoding of
+    /// The type of `Encodings` that Self will use if it is an encoding for
     /// a union to describe its members.
     type UnionMembers: ?Sized + Encodings;
 

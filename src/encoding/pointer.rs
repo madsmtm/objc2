@@ -3,10 +3,12 @@ use core::fmt;
 use {Descriptor, Encoding};
 use super::never::Never;
 
+/// An encoding for a pointer.
 #[derive(Clone, Copy, Debug)]
 pub struct Pointer<T>(T) where T: Encoding;
 
 impl<T> Pointer<T> where T: Encoding {
+    /// Constructs an encoding for a pointer to a target with the given encoding.
     pub fn new(target: T) -> Pointer<T> {
         Pointer(target)
     }

@@ -4,6 +4,7 @@ use {Descriptor, Encoding};
 use multi::Encodings;
 use super::never::Never;
 
+/// An encoding for a union.
 #[derive(Clone, Copy, Debug)]
 pub struct Union<S, T> where S: AsRef<str>, T: Encodings {
     name: S,
@@ -11,6 +12,8 @@ pub struct Union<S, T> where S: AsRef<str>, T: Encodings {
 }
 
 impl<S, T> Union<S, T> where S: AsRef<str>, T: Encodings {
+    /// Constructs an encoding for a union with the given name and
+    /// members with the given encodings.
     pub fn new(name: S, members: T) -> Union<S, T> {
         Union { name: name, members: members }
     }

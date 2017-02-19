@@ -3,6 +3,7 @@ use core::fmt;
 use {Descriptor, Encoding};
 use super::never::Never;
 
+/// An encoding for a "primitive" type which is not a composition of other types.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Primitive {
     Char,

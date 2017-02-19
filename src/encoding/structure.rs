@@ -4,6 +4,7 @@ use {Descriptor, Encoding};
 use multi::Encodings;
 use super::never::Never;
 
+/// An encoding for a struct.
 #[derive(Clone, Copy, Debug)]
 pub struct Struct<S, T> where S: AsRef<str>, T: Encodings {
     name: S,
@@ -11,6 +12,8 @@ pub struct Struct<S, T> where S: AsRef<str>, T: Encodings {
 }
 
 impl<S, T> Struct<S, T> where S: AsRef<str>, T: Encodings {
+    /// Constructs an encoding for a struct with the given name and
+    /// fields with the given encodings.
     pub fn new(name: S, fields: T) -> Struct<S, T> {
         Struct { name: name, fields: fields }
     }
