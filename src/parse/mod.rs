@@ -237,4 +237,10 @@ mod tests {
         assert_eq!(parse("Vv"), ParseResult::Primitive(Primitive::Void));
         assert_eq!(parse("r*"), ParseResult::Primitive(Primitive::String));
     }
+
+    #[test]
+    fn test_parse_garbage() {
+        assert_eq!(parse("☃"), ParseResult::Error);
+        assert!(!is_valid("☃"));
+    }
 }
