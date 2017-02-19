@@ -1,5 +1,7 @@
+use libc::{c_char, c_void};
+
 use Encoding;
-use encoding::Primitive;
+use encoding::{Pointer, Primitive};
 
 /// Types that have an Objective-C type encoding.
 ///
@@ -36,6 +38,8 @@ encode_impls!(
     f64: Double,
     bool: Bool,
     (): Void,
+    *mut c_char: String,
+    *const c_char: String,
 );
 
 unsafe impl Encode for isize {
@@ -56,4 +60,16 @@ unsafe impl Encode for usize {
 
     #[cfg(target_pointer_width = "64")]
     fn encode() -> Primitive { u64::encode() }
+}
+
+unsafe impl Encode for *mut c_void {
+    type Encoding = Pointer<Primitive>;
+
+    fn encode() -> Self::Encoding { Pointer::new(Primitive::Void) }
+}
+
+unsafe impl Encode for *const c_void {
+    type Encoding = Pointer<Primitive>;
+
+    fn encode() -> Self::Encoding { Pointer::new(Primitive::Void) }
 }

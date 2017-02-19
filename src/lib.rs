@@ -58,6 +58,7 @@ assert_eq!(i32::encode().to_string(), "i");
 
 #![no_std]
 
+extern crate libc;
 #[cfg(test)]
 extern crate std;
 

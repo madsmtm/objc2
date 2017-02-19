@@ -2,3 +2,6 @@
 name = "objc-encode"
 version = "0.0.0"
 authors = ["Steven Sheldon"]
+
+[dependencies]
+libc = "0.2"
