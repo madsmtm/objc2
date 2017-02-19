@@ -1,3 +1,5 @@
+//! Parsing encodings from their string representation.
+
 mod encoding;
 mod multi;
 
