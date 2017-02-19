@@ -25,7 +25,7 @@ fn chomp(s: &str) -> Option<(&str, &str)> {
 }
 
 fn chomp_ptr(s: &str) -> Option<usize> {
-    if s.starts_with("^") {
+    if s.starts_with('^') {
         chomp(&s[1..]).map(|(h, _)| h.len() + 1)
     } else {
         None
@@ -52,38 +52,41 @@ fn chomp_nested_delims(s: &str, open: char, close: char) -> Option<usize> {
 }
 
 fn chomp_primitive(s: &str) -> Option<(Primitive, &str)> {
-    if s.is_empty() {
-        return None;
-    }
+    let (h, t) = {
+        let mut chars = s.chars();
+        match chars.next() {
+            Some(h) => (h, chars.as_str()),
+            None => return None,
+        }
+    };
 
-    let (h, t) = s.split_at(1);
     let primitive = match h {
-        "c" => Primitive::Char,
-        "s" => Primitive::Short,
-        "i" => Primitive::Int,
-        "l" => Primitive::Long,
-        "q" => Primitive::LongLong,
-        "C" => Primitive::UChar,
-        "S" => Primitive::UShort,
-        "I" => Primitive::UInt,
-        "L" => Primitive::ULong,
-        "Q" => Primitive::ULongLong,
-        "f" => Primitive::Float,
-        "d" => Primitive::Double,
-        "B" => Primitive::Bool,
-        "v" => Primitive::Void,
-        "*" => Primitive::String,
-        "@" => {
+        'c' => Primitive::Char,
+        's' => Primitive::Short,
+        'i' => Primitive::Int,
+        'l' => Primitive::Long,
+        'q' => Primitive::LongLong,
+        'C' => Primitive::UChar,
+        'S' => Primitive::UShort,
+        'I' => Primitive::UInt,
+        'L' => Primitive::ULong,
+        'Q' => Primitive::ULongLong,
+        'f' => Primitive::Float,
+        'd' => Primitive::Double,
+        'B' => Primitive::Bool,
+        'v' => Primitive::Void,
+        '*' => Primitive::String,
+        '@' => {
             // Special handling for blocks
             if t.starts_with('?') {
                 return Some((Primitive::Block, &t[1..]));
             }
             Primitive::Object
         }
-        "#" => Primitive::Class,
-        ":" => Primitive::Sel,
-        "?" => Primitive::Unknown,
-        "b" => {
+        '#' => Primitive::Class,
+        ':' => Primitive::Sel,
+        '?' => Primitive::Unknown,
+        'b' => {
             return chomp_number(t).map(|(b, t)| (Primitive::BitField(b), t));
         }
         _ => return None,
@@ -242,5 +245,15 @@ mod tests {
     fn test_parse_garbage() {
         assert_eq!(parse("☃"), ParseResult::Error);
         assert!(!is_valid("☃"));
+
+        assert_eq!(parse(""), ParseResult::Error);
+        assert!(!is_valid(""));
+
+        // Ensure combining characters don't crash the parser
+        assert_eq!(parse("{́A=́ci}"), ParseResult::Struct("́A", "́ci"));
+
+        assert_eq!(parse("{☃=ci}"), ParseResult::Struct("☃", "ci"));
+        assert!(is_valid("{☃=ci}"));
+
     }
 }
