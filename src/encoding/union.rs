@@ -40,6 +40,13 @@ impl<S, T> fmt::Display for Union<S, T> where S: AsRef<str>, T: Encodings {
     }
 }
 
+impl<S, T, E> PartialEq<E> for Union<S, T>
+        where S: AsRef<str>, T: Encodings, E: ?Sized + Encoding {
+    fn eq(&self, other: &E) -> bool {
+        self.eq_encoding(other)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::string::ToString;
@@ -60,10 +67,10 @@ mod tests {
         let c = Primitive::Char;
 
         let u = Union::new("Onion", (c, i));
-        assert!(u.eq_encoding(&u));
-        assert!(!u.eq_encoding(&i));
+        assert!(u == u);
+        assert!(u != i);
 
         let u2 = StrEncoding::new("(Onion=ci)").unwrap();
-        assert!(u.eq_encoding(&u2));
+        assert!(u == u2);
     }
 }

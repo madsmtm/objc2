@@ -35,6 +35,12 @@ impl<T> fmt::Display for Array<T> where T: Encoding {
     }
 }
 
+impl<T, E> PartialEq<E> for Array<T> where T: Encoding, E: ?Sized + Encoding {
+    fn eq(&self, other: &E) -> bool {
+        self.eq_encoding(other)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::string::ToString;

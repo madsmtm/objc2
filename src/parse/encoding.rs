@@ -124,6 +124,13 @@ impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
     }
 }
 
+impl<S, E> PartialEq<E> for StrEncoding<S>
+        where S: ?Sized + AsRef<str>, E: ?Sized + Encoding {
+    fn eq(&self, other: &E) -> bool {
+        self.eq_encoding(other)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use encoding::{Array, Primitive, Struct};
@@ -132,13 +139,13 @@ mod tests {
     #[test]
     fn test_parsed_array() {
         let a = StrEncoding::from_str_unchecked("[12i]");
-        assert!(a.eq_encoding(&Array::new(12, Primitive::Int)));
+        assert!(a == &Array::new(12, Primitive::Int));
     }
 
     #[test]
     fn test_parsed_struct() {
         let parsed = StrEncoding::from_str_unchecked("{CGPoint=ci}");
         let expected = Struct::new("CGPoint", (Primitive::Char, Primitive::Int));
-        assert!(parsed.eq_encoding(&expected));
+        assert!(parsed == &expected);
     }
 }

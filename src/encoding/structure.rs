@@ -40,6 +40,13 @@ impl<S, T> fmt::Display for Struct<S, T> where S: AsRef<str>, T: Encodings {
     }
 }
 
+impl<S, T, E> PartialEq<E> for Struct<S, T>
+        where S: AsRef<str>, T: Encodings, E: ?Sized + Encoding {
+    fn eq(&self, other: &E) -> bool {
+        self.eq_encoding(other)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::string::ToString;
@@ -61,11 +68,11 @@ mod tests {
         let c = Primitive::Char;
 
         let s = Struct::new("CGPoint", (c, i));
-        assert!(s.eq_encoding(&s));
-        assert!(!s.eq_encoding(&i));
+        assert!(s == s);
+        assert!(s != i);
 
         let s2 = StrEncoding::new_unchecked("{CGPoint=ci}");
-        assert!(s2.eq_encoding(&s2));
-        assert!(s.eq_encoding(&s2));
+        assert!(s2 == s2);
+        assert!(s == s2);
     }
 }

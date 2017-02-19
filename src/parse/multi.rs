@@ -80,7 +80,7 @@ impl<'a> StrEncodingsComparator<'a> {
 
 impl<'a> EncodingsIterateCallback for StrEncodingsComparator<'a> {
     fn call<T: ?Sized + Encoding>(&mut self, encoding: &T) -> bool {
-        if !self.iter.next().map_or(false, |e| e.eq_encoding(encoding)) {
+        if !self.iter.next().map_or(false, |e| e == encoding) {
             self.all_equal = false;
             // stop iteration
             true

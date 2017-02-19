@@ -46,8 +46,8 @@ impl fmt::Display for Primitive {
     }
 }
 
-impl PartialEq for Primitive {
-    fn eq(&self, other: &Primitive) -> bool {
+impl<E> PartialEq<E> for Primitive where E: ?Sized + Encoding {
+    fn eq(&self, other: &E) -> bool {
         self.eq_encoding(other)
     }
 }
@@ -69,7 +69,7 @@ mod tests {
         let i = Primitive::Int;
         let c = Primitive::Char;
 
-        assert!(i.eq_encoding(&i));
-        assert!(!i.eq_encoding(&c));
+        assert!(i == i);
+        assert!(i != c);
     }
 }

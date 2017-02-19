@@ -29,7 +29,7 @@ and compared with another encoding through a `StrEncoding`:
 
 ``` rust
 let parsed = StrEncoding::from_str("i").unwrap();
-assert!(i32::encode().eq_encoding(parsed));
+assert!(parsed == &i32::encode());
 ```
 
 # Generating encoding strings

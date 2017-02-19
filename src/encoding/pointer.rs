@@ -31,6 +31,12 @@ impl<T> fmt::Display for Pointer<T> where T: Encoding {
     }
 }
 
+impl<T, E> PartialEq<E> for Pointer<T> where T: Encoding, E: ?Sized + Encoding {
+    fn eq(&self, other: &E) -> bool {
+        self.eq_encoding(other)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::string::ToString;
@@ -48,7 +54,7 @@ mod tests {
         let i = Primitive::Int;
 
         let p = Pointer::new(i);
-        assert!(p.eq_encoding(&p));
-        assert!(!p.eq_encoding(&i));
+        assert!(p == p);
+        assert!(p != i);
     }
 }

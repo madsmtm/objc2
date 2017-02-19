@@ -32,7 +32,7 @@ and compared with another encoding through a `StrEncoding`:
 # use objc_encode::{Encode, Encoding};
 # use objc_encode::parse::StrEncoding;
 let parsed = StrEncoding::from_str("i").unwrap();
-assert!(i32::encode().eq_encoding(parsed));
+assert!(parsed == &i32::encode());
 ```
 
 # Generating encoding strings
