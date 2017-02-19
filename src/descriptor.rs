@@ -61,7 +61,7 @@ pub fn write_encoding<W, T>(writer: &mut W, encoding: &T) -> fmt::Result
         where W: fmt::Write, T: ?Sized + Encoding {
     use Descriptor::*;
     match encoding.descriptor() {
-        Primitive(p) => write!(writer, "{}", p),
+        Primitive(p) => write_primitive(writer, p),
         Pointer(t) => {
             writer.write_char('^')?;
             t.write(writer)
@@ -82,4 +82,34 @@ pub fn write_encoding<W, T>(writer: &mut W, encoding: &T) -> fmt::Result
             writer.write_char(')')
         }
     }
+}
+
+fn write_primitive<W: fmt::Write>(writer: &mut W, p: Primitive) -> fmt::Result {
+    use encoding::Primitive::*;
+    let code = match p {
+        Char      => "c",
+        Short     => "s",
+        Int       => "i",
+        Long      => "l",
+        LongLong  => "q",
+        UChar     => "C",
+        UShort    => "S",
+        UInt      => "I",
+        ULong     => "L",
+        ULongLong => "Q",
+        Float     => "f",
+        Double    => "d",
+        Bool      => "B",
+        Void      => "v",
+        String    => "*",
+        Object    => "@",
+        Block     => "@?",
+        Class     => "#",
+        Sel       => ":",
+        Unknown   => "?",
+        BitField(b) => {
+            return write!(writer, "b{}", b);
+        }
+    };
+    writer.write_str(code)
 }

@@ -42,32 +42,7 @@ impl Encoding for Primitive {
 
 impl fmt::Display for Primitive {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        let code = match *self {
-            Primitive::Char      => "c",
-            Primitive::Short     => "s",
-            Primitive::Int       => "i",
-            Primitive::Long      => "l",
-            Primitive::LongLong  => "q",
-            Primitive::UChar     => "C",
-            Primitive::UShort    => "S",
-            Primitive::UInt      => "I",
-            Primitive::ULong     => "L",
-            Primitive::ULongLong => "Q",
-            Primitive::Float     => "f",
-            Primitive::Double    => "d",
-            Primitive::Bool      => "B",
-            Primitive::Void      => "v",
-            Primitive::String    => "*",
-            Primitive::Object    => "@",
-            Primitive::Block     => "@?",
-            Primitive::Class     => "#",
-            Primitive::Sel       => ":",
-            Primitive::Unknown   => "?",
-            Primitive::BitField(b) => {
-                return write!(formatter, "b{}", b);
-            }
-        };
-        fmt::Display::fmt(code, formatter)
+        self.write(formatter)
     }
 }
 
