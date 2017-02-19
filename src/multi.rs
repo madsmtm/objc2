@@ -146,11 +146,6 @@ impl<'a, T> EncodingsIterateCallback for IndexEncodingsComparator<'a, T>
         where T: 'a + ?Sized + IndexEncodings {
     fn call<E: ?Sized + Encoding>(&mut self, encoding: &E) -> bool {
         let index = self.index;
-        if index >= self.encs.len() {
-            // stop iteration
-            return true;
-        }
-
         self.index += 1;
         if !self.encs.encoding_at_eq(index, encoding) {
             self.all_equal = false;
