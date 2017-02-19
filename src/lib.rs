@@ -13,17 +13,28 @@ use core::fmt;
 pub use encode::Encode;
 pub use multi::{Encodings, EncodingsIterateCallback};
 
+/// An Objective-C type encoding.
 pub trait Encoding {
+    /// The type of `Encoding` that Self will use if it is an encoding of
+    /// a pointer to describe its target.
     type PointerTarget: ?Sized + Encoding;
+    /// The type of `Encoding` that Self will use if it is an encoding of
+    /// an array to describe its items.
     type ArrayItem: ?Sized + Encoding;
+    /// The type of `Encodings` that Self will use if it is an encoding of
+    /// a struct to describe its fields.
     type StructFields: ?Sized + Encodings;
+    /// The type of `Encodings` that Self will use if it is an encoding of
+    /// a union to describe its members.
     type UnionMembers: ?Sized + Encodings;
 
+    /// Returns a `Descriptor` that describes what kind of encoding self is.
     fn descriptor(&self) -> Descriptor<Self::PointerTarget,
                                        Self::ArrayItem,
                                        Self::StructFields,
                                        Self::UnionMembers>;
 
+    /// Returns whether self is equal to the given `Encoding`.
     fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
         use Descriptor::*;
         match (self.descriptor(), other.descriptor()) {
@@ -39,6 +50,7 @@ pub trait Encoding {
         }
     }
 
+    /// Writes the string representation of self to the given writer.
     fn write<W: fmt::Write>(&self, writer: &mut W) -> fmt::Result {
         use Descriptor::*;
         match self.descriptor() {
@@ -66,6 +78,15 @@ pub trait Encoding {
     }
 }
 
+/**
+A type which describes an `Encoding`.
+
+In a sense, descriptors allow a form of downcasting for `Encoding`s.
+While accepting an `Encoding` of any type, through its descriptor we can
+still know what kind it is and access specific information about it, like
+the length of an array or the name of a struct. This allows encodings of
+different types to be compared and interoperate.
+*/
 #[derive(Debug)]
 pub enum Descriptor<'a, T, I, F, M>
         where T: 'a + ?Sized + Encoding,
