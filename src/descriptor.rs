@@ -45,7 +45,7 @@ pub fn encodings_eq<T, U>(e1: &T, e2: &U) -> bool
         where T: ?Sized + Encoding, U: ?Sized + Encoding {
     use Descriptor::*;
     match (e1.descriptor(), e2.descriptor()) {
-        (Primitive(p1), Primitive(p2)) => p1 == p2,
+        (Primitive(p1), Primitive(p2)) => primitives_eq(p1, p2),
         (Pointer(t1), Pointer(t2)) => t1.eq_encoding(t2),
         (Array(l1, i1), Array(l2, i2)) =>
             l1 == l2 && i1.eq_encoding(i2),
@@ -53,6 +53,34 @@ pub fn encodings_eq<T, U>(e1: &T, e2: &U) -> bool
             n1 == n2 && f1.eq_encodings(f2),
         (Union(n1, m1), Union(n2, m2)) =>
             n1 == n2 && m1.eq_encodings(m2),
+        _ => false,
+    }
+}
+
+fn primitives_eq(p1: Primitive, p2: Primitive) -> bool {
+    use encoding::Primitive::*;
+    match (p1, p2) {
+        (Char     , Char     ) => true,
+        (Short    , Short    ) => true,
+        (Int      , Int      ) => true,
+        (Long     , Long     ) => true,
+        (LongLong , LongLong ) => true,
+        (UChar    , UChar    ) => true,
+        (UShort   , UShort   ) => true,
+        (UInt     , UInt     ) => true,
+        (ULong    , ULong    ) => true,
+        (ULongLong, ULongLong) => true,
+        (Float    , Float    ) => true,
+        (Double   , Double   ) => true,
+        (Bool     , Bool     ) => true,
+        (Void     , Void     ) => true,
+        (String   , String   ) => true,
+        (Object   , Object   ) => true,
+        (Block    , Block    ) => true,
+        (Class    , Class    ) => true,
+        (Sel      , Sel      ) => true,
+        (Unknown  , Unknown  ) => true,
+        (BitField(b1), BitField(b2)) => b1 == b2,
         _ => false,
     }
 }

@@ -4,7 +4,7 @@ use {Descriptor, Encoding};
 use super::never::Never;
 
 /// An encoding for a "primitive" type which is not a composition of other types.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug)]
 pub enum Primitive {
     Char,
     Short,
@@ -45,6 +45,14 @@ impl fmt::Display for Primitive {
         self.write(formatter)
     }
 }
+
+impl PartialEq for Primitive {
+    fn eq(&self, other: &Primitive) -> bool {
+        self.eq_encoding(other)
+    }
+}
+
+impl Eq for Primitive { }
 
 #[cfg(test)]
 mod tests {
