@@ -37,18 +37,8 @@ assert!(parsed == &i32::encode());
 
 # Generating encoding strings
 
-The string representation of an `Encoding` can be generated via its `write`
-method:
-
-```
-# use objc_encode::{Encode, Encoding};
-let mut result = String::new();
-i32::encode().write(&mut result).unwrap();
-assert_eq!(result, "i");
-```
-
-The encodings defined in this crate also implement `Display` for convenience,
-allowing the `to_string` method to be used:
+Every `Encoding` implements `Display` as its string representation.
+This can be generated conveniently through the `to_string` method:
 
 ```
 # use objc_encode::Encode;
@@ -75,7 +65,7 @@ pub use descriptor::Descriptor;
 pub use multi::{Encodings, EncodingsIterateCallback};
 
 /// An Objective-C type encoding.
-pub trait Encoding {
+pub trait Encoding: fmt::Display {
     /// The type of `Encoding` that Self will use if it is an encoding for
     /// a pointer to describe its target.
     type PointerTarget: ?Sized + Encoding;

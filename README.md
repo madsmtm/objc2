@@ -34,17 +34,8 @@ assert!(parsed == &i32::encode());
 
 # Generating encoding strings
 
-The string representation of an `Encoding` can be generated via its `write`
-method:
-
-``` rust
-let mut result = String::new();
-i32::encode().write(&mut result).unwrap();
-assert_eq!(result, "i");
-```
-
-The encodings defined in this crate also implement `Display` for convenience,
-allowing the `to_string` method to be used:
+Every `Encoding` implements `Display` as its string representation.
+This can be generated conveniently through the `to_string` method:
 
 ``` rust
 assert_eq!(i32::encode().to_string(), "i");

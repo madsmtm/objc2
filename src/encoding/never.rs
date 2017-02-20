@@ -1,3 +1,5 @@
+use core::fmt;
+
 use {Descriptor, Encoding};
 use multi::{Encodings, EncodingsIterateCallback};
 
@@ -21,6 +23,12 @@ impl Encodings for Never {
     }
 
     fn eq_encodings<E: ?Sized + Encodings>(&self, _: &E) -> bool {
+        match self { }
+    }
+}
+
+impl fmt::Display for Never  {
+    fn fmt(&self, _: &mut fmt::Formatter) -> fmt::Result {
         match self { }
     }
 }
