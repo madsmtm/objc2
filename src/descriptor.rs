@@ -91,22 +91,22 @@ pub fn write_encoding<W, T>(writer: &mut W, encoding: &T) -> fmt::Result
     match encoding.descriptor() {
         Primitive(p) => write_primitive(writer, p),
         Pointer(t) => {
-            writer.write_char('^')?;
+            try!(writer.write_char('^'));
             t.write(writer)
         }
         Array(len, item) => {
-            write!(writer, "[{}", len)?;
-            item.write(writer)?;
+            try!(write!(writer, "[{}", len));
+            try!(item.write(writer));
             writer.write_char(']')
         }
         Struct(name, fields) => {
-            write!(writer, "{{{}=", name)?;
-            fields.write_all(writer)?;
+            try!(write!(writer, "{{{}=", name));
+            try!(fields.write_all(writer));
             writer.write_char('}')
         }
         Union(name, members) => {
-            write!(writer, "({}=", name)?;
-            members.write_all(writer)?;
+            try!(write!(writer, "({}=", name));
+            try!(members.write_all(writer));
             writer.write_char(')')
         }
     }
