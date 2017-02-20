@@ -73,3 +73,34 @@ unsafe impl Encode for *const c_void {
 
     fn encode() -> Self::Encoding { Pointer::new(Primitive::Void) }
 }
+
+/*
+External crates cannot implement Encode for pointers or Optionals, but they
+*can* implement it for references. rust-lang/rust#25126
+
+As a workaround, we provide implementations for these types that return the
+same encoding as references.
+*/
+unsafe impl<T: 'static> Encode for *const T where for<'a> &'a T: Encode {
+    type Encoding = <&'static T as Encode>::Encoding;
+
+    fn encode() -> Self::Encoding { <&T>::encode() }
+}
+
+unsafe impl<T: 'static> Encode for *mut T where for<'a> &'a mut T: Encode {
+    type Encoding = <&'static mut T as Encode>::Encoding;
+
+    fn encode() -> Self::Encoding { <&mut T>::encode() }
+}
+
+unsafe impl<'a, T> Encode for Option<&'a T> where &'a T: Encode {
+    type Encoding = <&'a T as Encode>::Encoding;
+
+    fn encode() -> Self::Encoding { <&T>::encode() }
+}
+
+unsafe impl<'a, T> Encode for Option<&'a mut T> where &'a mut T: Encode {
+    type Encoding = <&'a mut T as Encode>::Encoding;
+
+    fn encode() -> Self::Encoding { <&mut T>::encode() }
+}
