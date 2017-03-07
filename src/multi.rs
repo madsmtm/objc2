@@ -120,15 +120,14 @@ impl<T> IndexEncodings for [T] where T: Encoding {
     }
 }
 
-struct IndexEncodingsComparator<'a, T>
-        where T: 'a + ?Sized + IndexEncodings {
+struct IndexEncodingsComparator<'a, T: 'a + ?Sized> {
     encs: &'a T,
     index: u8,
     all_equal: bool,
 }
 
-impl<'a, T> IndexEncodingsComparator<'a, T>
-        where T: 'a + ?Sized + IndexEncodings {
+impl<'a, T: 'a + ?Sized> IndexEncodingsComparator<'a, T>
+        where T: IndexEncodings {
     fn new(encs: &T) -> IndexEncodingsComparator<T> {
         IndexEncodingsComparator {
             encs: encs,
@@ -142,8 +141,8 @@ impl<'a, T> IndexEncodingsComparator<'a, T>
     }
 }
 
-impl<'a, T> EncodingsIterateCallback for IndexEncodingsComparator<'a, T>
-        where T: 'a + ?Sized + IndexEncodings {
+impl<'a, T: 'a + ?Sized> EncodingsIterateCallback for IndexEncodingsComparator<'a, T>
+        where T: IndexEncodings {
     fn call<E: ?Sized + Encoding>(&mut self, encoding: &E) -> bool {
         let index = self.index;
         self.index += 1;
@@ -158,12 +157,12 @@ impl<'a, T> EncodingsIterateCallback for IndexEncodingsComparator<'a, T>
     }
 }
 
-struct EncodingsWriter<'a, W> where W: 'a + fmt::Write {
+struct EncodingsWriter<'a, W: 'a> {
     writer: &'a mut W,
     result: fmt::Result,
 }
 
-impl<'a, W> EncodingsWriter<'a, W> where W: 'a + fmt::Write {
+impl<'a, W: 'a> EncodingsWriter<'a, W> where W: fmt::Write {
     fn new(writer: &mut W) -> EncodingsWriter<W> {
         EncodingsWriter {
             writer: writer,
@@ -176,8 +175,8 @@ impl<'a, W> EncodingsWriter<'a, W> where W: 'a + fmt::Write {
     }
 }
 
-impl<'a, W> EncodingsIterateCallback for EncodingsWriter<'a, W>
-        where W: 'a + fmt::Write {
+impl<'a, W: 'a> EncodingsIterateCallback for EncodingsWriter<'a, W>
+        where W: fmt::Write {
     fn call<E: ?Sized + Encoding>(&mut self, encoding: &E) -> bool {
         self.result = encoding.write(self.writer);
         // stop iteration if we hit an error

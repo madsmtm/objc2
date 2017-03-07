@@ -13,11 +13,11 @@ the length of an array or the name of a struct. This allows encodings of
 different types to be compared and interoperate.
 */
 #[derive(Debug)]
-pub enum Descriptor<'a, T, I, F, M>
-        where T: 'a + ?Sized + Encoding,
-              I: 'a + ?Sized + Encoding,
-              F: 'a + ?Sized + Encodings,
-              M: 'a + ?Sized + Encodings {
+pub enum Descriptor<'a,
+                    T: 'a + ?Sized,
+                    I: 'a + ?Sized,
+                    F: 'a + ?Sized,
+                    M: 'a + ?Sized> {
     Primitive(Primitive),
     Pointer(&'a T),
     Array(u32, &'a I),
@@ -25,24 +25,26 @@ pub enum Descriptor<'a, T, I, F, M>
     Union(&'a str, &'a M),
 }
 
-impl<'a, T, I, F, M> Copy for Descriptor<'a, T, I, F, M>
-        where T: 'a + ?Sized + Encoding,
-              I: 'a + ?Sized + Encoding,
-              F: 'a + ?Sized + Encodings,
-              M: 'a + ?Sized + Encodings { }
+impl<'a,
+     T: 'a + ?Sized,
+     I: 'a + ?Sized,
+     F: 'a + ?Sized,
+     M: 'a + ?Sized>
+        Copy for Descriptor<'a, T, I, F, M> { }
 
-impl<'a, T, I, F, M> Clone for Descriptor<'a, T, I, F, M>
-        where T: 'a + ?Sized + Encoding,
-              I: 'a + ?Sized + Encoding,
-              F: 'a + ?Sized + Encodings,
-              M: 'a + ?Sized + Encodings {
+impl<'a,
+     T: 'a + ?Sized,
+     I: 'a + ?Sized,
+     F: 'a + ?Sized,
+     M: 'a + ?Sized>
+        Clone for Descriptor<'a, T, I, F, M> {
     fn clone(&self) -> Descriptor<'a, T, I, F, M> {
         *self
     }
 }
 
-pub fn encodings_eq<T, U>(e1: &T, e2: &U) -> bool
-        where T: ?Sized + Encoding, U: ?Sized + Encoding {
+pub fn encodings_eq<T: ?Sized, U: ?Sized>(e1: &T, e2: &U) -> bool
+        where T: Encoding, U: Encoding {
     use Descriptor::*;
     match (e1.descriptor(), e2.descriptor()) {
         (Primitive(p1), Primitive(p2)) => primitives_eq(p1, p2),
@@ -85,8 +87,8 @@ fn primitives_eq(p1: Primitive, p2: Primitive) -> bool {
     }
 }
 
-pub fn write_encoding<W, T>(writer: &mut W, encoding: &T) -> fmt::Result
-        where W: fmt::Write, T: ?Sized + Encoding {
+pub fn write_encoding<W, T: ?Sized>(writer: &mut W, encoding: &T) -> fmt::Result
+        where W: fmt::Write, T: Encoding {
     use Descriptor::*;
     match encoding.descriptor() {
         Primitive(p) => write_primitive(writer, p),

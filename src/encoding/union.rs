@@ -40,8 +40,8 @@ impl<S, T> fmt::Display for Union<S, T> where S: AsRef<str>, T: Encodings {
     }
 }
 
-impl<S, T, E> PartialEq<E> for Union<S, T>
-        where S: AsRef<str>, T: Encodings, E: ?Sized + Encoding {
+impl<S, T, E: ?Sized> PartialEq<E> for Union<S, T>
+        where S: AsRef<str>, T: Encodings, E: Encoding {
     fn eq(&self, other: &E) -> bool {
         self.eq_encoding(other)
     }

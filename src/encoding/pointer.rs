@@ -31,7 +31,7 @@ impl<T> fmt::Display for Pointer<T> where T: Encoding {
     }
 }
 
-impl<T, E> PartialEq<E> for Pointer<T> where T: Encoding, E: ?Sized + Encoding {
+impl<T, E: ?Sized> PartialEq<E> for Pointer<T> where T: Encoding, E: Encoding {
     fn eq(&self, other: &E) -> bool {
         self.eq_encoding(other)
     }

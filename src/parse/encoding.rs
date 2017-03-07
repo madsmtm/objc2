@@ -24,7 +24,7 @@ then find that the encoding is of a struct, but no further evaluation is done
 of the fields of the struct until they are requested.
 */
 #[derive(Clone, Copy, Debug)]
-pub struct StrEncoding<S = str>(S) where S: ?Sized + AsRef<str>;
+pub struct StrEncoding<S: ?Sized = str>(S) where S: AsRef<str>;
 
 impl StrEncoding {
     /**
@@ -84,14 +84,14 @@ impl<S> StrEncoding<S> where S: AsRef<str> {
     }
 }
 
-impl<S> StrEncoding<S> where S: ?Sized + AsRef<str> {
+impl<S: ?Sized> StrEncoding<S> where S: AsRef<str> {
     /// Returns the string representation of self.
     pub fn as_str(&self) -> &str {
         self.0.as_ref()
     }
 }
 
-impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
+impl<S: ?Sized> Encoding for StrEncoding<S> where S: AsRef<str> {
     type PointerTarget = StrEncoding;
     type ArrayItem = StrEncoding;
     type StructFields = StrEncodings;
@@ -118,14 +118,14 @@ impl<S> Encoding for StrEncoding<S> where S: ?Sized + AsRef<str> {
     }
 }
 
-impl<S> fmt::Display for StrEncoding<S> where S: ?Sized + AsRef<str> {
+impl<S: ?Sized> fmt::Display for StrEncoding<S> where S: AsRef<str> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         self.write(formatter)
     }
 }
 
-impl<S, E> PartialEq<E> for StrEncoding<S>
-        where S: ?Sized + AsRef<str>, E: ?Sized + Encoding {
+impl<S: ?Sized, E: ?Sized> PartialEq<E> for StrEncoding<S>
+        where S: AsRef<str>, E: Encoding {
     fn eq(&self, other: &E) -> bool {
         self.eq_encoding(other)
     }

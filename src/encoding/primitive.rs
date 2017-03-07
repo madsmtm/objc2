@@ -46,7 +46,7 @@ impl fmt::Display for Primitive {
     }
 }
 
-impl<E> PartialEq<E> for Primitive where E: ?Sized + Encoding {
+impl<E: ?Sized> PartialEq<E> for Primitive where E: Encoding {
     fn eq(&self, other: &E) -> bool {
         self.eq_encoding(other)
     }
