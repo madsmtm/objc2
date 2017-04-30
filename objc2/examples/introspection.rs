@@ -1,4 +1,5 @@
 use core::ptr::NonNull;
+use terminated::ntstr;
 
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object};
@@ -30,7 +31,7 @@ fn main() {
 
     // Access an ivar of the object
     // TODO: Fix this!
-    let isa: *const Class = unsafe { *obj.ivar("isa") };
+    let isa: *const Class = unsafe { *obj.ivar(ntstr!("isa")) };
     println!("NSObject isa: {:?}", isa);
 
     #[cfg(feature = "malloc")]

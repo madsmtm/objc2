@@ -62,8 +62,9 @@ use crate::Message;
 /// use objc2::msg_send;
 /// use objc2::runtime::{Class, Object};
 /// use objc2::rc::{Id, Owned, Shared, WeakId};
+/// use terminated::ntstr;
 ///
-/// let cls = Class::get("NSObject").unwrap();
+/// let cls = Class::get(ntstr!("NSObject")).unwrap();
 /// let obj: Id<Object, Owned> = unsafe {
 ///     Id::new(msg_send![cls, new])
 /// };
