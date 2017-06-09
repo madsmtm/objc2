@@ -2,15 +2,8 @@
 
 set -eu
 
-rust_ios_install() {
-    ios_stdlib="rust-std-nightly-${1}-apple-ios"
-    curl -O "https://static.rust-lang.org/dist/${ios_stdlib}.tar.gz"
-    tar xzf "${ios_stdlib}.tar.gz"
-    "./${ios_stdlib}/install.sh" --prefix=$(rustc --print sysroot)
-}
-
 for arch in $IOS_ARCHS; do
-    rust_ios_install "$arch"
+    rustup target add "${arch}-apple-ios"
 done
 
 if [ -n "$IOS_ARCHS" ]; then

@@ -10,8 +10,8 @@ env:
 matrix:
   include:
     - os: osx
-      osx_image: xcode7.2
-      rust: nightly
+      osx_image: xcode7.3
+      rust: stable
       env: IOS_ARCHS="i386 x86_64 armv7 armv7s aarch64"
 sudo: false
 install: ./travis_install.sh
