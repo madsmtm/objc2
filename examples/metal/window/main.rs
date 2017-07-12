@@ -76,7 +76,7 @@ fn main() {
     let draw_size = glutin_window.get_inner_size().unwrap();
     layer.set_drawable_size(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
 
-    let library = device.new_default_library();
+    let library = device.new_library_with_file("examples/window/default.metallib").unwrap();
     let pipeline_state = prepare_pipeline_state(device, library);
     let command_queue = device.new_command_queue();
     //let nc: () = msg_send![command_queue.0, setExecutionEnabled:true];
@@ -94,7 +94,6 @@ fn main() {
             MTLResourceOptionCPUCacheModeDefault)
     };
 
-    let mut count = 0;
     let mut pool = NSAutoreleasePool::alloc().init();
     let mut r = 0.0f32;
     let mut running = true;
@@ -151,12 +150,8 @@ fn main() {
             r += 0.01f32;
             //let _: () = msg_send![command_queue.0, _submitAvailableCommandBuffers];
 
-            println!("{}:",count);
-
-
             unsafe { pool.release() };
             pool = NSAutoreleasePool::alloc().init();
-            count += 1;
         }
     }
 }
