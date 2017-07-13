@@ -18,4 +18,5 @@ fn main() {
     println!("Integrated GPU: {:?}", device.is_low_power());
     println!("Headless: {:?}", device.is_headless());
     println!("D24S8: {:?}", device.d24_s8_supported());
+    println!("Indirect argument buffer: {:?}", device.argument_buffers_support());
 }
