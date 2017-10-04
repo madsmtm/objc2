@@ -8,13 +8,13 @@
 extern crate cocoa;
 extern crate metal_rs as metal;
 extern crate winit;
-extern crate objc;
+#[macro_use] extern crate objc;
 extern crate objc_foundation;
 extern crate block;
 extern crate sema;
 
 use cocoa::base::id as cocoa_id;
-use cocoa::foundation::{NSRange, NSSize};
+use cocoa::foundation::{NSRange, NSSize, NSAutoreleasePool};
 use cocoa::appkit::{NSWindow, NSView};
 
 use objc::runtime::YES;
@@ -26,26 +26,24 @@ use winit::os::macos::WindowExt;
 use std::mem;
 
 
-fn prepare_pipeline_state<'a>(device: MTLDevice, library: MTLLibrary) -> MTLRenderPipelineState {
-    let vert = library.get_function("triangle_vertex");
-    let frag = library.get_function("triangle_fragment");
+fn prepare_pipeline_state<'a>(device: &DeviceRef, library: &LibraryRef) -> RenderPipelineState {
+    let vert = library.get_function("triangle_vertex").unwrap();
+    let frag = library.get_function("triangle_fragment").unwrap();
 
-    let pipeline_state_descriptor = MTLRenderPipelineDescriptor::alloc().init();
-    pipeline_state_descriptor.set_vertex_function(vert);
-    pipeline_state_descriptor.set_fragment_function(frag);
-    pipeline_state_descriptor.color_attachments().object_at(0).set_pixel_format(MTLPixelFormat::BGRA8Unorm);
+    let pipeline_state_descriptor = RenderPipelineDescriptor::new();
+    pipeline_state_descriptor.set_vertex_function(Some(&vert));
+    pipeline_state_descriptor.set_fragment_function(Some(&frag));
+    pipeline_state_descriptor.color_attachments().object_at(0).unwrap().set_pixel_format(MTLPixelFormat::BGRA8Unorm);
 
-    let pipeline_state = device.new_render_pipeline_state(pipeline_state_descriptor).unwrap();
-
-    pipeline_state
+    device.new_render_pipeline_state(&pipeline_state_descriptor).unwrap()
 }
 
-fn prepare_render_pass_descriptor(descriptor: MTLRenderPassDescriptor, texture: MTLTexture) {
+fn prepare_render_pass_descriptor(descriptor: &RenderPassDescriptorRef, texture: &TextureRef) {
     //descriptor.color_attachments().set_object_at(0, MTLRenderPassColorAttachmentDescriptor::alloc());
     //let color_attachment: MTLRenderPassColorAttachmentDescriptor = unsafe { msg_send![descriptor.color_attachments().0, _descriptorAtIndex:0] };//descriptor.color_attachments().object_at(0);
-    let color_attachment = descriptor.color_attachments().object_at(0);
+    let color_attachment = descriptor.color_attachments().object_at(0).unwrap();
 
-    color_attachment.set_texture(texture);
+    color_attachment.set_texture(Some(texture));
     color_attachment.set_load_action(MTLLoadAction::Clear);
     color_attachment.set_clear_color(MTLClearColor::new(0.5, 0.2, 0.2, 1.0));
     color_attachment.set_store_action(MTLStoreAction::Store);
@@ -59,10 +57,10 @@ fn main() {
         .build(&events_loop).unwrap();
 
     let window: cocoa_id = unsafe { mem::transmute(glutin_window.get_nswindow()) };
-    let device = create_system_default_device();
+    let device = Device::system_default();
 
-    let layer = CAMetalLayer::layer();
-    layer.set_device(device);
+    let layer = CoreAnimationLayer::new();
+    layer.set_device(&device);
     layer.set_pixel_format(MTLPixelFormat::BGRA8Unorm);
     layer.set_presents_with_transaction(false);
 
@@ -70,14 +68,14 @@ fn main() {
         let view = window.contentView();
         view.setWantsBestResolutionOpenGLSurface_(YES);
         view.setWantsLayer(YES);
-        view.setLayer(mem::transmute(layer.0));
+        view.setLayer(mem::transmute(layer.as_ref()));
     }
 
     let draw_size = glutin_window.get_inner_size().unwrap();
     layer.set_drawable_size(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
 
     let library = device.new_library_with_file("examples/window/default.metallib").unwrap();
-    let pipeline_state = prepare_pipeline_state(device, library);
+    let pipeline_state = prepare_pipeline_state(&device, &library);
     let command_queue = device.new_command_queue();
     //let nc: () = msg_send![command_queue.0, setExecutionEnabled:true];
 
@@ -94,7 +92,7 @@ fn main() {
             MTLResourceOptionCPUCacheModeDefault)
     };
 
-    let mut pool = NSAutoreleasePool::alloc().init();
+    let mut pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
     let mut r = 0.0f32;
     let mut running = true;
 
@@ -107,21 +105,21 @@ fn main() {
         });
 
         if let Some(drawable) = layer.next_drawable() {
-            let render_pass_descriptor = MTLRenderPassDescriptor::new();
-            let _a = prepare_render_pass_descriptor(render_pass_descriptor, drawable.texture());
+            let render_pass_descriptor = RenderPassDescriptor::new();
+            let _a = prepare_render_pass_descriptor(&render_pass_descriptor, drawable.texture());
 
             let command_buffer = command_queue.new_command_buffer();
-            let parallel_encoder = command_buffer.new_parallel_render_command_encoder(render_pass_descriptor);
+            let parallel_encoder = command_buffer.new_parallel_render_command_encoder(&render_pass_descriptor);
             let encoder = parallel_encoder.render_command_encoder();
-            encoder.set_render_pipeline_state(pipeline_state);
-            encoder.set_vertex_buffer(0, 0, vbuf);
+            encoder.set_render_pipeline_state(&pipeline_state);
+            encoder.set_vertex_buffer(0, 0, &vbuf);
             encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
             encoder.end_encoding();
             parallel_encoder.end_encoding();
 
-            render_pass_descriptor.color_attachments().object_at(0).set_load_action(MTLLoadAction::DontCare);
+            render_pass_descriptor.color_attachments().object_at(0).unwrap().set_load_action(MTLLoadAction::DontCare);
 
-            let parallel_encoder = command_buffer.new_parallel_render_command_encoder(render_pass_descriptor);
+            let parallel_encoder = command_buffer.new_parallel_render_command_encoder(&render_pass_descriptor);
             let encoder = parallel_encoder.render_command_encoder();
             use std::mem;
             let p = vbuf.contents();
@@ -138,20 +136,21 @@ fn main() {
             vbuf.did_modify_range(NSRange::new(0 as u64, (vertex_data.len() * mem::size_of::<f32>()) as u64));
 
 
-            encoder.set_render_pipeline_state(pipeline_state);
-            encoder.set_vertex_buffer(0, 0, vbuf);
+            encoder.set_render_pipeline_state(&pipeline_state);
+            encoder.set_vertex_buffer(0, 0, &vbuf);
             encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
             encoder.end_encoding();
             parallel_encoder.end_encoding();
 
-            command_buffer.present_drawable(drawable);
+            command_buffer.present_drawable(&drawable);
             command_buffer.commit();
 
             r += 0.01f32;
             //let _: () = msg_send![command_queue.0, _submitAvailableCommandBuffers];
-
-            unsafe { pool.release() };
-            pool = NSAutoreleasePool::alloc().init();
+            unsafe { 
+                msg_send![pool, release];
+                pool = NSAutoreleasePool::new(cocoa::base::nil);
+            }
         }
     }
 }

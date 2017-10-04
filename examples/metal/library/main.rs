@@ -12,8 +12,8 @@ use metal::*;
 const PROGRAM: &'static str = "";
 
 fn main() {
-    let device = create_system_default_device();
+    let device = Device::system_default();
 
-    let options = MTLCompileOptions::new();
-    let library = device.new_library_with_source(PROGRAM, options);
+    let options = CompileOptions::new();
+    let library = device.new_library_with_source(PROGRAM, &options);
 }

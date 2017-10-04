@@ -10,7 +10,7 @@ extern crate metal_rs as metal;
 use metal::*;
 
 fn main() {
-    let device = create_system_default_device();
+    let device = Device::system_default();
 
     println!("Vendor: {:?}", device.vendor());
     println!("Family: {:?}", device.family_name());

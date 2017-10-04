@@ -6,8 +6,12 @@
 // copied, modified, or distributed except according to those terms.
 
 extern crate metal_rs as metal;
+extern crate cocoa;
+#[macro_use] extern crate objc;
 
 use metal::*;
+
+use cocoa::foundation::NSAutoreleasePool;
 
 const PROGRAM: &'static str = "
     #include <metal_stdlib>\n\
@@ -42,25 +46,33 @@ const PROGRAM: &'static str = "
 ";
 
 fn main() {
-    let device = create_system_default_device();
+    let mut pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
 
-    let options = MTLCompileOptions::new();
-    let library = device.new_library_with_source(PROGRAM, options).unwrap();
-    let (vs, ps) = (library.get_function("vs"), library.get_function("ps"));
+    let device = Device::system_default();
 
-    let vertex_desc = MTLVertexDescriptor::new();
+    let options = CompileOptions::new();
+    let library = device.new_library_with_source(PROGRAM, &options).unwrap();
+    let (vs, ps) = (library.get_function("vs").unwrap(), library.get_function("ps").unwrap());
 
-    let desc = MTLRenderPipelineDescriptor::alloc().init();
-    desc.set_vertex_function(vs);
-    desc.set_fragment_function(ps);
-    desc.set_vertex_descriptor(vertex_desc);
+    let vertex_desc = VertexDescriptor::new();
 
-    let reflection = MTLRenderPipelineReflection::alloc().init(
+    let desc = RenderPipelineDescriptor::new();
+    desc.set_vertex_function(Some(&vs));
+    desc.set_fragment_function(Some(&ps));
+    desc.set_vertex_descriptor(Some(vertex_desc));
+
+    println!("{:?}", desc);
+
+    let reflection = unsafe { RenderPipelineReflection::new(
         desc.serialize_vertex_data(),
         desc.serialize_fragment_data(),
         vertex_desc.serialize_descriptor(),
-        device,
+        &device,
         0x8,
         0x0
-    );
+    ) };
+
+    unsafe {
+        msg_send![pool, release];
+    }
 }

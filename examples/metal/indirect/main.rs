@@ -6,29 +6,42 @@
 // copied, modified, or distributed except according to those terms.
 
 extern crate metal_rs as metal;
+extern crate cocoa;
+#[macro_use] extern crate objc;
+extern crate objc_id;
+extern crate objc_foundation;
 
 use metal::*;
 
-fn main() {
-    let device = create_system_default_device();
+use cocoa::foundation::NSAutoreleasePool;
+use objc_foundation::{NSArray, INSArray};
+use objc_id::Id;
 
-    let desc1 = MTLArgumentDescriptor::new();
+fn main() {
+    let mut pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
+
+    let device = Device::system_default();
+
+    let desc1 = ArgumentDescriptor::new();
     desc1.set_index(1);
     desc1.set_data_type(MTLDataType::Sampler);
-    let desc2 = MTLArgumentDescriptor::new();
+    let desc2 = ArgumentDescriptor::new();
     desc2.set_data_type(MTLDataType::Texture);
 
-    let arguments = NSArray::array_with_objects(&[desc1, desc2]);
-    let encoder = device.new_argument_encoder(arguments);
+    let encoder = device.new_argument_encoder(&Array::from_slice(&[desc1, desc2]));
     println!("{:?}", encoder);
 
     let buffer = device.new_buffer(encoder.encoded_length(), MTLResourceOptions::empty());
-    encoder.set_argument_buffer(buffer, 0);
+    encoder.set_argument_buffer(&buffer, 0);
 
     let sampler = {
-        let descriptor = MTLSamplerDescriptor::new();
-        device.new_sampler(descriptor)
+        let descriptor = SamplerDescriptor::new();
+        device.new_sampler(&descriptor)
     };
-    encoder.set_sampler_states(&[sampler], 0);
+    encoder.set_sampler_states(&[&sampler], 0);
     println!("{:?}", sampler);
+
+    unsafe {
+        msg_send![pool, release];
+    }
 }
