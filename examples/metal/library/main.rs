@@ -15,5 +15,5 @@ fn main() {
     let device = Device::system_default();
 
     let options = CompileOptions::new();
-    let library = device.new_library_with_source(PROGRAM, &options);
+    let _library = device.new_library_with_source(PROGRAM, &options);
 }

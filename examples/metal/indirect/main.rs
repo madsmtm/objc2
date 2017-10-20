@@ -14,11 +14,9 @@ extern crate objc_foundation;
 use metal::*;
 
 use cocoa::foundation::NSAutoreleasePool;
-use objc_foundation::{NSArray, INSArray};
-use objc_id::Id;
 
 fn main() {
-    let mut pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
+    let pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
 
     let device = Device::system_default();
 
