@@ -112,7 +112,7 @@ fn main() {
             let parallel_encoder = command_buffer.new_parallel_render_command_encoder(&render_pass_descriptor);
             let encoder = parallel_encoder.render_command_encoder();
             encoder.set_render_pipeline_state(&pipeline_state);
-            encoder.set_vertex_buffer(0, 0, &vbuf);
+            encoder.set_vertex_buffer(0, 0, Some(&vbuf));
             encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
             encoder.end_encoding();
             parallel_encoder.end_encoding();
@@ -137,7 +137,7 @@ fn main() {
 
 
             encoder.set_render_pipeline_state(&pipeline_state);
-            encoder.set_vertex_buffer(0, 0, &vbuf);
+            encoder.set_vertex_buffer(0, 0, Some(&vbuf));
             encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
             encoder.end_encoding();
             parallel_encoder.end_encoding();

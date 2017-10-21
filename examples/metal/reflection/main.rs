@@ -46,7 +46,7 @@ const PROGRAM: &'static str = "
 ";
 
 fn main() {
-    let mut pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
+    let pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
 
     let device = Device::system_default();
 
@@ -63,7 +63,7 @@ fn main() {
 
     println!("{:?}", desc);
 
-    let reflection = unsafe { RenderPipelineReflection::new(
+    let _reflection = unsafe { RenderPipelineReflection::new(
         desc.serialize_vertex_data(),
         desc.serialize_fragment_data(),
         vertex_desc.serialize_descriptor(),
