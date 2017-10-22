@@ -26,7 +26,7 @@ fn main() {
     desc2.set_data_type(MTLDataType::Sampler);
     desc2.set_index(1);
 
-    let encoder = device.new_argument_encoder(Array::from_slice(&[desc1, desc2]));
+    let encoder = device.new_argument_encoder(&Array::from_slice(&[desc1, desc2]));
     println!("{:?}", encoder);
 
     let buffer = device.new_buffer(encoder.encoded_length(), MTLResourceOptions::empty());
