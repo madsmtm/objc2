@@ -89,7 +89,7 @@ fn main() {
         device.new_buffer_with_data(
             unsafe { mem::transmute(vertex_data.as_ptr()) },
             (vertex_data.len() * mem::size_of::<f32>()) as u64,
-            MTLResourceOptionCPUCacheModeDefault)
+            MTLResourceOptions::CPUCacheModeDefaultCache)
     };
 
     let mut pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
