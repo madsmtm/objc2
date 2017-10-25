@@ -21,10 +21,10 @@ fn main() {
     let device = Device::system_default();
 
     let desc1 = ArgumentDescriptor::new();
-    desc1.set_index(1);
-    desc1.set_data_type(MTLDataType::Sampler);
+    desc1.set_data_type(MTLDataType::Texture);
     let desc2 = ArgumentDescriptor::new();
-    desc2.set_data_type(MTLDataType::Texture);
+    desc2.set_data_type(MTLDataType::Sampler);
+    desc2.set_index(1);
 
     let encoder = device.new_argument_encoder(&Array::from_slice(&[desc1, desc2]));
     println!("{:?}", encoder);
@@ -36,7 +36,7 @@ fn main() {
         let descriptor = SamplerDescriptor::new();
         device.new_sampler(&descriptor)
     };
-    encoder.set_sampler_states(&[&sampler], 0);
+    encoder.set_sampler_states(&[&sampler], 1);
     println!("{:?}", sampler);
 
     unsafe {
