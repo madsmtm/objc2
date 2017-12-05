@@ -27,8 +27,8 @@ use std::mem;
 
 
 fn prepare_pipeline_state<'a>(device: &DeviceRef, library: &LibraryRef) -> RenderPipelineState {
-    let vert = library.get_function("triangle_vertex").unwrap();
-    let frag = library.get_function("triangle_fragment").unwrap();
+    let vert = library.get_function("triangle_vertex", None).unwrap();
+    let frag = library.get_function("triangle_fragment", None).unwrap();
 
     let pipeline_state_descriptor = RenderPipelineDescriptor::new();
     pipeline_state_descriptor.set_vertex_function(Some(&vert));

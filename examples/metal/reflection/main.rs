@@ -52,7 +52,7 @@ fn main() {
 
     let options = CompileOptions::new();
     let library = device.new_library_with_source(PROGRAM, &options).unwrap();
-    let (vs, ps) = (library.get_function("vs").unwrap(), library.get_function("ps").unwrap());
+    let (vs, ps) = (library.get_function("vs", None).unwrap(), library.get_function("ps", None).unwrap());
 
     let vertex_desc = VertexDescriptor::new();
 
