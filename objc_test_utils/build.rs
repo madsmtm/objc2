@@ -1,7 +1,7 @@
-extern crate gcc;
+extern crate cc;
 
 fn main() {
-    gcc::Config::new()
+    cc::Build::new()
         .compiler("clang")
         .file("extern/block_utils.c")
         .flag("-fblocks")
