@@ -2,7 +2,7 @@
 A Rust interface for Objective-C blocks.
 
 For more information on the specifics of the block implementation, see
-Clang's documentation: http://clang.llvm.org/docs/Block-ABI-Apple.html
+Clang's documentation: <http://clang.llvm.org/docs/Block-ABI-Apple.html>
 
 # Invoking blocks
 
