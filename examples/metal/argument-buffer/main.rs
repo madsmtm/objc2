@@ -36,7 +36,7 @@ fn main() {
         let descriptor = SamplerDescriptor::new();
         device.new_sampler(&descriptor)
     };
-    encoder.set_sampler_states(&[&sampler], 1);
+    encoder.set_sampler_state(&sampler, 1);
     println!("{:?}", sampler);
 
     unsafe {
