@@ -99,7 +99,7 @@ fn main() {
     while running {
         events_loop.poll_events(|event| {
             match event {
-                winit::Event::WindowEvent{ event: winit::WindowEvent::Closed, .. } => running = false,
+                winit::Event::WindowEvent{ event: winit::WindowEvent::CloseRequested, .. } => running = false,
                 _ => ()
             }
         });
