@@ -67,8 +67,8 @@ fn main() {
     encoder.set_compute_pipeline_state(&pipeline_state);
     encoder.set_buffer(0, 0, Some(&arg_buffer));
 
-    encoder.use_resource(&buffer, MTLResourceUsage::ResourceUsageRead);
-    encoder.use_resource(&sum, MTLResourceUsage::ResourceUsageWrite);
+    encoder.use_resource(&buffer, MTLResourceUsage::Read);
+    encoder.use_resource(&sum, MTLResourceUsage::Write);
 
     let width = 16;
 
