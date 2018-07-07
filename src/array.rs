@@ -167,7 +167,7 @@ object_impl!(NSArray<T, O>);
 
 impl<T, O> INSObject for NSArray<T, O> where T: INSObject, O: Ownership {
     fn class() -> &'static Class {
-        Class::get("NSArray").unwrap()
+        class!(NSArray)
     }
 }
 
@@ -282,7 +282,7 @@ object_impl!(NSMutableArray<T, O>);
 
 impl<T, O> INSObject for NSMutableArray<T, O> where T: INSObject, O: Ownership {
     fn class() -> &'static Class {
-        Class::get("NSMutableArray").unwrap()
+        class!(NSMutableArray)
     }
 }
 

@@ -9,11 +9,7 @@ macro_rules! object_struct {
 
         impl $crate::INSObject for $name {
             fn class() -> &'static ::objc::runtime::Class {
-                let name = stringify!($name);
-                match ::objc::runtime::Class::get(name) {
-                    Some(cls) => cls,
-                    None => panic!("Class {} not found", name),
-                }
+                class!($name)
             }
         }
 

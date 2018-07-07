@@ -122,7 +122,7 @@ object_impl!(NSDictionary<K, V>);
 
 impl<K, V> INSObject for NSDictionary<K, V> where K: INSObject, V: INSObject {
     fn class() -> &'static Class {
-        Class::get("NSDictionary").unwrap()
+        class!(NSDictionary)
     }
 }
 

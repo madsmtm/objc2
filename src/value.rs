@@ -56,7 +56,7 @@ object_impl!(NSValue<T>);
 
 impl<T> INSObject for NSValue<T> where T: Any {
     fn class() -> &'static Class {
-        Class::get("NSValue").unwrap()
+        class!(NSValue)
     }
 }
 
