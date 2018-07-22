@@ -13,4 +13,4 @@ license = "MIT"
 exclude = [".gitignore"]
 
 [dependencies]
-objc = "0.2"
+objc = "0.2.4"

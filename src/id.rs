@@ -5,23 +5,8 @@ use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
 
 use objc::Message;
+use objc::rc::{StrongPtr, WeakPtr};
 use objc::runtime::Object;
-
-#[link(name = "objc", kind = "dylib")]
-extern {
-    fn objc_retain(obj: *mut Object) -> *mut Object;
-    fn objc_release(obj: *mut Object);
-}
-
-struct StrongPtr(*mut Object);
-
-impl Drop for StrongPtr {
-    fn drop(&mut self) {
-        unsafe {
-            objc_release(self.0);
-        }
-    }
-}
 
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
@@ -65,7 +50,7 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
-        Id::new(StrongPtr(objc_retain(ptr as *mut Object)))
+        Id::new(StrongPtr::retain(ptr as *mut Object))
     }
 
     /// Constructs an `Id` from a pointer to a retained object; this won't
@@ -75,7 +60,7 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
-        Id::new(StrongPtr(ptr as *mut Object))
+        Id::new(StrongPtr::new(ptr as *mut Object))
     }
 }
 
@@ -90,7 +75,7 @@ impl<T> Id<T, Owned> where T: Message {
 impl<T> Clone for Id<T, Shared> where T: Message {
     fn clone(&self) -> ShareId<T> {
         unsafe {
-            Id::new(StrongPtr(objc_retain(self.ptr.0)))
+            Id::new(self.ptr.clone())
         }
     }
 }
@@ -105,13 +90,13 @@ impl<T, O> Deref for Id<T, O> {
     type Target = T;
 
     fn deref(&self) -> &T {
-        unsafe { &*(self.ptr.0 as *mut T) }
+        unsafe { &*(*self.ptr as *mut T) }
     }
 }
 
 impl<T> DerefMut for Id<T, Owned> {
     fn deref_mut(&mut self) -> &mut T {
-        unsafe { &mut *(self.ptr.0 as *mut T) }
+        unsafe { &mut *(*self.ptr as *mut T) }
     }
 }
 
@@ -141,17 +126,49 @@ impl<T, O> fmt::Debug for Id<T, O> where T: fmt::Debug {
 
 impl<T, O> fmt::Pointer for Id<T, O> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fmt::Pointer::fmt(&self.ptr.0, f)
+        fmt::Pointer::fmt(&self.ptr, f)
     }
 }
 
 /// A convenient alias for a shared `Id`.
 pub type ShareId<T> = Id<T, Shared>;
 
+/// A pointer type for a weak reference to an Objective-C reference counted
+/// object.
+pub struct WeakId<T> {
+    ptr: WeakPtr,
+    item: PhantomData<T>,
+}
+
+impl<T> WeakId<T> where T: Message {
+    /// Construct a new `WeakId` referencing the given `ShareId`.
+    pub fn new(obj: &ShareId<T>) -> WeakId<T> {
+        WeakId {
+            ptr: obj.ptr.weak(),
+            item: PhantomData,
+        }
+    }
+
+    /// Load a `ShareId` from the `WeakId` if the object still exists.
+    /// Returns `None` if the object has been deallocated.
+    pub fn load(&self) -> Option<ShareId<T>> {
+        let obj = self.ptr.load();
+        if obj.is_null() {
+            None
+        } else {
+            Some(unsafe { Id::new(obj) })
+        }
+    }
+}
+
+unsafe impl<T> Sync for WeakId<T> where T: Sync { }
+
+unsafe impl<T> Send for WeakId<T> where T: Sync { }
+
 #[cfg(test)]
 mod tests {
-    use objc::runtime::{Class, Object};
-    use super::Id;
+    use objc::runtime::Object;
+    use super::{Id, ShareId, WeakId};
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
@@ -159,7 +176,7 @@ mod tests {
 
     #[test]
     fn test_clone() {
-        let cls = Class::get("NSObject").unwrap();
+        let cls = class!(NSObject);
         let obj: Id<Object> = unsafe {
             let obj: *mut Object = msg_send![cls, alloc];
             let obj: *mut Object = msg_send![obj, init];
@@ -176,5 +193,25 @@ mod tests {
 
         drop(obj);
         assert!(retain_count(&cloned) == 1);
+    }
+
+    #[test]
+    fn test_weak() {
+        let cls = class!(NSObject);
+        let obj: ShareId<Object> = unsafe {
+            let obj: *mut Object = msg_send![cls, alloc];
+            let obj: *mut Object = msg_send![obj, init];
+            Id::from_retained_ptr(obj)
+        };
+
+        let weak = WeakId::new(&obj);
+        let strong = weak.load().unwrap();
+        let strong_ptr: *const Object = &*strong;
+        let obj_ptr: *const Object = &*obj;
+        assert!(strong_ptr == obj_ptr);
+        drop(strong);
+
+        drop(obj);
+        assert!(weak.load().is_none());
     }
 }
