@@ -41,12 +41,6 @@ macro_rules! count_idents {
     ($a:ident, $($b:ident),+) => (1 + count_idents!($($b),*));
 }
 
-macro_rules! fmt_repeat {
-    () => ("");
-    ($a:ident) => ("{}");
-    ($a:ident, $($b:ident),+) => (concat!("{}", fmt_repeat!($($b),*)));
-}
-
 macro_rules! encodings_impl {
     ($($i:expr => $a:ident : $t:ident),*) => (
         #[allow(unused)]
