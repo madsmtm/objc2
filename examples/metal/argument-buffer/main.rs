@@ -5,7 +5,7 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-extern crate metal_rs as metal;
+extern crate metal;
 extern crate cocoa;
 #[macro_use] extern crate objc;
 extern crate objc_id;
