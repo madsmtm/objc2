@@ -6,7 +6,7 @@
 // copied, modified, or distributed except according to those terms.
 
 extern crate cocoa;
-extern crate metal_rs as metal;
+extern crate metal;
 extern crate winit;
 #[macro_use] extern crate objc;
 extern crate objc_foundation;
@@ -52,7 +52,7 @@ fn prepare_render_pass_descriptor(descriptor: &RenderPassDescriptorRef, texture:
 fn main() {
     let mut events_loop = winit::EventsLoop::new();
     let glutin_window = winit::WindowBuilder::new()
-        .with_dimensions(800, 600)
+        .with_dimensions((800, 600).into())
         .with_title("Metal".to_string())
         .build(&events_loop).unwrap();
 
@@ -72,7 +72,7 @@ fn main() {
     }
 
     let draw_size = glutin_window.get_inner_size().unwrap();
-    layer.set_drawable_size(NSSize::new(draw_size.0 as f64, draw_size.1 as f64));
+    layer.set_drawable_size(NSSize::new(draw_size.width as f64, draw_size.height as f64));
 
     let library = device.new_library_with_file("examples/window/default.metallib").unwrap();
     let pipeline_state = prepare_pipeline_state(&device, &library);
