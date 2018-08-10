@@ -6,6 +6,7 @@
 // copied, modified, or distributed except according to those terms.
 
 extern crate cocoa;
+extern crate core_graphics;
 extern crate metal;
 extern crate winit;
 #[macro_use] extern crate objc;
@@ -14,8 +15,9 @@ extern crate block;
 extern crate sema;
 
 use cocoa::base::id as cocoa_id;
-use cocoa::foundation::{NSRange, NSSize, NSAutoreleasePool};
+use cocoa::foundation::{NSRange, NSAutoreleasePool};
 use cocoa::appkit::{NSWindow, NSView};
+use core_graphics::geometry::CGSize;
 
 use objc::runtime::YES;
 
@@ -72,7 +74,7 @@ fn main() {
     }
 
     let draw_size = glutin_window.get_inner_size().unwrap();
-    layer.set_drawable_size(NSSize::new(draw_size.width as f64, draw_size.height as f64));
+    layer.set_drawable_size(CGSize::new(draw_size.width as f64, draw_size.height as f64));
 
     let library = device.new_library_with_file("examples/window/default.metallib").unwrap();
     let pipeline_state = prepare_pipeline_state(&device, &library);
