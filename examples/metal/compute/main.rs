@@ -57,8 +57,8 @@ fn main() {
     let pipeline_state = device.new_compute_pipeline_state(&pipeline_state_descriptor).unwrap();
 
     encoder.set_compute_pipeline_state(&pipeline_state);
-    encoder.set_buffer(0, 0, Some(&buffer));
-    encoder.set_buffer(1, 0, Some(&sum));
+    encoder.set_buffer(0, Some(&buffer), 0);
+    encoder.set_buffer(1, Some(&sum), 0);
 
     let width = 16;
 

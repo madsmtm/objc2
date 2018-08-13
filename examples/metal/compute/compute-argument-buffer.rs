@@ -65,7 +65,7 @@ fn main() {
     let pipeline_state = device.new_compute_pipeline_state(&pipeline_state_descriptor).unwrap();
 
     encoder.set_compute_pipeline_state(&pipeline_state);
-    encoder.set_buffer(0, 0, Some(&arg_buffer));
+    encoder.set_buffer(0, Some(&arg_buffer), 0);
 
     encoder.use_resource(&buffer, MTLResourceUsage::Read);
     encoder.use_resource(&sum, MTLResourceUsage::Write);
