@@ -54,7 +54,10 @@ fn main() {
     let pipeline_state_descriptor = ComputePipelineDescriptor::new();
     pipeline_state_descriptor.set_compute_function(Some(&kernel));
 
-    let pipeline_state = device.new_compute_pipeline_state(&pipeline_state_descriptor).unwrap();
+    let pipeline_state = device
+        .new_compute_pipeline_state_with_function(
+            pipeline_state_descriptor.compute_function().unwrap()
+        ).unwrap();
 
     encoder.set_compute_pipeline_state(&pipeline_state);
     encoder.set_buffer(0, Some(&buffer), 0);
