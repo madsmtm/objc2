@@ -63,6 +63,7 @@ fn main() {
 
     println!("{:?}", desc);
 
+    #[cfg(features = "private")]
     let _reflection = unsafe { RenderPipelineReflection::new(
         desc.serialize_vertex_data(),
         desc.serialize_fragment_data(),

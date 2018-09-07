@@ -12,11 +12,17 @@ use metal::*;
 fn main() {
     let device = Device::system_default();
 
-    println!("Vendor: {:?}", device.vendor());
-    println!("Family: {:?}", device.family_name());
+    #[cfg(feature = "private")]
+    {
+        println!("Vendor: {:?}", unsafe { device.vendor() });
+        println!("Family: {:?}", unsafe { device.family_name() });
+    }
     println!("Max threads per threadgroup: {:?}", device.max_threads_per_threadgroup());
-    println!("Integrated GPU: {:?}", device.is_low_power());
-    println!("Headless: {:?}", device.is_headless());
-    println!("D24S8: {:?}", device.d24_s8_supported());
+    #[cfg(target_os = "macos")]
+    {
+        println!("Integrated GPU: {:?}", device.is_low_power());
+        println!("Headless: {:?}", device.is_headless());
+        println!("D24S8: {:?}", device.d24_s8_supported());
+    }
     println!("Indirect argument buffer: {:?}", device.argument_buffers_support());
 }
