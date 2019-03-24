@@ -6,18 +6,20 @@ use super::never::Never;
 
 /// An encoding for a union.
 #[derive(Clone, Copy, Debug)]
-pub struct Union<S, T> where S: AsRef<str>, T: Encodings {
+pub struct Union<S, T> {
     name: S,
     members: T,
 }
 
-impl<S, T> Union<S, T> where S: AsRef<str>, T: Encodings {
+impl<S, T> Union<S, T> {
     /// Constructs an encoding for a union with the given name and
     /// members with the given encodings.
-    pub fn new(name: S, members: T) -> Union<S, T> {
+    pub const fn new(name: S, members: T) -> Union<S, T> {
         Union { name: name, members: members }
     }
+}
 
+impl<S, T> Union<S, T> where S: AsRef<str>, T: Encodings {
     fn name(&self) -> &str {
         self.name.as_ref()
     }

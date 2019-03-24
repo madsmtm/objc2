@@ -6,18 +6,20 @@ use super::never::Never;
 
 /// An encoding for a struct.
 #[derive(Clone, Copy, Debug)]
-pub struct Struct<S, T> where S: AsRef<str>, T: Encodings {
+pub struct Struct<S, T> {
     name: S,
     fields: T,
 }
 
-impl<S, T> Struct<S, T> where S: AsRef<str>, T: Encodings {
+impl<S, T> Struct<S, T> {
     /// Constructs an encoding for a struct with the given name and
     /// fields with the given encodings.
-    pub fn new(name: S, fields: T) -> Struct<S, T> {
+    pub const fn new(name: S, fields: T) -> Struct<S, T> {
         Struct { name: name, fields: fields }
     }
+}
 
+impl<S, T> Struct<S, T> where S: AsRef<str>, T: Encodings {
     fn name(&self) -> &str {
         self.name.as_ref()
     }

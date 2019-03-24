@@ -5,15 +5,15 @@ use super::never::Never;
 
 /// An encoding for an array.
 #[derive(Clone, Copy, Debug)]
-pub struct Array<T> where T: Encoding {
+pub struct Array<T> {
     len: u32,
     item: T,
 }
 
-impl<T> Array<T> where T: Encoding {
+impl<T> Array<T> {
     /// Constructs an encoding for an array with the given length and of items
     /// with the given encoding.
-    pub fn new(len: u32, item: T) -> Array<T> {
+    pub const fn new(len: u32, item: T) -> Array<T> {
         Array { len: len, item: item }
     }
 }

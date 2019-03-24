@@ -5,11 +5,11 @@ use super::never::Never;
 
 /// An encoding for a pointer.
 #[derive(Clone, Copy, Debug)]
-pub struct Pointer<T>(T) where T: Encoding;
+pub struct Pointer<T>(T);
 
-impl<T> Pointer<T> where T: Encoding {
+impl<T> Pointer<T> {
     /// Constructs an encoding for a pointer to a target with the given encoding.
-    pub fn new(target: T) -> Pointer<T> {
+    pub const fn new(target: T) -> Pointer<T> {
         Pointer(target)
     }
 }
