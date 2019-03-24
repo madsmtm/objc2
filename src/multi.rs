@@ -1,6 +1,6 @@
 use core::fmt;
 
-use Encoding;
+use crate::Encoding;
 
 /// Types that can be used as callbacks while iterating over `Encodings`.
 ///
@@ -180,7 +180,7 @@ impl<'a, W: 'a> EncodingsIterateCallback for EncodingsWriter<'a, W>
 
 #[cfg(test)]
 mod tests {
-    use encoding::Primitive;
+    use crate::encoding::Primitive;
     use super::*;
 
     #[test]

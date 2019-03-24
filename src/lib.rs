@@ -60,9 +60,9 @@ pub mod parse;
 
 use core::fmt;
 
-pub use encode::Encode;
-pub use descriptor::Descriptor;
-pub use multi::{Encodings, EncodingsIterateCallback};
+pub use crate::encode::Encode;
+pub use crate::descriptor::Descriptor;
+pub use crate::multi::{Encodings, EncodingsIterateCallback};
 
 /// An Objective-C type encoding.
 pub trait Encoding: fmt::Display {

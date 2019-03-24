@@ -2,6 +2,7 @@
 name = "objc-encode"
 version = "0.0.3"
 authors = ["Steven Sheldon"]
+edition = "2018"
 
 description = "Objective-C type encoding creation and parsing in Rust."
 keywords = ["objective-c", "osx", "ios", "cocoa", "uikit"]

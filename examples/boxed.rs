@@ -17,7 +17,7 @@ enum BoxedEncoding {
 
 impl BoxedEncoding {
     fn from_encoding<T: ?Sized + Encoding>(encoding: &T) -> BoxedEncoding {
-        use BoxedEncoding::*;
+        use crate::BoxedEncoding::*;
         match encoding.descriptor() {
             Descriptor::Primitive(p) => Primitive(p),
             Descriptor::Pointer(t) =>
@@ -49,7 +49,7 @@ impl Encoding for BoxedEncoding {
     type UnionMembers = [BoxedEncoding];
 
     fn descriptor(&self) -> Descriptor<BoxedEncoding, BoxedEncoding, [BoxedEncoding], [BoxedEncoding]> {
-        use BoxedEncoding::*;
+        use crate::BoxedEncoding::*;
         match *self {
             Primitive(p) => Descriptor::Primitive(p),
             Pointer(ref t) => Descriptor::Pointer(t),

@@ -1,7 +1,7 @@
 use libc::{c_char, c_void};
 
-use Encoding;
-use encoding::{Pointer, Primitive};
+use crate::Encoding;
+use crate::encoding::{Pointer, Primitive};
 
 /// Types that have an Objective-C type encoding.
 ///

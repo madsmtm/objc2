@@ -1,7 +1,7 @@
 use core::fmt;
 
-use {Encoding, Encodings};
-use encoding::Primitive;
+use crate::{Encoding, Encodings};
+use crate::encoding::Primitive;
 
 /**
 A type which describes an `Encoding`.
@@ -45,7 +45,7 @@ impl<'a,
 
 pub fn encodings_eq<T: ?Sized, U: ?Sized>(e1: &T, e2: &U) -> bool
         where T: Encoding, U: Encoding {
-    use Descriptor::*;
+    use crate::Descriptor::*;
     match (e1.descriptor(), e2.descriptor()) {
         (Primitive(p1), Primitive(p2)) => primitives_eq(p1, p2),
         (Pointer(t1), Pointer(t2)) => t1.eq_encoding(t2),
@@ -60,7 +60,7 @@ pub fn encodings_eq<T: ?Sized, U: ?Sized>(e1: &T, e2: &U) -> bool
 }
 
 fn primitives_eq(p1: Primitive, p2: Primitive) -> bool {
-    use encoding::Primitive::*;
+    use crate::encoding::Primitive::*;
     match (p1, p2) {
         (Char     , Char     ) => true,
         (Short    , Short    ) => true,
@@ -89,7 +89,7 @@ fn primitives_eq(p1: Primitive, p2: Primitive) -> bool {
 
 pub fn write_encoding<W, T: ?Sized>(writer: &mut W, encoding: &T) -> fmt::Result
         where W: fmt::Write, T: Encoding {
-    use Descriptor::*;
+    use crate::Descriptor::*;
     match encoding.descriptor() {
         Primitive(p) => write_primitive(writer, p),
         Pointer(t) => {
@@ -115,7 +115,7 @@ pub fn write_encoding<W, T: ?Sized>(writer: &mut W, encoding: &T) -> fmt::Result
 }
 
 fn write_primitive<W: fmt::Write>(writer: &mut W, p: Primitive) -> fmt::Result {
-    use encoding::Primitive::*;
+    use crate::encoding::Primitive::*;
     let code = match p {
         Char      => "c",
         Short     => "s",

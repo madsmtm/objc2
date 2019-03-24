@@ -3,7 +3,7 @@
 mod encoding;
 mod multi;
 
-use encoding::Primitive;
+use crate::encoding::Primitive;
 
 pub use self::encoding::{StrEncoding, ParseEncodingError};
 

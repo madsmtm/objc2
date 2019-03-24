@@ -1,6 +1,6 @@
 use core::fmt;
 
-use {Descriptor, Encoding};
+use crate::{Descriptor, Encoding};
 use super::never::Never;
 
 /// An encoding for a pointer.
@@ -40,7 +40,7 @@ impl<T, E: ?Sized> PartialEq<E> for Pointer<T> where T: Encoding, E: Encoding {
 #[cfg(test)]
 mod tests {
     use std::string::ToString;
-    use encoding::Primitive;
+    use crate::encoding::Primitive;
     use super::*;
 
     #[test]

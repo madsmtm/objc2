@@ -1,7 +1,7 @@
 use core::fmt;
 
-use {Descriptor, Encoding};
-use multi::Encodings;
+use crate::{Descriptor, Encoding};
+use crate::multi::Encodings;
 use super::never::Never;
 
 /// An encoding for a union.
@@ -50,8 +50,8 @@ impl<S, T, E: ?Sized> PartialEq<E> for Union<S, T>
 #[cfg(test)]
 mod tests {
     use std::string::ToString;
-    use encoding::Primitive;
-    use parse::StrEncoding;
+    use crate::encoding::Primitive;
+    use crate::parse::StrEncoding;
     use super::*;
 
     #[test]

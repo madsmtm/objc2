@@ -1,7 +1,7 @@
 use core::fmt;
 
-use {Descriptor, Encoding};
-use multi::{Encodings, EncodingsIterateCallback};
+use crate::{Descriptor, Encoding};
+use crate::multi::{Encodings, EncodingsIterateCallback};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Never { }

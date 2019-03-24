@@ -1,8 +1,8 @@
 use core::fmt;
 use core::mem;
 
-use Encoding;
-use multi::{Encodings, EncodingsIterateCallback};
+use crate::Encoding;
+use crate::multi::{Encodings, EncodingsIterateCallback};
 use super::chomp;
 use super::encoding::StrEncoding;
 

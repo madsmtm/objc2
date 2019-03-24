@@ -1,7 +1,7 @@
 use core::fmt;
 use core::mem;
 
-use {Descriptor, Encoding};
+use crate::{Descriptor, Encoding};
 use super::{is_valid, parse, ParseResult};
 use super::multi::StrEncodings;
 
@@ -133,7 +133,7 @@ impl<S: ?Sized, E: ?Sized> PartialEq<E> for StrEncoding<S>
 
 #[cfg(test)]
 mod tests {
-    use encoding::{Array, Primitive, Struct};
+    use crate::encoding::{Array, Primitive, Struct};
     use super::*;
 
     #[test]

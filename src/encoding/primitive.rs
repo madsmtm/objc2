@@ -1,6 +1,6 @@
 use core::fmt;
 
-use {Descriptor, Encoding};
+use crate::{Descriptor, Encoding};
 use super::never::Never;
 
 /// An encoding for a "primitive" type which is not a composition of other types.
