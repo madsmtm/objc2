@@ -93,22 +93,22 @@ pub fn write_encoding<W, T: ?Sized>(writer: &mut W, encoding: &T) -> fmt::Result
     match encoding.descriptor() {
         Primitive(p) => write_primitive(writer, p),
         Pointer(t) => {
-            try!(writer.write_char('^'));
+            writer.write_char('^')?;
             t.write(writer)
         }
         Array(len, item) => {
-            try!(write!(writer, "[{}", len));
-            try!(item.write(writer));
+            write!(writer, "[{}", len)?;
+            item.write(writer)?;
             writer.write_char(']')
         }
         Struct(name, fields) => {
-            try!(write!(writer, "{{{}=", name));
-            try!(fields.write_all(writer));
+            write!(writer, "{{{}=", name)?;
+            fields.write_all(writer)?;
             writer.write_char('}')
         }
         Union(name, members) => {
-            try!(write!(writer, "({}=", name));
-            try!(members.write_all(writer));
+            write!(writer, "({}=", name)?;
+            members.write_all(writer)?;
             writer.write_char(')')
         }
     }
