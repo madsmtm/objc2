@@ -10,14 +10,14 @@ pub trait EncodingsIterateCallback {
     /// This method is called for each encoding of an `Encodings`.
     /// The return value indicates whether iteration should stop;
     /// return `true` to stop the iteration before completion.
-    fn call<T: ?Sized + Encoding>(&mut self, &T) -> bool;
+    fn call<T: ?Sized + Encoding>(&mut self, encoding: &T) -> bool;
 }
 
 /// Types that represent a collection of `Encoding`s.
 pub trait Encodings {
     /// Iterates over the encodings of Self,
     /// calling the provided callback for each.
-    fn each<F: EncodingsIterateCallback>(&self, &mut F);
+    fn each<F: EncodingsIterateCallback>(&self, callback: &mut F);
 
     /// Returns whether Self is equal to the given encodings,
     fn eq_encodings<T: ?Sized + Encodings>(&self, encs: &T) -> bool;
@@ -31,7 +31,7 @@ pub trait Encodings {
 }
 
 trait IndexEncodings: Encodings {
-    fn encoding_at_eq<T: ?Sized + Encoding>(&self, u8, &T) -> bool;
+    fn encoding_at_eq<T: ?Sized + Encoding>(&self, index: u8, other: &T) -> bool;
     fn len(&self) -> u8;
 }
 
