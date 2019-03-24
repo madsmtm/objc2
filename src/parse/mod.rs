@@ -126,7 +126,7 @@ fn parse_parts(s: &str, open: char, sep: char, close: char)
 
 fn parse(s: &str) -> ParseResult {
     // strip qualifiers
-    let s = s.trim_left_matches(QUALIFIERS);
+    let s = s.trim_start_matches(QUALIFIERS);
 
     if s.starts_with('^') {
         ParseResult::Pointer(&s[1..])
