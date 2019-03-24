@@ -1,7 +1,6 @@
 extern crate objc_encode;
 
-use objc_encode::Encode;
-use objc_encode::encoding::{Primitive, Struct};
+use objc_encode::{Encode, Encoding};
 
 #[cfg(target_pointer_width = "32")]
 type CGFloat = f32;
@@ -16,11 +15,7 @@ struct CGPoint {
 }
 
 unsafe impl Encode for CGPoint {
-    type Encoding = Struct<&'static str, (Primitive, Primitive)>;
-
-    fn encode() -> Self::Encoding {
-        Struct::new("CGPoint", (CGFloat::encode(), CGFloat::encode()))
-    }
+    const CODE: Encoding<'static> = Encoding::Struct("CGPoint", &[CGFloat::CODE, CGFloat::CODE]);
 }
 
 #[repr(C)]
@@ -30,11 +25,7 @@ struct CGSize {
 }
 
 unsafe impl Encode for CGSize {
-    type Encoding = Struct<&'static str, (Primitive, Primitive)>;
-
-    fn encode() -> Self::Encoding {
-        Struct::new("CGSize", (CGFloat::encode(), CGFloat::encode()))
-    }
+    const CODE: Encoding<'static> = Encoding::Struct("CGSize", &[CGFloat::CODE, CGFloat::CODE]);
 }
 
 #[repr(C)]
@@ -44,14 +35,9 @@ struct CGRect {
 }
 
 unsafe impl Encode for CGRect {
-    type Encoding = Struct<&'static str, (<CGPoint as Encode>::Encoding,
-                                          <CGSize as Encode>::Encoding)>;
-
-    fn encode() -> Self::Encoding {
-        Struct::new("CGRect", (CGPoint::encode(), CGSize::encode()))
-    }
+    const CODE: Encoding<'static> = Encoding::Struct("CGRect", &[CGPoint::CODE, CGSize::CODE]);
 }
 
 fn main() {
-    println!("{}", CGRect::encode());
+    println!("{}", CGRect::CODE);
 }

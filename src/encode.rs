@@ -1,7 +1,6 @@
 use libc::{c_char, c_void};
 
 use crate::Encoding;
-use crate::encoding::{Pointer, Primitive};
 
 /// Types that have an Objective-C type encoding.
 ///
@@ -9,18 +8,14 @@ use crate::encoding::{Pointer, Primitive};
 /// size and alignment) from its encoding, so the implementer must verify that
 /// the encoding is accurate.
 pub unsafe trait Encode {
-    type Encoding: Encoding;
-
     /// Returns the Objective-C type encoding for Self.
-    fn encode() -> Self::Encoding;
+    const CODE: Encoding<'static>;
 }
 
 macro_rules! encode_impls {
     ($($t:ty : $e:ident,)*) => ($(
         unsafe impl Encode for $t {
-            type Encoding = Primitive;
-
-            fn encode() -> Primitive { Primitive::$e }
+            const CODE: Encoding<'static> = Encoding::$e;
         }
     )*);
 }
@@ -43,35 +38,27 @@ encode_impls!(
 );
 
 unsafe impl Encode for isize {
-    type Encoding = Primitive;
-
     #[cfg(target_pointer_width = "32")]
-    fn encode() -> Primitive { i32::encode() }
+    const CODE: Encoding<'static> = i32::CODE;
 
     #[cfg(target_pointer_width = "64")]
-    fn encode() -> Primitive { i64::encode() }
+    const CODE: Encoding<'static> = i64::CODE;
 }
 
 unsafe impl Encode for usize {
-    type Encoding = Primitive;
-
     #[cfg(target_pointer_width = "32")]
-    fn encode() -> Primitive { u32::encode() }
+    const CODE: Encoding<'static> = u32::CODE;
 
     #[cfg(target_pointer_width = "64")]
-    fn encode() -> Primitive { u64::encode() }
+    const CODE: Encoding<'static> = u64::CODE;
 }
 
 unsafe impl Encode for *mut c_void {
-    type Encoding = Pointer<Primitive>;
-
-    fn encode() -> Self::Encoding { Pointer::new(Primitive::Void) }
+    const CODE: Encoding<'static> = Encoding::Pointer(&Encoding::Void);
 }
 
 unsafe impl Encode for *const c_void {
-    type Encoding = Pointer<Primitive>;
-
-    fn encode() -> Self::Encoding { Pointer::new(Primitive::Void) }
+    const CODE: Encoding<'static> = Encoding::Pointer(&Encoding::Void);
 }
 
 /*
@@ -82,25 +69,17 @@ As a workaround, we provide implementations for these types that return the
 same encoding as references.
 */
 unsafe impl<T: 'static> Encode for *const T where for<'a> &'a T: Encode {
-    type Encoding = <&'static T as Encode>::Encoding;
-
-    fn encode() -> Self::Encoding { <&T>::encode() }
+    const CODE: Encoding<'static> = <&T as Encode>::CODE;
 }
 
 unsafe impl<T: 'static> Encode for *mut T where for<'a> &'a mut T: Encode {
-    type Encoding = <&'static mut T as Encode>::Encoding;
-
-    fn encode() -> Self::Encoding { <&mut T>::encode() }
+    const CODE: Encoding<'static> = <&mut T>::CODE;
 }
 
-unsafe impl<'a, T> Encode for Option<&'a T> where &'a T: Encode {
-    type Encoding = <&'a T as Encode>::Encoding;
-
-    fn encode() -> Self::Encoding { <&T>::encode() }
+unsafe impl<'a, T: 'a> Encode for Option<&'a T> where &'a T: Encode {
+    const CODE: Encoding<'static> = <&T>::CODE;
 }
 
-unsafe impl<'a, T> Encode for Option<&'a mut T> where &'a mut T: Encode {
-    type Encoding = <&'a mut T as Encode>::Encoding;
-
-    fn encode() -> Self::Encoding { <&mut T>::encode() }
+unsafe impl<'a, T: 'a> Encode for Option<&'a mut T> where &'a mut T: Encode {
+    const CODE: Encoding<'static> = <&mut T>::CODE;
 }

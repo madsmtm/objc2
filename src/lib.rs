@@ -54,44 +54,7 @@ extern crate std;
 
 pub mod encoding;
 mod encode;
-mod descriptor;
-mod multi;
-pub mod parse;
+// pub mod parse;
 
-use core::fmt;
-
+pub use crate::encoding::Encoding;
 pub use crate::encode::Encode;
-pub use crate::descriptor::Descriptor;
-pub use crate::multi::{Encodings, EncodingsIterateCallback};
-
-/// An Objective-C type encoding.
-pub trait Encoding: fmt::Display {
-    /// The type of `Encoding` that Self will use if it is an encoding for
-    /// a pointer to describe its target.
-    type PointerTarget: ?Sized + Encoding;
-    /// The type of `Encoding` that Self will use if it is an encoding for
-    /// an array to describe its items.
-    type ArrayItem: ?Sized + Encoding;
-    /// The type of `Encodings` that Self will use if it is an encoding for
-    /// a struct to describe its fields.
-    type StructFields: ?Sized + Encodings;
-    /// The type of `Encodings` that Self will use if it is an encoding for
-    /// a union to describe its members.
-    type UnionMembers: ?Sized + Encodings;
-
-    /// Returns a `Descriptor` that describes what kind of encoding self is.
-    fn descriptor(&self) -> Descriptor<Self::PointerTarget,
-                                       Self::ArrayItem,
-                                       Self::StructFields,
-                                       Self::UnionMembers>;
-
-    /// Returns whether self is equal to the given `Encoding`.
-    fn eq_encoding<T: ?Sized + Encoding>(&self, other: &T) -> bool {
-        descriptor::encodings_eq(self, other)
-    }
-
-    /// Writes the string representation of self to the given writer.
-    fn write<W: fmt::Write>(&self, writer: &mut W) -> fmt::Result {
-        descriptor::write_encoding(writer, self)
-    }
-}
