@@ -49,7 +49,7 @@ extern crate libc;
 #[cfg(test)]
 extern crate std;
 
-pub mod encoding;
+mod encoding;
 mod encode;
 pub mod parse;
 
