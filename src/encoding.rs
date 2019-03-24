@@ -1,7 +1,6 @@
-//! Types for statically defined encodings.
-
 use core::fmt;
 
+/// An Objective-C type encoding.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Encoding<'a> {
     Char,
