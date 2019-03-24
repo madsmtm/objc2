@@ -3,7 +3,7 @@
 mod encoding;
 mod multi;
 
-use crate::encoding::Primitive;
+use crate::Encoding;
 
 pub use self::encoding::{StrEncoding, ParseEncodingError};
 
@@ -53,7 +53,7 @@ fn chomp_nested_delims(s: &str, open: char, close: char) -> Option<usize> {
     close_index.map(|i| i + 1)
 }
 
-fn chomp_primitive(s: &str) -> Option<(Primitive, &str)> {
+fn chomp_primitive(s: &str) -> Option<(Encoding<'static>, &str)> {
     let (h, t) = {
         let mut chars = s.chars();
         match chars.next() {
@@ -63,33 +63,33 @@ fn chomp_primitive(s: &str) -> Option<(Primitive, &str)> {
     };
 
     let primitive = match h {
-        'c' => Primitive::Char,
-        's' => Primitive::Short,
-        'i' => Primitive::Int,
-        'l' => Primitive::Long,
-        'q' => Primitive::LongLong,
-        'C' => Primitive::UChar,
-        'S' => Primitive::UShort,
-        'I' => Primitive::UInt,
-        'L' => Primitive::ULong,
-        'Q' => Primitive::ULongLong,
-        'f' => Primitive::Float,
-        'd' => Primitive::Double,
-        'B' => Primitive::Bool,
-        'v' => Primitive::Void,
-        '*' => Primitive::String,
+        'c' => Encoding::Char,
+        's' => Encoding::Short,
+        'i' => Encoding::Int,
+        'l' => Encoding::Long,
+        'q' => Encoding::LongLong,
+        'C' => Encoding::UChar,
+        'S' => Encoding::UShort,
+        'I' => Encoding::UInt,
+        'L' => Encoding::ULong,
+        'Q' => Encoding::ULongLong,
+        'f' => Encoding::Float,
+        'd' => Encoding::Double,
+        'B' => Encoding::Bool,
+        'v' => Encoding::Void,
+        '*' => Encoding::String,
         '@' => {
             // Special handling for blocks
             if t.starts_with('?') {
-                return Some((Primitive::Block, &t[1..]));
+                return Some((Encoding::Block, &t[1..]));
             }
-            Primitive::Object
+            Encoding::Object
         }
-        '#' => Primitive::Class,
-        ':' => Primitive::Sel,
-        '?' => Primitive::Unknown,
+        '#' => Encoding::Class,
+        ':' => Encoding::Sel,
+        '?' => Encoding::Unknown,
         'b' => {
-            return chomp_number(t).map(|(b, t)| (Primitive::BitField(b), t));
+            return chomp_number(t).map(|(b, t)| (Encoding::BitField(b), t));
         }
         _ => return None,
     };
@@ -107,7 +107,7 @@ fn chomp_number(s: &str) -> Option<(u32, &str)> {
 
 #[derive(Debug, PartialEq, Eq)]
 enum ParseResult<'a> {
-    Primitive(Primitive),
+    Primitive(Encoding<'static>),
     Pointer(&'a str),
     Array(u32, &'a str),
     Struct(&'a str, &'a str),
@@ -214,18 +214,18 @@ mod tests {
 
     #[test]
     fn test_parse_block() {
-        assert_eq!(parse("@?"), ParseResult::Primitive(Primitive::Block));
+        assert_eq!(parse("@?"), ParseResult::Primitive(Encoding::Block));
         assert_eq!(parse("@??"), ParseResult::Error);
-        assert_eq!(chomp_primitive("@?c"), Some((Primitive::Block, "c")));
-        assert_eq!(chomp_primitive("@c?"), Some((Primitive::Object, "c?")));
+        assert_eq!(chomp_primitive("@?c"), Some((Encoding::Block, "c")));
+        assert_eq!(chomp_primitive("@c?"), Some((Encoding::Object, "c?")));
     }
 
     #[test]
     fn test_parse_bitfield() {
-        assert_eq!(parse("b32"), ParseResult::Primitive(Primitive::BitField(32)));
+        assert_eq!(parse("b32"), ParseResult::Primitive(Encoding::BitField(32)));
         assert_eq!(parse("b-32"), ParseResult::Error);
         assert_eq!(parse("b32f"), ParseResult::Error);
-        assert_eq!(chomp_primitive("b32b32"), Some((Primitive::BitField(32), "b32")));
+        assert_eq!(chomp_primitive("b32b32"), Some((Encoding::BitField(32), "b32")));
         assert_eq!(chomp_primitive("bb32"), None);
     }
 
@@ -239,8 +239,8 @@ mod tests {
 
     #[test]
     fn test_qualifiers() {
-        assert_eq!(parse("Vv"), ParseResult::Primitive(Primitive::Void));
-        assert_eq!(parse("r*"), ParseResult::Primitive(Primitive::String));
+        assert_eq!(parse("Vv"), ParseResult::Primitive(Encoding::Void));
+        assert_eq!(parse("r*"), ParseResult::Primitive(Encoding::String));
     }
 
     #[test]

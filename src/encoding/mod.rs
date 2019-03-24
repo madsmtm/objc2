@@ -2,7 +2,7 @@
 
 use core::fmt;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Encoding<'a> {
     Char,
     Short,
@@ -86,6 +86,7 @@ impl<'a> fmt::Display for Encoding<'a> {
 #[cfg(test)]
 mod tests {
     use std::string::ToString;
+    use crate::parse::StrEncoding;
     use super::Encoding;
 
     #[test]
@@ -130,8 +131,28 @@ mod tests {
     }
 
     #[test]
+    fn test_struct_eq() {
+        let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
+        assert!(s == s);
+        assert!(s != Encoding::Int);
+
+        let s2 = StrEncoding::new_unchecked("{CGPoint=ci}");
+        assert!(s == s2);
+    }
+
+    #[test]
     fn test_union_display() {
         let s = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
         assert_eq!(s.to_string(), "(Onion=ci)");
+    }
+
+    #[test]
+    fn test_union_eq() {
+        let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
+        assert!(u == u);
+        assert!(u != Encoding::Int);
+
+        let u2 = StrEncoding::new("(Onion=ci)").unwrap();
+        assert!(u == u2);
     }
 }

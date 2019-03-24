@@ -1,7 +1,7 @@
 use core::fmt;
 use core::mem;
 
-use crate::{Descriptor, Encoding};
+use crate::Encoding;
 use super::{is_valid, parse, ParseResult};
 use super::multi::StrEncodings;
 
@@ -89,63 +89,61 @@ impl<S: ?Sized> StrEncoding<S> where S: AsRef<str> {
     pub fn as_str(&self) -> &str {
         self.0.as_ref()
     }
-}
 
-impl<S: ?Sized> Encoding for StrEncoding<S> where S: AsRef<str> {
-    type PointerTarget = StrEncoding;
-    type ArrayItem = StrEncoding;
-    type StructFields = StrEncodings;
-    type UnionMembers = StrEncodings;
-
-    fn descriptor(&self) -> Descriptor<StrEncoding, StrEncoding, StrEncodings, StrEncodings> {
+    fn eq_encoding(&self, encoding: &Encoding) -> bool {
         let s = self.as_str();
-        match parse(s) {
-            ParseResult::Primitive(p) => Descriptor::Primitive(p),
-            ParseResult::Pointer(t) =>
-                Descriptor::Pointer(StrEncoding::from_str_unchecked(t)),
-            ParseResult::Array(len, item) =>
-                Descriptor::Array(len, StrEncoding::from_str_unchecked(item)),
-            ParseResult::Struct(name, fields) =>
-                Descriptor::Struct(name, StrEncodings::from_str_unchecked(fields)),
-            ParseResult::Union(name, members) =>
-                Descriptor::Union(name, StrEncodings::from_str_unchecked(members)),
-            ParseResult::Error => panic!("Failed to parse an encoding from {:?}", s),
+        match (parse(s), *encoding) {
+            (ParseResult::Error, _) =>
+                panic!("Failed to parse an encoding from {:?}", s),
+            (ParseResult::Primitive(p1), p2) => p1 == p2,
+            (ParseResult::Pointer(t1), Encoding::Pointer(t2)) =>
+                StrEncoding::from_str_unchecked(t1) == t2,
+            (ParseResult::Array(l1, i1), Encoding::Array(l2, i2)) =>
+                l1 == l2 && StrEncoding::from_str_unchecked(i1) == i2,
+            (ParseResult::Struct(n1, f1), Encoding::Struct(n2, f2)) =>
+                n1 == n2 && StrEncodings::from_str_unchecked(f1).iter().eq(f2),
+            (ParseResult::Union(n1, m1), Encoding::Union(n2, m2)) =>
+                n1 == n2 && StrEncodings::from_str_unchecked(m1).iter().eq(m2),
+            _ => false,
         }
-    }
-
-    fn write<W: fmt::Write>(&self, writer: &mut W) -> fmt::Result {
-        writer.write_str(self.as_str())
     }
 }
 
 impl<S: ?Sized> fmt::Display for StrEncoding<S> where S: AsRef<str> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        self.write(formatter)
+        fmt::Display::fmt(self.as_str(), formatter)
     }
 }
 
-impl<S: ?Sized, E: ?Sized> PartialEq<E> for StrEncoding<S>
-        where S: AsRef<str>, E: Encoding {
-    fn eq(&self, other: &E) -> bool {
+impl<'a, S: ?Sized> PartialEq<Encoding<'a>> for StrEncoding<S>
+        where S: AsRef<str> {
+    fn eq(&self, other: &Encoding<'a>) -> bool {
         self.eq_encoding(other)
+    }
+}
+
+impl<'a, S: ?Sized> PartialEq<StrEncoding<S>> for Encoding<'a>
+        where S: AsRef<str> {
+    fn eq(&self, other: &StrEncoding<S>) -> bool {
+        other.eq_encoding(self)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::encoding::{Array, Primitive, Struct};
+    use crate::Encoding;
     use super::*;
 
     #[test]
     fn test_parsed_array() {
         let a = StrEncoding::from_str_unchecked("[12i]");
-        assert!(a == &Array::new(12, Primitive::Int));
+        assert!(a == &Encoding::Array(12, &Encoding::Int));
     }
 
     #[test]
     fn test_parsed_struct() {
         let parsed = StrEncoding::from_str_unchecked("{CGPoint=ci}");
-        let expected = Struct::new("CGPoint", (Primitive::Char, Primitive::Int));
+        let expected = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
         assert!(parsed == &expected);
     }
 }
