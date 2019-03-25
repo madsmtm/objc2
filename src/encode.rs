@@ -1,4 +1,4 @@
-use libc::{c_char, c_void};
+use core::ffi::c_void;
 
 use crate::Encoding;
 
@@ -33,8 +33,10 @@ encode_impls!(
     f64: Double,
     bool: Bool,
     (): Void,
-    *mut c_char: String,
-    *const c_char: String,
+    *mut i8: String,
+    *const i8: String,
+    *mut u8: String,
+    *const u8: String,
 );
 
 unsafe impl Encode for isize {

@@ -15,6 +15,3 @@ license = "MIT"
 exclude = [
   ".gitignore",
 ]
-
-[dependencies]
-libc = "0.2"
