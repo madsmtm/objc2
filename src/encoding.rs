@@ -3,6 +3,9 @@ use core::fmt;
 use crate::parse::StrEncoding;
 
 /// An Objective-C type encoding.
+///
+/// For more information, see Apple's documentation:
+/// <https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html>
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Encoding<'a> {
     Char,
