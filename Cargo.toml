@@ -1,6 +1,6 @@
 [package]
 name = "objc-encode"
-version = "0.0.3"
+version = "1.0.0"
 authors = ["Steven Sheldon"]
 edition = "2018"
 
