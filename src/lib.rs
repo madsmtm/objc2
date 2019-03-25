@@ -12,8 +12,8 @@ the Objective-C compiler can encode. Implementing this trait looks like:
 
 ``` ignore
 unsafe impl Encode for CGPoint {
-    const CODE: Encoding<'static> =
-        Encoding::Struct("CGPoint", &[CGFloat::CODE, CGFLOAT::CODE]);
+    const ENCODING: Encoding<'static> =
+        Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFLOAT::ENCODING]);
 }
 ```
 
@@ -27,7 +27,7 @@ runtime:
 
 ```
 # use objc_encode::Encode;
-assert!(&i32::CODE == "i");
+assert!(&i32::ENCODING == "i");
 ```
 
 # Generating encoding strings
@@ -37,7 +37,7 @@ This can be generated conveniently through the `to_string` method:
 
 ```
 # use objc_encode::Encode;
-assert_eq!(i32::CODE.to_string(), "i");
+assert_eq!(i32::ENCODING.to_string(), "i");
 ```
 */
 
