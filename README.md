@@ -11,11 +11,8 @@ the Objective-C compiler can encode. Implementing this trait looks like:
 
 ``` rust
 unsafe impl Encode for CGPoint {
-    type Encoding = Struct<&'static str, (Primitive, Primitive)>;
-
-    fn encode() -> Self::Encoding {
-        Struct::new("CGPoint", (CGFloat::encode(), CGFloat::encode()))
-    }
+    const ENCODING: Encoding<'static> =
+        Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFLOAT::ENCODING]);
 }
 ```
 
@@ -24,12 +21,11 @@ containing structs, see the `core_graphics` example.
 
 # Comparing with encoding strings
 
-If you have an encoding string from the Objective-C runtime, it can be parsed
-and compared with another encoding through a `StrEncoding`:
+An `Encoding` can be compared with an encoding string from the Objective-C
+runtime:
 
 ``` rust
-let parsed = StrEncoding::from_str("i").unwrap();
-assert!(parsed == &i32::encode());
+assert!(&i32::ENCODING == "i");
 ```
 
 # Generating encoding strings
@@ -38,5 +34,5 @@ Every `Encoding` implements `Display` as its string representation.
 This can be generated conveniently through the `to_string` method:
 
 ``` rust
-assert_eq!(i32::encode().to_string(), "i");
+assert_eq!(i32::ENCODING.to_string(), "i");
 ```
