@@ -22,14 +22,12 @@ containing structs, see the `core_graphics` example.
 
 # Comparing with encoding strings
 
-If you have an encoding string from the Objective-C runtime, it can be parsed
-and compared with another encoding through a `StrEncoding`:
+An `Encoding` can be compared with an encoding string from the Objective-C
+runtime:
 
 ```
-# use objc_encode::{Encode, Encoding};
-# use objc_encode::parse::StrEncoding;
-let parsed = StrEncoding::from_str("i").unwrap();
-assert!(parsed == &i32::CODE);
+# use objc_encode::Encode;
+assert!(&i32::CODE == "i");
 ```
 
 # Generating encoding strings

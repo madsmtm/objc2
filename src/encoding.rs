@@ -1,5 +1,7 @@
 use core::fmt;
 
+use crate::parse::StrEncoding;
+
 /// An Objective-C type encoding.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Encoding<'a> {
@@ -30,7 +32,7 @@ pub enum Encoding<'a> {
     Union(&'a str, &'a [Encoding<'a>]),
 }
 
-impl<'a> fmt::Display for Encoding<'a> {
+impl fmt::Display for Encoding<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         use Encoding::*;
         let code = match *self {
@@ -82,10 +84,25 @@ impl<'a> fmt::Display for Encoding<'a> {
     }
 }
 
+impl PartialEq<str> for Encoding<'_> {
+    fn eq(&self, other: &str) -> bool {
+        StrEncoding::from_str(other)
+            .map(|e| e == self)
+            .unwrap_or(false)
+    }
+}
+
+impl PartialEq<Encoding<'_>> for str {
+    fn eq(&self, other: &Encoding) -> bool {
+        StrEncoding::from_str(self)
+            .map(|e| e == other)
+            .unwrap_or(false)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::string::ToString;
-    use crate::parse::StrEncoding;
     use super::Encoding;
 
     #[test]
@@ -134,9 +151,7 @@ mod tests {
         let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
         assert!(s == s);
         assert!(s != Encoding::Int);
-
-        let s2 = StrEncoding::new_unchecked("{CGPoint=ci}");
-        assert!(s == s2);
+        assert!(&s == "{CGPoint=ci}");
     }
 
     #[test]
@@ -150,8 +165,6 @@ mod tests {
         let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
         assert!(u == u);
         assert!(u != Encoding::Int);
-
-        let u2 = StrEncoding::new("(Onion=ci)").unwrap();
-        assert!(u == u2);
+        assert!(&u == "(Onion=ci)");
     }
 }
