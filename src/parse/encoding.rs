@@ -3,7 +3,7 @@ use core::mem;
 
 use crate::Encoding;
 use super::{is_valid, parse, ParseResult};
-use super::multi::StrEncodings;
+use super::multi::StrEncodingsIter;
 
 /// An error returned when constructing a `StrEncoding` if the string could not
 /// be parsed as a valid encoding.
@@ -101,9 +101,9 @@ impl<S: ?Sized> StrEncoding<S> where S: AsRef<str> {
             (ParseResult::Array(l1, i1), Encoding::Array(l2, i2)) =>
                 l1 == l2 && StrEncoding::from_str_unchecked(i1) == i2,
             (ParseResult::Struct(n1, f1), Encoding::Struct(n2, f2)) =>
-                n1 == n2 && StrEncodings::from_str_unchecked(f1).iter().eq(f2),
+                n1 == n2 && StrEncodingsIter::new(f1).eq(f2),
             (ParseResult::Union(n1, m1), Encoding::Union(n2, m2)) =>
-                n1 == n2 && StrEncodings::from_str_unchecked(m1).iter().eq(m2),
+                n1 == n2 && StrEncodingsIter::new(m1).eq(m2),
             _ => false,
         }
     }
