@@ -55,35 +55,6 @@ impl StrEncoding {
     }
 }
 
-impl<S> StrEncoding<S> where S: AsRef<str> {
-    /**
-    Constructs a `StrEncoding` parsed from the given string, or returns an
-    error if the string was not a valid encoding.
-
-    `new` constructs a sized `StrEncoding` that owns the given buffer, meaning
-    it can be moved without dealing with lifetimes. If you only have a borrowed
-    `&str` slice or don't want to allocate a buffer, use the `from_str` method.
-    */
-    pub fn new(s: S) -> Result<StrEncoding<S>, ParseEncodingError<S>> {
-        if is_valid(s.as_ref()) {
-            Ok(StrEncoding::new_unchecked(s))
-        } else {
-            Err(ParseEncodingError(s))
-        }
-    }
-
-    /**
-    Constructs a `StrEncoding` without checking to see if the given string is
-    a valid encoding.
-
-    If the given string is not a valid encoding, the returned `StrEncoding`
-    **will panic later** when being evaluated.
-    */
-    pub fn new_unchecked(s: S) -> StrEncoding<S> {
-        StrEncoding(s)
-    }
-}
-
 impl<S: ?Sized> StrEncoding<S> where S: AsRef<str> {
     /// Returns the string representation of self.
     pub fn as_str(&self) -> &str {
@@ -119,13 +90,6 @@ impl<'a, S: ?Sized> PartialEq<Encoding<'a>> for StrEncoding<S>
         where S: AsRef<str> {
     fn eq(&self, other: &Encoding<'a>) -> bool {
         self.eq_encoding(other)
-    }
-}
-
-impl<'a, S: ?Sized> PartialEq<StrEncoding<S>> for Encoding<'a>
-        where S: AsRef<str> {
-    fn eq(&self, other: &StrEncoding<S>) -> bool {
-        other.eq_encoding(self)
     }
 }
 

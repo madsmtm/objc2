@@ -49,7 +49,7 @@ extern crate std;
 
 mod encoding;
 mod encode;
-pub mod parse;
+mod parse;
 
 pub use crate::encoding::Encoding;
 pub use crate::encode::Encode;
