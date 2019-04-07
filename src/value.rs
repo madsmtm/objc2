@@ -5,7 +5,7 @@ use std::mem;
 use std::os::raw::{c_char, c_void};
 use std::str;
 
-use objc::{Encode, Encoding};
+use objc::Encode;
 use objc::runtime::Class;
 use objc_id::Id;
 
@@ -15,7 +15,7 @@ pub trait INSValue : INSObject {
     type Value: 'static + Copy + Encode;
 
     fn value(&self) -> Self::Value {
-        assert!(Self::Value::encode() == self.encoding());
+        assert!(&Self::Value::ENCODING == self.encoding());
         unsafe {
             let mut value = mem::uninitialized::<Self::Value>();
             let value_ptr: *mut Self::Value = &mut value;
@@ -25,12 +25,11 @@ pub trait INSValue : INSObject {
         }
     }
 
-    fn encoding(&self) -> Encoding {
+    fn encoding(&self) -> &str {
         unsafe {
             let result: *const c_char = msg_send![self, objCType];
             let s = CStr::from_ptr(result);
-            let s = str::from_utf8(s.to_bytes()).unwrap();
-            Encoding::from_str(s)
+            str::from_utf8(s.to_bytes()).unwrap()
         }
     }
 
@@ -38,7 +37,7 @@ pub trait INSValue : INSObject {
         let cls = Self::class();
         let value_ptr: *const Self::Value = &value;
         let bytes = value_ptr as *const c_void;
-        let encoding = CString::new(Self::Value::encode().as_str()).unwrap();
+        let encoding = CString::new(Self::Value::ENCODING.to_string()).unwrap();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:bytes
@@ -77,6 +76,6 @@ mod tests {
     fn test_value() {
         let val = NSValue::from_value(13u32);
         assert!(val.value() == 13);
-        assert!(u32::encode() == val.encoding());
+        assert!(&u32::ENCODING == val.encoding());
     }
 }
