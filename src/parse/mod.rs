@@ -1,11 +1,6 @@
 //! Parsing encodings from their string representation.
 
-mod encoding;
-mod multi;
-
 use crate::Encoding;
-
-pub use self::encoding::{StrEncoding, ParseEncodingError};
 
 const QUALIFIERS: &'static [char] = &[
     'r', // const
@@ -17,245 +12,131 @@ const QUALIFIERS: &'static [char] = &[
     'V', // oneway
 ];
 
-fn chomp(s: &str) -> Option<(&str, &str)> {
-    chomp_ptr(s)
-        .or_else(|| chomp_nested_delims(s, '[', ']'))
-        .or_else(|| chomp_nested_delims(s, '{', '}'))
-        .or_else(|| chomp_nested_delims(s, '(', ')'))
-        .or_else(|| chomp_primitive(s).map(|(_, t)| s.len() - t.len()))
-        .map(|head_len| s.split_at(head_len))
-}
-
-fn chomp_ptr(s: &str) -> Option<usize> {
-    if s.starts_with('^') {
-        chomp(&s[1..]).map(|(h, _)| h.len() + 1)
-    } else {
-        None
-    }
-}
-
-fn chomp_nested_delims(s: &str, open: char, close: char) -> Option<usize> {
-    if !s.starts_with(open) {
-        return None;
-    }
-
-    let mut depth = 0;
-    let close_index = s.find(|c: char| {
-        if c == open {
-            depth += 1;
-        } else if c == close {
-            depth -= 1;
+fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Result<&'a str, ()> {
+    use Encoding::*;
+    let code = match *enc {
+        Char      => "c",
+        Short     => "s",
+        Int       => "i",
+        Long      => "l",
+        LongLong  => "q",
+        UChar     => "C",
+        UShort    => "S",
+        UInt      => "I",
+        ULong     => "L",
+        ULongLong => "Q",
+        Float     => "f",
+        Double    => "d",
+        Bool      => "B",
+        Void      => "v",
+        String    => "*",
+        Object    => "@",
+        Block     => "@?",
+        Class     => "#",
+        Sel       => ":",
+        Unknown   => "?",
+        BitField(b) => {
+            let s = rm_prefix(s, "b")?;
+            return rm_int_prefix(s, b);
         }
-        // when the depth hits 0, we've found the close delim
-        depth == 0
-    });
-    // the total length is 1 more than the index of the close delim
-    close_index.map(|i| i + 1)
-}
-
-fn chomp_primitive(s: &str) -> Option<(Encoding<'static>, &str)> {
-    let (h, t) = {
-        let mut chars = s.chars();
-        match chars.next() {
-            Some(h) => (h, chars.as_str()),
-            None => return None,
+        Pointer(t) => {
+            let s = rm_prefix(s, "^")?;
+            return rm_enc_prefix(s, t);
         }
-    };
-
-    let primitive = match h {
-        'c' => Encoding::Char,
-        's' => Encoding::Short,
-        'i' => Encoding::Int,
-        'l' => Encoding::Long,
-        'q' => Encoding::LongLong,
-        'C' => Encoding::UChar,
-        'S' => Encoding::UShort,
-        'I' => Encoding::UInt,
-        'L' => Encoding::ULong,
-        'Q' => Encoding::ULongLong,
-        'f' => Encoding::Float,
-        'd' => Encoding::Double,
-        'B' => Encoding::Bool,
-        'v' => Encoding::Void,
-        '*' => Encoding::String,
-        '@' => {
-            // Special handling for blocks
-            if t.starts_with('?') {
-                return Some((Encoding::Block, &t[1..]));
+        Array(len, item) => {
+            let mut s = s;
+            s = rm_prefix(s, "[")?;
+            s = rm_int_prefix(s, len)?;
+            s = rm_enc_prefix(s, item)?;
+            return rm_prefix(s, "]");
+        }
+        Struct(name, fields) => {
+            let mut s = s;
+            s = rm_prefix(s, "{")?;
+            s = rm_prefix(s, name)?;
+            s = rm_prefix(s, "=")?;
+            for field in fields {
+                s = rm_enc_prefix(s, field)?;
             }
-            Encoding::Object
+            return rm_prefix(s, "}");
         }
-        '#' => Encoding::Class,
-        ':' => Encoding::Sel,
-        '?' => Encoding::Unknown,
-        'b' => {
-            return chomp_number(t).map(|(b, t)| (Encoding::BitField(b), t));
+        Union(name, members) => {
+            let mut s = s;
+            s = rm_prefix(s, "(")?;
+            s = rm_prefix(s, name)?;
+            s = rm_prefix(s, "=")?;
+            for member in members {
+                s = rm_enc_prefix(s, member)?;
+            }
+            return rm_prefix(s, ")");
         }
-        _ => return None,
     };
-    Some((primitive, t))
+
+    rm_prefix(s, code)
 }
 
-fn chomp_number(s: &str) -> Option<(u32, &str)> {
-    // Chomp until we hit a non-digit
+fn rm_int_prefix(s: &str, other: u32) -> Result<&str, ()> {
     let (num, t) = match s.find(|c: char| !c.is_digit(10)) {
         Some(i) => s.split_at(i),
         None => (s, ""),
     };
-    num.parse().map(|n| (n, t)).ok()
+    num.parse()
+        .map_err(|_| ())
+        .and_then(|n| if other == n { Ok(t) } else { Err(()) })
 }
 
-#[derive(Debug, PartialEq, Eq)]
-enum ParseResult<'a> {
-    Primitive(Encoding<'static>),
-    Pointer(&'a str),
-    Array(u32, &'a str),
-    Struct(&'a str, &'a str),
-    Union(&'a str, &'a str),
-    Error,
-}
-
-fn parse_parts(s: &str, open: char, sep: char, close: char)
-        -> Option<(&str, &str)> {
-    if s.starts_with(open) && s.ends_with(close) {
-        s.find(sep).map(|i| (&s[1..i], &s[i + 1..s.len() - 1]))
+fn rm_prefix<'a>(s: &'a str, other: &str) -> Result<&'a str, ()> {
+    if s.starts_with(other) {
+        Ok(&s[other.len()..])
     } else {
-        None
+        Err(())
     }
 }
 
-fn parse(s: &str) -> ParseResult {
+pub fn eq_enc(s: &str, enc: &Encoding) -> bool {
     // strip qualifiers
     let s = s.trim_start_matches(QUALIFIERS);
 
-    if s.starts_with('^') {
-        ParseResult::Pointer(&s[1..])
-    } else if s.starts_with('[') {
-        if !s.ends_with(']') {
-            ParseResult::Error
-        } else {
-            chomp_number(&s[1..s.len() - 1])
-                .map(|(len, item)| ParseResult::Array(len, item))
-                .unwrap_or(ParseResult::Error)
-        }
-    } else if s.starts_with('{') {
-        parse_parts(s, '{', '=', '}')
-            .map(|(name, fields)| ParseResult::Struct(name, fields))
-            .unwrap_or(ParseResult::Error)
-    } else if s.starts_with('(') {
-        parse_parts(s, '(', '=', ')')
-            .map(|(name, members)| ParseResult::Union(name, members))
-            .unwrap_or(ParseResult::Error)
-    } else {
-        match chomp_primitive(s) {
-            Some((p, t)) if t.is_empty() => ParseResult::Primitive(p),
-            _ => ParseResult::Error,
-        }
-    }
-}
-
-fn is_valid(s: &str) -> bool {
-    match parse(s) {
-        ParseResult::Primitive(_) => true,
-        ParseResult::Pointer(s) |
-        ParseResult::Array(_, s) => {
-            is_valid(s)
-        }
-        ParseResult::Struct(_, mut members) |
-        ParseResult::Union(_, mut members) => {
-            while !members.is_empty() {
-                members = match chomp(members) {
-                    Some((h, t)) if is_valid(h) => t,
-                    _ => return false,
-                };
-            }
-            true
-        }
-        ParseResult::Error => false,
-    }
+    // if the given encoding can be successfully removed from the start
+    // and an empty string remains, they were equal!
+    rm_enc_prefix(s, enc).map(str::is_empty).unwrap_or(false)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn assert_chomped(mut s: &str, expected: &[&str]) {
-        for expected in expected.iter().cloned() {
-            let (h, t) = chomp(s).unwrap();
-            assert_eq!(h, expected);
-            s = t;
-        }
-        assert!(s.is_empty());
+    #[test]
+    fn test_nested() {
+        let enc = Encoding::Struct("A", &[
+            Encoding::Struct("B", &[
+                Encoding::Char,
+                Encoding::Int,
+            ]),
+            Encoding::Char,
+            Encoding::Int,
+        ]);
+        assert!(eq_enc("{A={B=ci}ci}", &enc));
+        assert!(!eq_enc("{A={B=ci}ci", &enc));
+
     }
 
     #[test]
-    fn test_chomp() {
-        let s = "{A={B=ci^{C=c}}ci}c^i{C=c}";
-        let expected = ["{A={B=ci^{C=c}}ci}", "c", "^i", "{C=c}"];
-        assert_chomped(s, &expected);
-    }
-
-    #[test]
-    fn test_chomp_delims() {
-        let s = "{A=(B=ci)ci}[12{C=c}]c(D=ci)i";
-        let expected = ["{A=(B=ci)ci}", "[12{C=c}]", "c", "(D=ci)", "i"];
-        assert_chomped(s, &expected);
-    }
-
-    #[test]
-    fn test_chomp_bad_delims() {
-        assert_eq!(chomp("{A={B=ci}ci"), None);
-        assert_eq!(chomp("}A=ci{ci"), None);
-
-        let s = "{A=(B=ci}[12{C=c})]";
-        let expected = ["{A=(B=ci}", "[12{C=c})]"];
-        assert_chomped(s, &expected);
-    }
-
-    #[test]
-    fn test_parse_block() {
-        assert_eq!(parse("@?"), ParseResult::Primitive(Encoding::Block));
-        assert_eq!(parse("@??"), ParseResult::Error);
-        assert_eq!(chomp_primitive("@?c"), Some((Encoding::Block, "c")));
-        assert_eq!(chomp_primitive("@c?"), Some((Encoding::Object, "c?")));
-    }
-
-    #[test]
-    fn test_parse_bitfield() {
-        assert_eq!(parse("b32"), ParseResult::Primitive(Encoding::BitField(32)));
-        assert_eq!(parse("b-32"), ParseResult::Error);
-        assert_eq!(parse("b32f"), ParseResult::Error);
-        assert_eq!(chomp_primitive("b32b32"), Some((Encoding::BitField(32), "b32")));
-        assert_eq!(chomp_primitive("bb32"), None);
-    }
-
-    #[test]
-    fn test_validation() {
-        assert!(is_valid("c"));
-        assert!(is_valid("{A={B=ci^{C=c}}ci}"));
-        assert!(!is_valid("z"));
-        assert!(!is_valid("{A=[12{C=c}}]"));
+    fn test_bitfield() {
+        assert!(eq_enc("b32", &Encoding::BitField(32)));
+        assert!(!eq_enc("b", &Encoding::BitField(32)));
+        assert!(!eq_enc("b-32", &Encoding::BitField(32)));
     }
 
     #[test]
     fn test_qualifiers() {
-        assert_eq!(parse("Vv"), ParseResult::Primitive(Encoding::Void));
-        assert_eq!(parse("r*"), ParseResult::Primitive(Encoding::String));
+        assert!(eq_enc("Vv", &Encoding::Void));
+        assert!(eq_enc("r*", &Encoding::String));
     }
 
     #[test]
-    fn test_parse_garbage() {
-        assert_eq!(parse("☃"), ParseResult::Error);
-        assert!(!is_valid("☃"));
-
-        assert_eq!(parse(""), ParseResult::Error);
-        assert!(!is_valid(""));
-
-        // Ensure combining characters don't crash the parser
-        assert_eq!(parse("{́A=́ci}"), ParseResult::Struct("́A", "́ci"));
-
-        assert_eq!(parse("{☃=ci}"), ParseResult::Struct("☃", "ci"));
-        assert!(is_valid("{☃=ci}"));
-
+    fn test_unicode() {
+        let fields = &[Encoding::Char, Encoding::Int];
+        assert!(eq_enc("{☃=ci}", &Encoding::Struct("☃", fields)));
     }
 }

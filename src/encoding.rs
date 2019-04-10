@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::parse::StrEncoding;
+use crate::parse;
 
 /// An Objective-C type encoding.
 ///
@@ -89,17 +89,13 @@ impl fmt::Display for Encoding<'_> {
 
 impl PartialEq<str> for Encoding<'_> {
     fn eq(&self, other: &str) -> bool {
-        StrEncoding::from_str(other)
-            .map(|e| e == self)
-            .unwrap_or(false)
+        parse::eq_enc(other, self)
     }
 }
 
 impl PartialEq<Encoding<'_>> for str {
     fn eq(&self, other: &Encoding) -> bool {
-        StrEncoding::from_str(self)
-            .map(|e| e == other)
-            .unwrap_or(false)
+        parse::eq_enc(self, other)
     }
 }
 
@@ -112,12 +108,14 @@ mod tests {
     fn test_array_display() {
         let e = Encoding::Array(12, &Encoding::Int);
         assert_eq!(e.to_string(), "[12i]");
+        assert_eq!(&e, "[12i]");
     }
 
     #[test]
     fn test_pointer_display() {
         let e = Encoding::Pointer(&Encoding::Int);
         assert_eq!(e.to_string(), "^i");
+        assert_eq!(&e, "^i");
     }
 
     #[test]
@@ -132,6 +130,7 @@ mod tests {
     #[test]
     fn test_int_display() {
         assert_eq!(Encoding::Int.to_string(), "i");
+        assert_eq!(&Encoding::Int, "i");
     }
 
     #[test]
@@ -147,6 +146,7 @@ mod tests {
     fn test_struct_display() {
         let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
         assert_eq!(s.to_string(), "{CGPoint=ci}");
+        assert_eq!(&s, "{CGPoint=ci}");
     }
 
     #[test]
@@ -154,13 +154,13 @@ mod tests {
         let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
         assert!(s == s);
         assert!(s != Encoding::Int);
-        assert!(&s == "{CGPoint=ci}");
     }
 
     #[test]
     fn test_union_display() {
-        let s = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(s.to_string(), "(Onion=ci)");
+        let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
+        assert_eq!(u.to_string(), "(Onion=ci)");
+        assert_eq!(&u, "(Onion=ci)");
     }
 
     #[test]
@@ -168,6 +168,5 @@ mod tests {
         let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
         assert!(u == u);
         assert!(u != Encoding::Int);
-        assert!(&u == "(Onion=ci)");
     }
 }
