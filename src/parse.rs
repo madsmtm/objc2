@@ -12,7 +12,7 @@ const QUALIFIERS: &'static [char] = &[
     'V', // oneway
 ];
 
-fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Result<&'a str, ()> {
+fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Option<&'a str> {
     use Encoding::*;
     let code = match *enc {
         Char      => "c",
@@ -75,21 +75,20 @@ fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Result<&'a str, ()> {
     rm_prefix(s, code)
 }
 
-fn rm_int_prefix(s: &str, other: u32) -> Result<&str, ()> {
+fn rm_int_prefix(s: &str, other: u32) -> Option<&str> {
     let (num, t) = match s.find(|c: char| !c.is_digit(10)) {
         Some(i) => s.split_at(i),
         None => (s, ""),
     };
-    num.parse()
-        .map_err(|_| ())
-        .and_then(|n| if other == n { Ok(t) } else { Err(()) })
+    num.parse().ok()
+        .and_then(|n| if other == n { Some(t) } else { None })
 }
 
-fn rm_prefix<'a>(s: &'a str, other: &str) -> Result<&'a str, ()> {
+fn rm_prefix<'a>(s: &'a str, other: &str) -> Option<&'a str> {
     if s.starts_with(other) {
-        Ok(&s[other.len()..])
+        Some(&s[other.len()..])
     } else {
-        Err(())
+        None
     }
 }
 
@@ -99,7 +98,7 @@ pub fn eq_enc(s: &str, enc: &Encoding) -> bool {
 
     // if the given encoding can be successfully removed from the start
     // and an empty string remains, they were equal!
-    rm_enc_prefix(s, enc).map(str::is_empty).unwrap_or(false)
+    rm_enc_prefix(s, enc).map_or(false, str::is_empty)
 }
 
 #[cfg(test)]
