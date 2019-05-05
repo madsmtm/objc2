@@ -75,13 +75,18 @@ fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Option<&'a str> {
     rm_prefix(s, code)
 }
 
-fn rm_int_prefix(s: &str, other: u32) -> Option<&str> {
+fn chomp_int(s: &str) -> Option<(u32, &str)> {
+    // Chomp until we hit a non-digit
     let (num, t) = match s.find(|c: char| !c.is_digit(10)) {
         Some(i) => s.split_at(i),
         None => (s, ""),
     };
-    num.parse().ok()
-        .and_then(|n| if other == n { Some(t) } else { None })
+    num.parse().map(|n| (n, t)).ok()
+}
+
+fn rm_int_prefix(s: &str, other: u32) -> Option<&str> {
+    chomp_int(s)
+        .and_then(|(n, t)| if other == n { Some(t) } else { None })
 }
 
 fn rm_prefix<'a>(s: &'a str, other: &str) -> Option<&'a str> {
