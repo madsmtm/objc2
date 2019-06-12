@@ -123,7 +123,6 @@ fn main() {
 
             let parallel_encoder = command_buffer.new_parallel_render_command_encoder(&render_pass_descriptor);
             let encoder = parallel_encoder.render_command_encoder();
-            use std::mem;
             let p = vbuf.contents();
             let vertex_data: &[u8; 60] = unsafe { mem::transmute(&[
                   0.0f32,  0.5, 1.0, 0.0-r, 0.0,
