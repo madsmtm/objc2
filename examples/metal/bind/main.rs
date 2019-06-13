@@ -5,11 +5,8 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-extern crate metal;
-extern crate cocoa;
-#[macro_use] extern crate objc;
-extern crate objc_id;
-extern crate objc_foundation;
+#[macro_use]
+extern crate objc;
 
 use metal::*;
 
@@ -33,7 +30,7 @@ fn main() {
 
     encoder.set_buffers(2, &[Some(&buffer), None], &[4, 0]);
     encoder.set_sampler_states(1, &[Some(&sampler), None]);
-    
+
     encoder.end_encoding();
     cmd_buf.commit();
 

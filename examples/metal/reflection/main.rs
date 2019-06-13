@@ -5,9 +5,8 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-extern crate metal;
-extern crate cocoa;
-#[macro_use] extern crate objc;
+#[macro_use]
+extern crate objc;
 
 use metal::*;
 
@@ -52,7 +51,10 @@ fn main() {
 
     let options = CompileOptions::new();
     let library = device.new_library_with_source(PROGRAM, &options).unwrap();
-    let (vs, ps) = (library.get_function("vs", None).unwrap(), library.get_function("ps", None).unwrap());
+    let (vs, ps) = (
+        library.get_function("vs", None).unwrap(),
+        library.get_function("ps", None).unwrap(),
+    );
 
     let vertex_desc = VertexDescriptor::new();
 
@@ -64,14 +66,16 @@ fn main() {
     println!("{:?}", desc);
 
     #[cfg(features = "private")]
-    let _reflection = unsafe { RenderPipelineReflection::new(
-        desc.serialize_vertex_data(),
-        desc.serialize_fragment_data(),
-        vertex_desc.serialize_descriptor(),
-        &device,
-        0x8,
-        0x0
-    ) };
+    let _reflection = unsafe {
+        RenderPipelineReflection::new(
+            desc.serialize_vertex_data(),
+            desc.serialize_fragment_data(),
+            vertex_desc.serialize_descriptor(),
+            &device,
+            0x8,
+            0x0,
+        )
+    };
 
     unsafe {
         msg_send![pool, release];
