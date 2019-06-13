@@ -5,14 +5,7 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-extern crate cocoa;
-extern crate core_graphics;
-extern crate metal;
-extern crate winit;
 #[macro_use] extern crate objc;
-extern crate objc_foundation;
-extern crate block;
-extern crate sema;
 
 use cocoa::base::id as cocoa_id;
 use cocoa::foundation::{NSRange, NSAutoreleasePool};
