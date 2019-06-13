@@ -5,11 +5,12 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-#[macro_use] extern crate objc;
+#[macro_use]
+extern crate objc;
 
+use cocoa::appkit::{NSView, NSWindow};
 use cocoa::base::id as cocoa_id;
-use cocoa::foundation::{NSRange, NSAutoreleasePool};
-use cocoa::appkit::{NSWindow, NSView};
+use cocoa::foundation::{NSAutoreleasePool, NSRange};
 use core_graphics::geometry::CGSize;
 
 use objc::runtime::YES;
@@ -20,7 +21,6 @@ use winit::os::macos::WindowExt;
 
 use std::mem;
 
-
 fn prepare_pipeline_state<'a>(device: &DeviceRef, library: &LibraryRef) -> RenderPipelineState {
     let vert = library.get_function("triangle_vertex", None).unwrap();
     let frag = library.get_function("triangle_fragment", None).unwrap();
@@ -28,9 +28,15 @@ fn prepare_pipeline_state<'a>(device: &DeviceRef, library: &LibraryRef) -> Rende
     let pipeline_state_descriptor = RenderPipelineDescriptor::new();
     pipeline_state_descriptor.set_vertex_function(Some(&vert));
     pipeline_state_descriptor.set_fragment_function(Some(&frag));
-    pipeline_state_descriptor.color_attachments().object_at(0).unwrap().set_pixel_format(MTLPixelFormat::BGRA8Unorm);
+    pipeline_state_descriptor
+        .color_attachments()
+        .object_at(0)
+        .unwrap()
+        .set_pixel_format(MTLPixelFormat::BGRA8Unorm);
 
-    device.new_render_pipeline_state(&pipeline_state_descriptor).unwrap()
+    device
+        .new_render_pipeline_state(&pipeline_state_descriptor)
+        .unwrap()
 }
 
 fn prepare_render_pass_descriptor(descriptor: &RenderPassDescriptorRef, texture: &TextureRef) {
@@ -49,7 +55,8 @@ fn main() {
     let glutin_window = winit::WindowBuilder::new()
         .with_dimensions((800, 600).into())
         .with_title("Metal".to_string())
-        .build(&events_loop).unwrap();
+        .build(&events_loop)
+        .unwrap();
 
     let window: cocoa_id = unsafe { mem::transmute(glutin_window.get_nswindow()) };
     let device = Device::system_default();
@@ -69,22 +76,23 @@ fn main() {
     let draw_size = glutin_window.get_inner_size().unwrap();
     layer.set_drawable_size(CGSize::new(draw_size.width as f64, draw_size.height as f64));
 
-    let library = device.new_library_with_file("examples/window/default.metallib").unwrap();
+    let library = device
+        .new_library_with_file("examples/window/default.metallib")
+        .unwrap();
     let pipeline_state = prepare_pipeline_state(&device, &library);
     let command_queue = device.new_command_queue();
     //let nc: () = msg_send![command_queue.0, setExecutionEnabled:true];
 
     let vbuf = {
         let vertex_data = [
-              0.0f32,  0.5, 1.0, 0.0, 0.0,
-             -0.5, -0.5, 0.0, 1.0, 0.0,
-              0.5,  0.5, 0.0, 0.0, 1.0,
+            0.0f32, 0.5, 1.0, 0.0, 0.0, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 0.5, 0.0, 0.0, 1.0,
         ];
 
         device.new_buffer_with_data(
             unsafe { mem::transmute(vertex_data.as_ptr()) },
             (vertex_data.len() * mem::size_of::<f32>()) as u64,
-            MTLResourceOptions::CPUCacheModeDefaultCache)
+            MTLResourceOptions::CPUCacheModeDefaultCache,
+        )
     };
 
     let mut pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
@@ -92,11 +100,12 @@ fn main() {
     let mut running = true;
 
     while running {
-        events_loop.poll_events(|event| {
-            match event {
-                winit::Event::WindowEvent{ event: winit::WindowEvent::CloseRequested, .. } => running = false,
-                _ => ()
-            }
+        events_loop.poll_events(|event| match event {
+            winit::Event::WindowEvent {
+                event: winit::WindowEvent::CloseRequested,
+                ..
+            } => running = false,
+            _ => (),
         });
 
         if let Some(drawable) = layer.next_drawable() {
@@ -104,7 +113,8 @@ fn main() {
             let _a = prepare_render_pass_descriptor(&render_pass_descriptor, drawable.texture());
 
             let command_buffer = command_queue.new_command_buffer();
-            let parallel_encoder = command_buffer.new_parallel_render_command_encoder(&render_pass_descriptor);
+            let parallel_encoder =
+                command_buffer.new_parallel_render_command_encoder(&render_pass_descriptor);
             let encoder = parallel_encoder.render_command_encoder();
             encoder.set_render_pipeline_state(&pipeline_state);
             encoder.set_vertex_buffer(0, Some(&vbuf), 0);
@@ -112,23 +122,48 @@ fn main() {
             encoder.end_encoding();
             parallel_encoder.end_encoding();
 
-            render_pass_descriptor.color_attachments().object_at(0).unwrap().set_load_action(MTLLoadAction::DontCare);
+            render_pass_descriptor
+                .color_attachments()
+                .object_at(0)
+                .unwrap()
+                .set_load_action(MTLLoadAction::DontCare);
 
-            let parallel_encoder = command_buffer.new_parallel_render_command_encoder(&render_pass_descriptor);
+            let parallel_encoder =
+                command_buffer.new_parallel_render_command_encoder(&render_pass_descriptor);
             let encoder = parallel_encoder.render_command_encoder();
             let p = vbuf.contents();
-            let vertex_data: &[u8; 60] = unsafe { mem::transmute(&[
-                  0.0f32,  0.5, 1.0, 0.0-r, 0.0,
-                 -0.5, -0.5, 0.0, 1.0-r, 0.0,
-                  0.5,  0.5, 0.0, 0.0, 1.0+r,
-            ]) };
+            let vertex_data: &[u8; 60] = unsafe {
+                mem::transmute(&[
+                    0.0f32,
+                    0.5,
+                    1.0,
+                    0.0 - r,
+                    0.0,
+                    -0.5,
+                    -0.5,
+                    0.0,
+                    1.0 - r,
+                    0.0,
+                    0.5,
+                    0.5,
+                    0.0,
+                    0.0,
+                    1.0 + r,
+                ])
+            };
             use std::ptr;
 
             unsafe {
-                ptr::copy(vertex_data.as_ptr(), p as *mut u8, (vertex_data.len() * mem::size_of::<f32>()) as usize);
+                ptr::copy(
+                    vertex_data.as_ptr(),
+                    p as *mut u8,
+                    (vertex_data.len() * mem::size_of::<f32>()) as usize,
+                );
             }
-            vbuf.did_modify_range(NSRange::new(0 as u64, (vertex_data.len() * mem::size_of::<f32>()) as u64));
-
+            vbuf.did_modify_range(NSRange::new(
+                0 as u64,
+                (vertex_data.len() * mem::size_of::<f32>()) as u64,
+            ));
 
             encoder.set_render_pipeline_state(&pipeline_state);
             encoder.set_vertex_buffer(0, Some(&vbuf), 0);
@@ -141,7 +176,7 @@ fn main() {
 
             r += 0.01f32;
             //let _: () = msg_send![command_queue.0, _submitAvailableCommandBuffers];
-            unsafe { 
+            unsafe {
                 msg_send![pool, release];
                 pool = NSAutoreleasePool::new(cocoa::base::nil);
             }

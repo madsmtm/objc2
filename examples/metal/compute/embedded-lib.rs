@@ -5,7 +5,8 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-#[macro_use] extern crate objc;
+#[macro_use]
+extern crate objc;
 
 use metal::*;
 
@@ -24,7 +25,5 @@ fn main() {
     println!("Function type: {:?}", kernel.function_type());
     println!("OK");
 
-    unsafe {
-        msg_send![pool, release]
-    }
+    unsafe { msg_send![pool, release] }
 }
