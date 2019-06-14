@@ -31,6 +31,7 @@ fn main() {
 
     let sampler = {
         let descriptor = SamplerDescriptor::new();
+        descriptor.set_support_argument_buffers(true);
         device.new_sampler(&descriptor)
     };
     encoder.set_sampler_state(&sampler, 1);
