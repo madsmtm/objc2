@@ -38,6 +38,6 @@ fn main() {
     println!("{:?}", sampler);
 
     unsafe {
-        msg_send![pool, release];
+        let () = msg_send![pool, release];
     }
 }

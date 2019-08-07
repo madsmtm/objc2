@@ -25,5 +25,7 @@ fn main() {
     println!("Function type: {:?}", kernel.function_type());
     println!("OK");
 
-    unsafe { msg_send![pool, release] }
+    unsafe {
+        let () = msg_send![pool, release];
+    }
 }

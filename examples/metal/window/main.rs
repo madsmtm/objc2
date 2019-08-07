@@ -177,7 +177,7 @@ fn main() {
             r += 0.01f32;
             //let _: () = msg_send![command_queue.0, _submitAvailableCommandBuffers];
             unsafe {
-                msg_send![pool, release];
+                let () = msg_send![pool, release];
                 pool = NSAutoreleasePool::new(cocoa::base::nil);
             }
         }

@@ -83,6 +83,6 @@ fn main() {
 
     unsafe {
         assert_eq!(465, *ptr);
-        msg_send![pool, release];
+        let () = msg_send![pool, release];
     }
 }
