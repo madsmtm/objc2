@@ -78,6 +78,6 @@ fn main() {
     };
 
     unsafe {
-        msg_send![pool, release];
+        let () = msg_send![pool, release];
     }
 }

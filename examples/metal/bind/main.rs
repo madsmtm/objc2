@@ -37,6 +37,6 @@ fn main() {
     println!("Everything is bound");
 
     unsafe {
-        msg_send![pool, release];
+        let () = msg_send![pool, release];
     }
 }
