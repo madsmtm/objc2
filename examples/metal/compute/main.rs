@@ -16,7 +16,7 @@ use std::mem;
 
 fn main() {
     let pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
-    let device = Device::system_default();
+    let device = Device::system_default().expect("no device found");
     let command_queue = device.new_command_queue();
 
     let data = [

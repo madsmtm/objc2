@@ -15,7 +15,7 @@ use cocoa::foundation::NSAutoreleasePool;
 fn main() {
     let pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
 
-    let device = Device::system_default();
+    let device = Device::system_default().expect("no device found");
 
     let desc1 = ArgumentDescriptor::new();
     desc1.set_data_type(MTLDataType::Texture);

@@ -10,7 +10,7 @@ use metal::*;
 const PROGRAM: &'static str = "";
 
 fn main() {
-    let device = Device::system_default();
+    let device = Device::system_default().expect("no device found");
 
     let options = CompileOptions::new();
     let _library = device.new_library_with_source(PROGRAM, &options);

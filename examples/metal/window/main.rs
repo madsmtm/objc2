@@ -59,7 +59,7 @@ fn main() {
         .unwrap();
 
     let window: cocoa_id = unsafe { mem::transmute(glutin_window.get_nswindow()) };
-    let device = Device::system_default();
+    let device = Device::system_default().expect("no device found");
 
     let layer = CoreAnimationLayer::new();
     layer.set_device(&device);
