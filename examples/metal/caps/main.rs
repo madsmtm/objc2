@@ -8,7 +8,7 @@
 use metal::*;
 
 fn main() {
-    let device = Device::system_default();
+    let device = Device::system_default().expect("no device found");
 
     #[cfg(feature = "private")]
     {

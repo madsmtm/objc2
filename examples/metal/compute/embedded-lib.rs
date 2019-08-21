@@ -16,7 +16,7 @@ fn main() {
     let library_data = include_bytes!("default.metallib");
 
     let pool = unsafe { NSAutoreleasePool::new(cocoa::base::nil) };
-    let device = Device::system_default();
+    let device = Device::system_default().expect("no device found");
 
     let library = device.new_library_with_data(&library_data[..]).unwrap();
     let kernel = library.get_function("sum", None).unwrap();
