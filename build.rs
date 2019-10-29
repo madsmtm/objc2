@@ -1,5 +1,7 @@
-extern crate gcc;
+extern crate cc;
 
 fn main() {
-    gcc::compile_library("libexception.a", &["extern/exception.m"]);
+    cc::Build::new()
+        .file("extern/exception.m")
+        .compile("libexception.a");
 }
