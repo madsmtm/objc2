@@ -77,7 +77,7 @@ fn main() {
     layer.set_drawable_size(CGSize::new(draw_size.width as f64, draw_size.height as f64));
 
     let library = device
-        .new_library_with_file("examples/window/default.metallib")
+        .new_library_with_file("examples/window/shaders.metallib")
         .unwrap();
     let pipeline_state = prepare_pipeline_state(&device, &library);
     let command_queue = device.new_command_queue();
