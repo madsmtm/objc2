@@ -19,8 +19,8 @@ vertex ColorInOut triangle_vertex(device vertex_t* vertex_array [[ buffer(0) ]],
     ColorInOut out;
 
     auto device const &v = vertex_array[vid];
-    out.position = float4(v.x, v.y, 0.0, 1.0);
-    out.color = float4(v.r, v.g, v.b, 1.0);
+    out.position = float4(v.position.x, v.position.y, 0.0, 1.0);
+    out.color = float4(v.color.x, v.color.y, v.color.z, 1.0);
 
     return out;
 }

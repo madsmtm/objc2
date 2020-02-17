@@ -43,7 +43,7 @@ fn main() {
     let encoder = command_buffer.new_compute_command_encoder();
 
     let library = device
-        .new_library_with_file("examples/compute/default.metallib")
+        .new_library_with_file("examples/compute/shaders.metallib")
         .unwrap();
     let kernel = library.get_function("sum", None).unwrap();
 
