@@ -138,7 +138,7 @@ fn main() {
                     .unwrap()
                     .set_load_action(MTLLoadAction::DontCare);
 
-                    let encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
+                let encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
                 let p = vbuf.contents();
                 let vertex_data = [
                     0.0f32,
