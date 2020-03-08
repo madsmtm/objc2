@@ -41,9 +41,11 @@ fn main() {
 
     let command_buffer = command_queue.new_command_buffer();
 
-    let block = block::ConcreteBlock::new(move |buffer| {
-        println!("callback");
+    command_buffer.set_label("label");
+    let block = block::ConcreteBlock::new(move |buffer: &metal::CommandBufferRef| {
+        println!("{}", buffer.label());
     }).copy();
+
     command_buffer.add_completed_handler(&block);
 
     let encoder = command_buffer.new_compute_command_encoder();
