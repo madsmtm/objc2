@@ -20,8 +20,11 @@ const VERTEX_SHADER: &'static str = "triangle_vertex";
 const FRAGMENT_SHADER: &'static str = "triangle_fragment";
 
 // [2 bytes position, 3 bytes color] * 3
+#[rustfmt::skip]
 const VERTEX_ATTRIBS: [f32; 15] = [
-    0.0f32, 0.5, 1.0, 0.0, 0.0, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 0.5, 0.0, 0.0, 1.0,
+    0.0, 0.5, 1.0, 0.0, 0.0,
+    -0.5, -0.5, 0.0, 1.0, 0.0,
+    0.5, -0.5, 0.0, 0.0, 1.0,
 ];
 
 /// This example shows how to render headlessly by:

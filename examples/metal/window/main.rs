@@ -61,7 +61,7 @@ fn main() {
 
     let window = winit::window::WindowBuilder::new()
         .with_inner_size(size)
-        .with_title("Metal".to_string())
+        .with_title("Metal Window Example".to_string())
         .build(&events_loop)
         .unwrap();
 
@@ -144,18 +144,18 @@ fn main() {
                     0.0f32,
                     0.5,
                     1.0,
-                    0.0 - r,
                     0.0,
+                    0.0,
+                    -0.5 + (r.cos() / 2. + 0.5),
                     -0.5,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.5 - (r.cos() / 2. + 0.5),
                     -0.5,
                     0.0,
-                    1.0 - r,
                     0.0,
-                    0.5,
-                    0.5,
-                    0.0,
-                    0.0,
-                    1.0 + r,
+                    1.0,
                 ];
 
                 unsafe {
