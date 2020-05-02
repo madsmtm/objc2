@@ -1,0 +1,16 @@
+[package]
+name = "texture"
+authors = ["Chinedu Francis Nwafili"]
+version = "0.0.1"
+publish = false
+edition = "2018"
+
+[build-dependencies]
+bindgen = "0.53.2"
+
+[dependencies]
+cocoa = "0.20"
+core-graphics = "0.19"
+png = "0.16"
+metal = { path = "../../" }
+winit = "0.22"
