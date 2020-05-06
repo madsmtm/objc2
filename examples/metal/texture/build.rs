@@ -106,5 +106,5 @@ fn save_shader_types_hash(hash: u64) {
 }
 
 fn shader_types_hash_file() -> PathBuf {
-    PathBuf::from(std::env::var("OUT_DIR").unwrap()).join("shader_types_hash")
+    PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("shader_types_hash")
 }

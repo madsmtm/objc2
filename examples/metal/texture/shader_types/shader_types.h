@@ -5,7 +5,10 @@
 #ifndef shader_types_h
 #define shader_types_h
 
-#include <simd/simd.h>
+// Used to get the definition of vector_float2
+// If you need to import more types, simd is typically located at:
+// /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/simd
+#include <simd/vector_types.h>
 
 typedef enum VertexInputIndex {
     VertexInputIndexVertices = 0,
