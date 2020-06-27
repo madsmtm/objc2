@@ -7,23 +7,17 @@
 
 extern crate objc;
 
-use cocoa::{
-    appkit::{NSView},
-    base::id as cocoa_id,
-    foundation::{NSRange},
-};
+use cocoa::{appkit::NSView, base::id as cocoa_id, foundation::NSRange};
 
 use core_graphics::geometry::CGSize;
-use objc::runtime::YES;
 use metal::*;
-use winit::platform::macos::WindowExtMacOS;
+use objc::runtime::YES;
 use std::mem;
+use winit::platform::macos::WindowExtMacOS;
 
 use winit::{
-    event::{
-        Event, WindowEvent,
-    },
-    event_loop::ControlFlow
+    event::{Event, WindowEvent},
+    event_loop::ControlFlow,
 };
 
 fn prepare_pipeline_state<'a>(device: &DeviceRef, library: &LibraryRef) -> RenderPipelineState {
@@ -89,11 +83,10 @@ fn main() {
     let draw_size = window.inner_size();
     layer.set_drawable_size(CGSize::new(draw_size.width as f64, draw_size.height as f64));
 
-    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/window/shaders.metallib");
+    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("examples/window/shaders.metallib");
 
-    let library = device
-        .new_library_with_file(library_path)
-        .unwrap();
+    let library = device.new_library_with_file(library_path).unwrap();
     let pipeline_state = prepare_pipeline_state(&device, &library);
     let command_queue = device.new_command_queue();
     //let nc: () = msg_send![command_queue.0, setExecutionEnabled:true];
@@ -121,13 +114,12 @@ fn main() {
                 WindowEvent::Resized(size) => {
                     layer.set_drawable_size(CGSize::new(size.width as f64, size.height as f64));
                 }
-                _ => ()
-            }
+                _ => (),
+            },
             Event::MainEventsCleared => {
                 window.request_redraw();
             }
             Event::RedrawRequested(_) => {
-
                 let p = vbuf.contents();
                 let vertex_data = [
                     0.0f32,
@@ -180,7 +172,7 @@ fn main() {
                 command_buffer.commit();
 
                 r += 0.01f32;
-            },
+            }
             _ => {}
         }
     });

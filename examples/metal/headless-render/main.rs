@@ -5,10 +5,10 @@ use std::fs::File;
 use std::io::BufWriter;
 
 use metal::{
-    Buffer, Device, DeviceRef, LibraryRef, MTLClearColor,
-    MTLLoadAction, MTLOrigin, MTLPixelFormat, MTLPrimitiveType, MTLRegion, MTLResourceOptions,
-    MTLSize, MTLStoreAction, RenderPassDescriptor, RenderPassDescriptorRef,
-    RenderPipelineDescriptor, RenderPipelineState, TextureRef, TextureDescriptor, Texture
+    Buffer, Device, DeviceRef, LibraryRef, MTLClearColor, MTLLoadAction, MTLOrigin, MTLPixelFormat,
+    MTLPrimitiveType, MTLRegion, MTLResourceOptions, MTLSize, MTLStoreAction, RenderPassDescriptor,
+    RenderPassDescriptorRef, RenderPipelineDescriptor, RenderPipelineState, Texture,
+    TextureDescriptor, TextureRef,
 };
 use png::ColorType;
 
@@ -42,11 +42,10 @@ fn main() {
 
     let texture = create_texture(&device);
 
-    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/window/shaders.metallib");
+    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("examples/window/shaders.metallib");
 
-    let library = device
-        .new_library_with_file(library_path)
-        .unwrap();
+    let library = device.new_library_with_file(library_path).unwrap();
 
     let pipeline_state = prepare_pipeline_state(&device, &library);
 
