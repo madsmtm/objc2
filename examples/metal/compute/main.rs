@@ -49,9 +49,10 @@ fn main() {
     command_buffer.add_completed_handler(&block);
 
     let encoder = command_buffer.new_compute_command_encoder();
+    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/compute/shaders.metallib");
 
     let library = device
-        .new_library_with_file("examples/compute/shaders.metallib")
+        .new_library_with_file(library_path)
         .unwrap();
     let kernel = library.get_function("sum", None).unwrap();
 

@@ -42,8 +42,10 @@ fn main() {
 
     let texture = create_texture(&device);
 
+    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/window/shaders.metallib");
+
     let library = device
-        .new_library_with_file("examples/window/shaders.metallib")
+        .new_library_with_file(library_path)
         .unwrap();
 
     let pipeline_state = prepare_pipeline_state(&device, &library);

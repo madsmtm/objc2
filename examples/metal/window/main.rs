@@ -89,8 +89,10 @@ fn main() {
     let draw_size = window.inner_size();
     layer.set_drawable_size(CGSize::new(draw_size.width as f64, draw_size.height as f64));
 
+    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/window/shaders.metallib");
+
     let library = device
-        .new_library_with_file("examples/window/shaders.metallib")
+        .new_library_with_file(library_path)
         .unwrap();
     let pipeline_state = prepare_pipeline_state(&device, &library);
     let command_queue = device.new_command_queue();
@@ -125,28 +127,7 @@ fn main() {
                 window.request_redraw();
             }
             Event::RedrawRequested(_) => {
-                let drawable = match layer.next_drawable() {
-                    Some(drawable) => drawable,
-                    None => return,
-                };
 
-                let render_pass_descriptor = RenderPassDescriptor::new();
-                let _a = prepare_render_pass_descriptor(&render_pass_descriptor, drawable.texture());
-
-                let command_buffer = command_queue.new_command_buffer();
-                let encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
-                encoder.set_render_pipeline_state(&pipeline_state);
-                encoder.set_vertex_buffer(0, Some(&vbuf), 0);
-                encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
-                encoder.end_encoding();
-
-                render_pass_descriptor
-                    .color_attachments()
-                    .object_at(0)
-                    .unwrap()
-                    .set_load_action(MTLLoadAction::DontCare);
-
-                let encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
                 let p = vbuf.contents();
                 let vertex_data = [
                     0.0f32,
@@ -173,11 +154,23 @@ fn main() {
                         (vertex_data.len() * mem::size_of::<f32>()) as usize,
                     );
                 }
+
                 vbuf.did_modify_range(NSRange::new(
                     0 as u64,
                     (vertex_data.len() * mem::size_of::<f32>()) as u64,
                 ));
 
+                let drawable = match layer.next_drawable() {
+                    Some(drawable) => drawable,
+                    None => return,
+                };
+
+                let render_pass_descriptor = RenderPassDescriptor::new();
+
+                prepare_render_pass_descriptor(&render_pass_descriptor, drawable.texture());
+
+                let command_buffer = command_queue.new_command_buffer();
+                let encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
                 encoder.set_render_pipeline_state(&pipeline_state);
                 encoder.set_vertex_buffer(0, Some(&vbuf), 0);
                 encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);

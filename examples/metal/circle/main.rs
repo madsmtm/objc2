@@ -47,9 +47,11 @@ fn main() {
     let device = Device::system_default().expect("no device found");
     println!("Your device is: {}", device.name(),);
 
+    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/circle/shaders.metallib");
+
     // Use the metallib file generated out of .metal shader file
     let library = device
-        .new_library_with_file("examples/circle/shaders.metallib")
+        .new_library_with_file(library_path)
         .unwrap();
 
     // The render pipeline generated from the vertex and fragment shaders in the .metal shader file.
