@@ -8,7 +8,6 @@ use winit::{
 
 use cocoa::{appkit::NSView, base::id as cocoa_id};
 
-use core_graphics::geometry::CGSize;
 use objc::runtime::YES;
 
 use std::mem;
