@@ -85,6 +85,7 @@ fn save_image(texture: &TextureRef) {
 
     texture.get_bytes(
         image.as_mut_ptr() as *mut std::ffi::c_void,
+        VIEW_WIDTH * 4,
         MTLRegion {
             origin: MTLOrigin { x: 0, y: 0, z: 0 },
             size: MTLSize {
@@ -94,7 +95,6 @@ fn save_image(texture: &TextureRef) {
             },
         },
         0,
-        VIEW_WIDTH * 4,
     );
 
     let out_file =
