@@ -137,8 +137,8 @@ fn create_texture_to_display(device: &Device) -> Texture {
             },
         },
         0,
-        width * 4,
         buf.as_ptr() as _,
+        width * 4,
     );
 
     texture
