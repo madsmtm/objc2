@@ -9,8 +9,8 @@ edition = "2018"
 bindgen = "0.53.2"
 
 [dependencies]
-cocoa = "0.22"
-core-graphics = "0.21"
+cocoa = "0.23"
+core-graphics = "0.22"
 png = "0.16"
 metal = { path = "../../" }
 winit = "0.22"
