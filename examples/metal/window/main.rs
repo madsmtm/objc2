@@ -95,7 +95,7 @@ fn main() {
 
     let device = Device::system_default().expect("no device found");
 
-    let layer = CoreAnimationLayer::new();
+    let layer = MetalLayer::new();
     layer.set_device(&device);
     layer.set_pixel_format(MTLPixelFormat::BGRA8Unorm);
     layer.set_presents_with_transaction(false);

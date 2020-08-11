@@ -11,9 +11,9 @@ use winit::window::Window;
 
 use cocoa::foundation::NSRange;
 use metal::{
-    Buffer, CGSize, CommandQueue, CoreAnimationLayer, Device, Library, MTLClearColor,
-    MTLLoadAction, MTLOrigin, MTLPixelFormat, MTLPrimitiveType, MTLRegion, MTLResourceOptions,
-    MTLSize, MTLStoreAction, RenderPassDescriptor, RenderPassDescriptorRef,
+    Buffer, CGSize, CommandQueue, Device, Library, MTLClearColor, MTLLoadAction, MTLOrigin,
+    MTLPixelFormat, MTLPrimitiveType, MTLRegion, MTLResourceOptions, MTLSize, MTLStoreAction,
+    MetalLayer, MetalLayerRef, RenderPassDescriptor, RenderPassDescriptorRef,
     RenderPipelineDescriptor, RenderPipelineState, Texture, TextureDescriptor, TextureRef,
 };
 use shader_bindings::{
@@ -154,8 +154,8 @@ fn init_window(event_loop: &EventLoop<()>) -> Window {
         .unwrap()
 }
 
-fn get_window_layer(window: &Window, device: &Device) -> CoreAnimationLayer {
-    let layer = CoreAnimationLayer::new();
+fn get_window_layer(window: &Window, device: &Device) -> MetalLayer {
+    let layer = MetalLayer::new();
 
     layer.set_device(device);
     layer.set_pixel_format(PIXEL_FORMAT);
@@ -205,7 +205,7 @@ fn prepare_pipeline_state(device: &Device, library: &Library) -> RenderPipelineS
 fn handle_window_event(
     event: WindowEvent,
     control_flow: &mut ControlFlow,
-    layer: &CoreAnimationLayer,
+    layer: &MetalLayerRef,
     viewport_size_buffer: &Buffer,
 ) {
     match event {
@@ -231,7 +231,7 @@ fn update_viewport_size_buffer(viewport_size_buffer: &Buffer, size: (u32, u32)) 
 }
 
 fn redraw(
-    layer: &CoreAnimationLayer,
+    layer: &MetalLayerRef,
     pipeline_state: &RenderPipelineState,
     command_queue: &CommandQueue,
     vertex_buffer: &Buffer,

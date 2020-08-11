@@ -58,10 +58,10 @@ fn main() {
     // Set the command queue used to pass commands to the device.
     let command_queue = device.new_command_queue();
 
-    // Currently, CoreAnimationLayer is the only interface that provide
+    // Currently, MetalLayer is the only interface that provide
     // layers to carry drawable texture from GPU rendaring through metal
     // library to viewable windows.
-    let layer = CoreAnimationLayer::new();
+    let layer = MetalLayer::new();
     layer.set_device(&device);
     layer.set_pixel_format(MTLPixelFormat::BGRA8Unorm);
     layer.set_presents_with_transaction(false);
