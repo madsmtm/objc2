@@ -79,7 +79,7 @@ fn prepare_render_pass_descriptor(descriptor: &RenderPassDescriptorRef, texture:
 
     color_attachment.set_texture(Some(texture));
     color_attachment.set_load_action(MTLLoadAction::Clear);
-    color_attachment.set_clear_color(MTLClearColor::new(0.5, 0.2, 0.2, 1.0));
+    color_attachment.set_clear_color(MTLClearColor::new(0.2, 0.2, 0.25, 1.0));
     color_attachment.set_store_action(MTLStoreAction::Store);
 }
 
