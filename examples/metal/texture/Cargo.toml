@@ -14,3 +14,7 @@ core-graphics = "0.22"
 png = "0.16"
 metal = { path = "../../" }
 winit = "0.22"
+
+[dependencies.objc]
+version = "0.2.4"
+features = ["objc_exception"]

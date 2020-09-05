@@ -4,6 +4,7 @@
 use std::path::PathBuf;
 
 use cocoa::{appkit::NSView, base::id as cocoa_id};
+use objc::rc::autoreleasepool;
 use winit::dpi::LogicalSize;
 use winit::event_loop::{ControlFlow, EventLoop};
 use winit::platform::macos::WindowExtMacOS;
@@ -57,23 +58,25 @@ fn main() {
     let command_queue = device.new_command_queue();
 
     event_loop.run(move |event, _, control_flow| {
-        *control_flow = ControlFlow::Poll;
+        autoreleasepool(|| {
+            *control_flow = ControlFlow::Poll;
 
-        match event {
-            Event::WindowEvent { event, .. } => {
-                handle_window_event(event, control_flow, &layer, &viewport_size_buffer)
+            match event {
+                Event::WindowEvent { event, .. } => {
+                    handle_window_event(event, control_flow, &layer, &viewport_size_buffer)
+                }
+                Event::MainEventsCleared => window.request_redraw(),
+                Event::RedrawRequested(_) => redraw(
+                    &layer,
+                    &pipeline_state,
+                    &command_queue,
+                    &vertex_buffer,
+                    &viewport_size_buffer,
+                    &texture_to_render,
+                ),
+                _ => {}
             }
-            Event::MainEventsCleared => window.request_redraw(),
-            Event::RedrawRequested(_) => redraw(
-                &layer,
-                &pipeline_state,
-                &command_queue,
-                &vertex_buffer,
-                &viewport_size_buffer,
-                &texture_to_render,
-            ),
-            _ => {}
-        }
+        });
     });
 }
 
