@@ -88,5 +88,8 @@ fn main() {
         command_buffer.wait_until_completed();
 
         let ptr = sum.contents() as *mut u32;
+        unsafe {
+            assert_eq!(465, *ptr);
+        }
     });
 }
