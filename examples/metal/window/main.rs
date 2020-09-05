@@ -10,7 +10,7 @@ extern crate objc;
 use cocoa::{appkit::NSView, base::id as cocoa_id, foundation::NSRange};
 
 use metal::*;
-use objc::runtime::YES;
+use objc::{rc::autoreleasepool, runtime::YES};
 use std::mem;
 use winit::platform::macos::WindowExtMacOS;
 
@@ -161,91 +161,99 @@ fn main() {
     );
 
     events_loop.run(move |event, _, control_flow| {
-        *control_flow = ControlFlow::Poll;
+        autoreleasepool(|| {
+            *control_flow = ControlFlow::Poll;
 
-        match event {
-            Event::WindowEvent { event, .. } => match event {
-                WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
-                WindowEvent::Resized(size) => {
-                    layer.set_drawable_size(CGSize::new(size.width as f64, size.height as f64));
+            match event {
+                Event::WindowEvent { event, .. } => match event {
+                    WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
+                    WindowEvent::Resized(size) => {
+                        layer.set_drawable_size(CGSize::new(size.width as f64, size.height as f64));
+                    }
+                    _ => (),
+                },
+                Event::MainEventsCleared => {
+                    window.request_redraw();
                 }
-                _ => (),
-            },
-            Event::MainEventsCleared => {
-                window.request_redraw();
-            }
-            Event::RedrawRequested(_) => {
-                let p = vbuf.contents();
-                let vertex_data = [
-                    0.0f32,
-                    0.5,
-                    1.0,
-                    0.0,
-                    0.0,
-                    -0.5 + (r.cos() / 2. + 0.5),
-                    -0.5,
-                    0.0,
-                    1.0,
-                    0.0,
-                    0.5 - (r.cos() / 2. + 0.5),
-                    -0.5,
-                    0.0,
-                    0.0,
-                    1.0,
-                ];
+                Event::RedrawRequested(_) => {
+                    let p = vbuf.contents();
+                    let vertex_data = [
+                        0.0f32,
+                        0.5,
+                        1.0,
+                        0.0,
+                        0.0,
+                        -0.5 + (r.cos() / 2. + 0.5),
+                        -0.5,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.5 - (r.cos() / 2. + 0.5),
+                        -0.5,
+                        0.0,
+                        0.0,
+                        1.0,
+                    ];
 
-                unsafe {
-                    std::ptr::copy(
-                        vertex_data.as_ptr(),
-                        p as *mut f32,
-                        (vertex_data.len() * mem::size_of::<f32>()) as usize,
+                    unsafe {
+                        std::ptr::copy(
+                            vertex_data.as_ptr(),
+                            p as *mut f32,
+                            (vertex_data.len() * mem::size_of::<f32>()) as usize,
+                        );
+                    }
+
+                    vbuf.did_modify_range(NSRange::new(
+                        0 as u64,
+                        (vertex_data.len() * mem::size_of::<f32>()) as u64,
+                    ));
+
+                    let drawable = match layer.next_drawable() {
+                        Some(drawable) => drawable,
+                        None => return,
+                    };
+
+                    let render_pass_descriptor = RenderPassDescriptor::new();
+
+                    prepare_render_pass_descriptor(&render_pass_descriptor, drawable.texture());
+
+                    let command_buffer = command_queue.new_command_buffer();
+                    let encoder =
+                        command_buffer.new_render_command_encoder(&render_pass_descriptor);
+
+                    encoder.set_scissor_rect(MTLScissorRect {
+                        x: 20,
+                        y: 20,
+                        width: 100,
+                        height: 100,
+                    });
+                    encoder.set_render_pipeline_state(&clear_rect_pipeline_state);
+                    encoder.set_vertex_buffer(0, Some(&clear_rect_buffer), 0);
+                    encoder.draw_primitives_instanced(
+                        metal::MTLPrimitiveType::TriangleStrip,
+                        0,
+                        4,
+                        1,
                     );
+                    encoder.set_scissor_rect(MTLScissorRect {
+                        x: 0,
+                        y: 0,
+                        width: size.width as _,
+                        height: size.height as _,
+                    });
+
+                    encoder.set_render_pipeline_state(&triangle_pipeline_state);
+                    encoder.set_vertex_buffer(0, Some(&vbuf), 0);
+                    encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
+                    encoder.end_encoding();
+
+                    command_buffer.present_drawable(&drawable);
+                    command_buffer.commit();
+
+                    r += 0.01f32;
                 }
-
-                vbuf.did_modify_range(NSRange::new(
-                    0 as u64,
-                    (vertex_data.len() * mem::size_of::<f32>()) as u64,
-                ));
-
-                let drawable = match layer.next_drawable() {
-                    Some(drawable) => drawable,
-                    None => return,
-                };
-
-                let render_pass_descriptor = RenderPassDescriptor::new();
-
-                prepare_render_pass_descriptor(&render_pass_descriptor, drawable.texture());
-
-                let command_buffer = command_queue.new_command_buffer();
-                let encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
-
-                encoder.set_scissor_rect(MTLScissorRect {
-                    x: 20,
-                    y: 20,
-                    width: 100,
-                    height: 100,
-                });
-                encoder.set_render_pipeline_state(&clear_rect_pipeline_state);
-                encoder.set_vertex_buffer(0, Some(&clear_rect_buffer), 0);
-                encoder.draw_primitives_instanced(metal::MTLPrimitiveType::TriangleStrip, 0, 4, 1);
-                encoder.set_scissor_rect(MTLScissorRect {
-                    x: 0,
-                    y: 0,
-                    width: size.width as _,
-                    height: size.height as _,
-                });
-
-                encoder.set_render_pipeline_state(&triangle_pipeline_state);
-                encoder.set_vertex_buffer(0, Some(&vbuf), 0);
-                encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
-                encoder.end_encoding();
-
-                command_buffer.present_drawable(&drawable);
-                command_buffer.commit();
-
-                r += 0.01f32;
+                _ => {}
             }
-            _ => {}
-        }
+        });
     });
 }
