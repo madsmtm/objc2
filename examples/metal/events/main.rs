@@ -1,12 +1,12 @@
-// Copyright 2017 GFX developers
+// Copyright 2020 GFX developers
 //
 // Licensed under the Apache License, Version 2.0, <LICENSE-APACHE or
 // http://apache.org/licenses/LICENSE-2.0> or the MIT license <LICENSE-MIT or
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
+use dispatch::{Queue, QueueAttribute};
 use metal::*;
-use std::ffi::CString;
 
 /// This example replicates `Synchronizing Events Between a GPU and the CPU` article.
 /// See https://developer.apple.com/documentation/metal/synchronization/synchronizing_events_between_a_gpu_and_the_cpu
@@ -20,12 +20,14 @@ fn main() {
     let shared_event = device.new_shared_event();
 
     // Shareable event listener
-    let my_queue = unsafe {
-        let label = CString::new("com.example.apple-samplecode.MyQueue").unwrap();
-        dispatch_queue_create(label.as_ptr(), std::ptr::null())
-    };
+    let my_queue = Queue::create(
+        "com.example.apple-samplecode.MyQueue",
+        QueueAttribute::Serial,
+    );
 
-    let shared_event_listener = unsafe { SharedEventListener::from_dispatch_queue(my_queue) };
+    // Enable `dispatch-queue` feature to use dispatch queues,
+    // otherwise unsafe `from_queue_handle` is available for use with native APIs.
+    let shared_event_listener = SharedEventListener::from_queue(&my_queue);
 
     // Register CPU work
     let notify_block = block::ConcreteBlock::new(move |evt: &SharedEventRef, val: u64| {
@@ -45,6 +47,4 @@ fn main() {
     command_buffer.wait_until_completed();
 
     println!("Done");
-
-    unsafe { dispatch_release(my_queue) };
 }
