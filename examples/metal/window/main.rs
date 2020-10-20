@@ -7,7 +7,7 @@
 
 extern crate objc;
 
-use cocoa::{appkit::NSView, base::id as cocoa_id, foundation::NSRange};
+use cocoa::{appkit::NSView, base::id as cocoa_id};
 
 use metal::*;
 use objc::{rc::autoreleasepool, runtime::YES};
@@ -203,7 +203,7 @@ fn main() {
                         );
                     }
 
-                    vbuf.did_modify_range(NSRange::new(
+                    vbuf.did_modify_range(crate::NSRange::new(
                         0 as u64,
                         (vertex_data.len() * mem::size_of::<f32>()) as u64,
                     ));
