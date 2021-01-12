@@ -235,11 +235,12 @@ fn main() {
                         4,
                         1,
                     );
+                    let physical_size = window.inner_size();
                     encoder.set_scissor_rect(MTLScissorRect {
                         x: 0,
                         y: 0,
-                        width: size.width as _,
-                        height: size.height as _,
+                        width: physical_size.width as _,
+                        height: physical_size.height as _,
                     });
 
                     encoder.set_render_pipeline_state(&triangle_pipeline_state);
