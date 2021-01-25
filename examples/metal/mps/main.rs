@@ -77,7 +77,7 @@ fn main() {
 
     ray_intersector.set_ray_stride(mem::size_of::<Ray>() as u64);
     ray_intersector.set_ray_data_type(MPSRayDataType::OriginMinDistanceDirectionMaxDistance);
-    ray_intersector.set_intersecion_stride(mem::size_of::<Intersection>() as u64);
+    ray_intersector.set_intersection_stride(mem::size_of::<Intersection>() as u64);
     ray_intersector
         .set_intersection_data_type(MPSIntersectionDataType::DistancePrimitiveIndexCoordinates);
 
