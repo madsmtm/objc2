@@ -30,7 +30,7 @@ pub enum Encoding<'a> {
     Unknown,
     BitField(u32),
     Pointer(&'a Encoding<'a>),
-    Array(u32, &'a Encoding<'a>),
+    Array(usize, &'a Encoding<'a>),
     Struct(&'a str, &'a [Encoding<'a>]),
     Union(&'a str, &'a [Encoding<'a>]),
 }

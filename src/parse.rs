@@ -75,7 +75,7 @@ fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Option<&'a str> {
     rm_prefix(s, code)
 }
 
-fn chomp_int(s: &str) -> Option<(u32, &str)> {
+fn chomp_int(s: &str) -> Option<(usize, &str)> {
     // Chomp until we hit a non-digit
     let (num, t) = match s.find(|c: char| !c.is_digit(10)) {
         Some(i) => s.split_at(i),
@@ -84,7 +84,7 @@ fn chomp_int(s: &str) -> Option<(u32, &str)> {
     num.parse().map(|n| (n, t)).ok()
 }
 
-fn rm_int_prefix(s: &str, other: u32) -> Option<&str> {
+fn rm_int_prefix(s: &str, other: usize) -> Option<&str> {
     chomp_int(s)
         .and_then(|(n, t)| if other == n { Some(t) } else { None })
 }
