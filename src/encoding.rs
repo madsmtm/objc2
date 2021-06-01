@@ -28,7 +28,7 @@ pub enum Encoding<'a> {
     Class,
     Sel,
     Unknown,
-    BitField(u32),
+    BitField(u8),
     Pointer(&'a Encoding<'a>),
     Array(usize, &'a Encoding<'a>),
     Struct(&'a str, &'a [Encoding<'a>]),
