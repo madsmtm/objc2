@@ -7,10 +7,10 @@ to create and describe these type encodings without memory allocation in Rust.
 
 # Implementing Encode
 
-This crate declares an `Encode` trait that can be implemented for types that
+This crate declares an [`Encode`] trait that can be implemented for types that
 the Objective-C compiler can encode. Implementing this trait looks like:
 
-``` ignore
+```ignore
 unsafe impl Encode for CGPoint {
     const ENCODING: Encoding<'static> =
         Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFLOAT::ENCODING]);
@@ -22,7 +22,7 @@ containing structs, see the `core_graphics` example.
 
 # Comparing with encoding strings
 
-An `Encoding` can be compared with an encoding string from the Objective-C
+An [`Encoding`] can be compared with an encoding string from the Objective-C
 runtime:
 
 ```
@@ -32,8 +32,9 @@ assert!(&i32::ENCODING == "i");
 
 # Generating encoding strings
 
-Every `Encoding` implements `Display` as its string representation.
-This can be generated conveniently through the `to_string` method:
+Every [`Encoding`] implements [`Display`][`core::fmt::Display`] as its string
+representation. This can be generated conveniently through the
+[`to_string`][`alloc::string::ToString::to_string`] method:
 
 ```
 # use objc_encode::Encode;
@@ -42,10 +43,11 @@ assert_eq!(i32::ENCODING.to_string(), "i");
 */
 
 #![no_std]
+#![warn(missing_docs)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc-encode/1.1.0")]
 
-#[cfg(test)]
+#[cfg(any(test, doc))]
 extern crate alloc;
 
 mod encode;

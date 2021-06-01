@@ -8,30 +8,65 @@ use crate::parse;
 /// <https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html>
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Encoding<'a> {
+    /// A C `char`. Corresponds to the `c` code.
     Char,
+    /// A C `short`. Corresponds to the `s` code.
     Short,
+    /// A C `int`. Corresponds to the `i` code.
     Int,
+    /// A C `long`. Corresponds to the `l` code.
     Long,
+    /// A C `long long`. Corresponds to the `q` code.
     LongLong,
+    /// A C `unsigned char`. Corresponds to the `C` code.
     UChar,
+    /// A C `unsigned short`. Corresponds to the `S` code.
     UShort,
+    /// A C `unsigned int`. Corresponds to the `I` code.
     UInt,
+    /// A C `unsigned long`. Corresponds to the `L` code.
     ULong,
+    /// A C `unsigned long long`. Corresponds to the `Q` code.
     ULongLong,
+    /// A C `float`. Corresponds to the `f` code.
     Float,
+    /// A C `double`. Corresponds to the `d` code.
     Double,
+    /// A C++ `bool` / C99 `_Bool`. Corresponds to the `B` code.
     Bool,
+    /// A C `void`. Corresponds to the `v` code.
     Void,
+    /// A C `char *`. Corresponds to the `*` code.
     String,
+    /// An Objective-C object (`id`). Corresponds to the `@` code.
     Object,
+    /// An Objective-C block. Corresponds to the `@?` code.
     Block,
+    /// An Objective-C class (`Class`). Corresponds to the `#` code.
     Class,
+    /// An Objective-C selector (`SEL`). Corresponds to the `:` code.
     Sel,
+    /// An unknown type. Corresponds to the `?` code.
     Unknown,
+    /// A bitfield with the given number of bits.
+    ///
+    /// Corresponds to the `b`num code.
     BitField(u32),
+    /// A pointer to the given type.
+    ///
+    /// Corresponds to the `^`type code.
     Pointer(&'a Encoding<'a>),
+    /// An array with the given length and type.
+    ///
+    /// Corresponds to the `[len type]` code.
     Array(u32, &'a Encoding<'a>),
+    /// A struct with the given name and fields.
+    ///
+    /// Corresponds to the `{name=fields...}` code.
     Struct(&'a str, &'a [Encoding<'a>]),
+    /// A union with the given name and fields.
+    ///
+    /// Corresponds to the `(name=fields...)` code.
     Union(&'a str, &'a [Encoding<'a>]),
 }
 
