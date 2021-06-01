@@ -63,21 +63,9 @@ unsafe impl Encode for *const c_void {
     const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Void);
 }
 
-// TODO: Replace this with a const generics implementation when they stabilise (#44580)
-macro_rules! slice_encode_impl {
-    ($($n:literal),* $(,)?) => {
-        $(
-            unsafe impl<T: Encode> Encode for [T; $n] {
-                const ENCODING: Encoding<'static> = Encoding::Array($n, &<T as Encode>::ENCODING);
-            }
-        )*
-    };
+unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
+    const ENCODING: Encoding<'static> = Encoding::Array(LENGTH as u32, &<T as Encode>::ENCODING);
 }
-
-slice_encode_impl!(
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-    27, 28, 29, 30, 31, 32
-);
 
 /*
 External crates cannot implement Encode for pointers or Optionals, but they
