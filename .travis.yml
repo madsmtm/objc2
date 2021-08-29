@@ -3,6 +3,9 @@ language: rust
 cache: cargo
 os: osx
 
+# Run on master and PRs
+if: branch = master
+
 script:
 - cargo test --workspace --verbose
 - # TODO: cargo test --workspace --verbose --all-features
