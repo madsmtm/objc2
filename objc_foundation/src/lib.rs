@@ -3,8 +3,6 @@
 
 #[macro_use]
 extern crate objc;
-extern crate block;
-extern crate objc_id;
 
 pub use self::array::{
     INSArray, INSMutableArray, NSArray, NSComparisonResult, NSMutableArray, NSMutableSharedArray,

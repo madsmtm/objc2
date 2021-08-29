@@ -1,7 +1,5 @@
 #![cfg(any(target_os = "macos", target_os = "ios"))]
 
-extern crate objc;
-
 use objc::runtime::Object;
 use objc::{class, msg_send, sel};
 

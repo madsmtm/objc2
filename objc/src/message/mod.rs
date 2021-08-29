@@ -90,7 +90,7 @@ pub unsafe trait Message {
 
     # Example
     ``` no_run
-    # #[macro_use] extern crate objc;
+    # use objc::{class, msg_send};
     # use objc::runtime::{BOOL, Class, Object};
     # use objc::Message;
     # fn main() {

@@ -10,7 +10,7 @@ The following example demonstrates declaring a class named `MyNumber` that has
 one ivar, a `u32` named `_number` and a `number` method that returns it:
 
 ``` no_run
-# #[macro_use] extern crate objc;
+# use objc::class;
 # use objc::declare::ClassDecl;
 # use objc::runtime::{Class, Object, Sel};
 # fn main() {

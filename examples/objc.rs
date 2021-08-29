@@ -1,9 +1,6 @@
-#[macro_use]
-extern crate objc;
-
 use objc::rc::StrongPtr;
 use objc::runtime::{Class, Object};
-use objc::Encode;
+use objc::{class, msg_send, Encode};
 
 fn main() {
     // Get a class

@@ -16,7 +16,7 @@ For more information on Objective-C's reference counting, see Apple's documentat
 # Example
 
 ``` no_run
-# #[macro_use] extern crate objc;
+# use objc::{class, msg_send};
 # use objc::rc::{autoreleasepool, StrongPtr};
 # fn main() {
 // StrongPtr will release the object when dropped

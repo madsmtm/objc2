@@ -202,6 +202,7 @@ unsafe impl<T> Send for WeakId<T> where T: Sync {}
 mod tests {
     use super::{Id, ShareId, WeakId};
     use objc::runtime::Object;
+    use objc::{class, msg_send};
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
