@@ -1,0 +1,17 @@
+[package]
+name = "objc-foundation-derive"
+version = "0.0.1"
+authors = ["Steven Sheldon"]
+
+description = "Procedural macros for deriving traits from objc-foundation."
+keywords = ["objective-c", "osx", "ios", "cocoa", "uikit"]
+repository = "http://github.com/SSheldon/rust-objc-foundation"
+documentation = "http://ssheldon.github.io/rust-objc/objc_foundation/"
+license = "MIT"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "0.10"
+quote = "0.3.8"
