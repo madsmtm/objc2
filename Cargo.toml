@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "objc",
+    "objc_encode",
+    "objc_exception",
+    "objc_foundation",
+    "objc_id",
+]

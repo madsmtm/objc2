@@ -13,4 +13,4 @@ license = "MIT"
 exclude = [".gitignore"]
 
 [dependencies]
-objc = "0.2.4"
+objc = { path = "../objc", version = "0.2.4" }
