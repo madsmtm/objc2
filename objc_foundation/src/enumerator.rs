@@ -21,6 +21,12 @@ impl<'a, T> NSEnumerator<'a, T>
 where
     T: INSObject,
 {
+    /// TODO
+    ///
+    /// # Safety
+    ///
+    /// The object pointer must be a valid `NSEnumerator` with `Owned`
+    /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
         NSEnumerator {
             id: Id::from_ptr(ptr),

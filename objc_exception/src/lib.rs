@@ -22,7 +22,10 @@ pub enum Exception {}
 /// Throws an Objective-C exception.
 /// The argument must be a pointer to an Objective-C object.
 ///
-/// Unsafe because this unwinds from Objective-C.
+/// # Safety
+///
+/// This unwinds from Objective-C, and the exception must be caught using an
+/// Objective-C exception handler.
 pub unsafe fn throw(exception: *mut Exception) -> ! {
     RustObjCExceptionThrow(exception as *mut _);
     unreachable!();
@@ -64,7 +67,9 @@ where
 /// exception being thrown, or an `Err` with a pointer to an exception if one
 /// was thrown. The exception is retained and so must be released.
 ///
-/// Unsafe because this encourages unwinding through the closure from
+/// # Safety
+///
+/// This encourages unwinding through the closure from
 /// Objective-C, which is not safe.
 pub unsafe fn r#try<F, R>(closure: F) -> Result<R, *mut Exception>
 where

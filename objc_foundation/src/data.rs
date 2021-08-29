@@ -12,6 +12,10 @@ pub trait INSData: INSObject {
         unsafe { msg_send![self, length] }
     }
 
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     fn bytes(&self) -> &[u8] {
         let ptr: *const c_void = unsafe { msg_send![self, bytes] };
         // The bytes pointer may be null for length zero

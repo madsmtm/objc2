@@ -63,6 +63,7 @@ The bindings can be used on Linux or *BSD utilizing the
 #![crate_name = "objc"]
 #![crate_type = "lib"]
 #![warn(missing_docs)]
+#![allow(clippy::missing_safety_doc)]
 
 pub use objc_encode::{Encode, Encoding};
 

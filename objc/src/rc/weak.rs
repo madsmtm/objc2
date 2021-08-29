@@ -14,7 +14,10 @@ pub struct WeakPtr(Box<UnsafeCell<*mut Object>>);
 
 impl WeakPtr {
     /// Constructs a `WeakPtr` to the given object.
-    /// Unsafe because the caller must ensure the given object pointer is valid.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure the given object pointer is valid.
     pub unsafe fn new(obj: *mut Object) -> Self {
         let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
         runtime::objc_initWeak(ptr.get(), obj);

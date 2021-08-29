@@ -159,8 +159,11 @@ impl ClassDecl {
     /// Adds a method with the given name and implementation to self.
     /// Panics if the method wasn't sucessfully added
     /// or if the selector and function take different numbers of arguments.
-    /// Unsafe because the caller must ensure that the types match those that
-    /// are expected when the method is invoked from Objective-C.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the types match those that are expected
+    /// when the method is invoked from Objective-C.
     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
     where
         F: MethodImplementation<Callee = Object>,
@@ -182,8 +185,11 @@ impl ClassDecl {
     /// Adds a class method with the given name and implementation to self.
     /// Panics if the method wasn't sucessfully added
     /// or if the selector and function take different numbers of arguments.
-    /// Unsafe because the caller must ensure that the types match those that
-    /// are expected when the method is invoked from Objective-C.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the types match those that are expected
+    /// when the method is invoked from Objective-C.
     pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
     where
         F: MethodImplementation<Callee = Class>,

@@ -177,6 +177,10 @@ impl Sel {
 
     /// Wraps a raw pointer to a selector into a `Sel` object.
     ///
+    /// # Safety
+    ///
+    /// The pointer must a valid, registered selector.
+    ///
     /// This is almost never what you want; use `Sel::register()` instead.
     #[inline]
     pub unsafe fn from_ptr(ptr: *const c_void) -> Sel {
@@ -478,8 +482,10 @@ impl Object {
 
     /// Returns a reference to the ivar of self with the given name.
     /// Panics if self has no ivar with the given name.
-    /// Unsafe because the caller must ensure that the ivar is actually
-    /// of type `T`.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn get_ivar<T>(&self, name: &str) -> &T
     where
         T: Encode,
@@ -503,8 +509,10 @@ impl Object {
 
     /// Returns a mutable reference to the ivar of self with the given name.
     /// Panics if self has no ivar with the given name.
-    /// Unsafe because the caller must ensure that the ivar is actually
-    /// of type `T`.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn get_mut_ivar<T>(&mut self, name: &str) -> &mut T
     where
         T: Encode,
@@ -528,8 +536,10 @@ impl Object {
 
     /// Sets the value of the ivar of self with the given name.
     /// Panics if self has no ivar with the given name.
-    /// Unsafe because the caller must ensure that the ivar is actually
-    /// of type `T`.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn set_ivar<T>(&mut self, name: &str, value: T)
     where
         T: Encode,

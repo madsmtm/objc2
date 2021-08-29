@@ -36,6 +36,10 @@ pub trait INSString: INSObject {
         unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
     }
 
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     fn as_str(&self) -> &str {
         let bytes = unsafe {
             let bytes: *const c_char = msg_send![self, UTF8String];

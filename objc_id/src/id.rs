@@ -54,8 +54,11 @@ where
 
     /// Constructs an `Id` from a pointer to an unretained object and
     /// retains it. Panics if the pointer is null.
-    /// Unsafe because the pointer must be to a valid object and
-    /// the caller must ensure the ownership is correct.
+    ///
+    /// # Safety
+    ///
+    /// The pointer must be to a valid object and the caller must ensure the
+    /// ownership is correct.
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(
             !ptr.is_null(),
@@ -67,8 +70,11 @@ where
     /// Constructs an `Id` from a pointer to a retained object; this won't
     /// retain the pointer, so the caller must ensure the object has a +1
     /// retain count. Panics if the pointer is null.
-    /// Unsafe because the pointer must be to a valid object and
-    /// the caller must ensure the ownership is correct.
+    ///
+    /// # Safety
+    ///
+    /// The pointer must be to a valid object and the caller must ensure the
+    /// ownership is correct.
     pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(
             !ptr.is_null(),
@@ -124,10 +130,6 @@ where
 {
     fn eq(&self, other: &Id<T, O>) -> bool {
         self.deref() == other.deref()
-    }
-
-    fn ne(&self, other: &Id<T, O>) -> bool {
-        self.deref() != other.deref()
     }
 }
 
