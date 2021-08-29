@@ -42,7 +42,7 @@ where
 {
     let sup = Super {
         receiver: obj as *mut T as *mut Object,
-        superclass: superclass,
+        superclass,
     };
     let receiver = &sup as *const Super as *mut Object;
     let msg_send_fn = msg_send_super_fn::<R>();

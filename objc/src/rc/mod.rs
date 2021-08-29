@@ -16,7 +16,7 @@ For more information on Objective-C's reference counting, see Apple's documentat
 # Example
 
 ``` no_run
-# #[macro_use] extern crate objc;
+# use objc::{class, msg_send};
 # use objc::rc::{autoreleasepool, StrongPtr};
 # fn main() {
 // StrongPtr will release the object when dropped
@@ -91,8 +91,11 @@ mod tests {
         let weak = obj.weak();
 
         let weak2 = weak.clone();
-        let strong = weak2.load();
+
+        let strong = weak.load();
+        let strong2 = weak2.load();
         assert!(*strong == *obj);
+        assert!(*strong2 == *obj);
     }
 
     #[test]

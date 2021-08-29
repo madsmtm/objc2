@@ -1,10 +1,7 @@
-#[macro_use]
-extern crate objc;
-extern crate objc_foundation;
-
 use std::sync::{Once, ONCE_INIT};
 
 use objc::declare::ClassDecl;
+use objc::msg_send;
 use objc::runtime::{Class, Object, Sel};
 use objc::Message;
 use objc_foundation::{INSObject, NSObject};

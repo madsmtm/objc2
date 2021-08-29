@@ -74,6 +74,7 @@ pub struct Object {
 /// A pointer to the start of a method implementation.
 pub type Imp = unsafe extern "C" fn();
 
+#[allow(missing_docs)]
 #[link(name = "objc", kind = "dylib")]
 extern "C" {
     pub fn sel_registerName(name: *const c_char) -> Sel;
@@ -176,10 +177,14 @@ impl Sel {
 
     /// Wraps a raw pointer to a selector into a `Sel` object.
     ///
+    /// # Safety
+    ///
+    /// The pointer must a valid, registered selector.
+    ///
     /// This is almost never what you want; use `Sel::register()` instead.
     #[inline]
     pub unsafe fn from_ptr(ptr: *const c_void) -> Sel {
-        Sel { ptr: ptr }
+        Sel { ptr }
     }
 
     /// Returns a pointer to the raw selector.
@@ -210,7 +215,7 @@ impl Clone for Sel {
 }
 
 impl fmt::Debug for Sel {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
     }
 }
@@ -405,7 +410,7 @@ impl PartialEq for Class {
 impl Eq for Class {}
 
 impl fmt::Debug for Class {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
     }
 }
@@ -464,7 +469,7 @@ impl PartialEq for Protocol {
 impl Eq for Protocol {}
 
 impl fmt::Debug for Protocol {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
     }
 }
@@ -477,8 +482,10 @@ impl Object {
 
     /// Returns a reference to the ivar of self with the given name.
     /// Panics if self has no ivar with the given name.
-    /// Unsafe because the caller must ensure that the ivar is actually
-    /// of type `T`.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn get_ivar<T>(&self, name: &str) -> &T
     where
         T: Encode,
@@ -502,8 +509,10 @@ impl Object {
 
     /// Returns a mutable reference to the ivar of self with the given name.
     /// Panics if self has no ivar with the given name.
-    /// Unsafe because the caller must ensure that the ivar is actually
-    /// of type `T`.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn get_mut_ivar<T>(&mut self, name: &str) -> &mut T
     where
         T: Encode,
@@ -527,8 +536,10 @@ impl Object {
 
     /// Sets the value of the ivar of self with the given name.
     /// Panics if self has no ivar with the given name.
-    /// Unsafe because the caller must ensure that the ivar is actually
-    /// of type `T`.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn set_ivar<T>(&mut self, name: &str, value: T)
     where
         T: Encode,
@@ -538,7 +549,7 @@ impl Object {
 }
 
 impl fmt::Debug for Object {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "<{:?}: {:p}>", self.class(), self)
     }
 }

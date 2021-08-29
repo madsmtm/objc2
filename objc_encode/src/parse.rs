@@ -2,7 +2,7 @@
 
 use crate::Encoding;
 
-const QUALIFIERS: &'static [char] = &[
+const QUALIFIERS: &[char] = &[
     'r', // const
     'n', // in
     'N', // inout
@@ -12,7 +12,7 @@ const QUALIFIERS: &'static [char] = &[
     'V', // oneway
 ];
 
-fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Option<&'a str> {
+fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a str> {
     use Encoding::*;
     let code = match *enc {
         Char => "c",
@@ -36,43 +36,43 @@ fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Option<&'a str> {
         Sel => ":",
         Unknown => "?",
         BitField(b) => {
-            let s = rm_prefix(s, "b")?;
+            let s = s.strip_prefix('b')?;
             return rm_int_prefix(s, b);
         }
         Pointer(t) => {
-            let s = rm_prefix(s, "^")?;
+            let s = s.strip_prefix('^')?;
             return rm_enc_prefix(s, t);
         }
         Array(len, item) => {
             let mut s = s;
-            s = rm_prefix(s, "[")?;
+            s = s.strip_prefix('[')?;
             s = rm_int_prefix(s, len)?;
             s = rm_enc_prefix(s, item)?;
-            return rm_prefix(s, "]");
+            return s.strip_prefix(']');
         }
         Struct(name, fields) => {
             let mut s = s;
-            s = rm_prefix(s, "{")?;
-            s = rm_prefix(s, name)?;
-            s = rm_prefix(s, "=")?;
+            s = s.strip_prefix('{')?;
+            s = s.strip_prefix(name)?;
+            s = s.strip_prefix('=')?;
             for field in fields {
                 s = rm_enc_prefix(s, field)?;
             }
-            return rm_prefix(s, "}");
+            return s.strip_prefix('}');
         }
         Union(name, members) => {
             let mut s = s;
-            s = rm_prefix(s, "(")?;
-            s = rm_prefix(s, name)?;
-            s = rm_prefix(s, "=")?;
+            s = s.strip_prefix('(')?;
+            s = s.strip_prefix(name)?;
+            s = s.strip_prefix('=')?;
             for member in members {
                 s = rm_enc_prefix(s, member)?;
             }
-            return rm_prefix(s, ")");
+            return s.strip_prefix(')');
         }
     };
 
-    rm_prefix(s, code)
+    s.strip_prefix(code)
 }
 
 fn chomp_int(s: &str) -> Option<(u32, &str)> {
@@ -88,15 +88,7 @@ fn rm_int_prefix(s: &str, other: u32) -> Option<&str> {
     chomp_int(s).and_then(|(n, t)| if other == n { Some(t) } else { None })
 }
 
-fn rm_prefix<'a>(s: &'a str, other: &str) -> Option<&'a str> {
-    if s.starts_with(other) {
-        Some(&s[other.len()..])
-    } else {
-        None
-    }
-}
-
-pub fn eq_enc(s: &str, enc: &Encoding) -> bool {
+pub fn eq_enc(s: &str, enc: &Encoding<'_>) -> bool {
     // strip qualifiers
     let s = s.trim_start_matches(QUALIFIERS);
 

@@ -13,7 +13,7 @@ pub struct CustomObject {
 impl CustomObject {
     fn new(class: &Class) -> Self {
         let obj = unsafe { runtime::class_createInstance(class, 0) };
-        CustomObject { obj: obj }
+        CustomObject { obj }
     }
 }
 
@@ -40,6 +40,7 @@ impl Drop for CustomObject {
 }
 
 #[derive(Eq, PartialEq)]
+#[repr(C)]
 pub struct CustomStruct {
     pub a: u64,
     pub b: u64,

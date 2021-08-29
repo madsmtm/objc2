@@ -12,8 +12,7 @@ which can be cloned to allow multiple references.
 Weak references may be created using the [`WeakId`](struct.WeakId.html) struct.
 
 ```
-# #[macro_use] extern crate objc;
-# extern crate objc_id;
+# use objc::msg_send;
 use objc::runtime::{Class, Object};
 use objc_id::{Id, WeakId};
 
@@ -38,9 +37,6 @@ assert!(weak.load().is_none());
 # }
 ```
 */
-
-#[macro_use]
-extern crate objc;
 
 pub use id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
 

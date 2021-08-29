@@ -1,5 +1,3 @@
-extern crate objc_encode;
-
 use objc_encode::{Encode, Encoding};
 
 #[cfg(target_pointer_width = "32")]

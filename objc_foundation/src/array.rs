@@ -6,7 +6,7 @@ use std::os::raw::c_void;
 use objc::runtime::{Class, Object};
 use objc_id::{Id, Owned, Ownership, ShareId, Shared};
 
-use {INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
+use super::{INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
 #[repr(isize)]
 #[derive(Clone, Copy)]
@@ -400,8 +400,8 @@ pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 #[cfg(test)]
 mod tests {
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
+    use crate::{INSObject, INSString, NSObject, NSString};
     use objc_id::Id;
-    use {INSObject, INSString, NSObject, NSString};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
         let mut vec = Vec::with_capacity(len);
@@ -453,7 +453,7 @@ mod tests {
         assert!(middle_objs[1] == array.object_at(2));
 
         let empty_objs = array.objects_in_range(1..1);
-        assert!(empty_objs.len() == 0);
+        assert!(empty_objs.is_empty());
 
         let all_objs = array.objects_in_range(0..4);
         assert!(all_objs.len() == 4);

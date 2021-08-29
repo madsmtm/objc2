@@ -3,13 +3,17 @@ use std::ops::Range;
 use std::os::raw::c_void;
 use std::slice;
 
+use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use block::{Block, ConcreteBlock};
 use objc_id::Id;
-use {INSCopying, INSMutableCopying, INSObject, NSRange};
 
 pub trait INSData: INSObject {
     fn len(&self) -> usize {
         unsafe { msg_send![self, length] }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     fn bytes(&self) -> &[u8] {
@@ -128,7 +132,7 @@ impl INSMutableCopying for NSMutableData {
 #[cfg(test)]
 mod tests {
     use super::{INSData, INSMutableData, NSData, NSMutableData};
-    use INSObject;
+    use crate::INSObject;
 
     #[test]
     fn test_bytes() {

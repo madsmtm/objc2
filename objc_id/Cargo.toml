@@ -2,6 +2,7 @@
 name = "objc_id"
 version = "0.1.1"
 authors = ["Steven Sheldon"]
+edition = "2018"
 
 description = "Rust smart pointers for Objective-C reference counting."
 keywords = ["objective-c", "osx", "ios"]

@@ -6,7 +6,7 @@ use std::ptr;
 use objc::runtime::Class;
 use objc_id::{Id, Owned, Ownership, ShareId};
 
-use {INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSSharedArray};
+use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSSharedArray};
 
 unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D>
 where
@@ -164,8 +164,8 @@ where
 #[cfg(test)]
 mod tests {
     use super::{INSDictionary, NSDictionary};
+    use crate::{INSArray, INSObject, INSString, NSObject, NSString};
     use objc_id::Id;
-    use {INSArray, INSObject, INSString, NSObject, NSString};
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
         let string = NSString::from_str(key);

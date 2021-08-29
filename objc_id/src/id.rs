@@ -46,7 +46,7 @@ where
 {
     unsafe fn new(ptr: StrongPtr) -> Id<T, O> {
         Id {
-            ptr: ptr,
+            ptr,
             item: PhantomData,
             own: PhantomData,
         }
@@ -54,8 +54,11 @@ where
 
     /// Constructs an `Id` from a pointer to an unretained object and
     /// retains it. Panics if the pointer is null.
-    /// Unsafe because the pointer must be to a valid object and
-    /// the caller must ensure the ownership is correct.
+    ///
+    /// # Safety
+    ///
+    /// The pointer must be to a valid object and the caller must ensure the
+    /// ownership is correct.
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(
             !ptr.is_null(),
@@ -67,8 +70,11 @@ where
     /// Constructs an `Id` from a pointer to a retained object; this won't
     /// retain the pointer, so the caller must ensure the object has a +1
     /// retain count. Panics if the pointer is null.
-    /// Unsafe because the pointer must be to a valid object and
-    /// the caller must ensure the ownership is correct.
+    ///
+    /// # Safety
+    ///
+    /// The pointer must be to a valid object and the caller must ensure the
+    /// ownership is correct.
     pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
         assert!(
             !ptr.is_null(),
@@ -125,10 +131,6 @@ where
     fn eq(&self, other: &Id<T, O>) -> bool {
         self.deref() == other.deref()
     }
-
-    fn ne(&self, other: &Id<T, O>) -> bool {
-        self.deref() != other.deref()
-    }
 }
 
 impl<T, O> Eq for Id<T, O> where T: Eq {}
@@ -149,13 +151,13 @@ impl<T, O> fmt::Debug for Id<T, O>
 where
     T: fmt::Debug,
 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.deref().fmt(f)
     }
 }
 
 impl<T, O> fmt::Pointer for Id<T, O> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Pointer::fmt(&self.ptr, f)
     }
 }
@@ -202,6 +204,7 @@ unsafe impl<T> Send for WeakId<T> where T: Sync {}
 mod tests {
     use super::{Id, ShareId, WeakId};
     use objc::runtime::Object;
+    use objc::{class, msg_send};
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }

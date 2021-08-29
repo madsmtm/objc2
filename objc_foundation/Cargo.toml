@@ -2,6 +2,7 @@
 name = "objc-foundation"
 version = "0.1.1"
 authors = ["Steven Sheldon"]
+edition = "2018"
 
 description = "Rust wrapper for Objective-C's Foundation framework."
 keywords = ["objective-c", "osx", "ios", "cocoa", "uikit"]

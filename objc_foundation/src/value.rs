@@ -1,7 +1,7 @@
 use std::any::Any;
 use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
-use std::mem;
+use std::mem::MaybeUninit;
 use std::os::raw::{c_char, c_void};
 use std::str;
 
@@ -9,19 +9,18 @@ use objc::runtime::Class;
 use objc::{Encode, Encoding};
 use objc_id::Id;
 
-use {INSCopying, INSObject};
+use super::{INSCopying, INSObject};
 
 pub trait INSValue: INSObject {
     type Value: 'static + Copy + Encode;
 
     fn value(&self) -> Self::Value {
         assert!(Self::Value::encode() == self.encoding());
+        let mut value = MaybeUninit::<Self::Value>::uninit();
+        let ptr = value.as_mut_ptr() as *mut c_void;
         unsafe {
-            let mut value = mem::uninitialized::<Self::Value>();
-            let value_ptr: *mut Self::Value = &mut value;
-            let bytes = value_ptr as *mut c_void;
-            let _: () = msg_send![self, getValue: bytes];
-            value
+            let _: () = msg_send![self, getValue: ptr];
+            value.assume_init()
         }
     }
 
@@ -79,8 +78,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use crate::{INSValue, NSValue};
     use objc::Encode;
-    use {INSValue, NSValue};
 
     #[test]
     fn test_value() {

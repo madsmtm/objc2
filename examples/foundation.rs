@@ -1,5 +1,3 @@
-extern crate objc_foundation;
-
 use objc_foundation::{
     INSArray, INSCopying, INSDictionary, INSObject, INSString, NSArray, NSDictionary, NSObject,
     NSString,

@@ -7,7 +7,7 @@ use std::slice;
 use objc::runtime::Object;
 use objc_id::Id;
 
-use INSObject;
+use super::INSObject;
 
 pub struct NSEnumerator<'a, T>
 where
@@ -21,6 +21,12 @@ impl<'a, T> NSEnumerator<'a, T>
 where
     T: INSObject,
 {
+    /// TODO
+    ///
+    /// # Safety
+    ///
+    /// The object pointer must be a valid `NSEnumerator` with `Owned`
+    /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
         NSEnumerator {
             id: Id::from_ptr(ptr),
@@ -98,7 +104,7 @@ pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration> {
 impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
     fn new(object: &C) -> NSFastEnumerator<C> {
         NSFastEnumerator {
-            object: object,
+            object,
 
             ptr: ptr::null(),
             end: ptr::null(),
@@ -129,7 +135,7 @@ impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
             }
 
             self.ptr = buf.as_ptr();
-            self.end = unsafe { self.ptr.offset(buf.len() as isize) };
+            self.end = unsafe { self.ptr.add(buf.len()) };
             true
         } else {
             self.ptr = ptr::null();
@@ -158,7 +164,7 @@ impl<'a, C: INSFastEnumeration> Iterator for NSFastEnumerator<'a, C> {
 #[cfg(test)]
 mod tests {
     use super::INSFastEnumeration;
-    use {INSArray, INSValue, NSArray, NSValue};
+    use crate::{INSArray, INSValue, NSArray, NSValue};
 
     #[test]
     fn test_enumerator() {

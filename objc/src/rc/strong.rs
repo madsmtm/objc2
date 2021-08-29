@@ -12,14 +12,20 @@ impl StrongPtr {
     /// Constructs a `StrongPtr` to a newly created object that already has a
     /// +1 retain count. This will not retain the object.
     /// When dropped, the object will be released.
-    /// Unsafe because the caller must ensure the given object pointer is valid.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure the given object pointer is valid.
     pub unsafe fn new(ptr: *mut Object) -> Self {
         StrongPtr(ptr)
     }
 
     /// Retains the given object and constructs a `StrongPtr` to it.
     /// When dropped, the object will be released.
-    /// Unsafe because the caller must ensure the given object pointer is valid.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure the given object pointer is valid.
     pub unsafe fn retain(ptr: *mut Object) -> Self {
         StrongPtr(runtime::objc_retain(ptr))
     }
@@ -65,7 +71,7 @@ impl Deref for StrongPtr {
 }
 
 impl fmt::Pointer for StrongPtr {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Pointer::fmt(&self.0, f)
     }
 }

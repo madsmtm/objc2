@@ -5,7 +5,7 @@ use std::str;
 
 use objc_id::{Id, ShareId};
 
-use INSObject;
+use super::INSObject;
 
 pub trait INSCopying: INSObject {
     type Output: INSObject;
@@ -34,6 +34,10 @@ const UTF8_ENCODING: usize = 4;
 pub trait INSString: INSObject {
     fn len(&self) -> usize {
         unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     fn as_str(&self) -> &str {

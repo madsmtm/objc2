@@ -6,7 +6,6 @@ To check for a class that may not exist, use `Class::get`.
 
 # Example
 ``` no_run
-# #[macro_use] extern crate objc;
 # fn main() {
 let cls = class!(NSObject);
 # }
@@ -31,7 +30,6 @@ Registers a selector, returning a `Sel`.
 
 # Example
 ```
-# #[macro_use] extern crate objc;
 # fn main() {
 let sel = sel!(description);
 let sel = sel!(setObject:forKey:);
@@ -64,7 +62,6 @@ Variadic arguments are not currently supported.
 
 # Example
 ``` no_run
-# #[macro_use] extern crate objc;
 # use objc::runtime::Object;
 # fn main() {
 # unsafe {

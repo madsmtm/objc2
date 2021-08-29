@@ -36,7 +36,7 @@ pub enum Encoding<'a> {
 }
 
 impl fmt::Display for Encoding<'_> {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         use Encoding::*;
         let code = match *self {
             Char => "c",
@@ -94,7 +94,7 @@ impl PartialEq<str> for Encoding<'_> {
 }
 
 impl PartialEq<Encoding<'_>> for str {
-    fn eq(&self, other: &Encoding) -> bool {
+    fn eq(&self, other: &Encoding<'_>) -> bool {
         parse::eq_enc(self, other)
     }
 }
