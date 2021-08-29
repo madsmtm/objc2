@@ -54,8 +54,8 @@ encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
-    use objc_encode::Encode;
     use crate::runtime::{Class, Object, Sel};
+    use objc_encode::Encode;
 
     #[test]
     fn test_encode() {

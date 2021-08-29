@@ -1,9 +1,9 @@
 #[macro_use]
 extern crate objc;
 
-use objc::Encode;
 use objc::rc::StrongPtr;
 use objc::runtime::{Class, Object};
+use objc::Encode;
 
 fn main() {
     // Get a class
@@ -25,9 +25,7 @@ fn main() {
     println!("NSObject address: {:p}", obj);
 
     // Access an ivar of the object
-    let isa: *const Class = unsafe {
-        *(**obj).get_ivar("isa")
-    };
+    let isa: *const Class = unsafe { *(**obj).get_ivar("isa") };
     println!("NSObject isa: {:?}", isa);
 
     // Inspect a method of the class
@@ -38,8 +36,6 @@ fn main() {
     assert!(*hash_return == usize::ENCODING);
 
     // Invoke a method on the object
-    let hash: usize = unsafe {
-        msg_send![*obj, hash]
-    };
+    let hash: usize = unsafe { msg_send![*obj, hash] };
     println!("NSObject hash: {}", hash);
 }

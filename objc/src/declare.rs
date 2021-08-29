@@ -38,7 +38,7 @@ use std::ffi::CString;
 use std::mem;
 use std::ptr;
 
-use crate::runtime::{BOOL, Class, Imp, NO, Object, Protocol, Sel, self};
+use crate::runtime::{self, Class, Imp, Object, Protocol, Sel, BOOL, NO};
 use crate::{Encode, EncodeArguments, Encoding, Message};
 
 /// Types that can be used as the implementation of an Objective-C method.
@@ -93,8 +93,7 @@ fn count_args(sel: Sel) -> usize {
 
 fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
-    let mut types = format!("{}{}{}",
-        ret, <*mut Object>::ENCODING, Sel::ENCODING);
+    let mut types = format!("{}{}{}", ret, <*mut Object>::ENCODING, Sel::ENCODING);
     for enc in args {
         use std::fmt::Write;
         write!(&mut types, "{}", enc).unwrap();
@@ -117,13 +116,10 @@ pub struct ClassDecl {
 }
 
 impl ClassDecl {
-    fn with_superclass(name: &str, superclass: Option<&Class>)
-            -> Option<ClassDecl> {
+    fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<ClassDecl> {
         let name = CString::new(name).unwrap();
         let super_ptr = superclass.map_or(ptr::null(), |c| c);
-        let cls = unsafe {
-            runtime::objc_allocateClassPair(super_ptr, name.as_ptr(), 0)
-        };
+        let cls = unsafe { runtime::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
         if cls.is_null() {
             None
         } else {
@@ -150,8 +146,7 @@ impl ClassDecl {
     Functionality it expects, like implementations of `-retain` and `-release`
     used by ARC, will not be present otherwise.
     */
-    pub fn root(name: &str, intitialize_fn: extern fn(&Class, Sel))
-            -> Option<ClassDecl> {
+    pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<ClassDecl> {
         let mut decl = ClassDecl::with_superclass(name, None);
         if let Some(ref mut decl) = decl {
             unsafe {
@@ -167,17 +162,20 @@ impl ClassDecl {
     /// Unsafe because the caller must ensure that the types match those that
     /// are expected when the method is invoked from Objective-C.
     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-            where F: MethodImplementation<Callee=Object> {
+    where
+        F: MethodImplementation<Callee = Object>,
+    {
         let encs = F::Args::ENCODINGS;
         let sel_args = count_args(sel);
-        assert!(sel_args == encs.len(),
+        assert!(
+            sel_args == encs.len(),
             "Selector accepts {} arguments, but function accepts {}",
-            sel_args, encs.len(),
+            sel_args,
+            encs.len(),
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
-        let success = runtime::class_addMethod(self.cls, sel, func.imp(),
-            types.as_ptr());
+        let success = runtime::class_addMethod(self.cls, sel, func.imp(), types.as_ptr());
         assert!(success != NO, "Failed to add method {:?}", sel);
     }
 
@@ -187,31 +185,36 @@ impl ClassDecl {
     /// Unsafe because the caller must ensure that the types match those that
     /// are expected when the method is invoked from Objective-C.
     pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
-            where F: MethodImplementation<Callee=Class> {
+    where
+        F: MethodImplementation<Callee = Class>,
+    {
         let encs = F::Args::ENCODINGS;
         let sel_args = count_args(sel);
-        assert!(sel_args == encs.len(),
+        assert!(
+            sel_args == encs.len(),
             "Selector accepts {} arguments, but function accepts {}",
-            sel_args, encs.len(),
+            sel_args,
+            encs.len(),
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let metaclass = (*self.cls).metaclass() as *const _ as *mut _;
-        let success = runtime::class_addMethod(metaclass, sel, func.imp(),
-            types.as_ptr());
+        let success = runtime::class_addMethod(metaclass, sel, func.imp(), types.as_ptr());
         assert!(success != NO, "Failed to add class method {:?}", sel);
     }
 
     /// Adds an ivar with type `T` and the provided name to self.
     /// Panics if the ivar wasn't successfully added.
-    pub fn add_ivar<T>(&mut self, name: &str) where T: Encode {
+    pub fn add_ivar<T>(&mut self, name: &str)
+    where
+        T: Encode,
+    {
         let c_name = CString::new(name).unwrap();
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         let size = mem::size_of::<T>();
         let align = log2_align_of::<T>();
         let success = unsafe {
-            runtime::class_addIvar(self.cls, c_name.as_ptr(), size, align,
-                encoding.as_ptr())
+            runtime::class_addIvar(self.cls, c_name.as_ptr(), size, align, encoding.as_ptr())
         };
         assert!(success != NO, "Failed to add ivar {}", name);
     }
@@ -247,7 +250,7 @@ impl Drop for ClassDecl {
 /// A type for declaring a new protocol and adding new methods to it
 /// before registering it.
 pub struct ProtocolDecl {
-    proto: *mut Protocol
+    proto: *mut Protocol,
 }
 
 impl ProtocolDecl {
@@ -255,9 +258,7 @@ impl ProtocolDecl {
     /// protocol couldn't be allocated.
     pub fn new(name: &str) -> Option<ProtocolDecl> {
         let c_name = CString::new(name).unwrap();
-        let proto = unsafe {
-            runtime::objc_allocateProtocol(c_name.as_ptr())
-        };
+        let proto = unsafe { runtime::objc_allocateProtocol(c_name.as_ptr()) };
         if proto.is_null() {
             None
         } else {
@@ -265,34 +266,50 @@ impl ProtocolDecl {
         }
     }
 
-    fn add_method_description_common<Args, Ret>(&mut self, sel: Sel, is_required: bool,
-            is_instance_method: bool)
-            where Args: EncodeArguments,
-                  Ret: Encode {
+    fn add_method_description_common<Args, Ret>(
+        &mut self,
+        sel: Sel,
+        is_required: bool,
+        is_instance_method: bool,
+    ) where
+        Args: EncodeArguments,
+        Ret: Encode,
+    {
         let encs = Args::ENCODINGS;
         let sel_args = count_args(sel);
-        assert!(sel_args == encs.len(),
+        assert!(
+            sel_args == encs.len(),
             "Selector accepts {} arguments, but function accepts {}",
-            sel_args, encs.len(),
+            sel_args,
+            encs.len(),
         );
         let types = method_type_encoding(&Ret::ENCODING, encs);
         unsafe {
             runtime::protocol_addMethodDescription(
-                self.proto, sel, types.as_ptr(), is_required as BOOL, is_instance_method as BOOL);
+                self.proto,
+                sel,
+                types.as_ptr(),
+                is_required as BOOL,
+                is_instance_method as BOOL,
+            );
         }
     }
 
     /// Adds an instance method declaration with a given description to self.
     pub fn add_method_description<Args, Ret>(&mut self, sel: Sel, is_required: bool)
-            where Args: EncodeArguments,
-                  Ret: Encode {
+    where
+        Args: EncodeArguments,
+        Ret: Encode,
+    {
         self.add_method_description_common::<Args, Ret>(sel, is_required, true)
     }
 
     /// Adds a class method declaration with a given description to self.
     pub fn add_class_method_description<Args, Ret>(&mut self, sel: Sel, is_required: bool)
-            where Args: EncodeArguments,
-                  Ret: Encode {
+    where
+        Args: EncodeArguments,
+        Ret: Encode,
+    {
         self.add_method_description_common::<Args, Ret>(sel, is_required, false)
     }
 

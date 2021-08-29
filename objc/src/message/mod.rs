@@ -8,20 +8,22 @@ use crate::{Encode, EncodeArguments};
 
 #[cfg(feature = "exception")]
 macro_rules! objc_try {
-    ($b:block) => (
-        $crate::exception::catch_exception(|| $b).map_err(|exception|
+    ($b:block) => {
+        $crate::exception::catch_exception(|| $b).map_err(|exception| {
             if exception.is_null() {
                 MessageError("Uncaught exception nil".to_owned())
             } else {
                 MessageError(format!("Uncaught exception {:?}", &**exception))
             }
-        )
-    )
+        })
+    };
 }
 
 #[cfg(not(feature = "exception"))]
 macro_rules! objc_try {
-    ($b:block) => (Ok($b))
+    ($b:block) => {
+        Ok($b)
+    };
 }
 
 mod verify;
@@ -33,8 +35,8 @@ mod platform;
 #[path = "gnustep.rs"]
 mod platform;
 
-use self::platform::{send_unverified, send_super_unverified};
-use self::verify::{VerificationError, verify_message_signature};
+use self::platform::{send_super_unverified, send_unverified};
+use self::verify::{verify_message_signature, VerificationError};
 
 /// Specifies the superclass of an instance.
 #[repr(C)]
@@ -59,17 +61,22 @@ pub unsafe trait Message {
     `msg_send!` macro rather than this method.
     */
     #[cfg(not(feature = "verify_message"))]
-    unsafe fn send_message<A, R>(&self, sel: Sel, args: A)
-            -> Result<R, MessageError>
-            where Self: Sized, A: MessageArguments, R: Any {
+    unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
+    where
+        Self: Sized,
+        A: MessageArguments,
+        R: Any,
+    {
         send_message(self, sel, args)
     }
 
     #[cfg(feature = "verify_message")]
-    unsafe fn send_message<A, R>(&self, sel: Sel, args: A)
-            -> Result<R, MessageError>
-            where Self: Sized, A: MessageArguments + EncodeArguments,
-            R: Any + Encode {
+    unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
+    where
+        Self: Sized,
+        A: MessageArguments + EncodeArguments,
+        R: Any + Encode,
+    {
         send_message(self, sel, args)
     }
 
@@ -97,16 +104,19 @@ pub unsafe trait Message {
     ```
     */
     fn verify_message<A, R>(&self, sel: Sel) -> Result<(), MessageError>
-            where Self: Sized, A: EncodeArguments, R: Encode {
+    where
+        Self: Sized,
+        A: EncodeArguments,
+        R: Encode,
+    {
         let obj = unsafe { &*(self as *const _ as *const Object) };
-        verify_message_signature::<A, R>(obj.class(), sel)
-            .map_err(MessageError::from)
+        verify_message_signature::<A, R>(obj.class(), sel).map_err(MessageError::from)
     }
 }
 
-unsafe impl Message for Object { }
+unsafe impl Message for Object {}
 
-unsafe impl Message for Class { }
+unsafe impl Message for Class {}
 
 /// Types that may be used as the arguments of an Objective-C message.
 pub trait MessageArguments: Sized {
@@ -116,7 +126,8 @@ pub trait MessageArguments: Sized {
     /// be called directly; instead, use the `msg_send!` macro or, in cases
     /// with a dynamic selector, the `Message::send_message` method.
     unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R
-            where R: Any;
+    where
+        R: Any;
 }
 
 macro_rules! message_args_impl {
@@ -143,8 +154,33 @@ message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G);
 message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
 message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
 message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
-message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K);
-message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L);
+message_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K
+);
+message_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L
+);
 
 /**
 An error encountered while attempting to send a message.
@@ -179,19 +215,24 @@ impl<'a> From<VerificationError<'a>> for MessageError {
 #[doc(hidden)]
 #[inline(always)]
 #[cfg(not(feature = "verify_message"))]
-pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A)
-        -> Result<R, MessageError>
-        where T: Message, A: MessageArguments, R: Any {
+pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A) -> Result<R, MessageError>
+where
+    T: Message,
+    A: MessageArguments,
+    R: Any,
+{
     send_unverified(obj, sel, args)
 }
 
 #[doc(hidden)]
 #[inline(always)]
 #[cfg(feature = "verify_message")]
-pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A)
-        -> Result<R, MessageError>
-        where T: Message, A: MessageArguments + EncodeArguments,
-        R: Any + Encode {
+pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A) -> Result<R, MessageError>
+where
+    T: Message,
+    A: MessageArguments + EncodeArguments,
+    R: Any + Encode,
+{
     let cls = if obj.is_null() {
         return Err(VerificationError::NilReceiver(sel).into());
     } else {
@@ -205,19 +246,34 @@ pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A)
 #[doc(hidden)]
 #[inline(always)]
 #[cfg(not(feature = "verify_message"))]
-pub unsafe fn send_super_message<T, A, R>(obj: *const T, superclass: &Class,
-        sel: Sel, args: A) -> Result<R, MessageError>
-        where T: Message, A: MessageArguments, R: Any {
+pub unsafe fn send_super_message<T, A, R>(
+    obj: *const T,
+    superclass: &Class,
+    sel: Sel,
+    args: A,
+) -> Result<R, MessageError>
+where
+    T: Message,
+    A: MessageArguments,
+    R: Any,
+{
     send_super_unverified(obj, superclass, sel, args)
 }
 
 #[doc(hidden)]
 #[inline(always)]
 #[cfg(feature = "verify_message")]
-pub unsafe fn send_super_message<T, A, R>(obj: *const T, superclass: &Class,
-        sel: Sel, args: A) -> Result<R, MessageError>
-        where T: Message, A: MessageArguments + EncodeArguments,
-        R: Any + Encode {
+pub unsafe fn send_super_message<T, A, R>(
+    obj: *const T,
+    superclass: &Class,
+    sel: Sel,
+    args: A,
+) -> Result<R, MessageError>
+where
+    T: Message,
+    A: MessageArguments + EncodeArguments,
+    R: Any + Encode,
+{
     if obj.is_null() {
         return Err(VerificationError::NilReceiver(sel).into());
     }
@@ -228,9 +284,9 @@ pub unsafe fn send_super_message<T, A, R>(obj: *const T, superclass: &Class,
 
 #[cfg(test)]
 mod tests {
-    use crate::test_utils;
-    use crate::runtime::Object;
     use super::Message;
+    use crate::runtime::Object;
+    use crate::test_utils;
 
     #[test]
     fn test_send_message() {
@@ -245,10 +301,13 @@ mod tests {
     #[test]
     fn test_send_message_stret() {
         let obj = test_utils::custom_object();
-        let result: test_utils::CustomStruct = unsafe {
-            msg_send![obj, customStruct]
+        let result: test_utils::CustomStruct = unsafe { msg_send![obj, customStruct] };
+        let expected = test_utils::CustomStruct {
+            a: 1,
+            b: 2,
+            c: 3,
+            d: 4,
         };
-        let expected = test_utils::CustomStruct { a: 1, b:2, c: 3, d: 4 };
         assert!(result == expected);
     }
 
@@ -256,19 +315,13 @@ mod tests {
     #[test]
     fn test_send_message_nil() {
         let nil: *mut Object = ::std::ptr::null_mut();
-        let result: usize = unsafe {
-            msg_send![nil, hash]
-        };
+        let result: usize = unsafe { msg_send![nil, hash] };
         assert!(result == 0);
 
-        let result: *mut Object = unsafe {
-            msg_send![nil, description]
-        };
+        let result: *mut Object = unsafe { msg_send![nil, description] };
         assert!(result.is_null());
 
-        let result: f64 = unsafe {
-            msg_send![nil, doubleValue]
-        };
+        let result: f64 = unsafe { msg_send![nil, doubleValue] };
         assert!(result == 0.0);
     }
 

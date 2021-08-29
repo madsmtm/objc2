@@ -5,16 +5,19 @@ use std::os::raw::{c_int, c_void};
 use std::ptr;
 
 #[link(name = "objc", kind = "dylib")]
-extern { }
+extern "C" {}
 
-extern {
+extern "C" {
     fn RustObjCExceptionThrow(exception: *mut c_void);
-    fn RustObjCExceptionTryCatch(try: extern fn(*mut c_void),
-            context: *mut c_void, error: *mut *mut c_void) -> c_int;
+    fn RustObjCExceptionTryCatch(
+        try: extern "C" fn(*mut c_void),
+        context: *mut c_void,
+        error: *mut *mut c_void,
+    ) -> c_int;
 }
 
 /// An opaque type representing any Objective-C object thrown as an exception.
-pub enum Exception { }
+pub enum Exception {}
 
 /// Throws an Objective-C exception.
 /// The argument must be a pointer to an Objective-C object.
@@ -26,16 +29,20 @@ pub unsafe fn throw(exception: *mut Exception) -> ! {
 }
 
 unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut Exception>
-        where F: FnOnce() {
-    extern fn try_objc_execute_closure<F>(closure: &mut Option<F>)
-            where F: FnOnce() {
+where
+    F: FnOnce(),
+{
+    extern "C" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
+    where
+        F: FnOnce(),
+    {
         // This is always passed Some, so it's safe to unwrap
         let closure = closure.take().unwrap();
         closure();
     }
 
-    let f: extern fn(&mut Option<F>) = try_objc_execute_closure;
-    let f: extern fn(*mut c_void) = mem::transmute(f);
+    let f: extern "C" fn(&mut Option<F>) = try_objc_execute_closure;
+    let f: extern "C" fn(*mut c_void) = mem::transmute(f);
     // Wrap the closure in an Option so it can be taken
     let mut closure = Some(closure);
     let context = &mut closure as *mut _ as *mut c_void;
@@ -60,7 +67,9 @@ unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut Exception>
 /// Unsafe because this encourages unwinding through the closure from
 /// Objective-C, which is not safe.
 pub unsafe fn try<F, R>(closure: F) -> Result<R, *mut Exception>
-        where F: FnOnce() -> R {
+where
+    F: FnOnce() -> R,
+{
     let mut value = None;
     let result = {
         let value_ref = &mut value;
@@ -74,8 +83,8 @@ pub unsafe fn try<F, R>(closure: F) -> Result<R, *mut Exception>
 
 #[cfg(test)]
 mod tests {
-    use std::ptr;
     use super::{throw, try};
+    use std::ptr;
 
     #[test]
     fn test_try() {

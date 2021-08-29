@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::runtime::{Class, Method, Object, Sel};
-use crate::{Encode, Encoding, EncodeArguments};
+use crate::{Encode, EncodeArguments, Encoding};
 
 pub enum VerificationError<'a> {
     NilReceiver(Sel),
@@ -22,26 +22,44 @@ impl<'a> fmt::Display for VerificationError<'a> {
             }
             VerificationError::MismatchedReturn(method, ret) => {
                 let expected_ret = method.return_type();
-                write!(f, "Return type code {} does not match expected {} for method {:?}",
-                    ret, expected_ret, method.name())
+                write!(
+                    f,
+                    "Return type code {} does not match expected {} for method {:?}",
+                    ret,
+                    expected_ret,
+                    method.name()
+                )
             }
             VerificationError::MismatchedArgumentsCount(method, count) => {
                 let expected_count = method.arguments_count();
-                write!(f, "Method {:?} accepts {} arguments, but {} were given",
-                    method.name(), expected_count, count)
+                write!(
+                    f,
+                    "Method {:?} accepts {} arguments, but {} were given",
+                    method.name(),
+                    expected_count,
+                    count
+                )
             }
             VerificationError::MismatchedArgument(method, i, arg) => {
                 let expected = method.argument_type(i).unwrap();
-                write!(f, "Method {:?} expected argument at index {} with type code {} but was given {}",
-                    method.name(), i, expected, arg)
+                write!(
+                    f,
+                    "Method {:?} expected argument at index {} with type code {} but was given {}",
+                    method.name(),
+                    i,
+                    expected,
+                    arg
+                )
             }
         }
     }
 }
 
-pub fn verify_message_signature<A, R>(cls: &Class, sel: Sel)
-        -> Result<(), VerificationError>
-        where A: EncodeArguments, R: Encode {
+pub fn verify_message_signature<A, R>(cls: &Class, sel: Sel) -> Result<(), VerificationError>
+where
+    A: EncodeArguments,
+    R: Encode,
+{
     let method = match cls.instance_method(sel) {
         Some(method) => method,
         None => return Err(VerificationError::MethodNotFound(cls, sel)),

@@ -12,13 +12,13 @@ documentation = "http://ssheldon.github.io/rust-objc/objc/"
 license = "MIT"
 
 exclude = [
-  ".gitignore",
-  ".travis.yml",
-  "doc.sh",
-  "travis_install.sh",
-  "travis_test.sh",
-  "tests-ios/**",
- ]
+    ".gitignore",
+    ".travis.yml",
+    "doc.sh",
+    "travis_install.sh",
+    "travis_test.sh",
+    "tests-ios/**",
+]
 
 [features]
 exception = ["objc_exception"]

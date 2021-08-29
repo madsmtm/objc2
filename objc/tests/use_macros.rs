@@ -2,8 +2,8 @@
 
 extern crate objc;
 
-use objc::{class, msg_send, sel};
 use objc::runtime::Object;
+use objc::{class, msg_send, sel};
 
 #[test]
 fn use_class_and_msg_send() {
@@ -20,4 +20,3 @@ fn use_sel() {
     let _sel = sel!(description);
     let _sel = sel!(setObject:forKey:);
 }
-

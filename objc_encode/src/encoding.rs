@@ -39,26 +39,26 @@ impl fmt::Display for Encoding<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         use Encoding::*;
         let code = match *self {
-            Char      => "c",
-            Short     => "s",
-            Int       => "i",
-            Long      => "l",
-            LongLong  => "q",
-            UChar     => "C",
-            UShort    => "S",
-            UInt      => "I",
-            ULong     => "L",
+            Char => "c",
+            Short => "s",
+            Int => "i",
+            Long => "l",
+            LongLong => "q",
+            UChar => "C",
+            UShort => "S",
+            UInt => "I",
+            ULong => "L",
             ULongLong => "Q",
-            Float     => "f",
-            Double    => "d",
-            Bool      => "B",
-            Void      => "v",
-            String    => "*",
-            Object    => "@",
-            Block     => "@?",
-            Class     => "#",
-            Sel       => ":",
-            Unknown   => "?",
+            Float => "f",
+            Double => "d",
+            Bool => "B",
+            Void => "v",
+            String => "*",
+            Object => "@",
+            Block => "@?",
+            Class => "#",
+            Sel => ":",
+            Unknown => "?",
             BitField(b) => {
                 return write!(formatter, "b{}", b);
             }
@@ -101,8 +101,8 @@ impl PartialEq<Encoding<'_>> for str {
 
 #[cfg(test)]
 mod tests {
-    use std::string::ToString;
     use super::Encoding;
+    use std::string::ToString;
 
     #[test]
     fn test_array_display() {

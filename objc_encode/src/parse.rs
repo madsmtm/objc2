@@ -15,26 +15,26 @@ const QUALIFIERS: &'static [char] = &[
 fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Option<&'a str> {
     use Encoding::*;
     let code = match *enc {
-        Char      => "c",
-        Short     => "s",
-        Int       => "i",
-        Long      => "l",
-        LongLong  => "q",
-        UChar     => "C",
-        UShort    => "S",
-        UInt      => "I",
-        ULong     => "L",
+        Char => "c",
+        Short => "s",
+        Int => "i",
+        Long => "l",
+        LongLong => "q",
+        UChar => "C",
+        UShort => "S",
+        UInt => "I",
+        ULong => "L",
         ULongLong => "Q",
-        Float     => "f",
-        Double    => "d",
-        Bool      => "B",
-        Void      => "v",
-        String    => "*",
-        Object    => "@",
-        Block     => "@?",
-        Class     => "#",
-        Sel       => ":",
-        Unknown   => "?",
+        Float => "f",
+        Double => "d",
+        Bool => "B",
+        Void => "v",
+        String => "*",
+        Object => "@",
+        Block => "@?",
+        Class => "#",
+        Sel => ":",
+        Unknown => "?",
         BitField(b) => {
             let s = rm_prefix(s, "b")?;
             return rm_int_prefix(s, b);
@@ -85,8 +85,7 @@ fn chomp_int(s: &str) -> Option<(u32, &str)> {
 }
 
 fn rm_int_prefix(s: &str, other: u32) -> Option<&str> {
-    chomp_int(s)
-        .and_then(|(n, t)| if other == n { Some(t) } else { None })
+    chomp_int(s).and_then(|(n, t)| if other == n { Some(t) } else { None })
 }
 
 fn rm_prefix<'a>(s: &'a str, other: &str) -> Option<&'a str> {
@@ -112,17 +111,16 @@ mod tests {
 
     #[test]
     fn test_nested() {
-        let enc = Encoding::Struct("A", &[
-            Encoding::Struct("B", &[
+        let enc = Encoding::Struct(
+            "A",
+            &[
+                Encoding::Struct("B", &[Encoding::Char, Encoding::Int]),
                 Encoding::Char,
                 Encoding::Int,
-            ]),
-            Encoding::Char,
-            Encoding::Int,
-        ]);
+            ],
+        );
         assert!(eq_enc("{A={B=ci}ci}", &enc));
         assert!(!eq_enc("{A={B=ci}ci", &enc));
-
     }
 
     #[test]

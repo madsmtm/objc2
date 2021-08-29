@@ -84,7 +84,7 @@
 * C types are now used from `std::os::raw` rather than `libc`. This means
   `Encode` may not be implemented for `libc` types; switch them to the
   `std::os::raw` equivalents instead. This avoids an issue that would arise
-  from simultaneously using different versions of the libc crate. 
+  from simultaneously using different versions of the libc crate.
 
 * Dynamic messaging was moved into the `Message` trait; instead of
   `().send(obj, sel!(description))`, use
@@ -110,7 +110,7 @@
 ### Fixed
 
 * Corrected alignment of ivars in `ClassDecl`; declared classes may now have a
-  smaller size. 
+  smaller size.
 
 * With the `"exception"` or `"verify_message"` feature enabled, panics from
   `msg_send!` will now be triggered from the line and file where the macro is

@@ -4,15 +4,15 @@ use std::ops::{Index, Range};
 use std::os::raw::c_void;
 
 use objc::runtime::{Class, Object};
-use objc_id::{Id, Owned, Ownership, Shared, ShareId};
+use objc_id::{Id, Owned, Ownership, ShareId, Shared};
 
 use {INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
 #[repr(isize)]
 #[derive(Clone, Copy)]
 pub enum NSComparisonResult {
-    Ascending  = -1,
-    Same       = 0,
+    Ascending = -1,
+    Same = 0,
     Descending = 1,
 }
 
@@ -44,15 +44,24 @@ pub struct NSRange {
 impl NSRange {
     pub fn from_range(range: Range<usize>) -> NSRange {
         assert!(range.end >= range.start);
-        NSRange { location: range.start, length: range.end - range.start }
+        NSRange {
+            location: range.start,
+            length: range.end - range.start,
+        }
     }
 
     pub fn as_range(&self) -> Range<usize> {
-        Range { start: self.location, end: self.location + self.length }
+        Range {
+            start: self.location,
+            end: self.location + self.length,
+        }
     }
 }
 
-unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A> where A: INSArray {
+unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A>
+where
+    A: INSArray,
+{
     let cls = A::class();
     let obj: *mut A = msg_send![cls, alloc];
     let obj: *mut A = msg_send![obj, initWithObjects:refs.as_ptr()
@@ -60,19 +69,17 @@ unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A> where A: INSArray {
     Id::from_retained_ptr(obj)
 }
 
-pub trait INSArray : INSObject {
+pub trait INSArray: INSObject {
     type Item: INSObject;
     type Own: Ownership;
 
     fn count(&self) -> usize {
-        unsafe {
-            msg_send![self, count]
-        }
+        unsafe { msg_send![self, count] }
     }
 
     fn object_at(&self, index: usize) -> &Self::Item {
         unsafe {
-            let obj: *const Self::Item = msg_send![self, objectAtIndex:index];
+            let obj: *const Self::Item = msg_send![self, objectAtIndex: index];
             &*obj
         }
     }
@@ -80,14 +87,22 @@ pub trait INSArray : INSObject {
     fn first_object(&self) -> Option<&Self::Item> {
         unsafe {
             let obj: *const Self::Item = msg_send![self, firstObject];
-            if obj.is_null() { None } else { Some(&*obj) }
+            if obj.is_null() {
+                None
+            } else {
+                Some(&*obj)
+            }
         }
     }
 
     fn last_object(&self) -> Option<&Self::Item> {
         unsafe {
             let obj: *const Self::Item = msg_send![self, lastObject];
-            if obj.is_null() { None } else { Some(&*obj) }
+            if obj.is_null() {
+                None
+            } else {
+                Some(&*obj)
+            }
         }
     }
 
@@ -100,9 +115,7 @@ pub trait INSArray : INSObject {
 
     fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self> {
         let refs: Vec<&Self::Item> = vec.iter().map(|obj| &**obj).collect();
-        unsafe {
-            from_refs(&refs)
-        }
+        unsafe { from_refs(&refs) }
     }
 
     fn objects_in_range(&self, range: Range<usize>) -> Vec<&Self::Item> {
@@ -120,42 +133,53 @@ pub trait INSArray : INSObject {
     }
 
     fn into_vec(array: Id<Self>) -> Vec<Id<Self::Item, Self::Own>> {
-        array.to_vec().into_iter().map(|obj| unsafe {
-            let obj_ptr: *const Self::Item = obj;
-            Id::from_ptr(obj_ptr as *mut Self::Item)
-        }).collect()
+        array
+            .to_vec()
+            .into_iter()
+            .map(|obj| unsafe {
+                let obj_ptr: *const Self::Item = obj;
+                Id::from_ptr(obj_ptr as *mut Self::Item)
+            })
+            .collect()
     }
 
     fn mut_object_at(&mut self, index: usize) -> &mut Self::Item
-            where Self: INSArray<Own=Owned> {
+    where
+        Self: INSArray<Own = Owned>,
+    {
         unsafe {
-            let result: *mut Self::Item = msg_send![self, objectAtIndex:index];
+            let result: *mut Self::Item = msg_send![self, objectAtIndex: index];
             &mut *result
         }
     }
 
     fn shared_object_at(&self, index: usize) -> ShareId<Self::Item>
-            where Self: INSArray<Own=Shared> {
+    where
+        Self: INSArray<Own = Shared>,
+    {
         let obj = self.object_at(index);
-        unsafe {
-            Id::from_ptr(obj as *const _ as *mut Self::Item)
-        }
+        unsafe { Id::from_ptr(obj as *const _ as *mut Self::Item) }
     }
 
     fn from_slice(slice: &[ShareId<Self::Item>]) -> Id<Self>
-            where Self: INSArray<Own=Shared> {
+    where
+        Self: INSArray<Own = Shared>,
+    {
         let refs: Vec<&Self::Item> = slice.iter().map(|obj| &**obj).collect();
-        unsafe {
-            from_refs(&refs)
-        }
+        unsafe { from_refs(&refs) }
     }
 
     fn to_shared_vec(&self) -> Vec<ShareId<Self::Item>>
-            where Self: INSArray<Own=Shared> {
-        self.to_vec().into_iter().map(|obj| unsafe {
-            let obj_ptr: *const Self::Item = obj;
-            Id::from_ptr(obj_ptr as *mut Self::Item)
-        }).collect()
+    where
+        Self: INSArray<Own = Shared>,
+    {
+        self.to_vec()
+            .into_iter()
+            .map(|obj| unsafe {
+                let obj_ptr: *const Self::Item = obj;
+                Id::from_ptr(obj_ptr as *mut Self::Item)
+            })
+            .collect()
     }
 }
 
@@ -165,31 +189,52 @@ pub struct NSArray<T, O = Owned> {
 
 object_impl!(NSArray<T, O>);
 
-impl<T, O> INSObject for NSArray<T, O> where T: INSObject, O: Ownership {
+impl<T, O> INSObject for NSArray<T, O>
+where
+    T: INSObject,
+    O: Ownership,
+{
     fn class() -> &'static Class {
         class!(NSArray)
     }
 }
 
-impl<T, O> INSArray for NSArray<T, O> where T: INSObject, O: Ownership {
+impl<T, O> INSArray for NSArray<T, O>
+where
+    T: INSObject,
+    O: Ownership,
+{
     type Item = T;
     type Own = O;
 }
 
-impl<T> INSCopying for NSArray<T, Shared> where T: INSObject {
+impl<T> INSCopying for NSArray<T, Shared>
+where
+    T: INSObject,
+{
     type Output = NSSharedArray<T>;
 }
 
-impl<T> INSMutableCopying for NSArray<T, Shared> where T: INSObject {
+impl<T> INSMutableCopying for NSArray<T, Shared>
+where
+    T: INSObject,
+{
     type Output = NSMutableSharedArray<T>;
 }
 
 impl<T, O> INSFastEnumeration for NSArray<T, O>
-        where T: INSObject, O: Ownership {
+where
+    T: INSObject,
+    O: Ownership,
+{
     type Item = T;
 }
 
-impl<T, O> Index<usize> for NSArray<T, O> where T: INSObject, O: Ownership {
+impl<T, O> Index<usize> for NSArray<T, O>
+where
+    T: INSObject,
+    O: Ownership,
+{
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -199,7 +244,7 @@ impl<T, O> Index<usize> for NSArray<T, O> where T: INSObject, O: Ownership {
 
 pub type NSSharedArray<T> = NSArray<T, Shared>;
 
-pub trait INSMutableArray : INSArray {
+pub trait INSMutableArray: INSArray {
     fn add_object(&mut self, obj: Id<Self::Item, Self::Own>) {
         unsafe {
             let _: () = msg_send![self, addObject:&*obj];
@@ -212,8 +257,11 @@ pub trait INSMutableArray : INSArray {
         }
     }
 
-    fn replace_object_at(&mut self, index: usize, obj: Id<Self::Item, Self::Own>) ->
-            Id<Self::Item, Self::Own> {
+    fn replace_object_at(
+        &mut self,
+        index: usize,
+        obj: Id<Self::Item, Self::Own>,
+    ) -> Id<Self::Item, Self::Own> {
         let old_obj = unsafe {
             let obj = self.object_at(index);
             Id::from_ptr(obj as *const _ as *mut Self::Item)
@@ -231,15 +279,15 @@ pub trait INSMutableArray : INSArray {
             Id::from_ptr(obj as *const _ as *mut Self::Item)
         };
         unsafe {
-            let _: () = msg_send![self, removeObjectAtIndex:index];
+            let _: () = msg_send![self, removeObjectAtIndex: index];
         }
         obj
     }
 
     fn remove_last_object(&mut self) -> Id<Self::Item, Self::Own> {
-        let obj = self.last_object().map(|obj| unsafe {
-            Id::from_ptr(obj as *const _ as *mut Self::Item)
-        });
+        let obj = self
+            .last_object()
+            .map(|obj| unsafe { Id::from_ptr(obj as *const _ as *mut Self::Item) });
         unsafe {
             let _: () = msg_send![self, removeLastObject];
         }
@@ -255,14 +303,21 @@ pub trait INSMutableArray : INSArray {
     }
 
     fn sort_by<F>(&mut self, compare: F)
-            where F: FnMut(&Self::Item, &Self::Item) -> Ordering {
-        extern fn compare_with_closure<T, F>(obj1: &T, obj2: &T,
-                compare: &mut F) -> NSComparisonResult
-                where F: FnMut(&T, &T) -> Ordering {
+    where
+        F: FnMut(&Self::Item, &Self::Item) -> Ordering,
+    {
+        extern "C" fn compare_with_closure<T, F>(
+            obj1: &T,
+            obj2: &T,
+            compare: &mut F,
+        ) -> NSComparisonResult
+        where
+            F: FnMut(&T, &T) -> Ordering,
+        {
             NSComparisonResult::from_ordering((*compare)(obj1, obj2))
         }
 
-        let f: extern fn(&Self::Item, &Self::Item, &mut F) -> NSComparisonResult =
+        let f: extern "C" fn(&Self::Item, &Self::Item, &mut F) -> NSComparisonResult =
             compare_with_closure;
         let mut closure = compare;
         let closure_ptr: *mut F = &mut closure;
@@ -280,35 +335,59 @@ pub struct NSMutableArray<T, O = Owned> {
 
 object_impl!(NSMutableArray<T, O>);
 
-impl<T, O> INSObject for NSMutableArray<T, O> where T: INSObject, O: Ownership {
+impl<T, O> INSObject for NSMutableArray<T, O>
+where
+    T: INSObject,
+    O: Ownership,
+{
     fn class() -> &'static Class {
         class!(NSMutableArray)
     }
 }
 
-impl<T, O> INSArray for NSMutableArray<T, O> where T: INSObject, O: Ownership {
+impl<T, O> INSArray for NSMutableArray<T, O>
+where
+    T: INSObject,
+    O: Ownership,
+{
     type Item = T;
     type Own = O;
 }
 
 impl<T, O> INSMutableArray for NSMutableArray<T, O>
-        where T: INSObject, O: Ownership { }
+where
+    T: INSObject,
+    O: Ownership,
+{
+}
 
-impl<T> INSCopying for NSMutableArray<T, Shared> where T: INSObject {
+impl<T> INSCopying for NSMutableArray<T, Shared>
+where
+    T: INSObject,
+{
     type Output = NSSharedArray<T>;
 }
 
-impl<T> INSMutableCopying for NSMutableArray<T, Shared> where T: INSObject {
+impl<T> INSMutableCopying for NSMutableArray<T, Shared>
+where
+    T: INSObject,
+{
     type Output = NSMutableSharedArray<T>;
 }
 
 impl<T, O> INSFastEnumeration for NSMutableArray<T, O>
-        where T: INSObject, O: Ownership {
+where
+    T: INSObject,
+    O: Ownership,
+{
     type Item = T;
 }
 
 impl<T, O> Index<usize> for NSMutableArray<T, O>
-        where T: INSObject, O: Ownership {
+where
+    T: INSObject,
+    O: Ownership,
+{
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -320,9 +399,9 @@ pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 
 #[cfg(test)]
 mod tests {
+    use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use objc_id::Id;
     use {INSObject, INSString, NSObject, NSString};
-    use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
         let mut vec = Vec::with_capacity(len);
@@ -358,9 +437,10 @@ mod tests {
         let array = sample_array(4);
 
         assert!(array.object_enumerator().count() == 4);
-        assert!(array.object_enumerator()
-                     .enumerate()
-                     .all(|(i, obj)| obj == array.object_at(i)));
+        assert!(array
+            .object_enumerator()
+            .enumerate()
+            .all(|(i, obj)| obj == array.object_at(i)));
     }
 
     #[test]
@@ -431,10 +511,7 @@ mod tests {
 
     #[test]
     fn test_sort() {
-        let strings = vec![
-            NSString::from_str("hello"),
-            NSString::from_str("hi"),
-        ];
+        let strings = vec![NSString::from_str("hello"), NSString::from_str("hi")];
         let mut strings = NSMutableArray::from_vec(strings);
 
         strings.sort_by(|s1, s2| s1.as_str().len().cmp(&s2.as_str().len()));

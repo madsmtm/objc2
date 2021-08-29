@@ -42,6 +42,6 @@ assert!(weak.load().is_none());
 #[macro_use]
 extern crate objc;
 
-pub use id::{Id, Owned, Ownership, Shared, ShareId, WeakId};
+pub use id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
 
 mod id;

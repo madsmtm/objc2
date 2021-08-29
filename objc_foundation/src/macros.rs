@@ -1,11 +1,11 @@
 #[macro_export]
 macro_rules! object_struct {
-    ($name:ident) => (
+    ($name:ident) => {
         pub struct $name {
             _private: (),
         }
 
-        unsafe impl ::objc::Message for $name { }
+        unsafe impl ::objc::Message for $name {}
 
         impl $crate::INSObject for $name {
             fn class() -> &'static ::objc::runtime::Class {
@@ -20,10 +20,13 @@ macro_rules! object_struct {
             }
         }
 
-        impl ::std::cmp::Eq for $name { }
+        impl ::std::cmp::Eq for $name {}
 
         impl ::std::hash::Hash for $name {
-            fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
+            fn hash<H>(&self, state: &mut H)
+            where
+                H: ::std::hash::Hasher,
+            {
                 use $crate::INSObject;
                 self.hash_code().hash(state);
             }
@@ -35,7 +38,7 @@ macro_rules! object_struct {
                 ::std::fmt::Debug::fmt(self.description().as_str(), f)
             }
         }
-    );
+    };
 }
 
 macro_rules! object_impl {

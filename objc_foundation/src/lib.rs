@@ -3,13 +3,12 @@
 
 #[macro_use]
 extern crate objc;
-extern crate objc_id;
 extern crate block;
+extern crate objc_id;
 
 pub use self::array::{
-    INSArray, INSMutableArray,
-    NSArray, NSComparisonResult, NSMutableArray, NSRange,
-    NSMutableSharedArray, NSSharedArray,
+    INSArray, INSMutableArray, NSArray, NSComparisonResult, NSMutableArray, NSMutableSharedArray,
+    NSRange, NSSharedArray,
 };
 pub use self::data::{INSData, INSMutableData, NSData, NSMutableData};
 pub use self::dictionary::{INSDictionary, NSDictionary};
@@ -19,7 +18,7 @@ pub use self::string::{INSCopying, INSMutableCopying, INSString, NSString};
 pub use self::value::{INSValue, NSValue};
 
 #[link(name = "Foundation", kind = "framework")]
-extern { }
+extern "C" {}
 
 #[macro_use]
 mod macros;

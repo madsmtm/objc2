@@ -14,7 +14,7 @@ let cls = class!(NSObject);
 */
 #[macro_export]
 macro_rules! class {
-    ($name:ident) => ({
+    ($name:ident) => {{
         static CLASS: $crate::__CachedClass = $crate::__CachedClass::new();
         let name = concat!(stringify!($name), '\0');
         #[allow(unused_unsafe)]
@@ -23,7 +23,7 @@ macro_rules! class {
             Some(cls) => cls,
             None => panic!("Class with name {} could not be found", stringify!($name)),
         }
-    })
+    }};
 }
 
 /**

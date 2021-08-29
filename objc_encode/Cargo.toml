@@ -13,5 +13,5 @@ documentation = "http://ssheldon.github.io/rust-objc/objc_encode/"
 license = "MIT"
 
 exclude = [
-  ".gitignore",
+    ".gitignore",
 ]

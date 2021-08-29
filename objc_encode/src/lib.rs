@@ -46,9 +46,9 @@ assert_eq!(i32::ENCODING.to_string(), "i");
 #[cfg(test)]
 extern crate std;
 
-mod encoding;
 mod encode;
+mod encoding;
 mod parse;
 
-pub use crate::encoding::Encoding;
 pub use crate::encode::Encode;
+pub use crate::encoding::Encoding;

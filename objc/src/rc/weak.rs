@@ -1,8 +1,8 @@
 use std::cell::UnsafeCell;
 use std::ptr;
 
-use crate::runtime::{Object, self};
 use super::StrongPtr;
+use crate::runtime::{self, Object};
 
 // Our pointer must have the same address even if we are moved, so Box it.
 // Although loading the WeakPtr may modify the pointer, it is thread safe,
