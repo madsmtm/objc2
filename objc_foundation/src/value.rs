@@ -9,7 +9,7 @@ use objc::runtime::Class;
 use objc::{Encode, Encoding};
 use objc_id::Id;
 
-use {INSCopying, INSObject};
+use super::{INSCopying, INSObject};
 
 pub trait INSValue: INSObject {
     type Value: 'static + Copy + Encode;
@@ -79,8 +79,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use crate::{INSValue, NSValue};
     use objc::Encode;
-    use {INSValue, NSValue};
 
     #[test]
     fn test_value() {

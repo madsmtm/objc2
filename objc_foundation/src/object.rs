@@ -4,7 +4,7 @@ use objc::runtime::{Class, BOOL, NO};
 use objc::Message;
 use objc_id::{Id, ShareId};
 
-use NSString;
+use super::NSString;
 
 /*
 The Sized bound is unfortunate; ideally, objc objects would not be
@@ -54,7 +54,7 @@ object_struct!(NSObject);
 #[cfg(test)]
 mod tests {
     use super::{INSObject, NSObject};
-    use {INSString, NSString};
+    use crate::{INSString, NSString};
 
     #[test]
     fn test_is_equal() {

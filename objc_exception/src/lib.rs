@@ -10,7 +10,7 @@ extern "C" {}
 extern "C" {
     fn RustObjCExceptionThrow(exception: *mut c_void);
     fn RustObjCExceptionTryCatch(
-        try: extern "C" fn(*mut c_void),
+        r#try: extern "C" fn(*mut c_void),
         context: *mut c_void,
         error: *mut *mut c_void,
     ) -> c_int;
@@ -66,7 +66,7 @@ where
 ///
 /// Unsafe because this encourages unwinding through the closure from
 /// Objective-C, which is not safe.
-pub unsafe fn try<F, R>(closure: F) -> Result<R, *mut Exception>
+pub unsafe fn r#try<F, R>(closure: F) -> Result<R, *mut Exception>
 where
     F: FnOnce() -> R,
 {
@@ -83,14 +83,14 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::{throw, try};
+    use super::{r#try, throw};
     use std::ptr;
 
     #[test]
     fn test_try() {
         unsafe {
             let s = "Hello".to_string();
-            let result = try(move || {
+            let result = r#try(move || {
                 if s.len() > 0 {
                     throw(ptr::null_mut());
                 }
@@ -99,7 +99,7 @@ mod tests {
             assert!(result.unwrap_err() == ptr::null_mut());
 
             let mut s = "Hello".to_string();
-            let result = try(move || {
+            let result = r#try(move || {
                 s.push_str(", World!");
                 s
             });

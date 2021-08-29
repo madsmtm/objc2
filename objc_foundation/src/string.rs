@@ -5,7 +5,7 @@ use std::str;
 
 use objc_id::{Id, ShareId};
 
-use INSObject;
+use super::INSObject;
 
 pub trait INSCopying: INSObject {
     type Output: INSObject;
