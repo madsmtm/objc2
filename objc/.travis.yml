@@ -1,31 +1,66 @@
-language: rust
-rust:
-  - stable
-  - nightly
-os:
-  - osx
-  - linux
-env:
-  - FEATURES="" IOS_ARCHS=""
-matrix:
-  include:
-    - os: osx
-      rust: stable
-      env: FEATURES="exception verify_message" IOS_ARCHS=""
-    - os: osx
-      osx_image: xcode7.3
-      rust: 1.41.0
-      env: FEATURES="exception" IOS_ARCHS="i386 x86_64 armv7 armv7s aarch64"
 sudo: false
-install: ./travis_install.sh
+language: rust
+cache: cargo
+
+addons:
+  apt:
+    packages:
+    - clang
+    - cmake
+install: >
+  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+    git clone -b 1.9 https://github.com/gnustep/libobjc2.git &&
+    mkdir libobjc2/build &&
+    cd libobjc2/build &&
+    export CC="clang" &&
+    export CXX="clang++" &&
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=$HOME/libobjc2_staging ../ &&
+    make install
+  fi
 before_script: >
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then
     export LIBRARY_PATH=$HOME/libobjc2_staging/lib:$LIBRARY_PATH;
     export LD_LIBRARY_PATH=$HOME/libobjc2_staging/lib:$LD_LIBRARY_PATH;
   fi
-script: ./travis_test.sh
-addons:
-  apt:
-    packages:
-      - clang
-      - cmake
+script: cargo test --verbose
+
+jobs:
+  include:
+  - name: Check formatting
+    os: linux
+    rust: stable
+    install: rustup component add rustfmt
+    script: cargo fmt --all -- --check
+
+  - name: MacOS stable
+    os: osx
+    rust: stable
+  - name: MacOS nightly
+    os: osx
+    rust: nightly
+  - name: MacOS stable w. features
+    os: osx
+    rust: stable
+    script: cargo test --verbose --features "exception verify_message"
+
+  - name: Linux stable
+    os: linux
+    rust: stable
+  - name: Linux nightly
+    os: linux
+    rust: nightly
+
+  - name: iOS
+    os: osx
+    osx_image: xcode7.3
+    rust: 1.41.0
+    before_install: >
+      rustup target add
+      i386-apple-ios
+      x86_64-apple-ios
+      armv7-apple-ios
+      armv7s-apple-ios
+      aarch64-apple-ios
+    install: curl -LO https://github.com/SSheldon/rust-test-ios/releases/download/0.1.1/rust-test-ios && chmod +x rust-test-ios
+    env: FEATURES="exception"
+    script: ./rust-test-ios
