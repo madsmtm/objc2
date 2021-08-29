@@ -1,30 +1,29 @@
 use std::any::Any;
 
+use objc::runtime::{Class, BOOL, NO};
 use objc::Message;
-use objc::runtime::{BOOL, Class, NO};
 use objc_id::{Id, ShareId};
 
 use NSString;
 
 /*
- The Sized bound is unfortunate; ideally, objc objects would not be
- treated as Sized. However, rust won't allow casting a dynamically-sized type
- pointer to an Object pointer, because dynamically-sized types can have fat
- pointers (two words) instead of real pointers.
- */
-pub trait INSObject : Any + Sized + Message {
+The Sized bound is unfortunate; ideally, objc objects would not be
+treated as Sized. However, rust won't allow casting a dynamically-sized type
+pointer to an Object pointer, because dynamically-sized types can have fat
+pointers (two words) instead of real pointers.
+*/
+pub trait INSObject: Any + Sized + Message {
     fn class() -> &'static Class;
 
     fn hash_code(&self) -> usize {
-        unsafe {
-            msg_send![self, hash]
-        }
+        unsafe { msg_send![self, hash] }
     }
 
-    fn is_equal<T>(&self, other: &T) -> bool where T: INSObject {
-        let result: BOOL = unsafe {
-            msg_send![self, isEqual:other]
-        };
+    fn is_equal<T>(&self, other: &T) -> bool
+    where
+        T: INSObject,
+    {
+        let result: BOOL = unsafe { msg_send![self, isEqual: other] };
         result != NO
     }
 
@@ -36,9 +35,7 @@ pub trait INSObject : Any + Sized + Message {
     }
 
     fn is_kind_of(&self, cls: &Class) -> bool {
-        let result: BOOL = unsafe {
-            msg_send![self, isKindOfClass:cls]
-        };
+        let result: BOOL = unsafe { msg_send![self, isKindOfClass: cls] };
         result != NO
     }
 
@@ -56,8 +53,8 @@ object_struct!(NSObject);
 
 #[cfg(test)]
 mod tests {
-    use {INSString, NSString};
     use super::{INSObject, NSObject};
+    use {INSString, NSString};
 
     #[test]
     fn test_is_equal() {

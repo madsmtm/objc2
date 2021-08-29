@@ -4,22 +4,22 @@ use std::hash;
 use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
 
-use objc::Message;
 use objc::rc::{StrongPtr, WeakPtr};
 use objc::runtime::Object;
+use objc::Message;
 
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
-pub enum Owned { }
+pub enum Owned {}
 /// A type used to mark that the object(s) a struct contains are shared,
 /// so there may be other references to them.
-pub enum Shared { }
+pub enum Shared {}
 
 /// A type that marks what type of ownership a struct has over the object(s)
 /// it contains; specifically, either `Owned` or `Shared`.
-pub trait Ownership: Any { }
-impl Ownership for Owned { }
-impl Ownership for Shared { }
+pub trait Ownership: Any {}
+impl Ownership for Owned {}
+impl Ownership for Shared {}
 
 /// A pointer type for Objective-C's reference counted objects.
 ///
@@ -39,9 +39,17 @@ pub struct Id<T, O = Owned> {
     own: PhantomData<O>,
 }
 
-impl<T, O> Id<T, O> where T: Message, O: Ownership {
+impl<T, O> Id<T, O>
+where
+    T: Message,
+    O: Ownership,
+{
     unsafe fn new(ptr: StrongPtr) -> Id<T, O> {
-        Id { ptr: ptr, item: PhantomData, own: PhantomData }
+        Id {
+            ptr: ptr,
+            item: PhantomData,
+            own: PhantomData,
+        }
     }
 
     /// Constructs an `Id` from a pointer to an unretained object and
@@ -49,7 +57,10 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// Unsafe because the pointer must be to a valid object and
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
-        assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
+        assert!(
+            !ptr.is_null(),
+            "Attempted to construct an Id from a null pointer"
+        );
         Id::new(StrongPtr::retain(ptr as *mut Object))
     }
 
@@ -59,12 +70,18 @@ impl<T, O> Id<T, O> where T: Message, O: Ownership {
     /// Unsafe because the pointer must be to a valid object and
     /// the caller must ensure the ownership is correct.
     pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
-        assert!(!ptr.is_null(), "Attempted to construct an Id from a null pointer");
+        assert!(
+            !ptr.is_null(),
+            "Attempted to construct an Id from a null pointer"
+        );
         Id::new(StrongPtr::new(ptr as *mut Object))
     }
 }
 
-impl<T> Id<T, Owned> where T: Message {
+impl<T> Id<T, Owned>
+where
+    T: Message,
+{
     /// "Downgrade" an owned `Id` to a `ShareId`, allowing it to be cloned.
     pub fn share(self) -> ShareId<T> {
         let Id { ptr, .. } = self;
@@ -72,19 +89,20 @@ impl<T> Id<T, Owned> where T: Message {
     }
 }
 
-impl<T> Clone for Id<T, Shared> where T: Message {
+impl<T> Clone for Id<T, Shared>
+where
+    T: Message,
+{
     fn clone(&self) -> ShareId<T> {
-        unsafe {
-            Id::new(self.ptr.clone())
-        }
+        unsafe { Id::new(self.ptr.clone()) }
     }
 }
 
-unsafe impl<T, O> Sync for Id<T, O> where T: Sync { }
+unsafe impl<T, O> Sync for Id<T, O> where T: Sync {}
 
-unsafe impl<T> Send for Id<T, Owned> where T: Send { }
+unsafe impl<T> Send for Id<T, Owned> where T: Send {}
 
-unsafe impl<T> Send for Id<T, Shared> where T: Sync { }
+unsafe impl<T> Send for Id<T, Shared> where T: Sync {}
 
 impl<T, O> Deref for Id<T, O> {
     type Target = T;
@@ -100,7 +118,10 @@ impl<T> DerefMut for Id<T, Owned> {
     }
 }
 
-impl<T, O> PartialEq for Id<T, O> where T: PartialEq {
+impl<T, O> PartialEq for Id<T, O>
+where
+    T: PartialEq,
+{
     fn eq(&self, other: &Id<T, O>) -> bool {
         self.deref() == other.deref()
     }
@@ -110,15 +131,24 @@ impl<T, O> PartialEq for Id<T, O> where T: PartialEq {
     }
 }
 
-impl<T, O> Eq for Id<T, O> where T: Eq { }
+impl<T, O> Eq for Id<T, O> where T: Eq {}
 
-impl<T, O> hash::Hash for Id<T, O> where T: hash::Hash {
-    fn hash<H>(&self, state: &mut H) where H: hash::Hasher {
+impl<T, O> hash::Hash for Id<T, O>
+where
+    T: hash::Hash,
+{
+    fn hash<H>(&self, state: &mut H)
+    where
+        H: hash::Hasher,
+    {
         self.deref().hash(state)
     }
 }
 
-impl<T, O> fmt::Debug for Id<T, O> where T: fmt::Debug {
+impl<T, O> fmt::Debug for Id<T, O>
+where
+    T: fmt::Debug,
+{
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.deref().fmt(f)
     }
@@ -140,7 +170,10 @@ pub struct WeakId<T> {
     item: PhantomData<T>,
 }
 
-impl<T> WeakId<T> where T: Message {
+impl<T> WeakId<T>
+where
+    T: Message,
+{
     /// Construct a new `WeakId` referencing the given `ShareId`.
     pub fn new(obj: &ShareId<T>) -> WeakId<T> {
         WeakId {
@@ -161,14 +194,14 @@ impl<T> WeakId<T> where T: Message {
     }
 }
 
-unsafe impl<T> Sync for WeakId<T> where T: Sync { }
+unsafe impl<T> Sync for WeakId<T> where T: Sync {}
 
-unsafe impl<T> Send for WeakId<T> where T: Sync { }
+unsafe impl<T> Send for WeakId<T> where T: Sync {}
 
 #[cfg(test)]
 mod tests {
-    use objc::runtime::Object;
     use super::{Id, ShareId, WeakId};
+    use objc::runtime::Object;
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }

@@ -1,9 +1,9 @@
 #[macro_use]
 extern crate objc;
 
-pub use objc::*;
-use objc::runtime::*;
 use objc::rc::*;
+use objc::runtime::*;
+pub use objc::*;
 
 #[path = "../src/test_utils.rs"]
 mod test_utils;

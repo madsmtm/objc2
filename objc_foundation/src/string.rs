@@ -7,7 +7,7 @@ use objc_id::{Id, ShareId};
 
 use INSObject;
 
-pub trait INSCopying : INSObject {
+pub trait INSCopying: INSObject {
     type Output: INSObject;
 
     fn copy(&self) -> ShareId<Self::Output> {
@@ -18,7 +18,7 @@ pub trait INSCopying : INSObject {
     }
 }
 
-pub trait INSMutableCopying : INSObject {
+pub trait INSMutableCopying: INSObject {
     type Output: INSObject;
 
     fn mutable_copy(&self) -> Id<Self::Output> {
@@ -31,11 +31,9 @@ pub trait INSMutableCopying : INSObject {
 
 const UTF8_ENCODING: usize = 4;
 
-pub trait INSString : INSObject {
+pub trait INSString: INSObject {
     fn len(&self) -> usize {
-        unsafe {
-            msg_send![self, lengthOfBytesUsingEncoding:UTF8_ENCODING]
-        }
+        unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
     }
 
     fn as_str(&self) -> &str {
@@ -65,7 +63,7 @@ pub trait INSString : INSObject {
 
 object_struct!(NSString);
 
-impl INSString for NSString { }
+impl INSString for NSString {}
 
 impl INSCopying for NSString {
     type Output = NSString;

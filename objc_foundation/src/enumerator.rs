@@ -9,24 +9,40 @@ use objc_id::Id;
 
 use INSObject;
 
-pub struct NSEnumerator<'a, T> where T: INSObject {
+pub struct NSEnumerator<'a, T>
+where
+    T: INSObject,
+{
     id: Id<Object>,
     item: PhantomData<&'a T>,
 }
 
-impl<'a, T> NSEnumerator<'a, T> where T: INSObject {
+impl<'a, T> NSEnumerator<'a, T>
+where
+    T: INSObject,
+{
     pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
-        NSEnumerator { id: Id::from_ptr(ptr), item: PhantomData }
+        NSEnumerator {
+            id: Id::from_ptr(ptr),
+            item: PhantomData,
+        }
     }
 }
 
-impl<'a, T> Iterator for NSEnumerator<'a, T> where T: INSObject {
+impl<'a, T> Iterator for NSEnumerator<'a, T>
+where
+    T: INSObject,
+{
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
         unsafe {
             let obj: *mut T = msg_send![self.id, nextObject];
-            if obj.is_null() { None } else { Some(&*obj) }
+            if obj.is_null() {
+                None
+            } else {
+                Some(&*obj)
+            }
         }
     }
 }
@@ -47,9 +63,11 @@ struct NSFastEnumerationState<T> {
     extra: [c_ulong; 5],
 }
 
-fn enumerate<'a, 'b: 'a, C: INSFastEnumeration>(object: &'b C,
-        state: &mut NSFastEnumerationState<C::Item>,
-        buf: &'a mut [*const C::Item]) -> Option<&'a [*const C::Item]> {
+fn enumerate<'a, 'b: 'a, C: INSFastEnumeration>(
+    object: &'b C,
+    state: &mut NSFastEnumerationState<C::Item>,
+    buf: &'a mut [*const C::Item],
+) -> Option<&'a [*const C::Item]> {
     let count: usize = unsafe {
         // Reborrow state so that we don't move it
         let state = &mut *state;
@@ -103,9 +121,11 @@ impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
         if let Some(buf) = next_buf {
             // Check if the collection was mutated
             if let Some(mutations) = mutations {
-                assert!(mutations == unsafe { *self.state.mutations_ptr },
+                assert!(
+                    mutations == unsafe { *self.state.mutations_ptr },
                     "Mutation detected during enumeration of object {:p}",
-                    self.object);
+                    self.object
+                );
             }
 
             self.ptr = buf.as_ptr();
@@ -137,8 +157,8 @@ impl<'a, C: INSFastEnumeration> Iterator for NSFastEnumerator<'a, C> {
 
 #[cfg(test)]
 mod tests {
-    use {INSArray, INSValue, NSArray, NSValue};
     use super::INSFastEnumeration;
+    use {INSArray, INSValue, NSArray, NSValue};
 
     #[test]
     fn test_enumerator() {
@@ -149,7 +169,9 @@ mod tests {
         assert!(enumerator.count() == 4);
 
         let enumerator = array.object_enumerator();
-        assert!(enumerator.enumerate().all(|(i, obj)| obj.value() == i as u32));
+        assert!(enumerator
+            .enumerate()
+            .all(|(i, obj)| obj.value() == i as u32));
     }
 
     #[test]
@@ -161,6 +183,8 @@ mod tests {
         assert!(enumerator.count() == 4);
 
         let enumerator = array.enumerator();
-        assert!(enumerator.enumerate().all(|(i, obj)| obj.value() == i as u32));
+        assert!(enumerator
+            .enumerate()
+            .all(|(i, obj)| obj.value() == i as u32));
     }
 }

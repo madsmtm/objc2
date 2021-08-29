@@ -4,12 +4,12 @@ extern crate objc_foundation;
 
 use std::sync::{Once, ONCE_INIT};
 
-use objc::Message;
 use objc::declare::ClassDecl;
 use objc::runtime::{Class, Object, Sel};
+use objc::Message;
 use objc_foundation::{INSObject, NSObject};
 
-pub enum MYObject { }
+pub enum MYObject {}
 
 impl MYObject {
     fn number(&self) -> u32 {
@@ -21,13 +21,13 @@ impl MYObject {
 
     fn set_number(&mut self, number: u32) {
         unsafe {
-            let obj =  &mut *(self as *mut _ as *mut Object);
+            let obj = &mut *(self as *mut _ as *mut Object);
             obj.set_ivar("_number", number);
         }
     }
 }
 
-unsafe impl Message for MYObject { }
+unsafe impl Message for MYObject {}
 
 static MYOBJECT_REGISTER_CLASS: Once = ONCE_INIT;
 
@@ -39,18 +39,20 @@ impl INSObject for MYObject {
             decl.add_ivar::<u32>("_number");
 
             // Add ObjC methods for getting and setting the number
-            extern fn my_object_set_number(this: &mut Object, _cmd: Sel, number: u32) {
-                unsafe { this.set_ivar("_number", number); }
+            extern "C" fn my_object_set_number(this: &mut Object, _cmd: Sel, number: u32) {
+                unsafe {
+                    this.set_ivar("_number", number);
+                }
             }
 
-            extern fn my_object_get_number(this: &Object, _cmd: Sel) -> u32 {
+            extern "C" fn my_object_get_number(this: &Object, _cmd: Sel) -> u32 {
                 unsafe { *this.get_ivar("_number") }
             }
 
             unsafe {
-                let set_number: extern fn(&mut Object, Sel, u32) = my_object_set_number;
+                let set_number: extern "C" fn(&mut Object, Sel, u32) = my_object_set_number;
                 decl.add_method(sel!(setNumber:), set_number);
-                let get_number: extern fn(&Object, Sel) -> u32 = my_object_get_number;
+                let get_number: extern "C" fn(&Object, Sel) -> u32 = my_object_get_number;
                 decl.add_method(sel!(number), get_number);
             }
 

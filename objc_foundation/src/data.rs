@@ -3,15 +3,13 @@ use std::ops::Range;
 use std::os::raw::c_void;
 use std::slice;
 
-use objc_id::Id;
 use block::{Block, ConcreteBlock};
-use {INSObject, INSCopying, INSMutableCopying, NSRange};
+use objc_id::Id;
+use {INSCopying, INSMutableCopying, INSObject, NSRange};
 
-pub trait INSData : INSObject {
+pub trait INSData: INSObject {
     fn len(&self) -> usize {
-        unsafe {
-            msg_send![self, length]
-        }
+        unsafe { msg_send![self, length] }
     }
 
     fn bytes(&self) -> &[u8] {
@@ -22,9 +20,7 @@ pub trait INSData : INSObject {
         } else {
             (ptr as *const u8, self.len())
         };
-        unsafe {
-            slice::from_raw_parts(ptr, len)
-        }
+        unsafe { slice::from_raw_parts(ptr, len) }
     }
 
     fn with_bytes(bytes: &[u8]) -> Id<Self> {
@@ -63,7 +59,7 @@ pub trait INSData : INSObject {
 
 object_struct!(NSData);
 
-impl INSData for NSData { }
+impl INSData for NSData {}
 
 impl INSCopying for NSData {
     type Output = NSData;
@@ -73,7 +69,7 @@ impl INSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
-pub trait INSMutableData : INSData {
+pub trait INSMutableData: INSData {
     fn bytes_mut(&mut self) -> &mut [u8] {
         let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
         // The bytes pointer may be null for length zero
@@ -82,14 +78,12 @@ pub trait INSMutableData : INSData {
         } else {
             (ptr as *mut u8, self.len())
         };
-        unsafe {
-            slice::from_raw_parts_mut(ptr, len)
-        }
+        unsafe { slice::from_raw_parts_mut(ptr, len) }
     }
 
     fn set_len(&mut self, len: usize) {
         unsafe {
-            let _: () = msg_send![self, setLength:len];
+            let _: () = msg_send![self, setLength: len];
         }
     }
 
@@ -119,9 +113,9 @@ pub trait INSMutableData : INSData {
 
 object_struct!(NSMutableData);
 
-impl INSData for NSMutableData { }
+impl INSData for NSMutableData {}
 
-impl INSMutableData for NSMutableData { }
+impl INSMutableData for NSMutableData {}
 
 impl INSCopying for NSMutableData {
     type Output = NSData;
@@ -133,8 +127,8 @@ impl INSMutableCopying for NSMutableData {
 
 #[cfg(test)]
 mod tests {
-    use INSObject;
     use super::{INSData, INSMutableData, NSData, NSMutableData};
+    use INSObject;
 
     #[test]
     fn test_bytes() {

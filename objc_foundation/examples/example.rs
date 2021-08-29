@@ -1,7 +1,9 @@
 extern crate objc_foundation;
 
-use objc_foundation::{NSArray, NSDictionary, NSObject, NSString,
-    INSArray, INSCopying, INSDictionary, INSObject, INSString};
+use objc_foundation::{
+    INSArray, INSCopying, INSDictionary, INSObject, INSString, NSArray, NSDictionary, NSObject,
+    NSString,
+};
 
 fn main() {
     // Create and compare NSObjects

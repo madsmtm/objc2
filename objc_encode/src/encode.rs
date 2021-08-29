@@ -86,18 +86,30 @@ External crates cannot implement Encode for pointers or Optionals, but they
 As a workaround, we provide implementations for these types that return the
 same encoding as references.
 */
-unsafe impl<T> Encode for *const T where for<'b> &'b T: Encode {
+unsafe impl<T> Encode for *const T
+where
+    for<'b> &'b T: Encode,
+{
     const ENCODING: Encoding<'static> = <&T>::ENCODING;
 }
 
-unsafe impl<T> Encode for *mut T where for<'b> &'b mut T: Encode {
+unsafe impl<T> Encode for *mut T
+where
+    for<'b> &'b mut T: Encode,
+{
     const ENCODING: Encoding<'static> = <&mut T>::ENCODING;
 }
 
-unsafe impl<'a, T> Encode for Option<&'a T> where for<'b> &'b T: Encode {
+unsafe impl<'a, T> Encode for Option<&'a T>
+where
+    for<'b> &'b T: Encode,
+{
     const ENCODING: Encoding<'static> = <&T>::ENCODING;
 }
 
-unsafe impl<'a, T> Encode for Option<&'a mut T> where for<'b> &'b mut T: Encode {
+unsafe impl<'a, T> Encode for Option<&'a mut T>
+where
+    for<'b> &'b mut T: Encode,
+{
     const ENCODING: Encoding<'static> = <&mut T>::ENCODING;
 }

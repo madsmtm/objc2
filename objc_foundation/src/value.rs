@@ -5,13 +5,13 @@ use std::mem;
 use std::os::raw::{c_char, c_void};
 use std::str;
 
-use objc::{Encode, Encoding};
 use objc::runtime::Class;
+use objc::{Encode, Encoding};
 use objc_id::Id;
 
 use {INSCopying, INSObject};
 
-pub trait INSValue : INSObject {
+pub trait INSValue: INSObject {
     type Value: 'static + Copy + Encode;
 
     fn value(&self) -> Self::Value {
@@ -20,7 +20,7 @@ pub trait INSValue : INSObject {
             let mut value = mem::uninitialized::<Self::Value>();
             let value_ptr: *mut Self::Value = &mut value;
             let bytes = value_ptr as *mut c_void;
-            let _: () = msg_send![self, getValue:bytes];
+            let _: () = msg_send![self, getValue: bytes];
             value
         }
     }
@@ -54,17 +54,26 @@ pub struct NSValue<T> {
 
 object_impl!(NSValue<T>);
 
-impl<T> INSObject for NSValue<T> where T: Any {
+impl<T> INSObject for NSValue<T>
+where
+    T: Any,
+{
     fn class() -> &'static Class {
         class!(NSValue)
     }
 }
 
-impl<T> INSValue for NSValue<T> where T: Any + Copy + Encode {
+impl<T> INSValue for NSValue<T>
+where
+    T: Any + Copy + Encode,
+{
     type Value = T;
 }
 
-impl<T> INSCopying for NSValue<T> where T: Any {
+impl<T> INSCopying for NSValue<T>
+where
+    T: Any,
+{
     type Output = NSValue<T>;
 }
 
