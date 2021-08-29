@@ -4,6 +4,7 @@ use std::ops::{Index, Range};
 use std::os::raw::c_void;
 
 use objc::runtime::{Class, Object};
+use objc::{Encode, Encoding};
 use objc_id::{Id, Owned, Ownership, ShareId, Shared};
 
 use super::{INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
@@ -56,6 +57,11 @@ impl NSRange {
             end: self.location + self.length,
         }
     }
+}
+
+unsafe impl Encode for NSRange {
+    const ENCODING: Encoding<'static> =
+        Encoding::Struct("_NSRange", &[usize::ENCODING, usize::ENCODING]);
 }
 
 unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A>
