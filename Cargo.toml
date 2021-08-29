@@ -1,0 +1,17 @@
+[package]
+name = "objc-encode"
+version = "1.1.0"
+authors = ["Steven Sheldon"]
+edition = "2018"
+
+description = "Objective-C type encoding creation and parsing in Rust."
+keywords = ["objective-c", "osx", "ios", "cocoa", "uikit"]
+categories = ["development-tools::ffi", "no-std"]
+readme = "README.md"
+repository = "http://github.com/SSheldon/rust-objc-encode"
+documentation = "http://ssheldon.github.io/rust-objc/objc_encode/"
+license = "MIT"
+
+exclude = [
+  ".gitignore",
+]
