@@ -2,7 +2,7 @@
 
 use crate::Encoding;
 
-const QUALIFIERS: &'static [char] = &[
+const QUALIFIERS: &[char] = &[
     'r', // const
     'n', // in
     'N', // inout

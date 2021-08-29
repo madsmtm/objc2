@@ -91,8 +91,11 @@ mod tests {
         let weak = obj.weak();
 
         let weak2 = weak.clone();
-        let strong = weak2.load();
+
+        let strong = weak.load();
+        let strong2 = weak2.load();
         assert!(*strong == *obj);
+        assert!(*strong2 == *obj);
     }
 
     #[test]

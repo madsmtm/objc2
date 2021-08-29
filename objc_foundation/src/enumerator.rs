@@ -98,7 +98,7 @@ pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration> {
 impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
     fn new(object: &C) -> NSFastEnumerator<C> {
         NSFastEnumerator {
-            object: object,
+            object,
 
             ptr: ptr::null(),
             end: ptr::null(),
@@ -129,7 +129,7 @@ impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
             }
 
             self.ptr = buf.as_ptr();
-            self.end = unsafe { self.ptr.offset(buf.len() as isize) };
+            self.end = unsafe { self.ptr.add(buf.len()) };
             true
         } else {
             self.ptr = ptr::null();

@@ -91,7 +91,7 @@ mod tests {
         unsafe {
             let s = "Hello".to_string();
             let result = r#try(move || {
-                if s.len() > 0 {
+                if !s.is_empty() {
                     throw(ptr::null_mut());
                 }
                 s.len()

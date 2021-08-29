@@ -13,7 +13,7 @@ pub struct CustomObject {
 impl CustomObject {
     fn new(class: &Class) -> Self {
         let obj = unsafe { runtime::class_createInstance(class, 0) };
-        CustomObject { obj: obj }
+        CustomObject { obj }
     }
 }
 

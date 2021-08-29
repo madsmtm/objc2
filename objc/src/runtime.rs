@@ -180,7 +180,7 @@ impl Sel {
     /// This is almost never what you want; use `Sel::register()` instead.
     #[inline]
     pub unsafe fn from_ptr(ptr: *const c_void) -> Sel {
-        Sel { ptr: ptr }
+        Sel { ptr }
     }
 
     /// Returns a pointer to the raw selector.

@@ -46,7 +46,7 @@ where
 {
     unsafe fn new(ptr: StrongPtr) -> Id<T, O> {
         Id {
-            ptr: ptr,
+            ptr,
             item: PhantomData,
             own: PhantomData,
         }
