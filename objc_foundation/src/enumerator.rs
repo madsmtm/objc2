@@ -4,6 +4,7 @@ use std::os::raw::c_ulong;
 use std::ptr;
 use std::slice;
 
+use objc::msg_send;
 use objc::runtime::Object;
 use objc_id::Id;
 

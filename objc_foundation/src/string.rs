@@ -3,6 +3,7 @@ use std::os::raw::{c_char, c_void};
 use std::slice;
 use std::str;
 
+use objc::msg_send;
 use objc_id::{Id, ShareId};
 
 use super::INSObject;

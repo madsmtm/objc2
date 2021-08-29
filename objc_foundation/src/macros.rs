@@ -17,7 +17,7 @@ macro_rules! object_struct {
 
         impl $crate::INSObject for $name {
             fn class() -> &'static ::objc::runtime::Class {
-                class!($name)
+                ::objc::class!($name)
             }
         }
 

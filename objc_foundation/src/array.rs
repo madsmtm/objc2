@@ -4,6 +4,7 @@ use std::ops::{Index, Range};
 use std::os::raw::c_void;
 
 use objc::runtime::{Class, Object};
+use objc::{class, msg_send};
 use objc::{Encode, Encoding};
 use objc_id::{Id, Owned, Ownership, ShareId, Shared};
 

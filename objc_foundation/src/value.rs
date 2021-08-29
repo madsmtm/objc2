@@ -7,6 +7,7 @@ use std::str;
 
 use objc::runtime::Class;
 use objc::Encode;
+use objc::{class, msg_send};
 use objc_id::Id;
 
 use super::{INSCopying, INSObject};

@@ -5,6 +5,7 @@ use std::slice;
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use block::{Block, ConcreteBlock};
+use objc::msg_send;
 use objc_id::Id;
 
 pub trait INSData: INSObject {

@@ -6,6 +6,7 @@ To check for a class that may not exist, use `Class::get`.
 
 # Example
 ``` no_run
+# use objc::class;
 # fn main() {
 let cls = class!(NSObject);
 # }
@@ -30,6 +31,7 @@ Registers a selector, returning a `Sel`.
 
 # Example
 ```
+# use objc::sel;
 # fn main() {
 let sel = sel!(description);
 let sel = sel!(setObject:forKey:);
@@ -62,6 +64,7 @@ Variadic arguments are not currently supported.
 
 # Example
 ``` no_run
+# use objc::msg_send;
 # use objc::runtime::Object;
 # fn main() {
 # unsafe {

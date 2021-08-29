@@ -91,7 +91,7 @@ pub unsafe trait Message {
 
     # Example
     ``` no_run
-    # use objc::{class, msg_send};
+    # use objc::{class, msg_send, sel};
     # use objc::runtime::{BOOL, Class, Object};
     # use objc::Message;
     # fn main() {
