@@ -42,6 +42,13 @@ jobs:
     os: osx
     rust: stable
     script: cargo test --verbose --features "exception verify_message"
+  - name: MacOS 32bit
+    os: osx
+    osx_image: xcode9.4
+    rust: nightly
+    # 32-bit targets only have tier 3 support
+    install: rustup component add rust-src
+    script: cargo test -Z build-std --target i686-apple-darwin --verbose
 
   - name: Linux stable
     os: linux
