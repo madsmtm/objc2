@@ -74,6 +74,7 @@ pub struct Object {
 /// A pointer to the start of a method implementation.
 pub type Imp = unsafe extern "C" fn();
 
+#[allow(missing_docs)]
 #[link(name = "objc", kind = "dylib")]
 extern "C" {
     pub fn sel_registerName(name: *const c_char) -> Sel;
@@ -210,7 +211,7 @@ impl Clone for Sel {
 }
 
 impl fmt::Debug for Sel {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
     }
 }
@@ -405,7 +406,7 @@ impl PartialEq for Class {
 impl Eq for Class {}
 
 impl fmt::Debug for Class {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
     }
 }
@@ -464,7 +465,7 @@ impl PartialEq for Protocol {
 impl Eq for Protocol {}
 
 impl fmt::Debug for Protocol {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
     }
 }
@@ -538,7 +539,7 @@ impl Object {
 }
 
 impl fmt::Debug for Object {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "<{:?}: {:p}>", self.class(), self)
     }
 }

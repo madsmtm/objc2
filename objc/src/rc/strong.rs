@@ -65,7 +65,7 @@ impl Deref for StrongPtr {
 }
 
 impl fmt::Pointer for StrongPtr {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Pointer::fmt(&self.0, f)
     }
 }

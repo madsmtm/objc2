@@ -70,6 +70,7 @@ pub unsafe trait Message {
         send_message(self, sel, args)
     }
 
+    #[allow(missing_docs)]
     #[cfg(feature = "verify_message")]
     unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
     where
@@ -195,7 +196,7 @@ Currently, an error may be returned in two cases:
 pub struct MessageError(String);
 
 impl fmt::Display for MessageError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.0, f)
     }
 }
@@ -207,7 +208,7 @@ impl Error for MessageError {
 }
 
 impl<'a> From<VerificationError<'a>> for MessageError {
-    fn from(err: VerificationError) -> MessageError {
+    fn from(err: VerificationError<'_>) -> MessageError {
         MessageError(err.to_string())
     }
 }
@@ -284,8 +285,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::Message;
-    use crate::runtime::Object;
+    use super::*;
     use crate::test_utils;
 
     #[test]

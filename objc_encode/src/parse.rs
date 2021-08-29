@@ -12,7 +12,7 @@ const QUALIFIERS: &'static [char] = &[
     'V', // oneway
 ];
 
-fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding) -> Option<&'a str> {
+fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a str> {
     use Encoding::*;
     let code = match *enc {
         Char => "c",
@@ -96,7 +96,7 @@ fn rm_prefix<'a>(s: &'a str, other: &str) -> Option<&'a str> {
     }
 }
 
-pub fn eq_enc(s: &str, enc: &Encoding) -> bool {
+pub fn eq_enc(s: &str, enc: &Encoding<'_>) -> bool {
     // strip qualifiers
     let s = s.trim_start_matches(QUALIFIERS);
 

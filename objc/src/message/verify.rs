@@ -12,7 +12,7 @@ pub enum VerificationError<'a> {
 }
 
 impl<'a> fmt::Display for VerificationError<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             VerificationError::NilReceiver(sel) => {
                 write!(f, "Messsaging {:?} to nil", sel)
@@ -55,7 +55,7 @@ impl<'a> fmt::Display for VerificationError<'a> {
     }
 }
 
-pub fn verify_message_signature<A, R>(cls: &Class, sel: Sel) -> Result<(), VerificationError>
+pub fn verify_message_signature<A, R>(cls: &Class, sel: Sel) -> Result<(), VerificationError<'_>>
 where
     A: EncodeArguments,
     R: Encode,

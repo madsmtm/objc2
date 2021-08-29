@@ -40,6 +40,7 @@ impl Drop for CustomObject {
 }
 
 #[derive(Eq, PartialEq)]
+#[repr(C)]
 pub struct CustomStruct {
     pub a: u64,
     pub b: u64,

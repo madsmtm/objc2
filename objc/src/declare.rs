@@ -91,7 +91,7 @@ fn count_args(sel: Sel) -> usize {
     sel.name().chars().filter(|&c| c == ':').count()
 }
 
-fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
+fn method_type_encoding(ret: &Encoding<'_>, args: &[Encoding<'_>]) -> CString {
     // First two arguments are always self and the selector
     let mut types = format!("{}{}{}", ret, <*mut Object>::ENCODING, Sel::ENCODING);
     for enc in args {
