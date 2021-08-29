@@ -1,8 +1,4 @@
 #![crate_name = "objc_foundation"]
-#![crate_type = "lib"]
-
-#[macro_use]
-extern crate objc;
 
 pub use self::array::{
     INSArray, INSMutableArray, NSArray, NSComparisonResult, NSMutableArray, NSMutableSharedArray,

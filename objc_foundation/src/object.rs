@@ -1,5 +1,6 @@
 use std::any::Any;
 
+use objc::msg_send;
 use objc::runtime::{Class, BOOL, NO};
 use objc::Message;
 use objc_id::{Id, ShareId};

@@ -4,6 +4,7 @@ use std::ops::Index;
 use std::ptr;
 
 use objc::runtime::Class;
+use objc::{class, msg_send};
 use objc_id::{Id, Owned, Ownership, ShareId};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSSharedArray};
