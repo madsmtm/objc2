@@ -2,10 +2,6 @@
 // See https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain
 id objc_retain(id value);
 
-void RustObjCExceptionThrow(id exception) {
-    @throw exception;
-}
-
 int RustObjCExceptionTryCatch(void (*try)(void *), void *context, id *error) {
     @try {
         try(context);
