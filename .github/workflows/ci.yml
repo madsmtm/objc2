@@ -114,4 +114,6 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --verbose --no-fail-fast
+        # TODO: `objc/exception` feature is broken in objc_foundation
+        # TODO: `objc_foundation/block` feature doesn't work on GNUStep
+        args: --verbose --no-fail-fast --no-default-features
