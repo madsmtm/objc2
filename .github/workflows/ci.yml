@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  # Faster compilation and error on warnings
+  RUSTFLAGS: "-C debuginfo=0 -D warnings"
+
+jobs:
+  fmt:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check formatting
+      uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: -- --check
+
+  test:
+    name: Test
+    strategy:
+      matrix:
+        platform:
+          - { os: ubuntu-latest }
+          - { os: macos-10.15 }
+          - { os: macos-11    }
+          # - { target: x86_64-apple-ios,         os: macos-latest, }
+          # - { target: aarch64-apple-ios,        os: macos-latest, }
+
+    runs-on: ${{ matrix.platform.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache Rust
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/
+          target/
+        key: cargo-${{ matrix.platform.os }}
+
+    - name: Install different Rust toolchain
+      # A default toolchain is already installed
+      if: matrix.platform.target
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{ matrix.platform.target }}
+        profile: minimal
+        override: true
+
+    - name: Install Objective-C compiler
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: sudo apt-get install gobjc
+
+    - name: Check documentation
+      uses: actions-rs/cargo@v1
+      with:
+        # TODO: Disallow warnings here
+        command: doc
+        args: --no-deps --document-private-items
+
+    - name: Run checks
+      uses: actions-rs/cargo@v1
+      with:
+        command: check
+        args: --verbose
+
+    - name: Install GNUStep
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: |
+        sudo apt-get install clang make
+        git clone -b 1.9 https://github.com/gnustep/libobjc2.git &&
+        mkdir libobjc2/build &&
+        cd libobjc2/build &&
+        export CC="clang" &&
+        export CXX="clang++" &&
+        cmake -DCMAKE_INSTALL_PREFIX:PATH=$HOME/libobjc2_staging ../ &&
+        make install &&
+        echo "LIBRARY_PATH=$HOME/libobjc2_staging/lib:$LIBRARY_PATH" >> $GITHUB_ENV &&
+        echo "LD_LIBRARY_PATH=$HOME/libobjc2_staging/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+
+    - name: Build and run tests
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --verbose
