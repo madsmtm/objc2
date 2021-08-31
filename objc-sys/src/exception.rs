@@ -31,7 +31,7 @@ pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut 
 pub type objc_exception_handler =
     unsafe extern "C" fn(unused: *mut objc_object, context: *mut c_void);
 
-extern "C" {
+extern "C-unwind" {
     pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;
     pub fn objc_end_catch();
     /// See [`objc-exception.h`][objc-exception].

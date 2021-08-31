@@ -9,23 +9,15 @@
 //! - <https://llvm.org/docs/ExceptionHandling.html>
 
 use core::ffi::c_void;
-use core::mem;
+use core::intrinsics;
+use core::mem::ManuallyDrop;
 use core::ptr;
 use core::ptr::NonNull;
-use std::os::raw::c_uchar;
 
 use crate::rc::{Id, Shared};
 use crate::runtime::Object;
 
-use objc_sys::{objc_exception_throw, objc_object};
-
-extern "C" {
-    fn rust_objc_try_catch_exception(
-        f: extern "C" fn(*mut c_void),
-        context: *mut c_void,
-        error: *mut *mut objc_object,
-    ) -> c_uchar;
-}
+use objc_sys::{objc_begin_catch, objc_end_catch, objc_exception_throw, objc_object};
 
 /// Throws an Objective-C exception.
 ///
@@ -51,38 +43,6 @@ pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
     unsafe { objc_exception_throw(exception) }
 }
 
-unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Shared>>> {
-    extern "C" fn try_objc_execute_closure<F: FnOnce()>(closure: &mut Option<F>) {
-        // This is always passed Some, so it's safe to unwrap
-        let closure = closure.take().unwrap();
-        closure();
-    }
-
-    let f: extern "C" fn(&mut Option<F>) = try_objc_execute_closure;
-    let f: extern "C" fn(*mut c_void) = unsafe { mem::transmute(f) };
-    // Wrap the closure in an Option so it can be taken
-    let mut closure = Some(closure);
-    let context = &mut closure as *mut _ as *mut c_void;
-
-    let mut exception = ptr::null_mut();
-    let success = unsafe { rust_objc_try_catch_exception(f, context, &mut exception) };
-
-    if success == 0 {
-        Ok(())
-    } else {
-        // SAFETY:
-        // The exception is always a valid object (or NULL, but that has been
-        // checked).
-        //
-        // The ownership is safe as Shared; Objective-C code throwing an
-        // exception knows that they don't hold sole access to that exception
-        // instance any more, and Rust code is forbidden by requiring a Shared
-        // Id in `throw` (instead of just a shared reference, which could have
-        // come from an Owned Id).
-        Err(NonNull::new(exception as *mut Object).map(|e| unsafe { Id::new(e) }))
-    }
-}
-
 /// Tries to execute the given closure and catches an Objective-C exception
 /// if one is thrown.
 ///
@@ -99,15 +59,61 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
 /// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945].
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
-pub unsafe fn catch<R>(closure: impl FnOnce() -> R) -> Result<R, Option<Id<Object, Shared>>> {
-    let mut value = None;
-    let value_ref = &mut value;
-    let closure = move || {
-        *value_ref = Some(closure());
+pub unsafe fn catch<R, F: FnOnce() -> R>(f: F) -> Result<R, Option<Id<Object, Shared>>> {
+    // Our implementation is just a copy of `std::panicking::r#try`:
+    // https://github.com/rust-lang/rust/blob/1.52.1/library/std/src/panicking.rs#L299-L408
+    union Data<F, R> {
+        f: ManuallyDrop<F>,
+        r: ManuallyDrop<R>,
+        p: ManuallyDrop<Option<Id<Object, Shared>>>,
+    }
+
+    let mut data = Data {
+        f: ManuallyDrop::new(f),
     };
-    let result = unsafe { try_no_ret(closure) };
-    // If the try succeeded, this was set so it's safe to unwrap
-    result.map(|_| value.unwrap())
+
+    let data_ptr = &mut data as *mut _ as *mut u8;
+
+    return if unsafe { intrinsics::r#try(do_call::<F, R>, data_ptr, do_catch::<F, R>) } == 0 {
+        Ok(ManuallyDrop::into_inner(unsafe { data.r }))
+    } else {
+        Err(ManuallyDrop::into_inner(unsafe { data.p }))
+    };
+
+    /// Only function that we've changed
+    #[cold]
+    unsafe fn cleanup(payload: *mut u8) -> Option<Id<Object, Shared>> {
+        // We let Objective-C process the unwind payload, and hand us the
+        // exception object. Everything between this and `objc_end_catch` is
+        // treated as a `@catch` block.
+        let obj = unsafe { objc_begin_catch(payload as *mut c_void) };
+        // We retain the exception since it might have been autoreleased.
+        // This cannot unwind, so we don't need extra guards here.
+        let obj = NonNull::new(obj.cast::<Object>()).map(|ptr| unsafe { Id::retain(ptr) });
+        // End the `@catch` block.
+        unsafe { objc_end_catch() };
+        obj
+    }
+
+    #[inline]
+    fn do_call<F: FnOnce() -> R, R>(data: *mut u8) {
+        unsafe {
+            let data = data as *mut Data<F, R>;
+            let data = &mut (*data);
+            let f = ManuallyDrop::take(&mut data.f);
+            data.r = ManuallyDrop::new(f());
+        }
+    }
+
+    #[inline]
+    fn do_catch<F: FnOnce() -> R, R>(data: *mut u8, payload: *mut u8) {
+        unsafe {
+            let data = data as *mut Data<F, R>;
+            let data = &mut (*data);
+            let obj = cleanup(payload);
+            data.p = ManuallyDrop::new(obj);
+        }
+    }
 }
 
 #[cfg(test)]

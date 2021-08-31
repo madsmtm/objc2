@@ -24,8 +24,8 @@ exclude = [
 build = "build.rs"
 
 [features]
-# Enables `objc2::exception::throw` and `objc2::exception::catch`
-exception = ["cc"]
+# Deprecated; does nothing
+exception = []
 
 # Wrap every `objc2::msg_send` call in a `@try/@catch` block
 catch_all = ["exception"]
