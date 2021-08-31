@@ -104,11 +104,30 @@ where
     }
 }
 
-unsafe impl<T, O> Sync for Id<T, O> where T: Sync {}
+/// The `Send` implementation requires `T: Sync` because `Id<T, Shared>` give
+/// access to `&T`.
+///
+/// Additiontally, it requires `T: Send` because if `T: !Send`, you could
+/// clone a `Id<T, Shared>`, send it to another thread, and drop the clone
+/// last, making `dealloc` get called on the other thread, and violate
+/// `T: !Send`.
+unsafe impl<T: Sync + Send> Send for Id<T, Shared> {}
 
-unsafe impl<T> Send for Id<T, Owned> where T: Send {}
+/// The `Sync` implementation requires `T: Sync` because `&Id<T, Shared>` give
+/// access to `&T`.
+///
+/// Additiontally, it requires `T: Send`, because if `T: !Send`, you could
+/// clone a `&Id<T, Shared>` from another thread, and drop the clone last,
+/// making `dealloc` get called on the other thread, and violate `T: !Send`.
+unsafe impl<T: Sync + Send> Sync for Id<T, Shared> {}
 
-unsafe impl<T> Send for Id<T, Shared> where T: Sync {}
+/// `Id<T, Owned>` are `Send` if `T` is `Send` because they give the same
+/// access as having a T directly.
+unsafe impl<T: Send> Send for Id<T, Owned> {}
+
+/// `Id<T, Owned>` are `Sync` if `T` is `Sync` because they give the same
+/// access as having a `T` directly.
+unsafe impl<T: Sync> Sync for Id<T, Owned> {}
 
 impl<T, O> Deref for Id<T, O> {
     type Target = T;
@@ -196,9 +215,11 @@ where
     }
 }
 
-unsafe impl<T> Sync for WeakId<T> where T: Sync {}
+/// This implementation follows the same reasoning as `Id<T, Shared>`.
+unsafe impl<T: Sync + Send> Sync for WeakId<T> {}
 
-unsafe impl<T> Send for WeakId<T> where T: Sync {}
+/// This implementation follows the same reasoning as `Id<T, Shared>`.
+unsafe impl<T: Sync + Send> Send for WeakId<T> {}
 
 #[cfg(test)]
 mod tests {
