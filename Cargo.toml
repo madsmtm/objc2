@@ -6,3 +6,4 @@ members = [
     "objc_foundation",
     "objc_id",
 ]
+exclude = ["objc/tests-ios"]

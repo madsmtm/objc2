@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  # Faster compilation and error on warnings
+  RUSTFLAGS: "-C debuginfo=0 -D warnings"
+
+jobs:
+  fmt:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check formatting
+      uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: -- --check
+
+  test:
+    name: Test
+    strategy:
+      matrix:
+        platform:
+          - { os: ubuntu-latest } # TODO: 32bit and gcc-multilib
+          - { os: macos-10.15 }
+          - { os: macos-11    }
+          # - { target: x86_64-apple-ios,         os: macos-latest, }
+          # - { target: aarch64-apple-ios,        os: macos-latest, }
+
+    runs-on: ${{ matrix.platform.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Rust
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/
+          target/
+        key: ${{ matrix.platform.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+        restore-keys: |
+          ${{ matrix.platform.os }}-cargo-
+
+    - name: Install Packages
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: sudo apt-get install gobjc clang make
+
+    - name: Install different Rust toolchain
+      # A default toolchain is already installed
+      if: matrix.platform.target
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{ matrix.platform.target }}
+        profile: minimal
+        override: true
+
+    - name: Check documentation
+      uses: actions-rs/cargo@v1
+      with:
+        # TODO: Disallow warnings here
+        command: doc
+        args: --no-deps --document-private-items
+
+    - # Run before we install GNUStep as a "fail fast" mechanism
+      name: Run checks
+      uses: actions-rs/cargo@v1
+      with:
+        command: check
+        args: --verbose
+
+    - name: Install GNUStep libobjc2
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: |
+        wget https://github.com/gnustep/libobjc2/archive/refs/tags/v1.9.tar.gz
+        tar -xzf v1.9.tar.gz
+        mkdir libobjc2-1.9/build
+        cd libobjc2-1.9/build
+        export CC="clang"
+        export CXX="clang++"
+        cmake ../
+        sudo make install
+
+    - name: Install GNUStep make
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: |
+        wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_0.tar.gz
+        tar -xzf make-2_9_0.tar.gz
+        cd tools-make-make-2_9_0
+        ./configure --with-library-combo=ng-gnu-gnu
+        sudo make install
+
+    - name: Install GNUStep-Base
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: |
+        wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
+        tar -xzf base-1_28_0.tar.gz
+        cd libs-base-base-1_28_0
+        ./configure --disable-tls
+        sudo make install
+
+    - name: Setup environment
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: |
+        ls -al /usr/local/lib
+        ls -al /usr/local/include
+        echo "LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "CPATH=/usr/local/include:$CPATH" >> $GITHUB_ENV
+
+    - name: Build and run tests
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        # TODO: `objc/exception` feature is broken in objc_foundation
+        # TODO: `objc_foundation/block` feature doesn't work on GNUStep
+        args: --verbose --no-fail-fast --no-default-features

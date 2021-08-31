@@ -12,7 +12,10 @@ license = "MIT"
 
 exclude = [".gitignore"]
 
+[features]
+default = ["block"]
+
 [dependencies]
-block = "0.1"
+block = { optional = true, version = "0.1" }
 objc = { path = "../objc", version = "0.2.7" }
 objc_id = { path = "../objc_id", version = "0.1" }
