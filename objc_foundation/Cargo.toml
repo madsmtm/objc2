@@ -11,6 +11,7 @@ categories = [
     "development-tools::ffi",
     "os::macos-apis",
 ]
+readme = "README.md"
 repository = "https://github.com/madsmtm/objc"
 documentation = "https://docs.rs/objc_foundation/"
 license = "MIT"
