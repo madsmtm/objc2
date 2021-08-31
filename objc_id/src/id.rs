@@ -215,9 +215,11 @@ where
     }
 }
 
-unsafe impl<T> Sync for WeakId<T> where T: Sync {}
+/// This implementation follows the same reasoning as `Id<T, Shared>`.
+unsafe impl<T: Sync + Send> Sync for WeakId<T> {}
 
-unsafe impl<T> Send for WeakId<T> where T: Sync {}
+/// This implementation follows the same reasoning as `Id<T, Shared>`.
+unsafe impl<T: Sync + Send> Send for WeakId<T> {}
 
 #[cfg(test)]
 mod tests {
