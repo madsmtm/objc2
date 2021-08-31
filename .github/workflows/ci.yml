@@ -38,13 +38,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Cache Rust
       uses: actions/cache@v2
       with:
         path: |
           ~/.cargo/
           target/
-        key: cargo-${{ matrix.platform.os }}
+        key: ${{ matrix.platform.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+        restore-keys: |
+          ${{ matrix.platform.os }}-cargo-
 
     - name: Install Packages
       if: contains(matrix.platform.os, 'ubuntu')
@@ -77,9 +80,10 @@ jobs:
     - name: Install GNUStep libobjc2
       if: contains(matrix.platform.os, 'ubuntu')
       run: |
-        git clone -b 1.9 https://github.com/gnustep/libobjc2.git
-        mkdir libobjc2/build
-        cd libobjc2/build
+        wget https://github.com/gnustep/libobjc2/archive/refs/tags/v1.9.tar.gz
+        tar -xzf v1.9.tar.gz
+        mkdir libobjc2-1.9/build
+        cd libobjc2-1.9/build
         export CC="clang"
         export CXX="clang++"
         cmake ../
@@ -88,16 +92,18 @@ jobs:
     - name: Install GNUStep make
       if: contains(matrix.platform.os, 'ubuntu')
       run: |
-        git clone -b make-2_9_0 https://github.com/gnustep/tools-make.git
-        cd tools-make
+        wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_0.tar.gz
+        tar -xzf make-2_9_0.tar.gz
+        cd tools-make-make-2_9_0
         ./configure --with-library-combo=ng-gnu-gnu
         sudo make install
 
     - name: Install GNUStep-Base
       if: contains(matrix.platform.os, 'ubuntu')
       run: |
-        git clone -b base-1_28_0 https://github.com/gnustep/libs-base.git
-        cd libs-base
+        wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
+        tar -xzf base-1_28_0.tar.gz
+        cd libs-base-base-1_28_0
         ./configure --disable-tls
         sudo make install
 
