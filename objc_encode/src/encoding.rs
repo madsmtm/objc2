@@ -102,7 +102,7 @@ impl PartialEq<Encoding<'_>> for str {
 #[cfg(test)]
 mod tests {
     use super::Encoding;
-    use std::string::ToString;
+    use alloc::string::ToString;
 
     #[test]
     fn test_array_display() {

@@ -2,7 +2,8 @@
 // See https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain
 id objc_retain(id value);
 
-int RustObjCExceptionTryCatch(void (*try)(void *), void *context, id *error) {
+// We return `unsigned char`, since it is guaranteed to be an `u8` on all platforms
+unsigned char RustObjCExceptionTryCatch(void (*try)(void *), void *context, id *error) {
     @try {
         try(context);
         if (error) {

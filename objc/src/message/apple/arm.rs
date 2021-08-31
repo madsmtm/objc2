@@ -1,5 +1,5 @@
-use std::any::{Any, TypeId};
-use std::mem;
+use core::any::{Any, TypeId};
+use core::mem;
 
 use crate::runtime::Imp;
 

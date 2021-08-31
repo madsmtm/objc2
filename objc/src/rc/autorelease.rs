@@ -1,5 +1,5 @@
 use crate::runtime::{objc_autoreleasePoolPop, objc_autoreleasePoolPush};
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 // we use a struct to ensure that objc_autoreleasePoolPop during unwinding.
 struct AutoReleaseHelper {

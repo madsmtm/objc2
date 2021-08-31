@@ -55,6 +55,7 @@ encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 #[cfg(test)]
 mod tests {
     use crate::runtime::{Class, Object, Sel};
+    use alloc::string::ToString;
     use objc_encode::Encode;
 
     #[test]

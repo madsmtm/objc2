@@ -6,6 +6,7 @@ edition = "2018"
 
 description = "Rust interface for Objective-C's throw and try/catch statements."
 keywords = ["objective-c", "osx", "ios"]
+categories = ["development-tools::ffi", "no-std"]
 repository = "http://github.com/SSheldon/rust-objc-exception"
 documentation = "http://ssheldon.github.io/rust-objc/objc_exception/"
 license = "MIT"

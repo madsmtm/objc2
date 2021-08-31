@@ -60,10 +60,12 @@ The bindings can be used on Linux or *BSD utilizing the
 [GNUstep Objective-C runtime](https://www.github.com/gnustep/libobjc2).
 */
 
-#![crate_name = "objc"]
-#![crate_type = "lib"]
+#![no_std]
 #![warn(missing_docs)]
 #![allow(clippy::missing_safety_doc)]
+
+extern crate alloc;
+extern crate std;
 
 pub use objc_encode::{Encode, Encoding};
 

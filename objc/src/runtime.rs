@@ -3,12 +3,13 @@
 //! For more information on foreign functions, see Apple's documentation:
 //! <https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html>
 
+use core::ffi::c_void;
+use core::fmt;
+use core::ptr;
+use core::str;
 use malloc_buf::Malloc;
 use std::ffi::{CStr, CString};
-use std::fmt;
-use std::os::raw::{c_char, c_int, c_uint, c_void};
-use std::ptr;
-use std::str;
+use std::os::raw::{c_char, c_int, c_uint};
 
 use crate::Encode;
 

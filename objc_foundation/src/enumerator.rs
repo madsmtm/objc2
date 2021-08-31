@@ -1,8 +1,8 @@
-use std::marker::PhantomData;
-use std::mem;
+use core::marker::PhantomData;
+use core::mem;
+use core::ptr;
+use core::slice;
 use std::os::raw::c_ulong;
-use std::ptr;
-use std::slice;
 
 use objc::msg_send;
 use objc::runtime::Object;

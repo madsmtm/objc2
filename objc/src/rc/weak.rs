@@ -1,5 +1,6 @@
-use std::cell::UnsafeCell;
-use std::ptr;
+use alloc::boxed::Box;
+use core::cell::UnsafeCell;
+use core::ptr;
 
 use super::StrongPtr;
 use crate::runtime::{self, Object};

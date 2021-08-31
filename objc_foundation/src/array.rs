@@ -1,7 +1,8 @@
-use std::cmp::Ordering;
-use std::marker::PhantomData;
-use std::ops::{Index, Range};
-use std::os::raw::c_void;
+use alloc::vec::Vec;
+use core::cmp::Ordering;
+use core::ffi::c_void;
+use core::marker::PhantomData;
+use core::ops::{Index, Range};
 
 use objc::runtime::{Class, Object};
 use objc::{class, msg_send};
@@ -406,6 +407,9 @@ pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec;
+    use alloc::vec::Vec;
+
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
     use objc_id::Id;

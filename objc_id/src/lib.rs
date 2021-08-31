@@ -38,6 +38,9 @@ assert!(weak.load().is_none());
 ```
 */
 
+// This crate is, but its dependencies are not
+#![no_std]
+
 pub use id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
 
 mod id;

@@ -1,4 +1,4 @@
-use std::any::Any;
+use core::any::Any;
 
 use objc::msg_send;
 use objc::runtime::{Class, BOOL, NO};
@@ -56,6 +56,7 @@ object_struct!(NSObject);
 mod tests {
     use super::{INSObject, NSObject};
     use crate::{INSString, NSString};
+    use alloc::format;
 
     #[test]
     fn test_is_equal() {

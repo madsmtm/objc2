@@ -1,7 +1,8 @@
-use std::cmp::min;
-use std::marker::PhantomData;
-use std::ops::Index;
-use std::ptr;
+use alloc::vec::Vec;
+use core::cmp::min;
+use core::marker::PhantomData;
+use core::ops::Index;
+use core::ptr;
 
 use objc::runtime::Class;
 use objc::{class, msg_send};
@@ -164,9 +165,11 @@ where
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec;
+    use objc_id::Id;
+
     use super::{INSDictionary, NSDictionary};
     use crate::{INSArray, INSObject, INSString, NSObject, NSString};
-    use objc_id::Id;
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
         let string = NSString::from_str(key);
