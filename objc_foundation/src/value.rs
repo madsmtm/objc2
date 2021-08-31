@@ -1,9 +1,10 @@
-use std::any::Any;
+use core::any::Any;
+use core::ffi::c_void;
+use core::marker::PhantomData;
+use core::mem::MaybeUninit;
+use core::str;
 use std::ffi::{CStr, CString};
-use std::marker::PhantomData;
-use std::mem::MaybeUninit;
-use std::os::raw::{c_char, c_void};
-use std::str;
+use std::os::raw::c_char;
 
 use objc::runtime::Class;
 use objc::Encode;

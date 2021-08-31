@@ -1,7 +1,8 @@
-use std::fmt;
-use std::os::raw::{c_char, c_void};
-use std::slice;
-use std::str;
+use core::ffi::c_void;
+use core::fmt;
+use core::slice;
+use core::str;
+use std::os::raw::c_char;
 
 use objc::msg_send;
 use objc_id::{Id, ShareId};

@@ -1,5 +1,5 @@
-use std::any::Any;
-use std::mem;
+use core::any::Any;
+use core::mem;
 
 use super::{Message, MessageArguments, MessageError, Super};
 use crate::runtime::{Class, Imp, Object, Sel};

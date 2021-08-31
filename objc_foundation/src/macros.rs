@@ -21,29 +21,29 @@ macro_rules! object_struct {
             }
         }
 
-        impl ::std::cmp::PartialEq for $name {
+        impl ::core::cmp::PartialEq for $name {
             fn eq(&self, other: &Self) -> bool {
                 use $crate::INSObject;
                 self.is_equal(other)
             }
         }
 
-        impl ::std::cmp::Eq for $name {}
+        impl ::core::cmp::Eq for $name {}
 
-        impl ::std::hash::Hash for $name {
+        impl ::core::hash::Hash for $name {
             fn hash<H>(&self, state: &mut H)
             where
-                H: ::std::hash::Hasher,
+                H: ::core::hash::Hasher,
             {
                 use $crate::INSObject;
                 self.hash_code().hash(state);
             }
         }
 
-        impl ::std::fmt::Debug for $name {
-            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        impl ::core::fmt::Debug for $name {
+            fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
                 use $crate::{INSObject, INSString};
-                ::std::fmt::Debug::fmt(self.description().as_str(), f)
+                ::core::fmt::Debug::fmt(self.description().as_str(), f)
             }
         }
     };

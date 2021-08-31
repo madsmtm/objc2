@@ -4,7 +4,7 @@ extern crate quote;
 extern crate syn;
 
 use proc_macro::TokenStream;
-use quote::{Tokens, ToTokens};
+use quote::{ToTokens, Tokens};
 
 #[proc_macro_derive(INSObject)]
 pub fn impl_object(input: TokenStream) -> TokenStream {
@@ -22,7 +22,8 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
     let mut gen = Tokens::new();
     quote!(
         unsafe impl #impl_generics ::objc::Message for #name #ty_generics #where_clause { }
-    ).to_tokens(&mut gen);
+    )
+    .to_tokens(&mut gen);
 
     quote!(
         impl #impl_generics INSObject for #name #ty_generics #where_clause {
@@ -36,32 +37,36 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
                 }
             }
         }
-    ).to_tokens(&mut gen);
+    )
+    .to_tokens(&mut gen);
 
     quote!(
-        impl #impl_generics ::std::cmp::PartialEq for #name #ty_generics #where_clause {
+        impl #impl_generics ::core::cmp::PartialEq for #name #ty_generics #where_clause {
             fn eq(&self, other: &Self) -> bool {
                 INSObject::is_equal(self, other)
             }
         }
-    ).to_tokens(&mut gen);
+    )
+    .to_tokens(&mut gen);
 
     quote!(
-        impl #impl_generics ::std::hash::Hash for #name #ty_generics #where_clause {
-            fn hash<H>(&self, state: &mut H) where H: ::std::hash::Hasher {
+        impl #impl_generics ::core::hash::Hash for #name #ty_generics #where_clause {
+            fn hash<H>(&self, state: &mut H) where H: ::core::hash::Hasher {
                 INSObject::hash_code(self).hash(state);
             }
         }
-    ).to_tokens(&mut gen);
+    )
+    .to_tokens(&mut gen);
 
     quote!(
-        impl #impl_generics ::std::fmt::Debug for #name #ty_generics #where_clause {
-            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        impl #impl_generics ::core::fmt::Debug for #name #ty_generics #where_clause {
+            fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
                 let s = INSObject::description(self);
-                ::std::fmt::Display::fmt(&*s, f)
+                ::core::fmt::Display::fmt(&*s, f)
             }
         }
-    ).to_tokens(&mut gen);
+    )
+    .to_tokens(&mut gen);
 
     // Return the generated impl
     gen.parse().unwrap()

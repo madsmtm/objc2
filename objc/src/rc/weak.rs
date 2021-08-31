@@ -1,5 +1,5 @@
-use std::cell::UnsafeCell;
-use std::ptr;
+use core::cell::UnsafeCell;
+use core::ptr;
 
 use super::StrongPtr;
 use crate::runtime::{self, Object};

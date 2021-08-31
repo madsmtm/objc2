@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 
 use crate::runtime::{Class, Method, Object, Sel};
 use crate::{Encode, EncodeArguments, Encoding};

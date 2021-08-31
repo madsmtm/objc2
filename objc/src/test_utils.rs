@@ -1,4 +1,4 @@
-use std::ops::{Deref, DerefMut};
+use core::ops::{Deref, DerefMut};
 use std::os::raw::c_char;
 use std::sync::Once;
 

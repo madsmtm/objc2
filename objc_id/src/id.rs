@@ -1,8 +1,8 @@
-use std::any::Any;
-use std::fmt;
-use std::hash;
-use std::marker::PhantomData;
-use std::ops::{Deref, DerefMut};
+use core::any::Any;
+use core::fmt;
+use core::hash;
+use core::marker::PhantomData;
+use core::ops::{Deref, DerefMut};
 
 use objc::rc::{StrongPtr, WeakPtr};
 use objc::runtime::Object;

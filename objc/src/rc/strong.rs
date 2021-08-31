@@ -1,6 +1,6 @@
-use std::fmt;
-use std::mem;
-use std::ops::Deref;
+use core::fmt;
+use core::mem;
+use core::ops::Deref;
 
 use super::WeakPtr;
 use crate::runtime::{self, Object};

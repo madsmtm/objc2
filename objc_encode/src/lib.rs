@@ -44,7 +44,7 @@ assert_eq!(i32::ENCODING.to_string(), "i");
 #![no_std]
 
 #[cfg(test)]
-extern crate std;
+extern crate alloc;
 
 mod encode;
 mod encoding;

@@ -34,9 +34,9 @@ decl.register();
 ```
 */
 
+use core::mem;
+use core::ptr;
 use std::ffi::CString;
-use std::mem;
-use std::ptr;
 
 use crate::runtime::{self, Class, Imp, Object, Protocol, Sel, BOOL, NO};
 use crate::{Encode, EncodeArguments, Encoding, Message};
@@ -95,7 +95,7 @@ fn method_type_encoding(ret: &Encoding<'_>, args: &[Encoding<'_>]) -> CString {
     // First two arguments are always self and the selector
     let mut types = format!("{}{}{}", ret, <*mut Object>::ENCODING, Sel::ENCODING);
     for enc in args {
-        use std::fmt::Write;
+        use core::fmt::Write;
         write!(&mut types, "{}", enc).unwrap();
     }
     CString::new(types).unwrap()

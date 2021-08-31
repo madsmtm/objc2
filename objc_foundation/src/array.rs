@@ -1,7 +1,7 @@
-use std::cmp::Ordering;
-use std::marker::PhantomData;
-use std::ops::{Index, Range};
-use std::os::raw::c_void;
+use core::cmp::Ordering;
+use core::ffi::c_void;
+use core::marker::PhantomData;
+use core::ops::{Index, Range};
 
 use objc::runtime::{Class, Object};
 use objc::{class, msg_send};

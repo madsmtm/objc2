@@ -1,7 +1,7 @@
-use std::cmp::min;
-use std::marker::PhantomData;
-use std::ops::Index;
-use std::ptr;
+use core::cmp::min;
+use core::marker::PhantomData;
+use core::ops::Index;
+use core::ptr;
 
 use objc::runtime::Class;
 use objc::{class, msg_send};

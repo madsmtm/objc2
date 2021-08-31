@@ -1,6 +1,6 @@
-use std::ops::Range;
-use std::os::raw::c_void;
-use std::slice;
+use core::ffi::c_void;
+use core::ops::Range;
+use core::slice;
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 #[cfg(feature = "block")]
@@ -57,7 +57,7 @@ pub trait INSData: INSObject {
             let obj: *mut Self = msg_send![obj, initWithBytesNoCopy:bytes_ptr
                                                              length:bytes.len()
                                                         deallocator:dealloc];
-            std::mem::forget(bytes);
+            core::mem::forget(bytes);
             Id::from_retained_ptr(obj)
         }
     }

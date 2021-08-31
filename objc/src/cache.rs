@@ -1,6 +1,6 @@
-use std::os::raw::c_void;
-use std::ptr;
-use std::sync::atomic::{AtomicPtr, Ordering};
+use core::ffi::c_void;
+use core::ptr;
+use core::sync::atomic::{AtomicPtr, Ordering};
 
 use crate::runtime::{self, Class, Sel};
 

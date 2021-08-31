@@ -1,7 +1,7 @@
-use std::any::Any;
+use core::any::Any;
+use core::fmt;
+use core::mem;
 use std::error::Error;
-use std::fmt;
-use std::mem;
 
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::{Encode, EncodeArguments};
@@ -314,7 +314,7 @@ mod tests {
     #[cfg(not(feature = "verify_message"))]
     #[test]
     fn test_send_message_nil() {
-        let nil: *mut Object = ::std::ptr::null_mut();
+        let nil: *mut Object = ::core::ptr::null_mut();
         let result: usize = unsafe { msg_send![nil, hash] };
         assert!(result == 0);
 

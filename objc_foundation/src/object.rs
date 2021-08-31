@@ -1,4 +1,4 @@
-use std::any::Any;
+use core::any::Any;
 
 use objc::msg_send;
 use objc::runtime::{Class, BOOL, NO};
