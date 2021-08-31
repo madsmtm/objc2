@@ -20,7 +20,14 @@ use objc::runtime::Class;
 
 #[cfg(not(any(target_os = "macos", target_os = "ios")))]
 #[link(name = "gnustep-base", kind = "dylib")]
-extern { static _OBJC_CLASS_NSObject : Class; }
+extern "C" {}
+
+// Split up to illustrate that the linking doesn't have to be annotated on the
+// correct `extern` block.
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+extern "C" {
+    static _OBJC_CLASS_NSObject: Class;
+}
 
 #[cfg(not(any(target_os = "macos", target_os = "ios")))]
 #[allow(dead_code)]

@@ -84,6 +84,12 @@ impl fmt::Display for NSString {
 mod tests {
     use super::{INSCopying, INSString, NSString};
 
+    #[cfg(not(any(target_os = "macos", target_os = "ios")))]
+    #[test]
+    fn ensure_linkage() {
+        unsafe { crate::get_class_to_force_linkage() };
+    }
+
     #[test]
     fn test_utf8() {
         let expected = "ประเทศไทย中华Việt Nam";

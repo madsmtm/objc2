@@ -11,7 +11,7 @@ which can be cloned to allow multiple references.
 
 Weak references may be created using the [`WeakId`](struct.WeakId.html) struct.
 
-```
+```no_run
 # use objc::msg_send;
 use objc::runtime::{Class, Object};
 use objc_id::{Id, WeakId};
@@ -41,3 +41,23 @@ assert!(weak.load().is_none());
 pub use id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
 
 mod id;
+
+// TODO: Remove the need for this hack
+
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+use objc::runtime::Class;
+
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+#[link(name = "gnustep-base", kind = "dylib")]
+extern "C" {}
+
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+extern "C" {
+    static _OBJC_CLASS_NSObject: Class;
+}
+
+#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+#[allow(dead_code)]
+unsafe fn get_class_to_force_linkage() -> &'static Class {
+    &_OBJC_CLASS_NSObject
+}

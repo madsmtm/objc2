@@ -206,6 +206,12 @@ mod tests {
     use objc::runtime::Object;
     use objc::{class, msg_send};
 
+    #[cfg(not(any(target_os = "macos", target_os = "ios")))]
+    #[test]
+    fn ensure_linkage() {
+        unsafe { crate::get_class_to_force_linkage() };
+    }
+
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
     }
