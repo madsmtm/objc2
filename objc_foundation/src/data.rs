@@ -1,3 +1,5 @@
+#[cfg(feature = "block")]
+use alloc::vec::Vec;
 use core::ffi::c_void;
 use core::ops::Range;
 use core::slice;
@@ -135,6 +137,8 @@ impl INSMutableCopying for NSMutableData {
 mod tests {
     use super::{INSData, INSMutableData, NSData, NSMutableData};
     use crate::INSObject;
+    #[cfg(feature = "block")]
+    use alloc::vec;
 
     #[test]
     fn test_bytes() {

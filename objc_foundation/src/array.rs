@@ -1,3 +1,4 @@
+use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
@@ -406,6 +407,9 @@ pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec;
+    use alloc::vec::Vec;
+
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
     use objc_id::Id;

@@ -56,6 +56,7 @@ object_struct!(NSObject);
 mod tests {
     use super::{INSObject, NSObject};
     use crate::{INSString, NSString};
+    use alloc::format;
 
     #[test]
     fn test_is_equal() {

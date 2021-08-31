@@ -1,3 +1,4 @@
+use alloc::vec::Vec;
 use core::cmp::min;
 use core::marker::PhantomData;
 use core::ops::Index;
@@ -164,9 +165,11 @@ where
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec;
+    use objc_id::Id;
+
     use super::{INSDictionary, NSDictionary};
     use crate::{INSArray, INSObject, INSString, NSObject, NSString};
-    use objc_id::Id;
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
         let string = NSString::from_str(key);

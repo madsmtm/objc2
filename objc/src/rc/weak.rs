@@ -1,3 +1,4 @@
+use alloc::boxed::Box;
 use core::cell::UnsafeCell;
 use core::ptr;
 

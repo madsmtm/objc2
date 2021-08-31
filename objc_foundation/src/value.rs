@@ -1,3 +1,4 @@
+use alloc::string::ToString;
 use core::any::Any;
 use core::ffi::c_void;
 use core::marker::PhantomData;

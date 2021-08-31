@@ -1,3 +1,4 @@
+use alloc::string::{String, ToString};
 use core::any::Any;
 use core::fmt;
 use core::mem;

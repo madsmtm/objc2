@@ -1,4 +1,8 @@
+#![no_std]
 #![crate_name = "objc_foundation"]
+
+extern crate alloc;
+extern crate std;
 
 pub use self::array::{
     INSArray, INSMutableArray, NSArray, NSComparisonResult, NSMutableArray, NSMutableSharedArray,

@@ -34,6 +34,8 @@ decl.register();
 ```
 */
 
+use alloc::format;
+use alloc::string::ToString;
 use core::mem;
 use core::ptr;
 use std::ffi::CString;
