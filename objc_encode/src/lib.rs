@@ -42,6 +42,8 @@ assert_eq!(i32::ENCODING.to_string(), "i");
 */
 
 #![no_std]
+// Update in Cargo.toml as well.
+#![doc(html_root_url = "https://docs.rs/objc-encode/1.1.0")]
 
 #[cfg(test)]
 extern crate alloc;

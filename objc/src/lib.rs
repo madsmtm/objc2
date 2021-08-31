@@ -63,6 +63,8 @@ The bindings can be used on Linux or *BSD utilizing the
 #![no_std]
 #![warn(missing_docs)]
 #![allow(clippy::missing_safety_doc)]
+// Update in Cargo.toml as well.
+#![doc(html_root_url = "https://docs.rs/objc/0.2.7")]
 
 extern crate alloc;
 extern crate std;

@@ -1,3 +1,6 @@
+// Update in Cargo.toml as well.
+#![doc(html_root_url = "https://docs.rs/objc-foundation-derive/0.0.1")]
+
 extern crate proc_macro;
 #[macro_use]
 extern crate quote;

@@ -1,17 +1,20 @@
 [package]
 name = "objc_exception"
-version = "0.1.2"
-authors = ["Steven Sheldon"]
+version = "0.1.2" # Remember to update html_root_url in lib.rs
+authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
-description = "Rust interface for Objective-C's throw and try/catch statements."
-keywords = ["objective-c", "osx", "ios"]
-categories = ["development-tools::ffi", "no-std"]
-repository = "http://github.com/SSheldon/rust-objc-exception"
-documentation = "http://ssheldon.github.io/rust-objc/objc_exception/"
+description = "Objective-C's throw and try/catch statements."
+keywords = ["objective-c", "macos", "ios", "try", "catch"]
+categories = [
+    "api-bindings",
+    "development-tools::ffi",
+    "no-std",
+    "os::macos-apis",
+]
+repository = "https://github.com/madsmtm/objc"
+documentation = "https://docs.rs/objc_exception/"
 license = "MIT"
-
-exclude = [".gitignore"]
 
 build = "build.rs"
 

@@ -7,6 +7,8 @@
 //! - <https://llvm.org/docs/ExceptionHandling.html>
 
 #![warn(missing_docs)]
+// Update in Cargo.toml as well.
+#![doc(html_root_url = "https://docs.rs/objc_exception/0.1.2")]
 
 #![no_std]
 

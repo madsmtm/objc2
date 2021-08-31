@@ -40,6 +40,8 @@ assert!(weak.load().is_none());
 
 // This crate is, but its dependencies are not
 #![no_std]
+// Update in Cargo.toml as well.
+#![doc(html_root_url = "https://docs.rs/objc_id/0.1.1")]
 
 pub use id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
 

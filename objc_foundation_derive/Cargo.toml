@@ -1,12 +1,18 @@
 [package]
 name = "objc-foundation-derive"
-version = "0.0.1"
-authors = ["Steven Sheldon"]
+version = "0.0.1" # Remember to update html_root_url in lib.rs
+authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
+edition = "2018"
 
-description = "Procedural macros for deriving traits from objc-foundation."
-keywords = ["objective-c", "osx", "ios", "cocoa", "uikit"]
-repository = "http://github.com/SSheldon/rust-objc-foundation"
-documentation = "http://ssheldon.github.io/rust-objc/objc_foundation/"
+description = "Procedural macros for deriving traits from objc_foundation."
+keywords = ["objective-c", "macos", "ios", "cocoa", "uikit"]
+categories = [
+    "api-bindings",
+    "development-tools::ffi",
+    "os::macos-apis",
+]
+repository = "https://github.com/madsmtm/objc"
+documentation = "https://docs.rs/objc-foundation-derive/"
 license = "MIT"
 
 [lib]
