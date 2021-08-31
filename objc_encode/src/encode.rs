@@ -64,7 +64,7 @@ unsafe impl Encode for *const c_void {
 }
 
 unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
-    const ENCODING: Encoding<'static> = Encoding::Array(LENGTH as u32, &<T as Encode>::ENCODING);
+    const ENCODING: Encoding<'static> = Encoding::Array(LENGTH, &<T as Encode>::ENCODING);
 }
 
 // External crates cannot implement Encode for pointers or [`Option`], but
