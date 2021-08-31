@@ -1,70 +1,42 @@
 sudo: false
 language: rust
 cache: cargo
+os: osx
 
-addons:
-  apt:
-    packages:
-    - clang
-    - cmake
-install: >
-  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-    git clone -b 1.9 https://github.com/gnustep/libobjc2.git &&
-    mkdir libobjc2/build &&
-    cd libobjc2/build &&
-    export CC="clang" &&
-    export CXX="clang++" &&
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=$HOME/libobjc2_staging ../ &&
-    make install
-  fi
-before_script: >
-  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-    export LIBRARY_PATH=$HOME/libobjc2_staging/lib:$LIBRARY_PATH;
-    export LD_LIBRARY_PATH=$HOME/libobjc2_staging/lib:$LD_LIBRARY_PATH;
-  fi
-script: cargo test --verbose
+script:
+- cargo test --workspace --verbose
+- # TODO: cargo test --workspace --verbose --all-features
 
 jobs:
   include:
-  - name: Check formatting
-    os: linux
-    rust: stable
-    install: rustup component add rustfmt
-    script: cargo fmt --all -- --check
+  - name: MacOS 10.11
+    osx_image: xcode7.3
 
-  - name: MacOS stable
-    os: osx
-    rust: stable
-  - name: MacOS nightly
-    os: osx
-    rust: nightly
-  - name: MacOS stable w. features
-    os: osx
-    rust: stable
-    script: cargo test --verbose --features "exception verify_message"
-  - name: MacOS 32bit
-    os: osx
+  - name: MacOS 10.13 (with 32bit)
     osx_image: xcode9.4
     rust: nightly
     # 32-bit targets only have tier 3 support
     install: rustup component add rust-src
-    script: cargo test -Z build-std --target i686-apple-darwin --verbose
+    script:
+    - cargo test --workspace --verbose
+    - # TODO: cargo test --workspace --verbose --all-features
+    - # objc_exception doesn't work on 32bit?
+      cargo test --workspace --exclude objc_exception --verbose -Z build-std --target i686-apple-darwin
+    - # TODO: cargo test --workspace --verbose --all-features -Z build-std --target i686-apple-darwin
 
-  - name: Linux stable
-    os: linux
-    rust: stable
-  - name: Linux nightly
-    os: linux
-    rust: nightly
+  - name: MacOS 11.3
+    osx_image: xcode12.5
 
   - name: iOS nightly
-    os: osx
     osx_image: xcode7.3
     rust: nightly
     before_install: rustup component add rust-src
     # Install rust-test-ios
     install: curl -LO https://github.com/SSheldon/rust-test-ios/releases/download/0.1.1/rust-test-ios && chmod +x rust-test-ios
-    # Enable -Z build-std, 32-bit targets only have tier 3 support
-    before_script: printf '[unstable]\nbuild-std = ["std"]\n' > $HOME/.cargo/config.toml
+    before_script:
+      # Enable -Z build-std, 32-bit targets only have tier 3 support
+      - printf '[unstable]\nbuild-std = ["std"]\n' > $HOME/.cargo/config.toml
+      # Remove workspace since `rust-test-ios` is not made for that
+      - rm Cargo.toml
     # TODO: env: FEATURES="exception"
     script: cd objc && ../rust-test-ios
