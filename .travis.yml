@@ -66,5 +66,5 @@ jobs:
     install: curl -LO https://github.com/SSheldon/rust-test-ios/releases/download/0.1.1/rust-test-ios && chmod +x rust-test-ios
     # Enable -Z build-std, 32-bit targets only have tier 3 support
     before_script: printf '[unstable]\nbuild-std = ["std"]\n' > $HOME/.cargo/config.toml
-    env: FEATURES="exception"
-    script: ./rust-test-ios
+    # TODO: env: FEATURES="exception"
+    script: cd objc && ../rust-test-ios
