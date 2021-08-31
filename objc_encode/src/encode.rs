@@ -40,6 +40,9 @@ encode_impls!(
 );
 
 unsafe impl Encode for isize {
+    #[cfg(target_pointer_width = "16")]
+    const ENCODING: Encoding<'static> = i16::ENCODING;
+
     #[cfg(target_pointer_width = "32")]
     const ENCODING: Encoding<'static> = i32::ENCODING;
 
@@ -48,6 +51,9 @@ unsafe impl Encode for isize {
 }
 
 unsafe impl Encode for usize {
+    #[cfg(target_pointer_width = "16")]
+    const ENCODING: Encoding<'static> = u16::ENCODING;
+
     #[cfg(target_pointer_width = "32")]
     const ENCODING: Encoding<'static> = u32::ENCODING;
 
