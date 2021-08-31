@@ -1,11 +1,12 @@
-// Always available in Objective-C
-// See https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain
+/// This is always available when building Objective-C.
+///
+/// See <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain>.
 id objc_retain(id value);
 
 // We return `unsigned char`, since it is guaranteed to be an `u8` on all platforms
-unsigned char RustObjCExceptionTryCatch(void (*try)(void *), void *context, id *error) {
+unsigned char RustObjCExceptionTryCatch(void (*f)(void *), void *context, id *error) {
     @try {
-        try(context);
+        f(context);
         if (error) {
             *error = (id)0; // nil
         }
