@@ -1,9 +1,9 @@
-use std::sync::{Once, ONCE_INIT};
+use std::sync::Once;
 
 use objc::declare::ClassDecl;
-use objc::msg_send;
 use objc::runtime::{Class, Object, Sel};
 use objc::Message;
+use objc::{msg_send, sel};
 use objc_foundation::{INSObject, NSObject};
 
 /// In the future this should be an `extern type`, if that gets stabilized,
@@ -34,7 +34,7 @@ impl MYObject {
 
 unsafe impl Message for MYObject {}
 
-static MYOBJECT_REGISTER_CLASS: Once = ONCE_INIT;
+static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 
 impl INSObject for MYObject {
     fn class() -> &'static Class {
