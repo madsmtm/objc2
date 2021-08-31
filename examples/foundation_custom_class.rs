@@ -6,7 +6,15 @@ use objc::runtime::{Class, Object, Sel};
 use objc::Message;
 use objc_foundation::{INSObject, NSObject};
 
-pub enum MYObject {}
+/// In the future this should be an `extern type`, if that gets stabilized,
+/// see [RFC-1861](https://rust-lang.github.io/rfcs/1861-extern-types.html).
+#[repr(C)]
+pub struct MYObject {
+    /// See the [Nomicon] for details on representing opaque structs.
+    ///
+    /// [Nomicon]: https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs
+    _priv: [u8; 0],
+}
 
 impl MYObject {
     fn number(&self) -> u32 {
