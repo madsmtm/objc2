@@ -28,7 +28,7 @@ jobs:
     strategy:
       matrix:
         platform:
-          - { os: ubuntu-latest }
+          - { os: ubuntu-latest } # TODO: 32bit and gcc-multilib
           - { os: macos-10.15 }
           - { os: macos-11    }
           # - { target: x86_64-apple-ios,         os: macos-latest, }
@@ -46,6 +46,10 @@ jobs:
           target/
         key: cargo-${{ matrix.platform.os }}
 
+    - name: Install Packages
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: sudo apt-get install gobjc clang make
+
     - name: Install different Rust toolchain
       # A default toolchain is already installed
       if: matrix.platform.target
@@ -56,10 +60,6 @@ jobs:
         profile: minimal
         override: true
 
-    - name: Install Objective-C compiler
-      if: contains(matrix.platform.os, 'ubuntu')
-      run: sudo apt-get install gobjc
-
     - name: Check documentation
       uses: actions-rs/cargo@v1
       with:
@@ -67,28 +67,51 @@ jobs:
         command: doc
         args: --no-deps --document-private-items
 
-    - name: Run checks
+    - # Run before we install GNUStep as a "fail fast" mechanism
+      name: Run checks
       uses: actions-rs/cargo@v1
       with:
         command: check
         args: --verbose
 
-    - name: Install GNUStep
+    - name: Install GNUStep libobjc2
       if: contains(matrix.platform.os, 'ubuntu')
       run: |
-        sudo apt-get install clang make
-        git clone -b 1.9 https://github.com/gnustep/libobjc2.git &&
-        mkdir libobjc2/build &&
-        cd libobjc2/build &&
-        export CC="clang" &&
-        export CXX="clang++" &&
-        cmake -DCMAKE_INSTALL_PREFIX:PATH=$HOME/libobjc2_staging ../ &&
-        make install &&
-        echo "LIBRARY_PATH=$HOME/libobjc2_staging/lib:$LIBRARY_PATH" >> $GITHUB_ENV &&
-        echo "LD_LIBRARY_PATH=$HOME/libobjc2_staging/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        git clone -b 1.9 https://github.com/gnustep/libobjc2.git
+        mkdir libobjc2/build
+        cd libobjc2/build
+        export CC="clang"
+        export CXX="clang++"
+        cmake ../
+        sudo make install
+
+    - name: Install GNUStep make
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: |
+        git clone -b make-2_9_0 https://github.com/gnustep/tools-make.git
+        cd tools-make
+        ./configure --with-library-combo=ng-gnu-gnu
+        sudo make install
+
+    - name: Install GNUStep-Base
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: |
+        git clone -b base-1_28_0 https://github.com/gnustep/libs-base.git
+        cd libs-base
+        ./configure --disable-tls
+        sudo make install
+
+    - name: Setup environment
+      if: contains(matrix.platform.os, 'ubuntu')
+      run: |
+        ls -al /usr/local/lib
+        ls -al /usr/local/include
+        echo "LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "CPATH=/usr/local/include:$CPATH" >> $GITHUB_ENV
 
     - name: Build and run tests
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --verbose
+        args: --verbose --no-fail-fast
