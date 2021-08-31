@@ -6,14 +6,17 @@
 //! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html>
 //! - <https://llvm.org/docs/ExceptionHandling.html>
 
+#![no_std]
 #![warn(missing_docs)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc_exception/0.1.2")]
 
-#![no_std]
-
 #[cfg(test)]
 extern crate alloc;
+
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+extern "C" {}
 
 use core::ffi::c_void;
 use core::mem;

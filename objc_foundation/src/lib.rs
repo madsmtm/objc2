@@ -6,6 +6,10 @@
 extern crate alloc;
 extern crate std;
 
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+extern "C" {}
+
 pub use self::array::{
     INSArray, INSMutableArray, NSArray, NSComparisonResult, NSMutableArray, NSMutableSharedArray,
     NSRange, NSSharedArray,

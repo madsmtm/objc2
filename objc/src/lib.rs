@@ -69,6 +69,14 @@ The bindings can be used on Linux or *BSD utilizing the
 extern crate alloc;
 extern crate std;
 
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+extern "C" {}
+
+#[cfg(doctest)]
+#[doc = include_str!("../../README.md")]
+extern "C" {}
+
 pub use objc_encode::{Encode, Encoding};
 
 pub use crate::encode::EncodeArguments;

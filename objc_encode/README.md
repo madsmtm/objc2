@@ -18,9 +18,23 @@ This crate declares an `Encode` trait that can be implemented for types that
 the Objective-C compiler can encode. Implementing this trait looks like:
 
 ```rust
+use objc::{Encode, Encoding};
+
+#[cfg(target_pointer_width = "32")]
+type CGFloat = f32;
+
+#[cfg(target_pointer_width = "64")]
+type CGFloat = f64;
+
+#[repr(C)]
+struct CGPoint {
+    x: CGFloat,
+    y: CGFloat,
+}
+
 unsafe impl Encode for CGPoint {
     const ENCODING: Encoding<'static> =
-        Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFLOAT::ENCODING]);
+        Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 ```
 
@@ -33,6 +47,8 @@ An `Encoding` can be compared with an encoding string from the Objective-C
 runtime:
 
 ```rust
+use objc::Encode;
+
 assert!(&i32::ENCODING == "i");
 ```
 
@@ -42,5 +58,7 @@ Every `Encoding` implements `Display` as its string representation.
 This can be generated conveniently through the `to_string` method:
 
 ```rust
+use objc::Encode;
+
 assert_eq!(i32::ENCODING.to_string(), "i");
 ```
