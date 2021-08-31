@@ -1,8 +1,10 @@
 #[macro_export]
 macro_rules! object_struct {
     ($name:ident) => {
+        // TODO: `extern type`
+        #[repr(C)]
         pub struct $name {
-            _private: (),
+            _private: [u8; 0],
         }
 
         unsafe impl ::objc::Message for $name {}

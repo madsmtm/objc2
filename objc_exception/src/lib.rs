@@ -29,7 +29,18 @@ extern "C" {
 }
 
 /// An opaque type representing any Objective-C object thrown as an exception.
-pub enum Exception {}
+///
+/// In the future this will be an [`extern type`][rfc-1861], if that gets
+/// stabilized.
+///
+/// [rfc-1861]: https://rust-lang.github.io/rfcs/1861-extern-types.html
+#[repr(C)]
+pub struct Exception {
+    /// See the [Nomicon] for details on representing opaque structs.
+    ///
+    /// [Nomicon]: https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs
+    _priv: [u8; 0],
+}
 
 /// Throws an Objective-C exception.
 /// The argument must be a pointer to an Objective-C object.
