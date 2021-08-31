@@ -79,35 +79,38 @@ slice_encode_impl!(
     27, 28, 29, 30, 31, 32
 );
 
-/*
-External crates cannot implement Encode for pointers or Optionals, but they
-*can* implement it for references. rust-lang/rust#25126
+// External crates cannot implement Encode for pointers or [`Option`], but
+// they *can* implement it for references. See
+// [rust-lang/rust#25126](https://github.com/rust-lang/rust/issues/25126)
+//
+// So, as a workaround, we provide implementations for these types that return
+// the same encoding as references.
+//
+// Using `?Sized` is safe here because we delegate to other implementations
+// (which will verify that the implementation is safe for the unsized type).
 
-As a workaround, we provide implementations for these types that return the
-same encoding as references.
-*/
-unsafe impl<T> Encode for *const T
+unsafe impl<T: ?Sized> Encode for *const T
 where
     for<'b> &'b T: Encode,
 {
     const ENCODING: Encoding<'static> = <&T>::ENCODING;
 }
 
-unsafe impl<T> Encode for *mut T
+unsafe impl<T: ?Sized> Encode for *mut T
 where
     for<'b> &'b mut T: Encode,
 {
     const ENCODING: Encoding<'static> = <&mut T>::ENCODING;
 }
 
-unsafe impl<'a, T> Encode for Option<&'a T>
+unsafe impl<'a, T: ?Sized> Encode for Option<&'a T>
 where
     for<'b> &'b T: Encode,
 {
     const ENCODING: Encoding<'static> = <&T>::ENCODING;
 }
 
-unsafe impl<'a, T> Encode for Option<&'a mut T>
+unsafe impl<'a, T: ?Sized> Encode for Option<&'a mut T>
 where
     for<'b> &'b mut T: Encode,
 {
