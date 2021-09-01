@@ -134,7 +134,7 @@ pub unsafe trait RefEncode {
 
 /// Simple helper for implementing [`Encode`].
 macro_rules! encode_impls {
-    ($($t:ty : $e:ident,)*) => ($(
+    ($($t:ty => $e:ident,)*) => ($(
         unsafe impl Encode for $t {
             const ENCODING: Encoding<'static> = Encoding::$e;
         }
@@ -142,51 +142,71 @@ macro_rules! encode_impls {
 }
 
 encode_impls!(
-    i8: Char,
-    i16: Short,
-    i32: Int,
-    i64: LongLong,
-    u8: UChar,
-    u16: UShort,
-    u32: UInt,
-    u64: ULongLong,
-    f32: Float,
-    f64: Double,
-    bool: Bool,
-    (): Void,
-    *mut i8: String,
-    *const i8: String,
-    *mut u8: String,
-    *const u8: String,
+    i8 => Char,
+    i16 => Short,
+    i32 => Int,
+    i64 => LongLong,
+    u8 => UChar,
+    u16 => UShort,
+    u32 => UInt,
+    u64 => ULongLong,
+    f32 => Float,
+    f64 => Double,
+    bool => Bool,
+    () => Void,
+    *mut i8 => String,
+    *const i8 => String,
+    *mut u8 => String,
+    *const u8 => String,
 );
 
-/// The encoding of [`isize`] varies based on the target pointer width.
-///
-/// This makes it equal to `NSInteger`.
-unsafe impl Encode for isize {
-    #[cfg(target_pointer_width = "16")]
-    const ENCODING: Encoding<'static> = i16::ENCODING;
-
-    #[cfg(target_pointer_width = "32")]
-    const ENCODING: Encoding<'static> = i32::ENCODING;
-
-    #[cfg(target_pointer_width = "64")]
-    const ENCODING: Encoding<'static> = i64::ENCODING;
+macro_rules! encode_impls_size {
+    ($($t:ty => ($t16:ty, $t32:ty, $t64:ty),)*) => ($(
+        #[doc = concat!("The encoding of [`", stringify!($t), "`] varies based on the target pointer width.")]
+        unsafe impl Encode for $t {
+            #[cfg(target_pointer_width = "16")]
+            const ENCODING: Encoding<'static> = <$t16>::ENCODING;
+            #[cfg(target_pointer_width = "32")]
+            const ENCODING: Encoding<'static> = <$t32>::ENCODING;
+            #[cfg(target_pointer_width = "64")]
+            const ENCODING: Encoding<'static> = <$t64>::ENCODING;
+        }
+    )*);
 }
 
-/// The encoding of [`usize`] varies based on the target pointer width.
-///
-/// This makes it equal to `NSUInteger`.
-unsafe impl Encode for usize {
-    #[cfg(target_pointer_width = "16")]
-    const ENCODING: Encoding<'static> = u16::ENCODING;
+encode_impls_size!(
+    isize => (i16, i32, i64),
+    usize => (u16, u32, u64),
+);
 
-    #[cfg(target_pointer_width = "32")]
-    const ENCODING: Encoding<'static> = u32::ENCODING;
+/// Simple helper for implementing [`Encode`] for integer types.
+macro_rules! encode_impls_nonzero {
+    ($($nonzero:ident => $type:ty,)*) => ($(
+        unsafe impl Encode for core::num::$nonzero {
+            const ENCODING: Encoding<'static> = <$type>::ENCODING;
+        }
 
-    #[cfg(target_pointer_width = "64")]
-    const ENCODING: Encoding<'static> = u64::ENCODING;
+        unsafe impl Encode for Option<core::num::$nonzero> {
+            const ENCODING: Encoding<'static> = <$type>::ENCODING;
+        }
+    )*);
 }
+
+encode_impls_nonzero!(
+    NonZeroI8 => i8,
+    NonZeroI16 => i16,
+    NonZeroI32 => i32,
+    NonZeroI64 => i64,
+    NonZeroIsize => isize,
+    NonZeroU8 => u8,
+    NonZeroU16 => u16,
+    NonZeroU32 => u32,
+    NonZeroU64 => u64,
+    NonZeroUsize => usize,
+);
+
+// Note: I'm not sure atomic integers would be safe, since they might need the
+// Objective-C runtime to insert proper memory fences and ordering stuff?
 
 /// [`Encode`] is implemented manually for `*const c_void`, instead of
 /// implementing [`RefEncode`], to discourage creating `&c_void`.
