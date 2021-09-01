@@ -73,14 +73,8 @@ pub unsafe fn throw(exception: *mut Exception) -> ! {
     objc_exception_throw(exception as *mut _)
 }
 
-unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut Exception>
-where
-    F: FnOnce(),
-{
-    extern "C" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
-    where
-        F: FnOnce(),
-    {
+unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), *mut Exception> {
+    extern "C" fn try_objc_execute_closure<F: FnOnce()>(closure: &mut Option<F>) {
         // This is always passed Some, so it's safe to unwrap
         let closure = closure.take().unwrap();
         closure();
@@ -117,10 +111,7 @@ where
 /// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945].
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
-pub unsafe fn r#try<F, R>(closure: F) -> Result<R, *mut Exception>
-where
-    F: FnOnce() -> R,
-{
+pub unsafe fn r#try<R>(closure: impl FnOnce() -> R) -> Result<R, *mut Exception> {
     let mut value = None;
     let result = {
         let value_ref = &mut value;

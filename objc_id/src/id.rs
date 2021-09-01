@@ -16,23 +16,25 @@ pub enum Owned {}
 pub enum Shared {}
 
 /// A type that marks what type of ownership a struct has over the object(s)
-/// it contains; specifically, either `Owned` or `Shared`.
+/// it contains; specifically, either [`Owned`] or [`Shared`].
 pub trait Ownership: Any {}
 impl Ownership for Owned {}
 impl Ownership for Shared {}
 
 /// A pointer type for Objective-C's reference counted objects.
 ///
-/// The object of an `Id` is retained and sent a `release` message when
-/// the `Id` is dropped.
+/// The object of an [`Id`] is retained and sent a `release` message when
+/// the [`Id`] is dropped.
 ///
-/// An `Id` may be either `Owned` or `Shared`, represented by the types `Id`
-/// and `ShareId`, respectively. If owned, there are no other references to the
-/// object and the `Id` can be mutably dereferenced. `ShareId`, however, can
-/// only be immutably dereferenced because there may be other references to the
-/// object, but a `ShareId` can be cloned to provide more references to the
-/// object. An owned `Id` can be "downgraded" freely to a `ShareId`, but there
-/// is no way to safely upgrade back.
+/// An [`Id`] may be either [`Owned`] or [`Shared`], represented by the types
+/// [`Id`] and [`ShareId`], respectively.
+/// If owned, there are no other references to the object and the [`Id`] can
+/// be mutably dereferenced.
+/// [`ShareId`], however, can only be immutably dereferenced because there may
+/// be other references to the object, but a [`ShareId`] can be cloned to
+/// provide more references to the object.
+/// An owned [`Id`] can be "downgraded" freely to a [`ShareId`], but there is
+/// no way to safely upgrade back.
 pub struct Id<T, O = Owned> {
     ptr: StrongPtr,
     item: PhantomData<T>,
@@ -52,8 +54,12 @@ where
         }
     }
 
-    /// Constructs an `Id` from a pointer to an unretained object and
-    /// retains it. Panics if the pointer is null.
+    /// Constructs an [`Id`] from a pointer to an unretained object and
+    /// retains it.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the pointer is null.
     ///
     /// # Safety
     ///
@@ -67,9 +73,13 @@ where
         Id::new(StrongPtr::retain(ptr as *mut Object))
     }
 
-    /// Constructs an `Id` from a pointer to a retained object; this won't
+    /// Constructs an [`Id`] from a pointer to a retained object; this won't
     /// retain the pointer, so the caller must ensure the object has a +1
-    /// retain count. Panics if the pointer is null.
+    /// retain count.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the pointer is null.
     ///
     /// # Safety
     ///
@@ -88,7 +98,7 @@ impl<T> Id<T, Owned>
 where
     T: Message,
 {
-    /// "Downgrade" an owned `Id` to a `ShareId`, allowing it to be cloned.
+    /// Downgrade an owned [`Id`] to a [`ShareId`], allowing it to be cloned.
     pub fn share(self) -> ShareId<T> {
         let Id { ptr, .. } = self;
         unsafe { Id::new(ptr) }
@@ -162,7 +172,7 @@ impl<T, O> fmt::Pointer for Id<T, O> {
     }
 }
 
-/// A convenient alias for a shared `Id`.
+/// A convenient alias for a shared [`Id`].
 pub type ShareId<T> = Id<T, Shared>;
 
 /// A pointer type for a weak reference to an Objective-C reference counted
@@ -176,7 +186,7 @@ impl<T> WeakId<T>
 where
     T: Message,
 {
-    /// Construct a new `WeakId` referencing the given `ShareId`.
+    /// Construct a new [`WeakId`] referencing the given [`ShareId`].
     pub fn new(obj: &ShareId<T>) -> WeakId<T> {
         WeakId {
             ptr: obj.ptr.weak(),
@@ -184,8 +194,9 @@ where
         }
     }
 
-    /// Load a `ShareId` from the `WeakId` if the object still exists.
-    /// Returns `None` if the object has been deallocated.
+    /// Load a [`ShareId`] from the [`WeakId`] if the object still exists.
+    ///
+    /// Returns [`None`] if the object has been deallocated.
     pub fn load(&self) -> Option<ShareId<T>> {
         let obj = self.ptr.load();
         if obj.is_null() {

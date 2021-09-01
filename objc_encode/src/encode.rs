@@ -2,7 +2,7 @@ use core::ffi::c_void;
 
 use crate::Encoding;
 
-/// Types that have an Objective-C type encoding.
+/// Types that have an Objective-C type-encoding.
 ///
 /// # Safety
 ///
@@ -10,7 +10,7 @@ use crate::Encoding;
 /// alignment) from its encoding, so the implementer must verify that the
 /// encoding is accurate.
 pub unsafe trait Encode {
-    /// The Objective-C type encoding for `Self`.
+    /// The Objective-C type-encoding for this type.
     const ENCODING: Encoding<'static>;
 }
 

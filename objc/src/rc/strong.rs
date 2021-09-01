@@ -9,7 +9,7 @@ use crate::runtime::{self, Object};
 pub struct StrongPtr(*mut Object);
 
 impl StrongPtr {
-    /// Constructs a `StrongPtr` to a newly created object that already has a
+    /// Constructs a [`StrongPtr`] to a newly created object that already has a
     /// +1 retain count. This will not retain the object.
     /// When dropped, the object will be released.
     ///
@@ -20,7 +20,7 @@ impl StrongPtr {
         StrongPtr(ptr)
     }
 
-    /// Retains the given object and constructs a `StrongPtr` to it.
+    /// Retains the given object and constructs a [`StrongPtr`] to it.
     /// When dropped, the object will be released.
     ///
     /// # Safety
@@ -42,7 +42,7 @@ impl StrongPtr {
         ptr
     }
 
-    /// Returns a `WeakPtr` to self.
+    /// Returns a [`WeakPtr`] to self.
     pub fn weak(&self) -> WeakPtr {
         unsafe { WeakPtr::new(self.0) }
     }

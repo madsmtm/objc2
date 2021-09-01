@@ -4,14 +4,14 @@ use core::sync::atomic::{AtomicPtr, Ordering};
 
 use crate::runtime::{self, Class, Sel};
 
-/// Allows storing a `Sel` in a static and lazily loading it.
+/// Allows storing a [`Sel`] in a static and lazily loading it.
 #[doc(hidden)]
 pub struct CachedSel {
     ptr: AtomicPtr<c_void>,
 }
 
 impl CachedSel {
-    /// Constructs a new `CachedSel`.
+    /// Constructs a new [`CachedSel`].
     pub const fn new() -> CachedSel {
         CachedSel {
             ptr: AtomicPtr::new(ptr::null_mut()),
@@ -35,14 +35,14 @@ impl CachedSel {
     }
 }
 
-/// Allows storing a `Class` reference in a static and lazily loading it.
+/// Allows storing a [`Class`] reference in a static and lazily loading it.
 #[doc(hidden)]
 pub struct CachedClass {
     ptr: AtomicPtr<Class>,
 }
 
 impl CachedClass {
-    /// Constructs a new `CachedClass`.
+    /// Constructs a new [`CachedClass`].
     pub const fn new() -> CachedClass {
         CachedClass {
             ptr: AtomicPtr::new(ptr::null_mut()),

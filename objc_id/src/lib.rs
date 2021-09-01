@@ -2,21 +2,20 @@
 Rust smart pointers for Objective-C reference counting.
 
 To ensure that Objective-C objects are retained and released
-at the proper times, we can use the [`Id`](struct.Id.html) struct.
+at the proper times, we can use the [`Id`] struct.
 
-To enforce aliasing rules, an `Id` can be either owned or shared; if it is
-owned, meaning the `Id` is the only reference to the object, it can be mutably
-dereferenced. An owned `Id` can be downgraded to a [`ShareId`](type.ShareId.html)
-which can be cloned to allow multiple references.
+To enforce aliasing rules, an [`Id`] can be either owned or shared; if it is
+owned, meaning the [`Id`] is the only reference to the object, it can be
+mutably dereferenced. An owned [`Id`] can be downgraded to a [`ShareId`] which
+can be cloned to allow multiple references.
 
-Weak references may be created using the [`WeakId`](struct.WeakId.html) struct.
+Weak references may be created using the [`WeakId`] struct.
 
 ```no_run
 # use objc::msg_send;
 use objc::runtime::{Class, Object};
 use objc_id::{Id, WeakId};
 
-# fn main() {
 let cls = Class::get("NSObject").unwrap();
 let obj: Id<Object> = unsafe {
     Id::from_retained_ptr(msg_send![cls, new])
@@ -34,7 +33,6 @@ assert!(weak.load().is_some());
 // After the object is deallocated, our weak pointer returns none
 drop(obj);
 assert!(weak.load().is_none());
-# }
 ```
 */
 
