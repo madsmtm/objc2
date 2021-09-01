@@ -5,7 +5,7 @@ use core::mem;
 use std::error::Error;
 
 use crate::runtime::{Class, Imp, Object, Sel};
-use crate::{Encode, EncodeArguments};
+use crate::{Encode, EncodeArguments, RefEncode};
 
 #[cfg(feature = "exception")]
 macro_rules! objc_try {
@@ -52,18 +52,19 @@ struct Super {
 ///
 /// Examples include objects, classes, and blocks.
 ///
-/// The type should also implement [`Encode`] for `&Self` and `&mut Self`.
+/// Implementing this allows using pointers and references to the type as the
+/// receiver (first argument) in the [`msg_send!`][`crate::msg_send`] macro.
 ///
 /// # Safety
+///
+/// The type must implement [`RefEncode`] and adhere to the safety guidelines
+/// therein.
 ///
 /// A pointer to the type must be able to be the receiver of an Objective-C
 /// message sent with [`objc_msgSend`] or similar.
 ///
-/// The type must also have a C-compatible `repr` (`repr(C)`, `repr(u8)`,
-/// `repr(transparent)` where the inner types are C-compatible, and so on).
-///
 /// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
-pub unsafe trait Message {
+pub unsafe trait Message: RefEncode {
     /**
     Sends a message to self with the given selector and arguments.
 

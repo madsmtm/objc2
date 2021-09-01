@@ -11,7 +11,9 @@ use crate::Encoding;
 ///
 /// # Safety
 ///
-/// The type must be FFI-safe, see the [nomicon on other `repr`s][reprs].
+/// The type must be FFI-safe, meaning a C-compatible `repr` (`repr(C)`,
+/// `repr(u8)`, `repr(transparent)` where the inner types are C-compatible,
+/// and so on). See the [nomicon on other `repr`s][reprs].
 ///
 /// Objective-C will make assumptions about the type (like its size and
 /// alignment) from its encoding, so the implementer must verify that the
