@@ -22,7 +22,7 @@ unsafe impl<'a> Encode for &'a mut Class {
 }
 
 /// Types that represent a group of arguments, where each has an Objective-C
-/// type encoding.
+/// type-encoding.
 pub trait EncodeArguments {
     /// The type as which the encodings for Self will be returned.
     const ENCODINGS: &'static [Encoding<'static>];

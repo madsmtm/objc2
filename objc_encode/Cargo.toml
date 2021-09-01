@@ -1,17 +1,21 @@
 [package]
 name = "objc-encode"
-version = "1.1.0"
-authors = ["Steven Sheldon"]
+version = "1.1.0" # Remember to update html_root_url in lib.rs
+authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
-description = "Objective-C type encoding creation and parsing in Rust."
-keywords = ["objective-c", "osx", "ios", "cocoa", "uikit"]
-categories = ["development-tools::ffi", "no-std"]
+description = "Objective-C type encoding creation and parsing."
+keywords = ["objective-c", "macos", "ios", "encode"]
+categories = [
+    "development-tools::ffi",
+    "encoding",
+    "no-std",
+    "os::macos-apis",
+]
 readme = "README.md"
-repository = "http://github.com/SSheldon/rust-objc-encode"
-documentation = "http://ssheldon.github.io/rust-objc/objc_encode/"
+repository = "https://github.com/madsmtm/objc"
+documentation = "https://docs.rs/objc-encode/"
 license = "MIT"
 
-exclude = [
-    ".gitignore",
-]
+[dev-dependencies]
+objc = { path = "../objc", version = "0.2.7" }

@@ -8,7 +8,6 @@ Objective-C objects can be messaged using the [`msg_send!`](macro.msg_send!.html
 ``` no_run
 # use objc::{class, msg_send};
 # use objc::runtime::{BOOL, Class, Object};
-# fn main() {
 # unsafe {
 let cls = class!(NSObject);
 let obj: *mut Object = msg_send![cls, new];
@@ -16,7 +15,6 @@ let hash: usize = msg_send![obj, hash];
 let is_kind: BOOL = msg_send![obj, isKindOfClass:cls];
 // Even void methods must have their return type annotated
 let _: () = msg_send![obj, release];
-# }
 # }
 ```
 
@@ -63,9 +61,19 @@ The bindings can be used on Linux or *BSD utilizing the
 #![no_std]
 #![warn(missing_docs)]
 #![allow(clippy::missing_safety_doc)]
+// Update in Cargo.toml as well.
+#![doc(html_root_url = "https://docs.rs/objc/0.2.7")]
 
 extern crate alloc;
 extern crate std;
+
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+extern "C" {}
+
+#[cfg(doctest)]
+#[doc = include_str!("../../README.md")]
+extern "C" {}
 
 pub use objc_encode::{Encode, Encoding};
 

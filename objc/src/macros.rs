@@ -1,15 +1,20 @@
 /**
-Gets a reference to a `Class`.
+Gets a reference to a [`Class`] from the given name.
+
+# Panics
 
 Panics if no class with the given name can be found.
-To check for a class that may not exist, use `Class::get`.
 
-# Example
+To check for a class that may not exist, use [`Class::get`].
+
+[`Class`]: crate::runtime::Class
+[`Class::get`]: crate::runtime::Class::get
+
+# Examples
+
 ``` no_run
 # use objc::class;
-# fn main() {
 let cls = class!(NSObject);
-# }
 ```
 */
 #[macro_export]
@@ -27,15 +32,18 @@ macro_rules! class {
 }
 
 /**
-Registers a selector, returning a `Sel`.
+Registers a selector with the Objective-C runtime.
 
-# Example
+Returns a [`Sel`].
+
+[`Sel`]: crate::runtime::Sel
+
+# Examples
+
 ```
 # use objc::sel;
-# fn main() {
 let sel = sel!(description);
 let sel = sel!(setObject:forKey:);
-# }
 ```
 */
 #[macro_export]
@@ -58,21 +66,32 @@ macro_rules! sel {
 Sends a message to an object.
 
 The first argument can be any type that dereferences to a type that implements
-`Message`, like a reference, pointer, or an `Id`.
+[`Message`], like a reference, a pointer, or an `objc_id::Id` to an object.
+
 The syntax is similar to the message syntax in Objective-C.
+
 Variadic arguments are not currently supported.
 
-# Example
+[`Message`]: crate::Message
+
+# Panics
+
+Panics if the `exception` feature is enabled and the Objective-C method throws
+an exception.
+
+And panics if the `verify_message` feature is enabled and the Objective-C
+method's argument's encoding does not match the encoding of the given arguments.
+
+# Examples
+
 ``` no_run
 # use objc::msg_send;
 # use objc::runtime::Object;
-# fn main() {
 # unsafe {
 let obj: *mut Object;
 # let obj: *mut Object = 0 as *mut Object;
 let description: *const Object = msg_send![obj, description];
 let _: () = msg_send![obj, setArg1:1 arg2:2];
-# }
 # }
 ```
 */

@@ -1,9 +1,22 @@
 //! Rust interface for Objective-C's `@throw` and `@try`/`@catch` statements.
+//!
+//! See the following links for more information:
+//! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Tasks/HandlingExceptions.html>
+//! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocExceptionHandling.html>
+//! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html>
+//! - <https://llvm.org/docs/ExceptionHandling.html>
 
 #![no_std]
+#![warn(missing_docs)]
+// Update in Cargo.toml as well.
+#![doc(html_root_url = "https://docs.rs/objc_exception/0.1.2")]
 
 #[cfg(test)]
 extern crate alloc;
+
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+extern "C" {}
 
 use core::ffi::c_void;
 use core::mem;
@@ -22,7 +35,7 @@ extern "C" {
 
 extern "C" {
     fn RustObjCExceptionTryCatch(
-        r#try: extern "C" fn(*mut c_void),
+        f: extern "C" fn(*mut c_void),
         context: *mut c_void,
         error: *mut *mut c_void,
     ) -> u8; // std::os::raw::c_uchar
@@ -43,6 +56,7 @@ pub struct Exception {
 }
 
 /// Throws an Objective-C exception.
+///
 /// The argument must be a pointer to an Objective-C object.
 ///
 /// # Safety
@@ -59,14 +73,8 @@ pub unsafe fn throw(exception: *mut Exception) -> ! {
     objc_exception_throw(exception as *mut _)
 }
 
-unsafe fn try_no_ret<F>(closure: F) -> Result<(), *mut Exception>
-where
-    F: FnOnce(),
-{
-    extern "C" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
-    where
-        F: FnOnce(),
-    {
+unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), *mut Exception> {
+    extern "C" fn try_objc_execute_closure<F: FnOnce()>(closure: &mut Option<F>) {
         // This is always passed Some, so it's safe to unwrap
         let closure = closure.take().unwrap();
         closure();
@@ -97,12 +105,13 @@ where
 ///
 /// # Safety
 ///
-/// This encourages unwinding through the closure from
-/// Objective-C, which is not safe.
-pub unsafe fn r#try<F, R>(closure: F) -> Result<R, *mut Exception>
-where
-    F: FnOnce() -> R,
-{
+/// The given closure must not panic.
+///
+/// Additionally, this unwinds through the closure from Objective-C, which is
+/// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945].
+///
+/// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
+pub unsafe fn r#try<R>(closure: impl FnOnce() -> R) -> Result<R, *mut Exception> {
     let mut value = None;
     let result = {
         let value_ref = &mut value;

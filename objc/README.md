@@ -1,19 +1,28 @@
-Objective-C Runtime bindings and wrapper for Rust.
+# `objc`
 
-* Documentation: http://ssheldon.github.io/rust-objc/objc/
-* Crate: https://crates.io/crates/objc
+[![Latest version](https://badgen.net/crates/v/objc)](https://crates.io/crates/objc)
+[![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
+[![Documentation](https://docs.rs/objc/badge.svg)](https://docs.rs/objc/)
+[![CI Status](https://github.com/madsmtm/objc/workflows/CI/badge.svg)](https://github.com/madsmtm/objc/actions)
+
+Objective-C Runtime bindings and wrapper for Rust.
 
 ## Messaging objects
 
 Objective-C objects can be messaged using the `msg_send!` macro:
 
-``` rust
+```rust , no_run
+use objc::{class, msg_send};
+use objc::runtime::{BOOL, Object};
+
 let cls = class!(NSObject);
-let obj: *mut Object = msg_send![cls, new];
-let hash: usize = msg_send![obj, hash];
-let is_kind: BOOL = msg_send![obj, isKindOfClass:cls];
-// Even void methods must have their return type annotated
-let _: () = msg_send![obj, release];
+unsafe {
+    let obj: *mut Object = msg_send![cls, new];
+    let hash: usize = msg_send![obj, hash];
+    let is_kind: BOOL = msg_send![obj, isKindOfClass:cls];
+    // Even void methods must have their return type annotated
+    let _: () = msg_send![obj, release];
+}
 ```
 
 ## Reference counting
@@ -24,7 +33,10 @@ A `StrongPtr` retains an object and releases the object when dropped.
 A `WeakPtr` will not retain the object, but can be upgraded to a `StrongPtr`
 and safely fails if the object has been deallocated.
 
-``` rust
+```rust , no_run
+use objc::{class, msg_send};
+use objc::rc::{autoreleasepool, StrongPtr};
+
 // StrongPtr will release the object when dropped
 let obj = unsafe {
     StrongPtr::new(msg_send![class!(NSObject), new])
@@ -52,7 +64,11 @@ methods can then be added before the class is ultimately registered.
 The following example demonstrates declaring a class named `MyNumber` that has
 one ivar, a `u32` named `_number` and a `number` method that returns it:
 
-``` rust
+```rust , no_run
+use objc::{class, sel};
+use objc::declare::ClassDecl;
+use objc::runtime::{Object, Sel};
+
 let superclass = class!(NSObject);
 let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();
 

@@ -14,7 +14,7 @@ use crate::runtime::{self, Object};
 pub struct WeakPtr(Box<UnsafeCell<*mut Object>>);
 
 impl WeakPtr {
-    /// Constructs a `WeakPtr` to the given object.
+    /// Constructs a [`WeakPtr`] to the given object.
     ///
     /// # Safety
     ///
@@ -25,7 +25,7 @@ impl WeakPtr {
         WeakPtr(ptr)
     }
 
-    /// Loads the object self points to, returning a `StrongPtr`.
+    /// Loads the object self points to, returning a [`StrongPtr`].
     /// If the object has been deallocated, the returned pointer will be null.
     pub fn load(&self) -> StrongPtr {
         unsafe {

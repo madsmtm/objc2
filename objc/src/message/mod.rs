@@ -41,15 +41,28 @@ use self::verify::{verify_message_signature, VerificationError};
 
 /// Specifies the superclass of an instance.
 #[repr(C)]
-pub struct Super {
+struct Super {
     /// Specifies an instance of a class.
     pub receiver: *mut Object,
     /// Specifies the particular superclass of the instance to message.
     pub superclass: *const Class,
 }
 
-/// Types that may be sent Objective-C messages.
-/// For example: objects, classes, and blocks.
+/// This trait marks types that can be sent Objective-C messages.
+///
+/// Examples include objects, classes, and blocks.
+///
+/// The type should also implement [`Encode`] for `&Self` and `&mut Self`.
+///
+/// # Safety
+///
+/// A pointer to the type must be able to be the receiver of an Objective-C
+/// message sent with [`objc_msgSend`] or similar.
+///
+/// The type must also have a C-compatible `repr` (`repr(C)`, `repr(u8)`,
+/// `repr(transparent)` where the inner types are C-compatible, and so on).
+///
+/// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
 pub unsafe trait Message {
     /**
     Sends a message to self with the given selector and arguments.
@@ -87,7 +100,7 @@ pub unsafe trait Message {
     method for the given selector.
 
     This will look up the encoding of the method for the given selector, `sel`,
-    and return a `MessageError` if any encodings differ for the arguments `A`
+    and return a [`MessageError`] if any encodings differ for the arguments `A`
     and return type `R`.
 
     # Example
@@ -95,14 +108,12 @@ pub unsafe trait Message {
     # use objc::{class, msg_send, sel};
     # use objc::runtime::{BOOL, Class, Object};
     # use objc::Message;
-    # fn main() {
     let obj: &Object;
     # obj = unsafe { msg_send![class!(NSObject), new] };
     let sel = sel!(isKindOfClass:);
     // Verify isKindOfClass: takes one Class and returns a BOOL
     let result = obj.verify_message::<(&Class,), BOOL>(sel);
     assert!(result.is_ok());
-    # }
     ```
     */
     fn verify_message<A, R>(&self, sel: Sel) -> Result<(), MessageError>
@@ -122,11 +133,11 @@ unsafe impl Message for Class {}
 
 /// Types that may be used as the arguments of an Objective-C message.
 pub trait MessageArguments: Sized {
-    /// Invoke an `Imp` with the given object, selector, and arguments.
+    /// Invoke an [`Imp`] with the given object, selector, and arguments.
     ///
     /// This method is the primitive used when sending messages and should not
     /// be called directly; instead, use the `msg_send!` macro or, in cases
-    /// with a dynamic selector, the `Message::send_message` method.
+    /// with a dynamic selector, the [`Message::send_message`] method.
     unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R
     where
         R: Any;

@@ -15,13 +15,13 @@ use crate::Encode;
 
 /// The Objective-C `BOOL` type.
 ///
-/// To convert an Objective-C `BOOL` into a Rust `bool`, compare it with `NO`.
+/// To convert an Objective-C `BOOL` into a Rust [`bool`], compare it with [`NO`].
 #[cfg(not(target_arch = "aarch64"))]
 pub type BOOL = ::std::os::raw::c_schar;
-/// The equivalent of true for Objective-C's `BOOL` type.
+/// The equivalent of true for Objective-C's [`BOOL`] type.
 #[cfg(not(target_arch = "aarch64"))]
 pub const YES: BOOL = 1;
-/// The equivalent of false for Objective-C's `BOOL` type.
+/// The equivalent of false for Objective-C's [`BOOL`] type.
 #[cfg(not(target_arch = "aarch64"))]
 pub const NO: BOOL = 0;
 
@@ -176,13 +176,13 @@ impl Sel {
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
-    /// Wraps a raw pointer to a selector into a `Sel` object.
+    /// Wraps a raw pointer to a selector into a [`Sel`] object.
     ///
     /// # Safety
     ///
     /// The pointer must a valid, registered selector.
     ///
-    /// This is almost never what you want; use `Sel::register()` instead.
+    /// This is almost never what you want; use [`Sel::register`] instead.
     #[inline]
     pub unsafe fn from_ptr(ptr: *const c_void) -> Sel {
         Sel { ptr }
@@ -256,7 +256,7 @@ impl Method {
     }
 
     /// Returns the `Encoding` of a single parameter type of self, or
-    /// `None` if self has no parameter at the given index.
+    /// [`None`] if self has no parameter at the given index.
     pub fn argument_type(&self, index: usize) -> Option<Malloc<str>> {
         unsafe {
             let encoding = method_copyArgumentType(self, index as c_uint);
@@ -280,7 +280,7 @@ impl Method {
 }
 
 impl Class {
-    /// Returns the class definition of a specified class, or `None` if the
+    /// Returns the class definition of a specified class, or [`None`] if the
     /// class is not registered with the Objective-C runtime.
     pub fn get(name: &str) -> Option<&'static Class> {
         let name = CString::new(name).unwrap();
@@ -308,13 +308,13 @@ impl Class {
         unsafe { objc_getClassList(ptr::null_mut(), 0) as usize }
     }
 
-    /// Returns the name of self.
+    /// Returns the name of the class.
     pub fn name(&self) -> &str {
         let name = unsafe { CStr::from_ptr(class_getName(self)) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
-    /// Returns the superclass of self, or `None` if self is a root class.
+    /// Returns the superclass of self, or [`None`] if self is a root class.
     pub fn superclass(&self) -> Option<&Class> {
         unsafe {
             let superclass = class_getSuperclass(self);
@@ -339,9 +339,9 @@ impl Class {
         unsafe { class_getInstanceSize(self) as usize }
     }
 
-    /// Returns a specified instance method for self, or `None` if self and
-    /// its superclasses do not contain an instance method with the
-    /// specified selector.
+    /// Returns a specified instance method for self, or [`None`] if self and
+    /// its superclasses do not contain an instance method with the specified
+    /// selector.
     pub fn instance_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
             let method = class_getInstanceMethod(self, sel);
@@ -353,8 +353,8 @@ impl Class {
         }
     }
 
-    /// Returns the ivar for a specified instance variable of self, or `None`
-    /// if self has no ivar with the given name.
+    /// Returns the ivar for a specified instance variable of self, or
+    /// [`None`] if self has no ivar with the given name.
     pub fn instance_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
         unsafe {
@@ -417,8 +417,8 @@ impl fmt::Debug for Class {
 }
 
 impl Protocol {
-    /// Returns the protocol definition of a specified protocol, or `None` if the
-    /// protocol is not registered with the Objective-C runtime.
+    /// Returns the protocol definition of a specified protocol, or [`None`]
+    /// if the protocol is not registered with the Objective-C runtime.
     pub fn get(name: &str) -> Option<&'static Protocol> {
         let name = CString::new(name).unwrap();
         unsafe {
@@ -475,76 +475,65 @@ impl fmt::Debug for Protocol {
     }
 }
 
+fn get_ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
+    match cls.instance_variable(name) {
+        Some(ivar) => {
+            assert!(ivar.type_encoding() == &T::ENCODING);
+            ivar.offset()
+        }
+        None => panic!("Ivar {} not found on class {:?}", name, cls),
+    }
+}
+
 impl Object {
-    /// Returns the class of self.
+    /// Returns the class of this object.
     pub fn class(&self) -> &Class {
         unsafe { &*object_getClass(self) }
     }
 
-    /// Returns a reference to the ivar of self with the given name.
-    /// Panics if self has no ivar with the given name.
+    /// Returns a shared reference to the ivar with the given name.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the object has no ivar with the given name, or the type
+    /// encoding of the ivar differs from the type encoding of `T`.
     ///
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
-    pub unsafe fn get_ivar<T>(&self, name: &str) -> &T
-    where
-        T: Encode,
-    {
-        let offset = {
-            let cls = self.class();
-            match cls.instance_variable(name) {
-                Some(ivar) => {
-                    assert!(ivar.type_encoding() == &T::ENCODING);
-                    ivar.offset()
-                }
-                None => panic!("Ivar {} not found on class {:?}", name, cls),
-            }
-        };
-        let ptr = {
-            let self_ptr: *const Object = self;
-            (self_ptr as *const u8).offset(offset) as *const T
-        };
+    pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
+        let offset = get_ivar_offset::<T>(self.class(), name);
+        let ptr = (self as *const Self as *const u8).offset(offset) as *const T;
         &*ptr
     }
 
-    /// Returns a mutable reference to the ivar of self with the given name.
-    /// Panics if self has no ivar with the given name.
+    /// Returns a mutable reference to the ivar with the given name.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the object has no ivar with the given name, or the type
+    /// encoding of the ivar differs from the type encoding of `T`.
     ///
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
-    pub unsafe fn get_mut_ivar<T>(&mut self, name: &str) -> &mut T
-    where
-        T: Encode,
-    {
-        let offset = {
-            let cls = self.class();
-            match cls.instance_variable(name) {
-                Some(ivar) => {
-                    assert!(ivar.type_encoding() == &T::ENCODING);
-                    ivar.offset()
-                }
-                None => panic!("Ivar {} not found on class {:?}", name, cls),
-            }
-        };
-        let ptr = {
-            let self_ptr: *mut Object = self;
-            (self_ptr as *mut u8).offset(offset) as *mut T
-        };
+    pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
+        let offset = get_ivar_offset::<T>(self.class(), name);
+        let ptr = (self as *mut Self as *mut u8).offset(offset) as *mut T;
         &mut *ptr
     }
 
-    /// Sets the value of the ivar of self with the given name.
-    /// Panics if self has no ivar with the given name.
+    /// Sets the value of the ivar with the given name.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the object has no ivar with the given name, or the type
+    /// encoding of the ivar differs from the type encoding of `T`.
     ///
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
-    pub unsafe fn set_ivar<T>(&mut self, name: &str, value: T)
-    where
-        T: Encode,
-    {
+    pub unsafe fn set_ivar<T: Encode>(&mut self, name: &str, value: T) {
         *self.get_mut_ivar::<T>(name) = value;
     }
 }

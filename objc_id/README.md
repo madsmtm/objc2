@@ -1,3 +1,10 @@
+# `objc_id`
+
+[![Latest version](https://badgen.net/crates/v/objc_id)](https://crates.io/crates/objc_id)
+[![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
+[![Documentation](https://docs.rs/objc_id/badge.svg)](https://docs.rs/objc_id/)
+[![CI Status](https://github.com/madsmtm/objc/workflows/CI/badge.svg)](https://github.com/madsmtm/objc/actions)
+
 Rust smart pointers for Objective-C reference counting.
 
 To ensure that Objective-C objects are retained and released

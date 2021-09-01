@@ -1,5 +1,3 @@
-use objc_exception;
-
 use crate::rc::StrongPtr;
 use crate::runtime::Object;
 
@@ -14,11 +12,12 @@ use crate::runtime::Object;
 ///
 /// # Safety
 ///
-/// This encourages unwinding through the closure from Objective-C, which is
-/// not safe.
-pub unsafe fn catch_exception<F, R>(closure: F) -> Result<R, StrongPtr>
-where
-    F: FnOnce() -> R,
-{
+/// The given closure must not panic.
+///
+/// Additionally, this unwinds through the closure from Objective-C, which is
+/// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945].
+///
+/// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
+pub unsafe fn catch_exception<R>(closure: impl FnOnce() -> R) -> Result<R, StrongPtr> {
     objc_exception::r#try(closure).map_err(|exception| StrongPtr::new(exception as *mut Object))
 }

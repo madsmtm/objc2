@@ -1,7 +1,7 @@
 /*!
 Functionality for declaring Objective-C classes.
 
-Classes can be declared using the `ClassDecl` struct. Instance variables and
+Classes can be declared using the [`ClassDecl`] struct. Instance variables and
 methods can then be added before the class is ultimately registered.
 
 # Example
@@ -13,7 +13,6 @@ one ivar, a `u32` named `_number` and a `number` method that returns it:
 # use objc::{class, sel};
 # use objc::declare::ClassDecl;
 # use objc::runtime::{Class, Object, Sel};
-# fn main() {
 let superclass = class!(NSObject);
 let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();
 
@@ -30,7 +29,6 @@ unsafe {
 }
 
 decl.register();
-# }
 ```
 */
 
@@ -52,7 +50,7 @@ pub trait MethodImplementation {
     /// The argument types of the method.
     type Args: EncodeArguments;
 
-    /// Returns self as an `Imp` of a method.
+    /// Returns self as an [`Imp`] of a method.
     fn imp(self) -> Imp;
 }
 
@@ -129,20 +127,21 @@ impl ClassDecl {
         }
     }
 
-    /// Constructs a `ClassDecl` with the given name and superclass.
-    /// Returns `None` if the class couldn't be allocated.
+    /// Constructs a [`ClassDecl`] with the given name and superclass.
+    ///
+    /// Returns [`None`] if the class couldn't be allocated.
     pub fn new(name: &str, superclass: &Class) -> Option<ClassDecl> {
         ClassDecl::with_superclass(name, Some(superclass))
     }
 
     /**
-    Constructs a `ClassDecl` declaring a new root class with the given name.
-    Returns `None` if the class couldn't be allocated.
+    Constructs a [`ClassDecl`] declaring a new root class with the given name.
+    Returns [`None`] if the class couldn't be allocated.
 
     An implementation for `+initialize` must also be given; the runtime calls
     this method for all classes, so it must be defined on root classes.
 
-    Note that implementing a root class is not a simple endeavor.
+    Note that implementing a root class is not a simple endeavor!
     For example, your class probably cannot be passed to Cocoa code unless
     the entire `NSObject` protocol is implemented.
     Functionality it expects, like implementations of `-retain` and `-release`
@@ -158,9 +157,12 @@ impl ClassDecl {
         decl
     }
 
-    /// Adds a method with the given name and implementation to self.
-    /// Panics if the method wasn't sucessfully added
-    /// or if the selector and function take different numbers of arguments.
+    /// Adds a method with the given name and implementation.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the method wasn't sucessfully added or if the selector and
+    /// function take different numbers of arguments.
     ///
     /// # Safety
     ///
@@ -184,9 +186,12 @@ impl ClassDecl {
         assert!(success != NO, "Failed to add method {:?}", sel);
     }
 
-    /// Adds a class method with the given name and implementation to self.
-    /// Panics if the method wasn't sucessfully added
-    /// or if the selector and function take different numbers of arguments.
+    /// Adds a class method with the given name and implementation.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the method wasn't sucessfully added or if the selector and
+    /// function take different numbers of arguments.
     ///
     /// # Safety
     ///
@@ -211,12 +216,12 @@ impl ClassDecl {
         assert!(success != NO, "Failed to add class method {:?}", sel);
     }
 
-    /// Adds an ivar with type `T` and the provided name to self.
-    /// Panics if the ivar wasn't successfully added.
-    pub fn add_ivar<T>(&mut self, name: &str)
-    where
-        T: Encode,
-    {
+    /// Adds an ivar with type `T` and the provided name.
+    ///
+    /// # Panics
+    ///
+    /// If the ivar wasn't successfully added.
+    pub fn add_ivar<T: Encode>(&mut self, name: &str) {
         let c_name = CString::new(name).unwrap();
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         let size = mem::size_of::<T>();
@@ -227,15 +232,18 @@ impl ClassDecl {
         assert!(success != NO, "Failed to add ivar {}", name);
     }
 
-    /// Adds a protocol to self. Panics if the protocol wasn't successfully
-    /// added
+    /// Adds the given protocol to self.
+    ///
+    /// # Panics
+    ///
+    /// If the protocol wasn't successfully added.
     pub fn add_protocol(&mut self, proto: &Protocol) {
         let success = unsafe { runtime::class_addProtocol(self.cls, proto) };
         assert!(success != NO, "Failed to add protocol {:?}", proto);
     }
 
-    /// Registers self, consuming it and returning a reference to the
-    /// newly registered `Class`.
+    /// Registers the [`ClassDecl`], consuming it, and returns a reference to
+    /// the newly registered [`Class`].
     pub fn register(self) -> &'static Class {
         unsafe {
             let cls = self.cls;
@@ -262,8 +270,9 @@ pub struct ProtocolDecl {
 }
 
 impl ProtocolDecl {
-    /// Constructs a `ProtocolDecl` with the given name. Returns `None` if the
-    /// protocol couldn't be allocated.
+    /// Constructs a [`ProtocolDecl`] with the given name.
+    ///
+    /// Returns [`None`] if the protocol couldn't be allocated.
     pub fn new(name: &str) -> Option<ProtocolDecl> {
         let c_name = CString::new(name).unwrap();
         let proto = unsafe { runtime::objc_allocateProtocol(c_name.as_ptr()) };
@@ -303,7 +312,7 @@ impl ProtocolDecl {
         }
     }
 
-    /// Adds an instance method declaration with a given description to self.
+    /// Adds an instance method declaration with a given description.
     pub fn add_method_description<Args, Ret>(&mut self, sel: Sel, is_required: bool)
     where
         Args: EncodeArguments,
@@ -312,7 +321,7 @@ impl ProtocolDecl {
         self.add_method_description_common::<Args, Ret>(sel, is_required, true)
     }
 
-    /// Adds a class method declaration with a given description to self.
+    /// Adds a class method declaration with a given description.
     pub fn add_class_method_description<Args, Ret>(&mut self, sel: Sel, is_required: bool)
     where
         Args: EncodeArguments,
@@ -328,8 +337,8 @@ impl ProtocolDecl {
         }
     }
 
-    /// Registers self, consuming it and returning a reference to the
-    /// newly registered `Protocol`.
+    /// Registers the [`ProtocolDecl`], consuming it and returning a reference
+    /// to the newly registered [`Protocol`].
     pub fn register(self) -> &'static Protocol {
         unsafe {
             runtime::objc_registerProtocol(self.proto);

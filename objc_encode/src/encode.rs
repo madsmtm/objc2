@@ -2,13 +2,15 @@ use core::ffi::c_void;
 
 use crate::Encoding;
 
-/// Types that have an Objective-C type encoding.
+/// Types that have an Objective-C type-encoding.
 ///
-/// Unsafe because Objective-C will make assumptions about the type (like its
-/// size and alignment) from its encoding, so the implementer must verify that
-/// the encoding is accurate.
+/// # Safety
+///
+/// Objective-C will make assumptions about the type (like its size and
+/// alignment) from its encoding, so the implementer must verify that the
+/// encoding is accurate.
 pub unsafe trait Encode {
-    /// Returns the Objective-C type encoding for Self.
+    /// The Objective-C type-encoding for this type.
     const ENCODING: Encoding<'static>;
 }
 
