@@ -5,16 +5,17 @@ use core::mem;
 use std::error::Error;
 
 use crate::runtime::{Class, Imp, Object, Sel};
-use crate::{Encode, EncodeArguments};
+use crate::{Encode, EncodeArguments, RefEncode};
 
 #[cfg(feature = "exception")]
 macro_rules! objc_try {
     ($b:block) => {
         $crate::exception::catch_exception(|| $b).map_err(|exception| {
+            use alloc::borrow::ToOwned;
             if exception.is_null() {
                 MessageError("Uncaught exception nil".to_owned())
             } else {
-                MessageError(format!("Uncaught exception {:?}", &**exception))
+                MessageError(alloc::format!("Uncaught exception {:?}", &**exception))
             }
         })
     };
@@ -52,18 +53,19 @@ struct Super {
 ///
 /// Examples include objects, classes, and blocks.
 ///
-/// The type should also implement [`Encode`] for `&Self` and `&mut Self`.
+/// Implementing this allows using pointers and references to the type as the
+/// receiver (first argument) in the [`msg_send!`][`crate::msg_send`] macro.
 ///
 /// # Safety
+///
+/// The type must implement [`RefEncode`] and adhere to the safety guidelines
+/// therein.
 ///
 /// A pointer to the type must be able to be the receiver of an Objective-C
 /// message sent with [`objc_msgSend`] or similar.
 ///
-/// The type must also have a C-compatible `repr` (`repr(C)`, `repr(u8)`,
-/// `repr(transparent)` where the inner types are C-compatible, and so on).
-///
 /// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
-pub unsafe trait Message {
+pub unsafe trait Message: RefEncode {
     /**
     Sends a message to self with the given selector and arguments.
 
@@ -74,18 +76,6 @@ pub unsafe trait Message {
     If the selector is known at compile-time, it is recommended to use the
     `msg_send!` macro rather than this method.
     */
-    #[cfg(not(feature = "verify_message"))]
-    unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
-    where
-        Self: Sized,
-        A: MessageArguments,
-        R: Any,
-    {
-        send_message(self, sel, args)
-    }
-
-    #[allow(missing_docs)]
-    #[cfg(feature = "verify_message")]
     unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
     where
         Self: Sized,
@@ -226,72 +216,46 @@ impl<'a> From<VerificationError<'a>> for MessageError {
 }
 
 #[doc(hidden)]
-#[inline(always)]
-#[cfg(not(feature = "verify_message"))]
-pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A) -> Result<R, MessageError>
-where
-    T: Message,
-    A: MessageArguments,
-    R: Any,
-{
-    send_unverified(obj, sel, args)
-}
-
-#[doc(hidden)]
-#[inline(always)]
-#[cfg(feature = "verify_message")]
+#[cfg_attr(feature = "verify_message", inline(always))]
 pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A) -> Result<R, MessageError>
 where
     T: Message,
     A: MessageArguments + EncodeArguments,
     R: Any + Encode,
 {
-    let cls = if obj.is_null() {
-        return Err(VerificationError::NilReceiver(sel).into());
-    } else {
-        (*(obj as *const Object)).class()
-    };
+    #[cfg(feature = "verify_message")]
+    {
+        let cls = if obj.is_null() {
+            return Err(VerificationError::NilReceiver(sel).into());
+        } else {
+            (*(obj as *const Object)).class()
+        };
 
-    verify_message_signature::<A, R>(cls, sel)?;
-    send_unverified(obj, sel, args)
-}
-
-#[doc(hidden)]
-#[inline(always)]
-#[cfg(not(feature = "verify_message"))]
-pub unsafe fn send_super_message<T, A, R>(
-    obj: *const T,
-    superclass: &Class,
-    sel: Sel,
-    args: A,
-) -> Result<R, MessageError>
-where
-    T: Message,
-    A: MessageArguments,
-    R: Any,
-{
-    send_super_unverified(obj, superclass, sel, args)
-}
-
-#[doc(hidden)]
-#[inline(always)]
-#[cfg(feature = "verify_message")]
-pub unsafe fn send_super_message<T, A, R>(
-    obj: *const T,
-    superclass: &Class,
-    sel: Sel,
-    args: A,
-) -> Result<R, MessageError>
-where
-    T: Message,
-    A: MessageArguments + EncodeArguments,
-    R: Any + Encode,
-{
-    if obj.is_null() {
-        return Err(VerificationError::NilReceiver(sel).into());
+        verify_message_signature::<A, R>(cls, sel)?;
     }
+    send_unverified(obj, sel, args)
+}
 
-    verify_message_signature::<A, R>(superclass, sel)?;
+#[doc(hidden)]
+#[cfg_attr(feature = "verify_message", inline(always))]
+pub unsafe fn send_super_message<T, A, R>(
+    obj: *const T,
+    superclass: &Class,
+    sel: Sel,
+    args: A,
+) -> Result<R, MessageError>
+where
+    T: Message,
+    A: MessageArguments + EncodeArguments,
+    R: Any + Encode,
+{
+    #[cfg(feature = "verify_message")]
+    {
+        if obj.is_null() {
+            return Err(VerificationError::NilReceiver(sel).into());
+        }
+        verify_message_signature::<A, R>(superclass, sel)?;
+    }
     send_super_unverified(obj, superclass, sel, args)
 }
 

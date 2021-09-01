@@ -4,8 +4,8 @@ use core::ptr;
 use core::slice;
 use std::os::raw::c_ulong;
 
-use objc::msg_send;
 use objc::runtime::Object;
+use objc::{msg_send, Encode, Encoding, RefEncode};
 use objc_id::Id;
 
 use super::INSObject;
@@ -63,11 +63,27 @@ pub trait INSFastEnumeration: INSObject {
 }
 
 #[repr(C)]
-struct NSFastEnumerationState<T> {
-    state: c_ulong,
+struct NSFastEnumerationState<T: INSObject> {
+    state: c_ulong, // TODO: Verify this is actually always 64 bit
     items_ptr: *const *const T,
     mutations_ptr: *mut c_ulong,
     extra: [c_ulong; 5],
+}
+
+unsafe impl<T: INSObject> Encode for NSFastEnumerationState<T> {
+    const ENCODING: Encoding<'static> = Encoding::Struct(
+        "?",
+        &[
+            c_ulong::ENCODING,
+            Encoding::Pointer(&Encoding::Object), // <*const *const T>::ENCODING
+            Encoding::Pointer(&c_ulong::ENCODING),
+            Encoding::Array(5, &c_ulong::ENCODING),
+        ],
+    );
+}
+
+unsafe impl<T: INSObject> RefEncode for NSFastEnumerationState<T> {
+    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
 fn enumerate<'a, 'b: 'a, C: INSFastEnumeration>(

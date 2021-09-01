@@ -1,4 +1,4 @@
-use objc_encode::{Encode, Encoding};
+use objc::{Encode, Encoding, RefEncode};
 
 /// We don't know the size of NSString, so we can only hold pointers to it.
 ///
@@ -10,18 +10,9 @@ struct NSString {
     _priv: [u8; 0],
 }
 
-/// Implement `Encode` for references.
-///
-/// This also implements for `*mut NSString` and `Option<&mut NSString>`.
-unsafe impl<'a> Encode for &'a NSString {
-    const ENCODING: Encoding<'static> = Encoding::Object;
-}
-
-/// Implement `Encode` for mutable references.
-///
-/// This also implements for `*mut NSString` and `Option<&mut NSString>`.
-unsafe impl<'a> Encode for &'a mut NSString {
-    const ENCODING: Encoding<'static> = Encoding::Object;
+/// Implement `RefEncode` for pointers and references to the string.
+unsafe impl RefEncode for NSString {
+    const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }
 
 fn main() {

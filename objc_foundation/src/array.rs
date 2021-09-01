@@ -19,6 +19,10 @@ pub enum NSComparisonResult {
     Descending = 1,
 }
 
+unsafe impl Encode for NSComparisonResult {
+    const ENCODING: Encoding<'static> = isize::ENCODING;
+}
+
 impl NSComparisonResult {
     pub fn from_ordering(order: Ordering) -> NSComparisonResult {
         match order {
@@ -314,26 +318,30 @@ pub trait INSMutableArray: INSArray {
     where
         F: FnMut(&Self::Item, &Self::Item) -> Ordering,
     {
-        extern "C" fn compare_with_closure<T, F>(
+        extern "C" fn compare_with_closure<T, F: FnMut(&T, &T) -> Ordering>(
             obj1: &T,
             obj2: &T,
-            compare: &mut F,
-        ) -> NSComparisonResult
-        where
-            F: FnMut(&T, &T) -> Ordering,
-        {
-            NSComparisonResult::from_ordering((*compare)(obj1, obj2))
+            context: *mut c_void,
+        ) -> NSComparisonResult {
+            // Bring back a reference to the closure.
+            // Guaranteed to be unique, we gave `sortUsingFunction` unique is
+            // ownership, and that method only runs one function at a time.
+            let closure: &mut F = unsafe { &mut *(context as *mut F) };
+
+            NSComparisonResult::from_ordering((*closure)(obj1, obj2))
         }
 
-        let f: extern "C" fn(&Self::Item, &Self::Item, &mut F) -> NSComparisonResult =
-            compare_with_closure;
+        let f: extern "C" fn(_, _, _) -> _ = compare_with_closure::<Self::Item, F>;
+
+        // Grab a type-erased pointer to the closure (a pointer to stack).
         let mut closure = compare;
-        let closure_ptr: *mut F = &mut closure;
-        let context = closure_ptr as *mut c_void;
+        let context = &mut closure as *mut F as *mut c_void;
+
         unsafe {
-            let _: () = msg_send![self, sortUsingFunction:f
-                                                  context:context];
+            let _: () = msg_send![self, sortUsingFunction:f context:context];
         }
+        // Keep the closure alive until the function has run.
+        drop(closure);
     }
 }
 

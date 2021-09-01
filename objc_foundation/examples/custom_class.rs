@@ -2,8 +2,8 @@ use std::sync::Once;
 
 use objc::declare::ClassDecl;
 use objc::runtime::{Class, Object, Sel};
-use objc::Message;
 use objc::{msg_send, sel};
+use objc::{Encoding, Message, RefEncode};
 use objc_foundation::{INSObject, NSObject};
 
 /// In the future this should be an `extern type`, if that gets stabilized,
@@ -14,6 +14,10 @@ pub struct MYObject {
     ///
     /// [Nomicon]: https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs
     _priv: [u8; 0],
+}
+
+unsafe impl RefEncode for MYObject {
+    const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }
 
 impl MYObject {

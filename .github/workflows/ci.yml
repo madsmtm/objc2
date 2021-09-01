@@ -75,7 +75,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: check
-        args: --verbose
+        args: --verbose --no-default-features
 
     - name: Install GNUStep libobjc2
       if: contains(matrix.platform.os, 'ubuntu')
@@ -116,10 +116,16 @@ jobs:
         echo "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
         echo "CPATH=/usr/local/include:$CPATH" >> $GITHUB_ENV
 
-    - name: Build and run tests
+    - name: Test
       uses: actions-rs/cargo@v1
       with:
         command: test
-        # TODO: `objc/exception` feature is broken in objc_foundation
-        # TODO: `objc_foundation/block` feature doesn't work on GNUStep
+        # TODO: `objc_foundation/block` feature doesn't work
         args: --verbose --no-fail-fast --no-default-features
+
+    - name: Test w. exception and verify_message features
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        # TODO: `objc_foundation/block` feature doesn't work
+        args: --verbose --no-fail-fast --no-default-features --features exception,verify_message
