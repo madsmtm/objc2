@@ -58,5 +58,5 @@ mod encode;
 mod encoding;
 mod parse;
 
-pub use self::encode::{Encode, RefEncode};
+pub use self::encode::{Encode, EncodeArguments, RefEncode};
 pub use self::encoding::Encoding;

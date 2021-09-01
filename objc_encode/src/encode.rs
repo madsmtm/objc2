@@ -319,3 +319,98 @@ encode_pointer_impls!(
         const ENCODING_REF = Encoding::Pointer(&T::ENCODING_REF);
     }
 );
+
+/// Helper for implementing [`Encode`]/[`RefEncode`] for function pointers
+/// whoose arguments implement [`Encode`].
+///
+/// Ideally we'd implement it for all function pointers, but due to coherence
+/// issues, see <https://github.com/rust-lang/rust/issues/56105>, function
+/// pointers that take arguments with "special lifetimes" (don't know the
+/// termonology) don't get implemented properly.
+///
+/// We could fix it by adding those impls and allowing `coherence_leak_check`,
+/// but it would have to be done for _all_ references, `Option<&T>` and such as
+/// well. So trying to do it quickly requires generating a polynomial amount of
+/// implementations, which IMO is overkill for such a small issue.
+///
+/// Using `?Sized` is probably not safe here because C functions can only take
+/// and return items with a known size.
+macro_rules! encode_fn_pointer_impl {
+    (@ $FnTy: ty, $($Arg: ident),*) => {
+        unsafe impl<Ret: Encode, $($Arg: Encode),*> Encode for $FnTy {
+            const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Unknown);
+        }
+
+        unsafe impl<Ret: Encode, $($Arg: Encode),*> RefEncode for $FnTy {
+            const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+        }
+    };
+    ($($Arg: ident),+) => {
+        // Normal functions
+        encode_fn_pointer_impl!(@ extern "C" fn($($Arg),+) -> Ret, $($Arg),+ );
+        encode_fn_pointer_impl!(@ unsafe extern "C" fn($($Arg),+) -> Ret, $($Arg),+ );
+        // Variadic functions
+        encode_fn_pointer_impl!(@ extern "C" fn($($Arg),+ , ...) -> Ret, $($Arg),+ );
+        encode_fn_pointer_impl!(@ unsafe extern "C" fn($($Arg),+ , ...) -> Ret, $($Arg),+ );
+    };
+    () => {
+        // No variadic functions with 0 parameters
+        encode_fn_pointer_impl!(@ extern "C" fn() -> Ret, );
+        encode_fn_pointer_impl!(@ unsafe extern "C" fn() -> Ret, );
+    };
+}
+
+encode_fn_pointer_impl!();
+encode_fn_pointer_impl!(A);
+encode_fn_pointer_impl!(A, B);
+encode_fn_pointer_impl!(A, B, C);
+encode_fn_pointer_impl!(A, B, C, D);
+encode_fn_pointer_impl!(A, B, C, D, E);
+encode_fn_pointer_impl!(A, B, C, D, E, F);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+
+/// Types that represent an ordered group of function arguments, where each
+/// argument has an Objective-C type-encoding.
+///
+/// This is implemented for tuples, and is used to make generic code easier.
+///
+/// Note that tuples themselves don't implement [`Encode`] directly because
+/// they're not FFI-safe.
+///
+/// # Safety
+///
+/// You should not need to implement this. Open an issue if you know a
+/// use-case where this restrition should be lifted!
+pub unsafe trait EncodeArguments {
+    /// The encodings for the arguments.
+    const ENCODINGS: &'static [Encoding<'static>];
+}
+
+macro_rules! encode_args_impl {
+    ($($Arg: ident),*) => {
+        unsafe impl<$($Arg: Encode),*> EncodeArguments for ($($Arg,)*) {
+            const ENCODINGS: &'static [Encoding<'static>] = &[
+                $($Arg::ENCODING),*
+            ];
+        }
+    };
+}
+
+encode_args_impl!();
+encode_args_impl!(A);
+encode_args_impl!(A, B);
+encode_args_impl!(A, B, C);
+encode_args_impl!(A, B, C, D);
+encode_args_impl!(A, B, C, D, E);
+encode_args_impl!(A, B, C, D, E, F);
+encode_args_impl!(A, B, C, D, E, F, G);
+encode_args_impl!(A, B, C, D, E, F, G, H);
+encode_args_impl!(A, B, C, D, E, F, G, H, I);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
