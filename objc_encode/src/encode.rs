@@ -1,4 +1,4 @@
-use core::ffi::c_void;
+use core::{ffi::c_void, mem::ManuallyDrop, pin::Pin, ptr::NonNull};
 
 use crate::Encoding;
 
@@ -19,6 +19,10 @@ use crate::Encoding;
 ///
 /// Concretely, [`Self::ENCODING`] must match the result of running `@encode`
 /// in Objective-C with the type in question.
+///
+/// You should also beware of having [`Drop`] types implement this, since when
+/// passed to Objective-C via. `objc::msg_send!` their destructor will not be
+/// called!
 ///
 /// # Examples
 ///
@@ -65,8 +69,10 @@ pub unsafe trait Encode {
 /// - `*mut T`
 /// - `&T`
 /// - `&mut T`
+/// - `NonNull<T>`
 /// - `Option<&T>`
 /// - `Option<&mut T>`
+/// - `Option<NonNull<T>>`
 ///
 /// # Reasoning behind this trait's existence
 ///
@@ -224,6 +230,32 @@ unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
     const ENCODING: Encoding<'static> = Encoding::Array(LENGTH, &T::ENCODING);
 }
 
+unsafe impl<T: Encode, const LENGTH: usize> RefEncode for [T; LENGTH] {
+    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+}
+
+// SAFETY: `ManuallyDrop` is `repr(transparent)`.
+unsafe impl<T: Encode + ?Sized> Encode for ManuallyDrop<T> {
+    const ENCODING: Encoding<'static> = T::ENCODING;
+}
+
+// With specialization: `impl Encode for ManuallyDrop<Box<T>>`
+
+// SAFETY: `ManuallyDrop` is `repr(transparent)`.
+unsafe impl<T: RefEncode + ?Sized> RefEncode for ManuallyDrop<T> {
+    const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
+}
+
+// SAFETY: `Pin` is `repr(transparent)`.
+unsafe impl<T: Encode> Encode for Pin<T> {
+    const ENCODING: Encoding<'static> = T::ENCODING;
+}
+
+// SAFETY: `Pin` is `repr(transparent)`.
+unsafe impl<T: RefEncode> RefEncode for Pin<T> {
+    const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
+}
+
 /// Helper for implementing `Encode`/`RefEncode` for pointers to types that
 /// implement `RefEncode`.
 ///
@@ -249,11 +281,19 @@ macro_rules! encode_pointer_impls {
             const $c: Encoding<'static> = $e;
         }
 
+        unsafe impl<T: RefEncode + ?Sized> $x for NonNull<$t> {
+            const $c: Encoding<'static> = $e;
+        }
+
         unsafe impl<'a, $t: RefEncode + ?Sized> $x for Option<&'a $t> {
             const $c: Encoding<'static> = $e;
         }
 
         unsafe impl<'a, $t: RefEncode + ?Sized> $x for Option<&'a mut $t> {
+            const $c: Encoding<'static> = $e;
+        }
+
+        unsafe impl<T: RefEncode + ?Sized> $x for Option<NonNull<$t>> {
             const $c: Encoding<'static> = $e;
         }
     );
