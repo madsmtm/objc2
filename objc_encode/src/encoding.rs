@@ -2,10 +2,17 @@ use core::fmt;
 
 use crate::parse;
 
-/// An Objective-C type encoding.
+/// An Objective-C type-encoding.
 ///
-/// For more information, see Apple's documentation:
-/// <https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html>
+/// Can be retrieved in Objective-C for a type `T` using the `@encode(T)`
+/// directive.
+/// ```objective-c , ignore
+/// NSLog(@"Encoding of NSException: %s", @encode(NSException));
+/// ```
+///
+/// For more information, see [Apple's documentation][ocrtTypeEncodings].
+///
+/// [ocrtTypeEncodings]: https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Encoding<'a> {
     /// A C `char`. Corresponds to the `c` code.
@@ -62,9 +69,15 @@ pub enum Encoding<'a> {
     Array(usize, &'a Encoding<'a>),
     /// A struct with the given name and fields.
     ///
+    /// The order of the fields must match the order of the order in this.
+    ///
+    /// It is not uncommon for the name to be `"?"`.
+    ///
     /// Corresponds to the `{name=fields...}` code.
     Struct(&'a str, &'a [Encoding<'a>]),
     /// A union with the given name and fields.
+    ///
+    /// The order of the fields must match the order of the order in this.
     ///
     /// Corresponds to the `(name=fields...)` code.
     Union(&'a str, &'a [Encoding<'a>]),

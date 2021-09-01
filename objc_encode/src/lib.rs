@@ -26,7 +26,7 @@ An [`Encoding`] can be compared with an encoding string from the Objective-C
 runtime:
 
 ```
-# use objc_encode::Encode;
+# use objc::Encode;
 assert!(&i32::ENCODING == "i");
 ```
 
@@ -37,7 +37,7 @@ representation. This can be generated conveniently through the
 [`to_string`][`alloc::string::ToString::to_string`] method:
 
 ```
-# use objc_encode::Encode;
+# use objc::Encode;
 assert_eq!(i32::ENCODING.to_string(), "i");
 ```
 */
@@ -58,5 +58,5 @@ mod encode;
 mod encoding;
 mod parse;
 
-pub use crate::encode::Encode;
-pub use crate::encoding::Encoding;
+pub use self::encode::{Encode, RefEncode};
+pub use self::encoding::Encoding;

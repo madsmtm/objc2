@@ -1,24 +1,16 @@
 use crate::runtime::{Class, Object, Sel};
-use crate::{Encode, Encoding};
+use crate::{Encode, Encoding, RefEncode};
 
 unsafe impl Encode for Sel {
     const ENCODING: Encoding<'static> = Encoding::Sel;
 }
 
-unsafe impl<'a> Encode for &'a Object {
-    const ENCODING: Encoding<'static> = Encoding::Object;
+unsafe impl RefEncode for Object {
+    const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }
 
-unsafe impl<'a> Encode for &'a mut Object {
-    const ENCODING: Encoding<'static> = Encoding::Object;
-}
-
-unsafe impl<'a> Encode for &'a Class {
-    const ENCODING: Encoding<'static> = Encoding::Class;
-}
-
-unsafe impl<'a> Encode for &'a mut Class {
-    const ENCODING: Encoding<'static> = Encoding::Class;
+unsafe impl RefEncode for Class {
+    const ENCODING_REF: Encoding<'static> = Encoding::Class;
 }
 
 /// Types that represent a group of arguments, where each has an Objective-C
@@ -55,8 +47,8 @@ encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 #[cfg(test)]
 mod tests {
     use crate::runtime::{Class, Object, Sel};
+    use crate::Encode;
     use alloc::string::ToString;
-    use objc_encode::Encode;
 
     #[test]
     fn test_encode() {

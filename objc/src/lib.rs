@@ -75,7 +75,7 @@ extern "C" {}
 #[doc = include_str!("../../README.md")]
 extern "C" {}
 
-pub use objc_encode::{Encode, Encoding};
+pub use objc_encode::{Encode, Encoding, RefEncode};
 
 pub use crate::encode::EncodeArguments;
 pub use crate::message::{Message, MessageArguments, MessageError};
