@@ -204,35 +204,58 @@ unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
     const ENCODING: Encoding<'static> = Encoding::Array(LENGTH, &T::ENCODING);
 }
 
+/// Helper for implementing `Encode`/`RefEncode` for pointers to types that
+/// implement `RefEncode`.
+///
+/// Using `?Sized` is safe here because we delegate to other implementations
+/// (which will verify that the implementation is safe for the unsized type).
+macro_rules! encode_pointer_impls {
+    (unsafe impl<T: RefEncode> $x:ident for &$t:ident {
+        const $c:ident = $e:expr;
+    }) => (
+        unsafe impl<$t: RefEncode + ?Sized> $x for *const $t {
+            const $c: Encoding<'static> = $e;
+        }
+
+        unsafe impl<$t: RefEncode + ?Sized> $x for *mut $t {
+            const $c: Encoding<'static> = $e;
+        }
+
+        unsafe impl<'a, $t: RefEncode + ?Sized> $x for &'a $t {
+            const $c: Encoding<'static> = $e;
+        }
+
+        unsafe impl<'a, $t: RefEncode + ?Sized> $x for &'a mut $t {
+            const $c: Encoding<'static> = $e;
+        }
+
+        unsafe impl<'a, $t: RefEncode + ?Sized> $x for Option<&'a $t> {
+            const $c: Encoding<'static> = $e;
+        }
+
+        unsafe impl<'a, $t: RefEncode + ?Sized> $x for Option<&'a mut $t> {
+            const $c: Encoding<'static> = $e;
+        }
+    );
+}
+
 // Implement `Encode` for types that are `RefEncode`.
 //
 // This allows users to implement `Encode` for custom types that have a
 // specific encoding as a pointer, instead of having to implement it for each
 // pointer-like type in turn.
+encode_pointer_impls!(
+    unsafe impl<T: RefEncode> Encode for &T {
+        const ENCODING = T::ENCODING_REF;
+    }
+);
+
+// Implement `RefEncode` for pointers to types that are `RefEncode`.
 //
-// Using `?Sized` is safe here because we delegate to other implementations
-// (which will verify that the implementation is safe for the unsized type).
-
-unsafe impl<T: RefEncode + ?Sized> Encode for *const T {
-    const ENCODING: Encoding<'static> = T::ENCODING_REF;
-}
-
-unsafe impl<T: RefEncode + ?Sized> Encode for *mut T {
-    const ENCODING: Encoding<'static> = T::ENCODING_REF;
-}
-
-unsafe impl<'a, T: RefEncode + ?Sized> Encode for &'a T {
-    const ENCODING: Encoding<'static> = T::ENCODING_REF;
-}
-
-unsafe impl<'a, T: RefEncode + ?Sized> Encode for &'a mut T {
-    const ENCODING: Encoding<'static> = T::ENCODING_REF;
-}
-
-unsafe impl<'a, T: RefEncode + ?Sized> Encode for Option<&'a T> {
-    const ENCODING: Encoding<'static> = T::ENCODING_REF;
-}
-
-unsafe impl<'a, T: RefEncode + ?Sized> Encode for Option<&'a mut T> {
-    const ENCODING: Encoding<'static> = T::ENCODING_REF;
-}
+// This implements `Encode` for pointers to pointers (to pointers, and so on),
+// which would otherwise be very cumbersome to do manually.
+encode_pointer_impls!(
+    unsafe impl<T: RefEncode> RefEncode for &T {
+        const ENCODING_REF = Encoding::Pointer(&T::ENCODING_REF);
+    }
+);
