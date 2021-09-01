@@ -31,7 +31,10 @@ pub trait INSMutableCopying: INSObject {
     }
 }
 
+#[cfg(target_vendor = "apple")]
 const UTF8_ENCODING: usize = 4;
+#[cfg(not(target_vendor = "apple"))]
+const UTF8_ENCODING: i32 = 4;
 
 pub trait INSString: INSObject {
     fn len(&self) -> usize {
