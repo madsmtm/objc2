@@ -120,12 +120,11 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        # TODO: `objc_foundation/block` feature doesn't work
         args: --verbose --no-fail-fast --no-default-features
 
-    - name: Test w. exception and verify_message features
+    - name: Test with features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        # TODO: `objc_foundation/block` feature doesn't work
-        args: --verbose --no-fail-fast --no-default-features --features exception,verify_message
+        # Not using --all-features because some features are nightly-only
+        args: --verbose --no-fail-fast --features block,exception,verify_message
