@@ -1,7 +1,6 @@
-use core::any::Any;
 use core::mem;
 
-use super::{Message, MessageArguments, MessageError, Super};
+use super::{Encode, Message, MessageArguments, MessageError, Super};
 use crate::runtime::{Class, Imp, Object, Sel};
 
 extern "C" {
@@ -13,7 +12,7 @@ pub unsafe fn send_unverified<T, A, R>(obj: *const T, sel: Sel, args: A) -> Resu
 where
     T: Message,
     A: MessageArguments,
-    R: Any,
+    R: Encode,
 {
     if obj.is_null() {
         return mem::zeroed();
@@ -33,7 +32,7 @@ pub unsafe fn send_super_unverified<T, A, R>(
 where
     T: Message,
     A: MessageArguments,
-    R: Any,
+    R: Encode,
 {
     let receiver = obj as *mut T as *mut Object;
     let sup = Super {

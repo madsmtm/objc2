@@ -1,5 +1,4 @@
 use alloc::string::{String, ToString};
-use core::any::Any;
 use core::fmt;
 use core::mem;
 use std::error::Error;
@@ -80,7 +79,7 @@ pub unsafe trait Message: RefEncode {
     where
         Self: Sized,
         A: MessageArguments + EncodeArguments,
-        R: Any + Encode,
+        R: Encode,
     {
         send_message(self, sel, args)
     }
@@ -128,16 +127,13 @@ pub trait MessageArguments: Sized {
     /// This method is the primitive used when sending messages and should not
     /// be called directly; instead, use the `msg_send!` macro or, in cases
     /// with a dynamic selector, the [`Message::send_message`] method.
-    unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R
-    where
-        R: Any;
+    unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
 }
 
 macro_rules! message_args_impl {
     ($($a:ident : $t:ident),*) => (
         impl<$($t),*> MessageArguments for ($($t,)*) {
-            unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R
-                    where R: Any {
+            unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
                 let imp: unsafe extern fn(*mut Object, Sel $(, $t)*) -> R =
                     mem::transmute(imp);
                 imp(obj, sel $(, $a)*)
@@ -221,7 +217,7 @@ pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A) -> Result<
 where
     T: Message,
     A: MessageArguments + EncodeArguments,
-    R: Any + Encode,
+    R: Encode,
 {
     #[cfg(feature = "verify_message")]
     {
@@ -247,7 +243,7 @@ pub unsafe fn send_super_message<T, A, R>(
 where
     T: Message,
     A: MessageArguments + EncodeArguments,
-    R: Any + Encode,
+    R: Encode,
 {
     #[cfg(feature = "verify_message")]
     {
