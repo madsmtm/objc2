@@ -2,6 +2,7 @@
 name = "block"
 version = "0.1.6"
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
+edition = "2018"
 
 description = "Interface for Apple's C language extension of blocks."
 keywords = ["objective-c", "macos", "ios", "blocks"]

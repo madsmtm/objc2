@@ -470,7 +470,7 @@ impl<B> BlockDescriptor<B> {
 #[cfg(test)]
 mod tests {
     use super::{ConcreteBlock, RcBlock};
-    use test_utils::*;
+    use crate::test_utils::*;
 
     #[test]
     fn test_call_block() {

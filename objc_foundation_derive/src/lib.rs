@@ -5,10 +5,10 @@
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-extern crate proc_macro;
+
 #[macro_use]
 extern crate quote;
-extern crate syn;
+use syn;
 
 use proc_macro::TokenStream;
 use quote::{ToTokens, Tokens};

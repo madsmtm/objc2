@@ -1,6 +1,6 @@
-extern crate objc_test_utils;
+use objc_test_utils;
 
-use {Block, RcBlock};
+use crate::{Block, RcBlock};
 
 pub fn get_int_block_with(i: i32) -> RcBlock<(), i32> {
     unsafe {

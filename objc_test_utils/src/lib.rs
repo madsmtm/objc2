@@ -2,11 +2,17 @@
 #![crate_type = "lib"]
 
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.
-pub enum IntBlock {}
+#[repr(C)]
+pub struct IntBlock {
+    _priv: [u8; 0],
+}
 
 /// A block that takes one integer argument, adds to it, and returns the sum:
 /// `int32_t (^)(int32_t)`.
-pub enum AddBlock {}
+#[repr(C)]
+pub struct AddBlock {
+    _priv: [u8; 0],
+}
 
 extern "C" {
     /// Returns a pointer to a global `IntBlock` that returns 7.
