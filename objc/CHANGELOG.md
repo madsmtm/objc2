@@ -1,3 +1,10 @@
+## Unreleased
+
+### Changed
+
+* The closure in `autoreleasepool` now takes an argument, a reference to the
+  pool.
+
 ## 0.2.7
 
 ### Fixed

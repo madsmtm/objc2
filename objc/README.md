@@ -44,7 +44,7 @@ let obj = unsafe {
 
 // Cloning retains the object an additional time
 let cloned = obj.clone();
-autoreleasepool(|| {
+autoreleasepool(|_| {
     // Autorelease consumes the StrongPtr, but won't
     // actually release until the end of an autoreleasepool
     cloned.autorelease();

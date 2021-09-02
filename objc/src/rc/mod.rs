@@ -25,7 +25,7 @@ let obj = unsafe {
 
 // Cloning retains the object an additional time
 let cloned = obj.clone();
-autoreleasepool(|| {
+autoreleasepool(|_| {
     // Autorelease consumes the StrongPtr, but won't
     // actually release until the end of an autoreleasepool
     cloned.autorelease();
@@ -42,7 +42,7 @@ mod autorelease;
 mod strong;
 mod weak;
 
-pub use self::autorelease::autoreleasepool;
+pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
 pub use self::strong::StrongPtr;
 pub use self::weak::WeakPtr;
 
@@ -105,7 +105,7 @@ mod tests {
         }
         let cloned = obj.clone();
 
-        autoreleasepool(|| {
+        autoreleasepool(|_| {
             obj.autorelease();
             assert!(retain_count(*cloned) == 2);
         });
