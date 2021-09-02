@@ -1,4 +1,4 @@
-use objc::{Encode, Encoding, RefEncode};
+use objc_encode::{Encode, Encoding, RefEncode};
 
 /// We don't know the size of NSString, so we can only hold pointers to it.
 ///

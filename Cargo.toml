@@ -1,10 +1,12 @@
 [workspace]
 members = [
     "objc",
+    "objc_block",
     "objc_encode",
     "objc_exception",
     "objc_foundation",
     "objc_foundation_derive",
     "objc_id",
+    "objc_test_utils",
 ]
 exclude = ["objc/tests-ios"]

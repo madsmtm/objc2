@@ -17,6 +17,3 @@ readme = "README.md"
 repository = "https://github.com/madsmtm/objc"
 documentation = "https://docs.rs/objc-encode/"
 license = "MIT"
-
-[dev-dependencies]
-objc = { path = "../objc", version = "0.2.7" }

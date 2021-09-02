@@ -1,6 +1,6 @@
 use core::ffi::c_void;
 #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
-use std::{cell::RefCell, vec::Vec, thread_local};
+use std::{cell::RefCell, thread_local, vec::Vec};
 
 use crate::runtime::{objc_autoreleasePoolPop, objc_autoreleasePoolPush};
 
@@ -81,6 +81,7 @@ impl AutoreleasePool {
         all(debug_assertions, not(feature = "unstable_autoreleasesafe")),
         inline
     )]
+    #[allow(clippy::needless_lifetimes)]
     pub unsafe fn ptr_as_ref<'p, T>(&'p self, ptr: *const T) -> &'p T {
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
         POOLS.with(|c| {
@@ -110,6 +111,8 @@ impl AutoreleasePool {
         all(debug_assertions, not(feature = "unstable_autoreleasesafe")),
         inline
     )]
+    #[allow(clippy::needless_lifetimes)]
+    #[allow(clippy::mut_from_ref)]
     pub unsafe fn ptr_as_mut<'p, T>(&'p self, ptr: *mut T) -> &'p mut T {
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
         POOLS.with(|c| {
@@ -265,7 +268,10 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// inner pool:
 ///
 #[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```rust,compile_fail")]
-#[cfg_attr(not(feature = "unstable_autoreleasesafe"), doc = "```rust,should_panic")]
+#[cfg_attr(
+    not(feature = "unstable_autoreleasesafe"),
+    doc = "```rust,should_panic"
+)]
 /// # use objc::{class, msg_send};
 /// # use objc::rc::{autoreleasepool, AutoreleasePool};
 /// # use objc::runtime::Object;

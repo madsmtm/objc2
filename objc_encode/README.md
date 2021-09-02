@@ -51,7 +51,7 @@ An `Encoding` can be compared with an encoding string from the Objective-C
 runtime:
 
 ```rust
-use objc::Encode;
+use objc_encode::Encode;
 assert!(&i32::ENCODING == "i");
 ```
 
@@ -59,7 +59,7 @@ assert!(&i32::ENCODING == "i");
 generated conveniently through the `to_string` method:
 
 ```rust
-use objc::Encode;
+use objc_encode::Encode;
 assert_eq!(i32::ENCODING.to_string(), "i");
 ```
 
