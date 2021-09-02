@@ -54,7 +54,11 @@ use std::ops::{Deref, DerefMut};
 use std::os::raw::{c_int, c_ulong, c_void};
 use std::ptr;
 
-enum Class {}
+// TODO: Replace with `objc::Class`
+#[repr(C)]
+struct ClassInternal {
+    _priv: [u8; 0],
+}
 
 #[cfg_attr(
     any(target_os = "macos", target_os = "ios"),
@@ -65,7 +69,7 @@ enum Class {}
     link(name = "BlocksRuntime", kind = "dylib")
 )]
 extern "C" {
-    static _NSConcreteStackBlock: Class;
+    static _NSConcreteStackBlock: ClassInternal;
 
     fn _Block_copy(block: *const c_void) -> *mut c_void;
     fn _Block_release(block: *const c_void);
@@ -75,8 +79,11 @@ extern "C" {
 pub trait BlockArguments: Sized {
     /// Calls the given `Block` with self as the arguments.
     ///
-    /// Unsafe because `block` must point to a valid `Block` and this invokes
-    /// foreign code whose safety the compiler cannot verify.
+    /// # Safety
+    ///
+    /// The given block must point to a valid `Block`.
+    ///
+    /// This invokes foreign code whose safety the user must guarantee.
     unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R;
 }
 
@@ -136,7 +143,7 @@ block_args_impl!(
 
 #[repr(C)]
 struct BlockBase<A, R> {
-    isa: *const Class,
+    isa: *const ClassInternal,
     flags: c_int,
     _reserved: c_int,
     invoke: unsafe extern "C" fn(*mut Block<A, R>, ...) -> R,
@@ -155,10 +162,13 @@ where
 {
     /// Call self with the given arguments.
     ///
-    /// Unsafe because this invokes foreign code that the caller must verify
-    /// doesn't violate any of Rust's safety rules. For example, if this block
-    /// is shared with multiple references, the caller must ensure that calling
-    /// it will not cause a data race.
+    /// # Safety
+    ///
+    /// This invokes foreign code that the caller must verify doesn't violate
+    /// any of Rust's safety rules.
+    ///
+    /// For example, if this block is shared with multiple references, the
+    /// caller must ensure that calling it will not cause a data race.
     pub unsafe fn call(&self, args: A) -> R {
         args.call_block(self as *const _ as *mut _)
     }
@@ -173,19 +183,23 @@ impl<A, R> RcBlock<A, R> {
     /// Construct an `RcBlock` for the given block without copying it.
     /// The caller must ensure the block has a +1 reference count.
     ///
-    /// Unsafe because `ptr` must point to a valid `Block` and must have a +1
+    /// # Safety
+    ///
+    /// The given pointer must point to a valid `Block` and must have a +1
     /// reference count or it will be overreleased when the `RcBlock` is
     /// dropped.
     pub unsafe fn new(ptr: *mut Block<A, R>) -> Self {
-        RcBlock { ptr: ptr }
+        RcBlock { ptr }
     }
 
     /// Constructs an `RcBlock` by copying the given block.
     ///
-    /// Unsafe because `ptr` must point to a valid `Block`.
+    /// # Safety
+    ///
+    /// The given pointer must point to a valid `Block`.
     pub unsafe fn copy(ptr: *mut Block<A, R>) -> Self {
         let ptr = _Block_copy(ptr as *const c_void) as *mut Block<A, R>;
-        RcBlock { ptr: ptr }
+        RcBlock { ptr }
     }
 }
 
@@ -377,7 +391,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
                 invoke: mem::transmute(invoke),
             },
             descriptor: Box::new(BlockDescriptor::new()),
-            closure: closure,
+            closure,
         }
     }
 }
