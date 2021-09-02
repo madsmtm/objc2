@@ -153,28 +153,52 @@ impl Drop for AutoreleasePool {
     }
 }
 
+/// We use a macro here so that the documentation is included whether the
+/// feature is enabled or not.
+#[cfg(not(feature = "unstable_autoreleasesafe"))]
+macro_rules! auto_trait {
+    {$(#[$fn_meta:meta])* $v:vis unsafe trait AutoreleaseSafe {}} => {
+        $(#[$fn_meta])*
+        $v unsafe trait AutoreleaseSafe {}
+    }
+}
+
 #[cfg(feature = "unstable_autoreleasesafe")]
-/// Marks types that are safe to pass across the closure in an
-/// [`autoreleasepool`].
-///
-/// This is implemented for all types except [`AutoreleasePool`].
-///
-/// You should not need to implement this trait yourself.
-///
-/// # Safety
-///
-/// Must not be implemented for types that interract with the autorelease pool
-/// - so if you reimplement the `AutoreleasePool` struct, this should be
-/// negatively implemented for that.
-// TODO: We can technically make this private, but should we?
-pub unsafe auto trait AutoreleaseSafe {}
-#[cfg(feature = "unstable_autoreleasesafe")]
-impl !AutoreleaseSafe for AutoreleasePool {}
+macro_rules! auto_trait {
+    {$(#[$fn_meta:meta])* $v:vis unsafe trait AutoreleaseSafe {}} => {
+        $(#[$fn_meta])*
+        $v unsafe auto trait AutoreleaseSafe {}
+    }
+}
+
+auto_trait! {
+    /// Marks types that are safe to pass across the closure in an
+    /// [`autoreleasepool`].
+    ///
+    /// With the `unstable_autoreleasesafe` feature enabled, this is an auto
+    /// trait that is implemented for all types except [`AutoreleasePool`].
+    ///
+    /// Otherwise it is just a dummy trait that is implemented for all types;
+    /// the safety invariants are checked with debug assertions instead.
+    ///
+    /// You should not normally need to implement this trait yourself.
+    ///
+    /// # Safety
+    ///
+    /// Must not be implemented for types that interract with the autorelease
+    /// pool. So if you reimplement the [`AutoreleasePool`] struct or
+    /// likewise, this should be negatively implemented for that.
+    ///
+    /// This can easily be accomplished with an `PhantomData<AutoreleasePool>`
+    /// if the `unstable_autoreleasesafe` feature is enabled.
+    pub unsafe trait AutoreleaseSafe {}
+}
 
 #[cfg(not(feature = "unstable_autoreleasesafe"))]
-pub unsafe trait AutoreleaseSafe {}
-#[cfg(not(feature = "unstable_autoreleasesafe"))]
 unsafe impl<T> AutoreleaseSafe for T {}
+
+#[cfg(feature = "unstable_autoreleasesafe")]
+impl !AutoreleaseSafe for AutoreleasePool {}
 
 /// Execute `f` in the context of a new autorelease pool. The pool is
 /// drained after the execution of `f` completes.
@@ -202,6 +226,7 @@ unsafe impl<T> AutoreleaseSafe for T {}
 /// fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
 ///     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
 ///     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
+///     // Lifetime of the returned reference is bounded by the pool
 ///     unsafe { pool.ptr_as_mut(obj) }
 /// }
 ///
@@ -234,7 +259,8 @@ unsafe impl<T> AutoreleaseSafe for T {}
 /// });
 /// ```
 ///
-/// Incorrect usage which panics:
+/// Incorrect usage which panics because we tried to pass an outer pool to an
+/// inner pool:
 ///
 #[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```rust,compile_fail")]
 #[cfg_attr(not(feature = "unstable_autoreleasesafe"), doc = "```rust,should_panic")]
