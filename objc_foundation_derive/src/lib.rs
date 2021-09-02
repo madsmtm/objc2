@@ -5,7 +5,6 @@
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-
 #[macro_use]
 extern crate quote;
 use syn;

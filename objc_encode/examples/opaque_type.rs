@@ -1,5 +1,5 @@
 //! Implementing `RefEncode` for `NSDecimal`.
-use objc::{Encoding, RefEncode};
+use objc_encode::{Encoding, RefEncode};
 
 /// We choose in this case to represent `NSDecimal` as an opaque struct
 /// (and in the future as an `extern type`) because we don't know much
