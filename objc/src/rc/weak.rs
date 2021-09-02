@@ -21,7 +21,7 @@ impl WeakPtr {
     /// The caller must ensure the given object pointer is valid.
     pub unsafe fn new(obj: *mut Object) -> Self {
         let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
-        runtime::objc_initWeak(ptr.get(), obj);
+        runtime::objc_initWeak(ptr.get() as _, obj as _);
         WeakPtr(ptr)
     }
 
@@ -29,8 +29,8 @@ impl WeakPtr {
     /// If the object has been deallocated, the returned pointer will be null.
     pub fn load(&self) -> StrongPtr {
         unsafe {
-            let ptr = runtime::objc_loadWeakRetained(self.0.get());
-            StrongPtr::new(ptr)
+            let ptr = runtime::objc_loadWeakRetained(self.0.get() as _);
+            StrongPtr::new(ptr as _)
         }
     }
 }
@@ -38,7 +38,7 @@ impl WeakPtr {
 impl Drop for WeakPtr {
     fn drop(&mut self) {
         unsafe {
-            runtime::objc_destroyWeak(self.0.get());
+            runtime::objc_destroyWeak(self.0.get() as _);
         }
     }
 }
@@ -47,7 +47,7 @@ impl Clone for WeakPtr {
     fn clone(&self) -> Self {
         let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
         unsafe {
-            runtime::objc_copyWeak(ptr.get(), self.0.get());
+            runtime::objc_copyWeak(ptr.get() as _, self.0.get() as _);
         }
         WeakPtr(ptr)
     }

@@ -9,173 +9,67 @@ use core::ptr;
 use core::str;
 use malloc_buf::Malloc;
 use std::ffi::{CStr, CString};
-use std::os::raw::{c_char, c_int, c_uint};
+use std::os::raw::c_uint;
 
 use crate::Encode;
 
-/// The Objective-C `BOOL` type.
-///
-/// To convert an Objective-C `BOOL` into a Rust [`bool`], compare it with [`NO`].
-#[cfg(all(target_vendor = "apple", not(target_arch = "aarch64")))]
-pub type BOOL = ::std::os::raw::c_schar;
-#[cfg(all(not(target_vendor = "apple"), not(target_arch = "aarch64")))]
-pub type BOOL = u8;
-
-/// The equivalent of true for Objective-C's [`BOOL`] type.
-#[cfg(not(target_arch = "aarch64"))]
-pub const YES: BOOL = 1;
-/// The equivalent of false for Objective-C's [`BOOL`] type.
-#[cfg(not(target_arch = "aarch64"))]
-pub const NO: BOOL = 0;
-
-#[cfg(target_arch = "aarch64")]
-pub type BOOL = bool;
-#[cfg(target_arch = "aarch64")]
-pub const YES: BOOL = true;
-#[cfg(target_arch = "aarch64")]
-pub const NO: BOOL = false;
+use objc_sys;
+pub use objc_sys::{
+    class_addIvar, class_addMethod, class_addProtocol, class_conformsToProtocol,
+    class_copyIvarList, class_copyMethodList, class_copyProtocolList, class_createInstance,
+    class_getInstanceMethod, class_getInstanceSize, class_getInstanceVariable, class_getName,
+    class_getSuperclass, ivar_getName, ivar_getOffset, ivar_getTypeEncoding,
+    method_copyArgumentType, method_copyReturnType, method_exchangeImplementations,
+    method_getImplementation, method_getName, method_getNumberOfArguments,
+    method_setImplementation, objc_allocateClassPair, objc_allocateProtocol, objc_autorelease,
+    objc_autoreleasePoolPop, objc_autoreleasePoolPush, objc_copyClassList, objc_copyProtocolList,
+    objc_copyWeak, objc_destroyWeak, objc_disposeClassPair, objc_getClass, objc_getClassList,
+    objc_getProtocol, objc_initWeak, objc_loadWeakRetained, objc_registerClassPair,
+    objc_registerProtocol, objc_release, objc_retain, object_dispose, object_getClass,
+    protocol_addMethodDescription, protocol_addProtocol, protocol_conformsToProtocol,
+    protocol_copyProtocolList, protocol_getName, protocol_isEqual, sel_getName, sel_registerName,
+};
+pub use objc_sys::{Imp, BOOL, NO, YES};
 
 /// A type that represents a method selector.
-#[repr(C)]
+#[repr(transparent)]
 pub struct Sel {
-    ptr: *const c_void,
+    ptr: *const objc_sys::Sel,
 }
-
-/// A marker type to be embedded into other types just so that they cannot be
-/// constructed externally.
-type PrivateMarker = [u8; 0];
 
 /// A type that represents an instance variable.
 #[repr(C)]
-pub struct Ivar {
-    _priv: PrivateMarker,
-}
+pub struct Ivar(objc_sys::Ivar);
 
 /// A type that represents a method in a class definition.
 #[repr(C)]
-pub struct Method {
-    _priv: PrivateMarker,
-}
+pub struct Method(objc_sys::Method);
 
 /// A type that represents an Objective-C class.
 #[repr(C)]
-pub struct Class {
-    _priv: PrivateMarker,
-}
+pub struct Class(objc_sys::Class);
 
 /// A type that represents an Objective-C protocol.
 #[repr(C)]
-pub struct Protocol {
-    _priv: PrivateMarker,
-}
+pub struct Protocol(objc_sys::Protocol);
 
 /// A type that represents an instance of a class.
 #[repr(C)]
-pub struct Object {
-    _priv: PrivateMarker,
-}
-
-/// A pointer to the start of a method implementation.
-pub type Imp = unsafe extern "C" fn();
-
-#[allow(missing_docs)]
-#[link(name = "objc", kind = "dylib")]
-extern "C" {
-    pub fn sel_registerName(name: *const c_char) -> Sel;
-    pub fn sel_getName(sel: Sel) -> *const c_char;
-
-    pub fn class_getName(cls: *const Class) -> *const c_char;
-    pub fn class_getSuperclass(cls: *const Class) -> *const Class;
-    pub fn class_getInstanceSize(cls: *const Class) -> usize;
-    pub fn class_getInstanceMethod(cls: *const Class, sel: Sel) -> *const Method;
-    pub fn class_getInstanceVariable(cls: *const Class, name: *const c_char) -> *const Ivar;
-    pub fn class_copyMethodList(cls: *const Class, outCount: *mut c_uint) -> *mut *const Method;
-    pub fn class_copyIvarList(cls: *const Class, outCount: *mut c_uint) -> *mut *const Ivar;
-    pub fn class_addMethod(cls: *mut Class, name: Sel, imp: Imp, types: *const c_char) -> BOOL;
-    pub fn class_addIvar(
-        cls: *mut Class,
-        name: *const c_char,
-        size: usize,
-        alignment: u8,
-        types: *const c_char,
-    ) -> BOOL;
-    pub fn class_addProtocol(cls: *mut Class, proto: *const Protocol) -> BOOL;
-    pub fn class_conformsToProtocol(cls: *const Class, proto: *const Protocol) -> BOOL;
-    pub fn class_copyProtocolList(cls: *const Class, outCount: *mut c_uint)
-        -> *mut *const Protocol;
-
-    pub fn objc_allocateClassPair(
-        superclass: *const Class,
-        name: *const c_char,
-        extraBytes: usize,
-    ) -> *mut Class;
-    pub fn objc_disposeClassPair(cls: *mut Class);
-    pub fn objc_registerClassPair(cls: *mut Class);
-
-    pub fn class_createInstance(cls: *const Class, extraBytes: usize) -> *mut Object;
-    pub fn object_dispose(obj: *mut Object) -> *mut Object;
-    pub fn object_getClass(obj: *const Object) -> *const Class;
-
-    pub fn objc_getClassList(buffer: *mut *const Class, bufferLen: c_int) -> c_int;
-    pub fn objc_copyClassList(outCount: *mut c_uint) -> *mut *const Class;
-    pub fn objc_getClass(name: *const c_char) -> *const Class;
-    pub fn objc_getProtocol(name: *const c_char) -> *const Protocol;
-    pub fn objc_copyProtocolList(outCount: *mut c_uint) -> *mut *const Protocol;
-    pub fn objc_allocateProtocol(name: *const c_char) -> *mut Protocol;
-    pub fn objc_registerProtocol(proto: *mut Protocol);
-
-    pub fn objc_autoreleasePoolPush() -> *mut c_void;
-    pub fn objc_autoreleasePoolPop(context: *mut c_void);
-
-    pub fn protocol_addMethodDescription(
-        proto: *mut Protocol,
-        name: Sel,
-        types: *const c_char,
-        isRequiredMethod: BOOL,
-        isInstanceMethod: BOOL,
-    );
-    pub fn protocol_addProtocol(proto: *mut Protocol, addition: *const Protocol);
-    pub fn protocol_getName(proto: *const Protocol) -> *const c_char;
-    pub fn protocol_isEqual(proto: *const Protocol, other: *const Protocol) -> BOOL;
-    pub fn protocol_copyProtocolList(
-        proto: *const Protocol,
-        outCount: *mut c_uint,
-    ) -> *mut *const Protocol;
-    pub fn protocol_conformsToProtocol(proto: *const Protocol, other: *const Protocol) -> BOOL;
-
-    pub fn ivar_getName(ivar: *const Ivar) -> *const c_char;
-    pub fn ivar_getOffset(ivar: *const Ivar) -> isize;
-    pub fn ivar_getTypeEncoding(ivar: *const Ivar) -> *const c_char;
-
-    pub fn method_getName(method: *const Method) -> Sel;
-    pub fn method_getImplementation(method: *const Method) -> Imp;
-    pub fn method_copyReturnType(method: *const Method) -> *mut c_char;
-    pub fn method_copyArgumentType(method: *const Method, index: c_uint) -> *mut c_char;
-    pub fn method_getNumberOfArguments(method: *const Method) -> c_uint;
-    pub fn method_setImplementation(method: *mut Method, imp: Imp) -> Imp;
-    pub fn method_exchangeImplementations(m1: *mut Method, m2: *mut Method);
-
-    pub fn objc_retain(obj: *mut Object) -> *mut Object;
-    pub fn objc_release(obj: *mut Object);
-    pub fn objc_autorelease(obj: *mut Object);
-
-    pub fn objc_loadWeakRetained(location: *mut *mut Object) -> *mut Object;
-    pub fn objc_initWeak(location: *mut *mut Object, obj: *mut Object) -> *mut Object;
-    pub fn objc_destroyWeak(location: *mut *mut Object);
-    pub fn objc_copyWeak(to: *mut *mut Object, from: *mut *mut Object);
-}
+pub struct Object(objc_sys::Object);
 
 impl Sel {
     /// Registers a method with the Objective-C runtime system,
     /// maps the method name to a selector, and returns the selector value.
-    pub fn register(name: &str) -> Sel {
+    pub fn register(name: &str) -> Self {
         let name = CString::new(name).unwrap();
-        unsafe { sel_registerName(name.as_ptr()) }
+        Self {
+            ptr: unsafe { sel_registerName(name.as_ptr()) },
+        }
     }
 
     /// Returns the name of the method specified by self.
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(sel_getName(*self)) };
+        let name = unsafe { CStr::from_ptr(sel_getName(self.ptr)) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
@@ -187,14 +81,16 @@ impl Sel {
     ///
     /// This is almost never what you want; use [`Sel::register`] instead.
     #[inline]
-    pub unsafe fn from_ptr(ptr: *const c_void) -> Sel {
-        Sel { ptr }
+    pub unsafe fn from_ptr(ptr: *const c_void) -> Self {
+        Self {
+            ptr: ptr as *const objc_sys::Sel,
+        }
     }
 
     /// Returns a pointer to the raw selector.
     #[inline]
     pub fn as_ptr(&self) -> *const c_void {
-        self.ptr
+        self.ptr as *const c_void
     }
 }
 
@@ -213,8 +109,8 @@ unsafe impl Send for Sel {}
 impl Copy for Sel {}
 
 impl Clone for Sel {
-    fn clone(&self) -> Sel {
-        *self
+    fn clone(&self) -> Self {
+        Self { ptr: self.ptr }
     }
 }
 
@@ -225,35 +121,45 @@ impl fmt::Debug for Sel {
 }
 
 impl Ivar {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::Ivar {
+        self as *const Self as *const _
+    }
+
     /// Returns the name of self.
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ivar_getName(self)) };
+        let name = unsafe { CStr::from_ptr(ivar_getName(self.as_ptr())) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
     /// Returns the offset of self.
     pub fn offset(&self) -> isize {
-        let offset = unsafe { ivar_getOffset(self) };
+        let offset = unsafe { ivar_getOffset(self.as_ptr()) };
         offset as isize
     }
 
     /// Returns the `Encoding` of self.
     pub fn type_encoding(&self) -> &str {
-        let encoding = unsafe { CStr::from_ptr(ivar_getTypeEncoding(self)) };
+        let encoding = unsafe { CStr::from_ptr(ivar_getTypeEncoding(self.as_ptr())) };
         str::from_utf8(encoding.to_bytes()).unwrap()
     }
 }
 
 impl Method {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::Method {
+        self as *const Self as *const _
+    }
+
     /// Returns the name of self.
     pub fn name(&self) -> Sel {
-        unsafe { method_getName(self) }
+        Sel {
+            ptr: unsafe { method_getName(self.as_ptr()) },
+        }
     }
 
     /// Returns the `Encoding` of self's return type.
     pub fn return_type(&self) -> Malloc<str> {
         unsafe {
-            let encoding = method_copyReturnType(self);
+            let encoding = method_copyReturnType(self.as_ptr());
             Malloc::from_c_str(encoding).unwrap()
         }
     }
@@ -262,7 +168,7 @@ impl Method {
     /// [`None`] if self has no parameter at the given index.
     pub fn argument_type(&self, index: usize) -> Option<Malloc<str>> {
         unsafe {
-            let encoding = method_copyArgumentType(self, index as c_uint);
+            let encoding = method_copyArgumentType(self.as_ptr(), index as c_uint);
             if encoding.is_null() {
                 None
             } else {
@@ -273,32 +179,36 @@ impl Method {
 
     /// Returns the number of arguments accepted by self.
     pub fn arguments_count(&self) -> usize {
-        unsafe { method_getNumberOfArguments(self) as usize }
+        unsafe { method_getNumberOfArguments(self.as_ptr()) as usize }
     }
 
     /// Returns the implementation of self.
     pub fn implementation(&self) -> Imp {
-        unsafe { method_getImplementation(self) }
+        unsafe { method_getImplementation(self.as_ptr()) }
     }
 }
 
 impl Class {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::Class {
+        self as *const Self as *const _
+    }
+
     /// Returns the class definition of a specified class, or [`None`] if the
     /// class is not registered with the Objective-C runtime.
-    pub fn get(name: &str) -> Option<&'static Class> {
+    pub fn get(name: &str) -> Option<&'static Self> {
         let name = CString::new(name).unwrap();
         unsafe {
             let cls = objc_getClass(name.as_ptr());
             if cls.is_null() {
                 None
             } else {
-                Some(&*cls)
+                Some(&*(cls as *const Self))
             }
         }
     }
 
     /// Obtains the list of registered class definitions.
-    pub fn classes() -> Malloc<[&'static Class]> {
+    pub fn classes() -> Malloc<[&'static Self]> {
         unsafe {
             let mut count: c_uint = 0;
             let classes = objc_copyClassList(&mut count);
@@ -313,33 +223,30 @@ impl Class {
 
     /// Returns the name of the class.
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(class_getName(self)) };
+        let name = unsafe { CStr::from_ptr(class_getName(self.as_ptr())) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
     /// Returns the superclass of self, or [`None`] if self is a root class.
     pub fn superclass(&self) -> Option<&Class> {
         unsafe {
-            let superclass = class_getSuperclass(self);
+            let superclass = class_getSuperclass(self.as_ptr());
             if superclass.is_null() {
                 None
             } else {
-                Some(&*superclass)
+                Some(&*(superclass as *const Self))
             }
         }
     }
 
     /// Returns the metaclass of self.
-    pub fn metaclass(&self) -> &Class {
-        unsafe {
-            let self_ptr: *const Class = self;
-            &*object_getClass(self_ptr as *const Object)
-        }
+    pub fn metaclass(&self) -> &Self {
+        unsafe { &*(object_getClass(self.as_ptr() as *const objc_sys::Object) as *const Self) }
     }
 
     /// Returns the size of instances of self.
     pub fn instance_size(&self) -> usize {
-        unsafe { class_getInstanceSize(self) as usize }
+        unsafe { class_getInstanceSize(self.as_ptr()) as usize }
     }
 
     /// Returns a specified instance method for self, or [`None`] if self and
@@ -347,11 +254,11 @@ impl Class {
     /// selector.
     pub fn instance_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
-            let method = class_getInstanceMethod(self, sel);
+            let method = class_getInstanceMethod(self.as_ptr(), sel.ptr);
             if method.is_null() {
                 None
             } else {
-                Some(&*method)
+                Some(&*(method as *const Method))
             }
         }
     }
@@ -361,11 +268,11 @@ impl Class {
     pub fn instance_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
         unsafe {
-            let ivar = class_getInstanceVariable(self, name.as_ptr());
+            let ivar = class_getInstanceVariable(self.as_ptr(), name.as_ptr());
             if ivar.is_null() {
                 None
             } else {
-                Some(&*ivar)
+                Some(&*(ivar as *const Ivar))
             }
         }
     }
@@ -374,21 +281,21 @@ impl Class {
     pub fn instance_methods(&self) -> Malloc<[&Method]> {
         unsafe {
             let mut count: c_uint = 0;
-            let methods = class_copyMethodList(self, &mut count);
+            let methods = class_copyMethodList(self.as_ptr(), &mut count);
             Malloc::from_array(methods as *mut _, count as usize)
         }
     }
 
     /// Checks whether this class conforms to the specified protocol.
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
-        unsafe { class_conformsToProtocol(self, proto) == YES }
+        unsafe { class_conformsToProtocol(self.as_ptr(), proto.as_ptr()) == YES }
     }
 
     /// Get a list of the protocols to which this class conforms.
     pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
-            let protos = class_copyProtocolList(self, &mut count);
+            let protos = class_copyProtocolList(self.as_ptr(), &mut count);
             Malloc::from_array(protos as *mut _, count as usize)
         }
     }
@@ -397,7 +304,7 @@ impl Class {
     pub fn instance_variables(&self) -> Malloc<[&Ivar]> {
         unsafe {
             let mut count: c_uint = 0;
-            let ivars = class_copyIvarList(self, &mut count);
+            let ivars = class_copyIvarList(self.as_ptr(), &mut count);
             Malloc::from_array(ivars as *mut _, count as usize)
         }
     }
@@ -405,9 +312,7 @@ impl Class {
 
 impl PartialEq for Class {
     fn eq(&self, other: &Class) -> bool {
-        let self_ptr: *const Class = self;
-        let other_ptr: *const Class = other;
-        self_ptr == other_ptr
+        self.as_ptr() == other.as_ptr()
     }
 }
 
@@ -420,6 +325,10 @@ impl fmt::Debug for Class {
 }
 
 impl Protocol {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::Protocol {
+        self as *const Self as *const _
+    }
+
     /// Returns the protocol definition of a specified protocol, or [`None`]
     /// if the protocol is not registered with the Objective-C runtime.
     pub fn get(name: &str) -> Option<&'static Protocol> {
@@ -429,7 +338,7 @@ impl Protocol {
             if proto.is_null() {
                 None
             } else {
-                Some(&*proto)
+                Some(&*(proto as *const Self))
             }
         }
     }
@@ -447,26 +356,26 @@ impl Protocol {
     pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
-            let protocols = protocol_copyProtocolList(self, &mut count);
+            let protocols = protocol_copyProtocolList(self.as_ptr(), &mut count);
             Malloc::from_array(protocols as *mut _, count as usize)
         }
     }
 
     /// Checks whether this protocol conforms to the specified protocol.
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
-        unsafe { protocol_conformsToProtocol(self, proto) == YES }
+        unsafe { protocol_conformsToProtocol(self.as_ptr(), proto.as_ptr()) == YES }
     }
 
     /// Returns the name of self.
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(protocol_getName(self)) };
+        let name = unsafe { CStr::from_ptr(protocol_getName(self.as_ptr())) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
 }
 
 impl PartialEq for Protocol {
     fn eq(&self, other: &Protocol) -> bool {
-        unsafe { protocol_isEqual(self, other) == YES }
+        unsafe { protocol_isEqual(self.as_ptr(), other.as_ptr()) == YES }
     }
 }
 
@@ -489,9 +398,13 @@ fn get_ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
 }
 
 impl Object {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::Object {
+        self as *const Self as *const _
+    }
+
     /// Returns the class of this object.
     pub fn class(&self) -> &Class {
-        unsafe { &*object_getClass(self) }
+        unsafe { &*(object_getClass(self.as_ptr()) as *const Class) }
     }
 
     /// Returns a shared reference to the ivar with the given name.
@@ -543,7 +456,7 @@ impl Object {
 
 impl fmt::Debug for Object {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "<{:?}: {:p}>", self.class(), self)
+        write!(f, "<{:?}: {:p}>", self.class(), self.as_ptr())
     }
 }
 

@@ -1,0 +1,15 @@
+[package]
+name = "objc_sys"
+version = "0.0.0"
+authors = ["Mads Marquart <mads@marquart.dk>"]
+edition = "2018"
+
+description = "Bindings to the Objective-C core runtime"
+keywords = ["objective-c", "macos", "ios", "objc_msgSend", "sys"]
+categories = [
+    "external-ffi-bindings",
+    "os::macos-apis",
+]
+repository = "https://github.com/madsmtm/objc"
+documentation = "https://docs.rs/objc_sys/"
+license = "MIT"

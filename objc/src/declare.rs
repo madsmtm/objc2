@@ -118,12 +118,12 @@ pub struct ClassDecl {
 impl ClassDecl {
     fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<ClassDecl> {
         let name = CString::new(name).unwrap();
-        let super_ptr = superclass.map_or(ptr::null(), |c| c);
+        let super_ptr = superclass.map_or(ptr::null(), |c| c) as _;
         let cls = unsafe { runtime::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
         if cls.is_null() {
             None
         } else {
-            Some(ClassDecl { cls })
+            Some(ClassDecl { cls: cls as _ })
         }
     }
 
@@ -182,7 +182,8 @@ impl ClassDecl {
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
-        let success = runtime::class_addMethod(self.cls, sel, func.imp(), types.as_ptr());
+        let success =
+            runtime::class_addMethod(self.cls as _, sel.as_ptr() as _, func.imp(), types.as_ptr());
         assert!(success != NO, "Failed to add method {:?}", sel);
     }
 
@@ -212,7 +213,8 @@ impl ClassDecl {
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let metaclass = (*self.cls).metaclass() as *const _ as *mut _;
-        let success = runtime::class_addMethod(metaclass, sel, func.imp(), types.as_ptr());
+        let success =
+            runtime::class_addMethod(metaclass, sel.as_ptr() as _, func.imp(), types.as_ptr());
         assert!(success != NO, "Failed to add class method {:?}", sel);
     }
 
@@ -227,7 +229,13 @@ impl ClassDecl {
         let size = mem::size_of::<T>();
         let align = log2_align_of::<T>();
         let success = unsafe {
-            runtime::class_addIvar(self.cls, c_name.as_ptr(), size, align, encoding.as_ptr())
+            runtime::class_addIvar(
+                self.cls as _,
+                c_name.as_ptr(),
+                size,
+                align,
+                encoding.as_ptr(),
+            )
         };
         assert!(success != NO, "Failed to add ivar {}", name);
     }
@@ -238,7 +246,7 @@ impl ClassDecl {
     ///
     /// If the protocol wasn't successfully added.
     pub fn add_protocol(&mut self, proto: &Protocol) {
-        let success = unsafe { runtime::class_addProtocol(self.cls, proto) };
+        let success = unsafe { runtime::class_addProtocol(self.cls as _, proto.as_ptr()) };
         assert!(success != NO, "Failed to add protocol {:?}", proto);
     }
 
@@ -247,7 +255,7 @@ impl ClassDecl {
     pub fn register(self) -> &'static Class {
         unsafe {
             let cls = self.cls;
-            runtime::objc_registerClassPair(cls);
+            runtime::objc_registerClassPair(cls as _);
             // Forget self otherwise the class will be disposed in drop
             mem::forget(self);
             &*cls
@@ -258,7 +266,7 @@ impl ClassDecl {
 impl Drop for ClassDecl {
     fn drop(&mut self) {
         unsafe {
-            runtime::objc_disposeClassPair(self.cls);
+            runtime::objc_disposeClassPair(self.cls as _);
         }
     }
 }
@@ -275,7 +283,7 @@ impl ProtocolDecl {
     /// Returns [`None`] if the protocol couldn't be allocated.
     pub fn new(name: &str) -> Option<ProtocolDecl> {
         let c_name = CString::new(name).unwrap();
-        let proto = unsafe { runtime::objc_allocateProtocol(c_name.as_ptr()) };
+        let proto = unsafe { runtime::objc_allocateProtocol(c_name.as_ptr()) } as *mut Protocol;
         if proto.is_null() {
             None
         } else {
@@ -303,8 +311,8 @@ impl ProtocolDecl {
         let types = method_type_encoding(&Ret::ENCODING, encs);
         unsafe {
             runtime::protocol_addMethodDescription(
-                self.proto,
-                sel,
+                self.proto as _,
+                sel.as_ptr() as _,
                 types.as_ptr(),
                 is_required as BOOL,
                 is_instance_method as BOOL,
@@ -333,7 +341,7 @@ impl ProtocolDecl {
     /// Adds a requirement on another protocol.
     pub fn add_protocol(&mut self, proto: &Protocol) {
         unsafe {
-            runtime::protocol_addProtocol(self.proto, proto);
+            runtime::protocol_addProtocol(self.proto as _, proto.as_ptr());
         }
     }
 
@@ -341,7 +349,7 @@ impl ProtocolDecl {
     /// to the newly registered [`Protocol`].
     pub fn register(self) -> &'static Protocol {
         unsafe {
-            runtime::objc_registerProtocol(self.proto);
+            runtime::objc_registerProtocol(self.proto as _);
             &*self.proto
         }
     }

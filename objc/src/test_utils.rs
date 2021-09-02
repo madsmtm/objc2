@@ -12,8 +12,9 @@ pub struct CustomObject {
 
 impl CustomObject {
     fn new(class: &Class) -> Self {
-        let obj = unsafe { runtime::class_createInstance(class, 0) };
-        CustomObject { obj }
+        let ptr = class as *const Class as _;
+        let obj = unsafe { runtime::class_createInstance(ptr, 0) };
+        CustomObject { obj: obj as _ }
     }
 }
 
@@ -34,7 +35,7 @@ impl DerefMut for CustomObject {
 impl Drop for CustomObject {
     fn drop(&mut self) {
         unsafe {
-            runtime::object_dispose(self.obj);
+            runtime::object_dispose(self.obj as _);
         }
     }
 }
