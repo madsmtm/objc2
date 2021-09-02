@@ -44,7 +44,6 @@ mod strong;
 mod weak;
 mod autorelease;
 
-#[cfg(feature = "unstable_autoreleasesafe")]
 pub use self::autorelease::AutoreleaseSafe;
 pub use self::autorelease::{autoreleasepool, AutoreleasePool};
 pub use self::strong::StrongPtr;

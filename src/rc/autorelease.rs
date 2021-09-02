@@ -171,124 +171,101 @@ pub unsafe auto trait AutoreleaseSafe {}
 #[cfg(feature = "unstable_autoreleasesafe")]
 impl !AutoreleaseSafe for AutoreleasePool {}
 
-// We use a macro here so that the function documentation is included whether
-// the feature is enabled or not.
-
-#[cfg(feature = "unstable_autoreleasesafe")]
-macro_rules! fn_autoreleasepool {
-    {$(#[$fn_meta:meta])* $v:vis fn $fn:ident($f:ident) $b:block} => {
-        $(#[$fn_meta])*
-        $v fn $fn<T, F>($f: F) -> T
-        where
-            for<'p> F: FnOnce(&'p AutoreleasePool) -> T + AutoreleaseSafe,
-        {
-            $b
-        }
-    }
-}
-
 #[cfg(not(feature = "unstable_autoreleasesafe"))]
-macro_rules! fn_autoreleasepool {
-    {$(#[$fn_meta:meta])* $v:vis fn $fn:ident($f:ident) $b:block} => {
-        $(#[$fn_meta])*
-        $v fn $fn<T, F>($f: F) -> T
-        where
-            for<'p> F: FnOnce(&'p AutoreleasePool) -> T,
-        {
-            $b
-        }
-    }
-}
+pub unsafe trait AutoreleaseSafe {}
+#[cfg(not(feature = "unstable_autoreleasesafe"))]
+unsafe impl<T> AutoreleaseSafe for T {}
 
-fn_autoreleasepool!(
-    /// Execute `f` in the context of a new autorelease pool. The pool is
-    /// drained after the execution of `f` completes.
-    ///
-    /// This corresponds to `@autoreleasepool` blocks in Objective-C and
-    /// Swift.
-    ///
-    /// The pool is passed as a reference to the enclosing function to give it
-    /// a lifetime parameter that autoreleased objects can refer to.
-    ///
-    /// The given reference must not be used in an inner `autoreleasepool`,
-    /// doing so will panic with debug assertions enabled, and be a compile
-    /// error in a future release. You can test the compile error with the
-    /// `unstable_autoreleasesafe` crate feature on nightly Rust.
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```rust
-    /// use objc::{class, msg_send};
-    /// use objc::rc::{autoreleasepool, AutoreleasePool};
-    /// use objc::runtime::Object;
-    ///
-    /// fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-    ///     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
-    ///     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
-    ///     unsafe { pool.ptr_as_mut(obj) }
-    /// }
-    ///
-    /// autoreleasepool(|pool| {
-    ///     // Create `obj` and autorelease it to the pool
-    ///     let obj = needs_lifetime_from_pool(pool);
-    ///     // ... use `obj` here
-    ///     // `obj` is deallocated when the pool ends
-    /// });
-    /// ```
-    ///
-    /// Fails to compile because `obj` does not live long enough for us to
-    /// safely take it out of the pool:
-    ///
-    /// ```rust,compile_fail
-    /// # use objc::{class, msg_send};
-    /// # use objc::rc::{autoreleasepool, AutoreleasePool};
-    /// # use objc::runtime::Object;
-    /// #
-    /// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-    /// #     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
-    /// #     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
-    /// #     unsafe { pool.ptr_as_mut(obj) }
-    /// # }
-    /// #
-    /// let obj = autoreleasepool(|pool| {
-    ///     let obj = needs_lifetime_from_pool(pool);
-    ///     // Use `obj`
-    ///     obj
-    /// });
-    /// ```
-    ///
-    /// Incorrect usage which panics:
-    ///
-    #[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```rust,compile_fail")]
-    #[cfg_attr(not(feature = "unstable_autoreleasesafe"), doc = "```rust,should_panic")]
-    /// # use objc::{class, msg_send};
-    /// # use objc::rc::{autoreleasepool, AutoreleasePool};
-    /// # use objc::runtime::Object;
-    /// #
-    /// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-    /// #     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
-    /// #     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
-    /// #     unsafe { pool.ptr_as_mut(obj) }
-    /// # }
-    /// #
-    /// autoreleasepool(|outer_pool| {
-    ///     let obj = autoreleasepool(|inner_pool| {
-    ///         let obj = needs_lifetime_from_pool(outer_pool);
-    ///         obj
-    ///     });
-    ///     // `obj` could wrongly be used here because it's lifetime was
-    ///     // assigned to the outer pool, even though it was released by the
-    ///     // inner pool already.
-    /// });
-    /// ```
-    #[doc(alias = "@autoreleasepool")]
-    pub fn autoreleasepool(f) {
-        let pool = unsafe { AutoreleasePool::new() };
-        f(&pool)
-    }
-);
+/// Execute `f` in the context of a new autorelease pool. The pool is
+/// drained after the execution of `f` completes.
+///
+/// This corresponds to `@autoreleasepool` blocks in Objective-C and
+/// Swift.
+///
+/// The pool is passed as a reference to the enclosing function to give it
+/// a lifetime parameter that autoreleased objects can refer to.
+///
+/// The given reference must not be used in an inner `autoreleasepool`,
+/// doing so will panic with debug assertions enabled, and be a compile
+/// error in a future release. You can test the compile error with the
+/// `unstable_autoreleasesafe` crate feature on nightly Rust.
+///
+/// # Examples
+///
+/// Basic usage:
+///
+/// ```rust
+/// use objc::{class, msg_send};
+/// use objc::rc::{autoreleasepool, AutoreleasePool};
+/// use objc::runtime::Object;
+///
+/// fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
+///     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
+///     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
+///     unsafe { pool.ptr_as_mut(obj) }
+/// }
+///
+/// autoreleasepool(|pool| {
+///     // Create `obj` and autorelease it to the pool
+///     let obj = needs_lifetime_from_pool(pool);
+///     // ... use `obj` here
+///     // `obj` is deallocated when the pool ends
+/// });
+/// ```
+///
+/// Fails to compile because `obj` does not live long enough for us to
+/// safely take it out of the pool:
+///
+/// ```rust,compile_fail
+/// # use objc::{class, msg_send};
+/// # use objc::rc::{autoreleasepool, AutoreleasePool};
+/// # use objc::runtime::Object;
+/// #
+/// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
+/// #     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
+/// #     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
+/// #     unsafe { pool.ptr_as_mut(obj) }
+/// # }
+/// #
+/// let obj = autoreleasepool(|pool| {
+///     let obj = needs_lifetime_from_pool(pool);
+///     // Use `obj`
+///     obj
+/// });
+/// ```
+///
+/// Incorrect usage which panics:
+///
+#[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```rust,compile_fail")]
+#[cfg_attr(not(feature = "unstable_autoreleasesafe"), doc = "```rust,should_panic")]
+/// # use objc::{class, msg_send};
+/// # use objc::rc::{autoreleasepool, AutoreleasePool};
+/// # use objc::runtime::Object;
+/// #
+/// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
+/// #     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
+/// #     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
+/// #     unsafe { pool.ptr_as_mut(obj) }
+/// # }
+/// #
+/// autoreleasepool(|outer_pool| {
+///     let obj = autoreleasepool(|inner_pool| {
+///         let obj = needs_lifetime_from_pool(outer_pool);
+///         obj
+///     });
+///     // `obj` could wrongly be used here because it's lifetime was
+///     // assigned to the outer pool, even though it was released by the
+///     // inner pool already.
+/// });
+/// ```
+#[doc(alias = "@autoreleasepool")]
+pub fn autoreleasepool<T, F>(f: F) -> T
+where
+    for<'p> F: FnOnce(&'p AutoreleasePool) -> T + AutoreleaseSafe,
+{
+    let pool = unsafe { AutoreleasePool::new() };
+    f(&pool)
+}
 
 #[cfg(all(test, feature = "unstable_autoreleasesafe"))]
 mod tests {
