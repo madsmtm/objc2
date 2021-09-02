@@ -59,8 +59,10 @@ The bindings can be used on Linux or *BSD utilizing the
 */
 
 #![no_std]
-#![cfg_attr(feature = "unstable_autoreleasesafe", feature(negative_impls, auto_traits))]
-
+#![cfg_attr(
+    feature = "unstable_autoreleasesafe",
+    feature(negative_impls, auto_traits)
+)]
 #![warn(missing_docs)]
 #![allow(clippy::missing_safety_doc)]
 // Update in Cargo.toml as well.

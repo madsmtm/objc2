@@ -18,14 +18,10 @@ pub fn get_add_block_with(i: i32) -> RcBlock<(i32,), i32> {
 
 pub fn invoke_int_block(block: &Block<(), i32>) -> i32 {
     let ptr = block as *const _;
-    unsafe {
-        objc_test_utils::invoke_int_block(ptr as *mut _)
-    }
+    unsafe { objc_test_utils::invoke_int_block(ptr as *mut _) }
 }
 
 pub fn invoke_add_block(block: &Block<(i32,), i32>, a: i32) -> i32 {
     let ptr = block as *const _;
-    unsafe {
-        objc_test_utils::invoke_add_block(ptr as *mut _, a)
-    }
+    unsafe { objc_test_utils::invoke_add_block(ptr as *mut _, a) }
 }

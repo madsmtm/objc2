@@ -2,13 +2,13 @@
 #![crate_type = "lib"]
 
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.
-pub enum IntBlock { }
+pub enum IntBlock {}
 
 /// A block that takes one integer argument, adds to it, and returns the sum:
 /// `int32_t (^)(int32_t)`.
-pub enum AddBlock { }
+pub enum AddBlock {}
 
-extern {
+extern "C" {
     /// Returns a pointer to a global `IntBlock` that returns 7.
     pub fn get_int_block() -> *mut IntBlock;
     /// Returns a pointer to a copied `IntBlock` that returns `i`.
