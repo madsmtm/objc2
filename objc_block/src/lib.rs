@@ -45,14 +45,21 @@ to be copied once, and we can enforce this in Rust, but if Objective-C code
 were to copy it twice we could have a double free.
 */
 
+#![no_std]
+
+extern crate alloc;
+extern crate std;
+
 #[cfg(test)]
 mod test_utils;
 
-use std::marker::PhantomData;
-use std::mem;
-use std::ops::{Deref, DerefMut};
-use std::os::raw::{c_int, c_ulong, c_void};
-use std::ptr;
+use alloc::boxed::Box;
+use core::ffi::c_void;
+use core::marker::PhantomData;
+use core::mem;
+use core::ops::{Deref, DerefMut};
+use core::ptr;
+use std::os::raw::{c_int, c_ulong};
 
 use objc_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
@@ -364,7 +371,9 @@ pub struct ConcreteBlock<A, R, F> {
     closure: F,
 }
 
-unsafe impl<A: BlockArguments + EncodeArguments, R: Encode, F> RefEncode for ConcreteBlock<A, R, F> {
+unsafe impl<A: BlockArguments + EncodeArguments, R: Encode, F> RefEncode
+    for ConcreteBlock<A, R, F>
+{
     const ENCODING_REF: Encoding<'static> = Encoding::Block;
 }
 
@@ -476,6 +485,7 @@ impl<B> BlockDescriptor<B> {
 mod tests {
     use super::{ConcreteBlock, RcBlock};
     use crate::test_utils::*;
+    use alloc::string::ToString;
 
     #[test]
     fn test_call_block() {

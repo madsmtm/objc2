@@ -8,6 +8,7 @@ description = "Utilities for testing Objective-C interop."
 keywords = ["objective-c", "macos", "ios", "testing"]
 categories = [
     "development-tools::ffi",
+    "no-std",
     "development-tools::testing",
     "os::macos-apis",
 ]
