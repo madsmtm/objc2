@@ -54,6 +54,8 @@ use std::ops::{Deref, DerefMut};
 use std::os::raw::{c_int, c_ulong, c_void};
 use std::ptr;
 
+use objc_encode::{Encode, EncodeArguments, Encoding, RefEncode};
+
 // TODO: Replace with `objc::Class`
 #[repr(C)]
 struct ClassInternal {
@@ -156,10 +158,11 @@ pub struct Block<A, R> {
     _base: PhantomData<BlockBase<A, R>>,
 }
 
-impl<A: BlockArguments, R> Block<A, R>
-where
-    A: BlockArguments,
-{
+unsafe impl<A: BlockArguments + EncodeArguments, R: Encode> RefEncode for Block<A, R> {
+    const ENCODING_REF: Encoding<'static> = Encoding::Block;
+}
+
+impl<A: BlockArguments + EncodeArguments, R: Encode> Block<A, R> {
     /// Call self with the given arguments.
     ///
     /// # Safety
@@ -226,12 +229,9 @@ impl<A, R> Drop for RcBlock<A, R> {
 }
 
 /// Types that may be converted into a `ConcreteBlock`.
-pub trait IntoConcreteBlock<A>: Sized
-where
-    A: BlockArguments,
-{
+pub trait IntoConcreteBlock<A: BlockArguments + EncodeArguments>: Sized {
     /// The return type of the resulting `ConcreteBlock`.
-    type Ret;
+    type Ret: Encode;
 
     /// Consumes self to create a `ConcreteBlock`.
     fn into_concrete_block(self) -> ConcreteBlock<A, Self::Ret, Self>;
@@ -242,7 +242,7 @@ macro_rules! concrete_block_impl {
         concrete_block_impl!($f,);
     );
     ($f:ident, $($a:ident : $t:ident),*) => (
-        impl<$($t,)* R, X> IntoConcreteBlock<($($t,)*)> for X
+        impl<$($t: Encode,)* R: Encode, X> IntoConcreteBlock<($($t,)*)> for X
                 where X: Fn($($t,)*) -> R {
             type Ret = R;
 
@@ -364,9 +364,14 @@ pub struct ConcreteBlock<A, R, F> {
     closure: F,
 }
 
+unsafe impl<A: BlockArguments + EncodeArguments, R: Encode, F> RefEncode for ConcreteBlock<A, R, F> {
+    const ENCODING_REF: Encoding<'static> = Encoding::Block;
+}
+
 impl<A, R, F> ConcreteBlock<A, R, F>
 where
-    A: BlockArguments,
+    A: BlockArguments + EncodeArguments,
+    R: Encode,
     F: IntoConcreteBlock<A, Ret = R>,
 {
     /// Constructs a `ConcreteBlock` with the given closure.
