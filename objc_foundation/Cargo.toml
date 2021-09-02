@@ -20,6 +20,6 @@ license = "MIT"
 default = ["block"]
 
 [dependencies]
-block = { optional = true, version = "0.1" }
+block = { path = "../objc_block", optional = true, version = "0.1" }
 objc = { path = "../objc", version = "0.2.7" }
 objc_id = { path = "../objc_id", version = "0.1" }

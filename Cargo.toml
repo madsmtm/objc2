@@ -1,34 +1,12 @@
 [workspace]
 members = [
     "objc",
+    "objc_block",
     "objc_encode",
     "objc_exception",
     "objc_foundation",
     "objc_foundation_derive",
     "objc_id",
+    "objc_test_utils",
 ]
 exclude = ["objc/tests-ios"]
-
-[package]
-name = "block"
-version = "0.1.6"
-authors = ["Steven Sheldon"]
-
-description = "Rust interface for Apple's C language extension of blocks."
-keywords = ["blocks", "osx", "ios", "objective-c"]
-readme = "README.md"
-repository = "http://github.com/SSheldon/rust-block"
-documentation = "http://ssheldon.github.io/rust-objc/block/"
-license = "MIT"
-
-exclude = [
-  ".gitignore",
-  ".travis.yml",
-  "travis_install.sh",
-  "travis_test.sh",
-  "tests-ios/**",
-]
-
-[dev-dependencies.objc_test_utils]
-version = "0.0"
-path = "test_utils"

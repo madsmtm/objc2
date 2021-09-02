@@ -1,0 +1,23 @@
+[package]
+name = "objc_test_utils"
+version = "0.0.2"
+authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
+
+description = "Utilities for testing Objective-C interop."
+keywords = ["objective-c", "macos", "ios", "testing"]
+categories = [
+    "development-tools::ffi",
+    "development-tools::testing",
+    "os::macos-apis",
+]
+repository = "https://github.com/madsmtm/objc"
+documentation = "https://docs.rs/objc_test_utils/"
+license = "MIT"
+
+build = "build.rs"
+
+[lib]
+path = "lib.rs"
+
+[build-dependencies]
+gcc = "0.3"
