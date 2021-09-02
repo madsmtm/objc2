@@ -1,0 +1,22 @@
+language: rust
+rust:
+  - stable
+  - nightly
+os:
+  - osx
+  - linux
+env:
+  - IOS_ARCHS=""
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode7.3
+      rust: stable
+      env: IOS_ARCHS="i386 x86_64 armv7 armv7s aarch64"
+sudo: false
+install: ./travis_install.sh
+script: ./travis_test.sh
+addons:
+  apt:
+    packages:
+      - libblocksruntime-dev
