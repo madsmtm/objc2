@@ -29,25 +29,25 @@ pub use objc_sys::{
     protocol_addMethodDescription, protocol_addProtocol, protocol_conformsToProtocol,
     protocol_copyProtocolList, protocol_getName, protocol_isEqual, sel_getName, sel_registerName,
 };
-pub use objc_sys::{Imp, BOOL, NO, YES};
+pub use objc_sys::{BOOL, NO, YES};
 
 /// A type that represents a method selector.
 #[repr(transparent)]
 pub struct Sel {
-    ptr: *const objc_sys::Sel,
+    ptr: *const objc_sys::objc_selector,
 }
 
 /// A type that represents an instance variable.
 #[repr(C)]
-pub struct Ivar(objc_sys::Ivar);
+pub struct Ivar(objc_sys::objc_ivar);
 
 /// A type that represents a method in a class definition.
 #[repr(C)]
-pub struct Method(objc_sys::Method);
+pub struct Method(objc_sys::objc_method);
 
 /// A type that represents an Objective-C class.
 #[repr(C)]
-pub struct Class(objc_sys::Class);
+pub struct Class(objc_sys::objc_class);
 
 /// A type that represents an Objective-C protocol.
 #[repr(C)]
@@ -55,7 +55,10 @@ pub struct Protocol(objc_sys::Protocol);
 
 /// A type that represents an instance of a class.
 #[repr(C)]
-pub struct Object(objc_sys::Object);
+pub struct Object(objc_sys::objc_object);
+
+/// A pointer to the start of a method implementation.
+pub type Imp = objc_sys::IMP;
 
 impl Sel {
     /// Registers a method with the Objective-C runtime system,
@@ -83,7 +86,7 @@ impl Sel {
     #[inline]
     pub unsafe fn from_ptr(ptr: *const c_void) -> Self {
         Self {
-            ptr: ptr as *const objc_sys::Sel,
+            ptr: ptr as *const objc_sys::objc_selector,
         }
     }
 
@@ -121,7 +124,7 @@ impl fmt::Debug for Sel {
 }
 
 impl Ivar {
-    pub(crate) fn as_ptr(&self) -> *const objc_sys::Ivar {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::objc_ivar {
         self as *const Self as *const _
     }
 
@@ -145,7 +148,7 @@ impl Ivar {
 }
 
 impl Method {
-    pub(crate) fn as_ptr(&self) -> *const objc_sys::Method {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::objc_method {
         self as *const Self as *const _
     }
 
@@ -189,7 +192,7 @@ impl Method {
 }
 
 impl Class {
-    pub(crate) fn as_ptr(&self) -> *const objc_sys::Class {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::objc_class {
         self as *const Self as *const _
     }
 
@@ -241,7 +244,7 @@ impl Class {
 
     /// Returns the metaclass of self.
     pub fn metaclass(&self) -> &Self {
-        unsafe { &*(object_getClass(self.as_ptr() as *const objc_sys::Object) as *const Self) }
+        unsafe { &*(object_getClass(self.as_ptr() as *const _) as *const Self) }
     }
 
     /// Returns the size of instances of self.
@@ -398,7 +401,7 @@ fn get_ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
 }
 
 impl Object {
-    pub(crate) fn as_ptr(&self) -> *const objc_sys::Object {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::objc_object {
         self as *const Self as *const _
     }
 

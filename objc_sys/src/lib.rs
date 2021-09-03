@@ -1,5 +1,14 @@
-//! # Bindings to the Objective-C core runtime
+//! # Bindings to the objc_objective-C core runtime
+//!
+//! # Notable differences
+//!
+//! Protocol / objc_protocol is no longer a type alias of objc_object, for
+//! better type safety. Their internal representation is the same, so the
+//! functionality is just a cast away.
+
 #![no_std]
+#![allow(non_camel_case_types)]
+#![allow(non_upper_case_globals)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc-encode/1.1.0")]
 
@@ -32,130 +41,180 @@ pub const NO: BOOL = false;
 
 /// A type that represents a method selector.
 #[repr(C)]
-pub struct Sel {
+pub struct objc_selector {
     _priv: [u8; 0],
 }
 
 /// A type that represents an Objective-C class.
 #[repr(C)]
-pub struct Class {
+pub struct objc_class {
     _priv: [u8; 0],
 }
 
 /// A type that represents an instance of a class.
 #[repr(C)]
-pub struct Object {
+pub struct objc_object {
     _priv: [u8; 0],
 }
 
 /// A type that represents an instance variable.
 #[repr(C)]
-pub struct Ivar {
+pub struct objc_ivar {
     _priv: [u8; 0],
 }
 
 /// A type that represents a method in a class definition.
 #[repr(C)]
-pub struct Method {
+pub struct objc_method {
     _priv: [u8; 0],
 }
 
-/// A type that represents an Objective-C protocol.
+/// Nonstandard naming, actually TODO ...
 #[repr(C)]
-pub struct Protocol {
+pub struct objc_protocol {
     _priv: [u8; 0],
 }
+
+/// An immutable pointer to a selector.
+///
+/// Type alias provided for convenience.
+pub type SEL = *const objc_selector;
+
+/// A mutable pointer to a class.
+///
+/// Type alias provided for convenience.
+pub type Class = *mut objc_class;
+
+/// A mutable pointer to an object / instance.
+///
+/// Type alias provided for convenience.
+pub type id = *mut objc_object;
+
+/// An immutable pointer to an instance variable.
+///
+/// Type alias provided for convenience.
+pub type Ivar = *const objc_ivar;
+
+/// A mutable pointer to a method.
+///
+/// Type alias provided for convenience.
+pub type Method = *mut objc_method;
+
+/// An opaque type that represents a protocol.
+///
+/// Type alias provided for convenience.
+pub type Protocol = objc_protocol;
 
 /// A pointer to the start of a method implementation.
-pub type Imp = unsafe extern "C" fn();
+pub type IMP = unsafe extern "C" fn();
 
 #[link(name = "objc", kind = "dylib")]
 extern "C" {
-    pub fn sel_registerName(name: *const c_char) -> *const Sel;
-    pub fn sel_getName(sel: *const Sel) -> *const c_char;
+    pub fn sel_registerName(name: *const c_char) -> *const objc_selector;
+    pub fn sel_getName(sel: *const objc_selector) -> *const c_char;
 
-    pub fn class_getName(cls: *const Class) -> *const c_char;
-    pub fn class_getSuperclass(cls: *const Class) -> *const Class;
-    pub fn class_getInstanceSize(cls: *const Class) -> usize;
-    pub fn class_getInstanceMethod(cls: *const Class, sel: *const Sel) -> *const Method;
-    pub fn class_getInstanceVariable(cls: *const Class, name: *const c_char) -> *const Ivar;
-    pub fn class_copyMethodList(cls: *const Class, outCount: *mut c_uint) -> *mut *const Method;
-    pub fn class_copyIvarList(cls: *const Class, outCount: *mut c_uint) -> *mut *const Ivar;
+    pub fn class_getName(cls: *const objc_class) -> *const c_char;
+    pub fn class_getSuperclass(cls: *const objc_class) -> *const objc_class;
+    pub fn class_getInstanceSize(cls: *const objc_class) -> usize;
+    pub fn class_getInstanceMethod(
+        cls: *const objc_class,
+        sel: *const objc_selector,
+    ) -> *const objc_method;
+    pub fn class_getInstanceVariable(
+        cls: *const objc_class,
+        name: *const c_char,
+    ) -> *const objc_ivar;
+    pub fn class_copyMethodList(
+        cls: *const objc_class,
+        outCount: *mut c_uint,
+    ) -> *mut *const objc_method;
+    pub fn class_copyIvarList(
+        cls: *const objc_class,
+        outCount: *mut c_uint,
+    ) -> *mut *const objc_ivar;
     pub fn class_addMethod(
-        cls: *mut Class,
-        name: *const Sel,
-        imp: Imp,
+        cls: *mut objc_class,
+        name: *const objc_selector,
+        imp: IMP,
         types: *const c_char,
     ) -> BOOL;
     pub fn class_addIvar(
-        cls: *mut Class,
+        cls: *mut objc_class,
         name: *const c_char,
         size: usize,
         alignment: u8,
         types: *const c_char,
     ) -> BOOL;
-    pub fn class_addProtocol(cls: *mut Class, proto: *const Protocol) -> BOOL;
-    pub fn class_conformsToProtocol(cls: *const Class, proto: *const Protocol) -> BOOL;
-    pub fn class_copyProtocolList(cls: *const Class, outCount: *mut c_uint)
-        -> *mut *const Protocol;
+    pub fn class_addProtocol(cls: *mut objc_class, proto: *const objc_protocol) -> BOOL;
+    pub fn class_conformsToProtocol(cls: *const objc_class, proto: *const objc_protocol) -> BOOL;
+    pub fn class_copyProtocolList(
+        cls: *const objc_class,
+        outCount: *mut c_uint,
+    ) -> *mut *const objc_protocol;
 
     pub fn objc_allocateClassPair(
-        superclass: *const Class,
+        superclass: *const objc_class,
         name: *const c_char,
         extraBytes: usize,
-    ) -> *mut Class;
-    pub fn objc_disposeClassPair(cls: *mut Class);
-    pub fn objc_registerClassPair(cls: *mut Class);
+    ) -> *mut objc_class;
+    pub fn objc_disposeClassPair(cls: *mut objc_class);
+    pub fn objc_registerClassPair(cls: *mut objc_class);
 
-    pub fn class_createInstance(cls: *const Class, extraBytes: usize) -> *mut Object;
-    pub fn object_dispose(obj: *mut Object) -> *mut Object;
-    pub fn object_getClass(obj: *const Object) -> *const Class;
+    pub fn class_createInstance(cls: *const objc_class, extraBytes: usize) -> *mut objc_object;
+    pub fn object_dispose(obj: *mut objc_object) -> *mut objc_object;
+    pub fn object_getClass(obj: *const objc_object) -> *const objc_class;
 
-    pub fn objc_getClassList(buffer: *mut *const Class, bufferLen: c_int) -> c_int;
-    pub fn objc_copyClassList(outCount: *mut c_uint) -> *mut *const Class;
-    pub fn objc_getClass(name: *const c_char) -> *const Class;
-    pub fn objc_getProtocol(name: *const c_char) -> *const Protocol;
-    pub fn objc_copyProtocolList(outCount: *mut c_uint) -> *mut *const Protocol;
-    pub fn objc_allocateProtocol(name: *const c_char) -> *mut Protocol;
-    pub fn objc_registerProtocol(proto: *mut Protocol);
+    pub fn objc_getClassList(buffer: *mut *const objc_class, bufferLen: c_int) -> c_int;
+    pub fn objc_copyClassList(outCount: *mut c_uint) -> *mut *const objc_class;
+    pub fn objc_getClass(name: *const c_char) -> *const objc_class;
+    pub fn objc_getProtocol(name: *const c_char) -> *const objc_protocol;
+    pub fn objc_copyProtocolList(outCount: *mut c_uint) -> *mut *const objc_protocol;
+    pub fn objc_allocateProtocol(name: *const c_char) -> *mut objc_protocol;
+    pub fn objc_registerProtocol(proto: *mut objc_protocol);
 
     pub fn objc_autoreleasePoolPush() -> *mut c_void;
     pub fn objc_autoreleasePoolPop(context: *mut c_void);
 
     pub fn protocol_addMethodDescription(
-        proto: *mut Protocol,
-        name: *const Sel,
+        proto: *mut objc_protocol,
+        name: *const objc_selector,
         types: *const c_char,
         isRequiredMethod: BOOL,
         isInstanceMethod: BOOL,
     );
-    pub fn protocol_addProtocol(proto: *mut Protocol, addition: *const Protocol);
-    pub fn protocol_getName(proto: *const Protocol) -> *const c_char;
-    pub fn protocol_isEqual(proto: *const Protocol, other: *const Protocol) -> BOOL;
+    pub fn protocol_addProtocol(proto: *mut objc_protocol, addition: *const objc_protocol);
+    pub fn protocol_getName(proto: *const objc_protocol) -> *const c_char;
+    pub fn protocol_isEqual(proto: *const objc_protocol, other: *const objc_protocol) -> BOOL;
     pub fn protocol_copyProtocolList(
-        proto: *const Protocol,
+        proto: *const objc_protocol,
         outCount: *mut c_uint,
-    ) -> *mut *const Protocol;
-    pub fn protocol_conformsToProtocol(proto: *const Protocol, other: *const Protocol) -> BOOL;
+    ) -> *mut *const objc_protocol;
+    pub fn protocol_conformsToProtocol(
+        proto: *const objc_protocol,
+        other: *const objc_protocol,
+    ) -> BOOL;
 
-    pub fn ivar_getName(ivar: *const Ivar) -> *const c_char;
-    pub fn ivar_getOffset(ivar: *const Ivar) -> isize;
-    pub fn ivar_getTypeEncoding(ivar: *const Ivar) -> *const c_char;
+    pub fn ivar_getName(ivar: *const objc_ivar) -> *const c_char;
+    pub fn ivar_getOffset(ivar: *const objc_ivar) -> isize;
+    pub fn ivar_getTypeEncoding(ivar: *const objc_ivar) -> *const c_char;
 
-    pub fn method_getName(method: *const Method) -> *const Sel;
-    pub fn method_getImplementation(method: *const Method) -> Imp;
-    pub fn method_copyReturnType(method: *const Method) -> *mut c_char;
-    pub fn method_copyArgumentType(method: *const Method, index: c_uint) -> *mut c_char;
-    pub fn method_getNumberOfArguments(method: *const Method) -> c_uint;
-    pub fn method_setImplementation(method: *mut Method, imp: Imp) -> Imp;
-    pub fn method_exchangeImplementations(m1: *mut Method, m2: *mut Method);
+    pub fn method_getName(method: *const objc_method) -> *const objc_selector;
+    pub fn method_getImplementation(method: *const objc_method) -> IMP;
+    pub fn method_copyReturnType(method: *const objc_method) -> *mut c_char;
+    pub fn method_copyArgumentType(method: *const objc_method, index: c_uint) -> *mut c_char;
+    pub fn method_getNumberOfArguments(method: *const objc_method) -> c_uint;
+    pub fn method_setImplementation(method: *mut objc_method, imp: IMP) -> IMP;
+    pub fn method_exchangeImplementations(m1: *mut objc_method, m2: *mut objc_method);
 
-    pub fn objc_retain(obj: *mut Object) -> *mut Object;
-    pub fn objc_release(obj: *mut Object);
-    pub fn objc_autorelease(obj: *mut Object);
+    pub fn objc_retain(obj: *mut objc_object) -> *mut objc_object;
+    pub fn objc_release(obj: *mut objc_object);
+    pub fn objc_autorelease(obj: *mut objc_object);
 
-    pub fn objc_loadWeakRetained(location: *mut *mut Object) -> *mut Object;
-    pub fn objc_initWeak(location: *mut *mut Object, obj: *mut Object) -> *mut Object;
-    pub fn objc_destroyWeak(location: *mut *mut Object);
-    pub fn objc_copyWeak(to: *mut *mut Object, from: *mut *mut Object);
+    pub fn objc_loadWeakRetained(location: *mut *mut objc_object) -> *mut objc_object;
+    pub fn objc_initWeak(
+        location: *mut *mut objc_object,
+        obj: *mut objc_object,
+    ) -> *mut objc_object;
+    pub fn objc_destroyWeak(location: *mut *mut objc_object);
+    pub fn objc_copyWeak(to: *mut *mut objc_object, from: *mut *mut objc_object);
 }
