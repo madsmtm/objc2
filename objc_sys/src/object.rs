@@ -1,7 +1,16 @@
 use core::ffi::c_void;
 use std::os::raw::c_char;
 
-use crate::{objc_class, objc_ivar, objc_object};
+use crate::{objc_class, objc_ivar, OpaqueData};
+
+/// An opaque type that represents an instance of a class.
+#[repr(C)]
+pub struct objc_object {
+    // `isa` field is deprecated, so we don't expose it here.
+    // Use `object_getClass` instead.
+    _priv: [u8; 0],
+    _p: OpaqueData,
+}
 
 extern "C" {
     pub fn object_getClass(obj: *mut objc_object) -> *mut objc_class;

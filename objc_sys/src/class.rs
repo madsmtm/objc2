@@ -1,9 +1,18 @@
 use std::os::raw::{c_char, c_int, c_uint};
 
 use crate::{
-    objc_class, objc_ivar, objc_method, objc_object, objc_property_attribute_t, objc_property_t,
-    objc_protocol, objc_selector, BOOL, IMP,
+    objc_ivar, objc_method, objc_object, objc_property_attribute_t, objc_property_t, objc_protocol,
+    objc_selector, OpaqueData, BOOL, IMP,
 };
+
+/// An opaque type that represents an Objective-C class.
+#[repr(C)]
+pub struct objc_class {
+    // `isa` field is deprecated, so we don't expose it here.
+    // Use `class_getSuperclass` instead.
+    _priv: [u8; 0],
+    _p: OpaqueData,
+}
 
 extern "C" {
     pub fn objc_getClass(name: *const c_char) -> *const objc_class;

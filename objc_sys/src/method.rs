@@ -1,6 +1,20 @@
 use std::os::raw::{c_char, c_uint};
 
-use crate::{objc_method, objc_method_description, objc_selector, IMP};
+use crate::{objc_selector, OpaqueData, IMP};
+
+/// A type that represents a method in a class definition.
+#[repr(C)]
+pub struct objc_method {
+    _priv: [u8; 0],
+    _p: OpaqueData,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct objc_method_description {
+    pub name: *const objc_selector,
+    pub types: *mut c_char,
+}
 
 extern "C" {
     pub fn method_copyArgumentType(m: *mut objc_method, index: c_uint) -> *mut c_char;

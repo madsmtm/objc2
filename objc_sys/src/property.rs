@@ -1,16 +1,29 @@
 use std::os::raw::{c_char, c_uint};
 
-use crate::{objc_property_attribute_t, objc_property_t};
+use crate::OpaqueData;
+
+#[repr(C)]
+pub struct objc_property {
+    _priv: [u8; 0],
+    _p: OpaqueData,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct objc_property_attribute_t {
+    pub name: *const c_char,
+    pub value: *const c_char,
+}
 
 extern "C" {
     pub fn property_copyAttributeList(
-        property: objc_property_t,
+        property: *const objc_property,
         outCount: *mut c_uint,
     ) -> *mut objc_property_attribute_t;
     pub fn property_copyAttributeValue(
-        property: objc_property_t,
+        property: *const objc_property,
         attributeName: *const c_char,
     ) -> *mut c_char;
-    pub fn property_getAttributes(property: objc_property_t) -> *const c_char;
-    pub fn property_getName(property: objc_property_t) -> *const c_char;
+    pub fn property_getAttributes(property: *const objc_property) -> *const c_char;
+    pub fn property_getName(property: *const objc_property) -> *const c_char;
 }

@@ -1,9 +1,16 @@
 use std::os::raw::{c_char, c_uint};
 
 use crate::{
-    objc_method_description, objc_property_attribute_t, objc_property_t, objc_protocol,
-    objc_selector, BOOL,
+    objc_method_description, objc_property, objc_property_attribute_t, objc_selector, OpaqueData,
+    BOOL,
 };
+
+/// Nonstandard naming, actually... (TODO)
+#[repr(C)]
+pub struct objc_protocol {
+    _priv: [u8; 0],
+    _p: OpaqueData,
+}
 
 extern "C" {
     pub fn objc_getProtocol(name: *const c_char) -> *mut objc_protocol;
@@ -41,7 +48,7 @@ extern "C" {
     pub fn protocol_copyPropertyList(
         proto: *mut objc_protocol,
         outCount: *mut c_uint,
-    ) -> *mut objc_property_t;
+    ) -> *mut *const objc_property;
     pub fn protocol_copyProtocolList(
         proto: *mut objc_protocol,
         outCount: *mut c_uint,
@@ -58,6 +65,6 @@ extern "C" {
         name: *const c_char,
         isRequiredProperty: BOOL,
         isInstanceProperty: BOOL,
-    ) -> objc_property_t;
+    ) -> *mut objc_property;
     pub fn protocol_isEqual(proto: *mut objc_protocol, other: *mut objc_protocol) -> BOOL;
 }

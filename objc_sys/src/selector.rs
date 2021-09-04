@@ -1,6 +1,13 @@
 use std::os::raw::c_char;
 
-use crate::{objc_selector, BOOL};
+use crate::{OpaqueData, BOOL};
+
+/// A type that represents a method selector.
+#[repr(C)]
+pub struct objc_selector {
+    _priv: [u8; 0],
+    _p: OpaqueData,
+}
 
 extern "C" {
     pub fn sel_getName(sel: *const objc_selector) -> *const c_char;

@@ -1,9 +1,25 @@
 use core::ffi::c_void;
+use std::os::raw::c_int;
 
-use crate::{
-    objc_exception_matcher, objc_exception_preprocessor, objc_object,
-    objc_uncaught_exception_handler,
-};
+use crate::{objc_class, objc_object};
+
+/// Remember that this is non-null!
+pub type objc_exception_matcher =
+    unsafe extern "C" fn(catch_type: *mut objc_class, exception: *mut objc_object) -> c_int;
+
+/// Remember that this is non-null!
+pub type objc_exception_preprocessor =
+    unsafe extern "C" fn(exception: *mut objc_object) -> *mut objc_object;
+
+/// Remember that this is non-null!
+pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut objc_object);
+
+/// Only available on macOS.
+///
+/// Remember that this is non-null!
+#[cfg(target_os = "macos")]
+pub type objc_exception_handler =
+    unsafe extern "C" fn(unused: *mut objc_object, context: *mut c_void);
 
 extern "C" {
     pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;

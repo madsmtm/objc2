@@ -1,7 +1,20 @@
 use core::ffi::c_void;
 use std::os::raw::{c_char, c_int, c_uint};
 
-use crate::{objc_AssociationPolicy, objc_ivar, objc_object, BOOL, IMP};
+use crate::{objc_AssociationPolicy, objc_object, OpaqueData, BOOL};
+
+/// A type that represents an instance variable.
+#[repr(C)]
+pub struct objc_ivar {
+    _priv: [u8; 0],
+    _p: OpaqueData,
+}
+
+/// A pointer to the start of a method implementation.
+///
+/// Remember that this is non-null!
+/// Use `Option<IMP>` where nullability is expected. TODO
+pub type IMP = unsafe extern "C" fn();
 
 extern "C" {
     pub fn imp_getBlock(anImp: IMP) -> *mut objc_object;
