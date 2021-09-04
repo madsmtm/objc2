@@ -22,6 +22,7 @@ use std::os::raw::{c_char, c_int, c_uint};
 mod constants;
 mod message;
 mod types;
+mod bindings;
 
 pub use constants::*;
 pub use message::*;
