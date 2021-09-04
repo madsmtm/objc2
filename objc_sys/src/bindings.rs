@@ -377,12 +377,6 @@ extern "C" {
     pub fn imp_removeBlock(anImp: IMP) -> BOOL;
 }
 extern "C" {
-    pub fn objc_loadWeak(location: *mut id) -> id;
-}
-extern "C" {
-    pub fn objc_storeWeak(location: *mut id, obj: id) -> id;
-}
-extern "C" {
     pub fn objc_setAssociatedObject(
         object: id,
         key: *const ::std::os::raw::c_void,

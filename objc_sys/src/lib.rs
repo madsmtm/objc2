@@ -16,16 +16,17 @@
 
 extern crate std;
 
-use core::ffi::c_void;
 use std::os::raw::{c_char, c_int, c_uint};
 
+mod bindings;
 mod constants;
 mod message;
+mod rc;
 mod types;
-mod bindings;
 
 pub use constants::*;
 pub use message::*;
+pub use rc::*;
 pub use types::*;
 
 #[link(name = "objc", kind = "dylib")]
@@ -92,9 +93,6 @@ extern "C" {
     pub fn objc_allocateProtocol(name: *const c_char) -> *mut objc_protocol;
     pub fn objc_registerProtocol(proto: *mut objc_protocol);
 
-    pub fn objc_autoreleasePoolPush() -> *mut c_void;
-    pub fn objc_autoreleasePoolPop(context: *mut c_void);
-
     pub fn protocol_addMethodDescription(
         proto: *mut objc_protocol,
         name: *const objc_selector,
@@ -125,16 +123,4 @@ extern "C" {
     pub fn method_getNumberOfArguments(method: *const objc_method) -> c_uint;
     pub fn method_setImplementation(method: *mut objc_method, imp: IMP) -> IMP;
     pub fn method_exchangeImplementations(m1: *mut objc_method, m2: *mut objc_method);
-
-    pub fn objc_retain(obj: *mut objc_object) -> *mut objc_object;
-    pub fn objc_release(obj: *mut objc_object);
-    pub fn objc_autorelease(obj: *mut objc_object);
-
-    pub fn objc_loadWeakRetained(location: *mut *mut objc_object) -> *mut objc_object;
-    pub fn objc_initWeak(
-        location: *mut *mut objc_object,
-        obj: *mut objc_object,
-    ) -> *mut objc_object;
-    pub fn objc_destroyWeak(location: *mut *mut objc_object);
-    pub fn objc_copyWeak(to: *mut *mut objc_object, from: *mut *mut objc_object);
 }
