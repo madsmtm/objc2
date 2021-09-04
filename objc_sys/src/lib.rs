@@ -18,16 +18,31 @@ extern crate std;
 
 use std::os::raw::{c_char, c_int, c_uint};
 
-mod bindings;
+mod class;
 mod constants;
+mod exception;
 mod message;
+mod method;
+mod object;
+mod property;
+mod protocol;
 mod rc;
+mod selector;
 mod types;
+mod various;
 
+pub use class::*;
 pub use constants::*;
+pub use exception::*;
 pub use message::*;
+pub use method::*;
+pub use object::*;
+pub use property::*;
+pub use protocol::*;
 pub use rc::*;
+pub use selector::*;
 pub use types::*;
+pub use various::*;
 
 #[link(name = "objc", kind = "dylib")]
 extern "C" {
