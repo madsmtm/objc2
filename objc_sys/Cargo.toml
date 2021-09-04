@@ -1,6 +1,6 @@
 [package]
 name = "objc_sys"
-version = "0.0.0"
+version = "0.0.0" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
@@ -13,3 +13,14 @@ categories = [
 repository = "https://github.com/madsmtm/objc"
 documentation = "https://docs.rs/objc_sys/"
 license = "MIT"
+
+exclude = [
+    # Used to help developers track changes by running bindgen against
+    # different revisions of Apple's open source `objc4`.
+    "helper-scripts/*",
+]
+
+# Downstream users can customize the linking to libobjc!
+# See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
+links = "objc"
+build = "build.rs"

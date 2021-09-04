@@ -5,15 +5,18 @@
 //! Protocol / objc_protocol is no longer a type alias of objc_object, for
 //! better type safety. Their internal representation is the same, so the
 //! functionality is just a cast away.
+//!
+//! Deprecated functions are not included since they could be removed at any
+//! macOS release, and then our code would break.
 
 // TODO: Replace `extern "C"` with `extern "C-unwind"`.
 
 #![no_std]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
-// Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc_sys/1.1.0")]
+#![doc(html_root_url = "https://docs.rs/objc_sys/0.0.0")]
 
+// TODO: Remove this and add "no-std" category to Cargo.toml
 extern crate std;
 
 use core::cell::UnsafeCell;
@@ -52,6 +55,3 @@ pub use various::*;
 ///
 /// TODO: Replace this with `extern type` to also mark it as unsized.
 type OpaqueData = PhantomData<(UnsafeCell<*const ()>, PhantomPinned)>;
-
-#[link(name = "objc", kind = "dylib")]
-extern "C" {}
