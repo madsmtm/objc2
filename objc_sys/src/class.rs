@@ -102,7 +102,7 @@ extern "C" {
         name: *const objc_selector,
         imp: IMP,
         types: *const c_char,
-    ) -> IMP;
+    ) -> Option<IMP>;
     pub fn class_replaceProperty(
         cls: *mut objc_class,
         name: *const c_char,

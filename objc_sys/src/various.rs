@@ -12,8 +12,7 @@ pub struct objc_ivar {
 
 /// A pointer to the start of a method implementation.
 ///
-/// Remember that this is non-null!
-/// Use `Option<IMP>` where nullability is expected. TODO
+/// This must be non-null. Use `Option<IMP>` when nullability is desired.
 pub type IMP = unsafe extern "C" fn();
 
 /// Not available on macOS x86.
