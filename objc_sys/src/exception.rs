@@ -27,9 +27,6 @@ extern "C" {
     pub fn objc_exception_throw(exception: *mut objc_object);
     pub fn objc_exception_rethrow();
 
-    pub fn objc_setEnumerationMutationHandler(
-        handler: Option<unsafe extern "C" fn(arg1: *mut objc_object)>,
-    );
     pub fn objc_setExceptionMatcher(fn_: objc_exception_matcher) -> objc_exception_matcher;
     pub fn objc_setExceptionPreprocessor(
         fn_: objc_exception_preprocessor,

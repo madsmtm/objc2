@@ -13,24 +13,24 @@ pub struct objc_method {
 #[derive(Debug, Copy, Clone)]
 pub struct objc_method_description {
     pub name: *const objc_selector,
-    pub types: *mut c_char,
+    pub types: *const c_char,
 }
 
 extern "C" {
-    pub fn method_copyArgumentType(m: *mut objc_method, index: c_uint) -> *mut c_char;
-    pub fn method_copyReturnType(m: *mut objc_method) -> *mut c_char;
-    pub fn method_exchangeImplementations(m1: *mut objc_method, m2: *mut objc_method);
+    pub fn method_copyArgumentType(method: *const objc_method, index: c_uint) -> *mut c_char;
+    pub fn method_copyReturnType(method: *const objc_method) -> *mut c_char;
+    pub fn method_exchangeImplementations(method1: *mut objc_method, method2: *mut objc_method);
     pub fn method_getArgumentType(
-        m: *mut objc_method,
+        method: *const objc_method,
         index: c_uint,
         dst: *mut c_char,
         dst_len: usize,
     );
-    pub fn method_getDescription(m: *mut objc_method) -> *mut objc_method_description;
-    pub fn method_getImplementation(m: *mut objc_method) -> IMP;
-    pub fn method_getName(m: *mut objc_method) -> *const objc_selector;
-    pub fn method_getNumberOfArguments(m: *mut objc_method) -> c_uint;
-    pub fn method_getReturnType(m: *mut objc_method, dst: *mut c_char, dst_len: usize);
-    pub fn method_getTypeEncoding(m: *mut objc_method) -> *const c_char;
-    pub fn method_setImplementation(m: *mut objc_method, imp: IMP) -> IMP;
+    pub fn method_getDescription(m: *const objc_method) -> *const objc_method_description;
+    pub fn method_getImplementation(method: *const objc_method) -> IMP;
+    pub fn method_getName(method: *const objc_method) -> *const objc_selector;
+    pub fn method_getNumberOfArguments(method: *const objc_method) -> c_uint;
+    pub fn method_getReturnType(method: *const objc_method, dst: *mut c_char, dst_len: usize);
+    pub fn method_getTypeEncoding(method: *const objc_method) -> *const c_char;
+    pub fn method_setImplementation(method: *const objc_method, imp: IMP) -> IMP;
 }

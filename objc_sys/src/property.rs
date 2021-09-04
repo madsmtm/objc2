@@ -18,11 +18,11 @@ pub struct objc_property_attribute_t {
 extern "C" {
     pub fn property_copyAttributeList(
         property: *const objc_property,
-        outCount: *mut c_uint,
+        out_len: *mut c_uint,
     ) -> *mut objc_property_attribute_t;
     pub fn property_copyAttributeValue(
         property: *const objc_property,
-        attributeName: *const c_char,
+        attribute_name: *const c_char,
     ) -> *mut c_char;
     pub fn property_getAttributes(property: *const objc_property) -> *const c_char;
     pub fn property_getName(property: *const objc_property) -> *const c_char;

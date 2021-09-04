@@ -17,26 +17,29 @@ pub struct objc_ivar {
 pub type IMP = unsafe extern "C" fn();
 
 extern "C" {
-    pub fn imp_getBlock(anImp: IMP) -> *mut objc_object;
+    pub fn imp_getBlock(imp: IMP) -> *mut objc_object;
     pub fn imp_implementationWithBlock(block: *mut objc_object) -> IMP;
-    pub fn imp_removeBlock(anImp: IMP) -> BOOL;
+    pub fn imp_removeBlock(imp: IMP) -> BOOL;
 
-    pub fn ivar_getName(v: *const objc_ivar) -> *const c_char;
-    pub fn ivar_getOffset(v: *const objc_ivar) -> isize;
-    pub fn ivar_getTypeEncoding(v: *const objc_ivar) -> *const c_char;
+    pub fn ivar_getName(ivar: *const objc_ivar) -> *const c_char;
+    pub fn ivar_getOffset(ivar: *const objc_ivar) -> isize;
+    pub fn ivar_getTypeEncoding(ivar: *const objc_ivar) -> *const c_char;
 
     pub fn objc_copyClassNamesForImage(
         image: *const c_char,
-        outCount: *mut c_uint,
+        out_len: *mut c_uint,
     ) -> *mut *const c_char;
-    pub fn objc_copyImageNames(outCount: *mut c_uint) -> *mut *const c_char;
+    pub fn objc_copyImageNames(out_len: *mut c_uint) -> *mut *const c_char;
 
     pub fn objc_enumerationMutation(obj: *mut objc_object);
+    pub fn objc_setEnumerationMutationHandler(
+        handler: Option<unsafe extern "C" fn(arg1: *mut objc_object)>,
+    );
 
     pub fn objc_getAssociatedObject(
-        object: *mut objc_object,
+        object: *const objc_object,
         key: *const c_void,
-    ) -> *mut objc_object;
+    ) -> *const objc_object;
     pub fn objc_setAssociatedObject(
         object: *mut objc_object,
         key: *const c_void,
