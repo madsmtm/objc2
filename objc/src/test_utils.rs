@@ -35,6 +35,7 @@ impl DerefMut for CustomObject {
 impl Drop for CustomObject {
     fn drop(&mut self) {
         unsafe {
+            #[allow(deprecated)]
             runtime::object_dispose(self.obj as _);
         }
     }

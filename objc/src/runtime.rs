@@ -14,6 +14,8 @@ use std::os::raw::c_uint;
 use crate::Encode;
 
 use objc_sys;
+#[allow(deprecated)]
+pub use objc_sys::object_dispose;
 pub use objc_sys::{
     class_addIvar, class_addMethod, class_addProtocol, class_conformsToProtocol,
     class_copyIvarList, class_copyMethodList, class_copyProtocolList, class_createInstance,
@@ -25,7 +27,7 @@ pub use objc_sys::{
     objc_autoreleasePoolPop, objc_autoreleasePoolPush, objc_copyClassList, objc_copyProtocolList,
     objc_copyWeak, objc_destroyWeak, objc_disposeClassPair, objc_getClass, objc_getClassList,
     objc_getProtocol, objc_initWeak, objc_loadWeakRetained, objc_registerClassPair,
-    objc_registerProtocol, objc_release, objc_retain, object_dispose, object_getClass,
+    objc_registerProtocol, objc_release, objc_retain, object_getClass,
     protocol_addMethodDescription, protocol_addProtocol, protocol_conformsToProtocol,
     protocol_copyProtocolList, protocol_getName, protocol_isEqual, sel_getName, sel_registerName,
 };

@@ -54,6 +54,4 @@ pub use various::*;
 type OpaqueData = PhantomData<(UnsafeCell<*const ()>, PhantomPinned)>;
 
 #[link(name = "objc", kind = "dylib")]
-extern "C" {
-    pub fn object_dispose(obj: *mut objc_object) -> *mut objc_object;
-}
+extern "C" {}
