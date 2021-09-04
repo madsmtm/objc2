@@ -6,9 +6,13 @@
 //! better type safety. Their internal representation is the same, so the
 //! functionality is just a cast away.
 
+// TODO: Replace `extern "C"` with `extern "C-unwind"`.
+
 #![no_std]
+#![allow(non_camel_case_types)]
+#![allow(non_upper_case_globals)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc-encode/1.1.0")]
+#![doc(html_root_url = "https://docs.rs/objc_sys/1.1.0")]
 
 extern crate std;
 
@@ -16,9 +20,11 @@ use core::ffi::c_void;
 use std::os::raw::{c_char, c_int, c_uint};
 
 mod constants;
+mod message;
 mod types;
 
 pub use constants::*;
+pub use message::*;
 pub use types::*;
 
 #[link(name = "objc", kind = "dylib")]

@@ -1,18 +1,12 @@
 use core::mem;
+use objc_sys::{
+    objc_msgSend, objc_msgSendSuper, objc_msgSendSuper_stret, objc_msgSend_fpret,
+    objc_msgSend_stret,
+};
 
 use super::MsgSendFn;
 use crate::runtime::Imp;
 use crate::{Encode, Encoding};
-
-// TODO: C-unwind
-extern "C" {
-    fn objc_msgSend();
-    fn objc_msgSend_fpret();
-    fn objc_msgSend_stret();
-
-    fn objc_msgSendSuper();
-    fn objc_msgSendSuper_stret();
-}
 
 /// Structures 1 or 2 bytes in size are placed in EAX.
 /// Structures 4 or 8 bytes in size are placed in: EAX and EDX.

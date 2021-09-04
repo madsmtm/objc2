@@ -69,10 +69,7 @@ struct ClassInternal {
     _priv: [u8; 0],
 }
 
-#[cfg_attr(
-    target_vendor = "apple",
-    link(name = "System", kind = "dylib")
-)]
+#[cfg_attr(target_vendor = "apple", link(name = "System", kind = "dylib"))]
 #[cfg_attr(
     not(target_vendor = "apple"),
     link(name = "BlocksRuntime", kind = "dylib")

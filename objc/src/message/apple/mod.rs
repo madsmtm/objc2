@@ -1,4 +1,6 @@
-use super::{Encode, Message, MessageArguments, MessageError, Super};
+use objc_sys::objc_super;
+
+use super::{Encode, Message, MessageArguments, MessageError};
 use crate::runtime::{Class, Imp, Object, Sel};
 
 #[cfg(target_arch = "x86")]
@@ -43,11 +45,11 @@ where
     A: MessageArguments,
     R: Encode,
 {
-    let sup = Super {
-        receiver: obj as *mut T as *mut Object,
-        superclass,
+    let sup = objc_super {
+        receiver: obj as *mut T as *mut Object as *mut _,
+        super_class: superclass as *const Class as *const _,
     };
-    let receiver = &sup as *const Super as *mut Object;
+    let receiver = &sup as *const objc_super as *mut Object;
     let msg_send_fn = R::MSG_SEND_SUPER;
     objc_try!({ A::invoke(msg_send_fn, receiver, sel, args) })
 }

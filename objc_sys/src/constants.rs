@@ -17,14 +17,11 @@ pub const NO: BOOL = 0;
 pub const NO: BOOL = false;
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] object / instance.
-#[allow(non_upper_case_globals)]
 pub const nil: id = 0 as *mut _;
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] class.
-#[allow(non_upper_case_globals)]
 pub const Nil: Class = 0 as *mut _;
 
-#[allow(non_camel_case_types)]
 pub type objc_AssociationPolicy = usize;
 pub const OBJC_ASSOCIATION_ASSIGN: objc_AssociationPolicy = 0;
 pub const OBJC_ASSOCIATION_RETAIN_NONATOMIC: objc_AssociationPolicy = 1;

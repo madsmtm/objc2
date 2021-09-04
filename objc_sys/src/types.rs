@@ -1,5 +1,4 @@
 //! Objective-C types and type aliases.
-#![allow(non_camel_case_types)]
 
 use core::cell::UnsafeCell;
 #[cfg(target_os = "macos")]
