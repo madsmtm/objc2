@@ -14,6 +14,7 @@ use crate::parse;
 ///
 /// [ocrtTypeEncodings]: https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[non_exhaustive] // Maybe we're missing some encodings?
 pub enum Encoding<'a> {
     /// A C `char`. Corresponds to the `c` code.
     Char,
@@ -39,6 +40,14 @@ pub enum Encoding<'a> {
     Float,
     /// A C `double`. Corresponds to the `d` code.
     Double,
+    /// A C `long double`. Corresponds to the `D` code.
+    LongDouble,
+    /// A C `float _Complex`. Corresponds to the `jf` code.
+    FloatComplex,
+    /// A C `_Complex` or `double _Complex`. Corresponds to the `jd` code.
+    DoubleComplex,
+    /// A C `long double _Complex`. Corresponds to the `jD` code.
+    LongDoubleComplex,
     /// A C++ `bool` / C99 `_Bool`. Corresponds to the `B` code.
     Bool,
     /// A C `void`. Corresponds to the `v` code.
@@ -99,6 +108,10 @@ impl fmt::Display for Encoding<'_> {
             ULongLong => "Q",
             Float => "f",
             Double => "d",
+            LongDouble => "D",
+            FloatComplex => "jf",
+            DoubleComplex => "jd",
+            LongDoubleComplex => "jD",
             Bool => "B",
             Void => "v",
             String => "*",
