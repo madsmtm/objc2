@@ -7,18 +7,6 @@ use core::ffi::c_void;
 use core::marker::{PhantomData, PhantomPinned};
 use std::os::raw::{c_char, c_int};
 
-/// The equivalent of true for Objective-C's [`BOOL`] type.
-#[cfg(not(target_arch = "aarch64"))]
-pub const YES: BOOL = 1;
-#[cfg(target_arch = "aarch64")]
-pub const YES: BOOL = true;
-
-/// The equivalent of false for Objective-C's [`BOOL`] type.
-#[cfg(not(target_arch = "aarch64"))]
-pub const NO: BOOL = 0;
-#[cfg(target_arch = "aarch64")]
-pub const NO: BOOL = false;
-
 // Opaque types
 
 /// We don't know much about the actual structs, so better mark them `!Send`,
@@ -101,7 +89,8 @@ pub struct objc_property_attribute_t {
 
 /// The Objective-C `BOOL` type.
 ///
-/// To convert an Objective-C `BOOL` into a Rust [`bool`], compare it with [`NO`].
+/// To convert an Objective-C `BOOL` into a Rust [`bool`], compare it with
+/// [`NO`][`super::NO`].
 #[cfg(all(target_vendor = "apple", not(target_arch = "aarch64")))]
 pub type BOOL = i8;
 #[cfg(all(not(target_vendor = "apple"), not(target_arch = "aarch64")))]

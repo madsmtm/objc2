@@ -15,8 +15,10 @@ extern crate std;
 use core::ffi::c_void;
 use std::os::raw::{c_char, c_int, c_uint};
 
+mod constants;
 mod types;
 
+pub use constants::*;
 pub use types::*;
 
 #[link(name = "objc", kind = "dylib")]
