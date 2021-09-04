@@ -27,11 +27,18 @@ extern "C" {
     pub fn objc_exception_throw(exception: *mut objc_object);
     pub fn objc_exception_rethrow();
 
-    pub fn objc_setExceptionMatcher(fn_: objc_exception_matcher) -> objc_exception_matcher;
+    pub fn objc_setExceptionMatcher(f: objc_exception_matcher) -> objc_exception_matcher;
     pub fn objc_setExceptionPreprocessor(
-        fn_: objc_exception_preprocessor,
+        f: objc_exception_preprocessor,
     ) -> objc_exception_preprocessor;
     pub fn objc_setUncaughtExceptionHandler(
-        fn_: objc_uncaught_exception_handler,
+        f: objc_uncaught_exception_handler,
     ) -> objc_uncaught_exception_handler;
+
+    /// Only available on macOS.
+    #[cfg(target_os = "macos")]
+    pub fn objc_addExceptionHandler(f: objc_exception_handler, context: *mut c_void) -> usize;
+    /// Only available on macOS.
+    #[cfg(target_os = "macos")]
+    pub fn objc_removeExceptionHandler(token: usize);
 }
