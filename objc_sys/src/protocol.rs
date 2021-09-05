@@ -29,8 +29,8 @@ extern "C" {
         proto: *mut objc_protocol,
         name: *const objc_selector,
         types: *const c_char,
-        isRequiredMethod: BOOL,
-        isInstanceMethod: BOOL,
+        is_required_method: BOOL,
+        is_instance_method: BOOL,
     );
     pub fn protocol_addProperty(
         proto: *mut objc_protocol,
@@ -61,16 +61,16 @@ extern "C" {
     ) -> *mut *const objc_protocol;
     pub fn protocol_getMethodDescription(
         proto: *const objc_protocol,
-        aSel: *const objc_selector,
-        isRequiredMethod: BOOL,
-        isInstanceMethod: BOOL,
+        sel: *const objc_selector,
+        is_required_method: BOOL,
+        is_instance_method: BOOL,
     ) -> objc_method_description;
     pub fn protocol_getName(proto: *const objc_protocol) -> *const c_char;
     pub fn protocol_getProperty(
         proto: *const objc_protocol,
         name: *const c_char,
-        isRequiredProperty: BOOL,
-        isInstanceProperty: BOOL,
+        is_required_property: BOOL,
+        is_instance_property: BOOL,
     ) -> *const objc_property;
     pub fn protocol_isEqual(proto: *const objc_protocol, other: *const objc_protocol) -> BOOL;
 }

@@ -14,6 +14,15 @@ pub struct objc_class {
     _p: OpaqueData,
 }
 
+/// This is `c_char` in GNUStep's libobjc2 and `uint8_t` in Apple's objc4.
+///
+/// The pointer represents opaque data, and is definitely not just an integer,
+/// so its signedness (i8 vs. u8) is not applicable.
+///
+/// So we just assign it here as a private alias to u8, to not document the
+/// difference.
+type ivar_layout_type = u8;
+
 extern "C" {
     pub fn objc_getClass(name: *const c_char) -> *const objc_class;
     pub fn objc_getRequiredClass(name: *const c_char) -> *const objc_class;
@@ -91,13 +100,13 @@ extern "C" {
         cls: *const objc_class,
         name: *const c_char,
     ) -> *const objc_ivar;
-    pub fn class_getIvarLayout(cls: *const objc_class) -> *const u8;
+    pub fn class_getIvarLayout(cls: *const objc_class) -> *const ivar_layout_type;
     pub fn class_getName(cls: *const objc_class) -> *const c_char;
     pub fn class_getProperty(cls: *const objc_class, name: *const c_char) -> *const objc_property;
     pub fn class_getSuperclass(cls: *const objc_class) -> *const objc_class;
     pub fn class_getVersion(cls: *const objc_class) -> c_int;
     #[cfg(apple)]
-    pub fn class_getWeakIvarLayout(cls: *const objc_class) -> *const u8;
+    pub fn class_getWeakIvarLayout(cls: *const objc_class) -> *const ivar_layout_type;
     pub fn class_isMetaClass(cls: *const objc_class) -> BOOL;
     pub fn class_replaceMethod(
         cls: *mut objc_class,
@@ -112,8 +121,8 @@ extern "C" {
         attributes_len: c_uint,
     );
     pub fn class_respondsToSelector(cls: *const objc_class, sel: *const objc_selector) -> BOOL;
-    pub fn class_setIvarLayout(cls: *mut objc_class, layout: *const u8);
+    pub fn class_setIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);
     pub fn class_setVersion(cls: *mut objc_class, version: c_int);
     #[cfg(apple)]
-    pub fn class_setWeakIvarLayout(cls: *mut objc_class, layout: *const u8);
+    pub fn class_setWeakIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);
 }
