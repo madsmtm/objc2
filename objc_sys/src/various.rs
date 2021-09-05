@@ -91,4 +91,7 @@ extern "C" {
     // #[deprecated = "not recommended"]
     // #[cfg(apple)]
     // pub fn _objc_flush_caches
+
+    // #[cfg(gnustep)]
+    // objc_test_capability
 }
