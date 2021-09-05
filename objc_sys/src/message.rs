@@ -11,6 +11,8 @@ pub struct objc_super {
     /// The object / instance to send a message to.
     pub receiver: *mut objc_object,
     /// The particular superclass of the instance to message.
+    ///
+    /// Named `class` in GNUStep and in older Objective-C versions.
     pub super_class: *const objc_class,
 }
 

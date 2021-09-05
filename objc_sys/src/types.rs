@@ -8,9 +8,11 @@ use crate::{
 ///
 /// To convert an Objective-C `BOOL` into a Rust [`bool`], compare it with
 /// [`NO`][`super::NO`].
-#[cfg(all(target_vendor = "apple", not(target_arch = "aarch64")))]
+#[cfg(all(apple, not(target_arch = "aarch64")))]
 pub type BOOL = i8;
-#[cfg(all(not(target_vendor = "apple"), not(target_arch = "aarch64")))]
+/// TODO: Only if STRICT_APPLE_COMPATIBILITY is NOT defined.
+/// TODO: (__vxworks || _WIN32) becomes BOOL = c_int.
+#[cfg(all(gnustep, not(target_arch = "aarch64")))]
 pub type BOOL = u8;
 #[cfg(target_arch = "aarch64")]
 pub type BOOL = bool;

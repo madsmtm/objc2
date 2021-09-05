@@ -22,68 +22,6 @@ pub const OBJC_ARC_AUTORELEASE_DEBUG: u32 = 16;
 pub const OBJC_CAP_TRACING: u32 = 17;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct objc_ivar {
-    _unused: [u8; 0],
-}
-pub type Ivar = *mut objc_ivar;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_selector {
-    _unused: [u8; 0],
-}
-pub type SEL = *mut objc_selector;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_class {
-    _unused: [u8; 0],
-}
-pub type Class = *mut objc_class;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_object {
-    pub isa: Class,
-}
-pub type id = *mut objc_object;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_super {
-    pub receiver: id,
-    pub class: Class,
-}
-pub type IMP = ::std::option::Option<unsafe extern "C" fn(arg1: id, arg2: SEL, ...) -> id>;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_method {
-    _unused: [u8; 0],
-}
-pub type Method = *mut objc_method;
-pub type BOOL = ::std::os::raw::c_uchar;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_property {
-    _unused: [u8; 0],
-}
-pub type objc_property_t = *mut objc_property;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_protocol {
-    _unused: [u8; 0],
-}
-pub type Protocol = objc_protocol;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_method_description {
-    pub name: SEL,
-    pub types: *const ::std::os::raw::c_char,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct objc_property_attribute_t {
-    pub name: *const ::std::os::raw::c_char,
-    pub value: *const ::std::os::raw::c_char,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct objc_slot2 {
     pub method: IMP,
 }

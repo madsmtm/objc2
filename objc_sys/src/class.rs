@@ -8,8 +8,8 @@ use crate::{
 /// An opaque type that represents an Objective-C class.
 #[repr(C)]
 pub struct objc_class {
-    // `isa` field is deprecated, so we don't expose it here.
-    // Use `class_getSuperclass` instead.
+    // `isa` field is deprecated and not available on GNUStep, so we don't
+    // expose it here. Use `class_getSuperclass` instead.
     _priv: [u8; 0],
     _p: OpaqueData,
 }
