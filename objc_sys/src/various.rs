@@ -1,7 +1,11 @@
 use core::ffi::c_void;
-use std::os::raw::{c_char, c_int, c_uint};
+use std::os::raw::c_char;
+#[cfg(apple)]
+use std::os::raw::{c_int, c_uint};
 
-use crate::{objc_AssociationPolicy, objc_class, objc_object, OpaqueData, BOOL};
+#[cfg(apple)]
+use crate::objc_class;
+use crate::{objc_AssociationPolicy, objc_object, OpaqueData, BOOL};
 
 /// A type that represents an instance variable.
 #[repr(C)]

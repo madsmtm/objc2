@@ -3,7 +3,9 @@
 //! Most of these are `cfg`-gated, these configs are semver-stable.
 //!
 //! TODO: Some of these are only supported on _some_ GNUStep targets!
-use super::{objc_class, objc_object};
+use crate::{objc_class, objc_object};
+#[cfg(gnustep)]
+use crate::{objc_selector, IMP};
 
 /// Specifies data used when sending messages to superclasses.
 #[repr(C)]
@@ -21,7 +23,7 @@ pub struct objc_super {
 #[cfg(gnustep)]
 extern "C" {
     pub fn objc_msg_lookup(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
-    pub fn objc_msg_lookup_super(super: *const objc_super, sel: *const objc_selector) -> IMP;
+    pub fn objc_msg_lookup_super(sup: *const objc_super, sel: *const objc_selector) -> IMP;
     // objc_msg_lookup_sender
 }
 

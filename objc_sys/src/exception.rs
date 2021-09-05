@@ -3,9 +3,12 @@
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
 use core::ffi::c_void;
+#[cfg(any(apple, gnustep))]
 use std::os::raw::c_int;
 
-use crate::{objc_class, objc_object};
+#[cfg(apple)]
+use crate::objc_class;
+use crate::objc_object;
 
 /// Remember that this is non-null!
 #[cfg(apple)]

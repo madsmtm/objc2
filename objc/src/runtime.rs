@@ -14,6 +14,7 @@ use std::os::raw::c_uint;
 use crate::Encode;
 
 use objc_sys;
+#[cfg(target_vendor = "apple")]
 #[allow(deprecated)]
 pub use objc_sys::object_dispose;
 pub use objc_sys::{

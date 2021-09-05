@@ -1,8 +1,9 @@
 //! Various common #defines and enum constants.
 
+#[cfg(apple)]
 use std::os::raw::c_int;
 
-use super::{id, Class, BOOL};
+use crate::{id, Class, BOOL};
 
 /// The equivalent of true for Objective-C's [`BOOL`][`super::BOOL`] type.
 #[cfg(not(target_arch = "aarch64"))]
