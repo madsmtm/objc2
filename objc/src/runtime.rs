@@ -60,7 +60,7 @@ pub struct Protocol(objc_sys::Protocol);
 pub struct Object(objc_sys::objc_object);
 
 /// A pointer to the start of a method implementation.
-pub type Imp = objc_sys::IMP;
+pub type Imp = unsafe extern "C" fn();
 
 impl Sel {
     /// Registers a method with the Objective-C runtime system,
@@ -189,7 +189,7 @@ impl Method {
 
     /// Returns the implementation of self.
     pub fn implementation(&self) -> Imp {
-        unsafe { method_getImplementation(self.as_ptr()) }
+        unsafe { method_getImplementation(self.as_ptr()).expect("Null IMP") }
     }
 }
 

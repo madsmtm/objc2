@@ -182,8 +182,12 @@ impl ClassDecl {
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
-        let success =
-            runtime::class_addMethod(self.cls as _, sel.as_ptr() as _, func.imp(), types.as_ptr());
+        let success = runtime::class_addMethod(
+            self.cls as _,
+            sel.as_ptr() as _,
+            Some(func.imp()),
+            types.as_ptr(),
+        );
         assert!(success != NO, "Failed to add method {:?}", sel);
     }
 
@@ -213,8 +217,12 @@ impl ClassDecl {
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let metaclass = (*self.cls).metaclass() as *const _ as *mut _;
-        let success =
-            runtime::class_addMethod(metaclass, sel.as_ptr() as _, func.imp(), types.as_ptr());
+        let success = runtime::class_addMethod(
+            metaclass,
+            sel.as_ptr() as _,
+            Some(func.imp()),
+            types.as_ptr(),
+        );
         assert!(success != NO, "Failed to add class method {:?}", sel);
     }
 

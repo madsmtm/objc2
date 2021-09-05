@@ -10,10 +10,10 @@ pub struct objc_ivar {
     _p: OpaqueData,
 }
 
-/// A pointer to the start of a method implementation.
+/// A nullable pointer to the start of a method implementation.
 ///
-/// This must be non-null. Use `Option<IMP>` when nullability is desired.
-pub type IMP = unsafe extern "C" fn();
+/// Not all APIs are guaranteed to take NULL values; read the docs!
+pub type IMP = Option<unsafe extern "C" fn()>;
 
 /// Not available on macOS x86.
 ///
