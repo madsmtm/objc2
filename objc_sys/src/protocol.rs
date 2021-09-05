@@ -73,4 +73,10 @@ extern "C" {
         is_instance_property: BOOL,
     ) -> *const objc_property;
     pub fn protocol_isEqual(proto: *const objc_protocol, other: *const objc_protocol) -> BOOL;
+
+    // #[cfg(macos >= 10.12)]
+    // protocol_copyPropertyList2
+
+    // #[cfg(gnustep)]
+    // _protocol_getMethodTypeEncoding
 }

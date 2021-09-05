@@ -125,4 +125,13 @@ extern "C" {
     pub fn class_setVersion(cls: *mut objc_class, version: c_int);
     #[cfg(apple)]
     pub fn class_setWeakIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);
+
+    // #[deprecated = "not recommended"]
+    // pub fn class_setSuperclass
+    // #[deprecated = "use class_getMethodImplementation instead"]
+    // #[cfg(apple)]
+    // pub fn class_lookupMethod
+    // #[deprecated = "use class_respondsToSelector instead"]
+    // #[cfg(apple)]
+    // pub fn class_respondsToMethod
 }

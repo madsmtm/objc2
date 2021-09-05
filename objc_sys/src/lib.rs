@@ -6,8 +6,8 @@
 //! better type safety. Their internal representation is the same, so the
 //! functionality is just a cast away.
 //!
-//! Deprecated functions are not included since they could be removed at any
-//! macOS release, and then our code would break.
+//! Deprecated functions are not included for future compability, since they
+//! could be removed at any macOS release, and then our code would break.
 
 // TODO: Replace `extern "C"` with `extern "C-unwind"`.
 

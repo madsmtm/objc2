@@ -55,4 +55,11 @@ extern "C" {
     #[deprecated = "Not needed since ARC"]
     #[cfg(apple)]
     pub fn objc_destructInstance(obj: *mut objc_object) -> *mut c_void;
+
+    // #[deprecated = "use object_copy instead"]
+    // #[cfg(all(apple, target_os = "macos"))]
+    // object_copyFromZone
+    // #[deprecated = "use class_createInstance instead"]
+    // #[cfg(all(apple, target_os = "macos"))]
+    // class_createInstanceFromZone
 }

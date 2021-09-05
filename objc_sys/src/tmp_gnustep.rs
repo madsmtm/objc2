@@ -39,25 +39,6 @@ pub struct objc_slot {
     pub selector: SEL,
 }
 extern "C" {
-    pub fn class_setSuperclass(cls: Class, newSuper: Class) -> Class;
-}
-extern "C" {
-    pub fn protocol_copyPropertyList2(
-        p: *mut Protocol,
-        count: *mut ::std::os::raw::c_uint,
-        isRequiredProperty: BOOL,
-        isInstanceProperty: BOOL,
-    ) -> *mut objc_property_t;
-}
-extern "C" {
-    pub fn _protocol_getMethodTypeEncoding(
-        p: *mut Protocol,
-        aSel: SEL,
-        isRequiredMethod: BOOL,
-        isInstanceMethod: BOOL,
-    ) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
     pub fn objc_msg_lookup(arg1: id, arg2: SEL) -> IMP;
 }
 extern "C" {
@@ -86,78 +67,6 @@ extern "C" {
     pub fn objc_set_apple_compatible_objcxx_exceptions(
         newValue: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn objc_malloc(size: usize) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn objc_atomic_malloc(size: usize) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn objc_valloc(size: usize) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn objc_realloc(
-        mem: *mut ::std::os::raw::c_void,
-        size: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn objc_calloc(nelem: usize, size: usize) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn objc_free(mem: *mut ::std::os::raw::c_void);
-}
-extern "C" {
-    pub fn objc_get_class(name: *const ::std::os::raw::c_char) -> id;
-}
-extern "C" {
-    pub fn objc_lookup_class(name: *const ::std::os::raw::c_char) -> id;
-}
-extern "C" {
-    pub fn objc_get_meta_class(name: *const ::std::os::raw::c_char) -> id;
-}
-extern "C" {
-    pub fn objc_next_class(enum_state: *mut *mut ::std::os::raw::c_void) -> Class;
-}
-extern "C" {
-    pub fn class_pose_as(impostor: Class, super_class: Class) -> Class;
-}
-extern "C" {
-    pub fn sel_get_typed_uid(
-        name: *const ::std::os::raw::c_char,
-        types: *const ::std::os::raw::c_char,
-    ) -> SEL;
-}
-extern "C" {
-    pub fn sel_get_any_typed_uid(name: *const ::std::os::raw::c_char) -> SEL;
-}
-extern "C" {
-    pub fn sel_get_any_uid(name: *const ::std::os::raw::c_char) -> SEL;
-}
-extern "C" {
-    pub fn sel_get_uid(name: *const ::std::os::raw::c_char) -> SEL;
-}
-extern "C" {
-    pub fn sel_get_name(selector: SEL) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn sel_is_mapped(selector: SEL) -> BOOL;
-}
-extern "C" {
-    pub fn sel_get_type(selector: SEL) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn sel_register_name(name: *const ::std::os::raw::c_char) -> SEL;
-}
-extern "C" {
-    pub fn sel_register_typed_name(
-        name: *const ::std::os::raw::c_char,
-        type_: *const ::std::os::raw::c_char,
-    ) -> SEL;
-}
-extern "C" {
-    pub fn sel_eq(s1: SEL, s2: SEL) -> BOOL;
 }
 extern "C" {
     pub fn objc_test_capability(x: ::std::os::raw::c_int) -> ::std::os::raw::c_int;

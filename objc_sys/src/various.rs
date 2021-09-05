@@ -87,4 +87,8 @@ extern "C" {
         new_value: objc_hook_lazyClassNamer,
         out_old_value: *mut objc_hook_lazyClassNamer,
     );
+
+    // #[deprecated = "not recommended"]
+    // #[cfg(apple)]
+    // pub fn _objc_flush_caches
 }
