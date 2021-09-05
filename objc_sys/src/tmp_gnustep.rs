@@ -64,11 +64,6 @@ extern "C" {
     pub fn objc_msg_lookup2(receiver: *mut id, selector: SEL) -> IMP;
 }
 extern "C" {
-    pub fn objc_set_apple_compatible_objcxx_exceptions(
-        newValue: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-}
-extern "C" {
     pub fn objc_test_capability(x: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 #[repr(C)]
