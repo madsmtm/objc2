@@ -19,6 +19,7 @@ pub const OBJC_CAP_ASSOCIATED_REFERENCES: u32 = 13;
 pub const OBJC_CAP_SMALL_OBJECTS: u32 = 14;
 pub const OBJC_CAP_PROTOTYPES: u32 = 15;
 pub const OBJC_ARC_AUTORELEASE_DEBUG: u32 = 16;
+pub const OBJC_CAP_TRACING: u32 = 17;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct objc_ivar {
@@ -80,6 +81,14 @@ pub struct objc_method_description {
 pub struct objc_property_attribute_t {
     pub name: *const ::std::os::raw::c_char,
     pub value: *const ::std::os::raw::c_char,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct objc_slot2 {
+    pub method: IMP,
+}
+extern "C" {
+    pub static mut objc_method_cache_version: u64;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -408,6 +417,14 @@ extern "C" {
     ) -> *mut objc_property_t;
 }
 extern "C" {
+    pub fn protocol_copyPropertyList2(
+        p: *mut Protocol,
+        count: *mut ::std::os::raw::c_uint,
+        isRequiredProperty: BOOL,
+        isInstanceProperty: BOOL,
+    ) -> *mut objc_property_t;
+}
+extern "C" {
     pub fn protocol_copyProtocolList(
         p: *mut Protocol,
         count: *mut ::std::os::raw::c_uint,
@@ -423,6 +440,14 @@ extern "C" {
         isRequiredMethod: BOOL,
         isInstanceMethod: BOOL,
     ) -> objc_method_description;
+}
+extern "C" {
+    pub fn _protocol_getMethodTypeEncoding(
+        p: *mut Protocol,
+        aSel: SEL,
+        isRequiredMethod: BOOL,
+        isInstanceMethod: BOOL,
+    ) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn protocol_getName(p: *mut Protocol) -> *const ::std::os::raw::c_char;
@@ -459,6 +484,22 @@ extern "C" {
 extern "C" {
     pub fn objc_msg_lookup_sender(receiver: *mut id, selector: SEL, sender: id) -> *mut objc_slot;
 }
+extern "C" {
+    pub fn objc_get_slot(arg1: Class, arg2: SEL) -> *mut objc_slot;
+}
+extern "C" {
+    pub fn objc_get_slot2(arg1: Class, arg2: SEL, arg3: *mut u64) -> *mut objc_slot2;
+}
+extern "C" {
+    pub fn objc_slot_lookup_version(
+        receiver: *mut id,
+        selector: SEL,
+        arg1: *mut u64,
+    ) -> *mut objc_slot2;
+}
+extern "C" {
+    pub fn objc_msg_lookup2(receiver: *mut id, selector: SEL) -> IMP;
+}
 pub const OBJC_ASSOCIATION_ASSIGN: ::std::os::raw::c_uint = 0;
 pub const OBJC_ASSOCIATION_RETAIN_NONATOMIC: ::std::os::raw::c_uint = 1;
 pub const OBJC_ASSOCIATION_COPY_NONATOMIC: ::std::os::raw::c_uint = 3;
@@ -467,12 +508,12 @@ pub const OBJC_ASSOCIATION_COPY: ::std::os::raw::c_uint = 771;
 pub type _bindgen_ty_1 = ::std::os::raw::c_uint;
 pub type objc_AssociationPolicy = usize;
 extern "C" {
-    pub fn objc_getAssociatedObject(object: id, key: *mut ::std::os::raw::c_void) -> id;
+    pub fn objc_getAssociatedObject(object: id, key: *const ::std::os::raw::c_void) -> id;
 }
 extern "C" {
     pub fn objc_setAssociatedObject(
         object: id,
-        key: *mut ::std::os::raw::c_void,
+        key: *const ::std::os::raw::c_void,
         value: id,
         policy: objc_AssociationPolicy,
     );
@@ -481,10 +522,10 @@ extern "C" {
     pub fn objc_removeAssociatedObjects(object: id);
 }
 extern "C" {
-    pub fn imp_implementationWithBlock(block: *mut ::std::os::raw::c_void) -> IMP;
+    pub fn imp_implementationWithBlock(block: id) -> IMP;
 }
 extern "C" {
-    pub fn imp_getBlock(anImp: IMP) -> *mut ::std::os::raw::c_void;
+    pub fn imp_getBlock(anImp: IMP) -> id;
 }
 extern "C" {
     pub fn imp_removeBlock(anImp: IMP) -> BOOL;
@@ -624,7 +665,7 @@ extern "C" {
     pub fn objc_release(obj: id);
 }
 extern "C" {
-    pub fn objc_delete_weak_refs(obj: id);
+    pub fn objc_delete_weak_refs(obj: id) -> BOOL;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -660,12 +701,29 @@ extern "C" {
         ::std::option::Option<unsafe extern "C" fn(exceptionClass: i64) -> Class>;
 }
 extern "C" {
+    pub static mut _objc_selector_type_mismatch2: ::std::option::Option<
+        unsafe extern "C" fn(cls: Class, selector: SEL, result: *mut objc_slot2) -> IMP,
+    >;
+}
+extern "C" {
     pub static mut _objc_selector_type_mismatch: ::std::option::Option<
         unsafe extern "C" fn(cls: Class, selector: SEL, result: *mut objc_slot) -> *mut objc_slot,
     >;
 }
 extern "C" {
     pub static mut _objc_weak_load: ::std::option::Option<unsafe extern "C" fn(object: id) -> id>;
+}
+pub type objc_tracing_hook = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: id,
+        arg2: SEL,
+        arg3: IMP,
+        arg4: ::std::os::raw::c_int,
+        arg5: *mut ::std::os::raw::c_void,
+    ) -> IMP,
+>;
+extern "C" {
+    pub fn objc_registerTracingHook(arg1: SEL, arg2: objc_tracing_hook) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn objc_skip_type_qualifiers(
