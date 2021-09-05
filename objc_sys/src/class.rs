@@ -27,6 +27,7 @@ extern "C" {
         name: *const c_char,
         extra_bytes: usize,
     ) -> *mut objc_class;
+    #[cfg(apple)]
     pub fn objc_duplicateClass(
         original: *const objc_class,
         name: *const c_char,
@@ -95,6 +96,7 @@ extern "C" {
     pub fn class_getProperty(cls: *const objc_class, name: *const c_char) -> *const objc_property;
     pub fn class_getSuperclass(cls: *const objc_class) -> *const objc_class;
     pub fn class_getVersion(cls: *const objc_class) -> c_int;
+    #[cfg(apple)]
     pub fn class_getWeakIvarLayout(cls: *const objc_class) -> *const u8;
     pub fn class_isMetaClass(cls: *const objc_class) -> BOOL;
     pub fn class_replaceMethod(
@@ -112,5 +114,6 @@ extern "C" {
     pub fn class_respondsToSelector(cls: *const objc_class, sel: *const objc_selector) -> BOOL;
     pub fn class_setIvarLayout(cls: *mut objc_class, layout: *const u8);
     pub fn class_setVersion(cls: *mut objc_class, version: c_int);
+    #[cfg(apple)]
     pub fn class_setWeakIvarLayout(cls: *mut objc_class, layout: *const u8);
 }

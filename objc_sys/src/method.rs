@@ -26,6 +26,7 @@ extern "C" {
         dst: *mut c_char,
         dst_len: usize,
     );
+    #[cfg(apple)]
     pub fn method_getDescription(m: *const objc_method) -> *const objc_method_description;
     pub fn method_getImplementation(method: *const objc_method) -> IMP;
     pub fn method_getName(method: *const objc_method) -> *const objc_selector;

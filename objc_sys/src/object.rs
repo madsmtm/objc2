@@ -22,8 +22,10 @@ extern "C" {
     pub fn object_setIvar(obj: *mut objc_object, ivar: *const objc_ivar, value: *mut objc_object);
 
     #[deprecated = "Not needed since ARC"]
+    #[cfg(apple)]
     pub fn object_copy(obj: *const objc_object, size: usize) -> *mut objc_object;
     #[deprecated = "Not needed since ARC"]
+    #[cfg(apple)]
     pub fn object_dispose(obj: *mut objc_object) -> *mut objc_object;
     #[deprecated = "Not needed since ARC"]
     pub fn object_setInstanceVariable(
@@ -32,6 +34,7 @@ extern "C" {
         value: *mut c_void,
     ) -> *const objc_ivar;
     #[deprecated = "Not needed since ARC"]
+    #[cfg(apple)]
     pub fn object_setInstanceVariableWithStrongDefault(
         obj: *mut objc_object,
         name: *const c_char,
@@ -44,9 +47,12 @@ extern "C" {
         out_value: *mut *const c_void,
     ) -> *const objc_ivar;
     #[deprecated = "Not needed since ARC"]
+    #[cfg(apple)]
     pub fn objc_getFutureClass(name: *const c_char) -> *const objc_class;
     #[deprecated = "Not needed since ARC"]
+    #[cfg(apple)]
     pub fn objc_constructInstance(cls: *const objc_class, bytes: *mut c_void) -> *mut objc_object;
     #[deprecated = "Not needed since ARC"]
+    #[cfg(apple)]
     pub fn objc_destructInstance(obj: *mut objc_object) -> *mut c_void;
 }

@@ -1,3 +1,4 @@
+//! Only available with Apple's objc4.
 use core::ffi::c_void;
 use std::os::raw::c_int;
 

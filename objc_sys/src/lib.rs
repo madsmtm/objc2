@@ -24,6 +24,7 @@ use core::marker::{PhantomData, PhantomPinned};
 
 mod class;
 mod constants;
+#[cfg(apple)]
 mod exception;
 mod message;
 mod method;
@@ -37,6 +38,7 @@ mod various;
 
 pub use class::*;
 pub use constants::*;
+#[cfg(apple)]
 pub use exception::*;
 pub use message::*;
 pub use method::*;

@@ -1,6 +1,8 @@
 //! The `objc_msgSend` familiy of functions.
 //!
 //! Most of these are `cfg`-gated, these configs are semver-stable.
+//!
+//! TODO: Some of these are only supported on _some_ GNUStep targets!
 use super::{objc_class, objc_object};
 
 /// Specifies data used when sending messages to superclasses.
@@ -18,8 +20,11 @@ pub struct objc_super {
 
 extern "C" {
     pub fn objc_msgSend();
+    #[cfg(apple)]
     pub fn objc_msgSendSuper();
+    #[cfg(apple)]
     pub fn method_invoke();
+    #[cfg(apple)]
     pub fn _objc_msgForward();
     pub fn class_getMethodImplementation();
 }
@@ -29,10 +34,13 @@ extern "C" {
     /// Not available on `target_arch = "aarch64"`
     pub fn objc_msgSend_stret();
     /// Not available on `target_arch = "aarch64"`
+    #[cfg(apple)]
     pub fn objc_msgSendSuper_stret();
     /// Not available on `target_arch = "aarch64"`
+    #[cfg(apple)]
     pub fn method_invoke_stret();
     /// Not available on `target_arch = "aarch64"`
+    #[cfg(apple)]
     pub fn _objc_msgForward_stret();
     /// Not available on `target_arch = "aarch64"`
     pub fn class_getMethodImplementation_stret();
@@ -47,5 +55,6 @@ extern "C" {
 #[cfg(target_arch = "x86_64")] // __x86_64__
 extern "C" {
     /// Only available on `target_arch = "x86_64"`
+    #[cfg(apple)]
     pub fn objc_msgSend_fp2ret();
 }

@@ -18,14 +18,14 @@ pub type IMP = unsafe extern "C" fn();
 /// Not available on macOS x86.
 ///
 /// Remember that this is non-null!
-#[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+#[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
 pub type objc_hook_getClass =
     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const objc_class) -> BOOL;
 
 /// Not available on macOS x86.
 ///
 /// Remember that this is non-null!
-#[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+#[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
 pub type objc_hook_lazyClassNamer = unsafe extern "C" fn(cls: *const objc_class) -> *const c_char;
 
 extern "C" {
@@ -37,13 +37,17 @@ extern "C" {
     pub fn ivar_getOffset(ivar: *const objc_ivar) -> isize;
     pub fn ivar_getTypeEncoding(ivar: *const objc_ivar) -> *const c_char;
 
+    #[cfg(apple)]
     pub fn objc_copyClassNamesForImage(
         image: *const c_char,
         out_len: *mut c_uint,
     ) -> *mut *const c_char;
+    #[cfg(apple)]
     pub fn objc_copyImageNames(out_len: *mut c_uint) -> *mut *const c_char;
 
+    #[cfg(apple)]
     pub fn objc_enumerationMutation(obj: *mut objc_object);
+    #[cfg(apple)]
     pub fn objc_setEnumerationMutationHandler(
         handler: Option<unsafe extern "C" fn(arg1: *mut objc_object)>,
     );
@@ -60,14 +64,17 @@ extern "C" {
     );
     pub fn objc_removeAssociatedObjects(object: *mut objc_object);
 
+    #[cfg(apple)]
     pub fn objc_setForwardHandler(fwd: *mut c_void, fwd_stret: *mut c_void);
+    #[cfg(apple)]
     pub fn objc_sync_enter(obj: *mut objc_object) -> c_int;
+    #[cfg(apple)]
     pub fn objc_sync_exit(obj: *mut objc_object) -> c_int;
 
     /// Not available on macOS x86.
     ///
     /// Remember that this is non-null!
-    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+    #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
     pub fn objc_setHook_getClass(
         new_value: objc_hook_getClass,
         out_old_value: *mut objc_hook_getClass,
@@ -75,7 +82,7 @@ extern "C" {
     /// Not available on macOS x86.
     ///
     /// Remember that this is non-null!
-    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+    #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
     pub fn objc_setHook_lazyClassNamer(
         new_value: objc_hook_lazyClassNamer,
         out_old_value: *mut objc_hook_lazyClassNamer,
