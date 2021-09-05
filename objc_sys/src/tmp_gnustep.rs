@@ -610,63 +610,6 @@ extern "C" {
 extern "C" {
     pub fn objc_test_capability(x: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
-extern "C" {
-    pub fn objc_autorelease(obj: id) -> id;
-}
-extern "C" {
-    pub fn objc_autoreleaseReturnValue(obj: id) -> id;
-}
-extern "C" {
-    pub fn objc_initWeak(object: *mut id, value: id) -> id;
-}
-extern "C" {
-    pub fn objc_loadWeak(object: *mut id) -> id;
-}
-extern "C" {
-    pub fn objc_loadWeakRetained(obj: *mut id) -> id;
-}
-extern "C" {
-    pub fn objc_retain(obj: id) -> id;
-}
-extern "C" {
-    pub fn objc_retainAutorelease(obj: id) -> id;
-}
-extern "C" {
-    pub fn objc_retainAutoreleaseReturnValue(obj: id) -> id;
-}
-extern "C" {
-    pub fn objc_retainAutoreleasedReturnValue(obj: id) -> id;
-}
-extern "C" {
-    pub fn objc_retainBlock(b: id) -> id;
-}
-extern "C" {
-    pub fn objc_storeStrong(addr: *mut id, value: id) -> id;
-}
-extern "C" {
-    pub fn objc_storeWeak(addr: *mut id, obj: id) -> id;
-}
-extern "C" {
-    pub fn objc_autoreleasePoolPush() -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn objc_autoreleasePoolPop(pool: *mut ::std::os::raw::c_void);
-}
-extern "C" {
-    pub fn objc_copyWeak(dest: *mut id, src: *mut id);
-}
-extern "C" {
-    pub fn objc_destroyWeak(addr: *mut id);
-}
-extern "C" {
-    pub fn objc_moveWeak(dest: *mut id, src: *mut id);
-}
-extern "C" {
-    pub fn objc_release(obj: id);
-}
-extern "C" {
-    pub fn objc_delete_weak_refs(obj: id) -> BOOL;
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct objc_category {
