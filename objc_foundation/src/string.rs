@@ -31,7 +31,10 @@ pub trait INSMutableCopying: INSObject {
     }
 }
 
+#[cfg(target_vendor = "apple")]
 const UTF8_ENCODING: usize = 4;
+#[cfg(not(target_vendor = "apple"))]
+const UTF8_ENCODING: i32 = 4;
 
 pub trait INSString: INSObject {
     fn len(&self) -> usize {
@@ -85,7 +88,7 @@ impl fmt::Display for NSString {
 mod tests {
     use super::{INSCopying, INSString, NSString};
 
-    #[cfg(not(any(target_os = "macos", target_os = "ios")))]
+    #[cfg(not(target_vendor = "apple"))]
     #[test]
     fn ensure_linkage() {
         unsafe { crate::get_class_to_force_linkage() };

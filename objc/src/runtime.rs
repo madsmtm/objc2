@@ -16,8 +16,11 @@ use crate::Encode;
 /// The Objective-C `BOOL` type.
 ///
 /// To convert an Objective-C `BOOL` into a Rust [`bool`], compare it with [`NO`].
-#[cfg(not(target_arch = "aarch64"))]
+#[cfg(all(target_vendor = "apple", not(target_arch = "aarch64")))]
 pub type BOOL = ::std::os::raw::c_schar;
+#[cfg(all(not(target_vendor = "apple"), not(target_arch = "aarch64")))]
+pub type BOOL = u8;
+
 /// The equivalent of true for Objective-C's [`BOOL`] type.
 #[cfg(not(target_arch = "aarch64"))]
 pub const YES: BOOL = 1;

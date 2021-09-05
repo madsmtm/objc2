@@ -1,4 +1,4 @@
-#![cfg(any(target_os = "macos", target_os = "ios"))]
+#![cfg(target_vendor = "apple")]
 
 use objc::runtime::Object;
 use objc::{class, msg_send, sel};

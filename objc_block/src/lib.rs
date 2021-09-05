@@ -70,11 +70,11 @@ struct ClassInternal {
 }
 
 #[cfg_attr(
-    any(target_os = "macos", target_os = "ios"),
+    target_vendor = "apple",
     link(name = "System", kind = "dylib")
 )]
 #[cfg_attr(
-    not(any(target_os = "macos", target_os = "ios")),
+    not(target_vendor = "apple"),
     link(name = "BlocksRuntime", kind = "dylib")
 )]
 extern "C" {

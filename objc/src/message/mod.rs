@@ -29,10 +29,10 @@ macro_rules! objc_try {
 
 mod verify;
 
-#[cfg(any(target_os = "macos", target_os = "ios"))]
+#[cfg(target_vendor = "apple")]
 #[path = "apple/mod.rs"]
 mod platform;
-#[cfg(not(any(target_os = "macos", target_os = "ios")))]
+#[cfg(not(target_vendor = "apple"))]
 #[path = "gnustep.rs"]
 mod platform;
 
