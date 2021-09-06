@@ -25,7 +25,6 @@ extern "C" {
     #[cfg(apple)]
     pub fn object_copy(obj: *const objc_object, size: usize) -> *mut objc_object;
     #[deprecated = "Not needed since ARC"]
-    #[cfg(apple)]
     pub fn object_dispose(obj: *mut objc_object) -> *mut objc_object;
     #[deprecated = "Not needed since ARC"]
     pub fn object_setInstanceVariable(

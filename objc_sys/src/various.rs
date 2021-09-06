@@ -1,7 +1,7 @@
 use core::ffi::c_void;
-use std::os::raw::c_char;
 #[cfg(apple)]
-use std::os::raw::{c_int, c_uint};
+use std::os::raw::c_uint;
+use std::os::raw::{c_char, c_int};
 
 #[cfg(apple)]
 use crate::objc_class;
@@ -49,11 +49,12 @@ extern "C" {
     #[cfg(apple)]
     pub fn objc_copyImageNames(out_len: *mut c_uint) -> *mut *const c_char;
 
+    // Instead of being able to change this, it's a weak symbol on GNUStep.
     #[cfg(apple)]
     pub fn objc_enumerationMutation(obj: *mut objc_object);
     #[cfg(apple)]
     pub fn objc_setEnumerationMutationHandler(
-        handler: Option<unsafe extern "C" fn(arg1: *mut objc_object)>,
+        handler: Option<unsafe extern "C" fn(obj: *mut objc_object)>,
     );
 
     pub fn objc_getAssociatedObject(
@@ -70,9 +71,10 @@ extern "C" {
 
     #[cfg(apple)]
     pub fn objc_setForwardHandler(fwd: *mut c_void, fwd_stret: *mut c_void);
-    #[cfg(apple)]
+    // These two are defined in:
+    // - Apple: objc-sync.h
+    // - GNUStep: dtable.h / associate.m
     pub fn objc_sync_enter(obj: *mut objc_object) -> c_int;
-    #[cfg(apple)]
     pub fn objc_sync_exit(obj: *mut objc_object) -> c_int;
 
     /// Not available on macOS x86.
