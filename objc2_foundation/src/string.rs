@@ -5,7 +5,7 @@ use core::str;
 use std::os::raw::c_char;
 
 use objc::msg_send;
-use objc_id::{Id, ShareId};
+use objc2_id::{Id, ShareId};
 
 use super::INSObject;
 

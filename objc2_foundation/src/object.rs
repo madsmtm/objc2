@@ -3,7 +3,7 @@ use core::any::Any;
 use objc::msg_send;
 use objc::runtime::{Class, BOOL, NO};
 use objc::Message;
-use objc_id::{Id, ShareId};
+use objc2_id::{Id, ShareId};
 
 use super::NSString;
 

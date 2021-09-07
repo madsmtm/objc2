@@ -6,7 +6,7 @@ use std::os::raw::c_ulong;
 
 use objc::runtime::Object;
 use objc::{msg_send, Encode, Encoding, RefEncode};
-use objc_id::Id;
+use objc2_id::Id;
 
 use super::INSObject;
 

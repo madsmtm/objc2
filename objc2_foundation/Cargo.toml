@@ -24,4 +24,4 @@ block = ["objc2_block"]
 [dependencies]
 objc2_block = { path = "../objc2_block", optional = true }
 objc = { path = "../objc2", version = "0.2.7" }
-objc_id = { path = "../objc2_id", version = "0.1.1" }
+objc2_id = { path = "../objc2_id" }

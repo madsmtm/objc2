@@ -6,7 +6,7 @@ use core::ptr;
 
 use objc::runtime::Class;
 use objc::{class, msg_send};
-use objc_id::{Id, Owned, Ownership, ShareId};
+use objc2_id::{Id, Owned, Ownership, ShareId};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSSharedArray};
 
@@ -166,7 +166,7 @@ where
 #[cfg(test)]
 mod tests {
     use alloc::vec;
-    use objc_id::Id;
+    use objc2_id::Id;
 
     use super::{INSDictionary, NSDictionary};
     use crate::{INSArray, INSObject, INSString, NSObject, NSString};

@@ -7,7 +7,7 @@ use core::ops::{Index, Range};
 use objc::runtime::{Class, Object};
 use objc::{class, msg_send};
 use objc::{Encode, Encoding};
-use objc_id::{Id, Owned, Ownership, ShareId, Shared};
+use objc2_id::{Id, Owned, Ownership, ShareId, Shared};
 
 use super::{INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
@@ -420,7 +420,7 @@ mod tests {
 
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
-    use objc_id::Id;
+    use objc2_id::Id;
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
         let mut vec = Vec::with_capacity(len);

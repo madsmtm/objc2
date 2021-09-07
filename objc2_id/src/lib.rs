@@ -14,7 +14,7 @@ Weak references may be created using the [`WeakId`] struct.
 ```no_run
 # use objc::msg_send;
 use objc::runtime::{Class, Object};
-use objc_id::{Id, WeakId};
+use objc2_id::{Id, WeakId};
 
 let cls = Class::get("NSObject").unwrap();
 let obj: Id<Object> = unsafe {
@@ -39,7 +39,7 @@ assert!(weak.load().is_none());
 // This crate is, but its dependencies are not
 #![no_std]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc_id/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/objc2_id/0.1.1")]
 
 pub use id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
 

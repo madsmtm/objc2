@@ -1,8 +1,8 @@
-# `objc_id`
+# `objc2_id`
 
-[![Latest version](https://badgen.net/crates/v/objc_id)](https://crates.io/crates/objc_id)
+[![Latest version](https://badgen.net/crates/v/objc2_id)](https://crates.io/crates/objc2_id)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
-[![Documentation](https://docs.rs/objc_id/badge.svg)](https://docs.rs/objc_id/)
+[![Documentation](https://docs.rs/objc2_id/badge.svg)](https://docs.rs/objc2_id/)
 [![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
 
 Rust smart pointers for Objective-C reference counting.
@@ -19,7 +19,7 @@ Weak references may be created using the WeakId struct.
 
 ``` rust
 use objc::runtime::{Class, Object};
-use objc_id::{Id, WeakId};
+use objc2_id::{Id, WeakId};
 
 let cls = Class::get("NSObject").unwrap();
 let obj: Id<Object> = unsafe {
