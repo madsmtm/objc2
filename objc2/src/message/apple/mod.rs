@@ -1,4 +1,4 @@
-use objc_sys::objc_super;
+use objc2_sys::objc_super;
 
 use super::{Encode, Message, MessageArguments, MessageError};
 use crate::runtime::{Class, Imp, Object, Sel};

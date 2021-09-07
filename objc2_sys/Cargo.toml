@@ -1,5 +1,5 @@
 [package]
-name = "objc_sys"
+name = "objc2_sys"
 version = "0.0.0" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
@@ -12,7 +12,7 @@ categories = [
     "os::macos-apis",
 ]
 repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc_sys/"
+documentation = "https://docs.rs/objc2_sys/"
 license = "MIT"
 
 exclude = [

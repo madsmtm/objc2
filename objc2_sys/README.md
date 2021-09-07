@@ -1,15 +1,15 @@
-# `objc_sys`
+# `objc2_sys`
 
-[![Latest version](https://badgen.net/crates/v/objc_sys)](https://crates.io/crates/objc_sys)
+[![Latest version](https://badgen.net/crates/v/objc2_sys)](https://crates.io/crates/objc2_sys)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
-[![Documentation](https://docs.rs/objc_sys/badge.svg)](https://docs.rs/objc_sys/)
+[![Documentation](https://docs.rs/objc2_sys/badge.svg)](https://docs.rs/objc2_sys/)
 [![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
 
 Raw Rust bindings to core Objective-C runtimes and ABIs.
 
 ## Runtime Support
 
-`objc_sys` currently supports two runtimes (support for [`ObjFW`] and
+`objc2_sys` currently supports two runtimes (support for [`ObjFW`] and
 [`WinObjC`] may be added):
 - Apple's [`objc4`] on `cfg(target_vendor = "apple")` targets.
 - GNUStep's [`libobjc2`] on all other targets. See their [Objective-C Compiler
@@ -46,7 +46,7 @@ At least `libobjc2` [version 1.7][libobjc2-1.7] or `objc4`
 - **bridgeOS 2.0**
 
 So those are the **minimum supported Apple versions**. Functionality that was
-added after these versions are not (yet?) available in `objc_sys`.
+added after these versions are not (yet?) available in `objc2_sys`.
 
 [libobjc2-1.7]: https://github.com/gnustep/libobjc2/tree/1.7
 [objc4-493.9]: https://opensource.apple.com/source/objc4/

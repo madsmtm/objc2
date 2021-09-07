@@ -1,5 +1,5 @@
 use core::mem;
-use objc_sys::{objc_msgSend, objc_msgSendSuper, objc_msgSendSuper_stret, objc_msgSend_stret};
+use objc2_sys::{objc_msgSend, objc_msgSendSuper, objc_msgSendSuper_stret, objc_msgSend_stret};
 
 use super::MsgSendFn;
 use crate::runtime::Imp;

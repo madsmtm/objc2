@@ -1,4 +1,4 @@
-use objc_sys::{objc_msgSend, objc_msgSendSuper};
+use objc2_sys::{objc_msgSend, objc_msgSendSuper};
 
 use super::MsgSendFn;
 use crate::runtime::Imp;

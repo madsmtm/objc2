@@ -15,7 +15,7 @@
 #![no_std]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
-#![doc(html_root_url = "https://docs.rs/objc_sys/0.0.0")]
+#![doc(html_root_url = "https://docs.rs/objc2_sys/0.0.0")]
 
 // TODO: Replace `extern "C"` with `extern "C-unwind"` where applicable.
 // See https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html.
