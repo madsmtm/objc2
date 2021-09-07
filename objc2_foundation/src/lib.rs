@@ -26,7 +26,7 @@ pub use self::value::{INSValue, NSValue};
 extern "C" {}
 
 #[cfg(not(target_vendor = "apple"))]
-use objc::runtime::Class;
+use objc2::runtime::Class;
 
 #[cfg(not(target_vendor = "apple"))]
 #[link(name = "gnustep-base", kind = "dylib")]

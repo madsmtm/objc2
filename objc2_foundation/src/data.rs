@@ -5,7 +5,7 @@ use core::ops::Range;
 use core::slice;
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
-use objc::msg_send;
+use objc2::msg_send;
 #[cfg(feature = "block")]
 use objc2_block::{Block, ConcreteBlock};
 use objc2_id::Id;

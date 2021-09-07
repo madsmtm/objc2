@@ -7,15 +7,15 @@ macro_rules! object_struct {
             _private: [u8; 0],
         }
 
-        unsafe impl ::objc::Message for $name {}
+        unsafe impl ::objc2::Message for $name {}
 
-        unsafe impl ::objc::RefEncode for $name {
-            const ENCODING_REF: ::objc::Encoding<'static> = ::objc::Encoding::Object;
+        unsafe impl ::objc2::RefEncode for $name {
+            const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
         }
 
         impl $crate::INSObject for $name {
-            fn class() -> &'static ::objc::runtime::Class {
-                ::objc::class!($name)
+            fn class() -> &'static ::objc2::runtime::Class {
+                ::objc2::class!($name)
             }
         }
 
@@ -55,10 +55,10 @@ macro_rules! object_impl {
         object_impl!($name, $($t),+);
     );
     ($name:ident, $($t:ident),*) => (
-        unsafe impl<$($t),*> ::objc::Message for $name<$($t),*> { }
+        unsafe impl<$($t),*> ::objc2::Message for $name<$($t),*> { }
 
-        unsafe impl<$($t),*> ::objc::RefEncode for $name<$($t),*> {
-            const ENCODING_REF: ::objc::Encoding<'static> = ::objc::Encoding::Object;
+        unsafe impl<$($t),*> ::objc2::RefEncode for $name<$($t),*> {
+            const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
         }
     );
 }

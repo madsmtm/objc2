@@ -4,8 +4,8 @@ use core::marker::PhantomData;
 use core::ops::Index;
 use core::ptr;
 
-use objc::runtime::Class;
-use objc::{class, msg_send};
+use objc2::runtime::Class;
+use objc2::{class, msg_send};
 use objc2_id::{Id, Owned, Ownership, ShareId};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSSharedArray};

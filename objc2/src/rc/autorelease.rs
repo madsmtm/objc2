@@ -25,12 +25,12 @@ pub struct AutoreleasePool {
 }
 
 /// ```rust,compile_fail
-/// use objc::rc::AutoreleasePool;
+/// use objc2::rc::AutoreleasePool;
 /// fn needs_sync<T: Send>() {}
 /// needs_sync::<AutoreleasePool>();
 /// ```
 /// ```rust,compile_fail
-/// use objc::rc::AutoreleasePool;
+/// use objc2::rc::AutoreleasePool;
 /// fn needs_send<T: Send>() {}
 /// needs_send::<AutoreleasePool>();
 /// ```
@@ -224,9 +224,9 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// Basic usage:
 ///
 /// ```rust
-/// use objc::{class, msg_send};
-/// use objc::rc::{autoreleasepool, AutoreleasePool};
-/// use objc::runtime::Object;
+/// use objc2::{class, msg_send};
+/// use objc2::rc::{autoreleasepool, AutoreleasePool};
+/// use objc2::runtime::Object;
 ///
 /// fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
 ///     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
@@ -247,9 +247,9 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// safely take it out of the pool:
 ///
 /// ```rust,compile_fail
-/// # use objc::{class, msg_send};
-/// # use objc::rc::{autoreleasepool, AutoreleasePool};
-/// # use objc::runtime::Object;
+/// # use objc2::{class, msg_send};
+/// # use objc2::rc::{autoreleasepool, AutoreleasePool};
+/// # use objc2::runtime::Object;
 /// #
 /// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
 /// #     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
@@ -272,9 +272,9 @@ impl !AutoreleaseSafe for AutoreleasePool {}
     not(feature = "unstable_autoreleasesafe"),
     doc = "```rust,should_panic"
 )]
-/// # use objc::{class, msg_send};
-/// # use objc::rc::{autoreleasepool, AutoreleasePool};
-/// # use objc::runtime::Object;
+/// # use objc2::{class, msg_send};
+/// # use objc2::rc::{autoreleasepool, AutoreleasePool};
+/// # use objc2::runtime::Object;
 /// #
 /// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
 /// #     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };

@@ -4,9 +4,9 @@ use core::hash;
 use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
 
-use objc::rc::{StrongPtr, WeakPtr};
-use objc::runtime::Object;
-use objc::Message;
+use objc2::rc::{StrongPtr, WeakPtr};
+use objc2::runtime::Object;
+use objc2::Message;
 
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
@@ -235,8 +235,8 @@ unsafe impl<T: Sync + Send> Send for WeakId<T> {}
 #[cfg(test)]
 mod tests {
     use super::{Id, ShareId, WeakId};
-    use objc::runtime::Object;
-    use objc::{class, msg_send};
+    use objc2::runtime::Object;
+    use objc2::{class, msg_send};
 
     #[cfg(not(target_vendor = "apple"))]
     #[test]

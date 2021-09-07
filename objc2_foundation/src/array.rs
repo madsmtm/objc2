@@ -4,9 +4,9 @@ use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::ops::{Index, Range};
 
-use objc::runtime::{Class, Object};
-use objc::{class, msg_send};
-use objc::{Encode, Encoding};
+use objc2::runtime::{Class, Object};
+use objc2::{class, msg_send};
+use objc2::{Encode, Encoding};
 use objc2_id::{Id, Owned, Ownership, ShareId, Shared};
 
 use super::{INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};

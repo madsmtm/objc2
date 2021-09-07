@@ -4,7 +4,7 @@ use core::slice;
 use core::str;
 use std::os::raw::c_char;
 
-use objc::msg_send;
+use objc2::msg_send;
 use objc2_id::{Id, ShareId};
 
 use super::INSObject;

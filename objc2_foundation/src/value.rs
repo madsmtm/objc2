@@ -7,9 +7,9 @@ use core::str;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-use objc::runtime::Class;
-use objc::Encode;
-use objc::{class, msg_send};
+use objc2::runtime::Class;
+use objc2::Encode;
+use objc2::{class, msg_send};
 use objc2_id::Id;
 
 use super::{INSCopying, INSObject};
@@ -81,7 +81,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::{INSValue, NSValue};
-    use objc::Encode;
+    use objc2::Encode;
 
     #[test]
     fn test_value() {

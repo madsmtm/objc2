@@ -18,7 +18,7 @@ which can be cloned to allow multiple references.
 Weak references may be created using the WeakId struct.
 
 ``` rust
-use objc::runtime::{Class, Object};
+use objc2::runtime::{Class, Object};
 use objc2_id::{Id, WeakId};
 
 let cls = Class::get("NSObject").unwrap();

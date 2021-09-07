@@ -12,8 +12,8 @@ can be cloned to allow multiple references.
 Weak references may be created using the [`WeakId`] struct.
 
 ```no_run
-# use objc::msg_send;
-use objc::runtime::{Class, Object};
+# use objc2::msg_send;
+use objc2::runtime::{Class, Object};
 use objc2_id::{Id, WeakId};
 
 let cls = Class::get("NSObject").unwrap();
@@ -48,7 +48,7 @@ mod id;
 // TODO: Remove the need for this hack
 
 #[cfg(not(target_vendor = "apple"))]
-use objc::runtime::Class;
+use objc2::runtime::Class;
 
 #[cfg(not(target_vendor = "apple"))]
 #[link(name = "gnustep-base", kind = "dylib")]

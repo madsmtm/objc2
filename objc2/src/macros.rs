@@ -13,7 +13,7 @@ To check for a class that may not exist, use [`Class::get`].
 # Examples
 
 ``` no_run
-# use objc::class;
+# use objc2::class;
 let cls = class!(NSObject);
 ```
 */
@@ -41,7 +41,7 @@ Returns a [`Sel`].
 # Examples
 
 ```
-# use objc::sel;
+# use objc2::sel;
 let sel = sel!(description);
 let sel = sel!(setObject:forKey:);
 ```
@@ -85,8 +85,8 @@ method's argument's encoding does not match the encoding of the given arguments.
 # Examples
 
 ``` no_run
-# use objc::msg_send;
-# use objc::runtime::Object;
+# use objc2::msg_send;
+# use objc2::runtime::Object;
 # unsafe {
 let obj: *mut Object;
 # let obj: *mut Object = 0 as *mut Object;

@@ -6,8 +6,8 @@ Objective-C Runtime bindings and wrapper for Rust.
 Objective-C objects can be messaged using the [`msg_send!`](macro.msg_send!.html) macro:
 
 ``` no_run
-# use objc::{class, msg_send};
-# use objc::runtime::{BOOL, Class, Object};
+# use objc2::{class, msg_send};
+# use objc2::runtime::{BOOL, Class, Object};
 # unsafe {
 let cls = class!(NSObject);
 let obj: *mut Object = msg_send![cls, new];
@@ -66,7 +66,7 @@ The bindings can be used on Linux or *BSD utilizing the
 #![warn(missing_docs)]
 #![allow(clippy::missing_safety_doc)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc/0.2.7")]
+#![doc(html_root_url = "https://docs.rs/objc2/0.2.7")]
 
 extern crate alloc;
 extern crate std;

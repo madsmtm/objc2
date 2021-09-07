@@ -1,14 +1,14 @@
 use core::any::Any;
 
-use objc::msg_send;
-use objc::runtime::{Class, BOOL, NO};
-use objc::Message;
+use objc2::msg_send;
+use objc2::runtime::{Class, BOOL, NO};
+use objc2::Message;
 use objc2_id::{Id, ShareId};
 
 use super::NSString;
 
 /*
-The Sized bound is unfortunate; ideally, objc objects would not be
+The Sized bound is unfortunate; ideally, Objective-C objects would not be
 treated as Sized. However, rust won't allow casting a dynamically-sized type
 pointer to an Object pointer, because dynamically-sized types can have fat
 pointers (two words) instead of real pointers.

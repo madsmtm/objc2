@@ -85,9 +85,9 @@ pub unsafe trait Message: RefEncode {
 
     # Example
     ``` no_run
-    # use objc::{class, msg_send, sel};
-    # use objc::runtime::{BOOL, Class, Object};
-    # use objc::Message;
+    # use objc2::{class, msg_send, sel};
+    # use objc2::runtime::{BOOL, Class, Object};
+    # use objc2::Message;
     let obj: &Object;
     # obj = unsafe { msg_send![class!(NSObject), new] };
     let sel = sel!(isKindOfClass:);

@@ -17,4 +17,4 @@ documentation = "https://docs.rs/objc2_id/"
 license = "MIT"
 
 [dependencies]
-objc = { path = "../objc2", version = "0.2.7" }
+objc2 = { path = "../objc2" }

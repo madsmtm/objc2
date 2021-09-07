@@ -1,6 +1,6 @@
-use objc::rc::StrongPtr;
-use objc::runtime::{Class, Object};
-use objc::{class, msg_send, sel, Encode};
+use objc2::rc::StrongPtr;
+use objc2::runtime::{Class, Object};
+use objc2::{class, msg_send, sel, Encode};
 
 fn main() {
     // Get a class

@@ -1,8 +1,8 @@
-# `objc`
+# `objc2`
 
-[![Latest version](https://badgen.net/crates/v/objc)](https://crates.io/crates/objc)
+[![Latest version](https://badgen.net/crates/v/objc2)](https://crates.io/crates/objc2)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
-[![Documentation](https://docs.rs/objc/badge.svg)](https://docs.rs/objc/)
+[![Documentation](https://docs.rs/objc2/badge.svg)](https://docs.rs/objc2/)
 [![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
 
 Objective-C Runtime bindings and wrapper for Rust.
@@ -12,8 +12,8 @@ Objective-C Runtime bindings and wrapper for Rust.
 Objective-C objects can be messaged using the `msg_send!` macro:
 
 ```rust , no_run
-use objc::{class, msg_send};
-use objc::runtime::{BOOL, Object};
+use objc2::{class, msg_send};
+use objc2::runtime::{BOOL, Object};
 
 let cls = class!(NSObject);
 unsafe {
@@ -34,8 +34,8 @@ A `WeakPtr` will not retain the object, but can be upgraded to a `StrongPtr`
 and safely fails if the object has been deallocated.
 
 ```rust , no_run
-use objc::{class, msg_send};
-use objc::rc::{autoreleasepool, StrongPtr};
+use objc2::{class, msg_send};
+use objc2::rc::{autoreleasepool, StrongPtr};
 
 // StrongPtr will release the object when dropped
 let obj = unsafe {
@@ -65,9 +65,9 @@ The following example demonstrates declaring a class named `MyNumber` that has
 one ivar, a `u32` named `_number` and a `number` method that returns it:
 
 ```rust , no_run
-use objc::{class, sel};
-use objc::declare::ClassDecl;
-use objc::runtime::{Object, Sel};
+use objc2::{class, sel};
+use objc2::declare::ClassDecl;
+use objc2::runtime::{Object, Sel};
 
 let superclass = class!(NSObject);
 let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();

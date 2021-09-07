@@ -1,9 +1,9 @@
 use std::sync::Once;
 
-use objc::declare::ClassDecl;
-use objc::runtime::{Class, Object, Sel};
-use objc::{msg_send, sel};
-use objc::{Encoding, Message, RefEncode};
+use objc2::declare::ClassDecl;
+use objc2::runtime::{Class, Object, Sel};
+use objc2::{msg_send, sel};
+use objc2::{Encoding, Message, RefEncode};
 use objc2_foundation::{INSObject, NSObject};
 
 /// In the future this should be an `extern type`, if that gets stabilized,

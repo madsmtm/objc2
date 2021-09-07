@@ -1,7 +1,7 @@
 #![cfg(target_vendor = "apple")]
 
-use objc::runtime::Object;
-use objc::{class, msg_send, sel};
+use objc2::runtime::Object;
+use objc2::{class, msg_send, sel};
 
 #[test]
 fn use_class_and_msg_send() {

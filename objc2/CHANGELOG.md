@@ -52,7 +52,7 @@
 
 ### Fixed
 
-* Fixed the implementation of `objc::runtime` structs so there can't be unsound
+* Fixed the implementation of `objc2::runtime` structs so there can't be unsound
   references to uninhabited types.
 
 ## 0.2.2

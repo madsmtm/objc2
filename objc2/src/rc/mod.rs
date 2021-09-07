@@ -16,8 +16,8 @@ For more information on Objective-C's reference counting, see Apple's documentat
 # Example
 
 ``` no_run
-# use objc::{class, msg_send};
-# use objc::rc::{autoreleasepool, StrongPtr};
+# use objc2::{class, msg_send};
+# use objc2::rc::{autoreleasepool, StrongPtr};
 // StrongPtr will release the object when dropped
 let obj = unsafe {
     StrongPtr::new(msg_send![class!(NSObject), new])

@@ -27,16 +27,16 @@ pub fn impl_object(input: TokenStream) -> TokenStream {
 
     let mut gen = Tokens::new();
     quote!(
-        unsafe impl #impl_generics ::objc::Message for #name #ty_generics #where_clause { }
+        unsafe impl #impl_generics ::objc2::Message for #name #ty_generics #where_clause { }
     )
     .to_tokens(&mut gen);
 
     quote!(
         impl #impl_generics INSObject for #name #ty_generics #where_clause {
-            fn class() -> &'static ::objc::runtime::Class {
+            fn class() -> &'static ::objc2::runtime::Class {
                 extern {
                     #[link_name = #link_name]
-                    static OBJC_CLASS: ::objc::runtime::Class;
+                    static OBJC_CLASS: ::objc2::runtime::Class;
                 }
                 unsafe {
                     &OBJC_CLASS

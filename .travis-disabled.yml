@@ -42,4 +42,4 @@ jobs:
       # Remove workspace since `rust-test-ios` is not made for that
       - rm Cargo.toml
     # TODO: env: FEATURES="exception"
-    script: cd objc && ../rust-test-ios
+    script: cd objc2 && ../rust-test-ios

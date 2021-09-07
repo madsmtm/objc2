@@ -65,7 +65,7 @@ use std::os::raw::{c_int, c_ulong};
 
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
-// TODO: Replace with `objc::Class`
+// TODO: Replace with `objc2::Class`
 #[repr(C)]
 struct ClassInternal {
     _priv: [u8; 0],

@@ -15,8 +15,8 @@ Additionally it provides traits for annotating types that has a corresponding
 Objective-C encoding, respectively `Encode` for structs and `RefEncode` for
 references (and `EncodeArguments` for function arguments).
 
-These types are exported under the `objc` crate as well, so usually you would
-just use that crate.
+These types are exported under the `objc2` crate as well, so usually you would
+just use that.
 
 # Examples
 
