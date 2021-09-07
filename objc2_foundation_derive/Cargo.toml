@@ -1,5 +1,5 @@
 [package]
-name = "objc-foundation-derive"
+name = "objc2_foundation_derive"
 version = "0.0.1" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
@@ -13,7 +13,7 @@ categories = [
 ]
 readme = "README.md"
 repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc-foundation-derive/"
+documentation = "https://docs.rs/objc2_foundation_derive/"
 license = "MIT"
 
 [lib]
