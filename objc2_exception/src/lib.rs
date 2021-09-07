@@ -9,7 +9,7 @@
 #![no_std]
 #![warn(missing_docs)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc_exception/0.1.2")]
+#![doc(html_root_url = "https://docs.rs/objc2_exception/0.1.2")]
 
 #[cfg(test)]
 extern crate alloc;

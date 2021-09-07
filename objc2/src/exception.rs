@@ -1,7 +1,7 @@
 use crate::rc::StrongPtr;
 use crate::runtime::Object;
 
-// Comment copied from `objc_exception`
+// Comment copied from `objc2_exception`
 
 /// Tries to execute the given closure and catches an Objective-C exception
 /// if one is thrown.
@@ -19,5 +19,5 @@ use crate::runtime::Object;
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 pub unsafe fn catch_exception<R>(closure: impl FnOnce() -> R) -> Result<R, StrongPtr> {
-    objc_exception::r#try(closure).map_err(|exception| StrongPtr::new(exception as *mut Object))
+    objc2_exception::r#try(closure).map_err(|exception| StrongPtr::new(exception as *mut Object))
 }

@@ -1,5 +1,5 @@
 [package]
-name = "objc_exception"
+name = "objc2_exception"
 version = "0.1.2" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
@@ -14,7 +14,7 @@ categories = [
 ]
 readme = "README.md"
 repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc_exception/"
+documentation = "https://docs.rs/objc2_exception/"
 license = "MIT"
 
 build = "build.rs"

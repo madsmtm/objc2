@@ -22,7 +22,7 @@ exclude = [
 ]
 
 [features]
-exception = ["objc_exception"]
+exception = ["objc2_exception"]
 verify_message = []
 unstable_autoreleasesafe = []
 
@@ -30,4 +30,4 @@ unstable_autoreleasesafe = []
 malloc_buf = "1.0"
 objc2_sys = { path = "../objc2_sys" }
 objc2_encode = { path = "../objc2_encode" }
-objc_exception = { path = "../objc2_exception", version = "0.1", optional = true }
+objc2_exception = { path = "../objc2_exception", optional = true }
