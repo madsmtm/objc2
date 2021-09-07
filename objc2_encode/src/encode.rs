@@ -31,7 +31,7 @@ use crate::Encoding;
 /// Implementing for a struct:
 ///
 /// ```
-/// # use objc_encode::{Encode, Encoding, RefEncode};
+/// # use objc2_encode::{Encode, Encoding, RefEncode};
 /// # use core::ffi::c_void;
 /// #
 /// #[repr(C)]
@@ -114,7 +114,7 @@ pub unsafe trait RefEncode {
     ///
     /// This is usually implemented either as an object pointer:
     /// ```
-    /// # use objc_encode::{Encoding, RefEncode};
+    /// # use objc2_encode::{Encoding, RefEncode};
     /// # #[repr(C)]
     /// # struct MyObject {
     /// #     _priv: [u8; 0],
@@ -127,7 +127,7 @@ pub unsafe trait RefEncode {
     /// Or as a pointer to the type, delegating the rest to the [`Encode`]
     /// implementation:
     /// ```
-    /// # use objc_encode::{Encode, Encoding, RefEncode};
+    /// # use objc2_encode::{Encode, Encoding, RefEncode};
     /// # #[repr(transparent)]
     /// # struct MyType(i32);
     /// # unsafe impl Encode for MyType {

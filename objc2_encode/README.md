@@ -1,8 +1,8 @@
-# `objc-encode` - Objective-C type-encoding in Rust
+# `objc2_encode` - Objective-C type-encoding in Rust
 
-[![Latest version](https://badgen.net/crates/v/objc-encode)](https://crates.io/crates/objc-encode)
+[![Latest version](https://badgen.net/crates/v/objc2_encode)](https://crates.io/crates/objc2_encode)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
-[![Documentation](https://docs.rs/objc-encode/badge.svg)](https://docs.rs/objc-encode/)
+[![Documentation](https://docs.rs/objc2_encode/badge.svg)](https://docs.rs/objc2_encode/)
 [![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
 
 The Objective-C directive `@encode` encodes types as strings for usage in
@@ -23,7 +23,7 @@ just use that crate.
 Implementing `Encode` and `RefEncode`:
 
 ```rust
-use objc_encode::{Encode, Encoding, RefEncode};
+use objc2_encode::{Encode, Encoding, RefEncode};
 
 #[repr(C)]
 struct MyObject {
@@ -51,7 +51,7 @@ An `Encoding` can be compared with an encoding string from the Objective-C
 runtime:
 
 ```rust
-use objc_encode::Encode;
+use objc2_encode::Encode;
 assert!(&i32::ENCODING == "i");
 ```
 
@@ -59,7 +59,7 @@ assert!(&i32::ENCODING == "i");
 generated conveniently through the `to_string` method:
 
 ```rust
-use objc_encode::Encode;
+use objc2_encode::Encode;
 assert_eq!(i32::ENCODING.to_string(), "i");
 ```
 
@@ -69,7 +69,7 @@ See the [`examples`] folder for more complex usage.
 
 ```toml
 [dependencies]
-objc-encode = "1.1.0"
+objc2_encode = "1.1.0"
 ```
 
 # License
@@ -79,5 +79,5 @@ This project is licensed under the MIT license, see [`../LICENSE.txt`].
 Work is in progress to make it dual-licensed under the Apache License
 (Version 2.0) as well.
 
-[`examples`]: https://github.com/madsmtm/objc2/tree/master/objc_encode/examples
+[`examples`]: https://github.com/madsmtm/objc2/tree/master/objc2_encode/examples
 [`../LICENSE.txt`]: https://github.com/madsmtm/objc2/blob/master/LICENSE.txt

@@ -3,7 +3,7 @@
 #![no_std]
 #![warn(missing_docs)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc-encode/1.1.0")]
+#![doc(html_root_url = "https://docs.rs/objc2_encode/1.1.0")]
 
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]

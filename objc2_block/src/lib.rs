@@ -63,7 +63,7 @@ use core::ops::{Deref, DerefMut};
 use core::ptr;
 use std::os::raw::{c_int, c_ulong};
 
-use objc_encode::{Encode, EncodeArguments, Encoding, RefEncode};
+use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 // TODO: Replace with `objc::Class`
 #[repr(C)]

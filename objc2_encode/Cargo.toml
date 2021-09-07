@@ -1,5 +1,5 @@
 [package]
-name = "objc-encode"
+name = "objc2_encode"
 # Remember to update html_root_url in lib.rs and README.md
 version = "1.1.0"
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
@@ -15,5 +15,5 @@ categories = [
 ]
 readme = "README.md"
 repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc-encode/"
+documentation = "https://docs.rs/objc2_encode/"
 license = "MIT"

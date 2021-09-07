@@ -1,4 +1,4 @@
-use objc_encode::{Encode, Encoding};
+use objc2_encode::{Encode, Encoding};
 
 #[cfg(target_pointer_width = "32")]
 type CGFloat = f32;

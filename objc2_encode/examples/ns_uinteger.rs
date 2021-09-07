@@ -2,7 +2,7 @@
 //!
 //! Note that in this case `NSUInteger` could actually just be a type alias
 //! for `usize`.
-use objc_encode::{Encode, Encoding, RefEncode};
+use objc2_encode::{Encode, Encoding, RefEncode};
 
 #[repr(transparent)]
 struct NSUInteger {
