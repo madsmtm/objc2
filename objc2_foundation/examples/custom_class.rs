@@ -4,7 +4,7 @@ use objc::declare::ClassDecl;
 use objc::runtime::{Class, Object, Sel};
 use objc::{msg_send, sel};
 use objc::{Encoding, Message, RefEncode};
-use objc_foundation::{INSObject, NSObject};
+use objc2_foundation::{INSObject, NSObject};
 
 /// In the future this should be an `extern type`, if that gets stabilized,
 /// see [RFC-1861](https://rust-lang.github.io/rfcs/1861-extern-types.html).

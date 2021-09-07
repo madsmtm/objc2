@@ -1,4 +1,4 @@
-use objc_foundation::{
+use objc2_foundation::{
     INSArray, INSCopying, INSDictionary, INSObject, INSString, NSArray, NSDictionary, NSObject,
     NSString,
 };
