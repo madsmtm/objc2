@@ -1,22 +1,28 @@
-//! # Bindings to the objc_objective-C core runtime
+//! # Raw bindings to Objective-C runtimes
 //!
-//! # Notable differences
+//! These bindings contain almost no documentation, so it is highly
+//! recommended to read the documentation of the original libraries:
+//! - Apple's [official documentation][apple].
+//! - Apple's `objc4` [source code][objc4] ([`git` mirror][objc4-mirror]), in
+//!   particular `runtime.h`.
+//! - GNUStep's `libobjc2` [source code][libobjc2], in particular `runtime.h`.
 //!
-//! Protocol / objc_protocol is no longer a type alias of objc_object, for
-//! better type safety. Their internal representation is the same, so the
-//! functionality is just a cast away.
-//!
-//! Deprecated functions are not included for future compability, since they
-//! could be removed at any macOS release, and then our code would break.
-
-// TODO: Replace `extern "C"` with `extern "C-unwind"`.
+//! [apple]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+//! [libobjc2]: https://github.com/gnustep/libobjc2/tree/v2.1/objc
+//! [objc4]: https://opensource.apple.com/source/objc4/objc4-818.2/runtime/
+//! [objc4-mirror]: https://github.com/madsmtm/objc4-mirror.git
 
 #![no_std]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![doc(html_root_url = "https://docs.rs/objc_sys/0.0.0")]
 
+// TODO: Replace `extern "C"` with `extern "C-unwind"` where applicable.
+// See https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html.
+
 // TODO: Remove this and add "no-std" category to Cargo.toml
+// Requires a better solution for C-types in `no_std` crates.
+// See https://github.com/japaric/cty/issues/14.
 extern crate std;
 
 use core::cell::UnsafeCell;

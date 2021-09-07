@@ -7,7 +7,7 @@ use std::os::raw::{c_char, c_int};
 use crate::objc_class;
 use crate::{objc_AssociationPolicy, objc_object, OpaqueData, BOOL};
 
-/// A type that represents an instance variable.
+/// An opaque type that represents an instance variable.
 #[repr(C)]
 pub struct objc_ivar {
     _priv: [u8; 0],

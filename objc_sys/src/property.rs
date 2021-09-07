@@ -2,16 +2,22 @@ use std::os::raw::{c_char, c_uint};
 
 use crate::OpaqueData;
 
+/// An opaque type that describes a property in a class.
 #[repr(C)]
 pub struct objc_property {
     _priv: [u8; 0],
     _p: OpaqueData,
 }
 
+/// Describes an Objective-C property attribute.
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct objc_property_attribute_t {
+    /// The name of the attribute.
     pub name: *const c_char,
+    /// The value of the attribute
+    ///
+    /// Usually NULL.
     pub value: *const c_char,
 }
 

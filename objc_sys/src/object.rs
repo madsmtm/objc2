@@ -3,7 +3,7 @@ use std::os::raw::c_char;
 
 use crate::{objc_class, objc_ivar, OpaqueData};
 
-/// An opaque type that represents an instance of a class.
+/// An opaque type that represents an object / an instance of a class.
 #[repr(C)]
 pub struct objc_object {
     // `isa` field is deprecated, so we don't expose it here.

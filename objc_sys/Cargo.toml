@@ -4,10 +4,11 @@ version = "0.0.0" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
-description = "Bindings to the Objective-C core runtime"
+description = "Raw bindings to Objective-C runtimes"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "sys"]
 categories = [
     "external-ffi-bindings",
+    # "no_std" # TODO
     "os::macos-apis",
 ]
 repository = "https://github.com/madsmtm/objc"
@@ -19,6 +20,8 @@ exclude = [
     # different revisions of Apple's open source `objc4`.
     "helper-scripts/*",
 ]
+
+readme = "README.md"
 
 # Downstream users can customize the linking to libobjc!
 # See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts

@@ -9,10 +9,13 @@ pub struct objc_method {
     _p: OpaqueData,
 }
 
+/// Describes an Objective-C method.
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct objc_method_description {
+    /// The name of the method.
     pub name: *const objc_selector,
+    /// The types of the method arguments.
     pub types: *const c_char,
 }
 

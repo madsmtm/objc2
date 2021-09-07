@@ -2,7 +2,7 @@
 
 # Yup, this is terrible, but was a great help in creating the correct implementations
 
-# Source repo should be a path to https://github.com/madsmtm/objc4.git
+# Source repo should be a path to https://github.com/madsmtm/objc4-mirror.git
 set source_repo $argv[1]
 set to_repo $argv[2]
 

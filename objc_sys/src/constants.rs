@@ -5,16 +5,18 @@ use std::os::raw::c_int;
 
 use crate::{id, Class, BOOL};
 
-/// The equivalent of true for Objective-C's [`BOOL`][`super::BOOL`] type.
 #[cfg(not(target_arch = "aarch64"))]
+/// The equivalent of `true` for Objective-C's [`BOOL`][`super::BOOL`] type.
 pub const YES: BOOL = 1;
 #[cfg(target_arch = "aarch64")]
+/// The equivalent of `true` for Objective-C's [`BOOL`][`super::BOOL`] type.
 pub const YES: BOOL = true;
 
-/// The equivalent of false for Objective-C's [`BOOL`][`super::BOOL`] type.
 #[cfg(not(target_arch = "aarch64"))]
+/// The equivalent of `false` for Objective-C's [`BOOL`][`super::BOOL`] type.
 pub const NO: BOOL = 0;
 #[cfg(target_arch = "aarch64")]
+/// The equivalent of `false` for Objective-C's [`BOOL`][`super::BOOL`] type.
 pub const NO: BOOL = false;
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] object / instance.
