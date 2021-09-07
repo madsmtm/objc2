@@ -1,5 +1,5 @@
 [package]
-name = "objc_test_utils"
+name = "objc2_test_utils"
 version = "0.0.2"
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
@@ -13,7 +13,7 @@ categories = [
     "os::macos-apis",
 ]
 repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc_test_utils/"
+documentation = "https://docs.rs/objc2_test_utils/"
 license = "MIT"
 
 build = "build.rs"
