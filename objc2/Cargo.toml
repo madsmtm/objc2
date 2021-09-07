@@ -28,6 +28,6 @@ unstable_autoreleasesafe = []
 
 [dependencies]
 malloc_buf = "1.0"
-objc_sys = { path = "../objc_sys" }
-objc-encode = { path = "../objc_encode", version = "1.0" }
-objc_exception = { path = "../objc_exception", version = "0.1", optional = true }
+objc_sys = { path = "../objc2_sys" }
+objc-encode = { path = "../objc2_encode", version = "1.0" }
+objc_exception = { path = "../objc2_exception", version = "0.1", optional = true }

@@ -21,7 +21,7 @@ exclude = [
 ]
 
 [dependencies]
-objc-encode = { path = "../objc_encode", version = "1.1.0" }
+objc-encode = { path = "../objc2_encode", version = "1.1.0" }
 
 [dev-dependencies]
-objc_test_utils = { path = "../objc_test_utils", version = "0.0" }
+objc_test_utils = { path = "../objc2_test_utils", version = "0.0" }
