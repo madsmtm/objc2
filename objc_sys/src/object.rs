@@ -55,6 +55,31 @@ extern "C" {
     #[cfg(apple)]
     pub fn objc_destructInstance(obj: *mut objc_object) -> *mut c_void;
 
+    // TODO: Unsure if we should expose these; are they useful, and stable?
+    // Defined in objc-abi.h
+    // pub fn objc_getProperty(
+    //     obj: *const objc_object,
+    //     sel: *const objc_selector,
+    //     offset: isize,
+    //     atomic: BOOL,
+    // ) -> *mut c_void;
+    // pub fn objc_setProperty(
+    //     obj: *const objc_object,
+    //     sel: *const objc_selector,
+    //     offset: isize,
+    //     newValue: *const c_void,
+    //     atomic: BOOL,
+    //     shouldCopy: i8,
+    // );
+    // This is generated in setters to struct properties.
+    // pub fn objc_copyStruct(
+    //     dest: *mut c_void,
+    //     src: *const c_void,
+    //     size: isize,
+    //     atomic: BOOL,
+    //     hasStrong: BOOL,
+    // );
+
     // #[deprecated = "use object_copy instead"]
     // #[cfg(all(apple, target_os = "macos"))]
     // object_copyFromZone

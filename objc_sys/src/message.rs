@@ -25,12 +25,21 @@ extern "C" {
     pub fn objc_msg_lookup(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
     pub fn objc_msg_lookup_super(sup: *const objc_super, sel: *const objc_selector) -> IMP;
     // objc_msg_lookup_sender
+
+    // objc_msgLookup family available in macOS >= 10.12
 }
 
 extern "C" {
+    // objc_msgSend_noarg
+
     pub fn objc_msgSend();
+    // objc_msgSend_debug
+
     #[cfg(apple)]
     pub fn objc_msgSendSuper();
+    // objc_msgSendSuper2
+    // objc_msgSendSuper2_debug
+
     #[cfg(apple)]
     pub fn method_invoke();
     #[cfg(apple)]
@@ -42,9 +51,14 @@ extern "C" {
 extern "C" {
     /// Not available on `target_arch = "aarch64"`
     pub fn objc_msgSend_stret();
+    // objc_msgSend_stret_debug
+
     /// Not available on `target_arch = "aarch64"`
     #[cfg(apple)]
     pub fn objc_msgSendSuper_stret();
+    // objc_msgSendSuper2_stret
+    // objc_msgSendSuper2_stret_debug
+
     /// Not available on `target_arch = "aarch64"`
     #[cfg(apple)]
     pub fn method_invoke_stret();
@@ -59,6 +73,7 @@ extern "C" {
 extern "C" {
     /// Only available on `target_arch = "x86_64"` or `target_arch = "x86"`
     pub fn objc_msgSend_fpret();
+    // objc_msgSend_fpret_debug
 }
 
 #[cfg(target_arch = "x86_64")] // __x86_64__
@@ -66,4 +81,5 @@ extern "C" {
     /// Only available on `target_arch = "x86_64"`
     #[cfg(apple)]
     pub fn objc_msgSend_fp2ret();
+    // objc_msgSend_fp2ret_debug
 }
