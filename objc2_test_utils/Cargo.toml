@@ -12,7 +12,7 @@ categories = [
     "development-tools::testing",
     "os::macos-apis",
 ]
-repository = "https://github.com/madsmtm/objc"
+repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc_test_utils/"
 license = "MIT"
 

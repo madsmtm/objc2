@@ -13,7 +13,7 @@ categories = [
     "os::macos-apis",
 ]
 readme = "README.md"
-repository = "https://github.com/madsmtm/objc"
+repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc_exception/"
 license = "MIT"
 

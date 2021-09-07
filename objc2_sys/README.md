@@ -3,7 +3,7 @@
 [![Latest version](https://badgen.net/crates/v/objc_sys)](https://crates.io/crates/objc_sys)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/objc_sys/badge.svg)](https://docs.rs/objc_sys/)
-[![CI Status](https://github.com/madsmtm/objc/workflows/CI/badge.svg)](https://github.com/madsmtm/objc/actions)
+[![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
 
 Raw Rust bindings to core Objective-C runtimes and ABIs.
 

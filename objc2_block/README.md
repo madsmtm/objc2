@@ -3,7 +3,7 @@
 [![Latest version](https://badgen.net/crates/v/block)](https://crates.io/crates/block)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/block/badge.svg)](https://docs.rs/block/)
-[![CI Status](https://github.com/madsmtm/objc/workflows/CI/badge.svg)](https://github.com/madsmtm/objc/actions)
+[![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
 
 Rust interface for Apple's C language extension of blocks.
 

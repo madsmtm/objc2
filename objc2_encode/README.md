@@ -3,7 +3,7 @@
 [![Latest version](https://badgen.net/crates/v/objc-encode)](https://crates.io/crates/objc-encode)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/objc-encode/badge.svg)](https://docs.rs/objc-encode/)
-[![CI Status](https://github.com/madsmtm/objc/workflows/CI/badge.svg)](https://github.com/madsmtm/objc/actions)
+[![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
 
 The Objective-C directive `@encode` encodes types as strings for usage in
 various places in the runtime.
@@ -79,5 +79,5 @@ This project is licensed under the MIT license, see [`../LICENSE.txt`].
 Work is in progress to make it dual-licensed under the Apache License
 (Version 2.0) as well.
 
-[`examples`]: https://github.com/madsmtm/objc/tree/master/objc_encode/examples
-[`../LICENSE.txt`]: https://github.com/madsmtm/objc/blob/master/LICENSE.txt
+[`examples`]: https://github.com/madsmtm/objc2/tree/master/objc_encode/examples
+[`../LICENSE.txt`]: https://github.com/madsmtm/objc2/blob/master/LICENSE.txt

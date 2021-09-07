@@ -11,7 +11,7 @@ categories = [
     # "no_std" # TODO
     "os::macos-apis",
 ]
-repository = "https://github.com/madsmtm/objc"
+repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc_sys/"
 license = "MIT"
 
