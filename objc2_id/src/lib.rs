@@ -14,7 +14,7 @@ Weak references may be created using the [`WeakId`] struct.
 ```no_run
 # use objc2::msg_send;
 use objc2::runtime::{Class, Object};
-use objc2_id::{Id, WeakId};
+use objc2_id::{Id, Shared, WeakId};
 
 let cls = Class::get("NSObject").unwrap();
 let obj: Id<Object> = unsafe {
@@ -23,7 +23,7 @@ let obj: Id<Object> = unsafe {
 // obj will be released when it goes out of scope
 
 // share the object so we can clone it
-let obj = obj.share();
+let obj: Id<_, Shared> = obj.into();
 let another_ref = obj.clone();
 // dropping our other reference will decrement the retain count
 drop(another_ref);

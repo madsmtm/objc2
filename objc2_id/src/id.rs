@@ -39,9 +39,9 @@ impl Ownership for Shared {}
 /// may be other references to the object, since a shared [`Id`] can be cloned
 /// to provide exactly that.
 ///
-/// An owned [`Id`] can be safely "downgraded", that is, turned into to a
-/// shared [`Id`] using [`Id::share`], but there is no way to do the opposite
-/// safely.
+/// An [`Id<T, Owned>`] can be safely "downgraded", that is, turned into to a
+/// `Id<T, Shared>` using `From`/`Into`. The opposite is not safely possible,
+/// but the unsafe option [`Id::from_shared`] is provided.
 ///
 /// `Option<Id<T, O>>` is guaranteed to have the same size as a pointer to the
 /// object.
@@ -66,11 +66,16 @@ impl Ownership for Shared {}
 /// # Examples
 ///
 /// ```no_run
-/// let owned: Id<T, Owned>;
-/// let mut_ref: &mut T = *owned;
+/// # use objc2::{class, msg_send};
+/// # use objc2::runtime::Object;
+/// # use objc2_id::{Id, Owned, Shared};
+/// # type T = Object;
+/// let mut owned: Id<T, Owned>;
+/// # owned = unsafe { Id::from_retained_ptr(msg_send![class!(NSObject), new]) };
+/// let mut_ref: &mut T = &mut *owned;
 /// // Do something with `&mut T` here
 ///
-/// let shared: Id<T, Shared> = owned.share();
+/// let shared: Id<T, Shared> = owned.into();
 /// let cloned: Id<T, Shared> = shared.clone();
 /// // Do something with `&T` here
 /// ```
@@ -149,15 +154,31 @@ where
     }
 }
 
-// TODO: Change this to be a [`From`] implementation.
-impl<T> Id<T, Owned>
-where
-    T: Message,
-{
-    /// Downgrade an owned [`Id`] to a [`ShareId`], allowing it to be cloned.
-    pub fn share(self) -> ShareId<T> {
-        let ptr = ManuallyDrop::new(self).ptr;
-        unsafe { Id::new(ptr) }
+impl<T: Message> Id<T, Owned> {
+    /// Promote a shared [`Id`] to an owned one, allowing it to be mutated.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that there are no other pointers to the same
+    /// object (which also means that the given [`Id`] should have a retain
+    /// count of exactly 1 all cases, except when autoreleases are involved).
+    #[inline]
+    pub unsafe fn from_shared(obj: Id<T, Shared>) -> Self {
+        // Note: We can't debug_assert retainCount because of autoreleases
+        let ptr = ManuallyDrop::new(obj).ptr;
+        // SAFETY: The pointer is valid
+        // Ownership rules are upheld by the caller
+        <Id<T, Owned>>::new(ptr)
+    }
+}
+
+impl<T: Message> From<Id<T, Owned>> for Id<T, Shared> {
+    /// Downgrade from an owned to a shared [`Id`], allowing it to be cloned.
+    #[inline]
+    fn from(obj: Id<T, Owned>) -> Self {
+        let ptr = ManuallyDrop::new(obj).ptr;
+        // SAFETY: The pointer is valid, and ownership is simply decreased
+        unsafe { <Id<T, Shared>>::new(ptr) }
     }
 }
 
@@ -365,7 +386,7 @@ mod tests {
         };
         assert!(retain_count(&obj) == 1);
 
-        let obj = obj.share();
+        let obj: Id<_, Shared> = obj.into();
         assert!(retain_count(&obj) == 1);
 
         let cloned = obj.clone();

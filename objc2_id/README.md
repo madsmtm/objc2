@@ -28,7 +28,7 @@ let obj: Id<Object> = unsafe {
 // obj will be released when it goes out of scope
 
 // share the object so we can clone it
-let obj = obj.share();
+let obj: Id<_, Shared> = obj.into();
 let another_ref = obj.clone();
 // dropping our other reference will decrement the retain count
 drop(another_ref);
