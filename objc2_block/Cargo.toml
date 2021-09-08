@@ -1,0 +1,28 @@
+[package]
+name = "objc2_block"
+# Remember to update html_root_url in lib.rs and README.md
+version = "0.1.6"
+authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
+edition = "2018"
+
+description = "Interface for Apple's C language extension of blocks."
+keywords = ["objective-c", "macos", "ios", "blocks"]
+categories = [
+    "api-bindings",
+    "development-tools::ffi",
+    "os::macos-apis",
+]
+readme = "README.md"
+repository = "https://github.com/madsmtm/objc2"
+documentation = "https://docs.rs/objc2_block/"
+license = "MIT"
+
+exclude = [
+    "tests-ios/**",
+]
+
+[dependencies]
+objc2_encode = { path = "../objc2_encode" }
+
+[dev-dependencies]
+objc2_test_utils = { path = "../objc2_test_utils" }

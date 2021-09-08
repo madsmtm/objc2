@@ -1,0 +1,27 @@
+[package]
+name = "objc2_foundation"
+version = "0.1.1" # Remember to update html_root_url in lib.rs
+authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
+edition = "2018"
+
+description = "Bindings to the Objective-C Foundation framework."
+keywords = ["objective-c", "macos", "ios", "cocoa", "uikit"]
+categories = [
+    "api-bindings",
+    "development-tools::ffi",
+    "os::macos-apis",
+]
+readme = "README.md"
+repository = "https://github.com/madsmtm/objc2"
+documentation = "https://docs.rs/objc2_foundation/"
+license = "MIT"
+
+[features]
+default = ["block"]
+# Provided as a way to cut down on dependencies
+block = ["objc2_block"]
+
+[dependencies]
+objc2_block = { path = "../objc2_block", optional = true }
+objc2 = { path = "../objc2" }
+objc2_id = { path = "../objc2_id" }
