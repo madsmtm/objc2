@@ -1,5 +1,6 @@
 use core::ffi::c_void;
 use core::fmt;
+use core::ptr::NonNull;
 use core::slice;
 use core::str;
 use std::os::raw::c_char;
@@ -15,7 +16,7 @@ pub trait INSCopying: INSObject {
     fn copy(&self) -> ShareId<Self::Output> {
         unsafe {
             let obj: *mut Self::Output = msg_send![self, copy];
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         }
     }
 }
@@ -26,7 +27,7 @@ pub trait INSMutableCopying: INSObject {
     fn mutable_copy(&self) -> Id<Self::Output> {
         unsafe {
             let obj: *mut Self::Output = msg_send![self, mutableCopy];
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         }
     }
 }
@@ -65,7 +66,7 @@ pub trait INSString: INSObject {
             let obj: *mut Self = msg_send![obj, initWithBytes:bytes
                                                        length:string.len()
                                                      encoding:UTF8_ENCODING];
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         }
     }
 }

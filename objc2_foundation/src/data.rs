@@ -1,8 +1,8 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
-use core::ffi::c_void;
 use core::ops::Range;
 use core::slice;
+use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
@@ -37,7 +37,7 @@ pub trait INSData: INSObject {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:bytes_ptr
                                                        length:bytes.len()];
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         }
     }
 
@@ -60,7 +60,7 @@ pub trait INSData: INSObject {
                                                              length:bytes.len()
                                                         deallocator:dealloc];
             core::mem::forget(bytes);
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         }
     }
 }

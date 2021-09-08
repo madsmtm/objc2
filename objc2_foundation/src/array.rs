@@ -3,6 +3,7 @@ use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::ops::{Index, Range};
+use core::ptr::NonNull;
 
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
@@ -78,7 +79,7 @@ where
     let obj: *mut A = msg_send![cls, alloc];
     let obj: *mut A = msg_send![obj, initWithObjects:refs.as_ptr()
                                                count:refs.len()];
-    Id::from_retained_ptr(obj)
+    Id::new(NonNull::new_unchecked(obj))
 }
 
 pub trait INSArray: INSObject {
@@ -148,10 +149,7 @@ pub trait INSArray: INSObject {
         array
             .to_vec()
             .into_iter()
-            .map(|obj| unsafe {
-                let obj_ptr: *const Self::Item = obj;
-                Id::from_ptr(obj_ptr as *mut Self::Item)
-            })
+            .map(|obj| unsafe { Id::retain(obj.into()) })
             .collect()
     }
 
@@ -170,7 +168,7 @@ pub trait INSArray: INSObject {
         Self: INSArray<Own = Shared>,
     {
         let obj = self.object_at(index);
-        unsafe { Id::from_ptr(obj as *const _ as *mut Self::Item) }
+        unsafe { Id::retain(obj.into()) }
     }
 
     fn from_slice(slice: &[ShareId<Self::Item>]) -> Id<Self>
@@ -187,10 +185,7 @@ pub trait INSArray: INSObject {
     {
         self.to_vec()
             .into_iter()
-            .map(|obj| unsafe {
-                let obj_ptr: *const Self::Item = obj;
-                Id::from_ptr(obj_ptr as *mut Self::Item)
-            })
+            .map(|obj| unsafe { Id::retain(obj.into()) })
             .collect()
     }
 }
@@ -276,7 +271,7 @@ pub trait INSMutableArray: INSArray {
     ) -> Id<Self::Item, Self::Own> {
         let old_obj = unsafe {
             let obj = self.object_at(index);
-            Id::from_ptr(obj as *const _ as *mut Self::Item)
+            Id::retain(obj.into())
         };
         unsafe {
             let _: () = msg_send![self, replaceObjectAtIndex:index
@@ -288,7 +283,7 @@ pub trait INSMutableArray: INSArray {
     fn remove_object_at(&mut self, index: usize) -> Id<Self::Item, Self::Own> {
         let obj = unsafe {
             let obj = self.object_at(index);
-            Id::from_ptr(obj as *const _ as *mut Self::Item)
+            Id::retain(obj.into())
         };
         unsafe {
             let _: () = msg_send![self, removeObjectAtIndex: index];
@@ -299,7 +294,7 @@ pub trait INSMutableArray: INSArray {
     fn remove_last_object(&mut self) -> Id<Self::Item, Self::Own> {
         let obj = self
             .last_object()
-            .map(|obj| unsafe { Id::from_ptr(obj as *const _ as *mut Self::Item) });
+            .map(|obj| unsafe { Id::retain(obj.into()) });
         unsafe {
             let _: () = msg_send![self, removeLastObject];
         }

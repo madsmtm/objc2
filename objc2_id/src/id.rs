@@ -71,7 +71,7 @@ impl Ownership for Shared {}
 /// # use objc2_id::{Id, Owned, Shared};
 /// # type T = Object;
 /// let mut owned: Id<T, Owned>;
-/// # owned = unsafe { Id::from_retained_ptr(msg_send![class!(NSObject), new]) };
+/// # owned = unsafe { Id::new(msg_send![class!(NSObject), new]) };
 /// let mut_ref: &mut T = &mut *owned;
 /// // Do something with `&mut T` here
 ///
@@ -106,7 +106,53 @@ where
     T: Message,
     O: Ownership,
 {
-    unsafe fn new(ptr: NonNull<T>) -> Id<T, O> {
+    /// Constructs an [`Id`] to an object that already has +1 retain count.
+    ///
+    /// This is useful when you have a retain count that has been handed off
+    /// from somewhere else, usually Objective-C methods like `init`, `alloc`,
+    /// `new`, `copy`, or methods with the `ns_returns_retained` attribute.
+    ///
+    /// Since most of the above methods create new objects, and you therefore
+    /// hold unique access to the object, you would often set the ownership to
+    /// be [`Owned`].
+    ///
+    /// But some immutable objects (like `NSString`) don't always return
+    /// unique references, so in those case you would use [`Shared`].
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure the given object has +1 retain count, and that
+    /// the object pointer otherwise follows the same safety requirements as
+    /// in [`Id::retain`].
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// # use objc2::{class, msg_send};
+    /// # use objc2::runtime::{Class, Object};
+    /// # use objc2_id::{Id, Owned};
+    /// let cls: &Class;
+    /// # let cls = class!(NSObject);
+    /// let obj: &mut Object = unsafe { msg_send![cls, alloc] };
+    /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![obj, init]) };
+    /// // Or in this case simply just:
+    /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![cls, new]) };
+    /// ```
+    ///
+    /// ```no_run
+    /// # use objc2::{class, msg_send};
+    /// # use objc2::runtime::Object;
+    /// # use objc2_id::{Id, Shared};
+    /// # type NSString = Object;
+    /// let cls = class!(NSString);
+    /// // NSString is immutable, so don't create an owned reference to it
+    /// let obj: Id<NSString, Shared> = unsafe { Id::new(msg_send![cls, new]) };
+    /// ```
+    #[inline]
+    // Note: We don't take a reference as a parameter since it would be too
+    // easy to accidentally create two aliasing mutable references.
+    pub unsafe fn new(ptr: NonNull<T>) -> Id<T, O> {
+        // SAFETY: Upheld by the caller
         Id {
             ptr,
             item: PhantomData,
@@ -114,43 +160,47 @@ where
         }
     }
 
-    /// Constructs an [`Id`] from a pointer to an unretained object and
-    /// retains it.
+    /// Retains the given object pointer.
     ///
-    /// # Panics
+    /// This is useful when you have been given a pointer to an object from
+    /// some API, and you would like to ensure that the object stays around
+    /// so that you can work with it.
     ///
-    /// Panics if the pointer is null.
+    /// This is rarely used to construct owned [`Id`]s, see [`Id::new`] for
+    /// that.
     ///
     /// # Safety
     ///
-    /// The pointer must be to a valid object and the caller must ensure the
-    /// ownership is correct.
+    /// The caller must ensure that the ownership is correct; that is, there
+    /// must be no [`Owned`] pointers or mutable references to the same
+    /// object, and when creating owned [`Id`]s, there must be no other
+    /// pointers or references to the object.
+    ///
+    /// Additionally, the pointer must be valid as a reference (aligned,
+    /// dereferencable and initialized, see the [`std::ptr`] module for more
+    /// information).
+    //
+    // This would be illegal:
+    // ```no_run
+    // let owned: Id<T, Owned>;
+    // // Lifetime information is discarded
+    // let retained: Id<T, Shared> = unsafe { Id::retain(&*owned) };
+    // // Which means we can still mutate `Owned`:
+    // let x: &mut T = &mut *owned;
+    // // While we have an immutable reference
+    // let y: &T = &*retained;
+    // ```
     #[doc(alias = "objc_retain")]
-    pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
-        let nonnull = NonNull::new(ptr).expect("Attempted to construct an Id from a null pointer");
-        let ptr: *mut T = objc2_sys::objc_retain(nonnull.as_ptr() as *mut _) as *mut _;
-        debug_assert_eq!(
-            ptr,
-            nonnull.as_ptr(),
-            "objc_retain did not return the same pointer"
-        );
-        Id::new(NonNull::new_unchecked(ptr))
-    }
-
-    /// Constructs an [`Id`] from a pointer to a retained object; this won't
-    /// retain the pointer, so the caller must ensure the object has a +1
-    /// retain count.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the pointer is null.
-    ///
-    /// # Safety
-    ///
-    /// The pointer must be to a valid object and the caller must ensure the
-    /// ownership is correct.
-    pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
-        Id::new(NonNull::new(ptr).expect("Attempted to construct an Id from a null pointer"))
+    #[cfg_attr(debug_assertions, inline)]
+    pub unsafe fn retain(ptr: NonNull<T>) -> Id<T, O> {
+        let ptr = ptr.as_ptr() as *mut objc2_sys::objc_object;
+        // SAFETY: The caller upholds that the pointer is valid
+        let res = objc2_sys::objc_retain(ptr);
+        debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
+        // SAFETY: Non-null upheld by the caller, and `objc_retain` always
+        // returns the same pointer, see:
+        // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain
+        Id::new(NonNull::new_unchecked(res as *mut T))
     }
 }
 
@@ -193,8 +243,8 @@ where
     #[doc(alias = "retain")]
     #[inline]
     fn clone(&self) -> ShareId<T> {
-        // SAFETY: We already know the `ptr` is valid
-        unsafe { Id::from_ptr(self.ptr.as_ptr()) }
+        // SAFETY: The pointer is valid
+        unsafe { Id::retain(self.ptr) }
     }
 }
 
@@ -343,6 +393,7 @@ unsafe impl<T: Sync + Send> Send for WeakId<T> {}
 #[cfg(test)]
 mod tests {
     use core::mem::size_of;
+    use core::ptr::NonNull;
 
     use super::{Id, Owned, ShareId, Shared, WeakId};
     use objc2::runtime::Object;
@@ -382,7 +433,7 @@ mod tests {
         let obj: Id<Object> = unsafe {
             let obj: *mut Object = msg_send![cls, alloc];
             let obj: *mut Object = msg_send![obj, init];
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         };
         assert!(retain_count(&obj) == 1);
 
@@ -403,7 +454,7 @@ mod tests {
         let obj: ShareId<Object> = unsafe {
             let obj: *mut Object = msg_send![cls, alloc];
             let obj: *mut Object = msg_send![obj, init];
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         };
 
         let weak = WeakId::new(&obj);

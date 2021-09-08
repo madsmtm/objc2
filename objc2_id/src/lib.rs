@@ -18,7 +18,7 @@ use objc2_id::{Id, Shared, WeakId};
 
 let cls = Class::get("NSObject").unwrap();
 let obj: Id<Object> = unsafe {
-    Id::from_retained_ptr(msg_send![cls, new])
+    Id::new(msg_send![cls, new])
 };
 // obj will be released when it goes out of scope
 

@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 use core::cmp::min;
 use core::marker::PhantomData;
 use core::ops::Index;
-use core::ptr;
+use core::ptr::{self, NonNull};
 
 use objc2::runtime::Class;
 use objc2::{class, msg_send};
@@ -21,7 +21,7 @@ where
     let obj: *mut D = msg_send![obj, initWithObjects:vals.as_ptr()
                                              forKeys:keys.as_ptr()
                                                count:count];
-    Id::from_retained_ptr(obj)
+    Id::new(NonNull::new_unchecked(obj))
 }
 
 pub trait INSDictionary: INSObject {
@@ -95,8 +95,8 @@ pub trait INSDictionary: INSObject {
 
     fn keys_array(&self) -> Id<NSSharedArray<Self::Key>> {
         unsafe {
-            let keys: *mut NSSharedArray<Self::Key> = msg_send![self, allKeys];
-            Id::from_ptr(keys)
+            let keys = msg_send![self, allKeys];
+            Id::retain(NonNull::new_unchecked(keys))
         }
     }
 
@@ -111,7 +111,7 @@ pub trait INSDictionary: INSObject {
     fn into_values_array(dict: Id<Self>) -> Id<NSArray<Self::Value, Self::Own>> {
         unsafe {
             let vals = msg_send![dict, allValues];
-            Id::from_ptr(vals)
+            Id::retain(NonNull::new_unchecked(vals))
         }
     }
 }

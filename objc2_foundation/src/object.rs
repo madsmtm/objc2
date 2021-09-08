@@ -1,4 +1,5 @@
 use core::any::Any;
+use core::ptr::NonNull;
 
 use objc2::msg_send;
 use objc2::runtime::{Class, BOOL, NO};
@@ -31,7 +32,8 @@ pub trait INSObject: Any + Sized + Message {
     fn description(&self) -> ShareId<NSString> {
         unsafe {
             let result: *mut NSString = msg_send![self, description];
-            Id::from_ptr(result)
+            // TODO: Verify that description always returns a non-null string
+            Id::retain(NonNull::new_unchecked(result))
         }
     }
 
@@ -42,11 +44,7 @@ pub trait INSObject: Any + Sized + Message {
 
     fn new() -> Id<Self> {
         let cls = Self::class();
-        unsafe {
-            let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, init];
-            Id::from_retained_ptr(obj)
-        }
+        unsafe { Id::new(msg_send![cls, new]) }
     }
 }
 

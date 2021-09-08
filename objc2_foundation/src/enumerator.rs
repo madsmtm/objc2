@@ -1,6 +1,7 @@
 use core::marker::PhantomData;
 use core::mem;
 use core::ptr;
+use core::ptr::NonNull;
 use core::slice;
 use std::os::raw::c_ulong;
 
@@ -30,7 +31,7 @@ where
     /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
         NSEnumerator {
-            id: Id::from_ptr(ptr),
+            id: Id::retain(NonNull::new(ptr).unwrap()),
             item: PhantomData,
         }
     }
