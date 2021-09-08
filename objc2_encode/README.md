@@ -73,12 +73,4 @@ See the [`examples`] folder for more complex usage.
 objc2_encode = "1.1.0"
 ```
 
-# License
-
-This project is licensed under the MIT license, see [`../LICENSE.txt`].
-
-Work is in progress to make it dual-licensed under the Apache License
-(Version 2.0) as well.
-
 [`examples`]: https://github.com/madsmtm/objc2/tree/master/objc2_encode/examples
-[`../LICENSE.txt`]: https://github.com/madsmtm/objc2/blob/master/LICENSE.txt
