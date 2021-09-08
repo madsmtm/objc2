@@ -1,5 +1,6 @@
 [package]
-name = "block"
+name = "objc2_block"
+# Remember to update html_root_url in lib.rs and README.md
 version = "0.1.6"
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
@@ -13,7 +14,7 @@ categories = [
 ]
 readme = "README.md"
 repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/block/"
+documentation = "https://docs.rs/objc2_block/"
 license = "MIT"
 
 exclude = [

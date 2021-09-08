@@ -5,9 +5,9 @@ use core::ops::Range;
 use core::slice;
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
-#[cfg(feature = "block")]
-use block::{Block, ConcreteBlock};
 use objc::msg_send;
+#[cfg(feature = "block")]
+use objc2_block::{Block, ConcreteBlock};
 use objc_id::Id;
 
 pub trait INSData: INSObject {

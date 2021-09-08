@@ -18,9 +18,10 @@ license = "MIT"
 
 [features]
 default = ["block"]
+# Provided as a way to cut down on dependencies
+block = ["objc2_block"]
 
 [dependencies]
-# Feature provided as a way to cut down on dependencies
-block = { path = "../objc2_block", optional = true, version = "0.1" }
+objc2_block = { path = "../objc2_block", optional = true }
 objc = { path = "../objc2", version = "0.2.7" }
 objc_id = { path = "../objc2_id", version = "0.1.1" }
