@@ -6,6 +6,7 @@ use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
 use core::ptr::NonNull;
 
+use objc2::rc::AutoreleasePool;
 use objc2::rc::WeakPtr;
 use objc2::runtime::Object;
 use objc2::Message;
@@ -202,9 +203,36 @@ where
         // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain
         Id::new(NonNull::new_unchecked(res as *mut T))
     }
+
+    #[cfg_attr(debug_assertions, inline)]
+    fn autorelease_inner(self) -> *mut T {
+        let ptr = ManuallyDrop::new(self).ptr.as_ptr() as *mut objc2_sys::objc_object;
+        // SAFETY: The `ptr` is guaranteed to be valid and have at least one
+        // retain count.
+        // And because of the ManuallyDrop, we don't call the Drop
+        // implementation, so the object won't also be released there.
+        let res = unsafe { objc2_sys::objc_autorelease(ptr) };
+        debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
+        res as *mut T
+    }
 }
 
 impl<T: Message> Id<T, Owned> {
+    /// Autoreleases the owned [`Id`], returning a mutable reference bound to
+    /// the pool.
+    ///
+    /// The object is not immediately released, but will be when the innermost
+    /// / current autorelease pool (given as a parameter) is drained.
+    #[doc(alias = "objc_autorelease")]
+    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
+    #[inline]
+    pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p mut T {
+        let ptr = self.autorelease_inner();
+        // SAFETY: The pointer is valid as a reference, and we've consumed
+        // the unique access to the `Id` so mutability is safe.
+        unsafe { pool.ptr_as_mut(ptr) }
+    }
+
     /// Promote a shared [`Id`] to an owned one, allowing it to be mutated.
     ///
     /// # Safety
@@ -219,6 +247,22 @@ impl<T: Message> Id<T, Owned> {
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
         <Id<T, Owned>>::new(ptr)
+    }
+}
+
+impl<T: Message> Id<T, Shared> {
+    /// Autoreleases the shared [`Id`], returning an aliased reference bound
+    /// to the pool.
+    ///
+    /// The object is not immediately released, but will be when the innermost
+    /// / current autorelease pool (given as a parameter) is drained.
+    #[doc(alias = "objc_autorelease")]
+    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
+    #[inline]
+    pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p T {
+        let ptr = self.autorelease_inner();
+        // SAFETY: The pointer is valid as a reference
+        unsafe { pool.ptr_as_ref(ptr) }
     }
 }
 
