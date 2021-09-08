@@ -6,7 +6,7 @@
 [![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
 [![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
 
-Raw Rust bindings to core Objective-C runtimes and ABIs.
+Raw Rust bindings to the Objective-C runtime and ABI.
 
 ## Runtime Support
 

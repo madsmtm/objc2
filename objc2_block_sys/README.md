@@ -6,7 +6,7 @@
 [![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
 [![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
 
-Raw Rust bindings to Apple's C language extension of blocks
+Raw Rust bindings to Apple's C language extension of blocks.
 
 ## Runtime Support
 

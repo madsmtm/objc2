@@ -4,7 +4,7 @@ version = "0.0.0" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
-description = "Raw bindings to Objective-C runtimes"
+description = "Raw bindings to the Objective-C runtime and ABI"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "sys"]
 categories = [
     "external-ffi-bindings",

@@ -6,7 +6,7 @@
 [![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
 [![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
 
-Rust interface for Apple's C language extension of blocks.
+Apple's C language extension of blocks in Rust.
 
 For more information on the specifics of the block implementation, see
 Clang's documentation: http://clang.llvm.org/docs/Block-ABI-Apple.html
