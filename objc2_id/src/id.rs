@@ -2,9 +2,11 @@ use core::any::Any;
 use core::fmt;
 use core::hash;
 use core::marker::PhantomData;
+use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
+use core::ptr::NonNull;
 
-use objc2::rc::{StrongPtr, WeakPtr};
+use objc2::rc::WeakPtr;
 use objc2::runtime::Object;
 use objc2::Message;
 
@@ -35,9 +37,23 @@ impl Ownership for Shared {}
 /// provide more references to the object.
 /// An owned [`Id`] can be "downgraded" freely to a [`ShareId`], but there is
 /// no way to safely upgrade back.
+#[repr(transparent)]
 pub struct Id<T, O = Owned> {
-    ptr: StrongPtr,
+    /// A pointer to the contained object. The pointer is always retained.
+    ///
+    /// It is important that this is `NonNull`, since we want to dereference
+    /// it later, and be able to use the null-pointer optimization.
+    ///
+    /// Additionally, covariance is correct because we're either the unique
+    /// owner of `T` (O = Owned), or `T` is immutable (O = Shared).
+    ptr: NonNull<T>,
+    /// Necessary for dropck even though we never actually run T's destructor,
+    /// because it might have a `dealloc` that assumes that contained
+    /// references outlive the type.
+    ///
+    /// See <https://doc.rust-lang.org/nightly/nomicon/phantom-data.html>
     item: PhantomData<T>,
+    /// To prevent warnings about unused type parameters.
     own: PhantomData<O>,
 }
 
@@ -46,7 +62,7 @@ where
     T: Message,
     O: Ownership,
 {
-    unsafe fn new(ptr: StrongPtr) -> Id<T, O> {
+    unsafe fn new(ptr: NonNull<T>) -> Id<T, O> {
         Id {
             ptr,
             item: PhantomData,
@@ -66,11 +82,14 @@ where
     /// The pointer must be to a valid object and the caller must ensure the
     /// ownership is correct.
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
-        assert!(
-            !ptr.is_null(),
-            "Attempted to construct an Id from a null pointer"
+        let nonnull = NonNull::new(ptr).expect("Attempted to construct an Id from a null pointer");
+        let ptr: *mut T = objc2_sys::objc_retain(nonnull.as_ptr() as *mut _) as *mut _;
+        debug_assert_eq!(
+            ptr,
+            nonnull.as_ptr(),
+            "objc_retain did not return the same pointer"
         );
-        Id::new(StrongPtr::retain(ptr as *mut Object))
+        Id::new(NonNull::new_unchecked(ptr))
     }
 
     /// Constructs an [`Id`] from a pointer to a retained object; this won't
@@ -86,11 +105,7 @@ where
     /// The pointer must be to a valid object and the caller must ensure the
     /// ownership is correct.
     pub unsafe fn from_retained_ptr(ptr: *mut T) -> Id<T, O> {
-        assert!(
-            !ptr.is_null(),
-            "Attempted to construct an Id from a null pointer"
-        );
-        Id::new(StrongPtr::new(ptr as *mut Object))
+        Id::new(NonNull::new(ptr).expect("Attempted to construct an Id from a null pointer"))
     }
 }
 
@@ -100,7 +115,7 @@ where
 {
     /// Downgrade an owned [`Id`] to a [`ShareId`], allowing it to be cloned.
     pub fn share(self) -> ShareId<T> {
-        let Id { ptr, .. } = self;
+        let ptr = ManuallyDrop::new(self).ptr;
         unsafe { Id::new(ptr) }
     }
 }
@@ -110,7 +125,32 @@ where
     T: Message,
 {
     fn clone(&self) -> ShareId<T> {
-        unsafe { Id::new(self.ptr.clone()) }
+        unsafe { Id::from_ptr(self.ptr.as_ptr()) }
+    }
+}
+
+/// `#[may_dangle]` (see [this][dropck_eyepatch]) doesn't apply here since we
+/// don't run `T`'s destructor (rather, we want to discourage having `T`s with
+/// a destructor); and even if we did run the destructor, it would not be safe
+/// to add since we cannot verify that a `dealloc` method doesn't access
+/// borrowed data.
+///
+/// [dropck_eyepatch]: https://doc.rust-lang.org/nightly/nomicon/dropck.html#an-escape-hatch
+impl<T, O> Drop for Id<T, O> {
+    /// Releases the retained object.
+    ///
+    /// The contained object's destructor (if it has one) is never run!
+    #[doc(alias = "objc_release")]
+    #[doc(alias = "release")]
+    #[inline]
+    fn drop(&mut self) {
+        // We could technically run the destructor for `T` when `O = Owned`,
+        // and when `O = Shared` with (retainCount == 1), but that would be
+        // confusing and inconsistent since we cannot guarantee that it's run.
+
+        // SAFETY: The `ptr` is guaranteed to be valid and have at least one
+        // retain count
+        unsafe { objc2_sys::objc_release(self.ptr.as_ptr() as *mut _) };
     }
 }
 
@@ -143,13 +183,13 @@ impl<T, O> Deref for Id<T, O> {
     type Target = T;
 
     fn deref(&self) -> &T {
-        unsafe { &*(*self.ptr as *mut T) }
+        unsafe { self.ptr.as_ref() }
     }
 }
 
 impl<T> DerefMut for Id<T, Owned> {
     fn deref_mut(&mut self) -> &mut T {
-        unsafe { &mut *(*self.ptr as *mut T) }
+        unsafe { self.ptr.as_mut() }
     }
 }
 
@@ -187,7 +227,7 @@ where
 
 impl<T, O> fmt::Pointer for Id<T, O> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Pointer::fmt(&self.ptr, f)
+        fmt::Pointer::fmt(&self.ptr.as_ptr(), f)
     }
 }
 
@@ -207,8 +247,10 @@ where
 {
     /// Construct a new [`WeakId`] referencing the given [`ShareId`].
     pub fn new(obj: &ShareId<T>) -> WeakId<T> {
+        // SAFETY: The pointer is valid
+        let ptr = unsafe { WeakPtr::new(obj.ptr.as_ptr() as *mut Object) };
         WeakId {
-            ptr: obj.ptr.weak(),
+            ptr,
             item: PhantomData,
         }
     }
@@ -218,11 +260,8 @@ where
     /// Returns [`None`] if the object has been deallocated.
     pub fn load(&self) -> Option<ShareId<T>> {
         let obj = self.ptr.load();
-        if obj.is_null() {
-            None
-        } else {
-            Some(unsafe { Id::new(obj) })
-        }
+        let ptr = *ManuallyDrop::new(obj).deref().deref() as *mut T;
+        NonNull::new(ptr).map(|ptr| unsafe { Id::new(ptr) })
     }
 }
 
@@ -234,7 +273,9 @@ unsafe impl<T: Sync + Send> Send for WeakId<T> {}
 
 #[cfg(test)]
 mod tests {
-    use super::{Id, ShareId, WeakId};
+    use core::mem::size_of;
+
+    use super::{Id, Owned, ShareId, Shared, WeakId};
     use objc2::runtime::Object;
     use objc2::{class, msg_send};
 
@@ -246,6 +287,24 @@ mod tests {
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
+    }
+
+    pub struct TestType {
+        _data: [u8; 0], // TODO: `UnsafeCell`?
+    }
+
+    #[test]
+    fn test_size_of() {
+        assert_eq!(size_of::<Id<TestType, Owned>>(), size_of::<&TestType>());
+        assert_eq!(size_of::<Id<TestType, Shared>>(), size_of::<&TestType>());
+        assert_eq!(
+            size_of::<Option<Id<TestType, Owned>>>(),
+            size_of::<&TestType>()
+        );
+        assert_eq!(
+            size_of::<Option<Id<TestType, Shared>>>(),
+            size_of::<&TestType>()
+        );
     }
 
     #[test]
