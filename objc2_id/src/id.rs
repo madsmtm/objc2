@@ -1,6 +1,9 @@
+#[cfg(feature = "alloc")]
+use alloc::borrow;
 use core::any::Any;
 use core::fmt;
 use core::hash;
+use core::iter::FusedIterator;
 use core::marker::PhantomData;
 use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
@@ -102,11 +105,7 @@ pub struct Id<T, O = Owned> {
 }
 
 // TODO: Maybe make most of these functions "associated" functions instead?
-impl<T, O> Id<T, O>
-where
-    T: Message,
-    O: Ownership,
-{
+impl<T: Message, O: Ownership> Id<T, O> {
     /// Constructs an [`Id`] to an object that already has +1 retain count.
     ///
     /// This is useful when you have a retain count that has been handed off
@@ -276,10 +275,7 @@ impl<T: Message> From<Id<T, Owned>> for Id<T, Shared> {
     }
 }
 
-impl<T> Clone for Id<T, Shared>
-where
-    T: Message,
-{
+impl<T: Message> Clone for Id<T, Shared> {
     /// Makes a clone of the shared object.
     ///
     /// This increases the object's reference count.
@@ -345,46 +341,82 @@ unsafe impl<T: Sync> Sync for Id<T, Owned> {}
 impl<T, O> Deref for Id<T, O> {
     type Target = T;
 
+    /// Obtain an immutable reference to the object.
     fn deref(&self) -> &T {
+        // SAFETY: The pointer's validity is verified when the type is created
         unsafe { self.ptr.as_ref() }
     }
 }
 
 impl<T> DerefMut for Id<T, Owned> {
+    /// Obtain a mutable reference to the object.
     fn deref_mut(&mut self) -> &mut T {
+        // SAFETY: The pointer's validity is verified when the type is created
+        // Additionally, the owned `Id` is the unique owner of the object, so
+        // mutability is safe.
         unsafe { self.ptr.as_mut() }
     }
 }
 
-impl<T, O> PartialEq for Id<T, O>
-where
-    T: PartialEq,
-{
-    fn eq(&self, other: &Id<T, O>) -> bool {
-        self.deref() == other.deref()
+impl<T: PartialEq, O> PartialEq for Id<T, O> {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        (**self).eq(&**other)
+    }
+
+    #[inline]
+    fn ne(&self, other: &Self) -> bool {
+        (**self).ne(&**other)
     }
 }
 
-impl<T, O> Eq for Id<T, O> where T: Eq {}
+impl<T: Eq, O> Eq for Id<T, O> {}
 
-impl<T, O> hash::Hash for Id<T, O>
-where
-    T: hash::Hash,
-{
-    fn hash<H>(&self, state: &mut H)
-    where
-        H: hash::Hasher,
-    {
-        self.deref().hash(state)
+impl<T: PartialOrd, O> PartialOrd for Id<T, O> {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        (**self).partial_cmp(&**other)
+    }
+    #[inline]
+    fn lt(&self, other: &Self) -> bool {
+        (**self).lt(&**other)
+    }
+    #[inline]
+    fn le(&self, other: &Self) -> bool {
+        (**self).le(&**other)
+    }
+    #[inline]
+    fn ge(&self, other: &Self) -> bool {
+        (**self).ge(&**other)
+    }
+    #[inline]
+    fn gt(&self, other: &Self) -> bool {
+        (**self).gt(&**other)
     }
 }
 
-impl<T, O> fmt::Debug for Id<T, O>
-where
-    T: fmt::Debug,
-{
+impl<T: Ord, O> Ord for Id<T, O> {
+    #[inline]
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        (**self).cmp(&**other)
+    }
+}
+
+impl<T: hash::Hash, O> hash::Hash for Id<T, O> {
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        (**self).hash(state)
+    }
+}
+
+impl<T: fmt::Display, O> fmt::Display for Id<T, O> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.deref().fmt(f)
+        (**self).fmt(f)
+    }
+}
+
+impl<T: fmt::Debug, O> fmt::Debug for Id<T, O> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        (**self).fmt(f)
     }
 }
 
@@ -393,6 +425,77 @@ impl<T, O> fmt::Pointer for Id<T, O> {
         fmt::Pointer::fmt(&self.ptr.as_ptr(), f)
     }
 }
+
+impl<I: Iterator> Iterator for Id<I, Owned> {
+    type Item = I::Item;
+    fn next(&mut self) -> Option<I::Item> {
+        (**self).next()
+    }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (**self).size_hint()
+    }
+    fn nth(&mut self, n: usize) -> Option<I::Item> {
+        (**self).nth(n)
+    }
+}
+
+impl<I: DoubleEndedIterator> DoubleEndedIterator for Id<I, Owned> {
+    fn next_back(&mut self) -> Option<I::Item> {
+        (**self).next_back()
+    }
+    fn nth_back(&mut self, n: usize) -> Option<I::Item> {
+        (**self).nth_back(n)
+    }
+}
+
+impl<I: ExactSizeIterator> ExactSizeIterator for Id<I, Owned> {
+    fn len(&self) -> usize {
+        (**self).len()
+    }
+}
+
+impl<I: FusedIterator> FusedIterator for Id<I, Owned> {}
+
+#[cfg(feature = "alloc")]
+impl<T, O> borrow::Borrow<T> for Id<T, O> {
+    fn borrow(&self) -> &T {
+        &**self
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<T> borrow::BorrowMut<T> for Id<T, Owned> {
+    fn borrow_mut(&mut self) -> &mut T {
+        &mut **self
+    }
+}
+
+impl<T, O> AsRef<T> for Id<T, O> {
+    fn as_ref(&self) -> &T {
+        &**self
+    }
+}
+
+impl<T> AsMut<T> for Id<T, Owned> {
+    fn as_mut(&mut self) -> &mut T {
+        &mut **self
+    }
+}
+
+// impl<F: Future + Unpin> Future for Id<F, Owned> {
+//     type Output = F::Output;
+//     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+//         F::poll(Pin::new(&mut *self), cx)
+//     }
+// }
+
+// This is valid without `T: Unpin` because we don't implement any projection.
+//
+// See https://doc.rust-lang.org/1.54.0/src/alloc/boxed.rs.html#1652-1675
+// and the `Arc` implementation.
+impl<T, O> Unpin for Id<T, O> {}
+
+// TODO: When stabilized impl Fn traits & CoerceUnsized
 
 /// A convenient alias for a shared [`Id`].
 pub type ShareId<T> = Id<T, Shared>;
@@ -404,10 +507,7 @@ pub struct WeakId<T> {
     item: PhantomData<T>,
 }
 
-impl<T> WeakId<T>
-where
-    T: Message,
-{
+impl<T: Message> WeakId<T> {
     /// Construct a new [`WeakId`] referencing the given [`ShareId`].
     pub fn new(obj: &ShareId<T>) -> WeakId<T> {
         // SAFETY: The pointer is valid

@@ -19,3 +19,7 @@ license = "MIT"
 [dependencies]
 objc2 = { path = "../objc2" }
 objc2_sys = { path = "../objc2_sys" }
+
+[features]
+default = [] # TODO: Add alloc?
+alloc = []

@@ -41,6 +41,9 @@ assert!(weak.load().is_none());
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2_id/0.1.1")]
 
+#[cfg(alloc)]
+extern crate alloc;
+
 pub use id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
 
 mod id;
