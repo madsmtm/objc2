@@ -23,21 +23,59 @@ pub trait Ownership: Any {}
 impl Ownership for Owned {}
 impl Ownership for Shared {}
 
-/// A pointer type for Objective-C's reference counted objects.
+/// An pointer for Objective-C reference counted objects.
 ///
-/// The object of an [`Id`] is retained and sent a `release` message when
-/// the [`Id`] is dropped.
+/// [`Id`] strongly references or "retains" the given object `T`, and
+/// "releases" it again when dropped, thereby ensuring it will be deallocated
+/// at the right time.
 ///
-/// An [`Id`] may be either [`Owned`] or [`Shared`], represented by the types
-/// [`Id`] and [`ShareId`], respectively.
-/// If owned, there are no other references to the object and the [`Id`] can
-/// be mutably dereferenced.
-/// [`ShareId`], however, can only be immutably dereferenced because there may
-/// be other references to the object, but a [`ShareId`] can be cloned to
-/// provide more references to the object.
-/// An owned [`Id`] can be "downgraded" freely to a [`ShareId`], but there is
-/// no way to safely upgrade back.
+/// An [`Id`] can either be [`Owned`] or [`Shared`], represented with the `O`
+/// type parameter.
+///
+/// If owned, it is guaranteed that there are no other references to the
+/// object, and the [`Id`] can therefore be mutably dereferenced.
+///
+/// If shared, however, it can only be immutably dereferenced because there
+/// may be other references to the object, since a shared [`Id`] can be cloned
+/// to provide exactly that.
+///
+/// An owned [`Id`] can be safely "downgraded", that is, turned into to a
+/// shared [`Id`] using [`Id::share`], but there is no way to do the opposite
+/// safely.
+///
+/// `Option<Id<T, O>>` is guaranteed to have the same size as a pointer to the
+/// object.
+///
+/// # Comparison to `std` types
+///
+/// `Id<T, Owned>` can be thought of as the Objective-C equivalent of [`Box`]
+/// from the standard library: It is a unique pointer to some allocated
+/// object, and that means you're allowed to get a mutable reference to it.
+///
+/// Likewise, `Id<T, Shared>` is the Objective-C equivalent of [`Arc`]: It is
+/// a reference-counting pointer that, when cloned, increases the reference
+/// count.
+///
+/// # Caveats
+///
+/// If the inner type implements [`Drop`], that implementation will not be
+/// called, since there is no way to ensure that the Objective-C runtime will
+/// do so. If you need to run some code when the object is destroyed,
+/// implement the `dealloc` method instead.
+///
+/// # Examples
+///
+/// ```no_run
+/// let owned: Id<T, Owned>;
+/// let mut_ref: &mut T = *owned;
+/// // Do something with `&mut T` here
+///
+/// let shared: Id<T, Shared> = owned.share();
+/// let cloned: Id<T, Shared> = shared.clone();
+/// // Do something with `&T` here
+/// ```
 #[repr(transparent)]
+// TODO: Figure out if `Message` bound on `T` would be better here?
 pub struct Id<T, O = Owned> {
     /// A pointer to the contained object. The pointer is always retained.
     ///
@@ -57,6 +95,7 @@ pub struct Id<T, O = Owned> {
     own: PhantomData<O>,
 }
 
+// TODO: Maybe make most of these functions "associated" functions instead?
 impl<T, O> Id<T, O>
 where
     T: Message,
@@ -81,6 +120,7 @@ where
     ///
     /// The pointer must be to a valid object and the caller must ensure the
     /// ownership is correct.
+    #[doc(alias = "objc_retain")]
     pub unsafe fn from_ptr(ptr: *mut T) -> Id<T, O> {
         let nonnull = NonNull::new(ptr).expect("Attempted to construct an Id from a null pointer");
         let ptr: *mut T = objc2_sys::objc_retain(nonnull.as_ptr() as *mut _) as *mut _;
@@ -109,6 +149,7 @@ where
     }
 }
 
+// TODO: Change this to be a [`From`] implementation.
 impl<T> Id<T, Owned>
 where
     T: Message,
@@ -124,7 +165,14 @@ impl<T> Clone for Id<T, Shared>
 where
     T: Message,
 {
+    /// Makes a clone of the shared object.
+    ///
+    /// This increases the object's reference count.
+    #[doc(alias = "objc_retain")]
+    #[doc(alias = "retain")]
+    #[inline]
     fn clone(&self) -> ShareId<T> {
+        // SAFETY: We already know the `ptr` is valid
         unsafe { Id::from_ptr(self.ptr.as_ptr()) }
     }
 }
