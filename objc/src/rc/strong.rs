@@ -27,7 +27,7 @@ impl StrongPtr {
     ///
     /// The caller must ensure the given object pointer is valid.
     pub unsafe fn retain(ptr: *mut Object) -> Self {
-        StrongPtr(runtime::objc_retain(ptr))
+        Self(runtime::objc_retain(ptr as _) as _)
     }
 
     /// Autoreleases self, meaning that the object is not immediately released,
@@ -37,7 +37,7 @@ impl StrongPtr {
         let ptr = self.0;
         mem::forget(self);
         unsafe {
-            runtime::objc_autorelease(ptr);
+            runtime::objc_autorelease(ptr as _);
         }
         ptr
     }
@@ -51,7 +51,7 @@ impl StrongPtr {
 impl Drop for StrongPtr {
     fn drop(&mut self) {
         unsafe {
-            runtime::objc_release(self.0);
+            runtime::objc_release(self.0 as _);
         }
     }
 }

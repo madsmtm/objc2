@@ -1,17 +1,9 @@
 use core::mem;
+use objc_sys::{objc_msgSend, objc_msgSendSuper, objc_msgSendSuper_stret, objc_msgSend_stret};
 
 use super::MsgSendFn;
 use crate::runtime::Imp;
 use crate::Encode;
-
-// TODO: C-unwind
-extern "C" {
-    fn objc_msgSend();
-    fn objc_msgSend_stret();
-
-    fn objc_msgSendSuper();
-    fn objc_msgSendSuper_stret();
-}
 
 /// If the size of an object is larger than two eightbytes, it has class
 /// MEMORY. If the type has class MEMORY, then the caller provides space for
@@ -19,6 +11,7 @@ extern "C" {
 ///
 /// <http://people.freebsd.org/~obrien/amd64-elf-abi.pdf>
 impl<T: Encode> MsgSendFn for T {
+    // TODO: Should we use objc_msgSend_fpret and objc_msgSend_fp2ret ?
     const MSG_SEND: Imp = {
         if mem::size_of::<T>() <= 16 {
             objc_msgSend

@@ -26,9 +26,9 @@ impl CachedSel {
         // It should be fine to use `Relaxed` ordering here because `sel_registerName` is
         // thread-safe.
         if ptr.is_null() {
-            let sel = runtime::sel_registerName(name.as_ptr() as *const _);
-            self.ptr.store(sel.as_ptr() as *mut _, Ordering::Relaxed);
-            sel
+            let ptr = runtime::sel_registerName(name.as_ptr() as *const _);
+            self.ptr.store(ptr as *mut _, Ordering::Relaxed);
+            Sel::from_ptr(ptr as *const _)
         } else {
             Sel::from_ptr(ptr)
         }
@@ -56,7 +56,7 @@ impl CachedClass {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);
         if ptr.is_null() {
-            let cls = runtime::objc_getClass(name.as_ptr() as *const _);
+            let cls = runtime::objc_getClass(name.as_ptr() as *const _) as *const Class;
             self.ptr.store(cls as *mut _, Ordering::Relaxed);
             cls.as_ref()
         } else {

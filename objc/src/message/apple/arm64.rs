@@ -1,13 +1,8 @@
+use objc_sys::{objc_msgSend, objc_msgSendSuper};
+
 use super::MsgSendFn;
 use crate::runtime::Imp;
 use crate::Encode;
-
-// TODO: C-unwind
-extern "C" {
-    fn objc_msgSend();
-
-    fn objc_msgSendSuper();
-}
 
 /// `objc_msgSend_stret` is not even available in arm64.
 ///

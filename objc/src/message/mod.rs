@@ -39,15 +39,6 @@ mod platform;
 use self::platform::{send_super_unverified, send_unverified};
 use self::verify::{verify_message_signature, VerificationError};
 
-/// Specifies the superclass of an instance.
-#[repr(C)]
-struct Super {
-    /// Specifies an instance of a class.
-    pub receiver: *mut Object,
-    /// Specifies the particular superclass of the instance to message.
-    pub superclass: *const Class,
-}
-
 /// This trait marks types that can be sent Objective-C messages.
 ///
 /// Examples include objects, classes, and blocks.
