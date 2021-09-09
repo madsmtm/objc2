@@ -1,17 +1,17 @@
-#[cfg(feature = "alloc")]
 use alloc::borrow;
+use alloc::boxed::Box;
 use core::any::Any;
+use core::cell::UnsafeCell;
 use core::fmt;
 use core::hash;
 use core::iter::FusedIterator;
 use core::marker::PhantomData;
 use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
+use core::ptr;
 use core::ptr::NonNull;
 
 use objc2::rc::AutoreleasePool;
-use objc2::rc::WeakPtr;
-use objc2::runtime::Object;
 use objc2::Message;
 
 /// A type used to mark that a struct owns the object(s) it contains,
@@ -59,6 +59,9 @@ impl Ownership for Shared {}
 /// Likewise, `Id<T, Shared>` is the Objective-C equivalent of [`Arc`]: It is
 /// a reference-counting pointer that, when cloned, increases the reference
 /// count.
+///
+/// [`Box`]: alloc::boxed::Box
+/// [`Arc`]: alloc::sync::Arc
 ///
 /// # Caveats
 ///
@@ -179,6 +182,8 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// Additionally, the pointer must be valid as a reference (aligned,
     /// dereferencable and initialized, see the [`std::ptr`] module for more
     /// information).
+    ///
+    /// [`std::ptr`]: core::ptr
     //
     // This would be illegal:
     // ```no_run
@@ -456,14 +461,12 @@ impl<I: ExactSizeIterator> ExactSizeIterator for Id<I, Owned> {
 
 impl<I: FusedIterator> FusedIterator for Id<I, Owned> {}
 
-#[cfg(feature = "alloc")]
 impl<T, O> borrow::Borrow<T> for Id<T, O> {
     fn borrow(&self) -> &T {
         &**self
     }
 }
 
-#[cfg(feature = "alloc")]
 impl<T> borrow::BorrowMut<T> for Id<T, Owned> {
     fn borrow_mut(&mut self) -> &mut T {
         &mut **self
@@ -502,29 +505,91 @@ pub type ShareId<T> = Id<T, Shared>;
 
 /// A pointer type for a weak reference to an Objective-C reference counted
 /// object.
+///
+/// Allows breaking reference cycles and safely checking whether the object
+/// has been deallocated.
+#[repr(transparent)]
 pub struct WeakId<T> {
-    ptr: WeakPtr,
+    /// We give the runtime the address to this box, so that it can modify it
+    /// even if the `WeakId` is moved.
+    ///
+    /// Loading may modify the pointer through a shared reference, so we use
+    /// an UnsafeCell to get a *mut without self being mutable.
+    inner: Box<UnsafeCell<*mut T>>,
+    /// TODO: Variance and dropck
     item: PhantomData<T>,
 }
 
 impl<T: Message> WeakId<T> {
-    /// Construct a new [`WeakId`] referencing the given [`ShareId`].
-    pub fn new(obj: &ShareId<T>) -> WeakId<T> {
-        // SAFETY: The pointer is valid
-        let ptr = unsafe { WeakPtr::new(obj.ptr.as_ptr() as *mut Object) };
-        WeakId {
-            ptr,
+    /// Construct a new [`WeakId`] referencing the given shared [`Id`].
+    #[doc(alias = "objc_initWeak")]
+    pub fn new(obj: &Id<T, Shared>) -> Self {
+        // Note that taking `&Id<T, Owned>` would not be safe since that would
+        // allow loading an `Id<T, Shared>` later on.
+
+        // SAFETY: `obj` is valid
+        unsafe { Self::new_inner(&**obj as *const T as *mut T) }
+    }
+
+    /// # Safety
+    ///
+    /// The object must be valid or null.
+    unsafe fn new_inner(obj: *mut T) -> Self {
+        let inner = Box::new(UnsafeCell::new(ptr::null_mut()));
+        // SAFETY: `ptr` will never move, and the caller verifies `obj`
+        objc2_sys::objc_initWeak(inner.get() as _, obj as _);
+        Self {
+            inner,
             item: PhantomData,
         }
     }
 
-    /// Load a [`ShareId`] from the [`WeakId`] if the object still exists.
+    /// Load a shared (and retained) [`Id`] if the object still exists.
     ///
     /// Returns [`None`] if the object has been deallocated.
-    pub fn load(&self) -> Option<ShareId<T>> {
-        let obj = self.ptr.load();
-        let ptr = *ManuallyDrop::new(obj).deref().deref() as *mut T;
-        NonNull::new(ptr).map(|ptr| unsafe { Id::new(ptr) })
+    #[doc(alias = "upgrade")]
+    #[doc(alias = "objc_loadWeak")]
+    #[doc(alias = "objc_loadWeakRetained")]
+    #[inline]
+    pub fn load(&self) -> Option<Id<T, Shared>> {
+        let ptr: *mut *mut objc2_sys::objc_object = self.inner.get() as _;
+        let obj = unsafe { objc2_sys::objc_loadWeakRetained(ptr) } as *mut T;
+        NonNull::new(obj).map(|obj| unsafe { Id::new(obj) })
+    }
+}
+
+impl<T> Drop for WeakId<T> {
+    /// Drops the `WeakId` pointer.
+    #[doc(alias = "objc_destroyWeak")]
+    fn drop(&mut self) {
+        unsafe {
+            objc2_sys::objc_destroyWeak(self.inner.get() as _);
+        }
+    }
+}
+
+impl<T> Clone for WeakId<T> {
+    /// Makes a clone of the `WeakId` that points to the same object.
+    #[doc(alias = "objc_copyWeak")]
+    fn clone(&self) -> Self {
+        let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
+        unsafe {
+            objc2_sys::objc_copyWeak(ptr.get() as _, self.inner.get() as _);
+        }
+        Self {
+            inner: ptr,
+            item: PhantomData,
+        }
+    }
+}
+
+impl<T: Message> Default for WeakId<T> {
+    /// Constructs a new `WeakId<T>` that doesn't reference any object.
+    ///
+    /// Calling [`Self::load`] on the return value always gives [`None`].
+    fn default() -> Self {
+        // SAFETY: The pointer is null
+        unsafe { Self::new_inner(ptr::null_mut()) }
     }
 }
 
@@ -533,6 +598,16 @@ unsafe impl<T: Sync + Send> Sync for WeakId<T> {}
 
 /// This implementation follows the same reasoning as `Id<T, Shared>`.
 unsafe impl<T: Sync + Send> Send for WeakId<T> {}
+
+// Unsure about the Debug bound on T, see std::sync::Weak
+impl<T: fmt::Debug> fmt::Debug for WeakId<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(WeakId)")
+    }
+}
+
+// Underneath this is just a `Box`
+impl<T> Unpin for WeakId<T> {}
 
 #[cfg(test)]
 mod tests {
@@ -568,6 +643,11 @@ mod tests {
         assert_eq!(
             size_of::<Option<Id<TestType, Shared>>>(),
             size_of::<&TestType>()
+        );
+
+        assert_eq!(
+            size_of::<Option<WeakId<TestType>>>(),
+            size_of::<*const ()>()
         );
     }
 
@@ -610,5 +690,12 @@ mod tests {
 
         drop(obj);
         assert!(weak.load().is_none());
+    }
+
+    #[test]
+    fn test_weak_default() {
+        let weak: WeakId<Object> = WeakId::default();
+        assert!(weak.load().is_none());
+        drop(weak);
     }
 }
