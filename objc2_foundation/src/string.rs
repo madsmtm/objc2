@@ -6,14 +6,14 @@ use core::str;
 use std::os::raw::c_char;
 
 use objc2::msg_send;
-use objc2::rc::{Id, ShareId};
+use objc2::rc::{Id, Owned, Shared};
 
 use super::INSObject;
 
 pub trait INSCopying: INSObject {
     type Output: INSObject;
 
-    fn copy(&self) -> ShareId<Self::Output> {
+    fn copy(&self) -> Id<Self::Output, Shared> {
         unsafe {
             let obj: *mut Self::Output = msg_send![self, copy];
             Id::new(NonNull::new_unchecked(obj))
@@ -24,7 +24,7 @@ pub trait INSCopying: INSObject {
 pub trait INSMutableCopying: INSObject {
     type Output: INSObject;
 
-    fn mutable_copy(&self) -> Id<Self::Output> {
+    fn mutable_copy(&self) -> Id<Self::Output, Owned> {
         unsafe {
             let obj: *mut Self::Output = msg_send![self, mutableCopy];
             Id::new(NonNull::new_unchecked(obj))
@@ -58,7 +58,7 @@ pub trait INSString: INSObject {
         }
     }
 
-    fn from_str(string: &str) -> Id<Self> {
+    fn from_str(string: &str) -> Id<Self, Owned> {
         let cls = Self::class();
         let bytes = string.as_ptr() as *const c_void;
         unsafe {

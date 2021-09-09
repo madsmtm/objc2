@@ -6,7 +6,7 @@ use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
-use objc2::rc::Id;
+use objc2::rc::{Id, Owned};
 #[cfg(feature = "block")]
 use objc2_block::{Block, ConcreteBlock};
 
@@ -30,7 +30,7 @@ pub trait INSData: INSObject {
         unsafe { slice::from_raw_parts(ptr, len) }
     }
 
-    fn with_bytes(bytes: &[u8]) -> Id<Self> {
+    fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
         let cls = Self::class();
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
@@ -42,7 +42,7 @@ pub trait INSData: INSObject {
     }
 
     #[cfg(feature = "block")]
-    fn from_vec(bytes: Vec<u8>) -> Id<Self> {
+    fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
         let capacity = bytes.capacity();
         let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
             // Recreate the Vec and let it drop

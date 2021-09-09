@@ -59,10 +59,10 @@ use crate::Message;
 /// ```no_run
 /// use objc2::msg_send;
 /// use objc2::runtime::{Class, Object};
-/// use objc2::rc::{Id, WeakId, Shared};
+/// use objc2::rc::{Id, Owned, Shared, WeakId};
 ///
 /// let cls = Class::get("NSObject").unwrap();
-/// let obj: Id<Object> = unsafe {
+/// let obj: Id<Object, Owned> = unsafe {
 ///     Id::new(msg_send![cls, new])
 /// };
 /// // obj will be released when it goes out of scope
@@ -97,7 +97,7 @@ use crate::Message;
 #[repr(transparent)]
 // TODO: Figure out if `Message` bound on `T` would be better here?
 // TODO: Add `?Sized + ptr::Thin` bound on `T` to allow for extern types
-pub struct Id<T, O: Ownership = Owned> {
+pub struct Id<T, O: Ownership> {
     /// A pointer to the contained object. The pointer is always retained.
     ///
     /// It is important that this is `NonNull`, since we want to dereference
@@ -296,7 +296,7 @@ impl<T: Message> Clone for Id<T, Shared> {
     #[doc(alias = "objc_retain")]
     #[doc(alias = "retain")]
     #[inline]
-    fn clone(&self) -> ShareId<T> {
+    fn clone(&self) -> Self {
         // SAFETY: The pointer is valid
         unsafe { Id::retain(self.ptr) }
     }
@@ -509,14 +509,11 @@ impl<T, O: Ownership> Unpin for Id<T, O> {}
 
 // TODO: When stabilized impl Fn traits & CoerceUnsized
 
-/// A convenient alias for a shared [`Id`].
-pub type ShareId<T> = Id<T, Shared>;
-
 #[cfg(test)]
 mod tests {
     use core::ptr::NonNull;
 
-    use super::{Id, Shared};
+    use super::{Id, Owned, Shared};
     use crate::rc::autoreleasepool;
     use crate::runtime::Object;
     use crate::{class, msg_send};
@@ -543,7 +540,7 @@ mod tests {
     #[test]
     fn test_clone() {
         let cls = class!(NSObject);
-        let obj: Id<Object> = unsafe {
+        let obj: Id<Object, Owned> = unsafe {
             let obj: *mut Object = msg_send![cls, alloc];
             let obj: *mut Object = msg_send![obj, init];
             Id::new(NonNull::new_unchecked(obj))

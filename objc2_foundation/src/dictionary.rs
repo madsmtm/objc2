@@ -4,13 +4,13 @@ use core::marker::PhantomData;
 use core::ops::Index;
 use core::ptr::{self, NonNull};
 
-use objc2::rc::{Id, Owned, Ownership, ShareId};
+use objc2::rc::{Id, Owned, Ownership, Shared};
 use objc2::runtime::Class;
 use objc2::{class, msg_send};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSSharedArray};
 
-unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D>
+unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D, Owned>
 where
     D: INSDictionary,
     T: INSCopying<Output = D::Key>,
@@ -93,14 +93,14 @@ pub trait INSDictionary: INSObject {
         }
     }
 
-    fn keys_array(&self) -> Id<NSSharedArray<Self::Key>> {
+    fn keys_array(&self) -> Id<NSSharedArray<Self::Key>, Owned> {
         unsafe {
             let keys = msg_send![self, allKeys];
             Id::retain(NonNull::new_unchecked(keys))
         }
     }
 
-    fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<Self::Value, Self::Own>>) -> Id<Self>
+    fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<Self::Value, Self::Own>>) -> Id<Self, Owned>
     where
         T: INSCopying<Output = Self::Key>,
     {
@@ -108,7 +108,7 @@ pub trait INSDictionary: INSObject {
         unsafe { from_refs(keys, &vals_refs) }
     }
 
-    fn into_values_array(dict: Id<Self>) -> Id<NSArray<Self::Value, Self::Own>> {
+    fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<Self::Value, Self::Own>, Owned> {
         unsafe {
             let vals = msg_send![dict, allValues];
             Id::retain(NonNull::new_unchecked(vals))
@@ -117,8 +117,8 @@ pub trait INSDictionary: INSObject {
 }
 
 pub struct NSDictionary<K, V> {
-    key: PhantomData<ShareId<K>>,
-    obj: PhantomData<Id<V>>,
+    key: PhantomData<Id<K, Shared>>,
+    obj: PhantomData<Id<V, Owned>>,
 }
 
 object_impl!(NSDictionary<K, V>);
@@ -166,12 +166,12 @@ where
 #[cfg(test)]
 mod tests {
     use alloc::vec;
-    use objc2::rc::Id;
+    use objc2::rc::{Owned, Id};
 
     use super::{INSDictionary, NSDictionary};
     use crate::{INSArray, INSObject, INSString, NSObject, NSString};
 
-    fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
+    fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>, Owned> {
         let string = NSString::from_str(key);
         let obj = NSObject::new();
         NSDictionary::from_keys_and_objects(&[&*string], vec![obj])

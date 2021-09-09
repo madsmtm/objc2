@@ -5,7 +5,7 @@ use core::marker::PhantomData;
 use core::ops::{Index, Range};
 use core::ptr::NonNull;
 
-use objc2::rc::{Id, Owned, Ownership, ShareId, Shared};
+use objc2::rc::{Id, Owned, Ownership, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
 use objc2::{Encode, Encoding};
@@ -71,7 +71,7 @@ unsafe impl Encode for NSRange {
         Encoding::Struct("_NSRange", &[usize::ENCODING, usize::ENCODING]);
 }
 
-unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A>
+unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A, Owned>
 where
     A: INSArray,
 {
@@ -126,7 +126,7 @@ pub trait INSArray: INSObject {
         }
     }
 
-    fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self> {
+    fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self, Owned> {
         let refs: Vec<&Self::Item> = vec.iter().map(|obj| &**obj).collect();
         unsafe { from_refs(&refs) }
     }
@@ -145,7 +145,7 @@ pub trait INSArray: INSObject {
         self.objects_in_range(0..self.count())
     }
 
-    fn into_vec(array: Id<Self>) -> Vec<Id<Self::Item, Self::Own>> {
+    fn into_vec(array: Id<Self, Owned>) -> Vec<Id<Self::Item, Self::Own>> {
         array
             .to_vec()
             .into_iter()
@@ -163,7 +163,7 @@ pub trait INSArray: INSObject {
         }
     }
 
-    fn shared_object_at(&self, index: usize) -> ShareId<Self::Item>
+    fn shared_object_at(&self, index: usize) -> Id<Self::Item, Shared>
     where
         Self: INSArray<Own = Shared>,
     {
@@ -171,7 +171,7 @@ pub trait INSArray: INSObject {
         unsafe { Id::retain(obj.into()) }
     }
 
-    fn from_slice(slice: &[ShareId<Self::Item>]) -> Id<Self>
+    fn from_slice(slice: &[Id<Self::Item, Shared>]) -> Id<Self, Owned>
     where
         Self: INSArray<Own = Shared>,
     {
@@ -179,7 +179,7 @@ pub trait INSArray: INSObject {
         unsafe { from_refs(&refs) }
     }
 
-    fn to_shared_vec(&self) -> Vec<ShareId<Self::Item>>
+    fn to_shared_vec(&self) -> Vec<Id<Self::Item, Shared>>
     where
         Self: INSArray<Own = Shared>,
     {
@@ -415,9 +415,9 @@ mod tests {
 
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
-    use objc2::rc::Id;
+    use objc2::rc::{Id, Owned};
 
-    fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
+    fn sample_array(len: usize) -> Id<NSArray<NSObject>, Owned> {
         let mut vec = Vec::with_capacity(len);
         for _ in 0..len {
             vec.push(NSObject::new());
@@ -441,7 +441,7 @@ mod tests {
         assert!(array.first_object().unwrap() == array.object_at(0));
         assert!(array.last_object().unwrap() == array.object_at(3));
 
-        let empty_array: Id<NSArray<NSObject>> = INSObject::new();
+        let empty_array: Id<NSArray<NSObject>, Owned> = INSObject::new();
         assert!(empty_array.first_object().is_none());
         assert!(empty_array.last_object().is_none());
     }
