@@ -8,10 +8,10 @@ use core::str;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
+use objc2::rc::Id;
 use objc2::runtime::Class;
 use objc2::Encode;
 use objc2::{class, msg_send};
-use objc2_id::Id;
 
 use super::{INSCopying, INSObject};
 

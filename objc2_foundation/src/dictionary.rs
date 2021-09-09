@@ -4,9 +4,9 @@ use core::marker::PhantomData;
 use core::ops::Index;
 use core::ptr::{self, NonNull};
 
+use objc2::rc::{Id, Owned, Ownership, ShareId};
 use objc2::runtime::Class;
 use objc2::{class, msg_send};
-use objc2_id::{Id, Owned, Ownership, ShareId};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSSharedArray};
 
@@ -166,7 +166,7 @@ where
 #[cfg(test)]
 mod tests {
     use alloc::vec;
-    use objc2_id::Id;
+    use objc2::rc::Id;
 
     use super::{INSDictionary, NSDictionary};
     use crate::{INSArray, INSObject, INSString, NSObject, NSString};

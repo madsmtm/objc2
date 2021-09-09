@@ -5,10 +5,10 @@ use core::marker::PhantomData;
 use core::ops::{Index, Range};
 use core::ptr::NonNull;
 
+use objc2::rc::{Id, Owned, Ownership, ShareId, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
 use objc2::{Encode, Encoding};
-use objc2_id::{Id, Owned, Ownership, ShareId, Shared};
 
 use super::{INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
@@ -415,7 +415,7 @@ mod tests {
 
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
-    use objc2_id::Id;
+    use objc2::rc::Id;
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
         let mut vec = Vec::with_capacity(len);

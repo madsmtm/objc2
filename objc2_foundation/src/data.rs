@@ -6,9 +6,9 @@ use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
+use objc2::rc::Id;
 #[cfg(feature = "block")]
 use objc2_block::{Block, ConcreteBlock};
-use objc2_id::Id;
 
 pub trait INSData: INSObject {
     fn len(&self) -> usize {

@@ -1,58 +1,70 @@
-/*!
-Utilities for reference counting Objective-C objects.
-
-The utilities of the `rc` module provide ARC-like semantics for working with
-Objective-C's reference counted objects in Rust.
-A `StrongPtr` retains an object and releases the object when dropped.
-A `WeakPtr` will not retain the object, but can be upgraded to a `StrongPtr`
-and safely fails if the object has been deallocated.
-
-These utilities are not intended to provide a fully safe interface, but can be
-useful when writing higher-level Rust wrappers for Objective-C code.
-
-See [the clang documentation][clang-arc] and [the Apple article on memory
-management][mem-mgmt] (similar document exists [for Core Foundation][mem-cf])
-for more information on automatic and manual reference counting.
-
-It can also be useful to [enable Malloc Debugging][mem-debug] if you're trying
-to figure out if/where your application has memory errors and leaks.
-
-
-[clang-arc]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html
-[mem-mgmt]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html
-[mem-cf]: https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/CFMemoryMgmt.html
-[mem-debug]: https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/MallocDebug.html
-
-# Example
-
-``` no_run
-# use objc2::{class, msg_send};
-# use objc2::rc::{autoreleasepool, StrongPtr};
-// StrongPtr will release the object when dropped
-let obj = unsafe {
-    StrongPtr::new(msg_send![class!(NSObject), new])
-};
-
-// Cloning retains the object an additional time
-let cloned = obj.clone();
-autoreleasepool(|_| {
-    // Autorelease consumes the StrongPtr, but won't
-    // actually release until the end of an autoreleasepool
-    cloned.autorelease();
-});
-
-// Weak references won't retain the object
-let weak = obj.weak();
-drop(obj);
-assert!(weak.load().is_null());
-```
-*/
+//! Utilities for reference counting Objective-C objects.
+//!
+//! The utilities of the `rc` module provide ARC-like semantics for working
+//! with Objective-C's reference counted objects in Rust.
+//!
+//! A `StrongPtr` retains an object and releases the object when dropped.
+//! A `WeakPtr` will not retain the object, but can be upgraded to a `StrongPtr`
+//! and safely fails if the object has been deallocated.
+//!
+//! These utilities are not intended to provide a fully safe interface, but can be
+//! useful when writing higher-level Rust wrappers for Objective-C code.
+//!
+//! A smart pointer version of this is provided with the `Id` struct.
+//! To ensure that Objective-C objects are retained and released
+//! at the proper times.
+//!
+//! To enforce aliasing rules, an `Id` can be either owned or shared; if it is
+//! owned, meaning the `Id` is the only reference to the object, it can be
+//! mutably dereferenced. An owned `Id` can be downgraded to a shared `Id`
+//! which can be cloned to allow multiple references.
+//!
+//! Weak references may be created using the [`WeakId`] struct.
+//!
+//! See [the clang documentation][clang-arc] and [the Apple article on memory
+//! management][mem-mgmt] (similar document exists [for Core Foundation][mem-cf])
+//! for more information on automatic and manual reference counting.
+//!
+//! It can also be useful to [enable Malloc Debugging][mem-debug] if you're trying
+//! to figure out if/where your application has memory errors and leaks.
+//!
+//!
+//! [clang-arc]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html
+//! [mem-mgmt]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html
+//! [mem-cf]: https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/CFMemoryMgmt.html
+//! [mem-debug]: https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/MallocDebug.html
+//!
+//! # Example
+//!
+//! ``` no_run
+//! # use objc2::{class, msg_send};
+//! # use objc2::rc::{autoreleasepool, StrongPtr};
+//! // StrongPtr will release the object when dropped
+//! let obj = unsafe {
+//!     StrongPtr::new(msg_send![class!(NSObject), new])
+//! };
+//!
+//! // Cloning retains the object an additional time
+//! let cloned = obj.clone();
+//! autoreleasepool(|_| {
+//!     // Autorelease consumes the StrongPtr, but won't
+//!     // actually release until the end of an autoreleasepool
+//!     cloned.autorelease();
+//! });
+//!
+//! // Weak references won't retain the object
+//! let weak = obj.weak();
+//! drop(obj);
+//! assert!(weak.load().is_null());
+//! ```
 
 mod autorelease;
+mod id;
 mod strong;
 mod weak;
 
 pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
+pub use self::id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
 pub use self::strong::StrongPtr;
 pub use self::weak::WeakPtr;
 

@@ -2,9 +2,9 @@ use core::any::Any;
 use core::ptr::NonNull;
 
 use objc2::msg_send;
+use objc2::rc::{Id, ShareId};
 use objc2::runtime::{Class, BOOL, NO};
 use objc2::Message;
-use objc2_id::{Id, ShareId};
 
 use super::NSString;
 

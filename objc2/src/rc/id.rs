@@ -10,8 +10,8 @@ use core::ops::{Deref, DerefMut};
 use core::ptr;
 use core::ptr::NonNull;
 
-use objc2::rc::AutoreleasePool;
-use objc2::Message;
+use super::AutoreleasePool;
+use crate::Message;
 
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
@@ -84,9 +84,33 @@ impl Ownership for Shared {}
 /// # Examples
 ///
 /// ```no_run
+/// use objc2::msg_send;
+/// use objc2::runtime::{Class, Object};
+/// use objc2::rc::{Id, WeakId, Shared};
+///
+/// let cls = Class::get("NSObject").unwrap();
+/// let obj: Id<Object> = unsafe {
+///     Id::new(msg_send![cls, new])
+/// };
+/// // obj will be released when it goes out of scope
+///
+/// // share the object so we can clone it
+/// let obj: Id<_, Shared> = obj.into();
+/// let another_ref = obj.clone();
+/// // dropping our other reference will decrement the retain count
+/// drop(another_ref);
+///
+/// let weak = WeakId::new(&obj);
+/// assert!(weak.load().is_some());
+/// // After the object is deallocated, our weak pointer returns none
+/// drop(obj);
+/// assert!(weak.load().is_none());
+/// ```
+///
+/// ```no_run
 /// # use objc2::{class, msg_send};
 /// # use objc2::runtime::Object;
-/// # use objc2_id::{Id, Owned, Shared};
+/// # use objc2::rc::{Id, Owned, Shared};
 /// # type T = Object;
 /// let mut owned: Id<T, Owned>;
 /// # owned = unsafe { Id::new(msg_send![class!(NSObject), new]) };
@@ -145,7 +169,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// ```no_run
     /// # use objc2::{class, msg_send};
     /// # use objc2::runtime::{Class, Object};
-    /// # use objc2_id::{Id, Owned};
+    /// # use objc2::rc::{Id, Owned};
     /// let cls: &Class;
     /// # let cls = class!(NSObject);
     /// let obj: &mut Object = unsafe { msg_send![cls, alloc] };
@@ -157,7 +181,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// ```no_run
     /// # use objc2::{class, msg_send};
     /// # use objc2::runtime::Object;
-    /// # use objc2_id::{Id, Shared};
+    /// # use objc2::rc::{Id, Shared};
     /// # type NSString = Object;
     /// let cls = class!(NSString);
     /// // NSString is immutable, so don't create an owned reference to it
@@ -627,14 +651,8 @@ mod tests {
     use core::ptr::NonNull;
 
     use super::{Id, Owned, ShareId, Shared, WeakId};
-    use objc2::runtime::Object;
-    use objc2::{class, msg_send};
-
-    #[cfg(not(target_vendor = "apple"))]
-    #[test]
-    fn ensure_linkage() {
-        unsafe { crate::get_class_to_force_linkage() };
-    }
+    use crate::runtime::Object;
+    use crate::{class, msg_send};
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
