@@ -8,18 +8,19 @@
 Rust smart pointers for Objective-C reference counting.
 
 To ensure that Objective-C objects are retained and released
-at the proper times, we can use the Id struct.
+at the proper times, we can use the `Id` struct.
 
 To enforce aliasing rules, an `Id` can be either owned or shared; if it is
 owned, meaning the `Id` is the only reference to the object, it can be mutably
-dereferenced. An owned `Id` can be downgraded to a ShareId
-which can be cloned to allow multiple references.
+dereferenced. An owned `Id` can be downgraded to a shared `Id` which can be
+cloned to allow multiple references.
 
-Weak references may be created using the WeakId struct.
+Weak references may be created using the `WeakId` struct.
 
-``` rust
+```rust , no_run
+use objc2::msg_send;
 use objc2::runtime::{Class, Object};
-use objc2_id::{Id, WeakId};
+use objc2_id::{Id, WeakId, Shared};
 
 let cls = Class::get("NSObject").unwrap();
 let obj: Id<Object> = unsafe {
