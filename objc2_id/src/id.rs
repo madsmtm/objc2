@@ -99,6 +99,7 @@ impl Ownership for Shared {}
 /// ```
 #[repr(transparent)]
 // TODO: Figure out if `Message` bound on `T` would be better here?
+// TODO: Add `?Sized + ptr::Thin` bound on `T` to allow for extern types
 pub struct Id<T, O: Ownership = Owned> {
     /// A pointer to the contained object. The pointer is always retained.
     ///

@@ -10,8 +10,18 @@ and safely fails if the object has been deallocated.
 These utilities are not intended to provide a fully safe interface, but can be
 useful when writing higher-level Rust wrappers for Objective-C code.
 
-For more information on Objective-C's reference counting, see Apple's documentation:
-<https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html>
+See [the clang documentation][clang-arc] and [the Apple article on memory
+management][mem-mgmt] (similar document exists [for Core Foundation][mem-cf])
+for more information on automatic and manual reference counting.
+
+It can also be useful to [enable Malloc Debugging][mem-debug] if you're trying
+to figure out if/where your application has memory errors and leaks.
+
+
+[clang-arc]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html
+[mem-mgmt]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html
+[mem-cf]: https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/CFMemoryMgmt.html
+[mem-debug]: https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/MallocDebug.html
 
 # Example
 

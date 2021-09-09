@@ -13,13 +13,6 @@ use crate::runtime::{objc_autoreleasePoolPop, objc_autoreleasePoolPush};
 ///
 /// And this is not [`Sync`], since you can only autorelease a reference to a
 /// pool on the current thread.
-///
-/// See [the clang documentation][clang-arc] and [the apple article on memory
-/// management][memory-mgmt] for more information on automatic reference
-/// counting.
-///
-/// [clang-arc]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html
-/// [memory-mgmt]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html
 pub struct AutoreleasePool {
     context: *mut c_void,
 }
