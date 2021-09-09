@@ -114,7 +114,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
     #[cfg_attr(feature = "verify_message", inline(always))]
     unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
     where
-        A: MessageArguments + EncodeArguments,
+        A: MessageArguments,
         R: Encode,
     {
         let this = self.as_raw_receiver();
@@ -150,7 +150,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
         args: A,
     ) -> Result<R, MessageError>
     where
-        A: MessageArguments + EncodeArguments,
+        A: MessageArguments,
         R: Encode,
     {
         let this = self.as_raw_receiver();
@@ -280,7 +280,7 @@ unsafe impl<T: Message, O: Ownership> MessageReceiver for Option<Id<T, O>> {
 }
 
 /// Types that may be used as the arguments of an Objective-C message.
-pub trait MessageArguments: Sized {
+pub trait MessageArguments: EncodeArguments {
     /// Invoke an [`Imp`] with the given object, selector, and arguments.
     ///
     /// This method is the primitive used when sending messages and should not
@@ -291,7 +291,7 @@ pub trait MessageArguments: Sized {
 
 macro_rules! message_args_impl {
     ($($a:ident : $t:ident),*) => (
-        impl<$($t),*> MessageArguments for ($($t,)*) {
+        impl<$($t: Encode),*> MessageArguments for ($($t,)*) {
             unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
                 let imp: unsafe extern fn(*mut Object, Sel $(, $t)*) -> R =
                     mem::transmute(imp);
