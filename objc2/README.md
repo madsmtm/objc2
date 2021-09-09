@@ -29,31 +29,33 @@ unsafe {
 
 The utilities of the `rc` module provide ARC-like semantics for working with
 Objective-C's reference counted objects in Rust.
-A `StrongPtr` retains an object and releases the object when dropped.
-A `WeakPtr` will not retain the object, but can be upgraded to a `StrongPtr`
-and safely fails if the object has been deallocated.
+
+An `Id` retains an object and releases the object when dropped.
+A `WeakId` will not retain the object, but can be upgraded to an `Id` and
+safely fails if the object has been deallocated.
 
 ```rust , no_run
 use objc2::{class, msg_send};
-use objc2::rc::{autoreleasepool, StrongPtr};
+use objc2::rc::{autoreleasepool, Id, Shared, WeakId};
+use objc2::runtime::Object;
 
-// StrongPtr will release the object when dropped
-let obj = unsafe {
-    StrongPtr::new(msg_send![class!(NSObject), new])
+// Id will release the object when dropped
+let obj: Id<Object, Shared> = unsafe {
+    Id::new(msg_send![class!(NSObject), new])
 };
 
 // Cloning retains the object an additional time
 let cloned = obj.clone();
-autoreleasepool(|_| {
-    // Autorelease consumes the StrongPtr, but won't
+autoreleasepool(|pool| {
+    // Autorelease consumes the Id, but won't
     // actually release until the end of an autoreleasepool
-    cloned.autorelease();
+    let obj_ref: &Object = cloned.autorelease(pool);
 });
 
 // Weak references won't retain the object
-let weak = obj.weak();
+let weak = WeakId::new(&obj);
 drop(obj);
-assert!(weak.load().is_null());
+assert!(weak.load().is_none());
 ```
 
 ## Declaring classes

@@ -1,12 +1,13 @@
 use core::marker::PhantomData;
 use core::mem;
 use core::ptr;
+use core::ptr::NonNull;
 use core::slice;
 use std::os::raw::c_ulong;
 
+use objc2::rc::{Id, Owned};
 use objc2::runtime::Object;
 use objc2::{msg_send, Encode, Encoding, RefEncode};
-use objc2_id::Id;
 
 use super::INSObject;
 
@@ -14,7 +15,7 @@ pub struct NSEnumerator<'a, T>
 where
     T: INSObject,
 {
-    id: Id<Object>,
+    id: Id<Object, Owned>,
     item: PhantomData<&'a T>,
 }
 
@@ -30,7 +31,7 @@ where
     /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
         NSEnumerator {
-            id: Id::from_ptr(ptr),
+            id: Id::retain(NonNull::new(ptr).unwrap()),
             item: PhantomData,
         }
     }

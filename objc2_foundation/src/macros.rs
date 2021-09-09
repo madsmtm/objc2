@@ -51,13 +51,13 @@ macro_rules! object_impl {
     ($name:ident) => (
         object_impl!($name,);
     );
-    ($name:ident<$($t:ident),+>) => (
-        object_impl!($name, $($t),+);
+    ($name:ident<$($t:ident$(: $b:ident)?),+>) => (
+        object_impl!($name, $($t$(: $b)?),+);
     );
-    ($name:ident, $($t:ident),*) => (
-        unsafe impl<$($t),*> ::objc2::Message for $name<$($t),*> { }
+    ($name:ident, $($t:ident$(: $b:ident)?),*) => (
+        unsafe impl<$($t$(:($b))?),*> ::objc2::Message for $name<$($t),*> { }
 
-        unsafe impl<$($t),*> ::objc2::RefEncode for $name<$($t),*> {
+        unsafe impl<$($t$(: $b)?),*> ::objc2::RefEncode for $name<$($t),*> {
             const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
         }
     );

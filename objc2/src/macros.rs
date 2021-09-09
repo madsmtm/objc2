@@ -66,13 +66,15 @@ macro_rules! sel {
 Sends a message to an object.
 
 The first argument can be any type that dereferences to a type that implements
-[`Message`], like a reference, a pointer, or an `objc2_id::Id` to an object.
+[`Message`], like a reference, a pointer, or an [`rc::Id`] to an
+object.
 
 The syntax is similar to the message syntax in Objective-C.
 
 Variadic arguments are not currently supported.
 
 [`Message`]: crate::Message
+[`rc::Id`]: crate::rc::Id
 
 # Panics
 

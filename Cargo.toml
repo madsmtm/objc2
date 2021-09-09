@@ -6,7 +6,6 @@ members = [
     "objc2_exception",
     "objc2_foundation",
     "objc2_foundation_derive",
-    "objc2_id",
     "objc2_sys",
     "objc2_test_utils",
 ]

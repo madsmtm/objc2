@@ -1,14 +1,14 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
-use core::ffi::c_void;
 use core::ops::Range;
 use core::slice;
+use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
+use objc2::rc::{Id, Owned};
 #[cfg(feature = "block")]
 use objc2_block::{Block, ConcreteBlock};
-use objc2_id::Id;
 
 pub trait INSData: INSObject {
     fn len(&self) -> usize {
@@ -30,19 +30,19 @@ pub trait INSData: INSObject {
         unsafe { slice::from_raw_parts(ptr, len) }
     }
 
-    fn with_bytes(bytes: &[u8]) -> Id<Self> {
+    fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
         let cls = Self::class();
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:bytes_ptr
                                                        length:bytes.len()];
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         }
     }
 
     #[cfg(feature = "block")]
-    fn from_vec(bytes: Vec<u8>) -> Id<Self> {
+    fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
         let capacity = bytes.capacity();
         let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
             // Recreate the Vec and let it drop
@@ -60,7 +60,7 @@ pub trait INSData: INSObject {
                                                              length:bytes.len()
                                                         deallocator:dealloc];
             core::mem::forget(bytes);
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         }
     }
 }

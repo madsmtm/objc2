@@ -3,11 +3,12 @@ use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::ops::{Index, Range};
+use core::ptr::NonNull;
 
+use objc2::rc::{Id, Owned, Ownership, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
 use objc2::{Encode, Encoding};
-use objc2_id::{Id, Owned, Ownership, ShareId, Shared};
 
 use super::{INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
 
@@ -70,7 +71,7 @@ unsafe impl Encode for NSRange {
         Encoding::Struct("_NSRange", &[usize::ENCODING, usize::ENCODING]);
 }
 
-unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A>
+unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A, Owned>
 where
     A: INSArray,
 {
@@ -78,7 +79,7 @@ where
     let obj: *mut A = msg_send![cls, alloc];
     let obj: *mut A = msg_send![obj, initWithObjects:refs.as_ptr()
                                                count:refs.len()];
-    Id::from_retained_ptr(obj)
+    Id::new(NonNull::new_unchecked(obj))
 }
 
 pub trait INSArray: INSObject {
@@ -125,7 +126,7 @@ pub trait INSArray: INSObject {
         }
     }
 
-    fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self> {
+    fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self, Owned> {
         let refs: Vec<&Self::Item> = vec.iter().map(|obj| &**obj).collect();
         unsafe { from_refs(&refs) }
     }
@@ -144,14 +145,11 @@ pub trait INSArray: INSObject {
         self.objects_in_range(0..self.count())
     }
 
-    fn into_vec(array: Id<Self>) -> Vec<Id<Self::Item, Self::Own>> {
+    fn into_vec(array: Id<Self, Owned>) -> Vec<Id<Self::Item, Self::Own>> {
         array
             .to_vec()
             .into_iter()
-            .map(|obj| unsafe {
-                let obj_ptr: *const Self::Item = obj;
-                Id::from_ptr(obj_ptr as *mut Self::Item)
-            })
+            .map(|obj| unsafe { Id::retain(obj.into()) })
             .collect()
     }
 
@@ -165,15 +163,15 @@ pub trait INSArray: INSObject {
         }
     }
 
-    fn shared_object_at(&self, index: usize) -> ShareId<Self::Item>
+    fn shared_object_at(&self, index: usize) -> Id<Self::Item, Shared>
     where
         Self: INSArray<Own = Shared>,
     {
         let obj = self.object_at(index);
-        unsafe { Id::from_ptr(obj as *const _ as *mut Self::Item) }
+        unsafe { Id::retain(obj.into()) }
     }
 
-    fn from_slice(slice: &[ShareId<Self::Item>]) -> Id<Self>
+    fn from_slice(slice: &[Id<Self::Item, Shared>]) -> Id<Self, Owned>
     where
         Self: INSArray<Own = Shared>,
     {
@@ -181,25 +179,22 @@ pub trait INSArray: INSObject {
         unsafe { from_refs(&refs) }
     }
 
-    fn to_shared_vec(&self) -> Vec<ShareId<Self::Item>>
+    fn to_shared_vec(&self) -> Vec<Id<Self::Item, Shared>>
     where
         Self: INSArray<Own = Shared>,
     {
         self.to_vec()
             .into_iter()
-            .map(|obj| unsafe {
-                let obj_ptr: *const Self::Item = obj;
-                Id::from_ptr(obj_ptr as *mut Self::Item)
-            })
+            .map(|obj| unsafe { Id::retain(obj.into()) })
             .collect()
     }
 }
 
-pub struct NSArray<T, O = Owned> {
+pub struct NSArray<T, O: Ownership = Owned> {
     item: PhantomData<Id<T, O>>,
 }
 
-object_impl!(NSArray<T, O>);
+object_impl!(NSArray<T, O: Ownership>);
 
 impl<T, O> INSObject for NSArray<T, O>
 where
@@ -276,7 +271,7 @@ pub trait INSMutableArray: INSArray {
     ) -> Id<Self::Item, Self::Own> {
         let old_obj = unsafe {
             let obj = self.object_at(index);
-            Id::from_ptr(obj as *const _ as *mut Self::Item)
+            Id::retain(obj.into())
         };
         unsafe {
             let _: () = msg_send![self, replaceObjectAtIndex:index
@@ -288,7 +283,7 @@ pub trait INSMutableArray: INSArray {
     fn remove_object_at(&mut self, index: usize) -> Id<Self::Item, Self::Own> {
         let obj = unsafe {
             let obj = self.object_at(index);
-            Id::from_ptr(obj as *const _ as *mut Self::Item)
+            Id::retain(obj.into())
         };
         unsafe {
             let _: () = msg_send![self, removeObjectAtIndex: index];
@@ -299,7 +294,7 @@ pub trait INSMutableArray: INSArray {
     fn remove_last_object(&mut self) -> Id<Self::Item, Self::Own> {
         let obj = self
             .last_object()
-            .map(|obj| unsafe { Id::from_ptr(obj as *const _ as *mut Self::Item) });
+            .map(|obj| unsafe { Id::retain(obj.into()) });
         unsafe {
             let _: () = msg_send![self, removeLastObject];
         }
@@ -345,11 +340,11 @@ pub trait INSMutableArray: INSArray {
     }
 }
 
-pub struct NSMutableArray<T, O = Owned> {
+pub struct NSMutableArray<T, O: Ownership = Owned> {
     item: PhantomData<Id<T, O>>,
 }
 
-object_impl!(NSMutableArray<T, O>);
+object_impl!(NSMutableArray<T, O: Ownership>);
 
 impl<T, O> INSObject for NSMutableArray<T, O>
 where
@@ -420,9 +415,9 @@ mod tests {
 
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
-    use objc2_id::Id;
+    use objc2::rc::{Id, Owned};
 
-    fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
+    fn sample_array(len: usize) -> Id<NSArray<NSObject>, Owned> {
         let mut vec = Vec::with_capacity(len);
         for _ in 0..len {
             vec.push(NSObject::new());
@@ -446,7 +441,7 @@ mod tests {
         assert!(array.first_object().unwrap() == array.object_at(0));
         assert!(array.last_object().unwrap() == array.object_at(3));
 
-        let empty_array: Id<NSArray<NSObject>> = INSObject::new();
+        let empty_array: Id<NSArray<NSObject>, Owned> = INSObject::new();
         assert!(empty_array.first_object().is_none());
         assert!(empty_array.last_object().is_none());
     }

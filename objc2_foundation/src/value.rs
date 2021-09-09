@@ -3,14 +3,15 @@ use core::any::Any;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
+use core::ptr::NonNull;
 use core::str;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
+use objc2::rc::{Id, Owned};
 use objc2::runtime::Class;
 use objc2::Encode;
 use objc2::{class, msg_send};
-use objc2_id::Id;
 
 use super::{INSCopying, INSObject};
 
@@ -35,7 +36,7 @@ pub trait INSValue: INSObject {
         }
     }
 
-    fn from_value(value: Self::Value) -> Id<Self> {
+    fn from_value(value: Self::Value) -> Id<Self, Owned> {
         let cls = Self::class();
         let value_ptr: *const Self::Value = &value;
         let bytes = value_ptr as *const c_void;
@@ -44,7 +45,7 @@ pub trait INSValue: INSObject {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![obj, initWithBytes:bytes
                                                      objCType:encoding.as_ptr()];
-            Id::from_retained_ptr(obj)
+            Id::new(NonNull::new_unchecked(obj))
         }
     }
 }

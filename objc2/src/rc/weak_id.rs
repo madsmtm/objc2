@@ -1,0 +1,168 @@
+use alloc::boxed::Box;
+use core::cell::UnsafeCell;
+use core::fmt;
+use core::marker::PhantomData;
+use core::ptr;
+use core::ptr::NonNull;
+
+use super::{Id, Shared};
+use crate::Message;
+
+/// A pointer type for a weak reference to an Objective-C reference counted
+/// object.
+///
+/// Allows breaking reference cycles and safely checking whether the object
+/// has been deallocated.
+#[repr(transparent)]
+pub struct WeakId<T> {
+    /// We give the runtime the address to this box, so that it can modify it
+    /// even if the `WeakId` is moved.
+    ///
+    /// Loading may modify the pointer through a shared reference, so we use
+    /// an UnsafeCell to get a *mut without self being mutable.
+    inner: Box<UnsafeCell<*mut T>>,
+    /// TODO: Variance and dropck
+    item: PhantomData<T>,
+}
+
+impl<T: Message> WeakId<T> {
+    /// Construct a new [`WeakId`] referencing the given shared [`Id`].
+    #[doc(alias = "objc_initWeak")]
+    pub fn new(obj: &Id<T, Shared>) -> Self {
+        // Note that taking `&Id<T, Owned>` would not be safe since that would
+        // allow loading an `Id<T, Shared>` later on.
+
+        // SAFETY: `obj` is valid
+        unsafe { Self::new_inner(&**obj as *const T as *mut T) }
+    }
+
+    /// # Safety
+    ///
+    /// The object must be valid or null.
+    unsafe fn new_inner(obj: *mut T) -> Self {
+        let inner = Box::new(UnsafeCell::new(ptr::null_mut()));
+        // SAFETY: `ptr` will never move, and the caller verifies `obj`
+        objc2_sys::objc_initWeak(inner.get() as _, obj as _);
+        Self {
+            inner,
+            item: PhantomData,
+        }
+    }
+
+    /// Load a shared (and retained) [`Id`] if the object still exists.
+    ///
+    /// Returns [`None`] if the object has been deallocated.
+    #[doc(alias = "upgrade")]
+    #[doc(alias = "objc_loadWeak")]
+    #[doc(alias = "objc_loadWeakRetained")]
+    #[inline]
+    pub fn load(&self) -> Option<Id<T, Shared>> {
+        let ptr: *mut *mut objc2_sys::objc_object = self.inner.get() as _;
+        let obj = unsafe { objc2_sys::objc_loadWeakRetained(ptr) } as *mut T;
+        NonNull::new(obj).map(|obj| unsafe { Id::new(obj) })
+    }
+}
+
+impl<T> Drop for WeakId<T> {
+    /// Drops the `WeakId` pointer.
+    #[doc(alias = "objc_destroyWeak")]
+    fn drop(&mut self) {
+        unsafe {
+            objc2_sys::objc_destroyWeak(self.inner.get() as _);
+        }
+    }
+}
+
+impl<T> Clone for WeakId<T> {
+    /// Makes a clone of the `WeakId` that points to the same object.
+    #[doc(alias = "objc_copyWeak")]
+    fn clone(&self) -> Self {
+        let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
+        unsafe {
+            objc2_sys::objc_copyWeak(ptr.get() as _, self.inner.get() as _);
+        }
+        Self {
+            inner: ptr,
+            item: PhantomData,
+        }
+    }
+}
+
+impl<T: Message> Default for WeakId<T> {
+    /// Constructs a new `WeakId<T>` that doesn't reference any object.
+    ///
+    /// Calling [`Self::load`] on the return value always gives [`None`].
+    fn default() -> Self {
+        // SAFETY: The pointer is null
+        unsafe { Self::new_inner(ptr::null_mut()) }
+    }
+}
+
+/// This implementation follows the same reasoning as `Id<T, Shared>`.
+unsafe impl<T: Sync + Send> Sync for WeakId<T> {}
+
+/// This implementation follows the same reasoning as `Id<T, Shared>`.
+unsafe impl<T: Sync + Send> Send for WeakId<T> {}
+
+// Unsure about the Debug bound on T, see std::sync::Weak
+impl<T: fmt::Debug> fmt::Debug for WeakId<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(WeakId)")
+    }
+}
+
+// Underneath this is just a `Box`
+impl<T> Unpin for WeakId<T> {}
+
+#[cfg(test)]
+mod tests {
+    use core::ptr::NonNull;
+
+    use super::WeakId;
+    use super::{Id, Shared};
+    use crate::runtime::Object;
+    use crate::{class, msg_send};
+
+    #[test]
+    fn test_weak() {
+        let cls = class!(NSObject);
+        let obj: Id<Object, Shared> = unsafe {
+            let obj: *mut Object = msg_send![cls, alloc];
+            let obj: *mut Object = msg_send![obj, init];
+            Id::new(NonNull::new_unchecked(obj))
+        };
+
+        let weak = WeakId::new(&obj);
+        let strong = weak.load().unwrap();
+        let strong_ptr: *const Object = &*strong;
+        let obj_ptr: *const Object = &*obj;
+        assert_eq!(strong_ptr, obj_ptr);
+        drop(strong);
+
+        drop(obj);
+        assert!(weak.load().is_none());
+    }
+
+    #[test]
+    fn test_weak_clone() {
+        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]) };
+        let weak = WeakId::new(&obj);
+
+        let weak2 = weak.clone();
+
+        let strong = weak.load().unwrap();
+        let strong2 = weak2.load().unwrap();
+        let strong_ptr: *const Object = &*strong;
+        let strong2_ptr: *const Object = &*strong2;
+        let obj_ptr: *const Object = &*obj;
+        assert_eq!(strong_ptr, obj_ptr);
+        assert_eq!(strong2_ptr, obj_ptr);
+    }
+
+    #[test]
+    fn test_weak_default() {
+        let weak: WeakId<Object> = WeakId::default();
+        assert!(weak.load().is_none());
+        drop(weak);
+    }
+}
