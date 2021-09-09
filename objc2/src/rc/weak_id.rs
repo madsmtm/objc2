@@ -136,11 +136,27 @@ mod tests {
         let strong = weak.load().unwrap();
         let strong_ptr: *const Object = &*strong;
         let obj_ptr: *const Object = &*obj;
-        assert!(strong_ptr == obj_ptr);
+        assert_eq!(strong_ptr, obj_ptr);
         drop(strong);
 
         drop(obj);
         assert!(weak.load().is_none());
+    }
+
+    #[test]
+    fn test_weak_clone() {
+        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]) };
+        let weak = WeakId::new(&obj);
+
+        let weak2 = weak.clone();
+
+        let strong = weak.load().unwrap();
+        let strong2 = weak2.load().unwrap();
+        let strong_ptr: *const Object = &*strong;
+        let strong2_ptr: *const Object = &*strong2;
+        let obj_ptr: *const Object = &*obj;
+        assert_eq!(strong_ptr, obj_ptr);
+        assert_eq!(strong2_ptr, obj_ptr);
     }
 
     #[test]

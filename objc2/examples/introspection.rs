@@ -1,4 +1,6 @@
-use objc2::rc::StrongPtr;
+use core::ptr::NonNull;
+
+use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send, sel, Encode};
 
@@ -14,15 +16,15 @@ fn main() {
     }
 
     // Allocate an instance
-    let obj = unsafe {
+    let obj: Id<Object, Owned> = unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
-        let obj: *mut Object = msg_send![obj, init];
-        StrongPtr::new(obj)
+        let obj: NonNull<Object> = msg_send![obj, init];
+        Id::new(obj)
     };
     println!("NSObject address: {:p}", obj);
 
     // Access an ivar of the object
-    let isa: *const Class = unsafe { *(**obj).get_ivar("isa") };
+    let isa: *const Class = unsafe { *obj.get_ivar("isa") };
     println!("NSObject isa: {:?}", isa);
 
     // Inspect a method of the class
@@ -33,6 +35,6 @@ fn main() {
     assert!(*hash_return == usize::ENCODING);
 
     // Invoke a method on the object
-    let hash: usize = unsafe { msg_send![*obj, hash] };
+    let hash: usize = unsafe { msg_send![obj, hash] };
     println!("NSObject hash: {}", hash);
 }

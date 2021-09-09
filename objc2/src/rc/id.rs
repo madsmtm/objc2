@@ -517,11 +517,27 @@ mod tests {
     use core::ptr::NonNull;
 
     use super::{Id, Shared};
+    use crate::rc::autoreleasepool;
     use crate::runtime::Object;
     use crate::{class, msg_send};
 
     fn retain_count(obj: &Object) -> usize {
         unsafe { msg_send![obj, retainCount] }
+    }
+
+    #[test]
+    fn test_autorelease() {
+        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]) };
+
+        let cloned = obj.clone();
+
+        autoreleasepool(|pool| {
+            let _ref = obj.autorelease(pool);
+            assert_eq!(retain_count(&*cloned), 2);
+        });
+
+        // make sure that the autoreleased value has been released
+        assert_eq!(retain_count(&*cloned), 1);
     }
 
     #[test]
