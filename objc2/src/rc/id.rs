@@ -97,6 +97,7 @@ use crate::Message;
 #[repr(transparent)]
 // TODO: Figure out if `Message` bound on `T` would be better here?
 // TODO: Add `?Sized + ptr::Thin` bound on `T` to allow for extern types
+// TODO: Consider changing the name of Id -> Retain
 pub struct Id<T, O: Ownership> {
     /// A pointer to the contained object. The pointer is always retained.
     ///
@@ -219,6 +220,12 @@ impl<T: Message, O: Ownership> Id<T, O> {
 
     #[cfg_attr(debug_assertions, inline)]
     fn autorelease_inner(self) -> *mut T {
+        // Note that this (and the actual `autorelease`) is not an associated
+        // function. This breaks the guideline that smart pointers shouldn't
+        // add inherent methods, but since autoreleasing only works on already
+        // retained objects it is hard to imagine a case where the inner type
+        // has a method with the same name.
+
         let ptr = ManuallyDrop::new(self).ptr.as_ptr() as *mut objc2_sys::objc_object;
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
@@ -228,7 +235,23 @@ impl<T: Message, O: Ownership> Id<T, O> {
         debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
         res as *mut T
     }
+
+    // TODO: objc_retainAutoreleasedReturnValue
+    // TODO: objc_autoreleaseReturnValue
+    // TODO: objc_retainAutorelease
+    // TODO: objc_retainAutoreleaseReturnValue
+    // TODO: objc_autoreleaseReturnValue
+    // TODO: objc_autoreleaseReturnValue
 }
+
+// TODO: Consider something like this
+// #[cfg(block)]
+// impl<T: Block, O> Id<T, O> {
+//     #[doc(alias = "objc_retainBlock")]
+//     pub unsafe fn retain_block(block: NonNull<T>) -> Self {
+//         todo!()
+//     }
+// }
 
 impl<T: Message> Id<T, Owned> {
     /// Autoreleases the owned [`Id`], returning a mutable reference bound to
