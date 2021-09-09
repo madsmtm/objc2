@@ -60,20 +60,50 @@
 
 mod autorelease;
 mod id;
+mod ownership;
 mod strong;
 mod weak;
+mod weak_id;
 
 pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
-pub use self::id::{Id, Owned, Ownership, ShareId, Shared, WeakId};
+pub use self::id::{Id, ShareId};
+pub use self::ownership::{Owned, Ownership, Shared};
 pub use self::strong::StrongPtr;
 pub use self::weak::WeakPtr;
+pub use self::weak_id::WeakId;
 
 // These tests use NSObject, which isn't present for GNUstep
 #[cfg(all(test, target_vendor = "apple"))]
 mod tests {
+    use core::mem::size_of;
+
     use super::autoreleasepool;
     use super::StrongPtr;
+    use super::{Id, Owned, Shared, WeakId};
     use crate::runtime::Object;
+
+    pub struct TestType {
+        _data: [u8; 0], // TODO: `UnsafeCell`?
+    }
+
+    #[test]
+    fn test_size_of() {
+        assert_eq!(size_of::<Id<TestType, Owned>>(), size_of::<&TestType>());
+        assert_eq!(size_of::<Id<TestType, Shared>>(), size_of::<&TestType>());
+        assert_eq!(
+            size_of::<Option<Id<TestType, Owned>>>(),
+            size_of::<&TestType>()
+        );
+        assert_eq!(
+            size_of::<Option<Id<TestType, Shared>>>(),
+            size_of::<&TestType>()
+        );
+
+        assert_eq!(
+            size_of::<Option<WeakId<TestType>>>(),
+            size_of::<*const ()>()
+        );
+    }
 
     #[test]
     fn test_strong_clone() {
