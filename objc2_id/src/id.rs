@@ -99,7 +99,7 @@ impl Ownership for Shared {}
 /// ```
 #[repr(transparent)]
 // TODO: Figure out if `Message` bound on `T` would be better here?
-pub struct Id<T, O = Owned> {
+pub struct Id<T, O: Ownership = Owned> {
     /// A pointer to the contained object. The pointer is always retained.
     ///
     /// It is important that this is `NonNull`, since we want to dereference
@@ -311,7 +311,7 @@ impl<T: Message> Clone for Id<T, Shared> {
 /// borrowed data.
 ///
 /// [dropck_eyepatch]: https://doc.rust-lang.org/nightly/nomicon/dropck.html#an-escape-hatch
-impl<T, O> Drop for Id<T, O> {
+impl<T, O: Ownership> Drop for Id<T, O> {
     /// Releases the retained object.
     ///
     /// The contained object's destructor (if it has one) is never run!
@@ -354,7 +354,7 @@ unsafe impl<T: Send> Send for Id<T, Owned> {}
 /// access as having a `T` directly.
 unsafe impl<T: Sync> Sync for Id<T, Owned> {}
 
-impl<T, O> Deref for Id<T, O> {
+impl<T, O: Ownership> Deref for Id<T, O> {
     type Target = T;
 
     /// Obtain an immutable reference to the object.
@@ -374,7 +374,7 @@ impl<T> DerefMut for Id<T, Owned> {
     }
 }
 
-impl<T: PartialEq, O> PartialEq for Id<T, O> {
+impl<T: PartialEq, O: Ownership> PartialEq for Id<T, O> {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         (**self).eq(&**other)
@@ -386,9 +386,9 @@ impl<T: PartialEq, O> PartialEq for Id<T, O> {
     }
 }
 
-impl<T: Eq, O> Eq for Id<T, O> {}
+impl<T: Eq, O: Ownership> Eq for Id<T, O> {}
 
-impl<T: PartialOrd, O> PartialOrd for Id<T, O> {
+impl<T: PartialOrd, O: Ownership> PartialOrd for Id<T, O> {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
         (**self).partial_cmp(&**other)
@@ -411,32 +411,32 @@ impl<T: PartialOrd, O> PartialOrd for Id<T, O> {
     }
 }
 
-impl<T: Ord, O> Ord for Id<T, O> {
+impl<T: Ord, O: Ownership> Ord for Id<T, O> {
     #[inline]
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
         (**self).cmp(&**other)
     }
 }
 
-impl<T: hash::Hash, O> hash::Hash for Id<T, O> {
+impl<T: hash::Hash, O: Ownership> hash::Hash for Id<T, O> {
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         (**self).hash(state)
     }
 }
 
-impl<T: fmt::Display, O> fmt::Display for Id<T, O> {
+impl<T: fmt::Display, O: Ownership> fmt::Display for Id<T, O> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
     }
 }
 
-impl<T: fmt::Debug, O> fmt::Debug for Id<T, O> {
+impl<T: fmt::Debug, O: Ownership> fmt::Debug for Id<T, O> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
     }
 }
 
-impl<T, O> fmt::Pointer for Id<T, O> {
+impl<T, O: Ownership> fmt::Pointer for Id<T, O> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Pointer::fmt(&self.ptr.as_ptr(), f)
     }
@@ -472,7 +472,7 @@ impl<I: ExactSizeIterator> ExactSizeIterator for Id<I, Owned> {
 
 impl<I: FusedIterator> FusedIterator for Id<I, Owned> {}
 
-impl<T, O> borrow::Borrow<T> for Id<T, O> {
+impl<T, O: Ownership> borrow::Borrow<T> for Id<T, O> {
     fn borrow(&self) -> &T {
         &**self
     }
@@ -484,7 +484,7 @@ impl<T> borrow::BorrowMut<T> for Id<T, Owned> {
     }
 }
 
-impl<T, O> AsRef<T> for Id<T, O> {
+impl<T, O: Ownership> AsRef<T> for Id<T, O> {
     fn as_ref(&self) -> &T {
         &**self
     }
@@ -507,7 +507,7 @@ impl<T> AsMut<T> for Id<T, Owned> {
 //
 // See https://doc.rust-lang.org/1.54.0/src/alloc/boxed.rs.html#1652-1675
 // and the `Arc` implementation.
-impl<T, O> Unpin for Id<T, O> {}
+impl<T, O: Ownership> Unpin for Id<T, O> {}
 
 // TODO: When stabilized impl Fn traits & CoerceUnsized
 

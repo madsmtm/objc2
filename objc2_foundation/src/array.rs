@@ -190,11 +190,11 @@ pub trait INSArray: INSObject {
     }
 }
 
-pub struct NSArray<T, O = Owned> {
+pub struct NSArray<T, O: Ownership = Owned> {
     item: PhantomData<Id<T, O>>,
 }
 
-object_impl!(NSArray<T, O>);
+object_impl!(NSArray<T, O: Ownership>);
 
 impl<T, O> INSObject for NSArray<T, O>
 where
@@ -340,11 +340,11 @@ pub trait INSMutableArray: INSArray {
     }
 }
 
-pub struct NSMutableArray<T, O = Owned> {
+pub struct NSMutableArray<T, O: Ownership = Owned> {
     item: PhantomData<Id<T, O>>,
 }
 
-object_impl!(NSMutableArray<T, O>);
+object_impl!(NSMutableArray<T, O: Ownership>);
 
 impl<T, O> INSObject for NSMutableArray<T, O>
 where
