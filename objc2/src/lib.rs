@@ -70,6 +70,7 @@ The bindings can be used on Linux or *BSD utilizing the
 #![deny(unsafe_op_in_unsafe_fn)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2/0.2.7")]
+#![feature(generic_associated_types)]
 
 extern crate alloc;
 extern crate std;

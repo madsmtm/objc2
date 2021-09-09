@@ -236,6 +236,24 @@ impl<T: Message, O: Ownership> Id<T, O> {
         res as *mut T
     }
 
+    /// Autoreleases the [`Id`], returning a reference bound to the pool.
+    ///
+    /// The mutability of the reference varies based on if it's an owned or a
+    /// shared [`Id`].
+    ///
+    /// The object is not immediately released, but will be when the innermost
+    /// / current autorelease pool (given as a parameter) is drained.
+    #[doc(alias = "objc_autorelease")]
+    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
+    #[inline]
+    #[allow(clippy::needless_lifetimes)]
+    pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> <O as Ownership>::Reference<'p, T> {
+        let ptr = self.autorelease_inner();
+        // SAFETY: The pointer is valid as a reference, and we've consumed
+        // the unique access to the `Id` so mutability is safe.
+        unsafe { <O as Ownership>::as_ref_pool(pool, ptr) }
+    }
+
     // TODO: objc_retainAutoreleasedReturnValue
     // TODO: objc_autoreleaseReturnValue
     // TODO: objc_retainAutorelease
@@ -254,23 +272,6 @@ impl<T: Message, O: Ownership> Id<T, O> {
 // }
 
 impl<T: Message> Id<T, Owned> {
-    /// Autoreleases the owned [`Id`], returning a mutable reference bound to
-    /// the pool.
-    ///
-    /// The object is not immediately released, but will be when the innermost
-    /// / current autorelease pool (given as a parameter) is drained.
-    #[doc(alias = "objc_autorelease")]
-    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
-    #[inline]
-    #[allow(clippy::needless_lifetimes)]
-    #[allow(clippy::mut_from_ref)]
-    pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p mut T {
-        let ptr = self.autorelease_inner();
-        // SAFETY: The pointer is valid as a reference, and we've consumed
-        // the unique access to the `Id` so mutability is safe.
-        unsafe { pool.ptr_as_mut(ptr) }
-    }
-
     /// Promote a shared [`Id`] to an owned one, allowing it to be mutated.
     ///
     /// # Safety
@@ -287,23 +288,6 @@ impl<T: Message> Id<T, Owned> {
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
         unsafe { <Id<T, Owned>>::new(ptr) }
-    }
-}
-
-impl<T: Message> Id<T, Shared> {
-    /// Autoreleases the shared [`Id`], returning an aliased reference bound
-    /// to the pool.
-    ///
-    /// The object is not immediately released, but will be when the innermost
-    /// / current autorelease pool (given as a parameter) is drained.
-    #[doc(alias = "objc_autorelease")]
-    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
-    #[inline]
-    #[allow(clippy::needless_lifetimes)]
-    pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p T {
-        let ptr = self.autorelease_inner();
-        // SAFETY: The pointer is valid as a reference
-        unsafe { pool.ptr_as_ref(ptr) }
     }
 }
 
