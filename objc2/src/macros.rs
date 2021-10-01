@@ -102,7 +102,7 @@ macro_rules! msg_send {
     (super($obj:expr, $superclass:expr), $name:ident) => ({
         let sel = $crate::sel!($name);
         let result;
-        match $crate::Message::send_super_message(&*$obj, $superclass, sel, ()) {
+        match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -111,7 +111,7 @@ macro_rules! msg_send {
     (super($obj:expr, $superclass:expr), $($name:ident : $arg:expr)+) => ({
         let sel = $crate::sel!($($name:)+);
         let result;
-        match $crate::Message::send_super_message(&*$obj, $superclass, sel, ($($arg,)*)) {
+        match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ($($arg,)*)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -120,7 +120,7 @@ macro_rules! msg_send {
     ($obj:expr, $name:ident) => ({
         let sel = $crate::sel!($name);
         let result;
-        match $crate::Message::send_message(&*$obj, sel, ()) {
+        match $crate::MessageReceiver::send_message(&$obj, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -129,7 +129,7 @@ macro_rules! msg_send {
     ($obj:expr, $($name:ident : $arg:expr)+) => ({
         let sel = $crate::sel!($($name:)+);
         let result;
-        match $crate::Message::send_message(&*$obj, sel, ($($arg,)*)) {
+        match $crate::MessageReceiver::send_message(&$obj, sel, ($($arg,)*)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }

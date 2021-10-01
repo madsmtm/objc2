@@ -81,7 +81,7 @@ extern "C" {}
 
 pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
-pub use crate::message::{Message, MessageArguments, MessageError};
+pub use crate::message::{Message, MessageArguments, MessageError, MessageReceiver};
 
 pub use crate::cache::CachedClass as __CachedClass;
 pub use crate::cache::CachedSel as __CachedSel;

@@ -1,8 +1,11 @@
 use alloc::string::{String, ToString};
 use core::fmt;
 use core::mem;
+use core::ptr;
+use core::ptr::NonNull;
 use std::error::Error;
 
+use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::{Encode, EncodeArguments, RefEncode};
 
@@ -39,23 +42,65 @@ mod platform;
 use self::platform::{send_super_unverified, send_unverified};
 use self::verify::{verify_message_signature, VerificationError};
 
-/// This trait marks types that can be sent Objective-C messages.
+/// Types that can be sent Objective-C messages.
 ///
 /// Examples include objects, classes, and blocks.
 ///
-/// Implementing this allows using pointers and references to the type as the
+/// Implementing this provides [`MessageReceiver`] implementations for common
+/// pointer types and references to the type, which allows using them as the
 /// receiver (first argument) in the [`msg_send!`][`crate::msg_send`] macro.
 ///
 /// # Safety
 ///
-/// The type must implement [`RefEncode`] and adhere to the safety guidelines
-/// therein.
-///
 /// A pointer to the type must be able to be the receiver of an Objective-C
 /// message sent with [`objc_msgSend`] or similar.
 ///
+/// Additionally, the type must implement [`RefEncode`] and adhere to the
+/// safety requirements therein.
+///
 /// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
-pub unsafe trait Message: RefEncode {
+pub unsafe trait Message: RefEncode {}
+
+unsafe impl Message for Object {}
+
+unsafe impl Message for Class {}
+
+// TODO: Make this fully private
+pub(crate) mod private {
+    use super::{Id, Message, NonNull, Ownership};
+
+    pub trait Sealed {}
+
+    impl<T: Message + ?Sized> Sealed for *const T {}
+    impl<T: Message + ?Sized> Sealed for *mut T {}
+
+    impl<'a, T: Message + ?Sized> Sealed for &'a T {}
+    impl<'a, T: Message + ?Sized> Sealed for &'a mut T {}
+    impl<T: Message + ?Sized> Sealed for NonNull<T> {}
+    impl<T: Message, O: Ownership> Sealed for Id<T, O> {}
+
+    impl<'a, T: Message + ?Sized> Sealed for Option<&'a T> {}
+    impl<'a, T: Message + ?Sized> Sealed for Option<&'a mut T> {}
+    impl<T: Message + ?Sized> Sealed for Option<NonNull<T>> {}
+    impl<T: Message, O: Ownership> Sealed for Option<Id<T, O>> {}
+}
+
+/// Types that can directly be used as the receiver of Objective-C messages.
+///
+/// This is a sealed trait (for now) that is automatically implemented for
+/// pointers to types implementing [`Message`], so that code can be generic
+/// over the message receiver.
+///
+/// This is mostly an implementation detail; you'll want to implement
+/// [`Message`] for your type instead.
+///
+/// # Safety
+///
+/// [`Self::as_raw_receiver`] must be implemented correctly.
+pub unsafe trait MessageReceiver: private::Sealed {
+    /// Get a raw pointer to the receiver of the message.
+    fn as_raw_receiver(&self) -> *mut Object;
+
     /// Sends a message to self with the given selector and arguments.
     ///
     /// The correct version of `objc_msgSend` will be chosen based on the
@@ -67,12 +112,12 @@ pub unsafe trait Message: RefEncode {
     ///
     /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
     #[cfg_attr(feature = "verify_message", inline(always))]
-    unsafe fn send_message<A, R>(this: *const Self, sel: Sel, args: A) -> Result<R, MessageError>
+    unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
     where
-        Self: Sized,
         A: MessageArguments + EncodeArguments,
         R: Encode,
     {
+        let this = self.as_raw_receiver();
         #[cfg(feature = "verify_message")]
         {
             let cls = if this.is_null() {
@@ -99,16 +144,16 @@ pub unsafe trait Message: RefEncode {
     /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
     #[cfg_attr(feature = "verify_message", inline(always))]
     unsafe fn send_super_message<A, R>(
-        this: *const Self,
+        &self,
         superclass: &Class,
         sel: Sel,
         args: A,
     ) -> Result<R, MessageError>
     where
-        Self: Sized,
         A: MessageArguments + EncodeArguments,
         R: Encode,
     {
+        let this = self.as_raw_receiver();
         #[cfg(feature = "verify_message")]
         {
             if this.is_null() {
@@ -130,7 +175,7 @@ pub unsafe trait Message: RefEncode {
     /// ``` no_run
     /// # use objc2::{class, msg_send, sel};
     /// # use objc2::runtime::{BOOL, Class, Object};
-    /// # use objc2::Message;
+    /// # use objc2::MessageReceiver;
     /// let obj: &Object;
     /// # obj = unsafe { msg_send![class!(NSObject), new] };
     /// let sel = sel!(isKindOfClass:);
@@ -140,18 +185,99 @@ pub unsafe trait Message: RefEncode {
     /// ```
     fn verify_message<A, R>(&self, sel: Sel) -> Result<(), MessageError>
     where
-        Self: Sized,
         A: EncodeArguments,
         R: Encode,
     {
-        let obj = unsafe { &*(self as *const _ as *const Object) };
+        let obj = unsafe { &*self.as_raw_receiver() };
         verify_message_signature::<A, R>(obj.class(), sel).map_err(MessageError::from)
     }
 }
 
-unsafe impl Message for Object {}
+// Note that we implement MessageReceiver for unsized types as well, this is
+// to support `extern type`s in the future, not because we want to allow DSTs.
 
-unsafe impl Message for Class {}
+unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        *self as *mut T as *mut Object
+    }
+}
+
+unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        *self as *mut Object
+    }
+}
+
+unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        *self as *const T as *mut T as *mut Object
+    }
+}
+
+unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        *self as *const T as *mut T as *mut Object
+    }
+}
+
+unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        self.as_ptr() as *mut Object
+    }
+}
+
+unsafe impl<T: Message, O: Ownership> MessageReceiver for Id<T, O> {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        // TODO: Maybe don't dereference here, just to be safe?
+        (&**self).as_raw_receiver()
+    }
+}
+
+unsafe impl<'a, T: Message + ?Sized> MessageReceiver for Option<&'a T> {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        match self {
+            None => ptr::null_mut(),
+            Some(obj) => obj.as_raw_receiver(),
+        }
+    }
+}
+
+unsafe impl<'a, T: Message + ?Sized> MessageReceiver for Option<&'a mut T> {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        match self {
+            None => ptr::null_mut(),
+            Some(obj) => obj.as_raw_receiver(),
+        }
+    }
+}
+
+unsafe impl<T: Message + ?Sized> MessageReceiver for Option<NonNull<T>> {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        match self {
+            None => ptr::null_mut(),
+            Some(obj) => obj.as_raw_receiver(),
+        }
+    }
+}
+
+unsafe impl<T: Message, O: Ownership> MessageReceiver for Option<Id<T, O>> {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        match self {
+            None => ptr::null_mut(),
+            Some(id) => id.as_raw_receiver(),
+        }
+    }
+}
 
 /// Types that may be used as the arguments of an Objective-C message.
 pub trait MessageArguments: Sized {
@@ -159,7 +285,7 @@ pub trait MessageArguments: Sized {
     ///
     /// This method is the primitive used when sending messages and should not
     /// be called directly; instead, use the `msg_send!` macro or, in cases
-    /// with a dynamic selector, the [`Message::send_message`] method.
+    /// with a dynamic selector, the [`MessageReceiver::send_message`] method.
     unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
 }
 
