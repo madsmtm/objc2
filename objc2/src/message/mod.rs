@@ -286,15 +286,19 @@ pub trait MessageArguments: EncodeArguments {
     /// This method is the primitive used when sending messages and should not
     /// be called directly; instead, use the `msg_send!` macro or, in cases
     /// with a dynamic selector, the [`MessageReceiver::send_message`] method.
-    unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
+    unsafe fn invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
 }
 
 macro_rules! message_args_impl {
     ($($a:ident : $t:ident),*) => (
         impl<$($t: Encode),*> MessageArguments for ($($t,)*) {
-            unsafe fn invoke<R>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
-                let imp: unsafe extern fn(*mut Object, Sel $(, $t)*) -> R =
-                    mem::transmute(imp);
+            #[inline]
+            unsafe fn invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
+                // The imp must be cast to the appropriate function pointer
+                // type before being called; the msgSend functions are not
+                // parametric, but instead "trampolines" to the actual
+                // method implementations.
+                let imp: unsafe extern "C" fn(*mut Object, Sel $(, $t)*) -> R = mem::transmute(imp);
                 imp(obj, sel $(, $a)*)
             }
         }
