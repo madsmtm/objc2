@@ -77,8 +77,11 @@ where
 {
     let cls = A::class();
     let obj: *mut A = msg_send![cls, alloc];
-    let obj: *mut A = msg_send![obj, initWithObjects:refs.as_ptr()
-                                               count:refs.len()];
+    let obj: *mut A = msg_send![
+        obj,
+        initWithObjects: refs.as_ptr(),
+        count: refs.len(),
+    ];
     Id::new(NonNull::new_unchecked(obj))
 }
 
@@ -135,7 +138,7 @@ pub trait INSArray: INSObject {
         let range = NSRange::from_range(range);
         let mut vec = Vec::with_capacity(range.length);
         unsafe {
-            let _: () = msg_send![self, getObjects:vec.as_ptr() range:range];
+            let _: () = msg_send![self, getObjects: vec.as_ptr(), range: range];
             vec.set_len(range.length);
         }
         vec
@@ -254,13 +257,13 @@ pub type NSSharedArray<T> = NSArray<T, Shared>;
 pub trait INSMutableArray: INSArray {
     fn add_object(&mut self, obj: Id<Self::Item, Self::Own>) {
         unsafe {
-            let _: () = msg_send![self, addObject:&*obj];
+            let _: () = msg_send![self, addObject: &*obj];
         }
     }
 
     fn insert_object_at(&mut self, index: usize, obj: Id<Self::Item, Self::Own>) {
         unsafe {
-            let _: () = msg_send![self, insertObject:&*obj atIndex:index];
+            let _: () = msg_send![self, insertObject: &*obj, atIndex: index];
         }
     }
 
@@ -274,8 +277,11 @@ pub trait INSMutableArray: INSArray {
             Id::retain(obj.into())
         };
         unsafe {
-            let _: () = msg_send![self, replaceObjectAtIndex:index
-                                                  withObject:&*obj];
+            let _: () = msg_send![
+                self,
+                replaceObjectAtIndex: index,
+                withObject: &*obj,
+            ];
         }
         old_obj
     }
@@ -333,7 +339,7 @@ pub trait INSMutableArray: INSArray {
         let context = &mut closure as *mut F as *mut c_void;
 
         unsafe {
-            let _: () = msg_send![self, sortUsingFunction:f context:context];
+            let _: () = msg_send![self, sortUsingFunction: f, context: context];
         }
         // Keep the closure alive until the function has run.
         drop(closure);

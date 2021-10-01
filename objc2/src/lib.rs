@@ -12,7 +12,7 @@ Objective-C objects can be messaged using the [`msg_send!`](macro.msg_send!.html
 let cls = class!(NSObject);
 let obj: *mut Object = msg_send![cls, new];
 let hash: usize = msg_send![obj, hash];
-let is_kind: BOOL = msg_send![obj, isKindOfClass:cls];
+let is_kind: BOOL = msg_send![obj, isKindOfClass: cls];
 // Even void methods must have their return type annotated
 let _: () = msg_send![obj, release];
 # }

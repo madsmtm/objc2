@@ -95,9 +95,12 @@ fn enumerate<'a, 'b: 'a, C: INSFastEnumeration>(
     let count: usize = unsafe {
         // Reborrow state so that we don't move it
         let state = &mut *state;
-        msg_send![object, countByEnumeratingWithState:state
-                                              objects:buf.as_mut_ptr()
-                                                count:buf.len()]
+        msg_send![
+            object,
+            countByEnumeratingWithState: state,
+            objects: buf.as_mut_ptr(),
+            count: buf.len(),
+        ]
     };
 
     if count > 0 {

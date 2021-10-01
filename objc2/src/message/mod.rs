@@ -383,7 +383,7 @@ mod tests {
     fn test_send_message() {
         let obj = test_utils::custom_object();
         let result: u32 = unsafe {
-            let _: () = msg_send![obj, setFoo:4u32];
+            let _: () = msg_send![obj, setFoo: 4u32];
             msg_send![obj, foo]
         };
         assert!(result == 4);
@@ -421,7 +421,7 @@ mod tests {
         let obj = test_utils::custom_subclass_object();
         let superclass = test_utils::custom_class();
         unsafe {
-            let _: () = msg_send![obj, setFoo:4u32];
+            let _: () = msg_send![obj, setFoo: 4u32];
             let foo: u32 = msg_send![super(obj, superclass), foo];
             assert!(foo == 4);
 

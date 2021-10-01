@@ -18,9 +18,12 @@ where
     let cls = D::class();
     let count = min(keys.len(), vals.len());
     let obj: *mut D = msg_send![cls, alloc];
-    let obj: *mut D = msg_send![obj, initWithObjects:vals.as_ptr()
-                                             forKeys:keys.as_ptr()
-                                               count:count];
+    let obj: *mut D = msg_send![
+        obj,
+        initWithObjects: vals.as_ptr(),
+        forKeys: keys.as_ptr(),
+        count: count,
+    ];
     Id::new(NonNull::new_unchecked(obj))
 }
 
@@ -48,8 +51,11 @@ pub trait INSDictionary: INSObject {
         let len = self.count();
         let mut keys = Vec::with_capacity(len);
         unsafe {
-            let _: () = msg_send![self, getObjects:ptr::null_mut::<&Self::Value>()
-                                           andKeys:keys.as_mut_ptr()];
+            let _: () = msg_send![
+                self,
+                getObjects: ptr::null_mut::<&Self::Value>(),
+                andKeys: keys.as_mut_ptr(),
+            ];
             keys.set_len(len);
         }
         keys
@@ -59,8 +65,11 @@ pub trait INSDictionary: INSObject {
         let len = self.count();
         let mut vals = Vec::with_capacity(len);
         unsafe {
-            let _: () = msg_send![self, getObjects:vals.as_mut_ptr()
-                                           andKeys:ptr::null_mut::<&Self::Key>()];
+            let _: () = msg_send![
+                self,
+                getObjects: vals.as_mut_ptr(),
+                andKeys: ptr::null_mut::<&Self::Key>(),
+            ];
             vals.set_len(len);
         }
         vals
@@ -71,8 +80,11 @@ pub trait INSDictionary: INSObject {
         let mut keys = Vec::with_capacity(len);
         let mut objs = Vec::with_capacity(len);
         unsafe {
-            let _: () = msg_send![self, getObjects:objs.as_mut_ptr()
-                                           andKeys:keys.as_mut_ptr()];
+            let _: () = msg_send![
+                self,
+                getObjects: objs.as_mut_ptr(),
+                andKeys: keys.as_mut_ptr(),
+            ];
             keys.set_len(len);
             objs.set_len(len);
         }
@@ -100,7 +112,10 @@ pub trait INSDictionary: INSObject {
         }
     }
 
-    fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<Self::Value, Self::Own>>) -> Id<Self, Owned>
+    fn from_keys_and_objects<T>(
+        keys: &[&T],
+        vals: Vec<Id<Self::Value, Self::Own>>,
+    ) -> Id<Self, Owned>
     where
         T: INSCopying<Output = Self::Key>,
     {
@@ -166,7 +181,7 @@ where
 #[cfg(test)]
 mod tests {
     use alloc::vec;
-    use objc2::rc::{Owned, Id};
+    use objc2::rc::{Id, Owned};
 
     use super::{INSDictionary, NSDictionary};
     use crate::{INSArray, INSObject, INSString, NSObject, NSString};

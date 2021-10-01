@@ -35,8 +35,11 @@ pub trait INSData: INSObject {
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytes:bytes_ptr
-                                                       length:bytes.len()];
+            let obj: *mut Self = msg_send![
+                obj,
+                initWithBytes: bytes_ptr,
+                length: bytes.len(),
+            ];
             Id::new(NonNull::new_unchecked(obj))
         }
     }
@@ -56,9 +59,12 @@ pub trait INSData: INSObject {
         let cls = Self::class();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytesNoCopy:bytes_ptr
-                                                             length:bytes.len()
-                                                        deallocator:dealloc];
+            let obj: *mut Self = msg_send![
+                obj,
+                initWithBytesNoCopy: bytes_ptr,
+                length: bytes.len(),
+                deallocator: dealloc,
+            ];
             core::mem::forget(bytes);
             Id::new(NonNull::new_unchecked(obj))
         }
@@ -98,8 +104,11 @@ pub trait INSMutableData: INSData {
     fn append(&mut self, bytes: &[u8]) {
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
-            let _: () = msg_send![self, appendBytes:bytes_ptr
-                                             length:bytes.len()];
+            let _: () = msg_send![
+                self,
+                appendBytes: bytes_ptr,
+                length:bytes.len(),
+            ];
         }
     }
 
@@ -107,9 +116,12 @@ pub trait INSMutableData: INSData {
         let range = NSRange::from_range(range);
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
-            let _: () = msg_send![self, replaceBytesInRange:range
-                                                  withBytes:bytes_ptr
-                                                     length:bytes.len()];
+            let _: () = msg_send![
+                self,
+                replaceBytesInRange:range,
+                withBytes:bytes_ptr,
+                length:bytes.len(),
+            ];
         }
     }
 
