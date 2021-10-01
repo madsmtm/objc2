@@ -56,46 +56,88 @@ use self::verify::{verify_message_signature, VerificationError};
 ///
 /// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
 pub unsafe trait Message: RefEncode {
-    /**
-    Sends a message to self with the given selector and arguments.
-
-    The correct version of `objc_msgSend` will be chosen based on the
-    return type. For more information, see Apple's documentation:
-    <https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html#//apple_ref/doc/uid/TP40001418-CH1g-88778>
-
-    If the selector is known at compile-time, it is recommended to use the
-    `msg_send!` macro rather than this method.
-    */
-    unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
+    /// Sends a message to self with the given selector and arguments.
+    ///
+    /// The correct version of `objc_msgSend` will be chosen based on the
+    /// return type. For more information, see the section on "Sending
+    /// Messages" in Apple's [documentation][runtime].
+    ///
+    /// If the selector is known at compile-time, it is recommended to use the
+    /// [`msg_send!`][`crate::msg_send`] macro rather than this method.
+    ///
+    /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+    #[cfg_attr(feature = "verify_message", inline(always))]
+    unsafe fn send_message<A, R>(this: *const Self, sel: Sel, args: A) -> Result<R, MessageError>
     where
         Self: Sized,
         A: MessageArguments + EncodeArguments,
         R: Encode,
     {
-        send_message(self, sel, args)
+        #[cfg(feature = "verify_message")]
+        {
+            let cls = if this.is_null() {
+                return Err(VerificationError::NilReceiver(sel).into());
+            } else {
+                (*(this as *const Object)).class()
+            };
+
+            verify_message_signature::<A, R>(cls, sel)?;
+        }
+        send_unverified(this, sel, args)
     }
 
-    /**
-    Verifies that the argument and return types match the encoding of the
-    method for the given selector.
+    /// Sends a message to self's superclass with the given selector and
+    /// arguments.
+    ///
+    /// The correct version of `objc_msgSend_super` will be chosen based on the
+    /// return type. For more information, see the section on "Sending
+    /// Messages" in Apple's [documentation][runtime].
+    ///
+    /// If the selector is known at compile-time, it is recommended to use the
+    /// [`msg_send!(super)`][`crate::msg_send`] macro rather than this method.
+    ///
+    /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+    #[cfg_attr(feature = "verify_message", inline(always))]
+    unsafe fn send_super_message<A, R>(
+        this: *const Self,
+        superclass: &Class,
+        sel: Sel,
+        args: A,
+    ) -> Result<R, MessageError>
+    where
+        Self: Sized,
+        A: MessageArguments + EncodeArguments,
+        R: Encode,
+    {
+        #[cfg(feature = "verify_message")]
+        {
+            if this.is_null() {
+                return Err(VerificationError::NilReceiver(sel).into());
+            }
+            verify_message_signature::<A, R>(superclass, sel)?;
+        }
+        send_super_unverified(this, superclass, sel, args)
+    }
 
-    This will look up the encoding of the method for the given selector, `sel`,
-    and return a [`MessageError`] if any encodings differ for the arguments `A`
-    and return type `R`.
-
-    # Example
-    ``` no_run
-    # use objc2::{class, msg_send, sel};
-    # use objc2::runtime::{BOOL, Class, Object};
-    # use objc2::Message;
-    let obj: &Object;
-    # obj = unsafe { msg_send![class!(NSObject), new] };
-    let sel = sel!(isKindOfClass:);
-    // Verify isKindOfClass: takes one Class and returns a BOOL
-    let result = obj.verify_message::<(&Class,), BOOL>(sel);
-    assert!(result.is_ok());
-    ```
-    */
+    /// Verify that the argument and return types match the encoding of the
+    /// method for the given selector.
+    ///
+    /// This will look up the encoding of the method for the given selector,
+    /// `sel`, and return a [`MessageError`] if any encodings differ for the
+    /// arguments `A` and return type `R`.
+    ///
+    /// # Example
+    /// ``` no_run
+    /// # use objc2::{class, msg_send, sel};
+    /// # use objc2::runtime::{BOOL, Class, Object};
+    /// # use objc2::Message;
+    /// let obj: &Object;
+    /// # obj = unsafe { msg_send![class!(NSObject), new] };
+    /// let sel = sel!(isKindOfClass:);
+    /// // Verify isKindOfClass: takes one Class and returns a BOOL
+    /// let result = obj.verify_message::<(&Class,), BOOL>(sel);
+    /// assert!(result.is_ok());
+    /// ```
     fn verify_message<A, R>(&self, sel: Sel) -> Result<(), MessageError>
     where
         Self: Sized,
@@ -200,50 +242,6 @@ impl<'a> From<VerificationError<'a>> for MessageError {
     fn from(err: VerificationError<'_>) -> MessageError {
         MessageError(err.to_string())
     }
-}
-
-#[doc(hidden)]
-#[cfg_attr(feature = "verify_message", inline(always))]
-pub unsafe fn send_message<T, A, R>(obj: *const T, sel: Sel, args: A) -> Result<R, MessageError>
-where
-    T: Message,
-    A: MessageArguments + EncodeArguments,
-    R: Encode,
-{
-    #[cfg(feature = "verify_message")]
-    {
-        let cls = if obj.is_null() {
-            return Err(VerificationError::NilReceiver(sel).into());
-        } else {
-            (*(obj as *const Object)).class()
-        };
-
-        verify_message_signature::<A, R>(cls, sel)?;
-    }
-    send_unverified(obj, sel, args)
-}
-
-#[doc(hidden)]
-#[cfg_attr(feature = "verify_message", inline(always))]
-pub unsafe fn send_super_message<T, A, R>(
-    obj: *const T,
-    superclass: &Class,
-    sel: Sel,
-    args: A,
-) -> Result<R, MessageError>
-where
-    T: Message,
-    A: MessageArguments + EncodeArguments,
-    R: Encode,
-{
-    #[cfg(feature = "verify_message")]
-    {
-        if obj.is_null() {
-            return Err(VerificationError::NilReceiver(sel).into());
-        }
-        verify_message_signature::<A, R>(superclass, sel)?;
-    }
-    send_super_unverified(obj, superclass, sel, args)
 }
 
 #[cfg(test)]
