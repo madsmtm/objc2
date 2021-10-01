@@ -14,10 +14,10 @@ macro_rules! objc_try {
     ($b:block) => {
         $crate::exception::catch_exception(|| $b).map_err(|exception| {
             use alloc::borrow::ToOwned;
-            if exception.is_null() {
-                MessageError("Uncaught exception nil".to_owned())
+            if let Some(exception) = exception {
+                MessageError(alloc::format!("Uncaught exception {:?}", exception))
             } else {
-                MessageError(alloc::format!("Uncaught exception {:?}", &**exception))
+                MessageError("Uncaught exception nil".to_owned())
             }
         })
     };

@@ -1,8 +1,8 @@
 use core::ptr::NonNull;
 
-use crate::rc::Id;
+use crate::rc::{Id, Shared};
 use crate::runtime::Object;
-use objc2_exception::{r#try, Exception};
+use objc2_exception::r#try;
 
 // Comment copied from `objc2_exception`
 
@@ -21,6 +21,8 @@ use objc2_exception::{r#try, Exception};
 /// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945].
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
-pub unsafe fn catch_exception<R>(closure: impl FnOnce() -> R) -> Result<R, Id<Exception>> {
-    r#try(closure).map_err(|e| Id::new(NonNull::new(e).unwrap()))
+pub unsafe fn catch_exception<R>(
+    closure: impl FnOnce() -> R,
+) -> Result<R, Option<Id<Object, Shared>>> {
+    r#try(closure).map_err(|e| NonNull::new(e).map(|e| Id::new(e.cast())))
 }
