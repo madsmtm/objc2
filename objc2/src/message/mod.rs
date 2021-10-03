@@ -1,7 +1,6 @@
 use alloc::string::{String, ToString};
 use core::fmt;
 use core::mem;
-use core::ptr;
 use core::ptr::NonNull;
 use std::error::Error;
 
@@ -78,11 +77,6 @@ pub(crate) mod private {
     impl<'a, T: Message + ?Sized> Sealed for &'a mut T {}
     impl<T: Message + ?Sized> Sealed for NonNull<T> {}
     impl<T: Message, O: Ownership> Sealed for Id<T, O> {}
-
-    impl<'a, T: Message + ?Sized> Sealed for Option<&'a T> {}
-    impl<'a, T: Message + ?Sized> Sealed for Option<&'a mut T> {}
-    impl<T: Message + ?Sized> Sealed for Option<NonNull<T>> {}
-    impl<T: Message, O: Ownership> Sealed for Option<Id<T, O>> {}
 }
 
 /// Types that can directly be used as the receiver of Objective-C messages.
@@ -236,46 +230,6 @@ unsafe impl<T: Message, O: Ownership> MessageReceiver for Id<T, O> {
     fn as_raw_receiver(&self) -> *mut Object {
         // TODO: Maybe don't dereference here, just to be safe?
         (&**self).as_raw_receiver()
-    }
-}
-
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for Option<&'a T> {
-    #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        match self {
-            None => ptr::null_mut(),
-            Some(obj) => obj.as_raw_receiver(),
-        }
-    }
-}
-
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for Option<&'a mut T> {
-    #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        match self {
-            None => ptr::null_mut(),
-            Some(obj) => obj.as_raw_receiver(),
-        }
-    }
-}
-
-unsafe impl<T: Message + ?Sized> MessageReceiver for Option<NonNull<T>> {
-    #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        match self {
-            None => ptr::null_mut(),
-            Some(obj) => obj.as_raw_receiver(),
-        }
-    }
-}
-
-unsafe impl<T: Message, O: Ownership> MessageReceiver for Option<Id<T, O>> {
-    #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        match self {
-            None => ptr::null_mut(),
-            Some(id) => id.as_raw_receiver(),
-        }
     }
 }
 
