@@ -6,6 +6,7 @@ use core::marker::PhantomData;
 use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
 use core::ptr::NonNull;
+use std::error::Error;
 
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
@@ -445,6 +446,8 @@ impl<T: hash::Hash, O: Ownership> hash::Hash for Id<T, O> {
     }
 }
 
+// TODO: impl Hasher?
+
 impl<T: fmt::Display, O: Ownership> fmt::Display for Id<T, O> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
@@ -517,6 +520,15 @@ impl<T> AsMut<T> for Id<T, Owned> {
     }
 }
 
+impl<T: Error, O: Ownership> Error for Id<T, O> {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        (**self).source()
+    }
+}
+
+// TODO: impl io traits Seek, Read, BufRead and Write
+
+// TODO:
 // impl<F: Future + Unpin> Future for Id<F, Owned> {
 //     type Output = F::Output;
 //     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
