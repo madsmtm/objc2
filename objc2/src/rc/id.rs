@@ -7,6 +7,7 @@ use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
 use core::ptr::NonNull;
 use std::error::Error;
+use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
@@ -274,9 +275,11 @@ impl<T: Message> Id<T, Owned> {
     ///
     /// # Safety
     ///
-    /// The caller must ensure that there are no other pointers to the same
-    /// object (which also means that the given [`Id`] should have a retain
-    /// count of exactly 1 all cases, except when autoreleases are involved).
+    /// The caller must ensure that there are no other pointers (including
+    /// [`WeakId`][`super::WeakId`] pointers) to the same object.
+    ///
+    /// This also means that the given [`Id`] should have a retain count of
+    /// exactly 1 (except when autoreleases are involved).
     #[inline]
     pub unsafe fn from_shared(obj: Id<T, Shared>) -> Self {
         // Note: We can't debug_assert retainCount because of autoreleases
@@ -542,7 +545,15 @@ impl<T: Error, O: Ownership> Error for Id<T, O> {
 // and the `Arc` implementation.
 impl<T, O: Ownership> Unpin for Id<T, O> {}
 
-// TODO: When stabilized impl Fn traits & CoerceUnsized
+impl<T: RefUnwindSafe, O: Ownership> RefUnwindSafe for Id<T, O> {}
+
+// Same as `Arc<T>`.
+impl<T: RefUnwindSafe> UnwindSafe for Id<T, Shared> {}
+
+// Same as `Box<T>`.
+impl<T: UnwindSafe> UnwindSafe for Id<T, Owned> {}
+
+// TODO: impl Fn traits, CoerceUnsized, Stream and so on when stabilized
 
 #[cfg(test)]
 mod tests {
