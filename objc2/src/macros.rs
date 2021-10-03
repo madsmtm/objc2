@@ -93,7 +93,9 @@ method's argument's encoding does not match the encoding of the given arguments.
 let obj: *mut Object;
 # let obj: *mut Object = 0 as *mut Object;
 let description: *const Object = msg_send![obj, description];
-let _: () = msg_send![obj, setArg1:1 arg2:2];
+let _: () = msg_send![obj, setArg1: 1 arg2: 2];
+// Or with an optional comma between arguments:
+let _: () = msg_send![obj, setArg1: 1, arg2: 2];
 # }
 ```
 */
@@ -102,16 +104,16 @@ macro_rules! msg_send {
     (super($obj:expr, $superclass:expr), $name:ident) => ({
         let sel = $crate::sel!($name);
         let result;
-        match $crate::__send_super_message(&*$obj, $superclass, sel, ()) {
+        match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
         result
     });
-    (super($obj:expr, $superclass:expr), $($name:ident : $arg:expr)+) => ({
+    (super($obj:expr, $superclass:expr), $($name:ident : $arg:expr $(,)?)+) => ({
         let sel = $crate::sel!($($name:)+);
         let result;
-        match $crate::__send_super_message(&*$obj, $superclass, sel, ($($arg,)*)) {
+        match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ($($arg,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -120,16 +122,16 @@ macro_rules! msg_send {
     ($obj:expr, $name:ident) => ({
         let sel = $crate::sel!($name);
         let result;
-        match $crate::__send_message(&*$obj, sel, ()) {
+        match $crate::MessageReceiver::send_message(&$obj, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
         result
     });
-    ($obj:expr, $($name:ident : $arg:expr)+) => ({
+    ($obj:expr, $($name:ident : $arg:expr $(,)?)+) => ({
         let sel = $crate::sel!($($name:)+);
         let result;
-        match $crate::__send_message(&*$obj, sel, ($($arg,)*)) {
+        match $crate::MessageReceiver::send_message(&$obj, sel, ($($arg,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }

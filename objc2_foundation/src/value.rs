@@ -43,8 +43,11 @@ pub trait INSValue: INSObject {
         let encoding = CString::new(Self::Value::ENCODING.to_string()).unwrap();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytes:bytes
-                                                     objCType:encoding.as_ptr()];
+            let obj: *mut Self = msg_send![
+                obj,
+                initWithBytes: bytes,
+                objCType: encoding.as_ptr(),
+            ];
             Id::new(NonNull::new_unchecked(obj))
         }
     }

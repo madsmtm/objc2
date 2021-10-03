@@ -4,7 +4,7 @@ use std::sync::Once;
 
 use crate::declare::{ClassDecl, ProtocolDecl};
 use crate::runtime::{self, Class, Object, Protocol, Sel};
-use crate::{Encode, Encoding};
+use crate::{Encode, Encoding, MessageReceiver};
 
 pub struct CustomObject {
     obj: *mut Object,
@@ -15,6 +15,16 @@ impl CustomObject {
         let ptr = class as *const Class as _;
         let obj = unsafe { runtime::class_createInstance(ptr, 0) };
         CustomObject { obj: obj as _ }
+    }
+}
+
+// TODO: Remove the need for this hack
+impl crate::message::private::Sealed for CustomObject {}
+
+unsafe impl MessageReceiver for CustomObject {
+    #[inline]
+    fn as_raw_receiver(&self) -> *mut Object {
+        self.obj
     }
 }
 

@@ -12,7 +12,7 @@ Objective-C objects can be messaged using the [`msg_send!`](macro.msg_send!.html
 let cls = class!(NSObject);
 let obj: *mut Object = msg_send![cls, new];
 let hash: usize = msg_send![obj, hash];
-let is_kind: BOOL = msg_send![obj, isKindOfClass:cls];
+let is_kind: BOOL = msg_send![obj, isKindOfClass: cls];
 // Even void methods must have their return type annotated
 let _: () = msg_send![obj, release];
 # }
@@ -81,12 +81,10 @@ extern "C" {}
 
 pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
-pub use crate::message::{Message, MessageArguments, MessageError};
+pub use crate::message::{Message, MessageArguments, MessageError, MessageReceiver};
 
 pub use crate::cache::CachedClass as __CachedClass;
 pub use crate::cache::CachedSel as __CachedSel;
-pub use crate::message::send_message as __send_message;
-pub use crate::message::send_super_message as __send_super_message;
 
 #[macro_use]
 mod macros;

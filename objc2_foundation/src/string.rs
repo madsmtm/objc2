@@ -63,9 +63,12 @@ pub trait INSString: INSObject {
         let bytes = string.as_ptr() as *const c_void;
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![obj, initWithBytes:bytes
-                                                       length:string.len()
-                                                     encoding:UTF8_ENCODING];
+            let obj: *mut Self = msg_send![
+                obj,
+                initWithBytes: bytes,
+                length: string.len(),
+                encoding: UTF8_ENCODING,
+            ];
             Id::new(NonNull::new_unchecked(obj))
         }
     }

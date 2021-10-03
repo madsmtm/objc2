@@ -82,7 +82,7 @@ fn main() {
     });
 
     unsafe {
-        let _: () = msg_send![obj, setNumber:12u32];
+        let _: () = msg_send![obj, setNumber: 12u32];
     }
     println!("Number: {}", obj.number());
 }

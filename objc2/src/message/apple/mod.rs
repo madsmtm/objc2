@@ -1,6 +1,6 @@
 use objc2_sys::objc_super;
 
-use super::{Encode, Message, MessageArguments, MessageError};
+use super::{conditional_try, Encode, MessageArguments, MessageError};
 use crate::runtime::{Class, Imp, Object, Sel};
 
 #[cfg(target_arch = "x86")]
@@ -23,33 +23,36 @@ trait MsgSendFn: Encode {
     const MSG_SEND_SUPER: Imp;
 }
 
-pub unsafe fn send_unverified<T, A, R>(obj: *const T, sel: Sel, args: A) -> Result<R, MessageError>
+#[inline(always)]
+pub unsafe fn send_unverified<A, R>(
+    receiver: *mut Object,
+    sel: Sel,
+    args: A,
+) -> Result<R, MessageError>
 where
-    T: Message,
     A: MessageArguments,
     R: Encode,
 {
-    let receiver = obj as *mut T as *mut Object;
     let msg_send_fn = R::MSG_SEND;
-    objc_try!({ A::invoke(msg_send_fn, receiver, sel, args) })
+    conditional_try(|| A::invoke(msg_send_fn, receiver, sel, args))
 }
 
-pub unsafe fn send_super_unverified<T, A, R>(
-    obj: *const T,
+#[inline]
+pub unsafe fn send_super_unverified<A, R>(
+    receiver: *mut Object,
     superclass: &Class,
     sel: Sel,
     args: A,
 ) -> Result<R, MessageError>
 where
-    T: Message,
     A: MessageArguments,
     R: Encode,
 {
     let sup = objc_super {
-        receiver: obj as *mut T as *mut Object as *mut _,
+        receiver: receiver as *mut _,
         super_class: superclass as *const Class as *const _,
     };
     let receiver = &sup as *const objc_super as *mut Object;
     let msg_send_fn = R::MSG_SEND_SUPER;
-    objc_try!({ A::invoke(msg_send_fn, receiver, sel, args) })
+    conditional_try(|| A::invoke(msg_send_fn, receiver, sel, args))
 }
