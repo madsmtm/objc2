@@ -71,10 +71,7 @@ unsafe impl Encode for NSRange {
         Encoding::Struct("_NSRange", &[usize::ENCODING, usize::ENCODING]);
 }
 
-unsafe fn from_refs<A>(refs: &[&A::Item]) -> Id<A, A::Ownership>
-where
-    A: INSArray,
-{
+unsafe fn from_refs<A: INSArray>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
     let cls = A::class();
     let obj: *mut A = msg_send![cls, alloc];
     let obj: *mut A = msg_send![
@@ -197,11 +194,7 @@ pub struct NSArray<T, O: Ownership = Owned> {
 
 object_impl!(NSArray<T, O: Ownership>);
 
-impl<T, O> INSObject for NSArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
+impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
     type Ownership = Shared;
 
     fn class() -> &'static Class {
@@ -209,42 +202,24 @@ where
     }
 }
 
-impl<T, O> INSArray for NSArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
+impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     type Item = T;
     type Own = O;
 }
 
-impl<T> INSCopying for NSArray<T, Shared>
-where
-    T: INSObject,
-{
+impl<T: INSObject> INSCopying for NSArray<T, Shared> {
     type Output = NSSharedArray<T>;
 }
 
-impl<T> INSMutableCopying for NSArray<T, Shared>
-where
-    T: INSObject,
-{
+impl<T: INSObject> INSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableSharedArray<T>;
 }
 
-impl<T, O> INSFastEnumeration for NSArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
+impl<T: INSObject, O: Ownership> INSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
 
-impl<T, O> Index<usize> for NSArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
+impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -352,11 +327,7 @@ pub struct NSMutableArray<T, O: Ownership = Owned> {
 
 object_impl!(NSMutableArray<T, O: Ownership>);
 
-impl<T, O> INSObject for NSMutableArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
+impl<T: INSObject, O: Ownership> INSObject for NSMutableArray<T, O> {
     type Ownership = Owned;
 
     fn class() -> &'static Class {
@@ -364,49 +335,26 @@ where
     }
 }
 
-impl<T, O> INSArray for NSMutableArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
+impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Item = T;
     type Own = O;
 }
 
-impl<T, O> INSMutableArray for NSMutableArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
-}
+impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
 
-impl<T> INSCopying for NSMutableArray<T, Shared>
-where
-    T: INSObject,
-{
+impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
     type Output = NSSharedArray<T>;
 }
 
-impl<T> INSMutableCopying for NSMutableArray<T, Shared>
-where
-    T: INSObject,
-{
+impl<T: INSObject> INSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableSharedArray<T>;
 }
 
-impl<T, O> INSFastEnumeration for NSMutableArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
+impl<T: INSObject, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
     type Item = T;
 }
 
-impl<T, O> Index<usize> for NSMutableArray<T, O>
-where
-    T: INSObject,
-    O: Ownership,
-{
+impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {

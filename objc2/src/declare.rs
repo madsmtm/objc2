@@ -56,8 +56,12 @@ pub trait MethodImplementation {
 
 macro_rules! method_decl_impl {
     (-$s:ident, $r:ident, $f:ty, $($t:ident),*) => (
-        impl<$s, $r $(, $t)*> MethodImplementation for $f
-                where $s: Message, $r: Encode $(, $t: Encode)* {
+        impl<$s, $r, $($t),*> MethodImplementation for $f
+        where
+            $s: Message,
+            $r: Encode,
+            $($t: Encode,)*
+        {
             type Callee = $s;
             type Ret = $r;
             type Args = ($($t,)*);
@@ -68,8 +72,8 @@ macro_rules! method_decl_impl {
         }
     );
     ($($t:ident),*) => (
-        method_decl_impl!(-T, R, extern fn(&T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, extern fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
     );
 }
 

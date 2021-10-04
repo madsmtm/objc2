@@ -231,19 +231,24 @@ macro_rules! concrete_block_impl {
     );
     ($f:ident, $($a:ident : $t:ident),*) => (
         impl<$($t: Encode,)* R: Encode, X> IntoConcreteBlock<($($t,)*)> for X
-                where X: Fn($($t,)*) -> R {
+        where
+            X: Fn($($t,)*) -> R,
+        {
             type Ret = R;
 
             fn into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
                 unsafe extern fn $f<$($t,)* R, X>(
-                        block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
-                        $(, $a: $t)*) -> R
-                        where X: Fn($($t,)*) -> R {
+                    block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
+                    $(, $a: $t)*
+                ) -> R
+                where
+                    X: Fn($($t,)*) -> R
+                {
                     let block = &*block_ptr;
                     (block.closure)($($a),*)
                 }
 
-                let f: unsafe extern fn(*mut ConcreteBlock<($($t,)*), R, X> $(, $a: $t)*) -> R = $f;
+                let f: unsafe extern "C" fn(*mut ConcreteBlock<($($t,)*), R, X> $(, $a: $t)*) -> R = $f;
                 unsafe {
                     ConcreteBlock::with_invoke(mem::transmute(f), self)
                 }
@@ -397,10 +402,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     }
 }
 
-impl<A, R, F> ConcreteBlock<A, R, F>
-where
-    F: 'static,
-{
+impl<A, R, F: 'static> ConcreteBlock<A, R, F> {
     /// Copy self onto the heap as an `RcBlock`.
     pub fn copy(self) -> RcBlock<A, R> {
         unsafe {
@@ -415,10 +417,7 @@ where
     }
 }
 
-impl<A, R, F> Clone for ConcreteBlock<A, R, F>
-where
-    F: Clone,
-{
+impl<A, R, F: Clone> Clone for ConcreteBlock<A, R, F> {
     fn clone(&self) -> Self {
         unsafe {
             ConcreteBlock::with_invoke(mem::transmute(self.base.invoke), self.closure.clone())

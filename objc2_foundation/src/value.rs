@@ -59,10 +59,7 @@ pub struct NSValue<T> {
 
 object_impl!(NSValue<T>);
 
-impl<T> INSObject for NSValue<T>
-where
-    T: Any,
-{
+impl<T: Any> INSObject for NSValue<T> {
     type Ownership = Shared;
 
     fn class() -> &'static Class {
@@ -70,17 +67,11 @@ where
     }
 }
 
-impl<T> INSValue for NSValue<T>
-where
-    T: Any + Copy + Encode,
-{
+impl<T: Any + Copy + Encode> INSValue for NSValue<T> {
     type Value = T;
 }
 
-impl<T> INSCopying for NSValue<T>
-where
-    T: Any,
-{
+impl<T: Any> INSCopying for NSValue<T> {
     type Output = NSValue<T>;
 }
 

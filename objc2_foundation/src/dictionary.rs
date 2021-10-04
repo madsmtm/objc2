@@ -137,11 +137,7 @@ pub struct NSDictionary<K, V> {
 
 object_impl!(NSDictionary<K, V>);
 
-impl<K, V> INSObject for NSDictionary<K, V>
-where
-    K: INSObject,
-    V: INSObject,
-{
+impl<K: INSObject, V: INSObject> INSObject for NSDictionary<K, V> {
     type Ownership = Shared;
 
     fn class() -> &'static Class {
@@ -149,29 +145,17 @@ where
     }
 }
 
-impl<K, V> INSDictionary for NSDictionary<K, V>
-where
-    K: INSObject,
-    V: INSObject,
-{
+impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {
     type Key = K;
     type Value = V;
     type Own = Owned;
 }
 
-impl<K, V> INSFastEnumeration for NSDictionary<K, V>
-where
-    K: INSObject,
-    V: INSObject,
-{
+impl<K: INSObject, V: INSObject> INSFastEnumeration for NSDictionary<K, V> {
     type Item = K;
 }
 
-impl<'a, K, V> Index<&'a K> for NSDictionary<K, V>
-where
-    K: INSObject,
-    V: INSObject,
-{
+impl<'a, K: INSObject, V: INSObject> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
 
     fn index(&self, index: &K) -> &V {

@@ -31,10 +31,7 @@ pub trait INSObject: Any + Sized + Message {
         unsafe { msg_send![self, hash] }
     }
 
-    fn is_equal<T>(&self, other: &T) -> bool
-    where
-        T: INSObject,
-    {
+    fn is_equal<T: INSObject>(&self, other: &T) -> bool {
         let result: Bool = unsafe { msg_send![self, isEqual: other] };
         result.is_true()
     }

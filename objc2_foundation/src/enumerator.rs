@@ -11,18 +11,12 @@ use objc2::{msg_send, Encode, Encoding, RefEncode};
 
 use super::INSObject;
 
-pub struct NSEnumerator<'a, T>
-where
-    T: INSObject,
-{
+pub struct NSEnumerator<'a, T: INSObject> {
     id: Id<Object, Owned>,
     item: PhantomData<&'a T>,
 }
 
-impl<'a, T> NSEnumerator<'a, T>
-where
-    T: INSObject,
-{
+impl<'a, T: INSObject> NSEnumerator<'a, T> {
     /// TODO
     ///
     /// # Safety
@@ -37,10 +31,7 @@ where
     }
 }
 
-impl<'a, T> Iterator for NSEnumerator<'a, T>
-where
-    T: INSObject,
-{
+impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {

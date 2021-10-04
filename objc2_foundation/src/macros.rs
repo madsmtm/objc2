@@ -30,10 +30,7 @@ macro_rules! object_struct {
         impl ::core::cmp::Eq for $name {}
 
         impl ::core::hash::Hash for $name {
-            fn hash<H>(&self, state: &mut H)
-            where
-                H: ::core::hash::Hasher,
-            {
+            fn hash<H: ::core::hash::Hasher>(&self, state: &mut H) {
                 use $crate::INSObject;
                 self.hash_code().hash(state);
             }
