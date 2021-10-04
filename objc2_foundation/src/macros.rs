@@ -1,6 +1,5 @@
-#[macro_export]
 macro_rules! object_struct {
-    ($name:ident) => {
+    ($name:ident, $ownership:ty) => {
         // TODO: `extern type`
         #[repr(C)]
         pub struct $name {
@@ -14,6 +13,8 @@ macro_rules! object_struct {
         }
 
         impl $crate::INSObject for $name {
+            type Ownership = $ownership;
+
             fn class() -> &'static ::objc2::runtime::Class {
                 ::objc2::class!($name)
             }

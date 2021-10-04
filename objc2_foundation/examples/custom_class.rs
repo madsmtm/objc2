@@ -1,6 +1,7 @@
 use std::sync::Once;
 
 use objc2::declare::ClassDecl;
+use objc2::rc::Owned;
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, sel};
 use objc2::{Encoding, Message, RefEncode};
@@ -41,6 +42,8 @@ unsafe impl Message for MYObject {}
 static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 
 impl INSObject for MYObject {
+    type Ownership = Owned;
+
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();

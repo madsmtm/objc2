@@ -2,7 +2,7 @@ use core::any::Any;
 use core::ptr::NonNull;
 
 use objc2::msg_send;
-use objc2::rc::{Id, Owned, Shared};
+use objc2::rc::{Id, Owned, Ownership, Shared};
 use objc2::runtime::{Bool, Class};
 use objc2::Message;
 
@@ -15,6 +15,16 @@ pointer to an Object pointer, because dynamically-sized types can have fat
 pointers (two words) instead of real pointers.
 */
 pub trait INSObject: Any + Sized + Message {
+    /// Indicates whether the type is mutable or immutable.
+    ///
+    /// [`Shared`] means that only a shared [`Id`] can ever be held to this
+    /// object. This is important for immutable types like `NSString`, because
+    /// sending the `copy` message (and others) does not create a new
+    /// instance, but instead just retains the instance.
+    ///
+    /// Most objects are mutable and hence can return [`Owned`] [`Id`]s.
+    type Ownership: Ownership;
+
     fn class() -> &'static Class;
 
     fn hash_code(&self) -> usize {
@@ -42,13 +52,13 @@ pub trait INSObject: Any + Sized + Message {
         result.is_true()
     }
 
-    fn new() -> Id<Self, Owned> {
+    fn new() -> Id<Self, Self::Ownership> {
         let cls = Self::class();
         unsafe { Id::new(msg_send![cls, new]) }
     }
 }
 
-object_struct!(NSObject);
+object_struct!(NSObject, Owned);
 
 #[cfg(test)]
 mod tests {

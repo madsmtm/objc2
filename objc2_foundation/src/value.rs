@@ -8,7 +8,7 @@ use core::str;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-use objc2::rc::{Id, Owned};
+use objc2::rc::{Id, Shared};
 use objc2::runtime::Class;
 use objc2::Encode;
 use objc2::{class, msg_send};
@@ -36,7 +36,7 @@ pub trait INSValue: INSObject {
         }
     }
 
-    fn from_value(value: Self::Value) -> Id<Self, Owned> {
+    fn from_value(value: Self::Value) -> Id<Self, Self::Ownership> {
         let cls = Self::class();
         let value_ptr: *const Self::Value = &value;
         let bytes = value_ptr as *const c_void;
@@ -63,6 +63,8 @@ impl<T> INSObject for NSValue<T>
 where
     T: Any,
 {
+    type Ownership = Shared;
+
     fn class() -> &'static Class {
         class!(NSValue)
     }

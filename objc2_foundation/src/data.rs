@@ -6,7 +6,7 @@ use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
-use objc2::rc::{Id, Owned};
+use objc2::rc::{Id, Owned, Shared};
 
 pub trait INSData: INSObject {
     fn len(&self) -> usize {
@@ -27,7 +27,7 @@ pub trait INSData: INSObject {
         }
     }
 
-    fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
+    fn with_bytes(bytes: &[u8]) -> Id<Self, Self::Ownership> {
         let cls = Self::class();
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
@@ -42,7 +42,7 @@ pub trait INSData: INSObject {
     }
 
     #[cfg(feature = "block")]
-    fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
+    fn from_vec(bytes: Vec<u8>) -> Id<Self, Self::Ownership> {
         use objc2_block::{Block, ConcreteBlock};
 
         let capacity = bytes.capacity();
@@ -86,7 +86,7 @@ pub trait INSData: INSObject {
     }
 }
 
-object_struct!(NSData);
+object_struct!(NSData, Shared);
 
 impl INSData for NSData {}
 
@@ -146,7 +146,7 @@ pub trait INSMutableData: INSData {
     }
 }
 
-object_struct!(NSMutableData);
+object_struct!(NSMutableData, Owned);
 
 impl INSData for NSMutableData {}
 
