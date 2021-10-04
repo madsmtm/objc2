@@ -144,6 +144,7 @@ pub trait INSArray: INSObject {
         self.objects_in_range(0..self.count())
     }
 
+    // TODO: Take Id<Self, Self::ItemOwnership> ?
     fn into_vec(array: Id<Self, Owned>) -> Vec<Id<Self::Item, Self::ItemOwnership>> {
         array
             .to_vec()
@@ -188,6 +189,14 @@ pub trait INSArray: INSObject {
     }
 }
 
+/// TODO
+///
+/// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
+/// to the elements (without modifying the array itself), and
+/// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
+///
+/// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
+/// TODO: Can we make it impossible? Should we?
 pub struct NSArray<T, O: Ownership> {
     item: PhantomData<Id<T, O>>,
 }
@@ -195,7 +204,12 @@ pub struct NSArray<T, O: Ownership> {
 object_impl!(NSArray<T, O: Ownership>);
 
 impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
-    type Ownership = Shared;
+    /// The `NSArray` itself (length and number of items) is always immutable,
+    /// but we would like to know when we're the only owner of the array, to
+    /// allow mutation of the array's items.
+    ///
+    /// We only implement `INSCopying` when `O = Shared`, so this is safe.
+    type Ownership = O;
 
     fn class() -> &'static Class {
         class!(NSArray)
@@ -206,6 +220,8 @@ impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     type Item = T;
     type ItemOwnership = O;
 }
+
+// Copying only possible when ItemOwnership = Shared
 
 impl<T: INSObject> INSCopying for NSArray<T, Shared> {
     type Output = NSArray<T, Shared>;
@@ -340,6 +356,8 @@ impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
 
 impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
 
+// Copying only possible when ItemOwnership = Shared
+
 impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
     type Output = NSArray<T, Shared>;
 }
@@ -367,19 +385,19 @@ mod tests {
 
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
-    use objc2::rc::{Id, Shared};
+    use objc2::rc::{Id, Owned};
 
-    fn sample_array(len: usize) -> Id<NSArray<NSObject, Shared>, Shared> {
+    fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
         for _ in 0..len {
-            vec.push(NSObject::new().into());
+            vec.push(NSObject::new());
         }
         NSArray::from_vec(vec)
     }
 
     #[test]
     fn test_count() {
-        let empty_array = NSArray::<NSObject>::new();
+        let empty_array = NSArray::<NSObject, Owned>::new();
         assert!(empty_array.count() == 0);
 
         let array = sample_array(4);
@@ -393,7 +411,7 @@ mod tests {
         assert!(array.first_object().unwrap() == array.object_at(0));
         assert!(array.last_object().unwrap() == array.object_at(3));
 
-        let empty_array: Id<NSArray<NSObject>, _> = INSObject::new();
+        let empty_array: Id<NSArray<NSObject, Owned>, _> = INSObject::new();
         assert!(empty_array.first_object().is_none());
         assert!(empty_array.last_object().is_none());
     }
@@ -425,13 +443,13 @@ mod tests {
         assert!(all_objs.len() == 4);
     }
 
-    // #[test]
-    // fn test_into_vec() {
-    //     let array = sample_array(4);
-    //
-    //     let vec = INSArray::into_vec(array);
-    //     assert!(vec.len() == 4);
-    // }
+    #[test]
+    fn test_into_vec() {
+        let array = sample_array(4);
+
+        let vec = INSArray::into_vec(array);
+        assert!(vec.len() == 4);
+    }
 
     #[test]
     fn test_add_object() {
