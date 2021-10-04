@@ -17,7 +17,7 @@ fn main() {
     for obj in array.object_enumerator() {
         println!("{:?}", obj);
     }
-    println!("{}", array.count());
+    println!("{}", array.len());
 
     // Turn the NSArray back into a Vec
     let mut objs = NSArray::into_vec(array);
@@ -33,6 +33,6 @@ fn main() {
     let keys = &[&*string];
     let vals = vec![obj];
     let dict = NSDictionary::from_keys_and_objects(keys, vals);
-    println!("{:?}", dict.object_for(&string));
-    println!("{}", dict.count());
+    println!("{:?}", dict.get(&string));
+    println!("{}", dict.len());
 }

@@ -32,23 +32,19 @@ pub trait INSDictionary: INSObject {
     type Value: INSObject;
     type ValueOwnership: Ownership;
 
-    fn count(&self) -> usize {
+    #[doc(alias = "count")]
+    fn len(&self) -> usize {
         unsafe { msg_send![self, count] }
     }
 
-    fn object_for(&self, key: &Self::Key) -> Option<&Self::Value> {
-        unsafe {
-            let obj: *mut Self::Value = msg_send![self, objectForKey: key];
-            if obj.is_null() {
-                None
-            } else {
-                Some(&*obj)
-            }
-        }
+    #[doc(alias = "objectForKey:")]
+    fn get(&self, key: &Self::Key) -> Option<&Self::Value> {
+        unsafe { msg_send![self, objectForKey: key] }
     }
 
+    #[doc(alias = "getObjects:andKeys:")]
     fn keys(&self) -> Vec<&Self::Key> {
-        let len = self.count();
+        let len = self.len();
         let mut keys = Vec::with_capacity(len);
         unsafe {
             let _: () = msg_send![
@@ -61,8 +57,9 @@ pub trait INSDictionary: INSObject {
         keys
     }
 
+    #[doc(alias = "getObjects:andKeys:")]
     fn values(&self) -> Vec<&Self::Value> {
-        let len = self.count();
+        let len = self.len();
         let mut vals = Vec::with_capacity(len);
         unsafe {
             let _: () = msg_send![
@@ -75,8 +72,9 @@ pub trait INSDictionary: INSObject {
         vals
     }
 
+    #[doc(alias = "getObjects:andKeys:")]
     fn keys_and_objects(&self) -> (Vec<&Self::Key>, Vec<&Self::Value>) {
-        let len = self.count();
+        let len = self.len();
         let mut keys = Vec::with_capacity(len);
         let mut objs = Vec::with_capacity(len);
         unsafe {
@@ -161,7 +159,7 @@ impl<'a, K: INSObject, V: INSObject> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
 
     fn index(&self, index: &K) -> &V {
-        self.object_for(index).unwrap()
+        self.get(index).unwrap()
     }
 }
 
@@ -180,20 +178,20 @@ mod tests {
     }
 
     #[test]
-    fn test_count() {
+    fn test_len() {
         let dict = sample_dict("abcd");
-        assert!(dict.count() == 1);
+        assert_eq!(dict.len(), 1);
     }
 
     #[test]
-    fn test_object_for() {
+    fn test_get() {
         let dict = sample_dict("abcd");
 
         let string = NSString::from_str("abcd");
-        assert!(dict.object_for(&string).is_some());
+        assert!(dict.get(&string).is_some());
 
         let string = NSString::from_str("abcde");
-        assert!(dict.object_for(&string).is_none());
+        assert!(dict.get(&string).is_none());
     }
 
     #[test]
@@ -201,8 +199,8 @@ mod tests {
         let dict = sample_dict("abcd");
         let keys = dict.keys();
 
-        assert!(keys.len() == 1);
-        assert!(keys[0].as_str() == "abcd");
+        assert_eq!(keys.len(), 1);
+        assert_eq!(keys[0].as_str(), "abcd");
     }
 
     #[test]
@@ -210,7 +208,7 @@ mod tests {
         let dict = sample_dict("abcd");
         let vals = dict.values();
 
-        assert!(vals.len() == 1);
+        assert_eq!(vals.len(), 1);
     }
 
     #[test]
@@ -218,23 +216,23 @@ mod tests {
         let dict = sample_dict("abcd");
         let (keys, objs) = dict.keys_and_objects();
 
-        assert!(keys.len() == 1);
-        assert!(objs.len() == 1);
-        assert!(keys[0].as_str() == "abcd");
-        assert!(objs[0] == dict.object_for(keys[0]).unwrap());
+        assert_eq!(keys.len(), 1);
+        assert_eq!(objs.len(), 1);
+        assert_eq!(keys[0].as_str(), "abcd");
+        assert_eq!(objs[0], dict.get(keys[0]).unwrap());
     }
 
     #[test]
     fn test_key_enumerator() {
         let dict = sample_dict("abcd");
-        assert!(dict.key_enumerator().count() == 1);
-        assert!(dict.key_enumerator().next().unwrap().as_str() == "abcd");
+        assert_eq!(dict.key_enumerator().count(), 1);
+        assert_eq!(dict.key_enumerator().next().unwrap().as_str(), "abcd");
     }
 
     #[test]
     fn test_object_enumerator() {
         let dict = sample_dict("abcd");
-        assert!(dict.object_enumerator().count() == 1);
+        assert_eq!(dict.object_enumerator().count(), 1);
     }
 
     #[test]
@@ -242,10 +240,10 @@ mod tests {
         let dict = sample_dict("abcd");
 
         let keys = dict.keys_array();
-        assert!(keys.count() == 1);
-        assert!(keys.object_at(0).as_str() == "abcd");
+        assert_eq!(keys.len(), 1);
+        assert_eq!(keys[0].as_str(), "abcd");
 
         // let objs = INSDictionary::into_values_array(dict);
-        // assert!(objs.count() == 1);
+        // assert_eq!(objs.len(), 1);
     }
 }
