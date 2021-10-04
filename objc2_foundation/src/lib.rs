@@ -11,8 +11,7 @@ extern crate std;
 extern "C" {}
 
 pub use self::array::{
-    INSArray, INSMutableArray, NSArray, NSComparisonResult, NSMutableArray, NSMutableSharedArray,
-    NSRange, NSSharedArray,
+    INSArray, INSMutableArray, NSArray, NSComparisonResult, NSMutableArray, NSRange,
 };
 pub use self::data::{INSData, INSMutableData, NSData, NSMutableData};
 pub use self::dictionary::{INSDictionary, NSDictionary};

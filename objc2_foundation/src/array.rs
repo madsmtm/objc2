@@ -84,7 +84,7 @@ unsafe fn from_refs<A: INSArray>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
 
 pub trait INSArray: INSObject {
     type Item: INSObject;
-    type Own: Ownership;
+    type ItemOwnership: Ownership;
 
     fn count(&self) -> usize {
         unsafe { msg_send![self, count] }
@@ -126,7 +126,7 @@ pub trait INSArray: INSObject {
         }
     }
 
-    fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self, Self::Ownership> {
+    fn from_vec(vec: Vec<Id<Self::Item, Self::ItemOwnership>>) -> Id<Self, Self::Ownership> {
         unsafe { from_refs(vec.as_slice_ref()) }
     }
 
@@ -144,7 +144,7 @@ pub trait INSArray: INSObject {
         self.objects_in_range(0..self.count())
     }
 
-    fn into_vec(array: Id<Self, Owned>) -> Vec<Id<Self::Item, Self::Own>> {
+    fn into_vec(array: Id<Self, Owned>) -> Vec<Id<Self::Item, Self::ItemOwnership>> {
         array
             .to_vec()
             .into_iter()
@@ -154,7 +154,7 @@ pub trait INSArray: INSObject {
 
     fn mut_object_at(&mut self, index: usize) -> &mut Self::Item
     where
-        Self: INSArray<Own = Owned>,
+        Self: INSArray<ItemOwnership = Owned>,
     {
         unsafe {
             let result: *mut Self::Item = msg_send![self, objectAtIndex: index];
@@ -164,7 +164,7 @@ pub trait INSArray: INSObject {
 
     fn shared_object_at(&self, index: usize) -> Id<Self::Item, Shared>
     where
-        Self: INSArray<Own = Shared>,
+        Self: INSArray<ItemOwnership = Shared>,
     {
         let obj = self.object_at(index);
         unsafe { Id::retain(obj.into()) }
@@ -172,14 +172,14 @@ pub trait INSArray: INSObject {
 
     fn from_slice(slice: &[Id<Self::Item, Shared>]) -> Id<Self, Self::Ownership>
     where
-        Self: INSArray<Own = Shared>,
+        Self: INSArray<ItemOwnership = Shared>,
     {
         unsafe { from_refs(slice.as_slice_ref()) }
     }
 
     fn to_shared_vec(&self) -> Vec<Id<Self::Item, Shared>>
     where
-        Self: INSArray<Own = Shared>,
+        Self: INSArray<ItemOwnership = Shared>,
     {
         self.to_vec()
             .into_iter()
@@ -188,7 +188,7 @@ pub trait INSArray: INSObject {
     }
 }
 
-pub struct NSArray<T, O: Ownership = Owned> {
+pub struct NSArray<T, O: Ownership> {
     item: PhantomData<Id<T, O>>,
 }
 
@@ -204,15 +204,15 @@ impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
 
 impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     type Item = T;
-    type Own = O;
+    type ItemOwnership = O;
 }
 
 impl<T: INSObject> INSCopying for NSArray<T, Shared> {
-    type Output = NSSharedArray<T>;
+    type Output = NSArray<T, Shared>;
 }
 
 impl<T: INSObject> INSMutableCopying for NSArray<T, Shared> {
-    type Output = NSMutableSharedArray<T>;
+    type Output = NSMutableArray<T, Shared>;
 }
 
 impl<T: INSObject, O: Ownership> INSFastEnumeration for NSArray<T, O> {
@@ -227,16 +227,14 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
     }
 }
 
-pub type NSSharedArray<T> = NSArray<T, Shared>;
-
 pub trait INSMutableArray: INSArray {
-    fn add_object(&mut self, obj: Id<Self::Item, Self::Own>) {
+    fn add_object(&mut self, obj: Id<Self::Item, Self::ItemOwnership>) {
         unsafe {
             let _: () = msg_send![self, addObject: &*obj];
         }
     }
 
-    fn insert_object_at(&mut self, index: usize, obj: Id<Self::Item, Self::Own>) {
+    fn insert_object_at(&mut self, index: usize, obj: Id<Self::Item, Self::ItemOwnership>) {
         unsafe {
             let _: () = msg_send![self, insertObject: &*obj, atIndex: index];
         }
@@ -245,8 +243,8 @@ pub trait INSMutableArray: INSArray {
     fn replace_object_at(
         &mut self,
         index: usize,
-        obj: Id<Self::Item, Self::Own>,
-    ) -> Id<Self::Item, Self::Own> {
+        obj: Id<Self::Item, Self::ItemOwnership>,
+    ) -> Id<Self::Item, Self::ItemOwnership> {
         let old_obj = unsafe {
             let obj = self.object_at(index);
             Id::retain(obj.into())
@@ -261,7 +259,7 @@ pub trait INSMutableArray: INSArray {
         old_obj
     }
 
-    fn remove_object_at(&mut self, index: usize) -> Id<Self::Item, Self::Own> {
+    fn remove_object_at(&mut self, index: usize) -> Id<Self::Item, Self::ItemOwnership> {
         let obj = unsafe {
             let obj = self.object_at(index);
             Id::retain(obj.into())
@@ -272,7 +270,7 @@ pub trait INSMutableArray: INSArray {
         obj
     }
 
-    fn remove_last_object(&mut self) -> Id<Self::Item, Self::Own> {
+    fn remove_last_object(&mut self) -> Id<Self::Item, Self::ItemOwnership> {
         let obj = self
             .last_object()
             .map(|obj| unsafe { Id::retain(obj.into()) });
@@ -321,7 +319,7 @@ pub trait INSMutableArray: INSArray {
     }
 }
 
-pub struct NSMutableArray<T, O: Ownership = Owned> {
+pub struct NSMutableArray<T, O: Ownership> {
     item: PhantomData<Id<T, O>>,
 }
 
@@ -337,17 +335,17 @@ impl<T: INSObject, O: Ownership> INSObject for NSMutableArray<T, O> {
 
 impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Item = T;
-    type Own = O;
+    type ItemOwnership = O;
 }
 
 impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
 
 impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
-    type Output = NSSharedArray<T>;
+    type Output = NSArray<T, Shared>;
 }
 
 impl<T: INSObject> INSMutableCopying for NSMutableArray<T, Shared> {
-    type Output = NSMutableSharedArray<T>;
+    type Output = NSMutableArray<T, Shared>;
 }
 
 impl<T: INSObject, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
@@ -361,8 +359,6 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
         self.object_at(index)
     }
 }
-
-pub type NSMutableSharedArray<T> = NSMutableArray<T, Shared>;
 
 #[cfg(test)]
 mod tests {

@@ -8,7 +8,7 @@ use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::Class;
 use objc2::{class, msg_send};
 
-use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSSharedArray};
+use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator};
 
 unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D, D::Ownership>
 where
@@ -30,7 +30,7 @@ where
 pub trait INSDictionary: INSObject {
     type Key: INSObject;
     type Value: INSObject;
-    type Own: Ownership;
+    type ValueOwnership: Ownership;
 
     fn count(&self) -> usize {
         unsafe { msg_send![self, count] }
@@ -105,7 +105,7 @@ pub trait INSDictionary: INSObject {
         }
     }
 
-    fn keys_array(&self) -> Id<NSSharedArray<Self::Key>, Shared> {
+    fn keys_array(&self) -> Id<NSArray<Self::Key, Shared>, Shared> {
         unsafe {
             let keys = msg_send![self, allKeys];
             Id::retain(NonNull::new_unchecked(keys))
@@ -114,7 +114,7 @@ pub trait INSDictionary: INSObject {
 
     fn from_keys_and_objects<T>(
         keys: &[&T],
-        vals: Vec<Id<Self::Value, Self::Own>>,
+        vals: Vec<Id<Self::Value, Self::ValueOwnership>>,
     ) -> Id<Self, Self::Ownership>
     where
         T: INSCopying<Output = Self::Key>,
@@ -122,7 +122,9 @@ pub trait INSDictionary: INSObject {
         unsafe { from_refs(keys, &vals.as_slice_ref()) }
     }
 
-    fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<Self::Value, Self::Own>, Shared> {
+    fn into_values_array(
+        dict: Id<Self, Owned>,
+    ) -> Id<NSArray<Self::Value, Self::ValueOwnership>, Shared> {
         unsafe {
             let vals = msg_send![dict, allValues];
             Id::retain(NonNull::new_unchecked(vals))
@@ -148,7 +150,7 @@ impl<K: INSObject, V: INSObject> INSObject for NSDictionary<K, V> {
 impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {
     type Key = K;
     type Value = V;
-    type Own = Owned;
+    type ValueOwnership = Owned;
 }
 
 impl<K: INSObject, V: INSObject> INSFastEnumeration for NSDictionary<K, V> {
