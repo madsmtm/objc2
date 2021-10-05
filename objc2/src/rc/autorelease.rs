@@ -216,7 +216,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 ///
 /// Basic usage:
 ///
-/// ```rust
+/// ```rust,no_run
 /// use objc2::{class, msg_send};
 /// use objc2::rc::{autoreleasepool, AutoreleasePool};
 /// use objc2::runtime::Object;

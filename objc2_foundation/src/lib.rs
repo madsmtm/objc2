@@ -26,24 +26,8 @@ pub use self::value::{INSValue, NSValue};
 extern "C" {}
 
 #[cfg(not(target_vendor = "apple"))]
-use objc2::runtime::Class;
-
-#[cfg(not(target_vendor = "apple"))]
 #[link(name = "gnustep-base", kind = "dylib")]
 extern "C" {}
-
-// Split up to illustrate that the linking doesn't have to be annotated on the
-// correct `extern` block.
-#[cfg(not(target_vendor = "apple"))]
-extern "C" {
-    static _OBJC_CLASS_NSObject: Class;
-}
-
-#[cfg(not(target_vendor = "apple"))]
-#[allow(dead_code)]
-unsafe fn get_class_to_force_linkage() -> &'static Class {
-    &_OBJC_CLASS_NSObject
-}
 
 #[macro_use]
 mod macros;

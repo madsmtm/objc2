@@ -95,7 +95,7 @@ mod tests {
     #[cfg(not(target_vendor = "apple"))]
     #[test]
     fn ensure_linkage() {
-        unsafe { crate::get_class_to_force_linkage() };
+        unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
     }
 
     #[test]

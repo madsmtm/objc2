@@ -100,3 +100,27 @@ pub mod runtime;
 
 #[cfg(test)]
 mod test_utils;
+
+/// Hacky way to make GNUStep link properly to Foundation while testing.
+///
+/// This is a temporary solution to make our CI work for now!
+#[doc(hidden)]
+#[cfg(not(target_vendor = "apple"))]
+pub mod __gnustep_hack {
+    use super::runtime::Class;
+
+    #[link(name = "gnustep-base", kind = "dylib")]
+    // This linking doesn't have to be on the correct `extern` block.
+    extern "C" {
+        static _OBJC_CLASS_NSObject: Class;
+    }
+
+    pub unsafe fn get_class_to_force_linkage() -> &'static Class {
+        &_OBJC_CLASS_NSObject
+    }
+
+    #[test]
+    fn ensure_linkage() {
+        unsafe { get_class_to_force_linkage() };
+    }
+}
