@@ -3,7 +3,7 @@ use core::ptr::NonNull;
 
 use objc2::msg_send;
 use objc2::rc::{Id, Owned, Shared};
-use objc2::runtime::{Class, BOOL, NO};
+use objc2::runtime::{Bool, Class};
 use objc2::Message;
 
 use super::NSString;
@@ -25,8 +25,8 @@ pub trait INSObject: Any + Sized + Message {
     where
         T: INSObject,
     {
-        let result: BOOL = unsafe { msg_send![self, isEqual: other] };
-        result != NO
+        let result: Bool = unsafe { msg_send![self, isEqual: other] };
+        result.is_true()
     }
 
     fn description(&self) -> Id<NSString, Shared> {
@@ -38,8 +38,8 @@ pub trait INSObject: Any + Sized + Message {
     }
 
     fn is_kind_of(&self, cls: &Class) -> bool {
-        let result: BOOL = unsafe { msg_send![self, isKindOfClass: cls] };
-        result != NO
+        let result: Bool = unsafe { msg_send![self, isKindOfClass: cls] };
+        result.is_true()
     }
 
     fn new() -> Id<Self, Owned> {

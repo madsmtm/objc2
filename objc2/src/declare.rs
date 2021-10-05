@@ -38,7 +38,7 @@ use core::mem;
 use core::ptr;
 use std::ffi::CString;
 
-use crate::runtime::{self, Class, Imp, Object, Protocol, Sel, BOOL, NO};
+use crate::runtime::{self, Bool, Class, Imp, Object, Protocol, Sel};
 use crate::{Encode, EncodeArguments, Encoding, Message};
 
 /// Types that can be used as the implementation of an Objective-C method.
@@ -182,13 +182,13 @@ impl ClassDecl {
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
-        let success = runtime::class_addMethod(
+        let success = Bool::from_raw(runtime::class_addMethod(
             self.cls as _,
             sel.as_ptr() as _,
             Some(func.imp()),
             types.as_ptr(),
-        );
-        assert!(success != NO, "Failed to add method {:?}", sel);
+        ));
+        assert!(success.is_true(), "Failed to add method {:?}", sel);
     }
 
     /// Adds a class method with the given name and implementation.
@@ -217,13 +217,13 @@ impl ClassDecl {
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let metaclass = (*self.cls).metaclass() as *const _ as *mut _;
-        let success = runtime::class_addMethod(
+        let success = Bool::from_raw(runtime::class_addMethod(
             metaclass,
             sel.as_ptr() as _,
             Some(func.imp()),
             types.as_ptr(),
-        );
-        assert!(success != NO, "Failed to add class method {:?}", sel);
+        ));
+        assert!(success.is_true(), "Failed to add class method {:?}", sel);
     }
 
     /// Adds an ivar with type `T` and the provided name.
@@ -236,7 +236,7 @@ impl ClassDecl {
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         let size = mem::size_of::<T>();
         let align = log2_align_of::<T>();
-        let success = unsafe {
+        let success = Bool::from_raw(unsafe {
             runtime::class_addIvar(
                 self.cls as _,
                 c_name.as_ptr(),
@@ -244,8 +244,8 @@ impl ClassDecl {
                 align,
                 encoding.as_ptr(),
             )
-        };
-        assert!(success != NO, "Failed to add ivar {}", name);
+        });
+        assert!(success.is_true(), "Failed to add ivar {}", name);
     }
 
     /// Adds the given protocol to self.
@@ -255,7 +255,8 @@ impl ClassDecl {
     /// If the protocol wasn't successfully added.
     pub fn add_protocol(&mut self, proto: &Protocol) {
         let success = unsafe { runtime::class_addProtocol(self.cls as _, proto.as_ptr()) };
-        assert!(success != NO, "Failed to add protocol {:?}", proto);
+        let success = Bool::from_raw(success).is_true();
+        assert!(success, "Failed to add protocol {:?}", proto);
     }
 
     /// Registers the [`ClassDecl`], consuming it, and returns a reference to
@@ -322,8 +323,8 @@ impl ProtocolDecl {
                 self.proto as _,
                 sel.as_ptr() as _,
                 types.as_ptr(),
-                is_required as BOOL,
-                is_instance_method as BOOL,
+                Bool::new(is_required).into(),
+                Bool::new(is_instance_method).into(),
             );
         }
     }

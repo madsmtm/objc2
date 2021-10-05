@@ -28,23 +28,23 @@ use objc2_encode::{Encode, Encoding, RefEncode};
 #[repr(C)]
 struct MyObject {
     a: f32,
-    b: bool,
+    b: i16,
 }
 
 unsafe impl Encode for MyObject {
     const ENCODING: Encoding<'static> = Encoding::Struct(
         "MyObject",
-        &[f32::ENCODING, bool::ENCODING
-    ]);
+        &[f32::ENCODING, i16::ENCODING],
+    );
 }
 
-assert_eq!(&MyObject::ENCODING, "{MyObject=fB}");
+assert_eq!(&MyObject::ENCODING, "{MyObject=fs}");
 
 unsafe impl RefEncode for MyObject {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
-assert_eq!(&MyObject::ENCODING_REF, "^{MyObject=fB}");
+assert_eq!(&MyObject::ENCODING_REF, "^{MyObject=fs}");
 ```
 
 An `Encoding` can be compared with an encoding string from the Objective-C
