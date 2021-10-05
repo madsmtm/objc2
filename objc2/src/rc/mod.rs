@@ -28,11 +28,13 @@
 
 mod autorelease;
 mod id;
+mod id_slice;
 mod ownership;
 mod weak_id;
 
 pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
 pub use self::id::Id;
+pub use self::id_slice::{IdSlice, IdSliceMut};
 pub use self::ownership::{Owned, Ownership, Shared};
 pub use self::weak_id::WeakId;
 

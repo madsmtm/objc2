@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use core::ops::Index;
 use core::ptr::{self, NonNull};
 
-use objc2::rc::{Id, Owned, Ownership, Shared};
+use objc2::rc::{Id, IdSlice, Owned, Ownership, Shared};
 use objc2::runtime::Class;
 use objc2::{class, msg_send};
 
@@ -119,8 +119,7 @@ pub trait INSDictionary: INSObject {
     where
         T: INSCopying<Output = Self::Key>,
     {
-        let vals_refs: Vec<&Self::Value> = vals.iter().map(|obj| &**obj).collect();
-        unsafe { from_refs(keys, &vals_refs) }
+        unsafe { from_refs(keys, &vals.as_slice_ref()) }
     }
 
     fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<Self::Value, Self::Own>, Owned> {
