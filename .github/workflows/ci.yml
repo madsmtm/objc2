@@ -116,13 +116,23 @@ jobs:
         echo "LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
         echo "CPATH=/usr/local/include:$CPATH" >> $GITHUB_ENV
 
+    - name: Test GNUStep
+      if: contains(matrix.platform.os, 'ubuntu')
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        # Temporary fix
+        args: --verbose --no-fail-fast --no-default-features --package objc2_sys --package objc2 --package objc2_encode --package objc2_foundation
+
     - name: Test
+      if: ${{ !contains(matrix.platform.os, 'ubuntu') }}
       uses: actions-rs/cargo@v1
       with:
         command: test
         args: --verbose --no-fail-fast --no-default-features
 
     - name: Test with features
+      if: ${{ !contains(matrix.platform.os, 'ubuntu') }}
       uses: actions-rs/cargo@v1
       with:
         command: test
