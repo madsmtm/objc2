@@ -27,6 +27,11 @@ pub fn build() -> PathBuf {
     }
 
     cmake::Config::new(source_dir)
+        // Default to ignoring `gnustep-config` presence, since they usually
+        // want to install the libraries globally (which requires root).
+        // Users that want systemwide installation should just install it
+        // themselves, and shouldn't need to vendor GNUStep.
+        .define("GNUSTEP_INSTALL_TYPE", "NONE")
         .define("BUILD_STATIC_LIBOBJC", "OFF") // Default
         .define("DEBUG_ARC_COMPAT", "OFF") // Default
         .define("ENABLE_OBJCXX", "ON") // Default (NO_OBJCXX in code)
