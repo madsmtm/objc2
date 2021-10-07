@@ -59,7 +59,7 @@ impl Builder {
             panic!("{}", NO_SOURCES_MSG);
         }
 
-        let dst = cmake::Config::new(source_dir)
+        let dst = cmake::Config::new(&source_dir)
             // Default to ignoring `gnustep-config` presence, since they
             // usually want to install the libraries globally (which requires
             // root). Users that want systemwide installation should just
@@ -91,6 +91,7 @@ impl Builder {
             .build();
 
         Artifacts {
+            source_dir,
             include_dir: dst.join("include"),
             lib_dir: dst.join("lib"),
             lib_kind: self.lib_kind,
@@ -100,6 +101,7 @@ impl Builder {
 }
 
 pub struct Artifacts {
+    source_dir: PathBuf,
     include_dir: PathBuf,
     lib_dir: PathBuf,
     lib_kind: LibKind,
@@ -107,6 +109,10 @@ pub struct Artifacts {
 }
 
 impl Artifacts {
+    pub fn source_dir(&self) -> &Path {
+        &self.source_dir
+    }
+
     pub fn include_dir(&self) -> &Path {
         &self.include_dir
     }
@@ -132,6 +138,22 @@ impl Artifacts {
         println!("cargo:rustc-link-lib={}={}", kind, self.lib_name);
         println!("cargo:include={}", self.include_dir.display());
         println!("cargo:lib={}", self.lib_dir.display());
+    }
+
+    pub fn print_cargo_rerun_if_changed(&self) {
+        println!("cargo:rerun-if-env-changed=CC");
+        println!("cargo:rerun-if-env-changed=CXX");
+        rerun_if(&self.source_dir);
+    }
+}
+
+fn rerun_if(path: &Path) {
+    if path.is_dir() {
+        for entry in std::fs::read_dir(path).expect("read_dir") {
+            rerun_if(&entry.expect("entry").path());
+        }
+    } else {
+        println!("cargo:rerun-if-changed={}", path.display());
     }
 }
 

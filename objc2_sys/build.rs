@@ -9,6 +9,7 @@ fn main() {
 
     let artifacts = builder.build();
     artifacts.print_cargo_metadata();
+    artifacts.print_cargo_rerun_if_changed();
 
     // Add #[cfg(gnustep)] directive
     println!("cargo:rustc-cfg=gnustep");
