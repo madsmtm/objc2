@@ -1,12 +1,24 @@
 #[cfg(feature = "vendor_gnustep")]
 fn main() {
-    let artifacts = gnustep_libobjc2_src::build();
+    let mut builder = gnustep_libobjc2_src::Builder::new();
+
+    #[cfg(feature = "static")]
+    builder.lib_kind(gnustep_libobjc2_src::LibKind::Static);
+    #[cfg(not(feature = "static"))]
+    builder.lib_kind(gnustep_libobjc2_src::LibKind::Dynamic);
+
+    let artifacts = builder.build();
     artifacts.print_cargo_metadata();
+
+    // Add #[cfg(gnustep)] directive
     println!("cargo:rustc-cfg=gnustep");
 }
 
 #[cfg(not(feature = "vendor_gnustep"))]
 fn main() {
+    #[cfg(feature = "static")]
+    compile_error!("Can only link statically to libobjc when vendoring is enabled.");
+
     // Only rerun if this file changes; the script doesn't depend on our code
     println!("cargo:rerun-if-changed=build.rs");
 

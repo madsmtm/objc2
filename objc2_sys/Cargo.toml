@@ -29,8 +29,13 @@ links = "objc"
 build = "build.rs"
 
 [features]
-# If enabled, GNUStep's libobjc2 will be compiled and linked from source
+# If enabled, GNUStep's libobjc2 will be compiled and linked from source.
 vendor_gnustep = ["gnustep_libobjc2_src"]
+# Whether to link to libobjc statically.
+#
+# Only supported for vendored dependencies, it will trigger a compile-time
+# error when venoring is not enabled.
+static = []
 
 [build-dependencies]
 gnustep_libobjc2_src = { path = "../gnustep_libobjc2_src", optional = true }
