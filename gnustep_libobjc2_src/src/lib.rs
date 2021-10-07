@@ -11,7 +11,21 @@ need to fetch the submodule's contents from
 https://github.com/gnustep/libobjc2
 "#;
 
-pub fn build() -> PathBuf {
+#[non_exhaustive]
+pub enum LibKind {
+    Dynamic,
+    Static,
+    // Framework,
+}
+
+pub struct Artifacts {
+    include_dir: PathBuf,
+    lib_dir: PathBuf,
+    lib_kind: LibKind,
+    lib_name: &'static str,
+}
+
+pub fn build() -> Artifacts {
     // GNUStep only compiles with clang, so try that first.
     // (But let the user specify a different path if they need to).
     if env::var_os("CC").is_none() {
@@ -26,7 +40,7 @@ pub fn build() -> PathBuf {
         panic!("{}", NO_SOURCES_MSG);
     }
 
-    cmake::Config::new(source_dir)
+    let dst = cmake::Config::new(source_dir)
         // Default to ignoring `gnustep-config` presence, since they usually
         // want to install the libraries globally (which requires root).
         // Users that want systemwide installation should just install it
@@ -43,5 +57,41 @@ pub fn build() -> PathBuf {
         // .always_configure(false) // TODO
         // .static_crt(?)
         .build_target("install")
-        .build()
+        .build();
+
+    Artifacts {
+        include_dir: dst.join("include"),
+        lib_dir: dst.join("lib"),
+        lib_kind: LibKind::Dynamic,
+        lib_name: "objc",
+    }
+}
+
+impl Artifacts {
+    pub fn include_dir(&self) -> &Path {
+        &self.include_dir
+    }
+
+    pub fn lib_dir(&self) -> &Path {
+        &self.lib_dir
+    }
+
+    pub fn lib_kind(&self) -> &LibKind {
+        &self.lib_kind
+    }
+
+    pub fn lib_name(&self) -> &str {
+        &self.lib_name
+    }
+
+    pub fn print_cargo_metadata(&self) {
+        let kind = match self.lib_kind {
+            LibKind::Dynamic => "dynamic",
+            LibKind::Static => "static",
+        };
+        println!("cargo:rustc-link-search=native={}", self.lib_dir.display());
+        println!("cargo:rustc-link-lib={}={}", kind, self.lib_name);
+        println!("cargo:include={}", self.include_dir.display());
+        println!("cargo:lib={}", self.lib_dir.display());
+    }
 }
