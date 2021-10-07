@@ -1,3 +1,4 @@
+use std::env;
 use std::path::{Path, PathBuf};
 
 const NO_SOURCES_MSG: &'static str = r#"
@@ -11,10 +12,20 @@ https://github.com/gnustep/libobjc2
 "#;
 
 pub fn build() -> PathBuf {
+    // GNUStep only compiles with clang, so try that first.
+    // (But let the user specify a different path if they need to).
+    if env::var_os("CC").is_none() {
+        env::set_var("CC", "clang");
+    }
+    if env::var_os("CXX").is_none() {
+        env::set_var("CXX", "clang++");
+    }
+
     let source_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("libobjc2");
     if !source_dir.join("objc/objc.h").exists() {
         panic!("{}", NO_SOURCES_MSG);
     }
+
     cmake::Config::new(source_dir)
         .define("BUILD_STATIC_LIBOBJC", "OFF") // Default
         .define("DEBUG_ARC_COMPAT", "OFF") // Default
