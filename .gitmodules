@@ -2,3 +2,6 @@
 	path = gnustep_libobjc2_src/libobjc2
 	url = https://github.com/gnustep/libobjc2.git
 	branch = 2.1
+[submodule "gnustep-base"]
+	path = gnustep_base_src/libs-base
+	url = https://github.com/gnustep/libs-base.git

@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "gnustep_libobjc2_src",
+    "gnustep_base_src",
     "objc2",
     "objc2_block",
     "objc2_encode",

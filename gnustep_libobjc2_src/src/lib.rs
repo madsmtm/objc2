@@ -1,3 +1,15 @@
+//! TODO
+//!
+//! See
+//! - https://github.com/gnustep/libs-base/blob/base-1_28_0/INSTALL
+//! - https://github.com/blas-lapack-rs/blis-src/blob/main/blis-src/build.rs
+//! - https://github.com/alexcrichton/openssl-src-rs/blob/master/src/lib.rs
+//! - https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.70/autoconf.html#Running-configure-Scripts
+//!
+//! And gnustep-make would also have to be installed:
+//! - https://github.com/gnustep/tools-make/blob/master/Documentation/gnustep-make.texi
+//! - http://www.gnustep.org/resources/documentation/Developer/Make/Manual/DESIGN
+
 use std::env;
 use std::path::{Path, PathBuf};
 
