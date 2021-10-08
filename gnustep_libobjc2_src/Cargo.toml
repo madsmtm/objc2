@@ -1,0 +1,24 @@
+[package]
+name = "gnustep_libobjc2_src"
+version = "0.0.1"
+authors = ["Mads Marquart <mads@marquart.dk>"]
+edition = "2018"
+
+description = "Source of GNUStep's libobjc2 and logic to build it"
+keywords = ["gnustep", "objc", "libobjc2", "build-dependencies"]
+categories = [
+    "development-tools::build-utils",
+]
+readme = "README.md"
+repository = "https://github.com/madsmtm/gnustep_libobjc2_src"
+documentation = "https://docs.rs/gnustep_libobjc2_src/"
+license = "MIT/Apache-2.0"
+
+exclude = [
+    "libobjc2/ABIDoc/*",
+    "libobjc2/Test/*",
+    "libobjc2/third_party/robin-map/tests/*",
+]
+
+[dependencies]
+cmake = "0.1.45"

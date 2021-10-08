@@ -1,0 +1,4 @@
+[submodule "libobjc2"]
+	path = gnustep_libobjc2_src/libobjc2
+	url = https://github.com/gnustep/libobjc2.git
+	branch = 2.1
