@@ -77,18 +77,6 @@ jobs:
         command: check
         args: --verbose --no-default-features
 
-    - name: Install GNUStep libobjc2
-      if: contains(matrix.platform.os, 'ubuntu')
-      run: |
-        wget https://github.com/gnustep/libobjc2/archive/refs/tags/v1.9.tar.gz
-        tar -xzf v1.9.tar.gz
-        mkdir libobjc2-1.9/build
-        cd libobjc2-1.9/build
-        export CC="clang"
-        export CXX="clang++"
-        cmake ../
-        sudo make install
-
     - name: Install GNUStep make
       if: contains(matrix.platform.os, 'ubuntu')
       run: |
@@ -122,7 +110,7 @@ jobs:
       with:
         command: test
         # Temporary fix
-        args: --verbose --no-fail-fast --no-default-features --package objc2_sys --package objc2 --package objc2_encode --package objc2_foundation
+        args: --verbose --no-fail-fast --no-default-features --features objc2_sys/vendor_gnustep --package objc2_sys --package objc2 --package objc2_encode --package objc2_foundation
 
     - name: Test
       if: ${{ !contains(matrix.platform.os, 'ubuntu') }}

@@ -27,3 +27,10 @@ readme = "README.md"
 # See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
 links = "objc"
 build = "build.rs"
+
+[features]
+# If enabled, GNUStep's libobjc2 will be compiled and linked from source
+vendor_gnustep = ["gnustep_libobjc2_src"]
+
+[build-dependencies]
+gnustep_libobjc2_src = { path = "../gnustep_libobjc2_src", optional = true }
