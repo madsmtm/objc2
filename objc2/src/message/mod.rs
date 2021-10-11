@@ -28,10 +28,10 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, Message
 
 mod verify;
 
-#[cfg(target_vendor = "apple")]
+#[cfg(apple)]
 #[path = "apple/mod.rs"]
 mod platform;
-#[cfg(not(target_vendor = "apple"))]
+#[cfg(any(gnustep, winobjc))]
 #[path = "gnustep.rs"]
 mod platform;
 

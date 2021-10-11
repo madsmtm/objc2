@@ -106,7 +106,7 @@ mod test_utils;
 ///
 /// This is a temporary solution to make our CI work for now!
 #[doc(hidden)]
-#[cfg(not(target_vendor = "apple"))]
+#[cfg(any(gnustep, winobjc))]
 pub mod __gnustep_hack {
     use super::runtime::Class;
 
