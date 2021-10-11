@@ -4,7 +4,7 @@
 //!
 //! TODO: Some of these are only supported on _some_ GNUStep targets!
 use crate::{objc_class, objc_object};
-#[cfg(gnustep)]
+#[cfg(any(gnustep, winobjc))]
 use crate::{objc_selector, IMP};
 
 /// Specifies data used when sending messages to superclasses.
@@ -20,7 +20,7 @@ pub struct objc_super {
     pub super_class: *const objc_class,
 }
 
-#[cfg(gnustep)]
+#[cfg(any(gnustep, winobjc))]
 extern "C" {
     pub fn objc_msg_lookup(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
     pub fn objc_msg_lookup_super(sup: *const objc_super, sel: *const objc_selector) -> IMP;

@@ -3,7 +3,7 @@
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
 use core::ffi::c_void;
-#[cfg(any(apple, gnustep))]
+#[cfg(any(apple, gnustep, winobjc))]
 use std::os::raw::c_int;
 
 #[cfg(apple)]
@@ -37,7 +37,7 @@ extern "C" {
     pub fn objc_exception_throw(exception: *mut objc_object) -> !;
     #[cfg(apple)]
     pub fn objc_exception_rethrow() -> !;
-    #[cfg(gnustep)]
+    #[cfg(any(gnustep, winobjc))]
     pub fn objc_exception_rethrow(exc_buf: *mut c_void) -> !;
 
     #[cfg(apple)]
@@ -58,6 +58,6 @@ extern "C" {
     #[cfg(all(apple, target_os = "macos"))]
     pub fn objc_removeExceptionHandler(token: usize);
 
-    #[cfg(gnustep)]
+    #[cfg(any(gnustep, winobjc))]
     pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: c_int) -> c_int;
 }

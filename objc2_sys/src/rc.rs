@@ -48,6 +48,6 @@ extern "C" {
         -> *mut objc_object;
 
     // TODO: Decide about nonstandard extensions like these:
-    // #[cfg(gnustep)]
+    // #[cfg(any(gnustep, winobjc))]
     // pub fn objc_delete_weak_refs(obj: *mut objc_object) -> BOOL;
 }

@@ -9,24 +9,33 @@ Raw Rust bindings to core Objective-C runtimes and ABIs.
 
 ## Runtime Support
 
-`objc2_sys` currently supports two runtimes (support for [`ObjFW`] and
-[`WinObjC`] may be added):
-- Apple's [`objc4`] on `cfg(target_vendor = "apple")` targets.
-- GNUStep's [`libobjc2`] on all other targets. See their [Objective-C Compiler
-  and Runtime FAQ][gnustep-faq].
+`objc2_sys` currently supports three runtimes (support for [`ObjFW`] may be
+added):
+- Apple's [`objc4`] \(default on `target_vendor = "apple"`\).
+- GNUStep's [`libobjc2`] \(default on other systems\).
+- Window's [`WinObjC`] uses [a fork][ms-libobjc2] of GNUStep's `libobjc2`
+  based on version 1.8 with very few user-facing changes \(default on
+  `target_os = "windows"`\).
+
+A default is chosen automatically from the compilation target as seen above,
+but it is recommended to set the `OBJC_RUNTIME` environment variable to the
+desired runtime when building (see below).
 
 This library will probably only ever support ["Modern"][modern] Objective-C
 runtimes, since support for reference-counting primitives like `objc_retain`
 and `objc_autoreleasePoolPop` is a vital requirement for most applications.
 
 Just so we're being clear, this rules out the GCC [`libobjc`][gcc-libobjc]
-runtime (see [this][gcc-objc-support]), and the [`mulle-objc`] runtime.
+runtime (see [this][gcc-objc-support]), and the [`mulle-objc`] runtime. More
+information on different runtimes can be found in GNUStep's [Objective-C
+Compiler and Runtime FAQ][gnustep-faq].
 
 [`ObjFW`]: https://github.com/ObjFW/ObjFW
-[`WinObjC`]: https://github.com/microsoft/WinObjC
 [`objc4`]: https://opensource.apple.com/source/objc4/
 [`libobjc2`]: https://github.com/gnustep/libobjc2
 [gnustep-faq]: http://wiki.gnustep.org/index.php/Objective-C_Compiler_and_Runtime_FAQ
+[`WinObjC`]: https://github.com/microsoft/WinObjC
+[ms-libobjc2]: https://github.com/microsoft/libobjc2
 [modern]: https://en.wikipedia.org/wiki/Objective-C#Modern_Objective-C
 [gcc-libobjc]: https://github.com/gcc-mirror/gcc/tree/master/libobjc
 [gcc-objc-support]: https://gcc.gnu.org/onlinedocs/gcc/Standards.html#Objective-C-and-Objective-C_002b_002b-Languages
