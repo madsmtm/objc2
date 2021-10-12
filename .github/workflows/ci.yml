@@ -10,6 +10,8 @@ env:
   RUST_BACKTRACE: 1
   # Faster compilation and error on warnings
   RUSTFLAGS: "-C debuginfo=0 -D warnings"
+  CC: clang
+  CXX: clang++
 
 jobs:
   fmt:
@@ -84,8 +86,6 @@ jobs:
         tar -xzf v1.9.tar.gz
         mkdir libobjc2-1.9/build
         cd libobjc2-1.9/build
-        export CC="clang"
-        export CXX="clang++"
         cmake ../
         sudo make install
 
@@ -122,7 +122,15 @@ jobs:
       with:
         command: test
         # Temporary fix
-        args: --verbose --no-fail-fast --no-default-features --package objc2_sys --package objc2 --package objc2_encode --package objc2_foundation
+        args: --verbose --no-fail-fast --no-default-features --package objc2_sys --package objc2 --package objc2_encode --package objc2_exception --package objc2_foundation
+
+    - name: Test GNUStep with features
+      if: contains(matrix.platform.os, 'ubuntu')
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        # Temporary fix
+        args: --verbose --no-fail-fast --no-default-features --features exception,verify_message --package objc2_sys --package objc2 --package objc2_encode --package objc2_exception --package objc2_foundation
 
     - name: Test
       if: ${{ !contains(matrix.platform.os, 'ubuntu') }}

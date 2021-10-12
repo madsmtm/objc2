@@ -34,6 +34,9 @@ pub type objc_exception_handler =
 extern "C" {
     pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;
     pub fn objc_end_catch();
+    /// See [`objc-exception.h`][objc-exception].
+    ///
+    /// [objc-exception]: https://opensource.apple.com/source/objc4/objc4-818.2/runtime/objc-exception.h.auto.html
     pub fn objc_exception_throw(exception: *mut objc_object) -> !;
     #[cfg(apple)]
     pub fn objc_exception_rethrow() -> !;

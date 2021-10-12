@@ -160,9 +160,10 @@ fn main() {
 
     // Add clang arguments
     println!(
-        "cargo:clang_args=-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-weak -fobjc-runtime={}",
-        // -fobjc-arc implies -fobjc-link-runtime, so people actually don't
-        // even need to specify `-lobjc` (though they probably still should).
+        "cargo:clang_args=-fobjc-link-runtime -fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={}",
+        // `-fobjc-link-runtime` -> people don't need to specify `-lobjc`.
+
+        // -fobjc-weak ?
         clang_runtime
     ); // DEP_OBJC_CLANG_ARGS
 
