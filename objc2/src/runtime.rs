@@ -293,7 +293,7 @@ impl Class {
 
     /// Checks whether this class conforms to the specified protocol.
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
-        unsafe { Bool::from_raw(class_conformsToProtocol(self.as_ptr(), proto.as_ptr())).into() }
+        unsafe { Bool::from_raw(class_conformsToProtocol(self.as_ptr(), proto.as_ptr())).is_true() }
     }
 
     /// Get a list of the protocols to which this class conforms.
@@ -368,7 +368,9 @@ impl Protocol {
 
     /// Checks whether this protocol conforms to the specified protocol.
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
-        unsafe { Bool::from_raw(protocol_conformsToProtocol(self.as_ptr(), proto.as_ptr())).into() }
+        unsafe {
+            Bool::from_raw(protocol_conformsToProtocol(self.as_ptr(), proto.as_ptr())).is_true()
+        }
     }
 
     /// Returns the name of self.

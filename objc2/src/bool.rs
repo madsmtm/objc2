@@ -3,11 +3,21 @@ use core::fmt;
 
 /// The Objective-C `BOOL` type.
 ///
-/// To convert an Objective-C `BOOL` into a Rust [`bool`], call the one of the
+/// Usually, you would convert this into a Rust [`bool`] with the
 /// [`Bool::is_false`] or [`Bool::is_true`] methods.
 ///
 /// This is FFI-safe and can be used in directly with
 /// [`msg_send!`][`crate::msg_send`].
+///
+/// # Example
+///
+/// ```no_run
+/// use objc2::{class, msg_send};
+/// use objc2::runtime::{Object, Bool};
+/// let ns_value: *mut Object = unsafe { msg_send![class!(NSValue), initWithBool: Bool::YES] };
+/// let rtn: Bool = unsafe { msg_send![ns_value, boolValue] };
+/// assert!(rtn.is_true());
+/// ```
 #[repr(transparent)]
 // TODO: Might have to implement some of these manually, in case someone puts
 // something that is not 0 or 1 into the Bool?
