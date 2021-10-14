@@ -323,8 +323,8 @@ impl ProtocolDecl {
                 self.proto as _,
                 sel.as_ptr() as _,
                 types.as_ptr(),
-                Bool::new(is_required).into(),
-                Bool::new(is_instance_method).into(),
+                Bool::new(is_required).as_raw(),
+                Bool::new(is_instance_method).as_raw(),
             );
         }
     }

@@ -1,5 +1,3 @@
-use objc2_sys::BOOL;
-
 use crate::{Encode, Encoding, RefEncode};
 use core::fmt;
 
@@ -15,35 +13,35 @@ use core::fmt;
 // something that is not 0 or 1 into the Bool?
 #[derive(Copy, Clone, Default, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub struct Bool {
-    value: BOOL,
+    value: objc2_sys::BOOL,
 }
 
 impl Bool {
     /// The equivalent of [`true`] for Objective-C's `BOOL` type.
-    pub const YES: Self = Self::new(true);
+    pub const YES: Self = Self::from_raw(objc2_sys::YES);
 
     /// The equivalent of [`false`] for Objective-C's `BOOL` type.
-    pub const NO: Self = Self::new(false);
+    pub const NO: Self = Self::from_raw(objc2_sys::NO);
 
     /// Creates an Objective-C boolean from a Rust boolean.
     #[inline]
     pub const fn new(value: bool) -> Self {
         // true as u8 => 1
         // false as u8 => 0
-        let value = value as BOOL;
+        let value = value as objc2_sys::BOOL;
         Self { value }
     }
 
     /// Creates this from a boolean value received from a raw Objective-C API.
     #[inline]
-    pub const fn from_raw(value: BOOL) -> Self {
+    pub const fn from_raw(value: objc2_sys::BOOL) -> Self {
         Self { value }
     }
 
     /// Retrieves the inner `objc2_sys` boolean type, to be used in raw
     /// Objective-C APIs.
     #[inline]
-    pub const fn as_raw(self) -> BOOL {
+    pub const fn as_raw(self) -> objc2_sys::BOOL {
         self.value
     }
 
@@ -85,7 +83,7 @@ impl fmt::Debug for Bool {
 }
 
 unsafe impl Encode for Bool {
-    const ENCODING: Encoding<'static> = BOOL::ENCODING;
+    const ENCODING: Encoding<'static> = objc2_sys::BOOL::ENCODING;
 }
 
 unsafe impl RefEncode for Bool {
