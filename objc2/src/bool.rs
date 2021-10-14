@@ -64,20 +64,6 @@ impl Bool {
     }
 }
 
-impl From<BOOL> for Bool {
-    #[inline]
-    fn from(b: BOOL) -> Bool {
-        Bool::from_raw(b)
-    }
-}
-
-impl From<Bool> for BOOL {
-    #[inline]
-    fn from(b: Bool) -> BOOL {
-        b.as_raw()
-    }
-}
-
 impl From<bool> for Bool {
     #[inline]
     fn from(b: bool) -> Bool {
