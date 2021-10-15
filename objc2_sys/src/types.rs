@@ -5,14 +5,17 @@ use crate::{
 };
 
 #[cfg(all(apple, not(target_arch = "aarch64")))]
+// C: (explicitly) signed char
 type BOOL_INNER = i8;
 
 #[cfg(all(gnustep, not(target_arch = "aarch64")))]
 // TODO: Only if STRICT_APPLE_COMPATIBILITY is NOT defined.
 // TODO: (__vxworks || _WIN32) becomes BOOL = c_int.
+// C: unsigned char
 type BOOL_INNER = u8;
 
 #[cfg(target_arch = "aarch64")]
+// C: _Bool
 type BOOL_INNER = bool;
 
 /// The Objective-C `BOOL` type.

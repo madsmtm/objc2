@@ -89,6 +89,7 @@ pub use crate::cache::CachedSel as __CachedSel;
 #[macro_use]
 mod macros;
 
+mod bool;
 mod cache;
 pub mod declare;
 mod encode;

@@ -11,8 +11,6 @@ use malloc_buf::Malloc;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_uint;
 
-use crate::Encode;
-
 #[allow(deprecated)]
 pub use objc2_sys::object_dispose;
 pub use objc2_sys::{
@@ -31,6 +29,9 @@ pub use objc2_sys::{
     protocol_copyProtocolList, protocol_getName, protocol_isEqual, sel_getName, sel_registerName,
 };
 pub use objc2_sys::{BOOL, NO, YES};
+
+pub use super::bool::Bool;
+use crate::Encode;
 
 /// A type that represents a method selector.
 #[repr(transparent)]
@@ -292,7 +293,7 @@ impl Class {
 
     /// Checks whether this class conforms to the specified protocol.
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
-        unsafe { class_conformsToProtocol(self.as_ptr(), proto.as_ptr()) == YES }
+        unsafe { Bool::from_raw(class_conformsToProtocol(self.as_ptr(), proto.as_ptr())).is_true() }
     }
 
     /// Get a list of the protocols to which this class conforms.
@@ -367,7 +368,9 @@ impl Protocol {
 
     /// Checks whether this protocol conforms to the specified protocol.
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
-        unsafe { protocol_conformsToProtocol(self.as_ptr(), proto.as_ptr()) == YES }
+        unsafe {
+            Bool::from_raw(protocol_conformsToProtocol(self.as_ptr(), proto.as_ptr())).is_true()
+        }
     }
 
     /// Returns the name of self.
@@ -379,7 +382,7 @@ impl Protocol {
 
 impl PartialEq for Protocol {
     fn eq(&self, other: &Protocol) -> bool {
-        unsafe { protocol_isEqual(self.as_ptr(), other.as_ptr()) == YES }
+        unsafe { Bool::from_raw(protocol_isEqual(self.as_ptr(), other.as_ptr())).is_true() }
     }
 }
 

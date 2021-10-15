@@ -37,7 +37,7 @@ use crate::Encoding;
 /// #[repr(C)]
 /// struct MyType {
 ///     a: i32,
-///     b: bool,
+///     b: f64,
 ///     c: *const c_void,
 /// }
 ///
@@ -49,7 +49,7 @@ use crate::Encoding;
 ///             // Delegate to field's implementations.
 ///             // The order is the same as in the definition.
 ///             i32::ENCODING,
-///             bool::ENCODING,
+///             f64::ENCODING,
 ///             <*const c_void>::ENCODING,
 ///         ],
 ///     );
@@ -160,13 +160,20 @@ encode_impls!(
     u64 => ULongLong,
     f32 => Float,
     f64 => Double,
-    bool => Bool,
     () => Void,
     *mut i8 => String,
     *const i8 => String,
     *mut u8 => String,
     *const u8 => String,
 );
+
+/// Using this directly is heavily discouraged, since the type of BOOL differs
+/// across platforms.
+///
+/// Use `objc2_sys::BOOL::ENCODING` or `objc2::runtime::Bool` instead.
+unsafe impl Encode for bool {
+    const ENCODING: Encoding<'static> = Encoding::Bool;
+}
 
 macro_rules! encode_impls_size {
     ($($t:ty => ($t16:ty, $t32:ty, $t64:ty),)*) => ($(
