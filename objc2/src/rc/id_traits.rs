@@ -1,5 +1,7 @@
 //! Helper traits for Id.
 
+use core::convert::Infallible;
+
 use super::{Id, Owned, Ownership};
 use crate::Message;
 
@@ -68,5 +70,53 @@ pub trait DefaultId: Sized {
 impl<T: DefaultId> Default for Id<T, T::Ownership> {
     fn default() -> Self {
         T::default_id()
+    }
+}
+
+pub trait FromId<T, O: Ownership> {
+    fn from_id(obj: Id<T, O>) -> Self;
+}
+
+pub trait TryFromId<T, O: Ownership>: Sized {
+    type Error;
+    fn try_from_id(obj: Id<T, O>) -> Result<Self, Self::Error>;
+}
+
+impl<T, O: Ownership, U: FromId<T, O>> TryFromId<T, O> for U {
+    type Error = Infallible;
+
+    fn try_from_id(obj: Id<T, O>) -> Result<Self, Self::Error> {
+        Ok(FromId::from_id(obj))
+    }
+}
+
+/// TODO.
+///
+/// This is similar to [`Into`] in that it is implemented automatically for
+/// all [`Id`] that implement [`FromId`]; but you will have to implement this
+/// yourself in many more cases!
+pub trait IntoId<T, O: Ownership> {
+    fn into_id(self) -> Id<T, O>;
+}
+
+impl<T, O: Ownership, U> IntoId<U, O> for Id<T, O>
+where
+    Id<U, O>: FromId<T, O>,
+{
+    fn into_id(self) -> Id<U, O> {
+        FromId::from_id(self)
+    }
+}
+
+pub trait TryIntoId<T, O: Ownership> {
+    type Error;
+    fn try_into_id(self) -> Result<Id<T, O>, Self::Error>;
+}
+
+impl<T, O: Ownership, U: IntoId<T, O>> TryIntoId<T, O> for U {
+    type Error = Infallible;
+
+    fn try_into_id(self) -> Result<Id<T, O>, Self::Error> {
+        Ok(IntoId::into_id(self))
     }
 }
