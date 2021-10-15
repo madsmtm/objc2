@@ -5,7 +5,7 @@ use core::marker::PhantomData;
 use core::ops::{Index, Range};
 use core::ptr::NonNull;
 
-use objc2::rc::{Id, IdSlice, Owned, Ownership, Shared};
+use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
 use objc2::{Encode, Encoding};
