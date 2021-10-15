@@ -16,10 +16,7 @@ pub trait SliceId {
 }
 
 /// Helper trait for functionality on slices containing owned [`Id`]s.
-pub trait SliceIdMut {
-    /// The type of the items in the slice.
-    type Item;
-
+pub trait SliceIdMut: SliceId {
     /// Convert a mutable slice of mutable [`Id`]s into a mutable slice of
     /// mutable references.
     fn as_mut_slice_mut(&mut self) -> &mut [&mut Self::Item];
@@ -44,8 +41,6 @@ impl<T: Message, O: Ownership> SliceId for [Id<T, O>] {
 }
 
 impl<T: Message> SliceIdMut for [Id<T, Owned>] {
-    type Item = T;
-
     fn as_mut_slice_mut(&mut self) -> &mut [&mut T] {
         let ptr = self as *mut Self as *mut [&mut T];
         // SAFETY: Id<T, O> and &mut T have the same memory layout, and the
