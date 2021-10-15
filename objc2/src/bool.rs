@@ -3,11 +3,15 @@ use core::fmt;
 
 /// The Objective-C `BOOL` type.
 ///
-/// Usually, you would convert this into a Rust [`bool`] with the
-/// [`Bool::is_false`] or [`Bool::is_true`] methods.
+/// This is a thin wrapper-type over [`objc2_sys::BOOL`]. It is intended that
+/// you convert this into a Rust [`bool`] with the [`Bool::is_false`] or
+/// [`Bool::is_true`] methods as soon as possible.
 ///
 /// This is FFI-safe and can be used in directly with
 /// [`msg_send!`][`crate::msg_send`].
+///
+/// Note that this is able to contain more states than `bool` on some
+/// platforms, but these cases should not be relied on!
 ///
 /// # Example
 ///
@@ -19,9 +23,12 @@ use core::fmt;
 /// assert!(rtn.is_true());
 /// ```
 #[repr(transparent)]
-// TODO: Might have to implement some of these manually, in case someone puts
-// something that is not 0 or 1 into the Bool?
-#[derive(Copy, Clone, Default, Ord, PartialOrd, Eq, PartialEq, Hash)]
+// We don't implement comparison traits because they could be implemented with
+// two slightly different semantics:
+// - `self.is_true().cmp(other.is_true())`
+// - `self.value.cmp(other.value)`
+// And it is not immediately clear for users which one was chosen.
+#[derive(Copy, Clone, Default)]
 pub struct Bool {
     value: objc2_sys::BOOL,
 }
@@ -48,7 +55,7 @@ impl Bool {
         Self { value }
     }
 
-    /// Retrieves the inner `objc2_sys` boolean type, to be used in raw
+    /// Retrieves the inner [`objc2_sys`] boolean type, to be used in raw
     /// Objective-C APIs.
     #[inline]
     pub const fn as_raw(self) -> objc2_sys::BOOL {
