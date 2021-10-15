@@ -63,7 +63,7 @@ jobs:
       with:
         # TODO: Disallow warnings here
         command: doc
-        args: --no-deps --document-private-items
+        args: --verbose --no-deps --document-private-items
 
     - name: Test without features
       uses: actions-rs/cargo@v1
