@@ -54,3 +54,24 @@ impl<T: Message> SliceIdMut for [Id<T, Owned>] {
         unsafe { &mut *ptr }
     }
 }
+
+/// Helper trait to implement [`Default`] on types whoose default value is an
+/// [`Id`].
+// TODO: Remove `Sized` bound.
+// TODO: Maybe make this `unsafe` and provide a default implementation?
+pub trait DefaultId: Sized {
+    /// Indicates whether the default value is mutable or immutable.
+    type Ownership: Ownership;
+
+    /// The default [`Id`] for a type.
+    ///
+    /// On most objects the implementation would just be sending a message to
+    /// the `new` selector.
+    fn default_id() -> Id<Self, Self::Ownership>;
+}
+
+impl<T: DefaultId> Default for Id<T, T::Ownership> {
+    fn default() -> Self {
+        T::default_id()
+    }
+}
