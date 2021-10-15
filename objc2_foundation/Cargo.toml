@@ -24,3 +24,6 @@ block = ["objc2_block"]
 [dependencies]
 objc2_block = { path = "../objc2_block", optional = true }
 objc2 = { path = "../objc2" }
+
+[dev-dependencies]
+naughty-strings = "0.2.4"

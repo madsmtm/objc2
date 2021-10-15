@@ -90,6 +90,8 @@ impl fmt::Display for NSString {
 
 #[cfg(test)]
 mod tests {
+    use objc2::rc::autoreleasepool;
+
     use super::{INSCopying, INSString, NSString};
 
     #[cfg(not(target_vendor = "apple"))]
@@ -119,5 +121,20 @@ mod tests {
         let s = NSString::from_str("Hello!");
         let copied = s.copy();
         assert!(copied.as_str() == s.as_str());
+    }
+
+    #[test]
+    fn test_blns() {
+        for s in naughty_strings::BLNS {
+            if s.starts_with('\u{feff}') {
+                continue;
+            }
+            let ns_string = NSString::from_str(s);
+            autoreleasepool(|_| {
+                assert_eq!(*s, ns_string.as_str());
+            });
+            assert_eq!(&ns_string, &ns_string);
+            assert_eq!(ns_string.len(), s.len());
+        }
     }
 }
