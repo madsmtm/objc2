@@ -11,8 +11,11 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::fmt;
+use core::future::Future;
 use core::hash;
 use core::iter::FusedIterator;
+use core::pin::Pin;
+use core::task::{Context, Poll};
 use std::error::Error;
 use std::io;
 
@@ -273,12 +276,12 @@ impl<T: io::BufRead> io::BufRead for Id<T, Owned> {
     }
 }
 
-// TODO:
-// impl<F: Future + Unpin> Future for Id<F, Owned> {
-//     type Output = F::Output;
-//     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-//         F::poll(Pin::new(&mut *self), cx)
-//     }
-// }
+impl<T: Future + Unpin> Future for Id<T, Owned> {
+    type Output = T::Output;
+
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        T::poll(Pin::new(&mut *self), cx)
+    }
+}
 
 // TODO: impl Fn traits, CoerceUnsized, Stream and so on when stabilized
