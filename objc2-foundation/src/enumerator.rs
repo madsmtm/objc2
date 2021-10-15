@@ -169,13 +169,16 @@ impl<'a, C: INSFastEnumeration> Iterator for NSFastEnumerator<'a, C> {
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec::Vec;
+    use objc2::rc::{Id, IntoId};
+
     use super::INSFastEnumeration;
     use crate::{INSArray, INSValue, NSArray, NSValue};
 
     #[test]
     fn test_enumerator() {
-        let vec = (0u32..4).map(NSValue::new).collect();
-        let array = NSArray::from_vec(vec);
+        let vec: Vec<_> = (0u32..4).map(NSValue::new).collect();
+        let array: Id<NSArray<_, _>, _> = vec.into_id();
 
         let enumerator = array.iter();
         assert!(enumerator.count() == 4);
@@ -186,8 +189,8 @@ mod tests {
 
     #[test]
     fn test_fast_enumerator() {
-        let vec = (0u32..4).map(NSValue::new).collect();
-        let array = NSArray::from_vec(vec);
+        let vec: Vec<_> = (0u32..4).map(NSValue::new).collect();
+        let array: Id<NSArray<_, _>, _> = vec.into_id();
 
         let enumerator = array.enumerator();
         assert!(enumerator.count() == 4);

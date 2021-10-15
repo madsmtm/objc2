@@ -112,10 +112,6 @@ pub unsafe trait INSArray: INSObject {
         }
     }
 
-    fn from_vec(vec: Vec<Id<Self::Item, Self::ItemOwnership>>) -> Id<Self, Self::Ownership> {
-        unsafe { from_refs(vec.as_slice_ref()) }
-    }
-
     fn objects_in_range(&self, range: Range<usize>) -> Vec<&Self::Item> {
         let range = NSRange::from(range);
         let mut vec = Vec::with_capacity(range.length);
@@ -126,34 +122,11 @@ pub unsafe trait INSArray: INSObject {
         vec
     }
 
-    fn to_vec(&self) -> Vec<&Self::Item> {
-        self.objects_in_range(0..self.len())
-    }
-
-    // TODO: Take Id<Self, Self::ItemOwnership> ?
-    fn into_vec(array: Id<Self, Owned>) -> Vec<Id<Self::Item, Self::ItemOwnership>> {
-        array
-            .to_vec()
-            .into_iter()
-            .map(|obj| unsafe { Id::retain(obj.into()) })
-            .collect()
-    }
-
     fn from_slice(slice: &[Id<Self::Item, Shared>]) -> Id<Self, Self::Ownership>
     where
         Self: INSArray<ItemOwnership = Shared>,
     {
         unsafe { from_refs(slice.as_slice_ref()) }
-    }
-
-    fn to_shared_vec(&self) -> Vec<Id<Self::Item, Shared>>
-    where
-        Self: INSArray<ItemOwnership = Shared>,
-    {
-        self.to_vec()
-            .into_iter()
-            .map(|obj| unsafe { Id::retain(obj.into()) })
-            .collect()
     }
 }
 
@@ -208,6 +181,52 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
 
     fn index(&self, index: usize) -> &T {
         self.get(index).unwrap()
+    }
+}
+
+impl<T, O> FromId<NSArray<T, O>, Owned> for Vec<Id<T, O>>
+where
+    T: INSObject,
+    O: Ownership,
+{
+    fn from_id(array: Id<NSArray<T, O>, Owned>) -> Self {
+        let vec: Vec<&T> = (&*array).into();
+        vec.into_iter()
+            .map(|obj| unsafe { Id::retain(obj.into()) })
+            .collect()
+    }
+}
+
+impl<T, O> IntoId<NSArray<T, O>, Owned> for Vec<Id<T, O>>
+where
+    T: INSObject,
+    O: Ownership,
+{
+    fn into_id(self) -> Id<NSArray<T, O>, Owned> {
+        unsafe { from_refs(self.as_slice_ref()) }
+    }
+}
+
+impl<'a, T, O> From<&'a NSArray<T, O>> for Vec<&'a T>
+where
+    T: INSObject,
+    O: Ownership,
+{
+    fn from(array: &'a NSArray<T, O>) -> Self {
+        array.objects_in_range(0..array.count())
+    }
+}
+
+impl<T> From<&'_ NSArray<T, Shared>> for Vec<Id<T, Shared>>
+where
+    T: INSObject,
+{
+    fn from(array: &NSArray<T, Shared>) -> Self {
+        array
+            .objects_in_range(0..array.count())
+            .into_iter()
+            .map(|obj| unsafe { Id::retain(obj.into()) })
+            .collect()
     }
 }
 
@@ -358,6 +377,16 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     }
 }
 
+impl<T, O> IntoId<NSMutableArray<T, O>, Owned> for Vec<Id<T, O>>
+where
+    T: INSObject,
+    O: Ownership,
+{
+    fn into_id(self) -> Id<NSMutableArray<T, O>, Owned> {
+        unsafe { from_refs(self.as_slice_ref()) }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::vec;
@@ -374,7 +403,7 @@ mod tests {
         for _ in 0..len {
             vec.push(NSObject::new());
         }
-        NSArray::from_vec(vec)
+        vec.into_id()
     }
 
     fn retain_count<T: INSObject>(obj: &T) -> usize {
@@ -455,7 +484,7 @@ mod tests {
     fn test_into_vec() {
         let array = sample_array(4);
 
-        let vec = INSArray::into_vec(array);
+        let vec = Vec::from_id(array);
         assert_eq!(vec.len(), 4);
     }
 
@@ -504,7 +533,7 @@ mod tests {
     #[test]
     fn test_sort() {
         let strings = vec![NSString::from_str("hello"), NSString::from_str("hi")];
-        let mut strings = NSMutableArray::from_vec(strings);
+        let mut strings: Id<NSMutableArray<_, _>, Owned> = strings.into_id();
 
         autoreleasepool(|pool| {
             strings.sort_by(|s1, s2| s1.as_str(pool).len().cmp(&s2.as_str(pool).len()));
