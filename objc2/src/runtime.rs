@@ -202,14 +202,8 @@ impl Class {
     /// class is not registered with the Objective-C runtime.
     pub fn get(name: &str) -> Option<&'static Self> {
         let name = CString::new(name).unwrap();
-        unsafe {
-            let cls = objc_getClass(name.as_ptr());
-            if cls.is_null() {
-                None
-            } else {
-                Some(&*(cls as *const Self))
-            }
-        }
+        let cls = unsafe { objc_getClass(name.as_ptr()) };
+        unsafe { cls.cast::<Self>().as_ref() }
     }
 
     /// Obtains the list of registered class definitions.
@@ -477,6 +471,8 @@ mod tests {
     use super::{Class, Protocol, Sel};
     use crate::test_utils;
     use crate::Encode;
+    use alloc::format;
+    use proptest::prelude::*;
 
     #[test]
     fn test_ivar() {
@@ -572,5 +568,30 @@ mod tests {
             *obj.get_ivar("_foo")
         };
         assert!(result == 4);
+    }
+
+    proptest! {
+        #[test]
+        fn test_sel_register_name(s in "[^\\u{0000}]*") {
+            let sel = Sel::register(&s);
+            prop_assert_eq!(&*s, sel.name());
+            prop_assert_eq!(&sel, &sel);
+        }
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_sel_register_null() {
+        let _ = Sel::register("\0");
+    }
+
+    proptest! {
+        #[test]
+        fn test_class_register_name(s in "[^\\u{0000}]*") {
+            if let Some(cls) = Class::get(&s) {
+                prop_assert_eq!(&*s, cls.name());
+                prop_assert_eq!(&cls, &cls);
+            }
+        }
     }
 }

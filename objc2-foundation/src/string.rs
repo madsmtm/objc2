@@ -114,6 +114,8 @@ impl fmt::Display for NSString {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::format;
+    use proptest::prelude::*;
 
     #[cfg(gnustep)]
     #[test]
@@ -200,5 +202,17 @@ mod tests {
             assert_eq!(ns_string.as_str(pool), expected);
         });
         assert_eq!(ns_string.len(), expected.len());
+    }
+
+    proptest! {
+        #[test]
+        fn test_to_and_from_str(s in "[^\\u{feff}]*.*") {
+            let ns_string = NSString::from_str(&s);
+            autoreleasepool(|pool| {
+                assert_eq!(&*s, ns_string.as_str(pool));
+            });
+            prop_assert_eq!(&ns_string, &ns_string);
+            prop_assert_eq!(ns_string.len(), s.len());
+        }
     }
 }

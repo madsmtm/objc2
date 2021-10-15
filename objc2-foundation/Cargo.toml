@@ -27,3 +27,6 @@ block = ["block2"]
 block2 = { path = "../block2", optional = true }
 objc2 = { path = "../objc2" }
 objc-sys = { path = "../objc-sys" }
+
+[dev-dependencies]
+proptest = "1.0"
