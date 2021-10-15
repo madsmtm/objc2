@@ -106,3 +106,57 @@ unsafe impl Encode for Bool {
 unsafe impl RefEncode for Bool {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_basic() {
+        let b = Bool::new(true);
+        assert!(b.is_true());
+        assert!(!b.is_false());
+        assert!(bool::from(b));
+        assert_eq!(b.as_raw() as usize, 1);
+
+        let b = Bool::new(false);
+        assert!(!b.is_true());
+        assert!(b.is_false());
+        assert!(!bool::from(b));
+        assert_eq!(b.as_raw() as usize, 0);
+    }
+
+    #[test]
+    fn test_associated_constants() {
+        let b = Bool::YES;
+        assert!(b.is_true());
+        assert_eq!(b.as_raw() as usize, 1);
+
+        let b = Bool::NO;
+        assert!(b.is_false());
+        assert_eq!(b.as_raw() as usize, 0);
+    }
+
+    #[test]
+    fn test_impls() {
+        let b: Bool = Default::default();
+        assert!(b.is_false());
+
+        assert!(Bool::from(true).is_true());
+        assert!(Bool::from(false).is_false());
+
+        assert!(Bool::from(true).is_true());
+        assert!(Bool::from(false).is_false());
+    }
+
+    // Can't really do this test since it won't compile on platforms where
+    // type BOOL = bool.
+    //
+    // #[test]
+    // fn test_outside_normal() {
+    //     let b = Bool::from_raw(42);
+    //     assert!(b.is_true());
+    //     assert!(!b.is_false());
+    //     assert_eq!(b.as_raw(), 42);
+    // }
+}
