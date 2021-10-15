@@ -1,8 +1,6 @@
-name: CI
+name: GNUStep
 
 on:
-  push:
-    branches: [master]
   pull_request:
 
 env:
@@ -14,29 +12,10 @@ env:
   CXX: clang++
 
 jobs:
-  fmt:
-    name: Check formatting
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Check formatting
-      uses: actions-rs/cargo@v1
-      with:
-        command: fmt
-        args: -- --check
-
   test:
     name: Test
-    strategy:
-      matrix:
-        platform:
-          - { os: ubuntu-latest } # TODO: 32bit and gcc-multilib
-          - { os: macos-10.15 }
-          - { os: macos-11    }
-          # - { target: x86_64-apple-ios,         os: macos-latest, }
-          # - { target: aarch64-apple-ios,        os: macos-latest, }
-
-    runs-on: ${{ matrix.platform.os }}
+    # TODO: 32bit and gcc-multilib
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -47,30 +26,12 @@ jobs:
         path: |
           ~/.cargo/
           target/
-        key: ${{ matrix.platform.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+        key: gnustep-cargo-${{ hashFiles('**/Cargo.toml') }}
         restore-keys: |
-          ${{ matrix.platform.os }}-cargo-
+          gnustep-cargo-
 
     - name: Install Packages
-      if: contains(matrix.platform.os, 'ubuntu')
       run: sudo apt-get install gobjc clang make libblocksruntime-dev
-
-    - name: Install different Rust toolchain
-      # A default toolchain is already installed
-      if: matrix.platform.target
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        target: ${{ matrix.platform.target }}
-        profile: minimal
-        override: true
-
-    - name: Check documentation
-      uses: actions-rs/cargo@v1
-      with:
-        # TODO: Disallow warnings here
-        command: doc
-        args: --no-deps --document-private-items
 
     - # Run before we install GNUStep as a "fail fast" mechanism
       name: Run checks
@@ -80,17 +41,15 @@ jobs:
         args: --verbose --no-default-features
 
     - name: Install GNUStep libobjc2
-      if: contains(matrix.platform.os, 'ubuntu')
       run: |
         wget https://github.com/gnustep/libobjc2/archive/refs/tags/v1.9.tar.gz
         tar -xzf v1.9.tar.gz
-        mkdir libobjc2-1.9/build
+        mkdir -p libobjc2-1.9/build
         cd libobjc2-1.9/build
         cmake ../
         sudo make install
 
     - name: Install GNUStep make
-      if: contains(matrix.platform.os, 'ubuntu')
       run: |
         wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_0.tar.gz
         tar -xzf make-2_9_0.tar.gz
@@ -99,7 +58,6 @@ jobs:
         sudo make install
 
     - name: Install GNUStep-Base
-      if: contains(matrix.platform.os, 'ubuntu')
       run: |
         wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
         tar -xzf base-1_28_0.tar.gz
@@ -108,7 +66,6 @@ jobs:
         sudo make install
 
     - name: Setup environment
-      if: contains(matrix.platform.os, 'ubuntu')
       run: |
         ls -al /usr/local/lib
         ls -al /usr/local/include
@@ -117,7 +74,6 @@ jobs:
         echo "CPATH=/usr/local/include:$CPATH" >> $GITHUB_ENV
 
     - name: Test GNUStep
-      if: contains(matrix.platform.os, 'ubuntu')
       uses: actions-rs/cargo@v1
       with:
         command: test
@@ -125,24 +81,8 @@ jobs:
         args: --verbose --no-fail-fast --no-default-features --package objc2_sys --package objc2 --package objc2_encode --package objc2_exception --package objc2_foundation
 
     - name: Test GNUStep with features
-      if: contains(matrix.platform.os, 'ubuntu')
       uses: actions-rs/cargo@v1
       with:
         command: test
         # Temporary fix
         args: --verbose --no-fail-fast --no-default-features --features exception,verify_message --package objc2_sys --package objc2 --package objc2_encode --package objc2_exception --package objc2_foundation
-
-    - name: Test
-      if: ${{ !contains(matrix.platform.os, 'ubuntu') }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: --verbose --no-fail-fast --no-default-features
-
-    - name: Test with features
-      if: ${{ !contains(matrix.platform.os, 'ubuntu') }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        # Not using --all-features because some features are nightly-only
-        args: --verbose --no-fail-fast --features block,exception,verify_message
