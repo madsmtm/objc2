@@ -7,11 +7,14 @@
 #![forbid(unsafe_code)]
 
 use alloc::borrow;
+use alloc::string::String;
+use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::fmt;
 use core::hash;
 use core::iter::FusedIterator;
 use std::error::Error;
+use std::io;
 
 use super::{Id, Owned, Ownership};
 
@@ -182,7 +185,93 @@ impl<T: Error, O: Ownership> Error for Id<T, O> {
     }
 }
 
-// TODO: impl io traits Seek, Read, BufRead and Write
+impl<T: io::Read> io::Read for Id<T, Owned> {
+    #[inline]
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        (**self).read(buf)
+    }
+
+    #[inline]
+    fn read_vectored(&mut self, bufs: &mut [io::IoSliceMut<'_>]) -> io::Result<usize> {
+        (**self).read_vectored(bufs)
+    }
+
+    #[inline]
+    fn read_to_end(&mut self, buf: &mut Vec<u8>) -> io::Result<usize> {
+        (**self).read_to_end(buf)
+    }
+
+    #[inline]
+    fn read_to_string(&mut self, buf: &mut String) -> io::Result<usize> {
+        (**self).read_to_string(buf)
+    }
+
+    #[inline]
+    fn read_exact(&mut self, buf: &mut [u8]) -> io::Result<()> {
+        (**self).read_exact(buf)
+    }
+}
+
+impl<T: io::Write> io::Write for Id<T, Owned> {
+    #[inline]
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        (**self).write(buf)
+    }
+
+    #[inline]
+    fn write_vectored(&mut self, bufs: &[io::IoSlice<'_>]) -> io::Result<usize> {
+        (**self).write_vectored(bufs)
+    }
+
+    #[inline]
+    fn flush(&mut self) -> io::Result<()> {
+        (**self).flush()
+    }
+
+    #[inline]
+    fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
+        (**self).write_all(buf)
+    }
+
+    #[inline]
+    fn write_fmt(&mut self, fmt: fmt::Arguments<'_>) -> io::Result<()> {
+        (**self).write_fmt(fmt)
+    }
+}
+
+impl<T: io::Seek> io::Seek for Id<T, Owned> {
+    #[inline]
+    fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> {
+        (**self).seek(pos)
+    }
+
+    #[inline]
+    fn stream_position(&mut self) -> io::Result<u64> {
+        (**self).stream_position()
+    }
+}
+
+impl<T: io::BufRead> io::BufRead for Id<T, Owned> {
+    #[inline]
+    fn fill_buf(&mut self) -> io::Result<&[u8]> {
+        (**self).fill_buf()
+    }
+
+    #[inline]
+    fn consume(&mut self, amt: usize) {
+        (**self).consume(amt)
+    }
+
+    #[inline]
+    fn read_until(&mut self, byte: u8, buf: &mut Vec<u8>) -> io::Result<usize> {
+        (**self).read_until(byte, buf)
+    }
+
+    #[inline]
+    fn read_line(&mut self, buf: &mut String) -> io::Result<usize> {
+        (**self).read_line(buf)
+    }
+}
 
 // TODO:
 // impl<F: Future + Unpin> Future for Id<F, Owned> {
