@@ -28,6 +28,7 @@
 
 mod autorelease;
 mod id;
+mod id_forwarding_impls;
 mod id_slice;
 mod ownership;
 mod weak_id;
