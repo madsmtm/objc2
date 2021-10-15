@@ -29,13 +29,13 @@
 mod autorelease;
 mod id;
 mod id_forwarding_impls;
-mod id_slice;
+mod id_traits;
 mod ownership;
 mod weak_id;
 
 pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
 pub use self::id::Id;
-pub use self::id_slice::{IdSlice, IdSliceMut};
+pub use self::id_traits::{IdSlice, IdSliceMut};
 pub use self::ownership::{Owned, Ownership, Shared};
 pub use self::weak_id::WeakId;
 
