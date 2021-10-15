@@ -379,6 +379,8 @@ impl<T, O: Ownership> Deref for Id<T, O> {
     type Target = T;
 
     /// Obtain an immutable reference to the object.
+    // Box doesn't inline, but that's because it's a compiler built-in
+    #[inline]
     fn deref(&self) -> &T {
         // SAFETY: The pointer's validity is verified when the type is created
         unsafe { self.ptr.as_ref() }
@@ -387,6 +389,7 @@ impl<T, O: Ownership> Deref for Id<T, O> {
 
 impl<T> DerefMut for Id<T, Owned> {
     /// Obtain a mutable reference to the object.
+    #[inline]
     fn deref_mut(&mut self) -> &mut T {
         // SAFETY: The pointer's validity is verified when the type is created
         // Additionally, the owned `Id` is the unique owner of the object, so
