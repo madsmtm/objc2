@@ -5,7 +5,7 @@ use core::marker::PhantomData;
 use core::ops::{Index, Range};
 use core::ptr::NonNull;
 
-use objc2::rc::{Id, Owned, Ownership, Shared};
+use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
 use objc2::{Encode, Encoding};
@@ -130,8 +130,7 @@ pub trait INSArray: INSObject {
     }
 
     fn from_vec(vec: Vec<Id<Self::Item, Self::Own>>) -> Id<Self, Owned> {
-        let refs: Vec<&Self::Item> = vec.iter().map(|obj| &**obj).collect();
-        unsafe { from_refs(&refs) }
+        unsafe { from_refs(vec.as_slice_ref()) }
     }
 
     fn objects_in_range(&self, range: Range<usize>) -> Vec<&Self::Item> {
@@ -178,8 +177,7 @@ pub trait INSArray: INSObject {
     where
         Self: INSArray<Own = Shared>,
     {
-        let refs: Vec<&Self::Item> = slice.iter().map(|obj| &**obj).collect();
-        unsafe { from_refs(&refs) }
+        unsafe { from_refs(slice.as_slice_ref()) }
     }
 
     fn to_shared_vec(&self) -> Vec<Id<Self::Item, Shared>>

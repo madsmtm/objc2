@@ -4,6 +4,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::ptr;
 use core::ptr::NonNull;
+use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{Id, Shared};
 use crate::Message;
@@ -20,9 +21,12 @@ pub struct WeakId<T> {
     ///
     /// Loading may modify the pointer through a shared reference, so we use
     /// an UnsafeCell to get a *mut without self being mutable.
+    ///
+    /// TODO: Verify the need for UnsafeCell?
     inner: Box<UnsafeCell<*mut T>>,
-    /// TODO: Variance and dropck
-    item: PhantomData<T>,
+    /// WeakId inherits variance, dropck and various marker traits from
+    /// `Id<T, Shared>` because it can be upgraded to a shared Id.
+    item: PhantomData<Id<T, Shared>>,
 }
 
 impl<T: Message> WeakId<T> {
@@ -51,7 +55,8 @@ impl<T: Message> WeakId<T> {
 
     /// Load a shared (and retained) [`Id`] if the object still exists.
     ///
-    /// Returns [`None`] if the object has been deallocated.
+    /// Returns [`None`] if the object has been deallocated or was created
+    /// with [`Default::default`].
     #[doc(alias = "upgrade")]
     #[doc(alias = "objc_loadWeak")]
     #[doc(alias = "objc_loadWeakRetained")]
@@ -113,6 +118,12 @@ impl<T: fmt::Debug> fmt::Debug for WeakId<T> {
 
 // Underneath this is just a `Box`
 impl<T> Unpin for WeakId<T> {}
+
+// Same as `Id<T, Shared>`.
+impl<T: RefUnwindSafe> RefUnwindSafe for WeakId<T> {}
+
+// Same as `Id<T, Shared>`.
+impl<T: RefUnwindSafe> UnwindSafe for WeakId<T> {}
 
 #[cfg(test)]
 mod tests {

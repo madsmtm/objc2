@@ -60,9 +60,11 @@ mod tests {
     fn test_is_equal() {
         let obj1 = NSObject::new();
         assert!(obj1.is_equal(&*obj1));
+        assert_eq!(obj1, obj1); // Using forwarding impl on Id
 
         let obj2 = NSObject::new();
         assert!(!obj1.is_equal(&*obj2));
+        assert_ne!(obj1, obj2);
     }
 
     #[test]
@@ -76,7 +78,10 @@ mod tests {
         let obj = NSObject::new();
         let description = obj.description();
         let expected = format!("<NSObject: {:p}>", &*obj);
-        assert!(description.as_str() == &*expected);
+        assert_eq!(description.as_str(), &*expected);
+
+        let expected = format!("\"<NSObject: {:p}>\"", &*obj);
+        assert_eq!(format!("{:?}", obj), expected);
     }
 
     #[test]
