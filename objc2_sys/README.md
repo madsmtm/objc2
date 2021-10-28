@@ -10,56 +10,76 @@ Raw Rust bindings to core Objective-C runtimes and ABIs.
 
 ## Runtime Support
 
-`objc2_sys` currently supports three runtimes (support for [`ObjFW`] may be
-added):
-- Apple's [`objc4`] \(default on `target_vendor = "apple"`\).
-- GNUStep's [`libobjc2`] \(default on other systems\).
-- Window's [`WinObjC`] uses [a fork][ms-libobjc2] of GNUStep's `libobjc2`
-  based on version 1.8 with very few user-facing changes \(default on
-  `target_os = "windows"`\).
+### Apple's [`objc4`](https://opensource.apple.com/source/objc4/)
 
-A default is chosen automatically from the compilation target as seen above,
-but it is recommended to set the `OBJC_RUNTIME` environment variable to the
-desired runtime when building (see below).
+This is the default on Apple platforms:
+```rust , ignore
+#[cfg(any(
+    target_os = "macos",
+    target_os = "ios",
+    target_os = "tvos",
+    target_os = "watchos",
+))]
+```
+
+The supported runtime version (higher versions lets the compiler enable newer
+optimizations, at the cost of not supporting older operating systems) can be
+chosen using the standard `X_DEPLOYMENT_TARGET` environment variables:
+- macOS: `MACOSX_DEPLOYMENT_TARGET`
+  - Default: `10.7` ([same as Rust](https://github.com/rust-lang/rust/blob/1.56.0/compiler/rustc_target/src/spec/apple_base.rs#L67))
+  - Minimum: `10.7`
+- iOS: `IPHONEOS_DEPLOYMENT_TARGET`
+  - Default: `7.0` ([same as Rust](https://github.com/rust-lang/rust/blob/1.56.0/compiler/rustc_target/src/spec/apple_base.rs#L92))
+  - Minimum: `5.0` (theoretically)
+- tvOS: `TVOS_DEPLOYMENT_TARGET`
+  - Default: TODO
+  - Minimum: `9.0` (theoretically)
+- watchOS: `WATCHOS_DEPLOYMENT_TARGET`
+  - Default: TODO
+  - Minimum: `1.0` (theoretically)
+
+
+### Window's [`WinObjC`](https://github.com/microsoft/WinObjC)
+
+This is the default on `#[cfg(target_os = "windows")]`.
+
+This is essentially just [a fork](https://github.com/microsoft/libobjc2) based
+on GNUStep's `libobjc2` version 1.8, with very few user-facing changes.
+
+
+### GNUStep's [`libobjc2`](https://github.com/gnustep/libobjc2)
+
+This is the default on all other systems.
+
+The version can be chosen by setting the standard (used by GNUStep already)
+`RUNTIME_VERSION` environment variable to one of the following:
+- `gnustep-1.7`
+- `gnustep-1.8` (default)
+- `gnustep-1.9`
+- `gnustep-2.0`
+- `gnustep-2.1`
+
+If you wish to force using the GNUStep runtime on Apple or Windows systems,
+set the `RUNTIME_VERSION` environment variable to one of the values above.
+
+
+### Other runtimes
 
 This library will probably only ever support ["Modern"][modern] Objective-C
 runtimes, since support for reference-counting primitives like `objc_retain`
 and `objc_autoreleasePoolPop` is a vital requirement for most applications.
 
 Just so we're being clear, this rules out the GCC [`libobjc`][gcc-libobjc]
-runtime (see [this][gcc-objc-support]), and the [`mulle-objc`] runtime. More
-information on different runtimes can be found in GNUStep's [Objective-C
-Compiler and Runtime FAQ][gnustep-faq].
+runtime (see [this][gcc-objc-support]), and the [`mulle-objc`] runtime. (But
+support for [`ObjFW`] may be added). More information on different runtimes
+can be found in GNUStep's [Objective-C Compiler and Runtime FAQ][gnustep-faq].
 
-[`ObjFW`]: https://github.com/ObjFW/ObjFW
-[`objc4`]: https://opensource.apple.com/source/objc4/
-[`libobjc2`]: https://github.com/gnustep/libobjc2
-[gnustep-faq]: http://wiki.gnustep.org/index.php/Objective-C_Compiler_and_Runtime_FAQ
-[`WinObjC`]: https://github.com/microsoft/WinObjC
-[ms-libobjc2]: https://github.com/microsoft/libobjc2
 [modern]: https://en.wikipedia.org/wiki/Objective-C#Modern_Objective-C
 [gcc-libobjc]: https://github.com/gcc-mirror/gcc/tree/master/libobjc
 [gcc-objc-support]: https://gcc.gnu.org/onlinedocs/gcc/Standards.html#Objective-C-and-Objective-C_002b_002b-Languages
 [`mulle-objc`]: https://github.com/mulle-objc/mulle-objc-runtime
-
-
-## Required Versions
-
-At least `libobjc2` [version 1.7][libobjc2-1.7] or `objc4`
-[version 493.9][objc4-493.9] is required.
-
-`objc4` version 493.9 is available with:
-- **macOS 10.7**
-- **iOS 5.0**
-- **tvOS 9.0**
-- **watchOS 1.0**
-- **bridgeOS 2.0**
-
-So those are the **minimum supported Apple versions**. Functionality that was
-added after these versions are not (yet?) available in `objc2_sys`.
-
-[libobjc2-1.7]: https://github.com/gnustep/libobjc2/tree/1.7
-[objc4-493.9]: https://opensource.apple.com/source/objc4/
+[`ObjFW`]: https://github.com/ObjFW/ObjFW
+[gnustep-faq]: http://wiki.gnustep.org/index.php/Objective-C_Compiler_and_Runtime_FAQ
 
 
 ## Configuring linking
