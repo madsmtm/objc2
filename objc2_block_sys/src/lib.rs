@@ -7,15 +7,25 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2_block_sys/0.0.0")]
 
+// Ensure linkage actually happens
+#[cfg(feature = "gnustep-1-7")]
+extern crate objc2_sys;
+
+use core::cell::UnsafeCell;
 use core::ffi::c_void;
+use core::marker::{PhantomData, PhantomPinned};
 
 #[repr(C)]
 pub struct Class {
     #[cfg(any(feature = "apple", feature = "compiler-rt"))]
     _priv: [*mut c_void; 32],
+
     #[cfg(any(feature = "gnustep-1-7", feature = "objfw"))]
     // The size of this is unknown
     _priv: [u8; 0],
+
+    /// See objc2_sys::OpaqueData
+    _opaque: PhantomData<(UnsafeCell<*const ()>, PhantomPinned)>,
 }
 
 extern "C" {
