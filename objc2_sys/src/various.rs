@@ -98,6 +98,6 @@ extern "C" {
     // #[cfg(apple)]
     // pub fn _objc_flush_caches
 
-    // #[cfg(gnustep)]
+    // #[cfg(any(gnustep, winobjc))]
     // objc_test_capability
 }

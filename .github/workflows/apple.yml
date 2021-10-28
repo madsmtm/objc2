@@ -1,0 +1,79 @@
+name: Apple
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  # Faster compilation and error on warnings
+  RUSTFLAGS: "-C debuginfo=0 -D warnings"
+
+jobs:
+  fmt:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check formatting
+      uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: -- --check
+
+  test:
+    name: Test
+    strategy:
+      matrix:
+        platform:
+          - { os: macos-10.15    }
+          - { os: macos-11       }
+          # - { target: x86_64-apple-ios,         os: macos-latest, }
+          # - { target: aarch64-apple-ios,        os: macos-latest, }
+
+    runs-on: ${{ matrix.platform.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Rust
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/
+          target/
+        key: ${{ matrix.platform.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+        restore-keys: |
+          ${{ matrix.platform.os }}-cargo-
+
+    - name: Install different Rust toolchain
+      # A default toolchain is already installed
+      if: matrix.platform.target
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{ matrix.platform.target }}
+        profile: minimal
+        override: true
+
+    - name: Check documentation
+      uses: actions-rs/cargo@v1
+      with:
+        # TODO: Disallow warnings here
+        command: doc
+        args: --verbose --no-deps --document-private-items
+
+    - name: Test without features
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --verbose --no-fail-fast --no-default-features
+
+    - name: Test with features
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        # Not using --all-features because some features are nightly-only
+        args: --verbose --no-fail-fast --features block,exception,verify_message

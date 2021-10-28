@@ -4,25 +4,68 @@ use crate::{
     objc_class, objc_ivar, objc_method, objc_object, objc_property, objc_protocol, objc_selector,
 };
 
-#[cfg(all(apple, not(target_arch = "aarch64")))]
-// C: (explicitly) signed char
-type BOOL_INNER = i8;
+/// The BOOL typedef for Apple's objc4.
+///
+/// Don't be fooled by the backup definition in `objc.h`; __OBJC_BOOL_IS_BOOL
+/// is always defined by `clang` when compiling Objective-C sources. The below
+/// cfgs are determined experimentally via. cross compiling.
+#[cfg(apple)]
+mod inner {
+    // __OBJC_BOOL_IS_BOOL
+    #[cfg(any(
+        // aarch64-apple-*
+        target_arch = "aarch64",
+        // + x86_64-apple-ios (but not x86_64-apple-ios-macabi)
+        all(target_os = "ios", target_pointer_width = "64", not(target_abi_macabi)),
+        // + x86_64-apple-tvos
+        all(target_os = "tvos", target_pointer_width = "64"),
+        // + *-apple-watchos (no Rust targets with this yet)
+        target_os = "watchos",
+    ))]
+    // C: _Bool
+    pub type BOOL = bool;
 
-#[cfg(all(gnustep, not(target_arch = "aarch64")))]
-// TODO: Only if STRICT_APPLE_COMPATIBILITY is NOT defined.
-// TODO: (__vxworks || _WIN32) becomes BOOL = c_int.
-// C: unsigned char
-type BOOL_INNER = u8;
+    // Inverse of the above
+    #[cfg(not(any(
+        target_arch = "aarch64",
+        all(target_os = "ios", target_pointer_width = "64", not(target_abi_macabi)),
+        all(target_os = "tvos", target_pointer_width = "64"),
+        target_os = "watchos",
+    )))]
+    // C: (explicitly) signed char
+    pub type BOOL = i8;
+}
 
-#[cfg(target_arch = "aarch64")]
-// C: _Bool
-type BOOL_INNER = bool;
+// GNUStep's and Microsoft's libobjc2
+#[cfg(all(any(gnustep, winobjc), libobjc2_strict_apple_compat))]
+mod inner {
+    // C: (explicitly) signed char
+    pub type BOOL = i8;
+}
+
+#[cfg(all(any(gnustep, winobjc), not(libobjc2_strict_apple_compat)))]
+mod inner {
+    // windows && !32bit-MinGW
+    #[cfg(all(windows, not(all(target_pointer_width = "64", target_env = "gnu"))))]
+    pub type BOOL = std::os::raw::c_int;
+
+    // The inverse
+    #[cfg(not(all(windows, not(all(target_pointer_width = "64", target_env = "gnu")))))]
+    // C: unsigned char
+    pub type BOOL = u8;
+}
+
+// ObjFW???
+#[cfg(objfw)]
+mod inner {
+    pub type BOOL = todo!();
+}
 
 /// The Objective-C `BOOL` type.
 ///
 /// The type of this varies across platforms, so to convert an it into a Rust
 /// [`bool`], always compare it with [`YES`][`crate::YES`] or [`NO`][`crate::NO`].
-pub type BOOL = BOOL_INNER;
+pub type BOOL = inner::BOOL;
 
 /// An immutable pointer to a selector.
 ///

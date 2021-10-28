@@ -3,7 +3,8 @@
 [![Latest version](https://badgen.net/crates/v/objc2_encode)](https://crates.io/crates/objc2_encode)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/objc2_encode/badge.svg)](https://docs.rs/objc2_encode/)
-[![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
+[![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
+[![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
 
 The Objective-C directive `@encode` encodes types as strings for usage in
 various places in the runtime.

@@ -21,6 +21,8 @@ exclude = [
     "tests-ios/**",
 ]
 
+build = "build.rs"
+
 [features]
 exception = ["objc2_exception"]
 verify_message = []

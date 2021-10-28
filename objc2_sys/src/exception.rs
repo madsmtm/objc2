@@ -3,7 +3,7 @@
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
 use core::ffi::c_void;
-#[cfg(any(apple, gnustep))]
+#[cfg(any(apple, gnustep, winobjc))]
 use std::os::raw::c_int;
 
 #[cfg(apple)]
@@ -34,10 +34,13 @@ pub type objc_exception_handler =
 extern "C" {
     pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;
     pub fn objc_end_catch();
+    /// See [`objc-exception.h`][objc-exception].
+    ///
+    /// [objc-exception]: https://opensource.apple.com/source/objc4/objc4-818.2/runtime/objc-exception.h.auto.html
     pub fn objc_exception_throw(exception: *mut objc_object) -> !;
     #[cfg(apple)]
     pub fn objc_exception_rethrow() -> !;
-    #[cfg(gnustep)]
+    #[cfg(any(gnustep, winobjc))]
     pub fn objc_exception_rethrow(exc_buf: *mut c_void) -> !;
 
     #[cfg(apple)]
@@ -58,6 +61,6 @@ extern "C" {
     #[cfg(all(apple, target_os = "macos"))]
     pub fn objc_removeExceptionHandler(token: usize);
 
-    #[cfg(gnustep)]
+    #[cfg(any(gnustep, winobjc))]
     pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: c_int) -> c_int;
 }

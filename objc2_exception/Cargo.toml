@@ -9,7 +9,7 @@ keywords = ["objective-c", "macos", "ios", "try", "catch"]
 categories = [
     "api-bindings",
     "development-tools::ffi",
-    "no-std",
+    # "no-std", # TODO
     "os::macos-apis",
 ]
 readme = "README.md"
@@ -18,6 +18,9 @@ documentation = "https://docs.rs/objc2_exception/"
 license = "MIT"
 
 build = "build.rs"
+
+[dependencies]
+objc2_sys = { path = "../objc2_sys" }
 
 [build-dependencies]
 cc = "1"

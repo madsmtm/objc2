@@ -1,10 +1,13 @@
-/// This is always available when building Objective-C.
+// Don't include any headers, cross compilation is difficult to set up
+// properly in such situations.
+
+/// We're linking to `libobjc` so this should be available.
 ///
 /// See <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain>.
 id objc_retain(id value);
 
 // We return `unsigned char`, since it is guaranteed to be an `u8` on all platforms
-unsigned char RustObjCExceptionTryCatch(void (*f)(void *), void *context, id *error) {
+unsigned char rust_objc_try_catch_exception(void (*f)(void *), void *context, id *error) {
     @try {
         f(context);
         if (error) {

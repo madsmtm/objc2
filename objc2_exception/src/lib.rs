@@ -22,22 +22,13 @@ use core::ffi::c_void;
 use core::mem;
 use core::ptr;
 
-#[link(name = "objc", kind = "dylib")]
-// TODO: "C-unwind"
-extern "C" {
-    /// See [`objc-exception.h`][objc-exception].
-    ///
-    /// [objc-exception]: https://opensource.apple.com/source/objc4/objc4-818.2/runtime/objc-exception.h.auto.html
-    // Header marks this with _Nonnull, but LLVM output shows otherwise
-    fn objc_exception_throw(exception: *mut c_void) -> !;
-    // fn objc_exception_rethrow();
-}
+use objc2_sys::{objc_exception_throw, objc_object};
 
 extern "C" {
-    fn RustObjCExceptionTryCatch(
+    fn rust_objc_try_catch_exception(
         f: extern "C" fn(*mut c_void),
         context: *mut c_void,
-        error: *mut *mut c_void,
+        error: *mut *mut objc_object,
     ) -> u8; // std::os::raw::c_uchar
 }
 
@@ -47,13 +38,7 @@ extern "C" {
 /// stabilized.
 ///
 /// [rfc-1861]: https://rust-lang.github.io/rfcs/1861-extern-types.html
-#[repr(C)]
-pub struct Exception {
-    /// See the [Nomicon] for details on representing opaque structs.
-    ///
-    /// [Nomicon]: https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs
-    _priv: [u8; 0],
-}
+pub type Exception = objc_object;
 
 /// Throws an Objective-C exception.
 ///
@@ -70,7 +55,7 @@ pub struct Exception {
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[inline]
 pub unsafe fn throw(exception: *mut Exception) -> ! {
-    objc_exception_throw(exception as *mut _)
+    objc_exception_throw(exception)
 }
 
 unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), *mut Exception> {
@@ -87,12 +72,12 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), *mut Exception> {
     let context = &mut closure as *mut _ as *mut c_void;
 
     let mut exception = ptr::null_mut();
-    let success = RustObjCExceptionTryCatch(f, context, &mut exception);
+    let success = rust_objc_try_catch_exception(f, context, &mut exception);
 
     if success == 0 {
         Ok(())
     } else {
-        Err(exception as *mut _)
+        Err(exception)
     }
 }
 

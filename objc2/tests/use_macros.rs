@@ -1,4 +1,4 @@
-#![cfg(target_vendor = "apple")]
+#![cfg(target_vendor = "apple")] // Temporary
 
 use objc2::runtime::Object;
 use objc2::{class, msg_send, sel};

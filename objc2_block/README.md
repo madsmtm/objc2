@@ -3,7 +3,8 @@
 [![Latest version](https://badgen.net/crates/v/objc2_block)](https://crates.io/crates/objc2_block)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/objc2_block/badge.svg)](https://docs.rs/objc2_block/)
-[![CI Status](https://github.com/madsmtm/objc2/workflows/CI/badge.svg)](https://github.com/madsmtm/objc2/actions)
+[![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
+[![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
 
 Rust interface for Apple's C language extension of blocks.
 
