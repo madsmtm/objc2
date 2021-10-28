@@ -63,25 +63,8 @@ use core::ops::{Deref, DerefMut};
 use core::ptr;
 use std::os::raw::{c_int, c_ulong};
 
+pub use objc2_block_sys as ffi;
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
-
-// TODO: Replace with `objc2::Class`
-#[repr(C)]
-struct ClassInternal {
-    _priv: [u8; 0],
-}
-
-#[cfg_attr(target_vendor = "apple", link(name = "System", kind = "dylib"))]
-#[cfg_attr(
-    not(target_vendor = "apple"),
-    link(name = "BlocksRuntime", kind = "dylib")
-)]
-extern "C" {
-    static _NSConcreteStackBlock: ClassInternal;
-
-    fn _Block_copy(block: *const c_void) -> *mut c_void;
-    fn _Block_release(block: *const c_void);
-}
 
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments: Sized {
@@ -151,7 +134,7 @@ block_args_impl!(
 
 #[repr(C)]
 struct BlockBase<A, R> {
-    isa: *const ClassInternal,
+    isa: *const ffi::Class,
     flags: c_int,
     _reserved: c_int,
     invoke: unsafe extern "C" fn(*mut Block<A, R>, ...) -> R,
@@ -207,7 +190,7 @@ impl<A, R> RcBlock<A, R> {
     ///
     /// The given pointer must point to a valid `Block`.
     pub unsafe fn copy(ptr: *mut Block<A, R>) -> Self {
-        let ptr = _Block_copy(ptr as *const c_void) as *mut Block<A, R>;
+        let ptr = ffi::_Block_copy(ptr as *const c_void) as *mut Block<A, R>;
         RcBlock { ptr }
     }
 }
@@ -229,7 +212,7 @@ impl<A, R> Deref for RcBlock<A, R> {
 impl<A, R> Drop for RcBlock<A, R> {
     fn drop(&mut self) {
         unsafe {
-            _Block_release(self.ptr as *const c_void);
+            ffi::_Block_release(self.ptr as *const c_void);
         }
     }
 }
@@ -397,7 +380,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(*mut Self, ...) -> R, closure: F) -> Self {
         ConcreteBlock {
             base: BlockBase {
-                isa: &_NSConcreteStackBlock,
+                isa: &ffi::_NSConcreteStackBlock,
                 // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
                 flags: 1 << 25,
                 _reserved: 0,

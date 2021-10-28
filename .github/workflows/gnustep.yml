@@ -101,18 +101,17 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: check
-        args: --verbose --no-default-features
+        args: --verbose --no-default-features --features gnustep-1-9
 
-    - name: Test GNUStep
+    - name: Test without features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        # Temporary fix
-        args: --verbose --no-fail-fast --no-default-features --package objc2_sys --package objc2 --package objc2_encode --package objc2_exception --package objc2_foundation
+        args: --verbose --no-fail-fast --no-default-features --features gnustep-1-9
 
-    - name: Test GNUStep with features
+    - name: Test with features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        # Temporary fix
-        args: --verbose --no-fail-fast --no-default-features --features exception,verify_message --package objc2_sys --package objc2 --package objc2_encode --package objc2_exception --package objc2_foundation
+        # Not using --all-features because some features are nightly-only
+        args: --verbose --no-fail-fast --features gnustep-1-9,block,exception,verify_message
