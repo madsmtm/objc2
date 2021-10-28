@@ -6,9 +6,7 @@ fn main() {
     let mut builder = cc::Build::new();
     builder.file("extern/exception.m");
 
-    // Assume the C compiler is clang; if it isn't, this is probably going to
-    // fail anyways.
-    for flag in env::var("DEP_OBJC_CLANG_ARGS").unwrap().split(' ') {
+    for flag in env::var("DEP_OBJC_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);
     }
 

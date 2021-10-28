@@ -130,22 +130,19 @@ fn main() {
         }
     };
 
-    // Add clang arguments
+    // let gcc_args = match &runtime {
+    //     Apple(_) => "-fnext-runtime -fobjc-abi-version=2",
+    //     _ => "-fgnu-runtime",
+    // };
+
+    // Add CC arguments
+    // Assume the compiler is clang; if it isn't, this is probably going to
+    // fail anyways, since we're using newer runtimes than GCC supports.
     println!(
-        "cargo:clang_args=-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={}",
-        // `-fobjc-link-runtime` -> people don't need to specify `-lobjc`.
-
-        // -fobjc-weak ?
+        "cargo:cc_args=-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={}",
+        // TODO: -fobjc-weak ?
         clang_runtime
-    ); // DEP_OBJC_CLANG_ARGS
-
-    // Add GCC arguments. Not really supported
-    match runtime {
-        Apple(_) => {
-            println!("cargo:gcc_args=-fnext-runtime -fobjc-exceptions -fobjc-abi-version=2")
-        }
-        _ => println!("cargo:gcc_args=-fgnu-runtime -fobjc-exceptions"),
-    } // DEP_OBJC_GCC_ARGS
+    ); // DEP_OBJC_CC_ARGS
 
     // Link to libobjc
     println!("cargo:rustc-link-lib=dylib=objc");
