@@ -16,6 +16,8 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2_foundation/"
 license = "MIT"
 
+build = "build.rs"
+
 [features]
 default = ["block"]
 # Provided as a way to cut down on dependencies
@@ -24,3 +26,4 @@ block = ["objc2_block"]
 [dependencies]
 objc2_block = { path = "../objc2_block", optional = true }
 objc2 = { path = "../objc2" }
+objc2_sys = { path = "../objc2_sys" }
