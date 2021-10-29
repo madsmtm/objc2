@@ -167,13 +167,16 @@ impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec::Vec;
+    use objc2::rc::Id;
+
     use super::NSFastEnumeration;
     use crate::{NSArray, NSValue};
 
     #[test]
     fn test_enumerator() {
-        let vec = (0usize..4).map(NSValue::new).collect();
-        let array = NSArray::from_vec(vec);
+        let vec: Vec<_> = (0usize..4).map(NSValue::new).collect();
+        let array: Id<NSArray<_, _>, _> = vec.into();
 
         let enumerator = array.iter();
         assert_eq!(enumerator.count(), 4);
@@ -184,8 +187,8 @@ mod tests {
 
     #[test]
     fn test_fast_enumerator() {
-        let vec = (0usize..4).map(NSValue::new).collect();
-        let array = NSArray::from_vec(vec);
+        let vec: Vec<_> = (0usize..4).map(NSValue::new).collect();
+        let array: Id<NSArray<_, _>, _> = vec.into();
 
         let enumerator = array.iter_fast();
         assert_eq!(enumerator.count(), 4);

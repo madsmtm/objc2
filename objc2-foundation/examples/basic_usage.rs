@@ -1,4 +1,4 @@
-use objc2::rc::autoreleasepool;
+use objc2::rc::{autoreleasepool, Id};
 use objc2_foundation::{NSArray, NSCopying, NSDictionary, NSObject, NSString};
 
 fn main() {
@@ -14,14 +14,14 @@ fn main() {
 
     // Create an NSArray from a Vec
     let objs = vec![obj, obj2];
-    let array = NSArray::from_vec(objs);
+    let array: Id<NSArray<_, _>, _> = objs.into();
     for obj in array.iter() {
         println!("{:?}", obj);
     }
     println!("{}", array.len());
 
     // Turn the NSArray back into a Vec
-    let mut objs = NSArray::into_vec(array);
+    let mut objs = Vec::from(array);
     let obj = objs.pop().unwrap();
 
     // Create an NSString from a str slice

@@ -215,6 +215,37 @@ impl<T: Message> DefaultId for NSArray<T, Shared> {
     }
 }
 
+impl<T: Message, O: Ownership> From<Id<NSArray<T, O>, Owned>> for Vec<Id<T, O>> {
+    fn from(array: Id<NSArray<T, O>, Owned>) -> Self {
+        let vec: Vec<&T> = (&*array).into();
+        vec.into_iter()
+            .map(|obj| unsafe { Id::retain(obj.into()) })
+            .collect()
+    }
+}
+
+impl<T: Message, O: Ownership> From<Vec<Id<T, O>>> for Id<NSArray<T, O>, Owned> {
+    fn from(vec: Vec<Id<T, O>>) -> Self {
+        unsafe { from_refs(vec.as_slice_ref()) }
+    }
+}
+
+impl<'a, T: Message, O: Ownership> From<&'a NSArray<T, O>> for Vec<&'a T> {
+    fn from(array: &'a NSArray<T, O>) -> Self {
+        array.objects_in_range(0..array.count())
+    }
+}
+
+impl<T: Message> From<&'_ NSArray<T, Shared>> for Vec<Id<T, Shared>> {
+    fn from(array: &NSArray<T, Shared>) -> Self {
+        array
+            .objects_in_range(0..array.count())
+            .into_iter()
+            .map(|obj| unsafe { Id::retain(obj.into()) })
+            .collect()
+    }
+}
+
 impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     unsafe_def_fn!(pub fn new -> Owned);
 
@@ -378,6 +409,12 @@ impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
     }
 }
 
+impl<T: Message, O: Ownership> From<Vec<Id<T, O>>> for Id<NSMutableArray<T, O>, Owned> {
+    fn from(vec: Vec<Id<T, O>>) -> Self {
+        unsafe { from_refs(vec.as_slice_ref()) }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::format;
@@ -395,7 +432,7 @@ mod tests {
         for _ in 0..len {
             vec.push(NSObject::new());
         }
-        NSArray::from_vec(vec)
+        vec.into()
     }
 
     fn sample_number_array(len: u8) -> Id<NSArray<NSValue<u8>, Shared>, Shared> {
@@ -517,7 +554,7 @@ mod tests {
     fn test_into_vec() {
         let array = sample_array(4);
 
-        let vec = NSArray::into_vec(array);
+        let vec = Vec::from(array);
         assert_eq!(vec.len(), 4);
     }
 
@@ -566,7 +603,7 @@ mod tests {
     #[test]
     fn test_sort() {
         let strings = vec![NSString::from_str("hello"), NSString::from_str("hi")];
-        let mut strings = NSMutableArray::from_vec(strings);
+        let mut strings: Id<NSMutableArray<_, _>, Owned> = strings.into();
 
         autoreleasepool(|pool| {
             strings.sort_by(|s1, s2| s1.as_str(pool).len().cmp(&s2.as_str(pool).len()));
