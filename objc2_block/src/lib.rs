@@ -55,7 +55,6 @@ extern crate std;
 #[cfg(test)]
 mod test_utils;
 
-use alloc::boxed::Box;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem;
@@ -349,7 +348,7 @@ concrete_block_impl!(
 #[repr(C)]
 pub struct ConcreteBlock<A, R, F> {
     base: BlockBase<A, R>,
-    descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, F>>>,
+    descriptor: *const BlockDescriptor<ConcreteBlock<A, R, F>>,
     closure: F,
 }
 
@@ -374,6 +373,13 @@ where
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F> {
+    const DESCRIPTOR: BlockDescriptor<Self> = BlockDescriptor {
+        _reserved: 0,
+        block_size: mem::size_of::<Self>() as c_ulong,
+        copy_helper: block_context_copy::<Self>,
+        dispose_helper: block_context_dispose::<Self>,
+    };
+
     /// Constructs a `ConcreteBlock` with the given invoke function and closure.
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
@@ -381,12 +387,11 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
         ConcreteBlock {
             base: BlockBase {
                 isa: &ffi::_NSConcreteStackBlock,
-                // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
-                flags: 1 << 25,
+                flags: ffi::BLOCK_HAS_COPY_DISPOSE,
                 _reserved: 0,
                 invoke: mem::transmute(invoke),
             },
-            descriptor: Box::new(BlockDescriptor::new()),
+            descriptor: &Self::DESCRIPTOR,
             closure,
         }
     }
@@ -450,17 +455,6 @@ struct BlockDescriptor<B> {
     block_size: c_ulong,
     copy_helper: unsafe extern "C" fn(&mut B, &B),
     dispose_helper: unsafe extern "C" fn(&mut B),
-}
-
-impl<B> BlockDescriptor<B> {
-    fn new() -> BlockDescriptor<B> {
-        BlockDescriptor {
-            _reserved: 0,
-            block_size: mem::size_of::<B>() as c_ulong,
-            copy_helper: block_context_copy::<B>,
-            dispose_helper: block_context_dispose::<B>,
-        }
-    }
 }
 
 #[cfg(test)]
