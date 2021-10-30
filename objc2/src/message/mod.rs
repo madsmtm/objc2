@@ -165,13 +165,13 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// # Example
     /// ``` no_run
     /// # use objc2::{class, msg_send, sel};
-    /// # use objc2::runtime::{BOOL, Class, Object};
+    /// # use objc2::runtime::{Bool, Class, Object};
     /// # use objc2::MessageReceiver;
     /// let obj: &Object;
     /// # obj = unsafe { msg_send![class!(NSObject), new] };
     /// let sel = sel!(isKindOfClass:);
     /// // Verify isKindOfClass: takes one Class and returns a BOOL
-    /// let result = obj.verify_message::<(&Class,), BOOL>(sel);
+    /// let result = obj.verify_message::<(&Class,), Bool>(sel);
     /// assert!(result.is_ok());
     /// ```
     fn verify_message<A, R>(&self, sel: Sel) -> Result<(), MessageError>

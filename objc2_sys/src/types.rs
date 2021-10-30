@@ -65,6 +65,11 @@ mod inner {
 ///
 /// The type of this varies across platforms, so to convert an it into a Rust
 /// [`bool`], always compare it with [`YES`][`crate::YES`] or [`NO`][`crate::NO`].
+///
+/// Note that this type implements `objc2_encode::Encode` and
+/// `objc2_encode::RefEncode`, but the `RefEncode` implementation is wrong
+/// on some platforms! You should only use this on FFI boundaries, otherwise
+/// prefer `objc2::runtime::Bool`.
 pub type BOOL = inner::BOOL;
 
 /// An immutable pointer to a selector.

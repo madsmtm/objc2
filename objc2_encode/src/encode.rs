@@ -182,7 +182,7 @@ unsafe impl Encode for () {
 /// Using this directly is heavily discouraged, since the type of BOOL differs
 /// across platforms.
 ///
-/// Use `objc2_sys::BOOL::ENCODING` or `objc2::runtime::Bool` instead.
+/// Use `objc2::runtime::Bool::ENCODING` instead.
 unsafe impl Encode for bool {
     const ENCODING: Encoding<'static> = Encoding::Bool;
 }

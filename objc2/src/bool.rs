@@ -99,10 +99,21 @@ impl fmt::Debug for Bool {
     }
 }
 
+// SAFETY: `Bool` is `repr(transparent)`.
 unsafe impl Encode for Bool {
     const ENCODING: Encoding<'static> = objc2_sys::BOOL::ENCODING;
 }
 
+// Note that we shouldn't delegate to `BOOL`'s  `ENCODING_REF` since `BOOL` is
+// sometimes `i8`/`u8`, and their `ENCODING_REF`s are `Encoding::String`,
+// which is incorrect for `BOOL`:
+//
+// ```objc
+// @encode(BOOL); // -> "c", "C" or "B"
+// @encode(BOOL*); // -> "^c", "^C" or "^B"
+// @encode(char); // -> "c" or "C"
+// @encode(char*); // -> "*"
+// ```
 unsafe impl RefEncode for Bool {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
