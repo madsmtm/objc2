@@ -55,7 +55,6 @@ extern crate std;
 #[cfg(test)]
 mod test_utils;
 
-use alloc::boxed::Box;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem;
@@ -63,25 +62,8 @@ use core::ops::{Deref, DerefMut};
 use core::ptr;
 use std::os::raw::{c_int, c_ulong};
 
+pub use objc2_block_sys as ffi;
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
-
-// TODO: Replace with `objc2::Class`
-#[repr(C)]
-struct ClassInternal {
-    _priv: [u8; 0],
-}
-
-#[cfg_attr(target_vendor = "apple", link(name = "System", kind = "dylib"))]
-#[cfg_attr(
-    not(target_vendor = "apple"),
-    link(name = "BlocksRuntime", kind = "dylib")
-)]
-extern "C" {
-    static _NSConcreteStackBlock: ClassInternal;
-
-    fn _Block_copy(block: *const c_void) -> *mut c_void;
-    fn _Block_release(block: *const c_void);
-}
 
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments: Sized {
@@ -151,7 +133,7 @@ block_args_impl!(
 
 #[repr(C)]
 struct BlockBase<A, R> {
-    isa: *const ClassInternal,
+    isa: *const ffi::Class,
     flags: c_int,
     _reserved: c_int,
     invoke: unsafe extern "C" fn(*mut Block<A, R>, ...) -> R,
@@ -207,7 +189,7 @@ impl<A, R> RcBlock<A, R> {
     ///
     /// The given pointer must point to a valid `Block`.
     pub unsafe fn copy(ptr: *mut Block<A, R>) -> Self {
-        let ptr = _Block_copy(ptr as *const c_void) as *mut Block<A, R>;
+        let ptr = ffi::_Block_copy(ptr as *const c_void) as *mut Block<A, R>;
         RcBlock { ptr }
     }
 }
@@ -229,7 +211,7 @@ impl<A, R> Deref for RcBlock<A, R> {
 impl<A, R> Drop for RcBlock<A, R> {
     fn drop(&mut self) {
         unsafe {
-            _Block_release(self.ptr as *const c_void);
+            ffi::_Block_release(self.ptr as *const c_void);
         }
     }
 }
@@ -366,7 +348,7 @@ concrete_block_impl!(
 #[repr(C)]
 pub struct ConcreteBlock<A, R, F> {
     base: BlockBase<A, R>,
-    descriptor: Box<BlockDescriptor<ConcreteBlock<A, R, F>>>,
+    descriptor: *const BlockDescriptor<ConcreteBlock<A, R, F>>,
     closure: F,
 }
 
@@ -391,19 +373,25 @@ where
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F> {
+    const DESCRIPTOR: BlockDescriptor<Self> = BlockDescriptor {
+        _reserved: 0,
+        block_size: mem::size_of::<Self>() as c_ulong,
+        copy_helper: block_context_copy::<Self>,
+        dispose_helper: block_context_dispose::<Self>,
+    };
+
     /// Constructs a `ConcreteBlock` with the given invoke function and closure.
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(*mut Self, ...) -> R, closure: F) -> Self {
         ConcreteBlock {
             base: BlockBase {
-                isa: &_NSConcreteStackBlock,
-                // 1 << 25 = BLOCK_HAS_COPY_DISPOSE
-                flags: 1 << 25,
+                isa: &ffi::_NSConcreteStackBlock,
+                flags: ffi::BLOCK_HAS_COPY_DISPOSE,
                 _reserved: 0,
                 invoke: mem::transmute(invoke),
             },
-            descriptor: Box::new(BlockDescriptor::new()),
+            descriptor: &Self::DESCRIPTOR,
             closure,
         }
     }
@@ -467,17 +455,6 @@ struct BlockDescriptor<B> {
     block_size: c_ulong,
     copy_helper: unsafe extern "C" fn(&mut B, &B),
     dispose_helper: unsafe extern "C" fn(&mut B),
-}
-
-impl<B> BlockDescriptor<B> {
-    fn new() -> BlockDescriptor<B> {
-        BlockDescriptor {
-            _reserved: 0,
-            block_size: mem::size_of::<B>() as c_ulong,
-            copy_helper: block_context_copy::<B>,
-            dispose_helper: block_context_dispose::<B>,
-        }
-    }
 }
 
 #[cfg(test)]

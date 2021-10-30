@@ -23,6 +23,7 @@ exclude = [
 
 [dependencies]
 objc2_encode = { path = "../objc2_encode" }
+objc2_block_sys = { path = "../objc2_block_sys" }
 
 [dev-dependencies]
 objc2_test_utils = { path = "../objc2_test_utils" }

@@ -18,5 +18,8 @@ license = "MIT"
 
 build = "build.rs"
 
+[dependencies]
+objc2_block_sys = { path = "../objc2_block_sys" }
+
 [build-dependencies]
 cc = "1.0"
