@@ -8,7 +8,7 @@ use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::{Encode, EncodeArguments, RefEncode};
 
-#[cfg(feature = "exception")]
+#[cfg(feature = "catch_all")]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, MessageError> {
     use alloc::borrow::ToOwned;
     crate::exception::catch(f).map_err(|exception| {
@@ -20,7 +20,7 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, Message
     })
 }
 
-#[cfg(not(feature = "exception"))]
+#[cfg(not(feature = "catch_all"))]
 #[inline(always)]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, MessageError> {
     Ok(f())
@@ -300,7 +300,7 @@ An error encountered while attempting to send a message.
 
 Currently, an error may be returned in two cases:
 
-* an Objective-C exception is thrown and the `exception` feature is enabled
+* an Objective-C exception is thrown and the `catch_all` feature is enabled
 * the encodings of the arguments do not match the encoding of the method
   and the `verify_message` feature is enabled
 */

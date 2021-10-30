@@ -78,7 +78,7 @@ Variadic arguments are not currently supported.
 
 # Panics
 
-Panics if the `exception` feature is enabled and the Objective-C method throws
+Panics if the `catch_all` feature is enabled and the Objective-C method throws
 an exception.
 
 And panics if the `verify_message` feature is enabled and the Objective-C

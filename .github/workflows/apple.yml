@@ -76,4 +76,4 @@ jobs:
       with:
         command: test
         # Not using --all-features because some features are nightly-only
-        args: --verbose --no-fail-fast --features block,exception,verify_message
+        args: --verbose --no-fail-fast --features block,exception,catch_all,verify_message
