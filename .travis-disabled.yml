@@ -23,8 +23,8 @@ jobs:
     script:
     - cargo test --workspace --verbose
     - # TODO: cargo test --workspace --verbose --all-features
-    - # objc2_exception doesn't work on 32bit?
-      cargo test --workspace --exclude objc2_exception --verbose -Z build-std --target i686-apple-darwin
+    - # exception doesn't work on 32bit?
+      cargo test --workspace --verbose -Z build-std --target i686-apple-darwin
     - # TODO: cargo test --workspace --verbose --all-features -Z build-std --target i686-apple-darwin
 
   - name: MacOS 11.3

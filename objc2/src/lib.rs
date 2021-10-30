@@ -90,7 +90,7 @@ mod cache;
 pub mod declare;
 mod encode;
 #[cfg(feature = "exception")]
-mod exception;
+pub mod exception;
 mod message;
 pub mod rc;
 pub mod runtime;

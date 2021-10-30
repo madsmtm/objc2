@@ -11,7 +11,7 @@ use crate::{Encode, EncodeArguments, RefEncode};
 #[cfg(feature = "exception")]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, MessageError> {
     use alloc::borrow::ToOwned;
-    crate::exception::catch_exception(f).map_err(|exception| {
+    crate::exception::catch(f).map_err(|exception| {
         if let Some(exception) = exception {
             MessageError(alloc::format!("Uncaught exception {:?}", exception))
         } else {
