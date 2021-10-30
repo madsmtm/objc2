@@ -1,4 +1,11 @@
-use core::{ffi::c_void, mem::ManuallyDrop, pin::Pin, ptr::NonNull};
+use core::ffi::c_void;
+use core::mem::ManuallyDrop;
+use core::num::{
+    NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU16, NonZeroU32,
+    NonZeroU64, NonZeroU8, NonZeroUsize,
+};
+use core::pin::Pin;
+use core::ptr::NonNull;
 
 use crate::Encoding;
 
@@ -160,12 +167,17 @@ encode_impls!(
     u64 => ULongLong,
     f32 => Float,
     f64 => Double,
-    () => Void,
-    *mut i8 => String,
-    *const i8 => String,
-    *mut u8 => String,
-    *const u8 => String,
 );
+
+/// To allow usage as the return type of generic functions.
+///
+/// You should not rely on this encoding to exist for any other purpose (since
+/// `()` is not FFI-safe)!
+///
+/// TODO: Figure out a way to remove this.
+unsafe impl Encode for () {
+    const ENCODING: Encoding<'static> = Encoding::Void;
+}
 
 /// Using this directly is heavily discouraged, since the type of BOOL differs
 /// across platforms.
@@ -194,15 +206,44 @@ encode_impls_size!(
     usize => (u16, u32, u64),
 );
 
-/// Simple helper for implementing [`Encode`] for integer types.
+/// Simple helper for implementing [`RefEncode`].
+macro_rules! pointer_refencode_impl {
+    ($($t:ty),*) => ($(
+        unsafe impl RefEncode for $t {
+            const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+        }
+    )*);
+}
+
+pointer_refencode_impl!(bool, i16, i32, i64, isize, u16, u32, u64, usize, f32, f64);
+
+/// Pointers to [`i8`] use the special [`Encoding::String`] encoding.
+unsafe impl RefEncode for i8 {
+    const ENCODING_REF: Encoding<'static> = Encoding::String;
+}
+
+/// Pointers to [`u8`] use the special [`Encoding::String`] encoding.
+unsafe impl RefEncode for u8 {
+    const ENCODING_REF: Encoding<'static> = Encoding::String;
+}
+
+/// Simple helper for implementing [`Encode`] for nonzero integer types.
 macro_rules! encode_impls_nonzero {
     ($($nonzero:ident => $type:ty,)*) => ($(
-        unsafe impl Encode for core::num::$nonzero {
+        unsafe impl Encode for $nonzero {
             const ENCODING: Encoding<'static> = <$type>::ENCODING;
         }
 
-        unsafe impl Encode for Option<core::num::$nonzero> {
+        unsafe impl Encode for Option<$nonzero> {
             const ENCODING: Encoding<'static> = <$type>::ENCODING;
+        }
+
+        unsafe impl RefEncode for $nonzero {
+            const ENCODING_REF: Encoding<'static> = <$type>::ENCODING_REF;
+        }
+
+        unsafe impl RefEncode for Option<$nonzero> {
+            const ENCODING_REF: Encoding<'static> = <$type>::ENCODING_REF;
         }
     )*);
 }
@@ -423,3 +464,62 @@ encode_args_impl!(A, B, C, D, E, F, G, H, I);
 encode_args_impl!(A, B, C, D, E, F, G, H, I, J);
 encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K);
 encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_c_string() {
+        assert_eq!(i8::ENCODING, Encoding::Char);
+        assert_eq!(u8::ENCODING, Encoding::UChar);
+
+        assert_eq!(<*const i8>::ENCODING, Encoding::String);
+        assert_eq!(<&u8>::ENCODING, Encoding::String);
+        assert_eq!(i8::ENCODING_REF, Encoding::String);
+        assert_eq!(i8::ENCODING_REF, Encoding::String);
+
+        assert_eq!(
+            <*const *const i8>::ENCODING,
+            Encoding::Pointer(&Encoding::String)
+        );
+        assert_eq!(<&&u8>::ENCODING, Encoding::Pointer(&Encoding::String));
+    }
+
+    #[test]
+    fn test_i32() {
+        assert_eq!(i32::ENCODING, Encoding::Int);
+        assert_eq!(<&i32>::ENCODING, Encoding::Pointer(&Encoding::Int));
+        assert_eq!(
+            <&&i32>::ENCODING,
+            Encoding::Pointer(&Encoding::Pointer(&Encoding::Int))
+        );
+    }
+
+    #[test]
+    fn test_void() {
+        // TODO: Remove this
+        assert_eq!(<()>::ENCODING, Encoding::Void);
+        assert_eq!(
+            <*const c_void>::ENCODING,
+            Encoding::Pointer(&Encoding::Void)
+        );
+
+        // Shouldn't compile
+        // assert_eq!(<c_void>::ENCODING, Encoding::Void);
+        // assert_eq!(<*const ()>::ENCODING, Encoding::Pointer(&Encoding::Void));
+        // assert_eq!(<&c_void>::ENCODING, Encoding::Pointer(&Encoding::Void));
+    }
+
+    #[test]
+    fn test_extern_fn_pointer() {
+        assert_eq!(
+            <extern "C" fn()>::ENCODING,
+            Encoding::Pointer(&Encoding::Unknown)
+        );
+        assert_eq!(
+            <extern "C" fn(x: ()) -> ()>::ENCODING,
+            Encoding::Pointer(&Encoding::Unknown)
+        );
+    }
+}
