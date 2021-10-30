@@ -270,10 +270,18 @@ unsafe impl Encode for *const c_void {
     const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Void);
 }
 
+unsafe impl RefEncode for *const c_void {
+    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+}
+
 /// [`Encode`] is implemented manually for `*mut c_void`, instead of
 /// implementing [`RefEncode`], to discourage creating `&mut c_void`.
 unsafe impl Encode for *mut c_void {
     const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Void);
+}
+
+unsafe impl RefEncode for *mut c_void {
+    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
 unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
@@ -503,6 +511,10 @@ mod tests {
         assert_eq!(
             <*const c_void>::ENCODING,
             Encoding::Pointer(&Encoding::Void)
+        );
+        assert_eq!(
+            <&*const c_void>::ENCODING,
+            Encoding::Pointer(&Encoding::Pointer(&Encoding::Void))
         );
 
         // Shouldn't compile
