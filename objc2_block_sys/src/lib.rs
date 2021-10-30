@@ -1,9 +1,12 @@
+//! # Raw bindings to Apple's C language extension of blocks
 //!
-//! See:
-//! - https://github.com/apple/swift-corelibs-libdispatch/tree/main/src/BlocksRuntime
-//! - https://github.com/apple/swift-corelibs-foundation/tree/main/Sources/BlocksRuntime
-//! - https://clang.llvm.org/docs/BlockLanguageSpec.html
-//! - https://clang.llvm.org/docs/Block-ABI-Apple.html
+//! The documentation for these bindings is a mix from GNUStep's and Apple's
+//! sources, but the [ABI specification][ABI] is really the place you should
+//! be looking!
+//!
+//! See also the `README.md` for more info.
+//!
+//! [ABI]: https://clang.llvm.org/docs/Block-ABI-Apple.html
 
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2_block_sys/0.0.0")]
@@ -11,6 +14,10 @@
 // Ensure linkage actually happens
 #[cfg(feature = "gnustep-1-7")]
 extern crate objc2_sys;
+
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+extern "C" {}
 
 use core::cell::UnsafeCell;
 use core::ffi::c_void;
@@ -90,7 +97,7 @@ pub const BLOCK_IS_GLOBAL: block_flags = 1 << 28;
 ///     (true, true)   => ABI.2010.3.16, stret calling convention, presence of signature field,
 /// }
 ///
-/// See https://clang.llvm.org/docs/Block-ABI-Apple.html#high-level
+/// See <https://clang.llvm.org/docs/Block-ABI-Apple.html#high-level>
 #[doc(alias = "BLOCK_USE_SRET")]
 #[doc(alias = "BLOCK_HAS_DESCRIPTOR")] // compiler-rt || macOS 10.6
 pub const BLOCK_USE_STRET: block_flags = 1 << 29;

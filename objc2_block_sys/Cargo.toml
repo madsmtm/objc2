@@ -15,7 +15,7 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2_block_sys/"
 license = "MIT"
 
-# readme = "README.md"
+readme = "README.md"
 
 # Downstream users can customize the linking!
 # See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
@@ -24,14 +24,11 @@ build = "build.rs"
 
 [features]
 # Link to Apple's libclosure (exists in libSystem)
-# See https://opensource.apple.com/source/libclosure/
-# Accessible mirror https://github.com/madsmtm/libclosure
 #
 # This is the default on Apple platforms
 apple = []
 
 # Link to libBlocksRuntime from compiler-rt
-# See https://github.com/llvm/llvm-project/tree/release/13.x/compiler-rt/lib/BlocksRuntime
 #
 # This is the default on non-Apple platforms
 compiler-rt = []
