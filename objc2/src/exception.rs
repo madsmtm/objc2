@@ -34,15 +34,21 @@ extern "C" {
 /// # Safety
 ///
 /// This unwinds from Objective-C, and the exception must be caught using an
-/// Objective-C exception handler.
+/// Objective-C exception handler like [`catch`] (and specifically not
+/// [`catch_unwind`]).
 ///
 /// This also invokes undefined behaviour until `C-unwind` is stabilized, see
 /// [RFC-2945].
 ///
+/// [`catch_unwind`]: std::panic::catch_unwind
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[inline]
-pub unsafe fn throw(exception: *mut Object) -> ! {
-    objc_exception_throw(exception as *mut objc_object)
+pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
+    let exception = match exception {
+        Some(id) => &**id as *const Object as *mut objc_object,
+        None => ptr::null_mut(),
+    };
+    objc_exception_throw(exception)
 }
 
 unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Shared>>> {
@@ -64,6 +70,15 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
     if success == 0 {
         Ok(())
     } else {
+        // SAFETY:
+        // The exception is always a valid object (or NULL, but that has been
+        // checked).
+        //
+        // The ownership is safe as Shared; Objective-C code throwing an
+        // exception knows that they don't hold sole access to that exception
+        // instance any more, and Rust code is forbidden by requiring a Shared
+        // Id in `throw` (instead of just a shared reference, which could have
+        // come from an Owned Id).
         Err(NonNull::new(exception as *mut Object).map(|e| Id::new(e)))
     }
 }
@@ -77,7 +92,8 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
 ///
 /// # Safety
 ///
-/// The given closure must not panic.
+/// The given closure must not panic (e.g. normal Rust unwinding into this
+/// causes undefined behaviour).
 ///
 /// Additionally, this unwinds through the closure from Objective-C, which is
 /// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945].
@@ -98,9 +114,8 @@ pub unsafe fn catch<R>(closure: impl FnOnce() -> R) -> Result<R, Option<Id<Objec
 #[cfg(test)]
 mod tests {
     use alloc::string::ToString;
-    use core::ptr;
 
-    use super::{catch, throw};
+    use super::*;
 
     #[test]
     fn test_catch() {
@@ -115,16 +130,26 @@ mod tests {
     }
 
     #[test]
-    fn test_throw_catch() {
+    fn test_throw_catch_none() {
         let s = "Hello".to_string();
         let result = unsafe {
             catch(move || {
                 if !s.is_empty() {
-                    throw(ptr::null_mut());
+                    throw(None);
                 }
                 s.len()
             })
         };
         assert!(result.unwrap_err().is_none());
+    }
+
+    #[test]
+    fn test_throw_catch_object() {
+        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]) };
+
+        let result = unsafe { catch(|| throw(Some(&obj))) };
+        let e = result.unwrap_err().unwrap();
+        // Compare pointers
+        assert_eq!(&*e as *const Object, &*obj as *const Object);
     }
 }
