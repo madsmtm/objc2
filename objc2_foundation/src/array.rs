@@ -412,7 +412,7 @@ mod tests {
 
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
-    use objc2::rc::{Id, Owned};
+    use objc2::rc::{autoreleasepool, Id, Owned};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -525,8 +525,10 @@ mod tests {
         let strings = vec![NSString::from_str("hello"), NSString::from_str("hi")];
         let mut strings = NSMutableArray::from_vec(strings);
 
-        strings.sort_by(|s1, s2| s1.as_str().len().cmp(&s2.as_str().len()));
-        assert_eq!(strings[0].as_str(), "hi");
-        assert_eq!(strings[1].as_str(), "hello");
+        autoreleasepool(|pool| {
+            strings.sort_by(|s1, s2| s1.as_str(pool).len().cmp(&s2.as_str(pool).len()));
+            assert_eq!(strings[0].as_str(pool), "hi");
+            assert_eq!(strings[1].as_str(pool), "hello");
+        });
     }
 }

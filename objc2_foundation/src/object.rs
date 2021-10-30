@@ -62,6 +62,7 @@ mod tests {
     use super::{INSObject, NSObject};
     use crate::{INSString, NSString};
     use alloc::format;
+    use objc2::rc::autoreleasepool;
 
     #[test]
     fn test_is_equal() {
@@ -77,7 +78,7 @@ mod tests {
     #[test]
     fn test_hash_code() {
         let obj = NSObject::new();
-        assert!(obj.hash_code() == obj.hash_code());
+        assert_eq!(obj.hash_code(), obj.hash_code());
     }
 
     #[test]
@@ -85,7 +86,9 @@ mod tests {
         let obj = NSObject::new();
         let description = obj.description();
         let expected = format!("<NSObject: {:p}>", &*obj);
-        assert_eq!(description.as_str(), &*expected);
+        autoreleasepool(|pool| {
+            assert_eq!(description.as_str(pool), &*expected);
+        });
 
         let expected = format!("\"<NSObject: {:p}>\"", &*obj);
         assert_eq!(format!("{:?}", obj), expected);

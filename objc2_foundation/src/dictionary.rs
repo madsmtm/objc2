@@ -166,7 +166,7 @@ impl<'a, K: INSObject, V: INSObject> Index<&'a K> for NSDictionary<K, V> {
 #[cfg(test)]
 mod tests {
     use alloc::vec;
-    use objc2::rc::{Id, Shared};
+    use objc2::rc::{autoreleasepool, Id, Shared};
 
     use super::{INSDictionary, NSDictionary};
     use crate::{INSArray, INSObject, INSString, NSObject, NSString};
@@ -200,7 +200,9 @@ mod tests {
         let keys = dict.keys();
 
         assert_eq!(keys.len(), 1);
-        assert_eq!(keys[0].as_str(), "abcd");
+        autoreleasepool(|pool| {
+            assert_eq!(keys[0].as_str(pool), "abcd");
+        });
     }
 
     #[test]
@@ -218,7 +220,9 @@ mod tests {
 
         assert_eq!(keys.len(), 1);
         assert_eq!(objs.len(), 1);
-        assert_eq!(keys[0].as_str(), "abcd");
+        autoreleasepool(|pool| {
+            assert_eq!(keys[0].as_str(pool), "abcd");
+        });
         assert_eq!(objs[0], dict.get(keys[0]).unwrap());
     }
 
@@ -226,7 +230,9 @@ mod tests {
     fn test_key_enumerator() {
         let dict = sample_dict("abcd");
         assert_eq!(dict.key_enumerator().count(), 1);
-        assert_eq!(dict.key_enumerator().next().unwrap().as_str(), "abcd");
+        autoreleasepool(|pool| {
+            assert_eq!(dict.key_enumerator().next().unwrap().as_str(pool), "abcd");
+        });
     }
 
     #[test]
@@ -241,7 +247,9 @@ mod tests {
 
         let keys = dict.keys_array();
         assert_eq!(keys.len(), 1);
-        assert_eq!(keys[0].as_str(), "abcd");
+        autoreleasepool(|pool| {
+            assert_eq!(keys[0].as_str(pool), "abcd");
+        });
 
         // let objs = INSDictionary::into_values_array(dict);
         // assert_eq!(objs.len(), 1);

@@ -1,3 +1,4 @@
+use objc2::rc::autoreleasepool;
 use objc2_foundation::{
     INSArray, INSCopying, INSDictionary, INSObject, INSString, NSArray, NSDictionary, NSObject,
     NSString,
@@ -25,9 +26,12 @@ fn main() {
 
     // Create an NSString from a str slice
     let string = NSString::from_str("Hello, world!");
-    println!("{}", string.as_str());
-    let string2 = string.copy();
-    println!("{}", string2.as_str());
+    // Use an autoreleasepool to get the `str` contents of the NSString
+    autoreleasepool(|pool| {
+        println!("{}", string.as_str(pool));
+        let string2 = string.copy();
+        println!("{}", string2.as_str(pool));
+    });
 
     // Create a dictionary mapping strings to objects
     let keys = &[&*string];
