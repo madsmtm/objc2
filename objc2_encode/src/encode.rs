@@ -2,7 +2,7 @@ use core::ffi::c_void;
 use core::mem::ManuallyDrop;
 use core::num::{
     NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU16, NonZeroU32,
-    NonZeroU64, NonZeroU8, NonZeroUsize,
+    NonZeroU64, NonZeroU8, NonZeroUsize, Wrapping,
 };
 use core::pin::Pin;
 use core::ptr::NonNull;
@@ -311,6 +311,16 @@ unsafe impl<T: Encode> Encode for Pin<T> {
 
 // SAFETY: `Pin` is `repr(transparent)`.
 unsafe impl<T: RefEncode> RefEncode for Pin<T> {
+    const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
+}
+
+// SAFETY: `Wrapping` is `repr(transparent)`.
+unsafe impl<T: Encode> Encode for Wrapping<T> {
+    const ENCODING: Encoding<'static> = T::ENCODING;
+}
+
+// SAFETY: `Wrapping` is `repr(transparent)`.
+unsafe impl<T: RefEncode> RefEncode for Wrapping<T> {
     const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
 }
 
