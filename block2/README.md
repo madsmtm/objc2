@@ -1,8 +1,8 @@
-# `objc2_block`
+# `block2`
 
-[![Latest version](https://badgen.net/crates/v/objc2_block)](https://crates.io/crates/objc2_block)
+[![Latest version](https://badgen.net/crates/v/block2)](https://crates.io/crates/block2)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
-[![Documentation](https://docs.rs/objc2_block/badge.svg)](https://docs.rs/objc2_block/)
+[![Documentation](https://docs.rs/block2/badge.svg)](https://docs.rs/block2/)
 [![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
 [![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
 
@@ -25,7 +25,7 @@ int32_t sum(int32_t (^block)(int32_t, int32_t)) {
 We could write it in Rust as the following:
 
 ```rust
-use objc2_block::Block;
+use block2::Block;
 unsafe fn sum(block: &Block<(i32, i32), i32>) -> i32 {
     block.call((5, 8))
 }
@@ -40,7 +40,7 @@ Creating a block to pass to Objective-C can be done with the `ConcreteBlock`
 struct. For example, to create a block that adds two `i32`s, we could write:
 
 ```rust
-use objc2_block::ConcreteBlock;
+use block2::ConcreteBlock;
 let block = ConcreteBlock::new(|a: i32, b: i32| a + b);
 let block = block.copy();
 assert!(unsafe { block.call((5, 8)) } == 13);

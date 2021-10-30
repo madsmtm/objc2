@@ -47,7 +47,7 @@ pub unsafe trait INSData: INSObject {
     fn from_vec(bytes: Vec<u8>) -> Id<Self, Self::Ownership> {
         use core::mem::ManuallyDrop;
 
-        use objc2_block::{Block, ConcreteBlock};
+        use block2::{Block, ConcreteBlock};
 
         let capacity = bytes.capacity();
 
