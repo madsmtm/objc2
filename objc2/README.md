@@ -6,7 +6,7 @@
 [![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
 [![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
 
-Objective-C Runtime bindings and wrapper for Rust.
+Objective-C runtime bindings and interface for Rust.
 
 ## Messaging objects
 

@@ -4,7 +4,7 @@ version = "0.1.2" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
-description = "Objective-C's throw and try/catch statements."
+description = "Objective-C's @throw and @try/@catch statements"
 keywords = ["objective-c", "macos", "ios", "try", "catch"]
 categories = [
     "api-bindings",

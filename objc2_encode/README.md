@@ -1,10 +1,12 @@
-# `objc2_encode` - Objective-C type-encoding in Rust
+# `objc2_encode`
 
 [![Latest version](https://badgen.net/crates/v/objc2_encode)](https://crates.io/crates/objc2_encode)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/objc2_encode/badge.svg)](https://docs.rs/objc2_encode/)
 [![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
 [![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
+
+Objective-C type-encoding in Rust.
 
 The Objective-C directive `@encode` encodes types as strings for usage in
 various places in the runtime.
@@ -19,7 +21,8 @@ references (and `EncodeArguments` for function arguments).
 These types are exported under the `objc2` crate as well, so usually you would
 just use that.
 
-# Examples
+
+## Examples
 
 Implementing `Encode` and `RefEncode`:
 
@@ -66,19 +69,12 @@ assert_eq!(i32::ENCODING.to_string(), "i");
 
 See the [`examples`] folder for more complex usage.
 
-# Installation
+[`examples`]: https://github.com/madsmtm/objc2/tree/master/objc2_encode/examples
+
+
+## Installation
 
 ```toml
 [dependencies]
 objc2_encode = "1.1.0"
 ```
-
-# License
-
-This project is licensed under the MIT license, see [`../LICENSE.txt`].
-
-Work is in progress to make it dual-licensed under the Apache License
-(Version 2.0) as well.
-
-[`examples`]: https://github.com/madsmtm/objc2/tree/master/objc2_encode/examples
-[`../LICENSE.txt`]: https://github.com/madsmtm/objc2/blob/master/LICENSE.txt

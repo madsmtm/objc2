@@ -5,3 +5,5 @@
 [![Documentation](https://docs.rs/objc2_foundation/badge.svg)](https://docs.rs/objc2_foundation/)
 [![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
 [![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
+
+Bindings to the Objective-C `Foundation` framework in Rust.

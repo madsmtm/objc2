@@ -4,7 +4,7 @@ version = "0.1.1" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
-description = "Bindings to the Objective-C Foundation framework."
+description = "Bindings to the Objective-C Foundation framework"
 keywords = ["objective-c", "macos", "ios", "cocoa", "uikit"]
 categories = [
     "api-bindings",
