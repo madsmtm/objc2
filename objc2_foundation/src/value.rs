@@ -1,5 +1,4 @@
 use alloc::string::ToString;
-use core::any::Any;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
@@ -59,7 +58,7 @@ pub struct NSValue<T> {
 
 object_impl!(NSValue<T>);
 
-impl<T: Any> INSObject for NSValue<T> {
+impl<T: 'static> INSObject for NSValue<T> {
     type Ownership = Shared;
 
     fn class() -> &'static Class {
@@ -67,11 +66,11 @@ impl<T: Any> INSObject for NSValue<T> {
     }
 }
 
-impl<T: Any + Copy + Encode> INSValue for NSValue<T> {
+impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
     type Value = T;
 }
 
-impl<T: Any> INSCopying for NSValue<T> {
+impl<T: 'static> INSCopying for NSValue<T> {
     type Output = NSValue<T>;
 }
 
