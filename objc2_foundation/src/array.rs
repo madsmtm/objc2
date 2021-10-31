@@ -288,7 +288,7 @@ pub unsafe trait INSMutableArray: INSArray {
             // ownership, and that method only runs one function at a time.
             let closure: &mut F = unsafe { &mut *(context as *mut F) };
 
-            NSComparisonResult::from_ordering((*closure)(obj1, obj2))
+            NSComparisonResult::from((*closure)(obj1, obj2))
         }
 
         let f: extern "C" fn(_, _, _) -> _ = compare_with_closure::<Self::Item, F>;
