@@ -8,68 +8,11 @@ use core::ptr::NonNull;
 use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
-use objc2::{Encode, Encoding};
 
-use super::{INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSEnumerator};
-
-#[repr(isize)]
-#[derive(Clone, Copy)]
-pub enum NSComparisonResult {
-    Ascending = -1,
-    Same = 0,
-    Descending = 1,
-}
-
-unsafe impl Encode for NSComparisonResult {
-    const ENCODING: Encoding<'static> = isize::ENCODING;
-}
-
-impl NSComparisonResult {
-    pub fn from_ordering(order: Ordering) -> NSComparisonResult {
-        match order {
-            Ordering::Less => NSComparisonResult::Ascending,
-            Ordering::Equal => NSComparisonResult::Same,
-            Ordering::Greater => NSComparisonResult::Descending,
-        }
-    }
-
-    pub fn as_ordering(&self) -> Ordering {
-        match *self {
-            NSComparisonResult::Ascending => Ordering::Less,
-            NSComparisonResult::Same => Ordering::Equal,
-            NSComparisonResult::Descending => Ordering::Greater,
-        }
-    }
-}
-
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct NSRange {
-    pub location: usize,
-    pub length: usize,
-}
-
-impl NSRange {
-    pub fn from_range(range: Range<usize>) -> NSRange {
-        assert!(range.end >= range.start);
-        NSRange {
-            location: range.start,
-            length: range.end - range.start,
-        }
-    }
-
-    pub fn as_range(&self) -> Range<usize> {
-        Range {
-            start: self.location,
-            end: self.location + self.length,
-        }
-    }
-}
-
-unsafe impl Encode for NSRange {
-    const ENCODING: Encoding<'static> =
-        Encoding::Struct("_NSRange", &[usize::ENCODING, usize::ENCODING]);
-}
+use super::{
+    INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSComparisonResult, NSEnumerator,
+    NSRange,
+};
 
 unsafe fn from_refs<A: INSArray>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
     let cls = A::class();
