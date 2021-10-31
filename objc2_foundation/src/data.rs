@@ -128,7 +128,7 @@ pub unsafe trait INSMutableData: INSData {
     }
 
     fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
-        let range = NSRange::from_range(range);
+        let range = NSRange::from(range);
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
             let _: () = msg_send![

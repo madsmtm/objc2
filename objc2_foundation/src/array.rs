@@ -107,7 +107,7 @@ pub unsafe trait INSArray: INSObject {
     }
 
     fn objects_in_range(&self, range: Range<usize>) -> Vec<&Self::Item> {
-        let range = NSRange::from_range(range);
+        let range = NSRange::from(range);
         let mut vec = Vec::with_capacity(range.length);
         unsafe {
             let _: () = msg_send![self, getObjects: vec.as_ptr(), range: range];
