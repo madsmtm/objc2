@@ -11,7 +11,7 @@ use objc2::rc::{Id, Owned, Shared};
 
 use super::INSObject;
 
-pub trait INSCopying: INSObject {
+pub unsafe trait INSCopying: INSObject {
     /// This can be an [`Owned`] [`INSObject`] if and only if `copy` creates a
     /// new instance, see the following example:
     ///
@@ -31,7 +31,7 @@ pub trait INSCopying: INSObject {
     }
 }
 
-pub trait INSMutableCopying: INSObject {
+pub unsafe trait INSMutableCopying: INSObject {
     /// An [`Owned`] [`INSObject`] is required to be able to return an owned
     /// [`Id`].
     type Output: INSObject<Ownership = Owned>;
@@ -49,7 +49,7 @@ const UTF8_ENCODING: usize = 4;
 #[cfg(not(target_vendor = "apple"))]
 const UTF8_ENCODING: i32 = 4;
 
-pub trait INSString: INSObject {
+pub unsafe trait INSString: INSObject {
     fn len(&self) -> usize {
         unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
     }
@@ -128,11 +128,11 @@ pub trait INSString: INSObject {
     }
 }
 
-object_struct!(NSString, Shared);
+object_struct!(unsafe NSString, Shared);
 
-impl INSString for NSString {}
+unsafe impl INSString for NSString {}
 
-impl INSCopying for NSString {
+unsafe impl INSCopying for NSString {
     type Output = NSString;
 }
 

@@ -52,7 +52,7 @@ impl<'a> MyObject<'a> {
 
 static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 
-impl INSObject for MyObject<'_> {
+unsafe impl INSObject for MyObject<'_> {
     type Ownership = Owned;
 
     fn class() -> &'static Class {

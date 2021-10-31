@@ -27,7 +27,7 @@ where
     Id::new(NonNull::new_unchecked(obj))
 }
 
-pub trait INSDictionary: INSObject {
+pub unsafe trait INSDictionary: INSObject {
     type Key: INSObject;
     type Value: INSObject;
     type ValueOwnership: Ownership;
@@ -135,9 +135,9 @@ pub struct NSDictionary<K, V> {
     obj: PhantomData<Id<V, Owned>>,
 }
 
-object_impl!(NSDictionary<K, V>);
+object_impl!(unsafe NSDictionary<K, V>);
 
-impl<K: INSObject, V: INSObject> INSObject for NSDictionary<K, V> {
+unsafe impl<K: INSObject, V: INSObject> INSObject for NSDictionary<K, V> {
     type Ownership = Shared;
 
     fn class() -> &'static Class {
@@ -145,13 +145,13 @@ impl<K: INSObject, V: INSObject> INSObject for NSDictionary<K, V> {
     }
 }
 
-impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {
+unsafe impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {
     type Key = K;
     type Value = V;
     type ValueOwnership = Owned;
 }
 
-impl<K: INSObject, V: INSObject> INSFastEnumeration for NSDictionary<K, V> {
+unsafe impl<K: INSObject, V: INSObject> INSFastEnumeration for NSDictionary<K, V> {
     type Item = K;
 }
 

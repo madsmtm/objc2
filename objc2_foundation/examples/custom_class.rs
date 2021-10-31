@@ -41,7 +41,7 @@ unsafe impl Message for MYObject {}
 
 static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 
-impl INSObject for MYObject {
+unsafe impl INSObject for MYObject {
     type Ownership = Owned;
 
     fn class() -> &'static Class {

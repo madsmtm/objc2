@@ -14,7 +14,7 @@ use objc2::{class, msg_send};
 
 use super::{INSCopying, INSObject};
 
-pub trait INSValue: INSObject {
+pub unsafe trait INSValue: INSObject {
     type Value: 'static + Copy + Encode;
 
     fn value(&self) -> Self::Value {
@@ -56,9 +56,9 @@ pub struct NSValue<T> {
     value: PhantomData<T>,
 }
 
-object_impl!(NSValue<T>);
+object_impl!(unsafe NSValue<T>);
 
-impl<T: 'static> INSObject for NSValue<T> {
+unsafe impl<T: 'static> INSObject for NSValue<T> {
     type Ownership = Shared;
 
     fn class() -> &'static Class {
@@ -66,11 +66,11 @@ impl<T: 'static> INSObject for NSValue<T> {
     }
 }
 
-impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
+unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
     type Value = T;
 }
 
-impl<T: 'static> INSCopying for NSValue<T> {
+unsafe impl<T: 'static> INSCopying for NSValue<T> {
     type Output = NSValue<T>;
 }
 

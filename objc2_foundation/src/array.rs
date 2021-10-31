@@ -82,7 +82,7 @@ unsafe fn from_refs<A: INSArray>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
     Id::new(NonNull::new_unchecked(obj))
 }
 
-pub trait INSArray: INSObject {
+pub unsafe trait INSArray: INSObject {
     type Item: INSObject;
     type ItemOwnership: Ownership;
 
@@ -216,9 +216,9 @@ pub struct NSArray<T, O: Ownership> {
     item: PhantomData<Id<T, O>>,
 }
 
-object_impl!(NSArray<T, O: Ownership>);
+object_impl!(unsafe NSArray<T, O: Ownership>);
 
-impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
+unsafe impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
     /// The `NSArray` itself (length and number of items) is always immutable,
     /// but we would like to know when we're the only owner of the array, to
     /// allow mutation of the array's items.
@@ -231,22 +231,22 @@ impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
     }
 }
 
-impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
+unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     type Item = T;
     type ItemOwnership = O;
 }
 
 // Copying only possible when ItemOwnership = Shared
 
-impl<T: INSObject> INSCopying for NSArray<T, Shared> {
+unsafe impl<T: INSObject> INSCopying for NSArray<T, Shared> {
     type Output = NSArray<T, Shared>;
 }
 
-impl<T: INSObject> INSMutableCopying for NSArray<T, Shared> {
+unsafe impl<T: INSObject> INSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-impl<T: INSObject, O: Ownership> INSFastEnumeration for NSArray<T, O> {
+unsafe impl<T: INSObject, O: Ownership> INSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
 
@@ -258,7 +258,7 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
     }
 }
 
-pub trait INSMutableArray: INSArray {
+pub unsafe trait INSMutableArray: INSArray {
     #[doc(alias = "addObject:")]
     fn push(&mut self, obj: Id<Self::Item, Self::ItemOwnership>) {
         // SAFETY: The object is not nil
@@ -366,9 +366,9 @@ pub struct NSMutableArray<T, O: Ownership> {
     item: PhantomData<Id<T, O>>,
 }
 
-object_impl!(NSMutableArray<T, O: Ownership>);
+object_impl!(unsafe NSMutableArray<T, O: Ownership>);
 
-impl<T: INSObject, O: Ownership> INSObject for NSMutableArray<T, O> {
+unsafe impl<T: INSObject, O: Ownership> INSObject for NSMutableArray<T, O> {
     type Ownership = Owned;
 
     fn class() -> &'static Class {
@@ -376,24 +376,24 @@ impl<T: INSObject, O: Ownership> INSObject for NSMutableArray<T, O> {
     }
 }
 
-impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
+unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Item = T;
     type ItemOwnership = O;
 }
 
-impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
+unsafe impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
 
 // Copying only possible when ItemOwnership = Shared
 
-impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
     type Output = NSArray<T, Shared>;
 }
 
-impl<T: INSObject> INSMutableCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: INSObject> INSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-impl<T: INSObject, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
+unsafe impl<T: INSObject, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
     type Item = T;
 }
 

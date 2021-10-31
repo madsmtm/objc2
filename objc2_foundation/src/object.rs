@@ -13,7 +13,7 @@ treated as Sized. However, rust won't allow casting a dynamically-sized type
 pointer to an Object pointer, because dynamically-sized types can have fat
 pointers (two words) instead of real pointers.
 */
-pub trait INSObject: Sized + Message {
+pub unsafe trait INSObject: Sized + Message {
     /// Indicates whether the type is mutable or immutable.
     ///
     /// [`Shared`] means that only a shared [`Id`] can ever be held to this
@@ -54,7 +54,7 @@ pub trait INSObject: Sized + Message {
     }
 }
 
-object_struct!(NSObject, Owned);
+object_struct!(unsafe NSObject, Owned);
 
 #[cfg(test)]
 mod tests {

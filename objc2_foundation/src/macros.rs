@@ -1,5 +1,13 @@
+/// TODO
+///
+/// # Safety
+///
+/// The given name must be a valid Objective-C class that inherits NSObject
+/// and it's instances must have the raw encoding `Encoding::Object` (an
+/// example: `NSAutoreleasePool` does not have this). Finally the ownership
+/// must be correct for this class.
 macro_rules! object_struct {
-    ($name:ident, $ownership:ty) => {
+    (unsafe $name:ident, $ownership:ty) => {
         // TODO: `extern type`
         #[repr(C)]
         pub struct $name {
@@ -12,7 +20,7 @@ macro_rules! object_struct {
             const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
         }
 
-        impl $crate::INSObject for $name {
+        unsafe impl $crate::INSObject for $name {
             type Ownership = $ownership;
 
             fn class() -> &'static ::objc2::runtime::Class {
@@ -47,14 +55,19 @@ macro_rules! object_struct {
     };
 }
 
+/// TODO
+///
+/// # Safety
+///
+/// The given type must be valid as an Objective-C object. TODO: More.
 macro_rules! object_impl {
-    ($name:ident) => (
-        object_impl!($name,);
+    (unsafe $name:ident) => (
+        object_impl!(unsafe $name,);
     );
-    ($name:ident<$($t:ident$(: $b:ident)?),+>) => (
-        object_impl!($name, $($t$(: $b)?),+);
+    (unsafe $name:ident<$($t:ident$(: $b:ident)?),+>) => (
+        object_impl!(unsafe $name, $($t$(: $b)?),+);
     );
-    ($name:ident, $($t:ident$(: $b:ident)?),*) => (
+    (unsafe $name:ident, $($t:ident$(: $b:ident)?),*) => (
         unsafe impl<$($t$(:($b))?),*> ::objc2::Message for $name<$($t),*> { }
 
         unsafe impl<$($t$(: $b)?),*> ::objc2::RefEncode for $name<$($t),*> {

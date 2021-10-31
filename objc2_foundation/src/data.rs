@@ -8,7 +8,7 @@ use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
 use objc2::rc::{Id, Owned, Shared};
 
-pub trait INSData: INSObject {
+pub unsafe trait INSData: INSObject {
     fn len(&self) -> usize {
         unsafe { msg_send![self, length] }
     }
@@ -86,19 +86,19 @@ pub trait INSData: INSObject {
     }
 }
 
-object_struct!(NSData, Shared);
+object_struct!(unsafe NSData, Shared);
 
-impl INSData for NSData {}
+unsafe impl INSData for NSData {}
 
-impl INSCopying for NSData {
+unsafe impl INSCopying for NSData {
     type Output = NSData;
 }
 
-impl INSMutableCopying for NSData {
+unsafe impl INSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
-pub trait INSMutableData: INSData {
+pub unsafe trait INSMutableData: INSData {
     fn bytes_mut(&mut self) -> &mut [u8] {
         let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
         // The bytes pointer may be null for length zero
@@ -146,17 +146,17 @@ pub trait INSMutableData: INSData {
     }
 }
 
-object_struct!(NSMutableData, Owned);
+object_struct!(unsafe NSMutableData, Owned);
 
-impl INSData for NSMutableData {}
+unsafe impl INSData for NSMutableData {}
 
-impl INSMutableData for NSMutableData {}
+unsafe impl INSMutableData for NSMutableData {}
 
-impl INSCopying for NSMutableData {
+unsafe impl INSCopying for NSMutableData {
     type Output = NSData;
 }
 
-impl INSMutableCopying for NSMutableData {
+unsafe impl INSMutableCopying for NSMutableData {
     type Output = NSMutableData;
 }
 
