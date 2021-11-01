@@ -35,14 +35,7 @@ impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
-        unsafe {
-            let obj: *mut T = msg_send![self.id, nextObject];
-            if obj.is_null() {
-                None
-            } else {
-                Some(&*obj)
-            }
-        }
+        unsafe { msg_send![self.id, nextObject] }
     }
 }
 

@@ -353,9 +353,11 @@ mod tests {
     use alloc::vec;
     use alloc::vec::Vec;
 
+    use objc2::msg_send;
+    use objc2::rc::{autoreleasepool, Id, Owned, Shared};
+
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, NSObject, NSString};
-    use objc2::rc::{autoreleasepool, Id, Owned};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -363,6 +365,10 @@ mod tests {
             vec.push(NSObject::new());
         }
         NSArray::from_vec(vec)
+    }
+
+    fn retain_count<T: INSObject>(obj: &T) -> usize {
+        unsafe { msg_send![obj, retainCount] }
     }
 
     #[test]
@@ -384,6 +390,28 @@ mod tests {
         let empty_array: Id<NSArray<NSObject, Owned>, _> = INSObject::new();
         assert!(empty_array.first().is_none());
         assert!(empty_array.last().is_none());
+    }
+
+    #[test]
+    fn test_get_does_not_autorelease() {
+        let obj: Id<_, Shared> = NSObject::new().into();
+
+        assert_eq!(retain_count(&*obj), 1);
+
+        let array = NSArray::from_slice(&[obj.clone()]);
+
+        assert_eq!(retain_count(&*obj), 2);
+
+        autoreleasepool(|_pool| {
+            let obj2 = array.first().unwrap();
+            assert_eq!(retain_count(obj2), 2);
+        });
+
+        assert_eq!(retain_count(&*obj), 2);
+
+        drop(array);
+
+        assert_eq!(retain_count(&*obj), 1);
     }
 
     #[test]
