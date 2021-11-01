@@ -70,7 +70,31 @@ unsafe impl<T: 'static> INSObject for NSValue<T> {
     type Ownership = Shared;
 
     fn class() -> &'static Class {
-        class!(NSValue)
+        #[cfg(not(gnustep))]
+        return class!(NSValue);
+
+        #[cfg(gnustep)]
+        // We can't use NSValue directly, because its `new` method throws an
+        // exception (instead of just becoming an invalid NSValue). Luckily,
+        // the `GSValue` subclass has the desired behaviour, so we can just
+        // use that. Unfortunately, this is less efficient for the following:
+        // ```
+        // match T::ENCODING {
+        //     Encoding::Object => ...,
+        //     Encoding::Struct("_NSPoint", _) => ...,
+        //     Encoding::Pointer(&Encoding::Void) => ...,
+        //     Encoding::Struct("_NSRange", _) => ...,
+        //     Encoding::Struct("_NSRect", _) => ...,
+        //     Encoding::Struct("_NSSize", _) => ...,
+        // }
+        // ```
+        //
+        // See GNUStep's `NSValue +valueClassWithObjCType` and
+        // `GSConcreteValueTemplate.m` for more, though we can't use the
+        // classes in there either, because their `new` methods return valid
+        // objects (and so `<NSValue<NSRange>>::new()` would work differently
+        // on GNUStep).
+        return class!(GSValue);
     }
 }
 
@@ -84,7 +108,7 @@ unsafe impl<T: 'static> INSCopying for NSValue<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{INSObject, INSValue, NSValue};
+    use crate::{INSObject, INSValue, NSRange, NSValue};
     use objc2::Encode;
 
     #[test]
@@ -97,6 +121,17 @@ mod tests {
     #[test]
     fn test_value_new() {
         let val = <NSValue<u8>>::new();
+        assert!(val.encoding().is_none());
+        assert!(val.get().is_none());
+    }
+
+    #[test]
+    fn test_value_nsrange() {
+        let val = NSValue::from_value(NSRange::from(1..2));
+        assert!(&NSRange::ENCODING == val.encoding().unwrap());
+        assert_eq!(val.get().unwrap(), NSRange::from(1..2));
+
+        let val = <NSValue<NSRange>>::new();
         assert!(val.encoding().is_none());
         assert!(val.get().is_none());
     }
