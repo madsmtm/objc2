@@ -182,7 +182,7 @@ mod tests {
         let enumerator = array.object_enumerator();
         assert!(enumerator
             .enumerate()
-            .all(|(i, obj)| obj.value() == i as u32));
+            .all(|(i, obj)| obj.get() == Some(i as u32)));
     }
 
     #[test]
@@ -196,6 +196,6 @@ mod tests {
         let enumerator = array.enumerator();
         assert!(enumerator
             .enumerate()
-            .all(|(i, obj)| obj.value() == i as u32));
+            .all(|(i, obj)| obj.get() == Some(i as u32)));
     }
 }

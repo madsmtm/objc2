@@ -17,28 +17,36 @@ use super::{INSCopying, INSObject};
 pub unsafe trait INSValue: INSObject {
     type Value: 'static + Copy + Encode;
 
-    fn value(&self) -> Self::Value {
-        assert!(&Self::Value::ENCODING == self.encoding());
-        let mut value = MaybeUninit::<Self::Value>::uninit();
-        let ptr = value.as_mut_ptr() as *mut c_void;
-        unsafe {
-            let _: () = msg_send![self, getValue: ptr];
-            value.assume_init()
+    /// TODO.
+    ///
+    /// If the value was created using [`INSObject::new`], the value may not
+    /// be initialized. In that case, this will return [`None`].
+    fn get(&self) -> Option<Self::Value> {
+        // If encoding is `None`, this was created using INSObject::new
+        if let Some(encoding) = self.encoding() {
+            // TODO: This can be a debug assertion (?)
+            assert!(&Self::Value::ENCODING == encoding);
+            Some(unsafe { self.get_unchecked() })
+        } else {
+            None
         }
     }
 
-    fn encoding(&self) -> &str {
-        unsafe {
-            let result: *const c_char = msg_send![self, objCType];
-            let s = CStr::from_ptr(result);
-            str::from_utf8(s.to_bytes()).unwrap()
-        }
+    unsafe fn get_unchecked(&self) -> Self::Value {
+        let mut value = MaybeUninit::<Self::Value>::uninit();
+        let ptr = value.as_mut_ptr() as *mut c_void;
+        let _: () = msg_send![self, getValue: ptr];
+        value.assume_init()
+    }
+
+    fn encoding(&self) -> Option<&str> {
+        let result: Option<NonNull<c_char>> = unsafe { msg_send![self, objCType] };
+        result.map(|s| unsafe { CStr::from_ptr(s.as_ptr()) }.to_str().unwrap())
     }
 
     fn from_value(value: Self::Value) -> Id<Self, Self::Ownership> {
         let cls = Self::class();
-        let value_ptr: *const Self::Value = &value;
-        let bytes = value_ptr as *const c_void;
+        let bytes = &value as *const Self::Value as *const c_void;
         let encoding = CString::new(Self::Value::ENCODING.to_string()).unwrap();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
@@ -76,13 +84,20 @@ unsafe impl<T: 'static> INSCopying for NSValue<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{INSValue, NSValue};
+    use crate::{INSObject, INSValue, NSValue};
     use objc2::Encode;
 
     #[test]
     fn test_value() {
         let val = NSValue::from_value(13u32);
-        assert!(val.value() == 13);
-        assert!(&u32::ENCODING == val.encoding());
+        assert_eq!(val.get().unwrap(), 13);
+        assert!(&u32::ENCODING == val.encoding().unwrap());
+    }
+
+    #[test]
+    fn test_value_new() {
+        let val = <NSValue<u8>>::new();
+        assert!(val.encoding().is_none());
+        assert!(val.get().is_none());
     }
 }
