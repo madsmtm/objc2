@@ -47,14 +47,13 @@ pub unsafe trait INSObject: Sized + Message {
         let result: Bool = unsafe { msg_send![self, isKindOfClass: cls] };
         result.is_true()
     }
-
-    fn new() -> Id<Self, Self::Ownership> {
-        let cls = Self::class();
-        unsafe { Id::new(msg_send![cls, new]) }
-    }
 }
 
 object_struct!(unsafe NSObject, Owned);
+
+impl NSObject {
+    unsafe_def_fn!(pub fn new);
+}
 
 #[cfg(test)]
 mod tests {

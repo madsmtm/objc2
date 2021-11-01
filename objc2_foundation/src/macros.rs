@@ -75,3 +75,12 @@ macro_rules! object_impl {
         }
     );
 }
+
+macro_rules! unsafe_def_fn {
+    ($v:vis fn new) => {
+        $v fn new() -> Id<Self, <Self as INSObject>::Ownership> {
+            let cls = <Self as INSObject>::class();
+            unsafe { Id::new(NonNull::new_unchecked(msg_send![cls, new])) }
+        }
+    };
+}

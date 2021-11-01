@@ -24,7 +24,7 @@ unsafe impl RefEncode for MyObject<'_> {
 unsafe impl Message for MyObject<'_> {}
 
 impl<'a> MyObject<'a> {
-    fn new_with_ptr(number_ptr: &'a mut u8) -> Id<Self, Owned> {
+    fn new(number_ptr: &'a mut u8) -> Id<Self, Owned> {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithPtr: number_ptr];
@@ -83,7 +83,7 @@ unsafe impl INSObject for MyObject<'_> {
 
 fn main() {
     let mut number = 54;
-    let mut obj = MyObject::new_with_ptr(&mut number);
+    let mut obj = MyObject::new(&mut number);
 
     println!("Number: {}", obj.get().unwrap());
 

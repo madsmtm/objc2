@@ -9,6 +9,8 @@ use objc2::msg_send;
 use objc2::rc::{Id, Owned, Shared};
 
 pub unsafe trait INSData: INSObject {
+    unsafe_def_fn!(fn new);
+
     fn len(&self) -> usize {
         unsafe { msg_send![self, length] }
     }
@@ -179,7 +181,6 @@ impl DerefMut for NSMutableData {
 #[cfg(test)]
 mod tests {
     use super::{INSData, INSMutableData, NSData, NSMutableData};
-    use crate::INSObject;
     #[cfg(feature = "block")]
     use alloc::vec;
 

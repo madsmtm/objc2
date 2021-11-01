@@ -32,6 +32,8 @@ pub unsafe trait INSDictionary: INSObject {
     type Value: INSObject;
     type ValueOwnership: Ownership;
 
+    unsafe_def_fn!(fn new);
+
     #[doc(alias = "count")]
     fn len(&self) -> usize {
         unsafe { msg_send![self, count] }
@@ -169,7 +171,7 @@ mod tests {
     use objc2::rc::{autoreleasepool, Id, Shared};
 
     use super::{INSDictionary, NSDictionary};
-    use crate::{INSArray, INSObject, INSString, NSObject, NSString};
+    use crate::{INSArray, INSString, NSObject, NSString};
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>, Shared> {
         let string = NSString::from_str(key);

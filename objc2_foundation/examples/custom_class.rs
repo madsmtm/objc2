@@ -1,7 +1,8 @@
+use std::ptr::NonNull;
 use std::sync::Once;
 
 use objc2::declare::ClassDecl;
-use objc2::rc::Owned;
+use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, sel};
 use objc2::{Encoding, Message, RefEncode};
@@ -22,6 +23,11 @@ unsafe impl RefEncode for MYObject {
 }
 
 impl MYObject {
+    fn new() -> Id<Self, <Self as INSObject>::Ownership> {
+        let cls = Self::class();
+        unsafe { Id::new(NonNull::new_unchecked(msg_send![cls, new])) }
+    }
+
     fn number(&self) -> u32 {
         unsafe {
             let obj = &*(self as *const _ as *const Object);

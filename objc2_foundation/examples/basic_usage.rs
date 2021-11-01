@@ -1,7 +1,6 @@
 use objc2::rc::autoreleasepool;
 use objc2_foundation::{
-    INSArray, INSCopying, INSDictionary, INSObject, INSString, NSArray, NSDictionary, NSObject,
-    NSString,
+    INSArray, INSCopying, INSDictionary, INSString, NSArray, NSDictionary, NSObject, NSString,
 };
 
 fn main() {

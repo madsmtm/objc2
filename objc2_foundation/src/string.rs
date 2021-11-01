@@ -17,6 +17,8 @@ const UTF8_ENCODING: usize = 4;
 const UTF8_ENCODING: i32 = 4;
 
 pub unsafe trait INSString: INSObject {
+    unsafe_def_fn!(fn new);
+
     fn len(&self) -> usize {
         unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
     }

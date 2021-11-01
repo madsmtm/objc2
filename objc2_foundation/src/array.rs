@@ -29,6 +29,8 @@ pub unsafe trait INSArray: INSObject {
     type Item: INSObject;
     type ItemOwnership: Ownership;
 
+    unsafe_def_fn!(fn new);
+
     #[doc(alias = "count")]
     fn len(&self) -> usize {
         unsafe { msg_send![self, count] }
@@ -387,7 +389,7 @@ mod tests {
         assert_eq!(array.first(), array.get(0));
         assert_eq!(array.last(), array.get(3));
 
-        let empty_array: Id<NSArray<NSObject, Owned>, _> = INSObject::new();
+        let empty_array = <NSArray<NSObject, Owned>>::new();
         assert!(empty_array.first().is_none());
         assert!(empty_array.last().is_none());
     }

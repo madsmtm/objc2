@@ -173,29 +173,25 @@ mod tests {
 
     #[test]
     fn test_enumerator() {
-        let vec = (0u32..4).map(NSValue::from_value).collect();
+        let vec = (0u32..4).map(NSValue::new).collect();
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.object_enumerator();
         assert!(enumerator.count() == 4);
 
         let enumerator = array.object_enumerator();
-        assert!(enumerator
-            .enumerate()
-            .all(|(i, obj)| obj.get() == Some(i as u32)));
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));
     }
 
     #[test]
     fn test_fast_enumerator() {
-        let vec = (0u32..4).map(NSValue::from_value).collect();
+        let vec = (0u32..4).map(NSValue::new).collect();
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.enumerator();
         assert!(enumerator.count() == 4);
 
         let enumerator = array.enumerator();
-        assert!(enumerator
-            .enumerate()
-            .all(|(i, obj)| obj.get() == Some(i as u32)));
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));
     }
 }
