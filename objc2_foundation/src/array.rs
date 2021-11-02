@@ -97,7 +97,8 @@ pub unsafe trait INSArray: INSObject {
         unsafe { msg_send![self, lastObject] }
     }
 
-    fn object_enumerator(&self) -> NSEnumerator<Self::Item> {
+    #[doc(alias = "objectEnumerator")]
+    fn iter<'a>(&'a self) -> NSEnumerator<'a, Self::Item> {
         unsafe {
             let result: *mut Object = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)
@@ -417,12 +418,12 @@ mod tests {
     }
 
     #[test]
-    fn test_object_enumerator() {
+    fn test_iter() {
         let array = sample_array(4);
 
-        assert!(array.object_enumerator().count() == 4);
+        assert!(array.iter().count() == 4);
         assert!(array
-            .object_enumerator()
+            .iter()
             .enumerate()
             .all(|(i, obj)| Some(obj) == array.get(i)));
     }

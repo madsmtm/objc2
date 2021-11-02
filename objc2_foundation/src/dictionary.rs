@@ -91,14 +91,16 @@ pub unsafe trait INSDictionary: INSObject {
         (keys, objs)
     }
 
-    fn key_enumerator(&self) -> NSEnumerator<Self::Key> {
+    #[doc(alias = "keyEnumerator")]
+    fn iter_keys<'a>(&'a self) -> NSEnumerator<'a, Self::Key> {
         unsafe {
             let result = msg_send![self, keyEnumerator];
             NSEnumerator::from_ptr(result)
         }
     }
 
-    fn object_enumerator(&self) -> NSEnumerator<Self::Value> {
+    #[doc(alias = "objectEnumerator")]
+    fn iter_values<'a>(&'a self) -> NSEnumerator<'a, Self::Value> {
         unsafe {
             let result = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)
@@ -229,18 +231,18 @@ mod tests {
     }
 
     #[test]
-    fn test_key_enumerator() {
+    fn test_iter_keys() {
         let dict = sample_dict("abcd");
-        assert_eq!(dict.key_enumerator().count(), 1);
+        assert_eq!(dict.iter_keys().count(), 1);
         autoreleasepool(|pool| {
-            assert_eq!(dict.key_enumerator().next().unwrap().as_str(pool), "abcd");
+            assert_eq!(dict.iter_keys().next().unwrap().as_str(pool), "abcd");
         });
     }
 
     #[test]
-    fn test_object_enumerator() {
+    fn test_iter_values() {
         let dict = sample_dict("abcd");
-        assert_eq!(dict.object_enumerator().count(), 1);
+        assert_eq!(dict.iter_values().count(), 1);
     }
 
     #[test]
