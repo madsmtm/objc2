@@ -1,0 +1,17 @@
+[package]
+name = "tests"
+version = "0.1.0"
+edition = "2018"
+publish = false
+
+repository = "https://github.com/madsmtm/objc2"
+license = "MIT"
+
+build = "build.rs"
+
+[dependencies]
+block2 = { path = "../block2" }
+block-sys = { path = "../block-sys" }
+
+[build-dependencies]
+cc = "1.0"

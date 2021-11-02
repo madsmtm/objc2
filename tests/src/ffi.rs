@@ -1,8 +1,3 @@
-#![no_std]
-
-// Ensure linkage actually happens
-extern crate block_sys as _;
-
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.
 #[repr(C)]
 pub struct IntBlock {
