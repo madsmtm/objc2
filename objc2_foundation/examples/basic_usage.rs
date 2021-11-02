@@ -14,7 +14,7 @@ fn main() {
     // Create an NSArray from a Vec
     let objs = vec![obj, obj2];
     let array = NSArray::from_vec(objs);
-    for obj in array.object_enumerator() {
+    for obj in array.iter() {
         println!("{:?}", obj);
     }
     println!("{}", array.len());
