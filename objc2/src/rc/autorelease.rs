@@ -1,4 +1,6 @@
+use core::cell::UnsafeCell;
 use core::ffi::c_void;
+use core::marker::PhantomData;
 #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
 use std::{cell::RefCell, thread_local, vec::Vec};
 
@@ -15,6 +17,8 @@ use crate::runtime::{objc_autoreleasePoolPop, objc_autoreleasePoolPush};
 /// pool on the current thread.
 pub struct AutoreleasePool {
     context: *mut c_void,
+    // May pointer to data that is mutated (even though we hold shared access)
+    p: PhantomData<*mut UnsafeCell<c_void>>,
 }
 
 /// ```rust,compile_fail
@@ -55,7 +59,10 @@ impl AutoreleasePool {
         let context = objc_autoreleasePoolPush();
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
         POOLS.with(|c| c.borrow_mut().push(context));
-        Self { context }
+        Self {
+            context,
+            p: PhantomData,
+        }
     }
 
     /// This will be removed in a future version.
