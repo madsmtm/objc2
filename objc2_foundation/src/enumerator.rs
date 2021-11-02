@@ -11,54 +11,38 @@ use objc2::{msg_send, Encode, Encoding, RefEncode};
 
 use super::INSObject;
 
-pub struct NSEnumerator<'a, T>
-where
-    T: INSObject,
-{
+pub struct NSEnumerator<'a, T: INSObject> {
     id: Id<Object, Owned>,
     item: PhantomData<&'a T>,
 }
 
-impl<'a, T> NSEnumerator<'a, T>
-where
-    T: INSObject,
-{
+impl<'a, T: INSObject> NSEnumerator<'a, T> {
     /// TODO
     ///
     /// # Safety
     ///
     /// The object pointer must be a valid `NSEnumerator` with `Owned`
     /// ownership.
-    pub unsafe fn from_ptr(ptr: *mut Object) -> NSEnumerator<'a, T> {
-        NSEnumerator {
+    pub unsafe fn from_ptr(ptr: *mut Object) -> Self {
+        Self {
             id: Id::retain(NonNull::new(ptr).unwrap()),
             item: PhantomData,
         }
     }
 }
 
-impl<'a, T> Iterator for NSEnumerator<'a, T>
-where
-    T: INSObject,
-{
+impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
-        unsafe {
-            let obj: *mut T = msg_send![self.id, nextObject];
-            if obj.is_null() {
-                None
-            } else {
-                Some(&*obj)
-            }
-        }
+        unsafe { msg_send![self.id, nextObject] }
     }
 }
 
-pub trait INSFastEnumeration: INSObject {
+pub unsafe trait INSFastEnumeration: INSObject {
     type Item: INSObject;
 
-    fn enumerator(&self) -> NSFastEnumerator<Self> {
+    fn enumerator<'a>(&'a self) -> NSFastEnumerator<'a, Self> {
         NSFastEnumerator::new(self)
     }
 }
@@ -123,8 +107,8 @@ pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration> {
 }
 
 impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
-    fn new(object: &C) -> NSFastEnumerator<C> {
-        NSFastEnumerator {
+    fn new(object: &'a C) -> Self {
+        Self {
             object,
 
             ptr: ptr::null(),
@@ -189,29 +173,25 @@ mod tests {
 
     #[test]
     fn test_enumerator() {
-        let vec = (0u32..4).map(NSValue::from_value).collect();
+        let vec = (0u32..4).map(NSValue::new).collect();
         let array = NSArray::from_vec(vec);
 
-        let enumerator = array.object_enumerator();
+        let enumerator = array.iter();
         assert!(enumerator.count() == 4);
 
-        let enumerator = array.object_enumerator();
-        assert!(enumerator
-            .enumerate()
-            .all(|(i, obj)| obj.value() == i as u32));
+        let enumerator = array.iter();
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));
     }
 
     #[test]
     fn test_fast_enumerator() {
-        let vec = (0u32..4).map(NSValue::from_value).collect();
+        let vec = (0u32..4).map(NSValue::new).collect();
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.enumerator();
         assert!(enumerator.count() == 4);
 
         let enumerator = array.enumerator();
-        assert!(enumerator
-            .enumerate()
-            .all(|(i, obj)| obj.value() == i as u32));
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));
     }
 }

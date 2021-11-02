@@ -1,6 +1,6 @@
+use objc2::rc::autoreleasepool;
 use objc2_foundation::{
-    INSArray, INSCopying, INSDictionary, INSObject, INSString, NSArray, NSDictionary, NSObject,
-    NSString,
+    INSArray, INSCopying, INSDictionary, INSString, NSArray, NSDictionary, NSObject, NSString,
 };
 
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
     for obj in array.object_enumerator() {
         println!("{:?}", obj);
     }
-    println!("{}", array.count());
+    println!("{}", array.len());
 
     // Turn the NSArray back into a Vec
     let mut objs = NSArray::into_vec(array);
@@ -25,14 +25,17 @@ fn main() {
 
     // Create an NSString from a str slice
     let string = NSString::from_str("Hello, world!");
-    println!("{}", string.as_str());
-    let string2 = string.copy();
-    println!("{}", string2.as_str());
+    // Use an autoreleasepool to get the `str` contents of the NSString
+    autoreleasepool(|pool| {
+        println!("{}", string.as_str(pool));
+        let string2 = string.copy();
+        println!("{}", string2.as_str(pool));
+    });
 
     // Create a dictionary mapping strings to objects
     let keys = &[&*string];
     let vals = vec![obj];
     let dict = NSDictionary::from_keys_and_objects(keys, vals);
-    println!("{:?}", dict.object_for(&string));
-    println!("{}", dict.count());
+    println!("{:?}", dict.get(&string));
+    println!("{}", dict.len());
 }

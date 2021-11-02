@@ -10,15 +10,15 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-pub use self::array::{
-    INSArray, INSMutableArray, NSArray, NSComparisonResult, NSMutableArray, NSMutableSharedArray,
-    NSRange, NSSharedArray,
-};
+pub use self::array::{INSArray, INSMutableArray, NSArray, NSMutableArray};
+pub use self::comparison_result::NSComparisonResult;
+pub use self::copying::{INSCopying, INSMutableCopying};
 pub use self::data::{INSData, INSMutableData, NSData, NSMutableData};
 pub use self::dictionary::{INSDictionary, NSDictionary};
 pub use self::enumerator::{INSFastEnumeration, NSEnumerator, NSFastEnumerator};
 pub use self::object::{INSObject, NSObject};
-pub use self::string::{INSCopying, INSMutableCopying, INSString, NSString};
+pub use self::range::NSRange;
+pub use self::string::{INSString, NSString};
 pub use self::value::{INSValue, NSValue};
 
 #[cfg(target_vendor = "apple")]
@@ -33,9 +33,12 @@ extern "C" {}
 mod macros;
 
 mod array;
+mod comparison_result;
+mod copying;
 mod data;
 mod dictionary;
 mod enumerator;
 mod object;
+mod range;
 mod string;
 mod value;

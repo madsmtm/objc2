@@ -1,14 +1,16 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
-use core::ops::Range;
+use core::ops::{Deref, DerefMut, Range};
 use core::slice;
 use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
-use objc2::rc::{Id, Owned};
+use objc2::rc::{Id, Owned, Shared};
 
-pub trait INSData: INSObject {
+pub unsafe trait INSData: INSObject {
+    unsafe_def_fn!(fn new);
+
     fn len(&self) -> usize {
         unsafe { msg_send![self, length] }
     }
@@ -27,7 +29,7 @@ pub trait INSData: INSObject {
         }
     }
 
-    fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
+    fn with_bytes(bytes: &[u8]) -> Id<Self, Self::Ownership> {
         let cls = Self::class();
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe {
@@ -42,19 +44,19 @@ pub trait INSData: INSObject {
     }
 
     #[cfg(feature = "block")]
-    fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
+    fn from_vec(bytes: Vec<u8>) -> Id<Self, Self::Ownership> {
+        use core::mem::ManuallyDrop;
+
         use objc2_block::{Block, ConcreteBlock};
 
         let capacity = bytes.capacity();
+
         let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
             // Recreate the Vec and let it drop
             let _ = Vec::from_raw_parts(bytes as *mut u8, len, capacity);
         });
         let dealloc = dealloc.copy();
         let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;
-
-        let mut bytes = bytes;
-        let bytes_ptr = bytes.as_mut_ptr() as *mut c_void;
 
         // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
         // bug; it forgets to assign the input buffer and length to the
@@ -72,71 +74,73 @@ pub trait INSData: INSObject {
         };
         #[cfg(not(gnustep))]
         let cls = Self::class();
+
+        let mut bytes = ManuallyDrop::new(bytes);
+
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![
                 obj,
-                initWithBytesNoCopy: bytes_ptr,
+                initWithBytesNoCopy: bytes.as_mut_ptr() as *mut c_void,
                 length: bytes.len(),
                 deallocator: dealloc,
             ];
-            core::mem::forget(bytes);
             Id::new(NonNull::new_unchecked(obj))
         }
     }
 }
 
-object_struct!(NSData);
+object_struct!(unsafe NSData, Shared);
 
-impl INSData for NSData {}
+unsafe impl INSData for NSData {}
 
-impl INSCopying for NSData {
+unsafe impl INSCopying for NSData {
     type Output = NSData;
 }
 
-impl INSMutableCopying for NSData {
+unsafe impl INSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
-pub trait INSMutableData: INSData {
+impl Deref for NSData {
+    type Target = [u8];
+
+    fn deref(&self) -> &[u8] {
+        self.bytes()
+    }
+}
+
+pub unsafe trait INSMutableData: INSData {
     fn bytes_mut(&mut self) -> &mut [u8] {
         let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
         // The bytes pointer may be null for length zero
-        let (ptr, len) = if ptr.is_null() {
-            (0x1 as *mut u8, 0)
+        if ptr.is_null() {
+            &mut []
         } else {
-            (ptr as *mut u8, self.len())
-        };
-        unsafe { slice::from_raw_parts_mut(ptr, len) }
+            unsafe { slice::from_raw_parts_mut(ptr as *mut u8, self.len()) }
+        }
     }
 
+    /// Expands with zeroes, or truncates the buffer.
     fn set_len(&mut self, len: usize) {
-        unsafe {
-            let _: () = msg_send![self, setLength: len];
-        }
+        unsafe { msg_send![self, setLength: len] }
     }
 
     fn append(&mut self, bytes: &[u8]) {
         let bytes_ptr = bytes.as_ptr() as *const c_void;
-        unsafe {
-            let _: () = msg_send![
-                self,
-                appendBytes: bytes_ptr,
-                length:bytes.len(),
-            ];
-        }
+        unsafe { msg_send![self, appendBytes: bytes_ptr, length: bytes.len()] }
     }
 
     fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
-        let range = NSRange::from_range(range);
-        let bytes_ptr = bytes.as_ptr() as *const c_void;
+        let range = NSRange::from(range);
+        let ptr = bytes.as_ptr() as *const c_void;
         unsafe {
-            let _: () = msg_send![
+            msg_send![
                 self,
-                replaceBytesInRange:range,
-                withBytes:bytes_ptr,
-                length:bytes.len(),
-            ];
+                replaceBytesInRange: range,
+                withBytes: ptr,
+                length: bytes.len(),
+            ]
         }
     }
 
@@ -146,24 +150,37 @@ pub trait INSMutableData: INSData {
     }
 }
 
-object_struct!(NSMutableData);
+object_struct!(unsafe NSMutableData, Owned);
 
-impl INSData for NSMutableData {}
+unsafe impl INSData for NSMutableData {}
 
-impl INSMutableData for NSMutableData {}
+unsafe impl INSMutableData for NSMutableData {}
 
-impl INSCopying for NSMutableData {
+unsafe impl INSCopying for NSMutableData {
     type Output = NSData;
 }
 
-impl INSMutableCopying for NSMutableData {
+unsafe impl INSMutableCopying for NSMutableData {
     type Output = NSMutableData;
+}
+
+impl Deref for NSMutableData {
+    type Target = [u8];
+
+    fn deref(&self) -> &[u8] {
+        self.bytes()
+    }
+}
+
+impl DerefMut for NSMutableData {
+    fn deref_mut(&mut self) -> &mut [u8] {
+        self.bytes_mut()
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::{INSData, INSMutableData, NSData, NSMutableData};
-    use crate::INSObject;
     #[cfg(feature = "block")]
     use alloc::vec;
 
@@ -171,8 +188,8 @@ mod tests {
     fn test_bytes() {
         let bytes = [3, 7, 16, 52, 112, 19];
         let data = NSData::with_bytes(&bytes);
-        assert!(data.len() == bytes.len());
-        assert!(data.bytes() == bytes);
+        assert_eq!(data.len(), bytes.len());
+        assert_eq!(data.bytes(), bytes);
     }
 
     #[test]
@@ -185,43 +202,43 @@ mod tests {
     fn test_bytes_mut() {
         let mut data = NSMutableData::with_bytes(&[7, 16]);
         data.bytes_mut()[0] = 3;
-        assert!(data.bytes() == [3, 16]);
+        assert_eq!(data.bytes(), [3, 16]);
     }
 
     #[test]
     fn test_set_len() {
         let mut data = NSMutableData::with_bytes(&[7, 16]);
         data.set_len(4);
-        assert!(data.len() == 4);
-        assert!(data.bytes() == [7, 16, 0, 0]);
+        assert_eq!(data.len(), 4);
+        assert_eq!(data.bytes(), [7, 16, 0, 0]);
 
         data.set_len(1);
-        assert!(data.len() == 1);
-        assert!(data.bytes() == [7]);
+        assert_eq!(data.len(), 1);
+        assert_eq!(data.bytes(), [7]);
     }
 
     #[test]
     fn test_append() {
         let mut data = NSMutableData::with_bytes(&[7, 16]);
         data.append(&[3, 52]);
-        assert!(data.len() == 4);
-        assert!(data.bytes() == [7, 16, 3, 52]);
+        assert_eq!(data.len(), 4);
+        assert_eq!(data.bytes(), [7, 16, 3, 52]);
     }
 
     #[test]
     fn test_replace() {
         let mut data = NSMutableData::with_bytes(&[7, 16]);
         data.replace_range(0..0, &[3]);
-        assert!(data.bytes() == [3, 7, 16]);
+        assert_eq!(data.bytes(), [3, 7, 16]);
 
         data.replace_range(1..2, &[52, 13]);
-        assert!(data.bytes() == [3, 52, 13, 16]);
+        assert_eq!(data.bytes(), [3, 52, 13, 16]);
 
         data.replace_range(2..4, &[6]);
-        assert!(data.bytes() == [3, 52, 6]);
+        assert_eq!(data.bytes(), [3, 52, 6]);
 
         data.set_bytes(&[8, 17]);
-        assert!(data.bytes() == [8, 17]);
+        assert_eq!(data.bytes(), [8, 17]);
     }
 
     #[cfg(feature = "block")]

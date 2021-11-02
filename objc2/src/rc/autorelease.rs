@@ -58,6 +58,23 @@ impl AutoreleasePool {
         Self { context }
     }
 
+    /// This will be removed in a future version.
+    #[cfg_attr(
+        all(debug_assertions, not(feature = "unstable_autoreleasesafe")),
+        inline
+    )]
+    #[doc(hidden)]
+    pub fn __verify_is_inner(&self) {
+        #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
+        POOLS.with(|c| {
+            assert_eq!(
+                c.borrow().last(),
+                Some(&self.context),
+                "Tried to use lifetime from pool that was not innermost"
+            )
+        });
+    }
+
     /// Returns a shared reference to the given autoreleased pointer object.
     ///
     /// This is the preferred way to make references from autoreleased
@@ -70,20 +87,10 @@ impl AutoreleasePool {
     ///
     /// This is equivalent to `&*ptr`, and shares the unsafety of that, except
     /// the lifetime is bound to the pool instead of being unbounded.
-    #[cfg_attr(
-        all(debug_assertions, not(feature = "unstable_autoreleasesafe")),
-        inline
-    )]
+    #[inline]
     #[allow(clippy::needless_lifetimes)]
     pub unsafe fn ptr_as_ref<'p, T>(&'p self, ptr: *const T) -> &'p T {
-        #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
-        POOLS.with(|c| {
-            assert_eq!(
-                c.borrow().last(),
-                Some(&self.context),
-                "Tried to create shared reference with a lifetime from a pool that was not the innermost pool"
-            )
-        });
+        self.__verify_is_inner();
         // SAFETY: Checked by the caller
         &*ptr
     }
@@ -100,21 +107,11 @@ impl AutoreleasePool {
     ///
     /// This is equivalent to `&mut *ptr`, and shares the unsafety of that,
     /// except the lifetime is bound to the pool instead of being unbounded.
-    #[cfg_attr(
-        all(debug_assertions, not(feature = "unstable_autoreleasesafe")),
-        inline
-    )]
+    #[inline]
     #[allow(clippy::needless_lifetimes)]
     #[allow(clippy::mut_from_ref)]
     pub unsafe fn ptr_as_mut<'p, T>(&'p self, ptr: *mut T) -> &'p mut T {
-        #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
-        POOLS.with(|c| {
-            assert_eq!(
-                c.borrow().last(),
-                Some(&self.context),
-                "Tried to create unique reference with a lifetime from a pool that was not the innermost pool")
-            }
-        );
+        self.__verify_is_inner();
         // SAFETY: Checked by the caller
         &mut *ptr
     }
