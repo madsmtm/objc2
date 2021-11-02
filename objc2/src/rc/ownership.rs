@@ -1,3 +1,5 @@
+use super::AutoreleasePool;
+
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
 pub enum Owned {}
@@ -18,7 +20,32 @@ mod private {
 ///
 /// This trait is sealed and not meant to be implemented outside of the this
 /// crate.
-pub trait Ownership: private::Sealed + 'static {}
+pub trait Ownership: private::Sealed + 'static {
+    type Reference<'a, T: 'a>;
 
-impl Ownership for Owned {}
-impl Ownership for Shared {}
+    unsafe fn as_ref_pool<'p, T: 'p>(
+        pool: &'p AutoreleasePool,
+        ptr: *mut T,
+    ) -> Self::Reference<'p, T>;
+}
+
+impl Ownership for Owned {
+    type Reference<'a, T: 'a> = &'a mut T;
+
+    unsafe fn as_ref_pool<'p, T: 'p>(
+        pool: &'p AutoreleasePool,
+        ptr: *mut T,
+    ) -> Self::Reference<'p, T> {
+        unsafe { pool.ptr_as_mut(ptr) }
+    }
+}
+impl Ownership for Shared {
+    type Reference<'a, T: 'a> = &'a T;
+
+    unsafe fn as_ref_pool<'p, T: 'p>(
+        pool: &'p AutoreleasePool,
+        ptr: *mut T,
+    ) -> Self::Reference<'p, T> {
+        unsafe { pool.ptr_as_ref(ptr) }
+    }
+}
