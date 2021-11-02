@@ -9,7 +9,7 @@ use crate::{Encode, Encoding};
 /// composite type larger than 4 bytes does.
 ///
 /// <http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042e/IHI0042E_aapcs.pdf>
-impl<T: Encode> MsgSendFn for T {
+unsafe impl<T: Encode> MsgSendFn for T {
     const MSG_SEND: Imp = {
         if let Encoding::LongLong | Encoding::ULongLong | Encoding::Double = T::ENCODING {
             objc_msgSend

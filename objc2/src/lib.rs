@@ -63,8 +63,11 @@ The bindings can be used on Linux or *BSD utilizing the
     feature = "unstable_autoreleasesafe",
     feature(negative_impls, auto_traits)
 )]
+#![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
-#![allow(clippy::missing_safety_doc)]
+#![deny(non_ascii_idents)]
+#![warn(unreachable_pub)]
+#![deny(unsafe_op_in_unsafe_fn)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2/0.2.7")]
 

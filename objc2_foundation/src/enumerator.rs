@@ -24,8 +24,9 @@ impl<'a, T: INSObject> NSEnumerator<'a, T> {
     /// The object pointer must be a valid `NSEnumerator` with `Owned`
     /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> Self {
+        let ptr = NonNull::new(ptr).unwrap();
         Self {
-            id: Id::retain(NonNull::new(ptr).unwrap()),
+            id: unsafe { Id::retain(ptr) },
             item: PhantomData,
         }
     }
@@ -42,7 +43,7 @@ impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
 pub unsafe trait INSFastEnumeration: INSObject {
     type Item: INSObject;
 
-    fn enumerator<'a>(&'a self) -> NSFastEnumerator<'a, Self> {
+    fn enumerator(&self) -> NSFastEnumerator<'_, Self> {
         NSFastEnumerator::new(self)
     }
 }

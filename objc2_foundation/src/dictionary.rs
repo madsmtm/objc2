@@ -17,14 +17,17 @@ where
 {
     let cls = D::class();
     let count = min(keys.len(), vals.len());
-    let obj: *mut D = msg_send![cls, alloc];
-    let obj: *mut D = msg_send![
-        obj,
-        initWithObjects: vals.as_ptr(),
-        forKeys: keys.as_ptr(),
-        count: count,
-    ];
-    Id::new(NonNull::new_unchecked(obj))
+    let obj: *mut D = unsafe { msg_send![cls, alloc] };
+    let obj: *mut D = unsafe {
+        msg_send![
+            obj,
+            initWithObjects: vals.as_ptr(),
+            forKeys: keys.as_ptr(),
+            count: count,
+        ]
+    };
+    let obj = unsafe { NonNull::new_unchecked(obj) };
+    unsafe { Id::new(obj) }
 }
 
 pub unsafe trait INSDictionary: INSObject {
@@ -37,6 +40,10 @@ pub unsafe trait INSDictionary: INSObject {
     #[doc(alias = "count")]
     fn len(&self) -> usize {
         unsafe { msg_send![self, count] }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     #[doc(alias = "objectForKey:")]
@@ -92,7 +99,7 @@ pub unsafe trait INSDictionary: INSObject {
     }
 
     #[doc(alias = "keyEnumerator")]
-    fn iter_keys<'a>(&'a self) -> NSEnumerator<'a, Self::Key> {
+    fn iter_keys(&self) -> NSEnumerator<'_, Self::Key> {
         unsafe {
             let result = msg_send![self, keyEnumerator];
             NSEnumerator::from_ptr(result)
@@ -100,7 +107,7 @@ pub unsafe trait INSDictionary: INSObject {
     }
 
     #[doc(alias = "objectEnumerator")]
-    fn iter_values<'a>(&'a self) -> NSEnumerator<'a, Self::Value> {
+    fn iter_values(&self) -> NSEnumerator<'_, Self::Value> {
         unsafe {
             let result = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)
@@ -121,7 +128,7 @@ pub unsafe trait INSDictionary: INSObject {
     where
         T: INSCopying<Output = Self::Key>,
     {
-        unsafe { from_refs(keys, &vals.as_slice_ref()) }
+        unsafe { from_refs(keys, vals.as_slice_ref()) }
     }
 
     fn into_values_array(

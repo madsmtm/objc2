@@ -45,7 +45,7 @@ mod tests {
 
     use super::{Id, Owned, Shared, WeakId};
 
-    pub struct TestType {
+    struct TestType {
         _data: [u8; 0], // TODO: `UnsafeCell`?
     }
 

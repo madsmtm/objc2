@@ -26,6 +26,7 @@ use std::env;
 type Version = Option<String>;
 
 // For clang "-fobjc-runtime" support
+#[allow(clippy::upper_case_acronyms)]
 enum AppleRuntime {
     MacOS(Version),
     IOS(Version),

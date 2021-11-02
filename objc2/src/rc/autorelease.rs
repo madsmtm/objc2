@@ -1,4 +1,6 @@
+use core::cell::UnsafeCell;
 use core::ffi::c_void;
+use core::marker::PhantomData;
 #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
 use std::{cell::RefCell, thread_local, vec::Vec};
 
@@ -15,6 +17,8 @@ use crate::runtime::{objc_autoreleasePoolPop, objc_autoreleasePoolPush};
 /// pool on the current thread.
 pub struct AutoreleasePool {
     context: *mut c_void,
+    // May pointer to data that is mutated (even though we hold shared access)
+    p: PhantomData<*mut UnsafeCell<c_void>>,
 }
 
 /// ```rust,compile_fail
@@ -52,10 +56,13 @@ impl AutoreleasePool {
     #[doc(alias = "objc_autoreleasePoolPush")]
     unsafe fn new() -> Self {
         // TODO: Make this function pub when we're more certain of the API
-        let context = objc_autoreleasePoolPush();
+        let context = unsafe { objc_autoreleasePoolPush() };
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
         POOLS.with(|c| c.borrow_mut().push(context));
-        Self { context }
+        Self {
+            context,
+            p: PhantomData,
+        }
     }
 
     /// This will be removed in a future version.
@@ -92,7 +99,7 @@ impl AutoreleasePool {
     pub unsafe fn ptr_as_ref<'p, T>(&'p self, ptr: *const T) -> &'p T {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
-        &*ptr
+        unsafe { &*ptr }
     }
 
     /// Returns a unique reference to the given autoreleased pointer object.
@@ -113,7 +120,7 @@ impl AutoreleasePool {
     pub unsafe fn ptr_as_mut<'p, T>(&'p self, ptr: *mut T) -> &'p mut T {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
-        &mut *ptr
+        unsafe { &mut *ptr }
     }
 }
 

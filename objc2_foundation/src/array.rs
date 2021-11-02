@@ -16,13 +16,16 @@ use super::{
 
 unsafe fn from_refs<A: INSArray>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
     let cls = A::class();
-    let obj: *mut A = msg_send![cls, alloc];
-    let obj: *mut A = msg_send![
-        obj,
-        initWithObjects: refs.as_ptr(),
-        count: refs.len(),
-    ];
-    Id::new(NonNull::new_unchecked(obj))
+    let obj: *mut A = unsafe { msg_send![cls, alloc] };
+    let obj: *mut A = unsafe {
+        msg_send![
+            obj,
+            initWithObjects: refs.as_ptr(),
+            count: refs.len(),
+        ]
+    };
+    let obj = unsafe { NonNull::new_unchecked(obj) };
+    unsafe { Id::new(obj) }
 }
 
 pub unsafe trait INSArray: INSObject {
@@ -34,6 +37,10 @@ pub unsafe trait INSArray: INSObject {
     #[doc(alias = "count")]
     fn len(&self) -> usize {
         unsafe { msg_send![self, count] }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     #[doc(alias = "objectAtIndex:")]
@@ -98,7 +105,7 @@ pub unsafe trait INSArray: INSObject {
     }
 
     #[doc(alias = "objectEnumerator")]
-    fn iter<'a>(&'a self) -> NSEnumerator<'a, Self::Item> {
+    fn iter(&self) -> NSEnumerator<'_, Self::Item> {
         unsafe {
             let result: *mut Object = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)

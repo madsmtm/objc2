@@ -35,6 +35,7 @@ decl.register();
 use alloc::format;
 use alloc::string::ToString;
 use core::mem;
+use core::mem::ManuallyDrop;
 use core::ptr;
 use std::ffi::CString;
 
@@ -138,19 +139,20 @@ impl ClassDecl {
         ClassDecl::with_superclass(name, Some(superclass))
     }
 
-    /**
-    Constructs a [`ClassDecl`] declaring a new root class with the given name.
-    Returns [`None`] if the class couldn't be allocated.
-
-    An implementation for `+initialize` must also be given; the runtime calls
-    this method for all classes, so it must be defined on root classes.
-
-    Note that implementing a root class is not a simple endeavor!
-    For example, your class probably cannot be passed to Cocoa code unless
-    the entire `NSObject` protocol is implemented.
-    Functionality it expects, like implementations of `-retain` and `-release`
-    used by ARC, will not be present otherwise.
-    */
+    /// Constructs a [`ClassDecl`] declaring a new root class with the given
+    /// name.
+    ///
+    /// Returns [`None`] if the class couldn't be allocated.
+    ///
+    /// An implementation for `+initialize` must also be given; the runtime
+    /// calls this method for all classes, so it must be defined on root
+    /// classes.
+    ///
+    /// Note that implementing a root class is not a simple endeavor!
+    /// For example, your class probably cannot be passed to Cocoa code unless
+    /// the entire `NSObject` protocol is implemented.
+    /// Functionality it expects, like implementations of `-retain` and
+    /// `-release` used by ARC, will not be present otherwise.
     pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<ClassDecl> {
         let mut decl = ClassDecl::with_superclass(name, None);
         if let Some(ref mut decl) = decl {
@@ -186,12 +188,14 @@ impl ClassDecl {
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
-        let success = Bool::from_raw(runtime::class_addMethod(
-            self.cls as _,
-            sel.as_ptr() as _,
-            Some(func.imp()),
-            types.as_ptr(),
-        ));
+        let success = Bool::from_raw(unsafe {
+            runtime::class_addMethod(
+                self.cls as _,
+                sel.as_ptr() as _,
+                Some(func.imp()),
+                types.as_ptr(),
+            )
+        });
         assert!(success.is_true(), "Failed to add method {:?}", sel);
     }
 
@@ -220,13 +224,15 @@ impl ClassDecl {
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
-        let metaclass = (*self.cls).metaclass() as *const _ as *mut _;
-        let success = Bool::from_raw(runtime::class_addMethod(
-            metaclass,
-            sel.as_ptr() as _,
-            Some(func.imp()),
-            types.as_ptr(),
-        ));
+        let metaclass = unsafe { &*self.cls }.metaclass() as *const _ as *mut _;
+        let success = Bool::from_raw(unsafe {
+            runtime::class_addMethod(
+                metaclass,
+                sel.as_ptr() as _,
+                Some(func.imp()),
+                types.as_ptr(),
+            )
+        });
         assert!(success.is_true(), "Failed to add class method {:?}", sel);
     }
 
@@ -266,21 +272,16 @@ impl ClassDecl {
     /// Registers the [`ClassDecl`], consuming it, and returns a reference to
     /// the newly registered [`Class`].
     pub fn register(self) -> &'static Class {
-        unsafe {
-            let cls = self.cls;
-            runtime::objc_registerClassPair(cls as _);
-            // Forget self otherwise the class will be disposed in drop
-            mem::forget(self);
-            &*cls
-        }
+        // Forget self, otherwise the class will be disposed in drop
+        let cls = ManuallyDrop::new(self).cls;
+        unsafe { runtime::objc_registerClassPair(cls as _) };
+        unsafe { &*cls }
     }
 }
 
 impl Drop for ClassDecl {
     fn drop(&mut self) {
-        unsafe {
-            runtime::objc_disposeClassPair(self.cls as _);
-        }
+        unsafe { runtime::objc_disposeClassPair(self.cls as _) }
     }
 }
 

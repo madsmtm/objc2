@@ -28,6 +28,7 @@ impl<T: PartialEq, O: Ownership> PartialEq for Id<T, O> {
     }
 
     #[inline]
+    #[allow(clippy::partialeq_ne_impl)]
     fn ne(&self, other: &Self) -> bool {
         (**self).ne(&**other)
     }

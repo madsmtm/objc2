@@ -48,7 +48,7 @@ pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
         Some(id) => &**id as *const Object as *mut objc_object,
         None => ptr::null_mut(),
     };
-    objc_exception_throw(exception)
+    unsafe { objc_exception_throw(exception) }
 }
 
 unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Shared>>> {
@@ -59,13 +59,13 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
     }
 
     let f: extern "C" fn(&mut Option<F>) = try_objc_execute_closure;
-    let f: extern "C" fn(*mut c_void) = mem::transmute(f);
+    let f: extern "C" fn(*mut c_void) = unsafe { mem::transmute(f) };
     // Wrap the closure in an Option so it can be taken
     let mut closure = Some(closure);
     let context = &mut closure as *mut _ as *mut c_void;
 
     let mut exception = ptr::null_mut();
-    let success = rust_objc_try_catch_exception(f, context, &mut exception);
+    let success = unsafe { rust_objc_try_catch_exception(f, context, &mut exception) };
 
     if success == 0 {
         Ok(())
@@ -79,7 +79,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
         // instance any more, and Rust code is forbidden by requiring a Shared
         // Id in `throw` (instead of just a shared reference, which could have
         // come from an Owned Id).
-        Err(NonNull::new(exception as *mut Object).map(|e| Id::new(e)))
+        Err(NonNull::new(exception as *mut Object).map(|e| unsafe { Id::new(e) }))
     }
 }
 
@@ -101,12 +101,11 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 pub unsafe fn catch<R>(closure: impl FnOnce() -> R) -> Result<R, Option<Id<Object, Shared>>> {
     let mut value = None;
-    let result = {
-        let value_ref = &mut value;
-        try_no_ret(move || {
-            *value_ref = Some(closure());
-        })
+    let value_ref = &mut value;
+    let closure = move || {
+        *value_ref = Some(closure());
     };
+    let result = unsafe { try_no_ret(closure) };
     // If the try succeeded, this was set so it's safe to unwrap
     result.map(|_| value.unwrap())
 }

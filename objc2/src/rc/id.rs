@@ -164,7 +164,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     // easy to accidentally create two aliasing mutable references.
     pub unsafe fn new(ptr: NonNull<T>) -> Id<T, O> {
         // SAFETY: Upheld by the caller
-        Id {
+        Self {
             ptr,
             item: PhantomData,
             own: PhantomData,
@@ -208,12 +208,14 @@ impl<T: Message, O: Ownership> Id<T, O> {
     pub unsafe fn retain(ptr: NonNull<T>) -> Id<T, O> {
         let ptr = ptr.as_ptr() as *mut objc2_sys::objc_object;
         // SAFETY: The caller upholds that the pointer is valid
-        let res = objc2_sys::objc_retain(ptr);
+        let res = unsafe { objc2_sys::objc_retain(ptr) };
         debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
         // SAFETY: Non-null upheld by the caller, and `objc_retain` always
         // returns the same pointer, see:
         // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain
-        Id::new(NonNull::new_unchecked(res as *mut T))
+        let res = unsafe { NonNull::new_unchecked(res as *mut T) };
+        // SAFETY: We just retained the object, so it has +1 retain count
+        unsafe { Self::new(res) }
     }
 
     #[cfg_attr(debug_assertions, inline)]
@@ -260,6 +262,8 @@ impl<T: Message> Id<T, Owned> {
     #[doc(alias = "objc_autorelease")]
     #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
     #[inline]
+    #[allow(clippy::needless_lifetimes)]
+    #[allow(clippy::mut_from_ref)]
     pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p mut T {
         let ptr = self.autorelease_inner();
         // SAFETY: The pointer is valid as a reference, and we've consumed
@@ -282,7 +286,7 @@ impl<T: Message> Id<T, Owned> {
         let ptr = ManuallyDrop::new(obj).ptr;
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
-        <Id<T, Owned>>::new(ptr)
+        unsafe { <Id<T, Owned>>::new(ptr) }
     }
 }
 
@@ -295,6 +299,7 @@ impl<T: Message> Id<T, Shared> {
     #[doc(alias = "objc_autorelease")]
     #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
     #[inline]
+    #[allow(clippy::needless_lifetimes)]
     pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p T {
         let ptr = self.autorelease_inner();
         // SAFETY: The pointer is valid as a reference

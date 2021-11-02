@@ -45,7 +45,7 @@ macro_rules! object_struct {
         }
 
         impl ::core::fmt::Debug for $name {
-            fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+            fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 use $crate::{INSObject, INSString};
                 ::objc2::rc::autoreleasepool(|pool| {
                     ::core::fmt::Debug::fmt(self.description().as_str(pool), f)
