@@ -13,7 +13,7 @@ use crate::{Encode, Encoding};
 /// Structures of other sizes are placed at the address supplied by the caller.
 ///
 /// <https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/LowLevelABI/130-IA-32_Function_Calling_Conventions/IA32.html>
-impl<T: Encode> MsgSendFn for T {
+unsafe impl<T: Encode> MsgSendFn for T {
     const MSG_SEND: Imp = {
         if let Encoding::Float | Encoding::Double = T::ENCODING {
             objc_msgSend_fpret

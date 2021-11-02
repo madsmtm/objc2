@@ -109,7 +109,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
     ///
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
-    #[cfg_attr(feature = "verify_message", inline(always))]
+    #[cfg_attr(not(feature = "verify_message"), inline(always))]
     unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
     where
         A: MessageArguments,
@@ -148,7 +148,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
     ///
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
-    #[cfg_attr(feature = "verify_message", inline(always))]
+    #[cfg_attr(not(feature = "verify_message"), inline(always))]
     unsafe fn send_super_message<A, R>(
         &self,
         superclass: &Class,
