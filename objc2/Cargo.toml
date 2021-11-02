@@ -24,7 +24,11 @@ exclude = [
 build = "build.rs"
 
 [features]
-exception = ["objc2_exception"]
+# Enables `objc2::exception::throw` and `objc2::exception::catch`
+exception = ["cc"]
+
+# Wrap every `objc2::msg_send` call in a `@try/@catch` block
+catch_all = ["exception"]
 verify_message = []
 unstable_autoreleasesafe = []
 
@@ -32,4 +36,6 @@ unstable_autoreleasesafe = []
 malloc_buf = "1.0"
 objc2_sys = { path = "../objc2_sys" }
 objc2_encode = { path = "../objc2_encode" }
-objc2_exception = { path = "../objc2_exception", optional = true }
+
+[build-dependencies]
+cc = { version = "1", optional = true }
