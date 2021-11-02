@@ -1,5 +1,5 @@
 [package]
-name = "objc2_block"
+name = "block2"
 # Remember to update html_root_url in lib.rs and README.md
 version = "0.1.6"
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
@@ -14,7 +14,7 @@ categories = [
 ]
 readme = "README.md"
 repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc2_block/"
+documentation = "https://docs.rs/block2/"
 license = "MIT"
 
 exclude = [
@@ -23,7 +23,7 @@ exclude = [
 
 [dependencies]
 objc2_encode = { path = "../objc2_encode" }
-objc2_block_sys = { path = "../objc2_block_sys" }
+block-sys = { path = "../block-sys" }
 
 [dev-dependencies]
 objc2_test_utils = { path = "../objc2_test_utils" }

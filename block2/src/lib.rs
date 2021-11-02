@@ -18,7 +18,7 @@ int32_t sum(int32_t (^block)(int32_t, int32_t)) {
 We could write it in Rust as the following:
 
 ```
-# use objc2_block::Block;
+# use block2::Block;
 unsafe fn sum(block: &Block<(i32, i32), i32>) -> i32 {
     block.call((5, 8))
 }
@@ -33,7 +33,7 @@ Creating a block to pass to Objective-C can be done with the `ConcreteBlock`
 struct. For example, to create a block that adds two `i32`s, we could write:
 
 ```
-# use objc2_block::ConcreteBlock;
+# use block2::ConcreteBlock;
 let block = ConcreteBlock::new(|a: i32, b: i32| a + b);
 let block = block.copy();
 assert!(unsafe { block.call((5, 8)) } == 13);
@@ -47,7 +47,7 @@ were to copy it twice we could have a double free.
 
 #![no_std]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2_block/0.1.6")]
+#![doc(html_root_url = "https://docs.rs/block2/0.1.6")]
 
 extern crate alloc;
 extern crate std;
@@ -62,7 +62,7 @@ use core::ops::{Deref, DerefMut};
 use core::ptr;
 use std::os::raw::{c_int, c_ulong};
 
-pub use objc2_block_sys as ffi;
+pub use block_sys as ffi;
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 /// Types that may be used as the arguments to an Objective-C block.
