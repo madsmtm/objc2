@@ -4,7 +4,7 @@ members = [
     "block2",
     "objc-sys",
     "objc2",
-    "objc2_encode",
+    "objc2-encode",
     "objc2-foundation",
     "objc2_test_utils",
 ]
