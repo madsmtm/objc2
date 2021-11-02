@@ -45,8 +45,8 @@ pub unsafe trait INSValue: INSObject {
     unsafe fn get_unchecked(&self) -> Self::Value {
         let mut value = MaybeUninit::<Self::Value>::uninit();
         let ptr = value.as_mut_ptr() as *mut c_void;
-        let _: () = msg_send![self, getValue: ptr];
-        value.assume_init()
+        let _: () = unsafe { msg_send![self, getValue: ptr] };
+        unsafe { value.assume_init() }
     }
 
     fn encoding(&self) -> Option<&str> {

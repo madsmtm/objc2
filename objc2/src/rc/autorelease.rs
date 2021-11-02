@@ -56,7 +56,7 @@ impl AutoreleasePool {
     #[doc(alias = "objc_autoreleasePoolPush")]
     unsafe fn new() -> Self {
         // TODO: Make this function pub when we're more certain of the API
-        let context = objc_autoreleasePoolPush();
+        let context = unsafe { objc_autoreleasePoolPush() };
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
         POOLS.with(|c| c.borrow_mut().push(context));
         Self {
@@ -99,7 +99,7 @@ impl AutoreleasePool {
     pub unsafe fn ptr_as_ref<'p, T>(&'p self, ptr: *const T) -> &'p T {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
-        &*ptr
+        unsafe { &*ptr }
     }
 
     /// Returns a unique reference to the given autoreleased pointer object.
@@ -120,7 +120,7 @@ impl AutoreleasePool {
     pub unsafe fn ptr_as_mut<'p, T>(&'p self, ptr: *mut T) -> &'p mut T {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
-        &mut *ptr
+        unsafe { &mut *ptr }
     }
 }
 

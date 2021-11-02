@@ -426,8 +426,10 @@ impl Object {
     /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
         let offset = get_ivar_offset::<T>(self.class(), name);
-        let ptr = (self as *const Self as *const u8).offset(offset) as *const T;
-        &*ptr
+        // `offset` is given in bytes, so we convert to `u8`
+        let ptr = self as *const Self as *const u8;
+        let ptr = unsafe { ptr.offset(offset) } as *const T;
+        unsafe { &*ptr }
     }
 
     /// Returns a mutable reference to the ivar with the given name.
@@ -442,8 +444,10 @@ impl Object {
     /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
         let offset = get_ivar_offset::<T>(self.class(), name);
-        let ptr = (self as *mut Self as *mut u8).offset(offset) as *mut T;
-        &mut *ptr
+        // `offset` is given in bytes, so we convert to `u8`
+        let ptr = self as *mut Self as *mut u8;
+        let ptr = unsafe { ptr.offset(offset) } as *mut T;
+        unsafe { &mut *ptr }
     }
 
     /// Sets the value of the ivar with the given name.
@@ -457,7 +461,8 @@ impl Object {
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
     pub unsafe fn set_ivar<T: Encode>(&mut self, name: &str, value: T) {
-        *self.get_mut_ivar::<T>(name) = value;
+        // SAFETY: Invariants upheld by caller
+        unsafe { *self.get_mut_ivar::<T>(name) = value };
     }
 }
 

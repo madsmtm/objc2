@@ -46,7 +46,7 @@ impl<T: Message> WeakId<T> {
     unsafe fn new_inner(obj: *mut T) -> Self {
         let inner = Box::new(UnsafeCell::new(ptr::null_mut()));
         // SAFETY: `ptr` will never move, and the caller verifies `obj`
-        let _ = objc2_sys::objc_initWeak(inner.get() as _, obj as _);
+        let _ = unsafe { objc2_sys::objc_initWeak(inner.get() as _, obj as _) };
         Self {
             inner,
             item: PhantomData,
@@ -72,9 +72,7 @@ impl<T> Drop for WeakId<T> {
     /// Drops the `WeakId` pointer.
     #[doc(alias = "objc_destroyWeak")]
     fn drop(&mut self) {
-        unsafe {
-            objc2_sys::objc_destroyWeak(self.inner.get() as _);
-        }
+        unsafe { objc2_sys::objc_destroyWeak(self.inner.get() as _) }
     }
 }
 
@@ -83,9 +81,7 @@ impl<T> Clone for WeakId<T> {
     #[doc(alias = "objc_copyWeak")]
     fn clone(&self) -> Self {
         let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
-        unsafe {
-            objc2_sys::objc_copyWeak(ptr.get() as _, self.inner.get() as _);
-        }
+        unsafe { objc2_sys::objc_copyWeak(ptr.get() as _, self.inner.get() as _) };
         Self {
             inner: ptr,
             item: PhantomData,

@@ -24,8 +24,9 @@ impl<'a, T: INSObject> NSEnumerator<'a, T> {
     /// The object pointer must be a valid `NSEnumerator` with `Owned`
     /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> Self {
+        let ptr = NonNull::new(ptr).unwrap();
         Self {
-            id: Id::retain(NonNull::new(ptr).unwrap()),
+            id: unsafe { Id::retain(ptr) },
             item: PhantomData,
         }
     }

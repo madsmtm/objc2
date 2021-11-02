@@ -1,4 +1,5 @@
 //! Parsing encodings from their string representation.
+#![deny(unsafe_code)]
 
 use crate::Encoding;
 

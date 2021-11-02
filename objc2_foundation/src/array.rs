@@ -16,13 +16,16 @@ use super::{
 
 unsafe fn from_refs<A: INSArray>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
     let cls = A::class();
-    let obj: *mut A = msg_send![cls, alloc];
-    let obj: *mut A = msg_send![
-        obj,
-        initWithObjects: refs.as_ptr(),
-        count: refs.len(),
-    ];
-    Id::new(NonNull::new_unchecked(obj))
+    let obj: *mut A = unsafe { msg_send![cls, alloc] };
+    let obj: *mut A = unsafe {
+        msg_send![
+            obj,
+            initWithObjects: refs.as_ptr(),
+            count: refs.len(),
+        ]
+    };
+    let obj = unsafe { NonNull::new_unchecked(obj) };
+    unsafe { Id::new(obj) }
 }
 
 pub unsafe trait INSArray: INSObject {

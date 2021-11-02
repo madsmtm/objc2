@@ -50,6 +50,7 @@ were to copy it twice we could have a double free.
 #![warn(missing_docs)]
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]
+#![deny(unsafe_op_in_unsafe_fn)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block2/0.1.6")]
 
@@ -62,7 +63,7 @@ mod test_utils;
 
 use core::ffi::c_void;
 use core::marker::PhantomData;
-use core::mem;
+use core::mem::{self, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
 use core::ptr;
 use std::os::raw::{c_int, c_ulong};
@@ -86,12 +87,12 @@ macro_rules! block_args_impl {
     ($($a:ident : $t:ident),*) => (
         impl<$($t),*> BlockArguments for ($($t,)*) {
             unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R {
-                let invoke: unsafe extern fn(*mut Block<Self, R> $(, $t)*) -> R = {
+                let invoke: unsafe extern "C" fn(*mut Block<Self, R> $(, $t)*) -> R = {
                     let base = block as *mut BlockBase<Self, R>;
-                    mem::transmute((*base).invoke)
+                    unsafe { mem::transmute((*base).invoke) }
                 };
                 let ($($a,)*) = self;
-                invoke(block $(, $a)*)
+                unsafe { invoke(block $(, $a)*) }
             }
         }
     );
@@ -166,7 +167,7 @@ impl<A: BlockArguments + EncodeArguments, R: Encode> Block<A, R> {
     /// For example, if this block is shared with multiple references, the
     /// caller must ensure that calling it will not cause a data race.
     pub unsafe fn call(&self, args: A) -> R {
-        args.call_block(self as *const _ as *mut _)
+        unsafe { args.call_block(self as *const _ as *mut _) }
     }
 }
 
@@ -194,13 +195,19 @@ impl<A, R> RcBlock<A, R> {
     ///
     /// The given pointer must point to a valid `Block`.
     pub unsafe fn copy(ptr: *mut Block<A, R>) -> Self {
-        let ptr = ffi::_Block_copy(ptr as *const c_void) as *mut Block<A, R>;
-        RcBlock { ptr }
+        // SAFETY: The caller ensures the pointer is valid.
+        let ptr: *mut Block<A, R> = unsafe { ffi::_Block_copy(ptr as *const c_void) }.cast();
+        // SAFETY: We just copied the block, so the reference count is +1
+        //
+        // TODO: Does _Block_copy always returns a valid pointer?
+        unsafe { Self::new(ptr) }
     }
 }
 
 impl<A, R> Clone for RcBlock<A, R> {
     fn clone(&self) -> RcBlock<A, R> {
+        // SAFETY: The pointer is valid, since the only way to get an RcBlock
+        // in the first place is through unsafe functions.
         unsafe { RcBlock::copy(self.ptr) }
     }
 }
@@ -209,15 +216,14 @@ impl<A, R> Deref for RcBlock<A, R> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Block<A, R> {
+        // SAFETY: The pointer is ensured valid by creator functions.
         unsafe { &*self.ptr }
     }
 }
 
 impl<A, R> Drop for RcBlock<A, R> {
     fn drop(&mut self) {
-        unsafe {
-            ffi::_Block_release(self.ptr as *const c_void);
-        }
+        unsafe { ffi::_Block_release(self.ptr as *const c_void) };
     }
 }
 
@@ -249,7 +255,7 @@ macro_rules! concrete_block_impl {
                 where
                     X: Fn($($t,)*) -> R
                 {
-                    let block = &*block_ptr;
+                    let block = unsafe { &*block_ptr };
                     (block.closure)($($a),*)
                 }
 
@@ -396,10 +402,10 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(*mut Self, ...) -> R, closure: F) -> Self {
         ConcreteBlock {
             base: BlockBase {
-                isa: &ffi::_NSConcreteStackBlock,
+                isa: unsafe { &ffi::_NSConcreteStackBlock },
                 flags: ffi::BLOCK_HAS_COPY_DISPOSE,
                 _reserved: 0,
-                invoke: mem::transmute(invoke),
+                invoke: unsafe { mem::transmute(invoke) },
             },
             descriptor: &Self::DESCRIPTOR,
             closure,
@@ -410,15 +416,11 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
 impl<A, R, F: 'static> ConcreteBlock<A, R, F> {
     /// Copy self onto the heap as an `RcBlock`.
     pub fn copy(self) -> RcBlock<A, R> {
-        unsafe {
-            let mut block = self;
-            let copied = RcBlock::copy(&mut *block);
-            // At this point, our copy helper has been run so the block will
-            // be moved to the heap and we can forget the original block
-            // because the heap block will drop in our dispose helper.
-            mem::forget(block);
-            copied
-        }
+        // Our copy helper will run so the block will be moved to the heap
+        // and we can forget the original block because the heap block will
+        // drop in our dispose helper. TODO: Verify this.
+        let mut block = ManuallyDrop::new(self);
+        unsafe { RcBlock::copy(&mut **block) }
     }
 }
 
@@ -445,8 +447,7 @@ impl<A, R, F> DerefMut for ConcreteBlock<A, R, F> {
 }
 
 unsafe extern "C" fn block_context_dispose<B>(block: &mut B) {
-    // Read the block onto the stack and let it drop
-    let _ = ptr::read(block);
+    unsafe { ptr::drop_in_place(block) };
 }
 
 unsafe extern "C" fn block_context_copy<B>(_dst: &mut B, _src: &B) {

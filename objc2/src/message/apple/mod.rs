@@ -34,7 +34,7 @@ where
     R: Encode,
 {
     let msg_send_fn = R::MSG_SEND;
-    conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args))
+    unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }
 
 #[inline]
@@ -54,5 +54,5 @@ where
     };
     let receiver = &sup as *const objc_super as *mut Object;
     let msg_send_fn = R::MSG_SEND_SUPER;
-    conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args))
+    unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }

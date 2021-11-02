@@ -17,14 +17,17 @@ where
 {
     let cls = D::class();
     let count = min(keys.len(), vals.len());
-    let obj: *mut D = msg_send![cls, alloc];
-    let obj: *mut D = msg_send![
-        obj,
-        initWithObjects: vals.as_ptr(),
-        forKeys: keys.as_ptr(),
-        count: count,
-    ];
-    Id::new(NonNull::new_unchecked(obj))
+    let obj: *mut D = unsafe { msg_send![cls, alloc] };
+    let obj: *mut D = unsafe {
+        msg_send![
+            obj,
+            initWithObjects: vals.as_ptr(),
+            forKeys: keys.as_ptr(),
+            count: count,
+        ]
+    };
+    let obj = unsafe { NonNull::new_unchecked(obj) };
+    unsafe { Id::new(obj) }
 }
 
 pub unsafe trait INSDictionary: INSObject {

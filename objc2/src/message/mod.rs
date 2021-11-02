@@ -11,7 +11,7 @@ use crate::{Encode, EncodeArguments, RefEncode};
 #[cfg(feature = "catch_all")]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, MessageError> {
     use alloc::borrow::ToOwned;
-    crate::exception::catch(f).map_err(|exception| {
+    unsafe { crate::exception::catch(f) }.map_err(|exception| {
         if let Some(exception) = exception {
             MessageError(alloc::format!("Uncaught exception {:?}", exception))
         } else {
@@ -118,15 +118,17 @@ pub unsafe trait MessageReceiver: private::Sealed {
         let this = self.as_raw_receiver();
         #[cfg(feature = "verify_message")]
         {
-            let cls = if this.is_null() {
-                return Err(VerificationError::NilReceiver(sel).into());
+            // SAFETY: Caller ensures only valid or NULL pointers.
+            let this = unsafe { this.cast::<Object>().as_ref() };
+            let cls = if let Some(this) = this {
+                this.class()
             } else {
-                (*(this as *const Object)).class()
+                return Err(VerificationError::NilReceiver(sel).into());
             };
 
             verify_message_signature::<A, R>(cls, sel)?;
         }
-        send_unverified(this, sel, args)
+        unsafe { send_unverified(this, sel, args) }
     }
 
     /// Sends a message to self's superclass with the given selector and
@@ -167,7 +169,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
             }
             verify_message_signature::<A, R>(superclass, sel)?;
         }
-        send_super_unverified(this, superclass, sel, args)
+        unsafe { send_super_unverified(this, superclass, sel, args) }
     }
 
     /// Verify that the argument and return types match the encoding of the
@@ -271,8 +273,10 @@ macro_rules! message_args_impl {
                 // type before being called; the msgSend functions are not
                 // parametric, but instead "trampolines" to the actual
                 // method implementations.
-                let imp: unsafe extern "C" fn(*mut Object, Sel $(, $t)*) -> R = mem::transmute(imp);
-                imp(obj, sel $(, $a)*)
+                let imp: unsafe extern "C" fn(*mut Object, Sel $(, $t)*) -> R = unsafe {
+                    mem::transmute(imp)
+                };
+                unsafe { imp(obj, sel $(, $a)*) }
             }
         }
     );
