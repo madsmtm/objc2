@@ -5,7 +5,7 @@ members = [
     "objc-sys",
     "objc2",
     "objc2_encode",
-    "objc2_foundation",
+    "objc2-foundation",
     "objc2_test_utils",
 ]
 exclude = ["objc2/tests-ios"]

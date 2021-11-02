@@ -1,5 +1,5 @@
 [package]
-name = "objc2_foundation"
+name = "objc2-foundation"
 version = "0.1.1" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
