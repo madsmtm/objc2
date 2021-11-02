@@ -21,6 +21,7 @@ impl CachedSel {
     /// Returns the cached selector. If no selector is yet cached, registers
     /// one with the given name and stores it.
     #[inline(always)]
+    #[doc(hidden)]
     pub unsafe fn get(&self, name: &str) -> Sel {
         let ptr = self.ptr.load(Ordering::Relaxed);
         // It should be fine to use `Relaxed` ordering here because `sel_registerName` is
@@ -52,6 +53,7 @@ impl CachedClass {
     /// Returns the cached class. If no class is yet cached, gets one with
     /// the given name and stores it.
     #[inline(always)]
+    #[doc(hidden)]
     pub unsafe fn get(&self, name: &str) -> Option<&'static Class> {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);

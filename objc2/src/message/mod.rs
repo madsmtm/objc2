@@ -102,6 +102,13 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// [`msg_send!`][`crate::msg_send`] macro rather than this method.
     ///
     /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+    ///
+    /// # Safety
+    ///
+    /// This shares the same safety requirements as [`msg_send!`][`msg_send`].
+    ///
+    /// The added invariant is that the selector must take the same number of
+    /// arguments as is given.
     #[cfg_attr(feature = "verify_message", inline(always))]
     unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
     where
@@ -133,6 +140,14 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// [`msg_send!(super)`][`crate::msg_send`] macro rather than this method.
     ///
     /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+    ///
+    /// # Safety
+    ///
+    /// This shares the same safety requirements as
+    /// [`msg_send!(super(...), ...)`][`msg_send`].
+    ///
+    /// The added invariant is that the selector must take the same number of
+    /// arguments as is given.
     #[cfg_attr(feature = "verify_message", inline(always))]
     unsafe fn send_super_message<A, R>(
         &self,
@@ -231,20 +246,27 @@ unsafe impl<T: Message, O: Ownership> MessageReceiver for Id<T, O> {
 }
 
 /// Types that may be used as the arguments of an Objective-C message.
+///
+/// This is implemented for tuples of up to 12 arguments, where each argument
+/// implements [`Encode`].
+///
+/// You should not need to implement this yourself.
 pub trait MessageArguments: EncodeArguments {
     /// Invoke an [`Imp`] with the given object, selector, and arguments.
     ///
     /// This method is the primitive used when sending messages and should not
     /// be called directly; instead, use the `msg_send!` macro or, in cases
     /// with a dynamic selector, the [`MessageReceiver::send_message`] method.
-    unsafe fn invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
+    #[doc(hidden)]
+    unsafe fn __invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
 }
 
 macro_rules! message_args_impl {
     ($($a:ident : $t:ident),*) => (
         impl<$($t: Encode),*> MessageArguments for ($($t,)*) {
             #[inline]
-            unsafe fn invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
+            #[doc(hidden)]
+            unsafe fn __invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
                 // The imp must be cast to the appropriate function pointer
                 // type before being called; the msgSend functions are not
                 // parametric, but instead "trampolines" to the actual
@@ -295,15 +317,14 @@ message_args_impl!(
     l: L
 );
 
-/**
-An error encountered while attempting to send a message.
-
-Currently, an error may be returned in two cases:
-
-* an Objective-C exception is thrown and the `catch_all` feature is enabled
-* the encodings of the arguments do not match the encoding of the method
-  and the `verify_message` feature is enabled
-*/
+/// An error encountered while attempting to send a message.
+///
+/// Currently, an error may be returned in two cases:
+///
+/// - an Objective-C exception is thrown and the `catch_all` feature is
+///   enabled
+/// - the encodings of the arguments do not match the encoding of the method
+///   and the `verify_message` feature is enabled
 #[derive(Debug)]
 pub struct MessageError(String);
 

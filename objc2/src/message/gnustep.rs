@@ -18,7 +18,7 @@ where
     }
 
     let msg_send_fn = objc_msg_lookup(receiver as *mut _, sel.as_ptr() as *const _);
-    conditional_try(|| A::invoke(msg_send_fn.expect("Null IMP"), receiver, sel, args))
+    conditional_try(|| A::__invoke(msg_send_fn.expect("Null IMP"), receiver, sel, args))
 }
 
 pub(crate) unsafe fn send_super_unverified<A, R>(
@@ -36,5 +36,5 @@ where
         super_class: superclass as *const Class as *const _,
     };
     let msg_send_fn = objc_msg_lookup_super(&sup, sel.as_ptr() as *const _);
-    conditional_try(|| A::invoke(msg_send_fn.expect("Null IMP"), receiver, sel, args))
+    conditional_try(|| A::__invoke(msg_send_fn.expect("Null IMP"), receiver, sel, args))
 }

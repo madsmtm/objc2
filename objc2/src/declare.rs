@@ -138,19 +138,20 @@ impl ClassDecl {
         ClassDecl::with_superclass(name, Some(superclass))
     }
 
-    /**
-    Constructs a [`ClassDecl`] declaring a new root class with the given name.
-    Returns [`None`] if the class couldn't be allocated.
-
-    An implementation for `+initialize` must also be given; the runtime calls
-    this method for all classes, so it must be defined on root classes.
-
-    Note that implementing a root class is not a simple endeavor!
-    For example, your class probably cannot be passed to Cocoa code unless
-    the entire `NSObject` protocol is implemented.
-    Functionality it expects, like implementations of `-retain` and `-release`
-    used by ARC, will not be present otherwise.
-    */
+    /// Constructs a [`ClassDecl`] declaring a new root class with the given
+    /// name.
+    ///
+    /// Returns [`None`] if the class couldn't be allocated.
+    ///
+    /// An implementation for `+initialize` must also be given; the runtime
+    /// calls this method for all classes, so it must be defined on root
+    /// classes.
+    ///
+    /// Note that implementing a root class is not a simple endeavor!
+    /// For example, your class probably cannot be passed to Cocoa code unless
+    /// the entire `NSObject` protocol is implemented.
+    /// Functionality it expects, like implementations of `-retain` and
+    /// `-release` used by ARC, will not be present otherwise.
     pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<ClassDecl> {
         let mut decl = ClassDecl::with_superclass(name, None);
         if let Some(ref mut decl) = decl {
