@@ -1,5 +1,5 @@
 use core::mem;
-use objc2_sys::{objc_msg_lookup, objc_msg_lookup_super, objc_super};
+use objc_sys::{objc_msg_lookup, objc_msg_lookup_super, objc_super};
 
 use super::{conditional_try, Encode, MessageArguments, MessageError};
 use crate::runtime::{Class, Object, Sel};

@@ -17,7 +17,7 @@ use std::os::raw::c_uchar;
 use crate::rc::{Id, Shared};
 use crate::runtime::Object;
 
-use objc2_sys::{objc_exception_throw, objc_object};
+use objc_sys::{objc_exception_throw, objc_object};
 
 extern "C" {
     fn rust_objc_try_catch_exception(

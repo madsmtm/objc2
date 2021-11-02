@@ -1,4 +1,4 @@
-use objc2_sys::objc_super;
+use objc_sys::objc_super;
 
 use super::{conditional_try, Encode, MessageArguments, MessageError};
 use crate::runtime::{Class, Imp, Object, Sel};

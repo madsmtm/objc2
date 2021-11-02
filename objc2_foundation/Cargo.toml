@@ -26,4 +26,4 @@ block = ["block2"]
 [dependencies]
 block2 = { path = "../block2", optional = true }
 objc2 = { path = "../objc2" }
-objc2_sys = { path = "../objc2_sys" }
+objc-sys = { path = "../objc-sys" }

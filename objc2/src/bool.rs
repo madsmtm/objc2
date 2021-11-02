@@ -3,7 +3,7 @@ use core::fmt;
 
 /// The Objective-C `BOOL` type.
 ///
-/// This is a thin wrapper-type over [`objc2_sys::BOOL`]. It is intended that
+/// This is a thin wrapper-type over [`objc_sys::BOOL`]. It is intended that
 /// you convert this into a Rust [`bool`] with the [`Bool::is_false`] or
 /// [`Bool::is_true`] methods as soon as possible.
 ///
@@ -30,35 +30,35 @@ use core::fmt;
 // And it is not immediately clear for users which one was chosen.
 #[derive(Copy, Clone, Default)]
 pub struct Bool {
-    value: objc2_sys::BOOL,
+    value: objc_sys::BOOL,
 }
 
 impl Bool {
     /// The equivalent of [`true`] for Objective-C's `BOOL` type.
-    pub const YES: Self = Self::from_raw(objc2_sys::YES);
+    pub const YES: Self = Self::from_raw(objc_sys::YES);
 
     /// The equivalent of [`false`] for Objective-C's `BOOL` type.
-    pub const NO: Self = Self::from_raw(objc2_sys::NO);
+    pub const NO: Self = Self::from_raw(objc_sys::NO);
 
     /// Creates an Objective-C boolean from a Rust boolean.
     #[inline]
     pub const fn new(value: bool) -> Self {
         // true as u8 => 1
         // false as u8 => 0
-        let value = value as objc2_sys::BOOL;
+        let value = value as objc_sys::BOOL;
         Self { value }
     }
 
     /// Creates this from a boolean value received from a raw Objective-C API.
     #[inline]
-    pub const fn from_raw(value: objc2_sys::BOOL) -> Self {
+    pub const fn from_raw(value: objc_sys::BOOL) -> Self {
         Self { value }
     }
 
-    /// Retrieves the inner [`objc2_sys`] boolean type, to be used in raw
+    /// Retrieves the inner [`objc_sys`] boolean type, to be used in raw
     /// Objective-C APIs.
     #[inline]
-    pub const fn as_raw(self) -> objc2_sys::BOOL {
+    pub const fn as_raw(self) -> objc_sys::BOOL {
         self.value
     }
 
@@ -101,7 +101,7 @@ impl fmt::Debug for Bool {
 
 // SAFETY: `Bool` is `repr(transparent)`.
 unsafe impl Encode for Bool {
-    const ENCODING: Encoding<'static> = objc2_sys::BOOL::ENCODING;
+    const ENCODING: Encoding<'static> = objc_sys::BOOL::ENCODING;
 }
 
 // Note that we shouldn't delegate to `BOOL`'s  `ENCODING_REF` since `BOOL` is
