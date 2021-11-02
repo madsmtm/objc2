@@ -6,7 +6,7 @@ use crate::declare::{ClassDecl, ProtocolDecl};
 use crate::runtime::{self, Class, Object, Protocol, Sel};
 use crate::{Encode, Encoding, MessageReceiver};
 
-pub struct CustomObject {
+pub(crate) struct CustomObject {
     obj: *mut Object,
 }
 
@@ -53,11 +53,11 @@ impl Drop for CustomObject {
 
 #[derive(Eq, PartialEq)]
 #[repr(C)]
-pub struct CustomStruct {
-    pub a: u64,
-    pub b: u64,
-    pub c: u64,
-    pub d: u64,
+pub(crate) struct CustomStruct {
+    pub(crate) a: u64,
+    pub(crate) b: u64,
+    pub(crate) c: u64,
+    pub(crate) d: u64,
 }
 
 unsafe impl Encode for CustomStruct {
@@ -67,7 +67,7 @@ unsafe impl Encode for CustomStruct {
     );
 }
 
-pub fn custom_class() -> &'static Class {
+pub(crate) fn custom_class() -> &'static Class {
     static REGISTER_CUSTOM_CLASS: Once = Once::new();
 
     REGISTER_CUSTOM_CLASS.call_once(|| {
@@ -141,7 +141,7 @@ pub fn custom_class() -> &'static Class {
     class!(CustomObject)
 }
 
-pub fn custom_protocol() -> &'static Protocol {
+pub(crate) fn custom_protocol() -> &'static Protocol {
     static REGISTER_CUSTOM_PROTOCOL: Once = Once::new();
 
     REGISTER_CUSTOM_PROTOCOL.call_once(|| {
@@ -157,7 +157,7 @@ pub fn custom_protocol() -> &'static Protocol {
     Protocol::get("CustomProtocol").unwrap()
 }
 
-pub fn custom_subprotocol() -> &'static Protocol {
+pub(crate) fn custom_subprotocol() -> &'static Protocol {
     static REGISTER_CUSTOM_SUBPROTOCOL: Once = Once::new();
 
     REGISTER_CUSTOM_SUBPROTOCOL.call_once(|| {
@@ -173,11 +173,11 @@ pub fn custom_subprotocol() -> &'static Protocol {
     Protocol::get("CustomSubProtocol").unwrap()
 }
 
-pub fn custom_object() -> CustomObject {
+pub(crate) fn custom_object() -> CustomObject {
     CustomObject::new(custom_class())
 }
 
-pub fn custom_subclass() -> &'static Class {
+pub(crate) fn custom_subclass() -> &'static Class {
     static REGISTER_CUSTOM_SUBCLASS: Once = Once::new();
 
     REGISTER_CUSTOM_SUBCLASS.call_once(|| {
@@ -200,6 +200,6 @@ pub fn custom_subclass() -> &'static Class {
     class!(CustomSubclassObject)
 }
 
-pub fn custom_subclass_object() -> CustomObject {
+pub(crate) fn custom_subclass_object() -> CustomObject {
     CustomObject::new(custom_subclass())
 }

@@ -24,7 +24,7 @@ trait MsgSendFn: Encode {
 }
 
 #[inline(always)]
-pub unsafe fn send_unverified<A, R>(
+pub(crate) unsafe fn send_unverified<A, R>(
     receiver: *mut Object,
     sel: Sel,
     args: A,
@@ -38,7 +38,7 @@ where
 }
 
 #[inline]
-pub unsafe fn send_super_unverified<A, R>(
+pub(crate) unsafe fn send_super_unverified<A, R>(
     receiver: *mut Object,
     superclass: &Class,
     sel: Sel,

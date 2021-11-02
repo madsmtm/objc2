@@ -4,7 +4,7 @@ use objc2_sys::{objc_msg_lookup, objc_msg_lookup_super, objc_super};
 use super::{conditional_try, Encode, MessageArguments, MessageError};
 use crate::runtime::{Class, Object, Sel};
 
-pub unsafe fn send_unverified<A, R>(
+pub(crate) unsafe fn send_unverified<A, R>(
     receiver: *mut Object,
     sel: Sel,
     args: A,
@@ -21,7 +21,7 @@ where
     conditional_try(|| A::invoke(msg_send_fn.expect("Null IMP"), receiver, sel, args))
 }
 
-pub unsafe fn send_super_unverified<A, R>(
+pub(crate) unsafe fn send_super_unverified<A, R>(
     receiver: *mut Object,
     superclass: &Class,
     sel: Sel,

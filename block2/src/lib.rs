@@ -47,9 +47,13 @@ were to copy it twice we could have a double free.
 
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]
+#![warn(missing_docs)]
+#![deny(non_ascii_idents)]
+#![warn(unreachable_pub)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block2/0.1.6")]
 
+#[cfg(test)]
 extern crate alloc;
 extern crate std;
 
@@ -442,7 +446,7 @@ impl<A, R, F> DerefMut for ConcreteBlock<A, R, F> {
 
 unsafe extern "C" fn block_context_dispose<B>(block: &mut B) {
     // Read the block onto the stack and let it drop
-    ptr::read(block);
+    let _ = ptr::read(block);
 }
 
 unsafe extern "C" fn block_context_copy<B>(_dst: &mut B, _src: &B) {

@@ -55,7 +55,10 @@ impl<'a> fmt::Display for VerificationError<'a> {
     }
 }
 
-pub fn verify_message_signature<A, R>(cls: &Class, sel: Sel) -> Result<(), VerificationError<'_>>
+pub(crate) fn verify_message_signature<A, R>(
+    cls: &Class,
+    sel: Sel,
+) -> Result<(), VerificationError<'_>>
 where
     A: EncodeArguments,
     R: Encode,

@@ -46,7 +46,7 @@ impl<T: Message> WeakId<T> {
     unsafe fn new_inner(obj: *mut T) -> Self {
         let inner = Box::new(UnsafeCell::new(ptr::null_mut()));
         // SAFETY: `ptr` will never move, and the caller verifies `obj`
-        objc2_sys::objc_initWeak(inner.get() as _, obj as _);
+        let _ = objc2_sys::objc_initWeak(inner.get() as _, obj as _);
         Self {
             inner,
             item: PhantomData,

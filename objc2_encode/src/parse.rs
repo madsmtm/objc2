@@ -88,7 +88,7 @@ fn rm_int_prefix(s: &str, other: usize) -> Option<&str> {
     chomp_int(s).and_then(|(n, t)| if other == n { Some(t) } else { None })
 }
 
-pub fn eq_enc(s: &str, enc: &Encoding<'_>) -> bool {
+pub(crate) fn eq_enc(s: &str, enc: &Encoding<'_>) -> bool {
     // strip qualifiers
     let s = s.trim_start_matches(QUALIFIERS);
 
