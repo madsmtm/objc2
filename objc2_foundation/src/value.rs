@@ -37,6 +37,11 @@ pub unsafe trait INSValue: INSObject {
         }
     }
 
+    /// TODO
+    ///
+    /// # Safety
+    ///
+    /// The user must ensure that the inner value is properly initialized.
     unsafe fn get_unchecked(&self) -> Self::Value {
         let mut value = MaybeUninit::<Self::Value>::uninit();
         let ptr = value.as_mut_ptr() as *mut c_void;

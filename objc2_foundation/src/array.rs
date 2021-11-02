@@ -36,6 +36,10 @@ pub unsafe trait INSArray: INSObject {
         unsafe { msg_send![self, count] }
     }
 
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     #[doc(alias = "objectAtIndex:")]
     fn get(&self, index: usize) -> Option<&Self::Item> {
         // TODO: Replace this check with catching the thrown NSRangeException
@@ -98,7 +102,7 @@ pub unsafe trait INSArray: INSObject {
     }
 
     #[doc(alias = "objectEnumerator")]
-    fn iter<'a>(&'a self) -> NSEnumerator<'a, Self::Item> {
+    fn iter(&self) -> NSEnumerator<'_, Self::Item> {
         unsafe {
             let result: *mut Object = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)

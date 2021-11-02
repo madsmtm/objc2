@@ -260,6 +260,8 @@ impl<T: Message> Id<T, Owned> {
     #[doc(alias = "objc_autorelease")]
     #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
     #[inline]
+    #[allow(clippy::needless_lifetimes)]
+    #[allow(clippy::mut_from_ref)]
     pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p mut T {
         let ptr = self.autorelease_inner();
         // SAFETY: The pointer is valid as a reference, and we've consumed
@@ -295,6 +297,7 @@ impl<T: Message> Id<T, Shared> {
     #[doc(alias = "objc_autorelease")]
     #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
     #[inline]
+    #[allow(clippy::needless_lifetimes)]
     pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p T {
         let ptr = self.autorelease_inner();
         // SAFETY: The pointer is valid as a reference

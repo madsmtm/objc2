@@ -13,6 +13,7 @@
 //! [objc4-mirror]: https://github.com/madsmtm/objc4-mirror.git
 
 #![no_std]
+#![allow(clippy::upper_case_acronyms)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![doc(html_root_url = "https://docs.rs/objc2_sys/0.0.0")]

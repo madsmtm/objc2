@@ -42,7 +42,7 @@ impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
 pub unsafe trait INSFastEnumeration: INSObject {
     type Item: INSObject;
 
-    fn enumerator<'a>(&'a self) -> NSFastEnumerator<'a, Self> {
+    fn enumerator(&self) -> NSFastEnumerator<'_, Self> {
         NSFastEnumerator::new(self)
     }
 }

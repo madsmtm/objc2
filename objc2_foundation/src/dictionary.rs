@@ -39,6 +39,10 @@ pub unsafe trait INSDictionary: INSObject {
         unsafe { msg_send![self, count] }
     }
 
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     #[doc(alias = "objectForKey:")]
     fn get(&self, key: &Self::Key) -> Option<&Self::Value> {
         unsafe { msg_send![self, objectForKey: key] }
@@ -92,7 +96,7 @@ pub unsafe trait INSDictionary: INSObject {
     }
 
     #[doc(alias = "keyEnumerator")]
-    fn iter_keys<'a>(&'a self) -> NSEnumerator<'a, Self::Key> {
+    fn iter_keys(&self) -> NSEnumerator<'_, Self::Key> {
         unsafe {
             let result = msg_send![self, keyEnumerator];
             NSEnumerator::from_ptr(result)
@@ -100,7 +104,7 @@ pub unsafe trait INSDictionary: INSObject {
     }
 
     #[doc(alias = "objectEnumerator")]
-    fn iter_values<'a>(&'a self) -> NSEnumerator<'a, Self::Value> {
+    fn iter_values(&self) -> NSEnumerator<'_, Self::Value> {
         unsafe {
             let result = msg_send![self, objectEnumerator];
             NSEnumerator::from_ptr(result)
@@ -121,7 +125,7 @@ pub unsafe trait INSDictionary: INSObject {
     where
         T: INSCopying<Output = Self::Key>,
     {
-        unsafe { from_refs(keys, &vals.as_slice_ref()) }
+        unsafe { from_refs(keys, vals.as_slice_ref()) }
     }
 
     fn into_values_array(
