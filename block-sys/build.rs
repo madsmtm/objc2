@@ -41,7 +41,7 @@ fn main() {
             println!("cargo:rustc-link-lib=dylib=BlocksRuntime");
         }
         (false, false, true, false) => {
-            // Don't link to anything; objc2_sys already does that for us!
+            // Don't link to anything; objc-sys already does that for us!
 
             // Add GNUStep compability headers to make `#include <Block.h>`
             // work (on newer GNUStep versions these headers are present)

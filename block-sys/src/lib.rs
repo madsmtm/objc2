@@ -13,7 +13,7 @@
 
 // Ensure linkage actually happens
 #[cfg(feature = "gnustep-1-7")]
-extern crate objc2_sys;
+extern crate objc_sys as _;
 
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
@@ -33,7 +33,7 @@ pub struct Class {
     // The size of this is unknown
     _priv: [u8; 0],
 
-    /// See objc2_sys::OpaqueData
+    /// See objc_sys::OpaqueData
     _opaque: PhantomData<(UnsafeCell<*const ()>, PhantomPinned)>,
 }
 

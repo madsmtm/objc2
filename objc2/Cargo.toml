@@ -34,7 +34,7 @@ unstable_autoreleasesafe = []
 
 [dependencies]
 malloc_buf = "1.0"
-objc2_sys = { path = "../objc2_sys" }
+objc-sys = { path = "../objc-sys" }
 objc2_encode = { path = "../objc2_encode" }
 
 [build-dependencies]

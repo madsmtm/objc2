@@ -12,8 +12,8 @@ use std::ffi::{CStr, CString};
 use std::os::raw::c_uint;
 
 #[allow(deprecated)]
-pub use objc2_sys::object_dispose;
-pub use objc2_sys::{
+pub use objc_sys::object_dispose;
+pub use objc_sys::{
     class_addIvar, class_addMethod, class_addProtocol, class_conformsToProtocol,
     class_copyIvarList, class_copyMethodList, class_copyProtocolList, class_createInstance,
     class_getInstanceMethod, class_getInstanceSize, class_getInstanceVariable, class_getName,
@@ -28,7 +28,7 @@ pub use objc2_sys::{
     protocol_addMethodDescription, protocol_addProtocol, protocol_conformsToProtocol,
     protocol_copyProtocolList, protocol_getName, protocol_isEqual, sel_getName, sel_registerName,
 };
-pub use objc2_sys::{BOOL, NO, YES};
+pub use objc_sys::{BOOL, NO, YES};
 
 pub use super::bool::Bool;
 use crate::Encode;
@@ -36,28 +36,28 @@ use crate::Encode;
 /// A type that represents a method selector.
 #[repr(transparent)]
 pub struct Sel {
-    ptr: *const objc2_sys::objc_selector,
+    ptr: *const objc_sys::objc_selector,
 }
 
 /// A type that represents an instance variable.
 #[repr(C)]
-pub struct Ivar(objc2_sys::objc_ivar);
+pub struct Ivar(objc_sys::objc_ivar);
 
 /// A type that represents a method in a class definition.
 #[repr(C)]
-pub struct Method(objc2_sys::objc_method);
+pub struct Method(objc_sys::objc_method);
 
 /// A type that represents an Objective-C class.
 #[repr(C)]
-pub struct Class(objc2_sys::objc_class);
+pub struct Class(objc_sys::objc_class);
 
 /// A type that represents an Objective-C protocol.
 #[repr(C)]
-pub struct Protocol(objc2_sys::Protocol);
+pub struct Protocol(objc_sys::Protocol);
 
 /// A type that represents an instance of a class.
 #[repr(C)]
-pub struct Object(objc2_sys::objc_object);
+pub struct Object(objc_sys::objc_object);
 
 /// A pointer to the start of a method implementation.
 pub type Imp = unsafe extern "C" fn();
@@ -88,7 +88,7 @@ impl Sel {
     #[inline]
     pub unsafe fn from_ptr(ptr: *const c_void) -> Self {
         Self {
-            ptr: ptr as *const objc2_sys::objc_selector,
+            ptr: ptr as *const objc_sys::objc_selector,
         }
     }
 
@@ -126,7 +126,7 @@ impl fmt::Debug for Sel {
 }
 
 impl Ivar {
-    pub(crate) fn as_ptr(&self) -> *const objc2_sys::objc_ivar {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::objc_ivar {
         self as *const Self as *const _
     }
 
@@ -150,7 +150,7 @@ impl Ivar {
 }
 
 impl Method {
-    pub(crate) fn as_ptr(&self) -> *const objc2_sys::objc_method {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::objc_method {
         self as *const Self as *const _
     }
 
@@ -194,7 +194,7 @@ impl Method {
 }
 
 impl Class {
-    pub(crate) fn as_ptr(&self) -> *const objc2_sys::objc_class {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::objc_class {
         self as *const Self as *const _
     }
 
@@ -330,7 +330,7 @@ impl fmt::Debug for Class {
 }
 
 impl Protocol {
-    pub(crate) fn as_ptr(&self) -> *const objc2_sys::Protocol {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::Protocol {
         self as *const Self as *const _
     }
 
@@ -405,7 +405,7 @@ fn get_ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
 }
 
 impl Object {
-    pub(crate) fn as_ptr(&self) -> *const objc2_sys::objc_object {
+    pub(crate) fn as_ptr(&self) -> *const objc_sys::objc_object {
         self as *const Self as *const _
     }
 

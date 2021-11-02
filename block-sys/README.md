@@ -63,7 +63,7 @@ package.
 
 GNUStep is a bit odd, because it bundles blocks support into its Objective-C
 runtime. This means we have to link to `libobjc`, and this is done by
-depending on the `objc2_sys` crate. A bit unorthodox, yes, but it works.
+depending on the `objc-sys` crate. A bit unorthodox, yes, but it works.
 
 Sources:
 - [`Block.h`](https://github.com/gnustep/libobjc2/blob/v2.1/objc/blocks_runtime.h)
