@@ -106,7 +106,7 @@ unsafe impl INSCopying for NSString {
 }
 
 impl fmt::Display for NSString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         autoreleasepool(|pool| fmt::Display::fmt(self.as_str(pool), f))
     }
 }

@@ -1,4 +1,5 @@
 #![no_std]
+#![warn(elided_lifetimes_in_paths)]
 #![crate_name = "objc2_foundation"]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2_foundation/0.1.1")]

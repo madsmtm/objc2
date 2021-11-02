@@ -1,6 +1,7 @@
 //! # Objective-C type-encoding
 
 #![no_std]
+#![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2_encode/1.1.0")]
