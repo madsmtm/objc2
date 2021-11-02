@@ -6,6 +6,6 @@ members = [
     "objc2",
     "objc2-encode",
     "objc2-foundation",
-    "objc2_test_utils",
+    "tests",
 ]
 exclude = ["objc2/tests-ios"]
