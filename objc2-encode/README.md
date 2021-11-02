@@ -1,8 +1,8 @@
-# `objc2_encode`
+# `objc2-encode`
 
-[![Latest version](https://badgen.net/crates/v/objc2_encode)](https://crates.io/crates/objc2_encode)
+[![Latest version](https://badgen.net/crates/v/objc2-encode)](https://crates.io/crates/objc2-encode)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
-[![Documentation](https://docs.rs/objc2_encode/badge.svg)](https://docs.rs/objc2_encode/)
+[![Documentation](https://docs.rs/objc2-encode/badge.svg)](https://docs.rs/objc2-encode/)
 [![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
 [![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
 
@@ -69,12 +69,12 @@ assert_eq!(i32::ENCODING.to_string(), "i");
 
 See the [`examples`] folder for more complex usage.
 
-[`examples`]: https://github.com/madsmtm/objc2/tree/master/objc2_encode/examples
+[`examples`]: https://github.com/madsmtm/objc2/tree/master/objc2-encode/examples
 
 
 ## Installation
 
 ```toml
 [dependencies]
-objc2_encode = "1.1.0"
+objc2-encode = "1.1.0"
 ```
