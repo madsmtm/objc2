@@ -3,7 +3,7 @@ use std::os::raw::c_char;
 use std::sync::Once;
 
 use crate::declare::{ClassDecl, ProtocolDecl};
-use crate::runtime::{Class, Object, Protocol, Sel};
+use crate::runtime::{Class, Object, ObjectType, Protocol, Sel};
 use crate::{ffi, Encode, Encoding, MessageReceiver};
 
 #[derive(Debug)]

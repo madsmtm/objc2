@@ -1,7 +1,7 @@
 use core::ptr::NonNull;
 
 use objc2::rc::{Id, Owned};
-use objc2::runtime::{Class, Object};
+use objc2::runtime::{Class, Object, ObjectType};
 use objc2::{class, msg_send};
 #[cfg(feature = "malloc")]
 use objc2::{sel, Encode};

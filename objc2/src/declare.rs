@@ -12,7 +12,7 @@
 //! ```no_run
 //! use objc2::{class, sel};
 //! use objc2::declare::ClassDecl;
-//! use objc2::runtime::{Class, Object, Sel};
+//! use objc2::runtime::{Class, Object, ObjectType, Sel};
 //!
 //! let superclass = class!(NSObject);
 //! let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();

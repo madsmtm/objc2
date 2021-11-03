@@ -16,7 +16,7 @@ written in Objective-C; this crate enables you to interract with those.
 use std::ptr::NonNull;
 use objc2::{class, msg_send};
 use objc2::rc::{Id, Owned};
-use objc2::runtime::{Class, Object};
+use objc2::runtime::{Class, Object, ObjectType};
 
 let cls = class!(NSObject);
 let obj: *mut Object = unsafe { msg_send![cls, new] };
