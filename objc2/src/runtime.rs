@@ -587,7 +587,15 @@ mod tests {
 
     proptest! {
         #[test]
-        fn test_class_register_name(s in "[^\\u{0000}]*") {
+        fn test_class_register_unicode(s in "[^\\u{0000}]*") {
+            if let Some(cls) = Class::get(&s) {
+                prop_assert_eq!(&*s, cls.name());
+                prop_assert_eq!(&cls, &cls);
+            }
+        }
+
+        #[test]
+        fn test_class_register_ascii(s in "NS[a-zA-Z]*") {
             if let Some(cls) = Class::get(&s) {
                 prop_assert_eq!(&*s, cls.name());
                 prop_assert_eq!(&cls, &cls);
