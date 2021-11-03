@@ -37,13 +37,13 @@ mod inner {
 }
 
 // GNUStep's and Microsoft's libobjc2
-#[cfg(all(any(gnustep, winobjc), libobjc2_strict_apple_compat))]
+#[cfg(all(gnustep, libobjc2_strict_apple_compat))]
 mod inner {
     // C: (explicitly) signed char
     pub type BOOL = i8;
 }
 
-#[cfg(all(any(gnustep, winobjc), not(libobjc2_strict_apple_compat)))]
+#[cfg(all(gnustep, not(libobjc2_strict_apple_compat)))]
 mod inner {
     // windows && !32bit-MinGW
     #[cfg(all(windows, not(all(target_pointer_width = "64", target_env = "gnu"))))]

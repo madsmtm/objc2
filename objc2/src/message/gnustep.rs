@@ -14,7 +14,7 @@ where
     R: Encode,
 {
     if receiver.is_null() {
-        return mem::zeroed();
+        return unsafe { mem::zeroed() };
     }
 
     let sel_ptr = sel.as_ptr() as *const _;
@@ -40,5 +40,5 @@ where
     let sel_ptr = sel.as_ptr() as *const _;
     let msg_send_fn = unsafe { objc_msg_lookup_super(&sup, sel_ptr) };
     let msg_send_fn = msg_send_fn.expect("Null IMP");
-    unsafe { conditional_try(|| A::__invoke(msg_send_fn.expect("Null IMP"), receiver, sel, args)) }
+    unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }

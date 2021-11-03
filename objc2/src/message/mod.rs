@@ -31,7 +31,7 @@ mod verify;
 #[cfg(apple)]
 #[path = "apple/mod.rs"]
 mod platform;
-#[cfg(any(gnustep, winobjc))]
+#[cfg(gnustep)]
 #[path = "gnustep.rs"]
 mod platform;
 

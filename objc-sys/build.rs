@@ -39,7 +39,7 @@ use AppleRuntime::*;
 enum Runtime {
     Apple(AppleRuntime),
     GNUStep(u8, u8),
-    WinObjc,
+    WinObjC,
     #[allow(dead_code)]
     ObjFW(Option<String>),
 }
@@ -66,41 +66,101 @@ fn main() {
     // TODO: Figure out when to enable this
     // println!("cargo:rustc-cfg=libobjc2_strict_apple_compat");
 
-    let runtime = match get_env("RUNTIME_VERSION").as_deref() {
-        // Force using GNUStep on all platforms
-        Some("gnustep-1.7") => GNUStep(1, 7),
-        Some("gnustep-1.8") => GNUStep(1, 8),
-        Some("gnustep-1.9") => GNUStep(1, 9),
-        Some("gnustep-2.0") => GNUStep(2, 0),
-        Some("gnustep-2.1") => GNUStep(2, 1),
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
 
-        // Pick the relevant runtime to use, and find target versions
-        None => match &*env::var("CARGO_CFG_TARGET_OS").unwrap() {
-            "macos" => Apple(MacOS(Some(
-                get_env("MACOSX_DEPLOYMENT_TARGET").unwrap_or_else(|| "10.7".into()),
-            ))),
-            "ios" => Apple(IOS(Some(
-                get_env("IPHONEOS_DEPLOYMENT_TARGET").unwrap_or_else(|| "7.0".into()),
-            ))),
-            "tvos" => Apple(TvOS(get_env("TVOS_DEPLOYMENT_TARGET"))),
-            "watchos" => Apple(WatchOS(get_env("WATCHOS_DEPLOYMENT_TARGET"))),
-            "windows" => WinObjc,
-            _ => GNUStep(1, 8), // GNUStep's own default
-        },
+    let mut apple = env::var_os("CARGO_FEATURE_APPLE").is_some();
+    let gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
+    let objfw = env::var_os("CARGO_FEATURE_OBJFW").is_some();
 
-        Some(runtime) => panic!("Invalid RUNTIME_VERSION: {}", runtime),
+    if let (false, false, false) = (apple, gnustep, objfw) {
+        // Enable `apple` by default on Apple platforms
+        if let "macos" | "ios" | "tvos" | "watchos" = &*target_os {
+            apple = true;
+            // Add cheaty #[cfg(feature = "apple")] directive
+            println!("cargo:rustc-cfg=feature=\"apple\"");
+        }
+    }
+
+    let runtime = match (apple, gnustep, objfw) {
+        (true, false, false) => {
+            Apple(match &*target_os {
+                "macos" => MacOS(Some(
+                    get_env("MACOSX_DEPLOYMENT_TARGET").unwrap_or_else(|| "10.7".into()),
+                )),
+                "ios" => IOS(Some(
+                    get_env("IPHONEOS_DEPLOYMENT_TARGET").unwrap_or_else(|| "7.0".into()),
+                )),
+                "tvos" => TvOS(get_env("TVOS_DEPLOYMENT_TARGET")),
+                "watchos" => WatchOS(get_env("WATCHOS_DEPLOYMENT_TARGET")),
+                // Choose a sensible default for other platforms that
+                // specified `apple`; this is likely not going to work anyhow
+                _ => MacOS(None),
+            })
+        }
+        (false, true, false) => {
+            if env::var_os("CARGO_FEATURE_WINOBJC").is_some() {
+                WinObjC
+            } else if env::var_os("CARGO_FEATURE_GNUSTEP_2_1").is_some() {
+                GNUStep(2, 1)
+            } else if env::var_os("CARGO_FEATURE_GNUSTEP_2_0").is_some() {
+                GNUStep(2, 0)
+            } else if env::var_os("CARGO_FEATURE_GNUSTEP_1_9").is_some() {
+                GNUStep(1, 9)
+            } else if env::var_os("CARGO_FEATURE_GNUSTEP_1_8").is_some() {
+                GNUStep(1, 8)
+            } else {
+                // CARGO_FEATURE_GNUSTEP_1_7
+                GNUStep(1, 7)
+            }
+        }
+        (false, false, true) => {
+            unimplemented!()
+        }
+        (false, false, false) => {
+            panic!("Must specify the desired runtime (using features) on non-apple platforms.")
+        }
+        _ => {
+            panic!("Invalid feature combination; only one runtime may be selected!")
+        }
     };
 
     // Add `#[cfg(RUNTIME)]` directive
     let runtime_cfg = match runtime {
         Apple(_) => "apple",
-        GNUStep(_, _) => "gnustep",
-        WinObjc => "winobjc",
+        // WinObjC can be treated like GNUStep 1.8
+        GNUStep(_, _) | WinObjC => "gnustep",
         ObjFW(_) => "objfw",
     };
     println!("cargo:rustc-cfg={}", runtime_cfg);
     // Allow downstream build scripts to do the same
     println!("cargo:runtime={}", runtime_cfg); // DEP_OBJC_RUNTIME
+
+    // Tell downstream build scripts our features
+    // match &runtime {
+    //     Apple(_) => println!("cargo:apple=1"), // DEP_OBJC_APPLE
+    //     GNUStep(major, minor) => {
+    //         let version = (*major, *minor);
+    //         println!("cargo:gnustep-1-7=1"); // DEP_OBJC_GNUSTEP_1_7
+    //         if version >= (1, 8) {
+    //             println!("cargo:gnustep-1-8=1"); // DEP_OBJC_GNUSTEP_1_8
+    //         }
+    //         if version >= (1, 9) {
+    //             println!("cargo:gnustep-1-9=1"); // DEP_OBJC_GNUSTEP_1_9
+    //         }
+    //         if version >= (2, 0) {
+    //             println!("cargo:gnustep-2-0=1"); // DEP_OBJC_GNUSTEP_2_0
+    //         }
+    //         if version >= (2, 1) {
+    //             println!("cargo:gnustep-2-1=1"); // DEP_OBJC_GNUSTEP_2_1
+    //         }
+    //     }
+    //     WinObjC => {
+    //         println!("cargo:gnustep-1-7=1"); // DEP_OBJC_GNUSTEP_1_7
+    //         println!("cargo:gnustep-1-8=1"); // DEP_OBJC_GNUSTEP_1_8
+    //         println!("cargo:winobjc=1"); // DEP_OBJC_WINOBJC
+    //     }
+    //     ObjFW(_) => println!("cargo:objfw=1"), // DEP_OBJC_APPLE
+    // }
 
     let clang_runtime = match &runtime {
         Apple(runtime) => {
@@ -121,9 +181,10 @@ fn main() {
             }
         }
         // Default in clang is 1.6
+        // GNUStep's own default is 1.8
         GNUStep(major, minor) => format!("gnustep-{}.{}", major, minor),
         // WinObjC's libobjc2 is just a fork of gnustep's from version 1.8
-        WinObjc => "gnustep-1.8".into(),
+        WinObjC => "gnustep-1.8".into(),
         ObjFW(version) => {
             // Default in clang
             let _version = version.as_deref().unwrap_or("0.8");

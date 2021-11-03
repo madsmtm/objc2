@@ -25,11 +25,11 @@ pub use self::range::NSRange;
 pub use self::string::{INSString, NSString};
 pub use self::value::{INSValue, NSValue};
 
-#[cfg(target_vendor = "apple")]
+#[cfg(apple)]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
 
-#[cfg(not(target_vendor = "apple"))]
+#[cfg(gnustep)]
 #[link(name = "gnustep-base", kind = "dylib")]
 extern "C" {}
 

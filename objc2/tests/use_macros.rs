@@ -1,7 +1,11 @@
-#![cfg(target_vendor = "apple")] // Temporary
-
 use objc2::runtime::Object;
 use objc2::{class, msg_send, sel};
+
+#[cfg(gnustep)]
+#[test]
+fn ensure_linkage() {
+    unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+}
 
 #[test]
 fn use_class_and_msg_send() {

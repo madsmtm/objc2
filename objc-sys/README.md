@@ -10,17 +10,17 @@ Raw Rust bindings to the Objective-C runtime and ABI.
 
 ## Runtime Support
 
+Objective-C has a runtime, different implementations of said runtime exist,
+and they act in slightly different ways. By default, Apple platforms link to
+Apple's runtime, but if you're using another runtime you must tell it to this
+library using feature flags.
+
 ### Apple's [`objc4`](https://opensource.apple.com/source/objc4/)
 
-This is the default on Apple platforms:
-```rust , ignore
-#[cfg(any(
-    target_os = "macos",
-    target_os = "ios",
-    target_os = "tvos",
-    target_os = "watchos",
-))]
-```
+- Feature flag: `apple`.
+
+This is used by default on Apple platforms when no other feature flags are
+specified.
 
 The supported runtime version (higher versions lets the compiler enable newer
 optimizations, at the cost of not supporting older operating systems) can be
@@ -38,29 +38,29 @@ chosen using the standard `X_DEPLOYMENT_TARGET` environment variables:
   - Default: TODO
   - Minimum: `1.0` (theoretically)
 
+A git mirror of the sources is available [here](https://github.com/madsmtm/objc4-mirror).
+
+
+### GNUStep's [`libobjc2`](https://github.com/gnustep/libobjc2)
+
+- Feature flag: `gnustep-1-7`, `gnustep-1-8`, `gnustep-1-9`, `gnustep-2-0` and
+  `gnustep-2-1` depending on the version you're using. Recommended default is
+  `gnustep-1-8`.
+
 
 ### Window's [`WinObjC`](https://github.com/microsoft/WinObjC)
 
-This is the default on `#[cfg(target_os = "windows")]`.
+- Feature flag: `winobjc`.
 
 This is essentially just [a fork](https://github.com/microsoft/libobjc2) based
 on GNUStep's `libobjc2` version 1.8, with very few user-facing changes.
 
 
-### GNUStep's [`libobjc2`](https://github.com/gnustep/libobjc2)
+### [`ObjFW`](https://github.com/ObjFW/ObjFW) (WIP)
 
-This is the default on all other systems.
+- Feature flag: `objfw`.
 
-The version can be chosen by setting the standard (used by GNUStep already)
-`RUNTIME_VERSION` environment variable to one of the following:
-- `gnustep-1.7`
-- `gnustep-1.8` (default)
-- `gnustep-1.9`
-- `gnustep-2.0`
-- `gnustep-2.1`
-
-If you wish to force using the GNUStep runtime on Apple or Windows systems,
-set the `RUNTIME_VERSION` environment variable to one of the values above.
+TODO.
 
 
 ### Other runtimes
@@ -82,7 +82,7 @@ can be found in GNUStep's [Objective-C Compiler and Runtime FAQ][gnustep-faq].
 [gnustep-faq]: http://wiki.gnustep.org/index.php/Objective-C_Compiler_and_Runtime_FAQ
 
 
-## Configuring linking
+## Advanced linking configuration
 
 This crate defines the `links` key in `Cargo.toml` so it's possible to
 change the linking to `libobjc`, see [the relevant cargo docs][overriding].
@@ -94,7 +94,7 @@ also become an option.
 [overriding]: https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
 
 
-## Objective-C compiler ABI configuration
+## Objective-C Compiler configuration
 
 Objective-C compilers like `clang` and `gcc` requires configuring the calling
 ABI to the runtime you're using:
@@ -104,8 +104,25 @@ ABI to the runtime you're using:
   Note that Modern Objective-C features are ill supported.
 
 This is relevant if you're building and linking to custom Objective-C sources
-in a build script. In the future, this crate may expose build script metadata
-to help with selecting these (and other required) flags.
+in a build script. To assist in compiling Objective-C sources, this crate's
+build script expose the `DEP_OBJC_CC_ARGS` environment variable to downstream
+build scripts.
+
+Example usage in your `build.rs` (using the `cc` crate) would be as follows:
+
+```rust , ignore
+fn main() {
+    let mut builder = cc::Build::new();
+    builder.compiler("clang");
+    builder.file("my_objective_c_script.m");
+
+    for flag in std::env::var("DEP_OBJC_CC_ARGS").unwrap().split(' ') {
+        builder.flag(flag);
+    }
+
+    builder.compile("libmy_objective_c_script.a");
+}
+```
 
 [`-fobjc-runtime`]: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-fobjc-runtime
 [clang-objc-kinds]: https://clang.llvm.org/doxygen/classclang_1_1ObjCRuntime.html#af19fe070a7073df4ecc666b44137c4e5

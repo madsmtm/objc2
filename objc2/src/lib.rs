@@ -105,7 +105,7 @@ mod test_utils;
 ///
 /// This is a temporary solution to make our CI work for now!
 #[doc(hidden)]
-#[cfg(any(gnustep, winobjc))]
+#[cfg(gnustep)]
 pub mod __gnustep_hack {
     use super::runtime::Class;
 
@@ -116,7 +116,7 @@ pub mod __gnustep_hack {
     }
 
     pub unsafe fn get_class_to_force_linkage() -> &'static Class {
-        &_OBJC_CLASS_NSObject
+        unsafe { &_OBJC_CLASS_NSObject }
     }
 
     #[test]
