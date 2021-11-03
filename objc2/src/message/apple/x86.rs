@@ -15,7 +15,9 @@ use crate::{Encode, Encoding};
 /// <https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/LowLevelABI/130-IA-32_Function_Calling_Conventions/IA32.html>
 unsafe impl<T: Encode> MsgSendFn for T {
     const MSG_SEND: Imp = {
-        if let Encoding::Float | Encoding::Double = T::ENCODING {
+        // See lines 156 to 172 in:
+        // https://opensource.apple.com/source/objc4/objc4-818.2/runtime/message.h.auto.html
+        if let Encoding::Float | Encoding::Double | Encoding::LongDouble = T::ENCODING {
             objc_msgSend_fpret
         } else if let 0 | 1 | 2 | 4 | 8 = mem::size_of::<T>() {
             objc_msgSend
