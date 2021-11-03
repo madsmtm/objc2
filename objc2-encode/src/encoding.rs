@@ -10,9 +10,11 @@ use crate::parse;
 /// NSLog(@"Encoding of NSException: %s", @encode(NSException));
 /// ```
 ///
-/// For more information, see [Apple's documentation][ocrtTypeEncodings].
+/// For more information, see [Apple's documentation][ocrtTypeEncodings] and
+/// [`clang`'s source code for generating `@encode`][clang-src].
 ///
-/// [ocrtTypeEncodings]: https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html
+/// [ocrtTypeEncodings]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html
+/// [clang-src]: https://github.com/llvm/llvm-project/blob/fae0dfa6421ea6c02f86ba7292fa782e1e2b69d1/clang/lib/AST/ASTContext.cpp#L7500-L7850
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[non_exhaustive] // Maybe we're missing some encodings?
 pub enum Encoding<'a> {
@@ -48,6 +50,7 @@ pub enum Encoding<'a> {
     DoubleComplex,
     /// A C `long double _Complex`. Corresponds to the `jD` code.
     LongDoubleComplex,
+    // TODO: Complex(&Encoding) ???
     /// A C++ `bool` / C99 `_Bool`. Corresponds to the `B` code.
     Bool,
     /// A C `void`. Corresponds to the `v` code.
@@ -63,6 +66,8 @@ pub enum Encoding<'a> {
     /// An Objective-C selector (`SEL`). Corresponds to the `:` code.
     Sel,
     /// An unknown type. Corresponds to the `?` code.
+    ///
+    /// This is usually used to encode functions.
     Unknown,
     /// A bitfield with the given number of bits.
     ///
@@ -90,6 +95,15 @@ pub enum Encoding<'a> {
     ///
     /// Corresponds to the `(name=fields...)` code.
     Union(&'a str, &'a [Encoding<'a>]),
+    // "Vector" types have the '!' encoding, but are not implemented in clang
+
+    // TODO: Atomic, const and other such specifiers
+    // typedef struct x {
+    //     int a;
+    //     void* b;
+    // } x_t;
+    // NSLog(@"Encoding: %s", @encode(_Atomic x_t)); // -> A{x}
+    // NSLog(@"Encoding: %s", @encode(const int*)); // -> r^i
 }
 
 impl fmt::Display for Encoding<'_> {
