@@ -116,7 +116,7 @@ pub mod __gnustep_hack {
     }
 
     pub unsafe fn get_class_to_force_linkage() -> &'static Class {
-        &_OBJC_CLASS_NSObject
+        unsafe { &_OBJC_CLASS_NSObject }
     }
 
     #[test]
