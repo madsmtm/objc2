@@ -1,6 +1,11 @@
 //! # Objective-C type-encoding
 //!
 //! This is re-exported into the top level of `objc2`.
+//!
+//! Further resources:
+//! - <https://dmaclach.medium.com/objective-c-encoding-and-you-866624cc02de>
+//! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html>
+//! - <https://dmaclach.medium.com/objective-c-encoding-and-you-866624cc02de>
 
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]
