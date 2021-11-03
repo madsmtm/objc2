@@ -11,9 +11,9 @@ use objc2::rc::{Id, Shared};
 
 use super::{INSCopying, INSObject};
 
-#[cfg(target_vendor = "apple")]
+#[cfg(apple)]
 const UTF8_ENCODING: usize = 4;
-#[cfg(not(target_vendor = "apple"))]
+#[cfg(gnustep)]
 const UTF8_ENCODING: i32 = 4;
 
 pub unsafe trait INSString: INSObject {
@@ -190,7 +190,7 @@ mod tests {
         let s = "\u{feff}\u{feff}a\u{feff}";
 
         // Huh, this difference might be a GNUStep bug?
-        #[cfg(not(gnustep))]
+        #[cfg(apple)]
         let expected = "\u{feff}a\u{feff}";
         #[cfg(gnustep)]
         let expected = "a\u{feff}";

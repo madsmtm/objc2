@@ -105,7 +105,7 @@ mod test_utils;
 ///
 /// This is a temporary solution to make our CI work for now!
 #[doc(hidden)]
-#[cfg(any(gnustep, winobjc))]
+#[cfg(gnustep)]
 pub mod __gnustep_hack {
     use super::runtime::Class;
 

@@ -77,6 +77,6 @@ extern "C" {
     // #[cfg(macos >= 10.12)]
     // protocol_copyPropertyList2
 
-    // #[cfg(any(gnustep, winobjc))]
+    // #[cfg(gnustep)]
     // _protocol_getMethodTypeEncoding
 }

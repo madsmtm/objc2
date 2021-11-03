@@ -127,8 +127,8 @@ fn main() {
     // Add `#[cfg(RUNTIME)]` directive
     let runtime_cfg = match runtime {
         Apple(_) => "apple",
-        GNUStep(_, _) => "gnustep",
-        WinObjC => "winobjc",
+        // WinObjC can be treated like GNUStep 1.8
+        GNUStep(_, _) | WinObjC => "gnustep",
         ObjFW(_) => "objfw",
     };
     println!("cargo:rustc-cfg={}", runtime_cfg);
