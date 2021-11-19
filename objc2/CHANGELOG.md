@@ -50,6 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   module for general use. Use the new `catch_all` feature to wrap all message
   sends in a `@try/@catch`.
 * **BREAKING**: Most types are now `!Send` and `!Sync`. TODO: Reevaluate this!
+* Temporarily disabled iOS tests.
 * A lot of smaller things.
 
 ### Fixed
@@ -68,27 +69,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `rc::WeakPtr`. Use `rc::WeakId<Object>` instead.
 
 
-## [0.2.7] - 2019-10-19
+## [0.2.7] (`objc` crate) - 2019-10-19
 
 ### Fixed
-* Uses of `msg_send!` will now correctly fail to compile if no return type
-  can be inferred, instead of relying on an edge case of the compiler
-  that will soon change and silently cause undefined behavior.
+* **BREAKING**: Uses of `msg_send!` will now correctly fail to compile if no
+  return type can be inferred, instead of relying on an edge case of the
+  compiler that will soon change and silently cause undefined behavior.
 
 
-## [0.2.6] - 2019-03-25
+## [0.2.6] (`objc` crate) - 2019-03-25
 
 ### Fixed
 * Suppressed a deprecation warning in `sel!`, `msg_send!`, and `class!`.
 
 
-## [0.2.5] - 2018-07-24
+## [0.2.5] (`objc` crate) - 2018-07-24
 
 ### Added
-* `autoreleasepool` returns the value returned by its body closure.
+* **BREAKING**: `autoreleasepool` returns the value returned by its body
+  closure.
 
 
-## [0.2.4] - 2018-07-22
+## [0.2.4] (`objc` crate) - 2018-07-22
 
 ### Added
 * Added an `rc` module with reference counting utilities:
@@ -100,7 +102,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   return types.
 
 
-## [0.2.3] - 2018-07-07
+## [0.2.3] (`objc` crate) - 2018-07-07
 
 ### Added
 * Added a `class!` macro for getting statically-known classes. The result is
@@ -114,13 +116,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   references to uninhabited types.
 
 
-## [0.2.2] - 2016-10-30
+## [0.2.2] (`objc` crate) - 2016-10-30
 
 ### Added
 * Implemented `Sync` and `Send` for `Sel`.
 
 
-## [0.2.1] - 2016-04-23
+## [0.2.1] (`objc` crate) - 2016-04-23
 
 ### Added
 * Added support for working with protocols with the `Protocol` struct.
@@ -129,7 +131,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Protocols can be declared using the new `ProtocolDecl` struct.
 
 
-## [0.2.0] - 2016-03-20
+## [0.2.0] (`objc` crate) - 2016-03-20
 
 ### Added
 * Added verification for the types used when sending messages.
@@ -173,6 +175,74 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `msg_send!` will now be triggered from the line and file where the macro is
   used, rather than from within the implementation of messaging.
 
+## [0.1.8] (`objc` crate) - 2015-11-06
+
+### Changed
+* Updated `libc` dependency.
+
+
+## [0.1.7] (`objc` crate) - 2015-09-23
+
+### Fixed
+* `improper_ctypes` warning.
+
+
+## [0.1.6] (`objc` crate) - 2015-08-08
+
+### Added
+* Added `"exception"` feature which catches Objective-C exceptions and turns
+  them into Rust panics.
+* Added support for `ARM`, `ARM64` and `x86` architectures.
+* **BREAKING**: Added `Any` bound on message return types. In practice this
+  probably won't break anything.
+* Start testing on iOS.
+
+
+## [0.1.5] (`objc` crate) - 2015-05-02
+
+### Changed
+* **BREAKING**: Renamed `IntoMethodImp` to `MethodImplementation`.
+* **BREAKING**: Renamed `MethodImplementation::into_imp` to `::imp_for`.
+* **BREAKING**: Relaxed `Sized` bounds on `Encode` and `Message`. In practice
+  this probably won't break anything.
+
+### Removed
+* **BREAKING**: Removed `Id`, `Owned`, `Ownership`, `Shared`, `ShareId` and
+  `WeakId`. Use them from the `objc_id` crate instead.
+* **BREAKING**: Removed `Method::set_implementation` and
+  `Method::exchange_implementation`.
+
+
+## [0.1.4] (`objc` crate) - 2015-04-17
+
+### Removed
+* **BREAKING**: Removed `block` module. Use them from the `block` crate
+  instead.
+
+
+## [0.1.3] (`objc` crate) - 2015-04-11
+
+### Added
+* Implement `fmt::Pointer` for `Id`.
+
+### Fixed
+* Odd lifetime bug.
+
+
+## [0.1.2] (`objc` crate) - 2015-04-04
+
+### Fixed
+* **BREAKING**: Replace uses of `PhantomFn` with `Sized`.
+
+
+## [0.1.1] (`objc` crate) - 2015-03-27
+
+### Added
+* Implement `Error` for `UnequalArgsError`.
+
+### Removed
+* **BREAKING**: Move `objc::foundation` into new crate `objc_foundation`.
+
 
 [0.2.7]: https://github.com/madsmtm/objc2/compare/objc-0.2.6...objc-0.2.7
 [0.2.6]: https://github.com/madsmtm/objc2/compare/objc-0.2.5...objc-0.2.6
@@ -182,3 +252,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 [0.2.2]: https://github.com/madsmtm/objc2/compare/objc-0.2.1...objc-0.2.2
 [0.2.1]: https://github.com/madsmtm/objc2/compare/objc-0.2.0...objc-0.2.1
 [0.2.0]: https://github.com/madsmtm/objc2/compare/objc-0.1.8...objc-0.2.0
+[0.1.8]: https://github.com/madsmtm/objc2/compare/objc-0.1.7...objc-0.1.8
+[0.1.7]: https://github.com/madsmtm/objc2/compare/objc-0.1.6...objc-0.1.7
+[0.1.6]: https://github.com/madsmtm/objc2/compare/objc-0.1.5...objc-0.1.6
+[0.1.5]: https://github.com/madsmtm/objc2/compare/objc-0.1.4...objc-0.1.5
+[0.1.4]: https://github.com/madsmtm/objc2/compare/objc-0.1.3...objc-0.1.4
+[0.1.3]: https://github.com/madsmtm/objc2/compare/objc-0.1.2...objc-0.1.3
+[0.1.2]: https://github.com/madsmtm/objc2/compare/objc-0.1.1...objc-0.1.2
+[0.1.1]: https://github.com/madsmtm/objc2/compare/objc-0.1.0...objc-0.1.1
