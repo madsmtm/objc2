@@ -27,6 +27,48 @@ Afterwards, you can upgrade to the next release, in this case
 with every following release.
 
 
+## Goals
+
+- **Complete Soundness.**
+
+  The overarching goal of these crates is to be completely sound, meaning it
+  must not be possible for safe Rust to cause undefined behaviour using this
+  library.
+  This is a really difficult task, because, as a language interface, basically
+  everything it does requires `unsafe`.
+
+  Soundness is attempted by trying to document all instances of `unsafe`, and
+  the reasoning behind their safety.
+
+  Additionally, all `unsafe` APIs contain thorough `# Safety` sections, to let
+  users know exactly which safety guarantees they need to uphold.
+
+  If you find, or think you've found, a soundness hole, please report it on
+  the [issue tracker](https://github.com/madsmtm/objc2/issues/new).
+
+- **Idiomatic Rust.**
+
+  Soundness is easy to achieve if you just mark every API as `unsafe`.
+  However, that won't help us very much when we actually want to use it!
+
+  As such, these crates also try to be as safe and idiomatic as possible;
+  using references instead of pointers to represent objects and their
+  mutability, `Option` instead of `null`, zero cost (always a balancing act
+  against being ergonomic),
+
+- **Portability.**
+
+  Apple targets always have the highest priority, but there exist other
+  runtimes for Objective-C, and we would like to support them without the user
+  having to worry about portability issues.
+
+  The supported runtimes are tested in CI.
+
+- **High quality documentation.**
+
+  This is still quite lacking, help appreciated!
+
+
 ## License
 
 This project is licensed under the MIT license, see [`LICENSE.txt`].
