@@ -1,6 +1,6 @@
 [package]
 name = "objc2"
-version = "0.3.0-alpha.3" # Remember to update html_root_url in lib.rs
+version = "0.3.0-alpha.4" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
@@ -16,11 +16,6 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2/"
 license = "MIT"
 
-exclude = [
-    "doc.sh",
-    "tests-ios/**",
-]
-
 build = "build.rs"
 
 [features]
@@ -34,8 +29,9 @@ unstable_autoreleasesafe = []
 
 [dependencies]
 malloc_buf = "1.0"
-objc-sys = { path = "../objc-sys", version = "0.0.1" }
-objc2-encode = { path = "../objc2-encode", version = "2.0.0-alpha.1" }
+objc-sys = { path = "../objc-sys", version = "0.1.0" }
+# Loose dependency, because objc2-encode is not expected to change much more
+objc2-encode = { path = "../objc2-encode", version = "^2.0.0-beta.0" }
 
 [build-dependencies]
 cc = { version = "1", optional = true }

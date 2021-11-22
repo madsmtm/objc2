@@ -70,11 +70,3 @@ assert_eq!(i32::ENCODING.to_string(), "i");
 See the [`examples`] folder for more complex usage.
 
 [`examples`]: https://github.com/madsmtm/objc2/tree/master/objc2-encode/examples
-
-
-## Installation
-
-```toml
-[dependencies]
-objc2-encode = "1.1.0"
-```

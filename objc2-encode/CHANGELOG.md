@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 2.0.0-beta.0 - 2021-11-22
+
 ### Added
 * **BREAKING**: Add `Encoding::LongDouble`, `Encoding::FloatComplex`,
   `Encoding::DoubleComplex` and `Encoding::LongDoubleComplex`.
