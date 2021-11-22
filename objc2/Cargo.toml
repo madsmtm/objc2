@@ -16,11 +16,6 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2/"
 license = "MIT"
 
-exclude = [
-    "doc.sh",
-    "tests-ios/**",
-]
-
 build = "build.rs"
 
 [features]
