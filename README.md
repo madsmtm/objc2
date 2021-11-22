@@ -7,6 +7,26 @@
 # DISCLAIMER! These crates are work in progress, and should not be used in production environments. Use the battle-tested `objc` family instead!
 
 
+## Migrating from original crates
+
+It is recommended that you upgrade in small steps, to decrease the chance of
+making a mistake somewhere. This way, you can under each release review the
+relevant changelogs and run your test suite, to ensure you haven't missed
+something.
+
+As an example, if you want to migrate to `objc2`, you'd start by using it
+instead of `objc` in your `Cargo.toml`:
+```toml
+[dependencies]
+objc = { package = "objc2", version = "0.2.7" }
+```
+
+Afterwards, you can upgrade to the next release, in this case
+`v0.3.0-alpha.0`, and make the required changes to your code (the
+[changelog](objc/CHANGELOG.m) contains recommendations for this). And so on,
+with every following release.
+
+
 ## License
 
 This project is licensed under the MIT license, see [`LICENSE.txt`].

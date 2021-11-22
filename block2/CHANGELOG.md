@@ -7,21 +7,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
+* Proper GNUStep support using `block-sys`. See that crate for usage.
+* Export `block-sys` as `ffi` module.
+
+### Removed
+* Dependency on `objc_test_utils`.
+
+### Fixed
+* `ConcreteBlock` longer allocates block descriptors on the heap.
+* Better unwind safety in `ConcreteBlock::copy`.
+
+
+## 0.2.0-alpha.0 - 2021-10-28
+
+### Added
 * **BREAKING**: Blocks now require that arguments and return type implement
   `objc2_encode::Encode`. This is a safety measure to prevent creating blocks
   with invalid arguments.
-* Proper GNUStep support using `block-sys`. See that crate for usage.
-* Export `block-sys` as `ffi` module.
 * Blocks now implements `objc2_encode::RefEncode` (and as such can be used in
   Objective-C message sends).
+* Update to 2018 edition.
 
 ### Changed
 * **BREAKING**: Forked the project, so it is now available under the name
   `block2`.
-* No longer depends on `objc_test_utils`.
 
 ### Fixed
-* Soundness issues with using empty enums.
+* Soundness issues with using empty enums over FFI.
 
 
 ## [0.1.6] (`block` crate) - 2016-05-08

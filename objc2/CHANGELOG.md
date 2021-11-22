@@ -7,66 +7,219 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
-* Added a lot more documentation of safety requirements.
-* Added more documentation in general.
-* Added newtype `Bool` to fix soundness issues with using `BOOL` or `bool`.
 * **BREAKING**: GNUStep users must specify the appropriate feature flag on
   `objc-sys` for the version they're using.
 * Moved `objc_exception` crate into `exception` module (under feature flag).
-* Moved `objc_id` crate into `rc` module. Most significant changes are
-  `T: Message` bounds on `rc::Id`, `rc::Id` not having a default `Ownership` (
-  so you must specify it everywhere with `rc::Id<T, Owned / Shared>`) and a
-  lot of forwarding implementations for easier use.
+* Added support for `_Complex` types.
 * Added `rc::SliceId`, `rc::SliceIdMut` and `rc::DefaultId` helper traits for
   extra functionality on `rc::Id`.
-* Added `rc::AutoreleasePool` and `rc::AutoreleaseSafe` to make accessing
-  autoreleased objects safe.
-* Added (sealed for now) trait `MessageReceiver` to specify types that can
-  be used as the receiver of a message (instead of only allowing pointer
-  types).
-* Added support for `_Complex` types.
 
 ### Changed
-* **BREAKING**: Updated encoding utilities to use `objc2-encode`. See that for
-  how to use the new type `Encoding` and the new traits `Encode` and
-  `RefEncode`. Most likely you will need to implement `RefEncode` for any
-  custom types you may have.
-* **BREAKING**: Require that the receiver, arguments and return types of
-  messages always implement `Encode`. This helps ensuring that only types made
-  to go across the FFI boundary (`repr(C)`, ...) may.
-* **BREAKING**: The closure in `rc::autoreleasepool` now takes an argument
-  `&rc::AutoreleasePool`. This reference can be given to functions like
-  `INSString::as_str` so that it knows which lifetime to bound the `str` with.
-* **BREAKING**: Most types are now `!UnwindSafe`, to discourage trying to use
-  them after an unwind. This restriction may be lifted in the future.
-* **BREAKING**: Updated `malloc_buf` to version `1.0`.
-* **BREAKING**: `Ivar::type_encoding` now returns a `&str` instead of
-  `Encoding` for performance reasons.
-* **BREAKING**: `Method::return_type` and `Method::argument_type` now return
-  `Malloc<str>` instead of `Encoding` for performance reasons.
-* **BREAKING**: Dynamic message sending with `Message::send_message` is moved
-  to `MessageReceiver`.
 * **BREAKING**: The `exception` feature now just enables the `exception`
   module for general use. Use the new `catch_all` feature to wrap all message
   sends in a `@try/@catch`.
-* **BREAKING**: Most types are now `!Send` and `!Sync`. TODO: Reevaluate this!
-* Temporarily disabled iOS tests.
+
+
+## 0.3.0-alpha.3 - 2021-09-05
+
+### Added
+* Now uses the `objc-sys` crate for possibly better interoperability with
+  other crates that link to `libobjc`.
+* Added newtype `runtime::Bool` to fix soundness issues with using
+  `runtime::BOOL` or `bool`.
+* Moved `objc_id` crate into `rc` module. Notable changes:
+  - Vastly improved documentation
+  - Added `Id::autorelease`
+  - Added `Id::from_shared`
+  - Added a lot of forwarding implementations on `Id` for easier use
+  - `Id` and `WeakId` are now able to use the null-pointer optimization
+  - **BREAKING**: Added `T: Message` bounds on `Id`
+  - **BREAKING**: Remove `ShareId` type alias
+  - **BREAKING**: `Id` no longer have a default `Ownership`, you must specify
+    it everywhere as either `Id<T, Shared>` or `Id<T, Owned>`
+  - **BREAKING**: Sealed the `Ownership` trait
+  - **BREAKING**: Renamed `Id::from_ptr` to `Id::retain`
+  - **BREAKING**: Renamed `Id::from_retained_ptr` to `Id::new`
+  - **BREAKING**: Changed `Id::share` to a `From` implementation (usage of
+    `obj.share()` can be changed to `obj.into()`)
+  - **BREAKING**: Fixed soundness issues with missing `Send` and `Sync` bounds
+    on `Id` and `WeakId`
+* Added sealed (for now) trait `MessageReceiver` to specify types that can
+  be used as the receiver of a message (instead of only allowing pointer
+  types).
+* Add `MessageReceiver::send_super_message` method for dynamic selectors.
+
+### Changed
+* **BREAKING**: Most types are now `!UnwindSafe`, to discourage trying to use
+  them after an unwind. This restriction may be lifted in the future.
+* **BREAKING**: Most types are now `!Send` and `!Sync`. **TODO**: Reevaluate this!
 * A lot of smaller things.
+* **BREAKING**: Dynamic message sending with `Message::send_message` is moved
+  to `MessageReceiver`.
+* **BREAKING** Make `MessageArguments` a subtrait of `EncodeArguments`.
+* Allow an optional comma after each argument to `msg_send!`.
+
+### Removed
+* **BREAKING**: Removed `rc::StrongPtr`. Use `Option<rc::Id<Object, Shared>>`
+  instead (beware: This has stronger safety invariants!).
+* **BREAKING**: Removed `rc::WeakPtr`. Use `rc::WeakId<Object>` instead.
 
 ### Fixed
 * **BREAKING**: Stop unsafely dereferencing `msg_send!`s first argument. The
   `MessageReceiver` trait was introduced to avoid most breakage from this
   change.
-* Sealed the `rc::Ownership` trait.
-* Various smaller soundness issues.
-* Small performance tweaks (probably improvements) in message sending.
+
+
+## 0.3.0-alpha.2 - 2021-09-05
+
+### Added
+* Added `rc::AutoreleasePool` and `rc::AutoreleaseSafe` to make accessing
+  autoreleased objects safe, by binding references to it using the
+  `ptr_as_ref` and `ptr_as_mut` methods.
+
+### Changed
+* **BREAKING**: The closure in `rc::autoreleasepool` now takes an argument
+  `&rc::AutoreleasePool`. This reference can be given to functions like
+  `INSString::as_str` so that it knows which lifetime to bound the returned
+  `&str` with.
+
+  Simple migration:
+  ```rust
+  // Change
+  autoreleasepool(|| {
+      // Some code that autoreleases objects
+  });
+  // To
+  autoreleasepool(|_pool| {
+      // Some code that autoreleases objects
+  });
+  ```
+
+### Fixed
+* The encoding of `BOOL` on `GNUStep`.
+
+
+## 0.3.0-alpha.1 - 2021-09-02
+
+### Added
+* More documentation of safety requirements, and in general.
+
+### Changed
+* **BREAKING**: Change `objc-encode` dependency to `objc2-encode` version
+  `2.0.0-alpha.1`, and re-export the new `RefEncode` trait from that.
+* **BREAKING**: Require that the receiver, arguments and return types of
+  messages always implement `Encode`. This helps ensuring that only types made
+  to go across the FFI boundary (`repr(C)`, ...) may. These requirements were
+  already present when the `verify_message` feature was enabled.
+
+  This is a very _disruptive change_, since libraries are now required to
+  implement `Encode` and `RefEncode` for all types intended to go across the
+  FFI-boundary to Objective-C. The change is justified because it helps
+  ensuring that users only pass valid types to `msg_send!` (for example, this
+  prevents users from accidentally passing `Drop` types to `msg_send`).
+
+  See the following examples for how to implement these traits, and otherwise
+  refer to the documentation of `objc2-encode` (`v2.0.0-alpha.1` or above).
+  ```rust
+  use objc2::{Encode, Encoding, RefEncode};
+
+  /// Example struct.
+  #[repr(C)]
+  pub struct NSRange {
+      pub location: usize,
+      pub length: usize,
+  }
+  unsafe impl Encode for NSRange {
+      const ENCODING: Encoding<'static> = Encoding::Struct(
+          "_NSRange", // This is how the struct is defined in C header files
+          &[usize::ENCODING, usize::ENCODING]
+      );
+  }
+  unsafe impl RefEncode for NSRange {
+      const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+  }
+
+  /// Example object.
+  #[repr(C)]
+  pub struct __CFString(c_void);
+
+  pub type CFStringRef = *const __CFString;
+
+  unsafe impl RefEncode for __CFString {
+      const ENCODING_REF: Encoding<'static> = Encoding::Object;
+  }
+  ```
+* Temporarily disabled iOS tests.
+
+### Fixed
+* Statically find the correct `objc_msgSend[_X]` function to use based on the
+  `Encode` implementation of the return type. This fixes using functions that
+  return e.g. `type CGFloat = f32 / f64;`.
 * Documentation links.
 
+
+## 0.3.0-alpha.0 - 2021-08-29
+
+Note: This is the version that is, as of this writing, available on the
+`master` branch in the original `objc` project.
+
+### Added
+* Improve macro hygiene.
+  ```rust
+  // You can now do
+  use objc2::{sel, class, msg_send};
+  // Instead of
+  #[macro_use]
+  extern crate objc2;
+  ```
+* Update to Rust 2018.
+* Other internal improvements.
+
+### Changed
+* **BREAKING**: Forked the project, so the crate name is now `objc2`.
+* **BREAKING**: Updated encoding utilities to use `objc-encode`. See that for
+  how to use the updated type `Encoding` and trait `Encode`.
+
+  In short, you will likely need to change your implementations of `Encode`
+  like this:
+  ```rust
+  use objc2::{Encode, Encoding};
+
+  pub type CGFloat = ...; // Varies based on target_pointer_width
+
+  #[repr(C)]
+  pub struct NSPoint {
+      pub x: CGFloat,
+      pub y: CGFloat,
+  }
+
+  // Before
+  unsafe impl Encode for NSPoint {
+      fn encode() -> Encoding {
+          let encoding = format!(
+              "{{CGPoint={}{}}}",
+              CGFloat::encode().as_str(),
+              CGFloat::encode().as_str(),
+          );
+          unsafe { Encoding::from_str(&encoding) }
+      }
+  }
+
+  // After
+  unsafe impl Encode for NSPoint {
+      const ENCODING: Encoding<'static> = Encoding::Struct(
+          "CGPoint",
+          &[CGFloat::ENCODING, CGFloat::ENCODING]
+      );
+  }
+  ```
+* **BREAKING**: Updated public dependency `malloc_buf` to `1.0`.
+* **BREAKING**: `Method::return_type` and `Method::argument_type` now return
+  `Malloc<str>` instead of `Encoding`.
+* **BREAKING**: `Ivar::type_encoding` now return `&str` instead of `Encoding`.
+
 ### Removed
-* Removed hidden `sel_impl!` macro.
-* **BREAKING**: Removed `rc::StrongPtr`. Use `Option<rc::Id<Object, Shared>>`
-  instead (beware: This has stronger safety invariants!).
-* **BREAKING**: Removed `rc::WeakPtr`. Use `rc::WeakId<Object>` instead.
+* **BREAKING**: Removed hidden `sel_impl!` macro.
 
 
 ## [0.2.7] (`objc` crate) - 2019-10-19
