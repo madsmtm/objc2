@@ -6,9 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0-alpha.4 - 2021-11-22
+
 ### Added
-* **BREAKING**: GNUStep users must specify the appropriate feature flag on
-  `objc-sys` for the version they're using.
+* **BREAKING**: GNUStep users must depend on, and specify the appropriate
+  feature flag on `objc-sys` for the version they're using.
 * Moved `objc_exception` crate into `exception` module (under feature flag).
 * Added support for `_Complex` types.
 * Added `rc::SliceId`, `rc::SliceIdMut` and `rc::DefaultId` helper traits for
