@@ -52,7 +52,7 @@ were to copy it twice we could have a double free.
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/block2/0.1.6")]
+#![doc(html_root_url = "https://docs.rs/block2/0.2.0-alpha.0")]
 
 extern crate std;
 

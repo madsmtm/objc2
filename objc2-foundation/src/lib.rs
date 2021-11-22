@@ -5,7 +5,7 @@
 // TODO: #![warn(missing_docs)]
 #![deny(unsafe_op_in_unsafe_fn)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-foundation/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/objc2-foundation/0.2.0-alpha.1")]
 
 extern crate alloc;
 extern crate std;
