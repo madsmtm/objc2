@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-alpha.1 - 2021-11-22
+
 ### Added
 * Proper GNUStep support using `block-sys`. See that crate for usage.
 * Export `block-sys` as `ffi` module.
@@ -14,7 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Dependency on `objc_test_utils`.
 
 ### Fixed
-* `ConcreteBlock` longer allocates block descriptors on the heap.
+* `ConcreteBlock` no longer allocates block descriptors on the heap.
 * Better unwind safety in `ConcreteBlock::copy`.
 
 
