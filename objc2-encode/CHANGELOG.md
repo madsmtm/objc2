@@ -9,40 +9,63 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * **BREAKING**: Add `Encoding::LongDouble`, `Encoding::FloatComplex`,
   `Encoding::DoubleComplex` and `Encoding::LongDoubleComplex`.
+* Implement `RefEncode` for all number types that implement `Encode` (`bool`,
+  `i8`, `usize`, `f32`, `NonZeroU32`, and so on).
+* Implement `RefEncode` for `*const c_void` and `*mut c_void` (allowing
+  `void**` in C).
+* Implement `Encode` and `RefEncode` for `Wrapping<T>`, where `T` is properly
+  bound.
+
+### Changed
+* **BREAKING**: Make `Encoding` `#[non_exhaustive]`. This will help us in
+  evolving the API while minimizing further breaking changes.
+* Discourage using `bool::ENCODING`; use `objc2::Bool::ENCODING` instead.
+* Discourage using `()::ENCODING` for anything other than as a function return
+  type.
+
+
+## 2.0.0-alpha.1 - 2021-09-01
+
+### Added
 * Improved documentation.
-* **BREAKING**: Add `RefEncode` trait, which represents types whoose pointers
-  has an encoding. This means you now only have to implement `RefEncode`, and
-  not both `&Encode` and `&mut Encode`.
-* **BREAKING**: Implement `Encode` and `RefEncode` for all basic types (where
-  `T` is properly bound to implement it as well):
-  - Number types (`f32`, `u32`, ...)
-  - `NonZero` integer types
-  - `[T; LEN]` for all `LEN`s
+* Add `RefEncode` trait, which represents types whoose pointers has an
+  encoding. This means you now only have to implement `RefEncode`, and not
+  both `&Encode` and `&mut Encode`.
+  Additionally, encodings of pointers to pointers (to pointers, and so on) are
+  now supported.
+* Implement `Encode` for `NonZeroX` and `Option<NonZeroX>` integer types.
+* Implement `RefEncode` for arrays.
+* Implement `Encode` and `RefEncode` for (where `T` is properly bound):
   - `ManuallyDrop<T>`
   - `Pin<T>`
   - `NonNull<T>`
   - `Option<NonNull<T>>`
-  - `Wrapping<T>`
-  - `*const c_void`
-  - `*mut c_void`
-  - Some `extern "C" fn` pointers
-  - Pointers to pointers
-  - Pointers to pointers to pointers
-  - And so on
-* Add `EncodeArguments` from `objc` crate.
+* Add `EncodeArguments` trait, to represent an ordered group of functions
+  arguments, where each argument has an Objective-C type-encoding.
+  Previously in the `objc` crate.
+* Implement `Encode` and `RefEncode` for some `extern "C" fn` pointers.
+
+### Removed
+* **BREAKING**: Removed automatic `*const T: Encode` and `*mut T: Encode`
+  impls when when `&T: Encode` and `&mut T: Encode` was implemented.
+
+  Implement `T: RefEncode` instead!
+
+
+## 2.0.0-alpha.0 - 2021-09-01
+
+### Added
+* Improved documentation.
+* Support for targets with pointer-width 16
+* Implement `Encode` for all array lengths using const-generics.
+* Implement `Encode` for unsized pointer types as well.
 
 ### Changed
 * **BREAKING**: Forked the project, so it is now available under the name
   `objc2-encode`.
-* **BREAKING**: Made `Encoding` `#[non_exhaustive]`. This will help us in
-  evolving the API while minimizing further breaking changes.
-* Loosen `'static` bounds on references implementing `Encode`.
-* Discourage using `bool::ENCODING`; use `objc2::Bool::ENCODING` instead.
-
-### Removed
-* **BREAKING**: Automatic `*const T: Encode` and `*mut T: Encode` impls when
-  when `&T: Encode` and `&mut T: Encode` was implemented. Implement
-  `T: RefEncode` instead!
+* **BREAKING**: Changed type in `Encoding::BitField` from `u32` to `u8`.
+* **BREAKING**: Changed type in `Encoding::Array` from `u32` to `usize`.
+* **BREAKING**: Loosen `'static` bounds on references implementing `Encode`.
 
 
 ## [1.1.0] (`objc-encode` crate) - 2019-10-16
