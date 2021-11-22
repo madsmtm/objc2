@@ -47,4 +47,4 @@ winobjc = ["objc-sys/winobjc", "gnustep-1-8"]
 objfw = []
 
 [dependencies]
-objc-sys = { path = "../objc-sys", optional = true }
+objc-sys = { path = "../objc-sys", version = "0.1.0", optional = true }
