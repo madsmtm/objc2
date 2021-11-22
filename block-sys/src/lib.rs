@@ -9,7 +9,7 @@
 //! [ABI]: https://clang.llvm.org/docs/Block-ABI-Apple.html
 
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/block-sys/0.0.0")]
+#![doc(html_root_url = "https://docs.rs/block-sys/0.0.1")]
 
 // Ensure linkage actually happens
 #[cfg(feature = "gnustep-1-7")]
