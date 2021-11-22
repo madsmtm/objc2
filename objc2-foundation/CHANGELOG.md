@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## 0.2.0-alpha.2 - 2021-11-22
+
 ### Added
 * **BREAKING**: Added associated `Ownership` type to `INSObject` to specify
   whether the type can be mutated or not. `NSString` is a prime example of a
