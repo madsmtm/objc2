@@ -204,7 +204,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     // let y: &T = &*retained;
     // ```
     #[doc(alias = "objc_retain")]
-    #[cfg_attr(debug_assertions, inline)]
+    #[cfg_attr(not(debug_assertions), inline)]
     pub unsafe fn retain(ptr: NonNull<T>) -> Id<T, O> {
         let ptr = ptr.as_ptr() as *mut objc_sys::objc_object;
         // SAFETY: The caller upholds that the pointer is valid
@@ -218,7 +218,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
         unsafe { Self::new(res) }
     }
 
-    #[cfg_attr(debug_assertions, inline)]
+    #[cfg_attr(not(debug_assertions), inline)]
     fn autorelease_inner(self) -> *mut T {
         // Note that this (and the actual `autorelease`) is not an associated
         // function. This breaks the guideline that smart pointers shouldn't

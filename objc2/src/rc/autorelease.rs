@@ -67,7 +67,7 @@ impl AutoreleasePool {
 
     /// This will be removed in a future version.
     #[cfg_attr(
-        all(debug_assertions, not(feature = "unstable_autoreleasesafe")),
+        not(all(debug_assertions, not(feature = "unstable_autoreleasesafe"))),
         inline
     )]
     #[doc(hidden)]
