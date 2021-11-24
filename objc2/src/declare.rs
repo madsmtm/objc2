@@ -270,6 +270,8 @@ impl ClassDecl {
         assert!(success, "Failed to add protocol {:?}", proto);
     }
 
+    // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
+
     /// Registers the [`ClassDecl`], consuming it, and returns a reference to
     /// the newly registered [`Class`].
     pub fn register(self) -> &'static Class {
