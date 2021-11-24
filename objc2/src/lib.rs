@@ -91,7 +91,6 @@ mod macros;
 mod bool;
 mod cache;
 pub mod declare;
-mod encode;
 #[cfg(feature = "exception")]
 pub mod exception;
 mod message;

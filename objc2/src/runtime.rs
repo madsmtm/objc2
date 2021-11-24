@@ -31,7 +31,7 @@ pub use objc_sys::{
 pub use objc_sys::{BOOL, NO, YES};
 
 pub use super::bool::Bool;
-use crate::Encode;
+use crate::{Encode, Encoding, RefEncode};
 
 /// A type that represents a method selector.
 #[repr(transparent)]
@@ -97,6 +97,10 @@ impl Sel {
     pub fn as_ptr(&self) -> *const c_void {
         self.ptr as *const c_void
     }
+}
+
+unsafe impl Encode for Sel {
+    const ENCODING: Encoding<'static> = Encoding::Sel;
 }
 
 impl PartialEq for Sel {
@@ -315,6 +319,10 @@ impl Class {
     }
 }
 
+unsafe impl RefEncode for Class {
+    const ENCODING_REF: Encoding<'static> = Encoding::Class;
+}
+
 impl PartialEq for Class {
     fn eq(&self, other: &Class) -> bool {
         self.as_ptr() == other.as_ptr()
@@ -466,6 +474,10 @@ impl Object {
     }
 }
 
+unsafe impl RefEncode for Object {
+    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+}
+
 impl fmt::Debug for Object {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "<{:?}: {:p}>", self.class(), self.as_ptr())
@@ -474,7 +486,9 @@ impl fmt::Debug for Object {
 
 #[cfg(test)]
 mod tests {
-    use super::{Class, Protocol, Sel};
+    use alloc::string::ToString;
+
+    use super::{Class, Object, Protocol, Sel};
     use crate::test_utils;
     use crate::Encode;
 
@@ -572,5 +586,13 @@ mod tests {
             *obj.get_ivar("_foo")
         };
         assert!(result == 4);
+    }
+
+    #[test]
+    fn test_encode() {
+        assert!(<&Object>::ENCODING.to_string() == "@");
+        assert!(<*mut Object>::ENCODING.to_string() == "@");
+        assert!(<&Class>::ENCODING.to_string() == "#");
+        assert!(Sel::ENCODING.to_string() == ":");
     }
 }
