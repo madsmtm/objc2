@@ -1,10 +1,7 @@
 use core::mem;
-use objc_sys::{
-    objc_msgSend, objc_msgSendSuper, objc_msgSendSuper_stret, objc_msgSend_fp2ret,
-    objc_msgSend_fpret, objc_msgSend_stret,
-};
 
 use super::MsgSendFn;
+use crate::ffi;
 use crate::runtime::Imp;
 use crate::{Encode, Encoding};
 
@@ -19,20 +16,20 @@ unsafe impl<T: Encode> MsgSendFn for T {
         // See lines 156 to 172 in:
         // https://opensource.apple.com/source/objc4/objc4-818.2/runtime/message.h.auto.html
         if let Encoding::LongDouble = T::ENCODING {
-            objc_msgSend_fpret
+            ffi::objc_msgSend_fpret
         } else if let Encoding::LongDoubleComplex = T::ENCODING {
-            objc_msgSend_fp2ret
+            ffi::objc_msgSend_fp2ret
         } else if mem::size_of::<T>() <= 16 {
-            objc_msgSend
+            ffi::objc_msgSend
         } else {
-            objc_msgSend_stret
+            ffi::objc_msgSend_stret
         }
     };
     const MSG_SEND_SUPER: Imp = {
         if mem::size_of::<T>() <= 16 {
-            objc_msgSendSuper
+            ffi::objc_msgSendSuper
         } else {
-            objc_msgSendSuper_stret
+            ffi::objc_msgSendSuper_stret
         }
     };
 }

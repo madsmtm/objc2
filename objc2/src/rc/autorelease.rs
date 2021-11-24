@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
 use std::{cell::RefCell, thread_local, vec::Vec};
 
-use crate::runtime::{objc_autoreleasePoolPop, objc_autoreleasePoolPush};
+use crate::ffi;
 
 /// An Objective-C autorelease pool.
 ///
@@ -56,7 +56,7 @@ impl AutoreleasePool {
     #[doc(alias = "objc_autoreleasePoolPush")]
     unsafe fn new() -> Self {
         // TODO: Make this function pub when we're more certain of the API
-        let context = unsafe { objc_autoreleasePoolPush() };
+        let context = unsafe { ffi::objc_autoreleasePoolPush() };
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
         POOLS.with(|c| c.borrow_mut().push(context));
         Self {
@@ -143,7 +143,7 @@ impl Drop for AutoreleasePool {
     /// [revision `371`]: https://opensource.apple.com/source/objc4/objc4-371/runtime/objc-exception.m.auto.html
     #[doc(alias = "objc_autoreleasePoolPop")]
     fn drop(&mut self) {
-        unsafe { objc_autoreleasePoolPop(self.context) }
+        unsafe { ffi::objc_autoreleasePoolPop(self.context) }
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
         POOLS.with(|c| {
             assert_eq!(

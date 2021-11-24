@@ -3,8 +3,8 @@ use std::os::raw::c_char;
 use std::sync::Once;
 
 use crate::declare::{ClassDecl, ProtocolDecl};
-use crate::runtime::{self, Class, Object, Protocol, Sel};
-use crate::{Encode, Encoding, MessageReceiver};
+use crate::runtime::{Class, Object, Protocol, Sel};
+use crate::{ffi, Encode, Encoding, MessageReceiver};
 
 pub(crate) struct CustomObject {
     obj: *mut Object,
@@ -13,7 +13,7 @@ pub(crate) struct CustomObject {
 impl CustomObject {
     fn new(class: &Class) -> Self {
         let ptr = class as *const Class as _;
-        let obj = unsafe { runtime::class_createInstance(ptr, 0) };
+        let obj = unsafe { ffi::class_createInstance(ptr, 0) };
         CustomObject { obj: obj as _ }
     }
 }
@@ -46,7 +46,7 @@ impl Drop for CustomObject {
     fn drop(&mut self) {
         unsafe {
             #[allow(deprecated)]
-            runtime::object_dispose(self.obj as _);
+            ffi::object_dispose(self.obj as _);
         }
     }
 }
