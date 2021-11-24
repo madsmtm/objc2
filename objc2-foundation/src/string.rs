@@ -5,6 +5,7 @@ use core::slice;
 use core::str;
 use std::os::raw::c_char;
 
+use objc2::ffi;
 use objc2::msg_send;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
@@ -15,6 +16,10 @@ use super::{INSCopying, INSObject};
 const UTF8_ENCODING: usize = 4;
 #[cfg(gnustep)]
 const UTF8_ENCODING: i32 = 4;
+
+#[allow(unused)]
+#[allow(non_upper_case_globals)]
+const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
 pub unsafe trait INSString: INSObject {
     unsafe_def_fn!(fn new);
