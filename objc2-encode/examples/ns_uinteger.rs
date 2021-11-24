@@ -1,7 +1,7 @@
 //! Implementing `Encode` and `RefEncode` for `NSUInteger`.
 //!
 //! Note that in this case `NSUInteger` could actually just be a type alias
-//! for `usize`.
+//! for `usize`, and that's already available under `objc2::ffi::NSUInteger`.
 use objc2_encode::{Encode, Encoding, RefEncode};
 
 #[repr(transparent)]
