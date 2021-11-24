@@ -134,7 +134,8 @@ impl ClassDecl {
 
     /// Constructs a [`ClassDecl`] with the given name and superclass.
     ///
-    /// Returns [`None`] if the class couldn't be allocated.
+    /// Returns [`None`] if the class couldn't be allocated, or a class with
+    /// that name already exist.
     pub fn new(name: &str, superclass: &Class) -> Option<ClassDecl> {
         ClassDecl::with_superclass(name, Some(superclass))
     }
