@@ -70,14 +70,16 @@ runtimes, since support for reference-counting primitives like `objc_retain`
 and `objc_autoreleasePoolPop` is a vital requirement for most applications.
 
 Just so we're being clear, this rules out the GCC [`libobjc`][gcc-libobjc]
-runtime (see [this][gcc-objc-support]), and the [`mulle-objc`] runtime. (But
-support for [`ObjFW`] may be added). More information on different runtimes
-can be found in GNUStep's [Objective-C Compiler and Runtime FAQ][gnustep-faq].
+runtime (see [this][gcc-objc-support]), the [`mulle-objc`] runtime and
+[cocotron]. (But support for [`ObjFW`] may be added).
+More information on different runtimes can be found in GNUStep's
+[Objective-C Compiler and Runtime FAQ][gnustep-faq].
 
 [modern]: https://en.wikipedia.org/wiki/Objective-C#Modern_Objective-C
 [gcc-libobjc]: https://github.com/gcc-mirror/gcc/tree/master/libobjc
 [gcc-objc-support]: https://gcc.gnu.org/onlinedocs/gcc/Standards.html#Objective-C-and-Objective-C_002b_002b-Languages
 [`mulle-objc`]: https://github.com/mulle-objc/mulle-objc-runtime
+[cocotron]: https://cocotron.org/
 [`ObjFW`]: https://github.com/ObjFW/ObjFW
 [gnustep-faq]: http://wiki.gnustep.org/index.php/Objective-C_Compiler_and_Runtime_FAQ
 
