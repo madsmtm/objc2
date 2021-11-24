@@ -1,6 +1,5 @@
-use objc_sys::objc_super;
-
 use super::{conditional_try, Encode, MessageArguments, MessageError};
+use crate::ffi;
 use crate::runtime::{Class, Imp, Object, Sel};
 
 #[cfg(target_arch = "x86")]
@@ -48,11 +47,11 @@ where
     A: MessageArguments,
     R: Encode,
 {
-    let sup = objc_super {
+    let sup = ffi::objc_super {
         receiver: receiver as *mut _,
         super_class: superclass as *const Class as *const _,
     };
-    let receiver = &sup as *const objc_super as *mut Object;
+    let receiver = &sup as *const ffi::objc_super as *mut Object;
     let msg_send_fn = R::MSG_SEND_SUPER;
     unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }

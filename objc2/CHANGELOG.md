@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Export `objc-sys` as `ffi` module.
+
+### Changed
+* Deprecated `runtime::BOOL`, `runtime::YES` and `runtime::NO`. Use the
+  newtype `Bool` instead, or low-level `ffi::BOOL`, `ffi::YES` and `ffi::NO`.
+
+### Removed
+* **BREAKING**: Removed the raw FFI functions from the `runtime` module. These
+  are available in the new `ffi` module instead.
+
+### Fixed
+* An issue with inlining various `rc` methods.
+
 
 ## 0.3.0-alpha.4 - 2021-11-22
 
@@ -53,6 +67,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Add `MessageReceiver::send_super_message` method for dynamic selectors.
 
 ### Changed
+* **BREAKING**: Change types of parameters to FFI functions exported in the
+  `runtime` module.
 * **BREAKING**: Most types are now `!UnwindSafe`, to discourage trying to use
   them after an unwind. This restriction may be lifted in the future.
 * **BREAKING**: Most types are now `!Send` and `!Sync`. **TODO**: Reevaluate this!

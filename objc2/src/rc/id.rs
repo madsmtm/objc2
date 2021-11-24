@@ -7,6 +7,7 @@ use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
+use crate::ffi;
 use crate::Message;
 
 /// An pointer for Objective-C reference counted objects.
@@ -206,9 +207,9 @@ impl<T: Message, O: Ownership> Id<T, O> {
     #[doc(alias = "objc_retain")]
     #[cfg_attr(not(debug_assertions), inline)]
     pub unsafe fn retain(ptr: NonNull<T>) -> Id<T, O> {
-        let ptr = ptr.as_ptr() as *mut objc_sys::objc_object;
+        let ptr = ptr.as_ptr() as *mut ffi::objc_object;
         // SAFETY: The caller upholds that the pointer is valid
-        let res = unsafe { objc_sys::objc_retain(ptr) };
+        let res = unsafe { ffi::objc_retain(ptr) };
         debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
         // SAFETY: Non-null upheld by the caller, and `objc_retain` always
         // returns the same pointer, see:
@@ -226,12 +227,12 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // retained objects it is hard to imagine a case where the inner type
         // has a method with the same name.
 
-        let ptr = ManuallyDrop::new(self).ptr.as_ptr() as *mut objc_sys::objc_object;
+        let ptr = ManuallyDrop::new(self).ptr.as_ptr() as *mut ffi::objc_object;
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
         // And because of the ManuallyDrop, we don't call the Drop
         // implementation, so the object won't also be released there.
-        let res = unsafe { objc_sys::objc_autorelease(ptr) };
+        let res = unsafe { ffi::objc_autorelease(ptr) };
         debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
         res as *mut T
     }
@@ -351,7 +352,7 @@ impl<T, O: Ownership> Drop for Id<T, O> {
 
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count
-        unsafe { objc_sys::objc_release(self.ptr.as_ptr() as *mut _) };
+        unsafe { ffi::objc_release(self.ptr.as_ptr() as *mut _) };
     }
 }
 

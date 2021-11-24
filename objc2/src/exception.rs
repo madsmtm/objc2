@@ -14,16 +14,15 @@ use core::ptr;
 use core::ptr::NonNull;
 use std::os::raw::c_uchar;
 
+use crate::ffi;
 use crate::rc::{Id, Shared};
 use crate::runtime::Object;
-
-use objc_sys::{objc_exception_throw, objc_object};
 
 extern "C" {
     fn rust_objc_try_catch_exception(
         f: extern "C" fn(*mut c_void),
         context: *mut c_void,
-        error: *mut *mut objc_object,
+        error: *mut *mut ffi::objc_object,
     ) -> c_uchar;
 }
 
@@ -45,10 +44,10 @@ extern "C" {
 #[inline]
 pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
     let exception = match exception {
-        Some(id) => &**id as *const Object as *mut objc_object,
+        Some(id) => &**id as *const Object as *mut ffi::objc_object,
         None => ptr::null_mut(),
     };
-    unsafe { objc_exception_throw(exception) }
+    unsafe { ffi::objc_exception_throw(exception) }
 }
 
 unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Shared>>> {

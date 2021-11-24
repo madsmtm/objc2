@@ -1,6 +1,5 @@
-use objc_sys::{objc_msgSend, objc_msgSendSuper};
-
 use super::MsgSendFn;
+use crate::ffi;
 use crate::runtime::Imp;
 use crate::Encode;
 
@@ -8,6 +7,6 @@ use crate::Encode;
 ///
 /// <https://twitter.com/gparker/status/378079715824660480>
 unsafe impl<T: Encode> MsgSendFn for T {
-    const MSG_SEND: Imp = objc_msgSend;
-    const MSG_SEND_SUPER: Imp = objc_msgSendSuper;
+    const MSG_SEND: Imp = ffi::objc_msgSend;
+    const MSG_SEND_SUPER: Imp = ffi::objc_msgSendSuper;
 }

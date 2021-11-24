@@ -2,7 +2,8 @@ use core::ffi::c_void;
 use core::ptr;
 use core::sync::atomic::{AtomicPtr, Ordering};
 
-use crate::runtime::{self, Class, Sel};
+use crate::ffi;
+use crate::runtime::{Class, Sel};
 
 /// Allows storing a [`Sel`] in a static and lazily loading it.
 #[doc(hidden)]
@@ -26,7 +27,7 @@ impl CachedSel {
         // `Relaxed` should be fine since `sel_registerName` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);
         if ptr.is_null() {
-            let ptr = unsafe { runtime::sel_registerName(name.as_ptr() as *const _) };
+            let ptr = unsafe { ffi::sel_registerName(name.as_ptr() as *const _) };
             self.ptr.store(ptr as *mut _, Ordering::Relaxed);
             unsafe { Sel::from_ptr(ptr as *const _) }
         } else {
@@ -57,7 +58,7 @@ impl CachedClass {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);
         if ptr.is_null() {
-            let cls = unsafe { runtime::objc_getClass(name.as_ptr() as *const _) } as *const Class;
+            let cls = unsafe { ffi::objc_getClass(name.as_ptr() as *const _) } as *const Class;
             self.ptr.store(cls as *mut _, Ordering::Relaxed);
             unsafe { cls.as_ref() }
         } else {
