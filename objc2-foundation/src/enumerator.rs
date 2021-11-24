@@ -133,8 +133,9 @@ impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
         if let Some(buf) = next_buf {
             // Check if the collection was mutated
             if let Some(mutations) = mutations {
-                assert!(
-                    mutations == unsafe { *self.state.mutations_ptr },
+                assert_eq!(
+                    mutations,
+                    unsafe { *self.state.mutations_ptr },
                     "Mutation detected during enumeration of object {:p}",
                     self.object
                 );
@@ -178,7 +179,7 @@ mod tests {
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.iter();
-        assert!(enumerator.count() == 4);
+        assert_eq!(enumerator.count(), 4);
 
         let enumerator = array.iter();
         assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));
@@ -190,7 +191,7 @@ mod tests {
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.enumerator();
-        assert!(enumerator.count() == 4);
+        assert_eq!(enumerator.count(), 4);
 
         let enumerator = array.enumerator();
         assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));

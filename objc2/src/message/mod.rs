@@ -362,7 +362,7 @@ mod tests {
             let _: () = msg_send![obj, setFoo: 4u32];
             msg_send![obj, foo]
         };
-        assert!(result == 4);
+        assert_eq!(result, 4);
     }
 
     #[test]
@@ -375,7 +375,7 @@ mod tests {
             c: 3,
             d: 4,
         };
-        assert!(result == expected);
+        assert_eq!(result, expected);
     }
 
     #[cfg(not(feature = "verify_message"))]
@@ -411,11 +411,11 @@ mod tests {
         unsafe {
             let _: () = msg_send![obj, setFoo: 4u32];
             let foo: u32 = msg_send![super(obj, superclass), foo];
-            assert!(foo == 4);
+            assert_eq!(foo, 4);
 
             // The subclass is overriden to return foo + 2
             let foo: u32 = msg_send![obj, foo];
-            assert!(foo == 6);
+            assert_eq!(foo, 6);
         }
     }
 

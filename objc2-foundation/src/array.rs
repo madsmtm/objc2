@@ -428,7 +428,7 @@ mod tests {
     fn test_iter() {
         let array = sample_array(4);
 
-        assert!(array.iter().count() == 4);
+        assert_eq!(array.iter().count(), 4);
         assert!(array
             .iter()
             .enumerate()

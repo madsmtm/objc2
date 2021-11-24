@@ -547,7 +547,7 @@ mod tests {
     fn test_ivar() {
         let cls = test_utils::custom_class();
         let ivar = cls.instance_variable("_foo").unwrap();
-        assert!(ivar.name() == "_foo");
+        assert_eq!(ivar.name(), "_foo");
         assert!(ivar.type_encoding() == &<u32>::ENCODING);
         assert!(ivar.offset() > 0);
 
@@ -560,8 +560,8 @@ mod tests {
         let cls = test_utils::custom_class();
         let sel = Sel::register("foo");
         let method = cls.instance_method(sel).unwrap();
-        assert!(method.name().name() == "foo");
-        assert!(method.arguments_count() == 2);
+        assert_eq!(method.name().name(), "foo");
+        assert_eq!(method.arguments_count(), 2);
         assert!(*method.return_type() == <u32>::ENCODING);
         assert!(*method.argument_type(1).unwrap() == Sel::ENCODING);
 
@@ -572,18 +572,18 @@ mod tests {
     #[test]
     fn test_class() {
         let cls = test_utils::custom_class();
-        assert!(cls.name() == "CustomObject");
+        assert_eq!(cls.name(), "CustomObject");
         assert!(cls.instance_size() > 0);
         assert!(cls.superclass().is_none());
 
-        assert!(Class::get(cls.name()) == Some(cls));
+        assert_eq!(Class::get(cls.name()), Some(cls));
 
         let metaclass = cls.metaclass();
         // The metaclass of a root class is a subclass of the root class
-        assert!(metaclass.superclass().unwrap() == cls);
+        assert_eq!(metaclass.superclass().unwrap(), cls);
 
         let subclass = test_utils::custom_subclass();
-        assert!(subclass.superclass().unwrap() == cls);
+        assert_eq!(subclass.superclass().unwrap(), cls);
     }
 
     #[test]
@@ -596,7 +596,7 @@ mod tests {
     #[test]
     fn test_protocol() {
         let proto = test_utils::custom_protocol();
-        assert!(proto.name() == "CustomProtocol");
+        assert_eq!(proto.name(), "CustomProtocol");
         let class = test_utils::custom_class();
         assert!(class.conforms_to(proto));
         let class_protocols = class.adopted_protocols();
@@ -631,12 +631,12 @@ mod tests {
     #[test]
     fn test_object() {
         let mut obj = test_utils::custom_object();
-        assert!(obj.class() == test_utils::custom_class());
+        assert_eq!(obj.class(), test_utils::custom_class());
         let result: u32 = unsafe {
             obj.set_ivar("_foo", 4u32);
             *obj.get_ivar("_foo")
         };
-        assert!(result == 4);
+        assert_eq!(result, 4);
     }
 
     #[test]

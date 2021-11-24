@@ -6,6 +6,7 @@ use crate::declare::{ClassDecl, ProtocolDecl};
 use crate::runtime::{Class, Object, Protocol, Sel};
 use crate::{ffi, Encode, Encoding, MessageReceiver};
 
+#[derive(Debug)]
 pub(crate) struct CustomObject {
     obj: *mut Object,
 }
@@ -51,7 +52,7 @@ impl Drop for CustomObject {
     }
 }
 
-#[derive(Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 #[repr(C)]
 pub(crate) struct CustomStruct {
     pub(crate) a: u64,
