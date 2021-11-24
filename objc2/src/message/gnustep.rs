@@ -13,7 +13,13 @@ where
     A: MessageArguments,
     R: Encode,
 {
+    // If `receiver` is NULL, objc_msg_lookup will return a standard C-method
+    // taking two arguments, the receiver and the selector. Transmuting and
+    // calling such a function with multiple parameters is UB, so instead we
+    // just return NULL directly.
     if receiver.is_null() {
+        // SAFETY: Caller guarantees that messages to NULL-receivers only
+        // return pointers, and a mem::zeroed pointer is just a NULL-pointer.
         return unsafe { mem::zeroed() };
     }
 
@@ -33,6 +39,11 @@ where
     A: MessageArguments,
     R: Encode,
 {
+    if receiver.is_null() {
+        // SAFETY: Same as in `send_unverified`.
+        return unsafe { mem::zeroed() };
+    }
+
     let sup = ffi::objc_super {
         receiver: receiver as *mut _,
         super_class: superclass as *const Class as *const _,
