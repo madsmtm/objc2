@@ -119,7 +119,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
         #[cfg(feature = "verify_message")]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
-            let this = unsafe { this.cast::<Object>().as_ref() };
+            let this = unsafe { this.as_ref() };
             let cls = if let Some(this) = this {
                 this.class()
             } else {
