@@ -200,6 +200,12 @@ fn main() {
     // Add CC arguments
     // Assume the compiler is clang; if it isn't, this is probably going to
     // fail anyways, since we're using newer runtimes than GCC supports.
+    //
+    // TODO: Should add we these, or is it someone else's responsibility?
+    // - `-mios-simulator-version-min={}`
+    // - `-miphoneos-version-min={}`
+    // - `-mmacosx-version-min={}`
+    // - ...
     println!(
         "cargo:cc_args=-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={}",
         // TODO: -fobjc-weak ?
