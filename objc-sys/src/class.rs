@@ -90,6 +90,7 @@ extern "C" {
         name: *const objc_selector,
     ) -> *const objc_method;
     pub fn class_getClassVariable(cls: *const objc_class, name: *const c_char) -> *const objc_ivar;
+    #[cfg(apple)]
     pub fn class_getImageName(cls: *const objc_class) -> *const c_char;
     pub fn class_getInstanceMethod(
         cls: *const objc_class,
