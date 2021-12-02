@@ -106,6 +106,39 @@ pub enum Encoding<'a> {
     // NSLog(@"Encoding: %s", @encode(const int*)); // -> r^i
 }
 
+impl Encoding<'_> {
+    /// Check if one encoding is equivalent to another.
+    pub fn equivalent_to(&self, other: &Self) -> bool {
+        // For now, because we don't allow representing qualifiers
+        self == other
+    }
+
+    /// Check if an encoding is equivalent to the given string representation.
+    pub fn equivalent_to_str(&self, s: &str) -> bool {
+        // if the given encoding can be successfully removed from the start
+        // and an empty string remains, they were fully equivalent!
+        if let Some(res) = self.equivalent_to_start_of_str(s) {
+            res.is_empty()
+        } else {
+            false
+        }
+    }
+
+    /// Check if an encoding is equivalent to the start of the given string
+    /// representation.
+    ///
+    /// If it is equivalent, the remaining part of the string is returned.
+    /// Otherwise this returns [`None`].
+    pub fn equivalent_to_start_of_str<'a>(&self, s: &'a str) -> Option<&'a str> {
+        // strip leading qualifiers
+        let s = s.trim_start_matches(parse::QUALIFIERS);
+
+        // TODO: Allow missing/"?" names in structs and unions?
+
+        parse::rm_enc_prefix(s, self)
+    }
+}
+
 impl fmt::Display for Encoding<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         use Encoding::*;
@@ -164,13 +197,13 @@ impl fmt::Display for Encoding<'_> {
 
 impl PartialEq<str> for Encoding<'_> {
     fn eq(&self, other: &str) -> bool {
-        parse::eq_enc(other, self)
+        self.equivalent_to_str(other)
     }
 }
 
 impl PartialEq<Encoding<'_>> for str {
     fn eq(&self, other: &Encoding<'_>) -> bool {
-        parse::eq_enc(self, other)
+        other.equivalent_to_str(self)
     }
 }
 

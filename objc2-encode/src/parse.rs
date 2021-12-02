@@ -3,7 +3,7 @@
 
 use crate::Encoding;
 
-const QUALIFIERS: &[char] = &[
+pub(crate) const QUALIFIERS: &[char] = &[
     'r', // const
     'n', // in
     'N', // inout
@@ -13,7 +13,7 @@ const QUALIFIERS: &[char] = &[
     'V', // oneway
 ];
 
-fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a str> {
+pub(crate) fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a str> {
     use Encoding::*;
     let code = match *enc {
         Char => "c",
@@ -91,15 +91,6 @@ fn chomp_int(s: &str) -> Option<(usize, &str)> {
 
 fn rm_int_prefix(s: &str, other: usize) -> Option<&str> {
     chomp_int(s).and_then(|(n, t)| if other == n { Some(t) } else { None })
-}
-
-pub(crate) fn eq_enc(s: &str, enc: &Encoding<'_>) -> bool {
-    // strip qualifiers
-    let s = s.trim_start_matches(QUALIFIERS);
-
-    // if the given encoding can be successfully removed from the start
-    // and an empty string remains, they were equal!
-    rm_enc_prefix(s, enc).map_or(false, str::is_empty)
 }
 
 #[cfg(test)]
