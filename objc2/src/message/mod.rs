@@ -119,7 +119,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
         #[cfg(feature = "verify_message")]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
-            let this = unsafe { this.cast::<Object>().as_ref() };
+            let this = unsafe { this.as_ref() };
             let cls = if let Some(this) = this {
                 this.class()
             } else {
@@ -362,7 +362,7 @@ mod tests {
             let _: () = msg_send![obj, setFoo: 4u32];
             msg_send![obj, foo]
         };
-        assert!(result == 4);
+        assert_eq!(result, 4);
     }
 
     #[test]
@@ -375,21 +375,33 @@ mod tests {
             c: 3,
             d: 4,
         };
-        assert!(result == expected);
+        assert_eq!(result, expected);
     }
 
     #[cfg(not(feature = "verify_message"))]
     #[test]
     fn test_send_message_nil() {
         let nil: *mut Object = ::core::ptr::null_mut();
-        let result: usize = unsafe { msg_send![nil, hash] };
-        assert!(result == 0);
 
         let result: *mut Object = unsafe { msg_send![nil, description] };
         assert!(result.is_null());
 
+        // This result should not be relied on
+        let result: usize = unsafe { msg_send![nil, hash] };
+        assert_eq!(result, 0);
+
+        // This result should not be relied on
+        #[cfg(target_pointer_width = "16")]
+        let result: f32 = 0.0;
+        #[cfg(target_pointer_width = "32")]
+        let result: f32 = unsafe { msg_send![nil, floatValue] };
+        #[cfg(target_pointer_width = "64")]
         let result: f64 = unsafe { msg_send![nil, doubleValue] };
-        assert!(result == 0.0);
+        assert_eq!(result, 0.0);
+
+        // This result should not be relied on
+        let result: *mut Object = unsafe { msg_send![nil, multiple: 1u32, arguments: 2i8] };
+        assert!(result.is_null());
     }
 
     #[test]
@@ -399,11 +411,11 @@ mod tests {
         unsafe {
             let _: () = msg_send![obj, setFoo: 4u32];
             let foo: u32 = msg_send![super(obj, superclass), foo];
-            assert!(foo == 4);
+            assert_eq!(foo, 4);
 
             // The subclass is overriden to return foo + 2
             let foo: u32 = msg_send![obj, foo];
-            assert!(foo == 6);
+            assert_eq!(foo, 6);
         }
     }
 

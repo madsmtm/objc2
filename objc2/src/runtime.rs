@@ -180,6 +180,9 @@ impl Method {
         }
     }
 
+    // method_getTypeEncoding, efficient version of:
+    // -> return_type() + sum(argument_type(i) for i in arguments_count())
+
     /// Returns the number of arguments accepted by self.
     pub fn arguments_count(&self) -> usize {
         unsafe { ffi::method_getNumberOfArguments(self.as_ptr()) as usize }
@@ -189,6 +192,9 @@ impl Method {
     pub fn implementation(&self) -> Imp {
         unsafe { ffi::method_getImplementation(self.as_ptr()).expect("Null IMP") }
     }
+
+    // unsafe fn set_implementation(&mut self, imp: Imp) -> Imp;
+    // unsafe fn exchange_implementation(&mut self, other: &mut Method);
 }
 
 impl Class {
@@ -209,6 +215,9 @@ impl Class {
             }
         }
     }
+
+    // Same as `get`, but ...
+    // fn lookup(name: &str) -> Option<&'static Self>;
 
     /// Obtains the list of registered class definitions.
     pub fn classes() -> Malloc<[&'static Self]> {
@@ -247,6 +256,13 @@ impl Class {
         unsafe { &*(ffi::object_getClass(self.as_ptr() as *const _) as *const Self) }
     }
 
+    // objc_getMetaClass -> Same as `Class::get(name).metaclass()`
+
+    #[allow(unused)]
+    fn is_metaclass(&self) -> bool {
+        unsafe { Bool::from_raw(ffi::class_isMetaClass(self.as_ptr())).is_true() }
+    }
+
     /// Returns the size of instances of self.
     pub fn instance_size(&self) -> usize {
         unsafe { ffi::class_getInstanceSize(self.as_ptr()) as usize }
@@ -266,6 +282,8 @@ impl Class {
         }
     }
 
+    // fn class_method(&self, sel: Sel) -> Option<&Method>;
+
     /// Returns the ivar for a specified instance variable of self, or
     /// [`None`] if self has no ivar with the given name.
     pub fn instance_variable(&self, name: &str) -> Option<&Ivar> {
@@ -278,6 +296,24 @@ impl Class {
                 Some(&*(ivar as *const Ivar))
             }
         }
+    }
+
+    #[allow(unused)]
+    fn instance_variable_layout(&self) -> Option<&[u8]> {
+        let layout = unsafe { ffi::class_getIvarLayout(self.as_ptr()) };
+        if layout.is_null() {
+            None
+        } else {
+            Some(unsafe { CStr::from_ptr(layout as *const _) }.to_bytes())
+        }
+    }
+
+    #[allow(unused)]
+    fn class_variable(&self, name: &str) -> Option<&Ivar> {
+        let name = CString::new(name).unwrap();
+        let ivar = unsafe { ffi::class_getClassVariable(self.as_ptr(), name.as_ptr()) };
+        // SAFETY: TODO
+        unsafe { ivar.cast::<Ivar>().as_ref() }
     }
 
     /// Describes the instance methods implemented by self.
@@ -313,6 +349,17 @@ impl Class {
             Malloc::from_array(ivars as *mut _, count as usize)
         }
     }
+
+    // fn property(&self, name: &str) -> Option<&Property>;
+    // fn properties(&self) -> Malloc<[&Property]>;
+    // unsafe fn replace_method(&self, name: Sel, imp: Imp, types: &str) -> Imp;
+    // unsafe fn replace_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
+    // unsafe fn set_ivar_layout(&mut self, layout: &[u8]);
+    // fn method_imp(&self, name: Sel) -> Imp; // + _stret
+    // fn responds_to(&self, sel: Sel) -> bool;
+
+    // fn get_version(&self) -> u32;
+    // unsafe fn set_version(&mut self, version: u32);
 }
 
 unsafe impl RefEncode for Class {
@@ -472,6 +519,10 @@ impl Object {
         // SAFETY: Invariants upheld by caller
         unsafe { *self.get_mut_ivar::<T>(name) = value };
     }
+
+    // objc_setAssociatedObject
+    // objc_getAssociatedObject
+    // objc_removeAssociatedObjects
 }
 
 unsafe impl RefEncode for Object {
@@ -496,7 +547,7 @@ mod tests {
     fn test_ivar() {
         let cls = test_utils::custom_class();
         let ivar = cls.instance_variable("_foo").unwrap();
-        assert!(ivar.name() == "_foo");
+        assert_eq!(ivar.name(), "_foo");
         assert!(ivar.type_encoding() == &<u32>::ENCODING);
         assert!(ivar.offset() > 0);
 
@@ -509,8 +560,8 @@ mod tests {
         let cls = test_utils::custom_class();
         let sel = Sel::register("foo");
         let method = cls.instance_method(sel).unwrap();
-        assert!(method.name().name() == "foo");
-        assert!(method.arguments_count() == 2);
+        assert_eq!(method.name().name(), "foo");
+        assert_eq!(method.arguments_count(), 2);
         assert!(*method.return_type() == <u32>::ENCODING);
         assert!(*method.argument_type(1).unwrap() == Sel::ENCODING);
 
@@ -521,18 +572,18 @@ mod tests {
     #[test]
     fn test_class() {
         let cls = test_utils::custom_class();
-        assert!(cls.name() == "CustomObject");
+        assert_eq!(cls.name(), "CustomObject");
         assert!(cls.instance_size() > 0);
         assert!(cls.superclass().is_none());
 
-        assert!(Class::get(cls.name()) == Some(cls));
+        assert_eq!(Class::get(cls.name()), Some(cls));
 
         let metaclass = cls.metaclass();
         // The metaclass of a root class is a subclass of the root class
-        assert!(metaclass.superclass().unwrap() == cls);
+        assert_eq!(metaclass.superclass().unwrap(), cls);
 
         let subclass = test_utils::custom_subclass();
-        assert!(subclass.superclass().unwrap() == cls);
+        assert_eq!(subclass.superclass().unwrap(), cls);
     }
 
     #[test]
@@ -545,7 +596,7 @@ mod tests {
     #[test]
     fn test_protocol() {
         let proto = test_utils::custom_protocol();
-        assert!(proto.name() == "CustomProtocol");
+        assert_eq!(proto.name(), "CustomProtocol");
         let class = test_utils::custom_class();
         assert!(class.conforms_to(proto));
         let class_protocols = class.adopted_protocols();
@@ -580,12 +631,12 @@ mod tests {
     #[test]
     fn test_object() {
         let mut obj = test_utils::custom_object();
-        assert!(obj.class() == test_utils::custom_class());
+        assert_eq!(obj.class(), test_utils::custom_class());
         let result: u32 = unsafe {
             obj.set_ivar("_foo", 4u32);
             *obj.get_ivar("_foo")
         };
-        assert!(result == 4);
+        assert_eq!(result, 4);
     }
 
     #[test]

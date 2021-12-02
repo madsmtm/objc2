@@ -43,7 +43,7 @@ struct. For example, to create a block that adds two `i32`s, we could write:
 use block2::ConcreteBlock;
 let block = ConcreteBlock::new(|a: i32, b: i32| a + b);
 let block = block.copy();
-assert!(unsafe { block.call((5, 8)) } == 13);
+assert_eq!(unsafe { block.call((5, 8)) }, 13);
 ```
 
 It is important to copy your block to the heap (with the `copy` method) before

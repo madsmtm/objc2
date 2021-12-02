@@ -134,7 +134,8 @@ impl ClassDecl {
 
     /// Constructs a [`ClassDecl`] with the given name and superclass.
     ///
-    /// Returns [`None`] if the class couldn't be allocated.
+    /// Returns [`None`] if the class couldn't be allocated, or a class with
+    /// that name already exist.
     pub fn new(name: &str, superclass: &Class) -> Option<ClassDecl> {
         ClassDecl::with_superclass(name, Some(superclass))
     }
@@ -180,8 +181,9 @@ impl ClassDecl {
     {
         let encs = F::Args::ENCODINGS;
         let sel_args = count_args(sel);
-        assert!(
-            sel_args == encs.len(),
+        assert_eq!(
+            sel_args,
+            encs.len(),
             "Selector accepts {} arguments, but function accepts {}",
             sel_args,
             encs.len(),
@@ -216,8 +218,9 @@ impl ClassDecl {
     {
         let encs = F::Args::ENCODINGS;
         let sel_args = count_args(sel);
-        assert!(
-            sel_args == encs.len(),
+        assert_eq!(
+            sel_args,
+            encs.len(),
             "Selector accepts {} arguments, but function accepts {}",
             sel_args,
             encs.len(),
@@ -269,6 +272,8 @@ impl ClassDecl {
         assert!(success, "Failed to add protocol {:?}", proto);
     }
 
+    // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
+
     /// Registers the [`ClassDecl`], consuming it, and returns a reference to
     /// the newly registered [`Class`].
     pub fn register(self) -> &'static Class {
@@ -316,8 +321,9 @@ impl ProtocolDecl {
     {
         let encs = Args::ENCODINGS;
         let sel_args = count_args(sel);
-        assert!(
-            sel_args == encs.len(),
+        assert_eq!(
+            sel_args,
+            encs.len(),
             "Selector accepts {} arguments, but function accepts {}",
             sel_args,
             encs.len(),
@@ -377,19 +383,15 @@ mod tests {
     fn test_custom_class() {
         // Registering the custom class is in test_utils
         let obj = test_utils::custom_object();
-        unsafe {
-            let _: () = msg_send![obj, setFoo: 13u32];
-            let result: u32 = msg_send![obj, foo];
-            assert!(result == 13);
-        }
+        let _: () = unsafe { msg_send![obj, setFoo: 13u32] };
+        let result: u32 = unsafe { msg_send![obj, foo] };
+        assert_eq!(result, 13);
     }
 
     #[test]
     fn test_class_method() {
         let cls = test_utils::custom_class();
-        unsafe {
-            let result: u32 = msg_send![cls, classFoo];
-            assert!(result == 7);
-        }
+        let result: u32 = unsafe { msg_send![cls, classFoo] };
+        assert_eq!(result, 7);
     }
 }

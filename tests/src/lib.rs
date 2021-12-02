@@ -43,7 +43,7 @@ mod tests {
     fn test_call_block() {
         let block = get_int_block_with(13);
         unsafe {
-            assert!(block.call(()) == 13);
+            assert_eq!(block.call(()), 13);
         }
     }
 
@@ -51,7 +51,7 @@ mod tests {
     fn test_call_block_args() {
         let block = get_add_block_with(13);
         unsafe {
-            assert!(block.call((2,)) == 15);
+            assert_eq!(block.call((2,)), 15);
         }
     }
 
@@ -59,14 +59,14 @@ mod tests {
     fn test_create_block() {
         let block = ConcreteBlock::new(|| 13);
         let result = invoke_int_block(&block);
-        assert!(result == 13);
+        assert_eq!(result, 13);
     }
 
     #[test]
     fn test_create_block_args() {
         let block = ConcreteBlock::new(|a: i32| a + 5);
         let result = invoke_add_block(&block, 6);
-        assert!(result == 11);
+        assert_eq!(result, 11);
     }
 
     #[test]
@@ -74,10 +74,10 @@ mod tests {
         let s = "Hello!".to_string();
         let expected_len = s.len() as i32;
         let block = ConcreteBlock::new(move || s.len() as i32);
-        assert!(invoke_int_block(&block) == expected_len);
+        assert_eq!(invoke_int_block(&block), expected_len);
 
         let copied = block.copy();
-        assert!(invoke_int_block(&copied) == expected_len);
+        assert_eq!(invoke_int_block(&copied), expected_len);
     }
 
     #[test]
@@ -89,6 +89,6 @@ mod tests {
         }
 
         let block = make_block();
-        assert!(invoke_int_block(&block) == 7);
+        assert_eq!(invoke_int_block(&block), 7);
     }
 }

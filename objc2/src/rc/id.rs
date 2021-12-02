@@ -460,16 +460,16 @@ mod tests {
             let obj: *mut Object = msg_send![obj, init];
             Id::new(NonNull::new_unchecked(obj))
         };
-        assert!(retain_count(&obj) == 1);
+        assert_eq!(retain_count(&obj), 1);
 
         let obj: Id<_, Shared> = obj.into();
-        assert!(retain_count(&obj) == 1);
+        assert_eq!(retain_count(&obj), 1);
 
         let cloned = obj.clone();
-        assert!(retain_count(&cloned) == 2);
-        assert!(retain_count(&obj) == 2);
+        assert_eq!(retain_count(&cloned), 2);
+        assert_eq!(retain_count(&obj), 2);
 
         drop(obj);
-        assert!(retain_count(&cloned) == 1);
+        assert_eq!(retain_count(&cloned), 1);
     }
 }

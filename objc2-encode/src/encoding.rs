@@ -198,8 +198,8 @@ mod tests {
         let i = Encoding::Int;
         let p = Encoding::Pointer(&Encoding::Int);
 
-        assert!(p == p);
-        assert!(p != i);
+        assert_eq!(p, p);
+        assert_ne!(p, i);
     }
 
     #[test]
@@ -213,8 +213,8 @@ mod tests {
         let i = Encoding::Int;
         let c = Encoding::Char;
 
-        assert!(i == i);
-        assert!(i != c);
+        assert_eq!(i, i);
+        assert_ne!(i, c);
     }
 
     #[test]
@@ -227,8 +227,8 @@ mod tests {
     #[test]
     fn test_struct_eq() {
         let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
-        assert!(s == s);
-        assert!(s != Encoding::Int);
+        assert_eq!(s, s);
+        assert_ne!(s, Encoding::Int);
     }
 
     #[test]
@@ -241,7 +241,7 @@ mod tests {
     #[test]
     fn test_union_eq() {
         let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
-        assert!(u == u);
-        assert!(u != Encoding::Int);
+        assert_eq!(u, u);
+        assert_ne!(u, Encoding::Int);
     }
 }

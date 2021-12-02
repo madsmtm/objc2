@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `NSInteger` and `NSUInteger` (type aliases of `isize`/`usize`).
 * `NSIntegerMax`, `NSIntegerMin` and `NSUIntegerMax`.
 
+### Changed
+* **BREAKING**: `cfg`-guarded `class_getImageName` to only appear on Apple
+  platforms.
+
+  This is a breaking change, but it will be allowed in a semver-compatible
+  release, since it is unlikely that anyone is using it, and the symbol is not
+  present on other platforms anyhow, so users will just get an error at
+  link-time.
+
 
 ## 0.1.0 - 2021-11-22
 
