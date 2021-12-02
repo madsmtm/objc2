@@ -42,13 +42,13 @@ unsafe impl Encode for MyObject {
     );
 }
 
-assert_eq!(&MyObject::ENCODING, "{MyObject=fs}");
+assert!(MyObject::ENCODING.equivalent_to_str("{MyObject=fs}"));
 
 unsafe impl RefEncode for MyObject {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
-assert_eq!(&MyObject::ENCODING_REF, "^{MyObject=fs}");
+assert!(MyObject::ENCODING_REF.equivalent_to_str("^{MyObject=fs}"));
 ```
 
 An `Encoding` can be compared with an encoding string from the Objective-C
@@ -56,7 +56,7 @@ runtime:
 
 ```rust
 use objc2_encode::Encode;
-assert!(&i32::ENCODING == "i");
+assert!(i32::ENCODING.equivalent_to_str("i"));
 ```
 
 `Encoding` implements `Display` as its string representation. This can be

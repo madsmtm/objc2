@@ -28,7 +28,7 @@ unsafe impl RefEncode for NSDecimal {
 }
 
 fn main() {
-    assert_eq!(&NSDecimal::ENCODING_REF, "^{?=cCCC[38C]}");
+    assert!(NSDecimal::ENCODING_REF.equivalent_to_str("^{?=cCCC[38C]}"));
     // Does not compile:
     // println!("{:?}", NSDecimal::ENCODING);
 }

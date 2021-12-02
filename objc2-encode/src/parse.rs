@@ -107,26 +107,31 @@ mod tests {
                 Encoding::Int,
             ],
         );
-        assert!(eq_enc("{A={B=ci}ci}", &enc));
-        assert!(!eq_enc("{A={B=ci}ci", &enc));
+        assert!(enc.equivalent_to_str("{A={B=ci}ci}"));
+        assert_eq!(
+            enc.equivalent_to_start_of_str("{A={B=ci}ci}def"),
+            Some("def")
+        );
+        assert!(!enc.equivalent_to_str("{A={B=ci}ci"));
     }
 
     #[test]
     fn test_bitfield() {
-        assert!(eq_enc("b32", &Encoding::BitField(32)));
-        assert!(!eq_enc("b", &Encoding::BitField(32)));
-        assert!(!eq_enc("b-32", &Encoding::BitField(32)));
+        assert!(Encoding::BitField(32).equivalent_to_str("b32"));
+        assert!(!Encoding::BitField(32).equivalent_to_str("b32a"));
+        assert!(!Encoding::BitField(32).equivalent_to_str("b"));
+        assert!(!Encoding::BitField(32).equivalent_to_str("b-32"));
     }
 
     #[test]
     fn test_qualifiers() {
-        assert!(eq_enc("Vv", &Encoding::Void));
-        assert!(eq_enc("r*", &Encoding::String));
+        assert!(Encoding::Void.equivalent_to_str("Vv"));
+        assert!(Encoding::String.equivalent_to_str("r*"));
     }
 
     #[test]
     fn test_unicode() {
         let fields = &[Encoding::Char, Encoding::Int];
-        assert!(eq_enc("{☃=ci}", &Encoding::Struct("☃", fields)));
+        assert!(Encoding::Struct("☃", fields).equivalent_to_str("{☃=ci}"));
     }
 }

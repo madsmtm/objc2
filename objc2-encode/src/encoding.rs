@@ -216,14 +216,14 @@ mod tests {
     fn test_array_display() {
         let e = Encoding::Array(12, &Encoding::Int);
         assert_eq!(e.to_string(), "[12i]");
-        assert_eq!(&e, "[12i]");
+        assert!(e.equivalent_to_str("[12i]"));
     }
 
     #[test]
     fn test_pointer_display() {
         let e = Encoding::Pointer(&Encoding::Int);
         assert_eq!(e.to_string(), "^i");
-        assert_eq!(&e, "^i");
+        assert!(e.equivalent_to_str("^i"));
     }
 
     #[test]
@@ -238,7 +238,7 @@ mod tests {
     #[test]
     fn test_int_display() {
         assert_eq!(Encoding::Int.to_string(), "i");
-        assert_eq!(&Encoding::Int, "i");
+        assert!(Encoding::Int.equivalent_to_str("i"));
     }
 
     #[test]
@@ -254,7 +254,7 @@ mod tests {
     fn test_struct_display() {
         let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
         assert_eq!(s.to_string(), "{CGPoint=ci}");
-        assert_eq!(&s, "{CGPoint=ci}");
+        assert!(s.equivalent_to_str("{CGPoint=ci}"));
     }
 
     #[test]
@@ -268,7 +268,7 @@ mod tests {
     fn test_union_display() {
         let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
         assert_eq!(u.to_string(), "(Onion=ci)");
-        assert_eq!(&u, "(Onion=ci)");
+        assert!(u.equivalent_to_str("(Onion=ci)"));
     }
 
     #[test]

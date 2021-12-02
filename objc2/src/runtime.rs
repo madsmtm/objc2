@@ -452,7 +452,7 @@ impl fmt::Debug for Protocol {
 fn get_ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
     match cls.instance_variable(name) {
         Some(ivar) => {
-            assert!(ivar.type_encoding() == &T::ENCODING);
+            assert!(T::ENCODING.equivalent_to_str(ivar.type_encoding()));
             ivar.offset()
         }
         None => panic!("Ivar {} not found on class {:?}", name, cls),
@@ -548,7 +548,7 @@ mod tests {
         let cls = test_utils::custom_class();
         let ivar = cls.instance_variable("_foo").unwrap();
         assert_eq!(ivar.name(), "_foo");
-        assert!(ivar.type_encoding() == &<u32>::ENCODING);
+        assert!(<u32>::ENCODING.equivalent_to_str(ivar.type_encoding()));
         assert!(ivar.offset() > 0);
 
         let ivars = cls.instance_variables();
@@ -562,8 +562,8 @@ mod tests {
         let method = cls.instance_method(sel).unwrap();
         assert_eq!(method.name().name(), "foo");
         assert_eq!(method.arguments_count(), 2);
-        assert!(*method.return_type() == <u32>::ENCODING);
-        assert!(*method.argument_type(1).unwrap() == Sel::ENCODING);
+        assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
+        assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
 
         let methods = cls.instance_methods();
         assert!(methods.len() > 0);
@@ -641,9 +641,9 @@ mod tests {
 
     #[test]
     fn test_encode() {
-        assert!(<&Object>::ENCODING.to_string() == "@");
-        assert!(<*mut Object>::ENCODING.to_string() == "@");
-        assert!(<&Class>::ENCODING.to_string() == "#");
-        assert!(Sel::ENCODING.to_string() == ":");
+        assert_eq!(<&Object>::ENCODING.to_string(), "@");
+        assert_eq!(<*mut Object>::ENCODING.to_string(), "@");
+        assert_eq!(<&Class>::ENCODING.to_string(), "#");
+        assert_eq!(Sel::ENCODING.to_string(), ":");
     }
 }

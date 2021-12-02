@@ -30,7 +30,10 @@ pub unsafe trait INSValue: INSObject {
     fn get(&self) -> Self::Value {
         if let Some(encoding) = self.encoding() {
             // TODO: This can be a debug assertion (?)
-            assert!(&Self::Value::ENCODING == encoding, "Wrong encoding");
+            assert!(
+                Self::Value::ENCODING.equivalent_to_str(encoding),
+                "Wrong encoding"
+            );
             unsafe { self.get_unchecked() }
         } else {
             panic!("Missing NSValue encoding");
@@ -101,13 +104,13 @@ mod tests {
     fn test_value() {
         let val = NSValue::new(13u32);
         assert_eq!(val.get(), 13);
-        assert!(&u32::ENCODING == val.encoding().unwrap());
+        assert!(u32::ENCODING.equivalent_to_str(val.encoding().unwrap()));
     }
 
     #[test]
     fn test_value_nsrange() {
         let val = NSValue::new(NSRange::from(1..2));
-        assert!(&NSRange::ENCODING == val.encoding().unwrap());
+        assert!(NSRange::ENCODING.equivalent_to_str(val.encoding().unwrap()));
         let range: NSRange = unsafe { objc2::msg_send![val, rangeValue] };
         assert_eq!(range, NSRange::from(1..2));
         // NSValue -getValue is broken on GNUStep for some types
