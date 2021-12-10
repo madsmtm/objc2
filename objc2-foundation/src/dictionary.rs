@@ -10,7 +10,7 @@ use objc2::{class, msg_send};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator};
 
-unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D, D::Ownership>
+unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D, Shared>
 where
     D: INSDictionary,
     T: INSCopying<Output = D::Key>,
@@ -34,8 +34,6 @@ pub unsafe trait INSDictionary: INSObject {
     type Key: INSObject;
     type Value: INSObject;
     type ValueOwnership: Ownership;
-
-    unsafe_def_fn!(fn new);
 
     #[doc(alias = "count")]
     fn len(&self) -> usize {
@@ -124,7 +122,7 @@ pub unsafe trait INSDictionary: INSObject {
     fn from_keys_and_objects<T>(
         keys: &[&T],
         vals: Vec<Id<Self::Value, Self::ValueOwnership>>,
-    ) -> Id<Self, Self::Ownership>
+    ) -> Id<Self, Shared>
     where
         T: INSCopying<Output = Self::Key>,
     {
@@ -148,9 +146,11 @@ pub struct NSDictionary<K, V> {
 
 object_impl!(unsafe NSDictionary<K, V>);
 
-unsafe impl<K: INSObject, V: INSObject> INSObject for NSDictionary<K, V> {
-    type Ownership = Shared;
+impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
+    unsafe_def_fn!(pub fn new -> Shared);
+}
 
+unsafe impl<K: INSObject, V: INSObject> INSObject for NSDictionary<K, V> {
     fn class() -> &'static Class {
         class!(NSDictionary)
     }

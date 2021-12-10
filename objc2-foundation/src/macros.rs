@@ -7,7 +7,7 @@
 /// example: `NSAutoreleasePool` does not have this). Finally the ownership
 /// must be correct for this class.
 macro_rules! object_struct {
-    (unsafe $name:ident, $ownership:ty) => {
+    (unsafe $name:ident) => {
         // TODO: `extern type`
         #[repr(C)]
         pub struct $name {
@@ -21,8 +21,6 @@ macro_rules! object_struct {
         }
 
         unsafe impl $crate::INSObject for $name {
-            type Ownership = $ownership;
-
             fn class() -> &'static ::objc2::runtime::Class {
                 ::objc2::class!($name)
             }
@@ -77,8 +75,8 @@ macro_rules! object_impl {
 }
 
 macro_rules! unsafe_def_fn {
-    ($v:vis fn new) => {
-        $v fn new() -> Id<Self, <Self as INSObject>::Ownership> {
+    ($v:vis fn new -> $o:ty) => {
+        $v fn new() -> Id<Self, $o> {
             let cls = <Self as INSObject>::class();
             unsafe { Id::new(NonNull::new_unchecked(msg_send![cls, new])) }
         }

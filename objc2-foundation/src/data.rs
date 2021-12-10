@@ -6,10 +6,12 @@ use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
-use objc2::rc::{Id, Owned, Shared};
+use objc2::rc::{Id, Owned, Ownership, Shared};
 
 pub unsafe trait INSData: INSObject {
-    unsafe_def_fn!(fn new);
+    type Ownership: Ownership;
+
+    unsafe_def_fn!(fn new -> Self::Ownership);
 
     fn len(&self) -> usize {
         unsafe { msg_send![self, length] }
@@ -90,11 +92,14 @@ pub unsafe trait INSData: INSObject {
     }
 }
 
-object_struct!(unsafe NSData, Shared);
+object_struct!(unsafe NSData);
 
-unsafe impl INSData for NSData {}
+unsafe impl INSData for NSData {
+    type Ownership = Shared;
+}
 
 unsafe impl INSCopying for NSData {
+    type Ownership = Shared;
     type Output = NSData;
 }
 
@@ -150,13 +155,16 @@ pub unsafe trait INSMutableData: INSData {
     }
 }
 
-object_struct!(unsafe NSMutableData, Owned);
+object_struct!(unsafe NSMutableData);
 
-unsafe impl INSData for NSMutableData {}
+unsafe impl INSData for NSMutableData {
+    type Ownership = Owned;
+}
 
 unsafe impl INSMutableData for NSMutableData {}
 
 unsafe impl INSCopying for NSMutableData {
+    type Ownership = Shared;
     type Output = NSData;
 }
 

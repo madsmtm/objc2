@@ -22,8 +22,6 @@ const UTF8_ENCODING: i32 = 4;
 const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
 pub unsafe trait INSString: INSObject {
-    unsafe_def_fn!(fn new);
-
     fn len(&self) -> usize {
         unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
     }
@@ -86,7 +84,7 @@ pub unsafe trait INSString: INSObject {
         str::from_utf8(bytes).unwrap()
     }
 
-    fn from_str(string: &str) -> Id<Self, Self::Ownership> {
+    fn from_str(string: &str) -> Id<Self, Shared> {
         let cls = Self::class();
         let bytes = string.as_ptr() as *const c_void;
         unsafe {
@@ -102,11 +100,16 @@ pub unsafe trait INSString: INSObject {
     }
 }
 
-object_struct!(unsafe NSString, Shared);
+object_struct!(unsafe NSString);
+
+impl NSString {
+    unsafe_def_fn!(pub fn new -> Shared);
+}
 
 unsafe impl INSString for NSString {}
 
 unsafe impl INSCopying for NSString {
+    type Ownership = Shared;
     type Output = NSString;
 }
 

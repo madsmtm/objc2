@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* **BREAKING**: Added associated `Ownership` type to `NSCopying`.
+* **BREAKING**: Added associated `Ownership` type to `INSData`.
+* **BREAKING**: Added associated `Ownership` type to `INSArray`.
+
+### Changed
+* **BREAKING**: Made some creation methods a bit less generic (e.g.
+  `INSDictionary::from_keys_and_objects` now always returns `Id<_, Shared>`).
+
+### Removed
+* **BREAKING**: Removed associated `Ownership` type from `INSObject`; instead,
+  it is present on the types that actually need it (for example `NSCopying`).
+
 ## 0.2.0-alpha.2 - 2021-11-22
 
 ### Added
