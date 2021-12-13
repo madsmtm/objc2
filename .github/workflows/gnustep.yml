@@ -10,6 +10,7 @@ env:
   RUST_BACKTRACE: 1
   # Faster compilation and error on warnings
   RUSTFLAGS: "-C debuginfo=0 -D warnings"
+  CARGO_TERM_VERBOSE: true
   CC: clang
   CXX: clang++
 
@@ -101,17 +102,17 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: check
-        args: --verbose --no-default-features --features gnustep-1-9
+        args: --no-default-features --features gnustep-1-9
 
     - name: Test without features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --verbose --no-fail-fast --no-default-features --features gnustep-1-9
+        args: --no-fail-fast --no-default-features --features gnustep-1-9
 
     - name: Test with features
       uses: actions-rs/cargo@v1
       with:
         command: test
         # Not using --all-features because some features are nightly-only
-        args: --verbose --no-fail-fast --features gnustep-1-9,block,exception,catch_all,verify_message
+        args: --no-fail-fast --features gnustep-1-9,block,exception,catch_all,verify_message

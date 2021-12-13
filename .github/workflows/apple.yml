@@ -10,6 +10,7 @@ env:
   RUST_BACKTRACE: 1
   # Faster compilation and error on warnings
   RUSTFLAGS: "-C debuginfo=0 -D warnings"
+  CARGO_TERM_VERBOSE: true
 
 jobs:
   fmt:
@@ -61,28 +62,30 @@ jobs:
     - name: Check documentation
       uses: actions-rs/cargo@v1
       with:
-        # TODO: Disallow warnings here
         command: doc
-        args: --verbose --no-deps --document-private-items
+        args: --no-deps --document-private-items
 
     - name: Test without features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --verbose --no-fail-fast --no-default-features
+        args: --no-fail-fast --no-default-features
 
     - name: Test with features
       uses: actions-rs/cargo@v1
       with:
         command: test
         # Not using --all-features because some features are nightly-only
-        args: --verbose --no-fail-fast --features block,exception,catch_all,verify_message
+        args: --no-fail-fast --features block,exception,catch_all,verify_message
 
   build_32_bit:
     name: Build 32-bit
 
     # 32-bit support was removed in 10.15, so we can't test the binary, only build it
     runs-on: macos-10.15
+
+    env:
+      CARGO_BUILD_TARGET: i686-apple-darwin
 
     steps:
     - uses: actions/checkout@v2
@@ -105,4 +108,4 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: --verbose -Zbuild-std --tests --target i686-apple-darwin --features exception,catch_all,verify_message
+        args: -Zbuild-std --tests --features exception,catch_all,verify_message
