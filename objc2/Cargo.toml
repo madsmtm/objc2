@@ -39,6 +39,8 @@ cc = { version = "1", optional = true }
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 
+features = ["exception"]
+
 targets = [
     # MacOS
     "x86_64-apple-darwin",
