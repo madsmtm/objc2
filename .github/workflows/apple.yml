@@ -77,3 +77,32 @@ jobs:
         command: test
         # Not using --all-features because some features are nightly-only
         args: --verbose --no-fail-fast --features block,exception,catch_all,verify_message
+
+  build_32_bit:
+    name: Build 32-bit
+
+    # 32-bit support was removed in 10.15, so we can't test the binary, only build it
+    runs-on: macos-10.15
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install nightly Rust # required for -Zbuild-std
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        profile: minimal
+        override: true
+        components: rust-src
+
+    - name: Download macOS 10.13 SDK (supports 32-bit)
+      run: |
+        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/10.13/MacOSX10.13.tar.bz2
+        tar -xyf MacOSX10.13.tar.bz2
+        echo "SDKROOT=$(pwd)/MacOSX10.13.sdk" >> $GITHUB_ENV
+
+    - name: Build with features
+      uses: actions-rs/cargo@v1
+      with:
+        command: build
+        args: --verbose -Zbuild-std --tests --target i686-apple-darwin --features exception,catch_all,verify_message
