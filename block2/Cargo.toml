@@ -21,3 +21,6 @@ license = "MIT"
 # Loose dependency, because objc2-encode is not expected to change much more
 objc2-encode = { path = "../objc2-encode", version = "^2.0.0-beta.0" }
 block-sys = { path = "../block-sys", version = "0.0.1" }
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"

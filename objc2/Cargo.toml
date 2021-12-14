@@ -35,3 +35,6 @@ objc2-encode = { path = "../objc2-encode", version = "^2.0.0-beta.0" }
 
 [build-dependencies]
 cc = { version = "1", optional = true }
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"
