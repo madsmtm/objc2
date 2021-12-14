@@ -38,3 +38,17 @@ cc = { version = "1", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
+
+targets = [
+    # MacOS
+    "x86_64-apple-darwin",
+    "i686-apple-darwin",
+    # iOS
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    # GNUStep
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+]
+
+cargo-args = ["-Z", "build-std"]
