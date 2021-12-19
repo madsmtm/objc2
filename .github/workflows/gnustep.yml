@@ -10,6 +10,7 @@ env:
   RUST_BACKTRACE: 1
   # Faster compilation and error on warnings
   RUSTFLAGS: "-C debuginfo=0 -D warnings"
+  RUSTDOCFLAGS: "-D warnings"
   CARGO_TERM_VERBOSE: true
   CC: clang
   CXX: clang++
