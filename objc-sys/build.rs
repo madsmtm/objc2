@@ -164,11 +164,16 @@ fn main() {
 
     let clang_runtime = match &runtime {
         Apple(runtime) => {
-            let clang_runtime_str = match runtime {
-                MacOS(_) => "macosx",
-                IOS(_) => "ios",
-                WatchOS(_) => "watchos",
-                TvOS(_) => "ios", // ??
+            // The fragile runtime is expected on i686-apple-darwin, see:
+            // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Driver/ToolChains/Darwin.h#L228-L231
+            // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Driver/ToolChains/Clang.cpp#L3639-L3640
+            let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+            let clang_runtime_str = match (runtime, &*target_arch) {
+                (MacOS(_), "x86") => "macosx-fragile",
+                (MacOS(_), _) => "macosx",
+                (IOS(_), _) => "ios",
+                (WatchOS(_), _) => "watchos",
+                (TvOS(_), _) => "ios", // ??
             };
             match runtime {
                 MacOS(version) | IOS(version) | WatchOS(version) | TvOS(version) => {

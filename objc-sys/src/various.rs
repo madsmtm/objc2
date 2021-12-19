@@ -3,8 +3,6 @@ use core::ffi::c_void;
 use std::os::raw::c_uint;
 use std::os::raw::{c_char, c_int};
 
-#[cfg(apple)]
-use crate::objc_class;
 use crate::{objc_AssociationPolicy, objc_object, OpaqueData, BOOL};
 
 /// An opaque type that represents an instance variable.
@@ -24,13 +22,14 @@ pub type IMP = Option<unsafe extern "C" fn()>;
 /// Remember that this is non-null!
 #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
 pub type objc_hook_getClass =
-    unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const objc_class) -> BOOL;
+    unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::objc_class) -> BOOL;
 
 /// Not available on macOS x86.
 ///
 /// Remember that this is non-null!
 #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
-pub type objc_hook_lazyClassNamer = unsafe extern "C" fn(cls: *const objc_class) -> *const c_char;
+pub type objc_hook_lazyClassNamer =
+    unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
 
 extern "C" {
     pub fn imp_getBlock(imp: IMP) -> *mut objc_object;
