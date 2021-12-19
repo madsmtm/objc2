@@ -17,3 +17,6 @@ readme = "README.md"
 repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2-encode/"
 license = "MIT"
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"

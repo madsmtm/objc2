@@ -117,7 +117,16 @@ fn main() {
             unimplemented!()
         }
         (false, false, false) => {
-            panic!("Must specify the desired runtime (using features) on non-apple platforms.")
+            // Choose sensible defaults when generating docs
+            if std::env::var("DOCS_RS").is_ok() {
+                if target_os == "windows" {
+                    WinObjC
+                } else {
+                    GNUStep(1, 7)
+                }
+            } else {
+                panic!("Must specify the desired runtime (using features) on non-apple platforms.")
+            }
         }
         _ => {
             panic!("Invalid feature combination; only one runtime may be selected!")
@@ -173,7 +182,8 @@ fn main() {
                 (MacOS(_), _) => "macosx",
                 (IOS(_), _) => "ios",
                 (WatchOS(_), _) => "watchos",
-                (TvOS(_), _) => "ios", // ??
+                // tvOS doesn't have it's own -fobjc-runtime string
+                (TvOS(_), _) => "ios",
             };
             match runtime {
                 MacOS(version) | IOS(version) | WatchOS(version) | TvOS(version) => {

@@ -48,3 +48,6 @@ objfw = []
 
 [dependencies]
 objc-sys = { path = "../objc-sys", version = "0.1.0", optional = true }
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"

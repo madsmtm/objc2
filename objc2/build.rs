@@ -9,6 +9,11 @@ fn main() {
 
     #[cfg(feature = "exception")]
     {
+        if std::env::var("DOCS_RS").is_ok() {
+            // docs.rs doesn't have clang, so skip building this. The
+            // documentation will still work since it doesn't need to link.
+            return;
+        }
         println!("cargo:rerun-if-changed=extern/exception.m");
 
         let mut builder = cc::Build::new();
