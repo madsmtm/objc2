@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added common trait impls on `rc::Owned` and `rc::Shared` (useful in generic
   contexts).
 * Implement `RefEncode` for `runtime::Protocol`.
+* Added `Message` and `MessageReceiver` implementation for `ManuallyDrop<T>`
+  (where `T` is appropriately bound). This allows patterns like:
+  ```rust
+  let obj = Id::new(msg_send![class!(MyObject), alloc]);
+  let obj = ManuallyDrop::new(obj);
+  // `init` takes ownership and possibly returns a new object.
+  let obj = Id::new(msg_send![obj, init]);
+  ```
 
 ### Changed
 * Deprecated `runtime::BOOL`, `runtime::YES` and `runtime::NO`. Use the
