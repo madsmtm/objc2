@@ -130,6 +130,17 @@ mod tests {
     }
 
     #[test]
+    fn test_equality() {
+        let s1 = NSString::from_str("abc");
+        let s2 = NSString::from_str("abc");
+        assert_eq!(s1, s1);
+        assert_eq!(s1, s2);
+
+        let s3 = NSString::from_str("def");
+        assert_ne!(s1, s3);
+    }
+
+    #[test]
     fn test_empty() {
         let s1 = NSString::from_str("");
         let s2 = NSString::new();

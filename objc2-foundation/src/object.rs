@@ -51,13 +51,11 @@ mod tests {
     use objc2::rc::autoreleasepool;
 
     #[test]
-    fn test_is_equal() {
+    fn test_equality() {
         let obj1 = NSObject::new();
-        assert!(obj1.is_equal(&*obj1));
-        assert_eq!(obj1, obj1); // Using forwarding impl on Id
+        assert_eq!(obj1, obj1);
 
         let obj2 = NSObject::new();
-        assert!(!obj1.is_equal(&*obj2));
         assert_ne!(obj1, obj2);
     }
 

@@ -84,9 +84,18 @@ unsafe impl<T: 'static> INSCopying for NSValue<T> {
     type Output = NSValue<T>;
 }
 
+/// ```compile_fail
+/// use objc2_foundation::NSValue;
+/// fn needs_eq<T: Eq>() {}
+/// needs_eq::<NSValue<f32>>();
+/// ```
+#[cfg(doctest)]
+pub struct NSValueFloatNotEq;
+
 #[cfg(test)]
 mod tests {
     use crate::{INSValue, NSRange, NSValue};
+    use objc2::rc::{Id, Shared};
     use objc2::Encode;
 
     #[test]
@@ -94,6 +103,27 @@ mod tests {
         let val = NSValue::new(13u32);
         assert_eq!(val.get(), 13);
         assert!(&u32::ENCODING == val.encoding().unwrap());
+    }
+
+    #[test]
+    fn test_equality() {
+        let val1 = NSValue::new(123u32);
+        let val2 = NSValue::new(123u32);
+        assert_eq!(val1, val1);
+        assert_eq!(val1, val2);
+
+        let val3 = NSValue::new(456u32);
+        assert_ne!(val1, val3);
+    }
+
+    #[test]
+    fn test_equality_across_types() {
+        let val1 = NSValue::new(123);
+        let val2: Id<NSValue<u32>, Shared> = NSValue::new(123);
+        let val2: Id<NSValue<u8>, Shared> = unsafe { core::mem::transmute(val2) };
+
+        // Test that `objCType` is checked when comparing equality
+        assert_ne!(val1, val2);
     }
 
     #[test]

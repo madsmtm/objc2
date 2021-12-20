@@ -359,12 +359,20 @@ mod tests {
     use objc2::rc::{autoreleasepool, Id, Owned, Shared};
 
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
-    use crate::{INSObject, INSString, NSObject, NSString};
+    use crate::{INSObject, INSString, INSValue, NSObject, NSString, NSValue};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
         for _ in 0..len {
             vec.push(NSObject::new());
+        }
+        NSArray::from_vec(vec)
+    }
+
+    fn sample_number_array(len: u8) -> Id<NSArray<NSValue<u8>, Shared>, Shared> {
+        let mut vec = Vec::with_capacity(len as usize);
+        for i in 0..len {
+            vec.push(NSValue::new(i));
         }
         NSArray::from_vec(vec)
     }
@@ -380,6 +388,21 @@ mod tests {
 
         let array = sample_array(4);
         assert_eq!(array.len(), 4);
+    }
+
+    #[test]
+    fn test_equality() {
+        let array1 = sample_array(3);
+        let array2 = sample_array(3);
+        assert_ne!(array1, array2);
+
+        let array1 = sample_number_array(3);
+        let array2 = sample_number_array(3);
+        assert_eq!(array1, array2);
+
+        let array1 = sample_number_array(3);
+        let array2 = sample_number_array(4);
+        assert_ne!(array1, array2);
     }
 
     #[test]
