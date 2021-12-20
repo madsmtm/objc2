@@ -29,10 +29,11 @@ unsafe fn from_refs<A: INSArray>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
 }
 
 pub unsafe trait INSArray: INSObject {
+    type Ownership: Ownership;
     type Item: INSObject;
     type ItemOwnership: Ownership;
 
-    unsafe_def_fn!(fn new);
+    unsafe_def_fn!(fn new -> Self::Ownership);
 
     #[doc(alias = "count")]
     fn len(&self) -> usize {
@@ -165,6 +166,8 @@ pub unsafe trait INSArray: INSObject {
 ///
 /// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
 /// TODO: Can we make it impossible? Should we?
+///
+/// What about `Id<NSArray<T, Shared>, Owned>`?
 pub struct NSArray<T, O: Ownership> {
     item: PhantomData<Id<T, O>>,
 }
@@ -172,6 +175,12 @@ pub struct NSArray<T, O: Ownership> {
 object_impl!(unsafe NSArray<T, O: Ownership>);
 
 unsafe impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
+    fn class() -> &'static Class {
+        class!(NSArray)
+    }
+}
+
+unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     /// The `NSArray` itself (length and number of items) is always immutable,
     /// but we would like to know when we're the only owner of the array, to
     /// allow mutation of the array's items.
@@ -179,12 +188,6 @@ unsafe impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
     /// We only implement `INSCopying` when `O = Shared`, so this is safe.
     type Ownership = O;
 
-    fn class() -> &'static Class {
-        class!(NSArray)
-    }
-}
-
-unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     type Item = T;
     type ItemOwnership = O;
 }
@@ -192,6 +195,7 @@ unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
 // Copying only possible when ItemOwnership = Shared
 
 unsafe impl<T: INSObject> INSCopying for NSArray<T, Shared> {
+    type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
@@ -322,14 +326,13 @@ pub struct NSMutableArray<T, O: Ownership> {
 object_impl!(unsafe NSMutableArray<T, O: Ownership>);
 
 unsafe impl<T: INSObject, O: Ownership> INSObject for NSMutableArray<T, O> {
-    type Ownership = Owned;
-
     fn class() -> &'static Class {
         class!(NSMutableArray)
     }
 }
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
+    type Ownership = Owned;
     type Item = T;
     type ItemOwnership = O;
 }
@@ -339,6 +342,7 @@ unsafe impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O>
 // Copying only possible when ItemOwnership = Shared
 
 unsafe impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
+    type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 

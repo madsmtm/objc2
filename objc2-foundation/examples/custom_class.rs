@@ -23,7 +23,7 @@ unsafe impl RefEncode for MYObject {
 }
 
 impl MYObject {
-    fn new() -> Id<Self, <Self as INSObject>::Ownership> {
+    fn new() -> Id<Self, Owned> {
         let cls = Self::class();
         unsafe { Id::new(NonNull::new_unchecked(msg_send![cls, new])) }
     }
@@ -48,8 +48,6 @@ unsafe impl Message for MYObject {}
 static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 
 unsafe impl INSObject for MYObject {
-    type Ownership = Owned;
-
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();

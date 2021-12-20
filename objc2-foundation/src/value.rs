@@ -54,7 +54,7 @@ pub unsafe trait INSValue: INSObject {
         result.map(|s| unsafe { CStr::from_ptr(s.as_ptr()) }.to_str().unwrap())
     }
 
-    fn new(value: Self::Value) -> Id<Self, Self::Ownership> {
+    fn new(value: Self::Value) -> Id<Self, Shared> {
         let cls = Self::class();
         let bytes = &value as *const Self::Value as *const c_void;
         let encoding = CString::new(Self::Value::ENCODING.to_string()).unwrap();
@@ -77,8 +77,6 @@ pub struct NSValue<T> {
 object_impl!(unsafe NSValue<T>);
 
 unsafe impl<T: 'static> INSObject for NSValue<T> {
-    type Ownership = Shared;
-
     fn class() -> &'static Class {
         class!(NSValue)
     }
@@ -89,6 +87,7 @@ unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
 }
 
 unsafe impl<T: 'static> INSCopying for NSValue<T> {
+    type Ownership = Shared;
     type Output = NSValue<T>;
 }
 

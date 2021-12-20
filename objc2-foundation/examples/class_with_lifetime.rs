@@ -53,8 +53,6 @@ impl<'a> MyObject<'a> {
 static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 
 unsafe impl INSObject for MyObject<'_> {
-    type Ownership = Owned;
-
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
