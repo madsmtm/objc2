@@ -139,10 +139,13 @@ pub unsafe trait INSDictionary: INSObject {
 }
 
 object!(
-    unsafe pub struct<K: INSObject, V: INSObject> NSDictionary<K, V> {
+    unsafe pub struct NSDictionary<K, V> {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
     }
+    impl where
+        K: INSObject,
+        V: INSObject,
 );
 
 impl<K: INSObject, V: INSObject> NSDictionary<K, V> {

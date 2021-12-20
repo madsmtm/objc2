@@ -169,9 +169,10 @@ object!(
     /// TODO: Can we make it impossible? Should we?
     ///
     /// What about `Id<NSArray<T, Shared>, Owned>`?
-    unsafe pub struct<T: INSObject, O: Ownership> NSArray<T, O: Ownership> {
+    unsafe pub struct NSArray<T, O: Ownership> {
         item: PhantomData<Id<T, O>>,
     }
+    impl where T: INSObject
 );
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
@@ -314,9 +315,10 @@ pub unsafe trait INSMutableArray: INSArray {
 }
 
 object!(
-    unsafe pub struct<T: INSObject, O: Ownership> NSMutableArray<T, O: Ownership> {
+    unsafe pub struct NSMutableArray<T, O: Ownership> {
         item: PhantomData<Id<T, O>>,
     }
+    impl where T: INSObject
 );
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {

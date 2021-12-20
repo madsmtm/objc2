@@ -70,9 +70,10 @@ pub unsafe trait INSValue: INSObject {
 }
 
 object!(
-    unsafe pub struct<(T: 'static)> NSValue<T> {
+    unsafe pub struct NSValue<T> {
         value: PhantomData<T>,
     }
+    impl where T: 'static
 );
 
 unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
