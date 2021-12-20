@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `Encoding::equivalent_to`, `Encoding::equivalent_to_str` and
   `Encoding::equivalent_to_start_of_str` methods for more precise comparison
   semantics.
+* Added `Encode` and `RefEncode` implementations for `Option` function
+  pointers.
 
 ### Changed
 * Discourage comparing `str` with `Encoding` using `PartialEq`. This trait

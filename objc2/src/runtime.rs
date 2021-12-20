@@ -595,7 +595,7 @@ impl fmt::Debug for Object {
 mod tests {
     use alloc::string::ToString;
 
-    use super::{Bool, Class, Ivar, Method, Object, Protocol, Sel};
+    use super::{Bool, Class, Imp, Ivar, Method, Object, Protocol, Sel};
     use crate::test_utils;
     use crate::Encode;
 
@@ -701,6 +701,8 @@ mod tests {
         assert_eq!(<*mut Object>::ENCODING.to_string(), "@");
         assert_eq!(<&Class>::ENCODING.to_string(), "#");
         assert_eq!(Sel::ENCODING.to_string(), ":");
+        assert_eq!(Imp::ENCODING.to_string(), "^?");
+        assert_eq!(<Option<Imp>>::ENCODING.to_string(), "^?");
     }
 
     #[test]
