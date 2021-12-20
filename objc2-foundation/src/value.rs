@@ -7,10 +7,9 @@ use core::str;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
+use objc2::msg_send;
 use objc2::rc::{Id, Shared};
-use objc2::runtime::Class;
 use objc2::Encode;
-use objc2::{class, msg_send};
 
 use super::{INSCopying, INSObject};
 
@@ -70,17 +69,11 @@ pub unsafe trait INSValue: INSObject {
     }
 }
 
-pub struct NSValue<T> {
-    value: PhantomData<T>,
-}
-
-object_impl!(unsafe NSValue<T>);
-
-unsafe impl<T: 'static> INSObject for NSValue<T> {
-    fn class() -> &'static Class {
-        class!(NSValue)
+object!(
+    unsafe pub struct<(T: 'static)> NSValue<T> {
+        value: PhantomData<T>,
     }
-}
+);
 
 unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
     type Value = T;

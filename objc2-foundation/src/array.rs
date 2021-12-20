@@ -5,9 +5,9 @@ use core::marker::PhantomData;
 use core::ops::{Index, Range};
 use core::ptr::NonNull;
 
+use objc2::msg_send;
 use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
-use objc2::runtime::{Class, Object};
-use objc2::{class, msg_send};
+use objc2::runtime::Object;
 
 use super::{
     INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSComparisonResult, NSEnumerator,
@@ -158,27 +158,21 @@ pub unsafe trait INSArray: INSObject {
     }
 }
 
-/// TODO
-///
-/// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
-/// to the elements (without modifying the array itself), and
-/// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
-///
-/// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
-/// TODO: Can we make it impossible? Should we?
-///
-/// What about `Id<NSArray<T, Shared>, Owned>`?
-pub struct NSArray<T, O: Ownership> {
-    item: PhantomData<Id<T, O>>,
-}
-
-object_impl!(unsafe NSArray<T, O: Ownership>);
-
-unsafe impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
-    fn class() -> &'static Class {
-        class!(NSArray)
+object!(
+    /// TODO
+    ///
+    /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
+    /// to the elements (without modifying the array itself), and
+    /// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
+    ///
+    /// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
+    /// TODO: Can we make it impossible? Should we?
+    ///
+    /// What about `Id<NSArray<T, Shared>, Owned>`?
+    unsafe pub struct<T: INSObject, O: Ownership> NSArray<T, O: Ownership> {
+        item: PhantomData<Id<T, O>>,
     }
-}
+);
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     /// The `NSArray` itself (length and number of items) is always immutable,
@@ -319,17 +313,11 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 }
 
-pub struct NSMutableArray<T, O: Ownership> {
-    item: PhantomData<Id<T, O>>,
-}
-
-object_impl!(unsafe NSMutableArray<T, O: Ownership>);
-
-unsafe impl<T: INSObject, O: Ownership> INSObject for NSMutableArray<T, O> {
-    fn class() -> &'static Class {
-        class!(NSMutableArray)
+object!(
+    unsafe pub struct<T: INSObject, O: Ownership> NSMutableArray<T, O: Ownership> {
+        item: PhantomData<Id<T, O>>,
     }
-}
+);
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Ownership = Owned;

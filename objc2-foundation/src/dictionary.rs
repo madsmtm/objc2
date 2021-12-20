@@ -4,9 +4,8 @@ use core::marker::PhantomData;
 use core::ops::Index;
 use core::ptr::{self, NonNull};
 
+use objc2::msg_send;
 use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
-use objc2::runtime::Class;
-use objc2::{class, msg_send};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator};
 
@@ -139,21 +138,15 @@ pub unsafe trait INSDictionary: INSObject {
     }
 }
 
-pub struct NSDictionary<K, V> {
-    key: PhantomData<Id<K, Shared>>,
-    obj: PhantomData<Id<V, Owned>>,
-}
-
-object_impl!(unsafe NSDictionary<K, V>);
+object!(
+    unsafe pub struct<K: INSObject, V: INSObject> NSDictionary<K, V> {
+        key: PhantomData<Id<K, Shared>>,
+        obj: PhantomData<Id<V, Owned>>,
+    }
+);
 
 impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
     unsafe_def_fn!(pub fn new -> Shared);
-}
-
-unsafe impl<K: INSObject, V: INSObject> INSObject for NSDictionary<K, V> {
-    fn class() -> &'static Class {
-        class!(NSDictionary)
-    }
 }
 
 unsafe impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {

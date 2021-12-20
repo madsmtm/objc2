@@ -37,7 +37,7 @@ pub unsafe trait INSObject: Sized + Message {
     }
 }
 
-object_struct!(unsafe NSObject);
+object!(unsafe pub struct NSObject);
 
 impl NSObject {
     unsafe_def_fn!(pub fn new -> Owned);

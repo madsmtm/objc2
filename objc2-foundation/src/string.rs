@@ -100,7 +100,7 @@ pub unsafe trait INSString: INSObject {
     }
 }
 
-object_struct!(unsafe NSString);
+object!(unsafe pub struct NSString);
 
 impl NSString {
     unsafe_def_fn!(pub fn new -> Shared);

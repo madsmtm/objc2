@@ -6,43 +6,57 @@
 /// and it's instances must have the raw encoding `Encoding::Object` (an
 /// example: `NSAutoreleasePool` does not have this). Finally the ownership
 /// must be correct for this class.
-macro_rules! object_struct {
-    (unsafe $name:ident) => {
+macro_rules! object {
+    ($(#[$m:meta])* unsafe $v:vis struct $name:ident) => {
+        object!($(#[$m])* unsafe $v struct<()> $name<> {});
+    };
+    ($(#[$m:meta])* unsafe $v:vis struct<$($t:ident $(: $b:ident)?),+> $name:ident<$($t2:ident $(: $b2:ident)?),+> {
+        $($p:ident: $pty:ty,)*
+    }) => {
+        object!($(#[$m])* unsafe $v struct<($($t $(: $b)?),+)> $name<$($t2 $(: $b2)?),+> {
+            $($p: $pty,)*
+        });
+    };
+    ($(#[$m:meta])* unsafe $v:vis struct<($($t:tt)*)> $name:ident<$($t2:ident $(: $b2:ident)?),*> {
+        $($p:ident: $pty:ty,)*
+    }) => {
         // TODO: `extern type`
+        $(#[$m])*
         #[repr(C)]
-        pub struct $name {
+        $v struct $name<$($t2 $(: $b2)?),*> {
             _private: [u8; 0],
+            $($p: $pty),*
         }
 
-        unsafe impl ::objc2::Message for $name {}
+        unsafe impl<$($t)*> ::objc2::Message for $name<$($t2),*> { }
 
-        unsafe impl ::objc2::RefEncode for $name {
+        unsafe impl<$($t)*> ::objc2::RefEncode for $name<$($t2),*> {
             const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
         }
 
-        unsafe impl $crate::INSObject for $name {
+        unsafe impl<$($t)*> $crate::INSObject for $name<$($t2),*> {
             fn class() -> &'static ::objc2::runtime::Class {
                 ::objc2::class!($name)
             }
         }
 
-        impl ::core::cmp::PartialEq for $name {
+        impl<$($t)*> ::core::cmp::PartialEq for $name<$($t2),*> {
             fn eq(&self, other: &Self) -> bool {
                 use $crate::INSObject;
                 self.is_equal(other)
             }
         }
 
-        impl ::core::cmp::Eq for $name {}
+        impl<$($t)*> ::core::cmp::Eq for $name<$($t2),*> {}
 
-        impl ::core::hash::Hash for $name {
+        impl<$($t)*> ::core::hash::Hash for $name<$($t2),*> {
             fn hash<H: ::core::hash::Hasher>(&self, state: &mut H) {
                 use $crate::INSObject;
                 self.hash_code().hash(state);
             }
         }
 
-        impl ::core::fmt::Debug for $name {
+        impl<$($t)*> ::core::fmt::Debug for $name<$($t2),*> {
             fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 use $crate::{INSObject, INSString};
                 ::objc2::rc::autoreleasepool(|pool| {
@@ -51,27 +65,6 @@ macro_rules! object_struct {
             }
         }
     };
-}
-
-/// TODO
-///
-/// # Safety
-///
-/// The given type must be valid as an Objective-C object. TODO: More.
-macro_rules! object_impl {
-    (unsafe $name:ident) => (
-        object_impl!(unsafe $name,);
-    );
-    (unsafe $name:ident<$($t:ident$(: $b:ident)?),+>) => (
-        object_impl!(unsafe $name, $($t$(: $b)?),+);
-    );
-    (unsafe $name:ident, $($t:ident$(: $b:ident)?),*) => (
-        unsafe impl<$($t$(:($b))?),*> ::objc2::Message for $name<$($t),*> { }
-
-        unsafe impl<$($t$(: $b)?),*> ::objc2::RefEncode for $name<$($t),*> {
-            const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
-        }
-    );
 }
 
 macro_rules! unsafe_def_fn {
