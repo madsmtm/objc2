@@ -172,7 +172,6 @@ object!(
     unsafe pub struct NSArray<T, O: Ownership> {
         item: PhantomData<Id<T, O>>,
     }
-    impl where T: INSObject
 );
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
@@ -318,7 +317,6 @@ object!(
     unsafe pub struct NSMutableArray<T, O: Ownership> {
         item: PhantomData<Id<T, O>>,
     }
-    impl where T: INSObject
 );
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {

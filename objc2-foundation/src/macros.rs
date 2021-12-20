@@ -18,7 +18,6 @@ macro_rules! object {
         unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*> {
             $($p:ident: $pty:ty,)*
         }
-        $(impl where $($w:tt)+)?
     ) => {
         // TODO: `extern type`
         $(#[$m])*

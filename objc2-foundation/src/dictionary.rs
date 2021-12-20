@@ -143,9 +143,6 @@ object!(
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
     }
-    impl where
-        K: INSObject,
-        V: INSObject,
 );
 
 impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
