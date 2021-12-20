@@ -1,9 +1,11 @@
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum Owned {}
 
 /// A type used to mark that the object(s) a struct contains are shared,
 /// so there may be other references to them.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum Shared {}
 
 mod private {

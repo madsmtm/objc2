@@ -100,7 +100,7 @@ pub unsafe trait INSString: INSObject {
     }
 }
 
-object_struct!(unsafe NSString);
+object!(unsafe pub struct NSString);
 
 impl NSString {
     unsafe_def_fn!(pub fn new -> Shared);
@@ -122,11 +122,31 @@ impl fmt::Display for NSString {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::format;
 
     #[cfg(gnustep)]
     #[test]
     fn ensure_linkage() {
         unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+    }
+
+    #[test]
+    fn test_equality() {
+        let s1 = NSString::from_str("abc");
+        let s2 = NSString::from_str("abc");
+        assert_eq!(s1, s1);
+        assert_eq!(s1, s2);
+
+        let s3 = NSString::from_str("def");
+        assert_ne!(s1, s3);
+    }
+
+    #[test]
+    fn test_debug_display() {
+        let s = "xyz123";
+        let obj = NSString::from_str(s);
+        assert_eq!(format!("{:?}", obj), format!("{:?}", s));
+        assert_eq!(format!("{}", obj), format!("{}", s));
     }
 
     #[test]

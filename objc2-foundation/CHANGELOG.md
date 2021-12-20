@@ -10,14 +10,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Added associated `Ownership` type to `NSCopying`.
 * **BREAKING**: Added associated `Ownership` type to `INSData`.
 * **BREAKING**: Added associated `Ownership` type to `INSArray`.
+* Added common trait impls (`PartialEq`, `Eq`, `Hash` and `Debug`) to
+  `NSValue`, `NSDictionary`, `NSArray` and `NSMutableArray`.
 
 ### Changed
 * **BREAKING**: Made some creation methods a bit less generic (e.g.
   `INSDictionary::from_keys_and_objects` now always returns `Id<_, Shared>`).
+* Relax bounds on generic `INSObject` impls.
 
 ### Removed
 * **BREAKING**: Removed associated `Ownership` type from `INSObject`; instead,
   it is present on the types that actually need it (for example `NSCopying`).
+
+### Fixed
+* Soundness issue with `NSValue`, `NSDictionary`, `NSArray` and
+  `NSMutableArray` not being `#[repr(C)]`.
 
 ## 0.2.0-alpha.2 - 2021-11-22
 

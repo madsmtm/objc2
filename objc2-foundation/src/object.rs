@@ -37,7 +37,7 @@ pub unsafe trait INSObject: Sized + Message {
     }
 }
 
-object_struct!(unsafe NSObject);
+object!(unsafe pub struct NSObject);
 
 impl NSObject {
     unsafe_def_fn!(pub fn new -> Owned);
@@ -46,18 +46,15 @@ impl NSObject {
 #[cfg(test)]
 mod tests {
     use super::{INSObject, NSObject};
-    use crate::{INSString, NSString};
+    use crate::NSString;
     use alloc::format;
-    use objc2::rc::autoreleasepool;
 
     #[test]
-    fn test_is_equal() {
+    fn test_equality() {
         let obj1 = NSObject::new();
-        assert!(obj1.is_equal(&*obj1));
-        assert_eq!(obj1, obj1); // Using forwarding impl on Id
+        assert_eq!(obj1, obj1);
 
         let obj2 = NSObject::new();
-        assert!(!obj1.is_equal(&*obj2));
         assert_ne!(obj1, obj2);
     }
 
@@ -68,16 +65,10 @@ mod tests {
     }
 
     #[test]
-    fn test_description() {
+    fn test_debug() {
         let obj = NSObject::new();
-        let description = obj.description();
         let expected = format!("<NSObject: {:p}>", &*obj);
-        autoreleasepool(|pool| {
-            assert_eq!(description.as_str(pool), &*expected);
-        });
-
-        let expected = format!("\"<NSObject: {:p}>\"", &*obj);
-        assert_eq!(format!("{:?}", obj), expected);
+        assert_eq!(format!("{:?}", obj), format!("{:?}", expected));
     }
 
     #[test]

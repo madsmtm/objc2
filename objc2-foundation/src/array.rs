@@ -5,9 +5,9 @@ use core::marker::PhantomData;
 use core::ops::{Index, Range};
 use core::ptr::NonNull;
 
+use objc2::msg_send;
 use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
-use objc2::runtime::{Class, Object};
-use objc2::{class, msg_send};
+use objc2::runtime::Object;
 
 use super::{
     INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSComparisonResult, NSEnumerator,
@@ -158,27 +158,21 @@ pub unsafe trait INSArray: INSObject {
     }
 }
 
-/// TODO
-///
-/// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
-/// to the elements (without modifying the array itself), and
-/// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
-///
-/// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
-/// TODO: Can we make it impossible? Should we?
-///
-/// What about `Id<NSArray<T, Shared>, Owned>`?
-pub struct NSArray<T, O: Ownership> {
-    item: PhantomData<Id<T, O>>,
-}
-
-object_impl!(unsafe NSArray<T, O: Ownership>);
-
-unsafe impl<T: INSObject, O: Ownership> INSObject for NSArray<T, O> {
-    fn class() -> &'static Class {
-        class!(NSArray)
+object!(
+    /// TODO
+    ///
+    /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
+    /// to the elements (without modifying the array itself), and
+    /// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
+    ///
+    /// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
+    /// TODO: Can we make it impossible? Should we?
+    ///
+    /// What about `Id<NSArray<T, Shared>, Owned>`?
+    unsafe pub struct NSArray<T, O: Ownership> {
+        item: PhantomData<Id<T, O>>,
     }
-}
+);
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     /// The `NSArray` itself (length and number of items) is always immutable,
@@ -319,17 +313,11 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 }
 
-pub struct NSMutableArray<T, O: Ownership> {
-    item: PhantomData<Id<T, O>>,
-}
-
-object_impl!(unsafe NSMutableArray<T, O: Ownership>);
-
-unsafe impl<T: INSObject, O: Ownership> INSObject for NSMutableArray<T, O> {
-    fn class() -> &'static Class {
-        class!(NSMutableArray)
+object!(
+    unsafe pub struct NSMutableArray<T, O: Ownership> {
+        item: PhantomData<Id<T, O>>,
     }
-}
+);
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Ownership = Owned;
@@ -364,6 +352,7 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
     use alloc::vec;
     use alloc::vec::Vec;
 
@@ -371,12 +360,20 @@ mod tests {
     use objc2::rc::{autoreleasepool, Id, Owned, Shared};
 
     use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
-    use crate::{INSObject, INSString, NSObject, NSString};
+    use crate::{INSObject, INSString, INSValue, NSObject, NSString, NSValue};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
         for _ in 0..len {
             vec.push(NSObject::new());
+        }
+        NSArray::from_vec(vec)
+    }
+
+    fn sample_number_array(len: u8) -> Id<NSArray<NSValue<u8>, Shared>, Shared> {
+        let mut vec = Vec::with_capacity(len as usize);
+        for i in 0..len {
+            vec.push(NSValue::new(i));
         }
         NSArray::from_vec(vec)
     }
@@ -392,6 +389,33 @@ mod tests {
 
         let array = sample_array(4);
         assert_eq!(array.len(), 4);
+    }
+
+    #[test]
+    fn test_equality() {
+        let array1 = sample_array(3);
+        let array2 = sample_array(3);
+        assert_ne!(array1, array2);
+
+        let array1 = sample_number_array(3);
+        let array2 = sample_number_array(3);
+        assert_eq!(array1, array2);
+
+        let array1 = sample_number_array(3);
+        let array2 = sample_number_array(4);
+        assert_ne!(array1, array2);
+    }
+
+    #[test]
+    #[ignore = "Output is different depending on OS version and runtime"]
+    fn test_debug() {
+        let obj = sample_number_array(3);
+        let expected = r#"(
+    "<00>",
+    "<01>",
+    "<02>"
+)"#;
+        assert_eq!(format!("{:?}", obj), format!("{:?}", expected));
     }
 
     #[test]

@@ -7,10 +7,9 @@ use core::str;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
+use objc2::msg_send;
 use objc2::rc::{Id, Shared};
-use objc2::runtime::Class;
 use objc2::Encode;
-use objc2::{class, msg_send};
 
 use super::{INSCopying, INSObject};
 
@@ -70,17 +69,11 @@ pub unsafe trait INSValue: INSObject {
     }
 }
 
-pub struct NSValue<T> {
-    value: PhantomData<T>,
-}
-
-object_impl!(unsafe NSValue<T>);
-
-unsafe impl<T: 'static> INSObject for NSValue<T> {
-    fn class() -> &'static Class {
-        class!(NSValue)
+object!(
+    unsafe pub struct NSValue<T> {
+        value: PhantomData<T>,
     }
-}
+);
 
 unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
     type Value = T;
@@ -91,9 +84,20 @@ unsafe impl<T: 'static> INSCopying for NSValue<T> {
     type Output = NSValue<T>;
 }
 
+/// ```compile_fail
+/// use objc2_foundation::NSValue;
+/// fn needs_eq<T: Eq>() {}
+/// needs_eq::<NSValue<f32>>();
+/// ```
+#[cfg(doctest)]
+pub struct NSValueFloatNotEq;
+
 #[cfg(test)]
 mod tests {
+    use alloc::format;
+
     use crate::{INSValue, NSRange, NSValue};
+    use objc2::rc::{Id, Shared};
     use objc2::Encode;
 
     #[test]
@@ -101,6 +105,54 @@ mod tests {
         let val = NSValue::new(13u32);
         assert_eq!(val.get(), 13);
         assert!(&u32::ENCODING == val.encoding().unwrap());
+    }
+
+    #[test]
+    fn test_equality() {
+        let val1 = NSValue::new(123u32);
+        let val2 = NSValue::new(123u32);
+        assert_eq!(val1, val1);
+        assert_eq!(val1, val2);
+
+        let val3 = NSValue::new(456u32);
+        assert_ne!(val1, val3);
+    }
+
+    #[test]
+    fn test_equality_across_types() {
+        let val1 = NSValue::new(123);
+        let val2: Id<NSValue<u32>, Shared> = NSValue::new(123);
+        let val2: Id<NSValue<u8>, Shared> = unsafe { core::mem::transmute(val2) };
+
+        // Test that `objCType` is checked when comparing equality
+        assert_ne!(val1, val2);
+    }
+
+    #[test]
+    #[ignore = "Output is different depending on OS version and runtime"]
+    fn test_debug() {
+        fn assert_debug(val: impl core::fmt::Debug, expected: &str) {
+            assert_eq!(format!("{:?}", val), format!("{:?}", expected));
+        }
+        let val = NSValue::new(0xabu8);
+        let expected = "<ab>";
+        assert_debug(val, expected);
+
+        let val = NSValue::new(0x12i8);
+        let expected = "<12>";
+        assert_debug(val, expected);
+
+        let val = NSValue::new(0xdeadbeefu32);
+        let expected = "<efbeadde>";
+        assert_debug(val, expected);
+
+        // Very brittle
+        let val = NSValue::new(1.0f32);
+        let expected = &format!(
+            "<{:08x}>",
+            u32::from_le_bytes(1.0f32.to_le_bytes()).reverse_bits()
+        );
+        assert_debug(val, expected);
     }
 
     #[test]
