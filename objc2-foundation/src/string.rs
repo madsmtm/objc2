@@ -122,6 +122,7 @@ impl fmt::Display for NSString {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::format;
 
     #[cfg(gnustep)]
     #[test]
@@ -138,6 +139,14 @@ mod tests {
 
         let s3 = NSString::from_str("def");
         assert_ne!(s1, s3);
+    }
+
+    #[test]
+    fn test_debug_display() {
+        let s = "xyz123";
+        let obj = NSString::from_str(s);
+        assert_eq!(format!("{:?}", obj), format!("{:?}", s));
+        assert_eq!(format!("{}", obj), format!("{}", s));
     }
 
     #[test]

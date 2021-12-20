@@ -352,6 +352,7 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
     use alloc::vec;
     use alloc::vec::Vec;
 
@@ -403,6 +404,18 @@ mod tests {
         let array1 = sample_number_array(3);
         let array2 = sample_number_array(4);
         assert_ne!(array1, array2);
+    }
+
+    #[test]
+    #[ignore = "Output is different depending on OS version and runtime"]
+    fn test_debug() {
+        let obj = sample_number_array(3);
+        let expected = r#"(
+    "<00>",
+    "<01>",
+    "<02>"
+)"#;
+        assert_eq!(format!("{:?}", obj), format!("{:?}", expected));
     }
 
     #[test]

@@ -46,9 +46,8 @@ impl NSObject {
 #[cfg(test)]
 mod tests {
     use super::{INSObject, NSObject};
-    use crate::{INSString, NSString};
+    use crate::NSString;
     use alloc::format;
-    use objc2::rc::autoreleasepool;
 
     #[test]
     fn test_equality() {
@@ -66,16 +65,10 @@ mod tests {
     }
 
     #[test]
-    fn test_description() {
+    fn test_debug() {
         let obj = NSObject::new();
-        let description = obj.description();
         let expected = format!("<NSObject: {:p}>", &*obj);
-        autoreleasepool(|pool| {
-            assert_eq!(description.as_str(pool), &*expected);
-        });
-
-        let expected = format!("\"<NSObject: {:p}>\"", &*obj);
-        assert_eq!(format!("{:?}", obj), expected);
+        assert_eq!(format!("{:?}", obj), format!("{:?}", expected));
     }
 
     #[test]

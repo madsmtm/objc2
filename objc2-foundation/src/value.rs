@@ -94,6 +94,8 @@ pub struct NSValueFloatNotEq;
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
+
     use crate::{INSValue, NSRange, NSValue};
     use objc2::rc::{Id, Shared};
     use objc2::Encode;
@@ -124,6 +126,33 @@ mod tests {
 
         // Test that `objCType` is checked when comparing equality
         assert_ne!(val1, val2);
+    }
+
+    #[test]
+    #[ignore = "Output is different depending on OS version and runtime"]
+    fn test_debug() {
+        fn assert_debug(val: impl core::fmt::Debug, expected: &str) {
+            assert_eq!(format!("{:?}", val), format!("{:?}", expected));
+        }
+        let val = NSValue::new(0xabu8);
+        let expected = "<ab>";
+        assert_debug(val, expected);
+
+        let val = NSValue::new(0x12i8);
+        let expected = "<12>";
+        assert_debug(val, expected);
+
+        let val = NSValue::new(0xdeadbeefu32);
+        let expected = "<efbeadde>";
+        assert_debug(val, expected);
+
+        // Very brittle
+        let val = NSValue::new(1.0f32);
+        let expected = &format!(
+            "<{:08x}>",
+            u32::from_le_bytes(1.0f32.to_le_bytes()).reverse_bits()
+        );
+        assert_debug(val, expected);
     }
 
     #[test]
