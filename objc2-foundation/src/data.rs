@@ -94,6 +94,10 @@ pub unsafe trait INSData: INSObject {
 
 object!(unsafe pub struct NSData);
 
+// TODO: SAFETY
+unsafe impl Sync for NSData {}
+unsafe impl Send for NSData {}
+
 unsafe impl INSData for NSData {
     type Ownership = Shared;
 }
@@ -156,6 +160,10 @@ pub unsafe trait INSMutableData: INSData {
 }
 
 object!(unsafe pub struct NSMutableData);
+
+// TODO: SAFETY
+unsafe impl Sync for NSMutableData {}
+unsafe impl Send for NSMutableData {}
 
 unsafe impl INSData for NSMutableData {
     type Ownership = Owned;
