@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Export `objc-sys` as `ffi` module.
 * Added common trait impls on `rc::Owned` and `rc::Shared` (useful in generic
   contexts).
+* Implement `RefEncode` for `runtime::Protocol`.
 
 ### Changed
 * Deprecated `runtime::BOOL`, `runtime::YES` and `runtime::NO`. Use the

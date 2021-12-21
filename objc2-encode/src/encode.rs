@@ -408,8 +408,14 @@ macro_rules! encode_fn_pointer_impl {
         unsafe impl<Ret: Encode, $($Arg: Encode),*> Encode for $FnTy {
             const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Unknown);
         }
-
         unsafe impl<Ret: Encode, $($Arg: Encode),*> RefEncode for $FnTy {
+            const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+        }
+
+        unsafe impl<Ret: Encode, $($Arg: Encode),*> Encode for Option<$FnTy> {
+            const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Unknown);
+        }
+        unsafe impl<Ret: Encode, $($Arg: Encode),*> RefEncode for Option<$FnTy> {
             const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
         }
     };
@@ -541,6 +547,10 @@ mod tests {
         );
         assert_eq!(
             <extern "C" fn(x: ()) -> ()>::ENCODING,
+            Encoding::Pointer(&Encoding::Unknown)
+        );
+        assert_eq!(
+            <Option<unsafe extern "C" fn()>>::ENCODING,
             Encoding::Pointer(&Encoding::Unknown)
         );
     }

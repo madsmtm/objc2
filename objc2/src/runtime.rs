@@ -472,6 +472,11 @@ impl PartialEq for Protocol {
     }
 }
 
+unsafe impl RefEncode for Protocol {
+    // Protocol is an object internally
+    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+}
+
 impl Eq for Protocol {}
 
 impl fmt::Debug for Protocol {
@@ -595,7 +600,7 @@ impl fmt::Debug for Object {
 mod tests {
     use alloc::string::ToString;
 
-    use super::{Bool, Class, Ivar, Method, Object, Protocol, Sel};
+    use super::{Bool, Class, Imp, Ivar, Method, Object, Protocol, Sel};
     use crate::test_utils;
     use crate::Encode;
 
@@ -697,10 +702,16 @@ mod tests {
 
     #[test]
     fn test_encode() {
-        assert_eq!(<&Object>::ENCODING.to_string(), "@");
-        assert_eq!(<*mut Object>::ENCODING.to_string(), "@");
-        assert_eq!(<&Class>::ENCODING.to_string(), "#");
-        assert_eq!(Sel::ENCODING.to_string(), ":");
+        fn assert_enc<T: Encode>(expected: &str) {
+            assert_eq!(&T::ENCODING.to_string(), expected);
+        }
+        assert_enc::<&Object>("@");
+        assert_enc::<*mut Object>("@");
+        assert_enc::<&Class>("#");
+        assert_enc::<Sel>(":");
+        assert_enc::<Imp>("^?");
+        assert_enc::<Option<Imp>>("^?");
+        assert_enc::<&Protocol>("@");
     }
 
     #[test]
