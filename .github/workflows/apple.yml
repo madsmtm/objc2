@@ -77,7 +77,7 @@ jobs:
       with:
         command: test
         # Not using --all-features because some features are nightly-only
-        args: --no-fail-fast --features block,exception,catch_all,verify_message
+        args: --no-fail-fast --features malloc,block,exception,catch_all,verify_message
 
   build_32_bit:
     name: Build 32-bit
@@ -105,8 +105,14 @@ jobs:
         tar -xyf MacOSX10.13.tar.bz2
         echo "SDKROOT=$(pwd)/MacOSX10.13.sdk" >> $GITHUB_ENV
 
+    - name: Build without features
+      uses: actions-rs/cargo@v1
+      with:
+        command: build
+        args: -Zbuild-std --tests --no-default-features
+
     - name: Build with features
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: -Zbuild-std --tests --features exception,catch_all,verify_message
+        args: -Zbuild-std --tests --features malloc,exception,catch_all,verify_message

@@ -1,4 +1,4 @@
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use core::fmt;
 use core::mem;
 use core::mem::ManuallyDrop;
@@ -27,6 +27,7 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, Message
     Ok(f())
 }
 
+#[cfg(feature = "malloc")]
 mod verify;
 
 #[cfg(apple)]
@@ -37,6 +38,7 @@ mod platform;
 mod platform;
 
 use self::platform::{send_super_unverified, send_unverified};
+#[cfg(feature = "malloc")]
 use self::verify::{verify_message_signature, VerificationError};
 
 /// Types that can be sent Objective-C messages.
@@ -197,6 +199,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// let result = obj.verify_message::<(&Class,), Bool>(sel);
     /// assert!(result.is_ok());
     /// ```
+    #[cfg(feature = "malloc")]
     fn verify_message<A, R>(&self, sel: Sel) -> Result<(), MessageError>
     where
         A: EncodeArguments,
@@ -357,8 +360,10 @@ impl Error for MessageError {
     }
 }
 
+#[cfg(feature = "malloc")]
 impl<'a> From<VerificationError<'a>> for MessageError {
     fn from(err: VerificationError<'_>) -> MessageError {
+        use alloc::string::ToString;
         MessageError(err.to_string())
     }
 }
@@ -448,6 +453,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "malloc")]
     fn test_verify_message() {
         let obj = test_utils::custom_object();
         assert!(obj.verify_message::<(), u32>(sel!(foo)).is_ok());
