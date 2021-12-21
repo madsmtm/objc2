@@ -1,8 +1,9 @@
+use core::marker::PhantomData;
 use core::ptr::NonNull;
 
 use objc2::msg_send;
 use objc2::rc::{Id, Owned, Shared};
-use objc2::runtime::{Bool, Class};
+use objc2::runtime::{Bool, Class, Object};
 use objc2::Message;
 
 use super::NSString;
@@ -37,7 +38,22 @@ pub unsafe trait INSObject: Sized + Message {
     }
 }
 
-object!(unsafe pub struct NSObject);
+object!(unsafe pub struct NSObject<> {
+    p: PhantomData<Object>, // Temporary
+});
+
+/// ```compile_fail
+/// use objc2_foundation::NSObject;
+/// fn needs_sync<T: Sync>() {}
+/// needs_sync::<NSObject>();
+/// ```
+/// ```compile_fail
+/// use objc2_foundation::NSObject;
+/// fn needs_send<T: Send>() {}
+/// needs_send::<NSObject>();
+/// ```
+#[cfg(doctest)]
+pub struct NSObjectNotSendNorSync;
 
 impl NSObject {
     unsafe_def_fn!(pub fn new -> Owned);

@@ -184,6 +184,16 @@ unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
 unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
 unsafe impl<T: Send> Send for NSArray<T, Owned> {}
 
+/// ```compile_fail
+/// use objc2::rc::Shared;
+/// use objc2::runtime::Object;
+/// use objc2_foundation::NSArray;
+/// fn needs_send_sync<T: Send + Sync>() {}
+/// needs_send_sync::<NSArray<Object, Shared>>();
+/// ```
+#[cfg(doctest)]
+pub struct NSArrayWithObjectNotSendSync;
+
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     /// The `NSArray` itself (length and number of items) is always immutable,
     /// but we would like to know when we're the only owner of the array, to
