@@ -1,13 +1,13 @@
 //! Example of what I would like `bindgen` to be able to generate.
 
+use crate::NSString;
 use objc2::ffi::NSUInteger;
 use objc2::rc::{Allocated, Id, Unknown};
 use objc2::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use objc2::{class, msg_send, msg_send_id, Encoding, Message, RefEncode};
 
-type NSInvocation = NSObject;
-type NSMethodSignature = NSObject;
-type NSString = NSObject;
+pub type NSInvocation = NSObject;
+pub type NSMethodSignature = NSObject;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -16,7 +16,7 @@ pub struct _NSZone {
 }
 
 unsafe impl RefEncode for _NSZone {
-    const ENCODING_REF: Encoding<'static> = Encoding::Unknown;
+    const ENCODING_REF: Encoding<'static> = Encoding::Unknown; // TODO
 }
 
 #[repr(transparent)]
