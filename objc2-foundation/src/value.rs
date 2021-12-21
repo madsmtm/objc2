@@ -8,9 +8,9 @@ use core::{fmt, str};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
+use objc2::encode::Encode;
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Shared};
-use objc2::Encode;
 
 use super::{INSCopying, INSObject};
 
@@ -131,9 +131,8 @@ pub struct NSValueFloatNotEq;
 mod tests {
     use alloc::format;
 
-    use crate::{INSValue, NSRange, NSValue};
-    use objc2::rc::{Id, Shared};
-    use objc2::Encode;
+    use super::*;
+    use crate::NSRange;
 
     #[test]
     fn test_value() {

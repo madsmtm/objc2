@@ -1,7 +1,7 @@
 use core::fmt;
 
+use crate::encode::{Encode, EncodeArguments, Encoding};
 use crate::runtime::{Class, Method, Object, Sel};
-use crate::{Encode, EncodeArguments, Encoding};
 
 pub enum VerificationError<'a> {
     NilReceiver(Sel),

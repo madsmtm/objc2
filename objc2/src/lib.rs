@@ -141,9 +141,8 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
+pub use objc2_encode as encode;
 pub use objc_sys as ffi;
-
-pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 pub use crate::message::{Message, MessageArguments, MessageError, MessageReceiver};
 

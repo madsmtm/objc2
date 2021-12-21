@@ -3,8 +3,9 @@ use std::os::raw::c_char;
 use std::sync::Once;
 
 use crate::declare::{ClassDecl, ProtocolDecl};
+use crate::encode::{Encode, Encoding};
 use crate::runtime::{Class, Object, Protocol, Sel};
-use crate::{ffi, Encode, Encoding, MessageReceiver};
+use crate::{ffi, MessageReceiver};
 
 #[derive(Debug)]
 pub(crate) struct CustomObject {

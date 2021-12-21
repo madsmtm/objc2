@@ -41,8 +41,9 @@ use core::mem::ManuallyDrop;
 use core::ptr;
 use std::ffi::CString;
 
+use crate::encode::{Encode, EncodeArguments, Encoding};
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
-use crate::{ffi, Encode, EncodeArguments, Encoding, Message};
+use crate::{ffi, Message};
 
 /// Types that can be used as the implementation of an Objective-C method.
 pub trait MethodImplementation {

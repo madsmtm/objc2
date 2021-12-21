@@ -1,6 +1,6 @@
 use core::cmp::Ordering;
 
-use objc2::{Encode, Encoding, RefEncode};
+use objc2::encode::{Encode, Encoding, RefEncode};
 
 #[repr(isize)] // NSInteger
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]

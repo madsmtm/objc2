@@ -1,9 +1,9 @@
 use core::mem;
 
 use super::MsgSendFn;
+use crate::encode::{Encode, Encoding};
 use crate::ffi;
 use crate::runtime::Imp;
-use crate::{Encode, Encoding};
 
 /// Double-word sized fundamental data types don't use stret, but any
 /// composite type larger than 4 bytes does.

@@ -1,6 +1,6 @@
 use core::ops::Range;
 
-use objc2::{Encode, Encoding, RefEncode};
+use objc2::encode::{Encode, Encoding, RefEncode};
 
 #[repr(C)]
 // PartialEq is same as NSEqualRanges

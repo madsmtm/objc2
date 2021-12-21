@@ -5,9 +5,9 @@ use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 use std::error::Error;
 
+use crate::encode::{Encode, EncodeArguments, RefEncode};
 use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
-use crate::{Encode, EncodeArguments, RefEncode};
 
 #[cfg(feature = "catch_all")]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, MessageError> {

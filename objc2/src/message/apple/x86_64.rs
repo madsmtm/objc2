@@ -1,9 +1,9 @@
 use core::mem;
 
 use super::MsgSendFn;
+use crate::encode::{Encode, Encoding};
 use crate::ffi;
 use crate::runtime::Imp;
-use crate::{Encode, Encoding};
 
 /// If the size of an object is larger than two eightbytes, it has class
 /// MEMORY. If the type has class MEMORY, then the caller provides space for

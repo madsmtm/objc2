@@ -4,7 +4,7 @@ use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
 #[cfg(feature = "malloc")]
-use objc2::{sel, Encode};
+use objc2::{encode::Encode, sel};
 
 fn main() {
     // Get a class

@@ -1,6 +1,7 @@
 use core::mem;
 
-use super::{conditional_try, Encode, MessageArguments, MessageError};
+use super::{conditional_try, MessageArguments, MessageError};
+use crate::encode::Encode;
 use crate::ffi;
 use crate::runtime::{Class, Object, Sel};
 

@@ -1,7 +1,7 @@
 use super::MsgSendFn;
+use crate::encode::Encode;
 use crate::ffi;
 use crate::runtime::Imp;
-use crate::Encode;
 
 /// `objc_msgSend_stret` is not even available in arm64.
 ///

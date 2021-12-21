@@ -29,8 +29,8 @@ macro_rules! object {
 
         unsafe impl<$($t $(: $b)?),*> ::objc2::Message for $name<$($t),*> { }
 
-        unsafe impl<$($t $(: $b)?),*> ::objc2::RefEncode for $name<$($t),*> {
-            const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
+        unsafe impl<$($t $(: $b)?),*> ::objc2::encode::RefEncode for $name<$($t),*> {
+            const ENCODING_REF: ::objc2::encode::Encoding<'static> = ::objc2::encode::Encoding::Object;
         }
 
         unsafe impl<$($t $(: $b)?),*> $crate::INSObject for $name<$($t),*> {

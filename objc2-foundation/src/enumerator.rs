@@ -6,9 +6,10 @@ use core::ptr::NonNull;
 use core::slice;
 use std::os::raw::c_ulong;
 
+use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::msg_send;
 use objc2::rc::{Id, Owned};
 use objc2::runtime::Object;
-use objc2::{msg_send, Encode, Encoding, RefEncode};
 
 use super::INSObject;
 

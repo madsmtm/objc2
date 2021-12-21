@@ -3,10 +3,10 @@ use std::ptr::NonNull;
 use std::sync::Once;
 
 use objc2::declare::ClassDecl;
+use objc2::encode::{Encoding, RefEncode};
 use objc2::rc::{Id, Owned, Shared};
 use objc2::runtime::{Class, Object, Sel};
-use objc2::{msg_send, sel};
-use objc2::{Encoding, Message, RefEncode};
+use objc2::{msg_send, sel, Message};
 use objc2_foundation::{INSObject, NSObject};
 
 #[repr(C)]

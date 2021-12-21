@@ -1,9 +1,9 @@
 use core::mem;
 
 use super::MsgSendFn;
+use crate::encode::{Encode, Encoding};
 use crate::ffi;
 use crate::runtime::Imp;
-use crate::{Encode, Encoding};
 
 /// Structures 1 or 2 bytes in size are placed in EAX.
 /// Structures 4 or 8 bytes in size are placed in: EAX and EDX.

@@ -1,4 +1,5 @@
-use crate::{ffi, Encode, Encoding, RefEncode};
+use crate::encode::{Encode, Encoding, RefEncode};
+use crate::ffi;
 use core::fmt;
 
 /// The Objective-C `BOOL` type.

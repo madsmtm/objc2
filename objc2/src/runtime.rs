@@ -16,7 +16,8 @@ use std::ffi::{CStr, CString};
 use std::os::raw::c_uint;
 
 pub use super::bool::Bool;
-use crate::{ffi, Encode, Encoding, RefEncode};
+use crate::encode::{Encode, Encoding, RefEncode};
+use crate::ffi;
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
@@ -631,9 +632,8 @@ impl fmt::Debug for Object {
 mod tests {
     use alloc::string::ToString;
 
-    use super::{Bool, Class, Imp, Ivar, Method, Object, Protocol, Sel};
+    use super::*;
     use crate::test_utils;
-    use crate::Encode;
 
     #[test]
     fn test_ivar() {
