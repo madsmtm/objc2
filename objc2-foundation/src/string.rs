@@ -102,6 +102,10 @@ pub unsafe trait INSString: INSObject {
 
 object!(unsafe pub struct NSString);
 
+// TODO: SAFETY
+unsafe impl Sync for NSString {}
+unsafe impl Send for NSString {}
+
 impl NSString {
     unsafe_def_fn!(pub fn new -> Shared);
 }

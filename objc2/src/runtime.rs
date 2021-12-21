@@ -5,6 +5,7 @@
 
 use core::ffi::c_void;
 use core::fmt;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 use core::str;
 use malloc_buf::Malloc;
@@ -50,6 +51,13 @@ pub struct Class(ffi::objc_class);
 pub struct Protocol(ffi::Protocol);
 
 /// A type that represents an instance of a class.
+///
+/// Note: This is intentionally neither [`Sync`], [`Send`], [`UnwindSafe`],
+/// [`RefUnwindSafe`] nor [`Unpin`], since it is something that changes
+/// depending on the specific subclass.
+///
+/// Examples: `NSAutoreleasePool` is not `Send`, it has to be deallocated
+/// on the same thread that it was created. `NSLock` is not `Send` either.
 #[repr(C)]
 pub struct Object(ffi::objc_object);
 
@@ -105,9 +113,12 @@ impl PartialEq for Sel {
 
 impl Eq for Sel {}
 
-// Sel is safe to share across threads because it is immutable
+// SAFETY: Sel is immutable (and can be retrieved from any thread using the
+// `sel!` macro).
 unsafe impl Sync for Sel {}
 unsafe impl Send for Sel {}
+impl UnwindSafe for Sel {}
+impl RefUnwindSafe for Sel {}
 
 impl Copy for Sel {}
 
@@ -146,6 +157,12 @@ impl Ivar {
         str::from_utf8(encoding.to_bytes()).unwrap()
     }
 }
+
+// SAFETY: Ivar is immutable (and can be retrieved from Class anyhow).
+unsafe impl Sync for Ivar {}
+unsafe impl Send for Ivar {}
+impl UnwindSafe for Ivar {}
+impl RefUnwindSafe for Ivar {}
 
 impl Method {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_method {
@@ -196,6 +213,12 @@ impl Method {
     // unsafe fn set_implementation(&mut self, imp: Imp) -> Imp;
     // unsafe fn exchange_implementation(&mut self, other: &mut Method);
 }
+
+// SAFETY: Method is immutable (and can be retrieved from Class anyhow).
+unsafe impl Sync for Method {}
+unsafe impl Send for Method {}
+impl UnwindSafe for Method {}
+impl RefUnwindSafe for Method {}
 
 impl Class {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_class {
@@ -362,6 +385,14 @@ impl Class {
     // unsafe fn set_version(&mut self, version: u32);
 }
 
+// SAFETY: Class is immutable (and can be retrieved from any thread using the
+// `class!` macro).
+unsafe impl Sync for Class {}
+unsafe impl Send for Class {}
+impl UnwindSafe for Class {}
+impl RefUnwindSafe for Class {}
+// Note that Unpin is not applicable.
+
 unsafe impl RefEncode for Class {
     const ENCODING_REF: Encoding<'static> = Encoding::Class;
 }
@@ -449,6 +480,13 @@ impl fmt::Debug for Protocol {
     }
 }
 
+// SAFETY: Protocol is immutable (and can be retrieved from Class anyhow).
+unsafe impl Sync for Protocol {}
+unsafe impl Send for Protocol {}
+impl UnwindSafe for Protocol {}
+impl RefUnwindSafe for Protocol {}
+// Note that Unpin is not applicable.
+
 fn get_ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
     match cls.instance_variable(name) {
         Some(ivar) => {
@@ -525,6 +563,24 @@ impl Object {
     // objc_removeAssociatedObjects
 }
 
+/// ```
+/// use objc2::runtime::Object;
+/// fn needs_nothing<T>() {}
+/// needs_nothing::<Object>();
+/// ```
+/// ```compile_fail
+/// use objc2::runtime::Object;
+/// fn needs_sync<T: Sync>() {}
+/// needs_sync::<Object>();
+/// ```
+/// ```compile_fail
+/// use objc2::runtime::Object;
+/// fn needs_send<T: Send>() {}
+/// needs_send::<Object>();
+/// ```
+#[cfg(doctest)]
+pub struct ObjectNotSendNorSync;
+
 unsafe impl RefEncode for Object {
     const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }
@@ -539,7 +595,7 @@ impl fmt::Debug for Object {
 mod tests {
     use alloc::string::ToString;
 
-    use super::{Class, Object, Protocol, Sel};
+    use super::{Bool, Class, Ivar, Method, Object, Protocol, Sel};
     use crate::test_utils;
     use crate::Encode;
 
@@ -645,5 +701,16 @@ mod tests {
         assert!(<*mut Object>::ENCODING.to_string() == "@");
         assert!(<&Class>::ENCODING.to_string() == "#");
         assert!(Sel::ENCODING.to_string() == ":");
+    }
+
+    #[test]
+    fn test_send_sync() {
+        fn assert_send_sync<T: Send + Sync>() {}
+        assert_send_sync::<Bool>();
+        assert_send_sync::<Class>();
+        assert_send_sync::<Ivar>();
+        assert_send_sync::<Method>();
+        assert_send_sync::<Protocol>();
+        assert_send_sync::<Sel>();
     }
 }

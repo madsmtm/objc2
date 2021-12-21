@@ -174,6 +174,26 @@ object!(
     }
 );
 
+// SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
+//
+// The `PhantomData` can't get these impls to display in the docs.
+//
+// TODO: Properly verify this
+unsafe impl<T: Sync + Send> Sync for NSArray<T, Shared> {}
+unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
+unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
+unsafe impl<T: Send> Send for NSArray<T, Owned> {}
+
+/// ```compile_fail
+/// use objc2::rc::Shared;
+/// use objc2::runtime::Object;
+/// use objc2_foundation::NSArray;
+/// fn needs_send_sync<T: Send + Sync>() {}
+/// needs_send_sync::<NSArray<Object, Shared>>();
+/// ```
+#[cfg(doctest)]
+pub struct NSArrayWithObjectNotSendSync;
+
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     /// The `NSArray` itself (length and number of items) is always immutable,
     /// but we would like to know when we're the only owner of the array, to
@@ -318,6 +338,14 @@ object!(
         item: PhantomData<Id<T, O>>,
     }
 );
+
+// SAFETY: Same as NSArray.
+//
+// TODO: Properly verify this
+unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Ownership = Owned;
@@ -539,5 +567,15 @@ mod tests {
             assert_eq!(strings[0].as_str(pool), "hi");
             assert_eq!(strings[1].as_str(pool), "hello");
         });
+    }
+
+    #[test]
+    fn test_send_sync() {
+        fn assert_send_sync<T: Send + Sync>() {}
+
+        assert_send_sync::<NSArray<NSString, Shared>>();
+        assert_send_sync::<NSMutableArray<NSString, Shared>>();
+        assert_send_sync::<Id<NSArray<NSString, Shared>, Shared>>();
+        assert_send_sync::<Id<NSMutableArray<NSString, Shared>, Owned>>();
     }
 }

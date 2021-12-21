@@ -75,6 +75,10 @@ object!(
     }
 );
 
+// TODO: SAFETY
+unsafe impl<T: Sync> Sync for NSValue<T> {}
+unsafe impl<T: Send> Send for NSValue<T> {}
+
 unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
     type Value = T;
 }

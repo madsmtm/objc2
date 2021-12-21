@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 * An issue with inlining various `rc` methods.
+* Most types (e.g. `Class` and `Method`) are now `Send`, `Sync`, `UnwindSafe`
+  and `RefUnwindSafe` again.
+  Notable exception is `Object`, because that depends on the specific
+  subclass.
 
 
 ## 0.3.0-alpha.4 - 2021-11-22
@@ -73,7 +77,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `runtime` module.
 * **BREAKING**: Most types are now `!UnwindSafe`, to discourage trying to use
   them after an unwind. This restriction may be lifted in the future.
-* **BREAKING**: Most types are now `!Send` and `!Sync`. **TODO**: Reevaluate this!
+* **BREAKING**: Most types are now `!Send` and `!Sync`. This was an oversight
+  that is fixed in a later version.
 * A lot of smaller things.
 * **BREAKING**: Dynamic message sending with `Message::send_message` is moved
   to `MessageReceiver`.

@@ -21,12 +21,17 @@ pub struct AutoreleasePool {
     p: PhantomData<*mut UnsafeCell<c_void>>,
 }
 
-/// ```rust,compile_fail
+/// ```
 /// use objc2::rc::AutoreleasePool;
-/// fn needs_sync<T: Send>() {}
+/// fn needs_nothing<T>() {}
+/// needs_nothing::<AutoreleasePool>();
+/// ```
+/// ```compile_fail
+/// use objc2::rc::AutoreleasePool;
+/// fn needs_sync<T: Sync>() {}
 /// needs_sync::<AutoreleasePool>();
 /// ```
-/// ```rust,compile_fail
+/// ```compile_fail
 /// use objc2::rc::AutoreleasePool;
 /// fn needs_send<T: Send>() {}
 /// needs_send::<AutoreleasePool>();

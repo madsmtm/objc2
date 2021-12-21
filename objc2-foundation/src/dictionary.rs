@@ -145,6 +145,10 @@ object!(
     }
 );
 
+// TODO: SAFETY
+unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
+unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
+
 impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
     unsafe_def_fn!(pub fn new -> Shared);
 }
