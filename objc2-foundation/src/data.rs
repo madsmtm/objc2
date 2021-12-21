@@ -9,7 +9,7 @@ use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{msg_send, msg_send_id};
 
-use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
+use super::{ffi, NSCopying, NSMutableCopying, NSObject, NSRange};
 
 object! {
     /// A static byte buffer in memory.
@@ -42,9 +42,13 @@ unsafe impl Send for NSMutableData {}
 impl NSData {
     unsafe_def_fn!(fn new -> Shared);
 
+    fn r(&self) -> &ffi::NSData {
+        unsafe { &*(self as *const Self as *const ffi::NSData) }
+    }
+
     #[doc(alias = "length")]
     pub fn len(&self) -> usize {
-        unsafe { msg_send![self, length] }
+        unsafe { self.r().length() }
     }
 
     pub fn is_empty(&self) -> bool {
@@ -52,7 +56,7 @@ impl NSData {
     }
 
     pub fn bytes(&self) -> &[u8] {
-        let ptr: *const c_void = unsafe { msg_send![self, bytes] };
+        let ptr: *const c_void = unsafe { self.r().bytes() };
         let ptr: *const u8 = ptr.cast();
         // The bytes pointer may be null for length zero
         if ptr.is_null() {

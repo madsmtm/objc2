@@ -9,7 +9,7 @@ use objc2::rc::{Allocated, Id, Unknown};
 use objc2::runtime::{Bool, Object};
 use objc2::{class, msg_send, msg_send_id, Encoding, Message, RefEncode};
 
-use crate::NSObject;
+use crate::{NSData, NSObject};
 
 pub type NSRange = [NSUInteger; 2];
 pub type NSComparisonResult = NSInteger;
@@ -17,7 +17,6 @@ pub type NSComparisonResult = NSInteger;
 pub type NSCoder = NSObject;
 pub type NSLocale = NSObject;
 pub type NSError = NSObject;
-pub type NSData = NSObject;
 pub type NSDictionary = NSObject;
 pub type NSCharacterSet = NSObject;
 pub type NSURL = NSObject;
