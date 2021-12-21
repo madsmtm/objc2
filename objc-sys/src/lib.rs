@@ -56,9 +56,11 @@ pub use types::*;
 pub use various::*;
 
 /// We don't know much about the actual structs, so better mark them `!Send`,
-/// `!Sync`, `!Unpin` and as mutable behind shared references. Downstream
-/// libraries can always manually opt in to these types afterwards. (It's
-/// also less of a breaking change on our part if we re-add these later).
+/// `!Sync`, `!UnwindSafe`, `!RefUnwindSafe`, `!Unpin` and as mutable behind
+/// shared references.
 ///
-/// TODO: Replace this with `extern type` to also mark it as unsized.
-type OpaqueData = PhantomData<(UnsafeCell<*const ()>, PhantomPinned)>;
+/// Downstream libraries can always manually opt in to these types afterwards.
+/// (It's also less of a breaking change on our part if we re-add these).
+///
+/// TODO: Replace this with `extern type` to also mark it as `!Sized`.
+type OpaqueData = PhantomData<(UnsafeCell<()>, *const UnsafeCell<()>, PhantomPinned)>;

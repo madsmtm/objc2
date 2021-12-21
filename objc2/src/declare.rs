@@ -120,6 +120,20 @@ pub struct ClassDecl {
     cls: *mut Class,
 }
 
+// SAFETY: The stuff that touch global state does so using locks internally.
+//
+// Modifying the class itself can only be done through `&mut`, so Sync is
+// safe (e.g. we can't accidentally call `add_ivar` at the same time from two
+// different threads).
+//
+// (Though actually, that would be safe since the entire runtime is locked
+// when doing so...).
+//
+// Finally, there are no requirements that the class must be registered on the
+// same thread that allocated it.
+unsafe impl Send for ClassDecl {}
+unsafe impl Sync for ClassDecl {}
+
 impl ClassDecl {
     fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<ClassDecl> {
         let name = CString::new(name).unwrap();
@@ -295,6 +309,10 @@ impl Drop for ClassDecl {
 pub struct ProtocolDecl {
     proto: *mut Protocol,
 }
+
+// SAFETY: Similar to ClassDecl
+unsafe impl Send for ProtocolDecl {}
+unsafe impl Sync for ProtocolDecl {}
 
 impl ProtocolDecl {
     /// Constructs a [`ProtocolDecl`] with the given name.

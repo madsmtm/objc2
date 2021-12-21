@@ -34,7 +34,7 @@ pub struct Class {
     _priv: [u8; 0],
 
     /// See objc_sys::OpaqueData
-    _opaque: PhantomData<(UnsafeCell<*const ()>, PhantomPinned)>,
+    _opaque: PhantomData<(UnsafeCell<()>, *const UnsafeCell<()>, PhantomPinned)>,
 }
 
 /// Block descriptor flags.
