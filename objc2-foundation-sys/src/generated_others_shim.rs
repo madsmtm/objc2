@@ -2,12 +2,17 @@
 
 use core::ptr::NonNull;
 
-use objc2::ffi::NSUInteger;
+use objc2::ffi::{NSInteger, NSUInteger};
 use objc2::rc::{Allocated, Id, Unknown};
 use objc2::runtime::Object;
 use objc2::{class, msg_send, msg_send_id, Encoding, Message, RefEncode};
 
 use crate::{NSCoder, NSObject, NSRange};
+
+pub const NSComparisonResult_NSOrderedAscending: NSComparisonResult = -1;
+pub const NSComparisonResult_NSOrderedSame: NSComparisonResult = 0;
+pub const NSComparisonResult_NSOrderedDescending: NSComparisonResult = 1;
+pub type NSComparisonResult = NSInteger;
 
 #[repr(transparent)]
 pub struct NSArray(NSObject);

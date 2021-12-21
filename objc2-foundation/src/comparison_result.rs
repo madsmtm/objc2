@@ -2,6 +2,8 @@ use core::cmp::Ordering;
 
 use objc2::{Encode, Encoding, RefEncode};
 
+use crate::ffi;
+
 /// Constants that indicate sort order.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nscomparisonresult?language=objc).
@@ -9,11 +11,11 @@ use objc2::{Encode, Encoding, RefEncode};
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NSComparisonResult {
     /// The left operand is smaller than the right operand.
-    Ascending = -1,
+    Ascending = ffi::NSComparisonResult_NSOrderedAscending,
     /// The two operands are equal.
-    Same = 0,
+    Same = ffi::NSComparisonResult_NSOrderedSame,
     /// The left operand is greater than the right operand.
-    Descending = 1,
+    Descending = ffi::NSComparisonResult_NSOrderedDescending,
 }
 
 impl Default for NSComparisonResult {
