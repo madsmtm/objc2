@@ -26,6 +26,7 @@ unsafe impl RefEncode for NSUInteger {
 }
 
 fn main() {
-    assert_eq!(&NSUInteger::ENCODING, "Q");
-    assert_eq!(&<&NSUInteger>::ENCODING, "^Q");
+    assert!(NSUInteger::ENCODING.equivalent_to_str("Q"));
+    assert!(<&NSUInteger>::ENCODING.equivalent_to_str("^Q"));
+    assert!(<&NSUInteger>::ENCODING.equivalent_to_str("r^Q"));
 }

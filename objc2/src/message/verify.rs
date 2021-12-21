@@ -70,7 +70,7 @@ where
 
     let ret = R::ENCODING;
     let expected_ret = method.return_type();
-    if ret != *expected_ret {
+    if !ret.equivalent_to_str(&*expected_ret) {
         return Err(VerificationError::MismatchedReturn(method, ret));
     }
 
@@ -85,7 +85,7 @@ where
 
     for (i, arg) in self_and_cmd.iter().chain(args).copied().enumerate() {
         let expected = method.argument_type(i).unwrap();
-        if arg != *expected {
+        if !arg.equivalent_to_str(&*expected) {
             return Err(VerificationError::MismatchedArgument(method, i, arg));
         }
     }

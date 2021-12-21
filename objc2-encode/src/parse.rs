@@ -3,7 +3,7 @@
 
 use crate::Encoding;
 
-const QUALIFIERS: &[char] = &[
+pub(crate) const QUALIFIERS: &[char] = &[
     'r', // const
     'n', // in
     'N', // inout
@@ -13,7 +13,7 @@ const QUALIFIERS: &[char] = &[
     'V', // oneway
 ];
 
-fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a str> {
+pub(crate) fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a str> {
     use Encoding::*;
     let code = match *enc {
         Char => "c",
@@ -93,15 +93,6 @@ fn rm_int_prefix(s: &str, other: usize) -> Option<&str> {
     chomp_int(s).and_then(|(n, t)| if other == n { Some(t) } else { None })
 }
 
-pub(crate) fn eq_enc(s: &str, enc: &Encoding<'_>) -> bool {
-    // strip qualifiers
-    let s = s.trim_start_matches(QUALIFIERS);
-
-    // if the given encoding can be successfully removed from the start
-    // and an empty string remains, they were equal!
-    rm_enc_prefix(s, enc).map_or(false, str::is_empty)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -116,26 +107,31 @@ mod tests {
                 Encoding::Int,
             ],
         );
-        assert!(eq_enc("{A={B=ci}ci}", &enc));
-        assert!(!eq_enc("{A={B=ci}ci", &enc));
+        assert!(enc.equivalent_to_str("{A={B=ci}ci}"));
+        assert_eq!(
+            enc.equivalent_to_start_of_str("{A={B=ci}ci}def"),
+            Some("def")
+        );
+        assert!(!enc.equivalent_to_str("{A={B=ci}ci"));
     }
 
     #[test]
     fn test_bitfield() {
-        assert!(eq_enc("b32", &Encoding::BitField(32)));
-        assert!(!eq_enc("b", &Encoding::BitField(32)));
-        assert!(!eq_enc("b-32", &Encoding::BitField(32)));
+        assert!(Encoding::BitField(32).equivalent_to_str("b32"));
+        assert!(!Encoding::BitField(32).equivalent_to_str("b32a"));
+        assert!(!Encoding::BitField(32).equivalent_to_str("b"));
+        assert!(!Encoding::BitField(32).equivalent_to_str("b-32"));
     }
 
     #[test]
     fn test_qualifiers() {
-        assert!(eq_enc("Vv", &Encoding::Void));
-        assert!(eq_enc("r*", &Encoding::String));
+        assert!(Encoding::Void.equivalent_to_str("Vv"));
+        assert!(Encoding::String.equivalent_to_str("r*"));
     }
 
     #[test]
     fn test_unicode() {
         let fields = &[Encoding::Char, Encoding::Int];
-        assert!(eq_enc("{☃=ci}", &Encoding::Struct("☃", fields)));
+        assert!(Encoding::Struct("☃", fields).equivalent_to_str("{☃=ci}"));
     }
 }
