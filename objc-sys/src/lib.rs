@@ -16,7 +16,7 @@
 #![allow(clippy::upper_case_acronyms)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
-#![doc(html_root_url = "https://docs.rs/objc-sys/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/objc-sys/0.2.0-alpha.0")]
 
 // TODO: Replace `extern "C"` with `extern "C-unwind"` where applicable.
 // See https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html.
