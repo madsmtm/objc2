@@ -39,6 +39,11 @@ jobs:
             os: macos-11
             rust:
               target: x86_64-apple-darwin
+          - name: Test macOS nightly
+            os: macos-latest
+            rust:
+              toolchain: nightly
+              target: x86_64-apple-darwin
           - name: Build macOS 32bit
             os: macos-10.15
             rust:
