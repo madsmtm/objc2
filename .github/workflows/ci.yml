@@ -57,17 +57,113 @@ jobs:
             # 32-bit support was removed in 10.15, so we can't test the
             # binary, only build it
             test-args: --no-run
+          - name: Test GNUStep
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            features: gnustep-1-9
+            args: --features gnustep-1-9
+          - name: Test GNUStep 32bit
+            os: ubuntu-latest
+            target: i686-unknown-linux-gnu
+            rust:
+              toolchain: stable
+              # Install compiler for i686-unknown-linux-gnu
+              target: i686-unknown-linux-gnu
+            cflags: -m32
+            configureflags: --target=x86-pc-linux-gnu
+            args: --features gnustep-1-9
 
           # - { target: x86_64-apple-ios,         os: macos-latest, }
           # - { target: aarch64-apple-ios,        os: macos-latest, }
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
+      CFLAGS: ${{ matrix.cflags }}
+      CXXFLAGS: ${{ matrix.cflags }}
+      ASMFLAGS: ${{ matrix.cflags }}
+      LDFLAGS: ${{ matrix.cflags }}
 
     runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install Clang
+      if: contains(matrix.os, 'ubuntu')
+      run: sudo apt-get -y install clang
+
+    - name: Install cross compilation tools
+      if: matrix.target == 'i686-unknown-linux-gnu'
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get -y install gcc-multilib libgcc-10-dev:i386 \
+          libc6-dev:i386 libstdc++-10-dev:i386 libffi-dev:i386 \
+          libxml2-dev:i386 libicu-dev:i386
+
+    - name: Cache GNUStep
+      if: contains(matrix.os, 'ubuntu')
+      id: cache-gnustep
+      uses: actions/cache@v2
+      with:
+        # Ideally I would have just cached build-files, and then rerun make
+        # every time, letting it figure out what's changed. But GNUStep-Base
+        # ./configure invalidates the cache, which makes it very hard to
+        # know when to rebuild and when not to.
+        # So instead we just cache the final output:
+        # - lib/libobjc.so
+        # - lib/libgnustep-base.so
+        # - include/Foundation/*
+        # - include/objc/*
+        # - ...
+        path: |
+          ~/gnustep/lib
+          ~/gnustep/include
+        key: ${{ matrix.name }}-gnustep-libobjc2_1.9-make_2.9.0-base_1.28.0
+
+    - name: Setup GNUStep environment
+      if: contains(matrix.os, 'ubuntu')
+      run: |
+        mkdir -p $HOME/gnustep
+        echo "PATH=$HOME/gnustep/bin:$PATH" >> $GITHUB_ENV
+        echo "LIBRARY_PATH=$HOME/gnustep/lib:$LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$HOME/gnustep/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "CPATH=$HOME/gnustep/include:$CPATH" >> $GITHUB_ENV
+        ls -al ~/gnustep/* || true # Ignore failures
+
+    - name: Install Make and Cmake
+      if: contains(matrix.os, 'ubuntu') && steps.cache-gnustep.outputs.cache-hit != 'true'
+      run: sudo apt-get -y install make cmake
+
+    - name: Install GNUStep libobjc2 v1.9
+      if: contains(matrix.os, 'ubuntu') && steps.cache-gnustep.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/gnustep/libobjc2/archive/refs/tags/v1.9.tar.gz
+        tar -xzf v1.9.tar.gz
+        mkdir -p libobjc2-1.9/build
+        cd libobjc2-1.9/build
+        cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=$HOME/gnustep -DTESTS=OFF ..
+        make install
+
+    - name: Install GNUStep make
+      if: contains(matrix.os, 'ubuntu') && steps.cache-gnustep.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_0.tar.gz
+        tar -xzf make-2_9_0.tar.gz
+        mkdir -p tools-make-make-2_9_0/build
+        cd tools-make-make-2_9_0/build
+        ../configure --prefix=$HOME/gnustep --with-library-combo=ng-gnu-gnu
+        make install
+
+    - name: Install GNUStep-Base
+      if: contains(matrix.os, 'ubuntu') && steps.cache-gnustep.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
+        tar -xzf base-1_28_0.tar.gz
+        cd libs-base-base-1_28_0
+        ./configure --prefix=$HOME/gnustep --disable-tls --disable-xslt ${{ matrix.platform.configureflags }}
+        make install
+        ls -al $HOME/gnustep/*
 
     - name: Cache Rust
       uses: actions/cache@v2
@@ -100,19 +196,19 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: doc
-        args: ${{ matrix.args }} --no-deps --document-private-items
+        args: --no-deps --document-private-items ${{ matrix.args }}
 
     - name: Test without features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: ${{ matrix.args }} ${{ matrix.test-args }} --no-fail-fast --no-default-features
+        args: --no-fail-fast --no-default-features ${{ matrix.args }} ${{ matrix.test-args }}
 
     - name: Test with features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: ${{ matrix.args }} ${{ matrix.test-args }} --no-fail-fast --features ${{ env.FEATURES }}
+        args: --no-fail-fast --features ${{ env.FEATURES }} ${{ matrix.args }} ${{ matrix.test-args }}
 
     - name: Test with unstable features
       if: matrix.rust.toolchain == 'nightly'
@@ -120,4 +216,4 @@ jobs:
       with:
         command: test
         # Not using --all-features because that would enable e.g. gnustep
-        args: ${{ matrix.args }} ${{ matrix.test-args }} --no-fail-fast --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
+        args: --no-fail-fast --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }} ${{ matrix.args }} ${{ matrix.test-args }}
