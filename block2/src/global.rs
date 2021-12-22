@@ -131,7 +131,18 @@ where
 /// ```compile_fail
 /// use block2::global_block;
 /// global_block! {
-///     pub static INVALID_BLOCK = |b: Box<i32>| {};
+///     pub static BLOCK = |b: Box<i32>| {};
+/// }
+/// ```
+///
+/// There is also no way to get a block function that's generic over it's
+/// arguments. One could imagine the following syntax would work, but it can't
+/// due to implementation limitations:
+///
+/// ```compile_fail
+/// use block2::global_block;
+/// global_block! {
+///     pub static BLOCK<T: Encode> = |b: T| {};
 /// }
 /// ```
 ///
