@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* `GlobalBlock` and corresponding `global_block!` macro, allowing statically
+  creating blocks that don't reference their environment.
+
 
 ## 0.2.0-alpha.1 - 2021-11-22
 

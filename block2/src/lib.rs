@@ -66,6 +66,11 @@ use std::os::raw::{c_int, c_ulong};
 pub use block_sys as ffi;
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
+#[macro_use]
+mod global;
+
+pub use global::{GlobalBlock, __GLOBAL_DESCRIPTOR};
+
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments: Sized {
     /// Calls the given `Block` with self as the arguments.

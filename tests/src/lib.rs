@@ -37,7 +37,19 @@ pub fn invoke_add_block(block: &Block<(i32,), i32>, a: i32) -> i32 {
 mod tests {
     use super::*;
     use alloc::string::ToString;
-    use block2::{ConcreteBlock, RcBlock};
+    use block2::{global_block, ConcreteBlock, RcBlock};
+
+    global_block! {
+        /// Test `global_block` in an external crate
+        static MY_BLOCK = || -> i32 {
+            42
+        }
+    }
+
+    #[test]
+    fn test_global_block() {
+        assert_eq!(invoke_int_block(&MY_BLOCK), 42);
+    }
 
     #[test]
     fn test_call_block() {
