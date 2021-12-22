@@ -36,7 +36,6 @@ use alloc::format;
 use alloc::string::ToString;
 use core::mem;
 use core::mem::ManuallyDrop;
-use core::ptr;
 use std::ffi::CString;
 
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
@@ -137,7 +136,7 @@ unsafe impl Sync for ClassDecl {}
 impl ClassDecl {
     fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<ClassDecl> {
         let name = CString::new(name).unwrap();
-        let super_ptr = superclass.map_or(ptr::null(), |c| c) as _;
+        let super_ptr = superclass.map_or(0 as *const _, |c| c) as _;
         let cls = unsafe { ffi::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
         if cls.is_null() {
             None

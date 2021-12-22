@@ -399,7 +399,7 @@ mod tests {
     #[cfg(not(feature = "verify_message"))]
     #[test]
     fn test_send_message_nil() {
-        let nil: *mut Object = ::core::ptr::null_mut();
+        let nil: *mut Object = 0 as *mut Object;
 
         let result: *mut Object = unsafe { msg_send![nil, description] };
         assert!(result.is_null());
@@ -447,7 +447,7 @@ mod tests {
         };
         assert_eq!(result, 4);
 
-        let obj: *const ManuallyDrop<Object> = (&**obj as *const Object).cast();
+        let obj = &**obj as *const Object as *const ManuallyDrop<Object>;
         let result: u32 = unsafe { msg_send![obj, foo] };
         assert_eq!(result, 4);
     }

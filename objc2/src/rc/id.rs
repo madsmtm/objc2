@@ -173,10 +173,7 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
             own: PhantomData,
         }
     }
-}
 
-// TODO: Add ?Sized bound
-impl<T: Message, O: Ownership> Id<T, O> {
     /// Retains the given object pointer.
     ///
     /// This is useful when you have been given a pointer to an object from
@@ -212,14 +209,20 @@ impl<T: Message, O: Ownership> Id<T, O> {
     #[doc(alias = "objc_retain")]
     #[cfg_attr(not(debug_assertions), inline)]
     pub unsafe fn retain(ptr: NonNull<T>) -> Id<T, O> {
-        let ptr = ptr.as_ptr() as *mut ffi::objc_object;
+        let ptr = ptr.as_ptr();
+        let obj_ptr = ptr as *mut ffi::objc_object;
         // SAFETY: The caller upholds that the pointer is valid
-        let res = unsafe { ffi::objc_retain(ptr) };
-        debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
+        let res = unsafe { ffi::objc_retain(obj_ptr) };
+        debug_assert_eq!(res, obj_ptr, "objc_retain did not return the same pointer");
         // SAFETY: Non-null upheld by the caller, and `objc_retain` always
         // returns the same pointer, see:
         // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain
-        let res = unsafe { NonNull::new_unchecked(res as *mut T) };
+        //
+        // TODO: Use `res` instead, in the odd case where `objc_retain` did
+        // not return the same pointer. We can't do this currently because we
+        // have a ?Sized bound on T to support extern types, which means we
+        // can go from `*mut T` to `*mut objc_object`, but not the other way.
+        let res = unsafe { NonNull::new_unchecked(ptr) };
         // SAFETY: We just retained the object, so it has +1 retain count
         unsafe { Self::new(res) }
     }
@@ -232,14 +235,19 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // retained objects it is hard to imagine a case where the inner type
         // has a method with the same name.
 
-        let ptr = ManuallyDrop::new(self).ptr.as_ptr() as *mut ffi::objc_object;
+        let ptr = ManuallyDrop::new(self).ptr.as_ptr();
+        let obj_ptr = ptr as *mut ffi::objc_object;
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
         // And because of the ManuallyDrop, we don't call the Drop
         // implementation, so the object won't also be released there.
-        let res = unsafe { ffi::objc_autorelease(ptr) };
-        debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
-        res as *mut T
+        let res = unsafe { ffi::objc_autorelease(obj_ptr) };
+        debug_assert_eq!(
+            res, obj_ptr,
+            "objc_autorelease did not return the same pointer"
+        );
+        // TODO: Return `res`, see explanation in `retain`.
+        ptr
     }
 
     // TODO: objc_retainAutoreleasedReturnValue
@@ -259,8 +267,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
 //     }
 // }
 
-// TODO: Add ?Sized bound
-impl<T: Message> Id<T, Owned> {
+impl<T: Message + ?Sized> Id<T, Owned> {
     /// Autoreleases the owned [`Id`], returning a mutable reference bound to
     /// the pool.
     ///
@@ -297,8 +304,7 @@ impl<T: Message> Id<T, Owned> {
     }
 }
 
-// TODO: Add ?Sized bound
-impl<T: Message> Id<T, Shared> {
+impl<T: Message + ?Sized> Id<T, Shared> {
     /// Autoreleases the shared [`Id`], returning an aliased reference bound
     /// to the pool.
     ///
@@ -325,8 +331,7 @@ impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
     }
 }
 
-// TODO: Add ?Sized bound
-impl<T: Message> Clone for Id<T, Shared> {
+impl<T: Message + ?Sized> Clone for Id<T, Shared> {
     /// Makes a clone of the shared object.
     ///
     /// This increases the object's reference count.

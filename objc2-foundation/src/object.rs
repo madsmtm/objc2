@@ -15,7 +15,7 @@ pub unsafe trait INSObject: Message {
         unsafe { msg_send![self, hash] }
     }
 
-    fn is_equal<T: INSObject>(&self, other: &T) -> bool {
+    fn is_equal<T: INSObject + ?Sized>(&self, other: &T) -> bool {
         let result: Bool = unsafe { msg_send![self, isEqual: other] };
         result.is_true()
     }
@@ -40,12 +40,12 @@ object!(unsafe pub struct NSObject<> {
 
 /// ```compile_fail
 /// use objc2_foundation::NSObject;
-/// fn needs_sync<T: Sync>() {}
+/// fn needs_sync<T: Sync + ?Sized>() {}
 /// needs_sync::<NSObject>();
 /// ```
 /// ```compile_fail
 /// use objc2_foundation::NSObject;
-/// fn needs_send<T: Send>() {}
+/// fn needs_send<T: Send + ?Sized>() {}
 /// needs_send::<NSObject>();
 /// ```
 #[cfg(doctest)]

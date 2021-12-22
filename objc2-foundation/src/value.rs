@@ -93,7 +93,7 @@ unsafe impl<T: 'static> INSCopying for NSValue<T> {
 
 /// ```compile_fail
 /// use objc2_foundation::NSValue;
-/// fn needs_eq<T: Eq>() {}
+/// fn needs_eq<T: Eq + ?Sized>() {}
 /// needs_eq::<NSValue<f32>>();
 /// ```
 #[cfg(doctest)]

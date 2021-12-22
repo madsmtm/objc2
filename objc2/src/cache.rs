@@ -39,7 +39,7 @@ impl CachedSel {
 /// Allows storing a [`Class`] reference in a static and lazily loading it.
 #[doc(hidden)]
 pub struct CachedClass {
-    ptr: AtomicPtr<Class>,
+    ptr: AtomicPtr<c_void>,
 }
 
 impl CachedClass {
@@ -56,7 +56,7 @@ impl CachedClass {
     #[doc(hidden)]
     pub unsafe fn get(&self, name: &str) -> Option<&'static Class> {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.
-        let ptr = self.ptr.load(Ordering::Relaxed);
+        let ptr = self.ptr.load(Ordering::Relaxed) as *const Class;
         if ptr.is_null() {
             let cls = unsafe { ffi::objc_getClass(name.as_ptr() as *const _) } as *const Class;
             self.ptr.store(cls as *mut _, Ordering::Relaxed);

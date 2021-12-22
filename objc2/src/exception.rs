@@ -45,7 +45,7 @@ extern "C" {
 pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
     let exception = match exception {
         Some(id) => &**id as *const Object as *mut ffi::objc_object,
-        None => ptr::null_mut(),
+        None => ptr::from_raw_parts_mut(ptr::null_mut(), ()),
     };
     unsafe { ffi::objc_exception_throw(exception) }
 }
@@ -63,7 +63,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
     let mut closure = Some(closure);
     let context = &mut closure as *mut _ as *mut c_void;
 
-    let mut exception = ptr::null_mut();
+    let mut exception = ptr::from_raw_parts_mut(ptr::null_mut(), ());
     let success = unsafe { rust_objc_try_catch_exception(f, context, &mut exception) };
 
     if success == 0 {

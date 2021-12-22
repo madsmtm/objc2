@@ -32,7 +32,7 @@ pub unsafe trait INSCopying: INSObject {
     ///
     /// This is usually `Self`, but e.g. `NSMutableString` returns `NSString`.
     /// TODO: Verify???
-    type Output: INSObject;
+    type Output: INSObject + ?Sized;
 
     fn copy(&self) -> Id<Self::Output, Self::Ownership> {
         unsafe {
@@ -47,7 +47,7 @@ pub unsafe trait INSCopying: INSObject {
 /// Note that the `mutableCopy` selector must return an owned object!
 pub unsafe trait INSMutableCopying: INSObject {
     /// TODO
-    type Output: INSObject;
+    type Output: INSObject + ?Sized;
 
     fn mutable_copy(&self) -> Id<Self::Output, Owned> {
         unsafe {

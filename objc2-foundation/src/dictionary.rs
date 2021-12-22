@@ -30,8 +30,8 @@ where
 }
 
 pub unsafe trait INSDictionary: INSObject {
-    type Key: INSObject;
-    type Value: INSObject;
+    type Key: INSObject + ?Sized;
+    type Value: INSObject + ?Sized;
     type ValueOwnership: Ownership;
 
     #[doc(alias = "count")]
@@ -139,31 +139,33 @@ pub unsafe trait INSDictionary: INSObject {
 }
 
 object!(
-    unsafe pub struct NSDictionary<K, V> {
+    unsafe pub struct NSDictionary<K: ?Sized, V: ?Sized> {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
     }
 );
 
 // TODO: SAFETY
-unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
-unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
+unsafe impl<K: Sync + Send + ?Sized, V: Sync + ?Sized> Sync for NSDictionary<K, V> {}
+unsafe impl<K: Sync + Send + ?Sized, V: Send + ?Sized> Send for NSDictionary<K, V> {}
 
-impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
+impl<K: INSObject + ?Sized, V: INSObject + ?Sized> NSDictionary<K, V> {
     unsafe_def_fn!(pub fn new -> Shared);
 }
 
-unsafe impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {
+unsafe impl<K: INSObject + ?Sized, V: INSObject + ?Sized> INSDictionary for NSDictionary<K, V> {
     type Key = K;
     type Value = V;
     type ValueOwnership = Owned;
 }
 
-unsafe impl<K: INSObject, V: INSObject> INSFastEnumeration for NSDictionary<K, V> {
+unsafe impl<K: INSObject + ?Sized, V: INSObject + ?Sized> INSFastEnumeration
+    for NSDictionary<K, V>
+{
     type Item = K;
 }
 
-impl<'a, K: INSObject, V: INSObject> Index<&'a K> for NSDictionary<K, V> {
+impl<'a, K: INSObject + ?Sized, V: INSObject + ?Sized> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
 
     fn index(&self, index: &K) -> &V {

@@ -19,7 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * **BREAKING**: Made some creation methods a bit less generic (e.g.
   `INSDictionary::from_keys_and_objects` now always returns `Id<_, Shared>`).
-* Relax bounds on generic `INSObject` impls.
+* Relaxed bounds on generic `INSObject` impls.
+* Relaxed `Sized` bounds on generic objects like `NSArray`.
 
 ### Removed
 * **BREAKING**: Removed associated `Ownership` type from `INSObject`; instead,

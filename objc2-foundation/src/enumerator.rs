@@ -12,12 +12,12 @@ use objc2::{msg_send, Encode, Encoding, RefEncode};
 
 use super::INSObject;
 
-pub struct NSEnumerator<'a, T: INSObject> {
+pub struct NSEnumerator<'a, T: INSObject + ?Sized> {
     id: Id<Object, Owned>,
     item: PhantomData<&'a T>,
 }
 
-impl<'a, T: INSObject> NSEnumerator<'a, T> {
+impl<'a, T: INSObject + ?Sized> NSEnumerator<'a, T> {
     /// TODO
     ///
     /// # Safety
@@ -33,7 +33,7 @@ impl<'a, T: INSObject> NSEnumerator<'a, T> {
     }
 }
 
-impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
+impl<'a, T: INSObject + ?Sized> Iterator for NSEnumerator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
@@ -42,7 +42,7 @@ impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
 }
 
 pub unsafe trait INSFastEnumeration: INSObject {
-    type Item: INSObject;
+    type Item: INSObject + ?Sized;
 
     fn enumerator(&self) -> NSFastEnumerator<'_, Self> {
         NSFastEnumerator::new(self)
@@ -50,7 +50,7 @@ pub unsafe trait INSFastEnumeration: INSObject {
 }
 
 #[repr(C)]
-struct NSFastEnumerationState<T: INSObject> {
+struct NSFastEnumerationState<T: INSObject + ?Sized> {
     state: c_ulong, // TODO: Verify this is actually always 64 bit
     items_ptr: *const *const T,
     mutations_ptr: *mut c_ulong,
@@ -78,7 +78,7 @@ const U_LONG_ENCODING: Encoding<'static> = {
     }
 };
 
-unsafe impl<T: INSObject> Encode for NSFastEnumerationState<T> {
+unsafe impl<T: INSObject + ?Sized> Encode for NSFastEnumerationState<T> {
     const ENCODING: Encoding<'static> = Encoding::Struct(
         "?",
         &[
@@ -90,7 +90,7 @@ unsafe impl<T: INSObject> Encode for NSFastEnumerationState<T> {
     );
 }
 
-unsafe impl<T: INSObject> RefEncode for NSFastEnumerationState<T> {
+unsafe impl<T: INSObject + ?Sized> RefEncode for NSFastEnumerationState<T> {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
@@ -131,6 +131,10 @@ pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration + ?Sized> {
 
 impl<'a, C: INSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
     fn new(object: &'a C) -> Self {
+        // SAFETY: C::Item is ?Sized, but it should always be a thin pointer.
+        // This is just a way to get a null pointer because we can't apply the
+        // correct ptr::Thin bound yet.
+        let null_ptr = unsafe { mem::zeroed::<*const C::Item>() };
         Self {
             object,
 
@@ -138,7 +142,8 @@ impl<'a, C: INSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
             end: ptr::null(),
 
             state: unsafe { mem::zeroed() },
-            buf: [ptr::null(); FAST_ENUM_BUF_SIZE],
+            // SAFETY:
+            buf: [null_ptr; FAST_ENUM_BUF_SIZE],
         }
     }
 
