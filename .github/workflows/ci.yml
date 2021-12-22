@@ -172,7 +172,7 @@ jobs:
         path: |
           ~/.cargo/
           target/
-        key: ${{ matrix.name }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+        key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Install Rust toolchain
       # Assume default toolchain is already installed
