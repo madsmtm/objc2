@@ -22,6 +22,8 @@ const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_he
 ///
 /// If [`ConcreteBlock`] is the [`Fn`]-block equivalent, this is likewise the
 /// [`fn`]-block equivalent.
+///
+/// [`ConcreteBlock`]: crate::ConcreteBlock
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
     layout: ffi::Block_layout,
@@ -105,7 +107,7 @@ where
 /// ```
 /// use block2::global_block;
 /// global_block! {
-///     static ADDER_BLOCK = |x: i32, y: i32,| -> i32 {
+///     static ADDER_BLOCK = |x: i32, y: i32| -> i32 {
 ///         x + y
 ///     }
 /// };
@@ -132,6 +134,8 @@ where
 ///     pub static INVALID_BLOCK = |b: Box<i32>| {}
 /// };
 /// ```
+///
+/// [`Box`]: std::boxed::Box
 #[macro_export]
 macro_rules! global_block {
     // `||` is parsed as one token
