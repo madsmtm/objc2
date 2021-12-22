@@ -12,6 +12,7 @@ build = "build.rs"
 [dependencies]
 block2 = { path = "../block2" }
 block-sys = { path = "../block-sys" }
+objc2-encode = { path = "../objc2-encode" }
 
 [build-dependencies]
 cc = "1.0"

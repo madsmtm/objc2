@@ -8,6 +8,7 @@ use block2::{Block, RcBlock};
 extern crate alloc;
 
 pub mod ffi;
+use crate::ffi::LargeStruct;
 
 pub fn get_int_block_with(i: i32) -> RcBlock<(), i32> {
     unsafe {
@@ -31,6 +32,14 @@ pub fn invoke_int_block(block: &Block<(), i32>) -> i32 {
 pub fn invoke_add_block(block: &Block<(i32,), i32>, a: i32) -> i32 {
     let ptr = block as *const _;
     unsafe { ffi::invoke_add_block(ptr as *mut _, a) }
+}
+
+pub fn invoke_large_struct_block(
+    block: &Block<(LargeStruct,), LargeStruct>,
+    x: LargeStruct,
+) -> LargeStruct {
+    let ptr = block as *const _;
+    unsafe { ffi::invoke_large_struct_block(ptr as *mut _, x) }
 }
 
 #[cfg(test)]
@@ -102,5 +111,31 @@ mod tests {
 
         let block = make_block();
         assert_eq!(invoke_int_block(&block), 7);
+    }
+
+    #[test]
+    fn test_large_struct_block() {
+        global_block! {
+            static BLOCK = |data: LargeStruct| -> LargeStruct {
+                let mut data = data;
+                data.mutate();
+                data
+            }
+        }
+
+        let data = LargeStruct::get();
+        let mut new_data = data.clone();
+        new_data.mutate();
+
+        assert_eq!(unsafe { BLOCK.call((data,)) }, new_data);
+        assert_eq!(invoke_large_struct_block(&BLOCK, data), new_data);
+
+        let block = ConcreteBlock::new(|mut x: LargeStruct| {
+            x.mutate();
+            x
+        });
+        assert_eq!(invoke_large_struct_block(&block, data), new_data);
+        let block = block.copy();
+        assert_eq!(invoke_large_struct_block(&block, data), new_data);
     }
 }
