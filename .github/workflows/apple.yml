@@ -26,16 +26,37 @@ jobs:
         args: -- --check
 
   test:
-    name: Test
+    name: ${{ matrix.name }}
+
     strategy:
       matrix:
-        platform:
-          - { os: macos-10.15    }
-          - { os: macos-11       }
+        include:
+          - name: Test macOS 10.15
+            os: macos-10.15
+            rust:
+              target: x86_64-apple-darwin
+          - name: Test macOS 11
+            os: macos-11
+            rust:
+              target: x86_64-apple-darwin
+          - name: Build macOS 32bit
+            os: macos-10.15
+            rust:
+              toolchain: nightly
+              target: i686-apple-darwin
+              components: rust-src
+            args: -Zbuild-std -Zdoctest-xcompile
+            # 32-bit support was removed in 10.15, so we can't test the
+            # binary, only build it
+            test-args: --no-run
+
           # - { target: x86_64-apple-ios,         os: macos-latest, }
           # - { target: aarch64-apple-ios,        os: macos-latest, }
 
-    runs-on: ${{ matrix.platform.os }}
+    env:
+      CARGO_BUILD_TARGET: ${{ matrix.rust.target }}
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
@@ -46,73 +67,40 @@ jobs:
         path: |
           ~/.cargo/
           target/
-        key: ${{ matrix.platform.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
-        restore-keys: |
-          ${{ matrix.platform.os }}-cargo-
+        key: ${{ matrix.name }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
-    - name: Install different Rust toolchain
-      # A default toolchain is already installed
-      if: matrix.platform.target
+    - name: Install Rust toolchain
+      # Assume default toolchain is already installed
+      if: matrix.rust.toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
-        target: ${{ matrix.platform.target }}
+        toolchain: ${{ matrix.rust.toolchain }}
         profile: minimal
         override: true
+        components: ${{ matrix.rust.components }}
+
+    - name: Download macOS 10.13 SDK (supports 32-bit)
+      if: matrix.rust.target == 'i686-apple-darwin'
+      run: |
+        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/10.13/MacOSX10.13.tar.bz2
+        tar -xyf MacOSX10.13.tar.bz2
+        echo "SDKROOT=$(pwd)/MacOSX10.13.sdk" >> $GITHUB_ENV
 
     - name: Check documentation
       uses: actions-rs/cargo@v1
       with:
         command: doc
-        args: --no-deps --document-private-items
+        args: ${{ matrix.args }} --no-deps --document-private-items
 
     - name: Test without features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --no-fail-fast --no-default-features
+        args: ${{ matrix.args }} ${{ matrix.test-args }} --no-fail-fast --no-default-features
 
     - name: Test with features
       uses: actions-rs/cargo@v1
       with:
         command: test
         # Not using --all-features because some features are nightly-only
-        args: --no-fail-fast --features malloc,block,exception,catch_all,verify_message
-
-  build_32_bit:
-    name: Build 32-bit
-
-    # 32-bit support was removed in 10.15, so we can't test the binary, only build it
-    runs-on: macos-10.15
-
-    env:
-      CARGO_BUILD_TARGET: i686-apple-darwin
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install nightly Rust # required for -Zbuild-std
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: nightly
-        profile: minimal
-        override: true
-        components: rust-src
-
-    - name: Download macOS 10.13 SDK (supports 32-bit)
-      run: |
-        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/10.13/MacOSX10.13.tar.bz2
-        tar -xyf MacOSX10.13.tar.bz2
-        echo "SDKROOT=$(pwd)/MacOSX10.13.sdk" >> $GITHUB_ENV
-
-    - name: Build without features
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: -Zbuild-std -Zdoctest-xcompile --no-run --no-default-features
-
-    - name: Build with features
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: -Zbuild-std -Zdoctest-xcompile --no-run --features malloc,exception,catch_all,verify_message
+        args: ${{ matrix.args }} ${{ matrix.test-args }} --no-fail-fast --features malloc,block,exception,catch_all,verify_message
