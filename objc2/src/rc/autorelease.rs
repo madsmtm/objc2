@@ -1,5 +1,6 @@
 use core::cell::UnsafeCell;
 use core::ffi::c_void;
+use core::fmt;
 use core::marker::PhantomData;
 #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
 use std::{cell::RefCell, thread_local, vec::Vec};
@@ -15,6 +16,7 @@ use crate::ffi;
 ///
 /// And this is not [`Sync`], since you can only autorelease a reference to a
 /// pool on the current thread.
+#[derive(Debug)]
 pub struct AutoreleasePool {
     context: *mut c_void,
     // May pointer to data that is mutated (even though we hold shared access)
@@ -157,6 +159,12 @@ impl Drop for AutoreleasePool {
                 "Popped pool that was not the innermost pool"
             )
         });
+    }
+}
+
+impl fmt::Pointer for AutoreleasePool {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Pointer::fmt(&self.context, f)
     }
 }
 

@@ -345,7 +345,8 @@ message_args_impl!(
 ///   enabled
 /// - the encodings of the arguments do not match the encoding of the method
 ///   and the `verify_message` feature is enabled
-#[derive(Debug)]
+// Currently not Clone for future compat
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct MessageError(String);
 
 impl fmt::Display for MessageError {

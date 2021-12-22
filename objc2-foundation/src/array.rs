@@ -6,7 +6,7 @@ use core::ops::{Index, Range};
 use core::ptr::NonNull;
 
 use objc2::msg_send;
-use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::Object;
 
 use super::{
@@ -229,6 +229,15 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
     }
 }
 
+impl<T: INSObject, O: Ownership> DefaultId for NSArray<T, O> {
+    type Ownership = O;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
+    }
+}
+
 pub unsafe trait INSMutableArray: INSArray {
     #[doc(alias = "addObject:")]
     fn push(&mut self, obj: Id<Self::Item, Self::ItemOwnership>) {
@@ -375,6 +384,15 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
 
     fn index(&self, index: usize) -> &T {
         self.get(index).unwrap()
+    }
+}
+
+impl<T: INSObject, O: Ownership> DefaultId for NSMutableArray<T, O> {
+    type Ownership = Owned;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
     }
 }
 

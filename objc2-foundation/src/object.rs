@@ -2,7 +2,7 @@ use core::marker::PhantomData;
 use core::ptr::NonNull;
 
 use objc2::msg_send;
-use objc2::rc::{Id, Owned, Shared};
+use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Bool, Class, Object};
 use objc2::Message;
 
@@ -53,6 +53,15 @@ pub struct NSObjectNotSendNorSync;
 
 impl NSObject {
     unsafe_def_fn!(pub fn new -> Owned);
+}
+
+impl DefaultId for NSObject {
+    type Ownership = Owned;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
+    }
 }
 
 #[cfg(test)]

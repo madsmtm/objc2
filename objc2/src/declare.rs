@@ -116,6 +116,7 @@ fn log2_align_of<T>() -> u8 {
 
 /// A type for declaring a new class and adding new methods and ivars to it
 /// before registering it.
+#[derive(Debug)]
 pub struct ClassDecl {
     cls: *mut Class,
 }
@@ -306,6 +307,7 @@ impl Drop for ClassDecl {
 
 /// A type for declaring a new protocol and adding new methods to it
 /// before registering it.
+#[derive(Debug)]
 pub struct ProtocolDecl {
     proto: *mut Protocol,
 }

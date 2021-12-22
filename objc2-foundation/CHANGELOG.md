@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Implement `PartialOrd` and `Ord` for `NSComparisonResult` and `NSValue`.
+* Implement `fmt::Display` for `NSValue`.
+* Implement `DefaultId` for relevant objects.
+
 ### Changed
 * **BREAKING**: Renamed `INSFastEnumeration::enumerator` to
   `INSFastEnumeration::iter_fast`.

@@ -5,7 +5,7 @@ use core::ops::Index;
 use core::ptr::{self, NonNull};
 
 use objc2::msg_send;
-use objc2::rc::{Id, Owned, Ownership, Shared, SliceId};
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator};
 
@@ -151,6 +151,15 @@ unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
 
 impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
     unsafe_def_fn!(pub fn new -> Shared);
+}
+
+impl<K: INSObject, V: INSObject> DefaultId for NSDictionary<K, V> {
+    type Ownership = Shared;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
+    }
 }
 
 unsafe impl<K: INSObject, V: INSObject> INSDictionary for NSDictionary<K, V> {

@@ -6,7 +6,7 @@ use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
-use objc2::rc::{Id, Owned, Ownership, Shared};
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared};
 
 pub unsafe trait INSData: INSObject {
     type Ownership: Ownership;
@@ -111,6 +111,15 @@ unsafe impl INSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
+impl DefaultId for NSData {
+    type Ownership = Shared;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
+    }
+}
+
 impl Deref for NSData {
     type Target = [u8];
 
@@ -178,6 +187,15 @@ unsafe impl INSCopying for NSMutableData {
 
 unsafe impl INSMutableCopying for NSMutableData {
     type Output = NSMutableData;
+}
+
+impl DefaultId for NSMutableData {
+    type Ownership = Owned;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
+    }
 }
 
 impl Deref for NSMutableData {

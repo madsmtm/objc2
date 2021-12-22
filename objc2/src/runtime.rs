@@ -5,6 +5,7 @@
 
 use core::ffi::c_void;
 use core::fmt;
+use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 use core::str;
@@ -32,6 +33,8 @@ pub const NO: ffi::BOOL = ffi::NO;
 
 /// A type that represents a method selector.
 #[repr(transparent)]
+// ffi::sel_isEqual is just pointer comparison, so just generate PartialEq
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub struct Sel {
     ptr: *const ffi::objc_selector,
 }
@@ -51,6 +54,30 @@ pub struct Class(ffi::objc_class);
 /// A type that represents an Objective-C protocol.
 #[repr(C)]
 pub struct Protocol(ffi::Protocol);
+
+macro_rules! standard_pointer_impls {
+    ($($name:ident),*) => {
+        $(
+            impl PartialEq for $name {
+                #[inline]
+                fn eq(&self, other: &Self) -> bool {
+                    self.as_ptr() == other.as_ptr()
+                }
+            }
+            impl Eq for $name {}
+            impl hash::Hash for $name {
+                #[inline]
+                fn hash<H: hash::Hasher>(&self, state: &mut H) {
+                    self.as_ptr().hash(state)
+                }
+            }
+        )*
+    }
+}
+
+// Implement PartialEq, Eq and Hash using pointer semantics; there's not
+// really a better way to do it.
+standard_pointer_impls!(Ivar, Method, Class);
 
 /// A type that represents an instance of a class.
 ///
@@ -107,13 +134,9 @@ unsafe impl Encode for Sel {
     const ENCODING: Encoding<'static> = Encoding::Sel;
 }
 
-impl PartialEq for Sel {
-    fn eq(&self, other: &Sel) -> bool {
-        self.ptr == other.ptr
-    }
-}
-
-impl Eq for Sel {}
+// RefEncode is not implemented for Sel, because there is literally no API
+// that takes &Sel, but the user could easily get confused and accidentally
+// attempt that.
 
 // SAFETY: Sel is immutable (and can be retrieved from any thread using the
 // `sel!` macro).
@@ -122,17 +145,15 @@ unsafe impl Send for Sel {}
 impl UnwindSafe for Sel {}
 impl RefUnwindSafe for Sel {}
 
-impl Copy for Sel {}
-
-impl Clone for Sel {
-    fn clone(&self) -> Self {
-        Self { ptr: self.ptr }
-    }
-}
-
 impl fmt::Debug for Sel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
+    }
+}
+
+impl fmt::Pointer for Sel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Pointer::fmt(&self.ptr, f)
     }
 }
 
@@ -405,14 +426,6 @@ unsafe impl RefEncode for Class {
     const ENCODING_REF: Encoding<'static> = Encoding::Class;
 }
 
-impl PartialEq for Class {
-    fn eq(&self, other: &Class) -> bool {
-        self.as_ptr() == other.as_ptr()
-    }
-}
-
-impl Eq for Class {}
-
 impl fmt::Debug for Class {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
@@ -477,6 +490,8 @@ impl Protocol {
 }
 
 impl PartialEq for Protocol {
+    /// Check whether the protocols are equal, or conform to each other.
+    #[inline]
     fn eq(&self, other: &Protocol) -> bool {
         unsafe { Bool::from_raw(ffi::protocol_isEqual(self.as_ptr(), other.as_ptr())).is_true() }
     }

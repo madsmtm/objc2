@@ -1,14 +1,15 @@
 use alloc::string::ToString;
+use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
 use core::ptr::NonNull;
-use core::str;
+use core::{fmt, str};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
 use objc2::msg_send;
-use objc2::rc::{Id, Shared};
+use objc2::rc::{DefaultId, Id, Shared};
 use objc2::Encode;
 
 use super::{INSCopying, INSObject};
@@ -89,6 +90,33 @@ unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
 unsafe impl<T: 'static> INSCopying for NSValue<T> {
     type Ownership = Shared;
     type Output = NSValue<T>;
+}
+
+impl<T: 'static + Copy + Encode + Ord> Ord for NSValue<T> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.get().cmp(&other.get())
+    }
+}
+
+impl<T: 'static + Copy + Encode + PartialOrd> PartialOrd for NSValue<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.get().partial_cmp(&other.get())
+    }
+}
+
+impl<T: 'static + Copy + Encode + Default> DefaultId for NSValue<T> {
+    type Ownership = Shared;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new(Default::default())
+    }
+}
+
+impl<T: 'static + Copy + Encode + fmt::Display> fmt::Display for NSValue<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.get().fmt(f)
+    }
 }
 
 /// ```compile_fail
