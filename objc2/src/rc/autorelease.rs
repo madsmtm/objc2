@@ -202,7 +202,7 @@ auto_trait! {
 }
 
 #[cfg(not(feature = "unstable_autoreleasesafe"))]
-unsafe impl<T> AutoreleaseSafe for T {}
+unsafe impl<T: ?Sized> AutoreleaseSafe for T {}
 
 #[cfg(feature = "unstable_autoreleasesafe")]
 impl !AutoreleaseSafe for AutoreleasePool {}

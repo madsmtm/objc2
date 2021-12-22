@@ -45,7 +45,7 @@ use crate::{ffi, Encode, EncodeArguments, Encoding, Message};
 /// Types that can be used as the implementation of an Objective-C method.
 pub trait MethodImplementation {
     /// The callee type of the method.
-    type Callee: Message;
+    type Callee: Message + ?Sized;
     /// The return type of the method.
     type Ret: Encode;
     /// The argument types of the method.
@@ -59,7 +59,7 @@ macro_rules! method_decl_impl {
     (-$s:ident, $r:ident, $f:ty, $($t:ident),*) => (
         impl<$s, $r, $($t),*> MethodImplementation for $f
         where
-            $s: Message,
+            $s: Message + ?Sized,
             $r: Encode,
             $($t: Encode,)*
         {
