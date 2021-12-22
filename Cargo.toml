@@ -1,10 +1,10 @@
 [workspace]
 members = [
-    "block-sys",
-    "block2",
-    "objc-sys",
     "objc2",
+    "objc-sys",
     "objc2-encode",
     "objc2-foundation",
+    "block2",
+    "block-sys",
     "tests",
 ]

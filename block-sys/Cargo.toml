@@ -1,6 +1,6 @@
 [package]
 name = "block-sys"
-version = "0.0.1" # Remember to update html_root_url in lib.rs
+version = "0.0.2" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
@@ -47,7 +47,7 @@ winobjc = ["objc-sys/winobjc", "gnustep-1-8"]
 objfw = []
 
 [dependencies]
-objc-sys = { path = "../objc-sys", version = "0.1.0", optional = true }
+objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.0", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

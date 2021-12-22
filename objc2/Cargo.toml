@@ -1,6 +1,6 @@
 [package]
 name = "objc2"
-version = "0.3.0-alpha.4" # Remember to update html_root_url in lib.rs
+version = "0.3.0-alpha.5" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
@@ -40,9 +40,8 @@ unstable_autoreleasesafe = []
 
 [dependencies]
 malloc_buf = { version = "1.0", optional = true }
-objc-sys = { path = "../objc-sys", version = "0.1.0" }
-# Loose dependency, because objc2-encode is not expected to change much more
-objc2-encode = { path = "../objc2-encode", version = "^2.0.0-beta.0" }
+objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.0" }
+objc2-encode = { path = "../objc2-encode", version = "=2.0.0-beta.1" }
 
 [build-dependencies]
 cc = { version = "1", optional = true }

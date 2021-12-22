@@ -1,6 +1,6 @@
 [package]
 name = "objc2-foundation"
-version = "0.2.0-alpha.2" # Remember to update html_root_url in lib.rs
+version = "0.2.0-alpha.3" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
@@ -24,10 +24,9 @@ default = ["block"]
 block = ["block2"]
 
 [dependencies]
-# Exact dependencies, because block2 and objc2 are expected to change
-block2 = { path = "../block2", version = "=0.2.0-alpha.1", optional = true }
-objc2 = { path = "../objc2", version = "=0.3.0-alpha.4" }
-objc-sys = { path = "../objc-sys", version = "0.1.0" }
+block2 = { path = "../block2", version = "=0.2.0-alpha.2", optional = true }
+objc2 = { path = "../objc2", version = "=0.3.0-alpha.5" }
+objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.0" }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
