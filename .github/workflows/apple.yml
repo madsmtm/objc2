@@ -109,10 +109,10 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: -Zbuild-std --no-run --no-default-features
+        args: -Zbuild-std -Zdoctest-xcompile --no-run --no-default-features
 
     - name: Build with features
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: -Zbuild-std --no-run --features malloc,exception,catch_all,verify_message
+        args: -Zbuild-std -Zdoctest-xcompile --no-run --features malloc,exception,catch_all,verify_message
