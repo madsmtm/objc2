@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 2.0.0-beta.1 - 2021-12-22
+
 ### Added
 * `Encoding::equivalent_to`, `Encoding::equivalent_to_str` and
   `Encoding::equivalent_to_start_of_str` methods for more precise comparison
