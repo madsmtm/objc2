@@ -12,6 +12,8 @@ env:
   RUSTFLAGS: "-C debuginfo=0 -D warnings"
   RUSTDOCFLAGS: "-D warnings"
   CARGO_TERM_VERBOSE: true
+  FEATURES: malloc,block,exception,catch_all,verify_message
+  UNSTABLE_FEATURES: unstable_autoreleasesafe
 
 jobs:
   fmt:
@@ -107,5 +109,12 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        # Not using --all-features because some features are nightly-only
-        args: ${{ matrix.args }} ${{ matrix.test-args }} --no-fail-fast --features malloc,block,exception,catch_all,verify_message
+        args: ${{ matrix.args }} ${{ matrix.test-args }} --no-fail-fast --features ${{ env.FEATURES }}
+
+    - name: Test with unstable features
+      if: matrix.rust.toolchain == 'nightly'
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        # Not using --all-features because that would enable e.g. gnustep
+        args: ${{ matrix.args }} ${{ matrix.test-args }} --no-fail-fast --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
