@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Renamed:
+  - `Object::get_ivar` -> `Object::ivar`
+  - `Object::get_mut_ivar` -> `Object::ivar_mut`
+
 
 ## 0.3.0-alpha.5 - 2021-12-22
 

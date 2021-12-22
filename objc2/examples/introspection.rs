@@ -29,7 +29,7 @@ fn main() {
     println!("NSObject address: {:p}", obj);
 
     // Access an ivar of the object
-    let isa: *const Class = unsafe { *obj.get_ivar("isa") };
+    let isa: *const Class = unsafe { *obj.ivar("isa") };
     println!("NSObject isa: {:?}", isa);
 
     #[cfg(feature = "malloc")]

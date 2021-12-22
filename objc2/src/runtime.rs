@@ -502,7 +502,7 @@ impl UnwindSafe for Protocol {}
 impl RefUnwindSafe for Protocol {}
 // Note that Unpin is not applicable.
 
-fn get_ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
+fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
     match cls.instance_variable(name) {
         Some(ivar) => {
             assert!(T::ENCODING.equivalent_to_str(ivar.type_encoding()));
@@ -517,7 +517,7 @@ impl Object {
         self as *const Self as *const _
     }
 
-    /// Returns the class of this object.
+    /// Dynamically find the class of this object.
     pub fn class(&self) -> &Class {
         unsafe { &*(ffi::object_getClass(self.as_ptr()) as *const Class) }
     }
@@ -532,8 +532,10 @@ impl Object {
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
-    pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
-        let offset = get_ivar_offset::<T>(self.class(), name);
+    ///
+    /// Library implementors should expose a safe interface to the ivar.
+    pub unsafe fn ivar<T: Encode>(&self, name: &str) -> &T {
+        let offset = ivar_offset::<T>(self.class(), name);
         // `offset` is given in bytes, so we convert to `u8`
         let ptr = self as *const Self as *const u8;
         let ptr = unsafe { ptr.offset(offset) } as *const T;
@@ -550,8 +552,10 @@ impl Object {
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
-    pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
-        let offset = get_ivar_offset::<T>(self.class(), name);
+    ///
+    /// Library implementors should expose a safe interface to the ivar.
+    pub unsafe fn ivar_mut<T: Encode>(&mut self, name: &str) -> &mut T {
+        let offset = ivar_offset::<T>(self.class(), name);
         // `offset` is given in bytes, so we convert to `u8`
         let ptr = self as *mut Self as *mut u8;
         let ptr = unsafe { ptr.offset(offset) } as *mut T;
@@ -568,9 +572,11 @@ impl Object {
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
+    ///
+    /// Library implementors should expose a safe interface to the ivar.
     pub unsafe fn set_ivar<T: Encode>(&mut self, name: &str, value: T) {
         // SAFETY: Invariants upheld by caller
-        unsafe { *self.get_mut_ivar::<T>(name) = value };
+        unsafe { *self.ivar_mut::<T>(name) = value };
     }
 
     // objc_setAssociatedObject
@@ -713,7 +719,7 @@ mod tests {
         assert_eq!(obj.class(), test_utils::custom_class());
         let result: u32 = unsafe {
             obj.set_ivar("_foo", 4u32);
-            *obj.get_ivar("_foo")
+            *obj.ivar("_foo")
         };
         assert_eq!(result, 4);
     }

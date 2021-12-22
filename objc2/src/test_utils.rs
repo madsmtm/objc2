@@ -88,7 +88,7 @@ pub(crate) fn custom_class() -> &'static Class {
         }
 
         extern "C" fn custom_obj_get_foo(this: &Object, _cmd: Sel) -> u32 {
-            unsafe { *this.get_ivar::<u32>("_foo") }
+            unsafe { *this.ivar::<u32>("_foo") }
         }
 
         extern "C" fn custom_obj_get_struct(_this: &Object, _cmd: Sel) -> CustomStruct {
