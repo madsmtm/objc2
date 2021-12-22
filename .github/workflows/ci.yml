@@ -14,6 +14,8 @@ env:
   CARGO_TERM_VERBOSE: true
   FEATURES: malloc,block,exception,catch_all,verify_message
   UNSTABLE_FEATURES: unstable_autoreleasesafe
+  MACOSX_DEPLOYMENT_TARGET: 10.7
+  IPHONEOS_DEPLOYMENT_TARGET: 7.0
   # We only support compiling Objective-C code with clang
   CC: clang
   CXX: clang++
@@ -53,6 +55,7 @@ jobs:
             target: i686-apple-darwin
             rust:
               toolchain: nightly
+              target: x86_64-apple-darwin
               components: rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             # 32-bit support was removed in 10.15, so we can't test the
@@ -66,16 +69,44 @@ jobs:
           - name: Test GNUStep 32bit
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
-            rust:
-              toolchain: stable
-              # Install compiler for i686-unknown-linux-gnu
-              target: i686-unknown-linux-gnu
             cflags: -m32
             configureflags: --target=x86-pc-linux-gnu
             args: --features gnustep-1-9
-
-          # - { target: x86_64-apple-ios,         os: macos-latest, }
-          # - { target: aarch64-apple-ios,        os: macos-latest, }
+          - name: Build iOS ARM64
+            os: macos-latest
+            target: aarch64-apple-ios
+            test-args: --no-run
+          - name: Build iOS 64bit x86
+            os: macos-latest
+            target: x86_64-apple-ios
+            test-args: --no-run
+          - name: Build iOS ARMv7
+            os: macos-latest
+            target: armv7-apple-ios
+            rust:
+              toolchain: nightly
+              target: x86_64-apple-darwin
+              components: rust-src
+            args: -Zbuild-std -Zdoctest-xcompile
+            test-args: --no-run
+          - name: Build iOS ARMv7s
+            os: macos-latest
+            target: armv7s-apple-ios
+            rust:
+              toolchain: nightly
+              target: x86_64-apple-darwin
+              components: rust-src
+            args: -Zbuild-std -Zdoctest-xcompile
+            test-args: --no-run
+          - name: Build iOS 32bit x86
+            os: macos-latest
+            target: i386-apple-ios
+            rust:
+              toolchain: nightly
+              target: x86_64-apple-darwin
+              components: rust-src
+            args: -Zbuild-std -Zdoctest-xcompile
+            test-args: --no-run
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
@@ -101,6 +132,13 @@ jobs:
         sudo apt-get -y install gcc-multilib libgcc-10-dev:i386 \
           libc6-dev:i386 libstdc++-10-dev:i386 libffi-dev:i386 \
           libxml2-dev:i386 libicu-dev:i386
+
+    - name: Download macOS 10.13 SDK (supports 32-bit)
+      if: matrix.target == 'i686-apple-darwin'
+      run: |
+        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/10.13/MacOSX10.13.tar.bz2
+        tar -xyf MacOSX10.13.tar.bz2
+        echo "SDKROOT=$(pwd)/MacOSX10.13.sdk" >> $GITHUB_ENV
 
     - name: Cache GNUStep
       if: contains(matrix.os, 'ubuntu')
@@ -175,23 +213,14 @@ jobs:
         key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Install Rust toolchain
-      # Assume default toolchain is already installed
-      if: matrix.rust
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: ${{ matrix.rust.toolchain }}
+        toolchain: ${{ matrix.rust.toolchain || 'stable' }}
         profile: minimal
         override: true
         components: ${{ matrix.rust.components }}
-        # Yes, matrix.rust.target, not matrix.target
-        target: ${{ matrix.rust.target }}
-
-    - name: Download macOS 10.13 SDK (supports 32-bit)
-      if: matrix.target == 'i686-apple-darwin'
-      run: |
-        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/10.13/MacOSX10.13.tar.bz2
-        tar -xyf MacOSX10.13.tar.bz2
-        echo "SDKROOT=$(pwd)/MacOSX10.13.sdk" >> $GITHUB_ENV
+        # Allows installing for a different base target
+        target: ${{ matrix.rust.target || matrix.target }}
 
     - name: Check documentation
       uses: actions-rs/cargo@v1
