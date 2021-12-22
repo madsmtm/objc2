@@ -34,6 +34,7 @@ jobs:
     name: ${{ matrix.name }}
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: Test macOS 10.15
