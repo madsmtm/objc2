@@ -233,7 +233,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 ///
 /// Basic usage:
 ///
-/// ```rust,no_run
+/// ```no_run
 /// use objc2::{class, msg_send};
 /// use objc2::rc::{autoreleasepool, AutoreleasePool};
 /// use objc2::runtime::Object;
@@ -256,7 +256,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// Fails to compile because `obj` does not live long enough for us to
 /// safely take it out of the pool:
 ///
-/// ```rust,compile_fail
+/// ```compile_fail
 /// # use objc2::{class, msg_send};
 /// # use objc2::rc::{autoreleasepool, AutoreleasePool};
 /// # use objc2::runtime::Object;
@@ -277,11 +277,8 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// Incorrect usage which panics because we tried to pass an outer pool to an
 /// inner pool:
 ///
-#[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```rust,compile_fail")]
-#[cfg_attr(
-    not(feature = "unstable_autoreleasesafe"),
-    doc = "```rust,should_panic"
-)]
+#[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```compile_fail")]
+#[cfg_attr(not(feature = "unstable_autoreleasesafe"), doc = "```should_panic")]
 /// # use objc2::{class, msg_send};
 /// # use objc2::rc::{autoreleasepool, AutoreleasePool};
 /// # use objc2::runtime::Object;

@@ -29,6 +29,7 @@ fn main() {
     println!("NSObject address: {:p}", obj);
 
     // Access an ivar of the object
+    // TODO: Fix this!
     let isa: *const Class = unsafe { *obj.ivar("isa") };
     println!("NSObject isa: {:?}", isa);
 

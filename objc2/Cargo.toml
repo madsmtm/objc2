@@ -4,7 +4,7 @@ version = "0.3.0-alpha.5" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 
-description = "Objective-C runtime bindings and interface."
+description = "Objective-C interface and runtime bindings"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend"]
 categories = [
     "api-bindings",
@@ -18,6 +18,8 @@ license = "MIT"
 
 build = "build.rs"
 
+# NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
+# and may be removed in a minor release.
 [features]
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["cc"]

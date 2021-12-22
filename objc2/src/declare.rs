@@ -9,10 +9,11 @@
 //! has one ivar, a `u32` named `_number` and a `number` method that returns
 //! it:
 //!
-//! ``` no_run
-//! # use objc2::{class, sel};
-//! # use objc2::declare::ClassDecl;
-//! # use objc2::runtime::{Class, Object, Sel};
+//! ```no_run
+//! use objc2::{class, sel};
+//! use objc2::declare::ClassDecl;
+//! use objc2::runtime::{Class, Object, Sel};
+//!
 //! let superclass = class!(NSObject);
 //! let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();
 //!
@@ -20,12 +21,14 @@
 //! decl.add_ivar::<u32>("_number");
 //!
 //! // Add an ObjC method for getting the number
-//! extern fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
+//! extern "C" fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
 //!     unsafe { *this.ivar("_number") }
 //! }
 //! unsafe {
-//!     decl.add_method(sel!(number),
-//!         my_number_get as extern fn(&Object, Sel) -> u32);
+//!     decl.add_method(
+//!         sel!(number),
+//!         my_number_get as extern "C" fn(&Object, Sel) -> u32,
+//!     );
 //! }
 //!
 //! decl.register();

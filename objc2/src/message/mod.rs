@@ -188,7 +188,8 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// arguments `A` and return type `R`.
     ///
     /// # Example
-    /// ``` no_run
+    ///
+    /// ```no_run
     /// # use objc2::{class, msg_send, sel};
     /// # use objc2::runtime::{Bool, Class, Object};
     /// # use objc2::MessageReceiver;

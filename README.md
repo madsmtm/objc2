@@ -5,6 +5,9 @@
 
 # DISCLAIMER! These crates are work in progress, and should not be used in production environments. Use the battle-tested `objc` family instead!
 
+Anyway, thanks for being here, any help testing things out is highly
+appreciated!
+
 
 ## Migrating from original crates
 

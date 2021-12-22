@@ -61,7 +61,8 @@ macro_rules! sel {
 /// Sends a message to an object or class.
 ///
 /// The first argument can be any type that implements [`MessageReceiver`],
-/// like a reference, a pointer, or an [`rc::Id`] to an object.
+/// like a reference, a pointer, or an [`rc::Id`] to an object (where the
+/// object implements [`Message`]).
 ///
 /// In general this is wildly `unsafe`, even more so than sending messages in
 /// Objective-C, because this macro doesn't know the expected types and
@@ -73,6 +74,7 @@ macro_rules! sel {
 /// Variadic arguments are not currently supported.
 ///
 /// [`MessageReceiver`]: crate::MessageReceiver
+/// [`Message`]: crate::Message
 /// [`rc::Id`]: crate::rc::Id
 ///
 /// # Panics
