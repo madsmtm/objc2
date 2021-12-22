@@ -69,7 +69,7 @@ use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 #[macro_use]
 mod global;
 
-pub use global::{GlobalBlock, __GLOBAL_DESCRIPTOR};
+pub use global::GlobalBlock;
 
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments: Sized {

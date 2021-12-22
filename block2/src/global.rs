@@ -1,6 +1,7 @@
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::Deref;
+use core::ptr;
 use std::os::raw::c_ulong;
 
 use objc2_encode::{Encode, EncodeArguments};
@@ -8,8 +9,8 @@ use objc2_encode::{Encode, EncodeArguments};
 use super::{ffi, Block};
 use crate::BlockArguments;
 
-#[doc(hidden)]
-pub const __GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_header {
+// TODO: Should this be a static to help the compiler deduplicating them?
+const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_header {
     reserved: 0,
     size: mem::size_of::<ffi::Block_layout>() as c_ulong,
 };
@@ -46,6 +47,20 @@ where
 // constructing the static in `global_block!` with an invalid `GlobalBlock`
 // triggers an error.
 impl<A, R> GlobalBlock<A, R> {
+    // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
+    const FLAGS: ffi::block_flags = ffi::BLOCK_IS_GLOBAL | ffi::BLOCK_USE_STRET;
+
+    #[doc(hidden)]
+    pub const __DEFAULT_LAYOUT: ffi::Block_layout = ffi::Block_layout {
+        // Populated in `global_block!`
+        isa: ptr::null_mut(),
+        flags: Self::FLAGS,
+        reserved: 0,
+        // Populated in `global_block!`
+        invoke: None,
+        descriptor: &GLOBAL_DESCRIPTOR as *const _ as *mut _,
+    };
+
     /// Use the [`global_block`] macro instead.
     #[doc(hidden)]
     pub const unsafe fn from_layout(layout: ffi::Block_layout) -> Self {
@@ -133,21 +148,18 @@ macro_rules! global_block {
         $(#[$m])*
         #[allow(unused_unsafe)]
         $vis static $name: $crate::GlobalBlock<($($t,)*) $(, $r)?> = unsafe {
-            $crate::GlobalBlock::from_layout($crate::ffi::Block_layout {
-                isa: &$crate::ffi::_NSConcreteGlobalBlock as *const _ as *mut _,
-                flags: $crate::ffi::BLOCK_IS_GLOBAL | $crate::ffi::BLOCK_USE_STRET,
-                reserved: 0,
-                invoke: {
-                    unsafe extern "C" fn inner(_: *mut $crate::ffi::Block_layout, $($a: $t),*) $(-> $r)? {
-                        $body
-                    }
-                    let inner: unsafe extern "C" fn(*mut $crate::ffi::Block_layout, $($a: $t),*) $(-> $r)? = inner;
+            let mut layout = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_LAYOUT;
+            layout.isa = &$crate::ffi::_NSConcreteGlobalBlock as *const _ as *mut _;
+            layout.invoke = Some({
+                unsafe extern "C" fn inner(_: *mut $crate::ffi::Block_layout, $($a: $t),*) $(-> $r)? {
+                    $body
+                }
+                let inner: unsafe extern "C" fn(*mut $crate::ffi::Block_layout, $($a: $t),*) $(-> $r)? = inner;
 
-                    // TODO: SAFETY
-                    ::core::mem::transmute(inner)
-                },
-                descriptor: &$crate::__GLOBAL_DESCRIPTOR as *const _ as *mut _,
-            })
+                // TODO: SAFETY
+                ::core::mem::transmute(inner)
+            });
+            $crate::GlobalBlock::from_layout(layout)
         };
     };
 }
