@@ -30,7 +30,7 @@ pub struct WeakId<T: ?Sized> {
     item: PhantomData<Id<T, Shared>>,
 }
 
-impl<T: Message> WeakId<T> {
+impl<T: Message + ?Sized + ptr::Thin> WeakId<T> {
     /// Construct a new [`WeakId`] referencing the given shared [`Id`].
     #[doc(alias = "objc_initWeak")]
     pub fn new(obj: &Id<T, Shared>) -> Self {
@@ -45,7 +45,8 @@ impl<T: Message> WeakId<T> {
     ///
     /// The object must be valid or null.
     unsafe fn new_inner(obj: *mut T) -> Self {
-        let inner = Box::new(UnsafeCell::new(ptr::null_mut()));
+        let null = ptr::from_raw_parts_mut(ptr::null_mut(), ());
+        let inner = Box::new(UnsafeCell::new(null));
         // SAFETY: `ptr` will never move, and the caller verifies `obj`
         let _ = unsafe { ffi::objc_initWeak(inner.get() as _, obj as _) };
         Self {
@@ -64,7 +65,8 @@ impl<T: Message> WeakId<T> {
     #[inline]
     pub fn load(&self) -> Option<Id<T, Shared>> {
         let ptr: *mut *mut ffi::objc_object = self.inner.get() as _;
-        let obj = unsafe { ffi::objc_loadWeakRetained(ptr) } as *mut T;
+        let obj = unsafe { ffi::objc_loadWeakRetained(ptr) } as *mut ();
+        let obj: *mut T = ptr::from_raw_parts_mut(obj, ());
         NonNull::new(obj).map(|obj| unsafe { Id::new(obj) })
     }
 }
@@ -77,12 +79,12 @@ impl<T: ?Sized> Drop for WeakId<T> {
     }
 }
 
-// TODO: Add ?Sized
-impl<T> Clone for WeakId<T> {
+impl<T: ?Sized + ptr::Thin> Clone for WeakId<T> {
     /// Makes a clone of the `WeakId` that points to the same object.
     #[doc(alias = "objc_copyWeak")]
     fn clone(&self) -> Self {
-        let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
+        let null = ptr::from_raw_parts_mut(ptr::null_mut(), ());
+        let ptr = Box::new(UnsafeCell::new(null));
         unsafe { ffi::objc_copyWeak(ptr.get() as _, self.inner.get() as _) };
         Self {
             inner: ptr,
@@ -91,14 +93,14 @@ impl<T> Clone for WeakId<T> {
     }
 }
 
-// TODO: Add ?Sized
-impl<T: Message> Default for WeakId<T> {
+impl<T: Message + ?Sized + ptr::Thin> Default for WeakId<T> {
     /// Constructs a new `WeakId<T>` that doesn't reference any object.
     ///
     /// Calling [`Self::load`] on the return value always gives [`None`].
     fn default() -> Self {
+        let null = ptr::from_raw_parts_mut(ptr::null_mut(), ());
         // SAFETY: The pointer is null
-        unsafe { Self::new_inner(ptr::null_mut()) }
+        unsafe { Self::new_inner(null) }
     }
 }
 

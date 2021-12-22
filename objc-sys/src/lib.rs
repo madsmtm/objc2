@@ -13,6 +13,7 @@
 //! [objc4-mirror]: https://github.com/madsmtm/objc4-mirror.git
 
 #![no_std]
+#![cfg_attr(feature = "unstable_extern_types", feature(extern_types))]
 #![allow(clippy::upper_case_acronyms)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
@@ -26,8 +27,11 @@
 // See https://github.com/japaric/cty/issues/14.
 extern crate std;
 
-use core::cell::UnsafeCell;
-use core::marker::{PhantomData, PhantomPinned};
+#[cfg(not(feature = "unstable_extern_types"))]
+use core::{
+    cell::UnsafeCell,
+    marker::{PhantomData, PhantomPinned},
+};
 
 mod class;
 mod constants;
@@ -63,4 +67,9 @@ pub use various::*;
 /// (It's also less of a breaking change on our part if we re-add these).
 ///
 /// TODO: Replace this with `extern type` to also mark it as `!Sized`.
+#[cfg(not(feature = "unstable_extern_types"))]
 type OpaqueData = PhantomData<(UnsafeCell<()>, *const UnsafeCell<()>, PhantomPinned)>;
+#[cfg(feature = "unstable_extern_types")]
+extern "C" {
+    type OpaqueData;
+}

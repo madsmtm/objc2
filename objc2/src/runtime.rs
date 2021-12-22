@@ -341,7 +341,7 @@ impl Class {
         let name = CString::new(name).unwrap();
         let ivar = unsafe { ffi::class_getClassVariable(self.as_ptr(), name.as_ptr()) };
         // SAFETY: TODO
-        unsafe { ivar.cast::<Ivar>().as_ref() }
+        unsafe { (ivar as *const Ivar).as_ref() }
     }
 
     /// Describes the instance methods implemented by self.

@@ -1,4 +1,5 @@
 #![no_std]
+#![cfg_attr(feature = "unstable_extern_types", feature(extern_types))]
 #![warn(elided_lifetimes_in_paths)]
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]

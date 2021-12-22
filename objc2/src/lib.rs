@@ -63,6 +63,7 @@ The bindings can be used on Linux or *BSD utilizing the
     feature = "unstable_autoreleasesafe",
     feature(negative_impls, auto_traits)
 )]
+#![cfg_attr(feature = "unstable_extern_types", feature(ptr_metadata))]
 #![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
 #![deny(non_ascii_idents)]

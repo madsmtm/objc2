@@ -47,6 +47,9 @@ winobjc = ["gnustep-1-8"]
 # TODO
 objfw = []
 
+# Marks opaque types as !Sized
+unstable_extern_types = []
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 

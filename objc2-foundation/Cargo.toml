@@ -23,6 +23,8 @@ default = ["block"]
 # Provided as a way to cut down on dependencies
 block = ["block2"]
 
+unstable_extern_types = ["objc2/unstable_extern_types", "objc-sys/unstable_extern_types"]
+
 [dependencies]
 # Exact dependencies, because block2 and objc2 are expected to change
 block2 = { path = "../block2", version = "=0.2.0-alpha.1", optional = true }
