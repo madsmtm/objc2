@@ -52,7 +52,7 @@ mod tests {
         /// Test `global_block` in an external crate
         static MY_BLOCK = || -> i32 {
             42
-        }
+        };
     }
 
     #[test]
@@ -120,7 +120,7 @@ mod tests {
                 let mut data = data;
                 data.mutate();
                 data
-            }
+            };
         }
 
         let data = LargeStruct::get();

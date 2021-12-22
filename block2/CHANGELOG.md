@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* Changed `global_block!` macro to take an optional semicolon at the end.
+
 
 ## 0.2.0-alpha.2 - 2021-12-22
 
