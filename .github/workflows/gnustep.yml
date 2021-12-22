@@ -148,4 +148,4 @@ jobs:
       with:
         command: test
         # Not using --all-features because some features are nightly-only
-        args: --no-fail-fast --features gnustep-1-9,block,exception,catch_all,verify_message
+        args: --no-fail-fast --features gnustep-1-9,malloc,block,exception,catch_all,verify_message

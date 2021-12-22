@@ -19,10 +19,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   // `init` takes ownership and possibly returns a new object.
   let obj = Id::new(msg_send![obj, init]);
   ```
+* New cargo feature `"malloc"`, which allows cutting down on dependencies,
+  most crates don't need the introspection features that this provides.
 
 ### Changed
 * Deprecated `runtime::BOOL`, `runtime::YES` and `runtime::NO`. Use the
   newtype `Bool` instead, or low-level `ffi::BOOL`, `ffi::YES` and `ffi::NO`.
+* **BREAKING**: The following methods now require the new `"malloc"` feature
+  flag to be enabled:
+  - `MessageReceiver::verify_message` (temporarily)
+  - `Method::return_type`
+  - `Method::argument_type`
+  - `Class::classes`
+  - `Class::instance_methods`
+  - `Class::adopted_protocols`
+  - `Class::instance_variables`
+  - `Protocol::protocols`
+  - `Protocol::adopted_protocols`
 
 ### Removed
 * **BREAKING**: Removed the raw FFI functions from the `runtime` module. These

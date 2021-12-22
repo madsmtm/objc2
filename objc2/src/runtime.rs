@@ -8,8 +8,10 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 use core::str;
+#[cfg(feature = "malloc")]
 use malloc_buf::Malloc;
 use std::ffi::{CStr, CString};
+#[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
 pub use super::bool::Bool;
@@ -177,6 +179,7 @@ impl Method {
     }
 
     /// Returns the `Encoding` of self's return type.
+    #[cfg(feature = "malloc")]
     pub fn return_type(&self) -> Malloc<str> {
         unsafe {
             let encoding = ffi::method_copyReturnType(self.as_ptr());
@@ -186,6 +189,7 @@ impl Method {
 
     /// Returns the `Encoding` of a single parameter type of self, or
     /// [`None`] if self has no parameter at the given index.
+    #[cfg(feature = "malloc")]
     pub fn argument_type(&self, index: usize) -> Option<Malloc<str>> {
         unsafe {
             let encoding = ffi::method_copyArgumentType(self.as_ptr(), index as c_uint);
@@ -243,6 +247,7 @@ impl Class {
     // fn lookup(name: &str) -> Option<&'static Self>;
 
     /// Obtains the list of registered class definitions.
+    #[cfg(feature = "malloc")]
     pub fn classes() -> Malloc<[&'static Self]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -340,6 +345,7 @@ impl Class {
     }
 
     /// Describes the instance methods implemented by self.
+    #[cfg(feature = "malloc")]
     pub fn instance_methods(&self) -> Malloc<[&Method]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -356,6 +362,7 @@ impl Class {
     }
 
     /// Get a list of the protocols to which this class conforms.
+    #[cfg(feature = "malloc")]
     pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -365,6 +372,7 @@ impl Class {
     }
 
     /// Describes the instance variables declared by self.
+    #[cfg(feature = "malloc")]
     pub fn instance_variables(&self) -> Malloc<[&Ivar]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -431,6 +439,7 @@ impl Protocol {
     }
 
     /// Obtains the list of registered protocol definitions.
+    #[cfg(feature = "malloc")]
     pub fn protocols() -> Malloc<[&'static Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -440,6 +449,7 @@ impl Protocol {
     }
 
     /// Get a list of the protocols to which this protocol conforms.
+    #[cfg(feature = "malloc")]
     pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -612,8 +622,8 @@ mod tests {
         assert!(<u32>::ENCODING.equivalent_to_str(ivar.type_encoding()));
         assert!(ivar.offset() > 0);
 
-        let ivars = cls.instance_variables();
-        assert!(ivars.len() > 0);
+        #[cfg(feature = "malloc")]
+        assert!(cls.instance_variables().len() > 0);
     }
 
     #[test]
@@ -623,11 +633,14 @@ mod tests {
         let method = cls.instance_method(sel).unwrap();
         assert_eq!(method.name().name(), "foo");
         assert_eq!(method.arguments_count(), 2);
-        assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
-        assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
+        #[cfg(feature = "malloc")]
+        {
+            assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
+            assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
 
-        let methods = cls.instance_methods();
-        assert!(methods.len() > 0);
+            let methods = cls.instance_methods();
+            assert!(methods.len() > 0);
+        }
     }
 
     #[test]
@@ -648,8 +661,13 @@ mod tests {
     }
 
     #[test]
-    fn test_classes() {
+    fn test_classes_count() {
         assert!(Class::classes_count() > 0);
+    }
+
+    #[test]
+    #[cfg(feature = "malloc")]
+    fn test_classes() {
         let classes = Class::classes();
         assert!(classes.len() > 0);
     }
@@ -660,8 +678,8 @@ mod tests {
         assert_eq!(proto.name(), "CustomProtocol");
         let class = test_utils::custom_class();
         assert!(class.conforms_to(proto));
-        let class_protocols = class.adopted_protocols();
-        assert!(class_protocols.len() > 0);
+        #[cfg(feature = "malloc")]
+        assert!(class.adopted_protocols().len() > 0);
     }
 
     #[test]
@@ -676,8 +694,8 @@ mod tests {
         let sub_proto = test_utils::custom_subprotocol();
         let super_proto = test_utils::custom_protocol();
         assert!(sub_proto.conforms_to(super_proto));
-        let adopted_protocols = sub_proto.adopted_protocols();
-        assert_eq!(adopted_protocols[0], super_proto);
+        #[cfg(feature = "malloc")]
+        assert_eq!(sub_proto.adopted_protocols()[0], super_proto);
     }
 
     #[test]
@@ -685,8 +703,8 @@ mod tests {
         // Ensure that a protocol has been registered on linux
         let _ = test_utils::custom_protocol();
 
-        let protocols = Protocol::protocols();
-        assert!(protocols.len() > 0);
+        #[cfg(feature = "malloc")]
+        assert!(Protocol::protocols().len() > 0);
     }
 
     #[test]
