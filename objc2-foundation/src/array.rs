@@ -30,7 +30,7 @@ unsafe fn from_refs<A: INSArray + ?Sized>(refs: &[&A::Item]) -> Id<A, A::Ownersh
 
 pub unsafe trait INSArray: INSObject {
     type Ownership: Ownership;
-    type Item: INSObject;
+    type Item: INSObject + ?Sized;
     type ItemOwnership: Ownership;
 
     unsafe_def_fn!(fn new -> Self::Ownership);
@@ -169,7 +169,7 @@ object!(
     /// TODO: Can we make it impossible? Should we?
     ///
     /// What about `Id<NSArray<T, Shared>, Owned>`?
-    unsafe pub struct NSArray<T, O: Ownership> {
+    unsafe pub struct NSArray<T: ?Sized, O: Ownership> {
         item: PhantomData<Id<T, O>>,
     }
 );
@@ -179,22 +179,22 @@ object!(
 // The `PhantomData` can't get these impls to display in the docs.
 //
 // TODO: Properly verify this
-unsafe impl<T: Sync + Send> Sync for NSArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSArray<T, Owned> {}
+unsafe impl<T: Sync + Send + ?Sized> Sync for NSArray<T, Shared> {}
+unsafe impl<T: Sync + Send + ?Sized> Send for NSArray<T, Shared> {}
+unsafe impl<T: Sync + ?Sized> Sync for NSArray<T, Owned> {}
+unsafe impl<T: Send + ?Sized> Send for NSArray<T, Owned> {}
 
 /// ```compile_fail
 /// use objc2::rc::Shared;
 /// use objc2::runtime::Object;
 /// use objc2_foundation::NSArray;
-/// fn needs_send_sync<T: Send + Sync>() {}
+/// fn needs_send_sync<T: Send + Sync + ?Sized>() {}
 /// needs_send_sync::<NSArray<Object, Shared>>();
 /// ```
 #[cfg(doctest)]
 pub struct NSArrayWithObjectNotSendSync;
 
-unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
+unsafe impl<T: INSObject + ?Sized, O: Ownership> INSArray for NSArray<T, O> {
     /// The `NSArray` itself (length and number of items) is always immutable,
     /// but we would like to know when we're the only owner of the array, to
     /// allow mutation of the array's items.
@@ -208,20 +208,20 @@ unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
 
 // Copying only possible when ItemOwnership = Shared
 
-unsafe impl<T: INSObject> INSCopying for NSArray<T, Shared> {
+unsafe impl<T: INSObject + ?Sized> INSCopying for NSArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject> INSMutableCopying for NSArray<T, Shared> {
+unsafe impl<T: INSObject + ?Sized> INSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject, O: Ownership> INSFastEnumeration for NSArray<T, O> {
+unsafe impl<T: INSObject + ?Sized, O: Ownership> INSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
 
-impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
+impl<T: INSObject + ?Sized, O: Ownership> Index<usize> for NSArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -306,7 +306,7 @@ pub unsafe trait INSMutableArray: INSArray {
     where
         F: FnMut(&Self::Item, &Self::Item) -> Ordering,
     {
-        extern "C" fn compare_with_closure<T, F: FnMut(&T, &T) -> Ordering>(
+        extern "C" fn compare_with_closure<T: ?Sized, F: FnMut(&T, &T) -> Ordering>(
             obj1: &T,
             obj2: &T,
             context: *mut c_void,
@@ -334,7 +334,7 @@ pub unsafe trait INSMutableArray: INSArray {
 }
 
 object!(
-    unsafe pub struct NSMutableArray<T, O: Ownership> {
+    unsafe pub struct NSMutableArray<T: ?Sized, O: Ownership> {
         item: PhantomData<Id<T, O>>,
     }
 );
@@ -342,35 +342,35 @@ object!(
 // SAFETY: Same as NSArray.
 //
 // TODO: Properly verify this
-unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
+unsafe impl<T: Sync + Send + ?Sized> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync + Send + ?Sized> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync + ?Sized> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Send + ?Sized> Send for NSMutableArray<T, Owned> {}
 
-unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
+unsafe impl<T: INSObject + ?Sized, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Ownership = Owned;
     type Item = T;
     type ItemOwnership = O;
 }
 
-unsafe impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
+unsafe impl<T: INSObject + ?Sized, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
 
 // Copying only possible when ItemOwnership = Shared
 
-unsafe impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: INSObject + ?Sized> INSCopying for NSMutableArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject> INSMutableCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: INSObject + ?Sized> INSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
+unsafe impl<T: INSObject + ?Sized, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
     type Item = T;
 }
 
-impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
+impl<T: INSObject + ?Sized, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -571,7 +571,7 @@ mod tests {
 
     #[test]
     fn test_send_sync() {
-        fn assert_send_sync<T: Send + Sync>() {}
+        fn assert_send_sync<T: Send + Sync + ?Sized>() {}
 
         assert_send_sync::<NSArray<NSString, Shared>>();
         assert_send_sync::<NSMutableArray<NSString, Shared>>();

@@ -15,25 +15,25 @@ macro_rules! object {
     };
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*> {
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)? $(: ?$sized:ident)?),*> {
             $($p:ident: $pty:ty,)*
         }
     ) => {
         // TODO: `extern type`
         $(#[$m])*
         #[repr(C)]
-        $v struct $name<$($t $(: $b)?),*> {
+        $v struct $name<$($t $(: $b)? $(: ?$sized)?),*> {
             _private: [u8; 0],
             $($p: $pty),*
         }
 
-        unsafe impl<$($t $(: $b)?),*> ::objc2::Message for $name<$($t),*> { }
+        unsafe impl<$($t $(: $b)? $(: ?$sized)?),*> ::objc2::Message for $name<$($t),*> { }
 
-        unsafe impl<$($t $(: $b)?),*> ::objc2::RefEncode for $name<$($t),*> {
+        unsafe impl<$($t $(: $b)? $(: ?$sized)?),*> ::objc2::RefEncode for $name<$($t),*> {
             const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
         }
 
-        unsafe impl<$($t $(: $b)?),*> $crate::INSObject for $name<$($t),*> {
+        unsafe impl<$($t $(: $b)? $(: ?$sized)?),*> $crate::INSObject for $name<$($t),*> {
             fn class() -> &'static ::objc2::runtime::Class {
                 ::objc2::class!($name)
             }
@@ -49,7 +49,7 @@ macro_rules! object {
         // (instead of shallow) equality comparisons.
         //
         // See also https://nshipster.com/equality/
-        impl<$($t: ::core::cmp::PartialEq $(+ $b)?),*> ::core::cmp::PartialEq for $name<$($t),*> {
+        impl<$($t: ::core::cmp::PartialEq $(+ $b)? $(+ ?$sized)?),*> ::core::cmp::PartialEq for $name<$($t),*> {
             #[inline]
             fn eq(&self, other: &Self) -> bool {
                 use $crate::INSObject;
@@ -61,7 +61,7 @@ macro_rules! object {
         //
         // `T: Eq` bound added to prevent e.g. `NSValue<f32>` from being `Eq`
         // (even though `[NAN isEqual: NAN]` is true in Objective-C).
-        impl<$($t: ::core::cmp::Eq $(+ $b)?),*> ::core::cmp::Eq for $name<$($t),*> {}
+        impl<$($t: ::core::cmp::Eq $(+ $b)? $(+ ?$sized)?),*> ::core::cmp::Eq for $name<$($t),*> {}
 
         // Hashing in Objective-C has the exact same requirement as in Rust:
         //
@@ -69,7 +69,7 @@ macro_rules! object {
         // > they must have the same hash value.
         //
         // See https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418859-hash
-        impl<$($t: ::core::hash::Hash $(+ $b)?),*> ::core::hash::Hash for $name<$($t),*> {
+        impl<$($t: ::core::hash::Hash $(+ $b)? $(+ ?$sized)?),*> ::core::hash::Hash for $name<$($t),*> {
             #[inline]
             fn hash<H: ::core::hash::Hasher>(&self, state: &mut H) {
                 use $crate::INSObject;
@@ -78,7 +78,7 @@ macro_rules! object {
         }
 
         // TODO: Consider T: Debug bound
-        impl<$($t $(: $b)?),*> ::core::fmt::Debug for $name<$($t),*> {
+        impl<$($t $(: $b)? $(: ?$sized)?),*> ::core::fmt::Debug for $name<$($t),*> {
             fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 use ::objc2::MessageReceiver;
                 use ::alloc::borrow::ToOwned;
