@@ -16,7 +16,7 @@ use crate::Message;
 /// Allows breaking reference cycles and safely checking whether the object
 /// has been deallocated.
 #[repr(transparent)]
-pub struct WeakId<T> {
+pub struct WeakId<T: ?Sized> {
     /// We give the runtime the address to this box, so that it can modify it
     /// even if the `WeakId` is moved.
     ///
@@ -69,7 +69,7 @@ impl<T: Message> WeakId<T> {
     }
 }
 
-impl<T> Drop for WeakId<T> {
+impl<T: ?Sized> Drop for WeakId<T> {
     /// Drops the `WeakId` pointer.
     #[doc(alias = "objc_destroyWeak")]
     fn drop(&mut self) {
@@ -77,6 +77,7 @@ impl<T> Drop for WeakId<T> {
     }
 }
 
+// TODO: Add ?Sized
 impl<T> Clone for WeakId<T> {
     /// Makes a clone of the `WeakId` that points to the same object.
     #[doc(alias = "objc_copyWeak")]
@@ -90,6 +91,7 @@ impl<T> Clone for WeakId<T> {
     }
 }
 
+// TODO: Add ?Sized
 impl<T: Message> Default for WeakId<T> {
     /// Constructs a new `WeakId<T>` that doesn't reference any object.
     ///
@@ -101,26 +103,26 @@ impl<T: Message> Default for WeakId<T> {
 }
 
 /// This implementation follows the same reasoning as `Id<T, Shared>`.
-unsafe impl<T: Sync + Send> Sync for WeakId<T> {}
+unsafe impl<T: Sync + Send + ?Sized> Sync for WeakId<T> {}
 
 /// This implementation follows the same reasoning as `Id<T, Shared>`.
-unsafe impl<T: Sync + Send> Send for WeakId<T> {}
+unsafe impl<T: Sync + Send + ?Sized> Send for WeakId<T> {}
 
 // Unsure about the Debug bound on T, see std::sync::Weak
-impl<T: fmt::Debug> fmt::Debug for WeakId<T> {
+impl<T: fmt::Debug + ?Sized> fmt::Debug for WeakId<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "(WeakId)")
     }
 }
 
 // Underneath this is just a `Box`
-impl<T> Unpin for WeakId<T> {}
+impl<T: ?Sized> Unpin for WeakId<T> {}
 
 // Same as `Id<T, Shared>`.
-impl<T: RefUnwindSafe> RefUnwindSafe for WeakId<T> {}
+impl<T: RefUnwindSafe + ?Sized> RefUnwindSafe for WeakId<T> {}
 
 // Same as `Id<T, Shared>`.
-impl<T: RefUnwindSafe> UnwindSafe for WeakId<T> {}
+impl<T: RefUnwindSafe + ?Sized> UnwindSafe for WeakId<T> {}
 
 #[cfg(test)]
 mod tests {

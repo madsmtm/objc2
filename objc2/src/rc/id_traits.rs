@@ -6,7 +6,7 @@ use crate::Message;
 /// Helper trait for functionality on slices containing [`Id`]s.
 pub trait SliceId {
     /// The type of the items in the slice.
-    type Item;
+    type Item: ?Sized;
 
     /// Convert a slice of [`Id`]s into a slice of references.
     fn as_slice_ref(&self) -> &[&Self::Item];
@@ -22,7 +22,7 @@ pub trait SliceIdMut: SliceId {
     fn as_mut_slice_mut(&mut self) -> &mut [&mut Self::Item];
 }
 
-impl<T: Message, O: Ownership> SliceId for [Id<T, O>] {
+impl<T: Message + ?Sized, O: Ownership> SliceId for [Id<T, O>] {
     type Item = T;
 
     fn as_slice_ref(&self) -> &[&T] {
@@ -40,7 +40,7 @@ impl<T: Message, O: Ownership> SliceId for [Id<T, O>] {
     }
 }
 
-impl<T: Message> SliceIdMut for [Id<T, Owned>] {
+impl<T: Message + ?Sized> SliceIdMut for [Id<T, Owned>] {
     fn as_mut_slice_mut(&mut self) -> &mut [&mut T] {
         let ptr = self as *mut Self as *mut [&mut T];
         // SAFETY: Id<T, O> and &mut T have the same memory layout, and the
@@ -52,9 +52,8 @@ impl<T: Message> SliceIdMut for [Id<T, Owned>] {
 
 /// Helper trait to implement [`Default`] on types whoose default value is an
 /// [`Id`].
-// TODO: Remove `Sized` bound.
 // TODO: Maybe make this `unsafe` and provide a default implementation?
-pub trait DefaultId: Sized {
+pub trait DefaultId {
     /// Indicates whether the default value is mutable or immutable.
     type Ownership: Ownership;
 
@@ -65,7 +64,7 @@ pub trait DefaultId: Sized {
     fn default_id() -> Id<Self, Self::Ownership>;
 }
 
-impl<T: DefaultId> Default for Id<T, T::Ownership> {
+impl<T: DefaultId + ?Sized> Default for Id<T, T::Ownership> {
     fn default() -> Self {
         T::default_id()
     }
