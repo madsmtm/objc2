@@ -8,11 +8,7 @@ use objc2::Message;
 
 use super::NSString;
 
-// The Sized bound is unfortunate; ideally, Objective-C objects would not be
-// treated as Sized. However, rust won't allow casting a dynamically-sized
-// type pointer to an Object pointer, because dynamically-sized types can have
-// fat pointers (two words) instead of real pointers.
-pub unsafe trait INSObject: Sized + Message {
+pub unsafe trait INSObject: Message {
     fn class() -> &'static Class;
 
     fn hash_code(&self) -> usize {

@@ -11,8 +11,8 @@ use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator};
 
 unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D, Shared>
 where
-    D: INSDictionary,
-    T: INSCopying<Output = D::Key>,
+    D: INSDictionary + ?Sized,
+    T: INSCopying<Output = D::Key> + ?Sized,
 {
     let cls = D::class();
     let count = min(keys.len(), vals.len());

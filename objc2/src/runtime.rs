@@ -580,17 +580,17 @@ impl Object {
 
 /// ```
 /// use objc2::runtime::Object;
-/// fn needs_nothing<T>() {}
+/// fn needs_nothing<T: ?Sized>() {}
 /// needs_nothing::<Object>();
 /// ```
 /// ```compile_fail
 /// use objc2::runtime::Object;
-/// fn needs_sync<T: Sync>() {}
+/// fn needs_sync<T: ?Sized + Sync>() {}
 /// needs_sync::<Object>();
 /// ```
 /// ```compile_fail
 /// use objc2::runtime::Object;
-/// fn needs_send<T: Send>() {}
+/// fn needs_send<T: ?Sized + Send>() {}
 /// needs_send::<Object>();
 /// ```
 #[cfg(doctest)]
@@ -734,7 +734,7 @@ mod tests {
 
     #[test]
     fn test_send_sync() {
-        fn assert_send_sync<T: Send + Sync>() {}
+        fn assert_send_sync<T: Send + Sync + ?Sized>() {}
         assert_send_sync::<Bool>();
         assert_send_sync::<Class>();
         assert_send_sync::<Ivar>();

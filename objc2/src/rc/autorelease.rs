@@ -101,7 +101,7 @@ impl AutoreleasePool {
     /// the lifetime is bound to the pool instead of being unbounded.
     #[inline]
     #[allow(clippy::needless_lifetimes)]
-    pub unsafe fn ptr_as_ref<'p, T>(&'p self, ptr: *const T) -> &'p T {
+    pub unsafe fn ptr_as_ref<'p, T: ?Sized>(&'p self, ptr: *const T) -> &'p T {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
         unsafe { &*ptr }
@@ -122,7 +122,7 @@ impl AutoreleasePool {
     #[inline]
     #[allow(clippy::needless_lifetimes)]
     #[allow(clippy::mut_from_ref)]
-    pub unsafe fn ptr_as_mut<'p, T>(&'p self, ptr: *mut T) -> &'p mut T {
+    pub unsafe fn ptr_as_mut<'p, T: ?Sized>(&'p self, ptr: *mut T) -> &'p mut T {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
         unsafe { &mut *ptr }
@@ -202,7 +202,7 @@ auto_trait! {
 }
 
 #[cfg(not(feature = "unstable_autoreleasesafe"))]
-unsafe impl<T> AutoreleaseSafe for T {}
+unsafe impl<T: ?Sized> AutoreleaseSafe for T {}
 
 #[cfg(feature = "unstable_autoreleasesafe")]
 impl !AutoreleaseSafe for AutoreleasePool {}

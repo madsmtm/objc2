@@ -36,6 +36,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Class::instance_variables`
   - `Protocol::protocols`
   - `Protocol::adopted_protocols`
+* Relaxed `Sized` bound on `rc::Id` and `rc::WeakId` to prepare for
+  `extern type` support.
+* **BREAKING**: Relaxed `Sized` bound on `rc::SliceId` and `rc::DefaultId`.
 
 ### Removed
 * **BREAKING**: Removed the raw FFI functions from the `runtime` module. These
