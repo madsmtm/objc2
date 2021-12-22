@@ -44,7 +44,7 @@ impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
 pub unsafe trait INSFastEnumeration: INSObject {
     type Item: INSObject;
 
-    fn enumerator(&self) -> NSFastEnumerator<'_, Self> {
+    fn iter_fast(&self) -> NSFastEnumerator<'_, Self> {
         NSFastEnumerator::new(self)
     }
 }
@@ -212,10 +212,10 @@ mod tests {
         let vec = (0u32..4).map(NSValue::new).collect();
         let array = NSArray::from_vec(vec);
 
-        let enumerator = array.enumerator();
+        let enumerator = array.iter_fast();
         assert_eq!(enumerator.count(), 4);
 
-        let enumerator = array.enumerator();
+        let enumerator = array.iter_fast();
         assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));
     }
 }
