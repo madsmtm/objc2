@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-alpha.3 - 2021-12-22
+
 ### Added
 * **BREAKING**: Added associated `Ownership` type to `NSCopying`.
 * **BREAKING**: Added associated `Ownership` type to `INSData`.
@@ -28,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSMutableArray` not being `#[repr(C)]`.
 * **BREAKING**: `NSObject` is no longer `Send` and `Sync` (because its
   subclasses may not be).
+
 
 ## 0.2.0-alpha.2 - 2021-11-22
 
