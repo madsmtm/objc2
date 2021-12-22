@@ -14,7 +14,7 @@ use super::{
     NSRange,
 };
 
-unsafe fn from_refs<A: INSArray>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
+unsafe fn from_refs<A: INSArray + ?Sized>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
     let cls = A::class();
     let obj: *mut A = unsafe { msg_send![cls, alloc] };
     let obj: *mut A = unsafe {

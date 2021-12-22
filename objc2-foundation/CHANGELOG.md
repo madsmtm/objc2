@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 * **BREAKING**: Removed associated `Ownership` type from `INSObject`; instead,
   it is present on the types that actually need it (for example `NSCopying`).
+* **BREAKING**: Removed `Sized` bound on `INSObject`.
 
 ### Fixed
 * Soundness issue with `NSValue`, `NSDictionary`, `NSArray` and

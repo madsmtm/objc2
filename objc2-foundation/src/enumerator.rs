@@ -94,7 +94,7 @@ unsafe impl<T: INSObject> RefEncode for NSFastEnumerationState<T> {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
-fn enumerate<'a, 'b: 'a, C: INSFastEnumeration>(
+fn enumerate<'a, 'b: 'a, C: INSFastEnumeration + ?Sized>(
     object: &'b C,
     state: &mut NSFastEnumerationState<C::Item>,
     buf: &'a mut [*const C::Item],
@@ -119,7 +119,7 @@ fn enumerate<'a, 'b: 'a, C: INSFastEnumeration>(
 
 const FAST_ENUM_BUF_SIZE: usize = 16;
 
-pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration> {
+pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration + ?Sized> {
     object: &'a C,
 
     ptr: *const *const C::Item,
@@ -129,7 +129,7 @@ pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration> {
     buf: [*const C::Item; FAST_ENUM_BUF_SIZE],
 }
 
-impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
+impl<'a, C: INSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
     fn new(object: &'a C) -> Self {
         Self {
             object,
@@ -174,7 +174,7 @@ impl<'a, C: INSFastEnumeration> NSFastEnumerator<'a, C> {
     }
 }
 
-impl<'a, C: INSFastEnumeration> Iterator for NSFastEnumerator<'a, C> {
+impl<'a, C: INSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
     type Item = &'a C::Item;
 
     fn next(&mut self) -> Option<&'a C::Item> {
