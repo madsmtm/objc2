@@ -43,6 +43,19 @@ It is important to copy your block to the heap (with the `copy` method) before
 passing it to Objective-C; this is because our `ConcreteBlock` is only meant
 to be copied once, and we can enforce this in Rust, but if Objective-C code
 were to copy it twice we could have a double free.
+
+As an optimization if your block doesn't capture any variables, you can use
+the [`global_block!`] macro to create a static block:
+
+```
+use block2::global_block;
+global_block! {
+    static MY_BLOCK = || -> f32 {
+        10.0
+    }
+};
+assert_eq!(unsafe { MY_BLOCK.call(()) }, 10.0);
+```
 */
 
 #![no_std]
@@ -65,6 +78,11 @@ use std::os::raw::{c_int, c_ulong};
 
 pub use block_sys as ffi;
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
+
+#[macro_use]
+mod global;
+
+pub use global::GlobalBlock;
 
 /// Types that may be used as the arguments to an Objective-C block.
 pub trait BlockArguments: Sized {
