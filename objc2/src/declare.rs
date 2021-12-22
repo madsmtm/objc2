@@ -1,36 +1,35 @@
-/*!
-Functionality for declaring Objective-C classes.
-
-Classes can be declared using the [`ClassDecl`] struct. Instance variables and
-methods can then be added before the class is ultimately registered.
-
-# Example
-
-The following example demonstrates declaring a class named `MyNumber` that has
-one ivar, a `u32` named `_number` and a `number` method that returns it:
-
-``` no_run
-# use objc2::{class, sel};
-# use objc2::declare::ClassDecl;
-# use objc2::runtime::{Class, Object, Sel};
-let superclass = class!(NSObject);
-let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();
-
-// Add an instance variable
-decl.add_ivar::<u32>("_number");
-
-// Add an ObjC method for getting the number
-extern fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
-    unsafe { *this.ivar("_number") }
-}
-unsafe {
-    decl.add_method(sel!(number),
-        my_number_get as extern fn(&Object, Sel) -> u32);
-}
-
-decl.register();
-```
-*/
+//! Functionality for declaring Objective-C classes.
+//!
+//! Classes can be declared using the [`ClassDecl`] struct. Instance variables
+//! and methods can then be added before the class is ultimately registered.
+//!
+//! # Example
+//!
+//! The following example demonstrates declaring a class named `MyNumber` that
+//! has one ivar, a `u32` named `_number` and a `number` method that returns
+//! it:
+//!
+//! ``` no_run
+//! # use objc2::{class, sel};
+//! # use objc2::declare::ClassDecl;
+//! # use objc2::runtime::{Class, Object, Sel};
+//! let superclass = class!(NSObject);
+//! let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();
+//!
+//! // Add an instance variable
+//! decl.add_ivar::<u32>("_number");
+//!
+//! // Add an ObjC method for getting the number
+//! extern fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
+//!     unsafe { *this.ivar("_number") }
+//! }
+//! unsafe {
+//!     decl.add_method(sel!(number),
+//!         my_number_get as extern fn(&Object, Sel) -> u32);
+//! }
+//!
+//! decl.register();
+//! ```
 
 use alloc::format;
 use alloc::string::ToString;
