@@ -25,7 +25,7 @@ present in the module tree, this should have the same feature flag enabled as
 that.
 
 
-### Apple's [`libclosure`](https://opensource.apple.com/source/libclosure/)
+### Apple's [`libclosure`](https://github.com/apple-oss-distributions/libclosure)
 
 - Feature flag: `apple`.
 
@@ -40,8 +40,6 @@ The minimum required operating system versions are as follows:
 - watchOS: Unknown
 
 Though in practice Rust itself requires higher versions than this.
-
-A git mirror of the sources is available [here](https://github.com/madsmtm/libclosure).
 
 
 ### LLVM `compiler-rt`'s [`libBlocksRuntime`](https://github.com/llvm/llvm-project/tree/release/13.x/compiler-rt/lib/BlocksRuntime)

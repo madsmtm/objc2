@@ -140,14 +140,16 @@ impl Drop for AutoreleasePool {
     /// > Not draining the pool during an unwind is apparently required by the
     /// > Objective-C exceptions implementation.
     ///
-    /// This was true in the past, but since [revision `371`] of
-    /// `objc-exception.m` (ships with MacOS 10.5) the exception is now
-    /// retained when `@throw` is encountered.
+    /// This was true in the past, but since [revision `371`] of objc4 (ships
+    /// with MacOS 10.5) the exception is now retained when `@throw` is
+    /// encountered.
     ///
     /// Hence it is safe to drain the pool when unwinding.
     ///
+    /// TODO: Verify this claim on 32bit!
+    ///
     /// [clang documentation]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#autoreleasepool
-    /// [revision `371`]: https://opensource.apple.com/source/objc4/objc4-371/runtime/objc-exception.m.auto.html
+    /// [revision `371`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-371/runtime/objc-exception.m#L479-L482
     #[doc(alias = "objc_autoreleasePoolPop")]
     fn drop(&mut self) {
         unsafe { ffi::objc_autoreleasePoolPop(self.context) }

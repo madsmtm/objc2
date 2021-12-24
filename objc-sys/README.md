@@ -19,7 +19,7 @@ Apple's runtime, but if you're using another runtime you must tell it to this
 library using feature flags.
 
 
-### Apple's [`objc4`](https://opensource.apple.com/source/objc4/)
+### Apple's [`objc4`](https://github.com/apple-oss-distributions/objc4)
 
 - Feature flag: `apple`.
 
@@ -41,8 +41,6 @@ chosen using the standard `X_DEPLOYMENT_TARGET` environment variables:
 - watchOS: `WATCHOS_DEPLOYMENT_TARGET`
   - Default: TODO
   - Minimum: `1.0` (theoretically)
-
-A git mirror of the sources is available [here](https://github.com/madsmtm/objc4-mirror).
 
 
 ### GNUStep's [`libobjc2`](https://github.com/gnustep/libobjc2)
