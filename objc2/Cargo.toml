@@ -56,7 +56,7 @@ features = ["exception", "malloc"]
 targets = [
     # MacOS
     "x86_64-apple-darwin",
-    "i686-apple-darwin",
+    # "i686-apple-darwin",
     # iOS
     "aarch64-apple-ios",
     "x86_64-apple-ios",
@@ -64,5 +64,3 @@ targets = [
     "x86_64-unknown-linux-gnu",
     "i686-unknown-linux-gnu",
 ]
-
-cargo-args = ["-Z", "build-std"]
