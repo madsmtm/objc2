@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `INSFastEnumeration::enumerator` to
   `INSFastEnumeration::iter_fast`.
 
+### Removed
+* **BREAKING**: Removed `Deref` and `DerefMut` from `NSData` and
+  `NSMutableData`, since these invoke a non-trivial amount of code, and could
+  easily lead to hard-to-diagnose performance issues.
+
 
 ## 0.2.0-alpha.3 - 2021-12-22
 

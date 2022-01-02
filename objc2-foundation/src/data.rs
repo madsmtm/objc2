@@ -1,6 +1,6 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
-use core::ops::{Deref, DerefMut, Index, IndexMut, Range};
+use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use core::{ffi::c_void, ptr::NonNull};
 
@@ -135,14 +135,6 @@ impl DefaultId for NSData {
     }
 }
 
-impl Deref for NSData {
-    type Target = [u8];
-
-    fn deref(&self) -> &[u8] {
-        self.bytes()
-    }
-}
-
 pub unsafe trait INSMutableData: INSData {
     fn bytes_mut(&mut self) -> &mut [u8] {
         let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
@@ -238,20 +230,6 @@ impl DefaultId for NSMutableData {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
-    }
-}
-
-impl Deref for NSMutableData {
-    type Target = [u8];
-
-    fn deref(&self) -> &[u8] {
-        self.bytes()
-    }
-}
-
-impl DerefMut for NSMutableData {
-    fn deref_mut(&mut self) -> &mut [u8] {
-        self.bytes_mut()
     }
 }
 
