@@ -3,8 +3,7 @@
 //! These bindings contain almost no documentation, so it is highly
 //! recommended to read the documentation of the original libraries:
 //! - Apple's [official documentation][apple].
-//! - Apple's `objc4` [source code][objc4] ([`git` mirror][objc4-mirror]), in
-//!   particular `runtime.h`.
+//! - Apple's `objc4` [source code][objc4], in particular `runtime.h`.
 //! - GNUStep's `libobjc2` [source code][libobjc2], in particular `runtime.h`.
 //!
 //! See also the [`README.md`](https://crates.io/crates/objc-sys) for more
@@ -12,8 +11,7 @@
 //!
 //! [apple]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
 //! [libobjc2]: https://github.com/gnustep/libobjc2/tree/v2.1/objc
-//! [objc4]: https://opensource.apple.com/source/objc4/objc4-818.2/runtime/
-//! [objc4-mirror]: https://github.com/madsmtm/objc4-mirror.git
+//! [objc4]: https://github.com/apple-oss-distributions/objc4
 
 #![no_std]
 #![allow(clippy::upper_case_acronyms)]

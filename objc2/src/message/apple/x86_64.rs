@@ -11,10 +11,8 @@ use crate::{Encode, Encoding};
 ///
 /// <http://people.freebsd.org/~obrien/amd64-elf-abi.pdf>
 unsafe impl<T: Encode> MsgSendFn for T {
-    // TODO: Should we use objc_msgSend_fpret and objc_msgSend_fp2ret ?
     const MSG_SEND: Imp = {
-        // See lines 156 to 172 in:
-        // https://opensource.apple.com/source/objc4/objc4-818.2/runtime/message.h.auto.html
+        // See https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/message.h#L156-L172
         if let Encoding::LongDouble = T::ENCODING {
             ffi::objc_msgSend_fpret
         } else if let Encoding::LongDoubleComplex = T::ENCODING {

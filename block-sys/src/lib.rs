@@ -338,7 +338,7 @@ pub struct Block_descriptor_with_signature {
 //     pub Block_copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *mut c_void)>,
 //     pub Block_dispose: Option<unsafe extern "C" fn(block: *mut c_void)>,
 // }
-// Example usage: https://opensource.apple.com/source/libdispatch/libdispatch-84.5/src/once.c.auto.html
+// Example usage: https://github.com/apple-oss-distributions/libdispatch/blob/libdispatch-84.5/src/once.c
 
 /// Structure used for on-stack variables that are referenced by blocks.
 #[repr(C)]
