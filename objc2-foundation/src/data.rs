@@ -1,7 +1,7 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
-use core::ops::{Deref, DerefMut, Range};
-use core::slice;
+use core::ops::{Deref, DerefMut, Index, IndexMut, Range};
+use core::slice::{self, SliceIndex};
 use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
@@ -111,6 +111,21 @@ unsafe impl INSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
+impl AsRef<[u8]> for NSData {
+    fn as_ref(&self) -> &[u8] {
+        self.bytes()
+    }
+}
+
+impl<I: SliceIndex<[u8]>> Index<I> for NSData {
+    type Output = I::Output;
+
+    #[inline]
+    fn index(&self, index: I) -> &Self::Output {
+        Index::index(self.bytes(), index)
+    }
+}
+
 impl DefaultId for NSData {
     type Ownership = Shared;
 
@@ -187,6 +202,34 @@ unsafe impl INSCopying for NSMutableData {
 
 unsafe impl INSMutableCopying for NSMutableData {
     type Output = NSMutableData;
+}
+
+impl AsRef<[u8]> for NSMutableData {
+    fn as_ref(&self) -> &[u8] {
+        self.bytes()
+    }
+}
+
+impl AsMut<[u8]> for NSMutableData {
+    fn as_mut(&mut self) -> &mut [u8] {
+        self.bytes_mut()
+    }
+}
+
+impl<I: SliceIndex<[u8]>> Index<I> for NSMutableData {
+    type Output = I::Output;
+
+    #[inline]
+    fn index(&self, index: I) -> &Self::Output {
+        Index::index(self.bytes(), index)
+    }
+}
+
+impl<I: SliceIndex<[u8]>> IndexMut<I> for NSMutableData {
+    #[inline]
+    fn index_mut(&mut self, index: I) -> &mut Self::Output {
+        IndexMut::index_mut(self.bytes_mut(), index)
+    }
 }
 
 impl DefaultId for NSMutableData {

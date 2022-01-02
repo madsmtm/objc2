@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Implement `PartialOrd` and `Ord` for `NSComparisonResult` and `NSValue`.
 * Implement `fmt::Display` for `NSValue`.
 * Implement `DefaultId` for relevant objects.
+* Implement `AsRef` and `Index` for `NSData` and `NSMutableData`.
+* Implement `AsMut` and `IndexMut` for `NSMutableData`.
 
 ### Changed
 * **BREAKING**: Renamed `INSFastEnumeration::enumerator` to

@@ -175,7 +175,7 @@ unsafe impl<K: INSObject, V: INSObject> INSFastEnumeration for NSDictionary<K, V
 impl<'a, K: INSObject, V: INSObject> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
 
-    fn index(&self, index: &K) -> &V {
+    fn index<'s>(&'s self, index: &'a K) -> &'s V {
         self.get(index).unwrap()
     }
 }

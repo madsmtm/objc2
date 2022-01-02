@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
-use core::ops::{Index, Range};
+use core::ops::{Index, IndexMut, Range};
 use core::ptr::NonNull;
 
 use objc2::msg_send;
@@ -384,6 +384,12 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
 
     fn index(&self, index: usize) -> &T {
         self.get(index).unwrap()
+    }
+}
+
+impl<T: INSObject> IndexMut<usize> for NSMutableArray<T, Owned> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
+        self.get_mut(index).unwrap()
     }
 }
 
