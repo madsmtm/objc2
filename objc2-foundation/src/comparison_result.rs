@@ -3,7 +3,7 @@ use core::cmp::Ordering;
 use objc2::{Encode, Encoding, RefEncode};
 
 #[repr(isize)] // NSInteger
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum NSComparisonResult {
     Ascending = -1,
     Same = 0,

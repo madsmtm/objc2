@@ -3,10 +3,13 @@
 [![Latest version](https://badgen.net/crates/v/block-sys)](https://crates.io/crates/block-sys)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/block-sys/badge.svg)](https://docs.rs/block-sys/)
-[![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
-[![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
+[![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
 Raw Rust bindings to Apple's C language extension of blocks.
+
+This crate is part of the [`objc2` project](https://github.com/madsmtm/objc2),
+see that for related crates.
+
 
 ## Runtime Support
 
@@ -17,7 +20,9 @@ several different helper functions), the most important aspect being that the
 libraries are named differently, so the linking must take that into account.
 
 The user can choose the desired runtime by using the relevant cargo feature
-flags, see the following sections:
+flags, see the following sections. Note that if the `objc-sys` crate is
+present in the module tree, this should have the same feature flag enabled as
+that.
 
 
 ### Apple's [`libclosure`](https://opensource.apple.com/source/libclosure/)
@@ -51,6 +56,8 @@ and is now used in [Swift's `libdispatch`] and [Swift's Foundation] as well.
 
 This can be easily used on many Linux systems with the `libblocksruntime-dev`
 package.
+
+Using this runtime probably won't work together with `objc-sys` crate.
 
 [Swift's `libdispatch`]: https://github.com/apple/swift-corelibs-libdispatch/tree/swift-5.5.1-RELEASE/src/BlocksRuntime
 [Swift's Foundation]: https://github.com/apple/swift-corelibs-foundation/tree/swift-5.5.1-RELEASE/Sources/BlocksRuntime

@@ -99,8 +99,8 @@ where
 /// global_block! {
 ///     static MY_BLOCK = || -> i32 {
 ///         42
-///     }
-/// };
+///     };
+/// }
 /// assert_eq!(unsafe { MY_BLOCK.call(()) }, 42);
 /// ```
 ///
@@ -109,8 +109,8 @@ where
 /// global_block! {
 ///     static ADDER_BLOCK = |x: i32, y: i32| -> i32 {
 ///         x + y
-///     }
-/// };
+///     };
+/// }
 /// assert_eq!(unsafe { ADDER_BLOCK.call((5, 7)) }, 12);
 /// ```
 ///
@@ -119,8 +119,8 @@ where
 /// global_block! {
 ///     pub static MUTATING_BLOCK = |x: &mut i32| {
 ///         *x = *x + 42;
-///     }
-/// };
+///     };
+/// }
 /// let mut x = 5;
 /// unsafe { MUTATING_BLOCK.call((&mut x,)) };
 /// assert_eq!(x, 47);
@@ -131,8 +131,19 @@ where
 /// ```compile_fail
 /// use block2::global_block;
 /// global_block! {
-///     pub static INVALID_BLOCK = |b: Box<i32>| {}
-/// };
+///     pub static BLOCK = |b: Box<i32>| {};
+/// }
+/// ```
+///
+/// There is also no way to get a block function that's generic over it's
+/// arguments. One could imagine the following syntax would work, but it can't
+/// due to implementation limitations:
+///
+/// ```compile_fail
+/// use block2::global_block;
+/// global_block! {
+///     pub static BLOCK<T: Encode> = |b: T| {};
+/// }
 /// ```
 ///
 /// [`Box`]: std::boxed::Box
@@ -141,20 +152,23 @@ macro_rules! global_block {
     // `||` is parsed as one token
     (
         $(#[$m:meta])*
-        $vis:vis static $name:ident = || $(-> $r:ty)? $body:block
+        $vis:vis static $name:ident = || $(-> $r:ty)? $body:block $(;)?
     ) => {
-        $crate::global_block!($(#[$m])* $vis static $name = |,| $(-> $r)? $body);
+        $crate::global_block!(
+            $(#[$m])*
+            $vis static $name = |,| $(-> $r)? $body
+        );
     };
     (
         $(#[$m:meta])*
-        $vis:vis static $name:ident = |$($a:ident: $t:ty),* $(,)?| $(-> $r:ty)? $body:block
+        $vis:vis static $name:ident = |$($a:ident: $t:ty),* $(,)?| $(-> $r:ty)? $body:block $(;)?
     ) => {
         $(#[$m])*
         #[allow(unused_unsafe)]
         $vis static $name: $crate::GlobalBlock<($($t,)*) $(, $r)?> = unsafe {
             let mut layout = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_LAYOUT;
             layout.isa = &$crate::ffi::_NSConcreteGlobalBlock as *const _ as *mut _;
-            layout.invoke = Some({
+            layout.invoke = ::core::option::Option::Some({
                 unsafe extern "C" fn inner(_: *mut $crate::ffi::Block_layout, $($a: $t),*) $(-> $r)? {
                     $body
                 }
@@ -172,7 +186,7 @@ macro_rules! global_block {
 mod tests {
     global_block! {
         /// Test comments and visibility
-        pub(super) static NOOP_BLOCK = || {}
+        pub(super) static NOOP_BLOCK = || {};
     }
 
     global_block! {
@@ -180,7 +194,7 @@ mod tests {
         #[allow(unused)]
         static BLOCK = |x: i32, y: i32, z: i32, w: i32,| -> i32 {
             x + y + z + w
-        }
+        };
     }
 
     #[test]
@@ -190,11 +204,9 @@ mod tests {
 
     #[test]
     fn test_defined_in_function() {
-        global_block!(
-            static MY_BLOCK = || -> i32 {
-                42
-            }
-        );
+        global_block!(static MY_BLOCK = || -> i32 {
+            42
+        });
         assert_eq!(unsafe { MY_BLOCK.call(()) }, 42);
     }
 }

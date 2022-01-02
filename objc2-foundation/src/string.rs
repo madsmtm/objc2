@@ -8,6 +8,7 @@ use std::os::raw::c_char;
 use alloc::borrow::ToOwned;
 use objc2::ffi;
 use objc2::msg_send;
+use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
 
@@ -109,6 +110,15 @@ unsafe impl Send for NSString {}
 
 impl NSString {
     unsafe_def_fn!(pub fn new -> Shared);
+}
+
+impl DefaultId for NSString {
+    type Ownership = Shared;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
+    }
 }
 
 unsafe impl INSString for NSString {}

@@ -4,7 +4,8 @@
 //! sources, but the [ABI specification][ABI] is really the place you should
 //! be looking!
 //!
-//! See also the `README.md` for more info.
+//! See also the [`README.md`](https://crates.io/crates/block-sys) for more
+//! background information, and for how to configure the desired runtime.
 //!
 //! [ABI]: https://clang.llvm.org/docs/Block-ABI-Apple.html
 
@@ -257,7 +258,7 @@ pub struct Block_layout {
     /// space on the stack allocated to hold the return value.
     pub invoke: Option<unsafe extern "C" fn(block: *mut Block_layout, ...)>,
     /// The block's descriptor. The actual type of this is:
-    /// ```ignore
+    /// ```pseudo-code
     /// match (BLOCK_HAS_COPY_DISPOSE, BLOCK_HAS_SIGNATURE) {
     ///     (false, false) => Block_descriptor_header,
     ///     (true, false) => Block_descriptor,

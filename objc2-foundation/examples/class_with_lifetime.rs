@@ -35,14 +35,14 @@ impl<'a> MyObject<'a> {
     fn get(&self) -> Option<&'a u8> {
         unsafe {
             let obj = &*(self as *const _ as *const Object);
-            *obj.get_ivar("_number_ptr")
+            *obj.ivar("_number_ptr")
         }
     }
 
     fn write(&mut self, number: u8) {
         let ptr: &mut Option<&'a mut u8> = unsafe {
             let obj = &mut *(self as *mut _ as *mut Object);
-            obj.get_mut_ivar("_number_ptr")
+            obj.ivar_mut("_number_ptr")
         };
         if let Some(ptr) = ptr {
             **ptr = number;

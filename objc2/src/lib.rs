@@ -1,62 +1,124 @@
-/*!
-Objective-C Runtime bindings and wrapper for Rust.
-
-# Messaging objects
-
-Objective-C objects can be messaged using the [`msg_send!`](macro.msg_send!.html) macro:
-
-``` no_run
-# use objc2::{class, msg_send};
-# use objc2::runtime::{Bool, Class, Object};
-# unsafe {
-let cls = class!(NSObject);
-let obj: *mut Object = msg_send![cls, new];
-let hash: usize = msg_send![obj, hash];
-let is_kind: Bool = msg_send![obj, isKindOfClass: cls];
-// Even void methods must have their return type annotated
-let _: () = msg_send![obj, release];
-# }
-```
-
-# Reference counting
-
-Utilities for reference counting Objective-C objects are provided in the
-[`rc`](rc/index.html) module.
-
-# Declaring classes
-
-Objective-C classes can even be declared from Rust using the functionality of
-the [`declare`](declare/index.html) module.
-
-# Exceptions
-
-By default, if the `msg_send!` macro causes an exception to be thrown, this
-will unwind into Rust resulting in unsafe, undefined behavior.
-However, this crate has an `"catch_all"` feature which, when enabled, wraps
-each `msg_send!` in a `@try`/`@catch` and panics if an exception is caught,
-preventing Objective-C from unwinding into Rust.
-
-# Message type verification
-
-The Objective-C runtime includes encodings for each method that describe the
-argument and return types. This crate can take advantage of these encodings to
-verify that the types used in Rust match the types encoded for the method.
-
-To use this functionality, enable the `"verify_message"` feature.
-With this feature enabled, type checking is performed for every message send,
-which also requires that all arguments and return values for all messages
-implement `Encode`.
-
-If this requirement is burdensome or you'd rather
-just verify specific messages, you can call the
-[`Message::verify_message`](trait.Message.html#method.verify_message) method
-for specific selectors.
-
-# Support for other Operating Systems
-
-The bindings can be used on Linux or *BSD utilizing the
-[GNUstep Objective-C runtime](https://www.github.com/gnustep/libobjc2).
-*/
+//! # Objective-C interface and runtime bindings
+//!
+//! Objective-C is<sup>1</sup> the standard programming language on Apple
+//! platforms like macOS, iOS, tvOS and watchOS. It is an object-oriented
+//! language centered around sending messages to it's instances, which is for
+//! the most part equivalent to a function call.
+//!
+//! Most of the core libraries and frameworks that are in use on Apple systems
+//! are written in Objective-C, and hence we would like the ability to
+//! interract with these using Rust; this crate enables you to do that, in
+//! as safe a manner as possible.
+//!
+//! <sup>1: Yes, I know, "was", Swift now exists. All the existing frameworks
+//! are written in Objective-C though, so the point still holds.</sup>
+//!
+//!
+//! ## Basic usage
+//!
+//! This example illustrates major parts of the functionality in this crate:
+//!
+//! First, we get a reference to the `NSObject`'s [`runtime::Class`] using the
+//! [`class!`] macro.
+//! Next, we creates a new [`runtime::Object`] pointer, and ensures it is
+//! deallocated after we've used it by putting it into an [`rc::Owned`]
+//! [`rc::Id`].
+//! Now we send messages to the object to our hearts desire using
+//! the [`msg_send!`] macro, and lastly, the `Id<Object, _>` goes out of
+//! scope, and the object is deallocated.
+//!
+#![cfg_attr(apple, doc = "```")]
+#![cfg_attr(not(apple), doc = "```no_run")]
+//! use core::ptr::NonNull;
+//! use objc2::{class, msg_send};
+//! use objc2::ffi::NSUInteger;
+//! use objc2::rc::{Id, Owned};
+//! use objc2::runtime::{Bool, Object};
+//!
+//! // Creation
+//! let cls = class!(NSObject);
+//! let obj: *mut Object = unsafe { msg_send![cls, new] };
+//! let obj = NonNull::new(obj).expect("Failed allocating object");
+//! let obj: Id<Object, Owned> = unsafe { Id::new(obj) };
+//!
+//! // Usage
+//! let hash: NSUInteger = unsafe { msg_send![obj, hash] };
+//! let is_kind: Bool = unsafe { msg_send![obj, isKindOfClass: cls] };
+//! assert!(is_kind.is_true());
+//! ```
+//!
+//! Note that this very simple example contains **a lot** of `unsafe` (which
+//! should all ideally be justified with a `// SAFETY` comment). This is
+//! required because our compiler can verify very little about the Objective-C
+//! invocation, including all argument and return types used in [`msg_send!`];
+//! we could have just as easily accidentally made `hash` an `f32`, or any
+//! other type, and this would trigger undefined behaviour!
+//!
+//! Making the ergonomics better is something that is currently being worked
+//! on, see e.g. the [`objc2-foundation`] crate for more ergonomic usage of at
+//! least the `Foundation` framework.
+//!
+//! Anyhow, this nicely leads us to another feature that this crate has:
+//!
+//! [`runtime::Class`]: crate::runtime::Class
+//! [`runtime::Object`]: crate::runtime::Object
+//! [`rc::Owned`]: crate::rc::Owned
+//! [`rc::Id`]: crate::rc::Id
+//! [`objc2-foundation`]: https://crates.io/crates/objc2-foundation
+//!
+//!
+//! ## Encodings and message type verification
+//!
+//! The Objective-C runtime includes encodings for each method that describe
+//! the argument and return types. See the [`objc2-encode`] crate for the
+//! full overview of what this is.
+//!
+//! The important part is, to make message sending _safer_ (not fully safe),
+//! all arguments and return values for messages must implement [`Encode`].
+//! This allows the Rust compiler to prevent you from passing e.g. a [`Box`]
+//! into Objective-C, which would both be UB and leak the box.
+//!
+//! Furthermore, this crate can take advantage of the encodings provided by
+//! the runtime to verify that the types used in Rust match the types encoded
+//! for the method. This is not a perfect solution for ensuring safety of
+//! message sends (some Rust types have the same encoding, but are not
+//! equivalent), but it gets us much closer to it!
+//!
+//! To use this functionality, enable the `"verify_message"` cargo feature
+//! while debugging. With this feature enabled, encoding types are checked
+//! every time your send a message, and the message send will panic if they
+//! are not equivalent.
+//!
+//! [`objc2-encode`]: https://crates.io/crates/objc2-encode
+//! [`Box`]: std::boxed::Box
+//!
+//!
+//! ## Crate features
+//!
+//! This crate exports several optional cargo features, see [`Cargo.toml`] for
+//! an overview and description of these.
+//!
+//! [`Cargo.toml`]: https://github.com/madsmtm/objc2/blob/master/objc2/Cargo.toml
+//!
+//!
+//! ## Support for other Operating Systems
+//!
+//! The bindings can be used on Linux or *BSD utilizing the
+//! [GNUstep Objective-C runtime](https://www.github.com/gnustep/libobjc2),
+//! see the [`objc-sys`][`objc_sys`] crate for how to configure this.
+//!
+//!
+//! ## Other features
+//!
+//! Anyhow, that was a quick introduction, this library also has [support for
+//! handling exceptions][exc], [the ability to dynamically declare Objective-C
+//! classes][declare], [more advanced reference-counting utilities][rc] and
+//! more, peruse the documentation at will!
+//!
+#![cfg_attr(feature = "exception", doc = "[exc]: crate::exception")]
+#![cfg_attr(not(feature = "exception"), doc = "[exc]: #exception-feature-disabled")]
+//! [declare]: crate::declare
+//! [rc]: crate::rc
 
 #![no_std]
 #![cfg_attr(
@@ -74,7 +136,8 @@ The bindings can be used on Linux or *BSD utilizing the
 extern crate alloc;
 extern crate std;
 
-#[cfg(doctest)]
+// The example uses NSObject without doing the __gnustep_hack
+#[cfg(all(apple, doctest))]
 #[doc = include_str!("../README.md")]
 extern "C" {}
 

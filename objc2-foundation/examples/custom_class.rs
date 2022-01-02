@@ -31,7 +31,7 @@ impl MYObject {
     fn number(&self) -> u32 {
         unsafe {
             let obj = &*(self as *const _ as *const Object);
-            *obj.get_ivar("_number")
+            *obj.ivar("_number")
         }
     }
 
@@ -62,7 +62,7 @@ unsafe impl INSObject for MYObject {
             }
 
             extern "C" fn my_object_get_number(this: &Object, _cmd: Sel) -> u32 {
-                unsafe { *this.get_ivar("_number") }
+                unsafe { *this.ivar("_number") }
             }
 
             unsafe {

@@ -1,12 +1,12 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
-use core::ops::{Deref, DerefMut, Range};
-use core::slice;
+use core::ops::{Index, IndexMut, Range};
+use core::slice::{self, SliceIndex};
 use core::{ffi::c_void, ptr::NonNull};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
-use objc2::rc::{Id, Owned, Ownership, Shared};
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared};
 
 pub unsafe trait INSData: INSObject {
     type Ownership: Ownership;
@@ -111,11 +111,27 @@ unsafe impl INSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
-impl Deref for NSData {
-    type Target = [u8];
-
-    fn deref(&self) -> &[u8] {
+impl AsRef<[u8]> for NSData {
+    fn as_ref(&self) -> &[u8] {
         self.bytes()
+    }
+}
+
+impl<I: SliceIndex<[u8]>> Index<I> for NSData {
+    type Output = I::Output;
+
+    #[inline]
+    fn index(&self, index: I) -> &Self::Output {
+        Index::index(self.bytes(), index)
+    }
+}
+
+impl DefaultId for NSData {
+    type Ownership = Shared;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
     }
 }
 
@@ -180,17 +196,40 @@ unsafe impl INSMutableCopying for NSMutableData {
     type Output = NSMutableData;
 }
 
-impl Deref for NSMutableData {
-    type Target = [u8];
-
-    fn deref(&self) -> &[u8] {
+impl AsRef<[u8]> for NSMutableData {
+    fn as_ref(&self) -> &[u8] {
         self.bytes()
     }
 }
 
-impl DerefMut for NSMutableData {
-    fn deref_mut(&mut self) -> &mut [u8] {
+impl AsMut<[u8]> for NSMutableData {
+    fn as_mut(&mut self) -> &mut [u8] {
         self.bytes_mut()
+    }
+}
+
+impl<I: SliceIndex<[u8]>> Index<I> for NSMutableData {
+    type Output = I::Output;
+
+    #[inline]
+    fn index(&self, index: I) -> &Self::Output {
+        Index::index(self.bytes(), index)
+    }
+}
+
+impl<I: SliceIndex<[u8]>> IndexMut<I> for NSMutableData {
+    #[inline]
+    fn index_mut(&mut self, index: I) -> &mut Self::Output {
+        IndexMut::index_mut(self.bytes_mut(), index)
+    }
+}
+
+impl DefaultId for NSMutableData {
+    type Ownership = Owned;
+
+    #[inline]
+    fn default_id() -> Id<Self, Self::Ownership> {
+        Self::new()
     }
 }
 

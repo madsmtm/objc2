@@ -1,6 +1,12 @@
 //! Objective-C's @throw and @try/@catch.
 //!
-//! This is only available when the `exception` feature is enabled.
+//! By default, if the [`msg_send!`] macro causes an exception to be thrown,
+//! this will unwind into Rust, resulting in undefined behavior. However, this
+//! crate has an `"catch_all"` feature which, when enabled, wraps each
+//! [`msg_send!`] in a [`catch`] and panics if an exception is caught,
+//! preventing Objective-C from unwinding into Rust.
+//!
+//! This module is only available when the `"exception"` feature is enabled.
 //!
 //! See the following links for more information:
 //! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Tasks/HandlingExceptions.html>

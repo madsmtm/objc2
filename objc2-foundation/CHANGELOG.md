@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Implement `PartialOrd` and `Ord` for `NSComparisonResult` and `NSValue`.
+* Implement `fmt::Display` for `NSValue`.
+* Implement `DefaultId` for relevant objects.
+* Implement `AsRef` and `Index` for `NSData` and `NSMutableData`.
+* Implement `AsMut` and `IndexMut` for `NSMutableData`.
+
+### Changed
+* **BREAKING**: Renamed `INSFastEnumeration::enumerator` to
+  `INSFastEnumeration::iter_fast`.
+
+### Removed
+* **BREAKING**: Removed `Deref` and `DerefMut` from `NSData` and
+  `NSMutableData`, since these invoke a non-trivial amount of code, and could
+  easily lead to hard-to-diagnose performance issues.
+
 
 ## 0.2.0-alpha.3 - 2021-12-22
 

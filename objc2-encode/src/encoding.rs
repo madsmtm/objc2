@@ -6,16 +6,33 @@ use crate::parse;
 ///
 /// Can be retrieved in Objective-C for a type `T` using the `@encode(T)`
 /// directive.
-/// ```objective-c , ignore
+/// ```objc
 /// NSLog(@"Encoding of NSException: %s", @encode(NSException));
 /// ```
 ///
-/// For more information, see [Apple's documentation][ocrtTypeEncodings] and
-/// [`clang`'s source code for generating `@encode`][clang-src].
+/// The [`Display`][`fmt::Display`] implementation converts the [`Encoding`]
+/// into its string representation, that the the `@encode` directive would
+/// return. This can be used conveniently through the `to_string` method:
+///
+/// ```
+/// use objc2_encode::Encoding;
+/// assert_eq!(Encoding::Int.to_string(), "i");
+/// ```
+///
+/// For more information on the string value of an encoding, see [Apple's
+/// documentation][ocrtTypeEncodings].
 ///
 /// [ocrtTypeEncodings]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html
-/// [clang-src]: https://github.com/llvm/llvm-project/blob/fae0dfa6421ea6c02f86ba7292fa782e1e2b69d1/clang/lib/AST/ASTContext.cpp#L7500-L7850
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+///
+/// # Examples
+///
+/// Comparing an encoding to a string from the Objective-C runtime:
+///
+/// ```
+/// use objc2_encode::Encoding;
+/// assert!(Encoding::Array(10, &Encoding::FloatComplex).equivalent_to_str("[10jf]"));
+/// ```
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[non_exhaustive] // Maybe we're missing some encodings?
 pub enum Encoding<'a> {
     /// A C `char`. Corresponds to the `c` code.

@@ -1,5 +1,6 @@
 use core::cell::UnsafeCell;
 use core::ffi::c_void;
+use core::fmt;
 use core::marker::PhantomData;
 #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
 use std::{cell::RefCell, thread_local, vec::Vec};
@@ -15,6 +16,7 @@ use crate::ffi;
 ///
 /// And this is not [`Sync`], since you can only autorelease a reference to a
 /// pool on the current thread.
+#[derive(Debug)]
 pub struct AutoreleasePool {
     context: *mut c_void,
     // May pointer to data that is mutated (even though we hold shared access)
@@ -160,6 +162,12 @@ impl Drop for AutoreleasePool {
     }
 }
 
+impl fmt::Pointer for AutoreleasePool {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Pointer::fmt(&self.context, f)
+    }
+}
+
 /// We use a macro here so that the documentation is included whether the
 /// feature is enabled or not.
 #[cfg(not(feature = "unstable_autoreleasesafe"))]
@@ -225,7 +233,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 ///
 /// Basic usage:
 ///
-/// ```rust,no_run
+/// ```no_run
 /// use objc2::{class, msg_send};
 /// use objc2::rc::{autoreleasepool, AutoreleasePool};
 /// use objc2::runtime::Object;
@@ -248,7 +256,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// Fails to compile because `obj` does not live long enough for us to
 /// safely take it out of the pool:
 ///
-/// ```rust,compile_fail
+/// ```compile_fail
 /// # use objc2::{class, msg_send};
 /// # use objc2::rc::{autoreleasepool, AutoreleasePool};
 /// # use objc2::runtime::Object;
@@ -269,11 +277,8 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// Incorrect usage which panics because we tried to pass an outer pool to an
 /// inner pool:
 ///
-#[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```rust,compile_fail")]
-#[cfg_attr(
-    not(feature = "unstable_autoreleasesafe"),
-    doc = "```rust,should_panic"
-)]
+#[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```compile_fail")]
+#[cfg_attr(not(feature = "unstable_autoreleasesafe"), doc = "```should_panic")]
 /// # use objc2::{class, msg_send};
 /// # use objc2::rc::{autoreleasepool, AutoreleasePool};
 /// # use objc2::runtime::Object;

@@ -3,10 +3,13 @@
 [![Latest version](https://badgen.net/crates/v/objc-sys)](https://crates.io/crates/objc-sys)
 [![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/objc-sys/badge.svg)](https://docs.rs/objc-sys/)
-[![Apple CI](https://github.com/madsmtm/objc2/actions/workflows/apple.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/apple.yml)
-[![GNUStep CI](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/gnustep.yml)
+[![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
 Raw Rust bindings to the Objective-C runtime and ABI.
+
+This crate is part of the [`objc2` project](https://github.com/madsmtm/objc2),
+see that for related crates.
+
 
 ## Runtime Support
 
@@ -14,6 +17,7 @@ Objective-C has a runtime, different implementations of said runtime exist,
 and they act in slightly different ways. By default, Apple platforms link to
 Apple's runtime, but if you're using another runtime you must tell it to this
 library using feature flags.
+
 
 ### Apple's [`objc4`](https://opensource.apple.com/source/objc4/)
 
@@ -145,5 +149,5 @@ Some items (in particular the `objc_msgSend_X` family) have `cfg`s that prevent
 their usage on different platforms; these are **semver-stable** in the sense
 that they will only get less restrictive, never more.
 
-<sup>1</sup> That said, most of this is created with the help of `bindgen`'s
-commandline interface, so huge thanks to them!
+<sup>1: That said, most of this is created with the help of `bindgen`'s
+commandline interface, so huge thanks to them!</sup>

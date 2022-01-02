@@ -5,6 +5,7 @@
 
 use core::ffi::c_void;
 use core::fmt;
+use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 use core::str;
@@ -32,6 +33,8 @@ pub const NO: ffi::BOOL = ffi::NO;
 
 /// A type that represents a method selector.
 #[repr(transparent)]
+// ffi::sel_isEqual is just pointer comparison, so just generate PartialEq
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub struct Sel {
     ptr: *const ffi::objc_selector,
 }
@@ -51,6 +54,30 @@ pub struct Class(ffi::objc_class);
 /// A type that represents an Objective-C protocol.
 #[repr(C)]
 pub struct Protocol(ffi::Protocol);
+
+macro_rules! standard_pointer_impls {
+    ($($name:ident),*) => {
+        $(
+            impl PartialEq for $name {
+                #[inline]
+                fn eq(&self, other: &Self) -> bool {
+                    self.as_ptr() == other.as_ptr()
+                }
+            }
+            impl Eq for $name {}
+            impl hash::Hash for $name {
+                #[inline]
+                fn hash<H: hash::Hasher>(&self, state: &mut H) {
+                    self.as_ptr().hash(state)
+                }
+            }
+        )*
+    }
+}
+
+// Implement PartialEq, Eq and Hash using pointer semantics; there's not
+// really a better way to do it.
+standard_pointer_impls!(Ivar, Method, Class);
 
 /// A type that represents an instance of a class.
 ///
@@ -107,13 +134,9 @@ unsafe impl Encode for Sel {
     const ENCODING: Encoding<'static> = Encoding::Sel;
 }
 
-impl PartialEq for Sel {
-    fn eq(&self, other: &Sel) -> bool {
-        self.ptr == other.ptr
-    }
-}
-
-impl Eq for Sel {}
+// RefEncode is not implemented for Sel, because there is literally no API
+// that takes &Sel, but the user could easily get confused and accidentally
+// attempt that.
 
 // SAFETY: Sel is immutable (and can be retrieved from any thread using the
 // `sel!` macro).
@@ -122,17 +145,15 @@ unsafe impl Send for Sel {}
 impl UnwindSafe for Sel {}
 impl RefUnwindSafe for Sel {}
 
-impl Copy for Sel {}
-
-impl Clone for Sel {
-    fn clone(&self) -> Self {
-        Self { ptr: self.ptr }
-    }
-}
-
 impl fmt::Debug for Sel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
+    }
+}
+
+impl fmt::Pointer for Sel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Pointer::fmt(&self.ptr, f)
     }
 }
 
@@ -405,14 +426,6 @@ unsafe impl RefEncode for Class {
     const ENCODING_REF: Encoding<'static> = Encoding::Class;
 }
 
-impl PartialEq for Class {
-    fn eq(&self, other: &Class) -> bool {
-        self.as_ptr() == other.as_ptr()
-    }
-}
-
-impl Eq for Class {}
-
 impl fmt::Debug for Class {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())
@@ -477,6 +490,8 @@ impl Protocol {
 }
 
 impl PartialEq for Protocol {
+    /// Check whether the protocols are equal, or conform to each other.
+    #[inline]
     fn eq(&self, other: &Protocol) -> bool {
         unsafe { Bool::from_raw(ffi::protocol_isEqual(self.as_ptr(), other.as_ptr())).is_true() }
     }
@@ -502,7 +517,7 @@ impl UnwindSafe for Protocol {}
 impl RefUnwindSafe for Protocol {}
 // Note that Unpin is not applicable.
 
-fn get_ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
+fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
     match cls.instance_variable(name) {
         Some(ivar) => {
             assert!(T::ENCODING.equivalent_to_str(ivar.type_encoding()));
@@ -517,7 +532,7 @@ impl Object {
         self as *const Self as *const _
     }
 
-    /// Returns the class of this object.
+    /// Dynamically find the class of this object.
     pub fn class(&self) -> &Class {
         unsafe { &*(ffi::object_getClass(self.as_ptr()) as *const Class) }
     }
@@ -532,8 +547,10 @@ impl Object {
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
-    pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
-        let offset = get_ivar_offset::<T>(self.class(), name);
+    ///
+    /// Library implementors should expose a safe interface to the ivar.
+    pub unsafe fn ivar<T: Encode>(&self, name: &str) -> &T {
+        let offset = ivar_offset::<T>(self.class(), name);
         // `offset` is given in bytes, so we convert to `u8`
         let ptr = self as *const Self as *const u8;
         let ptr = unsafe { ptr.offset(offset) } as *const T;
@@ -550,8 +567,10 @@ impl Object {
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
-    pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
-        let offset = get_ivar_offset::<T>(self.class(), name);
+    ///
+    /// Library implementors should expose a safe interface to the ivar.
+    pub unsafe fn ivar_mut<T: Encode>(&mut self, name: &str) -> &mut T {
+        let offset = ivar_offset::<T>(self.class(), name);
         // `offset` is given in bytes, so we convert to `u8`
         let ptr = self as *mut Self as *mut u8;
         let ptr = unsafe { ptr.offset(offset) } as *mut T;
@@ -568,9 +587,11 @@ impl Object {
     /// # Safety
     ///
     /// The caller must ensure that the ivar is actually of type `T`.
+    ///
+    /// Library implementors should expose a safe interface to the ivar.
     pub unsafe fn set_ivar<T: Encode>(&mut self, name: &str, value: T) {
         // SAFETY: Invariants upheld by caller
-        unsafe { *self.get_mut_ivar::<T>(name) = value };
+        unsafe { *self.ivar_mut::<T>(name) = value };
     }
 
     // objc_setAssociatedObject
@@ -713,7 +734,7 @@ mod tests {
         assert_eq!(obj.class(), test_utils::custom_class());
         let result: u32 = unsafe {
             obj.set_ivar("_foo", 4u32);
-            *obj.get_ivar("_foo")
+            *obj.ivar("_foo")
         };
         assert_eq!(result, 4);
     }

@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Implement `Hash` for `Sel`, `Ivar`, `Class`, `Method` and `MessageError`.
+* Implement `PartialEq` and `Eq` for `Ivar`, `Method` and `MessageError`.
+* Implement `fmt::Pointer` for `Sel` and `rc::AutoreleasePool`.
+* Implement `fmt::Debug` for `ClassDecl`, `ProtocolDecl` and `rc::AutoreleasePool`.
+
+### Changed
+* **BREAKING**: Renamed:
+  - `Object::get_ivar` -> `Object::ivar`
+  - `Object::get_mut_ivar` -> `Object::ivar_mut`
+* Vastly improved documentation.
+
 
 ## 0.3.0-alpha.5 - 2021-12-22
 

@@ -1,3 +1,10 @@
+//! # Bindings to the Objective-C Cocoa `Foundation` framework
+//!
+//! This library is very much in progress, consider using the more
+//! battle-tested [`cocoa-foundation`] crate in the meantime.
+//!
+//! [`cocoa-foundation`]: https://crates.io/crates/cocoa-foundation
+
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]
 #![deny(non_ascii_idents)]

@@ -7,6 +7,9 @@
 //!   particular `runtime.h`.
 //! - GNUStep's `libobjc2` [source code][libobjc2], in particular `runtime.h`.
 //!
+//! See also the [`README.md`](https://crates.io/crates/objc-sys) for more
+//! background information, and for how to configure the desired runtime.
+//!
 //! [apple]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
 //! [libobjc2]: https://github.com/gnustep/libobjc2/tree/v2.1/objc
 //! [objc4]: https://opensource.apple.com/source/objc4/objc4-818.2/runtime/
@@ -25,6 +28,10 @@
 // Requires a better solution for C-types in `no_std` crates.
 // See https://github.com/japaric/cty/issues/14.
 extern crate std;
+
+#[cfg(doctest)]
+#[doc = include_str!("../README.md")]
+extern "C" {}
 
 use core::cell::UnsafeCell;
 use core::marker::{PhantomData, PhantomPinned};
@@ -64,3 +71,18 @@ pub use various::*;
 ///
 /// TODO: Replace this with `extern type` to also mark it as `!Sized`.
 type OpaqueData = PhantomData<(UnsafeCell<()>, *const UnsafeCell<()>, PhantomPinned)>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::ffi::CStr;
+
+    #[test]
+    fn smoke() {
+        // Verify that this library links and works fine by itself
+        let name = CStr::from_bytes_with_nul(b"abc:def:\0").unwrap();
+        let sel = unsafe { sel_registerName(name.as_ptr()) };
+        let rtn = unsafe { CStr::from_ptr(sel_getName(sel)) };
+        assert_eq!(name, rtn);
+    }
+}

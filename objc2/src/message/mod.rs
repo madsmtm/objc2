@@ -188,7 +188,8 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// arguments `A` and return type `R`.
     ///
     /// # Example
-    /// ``` no_run
+    ///
+    /// ```no_run
     /// # use objc2::{class, msg_send, sel};
     /// # use objc2::runtime::{Bool, Class, Object};
     /// # use objc2::MessageReceiver;
@@ -345,7 +346,8 @@ message_args_impl!(
 ///   enabled
 /// - the encodings of the arguments do not match the encoding of the method
 ///   and the `verify_message` feature is enabled
-#[derive(Debug)]
+// Currently not Clone for future compat
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct MessageError(String);
 
 impl fmt::Display for MessageError {
