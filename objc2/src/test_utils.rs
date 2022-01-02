@@ -5,8 +5,8 @@ use std::sync::Once;
 
 use crate::declare::{ClassBuilder, ProtocolBuilder};
 use crate::runtime::{Class, Object, Protocol, Sel};
-use crate::{class, msg_send, sel};
 use crate::{ffi, Encode, Encoding, MessageReceiver};
+use crate::{msg_send, sel};
 
 #[derive(Debug)]
 pub(crate) struct CustomObject {
@@ -173,7 +173,8 @@ pub(crate) fn custom_class() -> &'static Class {
         builder.register();
     });
 
-    class!(CustomObject)
+    // Can't use `class!` here since `CustomObject` is dynamically created.
+    Class::get("CustomObject").unwrap()
 }
 
 pub(crate) fn custom_protocol() -> &'static Protocol {
@@ -232,7 +233,7 @@ pub(crate) fn custom_subclass() -> &'static Class {
         builder.register();
     });
 
-    class!(CustomSubclassObject)
+    Class::get("CustomSubclassObject").unwrap()
 }
 
 pub(crate) fn custom_subclass_object() -> CustomObject {

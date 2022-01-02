@@ -18,6 +18,15 @@
 #[macro_export]
 macro_rules! class {
     ($name:ident) => {{
+        $crate::__class_inner!($name)
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(feature = "unstable-static-class"))]
+macro_rules! __class_inner {
+    ($name:ident) => {{
         use $crate::__macro_helpers::{concat, panic, stringify, CachedClass, None, Some};
         static CACHED_CLASS: CachedClass = CachedClass::new();
         let name = concat!(stringify!($name), '\0');
@@ -25,7 +34,7 @@ macro_rules! class {
         let cls = unsafe { CACHED_CLASS.get(name) };
         match cls {
             Some(cls) => cls,
-            None => panic!("Class with name {} could not be found", stringify!($name)),
+            None => panic!("Class with name {} could not be found", stringify!($name),),
         }
     }};
 }
@@ -165,18 +174,12 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __sel_inner_statics_apple_generic {
+macro_rules! __inner_statics_apple_generic {
     {
+        @image_info;
         $image_info_section:literal;
-        $var_name_section:literal;
-        $selector_ref_section:literal;
-        $data:ident,
         $($idents:ident)+
     } => {
-        use $crate::__macro_helpers::{__hash_idents, u8, UnsafeCell};
-        use $crate::ffi::__ImageInfo;
-        use $crate::runtime::Sel;
-
         /// We always emit the image info tag, since we need it to:
         /// - End up in the same codegen unit as the other statics below.
         /// - End up in the final binary so it can be read by dyld.
@@ -185,9 +188,22 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// reports `__DATA/__objc_imageinfo has unexpectedly large size XXX`,
         /// but things still seems to work.
         #[link_section = $image_info_section]
-        #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", __hash_idents!($($idents)+))]
+        #[export_name = $crate::__macro_helpers::concat!(
+            "\x01L_OBJC_IMAGE_INFO_",
+            $crate::__macro_helpers::__hash_idents!($($idents)+)
+        )]
         #[used] // Make sure this reaches the linker
-        static _IMAGE_INFO: __ImageInfo = __ImageInfo::system();
+        static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
+    };
+    {
+        @sel;
+        $var_name_section:literal;
+        $selector_ref_section:literal;
+        $data:ident,
+        $($idents:ident)+
+    } => {
+        use $crate::__macro_helpers::{__hash_idents, u8, UnsafeCell};
+        use $crate::runtime::Sel;
 
         const X: &[u8] = $data.as_bytes();
 
@@ -241,18 +257,56 @@ macro_rules! __sel_inner_statics_apple_generic {
             UnsafeCell::new(Sel::__internal_from_ptr(NAME_DATA.as_ptr().cast()))
         };
     };
+    {
+        @class;
+        $class_ref_section:literal;
+        $name:ident
+    } => {
+        use $crate::__macro_helpers::{concat, stringify, __hash_idents, UnsafeCell};
+        use $crate::runtime::Class;
+
+        // TODO
+        extern "C" {
+            // TODO: Weak linkage?
+            // https://stackoverflow.com/a/16936512
+            // http://sealiesoftware.com/blog/archive/2010/4/8/Do-it-yourself_Objective-C_weak_import.html
+            #[link_name = concat!("OBJC_CLASS_$_", stringify!($name))]
+            static CLASS: Class;
+        }
+
+        // TODO
+        #[link_section = $class_ref_section]
+        #[export_name = concat!("\x01L_OBJC_CLASSLIST_REFERENCES_$_", __hash_idents!($name))]
+        static mut REF: UnsafeCell<&Class> = unsafe {
+            UnsafeCell::new(&CLASS)
+        };
+    };
 }
 
+// These sections are found by reading clang/LLVM sources
 #[doc(hidden)]
 #[macro_export]
 #[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
-macro_rules! __sel_inner_statics {
-    ($($args:tt)*) => {
-        // Found by reading clang/LLVM sources
-        $crate::__sel_inner_statics_apple_generic! {
+macro_rules! __inner_statics {
+    (@image_info $($args:tt)*) => {
+        $crate::__inner_statics_apple_generic! {
+            @image_info;
             "__DATA,__objc_imageinfo,regular,no_dead_strip";
+            $($args)*
+        }
+    };
+    (@sel $($args:tt)*) => {
+        $crate::__inner_statics_apple_generic! {
+            @sel;
             "__TEXT,__objc_methname,cstring_literals";
             "__DATA,__objc_selrefs,literal_pointers,no_dead_strip";
+            $($args)*
+        }
+    };
+    (@class $($args:tt)*) => {
+        $crate::__inner_statics_apple_generic! {
+            @class;
+            "__DATA,__objc_classrefs,regular,no_dead_strip";
             $($args)*
         }
     };
@@ -261,25 +315,48 @@ macro_rules! __sel_inner_statics {
 #[doc(hidden)]
 #[macro_export]
 #[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86"))]
-macro_rules! __sel_inner_statics {
-    ($($args:tt)*) => {
-        $crate::__sel_inner_statics_apple_generic! {
+macro_rules! __inner_statics {
+    (@image_info $($args:tt)*) => {
+        $crate::__inner_statics_apple_generic! {
+            @image_info;
             "__OBJC,__image_info,regular";
+            $($args)*
+        }
+    };
+    (@sel $($args:tt)*) => {
+        $crate::__inner_statics_apple_generic! {
+            @sel;
             "__TEXT,__cstring,cstring_literals";
             "__OBJC,__message_refs,literal_pointers,no_dead_strip";
             $($args)*
         }
+    };
+    (@class $($args:tt)*) => {
+        // TODO
+        $crate::__macro_helpers::compile_error!(
+            "The `\"unstable-static-class\"` feature is not yet supported on 32bit macOS!"
+        )
+        // TODO: module info
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
 #[cfg(not(feature = "apple"))]
-macro_rules! __sel_inner_statics {
-    ($($args:tt)*) => {
+macro_rules! __inner_statics {
+    (@image_info $($args:tt)*) => {
+        // TODO
+    };
+    (@sel $($args:tt)*) => {
         // TODO
         $crate::__macro_helpers::compile_error!(
             "The `\"unstable-static-sel\"` feature is not yet supported on GNUStep!"
+        )
+    };
+    (@class $($args:tt)*) => {
+        // TODO
+        $crate::__macro_helpers::compile_error!(
+            "The `\"unstable-static-class\"` feature is not yet supported on GNUStep!"
         )
     };
 }
@@ -291,8 +368,9 @@ macro_rules! __sel_inner_statics {
     not(feature = "unstable-static-sel-inlined")
 ))]
 macro_rules! __sel_inner {
-    ($($args:tt)*) => {{
-        $crate::__sel_inner_statics!($($args)*);
+    ($data:ident, $($idents:ident)+) => {{
+        $crate::__inner_statics!(@image_info $($idents)+);
+        $crate::__inner_statics!(@sel $data, $($idents)+);
 
         /// HACK: Wrap the access in a non-generic, `#[inline(never)]`
         /// function to make the compiler group it into the same codegen unit
@@ -319,8 +397,44 @@ macro_rules! __sel_inner {
 #[macro_export]
 #[cfg(all(feature = "unstable-static-sel-inlined"))]
 macro_rules! __sel_inner {
-    ($($args:tt)*) => {{
-        $crate::__sel_inner_statics!($($args)*);
+    ($data:ident, $($idents:ident)+) => {{
+        $crate::__inner_statics!(@image_info $($idents)+);
+        $crate::__inner_statics!(@sel $data, $($idents)+);
+
+        #[allow(unused_unsafe)]
+        // SAFETY: See above
+        unsafe { *REF.get() }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-static-class",
+    not(feature = "unstable-static-class-inlined")
+))]
+macro_rules! __class_inner {
+    ($name:ident) => {{
+        $crate::__inner_statics!(@image_info $name);
+        $crate::__inner_statics!(@class $name);
+
+        // SAFETY: Same as __sel_inner
+        #[inline(never)]
+        fn objc_static_workaround() -> &'static Class {
+            unsafe { *REF.get() }
+        }
+
+        objc_static_workaround()
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "unstable-static-class-inlined"))]
+macro_rules! __class_inner {
+    ($name:ident) => {{
+        $crate::__inner_statics!(@image_info $name);
+        $crate::__inner_statics!(@class $name);
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
