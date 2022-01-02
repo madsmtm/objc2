@@ -378,6 +378,13 @@ jobs:
         # Not using --all-features because that would enable e.g. gnustep
         args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
+    - name: Test static selectors
+      if: ${{ !matrix.dinghy }}
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --features static-sel ${{ env.TESTARGS }}
+
     - name: Run assembly tests
       # Not run on GNUStep yet since a lot of function labels are mangled and
       # not inlined (and hence quite hard to match on, at some point we'll
