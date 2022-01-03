@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0-alpha.6 - 2022-01-03
+
 ### Added
 * Implement `Hash` for `Sel`, `Ivar`, `Class`, `Method` and `MessageError`.
 * Implement `PartialEq` and `Eq` for `Ivar`, `Method` and `MessageError`.
@@ -17,6 +20,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Object::get_ivar` -> `Object::ivar`
   - `Object::get_mut_ivar` -> `Object::ivar_mut`
 * Vastly improved documentation.
+* **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-alpha.1`.
+* **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
+  `EncodeArguments`) to `v2.0.0-beta.2`.
 
 
 ## 0.3.0-alpha.5 - 2021-12-22
@@ -54,6 +60,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Relaxed `Sized` bound on `rc::Id` and `rc::WeakId` to prepare for
   `extern type` support.
 * **BREAKING**: Relaxed `Sized` bound on `rc::SliceId` and `rc::DefaultId`.
+* **BREAKING**: Updated `objc-sys` to `v0.2.0-alpha.0`.
+* Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
+  `EncodeArguments`) to `v2.0.0-beta.1`.
 
 ### Removed
 * **BREAKING**: Removed the raw FFI functions from the `runtime` module. These
@@ -81,13 +90,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: The `exception` feature now just enables the `exception`
   module for general use. Use the new `catch_all` feature to wrap all message
   sends in a `@try/@catch`.
+* **BREAKING**: Updated `objc-sys` to `v0.1.0`.
+* **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
+  `EncodeArguments`) to `v2.0.0-beta.0`.
 
 
 ## 0.3.0-alpha.3 - 2021-09-05
 
 ### Added
-* Now uses the `objc-sys` crate for possibly better interoperability with
-  other crates that link to `libobjc`.
+* Now uses the `objc-sys` (`v0.0.1`) crate for possibly better
+  interoperability with other crates that link to `libobjc`.
 * Added newtype `runtime::Bool` to fix soundness issues with using
   `runtime::BOOL` or `bool`.
 * Moved `objc_id` crate into `rc` module. Notable changes:
