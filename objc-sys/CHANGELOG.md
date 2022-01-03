@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-alpha.1 - 2022-01-03
+
 ### Added
 * Added `objc_exception_try_enter` and `objc_exception_try_exit` on macOS x86.
 
@@ -34,6 +37,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   since macOS 10.14.4.
 * **BREAKING**: Removed `objc_setHook_lazyClassNamer` since it is only
   available since macOS 11.
+
+## Fixed
+* `docs.rs` configuration.
 
 
 ## 0.2.0-alpha.0 - 2021-12-22
