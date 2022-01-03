@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * Changed `global_block!` macro to take an optional semicolon at the end.
 * Improved documentation.
+* **BREAKING**: Updated `ffi` module to `block-sys v0.0.3`
 
 
 ## 0.2.0-alpha.2 - 2021-12-22
@@ -16,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * `GlobalBlock` and corresponding `global_block!` macro, allowing statically
   creating blocks that don't reference their environment.
+
+### Changed
+* **BREAKING**: Updated `ffi` module to `block-sys v0.0.2`
 
 
 ## 0.2.0-alpha.1 - 2021-11-22
