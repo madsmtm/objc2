@@ -32,13 +32,14 @@ extern_c! {
         name: *const c_char,
         value: *mut c_void,
     ) -> *const objc_ivar;
-    #[deprecated = "Not needed since ARC"]
-    #[cfg(apple)]
-    pub fn object_setInstanceVariableWithStrongDefault(
-        obj: *mut objc_object,
-        name: *const c_char,
-        value: *mut c_void,
-    ) -> *const objc_ivar;
+    // Available in macOS 10.12
+    // #[deprecated = "Not needed since ARC"]
+    // #[cfg(apple)]
+    // pub fn object_setInstanceVariableWithStrongDefault(
+    //     obj: *mut objc_object,
+    //     name: *const c_char,
+    //     value: *mut c_void,
+    // ) -> *const objc_ivar;
     #[deprecated = "Not needed since ARC"]
     pub fn object_getInstanceVariable(
         obj: *const objc_object,

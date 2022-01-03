@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `objc_exception_try_enter` and `objc_exception_try_exit` on macOS x86.
+
+### Changed
+* **BREAKING**: Correctly `cfg`-guarded the following types and methods to not
+  be available on macOS x86:
+  - `objc_exception_matcher`
+  - `objc_exception_preprocessor`
+  - `objc_uncaught_exception_handler`
+  - `objc_exception_handler`
+  - `objc_begin_catch`
+  - `objc_end_catch`
+  - `objc_exception_rethrow`
+  - `objc_setExceptionMatcher`
+  - `objc_setExceptionPreprocessor`
+  - `objc_setUncaughtExceptionHandler`
+  - `objc_addExceptionHandler`
+  - `objc_removeExceptionHandler`
+
+### Removed
+* **BREAKING**: Removed`objc_set_apple_compatible_objcxx_exceptions` since it
+  is only available when `libobjc2` is compiled with the correct flags.
+* **BREAKING**: Removed `object_setInstanceVariableWithStrongDefault` since it
+  is only available since macOS 10.12.
+* **BREAKING**: Removed `objc_setHook_getClass` since it is only available
+  since macOS 10.14.4.
+* **BREAKING**: Removed `objc_setHook_lazyClassNamer` since it is only
+  available since macOS 11.
+
 
 ## 0.2.0-alpha.0 - 2021-12-22
 
