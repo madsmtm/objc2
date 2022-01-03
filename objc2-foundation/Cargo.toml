@@ -24,7 +24,7 @@ default = ["block"]
 block = ["block2"]
 
 [dependencies]
-block2 = { path = "../block2", version = "=0.2.0-alpha.2", optional = true }
+block2 = { path = "../block2", version = "=0.2.0-alpha.3", optional = true }
 objc2 = { path = "../objc2", version = "=0.3.0-alpha.5" }
 objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1" }
 
