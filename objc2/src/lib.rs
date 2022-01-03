@@ -131,7 +131,7 @@
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2/0.3.0-alpha.5")]
+#![doc(html_root_url = "https://docs.rs/objc2/0.3.0-alpha.6")]
 
 extern crate alloc;
 extern crate std;

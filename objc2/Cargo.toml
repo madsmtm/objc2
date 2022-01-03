@@ -1,6 +1,6 @@
 [package]
 name = "objc2"
-version = "0.3.0-alpha.5" # Remember to update html_root_url in lib.rs
+version = "0.3.0-alpha.6" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2018"
 

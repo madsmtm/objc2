@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0-alpha.6 - 2022-01-03
+
 ### Added
 * Implement `Hash` for `Sel`, `Ivar`, `Class`, `Method` and `MessageError`.
 * Implement `PartialEq` and `Eq` for `Ivar`, `Method` and `MessageError`.
