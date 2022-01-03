@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Object::get_mut_ivar` -> `Object::ivar_mut`
 * Vastly improved documentation.
 * **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-alpha.1`.
+* **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
+  `EncodeArguments`) to `v2.0.0-beta.2`.
 
 
 ## 0.3.0-alpha.5 - 2021-12-22
@@ -56,6 +58,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `extern type` support.
 * **BREAKING**: Relaxed `Sized` bound on `rc::SliceId` and `rc::DefaultId`.
 * **BREAKING**: Updated `objc-sys` to `v0.2.0-alpha.0`.
+* Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
+  `EncodeArguments`) to `v2.0.0-beta.1`.
 
 ### Removed
 * **BREAKING**: Removed the raw FFI functions from the `runtime` module. These
@@ -84,6 +88,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   module for general use. Use the new `catch_all` feature to wrap all message
   sends in a `@try/@catch`.
 * **BREAKING**: Updated `objc-sys` to `v0.1.0`.
+* **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
+  `EncodeArguments`) to `v2.0.0-beta.0`.
 
 
 ## 0.3.0-alpha.3 - 2021-09-05

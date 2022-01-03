@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 2.0.0-beta.2 - 2022-01-03
+
 ### Added
 * Implement `Hash` for `Encoding`.
 
