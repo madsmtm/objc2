@@ -31,7 +31,7 @@ pub type objc_hook_getClass =
 pub type objc_hook_lazyClassNamer =
     unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
 
-extern "C" {
+extern_c! {
     pub fn imp_getBlock(imp: IMP) -> *mut objc_object;
     pub fn imp_implementationWithBlock(block: *mut objc_object) -> IMP;
     pub fn imp_removeBlock(imp: IMP) -> BOOL;
@@ -76,22 +76,24 @@ extern "C" {
     pub fn objc_sync_enter(obj: *mut objc_object) -> c_int;
     pub fn objc_sync_exit(obj: *mut objc_object) -> c_int;
 
-    /// Not available on macOS x86.
-    ///
-    /// Remember that this is non-null!
-    #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
-    pub fn objc_setHook_getClass(
-        new_value: objc_hook_getClass,
-        out_old_value: *mut objc_hook_getClass,
-    );
-    /// Not available on macOS x86.
-    ///
-    /// Remember that this is non-null!
-    #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
-    pub fn objc_setHook_lazyClassNamer(
-        new_value: objc_hook_lazyClassNamer,
-        out_old_value: *mut objc_hook_lazyClassNamer,
-    );
+    // Available in macOS 10.14.4
+    // /// Not available on macOS x86.
+    // ///
+    // /// Remember that this is non-null!
+    // #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
+    // pub fn objc_setHook_getClass(
+    //     new_value: objc_hook_getClass,
+    //     out_old_value: *mut objc_hook_getClass,
+    // );
+    // Available in macOS 11
+    // /// Not available on macOS x86.
+    // ///
+    // /// Remember that this is non-null!
+    // #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
+    // pub fn objc_setHook_lazyClassNamer(
+    //     new_value: objc_hook_lazyClassNamer,
+    //     out_old_value: *mut objc_hook_lazyClassNamer,
+    // );
 
     // #[deprecated = "not recommended"]
     // #[cfg(apple)]

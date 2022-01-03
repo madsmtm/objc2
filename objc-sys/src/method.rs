@@ -19,7 +19,7 @@ pub struct objc_method_description {
     pub types: *const c_char,
 }
 
-extern "C" {
+extern_c! {
     pub fn method_copyArgumentType(method: *const objc_method, index: c_uint) -> *mut c_char;
     pub fn method_copyReturnType(method: *const objc_method) -> *mut c_char;
     pub fn method_exchangeImplementations(method1: *mut objc_method, method2: *mut objc_method);

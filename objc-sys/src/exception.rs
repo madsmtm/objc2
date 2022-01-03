@@ -3,7 +3,7 @@
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
 use core::ffi::c_void;
-#[cfg(any(apple, gnustep))]
+#[cfg(apple)]
 use std::os::raw::c_int;
 
 #[cfg(apple)]
@@ -31,7 +31,7 @@ pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut 
 pub type objc_exception_handler =
     unsafe extern "C" fn(unused: *mut objc_object, context: *mut c_void);
 
-extern "C" {
+extern_c! {
     pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;
     pub fn objc_end_catch();
     /// See [`objc-exception.h`].
@@ -61,6 +61,9 @@ extern "C" {
     #[cfg(all(apple, target_os = "macos"))]
     pub fn objc_removeExceptionHandler(token: usize);
 
-    #[cfg(gnustep)]
-    pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: c_int) -> c_int;
+    // Only available when ENABLE_OBJCXX is set, and a useable C++ runtime is
+    // present when building libobjc2.
+    //
+    // #[cfg(gnustep)]
+    // pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: c_int) -> c_int;
 }
