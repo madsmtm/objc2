@@ -23,7 +23,7 @@ pub struct objc_class {
 /// difference.
 type ivar_layout_type = u8;
 
-extern "C" {
+extern_c! {
     pub fn objc_getClass(name: *const c_char) -> *const objc_class;
     pub fn objc_getRequiredClass(name: *const c_char) -> *const objc_class;
     pub fn objc_lookUpClass(name: *const c_char) -> *const objc_class;

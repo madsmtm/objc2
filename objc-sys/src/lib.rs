@@ -17,6 +17,7 @@
 #![allow(clippy::upper_case_acronyms)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
+#![allow(non_snake_case)]
 #![doc(html_root_url = "https://docs.rs/objc-sys/0.2.0-alpha.0")]
 
 // TODO: Replace `extern "C"` with `extern "C-unwind"` where applicable.
@@ -33,6 +34,61 @@ extern "C" {}
 
 use core::cell::UnsafeCell;
 use core::marker::{PhantomData, PhantomPinned};
+
+macro_rules! generate_linking_tests {
+    {
+        $(#[$extern_m:meta])*
+        extern $abi:literal {$(
+            $(#[$m:meta])*
+            $v:vis fn $name:ident($($a:ident: $t:ty),* $(,)?) $(-> $r:ty)?;
+        )+}
+    } => {
+        $(#[$extern_m])*
+        extern $abi {$(
+            $(#[$m])*
+            $v fn $name($($a: $t),*) $(-> $r)?;
+        )+}
+
+        $(#[$extern_m])*
+        #[allow(deprecated)]
+        #[cfg(test)]
+        mod test_linkable {
+            #[allow(unused)]
+            use super::*;
+            use std::println;
+
+            $(
+                $(#[$m])*
+                #[test]
+                fn $name() {
+                    // Get function pointer to make the linker require the
+                    // symbol to be available.
+                    let f: unsafe extern $abi fn($($t),*) $(-> $r)? = crate::$name;
+                    // Execute side-effect to ensure it is not optimized away.
+                    println!("{:p}", f);
+                }
+            )+
+        }
+    };
+}
+
+macro_rules! extern_c {
+    {
+        $(#![$extern_m:meta])*
+        $(
+            $(#[$m:meta])*
+            $v:vis fn $name:ident($($a:ident: $t:ty),* $(,)?) $(-> $r:ty)?;
+        )+
+    } => {
+        generate_linking_tests! {
+            $(#[$extern_m])*
+            extern "C" {$(
+                $(#[$m])*
+                $v fn $name($($a: $t),*) $(-> $r)?;
+            )+}
+        }
+    };
+}
 
 mod class;
 mod constants;

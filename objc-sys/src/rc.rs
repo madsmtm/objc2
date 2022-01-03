@@ -12,7 +12,7 @@ use core::ffi::c_void;
 
 use crate::objc_object;
 
-extern "C" {
+extern_c! {
     // Autorelease
 
     pub fn objc_autorelease(value: *mut objc_object) -> *mut objc_object;

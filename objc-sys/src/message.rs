@@ -20,16 +20,15 @@ pub struct objc_super {
     pub super_class: *const objc_class,
 }
 
-#[cfg(gnustep)]
-extern "C" {
+extern_c! {
+    #[cfg(gnustep)]
     pub fn objc_msg_lookup(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
+    #[cfg(gnustep)]
     pub fn objc_msg_lookup_super(sup: *const objc_super, sel: *const objc_selector) -> IMP;
+    // #[cfg(gnustep)]
     // objc_msg_lookup_sender
-
     // objc_msgLookup family available in macOS >= 10.12
-}
 
-extern "C" {
     // objc_msgSend_noarg
 
     pub fn objc_msgSend();
@@ -45,41 +44,41 @@ extern "C" {
     #[cfg(apple)]
     pub fn _objc_msgForward();
     pub fn class_getMethodImplementation();
-}
 
-#[cfg(not(target_arch = "aarch64"))] // __arm64__
-extern "C" {
+    // Struct return. Not available on __arm64__:
+
     /// Not available on `target_arch = "aarch64"`
+    #[cfg(not(target_arch = "aarch64"))]
     pub fn objc_msgSend_stret();
     // objc_msgSend_stret_debug
 
     /// Not available on `target_arch = "aarch64"`
-    #[cfg(apple)]
+    #[cfg(all(apple, not(target_arch = "aarch64")))]
     pub fn objc_msgSendSuper_stret();
     // objc_msgSendSuper2_stret
     // objc_msgSendSuper2_stret_debug
 
     /// Not available on `target_arch = "aarch64"`
-    #[cfg(apple)]
+    #[cfg(all(apple, not(target_arch = "aarch64")))]
     pub fn method_invoke_stret();
     /// Not available on `target_arch = "aarch64"`
-    #[cfg(apple)]
+    #[cfg(all(apple, not(target_arch = "aarch64")))]
     pub fn _objc_msgForward_stret();
     /// Not available on `target_arch = "aarch64"`
+    #[cfg(not(target_arch = "aarch64"))]
     pub fn class_getMethodImplementation_stret();
-}
 
-#[cfg(any(target_arch = "x86_64", target_arch = "x86"))] // __x86_64__ and __i386__
-extern "C" {
+    // __x86_64__ and __i386__
+
     /// Only available on `target_arch = "x86_64"` or `target_arch = "x86"`
+    #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
     pub fn objc_msgSend_fpret();
     // objc_msgSend_fpret_debug
-}
 
-#[cfg(target_arch = "x86_64")] // __x86_64__
-extern "C" {
+    // __x86_64__
+
     /// Only available on `target_arch = "x86_64"`
-    #[cfg(apple)]
+    #[cfg(all(apple, target_arch = "x86_64"))]
     pub fn objc_msgSend_fp2ret();
     // objc_msgSend_fp2ret_debug
 }

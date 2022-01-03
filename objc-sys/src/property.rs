@@ -21,7 +21,7 @@ pub struct objc_property_attribute_t {
     pub value: *const c_char,
 }
 
-extern "C" {
+extern_c! {
     pub fn property_copyAttributeList(
         property: *const objc_property,
         out_len: *mut c_uint,

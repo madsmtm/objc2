@@ -12,7 +12,7 @@ pub struct objc_object {
     _p: OpaqueData,
 }
 
-extern "C" {
+extern_c! {
     pub fn object_getClass(obj: *const objc_object) -> *const objc_class;
     pub fn object_getClassName(obj: *const objc_object) -> *const c_char;
     pub fn object_getIndexedIvars(obj: *const objc_object) -> *const c_void;

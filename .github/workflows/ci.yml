@@ -45,6 +45,15 @@ jobs:
           - name: Test macOS 11
             os: macos-11
             target: x86_64-apple-darwin
+          - name: Build macOS AArch64
+            os: macos-11
+            target: aarch64-apple-darwin
+            test-args: --no-run
+          - name: Test macOS old SDK
+            os: macos-11
+            target: x86_64-apple-darwin
+            # Oldest macOS version we support
+            sdk: 10.7
           - name: Test macOS nightly
             os: macos-latest
             target: x86_64-apple-darwin
@@ -61,6 +70,8 @@ jobs:
             # 32-bit support was removed in 10.15, so we can't test the
             # binary, only build it
             test-args: --no-run
+            # Newest SDK that supports 32-bit
+            sdk: 10.13
           - name: Test GNUStep
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -133,12 +144,12 @@ jobs:
           libc6-dev:i386 libstdc++-10-dev:i386 libffi-dev:i386 \
           libxml2-dev:i386 libicu-dev:i386
 
-    - name: Download macOS 10.13 SDK (supports 32-bit)
-      if: matrix.target == 'i686-apple-darwin'
+    - name: Download different macOS SDK
+      if: matrix.sdk
       run: |
-        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/10.13/MacOSX10.13.tar.bz2
-        tar -xyf MacOSX10.13.tar.bz2
-        echo "SDKROOT=$(pwd)/MacOSX10.13.sdk" >> $GITHUB_ENV
+        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/${{ matrix.sdk }}/MacOSX${{ matrix.sdk }}.tar.bz2
+        tar -xyf MacOSX${{ matrix.sdk }}.tar.bz2
+        echo "SDKROOT=$(pwd)/MacOSX${{ matrix.sdk }}.sdk" >> $GITHUB_ENV
 
     - name: Cache GNUStep
       if: contains(matrix.os, 'ubuntu')

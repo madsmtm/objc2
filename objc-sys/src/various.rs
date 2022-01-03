@@ -31,7 +31,7 @@ pub type objc_hook_getClass =
 pub type objc_hook_lazyClassNamer =
     unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
 
-extern "C" {
+extern_c! {
     pub fn imp_getBlock(imp: IMP) -> *mut objc_object;
     pub fn imp_implementationWithBlock(block: *mut objc_object) -> IMP;
     pub fn imp_removeBlock(imp: IMP) -> BOOL;

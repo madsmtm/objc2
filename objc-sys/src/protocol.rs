@@ -18,7 +18,7 @@ pub struct objc_protocol {
     _p: OpaqueData,
 }
 
-extern "C" {
+extern_c! {
     pub fn objc_getProtocol(name: *const c_char) -> *const objc_protocol;
     pub fn objc_copyProtocolList(out_len: *mut c_uint) -> *mut *const objc_protocol;
 
