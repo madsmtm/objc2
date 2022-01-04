@@ -557,6 +557,13 @@ impl Object {
         unsafe { &*ptr }
     }
 
+    /// Use [`ivar`](`Self::ivar`) instead.
+    #[deprecated = "Use `Object::ivar` instead."]
+    pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
+        // SAFETY: Upheld by caller
+        unsafe { self.ivar(name) }
+    }
+
     /// Returns a mutable reference to the ivar with the given name.
     ///
     /// # Panics
@@ -575,6 +582,13 @@ impl Object {
         let ptr = self as *mut Self as *mut u8;
         let ptr = unsafe { ptr.offset(offset) } as *mut T;
         unsafe { &mut *ptr }
+    }
+
+    /// Use [`ivar_mut`](`Self::ivar_mut`) instead.
+    #[deprecated = "Use `Object::ivar_mut` instead."]
+    pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
+        // SAFETY: Upheld by caller
+        unsafe { self.ivar_mut(name) }
     }
 
     /// Sets the value of the ivar with the given name.

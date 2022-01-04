@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added deprecated `Object::get_ivar` and `Object::get_mut_ivar` to make
+  upgrading easier.
+
 
 ## 0.3.0-alpha.6 - 2022-01-03
 
