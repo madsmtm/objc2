@@ -171,7 +171,7 @@ impl<'a, C: INSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
 #[cfg(test)]
 mod tests {
     use super::INSFastEnumeration;
-    use crate::{INSValue, NSArray, NSValue};
+    use crate::{NSArray, NSValue};
 
     #[test]
     fn test_enumerator() {

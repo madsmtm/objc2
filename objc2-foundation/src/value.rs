@@ -24,9 +24,7 @@ object! {
 unsafe impl<T: Sync> Sync for NSValue<T> {}
 unsafe impl<T: Send> Send for NSValue<T> {}
 
-pub unsafe trait INSValue: INSObject {
-    type Value: 'static + Copy + Encode;
-
+impl<T: 'static + Copy + Encode> NSValue<T> {
     // Default / empty new is not provided because `-init` returns `nil` on
     // Apple and GNUStep throws an exception on all other messages to this
     // invalid instance.
@@ -37,13 +35,10 @@ pub unsafe trait INSValue: INSObject {
     /// [gnustep/libs-base#216].
     ///
     /// [gnustep/libs-base#216]: https://github.com/gnustep/libs-base/pull/216
-    fn get(&self) -> Self::Value {
+    pub fn get(&self) -> T {
         if let Some(encoding) = self.encoding() {
             // TODO: This can be a debug assertion (?)
-            assert!(
-                Self::Value::ENCODING.equivalent_to_str(encoding),
-                "Wrong encoding"
-            );
+            assert!(T::ENCODING.equivalent_to_str(encoding), "Wrong encoding");
             unsafe { self.get_unchecked() }
         } else {
             panic!("Missing NSValue encoding");
@@ -55,22 +50,22 @@ pub unsafe trait INSValue: INSObject {
     /// # Safety
     ///
     /// The user must ensure that the inner value is properly initialized.
-    unsafe fn get_unchecked(&self) -> Self::Value {
-        let mut value = MaybeUninit::<Self::Value>::uninit();
+    pub unsafe fn get_unchecked(&self) -> T {
+        let mut value = MaybeUninit::<T>::uninit();
         let ptr = value.as_mut_ptr() as *mut c_void;
         let _: () = unsafe { msg_send![self, getValue: ptr] };
         unsafe { value.assume_init() }
     }
 
-    fn encoding(&self) -> Option<&str> {
+    pub fn encoding(&self) -> Option<&str> {
         let result: Option<NonNull<c_char>> = unsafe { msg_send![self, objCType] };
         result.map(|s| unsafe { CStr::from_ptr(s.as_ptr()) }.to_str().unwrap())
     }
 
-    fn new(value: Self::Value) -> Id<Self, Shared> {
+    pub fn new(value: T) -> Id<Self, Shared> {
         let cls = Self::class();
-        let bytes = &value as *const Self::Value as *const c_void;
-        let encoding = CString::new(Self::Value::ENCODING.to_string()).unwrap();
+        let bytes = &value as *const T as *const c_void;
+        let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
             let obj: *mut Self = msg_send![
@@ -81,10 +76,6 @@ pub unsafe trait INSValue: INSObject {
             Id::new(NonNull::new_unchecked(obj))
         }
     }
-}
-
-unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
-    type Value = T;
 }
 
 unsafe impl<T: 'static> INSCopying for NSValue<T> {
@@ -131,7 +122,7 @@ pub struct NSValueFloatNotEq;
 mod tests {
     use alloc::format;
 
-    use crate::{INSValue, NSRange, NSValue};
+    use crate::{NSRange, NSValue};
     use objc2::rc::{Id, Shared};
     use objc2::Encode;
 

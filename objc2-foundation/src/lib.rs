@@ -30,7 +30,7 @@ pub use self::enumerator::{INSFastEnumeration, NSEnumerator, NSFastEnumerator};
 pub use self::object::{INSObject, NSObject};
 pub use self::range::NSRange;
 pub use self::string::NSString;
-pub use self::value::{INSValue, NSValue};
+pub use self::value::NSValue;
 
 #[cfg(apple)]
 #[link(name = "Foundation", kind = "framework")]

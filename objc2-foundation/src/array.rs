@@ -385,7 +385,7 @@ mod tests {
     use objc2::rc::{autoreleasepool, Id, Owned, Shared};
 
     use super::{NSArray, NSMutableArray};
-    use crate::{INSObject, INSValue, NSObject, NSString, NSValue};
+    use crate::{INSObject, NSObject, NSString, NSValue};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
