@@ -4,10 +4,12 @@
 #![no_std]
 use block2::{Block, RcBlock};
 
-#[cfg(test)]
 extern crate alloc;
+extern crate std;
 
 pub mod ffi;
+#[cfg(test)]
+mod test_encode_utils;
 use crate::ffi::LargeStruct;
 
 pub fn get_int_block_with(i: i32) -> RcBlock<(), i32> {

@@ -78,6 +78,9 @@
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
+#[cfg(doc)]
+extern crate std;
+
 #[cfg(any(test, doc))]
 extern crate alloc;
 
