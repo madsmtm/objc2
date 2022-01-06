@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSRange` methods `new`, `is_empty`, `contains` and `end`.
 * Added `NSThread` object.
 * Added `is_multi_threaded` and `is_main_thread` helper functions.
+* Added `NSProcessInfo` object.
 
 ### Changed
 * **BREAKING**: Removed the following helper traits in favor of inherent
