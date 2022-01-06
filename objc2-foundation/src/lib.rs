@@ -29,7 +29,7 @@ pub use self::dictionary::NSDictionary;
 pub use self::enumerator::{INSFastEnumeration, NSEnumerator, NSFastEnumerator};
 pub use self::object::{INSObject, NSObject};
 pub use self::range::NSRange;
-pub use self::string::{INSString, NSString};
+pub use self::string::NSString;
 pub use self::value::{INSValue, NSValue};
 
 #[cfg(apple)]

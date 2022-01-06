@@ -100,7 +100,7 @@ macro_rules! object {
             fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 use ::objc2::MessageReceiver;
                 use ::alloc::borrow::ToOwned;
-                use $crate::{INSObject, INSString, NSObject};
+                use $crate::{INSObject, NSObject};
                 // "downgrading" to  NSObject and calling `to_owned` to work
                 // around `f` and Self not being AutoreleaseSafe.
                 // TODO: Fix this!
