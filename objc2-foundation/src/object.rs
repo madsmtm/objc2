@@ -17,7 +17,7 @@ pub unsafe trait INSObject: Message {
 
     fn is_equal<T: INSObject>(&self, other: &T) -> bool {
         let result: Bool = unsafe { msg_send![self, isEqual: other] };
-        result.is_true()
+        result.as_bool()
     }
 
     fn description(&self) -> Id<NSString, Shared> {
@@ -30,7 +30,7 @@ pub unsafe trait INSObject: Message {
 
     fn is_kind_of(&self, cls: &Class) -> bool {
         let result: Bool = unsafe { msg_send![self, isKindOfClass: cls] };
-        result.is_true()
+        result.as_bool()
     }
 }
 

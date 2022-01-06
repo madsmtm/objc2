@@ -309,7 +309,7 @@ impl Class {
 
     #[allow(unused)]
     fn is_metaclass(&self) -> bool {
-        unsafe { Bool::from_raw(ffi::class_isMetaClass(self.as_ptr())).is_true() }
+        unsafe { Bool::from_raw(ffi::class_isMetaClass(self.as_ptr())).as_bool() }
     }
 
     /// Returns the size of instances of self.
@@ -378,7 +378,7 @@ impl Class {
     /// Checks whether this class conforms to the specified protocol.
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
         unsafe {
-            Bool::from_raw(ffi::class_conformsToProtocol(self.as_ptr(), proto.as_ptr())).is_true()
+            Bool::from_raw(ffi::class_conformsToProtocol(self.as_ptr(), proto.as_ptr())).as_bool()
         }
     }
 
@@ -478,7 +478,7 @@ impl Protocol {
                 self.as_ptr(),
                 proto.as_ptr(),
             ))
-            .is_true()
+            .as_bool()
         }
     }
 
@@ -493,7 +493,7 @@ impl PartialEq for Protocol {
     /// Check whether the protocols are equal, or conform to each other.
     #[inline]
     fn eq(&self, other: &Protocol) -> bool {
-        unsafe { Bool::from_raw(ffi::protocol_isEqual(self.as_ptr(), other.as_ptr())).is_true() }
+        unsafe { Bool::from_raw(ffi::protocol_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
     }
 }
 

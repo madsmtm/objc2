@@ -44,7 +44,7 @@
 //! // Usage
 //! let hash: NSUInteger = unsafe { msg_send![obj, hash] };
 //! let is_kind: Bool = unsafe { msg_send![obj, isKindOfClass: cls] };
-//! assert!(is_kind.is_true());
+//! assert!(is_kind.as_bool());
 //! ```
 //!
 //! Note that this very simple example contains **a lot** of `unsafe` (which
