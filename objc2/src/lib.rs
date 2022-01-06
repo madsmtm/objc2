@@ -180,7 +180,7 @@ pub mod __gnustep_hack {
     }
 
     pub unsafe fn get_class_to_force_linkage() -> &'static Class {
-        unsafe { &_OBJC_CLASS_NSObject }
+        unsafe { core::ptr::read_volatile(&&_OBJC_CLASS_NSObject) }
     }
 
     #[test]

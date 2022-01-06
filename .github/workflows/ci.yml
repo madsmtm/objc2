@@ -233,6 +233,12 @@ jobs:
         # Allows installing for a different base target
         target: ${{ matrix.rust.target || matrix.target }}
 
+    - name: Build
+      uses: actions-rs/cargo@v1
+      with:
+        command: build
+        args: ${{ matrix.args }}
+
     - name: Check documentation
       uses: actions-rs/cargo@v1
       with:
@@ -250,6 +256,12 @@ jobs:
       with:
         command: test
         args: --no-fail-fast --features ${{ env.FEATURES }} ${{ matrix.args }} ${{ matrix.test-args }}
+
+    - name: Test in release mode
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --no-fail-fast --features ${{ env.FEATURES }} ${{ matrix.args }} ${{ matrix.test-args }} --release
 
     - name: Test with unstable features
       if: matrix.rust.toolchain == 'nightly'

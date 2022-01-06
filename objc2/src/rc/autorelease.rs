@@ -276,8 +276,8 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// });
 /// ```
 ///
-/// Incorrect usage which panics because we tried to pass an outer pool to an
-/// inner pool:
+/// Incorrect usage which panics (with debug assertions enabled) because we
+/// tried to pass an outer pool to an inner pool:
 ///
 #[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```compile_fail")]
 #[cfg_attr(not(feature = "unstable_autoreleasesafe"), doc = "```should_panic")]
@@ -300,6 +300,8 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 ///     // assigned to the outer pool, even though it was released by the
 ///     // inner pool already.
 /// });
+/// #
+/// # panic!("Does not panic in release mode, so for testing we make it!");
 /// ```
 #[doc(alias = "@autoreleasepool")]
 pub fn autoreleasepool<T, F>(f: F) -> T
