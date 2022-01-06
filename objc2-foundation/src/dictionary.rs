@@ -7,7 +7,7 @@ use core::ptr::{self, NonNull};
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 
-use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator};
+use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSObject};
 
 unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D, Shared>
 where
@@ -138,12 +138,12 @@ pub unsafe trait INSDictionary: INSObject {
     }
 }
 
-object!(
-    unsafe pub struct NSDictionary<K, V> {
+object! {
+    unsafe pub struct NSDictionary<K, V>: NSObject {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
     }
-);
+}
 
 // TODO: SAFETY
 unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}

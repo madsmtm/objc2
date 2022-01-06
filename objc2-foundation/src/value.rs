@@ -12,7 +12,7 @@ use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Shared};
 use objc2::Encode;
 
-use super::{INSCopying, INSObject};
+use super::{INSCopying, INSObject, NSObject};
 
 pub unsafe trait INSValue: INSObject {
     type Value: 'static + Copy + Encode;
@@ -73,11 +73,11 @@ pub unsafe trait INSValue: INSObject {
     }
 }
 
-object!(
-    unsafe pub struct NSValue<T> {
+object! {
+    unsafe pub struct NSValue<T>: NSObject {
         value: PhantomData<T>,
     }
-);
+}
 
 // TODO: SAFETY
 unsafe impl<T: Sync> Sync for NSValue<T> {}

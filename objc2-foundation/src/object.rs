@@ -1,4 +1,3 @@
-use core::marker::PhantomData;
 use core::ptr::NonNull;
 
 use objc2::msg_send;
@@ -34,9 +33,9 @@ pub unsafe trait INSObject: Message {
     }
 }
 
-object!(unsafe pub struct NSObject<> {
-    p: PhantomData<Object>, // Temporary
-});
+object! {
+    unsafe pub struct NSObject: Object;
+}
 
 /// ```compile_fail
 /// use objc2_foundation::NSObject;

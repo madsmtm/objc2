@@ -9,21 +9,21 @@
 macro_rules! object {
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident
+        unsafe $v:vis struct $name:ident: $inherits:ty $(;)?
     ) => {
-        object!($(#[$m])* unsafe $v struct $name<> {});
+        object!($(#[$m])* unsafe $v struct $name<>: $inherits {});
     };
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*> {
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $inherits:ty {
             $($p:ident: $pty:ty,)*
         }
     ) => {
-        // TODO: `extern type`
         $(#[$m])*
+        // TODO: repr(transparent) when the inner pointer is no longer a ZST.
         #[repr(C)]
         $v struct $name<$($t $(: $b)?),*> {
-            _private: [u8; 0],
+            inner: $inherits,
             $($p: $pty),*
         }
 
@@ -38,6 +38,24 @@ macro_rules! object {
                 ::objc2::class!($name)
             }
         }
+
+        impl<$($t $(: $b)?),*> ::core::ops::Deref for $name<$($t),*> {
+            type Target = $inherits;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.inner
+            }
+        }
+
+        impl<$($t $(: $b)?),*> ::core::ops::DerefMut for $name<$($t),*> {
+            #[inline]
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                &mut self.inner
+            }
+        }
+
+        // TODO: AsRef and AsMut
 
         // Objective-C equality has approximately the same semantics as Rust
         // equality (although less aptly specified).

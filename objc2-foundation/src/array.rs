@@ -11,7 +11,7 @@ use objc2::runtime::Object;
 
 use super::{
     INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSComparisonResult, NSEnumerator,
-    NSRange,
+    NSObject, NSRange,
 };
 
 unsafe fn from_refs<A: INSArray + ?Sized>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
@@ -158,7 +158,7 @@ pub unsafe trait INSArray: INSObject {
     }
 }
 
-object!(
+object! {
     /// TODO
     ///
     /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
@@ -169,10 +169,10 @@ object!(
     /// TODO: Can we make it impossible? Should we?
     ///
     /// What about `Id<NSArray<T, Shared>, Owned>`?
-    unsafe pub struct NSArray<T, O: Ownership> {
+    unsafe pub struct NSArray<T, O: Ownership>: NSObject {
         item: PhantomData<Id<T, O>>,
     }
-);
+}
 
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
 //
@@ -342,11 +342,12 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 }
 
-object!(
-    unsafe pub struct NSMutableArray<T, O: Ownership> {
+object! {
+    // TODO: Ensure that this deref to NSArray is safe!
+    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {
         item: PhantomData<Id<T, O>>,
     }
-);
+}
 
 // SAFETY: Same as NSArray.
 //

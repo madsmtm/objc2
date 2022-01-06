@@ -4,9 +4,10 @@ use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use core::{ffi::c_void, ptr::NonNull};
 
-use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared};
+
+use super::{INSCopying, INSMutableCopying, INSObject, NSObject, NSRange};
 
 pub unsafe trait INSData: INSObject {
     type Ownership: Ownership;
@@ -92,7 +93,9 @@ pub unsafe trait INSData: INSObject {
     }
 }
 
-object!(unsafe pub struct NSData);
+object! {
+    unsafe pub struct NSData: NSObject;
+}
 
 // TODO: SAFETY
 unsafe impl Sync for NSData {}
@@ -175,7 +178,9 @@ pub unsafe trait INSMutableData: INSData {
     }
 }
 
-object!(unsafe pub struct NSMutableData);
+object! {
+    unsafe pub struct NSMutableData: NSData;
+}
 
 // TODO: SAFETY
 unsafe impl Sync for NSMutableData {}

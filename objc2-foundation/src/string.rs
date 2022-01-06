@@ -12,7 +12,7 @@ use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
 
-use super::{INSCopying, INSObject};
+use super::{INSCopying, INSObject, NSObject};
 
 #[cfg(apple)]
 const UTF8_ENCODING: usize = 4;
@@ -102,7 +102,9 @@ pub unsafe trait INSString: INSObject {
     }
 }
 
-object!(unsafe pub struct NSString);
+object! {
+    unsafe pub struct NSString: NSObject;
+}
 
 // TODO: SAFETY
 unsafe impl Sync for NSString {}

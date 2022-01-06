@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Objects now `Deref` to their superclasses. E.g. `NSMutableArray` derefs to
+  `NSArray`, which derefs to `NSObject`, which derefs to `Object`.
+
+  This allows more ergonomic usage.
+
 
 ## 0.2.0-alpha.4 - 2022-01-03
 
