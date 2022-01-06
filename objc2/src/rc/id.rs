@@ -251,6 +251,21 @@ impl<T: Message, O: Ownership> Id<T, O> {
         unsafe { Self::new(res) }
     }
 
+    /// Retains an object pointer that may be null.
+    ///
+    /// This is just a convenience wrapper over [`Id::retain`] so that you
+    /// don't need to construct a [`NonNull`] when you know the pointer may
+    /// be null.
+    ///
+    /// # Safety
+    ///
+    /// Same as [`Id::retain`].
+    #[inline]
+    pub unsafe fn retain_null(ptr: *mut T) -> Option<Id<T, O>> {
+        // SAFETY: Upheld by the caller
+        NonNull::new(ptr).map(|ptr| unsafe { Id::retain(ptr) })
+    }
+
     #[cfg_attr(not(debug_assertions), inline)]
     fn autorelease_inner(self) -> *mut T {
         // Note that this (and the actual `autorelease`) is not an associated
