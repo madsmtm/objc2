@@ -14,6 +14,16 @@ use objc2::Encode;
 
 use super::{INSCopying, INSObject, NSObject};
 
+object! {
+    unsafe pub struct NSValue<T>: NSObject {
+        value: PhantomData<T>,
+    }
+}
+
+// TODO: SAFETY
+unsafe impl<T: Sync> Sync for NSValue<T> {}
+unsafe impl<T: Send> Send for NSValue<T> {}
+
 pub unsafe trait INSValue: INSObject {
     type Value: 'static + Copy + Encode;
 
@@ -72,16 +82,6 @@ pub unsafe trait INSValue: INSObject {
         }
     }
 }
-
-object! {
-    unsafe pub struct NSValue<T>: NSObject {
-        value: PhantomData<T>,
-    }
-}
-
-// TODO: SAFETY
-unsafe impl<T: Sync> Sync for NSValue<T> {}
-unsafe impl<T: Send> Send for NSValue<T> {}
 
 unsafe impl<T: 'static + Copy + Encode> INSValue for NSValue<T> {
     type Value = T;

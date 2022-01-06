@@ -14,6 +14,57 @@ use super::{
     NSObject, NSRange,
 };
 
+object! {
+    /// TODO
+    ///
+    /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
+    /// to the elements (without modifying the array itself), and
+    /// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
+    ///
+    /// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
+    /// TODO: Can we make it impossible? Should we?
+    ///
+    /// What about `Id<NSArray<T, Shared>, Owned>`?
+    unsafe pub struct NSArray<T, O: Ownership>: NSObject {
+        item: PhantomData<Id<T, O>>,
+    }
+}
+
+// SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
+//
+// The `PhantomData` can't get these impls to display in the docs.
+//
+// TODO: Properly verify this
+unsafe impl<T: Sync + Send> Sync for NSArray<T, Shared> {}
+unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
+unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
+unsafe impl<T: Send> Send for NSArray<T, Owned> {}
+
+/// ```compile_fail
+/// use objc2::rc::Shared;
+/// use objc2::runtime::Object;
+/// use objc2_foundation::NSArray;
+/// fn needs_send_sync<T: Send + Sync>() {}
+/// needs_send_sync::<NSArray<Object, Shared>>();
+/// ```
+#[cfg(doctest)]
+pub struct NSArrayWithObjectNotSendSync;
+
+object! {
+    // TODO: Ensure that this deref to NSArray is safe!
+    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {
+        item: PhantomData<Id<T, O>>,
+    }
+}
+
+// SAFETY: Same as NSArray.
+//
+// TODO: Properly verify this
+unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
+
 unsafe fn from_refs<A: INSArray + ?Sized>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
     let cls = A::class();
     let obj: *mut A = unsafe { msg_send![cls, alloc] };
@@ -157,42 +208,6 @@ pub unsafe trait INSArray: INSObject {
             .collect()
     }
 }
-
-object! {
-    /// TODO
-    ///
-    /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
-    /// to the elements (without modifying the array itself), and
-    /// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
-    ///
-    /// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
-    /// TODO: Can we make it impossible? Should we?
-    ///
-    /// What about `Id<NSArray<T, Shared>, Owned>`?
-    unsafe pub struct NSArray<T, O: Ownership>: NSObject {
-        item: PhantomData<Id<T, O>>,
-    }
-}
-
-// SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
-//
-// The `PhantomData` can't get these impls to display in the docs.
-//
-// TODO: Properly verify this
-unsafe impl<T: Sync + Send> Sync for NSArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSArray<T, Owned> {}
-
-/// ```compile_fail
-/// use objc2::rc::Shared;
-/// use objc2::runtime::Object;
-/// use objc2_foundation::NSArray;
-/// fn needs_send_sync<T: Send + Sync>() {}
-/// needs_send_sync::<NSArray<Object, Shared>>();
-/// ```
-#[cfg(doctest)]
-pub struct NSArrayWithObjectNotSendSync;
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
     /// The `NSArray` itself (length and number of items) is always immutable,
@@ -341,21 +356,6 @@ pub unsafe trait INSMutableArray: INSArray {
         drop(closure);
     }
 }
-
-object! {
-    // TODO: Ensure that this deref to NSArray is safe!
-    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {
-        item: PhantomData<Id<T, O>>,
-    }
-}
-
-// SAFETY: Same as NSArray.
-//
-// TODO: Properly verify this
-unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
 
 unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Ownership = Owned;

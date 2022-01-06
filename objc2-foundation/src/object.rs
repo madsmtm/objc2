@@ -7,6 +7,27 @@ use objc2::Message;
 
 use super::NSString;
 
+object! {
+    unsafe pub struct NSObject: Object;
+}
+
+/// ```compile_fail
+/// use objc2_foundation::NSObject;
+/// fn needs_sync<T: Sync>() {}
+/// needs_sync::<NSObject>();
+/// ```
+/// ```compile_fail
+/// use objc2_foundation::NSObject;
+/// fn needs_send<T: Send>() {}
+/// needs_send::<NSObject>();
+/// ```
+#[cfg(doctest)]
+pub struct NSObjectNotSendNorSync;
+
+impl NSObject {
+    unsafe_def_fn!(pub fn new -> Owned);
+}
+
 pub unsafe trait INSObject: Message {
     fn class() -> &'static Class;
 
@@ -31,27 +52,6 @@ pub unsafe trait INSObject: Message {
         let result: Bool = unsafe { msg_send![self, isKindOfClass: cls] };
         result.as_bool()
     }
-}
-
-object! {
-    unsafe pub struct NSObject: Object;
-}
-
-/// ```compile_fail
-/// use objc2_foundation::NSObject;
-/// fn needs_sync<T: Sync>() {}
-/// needs_sync::<NSObject>();
-/// ```
-/// ```compile_fail
-/// use objc2_foundation::NSObject;
-/// fn needs_send<T: Send>() {}
-/// needs_send::<NSObject>();
-/// ```
-#[cfg(doctest)]
-pub struct NSObjectNotSendNorSync;
-
-impl NSObject {
-    unsafe_def_fn!(pub fn new -> Owned);
 }
 
 impl DefaultId for NSObject {

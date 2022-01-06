@@ -23,6 +23,18 @@ const UTF8_ENCODING: i32 = 4;
 #[allow(non_upper_case_globals)]
 const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
+object! {
+    unsafe pub struct NSString: NSObject;
+}
+
+// TODO: SAFETY
+unsafe impl Sync for NSString {}
+unsafe impl Send for NSString {}
+
+impl NSString {
+    unsafe_def_fn!(pub fn new -> Shared);
+}
+
 pub unsafe trait INSString: INSObject {
     fn len(&self) -> usize {
         unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
@@ -100,18 +112,6 @@ pub unsafe trait INSString: INSObject {
             Id::new(NonNull::new_unchecked(obj))
         }
     }
-}
-
-object! {
-    unsafe pub struct NSString: NSObject;
-}
-
-// TODO: SAFETY
-unsafe impl Sync for NSString {}
-unsafe impl Send for NSString {}
-
-impl NSString {
-    unsafe_def_fn!(pub fn new -> Shared);
 }
 
 impl DefaultId for NSString {

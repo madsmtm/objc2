@@ -9,6 +9,22 @@ use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared};
 
 use super::{INSCopying, INSMutableCopying, INSObject, NSObject, NSRange};
 
+object! {
+    unsafe pub struct NSData: NSObject;
+}
+
+// TODO: SAFETY
+unsafe impl Sync for NSData {}
+unsafe impl Send for NSData {}
+
+object! {
+    unsafe pub struct NSMutableData: NSData;
+}
+
+// TODO: SAFETY
+unsafe impl Sync for NSMutableData {}
+unsafe impl Send for NSMutableData {}
+
 pub unsafe trait INSData: INSObject {
     type Ownership: Ownership;
 
@@ -93,14 +109,6 @@ pub unsafe trait INSData: INSObject {
     }
 }
 
-object! {
-    unsafe pub struct NSData: NSObject;
-}
-
-// TODO: SAFETY
-unsafe impl Sync for NSData {}
-unsafe impl Send for NSData {}
-
 unsafe impl INSData for NSData {
     type Ownership = Shared;
 }
@@ -177,14 +185,6 @@ pub unsafe trait INSMutableData: INSData {
         self.replace_range(0..len, bytes);
     }
 }
-
-object! {
-    unsafe pub struct NSMutableData: NSData;
-}
-
-// TODO: SAFETY
-unsafe impl Sync for NSMutableData {}
-unsafe impl Send for NSMutableData {}
 
 unsafe impl INSData for NSMutableData {
     type Ownership = Owned;

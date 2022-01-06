@@ -9,6 +9,21 @@ use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 
 use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSObject};
 
+object! {
+    unsafe pub struct NSDictionary<K, V>: NSObject {
+        key: PhantomData<Id<K, Shared>>,
+        obj: PhantomData<Id<V, Owned>>,
+    }
+}
+
+// TODO: SAFETY
+unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
+unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
+
+impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
+    unsafe_def_fn!(pub fn new -> Shared);
+}
+
 unsafe fn from_refs<D, T>(keys: &[&T], vals: &[&D::Value]) -> Id<D, Shared>
 where
     D: INSDictionary + ?Sized,
@@ -136,21 +151,6 @@ pub unsafe trait INSDictionary: INSObject {
             Id::retain(NonNull::new_unchecked(vals))
         }
     }
-}
-
-object! {
-    unsafe pub struct NSDictionary<K, V>: NSObject {
-        key: PhantomData<Id<K, Shared>>,
-        obj: PhantomData<Id<V, Owned>>,
-    }
-}
-
-// TODO: SAFETY
-unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
-unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
-
-impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
-    unsafe_def_fn!(pub fn new -> Shared);
 }
 
 impl<K: INSObject, V: INSObject> DefaultId for NSDictionary<K, V> {
