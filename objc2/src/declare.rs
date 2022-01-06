@@ -13,16 +13,17 @@
 //! use objc2::{class, sel};
 //! use objc2::declare::ClassDecl;
 //! use objc2::runtime::{Class, Object, Sel};
+//! use terminated::ntstr;
 //!
 //! let superclass = class!(NSObject);
-//! let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();
+//! let mut decl = ClassDecl::new(ntstr!("MyNumber"), superclass).unwrap();
 //!
 //! // Add an instance variable
-//! decl.add_ivar::<u32>("_number");
+//! decl.add_ivar::<u32>(ntstr!("_number"));
 //!
 //! // Add an ObjC method for getting the number
 //! extern "C" fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
-//!     unsafe { *this.ivar("_number") }
+//!     unsafe { *this.ivar(ntstr!("_number")) }
 //! }
 //! unsafe {
 //!     decl.add_method(
@@ -40,6 +41,9 @@ use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr;
 use std::ffi::CString;
+use std::os::raw::c_char;
+
+use terminated::NulTerminatedStr;
 
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::{ffi, Encode, EncodeArguments, Encoding, Message};
@@ -138,10 +142,10 @@ unsafe impl Send for ClassDecl {}
 unsafe impl Sync for ClassDecl {}
 
 impl ClassDecl {
-    fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<ClassDecl> {
-        let name = CString::new(name).unwrap();
+    fn with_superclass(name: &NulTerminatedStr, superclass: Option<&Class>) -> Option<ClassDecl> {
+        let name_ptr = name.as_ptr() as *const c_char;
         let super_ptr = superclass.map_or(ptr::null(), |c| c) as _;
-        let cls = unsafe { ffi::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
+        let cls = unsafe { ffi::objc_allocateClassPair(super_ptr, name_ptr, 0) };
         if cls.is_null() {
             None
         } else {
@@ -153,7 +157,7 @@ impl ClassDecl {
     ///
     /// Returns [`None`] if the class couldn't be allocated, or a class with
     /// that name already exist.
-    pub fn new(name: &str, superclass: &Class) -> Option<ClassDecl> {
+    pub fn new(name: &NulTerminatedStr, superclass: &Class) -> Option<ClassDecl> {
         ClassDecl::with_superclass(name, Some(superclass))
     }
 
@@ -171,7 +175,10 @@ impl ClassDecl {
     /// the entire `NSObject` protocol is implemented.
     /// Functionality it expects, like implementations of `-retain` and
     /// `-release` used by ARC, will not be present otherwise.
-    pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<ClassDecl> {
+    pub fn root(
+        name: &NulTerminatedStr,
+        intitialize_fn: extern "C" fn(&Class, Sel),
+    ) -> Option<ClassDecl> {
         let mut decl = ClassDecl::with_superclass(name, None);
         if let Some(ref mut decl) = decl {
             unsafe {
@@ -261,15 +268,15 @@ impl ClassDecl {
     /// # Panics
     ///
     /// If the ivar wasn't successfully added.
-    pub fn add_ivar<T: Encode>(&mut self, name: &str) {
-        let c_name = CString::new(name).unwrap();
+    pub fn add_ivar<T: Encode>(&mut self, name: &NulTerminatedStr) {
+        let name_ptr = name.as_ptr() as *const c_char;
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         let size = mem::size_of::<T>();
         let align = log2_align_of::<T>();
         let success = Bool::from_raw(unsafe {
             ffi::class_addIvar(
                 self.cls as _,
-                c_name.as_ptr(),
+                name_ptr,
                 size,
                 align,
                 encoding.as_ptr(),
@@ -322,9 +329,9 @@ impl ProtocolDecl {
     /// Constructs a [`ProtocolDecl`] with the given name.
     ///
     /// Returns [`None`] if the protocol couldn't be allocated.
-    pub fn new(name: &str) -> Option<ProtocolDecl> {
-        let c_name = CString::new(name).unwrap();
-        let proto = unsafe { ffi::objc_allocateProtocol(c_name.as_ptr()) } as *mut Protocol;
+    pub fn new(name: &NulTerminatedStr) -> Option<ProtocolDecl> {
+        let name_ptr = name.as_ptr() as *const c_char;
+        let proto = unsafe { ffi::objc_allocateProtocol(name_ptr) } as *mut Protocol;
         if proto.is_null() {
             None
         } else {

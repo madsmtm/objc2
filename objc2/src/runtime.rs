@@ -11,9 +11,11 @@ use core::ptr;
 use core::str;
 #[cfg(feature = "malloc")]
 use malloc_buf::Malloc;
-use std::ffi::{CStr, CString};
+use std::ffi::CStr;
+use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
+use terminated::NulTerminatedStr;
 
 pub use super::bool::Bool;
 use crate::{ffi, Encode, Encoding, RefEncode};
@@ -96,10 +98,10 @@ pub type Imp = unsafe extern "C" fn();
 impl Sel {
     /// Registers a method with the Objective-C runtime system,
     /// maps the method name to a selector, and returns the selector value.
-    pub fn register(name: &str) -> Self {
-        let name = CString::new(name).unwrap();
+    pub fn register(name: &NulTerminatedStr) -> Self {
+        let name_ptr = name.as_ptr() as *const c_char;
         Self {
-            ptr: unsafe { ffi::sel_registerName(name.as_ptr()) },
+            ptr: unsafe { ffi::sel_registerName(name_ptr) },
         }
     }
 
@@ -252,10 +254,10 @@ impl Class {
 
     /// Returns the class definition of a specified class, or [`None`] if the
     /// class is not registered with the Objective-C runtime.
-    pub fn get(name: &str) -> Option<&'static Self> {
-        let name = CString::new(name).unwrap();
+    pub fn get(name: &NulTerminatedStr) -> Option<&'static Self> {
+        let name_ptr = name.as_ptr() as *const c_char;
         unsafe {
-            let cls = ffi::objc_getClass(name.as_ptr());
+            let cls = ffi::objc_getClass(name_ptr);
             if cls.is_null() {
                 None
             } else {
@@ -335,10 +337,10 @@ impl Class {
 
     /// Returns the ivar for a specified instance variable of self, or
     /// [`None`] if self has no ivar with the given name.
-    pub fn instance_variable(&self, name: &str) -> Option<&Ivar> {
-        let name = CString::new(name).unwrap();
+    pub fn instance_variable(&self, name: &NulTerminatedStr) -> Option<&Ivar> {
+        let name_ptr = name.as_ptr() as *const c_char;
         unsafe {
-            let ivar = ffi::class_getInstanceVariable(self.as_ptr(), name.as_ptr());
+            let ivar = ffi::class_getInstanceVariable(self.as_ptr(), name_ptr);
             if ivar.is_null() {
                 None
             } else {
@@ -358,9 +360,9 @@ impl Class {
     }
 
     #[allow(unused)]
-    fn class_variable(&self, name: &str) -> Option<&Ivar> {
-        let name = CString::new(name).unwrap();
-        let ivar = unsafe { ffi::class_getClassVariable(self.as_ptr(), name.as_ptr()) };
+    fn class_variable(&self, name: &NulTerminatedStr) -> Option<&Ivar> {
+        let name_ptr = name.as_ptr() as *const c_char;
+        let ivar = unsafe { ffi::class_getClassVariable(self.as_ptr(), name_ptr) };
         // SAFETY: TODO
         unsafe { ivar.cast::<Ivar>().as_ref() }
     }
@@ -439,10 +441,10 @@ impl Protocol {
 
     /// Returns the protocol definition of a specified protocol, or [`None`]
     /// if the protocol is not registered with the Objective-C runtime.
-    pub fn get(name: &str) -> Option<&'static Protocol> {
-        let name = CString::new(name).unwrap();
+    pub fn get(name: &NulTerminatedStr) -> Option<&'static Protocol> {
+        let name_ptr = name.as_ptr() as *const c_char;
         unsafe {
-            let proto = ffi::objc_getProtocol(name.as_ptr());
+            let proto = ffi::objc_getProtocol(name_ptr);
             if proto.is_null() {
                 None
             } else {
@@ -517,7 +519,7 @@ impl UnwindSafe for Protocol {}
 impl RefUnwindSafe for Protocol {}
 // Note that Unpin is not applicable.
 
-fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
+fn ivar_offset<T: Encode>(cls: &Class, name: &NulTerminatedStr) -> isize {
     match cls.instance_variable(name) {
         Some(ivar) => {
             assert!(T::ENCODING.equivalent_to_str(ivar.type_encoding()));
@@ -549,7 +551,7 @@ impl Object {
     /// The caller must ensure that the ivar is actually of type `T`.
     ///
     /// Library implementors should expose a safe interface to the ivar.
-    pub unsafe fn ivar<T: Encode>(&self, name: &str) -> &T {
+    pub unsafe fn ivar<T: Encode>(&self, name: &NulTerminatedStr) -> &T {
         let offset = ivar_offset::<T>(self.class(), name);
         // `offset` is given in bytes, so we convert to `u8`
         let ptr = self as *const Self as *const u8;
@@ -569,7 +571,7 @@ impl Object {
     /// The caller must ensure that the ivar is actually of type `T`.
     ///
     /// Library implementors should expose a safe interface to the ivar.
-    pub unsafe fn ivar_mut<T: Encode>(&mut self, name: &str) -> &mut T {
+    pub unsafe fn ivar_mut<T: Encode>(&mut self, name: &NulTerminatedStr) -> &mut T {
         let offset = ivar_offset::<T>(self.class(), name);
         // `offset` is given in bytes, so we convert to `u8`
         let ptr = self as *mut Self as *mut u8;
@@ -589,7 +591,7 @@ impl Object {
     /// The caller must ensure that the ivar is actually of type `T`.
     ///
     /// Library implementors should expose a safe interface to the ivar.
-    pub unsafe fn set_ivar<T: Encode>(&mut self, name: &str, value: T) {
+    pub unsafe fn set_ivar<T: Encode>(&mut self, name: &NulTerminatedStr, value: T) {
         // SAFETY: Invariants upheld by caller
         unsafe { *self.ivar_mut::<T>(name) = value };
     }
@@ -635,10 +637,12 @@ mod tests {
     use crate::test_utils;
     use crate::Encode;
 
+    use terminated::ntstr;
+
     #[test]
     fn test_ivar() {
         let cls = test_utils::custom_class();
-        let ivar = cls.instance_variable("_foo").unwrap();
+        let ivar = cls.instance_variable(ntstr!("_foo")).unwrap();
         assert_eq!(ivar.name(), "_foo");
         assert!(<u32>::ENCODING.equivalent_to_str(ivar.type_encoding()));
         assert!(ivar.offset() > 0);
@@ -650,7 +654,7 @@ mod tests {
     #[test]
     fn test_method() {
         let cls = test_utils::custom_class();
-        let sel = Sel::register("foo");
+        let sel = Sel::register(ntstr!("foo"));
         let method = cls.instance_method(sel).unwrap();
         assert_eq!(method.name().name(), "foo");
         assert_eq!(method.arguments_count(), 2);
@@ -671,7 +675,7 @@ mod tests {
         assert!(cls.instance_size() > 0);
         assert!(cls.superclass().is_none());
 
-        assert_eq!(Class::get(cls.name()), Some(cls));
+        assert_eq!(Class::get(ntstr!("CustomObject")), Some(cls));
 
         let metaclass = cls.metaclass();
         // The metaclass of a root class is a subclass of the root class
@@ -733,8 +737,8 @@ mod tests {
         let mut obj = test_utils::custom_object();
         assert_eq!(obj.class(), test_utils::custom_class());
         let result: u32 = unsafe {
-            obj.set_ivar("_foo", 4u32);
-            *obj.ivar("_foo")
+            obj.set_ivar(ntstr!("_foo"), 4u32);
+            *obj.ivar(ntstr!("_foo"))
         };
         assert_eq!(result, 4);
     }
