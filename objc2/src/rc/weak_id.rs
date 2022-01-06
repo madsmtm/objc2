@@ -1,5 +1,6 @@
 use alloc::boxed::Box;
 use core::cell::UnsafeCell;
+use core::convert::TryFrom;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ptr;
@@ -59,6 +60,7 @@ impl<T: Message> WeakId<T> {
     /// Returns [`None`] if the object has been deallocated or was created
     /// with [`Default::default`].
     #[doc(alias = "upgrade")]
+    #[doc(alias = "retain")]
     #[doc(alias = "objc_loadWeak")]
     #[doc(alias = "objc_loadWeakRetained")]
     #[inline]
@@ -67,6 +69,8 @@ impl<T: Message> WeakId<T> {
         let obj = unsafe { ffi::objc_loadWeakRetained(ptr) } as *mut T;
         NonNull::new(obj).map(|obj| unsafe { Id::new(obj) })
     }
+
+    // TODO: Add `autorelease(&self) -> Option<&T>` using `objc_loadWeak`?
 }
 
 impl<T: ?Sized> Drop for WeakId<T> {
@@ -123,6 +127,19 @@ impl<T: RefUnwindSafe + ?Sized> RefUnwindSafe for WeakId<T> {}
 
 // Same as `Id<T, Shared>`.
 impl<T: RefUnwindSafe + ?Sized> UnwindSafe for WeakId<T> {}
+
+impl<T: Message> From<Id<T, Shared>> for WeakId<T> {
+    fn from(obj: Id<T, Shared>) -> Self {
+        WeakId::new(&obj)
+    }
+}
+
+impl<T: Message> TryFrom<WeakId<T>> for Id<T, Shared> {
+    type Error = ();
+    fn try_from(weak: WeakId<T>) -> Result<Self, ()> {
+        return weak.load().ok_or(());
+    }
+}
 
 #[cfg(test)]
 mod tests {

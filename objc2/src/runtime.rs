@@ -650,6 +650,29 @@ mod tests {
     use crate::Encode;
 
     #[test]
+    fn test_selector() {
+        macro_rules! test_sel {
+            ($s:literal, $($tt:tt)+) => {{
+                let sel = sel!($($tt)*);
+                let expected = Sel::register($s);
+                assert_eq!(sel, expected);
+                assert_eq!(sel.name(), $s);
+            }}
+        }
+        test_sel!("abc", abc);
+        test_sel!("abc:", abc:);
+        test_sel!("abc:def:", abc:def:);
+    }
+
+    #[test]
+    fn test_empty_selector() {
+        let sel = Sel::register("");
+        assert_eq!(sel.name(), "");
+        let sel = Sel::register(":");
+        assert_eq!(sel.name(), ":");
+    }
+
+    #[test]
     fn test_ivar() {
         let cls = test_utils::custom_class();
         let ivar = cls.instance_variable("_foo").unwrap();
