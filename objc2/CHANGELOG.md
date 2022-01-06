@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added deprecated `Object::get_ivar` and `Object::get_mut_ivar` to make
   upgrading easier.
+* Allow using `From`/`TryFrom` to convert between `rc::Id` and `rc::WeakId`.
 
 
 ## 0.3.0-alpha.6 - 2022-01-03

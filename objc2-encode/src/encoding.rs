@@ -42,6 +42,9 @@ pub enum Encoding<'a> {
     /// A C `int`. Corresponds to the `i` code.
     Int,
     /// A C `long`. Corresponds to the `l` code.
+    ///
+    /// This is treated as a 32-bit quantity in 64-bit programs.
+    // TODO: What does that mean??
     Long,
     /// A C `long long`. Corresponds to the `q` code.
     LongLong,
@@ -121,6 +124,13 @@ pub enum Encoding<'a> {
     // } x_t;
     // NSLog(@"Encoding: %s", @encode(_Atomic x_t)); // -> A{x}
     // NSLog(@"Encoding: %s", @encode(const int*)); // -> r^i
+    //
+    // Note that const only applies to the outermost pointer!
+    //
+    // And how does atomic objects work?
+    // core::sync::atomic::AtomicPtr<T: Message>?
+
+    // TODO: `t` and `T` codes for i128 and u128?
 }
 
 impl Encoding<'_> {

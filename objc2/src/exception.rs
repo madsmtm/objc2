@@ -14,6 +14,9 @@
 //! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html>
 //! - <https://llvm.org/docs/ExceptionHandling.html>
 
+// TODO: Test this with panic=abort, and ensure that the code-size is
+// reasonable in that case.
+
 use core::ffi::c_void;
 use core::mem;
 use core::ptr;
@@ -25,6 +28,21 @@ use crate::rc::{Id, Shared};
 use crate::runtime::Object;
 
 extern "C" {
+    /// Call the given function inside an Objective-C `@try/@catch` block.
+    ///
+    /// Defined in `extern/exception.m` and compiled in `build.rs`.
+    ///
+    /// Alternatively, we could manually write assembly for this function like
+    /// [`objrs` does][manual-asm] does, that would cut down on a build stage
+    /// (and would probably give us a bit better performance), but it gets
+    /// unwieldy _very_ quickly, so I chose the much more stable option.
+    ///
+    /// Another thing to remember: While Rust's and Objective-C's unwinding
+    /// mechanisms are similar now, Rust's is explicitly unspecified, and they
+    /// may diverge significantly in the future; so handling this in pure Rust
+    /// (using mechanisms like core::intrinsics::r#try) is not an option!
+    ///
+    /// [manual-asm]: https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/exception.rs
     fn rust_objc_try_catch_exception(
         f: extern "C" fn(*mut c_void),
         context: *mut c_void,

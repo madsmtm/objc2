@@ -18,6 +18,8 @@ use crate::ffi;
 /// pool on the current thread.
 #[derive(Debug)]
 pub struct AutoreleasePool {
+    /// This is an opaque handle, and is not guaranteed to be neither a valid
+    /// nor aligned pointer.
     context: *mut c_void,
     // May pointer to data that is mutated (even though we hold shared access)
     p: PhantomData<*mut UnsafeCell<c_void>>,
@@ -140,9 +142,13 @@ impl Drop for AutoreleasePool {
     /// > Not draining the pool during an unwind is apparently required by the
     /// > Objective-C exceptions implementation.
     ///
-    /// This was true in the past, but since [revision `371`] of objc4 (ships
-    /// with MacOS 10.5) the exception is now retained when `@throw` is
-    /// encountered.
+    /// However, we would like to do this anyway whenever possible, since the
+    /// unwind is probably caused by Rust, and forgetting to pop the pool will
+    /// likely leak memory.
+    ///
+    /// Fortunately, the above statement was true in the past, but since
+    /// [revision `371`] of objc4 (ships with MacOS 10.5) the exception is now
+    /// retained when `@throw` is encountered.
     ///
     /// Hence it is safe to drain the pool when unwinding.
     ///

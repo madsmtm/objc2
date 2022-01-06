@@ -147,6 +147,8 @@ pub unsafe trait RefEncode {
     const ENCODING_REF: Encoding<'static>;
 }
 
+// TODO: Implement for `PhantomData` and `PhantomPinned`?
+
 /// Simple helper for implementing [`Encode`].
 macro_rules! encode_impls {
     ($($t:ty => $e:ident,)*) => ($(
@@ -168,6 +170,8 @@ encode_impls!(
     f32 => Float,
     f64 => Double,
 );
+
+// TODO: Structs in core::arch?
 
 /// To allow usage as the return type of generic functions.
 ///
@@ -304,6 +308,20 @@ unsafe impl<T: RefEncode + ?Sized> RefEncode for ManuallyDrop<T> {
     const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
 }
 
+// TODO: Consider UnsafeCell<T>
+// It is #[repr(transparent)], but might not be safe given that UnsafeCell
+// also has #[repr(no_niche)]
+
+// TODO: Consider Cell<T>
+// It is #[repr(transparent)] of UnsafeCell<T>, so figure that out first
+// `Cell` might also have other requirements that would disourage this impl?
+
+// TODO: Types that need to be made repr(transparent) first:
+// core::cell::Ref?
+// core::cell::RefCell?
+// core::cell::RefMut?
+// core::panic::AssertUnwindSafe<T>
+
 // SAFETY: `Pin` is `repr(transparent)`.
 unsafe impl<T: Encode> Encode for Pin<T> {
     const ENCODING: Encoding<'static> = T::ENCODING;
@@ -314,6 +332,8 @@ unsafe impl<T: RefEncode> RefEncode for Pin<T> {
     const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
 }
 
+// TODO: MaybeUninit<T>
+
 // SAFETY: `Wrapping` is `repr(transparent)`.
 unsafe impl<T: Encode> Encode for Wrapping<T> {
     const ENCODING: Encoding<'static> = T::ENCODING;
@@ -323,6 +343,10 @@ unsafe impl<T: Encode> Encode for Wrapping<T> {
 unsafe impl<T: RefEncode> RefEncode for Wrapping<T> {
     const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
 }
+
+// TODO: core::num::Saturating when that is stabilized
+
+// TODO: core::cmp::Reverse?
 
 /// Helper for implementing `Encode`/`RefEncode` for pointers to types that
 /// implement `RefEncode`.
