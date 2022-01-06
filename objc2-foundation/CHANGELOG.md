@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   This allows more ergonomic usage.
 
+### Changed
+* **BREAKING**: Removed the following helper traits in favor of inherent
+  methods on the object itself:
+  - `INSMutableArray`
+
+  This is possible because objects now deref to their superclasses.
+
 
 ## 0.2.0-alpha.4 - 2022-01-03
 

@@ -21,7 +21,7 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-pub use self::array::{INSArray, INSMutableArray, NSArray, NSMutableArray};
+pub use self::array::{INSArray, NSArray, NSMutableArray};
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{INSCopying, INSMutableCopying};
 pub use self::data::{INSData, INSMutableData, NSData, NSMutableData};

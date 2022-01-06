@@ -253,15 +253,15 @@ impl<T: INSObject, O: Ownership> DefaultId for NSArray<T, O> {
     }
 }
 
-pub unsafe trait INSMutableArray: INSArray {
+impl<T: INSObject, O: Ownership> NSMutableArray<T, O> {
     #[doc(alias = "addObject:")]
-    fn push(&mut self, obj: Id<Self::Item, Self::ItemOwnership>) {
+    pub fn push(&mut self, obj: Id<T, O>) {
         // SAFETY: The object is not nil
         unsafe { msg_send![self, addObject: &*obj] }
     }
 
     #[doc(alias = "insertObject:atIndex:")]
-    fn insert(&mut self, index: usize, obj: Id<Self::Item, Self::ItemOwnership>) {
+    pub fn insert(&mut self, index: usize, obj: Id<T, O>) {
         // TODO: Replace this check with catching the thrown NSRangeException
         let len = self.len();
         if index < len {
@@ -277,11 +277,7 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 
     #[doc(alias = "replaceObjectAtIndex:withObject:")]
-    fn replace(
-        &mut self,
-        index: usize,
-        obj: Id<Self::Item, Self::ItemOwnership>,
-    ) -> Id<Self::Item, Self::ItemOwnership> {
+    pub fn replace(&mut self, index: usize, obj: Id<T, O>) -> Id<T, O> {
         let old_obj = unsafe {
             let obj = self.get(index).unwrap();
             Id::retain(obj.into())
@@ -297,7 +293,7 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 
     #[doc(alias = "removeObjectAtIndex:")]
-    fn remove(&mut self, index: usize) -> Id<Self::Item, Self::ItemOwnership> {
+    pub fn remove(&mut self, index: usize) -> Id<T, O> {
         let obj = if let Some(obj) = self.get(index) {
             unsafe { Id::retain(obj.into()) }
         } else {
@@ -310,7 +306,7 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 
     #[doc(alias = "removeLastObject")]
-    fn pop(&mut self) -> Option<Id<Self::Item, Self::ItemOwnership>> {
+    pub fn pop(&mut self) -> Option<Id<T, O>> {
         self.last().map(|obj| {
             let obj = unsafe { Id::retain(obj.into()) };
             unsafe {
@@ -321,18 +317,15 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 
     #[doc(alias = "removeAllObjects")]
-    fn clear(&mut self) {
+    pub fn clear(&mut self) {
         unsafe { msg_send![self, removeAllObjects] }
     }
 
     #[doc(alias = "sortUsingFunction:context:")]
-    fn sort_by<F>(&mut self, compare: F)
-    where
-        F: FnMut(&Self::Item, &Self::Item) -> Ordering,
-    {
-        extern "C" fn compare_with_closure<T, F: FnMut(&T, &T) -> Ordering>(
-            obj1: &T,
-            obj2: &T,
+    pub fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {
+        extern "C" fn compare_with_closure<U, F: FnMut(&U, &U) -> Ordering>(
+            obj1: &U,
+            obj2: &U,
             context: *mut c_void,
         ) -> NSComparisonResult {
             // Bring back a reference to the closure.
@@ -343,7 +336,7 @@ pub unsafe trait INSMutableArray: INSArray {
             NSComparisonResult::from((*closure)(obj1, obj2))
         }
 
-        let f: extern "C" fn(_, _, _) -> _ = compare_with_closure::<Self::Item, F>;
+        let f: extern "C" fn(_, _, _) -> _ = compare_with_closure::<T, F>;
 
         // Grab a type-erased pointer to the closure (a pointer to stack).
         let mut closure = compare;
@@ -362,8 +355,6 @@ unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
     type Item = T;
     type ItemOwnership = O;
 }
-
-unsafe impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
 
 // Copying only possible when ItemOwnership = Shared
 
@@ -412,7 +403,7 @@ mod tests {
     use objc2::msg_send;
     use objc2::rc::{autoreleasepool, Id, Owned, Shared};
 
-    use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
+    use super::{INSArray, NSArray, NSMutableArray};
     use crate::{INSObject, INSString, INSValue, NSObject, NSString, NSValue};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
