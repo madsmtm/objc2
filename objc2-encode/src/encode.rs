@@ -147,6 +147,8 @@ pub unsafe trait RefEncode {
     const ENCODING_REF: Encoding<'static>;
 }
 
+// TODO: Implement for `PhantomData` and `PhantomPinned`?
+
 /// Simple helper for implementing [`Encode`].
 macro_rules! encode_impls {
     ($($t:ty => $e:ident,)*) => ($(
@@ -318,6 +320,7 @@ unsafe impl<T: RefEncode + ?Sized> RefEncode for ManuallyDrop<T> {
 // core::cell::Ref?
 // core::cell::RefCell?
 // core::cell::RefMut?
+// core::panic::AssertUnwindSafe<T>
 
 // SAFETY: `Pin` is `repr(transparent)`.
 unsafe impl<T: Encode> Encode for Pin<T> {
@@ -340,6 +343,8 @@ unsafe impl<T: Encode> Encode for Wrapping<T> {
 unsafe impl<T: RefEncode> RefEncode for Wrapping<T> {
     const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
 }
+
+// TODO: core::num::Saturating when that is stabilized
 
 // TODO: core::cmp::Reverse?
 

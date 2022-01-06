@@ -25,6 +25,7 @@ pub struct WeakId<T: ?Sized> {
     /// an UnsafeCell to get a *mut without self being mutable.
     ///
     /// TODO: Verify the need for UnsafeCell?
+    /// TODO: Investigate if we can avoid some allocations using `Pin`.
     inner: Box<UnsafeCell<*mut T>>,
     /// WeakId inherits variance, dropck and various marker traits from
     /// `Id<T, Shared>` because it can be upgraded to a shared Id.
