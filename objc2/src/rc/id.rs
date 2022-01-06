@@ -173,6 +173,33 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
             own: PhantomData,
         }
     }
+
+    /// Constructs an [`Id`] from a pointer that may be null.
+    ///
+    /// This is just a convenience wrapper over [`Id::new`] so that you don't
+    /// need to construct a [`NonNull`] when you know the pointer may be null.
+    ///
+    /// # Safety
+    ///
+    /// Same as [`Id::new`].
+    #[inline]
+    pub unsafe fn new_null(ptr: *mut T) -> Option<Id<T, O>> {
+        // SAFETY: Upheld by the caller
+        NonNull::new(ptr).map(|ptr| unsafe { Id::new(ptr) })
+    }
+
+    /// Returns a raw pointer to the object.
+    ///
+    /// The pointer is valid for at least as long as the `Id` is held.
+    #[inline]
+    pub fn as_ptr(&self) -> *mut T {
+        // Note: This is not an associated function, which breaks the
+        // guideline that smart pointers shouldn't add inherent methods!
+        //
+        // However, this method is quite useful when migrating old codebases,
+        // so I think we'll let it be here for now.
+        self.ptr.as_ptr()
+    }
 }
 
 // TODO: Add ?Sized bound
@@ -224,6 +251,21 @@ impl<T: Message, O: Ownership> Id<T, O> {
         unsafe { Self::new(res) }
     }
 
+    /// Retains an object pointer that may be null.
+    ///
+    /// This is just a convenience wrapper over [`Id::retain`] so that you
+    /// don't need to construct a [`NonNull`] when you know the pointer may
+    /// be null.
+    ///
+    /// # Safety
+    ///
+    /// Same as [`Id::retain`].
+    #[inline]
+    pub unsafe fn retain_null(ptr: *mut T) -> Option<Id<T, O>> {
+        // SAFETY: Upheld by the caller
+        NonNull::new(ptr).map(|ptr| unsafe { Id::retain(ptr) })
+    }
+
     #[cfg_attr(not(debug_assertions), inline)]
     fn autorelease_inner(self) -> *mut T {
         // Note that this (and the actual `autorelease`) is not an associated
@@ -232,7 +274,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // retained objects it is hard to imagine a case where the inner type
         // has a method with the same name.
 
-        let ptr = ManuallyDrop::new(self).ptr.as_ptr() as *mut ffi::objc_object;
+        let ptr = ManuallyDrop::new(self).as_ptr() as *mut ffi::objc_object;
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
         // And because of the ManuallyDrop, we don't call the Drop

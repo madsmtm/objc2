@@ -4,8 +4,8 @@ use core::fmt;
 /// The Objective-C `BOOL` type.
 ///
 /// This is a thin wrapper-type over [`objc_sys::BOOL`]. It is intended that
-/// you convert this into a Rust [`bool`] with the [`Bool::is_false`] or
-/// [`Bool::is_true`] methods as soon as possible.
+/// you convert this into a Rust [`bool`] with the [`Bool::as_bool`] method as
+/// soon as possible.
 ///
 /// This is FFI-safe and can be used in directly with
 /// [`msg_send!`][`crate::msg_send`].
@@ -20,12 +20,12 @@ use core::fmt;
 /// use objc2::runtime::{Object, Bool};
 /// let ns_value: *mut Object = unsafe { msg_send![class!(NSValue), initWithBool: Bool::YES] };
 /// let rtn: Bool = unsafe { msg_send![ns_value, boolValue] };
-/// assert!(rtn.is_true());
+/// assert!(rtn.as_bool());
 /// ```
 #[repr(transparent)]
 // We don't implement comparison traits because they could be implemented with
 // two slightly different semantics:
-// - `self.is_true().cmp(other.is_true())`
+// - `self.as_bool().cmp(other.as_bool())`
 // - `self.value.cmp(other.value)`
 // And it is not immediately clear for users which one was chosen.
 #[derive(Copy, Clone, Default)]
@@ -63,6 +63,8 @@ impl Bool {
     }
 
     /// Returns `true` if `self` is [`NO`][`Self::NO`].
+    ///
+    /// You should prefer using [`as_bool`][`Self::as_bool`].
     #[inline]
     pub const fn is_false(self) -> bool {
         // Always compare with 0
@@ -71,11 +73,19 @@ impl Bool {
     }
 
     /// Returns `true` if `self` is the opposite of [`NO`][`Self::NO`].
+    ///
+    /// You should prefer using [`as_bool`][`Self::as_bool`].
     #[inline]
     pub const fn is_true(self) -> bool {
         // Always compare with 0
         // This is what happens when using `if` in C.
         self.value as u8 != 0
+    }
+
+    /// Converts this into the [`bool`] equivalent.
+    #[inline]
+    pub const fn as_bool(self) -> bool {
+        self.is_true()
     }
 }
 
@@ -89,13 +99,13 @@ impl From<bool> for Bool {
 impl From<Bool> for bool {
     #[inline]
     fn from(b: Bool) -> bool {
-        b.is_true()
+        b.as_bool()
     }
 }
 
 impl fmt::Debug for Bool {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(if self.is_true() { "YES" } else { "NO" })
+        f.write_str(if self.as_bool() { "YES" } else { "NO" })
     }
 }
 
@@ -125,12 +135,14 @@ mod tests {
     #[test]
     fn test_basic() {
         let b = Bool::new(true);
+        assert!(b.as_bool());
         assert!(b.is_true());
         assert!(!b.is_false());
         assert!(bool::from(b));
         assert_eq!(b.as_raw() as usize, 1);
 
         let b = Bool::new(false);
+        assert!(!b.as_bool());
         assert!(!b.is_true());
         assert!(b.is_false());
         assert!(!bool::from(b));
@@ -140,10 +152,12 @@ mod tests {
     #[test]
     fn test_associated_constants() {
         let b = Bool::YES;
+        assert!(b.as_bool());
         assert!(b.is_true());
         assert_eq!(b.as_raw() as usize, 1);
 
         let b = Bool::NO;
+        assert!(!b.as_bool());
         assert!(b.is_false());
         assert_eq!(b.as_raw() as usize, 0);
     }
@@ -151,8 +165,10 @@ mod tests {
     #[test]
     fn test_impls() {
         let b: Bool = Default::default();
+        assert!(!b.as_bool());
         assert!(b.is_false());
 
+        assert!(Bool::from(true).as_bool());
         assert!(Bool::from(true).is_true());
         assert!(Bool::from(false).is_false());
 

@@ -68,7 +68,7 @@ extern "C" {
 #[inline]
 pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
     let exception = match exception {
-        Some(id) => &**id as *const Object as *mut ffi::objc_object,
+        Some(id) => id.as_ptr() as *mut ffi::objc_object,
         None => ptr::null_mut(),
     };
     unsafe { ffi::objc_exception_throw(exception) }

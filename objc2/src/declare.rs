@@ -215,7 +215,7 @@ impl ClassDecl {
                 types.as_ptr(),
             )
         });
-        assert!(success.is_true(), "Failed to add method {:?}", sel);
+        assert!(success.as_bool(), "Failed to add method {:?}", sel);
     }
 
     /// Adds a class method with the given name and implementation.
@@ -253,7 +253,7 @@ impl ClassDecl {
                 types.as_ptr(),
             )
         });
-        assert!(success.is_true(), "Failed to add class method {:?}", sel);
+        assert!(success.as_bool(), "Failed to add class method {:?}", sel);
     }
 
     /// Adds an ivar with type `T` and the provided name.
@@ -275,7 +275,7 @@ impl ClassDecl {
                 encoding.as_ptr(),
             )
         });
-        assert!(success.is_true(), "Failed to add ivar {}", name);
+        assert!(success.as_bool(), "Failed to add ivar {}", name);
     }
 
     /// Adds the given protocol to self.
@@ -285,7 +285,7 @@ impl ClassDecl {
     /// If the protocol wasn't successfully added.
     pub fn add_protocol(&mut self, proto: &Protocol) {
         let success = unsafe { ffi::class_addProtocol(self.cls as _, proto.as_ptr()) };
-        let success = Bool::from_raw(success).is_true();
+        let success = Bool::from_raw(success).as_bool();
         assert!(success, "Failed to add protocol {:?}", proto);
     }
 
