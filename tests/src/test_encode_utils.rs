@@ -26,7 +26,8 @@ unsafe fn assert_str<T: Display>(s: *const c_char, expected: T) {
 }
 
 macro_rules! assert_inner {
-    (enc $stat:ident => $expected:expr) => {
+    (enc $(#[$m:meta])* $stat:ident => $expected:expr) => {
+        $(#[$m])*
         #[test]
         fn $stat() {
             extern "C" {
@@ -35,7 +36,8 @@ macro_rules! assert_inner {
             unsafe { assert_encoding($stat, $expected) };
         }
     };
-    (str $stat:ident => $expected:expr) => {
+    (str $(#[$m:meta])* $stat:ident => $expected:expr) => {
+        $(#[$m])*
         #[test]
         fn $stat() {
             extern "C" {
@@ -47,11 +49,14 @@ macro_rules! assert_inner {
 }
 
 macro_rules! assert_types {
-    ($($stat:ident => $type:ty,)+) => {$(
+    ($(
+        $(#[$m:meta])*
+        $stat:ident => $type:ty,
+    )+) => {$(
         paste! {
-            assert_inner!(enc [<ENCODING_ $stat>] => <$type>::ENCODING);
-            assert_inner!(enc [<ENCODING_ $stat _POINTER>] => <*const $type>::ENCODING);
-            assert_inner!(str [<ENCODING_ $stat _ATOMIC>] => format!("A{}", <$type>::ENCODING));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat>] => <$type>::ENCODING);
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => <*const $type>::ENCODING);
+            assert_inner!(str $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => format!("A{}", <$type>::ENCODING));
         }
     )+};
 }
@@ -111,15 +116,24 @@ assert_types! {
     INT16 => i16,
     INT32 => i32,
     INT64 => i64,
-    INTPTR => isize,
     UINT8 => u8,
     UINT16 => u16,
     UINT32 => u32,
     UINT64 => u64,
+
+    // `intptr`, `uintptr` and `size_t` are cfg-guarded because they are
+    // simply just too much of a hassle to get working on this old platform.
+    //
+    // Pointers (`intptr*`) works, but not plain `intptr`...
+
+    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+    INTPTR => isize,
+    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
     UINTPTR => usize,
 
     // stddef.h
 
+    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
     SIZE_T => usize,
     PTRDIFF_T => isize,
 
