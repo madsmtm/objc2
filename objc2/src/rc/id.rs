@@ -173,6 +173,20 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
             own: PhantomData,
         }
     }
+
+    /// Constructs an [`Id`] from a pointer that may be null.
+    ///
+    /// This is just a convenience wrapper over [`Id::new`] so that you don't
+    /// need to construct a [`NonNull`] when you know the pointer may be null.
+    ///
+    /// # Safety
+    ///
+    /// Same as [`Id::new`].
+    #[inline]
+    pub unsafe fn new_null(ptr: *mut T) -> Option<Id<T, O>> {
+        // SAFETY: Upheld by the caller
+        NonNull::new(ptr).map(|ptr| unsafe { Id::new(ptr) })
+    }
 }
 
 // TODO: Add ?Sized bound
