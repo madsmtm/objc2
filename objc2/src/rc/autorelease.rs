@@ -1,7 +1,8 @@
-use core::cell::UnsafeCell;
 use core::ffi::c_void;
 use core::fmt;
 use core::marker::PhantomData;
+use core::mem::ManuallyDrop;
+use core::{cell::UnsafeCell, ptr};
 #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
 use std::{cell::RefCell, thread_local, vec::Vec};
 
@@ -72,6 +73,13 @@ impl AutoreleasePool {
         }
     }
 
+    const unsafe fn new_leaking() -> Self {
+        Self {
+            context: ptr::null_mut(),
+            p: PhantomData,
+        }
+    }
+
     /// This will be removed in a future version.
     #[cfg_attr(
         not(all(debug_assertions, not(feature = "unstable_autoreleasesafe"))),
@@ -80,13 +88,15 @@ impl AutoreleasePool {
     #[doc(hidden)]
     pub fn __verify_is_inner(&self) {
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
-        POOLS.with(|c| {
-            assert_eq!(
-                c.borrow().last(),
-                Some(&self.context),
-                "Tried to use lifetime from pool that was not innermost"
-            )
-        });
+        if !self.context.is_null() {
+            POOLS.with(|c| {
+                assert_eq!(
+                    c.borrow().last(),
+                    Some(&self.context),
+                    "Tried to use lifetime from pool that was not innermost"
+                )
+            });
+        }
     }
 
     /// Returns a shared reference to the given autoreleased pointer object.
@@ -310,9 +320,21 @@ where
     f(&pool)
 }
 
-#[cfg(all(test, feature = "unstable_autoreleasesafe"))]
+/// TODO
+pub fn autoreleasepool_leaking<T, F>(f: F) -> T
+where
+    for<'p> F: FnOnce(&'p AutoreleasePool) -> T + AutoreleaseSafe,
+{
+    let pool = ManuallyDrop::new(unsafe { AutoreleasePool::new_leaking() });
+    f(&pool)
+}
+
+#[cfg(test)]
 mod tests {
-    use super::AutoreleaseSafe;
+    use core::ptr::NonNull;
+
+    use super::{autoreleasepool_leaking, AutoreleaseSafe};
+    use crate::rc::{Id, Owned};
     use crate::runtime::Object;
 
     fn requires_autoreleasesafe<T: AutoreleaseSafe>() {}
@@ -322,5 +344,18 @@ mod tests {
         requires_autoreleasesafe::<usize>();
         requires_autoreleasesafe::<*mut Object>();
         requires_autoreleasesafe::<&mut Object>();
+    }
+
+    #[test]
+    fn test_autoreleasepool_leaking() {
+        let cls = class!(NSObject);
+        let obj: Id<Object, Owned> = unsafe {
+            let obj: *mut Object = msg_send![cls, alloc];
+            let obj: *mut Object = msg_send![obj, init];
+            Id::new(NonNull::new_unchecked(obj))
+        };
+        autoreleasepool_leaking(|pool| {
+            let _ = obj.autorelease(pool);
+        });
     }
 }
