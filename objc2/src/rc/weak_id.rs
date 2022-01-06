@@ -40,7 +40,7 @@ impl<T: Message> WeakId<T> {
         // allow loading an `Id<T, Shared>` later on.
 
         // SAFETY: `obj` is valid
-        unsafe { Self::new_inner(&**obj as *const T as *mut T) }
+        unsafe { Self::new_inner(obj.as_ptr()) }
     }
 
     /// # Safety

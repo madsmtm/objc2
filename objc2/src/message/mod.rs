@@ -252,8 +252,7 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
 unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for Id<T, O> {
     #[inline]
     fn as_raw_receiver(&self) -> *mut Object {
-        // TODO: Maybe don't dereference here, just to be safe?
-        (&**self).as_raw_receiver()
+        self.as_ptr() as *mut Object
     }
 }
 
@@ -449,7 +448,7 @@ mod tests {
         };
         assert_eq!(result, 4);
 
-        let obj: *const ManuallyDrop<Object> = (&**obj as *const Object).cast();
+        let obj: *const ManuallyDrop<Object> = obj.as_ptr().cast();
         let result: u32 = unsafe { msg_send![obj, foo] };
         assert_eq!(result, 4);
     }
