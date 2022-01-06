@@ -146,8 +146,8 @@ impl DefaultId for NSData {
     }
 }
 
-pub unsafe trait INSMutableData: INSData {
-    fn bytes_mut(&mut self) -> &mut [u8] {
+impl NSMutableData {
+    pub fn bytes_mut(&mut self) -> &mut [u8] {
         let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
         // The bytes pointer may be null for length zero
         if ptr.is_null() {
@@ -158,16 +158,16 @@ pub unsafe trait INSMutableData: INSData {
     }
 
     /// Expands with zeroes, or truncates the buffer.
-    fn set_len(&mut self, len: usize) {
+    pub fn set_len(&mut self, len: usize) {
         unsafe { msg_send![self, setLength: len] }
     }
 
-    fn append(&mut self, bytes: &[u8]) {
+    pub fn append(&mut self, bytes: &[u8]) {
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe { msg_send![self, appendBytes: bytes_ptr, length: bytes.len()] }
     }
 
-    fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
+    pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
         let range = NSRange::from(range);
         let ptr = bytes.as_ptr() as *const c_void;
         unsafe {
@@ -180,7 +180,7 @@ pub unsafe trait INSMutableData: INSData {
         }
     }
 
-    fn set_bytes(&mut self, bytes: &[u8]) {
+    pub fn set_bytes(&mut self, bytes: &[u8]) {
         let len = self.len();
         self.replace_range(0..len, bytes);
     }
@@ -189,8 +189,6 @@ pub unsafe trait INSMutableData: INSData {
 unsafe impl INSData for NSMutableData {
     type Ownership = Owned;
 }
-
-unsafe impl INSMutableData for NSMutableData {}
 
 unsafe impl INSCopying for NSMutableData {
     type Ownership = Shared;
@@ -240,7 +238,7 @@ impl DefaultId for NSMutableData {
 
 #[cfg(test)]
 mod tests {
-    use super::{INSData, INSMutableData, NSData, NSMutableData};
+    use super::{INSData, NSData, NSMutableData};
     #[cfg(feature = "block")]
     use alloc::vec;
 
