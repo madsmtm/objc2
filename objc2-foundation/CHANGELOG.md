@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed the following helper traits in favor of inherent
   methods on the object itself:
   - `INSMutableArray`
+  - `INSArray`
   - `INSMutableData`
 
   This is possible because objects now deref to their superclasses.

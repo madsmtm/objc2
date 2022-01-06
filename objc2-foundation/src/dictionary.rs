@@ -186,7 +186,7 @@ mod tests {
     use objc2::rc::{autoreleasepool, Id, Shared};
 
     use super::{INSDictionary, NSDictionary};
-    use crate::{INSArray, INSString, NSObject, NSString};
+    use crate::{INSString, NSObject, NSString};
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>, Shared> {
         let string = NSString::from_str(key);

@@ -115,7 +115,11 @@ macro_rules! object {
 }
 
 macro_rules! unsafe_def_fn {
-    ($v:vis fn new -> $o:ty) => {
+    (
+        $(#[$m:meta])*
+        $v:vis fn new -> $o:ty $(;)?
+    ) => {
+        $(#[$m])*
         $v fn new() -> Id<Self, $o> {
             let cls = <Self as INSObject>::class();
             unsafe { Id::new(NonNull::new_unchecked(msg_send![cls, new])) }
