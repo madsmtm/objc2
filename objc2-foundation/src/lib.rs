@@ -24,7 +24,7 @@ extern "C" {}
 pub use self::array::{NSArray, NSMutableArray};
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{INSCopying, INSMutableCopying};
-pub use self::data::{INSData, NSData, NSMutableData};
+pub use self::data::{NSData, NSMutableData};
 pub use self::dictionary::{INSDictionary, NSDictionary};
 pub use self::enumerator::{INSFastEnumeration, NSEnumerator, NSFastEnumerator};
 pub use self::object::{INSObject, NSObject};
