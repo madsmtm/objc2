@@ -124,6 +124,40 @@ pub enum Encoding<'a> {
 }
 
 impl Encoding<'_> {
+    /// The encoding of [`c_long`](`std::os::raw::c_long`).
+    ///
+    /// Ideally the encoding of `long` would just be the same as `int` when
+    /// it's 32 bits wide and the same as `long long` when it is 64 bits wide;
+    /// then `c_long::ENCODING` would just work.
+    ///
+    /// Unfortunately, `long` have a different encoding than `int` when it is
+    /// 32 bits wide; the 'l'/'L' encoding.
+    pub const LONG: Self = {
+        // Alternative: `mem::size_of::<c_long>() == 4`
+        // That would exactly match what `clang` does:
+        // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/AST/ASTContext.cpp#L7245
+        if cfg!(any(target_pointer_width = "32", windows)) {
+            // @encode(long) = 'l'
+            Self::Long
+        } else {
+            // @encode(long) = 'q'
+            Self::LongLong
+        }
+    };
+
+    /// The encoding of [`c_ulong`](`std::os::raw::c_ulong`).
+    ///
+    /// See [`Encoding::LONG`] for explanation.
+    pub const U_LONG: Self = {
+        if cfg!(any(target_pointer_width = "32", windows)) {
+            // @encode(unsigned long) = 'L'
+            Encoding::ULong
+        } else {
+            // @encode(unsigned long) = 'Q'
+            Encoding::ULongLong
+        }
+    };
+
     /// Check if one encoding is equivalent to another.
     pub fn equivalent_to(&self, other: &Self) -> bool {
         // For now, because we don't allow representing qualifiers

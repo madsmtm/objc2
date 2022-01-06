@@ -1,6 +1,5 @@
 use core::marker::PhantomData;
 use core::mem;
-use core::mem::size_of;
 use core::ptr;
 use core::ptr::NonNull;
 use core::slice;
@@ -57,35 +56,14 @@ struct NSFastEnumerationState<T: INSObject> {
     extra: [c_ulong; 5],
 }
 
-/// Ideally the encoding of `long` would just be the same as `int` when it's
-/// 32 bits wide and the same as `long long` when it's 64 bits wide; then
-/// `c_long::ENCODING` would just work.
-///
-/// Unfortunately, `long` and `unsigned long` have a different encoding than
-/// `int` when it's 32 bits wide; the 'l'/'L' encoding.
-const U_LONG_ENCODING: Encoding<'static> = {
-    // We could also just have used:
-    // #[cfg(any(target_pointer_width = "32", windows))]
-    //
-    // But this way we exactly match what `clang` does:
-    // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/AST/ASTContext.cpp#L7245
-    if size_of::<c_ulong>() == 4 {
-        // @encode(unsigned long) = 'L'
-        Encoding::ULong
-    } else {
-        // @encode(unsigned long) = 'Q'
-        Encoding::ULongLong
-    }
-};
-
 unsafe impl<T: INSObject> Encode for NSFastEnumerationState<T> {
     const ENCODING: Encoding<'static> = Encoding::Struct(
         "?",
         &[
-            U_LONG_ENCODING,
+            Encoding::U_LONG,
             Encoding::Pointer(&Encoding::Object), // <*const *const T>::ENCODING
-            Encoding::Pointer(&U_LONG_ENCODING),
-            Encoding::Array(5, &U_LONG_ENCODING),
+            Encoding::Pointer(&Encoding::U_LONG),
+            Encoding::Array(5, &Encoding::U_LONG),
         ],
     );
 }
