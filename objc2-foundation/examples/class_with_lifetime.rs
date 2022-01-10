@@ -7,7 +7,7 @@ use objc2::rc::{Id, Owned, Shared};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, sel};
 use objc2::{Encoding, Message, RefEncode};
-use objc2_foundation::{INSObject, NSObject};
+use objc2_foundation::NSObject;
 
 #[repr(C)]
 pub struct MyObject<'a> {
@@ -22,6 +22,8 @@ unsafe impl RefEncode for MyObject<'_> {
 }
 
 unsafe impl Message for MyObject<'_> {}
+
+static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 
 impl<'a> MyObject<'a> {
     fn new(number_ptr: &'a mut u8) -> Id<Self, Owned> {
@@ -48,11 +50,7 @@ impl<'a> MyObject<'a> {
             **ptr = number;
         }
     }
-}
 
-static MYOBJECT_REGISTER_CLASS: Once = Once::new();
-
-unsafe impl INSObject for MyObject<'_> {
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();

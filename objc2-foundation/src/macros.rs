@@ -33,8 +33,8 @@ macro_rules! object {
             const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
         }
 
-        unsafe impl<$($t $(: $b)?),*> $crate::INSObject for $name<$($t),*> {
-            fn class() -> &'static ::objc2::runtime::Class {
+        impl<$($t $(: $b)?),*> $name<$($t),*> {
+            pub fn class() -> &'static ::objc2::runtime::Class {
                 ::objc2::class!($name)
             }
         }
@@ -70,7 +70,12 @@ macro_rules! object {
         impl<$($t: ::core::cmp::PartialEq $(+ $b)?),*> ::core::cmp::PartialEq for $name<$($t),*> {
             #[inline]
             fn eq(&self, other: &Self) -> bool {
-                use $crate::INSObject;
+                use ::objc2::MessageReceiver;
+                use $crate::NSObject;
+                // "downgrading" to  NSObject to work around generic
+                // downgrading not having been set up yet.
+                // TODO: Fix this.
+                let other: &NSObject = unsafe { &*other.as_raw_receiver().cast() };
                 self.is_equal(other)
             }
         }
@@ -90,7 +95,6 @@ macro_rules! object {
         impl<$($t: ::core::hash::Hash $(+ $b)?),*> ::core::hash::Hash for $name<$($t),*> {
             #[inline]
             fn hash<H: ::core::hash::Hasher>(&self, state: &mut H) {
-                use $crate::INSObject;
                 self.hash_code().hash(state);
             }
         }
@@ -100,7 +104,7 @@ macro_rules! object {
             fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 use ::objc2::MessageReceiver;
                 use ::alloc::borrow::ToOwned;
-                use $crate::{INSObject, NSObject};
+                use $crate::NSObject;
                 // "downgrading" to  NSObject and calling `to_owned` to work
                 // around `f` and Self not being AutoreleaseSafe.
                 // TODO: Fix this!
@@ -121,7 +125,7 @@ macro_rules! unsafe_def_fn {
     ) => {
         $(#[$m])*
         $v fn new() -> Id<Self, $o> {
-            let cls = <Self as INSObject>::class();
+            let cls = Self::class();
             unsafe { Id::new(NonNull::new_unchecked(msg_send![cls, new])) }
         }
     };

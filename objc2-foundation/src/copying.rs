@@ -1,11 +1,9 @@
 use core::ptr::NonNull;
 
-use objc2::msg_send;
 use objc2::rc::{Id, Owned, Ownership};
+use objc2::{msg_send, Message};
 
-use super::INSObject;
-
-pub unsafe trait INSCopying: INSObject {
+pub unsafe trait INSCopying: Message {
     /// Indicates whether the type is mutable or immutable.
     ///
     /// This can be [`Owned`] if and only if `copy` creates a new instance,
@@ -32,7 +30,7 @@ pub unsafe trait INSCopying: INSObject {
     ///
     /// This is usually `Self`, but e.g. `NSMutableString` returns `NSString`.
     /// TODO: Verify???
-    type Output: INSObject;
+    type Output: Message;
 
     fn copy(&self) -> Id<Self::Output, Self::Ownership> {
         unsafe {
@@ -45,9 +43,9 @@ pub unsafe trait INSCopying: INSObject {
 /// TODO
 ///
 /// Note that the `mutableCopy` selector must return an owned object!
-pub unsafe trait INSMutableCopying: INSObject {
+pub unsafe trait INSMutableCopying: Message {
     /// TODO
-    type Output: INSObject;
+    type Output: Message;
 
     fn mutable_copy(&self) -> Id<Self::Output, Owned> {
         unsafe {

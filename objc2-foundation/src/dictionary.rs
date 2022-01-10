@@ -4,10 +4,10 @@ use core::marker::PhantomData;
 use core::ops::Index;
 use core::ptr::{self, NonNull};
 
-use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
+use objc2::{msg_send, Message};
 
-use super::{INSCopying, INSFastEnumeration, INSObject, NSArray, NSEnumerator, NSObject};
+use super::{INSCopying, INSFastEnumeration, NSArray, NSEnumerator, NSObject};
 
 object! {
     unsafe pub struct NSDictionary<K, V>: NSObject {
@@ -20,7 +20,7 @@ object! {
 unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
 unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
 
-impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
+impl<K: Message, V: Message> NSDictionary<K, V> {
     unsafe_def_fn!(pub fn new -> Shared);
 
     #[doc(alias = "count")]
@@ -136,7 +136,7 @@ impl<K: INSObject, V: INSObject> NSDictionary<K, V> {
     }
 }
 
-impl<K: INSObject, V: INSObject> DefaultId for NSDictionary<K, V> {
+impl<K: Message, V: Message> DefaultId for NSDictionary<K, V> {
     type Ownership = Shared;
 
     #[inline]
@@ -145,11 +145,11 @@ impl<K: INSObject, V: INSObject> DefaultId for NSDictionary<K, V> {
     }
 }
 
-unsafe impl<K: INSObject, V: INSObject> INSFastEnumeration for NSDictionary<K, V> {
+unsafe impl<K: Message, V: Message> INSFastEnumeration for NSDictionary<K, V> {
     type Item = K;
 }
 
-impl<'a, K: INSObject, V: INSObject> Index<&'a K> for NSDictionary<K, V> {
+impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
 
     fn index<'s>(&'s self, index: &'a K) -> &'s V {

@@ -6,7 +6,7 @@ use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, sel};
 use objc2::{Encoding, Message, RefEncode};
-use objc2_foundation::{INSObject, NSObject};
+use objc2_foundation::NSObject;
 
 /// In the future this should be an `extern type`, if that gets stabilized,
 /// see [RFC-1861](https://rust-lang.github.io/rfcs/1861-extern-types.html).
@@ -21,6 +21,10 @@ pub struct MYObject {
 unsafe impl RefEncode for MYObject {
     const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }
+
+unsafe impl Message for MYObject {}
+
+static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 
 impl MYObject {
     fn new() -> Id<Self, Owned> {
@@ -41,13 +45,7 @@ impl MYObject {
             obj.set_ivar("_number", number);
         }
     }
-}
 
-unsafe impl Message for MYObject {}
-
-static MYOBJECT_REGISTER_CLASS: Once = Once::new();
-
-unsafe impl INSObject for MYObject {
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();

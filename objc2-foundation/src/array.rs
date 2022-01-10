@@ -8,10 +8,11 @@ use core::ptr::NonNull;
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::{Class, Object};
+use objc2::Message;
 
 use super::{
-    INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSComparisonResult, NSEnumerator,
-    NSObject, NSRange,
+    INSCopying, INSFastEnumeration, INSMutableCopying, NSComparisonResult, NSEnumerator, NSObject,
+    NSRange,
 };
 
 object! {
@@ -65,7 +66,7 @@ unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
 unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
 unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
 
-unsafe fn from_refs<T: INSObject + ?Sized>(cls: &Class, refs: &[&T]) -> NonNull<Object> {
+unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> NonNull<Object> {
     let obj: *mut Object = unsafe { msg_send![cls, alloc] };
     let obj: *mut Object = unsafe {
         msg_send![
@@ -77,7 +78,7 @@ unsafe fn from_refs<T: INSObject + ?Sized>(cls: &Class, refs: &[&T]) -> NonNull<
     unsafe { NonNull::new_unchecked(obj) }
 }
 
-impl<T: INSObject, O: Ownership> NSArray<T, O> {
+impl<T: Message, O: Ownership> NSArray<T, O> {
     unsafe_def_fn! {
         /// The `NSArray` itself (length and number of items) is always immutable,
         /// but we would like to know when we're the only owner of the array, to
@@ -151,7 +152,7 @@ impl<T: INSObject, O: Ownership> NSArray<T, O> {
     }
 }
 
-impl<T: INSObject> NSArray<T, Shared> {
+impl<T: Message> NSArray<T, Shared> {
     pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
         unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()) }
     }
@@ -171,7 +172,7 @@ impl<T: INSObject> NSArray<T, Shared> {
     }
 }
 
-impl<T: INSObject> NSArray<T, Owned> {
+impl<T: Message> NSArray<T, Owned> {
     #[doc(alias = "objectAtIndex:")]
     pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
         // TODO: Replace this check with catching the thrown NSRangeException
@@ -196,20 +197,20 @@ impl<T: INSObject> NSArray<T, Owned> {
 
 // Copying only possible when ItemOwnership = Shared
 
-unsafe impl<T: INSObject> INSCopying for NSArray<T, Shared> {
+unsafe impl<T: Message> INSCopying for NSArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject> INSMutableCopying for NSArray<T, Shared> {
+unsafe impl<T: Message> INSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject, O: Ownership> INSFastEnumeration for NSArray<T, O> {
+unsafe impl<T: Message, O: Ownership> INSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
 
-impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
+impl<T: Message, O: Ownership> Index<usize> for NSArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -217,7 +218,7 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
     }
 }
 
-impl<T: INSObject, O: Ownership> DefaultId for NSArray<T, O> {
+impl<T: Message, O: Ownership> DefaultId for NSArray<T, O> {
     type Ownership = O;
 
     #[inline]
@@ -226,7 +227,7 @@ impl<T: INSObject, O: Ownership> DefaultId for NSArray<T, O> {
     }
 }
 
-impl<T: INSObject, O: Ownership> NSMutableArray<T, O> {
+impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     unsafe_def_fn!(pub fn new -> Owned);
 
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
@@ -234,13 +235,13 @@ impl<T: INSObject, O: Ownership> NSMutableArray<T, O> {
     }
 }
 
-impl<T: INSObject> NSMutableArray<T, Shared> {
+impl<T: Message> NSMutableArray<T, Shared> {
     pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
         unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()) }
     }
 }
 
-impl<T: INSObject, O: Ownership> NSMutableArray<T, O> {
+impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     #[doc(alias = "addObject:")]
     pub fn push(&mut self, obj: Id<T, O>) {
         // SAFETY: The object is not nil
@@ -339,20 +340,20 @@ impl<T: INSObject, O: Ownership> NSMutableArray<T, O> {
 
 // Copying only possible when ItemOwnership = Shared
 
-unsafe impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: Message> INSCopying for NSMutableArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject> INSMutableCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: Message> INSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
+unsafe impl<T: Message, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
     type Item = T;
 }
 
-impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
+impl<T: Message, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -360,13 +361,13 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     }
 }
 
-impl<T: INSObject> IndexMut<usize> for NSMutableArray<T, Owned> {
+impl<T: Message> IndexMut<usize> for NSMutableArray<T, Owned> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
     }
 }
 
-impl<T: INSObject, O: Ownership> DefaultId for NSMutableArray<T, O> {
+impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
     type Ownership = Owned;
 
     #[inline]
@@ -385,7 +386,7 @@ mod tests {
     use objc2::rc::{autoreleasepool, Id, Owned, Shared};
 
     use super::{NSArray, NSMutableArray};
-    use crate::{INSObject, NSObject, NSString, NSValue};
+    use crate::{NSObject, NSString, NSValue};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -403,7 +404,7 @@ mod tests {
         NSArray::from_vec(vec)
     }
 
-    fn retain_count<T: INSObject>(obj: &T) -> usize {
+    fn retain_count(obj: &NSObject) -> usize {
         unsafe { msg_send![obj, retainCount] }
     }
 

@@ -8,7 +8,7 @@ use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
 
-use super::{INSCopying, INSMutableCopying, INSObject, NSObject, NSRange};
+use super::{INSCopying, INSMutableCopying, NSObject, NSRange};
 
 object! {
     unsafe pub struct NSData: NSObject;

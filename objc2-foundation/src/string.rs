@@ -12,7 +12,7 @@ use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
 
-use super::{INSCopying, INSObject, NSObject};
+use super::{INSCopying, NSObject};
 
 #[cfg(apple)]
 const UTF8_ENCODING: usize = 4;
@@ -46,7 +46,7 @@ impl NSString {
     ///
     /// ```compile_fail
     /// # use objc2::rc::autoreleasepool;
-    /// # use objc2_foundation::{INSObject, NSString};
+    /// # use objc2_foundation::NSString;
     /// autoreleasepool(|pool| {
     ///     let ns_string = NSString::new();
     ///     let s = ns_string.as_str(pool);
@@ -57,7 +57,7 @@ impl NSString {
     ///
     /// ```compile_fail
     /// # use objc2::rc::autoreleasepool;
-    /// # use objc2_foundation::{INSObject, NSString};
+    /// # use objc2_foundation::NSString;
     /// let ns_string = NSString::new();
     /// let s = autoreleasepool(|pool| ns_string.as_str(pool));
     /// ```

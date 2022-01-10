@@ -7,16 +7,14 @@ use std::os::raw::c_ulong;
 
 use objc2::rc::{Id, Owned};
 use objc2::runtime::Object;
-use objc2::{msg_send, Encode, Encoding, RefEncode};
+use objc2::{msg_send, Encode, Encoding, Message, RefEncode};
 
-use super::INSObject;
-
-pub struct NSEnumerator<'a, T: INSObject> {
+pub struct NSEnumerator<'a, T: Message> {
     id: Id<Object, Owned>,
     item: PhantomData<&'a T>,
 }
 
-impl<'a, T: INSObject> NSEnumerator<'a, T> {
+impl<'a, T: Message> NSEnumerator<'a, T> {
     /// TODO
     ///
     /// # Safety
@@ -32,7 +30,7 @@ impl<'a, T: INSObject> NSEnumerator<'a, T> {
     }
 }
 
-impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
+impl<'a, T: Message> Iterator for NSEnumerator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
@@ -40,8 +38,8 @@ impl<'a, T: INSObject> Iterator for NSEnumerator<'a, T> {
     }
 }
 
-pub unsafe trait INSFastEnumeration: INSObject {
-    type Item: INSObject;
+pub unsafe trait INSFastEnumeration: Message {
+    type Item: Message;
 
     fn iter_fast(&self) -> NSFastEnumerator<'_, Self> {
         NSFastEnumerator::new(self)
@@ -49,14 +47,14 @@ pub unsafe trait INSFastEnumeration: INSObject {
 }
 
 #[repr(C)]
-struct NSFastEnumerationState<T: INSObject> {
+struct NSFastEnumerationState<T: Message> {
     state: c_ulong, // TODO: Verify this is actually always 64 bit
     items_ptr: *const *const T,
     mutations_ptr: *mut c_ulong,
     extra: [c_ulong; 5],
 }
 
-unsafe impl<T: INSObject> Encode for NSFastEnumerationState<T> {
+unsafe impl<T: Message> Encode for NSFastEnumerationState<T> {
     const ENCODING: Encoding<'static> = Encoding::Struct(
         "?",
         &[
@@ -68,7 +66,7 @@ unsafe impl<T: INSObject> Encode for NSFastEnumerationState<T> {
     );
 }
 
-unsafe impl<T: INSObject> RefEncode for NSFastEnumerationState<T> {
+unsafe impl<T: Message> RefEncode for NSFastEnumerationState<T> {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 

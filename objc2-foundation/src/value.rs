@@ -12,7 +12,7 @@ use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Shared};
 use objc2::Encode;
 
-use super::{INSCopying, INSObject, NSObject};
+use super::{INSCopying, NSObject};
 
 object! {
     unsafe pub struct NSValue<T>: NSObject {
