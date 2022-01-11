@@ -87,6 +87,10 @@ jobs:
             os: macos-11
             target: x86_64-apple-ios
             dinghy: true
+          - name: Build iOS simulator ARM64
+            os: macos-latest
+            target: aarch64-apple-ios-sim
+            test-args: --no-run
           - name: Build iOS ARM64
             os: macos-latest
             target: aarch64-apple-ios
