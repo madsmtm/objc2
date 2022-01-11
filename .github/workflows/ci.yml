@@ -152,6 +152,14 @@ jobs:
 
     - name: Download different macOS SDK
       if: matrix.sdk
+      # macOS SDKs:
+      # - https://github.com/alexey-lysiuk/macos-sdk
+      # - https://github.com/phracker/MacOSX-SDKs
+      # - https://github.com/hexops/sdk-macos-12.0
+      #
+      # iOS SDKs:
+      # - https://github.com/xybp888/iOS-SDKs
+      # - https://github.com/theos/sdks
       run: |
         wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/${{ matrix.sdk }}/MacOSX${{ matrix.sdk }}.tar.bz2
         tar -xyf MacOSX${{ matrix.sdk }}.tar.bz2
