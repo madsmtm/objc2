@@ -15,12 +15,6 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc-sys/"
 license = "MIT"
 
-exclude = [
-    # Used to help developers track changes by running bindgen against
-    # different revisions of Apple's open source `objc4`.
-    "helper-scripts/*",
-]
-
 readme = "README.md"
 
 # Downstream users can customize the linking to libobjc!
