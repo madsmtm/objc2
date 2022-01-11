@@ -11,7 +11,7 @@ use objc2::runtime::{Class, Object};
 use objc2::Message;
 
 use super::{
-    INSCopying, INSFastEnumeration, INSMutableCopying, NSComparisonResult, NSEnumerator, NSObject,
+    NSComparisonResult, NSCopying, NSEnumerator, NSFastEnumeration, NSMutableCopying, NSObject,
     NSRange,
 };
 
@@ -197,16 +197,16 @@ impl<T: Message> NSArray<T, Owned> {
 
 // Copying only possible when ItemOwnership = Shared
 
-unsafe impl<T: Message> INSCopying for NSArray<T, Shared> {
+unsafe impl<T: Message> NSCopying for NSArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
-unsafe impl<T: Message> INSMutableCopying for NSArray<T, Shared> {
+unsafe impl<T: Message> NSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-unsafe impl<T: Message, O: Ownership> INSFastEnumeration for NSArray<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
 
@@ -340,16 +340,16 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
 
 // Copying only possible when ItemOwnership = Shared
 
-unsafe impl<T: Message> INSCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: Message> NSCopying for NSMutableArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
-unsafe impl<T: Message> INSMutableCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: Message> NSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-unsafe impl<T: Message, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableArray<T, O> {
     type Item = T;
 }
 

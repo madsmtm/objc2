@@ -1,5 +1,5 @@
 use objc2::rc::autoreleasepool;
-use objc2_foundation::{INSCopying, NSArray, NSDictionary, NSObject, NSString};
+use objc2_foundation::{NSArray, NSCopying, NSDictionary, NSObject, NSString};
 
 fn main() {
     // Create and compare NSObjects

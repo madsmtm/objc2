@@ -3,7 +3,7 @@ use core::ptr::NonNull;
 use objc2::rc::{Id, Owned, Ownership};
 use objc2::{msg_send, Message};
 
-pub unsafe trait INSCopying: Message {
+pub unsafe trait NSCopying: Message {
     /// Indicates whether the type is mutable or immutable.
     ///
     /// This can be [`Owned`] if and only if `copy` creates a new instance,
@@ -43,7 +43,7 @@ pub unsafe trait INSCopying: Message {
 /// TODO
 ///
 /// Note that the `mutableCopy` selector must return an owned object!
-pub unsafe trait INSMutableCopying: Message {
+pub unsafe trait NSMutableCopying: Message {
     /// TODO
     type Output: Message;
 

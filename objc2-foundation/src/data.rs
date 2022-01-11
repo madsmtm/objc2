@@ -8,7 +8,7 @@ use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
 
-use super::{INSCopying, INSMutableCopying, NSObject, NSRange};
+use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
 
 object! {
     unsafe pub struct NSData: NSObject;
@@ -69,12 +69,12 @@ impl NSData {
     }
 }
 
-unsafe impl INSCopying for NSData {
+unsafe impl NSCopying for NSData {
     type Ownership = Shared;
     type Output = NSData;
 }
 
-unsafe impl INSMutableCopying for NSData {
+unsafe impl NSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
@@ -153,12 +153,12 @@ impl NSMutableData {
     }
 }
 
-unsafe impl INSCopying for NSMutableData {
+unsafe impl NSCopying for NSMutableData {
     type Ownership = Shared;
     type Output = NSData;
 }
 
-unsafe impl INSMutableCopying for NSMutableData {
+unsafe impl NSMutableCopying for NSMutableData {
     type Output = NSMutableData;
 }
 

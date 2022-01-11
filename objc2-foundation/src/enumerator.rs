@@ -38,7 +38,7 @@ impl<'a, T: Message> Iterator for NSEnumerator<'a, T> {
     }
 }
 
-pub unsafe trait INSFastEnumeration: Message {
+pub unsafe trait NSFastEnumeration: Message {
     type Item: Message;
 
     fn iter_fast(&self) -> NSFastEnumerator<'_, Self> {
@@ -70,7 +70,7 @@ unsafe impl<T: Message> RefEncode for NSFastEnumerationState<T> {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
-fn enumerate<'a, 'b: 'a, C: INSFastEnumeration + ?Sized>(
+fn enumerate<'a, 'b: 'a, C: NSFastEnumeration + ?Sized>(
     object: &'b C,
     state: &mut NSFastEnumerationState<C::Item>,
     buf: &'a mut [*const C::Item],
@@ -95,7 +95,7 @@ fn enumerate<'a, 'b: 'a, C: INSFastEnumeration + ?Sized>(
 
 const FAST_ENUM_BUF_SIZE: usize = 16;
 
-pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration + ?Sized> {
+pub struct NSFastEnumerator<'a, C: 'a + NSFastEnumeration + ?Sized> {
     object: &'a C,
 
     ptr: *const *const C::Item,
@@ -105,7 +105,7 @@ pub struct NSFastEnumerator<'a, C: 'a + INSFastEnumeration + ?Sized> {
     buf: [*const C::Item; FAST_ENUM_BUF_SIZE],
 }
 
-impl<'a, C: INSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
+impl<'a, C: NSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
     fn new(object: &'a C) -> Self {
         Self {
             object,
@@ -150,7 +150,7 @@ impl<'a, C: INSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
     }
 }
 
-impl<'a, C: INSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
+impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
     type Item = &'a C::Item;
 
     fn next(&mut self) -> Option<&'a C::Item> {
@@ -168,7 +168,7 @@ impl<'a, C: INSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
 
 #[cfg(test)]
 mod tests {
-    use super::INSFastEnumeration;
+    use super::NSFastEnumeration;
     use crate::{NSArray, NSValue};
 
     #[test]

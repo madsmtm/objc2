@@ -23,10 +23,10 @@ extern "C" {}
 
 pub use self::array::{NSArray, NSMutableArray};
 pub use self::comparison_result::NSComparisonResult;
-pub use self::copying::{INSCopying, INSMutableCopying};
+pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::data::{NSData, NSMutableData};
 pub use self::dictionary::NSDictionary;
-pub use self::enumerator::{INSFastEnumeration, NSEnumerator, NSFastEnumerator};
+pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
 pub use self::object::NSObject;
 pub use self::range::NSRange;
 pub use self::string::NSString;

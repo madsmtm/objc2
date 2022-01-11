@@ -12,7 +12,7 @@ use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
 
-use super::{INSCopying, NSObject};
+use super::{NSCopying, NSObject};
 
 #[cfg(apple)]
 const UTF8_ENCODING: usize = 4;
@@ -121,7 +121,7 @@ impl DefaultId for NSString {
     }
 }
 
-unsafe impl INSCopying for NSString {
+unsafe impl NSCopying for NSString {
     type Ownership = Shared;
     type Output = NSString;
 }

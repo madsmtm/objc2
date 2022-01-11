@@ -12,7 +12,7 @@ use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Shared};
 use objc2::Encode;
 
-use super::{INSCopying, NSObject};
+use super::{NSCopying, NSObject};
 
 object! {
     unsafe pub struct NSValue<T>: NSObject {
@@ -78,7 +78,7 @@ impl<T: 'static + Copy + Encode> NSValue<T> {
     }
 }
 
-unsafe impl<T: 'static> INSCopying for NSValue<T> {
+unsafe impl<T: 'static> NSCopying for NSValue<T> {
     type Ownership = Shared;
     type Output = NSValue<T>;
 }

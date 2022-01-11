@@ -7,7 +7,7 @@ use core::ptr::{self, NonNull};
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
 use objc2::{msg_send, Message};
 
-use super::{INSCopying, INSFastEnumeration, NSArray, NSEnumerator, NSObject};
+use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
 
 object! {
     unsafe pub struct NSDictionary<K, V>: NSObject {
@@ -109,7 +109,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 
     pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Shared>
     where
-        T: INSCopying<Output = K>,
+        T: NSCopying<Output = K>,
     {
         let vals = vals.as_slice_ref();
 
@@ -145,7 +145,7 @@ impl<K: Message, V: Message> DefaultId for NSDictionary<K, V> {
     }
 }
 
-unsafe impl<K: Message, V: Message> INSFastEnumeration for NSDictionary<K, V> {
+unsafe impl<K: Message, V: Message> NSFastEnumeration for NSDictionary<K, V> {
     type Item = K;
 }
 

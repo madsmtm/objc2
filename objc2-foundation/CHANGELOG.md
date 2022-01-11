@@ -28,6 +28,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Relaxed a lot of bounds from `INSObject` to `Message`. At some
   point in the future a new trait will be introduced which remedies this
   change.
+* **BREAKING**: Removed the `I` prefix from:
+  - `INSCopying` (now `NSCopying`)
+  - `INSMutableCopying` (now `NSMutableCopying`)
+  - `INSFastEnumeration` (now `NSFastEnumeration`)
 
 
 ## 0.2.0-alpha.4 - 2022-01-03
