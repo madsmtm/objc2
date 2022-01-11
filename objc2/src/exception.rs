@@ -153,7 +153,7 @@ mod tests {
 
     #[test]
     // TODO: `NULL` exceptions are invalid on 32-bit / w. fragile runtime
-    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+    #[cfg(target_pointer_width = "64")]
     fn test_throw_catch_none() {
         let s = "Hello".to_string();
         let result = unsafe {
