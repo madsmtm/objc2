@@ -83,13 +83,13 @@ jobs:
             cflags: -m32
             configureflags: --target=x86-pc-linux-gnu
             args: --features gnustep-1-9
+          - name: Test iOS simulator x86 64bit
+            os: macos-11
+            target: x86_64-apple-ios
+            dinghy: true
           - name: Build iOS ARM64
             os: macos-latest
             target: aarch64-apple-ios
-            test-args: --no-run
-          - name: Build iOS 64bit x86
-            os: macos-latest
-            target: x86_64-apple-ios
             test-args: --no-run
           - name: Build iOS ARMv7
             os: macos-latest
@@ -125,6 +125,8 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
+      # Use --no-fail-fast, except with dinghy
+      TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.args }} ${{ matrix.test-args }}
 
     runs-on: ${{ matrix.os }}
 
@@ -233,6 +235,24 @@ jobs:
         # Allows installing for a different base target
         target: ${{ matrix.rust.target || matrix.target }}
 
+    - name: Set up Cargo Dinghy
+      if: matrix.dinghy
+      run: |
+        cargo install cargo-dinghy --target x86_64-apple-darwin
+
+        # Launch the simulator
+        xcrun simctl list runtimes
+        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
+        export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
+        xcrun simctl boot $SIM_ID
+
+        # Overwrite `cargo` to point to `cargo-dinghy`
+        mkdir bin
+        echo "#!/bin/bash" > bin/cargo
+        echo "cargo-dinghy --device=$SIM_ID \"\$@\"" >> bin/cargo
+        chmod +x bin/cargo
+        echo "PATH=$(pwd)/bin:$PATH" >> $GITHUB_ENV
+
     - name: Build
       uses: actions-rs/cargo@v1
       with:
@@ -240,6 +260,7 @@ jobs:
         args: ${{ matrix.args }}
 
     - name: Check documentation
+      if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: doc
@@ -249,24 +270,26 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --no-fail-fast --no-default-features ${{ matrix.args }} ${{ matrix.test-args }}
+        args: --no-default-features ${{ env.TESTARGS }}
 
     - name: Test with features
+      if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --no-fail-fast --features ${{ env.FEATURES }} ${{ matrix.args }} ${{ matrix.test-args }}
+        args: --features ${{ env.FEATURES }} ${{ env.TESTARGS }}
 
     - name: Test in release mode
+      if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --no-fail-fast --features ${{ env.FEATURES }} ${{ matrix.args }} ${{ matrix.test-args }} --release
+        args: --features ${{ env.FEATURES }} ${{ env.TESTARGS }} --release
 
     - name: Test with unstable features
-      if: matrix.rust.toolchain == 'nightly'
+      if: ${{ !matrix.dinghy && matrix.rust.toolchain == 'nightly' }}
       uses: actions-rs/cargo@v1
       with:
         command: test
         # Not using --all-features because that would enable e.g. gnustep
-        args: --no-fail-fast --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }} ${{ matrix.args }} ${{ matrix.test-args }}
+        args: --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }} ${{ env.TESTARGS }}
