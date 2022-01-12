@@ -388,8 +388,8 @@ jobs:
         tar -xzf objfw-0.90.2.tar.gz
         cd objfw-0.90.2
 
-        # Remove -Wdocumentation, since it breaks the build
-        sed -i -e '/OBJCFLAGS="$OBJCFLAGS -Wdocumentation"/d' configure.ac
+        # Remove -Werror, since it breaks the build
+        sed -i -e '/OBJCFLAGS="$OBJCFLAGS -Werror"/d' configure.ac
 
         autoreconf
         ./configure --prefix=$HOME/objfw
