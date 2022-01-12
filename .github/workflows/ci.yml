@@ -247,7 +247,7 @@ jobs:
         # Allows installing for a different base target
         target: ${{ matrix.rust.target || matrix.target }}
 
-    - name: Set up Cargo Dinghy
+    - name: Run Cargo Dinghy
       if: matrix.dinghy
       run: |
         cargo install cargo-dinghy --target x86_64-apple-darwin
@@ -258,14 +258,14 @@ jobs:
         export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
         xcrun simctl boot $SIM_ID
 
-        # Overwrite `cargo` to point to `cargo-dinghy`
-        mkdir bin
-        echo "#!/bin/bash" > bin/cargo
-        echo "cargo-dinghy --device=$SIM_ID \"\$@\"" >> bin/cargo
-        chmod +x bin/cargo
-        echo "PATH=$(pwd)/bin:$PATH" >> $GITHUB_ENV
+        # Build
+        cargo dinghy build
+
+        # Run tests
+        cargo dinghy --device=$SIM_ID test --no-default-features
 
     - name: Build
+      if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: build
@@ -279,6 +279,7 @@ jobs:
         args: --no-deps --document-private-items ${{ matrix.args }}
 
     - name: Test without features
+      if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
