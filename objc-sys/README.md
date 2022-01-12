@@ -73,7 +73,7 @@ and `objc_autoreleasePoolPop` is a vital requirement for most applications.
 
 Just so we're being clear, this rules out the GCC [`libobjc`][gcc-libobjc]
 runtime (see [this][gcc-objc-support]), the [`mulle-objc`] runtime and
-[cocotron]. (But support for [`ObjFW`] may be added).
+[cocotron]. (But support for [`ObjFW`] and [`darling`] may be added).
 More information on different runtimes can be found in GNUStep's
 [Objective-C Compiler and Runtime FAQ][gnustep-faq].
 
@@ -83,6 +83,7 @@ More information on different runtimes can be found in GNUStep's
 [`mulle-objc`]: https://github.com/mulle-objc/mulle-objc-runtime
 [cocotron]: https://cocotron.org/
 [`ObjFW`]: https://github.com/ObjFW/ObjFW
+[`darling`]: https://github.com/darlinghq/darling-objc4
 [gnustep-faq]: http://wiki.gnustep.org/index.php/Objective-C_Compiler_and_Runtime_FAQ
 
 
