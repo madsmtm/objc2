@@ -263,6 +263,13 @@ jobs:
 
         # Run tests
         cargo dinghy --device=$SIM_ID test --no-default-features
+        # Enable a few features. We're doing it this way because cargo dingy
+        # doesn't support specifying features from a workspace.
+        sed -i -e '/\[features\]/a\
+        default = ["exception", "verify_message", "catch_all"]
+        ' objc2/Cargo.toml
+        cargo dinghy --device=$SIM_ID test
+        cargo dinghy --device=$SIM_ID test --release
 
     - name: Build
       if: ${{ !matrix.dinghy }}
