@@ -416,4 +416,5 @@ jobs:
         override: true
 
     - name: Test
-      run: cargo test --no-fail-fast -p objc2 --features objc-sys/objfw
+      # Everything except objc2-foundation
+      run: cargo test --no-fail-fast -p objc-sys -p objc2-encode -p objc2 -p block-sys -p block2 -p tests --features objfw
