@@ -58,7 +58,6 @@ fn main() {
             cc_args.push_str(" -I");
             cc_args.push_str(compat_headers.to_str().unwrap());
             println!("cargo:rustc-link-lib=dylib=objfw");
-            unimplemented!("ObjFW is not yet supported")
         }
         // Checked in if-let above
         (false, false, false, false) => unreachable!(),

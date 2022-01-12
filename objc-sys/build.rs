@@ -113,11 +113,7 @@ fn main() {
                 GNUStep(1, 7)
             }
         }
-        (false, false, true) => {
-            // For now
-            unimplemented!("ObjFW is not yet supported")
-            // ObjFW(None)
-        }
+        (false, false, true) => ObjFW(None),
         (false, false, false) => {
             // Choose sensible defaults when generating docs
             if std::env::var("DOCS_RS").is_ok() {

@@ -399,7 +399,14 @@ jobs:
         ./configure --prefix=$HOME/objfw
         make
         make install
+
+        echo "PATH=$HOME/objfw/bin:$PATH" >> $GITHUB_ENV
+        echo "LIBRARY_PATH=$HOME/objfw/lib:$LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$HOME/objfw/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "CPATH=$HOME/objfw/include:$CPATH" >> $GITHUB_ENV
         ls -al $HOME/objfw/*
+        ls -al $HOME/objfw/include/ObjFW
+        ls -al $HOME/objfw/include/ObjFW-RT
 
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
