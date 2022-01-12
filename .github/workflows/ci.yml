@@ -377,7 +377,6 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Clang
-      if: contains(matrix.os, 'ubuntu')
       run: sudo apt-get -y install clang
 
     - name: Set up ObjFW
