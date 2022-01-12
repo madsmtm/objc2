@@ -371,6 +371,9 @@ jobs:
   test_objfw:
     name: Test ObjFW
 
+    env:
+      RUN_TESTS:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -401,6 +404,8 @@ jobs:
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
+        toolchain: stable
+        profile: minimal
         override: true
 
     - name: Test
