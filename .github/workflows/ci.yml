@@ -371,13 +371,6 @@ jobs:
   test_objfw:
     name: Test ObjFW
 
-    env:
-      CFLAGS: -Wno-error=documentation
-      CXXFLAGS: -Wno-error=documentation
-      OBJCFLAGS: -Wno-error=documentation
-      ASMFLAGS: -Wno-error=documentation
-      LDFLAGS: -Wno-error=documentation
-
     runs-on: ubuntu-latest
 
     steps:
@@ -394,6 +387,10 @@ jobs:
         wget https://objfw.nil.im/downloads/objfw-0.90.2.tar.gz
         tar -xzf objfw-0.90.2.tar.gz
         cd objfw-0.90.2
+
+        # Remove -Wdocumentation, since it breaks the build
+        sed -i -e '/OBJCFLAGS="$OBJCFLAGS -Wdocumentation"/d' configure.ac
+
         autoreconf
         ./configure --prefix=$HOME/objfw
         make
