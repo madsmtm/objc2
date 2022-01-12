@@ -24,6 +24,7 @@ macro_rules! object {
         #[repr(C)]
         $v struct $name<$($t $(: $b)?),*> {
             inner: $inherits,
+            // Additional fields (should only be zero-sized PhantomData).
             $($p: $pty),*
         }
 
@@ -39,6 +40,24 @@ macro_rules! object {
             }
         }
 
+        // SAFETY: An instance can always be _used_ in exactly the same way as
+        // it's superclasses (though not necessarily _constructed_ in the same
+        // way, but `Deref` doesn't allow this).
+        //
+        // Remember; while we (the Rust side) may intentionally be forgetting
+        // which instance we're holding, the Objective-C side will remember,
+        // and will always dispatch to the correct method implementations.
+        //
+        // Any lifetime information that the object may have been holding is
+        // safely kept in the returned reference.
+        //
+        // Generics are discarded (for example in the case of `&NSValue<T>` to
+        // `&NSObject`), but if the generic contained a lifetime, that
+        // lifetime is still included in the returned reference.
+        //
+        // Note that you can easily have two different variables pointing to
+        // the same object, `x: &T` and `y: &T::Target`, and this would be
+        // perfectly safe!
         impl<$($t $(: $b)?),*> ::core::ops::Deref for $name<$($t),*> {
             type Target = $inherits;
 
@@ -48,6 +67,17 @@ macro_rules! object {
             }
         }
 
+        // SAFETY: Mutability does not change anything in the above
+        // consideration, the lifetime of `&mut Self::Target` is still tied to
+        // `&mut self`.
+        //
+        // Usually we don't want to allow `&mut` of immutable objects like
+        // `NSString`, because their `NSCopying` implementation returns the
+        // same object, and would violate aliasing rules.
+        //
+        // But `&mut NSMutableString` -> `&mut NSString` safe, since the
+        // `NSCopying` implementation of `NSMutableString` is used, and that
+        // is guaranteed to return a different object.
         impl<$($t $(: $b)?),*> ::core::ops::DerefMut for $name<$($t),*> {
             #[inline]
             fn deref_mut(&mut self) -> &mut Self::Target {
