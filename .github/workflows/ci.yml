@@ -34,6 +34,7 @@ jobs:
 
   test:
     name: ${{ matrix.name }}
+    if: false # Temporarily disabled
 
     strategy:
       fail-fast: false
@@ -366,3 +367,34 @@ jobs:
         ' objc2/Cargo.toml
         cargo dinghy --device=$SIM_ID test
         cargo dinghy --device=$SIM_ID test --release
+
+  test_objfw:
+    name: Test ObjFW
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Clang
+      if: contains(matrix.os, 'ubuntu')
+      run: sudo apt-get -y install clang
+
+    - name: Set up ObjFW
+      run: |
+        wget https://objfw.nil.im/downloads/objfw-0.90.2.tar.gz
+        tar -xzf objfw-0.90.2.tar.gz
+        cd objfw-0.90.2
+        autoreconf
+        ./configure --prefix=$HOME/objfw
+        make
+        make install
+        ls -al $HOME/objfw/*
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        override: true
+
+    - name: Test
+      run: cargo test --no-fail-fast -p objc2 --features objc-sys/objfw
