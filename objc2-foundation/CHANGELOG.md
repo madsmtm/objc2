@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * **BREAKING**: Removed the following helper traits in favor of inherent
-  methods on the object itself:
+  methods on the objects themselves:
   - `INSMutableArray`
   - `INSArray`
   - `INSMutableData`
@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `INSValue`
   - `INSObject`
 
-  This is possible because objects now deref to their superclasses.
+  This changed because objects now deref to their superclasses.
 * **BREAKING**: Relaxed a lot of bounds from `INSObject` to `Message`. At some
   point in the future a new trait will be introduced which remedies this
   change.
