@@ -371,6 +371,13 @@ jobs:
   test_objfw:
     name: Test ObjFW
 
+    env:
+      CFLAGS: -Wno-error=documentation
+      CXXFLAGS: -Wno-error=documentation
+      OBJCFLAGS: -Wno-error=documentation
+      ASMFLAGS: -Wno-error=documentation
+      LDFLAGS: -Wno-error=documentation
+
     runs-on: ubuntu-latest
 
     steps:
