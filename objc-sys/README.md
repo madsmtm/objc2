@@ -18,6 +18,12 @@ and they act in slightly different ways. By default, Apple platforms link to
 Apple's runtime, but if you're using another runtime you must tell it to this
 library using feature flags.
 
+One could ask, why even bother supporting other runtimes? To that, there's a
+simple answer: _Robustness_. By testing with these alternative runtimes in CI,
+we become by extension much more confident that our implementation doesn't
+rely on brittle unspecified behaviour, and works across different macOS and
+iOS versions.
+
 
 ### Apple's [`objc4`](https://github.com/apple-oss-distributions/objc4)
 
