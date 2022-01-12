@@ -390,6 +390,7 @@ jobs:
 
         # Remove -Werror, since it breaks the build
         sed -i -e '/OBJCFLAGS="$OBJCFLAGS -Werror"/d' configure.ac
+        sed -i -e 's/-Wpointer-arith -Werror/-Wpointer-arith/g' configure.ac
 
         autoreconf
         ./configure --prefix=$HOME/objfw
