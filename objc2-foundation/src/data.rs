@@ -4,24 +4,40 @@ use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use core::{ffi::c_void, ptr::NonNull};
 
-use super::{INSCopying, INSMutableCopying, INSObject, NSRange};
 use objc2::msg_send;
-use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared};
+use objc2::rc::{DefaultId, Id, Owned, Shared};
+use objc2::runtime::{Class, Object};
 
-pub unsafe trait INSData: INSObject {
-    type Ownership: Ownership;
+use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
 
-    unsafe_def_fn!(fn new -> Self::Ownership);
+object! {
+    unsafe pub struct NSData: NSObject;
+}
 
-    fn len(&self) -> usize {
+// TODO: SAFETY
+unsafe impl Sync for NSData {}
+unsafe impl Send for NSData {}
+
+object! {
+    unsafe pub struct NSMutableData: NSData;
+}
+
+// TODO: SAFETY
+unsafe impl Sync for NSMutableData {}
+unsafe impl Send for NSMutableData {}
+
+impl NSData {
+    unsafe_def_fn!(fn new -> Shared);
+
+    pub fn len(&self) -> usize {
         unsafe { msg_send![self, length] }
     }
 
-    fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    fn bytes(&self) -> &[u8] {
+    pub fn bytes(&self) -> &[u8] {
         let ptr: *const c_void = unsafe { msg_send![self, bytes] };
         // The bytes pointer may be null for length zero
         if ptr.is_null() {
@@ -31,83 +47,34 @@ pub unsafe trait INSData: INSObject {
         }
     }
 
-    fn with_bytes(bytes: &[u8]) -> Id<Self, Self::Ownership> {
-        let cls = Self::class();
-        let bytes_ptr = bytes.as_ptr() as *const c_void;
-        unsafe {
-            let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![
-                obj,
-                initWithBytes: bytes_ptr,
-                length: bytes.len(),
-            ];
-            Id::new(NonNull::new_unchecked(obj))
-        }
+    pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
+        unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()) }
     }
 
     #[cfg(feature = "block")]
-    fn from_vec(bytes: Vec<u8>) -> Id<Self, Self::Ownership> {
-        use core::mem::ManuallyDrop;
-
-        use block2::{Block, ConcreteBlock};
-
-        let capacity = bytes.capacity();
-
-        let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
-            // Recreate the Vec and let it drop
-            let _ = Vec::from_raw_parts(bytes as *mut u8, len, capacity);
-        });
-        let dealloc = dealloc.copy();
-        let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;
-
+    pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Shared> {
         // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
         // bug; it forgets to assign the input buffer and length to the
         // instance before it swizzles to NSDataWithDeallocatorBlock.
         // See https://github.com/gnustep/libs-base/pull/213
         // So we just use NSDataWithDeallocatorBlock directly.
+        //
+        // NSMutableData does not have this problem.
         #[cfg(gnustep)]
-        let cls = {
-            let cls = Self::class();
-            if cls == objc2::class!(NSData) {
-                objc2::class!(NSDataWithDeallocatorBlock)
-            } else {
-                cls
-            }
-        };
+        let cls = objc2::class!(NSDataWithDeallocatorBlock);
         #[cfg(not(gnustep))]
         let cls = Self::class();
 
-        let mut bytes = ManuallyDrop::new(bytes);
-
-        unsafe {
-            let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![
-                obj,
-                initWithBytesNoCopy: bytes.as_mut_ptr() as *mut c_void,
-                length: bytes.len(),
-                deallocator: dealloc,
-            ];
-            Id::new(NonNull::new_unchecked(obj))
-        }
+        unsafe { Id::new(data_from_vec(cls, bytes).cast()) }
     }
 }
 
-object!(unsafe pub struct NSData);
-
-// TODO: SAFETY
-unsafe impl Sync for NSData {}
-unsafe impl Send for NSData {}
-
-unsafe impl INSData for NSData {
-    type Ownership = Shared;
-}
-
-unsafe impl INSCopying for NSData {
+unsafe impl NSCopying for NSData {
     type Ownership = Shared;
     type Output = NSData;
 }
 
-unsafe impl INSMutableCopying for NSData {
+unsafe impl NSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
@@ -135,8 +102,19 @@ impl DefaultId for NSData {
     }
 }
 
-pub unsafe trait INSMutableData: INSData {
-    fn bytes_mut(&mut self) -> &mut [u8] {
+impl NSMutableData {
+    unsafe_def_fn!(fn new -> Owned);
+
+    pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
+        unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()) }
+    }
+
+    #[cfg(feature = "block")]
+    pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
+        unsafe { Id::new(data_from_vec(Self::class(), bytes).cast()) }
+    }
+
+    pub fn bytes_mut(&mut self) -> &mut [u8] {
         let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
         // The bytes pointer may be null for length zero
         if ptr.is_null() {
@@ -147,16 +125,16 @@ pub unsafe trait INSMutableData: INSData {
     }
 
     /// Expands with zeroes, or truncates the buffer.
-    fn set_len(&mut self, len: usize) {
+    pub fn set_len(&mut self, len: usize) {
         unsafe { msg_send![self, setLength: len] }
     }
 
-    fn append(&mut self, bytes: &[u8]) {
+    pub fn append(&mut self, bytes: &[u8]) {
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe { msg_send![self, appendBytes: bytes_ptr, length: bytes.len()] }
     }
 
-    fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
+    pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
         let range = NSRange::from(range);
         let ptr = bytes.as_ptr() as *const c_void;
         unsafe {
@@ -169,30 +147,18 @@ pub unsafe trait INSMutableData: INSData {
         }
     }
 
-    fn set_bytes(&mut self, bytes: &[u8]) {
+    pub fn set_bytes(&mut self, bytes: &[u8]) {
         let len = self.len();
         self.replace_range(0..len, bytes);
     }
 }
 
-object!(unsafe pub struct NSMutableData);
-
-// TODO: SAFETY
-unsafe impl Sync for NSMutableData {}
-unsafe impl Send for NSMutableData {}
-
-unsafe impl INSData for NSMutableData {
-    type Ownership = Owned;
-}
-
-unsafe impl INSMutableData for NSMutableData {}
-
-unsafe impl INSCopying for NSMutableData {
+unsafe impl NSCopying for NSMutableData {
     type Ownership = Shared;
     type Output = NSData;
 }
 
-unsafe impl INSMutableCopying for NSMutableData {
+unsafe impl NSMutableCopying for NSMutableData {
     type Output = NSMutableData;
 }
 
@@ -233,9 +199,51 @@ impl DefaultId for NSMutableData {
     }
 }
 
+unsafe fn data_with_bytes(cls: &Class, bytes: &[u8]) -> NonNull<Object> {
+    let bytes_ptr = bytes.as_ptr() as *const c_void;
+    unsafe {
+        let obj: *mut Object = msg_send![cls, alloc];
+        let obj: *mut Object = msg_send![
+            obj,
+            initWithBytes: bytes_ptr,
+            length: bytes.len(),
+        ];
+        NonNull::new_unchecked(obj)
+    }
+}
+
+#[cfg(feature = "block")]
+unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> NonNull<Object> {
+    use core::mem::ManuallyDrop;
+
+    use block2::{Block, ConcreteBlock};
+
+    let capacity = bytes.capacity();
+
+    let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
+        // Recreate the Vec and let it drop
+        let _ = Vec::from_raw_parts(bytes as *mut u8, len, capacity);
+    });
+    let dealloc = dealloc.copy();
+    let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;
+
+    let mut bytes = ManuallyDrop::new(bytes);
+
+    unsafe {
+        let obj: *mut Object = msg_send![cls, alloc];
+        let obj: *mut Object = msg_send![
+            obj,
+            initWithBytesNoCopy: bytes.as_mut_ptr() as *mut c_void,
+            length: bytes.len(),
+            deallocator: dealloc,
+        ];
+        NonNull::new_unchecked(obj)
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{INSData, INSMutableData, NSData, NSMutableData};
+    use super::{NSData, NSMutableData};
     #[cfg(feature = "block")]
     use alloc::vec;
 

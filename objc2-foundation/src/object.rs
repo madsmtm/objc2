@@ -1,42 +1,14 @@
-use core::marker::PhantomData;
 use core::ptr::NonNull;
 
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Bool, Class, Object};
-use objc2::Message;
 
 use super::NSString;
 
-pub unsafe trait INSObject: Message {
-    fn class() -> &'static Class;
-
-    fn hash_code(&self) -> usize {
-        unsafe { msg_send![self, hash] }
-    }
-
-    fn is_equal<T: INSObject>(&self, other: &T) -> bool {
-        let result: Bool = unsafe { msg_send![self, isEqual: other] };
-        result.as_bool()
-    }
-
-    fn description(&self) -> Id<NSString, Shared> {
-        unsafe {
-            let result: *mut NSString = msg_send![self, description];
-            // TODO: Verify that description always returns a non-null string
-            Id::retain(NonNull::new_unchecked(result))
-        }
-    }
-
-    fn is_kind_of(&self, cls: &Class) -> bool {
-        let result: Bool = unsafe { msg_send![self, isKindOfClass: cls] };
-        result.as_bool()
-    }
+object! {
+    unsafe pub struct NSObject: Object;
 }
-
-object!(unsafe pub struct NSObject<> {
-    p: PhantomData<Object>, // Temporary
-});
 
 /// ```compile_fail
 /// use objc2_foundation::NSObject;
@@ -53,6 +25,28 @@ pub struct NSObjectNotSendNorSync;
 
 impl NSObject {
     unsafe_def_fn!(pub fn new -> Owned);
+
+    pub fn hash_code(&self) -> usize {
+        unsafe { msg_send![self, hash] }
+    }
+
+    pub fn is_equal(&self, other: &NSObject) -> bool {
+        let result: Bool = unsafe { msg_send![self, isEqual: other] };
+        result.as_bool()
+    }
+
+    pub fn description(&self) -> Id<NSString, Shared> {
+        unsafe {
+            let result: *mut NSString = msg_send![self, description];
+            // TODO: Verify that description always returns a non-null string
+            Id::retain(NonNull::new_unchecked(result))
+        }
+    }
+
+    pub fn is_kind_of(&self, cls: &Class) -> bool {
+        let result: Bool = unsafe { msg_send![self, isKindOfClass: cls] };
+        result.as_bool()
+    }
 }
 
 impl DefaultId for NSObject {
@@ -66,7 +60,7 @@ impl DefaultId for NSObject {
 
 #[cfg(test)]
 mod tests {
-    use super::{INSObject, NSObject};
+    use super::NSObject;
     use crate::NSString;
     use alloc::format;
 

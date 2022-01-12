@@ -21,16 +21,16 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-pub use self::array::{INSArray, INSMutableArray, NSArray, NSMutableArray};
+pub use self::array::{NSArray, NSMutableArray};
 pub use self::comparison_result::NSComparisonResult;
-pub use self::copying::{INSCopying, INSMutableCopying};
-pub use self::data::{INSData, INSMutableData, NSData, NSMutableData};
-pub use self::dictionary::{INSDictionary, NSDictionary};
-pub use self::enumerator::{INSFastEnumeration, NSEnumerator, NSFastEnumerator};
-pub use self::object::{INSObject, NSObject};
+pub use self::copying::{NSCopying, NSMutableCopying};
+pub use self::data::{NSData, NSMutableData};
+pub use self::dictionary::NSDictionary;
+pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
+pub use self::object::NSObject;
 pub use self::range::NSRange;
-pub use self::string::{INSString, NSString};
-pub use self::value::{INSValue, NSValue};
+pub use self::string::NSString;
+pub use self::value::NSValue;
 
 #[cfg(apple)]
 #[link(name = "Foundation", kind = "framework")]

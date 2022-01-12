@@ -12,7 +12,7 @@ use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
 
-use super::{INSCopying, INSObject};
+use super::{NSCopying, NSObject};
 
 #[cfg(apple)]
 const UTF8_ENCODING: usize = 4;
@@ -23,12 +23,22 @@ const UTF8_ENCODING: i32 = 4;
 #[allow(non_upper_case_globals)]
 const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
-pub unsafe trait INSString: INSObject {
-    fn len(&self) -> usize {
+object! {
+    unsafe pub struct NSString: NSObject;
+}
+
+// TODO: SAFETY
+unsafe impl Sync for NSString {}
+unsafe impl Send for NSString {}
+
+impl NSString {
+    unsafe_def_fn!(pub fn new -> Shared);
+
+    pub fn len(&self) -> usize {
         unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
     }
 
-    fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
@@ -36,7 +46,7 @@ pub unsafe trait INSString: INSObject {
     ///
     /// ```compile_fail
     /// # use objc2::rc::autoreleasepool;
-    /// # use objc2_foundation::{INSObject, INSString, NSString};
+    /// # use objc2_foundation::NSString;
     /// autoreleasepool(|pool| {
     ///     let ns_string = NSString::new();
     ///     let s = ns_string.as_str(pool);
@@ -47,11 +57,11 @@ pub unsafe trait INSString: INSObject {
     ///
     /// ```compile_fail
     /// # use objc2::rc::autoreleasepool;
-    /// # use objc2_foundation::{INSObject, INSString, NSString};
+    /// # use objc2_foundation::NSString;
     /// let ns_string = NSString::new();
     /// let s = autoreleasepool(|pool| ns_string.as_str(pool));
     /// ```
-    fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
+    pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
         // This is necessary until `auto` types stabilizes.
         pool.__verify_is_inner();
 
@@ -86,7 +96,7 @@ pub unsafe trait INSString: INSObject {
         str::from_utf8(bytes).unwrap()
     }
 
-    fn from_str(string: &str) -> Id<Self, Shared> {
+    pub fn from_str(string: &str) -> Id<Self, Shared> {
         let cls = Self::class();
         let bytes = string.as_ptr() as *const c_void;
         unsafe {
@@ -102,16 +112,6 @@ pub unsafe trait INSString: INSObject {
     }
 }
 
-object!(unsafe pub struct NSString);
-
-// TODO: SAFETY
-unsafe impl Sync for NSString {}
-unsafe impl Send for NSString {}
-
-impl NSString {
-    unsafe_def_fn!(pub fn new -> Shared);
-}
-
 impl DefaultId for NSString {
     type Ownership = Shared;
 
@@ -121,9 +121,7 @@ impl DefaultId for NSString {
     }
 }
 
-unsafe impl INSString for NSString {}
-
-unsafe impl INSCopying for NSString {
+unsafe impl NSCopying for NSString {
     type Ownership = Shared;
     type Output = NSString;
 }

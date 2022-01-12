@@ -499,6 +499,7 @@ mod tests {
         });
 
         // make sure that the autoreleased value has been released
+        // TODO: Investigate if this is flaky on GNUStep
         assert_eq!(retain_count(&*cloned), 1);
     }
 

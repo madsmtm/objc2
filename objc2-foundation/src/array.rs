@@ -7,158 +7,15 @@ use core::ptr::NonNull;
 
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::runtime::Object;
+use objc2::runtime::{Class, Object};
+use objc2::Message;
 
 use super::{
-    INSCopying, INSFastEnumeration, INSMutableCopying, INSObject, NSComparisonResult, NSEnumerator,
+    NSComparisonResult, NSCopying, NSEnumerator, NSFastEnumeration, NSMutableCopying, NSObject,
     NSRange,
 };
 
-unsafe fn from_refs<A: INSArray + ?Sized>(refs: &[&A::Item]) -> Id<A, A::Ownership> {
-    let cls = A::class();
-    let obj: *mut A = unsafe { msg_send![cls, alloc] };
-    let obj: *mut A = unsafe {
-        msg_send![
-            obj,
-            initWithObjects: refs.as_ptr(),
-            count: refs.len(),
-        ]
-    };
-    let obj = unsafe { NonNull::new_unchecked(obj) };
-    unsafe { Id::new(obj) }
-}
-
-pub unsafe trait INSArray: INSObject {
-    type Ownership: Ownership;
-    type Item: INSObject;
-    type ItemOwnership: Ownership;
-
-    unsafe_def_fn!(fn new -> Self::Ownership);
-
-    #[doc(alias = "count")]
-    fn len(&self) -> usize {
-        unsafe { msg_send![self, count] }
-    }
-
-    fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
-    #[doc(alias = "objectAtIndex:")]
-    fn get(&self, index: usize) -> Option<&Self::Item> {
-        // TODO: Replace this check with catching the thrown NSRangeException
-        if index < self.len() {
-            // SAFETY: The index is checked to be in bounds.
-            Some(unsafe { msg_send![self, objectAtIndex: index] })
-        } else {
-            None
-        }
-    }
-
-    #[doc(alias = "objectAtIndex:")]
-    fn get_mut(&mut self, index: usize) -> Option<&mut Self::Item>
-    where
-        Self: INSArray<ItemOwnership = Owned>,
-    {
-        // TODO: Replace this check with catching the thrown NSRangeException
-        if index < self.len() {
-            // SAFETY: The index is checked to be in bounds.
-            Some(unsafe { msg_send![self, objectAtIndex: index] })
-        } else {
-            None
-        }
-    }
-
-    #[doc(alias = "objectAtIndex:")]
-    fn get_retained(&self, index: usize) -> Id<Self::Item, Shared>
-    where
-        Self: INSArray<ItemOwnership = Shared>,
-    {
-        let obj = self.get(index).unwrap();
-        // SAFETY: The object is originally shared (see `where` bound).
-        unsafe { Id::retain(obj.into()) }
-    }
-
-    #[doc(alias = "firstObject")]
-    fn first(&self) -> Option<&Self::Item> {
-        unsafe { msg_send![self, firstObject] }
-    }
-
-    #[doc(alias = "firstObject")]
-    fn first_mut(&mut self) -> Option<&mut Self::Item>
-    where
-        Self: INSArray<ItemOwnership = Owned>,
-    {
-        unsafe { msg_send![self, firstObject] }
-    }
-
-    #[doc(alias = "lastObject")]
-    fn last(&self) -> Option<&Self::Item> {
-        unsafe { msg_send![self, lastObject] }
-    }
-
-    #[doc(alias = "lastObject")]
-    fn last_mut(&mut self) -> Option<&mut Self::Item>
-    where
-        Self: INSArray<ItemOwnership = Owned>,
-    {
-        unsafe { msg_send![self, lastObject] }
-    }
-
-    #[doc(alias = "objectEnumerator")]
-    fn iter(&self) -> NSEnumerator<'_, Self::Item> {
-        unsafe {
-            let result: *mut Object = msg_send![self, objectEnumerator];
-            NSEnumerator::from_ptr(result)
-        }
-    }
-
-    fn from_vec(vec: Vec<Id<Self::Item, Self::ItemOwnership>>) -> Id<Self, Self::Ownership> {
-        unsafe { from_refs(vec.as_slice_ref()) }
-    }
-
-    fn objects_in_range(&self, range: Range<usize>) -> Vec<&Self::Item> {
-        let range = NSRange::from(range);
-        let mut vec = Vec::with_capacity(range.length);
-        unsafe {
-            let _: () = msg_send![self, getObjects: vec.as_ptr(), range: range];
-            vec.set_len(range.length);
-        }
-        vec
-    }
-
-    fn to_vec(&self) -> Vec<&Self::Item> {
-        self.objects_in_range(0..self.len())
-    }
-
-    // TODO: Take Id<Self, Self::ItemOwnership> ?
-    fn into_vec(array: Id<Self, Owned>) -> Vec<Id<Self::Item, Self::ItemOwnership>> {
-        array
-            .to_vec()
-            .into_iter()
-            .map(|obj| unsafe { Id::retain(obj.into()) })
-            .collect()
-    }
-
-    fn from_slice(slice: &[Id<Self::Item, Shared>]) -> Id<Self, Self::Ownership>
-    where
-        Self: INSArray<ItemOwnership = Shared>,
-    {
-        unsafe { from_refs(slice.as_slice_ref()) }
-    }
-
-    fn to_shared_vec(&self) -> Vec<Id<Self::Item, Shared>>
-    where
-        Self: INSArray<ItemOwnership = Shared>,
-    {
-        self.to_vec()
-            .into_iter()
-            .map(|obj| unsafe { Id::retain(obj.into()) })
-            .collect()
-    }
-}
-
-object!(
+object! {
     /// TODO
     ///
     /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
@@ -169,10 +26,10 @@ object!(
     /// TODO: Can we make it impossible? Should we?
     ///
     /// What about `Id<NSArray<T, Shared>, Owned>`?
-    unsafe pub struct NSArray<T, O: Ownership> {
+    unsafe pub struct NSArray<T, O: Ownership>: NSObject {
         item: PhantomData<Id<T, O>>,
     }
-);
+}
 
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
 //
@@ -194,34 +51,166 @@ unsafe impl<T: Send> Send for NSArray<T, Owned> {}
 #[cfg(doctest)]
 pub struct NSArrayWithObjectNotSendSync;
 
-unsafe impl<T: INSObject, O: Ownership> INSArray for NSArray<T, O> {
-    /// The `NSArray` itself (length and number of items) is always immutable,
-    /// but we would like to know when we're the only owner of the array, to
-    /// allow mutation of the array's items.
-    ///
-    /// We only implement `INSCopying` when `O = Shared`, so this is safe.
-    type Ownership = O;
+object! {
+    // TODO: Ensure that this deref to NSArray is safe!
+    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {
+        item: PhantomData<Id<T, O>>,
+    }
+}
 
-    type Item = T;
-    type ItemOwnership = O;
+// SAFETY: Same as NSArray.
+//
+// TODO: Properly verify this
+unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
+
+unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> NonNull<Object> {
+    let obj: *mut Object = unsafe { msg_send![cls, alloc] };
+    let obj: *mut Object = unsafe {
+        msg_send![
+            obj,
+            initWithObjects: refs.as_ptr(),
+            count: refs.len(),
+        ]
+    };
+    unsafe { NonNull::new_unchecked(obj) }
+}
+
+impl<T: Message, O: Ownership> NSArray<T, O> {
+    unsafe_def_fn! {
+        /// The `NSArray` itself (length and number of items) is always immutable,
+        /// but we would like to know when we're the only owner of the array, to
+        /// allow mutation of the array's items.
+        pub fn new -> O;
+    }
+
+    #[doc(alias = "count")]
+    pub fn len(&self) -> usize {
+        unsafe { msg_send![self, count] }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    #[doc(alias = "objectAtIndex:")]
+    pub fn get(&self, index: usize) -> Option<&T> {
+        // TODO: Replace this check with catching the thrown NSRangeException
+        if index < self.len() {
+            // SAFETY: The index is checked to be in bounds.
+            Some(unsafe { msg_send![self, objectAtIndex: index] })
+        } else {
+            None
+        }
+    }
+
+    #[doc(alias = "firstObject")]
+    pub fn first(&self) -> Option<&T> {
+        unsafe { msg_send![self, firstObject] }
+    }
+
+    #[doc(alias = "lastObject")]
+    pub fn last(&self) -> Option<&T> {
+        unsafe { msg_send![self, lastObject] }
+    }
+
+    #[doc(alias = "objectEnumerator")]
+    pub fn iter(&self) -> NSEnumerator<'_, T> {
+        unsafe {
+            let result: *mut Object = msg_send![self, objectEnumerator];
+            NSEnumerator::from_ptr(result)
+        }
+    }
+
+    pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
+        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()) }
+    }
+
+    pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
+        let range = NSRange::from(range);
+        let mut vec = Vec::with_capacity(range.length);
+        unsafe {
+            let _: () = msg_send![self, getObjects: vec.as_ptr(), range: range];
+            vec.set_len(range.length);
+        }
+        vec
+    }
+
+    pub fn to_vec(&self) -> Vec<&T> {
+        self.objects_in_range(0..self.len())
+    }
+
+    // TODO: Take Id<Self, Self::ItemOwnership> ?
+    pub fn into_vec(array: Id<Self, Owned>) -> Vec<Id<T, O>> {
+        array
+            .to_vec()
+            .into_iter()
+            .map(|obj| unsafe { Id::retain(obj.into()) })
+            .collect()
+    }
+}
+
+impl<T: Message> NSArray<T, Shared> {
+    pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
+        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()) }
+    }
+
+    #[doc(alias = "objectAtIndex:")]
+    pub fn get_retained(&self, index: usize) -> Id<T, Shared> {
+        let obj = self.get(index).unwrap();
+        // SAFETY: The object is originally shared (see `where` bound).
+        unsafe { Id::retain(obj.into()) }
+    }
+
+    pub fn to_shared_vec(&self) -> Vec<Id<T, Shared>> {
+        self.to_vec()
+            .into_iter()
+            .map(|obj| unsafe { Id::retain(obj.into()) })
+            .collect()
+    }
+}
+
+impl<T: Message> NSArray<T, Owned> {
+    #[doc(alias = "objectAtIndex:")]
+    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
+        // TODO: Replace this check with catching the thrown NSRangeException
+        if index < self.len() {
+            // SAFETY: The index is checked to be in bounds.
+            Some(unsafe { msg_send![self, objectAtIndex: index] })
+        } else {
+            None
+        }
+    }
+
+    #[doc(alias = "firstObject")]
+    pub fn first_mut(&mut self) -> Option<&mut T> {
+        unsafe { msg_send![self, firstObject] }
+    }
+
+    #[doc(alias = "lastObject")]
+    pub fn last_mut(&mut self) -> Option<&mut T> {
+        unsafe { msg_send![self, lastObject] }
+    }
 }
 
 // Copying only possible when ItemOwnership = Shared
 
-unsafe impl<T: INSObject> INSCopying for NSArray<T, Shared> {
+unsafe impl<T: Message> NSCopying for NSArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject> INSMutableCopying for NSArray<T, Shared> {
+unsafe impl<T: Message> NSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject, O: Ownership> INSFastEnumeration for NSArray<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
 
-impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
+impl<T: Message, O: Ownership> Index<usize> for NSArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -229,7 +218,7 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSArray<T, O> {
     }
 }
 
-impl<T: INSObject, O: Ownership> DefaultId for NSArray<T, O> {
+impl<T: Message, O: Ownership> DefaultId for NSArray<T, O> {
     type Ownership = O;
 
     #[inline]
@@ -238,15 +227,29 @@ impl<T: INSObject, O: Ownership> DefaultId for NSArray<T, O> {
     }
 }
 
-pub unsafe trait INSMutableArray: INSArray {
+impl<T: Message, O: Ownership> NSMutableArray<T, O> {
+    unsafe_def_fn!(pub fn new -> Owned);
+
+    pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
+        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()) }
+    }
+}
+
+impl<T: Message> NSMutableArray<T, Shared> {
+    pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
+        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()) }
+    }
+}
+
+impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     #[doc(alias = "addObject:")]
-    fn push(&mut self, obj: Id<Self::Item, Self::ItemOwnership>) {
+    pub fn push(&mut self, obj: Id<T, O>) {
         // SAFETY: The object is not nil
         unsafe { msg_send![self, addObject: &*obj] }
     }
 
     #[doc(alias = "insertObject:atIndex:")]
-    fn insert(&mut self, index: usize, obj: Id<Self::Item, Self::ItemOwnership>) {
+    pub fn insert(&mut self, index: usize, obj: Id<T, O>) {
         // TODO: Replace this check with catching the thrown NSRangeException
         let len = self.len();
         if index < len {
@@ -262,11 +265,7 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 
     #[doc(alias = "replaceObjectAtIndex:withObject:")]
-    fn replace(
-        &mut self,
-        index: usize,
-        obj: Id<Self::Item, Self::ItemOwnership>,
-    ) -> Id<Self::Item, Self::ItemOwnership> {
+    pub fn replace(&mut self, index: usize, obj: Id<T, O>) -> Id<T, O> {
         let old_obj = unsafe {
             let obj = self.get(index).unwrap();
             Id::retain(obj.into())
@@ -282,7 +281,7 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 
     #[doc(alias = "removeObjectAtIndex:")]
-    fn remove(&mut self, index: usize) -> Id<Self::Item, Self::ItemOwnership> {
+    pub fn remove(&mut self, index: usize) -> Id<T, O> {
         let obj = if let Some(obj) = self.get(index) {
             unsafe { Id::retain(obj.into()) }
         } else {
@@ -295,7 +294,7 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 
     #[doc(alias = "removeLastObject")]
-    fn pop(&mut self) -> Option<Id<Self::Item, Self::ItemOwnership>> {
+    pub fn pop(&mut self) -> Option<Id<T, O>> {
         self.last().map(|obj| {
             let obj = unsafe { Id::retain(obj.into()) };
             unsafe {
@@ -306,18 +305,15 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 
     #[doc(alias = "removeAllObjects")]
-    fn clear(&mut self) {
+    pub fn clear(&mut self) {
         unsafe { msg_send![self, removeAllObjects] }
     }
 
     #[doc(alias = "sortUsingFunction:context:")]
-    fn sort_by<F>(&mut self, compare: F)
-    where
-        F: FnMut(&Self::Item, &Self::Item) -> Ordering,
-    {
-        extern "C" fn compare_with_closure<T, F: FnMut(&T, &T) -> Ordering>(
-            obj1: &T,
-            obj2: &T,
+    pub fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {
+        extern "C" fn compare_with_closure<U, F: FnMut(&U, &U) -> Ordering>(
+            obj1: &U,
+            obj2: &U,
             context: *mut c_void,
         ) -> NSComparisonResult {
             // Bring back a reference to the closure.
@@ -328,7 +324,7 @@ pub unsafe trait INSMutableArray: INSArray {
             NSComparisonResult::from((*closure)(obj1, obj2))
         }
 
-        let f: extern "C" fn(_, _, _) -> _ = compare_with_closure::<Self::Item, F>;
+        let f: extern "C" fn(_, _, _) -> _ = compare_with_closure::<T, F>;
 
         // Grab a type-erased pointer to the closure (a pointer to stack).
         let mut closure = compare;
@@ -342,44 +338,22 @@ pub unsafe trait INSMutableArray: INSArray {
     }
 }
 
-object!(
-    unsafe pub struct NSMutableArray<T, O: Ownership> {
-        item: PhantomData<Id<T, O>>,
-    }
-);
-
-// SAFETY: Same as NSArray.
-//
-// TODO: Properly verify this
-unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
-
-unsafe impl<T: INSObject, O: Ownership> INSArray for NSMutableArray<T, O> {
-    type Ownership = Owned;
-    type Item = T;
-    type ItemOwnership = O;
-}
-
-unsafe impl<T: INSObject, O: Ownership> INSMutableArray for NSMutableArray<T, O> {}
-
 // Copying only possible when ItemOwnership = Shared
 
-unsafe impl<T: INSObject> INSCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: Message> NSCopying for NSMutableArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject> INSMutableCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: Message> NSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-unsafe impl<T: INSObject, O: Ownership> INSFastEnumeration for NSMutableArray<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableArray<T, O> {
     type Item = T;
 }
 
-impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
+impl<T: Message, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -387,13 +361,13 @@ impl<T: INSObject, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     }
 }
 
-impl<T: INSObject> IndexMut<usize> for NSMutableArray<T, Owned> {
+impl<T: Message> IndexMut<usize> for NSMutableArray<T, Owned> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
     }
 }
 
-impl<T: INSObject, O: Ownership> DefaultId for NSMutableArray<T, O> {
+impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
     type Ownership = Owned;
 
     #[inline]
@@ -411,8 +385,8 @@ mod tests {
     use objc2::msg_send;
     use objc2::rc::{autoreleasepool, Id, Owned, Shared};
 
-    use super::{INSArray, INSMutableArray, NSArray, NSMutableArray};
-    use crate::{INSObject, INSString, INSValue, NSObject, NSString, NSValue};
+    use super::{NSArray, NSMutableArray};
+    use crate::{NSObject, NSString, NSValue};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -430,7 +404,7 @@ mod tests {
         NSArray::from_vec(vec)
     }
 
-    fn retain_count<T: INSObject>(obj: &T) -> usize {
+    fn retain_count(obj: &NSObject) -> usize {
         unsafe { msg_send![obj, retainCount] }
     }
 
@@ -535,7 +509,7 @@ mod tests {
     fn test_into_vec() {
         let array = sample_array(4);
 
-        let vec = INSArray::into_vec(array);
+        let vec = NSArray::into_vec(array);
         assert_eq!(vec.len(), 4);
     }
 
