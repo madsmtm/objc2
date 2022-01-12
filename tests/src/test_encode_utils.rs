@@ -126,14 +126,14 @@ assert_types! {
     //
     // Pointers (`intptr*`) works, but not plain `intptr`...
 
-    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+    #[cfg(target_pointer_width = "64")]
     INTPTR => isize,
-    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+    #[cfg(target_pointer_width = "64")]
     UINTPTR => usize,
 
     // stddef.h
 
-    #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+    #[cfg(target_pointer_width = "64")]
     SIZE_T => usize,
     PTRDIFF_T => isize,
 
