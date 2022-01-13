@@ -1,0 +1,12 @@
+[package]
+name = "compile-tests"
+version = "0.1.0"
+edition = "2018"
+publish = false
+
+repository = "https://github.com/madsmtm/objc2"
+license = "MIT"
+
+[dependencies]
+objc2 = { path = "../objc2" }
+compiletest_rs = "0.7"

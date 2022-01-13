@@ -53,7 +53,7 @@ fn run(src: &'static str, mode: Mode) {
     let dir = find_dependency(&deps_dir, "objc2").unwrap();
 
     config.mode = mode;
-    config.src_base = PathBuf::from(format!("tests/{}", src));
+    config.src_base = PathBuf::from(format!("{}/{}", env!("CARGO_MANIFEST_DIR"), src));
     config.target_rustcflags = Some(format!(
         "-L dependency={} --extern objc2={}",
         deps_dir.display(),
@@ -70,22 +70,9 @@ fn run(src: &'static str, mode: Mode) {
     run_tests(&config);
 }
 
-#[test]
-fn test_ui() {
+fn main() {
     run("ui", Mode::Ui);
-}
-
-#[test]
-fn test_ui_compile_fail() {
     run("ui", Mode::CompileFail);
-}
-
-#[test]
-fn test_codegen() {
     run("codegen", Mode::Codegen);
-}
-
-#[test]
-fn test_codegen_pass() {
     run("codegen", Mode::RunPass);
 }

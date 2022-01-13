@@ -45,9 +45,6 @@ malloc_buf = { version = "1.0", optional = true }
 objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1" }
 objc2-encode = { path = "../objc2-encode", version = "=2.0.0-beta.2" }
 
-[dev-dependencies]
-compiletest_rs = "0.7"
-
 [build-dependencies]
 cc = { version = "1", optional = true }
 
