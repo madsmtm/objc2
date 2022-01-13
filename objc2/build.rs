@@ -25,4 +25,10 @@ fn main() {
 
         builder.compile("librust_objc_try_catch_exception.a");
     }
+
+    // For compile tests
+    println!(
+        "cargo:rustc-env=BUILD_PROFILE={}",
+        std::env::var("PROFILE").unwrap()
+    );
 }
