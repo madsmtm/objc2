@@ -8,8 +8,10 @@ fn run_mode(mode: &'static str) {
     config.src_base = PathBuf::from(format!("tests/{}", mode));
     config.verbose = true;
     config.target_rustcflags = Some(format!(
-        "-L ../target/{profile} -L ../target/{profile}/deps --edition=2018 --extern objc2",
-        profile = env!("BUILD_PROFILE")
+        "-L ../target/{profile} -L ../target/{profile}/deps -L ../target/{target}/{profile} -L ../target/{target}/{profile}/deps --edition=2018 --extern objc2",
+        // Environment variables from build script:
+        target = env!("BUILD_TARGET"),
+        profile = env!("BUILD_PROFILE"),
     ));
     config.clean_rmeta();
 

@@ -29,6 +29,10 @@ fn main() {
     // For compile tests
     println!(
         "cargo:rustc-env=BUILD_PROFILE={}",
-        std::env::var("PROFILE").unwrap()
+        env::var("PROFILE").unwrap()
+    );
+    println!(
+        "cargo:rustc-env=BUILD_TARGET={}",
+        env::var("TARGET").unwrap()
     );
 }
