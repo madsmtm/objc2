@@ -59,6 +59,11 @@ fn run(src: &'static str, mode: Mode) {
         deps_dir.display(),
         dir.display()
     ));
+    config.llvm_filecheck = Some(
+        env::var("FILECHECK")
+            .unwrap_or("FileCheck".to_string())
+            .into(),
+    );
     config.edition = Some("2018".into());
     config.verbose = true;
 
@@ -73,4 +78,14 @@ fn test_ui() {
 #[test]
 fn test_ui_compile_fail() {
     run("ui", Mode::CompileFail);
+}
+
+#[test]
+fn test_codegen() {
+    run("codegen", Mode::Codegen);
+}
+
+#[test]
+fn test_codegen_pass() {
+    run("codegen", Mode::RunPass);
 }
