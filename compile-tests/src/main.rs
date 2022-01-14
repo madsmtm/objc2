@@ -76,10 +76,8 @@ fn main() -> io::Result<()> {
     run_tests(&config);
 
     // Run Codegen tests
-    config.src_base = manifest_dir.join("codegen");
-    config.mode = Mode::RunPass;
-    run_tests(&config);
-    config.mode = Mode::Codegen;
+    config.src_base = manifest_dir.join("assembly");
+    config.mode = Mode::Assembly;
     run_tests(&config);
 
     Ok(())
