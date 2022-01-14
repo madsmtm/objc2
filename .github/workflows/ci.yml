@@ -137,6 +137,53 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Cache external dependencies
+      id: extern-cache
+      uses: actions/cache@v2
+      with:
+        # We could have just cached build-files, and then rerun the build tool
+        # every time, letting it figure out what's changed. However, this has
+        # several problems:
+        #
+        # - GNUStep-Base ./configure invalidates the cache, which makes it
+        #   very hard to know when to rebuild and when not to.
+        # - We don't want to rebuild cargo-dinghy every time the ~/.cargo
+        #   folder is invalidated.
+        #
+        # So instead we just place the final outputs in ~/extern, and cache
+        # them there:
+        # - bin/cargo-dinghy
+        # - lib/libobjc.so
+        # - lib/libgnustep-base.so
+        # - include/Foundation/*
+        # - include/objc/*
+        # - sdk/...
+        path: |
+          ~/extern/bin
+          ~/extern/lib
+          ~/extern/include
+          ~/extern/sdk
+        # Change this key if we start caching more things
+        key: ${{ matrix.name }}-extern-v1
+
+    - name: Setup environment
+      # These add to PATH-like variables, so they can always be set
+      run: |
+        mkdir -p $HOME/extern/bin
+        mkdir -p $HOME/extern/lib
+        mkdir -p $HOME/extern/include
+        echo "PATH=$HOME/extern/bin:$PATH" >> $GITHUB_ENV
+        echo "LIBRARY_PATH=$HOME/extern/lib:$LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$HOME/extern/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "CPATH=$HOME/extern/include:$CPATH" >> $GITHUB_ENV
+        # Debug print these
+        ls -al $HOME/extern/*
+
+    - name: Setup SDK environment
+      if: matrix.sdk
+      # This changes a variable, so is only set when a custom SDK is used
+      run: echo "SDKROOT=$HOME/extern/sdk" >> $GITHUB_ENV
+
     - name: Install Clang
       if: contains(matrix.os, 'ubuntu')
       run: sudo apt-get -y install clang
@@ -151,7 +198,7 @@ jobs:
           libxml2-dev:i386 libicu-dev:i386
 
     - name: Download different macOS SDK
-      if: matrix.sdk
+      if: matrix.sdk && steps.extern-cache.outputs.cache-hit != 'true'
       # macOS SDKs:
       # - https://github.com/alexey-lysiuk/macos-sdk
       # - https://github.com/phracker/MacOSX-SDKs
@@ -163,71 +210,41 @@ jobs:
       run: |
         wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/${{ matrix.sdk }}/MacOSX${{ matrix.sdk }}.tar.bz2
         tar -xyf MacOSX${{ matrix.sdk }}.tar.bz2
-        echo "SDKROOT=$(pwd)/MacOSX${{ matrix.sdk }}.sdk" >> $GITHUB_ENV
-
-    - name: Cache GNUStep
-      if: contains(matrix.os, 'ubuntu')
-      id: cache-gnustep
-      uses: actions/cache@v2
-      with:
-        # Ideally I would have just cached build-files, and then rerun make
-        # every time, letting it figure out what's changed. But GNUStep-Base
-        # ./configure invalidates the cache, which makes it very hard to
-        # know when to rebuild and when not to.
-        # So instead we just cache the final output:
-        # - lib/libobjc.so
-        # - lib/libgnustep-base.so
-        # - include/Foundation/*
-        # - include/objc/*
-        # - ...
-        path: |
-          ~/gnustep/lib
-          ~/gnustep/include
-        key: ${{ matrix.name }}-gnustep-libobjc2_1.9-make_2.9.0-base_1.28.0
-
-    - name: Setup GNUStep environment
-      if: contains(matrix.os, 'ubuntu')
-      run: |
-        mkdir -p $HOME/gnustep
-        echo "PATH=$HOME/gnustep/bin:$PATH" >> $GITHUB_ENV
-        echo "LIBRARY_PATH=$HOME/gnustep/lib:$LIBRARY_PATH" >> $GITHUB_ENV
-        echo "LD_LIBRARY_PATH=$HOME/gnustep/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-        echo "CPATH=$HOME/gnustep/include:$CPATH" >> $GITHUB_ENV
-        ls -al ~/gnustep/* || true # Ignore failures
+        mv MacOSX${{ matrix.sdk }}.sdk $HOME/extern/sdk
 
     - name: Install Make and Cmake
-      if: contains(matrix.os, 'ubuntu') && steps.cache-gnustep.outputs.cache-hit != 'true'
+      if: contains(matrix.os, 'ubuntu') && steps.extern-cache.outputs.cache-hit != 'true'
       run: sudo apt-get -y install make cmake
 
     - name: Install GNUStep libobjc2 v1.9
-      if: contains(matrix.os, 'ubuntu') && steps.cache-gnustep.outputs.cache-hit != 'true'
+      if: contains(matrix.os, 'ubuntu') && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libobjc2/archive/refs/tags/v1.9.tar.gz
         tar -xzf v1.9.tar.gz
         mkdir -p libobjc2-1.9/build
         cd libobjc2-1.9/build
-        cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=$HOME/gnustep -DTESTS=OFF ..
+        cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=$HOME/extern -DTESTS=OFF ..
         make install
 
     - name: Install GNUStep make
-      if: contains(matrix.os, 'ubuntu') && steps.cache-gnustep.outputs.cache-hit != 'true'
+      if: contains(matrix.os, 'ubuntu') && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_0.tar.gz
         tar -xzf make-2_9_0.tar.gz
         mkdir -p tools-make-make-2_9_0/build
         cd tools-make-make-2_9_0/build
-        ../configure --prefix=$HOME/gnustep --with-library-combo=ng-gnu-gnu
+        ../configure --prefix=$HOME/extern --with-library-combo=ng-gnu-gnu
         make install
 
     - name: Install GNUStep-Base
-      if: contains(matrix.os, 'ubuntu') && steps.cache-gnustep.outputs.cache-hit != 'true'
+      if: contains(matrix.os, 'ubuntu') && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
         tar -xzf base-1_28_0.tar.gz
         cd libs-base-base-1_28_0
-        ./configure --prefix=$HOME/gnustep --disable-tls --disable-xslt ${{ matrix.platform.configureflags }}
+        ./configure --prefix=$HOME/extern --disable-tls --disable-xslt ${{ matrix.platform.configureflags }}
         make install
-        ls -al $HOME/gnustep/*
+        ls -al $HOME/extern/*
 
     - name: Cache Rust
       uses: actions/cache@v2
@@ -247,11 +264,13 @@ jobs:
         # Allows installing for a different base target
         target: ${{ matrix.rust.target || matrix.target }}
 
+    - name: Install Cargo Dinghy
+      if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
+      run: cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
+
     - name: Run Cargo Dinghy
       if: matrix.dinghy
       run: |
-        cargo install cargo-dinghy --target x86_64-apple-darwin
-
         # Launch the simulator
         xcrun simctl list runtimes
         RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
