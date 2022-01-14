@@ -8,5 +8,5 @@ repository = "https://github.com/madsmtm/objc2"
 license = "MIT"
 
 [dependencies]
-objc2 = { path = "../objc2" }
 compiletest_rs = "0.7"
+cargo_metadata = "0.14"
