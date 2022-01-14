@@ -2,6 +2,8 @@ use std::env;
 use std::io;
 use std::path::{Path, PathBuf};
 
+use compiletest_rs::{common::Mode, run_tests, Config};
+
 // Environment variables created in build script
 const TARGET: &'static str = env!("BUILD_TARGET");
 const PROFILE: &'static str = env!("BUILD_PROFILE");
@@ -30,8 +32,8 @@ fn find_dependency(deps_dir: &Path, dep: &str) -> io::Result<PathBuf> {
     Ok(rlib.expect("Found no rlib"))
 }
 
-fn run(src: &'static str, mode: &'static str) {
-    let mut config = compiletest_rs::Config::default();
+fn run(src: &'static str, mode: Mode) {
+    let mut config = Config::default();
 
     // ../target
     let target_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -50,23 +52,25 @@ fn run(src: &'static str, mode: &'static str) {
 
     let dir = find_dependency(&deps_dir, "objc2").unwrap();
 
-    config.mode = mode.parse().expect("Invalid mode");
+    config.mode = mode;
     config.src_base = PathBuf::from(format!("tests/{}", src));
     config.target_rustcflags = Some(format!(
-        "-L dependency={} --edition=2018 --extern objc2={}",
+        "-L dependency={} --extern objc2={}",
         deps_dir.display(),
         dir.display()
     ));
+    config.edition = Some("2018".into());
+    config.verbose = true;
 
-    compiletest_rs::run_tests(&config);
+    run_tests(&config);
 }
 
 #[test]
 fn test_ui() {
-    run("ui", "ui");
+    run("ui", Mode::Ui);
 }
 
 #[test]
 fn test_ui_compile_fail() {
-    run("ui", "compile-fail");
+    run("ui", Mode::CompileFail);
 }
