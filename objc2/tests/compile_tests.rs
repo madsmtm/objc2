@@ -30,7 +30,7 @@ fn find_dependency(deps_dir: &Path, dep: &str) -> io::Result<PathBuf> {
     Ok(rlib.expect("Found no rlib"))
 }
 
-fn run_mode(mode: &'static str) {
+fn run(src: &'static str, mode: &'static str) {
     let mut config = compiletest_rs::Config::default();
 
     // ../target
@@ -51,7 +51,7 @@ fn run_mode(mode: &'static str) {
     let dir = find_dependency(&deps_dir, "objc2").unwrap();
 
     config.mode = mode.parse().expect("Invalid mode");
-    config.src_base = PathBuf::from(format!("tests/{}", mode));
+    config.src_base = PathBuf::from(format!("tests/{}", src));
     config.target_rustcflags = Some(format!(
         "-L dependency={} --edition=2018 --extern objc2={}",
         deps_dir.display(),
@@ -62,6 +62,11 @@ fn run_mode(mode: &'static str) {
 }
 
 #[test]
-fn compile_test() {
-    run_mode("ui");
+fn test_ui() {
+    run("ui", "ui");
+}
+
+#[test]
+fn test_ui_compile_fail() {
+    run("ui", "compile-fail");
 }

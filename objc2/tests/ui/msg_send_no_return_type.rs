@@ -6,5 +6,6 @@ fn main() {
     unsafe {
         let cls = class!(NSObject);
         msg_send![cls, new];
+        //~^ ERROR type annotations needed
     }
 }
