@@ -9,12 +9,25 @@ license = "MIT"
 
 build = "build.rs"
 
+[features]
+# Enable UI tests
+#
+# These are not enabled by default because trybuild doesn't pass feature flags
+# (like --features gnustep-1-9) to its cargo invocation, and hence they don't
+# always work.
+#
+# Also, they're slower than most tests.
+ui = ["trybuild"]
+
 [dependencies]
 block2 = { path = "../block2" }
 block-sys = { path = "../block-sys" }
 objc-sys = { path = "../objc-sys" }
 objc2 = { path = "../objc2" }
 objc2-encode = { path = "../objc2-encode" }
+
+# Put here instead of dev-dependencies because we want to make it optional
+trybuild = { version = "1.0", optional = true }
 
 [build-dependencies]
 cc = "1.0"

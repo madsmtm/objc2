@@ -140,4 +140,11 @@ mod tests {
         let block = block.copy();
         assert_eq!(invoke_large_struct_block(&block, data), new_data);
     }
+
+    #[test]
+    #[cfg(feature = "ui")]
+    fn ui() {
+        let t = trybuild::TestCases::new();
+        t.compile_fail("ui/*.rs");
+    }
 }

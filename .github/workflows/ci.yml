@@ -42,9 +42,10 @@ jobs:
           - name: Test macOS 10.15
             os: macos-10.15
             target: x86_64-apple-darwin
-          - name: Test macOS 11
+          - name: Test macOS 11 w. ui tests
             os: macos-11
             target: x86_64-apple-darwin
+            args: --features tests/ui
           - name: Build macOS AArch64
             os: macos-11
             target: aarch64-apple-darwin
@@ -54,11 +55,12 @@ jobs:
             target: x86_64-apple-darwin
             # Oldest macOS version we support
             sdk: 10.7
-          - name: Test macOS nightly
+          - name: Test macOS nightly w. ui tests
             os: macos-latest
             target: x86_64-apple-darwin
             rust:
               toolchain: nightly
+            args: --features tests/ui
           - name: Build macOS 32bit
             os: macos-10.15
             target: i686-apple-darwin
