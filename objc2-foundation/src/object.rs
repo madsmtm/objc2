@@ -10,19 +10,6 @@ object! {
     unsafe pub struct NSObject: Object;
 }
 
-/// ```compile_fail
-/// use objc2_foundation::NSObject;
-/// fn needs_sync<T: Sync>() {}
-/// needs_sync::<NSObject>();
-/// ```
-/// ```compile_fail
-/// use objc2_foundation::NSObject;
-/// fn needs_send<T: Send>() {}
-/// needs_send::<NSObject>();
-/// ```
-#[cfg(doctest)]
-pub struct NSObjectNotSendNorSync;
-
 impl NSObject {
     unsafe_def_fn!(pub fn new -> Owned);
 

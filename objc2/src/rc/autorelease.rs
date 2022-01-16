@@ -25,24 +25,6 @@ pub struct AutoreleasePool {
     p: PhantomData<*mut UnsafeCell<c_void>>,
 }
 
-/// ```
-/// use objc2::rc::AutoreleasePool;
-/// fn needs_nothing<T>() {}
-/// needs_nothing::<AutoreleasePool>();
-/// ```
-/// ```compile_fail
-/// use objc2::rc::AutoreleasePool;
-/// fn needs_sync<T: Sync>() {}
-/// needs_sync::<AutoreleasePool>();
-/// ```
-/// ```compile_fail
-/// use objc2::rc::AutoreleasePool;
-/// fn needs_send<T: Send>() {}
-/// needs_send::<AutoreleasePool>();
-/// ```
-#[cfg(doctest)]
-pub struct AutoreleasePoolNotSendNorSync;
-
 #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
 thread_local! {
     /// We track the thread's pools to verify that object lifetimes are only

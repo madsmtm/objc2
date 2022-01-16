@@ -25,6 +25,7 @@ block-sys = { path = "../block-sys" }
 objc-sys = { path = "../objc-sys" }
 objc2 = { path = "../objc2" }
 objc2-encode = { path = "../objc2-encode" }
+objc2-foundation = { path = "../objc2-foundation" }
 
 # Put here instead of dev-dependencies because we want to make it optional
 trybuild = { version = "1.0", optional = true }

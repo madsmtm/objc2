@@ -110,14 +110,6 @@ impl<T: 'static + Copy + Encode + fmt::Display> fmt::Display for NSValue<T> {
     }
 }
 
-/// ```compile_fail
-/// use objc2_foundation::NSValue;
-/// fn needs_eq<T: Eq>() {}
-/// needs_eq::<NSValue<f32>>();
-/// ```
-#[cfg(doctest)]
-pub struct NSValueFloatNotEq;
-
 #[cfg(test)]
 mod tests {
     use alloc::format;
