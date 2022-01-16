@@ -41,16 +41,6 @@ unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
 unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
 unsafe impl<T: Send> Send for NSArray<T, Owned> {}
 
-/// ```compile_fail
-/// use objc2::rc::Shared;
-/// use objc2::runtime::Object;
-/// use objc2_foundation::NSArray;
-/// fn needs_send_sync<T: Send + Sync>() {}
-/// needs_send_sync::<NSArray<Object, Shared>>();
-/// ```
-#[cfg(doctest)]
-pub struct NSArrayWithObjectNotSendSync;
-
 object! {
     // TODO: Ensure that this deref to NSArray is safe!
     unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {

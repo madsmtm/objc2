@@ -613,24 +613,6 @@ impl Object {
     // objc_removeAssociatedObjects
 }
 
-/// ```
-/// use objc2::runtime::Object;
-/// fn needs_nothing<T: ?Sized>() {}
-/// needs_nothing::<Object>();
-/// ```
-/// ```compile_fail
-/// use objc2::runtime::Object;
-/// fn needs_sync<T: ?Sized + Sync>() {}
-/// needs_sync::<Object>();
-/// ```
-/// ```compile_fail
-/// use objc2::runtime::Object;
-/// fn needs_send<T: ?Sized + Send>() {}
-/// needs_send::<Object>();
-/// ```
-#[cfg(doctest)]
-pub struct ObjectNotSendNorSync;
-
 unsafe impl RefEncode for Object {
     const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }

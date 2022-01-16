@@ -43,24 +43,6 @@ impl NSString {
     }
 
     /// TODO
-    ///
-    /// ```compile_fail
-    /// # use objc2::rc::autoreleasepool;
-    /// # use objc2_foundation::NSString;
-    /// autoreleasepool(|pool| {
-    ///     let ns_string = NSString::new();
-    ///     let s = ns_string.as_str(pool);
-    ///     drop(ns_string);
-    ///     println!("{}", s);
-    /// });
-    /// ```
-    ///
-    /// ```compile_fail
-    /// # use objc2::rc::autoreleasepool;
-    /// # use objc2_foundation::NSString;
-    /// let ns_string = NSString::new();
-    /// let s = autoreleasepool(|pool| ns_string.as_str(pool));
-    /// ```
     pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
         // This is necessary until `auto` types stabilizes.
         pool.__verify_is_inner();

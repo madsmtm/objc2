@@ -1,0 +1,13 @@
+error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
+ --> ui/msg_send_only_message.rs:5:14
+  |
+5 |     unsafe { msg_send![1, new] };
+  |              ^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `{integer}`
+  |
+  = help: the following implementations were found:
+            <&'a T as MessageReceiver>
+            <&'a mut T as MessageReceiver>
+            <*const T as MessageReceiver>
+            <*mut T as MessageReceiver>
+          and 3 others
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
