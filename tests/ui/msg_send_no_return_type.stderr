@@ -1,0 +1,7 @@
+error[E0282]: type annotations needed
+ --> ui/msg_send_no_return_type.rs:8:9
+  |
+8 |         msg_send![cls, new];
+  |         ^^^^^^^^^^^^^^^^^^^ consider giving `result` a type
+  |
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
