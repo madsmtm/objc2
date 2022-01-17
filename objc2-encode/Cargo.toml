@@ -18,6 +18,12 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2-encode/"
 license = "MIT"
 
+[features]
+derive = ["objc2-proc-macros"]
+
+[dependencies]
+objc2-proc-macros = { path = "../objc2-proc-macros", optional = true }
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 

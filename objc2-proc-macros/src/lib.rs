@@ -16,3 +16,19 @@
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}
+
+use proc_macro::TokenStream;
+
+/// TODO
+#[proc_macro_derive(Encode)]
+pub fn encode_derive(input: TokenStream) -> TokenStream {
+    dbg!(input);
+    todo!()
+}
+
+/// TODO
+#[proc_macro_derive(RefEncode)]
+pub fn ref_encode_derive(input: TokenStream) -> TokenStream {
+    dbg!(input);
+    todo!()
+}

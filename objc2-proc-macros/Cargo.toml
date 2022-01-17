@@ -30,5 +30,10 @@ gnustep-1-9 = ["gnustep-1-8"]
 gnustep-2-0 = ["gnustep-1-9"]
 gnustep-2-1 = ["gnustep-2-0"]
 
+[dependencies]
+syn = "1.0"
+quote = "1.0"
+# TODO: Use `proc-macro-crate` or similar for better usage downstream?
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
