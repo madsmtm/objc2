@@ -19,16 +19,18 @@ extern "C" {}
 
 use proc_macro::TokenStream;
 
+mod derive;
+
 /// TODO
 #[proc_macro_derive(Encode)]
 pub fn encode_derive(input: TokenStream) -> TokenStream {
-    dbg!(input);
-    todo!()
+    let ast = syn::parse(input).unwrap();
+    derive::impl_encode(&ast)
 }
 
 /// TODO
 #[proc_macro_derive(RefEncode)]
 pub fn ref_encode_derive(input: TokenStream) -> TokenStream {
-    dbg!(input);
-    todo!()
+    let ast = syn::parse(input).unwrap();
+    derive::impl_ref_encode(&ast)
 }
