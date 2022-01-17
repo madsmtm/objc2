@@ -20,6 +20,7 @@ extern "C" {}
 use proc_macro::TokenStream;
 
 mod derive;
+mod utils;
 
 /// TODO
 #[proc_macro_derive(Encode)]
