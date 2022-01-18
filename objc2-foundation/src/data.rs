@@ -3,6 +3,7 @@ use alloc::vec::Vec;
 use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use core::{ffi::c_void, ptr::NonNull};
+use std::io;
 
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
@@ -11,6 +12,11 @@ use objc2::runtime::{Class, Object};
 use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
 
 object! {
+    /// A static byte buffer in memory.
+    ///
+    /// This is similar to a [`slice`][`prim@slice`] of [`u8`].
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsdata?language=objc).
     unsafe pub struct NSData: NSObject;
 }
 
@@ -19,6 +25,13 @@ unsafe impl Sync for NSData {}
 unsafe impl Send for NSData {}
 
 object! {
+    /// A dynamic byte buffer in memory.
+    ///
+    /// This is the Objective-C equivalent of a [`Vec`] containing [`u8`].
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutabledata?language=objc).
+    ///
+    /// [`Vec`]: std::vec::Vec
     unsafe pub struct NSMutableData: NSData;
 }
 
@@ -29,6 +42,7 @@ unsafe impl Send for NSMutableData {}
 impl NSData {
     unsafe_def_fn!(fn new -> Shared);
 
+    #[doc(alias = "length")]
     pub fn len(&self) -> usize {
         unsafe { msg_send![self, length] }
     }
@@ -89,6 +103,7 @@ impl<I: SliceIndex<[u8]>> Index<I> for NSData {
 
     #[inline]
     fn index(&self, index: I) -> &Self::Output {
+        // Replaces the need for getBytes:range:
         Index::index(self.bytes(), index)
     }
 }
@@ -102,6 +117,7 @@ impl DefaultId for NSData {
     }
 }
 
+/// Creation methods
 impl NSMutableData {
     unsafe_def_fn!(fn new -> Owned);
 
@@ -114,6 +130,31 @@ impl NSMutableData {
         unsafe { Id::new(data_from_vec(Self::class(), bytes).cast()) }
     }
 
+    // TODO: Use malloc_buf/mbox and `initWithBytesNoCopy:...`?
+
+    #[doc(alias = "initWithData:")]
+    pub fn from_data(data: &NSData) -> Id<Self, Owned> {
+        // Not provided on NSData, one should just use NSData::copy or similar
+        unsafe {
+            let obj: *mut Self = msg_send![Self::class(), alloc];
+            let obj: *mut Self = msg_send![obj, initWithData: data];
+            Id::new(NonNull::new_unchecked(obj))
+        }
+    }
+
+    #[doc(alias = "initWithCapacity:")]
+    pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
+        unsafe {
+            let obj: *mut Self = msg_send![Self::class(), alloc];
+            let obj: *mut Self = msg_send![obj, initWithCapacity: capacity];
+            Id::new(NonNull::new_unchecked(obj))
+        }
+    }
+}
+
+/// Mutation methods
+impl NSMutableData {
+    #[doc(alias = "mutableBytes")]
     pub fn bytes_mut(&mut self) -> &mut [u8] {
         let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
         // The bytes pointer may be null for length zero
@@ -125,15 +166,22 @@ impl NSMutableData {
     }
 
     /// Expands with zeroes, or truncates the buffer.
+    #[doc(alias = "setLength:")]
     pub fn set_len(&mut self, len: usize) {
         unsafe { msg_send![self, setLength: len] }
     }
 
-    pub fn append(&mut self, bytes: &[u8]) {
+    #[doc(alias = "appendBytes:length:")]
+    pub fn extend_from_slice(&mut self, bytes: &[u8]) {
         let bytes_ptr = bytes.as_ptr() as *const c_void;
         unsafe { msg_send![self, appendBytes: bytes_ptr, length: bytes.len()] }
     }
 
+    pub fn push(&mut self, byte: u8) {
+        self.extend_from_slice(&[byte])
+    }
+
+    #[doc(alias = "replaceBytesInRange:withBytes:length:")]
     pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
         let range = NSRange::from(range);
         let ptr = bytes.as_ptr() as *const c_void;
@@ -187,6 +235,46 @@ impl<I: SliceIndex<[u8]>> IndexMut<I> for NSMutableData {
     #[inline]
     fn index_mut(&mut self, index: I) -> &mut Self::Output {
         IndexMut::index_mut(self.bytes_mut(), index)
+    }
+}
+
+// impl FromIterator<u8> for Id<NSMutableData, Owned> {
+//     fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
+//         let iter = iter.into_iter();
+//         let (lower, _) = iter.size_hint();
+//         let data = Self::with_capacity(lower);
+//         for item in iter {
+//             data.push(item);
+//         }
+//         data
+//     }
+// }
+
+impl Extend<u8> for NSMutableData {
+    /// You should use [`extend_from_slice`] whenever possible, it is more
+    /// performant.
+    ///
+    /// [`extend_from_slice`]: Self::extend_from_slice
+    fn extend<T: IntoIterator<Item = u8>>(&mut self, iter: T) {
+        for item in iter {
+            self.push(item);
+        }
+    }
+}
+
+impl io::Write for NSMutableData {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        self.extend_from_slice(buf);
+        Ok(buf.len())
+    }
+
+    fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
+        self.extend_from_slice(buf);
+        Ok(())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
     }
 }
 
@@ -283,7 +371,7 @@ mod tests {
     #[test]
     fn test_append() {
         let mut data = NSMutableData::with_bytes(&[7, 16]);
-        data.append(&[3, 52]);
+        data.extend_from_slice(&[3, 52]);
         assert_eq!(data.len(), 4);
         assert_eq!(data.bytes(), [7, 16, 3, 52]);
     }
@@ -312,5 +400,30 @@ mod tests {
 
         let data = NSData::from_vec(bytes);
         assert_eq!(data.bytes().as_ptr(), bytes_ptr);
+    }
+
+    #[test]
+    fn test_from_data() {
+        let data = NSData::with_bytes(&[1, 2]);
+        let mut_data = NSMutableData::from_data(&data);
+        assert_eq!(&*data, &**mut_data);
+    }
+
+    #[test]
+    fn test_with_capacity() {
+        let mut data = NSMutableData::with_capacity(5);
+        assert_eq!(data.bytes(), &[]);
+        data.extend_from_slice(&[1, 2, 3, 4, 5]);
+        assert_eq!(data.bytes(), &[1, 2, 3, 4, 5]);
+        data.extend_from_slice(&[6, 7]);
+        assert_eq!(data.bytes(), &[1, 2, 3, 4, 5, 6, 7]);
+    }
+
+    #[test]
+    fn test_extend() {
+        let iter = (3..=5).into_iter();
+        let mut data = NSMutableData::with_bytes(&[1, 2]);
+        data.extend(iter);
+        assert_eq!(data.bytes(), &[1, 2, 3, 4, 5]);
     }
 }

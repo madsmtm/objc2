@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSThread` object.
 * Added `is_multi_threaded` and `is_main_thread` helper functions.
 * Added `NSProcessInfo` object.
+* Added `NSMutableData` methods `from_data`, `with_capacity` and `push`.
+* Added `io::Write` and `iter::Extend` implementation for `NSMutableData`.
 
 ### Changed
 * **BREAKING**: Removed the following helper traits in favor of inherent
@@ -38,6 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `INSCopying` (now `NSCopying`)
   - `INSMutableCopying` (now `NSMutableCopying`)
   - `INSFastEnumeration` (now `NSFastEnumeration`)
+* **BREAKING**: Renamed `NSMutableData::append` to `extend_from_slice`.
 
 
 ## 0.2.0-alpha.4 - 2022-01-03
