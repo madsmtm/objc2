@@ -32,6 +32,7 @@ pub use self::process_info::NSProcessInfo;
 pub use self::range::NSRange;
 pub use self::string::NSString;
 pub use self::thread::{is_main_thread, is_multi_threaded, NSThread};
+pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
 
 #[cfg(apple)]
@@ -56,4 +57,5 @@ mod process_info;
 mod range;
 mod string;
 mod thread;
+mod uuid;
 mod value;
