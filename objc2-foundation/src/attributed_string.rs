@@ -4,7 +4,9 @@ use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Shared};
 use objc2::runtime::Object;
 
-use crate::{NSCopying, NSDictionary, NSObject, NSString};
+use crate::{
+    NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
+};
 
 object! {
     /// A string that has associated attributes for portions of its text.
@@ -114,6 +116,10 @@ unsafe impl NSCopying for NSAttributedString {
     type Output = NSAttributedString;
 }
 
+unsafe impl NSMutableCopying for NSAttributedString {
+    type Output = NSMutableAttributedString;
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::string::ToString;
@@ -152,8 +158,8 @@ mod tests {
         // assert_eq!(s1.as_ptr(), s2.as_ptr());
         assert!(s2.is_kind_of(NSAttributedString::class()));
 
-        // let s3 = s1.mutable_copy();
-        // assert_ne!(s1.as_ptr(), s3.as_ptr() as *mut NSAttributedString);
-        // assert!(s3.is_kind_of(NSMutableAttributedString::class()));
+        let s3 = s1.mutable_copy();
+        assert_ne!(s1.as_ptr(), s3.as_ptr() as *mut NSAttributedString);
+        assert!(s3.is_kind_of(NSMutableAttributedString::class()));
     }
 }

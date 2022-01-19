@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSUUID` object.
 * Added `NSMutableString` object.
 * Added basic `NSAttributedString` object.
+* Added basic `NSMutableAttributedString` object.
 
 ### Changed
 * **BREAKING**: Removed the following helper traits in favor of inherent
