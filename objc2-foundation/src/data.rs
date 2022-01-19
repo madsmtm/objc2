@@ -184,6 +184,8 @@ impl NSMutableData {
     #[doc(alias = "replaceBytesInRange:withBytes:length:")]
     pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
         let range = NSRange::from(range);
+        // No need to verify the length of the range here,
+        // `replaceBytesInRange:` just zero-fills if out of bounds.
         let ptr = bytes.as_ptr() as *const c_void;
         unsafe {
             msg_send![

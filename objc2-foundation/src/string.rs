@@ -12,9 +12,9 @@ use objc2::msg_send;
 use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
-use objc2::runtime::Bool;
+use objc2::runtime::{Bool, Class, Object};
 
-use crate::{NSComparisonResult, NSCopying, NSObject};
+use crate::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
 
 #[cfg(apple)]
 const UTF8_ENCODING: usize = 4;
@@ -163,17 +163,9 @@ impl NSString {
     #[doc(alias = "initWithBytes")]
     #[doc(alias = "initWithBytes:length:encoding:")]
     pub fn from_str(string: &str) -> Id<Self, Shared> {
-        let cls = Self::class();
-        let bytes = string.as_ptr() as *const c_void;
         unsafe {
-            let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![
-                obj,
-                initWithBytes: bytes,
-                length: string.len(),
-                encoding: UTF8_ENCODING,
-            ];
-            Id::new(NonNull::new_unchecked(obj))
+            let obj = from_str(Self::class(), string);
+            Id::new(obj.cast())
         }
     }
 
@@ -206,6 +198,20 @@ impl NSString {
 
     // pub fn from_nsrange(range: NSRange) -> Id<Self, Shared>
     // https://developer.apple.com/documentation/foundation/1415155-nsstringfromrange?language=objc
+}
+
+pub(crate) fn from_str(cls: &Class, string: &str) -> NonNull<Object> {
+    let bytes = string.as_ptr() as *const c_void;
+    unsafe {
+        let obj: *mut Object = msg_send![cls, alloc];
+        let obj: *mut Object = msg_send![
+            obj,
+            initWithBytes: bytes,
+            length: string.len(),
+            encoding: UTF8_ENCODING,
+        ];
+        NonNull::new_unchecked(obj)
+    }
 }
 
 impl PartialOrd for NSString {
@@ -246,6 +252,10 @@ impl DefaultId for NSString {
 unsafe impl NSCopying for NSString {
     type Ownership = Shared;
     type Output = NSString;
+}
+
+unsafe impl NSMutableCopying for NSString {
+    type Output = NSMutableString;
 }
 
 impl fmt::Display for NSString {
@@ -336,11 +346,15 @@ mod tests {
 
     #[test]
     fn test_copy() {
-        let s = NSString::from_str("Hello!");
-        let copied = s.copy();
-        autoreleasepool(|pool| {
-            assert_eq!(copied.as_str(pool), s.as_str(pool));
-        });
+        let s1 = NSString::from_str("abc");
+        let s2 = s1.copy();
+        // An optimization that NSString makes, since it is immutable
+        assert_eq!(s1.as_ptr(), s2.as_ptr());
+        assert!(s2.is_kind_of(NSString::class()));
+
+        let s3 = s1.mutable_copy();
+        assert_ne!(s1.as_ptr(), s3.as_ptr() as *mut NSString);
+        assert!(s3.is_kind_of(NSMutableString::class()));
     }
 
     #[test]

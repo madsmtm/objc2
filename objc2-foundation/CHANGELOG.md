@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSMutableData` methods `from_data`, `with_capacity` and `push`.
 * Added `io::Write` and `iter::Extend` implementation for `NSMutableData`.
 * Added `NSUUID` object.
+* Added `NSMutableString` object.
 
 ### Changed
 * **BREAKING**: Removed the following helper traits in favor of inherent
