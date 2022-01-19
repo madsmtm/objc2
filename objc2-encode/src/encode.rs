@@ -183,13 +183,13 @@ unsafe impl Encode for () {
     const ENCODING: Encoding<'static> = Encoding::Void;
 }
 
-/// Using this directly is heavily discouraged, since the type of BOOL differs
-/// across platforms.
-///
-/// Use `objc2::runtime::Bool::ENCODING` instead.
-unsafe impl Encode for bool {
-    const ENCODING: Encoding<'static> = Encoding::Bool;
-}
+// /// Using this directly is heavily discouraged, since the type of BOOL differs
+// /// across platforms.
+// ///
+// /// Use `objc2::runtime::Bool::ENCODING` instead.
+// unsafe impl Encode for bool {
+//     const ENCODING: Encoding<'static> = Encoding::Bool;
+// }
 
 macro_rules! encode_impls_size {
     ($($t:ty => ($t16:ty, $t32:ty, $t64:ty),)*) => ($(
@@ -219,7 +219,7 @@ macro_rules! pointer_refencode_impl {
     )*);
 }
 
-pointer_refencode_impl!(bool, i16, i32, i64, isize, u16, u32, u64, usize, f32, f64);
+pointer_refencode_impl!(i16, i32, i64, isize, u16, u32, u64, usize, f32, f64);
 
 /// Pointers to [`i8`] use the special [`Encoding::String`] encoding.
 unsafe impl RefEncode for i8 {

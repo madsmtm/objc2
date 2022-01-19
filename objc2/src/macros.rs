@@ -140,7 +140,7 @@ macro_rules! msg_send {
         let result;
         match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ()) {
             Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
+            Ok(r) => result = $crate::ReturnType::from_return_type(r),
         }
         result
     });
@@ -149,7 +149,7 @@ macro_rules! msg_send {
         let result;
         match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ($($arg,)+)) {
             Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
+            Ok(r) => result = $crate::ReturnType::from_return_type(r),
         }
         result
     });
@@ -158,7 +158,7 @@ macro_rules! msg_send {
         let result;
         match $crate::MessageReceiver::send_message(&$obj, sel, ()) {
             Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
+            Ok(r) => result = $crate::ReturnType::from_return_type(r),
         }
         result
     });
@@ -167,7 +167,7 @@ macro_rules! msg_send {
         let result;
         match $crate::MessageReceiver::send_message(&$obj, sel, ($($arg,)+)) {
             Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
+            Ok(r) => result = $crate::ReturnType::from_return_type(r),
         }
         result
     });

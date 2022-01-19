@@ -143,7 +143,7 @@ extern "C" {}
 
 pub use objc_sys as ffi;
 
-pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
+pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode, ReturnType};
 
 pub use crate::message::{Message, MessageArguments, MessageError, MessageReceiver};
 

@@ -90,3 +90,25 @@ mod parse;
 
 pub use self::encode::{Encode, EncodeArguments, RefEncode};
 pub use self::encoding::Encoding;
+
+/// TODO
+pub trait ReturnType {
+    /// TODO
+    type From: Encode;
+    /// TODO
+    fn from_return_type(from: Self::From) -> Self;
+}
+
+impl<T: Encode> ReturnType for T {
+    type From = T;
+    fn from_return_type(from: Self::From) -> Self {
+        from
+    }
+}
+
+impl ReturnType for bool {
+    type From = i8; // BOOL - Varies between runtimes
+    fn from_return_type(from: Self::From) -> Self {
+        from != 0
+    }
+}
