@@ -662,10 +662,19 @@ impl Object {
         // SAFETY: Invariants upheld by caller
         unsafe { *self.ivar_mut::<T>(name) = value };
     }
+}
 
+/// Associated objects.
+///
+/// TODO: Make a public API for these.
+///
+/// See [Apple's documentation](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocAssociativeReferences.html).
+impl Object {
     // objc_setAssociatedObject
     // objc_getAssociatedObject
     // objc_removeAssociatedObjects
+
+    // https://nshipster.com/associated-objects/
 }
 
 unsafe impl RefEncode for Object {

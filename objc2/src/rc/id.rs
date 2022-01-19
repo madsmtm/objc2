@@ -176,6 +176,10 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     // Note: We don't take a reference as a parameter since it would be too
     // easy to accidentally create two aliasing mutable references.
     pub unsafe fn new(ptr: *mut T) -> Option<Id<T, O>> {
+        #[cfg(debug_assertions)]
+        unsafe {
+            O::__ensure_unique_if_owned(ptr as *mut _)
+        };
         // Should optimize down to nothing.
         // SAFETY: Upheld by the caller
         NonNull::new(ptr).map(|ptr| unsafe { Id::new_nonnull(ptr) })
@@ -215,6 +219,16 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
 
         // SAFETY: Option<Id<T, _>> has the same size as *mut T
         unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(ManuallyDrop::new(obj)) }
+    }
+
+    // TODO: Pub?
+    #[inline]
+    fn forget(self) -> *mut T {
+        #[cfg(debug_assertions)]
+        unsafe {
+            O::__relinquish_ownership(self.as_ptr() as *mut _)
+        };
+        ManuallyDrop::new(self).as_ptr()
     }
 }
 
@@ -410,11 +424,11 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // retained objects it is hard to imagine a case where the inner type
         // has a method with the same name.
 
-        let ptr = ManuallyDrop::new(self).ptr.as_ptr();
+        let ptr = self.forget();
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
-        // And because of the ManuallyDrop, we don't call the Drop
-        // implementation, so the object won't also be released there.
+        // And because of the `forget`, we don't call the Drop implementation,
+        // so the object won't also be released there.
         let res: *mut T = unsafe { ffi::objc_autorelease(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
         res
@@ -467,7 +481,8 @@ impl<T: Message> Id<T, Owned> {
     #[inline]
     pub unsafe fn from_shared(obj: Id<T, Shared>) -> Self {
         // Note: We can't debug_assert retainCount because of autoreleases
-        let ptr = ManuallyDrop::new(obj).ptr;
+        let ptr = obj.ptr;
+        obj.forget();
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
         unsafe { <Id<T, Owned>>::new_nonnull(ptr) }
@@ -496,7 +511,8 @@ impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
     /// Downgrade from an owned to a shared [`Id`], allowing it to be cloned.
     #[inline]
     fn from(obj: Id<T, Owned>) -> Self {
-        let ptr = ManuallyDrop::new(obj).ptr;
+        let ptr = obj.ptr;
+        obj.forget();
         // SAFETY: The pointer is valid, and ownership is simply decreased
         unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
     }
@@ -534,6 +550,11 @@ impl<T: ?Sized, O: Ownership> Drop for Id<T, O> {
     #[doc(alias = "release")]
     #[inline]
     fn drop(&mut self) {
+        #[cfg(debug_assertions)]
+        unsafe {
+            O::__relinquish_ownership(self.ptr.as_ptr() as *mut _)
+        };
+
         // We could technically run the destructor for `T` when `O = Owned`,
         // and when `O = Shared` with (retainCount == 1), but that would be
         // confusing and inconsistent since we cannot guarantee that it's run.
@@ -626,6 +647,15 @@ mod tests {
         assert_eq!(retain_count, expected);
     }
 
+    fn new() -> Id<Object, Owned> {
+        let cls = class!(NSObject);
+        unsafe {
+            let obj: *mut Object = msg_send![cls, alloc];
+            let obj: *mut Object = msg_send![obj, init];
+            Id::new(NonNull::new_unchecked(obj))
+        }
+    }
+
     #[test]
     fn test_drop() {
         let mut expected = ThreadTestData::current();
@@ -703,5 +733,52 @@ mod tests {
         let _obj2: Id<_, Shared> = unsafe { Id::retain_autoreleased(ptr) }.unwrap();
         expected.retain += 1;
         expected.assert_current();
+    }
+
+    #[test]
+    fn test_unique_owned() {
+        let obj = new();
+
+        // To/from shared
+        let obj = obj.into();
+        let obj: Id<Object, Owned> = unsafe { Id::from_shared(obj) };
+
+        // To/from autoreleased
+        let obj: Id<Object, Owned> = autoreleasepool(|pool| {
+            let obj = obj.autorelease(pool);
+            unsafe { Id::retain_null(obj).unwrap() }
+        });
+
+        // Forget and bring back
+        let ptr = obj.forget();
+        let _obj: Id<Object, Owned> = unsafe { Id::new_null(ptr).unwrap() };
+    }
+
+    #[test]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "Another `Id<T, Owned>` has already been created from that object"
+    )]
+    fn test_double_owned() {
+        let obj = new();
+        // Double-retain: This is unsound!
+        let _obj2: Id<Object, Owned> = unsafe { Id::retain_null(obj.as_ptr()).unwrap() };
+    }
+
+    #[test]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "Tried to give up ownership of `Id<T, Owned>` that wasn't owned"
+    )]
+    fn test_double_forgotten() {
+        let obj = new();
+        let ptr = obj.forget();
+
+        let _obj: Id<Object, Owned> = Id {
+            ptr: NonNull::new(ptr).unwrap(),
+            item: PhantomData,
+            own: PhantomData,
+        };
+        // Dropping fails
     }
 }

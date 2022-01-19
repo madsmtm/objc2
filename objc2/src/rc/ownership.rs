@@ -1,3 +1,7 @@
+use core::ffi::c_void;
+
+use crate::ffi;
+
 /// A type used to mark that a struct owns the object(s) it contains,
 /// so it has the sole references to them.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
@@ -20,7 +24,58 @@ mod private {
 ///
 /// This trait is sealed and not meant to be implemented outside of the this
 /// crate.
-pub trait Ownership: private::Sealed + 'static {}
+pub trait Ownership: private::Sealed + 'static {
+    #[doc(hidden)]
+    #[inline(always)]
+    unsafe fn __ensure_unique_if_owned(_: *mut ffi::objc_object) {}
+    #[doc(hidden)]
+    #[inline(always)]
+    unsafe fn __relinquish_ownership(_: *mut ffi::objc_object) {}
+}
 
-impl Ownership for Owned {}
+/// The value of this doesn't matter, it's only the address that we use.
+static OBJC2_ID_OWNED_UNIQUE_KEY: i32 = 0;
+#[inline(always)]
+fn key() -> *const c_void {
+    &OBJC2_ID_OWNED_UNIQUE_KEY as *const i32 as *const _
+}
+
+impl Ownership for Owned {
+    #[track_caller]
+    unsafe fn __ensure_unique_if_owned(obj: *mut ffi::objc_object) {
+        std::println!("\n__ensure_unique_if_owned: {:?} / {:?}", obj, key());
+        let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
+        std::println!("associated: {:?}", associated);
+        if associated.is_null() {
+            // Set the associated object to something (it can be anything, so
+            // we just set it to the current object).
+            //
+            // We use `assign` because we don't want to retain or copy the
+            // object, since we just use it as a marker.
+            unsafe { ffi::objc_setAssociatedObject(obj, key(), obj, ffi::OBJC_ASSOCIATION_ASSIGN) };
+        } else {
+            panic!("Another `Id<T, Owned>` has already been created from that object!");
+        }
+        let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
+        std::println!("associated: {:?}", associated);
+    }
+
+    #[track_caller]
+    unsafe fn __relinquish_ownership(obj: *mut ffi::objc_object) {
+        std::println!("\n__relinquish_ownership: {:?} / {:?}", obj, key());
+        let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
+        std::println!("associated: {:?}", associated);
+        if associated.is_null() {
+            panic!("Tried to give up ownership of `Id<T, Owned>` that wasn't owned!");
+        } else {
+            // Clear the associated object
+            unsafe {
+                ffi::objc_setAssociatedObject(obj, key(), ffi::nil, ffi::OBJC_ASSOCIATION_ASSIGN)
+            };
+        }
+        let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
+        std::println!("associated: {:?}", associated);
+    }
+}
+
 impl Ownership for Shared {}
