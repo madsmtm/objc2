@@ -57,14 +57,13 @@ unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Objec
     }
 }
 
-impl<T: Message, O: Ownership> NSArray<T, O> {
+impl<T: Message> NSArray<T, Shared> {
     unsafe_def_fn! {
-        /// The `NSArray` itself (length and number of items) is always immutable,
-        /// but we would like to know when we're the only owner of the array, to
-        /// allow mutation of the array's items.
-        pub fn new -> O;
+        pub fn new -> Shared;
     }
+}
 
+impl<T: Message, O: Ownership> NSArray<T, O> {
     #[doc(alias = "count")]
     pub fn len(&self) -> usize {
         unsafe { msg_send![self, count] }
@@ -103,6 +102,9 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
         }
     }
 
+    // The `NSArray` itself (length and number of items) is always immutable,
+    // but we would like to know when we're the only owner of the array, to
+    // allow mutation of the array's items.
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
         unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()).unwrap() }
     }
@@ -204,8 +206,8 @@ impl<T: Message, O: Ownership> Index<usize> for NSArray<T, O> {
     }
 }
 
-impl<T: Message, O: Ownership> DefaultId for NSArray<T, O> {
-    type Ownership = O;
+impl<T: Message> DefaultId for NSArray<T, Shared> {
+    type Ownership = Shared;
 
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
@@ -408,8 +410,14 @@ mod tests {
     }
 
     #[test]
+    fn test_two_empty() {
+        let _empty_array1 = NSArray::<NSObject, _>::new();
+        let _empty_array2 = NSArray::<NSObject, _>::new();
+    }
+
+    #[test]
     fn test_len() {
-        let empty_array = NSArray::<NSObject, Owned>::new();
+        let empty_array = NSArray::<NSObject, _>::new();
         assert_eq!(empty_array.len(), 0);
 
         let array = sample_array(4);
@@ -450,7 +458,7 @@ mod tests {
         assert_eq!(array.first(), array.get(0));
         assert_eq!(array.last(), array.get(3));
 
-        let empty_array = <NSArray<NSObject, Owned>>::new();
+        let empty_array = <NSArray<NSObject, Shared>>::new();
         assert!(empty_array.first().is_none());
         assert!(empty_array.last().is_none());
     }
