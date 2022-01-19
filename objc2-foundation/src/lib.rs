@@ -30,6 +30,7 @@ pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
 pub use self::object::NSObject;
 pub use self::range::NSRange;
 pub use self::string::NSString;
+pub use self::thread::{is_main_thread, is_multi_threaded, NSThread};
 pub use self::value::NSValue;
 
 #[cfg(apple)]
@@ -52,4 +53,5 @@ mod enumerator;
 mod object;
 mod range;
 mod string;
+mod thread;
 mod value;
