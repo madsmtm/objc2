@@ -1,9 +1,29 @@
 //! # Bindings to the Objective-C Cocoa `Foundation` framework
 //!
-//! This library is very much in progress, consider using the more
-//! battle-tested [`cocoa-foundation`] crate in the meantime.
+//! The [`std`] equivalent for Objective-C, containing essential data types,
+//! collections, and operating-system services.
+//!
+//! See [Apple's documentation](https://developer.apple.com/documentation/foundation?language=objc).
+//!
+//! **NOTICE: This library is very much in progress, consider using the more
+//! battle-tested [`cocoa-foundation`] crate in the meantime.**
 //!
 //! [`cocoa-foundation`]: https://crates.io/crates/cocoa-foundation
+//!
+//! ## Philosophy
+//!
+//! The `Foundation` framework is _huge_! If we aspired to map every API it
+//! exposes (a lot of it is just helper methods to make Objective-C more
+//! ergonomic), this library would never be finished. Instead, our focus lies
+//! on conversion methods, to allow easily using them from Rust.
+//!
+//! If you find some API that an object doesn't expose (but should), we gladly
+//! accept [pull requests]. Anyhow, if it is something that is out of scope,
+//! these objects implement the [`objc2::Message`] trait, so you can always
+//! just manually implement call a method using the [`objc2::msg_send!`]
+//! macro.
+//!
+//! [pull requests]: https://github.com/madsmtm/objc2/pulls
 
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]
