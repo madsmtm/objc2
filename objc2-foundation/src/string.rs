@@ -1,3 +1,4 @@
+use core::cmp;
 use core::ffi::c_void;
 use core::fmt;
 use core::ptr::NonNull;
@@ -11,8 +12,9 @@ use objc2::msg_send;
 use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
+use objc2::runtime::Bool;
 
-use super::{NSCopying, NSObject};
+use crate::{NSComparisonResult, NSCopying, NSObject};
 
 #[cfg(apple)]
 const UTF8_ENCODING: usize = 4;
@@ -24,7 +26,16 @@ const UTF8_ENCODING: i32 = 4;
 const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
 object! {
+    /// A static, plain-text Unicode string object.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring?language=objc).
     unsafe pub struct NSString: NSObject;
+    // TODO: Use isEqualToString: for comparison (instead of just isEqual:)
+    // The former is more performant
+
+    // TODO: Use more performant Debug implementation.
+
+    // TODO: Check if performance of NSSelectorFromString is worthwhile
 }
 
 // TODO: SAFETY
@@ -32,17 +43,83 @@ unsafe impl Sync for NSString {}
 unsafe impl Send for NSString {}
 
 impl NSString {
-    unsafe_def_fn!(pub fn new -> Shared);
+    unsafe_def_fn! {
+        /// Construct an empty NSString.
+        pub fn new -> Shared;
+    }
 
+    /// The number of UTF-8 code units in `self`.
+    #[doc(alias = "lengthOfBytesUsingEncoding")]
+    #[doc(alias = "lengthOfBytesUsingEncoding:")]
     pub fn len(&self) -> usize {
         unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
     }
 
+    /// The number of UTF-16 code units in `self`.
+    ///
+    /// See also [`NSString::len`].
+    #[doc(alias = "length")]
+    // TODO: Finish this
+    fn len_utf16(&self) -> usize {
+        unsafe { msg_send![self, lengt] }
+    }
+
     pub fn is_empty(&self) -> bool {
+        // TODO: lengthOfBytesUsingEncoding: might sometimes return 0 for
+        // other reasons, so this is not really correct!
         self.len() == 0
     }
 
-    /// TODO
+    /// Get the [`str`](`prim@str`) representation of this string if it can be
+    /// done efficiently.
+    ///
+    /// Returns [`None`] if the internal storage does not allow this to be
+    /// done efficiently. Use [`NSString::as_str`] or `NSString::to_string`
+    /// if performance is not an issue.
+    #[doc(alias = "CFStringGetCStringPtr")]
+    #[allow(unused)]
+    // TODO: Finish this
+    fn as_str_wip(&self) -> Option<&str> {
+        type CFStringEncoding = u32;
+        #[allow(non_upper_case_globals)]
+        // https://developer.apple.com/documentation/corefoundation/cfstringbuiltinencodings/kcfstringencodingutf8?language=objc
+        const kCFStringEncodingUTF8: CFStringEncoding = 0x08000100;
+        extern "C" {
+            // https://developer.apple.com/documentation/corefoundation/1542133-cfstringgetcstringptr?language=objc
+            fn CFStringGetCStringPtr(s: &NSString, encoding: CFStringEncoding) -> *const c_char;
+        }
+        let bytes = unsafe { CFStringGetCStringPtr(self, kCFStringEncodingUTF8) };
+        NonNull::new(bytes as *mut u8).map(|bytes| {
+            let len = self.len();
+            let bytes: &[u8] = unsafe { slice::from_raw_parts(bytes.as_ptr(), len) };
+            str::from_utf8(bytes).unwrap()
+        })
+    }
+
+    /// Get an [UTF-16] string slice if it can be done efficiently.
+    ///
+    /// Returns [`None`] if the internal storage of `self` does not allow this
+    /// to be returned efficiently.
+    ///
+    /// See [`as_str`](Self::as_str) for the UTF-8 equivalent.
+    ///
+    /// [UTF-16]: https://en.wikipedia.org/wiki/UTF-16
+    #[allow(unused)]
+    // TODO: Finish this
+    fn as_utf16(&self) -> Option<&[u16]> {
+        extern "C" {
+            // https://developer.apple.com/documentation/corefoundation/1542939-cfstringgetcharactersptr?language=objc
+            fn CFStringGetCharactersPtr(s: &NSString) -> *const u16;
+        }
+        let ptr = unsafe { CFStringGetCharactersPtr(self) };
+        NonNull::new(ptr as *mut u16)
+            .map(|ptr| unsafe { slice::from_raw_parts(ptr.as_ptr(), self.len_utf16()) })
+    }
+
+    /// Get the [`str`](`prim@str`) representation of this.
+    ///
+    /// TODO: Further explain this.
+    #[doc(alias = "UTF8String")]
     pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
         // This is necessary until `auto` types stabilizes.
         pool.__verify_is_inner();
@@ -60,6 +137,8 @@ impl NSString {
         //
         // So the lifetime of the returned pointer is either the same as the
         // NSString OR the lifetime of the innermost @autoreleasepool.
+        //
+        // https://developer.apple.com/documentation/foundation/nsstring/1411189-utf8string?language=objc
         let bytes: *const c_char = unsafe { msg_send![self, UTF8String] };
         let bytes = bytes as *const u8;
         let len = self.len();
@@ -78,6 +157,11 @@ impl NSString {
         str::from_utf8(bytes).unwrap()
     }
 
+    // TODO: Allow usecases where the NUL byte from `UTF8String` is kept?
+
+    /// Creates an immutable `NSString` by copying the given string slice.
+    #[doc(alias = "initWithBytes")]
+    #[doc(alias = "initWithBytes:length:encoding:")]
     pub fn from_str(string: &str) -> Id<Self, Shared> {
         let cls = Self::class();
         let bytes = string.as_ptr() as *const c_void;
@@ -92,7 +176,63 @@ impl NSString {
             Id::new(NonNull::new_unchecked(obj))
         }
     }
+
+    // TODO: initWithBytesNoCopy:, maybe add lifetime parameter to NSString?
+    // See https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L350-L381
+    // Might be quite difficult, as Objective-C code might assume the NSString
+    // is always alive?
+    // See https://github.com/drewcrawford/foundationr/blob/b27683417a35510e8e5d78a821f081905b803de6/src/nsstring.rs
+
+    /// Whether the given string matches the beginning characters of this
+    /// string.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1410309-hasprefix?language=objc).
+    #[doc(alias = "hasPrefix")]
+    #[doc(alias = "hasPrefix:")]
+    pub fn has_prefix(&self, prefix: &NSString) -> bool {
+        let res: Bool = unsafe { msg_send![self, hasPrefix: prefix] };
+        res.is_true()
+    }
+
+    /// Whether the given string matches the ending characters of this string.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1416529-hassuffix?language=objc).
+    #[doc(alias = "hasSuffix")]
+    #[doc(alias = "hasSuffix:")]
+    pub fn has_suffix(&self, suffix: &NSString) -> bool {
+        let res: Bool = unsafe { msg_send![self, hasSuffix: suffix] };
+        res.is_true()
+    }
+
+    // pub fn from_nsrange(range: NSRange) -> Id<Self, Shared>
+    // https://developer.apple.com/documentation/foundation/1415155-nsstringfromrange?language=objc
 }
+
+impl PartialOrd for NSString {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for NSString {
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
+        let res: NSComparisonResult = unsafe { msg_send![self, compare: other] };
+        // TODO: Other comparison methods:
+        // - compare:options:
+        // - compare:options:range:
+        // - compare:options:range:locale:
+        // - localizedCompare:
+        // - caseInsensitiveCompare:
+        // - localizedCaseInsensitiveCompare:
+        // - localizedStandardCompare:
+        res.into()
+    }
+}
+
+// TODO: PartialEq and PartialOrd against &str
+// See `fruity`'s implementation:
+// https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L69-L163
 
 impl DefaultId for NSString {
     type Ownership = Shared;
@@ -175,6 +315,16 @@ mod tests {
     }
 
     #[test]
+    fn test_nul() {
+        let expected = "\0";
+        let s = NSString::from_str(expected);
+        assert_eq!(s.len(), expected.len());
+        autoreleasepool(|pool| {
+            assert_eq!(s.as_str(pool), expected);
+        });
+    }
+
+    #[test]
     fn test_interior_nul() {
         let expected = "Hello\0World";
         let s = NSString::from_str(expected);
@@ -227,5 +377,56 @@ mod tests {
             assert_eq!(ns_string.as_str(pool), expected);
         });
         assert_eq!(ns_string.len(), expected.len());
+    }
+
+    #[test]
+    fn test_hash() {
+        use std::collections::hash_map::DefaultHasher;
+        use std::hash::Hash;
+
+        let s1 = NSString::from_str("example string goes here");
+        let s2 = NSString::from_str("example string goes here");
+
+        let mut hashstate = DefaultHasher::new();
+        let mut hashstate2 = DefaultHasher::new();
+        assert_eq!(s1.hash(&mut hashstate), s2.hash(&mut hashstate2));
+    }
+
+    #[test]
+    fn test_prefix_suffix() {
+        let s = NSString::from_str("abcdef");
+        let prefix = NSString::from_str("abc");
+        let suffix = NSString::from_str("def");
+        assert!(s.has_prefix(&prefix));
+        assert!(s.has_suffix(&suffix));
+        assert!(!s.has_prefix(&suffix));
+        assert!(!s.has_suffix(&prefix));
+    }
+
+    #[test]
+    fn test_cmp() {
+        let s1 = NSString::from_str("aa");
+        assert!(s1 <= s1);
+        assert!(s1 >= s1);
+        let s2 = NSString::from_str("ab");
+        assert!(s1 < s2);
+        assert!(!(s1 > s2));
+        assert!(s1 <= s2);
+        assert!(!(s1 >= s2));
+        let s3 = NSString::from_str("ba");
+        assert!(s1 < s3);
+        assert!(!(s1 > s3));
+        assert!(s1 <= s3);
+        assert!(!(s1 >= s3));
+        assert!(s2 < s3);
+        assert!(!(s2 > s3));
+        assert!(s2 <= s3);
+        assert!(!(s2 >= s3));
+
+        let s = NSString::from_str("abc");
+        let shorter = NSString::from_str("a");
+        let longer = NSString::from_str("abcdef");
+        assert!(s > shorter);
+        assert!(s < longer);
     }
 }

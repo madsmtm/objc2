@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSArray`, which derefs to `NSObject`, which derefs to `Object`.
 
   This allows more ergonomic usage.
+* Implement `PartialOrd` and `Ord` for `NSString`.
+* Added `NSString::has_prefix` and `NSString::has_suffix`.
 
 ### Changed
 * **BREAKING**: Removed the following helper traits in favor of inherent
