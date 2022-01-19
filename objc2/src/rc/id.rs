@@ -781,4 +781,14 @@ mod tests {
         };
         // Dropping fails
     }
+
+    #[test]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "An `Id<T, Owned>` exists while trying to create `Id<T, Shared>`!"
+    )]
+    fn test_create_shared_when_owned_exists() {
+        let obj = new();
+        let _obj: Id<Object, Shared> = unsafe { Id::retain(obj.ptr) };
+    }
 }

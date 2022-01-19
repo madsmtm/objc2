@@ -26,11 +26,9 @@ mod private {
 /// crate.
 pub trait Ownership: private::Sealed + 'static {
     #[doc(hidden)]
-    #[inline(always)]
-    unsafe fn __ensure_unique_if_owned(_: *mut ffi::objc_object) {}
+    unsafe fn __ensure_unique_if_owned(_: *mut ffi::objc_object);
     #[doc(hidden)]
-    #[inline(always)]
-    unsafe fn __relinquish_ownership(_: *mut ffi::objc_object) {}
+    unsafe fn __relinquish_ownership(_: *mut ffi::objc_object);
 }
 
 /// The value of this doesn't matter, it's only the address that we use.
@@ -78,4 +76,23 @@ impl Ownership for Owned {
     }
 }
 
-impl Ownership for Shared {}
+impl Ownership for Shared {
+    #[track_caller]
+    unsafe fn __ensure_unique_if_owned(obj: *mut ffi::objc_object) {
+        std::println!("\n__ensure_unique_if_owned: {:?} / {:?}", obj, key());
+        let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
+        std::println!("associated: {:?}", associated);
+        if !associated.is_null() {
+            panic!("An `Id<T, Owned>` exists while trying to create `Id<T, Shared>`!");
+        }
+    }
+    #[track_caller]
+    unsafe fn __relinquish_ownership(obj: *mut ffi::objc_object) {
+        std::println!("\n__relinquish_ownership: {:?} / {:?}", obj, key());
+        let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
+        std::println!("associated: {:?}", associated);
+        if !associated.is_null() {
+            panic!("Tried to give up ownership of `Id<T, Shared>`!");
+        }
+    }
+}
