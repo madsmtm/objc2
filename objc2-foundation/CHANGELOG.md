@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `io::Write` and `iter::Extend` implementation for `NSMutableData`.
 * Added `NSUUID` object.
 * Added `NSMutableString` object.
+* Added basic `NSAttributedString` object.
 
 ### Changed
 * **BREAKING**: Removed the following helper traits in favor of inherent

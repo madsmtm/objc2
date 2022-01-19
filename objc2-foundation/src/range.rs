@@ -27,6 +27,7 @@ impl NSRange {
     /// assert_eq!(NSRange::new(3, 2), NSRange::from(3..5));
     /// ```
     #[inline]
+    #[doc(alias = "NSMakeRange")]
     pub const fn new(location: usize, length: usize) -> Self {
         // Equivalent to NSMakeRange
         Self { location, length }
@@ -62,6 +63,7 @@ impl NSRange {
     /// assert!(!NSRange::from(3..3).contains(3));
     /// ```
     #[inline]
+    #[doc(alias = "NSLocationInRange")]
     pub fn contains(&self, index: usize) -> bool {
         // Same as NSLocationInRange
         if let Some(len) = index.checked_sub(self.location) {
@@ -74,6 +76,7 @@ impl NSRange {
 
     /// Returns the upper bound of the range (exclusive).
     #[inline]
+    #[doc(alias = "NSMaxRange")]
     pub fn end(&self) -> usize {
         self.location
             .checked_add(self.length)

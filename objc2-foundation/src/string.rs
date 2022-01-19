@@ -61,7 +61,7 @@ impl NSString {
     #[doc(alias = "length")]
     // TODO: Finish this
     fn len_utf16(&self) -> usize {
-        unsafe { msg_send![self, lengt] }
+        unsafe { msg_send![self, length] }
     }
 
     pub fn is_empty(&self) -> bool {

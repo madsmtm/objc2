@@ -42,6 +42,7 @@ extern crate std;
 extern "C" {}
 
 pub use self::array::{NSArray, NSMutableArray};
+pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::data::{NSData, NSMutableData};
@@ -68,6 +69,7 @@ extern "C" {}
 mod macros;
 
 mod array;
+mod attributed_string;
 mod comparison_result;
 mod copying;
 mod data;
