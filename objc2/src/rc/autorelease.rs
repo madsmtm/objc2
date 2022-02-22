@@ -45,6 +45,7 @@ impl AutoreleasePool {
     /// Additionally, the pools must be dropped in the same order they were
     /// created.
     #[doc(alias = "objc_autoreleasePoolPush")]
+    #[inline]
     unsafe fn new() -> Self {
         // TODO: Make this function pub when we're more certain of the API
         let context = unsafe { ffi::objc_autoreleasePoolPush() };
@@ -57,10 +58,7 @@ impl AutoreleasePool {
     }
 
     /// This will be removed in a future version.
-    #[cfg_attr(
-        not(all(debug_assertions, not(feature = "unstable_autoreleasesafe"))),
-        inline
-    )]
+    #[inline]
     #[doc(hidden)]
     pub fn __verify_is_inner(&self) {
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
@@ -139,6 +137,7 @@ impl Drop for AutoreleasePool {
     /// [clang documentation]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#autoreleasepool
     /// [revision `371`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-371/runtime/objc-exception.m#L479-L482
     #[doc(alias = "objc_autoreleasePoolPop")]
+    #[inline]
     fn drop(&mut self) {
         unsafe { ffi::objc_autoreleasePoolPop(self.context) }
         #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
@@ -292,6 +291,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// # panic!("Does not panic in release mode, so for testing we make it!");
 /// ```
 #[doc(alias = "@autoreleasepool")]
+#[inline(always)]
 pub fn autoreleasepool<T, F>(f: F) -> T
 where
     for<'p> F: FnOnce(&'p AutoreleasePool) -> T + AutoreleaseSafe,

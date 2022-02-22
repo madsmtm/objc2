@@ -237,7 +237,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     // let y: &T = &*retained;
     // ```
     #[doc(alias = "objc_retain")]
-    #[cfg_attr(not(debug_assertions), inline)]
+    #[inline]
     pub unsafe fn retain(ptr: NonNull<T>) -> Id<T, O> {
         let ptr = ptr.as_ptr() as *mut ffi::objc_object;
         // SAFETY: The caller upholds that the pointer is valid
@@ -266,7 +266,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
         NonNull::new(ptr).map(|ptr| unsafe { Id::retain(ptr) })
     }
 
-    #[cfg_attr(not(debug_assertions), inline)]
+    #[inline]
     fn autorelease_inner(self) -> *mut T {
         // Note that this (and the actual `autorelease`) is not an associated
         // function. This breaks the guideline that smart pointers shouldn't

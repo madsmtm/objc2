@@ -4,7 +4,6 @@ use core::convert::TryFrom;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ptr;
-use core::ptr::NonNull;
 use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{Id, Shared};
@@ -35,6 +34,7 @@ pub struct WeakId<T: ?Sized> {
 impl<T: Message> WeakId<T> {
     /// Construct a new [`WeakId`] referencing the given shared [`Id`].
     #[doc(alias = "objc_initWeak")]
+    #[inline]
     pub fn new(obj: &Id<T, Shared>) -> Self {
         // Note that taking `&Id<T, Owned>` would not be safe since that would
         // allow loading an `Id<T, Shared>` later on.
@@ -68,7 +68,7 @@ impl<T: Message> WeakId<T> {
     pub fn load(&self) -> Option<Id<T, Shared>> {
         let ptr: *mut *mut ffi::objc_object = self.inner.get() as _;
         let obj = unsafe { ffi::objc_loadWeakRetained(ptr) } as *mut T;
-        NonNull::new(obj).map(|obj| unsafe { Id::new(obj) })
+        unsafe { Id::new_null(obj) }
     }
 
     // TODO: Add `autorelease(&self) -> Option<&T>` using `objc_loadWeak`?
@@ -77,6 +77,7 @@ impl<T: Message> WeakId<T> {
 impl<T: ?Sized> Drop for WeakId<T> {
     /// Drops the `WeakId` pointer.
     #[doc(alias = "objc_destroyWeak")]
+    #[inline]
     fn drop(&mut self) {
         unsafe { ffi::objc_destroyWeak(self.inner.get() as _) }
     }
@@ -101,6 +102,7 @@ impl<T: Message> Default for WeakId<T> {
     /// Constructs a new `WeakId<T>` that doesn't reference any object.
     ///
     /// Calling [`Self::load`] on the return value always gives [`None`].
+    #[inline]
     fn default() -> Self {
         // SAFETY: The pointer is null
         unsafe { Self::new_inner(ptr::null_mut()) }
@@ -130,6 +132,7 @@ impl<T: RefUnwindSafe + ?Sized> RefUnwindSafe for WeakId<T> {}
 impl<T: RefUnwindSafe + ?Sized> UnwindSafe for WeakId<T> {}
 
 impl<T: Message> From<Id<T, Shared>> for WeakId<T> {
+    #[inline]
     fn from(obj: Id<T, Shared>) -> Self {
         WeakId::new(&obj)
     }
