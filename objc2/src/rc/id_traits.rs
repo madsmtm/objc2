@@ -65,6 +65,7 @@ pub trait DefaultId {
 }
 
 impl<T: DefaultId + ?Sized> Default for Id<T, T::Ownership> {
+    #[inline]
     fn default() -> Self {
         T::default_id()
     }

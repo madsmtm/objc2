@@ -186,9 +186,9 @@ jobs:
       # This changes a variable, so is only set when a custom SDK is used
       run: echo "SDKROOT=$HOME/extern/sdk" >> $GITHUB_ENV
 
-    - name: Install Clang
+    - name: Install Clang & Valgrind
       if: contains(matrix.os, 'ubuntu')
-      run: sudo apt-get -y install clang
+      run: sudo apt-get -y install clang valgrind
 
     - name: Install cross compilation tools
       if: matrix.target == 'i686-unknown-linux-gnu'
@@ -326,6 +326,15 @@ jobs:
       with:
         command: test
         args: --features ${{ env.FEATURES }} ${{ env.TESTARGS }} --release
+
+    - name: Run benchmarks
+      # Difficult to install Valgrind on macOS
+      # See https://github.com/LouisBrunner/valgrind-macos
+      if: contains(matrix.os, 'ubuntu')
+      uses: actions-rs/cargo@v1
+      with:
+        command: bench
+        args: --bench autorelease ${{ env.TESTARGS }}
 
     - name: Test with unstable features
       if: ${{ !matrix.dinghy && matrix.rust.toolchain == 'nightly' }}

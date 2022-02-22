@@ -48,6 +48,13 @@ objc2-encode = { path = "../objc2-encode", version = "=2.0.0-beta.2" }
 [build-dependencies]
 cc = { version = "1", optional = true }
 
+[dev-dependencies]
+iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
+
+[[bench]]
+name = "autorelease"
+harness = false
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 
