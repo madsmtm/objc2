@@ -1,6 +1,7 @@
 #include <objc/objc.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <uuid/uuid.h>
 // For NSInteger / NSUInteger. Linking is not required.
 #include <Foundation/NSObject.h>
 
@@ -44,13 +45,25 @@ ENCODING_INNER(VOID_POINTER_POINTER, void**);
 
 // Array
 
-ENCODING_INNER(INT_ARRAY, int[10]);
-ENCODING_INNER(INT_ARRAY_POINTER, int*[10]);
-ENCODING_INNER(INT_ARRAY_ATOMIC, _Atomic int[10]);
+ENCODING_INNER(ARRAY_INT, int[10]);
+ENCODING_INNER(ARRAY_INT_POINTER, int*[10]);
+ENCODING_INNER(ARRAY_INT_ATOMIC, _Atomic int[10]);
 
 // Struct
 
-// TODO: Structs and such
+struct empty {};
+ENCODING(STRUCT_EMPTY, struct empty);
+struct one_item {
+    void* a;
+};
+ENCODING(STRUCT_ONE_ITEM, struct one_item);
+struct two_items {
+    float a;
+    int b;
+};
+ENCODING(STRUCT_TWO_ITEMS, struct two_items);
+
+// TODO: Structs with arrays, and vice-versa
 
 // Objective-C
 
@@ -80,6 +93,11 @@ ENCODING(UINTPTR, uintptr_t);
 
 ENCODING(SIZE_T, size_t);
 ENCODING(PTRDIFF_T, ptrdiff_t);
+
+// uuid.h
+
+ENCODING_INNER(UUID_T, uuid_t);
+ENCODING_INNER(UUID_T_POINTER, uuid_t*);
 
 // Possible extras
 

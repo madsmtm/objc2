@@ -95,11 +95,13 @@ assert_types! {
 
     // Array
 
-    // TODO: INT_ARRAY => [c_int; 10],
+    // ARRAY_INT
 
     // Struct
 
-    // TODO: Structs and such
+    // STRUCT_EMPTY
+    // STRUCT_ONE_ITEM
+    // STRUCT_TWO_ITEMS
 
     // // Objective-C
 
@@ -181,3 +183,32 @@ assert_inner!(str ENCODING_DOUBLE_COMPLEX_ATOMIC => format!("A{}", Encoding::Dou
 assert_inner!(enc ENCODING_LONG_DOUBLE_COMPLEX => Encoding::LongDoubleComplex);
 assert_inner!(enc ENCODING_LONG_DOUBLE_COMPLEX_POINTER => Encoding::Pointer(&Encoding::LongDoubleComplex));
 assert_inner!(str ENCODING_LONG_DOUBLE_COMPLEX_ATOMIC => format!("A{}", Encoding::LongDoubleComplex));
+
+// Arrays (atomics and pointers are weirdly encoded?)
+
+const ARRAY_ENC: Encoding<'static> = Encoding::Array(10, &c_int::ENCODING);
+assert_inner!(enc ENCODING_ARRAY_INT => ARRAY_ENC);
+assert_inner!(str ENCODING_ARRAY_INT_POINTER => "[10^i]");
+assert_inner!(str ENCODING_ARRAY_INT_ATOMIC => "[10Ai]");
+
+// Structs (atomics erase type information)
+
+const ENC0: Encoding<'static> = Encoding::Struct("empty", &[]);
+assert_inner!(enc ENCODING_STRUCT_EMPTY => ENC0);
+assert_inner!(enc ENCODING_STRUCT_EMPTY_POINTER => Encoding::Pointer(&ENC0));
+assert_inner!(str ENCODING_STRUCT_EMPTY_ATOMIC => "A{empty}");
+
+const ENC1: Encoding<'static> = Encoding::Struct("one_item", &[<*const c_void>::ENCODING]);
+assert_inner!(enc ENCODING_STRUCT_ONE_ITEM => ENC1);
+assert_inner!(enc ENCODING_STRUCT_ONE_ITEM_POINTER => Encoding::Pointer(&ENC1));
+assert_inner!(str ENCODING_STRUCT_ONE_ITEM_ATOMIC => "A{one_item}");
+
+const ENC2: Encoding<'static> = Encoding::Struct("two_items", &[f32::ENCODING, c_int::ENCODING]);
+assert_inner!(enc ENCODING_STRUCT_TWO_ITEMS => ENC2);
+assert_inner!(enc ENCODING_STRUCT_TWO_ITEMS_POINTER => Encoding::Pointer(&ENC2));
+assert_inner!(str ENCODING_STRUCT_TWO_ITEMS_ATOMIC => "A{two_items}");
+
+// UUIDs
+
+assert_inner!(enc ENCODING_UUID_T => Encoding::Array(16, &u8::ENCODING));
+assert_inner!(enc ENCODING_UUID_T_POINTER => Encoding::Pointer(&Encoding::Array(16, &u8::ENCODING)));

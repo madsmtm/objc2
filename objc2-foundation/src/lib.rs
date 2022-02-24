@@ -1,9 +1,29 @@
 //! # Bindings to the Objective-C Cocoa `Foundation` framework
 //!
-//! This library is very much in progress, consider using the more
-//! battle-tested [`cocoa-foundation`] crate in the meantime.
+//! The [`std`] equivalent for Objective-C, containing essential data types,
+//! collections, and operating-system services.
+//!
+//! See [Apple's documentation](https://developer.apple.com/documentation/foundation?language=objc).
+//!
+//! **NOTICE: This library is very much in progress, consider using the more
+//! battle-tested [`cocoa-foundation`] crate in the meantime.**
 //!
 //! [`cocoa-foundation`]: https://crates.io/crates/cocoa-foundation
+//!
+//! ## Philosophy
+//!
+//! The `Foundation` framework is _huge_! If we aspired to map every API it
+//! exposes (a lot of it is just helper methods to make Objective-C more
+//! ergonomic), this library would never be finished. Instead, our focus lies
+//! on conversion methods, to allow easily using them from Rust.
+//!
+//! If you find some API that an object doesn't expose (but should), we gladly
+//! accept [pull requests]. Anyhow, if it is something that is out of scope,
+//! these objects implement the [`objc2::Message`] trait, so you can always
+//! just manually implement call a method using the [`objc2::msg_send!`]
+//! macro.
+//!
+//! [pull requests]: https://github.com/madsmtm/objc2/pulls
 
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]
@@ -22,14 +42,20 @@ extern crate std;
 extern "C" {}
 
 pub use self::array::{NSArray, NSMutableArray};
+pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::data::{NSData, NSMutableData};
 pub use self::dictionary::NSDictionary;
 pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
+pub use self::mutable_attributed_string::NSMutableAttributedString;
+pub use self::mutable_string::NSMutableString;
 pub use self::object::NSObject;
+pub use self::process_info::NSProcessInfo;
 pub use self::range::NSRange;
 pub use self::string::NSString;
+pub use self::thread::{is_main_thread, is_multi_threaded, NSThread};
+pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
 
 #[cfg(apple)]
@@ -44,12 +70,18 @@ extern "C" {}
 mod macros;
 
 mod array;
+mod attributed_string;
 mod comparison_result;
 mod copying;
 mod data;
 mod dictionary;
 mod enumerator;
+mod mutable_attributed_string;
+mod mutable_string;
 mod object;
+mod process_info;
 mod range;
 mod string;
+mod thread;
+mod uuid;
 mod value;
