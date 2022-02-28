@@ -2,8 +2,8 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
-use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
@@ -117,6 +117,11 @@ pub struct Id<T: ?Sized, O: Ownership> {
     item: PhantomData<T>,
     /// To prevent warnings about unused type parameters.
     own: PhantomData<O>,
+    /// Marks the type as !UnwindSafe. Later on we'll re-enable this.
+    ///
+    /// See <https://github.com/rust-lang/rust/issues/93367> for why this is
+    /// required.
+    notunwindsafe: PhantomData<&'static mut ()>,
 }
 
 impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
@@ -171,6 +176,7 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
             ptr,
             item: PhantomData,
             own: PhantomData,
+            notunwindsafe: PhantomData,
         }
     }
 
