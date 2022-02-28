@@ -23,9 +23,13 @@ pub struct WeakId<T: ?Sized> {
     /// Loading may modify the pointer through a shared reference, so we use
     /// an UnsafeCell to get a *mut without self being mutable.
     ///
+    /// Remember that any thread may actually modify the inner value
+    /// concurrently, but as long as we only use it through the `objc_XXXWeak`
+    /// methods, all access is behind a lock.
+    ///
     /// TODO: Verify the need for UnsafeCell?
     /// TODO: Investigate if we can avoid some allocations using `Pin`.
-    inner: Box<UnsafeCell<*mut T>>,
+    inner: Box<UnsafeCell<*mut ffi::objc_object>>,
     /// WeakId inherits variance, dropck and various marker traits from
     /// `Id<T, Shared>` because it can be upgraded to a shared Id.
     item: PhantomData<Id<T, Shared>>,
@@ -49,7 +53,7 @@ impl<T: Message> WeakId<T> {
     unsafe fn new_inner(obj: *mut T) -> Self {
         let inner = Box::new(UnsafeCell::new(ptr::null_mut()));
         // SAFETY: `ptr` will never move, and the caller verifies `obj`
-        let _ = unsafe { ffi::objc_initWeak(inner.get() as _, obj as _) };
+        let _ = unsafe { ffi::objc_initWeak(inner.get(), obj as *mut ffi::objc_object) };
         Self {
             inner,
             item: PhantomData,
@@ -66,7 +70,7 @@ impl<T: Message> WeakId<T> {
     #[doc(alias = "objc_loadWeakRetained")]
     #[inline]
     pub fn load(&self) -> Option<Id<T, Shared>> {
-        let ptr: *mut *mut ffi::objc_object = self.inner.get() as _;
+        let ptr = self.inner.get();
         let obj = unsafe { ffi::objc_loadWeakRetained(ptr) } as *mut T;
         unsafe { Id::new_null(obj) }
     }
@@ -79,7 +83,7 @@ impl<T: ?Sized> Drop for WeakId<T> {
     #[doc(alias = "objc_destroyWeak")]
     #[inline]
     fn drop(&mut self) {
-        unsafe { ffi::objc_destroyWeak(self.inner.get() as _) }
+        unsafe { ffi::objc_destroyWeak(self.inner.get()) }
     }
 }
 
@@ -89,7 +93,7 @@ impl<T> Clone for WeakId<T> {
     #[doc(alias = "objc_copyWeak")]
     fn clone(&self) -> Self {
         let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
-        unsafe { ffi::objc_copyWeak(ptr.get() as _, self.inner.get() as _) };
+        unsafe { ffi::objc_copyWeak(ptr.get(), self.inner.get()) };
         Self {
             inner: ptr,
             item: PhantomData,

@@ -94,6 +94,14 @@ mod tests {
         obj
     }
 
+    /// Test that `WeakId<T>` is covariant over `T`.
+    #[allow(unused)]
+    fn assert_weak_id_variance<'a, 'b>(
+        obj: &'a WeakId<MyObject<'static>>,
+    ) -> &'a WeakId<MyObject<'b>> {
+        obj
+    }
+
     #[test]
     fn test_size_of() {
         assert_eq!(size_of::<Id<TestType, Owned>>(), size_of::<&TestType>());
