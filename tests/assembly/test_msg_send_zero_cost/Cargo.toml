@@ -9,3 +9,5 @@ path = "lib.rs"
 
 [dependencies]
 objc2 = { path = "../../../objc2" }
+objc-sys = { path = "../../../objc-sys" }
+block-sys = { path = "../../../block-sys" }
