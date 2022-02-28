@@ -1,8 +1,8 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
+use core::ffi::c_void;
 use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
-use core::{ffi::c_void, ptr::NonNull};
 use std::io;
 
 use objc2::msg_send;
@@ -62,7 +62,7 @@ impl NSData {
     }
 
     pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
-        unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()) }
+        unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()).unwrap() }
     }
 
     #[cfg(feature = "block")]
@@ -79,7 +79,7 @@ impl NSData {
         #[cfg(not(gnustep))]
         let cls = Self::class();
 
-        unsafe { Id::new(data_from_vec(cls, bytes).cast()) }
+        unsafe { Id::new(data_from_vec(cls, bytes).cast()).unwrap() }
     }
 }
 
@@ -122,12 +122,12 @@ impl NSMutableData {
     unsafe_def_fn!(fn new -> Owned);
 
     pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
-        unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()) }
+        unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()).unwrap() }
     }
 
     #[cfg(feature = "block")]
     pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
-        unsafe { Id::new(data_from_vec(Self::class(), bytes).cast()) }
+        unsafe { Id::new(data_from_vec(Self::class(), bytes).cast()).unwrap() }
     }
 
     // TODO: Use malloc_buf/mbox and `initWithBytesNoCopy:...`?
@@ -138,7 +138,7 @@ impl NSMutableData {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithData: data];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 
@@ -147,7 +147,7 @@ impl NSMutableData {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithCapacity: capacity];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 }
@@ -289,21 +289,20 @@ impl DefaultId for NSMutableData {
     }
 }
 
-unsafe fn data_with_bytes(cls: &Class, bytes: &[u8]) -> NonNull<Object> {
+unsafe fn data_with_bytes(cls: &Class, bytes: &[u8]) -> *mut Object {
     let bytes_ptr = bytes.as_ptr() as *const c_void;
     unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
-        let obj: *mut Object = msg_send![
+        msg_send![
             obj,
             initWithBytes: bytes_ptr,
             length: bytes.len(),
-        ];
-        NonNull::new_unchecked(obj)
+        ]
     }
 }
 
 #[cfg(feature = "block")]
-unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> NonNull<Object> {
+unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> *mut Object {
     use core::mem::ManuallyDrop;
 
     use block2::{Block, ConcreteBlock};
@@ -321,13 +320,12 @@ unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> NonNull<Object> {
 
     unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
-        let obj: *mut Object = msg_send![
+        msg_send![
             obj,
             initWithBytesNoCopy: bytes.as_mut_ptr() as *mut c_void,
             length: bytes.len(),
             deallocator: dealloc,
-        ];
-        NonNull::new_unchecked(obj)
+        ]
     }
 }
 

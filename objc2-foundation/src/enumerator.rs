@@ -1,7 +1,6 @@
 use core::marker::PhantomData;
 use core::mem;
 use core::ptr;
-use core::ptr::NonNull;
 use core::slice;
 use std::os::raw::c_ulong;
 
@@ -23,9 +22,8 @@ impl<'a, T: Message> NSEnumerator<'a, T> {
     /// The object pointer must be a valid `NSEnumerator` with `Owned`
     /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> Self {
-        let ptr = NonNull::new(ptr).unwrap();
         Self {
-            id: unsafe { Id::retain(ptr) },
+            id: unsafe { Id::retain(ptr) }.unwrap(),
             item: PhantomData,
         }
     }

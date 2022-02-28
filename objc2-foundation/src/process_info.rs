@@ -1,5 +1,3 @@
-use core::ptr::NonNull;
-
 use objc2::msg_send;
 use objc2::rc::{Id, Shared};
 
@@ -23,13 +21,12 @@ impl NSProcessInfo {
     pub fn process_info() -> Id<NSProcessInfo, Shared> {
         // currentThread is @property(strong), what does that mean?
         let obj: *mut Self = unsafe { msg_send![Self::class(), processInfo] };
-        let obj = unsafe { NonNull::new_unchecked(obj) };
-        unsafe { Id::retain(obj) }
+        // TODO: Always available?
+        unsafe { Id::retain(obj).unwrap() }
     }
 
     pub fn process_name(&self) -> Id<NSString, Shared> {
         let obj: *mut NSString = unsafe { msg_send![Self::class(), processName] };
-        let obj = NonNull::new(obj).unwrap();
-        unsafe { Id::retain(obj) }
+        unsafe { Id::retain(obj).unwrap() }
     }
 }

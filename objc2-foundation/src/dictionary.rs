@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 use core::cmp::min;
 use core::marker::PhantomData;
 use core::ops::Index;
-use core::ptr::{self, NonNull};
+use core::ptr;
 
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
 use objc2::{msg_send, Message};
@@ -103,7 +103,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     pub fn keys_array(&self) -> Id<NSArray<K, Shared>, Shared> {
         unsafe {
             let keys = msg_send![self, allKeys];
-            Id::retain(NonNull::new_unchecked(keys))
+            Id::retain(keys).unwrap()
         }
     }
 
@@ -124,14 +124,13 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
                 count: count,
             ]
         };
-        let obj = unsafe { NonNull::new_unchecked(obj) };
-        unsafe { Id::new(obj) }
+        unsafe { Id::new(obj).unwrap() }
     }
 
     pub fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<V, Owned>, Shared> {
         unsafe {
             let vals = msg_send![dict, allValues];
-            Id::retain(NonNull::new_unchecked(vals))
+            Id::retain(vals).unwrap()
         }
     }
 }

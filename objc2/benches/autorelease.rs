@@ -1,6 +1,5 @@
 use core::ffi::c_void;
 use std::mem::ManuallyDrop;
-use std::ptr::NonNull;
 
 use objc2::ffi;
 use objc2::rc::{autoreleasepool, Id, Shared};
@@ -47,7 +46,7 @@ fn alloc_nsobject() -> *mut Object {
 fn new_nsobject() -> Id<Object, Shared> {
     let obj = alloc_nsobject();
     let obj: *mut Object = unsafe { msg_send![obj, init] };
-    unsafe { Id::new(NonNull::new_unchecked(obj)) }
+    unsafe { Id::new(obj).unwrap_unchecked() }
 }
 
 fn new_nsdata() -> Id<Object, Shared> {
@@ -60,7 +59,7 @@ fn new_nsdata() -> Id<Object, Shared> {
             length: BYTES.len(),
         ]
     };
-    unsafe { Id::new(NonNull::new_unchecked(obj)) }
+    unsafe { Id::new(obj).unwrap_unchecked() }
 }
 
 fn new_leaked_nsdata() -> *mut Object {
@@ -82,7 +81,7 @@ fn autoreleased_nsdata() -> *mut Object {
 fn new_nsstring() -> Id<Object, Shared> {
     let obj: *mut Object = unsafe { msg_send![class!(NSString), alloc] };
     let obj: *mut Object = unsafe { msg_send![obj, init] };
-    unsafe { Id::new(NonNull::new_unchecked(obj)) }
+    unsafe { Id::new(obj).unwrap_unchecked() }
 }
 
 fn new_leaked_nsstring() -> *mut Object {
@@ -96,7 +95,7 @@ fn autoreleased_nsstring() -> *mut Object {
 
 fn retain_autoreleased(obj: *mut Object) -> Id<Object, Shared> {
     let obj = unsafe { ffi::objc_retainAutoreleasedReturnValue(obj.cast()) };
-    unsafe { Id::new(NonNull::new_unchecked(obj).cast()) }
+    unsafe { Id::new(obj.cast()).unwrap_unchecked() }
 }
 
 fn autoreleased_nsdata_pool_cleanup() -> *mut Object {

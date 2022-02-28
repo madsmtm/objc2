@@ -1,5 +1,4 @@
 use std::marker::PhantomData;
-use std::ptr::NonNull;
 use std::sync::Once;
 
 use objc2::declare::ClassDecl;
@@ -30,7 +29,7 @@ impl<'a> MyObject<'a> {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithPtr: number_ptr];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 

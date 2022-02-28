@@ -20,7 +20,6 @@
 use core::ffi::c_void;
 use core::mem;
 use core::ptr;
-use core::ptr::NonNull;
 use std::os::raw::c_uchar;
 
 use crate::ffi;
@@ -94,15 +93,14 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
         Ok(())
     } else {
         // SAFETY:
-        // The exception is always a valid object (or NULL, but that has been
-        // checked).
+        // The exception is always a valid object or NULL.
         //
         // The ownership is safe as Shared; Objective-C code throwing an
         // exception knows that they don't hold sole access to that exception
         // instance any more, and Rust code is forbidden by requiring a Shared
         // Id in `throw` (instead of just a shared reference, which could have
         // come from an Owned Id).
-        Err(NonNull::new(exception as *mut Object).map(|e| unsafe { Id::new(e) }))
+        Err(unsafe { Id::new(exception as *mut Object) })
     }
 }
 
@@ -169,7 +167,7 @@ mod tests {
 
     #[test]
     fn test_throw_catch_object() {
-        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]) };
+        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
 
         let result = unsafe { catch(|| throw(Some(&obj))) };
         let e = result.unwrap_err().unwrap();

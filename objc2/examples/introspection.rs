@@ -1,5 +1,3 @@
-use core::ptr::NonNull;
-
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send};
@@ -23,8 +21,8 @@ fn main() {
     // Allocate an instance
     let obj: Id<Object, Owned> = unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
-        let obj: NonNull<Object> = msg_send![obj, init];
-        Id::new(obj)
+        let obj: *mut Object = msg_send![obj, init];
+        Id::new(obj).unwrap()
     };
     println!("NSObject address: {:p}", obj);
 

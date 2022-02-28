@@ -3,7 +3,6 @@ use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut, Range};
-use core::ptr::NonNull;
 
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
@@ -47,16 +46,15 @@ object! {
     unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {}
 }
 
-unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> NonNull<Object> {
+unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Object {
     let obj: *mut Object = unsafe { msg_send![cls, alloc] };
-    let obj: *mut Object = unsafe {
+    unsafe {
         msg_send![
             obj,
             initWithObjects: refs.as_ptr(),
             count: refs.len(),
         ]
-    };
-    unsafe { NonNull::new_unchecked(obj) }
+    }
 }
 
 impl<T: Message, O: Ownership> NSArray<T, O> {
@@ -106,7 +104,7 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
     }
 
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
-        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()) }
+        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()).unwrap() }
     }
 
     pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
@@ -128,27 +126,27 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
         array
             .to_vec()
             .into_iter()
-            .map(|obj| unsafe { Id::retain(obj.into()) })
+            .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
             .collect()
     }
 }
 
 impl<T: Message> NSArray<T, Shared> {
     pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
-        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()) }
+        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()).unwrap() }
     }
 
     #[doc(alias = "objectAtIndex:")]
     pub fn get_retained(&self, index: usize) -> Id<T, Shared> {
         let obj = self.get(index).unwrap();
         // SAFETY: The object is originally shared (see `where` bound).
-        unsafe { Id::retain(obj.into()) }
+        unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() }
     }
 
     pub fn to_shared_vec(&self) -> Vec<Id<T, Shared>> {
         self.to_vec()
             .into_iter()
-            .map(|obj| unsafe { Id::retain(obj.into()) })
+            .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
             .collect()
     }
 }
@@ -212,13 +210,13 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     unsafe_def_fn!(pub fn new -> Owned);
 
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
-        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()) }
+        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()).unwrap() }
     }
 }
 
 impl<T: Message> NSMutableArray<T, Shared> {
     pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
-        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()) }
+        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()).unwrap() }
     }
 }
 
@@ -249,7 +247,7 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     pub fn replace(&mut self, index: usize, obj: Id<T, O>) -> Id<T, O> {
         let old_obj = unsafe {
             let obj = self.get(index).unwrap();
-            Id::retain(obj.into())
+            Id::retain(obj as *const T as *mut T).unwrap_unchecked()
         };
         unsafe {
             let _: () = msg_send![
@@ -264,7 +262,7 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     #[doc(alias = "removeObjectAtIndex:")]
     pub fn remove(&mut self, index: usize) -> Id<T, O> {
         let obj = if let Some(obj) = self.get(index) {
-            unsafe { Id::retain(obj.into()) }
+            unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() }
         } else {
             panic!("removal index should be < len");
         };
@@ -277,7 +275,7 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     #[doc(alias = "removeLastObject")]
     pub fn pop(&mut self) -> Option<Id<T, O>> {
         self.last().map(|obj| {
-            let obj = unsafe { Id::retain(obj.into()) };
+            let obj = unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() };
             unsafe {
                 let _: () = msg_send![self, removeLastObject];
             }

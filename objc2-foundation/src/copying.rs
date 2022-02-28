@@ -1,5 +1,3 @@
-use core::ptr::NonNull;
-
 use objc2::rc::{Id, Owned, Ownership};
 use objc2::{msg_send, Message};
 
@@ -35,7 +33,7 @@ pub unsafe trait NSCopying: Message {
     fn copy(&self) -> Id<Self::Output, Self::Ownership> {
         unsafe {
             let obj: *mut Self::Output = msg_send![self, copy];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 }
@@ -50,7 +48,7 @@ pub unsafe trait NSMutableCopying: Message {
     fn mutable_copy(&self) -> Id<Self::Output, Owned> {
         unsafe {
             let obj: *mut Self::Output = msg_send![self, mutableCopy];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 }

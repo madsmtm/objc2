@@ -1,4 +1,3 @@
-use std::ptr::NonNull;
 use std::sync::Once;
 
 use objc2::declare::ClassDecl;
@@ -26,7 +25,7 @@ static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 impl MYObject {
     fn new() -> Id<Self, Owned> {
         let cls = Self::class();
-        unsafe { Id::new(NonNull::new_unchecked(msg_send![cls, new])) }
+        unsafe { Id::new(msg_send![cls, new]).unwrap() }
     }
 
     fn number(&self) -> u32 {

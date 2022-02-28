@@ -72,7 +72,7 @@ impl<T: Message> WeakId<T> {
     pub fn load(&self) -> Option<Id<T, Shared>> {
         let ptr = self.inner.get();
         let obj = unsafe { ffi::objc_loadWeakRetained(ptr) } as *mut T;
-        unsafe { Id::new_null(obj) }
+        unsafe { Id::new(obj) }
     }
 
     // TODO: Add `autorelease(&self) -> Option<&T>` using `objc_loadWeak`?
@@ -151,8 +151,6 @@ impl<T: Message> TryFrom<WeakId<T>> for Id<T, Shared> {
 
 #[cfg(test)]
 mod tests {
-    use core::ptr::NonNull;
-
     use super::WeakId;
     use super::{Id, Shared};
     use crate::runtime::Object;
@@ -164,7 +162,7 @@ mod tests {
         let obj: Id<Object, Shared> = unsafe {
             let obj: *mut Object = msg_send![cls, alloc];
             let obj: *mut Object = msg_send![obj, init];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         };
 
         let weak = WeakId::new(&obj);
@@ -180,7 +178,7 @@ mod tests {
 
     #[test]
     fn test_weak_clone() {
-        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]) };
+        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
         let weak = WeakId::new(&obj);
 
         let weak2 = weak.clone();
