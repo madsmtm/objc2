@@ -130,7 +130,7 @@ pub use various::*;
 /// (It's also less of a breaking change on our part if we re-add these).
 ///
 /// TODO: Replace this with `extern type` to also mark it as `!Sized`.
-type OpaqueData = PhantomData<(UnsafeCell<()>, *const UnsafeCell<()>, PhantomPinned)>;
+type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
 
 #[cfg(test)]
 mod tests {

@@ -43,18 +43,9 @@ unsafe impl<T: Send> Send for NSArray<T, Owned> {}
 
 object! {
     // TODO: Ensure that this deref to NSArray is safe!
-    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {
-        item: PhantomData<Id<T, O>>,
-    }
+    // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
+    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {}
 }
-
-// SAFETY: Same as NSArray.
-//
-// TODO: Properly verify this
-unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
 
 unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> NonNull<Object> {
     let obj: *mut Object = unsafe { msg_send![cls, alloc] };
