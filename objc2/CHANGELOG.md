@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Bool::as_bool` (more descriptive name than `Bool::is_true`).
 * Added convenience methods `Id::new_null`, `Id::as_ptr` and
   `Id::retain_null`.
+* The `objc2-encode` dependency is now exposed as `objc2::encode`.
 
 
 ## 0.3.0-alpha.6 - 2022-01-03

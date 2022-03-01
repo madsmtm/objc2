@@ -89,7 +89,7 @@
 //! every time your send a message, and the message send will panic if they
 //! are not equivalent.
 //!
-//! [`objc2-encode`]: https://crates.io/crates/objc2-encode
+//! [`objc2-encode`]: objc2_encode
 //! [`Box`]: std::boxed::Box
 //!
 //!
@@ -141,8 +141,10 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
+pub use objc2_encode as encode;
 pub use objc_sys as ffi;
 
+#[doc(no_inline)]
 pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 pub use crate::message::{Message, MessageArguments, MessageError, MessageReceiver};
