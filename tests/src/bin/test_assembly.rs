@@ -70,6 +70,7 @@ fn main() {
             .arg("--message-format=json-render-diagnostics")
             .arg("--")
             .arg("--emit=asm")
+            .arg("-Cllvm-args=--x86-asm-syntax=intel")
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
             .output()
