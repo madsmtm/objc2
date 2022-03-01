@@ -22,5 +22,8 @@ fn main() {
         builder.flag(flag);
     }
 
+    // For assembly tests
+    println!("cargo:rustc-env=TARGET={}", env::var("TARGET").unwrap());
+
     builder.compile("libencode_utils.a");
 }
