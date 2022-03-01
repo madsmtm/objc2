@@ -11,6 +11,13 @@ use std::io;
 use std::path::Path;
 use std::process::{Command, Stdio};
 
+fn strip_lines(data: &str, starts_with: &str) -> String {
+    data.lines()
+        .filter(|line| !line.trim_start().starts_with(starts_with))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
 fn strip_section(data: &str, section: &str) -> String {
     let mut res = String::with_capacity(data.len());
     let mut in_removed_section = false;
@@ -20,14 +27,17 @@ fn strip_section(data: &str, section: &str) -> String {
             in_removed_section = false;
         }
         if line.trim().starts_with(".section") {
-            in_removed_section = line.contains(section);
+            if line.contains(section) {
+                in_removed_section = true;
+                write!(res, "; Stripped {section} section\n").unwrap();
+            } else {
+                in_removed_section = false;
+            }
         }
         if !in_removed_section {
             res.push_str(line);
-        } else {
-            write!(res, "; Stripped {section} line").unwrap();
+            res.push('\n');
         }
-        res.push('\n');
     }
     res
 }
@@ -41,6 +51,10 @@ fn read_assembly<P: AsRef<Path>>(path: P) -> io::Result<String> {
         .to_str()
         .unwrap();
     let s = s.replace(workspace_dir, "$WORKSPACE");
+    let s = strip_lines(&s, ".cfi_");
+    let s = strip_lines(&s, ".macosx_version_");
+    let s = strip_lines(&s, ".ios_version_");
+    let s = strip_lines(&s, ".build_version");
     // We remove the __LLVM,__bitcode and __LLVM,__cmdline sections because
     // they're uninteresting for out use-case.
     //
