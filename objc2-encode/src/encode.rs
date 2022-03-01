@@ -1,10 +1,9 @@
 use core::ffi::c_void;
-use core::mem::ManuallyDrop;
+use core::mem::{ManuallyDrop, MaybeUninit};
 use core::num::{
     NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU16, NonZeroU32,
     NonZeroU64, NonZeroU8, NonZeroUsize, Wrapping,
 };
-use core::pin::Pin;
 use core::ptr::NonNull;
 
 use crate::Encoding;
@@ -318,57 +317,50 @@ unsafe impl<T: Encode, const LENGTH: usize> RefEncode for [T; LENGTH] {
     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
-// SAFETY: `ManuallyDrop` is `repr(transparent)`.
-unsafe impl<T: Encode + ?Sized> Encode for ManuallyDrop<T> {
-    const ENCODING: Encoding<'static> = T::ENCODING;
+macro_rules! encode_impls_transparent {
+    ($($t:ident<T $(: ?$b:ident)?>,)*) => ($(
+        unsafe impl<T: Encode $(+ ?$b)?> Encode for $t<T> {
+            const ENCODING: Encoding<'static> = T::ENCODING;
+        }
+
+        unsafe impl<T: RefEncode $(+ ?$b)?> RefEncode for $t<T> {
+            const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
+        }
+    )*);
 }
 
-// With specialization: `impl Encode for ManuallyDrop<Box<T>>`
+encode_impls_transparent! {
+    // SAFETY: Guaranteed to have the same layout as `T`, and is subject to
+    // the same layout optimizations as `T`.
+    // TODO: With specialization: `impl Encode for ManuallyDrop<Box<T>>`
+    ManuallyDrop<T: ?Sized>,
 
-// SAFETY: `ManuallyDrop` is `repr(transparent)`.
-unsafe impl<T: RefEncode + ?Sized> RefEncode for ManuallyDrop<T> {
-    const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
+    // The fact that this has `repr(no_niche)` has no effect on us, since we
+    // don't implement `Encode` generically over `Option`.
+    // (e.g. an `Option<UnsafeCell<&u8>>` impl is not available).
+    // The inner field is not public, so may not be stable.
+    // TODO: UnsafeCell<T>,
+
+    // The inner field is not public, so may not be safe.
+    // TODO: Pin<T>,
+
+    // SAFETY: Guaranteed to have the same size, alignment, and ABI as `T`.
+    MaybeUninit<T>,
+
+    // SAFETY: Guaranteed to have the same layout and ABI as `T`.
+    Wrapping<T>,
+
+    // It might have requirements that would disourage this impl?
+    // TODO: Cell<T>
+
+    // TODO: Types that need to be made repr(transparent) first:
+    // - core::cell::Ref?
+    // - core::cell::RefCell?
+    // - core::cell::RefMut?
+    // - core::panic::AssertUnwindSafe<T>
+    // TODO: core::num::Saturating when that is stabilized
+    // TODO: core::cmp::Reverse?
 }
-
-// TODO: Consider UnsafeCell<T>
-// It is #[repr(transparent)], but might not be safe given that UnsafeCell
-// also has #[repr(no_niche)]
-
-// TODO: Consider Cell<T>
-// It is #[repr(transparent)] of UnsafeCell<T>, so figure that out first
-// `Cell` might also have other requirements that would disourage this impl?
-
-// TODO: Types that need to be made repr(transparent) first:
-// core::cell::Ref?
-// core::cell::RefCell?
-// core::cell::RefMut?
-// core::panic::AssertUnwindSafe<T>
-
-// SAFETY: `Pin` is `repr(transparent)`.
-unsafe impl<T: Encode> Encode for Pin<T> {
-    const ENCODING: Encoding<'static> = T::ENCODING;
-}
-
-// SAFETY: `Pin` is `repr(transparent)`.
-unsafe impl<T: RefEncode> RefEncode for Pin<T> {
-    const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
-}
-
-// TODO: MaybeUninit<T>
-
-// SAFETY: `Wrapping` is `repr(transparent)`.
-unsafe impl<T: Encode> Encode for Wrapping<T> {
-    const ENCODING: Encoding<'static> = T::ENCODING;
-}
-
-// SAFETY: `Wrapping` is `repr(transparent)`.
-unsafe impl<T: RefEncode> RefEncode for Wrapping<T> {
-    const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
-}
-
-// TODO: core::num::Saturating when that is stabilized
-
-// TODO: core::cmp::Reverse?
 
 /// Helper for implementing `Encode`/`RefEncode` for pointers to types that
 /// implement `RefEncode`.
@@ -376,38 +368,38 @@ unsafe impl<T: RefEncode> RefEncode for Wrapping<T> {
 /// Using `?Sized` is safe here because we delegate to other implementations
 /// (which will verify that the implementation is safe for the unsized type).
 macro_rules! encode_pointer_impls {
-    (unsafe impl<T: RefEncode> $x:ident for &$t:ident {
+    (unsafe impl<T: RefEncode> $x:ident for Pointer<T> {
         const $c:ident = $e:expr;
     }) => (
-        unsafe impl<$t: RefEncode + ?Sized> $x for *const $t {
+        unsafe impl<T: RefEncode + ?Sized> $x for *const T {
             const $c: Encoding<'static> = $e;
         }
 
-        unsafe impl<$t: RefEncode + ?Sized> $x for *mut $t {
+        unsafe impl<T: RefEncode + ?Sized> $x for *mut T {
             const $c: Encoding<'static> = $e;
         }
 
-        unsafe impl<'a, $t: RefEncode + ?Sized> $x for &'a $t {
+        unsafe impl<'a, T: RefEncode + ?Sized> $x for &'a T {
             const $c: Encoding<'static> = $e;
         }
 
-        unsafe impl<'a, $t: RefEncode + ?Sized> $x for &'a mut $t {
+        unsafe impl<'a, T: RefEncode + ?Sized> $x for &'a mut T {
             const $c: Encoding<'static> = $e;
         }
 
-        unsafe impl<T: RefEncode + ?Sized> $x for NonNull<$t> {
+        unsafe impl<T: RefEncode + ?Sized> $x for NonNull<T> {
             const $c: Encoding<'static> = $e;
         }
 
-        unsafe impl<'a, $t: RefEncode + ?Sized> $x for Option<&'a $t> {
+        unsafe impl<'a, T: RefEncode + ?Sized> $x for Option<&'a T> {
             const $c: Encoding<'static> = $e;
         }
 
-        unsafe impl<'a, $t: RefEncode + ?Sized> $x for Option<&'a mut $t> {
+        unsafe impl<'a, T: RefEncode + ?Sized> $x for Option<&'a mut T> {
             const $c: Encoding<'static> = $e;
         }
 
-        unsafe impl<T: RefEncode + ?Sized> $x for Option<NonNull<$t>> {
+        unsafe impl<T: RefEncode + ?Sized> $x for Option<NonNull<T>> {
             const $c: Encoding<'static> = $e;
         }
     );
@@ -419,7 +411,7 @@ macro_rules! encode_pointer_impls {
 // specific encoding as a pointer, instead of having to implement it for each
 // pointer-like type in turn.
 encode_pointer_impls!(
-    unsafe impl<T: RefEncode> Encode for &T {
+    unsafe impl<T: RefEncode> Encode for Pointer<T> {
         const ENCODING = T::ENCODING_REF;
     }
 );
@@ -429,7 +421,7 @@ encode_pointer_impls!(
 // This implements `Encode` for pointers to pointers (to pointers, and so on),
 // which would otherwise be very cumbersome to do manually.
 encode_pointer_impls!(
-    unsafe impl<T: RefEncode> RefEncode for &T {
+    unsafe impl<T: RefEncode> RefEncode for Pointer<T> {
         const ENCODING_REF = Encoding::Pointer(&T::ENCODING_REF);
     }
 );
@@ -585,6 +577,22 @@ mod tests {
             <&*const c_void>::ENCODING,
             Encoding::Pointer(&Encoding::Pointer(&Encoding::Void))
         );
+    }
+
+    #[test]
+    fn test_transparent() {
+        assert_eq!(<ManuallyDrop<u8>>::ENCODING, u8::ENCODING);
+        assert_eq!(<ManuallyDrop<&u8>>::ENCODING, u8::ENCODING_REF);
+        assert_eq!(<ManuallyDrop<Option<&u8>>>::ENCODING, u8::ENCODING_REF);
+        assert_eq!(<&ManuallyDrop<Option<&u8>>>::ENCODING, <&&u8>::ENCODING);
+
+        // assert_eq!(<UnsafeCell<u8>>::ENCODING, u8::ENCODING);
+        // assert_eq!(<Pin<u8>>::ENCODING, u8::ENCODING);
+        assert_eq!(<MaybeUninit<u8>>::ENCODING, u8::ENCODING);
+        assert_eq!(<Wrapping<u8>>::ENCODING, u8::ENCODING);
+
+        // Shouldn't compile
+        // assert_eq!(<Option<UnsafeCell<&u8>>>::ENCODING, <&u8>::ENCODING);
     }
 
     #[test]

@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Encoding::C_LONG` and `Encoding::C_U_LONG` to help with platform
   compatibility; use these instead of `c_long::ENCODING` and
   `c_ulong::ENCODING`.
+* Implement `Encode` and `RefEncode` for `MaybeUninit<T>`, where `T` is
+  properly bound.
 
 ### Changed
 * **BREAKING**: Sealed the `EncodeArguments` trait.
@@ -17,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 * **BREAKING**: Removed `PartialEq` impl between `str` and `Encoding` since it
   was incorrect (it violated the trait requirements).
+* **BREAKING**: Removed `Encode` and `RefEncode` implementations for `Pin`
+  since it may not be sound.
 
 
 ## 2.0.0-beta.2 - 2022-01-03
