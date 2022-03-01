@@ -54,7 +54,13 @@ fn test_retain_autoreleased() {
         // When compiled in release mode / with optimizations enabled,
         // subsequent usage of `retain_autoreleased` will succeed in retaining
         // the autoreleased value!
-        let expected = if cfg!(all(debug_assertions, not(gnustep))) {
+        let expected = if cfg!(gnustep) {
+            1
+        } else if cfg!(any(
+            debug_assertions,
+            feature = "exception",
+            feature = "verify_message"
+        )) {
             2
         } else {
             1

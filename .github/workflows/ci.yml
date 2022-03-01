@@ -306,6 +306,13 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
+        args: --no-default-features ${{ env.TESTARGS }} --release
+
+    - name: Test in release mode with features
+      if: ${{ !matrix.dinghy }}
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
         args: --features ${{ env.FEATURES }} ${{ env.TESTARGS }} --release
 
     - name: Run benchmarks
@@ -346,10 +353,12 @@ jobs:
         xcrun simctl boot $SIM_ID
 
         # Build
-        cargo dinghy build
+        cargo dinghy --device=$SIM_ID build
 
         # Run tests
         cargo dinghy --device=$SIM_ID test --no-default-features
+        cargo dinghy --device=$SIM_ID test --release
+
         # Enable a few features. We're doing it this way because cargo dingy
         # doesn't support specifying features from a workspace.
         sed -i -e '/\[features\]/a\
