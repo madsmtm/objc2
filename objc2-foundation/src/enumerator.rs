@@ -9,6 +9,7 @@ use objc2::rc::{Id, Owned};
 use objc2::runtime::Object;
 use objc2::{msg_send, Encode, Encoding, Message, RefEncode};
 
+// TODO: https://doc.rust-lang.org/stable/reference/trait-bounds.html#lifetime-bounds
 pub struct NSEnumerator<'a, T: Message> {
     id: Id<Object, Owned>,
     item: PhantomData<&'a T>,

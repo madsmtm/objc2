@@ -76,8 +76,9 @@ mod tests {
     use super::{Id, Owned, Ownership, Shared, WeakId};
     use crate::runtime::Object;
 
+    #[repr(C)]
     struct TestType {
-        _data: [u8; 0], // TODO: `UnsafeCell`?
+        inner: Object,
     }
 
     #[repr(C)]

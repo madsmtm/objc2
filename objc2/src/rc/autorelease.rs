@@ -21,7 +21,7 @@ pub struct AutoreleasePool {
     /// This is an opaque handle, and is not guaranteed to be neither a valid
     /// nor aligned pointer.
     context: *mut c_void,
-    // May pointer to data that is mutated (even though we hold shared access)
+    /// May point to data that is mutated (even though we hold shared access).
     p: PhantomData<*mut UnsafeCell<c_void>>,
 }
 
