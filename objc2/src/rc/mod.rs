@@ -55,6 +55,7 @@
 //! assert!(weak.load().is_none());
 //! ```
 
+mod alloc;
 mod autorelease;
 mod id;
 mod id_forwarding_impls;

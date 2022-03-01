@@ -125,6 +125,7 @@
     feature = "unstable_autoreleasesafe",
     feature(negative_impls, auto_traits)
 )]
+#![feature(allocator_api, new_uninit)]
 #![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
 #![deny(non_ascii_idents)]
