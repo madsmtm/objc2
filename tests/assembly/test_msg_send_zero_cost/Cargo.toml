@@ -1,0 +1,13 @@
+[package]
+name = "test_msg_send_zero_cost"
+version = "0.1.0"
+edition = "2018"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+objc2 = { path = "../../../objc2" }
+objc-sys = { path = "../../../objc-sys" }
+block-sys = { path = "../../../block-sys" }

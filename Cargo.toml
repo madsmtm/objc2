@@ -7,4 +7,5 @@ members = [
     "block2",
     "block-sys",
     "tests",
+    "tests/assembly/*",
 ]

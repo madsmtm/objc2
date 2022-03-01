@@ -60,7 +60,7 @@ jobs:
             rust:
               toolchain: nightly
             # Run on nightly to help find regressions
-            args: --features tests/ui
+            test-args: --features tests/ui
           - name: Build macOS 32bit
             os: macos-10.15
             target: i686-apple-darwin
@@ -77,14 +77,15 @@ jobs:
           - name: Test GNUStep
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            features: gnustep-1-9
-            args: --features gnustep-1-9
+            host-args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
+            args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
           - name: Test GNUStep 32bit
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
             cflags: -m32
             configureflags: --target=x86-pc-linux-gnu
-            args: --features gnustep-1-9
+            host-args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
+            args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
           - name: Test iOS simulator x86 64bit
             os: macos-11
             target: x86_64-apple-ios
@@ -270,28 +271,6 @@ jobs:
       if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
       run: cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
 
-    - name: Run Cargo Dinghy
-      if: matrix.dinghy
-      run: |
-        # Launch the simulator
-        xcrun simctl list runtimes
-        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
-        export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
-        xcrun simctl boot $SIM_ID
-
-        # Build
-        cargo dinghy build
-
-        # Run tests
-        cargo dinghy --device=$SIM_ID test --no-default-features
-        # Enable a few features. We're doing it this way because cargo dingy
-        # doesn't support specifying features from a workspace.
-        sed -i -e '/\[features\]/a\
-        default = ["exception", "verify_message", "catch_all"]
-        ' objc2/Cargo.toml
-        cargo dinghy --device=$SIM_ID test
-        cargo dinghy --device=$SIM_ID test --release
-
     - name: Build
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
@@ -343,3 +322,36 @@ jobs:
         command: test
         # Not using --all-features because that would enable e.g. gnustep
         args: --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }} ${{ env.TESTARGS }}
+
+    - name: Run assembly tests
+      # Not run on GNUStep yet since a lot of function labels are mangled and
+      # not inlined (and hence quite hard to match on, at some point we'll
+      # need to find a solution to that).
+      if: ${{ !contains(matrix.os, 'ubuntu') }}
+      shell: bash
+      run:
+        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
+
+        cargo run ${{ matrix.host-args }} --features assembly --target=$HOST_TARGET test_assembly ${{ matrix.args }}
+
+    - name: Run Cargo Dinghy
+      if: matrix.dinghy
+      run: |
+        # Launch the simulator
+        xcrun simctl list runtimes
+        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
+        export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
+        xcrun simctl boot $SIM_ID
+
+        # Build
+        cargo dinghy build
+
+        # Run tests
+        cargo dinghy --device=$SIM_ID test --no-default-features
+        # Enable a few features. We're doing it this way because cargo dingy
+        # doesn't support specifying features from a workspace.
+        sed -i -e '/\[features\]/a\
+        default = ["exception", "verify_message", "catch_all"]
+        ' objc2/Cargo.toml
+        cargo dinghy --device=$SIM_ID test
+        cargo dinghy --device=$SIM_ID test --release
