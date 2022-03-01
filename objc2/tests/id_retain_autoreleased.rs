@@ -11,13 +11,26 @@ fn retain_count(obj: &Object) -> usize {
 fn create_data(bytes: &[u8]) -> Id<Object, Shared> {
     let bytes_ptr = bytes.as_ptr() as *const c_void;
     unsafe {
-        // All code between the `msg_send!` and the `retain_autoreleased` must
-        // be able to be optimized away for this to work.
+        // let obj: *mut Object = msg_send![
+        //     class!(NSMutableData),
+        //     dataWithBytes: bytes_ptr,
+        //     length: bytes.len(),
+        // ];
+        //
+        // On x86 (and perhaps others), dataWithBytes does not tail call
+        // `autorelease` and hence the return address points into that instead
+        // of our code, making the fast autorelease scheme fail.
+        //
+        // So instead, we call `autorelease` manually here.
+        let obj: *mut Object = msg_send![class!(NSMutableData), alloc];
         let obj: *mut Object = msg_send![
-            class!(NSData),
-            dataWithBytes: bytes_ptr,
+            obj,
+            initWithBytes: bytes_ptr,
             length: bytes.len(),
         ];
+        let obj: *mut Object = msg_send![obj, autorelease];
+        // All code between the `msg_send!` and the `retain_autoreleased` must
+        // be able to be optimized away for this to work.
         Id::retain_autoreleased(obj).unwrap()
     }
 }
