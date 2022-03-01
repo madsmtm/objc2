@@ -42,10 +42,9 @@ jobs:
           - name: Test macOS 10.15
             os: macos-10.15
             target: x86_64-apple-darwin
-          - name: Test macOS 11 w. ui tests
+          - name: Test macOS 11
             os: macos-11
             target: x86_64-apple-darwin
-            args: --features tests/ui
           - name: Build macOS AArch64
             os: macos-11
             target: aarch64-apple-darwin
@@ -60,6 +59,7 @@ jobs:
             target: x86_64-apple-darwin
             rust:
               toolchain: nightly
+            # Run on nightly to help find regressions
             args: --features tests/ui
           - name: Build macOS 32bit
             os: macos-10.15
