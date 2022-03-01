@@ -11,14 +11,14 @@ use objc2_foundation::NSObject;
 
 #[repr(C)]
 pub struct MyObject<'a> {
-    _priv: [u8; 0],
+    inner: Object,
     // `init` defaults ivars to all zeroes, so allow for that here
     // TODO: Verify this claim!
     p: PhantomData<Option<&'a mut u8>>,
 }
 
 unsafe impl RefEncode for MyObject<'_> {
-    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+    const ENCODING_REF: Encoding<'static> = Object::ENCODING_REF;
 }
 
 unsafe impl Message for MyObject<'_> {}
@@ -35,17 +35,11 @@ impl<'a> MyObject<'a> {
     }
 
     fn get(&self) -> Option<&'a u8> {
-        unsafe {
-            let obj = &*(self as *const _ as *const Object);
-            *obj.ivar("_number_ptr")
-        }
+        unsafe { *self.inner.ivar("_number_ptr") }
     }
 
     fn write(&mut self, number: u8) {
-        let ptr: &mut Option<&'a mut u8> = unsafe {
-            let obj = &mut *(self as *mut _ as *mut Object);
-            obj.ivar_mut("_number_ptr")
-        };
+        let ptr = unsafe { self.inner.ivar_mut::<Option<&'a mut u8>>("_number_ptr") };
         if let Some(ptr) = ptr {
             **ptr = number;
         }
@@ -55,7 +49,7 @@ impl<'a> MyObject<'a> {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
             let mut decl = ClassDecl::new("MyObject", superclass).unwrap();
-            decl.add_ivar::<&mut u8>("_number_ptr");
+            decl.add_ivar::<Option<&mut u8>>("_number_ptr");
 
             extern "C" fn init_with_ptr(this: &mut Object, _cmd: Sel, ptr: *mut u8) -> *mut Object {
                 unsafe {

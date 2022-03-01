@@ -70,12 +70,37 @@ pub use self::weak_id::WeakId;
 
 #[cfg(test)]
 mod tests {
+    use core::marker::PhantomData;
     use core::mem::size_of;
 
-    use super::{Id, Owned, Shared, WeakId};
+    use super::{Id, Owned, Ownership, Shared, WeakId};
+    use crate::runtime::Object;
 
+    #[repr(C)]
     struct TestType {
-        _data: [u8; 0], // TODO: `UnsafeCell`?
+        inner: Object,
+    }
+
+    #[repr(C)]
+    struct MyObject<'a> {
+        inner: Object,
+        p: PhantomData<&'a str>,
+    }
+
+    /// Test that `Id<T, O>` is covariant over `T`.
+    #[allow(unused)]
+    fn assert_id_variance<'a, 'b, O: Ownership>(
+        obj: &'a Id<MyObject<'static>, O>,
+    ) -> &'a Id<MyObject<'b>, O> {
+        obj
+    }
+
+    /// Test that `WeakId<T>` is covariant over `T`.
+    #[allow(unused)]
+    fn assert_weak_id_variance<'a, 'b>(
+        obj: &'a WeakId<MyObject<'static>>,
+    ) -> &'a WeakId<MyObject<'b>> {
+        obj
     }
 
     #[test]

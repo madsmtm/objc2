@@ -12,10 +12,7 @@ use objc2_foundation::NSObject;
 /// see [RFC-1861](https://rust-lang.github.io/rfcs/1861-extern-types.html).
 #[repr(C)]
 pub struct MYObject {
-    /// See the [Nomicon] for details on representing opaque structs.
-    ///
-    /// [Nomicon]: https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs
-    _priv: [u8; 0],
+    inner: Object,
 }
 
 unsafe impl RefEncode for MYObject {
@@ -33,17 +30,11 @@ impl MYObject {
     }
 
     fn number(&self) -> u32 {
-        unsafe {
-            let obj = &*(self as *const _ as *const Object);
-            *obj.ivar("_number")
-        }
+        unsafe { *self.inner.ivar("_number") }
     }
 
     fn set_number(&mut self, number: u32) {
-        unsafe {
-            let obj = &mut *(self as *mut _ as *mut Object);
-            obj.set_ivar("_number", number);
-        }
+        unsafe { self.inner.set_ivar("_number", number) };
     }
 
     fn class() -> &'static Class {

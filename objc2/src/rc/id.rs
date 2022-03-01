@@ -412,6 +412,7 @@ impl<T: ?Sized, O: Ownership> Drop for Id<T, O> {
     }
 }
 
+// https://doc.rust-lang.org/nomicon/arc-mutex/arc-base.html#send-and-sync
 /// The `Send` implementation requires `T: Sync` because `Id<T, Shared>` give
 /// access to `&T`.
 ///
