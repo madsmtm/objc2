@@ -7,6 +7,9 @@ _handle:
 	push	{r7, lr}
 	mov	r7, sp
 	bl	_objc_msgSend
+	@ InlineAsm Start
+	mov	r7, r7
+	@ InlineAsm End
 	bl	_objc_retainAutoreleasedReturnValue
 	pop	{r7, pc}
 

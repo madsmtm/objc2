@@ -272,7 +272,69 @@ impl<T: Message, O: Ownership> Id<T, O> {
     #[doc(alias = "objc_retainAutoreleasedReturnValue")]
     #[inline(always)]
     pub unsafe fn retain_autoreleased(ptr: *mut T) -> Option<Id<T, O>> {
+        // Add magic nop instruction to participate in the fast autorelease
+        // scheme.
+        //
+        // See `callerAcceptsOptimizedReturn` in `objc-object.h`:
+        // https://github.com/apple-oss-distributions/objc4/blob/objc4-838/runtime/objc-object.h#L1209-L1377
+        //
+        // We will unconditionally emit these instructions, even if they end
+        // up being unused (for example because we're unlucky with inlining,
+        // some other work is done between the objc_msgSend and this, or the
+        // runtime version is too old to support it).
+        //
+        // It may seem like there should be a better way to do this, but
+        // emitting raw assembly is exactly what Clang and Swift does:
+        // swiftc: https://github.com/apple/swift/blob/swift-5.5.3-RELEASE/lib/IRGen/GenObjC.cpp#L148-L173
+        // Clang: https://github.com/llvm/llvm-project/blob/889317d47b7f046cf0e68746da8f7f264582fb5b/clang/lib/CodeGen/CGObjC.cpp#L2339-L2373
+        //
+        // Resources:
+        // - https://www.mikeash.com/pyblog/friday-qa-2011-09-30-automatic-reference-counting.html
+        // - https://www.galloway.me.uk/2012/02/how-does-objc_retainautoreleasedreturnvalue-work/
+        // - https://github.com/gfx-rs/metal-rs/issues/222
+        // - https://news.ycombinator.com/item?id=29311736
+        // - https://stackoverflow.com/a/23765612
+        //
+        // SAFETY:
+        // Based on https://doc.rust-lang.org/stable/reference/inline-assembly.html#rules-for-inline-assembly
+        //
+        // We don't care about the value of the register (so it's okay to be
+        // undefined), and its value is preserved.
+        //
+        // nomem: No reads or writes to memory are performed (this `mov`
+        //   operates entirely on registers).
+        // preserves_flags: `mov` doesn't modify any flags.
+        // nostack: We don't touch the stack.
+
+        // Only worth doing on the Apple runtime.
+        // Not supported on TARGET_OS_WIN32.
+        #[cfg(all(apple, not(target_os = "windows")))]
+        {
+            // Supported since macOS 10.7.
+            #[cfg(target_arch = "x86_64")]
+            {} // x86_64 looks at the next call instruction
+
+            // Supported since macOS 10.8.
+            #[cfg(target_arch = "arm")]
+            unsafe {
+                core::arch::asm!("mov r7, r7", options(nomem, preserves_flags, nostack))
+            };
+
+            // Supported since macOS 10.10.
+            #[cfg(target_arch = "aarch64")]
+            unsafe {
+                core::arch::asm!("mov fp, fp", options(nomem, preserves_flags, nostack))
+            };
+
+            // Supported since macOS 10.12.
+            #[cfg(target_arch = "x86")]
+            unsafe {
+                core::arch::asm!("mov ebp, ebp", options(nomem, preserves_flags, nostack))
+            };
+        }
+
         let ptr = ptr as *mut ffi::objc_object;
+
         // SAFETY: Same as `retain`, `objc_retainAutoreleasedReturnValue` is
         // just an optimization.
         let res = unsafe { ffi::objc_retainAutoreleasedReturnValue(ptr) };

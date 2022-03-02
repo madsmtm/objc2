@@ -11,6 +11,11 @@ _handle:
 	mov	dword ptr [esp + 4], ecx
 	mov	dword ptr [esp], eax
 	call	_objc_msgSend
+	## InlineAsm Start
+
+	mov	ebp, ebp
+
+	## InlineAsm End
 	mov	dword ptr [esp], eax
 	call	_objc_retainAutoreleasedReturnValue
 	add	esp, 8
