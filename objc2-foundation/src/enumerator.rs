@@ -23,7 +23,7 @@ impl<'a, T: Message> NSEnumerator<'a, T> {
     /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> Self {
         Self {
-            id: unsafe { Id::retain(ptr) }.unwrap(),
+            id: unsafe { Id::retain_autoreleased(ptr) }.unwrap(),
             item: PhantomData,
         }
     }

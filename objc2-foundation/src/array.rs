@@ -140,7 +140,7 @@ impl<T: Message> NSArray<T, Shared> {
     pub fn get_retained(&self, index: usize) -> Id<T, Shared> {
         let obj = self.get(index).unwrap();
         // SAFETY: The object is originally shared (see `where` bound).
-        unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() }
+        unsafe { Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked() }
     }
 
     pub fn to_shared_vec(&self) -> Vec<Id<T, Shared>> {
@@ -247,7 +247,7 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     pub fn replace(&mut self, index: usize, obj: Id<T, O>) -> Id<T, O> {
         let old_obj = unsafe {
             let obj = self.get(index).unwrap();
-            Id::retain(obj as *const T as *mut T).unwrap_unchecked()
+            Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked()
         };
         unsafe {
             let _: () = msg_send![
@@ -262,7 +262,7 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     #[doc(alias = "removeObjectAtIndex:")]
     pub fn remove(&mut self, index: usize) -> Id<T, O> {
         let obj = if let Some(obj) = self.get(index) {
-            unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() }
+            unsafe { Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked() }
         } else {
             panic!("removal index should be < len");
         };

@@ -210,6 +210,9 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// some API, and you would like to ensure that the object stays around
     /// so that you can work with it.
     ///
+    /// If said API is a normal Objective-C method, you probably want to use
+    /// [`Id::retain_autoreleased`] instead.
+    ///
     /// This is rarely used to construct owned [`Id`]s, see [`Id::new`] for
     /// that.
     ///
@@ -249,6 +252,37 @@ impl<T: Message, O: Ownership> Id<T, O> {
         unsafe { Self::new(res as *mut T) }
     }
 
+    /// Retains a previously autoreleased object pointer.
+    ///
+    /// This is useful when calling Objective-C methods that return
+    /// autoreleased objects, see [Cocoa's Memory Management Policy][mmRules].
+    ///
+    /// This has exactly the same semantics as [`Id::retain`], except it can
+    /// sometimes avoid putting the object into the autorelease pool, possibly
+    /// yielding increased speed and reducing memory pressure.
+    ///
+    /// Note: This relies heavily on being inlined right after [`msg_send!`],
+    /// be careful not accidentally require instructions between these.
+    ///
+    /// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html
+    ///
+    /// # Safety
+    ///
+    /// Same as [`Id::retain`].
+    #[doc(alias = "objc_retainAutoreleasedReturnValue")]
+    #[inline(always)]
+    pub unsafe fn retain_autoreleased(ptr: *mut T) -> Option<Id<T, O>> {
+        let ptr = ptr as *mut ffi::objc_object;
+        // SAFETY: Same as `retain`, `objc_retainAutoreleasedReturnValue` is
+        // just an optimization.
+        let res = unsafe { ffi::objc_retainAutoreleasedReturnValue(ptr) };
+        debug_assert_eq!(
+            res, ptr,
+            "objc_retainAutoreleasedReturnValue did not return the same pointer"
+        );
+        unsafe { Self::new(res as *mut T) }
+    }
+
     #[inline]
     fn autorelease_inner(self) -> *mut T {
         // Note that this (and the actual `autorelease`) is not an associated
@@ -267,7 +301,6 @@ impl<T: Message, O: Ownership> Id<T, O> {
         res as *mut T
     }
 
-    // TODO: objc_retainAutoreleasedReturnValue
     // TODO: objc_autoreleaseReturnValue
     // TODO: objc_retainAutorelease
     // TODO: objc_retainAutoreleaseReturnValue

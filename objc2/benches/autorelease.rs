@@ -1,7 +1,6 @@
 use core::ffi::c_void;
 use std::mem::ManuallyDrop;
 
-use objc2::ffi;
 use objc2::rc::{autoreleasepool, Id, Shared};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{class, msg_send, sel};
@@ -94,8 +93,7 @@ fn autoreleased_nsstring() -> *mut Object {
 }
 
 fn retain_autoreleased(obj: *mut Object) -> Id<Object, Shared> {
-    let obj = unsafe { ffi::objc_retainAutoreleasedReturnValue(obj.cast()) };
-    unsafe { Id::new(obj.cast()).unwrap_unchecked() }
+    unsafe { Id::retain_autoreleased(obj.cast()).unwrap_unchecked() }
 }
 
 fn autoreleased_nsdata_pool_cleanup() -> *mut Object {
@@ -133,6 +131,7 @@ macro_rules! main_with_warmup {
             )+
         }
 
+        // Required to get DYLD to resolve the stubs on x86_64
         fn warmup() {
             $(
                 warmup_fns::$f();

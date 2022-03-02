@@ -24,7 +24,7 @@ impl NSObject {
         unsafe {
             let result: *mut NSString = msg_send![self, description];
             // TODO: Verify that description always returns a non-null string
-            Id::retain(result).unwrap()
+            Id::retain_autoreleased(result).unwrap()
         }
     }
 
