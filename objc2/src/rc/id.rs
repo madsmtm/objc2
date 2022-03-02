@@ -338,6 +338,29 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // SAFETY: Same as `retain`, `objc_retainAutoreleasedReturnValue` is
         // just an optimization.
         let res = unsafe { ffi::objc_retainAutoreleasedReturnValue(ptr) };
+
+        // Ideally, we'd be able to specify that the above call should never
+        // be tail-call optimized (become a `jmp` instruction instead of a
+        // `call`); Rust doesn't really have a way of doing this currently, so
+        // we just emit a simple `nop` to make such tail-call optimizations
+        // less likely to occur.
+        //
+        // This is brittle! We should find a better solution!
+        #[cfg(all(apple, not(target_os = "windows"), target_arch = "x86_64"))]
+        {
+            // SAFETY: Similar to above.
+            unsafe { core::arch::asm!("nop", options(nomem, preserves_flags, nostack)) };
+            // TODO: Possibly more efficient alternative?
+            // #![feature(asm_sym)]
+            // core::arch::asm!(
+            //     "mov rdi, rax",
+            //     "call {}",
+            //     sym objc2::ffi::objc_retainAutoreleasedReturnValue,
+            //     inout("rax") obj,
+            //     clobber_abi("C"),
+            // );
+        }
+
         debug_assert_eq!(
             res, ptr,
             "objc_retainAutoreleasedReturnValue did not return the same pointer"

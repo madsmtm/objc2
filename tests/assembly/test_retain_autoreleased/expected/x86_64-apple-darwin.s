@@ -7,7 +7,13 @@ _handle:
 	mov	rbp, rsp
 	call	_objc_msgSend
 	mov	rdi, rax
+	call	_objc_retainAutoreleasedReturnValue
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
 	pop	rbp
-	jmp	_objc_retainAutoreleasedReturnValue
+	ret
 
 .subsections_via_symbols
