@@ -189,7 +189,9 @@ jobs:
 
     - name: Install Clang & Valgrind
       if: contains(matrix.os, 'ubuntu')
-      run: sudo apt-get -y install clang valgrind
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install clang valgrind
 
     - name: Install cross compilation tools
       if: matrix.target == 'i686-unknown-linux-gnu'
