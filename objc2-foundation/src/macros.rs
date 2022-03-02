@@ -156,7 +156,7 @@ macro_rules! unsafe_def_fn {
         $(#[$m])*
         $v fn new() -> Id<Self, $o> {
             let cls = Self::class();
-            unsafe { Id::new(NonNull::new_unchecked(msg_send![cls, new])) }
+            unsafe { Id::new(msg_send![cls, new]).unwrap() }
         }
     };
 }

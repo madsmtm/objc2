@@ -29,7 +29,6 @@
 //!
 #![cfg_attr(apple, doc = "```")]
 #![cfg_attr(not(apple), doc = "```no_run")]
-//! use core::ptr::NonNull;
 //! use objc2::{class, msg_send};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::{Id, Owned};
@@ -38,8 +37,9 @@
 //! // Creation
 //! let cls = class!(NSObject);
 //! let obj: *mut Object = unsafe { msg_send![cls, new] };
-//! let obj = NonNull::new(obj).expect("Failed allocating object");
-//! let obj: Id<Object, Owned> = unsafe { Id::new(obj) };
+//! let obj: Id<Object, Owned> = unsafe {
+//!     Id::new(obj).expect("Failed allocating object")
+//! };
 //!
 //! // Usage
 //! let hash: NSUInteger = unsafe { msg_send![obj, hash] };

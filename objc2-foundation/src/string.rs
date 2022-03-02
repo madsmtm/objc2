@@ -165,7 +165,7 @@ impl NSString {
     pub fn from_str(string: &str) -> Id<Self, Shared> {
         unsafe {
             let obj = from_str(Self::class(), string);
-            Id::new(obj.cast())
+            Id::new(obj.cast()).unwrap()
         }
     }
 
@@ -200,17 +200,16 @@ impl NSString {
     // https://developer.apple.com/documentation/foundation/1415155-nsstringfromrange?language=objc
 }
 
-pub(crate) fn from_str(cls: &Class, string: &str) -> NonNull<Object> {
+pub(crate) fn from_str(cls: &Class, string: &str) -> *mut Object {
     let bytes = string.as_ptr() as *const c_void;
     unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
-        let obj: *mut Object = msg_send![
+        msg_send![
             obj,
             initWithBytes: bytes,
             length: string.len(),
             encoding: UTF8_ENCODING,
-        ];
-        NonNull::new_unchecked(obj)
+        ]
     }
 }
 

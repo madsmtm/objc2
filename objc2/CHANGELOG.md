@@ -11,9 +11,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   upgrading easier.
 * Allow using `From`/`TryFrom` to convert between `rc::Id` and `rc::WeakId`.
 * Added `Bool::as_bool` (more descriptive name than `Bool::is_true`).
-* Added convenience methods `Id::new_null`, `Id::as_ptr` and
-  `Id::retain_null`.
+* Added convenience method `Id::as_ptr`.
 * The `objc2-encode` dependency is now exposed as `objc2::encode`.
+
+### Changed
+* **BREAKING**: Changed signature of `Id::new` and `Id::retain` from
+  `fn(NonNull<T>) -> Id<T>` to `fn(*mut T) -> Option<Id<T>>`.
+
+  Concretely, you will have to change your code as follows.
+  ```rust
+  // Before
+  let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
+  let obj = NonNull::new(obj).expect("Failed to allocate object.");
+  let obj = unsafe { Id::new(obj) };
+  // After
+  let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
+  let obj = unsafe { Id::new(obj) }.expect("Failed to allocate object.");
+  ```
 
 
 ## 0.3.0-alpha.6 - 2022-01-03

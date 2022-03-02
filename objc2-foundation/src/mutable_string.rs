@@ -1,7 +1,6 @@
 use core::cmp;
 use core::fmt;
 use core::ops::AddAssign;
-use core::ptr::NonNull;
 use core::str;
 
 use objc2::msg_send;
@@ -32,7 +31,7 @@ impl NSMutableString {
     pub fn from_str(string: &str) -> Id<Self, Owned> {
         unsafe {
             let obj = super::string::from_str(Self::class(), string);
-            Id::new(obj.cast())
+            Id::new(obj.cast()).unwrap()
         }
     }
 
@@ -42,7 +41,7 @@ impl NSMutableString {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithString: string];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 
@@ -51,7 +50,7 @@ impl NSMutableString {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithCapacity: capacity];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 }

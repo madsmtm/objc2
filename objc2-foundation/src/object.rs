@@ -1,5 +1,3 @@
-use core::ptr::NonNull;
-
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Bool, Class, Object};
@@ -26,7 +24,7 @@ impl NSObject {
         unsafe {
             let result: *mut NSString = msg_send![self, description];
             // TODO: Verify that description always returns a non-null string
-            Id::retain(NonNull::new_unchecked(result))
+            Id::retain(result).unwrap()
         }
     }
 

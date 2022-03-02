@@ -1,5 +1,3 @@
-use core::ptr::NonNull;
-
 use objc2::rc::{Id, Shared};
 use objc2::{msg_send, Encode, Encoding, RefEncode};
 
@@ -37,7 +35,7 @@ impl NSUUID {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, init];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 
@@ -46,7 +44,7 @@ impl NSUUID {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithUUIDBytes: &bytes];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 

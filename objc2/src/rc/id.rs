@@ -65,7 +65,7 @@ use crate::Message;
 ///
 /// let cls = Class::get("NSObject").unwrap();
 /// let obj: Id<Object, Owned> = unsafe {
-///     Id::new(msg_send![cls, new])
+///     Id::new(msg_send![cls, new]).unwrap()
 /// };
 /// // obj will be released when it goes out of scope
 ///
@@ -88,7 +88,7 @@ use crate::Message;
 /// # use objc2::rc::{Id, Owned, Shared};
 /// # type T = Object;
 /// let mut owned: Id<T, Owned>;
-/// # owned = unsafe { Id::new(msg_send![class!(NSObject), new]) };
+/// # owned = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
 /// let mut_ref: &mut T = &mut *owned;
 /// // Do something with `&mut T` here
 ///
@@ -138,6 +138,8 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// But some immutable objects (like `NSString`) don't always return
     /// unique references, so in those case you would use [`Shared`].
     ///
+    /// Returns `None` if the pointer was null.
+    ///
     /// # Safety
     ///
     /// The caller must ensure the given object has +1 retain count, and that
@@ -153,9 +155,9 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// let cls: &Class;
     /// # let cls = class!(NSObject);
     /// let obj: &mut Object = unsafe { msg_send![cls, alloc] };
-    /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![obj, init]) };
+    /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![obj, init]).unwrap() };
     /// // Or in this case simply just:
-    /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![cls, new]) };
+    /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![cls, new]).unwrap() };
     /// ```
     ///
     /// ```no_run
@@ -165,33 +167,25 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// # type NSString = Object;
     /// let cls = class!(NSString);
     /// // NSString is immutable, so don't create an owned reference to it
-    /// let obj: Id<NSString, Shared> = unsafe { Id::new(msg_send![cls, new]) };
+    /// let obj: Id<NSString, Shared> = unsafe { Id::new(msg_send![cls, new]).unwrap() };
     /// ```
     #[inline]
     // Note: We don't take a reference as a parameter since it would be too
     // easy to accidentally create two aliasing mutable references.
-    pub unsafe fn new(ptr: NonNull<T>) -> Id<T, O> {
+    pub unsafe fn new(ptr: *mut T) -> Option<Id<T, O>> {
+        // Should optimize down to nothing.
         // SAFETY: Upheld by the caller
+        NonNull::new(ptr).map(|ptr| unsafe { Id::new_nonnull(ptr) })
+    }
+
+    #[inline]
+    unsafe fn new_nonnull(ptr: NonNull<T>) -> Id<T, O> {
         Self {
             ptr,
             item: PhantomData,
             own: PhantomData,
             notunwindsafe: PhantomData,
         }
-    }
-
-    /// Constructs an [`Id`] from a pointer that may be null.
-    ///
-    /// This is just a convenience wrapper over [`Id::new`] so that you don't
-    /// need to construct a [`NonNull`] when you know the pointer may be null.
-    ///
-    /// # Safety
-    ///
-    /// Same as [`Id::new`].
-    #[inline]
-    pub unsafe fn new_null(ptr: *mut T) -> Option<Id<T, O>> {
-        // SAFETY: Upheld by the caller
-        NonNull::new(ptr).map(|ptr| unsafe { Id::new(ptr) })
     }
 
     /// Returns a raw pointer to the object.
@@ -219,6 +213,8 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// This is rarely used to construct owned [`Id`]s, see [`Id::new`] for
     /// that.
     ///
+    /// Returns `None` if the pointer was null.
+    ///
     /// # Safety
     ///
     /// The caller must ensure that the ownership is correct; that is, there
@@ -244,32 +240,13 @@ impl<T: Message, O: Ownership> Id<T, O> {
     // ```
     #[doc(alias = "objc_retain")]
     #[inline]
-    pub unsafe fn retain(ptr: NonNull<T>) -> Id<T, O> {
-        let ptr = ptr.as_ptr() as *mut ffi::objc_object;
+    pub unsafe fn retain(ptr: *mut T) -> Option<Id<T, O>> {
+        let ptr = ptr as *mut ffi::objc_object;
         // SAFETY: The caller upholds that the pointer is valid
         let res = unsafe { ffi::objc_retain(ptr) };
         debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
-        // SAFETY: Non-null upheld by the caller, and `objc_retain` always
-        // returns the same pointer, see:
-        // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain
-        let res = unsafe { NonNull::new_unchecked(res as *mut T) };
         // SAFETY: We just retained the object, so it has +1 retain count
-        unsafe { Self::new(res) }
-    }
-
-    /// Retains an object pointer that may be null.
-    ///
-    /// This is just a convenience wrapper over [`Id::retain`] so that you
-    /// don't need to construct a [`NonNull`] when you know the pointer may
-    /// be null.
-    ///
-    /// # Safety
-    ///
-    /// Same as [`Id::retain`].
-    #[inline]
-    pub unsafe fn retain_null(ptr: *mut T) -> Option<Id<T, O>> {
-        // SAFETY: Upheld by the caller
-        NonNull::new(ptr).map(|ptr| unsafe { Id::retain(ptr) })
+        unsafe { Self::new(res as *mut T) }
     }
 
     #[inline]
@@ -302,7 +279,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
 // #[cfg(block)]
 // impl<T: Block, O> Id<T, O> {
 //     #[doc(alias = "objc_retainBlock")]
-//     pub unsafe fn retain_block(block: NonNull<T>) -> Self {
+//     pub unsafe fn retain_block(block: *mut T) -> Option<Self> {
 //         todo!()
 //     }
 // }
@@ -341,7 +318,7 @@ impl<T: Message> Id<T, Owned> {
         let ptr = ManuallyDrop::new(obj).ptr;
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
-        unsafe { <Id<T, Owned>>::new(ptr) }
+        unsafe { <Id<T, Owned>>::new_nonnull(ptr) }
     }
 }
 
@@ -369,7 +346,7 @@ impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
     fn from(obj: Id<T, Owned>) -> Self {
         let ptr = ManuallyDrop::new(obj).ptr;
         // SAFETY: The pointer is valid, and ownership is simply decreased
-        unsafe { <Id<T, Shared>>::new(ptr) }
+        unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
     }
 }
 
@@ -383,7 +360,10 @@ impl<T: Message> Clone for Id<T, Shared> {
     #[inline]
     fn clone(&self) -> Self {
         // SAFETY: The pointer is valid
-        unsafe { Id::retain(self.ptr) }
+        let obj = unsafe { Id::retain(self.ptr.as_ptr()) };
+        // SAFETY: `objc_retain` always returns the same object pointer, and
+        // the pointer is guaranteed non-null by Id.
+        unsafe { obj.unwrap_unchecked() }
     }
 }
 
@@ -483,8 +463,6 @@ impl<T: UnwindSafe + ?Sized> UnwindSafe for Id<T, Owned> {}
 
 #[cfg(test)]
 mod tests {
-    use core::ptr::NonNull;
-
     use super::{Id, Owned, Shared};
     use crate::rc::autoreleasepool;
     use crate::runtime::Object;
@@ -496,7 +474,7 @@ mod tests {
 
     #[test]
     fn test_autorelease() {
-        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]) };
+        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
 
         let cloned = obj.clone();
 
@@ -516,7 +494,7 @@ mod tests {
         let obj: Id<Object, Owned> = unsafe {
             let obj: *mut Object = msg_send![cls, alloc];
             let obj: *mut Object = msg_send![obj, init];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         };
         assert_eq!(retain_count(&obj), 1);
 

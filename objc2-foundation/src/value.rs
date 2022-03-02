@@ -73,7 +73,7 @@ impl<T: 'static + Copy + Encode> NSValue<T> {
                 initWithBytes: bytes,
                 objCType: encoding.as_ptr(),
             ];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 }

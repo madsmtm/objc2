@@ -1,5 +1,3 @@
-use core::ptr::NonNull;
-
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 
@@ -30,7 +28,7 @@ impl NSMutableAttributedString {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithString: string];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 
@@ -39,7 +37,7 @@ impl NSMutableAttributedString {
         unsafe {
             let obj: *mut Self = msg_send![Self::class(), alloc];
             let obj: *mut Self = msg_send![obj, initWithAttributedString: attributed_string];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 }
