@@ -68,7 +68,11 @@ fn main() {
     let host = env!("TARGET");
 
     for entry in manifest_dir.join("assembly").read_dir().unwrap() {
-        let package_path = entry.unwrap().path();
+        let entry = entry.unwrap();
+        if !entry.file_type().unwrap().is_dir() {
+            continue;
+        }
+        let package_path = entry.path();
         let package = package_path.file_name().unwrap().to_str().unwrap();
 
         println!("Testing {package}.");
@@ -125,7 +129,7 @@ fn main() {
         let actual = read_assembly(&artifact).unwrap();
         if should_overwrite {
             fs::write(expected_file, actual).unwrap();
-        } else if let Ok(expected) = read_assembly(expected_file) {
+        } else if let Ok(expected) = fs::read_to_string(expected_file) {
             if expected != actual {
                 eprintln!("\n===Expected===\n{}\n===Actual===\n{}", expected, actual);
                 panic!("Expected and actual did not match.");

@@ -4,6 +4,10 @@
 	.p2align	2
 	.code	32
 _handle:
-	b	_objc_msgSend
+	push	{r7, lr}
+	mov	r7, sp
+	bl	_objc_msgSend
+	bl	_objc_retainAutoreleasedReturnValue
+	pop	{r7, pc}
 
 .subsections_via_symbols
