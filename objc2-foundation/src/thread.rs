@@ -20,7 +20,7 @@ impl NSThread {
         // TODO: currentThread is @property(strong), what does that mean?
         let obj: *mut Self = unsafe { msg_send![Self::class(), currentThread] };
         // TODO: Always available?
-        unsafe { Id::retain(obj).unwrap() }
+        unsafe { Id::retain_autoreleased(obj).unwrap() }
     }
 
     /// Returns the [`NSThread`] object representing the main thread.
@@ -29,7 +29,7 @@ impl NSThread {
         let obj: *mut Self = unsafe { msg_send![Self::class(), mainThread] };
         // The main thread static may not have been initialized
         // This can at least fail in GNUStep!
-        unsafe { Id::retain(obj).expect("Could not retrieve main thread.") }
+        unsafe { Id::retain_autoreleased(obj).expect("Could not retrieve main thread.") }
     }
 
     /// Returns `true` if the thread is the main thread.
@@ -41,7 +41,7 @@ impl NSThread {
     /// The name of the thread.
     pub fn name(&self) -> Option<Id<NSString, Shared>> {
         let obj: *mut NSString = unsafe { msg_send![self, name] };
-        unsafe { Id::retain(obj) }
+        unsafe { Id::retain_autoreleased(obj) }
     }
 }
 

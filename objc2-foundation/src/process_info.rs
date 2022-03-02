@@ -22,11 +22,11 @@ impl NSProcessInfo {
         // currentThread is @property(strong), what does that mean?
         let obj: *mut Self = unsafe { msg_send![Self::class(), processInfo] };
         // TODO: Always available?
-        unsafe { Id::retain(obj).unwrap() }
+        unsafe { Id::retain_autoreleased(obj).unwrap() }
     }
 
     pub fn process_name(&self) -> Id<NSString, Shared> {
         let obj: *mut NSString = unsafe { msg_send![Self::class(), processName] };
-        unsafe { Id::retain(obj).unwrap() }
+        unsafe { Id::retain_autoreleased(obj).unwrap() }
     }
 }

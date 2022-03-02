@@ -1,0 +1,13 @@
+[package]
+name = "test_retain_autoreleased"
+version = "0.1.0"
+edition = "2018"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+objc2 = { path = "../../../objc2" }
+objc-sys = { path = "../../../objc-sys" }
+block-sys = { path = "../../../block-sys" }
