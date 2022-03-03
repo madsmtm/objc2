@@ -4,147 +4,210 @@
 	.p2align	2
 	.code	32
 _get_sel:
-	movw	r0, :lower16:(__MergedGlobals-(LPC0_0+8))
-	movt	r0, :upper16:(__MergedGlobals-(LPC0_0+8))
-LPC0_0:
-	ldr	r0, [pc, r0]
-	bx	lr
+	b	__ZN15test_static_sel7get_sel22objc_static_workaround17h72e7bc422453dd4bE
 
 	.globl	_get_same_sel
 	.p2align	2
 	.code	32
 _get_same_sel:
-	movw	r0, :lower16:(__MergedGlobals-(LPC1_0+8))
-	movt	r0, :upper16:(__MergedGlobals-(LPC1_0+8))
-LPC1_0:
-	add	r0, pc, r0
-	ldr	r0, [r0, #4]
-	bx	lr
+	b	__ZN15test_static_sel12get_same_sel22objc_static_workaround17hd2469b9e7fb1c0f2E
 
 	.globl	_get_common
 	.p2align	2
 	.code	32
 _get_common:
-	movw	r0, :lower16:(__ZN15test_static_sel10get_common5do_it3REF17h88c0b345ea50045dE-(LPC2_0+8))
-	movt	r0, :upper16:(__ZN15test_static_sel10get_common5do_it3REF17h88c0b345ea50045dE-(LPC2_0+8))
-LPC2_0:
-	ldr	r0, [pc, r0]
-	bx	lr
+	b	__ZN15test_static_sel10get_common22objc_static_workaround17h3f794ff9f42acf9eE
 
 	.globl	_get_different_sel
 	.p2align	2
 	.code	32
 _get_different_sel:
-	movw	r0, :lower16:(__MergedGlobals-(LPC3_0+8))
-	movt	r0, :upper16:(__MergedGlobals-(LPC3_0+8))
-LPC3_0:
-	add	r0, pc, r0
-	ldr	r0, [r0, #8]
-	bx	lr
+	b	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h01062977b636a32dE
 
 	.globl	_unused_sel
 	.p2align	2
 	.code	32
 _unused_sel:
-	movw	r0, :lower16:(__ZN15test_static_sel10unused_sel5do_it3REF17h3456b073979c4c05E-(LPC4_0+8))
-	movt	r0, :upper16:(__ZN15test_static_sel10unused_sel5do_it3REF17h3456b073979c4c05E-(LPC4_0+8))
-LPC4_0:
-	ldr	r0, [pc, r0]
-	bx	lr
+	b	__ZN15test_static_sel10unused_sel22objc_static_workaround17h6da711f1e3b49352E
 
 	.globl	_use_fns
 	.p2align	2
 	.code	32
 _use_fns:
-	movw	r1, :lower16:(__MergedGlobals-(LPC5_0+8))
-	movt	r1, :upper16:(__MergedGlobals-(LPC5_0+8))
-	movw	r2, :lower16:(__MergedGlobals-(LPC5_1+8))
-	movt	r2, :upper16:(__MergedGlobals-(LPC5_1+8))
-LPC5_0:
-	add	r1, pc, r1
-LPC5_1:
-	ldr	r2, [pc, r2]
-	ldr	r3, [r1, #4]
-	ldr	r9, [r1, #8]
-	ldr	r1, [r1, #12]
-	stm	r0, {r2, r3, r9}
-	str	r1, [r0, #12]
-	bx	lr
+	push	{r4, r5, r6, r7, lr}
+	add	r7, sp, #12
+	push	{r8}
+	mov	r4, r0
+	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17h72e7bc422453dd4bE
+	mov	r8, r0
+	bl	__ZN15test_static_sel12get_same_sel22objc_static_workaround17hd2469b9e7fb1c0f2E
+	mov	r6, r0
+	bl	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h01062977b636a32dE
+	mov	r5, r0
+	bl	__ZN15test_static_sel7use_fns22objc_static_workaround17h0114609dfd50ccc2E
+	str	r8, [r4]
+	str	r6, [r4, #4]
+	str	r5, [r4, #8]
+	str	r0, [r4, #12]
+	pop	{r8}
+	pop	{r4, r5, r6, r7, pc}
 
 	.globl	_use_same_twice
 	.p2align	2
 	.code	32
 _use_same_twice:
-	movw	r2, :lower16:(__MergedGlobals-(LPC6_0+8))
-	movt	r2, :upper16:(__MergedGlobals-(LPC6_0+8))
-LPC6_0:
-	ldr	r2, [pc, r2]
-	movw	r3, :lower16:(__MergedGlobals-(LPC6_1+8))
-	movt	r3, :upper16:(__MergedGlobals-(LPC6_1+8))
-LPC6_1:
-	ldr	r3, [pc, r3]
-	strd	r2, r3, [r0]
-	bx	lr
+	push	{r4, r7, lr}
+	add	r7, sp, #4
+	push	{r8}
+	mov	r4, r0
+	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17h72e7bc422453dd4bE
+	mov	r8, r0
+	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17h72e7bc422453dd4bE
+	mov	r9, r0
+	strd	r8, r9, [r4]
+	pop	{r8}
+	pop	{r4, r7, pc}
 
 	.globl	_use_in_loop
 	.p2align	2
 	.code	32
 _use_in_loop:
+	push	{r4, r7, lr}
+	add	r7, sp, #4
 	cmp	r0, #0
-	bxeq	lr
+	popeq	{r4, r7, pc}
 LBB7_1:
-	movw	r1, :lower16:(__ZN15test_static_sel11use_in_loop5do_it3REF17ha9a536f99ddb0372E-(LPC7_0+8))
-	subs	r0, r0, #1
-	movt	r1, :upper16:(__ZN15test_static_sel11use_in_loop5do_it3REF17ha9a536f99ddb0372E-(LPC7_0+8))
-LPC7_0:
-	ldr	r1, [pc, r1]
-	bne	LBB7_1
+	mov	r4, r0
+LBB7_2:
+	bl	__ZN15test_static_sel11use_in_loop22objc_static_workaround17hfddcd2cc792b0ea4E
+	subs	r4, r4, #1
+	bne	LBB7_2
+	pop	{r4, r7, pc}
+
+	.p2align	2
+	.code	32
+__ZN15test_static_sel7get_sel22objc_static_workaround17h72e7bc422453dd4bE:
+	movw	r0, :lower16:(__ZN15test_static_sel7get_sel22objc_static_workaround3REF17haed2d29deaa594a5E-(LPC8_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel7get_sel22objc_static_workaround3REF17haed2d29deaa594a5E-(LPC8_0+8))
+LPC8_0:
+	ldr	r0, [pc, r0]
+	bx	lr
+
+	.p2align	2
+	.code	32
+__ZN15test_static_sel12get_same_sel22objc_static_workaround17hd2469b9e7fb1c0f2E:
+	movw	r0, :lower16:(__ZN15test_static_sel12get_same_sel22objc_static_workaround3REF17ha96ad30cde590111E-(LPC9_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel12get_same_sel22objc_static_workaround3REF17ha96ad30cde590111E-(LPC9_0+8))
+LPC9_0:
+	ldr	r0, [pc, r0]
+	bx	lr
+
+	.p2align	2
+	.code	32
+__ZN15test_static_sel10get_common22objc_static_workaround17h3f794ff9f42acf9eE:
+	movw	r0, :lower16:(__ZN15test_static_sel10get_common22objc_static_workaround3REF17h9dd8d669df75f145E-(LPC10_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel10get_common22objc_static_workaround3REF17h9dd8d669df75f145E-(LPC10_0+8))
+LPC10_0:
+	ldr	r0, [pc, r0]
+	bx	lr
+
+	.p2align	2
+	.code	32
+__ZN15test_static_sel17get_different_sel22objc_static_workaround17h01062977b636a32dE:
+	movw	r0, :lower16:(__ZN15test_static_sel17get_different_sel22objc_static_workaround3REF17hfbfc6a5f52210736E-(LPC11_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel17get_different_sel22objc_static_workaround3REF17hfbfc6a5f52210736E-(LPC11_0+8))
+LPC11_0:
+	ldr	r0, [pc, r0]
+	bx	lr
+
+	.p2align	2
+	.code	32
+__ZN15test_static_sel10unused_sel22objc_static_workaround17h6da711f1e3b49352E:
+	movw	r0, :lower16:(__ZN15test_static_sel10unused_sel22objc_static_workaround3REF17h3f6ed3f067235ff3E-(LPC12_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel10unused_sel22objc_static_workaround3REF17h3f6ed3f067235ff3E-(LPC12_0+8))
+LPC12_0:
+	ldr	r0, [pc, r0]
+	bx	lr
+
+	.p2align	2
+	.code	32
+__ZN15test_static_sel7use_fns22objc_static_workaround17h0114609dfd50ccc2E:
+	movw	r0, :lower16:(__ZN15test_static_sel7use_fns22objc_static_workaround3REF17hd9b45383a5f14d7fE-(LPC13_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel7use_fns22objc_static_workaround3REF17hd9b45383a5f14d7fE-(LPC13_0+8))
+LPC13_0:
+	ldr	r0, [pc, r0]
+	bx	lr
+
+	.p2align	2
+	.code	32
+__ZN15test_static_sel11use_in_loop22objc_static_workaround17hfddcd2cc792b0ea4E:
+	movw	r0, :lower16:(__ZN15test_static_sel11use_in_loop22objc_static_workaround3REF17h4273a0a2541d4d90E-(LPC14_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel11use_in_loop22objc_static_workaround3REF17h4273a0a2541d4d90E-(LPC14_0+8))
+LPC14_0:
+	ldr	r0, [pc, r0]
 	bx	lr
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7get_sel5do_it4NAME17h2b52ef278f5b8d4dE:
+__ZN15test_static_sel7get_sel22objc_static_workaround4NAME17ha3f8077c962753c6E:
 	.asciz	"simple"
 
-__ZN15test_static_sel12get_same_sel5do_it4NAME17h50d386fa227c6606E:
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.p2align	2
+__ZN15test_static_sel7get_sel22objc_static_workaround3REF17haed2d29deaa594a5E:
+	.long	__ZN15test_static_sel7get_sel22objc_static_workaround4NAME17ha3f8077c962753c6E
+
+	.section	__TEXT,__objc_methname,cstring_literals
+__ZN15test_static_sel12get_same_sel22objc_static_workaround4NAME17h414b71130d291bcbE:
 	.asciz	"simple"
 
-__ZN15test_static_sel10get_common5do_it4NAME17h179213a48bde1076E:
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.p2align	2
+__ZN15test_static_sel12get_same_sel22objc_static_workaround3REF17ha96ad30cde590111E:
+	.long	__ZN15test_static_sel12get_same_sel22objc_static_workaround4NAME17h414b71130d291bcbE
+
+	.section	__TEXT,__objc_methname,cstring_literals
+__ZN15test_static_sel10get_common22objc_static_workaround4NAME17h59407464b3ae7e14E:
 	.asciz	"alloc"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
-__ZN15test_static_sel10get_common5do_it3REF17h88c0b345ea50045dE:
-	.long	__ZN15test_static_sel10get_common5do_it4NAME17h179213a48bde1076E
+__ZN15test_static_sel10get_common22objc_static_workaround3REF17h9dd8d669df75f145E:
+	.long	__ZN15test_static_sel10get_common22objc_static_workaround4NAME17h59407464b3ae7e14E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel17get_different_sel5do_it4NAME17h6f683b1d018a42d4E:
+__ZN15test_static_sel17get_different_sel22objc_static_workaround4NAME17hf259bc1c6d7a8474E:
 	.asciz	"i:am:different:"
 
-__ZN15test_static_sel10unused_sel5do_it4NAME17h52310f431dc7fa86E:
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.p2align	2
+__ZN15test_static_sel17get_different_sel22objc_static_workaround3REF17hfbfc6a5f52210736E:
+	.long	__ZN15test_static_sel17get_different_sel22objc_static_workaround4NAME17hf259bc1c6d7a8474E
+
+	.section	__TEXT,__objc_methname,cstring_literals
+__ZN15test_static_sel10unused_sel22objc_static_workaround4NAME17h524d9abe91019351E:
 	.asciz	"unused"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
-__ZN15test_static_sel10unused_sel5do_it3REF17h3456b073979c4c05E:
-	.long	__ZN15test_static_sel10unused_sel5do_it4NAME17h52310f431dc7fa86E
+__ZN15test_static_sel10unused_sel22objc_static_workaround3REF17h3f6ed3f067235ff3E:
+	.long	__ZN15test_static_sel10unused_sel22objc_static_workaround4NAME17h524d9abe91019351E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7use_fns5do_it4NAME17h00d062c3767274a5E:
+__ZN15test_static_sel7use_fns22objc_static_workaround4NAME17he05a8a8a090de466E:
 	.asciz	"fourthSel"
 
-__ZN15test_static_sel11use_in_loop5do_it4NAME17h212e17b8e008601dE:
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.p2align	2
+__ZN15test_static_sel7use_fns22objc_static_workaround3REF17hd9b45383a5f14d7fE:
+	.long	__ZN15test_static_sel7use_fns22objc_static_workaround4NAME17he05a8a8a090de466E
+
+	.section	__TEXT,__objc_methname,cstring_literals
+__ZN15test_static_sel11use_in_loop22objc_static_workaround4NAME17hd8d7210562c66839E:
 	.asciz	"loopedSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
-__ZN15test_static_sel11use_in_loop5do_it3REF17ha9a536f99ddb0372E:
-	.long	__ZN15test_static_sel11use_in_loop5do_it4NAME17h212e17b8e008601dE
-
-	.p2align	2
-__MergedGlobals:
-	.long	__ZN15test_static_sel7get_sel5do_it4NAME17h2b52ef278f5b8d4dE
-	.long	__ZN15test_static_sel12get_same_sel5do_it4NAME17h50d386fa227c6606E
-	.long	__ZN15test_static_sel17get_different_sel5do_it4NAME17h6f683b1d018a42d4E
-	.long	__ZN15test_static_sel7use_fns5do_it4NAME17h00d062c3767274a5E
+__ZN15test_static_sel11use_in_loop22objc_static_workaround3REF17h4273a0a2541d4d90E:
+	.long	__ZN15test_static_sel11use_in_loop22objc_static_workaround4NAME17hd8d7210562c66839E
 
 .subsections_via_symbols

@@ -63,11 +63,12 @@ macro_rules! sel {
     ($($name:ident :)+) => {
         $crate::sel!(@__inner concat!($(stringify!($name), ':'),+, '\0'))
     };
-    // Declare a function to hide unsafety, otherwise we can trigger the
-    // unused_unsafe lint; see rust-lang/rust#8472
     (@__inner $sel:expr) => {{
-        #[inline(always)]
-        fn do_it() -> $crate::runtime::Sel {
+        // HACK: Wrap the statics in a non-generic, `#[inline(never)]`
+        // function to "coerce" the compiler to group all of them into the
+        // same codegen unit to avoid link errors
+        #[inline(never)]
+        fn objc_static_workaround() -> $crate::runtime::Sel {
             const X: &[u8] = $sel.as_bytes();
 
             #[link_section = "__TEXT,__objc_methname,cstring_literals"]
@@ -96,7 +97,7 @@ macro_rules! sel {
             unsafe { $crate::runtime::Sel::from_ptr(ptr) }
         }
 
-        do_it()
+        objc_static_workaround()
     }};
 }
 
