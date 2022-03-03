@@ -58,7 +58,7 @@ LPC2_0:
 __ZN24test_msg_send_static_sel15handle_with_sel5do_it4NAME17h4be0477fe73c107cE:
 	.asciz	"someSelector"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __ZN24test_msg_send_static_sel15handle_with_sel5do_it3REF17ha3faf09d3de71191E:
 	.long	__ZN24test_msg_send_static_sel15handle_with_sel5do_it4NAME17h4be0477fe73c107cE
@@ -82,7 +82,7 @@ __ZN24test_msg_send_static_sel11use_generic5do_it4NAME17h52746d9e41762e25E:
 __ZN24test_msg_send_static_sel11use_generic5do_it4NAME17hc6eea12cf00dc3ecE:
 	.asciz	"performSelector:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __MergedGlobals:
 	.long	__ZN24test_msg_send_static_sel17handle_alloc_init5do_it4NAME17hfb54835af2ec43c7E

@@ -82,7 +82,7 @@ macro_rules! sel {
             };
 
             // Place the constant value in the correct section.
-            #[link_section = "__DATA,__objc_selrefs,literal_pointers,no_dead_strip"]
+            #[link_section = "__DATA,__objc_selrefs,literal_pointers"]
             static mut REF: &[u8; X.len()] = &NAME;
 
             // The actual selector is replaced by dyld when the program is

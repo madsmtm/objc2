@@ -147,7 +147,7 @@ LBB7_6:
 __ZN15test_static_sel7get_sel5do_it4NAME17h6c6d257dd8fb3617E:
 	.asciz	"simple"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __ZN15test_static_sel7get_sel5do_it3REF17h228c7cd1be7c0069E:
 	.long	__ZN15test_static_sel7get_sel5do_it4NAME17h6c6d257dd8fb3617E
@@ -156,7 +156,7 @@ __ZN15test_static_sel7get_sel5do_it3REF17h228c7cd1be7c0069E:
 __ZN15test_static_sel12get_same_sel5do_it4NAME17h3c19b4f1b67d375cE:
 	.asciz	"simple"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __ZN15test_static_sel12get_same_sel5do_it3REF17h2d56ac8d4cf2a355E:
 	.long	__ZN15test_static_sel12get_same_sel5do_it4NAME17h3c19b4f1b67d375cE
@@ -165,7 +165,7 @@ __ZN15test_static_sel12get_same_sel5do_it3REF17h2d56ac8d4cf2a355E:
 __ZN15test_static_sel10get_common5do_it4NAME17hcb2f2f30b61e60e6E:
 	.asciz	"alloc"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __ZN15test_static_sel10get_common5do_it3REF17hbce043dcabf60bd8E:
 	.long	__ZN15test_static_sel10get_common5do_it4NAME17hcb2f2f30b61e60e6E
@@ -174,7 +174,7 @@ __ZN15test_static_sel10get_common5do_it3REF17hbce043dcabf60bd8E:
 __ZN15test_static_sel17get_different_sel5do_it4NAME17hf72482e04f464b16E:
 	.asciz	"i:am:different:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __ZN15test_static_sel17get_different_sel5do_it3REF17h46c19195af72a6afE:
 	.long	__ZN15test_static_sel17get_different_sel5do_it4NAME17hf72482e04f464b16E
@@ -183,7 +183,7 @@ __ZN15test_static_sel17get_different_sel5do_it3REF17h46c19195af72a6afE:
 __ZN15test_static_sel10unused_sel5do_it4NAME17h47c97c765e901021E:
 	.asciz	"unused"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __ZN15test_static_sel10unused_sel5do_it3REF17hb665a83c664ebefbE:
 	.long	__ZN15test_static_sel10unused_sel5do_it4NAME17h47c97c765e901021E
@@ -192,7 +192,7 @@ __ZN15test_static_sel10unused_sel5do_it3REF17hb665a83c664ebefbE:
 __ZN15test_static_sel7use_fns5do_it4NAME17hf963d790d76ff9aaE:
 	.asciz	"fourthSel"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __ZN15test_static_sel7use_fns5do_it3REF17h4ce7e1055d208b06E:
 	.long	__ZN15test_static_sel7use_fns5do_it4NAME17hf963d790d76ff9aaE
@@ -201,7 +201,7 @@ __ZN15test_static_sel7use_fns5do_it3REF17h4ce7e1055d208b06E:
 __ZN15test_static_sel11use_in_loop5do_it4NAME17h13b3be67c555f0a5E:
 	.asciz	"loopedSelector"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	2
 __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE:
 	.long	__ZN15test_static_sel11use_in_loop5do_it4NAME17h13b3be67c555f0a5E

@@ -96,7 +96,7 @@ __ZN15test_static_sel12get_same_sel5do_it4NAME17h4e648ed7466261caE:
 __ZN15test_static_sel10get_common5do_it4NAME17hfd368362e2d25fffE:
 	.asciz	"alloc"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	3
 __ZN15test_static_sel10get_common5do_it3REF17h04d7420870ee0084E:
 	.quad	__ZN15test_static_sel10get_common5do_it4NAME17hfd368362e2d25fffE
@@ -108,7 +108,7 @@ __ZN15test_static_sel17get_different_sel5do_it4NAME17h073785bcd4aaf0b5E:
 __ZN15test_static_sel10unused_sel5do_it4NAME17h0804808ebe10326eE:
 	.asciz	"unused"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	3
 __ZN15test_static_sel10unused_sel5do_it3REF17h08e2222b7f31b61dE:
 	.quad	__ZN15test_static_sel10unused_sel5do_it4NAME17h0804808ebe10326eE
@@ -120,7 +120,7 @@ __ZN15test_static_sel7use_fns5do_it4NAME17h6498c06488ad7ff3E:
 __ZN15test_static_sel11use_in_loop5do_it4NAME17hc07464c5efd1d06bE:
 	.asciz	"loopedSelector"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.p2align	3
 __ZN15test_static_sel11use_in_loop5do_it3REF17hdd95e73e2d016191E:
 	.quad	__ZN15test_static_sel11use_in_loop5do_it4NAME17hc07464c5efd1d06bE
