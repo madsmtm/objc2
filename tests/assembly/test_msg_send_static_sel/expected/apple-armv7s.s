@@ -6,8 +6,8 @@
 _handle_with_sel:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r1, :lower16:(__ZN24test_msg_send_static_sel15handle_with_sel5do_it3REF17h9a8ef11721428e5cE-(LPC0_0+8))
-	movt	r1, :upper16:(__ZN24test_msg_send_static_sel15handle_with_sel5do_it3REF17h9a8ef11721428e5cE-(LPC0_0+8))
+	movw	r1, :lower16:(__ZN24test_msg_send_static_sel15handle_with_sel5do_it3REF17h5684820907e02a7dE-(LPC0_0+8))
+	movt	r1, :upper16:(__ZN24test_msg_send_static_sel15handle_with_sel5do_it3REF17h5684820907e02a7dE-(LPC0_0+8))
 LPC0_0:
 	ldr	r1, [pc, r1]
 	bl	_objc_msgSend
@@ -58,41 +58,41 @@ LPC2_0:
 	pop	{r4, r5, r7, pc}
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN24test_msg_send_static_sel15handle_with_sel5do_it5VALUE17h5efd63825ac22048E:
+__ZN24test_msg_send_static_sel15handle_with_sel5do_it4NAME17h1b045ce2d125ff39E:
 	.asciz	"someSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN24test_msg_send_static_sel15handle_with_sel5do_it3REF17h9a8ef11721428e5cE:
-	.long	__ZN24test_msg_send_static_sel15handle_with_sel5do_it5VALUE17h5efd63825ac22048E
+__ZN24test_msg_send_static_sel15handle_with_sel5do_it3REF17h5684820907e02a7dE:
+	.long	__ZN24test_msg_send_static_sel15handle_with_sel5do_it4NAME17h1b045ce2d125ff39E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN24test_msg_send_static_sel17handle_alloc_init5do_it5VALUE17h441437e082275571E:
+__ZN24test_msg_send_static_sel17handle_alloc_init5do_it4NAME17h4e0852fc05b66326E:
 	.asciz	"init"
 
-__ZN24test_msg_send_static_sel17handle_alloc_init5do_it5VALUE17h511d9a3abe34514fE:
+__ZN24test_msg_send_static_sel17handle_alloc_init5do_it4NAME17ha3a756441bd0acebE:
 	.asciz	"alloc"
 
-__ZN24test_msg_send_static_sel7generic5do_it5VALUE17h085bf46fbd37778eE:
+__ZN24test_msg_send_static_sel7generic5do_it4NAME17h4c3b369edbd3aadcE:
 	.asciz	"generic:selector:"
 
-__ZN24test_msg_send_static_sel11use_generic5do_it5VALUE17hd2f614f4541f1fb6E:
+__ZN24test_msg_send_static_sel11use_generic5do_it4NAME17h639b2c9b06a336e7E:
 	.asciz	"performSelector:"
 
-__ZN24test_msg_send_static_sel11use_generic5do_it5VALUE17h4daddbacc43585e3E:
+__ZN24test_msg_send_static_sel11use_generic5do_it4NAME17hd38879191654969cE:
 	.asciz	"performSelector:"
 
-__ZN24test_msg_send_static_sel11use_generic5do_it5VALUE17hce3635c78de3d40cE:
+__ZN24test_msg_send_static_sel11use_generic5do_it4NAME17h558dcd606e4b144fE:
 	.asciz	"performSelector:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
 __MergedGlobals:
-	.long	__ZN24test_msg_send_static_sel17handle_alloc_init5do_it5VALUE17h441437e082275571E
-	.long	__ZN24test_msg_send_static_sel17handle_alloc_init5do_it5VALUE17h511d9a3abe34514fE
-	.long	__ZN24test_msg_send_static_sel7generic5do_it5VALUE17h085bf46fbd37778eE
-	.long	__ZN24test_msg_send_static_sel11use_generic5do_it5VALUE17hd2f614f4541f1fb6E
-	.long	__ZN24test_msg_send_static_sel11use_generic5do_it5VALUE17h4daddbacc43585e3E
-	.long	__ZN24test_msg_send_static_sel11use_generic5do_it5VALUE17hce3635c78de3d40cE
+	.long	__ZN24test_msg_send_static_sel17handle_alloc_init5do_it4NAME17h4e0852fc05b66326E
+	.long	__ZN24test_msg_send_static_sel17handle_alloc_init5do_it4NAME17ha3a756441bd0acebE
+	.long	__ZN24test_msg_send_static_sel7generic5do_it4NAME17h4c3b369edbd3aadcE
+	.long	__ZN24test_msg_send_static_sel11use_generic5do_it4NAME17h639b2c9b06a336e7E
+	.long	__ZN24test_msg_send_static_sel11use_generic5do_it4NAME17hd38879191654969cE
+	.long	__ZN24test_msg_send_static_sel11use_generic5do_it4NAME17h558dcd606e4b144fE
 
 .subsections_via_symbols

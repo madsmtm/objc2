@@ -70,12 +70,8 @@ macro_rules! sel {
         fn do_it() -> $crate::runtime::Sel {
             const X: &[u8] = $sel.as_bytes();
 
-            struct Cheaty(*const [u8; X.len()]);
-            unsafe impl Send for Cheaty {}
-            unsafe impl Sync for Cheaty {}
-
             #[link_section = "__TEXT,__objc_methname,cstring_literals"]
-            static VALUE: [u8; X.len()] = {
+            static NAME: [u8; X.len()] = {
                 let mut res: [u8; X.len()] = [0; X.len()];
                 let mut i = 0;
                 while i < X.len() {
@@ -87,17 +83,17 @@ macro_rules! sel {
 
             // Place the constant value in the correct section.
             #[link_section = "__DATA,__objc_selrefs,literal_pointers,no_dead_strip"]
-            static mut REF: Cheaty = Cheaty(&VALUE);
+            static mut REF: &[u8; X.len()] = &NAME;
 
             // The actual selector is replaced by dyld when the program is
             // loaded, so we need to use a volatile read to prevent the
             // optimizer from thinking it can circumvent the read through REF.
             //
-            // Produce a sel type as a result.
-            // XXX(nika): Don't use transmute?
-            unsafe {
-                ::std::mem::transmute::<_, $crate::runtime::Sel>(::std::ptr::read_volatile(&REF.0))
-            }
+            // TODO: `::core` here could be replaced with some more
+            // sophisticated logic so we don't rely on downstream users having
+            // this setup.
+            let ptr = unsafe { ::core::ptr::read_volatile(&REF).as_ptr() as *const _ };
+            unsafe { $crate::runtime::Sel::from_ptr(ptr) }
         }
 
         do_it()

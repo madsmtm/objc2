@@ -25,8 +25,8 @@ LPC1_0:
 	.p2align	2
 	.code	32
 _get_common:
-	movw	r0, :lower16:(__ZN15test_static_sel10get_common5do_it3REF17h2fcf6713cccb23c2E-(LPC2_0+8))
-	movt	r0, :upper16:(__ZN15test_static_sel10get_common5do_it3REF17h2fcf6713cccb23c2E-(LPC2_0+8))
+	movw	r0, :lower16:(__ZN15test_static_sel10get_common5do_it3REF17h88c0b345ea50045dE-(LPC2_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel10get_common5do_it3REF17h88c0b345ea50045dE-(LPC2_0+8))
 LPC2_0:
 	ldr	r0, [pc, r0]
 	bx	lr
@@ -46,8 +46,8 @@ LPC3_0:
 	.p2align	2
 	.code	32
 _unused_sel:
-	movw	r0, :lower16:(__ZN15test_static_sel10unused_sel5do_it3REF17hd1843813254fd749E-(LPC4_0+8))
-	movt	r0, :upper16:(__ZN15test_static_sel10unused_sel5do_it3REF17hd1843813254fd749E-(LPC4_0+8))
+	movw	r0, :lower16:(__ZN15test_static_sel10unused_sel5do_it3REF17h3456b073979c4c05E-(LPC4_0+8))
+	movt	r0, :upper16:(__ZN15test_static_sel10unused_sel5do_it3REF17h3456b073979c4c05E-(LPC4_0+8))
 LPC4_0:
 	ldr	r0, [pc, r0]
 	bx	lr
@@ -93,58 +93,58 @@ _use_in_loop:
 	cmp	r0, #0
 	bxeq	lr
 LBB7_1:
-	movw	r1, :lower16:(__ZN15test_static_sel11use_in_loop5do_it3REF17hc3ddbd16275c953aE-(LPC7_0+8))
+	movw	r1, :lower16:(__ZN15test_static_sel11use_in_loop5do_it3REF17ha9a536f99ddb0372E-(LPC7_0+8))
 	subs	r0, r0, #1
-	movt	r1, :upper16:(__ZN15test_static_sel11use_in_loop5do_it3REF17hc3ddbd16275c953aE-(LPC7_0+8))
+	movt	r1, :upper16:(__ZN15test_static_sel11use_in_loop5do_it3REF17ha9a536f99ddb0372E-(LPC7_0+8))
 LPC7_0:
 	ldr	r1, [pc, r1]
 	bne	LBB7_1
 	bx	lr
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7get_sel5do_it5VALUE17h2b7d0292b914b628E:
+__ZN15test_static_sel7get_sel5do_it4NAME17h2b52ef278f5b8d4dE:
 	.asciz	"simple"
 
-__ZN15test_static_sel12get_same_sel5do_it5VALUE17h150bb3bb3ef538caE:
+__ZN15test_static_sel12get_same_sel5do_it4NAME17h50d386fa227c6606E:
 	.asciz	"simple"
 
-__ZN15test_static_sel10get_common5do_it5VALUE17hf482623d5a0e24bcE:
+__ZN15test_static_sel10get_common5do_it4NAME17h179213a48bde1076E:
 	.asciz	"alloc"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel10get_common5do_it3REF17h2fcf6713cccb23c2E:
-	.long	__ZN15test_static_sel10get_common5do_it5VALUE17hf482623d5a0e24bcE
+__ZN15test_static_sel10get_common5do_it3REF17h88c0b345ea50045dE:
+	.long	__ZN15test_static_sel10get_common5do_it4NAME17h179213a48bde1076E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel17get_different_sel5do_it5VALUE17he4401ae12495c648E:
+__ZN15test_static_sel17get_different_sel5do_it4NAME17h6f683b1d018a42d4E:
 	.asciz	"i:am:different:"
 
-__ZN15test_static_sel10unused_sel5do_it5VALUE17he425e6855951f7deE:
+__ZN15test_static_sel10unused_sel5do_it4NAME17h52310f431dc7fa86E:
 	.asciz	"unused"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel10unused_sel5do_it3REF17hd1843813254fd749E:
-	.long	__ZN15test_static_sel10unused_sel5do_it5VALUE17he425e6855951f7deE
+__ZN15test_static_sel10unused_sel5do_it3REF17h3456b073979c4c05E:
+	.long	__ZN15test_static_sel10unused_sel5do_it4NAME17h52310f431dc7fa86E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7use_fns5do_it5VALUE17h4bcae19786cde021E:
+__ZN15test_static_sel7use_fns5do_it4NAME17h00d062c3767274a5E:
 	.asciz	"fourthSel"
 
-__ZN15test_static_sel11use_in_loop5do_it5VALUE17h474e12afa6bd4102E:
+__ZN15test_static_sel11use_in_loop5do_it4NAME17h212e17b8e008601dE:
 	.asciz	"loopedSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel11use_in_loop5do_it3REF17hc3ddbd16275c953aE:
-	.long	__ZN15test_static_sel11use_in_loop5do_it5VALUE17h474e12afa6bd4102E
+__ZN15test_static_sel11use_in_loop5do_it3REF17ha9a536f99ddb0372E:
+	.long	__ZN15test_static_sel11use_in_loop5do_it4NAME17h212e17b8e008601dE
 
 	.p2align	2
 __MergedGlobals:
-	.long	__ZN15test_static_sel7get_sel5do_it5VALUE17h2b7d0292b914b628E
-	.long	__ZN15test_static_sel12get_same_sel5do_it5VALUE17h150bb3bb3ef538caE
-	.long	__ZN15test_static_sel17get_different_sel5do_it5VALUE17he4401ae12495c648E
-	.long	__ZN15test_static_sel7use_fns5do_it5VALUE17h4bcae19786cde021E
+	.long	__ZN15test_static_sel7get_sel5do_it4NAME17h2b52ef278f5b8d4dE
+	.long	__ZN15test_static_sel12get_same_sel5do_it4NAME17h50d386fa227c6606E
+	.long	__ZN15test_static_sel17get_different_sel5do_it4NAME17h6f683b1d018a42d4E
+	.long	__ZN15test_static_sel7use_fns5do_it4NAME17h00d062c3767274a5E
 
 .subsections_via_symbols

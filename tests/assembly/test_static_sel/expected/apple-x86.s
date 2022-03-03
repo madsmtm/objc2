@@ -8,7 +8,7 @@ _get_sel:
 	call	L0$pb
 L0$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel7get_sel5do_it3REF17h9474478a9beae4b3E-L0$pb]
+	mov	eax, dword ptr [eax + __ZN15test_static_sel7get_sel5do_it3REF17h228c7cd1be7c0069E-L0$pb]
 	pop	ebp
 	ret
 
@@ -20,7 +20,7 @@ _get_same_sel:
 	call	L1$pb
 L1$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel12get_same_sel5do_it3REF17h4e0f4268fe73e0d3E-L1$pb]
+	mov	eax, dword ptr [eax + __ZN15test_static_sel12get_same_sel5do_it3REF17h2d56ac8d4cf2a355E-L1$pb]
 	pop	ebp
 	ret
 
@@ -32,7 +32,7 @@ _get_common:
 	call	L2$pb
 L2$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel10get_common5do_it3REF17habc9cf686995fb2cE-L2$pb]
+	mov	eax, dword ptr [eax + __ZN15test_static_sel10get_common5do_it3REF17hbce043dcabf60bd8E-L2$pb]
 	pop	ebp
 	ret
 
@@ -44,7 +44,7 @@ _get_different_sel:
 	call	L3$pb
 L3$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel17get_different_sel5do_it3REF17h3cab7071782ba0e6E-L3$pb]
+	mov	eax, dword ptr [eax + __ZN15test_static_sel17get_different_sel5do_it3REF17h46c19195af72a6afE-L3$pb]
 	pop	ebp
 	ret
 
@@ -56,7 +56,7 @@ _unused_sel:
 	call	L4$pb
 L4$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel10unused_sel5do_it3REF17h484805d909f89434E-L4$pb]
+	mov	eax, dword ptr [eax + __ZN15test_static_sel10unused_sel5do_it3REF17hb665a83c664ebefbE-L4$pb]
 	pop	ebp
 	ret
 
@@ -71,10 +71,10 @@ _use_fns:
 L5$pb:
 	pop	ecx
 	mov	eax, dword ptr [ebp + 8]
-	mov	edx, dword ptr [ecx + __ZN15test_static_sel7get_sel5do_it3REF17h9474478a9beae4b3E-L5$pb]
-	mov	esi, dword ptr [ecx + __ZN15test_static_sel12get_same_sel5do_it3REF17h4e0f4268fe73e0d3E-L5$pb]
-	mov	edi, dword ptr [ecx + __ZN15test_static_sel17get_different_sel5do_it3REF17h3cab7071782ba0e6E-L5$pb]
-	mov	ecx, dword ptr [ecx + __ZN15test_static_sel7use_fns5do_it3REF17h8cd819e3c1124776E-L5$pb]
+	mov	edx, dword ptr [ecx + __ZN15test_static_sel7get_sel5do_it3REF17h228c7cd1be7c0069E-L5$pb]
+	mov	esi, dword ptr [ecx + __ZN15test_static_sel12get_same_sel5do_it3REF17h2d56ac8d4cf2a355E-L5$pb]
+	mov	edi, dword ptr [ecx + __ZN15test_static_sel17get_different_sel5do_it3REF17h46c19195af72a6afE-L5$pb]
+	mov	ecx, dword ptr [ecx + __ZN15test_static_sel7use_fns5do_it3REF17h4ce7e1055d208b06E-L5$pb]
 	mov	dword ptr [eax], edx
 	mov	dword ptr [eax + 4], esi
 	mov	dword ptr [eax + 8], edi
@@ -93,8 +93,8 @@ _use_same_twice:
 L6$pb:
 	pop	ecx
 	mov	eax, dword ptr [ebp + 8]
-	mov	edx, dword ptr [ecx + __ZN15test_static_sel7get_sel5do_it3REF17h9474478a9beae4b3E-L6$pb]
-	mov	ecx, dword ptr [ecx + __ZN15test_static_sel7get_sel5do_it3REF17h9474478a9beae4b3E-L6$pb]
+	mov	edx, dword ptr [ecx + __ZN15test_static_sel7get_sel5do_it3REF17h228c7cd1be7c0069E-L6$pb]
+	mov	ecx, dword ptr [ecx + __ZN15test_static_sel7get_sel5do_it3REF17h228c7cd1be7c0069E-L6$pb]
 	mov	dword ptr [eax], edx
 	mov	dword ptr [eax + 4], ecx
 	pop	ebp
@@ -120,14 +120,14 @@ L7$pb:
 	and	edx, -8
 	.p2align	4, 0x90
 LBB7_3:
-	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
-	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
-	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
-	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
-	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
-	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
-	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
-	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
+	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
+	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
+	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
+	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
+	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
+	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
+	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
+	mov	esi, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
 	add	edx, -8
 	jne	LBB7_3
 LBB7_4:
@@ -135,7 +135,7 @@ LBB7_4:
 	je	LBB7_6
 	.p2align	4, 0x90
 LBB7_5:
-	mov	edx, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E-L7$pb]
+	mov	edx, dword ptr [eax + __ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE-L7$pb]
 	dec	ecx
 	jne	LBB7_5
 LBB7_6:
@@ -144,66 +144,66 @@ LBB7_6:
 	ret
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7get_sel5do_it5VALUE17hdc6f5bc4c8522997E:
+__ZN15test_static_sel7get_sel5do_it4NAME17h6c6d257dd8fb3617E:
 	.asciz	"simple"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel7get_sel5do_it3REF17h9474478a9beae4b3E:
-	.long	__ZN15test_static_sel7get_sel5do_it5VALUE17hdc6f5bc4c8522997E
+__ZN15test_static_sel7get_sel5do_it3REF17h228c7cd1be7c0069E:
+	.long	__ZN15test_static_sel7get_sel5do_it4NAME17h6c6d257dd8fb3617E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel12get_same_sel5do_it5VALUE17hba6507a7c7d39ef8E:
+__ZN15test_static_sel12get_same_sel5do_it4NAME17h3c19b4f1b67d375cE:
 	.asciz	"simple"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel12get_same_sel5do_it3REF17h4e0f4268fe73e0d3E:
-	.long	__ZN15test_static_sel12get_same_sel5do_it5VALUE17hba6507a7c7d39ef8E
+__ZN15test_static_sel12get_same_sel5do_it3REF17h2d56ac8d4cf2a355E:
+	.long	__ZN15test_static_sel12get_same_sel5do_it4NAME17h3c19b4f1b67d375cE
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel10get_common5do_it5VALUE17ha16c61a23dba9432E:
+__ZN15test_static_sel10get_common5do_it4NAME17hcb2f2f30b61e60e6E:
 	.asciz	"alloc"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel10get_common5do_it3REF17habc9cf686995fb2cE:
-	.long	__ZN15test_static_sel10get_common5do_it5VALUE17ha16c61a23dba9432E
+__ZN15test_static_sel10get_common5do_it3REF17hbce043dcabf60bd8E:
+	.long	__ZN15test_static_sel10get_common5do_it4NAME17hcb2f2f30b61e60e6E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel17get_different_sel5do_it5VALUE17h56d326a3c9259e1eE:
+__ZN15test_static_sel17get_different_sel5do_it4NAME17hf72482e04f464b16E:
 	.asciz	"i:am:different:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel17get_different_sel5do_it3REF17h3cab7071782ba0e6E:
-	.long	__ZN15test_static_sel17get_different_sel5do_it5VALUE17h56d326a3c9259e1eE
+__ZN15test_static_sel17get_different_sel5do_it3REF17h46c19195af72a6afE:
+	.long	__ZN15test_static_sel17get_different_sel5do_it4NAME17hf72482e04f464b16E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel10unused_sel5do_it5VALUE17h466f702aa6f94d5fE:
+__ZN15test_static_sel10unused_sel5do_it4NAME17h47c97c765e901021E:
 	.asciz	"unused"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel10unused_sel5do_it3REF17h484805d909f89434E:
-	.long	__ZN15test_static_sel10unused_sel5do_it5VALUE17h466f702aa6f94d5fE
+__ZN15test_static_sel10unused_sel5do_it3REF17hb665a83c664ebefbE:
+	.long	__ZN15test_static_sel10unused_sel5do_it4NAME17h47c97c765e901021E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7use_fns5do_it5VALUE17h7ce073afa896ddd6E:
+__ZN15test_static_sel7use_fns5do_it4NAME17hf963d790d76ff9aaE:
 	.asciz	"fourthSel"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel7use_fns5do_it3REF17h8cd819e3c1124776E:
-	.long	__ZN15test_static_sel7use_fns5do_it5VALUE17h7ce073afa896ddd6E
+__ZN15test_static_sel7use_fns5do_it3REF17h4ce7e1055d208b06E:
+	.long	__ZN15test_static_sel7use_fns5do_it4NAME17hf963d790d76ff9aaE
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel11use_in_loop5do_it5VALUE17haac9abd8f4a72a6bE:
+__ZN15test_static_sel11use_in_loop5do_it4NAME17h13b3be67c555f0a5E:
 	.asciz	"loopedSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	2
-__ZN15test_static_sel11use_in_loop5do_it3REF17h6c8decc396b6a708E:
-	.long	__ZN15test_static_sel11use_in_loop5do_it5VALUE17haac9abd8f4a72a6bE
+__ZN15test_static_sel11use_in_loop5do_it3REF17h82744bfcc90580aeE:
+	.long	__ZN15test_static_sel11use_in_loop5do_it4NAME17h13b3be67c555f0a5E
 
 .subsections_via_symbols

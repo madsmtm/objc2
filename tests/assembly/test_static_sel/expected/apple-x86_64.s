@@ -5,7 +5,7 @@
 _get_sel:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + __ZN15test_static_sel7get_sel5do_it3REF17h3382eb6577a19884E]
+	mov	rax, qword ptr [rip + __ZN15test_static_sel7get_sel5do_it3REF17h782882fcc02d9d8aE]
 	pop	rbp
 	ret
 
@@ -14,7 +14,7 @@ _get_sel:
 _get_same_sel:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + __ZN15test_static_sel12get_same_sel5do_it3REF17hc31d191dc2fd749eE]
+	mov	rax, qword ptr [rip + __ZN15test_static_sel12get_same_sel5do_it3REF17h2d67e358172fa45dE]
 	pop	rbp
 	ret
 
@@ -23,7 +23,7 @@ _get_same_sel:
 _get_common:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + __ZN15test_static_sel10get_common5do_it3REF17hdadb6ccb121002e4E]
+	mov	rax, qword ptr [rip + __ZN15test_static_sel10get_common5do_it3REF17hbd5f5d11cc1d359fE]
 	pop	rbp
 	ret
 
@@ -32,7 +32,7 @@ _get_common:
 _get_different_sel:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + __ZN15test_static_sel17get_different_sel5do_it3REF17he5023edc2d5cf13dE]
+	mov	rax, qword ptr [rip + __ZN15test_static_sel17get_different_sel5do_it3REF17h95db9b19a0d861e2E]
 	pop	rbp
 	ret
 
@@ -41,7 +41,7 @@ _get_different_sel:
 _unused_sel:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + __ZN15test_static_sel10unused_sel5do_it3REF17h24fb2858983de1caE]
+	mov	rax, qword ptr [rip + __ZN15test_static_sel10unused_sel5do_it3REF17hc65ecc2272129c12E]
 	pop	rbp
 	ret
 
@@ -51,10 +51,10 @@ _use_fns:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel7get_sel5do_it3REF17h3382eb6577a19884E]
-	mov	rdx, qword ptr [rip + __ZN15test_static_sel12get_same_sel5do_it3REF17hc31d191dc2fd749eE]
-	mov	rsi, qword ptr [rip + __ZN15test_static_sel17get_different_sel5do_it3REF17he5023edc2d5cf13dE]
-	mov	rdi, qword ptr [rip + __ZN15test_static_sel7use_fns5do_it3REF17h57c91cfc799dcb29E]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel7get_sel5do_it3REF17h782882fcc02d9d8aE]
+	mov	rdx, qword ptr [rip + __ZN15test_static_sel12get_same_sel5do_it3REF17h2d67e358172fa45dE]
+	mov	rsi, qword ptr [rip + __ZN15test_static_sel17get_different_sel5do_it3REF17h95db9b19a0d861e2E]
+	mov	rdi, qword ptr [rip + __ZN15test_static_sel7use_fns5do_it3REF17h588d7388fcda7afcE]
 	mov	qword ptr [rax], rcx
 	mov	qword ptr [rax + 8], rdx
 	mov	qword ptr [rax + 16], rsi
@@ -68,8 +68,8 @@ _use_same_twice:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel7get_sel5do_it3REF17h3382eb6577a19884E]
-	mov	rdx, qword ptr [rip + __ZN15test_static_sel7get_sel5do_it3REF17h3382eb6577a19884E]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel7get_sel5do_it3REF17h782882fcc02d9d8aE]
+	mov	rdx, qword ptr [rip + __ZN15test_static_sel7get_sel5do_it3REF17h782882fcc02d9d8aE]
 	mov	qword ptr [rdi], rcx
 	mov	qword ptr [rdi + 8], rdx
 	pop	rbp
@@ -90,14 +90,14 @@ _use_in_loop:
 	and	rdi, -8
 	.p2align	4, 0x90
 LBB7_3:
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
 	add	rdi, -8
 	jne	LBB7_3
 LBB7_4:
@@ -105,7 +105,7 @@ LBB7_4:
 	je	LBB7_6
 	.p2align	4, 0x90
 LBB7_5:
-	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E]
+	mov	rcx, qword ptr [rip + __ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE]
 	dec	rax
 	jne	LBB7_5
 LBB7_6:
@@ -113,66 +113,66 @@ LBB7_6:
 	ret
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7get_sel5do_it5VALUE17h338b867de999a683E:
+__ZN15test_static_sel7get_sel5do_it4NAME17h9e9003947df30d5bE:
 	.asciz	"simple"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel7get_sel5do_it3REF17h3382eb6577a19884E:
-	.quad	__ZN15test_static_sel7get_sel5do_it5VALUE17h338b867de999a683E
+__ZN15test_static_sel7get_sel5do_it3REF17h782882fcc02d9d8aE:
+	.quad	__ZN15test_static_sel7get_sel5do_it4NAME17h9e9003947df30d5bE
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel12get_same_sel5do_it5VALUE17hfda78dbf2d31d676E:
+__ZN15test_static_sel12get_same_sel5do_it4NAME17h8b1a946a162bf505E:
 	.asciz	"simple"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel12get_same_sel5do_it3REF17hc31d191dc2fd749eE:
-	.quad	__ZN15test_static_sel12get_same_sel5do_it5VALUE17hfda78dbf2d31d676E
+__ZN15test_static_sel12get_same_sel5do_it3REF17h2d67e358172fa45dE:
+	.quad	__ZN15test_static_sel12get_same_sel5do_it4NAME17h8b1a946a162bf505E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel10get_common5do_it5VALUE17h6913f03b163cd283E:
+__ZN15test_static_sel10get_common5do_it4NAME17h584eb2aaa202befbE:
 	.asciz	"alloc"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel10get_common5do_it3REF17hdadb6ccb121002e4E:
-	.quad	__ZN15test_static_sel10get_common5do_it5VALUE17h6913f03b163cd283E
+__ZN15test_static_sel10get_common5do_it3REF17hbd5f5d11cc1d359fE:
+	.quad	__ZN15test_static_sel10get_common5do_it4NAME17h584eb2aaa202befbE
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel17get_different_sel5do_it5VALUE17h88a6ccd34e9782e8E:
+__ZN15test_static_sel17get_different_sel5do_it4NAME17h771c17e46b379ccbE:
 	.asciz	"i:am:different:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel17get_different_sel5do_it3REF17he5023edc2d5cf13dE:
-	.quad	__ZN15test_static_sel17get_different_sel5do_it5VALUE17h88a6ccd34e9782e8E
+__ZN15test_static_sel17get_different_sel5do_it3REF17h95db9b19a0d861e2E:
+	.quad	__ZN15test_static_sel17get_different_sel5do_it4NAME17h771c17e46b379ccbE
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel10unused_sel5do_it5VALUE17hef3d043ebac21292E:
+__ZN15test_static_sel10unused_sel5do_it4NAME17h00f91d535bf5e92eE:
 	.asciz	"unused"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel10unused_sel5do_it3REF17h24fb2858983de1caE:
-	.quad	__ZN15test_static_sel10unused_sel5do_it5VALUE17hef3d043ebac21292E
+__ZN15test_static_sel10unused_sel5do_it3REF17hc65ecc2272129c12E:
+	.quad	__ZN15test_static_sel10unused_sel5do_it4NAME17h00f91d535bf5e92eE
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7use_fns5do_it5VALUE17h3053c06c1c5263daE:
+__ZN15test_static_sel7use_fns5do_it4NAME17hff47d49a940f1428E:
 	.asciz	"fourthSel"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel7use_fns5do_it3REF17h57c91cfc799dcb29E:
-	.quad	__ZN15test_static_sel7use_fns5do_it5VALUE17h3053c06c1c5263daE
+__ZN15test_static_sel7use_fns5do_it3REF17h588d7388fcda7afcE:
+	.quad	__ZN15test_static_sel7use_fns5do_it4NAME17hff47d49a940f1428E
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel11use_in_loop5do_it5VALUE17h24465c3f4d5d6e1eE:
+__ZN15test_static_sel11use_in_loop5do_it4NAME17hfb93cf0b2231dd8eE:
 	.asciz	"loopedSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel11use_in_loop5do_it3REF17hbcc9fc4e6297cac5E:
-	.quad	__ZN15test_static_sel11use_in_loop5do_it5VALUE17h24465c3f4d5d6e1eE
+__ZN15test_static_sel11use_in_loop5do_it3REF17he7523abb0b72310bE:
+	.quad	__ZN15test_static_sel11use_in_loop5do_it4NAME17hfb93cf0b2231dd8eE
 
 .subsections_via_symbols

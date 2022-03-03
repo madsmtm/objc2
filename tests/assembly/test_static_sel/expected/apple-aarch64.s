@@ -23,9 +23,9 @@ Lloh3:
 	.p2align	2
 _get_common:
 Lloh4:
-	adrp	x8, __ZN15test_static_sel10get_common5do_it3REF17hc0153c8b995ae069E@PAGE
+	adrp	x8, __ZN15test_static_sel10get_common5do_it3REF17h04d7420870ee0084E@PAGE
 Lloh5:
-	ldr	x0, [x8, __ZN15test_static_sel10get_common5do_it3REF17hc0153c8b995ae069E@PAGEOFF]
+	ldr	x0, [x8, __ZN15test_static_sel10get_common5do_it3REF17h04d7420870ee0084E@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh4, Lloh5
 
@@ -43,9 +43,9 @@ Lloh7:
 	.p2align	2
 _unused_sel:
 Lloh8:
-	adrp	x8, __ZN15test_static_sel10unused_sel5do_it3REF17h10d313b0038716f3E@PAGE
+	adrp	x8, __ZN15test_static_sel10unused_sel5do_it3REF17h08e2222b7f31b61dE@PAGE
 Lloh9:
-	ldr	xzr, [x8, __ZN15test_static_sel10unused_sel5do_it3REF17h10d313b0038716f3E@PAGEOFF]
+	ldr	xzr, [x8, __ZN15test_static_sel10unused_sel5do_it3REF17h08e2222b7f31b61dE@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh8, Lloh9
 
@@ -78,58 +78,58 @@ _use_same_twice:
 	.p2align	2
 _use_in_loop:
 	cbz	x0, LBB7_3
-	adrp	x8, __ZN15test_static_sel11use_in_loop5do_it3REF17hc74b5495e1d5fa3dE@PAGE
+	adrp	x8, __ZN15test_static_sel11use_in_loop5do_it3REF17hdd95e73e2d016191E@PAGE
 LBB7_2:
-	ldr	xzr, [x8, __ZN15test_static_sel11use_in_loop5do_it3REF17hc74b5495e1d5fa3dE@PAGEOFF]
+	ldr	xzr, [x8, __ZN15test_static_sel11use_in_loop5do_it3REF17hdd95e73e2d016191E@PAGEOFF]
 	subs	x0, x0, #1
 	b.ne	LBB7_2
 LBB7_3:
 	ret
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7get_sel5do_it5VALUE17hbe84d58afa6acbd3E:
+__ZN15test_static_sel7get_sel5do_it4NAME17hdceeb5c3708f29bfE:
 	.asciz	"simple"
 
-__ZN15test_static_sel12get_same_sel5do_it5VALUE17heb382f8971b53283E:
+__ZN15test_static_sel12get_same_sel5do_it4NAME17h4e648ed7466261caE:
 	.asciz	"simple"
 
-__ZN15test_static_sel10get_common5do_it5VALUE17hd149c186017d657dE:
+__ZN15test_static_sel10get_common5do_it4NAME17hfd368362e2d25fffE:
 	.asciz	"alloc"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel10get_common5do_it3REF17hc0153c8b995ae069E:
-	.quad	__ZN15test_static_sel10get_common5do_it5VALUE17hd149c186017d657dE
+__ZN15test_static_sel10get_common5do_it3REF17h04d7420870ee0084E:
+	.quad	__ZN15test_static_sel10get_common5do_it4NAME17hfd368362e2d25fffE
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel17get_different_sel5do_it5VALUE17hf787bc78eaf65504E:
+__ZN15test_static_sel17get_different_sel5do_it4NAME17h073785bcd4aaf0b5E:
 	.asciz	"i:am:different:"
 
-__ZN15test_static_sel10unused_sel5do_it5VALUE17h1b48bd5d3ca1c638E:
+__ZN15test_static_sel10unused_sel5do_it4NAME17h0804808ebe10326eE:
 	.asciz	"unused"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel10unused_sel5do_it3REF17h10d313b0038716f3E:
-	.quad	__ZN15test_static_sel10unused_sel5do_it5VALUE17h1b48bd5d3ca1c638E
+__ZN15test_static_sel10unused_sel5do_it3REF17h08e2222b7f31b61dE:
+	.quad	__ZN15test_static_sel10unused_sel5do_it4NAME17h0804808ebe10326eE
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7use_fns5do_it5VALUE17hd8d355acf71c10e1E:
+__ZN15test_static_sel7use_fns5do_it4NAME17h6498c06488ad7ff3E:
 	.asciz	"fourthSel"
 
-__ZN15test_static_sel11use_in_loop5do_it5VALUE17he5797d44142247f6E:
+__ZN15test_static_sel11use_in_loop5do_it4NAME17hc07464c5efd1d06bE:
 	.asciz	"loopedSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.p2align	3
-__ZN15test_static_sel11use_in_loop5do_it3REF17hc74b5495e1d5fa3dE:
-	.quad	__ZN15test_static_sel11use_in_loop5do_it5VALUE17he5797d44142247f6E
+__ZN15test_static_sel11use_in_loop5do_it3REF17hdd95e73e2d016191E:
+	.quad	__ZN15test_static_sel11use_in_loop5do_it4NAME17hc07464c5efd1d06bE
 
 	.p2align	3
 __MergedGlobals:
-	.quad	__ZN15test_static_sel7get_sel5do_it5VALUE17hbe84d58afa6acbd3E
-	.quad	__ZN15test_static_sel12get_same_sel5do_it5VALUE17heb382f8971b53283E
-	.quad	__ZN15test_static_sel17get_different_sel5do_it5VALUE17hf787bc78eaf65504E
-	.quad	__ZN15test_static_sel7use_fns5do_it5VALUE17hd8d355acf71c10e1E
+	.quad	__ZN15test_static_sel7get_sel5do_it4NAME17hdceeb5c3708f29bfE
+	.quad	__ZN15test_static_sel12get_same_sel5do_it4NAME17h4e648ed7466261caE
+	.quad	__ZN15test_static_sel17get_different_sel5do_it4NAME17h073785bcd4aaf0b5E
+	.quad	__ZN15test_static_sel7use_fns5do_it4NAME17h6498c06488ad7ff3E
 
 .subsections_via_symbols
