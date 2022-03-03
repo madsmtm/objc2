@@ -37,6 +37,8 @@ verify_message = ["malloc"] # TODO: Remove malloc feature here
 # increases compilation time.
 malloc = ["malloc_buf"]
 
+static-sel = []
+
 # Uses nightly features to make AutoreleasePool zero-cost even in debug mode
 unstable-autoreleasesafe = []
 

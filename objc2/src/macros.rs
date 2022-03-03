@@ -43,6 +43,7 @@ macro_rules! class {
 /// let sel = sel!(setObject:forKey:);
 /// ```
 #[macro_export]
+#[cfg(not(feature = "static-sel"))]
 macro_rules! sel {
     ($first:ident $(: $($rest:ident :)*)?) => ({
         static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
@@ -50,6 +51,51 @@ macro_rules! sel {
         #[allow(unused_unsafe)]
         unsafe { SEL.get(name) }
     });
+}
+
+/// TODO
+#[macro_export]
+#[cfg(feature = "static-sel")]
+macro_rules! sel {
+    ($name:ident) => {
+        $crate::sel!(@__inner concat!(stringify!($name), '\0'))
+    };
+    ($($name:ident :)+) => {
+        $crate::sel!(@__inner concat!($(stringify!($name), ':'),+, '\0'))
+    };
+    // Declare a function to hide unsafety, otherwise we can trigger the
+    // unused_unsafe lint; see rust-lang/rust#8472
+    (@__inner $sel:expr) => {{
+        #[inline(always)]
+        fn do_it() -> $crate::runtime::Sel {
+            const X: &[u8] = $sel.as_bytes();
+
+            struct Cheaty(*const [u8; X.len()]);
+            unsafe impl Send for Cheaty {}
+            unsafe impl Sync for Cheaty {}
+
+            #[link_section = "__TEXT,__objc_methname,cstring_literals"]
+            static VALUE: [u8; X.len()] = {
+                let mut res: [u8; X.len()] = [0; X.len()];
+                let mut i = 0;
+                while i < X.len() {
+                    res[i] = X[i];
+                    i += 1;
+                }
+                res
+            };
+
+            // Place the constant value in the correct section.
+            #[link_section = "__DATA,__objc_selrefs,literal_pointers,no_dead_strip"]
+            static mut REF: Cheaty = Cheaty(&VALUE);
+
+            // Produce a sel type as a result.
+            // XXX(nika): Don't use transmute?
+            unsafe { ::std::mem::transmute::<_, $crate::runtime::Sel>(REF.0) }
+        }
+
+        do_it()
+    }};
 }
 
 /// Send a message to an object or class.
