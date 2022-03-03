@@ -655,6 +655,12 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
+    fn test_sel_register_null() {
+        let _ = Sel::register("\0");
+    }
+
+    #[test]
     fn test_ivar() {
         let cls = test_utils::custom_class();
         let ivar = cls.instance_variable("_foo").unwrap();
