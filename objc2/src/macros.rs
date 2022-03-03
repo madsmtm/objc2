@@ -71,6 +71,8 @@ macro_rules! sel {
         fn objc_static_workaround() -> $crate::runtime::Sel {
             const X: &[u8] = $sel.as_bytes();
 
+            $crate::image_info();
+
             #[link_section = "__TEXT,__objc_methname,cstring_literals"]
             #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__proc_macros::hash_idents!($($idents)+))]
             static NAME: [u8; X.len()] = {

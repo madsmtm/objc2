@@ -204,6 +204,16 @@ pub use crate::cache::CachedSel as __CachedSel;
 #[macro_use]
 mod macros;
 
+#[doc(hidden)]
+pub fn image_info() {
+    #[link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"]
+    #[used]
+    static _IMAGE_INFO: [u32; 2] = [
+        0,  // Version
+        64, // Flags
+    ];
+}
+
 mod bool;
 mod cache;
 pub mod declare;

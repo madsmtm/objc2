@@ -80,64 +80,92 @@ LBB7_3:
 
 	.p2align	2
 __ZN15test_static_sel7get_sel22objc_static_workaround17hd01b8e03bc7ee2f2E:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	__ZN5objc210image_info17h1a00393fd20ac219E
 Lloh0:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9@PAGE
 Lloh1:
 	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9@PAGEOFF]
+	ldp	x29, x30, [sp], #16
 	ret
 	.loh AdrpLdr	Lloh0, Lloh1
 
 	.p2align	2
 __ZN15test_static_sel12get_same_sel22objc_static_workaround17h6fded10733d3d13eE:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	__ZN5objc210image_info17h1a00393fd20ac219E
 Lloh2:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35@PAGE
 Lloh3:
 	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35@PAGEOFF]
+	ldp	x29, x30, [sp], #16
 	ret
 	.loh AdrpLdr	Lloh2, Lloh3
 
 	.p2align	2
 __ZN15test_static_sel10get_common22objc_static_workaround17h3099714314719ae4E:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	__ZN5objc210image_info17h1a00393fd20ac219E
 Lloh4:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964@PAGE
 Lloh5:
 	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964@PAGEOFF]
+	ldp	x29, x30, [sp], #16
 	ret
 	.loh AdrpLdr	Lloh4, Lloh5
 
 	.p2align	2
 __ZN15test_static_sel17get_different_sel22objc_static_workaround17h2df9cd4849db8a71E:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	__ZN5objc210image_info17h1a00393fd20ac219E
 Lloh6:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b@PAGE
 Lloh7:
 	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b@PAGEOFF]
+	ldp	x29, x30, [sp], #16
 	ret
 	.loh AdrpLdr	Lloh6, Lloh7
 
 	.p2align	2
 __ZN15test_static_sel10unused_sel22objc_static_workaround17h751ade9083325dbfE:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	__ZN5objc210image_info17h1a00393fd20ac219E
 Lloh8:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477@PAGE
 Lloh9:
 	ldr	xzr, [x8, L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477@PAGEOFF]
+	ldp	x29, x30, [sp], #16
 	ret
 	.loh AdrpLdr	Lloh8, Lloh9
 
 	.p2align	2
 __ZN15test_static_sel7use_fns22objc_static_workaround17h0a4a70767a5df0c7E:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	__ZN5objc210image_info17h1a00393fd20ac219E
 Lloh10:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860@PAGE
 Lloh11:
 	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860@PAGEOFF]
+	ldp	x29, x30, [sp], #16
 	ret
 	.loh AdrpLdr	Lloh10, Lloh11
 
 	.p2align	2
 __ZN15test_static_sel11use_in_loop22objc_static_workaround17hd571f39365fc8d75E:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	__ZN5objc210image_info17h1a00393fd20ac219E
 Lloh12:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07@PAGE
 Lloh13:
 	ldr	xzr, [x8, L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07@PAGEOFF]
+	ldp	x29, x30, [sp], #16
 	ret
 	.loh AdrpLdr	Lloh12, Lloh13
 
