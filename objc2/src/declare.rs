@@ -39,6 +39,7 @@ use alloc::string::ToString;
 use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr;
+use core::ptr::NonNull;
 use std::ffi::CString;
 
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
@@ -120,7 +121,7 @@ fn log2_align_of<T>() -> u8 {
 /// before registering it.
 #[derive(Debug)]
 pub struct ClassDecl {
-    cls: *mut Class,
+    cls: NonNull<Class>,
 }
 
 // SAFETY: The stuff that touch global state does so using locks internally.
@@ -138,23 +139,23 @@ unsafe impl Send for ClassDecl {}
 unsafe impl Sync for ClassDecl {}
 
 impl ClassDecl {
-    fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<ClassDecl> {
+    fn as_ptr(&self) -> *mut ffi::objc_class {
+        self.cls.as_ptr().cast()
+    }
+
+    fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<Self> {
         let name = CString::new(name).unwrap();
         let super_ptr = superclass.map_or(ptr::null(), |c| c) as _;
         let cls = unsafe { ffi::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
-        if cls.is_null() {
-            None
-        } else {
-            Some(ClassDecl { cls: cls as _ })
-        }
+        NonNull::new(cls.cast()).map(|cls| Self { cls })
     }
 
     /// Constructs a [`ClassDecl`] with the given name and superclass.
     ///
     /// Returns [`None`] if the class couldn't be allocated, or a class with
     /// that name already exist.
-    pub fn new(name: &str, superclass: &Class) -> Option<ClassDecl> {
-        ClassDecl::with_superclass(name, Some(superclass))
+    pub fn new(name: &str, superclass: &Class) -> Option<Self> {
+        Self::with_superclass(name, Some(superclass))
     }
 
     /// Constructs a [`ClassDecl`] declaring a new root class with the given
@@ -171,12 +172,10 @@ impl ClassDecl {
     /// the entire `NSObject` protocol is implemented.
     /// Functionality it expects, like implementations of `-retain` and
     /// `-release` used by ARC, will not be present otherwise.
-    pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<ClassDecl> {
-        let mut decl = ClassDecl::with_superclass(name, None);
+    pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<Self> {
+        let mut decl = Self::with_superclass(name, None);
         if let Some(ref mut decl) = decl {
-            unsafe {
-                decl.add_class_method(sel!(initialize), intitialize_fn);
-            }
+            unsafe { decl.add_class_method(sel!(initialize), intitialize_fn) };
         }
         decl
     }
@@ -209,7 +208,7 @@ impl ClassDecl {
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
-                self.cls as _,
+                self.as_ptr(),
                 sel.as_ptr() as _,
                 Some(func.imp()),
                 types.as_ptr(),
@@ -244,7 +243,7 @@ impl ClassDecl {
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
-        let metaclass = unsafe { &*self.cls }.metaclass() as *const _ as *mut _;
+        let metaclass = unsafe { self.cls.as_ref() }.metaclass() as *const _ as *mut _;
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
                 metaclass,
@@ -268,7 +267,7 @@ impl ClassDecl {
         let align = log2_align_of::<T>();
         let success = Bool::from_raw(unsafe {
             ffi::class_addIvar(
-                self.cls as _,
+                self.as_ptr(),
                 c_name.as_ptr(),
                 size,
                 align,
@@ -284,7 +283,7 @@ impl ClassDecl {
     ///
     /// If the protocol wasn't successfully added.
     pub fn add_protocol(&mut self, proto: &Protocol) {
-        let success = unsafe { ffi::class_addProtocol(self.cls as _, proto.as_ptr()) };
+        let success = unsafe { ffi::class_addProtocol(self.as_ptr(), proto.as_ptr()) };
         let success = Bool::from_raw(success).as_bool();
         assert!(success, "Failed to add protocol {:?}", proto);
     }
@@ -296,14 +295,14 @@ impl ClassDecl {
     pub fn register(self) -> &'static Class {
         // Forget self, otherwise the class will be disposed in drop
         let cls = ManuallyDrop::new(self).cls;
-        unsafe { ffi::objc_registerClassPair(cls as _) };
-        unsafe { &*cls }
+        unsafe { ffi::objc_registerClassPair(cls.as_ptr().cast()) };
+        unsafe { cls.as_ref() }
     }
 }
 
 impl Drop for ClassDecl {
     fn drop(&mut self) {
-        unsafe { ffi::objc_disposeClassPair(self.cls as _) }
+        unsafe { ffi::objc_disposeClassPair(self.as_ptr()) }
     }
 }
 
@@ -311,7 +310,7 @@ impl Drop for ClassDecl {
 /// before registering it.
 #[derive(Debug)]
 pub struct ProtocolDecl {
-    proto: *mut Protocol,
+    proto: NonNull<Protocol>,
 }
 
 // SAFETY: Similar to ClassDecl
@@ -319,17 +318,17 @@ unsafe impl Send for ProtocolDecl {}
 unsafe impl Sync for ProtocolDecl {}
 
 impl ProtocolDecl {
+    fn as_ptr(&self) -> *mut ffi::objc_protocol {
+        self.proto.as_ptr().cast()
+    }
+
     /// Constructs a [`ProtocolDecl`] with the given name.
     ///
     /// Returns [`None`] if the protocol couldn't be allocated.
-    pub fn new(name: &str) -> Option<ProtocolDecl> {
+    pub fn new(name: &str) -> Option<Self> {
         let c_name = CString::new(name).unwrap();
         let proto = unsafe { ffi::objc_allocateProtocol(c_name.as_ptr()) } as *mut Protocol;
-        if proto.is_null() {
-            None
-        } else {
-            Some(ProtocolDecl { proto })
-        }
+        NonNull::new(proto).map(|proto| Self { proto })
     }
 
     fn add_method_description_common<Args, Ret>(
@@ -353,7 +352,7 @@ impl ProtocolDecl {
         let types = method_type_encoding(&Ret::ENCODING, encs);
         unsafe {
             ffi::protocol_addMethodDescription(
-                self.proto as _,
+                self.as_ptr(),
                 sel.as_ptr() as _,
                 types.as_ptr(),
                 Bool::new(is_required).as_raw(),
@@ -383,7 +382,7 @@ impl ProtocolDecl {
     /// Adds a requirement on another protocol.
     pub fn add_protocol(&mut self, proto: &Protocol) {
         unsafe {
-            ffi::protocol_addProtocol(self.proto as _, proto.as_ptr());
+            ffi::protocol_addProtocol(self.as_ptr(), proto.as_ptr());
         }
     }
 
@@ -391,8 +390,8 @@ impl ProtocolDecl {
     /// to the newly registered [`Protocol`].
     pub fn register(self) -> &'static Protocol {
         unsafe {
-            ffi::objc_registerProtocol(self.proto as _);
-            &*self.proto
+            ffi::objc_registerProtocol(self.as_ptr());
+            self.proto.as_ref()
         }
     }
 }
