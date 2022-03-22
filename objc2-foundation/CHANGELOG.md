@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSMutableString` object.
 * Added basic `NSAttributedString` object.
 * Added basic `NSMutableAttributedString` object.
+* Added `NSInteger` and `NSUInteger` (type aliases to `isize` and `usize`).
 
 ### Changed
 * **BREAKING**: Removed the following helper traits in favor of inherent

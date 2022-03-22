@@ -58,6 +58,11 @@ pub use self::thread::{is_main_thread, is_multi_threaded, NSThread};
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
 
+// Available under Foundation, so makes sense here as well:
+// https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
+#[doc(no_inline)]
+pub use objc2::ffi::{NSInteger, NSUInteger};
+
 #[cfg(apple)]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
