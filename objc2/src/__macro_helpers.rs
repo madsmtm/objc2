@@ -2,8 +2,10 @@ use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
 
-#[doc(hidden)]
 pub use core::compile_error;
+pub use core::ptr::read_volatile;
+#[cfg(feature = "static-sel")]
+pub use objc2_proc_macros::hash_idents;
 
 /// Helper for specifying the retain semantics for a given selector family.
 ///
@@ -28,7 +30,6 @@ pub use core::compile_error;
 /// ARC though!
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
-#[doc(hidden)]
 pub struct RetainSemantics<
     // `new` family
     const NEW: bool,
@@ -40,7 +41,6 @@ pub struct RetainSemantics<
     const COPY_OR_MUT_COPY: bool,
 > {}
 
-#[doc(hidden)]
 pub trait MsgSendId<T, U> {
     unsafe fn send_message_id<A: MessageArguments>(
         obj: T,
@@ -131,7 +131,6 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
 /// Checks whether a given selector is said to be in a given selector family.
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families>
-#[doc(hidden)]
 pub const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool {
     // Skip leading underscores from selector
     loop {

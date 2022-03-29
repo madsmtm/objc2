@@ -118,7 +118,7 @@ impl Sel {
     ///
     /// This is almost never what you want; use [`Sel::register`] instead.
     #[inline]
-    pub unsafe fn from_ptr(ptr: *const c_void) -> Self {
+    pub const unsafe fn from_ptr(ptr: *const c_void) -> Self {
         Self { ptr: ptr.cast() }
     }
 

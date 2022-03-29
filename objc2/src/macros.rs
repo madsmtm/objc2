@@ -57,28 +57,28 @@ macro_rules! sel {
 #[macro_export]
 #[cfg(feature = "static-sel")]
 macro_rules! sel {
-    ($name:ident) => {
-        $crate::sel!(@__inner concat!(stringify!($name), '\0'), $name)
-    };
-    ($($name:ident :)+) => {
-        $crate::sel!(@__inner concat!($(stringify!($name), ':'),+, '\0'), $($name),+)
-    };
-    (@__inner $sel:expr, $($idents:ident),+) => {{
+    ($first:ident $(: $($rest:ident :)*)?) => ({
         // HACK: Wrap the statics in a non-generic, `#[inline(never)]`
         // function to "coerce" the compiler to group all of them into the
         // same codegen unit to avoid link errors
         #[inline(never)]
         fn objc_static_workaround() -> $crate::runtime::Sel {
-            const X: &[u8] = $sel.as_bytes();
-
             #[link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"]
-            #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__proc_macros::hash_idents!($($idents)+))]
+            #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::hash_idents!($first $($($rest)*)?))]
             #[used]
             static _IMAGE_TAG: [u32; 2] = [0, 0];
 
+            // Intermediate selecter data.
+            const X: &[u8] = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0').as_bytes();
+
+            // Marked with `unnamed_addr` in Objective-C's LLVM.
+            // See rust-lang/rust#18297
+            // Should only be an optimization (?)
             #[link_section = "__TEXT,__objc_methname,cstring_literals"]
-            #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__proc_macros::hash_idents!($($idents)+))]
-            static NAME: [u8; X.len()] = {
+            #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__macro_helpers::hash_idents!($first $($($rest)*)?))]
+            static NAME_DATA: [u8; X.len()] = {
+                // Convert the `&[u8]` slice to an array with known length, so
+                // that we can place that directly in a static.
                 let mut res: [u8; X.len()] = [0; X.len()];
                 let mut i = 0;
                 while i < X.len() {
@@ -89,23 +89,25 @@ macro_rules! sel {
             };
 
             // Place the constant value in the correct section.
+            //
+            // Clang uses `no_dead_strip` here for some reason?
             #[link_section = "__DATA,__objc_selrefs,literal_pointers"]
-            #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__proc_macros::hash_idents!($($idents)+))]
-            static mut REF: &[u8; X.len()] = &NAME;
+            #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::hash_idents!($first $($($rest)*)?))]
+            static mut REF: $crate::runtime::Sel = unsafe {
+                $crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast())
+            };
 
             // The actual selector is replaced by dyld when the program is
             // loaded, so we need to use a volatile read to prevent the
             // optimizer from thinking it can circumvent the read through REF.
             //
-            // TODO: `::core` here could be replaced with some more
-            // sophisticated logic so we don't rely on downstream users having
-            // this setup.
-            let ptr = unsafe { ::core::ptr::read_volatile(&REF).as_ptr() as *const _ };
-            unsafe { $crate::runtime::Sel::from_ptr(ptr) }
+            // Clang avoids this by marking `REF` with LLVM's
+            // `externally_initialized`.
+            unsafe { $crate::__macro_helpers::read_volatile(&REF) }
         }
 
         objc_static_workaround()
-    }};
+    });
 }
 
 /// Send a message to an object or class.
