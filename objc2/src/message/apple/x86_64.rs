@@ -9,7 +9,7 @@ use crate::{Encode, Encoding};
 /// MEMORY. If the type has class MEMORY, then the caller provides space for
 /// the return value and passes the address of this storage.
 ///
-/// <http://people.freebsd.org/~obrien/amd64-elf-abi.pdf>
+/// <https://www.uclibc.org/docs/psABI-x86_64.pdf>
 unsafe impl<T: Encode> MsgSendFn for T {
     const MSG_SEND: Imp = {
         // See https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/message.h#L156-L172
