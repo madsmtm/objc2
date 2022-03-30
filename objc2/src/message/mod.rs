@@ -296,6 +296,9 @@ macro_rules! message_args_impl {
                 let imp: unsafe extern "C" fn(*mut Object, Sel $(, $t)*) -> R = unsafe {
                     mem::transmute(imp)
                 };
+                // TODO: On x86_64 it would be more efficient to use a GOT
+                // entry here (e.g. adding `nonlazybind` in LLVM).
+                // Same can be said of e.g. `objc_retain` and `objc_release`.
                 unsafe { imp(obj, sel $(, $a)*) }
             }
         }
