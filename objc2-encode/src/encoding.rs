@@ -277,40 +277,6 @@ impl fmt::Display for Encoding<'_> {
     }
 }
 
-// TODO: Deprecate and remove these PartialEq impls
-
-/// Partial equality between an [`Encoding`] and a [`str`].
-///
-/// Using this is heavily discouraged, since it is not transitive; use
-/// [`Encoding::equivalent_to_str`] instead for more correct semantics.
-impl PartialEq<str> for Encoding<'_> {
-    /// Using this is discouraged.
-    fn eq(&self, other: &str) -> bool {
-        self.equivalent_to_str(other)
-    }
-
-    /// Using this is discouraged.
-    fn ne(&self, other: &str) -> bool {
-        !self.eq(other)
-    }
-}
-
-/// Partial equality between an [`Encoding`] and a [`str`].
-///
-/// Using this is heavily discouraged, since it is not transitive; use
-/// [`Encoding::equivalent_to_str`] instead for more correct semantics.
-impl PartialEq<Encoding<'_>> for str {
-    /// Using this is discouraged.
-    fn eq(&self, other: &Encoding<'_>) -> bool {
-        other.equivalent_to_str(self)
-    }
-
-    /// Using this is discouraged.
-    fn ne(&self, other: &Encoding<'_>) -> bool {
-        !self.eq(other)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::Encoding;
