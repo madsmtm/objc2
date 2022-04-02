@@ -169,12 +169,24 @@ impl Encoding<'_> {
     };
 
     /// Check if one encoding is equivalent to another.
+    ///
+    /// Currently, equivalence testing requires that the encodings are equal,
+    /// except for qualifiers. This may be changed in the future to e.g.
+    /// ignore struct names, to allow structs behind multiple pointers to be
+    /// considered equivalent, or similar changes that may be required because
+    /// of limitations in Objective-C compiler implementations.
+    ///
+    /// For example, you should not rely on two equivalent encodings to have
+    /// the same size or ABI - that is provided on a best-effort basis.
     pub fn equivalent_to(&self, other: &Self) -> bool {
         // For now, because we don't allow representing qualifiers
         self == other
     }
 
     /// Check if an encoding is equivalent to the given string representation.
+    ///
+    /// See [`Encoding::equivalent_to`] for details about the meaning of
+    /// "equivalence".
     pub fn equivalent_to_str(&self, s: &str) -> bool {
         // if the given encoding can be successfully removed from the start
         // and an empty string remains, they were fully equivalent!
@@ -190,6 +202,9 @@ impl Encoding<'_> {
     ///
     /// If it is equivalent, the remaining part of the string is returned.
     /// Otherwise this returns [`None`].
+    ///
+    /// See [`Encoding::equivalent_to`] for details about the meaning of
+    /// "equivalence".
     pub fn equivalent_to_start_of_str<'a>(&self, s: &'a str) -> Option<&'a str> {
         // strip leading qualifiers
         let s = s.trim_start_matches(parse::QUALIFIERS);
@@ -200,6 +215,12 @@ impl Encoding<'_> {
     }
 }
 
+/// Formats this [`Encoding`] in a similar way that the `@encode` directive
+/// would ordinarily do.
+///
+/// You should not rely on the output of this to be stable across versions. It
+/// may change if found to be required to be compatible with exisiting
+/// Objective-C compilers.
 impl fmt::Display for Encoding<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         use Encoding::*;
