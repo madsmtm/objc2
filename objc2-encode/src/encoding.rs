@@ -141,8 +141,8 @@ impl Encoding<'_> {
     /// then `c_long::ENCODING` would just work.
     ///
     /// Unfortunately, `long` have a different encoding than `int` when it is
-    /// 32 bits wide; the 'l'/'L' encoding.
-    pub const LONG: Self = {
+    /// 32 bits wide; the [`l`][`Encoding::Long`] encoding.
+    pub const C_LONG: Self = {
         // Alternative: `mem::size_of::<c_long>() == 4`
         // That would exactly match what `clang` does:
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/AST/ASTContext.cpp#L7245
@@ -157,8 +157,8 @@ impl Encoding<'_> {
 
     /// The encoding of [`c_ulong`](`std::os::raw::c_ulong`).
     ///
-    /// See [`Encoding::LONG`] for explanation.
-    pub const U_LONG: Self = {
+    /// See [`Encoding::C_LONG`] for explanation.
+    pub const C_U_LONG: Self = {
         if cfg!(any(target_pointer_width = "32", windows)) {
             // @encode(unsigned long) = 'L'
             Encoding::ULong

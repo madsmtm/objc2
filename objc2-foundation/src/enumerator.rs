@@ -57,10 +57,10 @@ unsafe impl<T: Message> Encode for NSFastEnumerationState<T> {
     const ENCODING: Encoding<'static> = Encoding::Struct(
         "?",
         &[
-            Encoding::U_LONG,
+            Encoding::C_U_LONG,
             Encoding::Pointer(&Encoding::Object), // <*const *const T>::ENCODING
-            Encoding::Pointer(&Encoding::U_LONG),
-            Encoding::Array(5, &Encoding::U_LONG),
+            Encoding::Pointer(&Encoding::C_U_LONG),
+            Encoding::Array(5, &Encoding::C_U_LONG),
         ],
     );
 }

@@ -158,13 +158,13 @@ assert_inner!(enc ENCODING_VOID_POINTER_POINTER => <*const *const c_void>::ENCOD
 
 // `[unsigned] long`s are weird:
 
-assert_inner!(enc ENCODING_LONG => Encoding::LONG);
-assert_inner!(enc ENCODING_LONG_POINTER => Encoding::Pointer(&Encoding::LONG));
-assert_inner!(str ENCODING_LONG_ATOMIC => format!("A{}", Encoding::LONG));
+assert_inner!(enc ENCODING_LONG => Encoding::C_LONG);
+assert_inner!(enc ENCODING_LONG_POINTER => Encoding::Pointer(&Encoding::C_LONG));
+assert_inner!(str ENCODING_LONG_ATOMIC => format!("A{}", Encoding::C_LONG));
 
-assert_inner!(enc ENCODING_UNSIGNED_LONG => Encoding::U_LONG);
-assert_inner!(enc ENCODING_UNSIGNED_LONG_POINTER => Encoding::Pointer(&Encoding::U_LONG));
-assert_inner!(str ENCODING_UNSIGNED_LONG_ATOMIC => format!("A{}", Encoding::U_LONG));
+assert_inner!(enc ENCODING_UNSIGNED_LONG => Encoding::C_U_LONG);
+assert_inner!(enc ENCODING_UNSIGNED_LONG_POINTER => Encoding::Pointer(&Encoding::C_U_LONG));
+assert_inner!(str ENCODING_UNSIGNED_LONG_ATOMIC => format!("A{}", Encoding::C_U_LONG));
 
 // No appropriate Rust types for these:
 
