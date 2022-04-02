@@ -34,6 +34,9 @@
 // See https://github.com/japaric/cty/issues/14.
 extern crate std;
 
+#[cfg(not(feature = "std"))]
+compile_error!("The `std` feature currently must be enabled.");
+
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}

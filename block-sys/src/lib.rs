@@ -24,6 +24,9 @@
 
 extern crate std;
 
+#[cfg(not(feature = "std"))]
+compile_error!("The `std` feature currently must be enabled.");
+
 // Ensure linkage actually happens
 #[cfg(feature = "gnustep-1-7")]
 extern crate objc_sys as _;

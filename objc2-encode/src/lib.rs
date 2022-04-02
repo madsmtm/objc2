@@ -99,10 +99,10 @@
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-#[cfg(doc)]
+#[cfg(any(feature = "std", doc))]
 extern crate std;
 
-#[cfg(any(test, doc))]
+#[cfg(any(feature = "alloc", test, doc))]
 extern crate alloc;
 
 mod encode;

@@ -25,7 +25,11 @@ build = "build.rs"
 [features]
 # The default runtime is Apple's. Other platforms will probably error if the
 # correct feature flag is not specified.
-default = ["apple"]
+default = ["std", "apple"]
+
+# Currently not possible to turn off, put here for forwards compatibility.
+std = ["alloc", "objc-sys?/std"]
+alloc = ["objc-sys?/alloc"]
 
 # Link to Apple's libclosure (exists in libSystem)
 apple = []
