@@ -11,6 +11,7 @@ extern "C" {}
 // Only works on macOS >= 10.15 or iOS > 7.0
 fn main() {
     let text = "Hello from Rust!";
+    const UTF8_ENCODING: NSUInteger = 4;
 
     let string: *const Object = unsafe { msg_send![class!(NSString), alloc] };
     let string = unsafe {
@@ -18,7 +19,7 @@ fn main() {
             string,
             initWithBytes: text.as_ptr() as *const c_void,
             length: text.len(),
-            encoding: 4 as NSUInteger, // UTF8_ENCODING on macOS / iOS
+            encoding: UTF8_ENCODING,
         ]
     };
     let string: Id<Object, Shared> = unsafe { Id::new(string).unwrap() };

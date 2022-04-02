@@ -532,7 +532,11 @@ impl Object {
         unsafe { &*ptr }
     }
 
-    /// Use [`ivar`](`Self::ivar`) instead.
+    /// Use [`ivar`][`Self::ivar`] instead.
+    ///
+    /// # Safety
+    ///
+    /// Same as [`ivar`][`Self::ivar`].
     #[deprecated = "Use `Object::ivar` instead."]
     pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
         // SAFETY: Upheld by caller
@@ -560,6 +564,10 @@ impl Object {
     }
 
     /// Use [`ivar_mut`](`Self::ivar_mut`) instead.
+    ///
+    /// # Safety
+    ///
+    /// Same as [`ivar_mut`][`Self::ivar_mut`].
     #[deprecated = "Use `Object::ivar_mut` instead."]
     pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
         // SAFETY: Upheld by caller
