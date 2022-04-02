@@ -226,11 +226,30 @@ assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS_ATOMIC => "A{with_arrays}");
 
 // Bitfields
 
-const BITFIELD: Encoding<'static> =
-    Encoding::Struct("bitfield", &[Encoding::BitField(1), Encoding::BitField(30)]);
-assert_inner!(enc ENCODING_BITFIELD => BITFIELD);
-assert_inner!(enc ENCODING_BITFIELD_POINTER => Encoding::Pointer(&BITFIELD));
-assert_inner!(str ENCODING_BITFIELD_ATOMIC => "A{bitfield}");
+#[cfg(not(gnustep))]
+mod bitfields {
+    use super::*;
+
+    const BITFIELD: Encoding<'static> = Encoding::Struct(
+        "bitfield",
+        &[
+            Encoding::BitField(1, &Encoding::UInt),
+            Encoding::BitField(30, &Encoding::UInt),
+        ],
+    );
+    assert_inner!(enc ENCODING_BITFIELD => BITFIELD);
+    assert_inner!(enc ENCODING_BITFIELD_POINTER => Encoding::Pointer(&BITFIELD));
+    assert_inner!(str ENCODING_BITFIELD_ATOMIC => "A{bitfield}");
+}
+
+#[cfg(gnustep)]
+mod bitfields {
+    use super::*;
+
+    assert_inner!(str ENCODING_BITFIELD => "{bitfield=b0I1b1I30}");
+    assert_inner!(str ENCODING_BITFIELD_POINTER => "^{bitfield=b0I1b1I30}");
+    assert_inner!(str ENCODING_BITFIELD_ATOMIC => "A{bitfield}");
+}
 
 // Unions
 

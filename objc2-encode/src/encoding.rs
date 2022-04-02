@@ -89,10 +89,13 @@ pub enum Encoding<'a> {
     ///
     /// This is usually used to encode functions.
     Unknown,
-    /// A bitfield with the given number of bits.
+    /// A bitfield with the given number of bits, and the given type.
+    ///
+    /// The type is not currently used, but may be in the future for better
+    /// compatibility with Objective-C runtimes.
     ///
     /// Corresponds to the `b`num code.
-    BitField(u8),
+    BitField(u8, &'a Encoding<'a>),
     /// A pointer to the given type.
     ///
     /// Corresponds to the `^`type code.
@@ -249,7 +252,8 @@ impl fmt::Display for Encoding<'_> {
             Class => "#",
             Sel => ":",
             Unknown => "?",
-            BitField(b) => {
+            BitField(b, _type) => {
+                // TODO: Use the type on GNUStep
                 return write!(formatter, "b{}", b);
             }
             Pointer(t) => {

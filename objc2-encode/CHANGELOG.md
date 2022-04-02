@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * **BREAKING**: Sealed the `EncodeArguments` trait.
+* **BREAKING**: Add type argument to `Encoding::BitField`.
 
 ### Removed
 * **BREAKING**: Removed `PartialEq` impl between `str` and `Encoding` since it
