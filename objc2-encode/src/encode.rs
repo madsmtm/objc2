@@ -176,8 +176,7 @@ encode_impls!(
 ///
 /// You should not rely on this encoding to exist for any other purpose (since
 /// `()` is not FFI-safe)!
-///
-/// TODO: Figure out a way to remove this.
+// TODO: Figure out a way to remove this - maybe with a `EncodeReturn` trait?
 unsafe impl Encode for () {
     const ENCODING: Encoding<'static> = Encoding::Void;
 }
