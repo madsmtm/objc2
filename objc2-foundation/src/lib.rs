@@ -48,6 +48,7 @@ pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::data::{NSData, NSMutableData};
 pub use self::dictionary::NSDictionary;
 pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
+pub use self::geometry::{CGFloat, NSPoint, NSRect, NSSize};
 pub use self::mutable_attributed_string::NSMutableAttributedString;
 pub use self::mutable_string::NSMutableString;
 pub use self::object::NSObject;
@@ -57,6 +58,11 @@ pub use self::string::NSString;
 pub use self::thread::{is_main_thread, is_multi_threaded, NSThread};
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
+
+// Available under Foundation, so makes sense here as well:
+// https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
+#[doc(no_inline)]
+pub use objc2::ffi::{NSInteger, NSUInteger};
 
 #[cfg(apple)]
 #[link(name = "Foundation", kind = "framework")]
@@ -76,6 +82,7 @@ mod copying;
 mod data;
 mod dictionary;
 mod enumerator;
+mod geometry;
 mod mutable_attributed_string;
 mod mutable_string;
 mod object;

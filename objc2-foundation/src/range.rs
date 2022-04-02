@@ -2,6 +2,8 @@ use core::ops::Range;
 
 use objc2::{Encode, Encoding, RefEncode};
 
+use super::NSUInteger;
+
 /// TODO.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsrange?language=objc).
@@ -10,11 +12,9 @@ use objc2::{Encode, Encoding, RefEncode};
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct NSRange {
     /// The lower bound of the range (inclusive).
-    // NSUInteger
-    pub location: usize,
+    pub location: NSUInteger,
     /// The number of items in the range, starting from `location`.
-    // NSUInteger
-    pub length: usize,
+    pub length: NSUInteger,
 }
 
 impl NSRange {
