@@ -494,25 +494,32 @@ encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 
+mod private {
+    pub trait Sealed {}
+}
+
 /// Types that represent an ordered group of function arguments, where each
 /// argument has an Objective-C type-encoding.
 ///
-/// This is implemented for tuples, and is used to make generic code easier.
+/// This is implemented for tuples of up to 12 arguments, where each argument
+/// implements [`Encode`]. It is primarily used to make generic code easier.
 ///
 /// Note that tuples themselves don't implement [`Encode`] directly because
-/// they're not FFI-safe.
+/// they're not FFI-safe!
 ///
 /// # Safety
 ///
-/// You should not need to implement this. Open an issue if you know a
-/// use-case where this restrition should be lifted!
-pub unsafe trait EncodeArguments {
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait EncodeArguments: private::Sealed {
     /// The encodings for the arguments.
     const ENCODINGS: &'static [Encoding<'static>];
 }
 
 macro_rules! encode_args_impl {
     ($($Arg: ident),*) => {
+        impl<$($Arg: Encode),*> private::Sealed for ($($Arg,)*) {}
+
         unsafe impl<$($Arg: Encode),*> EncodeArguments for ($($Arg,)*) {
             const ENCODINGS: &'static [Encoding<'static>] = &[
                 $($Arg::ENCODING),*

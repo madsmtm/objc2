@@ -31,6 +31,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let obj = unsafe { Id::new(obj) }.expect("Failed to allocate object.");
   ```
 
+### Fixed
+* Properly sealed the `MessageArguments` trait (it already had a hidden
+  method, so this is not really a breaking change).
+
 
 ## 0.3.0-alpha.6 - 2022-01-03
 

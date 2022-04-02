@@ -124,6 +124,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
         R: Encode,
     {
         let this = self.as_raw_receiver();
+        // TODO: Always enable this when `debug_assertions` are on.
         #[cfg(feature = "verify_message")]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
@@ -268,8 +269,11 @@ unsafe impl<T: MessageReceiver + ?Sized> MessageReceiver for ManuallyDrop<T> {
 /// This is implemented for tuples of up to 12 arguments, where each argument
 /// implements [`Encode`].
 ///
-/// You should not need to implement this yourself.
-pub trait MessageArguments: EncodeArguments {
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait MessageArguments: EncodeArguments {
     /// Invoke an [`Imp`] with the given object, selector, and arguments.
     ///
     /// This method is the primitive used when sending messages and should not
@@ -281,7 +285,7 @@ pub trait MessageArguments: EncodeArguments {
 
 macro_rules! message_args_impl {
     ($($a:ident : $t:ident),*) => (
-        impl<$($t: Encode),*> MessageArguments for ($($t,)*) {
+        unsafe impl<$($t: Encode),*> MessageArguments for ($($t,)*) {
             #[inline]
             #[doc(hidden)]
             unsafe fn __invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
