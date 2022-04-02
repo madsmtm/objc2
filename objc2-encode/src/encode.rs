@@ -22,8 +22,8 @@ use crate::Encoding;
 /// `repr(u8)`, `repr(transparent)` where the inner types are C-compatible,
 /// and so on). See the [nomicon on other `repr`s][reprs].
 ///
-/// Objective-C will make assumptions about the type (like its size and
-/// alignment) from its encoding, so the implementer must verify that the
+/// Objective-C will make assumptions about the type (like its size, alignment
+/// and ABI) from its encoding, so the implementer must verify that the
 /// encoding is accurate.
 ///
 /// Concretely, [`Self::ENCODING`] must match the result of running `@encode`
@@ -101,8 +101,8 @@ pub unsafe trait Encode {
 /// information on how to represent objects that you don't know the layout of
 /// (or use `extern type` ([RFC-1861]) if you're using nightly).
 ///
-/// Objective-C will make assumptions about the type (like its size and
-/// alignment) from its encoding, so the implementer must verify that the
+/// Objective-C will make assumptions about the type (like its size, alignment
+/// and ABI) from its encoding, so the implementer must verify that the
 /// encoding is accurate.
 ///
 /// Concretely, [`Self::ENCODING_REF`] must match the result of running
