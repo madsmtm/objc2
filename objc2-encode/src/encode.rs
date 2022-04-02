@@ -183,6 +183,28 @@ unsafe impl Encode for () {
     const ENCODING: Encoding<'static> = Encoding::Void;
 }
 
+// UI tests of this is too brittle.
+#[cfg(doctest)]
+/// ```
+/// use objc2_encode::Encode;
+/// <()>::ENCODING; // TODO: Make this fail as well
+/// ```
+/// ```should_fail
+/// use core::ffi::c_void;
+/// use objc2_encode::Encode;
+/// <c_void>::ENCODING;
+/// ```
+/// ```should_fail
+/// use objc2_encode::Encode;
+/// <*const ()>::ENCODING;
+/// ```
+/// ```should_fail
+/// use core::ffi::c_void;
+/// use objc2_encode::Encode;
+/// <&c_void>::ENCODING;
+/// ```
+extern "C" {}
+
 /// Using this directly is heavily discouraged, since the type of BOOL differs
 /// across platforms.
 ///
@@ -556,11 +578,6 @@ mod tests {
             <&*const c_void>::ENCODING,
             Encoding::Pointer(&Encoding::Pointer(&Encoding::Void))
         );
-
-        // Shouldn't compile
-        // assert_eq!(<c_void>::ENCODING, Encoding::Void);
-        // assert_eq!(<*const ()>::ENCODING, Encoding::Pointer(&Encoding::Void));
-        // assert_eq!(<&c_void>::ENCODING, Encoding::Pointer(&Encoding::Void));
     }
 
     #[test]
@@ -577,5 +594,12 @@ mod tests {
             <Option<unsafe extern "C" fn()>>::ENCODING,
             Encoding::Pointer(&Encoding::Unknown)
         );
+    }
+
+    #[test]
+    fn test_encode_arguments() {
+        assert!(<()>::ENCODINGS.is_empty());
+        assert_eq!(<(i8,)>::ENCODINGS, &[i8::ENCODING]);
+        assert_eq!(<(i8, u32)>::ENCODINGS, &[i8::ENCODING, u32::ENCODING]);
     }
 }

@@ -316,6 +316,13 @@ mod tests {
     use super::Encoding;
     use alloc::string::ToString;
 
+    fn send_sync<T: Send + Sync>() {}
+
+    #[test]
+    fn test_send_sync() {
+        send_sync::<Encoding<'_>>();
+    }
+
     #[test]
     fn test_array_display() {
         let e = Encoding::Array(12, &Encoding::Int);
