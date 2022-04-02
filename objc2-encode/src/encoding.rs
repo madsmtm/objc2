@@ -89,10 +89,13 @@ pub enum Encoding<'a> {
     ///
     /// This is usually used to encode functions.
     Unknown,
-    /// A bitfield with the given number of bits.
+    /// A bitfield with the given number of bits, and the given type.
+    ///
+    /// The type is not currently used, but may be in the future for better
+    /// compatibility with Objective-C runtimes.
     ///
     /// Corresponds to the `b`num code.
-    BitField(u8),
+    BitField(u8, &'a Encoding<'a>),
     /// A pointer to the given type.
     ///
     /// Corresponds to the `^`type code.
@@ -141,8 +144,8 @@ impl Encoding<'_> {
     /// then `c_long::ENCODING` would just work.
     ///
     /// Unfortunately, `long` have a different encoding than `int` when it is
-    /// 32 bits wide; the 'l'/'L' encoding.
-    pub const LONG: Self = {
+    /// 32 bits wide; the [`l`][`Encoding::Long`] encoding.
+    pub const C_LONG: Self = {
         // Alternative: `mem::size_of::<c_long>() == 4`
         // That would exactly match what `clang` does:
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/AST/ASTContext.cpp#L7245
@@ -157,8 +160,8 @@ impl Encoding<'_> {
 
     /// The encoding of [`c_ulong`](`std::os::raw::c_ulong`).
     ///
-    /// See [`Encoding::LONG`] for explanation.
-    pub const U_LONG: Self = {
+    /// See [`Encoding::C_LONG`] for explanation.
+    pub const C_U_LONG: Self = {
         if cfg!(any(target_pointer_width = "32", windows)) {
             // @encode(unsigned long) = 'L'
             Encoding::ULong
@@ -169,12 +172,24 @@ impl Encoding<'_> {
     };
 
     /// Check if one encoding is equivalent to another.
+    ///
+    /// Currently, equivalence testing requires that the encodings are equal,
+    /// except for qualifiers. This may be changed in the future to e.g.
+    /// ignore struct names, to allow structs behind multiple pointers to be
+    /// considered equivalent, or similar changes that may be required because
+    /// of limitations in Objective-C compiler implementations.
+    ///
+    /// For example, you should not rely on two equivalent encodings to have
+    /// the same size or ABI - that is provided on a best-effort basis.
     pub fn equivalent_to(&self, other: &Self) -> bool {
         // For now, because we don't allow representing qualifiers
         self == other
     }
 
     /// Check if an encoding is equivalent to the given string representation.
+    ///
+    /// See [`Encoding::equivalent_to`] for details about the meaning of
+    /// "equivalence".
     pub fn equivalent_to_str(&self, s: &str) -> bool {
         // if the given encoding can be successfully removed from the start
         // and an empty string remains, they were fully equivalent!
@@ -190,6 +205,9 @@ impl Encoding<'_> {
     ///
     /// If it is equivalent, the remaining part of the string is returned.
     /// Otherwise this returns [`None`].
+    ///
+    /// See [`Encoding::equivalent_to`] for details about the meaning of
+    /// "equivalence".
     pub fn equivalent_to_start_of_str<'a>(&self, s: &'a str) -> Option<&'a str> {
         // strip leading qualifiers
         let s = s.trim_start_matches(parse::QUALIFIERS);
@@ -200,6 +218,12 @@ impl Encoding<'_> {
     }
 }
 
+/// Formats this [`Encoding`] in a similar way that the `@encode` directive
+/// would ordinarily do.
+///
+/// You should not rely on the output of this to be stable across versions. It
+/// may change if found to be required to be compatible with exisiting
+/// Objective-C compilers.
 impl fmt::Display for Encoding<'_> {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         use Encoding::*;
@@ -228,7 +252,8 @@ impl fmt::Display for Encoding<'_> {
             Class => "#",
             Sel => ":",
             Unknown => "?",
-            BitField(b) => {
+            BitField(b, _type) => {
+                // TODO: Use the type on GNUStep
                 return write!(formatter, "b{}", b);
             }
             Pointer(t) => {
@@ -256,44 +281,17 @@ impl fmt::Display for Encoding<'_> {
     }
 }
 
-// TODO: Deprecate and remove these PartialEq impls
-
-/// Partial equality between an [`Encoding`] and a [`str`].
-///
-/// Using this is heavily discouraged, since it is not transitive; use
-/// [`Encoding::equivalent_to_str`] instead for more correct semantics.
-impl PartialEq<str> for Encoding<'_> {
-    /// Using this is discouraged.
-    fn eq(&self, other: &str) -> bool {
-        self.equivalent_to_str(other)
-    }
-
-    /// Using this is discouraged.
-    fn ne(&self, other: &str) -> bool {
-        !self.eq(other)
-    }
-}
-
-/// Partial equality between an [`Encoding`] and a [`str`].
-///
-/// Using this is heavily discouraged, since it is not transitive; use
-/// [`Encoding::equivalent_to_str`] instead for more correct semantics.
-impl PartialEq<Encoding<'_>> for str {
-    /// Using this is discouraged.
-    fn eq(&self, other: &Encoding<'_>) -> bool {
-        other.equivalent_to_str(self)
-    }
-
-    /// Using this is discouraged.
-    fn ne(&self, other: &Encoding<'_>) -> bool {
-        !self.eq(other)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::Encoding;
     use alloc::string::ToString;
+
+    fn send_sync<T: Send + Sync>() {}
+
+    #[test]
+    fn test_send_sync() {
+        send_sync::<Encoding<'_>>();
+    }
 
     #[test]
     fn test_array_display() {

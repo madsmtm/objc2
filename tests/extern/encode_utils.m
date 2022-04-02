@@ -43,27 +43,66 @@ ENCODING_INNER(VOID_POINTER, void*);
 ENCODING_INNER(VOID_POINTER_CONST, const void*);
 ENCODING_INNER(VOID_POINTER_POINTER, void**);
 
-// Array
-
-ENCODING_INNER(ARRAY_INT, int[10]);
-ENCODING_INNER(ARRAY_INT_POINTER, int*[10]);
-ENCODING_INNER(ARRAY_INT_ATOMIC, _Atomic int[10]);
-
 // Struct
 
 struct empty {};
 ENCODING(STRUCT_EMPTY, struct empty);
+ENCODING_INNER(STRUCT_EMPTY_POINTER_POINTER, struct empty**);
+ENCODING_INNER(STRUCT_EMPTY_POINTER_POINTER_POINTER, struct empty***);
 struct one_item {
     void* a;
 };
 ENCODING(STRUCT_ONE_ITEM, struct one_item);
+ENCODING_INNER(STRUCT_ONE_ITEM_POINTER_POINTER, struct one_item**);
+ENCODING_INNER(STRUCT_ONE_ITEM_POINTER_POINTER_POINTER, struct one_item***);
 struct two_items {
     float a;
     int b;
 };
 ENCODING(STRUCT_TWO_ITEMS, struct two_items);
 
-// TODO: Structs with arrays, and vice-versa
+struct with_arrays {
+    int a[1];
+    int* b[2];
+    int (*c)[3];
+};
+ENCODING(STRUCT_WITH_ARRAYS, struct with_arrays);
+
+// Bit field
+
+struct bitfield {
+    unsigned int a: 1;
+    unsigned int b: 30;
+};
+ENCODING(BITFIELD, struct bitfield);
+
+// Union
+
+union union_ {
+    float a;
+    int b;
+};
+ENCODING(UNION, union union_);
+
+// Array
+// Using typedefs because the type of pointers to arrays are hard to name.
+// Also, atomic arrays does not exist
+
+typedef int arr[10];
+ENCODING_INNER(ARRAY_INT, arr);
+ENCODING_INNER(ARRAY_INT_POINTER, arr*);
+
+typedef int* arr_ptr[10];
+ENCODING_INNER(ARRAY_POINTER, arr_ptr);
+ENCODING_INNER(ARRAY_POINTER_POINTER, arr_ptr*);
+
+typedef int arr_nested[10][20];
+ENCODING_INNER(ARRAY_NESTED, arr_nested);
+ENCODING_INNER(ARRAY_NESTED_POINTER, arr_nested*);
+
+typedef struct two_items arr_struct[0];
+ENCODING_INNER(ARRAY_STRUCT, arr_struct);
+ENCODING_INNER(ARRAY_STRUCT_POINTER, arr_struct*);
 
 // Objective-C
 

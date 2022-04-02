@@ -3,11 +3,13 @@ use alloc::format;
 use core::fmt::Display;
 use objc2::ffi::{NSInteger, NSUInteger};
 use objc2::runtime::{Bool, Class, Object, Sel};
-use objc2_encode::Encoding;
+use objc2_encode::{Encode, Encoding, RefEncode};
 use paste::paste;
 use std::ffi::CStr;
 use std::os::raw::*;
 use std::string::ToString;
+
+use super::*;
 
 unsafe fn assert_encoding(s: *const c_char, e: Encoding) {
     let s = CStr::from_ptr(s).to_str().unwrap();
@@ -55,14 +57,11 @@ macro_rules! assert_types {
     )+) => {$(
         paste! {
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat>] => <$type>::ENCODING);
-            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => <*const $type>::ENCODING);
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => <$type>::ENCODING_REF);
             assert_inner!(str $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => format!("A{}", <$type>::ENCODING));
         }
     )+};
 }
-
-use super::*;
-use objc2_encode::Encode;
 
 assert_types! {
     // C types
@@ -93,17 +92,25 @@ assert_types! {
 
     // VOID => void,
 
-    // Array
-
-    // ARRAY_INT
-
     // Struct
 
     // STRUCT_EMPTY
     // STRUCT_ONE_ITEM
     // STRUCT_TWO_ITEMS
+    // STRUCT_WITH_ARRAYS
 
-    // // Objective-C
+    // Bitfields
+
+    // BITFIELD
+
+    // Array
+
+    // ARRAY_INT
+    // ARRAY_POINTER
+    // ARRAY_NESTED
+    // ARRAY_STRUCT
+
+    // Objective-C
 
     OBJC_BOOL => Bool,
     ID => *mut Object,
@@ -158,13 +165,13 @@ assert_inner!(enc ENCODING_VOID_POINTER_POINTER => <*const *const c_void>::ENCOD
 
 // `[unsigned] long`s are weird:
 
-assert_inner!(enc ENCODING_LONG => Encoding::LONG);
-assert_inner!(enc ENCODING_LONG_POINTER => Encoding::Pointer(&Encoding::LONG));
-assert_inner!(str ENCODING_LONG_ATOMIC => format!("A{}", Encoding::LONG));
+assert_inner!(enc ENCODING_LONG => Encoding::C_LONG);
+assert_inner!(enc ENCODING_LONG_POINTER => Encoding::Pointer(&Encoding::C_LONG));
+assert_inner!(str ENCODING_LONG_ATOMIC => format!("A{}", Encoding::C_LONG));
 
-assert_inner!(enc ENCODING_UNSIGNED_LONG => Encoding::U_LONG);
-assert_inner!(enc ENCODING_UNSIGNED_LONG_POINTER => Encoding::Pointer(&Encoding::U_LONG));
-assert_inner!(str ENCODING_UNSIGNED_LONG_ATOMIC => format!("A{}", Encoding::U_LONG));
+assert_inner!(enc ENCODING_UNSIGNED_LONG => Encoding::C_U_LONG);
+assert_inner!(enc ENCODING_UNSIGNED_LONG_POINTER => Encoding::Pointer(&Encoding::C_U_LONG));
+assert_inner!(str ENCODING_UNSIGNED_LONG_ATOMIC => format!("A{}", Encoding::C_U_LONG));
 
 // No appropriate Rust types for these:
 
@@ -184,29 +191,89 @@ assert_inner!(enc ENCODING_LONG_DOUBLE_COMPLEX => Encoding::LongDoubleComplex);
 assert_inner!(enc ENCODING_LONG_DOUBLE_COMPLEX_POINTER => Encoding::Pointer(&Encoding::LongDoubleComplex));
 assert_inner!(str ENCODING_LONG_DOUBLE_COMPLEX_ATOMIC => format!("A{}", Encoding::LongDoubleComplex));
 
-// Arrays (atomics and pointers are weirdly encoded?)
-
-const ARRAY_ENC: Encoding<'static> = Encoding::Array(10, &c_int::ENCODING);
-assert_inner!(enc ENCODING_ARRAY_INT => ARRAY_ENC);
-assert_inner!(str ENCODING_ARRAY_INT_POINTER => "[10^i]");
-assert_inner!(str ENCODING_ARRAY_INT_ATOMIC => "[10Ai]");
-
-// Structs (atomics erase type information)
+// Structs (atomics or double indirection erase type information)
 
 const ENC0: Encoding<'static> = Encoding::Struct("empty", &[]);
 assert_inner!(enc ENCODING_STRUCT_EMPTY => ENC0);
 assert_inner!(enc ENCODING_STRUCT_EMPTY_POINTER => Encoding::Pointer(&ENC0));
+assert_inner!(str ENCODING_STRUCT_EMPTY_POINTER_POINTER => "^^{empty}");
+assert_inner!(str ENCODING_STRUCT_EMPTY_POINTER_POINTER_POINTER => "^^^{empty}");
 assert_inner!(str ENCODING_STRUCT_EMPTY_ATOMIC => "A{empty}");
 
 const ENC1: Encoding<'static> = Encoding::Struct("one_item", &[<*const c_void>::ENCODING]);
 assert_inner!(enc ENCODING_STRUCT_ONE_ITEM => ENC1);
 assert_inner!(enc ENCODING_STRUCT_ONE_ITEM_POINTER => Encoding::Pointer(&ENC1));
+assert_inner!(str ENCODING_STRUCT_ONE_ITEM_POINTER_POINTER => "^^{one_item}");
+assert_inner!(str ENCODING_STRUCT_ONE_ITEM_POINTER_POINTER_POINTER => "^^^{one_item}");
 assert_inner!(str ENCODING_STRUCT_ONE_ITEM_ATOMIC => "A{one_item}");
 
 const ENC2: Encoding<'static> = Encoding::Struct("two_items", &[f32::ENCODING, c_int::ENCODING]);
 assert_inner!(enc ENCODING_STRUCT_TWO_ITEMS => ENC2);
 assert_inner!(enc ENCODING_STRUCT_TWO_ITEMS_POINTER => Encoding::Pointer(&ENC2));
 assert_inner!(str ENCODING_STRUCT_TWO_ITEMS_ATOMIC => "A{two_items}");
+
+const WITH_ARRAYS: Encoding<'static> = Encoding::Struct(
+    "with_arrays",
+    &[
+        <[c_int; 1]>::ENCODING,
+        <[&c_int; 2]>::ENCODING,
+        <&[c_int; 3]>::ENCODING,
+    ],
+);
+assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS => WITH_ARRAYS);
+assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS_POINTER => Encoding::Pointer(&WITH_ARRAYS));
+assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS_ATOMIC => "A{with_arrays}");
+
+// Bitfields
+
+#[cfg(not(gnustep))]
+mod bitfields {
+    use super::*;
+
+    const BITFIELD: Encoding<'static> = Encoding::Struct(
+        "bitfield",
+        &[
+            Encoding::BitField(1, &Encoding::UInt),
+            Encoding::BitField(30, &Encoding::UInt),
+        ],
+    );
+    assert_inner!(enc ENCODING_BITFIELD => BITFIELD);
+    assert_inner!(enc ENCODING_BITFIELD_POINTER => Encoding::Pointer(&BITFIELD));
+    assert_inner!(str ENCODING_BITFIELD_ATOMIC => "A{bitfield}");
+}
+
+#[cfg(gnustep)]
+mod bitfields {
+    use super::*;
+
+    assert_inner!(str ENCODING_BITFIELD => "{bitfield=b0I1b1I30}");
+    assert_inner!(str ENCODING_BITFIELD_POINTER => "^{bitfield=b0I1b1I30}");
+    assert_inner!(str ENCODING_BITFIELD_ATOMIC => "A{bitfield}");
+}
+
+// Unions
+
+const UNION: Encoding<'static> = Encoding::Union("union_", &[f32::ENCODING, c_int::ENCODING]);
+assert_inner!(enc ENCODING_UNION => UNION);
+assert_inner!(enc ENCODING_UNION_POINTER => Encoding::Pointer(&UNION));
+assert_inner!(str ENCODING_UNION_ATOMIC => "A(union_)");
+
+// Arrays (atomics are not supported)
+
+type ARRAY = [c_int; 10];
+assert_inner!(enc ENCODING_ARRAY_INT => ARRAY::ENCODING);
+assert_inner!(enc ENCODING_ARRAY_INT_POINTER => ARRAY::ENCODING_REF);
+
+type POINTER = [*const c_int; 10];
+assert_inner!(enc ENCODING_ARRAY_POINTER => POINTER::ENCODING);
+assert_inner!(str ENCODING_ARRAY_POINTER_POINTER => POINTER::ENCODING_REF);
+
+type NESTED = [[c_int; 20]; 10];
+assert_inner!(enc ENCODING_ARRAY_NESTED => NESTED::ENCODING);
+assert_inner!(str ENCODING_ARRAY_NESTED_POINTER => NESTED::ENCODING_REF);
+
+assert_inner!(enc ENCODING_ARRAY_STRUCT => Encoding::Array(0, &ENC2));
+assert_inner!(str ENCODING_ARRAY_STRUCT_POINTER => Encoding::Pointer(&Encoding::Array(0, &ENC2)));
 
 // UUIDs
 

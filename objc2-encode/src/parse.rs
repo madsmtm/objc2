@@ -40,7 +40,8 @@ pub(crate) fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a st
         Class => "#",
         Sel => ":",
         Unknown => "?",
-        BitField(b) => {
+        BitField(b, _type) => {
+            // TODO: Use the type on GNUStep
             let s = s.strip_prefix('b')?;
             return rm_int_prefix(s, b as usize);
         }
@@ -117,10 +118,11 @@ mod tests {
 
     #[test]
     fn test_bitfield() {
-        assert!(Encoding::BitField(32).equivalent_to_str("b32"));
-        assert!(!Encoding::BitField(32).equivalent_to_str("b32a"));
-        assert!(!Encoding::BitField(32).equivalent_to_str("b"));
-        assert!(!Encoding::BitField(32).equivalent_to_str("b-32"));
+        let bitfield = Encoding::BitField(32, &Encoding::Int);
+        assert!(bitfield.equivalent_to_str("b32"));
+        assert!(!bitfield.equivalent_to_str("b32a"));
+        assert!(!bitfield.equivalent_to_str("b"));
+        assert!(!bitfield.equivalent_to_str("b-32"));
     }
 
     #[test]

@@ -4,6 +4,9 @@ fn main() {
     println!("cargo:rerun-if-changed=extern/block_utils.c");
     println!("cargo:rerun-if-changed=extern/encode_utils.m");
 
+    let runtime = env::var("DEP_OBJC_RUNTIME").unwrap();
+    println!("cargo:rustc-cfg={}", runtime);
+
     let mut builder = cc::Build::new();
     builder.compiler("clang");
     builder.file("extern/block_utils.c");

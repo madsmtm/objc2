@@ -12,8 +12,11 @@
 //! Objective-C encoding: Specifically [`Encode`] for structs, [`RefEncode`]
 //! for references and [`EncodeArguments`] for function arguments.
 //!
-//! These types are exported under the [`objc2`] crate as well, so usually you
-//! would just use them from there.
+//! This crate is exported under the [`objc2`] crate as `objc2::encode`, so
+//! usually you would just use it from there.
+//!
+//! [`objc2`]: https://crates.io/crates/objc2
+//!
 //!
 //! ## Example
 //!
@@ -57,13 +60,29 @@
 //!
 //! [`examples`]: https://github.com/madsmtm/objc2/tree/master/objc2-encode/examples
 //!
-//! Further resources:
+//!
+//! ## Caveats
+//!
+//! We've taken the pragmatic approach with [`Encode`] and [`RefEncode`], and
+//! have implemented it for as many types as possible (instead of defining a
+//! bunch of subtraits for very specific purposes). However, that might
+//! sometimes be slightly surprising.
+//!
+//! Notably we have implemented these for [`bool`], which, in reality, you
+//! would never actually see in an Objective-C method (they use `BOOL`, see
+//! `objc2::runtime::Bool`), but which _can_ techincally occur, and as such
+//! does make sense to define an encoding for.
+//!
+//! The other example is [`()`][`unit`], which doesn't make sense as a method
+//! argument, but is a very common return type, and hence implements `Encode`.
+//!
+//!
+//! ## Further resources
+//!
 //! - [Objective-C, Encoding and You](https://dmaclach.medium.com/objective-c-encoding-and-you-866624cc02de).
 //! - [Apple's documentation on Type Encodings](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html).
 //! - [How are the digits in ObjC method type encoding calculated?](https://stackoverflow.com/a/11527925)
 //! - [`clang`'s source code for generating `@encode`](https://github.com/llvm/llvm-project/blob/fae0dfa6421ea6c02f86ba7292fa782e1e2b69d1/clang/lib/AST/ASTContext.cpp#L7500-L7850).
-//!
-//! [`objc2`]: https://crates.io/crates/objc2
 
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]

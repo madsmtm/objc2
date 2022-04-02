@@ -31,6 +31,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let obj = unsafe { Id::new(obj) }.expect("Failed to allocate object.");
   ```
 
+### Fixed
+* Properly sealed the `MessageArguments` trait (it already had a hidden
+  method, so this is not really a breaking change).
+
 
 ## 0.3.0-alpha.6 - 2022-01-03
 
@@ -103,6 +107,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## 0.3.0-alpha.4 - 2021-11-22
 
+Note: To use this version, specify `objc2-encode = "=2.0.0-beta.0"` in your
+`Cargo.toml` as well.
+
 ### Added
 * **BREAKING**: GNUStep users must depend on, and specify the appropriate
   feature flag on `objc-sys` for the version they're using.
@@ -121,6 +128,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ## 0.3.0-alpha.3 - 2021-09-05
+
+Note: To use this version, specify `objc2-encode = "=2.0.0-alpha.1"` in your
+`Cargo.toml` as well.
 
 ### Added
 * Now uses the `objc-sys` (`v0.0.1`) crate for possibly better
