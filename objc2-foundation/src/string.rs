@@ -8,11 +8,11 @@ use std::os::raw::c_char;
 
 use alloc::borrow::ToOwned;
 use objc2::ffi;
-use objc2::msg_send;
 use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
-use objc2::runtime::{Bool, Class, Object};
+use objc2::runtime::{Class, Object};
+use objc2::{msg_send, msg_send_bool};
 
 use crate::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
 
@@ -182,8 +182,7 @@ impl NSString {
     #[doc(alias = "hasPrefix")]
     #[doc(alias = "hasPrefix:")]
     pub fn has_prefix(&self, prefix: &NSString) -> bool {
-        let res: Bool = unsafe { msg_send![self, hasPrefix: prefix] };
-        res.is_true()
+        unsafe { msg_send_bool![self, hasPrefix: prefix] }
     }
 
     /// Whether the given string matches the ending characters of this string.
@@ -192,8 +191,7 @@ impl NSString {
     #[doc(alias = "hasSuffix")]
     #[doc(alias = "hasSuffix:")]
     pub fn has_suffix(&self, suffix: &NSString) -> bool {
-        let res: Bool = unsafe { msg_send![self, hasSuffix: suffix] };
-        res.is_true()
+        unsafe { msg_send_bool![self, hasSuffix: suffix] }
     }
 
     // pub fn from_nsrange(range: NSRange) -> Id<Self, Shared>

@@ -166,3 +166,39 @@ macro_rules! msg_send {
         result
     });
 }
+
+/// A less error-prone version of [`msg_send!`] for methods returning `BOOL`.
+///
+/// Objective-C's `BOOL` is different from Rust's [`bool`] (see [`Bool`]), so
+/// a conversion step must be performed before using it - this macro does that
+/// for you!
+///
+/// [`Bool`]: crate::runtime::Bool
+///
+/// Equivalent to the following:
+///
+/// ```ignore
+/// # use objc2::msg_send;
+/// # use objc2::runtime::Bool;
+/// # let obj: *mut Object = 0 as *mut Object;
+/// {
+///     let result: Bool = msg_send![obj, selector];
+///     result.as_bool()
+/// };
+/// ```
+///
+/// # Examples
+///
+/// ```no_run
+/// # use objc2::msg_send_bool;
+/// # use objc2::runtime::Object;
+/// # let obj: *mut Object = 0 as *mut Object;
+/// assert!(unsafe { msg_send_bool![obj, isEqual: obj] });
+/// ```
+#[macro_export]
+macro_rules! msg_send_bool {
+    [$($msg_send_args:tt)+] => ({
+        let result: $crate::runtime::Bool = $crate::msg_send![$($msg_send_args)+];
+        result.as_bool()
+    });
+}

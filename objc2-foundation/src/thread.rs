@@ -1,6 +1,5 @@
-use objc2::msg_send;
 use objc2::rc::{Id, Shared};
-use objc2::runtime::Bool;
+use objc2::{msg_send, msg_send_bool};
 
 use crate::{NSObject, NSString};
 
@@ -34,8 +33,7 @@ impl NSThread {
 
     /// Returns `true` if the thread is the main thread.
     pub fn is_main(&self) -> bool {
-        let res: Bool = unsafe { msg_send![self, isMainThread] };
-        res.is_true()
+        unsafe { msg_send_bool![self, isMainThread] }
     }
 
     /// The name of the thread.
@@ -47,14 +45,12 @@ impl NSThread {
 
 /// Whether the application is multithreaded according to Cocoa.
 pub fn is_multi_threaded() -> bool {
-    let res: Bool = unsafe { msg_send![NSThread::class(), isMultiThreaded] };
-    res.is_true()
+    unsafe { msg_send_bool![NSThread::class(), isMultiThreaded] }
 }
 
 /// Whether the current thread is the main thread.
 pub fn is_main_thread() -> bool {
-    let res: Bool = unsafe { msg_send![NSThread::class(), isMainThread] };
-    res.is_true()
+    unsafe { msg_send_bool![NSThread::class(), isMainThread] }
 }
 
 #[cfg(test)]
