@@ -100,7 +100,7 @@ error[E0308]: mismatched types
   --> ui/msg_send_id_invalid_return.rs
    |
    |     let _: Id<Object, Owned> = unsafe { msg_send_id![obj, init].unwrap() };
-   |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected enum `objc2::rc::Owned`, found enum `Shared`
+   |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected struct `objc2::rc::Owned`, found struct `Shared`
    |
    = note: expected struct `Id<_, objc2::rc::Owned>`
               found struct `Id<_, Shared>`
