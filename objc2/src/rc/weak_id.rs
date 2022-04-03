@@ -1,6 +1,5 @@
 use alloc::boxed::Box;
 use core::cell::UnsafeCell;
-use core::convert::TryFrom;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ptr;

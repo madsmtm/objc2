@@ -9,3 +9,4 @@ members = [
     "tests",
     "tests/assembly/*",
 ]
+resolver = "2"

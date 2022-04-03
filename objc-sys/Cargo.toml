@@ -2,7 +2,7 @@
 name = "objc-sys"
 version = "0.2.0-alpha.1" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
-edition = "2018"
+edition = "2021"
 
 description = "Raw bindings to the Objective-C runtime and ABI"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "sys"]

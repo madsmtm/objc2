@@ -3,7 +3,7 @@ name = "block2"
 # Remember to update html_root_url in lib.rs and README.md
 version = "0.2.0-alpha.3"
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
-edition = "2018"
+edition = "2021"
 
 description = "Apple's C language extension of blocks"
 keywords = ["objective-c", "macos", "ios", "blocks"]
