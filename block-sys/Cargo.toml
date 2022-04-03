@@ -2,7 +2,7 @@
 name = "block-sys"
 version = "0.0.3" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
-edition = "2018"
+edition = "2021"
 
 description = "Raw bindings to Apple's C language extension of blocks"
 keywords = ["objective-c", "macos", "ios", "blocks", "sys"]

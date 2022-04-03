@@ -17,6 +17,7 @@ mod arch;
 
 /// On the above architectures we can statically find the correct method to
 /// call from the return type, by looking at it's `Encode` implementation.
+#[allow(clippy::missing_safety_doc)]
 unsafe trait MsgSendFn: Encode {
     const MSG_SEND: Imp;
     const MSG_SEND_SUPER: Imp;

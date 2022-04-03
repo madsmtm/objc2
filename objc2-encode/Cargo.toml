@@ -3,7 +3,7 @@ name = "objc2-encode"
 # Remember to update html_root_url in lib.rs and README.md
 version = "2.0.0-beta.2"
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
-edition = "2018"
+edition = "2021"
 
 description = "Objective-C type-encodings"
 keywords = ["objective-c", "macos", "ios", "encode"]

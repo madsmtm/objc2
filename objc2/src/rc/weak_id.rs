@@ -1,6 +1,5 @@
 use alloc::boxed::Box;
 use core::cell::UnsafeCell;
-use core::convert::TryFrom;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ptr;
@@ -145,7 +144,7 @@ impl<T: Message> From<Id<T, Shared>> for WeakId<T> {
 impl<T: Message> TryFrom<WeakId<T>> for Id<T, Shared> {
     type Error = ();
     fn try_from(weak: WeakId<T>) -> Result<Self, ()> {
-        return weak.load().ok_or(());
+        weak.load().ok_or(())
     }
 }
 

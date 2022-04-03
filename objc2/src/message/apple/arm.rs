@@ -8,7 +8,8 @@ use crate::{Encode, Encoding};
 /// Double-word sized fundamental data types don't use stret, but any
 /// composite type larger than 4 bytes does.
 ///
-/// <http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042e/IHI0042E_aapcs.pdf>
+/// <https://web.archive.org/web/20191016000656/http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf>
+/// <https://developer.arm.com/documentation/ihi0042/latest>
 unsafe impl<T: Encode> MsgSendFn for T {
     const MSG_SEND: Imp = {
         if let Encoding::LongLong | Encoding::ULongLong | Encoding::Double = T::ENCODING {

@@ -2,7 +2,7 @@
 name = "objc2-foundation"
 version = "0.2.0-alpha.4" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
-edition = "2018"
+edition = "2021"
 
 description = "Bindings to the Objective-C Cocoa Foundation framework"
 keywords = ["objective-c", "macos", "ios", "cocoa", "uikit"]

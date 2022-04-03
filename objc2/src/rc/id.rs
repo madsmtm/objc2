@@ -312,7 +312,13 @@ impl<T: Message, O: Ownership> Id<T, O> {
         {
             // Supported since macOS 10.7.
             #[cfg(target_arch = "x86_64")]
-            {} // x86_64 looks at the next call instruction
+            {
+                // x86_64 looks at the next call instruction.
+                //
+                // This is expected to be a PLT entry - if the user specifies
+                // `-Zplt=no`, a GOT entry will be created instead, and this
+                // will not work.
+            }
 
             // Supported since macOS 10.8.
             #[cfg(target_arch = "arm")]
@@ -350,7 +356,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
         {
             // SAFETY: Similar to above.
             unsafe { core::arch::asm!("nop", options(nomem, preserves_flags, nostack)) };
-            // TODO: Possibly more efficient alternative?
+            // TODO: Possibly more efficient alternative? Also consider PLT.
             // #![feature(asm_sym)]
             // core::arch::asm!(
             //     "mov rdi, rax",
