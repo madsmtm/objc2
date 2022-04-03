@@ -100,13 +100,7 @@ macro_rules! object {
         impl<$($t: ::core::cmp::PartialEq $(+ $b)?),*> ::core::cmp::PartialEq for $name<$($t),*> {
             #[inline]
             fn eq(&self, other: &Self) -> bool {
-                use ::objc2::MessageReceiver;
-                use $crate::NSObject;
-                // "downgrading" to  NSObject to work around generic
-                // downgrading not having been set up yet.
-                // TODO: Fix this.
-                let other: &NSObject = unsafe { &*other.as_raw_receiver().cast() };
-                self.is_equal(other)
+                self.is_equal(&*other)
             }
         }
 
