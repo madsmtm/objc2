@@ -660,6 +660,24 @@ impl<T: ?Sized, O: Ownership> Drop for Id<T, O> {
     }
 }
 
+impl<T: Message + Deref + DerefMut, O: Ownership> Id<T, O> {
+    /// TODO
+    // TODO: Unsure about the name of this
+    // TODO: Should we add a trait that users can implement to get this
+    // functionality instead of relying on `Deref`?
+    // Or would `AsRef` be better?
+    #[inline]
+    pub fn downgrade(self) -> Id<T::Target, O> {
+        let this = ManuallyDrop::new(self);
+        let ptr: NonNull<T::Target> = NonNull::from(&***this);
+        // SAFETY:
+        // - TODO
+        // - **Only safe if `T::Target` and `T` is the same object!**
+        // - The ownership is preserved
+        unsafe { Id::new_nonnull(ptr) }
+    }
+}
+
 // https://doc.rust-lang.org/nomicon/arc-mutex/arc-base.html#send-and-sync
 /// The `Send` implementation requires `T: Sync` because `Id<T, Shared>` give
 /// access to `&T`.
