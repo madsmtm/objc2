@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   since they could easily be mistaken for the `objc2::runtime` structs with
   the same name.
 * **BREAKING**: Removed `objc_property_t`.
+* **BREAKING**: Removed `objc_hook_getClass` and `objc_hook_lazyClassNamer`
+  type aliases (for now).
 
 
 ## 0.2.0-alpha.1 - 2022-01-03

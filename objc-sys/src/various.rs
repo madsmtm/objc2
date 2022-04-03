@@ -17,19 +17,19 @@ pub struct objc_ivar {
 /// Not all APIs are guaranteed to take NULL values; read the docs!
 pub type IMP = Option<unsafe extern "C" fn()>;
 
-/// Not available on macOS x86.
-///
-/// Remember that this is non-null!
-#[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
-pub type objc_hook_getClass =
-    unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::objc_class) -> BOOL;
-
-/// Not available on macOS x86.
-///
-/// Remember that this is non-null!
-#[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
-pub type objc_hook_lazyClassNamer =
-    unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
+// /// Not available on macOS x86.
+// ///
+// /// Remember that this is non-null!
+// #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
+// pub type objc_hook_getClass =
+//     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::objc_class) -> BOOL;
+//
+// /// Not available on macOS x86.
+// ///
+// /// Remember that this is non-null!
+// #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
+// pub type objc_hook_lazyClassNamer =
+//     unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
 
 extern_c! {
     pub fn imp_getBlock(imp: IMP) -> *mut objc_object;
