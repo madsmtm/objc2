@@ -214,11 +214,8 @@ impl Method {
     pub fn argument_type(&self, index: usize) -> Option<Malloc<str>> {
         unsafe {
             let encoding = ffi::method_copyArgumentType(self.as_ptr(), index as c_uint);
-            if encoding.is_null() {
-                None
-            } else {
-                Some(Malloc::from_c_str(encoding).unwrap())
-            }
+            ptr::NonNull::new(encoding)
+                .map(|encoding| Malloc::from_c_str(encoding.as_ptr()).unwrap())
         }
     }
 
@@ -254,14 +251,8 @@ impl Class {
     /// class is not registered with the Objective-C runtime.
     pub fn get(name: &str) -> Option<&'static Self> {
         let name = CString::new(name).unwrap();
-        unsafe {
-            let cls = ffi::objc_getClass(name.as_ptr());
-            if cls.is_null() {
-                None
-            } else {
-                Some(&*(cls as *const Self))
-            }
-        }
+        let cls = unsafe { ffi::objc_getClass(name.as_ptr()) };
+        unsafe { cls.cast::<Self>().as_ref() }
     }
 
     // Same as `get`, but ...
@@ -292,11 +283,7 @@ impl Class {
     pub fn superclass(&self) -> Option<&Class> {
         unsafe {
             let superclass = ffi::class_getSuperclass(self.as_ptr());
-            if superclass.is_null() {
-                None
-            } else {
-                Some(&*(superclass as *const Self))
-            }
+            superclass.cast::<Class>().as_ref()
         }
     }
 
@@ -323,11 +310,7 @@ impl Class {
     pub fn instance_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
             let method = ffi::class_getInstanceMethod(self.as_ptr(), sel.ptr);
-            if method.is_null() {
-                None
-            } else {
-                Some(&*(method as *const Method))
-            }
+            method.cast::<Method>().as_ref()
         }
     }
 
@@ -339,11 +322,7 @@ impl Class {
         let name = CString::new(name).unwrap();
         unsafe {
             let ivar = ffi::class_getInstanceVariable(self.as_ptr(), name.as_ptr());
-            if ivar.is_null() {
-                None
-            } else {
-                Some(&*(ivar as *const Ivar))
-            }
+            ivar.cast::<Ivar>().as_ref()
         }
     }
 
@@ -443,11 +422,7 @@ impl Protocol {
         let name = CString::new(name).unwrap();
         unsafe {
             let proto = ffi::objc_getProtocol(name.as_ptr());
-            if proto.is_null() {
-                None
-            } else {
-                Some(&*(proto as *const Self))
-            }
+            proto.cast::<Self>().as_ref()
         }
     }
 
