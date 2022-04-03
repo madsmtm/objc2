@@ -3,7 +3,7 @@
 #[cfg(apple)]
 use std::os::raw::c_int;
 
-use crate::{id, Class, BOOL};
+use crate::{id, objc_class, BOOL};
 
 /// The equivalent of `true` for Objective-C's [`BOOL`][`super::BOOL`] type.
 pub const YES: BOOL = true as BOOL; // true -> 1
@@ -15,7 +15,7 @@ pub const NO: BOOL = false as BOOL; // false -> 0
 pub const nil: id = 0 as *mut _;
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] class.
-pub const Nil: Class = 0 as *mut _;
+pub const Nil: *mut objc_class = 0 as *mut _;
 
 pub type objc_AssociationPolicy = usize;
 pub const OBJC_ASSOCIATION_ASSIGN: objc_AssociationPolicy = 0;

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Removed
+* **BREAKING**: Removed type aliases `Class`, `Ivar`, `Method` and `Protocol`
+  since they could easily be mistaken for the `objc2::runtime` structs with
+  the same name.
+* **BREAKING**: Removed `objc_property_t`.
+
 
 ## 0.2.0-alpha.1 - 2022-01-03
 
