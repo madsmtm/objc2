@@ -32,7 +32,7 @@ object! {
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutabledata?language=objc).
     ///
     /// [`Vec`]: std::vec::Vec
-    unsafe pub struct NSMutableData: NSData;
+    unsafe pub struct NSMutableData: NSData, NSObject;
 }
 
 // TODO: SAFETY

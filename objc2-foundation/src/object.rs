@@ -5,7 +5,8 @@ use objc2::runtime::{Bool, Class, Object};
 use super::NSString;
 
 object! {
-    unsafe pub struct NSObject: Object;
+    @__inner
+    unsafe pub struct NSObject<>: Object {}
 }
 
 impl NSObject {

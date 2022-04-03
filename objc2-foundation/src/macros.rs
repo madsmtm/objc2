@@ -1,3 +1,24 @@
+macro_rules! __impl_as_ref_as_mut {
+    ($name:ident<$($t:ident $(: $b:ident)?),*>,) => {};
+    ($name:ident<$($t:ident $(: $b:ident)?),*>, $item:ty, $($tail:ty,)*) => {
+        impl<$($t $(: $b)?),*> AsRef<$item> for $name<$($t),*> {
+            #[inline]
+            fn as_ref(&self) -> &$item {
+                &**self
+            }
+        }
+
+        impl<$($t $(: $b)?),*> AsMut<$item> for $name<$($t),*> {
+            #[inline]
+            fn as_mut(&mut self) -> &mut $item {
+                &mut **self
+            }
+        }
+
+        __impl_as_ref_as_mut!($name<$($t $(: $b)?),*>, $($tail,)*);
+    };
+}
+
 /// TODO
 ///
 /// # Safety
@@ -9,13 +30,32 @@
 macro_rules! object {
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident: $inherits:ty $(;)?
+        unsafe $v:vis struct $name:ident: $($inheritance_chain:ty),+ $(;)?
     ) => {
-        object!($(#[$m])* unsafe $v struct $name<>: $inherits {});
+        object! {
+            @__inner
+            $(#[$m])*
+            unsafe $v struct $name<>: $($inheritance_chain,)+ ::objc2::runtime::Object {}
+        }
     };
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $inherits:ty {
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $($inheritance_chain:ty),+ {
+            $($p:ident: $pty:ty,)*
+        }
+    ) => {
+        object! {
+            @__inner
+            $(#[$m])*
+            unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ ::objc2::runtime::Object {
+                $($p: $pty,)*
+            }
+        }
+    };
+    (
+        @__inner
+        $(#[$m:meta])*
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $inherits:ty $(, $inheritance_rest:ty)* {
             $($p:ident: $pty:ty,)*
         }
     ) => {
@@ -85,7 +125,7 @@ macro_rules! object {
             }
         }
 
-        // TODO: AsRef and AsMut
+        __impl_as_ref_as_mut!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
 
         // Objective-C equality has approximately the same semantics as Rust
         // equality (although less aptly specified).
