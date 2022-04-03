@@ -235,14 +235,28 @@ macro_rules! msg_send_id {
     [$obj:expr, $selector:ident $(,)?] => ({
         let sel = $crate::sel!($selector);
         const NAME: &[u8] = stringify!($selector).as_bytes();
-        $crate::msg_send_id!(@__inner $obj, NAME, sel, ())
+        $crate::msg_send_id!(@__get_assert_consts NAME);
+        use $crate::__macro_helpers::{MsgSendId, Assert};
+        let result;
+        match <Assert<ALLOC, INIT, RETAINED> as MsgSendId<_, _>>::send_message_id($obj, sel, ()) {
+            Err(s) => panic!("{}", s),
+            Ok(r) => result = r,
+        }
+        result
     });
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
         let sel = $crate::sel!($($selector:)+);
         const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
-        $crate::msg_send_id!(@__inner $obj, NAME, sel, ($($argument,)+))
+        $crate::msg_send_id!(@__get_assert_consts NAME);
+        use $crate::__macro_helpers::{MsgSendId, Assert};
+        let result;
+        match <Assert<ALLOC, INIT, RETAINED> as MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+)) {
+            Err(s) => panic!("{}", s),
+            Ok(r) => result = r,
+        }
+        result
     });
-    (@__inner $obj:expr, $name:ident, $sel:ident, $args:expr) => {{
+    (@__get_assert_consts $name:ident) => {
         const ALLOC: bool = $crate::__macro_helpers::starts_with_str($name, b"alloc");
         const INIT: bool = $crate::__macro_helpers::starts_with_str($name, b"init");
         const RETAINED: bool = {
@@ -252,13 +266,5 @@ macro_rules! msg_send_id {
                 || $crate::__macro_helpers::starts_with_str($name, b"mutableCopy")
                 || $crate::__macro_helpers::starts_with_str($name, b"init")
         };
-
-        use $crate::__macro_helpers::{MsgSendId, Assert};
-        let result;
-        match <Assert<ALLOC, INIT, RETAINED>>::send_message_id($obj, $sel, $args) {
-            Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
-        }
-        result
-    }};
+    };
 }

@@ -126,4 +126,20 @@ mod tests {
         assert!(!starts_with_str(b"abcdef", b"abb"));
         assert!(!starts_with_str(b"", b"a"));
     }
+
+    mod test_trait_disambugated {
+        use super::*;
+
+        trait Abc {
+            fn send_message_id() {}
+        }
+
+        impl<T> Abc for T {}
+
+        #[test]
+        fn test_macro_still_works() {
+            let cls = class!(NSObject);
+            let _obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+        }
+    }
 }
