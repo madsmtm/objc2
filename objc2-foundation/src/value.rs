@@ -180,7 +180,7 @@ mod tests {
         let range: NSRange = unsafe { objc2::msg_send![val, rangeValue] };
         assert_eq!(range, NSRange::from(1..2));
         // NSValue -getValue is broken on GNUStep for some types
-        #[cfg(not(gnustep))]
+        #[cfg(not(feature = "gnustep-1-7"))]
         assert_eq!(val.get(), NSRange::from(1..2));
     }
 }

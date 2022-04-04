@@ -30,8 +30,8 @@
 //!
 //! ## Example
 //!
-#![cfg_attr(apple, doc = "```")]
-#![cfg_attr(not(apple), doc = "```no_run")]
+#![cfg_attr(feature = "apple", doc = "```")]
+#![cfg_attr(not(feature = "apple"), doc = "```no_run")]
 //! use objc2::{class, msg_send};
 //! use objc2::rc::{autoreleasepool, Id, Shared, WeakId};
 //! use objc2::runtime::Object;

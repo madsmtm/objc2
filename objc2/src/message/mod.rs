@@ -30,10 +30,10 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, Message
 #[cfg(feature = "malloc")]
 mod verify;
 
-#[cfg(apple)]
+#[cfg(feature = "apple")]
 #[path = "apple/mod.rs"]
 mod platform;
-#[cfg(gnustep)]
+#[cfg(feature = "gnustep-1-7")]
 #[path = "gnustep.rs"]
 mod platform;
 

@@ -4,7 +4,7 @@ use objc2::runtime::Object;
 use objc2::{class, msg_send};
 use std::ffi::c_void;
 
-#[cfg(apple)] // Does not work on GNUStep
+#[cfg(feature = "apple")] // Does not work on GNUStep
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
 

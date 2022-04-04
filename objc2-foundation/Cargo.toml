@@ -16,8 +16,6 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2-foundation/"
 license = "MIT"
 
-build = "build.rs"
-
 [features]
 default = ["apple", "block"]
 # Provided as a way to cut down on dependencies
@@ -35,7 +33,6 @@ winobjc = ["gnustep-1-8", "objc2/winobjc", "block2?/winobjc"]
 [dependencies]
 block2 = { path = "../block2", version = "=0.2.0-alpha.3", optional = true }
 objc2 = { path = "../objc2", version = "=0.3.0-alpha.6" }
-objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1" }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

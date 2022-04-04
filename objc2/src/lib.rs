@@ -27,8 +27,8 @@
 //! the [`msg_send!`] macro, and lastly, the `Id<Object, _>` goes out of
 //! scope, and the object is deallocated.
 //!
-#![cfg_attr(apple, doc = "```")]
-#![cfg_attr(not(apple), doc = "```no_run")]
+#![cfg_attr(feature = "apple", doc = "```")]
+#![cfg_attr(not(feature = "apple"), doc = "```no_run")]
 //! use objc2::{class, msg_send};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::{Id, Owned};
@@ -137,7 +137,7 @@ extern crate alloc;
 extern crate std;
 
 // The example uses NSObject without doing the __gnustep_hack
-#[cfg(all(apple, doctest))]
+#[cfg(all(feature = "apple", doctest))]
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
@@ -171,7 +171,7 @@ mod test_utils;
 ///
 /// This is a temporary solution to make our CI work for now!
 #[doc(hidden)]
-#[cfg(gnustep)]
+#[cfg(feature = "gnustep-1-7")]
 pub mod __gnustep_hack {
     use super::runtime::Class;
 

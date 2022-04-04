@@ -226,7 +226,7 @@ assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS_ATOMIC => "A{with_arrays}");
 
 // Bitfields
 
-#[cfg(not(gnustep))]
+#[cfg(feature = "apple")]
 mod bitfields {
     use super::*;
 
@@ -242,7 +242,7 @@ mod bitfields {
     assert_inner!(str ENCODING_BITFIELD_ATOMIC => "A{bitfield}");
 }
 
-#[cfg(gnustep)]
+#[cfg(feature = "gnustep-1-7")]
 mod bitfields {
     use super::*;
 

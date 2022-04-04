@@ -74,9 +74,9 @@ impl NSData {
         // So we just use NSDataWithDeallocatorBlock directly.
         //
         // NSMutableData does not have this problem.
-        #[cfg(gnustep)]
+        #[cfg(feature = "gnustep-1-7")]
         let cls = objc2::class!(NSDataWithDeallocatorBlock);
-        #[cfg(not(gnustep))]
+        #[cfg(not(feature = "gnustep-1-7"))]
         let cls = Self::class();
 
         unsafe { Id::new(data_from_vec(cls, bytes).cast()).unwrap() }

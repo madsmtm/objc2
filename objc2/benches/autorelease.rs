@@ -5,18 +5,18 @@ use objc2::rc::{autoreleasepool, Id, Shared};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{class, msg_send, sel};
 
-#[cfg(apple)]
+#[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
 
-#[cfg(gnustep)]
+#[cfg(feature = "gnustep-1-7")]
 #[link(name = "gnustep-base", kind = "dylib")]
 extern "C" {}
 
 const BYTES: &[u8] = &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 fn empty() {
-    #[cfg(gnustep)]
+    #[cfg(feature = "gnustep-1-7")]
     unsafe {
         objc2::__gnustep_hack::get_class_to_force_linkage()
     };
