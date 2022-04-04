@@ -1,7 +1,10 @@
+#[cfg(not(objfw))]
 use core::ffi::c_void;
 use std::os::raw::c_char;
 
-use crate::{objc_class, objc_ivar, OpaqueData};
+#[cfg(not(objfw))]
+use crate::objc_ivar;
+use crate::{objc_class, OpaqueData};
 
 /// An opaque type that represents an object / an instance of a class.
 #[repr(C)]
@@ -15,23 +18,31 @@ pub struct objc_object {
 extern_c! {
     pub fn object_getClass(obj: *const objc_object) -> *const objc_class;
     pub fn object_getClassName(obj: *const objc_object) -> *const c_char;
-    pub fn object_getIndexedIvars(obj: *const objc_object) -> *const c_void;
-    pub fn object_getIvar(obj: *const objc_object, ivar: *const objc_ivar) -> *const objc_object;
-
     pub fn object_setClass(obj: *mut objc_object, cls: *const objc_class) -> *const objc_class;
+
+    #[cfg(not(objfw))]
+    pub fn object_getIndexedIvars(obj: *const objc_object) -> *const c_void;
+    #[cfg(not(objfw))]
+    pub fn object_getIvar(obj: *const objc_object, ivar: *const objc_ivar) -> *const objc_object;
+    #[cfg(not(objfw))]
     pub fn object_setIvar(obj: *mut objc_object, ivar: *const objc_ivar, value: *mut objc_object);
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(apple)]
     pub fn object_copy(obj: *const objc_object, size: usize) -> *mut objc_object;
+
     #[deprecated = "Not needed since ARC"]
+    #[cfg(not(objfw))]
     pub fn object_dispose(obj: *mut objc_object) -> *mut objc_object;
+
     #[deprecated = "Not needed since ARC"]
+    #[cfg(not(objfw))]
     pub fn object_setInstanceVariable(
         obj: *mut objc_object,
         name: *const c_char,
         value: *mut c_void,
     ) -> *const objc_ivar;
+
     // Available in macOS 10.12
     // #[deprecated = "Not needed since ARC"]
     // #[cfg(apple)]
@@ -40,12 +51,15 @@ extern_c! {
     //     name: *const c_char,
     //     value: *mut c_void,
     // ) -> *const objc_ivar;
+
     #[deprecated = "Not needed since ARC"]
+    #[cfg(not(objfw))]
     pub fn object_getInstanceVariable(
         obj: *const objc_object,
         name: *const c_char,
         out_value: *mut *const c_void,
     ) -> *const objc_ivar;
+
     #[deprecated = "Not needed since ARC"]
     #[cfg(apple)]
     pub fn objc_getFutureClass(name: *const c_char) -> *const objc_class;

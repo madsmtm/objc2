@@ -1,9 +1,13 @@
 use core::ffi::c_void;
+#[cfg(not(objfw))]
+use std::os::raw::c_char;
+use std::os::raw::c_int;
 #[cfg(apple)]
 use std::os::raw::c_uint;
-use std::os::raw::{c_char, c_int};
 
-use crate::{objc_AssociationPolicy, objc_object, OpaqueData, BOOL};
+#[cfg(not(objfw))]
+use crate::{objc_AssociationPolicy, BOOL};
+use crate::{objc_object, OpaqueData};
 
 /// An opaque type that represents an instance variable.
 #[repr(C)]
@@ -32,12 +36,18 @@ pub type IMP = Option<unsafe extern "C" fn()>;
 //     unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
 
 extern_c! {
+    #[cfg(not(objfw))]
     pub fn imp_getBlock(imp: IMP) -> *mut objc_object;
+    #[cfg(not(objfw))]
     pub fn imp_implementationWithBlock(block: *mut objc_object) -> IMP;
+    #[cfg(not(objfw))]
     pub fn imp_removeBlock(imp: IMP) -> BOOL;
 
+    #[cfg(not(objfw))]
     pub fn ivar_getName(ivar: *const objc_ivar) -> *const c_char;
+    #[cfg(not(objfw))]
     pub fn ivar_getOffset(ivar: *const objc_ivar) -> isize;
+    #[cfg(not(objfw))]
     pub fn ivar_getTypeEncoding(ivar: *const objc_ivar) -> *const c_char;
 
     #[cfg(apple)]
@@ -49,30 +59,34 @@ extern_c! {
     pub fn objc_copyImageNames(out_len: *mut c_uint) -> *mut *const c_char;
 
     // Instead of being able to change this, it's a weak symbol on GNUStep.
-    #[cfg(apple)]
+    #[cfg(any(apple, objfw))]
     pub fn objc_enumerationMutation(obj: *mut objc_object);
-    #[cfg(apple)]
+    #[cfg(any(apple, objfw))]
     pub fn objc_setEnumerationMutationHandler(
         handler: Option<unsafe extern "C" fn(obj: *mut objc_object)>,
     );
 
+    #[cfg(not(objfw))]
     pub fn objc_getAssociatedObject(
         object: *const objc_object,
         key: *const c_void,
     ) -> *const objc_object;
+    #[cfg(not(objfw))]
     pub fn objc_setAssociatedObject(
         object: *mut objc_object,
         key: *const c_void,
         value: *mut objc_object,
         policy: objc_AssociationPolicy,
     );
+    #[cfg(not(objfw))]
     pub fn objc_removeAssociatedObjects(object: *mut objc_object);
 
-    #[cfg(apple)]
+    #[cfg(any(apple, objfw))]
     pub fn objc_setForwardHandler(fwd: *mut c_void, fwd_stret: *mut c_void);
     // These two are defined in:
     // - Apple: objc-sync.h
     // - GNUStep: dtable.h / associate.m
+    // - ObjFW: ObjFW-RT.h
     pub fn objc_sync_enter(obj: *mut objc_object) -> c_int;
     pub fn objc_sync_exit(obj: *mut objc_object) -> c_int;
 

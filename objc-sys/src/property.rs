@@ -1,4 +1,6 @@
-use std::os::raw::{c_char, c_uint};
+use std::os::raw::c_char;
+#[cfg(not(objfw))]
+use std::os::raw::c_uint;
 
 use crate::OpaqueData;
 
@@ -22,6 +24,8 @@ pub struct objc_property_attribute_t {
 }
 
 extern_c! {
+    #![cfg(not(objfw))]
+
     pub fn property_copyAttributeList(
         property: *const objc_property,
         out_len: *mut c_uint,

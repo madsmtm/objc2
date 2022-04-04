@@ -53,10 +53,16 @@ mod inner {
     pub type BOOL = u8;
 }
 
-// ObjFW???
+// ObjFW
 #[cfg(objfw)]
 mod inner {
-    pub type BOOL = todo!();
+    // Defined in ObjFW-RT.h
+    // C: signed char
+    // This has changed since v0.90, but we don't support that yet.
+    pub type BOOL = i8;
+
+    // Note that ObjFW uses `bool` in return types, but that doesn't change
+    // the ABI, so we'll just use `BOOL` there for ease of use.
 }
 
 /// The Objective-C `BOOL` type.

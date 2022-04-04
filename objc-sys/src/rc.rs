@@ -1,11 +1,13 @@
 //! ARC functions.
 //!
+//! Is available in Clang's [documentation][ARC] so these are safe to rely on.
+//!
 //! All available since macOS `10.7`.
 //!
-//! Defined in `objc-internal.h`, but is available in Clang's
-//! [documentation][ARC] so these are safe to rely on.
-//!
-//! On GNUStep these are defined in `objc-arc.h`.
+//! Defined in:
+//! - Apple: `objc-internal.h`
+//! - GNUStep: `objc-arc.h`
+//! - ObjFW: `runtime/arc.m`
 //!
 //! [ARC]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#runtime-support>
 use core::ffi::c_void;
@@ -13,11 +15,17 @@ use core::ffi::c_void;
 use crate::objc_object;
 
 extern_c! {
+    // Autoreleasepool
+    // ObjFW: Defined in `autorelease.h`, not available with libobjfw-rt!
+
+    #[cfg(not(objfw))]
+    pub fn objc_autoreleasePoolPop(pool: *mut c_void);
+    #[cfg(not(objfw))]
+    pub fn objc_autoreleasePoolPush() -> *mut c_void;
+
     // Autorelease
 
     pub fn objc_autorelease(value: *mut objc_object) -> *mut objc_object;
-    pub fn objc_autoreleasePoolPop(pool: *mut c_void);
-    pub fn objc_autoreleasePoolPush() -> *mut c_void;
     pub fn objc_autoreleaseReturnValue(value: *mut objc_object) -> *mut objc_object;
 
     // Weak pointers
