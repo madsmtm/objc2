@@ -19,7 +19,7 @@ license = "MIT"
 build = "build.rs"
 
 [features]
-default = ["block"]
+default = ["apple", "block"]
 # Provided as a way to cut down on dependencies
 block = ["block2"]
 

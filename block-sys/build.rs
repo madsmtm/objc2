@@ -5,21 +5,23 @@ fn main() {
     // Only rerun if this file changes; the script doesn't depend on our code
     println!("cargo:rerun-if-changed=build.rs");
 
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+
     let mut apple = env::var_os("CARGO_FEATURE_APPLE").is_some();
-    let mut compiler_rt = env::var_os("CARGO_FEATURE_COMPILER_RT").is_some();
-    let gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
+    let compiler_rt = env::var_os("CARGO_FEATURE_COMPILER_RT").is_some();
+    let mut gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
     let objfw = env::var_os("CARGO_FEATURE_OBJFW").is_some();
 
-    if let (false, false, false, false) = (apple, compiler_rt, gnustep, objfw) {
-        let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+    if std::env::var("DOCS_RS").is_ok() {
         if let "macos" | "ios" | "tvos" | "watchos" = &*target_os {
             apple = true;
             // Add cheaty #[cfg(feature = "apple")] directive
             println!("cargo:rustc-cfg=feature=\"apple\"");
         } else {
-            compiler_rt = true;
-            // Add cheaty #[cfg(feature = "compiler-rt")] directive
-            println!("cargo:rustc-cfg=feature=\"compiler-rt\"");
+            // Also winobjc
+            gnustep = true;
+            // Add cheaty #[cfg(feature = "gnustep-1-7")] directive
+            println!("cargo:rustc-cfg=feature=\"gnustep-1-7\"");
         }
     }
 
@@ -61,7 +63,9 @@ fn main() {
             unimplemented!("ObjFW is not yet supported")
         }
         // Checked in if-let above
-        (false, false, false, false) => unreachable!(),
+        (false, false, false, false) => {
+            panic!("Invalid feature combination; at least one runtime must be selected!")
+        }
         (_, _, _, _) => panic!("Invalid feature combination; only one runtime may be selected!"),
     }
 

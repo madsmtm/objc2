@@ -10,6 +10,7 @@ license = "MIT"
 build = "build.rs"
 
 [features]
+default = ["apple"]
 # Enable UI tests
 #
 # These are not enabled by default because trybuild doesn't pass feature flags

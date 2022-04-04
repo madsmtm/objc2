@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Changed `links` key from `objc` to `objc_0_2` for better
   future compatibility, until we reach 1.0 (so `DEP_OBJC_X` in build scripts
   becomes `DEP_OBJC_0_2_X`).
+* **BREAKING**: Apple's runtime is now always the default.
 
 ### Removed
 * **BREAKING**: Removed type aliases `Class`, `Ivar`, `Method` and `Protocol`

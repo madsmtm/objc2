@@ -23,14 +23,14 @@ links = "block_0_0"
 build = "build.rs"
 
 [features]
+# The default runtime is Apple's. Other platforms will probably error if the
+# correct feature flag is not specified.
+default = ["apple"]
+
 # Link to Apple's libclosure (exists in libSystem)
-#
-# This is the default on Apple platforms
 apple = []
 
 # Link to libBlocksRuntime from compiler-rt
-#
-# This is the default on non-Apple platforms
 compiler-rt = []
 
 # Link to GNUStep's libobjc2 (which contains the block implementation)
@@ -51,3 +51,4 @@ objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
+no-default-features = true

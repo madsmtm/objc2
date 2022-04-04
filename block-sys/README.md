@@ -20,9 +20,9 @@ several different helper functions), the most important aspect being that the
 libraries are named differently, so the linking must take that into account.
 
 The user can choose the desired runtime by using the relevant cargo feature
-flags, see the following sections. Note that if the `objc-sys` crate is
-present in the module tree, this should have the same feature flag enabled as
-that.
+flags, see the following sections (might have to disable the default `apple`
+feature first). Note that if the `objc-sys` crate is present in the module
+tree, this should have the same feature flag enabled as that.
 
 
 ### Apple's [`libclosure`](https://github.com/apple-oss-distributions/libclosure)
@@ -30,8 +30,7 @@ that.
 - Feature flag: `apple`.
 
 This is naturally the most sophisticated runtime, and it has quite a lot more
-features than the specification mandates. This is used by default on Apple
-platforms when no feature flags are specified.
+features than the specification mandates. This is used by default.
 
 The minimum required operating system versions are as follows:
 - macOS: `10.6`
@@ -45,9 +44,6 @@ Though in practice Rust itself requires higher versions than this.
 ### LLVM `compiler-rt`'s [`libBlocksRuntime`](https://github.com/llvm/llvm-project/tree/release/13.x/compiler-rt/lib/BlocksRuntime)
 
 - Feature flag: `compiler-rt`.
-
-This is the default runtime on all non-Apple platforms when no feature flags
-are specified.
 
 This is effectively just a copy of Apple's older (around macOS 10.6) runtime,
 and is now used in [Swift's `libdispatch`] and [Swift's Foundation] as well.

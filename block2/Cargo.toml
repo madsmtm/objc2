@@ -18,6 +18,8 @@ documentation = "https://docs.rs/block2/"
 license = "MIT"
 
 [features]
+default = ["apple"]
+
 # Runtime selection. Default is `apple`. See `block-sys` for details.
 apple = ["block-sys/apple"]
 compiler-rt = ["block-sys/compiler-rt"]

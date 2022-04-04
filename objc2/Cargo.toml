@@ -21,6 +21,8 @@ build = "build.rs"
 # NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
 # and may be removed in a minor release.
 [features]
+default = ["apple"]
+
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["cc"]
 
