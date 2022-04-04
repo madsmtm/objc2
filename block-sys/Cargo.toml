@@ -34,7 +34,7 @@ apple = []
 compiler-rt = []
 
 # Link to GNUStep's libobjc2 (which contains the block implementation)
-gnustep-1-7 = ["objc-sys/gnustep-1-7"]
+gnustep-1-7 = ["objc-sys", "objc-sys/gnustep-1-7"]
 gnustep-1-8 = ["objc-sys/gnustep-1-8", "gnustep-1-7"]
 gnustep-1-9 = ["objc-sys/gnustep-1-9", "gnustep-1-8"]
 gnustep-2-0 = ["objc-sys/gnustep-2-0", "gnustep-1-9"]

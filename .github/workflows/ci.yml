@@ -79,15 +79,15 @@ jobs:
           - name: Test GNUStep
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            host-args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
-            args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
+            host-args: --features gnustep-1-9
+            args: --features gnustep-1-9
           - name: Test GNUStep 32bit
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
             cflags: -m32
             configureflags: --target=x86-pc-linux-gnu
-            host-args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
-            args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
+            host-args: --features gnustep-1-9
+            args: --features gnustep-1-9
           - name: Test iOS simulator x86 64bit
             os: macos-11
             target: x86_64-apple-ios

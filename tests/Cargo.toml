@@ -20,6 +20,16 @@ build = "build.rs"
 ui = ["trybuild"]
 assembly = ["cargo_metadata"]
 
+# Runtime features. Rely on `objc2-foundation` and `block2` to enable these
+# for the other dependencies.
+apple = ["block2/apple", "objc2-foundation/apple"]
+gnustep-1-7 = ["block2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "block2/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
+winobjc = ["gnustep-1-8", "block2/winobjc", "objc2-foundation/winobjc"]
+
 [dependencies]
 block2 = { path = "../block2" }
 block-sys = { path = "../block-sys" }
