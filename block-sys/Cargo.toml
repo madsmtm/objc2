@@ -19,7 +19,7 @@ readme = "README.md"
 
 # Downstream users can customize the linking!
 # See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
-links = "block"
+links = "block_0_0"
 build = "build.rs"
 
 [features]

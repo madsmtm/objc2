@@ -142,7 +142,7 @@ fn main() {
     };
     println!("cargo:rustc-cfg={}", runtime_cfg);
     // Allow downstream build scripts to do the same
-    println!("cargo:runtime={}", runtime_cfg); // DEP_OBJC_RUNTIME
+    println!("cargo:runtime={}", runtime_cfg); // DEP_OBJC_[version]_RUNTIME
 
     // Tell downstream build scripts our features
     // match &runtime {
@@ -225,7 +225,7 @@ fn main() {
         "cargo:cc_args=-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={}",
         // TODO: -fobjc-weak ?
         clang_runtime
-    ); // DEP_OBJC_CC_ARGS
+    ); // DEP_OBJC_[version]_CC_ARGS
 
     // Link to libobjc
     println!("cargo:rustc-link-lib=dylib=objc");

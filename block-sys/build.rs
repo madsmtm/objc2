@@ -58,6 +58,6 @@ fn main() {
         (_, _, _, _) => panic!("Invalid feature combination; only one runtime may be selected!"),
     }
 
-    // Add DEP_BLOCK_CC_ARGS
+    // Add DEP_BLOCK_[version]_CC_ARGS
     println!("cargo:cc_args={}", cc_args);
 }
