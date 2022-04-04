@@ -79,15 +79,13 @@ jobs:
           - name: Test GNUStep
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            host-args: --no-default-features --features gnustep-1-9
-            args: --no-default-features --features objc2-foundation/block --features gnustep-1-9
+            runtime: gnustep-1-9
           - name: Test GNUStep 32bit
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
             cflags: -m32
             configureflags: --target=x86-pc-linux-gnu
-            host-args: --no-default-features --features gnustep-1-9
-            args: --no-default-features --features objc2-foundation/block --features gnustep-1-9
+            runtime: gnustep-1-9
           - name: Test iOS simulator x86 64bit
             os: macos-11
             target: x86_64-apple-ios
@@ -134,8 +132,10 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
+      HOSTARGS: --no-default-features --features ${{ matrix.runtime || 'apple' }}
+      ARGS: --no-default-features --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
-      TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.args }} ${{ matrix.test-args }}
+      TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
 
     runs-on: ${{ matrix.os }}
 
@@ -280,42 +280,42 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: ${{ matrix.args }}
+        args: ${{ env.ARGS }}
 
     - name: Check documentation
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: doc
-        args: --no-deps --document-private-items ${{ matrix.args }}
+        args: ${{ env.ARGS }} --no-deps --document-private-items
 
     - name: Test without features
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --no-default-features ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }}
 
     - name: Test with features
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --features ${{ env.FEATURES }} ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }}
 
-    - name: Test in release mode
+    - name: Test in release mode without features
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --no-default-features ${{ env.TESTARGS }} --release
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --release
 
     - name: Test in release mode with features
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --features ${{ env.FEATURES }} ${{ env.TESTARGS }} --release
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }} --release
 
     - name: Run benchmarks
       # Difficult to install Valgrind on macOS
@@ -324,7 +324,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: bench
-        args: --bench autorelease ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --bench autorelease
 
     - name: Test with unstable features
       if: ${{ !matrix.dinghy && matrix.rust.toolchain == 'nightly' }}
@@ -332,7 +332,7 @@ jobs:
       with:
         command: test
         # Not using --all-features because that would enable e.g. gnustep
-        args: --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }} ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
     - name: Run assembly tests
       # Not run on GNUStep yet since a lot of function labels are mangled and
@@ -343,7 +343,7 @@ jobs:
       run:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
 
-        cargo run ${{ matrix.host-args }} --features assembly --target=$HOST_TARGET test_assembly ${{ matrix.args }}
+        cargo run ${{ env.HOSTARGS }} --features assembly --target=$HOST_TARGET test_assembly ${{ env.ARGS }}
 
     - name: Run Cargo Dinghy
       if: matrix.dinghy
@@ -355,16 +355,16 @@ jobs:
         xcrun simctl boot $SIM_ID
 
         # Build
-        cargo dinghy --device=$SIM_ID build
+        cargo dinghy --device=$SIM_ID build ${{ env.ARGS }}
 
         # Run tests
-        cargo dinghy --device=$SIM_ID test --no-default-features
-        cargo dinghy --device=$SIM_ID test --release
+        cargo dinghy --device=$SIM_ID test ${{ env.ARGS }}
+        cargo dinghy --device=$SIM_ID test ${{ env.ARGS }} --release
 
         # Enable a few features. We're doing it this way because cargo dingy
         # doesn't support specifying features from a workspace.
         sed -i -e '/\[features\]/a\
         default = ["exception", "verify_message", "catch_all"]
         ' objc2/Cargo.toml
-        cargo dinghy --device=$SIM_ID test
-        cargo dinghy --device=$SIM_ID test --release
+        cargo dinghy --device=$SIM_ID test ${{ env.ARGS }}
+        cargo dinghy --device=$SIM_ID test ${{ env.ARGS }} --release
