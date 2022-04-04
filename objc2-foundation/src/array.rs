@@ -43,7 +43,7 @@ unsafe impl<T: Send> Send for NSArray<T, Owned> {}
 object! {
     // TODO: Ensure that this deref to NSArray is safe!
     // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
-    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O> {}
+    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O>, NSObject {}
 }
 
 unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Object {

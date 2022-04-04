@@ -6,13 +6,13 @@ use core::str;
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 
-use crate::{NSCopying, NSMutableCopying, NSString};
+use crate::{NSCopying, NSMutableCopying, NSObject, NSString};
 
 object! {
     /// A dynamic plain-text Unicode string object.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutablestring?language=objc).
-    unsafe pub struct NSMutableString: NSString;
+    unsafe pub struct NSMutableString: NSString, NSObject;
 }
 
 // TODO: SAFETY

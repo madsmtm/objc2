@@ -1,13 +1,13 @@
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 
-use crate::{NSAttributedString, NSCopying, NSMutableCopying, NSString};
+use crate::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
 
 object! {
     /// A mutable string that has associated attributes.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutableattributedstring?language=objc).
-    unsafe pub struct NSMutableAttributedString: NSAttributedString;
+    unsafe pub struct NSMutableAttributedString: NSAttributedString, NSObject;
 }
 
 // TODO: SAFETY
