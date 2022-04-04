@@ -301,7 +301,6 @@ pub struct Block_descriptor {
 ///
 /// Requires BLOCK_HAS_SIGNATURE
 #[repr(C)]
-#[cfg(not(feature = "objfw"))]
 pub struct Block_descriptor_basic {
     pub header: Block_descriptor_header,
 

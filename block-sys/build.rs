@@ -47,12 +47,19 @@ fn main() {
             // work (on newer GNUStep versions these headers are present)
             if env::var_os("CARGO_FEATURE_GNUSTEP_2_0").is_none() {
                 let compat_headers =
-                    Path::new(env!("CARGO_MANIFEST_DIR")).join("gnustep-compat-headers");
+                    Path::new(env!("CARGO_MANIFEST_DIR")).join("compat-headers/gnustep");
                 cc_args.push_str(" -I");
                 cc_args.push_str(compat_headers.to_str().unwrap());
             }
         }
-        (false, false, false, true) => unimplemented!(),
+        (false, false, false, true) => {
+            // Add compability headers to make `#include <Block.h>` work.
+            let compat_headers = Path::new(env!("CARGO_MANIFEST_DIR")).join("compat-headers/objfw");
+            cc_args.push_str(" -I");
+            cc_args.push_str(compat_headers.to_str().unwrap());
+            println!("cargo:rustc-link-lib=dylib=objfw");
+            unimplemented!("ObjFW is not yet supported")
+        }
         // Checked in if-let above
         (false, false, false, false) => unreachable!(),
         (_, _, _, _) => panic!("Invalid feature combination; only one runtime may be selected!"),
