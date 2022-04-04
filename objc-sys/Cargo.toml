@@ -1,6 +1,8 @@
 [package]
 name = "objc-sys"
-version = "0.2.0-alpha.1" # Remember to update html_root_url in lib.rs
+# Remember to update `html_root_url` in lib.rs, the `links` key, and the
+# exception function name.
+version = "0.2.0-alpha.1"
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 
@@ -42,6 +44,12 @@ winobjc = ["gnustep-1-8"]
 
 # TODO
 objfw = []
+
+# Private/unstable features - must not be relied on!
+unstable-exception = ["cc"]
+
+[build-dependencies]
+cc = { version = "1", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

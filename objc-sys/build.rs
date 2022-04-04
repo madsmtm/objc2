@@ -211,4 +211,25 @@ fn main() {
         // Link to libobjc
         println!("cargo:rustc-link-lib=dylib=objc");
     }
+
+    // We do this compilation step here instead of in `objc2` to cut down on
+    // the total number of build scripts required.
+    #[cfg(feature = "unstable-exception")]
+    {
+        if std::env::var("DOCS_RS").is_ok() {
+            // docs.rs doesn't have clang, so skip building this. The
+            // documentation will still work since it doesn't need to link.
+            return;
+        }
+        println!("cargo:rerun-if-changed=extern/exception.m");
+
+        let mut builder = cc::Build::new();
+        builder.file("extern/exception.m");
+
+        for flag in cc_args.split(' ') {
+            builder.flag(flag);
+        }
+
+        builder.compile("librust_objc_sys_0_2_try_catch_exception.a");
+    }
 }

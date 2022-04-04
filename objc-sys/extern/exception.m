@@ -6,8 +6,10 @@
 /// See <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-runtime-objc-retain>.
 id objc_retain(id value);
 
-// We return `unsigned char`, since it is guaranteed to be an `u8` on all platforms
-unsigned char rust_objc_try_catch_exception(void (*f)(void *), void *context, id *error) {
+/// Unsure how C name resolution works, so we make sure to version this symbol.
+///
+/// Return `unsigned char` since it is guaranteed to be `u8` on all platforms.
+unsigned char rust_objc_sys_0_2_try_catch_exception(void (*f)(void *), void *context, id *error) {
     @try {
         f(context);
         if (error) {

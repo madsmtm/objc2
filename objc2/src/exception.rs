@@ -20,34 +20,10 @@
 use core::ffi::c_void;
 use core::mem;
 use core::ptr;
-use std::os::raw::c_uchar;
 
 use crate::ffi;
 use crate::rc::{Id, Shared};
 use crate::runtime::Object;
-
-extern "C" {
-    /// Call the given function inside an Objective-C `@try/@catch` block.
-    ///
-    /// Defined in `extern/exception.m` and compiled in `build.rs`.
-    ///
-    /// Alternatively, we could manually write assembly for this function like
-    /// [`objrs` does][manual-asm] does, that would cut down on a build stage
-    /// (and would probably give us a bit better performance), but it gets
-    /// unwieldy _very_ quickly, so I chose the much more stable option.
-    ///
-    /// Another thing to remember: While Rust's and Objective-C's unwinding
-    /// mechanisms are similar now, Rust's is explicitly unspecified, and they
-    /// may diverge significantly in the future; so handling this in pure Rust
-    /// (using mechanisms like core::intrinsics::r#try) is not an option!
-    ///
-    /// [manual-asm]: https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/exception.rs
-    fn rust_objc_try_catch_exception(
-        f: extern "C" fn(*mut c_void),
-        context: *mut c_void,
-        error: *mut *mut ffi::objc_object,
-    ) -> c_uchar;
-}
 
 /// Throws an Objective-C exception.
 ///
@@ -87,7 +63,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
     let context = &mut closure as *mut _ as *mut c_void;
 
     let mut exception = ptr::null_mut();
-    let success = unsafe { rust_objc_try_catch_exception(f, context, &mut exception) };
+    let success = unsafe { ffi::rust_objc_sys_0_2_try_catch_exception(f, context, &mut exception) };
 
     if success == 0 {
         Ok(())

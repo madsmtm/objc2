@@ -2,10 +2,12 @@
 //! Apple: `objc-exception.h`
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
-#[cfg(not(objfw))]
+#[cfg(any(not(objfw), feature = "unstable-exception"))]
 use core::ffi::c_void;
 #[cfg(apple)]
 use std::os::raw::c_int;
+#[cfg(feature = "unstable-exception")]
+use std::os::raw::c_uchar;
 
 #[cfg(apple)]
 use crate::objc_class;
@@ -73,4 +75,26 @@ extern_c! {
     //
     // #[cfg(gnustep)]
     // pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: c_int) -> c_int;
+
+    /// Call the given function inside an Objective-C `@try/@catch` block.
+    ///
+    /// Defined in `extern/exception.m` and compiled in `build.rs`.
+    ///
+    /// Alternatively, we could manually write assembly for this function like
+    /// [`objrs` does][manual-asm] does, that would cut down on a build stage
+    /// (and would probably give us a bit better performance), but it gets
+    /// unwieldy _very_ quickly, so I chose the much more stable option.
+    ///
+    /// Another thing to remember: While Rust's and Objective-C's unwinding
+    /// mechanisms are similar now, Rust's is explicitly unspecified, and they
+    /// may diverge significantly in the future; so handling this in pure Rust
+    /// (using mechanisms like core::intrinsics::r#try) is not an option!
+    ///
+    /// [manual-asm]: https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/exception.rs
+    #[cfg(feature = "unstable-exception")]
+    pub fn rust_objc_sys_0_2_try_catch_exception(
+        f: extern "C" fn(*mut c_void),
+        context: *mut c_void,
+        error: *mut *mut objc_object,
+    ) -> c_uchar;
 }
