@@ -85,6 +85,7 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block2/0.2.0-alpha.4")]
 
+extern crate alloc;
 extern crate std;
 
 #[cfg(doctest)]
@@ -101,6 +102,7 @@ use std::os::raw::c_ulong;
 pub use block_sys as ffi;
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
+mod debug;
 #[macro_use]
 mod global;
 
