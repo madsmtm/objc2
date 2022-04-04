@@ -1,8 +1,6 @@
 //! Objective-C type aliases.
 
-use crate::{
-    objc_class, objc_ivar, objc_method, objc_object, objc_property, objc_protocol, objc_selector,
-};
+use crate::{objc_object, objc_selector};
 
 /// The BOOL typedef for Apple's objc4.
 ///
@@ -55,10 +53,16 @@ mod inner {
     pub type BOOL = u8;
 }
 
-// ObjFW???
+// ObjFW
 #[cfg(objfw)]
 mod inner {
-    pub type BOOL = todo!();
+    // Defined in ObjFW-RT.h
+    // C: signed char
+    // This has changed since v0.90, but we don't support that yet.
+    pub type BOOL = i8;
+
+    // Note that ObjFW uses `bool` in return types, but that doesn't change
+    // the ABI, so we'll just use `BOOL` there for ease of use.
 }
 
 /// The Objective-C `BOOL` type.
@@ -150,6 +154,9 @@ pub type NSInteger = isize;
 ///
 /// ```
 /// use objc_sys::NSUInteger;
+/// // Or:
+/// // use objc2::ffi::NSUInteger;
+/// // use objc2_foundation::NSUInteger;
 /// extern "C" {
 ///     fn some_external_function() -> NSUInteger;
 /// }
@@ -177,39 +184,13 @@ pub const NSUIntegerMax: NSUInteger = NSUInteger::MAX;
 
 /// An immutable pointer to a selector.
 ///
-/// Type alias provided for convenience.
+/// Type alias provided for convenience. See `objc2::runtime::Sel` for a
+/// higher level binding.
 pub type SEL = *const objc_selector;
-
-/// A mutable pointer to a class.
-///
-/// Type alias provided for convenience.
-pub type Class = *mut objc_class;
 
 /// A mutable pointer to an object / instance.
 ///
-/// Type alias provided for convenience.
+/// Type alias provided for convenience. See `objc2::runtime::Object` for a
+/// higher level binding, and `objc2::rc::Id` for an easier way of handling
+/// objects.
 pub type id = *mut objc_object;
-
-/// An immutable pointer to an instance variable.
-///
-/// Type alias provided for convenience.
-pub type Ivar = *const objc_ivar;
-
-/// A mutable pointer to a method.
-///
-/// Type alias provided for convenience.
-pub type Method = *mut objc_method;
-
-/// An opaque type that represents a protocol.
-///
-/// This is not just a type alias of [`objc_object`], but of [`objc_protocol`]
-/// instead, for better type safety. Their internal representation is the same,
-/// so the functionality is just a cast away.
-///
-/// Type alias provided for convenience.
-pub type Protocol = objc_protocol;
-
-/// A mutable pointer to a property.
-///
-/// Type alias provided for convenience.
-pub type objc_property_t = *mut objc_property;

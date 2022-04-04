@@ -2,6 +2,7 @@
 //! Apple: `objc-exception.h`
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
+#[cfg(not(objfw))]
 use core::ffi::c_void;
 #[cfg(apple)]
 use std::os::raw::c_int;
@@ -24,6 +25,10 @@ pub type objc_exception_preprocessor =
 #[cfg(apple)]
 pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut objc_object);
 
+#[cfg(objfw)]
+pub type objc_uncaught_exception_handler =
+    Option<unsafe extern "C" fn(exception: *mut objc_object)>;
+
 /// Only available on macOS.
 ///
 /// Remember that this is non-null!
@@ -32,7 +37,9 @@ pub type objc_exception_handler =
     unsafe extern "C" fn(unused: *mut objc_object, context: *mut c_void);
 
 extern_c! {
+    #[cfg(not(objfw))]
     pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;
+    #[cfg(not(objfw))]
     pub fn objc_end_catch();
     /// See [`objc-exception.h`].
     ///
@@ -49,7 +56,7 @@ extern_c! {
     pub fn objc_setExceptionPreprocessor(
         f: objc_exception_preprocessor,
     ) -> objc_exception_preprocessor;
-    #[cfg(apple)]
+    #[cfg(any(apple, objfw))]
     pub fn objc_setUncaughtExceptionHandler(
         f: objc_uncaught_exception_handler,
     ) -> objc_uncaught_exception_handler;

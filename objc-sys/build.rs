@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, path::Path};
 
 /// TODO: Better validation of this
 ///
@@ -114,7 +114,9 @@ fn main() {
             }
         }
         (false, false, true) => {
-            unimplemented!()
+            // For now
+            unimplemented!("ObjFW is not yet supported")
+            // ObjFW(None)
         }
         (false, false, false) => {
             // Choose sensible defaults when generating docs
@@ -142,7 +144,7 @@ fn main() {
     };
     println!("cargo:rustc-cfg={}", runtime_cfg);
     // Allow downstream build scripts to do the same
-    println!("cargo:runtime={}", runtime_cfg); // DEP_OBJC_RUNTIME
+    println!("cargo:runtime={}", runtime_cfg); // DEP_OBJC_[version]_RUNTIME
 
     // Tell downstream build scripts our features
     // match &runtime {
@@ -202,8 +204,8 @@ fn main() {
         WinObjC => "gnustep-1.8".into(),
         ObjFW(version) => {
             // Default in clang
-            let _version = version.as_deref().unwrap_or("0.8");
-            todo!()
+            let version = version.as_deref().unwrap_or("0.8");
+            format!("objfw-{}", version)
         }
     };
 
@@ -221,12 +223,27 @@ fn main() {
     // - `-miphoneos-version-min={}`
     // - `-mmacosx-version-min={}`
     // - ...
-    println!(
-        "cargo:cc_args=-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={}",
-        // TODO: -fobjc-weak ?
+    //
+    // TODO: -fobjc-weak ?
+    let mut cc_args = format!(
+        "-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={}",
         clang_runtime
-    ); // DEP_OBJC_CC_ARGS
+    );
 
-    // Link to libobjc
-    println!("cargo:rustc-link-lib=dylib=objc");
+    if let Runtime::ObjFW(_) = &runtime {
+        // Add compability headers to make `#include <objc/objc.h>` work.
+        let compat_headers = Path::new(env!("CARGO_MANIFEST_DIR")).join("compat-headers-objfw");
+        cc_args.push_str(" -I");
+        cc_args.push_str(compat_headers.to_str().unwrap());
+    }
+
+    println!("cargo:cc_args={}", cc_args); // DEP_OBJC_[version]_CC_ARGS
+
+    if let Runtime::ObjFW(_) = &runtime {
+        // Link to libobjfw-rt
+        println!("cargo:rustc-link-lib=dylib=objfw-rt");
+    } else {
+        // Link to libobjc
+        println!("cargo:rustc-link-lib=dylib=objc");
+    }
 }

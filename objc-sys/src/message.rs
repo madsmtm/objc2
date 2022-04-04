@@ -4,7 +4,7 @@
 //!
 //! TODO: Some of these are only supported on _some_ GNUStep targets!
 use crate::{objc_class, objc_object};
-#[cfg(gnustep)]
+#[cfg(any(gnustep, objfw))]
 use crate::{objc_selector, IMP};
 
 /// Specifies data used when sending messages to superclasses.
@@ -21,16 +21,21 @@ pub struct objc_super {
 }
 
 extern_c! {
-    #[cfg(gnustep)]
+    #[cfg(any(gnustep, objfw))]
     pub fn objc_msg_lookup(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
-    #[cfg(gnustep)]
+    #[cfg(objfw)]
+    pub fn objc_msg_lookup_stret(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
+    #[cfg(any(gnustep, objfw))]
     pub fn objc_msg_lookup_super(sup: *const objc_super, sel: *const objc_selector) -> IMP;
+    #[cfg(objfw)]
+    pub fn objc_msg_lookup_super_stret(sup: *const objc_super, sel: *const objc_selector) -> IMP;
     // #[cfg(gnustep)]
     // objc_msg_lookup_sender
     // objc_msgLookup family available in macOS >= 10.12
 
     // objc_msgSend_noarg
 
+    #[cfg(not(objfw))]
     pub fn objc_msgSend();
     // objc_msgSend_debug
 
@@ -48,7 +53,7 @@ extern_c! {
     // Struct return. Not available on __arm64__:
 
     /// Not available on `target_arch = "aarch64"`
-    #[cfg(not(target_arch = "aarch64"))]
+    #[cfg(all(not(objfw), not(target_arch = "aarch64")))]
     pub fn objc_msgSend_stret();
     // objc_msgSend_stret_debug
 
@@ -64,14 +69,14 @@ extern_c! {
     /// Not available on `target_arch = "aarch64"`
     #[cfg(all(apple, not(target_arch = "aarch64")))]
     pub fn _objc_msgForward_stret();
-    /// Not available on `target_arch = "aarch64"`
-    #[cfg(not(target_arch = "aarch64"))]
+    /// Not available on `target_arch = "aarch64"`, always available on ObjFW
+    #[cfg(any(objfw, not(target_arch = "aarch64")))]
     pub fn class_getMethodImplementation_stret();
 
     // __x86_64__ and __i386__
 
     /// Only available on `target_arch = "x86_64"` or `target_arch = "x86"`
-    #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
+    #[cfg(all(not(objfw), any(target_arch = "x86_64", target_arch = "x86")))]
     pub fn objc_msgSend_fpret();
     // objc_msgSend_fpret_debug
 

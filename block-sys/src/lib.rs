@@ -9,8 +9,11 @@
 //!
 //! [ABI]: https://clang.llvm.org/docs/Block-ABI-Apple.html
 
+#![no_std]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block-sys/0.0.3")]
+
+extern crate std;
 
 // Ensure linkage actually happens
 #[cfg(feature = "gnustep-1-7")]
@@ -298,7 +301,6 @@ pub struct Block_descriptor {
 ///
 /// Requires BLOCK_HAS_SIGNATURE
 #[repr(C)]
-#[cfg(not(feature = "objfw"))]
 pub struct Block_descriptor_basic {
     pub header: Block_descriptor_header,
 
@@ -387,4 +389,51 @@ pub struct Block_byref {
 pub struct Block_byref_extended {
     pub inner: Block_byref,
     pub layout: *const c_char,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use core::ptr;
+    use std::println;
+
+    #[test]
+    fn smoke() {
+        assert_eq!(unsafe { _Block_copy(ptr::null()) }, ptr::null_mut());
+    }
+
+    #[test]
+    fn test_linkable() {
+        println!("{:p}", unsafe { &_NSConcreteGlobalBlock });
+        println!("{:p}", unsafe { &_NSConcreteStackBlock });
+        println!("{:p}", unsafe { &_NSConcreteMallocBlock });
+        println!(
+            "{:p}",
+            _Block_copy as unsafe extern "C" fn(*const c_void) -> *mut c_void
+        );
+        println!(
+            "{:p}",
+            _Block_object_assign
+                as unsafe extern "C" fn(*mut c_void, *const c_void, block_assign_dispose_flags)
+        );
+        println!(
+            "{:p}",
+            _Block_object_dispose
+                as unsafe extern "C" fn(*const c_void, block_assign_dispose_flags)
+        );
+        println!(
+            "{:p}",
+            _Block_release as unsafe extern "C" fn(*const c_void)
+        );
+        #[cfg(any(feature = "apple", feature = "compiler-rt"))]
+        {
+            println!("{:p}", unsafe { &_NSConcreteAutoBlock });
+            println!("{:p}", unsafe { &_NSConcreteFinalizingBlock });
+            println!("{:p}", unsafe { &_NSConcreteWeakBlockVariable });
+            println!(
+                "{:p}",
+                Block_size as unsafe extern "C" fn(*mut c_void) -> c_ulong
+            );
+        }
+    }
 }

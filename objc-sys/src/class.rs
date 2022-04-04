@@ -1,9 +1,8 @@
 use std::os::raw::{c_char, c_int, c_uint};
 
-use crate::{
-    objc_ivar, objc_method, objc_object, objc_property, objc_property_attribute_t, objc_protocol,
-    objc_selector, OpaqueData, BOOL, IMP,
-};
+#[cfg(not(objfw))]
+use crate::{objc_ivar, objc_method, objc_object, objc_property, objc_property_attribute_t};
+use crate::{objc_protocol, objc_selector, OpaqueData, BOOL, IMP};
 
 /// An opaque type that represents an Objective-C class.
 #[repr(C)]
@@ -14,6 +13,7 @@ pub struct objc_class {
     _p: OpaqueData,
 }
 
+#[cfg(not(objfw))]
 /// This is `c_char` in GNUStep's libobjc2 and `uint8_t` in Apple's objc4.
 ///
 /// The pointer represents opaque data, and is definitely not just an integer,
@@ -27,6 +27,7 @@ extern_c! {
     pub fn objc_getClass(name: *const c_char) -> *const objc_class;
     pub fn objc_getRequiredClass(name: *const c_char) -> *const objc_class;
     pub fn objc_lookUpClass(name: *const c_char) -> *const objc_class;
+    #[cfg(not(objfw))]
     pub fn objc_getMetaClass(name: *const c_char) -> *const objc_class;
     pub fn objc_copyClassList(out_len: *mut c_uint) -> *mut *const objc_class;
     pub fn objc_getClassList(buffer: *mut *const objc_class, buffer_len: c_int) -> c_int;
@@ -42,9 +43,11 @@ extern_c! {
         name: *const c_char,
         extra_bytes: usize,
     ) -> *mut objc_class;
+    #[cfg(not(objfw))]
     pub fn objc_disposeClassPair(cls: *mut objc_class);
     pub fn objc_registerClassPair(cls: *mut objc_class);
 
+    #[cfg(not(objfw))]
     pub fn class_addIvar(
         cls: *mut objc_class,
         name: *const c_char,
@@ -58,53 +61,68 @@ extern_c! {
         imp: IMP,
         types: *const c_char,
     ) -> BOOL;
+    #[cfg(not(objfw))]
     pub fn class_addProperty(
         cls: *mut objc_class,
         name: *const c_char,
         attributes: *const objc_property_attribute_t,
         attributes_count: c_uint,
     ) -> BOOL;
+    #[cfg(not(objfw))]
     pub fn class_addProtocol(cls: *mut objc_class, protocol: *const objc_protocol) -> BOOL;
     pub fn class_conformsToProtocol(cls: *const objc_class, protocol: *const objc_protocol)
         -> BOOL;
+
+    #[cfg(not(objfw))] // Available in newer versions
     pub fn class_copyIvarList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_ivar;
+    #[cfg(not(objfw))] // Available in newer versions
     pub fn class_copyMethodList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_method;
+    #[cfg(not(objfw))] // Available in newer versions
     pub fn class_copyPropertyList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_property;
+    #[cfg(not(objfw))]
     pub fn class_copyProtocolList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_protocol;
 
+    #[cfg(not(objfw))]
     pub fn class_createInstance(cls: *const objc_class, extra_bytes: usize) -> *mut objc_object;
+    #[cfg(not(objfw))]
     pub fn class_getClassMethod(
         cls: *const objc_class,
         name: *const objc_selector,
     ) -> *const objc_method;
+    #[cfg(not(objfw))]
     pub fn class_getClassVariable(cls: *const objc_class, name: *const c_char) -> *const objc_ivar;
     #[cfg(apple)]
     pub fn class_getImageName(cls: *const objc_class) -> *const c_char;
+    #[cfg(not(objfw))] // Available in newer versions
     pub fn class_getInstanceMethod(
         cls: *const objc_class,
         name: *const objc_selector,
     ) -> *const objc_method;
     pub fn class_getInstanceSize(cls: *const objc_class) -> usize;
+    #[cfg(not(objfw))]
     pub fn class_getInstanceVariable(
         cls: *const objc_class,
         name: *const c_char,
     ) -> *const objc_ivar;
+    #[cfg(not(objfw))]
     pub fn class_getIvarLayout(cls: *const objc_class) -> *const ivar_layout_type;
     pub fn class_getName(cls: *const objc_class) -> *const c_char;
+    #[cfg(not(objfw))]
     pub fn class_getProperty(cls: *const objc_class, name: *const c_char) -> *const objc_property;
     pub fn class_getSuperclass(cls: *const objc_class) -> *const objc_class;
+    #[cfg(not(objfw))]
     pub fn class_getVersion(cls: *const objc_class) -> c_int;
     #[cfg(apple)]
     pub fn class_getWeakIvarLayout(cls: *const objc_class) -> *const ivar_layout_type;
@@ -115,6 +133,7 @@ extern_c! {
         imp: IMP,
         types: *const c_char,
     ) -> IMP;
+    #[cfg(not(objfw))]
     pub fn class_replaceProperty(
         cls: *mut objc_class,
         name: *const c_char,
@@ -122,7 +141,9 @@ extern_c! {
         attributes_len: c_uint,
     );
     pub fn class_respondsToSelector(cls: *const objc_class, sel: *const objc_selector) -> BOOL;
+    #[cfg(not(objfw))]
     pub fn class_setIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);
+    #[cfg(not(objfw))]
     pub fn class_setVersion(cls: *mut objc_class, version: c_int);
     #[cfg(apple)]
     pub fn class_setWeakIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);

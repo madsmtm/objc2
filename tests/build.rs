@@ -4,14 +4,14 @@ fn main() {
     println!("cargo:rerun-if-changed=extern/block_utils.c");
     println!("cargo:rerun-if-changed=extern/encode_utils.m");
 
-    let runtime = env::var("DEP_OBJC_RUNTIME").unwrap();
+    let runtime = env::var("DEP_OBJC_0_2_RUNTIME").unwrap();
     println!("cargo:rustc-cfg={}", runtime);
 
     let mut builder = cc::Build::new();
     builder.compiler("clang");
     builder.file("extern/block_utils.c");
 
-    for flag in env::var("DEP_BLOCK_CC_ARGS").unwrap().split(' ') {
+    for flag in env::var("DEP_BLOCK_0_0_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);
     }
 
@@ -21,7 +21,7 @@ fn main() {
     builder.compiler("clang");
     builder.file("extern/encode_utils.m");
 
-    for flag in env::var("DEP_OBJC_CC_ARGS").unwrap().split(' ') {
+    for flag in env::var("DEP_OBJC_0_2_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);
     }
 

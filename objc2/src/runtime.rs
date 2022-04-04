@@ -53,7 +53,7 @@ pub struct Class(ffi::objc_class);
 
 /// A type that represents an Objective-C protocol.
 #[repr(C)]
-pub struct Protocol(ffi::Protocol);
+pub struct Protocol(ffi::objc_protocol);
 
 macro_rules! standard_pointer_impls {
     ($($name:ident),*) => {
@@ -412,7 +412,7 @@ impl fmt::Debug for Class {
 }
 
 impl Protocol {
-    pub(crate) fn as_ptr(&self) -> *const ffi::Protocol {
+    pub(crate) fn as_ptr(&self) -> *const ffi::objc_protocol {
         self as *const Self as *const _
     }
 

@@ -19,7 +19,7 @@ readme = "README.md"
 
 # Downstream users can customize the linking to libobjc!
 # See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
-links = "objc"
+links = "objc_0_2"
 build = "build.rs"
 
 # The default is `apple` on Apple platforms; all other platforms will error

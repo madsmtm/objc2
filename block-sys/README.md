@@ -94,8 +94,8 @@ TODO.
 
 To our knowledge, currently only `clang` supports the [Language Specification
 for Blocks][block-lang]. To assist in compiling C (or Objective-C) sources
-using these features, this crate's build script expose the `DEP_BLOCK_CC_ARGS`
-environment variable to downstream build scripts.
+using these features, this crate's build script expose the
+`DEP_BLOCK_0_0_CC_ARGS` environment variable to downstream build scripts.
 
 Example usage in your `build.rs` (using the `cc` crate) would be as follows:
 
@@ -105,7 +105,7 @@ fn main() {
     builder.compiler("clang");
     builder.file("my_script_using_blocks.c");
 
-    for flag in std::env::var("DEP_BLOCK_CC_ARGS").unwrap().split(' ') {
+    for flag in std::env::var("DEP_BLOCK_0_0_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);
     }
 
