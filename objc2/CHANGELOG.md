@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * The `objc2-encode` dependency is now exposed as `objc2::encode`.
 * Added `Id::retain_autoreleased` to allow following Cocoas memory management
   rules more efficiently.
+* Consistently allow trailing commas in `msg_send!`.
 
 ### Changed
 * **BREAKING**: Changed signature of `Id::new` and `Id::retain` from

@@ -44,15 +44,9 @@ macro_rules! class {
 /// ```
 #[macro_export]
 macro_rules! sel {
-    ($name:ident) => ({
+    ($first:ident $(: $($rest:ident :)*)?) => ({
         static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
-        let name = concat!(stringify!($name), '\0');
-        #[allow(unused_unsafe)]
-        unsafe { SEL.get(name) }
-    });
-    ($($name:ident :)+) => ({
-        static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
-        let name = concat!($(stringify!($name), ':'),+, '\0');
+        let name = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
         #[allow(unused_unsafe)]
         unsafe { SEL.get(name) }
     });
@@ -135,8 +129,8 @@ macro_rules! sel {
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[macro_export]
 macro_rules! msg_send {
-    (super($obj:expr, $superclass:expr), $name:ident) => ({
-        let sel = $crate::sel!($name);
+    [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
+        let sel = $crate::sel!($selector);
         let result;
         match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ()) {
             Err(s) => panic!("{}", s),
@@ -144,17 +138,17 @@ macro_rules! msg_send {
         }
         result
     });
-    (super($obj:expr, $superclass:expr), $($name:ident : $arg:expr $(,)?)+) => ({
-        let sel = $crate::sel!($($name:)+);
+    [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr $(,)?)+] => ({
+        let sel = $crate::sel!($($selector :)+);
         let result;
-        match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ($($arg,)+)) {
+        match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ($($argument,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
         result
     });
-    ($obj:expr, $name:ident) => ({
-        let sel = $crate::sel!($name);
+    [$obj:expr, $selector:ident $(,)?] => ({
+        let sel = $crate::sel!($selector);
         let result;
         match $crate::MessageReceiver::send_message(&$obj, sel, ()) {
             Err(s) => panic!("{}", s),
@@ -162,10 +156,10 @@ macro_rules! msg_send {
         }
         result
     });
-    ($obj:expr, $($name:ident : $arg:expr $(,)?)+) => ({
-        let sel = $crate::sel!($($name:)+);
+    [$obj:expr, $($selector:ident : $argument:expr $(,)?)+] => ({
+        let sel = $crate::sel!($($selector :)+);
         let result;
-        match $crate::MessageReceiver::send_message(&$obj, sel, ($($arg,)+)) {
+        match $crate::MessageReceiver::send_message(&$obj, sel, ($($argument,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }

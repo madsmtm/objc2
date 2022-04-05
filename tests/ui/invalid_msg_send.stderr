@@ -10,38 +10,32 @@ error: unexpected end of macro invocation
 10 |     let _: () = unsafe { msg_send![obj,] };
    |                                        ^ missing tokens in macro arguments
 
-error: no rules expected the token `,`
-  --> ui/invalid_msg_send.rs:11:42
-   |
-11 |     let _: () = unsafe { msg_send![obj, a,] }; // Could be allowed
-   |                                          ^ no rules expected this token in macro call
-
 error: unexpected end of macro invocation
-  --> ui/invalid_msg_send.rs:12:43
+  --> ui/invalid_msg_send.rs:11:43
    |
-12 |     let _: () = unsafe { msg_send![obj, a:] };
+11 |     let _: () = unsafe { msg_send![obj, a:] };
    |                                           ^ missing tokens in macro arguments
 
 error: unexpected end of macro invocation
-  --> ui/invalid_msg_send.rs:13:47
+  --> ui/invalid_msg_send.rs:12:47
    |
-13 |     let _: () = unsafe { msg_send![obj, a: b c] };
+12 |     let _: () = unsafe { msg_send![obj, a: b c] };
    |                                               ^ missing tokens in macro arguments
 
 error: no rules expected the token `d`
-  --> ui/invalid_msg_send.rs:15:49
+  --> ui/invalid_msg_send.rs:14:49
    |
-15 |     let _: () = unsafe { msg_send![obj, a: b, c d] };
+14 |     let _: () = unsafe { msg_send![obj, a: b, c d] };
    |                                                 ^ no rules expected this token in macro call
 
 error[E0412]: cannot find type `c` in this scope
-  --> ui/invalid_msg_send.rs:14:47
+  --> ui/invalid_msg_send.rs:13:47
    |
-14 |     let _: () = unsafe { msg_send![obj, a: b: c] };
+13 |     let _: () = unsafe { msg_send![obj, a: b: c] };
    |                                               ^ expecting a type here because of type ascription
 
 error[E0412]: cannot find type `c` in this scope
-  --> ui/invalid_msg_send.rs:16:47
+  --> ui/invalid_msg_send.rs:15:47
    |
-16 |     let _: () = unsafe { msg_send![obj, a: b: c] };
+15 |     let _: () = unsafe { msg_send![obj, a: b: c] };
    |                                               ^ expecting a type here because of type ascription
