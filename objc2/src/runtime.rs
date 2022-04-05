@@ -627,6 +627,7 @@ mod tests {
         test_sel!("abc", abc);
         test_sel!("abc:", abc:);
         test_sel!("abc:def:", abc:def:);
+        test_sel!("abc:def:ghi:", abc:def:ghi:);
     }
 
     #[test]

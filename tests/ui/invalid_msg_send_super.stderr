@@ -1,0 +1,29 @@
+error[E0433]: failed to resolve: there are too many leading `super` keywords
+ --> ui/invalid_msg_send_super.rs:9:36
+  |
+9 |     let _: () = unsafe { msg_send![super, init] };
+  |                                    ^^^^^ there are too many leading `super` keywords
+
+error[E0433]: failed to resolve: there are too many leading `super` keywords
+  --> ui/invalid_msg_send_super.rs:10:36
+   |
+10 |     let _: () = unsafe { msg_send![super(), init] };
+   |                                    ^^^^^ there are too many leading `super` keywords
+
+error[E0433]: failed to resolve: there are too many leading `super` keywords
+  --> ui/invalid_msg_send_super.rs:11:36
+   |
+11 |     let _: () = unsafe { msg_send![super(obj), init] };
+   |                                    ^^^^^ there are too many leading `super` keywords
+
+error[E0433]: failed to resolve: there are too many leading `super` keywords
+  --> ui/invalid_msg_send_super.rs:12:36
+   |
+12 |     let _: () = unsafe { msg_send![super(obj,), init] };
+   |                                    ^^^^^ there are too many leading `super` keywords
+
+error[E0433]: failed to resolve: there are too many leading `super` keywords
+  --> ui/invalid_msg_send_super.rs:13:36
+   |
+13 |     let _: () = unsafe { msg_send![super(obj, superclass,), init] };
+   |                                    ^^^^^ there are too many leading `super` keywords
