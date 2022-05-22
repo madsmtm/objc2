@@ -345,26 +345,24 @@ jobs:
 
         cargo run ${{ env.HOSTARGS }} --features assembly --target=$HOST_TARGET test_assembly ${{ env.ARGS }}
 
-    - name: Run Cargo Dinghy
+    - name: Launch XCode Simulator
       if: matrix.dinghy
       run: |
-        # Launch the simulator
+        # Get system info
         xcrun simctl list runtimes
+
+        # Launch the simulator
         RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
         export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
         xcrun simctl boot $SIM_ID
 
-        # Build
-        cargo dinghy --device=$SIM_ID build ${{ env.ARGS }}
+    - name: Build w. Cargo Dinghy
+      if: matrix.dinghy
+      run: cargo dinghy --device=$SIM_ID build ${{ matrix.args }}
 
-        # Run tests
-        cargo dinghy --device=$SIM_ID test ${{ env.ARGS }}
-        cargo dinghy --device=$SIM_ID test ${{ env.ARGS }} --release
-
-        # Enable a few features. We're doing it this way because cargo dingy
-        # doesn't support specifying features from a workspace.
-        sed -i -e '/\[features\]/a\
-        default = ["exception", "verify_message", "catch_all"]
-        ' objc2/Cargo.toml
-        cargo dinghy --device=$SIM_ID test ${{ env.ARGS }}
-        cargo dinghy --device=$SIM_ID test ${{ env.ARGS }} --release
+    - name: Test w. Cargo Dinghy
+      if: matrix.dinghy
+      # Note that we're not testing more complex configurations, since that
+      # takes a very long time to run in CI, and that impedes general
+      # development work.
+      run: cargo dinghy --device=$SIM_ID test ${{ matrix.args }}
