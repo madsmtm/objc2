@@ -2,6 +2,7 @@
 //!
 //! So that Miri works on the pure-Rust Objective-C code that people write.
 
+mod class;
 mod message;
 mod selector;
 
