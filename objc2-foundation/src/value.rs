@@ -65,14 +65,13 @@ impl<T: 'static + Copy + Encode> NSValue<T> {
     pub fn new(value: T) -> Id<Self, Shared> {
         let cls = Self::class();
         let bytes = &value as *const T as *const c_void;
-        let encoding = CString::new(T::ENCODING.to_string()).unwrap();
+        #[cfg(not(feature = "unstable-static-encoding-str"))]
+        let encoding_ptr = CString::new(T::ENCODING.to_string()).unwrap().as_ptr();
+        #[cfg(feature = "unstable-static-encoding-str")]
+        let encoding_ptr = <objc2::encode::EncodingHelper<T>>::ENCODING_CSTR.cast::<c_char>();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![
-                obj,
-                initWithBytes: bytes,
-                objCType: encoding.as_ptr(),
-            ];
+            let obj: *mut Self = msg_send![obj, initWithBytes: bytes, objCType: encoding_ptr,];
             Id::new(obj).unwrap()
         }
     }
