@@ -3,7 +3,7 @@ use alloc::format;
 use core::fmt::Display;
 use objc2::ffi::{NSInteger, NSUInteger};
 use objc2::runtime::{Bool, Class, Object, Sel};
-use objc2_encode::{Encode, Encoding, RefEncode};
+use objc2::{Encode, Encoding, RefEncode};
 use paste::paste;
 use std::ffi::CStr;
 use std::os::raw::*;

@@ -32,12 +32,11 @@ gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2-foundation/gnustep-2-
 winobjc = ["gnustep-1-8", "block2/winobjc", "objc2-foundation/winobjc"]
 
 [dependencies]
-block2 = { path = "../block2" }
-block-sys = { path = "../block-sys" }
-objc-sys = { path = "../objc-sys" }
-objc2 = { path = "../objc2" }
-objc2-encode = { path = "../objc2-encode" }
-objc2-foundation = { path = "../objc2-foundation" }
+block2 = { path = "../block2", default-features = false }
+block-sys = { path = "../block-sys", default-features = false }
+objc-sys = { path = "../objc-sys", default-features = false }
+objc2 = { path = "../objc2", default-features = false }
+objc2-foundation = { path = "../objc2-foundation", default-features = false }
 
 # Put here instead of dev-dependencies because we want to make it optional
 trybuild = { version = "1.0", optional = true }

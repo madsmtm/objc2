@@ -31,8 +31,8 @@ gnustep-2-1 = ["gnustep-2-0", "block-sys/gnustep-2-1"]
 winobjc = ["gnustep-1-8", "block-sys/winobjc"]
 
 [dependencies]
-objc2-encode = { path = "../objc2-encode", version = "=2.0.0-beta.2" }
-block-sys = { path = "../block-sys", version = "0.0.3" }
+objc2-encode = { path = "../objc2-encode", version = "=2.0.0-beta.2", default-features = false }
+block-sys = { path = "../block-sys", version = "0.0.3", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
