@@ -107,7 +107,7 @@ mod exception;
 mod message;
 mod method;
 #[cfg(any(feature = "unstable-custom-runtime", miri))]
-mod miri;
+pub mod miri;
 mod object;
 mod property;
 mod protocol;
