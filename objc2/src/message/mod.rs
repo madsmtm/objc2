@@ -287,7 +287,6 @@ macro_rules! message_args_impl {
     ($($a:ident : $t:ident),*) => (
         unsafe impl<$($t: Encode),*> MessageArguments for ($($t,)*) {
             #[inline]
-            #[doc(hidden)]
             unsafe fn __invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
                 // The imp must be cast to the appropriate function pointer
                 // type before being called; the msgSend functions are not
