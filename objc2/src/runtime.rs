@@ -105,7 +105,9 @@ impl Sel {
 
     /// Returns the name of the method specified by self.
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::sel_getName(self.ptr)) };
+        let ptr = unsafe { ffi::sel_getName(self.ptr) };
+        debug_assert!(!ptr.is_null());
+        let name = unsafe { CStr::from_ptr(ptr) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
@@ -635,6 +637,14 @@ mod tests {
         assert_eq!(sel.name(), "");
         let sel = Sel::register(":");
         assert_eq!(sel.name(), ":");
+    }
+
+    #[test]
+    fn test_selector_register_repeated() {
+        let sel1 = Sel::register("repeated:register:");
+        let sel2 = Sel::register("repeated:register:");
+        assert_eq!(sel1, sel2);
+        assert_eq!(sel1.as_ptr(), sel2.as_ptr());
     }
 
     #[test]

@@ -19,6 +19,11 @@
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
 #![doc(html_root_url = "https://docs.rs/objc-sys/0.2.0-alpha.1")]
+#![cfg_attr(any(feature = "unstable-custom-runtime", miri), feature(once_cell))]
+#![cfg_attr(
+    any(feature = "unstable-custom-runtime", miri),
+    feature(strict_provenance)
+)]
 
 // TODO: Replace `extern "C"` with `extern "C-unwind"` where applicable.
 // See https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html.
@@ -101,6 +106,8 @@ mod exception;
 
 mod message;
 mod method;
+#[cfg(any(feature = "unstable-custom-runtime", miri))]
+mod miri;
 mod object;
 mod property;
 mod protocol;

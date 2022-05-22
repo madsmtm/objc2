@@ -239,6 +239,7 @@ fn main() {
 
     println!("cargo:cc_args={}", cc_args); // DEP_OBJC_[version]_CC_ARGS
 
+    #[cfg(not(any(feature = "unstable-custom-runtime", miri)))]
     if let Runtime::ObjFW(_) = &runtime {
         // Link to libobjfw-rt
         println!("cargo:rustc-link-lib=dylib=objfw-rt");
