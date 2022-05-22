@@ -4,6 +4,8 @@ on:
   push:
     branches: [master]
   pull_request:
+  schedule:
+    - cron: '0 9 * * MON'
 
 env:
   CARGO_TERM_COLOR: always
