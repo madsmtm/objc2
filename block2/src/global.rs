@@ -18,12 +18,13 @@ const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_he
 /// An Objective-C block that does not capture it's environment.
 ///
 /// This is effectively just a glorified function pointer, and can created and
-/// stored in static memory using the [`global_block`][`global_block!`] macro.
+/// stored in static memory using the [`global_block!`] macro.
 ///
 /// If [`ConcreteBlock`] is the [`Fn`]-block equivalent, this is likewise the
 /// [`fn`]-block equivalent.
 ///
 /// [`ConcreteBlock`]: crate::ConcreteBlock
+/// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
     layout: ffi::Block_layout,
@@ -88,9 +89,9 @@ where
 
 /// Construct a static [`GlobalBlock`].
 ///
-/// The syntax is similar to a static closure. Note that the block cannot
-/// capture it's environment, and it's argument types and return type must be
-/// [`Encode`].
+/// The syntax is similar to a static closure (except that all types have to
+/// be specified). Note that the block cannot capture it's environment, and
+/// it's argument types and return type must be [`Encode`].
 ///
 /// # Examples
 ///
