@@ -137,35 +137,6 @@ fn main() {
         ObjFW(_) => "objfw",
     };
     println!("cargo:rustc-cfg={}", runtime_cfg);
-    // Allow downstream build scripts to do the same
-    println!("cargo:runtime={}", runtime_cfg); // DEP_OBJC_[version]_RUNTIME
-
-    // Tell downstream build scripts our features
-    // match &runtime {
-    //     Apple(_) => println!("cargo:apple=1"), // DEP_OBJC_APPLE
-    //     GNUStep(major, minor) => {
-    //         let version = (*major, *minor);
-    //         println!("cargo:gnustep-1-7=1"); // DEP_OBJC_GNUSTEP_1_7
-    //         if version >= (1, 8) {
-    //             println!("cargo:gnustep-1-8=1"); // DEP_OBJC_GNUSTEP_1_8
-    //         }
-    //         if version >= (1, 9) {
-    //             println!("cargo:gnustep-1-9=1"); // DEP_OBJC_GNUSTEP_1_9
-    //         }
-    //         if version >= (2, 0) {
-    //             println!("cargo:gnustep-2-0=1"); // DEP_OBJC_GNUSTEP_2_0
-    //         }
-    //         if version >= (2, 1) {
-    //             println!("cargo:gnustep-2-1=1"); // DEP_OBJC_GNUSTEP_2_1
-    //         }
-    //     }
-    //     WinObjC => {
-    //         println!("cargo:gnustep-1-7=1"); // DEP_OBJC_GNUSTEP_1_7
-    //         println!("cargo:gnustep-1-8=1"); // DEP_OBJC_GNUSTEP_1_8
-    //         println!("cargo:winobjc=1"); // DEP_OBJC_WINOBJC
-    //     }
-    //     ObjFW(_) => println!("cargo:objfw=1"), // DEP_OBJC_APPLE
-    // }
 
     let clang_runtime = match &runtime {
         Apple(runtime) => {

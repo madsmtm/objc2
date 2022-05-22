@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * **BREAKING**: Changed `links` key from `block` to `block_0_0` for better
-  future compatibility, until we reach 1.0 (so `DEP_BLOCK_X` in build scripts
-  becomes `DEP_BLOCK_0_0_X`).
+  future compatibility, until we reach 1.0 (so `DEP_BLOCK_CC_ARGS` in build
+  scripts becomes `DEP_BLOCK_0_0_CC_ARGS`).
 * **BREAKING**: Apple's runtime is now always the default.
 
 
