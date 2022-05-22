@@ -6,6 +6,16 @@ error[E0277]: the trait bound `Box<i32>: objc2_encode::encode::Encode` is not sa
 5 | | }
   | |_^ the trait `objc2_encode::encode::Encode` is not implemented for `Box<i32>`
   |
+  = help: the following other types implement trait `objc2_encode::encode::Encode`:
+            &'a T
+            &'a mut T
+            ()
+            *const T
+            *const c_void
+            *mut T
+            *mut c_void
+            ManuallyDrop<T>
+          and 140 others
   = note: required because of the requirements on the impl of `objc2_encode::encode::EncodeArguments` for `(Box<i32>,)`
   = note: required because of the requirements on the impl of `Sync` for `GlobalBlock<(Box<i32>,)>`
   = note: shared static variables must have a type that implements `Sync`

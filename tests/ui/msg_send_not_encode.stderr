@@ -4,6 +4,16 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
 7   |         let _: Vec<u8> = msg_send![cls, new];
     |                          ^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`
     |
+    = help: the following other types implement trait `Encode`:
+              &'a T
+              &'a mut T
+              ()
+              *const T
+              *const c_void
+              *mut T
+              *mut c_void
+              ManuallyDrop<T>
+            and 142 others
 note: required by a bound in `send_message`
    --> $WORKSPACE/objc2/src/message/mod.rs
     |
