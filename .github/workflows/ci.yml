@@ -169,7 +169,7 @@ jobs:
           ~/extern/include
           ~/extern/sdk
         # Change this key if we start caching more things
-        key: ${{ matrix.name }}-extern-v1
+        key: ${{ matrix.name }}-extern-v2
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -273,7 +273,9 @@ jobs:
 
     - name: Install Cargo Dinghy
       if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
-      run: cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
+      # TODO: Replace once cargo dinghy gets updated
+      # cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
+      run: cargo install --git https://github.com/madsmtm/dinghy.git --branch update-cargo --bin cargo-dinghy --root=$HOME/extern --target=x86_64-apple-darwin
 
     - name: Build
       if: ${{ !matrix.dinghy }}
