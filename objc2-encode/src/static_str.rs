@@ -1,3 +1,5 @@
+#[cfg(feature = "unstable-static-encoding-str")]
+use super::Encode;
 use super::Encoding;
 
 pub(crate) const fn static_int_str_len(mut n: u128) -> usize {
@@ -203,6 +205,38 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
         }
     };
     res
+}
+
+/// Workaround since we can't specify the correct `where` bound on `Encode`.
+#[cfg(feature = "unstable-static-encoding-str")]
+pub struct EncodingHelper<T>(T);
+
+#[cfg(feature = "unstable-static-encoding-str")]
+impl<T: super::Encode> EncodingHelper<T>
+where
+    [u8; static_encoding_str_len(T::ENCODING) + 1]: Sized,
+{
+    #[doc(hidden)]
+    // Contains null byte at the end
+    const __ENCODING_CSTR_BYTES: [u8; static_encoding_str_len(T::ENCODING) + 1] =
+        static_encoding_str_array(T::ENCODING);
+
+    /// TODO
+    pub const ENCODING_CSTR: *const u8 = Self::__ENCODING_CSTR_BYTES.as_ptr();
+}
+
+#[cfg(feature = "unstable-static-encoding-str")]
+impl<T: Encode> EncodingHelper<T>
+where
+    [u8; static_encoding_str_len(T::ENCODING)]: Sized,
+{
+    #[doc(hidden)]
+    const __ENCODING_STR_BYTES: [u8; static_encoding_str_len(T::ENCODING)] =
+        static_encoding_str_array(T::ENCODING);
+
+    /// TODO
+    pub const ENCODING_STR: &'static str =
+        unsafe { core::mem::transmute::<&[u8], &str>(&Self::__ENCODING_STR_BYTES) };
 }
 
 #[cfg(test)]

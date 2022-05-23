@@ -68,6 +68,12 @@ use crate::Encoding;
 pub unsafe trait Encode {
     /// The Objective-C type-encoding for this type.
     const ENCODING: Encoding<'static>;
+
+    #[doc(hidden)]
+    const __ENCODING_ARR: [u8; 200] = Self::ENCODING.get_str_array::<200>();
+
+    /// TODO
+    const ENCODING_CSTR: *const u8 = Self::__ENCODING_ARR.as_ptr();
 }
 
 /// Types whoose references has an Objective-C type-encoding.

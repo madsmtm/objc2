@@ -92,6 +92,8 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-encode/2.0.0-beta.2")]
+#![cfg_attr(feature = "unstable-static-encoding-str", allow(incomplete_features))]
+#![cfg_attr(feature = "unstable-static-encoding-str", feature(generic_const_exprs))]
 
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
@@ -108,8 +110,10 @@ mod encoding;
 mod parse;
 
 // Will be used at some point when generic constants are available
-#[allow(dead_code)]
+#[cfg_attr(not(feature = "unstable-static-encoding-str"), allow(dead_code))]
 mod static_str;
 
 pub use self::encode::{Encode, EncodeArguments, RefEncode};
 pub use self::encoding::Encoding;
+#[cfg(feature = "unstable-static-encoding-str")]
+pub use self::static_str::EncodingHelper;

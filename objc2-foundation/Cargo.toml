@@ -23,10 +23,14 @@ default = ["block"]
 # Provided as a way to cut down on dependencies
 block = ["block2"]
 
+# Requires the `generic_const_exprs` feature
+unstable-static-encoding-str = ["objc2-encode/unstable-static-encoding-str", "objc2/unstable-static-encoding-str"]
+
 [dependencies]
 block2 = { path = "../block2", version = "=0.2.0-alpha.3", optional = true }
 objc2 = { path = "../objc2", version = "=0.3.0-alpha.6" }
 objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1" }
+objc2-encode = { path = "../objc2-encode", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

@@ -18,5 +18,9 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2-encode/"
 license = "MIT"
 
+[features]
+# Requires the `generic_const_exprs` feature
+unstable-static-encoding-str = []
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
