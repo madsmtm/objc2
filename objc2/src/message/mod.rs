@@ -33,7 +33,8 @@ mod verify;
 #[cfg(apple)]
 #[path = "apple/mod.rs"]
 mod platform;
-#[cfg(gnustep)]
+// TODO: This is _not_ correct, struct return works differently!
+#[cfg(any(gnustep, objfw))]
 #[path = "gnustep.rs"]
 mod platform;
 

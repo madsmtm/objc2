@@ -11,8 +11,8 @@ env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
   # Faster compilation and error on warnings
-  RUSTFLAGS: "-C debuginfo=0 -D warnings"
-  RUSTDOCFLAGS: "-D warnings"
+  # RUSTFLAGS: "-C debuginfo=0 -D warnings"
+  # RUSTDOCFLAGS: "-D warnings"
   CARGO_TERM_VERBOSE: true
   FEATURES: malloc,block,exception,catch_all,verify_message
   UNSTABLE_FEATURES: unstable_autoreleasesafe
@@ -36,6 +36,7 @@ jobs:
 
   test:
     name: ${{ matrix.name }}
+    if: false # Temporarily disabled
 
     strategy:
       fail-fast: false
@@ -368,3 +369,54 @@ jobs:
         ' objc2/Cargo.toml
         cargo dinghy --device=$SIM_ID test
         cargo dinghy --device=$SIM_ID test --release
+
+  test_objfw:
+    name: Test ObjFW
+
+    env:
+      RUN_TESTS:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Clang
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install clang
+        clang --version
+
+    - name: Set up ObjFW
+      run: |
+        wget https://objfw.nil.im/downloads/objfw-0.90.2.tar.gz
+        tar -xzf objfw-0.90.2.tar.gz
+        cd objfw-0.90.2
+
+        # Remove -Werror, since it breaks the build
+        sed -i -e '/OBJCFLAGS="$OBJCFLAGS -Werror"/d' configure.ac
+        sed -i -e 's/-Wpointer-arith -Werror/-Wpointer-arith/g' configure.ac
+
+        autoreconf
+        ./configure --prefix=$HOME/objfw
+        make
+        make install
+
+        echo "PATH=$HOME/objfw/bin:$PATH" >> $GITHUB_ENV
+        echo "LIBRARY_PATH=$HOME/objfw/lib:$LIBRARY_PATH" >> $GITHUB_ENV
+        echo "LD_LIBRARY_PATH=$HOME/objfw/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "CPATH=$HOME/objfw/include:$CPATH" >> $GITHUB_ENV
+        ls -al $HOME/objfw/*
+        ls -al $HOME/objfw/include/ObjFW
+        ls -al $HOME/objfw/include/ObjFW-RT
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+
+    - name: Test
+      # Everything except objc2-foundation
+      run: cargo test --no-fail-fast -p objc-sys -p objc2-encode -p objc2 -p block-sys -p block2 -p tests --features objfw
