@@ -1,6 +1,6 @@
-use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::runtime::{Bool, Class, Object};
+use objc2::runtime::{Class, Object};
+use objc2::{msg_send, msg_send_bool};
 
 use super::NSString;
 
@@ -17,8 +17,7 @@ impl NSObject {
     }
 
     pub fn is_equal(&self, other: &NSObject) -> bool {
-        let result: Bool = unsafe { msg_send![self, isEqual: other] };
-        result.as_bool()
+        unsafe { msg_send_bool![self, isEqual: other] }
     }
 
     pub fn description(&self) -> Id<NSString, Shared> {
@@ -30,8 +29,7 @@ impl NSObject {
     }
 
     pub fn is_kind_of(&self, cls: &Class) -> bool {
-        let result: Bool = unsafe { msg_send![self, isKindOfClass: cls] };
-        result.as_bool()
+        unsafe { msg_send_bool![self, isKindOfClass: cls] }
     }
 }
 

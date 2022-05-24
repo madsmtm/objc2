@@ -170,8 +170,7 @@ impl Ivar {
 
     /// Returns the offset of self.
     pub fn offset(&self) -> isize {
-        let offset = unsafe { ffi::ivar_getOffset(self.as_ptr()) };
-        offset as isize
+        unsafe { ffi::ivar_getOffset(self.as_ptr()) }
     }
 
     /// Returns the `Encoding` of self.
@@ -627,6 +626,7 @@ mod tests {
         test_sel!("abc", abc);
         test_sel!("abc:", abc:);
         test_sel!("abc:def:", abc:def:);
+        test_sel!("abc:def:ghi:", abc:def:ghi:);
     }
 
     #[test]

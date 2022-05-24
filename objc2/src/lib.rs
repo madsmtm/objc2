@@ -29,7 +29,7 @@
 //!
 #![cfg_attr(apple, doc = "```")]
 #![cfg_attr(not(apple), doc = "```no_run")]
-//! use objc2::{class, msg_send};
+//! use objc2::{class, msg_send, msg_send_bool};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::{Id, Owned};
 //! use objc2::runtime::{Bool, Object};
@@ -43,8 +43,8 @@
 //!
 //! // Usage
 //! let hash: NSUInteger = unsafe { msg_send![obj, hash] };
-//! let is_kind: Bool = unsafe { msg_send![obj, isKindOfClass: cls] };
-//! assert!(is_kind.as_bool());
+//! let is_kind = unsafe { msg_send_bool![obj, isKindOfClass: cls] };
+//! assert!(is_kind);
 //! ```
 //!
 //! Note that this very simple example contains **a lot** of `unsafe` (which

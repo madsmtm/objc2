@@ -1,4 +1,4 @@
-use objc2::runtime::Object;
+use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send, sel};
 
 #[cfg(gnustep)]
@@ -21,4 +21,29 @@ fn use_class_and_msg_send() {
 fn use_sel() {
     let _sel = sel!(description);
     let _sel = sel!(setObject:forKey:);
+}
+
+#[allow(unused)]
+fn test_msg_send_comma_handling(obj: &Object, superclass: &Class) {
+    unsafe {
+        let _: () = msg_send![obj, a];
+        let _: () = msg_send![obj, a,];
+        let _: () = msg_send![obj, a: 32i32];
+        let _: () = msg_send![obj, a: 32i32,];
+        let _: () = msg_send![obj, a: 32i32 b: 32i32];
+        let _: () = msg_send![obj, a: 32i32 b: 32i32,];
+        let _: () = msg_send![obj, a: 32i32, b: 32i32];
+        let _: () = msg_send![obj, a: 32i32, b: 32i32,];
+    }
+
+    unsafe {
+        let _: () = msg_send![super(obj, superclass), a];
+        let _: () = msg_send![super(obj, superclass), a,];
+        let _: () = msg_send![super(obj, superclass), a: 32i32];
+        let _: () = msg_send![super(obj, superclass), a: 32i32,];
+        let _: () = msg_send![super(obj, superclass), a: 32i32 b: 32i32];
+        let _: () = msg_send![super(obj, superclass), a: 32i32 b: 32i32,];
+        let _: () = msg_send![super(obj, superclass), a: 32i32, b: 32i32];
+        let _: () = msg_send![super(obj, superclass), a: 32i32, b: 32i32,];
+    }
 }
