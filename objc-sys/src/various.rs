@@ -24,14 +24,14 @@ pub type IMP = Option<unsafe extern "C" fn()>;
 // /// Not available on macOS x86.
 // ///
 // /// Remember that this is non-null!
-// #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
+// #[cfg(apple_new)]
 // pub type objc_hook_getClass =
 //     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::objc_class) -> BOOL;
 //
 // /// Not available on macOS x86.
 // ///
 // /// Remember that this is non-null!
-// #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
+// #[cfg(apple_new)]
 // pub type objc_hook_lazyClassNamer =
 //     unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
 
@@ -94,7 +94,7 @@ extern_c! {
     // /// Not available on macOS x86.
     // ///
     // /// Remember that this is non-null!
-    // #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
+    // #[cfg(apple_new)]
     // pub fn objc_setHook_getClass(
     //     new_value: objc_hook_getClass,
     //     out_old_value: *mut objc_hook_getClass,
@@ -103,7 +103,7 @@ extern_c! {
     // /// Not available on macOS x86.
     // ///
     // /// Remember that this is non-null!
-    // #[cfg(all(apple, not(all(target_os = "macos", target_arch = "x86"))))]
+    // #[cfg(apple_new)]
     // pub fn objc_setHook_lazyClassNamer(
     //     new_value: objc_hook_lazyClassNamer,
     //     out_old_value: *mut objc_hook_lazyClassNamer,
