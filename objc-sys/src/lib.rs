@@ -93,12 +93,7 @@ macro_rules! extern_c {
 mod class;
 mod constants;
 
-#[cfg(not(all(apple, target_os = "macos", target_arch = "x86")))]
 mod exception;
-#[cfg(all(apple, target_os = "macos", target_arch = "x86"))]
-#[path = "exception-macos-x86.rs"]
-mod exception;
-
 mod message;
 mod method;
 mod object;
