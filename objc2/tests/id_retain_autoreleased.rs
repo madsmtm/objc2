@@ -37,12 +37,12 @@ fn create_data(bytes: &[u8]) -> Id<Object, Shared> {
 
 #[test]
 fn test_retain_autoreleased() {
-    #[cfg(gnustep)]
+    #[cfg(feature = "gnustep-1-7")]
     unsafe {
         objc2::__gnustep_hack::get_class_to_force_linkage()
     };
 
-    #[cfg(apple)]
+    #[cfg(feature = "apple")]
     #[link(name = "Foundation", kind = "framework")]
     extern "C" {}
 
@@ -54,7 +54,7 @@ fn test_retain_autoreleased() {
         // When compiled in release mode / with optimizations enabled,
         // subsequent usage of `retain_autoreleased` will succeed in retaining
         // the autoreleased value!
-        let expected = if cfg!(gnustep) {
+        let expected = if cfg!(feature = "gnustep-1-7") {
             1
         } else if cfg!(any(
             debug_assertions,

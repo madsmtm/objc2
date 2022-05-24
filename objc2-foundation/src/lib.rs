@@ -64,11 +64,11 @@ pub use self::value::NSValue;
 #[doc(no_inline)]
 pub use objc2::ffi::{NSInteger, NSUInteger};
 
-#[cfg(apple)]
+#[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
 
-#[cfg(gnustep)]
+#[cfg(feature = "gnustep-1-7")]
 #[link(name = "gnustep-base", kind = "dylib")]
 extern "C" {}
 

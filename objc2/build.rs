@@ -1,14 +1,11 @@
-use std::env;
-
 fn main() {
     // The script doesn't depend on our code
     println!("cargo:rerun-if-changed=build.rs");
 
-    let runtime = env::var("DEP_OBJC_0_2_RUNTIME").unwrap();
-    println!("cargo:rustc-cfg={}", runtime);
-
     #[cfg(feature = "exception")]
     {
+        use std::env;
+
         if std::env::var("DOCS_RS").is_ok() {
             // docs.rs doesn't have clang, so skip building this. The
             // documentation will still work since it doesn't need to link.

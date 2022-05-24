@@ -20,14 +20,20 @@ pub type CGFloat = InnerFloat;
 
 // NSGeometry types are just aliases to CGGeometry types on iOS, tvOS, watchOS
 // and macOS 64bit (and hence their Objective-C encodings are different).
-#[cfg(all(apple, not(all(target_os = "macos", target_pointer_width = "32"))))]
+#[cfg(all(
+    feature = "apple",
+    not(all(target_os = "macos", target_pointer_width = "32"))
+))]
 mod names {
     pub(super) const POINT: &str = "_CGPoint";
     pub(super) const SIZE: &str = "_CGSize";
     pub(super) const RECT: &str = "_CGRect";
 }
 
-#[cfg(any(gnustep, all(target_os = "macos", target_pointer_width = "32")))]
+#[cfg(any(
+    feature = "gnustep-1-7",
+    all(target_os = "macos", target_pointer_width = "32")
+))]
 mod names {
     pub(super) const POINT: &str = "_NSPoint";
     pub(super) const SIZE: &str = "_NSSize";
@@ -305,7 +311,7 @@ mod tests {
     // and so on properly, so let's ensure that NSEqualXXX handles these as
     // well (so that we're confident that the implementations are equivalent).
     #[test]
-    #[cfg(any(all(apple, target_os = "macos"), gnustep))] // or macabi
+    #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
     fn test_partial_eq() {
         use objc2::runtime::Bool;
 

@@ -3,7 +3,7 @@ use alloc::format;
 use core::fmt::Display;
 use objc2::ffi::{NSInteger, NSUInteger};
 use objc2::runtime::{Bool, Class, Object, Sel};
-use objc2_encode::{Encode, Encoding, RefEncode};
+use objc2::{Encode, Encoding, RefEncode};
 use paste::paste;
 use std::ffi::CStr;
 use std::os::raw::*;
@@ -226,7 +226,7 @@ assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS_ATOMIC => "A{with_arrays}");
 
 // Bitfields
 
-#[cfg(not(gnustep))]
+#[cfg(feature = "apple")]
 mod bitfields {
     use super::*;
 
@@ -242,7 +242,7 @@ mod bitfields {
     assert_inner!(str ENCODING_BITFIELD_ATOMIC => "A{bitfield}");
 }
 
-#[cfg(gnustep)]
+#[cfg(feature = "gnustep-1-7")]
 mod bitfields {
     use super::*;
 

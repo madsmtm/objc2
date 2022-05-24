@@ -16,7 +16,8 @@ see that for related crates.
 Objective-C has a runtime, different implementations of said runtime exist,
 and they act in slightly different ways. By default, Apple platforms link to
 Apple's runtime, but if you're using another runtime you must tell it to this
-library using feature flags.
+library using feature flags (you might have to disable the default `apple`
+feature first).
 
 One could ask, why even bother supporting other runtimes? To that, there's a
 simple answer: _Robustness_. By testing with these alternative runtimes in CI,
@@ -29,8 +30,7 @@ iOS versions.
 
 - Feature flag: `apple`.
 
-This is used by default on Apple platforms when no other feature flags are
-specified.
+This is used by default.
 
 The supported runtime version (higher versions lets the compiler enable newer
 optimizations, at the cost of not supporting older operating systems) can be

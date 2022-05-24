@@ -1,7 +1,7 @@
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send, sel};
 
-#[cfg(gnustep)]
+#[cfg(feature = "gnustep-1-7")]
 #[test]
 fn ensure_linkage() {
     unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };

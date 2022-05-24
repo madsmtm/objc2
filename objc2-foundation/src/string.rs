@@ -16,9 +16,9 @@ use objc2::{msg_send, msg_send_bool};
 
 use crate::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
 
-#[cfg(apple)]
+#[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;
-#[cfg(gnustep)]
+#[cfg(feature = "gnustep-1-7")]
 const UTF8_ENCODING: i32 = 4;
 
 #[allow(unused)]
@@ -270,7 +270,7 @@ mod tests {
     use super::*;
     use alloc::format;
 
-    #[cfg(gnustep)]
+    #[cfg(feature = "gnustep-1-7")]
     #[test]
     fn ensure_linkage() {
         unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -378,9 +378,9 @@ mod tests {
         let s = "\u{feff}\u{feff}a\u{feff}";
 
         // Huh, this difference might be a GNUStep bug?
-        #[cfg(apple)]
+        #[cfg(feature = "apple")]
         let expected = "\u{feff}a\u{feff}";
-        #[cfg(gnustep)]
+        #[cfg(feature = "gnustep-1-7")]
         let expected = "a\u{feff}";
 
         let ns_string = NSString::from_str(s);

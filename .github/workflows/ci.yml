@@ -79,15 +79,13 @@ jobs:
           - name: Test GNUStep
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            host-args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
-            args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
+            runtime: gnustep-1-9
           - name: Test GNUStep 32bit
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
             cflags: -m32
             configureflags: --target=x86-pc-linux-gnu
-            host-args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
-            args: --features block-sys/gnustep-1-9,objc-sys/gnustep-1-9
+            runtime: gnustep-1-9
           - name: Test iOS simulator x86 64bit
             os: macos-11
             target: x86_64-apple-ios
@@ -134,8 +132,10 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
+      HOSTARGS: --no-default-features --features ${{ matrix.runtime || 'apple' }}
+      ARGS: --no-default-features --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
-      TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.args }} ${{ matrix.test-args }}
+      TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
 
     runs-on: ${{ matrix.os }}
 
@@ -169,7 +169,7 @@ jobs:
           ~/extern/include
           ~/extern/sdk
         # Change this key if we start caching more things
-        key: ${{ matrix.name }}-extern-v1
+        key: ${{ matrix.name }}-extern-v2
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -273,49 +273,51 @@ jobs:
 
     - name: Install Cargo Dinghy
       if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
-      run: cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
+      # TODO: Replace once cargo dinghy gets updated
+      # cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
+      run: cargo install --git https://github.com/madsmtm/dinghy.git --branch update-cargo --bin cargo-dinghy --root=$HOME/extern --target=x86_64-apple-darwin
 
     - name: Build
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: ${{ matrix.args }}
+        args: ${{ env.ARGS }}
 
     - name: Check documentation
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: doc
-        args: --no-deps --document-private-items ${{ matrix.args }}
+        args: ${{ env.ARGS }} --no-deps --document-private-items
 
     - name: Test without features
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --no-default-features ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }}
 
     - name: Test with features
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --features ${{ env.FEATURES }} ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }}
 
-    - name: Test in release mode
+    - name: Test in release mode without features
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --no-default-features ${{ env.TESTARGS }} --release
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --release
 
     - name: Test in release mode with features
       if: ${{ !matrix.dinghy }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --features ${{ env.FEATURES }} ${{ env.TESTARGS }} --release
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }} --release
 
     - name: Run benchmarks
       # Difficult to install Valgrind on macOS
@@ -324,7 +326,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: bench
-        args: --bench autorelease ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --bench autorelease
 
     - name: Test with unstable features
       if: ${{ !matrix.dinghy && matrix.rust.toolchain == 'nightly' }}
@@ -332,7 +334,7 @@ jobs:
       with:
         command: test
         # Not using --all-features because that would enable e.g. gnustep
-        args: --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }} ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
     - name: Run assembly tests
       # Not run on GNUStep yet since a lot of function labels are mangled and
@@ -343,28 +345,26 @@ jobs:
       run:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
 
-        cargo run ${{ matrix.host-args }} --features assembly --target=$HOST_TARGET test_assembly ${{ matrix.args }}
+        cargo run ${{ env.HOSTARGS }} --features assembly --target=$HOST_TARGET test_assembly ${{ env.ARGS }}
 
-    - name: Run Cargo Dinghy
+    - name: Launch XCode Simulator
       if: matrix.dinghy
       run: |
-        # Launch the simulator
+        # Get system info
         xcrun simctl list runtimes
+
+        # Launch the simulator
         RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
         export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
         xcrun simctl boot $SIM_ID
 
-        # Build
-        cargo dinghy --device=$SIM_ID build
+    - name: Build w. Cargo Dinghy
+      if: matrix.dinghy
+      run: cargo dinghy --device=$SIM_ID build ${{ matrix.args }}
 
-        # Run tests
-        cargo dinghy --device=$SIM_ID test --no-default-features
-        cargo dinghy --device=$SIM_ID test --release
-
-        # Enable a few features. We're doing it this way because cargo dingy
-        # doesn't support specifying features from a workspace.
-        sed -i -e '/\[features\]/a\
-        default = ["exception", "verify_message", "catch_all"]
-        ' objc2/Cargo.toml
-        cargo dinghy --device=$SIM_ID test
-        cargo dinghy --device=$SIM_ID test --release
+    - name: Test w. Cargo Dinghy
+      if: matrix.dinghy
+      # Note that we're not testing more complex configurations, since that
+      # takes a very long time to run in CI, and that impedes general
+      # development work.
+      run: cargo dinghy --device=$SIM_ID test ${{ matrix.args }}

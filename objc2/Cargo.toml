@@ -21,6 +21,8 @@ build = "build.rs"
 # NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
 # and may be removed in a minor release.
 [features]
+default = ["apple"]
+
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["cc"]
 
@@ -40,10 +42,19 @@ malloc = ["malloc_buf"]
 # Uses nightly features to make AutoreleasePool zero-cost even in debug mode
 unstable_autoreleasesafe = []
 
+# Runtime selection. See `objc-sys` for details.
+apple = ["objc-sys/apple"]
+gnustep-1-7 = ["objc-sys/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1"]
+winobjc = ["gnustep-1-8", "objc-sys/winobjc"]
+
 [dependencies]
 malloc_buf = { version = "1.0", optional = true }
-objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1" }
-objc2-encode = { path = "../objc2-encode", version = "=2.0.0-beta.2" }
+objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1", default-features = false }
+objc2-encode = { path = "../objc2-encode", version = "=2.0.0-beta.2", default-features = false }
 
 [build-dependencies]
 cc = { version = "1", optional = true }

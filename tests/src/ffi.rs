@@ -1,4 +1,4 @@
-use objc2_encode::{Encode, Encoding};
+use objc2::{Encode, Encoding};
 
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.
 #[repr(C)]

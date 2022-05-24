@@ -69,15 +69,15 @@ fn main() {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
 
     let mut apple = env::var_os("CARGO_FEATURE_APPLE").is_some();
-    let gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
+    let mut gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
     let objfw = env::var_os("CARGO_FEATURE_OBJFW").is_some();
 
-    if let (false, false, false) = (apple, gnustep, objfw) {
-        // Enable `apple` by default on Apple platforms
+    // Choose defaults when generating docs
+    if std::env::var("DOCS_RS").is_ok() {
         if let "macos" | "ios" | "tvos" | "watchos" = &*target_os {
             apple = true;
-            // Add cheaty #[cfg(feature = "apple")] directive
-            println!("cargo:rustc-cfg=feature=\"apple\"");
+        } else {
+            gnustep = true; // Also winobjc
         }
     }
 
@@ -98,7 +98,14 @@ fn main() {
             })
         }
         (false, true, false) => {
-            if env::var_os("CARGO_FEATURE_WINOBJC").is_some() {
+            // Choose defaults when generating docs
+            if std::env::var("DOCS_RS").is_ok() {
+                if "windows" == target_os {
+                    WinObjC
+                } else {
+                    GNUStep(1, 7)
+                }
+            } else if env::var_os("CARGO_FEATURE_WINOBJC").is_some() {
                 WinObjC
             } else if env::var_os("CARGO_FEATURE_GNUSTEP_2_1").is_some() {
                 GNUStep(2, 1)
@@ -118,21 +125,8 @@ fn main() {
             unimplemented!("ObjFW is not yet supported")
             // ObjFW(None)
         }
-        (false, false, false) => {
-            // Choose sensible defaults when generating docs
-            if std::env::var("DOCS_RS").is_ok() {
-                if target_os == "windows" {
-                    WinObjC
-                } else {
-                    GNUStep(1, 7)
-                }
-            } else {
-                panic!("Must specify the desired runtime (using features) on non-apple platforms.")
-            }
-        }
-        _ => {
-            panic!("Invalid feature combination; only one runtime may be selected!")
-        }
+        (false, false, false) => panic!("Must specify the desired runtime (using cargo features)."),
+        _ => panic!("Invalid feature combination; only one runtime may be selected!"),
     };
 
     // Add `#[cfg(RUNTIME)]` directive
@@ -143,35 +137,6 @@ fn main() {
         ObjFW(_) => "objfw",
     };
     println!("cargo:rustc-cfg={}", runtime_cfg);
-    // Allow downstream build scripts to do the same
-    println!("cargo:runtime={}", runtime_cfg); // DEP_OBJC_[version]_RUNTIME
-
-    // Tell downstream build scripts our features
-    // match &runtime {
-    //     Apple(_) => println!("cargo:apple=1"), // DEP_OBJC_APPLE
-    //     GNUStep(major, minor) => {
-    //         let version = (*major, *minor);
-    //         println!("cargo:gnustep-1-7=1"); // DEP_OBJC_GNUSTEP_1_7
-    //         if version >= (1, 8) {
-    //             println!("cargo:gnustep-1-8=1"); // DEP_OBJC_GNUSTEP_1_8
-    //         }
-    //         if version >= (1, 9) {
-    //             println!("cargo:gnustep-1-9=1"); // DEP_OBJC_GNUSTEP_1_9
-    //         }
-    //         if version >= (2, 0) {
-    //             println!("cargo:gnustep-2-0=1"); // DEP_OBJC_GNUSTEP_2_0
-    //         }
-    //         if version >= (2, 1) {
-    //             println!("cargo:gnustep-2-1=1"); // DEP_OBJC_GNUSTEP_2_1
-    //         }
-    //     }
-    //     WinObjC => {
-    //         println!("cargo:gnustep-1-7=1"); // DEP_OBJC_GNUSTEP_1_7
-    //         println!("cargo:gnustep-1-8=1"); // DEP_OBJC_GNUSTEP_1_8
-    //         println!("cargo:winobjc=1"); // DEP_OBJC_WINOBJC
-    //     }
-    //     ObjFW(_) => println!("cargo:objfw=1"), // DEP_OBJC_APPLE
-    // }
 
     let clang_runtime = match &runtime {
         Apple(runtime) => {

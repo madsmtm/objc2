@@ -8,8 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * **BREAKING**: Changed `links` key from `objc` to `objc_0_2` for better
-  future compatibility, until we reach 1.0 (so `DEP_OBJC_X` in build scripts
-  becomes `DEP_OBJC_0_2_X`).
+  future compatibility, until we reach 1.0 (so `DEP_OBJC_CC_ARGS` in build
+  scripts becomes `DEP_OBJC_0_2_CC_ARGS`).
+* **BREAKING**: Apple's runtime is now always the default.
 
 ### Removed
 * **BREAKING**: Removed type aliases `Class`, `Ivar`, `Method` and `Protocol`
@@ -18,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `objc_property_t`.
 * **BREAKING**: Removed `objc_hook_getClass` and `objc_hook_lazyClassNamer`
   type aliases (for now).
+* **BREAKING**: Removed `DEP_OBJC_RUNTIME` build script output.
 
 
 ## 0.2.0-alpha.1 - 2022-01-03

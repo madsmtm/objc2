@@ -58,7 +58,10 @@ mod tests {
     use super::*;
 
     #[test]
-    #[cfg_attr(gnustep, should_panic = "Could not retrieve main thread")]
+    #[cfg_attr(
+        feature = "gnustep-1-7",
+        should_panic = "Could not retrieve main thread"
+    )]
     fn test_main_thread() {
         let current = NSThread::current();
         let main = NSThread::main();
