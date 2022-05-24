@@ -14,8 +14,6 @@ env:
   RUSTFLAGS: "-C debuginfo=0 -D warnings"
   RUSTDOCFLAGS: "-D warnings"
   CARGO_TERM_VERBOSE: true
-  FEATURES: malloc,block,exception,catch_all,verify_message
-  UNSTABLE_FEATURES: unstable-autoreleasesafe
   MACOSX_DEPLOYMENT_TARGET: 10.7
   IPHONEOS_DEPLOYMENT_TARGET: 7.0
   # We only support compiling Objective-C code with clang
@@ -125,6 +123,13 @@ jobs:
               components: rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             test-args: --no-run
+          - name: Test Compiler-RT
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            runtime: compiler-rt
+            args: -p block-sys -p block2
+            features: ' '
+            unstable-features: ' '
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
@@ -136,6 +141,8 @@ jobs:
       ARGS: --no-default-features --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
+      FEATURES: ${{ matrix.features || 'malloc,block,exception,catch_all,verify_message' }}
+      UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe' }}
 
     runs-on: ${{ matrix.os }}
 
@@ -195,6 +202,10 @@ jobs:
         sudo apt-get update
         sudo apt-get -y install clang valgrind
 
+    - name: Install libBlocksRuntime
+      if: contains(matrix.runtime, 'compiler-rt')
+      run: sudo apt-get -y install libblocksruntime-dev
+
     - name: Install cross compilation tools
       if: matrix.target == 'i686-unknown-linux-gnu'
       run: |
@@ -220,11 +231,11 @@ jobs:
         mv MacOSX${{ matrix.sdk }}.sdk $HOME/extern/sdk
 
     - name: Install Make and Cmake
-      if: contains(matrix.os, 'ubuntu') && steps.extern-cache.outputs.cache-hit != 'true'
+      if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
       run: sudo apt-get -y install make cmake
 
     - name: Install GNUStep libobjc2 v1.9
-      if: contains(matrix.os, 'ubuntu') && steps.extern-cache.outputs.cache-hit != 'true'
+      if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libobjc2/archive/refs/tags/v1.9.tar.gz
         tar -xzf v1.9.tar.gz
@@ -234,7 +245,7 @@ jobs:
         make install
 
     - name: Install GNUStep make
-      if: contains(matrix.os, 'ubuntu') && steps.extern-cache.outputs.cache-hit != 'true'
+      if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_0.tar.gz
         tar -xzf make-2_9_0.tar.gz
@@ -244,7 +255,7 @@ jobs:
         make install
 
     - name: Install GNUStep-Base
-      if: contains(matrix.os, 'ubuntu') && steps.extern-cache.outputs.cache-hit != 'true'
+      if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
         tar -xzf base-1_28_0.tar.gz
@@ -326,7 +337,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: bench
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --bench autorelease
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }}
 
     - name: Test with unstable features
       if: ${{ !matrix.dinghy && matrix.rust.toolchain == 'nightly' }}
