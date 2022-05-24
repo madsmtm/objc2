@@ -41,6 +41,8 @@ winobjc = ["gnustep-1-8"]
 # TODO
 objfw = []
 
+unstable-custom-runtime = []
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 

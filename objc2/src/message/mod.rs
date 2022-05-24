@@ -30,11 +30,14 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, Message
 #[cfg(feature = "malloc")]
 mod verify;
 
-#[cfg(apple)]
+#[cfg(all(not(miri), apple))]
 #[path = "apple/mod.rs"]
 mod platform;
-#[cfg(gnustep)]
+#[cfg(all(not(miri), gnustep))]
 #[path = "gnustep.rs"]
+mod platform;
+#[cfg(miri)]
+#[path = "miri.rs"]
 mod platform;
 
 use self::platform::{send_super_unverified, send_unverified};
