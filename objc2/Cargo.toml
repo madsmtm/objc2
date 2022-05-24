@@ -38,7 +38,7 @@ verify_message = ["malloc"] # TODO: Remove malloc feature here
 malloc = ["malloc_buf"]
 
 # Uses nightly features to make AutoreleasePool zero-cost even in debug mode
-unstable_autoreleasesafe = []
+unstable-autoreleasesafe = []
 
 # Runtime selection. See `objc-sys` for details.
 apple = ["objc-sys/apple"]

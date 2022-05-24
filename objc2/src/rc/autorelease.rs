@@ -2,7 +2,7 @@ use core::cell::UnsafeCell;
 use core::ffi::c_void;
 use core::fmt;
 use core::marker::PhantomData;
-#[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
+#[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
 use std::{cell::RefCell, thread_local, vec::Vec};
 
 use crate::ffi;
@@ -25,7 +25,7 @@ pub struct AutoreleasePool {
     p: PhantomData<*mut UnsafeCell<c_void>>,
 }
 
-#[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
+#[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
 thread_local! {
     /// We track the thread's pools to verify that object lifetimes are only
     /// taken from the innermost pool.
@@ -49,7 +49,7 @@ impl AutoreleasePool {
     unsafe fn new() -> Self {
         // TODO: Make this function pub when we're more certain of the API
         let context = unsafe { ffi::objc_autoreleasePoolPush() };
-        #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
+        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
         POOLS.with(|c| c.borrow_mut().push(context));
         Self {
             context,
@@ -61,7 +61,7 @@ impl AutoreleasePool {
     #[inline]
     #[doc(hidden)]
     pub fn __verify_is_inner(&self) {
-        #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
+        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
         POOLS.with(|c| {
             assert_eq!(
                 c.borrow().last(),
@@ -140,7 +140,7 @@ impl Drop for AutoreleasePool {
     #[inline]
     fn drop(&mut self) {
         unsafe { ffi::objc_autoreleasePoolPop(self.context) }
-        #[cfg(all(debug_assertions, not(feature = "unstable_autoreleasesafe")))]
+        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
         POOLS.with(|c| {
             assert_eq!(
                 c.borrow_mut().pop(),
@@ -159,7 +159,7 @@ impl fmt::Pointer for AutoreleasePool {
 
 /// We use a macro here so that the documentation is included whether the
 /// feature is enabled or not.
-#[cfg(not(feature = "unstable_autoreleasesafe"))]
+#[cfg(not(feature = "unstable-autoreleasesafe"))]
 macro_rules! auto_trait {
     {$(#[$fn_meta:meta])* $v:vis unsafe trait AutoreleaseSafe {}} => {
         $(#[$fn_meta])*
@@ -167,7 +167,7 @@ macro_rules! auto_trait {
     }
 }
 
-#[cfg(feature = "unstable_autoreleasesafe")]
+#[cfg(feature = "unstable-autoreleasesafe")]
 macro_rules! auto_trait {
     {$(#[$fn_meta:meta])* $v:vis unsafe trait AutoreleaseSafe {}} => {
         $(#[$fn_meta])*
@@ -179,7 +179,7 @@ auto_trait! {
     /// Marks types that are safe to pass across the closure in an
     /// [`autoreleasepool`].
     ///
-    /// With the `unstable_autoreleasesafe` feature enabled, this is an auto
+    /// With the `unstable-autoreleasesafe` feature enabled, this is an auto
     /// trait that is implemented for all types except [`AutoreleasePool`].
     ///
     /// Otherwise it is just a dummy trait that is implemented for all types;
@@ -194,14 +194,14 @@ auto_trait! {
     /// likewise, this should be negatively implemented for that.
     ///
     /// This can easily be accomplished with an `PhantomData<AutoreleasePool>`
-    /// if the `unstable_autoreleasesafe` feature is enabled.
+    /// if the `unstable-autoreleasesafe` feature is enabled.
     pub unsafe trait AutoreleaseSafe {}
 }
 
-#[cfg(not(feature = "unstable_autoreleasesafe"))]
+#[cfg(not(feature = "unstable-autoreleasesafe"))]
 unsafe impl<T: ?Sized> AutoreleaseSafe for T {}
 
-#[cfg(feature = "unstable_autoreleasesafe")]
+#[cfg(feature = "unstable-autoreleasesafe")]
 impl !AutoreleaseSafe for AutoreleasePool {}
 
 /// Execute `f` in the context of a new autorelease pool. The pool is
@@ -216,7 +216,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// The given reference must not be used in an inner `autoreleasepool`,
 /// doing so will panic with debug assertions enabled, and be a compile
 /// error in a future release. You can test the compile error with the
-/// `unstable_autoreleasesafe` crate feature on nightly Rust.
+/// `unstable-autoreleasesafe` crate feature on nightly Rust.
 ///
 /// # Examples
 ///
@@ -266,8 +266,8 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// Incorrect usage which panics (with debug assertions enabled) because we
 /// tried to pass an outer pool to an inner pool:
 ///
-#[cfg_attr(feature = "unstable_autoreleasesafe", doc = "```compile_fail")]
-#[cfg_attr(not(feature = "unstable_autoreleasesafe"), doc = "```should_panic")]
+#[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail")]
+#[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```should_panic")]
 /// # use objc2::{class, msg_send};
 /// # use objc2::rc::{autoreleasepool, AutoreleasePool};
 /// # use objc2::runtime::Object;
@@ -300,7 +300,7 @@ where
     f(&pool)
 }
 
-#[cfg(all(test, feature = "unstable_autoreleasesafe"))]
+#[cfg(all(test, feature = "unstable-autoreleasesafe"))]
 mod tests {
     use super::AutoreleaseSafe;
     use crate::runtime::Object;

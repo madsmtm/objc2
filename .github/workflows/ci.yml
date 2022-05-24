@@ -15,7 +15,7 @@ env:
   RUSTDOCFLAGS: "-D warnings"
   CARGO_TERM_VERBOSE: true
   FEATURES: malloc,block,exception,catch_all,verify_message
-  UNSTABLE_FEATURES: unstable_autoreleasesafe
+  UNSTABLE_FEATURES: unstable-autoreleasesafe
   MACOSX_DEPLOYMENT_TARGET: 10.7
   IPHONEOS_DEPLOYMENT_TARGET: 7.0
   # We only support compiling Objective-C code with clang
