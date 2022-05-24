@@ -10,7 +10,7 @@ fn main() {
     let mut apple = env::var_os("CARGO_FEATURE_APPLE").is_some();
     let compiler_rt = env::var_os("CARGO_FEATURE_COMPILER_RT").is_some();
     let mut gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
-    let objfw = env::var_os("CARGO_FEATURE_OBJFW").is_some();
+    let objfw = env::var_os("CARGO_FEATURE_UNSTABLE_OBJFW").is_some();
 
     if std::env::var("DOCS_RS").is_ok() {
         if let "macos" | "ios" | "tvos" | "watchos" = &*target_os {

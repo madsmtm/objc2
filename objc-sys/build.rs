@@ -71,7 +71,7 @@ fn main() {
 
     let mut apple = env::var_os("CARGO_FEATURE_APPLE").is_some();
     let mut gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
-    let objfw = env::var_os("CARGO_FEATURE_OBJFW").is_some();
+    let objfw = env::var_os("CARGO_FEATURE_UNSTABLE_OBJFW").is_some();
 
     // Choose defaults when generating docs
     if std::env::var("DOCS_RS").is_ok() {
@@ -106,7 +106,7 @@ fn main() {
                 } else {
                     GNUStep(1, 7)
                 }
-            } else if env::var_os("CARGO_FEATURE_WINOBJC").is_some() {
+            } else if env::var_os("CARGO_FEATURE_UNSTABLE_WINOBJC").is_some() {
                 WinObjC
             } else if env::var_os("CARGO_FEATURE_GNUSTEP_2_1").is_some() {
                 GNUStep(2, 1)

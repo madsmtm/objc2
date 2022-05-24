@@ -61,7 +61,7 @@ extern_c! {
     // objc_exception_get_functions
     // objc_exception_set_functions
 
-    #[cfg(any(gnustep, winobjc))]
+    #[cfg(gnustep)]
     pub fn objc_exception_rethrow(exc_buf: *mut c_void) -> !;
 
     #[cfg(apple_new)]
