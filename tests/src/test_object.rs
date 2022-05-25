@@ -1,8 +1,8 @@
-use core::mem::size_of;
+use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
-use objc2::runtime::{Bool, Class, Protocol};
+use objc2::runtime::{Bool, Class, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_bool};
@@ -67,6 +67,22 @@ impl MyTestObject {
     fn var2_ivar_mut(&mut self) -> &mut Bool {
         unsafe { self.inner.ivar_mut("var2") }
     }
+
+    fn var3(&self) -> *mut Object {
+        unsafe { msg_send![self, var3] }
+    }
+
+    fn set_var3(&mut self, obj: *mut Object) {
+        unsafe { msg_send![self, setVar3: obj] }
+    }
+
+    fn var3_ivar(&self) -> &*mut Object {
+        unsafe { self.inner.ivar("var3") }
+    }
+
+    fn var3_ivar_mut(&mut self) -> &mut *mut Object {
+        unsafe { self.inner.ivar_mut("var3") }
+    }
 }
 
 #[cfg(feature = "malloc")]
@@ -112,6 +128,7 @@ fn test_class() {
             isa: *const Class,
             var1: c_int,
             var2: Bool,
+            var3: *mut NSObject,
         }
         size_of::<MyTestObjectLayout>()
     });
@@ -158,4 +175,19 @@ fn test_object() {
     *obj.var2_ivar_mut() = Bool::NO;
     assert!(!obj.var2());
     assert!(obj.var2_ivar().is_false());
+
+    assert!(obj.var3().is_null());
+    assert!(obj.var3_ivar().is_null());
+
+    let obj2 = ManuallyDrop::new(NSObject::new()).as_ptr().cast::<Object>();
+    obj.set_var3(obj2);
+    assert_eq!(obj.var3(), obj2);
+    assert_eq!(*obj.var3_ivar(), obj2);
+
+    let obj3 = ManuallyDrop::new(NSObject::new()).as_ptr().cast::<Object>();
+    *obj.var3_ivar_mut() = obj3;
+    assert_ne!(obj.var3(), obj2);
+    assert_ne!(*obj.var3_ivar(), obj2);
+    assert_eq!(obj.var3(), obj3);
+    assert_eq!(*obj.var3_ivar(), obj3);
 }
