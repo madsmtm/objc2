@@ -56,17 +56,21 @@ chosen using the standard `X_DEPLOYMENT_TARGET` environment variables:
   `gnustep-1-8`.
 
 
-### Window's [`WinObjC`](https://github.com/microsoft/WinObjC)
+### Microsoft's [`WinObjC`](https://github.com/microsoft/WinObjC)
 
-- Feature flag: `winobjc`.
+- Feature flag: `unstable-winobjc`.
+
+**Unstable: Hasn't been tested on Windows yet!**
 
 This is essentially just [a fork](https://github.com/microsoft/libobjc2) based
 on GNUStep's `libobjc2` version 1.8, with very few user-facing changes.
 
 
-### [`ObjFW`](https://github.com/ObjFW/ObjFW) (WIP)
+### [`ObjFW`](https://github.com/ObjFW/ObjFW)
 
-- Feature flag: `objfw`.
+- Feature flag: `unstable-objfw`.
+
+**Unstable: Doesn't work yet!**
 
 TODO.
 
@@ -79,7 +83,7 @@ and `objc_autoreleasePoolPop` is a vital requirement for most applications.
 
 Just so we're being clear, this rules out the GCC [`libobjc`][gcc-libobjc]
 runtime (see [this][gcc-objc-support]), the [`mulle-objc`] runtime and
-[cocotron]. (But support for [`ObjFW`] and [`darling`] may be added).
+[cocotron]. (But support for [`darling`] may be added).
 More information on different runtimes can be found in GNUStep's
 [Objective-C Compiler and Runtime FAQ][gnustep-faq].
 
@@ -88,7 +92,6 @@ More information on different runtimes can be found in GNUStep's
 [gcc-objc-support]: https://gcc.gnu.org/onlinedocs/gcc/Standards.html#Objective-C-and-Objective-C_002b_002b-Languages
 [`mulle-objc`]: https://github.com/mulle-objc/mulle-objc-runtime
 [cocotron]: https://cocotron.org/
-[`ObjFW`]: https://github.com/ObjFW/ObjFW
 [`darling`]: https://github.com/darlinghq/darling-objc4
 [gnustep-faq]: http://wiki.gnustep.org/index.php/Objective-C_Compiler_and_Runtime_FAQ
 

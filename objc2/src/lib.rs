@@ -122,7 +122,7 @@
 
 #![no_std]
 #![cfg_attr(
-    feature = "unstable_autoreleasesafe",
+    feature = "unstable-autoreleasesafe",
     feature(negative_impls, auto_traits)
 )]
 #![warn(elided_lifetimes_in_paths)]

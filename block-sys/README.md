@@ -73,15 +73,19 @@ Sources:
 
 ### Microsoft's [`WinObjC`](https://github.com/microsoft/WinObjC)
 
-- Feature flag: `winobjc`.
+- Feature flag: `unstable-winobjc`.
+
+**Unstable: Hasn't been tested on Windows yet!**
 
 Essentially just [a fork](https://github.com/microsoft/libobjc2) based on
 GNUStep's `libobjc2` version 1.8.
 
 
-### [`ObjFW`](https://github.com/ObjFW/ObjFW) (WIP)
+### [`ObjFW`](https://github.com/ObjFW/ObjFW)
 
-- Feature flag: `objfw`.
+- Feature flag: `unstable-objfw`.
+
+**Unstable: Doesn't work yet!**
 
 TODO.
 
