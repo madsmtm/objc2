@@ -395,7 +395,25 @@ impl<'a> From<VerificationError<'a>> for MessageError {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::rc::{Id, Owned};
     use crate::test_utils;
+
+    #[allow(unused)]
+    fn test_different_receivers(mut obj: Id<Object, Owned>) {
+        unsafe {
+            let x = &mut obj;
+            let _: () = msg_send![x, mutable1];
+            // let _: () = msg_send![x, mutable2];
+            let _: () = msg_send![&mut *obj, mutable1];
+            let _: () = msg_send![&mut *obj, mutable2];
+            let obj: NonNull<Object> = (&mut *obj).into();
+            let _: () = msg_send![obj, mutable1];
+            let _: () = msg_send![obj, mutable2];
+            let obj: *mut Object = obj.as_ptr();
+            let _: () = msg_send![obj, mutable1];
+            let _: () = msg_send![obj, mutable2];
+        }
+    }
 
     #[test]
     fn test_send_message() {
