@@ -15,7 +15,7 @@ error[E0277]: the trait bound `extern "C" fn(_, _, _): MethodImplementation` is 
               for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E) -> R
               for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
               for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
-            and 70 others
+            and 109 others
 note: required by a bound in `ClassBuilder::add_method`
    --> $WORKSPACE/objc2/src/declare.rs
     |
@@ -39,7 +39,7 @@ error[E0277]: the trait bound `for<'r> extern "C" fn(_, _, &'r objc2::runtime::O
               for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E) -> R
               for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
               for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
-            and 70 others
+            and 109 others
 note: required by a bound in `ClassBuilder::add_method`
    --> $WORKSPACE/objc2/src/declare.rs
     |

@@ -58,6 +58,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   If you previously used `*mut Object` or `&Object` as the receiver, message
   sending should work exactly as before.
+* **BREAKING**: `Class` no longer implements `Message` (but it can still be
+  used as the receiver in `msg_send!`, so this is unlikely to break anything
+  in practice).
 
 ### Fixed
 * Properly sealed the `MessageArguments` trait (it already had a hidden
