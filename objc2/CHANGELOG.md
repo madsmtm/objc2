@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Consistently allow trailing commas in `msg_send!`.
 * Added `msg_send_bool!`, a less error-prone version of `msg_send!` for
   Objective-C methods that return `BOOL`.
+* Implemented `MethodImplementation` for `unsafe` function pointers.
 
 ### Changed
 * **BREAKING**: Changed signature of `Id::new` and `Id::retain` from

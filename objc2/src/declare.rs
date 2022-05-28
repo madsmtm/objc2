@@ -78,6 +78,10 @@ macro_rules! method_decl_impl {
     ($($t:ident),*) => (
         method_decl_impl!(-T, R, extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(-T, R, extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern "C" fn(*const T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern "C" fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
     );
 }
 
