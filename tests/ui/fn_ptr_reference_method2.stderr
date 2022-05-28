@@ -1,0 +1,8 @@
+error: implementation of `MethodImplementation` is not general enough
+  --> ui/fn_ptr_reference_method2.rs:12:17
+   |
+12 |         builder.add_method(sel!(both:), my_fn as extern "C" fn(&Object, Sel, &Object));
+   |                 ^^^^^^^^^^ implementation of `MethodImplementation` is not general enough
+   |
+   = note: `MethodImplementation` would have to be implemented for the type `for<'r, 's> extern "C" fn(&'r objc2::runtime::Object, objc2::runtime::Sel, &'s objc2::runtime::Object)`
+   = note: ...but `MethodImplementation` is actually implemented for the type `for<'r> extern "C" fn(&'r objc2::runtime::Object, objc2::runtime::Sel, &'0 objc2::runtime::Object)`, for some specific lifetime `'0`

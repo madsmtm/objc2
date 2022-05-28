@@ -1,0 +1,47 @@
+error[E0277]: the trait bound `extern "C" fn(_, _, _): MethodImplementation` is not satisfied
+   --> ui/fn_ptr_reference_method.rs:21:41
+    |
+21  |         builder.add_method(sel!(none:), my_fn as extern "C" fn(_, _, _));
+    |                 ----------              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `extern "C" fn(_, _, _)`
+    |                 |
+    |                 required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `MethodImplementation`:
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
+            and 70 others
+note: required by a bound in `ClassBuilder::add_method`
+   --> $WORKSPACE/objc2/src/declare.rs
+    |
+    |         F: MethodImplementation<Callee = T>,
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+
+error[E0277]: the trait bound `for<'r> extern "C" fn(_, _, &'r objc2::runtime::Object): MethodImplementation` is not satisfied
+   --> ui/fn_ptr_reference_method.rs:22:42
+    |
+22  |         builder.add_method(sel!(third:), my_fn as extern "C" fn(_, _, &Object));
+    |                 ----------               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `for<'r> extern "C" fn(_, _, &'r objc2::runtime::Object)`
+    |                 |
+    |                 required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `MethodImplementation`:
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+              for<'r> extern "C" fn(&'r T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
+            and 70 others
+note: required by a bound in `ClassBuilder::add_method`
+   --> $WORKSPACE/objc2/src/declare.rs
+    |
+    |         F: MethodImplementation<Callee = T>,
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
