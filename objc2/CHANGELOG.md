@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   upgrading easier.
 * Allow using `From`/`TryFrom` to convert between `rc::Id` and `rc::WeakId`.
 * Added `Bool::as_bool` (more descriptive name than `Bool::is_true`).
-* Added convenience method `Id::as_ptr`.
+* Added convenience method `Id::as_ptr` and `Id::as_mut_ptr`.
 * The `objc2-encode` dependency is now exposed as `objc2::encode`.
 * Added `Id::retain_autoreleased` to allow following Cocoas memory management
   rules more efficiently.

@@ -49,10 +49,10 @@ impl<T: Message> WeakId<T> {
     /// # Safety
     ///
     /// The object must be valid or null.
-    unsafe fn new_inner(obj: *mut T) -> Self {
+    unsafe fn new_inner(obj: *const T) -> Self {
         let inner = Box::new(UnsafeCell::new(ptr::null_mut()));
         // SAFETY: `ptr` will never move, and the caller verifies `obj`
-        let _ = unsafe { ffi::objc_initWeak(inner.get(), obj as *mut ffi::objc_object) };
+        let _ = unsafe { ffi::objc_initWeak(inner.get(), obj as *mut T as *mut ffi::objc_object) };
         Self {
             inner,
             item: PhantomData,
@@ -108,7 +108,7 @@ impl<T: Message> Default for WeakId<T> {
     #[inline]
     fn default() -> Self {
         // SAFETY: The pointer is null
-        unsafe { Self::new_inner(ptr::null_mut()) }
+        unsafe { Self::new_inner(ptr::null()) }
     }
 }
 

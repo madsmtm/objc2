@@ -192,9 +192,26 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     ///
     /// The pointer is valid for at least as long as the `Id` is held.
     ///
+    /// See [`Id::as_mut_ptr`] for the mutable equivalent.
+    ///
     /// This is an associated method, and must be called as `Id::as_ptr(obj)`.
     #[inline]
-    pub fn as_ptr(this: &Id<T, O>) -> *mut T {
+    pub fn as_ptr(this: &Id<T, O>) -> *const T {
+        this.ptr.as_ptr()
+    }
+}
+
+impl<T: Message + ?Sized> Id<T, Owned> {
+    /// Returns a raw mutable pointer to the object.
+    ///
+    /// The pointer is valid for at least as long as the `Id` is held.
+    ///
+    /// See [`Id::as_ptr`] for the immutable equivalent.
+    ///
+    /// This is an associated method, and must be called as
+    /// `Id::as_mut_ptr(obj)`.
+    #[inline]
+    pub fn as_mut_ptr(this: &mut Id<T, Owned>) -> *mut T {
         this.ptr.as_ptr()
     }
 }

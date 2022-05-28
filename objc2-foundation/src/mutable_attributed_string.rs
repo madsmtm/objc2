@@ -90,7 +90,10 @@ mod tests {
     fn test_copy() {
         let s1 = NSMutableAttributedString::from_nsstring(&NSString::from_str("abc"));
         let s2 = s1.copy();
-        assert_ne!(Id::as_ptr(&s1) as *mut NSAttributedString, Id::as_ptr(&s2));
+        assert_ne!(
+            Id::as_ptr(&s1) as *const NSAttributedString,
+            Id::as_ptr(&s2)
+        );
         assert!(s2.is_kind_of(NSAttributedString::class()));
 
         let s3 = s1.mutable_copy();
