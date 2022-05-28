@@ -34,6 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
   let obj = unsafe { Id::new(obj) }.expect("Failed to allocate object.");
   ```
+* Allow specifying any receiver `T: Message` for methods added with
+  `ClassBuilder::add_method`.
 
 ### Fixed
 * Properly sealed the `MessageArguments` trait (it already had a hidden

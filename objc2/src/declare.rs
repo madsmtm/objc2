@@ -195,9 +195,10 @@ impl ClassDecl {
     ///
     /// The caller must ensure that the types match those that are expected
     /// when the method is invoked from Objective-C.
-    pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
+    pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
     where
-        F: MethodImplementation<Callee = Object>,
+        T: Message + ?Sized, // TODO: Disallow `Class`
+        F: MethodImplementation<Callee = T>,
     {
         let encs = F::Args::ENCODINGS;
         let sel_args = count_args(sel);
