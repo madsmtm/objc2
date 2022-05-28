@@ -2,7 +2,7 @@
 use std::marker::PhantomData;
 use std::sync::Once;
 
-use objc2::declare::ClassDecl;
+use objc2::declare::ClassBuilder;
 use objc2::rc::{Id, Owned, Shared};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, sel};
@@ -48,8 +48,8 @@ impl<'a> MyObject<'a> {
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
-            let mut decl = ClassDecl::new("MyObject", superclass).unwrap();
-            decl.add_ivar::<Option<&mut u8>>("_number_ptr");
+            let mut builder = ClassBuilder::new("MyObject", superclass).unwrap();
+            builder.add_ivar::<Option<&mut u8>>("_number_ptr");
 
             unsafe extern "C" fn init_with_ptr(
                 this: *mut Object,
@@ -68,10 +68,10 @@ impl<'a> MyObject<'a> {
             unsafe {
                 let init_with_ptr: unsafe extern "C" fn(*mut Object, Sel, *mut u8) -> *mut Object =
                     init_with_ptr;
-                decl.add_method(sel!(initWithPtr:), init_with_ptr);
+                builder.add_method(sel!(initWithPtr:), init_with_ptr);
             }
 
-            decl.register();
+            builder.register();
         });
 
         Class::get("MyObject").unwrap()

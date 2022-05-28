@@ -36,6 +36,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```
 * Allow specifying any receiver `T: Message` for methods added with
   `ClassBuilder::add_method`.
+* Renamed `ClassDecl` and `ProtocolDecl` to `ClassBuilder` and
+  `ProtocolBuilder`. The old names are kept as deprecated aliases.
 
 ### Fixed
 * Properly sealed the `MessageArguments` trait (it already had a hidden
