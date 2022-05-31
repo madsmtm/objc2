@@ -20,3 +20,27 @@ note: required by a bound in `send_message`
     |         R: Encode,
     |            ^^^^^^ required by this bound in `send_message`
     = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
+   --> ui/msg_send_not_encode.rs:10:21
+    |
+10  |         let _: () = msg_send![cls, newWith: x];
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`
+    |
+    = help: the following other types implement trait `Encode`:
+              &'a T
+              &'a mut T
+              ()
+              *const T
+              *const c_void
+              *mut T
+              *mut c_void
+              ManuallyDrop<T>
+            and 142 others
+    = note: required because of the requirements on the impl of `MessageArguments` for `(Vec<u8>,)`
+note: required by a bound in `send_message`
+   --> $WORKSPACE/objc2/src/message/mod.rs
+    |
+    |         A: MessageArguments,
+    |            ^^^^^^^^^^^^^^^^ required by this bound in `send_message`
+    = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
