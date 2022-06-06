@@ -31,9 +31,9 @@ fn main() {
     let utterance: *mut Object = unsafe { msg_send![utterance, initWithString: &*string] };
     let utterance: Id<Object, Owned> = unsafe { Id::new(utterance).unwrap() };
 
-    // let _: () = unsafe { msg_send![utterance, setVolume: 90.0f32 };
-    // let _: () = unsafe { msg_send![utterance, setRate: 0.50f32 };
-    // let _: () = unsafe { msg_send![utterance, setPitchMultiplier: 0.80f32 };
+    // let _: () = unsafe { msg_send![&utterance, setVolume: 90.0f32 };
+    // let _: () = unsafe { msg_send![&utterance, setRate: 0.50f32 };
+    // let _: () = unsafe { msg_send![&utterance, setPitchMultiplier: 0.80f32 };
 
-    let _: () = unsafe { msg_send![synthesizer, speakUtterance: &*utterance] };
+    let _: () = unsafe { msg_send![&synthesizer, speakUtterance: &*utterance] };
 }

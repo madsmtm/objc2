@@ -156,7 +156,8 @@ impl NSMutableData {
 impl NSMutableData {
     #[doc(alias = "mutableBytes")]
     pub fn bytes_mut(&mut self) -> &mut [u8] {
-        let ptr: *mut c_void = unsafe { msg_send![self, mutableBytes] };
+        let this = &mut *self; // Reborrow
+        let ptr: *mut c_void = unsafe { msg_send![this, mutableBytes] };
         // The bytes pointer may be null for length zero
         if ptr.is_null() {
             &mut []

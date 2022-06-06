@@ -33,7 +33,7 @@ impl<'a, T: Message> Iterator for NSEnumerator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
-        unsafe { msg_send![self.id, nextObject] }
+        unsafe { msg_send![&mut self.id, nextObject] }
     }
 }
 

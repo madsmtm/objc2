@@ -54,22 +54,32 @@ macro_rules! sel {
 
 /// Sends a message to an object or class.
 ///
-/// The first argument can be any type that implements [`MessageReceiver`],
-/// like a reference, a pointer, or an [`rc::Id`] to an object (where the
-/// object implements [`Message`]).
-///
-/// In general this is wildly `unsafe`, even more so than sending messages in
+/// This is wildly `unsafe`, even more so than sending messages in
 /// Objective-C, because this macro doesn't know the expected types and
 /// because Rust has more safety invariants to uphold. Make sure to review the
-/// safety section below.
+/// safety section below!
 ///
-/// The syntax is similar to the message syntax in Objective-C.
+/// # General information
+///
+/// The syntax is similar to the message syntax in Objective-C, except we
+/// allow an optional comma between arguments (works better with rustfmt).
+///
+/// The first argument (know as the "receiver") can be any type that
+/// implements [`MessageReceiver`], like a reference or a pointer to an
+/// object, or even a reference to an [`rc::Id`] containing an object.
+/// Each subsequent argument must implement [`Encode`].
+///
+/// Behind the scenes this translates into a call to [`sel!`], and afterwards
+/// a fully qualified call to [`MessageReceiver::send_message`] (note that
+/// this means that auto-dereferencing of the receiver is not supported,
+/// making the ergonomics when using this slightly worse).
 ///
 /// Variadic arguments are not currently supported.
 ///
 /// [`MessageReceiver`]: crate::MessageReceiver
-/// [`Message`]: crate::Message
 /// [`rc::Id`]: crate::rc::Id
+/// [`Encode`]: crate::Encode
+/// [`MessageReceiver::send_message`]: crate::MessageReceiver::send_message
 ///
 /// # Panics
 ///
@@ -83,13 +93,12 @@ macro_rules! sel {
 ///
 /// # Safety
 ///
-/// The user must ensure that the selector is a valid method and is available
-/// on the given receiver.
+/// This macro can't inspect header files to see the expected types, so it is
+/// your responsibility that the selector exists on the receiver, and that the
+/// argument types and return type are what the receiver excepts for this
+/// selector - similar to defining an external function in FFI.
 ///
-/// Since this macro can't inspect header files to see the expected types, it
-/// is the users responsibility that the argument types and return type are
-/// what the receiver excepts for this selector. A way of doing this is by
-/// defining a wrapper function:
+/// The recommended way of doing this is by defining a wrapper function:
 /// ```
 /// # use std::os::raw::{c_int, c_char};
 /// # use objc2::msg_send;
@@ -99,19 +108,35 @@ macro_rules! sel {
 /// }
 /// ```
 ///
-/// The user must also uphold any safety requirements (explicit and implicit)
-/// that the method has (e.g. methods that take pointers as an argument
-/// usually require that the pointer is valid and often non-null).
+/// This way we are clearly communicating to Rust that this method takes an
+/// immutable object, a C-integer, and returns a pointer to (probably) a
+/// C-compatible string. Afterwards, it becomes fairly trivial to make a safe
+/// abstraction around this.
 ///
-/// Additionally, the call must not violate Rust's mutability rules, e.g. if
-/// passing an `&T` the Objective-C method must not mutate the variable.
+/// In particular, you must uphold the following requirements:
 ///
-/// If the receiver is a raw pointer the user must ensure that it is valid
-/// (aligned, dereferenceable, initialized and so on). Messages to `null`
-/// pointers are allowed (though discouraged), but only if the return type
-/// itself is a pointer.
+/// 1. The selector is a valid method that is available on the given receiver.
 ///
-/// Finally, the method must not (yet, see [RFC-2945]) throw an exception.
+/// 2. The types of the receiver and arguments must match what is expected on
+///   the Objective-C side.
+///
+/// 3. The call must not violate Rust's mutability rules, e.g. if passing an
+///   `&T`, the Objective-C method must not mutate the variable (this is true
+///   for receivers as well).
+///
+/// 4. If the receiver is a raw pointer the user must ensure that it is valid
+///   (aligned, dereferenceable, initialized and so on). Messages to `null`
+///   pointers are allowed (though heavily discouraged), but only if the
+///   return type itself is a pointer.
+///
+/// 5. The method must not (yet, see [RFC-2945]) throw an exception.
+///
+/// 6. You must uphold any additional safety requirements (explicit and
+///   implicit) that the method has (for example, methods that take pointers
+///   usually require that the pointer is valid, and sometimes non-null.
+///   Another example, some methods may only be called on the main thread).
+///
+/// 7. TODO: Maybe more?
 ///
 /// # Examples
 ///
@@ -132,7 +157,7 @@ macro_rules! msg_send {
     [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
         let sel = $crate::sel!($selector);
         let result;
-        match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ()) {
+        match $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -141,7 +166,7 @@ macro_rules! msg_send {
     [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr $(,)?)+] => ({
         let sel = $crate::sel!($($selector :)+);
         let result;
-        match $crate::MessageReceiver::send_super_message(&$obj, $superclass, sel, ($($argument,)+)) {
+        match $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ($($argument,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -150,7 +175,7 @@ macro_rules! msg_send {
     [$obj:expr, $selector:ident $(,)?] => ({
         let sel = $crate::sel!($selector);
         let result;
-        match $crate::MessageReceiver::send_message(&$obj, sel, ()) {
+        match $crate::MessageReceiver::send_message($obj, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -159,7 +184,7 @@ macro_rules! msg_send {
     [$obj:expr, $($selector:ident : $argument:expr $(,)?)+] => ({
         let sel = $crate::sel!($($selector :)+);
         let result;
-        match $crate::MessageReceiver::send_message(&$obj, sel, ($($argument,)+)) {
+        match $crate::MessageReceiver::send_message($obj, sel, ($($argument,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }

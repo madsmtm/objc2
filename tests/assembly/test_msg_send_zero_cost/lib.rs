@@ -5,5 +5,5 @@ use objc2::MessageReceiver;
 
 #[no_mangle]
 pub fn handle(obj: &Object, sel: Sel) -> *mut Object {
-    unsafe { MessageReceiver::send_message(&obj, sel, ()).unwrap() }
+    unsafe { MessageReceiver::send_message(obj, sel, ()).unwrap() }
 }

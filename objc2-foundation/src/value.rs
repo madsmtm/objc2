@@ -177,7 +177,7 @@ mod tests {
     fn test_value_nsrange() {
         let val = NSValue::new(NSRange::from(1..2));
         assert!(NSRange::ENCODING.equivalent_to_str(val.encoding().unwrap()));
-        let range: NSRange = unsafe { objc2::msg_send![val, rangeValue] };
+        let range: NSRange = unsafe { objc2::msg_send![&val, rangeValue] };
         assert_eq!(range, NSRange::from(1..2));
         // NSValue -getValue is broken on GNUStep for some types
         #[cfg(not(feature = "gnustep-1-7"))]

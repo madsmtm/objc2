@@ -5,7 +5,7 @@ use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 use std::error::Error;
 
-use crate::rc::{Id, Ownership};
+use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::{Encode, EncodeArguments, RefEncode};
 
@@ -69,19 +69,22 @@ unsafe impl Message for Class {}
 
 // TODO: Make this fully private
 pub(crate) mod private {
-    use super::{Id, ManuallyDrop, Message, MessageReceiver, NonNull, Ownership};
+    use super::*;
 
     pub trait Sealed {}
 
     impl<T: Message + ?Sized> Sealed for *const T {}
     impl<T: Message + ?Sized> Sealed for *mut T {}
+    impl<T: Message + ?Sized> Sealed for NonNull<T> {}
 
     impl<'a, T: Message + ?Sized> Sealed for &'a T {}
     impl<'a, T: Message + ?Sized> Sealed for &'a mut T {}
-    impl<T: Message + ?Sized> Sealed for NonNull<T> {}
-    impl<T: Message + ?Sized, O: Ownership> Sealed for Id<T, O> {}
 
-    impl<T: MessageReceiver + ?Sized> Sealed for ManuallyDrop<T> {}
+    impl<'a, T: Message + ?Sized, O: Ownership> Sealed for &'a Id<T, O> {}
+    impl<'a, T: Message + ?Sized> Sealed for &'a mut Id<T, Owned> {}
+
+    impl<'a, T: Message + ?Sized, O: Ownership> Sealed for &'a ManuallyDrop<Id<T, O>> {}
+    impl<'a, T: Message + ?Sized> Sealed for &'a mut ManuallyDrop<Id<T, Owned>> {}
 }
 
 /// Types that can directly be used as the receiver of Objective-C messages.
@@ -96,9 +99,9 @@ pub(crate) mod private {
 /// # Safety
 ///
 /// [`Self::as_raw_receiver`] must be implemented correctly.
-pub unsafe trait MessageReceiver: private::Sealed {
+pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// Get a raw pointer to the receiver of the message.
-    fn as_raw_receiver(&self) -> *mut Object;
+    fn as_raw_receiver(self) -> *mut Object;
 
     /// Sends a message to self with the given selector and arguments.
     ///
@@ -118,7 +121,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
     #[cfg_attr(not(feature = "verify_message"), inline(always))]
-    unsafe fn send_message<A, R>(&self, sel: Sel, args: A) -> Result<R, MessageError>
+    unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> Result<R, MessageError>
     where
         A: MessageArguments,
         R: Encode,
@@ -161,7 +164,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// arguments as is given.
     #[cfg_attr(not(feature = "verify_message"), inline(always))]
     unsafe fn send_super_message<A, R>(
-        &self,
+        self,
         superclass: &Class,
         sel: Sel,
         args: A,
@@ -202,7 +205,7 @@ pub unsafe trait MessageReceiver: private::Sealed {
     /// assert!(result.is_ok());
     /// ```
     #[cfg(feature = "malloc")]
-    fn verify_message<A, R>(&self, sel: Sel) -> Result<(), MessageError>
+    fn verify_message<A, R>(self, sel: Sel) -> Result<(), MessageError>
     where
         A: EncodeArguments,
         R: Encode,
@@ -217,50 +220,64 @@ pub unsafe trait MessageReceiver: private::Sealed {
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
     #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        *self as *mut T as *mut Object
+    fn as_raw_receiver(self) -> *mut Object {
+        self as *mut T as *mut Object
     }
 }
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
     #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        *self as *mut Object
-    }
-}
-
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
-    #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        *self as *const T as *mut T as *mut Object
-    }
-}
-
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
-    #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        *self as *const T as *mut T as *mut Object
+    fn as_raw_receiver(self) -> *mut Object {
+        self as *mut Object
     }
 }
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
     #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
+    fn as_raw_receiver(self) -> *mut Object {
         self.as_ptr() as *mut Object
     }
 }
 
-unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for Id<T, O> {
+unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
     #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
+    fn as_raw_receiver(self) -> *mut Object {
+        self as *const T as *mut T as *mut Object
+    }
+}
+
+unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
+        self as *const T as *mut T as *mut Object
+    }
+}
+
+unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T, O> {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
         self.as_ptr() as *mut Object
     }
 }
 
-unsafe impl<T: MessageReceiver + ?Sized> MessageReceiver for ManuallyDrop<T> {
+unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
     #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        (**self).as_raw_receiver()
+    fn as_raw_receiver(self) -> *mut Object {
+        self.as_ptr() as *mut Object
+    }
+}
+
+unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a ManuallyDrop<Id<T, O>> {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
+        (**self).as_ptr() as *mut Object
+    }
+}
+
+unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut ManuallyDrop<Id<T, Owned>> {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
+        (**self).as_ptr() as *mut Object
     }
 }
 
@@ -382,10 +399,10 @@ mod tests {
 
     #[test]
     fn test_send_message() {
-        let obj = test_utils::custom_object();
+        let mut obj = test_utils::custom_object();
         let result: u32 = unsafe {
-            let _: () = msg_send![obj, setFoo: 4u32];
-            msg_send![obj, foo]
+            let _: () = msg_send![&mut obj, setFoo: 4u32];
+            msg_send![&obj, foo]
         };
         assert_eq!(result, 4);
     }
@@ -393,7 +410,7 @@ mod tests {
     #[test]
     fn test_send_message_stret() {
         let obj = test_utils::custom_object();
-        let result: test_utils::CustomStruct = unsafe { msg_send![obj, customStruct] };
+        let result: test_utils::CustomStruct = unsafe { msg_send![&obj, customStruct] };
         let expected = test_utils::CustomStruct {
             a: 1,
             b: 2,
@@ -431,15 +448,15 @@ mod tests {
 
     #[test]
     fn test_send_message_super() {
-        let obj = test_utils::custom_subclass_object();
+        let mut obj = test_utils::custom_subclass_object();
         let superclass = test_utils::custom_class();
         unsafe {
-            let _: () = msg_send![obj, setFoo: 4u32];
-            let foo: u32 = msg_send![super(obj, superclass), foo];
+            let _: () = msg_send![&mut obj, setFoo: 4u32];
+            let foo: u32 = msg_send![super(&obj, superclass), foo];
             assert_eq!(foo, 4);
 
             // The subclass is overriden to return foo + 2
-            let foo: u32 = msg_send![obj, foo];
+            let foo: u32 = msg_send![&obj, foo];
             assert_eq!(foo, 6);
         }
     }
@@ -447,10 +464,10 @@ mod tests {
     #[test]
     fn test_send_message_manuallydrop() {
         let obj = test_utils::custom_object();
-        let obj = ManuallyDrop::new(obj);
+        let mut obj = ManuallyDrop::new(obj);
         let result: u32 = unsafe {
-            let _: () = msg_send![obj, setFoo: 4u32];
-            msg_send![obj, foo]
+            let _: () = msg_send![&mut obj, setFoo: 4u32];
+            msg_send![&obj, foo]
         };
         assert_eq!(result, 4);
 

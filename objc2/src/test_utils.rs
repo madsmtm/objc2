@@ -1,3 +1,4 @@
+use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
 use std::os::raw::c_char;
 use std::sync::Once;
@@ -20,12 +21,36 @@ impl CustomObject {
 }
 
 // TODO: Remove the need for this hack
-impl crate::message::private::Sealed for CustomObject {}
+impl crate::message::private::Sealed for &CustomObject {}
+impl crate::message::private::Sealed for &mut CustomObject {}
+impl crate::message::private::Sealed for &ManuallyDrop<CustomObject> {}
+impl crate::message::private::Sealed for &mut ManuallyDrop<CustomObject> {}
 
-unsafe impl MessageReceiver for CustomObject {
+unsafe impl MessageReceiver for &CustomObject {
     #[inline]
-    fn as_raw_receiver(&self) -> *mut Object {
-        self.obj
+    fn as_raw_receiver(self) -> *mut Object {
+        (&**self).as_raw_receiver()
+    }
+}
+
+unsafe impl MessageReceiver for &mut CustomObject {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
+        (&**self).as_raw_receiver()
+    }
+}
+
+unsafe impl MessageReceiver for &ManuallyDrop<CustomObject> {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
+        (&**self).as_raw_receiver()
+    }
+}
+
+unsafe impl MessageReceiver for &mut ManuallyDrop<CustomObject> {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
+        (&**self).as_raw_receiver()
     }
 }
 
