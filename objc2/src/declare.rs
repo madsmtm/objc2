@@ -48,7 +48,7 @@ use crate::{ffi, Encode, EncodeArguments, Encoding, Message};
 /// Types that can be used as the implementation of an Objective-C method.
 pub trait MethodImplementation {
     /// The callee type of the method.
-    type Callee: Message + ?Sized;
+    type Callee: ?Sized;
     /// The return type of the method.
     type Ret: Encode;
     /// The argument types of the method.
@@ -75,6 +75,21 @@ macro_rules! method_decl_impl {
             }
         }
     );
+    (@$s:ident, $r:ident, $f:ty, $($t:ident),*) => (
+        impl<$r, $($t),*> MethodImplementation for $f
+        where
+            $r: Encode,
+            $($t: Encode,)*
+        {
+            type Callee = $s;
+            type Ret = $r;
+            type Args = ($($t,)*);
+
+            fn imp(self) -> Imp {
+                unsafe { mem::transmute(self) }
+            }
+        }
+    );
     ($($t:ident),*) => (
         method_decl_impl!(-T, R, extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(-T, R, extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
@@ -82,6 +97,10 @@ macro_rules! method_decl_impl {
         method_decl_impl!(-T, R, unsafe extern "C" fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(-T, R, unsafe extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(-T, R, unsafe extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+
+        method_decl_impl!(@Class, R, extern "C" fn(&Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@Class, R, unsafe extern "C" fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@Class, R, unsafe extern "C" fn(&Class, Sel $(, $t)*) -> R, $($t),*);
     );
 }
 
@@ -200,7 +219,7 @@ impl ClassBuilder {
     /// when the method is invoked from Objective-C.
     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
     where
-        T: Message + ?Sized, // TODO: Disallow `Class`
+        T: Message + ?Sized,
         F: MethodImplementation<Callee = T>,
     {
         let encs = F::Args::ENCODINGS;

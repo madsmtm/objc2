@@ -43,8 +43,6 @@ use self::verify::{verify_message_signature, VerificationError};
 
 /// Types that can be sent Objective-C messages.
 ///
-/// Examples include objects, classes, and blocks.
-///
 /// Implementing this provides [`MessageReceiver`] implementations for common
 /// pointer types and references to the type, which allows using them as the
 /// receiver (first argument) in the [`msg_send!`][`crate::msg_send`] macro.
@@ -53,6 +51,9 @@ use self::verify::{verify_message_signature, VerificationError};
 ///
 /// A pointer to the type must be able to be the receiver of an Objective-C
 /// message sent with [`objc_msgSend`] or similar.
+///
+/// The object must also respond to the `retain`, `release` and `autorelease`
+/// messages, as that allows it to be used with [`rc::Id`][`Id`].
 ///
 /// Additionally, the type must implement [`RefEncode`] and adhere to the
 /// safety requirements therein.
@@ -64,8 +65,6 @@ pub unsafe trait Message: RefEncode {}
 unsafe impl<T: Message + ?Sized> Message for ManuallyDrop<T> {}
 
 unsafe impl Message for Object {}
-
-unsafe impl Message for Class {}
 
 // TODO: Make this fully private
 pub(crate) mod private {
@@ -84,9 +83,14 @@ pub(crate) mod private {
     impl<'a, T: Message + ?Sized> Sealed for &'a mut Id<T, Owned> {}
 
     impl<T: Message + ?Sized, O: Ownership> Sealed for ManuallyDrop<Id<T, O>> {}
+
+    impl Sealed for *const Class {}
+    impl<'a> Sealed for &'a Class {}
 }
 
 /// Types that can directly be used as the receiver of Objective-C messages.
+///
+/// Examples include objects, classes, and blocks.
 ///
 /// This is a sealed trait (for now) that is automatically implemented for
 /// pointers to types implementing [`Message`], so that code can be generic
@@ -270,6 +274,20 @@ unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
         Id::consume_as_ptr(self) as *mut Object
+    }
+}
+
+unsafe impl MessageReceiver for *const Class {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
+        self as *mut Class as *mut Object
+    }
+}
+
+unsafe impl<'a> MessageReceiver for &'a Class {
+    #[inline]
+    fn as_raw_receiver(self) -> *mut Object {
+        self as *const Class as *mut Class as *mut Object
     }
 }
 

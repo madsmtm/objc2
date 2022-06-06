@@ -9,8 +9,9 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
             &'a T
             &'a mut Id<T, objc2::rc::Owned>
             &'a mut T
+            &'a objc2::runtime::Class
             *const T
+            *const objc2::runtime::Class
             *mut T
-            ManuallyDrop<Id<T, O>>
-            NonNull<T>
+          and 2 others
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
