@@ -179,12 +179,12 @@ fn test_object() {
     assert!(obj.var3().is_null());
     assert!(obj.var3_ivar().is_null());
 
-    let obj2 = ManuallyDrop::new(NSObject::new()).as_ptr().cast::<Object>();
+    let obj2 = Id::as_ptr(&mut *ManuallyDrop::new(NSObject::new())).cast::<Object>();
     obj.set_var3(obj2);
     assert_eq!(obj.var3(), obj2);
     assert_eq!(*obj.var3_ivar(), obj2);
 
-    let obj3 = ManuallyDrop::new(NSObject::new()).as_ptr().cast::<Object>();
+    let obj3 = Id::as_ptr(&mut *ManuallyDrop::new(NSObject::new())).cast::<Object>();
     *obj.var3_ivar_mut() = obj3;
     assert_ne!(obj.var3(), obj2);
     assert_ne!(*obj.var3_ivar(), obj2);

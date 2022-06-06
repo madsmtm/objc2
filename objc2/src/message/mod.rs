@@ -256,28 +256,28 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
 unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T, O> {
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
-        self.as_ptr() as *mut Object
+        Id::as_ptr(self) as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
-        self.as_ptr() as *mut Object
+        Id::as_ptr(self) as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a ManuallyDrop<Id<T, O>> {
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
-        (**self).as_ptr() as *mut Object
+        Id::as_ptr(&**self) as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut ManuallyDrop<Id<T, Owned>> {
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
-        (**self).as_ptr() as *mut Object
+        Id::as_ptr(&mut **self) as *mut Object
     }
 }
 

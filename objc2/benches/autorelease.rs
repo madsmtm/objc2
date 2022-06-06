@@ -62,7 +62,7 @@ fn new_nsdata() -> Id<Object, Shared> {
 }
 
 fn new_leaked_nsdata() -> *mut Object {
-    ManuallyDrop::new(new_nsdata()).as_ptr()
+    Id::as_ptr(&*ManuallyDrop::new(new_nsdata()))
 }
 
 fn autoreleased_nsdata() -> *mut Object {
@@ -84,7 +84,7 @@ fn new_nsstring() -> Id<Object, Shared> {
 }
 
 fn new_leaked_nsstring() -> *mut Object {
-    ManuallyDrop::new(new_nsstring()).as_ptr()
+    Id::as_ptr(&*ManuallyDrop::new(new_nsstring()))
 }
 
 fn autoreleased_nsstring() -> *mut Object {

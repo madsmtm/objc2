@@ -191,14 +191,11 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// Returns a raw pointer to the object.
     ///
     /// The pointer is valid for at least as long as the `Id` is held.
+    ///
+    /// This is an associated method, and must be called as `Id::as_ptr(obj)`.
     #[inline]
-    pub fn as_ptr(&self) -> *mut T {
-        // Note: This is not an associated function, which breaks the
-        // guideline that smart pointers shouldn't add inherent methods!
-        //
-        // However, this method is quite useful when migrating old codebases,
-        // so I think we'll let it be here for now.
-        self.ptr.as_ptr()
+    pub fn as_ptr(this: &Id<T, O>) -> *mut T {
+        this.ptr.as_ptr()
     }
 }
 
@@ -382,7 +379,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // retained objects it is hard to imagine a case where the inner type
         // has a method with the same name.
 
-        let ptr = ManuallyDrop::new(self).as_ptr() as *mut ffi::objc_object;
+        let ptr = ManuallyDrop::new(self).ptr.as_ptr() as *mut ffi::objc_object;
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
         // And because of the ManuallyDrop, we don't call the Drop
