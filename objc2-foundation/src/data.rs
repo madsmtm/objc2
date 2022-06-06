@@ -154,10 +154,14 @@ impl NSMutableData {
 
 /// Mutation methods
 impl NSMutableData {
+    // Helps with reborrowing issue
+    fn raw_bytes_mut(&mut self) -> *mut c_void {
+        unsafe { msg_send![self, mutableBytes] }
+    }
+
     #[doc(alias = "mutableBytes")]
     pub fn bytes_mut(&mut self) -> &mut [u8] {
-        let this = &mut *self; // Reborrow
-        let ptr: *mut c_void = unsafe { msg_send![this, mutableBytes] };
+        let ptr = self.raw_bytes_mut();
         // The bytes pointer may be null for length zero
         if ptr.is_null() {
             &mut []

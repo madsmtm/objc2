@@ -272,14 +272,16 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
         obj
     }
 
+    fn remove_last(&mut self) {
+        unsafe { msg_send![self, removeLastObject] }
+    }
+
     #[doc(alias = "removeLastObject")]
     pub fn pop(&mut self) -> Option<Id<T, O>> {
         self.last()
             .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
             .map(|obj| {
-                unsafe {
-                    let _: () = msg_send![self, removeLastObject];
-                }
+                self.remove_last();
                 obj
             })
     }
