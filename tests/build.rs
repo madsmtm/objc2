@@ -12,6 +12,13 @@ fn main() {
         builder.flag(flag);
     }
 
+    // TODO???
+    // for flag in env::var("DEP_OBJC_0_2_CC_ARGS").unwrap().split(' ') {
+    //     builder.flag(flag);
+    // }
+
+    builder.flag("-xobjective-c");
+
     builder.compile("libblock_utils.a");
 
     let mut builder = cc::Build::new();

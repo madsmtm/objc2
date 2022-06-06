@@ -1,3 +1,4 @@
+use block2::{ffi, Block};
 use objc2::{Encode, Encoding};
 
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.
@@ -61,11 +62,27 @@ extern "C" {
     pub fn get_large_struct_block() -> *mut LargeStructBlock;
     pub fn get_large_struct_block_with(i: LargeStruct) -> *mut LargeStructBlock;
     pub fn invoke_large_struct_block(block: *mut LargeStructBlock, s: LargeStruct) -> LargeStruct;
+
+    pub fn try_block_debugging(x: i32);
+}
+
+#[no_mangle]
+extern "C" fn debug_block(layout: &ffi::Block_layout) {
+    let block: &Block<(), ()> =
+        unsafe { &*(layout as *const ffi::Block_layout as *const Block<(), ()>) };
+    std::println!("{:#?}", block);
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_block_debugging() {
+        unsafe { try_block_debugging(5) };
+        // Uncomment to see debug output
+        // panic!();
+    }
 
     #[test]
     fn test_int_block() {

@@ -53,3 +53,53 @@ LargeStructBlock get_large_struct_block_with(LargeStruct a) {
 LargeStruct invoke_large_struct_block(LargeStructBlock block, LargeStruct s) {
     return block(s);
 }
+
+
+#include <Foundation/NSObject.h>
+
+typedef int32_t (^ABlock)(void);
+
+void debug_block(void* block);
+#define DEBUG(block) debug_block((void*)(block))
+
+void try_block_debugging(int32_t x) {
+    // Create block that captures an argument
+    ABlock block = ^{
+        return (int32_t)7 + x;
+    };
+    DEBUG(block);
+
+    // Copy it to the heap
+    block = Block_copy(block);
+    DEBUG(block);
+
+    // Increase the retain count 100 times
+    for (int i = 0; i < 100; ++i) {
+        block = Block_copy(block);
+    }
+    DEBUG(block);
+
+    // Increase the retain count so that it overflows
+    for (int i = 0; i < 100000; ++i) {
+        block = Block_copy(block);
+    }
+    DEBUG(block);
+
+    // Debug a few other types of blocks
+    DEBUG(^{
+        return (int32_t)7;
+    });
+    DEBUG(^{});
+    DEBUG(get_large_struct_block());
+
+    // Debug blocks that contains Objective-C objects
+    id obj = [NSObject new];
+    DEBUG(^{
+        return obj;
+    });
+    DEBUG(Block_copy(^{
+        return obj;
+    }));
+}
+
+
