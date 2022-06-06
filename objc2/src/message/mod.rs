@@ -83,8 +83,7 @@ pub(crate) mod private {
     impl<'a, T: Message + ?Sized, O: Ownership> Sealed for &'a Id<T, O> {}
     impl<'a, T: Message + ?Sized> Sealed for &'a mut Id<T, Owned> {}
 
-    impl<'a, T: Message + ?Sized, O: Ownership> Sealed for &'a ManuallyDrop<Id<T, O>> {}
-    impl<'a, T: Message + ?Sized> Sealed for &'a mut ManuallyDrop<Id<T, Owned>> {}
+    impl<T: Message + ?Sized, O: Ownership> Sealed for ManuallyDrop<Id<T, O>> {}
 }
 
 /// Types that can directly be used as the receiver of Objective-C messages.
@@ -267,17 +266,10 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a ManuallyDrop<Id<T, O>> {
+unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<Id<T, O>> {
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
-        Id::as_ptr(&**self) as *mut Object
-    }
-}
-
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut ManuallyDrop<Id<T, Owned>> {
-    #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
-        Id::as_mut_ptr(&mut **self) as *mut Object
+        Id::consume_as_ptr(self) as *mut Object
     }
 }
 
@@ -481,17 +473,11 @@ mod tests {
 
     #[test]
     fn test_send_message_manuallydrop() {
-        let obj = test_utils::custom_object();
-        let mut obj = ManuallyDrop::new(obj);
-        let result: u32 = unsafe {
-            let _: () = msg_send![&mut obj, setFoo: 4u32];
-            msg_send![&obj, foo]
+        let obj = ManuallyDrop::new(test_utils::custom_object());
+        unsafe {
+            let _: () = msg_send![obj, release];
         };
-        assert_eq!(result, 4);
-
-        let obj: *const ManuallyDrop<Object> = obj.as_ptr().cast();
-        let result: u32 = unsafe { msg_send![obj, foo] };
-        assert_eq!(result, 4);
+        // `obj` is consumed, can't use here
     }
 
     #[test]

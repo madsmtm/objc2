@@ -199,6 +199,11 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     pub fn as_ptr(this: &Id<T, O>) -> *const T {
         this.ptr.as_ptr()
     }
+
+    #[inline]
+    pub(crate) fn consume_as_ptr(this: ManuallyDrop<Self>) -> *mut T {
+        this.ptr.as_ptr()
+    }
 }
 
 impl<T: Message + ?Sized> Id<T, Owned> {

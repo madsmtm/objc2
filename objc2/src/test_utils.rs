@@ -23,34 +23,26 @@ impl CustomObject {
 // TODO: Remove the need for this hack
 impl crate::message::private::Sealed for &CustomObject {}
 impl crate::message::private::Sealed for &mut CustomObject {}
-impl crate::message::private::Sealed for &ManuallyDrop<CustomObject> {}
-impl crate::message::private::Sealed for &mut ManuallyDrop<CustomObject> {}
+impl crate::message::private::Sealed for ManuallyDrop<CustomObject> {}
 
 unsafe impl MessageReceiver for &CustomObject {
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
-        (&**self).as_raw_receiver()
+        self.obj
     }
 }
 
 unsafe impl MessageReceiver for &mut CustomObject {
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
-        (&**self).as_raw_receiver()
+        self.obj
     }
 }
 
-unsafe impl MessageReceiver for &ManuallyDrop<CustomObject> {
+unsafe impl MessageReceiver for ManuallyDrop<CustomObject> {
     #[inline]
     fn as_raw_receiver(self) -> *mut Object {
-        (&**self).as_raw_receiver()
-    }
-}
-
-unsafe impl MessageReceiver for &mut ManuallyDrop<CustomObject> {
-    #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
-        (&**self).as_raw_receiver()
+        self.obj
     }
 }
 
@@ -106,6 +98,11 @@ pub(crate) fn custom_class() -> &'static Class {
         builder.add_protocol(proto);
         builder.add_ivar::<u32>("_foo");
 
+        unsafe extern "C" fn custom_obj_release(this: *mut Object, _cmd: Sel) {
+            // Drop the value
+            let _ = CustomObject { obj: this };
+        }
+
         extern "C" fn custom_obj_set_foo(this: &mut Object, _cmd: Sel, foo: u32) {
             unsafe {
                 this.set_ivar::<u32>("_foo", foo);
@@ -145,6 +142,9 @@ pub(crate) fn custom_class() -> &'static Class {
         }
 
         unsafe {
+            let release: unsafe extern "C" fn(*mut Object, Sel) = custom_obj_release;
+            builder.add_method(sel!(release), release);
+
             let set_foo: extern "C" fn(&mut Object, Sel, u32) = custom_obj_set_foo;
             builder.add_method(sel!(setFoo:), set_foo);
             let get_foo: extern "C" fn(&Object, Sel) -> u32 = custom_obj_get_foo;
