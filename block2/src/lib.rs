@@ -210,7 +210,7 @@ impl<A: BlockArguments + EncodeArguments, R: Encode> Block<A, R> {
 
 /// A reference-counted Objective-C block.
 pub struct RcBlock<A, R> {
-    ptr: *mut Block<A, R>,
+    pub(crate) ptr: *mut Block<A, R>,
 }
 
 impl<A, R> RcBlock<A, R> {

@@ -1,10 +1,10 @@
 use alloc::format;
 use core::ffi::c_void;
-use core::fmt::{Debug, Error, Formatter};
+use core::fmt::{Debug, DebugStruct, Error, Formatter};
 use core::ptr;
 use std::ffi::CStr;
 
-use crate::{ffi, Block};
+use crate::{ffi, Block, ConcreteBlock, GlobalBlock, RcBlock};
 
 #[derive(Clone, Copy)]
 struct Isa(*const ffi::Class);
@@ -37,25 +37,53 @@ impl Debug for Isa {
     }
 }
 
+fn debug_block_layout(layout: &ffi::Block_layout, f: &mut DebugStruct<'_, '_>) {
+    f.field("isa", &Isa(layout.isa));
+    f.field("flags", &BlockFlags(layout.flags));
+    f.field("reserved", &layout.reserved);
+    f.field("invoke", &layout.invoke);
+    f.field(
+        "descriptor",
+        &BlockDescriptor {
+            has_copy_dispose: layout.flags & ffi::BLOCK_HAS_COPY_DISPOSE != 0,
+            has_signature: layout.flags & ffi::BLOCK_HAS_SIGNATURE != 0,
+            descriptor: layout.descriptor,
+        },
+    );
+}
+
 impl<A, R> Debug for Block<A, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let mut f = f.debug_struct("Block");
+        let ptr: *const Self = self;
+        let layout = unsafe { ptr.cast::<ffi::Block_layout>().as_ref().unwrap() };
+        debug_block_layout(layout, &mut f);
+        f.finish_non_exhaustive()
+    }
+}
 
-        let layout: &ffi::Block_layout =
-            unsafe { &*(self as *const Self as *const ffi::Block_layout) };
+impl<A, R> Debug for RcBlock<A, R> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        let mut f = f.debug_struct("RcBlock");
+        let layout = unsafe { self.ptr.cast::<ffi::Block_layout>().as_ref().unwrap() };
+        debug_block_layout(layout, &mut f);
+        f.finish_non_exhaustive()
+    }
+}
 
-        f.field("isa", &Isa(layout.isa));
-        f.field("flags", &BlockFlags(layout.flags));
-        f.field("reserved", &layout.reserved);
-        f.field("invoke", &layout.invoke);
-        f.field(
-            "descriptor",
-            &BlockDescriptor {
-                has_copy_dispose: layout.flags & ffi::BLOCK_HAS_COPY_DISPOSE != 0,
-                has_signature: layout.flags & ffi::BLOCK_HAS_SIGNATURE != 0,
-                descriptor: layout.descriptor.cast(),
-            },
-        );
+impl<A, R, F: Debug> Debug for ConcreteBlock<A, R, F> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        let mut f = f.debug_struct("ConcreteBlock");
+        debug_block_layout(&self.layout, &mut f);
+        f.field("closure", &self.closure);
+        f.finish()
+    }
+}
+
+impl<A, R> Debug for GlobalBlock<A, R> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        let mut f = f.debug_struct("GlobalBlock");
+        debug_block_layout(&self.layout, &mut f);
         f.finish_non_exhaustive()
     }
 }
@@ -104,7 +132,7 @@ impl Debug for BlockFlags {
 struct BlockDescriptor {
     has_copy_dispose: bool,
     has_signature: bool,
-    descriptor: *mut c_void,
+    descriptor: *const c_void,
 }
 
 impl Debug for BlockDescriptor {
@@ -115,7 +143,12 @@ impl Debug for BlockDescriptor {
 
         let mut f = f.debug_struct("BlockDescriptor");
 
-        let header = unsafe { &*(self.descriptor as *mut ffi::Block_descriptor_header) };
+        let header = unsafe {
+            self.descriptor
+                .cast::<ffi::Block_descriptor_header>()
+                .as_ref()
+                .unwrap()
+        };
 
         f.field("reserved", &header.reserved);
         f.field("size", &header.size);
@@ -123,12 +156,22 @@ impl Debug for BlockDescriptor {
         match (self.has_copy_dispose, self.has_signature) {
             (false, false) => {}
             (true, false) => {
-                let descriptor = unsafe { &*(self.descriptor as *mut ffi::Block_descriptor) };
+                let descriptor = unsafe {
+                    self.descriptor
+                        .cast::<ffi::Block_descriptor>()
+                        .as_ref()
+                        .unwrap()
+                };
                 f.field("copy", &descriptor.copy);
                 f.field("dispose", &descriptor.dispose);
             }
             (false, true) => {
-                let descriptor = unsafe { &*(self.descriptor as *mut ffi::Block_descriptor_basic) };
+                let descriptor = unsafe {
+                    self.descriptor
+                        .cast::<ffi::Block_descriptor_basic>()
+                        .as_ref()
+                        .unwrap()
+                };
                 f.field(
                     "encoding",
                     &if descriptor.encoding.is_null() {
@@ -139,10 +182,14 @@ impl Debug for BlockDescriptor {
                 );
             }
             (true, true) => {
-                let descriptor =
-                    unsafe { &*(self.descriptor as *mut ffi::Block_descriptor_with_signature) };
-                f.field("copy", &descriptor.inner.copy);
-                f.field("dispose", &descriptor.inner.dispose);
+                let descriptor = unsafe {
+                    self.descriptor
+                        .cast::<ffi::Block_descriptor_with_signature>()
+                        .as_ref()
+                        .unwrap()
+                };
+                f.field("copy", &descriptor.copy);
+                f.field("dispose", &descriptor.dispose);
                 f.field(
                     "encoding",
                     &if descriptor.encoding.is_null() {

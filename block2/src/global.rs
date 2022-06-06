@@ -28,7 +28,7 @@ const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_he
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
-    layout: ffi::Block_layout,
+    pub(crate) layout: ffi::Block_layout,
     p: PhantomData<(A, R)>,
 }
 
