@@ -1,9 +1,41 @@
 use alloc::format;
 use core::ffi::c_void;
 use core::fmt::{Debug, Error, Formatter};
+use core::ptr;
 use std::ffi::CStr;
 
 use crate::{ffi, Block};
+
+#[derive(Clone, Copy)]
+struct Isa(*const ffi::Class);
+
+impl Isa {
+    fn is_global(self) -> bool {
+        ptr::eq(unsafe { &ffi::_NSConcreteGlobalBlock }, self.0)
+    }
+
+    fn is_stack(self) -> bool {
+        ptr::eq(unsafe { &ffi::_NSConcreteStackBlock }, self.0)
+    }
+
+    fn is_malloc(self) -> bool {
+        ptr::eq(unsafe { &ffi::_NSConcreteMallocBlock }, self.0)
+    }
+}
+
+impl Debug for Isa {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        if self.is_global() {
+            f.write_str("_NSConcreteGlobalBlock")
+        } else if self.is_stack() {
+            f.write_str("_NSConcreteStackBlock")
+        } else if self.is_malloc() {
+            f.write_str("_NSConcreteMallocBlock")
+        } else {
+            write!(f, "{:?}", self.0)
+        }
+    }
+}
 
 impl<A, R> Debug for Block<A, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
@@ -12,7 +44,7 @@ impl<A, R> Debug for Block<A, R> {
         let layout: &ffi::Block_layout =
             unsafe { &*(self as *const Self as *const ffi::Block_layout) };
 
-        f.field("isa", debug_isa(&layout.isa));
+        f.field("isa", &Isa(layout.isa));
         f.field("flags", &BlockFlags(layout.flags));
         f.field("reserved", &layout.reserved);
         f.field("invoke", &layout.invoke);
@@ -25,18 +57,6 @@ impl<A, R> Debug for Block<A, R> {
             },
         );
         f.finish_non_exhaustive()
-    }
-}
-
-fn debug_isa(isa: &*mut ffi::Class) -> &dyn Debug {
-    if unsafe { &ffi::_NSConcreteGlobalBlock } as *const ffi::Class == *isa {
-        &"Global"
-    } else if unsafe { &ffi::_NSConcreteStackBlock } as *const ffi::Class == *isa {
-        &"Stack"
-    } else if unsafe { &ffi::_NSConcreteMallocBlock } as *const ffi::Class == *isa {
-        &"Malloc"
-    } else {
-        isa
     }
 }
 
@@ -135,5 +155,30 @@ impl Debug for BlockDescriptor {
         }
 
         f.finish()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_isa() {
+        let isa = Isa(unsafe { &ffi::_NSConcreteGlobalBlock });
+        assert!(isa.is_global());
+        assert!(!isa.is_stack());
+        assert!(!isa.is_malloc());
+        let isa = Isa(unsafe { &ffi::_NSConcreteStackBlock });
+        assert!(!isa.is_global());
+        assert!(isa.is_stack());
+        assert!(!isa.is_malloc());
+        let isa = Isa(unsafe { &ffi::_NSConcreteMallocBlock });
+        assert!(!isa.is_global());
+        assert!(!isa.is_stack());
+        assert!(isa.is_malloc());
+        let isa = Isa(ptr::null());
+        assert!(!isa.is_global());
+        assert!(!isa.is_stack());
+        assert!(!isa.is_malloc());
     }
 }
