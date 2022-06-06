@@ -430,8 +430,7 @@ encode_pointer_impls!(
 ///
 /// Ideally we'd implement it for all function pointers, but due to coherence
 /// issues, see <https://github.com/rust-lang/rust/issues/56105>, function
-/// pointers that take arguments with "special lifetimes" (don't know the
-/// termonology) don't get implemented properly.
+/// pointers that are higher-ranked over lifetimes don't get implemented.
 ///
 /// We could fix it by adding those impls and allowing `coherence_leak_check`,
 /// but it would have to be done for _all_ references, `Option<&T>` and such as

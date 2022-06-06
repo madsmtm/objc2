@@ -1,6 +1,6 @@
 //! Functionality for declaring Objective-C classes.
 //!
-//! Classes can be declared using the [`ClassDecl`] struct. Instance variables
+//! Classes can be declared using the [`ClassBuilder`] struct. Instance variables
 //! and methods can then be added before the class is ultimately registered.
 //!
 //! # Example
@@ -11,11 +11,11 @@
 //!
 //! ```no_run
 //! use objc2::{class, sel};
-//! use objc2::declare::ClassDecl;
+//! use objc2::declare::ClassBuilder;
 //! use objc2::runtime::{Class, Object, Sel};
 //!
 //! let superclass = class!(NSObject);
-//! let mut decl = ClassDecl::new("MyNumber", superclass).unwrap();
+//! let mut decl = ClassBuilder::new("MyNumber", superclass).unwrap();
 //!
 //! // Add an instance variable
 //! decl.add_ivar::<u32>("_number");
@@ -78,6 +78,10 @@ macro_rules! method_decl_impl {
     ($($t:ident),*) => (
         method_decl_impl!(-T, R, extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(-T, R, extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern "C" fn(*const T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern "C" fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
     );
 }
 
@@ -120,9 +124,13 @@ fn log2_align_of<T>() -> u8 {
 /// A type for declaring a new class and adding new methods and ivars to it
 /// before registering it.
 #[derive(Debug)]
-pub struct ClassDecl {
+pub struct ClassBuilder {
     cls: NonNull<Class>,
 }
+
+#[doc(hidden)]
+#[deprecated = "Use `ClassBuilder` instead."]
+pub type ClassDecl = ClassBuilder;
 
 // SAFETY: The stuff that touch global state does so using locks internally.
 //
@@ -134,11 +142,11 @@ pub struct ClassDecl {
 // when doing so...).
 //
 // Finally, there are no requirements that the class must be registered on the
-// same thread that allocated it.
-unsafe impl Send for ClassDecl {}
-unsafe impl Sync for ClassDecl {}
+// same thread that allocated it (so Send is safe).
+unsafe impl Send for ClassBuilder {}
+unsafe impl Sync for ClassBuilder {}
 
-impl ClassDecl {
+impl ClassBuilder {
     fn as_ptr(&self) -> *mut ffi::objc_class {
         self.cls.as_ptr().cast()
     }
@@ -150,7 +158,7 @@ impl ClassDecl {
         NonNull::new(cls.cast()).map(|cls| Self { cls })
     }
 
-    /// Constructs a [`ClassDecl`] with the given name and superclass.
+    /// Constructs a [`ClassBuilder`] with the given name and superclass.
     ///
     /// Returns [`None`] if the class couldn't be allocated, or a class with
     /// that name already exist.
@@ -158,8 +166,8 @@ impl ClassDecl {
         Self::with_superclass(name, Some(superclass))
     }
 
-    /// Constructs a [`ClassDecl`] declaring a new root class with the given
-    /// name.
+    /// Constructs a [`ClassBuilder`] declaring a new root class with the
+    /// given name.
     ///
     /// Returns [`None`] if the class couldn't be allocated.
     ///
@@ -173,11 +181,10 @@ impl ClassDecl {
     /// Functionality it expects, like implementations of `-retain` and
     /// `-release` used by ARC, will not be present otherwise.
     pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<Self> {
-        let mut decl = Self::with_superclass(name, None);
-        if let Some(ref mut decl) = decl {
-            unsafe { decl.add_class_method(sel!(initialize), intitialize_fn) };
-        }
-        decl
+        Self::with_superclass(name, None).map(|mut this| {
+            unsafe { this.add_class_method(sel!(initialize), intitialize_fn) };
+            this
+        })
     }
 
     /// Adds a method with the given name and implementation.
@@ -191,9 +198,10 @@ impl ClassDecl {
     ///
     /// The caller must ensure that the types match those that are expected
     /// when the method is invoked from Objective-C.
-    pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
+    pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
     where
-        F: MethodImplementation<Callee = Object>,
+        T: Message + ?Sized, // TODO: Disallow `Class`
+        F: MethodImplementation<Callee = T>,
     {
         let encs = F::Args::ENCODINGS;
         let sel_args = count_args(sel);
@@ -290,8 +298,8 @@ impl ClassDecl {
 
     // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
 
-    /// Registers the [`ClassDecl`], consuming it, and returns a reference to
-    /// the newly registered [`Class`].
+    /// Registers the [`ClassBuilder`], consuming it, and returns a reference
+    /// to the newly registered [`Class`].
     pub fn register(self) -> &'static Class {
         // Forget self, otherwise the class will be disposed in drop
         let cls = ManuallyDrop::new(self).cls;
@@ -300,7 +308,7 @@ impl ClassDecl {
     }
 }
 
-impl Drop for ClassDecl {
+impl Drop for ClassBuilder {
     fn drop(&mut self) {
         unsafe { ffi::objc_disposeClassPair(self.as_ptr()) }
     }
@@ -309,20 +317,24 @@ impl Drop for ClassDecl {
 /// A type for declaring a new protocol and adding new methods to it
 /// before registering it.
 #[derive(Debug)]
-pub struct ProtocolDecl {
+pub struct ProtocolBuilder {
     proto: NonNull<Protocol>,
 }
 
-// SAFETY: Similar to ClassDecl
-unsafe impl Send for ProtocolDecl {}
-unsafe impl Sync for ProtocolDecl {}
+#[doc(hidden)]
+#[deprecated = "Use `ProtocolBuilder` instead."]
+pub type ProtocolDecl = ProtocolBuilder;
 
-impl ProtocolDecl {
+// SAFETY: Similar to ClassBuilder
+unsafe impl Send for ProtocolBuilder {}
+unsafe impl Sync for ProtocolBuilder {}
+
+impl ProtocolBuilder {
     fn as_ptr(&self) -> *mut ffi::objc_protocol {
         self.proto.as_ptr().cast()
     }
 
-    /// Constructs a [`ProtocolDecl`] with the given name.
+    /// Constructs a [`ProtocolBuilder`] with the given name.
     ///
     /// Returns [`None`] if the protocol couldn't be allocated.
     pub fn new(name: &str) -> Option<Self> {
@@ -386,7 +398,7 @@ impl ProtocolDecl {
         }
     }
 
-    /// Registers the [`ProtocolDecl`], consuming it and returning a reference
+    /// Registers the [`ProtocolBuilder`], consuming it and returning a reference
     /// to the newly registered [`Protocol`].
     pub fn register(self) -> &'static Protocol {
         unsafe {

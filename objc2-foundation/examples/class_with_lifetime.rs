@@ -1,7 +1,8 @@
+#![deny(unsafe_op_in_unsafe_fn)]
 use std::marker::PhantomData;
 use std::sync::Once;
 
-use objc2::declare::ClassDecl;
+use objc2::declare::ClassBuilder;
 use objc2::rc::{Id, Owned, Shared};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, sel};
@@ -47,23 +48,30 @@ impl<'a> MyObject<'a> {
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
-            let mut decl = ClassDecl::new("MyObject", superclass).unwrap();
-            decl.add_ivar::<Option<&mut u8>>("_number_ptr");
+            let mut builder = ClassBuilder::new("MyObject", superclass).unwrap();
+            builder.add_ivar::<Option<&mut u8>>("_number_ptr");
 
-            extern "C" fn init_with_ptr(this: &mut Object, _cmd: Sel, ptr: *mut u8) -> *mut Object {
-                unsafe {
-                    this.set_ivar("_number_ptr", ptr);
+            unsafe extern "C" fn init_with_ptr(
+                this: *mut Object,
+                _cmd: Sel,
+                ptr: *mut u8,
+            ) -> *mut Object {
+                let this: *mut Object = unsafe { msg_send![super(this, NSObject::class()), init] };
+                if let Some(this) = unsafe { this.as_mut() } {
+                    unsafe {
+                        this.set_ivar("_number_ptr", ptr);
+                    }
                 }
                 this
             }
 
             unsafe {
-                let init_with_ptr: extern "C" fn(&mut Object, Sel, *mut u8) -> *mut Object =
+                let init_with_ptr: unsafe extern "C" fn(*mut Object, Sel, *mut u8) -> *mut Object =
                     init_with_ptr;
-                decl.add_method(sel!(initWithPtr:), init_with_ptr);
+                builder.add_method(sel!(initWithPtr:), init_with_ptr);
             }
 
-            decl.register();
+            builder.register();
         });
 
         Class::get("MyObject").unwrap()

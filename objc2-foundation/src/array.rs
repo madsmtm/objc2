@@ -303,7 +303,10 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
             NSComparisonResult::from((*closure)(obj1, obj2))
         }
 
-        let f: extern "C" fn(_, _, _) -> _ = compare_with_closure::<T, F>;
+        // We can't name the actual lifetimes in use here, so use `_`.
+        // See also https://github.com/rust-lang/rust/issues/56105
+        let f: extern "C" fn(_, _, *mut c_void) -> NSComparisonResult =
+            compare_with_closure::<T, F>;
 
         // Grab a type-erased pointer to the closure (a pointer to stack).
         let mut closure = compare;

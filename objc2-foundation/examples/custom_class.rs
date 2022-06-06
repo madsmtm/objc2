@@ -1,6 +1,6 @@
 use std::sync::Once;
 
-use objc2::declare::ClassDecl;
+use objc2::declare::ClassBuilder;
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, sel};
@@ -39,28 +39,26 @@ impl MYObject {
     fn class() -> &'static Class {
         MYOBJECT_REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
-            let mut decl = ClassDecl::new("MYObject", superclass).unwrap();
-            decl.add_ivar::<u32>("_number");
+            let mut builder = ClassBuilder::new("MYObject", superclass).unwrap();
+            builder.add_ivar::<u32>("_number");
 
             // Add ObjC methods for getting and setting the number
-            extern "C" fn my_object_set_number(this: &mut Object, _cmd: Sel, number: u32) {
-                unsafe {
-                    this.set_ivar("_number", number);
-                }
+            extern "C" fn my_object_set_number(this: &mut MYObject, _cmd: Sel, number: u32) {
+                this.set_number(number);
             }
 
-            extern "C" fn my_object_get_number(this: &Object, _cmd: Sel) -> u32 {
-                unsafe { *this.ivar("_number") }
+            extern "C" fn my_object_get_number(this: &MYObject, _cmd: Sel) -> u32 {
+                this.number()
             }
 
             unsafe {
-                let set_number: extern "C" fn(&mut Object, Sel, u32) = my_object_set_number;
-                decl.add_method(sel!(setNumber:), set_number);
-                let get_number: extern "C" fn(&Object, Sel) -> u32 = my_object_get_number;
-                decl.add_method(sel!(number), get_number);
+                let set_number: extern "C" fn(&mut MYObject, Sel, u32) = my_object_set_number;
+                builder.add_method(sel!(setNumber:), set_number);
+                let get_number: extern "C" fn(&MYObject, Sel) -> u32 = my_object_get_number;
+                builder.add_method(sel!(number), get_number);
             }
 
-            decl.register();
+            builder.register();
         });
 
         Class::get("MYObject").unwrap()

@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Consistently allow trailing commas in `msg_send!`.
 * Added `msg_send_bool!`, a less error-prone version of `msg_send!` for
   Objective-C methods that return `BOOL`.
+* Implemented `MethodImplementation` for `unsafe` function pointers.
 
 ### Changed
 * **BREAKING**: Changed signature of `Id::new` and `Id::retain` from
@@ -33,6 +34,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
   let obj = unsafe { Id::new(obj) }.expect("Failed to allocate object.");
   ```
+* Allow specifying any receiver `T: Message` for methods added with
+  `ClassBuilder::add_method`.
+* Renamed `ClassDecl` and `ProtocolDecl` to `ClassBuilder` and
+  `ProtocolBuilder`. The old names are kept as deprecated aliases.
 
 ### Fixed
 * Properly sealed the `MessageArguments` trait (it already had a hidden
