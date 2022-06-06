@@ -70,12 +70,12 @@ fn main() {
 
     obj.set_number(7);
     println!("Number: {}", unsafe {
-        let number: u32 = msg_send![obj, number];
+        let number: u32 = msg_send![&obj, number];
         number
     });
 
     unsafe {
-        let _: () = msg_send![obj, setNumber: 12u32];
+        let _: () = msg_send![&mut obj, setNumber: 12u32];
     }
     println!("Number: {}", obj.number());
 }

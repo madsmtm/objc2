@@ -42,6 +42,6 @@ fn main() {
     }
 
     // Invoke a method on the object
-    let hash: usize = unsafe { msg_send![obj, hash] };
+    let hash: usize = unsafe { msg_send![&obj, hash] };
     println!("NSObject hash: {}", hash);
 }

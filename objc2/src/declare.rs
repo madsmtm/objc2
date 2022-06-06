@@ -415,9 +415,9 @@ mod tests {
     #[test]
     fn test_custom_class() {
         // Registering the custom class is in test_utils
-        let obj = test_utils::custom_object();
-        let _: () = unsafe { msg_send![obj, setFoo: 13u32] };
-        let result: u32 = unsafe { msg_send![obj, foo] };
+        let mut obj = test_utils::custom_object();
+        let _: () = unsafe { msg_send![&mut obj, setFoo: 13u32] };
+        let result: u32 = unsafe { msg_send![&obj, foo] };
         assert_eq!(result, 13);
     }
 

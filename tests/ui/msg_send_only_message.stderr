@@ -5,11 +5,12 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
   |              ^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `{integer}`
   |
   = help: the following other types implement trait `MessageReceiver`:
+            &'a Id<T, O>
             &'a T
+            &'a mut Id<T, objc2::rc::Owned>
             &'a mut T
             *const T
             *mut T
-            Id<T, O>
-            ManuallyDrop<T>
+            ManuallyDrop<Id<T, O>>
             NonNull<T>
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -42,8 +42,8 @@
 //! };
 //!
 //! // Usage
-//! let hash: NSUInteger = unsafe { msg_send![obj, hash] };
-//! let is_kind = unsafe { msg_send_bool![obj, isKindOfClass: cls] };
+//! let hash: NSUInteger = unsafe { msg_send![&obj, hash] };
+//! let is_kind = unsafe { msg_send_bool![&obj, isKindOfClass: cls] };
 //! assert!(is_kind);
 //! ```
 //!

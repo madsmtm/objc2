@@ -129,7 +129,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 
     pub fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<V, Owned>, Shared> {
         unsafe {
-            let vals = msg_send![dict, allValues];
+            let vals = msg_send![&dict, allValues];
             Id::retain_autoreleased(vals).unwrap()
         }
     }

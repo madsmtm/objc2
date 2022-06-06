@@ -61,11 +61,11 @@ fn new_nsdata() -> Id<Object, Shared> {
     unsafe { Id::new(obj).unwrap_unchecked() }
 }
 
-fn new_leaked_nsdata() -> *mut Object {
-    ManuallyDrop::new(new_nsdata()).as_ptr()
+fn new_leaked_nsdata() -> *const Object {
+    Id::as_ptr(&*ManuallyDrop::new(new_nsdata()))
 }
 
-fn autoreleased_nsdata() -> *mut Object {
+fn autoreleased_nsdata() -> *const Object {
     // let bytes_ptr = BYTES.as_ptr() as *const c_void;
     // unsafe {
     //     msg_send![
@@ -83,20 +83,20 @@ fn new_nsstring() -> Id<Object, Shared> {
     unsafe { Id::new(obj).unwrap_unchecked() }
 }
 
-fn new_leaked_nsstring() -> *mut Object {
-    ManuallyDrop::new(new_nsstring()).as_ptr()
+fn new_leaked_nsstring() -> *const Object {
+    Id::as_ptr(&*ManuallyDrop::new(new_nsstring()))
 }
 
-fn autoreleased_nsstring() -> *mut Object {
+fn autoreleased_nsstring() -> *const Object {
     // unsafe { msg_send![class!(NSString), string] }
     unsafe { msg_send![new_leaked_nsstring(), autorelease] }
 }
 
-fn retain_autoreleased(obj: *mut Object) -> Id<Object, Shared> {
-    unsafe { Id::retain_autoreleased(obj.cast()).unwrap_unchecked() }
+fn retain_autoreleased(obj: *const Object) -> Id<Object, Shared> {
+    unsafe { Id::retain_autoreleased((obj as *mut Object).cast()).unwrap_unchecked() }
 }
 
-fn autoreleased_nsdata_pool_cleanup() -> *mut Object {
+fn autoreleased_nsdata_pool_cleanup() -> *const Object {
     autoreleasepool(|_| autoreleased_nsdata())
 }
 
@@ -108,7 +108,7 @@ fn autoreleased_nsdata_fast_caller_cleanup_pool_cleanup() -> Id<Object, Shared> 
     autoreleasepool(|_| retain_autoreleased(autoreleased_nsdata()))
 }
 
-fn autoreleased_nsstring_pool_cleanup() -> *mut Object {
+fn autoreleased_nsstring_pool_cleanup() -> *const Object {
     autoreleasepool(|_| autoreleased_nsstring())
 }
 

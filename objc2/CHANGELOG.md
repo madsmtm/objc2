@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   upgrading easier.
 * Allow using `From`/`TryFrom` to convert between `rc::Id` and `rc::WeakId`.
 * Added `Bool::as_bool` (more descriptive name than `Bool::is_true`).
-* Added convenience method `Id::as_ptr`.
+* Added convenience method `Id::as_ptr` and `Id::as_mut_ptr`.
 * The `objc2-encode` dependency is now exposed as `objc2::encode`.
 * Added `Id::retain_autoreleased` to allow following Cocoas memory management
   rules more efficiently.
@@ -38,6 +38,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `ClassBuilder::add_method`.
 * Renamed `ClassDecl` and `ProtocolDecl` to `ClassBuilder` and
   `ProtocolBuilder`. The old names are kept as deprecated aliases.
+* **BREAKING**: Changed how `msg_send!` works wrt. capturing its arguments.
+
+  This will require changes to your code wherever you used `Id`, for example:
+  ```rust
+  // Before
+  let obj: Id<Object, Owned> = ...;
+  let p: i32 = unsafe { msg_send![obj, parameter] };
+  let _: () = unsafe { msg_send![obj, setParameter: p + 1] };
+  // After
+  let mut obj: Id<Object, Owned> = ...;
+  let p: i32 = unsafe { msg_send![&obj, parameter] };
+  let _: () = unsafe { msg_send![&mut obj, setParameter: p + 1] };
+  ```
+
+  Notice that we now clearly pass `obj` by reference, and therein also
+  communicate the mutability of the object (in the first case, immutable, and
+  in the second, mutable).
+
+  If you previously used `*mut Object` or `&Object` as the receiver, message
+  sending should work exactly as before.
 
 ### Fixed
 * Properly sealed the `MessageArguments` trait (it already had a hidden

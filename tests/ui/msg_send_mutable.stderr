@@ -1,0 +1,17 @@
+error[E0382]: use of moved value: `obj`
+   --> ui/msg_send_mutable.rs:13:36
+    |
+9   |     let obj: &mut Object = unsafe { msg_send![cls, new] };
+    |         --- move occurs because `obj` has type `&mut objc2::runtime::Object`, which does not implement the `Copy` trait
+10  |
+11  |     let _: () = unsafe { msg_send![obj, selector] };
+    |                          ------------------------ `obj` moved due to this method call
+12  |     // Could be solved with a reborrow
+13  |     let _: () = unsafe { msg_send![obj, selector] };
+    |                                    ^^^ value used here after move
+    |
+note: this function takes ownership of the receiver `self`, which moves `obj`
+   --> $WORKSPACE/objc2/src/message/mod.rs
+    |
+    |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> Result<R, MessageError>
+    |                                  ^^^^
