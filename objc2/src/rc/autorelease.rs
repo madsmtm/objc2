@@ -88,7 +88,7 @@ impl AutoreleasePool {
     pub unsafe fn ptr_as_ref<'p, T: ?Sized>(&'p self, ptr: *const T) -> &'p T {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
-        unsafe { &*ptr }
+        unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
     /// Returns a unique reference to the given autoreleased pointer object.
@@ -109,7 +109,7 @@ impl AutoreleasePool {
     pub unsafe fn ptr_as_mut<'p, T: ?Sized>(&'p self, ptr: *mut T) -> &'p mut T {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
-        unsafe { &mut *ptr }
+        unsafe { ptr.as_mut().unwrap_unchecked() }
     }
 }
 

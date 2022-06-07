@@ -310,7 +310,7 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
             // Bring back a reference to the closure.
             // Guaranteed to be unique, we gave `sortUsingFunction` unique is
             // ownership, and that method only runs one function at a time.
-            let closure: &mut F = unsafe { &mut *(context as *mut F) };
+            let closure: &mut F = unsafe { (context as *mut F).as_mut().unwrap_unchecked() };
 
             NSComparisonResult::from((*closure)(obj1, obj2))
         }

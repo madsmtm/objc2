@@ -211,7 +211,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         A: EncodeArguments,
         R: Encode,
     {
-        let obj = unsafe { &*self.__as_raw_receiver() };
+        let obj = unsafe { self.__as_raw_receiver().as_ref().unwrap() };
         verify_message_signature::<A, R>(obj.class(), sel).map_err(MessageError::from)
     }
 }

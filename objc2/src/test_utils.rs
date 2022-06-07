@@ -50,13 +50,13 @@ impl Deref for CustomObject {
     type Target = Object;
 
     fn deref(&self) -> &Object {
-        unsafe { &*self.obj }
+        unsafe { self.obj.as_ref().unwrap_unchecked() }
     }
 }
 
 impl DerefMut for CustomObject {
     fn deref_mut(&mut self) -> &mut Object {
-        unsafe { &mut *self.obj }
+        unsafe { self.obj.as_mut().unwrap_unchecked() }
     }
 }
 

@@ -290,7 +290,8 @@ impl Class {
 
     /// Returns the metaclass of self.
     pub fn metaclass(&self) -> &Self {
-        unsafe { &*(ffi::object_getClass(self.as_ptr().cast()).cast()) }
+        let ptr: *const Self = unsafe { ffi::object_getClass(self.as_ptr().cast()) }.cast();
+        unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
     // objc_getMetaClass -> Same as `Class::get(name).metaclass()`
@@ -514,7 +515,8 @@ impl Object {
 
     /// Dynamically find the class of this object.
     pub fn class(&self) -> &Class {
-        unsafe { &*(ffi::object_getClass(self.as_ptr()).cast()) }
+        let ptr: *const Class = unsafe { ffi::object_getClass(self.as_ptr()) }.cast();
+        unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
     /// Returns a shared reference to the ivar with the given name.
@@ -538,7 +540,7 @@ impl Object {
         let ptr = unsafe { ptr.offset(offset) };
         let ptr: *const T = ptr.cast();
 
-        unsafe { &*ptr }
+        unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
     /// Use [`ivar`][`Self::ivar`] instead.
@@ -573,7 +575,7 @@ impl Object {
         let ptr = unsafe { ptr.offset(offset) };
         let ptr: *mut T = ptr.cast();
 
-        unsafe { &mut *ptr }
+        unsafe { ptr.as_mut().unwrap_unchecked() }
     }
 
     /// Use [`ivar_mut`](`Self::ivar_mut`) instead.

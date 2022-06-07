@@ -276,6 +276,7 @@ impl fmt::Display for NSString {
 mod tests {
     use super::*;
     use alloc::format;
+    use core::ptr;
 
     #[cfg(feature = "gnustep-1-7")]
     #[test]
@@ -365,11 +366,10 @@ mod tests {
     fn test_copy_nsstring_is_same() {
         let string1 = NSString::from_str("Hello, world!");
         let string2 = string1.copy();
-
-        let s1: *const NSString = &*string1;
-        let s2: *const NSString = &*string2;
-
-        assert_eq!(s1, s2, "Cloned NSString didn't have the same address");
+        assert!(
+            ptr::eq(&*string1, &*string2),
+            "Cloned NSString didn't have the same address"
+        );
     }
 
     #[test]

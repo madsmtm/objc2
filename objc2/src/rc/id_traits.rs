@@ -29,14 +29,14 @@ impl<T: Message + ?Sized, O: Ownership> SliceId for [Id<T, O>] {
         let ptr = self as *const Self as *const [&T];
         // SAFETY: Id<T, O> and &T have the same memory layout. Further safety
         // follows from `Deref` impl.
-        unsafe { &*ptr }
+        unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
     fn as_slice_mut(&mut self) -> &mut [&T] {
         let ptr = self as *mut Self as *mut [&T];
         // SAFETY: Id<T, O> and &T have the same memory layout. Further safety
         // follows from `Deref` impl.
-        unsafe { &mut *ptr }
+        unsafe { ptr.as_mut().unwrap_unchecked() }
     }
 }
 
@@ -46,7 +46,7 @@ impl<T: Message + ?Sized> SliceIdMut for [Id<T, Owned>] {
         // SAFETY: Id<T, O> and &mut T have the same memory layout, and the
         // `Id` is `Owned` so we're allowed to hand out mutable references.
         // Further safety follows from `DerefMut` impl.
-        unsafe { &mut *ptr }
+        unsafe { ptr.as_mut().unwrap_unchecked() }
     }
 }
 

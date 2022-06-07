@@ -178,7 +178,7 @@ macro_rules! object {
         impl<$($t: ::core::cmp::PartialEq $(+ $b)?),*> ::core::cmp::PartialEq for $name<$($t),*> {
             #[inline]
             fn eq(&self, other: &Self) -> bool {
-                self.is_equal(&*other)
+                self.is_equal(other.as_ref())
             }
         }
 

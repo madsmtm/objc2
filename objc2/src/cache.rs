@@ -57,12 +57,12 @@ impl CachedClass {
     pub unsafe fn get(&self, name: &str) -> Option<&'static Class> {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);
-        if ptr.is_null() {
-            let cls: *const Class = unsafe { ffi::objc_getClass(name.as_ptr().cast()) }.cast();
-            self.ptr.store(cls as *mut Class, Ordering::Relaxed);
-            unsafe { cls.as_ref() }
+        if let Some(cls) = unsafe { ptr.as_ref() } {
+            Some(cls)
         } else {
-            Some(unsafe { &*ptr })
+            let ptr: *const Class = unsafe { ffi::objc_getClass(name.as_ptr().cast()) }.cast();
+            self.ptr.store(ptr as *mut Class, Ordering::Relaxed);
+            unsafe { ptr.as_ref() }
         }
     }
 }

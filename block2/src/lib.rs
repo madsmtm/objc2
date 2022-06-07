@@ -468,7 +468,10 @@ impl<A, R, F> Deref for ConcreteBlock<A, R, F> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Self::Target {
-        unsafe { &*(self as *const Self as *const Block<A, R>) }
+        let ptr: *const Self = self;
+        let ptr: *const Block<A, R> = ptr.cast();
+        // TODO: SAFETY
+        unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 }
 

@@ -159,7 +159,7 @@ impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
             unsafe {
                 let obj = *self.ptr;
                 self.ptr = self.ptr.offset(1);
-                Some(&*obj)
+                Some(obj.as_ref().unwrap_unchecked())
             }
         }
     }
