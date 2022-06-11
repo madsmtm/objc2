@@ -57,9 +57,11 @@ mod tests {
     }
 
     #[test]
-    fn test_as_ref() {
-        fn impls_as_ref<T: AsRef<U> + ?Sized, U: ?Sized>(_: &T) {}
-        fn impls_as_mut<T: AsMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
+    fn test_as_ref_borrow() {
+        use core::borrow::{Borrow, BorrowMut};
+
+        fn impls_as_ref<T: AsRef<U> + Borrow<U> + ?Sized, U: ?Sized>(_: &T) {}
+        fn impls_as_mut<T: AsMut<U> + BorrowMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
 
         let mut obj = NSObject::new();
         impls_as_ref::<Id<NSObject, Owned>, NSObject>(&obj);
