@@ -83,6 +83,13 @@ unsafe impl<T: 'static> NSCopying for NSValue<T> {
     type Output = NSValue<T>;
 }
 
+impl<T: 'static> alloc::borrow::ToOwned for NSValue<T> {
+    type Owned = Id<NSValue<T>, Shared>;
+    fn to_owned(&self) -> Self::Owned {
+        self.copy()
+    }
+}
+
 impl<T: 'static + Copy + Encode + Ord> Ord for NSValue<T> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.get().cmp(&other.get())

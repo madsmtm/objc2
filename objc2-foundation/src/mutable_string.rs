@@ -96,6 +96,13 @@ unsafe impl NSMutableCopying for NSMutableString {
     type Output = NSMutableString;
 }
 
+impl alloc::borrow::ToOwned for NSMutableString {
+    type Owned = Id<NSMutableString, Owned>;
+    fn to_owned(&self) -> Self::Owned {
+        self.mutable_copy()
+    }
+}
+
 impl AddAssign<&NSString> for NSMutableString {
     #[inline]
     fn add_assign(&mut self, other: &NSString) {

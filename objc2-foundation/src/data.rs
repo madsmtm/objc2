@@ -92,6 +92,13 @@ unsafe impl NSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
+impl alloc::borrow::ToOwned for NSData {
+    type Owned = Id<NSData, Shared>;
+    fn to_owned(&self) -> Self::Owned {
+        self.copy()
+    }
+}
+
 impl AsRef<[u8]> for NSData {
     fn as_ref(&self) -> &[u8] {
         self.bytes()
@@ -218,6 +225,13 @@ unsafe impl NSCopying for NSMutableData {
 
 unsafe impl NSMutableCopying for NSMutableData {
     type Output = NSMutableData;
+}
+
+impl alloc::borrow::ToOwned for NSMutableData {
+    type Owned = Id<NSMutableData, Owned>;
+    fn to_owned(&self) -> Self::Owned {
+        self.mutable_copy()
+    }
 }
 
 impl AsRef<[u8]> for NSMutableData {
