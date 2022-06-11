@@ -7,7 +7,7 @@ use objc2::runtime::{Object, Sel};
 extern "C" fn my_fn(_this: &Object, _cmd: Sel, _x: &Object) {}
 
 fn main() {
-    let builder = ClassBuilder::new("SomeTestClass", class!(NSObject)).unwrap();
+    let mut builder = ClassBuilder::new("SomeTestClass", class!(NSObject)).unwrap();
     unsafe {
         builder.add_method(sel!(both:), my_fn as extern "C" fn(&Object, Sel, &Object));
     }
