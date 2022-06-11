@@ -226,7 +226,10 @@ impl ClassBuilder {
     /// the entire `NSObject` protocol is implemented.
     /// Functionality it expects, like implementations of `-retain` and
     /// `-release` used by ARC, will not be present otherwise.
-    pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<Self> {
+    pub fn root<F>(name: &str, intitialize_fn: F) -> Option<Self>
+    where
+        F: MethodImplementation<Callee = Class, Args = (), Ret = ()>,
+    {
         Self::with_superclass(name, None).map(|mut this| {
             unsafe { this.add_class_method(sel!(initialize), intitialize_fn) };
             this
