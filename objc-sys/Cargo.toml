@@ -58,11 +58,16 @@ no-default-features = true
 targets = [
     # MacOS
     "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
     # "i686-apple-darwin",
     # iOS
     "aarch64-apple-ios",
     "x86_64-apple-ios",
+    # "armv7-apple-ios",
+    # "i386-apple-ios",
     # GNUStep
     "x86_64-unknown-linux-gnu",
     "i686-unknown-linux-gnu",
+    # Windows
+    "x86_64-pc-windows-msvc",
 ]
