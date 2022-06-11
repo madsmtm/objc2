@@ -68,6 +68,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 * **BREAKING**: `ManuallyDrop` no longer implements `Message` directly.
+* **BREAKING**: `MessageReceiver::as_raw_receiver` is no longer public.
 
 
 ## 0.3.0-alpha.6 - 2022-01-03

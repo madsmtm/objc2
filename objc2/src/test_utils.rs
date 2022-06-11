@@ -27,21 +27,21 @@ impl crate::message::private::Sealed for ManuallyDrop<CustomObject> {}
 
 unsafe impl MessageReceiver for &CustomObject {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self.obj
     }
 }
 
 unsafe impl MessageReceiver for &mut CustomObject {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self.obj
     }
 }
 
 unsafe impl MessageReceiver for ManuallyDrop<CustomObject> {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self.obj
     }
 }
