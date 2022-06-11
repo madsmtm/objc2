@@ -185,6 +185,13 @@ unsafe impl<T: Message> NSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
+impl<T: Message> alloc::borrow::ToOwned for NSArray<T, Shared> {
+    type Owned = Id<NSArray<T, Shared>, Shared>;
+    fn to_owned(&self) -> Self::Owned {
+        self.copy()
+    }
+}
+
 unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
@@ -332,6 +339,13 @@ unsafe impl<T: Message> NSCopying for NSMutableArray<T, Shared> {
 
 unsafe impl<T: Message> NSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
+}
+
+impl<T: Message> alloc::borrow::ToOwned for NSMutableArray<T, Shared> {
+    type Owned = Id<NSMutableArray<T, Shared>, Owned>;
+    fn to_owned(&self) -> Self::Owned {
+        self.mutable_copy()
+    }
 }
 
 unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableArray<T, O> {

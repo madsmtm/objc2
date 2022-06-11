@@ -68,6 +68,13 @@ unsafe impl NSCopying for NSUUID {
     type Output = NSUUID;
 }
 
+impl alloc::borrow::ToOwned for NSUUID {
+    type Owned = Id<NSUUID, Shared>;
+    fn to_owned(&self) -> Self::Owned {
+        self.copy()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

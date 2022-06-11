@@ -1,21 +1,45 @@
-macro_rules! __impl_as_ref_as_mut {
+macro_rules! __impl_as_ref_borrow {
     ($name:ident<$($t:ident $(: $b:ident)?),*>,) => {};
     ($name:ident<$($t:ident $(: $b:ident)?),*>, $item:ty, $($tail:ty,)*) => {
         impl<$($t $(: $b)?),*> AsRef<$item> for $name<$($t),*> {
             #[inline]
             fn as_ref(&self) -> &$item {
-                &**self
+                // Triggers Deref coercion depending on return type
+                &*self
             }
         }
 
         impl<$($t $(: $b)?),*> AsMut<$item> for $name<$($t),*> {
             #[inline]
             fn as_mut(&mut self) -> &mut $item {
-                &mut **self
+                // Triggers DerefMut coercion depending on return type
+                &mut *self
             }
         }
 
-        __impl_as_ref_as_mut!($name<$($t $(: $b)?),*>, $($tail,)*);
+        // Borrow and BorrowMut are correct, since subclasses behaves
+        // identical to the class they inherit (message sending doesn't care).
+        //
+        // In particular, `Eq`, `Ord` and `Hash` all give the same results
+        // after borrow.
+
+        impl<$($t $(: $b)?),*> ::core::borrow::Borrow<$item> for $name<$($t),*> {
+            #[inline]
+            fn borrow(&self) -> &$item {
+                // Triggers Deref coercion depending on return type
+                &*self
+            }
+        }
+
+        impl<$($t $(: $b)?),*> ::core::borrow::BorrowMut<$item> for $name<$($t),*> {
+            #[inline]
+            fn borrow_mut(&mut self) -> &mut $item {
+                // Triggers Deref coercion depending on return type
+                &mut *self
+            }
+        }
+
+        __impl_as_ref_borrow!($name<$($t $(: $b)?),*>, $($tail,)*);
     };
 }
 
@@ -125,7 +149,21 @@ macro_rules! object {
             }
         }
 
-        __impl_as_ref_as_mut!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
+        impl<$($t $(: $b)?),*> AsRef<Self> for $name<$($t),*> {
+            #[inline]
+            fn as_ref(&self) -> &Self {
+                self
+            }
+        }
+
+        impl<$($t $(: $b)?),*> AsMut<Self> for $name<$($t),*> {
+            #[inline]
+            fn as_mut(&mut self) -> &mut Self {
+                self
+            }
+        }
+
+        __impl_as_ref_borrow!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
 
         // Objective-C equality has approximately the same semantics as Rust
         // equality (although less aptly specified).
@@ -166,13 +204,12 @@ macro_rules! object {
         // TODO: Consider T: Debug bound
         impl<$($t $(: $b)?),*> ::core::fmt::Debug for $name<$($t),*> {
             fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                use ::objc2::MessageReceiver;
                 use ::alloc::borrow::ToOwned;
                 use $crate::NSObject;
                 // "downgrading" to  NSObject and calling `to_owned` to work
                 // around `f` and Self not being AutoreleaseSafe.
                 // TODO: Fix this!
-                let this: &NSObject = unsafe { &*self.as_raw_receiver().cast() };
+                let this: &NSObject = self.as_ref();
                 let s = ::objc2::rc::autoreleasepool(|pool| {
                     this.description().as_str(pool).to_owned()
                 });

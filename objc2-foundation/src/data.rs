@@ -92,11 +92,21 @@ unsafe impl NSMutableCopying for NSData {
     type Output = NSMutableData;
 }
 
+impl alloc::borrow::ToOwned for NSData {
+    type Owned = Id<NSData, Shared>;
+    fn to_owned(&self) -> Self::Owned {
+        self.copy()
+    }
+}
+
 impl AsRef<[u8]> for NSData {
     fn as_ref(&self) -> &[u8] {
         self.bytes()
     }
 }
+
+// Note: We don't implement `Borrow<[u8]>` since we can't guarantee that `Eq`,
+// `Ord` and `Hash` are equal for `NSData` vs. `[u8]`!
 
 impl<I: SliceIndex<[u8]>> Index<I> for NSData {
     type Output = I::Output;
@@ -215,6 +225,13 @@ unsafe impl NSCopying for NSMutableData {
 
 unsafe impl NSMutableCopying for NSMutableData {
     type Output = NSMutableData;
+}
+
+impl alloc::borrow::ToOwned for NSMutableData {
+    type Owned = Id<NSMutableData, Owned>;
+    fn to_owned(&self) -> Self::Owned {
+        self.mutable_copy()
+    }
 }
 
 impl AsRef<[u8]> for NSMutableData {
@@ -336,7 +353,7 @@ unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> *mut Object {
 
 #[cfg(test)]
 mod tests {
-    use super::{NSData, NSMutableData};
+    use super::*;
     #[cfg(feature = "block")]
     use alloc::vec;
 
@@ -430,5 +447,47 @@ mod tests {
         let mut data = NSMutableData::with_bytes(&[1, 2]);
         data.extend(iter);
         assert_eq!(data.bytes(), &[1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn test_as_ref_borrow() {
+        use core::borrow::{Borrow, BorrowMut};
+
+        fn impls_borrow<T: AsRef<U> + Borrow<U> + ?Sized, U: ?Sized>(_: &T) {}
+        fn impls_borrow_mut<T: AsMut<U> + BorrowMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
+
+        let mut obj = NSMutableData::new();
+        impls_borrow::<Id<NSMutableData, Owned>, NSMutableData>(&obj);
+        impls_borrow_mut::<Id<NSMutableData, Owned>, NSMutableData>(&mut obj);
+
+        impls_borrow::<NSMutableData, NSMutableData>(&obj);
+        impls_borrow_mut::<NSMutableData, NSMutableData>(&mut obj);
+        impls_borrow::<NSMutableData, NSData>(&obj);
+        impls_borrow_mut::<NSMutableData, NSData>(&mut obj);
+        impls_borrow::<NSMutableData, NSObject>(&obj);
+        impls_borrow_mut::<NSMutableData, NSObject>(&mut obj);
+        impls_borrow::<NSMutableData, Object>(&obj);
+        impls_borrow_mut::<NSMutableData, Object>(&mut obj);
+
+        impls_borrow::<NSData, NSData>(&obj);
+        impls_borrow_mut::<NSData, NSData>(&mut obj);
+        impls_borrow::<NSData, NSObject>(&obj);
+        impls_borrow_mut::<NSData, NSObject>(&mut obj);
+        impls_borrow::<NSData, Object>(&obj);
+        impls_borrow_mut::<NSData, Object>(&mut obj);
+
+        fn impls_as_ref<T: AsRef<U> + ?Sized, U: ?Sized>(_: &T) {}
+        fn impls_as_mut<T: AsMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
+
+        impls_as_ref::<NSMutableData, [u8]>(&obj);
+        impls_as_mut::<NSMutableData, [u8]>(&mut obj);
+        impls_as_ref::<NSData, [u8]>(&obj);
+
+        let obj: &mut NSMutableData = &mut *obj;
+        let _: &[u8] = obj.as_ref();
+        let _: &mut [u8] = obj.as_mut();
+
+        let obj: &mut NSData = &mut **obj;
+        let _: &[u8] = obj.as_ref();
     }
 }

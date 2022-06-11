@@ -74,6 +74,13 @@ unsafe impl NSMutableCopying for NSMutableAttributedString {
     type Output = NSMutableAttributedString;
 }
 
+impl alloc::borrow::ToOwned for NSMutableAttributedString {
+    type Owned = Id<NSMutableAttributedString, Owned>;
+    fn to_owned(&self) -> Self::Owned {
+        self.mutable_copy()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::string::ToString;

@@ -1,3 +1,4 @@
+use alloc::borrow::ToOwned;
 use core::cmp;
 use core::ffi::c_void;
 use core::fmt;
@@ -6,7 +7,6 @@ use core::slice;
 use core::str;
 use std::os::raw::c_char;
 
-use alloc::borrow::ToOwned;
 use objc2::ffi;
 use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
@@ -253,6 +253,13 @@ unsafe impl NSCopying for NSString {
 
 unsafe impl NSMutableCopying for NSString {
     type Output = NSMutableString;
+}
+
+impl ToOwned for NSString {
+    type Owned = Id<NSString, Shared>;
+    fn to_owned(&self) -> Self::Owned {
+        self.copy()
+    }
 }
 
 impl fmt::Display for NSString {
