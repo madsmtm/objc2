@@ -61,6 +61,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `Class` no longer implements `Message` (but it can still be
   used as the receiver in `msg_send!`, so this is unlikely to break anything
   in practice).
+* **BREAKING**: Sealed the `MethodImplementation` trait, and made it's `imp`
+  method privat.
 
 ### Fixed
 * Properly sealed the `MessageArguments` trait (it already had a hidden
