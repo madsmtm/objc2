@@ -71,6 +71,10 @@ macro_rules! generate_linking_tests {
                     // Get function pointer to make the linker require the
                     // symbol to be available.
                     let f: unsafe extern $abi fn($($t),*) $(-> $r)? = crate::$name;
+                    // Workaround for https://github.com/rust-lang/rust/pull/92964
+                    #[cfg(feature = "unstable-c-unwind")]
+                    #[allow(clippy::useless_transmute)]
+                    let f: unsafe extern "C" fn() = unsafe { core::mem::transmute(f) };
                     // Execute side-effect to ensure it is not optimized away.
                     std::println!("{:p}", f);
                 }
