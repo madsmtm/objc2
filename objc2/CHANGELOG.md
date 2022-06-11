@@ -66,6 +66,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Properly sealed the `MessageArguments` trait (it already had a hidden
   method, so this is not really a breaking change).
 
+### Removed
+* **BREAKING**: `ManuallyDrop` no longer implements `Message` directly.
+
 
 ## 0.3.0-alpha.6 - 2022-01-03
 

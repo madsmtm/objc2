@@ -610,6 +610,25 @@ mod tests {
     }
 
     #[test]
+    fn test_extern_fn_pointer_elided_lifetime() {
+        fn impls_encode<T: Encode>(_x: T) {}
+
+        extern "C" fn my_fn1(_x: &i32) {}
+        extern "C" fn my_fn2(_x: &i32, _y: &u8) {}
+        extern "C" fn my_fn3(x: &u8) -> &u8 {
+            x
+        }
+        extern "C" fn my_fn4<'a, 'b>(x: &'a u8, _y: &'b i32) -> &'a u8 {
+            x
+        }
+
+        impls_encode(my_fn1 as extern "C" fn(_));
+        impls_encode(my_fn2 as extern "C" fn(_, _));
+        impls_encode(my_fn3 as extern "C" fn(_) -> _);
+        impls_encode(my_fn4 as extern "C" fn(_, _) -> _);
+    }
+
+    #[test]
     fn test_encode_arguments() {
         assert!(<()>::ENCODINGS.is_empty());
         assert_eq!(<(i8,)>::ENCODINGS, &[i8::ENCODING]);

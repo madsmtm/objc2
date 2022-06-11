@@ -61,9 +61,6 @@ use self::verify::{verify_message_signature, VerificationError};
 /// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
 pub unsafe trait Message: RefEncode {}
 
-// SAFETY: `ManuallyDrop` is `repr(transparent)`.
-unsafe impl<T: Message + ?Sized> Message for ManuallyDrop<T> {}
-
 unsafe impl Message for Object {}
 
 // TODO: Make this fully private

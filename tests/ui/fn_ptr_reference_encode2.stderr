@@ -1,8 +1,0 @@
-error: implementation of `Encode` is not general enough
- --> ui/fn_ptr_reference_encode2.rs:6:20
-  |
-6 |     let encoding = <extern "C" fn(&i32) as Encode>::ENCODING;
-  |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `Encode` is not general enough
-  |
-  = note: `Encode` would have to be implemented for the type `for<'r> extern "C" fn(&'r i32)`
-  = note: ...but `Encode` is actually implemented for the type `extern "C" fn(&'0 i32)`, for some specific lifetime `'0`
