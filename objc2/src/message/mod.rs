@@ -98,10 +98,11 @@ pub(crate) mod private {
 ///
 /// # Safety
 ///
-/// [`Self::as_raw_receiver`] must be implemented correctly.
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
 pub unsafe trait MessageReceiver: private::Sealed + Sized {
-    /// Get a raw pointer to the receiver of the message.
-    fn as_raw_receiver(self) -> *mut Object;
+    #[doc(hidden)]
+    fn __as_raw_receiver(self) -> *mut Object;
 
     /// Sends a message to self with the given selector and arguments.
     ///
@@ -126,7 +127,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         A: MessageArguments,
         R: Encode,
     {
-        let this = self.as_raw_receiver();
+        let this = self.__as_raw_receiver();
         // TODO: Always enable this when `debug_assertions` are on.
         #[cfg(feature = "verify_message")]
         {
@@ -173,7 +174,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         A: MessageArguments,
         R: Encode,
     {
-        let this = self.as_raw_receiver();
+        let this = self.__as_raw_receiver();
         #[cfg(feature = "verify_message")]
         {
             if this.is_null() {
@@ -210,7 +211,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         A: EncodeArguments,
         R: Encode,
     {
-        let obj = unsafe { &*self.as_raw_receiver() };
+        let obj = unsafe { &*self.__as_raw_receiver() };
         verify_message_signature::<A, R>(obj.class(), sel).map_err(MessageError::from)
     }
 }
@@ -220,70 +221,70 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self as *mut T as *mut Object
     }
 }
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self as *mut Object
     }
 }
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self.as_ptr() as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self as *const T as *mut T as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self as *const T as *mut T as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T, O> {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         Id::as_ptr(self) as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         Id::as_mut_ptr(self) as *mut Object
     }
 }
 
 unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<Id<T, O>> {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         Id::consume_as_ptr(self) as *mut Object
     }
 }
 
 unsafe impl MessageReceiver for *const Class {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self as *mut Class as *mut Object
     }
 }
 
 unsafe impl<'a> MessageReceiver for &'a Class {
     #[inline]
-    fn as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut Object {
         self as *const Class as *mut Class as *mut Object
     }
 }

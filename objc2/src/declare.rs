@@ -43,23 +43,37 @@ use core::ptr::NonNull;
 use std::ffi::CString;
 
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
-use crate::{ffi, Encode, EncodeArguments, Encoding, Message};
+use crate::{ffi, Encode, EncodeArguments, Encoding, Message, RefEncode};
+
+pub(crate) mod private {
+    pub trait Sealed {}
+}
 
 /// Types that can be used as the implementation of an Objective-C method.
-pub trait MethodImplementation {
+///
+/// This is a sealed trait that is implemented for a lot of `extern "C"`
+/// function pointer types.
+pub trait MethodImplementation: private::Sealed {
     /// The callee type of the method.
-    type Callee: ?Sized;
+    type Callee: RefEncode + ?Sized;
     /// The return type of the method.
     type Ret: Encode;
     /// The argument types of the method.
     type Args: EncodeArguments;
 
-    /// Returns self as an [`Imp`] of a method.
-    fn imp(self) -> Imp;
+    #[doc(hidden)]
+    fn __imp(self) -> Imp;
 }
 
 macro_rules! method_decl_impl {
-    (-$s:ident, $r:ident, $f:ty, $($t:ident),*) => (
+    (-$s:ident, $r:ident, $f:ty, $($t:ident),*) => {
+        impl<$s, $r, $($t),*> private::Sealed for $f
+        where
+            $s: Message + ?Sized,
+            $r: Encode,
+            $($t: Encode,)*
+        {}
+
         impl<$s, $r, $($t),*> MethodImplementation for $f
         where
             $s: Message + ?Sized,
@@ -70,12 +84,18 @@ macro_rules! method_decl_impl {
             type Ret = $r;
             type Args = ($($t,)*);
 
-            fn imp(self) -> Imp {
+            fn __imp(self) -> Imp {
                 unsafe { mem::transmute(self) }
             }
         }
-    );
-    (@$s:ident, $r:ident, $f:ty, $($t:ident),*) => (
+    };
+    (@$s:ident, $r:ident, $f:ty, $($t:ident),*) => {
+        impl<$r, $($t),*> private::Sealed for $f
+        where
+            $r: Encode,
+            $($t: Encode,)*
+        {}
+
         impl<$r, $($t),*> MethodImplementation for $f
         where
             $r: Encode,
@@ -85,12 +105,12 @@ macro_rules! method_decl_impl {
             type Ret = $r;
             type Args = ($($t,)*);
 
-            fn imp(self) -> Imp {
+            fn __imp(self) -> Imp {
                 unsafe { mem::transmute(self) }
             }
         }
-    );
-    ($($t:ident),*) => (
+    };
+    ($($t:ident),*) => {
         method_decl_impl!(-T, R, extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(-T, R, extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(-T, R, unsafe extern "C" fn(*const T, Sel $(, $t)*) -> R, $($t),*);
@@ -101,7 +121,7 @@ macro_rules! method_decl_impl {
         method_decl_impl!(@Class, R, extern "C" fn(&Class, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@Class, R, unsafe extern "C" fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@Class, R, unsafe extern "C" fn(&Class, Sel $(, $t)*) -> R, $($t),*);
-    );
+    };
 }
 
 method_decl_impl!();
@@ -237,7 +257,7 @@ impl ClassBuilder {
             ffi::class_addMethod(
                 self.as_ptr(),
                 sel.as_ptr() as _,
-                Some(func.imp()),
+                Some(func.__imp()),
                 types.as_ptr(),
             )
         });
@@ -275,7 +295,7 @@ impl ClassBuilder {
             ffi::class_addMethod(
                 metaclass,
                 sel.as_ptr() as _,
-                Some(func.imp()),
+                Some(func.__imp()),
                 types.as_ptr(),
             )
         });
