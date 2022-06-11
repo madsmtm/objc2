@@ -44,9 +44,31 @@ impl DefaultId for NSObject {
 
 #[cfg(test)]
 mod tests {
-    use super::NSObject;
-    use crate::NSString;
+    use super::*;
     use alloc::format;
+
+    #[test]
+    fn test_deref() {
+        let mut obj: Id<NSObject, Owned> = NSObject::new();
+        let _: &NSObject = &*obj;
+        let _: &mut NSObject = &mut *obj;
+        let _: &Object = &*obj;
+        let _: &mut Object = &mut *obj;
+    }
+
+    #[test]
+    fn test_as_ref() {
+        fn impls_as_ref<T: AsRef<U> + ?Sized, U: ?Sized>(_: &T) {}
+        fn impls_as_mut<T: AsMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
+
+        let mut obj = NSObject::new();
+        impls_as_ref::<Id<NSObject, Owned>, NSObject>(&obj);
+        impls_as_mut::<Id<NSObject, Owned>, NSObject>(&mut obj);
+        impls_as_ref::<NSObject, NSObject>(&obj);
+        impls_as_mut::<NSObject, NSObject>(&mut obj);
+        impls_as_ref::<NSObject, Object>(&obj);
+        impls_as_mut::<NSObject, Object>(&mut obj);
+    }
 
     #[test]
     fn test_equality() {

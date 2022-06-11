@@ -4,14 +4,16 @@ macro_rules! __impl_as_ref_as_mut {
         impl<$($t $(: $b)?),*> AsRef<$item> for $name<$($t),*> {
             #[inline]
             fn as_ref(&self) -> &$item {
-                &**self
+                // Triggers Deref coercion depending on return type
+                &*self
             }
         }
 
         impl<$($t $(: $b)?),*> AsMut<$item> for $name<$($t),*> {
             #[inline]
             fn as_mut(&mut self) -> &mut $item {
-                &mut **self
+                // Triggers DerefMut coercion depending on return type
+                &mut *self
             }
         }
 
@@ -125,7 +127,7 @@ macro_rules! object {
             }
         }
 
-        __impl_as_ref_as_mut!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
+        __impl_as_ref_as_mut!($name<$($t $(: $b)?),*>, $name<$($t),*>, $inherits, $($inheritance_rest,)*);
 
         // Objective-C equality has approximately the same semantics as Rust
         // equality (although less aptly specified).
@@ -166,13 +168,12 @@ macro_rules! object {
         // TODO: Consider T: Debug bound
         impl<$($t $(: $b)?),*> ::core::fmt::Debug for $name<$($t),*> {
             fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                use ::objc2::MessageReceiver;
                 use ::alloc::borrow::ToOwned;
                 use $crate::NSObject;
                 // "downgrading" to  NSObject and calling `to_owned` to work
                 // around `f` and Self not being AutoreleaseSafe.
                 // TODO: Fix this!
-                let this: &NSObject = unsafe { &*self.as_raw_receiver().cast() };
+                let this: &NSObject = self.as_ref();
                 let s = ::objc2::rc::autoreleasepool(|pool| {
                     this.description().as_str(pool).to_owned()
                 });

@@ -336,7 +336,7 @@ unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> *mut Object {
 
 #[cfg(test)]
 mod tests {
-    use super::{NSData, NSMutableData};
+    use super::*;
     #[cfg(feature = "block")]
     use alloc::vec;
 
@@ -430,5 +430,42 @@ mod tests {
         let mut data = NSMutableData::with_bytes(&[1, 2]);
         data.extend(iter);
         assert_eq!(data.bytes(), &[1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn test_as_ref() {
+        fn impls_as_ref<T: AsRef<U> + ?Sized, U: ?Sized>(_: &T) {}
+        fn impls_as_mut<T: AsMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
+
+        let mut obj = NSMutableData::new();
+        impls_as_ref::<Id<NSMutableData, Owned>, NSMutableData>(&obj);
+        impls_as_mut::<Id<NSMutableData, Owned>, NSMutableData>(&mut obj);
+
+        impls_as_ref::<NSMutableData, NSMutableData>(&obj);
+        impls_as_mut::<NSMutableData, NSMutableData>(&mut obj);
+        impls_as_ref::<NSMutableData, NSData>(&obj);
+        impls_as_mut::<NSMutableData, NSData>(&mut obj);
+        impls_as_ref::<NSMutableData, NSObject>(&obj);
+        impls_as_mut::<NSMutableData, NSObject>(&mut obj);
+        impls_as_ref::<NSMutableData, Object>(&obj);
+        impls_as_mut::<NSMutableData, Object>(&mut obj);
+
+        impls_as_ref::<NSData, NSData>(&obj);
+        impls_as_mut::<NSData, NSData>(&mut obj);
+        impls_as_ref::<NSData, NSObject>(&obj);
+        impls_as_mut::<NSData, NSObject>(&mut obj);
+        impls_as_ref::<NSData, Object>(&obj);
+        impls_as_mut::<NSData, Object>(&mut obj);
+
+        impls_as_ref::<NSMutableData, [u8]>(&obj);
+        impls_as_mut::<NSMutableData, [u8]>(&mut obj);
+        impls_as_ref::<NSData, [u8]>(&obj);
+
+        let obj: &mut NSMutableData = &mut *obj;
+        let _: &[u8] = obj.as_ref();
+        let _: &mut [u8] = obj.as_mut();
+
+        let obj: &mut NSData = &mut **obj;
+        let _: &[u8] = obj.as_ref();
     }
 }
