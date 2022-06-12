@@ -27,9 +27,9 @@ impl CachedSel {
         // `Relaxed` should be fine since `sel_registerName` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);
         if ptr.is_null() {
-            let ptr = unsafe { ffi::sel_registerName(name.as_ptr() as *const _) };
-            self.ptr.store(ptr as *mut _, Ordering::Relaxed);
-            unsafe { Sel::from_ptr(ptr as *const _) }
+            let ptr: *const c_void = unsafe { ffi::sel_registerName(name.as_ptr().cast()).cast() };
+            self.ptr.store(ptr as *mut c_void, Ordering::Relaxed);
+            unsafe { Sel::from_ptr(ptr) }
         } else {
             unsafe { Sel::from_ptr(ptr) }
         }
@@ -57,12 +57,12 @@ impl CachedClass {
     pub unsafe fn get(&self, name: &str) -> Option<&'static Class> {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);
-        if ptr.is_null() {
-            let cls = unsafe { ffi::objc_getClass(name.as_ptr() as *const _) } as *const Class;
-            self.ptr.store(cls as *mut _, Ordering::Relaxed);
-            unsafe { cls.as_ref() }
+        if let Some(cls) = unsafe { ptr.as_ref() } {
+            Some(cls)
         } else {
-            Some(unsafe { &*ptr })
+            let ptr: *const Class = unsafe { ffi::objc_getClass(name.as_ptr().cast()) }.cast();
+            self.ptr.store(ptr as *mut Class, Ordering::Relaxed);
+            unsafe { ptr.as_ref() }
         }
     }
 }

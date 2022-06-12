@@ -53,11 +53,12 @@ impl NSData {
 
     pub fn bytes(&self) -> &[u8] {
         let ptr: *const c_void = unsafe { msg_send![self, bytes] };
+        let ptr: *const u8 = ptr.cast();
         // The bytes pointer may be null for length zero
         if ptr.is_null() {
             &[]
         } else {
-            unsafe { slice::from_raw_parts(ptr as *const u8, self.len()) }
+            unsafe { slice::from_raw_parts(ptr, self.len()) }
         }
     }
 
@@ -172,11 +173,12 @@ impl NSMutableData {
     #[doc(alias = "mutableBytes")]
     pub fn bytes_mut(&mut self) -> &mut [u8] {
         let ptr = self.raw_bytes_mut();
+        let ptr: *mut u8 = ptr.cast();
         // The bytes pointer may be null for length zero
         if ptr.is_null() {
             &mut []
         } else {
-            unsafe { slice::from_raw_parts_mut(ptr as *mut u8, self.len()) }
+            unsafe { slice::from_raw_parts_mut(ptr, self.len()) }
         }
     }
 
@@ -188,7 +190,7 @@ impl NSMutableData {
 
     #[doc(alias = "appendBytes:length:")]
     pub fn extend_from_slice(&mut self, bytes: &[u8]) {
-        let bytes_ptr = bytes.as_ptr() as *const c_void;
+        let bytes_ptr: *const c_void = bytes.as_ptr().cast();
         unsafe { msg_send![self, appendBytes: bytes_ptr, length: bytes.len()] }
     }
 
@@ -201,7 +203,7 @@ impl NSMutableData {
         let range = NSRange::from(range);
         // No need to verify the length of the range here,
         // `replaceBytesInRange:` just zero-fills if out of bounds.
-        let ptr = bytes.as_ptr() as *const c_void;
+        let ptr: *const c_void = bytes.as_ptr().cast();
         unsafe {
             msg_send![
                 self,
@@ -312,7 +314,7 @@ impl DefaultId for NSMutableData {
 }
 
 unsafe fn data_with_bytes(cls: &Class, bytes: &[u8]) -> *mut Object {
-    let bytes_ptr = bytes.as_ptr() as *const c_void;
+    let bytes_ptr: *const c_void = bytes.as_ptr().cast();
     unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
         msg_send![
@@ -333,18 +335,19 @@ unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> *mut Object {
 
     let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
         // Recreate the Vec and let it drop
-        let _ = Vec::from_raw_parts(bytes as *mut u8, len, capacity);
+        let _ = Vec::<u8>::from_raw_parts(bytes.cast(), len, capacity);
     });
     let dealloc = dealloc.copy();
     let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;
 
     let mut bytes = ManuallyDrop::new(bytes);
+    let bytes_ptr: *mut c_void = bytes.as_mut_ptr().cast();
 
     unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
         msg_send![
             obj,
-            initWithBytesNoCopy: bytes.as_mut_ptr() as *mut c_void,
+            initWithBytesNoCopy: bytes_ptr,
             length: bytes.len(),
             deallocator: dealloc,
         ]

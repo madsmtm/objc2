@@ -83,8 +83,10 @@ where
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Self::Target {
+        let ptr: *const Self = self;
+        let ptr: *const Block<A, R> = ptr.cast();
         // TODO: SAFETY
-        unsafe { &*(self as *const Self as *const Block<A, R>) }
+        unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 }
 

@@ -52,7 +52,7 @@ impl<T: 'static + Copy + Encode> NSValue<T> {
     /// The user must ensure that the inner value is properly initialized.
     pub unsafe fn get_unchecked(&self) -> T {
         let mut value = MaybeUninit::<T>::uninit();
-        let ptr = value.as_mut_ptr() as *mut c_void;
+        let ptr: *mut c_void = value.as_mut_ptr().cast();
         let _: () = unsafe { msg_send![self, getValue: ptr] };
         unsafe { value.assume_init() }
     }
@@ -64,7 +64,8 @@ impl<T: 'static + Copy + Encode> NSValue<T> {
 
     pub fn new(value: T) -> Id<Self, Shared> {
         let cls = Self::class();
-        let bytes = &value as *const T as *const c_void;
+        let bytes: *const T = &value;
+        let bytes: *const c_void = bytes.cast();
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         unsafe {
             let obj: *mut Self = msg_send![cls, alloc];

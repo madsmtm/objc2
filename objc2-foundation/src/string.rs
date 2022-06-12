@@ -140,7 +140,7 @@ impl NSString {
         //
         // https://developer.apple.com/documentation/foundation/nsstring/1411189-utf8string?language=objc
         let bytes: *const c_char = unsafe { msg_send![self, UTF8String] };
-        let bytes = bytes as *const u8;
+        let bytes: *const u8 = bytes.cast();
         let len = self.len();
 
         // SAFETY:
@@ -199,7 +199,7 @@ impl NSString {
 }
 
 pub(crate) fn from_str(cls: &Class, string: &str) -> *mut Object {
-    let bytes = string.as_ptr() as *const c_void;
+    let bytes: *const c_void = string.as_ptr().cast();
     unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
         msg_send![
@@ -276,6 +276,7 @@ impl fmt::Display for NSString {
 mod tests {
     use super::*;
     use alloc::format;
+    use core::ptr;
 
     #[cfg(feature = "gnustep-1-7")]
     #[test]
@@ -365,11 +366,10 @@ mod tests {
     fn test_copy_nsstring_is_same() {
         let string1 = NSString::from_str("Hello, world!");
         let string2 = string1.copy();
-
-        let s1: *const NSString = &*string1;
-        let s2: *const NSString = &*string2;
-
-        assert_eq!(s1, s2, "Cloned NSString didn't have the same address");
+        assert!(
+            ptr::eq(&*string1, &*string2),
+            "Cloned NSString didn't have the same address"
+        );
     }
 
     #[test]

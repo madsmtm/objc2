@@ -159,7 +159,7 @@ impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
             unsafe {
                 let obj = *self.ptr;
                 self.ptr = self.ptr.offset(1);
-                Some(&*obj)
+                Some(obj.as_ref().unwrap_unchecked())
             }
         }
     }
@@ -172,25 +172,25 @@ mod tests {
 
     #[test]
     fn test_enumerator() {
-        let vec = (0u32..4).map(NSValue::new).collect();
+        let vec = (0usize..4).map(NSValue::new).collect();
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.iter();
         assert_eq!(enumerator.count(), 4);
 
         let enumerator = array.iter();
-        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i));
     }
 
     #[test]
     fn test_fast_enumerator() {
-        let vec = (0u32..4).map(NSValue::new).collect();
+        let vec = (0usize..4).map(NSValue::new).collect();
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.iter_fast();
         assert_eq!(enumerator.count(), 4);
 
         let enumerator = array.iter_fast();
-        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i as u32));
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i));
     }
 }

@@ -186,13 +186,13 @@ unsafe impl Send for ClassBuilder {}
 unsafe impl Sync for ClassBuilder {}
 
 impl ClassBuilder {
-    fn as_ptr(&self) -> *mut ffi::objc_class {
+    fn as_mut_ptr(&mut self) -> *mut ffi::objc_class {
         self.cls.as_ptr().cast()
     }
 
     fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<Self> {
         let name = CString::new(name).unwrap();
-        let super_ptr = superclass.map_or(ptr::null(), |c| c) as _;
+        let super_ptr = superclass.map_or(ptr::null(), |c| c).cast();
         let cls = unsafe { ffi::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
         NonNull::new(cls.cast()).map(|cls| Self { cls })
     }
@@ -255,13 +255,17 @@ impl ClassBuilder {
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
-                self.as_ptr(),
-                sel.as_ptr() as _,
+                self.as_mut_ptr(),
+                sel.as_ptr().cast(),
                 Some(func.__imp()),
                 types.as_ptr(),
             )
         });
         assert!(success.as_bool(), "Failed to add method {:?}", sel);
+    }
+
+    fn metaclass_mut(&mut self) -> *mut ffi::objc_class {
+        unsafe { ffi::object_getClass(self.as_mut_ptr().cast()) as *mut ffi::objc_class }
     }
 
     /// Adds a class method with the given name and implementation.
@@ -290,11 +294,10 @@ impl ClassBuilder {
         );
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
-        let metaclass = unsafe { self.cls.as_ref() }.metaclass() as *const _ as *mut _;
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
-                metaclass,
-                sel.as_ptr() as _,
+                self.metaclass_mut(),
+                sel.as_ptr().cast(),
                 Some(func.__imp()),
                 types.as_ptr(),
             )
@@ -314,7 +317,7 @@ impl ClassBuilder {
         let align = log2_align_of::<T>();
         let success = Bool::from_raw(unsafe {
             ffi::class_addIvar(
-                self.as_ptr(),
+                self.as_mut_ptr(),
                 c_name.as_ptr(),
                 size,
                 align,
@@ -330,7 +333,7 @@ impl ClassBuilder {
     ///
     /// If the protocol wasn't successfully added.
     pub fn add_protocol(&mut self, proto: &Protocol) {
-        let success = unsafe { ffi::class_addProtocol(self.as_ptr(), proto.as_ptr()) };
+        let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
         let success = Bool::from_raw(success).as_bool();
         assert!(success, "Failed to add protocol {:?}", proto);
     }
@@ -341,15 +344,15 @@ impl ClassBuilder {
     /// to the newly registered [`Class`].
     pub fn register(self) -> &'static Class {
         // Forget self, otherwise the class will be disposed in drop
-        let cls = ManuallyDrop::new(self).cls;
-        unsafe { ffi::objc_registerClassPair(cls.as_ptr().cast()) };
-        unsafe { cls.as_ref() }
+        let mut this = ManuallyDrop::new(self);
+        unsafe { ffi::objc_registerClassPair(this.as_mut_ptr()) };
+        unsafe { this.cls.as_ref() }
     }
 }
 
 impl Drop for ClassBuilder {
     fn drop(&mut self) {
-        unsafe { ffi::objc_disposeClassPair(self.as_ptr()) }
+        unsafe { ffi::objc_disposeClassPair(self.as_mut_ptr()) }
     }
 }
 
@@ -369,7 +372,7 @@ unsafe impl Send for ProtocolBuilder {}
 unsafe impl Sync for ProtocolBuilder {}
 
 impl ProtocolBuilder {
-    fn as_ptr(&self) -> *mut ffi::objc_protocol {
+    fn as_mut_ptr(&mut self) -> *mut ffi::objc_protocol {
         self.proto.as_ptr().cast()
     }
 
@@ -378,8 +381,8 @@ impl ProtocolBuilder {
     /// Returns [`None`] if the protocol couldn't be allocated.
     pub fn new(name: &str) -> Option<Self> {
         let c_name = CString::new(name).unwrap();
-        let proto = unsafe { ffi::objc_allocateProtocol(c_name.as_ptr()) } as *mut Protocol;
-        NonNull::new(proto).map(|proto| Self { proto })
+        let proto = unsafe { ffi::objc_allocateProtocol(c_name.as_ptr()) };
+        NonNull::new(proto.cast()).map(|proto| Self { proto })
     }
 
     fn add_method_description_common<Args, Ret>(
@@ -403,8 +406,8 @@ impl ProtocolBuilder {
         let types = method_type_encoding(&Ret::ENCODING, encs);
         unsafe {
             ffi::protocol_addMethodDescription(
-                self.as_ptr(),
-                sel.as_ptr() as _,
+                self.as_mut_ptr(),
+                sel.as_ptr().cast(),
                 types.as_ptr(),
                 Bool::new(is_required).as_raw(),
                 Bool::new(is_instance_method).as_raw(),
@@ -433,15 +436,15 @@ impl ProtocolBuilder {
     /// Adds a requirement on another protocol.
     pub fn add_protocol(&mut self, proto: &Protocol) {
         unsafe {
-            ffi::protocol_addProtocol(self.as_ptr(), proto.as_ptr());
+            ffi::protocol_addProtocol(self.as_mut_ptr(), proto.as_ptr());
         }
     }
 
     /// Registers the [`ProtocolBuilder`], consuming it and returning a reference
     /// to the newly registered [`Protocol`].
-    pub fn register(self) -> &'static Protocol {
+    pub fn register(mut self) -> &'static Protocol {
         unsafe {
-            ffi::objc_registerProtocol(self.as_ptr());
+            ffi::objc_registerProtocol(self.as_mut_ptr());
             self.proto.as_ref()
         }
     }

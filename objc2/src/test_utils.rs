@@ -14,9 +14,9 @@ pub(crate) struct CustomObject {
 
 impl CustomObject {
     fn new(class: &Class) -> Self {
-        let ptr = class as *const Class as _;
-        let obj = unsafe { ffi::class_createInstance(ptr, 0) };
-        CustomObject { obj: obj as _ }
+        let ptr: *const Class = class;
+        let obj = unsafe { ffi::class_createInstance(ptr.cast(), 0) }.cast();
+        CustomObject { obj }
     }
 }
 
@@ -50,13 +50,13 @@ impl Deref for CustomObject {
     type Target = Object;
 
     fn deref(&self) -> &Object {
-        unsafe { &*self.obj }
+        unsafe { self.obj.as_ref().unwrap_unchecked() }
     }
 }
 
 impl DerefMut for CustomObject {
     fn deref_mut(&mut self) -> &mut Object {
-        unsafe { &mut *self.obj }
+        unsafe { self.obj.as_mut().unwrap_unchecked() }
     }
 }
 
@@ -64,7 +64,7 @@ impl Drop for CustomObject {
     fn drop(&mut self) {
         unsafe {
             #[allow(deprecated)]
-            ffi::object_dispose(self.obj as _);
+            ffi::object_dispose(self.obj.cast());
         }
     }
 }

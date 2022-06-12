@@ -9,7 +9,7 @@ fn retain_count(obj: &Object) -> usize {
 }
 
 fn create_data(bytes: &[u8]) -> Id<Object, Shared> {
-    let bytes_ptr = bytes.as_ptr() as *const c_void;
+    let bytes_ptr: *const c_void = bytes.as_ptr().cast();
     unsafe {
         // let obj: *mut Object = msg_send![
         //     class!(NSMutableData),
