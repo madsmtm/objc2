@@ -89,11 +89,12 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
+use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem::{self, ManuallyDrop};
-use core::ops::{Deref, DerefMut};
+use core::ops::Deref;
 use core::ptr;
-use std::os::raw::{c_int, c_ulong};
+use std::os::raw::c_ulong;
 
 pub use block_sys as ffi;
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
@@ -119,12 +120,14 @@ macro_rules! block_args_impl {
     ($($a:ident : $t:ident),*) => (
         impl<$($t),*> BlockArguments for ($($t,)*) {
             unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R {
-                let invoke: unsafe extern "C" fn(*mut Block<Self, R> $(, $t)*) -> R = {
-                    let base = block as *mut BlockBase<Self, R>;
-                    unsafe { mem::transmute((*base).invoke) }
-                };
+                let layout = unsafe { block.cast::<ffi::Block_layout>().as_ref().unwrap_unchecked() };
+                // TODO: Can `invoke` actually be null?
+                let invoke: unsafe extern "C" fn() = layout.invoke.unwrap();
+                let invoke: unsafe extern "C" fn(*mut Block<Self, R>, $($t),*) -> R =
+                    unsafe { mem::transmute(invoke) }
+                ;
                 let ($($a,)*) = self;
-                unsafe { invoke(block $(, $a)*) }
+                unsafe { invoke(block, $($a),*) }
             }
         }
     );
@@ -169,19 +172,12 @@ block_args_impl!(
     l: L
 );
 
-#[repr(C)]
-struct BlockBase<A, R> {
-    isa: *const ffi::Class,
-    flags: c_int,
-    _reserved: c_int,
-    invoke: unsafe extern "C" fn(*mut Block<A, R>, ...) -> R,
-}
-
 /// An Objective-C block that takes arguments of `A` when called and
 /// returns a value of `R`.
 #[repr(C)]
 pub struct Block<A, R> {
-    _base: PhantomData<BlockBase<A, R>>,
+    _inner: [u8; 0],
+    p: PhantomData<(ffi::Block_layout, fn(A) -> R)>,
 }
 
 unsafe impl<A: BlockArguments + EncodeArguments, R: Encode> RefEncode for Block<A, R> {
@@ -199,7 +195,7 @@ impl<A: BlockArguments + EncodeArguments, R: Encode> Block<A, R> {
     /// For example, if this block is shared with multiple references, the
     /// caller must ensure that calling it will not cause a data race.
     pub unsafe fn call(&self, args: A) -> R {
-        unsafe { args.call_block(self as *const _ as *mut _) }
+        unsafe { args.call_block(self as *const Self as *mut Self) }
     }
 }
 
@@ -249,7 +245,7 @@ impl<A, R> Deref for RcBlock<A, R> {
 
     fn deref(&self) -> &Block<A, R> {
         // SAFETY: The pointer is ensured valid by creator functions.
-        unsafe { &*self.ptr }
+        unsafe { self.ptr.as_ref().unwrap_unchecked() }
     }
 }
 
@@ -280,21 +276,19 @@ macro_rules! concrete_block_impl {
             type Ret = R;
 
             fn into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
-                unsafe extern fn $f<$($t,)* R, X>(
-                    block_ptr: *mut ConcreteBlock<($($t,)*), R, X>
-                    $(, $a: $t)*
+                extern "C" fn $f<$($t,)* R, X>(
+                    block: &ConcreteBlock<($($t,)*), R, X>,
+                    $($a: $t,)*
                 ) -> R
                 where
-                    X: Fn($($t,)*) -> R
+                    X: Fn($($t,)*) -> R,
                 {
-                    let block = unsafe { &*block_ptr };
                     (block.closure)($($a),*)
                 }
 
-                let f: unsafe extern "C" fn(*mut ConcreteBlock<($($t,)*), R, X> $(, $a: $t)*) -> R = $f;
-                unsafe {
-                    ConcreteBlock::with_invoke(mem::transmute(f), self)
-                }
+                let f: extern "C" fn(&ConcreteBlock<($($t,)*), R, X>, $($a: $t,)*) -> R = $f;
+                let f: unsafe extern "C" fn() = unsafe { mem::transmute(f) };
+                unsafe { ConcreteBlock::with_invoke(f, self) }
             }
         }
     );
@@ -395,8 +389,8 @@ concrete_block_impl!(
 /// constructed on the stack.
 #[repr(C)]
 pub struct ConcreteBlock<A, R, F> {
-    base: BlockBase<A, R>,
-    descriptor: *const BlockDescriptor<ConcreteBlock<A, R, F>>,
+    p: PhantomData<Block<A, R>>,
+    layout: ffi::Block_layout,
     closure: F,
 }
 
@@ -421,25 +415,32 @@ where
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F> {
-    const DESCRIPTOR: BlockDescriptor<Self> = BlockDescriptor {
-        _reserved: 0,
-        block_size: mem::size_of::<Self>() as c_ulong,
-        copy_helper: block_context_copy::<Self>,
-        dispose_helper: block_context_dispose::<Self>,
+    // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
+    const FLAGS: ffi::block_flags = ffi::BLOCK_HAS_COPY_DISPOSE;
+
+    const DESCRIPTOR: ffi::Block_descriptor = ffi::Block_descriptor {
+        header: ffi::Block_descriptor_header {
+            reserved: 0,
+            size: mem::size_of::<Self>() as c_ulong,
+        },
+        copy: Some(block_context_copy::<Self>),
+        dispose: Some(block_context_dispose::<Self>),
     };
 
     /// Constructs a `ConcreteBlock` with the given invoke function and closure.
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
-    unsafe fn with_invoke(invoke: unsafe extern "C" fn(*mut Self, ...) -> R, closure: F) -> Self {
-        ConcreteBlock {
-            base: BlockBase {
-                isa: unsafe { &ffi::_NSConcreteStackBlock },
-                flags: ffi::BLOCK_HAS_COPY_DISPOSE,
-                _reserved: 0,
-                invoke: unsafe { mem::transmute(invoke) },
-            },
-            descriptor: &Self::DESCRIPTOR,
+    unsafe fn with_invoke(invoke: unsafe extern "C" fn(), closure: F) -> Self {
+        let layout = ffi::Block_layout {
+            isa: unsafe { &ffi::_NSConcreteStackBlock },
+            flags: Self::FLAGS,
+            reserved: 0,
+            invoke: Some(invoke),
+            descriptor: &Self::DESCRIPTOR as *const ffi::Block_descriptor as *mut c_void,
+        };
+        Self {
+            p: PhantomData,
+            layout,
             closure,
         }
     }
@@ -452,46 +453,31 @@ impl<A, R, F: 'static> ConcreteBlock<A, R, F> {
         // and we can forget the original block because the heap block will
         // drop in our dispose helper. TODO: Verify this.
         let mut block = ManuallyDrop::new(self);
-        unsafe { RcBlock::copy(&mut **block) }
+        let ptr: *mut Self = &mut *block;
+        unsafe { RcBlock::copy(ptr.cast()) }
     }
 }
 
 impl<A, R, F: Clone> Clone for ConcreteBlock<A, R, F> {
     fn clone(&self) -> Self {
-        unsafe {
-            ConcreteBlock::with_invoke(mem::transmute(self.base.invoke), self.closure.clone())
-        }
+        unsafe { Self::with_invoke(self.layout.invoke.unwrap(), self.closure.clone()) }
     }
 }
 
 impl<A, R, F> Deref for ConcreteBlock<A, R, F> {
     type Target = Block<A, R>;
 
-    fn deref(&self) -> &Block<A, R> {
-        unsafe { &*(&self.base as *const _ as *const Block<A, R>) }
+    fn deref(&self) -> &Self::Target {
+        unsafe { &*(self as *const Self as *const Block<A, R>) }
     }
 }
 
-impl<A, R, F> DerefMut for ConcreteBlock<A, R, F> {
-    fn deref_mut(&mut self) -> &mut Block<A, R> {
-        unsafe { &mut *(&mut self.base as *mut _ as *mut Block<A, R>) }
-    }
+unsafe extern "C" fn block_context_dispose<B>(block: *mut c_void) {
+    unsafe { ptr::drop_in_place(block.cast::<B>()) };
 }
 
-unsafe extern "C" fn block_context_dispose<B>(block: &mut B) {
-    unsafe { ptr::drop_in_place(block) };
-}
-
-unsafe extern "C" fn block_context_copy<B>(_dst: &mut B, _src: &B) {
+unsafe extern "C" fn block_context_copy<B>(_dst: *mut c_void, _src: *mut c_void) {
     // The runtime memmoves the src block into the dst block, nothing to do
-}
-
-#[repr(C)]
-struct BlockDescriptor<B> {
-    _reserved: c_ulong,
-    block_size: c_ulong,
-    copy_helper: unsafe extern "C" fn(&mut B, &B),
-    dispose_helper: unsafe extern "C" fn(&mut B),
 }
 
 #[cfg(test)]

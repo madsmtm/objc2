@@ -82,7 +82,7 @@ where
 {
     type Target = Block<A, R>;
 
-    fn deref(&self) -> &Block<A, R> {
+    fn deref(&self) -> &Self::Target {
         // TODO: SAFETY
         unsafe { &*(self as *const Self as *const Block<A, R>) }
     }
