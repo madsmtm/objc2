@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   scripts becomes `DEP_BLOCK_0_0_CC_ARGS`).
 * **BREAKING**: Apple's runtime is now always the default.
 
+### Fixed
+* **BREAKING**: Tweak the types of a lot of fields and arguments.
+
 
 ## 0.0.3 - 2022-01-03
 

@@ -89,7 +89,6 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem::{self, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
@@ -229,7 +228,7 @@ impl<A, R> RcBlock<A, R> {
     /// The given pointer must point to a valid `Block`.
     pub unsafe fn copy(ptr: *mut Block<A, R>) -> Self {
         // SAFETY: The caller ensures the pointer is valid.
-        let ptr: *mut Block<A, R> = unsafe { ffi::_Block_copy(ptr as *const c_void) }.cast();
+        let ptr: *mut Block<A, R> = unsafe { ffi::_Block_copy(ptr.cast()) }.cast();
         // SAFETY: We just copied the block, so the reference count is +1
         //
         // TODO: Does _Block_copy always returns a valid pointer?
@@ -256,7 +255,7 @@ impl<A, R> Deref for RcBlock<A, R> {
 
 impl<A, R> Drop for RcBlock<A, R> {
     fn drop(&mut self) {
-        unsafe { ffi::_Block_release(self.ptr as *const c_void) };
+        unsafe { ffi::_Block_release(self.ptr.cast()) };
     }
 }
 
