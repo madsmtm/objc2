@@ -1,3 +1,4 @@
+use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::Deref;
@@ -61,7 +62,7 @@ impl<A, R> GlobalBlock<A, R> {
         reserved: 0,
         // Populated in `global_block!`
         invoke: None,
-        descriptor: &GLOBAL_DESCRIPTOR as *const _ as *mut _,
+        descriptor: &GLOBAL_DESCRIPTOR as *const ffi::Block_descriptor_header as *mut c_void,
     };
 
     /// Use the [`global_block`] macro instead.
@@ -81,7 +82,7 @@ where
 {
     type Target = Block<A, R>;
 
-    fn deref(&self) -> &Block<A, R> {
+    fn deref(&self) -> &Self::Target {
         // TODO: SAFETY
         unsafe { &*(self as *const Self as *const Block<A, R>) }
     }
@@ -168,7 +169,7 @@ macro_rules! global_block {
         #[allow(unused_unsafe)]
         $vis static $name: $crate::GlobalBlock<($($t,)*) $(, $r)?> = unsafe {
             let mut layout = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_LAYOUT;
-            layout.isa = &$crate::ffi::_NSConcreteGlobalBlock as *const _ as *mut _;
+            layout.isa = &$crate::ffi::_NSConcreteGlobalBlock;
             layout.invoke = ::core::option::Option::Some({
                 unsafe extern "C" fn inner(_: *mut $crate::ffi::Block_layout, $($a: $t),*) $(-> $r)? {
                     $body

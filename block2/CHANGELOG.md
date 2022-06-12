@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Improved documentation.
 * **BREAKING**: Updated `ffi` module to `block-sys v0.0.3`
 
+### Removed
+* **BREAKING**: Removed `DerefMut` implementation for `ConcreteBlock`.
+
 
 ## 0.2.0-alpha.2 - 2021-12-22
 
