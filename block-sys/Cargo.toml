@@ -46,9 +46,30 @@ unstable-winobjc = ["objc-sys/unstable-winobjc", "gnustep-1-8"]
 # Link to ObjFW
 unstable-objfw = []
 
+# Private
+unstable-docsrs = ["objc-sys"] # Need `objc-sys` on certain platforms
+
 [dependencies]
 objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 no-default-features = true
+features = ["unstable-docsrs"]
+
+targets = [
+    # MacOS
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
+    # "i686-apple-darwin",
+    # iOS
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    # "armv7-apple-ios",
+    # "i386-apple-ios",
+    # GNUStep
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+    # Windows
+    "x86_64-pc-windows-msvc",
+]
