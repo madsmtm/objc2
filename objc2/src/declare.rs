@@ -164,6 +164,8 @@ fn log2_align_of<T>() -> u8 {
 /// before registering it.
 #[derive(Debug)]
 pub struct ClassBuilder {
+    // Note: Don't ever construct a &mut Class, since it is possible to get
+    // this pointer using `Class::classes`!
     cls: NonNull<Class>,
 }
 
@@ -452,7 +454,30 @@ impl ProtocolBuilder {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::test_utils;
+
+    #[test]
+    fn test_classbuilder_duplicate() {
+        let cls = test_utils::custom_class();
+        let builder = ClassBuilder::new("TestClassBuilderDuplicate", cls).unwrap();
+        let _ = builder.register();
+
+        assert!(ClassBuilder::new("TestClassBuilderDuplicate", cls).is_none());
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "gnustep-1-7",
+        ignore = "Dropping ClassBuilder has weird threading side effects on GNUStep"
+    )]
+    fn test_classbuilder_drop() {
+        let cls = test_utils::custom_class();
+        let builder = ClassBuilder::new("TestClassBuilderDrop", cls).unwrap();
+        drop(builder);
+        // After we dropped the class, we can create a new one with the same name:
+        let _builder = ClassBuilder::new("TestClassBuilderDrop", cls).unwrap();
+    }
 
     #[test]
     fn test_custom_class() {
@@ -461,6 +486,29 @@ mod tests {
         let _: () = unsafe { msg_send![&mut obj, setFoo: 13u32] };
         let result: u32 = unsafe { msg_send![&obj, foo] };
         assert_eq!(result, 13);
+    }
+
+    #[test]
+    #[cfg(feature = "malloc")]
+    fn test_in_all_classes() {
+        fn assert_is_present(cls: *const Class) {
+            // Check that the class is present in Class::classes()
+            assert!(Class::classes()
+                .into_iter()
+                .find(|&item| ptr::eq(cls, *item))
+                .is_some());
+        }
+
+        let superclass = test_utils::custom_class();
+        let builder = ClassBuilder::new("TestFetchWhileCreatingClass", superclass).unwrap();
+
+        if cfg!(feature = "apple") {
+            // It is IMO a bug in Apple's runtime that it is present here
+            assert_is_present(builder.cls.as_ptr());
+        }
+
+        let cls = builder.register();
+        assert_is_present(cls);
     }
 
     #[test]
