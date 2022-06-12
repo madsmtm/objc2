@@ -12,7 +12,8 @@ fn main() {
     let mut gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
     let objfw = env::var_os("CARGO_FEATURE_UNSTABLE_OBJFW").is_some();
 
-    if std::env::var("DOCS_RS").is_ok() {
+    // Only when the crate is being compiled directly
+    if cfg!(feature = "unstable-docsrs") {
         if let "macos" | "ios" | "tvos" | "watchos" = &*target_os {
             apple = true;
             // Add cheaty #[cfg(feature = "apple")] directive

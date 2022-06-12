@@ -74,7 +74,8 @@ fn main() {
     let objfw = env::var_os("CARGO_FEATURE_UNSTABLE_OBJFW").is_some();
 
     // Choose defaults when generating docs
-    if std::env::var("DOCS_RS").is_ok() {
+    // Only when the crate is being compiled directly
+    if cfg!(feature = "unstable-docsrs") {
         if let "macos" | "ios" | "tvos" | "watchos" = &*target_os {
             apple = true;
         } else {
@@ -100,7 +101,7 @@ fn main() {
         }
         (false, true, false) => {
             // Choose defaults when generating docs
-            if std::env::var("DOCS_RS").is_ok() {
+            if cfg!(feature = "unstable-docsrs") {
                 if "windows" == target_os {
                     WinObjC
                 } else {
@@ -229,6 +230,11 @@ fn main() {
         if std::env::var("DOCS_RS").is_ok() {
             // docs.rs doesn't have clang, so skip building this. The
             // documentation will still work since it doesn't need to link.
+            //
+            // This is independent of the `unstable-docsrs` feature flag; we
+            // never want to try invoking clang on docs.rs, whether we're the
+            // crate being documented currently, or a dependency of another
+            // crate.
             return;
         }
         println!("cargo:rerun-if-changed=extern/exception.m");
