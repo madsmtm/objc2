@@ -140,7 +140,7 @@ impl NSString {
         //
         // https://developer.apple.com/documentation/foundation/nsstring/1411189-utf8string?language=objc
         let bytes: *const c_char = unsafe { msg_send![self, UTF8String] };
-        let bytes = bytes as *const u8;
+        let bytes: *const u8 = bytes.cast();
         let len = self.len();
 
         // SAFETY:
@@ -199,7 +199,7 @@ impl NSString {
 }
 
 pub(crate) fn from_str(cls: &Class, string: &str) -> *mut Object {
-    let bytes = string.as_ptr() as *const c_void;
+    let bytes: *const c_void = string.as_ptr().cast();
     unsafe {
         let obj: *mut Object = msg_send![cls, alloc];
         msg_send![

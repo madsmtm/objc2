@@ -60,7 +60,8 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
     let f: extern "C" fn(*mut c_void) = unsafe { mem::transmute(f) };
     // Wrap the closure in an Option so it can be taken
     let mut closure = Some(closure);
-    let context = &mut closure as *mut _ as *mut c_void;
+    let context: *mut Option<F> = &mut closure;
+    let context = context.cast();
 
     let mut exception = ptr::null_mut();
     let success = unsafe { ffi::rust_objc_sys_0_2_try_catch_exception(f, context, &mut exception) };
@@ -76,7 +77,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
         // instance any more, and Rust code is forbidden by requiring a Shared
         // Id in `throw` (instead of just a shared reference, which could have
         // come from an Owned Id).
-        Err(unsafe { Id::new(exception as *mut Object) })
+        Err(unsafe { Id::new(exception.cast()) })
     }
 }
 
@@ -146,8 +147,7 @@ mod tests {
         let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
 
         let result = unsafe { catch(|| throw(Some(&obj))) };
-        let e = result.unwrap_err().unwrap();
-        // Compare pointers
-        assert_eq!(&*e as *const Object, &*obj as *const Object);
+        let exception = result.unwrap_err().unwrap();
+        assert!(ptr::eq(&*exception, &*obj));
     }
 }

@@ -12,6 +12,7 @@ use core::str;
 #[cfg(feature = "malloc")]
 use malloc_buf::Malloc;
 use std::ffi::{CStr, CString};
+use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
@@ -118,15 +119,13 @@ impl Sel {
     /// This is almost never what you want; use [`Sel::register`] instead.
     #[inline]
     pub unsafe fn from_ptr(ptr: *const c_void) -> Self {
-        Self {
-            ptr: ptr as *const _,
-        }
+        Self { ptr: ptr.cast() }
     }
 
     /// Returns a pointer to the raw selector.
     #[inline]
     pub fn as_ptr(&self) -> *const c_void {
-        self.ptr as *const _
+        self.ptr.cast()
     }
 }
 
@@ -159,7 +158,8 @@ impl fmt::Pointer for Sel {
 
 impl Ivar {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_ivar {
-        self as *const Self as *const _
+        let ptr: *const Self = self;
+        ptr.cast()
     }
 
     /// Returns the name of self.
@@ -188,7 +188,8 @@ impl RefUnwindSafe for Ivar {}
 
 impl Method {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_method {
-        self as *const Self as *const _
+        let ptr: *const Self = self;
+        ptr.cast()
     }
 
     /// Returns the name of self.
@@ -243,7 +244,8 @@ impl RefUnwindSafe for Method {}
 
 impl Class {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_class {
-        self as *const Self as *const _
+        let ptr: *const Self = self;
+        ptr.cast()
     }
 
     /// Returns the class definition of a specified class, or [`None`] if the
@@ -262,8 +264,8 @@ impl Class {
     pub fn classes() -> Malloc<[&'static Self]> {
         unsafe {
             let mut count: c_uint = 0;
-            let classes = ffi::objc_copyClassList(&mut count);
-            Malloc::from_array(classes as *mut _, count as usize)
+            let classes: *mut &Self = ffi::objc_copyClassList(&mut count).cast();
+            Malloc::from_array(classes, count as usize)
         }
     }
 
@@ -288,7 +290,7 @@ impl Class {
 
     /// Returns the metaclass of self.
     pub fn metaclass(&self) -> &Self {
-        unsafe { &*(ffi::object_getClass(self.as_ptr() as *const _) as *const Self) }
+        unsafe { &*(ffi::object_getClass(self.as_ptr().cast()).cast()) }
     }
 
     // objc_getMetaClass -> Same as `Class::get(name).metaclass()`
@@ -327,11 +329,11 @@ impl Class {
 
     #[allow(unused)]
     fn instance_variable_layout(&self) -> Option<&[u8]> {
-        let layout = unsafe { ffi::class_getIvarLayout(self.as_ptr()) };
+        let layout: *const c_char = unsafe { ffi::class_getIvarLayout(self.as_ptr()).cast() };
         if layout.is_null() {
             None
         } else {
-            Some(unsafe { CStr::from_ptr(layout as *const _) }.to_bytes())
+            Some(unsafe { CStr::from_ptr(layout) }.to_bytes())
         }
     }
 
@@ -348,8 +350,8 @@ impl Class {
     pub fn instance_methods(&self) -> Malloc<[&Method]> {
         unsafe {
             let mut count: c_uint = 0;
-            let methods = ffi::class_copyMethodList(self.as_ptr(), &mut count);
-            Malloc::from_array(methods as *mut _, count as usize)
+            let methods: *mut &Method = ffi::class_copyMethodList(self.as_ptr(), &mut count).cast();
+            Malloc::from_array(methods, count as usize)
         }
     }
 
@@ -365,8 +367,9 @@ impl Class {
     pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
-            let protos = ffi::class_copyProtocolList(self.as_ptr(), &mut count);
-            Malloc::from_array(protos as *mut _, count as usize)
+            let protos: *mut &Protocol =
+                ffi::class_copyProtocolList(self.as_ptr(), &mut count).cast();
+            Malloc::from_array(protos, count as usize)
         }
     }
 
@@ -375,8 +378,8 @@ impl Class {
     pub fn instance_variables(&self) -> Malloc<[&Ivar]> {
         unsafe {
             let mut count: c_uint = 0;
-            let ivars = ffi::class_copyIvarList(self.as_ptr(), &mut count);
-            Malloc::from_array(ivars as *mut _, count as usize)
+            let ivars: *mut &Ivar = ffi::class_copyIvarList(self.as_ptr(), &mut count).cast();
+            Malloc::from_array(ivars, count as usize)
         }
     }
 
@@ -412,7 +415,8 @@ impl fmt::Debug for Class {
 
 impl Protocol {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_protocol {
-        self as *const Self as *const _
+        let ptr: *const Self = self;
+        ptr.cast()
     }
 
     /// Returns the protocol definition of a specified protocol, or [`None`]
@@ -430,8 +434,8 @@ impl Protocol {
     pub fn protocols() -> Malloc<[&'static Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
-            let protocols = ffi::objc_copyProtocolList(&mut count);
-            Malloc::from_array(protocols as *mut _, count as usize)
+            let protocols: *mut &Protocol = ffi::objc_copyProtocolList(&mut count).cast();
+            Malloc::from_array(protocols, count as usize)
         }
     }
 
@@ -440,8 +444,9 @@ impl Protocol {
     pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
-            let protocols = ffi::protocol_copyProtocolList(self.as_ptr(), &mut count);
-            Malloc::from_array(protocols as *mut _, count as usize)
+            let protocols: *mut &Protocol =
+                ffi::protocol_copyProtocolList(self.as_ptr(), &mut count).cast();
+            Malloc::from_array(protocols, count as usize)
         }
     }
 
@@ -503,12 +508,13 @@ fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
 
 impl Object {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_object {
-        self as *const Self as *const _
+        let ptr: *const Self = self;
+        ptr.cast()
     }
 
     /// Dynamically find the class of this object.
     pub fn class(&self) -> &Class {
-        unsafe { &*(ffi::object_getClass(self.as_ptr()) as *const Class) }
+        unsafe { &*(ffi::object_getClass(self.as_ptr()).cast()) }
     }
 
     /// Returns a shared reference to the ivar with the given name.
@@ -525,9 +531,13 @@ impl Object {
     /// Library implementors should expose a safe interface to the ivar.
     pub unsafe fn ivar<T: Encode>(&self, name: &str) -> &T {
         let offset = ivar_offset::<T>(self.class(), name);
-        // `offset` is given in bytes, so we convert to `u8`
-        let ptr = self as *const Self as *const u8;
-        let ptr = unsafe { ptr.offset(offset) } as *const T;
+        let ptr: *const Self = self;
+
+        // `offset` is given in bytes, so we convert to `u8` and back to `T`
+        let ptr: *const u8 = ptr.cast();
+        let ptr = unsafe { ptr.offset(offset) };
+        let ptr: *const T = ptr.cast();
+
         unsafe { &*ptr }
     }
 
@@ -556,9 +566,13 @@ impl Object {
     /// Library implementors should expose a safe interface to the ivar.
     pub unsafe fn ivar_mut<T: Encode>(&mut self, name: &str) -> &mut T {
         let offset = ivar_offset::<T>(self.class(), name);
-        // `offset` is given in bytes, so we convert to `u8`
-        let ptr = self as *mut Self as *mut u8;
-        let ptr = unsafe { ptr.offset(offset) } as *mut T;
+        let ptr: *mut Self = self;
+
+        // `offset` is given in bytes, so we convert to `u8` and back to `T`
+        let ptr: *mut u8 = ptr.cast();
+        let ptr = unsafe { ptr.offset(offset) };
+        let ptr: *mut T = ptr.cast();
+
         unsafe { &mut *ptr }
     }
 

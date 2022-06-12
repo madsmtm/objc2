@@ -14,9 +14,9 @@ pub(crate) struct CustomObject {
 
 impl CustomObject {
     fn new(class: &Class) -> Self {
-        let ptr = class as *const Class as _;
-        let obj = unsafe { ffi::class_createInstance(ptr, 0) };
-        CustomObject { obj: obj as _ }
+        let ptr: *const Class = class;
+        let obj = unsafe { ffi::class_createInstance(ptr.cast(), 0) }.cast();
+        CustomObject { obj }
     }
 }
 
@@ -64,7 +64,7 @@ impl Drop for CustomObject {
     fn drop(&mut self) {
         unsafe {
             #[allow(deprecated)]
-            ffi::object_dispose(self.obj as _);
+            ffi::object_dispose(self.obj.cast());
         }
     }
 }

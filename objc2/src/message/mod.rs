@@ -229,49 +229,51 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
 unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        self as *mut Object
+        self.cast()
     }
 }
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        self.as_ptr() as *mut Object
+        self.as_ptr().cast()
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        self as *const T as *mut T as *mut Object
+        let ptr: *const T = self;
+        ptr as *mut T as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        self as *mut T as *mut Object
+        let ptr: *mut T = self;
+        ptr.cast()
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T, O> {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        Id::as_ptr(self) as *mut Object
+        Id::as_ptr(self) as *mut T as *mut Object
     }
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        Id::as_mut_ptr(self) as *mut Object
+        Id::as_mut_ptr(self).cast()
     }
 }
 
 unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<Id<T, O>> {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        Id::consume_as_ptr(self) as *mut Object
+        Id::consume_as_ptr(self).cast()
     }
 }
 
@@ -285,7 +287,8 @@ unsafe impl MessageReceiver for *const Class {
 unsafe impl<'a> MessageReceiver for &'a Class {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        self as *const Class as *mut Class as *mut Object
+        let ptr: *const Class = self;
+        ptr as *mut Class as *mut Object
     }
 }
 

@@ -14,10 +14,11 @@ fn main() {
     const UTF8_ENCODING: NSUInteger = 4;
 
     let string: *const Object = unsafe { msg_send![class!(NSString), alloc] };
+    let text_ptr: *const c_void = text.as_ptr().cast();
     let string = unsafe {
         msg_send![
             string,
-            initWithBytes: text.as_ptr() as *const c_void,
+            initWithBytes: text_ptr,
             length: text.len(),
             encoding: UTF8_ENCODING,
         ]
