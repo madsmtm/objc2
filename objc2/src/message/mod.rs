@@ -250,7 +250,7 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        self as *const T as *mut T as *mut Object
+        self as *mut T as *mut Object
     }
 }
 
