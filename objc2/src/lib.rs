@@ -178,11 +178,17 @@ pub mod __gnustep_hack {
     #[link(name = "gnustep-base", kind = "dylib")]
     // This linking doesn't have to be on the correct `extern` block.
     extern "C" {
-        static _OBJC_CLASS_NSObject: Class;
+        // The linking changed in libobjc2 v2.0
+        #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSObject")]
+        #[cfg_attr(not(feature = "gnustep-2-0"), link_name = "_OBJC_CLASS_NSObject")]
+        static OBJC_CLASS_NSObject: Class;
+        // Others:
+        // __objc_class_name_NSObject
+        // _OBJC_CLASS_REF_NSObject
     }
 
     pub unsafe fn get_class_to_force_linkage() -> &'static Class {
-        unsafe { core::ptr::read_volatile(&&_OBJC_CLASS_NSObject) }
+        unsafe { core::ptr::read_volatile(&&OBJC_CLASS_NSObject) }
     }
 
     #[test]

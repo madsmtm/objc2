@@ -53,7 +53,7 @@ jobs:
             os: macos-11
             target: x86_64-apple-darwin
             # Oldest macOS version we support
-            sdk: 10.7
+            sdk: "10.7"
           - name: Test macOS nightly w. ui tests
             os: macos-latest
             target: x86_64-apple-darwin
@@ -73,17 +73,29 @@ jobs:
             # binary, only build it
             test-args: --no-run
             # Newest SDK that supports 32-bit
-            sdk: 10.13
-          - name: Test GNUStep
+            sdk: "10.13"
+          - name: Test GNUStep with libobjc2 v1.9
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             runtime: gnustep-1-9
+            libobjc2: "1.9"
+          - name: Test GNUStep with libobjc2 v2.0
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            runtime: gnustep-2-0
+            libobjc2: "2.0"
+          - name: Test GNUStep with libobjc2 v2.1
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            runtime: gnustep-2-1
+            libobjc2: "2.1"
           - name: Test GNUStep 32bit
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
             cflags: -m32
             configureflags: --target=x86-pc-linux-gnu
             runtime: gnustep-1-9
+            libobjc2: "1.9"
           - name: Test iOS simulator x86 64bit
             os: macos-11
             target: x86_64-apple-ios
@@ -234,13 +246,25 @@ jobs:
       if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
       run: sudo apt-get -y install make cmake
 
-    - name: Install GNUStep libobjc2 v1.9
-      if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
+    - name: Install GNUStep libobjc2
+      if: matrix.libobjc2 && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
-        wget https://github.com/gnustep/libobjc2/archive/refs/tags/v1.9.tar.gz
-        tar -xzf v1.9.tar.gz
-        mkdir -p libobjc2-1.9/build
-        cd libobjc2-1.9/build
+        wget https://github.com/gnustep/libobjc2/archive/refs/tags/v${{ matrix.libobjc2 }}.tar.gz
+        tar -xzf v${{ matrix.libobjc2 }}.tar.gz
+
+        # Install robin-map on v2.1
+        if test -d libobjc2-2.1; then
+          cd libobjc2-2.1/third_party
+          # Remove possibly existing `robin-map` folder
+          rm -rf robin-map
+          wget https://github.com/Tessil/robin-map/archive/757de829927489bee55ab02147484850c687b620.tar.gz
+          tar -xzf 757de829927489bee55ab02147484850c687b620.tar.gz
+          mv robin-map-757de829927489bee55ab02147484850c687b620 robin-map
+          cd ../..
+        fi
+
+        mkdir -p libobjc2-${{ matrix.libobjc2 }}/build
+        cd libobjc2-${{ matrix.libobjc2 }}/build
         cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=$HOME/extern -DTESTS=OFF ..
         make install
 
