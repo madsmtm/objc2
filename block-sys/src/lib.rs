@@ -14,7 +14,7 @@
 
 #![no_std]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/block-sys/0.0.3")]
+#![doc(html_root_url = "https://docs.rs/block-sys/0.0.4")]
 
 extern crate std;
 

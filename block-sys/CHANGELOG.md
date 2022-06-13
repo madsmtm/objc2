@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.0.4 - 2022-06-13
+
 ### Changed
 * **BREAKING**: Changed `links` key from `block` to `block_0_0` for better
   future compatibility, until we reach 1.0 (so `DEP_BLOCK_CC_ARGS` in build
