@@ -161,13 +161,13 @@ impl Encoding<'_> {
     /// The encoding of [`c_ulong`](`std::os::raw::c_ulong`).
     ///
     /// See [`Encoding::C_LONG`] for explanation.
-    pub const C_U_LONG: Self = {
+    pub const C_ULONG: Self = {
         if cfg!(any(target_pointer_width = "32", windows)) {
             // @encode(unsigned long) = 'L'
-            Encoding::ULong
+            Self::ULong
         } else {
             // @encode(unsigned long) = 'Q'
-            Encoding::ULongLong
+            Self::ULongLong
         }
     };
 
