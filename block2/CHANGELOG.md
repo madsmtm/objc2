@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-alpha.4 - 2022-06-13
+
 ### Changed
 * **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.0`.
 * **BREAKING**: Updated `ffi` module to `block-sys v0.0.4`.
