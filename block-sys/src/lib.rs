@@ -13,6 +13,7 @@
 // See https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html.
 
 #![no_std]
+#![warn(clippy::cargo)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block-sys/0.0.4")]
 

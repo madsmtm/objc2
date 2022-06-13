@@ -80,6 +80,7 @@
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
+#![warn(clippy::cargo)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block2/0.2.0-alpha.4")]
 

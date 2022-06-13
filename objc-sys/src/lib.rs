@@ -14,6 +14,7 @@
 //! [objc4]: https://github.com/apple-oss-distributions/objc4
 
 #![no_std]
+#![warn(clippy::cargo)]
 #![allow(clippy::upper_case_acronyms)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
