@@ -91,7 +91,7 @@
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-encode/2.0.0-beta.2")]
+#![doc(html_root_url = "https://docs.rs/objc2-encode/2.0.0-pre.0")]
 
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]

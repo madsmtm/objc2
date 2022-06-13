@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.0`
+
+### Removed
+* **BREAKING**: Removed `DerefMut` implementation for `ConcreteBlock`.
+
 
 ## 0.2.0-alpha.3 - 2022-01-03
 
@@ -13,9 +19,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Changed `global_block!` macro to take an optional semicolon at the end.
 * Improved documentation.
 * **BREAKING**: Updated `ffi` module to `block-sys v0.0.3`
-
-### Removed
-* **BREAKING**: Removed `DerefMut` implementation for `ConcreteBlock`.
 
 
 ## 0.2.0-alpha.2 - 2021-12-22
