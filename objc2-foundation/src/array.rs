@@ -310,7 +310,7 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
             // Bring back a reference to the closure.
             // Guaranteed to be unique, we gave `sortUsingFunction` unique is
             // ownership, and that method only runs one function at a time.
-            let closure: &mut F = unsafe { (context as *mut F).as_mut().unwrap_unchecked() };
+            let closure: &mut F = unsafe { context.cast::<F>().as_mut().unwrap_unchecked() };
 
             NSComparisonResult::from((*closure)(obj1, obj2))
         }
@@ -322,7 +322,8 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
 
         // Grab a type-erased pointer to the closure (a pointer to stack).
         let mut closure = compare;
-        let context = &mut closure as *mut F as *mut c_void;
+        let context: *mut F = &mut closure;
+        let context: *mut c_void = context.cast();
 
         unsafe {
             let _: () = msg_send![self, sortUsingFunction: f, context: context];

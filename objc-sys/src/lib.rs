@@ -19,6 +19,7 @@
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
 #![warn(clippy::cargo)]
+#![warn(clippy::ptr_as_ptr)]
 #![allow(clippy::upper_case_acronyms)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]

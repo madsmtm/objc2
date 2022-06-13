@@ -359,7 +359,7 @@ mod tests {
         assert!(s2.is_kind_of(NSString::class()));
 
         let s3 = s1.mutable_copy();
-        assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3) as *const NSString);
+        assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
         assert!(s3.is_kind_of(NSMutableString::class()));
     }
 

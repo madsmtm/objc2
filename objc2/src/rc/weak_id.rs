@@ -52,7 +52,7 @@ impl<T: Message> WeakId<T> {
     unsafe fn new_inner(obj: *const T) -> Self {
         let inner = Box::new(UnsafeCell::new(ptr::null_mut()));
         // SAFETY: `ptr` will never move, and the caller verifies `obj`
-        let _ = unsafe { ffi::objc_initWeak(inner.get(), obj as *mut T as *mut ffi::objc_object) };
+        let _ = unsafe { ffi::objc_initWeak(inner.get(), (obj as *mut T).cast()) };
         Self {
             inner,
             item: PhantomData,
@@ -70,7 +70,7 @@ impl<T: Message> WeakId<T> {
     #[inline]
     pub fn load(&self) -> Option<Id<T, Shared>> {
         let ptr = self.inner.get();
-        let obj = unsafe { ffi::objc_loadWeakRetained(ptr) } as *mut T;
+        let obj = unsafe { ffi::objc_loadWeakRetained(ptr) }.cast();
         unsafe { Id::new(obj) }
     }
 
