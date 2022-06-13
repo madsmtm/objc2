@@ -41,6 +41,15 @@ impl NSThread {
         let obj: *mut NSString = unsafe { msg_send![self, name] };
         unsafe { Id::retain_autoreleased(obj) }
     }
+
+    fn new() -> Id<Self, Shared> {
+        let obj: *mut Self = unsafe { msg_send![Self::class(), new] };
+        unsafe { Id::new(obj) }.unwrap()
+    }
+
+    fn start(&self) {
+        unsafe { msg_send![self, start] }
+    }
 }
 
 /// Whether the application is multithreaded according to Cocoa.
@@ -53,6 +62,13 @@ pub fn is_main_thread() -> bool {
     unsafe { msg_send_bool![NSThread::class(), isMainThread] }
 }
 
+#[allow(unused)]
+fn make_multithreaded() {
+    let thread = NSThread::new();
+    thread.start();
+    // Don't bother waiting for it to complete!
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -60,7 +76,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         feature = "gnustep-1-7",
-        should_panic = "Could not retrieve main thread"
+        ignore = "Retrieving main thread is weirdly broken, only works with --test-threads=1"
     )]
     fn test_main_thread() {
         let current = NSThread::current();
