@@ -606,49 +606,93 @@ impl<T: UnwindSafe + ?Sized> UnwindSafe for Id<T, Owned> {}
 
 #[cfg(test)]
 mod tests {
-    use super::{Id, Owned, Shared};
-    use crate::rc::autoreleasepool;
+    use super::*;
+    use crate::msg_send;
+    use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::Object;
-    use crate::{class, msg_send};
 
-    fn retain_count(obj: &Object) -> usize {
-        unsafe { msg_send![obj, retainCount] }
+    #[track_caller]
+    fn assert_retain_count(obj: &Object, expected: usize) {
+        let retain_count: usize = unsafe { msg_send![obj, retainCount] };
+        assert_eq!(retain_count, expected);
+    }
+
+    #[test]
+    fn test_drop() {
+        let mut expected = ThreadTestData::current();
+
+        let obj = RcTestObject::new();
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.assert_current();
+
+        drop(obj);
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
     }
 
     #[test]
     fn test_autorelease() {
-        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
-
+        let obj: Id<_, Shared> = RcTestObject::new().into();
         let cloned = obj.clone();
+        let mut expected = ThreadTestData::current();
 
         autoreleasepool(|pool| {
             let _ref = obj.autorelease(pool);
-            assert_eq!(retain_count(&*cloned), 2);
+            expected.autorelease += 1;
+            expected.assert_current();
+            assert_retain_count(&cloned, 2);
         });
+        expected.release += 1;
+        expected.assert_current();
+        assert_retain_count(&cloned, 1);
 
-        // make sure that the autoreleased value has been released
-        // TODO: Investigate if this is flaky on GNUStep
-        assert_eq!(retain_count(&*cloned), 1);
+        autoreleasepool(|pool| {
+            let _ref = cloned.autorelease(pool);
+            expected.autorelease += 1;
+            expected.assert_current();
+        });
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
     }
 
     #[test]
     fn test_clone() {
-        let cls = class!(NSObject);
-        let obj: Id<Object, Owned> = unsafe {
-            let obj: *mut Object = msg_send![cls, alloc];
-            let obj: *mut Object = msg_send![obj, init];
-            Id::new(obj).unwrap()
-        };
-        assert_eq!(retain_count(&obj), 1);
+        let obj: Id<_, Owned> = RcTestObject::new();
+        assert_retain_count(&obj, 1);
+        let mut expected = ThreadTestData::current();
 
         let obj: Id<_, Shared> = obj.into();
-        assert_eq!(retain_count(&obj), 1);
+        expected.assert_current();
+        assert_retain_count(&obj, 1);
 
         let cloned = obj.clone();
-        assert_eq!(retain_count(&cloned), 2);
-        assert_eq!(retain_count(&obj), 2);
+        expected.retain += 1;
+        expected.assert_current();
+        assert_retain_count(&cloned, 2);
+        assert_retain_count(&obj, 2);
 
         drop(obj);
-        assert_eq!(retain_count(&cloned), 1);
+        expected.release += 1;
+        expected.assert_current();
+        assert_retain_count(&cloned, 1);
+
+        drop(cloned);
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_retain_autoreleased_works_as_retain() {
+        let obj: Id<_, Shared> = RcTestObject::new().into();
+        let mut expected = ThreadTestData::current();
+
+        let ptr = Id::as_ptr(&obj) as *mut RcTestObject;
+        let _obj2: Id<_, Shared> = unsafe { Id::retain_autoreleased(ptr) }.unwrap();
+        expected.retain += 1;
+        expected.assert_current();
     }
 }

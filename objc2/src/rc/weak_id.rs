@@ -150,45 +150,68 @@ impl<T: Message> TryFrom<WeakId<T>> for Id<T, Shared> {
 
 #[cfg(test)]
 mod tests {
-    use super::WeakId;
-    use super::{Id, Shared};
+    use super::*;
+    use crate::rc::{RcTestObject, ThreadTestData};
     use crate::runtime::Object;
-    use crate::{class, msg_send};
 
     #[test]
     fn test_weak() {
-        let cls = class!(NSObject);
-        let obj: Id<Object, Shared> = unsafe {
-            let obj: *mut Object = msg_send![cls, alloc];
-            let obj: *mut Object = msg_send![obj, init];
-            Id::new(obj).unwrap()
-        };
+        let obj: Id<_, Shared> = RcTestObject::new().into();
+        let mut expected = ThreadTestData::current();
 
         let weak = WeakId::new(&obj);
+        expected.assert_current();
+
         let strong = weak.load().unwrap();
-        let strong_ptr: *const Object = &*strong;
-        let obj_ptr: *const Object = &*obj;
-        assert_eq!(strong_ptr, obj_ptr);
-        drop(strong);
+        expected.try_retain += 1;
+        expected.assert_current();
+        assert!(ptr::eq(&*strong, &*obj));
 
         drop(obj);
-        assert!(weak.load().is_none());
+        drop(strong);
+        expected.release += 2;
+        expected.dealloc += 1;
+        expected.assert_current();
+
+        if cfg!(not(feature = "gnustep-1-7")) {
+            // This loads the object on GNUStep for some reason??
+            assert!(weak.load().is_none());
+            expected.try_retain_fail += 1;
+            expected.assert_current();
+        }
+
+        drop(weak);
+        expected.assert_current();
     }
 
     #[test]
     fn test_weak_clone() {
-        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
+        let obj: Id<_, Shared> = RcTestObject::new().into();
+        let mut expected = ThreadTestData::current();
+
         let weak = WeakId::new(&obj);
+        expected.assert_current();
 
         let weak2 = weak.clone();
+        if cfg!(feature = "apple") {
+            expected.try_retain += 1;
+            expected.release += 1;
+        }
+        expected.assert_current();
 
         let strong = weak.load().unwrap();
+        expected.try_retain += 1;
+        expected.assert_current();
+        assert!(ptr::eq(&*strong, &*obj));
+
         let strong2 = weak2.load().unwrap();
-        let strong_ptr: *const Object = &*strong;
-        let strong2_ptr: *const Object = &*strong2;
-        let obj_ptr: *const Object = &*obj;
-        assert_eq!(strong_ptr, obj_ptr);
-        assert_eq!(strong2_ptr, obj_ptr);
+        expected.try_retain += 1;
+        expected.assert_current();
+        assert!(ptr::eq(&*strong, &*strong2));
+
+        drop(weak);
+        drop(weak2);
+        expected.assert_current();
     }
 
     #[test]
