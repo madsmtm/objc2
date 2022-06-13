@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-beta.0 - 2022-06-13
+
 ### Changed
 * **BREAKING**: Changed `links` key from `objc` to `objc_0_2` for better
   future compatibility, until we reach 1.0 (so `DEP_OBJC_CC_ARGS` in build
