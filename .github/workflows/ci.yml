@@ -84,6 +84,11 @@ jobs:
             target: x86_64-unknown-linux-gnu
             runtime: gnustep-2-0
             libobjc2: "2.0"
+          - name: Test GNUStep with libobjc2 v2.1
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            runtime: gnustep-2-1
+            libobjc2: "2.1"
           - name: Test GNUStep 32bit
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
@@ -246,6 +251,18 @@ jobs:
       run: |
         wget https://github.com/gnustep/libobjc2/archive/refs/tags/v${{ matrix.libobjc2 }}.tar.gz
         tar -xzf v${{ matrix.libobjc2 }}.tar.gz
+
+        # Install robin-map on v2.1
+        if test -d libobjc2-2.1; then
+          cd libobjc2-2.1/third_party
+          # Remove possibly existing `robin-map` folder
+          rm -rf robin-map
+          wget https://github.com/Tessil/robin-map/archive/757de829927489bee55ab02147484850c687b620.tar.gz
+          tar -xzf 757de829927489bee55ab02147484850c687b620.tar.gz
+          mv robin-map-757de829927489bee55ab02147484850c687b620 robin-map
+          cd ../..
+        fi
+
         mkdir -p libobjc2-${{ matrix.libobjc2 }}/build
         cd libobjc2-${{ matrix.libobjc2 }}/build
         cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=$HOME/extern -DTESTS=OFF ..
