@@ -21,7 +21,7 @@ mod inner {
         target_os = "watchos",
     ))]
     // C: _Bool
-    pub type BOOL = bool;
+    pub(crate) type BOOL = bool;
 
     // Inverse of the above
     #[cfg(not(any(
@@ -31,26 +31,26 @@ mod inner {
         target_os = "watchos",
     )))]
     // C: (explicitly) signed char
-    pub type BOOL = i8;
+    pub(crate) type BOOL = i8;
 }
 
 // GNUStep's and Microsoft's libobjc2
 #[cfg(all(gnustep, libobjc2_strict_apple_compat))]
 mod inner {
     // C: (explicitly) signed char
-    pub type BOOL = i8;
+    pub(crate) type BOOL = i8;
 }
 
 #[cfg(all(gnustep, not(libobjc2_strict_apple_compat)))]
 mod inner {
     // windows && !32bit-MinGW
     #[cfg(all(windows, not(all(target_pointer_width = "64", target_env = "gnu"))))]
-    pub type BOOL = std::os::raw::c_int;
+    pub(crate) type BOOL = std::os::raw::c_int;
 
     // The inverse
     #[cfg(not(all(windows, not(all(target_pointer_width = "64", target_env = "gnu")))))]
     // C: unsigned char
-    pub type BOOL = u8;
+    pub(crate) type BOOL = u8;
 }
 
 // ObjFW
@@ -59,7 +59,7 @@ mod inner {
     // Defined in ObjFW-RT.h
     // C: signed char
     // This has changed since v0.90, but we don't support that yet.
-    pub type BOOL = i8;
+    pub(crate) type BOOL = i8;
 
     // Note that ObjFW uses `bool` in return types, but that doesn't change
     // the ABI, so we'll just use `BOOL` there for ease of use.
