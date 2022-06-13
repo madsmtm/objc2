@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 2.0.0-pre.0 - 2022-06-13
+
 ### Added
 * Added `Encoding::C_LONG` and `Encoding::C_U_LONG` to help with platform
   compatibility; use these instead of `c_long::ENCODING` and

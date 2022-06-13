@@ -1,6 +1,6 @@
 [package]
 name = "objc2-foundation"
-version = "0.2.0-alpha.4" # Remember to update html_root_url in lib.rs
+version = "0.2.0-alpha.5" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 
@@ -30,8 +30,8 @@ gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "block2?/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1"]
 
 [dependencies]
-block2 = { path = "../block2", version = "=0.2.0-alpha.3", default-features = false, optional = true }
-objc2 = { path = "../objc2", version = "=0.3.0-alpha.6", default-features = false }
+block2 = { path = "../block2", version = "=0.2.0-alpha.4", default-features = false, optional = true }
+objc2 = { path = "../objc2", version = "=0.3.0-beta.0", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

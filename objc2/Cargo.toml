@@ -1,6 +1,6 @@
 [package]
 name = "objc2"
-version = "0.3.0-alpha.6" # Remember to update html_root_url in lib.rs
+version = "0.3.0-beta.0" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 
@@ -50,8 +50,8 @@ gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1"]
 
 [dependencies]
 malloc_buf = { version = "1.0", optional = true }
-objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1", default-features = false }
-objc2-encode = { path = "../objc2-encode", version = "=2.0.0-beta.2", default-features = false }
+objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.0", default-features = false }
+objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.0", default-features = false }
 
 [dev-dependencies]
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }

@@ -1,6 +1,6 @@
 [package]
 name = "block-sys"
-version = "0.0.3" # Remember to update html_root_url in lib.rs
+version = "0.0.4" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 
@@ -50,7 +50,7 @@ unstable-objfw = []
 unstable-docsrs = ["objc-sys"] # Need `objc-sys` on certain platforms
 
 [dependencies]
-objc-sys = { path = "../objc-sys", version = "=0.2.0-alpha.1", default-features = false, optional = true }
+objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0-beta.0 - 2022-06-13
+
 ### Added
 * Added deprecated `Object::get_ivar` and `Object::get_mut_ivar` to make
   upgrading easier.
@@ -63,6 +66,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   in practice).
 * **BREAKING**: Sealed the `MethodImplementation` trait, and made it's `imp`
   method privat.
+* **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-beta.0`.
+* **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
+  `EncodeArguments`) to `v2.0.0-pre.0`.
 
 ### Fixed
 * Properly sealed the `MessageArguments` trait (it already had a hidden
