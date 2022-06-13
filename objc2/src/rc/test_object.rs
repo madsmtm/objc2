@@ -29,7 +29,17 @@ impl ThreadTestData {
     #[track_caller]
     pub(crate) fn assert_current(&self) {
         let current = Self::current();
-        assert_eq!(&current, self);
+        let mut expected = self.clone();
+        if cfg!(feature = "gnustep-1-7") {
+            // GNUStep doesn't have `tryRetain`, it uses `retain` directly
+            let retain_diff = expected.try_retain - current.try_retain;
+            expected.retain += retain_diff;
+            expected.try_retain -= retain_diff;
+
+            // GNUStep doesn't call `autorelease` if it's overridden
+            expected.autorelease = 0;
+        }
+        assert_eq!(current, expected);
     }
 }
 
