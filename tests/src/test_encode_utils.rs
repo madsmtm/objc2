@@ -169,9 +169,9 @@ assert_inner!(enc ENCODING_LONG => Encoding::C_LONG);
 assert_inner!(enc ENCODING_LONG_POINTER => Encoding::Pointer(&Encoding::C_LONG));
 assert_inner!(str ENCODING_LONG_ATOMIC => format!("A{}", Encoding::C_LONG));
 
-assert_inner!(enc ENCODING_UNSIGNED_LONG => Encoding::C_U_LONG);
-assert_inner!(enc ENCODING_UNSIGNED_LONG_POINTER => Encoding::Pointer(&Encoding::C_U_LONG));
-assert_inner!(str ENCODING_UNSIGNED_LONG_ATOMIC => format!("A{}", Encoding::C_U_LONG));
+assert_inner!(enc ENCODING_UNSIGNED_LONG => Encoding::C_ULONG);
+assert_inner!(enc ENCODING_UNSIGNED_LONG_POINTER => Encoding::Pointer(&Encoding::C_ULONG));
+assert_inner!(str ENCODING_UNSIGNED_LONG_ATOMIC => format!("A{}", Encoding::C_ULONG));
 
 // No appropriate Rust types for these:
 
