@@ -446,9 +446,8 @@ mod tests {
 
     #[test]
     fn test_extend() {
-        let iter = (3..=5).into_iter();
         let mut data = NSMutableData::with_bytes(&[1, 2]);
-        data.extend(iter);
+        data.extend(3..=5);
         assert_eq!(data.bytes(), &[1, 2, 3, 4, 5]);
     }
 

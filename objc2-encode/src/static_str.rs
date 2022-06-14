@@ -6,7 +6,7 @@ pub(crate) const fn static_int_str_len(mut n: u128) -> usize {
         return 1;
     }
     while n > 0 {
-        n = n / 10;
+        n /= 10;
         i += 1;
     }
     i
@@ -16,12 +16,12 @@ pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u128) -> [u8; 
     let mut res: [u8; RES] = [0; RES];
     let mut i = 0;
     if n == 0 {
-        res[0] = '0' as u8;
+        res[0] = b'0';
         return res;
     }
     while n > 0 {
-        res[i] = '0' as u8 + (n % 10) as u8;
-        n = n / 10;
+        res[i] = b'0' + (n % 10) as u8;
+        n /= 10;
         i += 1;
     }
 
@@ -30,7 +30,7 @@ pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u128) -> [u8; 
     while 0 < i {
         i -= 1;
         rev[rev_i] = res[i];
-        n = n / 10;
+        n /= 10;
         rev_i += 1;
     }
     rev
@@ -68,46 +68,46 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
     let mut res: [u8; LEN] = [0; LEN];
 
     match encoding {
-        Char => res[0] = 'c' as u8,
-        Short => res[0] = 's' as u8,
-        Int => res[0] = 'i' as u8,
-        Long => res[0] = 'l' as u8,
-        LongLong => res[0] = 'q' as u8,
-        UChar => res[0] = 'C' as u8,
-        UShort => res[0] = 'S' as u8,
-        UInt => res[0] = 'I' as u8,
-        ULong => res[0] = 'L' as u8,
-        ULongLong => res[0] = 'Q' as u8,
-        Float => res[0] = 'f' as u8,
-        Double => res[0] = 'd' as u8,
-        LongDouble => res[0] = 'D' as u8,
+        Char => res[0] = b'c',
+        Short => res[0] = b's',
+        Int => res[0] = b'i',
+        Long => res[0] = b'l',
+        LongLong => res[0] = b'q',
+        UChar => res[0] = b'C',
+        UShort => res[0] = b'S',
+        UInt => res[0] = b'I',
+        ULong => res[0] = b'L',
+        ULongLong => res[0] = b'Q',
+        Float => res[0] = b'f',
+        Double => res[0] = b'd',
+        LongDouble => res[0] = b'D',
         FloatComplex => {
-            res[0] = 'j' as u8;
-            res[1] = 'f' as u8;
+            res[0] = b'j';
+            res[1] = b'f';
         }
         DoubleComplex => {
-            res[0] = 'j' as u8;
-            res[1] = 'd' as u8;
+            res[0] = b'j';
+            res[1] = b'd';
         }
         LongDoubleComplex => {
-            res[0] = 'j' as u8;
-            res[1] = 'D' as u8;
+            res[0] = b'j';
+            res[1] = b'D';
         }
-        Bool => res[0] = 'B' as u8,
-        Void => res[0] = 'v' as u8,
+        Bool => res[0] = b'B',
+        Void => res[0] = b'v',
         Block => {
-            res[0] = '@' as u8;
-            res[1] = '?' as u8;
+            res[0] = b'@';
+            res[1] = b'?';
         }
-        String => res[0] = '*' as u8,
-        Object => res[0] = '@' as u8,
-        Class => res[0] = '#' as u8,
-        Sel => res[0] = ':' as u8,
-        Unknown => res[0] = '?' as u8,
+        String => res[0] = b'*',
+        Object => res[0] = b'@',
+        Class => res[0] = b'#',
+        Sel => res[0] = b':',
+        Unknown => res[0] = b'?',
         BitField(b, &_type) => {
             let mut res_i = 0;
 
-            res[res_i] = 'b' as u8;
+            res[res_i] = b'b';
             res_i += 1;
 
             let mut i = 0;
@@ -122,7 +122,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
         Pointer(&t) => {
             let mut res_i = 0;
 
-            res[res_i] = '^' as u8;
+            res[res_i] = b'^';
             res_i += 1;
 
             let mut i = 0;
@@ -137,7 +137,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
         Array(len, &item) => {
             let mut res_i = 0;
 
-            res[res_i] = '[' as u8;
+            res[res_i] = b'[';
             res_i += 1;
 
             let mut i = 0;
@@ -158,14 +158,14 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
 
-            res[res_i] = ']' as u8;
+            res[res_i] = b']';
         }
         Struct(name, items) | Union(name, items) => {
             let mut res_i = 0;
 
             match encoding {
-                Struct(_, _) => res[res_i] = '{' as u8,
-                Union(_, _) => res[res_i] = '(' as u8,
+                Struct(_, _) => res[res_i] = b'{',
+                Union(_, _) => res[res_i] = b'(',
                 _ => {}
             };
             res_i += 1;
@@ -178,7 +178,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 name_i += 1;
             }
 
-            res[res_i] = '=' as u8;
+            res[res_i] = b'=';
             res_i += 1;
 
             let mut items_i = 0;
@@ -196,8 +196,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
             }
 
             match encoding {
-                Struct(_, _) => res[res_i] = '}' as u8,
-                Union(_, _) => res[res_i] = ')' as u8,
+                Struct(_, _) => res[res_i] = b'}',
+                Union(_, _) => res[res_i] = b')',
                 _ => {}
             };
         }
@@ -212,18 +212,18 @@ mod tests {
     macro_rules! const_int_str {
         ($n:expr) => {{
             const X: [u8; static_int_str_len($n as u128)] = static_int_str_array($n as u128);
-            unsafe { core::mem::transmute::<&[u8], &str>(&X) }
+            unsafe { core::str::from_utf8_unchecked(&X) }
         }};
     }
 
     #[test]
     fn test_const_int_str() {
-        const STR_0: &'static str = const_int_str!(0);
-        const STR_4: &'static str = const_int_str!(4);
-        const STR_42: &'static str = const_int_str!(42);
-        const STR_100: &'static str = const_int_str!(100);
-        const STR_999: &'static str = const_int_str!(999);
-        const STR_1236018655: &'static str = const_int_str!(1236018655);
+        const STR_0: &str = const_int_str!(0);
+        const STR_4: &str = const_int_str!(4);
+        const STR_42: &str = const_int_str!(42);
+        const STR_100: &str = const_int_str!(100);
+        const STR_999: &str = const_int_str!(999);
+        const STR_1236018655: &str = const_int_str!(1236018655);
 
         assert_eq!(STR_0, "0");
         assert_eq!(STR_4, "4");
@@ -237,20 +237,20 @@ mod tests {
         ($e:expr) => {{
             const E: $crate::Encoding<'static> = $e;
             const X: [u8; static_encoding_str_len(E)] = static_encoding_str_array(E);
-            unsafe { core::mem::transmute::<&'static [u8], &'static str>(&X) }
+            unsafe { core::str::from_utf8_unchecked(&X) }
         }};
     }
 
     #[test]
     fn test_const_encoding() {
-        const CHAR: &'static str = const_encoding!(Encoding::Char);
+        const CHAR: &str = const_encoding!(Encoding::Char);
         assert_eq!(CHAR, "c");
-        const BLOCK: &'static str = const_encoding!(Encoding::Block);
+        const BLOCK: &str = const_encoding!(Encoding::Block);
         assert_eq!(BLOCK, "@?");
-        const STRUCT: &'static str =
+        const STRUCT: &str =
             const_encoding!(Encoding::Struct("abc", &[Encoding::Int, Encoding::Double]));
         assert_eq!(STRUCT, "{abc=id}");
-        const VARIOUS: &'static str = const_encoding!(Encoding::Struct(
+        const VARIOUS: &str = const_encoding!(Encoding::Struct(
             "abc",
             &[
                 Encoding::Pointer(&Encoding::Array(8, &Encoding::Bool)),

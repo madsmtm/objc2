@@ -28,6 +28,7 @@ impl NSMutableString {
 
     /// Creates a new [`NSMutableString`] by copying the given string slice.
     #[doc(alias = "initWithBytes:length:encoding:")]
+    #[allow(clippy::should_implement_trait)] // Not really sure of a better name
     pub fn from_str(string: &str) -> Id<Self, Owned> {
         unsafe {
             let obj = super::string::from_str(Self::class(), string);

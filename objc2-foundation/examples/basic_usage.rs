@@ -4,7 +4,10 @@ use objc2_foundation::{NSArray, NSCopying, NSDictionary, NSObject, NSString};
 fn main() {
     // Create and compare NSObjects
     let obj = NSObject::new();
-    println!("{:?} == {:?}? {:?}", obj, obj, obj == obj);
+    #[allow(clippy::eq_op)]
+    {
+        println!("{:?} == {:?}? {:?}", obj, obj, obj == obj);
+    }
 
     let obj2 = NSObject::new();
     println!("{:?} == {:?}? {:?}", obj, obj2, obj == obj2);

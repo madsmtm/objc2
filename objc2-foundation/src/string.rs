@@ -162,6 +162,7 @@ impl NSString {
     /// Creates an immutable `NSString` by copying the given string slice.
     #[doc(alias = "initWithBytes")]
     #[doc(alias = "initWithBytes:length:encoding:")]
+    #[allow(clippy::should_implement_trait)] // Not really sure of a better name
     pub fn from_str(string: &str) -> Id<Self, Shared> {
         unsafe {
             let obj = from_str(Self::class(), string);
@@ -399,6 +400,7 @@ mod tests {
 
     #[test]
     fn test_hash() {
+        use core::hash::Hasher;
         use std::collections::hash_map::DefaultHasher;
         use std::hash::Hash;
 
@@ -407,7 +409,11 @@ mod tests {
 
         let mut hashstate = DefaultHasher::new();
         let mut hashstate2 = DefaultHasher::new();
-        assert_eq!(s1.hash(&mut hashstate), s2.hash(&mut hashstate2));
+
+        s1.hash(&mut hashstate);
+        s2.hash(&mut hashstate2);
+
+        assert_eq!(hashstate.finish(), hashstate2.finish());
     }
 
     #[test]
@@ -422,6 +428,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::nonminimal_bool)]
     fn test_cmp() {
         let s1 = NSString::from_str("aa");
         assert!(s1 <= s1);

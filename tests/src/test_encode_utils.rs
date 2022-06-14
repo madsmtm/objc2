@@ -260,17 +260,17 @@ assert_inner!(str ENCODING_UNION_ATOMIC => "A(union_)");
 
 // Arrays (atomics are not supported)
 
-type ARRAY = [c_int; 10];
-assert_inner!(enc ENCODING_ARRAY_INT => ARRAY::ENCODING);
-assert_inner!(enc ENCODING_ARRAY_INT_POINTER => ARRAY::ENCODING_REF);
+type Array = [c_int; 10];
+assert_inner!(enc ENCODING_ARRAY_INT => Array::ENCODING);
+assert_inner!(enc ENCODING_ARRAY_INT_POINTER => Array::ENCODING_REF);
 
-type POINTER = [*const c_int; 10];
-assert_inner!(enc ENCODING_ARRAY_POINTER => POINTER::ENCODING);
-assert_inner!(str ENCODING_ARRAY_POINTER_POINTER => POINTER::ENCODING_REF);
+type Pointer = [*const c_int; 10];
+assert_inner!(enc ENCODING_ARRAY_POINTER => Pointer::ENCODING);
+assert_inner!(str ENCODING_ARRAY_POINTER_POINTER => Pointer::ENCODING_REF);
 
-type NESTED = [[c_int; 20]; 10];
-assert_inner!(enc ENCODING_ARRAY_NESTED => NESTED::ENCODING);
-assert_inner!(str ENCODING_ARRAY_NESTED_POINTER => NESTED::ENCODING_REF);
+type Nested = [[c_int; 20]; 10];
+assert_inner!(enc ENCODING_ARRAY_NESTED => Nested::ENCODING);
+assert_inner!(str ENCODING_ARRAY_NESTED_POINTER => Nested::ENCODING_REF);
 
 assert_inner!(enc ENCODING_ARRAY_STRUCT => Encoding::Array(0, &ENC2));
 assert_inner!(str ENCODING_ARRAY_STRUCT_POINTER => Encoding::Pointer(&Encoding::Array(0, &ENC2)));

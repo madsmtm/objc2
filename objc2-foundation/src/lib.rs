@@ -31,6 +31,7 @@
 #![warn(unreachable_pub)]
 // TODO: #![warn(missing_docs)]
 #![deny(unsafe_op_in_unsafe_fn)]
+#![allow(clippy::missing_safety_doc)] // TODO: Remove this
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-foundation/0.2.0-alpha.5")]
 
