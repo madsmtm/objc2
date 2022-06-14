@@ -5,7 +5,6 @@
 use cargo_metadata::Message;
 use std::env;
 use std::env::args;
-use std::fmt::Write;
 use std::fs;
 use std::io;
 use std::path::Path;
@@ -23,13 +22,10 @@ fn strip_section(data: &str, section: &str) -> String {
     let mut in_removed_section = false;
     for line in data.lines() {
         // This only works for the __LLVM sections we're interested in
-        if line == "" {
-            in_removed_section = false;
-        }
         if line.trim().starts_with(".section") {
             if line.contains(section) {
                 in_removed_section = true;
-                write!(res, "; Stripped {section} section\n").unwrap();
+                println!("Stripped {section} section");
             } else {
                 in_removed_section = false;
             }
@@ -37,6 +33,9 @@ fn strip_section(data: &str, section: &str) -> String {
         if !in_removed_section {
             res.push_str(line);
             res.push('\n');
+        }
+        if line == "" {
+            in_removed_section = false;
         }
     }
     res
@@ -88,6 +87,7 @@ fn main() {
             .arg("--message-format=json-render-diagnostics")
             .arg("--")
             .arg("--emit=asm")
+            // .arg("-Zplt=no")
             .arg("-Cllvm-args=--x86-asm-syntax=intel")
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
@@ -123,8 +123,17 @@ fn main() {
             .unwrap_or(host);
 
         println!("Target {target}.");
+        let architecture = target.split_once("-").unwrap().0;
+        let architecture = if matches!(architecture, "i386" | "i686") {
+            "x86"
+        } else {
+            architecture
+        };
+        println!("Architecture {architecture}.");
 
-        let expected_file = package_path.join("expected").join(format!("{target}.s"));
+        let expected_file = package_path
+            .join("expected")
+            .join(format!("apple-{architecture}.s"));
 
         let actual = read_assembly(&artifact).unwrap();
         if should_overwrite {
@@ -135,7 +144,10 @@ fn main() {
                 panic!("Expected and actual did not match.");
             }
         } else {
-            panic!("Missing assembly output for target {}:\n{}", target, actual);
+            panic!(
+                "Missing assembly output for architecture {}:\n{}",
+                architecture, actual
+            );
         }
     }
 }
