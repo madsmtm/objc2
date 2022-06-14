@@ -316,7 +316,8 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: clippy
-        args: ${{ env.ARGS }} --all-targets -- --deny warnings
+        # Temporarily allow `clippy::let_unit_value`
+        args: ${{ env.ARGS }} --all-targets -- --deny warnings --allow clippy::let_unit_value
 
     - name: Build
       if: ${{ !matrix.dinghy }}
