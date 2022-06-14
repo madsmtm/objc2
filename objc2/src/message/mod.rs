@@ -477,6 +477,10 @@ mod tests {
         let result: Option<Id<Object, Shared>> =
             unsafe { msg_send_id![nil, multiple: 1u32, arguments: 2i8] };
         assert!(result.is_none());
+
+        // This result should not be relied on
+        let result: Option<Id<Object, Shared>> = unsafe { msg_send_id![None, init] };
+        assert!(result.is_none());
     }
 
     #[test]

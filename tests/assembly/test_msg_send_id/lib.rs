@@ -4,12 +4,12 @@ use objc2::rc::{Id, Shared};
 use objc2::runtime::{Class, Object, Sel};
 
 #[no_mangle]
-unsafe fn handle_alloc(obj: &Class, sel: Sel) -> Id<Object, Shared> {
+unsafe fn handle_alloc(obj: &Class, sel: Sel) -> Option<Id<Object, Shared>> {
     <Assert<true, false, true>>::send_message_id(obj, sel, ()).unwrap()
 }
 
 #[no_mangle]
-unsafe fn handle_init(obj: Id<Object, Shared>, sel: Sel) -> Option<Id<Object, Shared>> {
+unsafe fn handle_init(obj: Option<Id<Object, Shared>>, sel: Sel) -> Option<Id<Object, Shared>> {
     <Assert<false, true, true>>::send_message_id(obj, sel, ()).unwrap()
 }
 
@@ -21,8 +21,9 @@ unsafe fn handle_alloc_init(obj: &Class, sel1: Sel, sel2: Sel) -> Option<Id<Obje
 
 #[no_mangle]
 unsafe fn handle_alloc_release(cls: &Class, sel: Sel) {
-    let _obj: Id<Object, Shared> =
-        <Assert<true, false, true>>::send_message_id(cls, sel, ()).unwrap();
+    let _obj: Id<Object, Shared> = <Assert<true, false, true>>::send_message_id(cls, sel, ())
+        .unwrap()
+        .unwrap_unchecked();
 }
 
 #[no_mangle]

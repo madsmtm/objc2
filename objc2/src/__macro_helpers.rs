@@ -1,5 +1,3 @@
-use core::mem::ManuallyDrop;
-
 use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
@@ -17,7 +15,7 @@ pub trait MsgSendId<T, U> {
 }
 
 // `alloc`, should mark the return value as "allocated, not initialized" somehow
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
     for Assert<true, false, true>
 {
     #[inline(always)]
@@ -25,26 +23,29 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
         cls: &Class,
         sel: Sel,
         args: A,
-    ) -> Result<Id<T, O>, MessageError> {
-        unsafe {
-            MessageReceiver::send_message(cls, sel, args)
-                .map(|r| Id::new(r).expect("Failed allocating"))
-        }
+    ) -> Result<Option<Id<T, O>>, MessageError> {
+        unsafe { MessageReceiver::send_message(cls, sel, args).map(|r| Id::new(r)) }
     }
 }
 
 // `init`, should mark the input value as "allocated, not initialized" somehow
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Id<T, O>, Option<Id<T, O>>>
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Option<Id<T, O>>>
     for Assert<false, true, true>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
-        obj: Id<T, O>,
+        obj: Option<Id<T, O>>,
         sel: Sel,
         args: A,
     ) -> Result<Option<Id<T, O>>, MessageError> {
-        let obj = ManuallyDrop::new(obj);
-        unsafe { MessageReceiver::send_message(obj, sel, args).map(|r| Id::new(r)) }
+        let ptr = Id::option_into_ptr(obj);
+        // SAFETY: `ptr` may be null here, but that's fine since the return
+        // is `*mut T`, which is one of the few types where messages to nil is
+        // allowed.
+        //
+        // We do this for efficiency, to avoid having a branch after every
+        // `alloc`, that the user did not intend.
+        unsafe { MessageReceiver::send_message(ptr, sel, args).map(|r| Id::new(r)) }
     }
 }
 

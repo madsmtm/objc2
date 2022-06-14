@@ -1,6 +1,6 @@
 use core::fmt;
 use core::marker::PhantomData;
-use core::mem::ManuallyDrop;
+use core::mem::{self, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
@@ -206,6 +206,15 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     #[inline]
     pub(crate) fn consume_as_ptr(this: ManuallyDrop<Self>) -> *mut T {
         this.ptr.as_ptr()
+    }
+
+    #[inline]
+    pub(crate) fn option_into_ptr(obj: Option<Self>) -> *mut T {
+        // Difficult to write this in an ergonomic way with ?Sized
+        // So we just hack it with transmute!
+
+        // SAFETY: Option<Id<T, _>> has the same size as *mut T
+        unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(ManuallyDrop::new(obj)) }
     }
 }
 
