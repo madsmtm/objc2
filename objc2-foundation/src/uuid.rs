@@ -1,5 +1,5 @@
 use objc2::rc::{Id, Shared};
-use objc2::{msg_send, Encode, Encoding, RefEncode};
+use objc2::{msg_send, msg_send_id, Encode, Encoding, RefEncode};
 
 use super::{NSCopying, NSObject};
 
@@ -32,19 +32,14 @@ impl NSUUID {
     // TODO: `nil` method?
 
     pub fn new_v4() -> Id<Self, Shared> {
-        unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, init];
-            Id::new(obj).unwrap()
-        }
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
     pub fn from_bytes(bytes: [u8; 16]) -> Id<Self, Shared> {
         let bytes = UuidBytes(bytes);
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithUUIDBytes: &bytes];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithUUIDBytes: &bytes].unwrap()
         }
     }
 

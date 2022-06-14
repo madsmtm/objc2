@@ -32,13 +32,13 @@
 //!
 #![cfg_attr(feature = "apple", doc = "```")]
 #![cfg_attr(not(feature = "apple"), doc = "```no_run")]
-//! use objc2::{class, msg_send};
+//! use objc2::{class, msg_send_id};
 //! use objc2::rc::{autoreleasepool, Id, Shared, WeakId};
 //! use objc2::runtime::Object;
 //!
 //! // Id will release the object when dropped
 //! let obj: Id<Object, Shared> = unsafe {
-//!     Id::new(msg_send![class!(NSObject), new]).unwrap()
+//!     msg_send_id![class!(NSObject), new].unwrap()
 //! };
 //!
 //! // Cloning retains the object an additional time

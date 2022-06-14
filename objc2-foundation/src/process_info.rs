@@ -1,4 +1,4 @@
-use objc2::msg_send;
+use objc2::msg_send_id;
 use objc2::rc::{Id, Shared};
 
 use crate::{NSObject, NSString};
@@ -20,13 +20,11 @@ unsafe impl Sync for NSProcessInfo {}
 impl NSProcessInfo {
     pub fn process_info() -> Id<NSProcessInfo, Shared> {
         // currentThread is @property(strong), what does that mean?
-        let obj: *mut Self = unsafe { msg_send![Self::class(), processInfo] };
         // TODO: Always available?
-        unsafe { Id::retain_autoreleased(obj).unwrap() }
+        unsafe { msg_send_id![Self::class(), processInfo].unwrap() }
     }
 
     pub fn process_name(&self) -> Id<NSString, Shared> {
-        let obj: *mut NSString = unsafe { msg_send![Self::class(), processName] };
-        unsafe { Id::retain_autoreleased(obj).unwrap() }
+        unsafe { msg_send_id![self, processName].unwrap() }
     }
 }

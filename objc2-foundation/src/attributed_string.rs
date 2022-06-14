@@ -1,6 +1,6 @@
-use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Shared};
 use objc2::runtime::Object;
+use objc2::{msg_send, msg_send_id};
 
 use crate::{
     NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
@@ -47,9 +47,8 @@ impl NSAttributedString {
         attributes: &NSDictionary<NSAttributedStringKey, Object>,
     ) -> Id<Self, Shared> {
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithString: string, attributes: attributes];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithString: string, attributes: attributes].unwrap()
         }
     }
 
@@ -57,9 +56,8 @@ impl NSAttributedString {
     #[doc(alias = "initWithString:")]
     pub fn from_nsstring(string: &NSString) -> Id<Self, Shared> {
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithString: string];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithString: string].unwrap()
         }
     }
 }
@@ -67,8 +65,8 @@ impl NSAttributedString {
 /// Querying.
 impl NSAttributedString {
     // TODO: Lifetimes?
-    pub fn string(&self) -> &NSString {
-        unsafe { msg_send![self, string] }
+    pub fn string(&self) -> Id<NSString, Shared> {
+        unsafe { msg_send_id![self, string].unwrap() }
     }
 
     /// Alias for `self.string().len_utf16()`.

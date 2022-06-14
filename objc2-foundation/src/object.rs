@@ -1,6 +1,6 @@
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
-use objc2::{msg_send, msg_send_bool};
+use objc2::{msg_send, msg_send_bool, msg_send_id};
 
 use super::NSString;
 
@@ -21,11 +21,8 @@ impl NSObject {
     }
 
     pub fn description(&self) -> Id<NSString, Shared> {
-        unsafe {
-            let result: *mut NSString = msg_send![self, description];
-            // TODO: Verify that description always returns a non-null string
-            Id::retain_autoreleased(result).unwrap()
-        }
+        // TODO: Verify that description always returns a non-null string
+        unsafe { msg_send_id![self, description].unwrap() }
     }
 
     pub fn is_kind_of(&self, cls: &Class) -> bool {

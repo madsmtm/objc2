@@ -5,7 +5,7 @@ use std::sync::Once;
 use objc2::declare::ClassBuilder;
 use objc2::rc::{Id, Owned, Shared};
 use objc2::runtime::{Class, Object, Sel};
-use objc2::{msg_send, sel};
+use objc2::{msg_send, msg_send_id, sel};
 use objc2::{Encoding, Message, RefEncode};
 use objc2_foundation::NSObject;
 
@@ -28,9 +28,8 @@ static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 impl<'a> MyObject<'a> {
     fn new(number_ptr: &'a mut u8) -> Id<Self, Owned> {
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithPtr: number_ptr];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithPtr: number_ptr].unwrap()
         }
     }
 

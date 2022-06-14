@@ -5,7 +5,7 @@ use core::ops::Index;
 use core::ptr;
 
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
-use objc2::{msg_send, Message};
+use objc2::{msg_send, msg_send_id, Message};
 
 use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
 
@@ -101,10 +101,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 
     pub fn keys_array(&self) -> Id<NSArray<K, Shared>, Shared> {
-        unsafe {
-            let keys = msg_send![self, allKeys];
-            Id::retain_autoreleased(keys).unwrap()
-        }
+        unsafe { msg_send_id![self, allKeys] }.unwrap()
     }
 
     pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Shared>
@@ -115,23 +112,20 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 
         let cls = Self::class();
         let count = min(keys.len(), vals.len());
-        let obj: *mut Self = unsafe { msg_send![cls, alloc] };
-        let obj: *mut Self = unsafe {
-            msg_send![
+        let obj = unsafe { msg_send_id![cls, alloc] };
+        unsafe {
+            msg_send_id![
                 obj,
                 initWithObjects: vals.as_ptr(),
                 forKeys: keys.as_ptr(),
                 count: count,
             ]
-        };
-        unsafe { Id::new(obj).unwrap() }
+        }
+        .unwrap()
     }
 
     pub fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<V, Owned>, Shared> {
-        unsafe {
-            let vals = msg_send![&dict, allValues];
-            Id::retain_autoreleased(vals).unwrap()
-        }
+        unsafe { msg_send_id![&dict, allValues] }.unwrap()
     }
 }
 

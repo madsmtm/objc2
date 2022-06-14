@@ -452,10 +452,13 @@ mod tests {
     #[cfg(not(feature = "verify_message"))]
     #[test]
     fn test_send_message_nil() {
+        use crate::rc::Shared;
+
         let nil: *mut Object = ::core::ptr::null_mut();
 
-        let result: *mut Object = unsafe { msg_send![nil, description] };
-        assert!(result.is_null());
+        // This result should not be relied on
+        let result: Option<Id<Object, Shared>> = unsafe { msg_send_id![nil, description] };
+        assert!(result.is_none());
 
         // This result should not be relied on
         let result: usize = unsafe { msg_send![nil, hash] };
@@ -471,8 +474,9 @@ mod tests {
         assert_eq!(result, 0.0);
 
         // This result should not be relied on
-        let result: *mut Object = unsafe { msg_send![nil, multiple: 1u32, arguments: 2i8] };
-        assert!(result.is_null());
+        let result: Option<Id<Object, Shared>> =
+            unsafe { msg_send_id![nil, multiple: 1u32, arguments: 2i8] };
+        assert!(result.is_none());
     }
 
     #[test]

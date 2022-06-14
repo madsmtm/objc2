@@ -1,5 +1,5 @@
 use objc2::rc::{Id, Shared};
-use objc2::{msg_send, msg_send_bool};
+use objc2::{msg_send, msg_send_bool, msg_send_id};
 
 use crate::{NSObject, NSString};
 
@@ -15,20 +15,18 @@ unsafe impl Sync for NSThread {}
 
 impl NSThread {
     /// Returns the [`NSThread`] object representing the current thread.
-    pub fn current() -> Id<NSThread, Shared> {
+    pub fn current() -> Id<Self, Shared> {
         // TODO: currentThread is @property(strong), what does that mean?
-        let obj: *mut Self = unsafe { msg_send![Self::class(), currentThread] };
         // TODO: Always available?
-        unsafe { Id::retain_autoreleased(obj).unwrap() }
+        unsafe { msg_send_id![Self::class(), currentThread].unwrap() }
     }
 
     /// Returns the [`NSThread`] object representing the main thread.
     pub fn main() -> Id<NSThread, Shared> {
         // TODO: mainThread is @property(strong), what does that mean?
-        let obj: *mut Self = unsafe { msg_send![Self::class(), mainThread] };
         // The main thread static may not have been initialized
         // This can at least fail in GNUStep!
-        unsafe { Id::retain_autoreleased(obj).expect("Could not retrieve main thread.") }
+        unsafe { msg_send_id![Self::class(), mainThread] }.expect("Could not retrieve main thread.")
     }
 
     /// Returns `true` if the thread is the main thread.
@@ -38,13 +36,11 @@ impl NSThread {
 
     /// The name of the thread.
     pub fn name(&self) -> Option<Id<NSString, Shared>> {
-        let obj: *mut NSString = unsafe { msg_send![self, name] };
-        unsafe { Id::retain_autoreleased(obj) }
+        unsafe { msg_send_id![self, name] }
     }
 
     fn new() -> Id<Self, Shared> {
-        let obj: *mut Self = unsafe { msg_send![Self::class(), new] };
-        unsafe { Id::new(obj) }.unwrap()
+        unsafe { msg_send_id![Self::class(), new] }.unwrap()
     }
 
     fn start(&self) {

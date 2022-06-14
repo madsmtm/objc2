@@ -1,5 +1,5 @@
 use objc2::rc::{Id, Owned, Ownership};
-use objc2::{msg_send, Message};
+use objc2::{msg_send_id, Message};
 
 pub unsafe trait NSCopying: Message {
     /// Indicates whether the type is mutable or immutable.
@@ -31,10 +31,7 @@ pub unsafe trait NSCopying: Message {
     type Output: Message;
 
     fn copy(&self) -> Id<Self::Output, Self::Ownership> {
-        unsafe {
-            let obj: *mut Self::Output = msg_send![self, copy];
-            Id::new(obj).unwrap()
-        }
+        unsafe { msg_send_id![self, copy].unwrap() }
     }
 }
 
@@ -46,9 +43,6 @@ pub unsafe trait NSMutableCopying: Message {
     type Output: Message;
 
     fn mutable_copy(&self) -> Id<Self::Output, Owned> {
-        unsafe {
-            let obj: *mut Self::Output = msg_send![self, mutableCopy];
-            Id::new(obj).unwrap()
-        }
+        unsafe { msg_send_id![self, mutableCopy].unwrap() }
     }
 }

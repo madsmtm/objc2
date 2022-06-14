@@ -5,7 +5,7 @@ use std::sync::Once;
 use super::{Id, Owned};
 use crate::declare::ClassBuilder;
 use crate::runtime::{Bool, Class, Object, Sel};
-use crate::{msg_send, msg_send_bool};
+use crate::{msg_send, msg_send_bool, msg_send_id};
 use crate::{Encoding, Message, RefEncode};
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -152,6 +152,6 @@ impl RcTestObject {
     }
 
     pub(crate) fn new() -> Id<Self, Owned> {
-        unsafe { Id::new(msg_send![Self::class(), new]) }.unwrap()
+        unsafe { msg_send_id![Self::class(), new] }.unwrap()
     }
 }

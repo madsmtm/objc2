@@ -1,6 +1,6 @@
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object};
-use objc2::{class, msg_send};
+use objc2::{class, msg_send, msg_send_id};
 #[cfg(feature = "malloc")]
 use objc2::{sel, Encode};
 
@@ -20,9 +20,8 @@ fn main() {
 
     // Allocate an instance
     let obj: Id<Object, Owned> = unsafe {
-        let obj: *mut Object = msg_send![cls, alloc];
-        let obj: *mut Object = msg_send![obj, init];
-        Id::new(obj).unwrap()
+        let obj = msg_send_id![cls, alloc];
+        msg_send_id![obj, init].unwrap()
     };
     println!("NSObject address: {:p}", obj);
 

@@ -13,13 +13,12 @@ written in Objective-C; this crate enables you to interract with those.
 ## Example
 
 ```rust
-use objc2::{class, msg_send};
+use objc2::{class, msg_send_id};
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object};
 
 let cls = class!(NSObject);
-let obj: *mut Object = unsafe { msg_send![cls, new] };
-let obj: Id<Object, Owned> = unsafe { Id::new(obj).unwrap() };
+let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] }.unwrap();
 
 // TODO
 // let isa = unsafe { obj.ivar::<Class>("isa") };

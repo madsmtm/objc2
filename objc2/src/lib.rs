@@ -29,16 +29,15 @@
 //!
 #![cfg_attr(feature = "apple", doc = "```")]
 #![cfg_attr(not(feature = "apple"), doc = "```no_run")]
-//! use objc2::{class, msg_send, msg_send_bool};
+//! use objc2::{class, msg_send, msg_send_bool, msg_send_id};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::{Id, Owned};
 //! use objc2::runtime::Object;
 //!
 //! // Creation
 //! let cls = class!(NSObject);
-//! let obj: *mut Object = unsafe { msg_send![cls, new] };
 //! let obj: Id<Object, Owned> = unsafe {
-//!     Id::new(obj).expect("Failed allocating object")
+//!     msg_send_id![cls, new].expect("Failed allocating object")
 //! };
 //!
 //! // Usage

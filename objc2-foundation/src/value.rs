@@ -8,9 +8,9 @@ use core::{fmt, str};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Shared};
 use objc2::Encode;
+use objc2::{msg_send, msg_send_id};
 
 use super::{NSCopying, NSObject};
 
@@ -68,13 +68,13 @@ impl<T: 'static + Copy + Encode> NSValue<T> {
         let bytes: *const c_void = bytes.cast();
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         unsafe {
-            let obj: *mut Self = msg_send![cls, alloc];
-            let obj: *mut Self = msg_send![
+            let obj = msg_send_id![cls, alloc];
+            msg_send_id![
                 obj,
                 initWithBytes: bytes,
                 objCType: encoding.as_ptr(),
-            ];
-            Id::new(obj).unwrap()
+            ]
+            .unwrap()
         }
     }
 }
