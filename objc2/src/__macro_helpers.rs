@@ -78,19 +78,45 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Option<Id<U, O>>
     }
 }
 
+// https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families
 #[doc(hidden)]
-pub const fn starts_with_str(haystack: &[u8], needle: &[u8]) -> bool {
-    if needle.len() > haystack.len() {
-        return false;
-    }
-    let mut i = 0;
-    while i < needle.len() {
-        if needle[i] != haystack[i] {
-            return false;
+pub const fn in_method_family(mut selector: &[u8], mut family: &[u8]) -> bool {
+    // Skip leading underscores from selector
+    loop {
+        selector = match selector {
+            [b'_', selector @ ..] => (selector),
+            _ => break,
         }
-        i += 1;
     }
-    true
+
+    // Compare each character
+    loop {
+        (selector, family) = match (selector, family) {
+            // Remaining items
+            ([s, selector @ ..], [f, family @ ..]) => {
+                if *s == *f {
+                    // Next iteration
+                    (selector, family)
+                } else {
+                    // Family does not begin with selector
+                    return false;
+                }
+            }
+            // Equal
+            ([], []) => {
+                return true;
+            }
+            // Selector can't be part of familiy if smaller than it
+            ([], _) => {
+                return false;
+            }
+            // Remaining items in selector
+            // -> ensure next character is not lowercase
+            ([s, ..], []) => {
+                return !s.is_ascii_lowercase();
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -117,14 +143,81 @@ mod tests {
     }
 
     #[test]
-    fn test_starts_with_str() {
-        assert!(starts_with_str(b"abcdef", b"abc"));
-        assert!(starts_with_str(b"a", b""));
-        assert!(starts_with_str(b"", b""));
+    fn test_in_method_family() {
+        // Common cases
 
-        assert!(!starts_with_str(b"abcdef", b"def"));
-        assert!(!starts_with_str(b"abcdef", b"abb"));
-        assert!(!starts_with_str(b"", b"a"));
+        assert!(in_method_family(b"alloc", b"alloc"));
+        assert!(in_method_family(b"allocWithZone:", b"alloc"));
+        assert!(!in_method_family(b"dealloc", b"alloc"));
+        assert!(!in_method_family(b"initialize", b"init"));
+        assert!(!in_method_family(b"decimalNumberWithDecimal:", b"init"));
+        assert!(in_method_family(b"initWithCapacity:", b"init"));
+        assert!(in_method_family(b"_initButPrivate:withParam:", b"init"));
+        assert!(!in_method_family(b"description", b"init"));
+        assert!(!in_method_family(b"inIT", b"init"));
+
+        assert!(!in_method_family(b"init", b"copy"));
+        assert!(!in_method_family(b"copyingStuff:", b"copy"));
+        assert!(in_method_family(b"copyWithZone:", b"copy"));
+        assert!(!in_method_family(b"initWithArray:copyItems:", b"copy"));
+        assert!(in_method_family(b"copyItemAtURL:toURL:error:", b"copy"));
+
+        assert!(!in_method_family(b"mutableCopying", b"mutableCopy"));
+        assert!(in_method_family(b"mutableCopyWithZone:", b"mutableCopy"));
+        assert!(in_method_family(b"mutableCopyWithZone:", b"mutableCopy"));
+
+        assert!(in_method_family(
+            b"newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
+            b"new"
+        ));
+        assert!(in_method_family(
+            b"newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
+            b"new"
+        ));
+        assert!(!in_method_family(b"newsstandAssetDownload", b"new"));
+
+        // Trying to weed out edge-cases:
+
+        assert!(in_method_family(b"__abcDef", b"abc"));
+        assert!(in_method_family(b"_abcDef", b"abc"));
+        assert!(in_method_family(b"abcDef", b"abc"));
+        assert!(in_method_family(b"___a", b"a"));
+        assert!(in_method_family(b"__a", b"a"));
+        assert!(in_method_family(b"_a", b"a"));
+        assert!(in_method_family(b"a", b"a"));
+
+        assert!(!in_method_family(b"_abcdef", b"abc"));
+        assert!(!in_method_family(b"_abcdef", b"def"));
+        assert!(!in_method_family(b"_bcdef", b"abc"));
+        assert!(!in_method_family(b"a_bc", b"abc"));
+        assert!(!in_method_family(b"abcdef", b"abc"));
+        assert!(!in_method_family(b"abcdef", b"def"));
+        assert!(!in_method_family(b"abcdef", b"abb"));
+        assert!(!in_method_family(b"___", b"a"));
+        assert!(!in_method_family(b"_", b"a"));
+        assert!(!in_method_family(b"", b"a"));
+
+        assert!(in_method_family(b"copy", b"copy"));
+        assert!(in_method_family(b"copy:", b"copy"));
+        assert!(in_method_family(b"copyMe", b"copy"));
+        assert!(in_method_family(b"_copy", b"copy"));
+        assert!(in_method_family(b"_copy:", b"copy"));
+        assert!(in_method_family(b"_copyMe", b"copy"));
+        assert!(!in_method_family(b"copying", b"copy"));
+        assert!(!in_method_family(b"copying:", b"copy"));
+        assert!(!in_method_family(b"_copying", b"copy"));
+        assert!(!in_method_family(b"Copy", b"copy"));
+        assert!(!in_method_family(b"COPY", b"copy"));
+
+        // Empty family (not supported)
+        assert!(in_method_family(b"___", b""));
+        assert!(in_method_family(b"__", b""));
+        assert!(in_method_family(b"_", b""));
+        assert!(in_method_family(b"", b""));
+        assert!(!in_method_family(b"_a", b""));
+        assert!(!in_method_family(b"a", b""));
+        assert!(in_method_family(b"_A", b""));
+        assert!(in_method_family(b"A", b""));
     }
 
     mod test_trait_disambugated {

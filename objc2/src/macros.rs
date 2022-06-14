@@ -257,14 +257,16 @@ macro_rules! msg_send_id {
         result
     });
     (@__get_assert_consts $name:ident) => {
-        const ALLOC: bool = $crate::__macro_helpers::starts_with_str($name, b"alloc");
-        const INIT: bool = $crate::__macro_helpers::starts_with_str($name, b"init");
+        const ALLOC: bool = $crate::__macro_helpers::in_method_family($name, b"alloc");
+        // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#consumed-parameters
+        const INIT: bool = $crate::__macro_helpers::in_method_family($name, b"init");
+        // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retained-return-values
         const RETAINED: bool = {
-            $crate::__macro_helpers::starts_with_str($name, b"alloc")
-                || $crate::__macro_helpers::starts_with_str($name, b"new")
-                || $crate::__macro_helpers::starts_with_str($name, b"copy")
-                || $crate::__macro_helpers::starts_with_str($name, b"mutableCopy")
-                || $crate::__macro_helpers::starts_with_str($name, b"init")
+            $crate::__macro_helpers::in_method_family($name, b"alloc")
+                || $crate::__macro_helpers::in_method_family($name, b"new")
+                || $crate::__macro_helpers::in_method_family($name, b"copy")
+                || $crate::__macro_helpers::in_method_family($name, b"mutableCopy")
+                || $crate::__macro_helpers::in_method_family($name, b"init")
         };
     };
 }
