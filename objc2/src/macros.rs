@@ -146,6 +146,7 @@ macro_rules! sel {
 /// let obj: *mut Object;
 /// # let obj: *mut Object = 0 as *mut Object;
 /// let description: *const Object = unsafe { msg_send![obj, description] };
+/// // Usually you'd use msg_send_id here ^
 /// let _: () = unsafe { msg_send![obj, setArg1: 1 arg2: 2] };
 /// // Or with an optional comma between arguments:
 /// let _: () = unsafe { msg_send![obj, setArg1: 1, arg2: 2] };
@@ -226,4 +227,38 @@ macro_rules! msg_send_bool {
         let result: $crate::runtime::Bool = $crate::msg_send![$($msg_send_args)+];
         result.as_bool()
     });
+}
+
+/// TODO
+#[macro_export]
+macro_rules! msg_send_id {
+    [$obj:expr, $selector:ident $(,)?] => ({
+        let sel = $crate::sel!($selector);
+        const NAME: &[u8] = stringify!($selector).as_bytes();
+        $crate::msg_send_id!(@__inner $obj, NAME, sel, ())
+    });
+    [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
+        let sel = $crate::sel!($($selector:)+);
+        const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
+        $crate::msg_send_id!(@__inner $obj, NAME, sel, ($($argument,)+))
+    });
+    (@__inner $obj:expr, $name:ident, $sel:ident, $args:expr) => {{
+        const ALLOC: bool = $crate::__macro_helpers::starts_with_str($name, b"alloc");
+        const INIT: bool = $crate::__macro_helpers::starts_with_str($name, b"init");
+        const RETAINED: bool = {
+            $crate::__macro_helpers::starts_with_str($name, b"alloc")
+                || $crate::__macro_helpers::starts_with_str($name, b"new")
+                || $crate::__macro_helpers::starts_with_str($name, b"copy")
+                || $crate::__macro_helpers::starts_with_str($name, b"mutableCopy")
+                || $crate::__macro_helpers::starts_with_str($name, b"init")
+        };
+
+        use $crate::__macro_helpers::{MsgSendId, Assert};
+        let result;
+        match <Assert<ALLOC, INIT, RETAINED>>::send_message_id($obj, $sel, $args) {
+            Err(s) => panic!("{}", s),
+            Ok(r) => result = r,
+        }
+        result
+    }};
 }

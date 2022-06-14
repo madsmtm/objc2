@@ -167,6 +167,9 @@ pub mod runtime;
 #[cfg(test)]
 mod test_utils;
 
+#[doc(hidden)]
+pub mod __macro_helpers;
+
 /// Hacky way to make GNUStep link properly to Foundation while testing.
 ///
 /// This is a temporary solution to make our CI work for now!
