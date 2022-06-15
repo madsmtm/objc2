@@ -1,3 +1,5 @@
+use core::mem::ManuallyDrop;
+
 use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
@@ -105,6 +107,27 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
         // We do this for efficiency, to avoid having a branch after every
         // `alloc`, that the user did not intend.
         unsafe { MessageReceiver::send_message(ptr, sel, args).map(|r| Id::new(r)) }
+    }
+}
+
+// Super: `init`. Takes a non-null object and returns a non-initialized object
+//
+// Should theoretically make it easy to use in declared `init` methods, once
+// they've received an ergonomics overhaul
+impl<T: ?Sized + Message, O: Ownership> MsgSendSuperId<Id<T, O>, Id<T, O>>
+    for RetainSemantics<false, false, true, false>
+{
+    #[inline(always)]
+    unsafe fn send_super_message_id<A: MessageArguments>(
+        obj: Id<T, O>,
+        superclass: &Class,
+        sel: Sel,
+        args: A,
+    ) -> Result<Option<Id<T, O>>, MessageError> {
+        let ptr = Id::consume_as_ptr(ManuallyDrop::new(obj));
+        unsafe {
+            MessageReceiver::send_super_message(ptr, superclass, sel, args).map(|r| Id::new(r))
+        }
     }
 }
 
@@ -316,7 +339,11 @@ mod tests {
         // superclass, just to verify that the macro works.
         // TODO: Better solution!
         let cls = class!(NSObject);
-        let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+
+        let obj = unsafe { msg_send_id![cls, alloc] };
+
+        let obj = obj.unwrap(); // Required on super
+        let obj: Id<Object, Owned> = unsafe { msg_send_id![super(obj, cls), init].unwrap() };
 
         let _desc: Option<Id<Object, Shared>> =
             unsafe { msg_send_id![super(&obj, cls), description] };
