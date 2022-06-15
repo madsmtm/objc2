@@ -32,34 +32,32 @@ note: associated function defined here
    |     unsafe fn send_message_id<A: MessageArguments>(
    |               ^^^^^^^^^^^^^^^
 
-error[E0277]: the trait bound `Assert<false, false, true, false>: MsgSendId<&objc2::runtime::Object, _>` is not satisfied
+error[E0277]: the trait bound `Option<Id<_, _>>: From<&objc2::runtime::Object>` is not satisfied
   --> ui/msg_send_id_invalid_receiver.rs:10:42
    |
 10 |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
-   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MsgSendId<&objc2::runtime::Object, _>` is not implemented for `Assert<false, false, true, false>`
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `From<&objc2::runtime::Object>` is not implemented for `Option<Id<_, _>>`
    |
-   = help: the following other types implement trait `MsgSendId<T, U>`:
-             <Assert<false, false, false, false> as MsgSendId<T, Option<Id<U, O>>>>
-             <Assert<false, false, false, true> as MsgSendId<T, Option<Id<U, O>>>>
-             <Assert<false, false, true, false> as MsgSendId<Id<T, O>, Option<Id<T, O>>>>
-             <Assert<false, false, true, false> as MsgSendId<Option<Id<T, O>>, Option<Id<T, O>>>>
-             <Assert<false, true, false, false> as MsgSendId<&objc2::runtime::Class, Option<Id<T, O>>>>
-             <Assert<true, false, false, false> as MsgSendId<&objc2::runtime::Class, Option<Id<T, O>>>>
+   = help: the following other types implement trait `From<T>`:
+             <Option<&'a T> as From<&'a Option<T>>>
+             <Option<&'a mut T> as From<&'a mut Option<T>>>
+             <Option<T> as From<T>>
+   = note: required because of the requirements on the impl of `Into<Option<Id<_, _>>>` for `&objc2::runtime::Object`
+   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Object, Option<Id<_, _>>>` for `Assert<false, false, true, false>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Assert<false, false, true, false>: MsgSendId<&objc2::runtime::Class, _>` is not satisfied
+error[E0277]: the trait bound `Option<Id<_, _>>: From<&objc2::runtime::Class>` is not satisfied
   --> ui/msg_send_id_invalid_receiver.rs:13:42
    |
 13 |     let _: Id<Object, Shared> = unsafe { msg_send_id![cls, init].unwrap() };
-   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MsgSendId<&objc2::runtime::Class, _>` is not implemented for `Assert<false, false, true, false>`
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `From<&objc2::runtime::Class>` is not implemented for `Option<Id<_, _>>`
    |
-   = help: the following other types implement trait `MsgSendId<T, U>`:
-             <Assert<false, false, false, false> as MsgSendId<T, Option<Id<U, O>>>>
-             <Assert<false, false, false, true> as MsgSendId<T, Option<Id<U, O>>>>
-             <Assert<false, false, true, false> as MsgSendId<Id<T, O>, Option<Id<T, O>>>>
-             <Assert<false, false, true, false> as MsgSendId<Option<Id<T, O>>, Option<Id<T, O>>>>
-             <Assert<false, true, false, false> as MsgSendId<&objc2::runtime::Class, Option<Id<T, O>>>>
-             <Assert<true, false, false, false> as MsgSendId<&objc2::runtime::Class, Option<Id<T, O>>>>
+   = help: the following other types implement trait `From<T>`:
+             <Option<&'a T> as From<&'a Option<T>>>
+             <Option<&'a mut T> as From<&'a mut Option<T>>>
+             <Option<T> as From<T>>
+   = note: required because of the requirements on the impl of `Into<Option<Id<_, _>>>` for `&objc2::runtime::Class`
+   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Class, Option<Id<_, _>>>` for `Assert<false, false, true, false>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiver` is not satisfied

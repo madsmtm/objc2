@@ -1,5 +1,3 @@
-use core::mem::ManuallyDrop;
-
 use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
@@ -54,37 +52,24 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
 }
 
 // `init`, should mark the input value as "allocated, not initialized" somehow
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Option<Id<T, O>>>
+//
+// The generic bound allows `init` to take both `Option<Id>` and `Id`.
+impl<X: Into<Option<Id<T, O>>>, T: ?Sized + Message, O: Ownership> MsgSendId<X, Option<Id<T, O>>>
     for Assert<false, false, true, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
-        obj: Option<Id<T, O>>,
+        obj: X,
         sel: Sel,
         args: A,
     ) -> Result<Option<Id<T, O>>, MessageError> {
-        let ptr = Id::option_into_ptr(obj);
+        let ptr = Id::option_into_ptr(obj.into());
         // SAFETY: `ptr` may be null here, but that's fine since the return
         // is `*mut T`, which is one of the few types where messages to nil is
         // allowed.
         //
         // We do this for efficiency, to avoid having a branch after every
         // `alloc`, that the user did not intend.
-        unsafe { MessageReceiver::send_message(ptr, sel, args).map(|r| Id::new(r)) }
-    }
-}
-
-// Allow `init` to also take `Id` directly
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Id<T, O>, Option<Id<T, O>>>
-    for Assert<false, false, true, false>
-{
-    #[inline(always)]
-    unsafe fn send_message_id<A: MessageArguments>(
-        obj: Id<T, O>,
-        sel: Sel,
-        args: A,
-    ) -> Result<Option<Id<T, O>>, MessageError> {
-        let ptr = Id::consume_as_ptr(ManuallyDrop::new(obj));
         unsafe { MessageReceiver::send_message(ptr, sel, args).map(|r| Id::new(r)) }
     }
 }
