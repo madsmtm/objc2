@@ -49,6 +49,16 @@ pub trait MsgSendId<T, U> {
     ) -> Result<Option<U>, MessageError>;
 }
 
+#[doc(hidden)]
+pub trait MsgSendSuperId<T, U> {
+    unsafe fn send_super_message_id<A: MessageArguments>(
+        obj: T,
+        superclass: &Class,
+        sel: Sel,
+        args: A,
+    ) -> Result<Option<U>, MessageError>;
+}
+
 // `new`
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for RetainSemantics<true, false, false, false>
@@ -125,6 +135,26 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
         // All code between the message send and the `retain_autoreleased`
         // must be able to be optimized away for this to work.
         unsafe { MessageReceiver::send_message(obj, sel, args).map(|r| Id::retain_autoreleased(r)) }
+    }
+}
+
+// Super: All other selectors
+impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendSuperId<T, Id<U, O>>
+    for RetainSemantics<false, false, false, false>
+{
+    #[inline(always)]
+    unsafe fn send_super_message_id<A: MessageArguments>(
+        obj: T,
+        superclass: &Class,
+        sel: Sel,
+        args: A,
+    ) -> Result<Option<Id<U, O>>, MessageError> {
+        // All code between the message send and the `retain_autoreleased`
+        // must be able to be optimized away for this to work.
+        unsafe {
+            MessageReceiver::send_super_message(obj, superclass, sel, args)
+                .map(|r| Id::retain_autoreleased(r))
+        }
     }
 }
 
@@ -278,6 +308,18 @@ mod tests {
         expected.release += 3;
         expected.dealloc += 2;
         expected.assert_current();
+    }
+
+    #[test]
+    fn test_msg_send_super_id() {
+        // We send the messages to the class itself instead of it's actual
+        // superclass, just to verify that the macro works.
+        // TODO: Better solution!
+        let cls = class!(NSObject);
+        let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+
+        let _desc: Option<Id<Object, Shared>> =
+            unsafe { msg_send_id![super(&obj, cls), description] };
     }
 
     #[test]

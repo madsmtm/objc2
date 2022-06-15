@@ -384,6 +384,29 @@ macro_rules! msg_send_bool {
 /// ```
 #[macro_export]
 macro_rules! msg_send_id {
+    [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
+        $crate::__msg_send_id_helper!(@verify $selector);
+        let sel = $crate::sel!($selector);
+        const NAME: &[u8] = stringify!($selector).as_bytes();
+        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
+        let result: Option<$crate::rc::Id<_, _>>;
+        match <RS as $crate::__macro_helpers::MsgSendSuperId<_, _>>::send_super_message_id($obj, $superclass, sel, ()) {
+            Err(s) => panic!("{}", s),
+            Ok(r) => result = r,
+        }
+        result
+    });
+    [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr),+ $(,)?] => ({
+        let sel = $crate::sel!($($selector:)+);
+        const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
+        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
+        let result: Option<$crate::rc::Id<_, _>>;
+        match <RS as $crate::__macro_helpers::MsgSendSuperId<_, _>>::send_super_message_id($obj, $superclass, sel, ($($argument,)+)) {
+            Err(s) => panic!("{}", s),
+            Ok(r) => result = r,
+        }
+        result
+    });
     [$obj:expr, $selector:ident $(,)?] => ({
         $crate::__msg_send_id_helper!(@verify $selector);
         let sel = $crate::sel!($selector);
