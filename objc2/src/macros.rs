@@ -258,9 +258,8 @@ macro_rules! msg_send_id {
         let sel = $crate::sel!($selector);
         const NAME: &[u8] = stringify!($selector).as_bytes();
         $crate::msg_send_id!(@__get_assert_consts NAME);
-        use $crate::__macro_helpers::{MsgSendId, Assert};
         let result;
-        match <Assert<ALLOC, INIT, RETAINED> as MsgSendId<_, _>>::send_message_id($obj, sel, ()) {
+        match <X as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -270,25 +269,21 @@ macro_rules! msg_send_id {
         let sel = $crate::sel!($($selector:)+);
         const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
         $crate::msg_send_id!(@__get_assert_consts NAME);
-        use $crate::__macro_helpers::{MsgSendId, Assert};
         let result;
-        match <Assert<ALLOC, INIT, RETAINED> as MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+)) {
+        match <X as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
         result
     });
-    (@__get_assert_consts $name:ident) => {
-        const ALLOC: bool = $crate::__macro_helpers::in_method_family($name, b"alloc");
-        // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#consumed-parameters
-        const INIT: bool = $crate::__macro_helpers::in_method_family($name, b"init");
-        // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retained-return-values
-        const RETAINED: bool = {
-            $crate::__macro_helpers::in_method_family($name, b"alloc")
-                || $crate::__macro_helpers::in_method_family($name, b"new")
-                || $crate::__macro_helpers::in_method_family($name, b"copy")
-                || $crate::__macro_helpers::in_method_family($name, b"mutableCopy")
-                || $crate::__macro_helpers::in_method_family($name, b"init")
+    (@__get_assert_consts $selector:ident) => {
+        const NEW: bool = $crate::__macro_helpers::in_method_family($selector, b"new");
+        const ALLOC: bool = $crate::__macro_helpers::in_method_family($selector, b"alloc");
+        const INIT: bool = $crate::__macro_helpers::in_method_family($selector, b"init");
+        const COPY_OR_MUT_COPY: bool = {
+            $crate::__macro_helpers::in_method_family($selector, b"copy")
+                || $crate::__macro_helpers::in_method_family($selector, b"mutableCopy")
         };
+        type X = $crate::__macro_helpers::Assert<NEW, ALLOC, INIT, COPY_OR_MUT_COPY>;
     };
 }

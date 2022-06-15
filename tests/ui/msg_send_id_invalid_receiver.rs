@@ -5,6 +5,7 @@ use objc2::rc::{Id, Shared};
 
 fn main() {
     let obj: &Object;
+    let _: Id<Object, Shared> = unsafe { msg_send_id![obj, new].unwrap() };
     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, alloc].unwrap() };
     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
 

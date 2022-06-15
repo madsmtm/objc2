@@ -7,8 +7,14 @@ use crate::{Message, MessageArguments, MessageError, MessageReceiver};
 #[doc(hidden)]
 pub use core::compile_error;
 
+// https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments
 #[doc(hidden)]
-pub struct Assert<const ALLOC: bool, const INIT: bool, const RETAINED: bool> {}
+pub struct Assert<
+    const NEW: bool,
+    const ALLOC: bool,
+    const INIT: bool,
+    const COPY_OR_MUT_COPY: bool,
+> {}
 
 #[doc(hidden)]
 pub trait MsgSendId<T, U> {
@@ -19,9 +25,23 @@ pub trait MsgSendId<T, U> {
     ) -> Result<U, MessageError>;
 }
 
+// `new`
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
+    for Assert<true, false, false, false>
+{
+    #[inline(always)]
+    unsafe fn send_message_id<A: MessageArguments>(
+        obj: &Class,
+        sel: Sel,
+        args: A,
+    ) -> Result<Option<Id<T, O>>, MessageError> {
+        unsafe { MessageReceiver::send_message(obj, sel, args).map(|r| Id::new(r)) }
+    }
+}
+
 // `alloc`, should mark the return value as "allocated, not initialized" somehow
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
-    for Assert<true, false, true>
+    for Assert<false, true, false, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -35,7 +55,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
 
 // `init`, should mark the input value as "allocated, not initialized" somehow
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Option<Id<T, O>>>
-    for Assert<false, true, true>
+    for Assert<false, false, true, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -56,7 +76,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Option<Id<T,
 
 // Allow `init` to also take `Id` directly
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<Id<T, O>, Option<Id<T, O>>>
-    for Assert<false, true, true>
+    for Assert<false, false, true, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -69,9 +89,9 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Id<T, O>, Option<Id<T, O>>>
     }
 }
 
-// `copy`, `mutableCopy` and `new`
+// `copy` and `mutableCopy`
 impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Option<Id<U, O>>>
-    for Assert<false, false, true>
+    for Assert<false, false, false, true>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -85,7 +105,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Option<
 
 // All other selectors
 impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Option<Id<U, O>>>
-    for Assert<false, false, false>
+    for Assert<false, false, false, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
