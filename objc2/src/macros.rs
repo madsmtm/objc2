@@ -52,53 +52,15 @@ macro_rules! sel {
     });
 }
 
-/// Sends a message to an object or class.
+/// Send a message to an object or class.
 ///
 /// This is wildly `unsafe`, even more so than sending messages in
-/// Objective-C, because this macro doesn't know the expected types and
-/// because Rust has more safety invariants to uphold. Make sure to review the
-/// safety section below!
+/// Objective-C, because this macro can't inspect header files to see the
+/// expected types, and because Rust has more safety invariants to uphold.
+/// Make sure to review the safety section below!
 ///
-/// # General information
+/// The recommended way of using this macro is by defining a wrapper function:
 ///
-/// The syntax is similar to the message syntax in Objective-C, except we
-/// allow an optional comma between arguments (works better with rustfmt).
-///
-/// The first argument (know as the "receiver") can be any type that
-/// implements [`MessageReceiver`], like a reference or a pointer to an
-/// object, or even a reference to an [`rc::Id`] containing an object.
-/// Each subsequent argument must implement [`Encode`].
-///
-/// Behind the scenes this translates into a call to [`sel!`], and afterwards
-/// a fully qualified call to [`MessageReceiver::send_message`] (note that
-/// this means that auto-dereferencing of the receiver is not supported,
-/// making the ergonomics when using this slightly worse).
-///
-/// Variadic arguments are not currently supported.
-///
-/// [`MessageReceiver`]: crate::MessageReceiver
-/// [`rc::Id`]: crate::rc::Id
-/// [`Encode`]: crate::Encode
-/// [`MessageReceiver::send_message`]: crate::MessageReceiver::send_message
-///
-/// # Panics
-///
-/// Panics if the `catch_all` feature is enabled and the Objective-C method
-/// throws an exception. Exceptions may however still cause UB until we get
-/// `extern "C-unwind"`, see [RFC-2945].
-///
-/// And panics if the `verify_message` feature is enabled and the Objective-C
-/// method's argument's encoding does not match the encoding of the given
-/// arguments. This is highly recommended to enable while testing!
-///
-/// # Safety
-///
-/// This macro can't inspect header files to see the expected types, so it is
-/// your responsibility that the selector exists on the receiver, and that the
-/// argument types and return type are what the receiver excepts for this
-/// selector - similar to defining an external function in FFI.
-///
-/// The recommended way of doing this is by defining a wrapper function:
 /// ```
 /// # use std::os::raw::{c_int, c_char};
 /// # use objc2::msg_send;
@@ -108,35 +70,86 @@ macro_rules! sel {
 /// }
 /// ```
 ///
-/// This way we are clearly communicating to Rust that this method takes an
-/// immutable object, a C-integer, and returns a pointer to (probably) a
-/// C-compatible string. Afterwards, it becomes fairly trivial to make a safe
-/// abstraction around this.
+/// This way we are clearly communicating to Rust that: The method
+/// `doSomething:` works on shared references to an object. It takes a C-style
+/// signed integer, and returns a pointer to what is probably a C-compatible
+/// string. Now it's much, _much_ easier to make a safe abstraction around
+/// this!
 ///
-/// In particular, you must uphold the following requirements:
+/// There exists two variants of this macro, [`msg_send_bool!`] and
+/// [`msg_send_id!`], which can help with upholding certain requirements of
+/// methods that return respectively Objective-C's `BOOL` and `id` (or any
+/// object pointer). Use those whenever you want to call such a method!
 ///
-/// 1. The selector is a valid method that is available on the given receiver.
 ///
-/// 2. The types of the receiver and arguments must match what is expected on
-///   the Objective-C side.
+/// # Specification
 ///
-/// 3. The call must not violate Rust's mutability rules, e.g. if passing an
-///   `&T`, the Objective-C method must not mutate the variable (this is true
-///   for receivers as well).
+/// The syntax is similar to the message syntax in Objective-C, except with
+/// an (optional, though consider that deprecated) comma between arguments,
+/// since that works much better with rustfmt.
 ///
-/// 4. If the receiver is a raw pointer the user must ensure that it is valid
-///   (aligned, dereferenceable, initialized and so on). Messages to `null`
-///   pointers are allowed (though heavily discouraged), but only if the
-///   return type itself is a pointer.
+/// The first expression, know as the "receiver", can be any type that
+/// implements [`MessageReceiver`], like a reference or a pointer to an
+/// object, or even a reference to an [`rc::Id`] containing an object.
 ///
-/// 5. The method must not (yet, see [RFC-2945]) throw an exception.
+/// All arguments, and the return type, must implement [`Encode`].
 ///
-/// 6. You must uphold any additional safety requirements (explicit and
-///   implicit) that the method has (for example, methods that take pointers
-///   usually require that the pointer is valid, and sometimes non-null.
-///   Another example, some methods may only be called on the main thread).
+/// This translates into a call to [`sel!`], and afterwards a fully qualified
+/// call to [`MessageReceiver::send_message`]. Note that this means that
+/// auto-dereferencing of the receiver is not supported.
 ///
-/// 7. TODO: Maybe more?
+/// Variadic arguments are currently not supported.
+///
+/// [`MessageReceiver`]: crate::MessageReceiver
+/// [`rc::Id`]: crate::rc::Id
+/// [`Encode`]: crate::Encode
+/// [`MessageReceiver::send_message`]: crate::MessageReceiver::send_message
+///
+///
+/// # Panics
+///
+/// Panics if the `"catch_all"` feature is enabled and the Objective-C method
+/// throws an exception. Exceptions may still cause UB until
+/// `extern "C-unwind"` is stable, see [RFC-2945].
+///
+/// Panics if the `"verify_message"` feature is enabled and the Objective-C
+/// method's argument's encoding does not match the encoding of the given
+/// arguments. This is highly recommended to enable while testing!
+///
+/// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
+///
+///
+/// # Safety
+///
+/// Similar to defining and calling an `extern` function in a foreign function
+/// interface. In particular, you must uphold the following requirements:
+///
+/// 1. The selector corresponds to a valid method that is available on the
+///    receiver.
+///
+/// 2. The argument types must match what the receiver excepts for this
+///    selector.
+///
+/// 3. The return type must match what the receiver returns for this selector.
+///
+/// 4. The call must not violate Rust's mutability rules, for example if
+///    passing an `&T`, the Objective-C method must not mutate the variable
+///    (of course except if the variable is inside [`std::cell::UnsafeCell`]).
+///
+/// 5. If the receiver is a raw pointer it must be valid (aligned,
+///    dereferenceable, initialized and so on). Messages to `null` pointers
+///    are allowed (though heavily discouraged), but _only_ if the return type
+///    itself is a pointer.
+///
+/// 6. The method must not (yet) throw an exception.
+///
+/// 7. You must uphold any additional safety requirements (explicit and
+///    implicit) that the method has. For example, methods that take pointers
+///    usually require that the pointer is valid, and sometimes non-null.
+///    Another example, some methods may only be called on the main thread.
+///
+/// 8. TODO: Maybe more?
+///
 ///
 /// # Examples
 ///
@@ -151,8 +164,6 @@ macro_rules! sel {
 /// // Or with an optional comma between arguments:
 /// let _: () = unsafe { msg_send![obj, setArg1: 1, arg2: 2] };
 /// ```
-///
-/// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[macro_export]
 macro_rules! msg_send {
     [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
@@ -193,33 +204,48 @@ macro_rules! msg_send {
     });
 }
 
-/// A less error-prone version of [`msg_send!`] for methods returning `BOOL`.
+/// [`msg_send!`] for methods returning `BOOL`.
 ///
-/// Objective-C's `BOOL` is different from Rust's [`bool`] (see [`Bool`]), so
-/// a conversion step must be performed before using it - this macro does that
-/// for you!
+/// Objective-C's `BOOL` is different from Rust's [`bool`], see
+/// [`runtime::Bool`] for more information, so a conversion step must be
+/// performed before using it - this can easily be forgotted using the
+/// [`msg_send!`] macro, so this is a less error-prone version does the
+/// conversion for you!
 ///
-/// [`Bool`]: crate::runtime::Bool
+/// [`runtime::Bool`]: crate::runtime::Bool
+///
+///
+/// # Specification
 ///
 /// Equivalent to the following:
 ///
-/// ```ignore
+/// ```no_run
 /// # use objc2::msg_send;
-/// # use objc2::runtime::Bool;
+/// # use objc2::runtime::{Bool, Object};
 /// # let obj: *mut Object = 0 as *mut Object;
+/// # unsafe
 /// {
 ///     let result: Bool = msg_send![obj, selector];
 ///     result.as_bool()
 /// };
 /// ```
 ///
+///
+/// # Safety
+///
+/// Same as [`msg_send!`], with the expected return type of `BOOL`.
+///
+///
 /// # Examples
 ///
-/// ```no_run
-/// # use objc2::msg_send_bool;
+#[cfg_attr(feature = "apple", doc = "```")]
+#[cfg_attr(not(feature = "apple"), doc = "```no_run")]
+/// # use objc2::{class, msg_send_bool, msg_send_id};
+/// # use objc2::rc::{Id, Owned};
 /// # use objc2::runtime::Object;
-/// # let obj: *mut Object = 0 as *mut Object;
-/// assert!(unsafe { msg_send_bool![obj, isEqual: obj] });
+/// let obj: Id<Object, Owned>;
+/// # obj = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+/// assert!(unsafe { msg_send_bool![&obj, isEqual: &*obj] });
 /// ```
 #[macro_export]
 macro_rules! msg_send_bool {
@@ -229,6 +255,8 @@ macro_rules! msg_send_bool {
     });
 }
 
+/// [`msg_send!`] for methods returning `id` or other object pointers.
+///
 /// TODO
 ///
 /// TODO: Assumes that attributes like `objc_method_family`, `ns_returns_retained`, `ns_consumed` and so on are not present.
