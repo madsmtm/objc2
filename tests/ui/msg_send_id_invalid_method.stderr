@@ -1,34 +1,34 @@
 error: msg_send_id![obj, retain] is not supported. Use `Id::retain` instead
- --> ui/msg_send_id_invalid_method.rs:7:14
-  |
-7 |     unsafe { msg_send_id![object, retain] };
-  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/msg_send_id_invalid_method.rs:11:14
+   |
+11 |     unsafe { msg_send_id![object, retain] };
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `$crate::__msg_send_id_helper` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, release] is not supported. Drop an `Id` instead
- --> ui/msg_send_id_invalid_method.rs:8:14
-  |
-8 |     unsafe { msg_send_id![object, release] };
-  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/msg_send_id_invalid_method.rs:12:14
+   |
+12 |     unsafe { msg_send_id![object, release] };
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `$crate::__msg_send_id_helper` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`
- --> ui/msg_send_id_invalid_method.rs:9:14
-  |
-9 |     unsafe { msg_send_id![object, autorelease] };
-  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/msg_send_id_invalid_method.rs:13:14
+   |
+13 |     unsafe { msg_send_id![object, autorelease] };
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `$crate::__msg_send_id_helper` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, retain] is not supported. Use `Id::retain` instead
-  --> ui/msg_send_id_invalid_method.rs:11:9
+  --> ui/msg_send_id_invalid_method.rs:15:9
    |
-11 | /         msg_send_id![
-12 | |             object,
-13 | |             retain,
-14 | |         ]
+15 | /         msg_send_id![
+16 | |             object,
+17 | |             retain,
+18 | |         ]
    | |_________^
    |
-   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `$crate::__msg_send_id_helper` (in Nightly builds, run with -Z macro-backtrace for more info)

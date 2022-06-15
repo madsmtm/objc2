@@ -239,25 +239,11 @@ macro_rules! msg_send_bool {
 /// [`Id::autorelease`]: crate::rc::Id::autorelease
 #[macro_export]
 macro_rules! msg_send_id {
-    [$obj:expr, retain $(,)?] => ({
-        $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, retain] is not supported. Use `Id::retain` instead"
-        )
-    });
-    [$obj:expr, release $(,)?] => ({
-        $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, release] is not supported. Drop an `Id` instead"
-        )
-    });
-    [$obj:expr, autorelease $(,)?] => ({
-        $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`"
-        )
-    });
     [$obj:expr, $selector:ident $(,)?] => ({
+        $crate::__msg_send_id_helper!(@verify $selector);
         let sel = $crate::sel!($selector);
         const NAME: &[u8] = stringify!($selector).as_bytes();
-        $crate::msg_send_id!(@__get_assert_consts NAME);
+        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result: Option<$crate::rc::Id<_, _>>;
         match <X as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ()) {
             Err(s) => panic!("{}", s),
@@ -268,7 +254,7 @@ macro_rules! msg_send_id {
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
         let sel = $crate::sel!($($selector:)+);
         const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
-        $crate::msg_send_id!(@__get_assert_consts NAME);
+        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result: Option<$crate::rc::Id<_, _>>;
         match <X as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+)) {
             Err(s) => panic!("{}", s),
@@ -276,7 +262,29 @@ macro_rules! msg_send_id {
         }
         result
     });
-    (@__get_assert_consts $selector:ident) => {
+}
+
+/// Helper macro: To avoid exposing these in the docs for [`msg_send_id!`].
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __msg_send_id_helper {
+    (@verify retain) => {{
+        $crate::__macro_helpers::compile_error!(
+            "msg_send_id![obj, retain] is not supported. Use `Id::retain` instead"
+        )
+    }};
+    (@verify release) => {{
+        $crate::__macro_helpers::compile_error!(
+            "msg_send_id![obj, release] is not supported. Drop an `Id` instead"
+        )
+    }};
+    (@verify autorelease) => {{
+        $crate::__macro_helpers::compile_error!(
+            "msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`"
+        )
+    }};
+    (@verify $selector:ident) => {{}};
+    (@get_assert_consts $selector:ident) => {
         const NEW: bool = $crate::__macro_helpers::in_method_family($selector, b"new");
         const ALLOC: bool = $crate::__macro_helpers::in_method_family($selector, b"alloc");
         const INIT: bool = $crate::__macro_helpers::in_method_family($selector, b"init");
