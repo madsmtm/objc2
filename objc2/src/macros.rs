@@ -325,10 +325,9 @@ macro_rules! msg_send_bool {
 /// - The `alloc` family: The receiver must be `&Class`, and the return type
 ///   is a generic `Option<Id<T, O>>`. (This will change, see [#172]).
 ///
-/// - The `init` family: The receiver must be either `Id<T, O>` or
-///   `Option<Id<T, O>>` as returned from `alloc`. The receiver is consumed,
-///   and a the now-initialized `Option<Id<T, O>>` (with the same `T` and `O`)
-///   is returned.
+/// - The `init` family: The receiver must be `Option<Id<T, O>>` as returned
+///   from `alloc`. The receiver is consumed, and a the now-initialized
+///   `Option<Id<T, O>>` (with the same `T` and `O`) is returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
 ///   [`MessageReceiver`] and the return type is a generic `Option<Id<T, O>>`.

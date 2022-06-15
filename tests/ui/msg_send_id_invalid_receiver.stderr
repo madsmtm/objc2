@@ -32,33 +32,39 @@ note: associated function defined here
    |     unsafe fn send_message_id<A: MessageArguments>(
    |               ^^^^^^^^^^^^^^^
 
-error[E0277]: the trait bound `Option<Id<_, _>>: From<&objc2::runtime::Object>` is not satisfied
-  --> ui/msg_send_id_invalid_receiver.rs:10:42
+error[E0308]: mismatched types
+  --> ui/msg_send_id_invalid_receiver.rs:10:55
    |
 10 |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
-   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `From<&objc2::runtime::Object>` is not implemented for `Option<Id<_, _>>`
+   |                                          -------------^^^-------
+   |                                          |            |
+   |                                          |            expected enum `Option`, found `&objc2::runtime::Object`
+   |                                          arguments to this function are incorrect
    |
-   = help: the following other types implement trait `From<T>`:
-             <Option<&'a T> as From<&'a Option<T>>>
-             <Option<&'a mut T> as From<&'a mut Option<T>>>
-             <Option<T> as From<T>>
-   = note: required because of the requirements on the impl of `Into<Option<Id<_, _>>>` for `&objc2::runtime::Object`
-   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Object, Id<_, _>>` for `RetainSemantics<false, false, true, false>`
-   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note:   expected enum `Option<Id<_, _>>`
+           found reference `&objc2::runtime::Object`
+note: associated function defined here
+  --> $WORKSPACE/objc2/src/__macro_helpers.rs
+   |
+   |     unsafe fn send_message_id<A: MessageArguments>(
+   |               ^^^^^^^^^^^^^^^
 
-error[E0277]: the trait bound `Option<Id<_, _>>: From<&objc2::runtime::Class>` is not satisfied
-  --> ui/msg_send_id_invalid_receiver.rs:13:42
+error[E0308]: mismatched types
+  --> ui/msg_send_id_invalid_receiver.rs:13:55
    |
 13 |     let _: Id<Object, Shared> = unsafe { msg_send_id![cls, init].unwrap() };
-   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `From<&objc2::runtime::Class>` is not implemented for `Option<Id<_, _>>`
+   |                                          -------------^^^-------
+   |                                          |            |
+   |                                          |            expected enum `Option`, found `&objc2::runtime::Class`
+   |                                          arguments to this function are incorrect
    |
-   = help: the following other types implement trait `From<T>`:
-             <Option<&'a T> as From<&'a Option<T>>>
-             <Option<&'a mut T> as From<&'a mut Option<T>>>
-             <Option<T> as From<T>>
-   = note: required because of the requirements on the impl of `Into<Option<Id<_, _>>>` for `&objc2::runtime::Class`
-   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Class, Id<_, _>>` for `RetainSemantics<false, false, true, false>`
-   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note:   expected enum `Option<Id<_, _>>`
+           found reference `&objc2::runtime::Class`
+note: associated function defined here
+  --> $WORKSPACE/objc2/src/__macro_helpers.rs
+   |
+   |     unsafe fn send_message_id<A: MessageArguments>(
+   |               ^^^^^^^^^^^^^^^
 
 error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiver` is not satisfied
   --> ui/msg_send_id_invalid_receiver.rs:16:42

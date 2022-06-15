@@ -78,18 +78,16 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
 }
 
 // `init`, should mark the input value as "allocated, not initialized" somehow
-//
-// The generic bound allows `init` to take both `Option<Id>` and `Id`.
-impl<X: Into<Option<Id<T, O>>>, T: ?Sized + Message, O: Ownership> MsgSendId<X, Id<T, O>>
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
     for RetainSemantics<false, false, true, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
-        obj: X,
+        obj: Option<Id<T, O>>,
         sel: Sel,
         args: A,
     ) -> Result<Option<Id<T, O>>, MessageError> {
-        let ptr = Id::option_into_ptr(obj.into());
+        let ptr = Id::option_into_ptr(obj);
         // SAFETY: `ptr` may be null here, but that's fine since the return
         // is `*mut T`, which is one of the few types where messages to nil is
         // allowed.
@@ -242,7 +240,7 @@ mod tests {
         expected.alloc += 1;
         // Check allocation error before init
         let obj = obj.unwrap();
-        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![Some(obj), init].unwrap() };
         expected.init += 1;
         expected.assert_current();
     }
