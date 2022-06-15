@@ -16,13 +16,13 @@ note: associated function defined here
    |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
-  --> ui/msg_send_id_invalid_receiver.rs:9:55
+  --> ui/msg_send_id_invalid_receiver.rs:9:66
    |
-9  |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, alloc].unwrap() };
-   |                                          -------------^^^--------
-   |                                          |            |
-   |                                          |            expected struct `objc2::runtime::Class`, found struct `objc2::runtime::Object`
-   |                                          arguments to this function are incorrect
+9  |     let _: Id<Allocated<Object>, Shared> = unsafe { msg_send_id![obj, alloc].unwrap() };
+   |                                                     -------------^^^--------
+   |                                                     |            |
+   |                                                     |            expected struct `objc2::runtime::Class`, found struct `objc2::runtime::Object`
+   |                                                     arguments to this function are incorrect
    |
    = note: expected reference `&objc2::runtime::Class`
               found reference `&objc2::runtime::Object`
@@ -41,7 +41,7 @@ error[E0308]: mismatched types
    |                                          |            expected enum `Option`, found `&objc2::runtime::Object`
    |                                          arguments to this function are incorrect
    |
-   = note:   expected enum `Option<Id<_, _>>`
+   = note:   expected enum `Option<Id<Allocated<_>, _>>`
            found reference `&objc2::runtime::Object`
 note: associated function defined here
   --> $WORKSPACE/objc2/src/__macro_helpers.rs
@@ -58,7 +58,7 @@ error[E0308]: mismatched types
    |                                          |            expected enum `Option`, found `&objc2::runtime::Class`
    |                                          arguments to this function are incorrect
    |
-   = note:   expected enum `Option<Id<_, _>>`
+   = note:   expected enum `Option<Id<Allocated<_>, _>>`
            found reference `&objc2::runtime::Class`
 note: associated function defined here
   --> $WORKSPACE/objc2/src/__macro_helpers.rs
@@ -66,10 +66,44 @@ note: associated function defined here
    |     unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<U>;
    |               ^^^^^^^^^^^^^^^
 
-error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiver` is not satisfied
-  --> ui/msg_send_id_invalid_receiver.rs:16:42
+error[E0308]: mismatched types
+  --> ui/msg_send_id_invalid_receiver.rs:15:55
    |
-16 |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, copy].unwrap() };
+15 |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+   |                                          -------------^^^-------
+   |                                          |            |
+   |                                          |            expected enum `Option`, found struct `Id`
+   |                                          arguments to this function are incorrect
+   |
+   = note: expected enum `Option<Id<Allocated<_>, _>>`
+            found struct `Id<objc2::runtime::Object, Shared>`
+note: associated function defined here
+  --> $WORKSPACE/objc2/src/__macro_helpers.rs
+   |
+   |     unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<U>;
+   |               ^^^^^^^^^^^^^^^
+
+error[E0308]: mismatched types
+  --> ui/msg_send_id_invalid_receiver.rs:17:55
+   |
+17 |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+   |                                          -------------^^^-------
+   |                                          |            |
+   |                                          |            expected struct `Allocated`, found struct `objc2::runtime::Object`
+   |                                          arguments to this function are incorrect
+   |
+   = note: expected enum `Option<Id<Allocated<_>, _>>`
+              found enum `Option<Id<objc2::runtime::Object, Shared>>`
+note: associated function defined here
+  --> $WORKSPACE/objc2/src/__macro_helpers.rs
+   |
+   |     unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<U>;
+   |               ^^^^^^^^^^^^^^^
+
+error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiver` is not satisfied
+  --> ui/msg_send_id_invalid_receiver.rs:20:42
+   |
+20 |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, copy].unwrap() };
    |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Id<objc2::runtime::Object, Shared>`
    |
    = help: the following other types implement trait `MessageReceiver`:

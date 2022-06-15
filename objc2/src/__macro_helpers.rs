@@ -1,4 +1,4 @@
-use crate::rc::{Id, Ownership};
+use crate::rc::{Allocated, Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
 
@@ -68,8 +68,8 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     }
 }
 
-// `alloc`, should mark the return value as "allocated, not initialized" somehow
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
+// `alloc`
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<Allocated<T>, O>>
     for RetainSemantics<false, true, false, false>
 {
     #[inline]
@@ -78,26 +78,26 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
         cls: &Class,
         sel: Sel,
         args: A,
-    ) -> Option<Id<T, O>> {
+    ) -> Option<Id<Allocated<T>, O>> {
         // SAFETY: Checked by caller
         let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
         // SAFETY: The selector is `alloc`, so this has +1 retain count
-        unsafe { Id::new(obj) }
+        unsafe { Id::new_allocated(obj) }
     }
 }
 
-// `init`, should mark the input value as "allocated, not initialized" somehow
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
+// `init`
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, Id<T, O>>
     for RetainSemantics<false, false, true, false>
 {
     #[inline]
     #[track_caller]
     unsafe fn send_message_id<A: MessageArguments>(
-        obj: Option<Id<T, O>>,
+        obj: Option<Id<Allocated<T>, O>>,
         sel: Sel,
         args: A,
     ) -> Option<Id<T, O>> {
-        let ptr = Id::option_into_ptr(obj);
+        let ptr = Id::option_into_ptr(obj.map(|obj| unsafe { Id::assume_init(obj) }));
         // SAFETY: `ptr` may be null here, but that's fine since the return
         // is `*mut T`, which is one of the few types where messages to nil is
         // allowed.
@@ -191,7 +191,7 @@ mod tests {
 
     use core::ptr;
 
-    use crate::rc::{Owned, RcTestObject, Shared, ThreadTestData};
+    use crate::rc::{Allocated, Owned, RcTestObject, Shared, ThreadTestData};
     use crate::runtime::Object;
     use crate::{Encoding, RefEncode};
 
@@ -200,7 +200,7 @@ mod tests {
         let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 
-        let obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![cls, alloc].unwrap() };
+        let obj: Id<Allocated<RcTestObject>, Shared> = unsafe { msg_send_id![cls, alloc].unwrap() };
         expected.alloc += 1;
         expected.assert_current();
 
@@ -230,7 +230,7 @@ mod tests {
         let cls = RcTestObject::class();
 
         let zone: *const _NSZone = ptr::null();
-        let _obj: Id<RcTestObject, Owned> =
+        let _obj: Id<Allocated<RcTestObject>, Owned> =
             unsafe { msg_send_id![cls, allocWithZone: zone].unwrap() };
         // `+[NSObject alloc]` delegates to `+[NSObject allocWithZone:]`, but
         // `RcTestObject` only catches `alloc`.
@@ -243,14 +243,14 @@ mod tests {
         let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 
-        let obj: Option<Id<RcTestObject, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Option<Id<Allocated<RcTestObject>, Shared>> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         // Don't check allocation error
         let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
         expected.init += 1;
         expected.assert_current();
 
-        let obj: Option<Id<RcTestObject, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Option<Id<Allocated<RcTestObject>, Shared>> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         // Check allocation error before init
         let obj = obj.unwrap();

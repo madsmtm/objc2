@@ -5,6 +5,7 @@ use core::ops::{Deref, DerefMut};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 
+use super::Allocated;
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
@@ -124,6 +125,39 @@ pub struct Id<T: ?Sized, O: Ownership> {
     notunwindsafe: PhantomData<&'static mut ()>,
 }
 
+impl<T: ?Sized, O: Ownership> Id<T, O> {
+    #[inline]
+    unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
+        Self {
+            ptr,
+            item: PhantomData,
+            own: PhantomData,
+            notunwindsafe: PhantomData,
+        }
+    }
+}
+
+impl<T: Message + ?Sized, O: Ownership> Id<Allocated<T>, O> {
+    #[inline]
+    pub(crate) unsafe fn new_allocated(ptr: *mut T) -> Option<Self> {
+        // SAFETY: Upheld by the caller
+        NonNull::new(ptr as *mut Allocated<T>).map(|ptr| unsafe { Self::new_nonnull(ptr) })
+    }
+
+    #[inline]
+    pub(crate) unsafe fn assume_init(this: Self) -> Id<T, O> {
+        let ptr = ManuallyDrop::new(this).ptr;
+
+        // NonNull::cast
+        let ptr = ptr.as_ptr() as *mut T;
+        let ptr = unsafe { NonNull::new_unchecked(ptr) };
+
+        // SAFETY: The pointer is valid.
+        // Caller verifies that the object is allocated.
+        unsafe { Id::new_nonnull(ptr) }
+    }
+}
+
 impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// Constructs an [`Id`] to an object that already has +1 retain count.
     ///
@@ -179,16 +213,6 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
         // Should optimize down to nothing.
         // SAFETY: Upheld by the caller
         NonNull::new(ptr).map(|ptr| unsafe { Id::new_nonnull(ptr) })
-    }
-
-    #[inline]
-    unsafe fn new_nonnull(ptr: NonNull<T>) -> Id<T, O> {
-        Self {
-            ptr,
-            item: PhantomData,
-            own: PhantomData,
-            notunwindsafe: PhantomData,
-        }
     }
 
     /// Returns a raw pointer to the object.

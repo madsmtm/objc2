@@ -33,19 +33,16 @@ error[E0308]: mismatched types
   --> ui/msg_send_id_invalid_return.rs:11:31
    |
 11 |     let _: &Object = unsafe { msg_send_id![cls, alloc].unwrap() };
-   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |                               |
-   |                               expected `&objc2::runtime::Object`, found struct `Id`
-   |                               help: consider borrowing here: `&msg_send_id![cls, alloc].unwrap()`
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&objc2::runtime::Object`, found struct `Id`
    |
    = note: expected reference `&objc2::runtime::Object`
-                 found struct `Id<_, _>`
+                 found struct `Id<Allocated<_>, _>`
 
 error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
-  --> ui/msg_send_id_invalid_return.rs:12:41
+  --> ui/msg_send_id_invalid_return.rs:12:52
    |
-12 |     let _: Id<Class, Shared> = unsafe { msg_send_id![cls, alloc].unwrap() };
-   |                                         ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `objc2::runtime::Class`
+12 |     let _: Id<Allocated<Class>, Shared> = unsafe { msg_send_id![cls, alloc].unwrap() };
+   |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `objc2::runtime::Class`
    |
    = help: the following other types implement trait `Message`:
              NSArray<T, O>
@@ -57,13 +54,22 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
              NSMutableData
              NSMutableString
            and 7 others
-   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Class, Id<objc2::runtime::Class, Shared>>` for `RetainSemantics<false, true, false, false>`
+   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Class, Id<Allocated<objc2::runtime::Class>, Shared>>` for `RetainSemantics<false, true, false, false>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0308]: mismatched types
-  --> ui/msg_send_id_invalid_return.rs:15:31
+  --> ui/msg_send_id_invalid_return.rs:13:42
    |
-15 |     let _: &Object = unsafe { msg_send_id![obj, init].unwrap() };
+13 |     let _: Id<Object, Shared> = unsafe { msg_send_id![cls, alloc].unwrap() };
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected struct `objc2::runtime::Object`, found struct `Allocated`
+   |
+   = note: expected struct `Id<objc2::runtime::Object, Shared>`
+              found struct `Id<Allocated<_>, _>`
+
+error[E0308]: mismatched types
+  --> ui/msg_send_id_invalid_return.rs:16:31
+   |
+16 |     let _: &Object = unsafe { msg_send_id![obj, init].unwrap() };
    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |                               |
    |                               expected `&objc2::runtime::Object`, found struct `Id`
@@ -73,36 +79,36 @@ error[E0308]: mismatched types
                  found struct `Id<objc2::runtime::Object, Shared>`
 
 error[E0308]: mismatched types
-  --> ui/msg_send_id_invalid_return.rs:17:41
+  --> ui/msg_send_id_invalid_return.rs:18:41
    |
-17 |     let _: Id<Class, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+18 |     let _: Id<Class, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
    |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected struct `objc2::runtime::Class`, found struct `objc2::runtime::Object`
    |
    = note: expected struct `Id<objc2::runtime::Class, _>`
               found struct `Id<objc2::runtime::Object, _>`
 
 error[E0308]: mismatched types
-  --> ui/msg_send_id_invalid_return.rs:19:44
+  --> ui/msg_send_id_invalid_return.rs:20:44
    |
-19 |     let _: Id<NSObject, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+20 |     let _: Id<NSObject, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
    |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected struct `NSObject`, found struct `objc2::runtime::Object`
    |
    = note: expected struct `Id<NSObject, _>`
               found struct `Id<objc2::runtime::Object, _>`
 
 error[E0308]: mismatched types
-  --> ui/msg_send_id_invalid_return.rs:21:41
+  --> ui/msg_send_id_invalid_return.rs:22:41
    |
-21 |     let _: Id<Object, Owned> = unsafe { msg_send_id![obj, init].unwrap() };
+22 |     let _: Id<Object, Owned> = unsafe { msg_send_id![obj, init].unwrap() };
    |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected enum `objc2::rc::Owned`, found enum `Shared`
    |
    = note: expected struct `Id<_, objc2::rc::Owned>`
               found struct `Id<_, Shared>`
 
 error[E0308]: mismatched types
-  --> ui/msg_send_id_invalid_return.rs:24:31
+  --> ui/msg_send_id_invalid_return.rs:25:31
    |
-24 |     let _: &Object = unsafe { msg_send_id![&obj, description].unwrap() };
+25 |     let _: &Object = unsafe { msg_send_id![&obj, description].unwrap() };
    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |                               |
    |                               expected `&objc2::runtime::Object`, found struct `Id`
