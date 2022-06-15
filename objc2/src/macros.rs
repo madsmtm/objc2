@@ -231,6 +231,8 @@ macro_rules! msg_send_bool {
 
 /// TODO
 ///
+/// TODO: Assumes that attributes like `objc_method_family`, `ns_returns_retained`, `ns_consumed` and so on are not present.
+///
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
 /// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
 ///
@@ -245,7 +247,7 @@ macro_rules! msg_send_id {
         const NAME: &[u8] = stringify!($selector).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result: Option<$crate::rc::Id<_, _>>;
-        match <X as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ()) {
+        match <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -256,7 +258,7 @@ macro_rules! msg_send_id {
         const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result: Option<$crate::rc::Id<_, _>>;
-        match <X as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+)) {
+        match <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
         }
@@ -285,13 +287,13 @@ macro_rules! __msg_send_id_helper {
     }};
     (@verify $selector:ident) => {{}};
     (@get_assert_consts $selector:ident) => {
-        const NEW: bool = $crate::__macro_helpers::in_method_family($selector, b"new");
-        const ALLOC: bool = $crate::__macro_helpers::in_method_family($selector, b"alloc");
-        const INIT: bool = $crate::__macro_helpers::in_method_family($selector, b"init");
+        const NEW: bool = $crate::__macro_helpers::in_selector_family($selector, b"new");
+        const ALLOC: bool = $crate::__macro_helpers::in_selector_family($selector, b"alloc");
+        const INIT: bool = $crate::__macro_helpers::in_selector_family($selector, b"init");
         const COPY_OR_MUT_COPY: bool = {
-            $crate::__macro_helpers::in_method_family($selector, b"copy")
-                || $crate::__macro_helpers::in_method_family($selector, b"mutableCopy")
+            $crate::__macro_helpers::in_selector_family($selector, b"copy")
+                || $crate::__macro_helpers::in_selector_family($selector, b"mutableCopy")
         };
-        type X = $crate::__macro_helpers::Assert<NEW, ALLOC, INIT, COPY_OR_MUT_COPY>;
+        type RS = $crate::__macro_helpers::RetainSemantics<NEW, ALLOC, INIT, COPY_OR_MUT_COPY>;
     };
 }

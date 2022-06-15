@@ -5,12 +5,38 @@ use crate::{Message, MessageArguments, MessageError, MessageReceiver};
 #[doc(hidden)]
 pub use core::compile_error;
 
-// https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments
+/// Helper for specifying the retain semantics for a given selector family.
+///
+/// Note that we can't actually check if a method is in a method family; only
+/// whether the _selector_ is in a _selector_ family.
+///
+/// The slight difference here is:
+/// - The method may be annotated with the `objc_method_family` attribute,
+///   which would cause it to be in a different family. That this is not the
+///   case is part of the `unsafe` contract of `msg_send_id!`.
+/// - The method may not obey the added restrictions of the method family.
+///   The added restrictions are:
+///   - `new`, `alloc`, `copy` and `mutableCopy`: The method must return a
+///     retainable object pointer type - we ensure this by making
+///     `message_send_id` return `Id`.
+///   - `init`: The method must be an instance method and must return an
+///     Objective-C pointer type - We ensure this by taking `Id<T, O>`, which
+///     means it can't be a class method!
+///
+/// While we're at it, we also limit a few other things to help the user out,
+/// like only allowing `&Class` in `new` - this is not strictly required by
+/// ARC though!
+///
+/// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
 #[doc(hidden)]
-pub struct Assert<
+pub struct RetainSemantics<
+    // `new` family
     const NEW: bool,
+    // `alloc` family
     const ALLOC: bool,
+    // `init` family
     const INIT: bool,
+    // `copy` or `mutableCopy` family
     const COPY_OR_MUT_COPY: bool,
 > {}
 
@@ -25,7 +51,7 @@ pub trait MsgSendId<T, U> {
 
 // `new`
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
-    for Assert<true, false, false, false>
+    for RetainSemantics<true, false, false, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -39,7 +65,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
 
 // `alloc`, should mark the return value as "allocated, not initialized" somehow
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
-    for Assert<false, true, false, false>
+    for RetainSemantics<false, true, false, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -55,7 +81,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
 //
 // The generic bound allows `init` to take both `Option<Id>` and `Id`.
 impl<X: Into<Option<Id<T, O>>>, T: ?Sized + Message, O: Ownership> MsgSendId<X, Id<T, O>>
-    for Assert<false, false, true, false>
+    for RetainSemantics<false, false, true, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -76,7 +102,7 @@ impl<X: Into<Option<Id<T, O>>>, T: ?Sized + Message, O: Ownership> MsgSendId<X, 
 
 // `copy` and `mutableCopy`
 impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
-    for Assert<false, false, false, true>
+    for RetainSemantics<false, false, false, true>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -90,7 +116,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 
 // All other selectors
 impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
-    for Assert<false, false, false, false>
+    for RetainSemantics<false, false, false, false>
 {
     #[inline(always)]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -104,9 +130,11 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
     }
 }
 
-// https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families
+/// Checks whether a given selector is said to be in a given selector family.
+///
+/// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families>
 #[doc(hidden)]
-pub const fn in_method_family(mut selector: &[u8], mut family: &[u8]) -> bool {
+pub const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool {
     // Skip leading underscores from selector
     loop {
         selector = match selector {
@@ -255,81 +283,81 @@ mod tests {
     }
 
     #[test]
-    fn test_in_method_family() {
+    fn test_in_selector_family() {
         // Common cases
 
-        assert!(in_method_family(b"alloc", b"alloc"));
-        assert!(in_method_family(b"allocWithZone:", b"alloc"));
-        assert!(!in_method_family(b"dealloc", b"alloc"));
-        assert!(!in_method_family(b"initialize", b"init"));
-        assert!(!in_method_family(b"decimalNumberWithDecimal:", b"init"));
-        assert!(in_method_family(b"initWithCapacity:", b"init"));
-        assert!(in_method_family(b"_initButPrivate:withParam:", b"init"));
-        assert!(!in_method_family(b"description", b"init"));
-        assert!(!in_method_family(b"inIT", b"init"));
+        assert!(in_selector_family(b"alloc", b"alloc"));
+        assert!(in_selector_family(b"allocWithZone:", b"alloc"));
+        assert!(!in_selector_family(b"dealloc", b"alloc"));
+        assert!(!in_selector_family(b"initialize", b"init"));
+        assert!(!in_selector_family(b"decimalNumberWithDecimal:", b"init"));
+        assert!(in_selector_family(b"initWithCapacity:", b"init"));
+        assert!(in_selector_family(b"_initButPrivate:withParam:", b"init"));
+        assert!(!in_selector_family(b"description", b"init"));
+        assert!(!in_selector_family(b"inIT", b"init"));
 
-        assert!(!in_method_family(b"init", b"copy"));
-        assert!(!in_method_family(b"copyingStuff:", b"copy"));
-        assert!(in_method_family(b"copyWithZone:", b"copy"));
-        assert!(!in_method_family(b"initWithArray:copyItems:", b"copy"));
-        assert!(in_method_family(b"copyItemAtURL:toURL:error:", b"copy"));
+        assert!(!in_selector_family(b"init", b"copy"));
+        assert!(!in_selector_family(b"copyingStuff:", b"copy"));
+        assert!(in_selector_family(b"copyWithZone:", b"copy"));
+        assert!(!in_selector_family(b"initWithArray:copyItems:", b"copy"));
+        assert!(in_selector_family(b"copyItemAtURL:toURL:error:", b"copy"));
 
-        assert!(!in_method_family(b"mutableCopying", b"mutableCopy"));
-        assert!(in_method_family(b"mutableCopyWithZone:", b"mutableCopy"));
-        assert!(in_method_family(b"mutableCopyWithZone:", b"mutableCopy"));
+        assert!(!in_selector_family(b"mutableCopying", b"mutableCopy"));
+        assert!(in_selector_family(b"mutableCopyWithZone:", b"mutableCopy"));
+        assert!(in_selector_family(b"mutableCopyWithZone:", b"mutableCopy"));
 
-        assert!(in_method_family(
+        assert!(in_selector_family(
             b"newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
             b"new"
         ));
-        assert!(in_method_family(
+        assert!(in_selector_family(
             b"newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
             b"new"
         ));
-        assert!(!in_method_family(b"newsstandAssetDownload", b"new"));
+        assert!(!in_selector_family(b"newsstandAssetDownload", b"new"));
 
         // Trying to weed out edge-cases:
 
-        assert!(in_method_family(b"__abcDef", b"abc"));
-        assert!(in_method_family(b"_abcDef", b"abc"));
-        assert!(in_method_family(b"abcDef", b"abc"));
-        assert!(in_method_family(b"___a", b"a"));
-        assert!(in_method_family(b"__a", b"a"));
-        assert!(in_method_family(b"_a", b"a"));
-        assert!(in_method_family(b"a", b"a"));
+        assert!(in_selector_family(b"__abcDef", b"abc"));
+        assert!(in_selector_family(b"_abcDef", b"abc"));
+        assert!(in_selector_family(b"abcDef", b"abc"));
+        assert!(in_selector_family(b"___a", b"a"));
+        assert!(in_selector_family(b"__a", b"a"));
+        assert!(in_selector_family(b"_a", b"a"));
+        assert!(in_selector_family(b"a", b"a"));
 
-        assert!(!in_method_family(b"_abcdef", b"abc"));
-        assert!(!in_method_family(b"_abcdef", b"def"));
-        assert!(!in_method_family(b"_bcdef", b"abc"));
-        assert!(!in_method_family(b"a_bc", b"abc"));
-        assert!(!in_method_family(b"abcdef", b"abc"));
-        assert!(!in_method_family(b"abcdef", b"def"));
-        assert!(!in_method_family(b"abcdef", b"abb"));
-        assert!(!in_method_family(b"___", b"a"));
-        assert!(!in_method_family(b"_", b"a"));
-        assert!(!in_method_family(b"", b"a"));
+        assert!(!in_selector_family(b"_abcdef", b"abc"));
+        assert!(!in_selector_family(b"_abcdef", b"def"));
+        assert!(!in_selector_family(b"_bcdef", b"abc"));
+        assert!(!in_selector_family(b"a_bc", b"abc"));
+        assert!(!in_selector_family(b"abcdef", b"abc"));
+        assert!(!in_selector_family(b"abcdef", b"def"));
+        assert!(!in_selector_family(b"abcdef", b"abb"));
+        assert!(!in_selector_family(b"___", b"a"));
+        assert!(!in_selector_family(b"_", b"a"));
+        assert!(!in_selector_family(b"", b"a"));
 
-        assert!(in_method_family(b"copy", b"copy"));
-        assert!(in_method_family(b"copy:", b"copy"));
-        assert!(in_method_family(b"copyMe", b"copy"));
-        assert!(in_method_family(b"_copy", b"copy"));
-        assert!(in_method_family(b"_copy:", b"copy"));
-        assert!(in_method_family(b"_copyMe", b"copy"));
-        assert!(!in_method_family(b"copying", b"copy"));
-        assert!(!in_method_family(b"copying:", b"copy"));
-        assert!(!in_method_family(b"_copying", b"copy"));
-        assert!(!in_method_family(b"Copy", b"copy"));
-        assert!(!in_method_family(b"COPY", b"copy"));
+        assert!(in_selector_family(b"copy", b"copy"));
+        assert!(in_selector_family(b"copy:", b"copy"));
+        assert!(in_selector_family(b"copyMe", b"copy"));
+        assert!(in_selector_family(b"_copy", b"copy"));
+        assert!(in_selector_family(b"_copy:", b"copy"));
+        assert!(in_selector_family(b"_copyMe", b"copy"));
+        assert!(!in_selector_family(b"copying", b"copy"));
+        assert!(!in_selector_family(b"copying:", b"copy"));
+        assert!(!in_selector_family(b"_copying", b"copy"));
+        assert!(!in_selector_family(b"Copy", b"copy"));
+        assert!(!in_selector_family(b"COPY", b"copy"));
 
         // Empty family (not supported)
-        assert!(in_method_family(b"___", b""));
-        assert!(in_method_family(b"__", b""));
-        assert!(in_method_family(b"_", b""));
-        assert!(in_method_family(b"", b""));
-        assert!(!in_method_family(b"_a", b""));
-        assert!(!in_method_family(b"a", b""));
-        assert!(in_method_family(b"_A", b""));
-        assert!(in_method_family(b"A", b""));
+        assert!(in_selector_family(b"___", b""));
+        assert!(in_selector_family(b"__", b""));
+        assert!(in_selector_family(b"_", b""));
+        assert!(in_selector_family(b"", b""));
+        assert!(!in_selector_family(b"_a", b""));
+        assert!(!in_selector_family(b"a", b""));
+        assert!(in_selector_family(b"_A", b""));
+        assert!(in_selector_family(b"A", b""));
     }
 
     mod test_trait_disambugated {
