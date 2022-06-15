@@ -13,16 +13,16 @@ written in Objective-C; this crate enables you to interract with those.
 ## Example
 
 ```rust
-use objc2::{class, msg_send_id};
+use objc2::{class, msg_send, msg_send_id};
+use objc2::ffi::NSUInteger;
 use objc2::rc::{Id, Owned};
-use objc2::runtime::{Class, Object};
+use objc2::runtime::Object;
 
 let cls = class!(NSObject);
 let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] }.unwrap();
 
-// TODO
-// let isa = unsafe { obj.ivar::<Class>("isa") };
-// assert_eq!(cls, isa);
+let hash: NSUInteger = unsafe { msg_send![&obj, hash] };
+println!("NSObject hash: {}", hash);
 ```
 
 See [the docs](https://docs.rs/objc2/) for a more thorough overview, or jump
