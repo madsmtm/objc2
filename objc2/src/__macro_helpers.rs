@@ -151,59 +151,107 @@ mod tests {
 
     use core::ptr;
 
-    use crate::rc::{Owned, Shared};
+    use crate::rc::{Owned, RcTestObject, Shared, ThreadTestData};
     use crate::runtime::Object;
     use crate::{Encoding, RefEncode};
 
-    #[repr(C)]
-    struct _NSZone {
-        _inner: [u8; 0],
-    }
+    #[test]
+    fn test_macro_alloc() {
+        let mut expected = ThreadTestData::current();
+        let cls = RcTestObject::class();
 
-    unsafe impl RefEncode for _NSZone {
-        const ENCODING_REF: Encoding<'static> =
-            Encoding::Pointer(&Encoding::Struct("_NSZone", &[]));
+        let obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![cls, alloc].unwrap() };
+        expected.alloc += 1;
+        expected.assert_current();
+
+        drop(obj);
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
     }
 
     #[test]
-    fn test_macro_alloc() {
-        let cls = class!(NSObject);
+    #[cfg_attr(
+        all(feature = "gnustep-1-7", feature = "verify_message"),
+        ignore = "NSZone's encoding is quite complex on GNUStep"
+    )]
+    fn test_alloc_with_zone() {
+        #[repr(C)]
+        struct _NSZone {
+            _inner: [u8; 0],
+        }
 
-        let _obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        unsafe impl RefEncode for _NSZone {
+            const ENCODING_REF: Encoding<'static> =
+                Encoding::Pointer(&Encoding::Struct("_NSZone", &[]));
+        }
+
+        let expected = ThreadTestData::current();
+        let cls = RcTestObject::class();
 
         let zone: *const _NSZone = ptr::null();
-        let _obj: Option<Id<Object, Owned>> = unsafe { msg_send_id![cls, allocWithZone: zone] };
+        let _obj: Id<RcTestObject, Owned> =
+            unsafe { msg_send_id![cls, allocWithZone: zone].unwrap() };
+        // `+[NSObject alloc]` delegates to `+[NSObject allocWithZone:]`, but
+        // `RcTestObject` only catches `alloc`.
+        // expected.alloc += 1;
+        expected.assert_current();
     }
 
     #[test]
     fn test_macro_init() {
-        let cls = class!(NSObject);
+        let mut expected = ThreadTestData::current();
+        let cls = RcTestObject::class();
 
-        let obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Option<Id<RcTestObject, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        expected.alloc += 1;
         // Don't check allocation error
-        let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+        expected.init += 1;
+        expected.assert_current();
 
-        let obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Option<Id<RcTestObject, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        expected.alloc += 1;
         // Check allocation error before init
         let obj = obj.unwrap();
-        let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+        expected.init += 1;
+        expected.assert_current();
     }
 
     #[test]
     fn test_macro() {
-        let cls = class!(NSObject);
+        let mut expected = ThreadTestData::current();
+        let cls = RcTestObject::class();
+        crate::rc::autoreleasepool(|_| {
+            let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+            expected.alloc += 1;
+            expected.init += 1;
+            expected.assert_current();
 
-        let _obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+            let obj = unsafe { msg_send_id![cls, alloc] };
+            expected.alloc += 1;
+            expected.assert_current();
 
-        let obj = unsafe { msg_send_id![cls, alloc] };
+            let obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, init].unwrap() };
+            expected.init += 1;
+            expected.assert_current();
 
-        let obj: Id<Object, Owned> = unsafe { msg_send_id![obj, init].unwrap() };
+            // TODO:
+            // let copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy].unwrap() };
+            // let mutable_copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, mutableCopy].unwrap() };
 
-        // TODO:
-        // let copy: Id<Object, Shared> = unsafe { msg_send_id![&obj, copy].unwrap() };
-        // let mutable_copy: Id<Object, Shared> = unsafe { msg_send_id![&obj, mutableCopy].unwrap() };
+            let _self: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, self].unwrap() };
+            expected.retain += 1;
+            expected.assert_current();
 
-        let _desc: Option<Id<Object, Shared>> = unsafe { msg_send_id![&obj, description] };
+            let _desc: Option<Id<RcTestObject, Shared>> =
+                unsafe { msg_send_id![&obj, description] };
+            expected.assert_current();
+        });
+        expected.release += 3;
+        expected.dealloc += 2;
+        expected.assert_current();
     }
 
     #[test]
