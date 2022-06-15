@@ -218,6 +218,13 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// error in a future release. You can test the compile error with the
 /// `unstable-autoreleasesafe` crate feature on nightly Rust.
 ///
+/// Note that this is mostly useful for preventing leaks (as any Objective-C
+/// method may leak internally). If implementing an interface to an object,
+/// you should try to return retained pointers with [`msg_send_id!`] wherever
+/// you can instead, since having to use this function can be quite cumbersome
+/// for your users!
+///
+///
 /// # Examples
 ///
 /// Basic usage:

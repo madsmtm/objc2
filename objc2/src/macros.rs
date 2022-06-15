@@ -144,11 +144,17 @@ macro_rules! sel {
 /// 6. The method must not (yet) throw an exception.
 ///
 /// 7. You must uphold any additional safety requirements (explicit and
-///    implicit) that the method has. For example, methods that take pointers
-///    usually require that the pointer is valid, and sometimes non-null.
-///    Another example, some methods may only be called on the main thread.
+///    implicit) that the method has. For example:
+///    - Methods that take pointers usually require that the pointer is valid,
+///      and sometimes non-null.
+///    - Sometimes, a method may only be called on the main thread.
+///    - The lifetime of returned pointers usually follows certain rules, and
+///      may not be valid outside of an [`autoreleasepool`] ([`msg_send_id!`]
+///      can greatly help with that).
 ///
 /// 8. TODO: Maybe more?
+///
+/// [`autoreleasepool`]: crate::rc::autoreleasepool
 ///
 ///
 /// # Examples
@@ -255,18 +261,121 @@ macro_rules! msg_send_bool {
     });
 }
 
-/// [`msg_send!`] for methods returning `id` or other object pointers.
+/// [`msg_send!`] for methods returning `id`, `NSObject*`, or similar object
+/// pointers.
 ///
-/// TODO
+/// Objective-C's object pointers have certain rules for when they should be
+/// retained and released across function calls. This macro helps doing that,
+/// and returns an [`Option`] (letting you handle failures) containing an
+/// [`rc::Id`] with the object.
 ///
-/// TODO: Assumes that attributes like `objc_method_family`, `ns_returns_retained`, `ns_consumed` and so on are not present.
+/// [`rc::Id`]: crate::rc::Id
+///
+///
+/// # A little history
+///
+/// Objective-C's type system is... limited, so you can't easily tell who is
+/// responsible for releasing an object. To remedy this problem, Apple/Cocoa
+/// introduced approximately the following rule:
+///
+/// The caller is responsible for releasing objects return from methods that
+/// begin with `new`, `alloc`, `copy`, `mutableCopy` or `init`, and method
+/// that begins with `init` takes ownership of the receiver. See [Cocoa's
+/// Memory Management Policy][mmRules] for a user-friendly introduction to
+/// this concept.
+///
+/// In the past, users had to do `retain` and `release` calls themselves to
+/// properly follow these rules. To avoid the memory management problems
+/// associated with manual stuff like that, they [introduced "ARC"][arc-rel],
+/// which codifies the rules as part of the language, and inserts the required
+/// `retain` and `release` calls automatically.
+///
+/// [`msg_send!`] is similar to pre-ARC; you have to know when to retain and
+/// when to release an object. [`msg_send_id!`] is similar to ARC; the rules
+/// are simple enough that we can do them automatically!
+///
+/// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW1
+/// [arc-rel]: https://developer.apple.com/library/archive/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226
+///
+///
+/// # Specification
+///
+/// The syntax is the same as in [`msg_send!`].
+///
+/// Attributes like `objc_method_family`, `ns_returns_retained`, `ns_consumed`
+/// and so on must not present on the method - if they are, you should do
+/// manual memory management using the [`msg_send!`] macro instead.
+///
+/// The accepted receiver and return types, and how we handle them, differ
+/// depending on which, if any, of the [recognized selector
+/// families][sel-families] the selector belongs to (here `T: Message` and
+/// `O: Ownership`):
+///
+/// - The `new` family: The receiver must be `&Class`, and the return type
+///   is a generic `Option<Id<T, O>>`.
+///
+/// - The `alloc` family: The receiver must be `&Class`, and the return type
+///   is a generic `Option<Id<T, O>>`. (This will change, see [#172]).
+///
+/// - The `init` family: The receiver must be either `Id<T, O>` or
+///   `Option<Id<T, O>>` as returned from `alloc`. The receiver is consumed,
+///   and a the now-initialized `Option<Id<T, O>>` (with the same `T` and `O`)
+///   is returned.
+///
+/// - The `copy` family: The receiver may be anything that implements
+///   [`MessageReceiver`] and the return type is a generic `Option<Id<T, O>>`.
+///
+/// - The `mutableCopy` family: Same as the `copy` family.
+///
+/// - No family: The receiver may be anything that implements
+///   [`MessageReceiver`]. The result is retained using
+///   [`Id::retain_autoreleased`], and a generic `Option<Id<T, O>>` is
+///   returned. This retain is in most cases faster than using autorelease
+///   pools!
+///
+/// See [the clang documentation][arc-retainable] for the precise
+/// specification.
+///
+/// This macro doesn't support super methods yet, see [#173].
 ///
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
 /// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
 ///
+/// [sel-families]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families
+/// [#172]: https://github.com/madsmtm/objc2/pull/172
+/// [`MessageReceiver`]: crate::MessageReceiver
+/// [`Id::retain_autoreleased`]: crate::rc::Id::retain_autoreleased
+/// [arc-retainable]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments
+/// [#173]: https://github.com/madsmtm/objc2/pull/173
 /// [`Id::retain`]: crate::rc::Id::retain
 /// [`Id::drop`]: crate::rc::Id::drop
 /// [`Id::autorelease`]: crate::rc::Id::autorelease
+///
+///
+/// # Safety
+///
+/// Same as [`msg_send!`], with an expected return type of `id`,
+/// `instancetype`, `NSObject*`, or other such object pointers. The method
+/// must not have any attributes that changes the how it handles memory
+/// management.
+///
+///
+/// # Examples
+///
+/// ```no_run
+/// use objc2::{class, msg_send, msg_send_bool, msg_send_id};
+/// use objc2::ffi::NSUInteger;
+/// use objc2::rc::{Id, Shared};
+/// use objc2::runtime::Object;
+// Allocate new object
+/// let obj = unsafe { msg_send_id![class!(NSObject), alloc] };
+/// // Consume the allocated object, return initialized object
+/// let obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+/// // Copy the object
+/// let copy: Id<Object, Shared> = unsafe { msg_send_id![&obj, copy].unwrap() };
+/// // Call ordinary selector that returns an object
+/// let s: Id<Object, Shared> = unsafe { msg_send_id![&obj, description].unwrap() };
+/// ```
 #[macro_export]
 macro_rules! msg_send_id {
     [$obj:expr, $selector:ident $(,)?] => ({
