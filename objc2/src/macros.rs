@@ -81,6 +81,9 @@ macro_rules! sel {
 /// methods that return respectively Objective-C's `BOOL` and `id` (or any
 /// object pointer). Use those whenever you want to call such a method!
 ///
+/// [`msg_send_bool!`]: crate::msg_send_bool
+/// [`msg_send_id!`]: crate::msg_send_id
+///
 ///
 /// # Specification
 ///
@@ -157,6 +160,7 @@ macro_rules! sel {
 /// 8. TODO: Maybe more?
 ///
 /// [`autoreleasepool`]: crate::rc::autoreleasepool
+/// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
 /// # Examples
@@ -298,6 +302,8 @@ macro_rules! msg_send_bool {
 ///
 /// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW1
 /// [arc-rel]: https://developer.apple.com/library/archive/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226
+///
+/// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
 /// # Specification
