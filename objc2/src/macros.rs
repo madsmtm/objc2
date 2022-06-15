@@ -71,10 +71,10 @@ macro_rules! sel {
 /// ```
 ///
 /// This way we are clearly communicating to Rust that: The method
-/// `doSomething:` works on shared references to an object. It takes a C-style
-/// signed integer, and returns a pointer to what is probably a C-compatible
-/// string. Now it's much, _much_ easier to make a safe abstraction around
-/// this!
+/// `doSomething:` works with a shared reference to the object. It takes a
+/// C-style signed integer, and returns a pointer to what is probably a
+/// C-compatible string. Now it's much, _much_ easier to make a safe
+/// abstraction around this!
 ///
 /// There exists two variants of this macro, [`msg_send_bool!`] and
 /// [`msg_send_id!`], which can help with upholding certain requirements of
@@ -94,9 +94,12 @@ macro_rules! sel {
 ///
 /// All arguments, and the return type, must implement [`Encode`].
 ///
-/// This translates into a call to [`sel!`], and afterwards a fully qualified
-/// call to [`MessageReceiver::send_message`]. Note that this means that
-/// auto-dereferencing of the receiver is not supported.
+/// This macro translates into a call to [`sel!`], and afterwards a fully
+/// qualified call to [`MessageReceiver::send_message`]. Note that this means
+/// that auto-dereferencing of the receiver is not supported, and that the
+/// receiver is consumed. You may encounter a little trouble with `&mut`
+/// references, try refactoring into a separate method or reborrowing the
+/// reference.
 ///
 /// Variadic arguments are currently not supported.
 ///
@@ -127,10 +130,9 @@ macro_rules! sel {
 /// 1. The selector corresponds to a valid method that is available on the
 ///    receiver.
 ///
-/// 2. The argument types must match what the receiver excepts for this
-///    selector.
+/// 2. The argument types match what the receiver excepts for this selector.
 ///
-/// 3. The return type must match what the receiver returns for this selector.
+/// 3. The return type match what the receiver returns for this selector.
 ///
 /// 4. The call must not violate Rust's mutability rules, for example if
 ///    passing an `&T`, the Objective-C method must not mutate the variable
@@ -166,9 +168,9 @@ macro_rules! sel {
 /// # let obj: *mut Object = 0 as *mut Object;
 /// let description: *const Object = unsafe { msg_send![obj, description] };
 /// // Usually you'd use msg_send_id here ^
-/// let _: () = unsafe { msg_send![obj, setArg1: 1 arg2: 2] };
-/// // Or with an optional comma between arguments:
-/// let _: () = unsafe { msg_send![obj, setArg1: 1, arg2: 2] };
+/// let _: () = unsafe { msg_send![obj, setArg1: 1u32, arg2: 2i32] };
+/// let arg1: i32 = unsafe { msg_send![obj, getArg1] };
+/// let arg2: i32 = unsafe { msg_send![obj, getArg2] };
 /// ```
 #[macro_export]
 macro_rules! msg_send {
@@ -264,7 +266,7 @@ macro_rules! msg_send_bool {
 /// [`msg_send!`] for methods returning `id`, `NSObject*`, or similar object
 /// pointers.
 ///
-/// Objective-C's object pointers have certain rules for when they should be
+/// Object pointers in Objective-C have certain rules for when they should be
 /// retained and released across function calls. This macro helps doing that,
 /// and returns an [`Option`] (letting you handle failures) containing an
 /// [`rc::Id`] with the object.
@@ -334,10 +336,9 @@ macro_rules! msg_send_bool {
 ///   pools!
 ///
 /// See [the clang documentation][arc-retainable] for the precise
-/// specification.
+/// specification of Objective-C's ownership rules.
 ///
 /// This macro doesn't support super methods yet, see [#173].
-///
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
 /// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
 ///
@@ -403,7 +404,7 @@ macro_rules! msg_send_id {
     });
 }
 
-/// Helper macro: To avoid exposing these in the docs for [`msg_send_id!`].
+/// Helper macro to avoid exposing these in the docs for [`msg_send_id!`].
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __msg_send_id_helper {

@@ -107,7 +107,7 @@
 //!
 //! To use this functionality, enable the `"verify_message"` cargo feature
 //! while debugging. With this feature enabled, encodings are checked every
-//! time your send a message, and the message send will panic if they are not
+//! time you send a message, and the message send will panic if they are not
 //! equivalent.
 //!
 //! To take the example above, if we changed the `hash` method's return type

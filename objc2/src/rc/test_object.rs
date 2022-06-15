@@ -152,7 +152,7 @@ impl RcTestObject {
     }
 
     pub(crate) fn new() -> Id<Self, Owned> {
-        // Use msg_send! to test that; msg_send_id! is tested elsewhere!
+        // Use msg_send! - msg_send_id! is tested elsewhere!
         unsafe { Id::new(msg_send![Self::class(), new]) }.unwrap()
     }
 }
