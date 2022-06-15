@@ -43,7 +43,7 @@ error[E0277]: the trait bound `Option<Id<_, _>>: From<&objc2::runtime::Object>` 
              <Option<&'a mut T> as From<&'a mut Option<T>>>
              <Option<T> as From<T>>
    = note: required because of the requirements on the impl of `Into<Option<Id<_, _>>>` for `&objc2::runtime::Object`
-   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Object, Option<Id<_, _>>>` for `Assert<false, false, true, false>`
+   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Object, Id<_, _>>` for `Assert<false, false, true, false>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Option<Id<_, _>>: From<&objc2::runtime::Class>` is not satisfied
@@ -57,7 +57,7 @@ error[E0277]: the trait bound `Option<Id<_, _>>: From<&objc2::runtime::Class>` i
              <Option<&'a mut T> as From<&'a mut Option<T>>>
              <Option<T> as From<T>>
    = note: required because of the requirements on the impl of `Into<Option<Id<_, _>>>` for `&objc2::runtime::Class`
-   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Class, Option<Id<_, _>>>` for `Assert<false, false, true, false>`
+   = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Class, Id<_, _>>` for `Assert<false, false, true, false>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiver` is not satisfied
@@ -69,5 +69,5 @@ error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiv
    = help: the following other types implement trait `MessageReceiver`:
              &'a Id<T, O>
              &'a mut Id<T, objc2::rc::Owned>
-   = note: required because of the requirements on the impl of `MsgSendId<Id<objc2::runtime::Object, Shared>, Option<Id<_, _>>>` for `Assert<false, false, false, true>`
+   = note: required because of the requirements on the impl of `MsgSendId<Id<objc2::runtime::Object, Shared>, Id<_, _>>` for `Assert<false, false, false, true>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

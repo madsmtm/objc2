@@ -258,7 +258,7 @@ macro_rules! msg_send_id {
         let sel = $crate::sel!($selector);
         const NAME: &[u8] = stringify!($selector).as_bytes();
         $crate::msg_send_id!(@__get_assert_consts NAME);
-        let result;
+        let result: Option<$crate::rc::Id<_, _>>;
         match <X as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ()) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,
@@ -269,7 +269,7 @@ macro_rules! msg_send_id {
         let sel = $crate::sel!($($selector:)+);
         const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
         $crate::msg_send_id!(@__get_assert_consts NAME);
-        let result;
+        let result: Option<$crate::rc::Id<_, _>>;
         match <X as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+)) {
             Err(s) => panic!("{}", s),
             Ok(r) => result = r,

@@ -20,11 +20,11 @@ pub trait MsgSendId<T, U> {
         obj: T,
         sel: Sel,
         args: A,
-    ) -> Result<U, MessageError>;
+    ) -> Result<Option<U>, MessageError>;
 }
 
 // `new`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for Assert<true, false, false, false>
 {
     #[inline(always)]
@@ -38,7 +38,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
 }
 
 // `alloc`, should mark the return value as "allocated, not initialized" somehow
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for Assert<false, true, false, false>
 {
     #[inline(always)]
@@ -54,7 +54,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Option<Id<T, O>>>
 // `init`, should mark the input value as "allocated, not initialized" somehow
 //
 // The generic bound allows `init` to take both `Option<Id>` and `Id`.
-impl<X: Into<Option<Id<T, O>>>, T: ?Sized + Message, O: Ownership> MsgSendId<X, Option<Id<T, O>>>
+impl<X: Into<Option<Id<T, O>>>, T: ?Sized + Message, O: Ownership> MsgSendId<X, Id<T, O>>
     for Assert<false, false, true, false>
 {
     #[inline(always)]
@@ -75,7 +75,7 @@ impl<X: Into<Option<Id<T, O>>>, T: ?Sized + Message, O: Ownership> MsgSendId<X, 
 }
 
 // `copy` and `mutableCopy`
-impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Option<Id<U, O>>>
+impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
     for Assert<false, false, false, true>
 {
     #[inline(always)]
@@ -89,7 +89,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Option<
 }
 
 // All other selectors
-impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Option<Id<U, O>>>
+impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
     for Assert<false, false, false, false>
 {
     #[inline(always)]
