@@ -16,10 +16,13 @@ use core::fmt;
 /// # Example
 ///
 /// ```no_run
-/// use objc2::{class, msg_send, msg_send_bool};
+/// use objc2::{class, msg_send_bool, msg_send_id};
+/// use objc2::rc::{Id, Shared};
 /// use objc2::runtime::{Object, Bool};
-/// let ns_value: *mut Object = unsafe { msg_send![class!(NSValue), initWithBool: Bool::YES] };
-/// assert!(unsafe { msg_send_bool![ns_value, boolValue] });
+/// let ns_value: Id<Object, Shared> = unsafe {
+///     msg_send_id![class!(NSNumber), numberWithBool: Bool::YES].unwrap()
+/// };
+/// assert!(unsafe { msg_send_bool![&ns_value, boolValue] });
 /// ```
 #[repr(transparent)]
 // We don't implement comparison traits because they could be implemented with

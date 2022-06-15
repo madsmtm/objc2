@@ -3,8 +3,8 @@ use core::fmt;
 use core::ops::AddAssign;
 use core::str;
 
-use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
+use objc2::{msg_send, msg_send_id};
 
 use crate::{NSCopying, NSMutableCopying, NSObject, NSString};
 
@@ -39,18 +39,16 @@ impl NSMutableString {
     #[doc(alias = "initWithString:")]
     pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithString: string];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithString: string].unwrap()
         }
     }
 
     #[doc(alias = "initWithCapacity:")]
     pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithCapacity: capacity];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithCapacity: capacity].unwrap()
         }
     }
 }

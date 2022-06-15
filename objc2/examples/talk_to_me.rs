@@ -1,7 +1,7 @@
 use objc2::ffi::NSUInteger;
 use objc2::rc::{Id, Owned, Shared};
 use objc2::runtime::Object;
-use objc2::{class, msg_send};
+use objc2::{class, msg_send, msg_send_id};
 use std::ffi::c_void;
 
 #[cfg(feature = "apple")] // Does not work on GNUStep
@@ -13,24 +13,24 @@ fn main() {
     let text = "Hello from Rust!";
     const UTF8_ENCODING: NSUInteger = 4;
 
-    let string: *const Object = unsafe { msg_send![class!(NSString), alloc] };
+    let string = unsafe { msg_send_id![class!(NSString), alloc] };
     let text_ptr: *const c_void = text.as_ptr().cast();
-    let string = unsafe {
-        msg_send![
+    let string: Id<Object, Shared> = unsafe {
+        msg_send_id![
             string,
             initWithBytes: text_ptr,
             length: text.len(),
             encoding: UTF8_ENCODING,
         ]
-    };
-    let string: Id<Object, Shared> = unsafe { Id::new(string).unwrap() };
+    }
+    .unwrap();
 
-    let synthesizer: *mut Object = unsafe { msg_send![class!(AVSpeechSynthesizer), new] };
-    let synthesizer: Id<Object, Owned> = unsafe { Id::new(synthesizer).unwrap() };
+    let synthesizer: Id<Object, Owned> =
+        unsafe { msg_send_id![class!(AVSpeechSynthesizer), new] }.unwrap();
 
-    let utterance: *mut Object = unsafe { msg_send![class!(AVSpeechUtterance), alloc] };
-    let utterance: *mut Object = unsafe { msg_send![utterance, initWithString: &*string] };
-    let utterance: Id<Object, Owned> = unsafe { Id::new(utterance).unwrap() };
+    let utterance = unsafe { msg_send_id![class!(AVSpeechUtterance), alloc] };
+    let utterance: Id<Object, Owned> =
+        unsafe { msg_send_id![utterance, initWithString: &*string] }.unwrap();
 
     // let _: () = unsafe { msg_send![&utterance, setVolume: 90.0f32 };
     // let _: () = unsafe { msg_send![&utterance, setRate: 0.50f32 };

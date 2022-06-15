@@ -227,7 +227,7 @@ macro_rules! unsafe_def_fn {
         $(#[$m])*
         $v fn new() -> Id<Self, $o> {
             let cls = Self::class();
-            unsafe { Id::new(msg_send![cls, new]).unwrap() }
+            unsafe { ::objc2::msg_send_id![cls, new].unwrap() }
         }
     };
 }

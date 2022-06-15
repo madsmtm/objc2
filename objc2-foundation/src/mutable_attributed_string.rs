@@ -1,5 +1,5 @@
-use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
+use objc2::{msg_send, msg_send_id};
 
 use crate::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
 
@@ -26,18 +26,16 @@ impl NSMutableAttributedString {
     #[doc(alias = "initWithString:")]
     pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithString: string];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithString: string].unwrap()
         }
     }
 
     #[doc(alias = "initWithAttributedString:")]
     pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self, Owned> {
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithAttributedString: attributed_string];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithAttributedString: attributed_string].unwrap()
         }
     }
 }

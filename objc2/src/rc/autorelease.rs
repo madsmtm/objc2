@@ -218,20 +218,33 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// error in a future release. You can test the compile error with the
 /// `unstable-autoreleasesafe` crate feature on nightly Rust.
 ///
+/// Note that this is mostly useful for preventing leaks (as any Objective-C
+/// method may leak internally). If implementing an interface to an object,
+/// you should try to return retained pointers with [`msg_send_id!`] wherever
+/// you can instead, since having to use this function can be quite cumbersome
+/// for your users!
+///
+///
 /// # Examples
 ///
 /// Basic usage:
 ///
 /// ```no_run
-/// use objc2::{class, msg_send};
-/// use objc2::rc::{autoreleasepool, AutoreleasePool};
+/// use core::mem::ManuallyDrop;
+/// use objc2::{class, msg_send, msg_send_id};
+/// use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 /// use objc2::runtime::Object;
 ///
 /// fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-///     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
+///     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+///     let obj = ManuallyDrop::new(obj);
 ///     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
 ///     // Lifetime of the returned reference is bounded by the pool
 ///     unsafe { pool.ptr_as_mut(obj) }
+///
+///     // Or simply
+///     // let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+///     // obj.autorelease(pool)
 /// }
 ///
 /// autoreleasepool(|pool| {
@@ -246,14 +259,13 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// safely take it out of the pool:
 ///
 /// ```compile_fail
-/// # use objc2::{class, msg_send};
-/// # use objc2::rc::{autoreleasepool, AutoreleasePool};
+/// # use objc2::{class, msg_send_id, Id, Owned};
+/// # use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 /// # use objc2::runtime::Object;
 /// #
 /// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-/// #     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
-/// #     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
-/// #     unsafe { pool.ptr_as_mut(obj) }
+/// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+/// #     obj.autorelease(pool)
 /// # }
 /// #
 /// let obj = autoreleasepool(|pool| {
@@ -268,14 +280,13 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 ///
 #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail")]
 #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```should_panic")]
-/// # use objc2::{class, msg_send};
-/// # use objc2::rc::{autoreleasepool, AutoreleasePool};
+/// # use objc2::{class, msg_send_id};
+/// # use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 /// # use objc2::runtime::Object;
 /// #
 /// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-/// #     let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
-/// #     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
-/// #     unsafe { pool.ptr_as_mut(obj) }
+/// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+/// #     obj.autorelease(pool)
 /// # }
 /// #
 /// autoreleasepool(|outer_pool| {

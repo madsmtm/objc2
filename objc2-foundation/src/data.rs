@@ -5,9 +5,9 @@ use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use std::io;
 
-use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
+use objc2::{msg_send, msg_send_id};
 
 use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
 
@@ -147,18 +147,16 @@ impl NSMutableData {
     pub fn from_data(data: &NSData) -> Id<Self, Owned> {
         // Not provided on NSData, one should just use NSData::copy or similar
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithData: data];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithData: data].unwrap()
         }
     }
 
     #[doc(alias = "initWithCapacity:")]
     pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
         unsafe {
-            let obj: *mut Self = msg_send![Self::class(), alloc];
-            let obj: *mut Self = msg_send![obj, initWithCapacity: capacity];
-            Id::new(obj).unwrap()
+            let obj = msg_send_id![Self::class(), alloc];
+            msg_send_id![obj, initWithCapacity: capacity].unwrap()
         }
     }
 }

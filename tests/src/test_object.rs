@@ -5,7 +5,7 @@ use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 use objc2::runtime::{Bool, Class, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
-use objc2::{class, msg_send, msg_send_bool};
+use objc2::{class, msg_send, msg_send_bool, msg_send_id};
 use objc2_foundation::NSObject;
 
 #[repr(C)]
@@ -26,13 +26,18 @@ impl MyTestObject {
 
     fn new() -> Id<Self, Owned> {
         let cls = Self::class();
-        unsafe { Id::new(msg_send![cls, new]).unwrap() }
+        unsafe { msg_send_id![cls, new].unwrap() }
     }
 
     fn new_autoreleased<'p>(pool: &'p AutoreleasePool) -> &'p Self {
         let cls = Self::class();
         let ptr: *const Self = unsafe { msg_send![cls, getAutoreleasedInstance] };
         unsafe { pool.ptr_as_ref(ptr) }
+    }
+
+    fn new_autoreleased_retained() -> Id<Self, Owned> {
+        let cls = Self::class();
+        unsafe { msg_send_id![cls, getAutoreleasedInstance].unwrap_unchecked() }
     }
 
     fn add_numbers(a: c_int, b: c_int) -> c_int {
@@ -154,6 +159,7 @@ fn test_object() {
     autoreleasepool(|pool| {
         let _obj = MyTestObject::new_autoreleased(pool);
     });
+    let _obj = MyTestObject::new_autoreleased_retained();
 
     let mut obj = MyTestObject::new();
     assert_eq!((*obj.inner).class(), MyTestObject::class());

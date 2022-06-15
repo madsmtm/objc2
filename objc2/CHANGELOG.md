@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `msg_send_id!` to help with following Objective-C's memory management
+  rules. **It is highly recommended that you use this instead of doing memory
+  management yourself!**
+
+  Example:
+  ```rust
+  // Before
+  let obj: Id<Object, Shared> = unsafe {
+      let obj: *mut Self = msg_send![Self::class(), alloc];
+      let obj: *mut Self = msg_send![obj, init];
+      Id::new(obj).unwrap()
+  };
+
+  // After
+  let obj: Id<Object, Shared> = unsafe {
+      msg_send_id![msg_send_id![Self::class(), alloc], new].unwrap()
+  };
+  ```
+
 
 ## 0.3.0-beta.0 - 2022-06-13
 

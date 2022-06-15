@@ -1,9 +1,9 @@
 //! # Objective-C interface and runtime bindings
 //!
 //! Objective-C is<sup>1</sup> the standard programming language on Apple
-//! platforms like macOS, iOS, tvOS and watchOS. It is an object-oriented
-//! language centered around sending messages to it's instances, which is for
-//! the most part equivalent to a function call.
+//! platforms like macOS, iOS, iPadOS, tvOS and watchOS. It is an
+//! object-oriented language centered around sending messages to it's
+//! instances - can for the most part be viewed as a simple method call.
 //!
 //! Most of the core libraries and frameworks that are in use on Apple systems
 //! are written in Objective-C, and hence we would like the ability to
@@ -20,31 +20,51 @@
 //!
 //! First, we get a reference to the `NSObject`'s [`runtime::Class`] using the
 //! [`class!`] macro.
-//! Next, we creates a new [`runtime::Object`] pointer, and ensures it is
+//! Next, we creates a new [`runtime::Object`] pointer, and ensure it is
 //! deallocated after we've used it by putting it into an [`rc::Owned`]
 //! [`rc::Id`].
-//! Now we send messages to the object to our hearts desire using
-//! the [`msg_send!`] macro, and lastly, the `Id<Object, _>` goes out of
-//! scope, and the object is deallocated.
+//! Now we're free to send messages to the object to our hearts desire using
+//! the [`msg_send!`], [`msg_send_bool!`] or [`msg_send_id!`] macros
+//! (depending on the return type of the method).
+//! Finally, the `Id<Object, _>` goes out of scope, and the object is released
+//! and deallocated.
 //!
 #![cfg_attr(feature = "apple", doc = "```")]
 #![cfg_attr(not(feature = "apple"), doc = "```no_run")]
-//! use objc2::{class, msg_send, msg_send_bool};
+//! use objc2::{class, msg_send, msg_send_bool, msg_send_id};
 //! use objc2::ffi::NSUInteger;
-//! use objc2::rc::{Id, Owned};
+//! use objc2::rc::{Id, Owned, Shared};
 //! use objc2::runtime::Object;
 //!
-//! // Creation
 //! let cls = class!(NSObject);
-//! let obj: *mut Object = unsafe { msg_send![cls, new] };
-//! let obj: Id<Object, Owned> = unsafe {
-//!     Id::new(obj).expect("Failed allocating object")
+//!
+//! // Creation
+//!
+//! let obj1: Id<Object, Owned> = unsafe {
+//!     msg_send_id![cls, new].expect("Failed allocating")
+//! };
+//! let obj2: Id<Object, Owned> = unsafe {
+//!     // Equivalent to using `new`
+//!     msg_send_id![msg_send_id![cls, alloc], init].expect("Failed allocating")
 //! };
 //!
 //! // Usage
-//! let hash: NSUInteger = unsafe { msg_send![&obj, hash] };
-//! let is_kind = unsafe { msg_send_bool![&obj, isKindOfClass: cls] };
+//!
+//! let hash1: NSUInteger = unsafe { msg_send![&obj1, hash] };
+//! let hash2: NSUInteger = unsafe { msg_send![&obj2, hash] };
+//! assert_ne!(hash1, hash2);
+//!
+//! let is_kind = unsafe { msg_send_bool![&obj1, isKindOfClass: cls] };
 //! assert!(is_kind);
+//!
+//! // We're going to create a new reference to the first object, so
+//! // relinquish mutable ownership.
+//! let obj1: Id<Object, Shared> = obj1.into();
+//! let obj1_self: Id<Object, Shared> = unsafe { msg_send_id![&obj1, self].unwrap() };
+//! let is_equal = unsafe { msg_send_bool![&obj1, isEqual: &*obj1_self] };
+//! assert!(is_equal);
+//!
+//! // Deallocation on drop
 //! ```
 //!
 //! Note that this very simple example contains **a lot** of `unsafe` (which
@@ -56,9 +76,10 @@
 //!
 //! Making the ergonomics better is something that is currently being worked
 //! on, see e.g. the [`objc2-foundation`] crate for more ergonomic usage of at
-//! least the `Foundation` framework.
+//! least parts of the `Foundation` framework.
 //!
-//! Anyhow, this nicely leads us to another feature that this crate has:
+//! Anyhow, all of this `unsafe` nicely leads us to another feature that this
+//! crate has:
 //!
 //! [`runtime::Class`]: crate::runtime::Class
 //! [`runtime::Object`]: crate::runtime::Object
@@ -71,23 +92,45 @@
 //!
 //! The Objective-C runtime includes encodings for each method that describe
 //! the argument and return types. See the [`objc2-encode`] crate for the
-//! full overview of what this is.
+//! full overview of what this is (its types are re-exported in this crate).
 //!
-//! The important part is, to make message sending _safer_ (not fully safe),
-//! all arguments and return values for messages must implement [`Encode`].
-//! This allows the Rust compiler to prevent you from passing e.g. a [`Box`]
-//! into Objective-C, which would both be UB and leak the box.
+//! The important part is: To make message sending safer, all arguments and
+//! return values for messages must implement [`Encode`]. This allows the Rust
+//! compiler to prevent you from passing e.g. a [`Box`] into Objective-C,
+//! which would both be UB and leak the box.
 //!
-//! Furthermore, this crate can take advantage of the encodings provided by
-//! the runtime to verify that the types used in Rust match the types encoded
-//! for the method. This is not a perfect solution for ensuring safety of
-//! message sends (some Rust types have the same encoding, but are not
+//! Furthermore, we can take advantage of the encodings provided by the
+//! runtime to verify that the types used in Rust actually match the types
+//! encoded for the method. This is not a perfect solution for ensuring safety
+//! (some Rust types have the same Objective-C encoding, but are not
 //! equivalent), but it gets us much closer to it!
 //!
 //! To use this functionality, enable the `"verify_message"` cargo feature
-//! while debugging. With this feature enabled, encoding types are checked
-//! every time your send a message, and the message send will panic if they
-//! are not equivalent.
+//! while debugging. With this feature enabled, encodings are checked every
+//! time you send a message, and the message send will panic if they are not
+//! equivalent.
+//!
+//! To take the example above, if we changed the `hash` method's return type
+//! as in the following example, it panics when the feature is enabled:
+//!
+#![cfg_attr(
+    all(feature = "apple", feature = "verify_message"),
+    doc = "```should_panic"
+)]
+#![cfg_attr(
+    not(all(feature = "apple", feature = "verify_message")),
+    doc = "```no_run"
+)]
+//! # use objc2::{class, msg_send, msg_send_id};
+//! # use objc2::rc::{Id, Owned};
+//! # use objc2::runtime::Object;
+//! #
+//! # let cls = class!(NSObject);
+//! # let obj1: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+//! #
+//! // Wrong return type - this is UB!
+//! let hash1: f32 = unsafe { msg_send![&obj1, hash] };
+//! ```
 //!
 //! [`objc2-encode`]: objc2_encode
 //! [`Box`]: std::boxed::Box
@@ -108,12 +151,12 @@
 //! see the [`objc-sys`][`objc_sys`] crate for how to configure this.
 //!
 //!
-//! ## Other features
+//! ## Other functionality
 //!
-//! Anyhow, that was a quick introduction, this library also has [support for
-//! handling exceptions][exc], [the ability to dynamically declare Objective-C
-//! classes][declare], [more advanced reference-counting utilities][rc] and
-//! more, peruse the documentation at will!
+//! That was a quick introduction, this library also has [support for handling
+//! exceptions][exc], [the ability to dynamically declare Objective-C
+//! classes][declare], [advanced reference-counting utilities][rc], and more -
+//! peruse the documentation at will!
 //!
 #![cfg_attr(feature = "exception", doc = "[exc]: crate::exception")]
 #![cfg_attr(not(feature = "exception"), doc = "[exc]: #exception-feature-disabled")]
@@ -166,6 +209,9 @@ pub mod runtime;
 
 #[cfg(test)]
 mod test_utils;
+
+#[doc(hidden)]
+pub mod __macro_helpers;
 
 /// Hacky way to make GNUStep link properly to Foundation while testing.
 ///

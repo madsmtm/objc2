@@ -77,7 +77,7 @@ impl DerefMut for RcTestObject {
 }
 
 impl RcTestObject {
-    fn class() -> &'static Class {
+    pub(crate) fn class() -> &'static Class {
         static REGISTER_CLASS: Once = Once::new();
 
         REGISTER_CLASS.call_once(|| {
@@ -152,6 +152,7 @@ impl RcTestObject {
     }
 
     pub(crate) fn new() -> Id<Self, Owned> {
+        // Use msg_send! - msg_send_id! is tested elsewhere!
         unsafe { Id::new(msg_send![Self::class(), new]) }.unwrap()
     }
 }

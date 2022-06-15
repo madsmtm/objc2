@@ -3,7 +3,7 @@ use std::sync::Once;
 use objc2::declare::ClassBuilder;
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object, Sel};
-use objc2::{msg_send, sel};
+use objc2::{msg_send, msg_send_id, sel};
 use objc2::{Encoding, Message, RefEncode};
 use objc2_foundation::NSObject;
 
@@ -25,7 +25,7 @@ static MYOBJECT_REGISTER_CLASS: Once = Once::new();
 impl MYObject {
     fn new() -> Id<Self, Owned> {
         let cls = Self::class();
-        unsafe { Id::new(msg_send![cls, new]).unwrap() }
+        unsafe { msg_send_id![cls, new].unwrap() }
     }
 
     fn number(&self) -> u32 {

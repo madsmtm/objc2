@@ -144,7 +144,7 @@ mod tests {
 
     #[test]
     fn test_throw_catch_object() {
-        let obj: Id<Object, Shared> = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
+        let obj: Id<Object, Shared> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
 
         let result = unsafe { catch(|| throw(Some(&obj))) };
         let exception = result.unwrap_err().unwrap();

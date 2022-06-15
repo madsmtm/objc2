@@ -1,6 +1,6 @@
 use core::fmt;
 use core::marker::PhantomData;
-use core::mem::ManuallyDrop;
+use core::mem::{self, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
@@ -59,13 +59,13 @@ use crate::Message;
 /// # Examples
 ///
 /// ```no_run
-/// use objc2::msg_send;
+/// use objc2::msg_send_id;
 /// use objc2::runtime::{Class, Object};
 /// use objc2::rc::{Id, Owned, Shared, WeakId};
 ///
 /// let cls = Class::get("NSObject").unwrap();
 /// let obj: Id<Object, Owned> = unsafe {
-///     Id::new(msg_send![cls, new]).unwrap()
+///     msg_send_id![cls, new].unwrap()
 /// };
 /// // obj will be released when it goes out of scope
 ///
@@ -83,12 +83,12 @@ use crate::Message;
 /// ```
 ///
 /// ```no_run
-/// # use objc2::{class, msg_send};
+/// # use objc2::{class, msg_send_id};
 /// # use objc2::runtime::Object;
 /// # use objc2::rc::{Id, Owned, Shared};
 /// # type T = Object;
 /// let mut owned: Id<T, Owned>;
-/// # owned = unsafe { Id::new(msg_send![class!(NSObject), new]).unwrap() };
+/// # owned = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
 /// let mut_ref: &mut T = &mut *owned;
 /// // Do something with `&mut T` here
 ///
@@ -149,25 +149,28 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// # Example
     ///
     /// ```no_run
-    /// # use objc2::{class, msg_send};
+    /// # use objc2::{class, msg_send, msg_send_id};
     /// # use objc2::runtime::{Class, Object};
     /// # use objc2::rc::{Id, Owned};
     /// let cls: &Class;
     /// # let cls = class!(NSObject);
     /// let obj: &mut Object = unsafe { msg_send![cls, alloc] };
     /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![obj, init]).unwrap() };
+    /// // Or utilizing `msg_send_id`:
+    /// let obj = unsafe { msg_send_id![cls, alloc] };
+    /// let obj: Id<Object, Owned> = unsafe { msg_send_id![obj, init].unwrap() };
     /// // Or in this case simply just:
-    /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![cls, new]).unwrap() };
+    /// let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
     /// ```
     ///
     /// ```no_run
-    /// # use objc2::{class, msg_send};
+    /// # use objc2::{class, msg_send_id};
     /// # use objc2::runtime::Object;
     /// # use objc2::rc::{Id, Shared};
     /// # type NSString = Object;
     /// let cls = class!(NSString);
     /// // NSString is immutable, so don't create an owned reference to it
-    /// let obj: Id<NSString, Shared> = unsafe { Id::new(msg_send![cls, new]).unwrap() };
+    /// let obj: Id<NSString, Shared> = unsafe { msg_send_id![cls, new].unwrap() };
     /// ```
     #[inline]
     // Note: We don't take a reference as a parameter since it would be too
@@ -203,6 +206,15 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     #[inline]
     pub(crate) fn consume_as_ptr(this: ManuallyDrop<Self>) -> *mut T {
         this.ptr.as_ptr()
+    }
+
+    #[inline]
+    pub(crate) fn option_into_ptr(obj: Option<Self>) -> *mut T {
+        // Difficult to write this in an ergonomic way with ?Sized
+        // So we just hack it with transmute!
+
+        // SAFETY: Option<Id<T, _>> has the same size as *mut T
+        unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(ManuallyDrop::new(obj)) }
     }
 }
 
