@@ -1,3 +1,5 @@
+use core::mem::ManuallyDrop;
+
 use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
@@ -48,6 +50,21 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Option<Id<T,
         //
         // We do this for efficiency, to avoid having a branch after every
         // `alloc`, that the user did not intend.
+        unsafe { MessageReceiver::send_message(ptr, sel, args).map(|r| Id::new(r)) }
+    }
+}
+
+// Allow `init` to also take `Id` directly
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<Id<T, O>, Option<Id<T, O>>>
+    for Assert<false, true, true>
+{
+    #[inline(always)]
+    unsafe fn send_message_id<A: MessageArguments>(
+        obj: Id<T, O>,
+        sel: Sel,
+        args: A,
+    ) -> Result<Option<Id<T, O>>, MessageError> {
+        let ptr = Id::consume_as_ptr(ManuallyDrop::new(obj));
         unsafe { MessageReceiver::send_message(ptr, sel, args).map(|r| Id::new(r)) }
     }
 }
@@ -126,8 +143,46 @@ pub const fn in_method_family(mut selector: &[u8], mut family: &[u8]) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rc::{Id, Owned, Shared};
+
+    use core::ptr;
+
+    use crate::rc::{Owned, Shared};
     use crate::runtime::Object;
+    use crate::{Encoding, RefEncode};
+
+    #[repr(C)]
+    struct _NSZone {
+        _inner: [u8; 0],
+    }
+
+    unsafe impl RefEncode for _NSZone {
+        const ENCODING_REF: Encoding<'static> =
+            Encoding::Pointer(&Encoding::Struct("_NSZone", &[]));
+    }
+
+    #[test]
+    fn test_macro_alloc() {
+        let cls = class!(NSObject);
+
+        let _obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![cls, alloc] };
+
+        let zone: *const _NSZone = ptr::null();
+        let _obj: Option<Id<Object, Owned>> = unsafe { msg_send_id![cls, allocWithZone: zone] };
+    }
+
+    #[test]
+    fn test_macro_init() {
+        let cls = class!(NSObject);
+
+        let obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        // Don't check allocation error
+        let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+
+        let obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        // Check allocation error before init
+        let obj = obj.unwrap();
+        let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+    }
 
     #[test]
     fn test_macro() {
