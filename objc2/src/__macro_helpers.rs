@@ -3,6 +3,9 @@ use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
 
 #[doc(hidden)]
+pub use core::compile_error;
+
+#[doc(hidden)]
 pub struct Assert<const ALLOC: bool, const INIT: bool, const RETAINED: bool> {}
 
 #[doc(hidden)]

@@ -230,8 +230,30 @@ macro_rules! msg_send_bool {
 }
 
 /// TODO
+///
+/// The `retain`, `release` and `autorelease` selectors are not supported, use
+/// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
+///
+/// [`Id::retain`]: crate::rc::Id::retain
+/// [`Id::drop`]: crate::rc::Id::drop
+/// [`Id::autorelease`]: crate::rc::Id::autorelease
 #[macro_export]
 macro_rules! msg_send_id {
+    [$obj:expr, retain $(,)?] => ({
+        $crate::__macro_helpers::compile_error!(
+            "msg_send_id![obj, retain] is not supported. Use `Id::retain` instead"
+        )
+    });
+    [$obj:expr, release $(,)?] => ({
+        $crate::__macro_helpers::compile_error!(
+            "msg_send_id![obj, release] is not supported. Drop an `Id` instead"
+        )
+    });
+    [$obj:expr, autorelease $(,)?] => ({
+        $crate::__macro_helpers::compile_error!(
+            "msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`"
+        )
+    });
     [$obj:expr, $selector:ident $(,)?] => ({
         let sel = $crate::sel!($selector);
         const NAME: &[u8] = stringify!($selector).as_bytes();
