@@ -1,18 +1,24 @@
+//! Use `AVSpeechSynthesizer` to speak synthesized text.
+//!
+//! **Untested**!
+//!
+//! Works on macOS >= 10.15 or iOS > 7.0!
 use objc2::ffi::NSUInteger;
 use objc2::rc::{Id, Owned, Shared};
 use objc2::runtime::Object;
-use objc2::{class, msg_send, msg_send_id};
+use objc2::{class, msg_send, msg_send_bool, msg_send_id};
 use std::ffi::c_void;
 
-#[cfg(feature = "apple")] // Does not work on GNUStep
+#[cfg(feature = "apple")]
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
 
-// Only works on macOS >= 10.15 or iOS > 7.0
+const UTF8_ENCODING: NSUInteger = 4;
+
 fn main() {
     let text = "Hello from Rust!";
-    const UTF8_ENCODING: NSUInteger = 4;
 
+    // Note: objc2-foundation has functionality to do this safely!
     let string = unsafe { msg_send_id![class!(NSString), alloc] };
     let text_ptr: *const c_void = text.as_ptr().cast();
     let string: Id<Object, Shared> = unsafe {
@@ -37,4 +43,8 @@ fn main() {
     // let _: () = unsafe { msg_send![&utterance, setPitchMultiplier: 0.80f32 };
 
     let _: () = unsafe { msg_send![&synthesizer, speakUtterance: &*utterance] };
+
+    while unsafe { msg_send_bool![&synthesizer, isSpeaking] } {
+        // Busy loop while speaking
+    }
 }

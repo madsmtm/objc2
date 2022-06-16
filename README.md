@@ -9,6 +9,31 @@ Anyway, thanks for being here, any help testing things out is highly
 appreciated!
 
 
+## Crate overview
+
+The core crate is [`objc2`], which contains everything you need to interface
+with Objective-C. We use it in [`objc2-foundation`] to provide a safe
+abstraction over some core objects from the Foundation Framework, since these
+are used in almost all other Objective-C frameworks.
+
+[`block2`] has a bit of a weird position in all of this: Apple's C language
+extension of blocks is _technically_ not limited to being used in Objective-C,
+though in practice that's the only place it's used, so it makes sense to
+develop these together.
+
+[`objc2-encode`] is really just a part of `objc2`, it mostly exists as a
+separate crate to help people cutting down on unneeded dependencies.
+[`objc-sys`] and [`block-sys`] contain raw bindings to the underlying C
+runtime libraries.
+
+[`objc2`]: ./objc2
+[`objc2-foundation`]: ./objc2-foundation
+[`block2`]: ./block2
+[`objc2-encode`]: ./objc2-encode
+[`objc-sys`]: ./objc-sys
+[`block-sys`]: ./block-sys
+
+
 ## Migrating from original crates
 
 It is recommended that you upgrade in small steps, to decrease the chance of
@@ -35,40 +60,56 @@ with every following release.
 
   The overarching goal of these crates is to be completely sound, meaning it
   must not be possible for safe Rust to cause undefined behaviour using this
-  library.
-  This is a really difficult task, because, as a language interface, basically
-  everything it does requires `unsafe`.
+  library!
 
-  Soundness is attempted by trying to document all instances of `unsafe`, and
-  the reasoning behind their safety.
+  This is a really difficult task (!!!), because, as a language interface,
+  basically everything it does requires `unsafe`, and because the two
+  languages have vastly different semantics.
 
-  Additionally, all `unsafe` APIs contain thorough `# Safety` sections, to let
-  users know exactly which safety guarantees they need to uphold.
+  Tackling this issue requires vigilance, which is why we're stating it as the
+  project's top priority. Internally, all instances of `unsafe` should have an
+  accompanying `# SAFETY` comment that explain the reasoning behind their
+  safety. At some point we might be able to use the Miri tool to help finding
+  instances of undefined behaviour, see [#146].
 
   If you find, or think you've found, a soundness hole, please report it on
-  the [issue tracker](https://github.com/madsmtm/objc2/issues/new).
+  the [issue tracker].
 
 - **Idiomatic Rust.**
 
   Soundness is easy to achieve if you just mark every API as `unsafe`.
-  However, that won't help us very much when we actually want to use it!
+  However, that just pushes the burden onto the user!
 
-  As such, these crates also try to be as safe and idiomatic as possible;
-  using references instead of pointers to represent objects and their
-  mutability, `Option` instead of `null`, zero cost (always a balancing act
-  against being ergonomic),
+  As such, we'll try to be as safe and idiomatic as possible; using references
+  instead of pointers to represent objects and their mutability, `Option`
+  instead of `null`, and so on. These abstractions should try be zero cost,
+  but this is of course a balancing act against being ergonomic.
+
+  Some APIs will still have to remain `unsafe` though, so these should contain
+  thorough `# Safety` sections, to let users know _exactly_ which safety
+  guarantees they need to uphold.
 
 - **Portability.**
 
-  Apple targets always have the highest priority, but there exist other
-  runtimes for Objective-C, and we would like to support them without the user
-  having to worry about portability issues.
+  Apple targets (macOS, iOS, iPadOS, tvOS and watchOS) always have the highest
+  priority, but there exist other runtimes for Objective-C, and we would like
+  to support them without the user having to worry about portability issues.
 
-  The supported runtimes are tested in CI.
+  The supported runtimes are tested in CI. This also improves the robustness
+  of our implementation, giving os more confidence that things won't break
+  when Apple releases a new version of one of their OSes.
 
 - **High quality documentation.**
 
-  This is still quite lacking, help appreciated!
+  This is still fairly lacking, see [#32], help appreciated!
+
+  If you have any questions or need advice and/or review of your Rust crate
+  that interfaces with Objective-C, please [open an issue][issue tracker],
+  I'll be glad to give you advice!
+
+[#146]: https://github.com/madsmtm/objc2/pull/146
+[issue tracker]: https://github.com/madsmtm/objc2/issues/new
+[#32]: https://github.com/madsmtm/objc2/issues/32
 
 
 ## License
@@ -84,8 +125,9 @@ Work is in progress to make it dual-licensed under the Apache License
 
 ## Acknowledgements
 
-This repository is originally a fork of [`objc`], with the following
-projects merged into it (see reasoning for the fork [here][origin-issue-101]):
+This repository is originally a fork of [`objc`] (hence the name `objc2`),
+with the following projects merged into it (see reasoning for the fork
+[here][origin-issue-101]):
 - [`objc-encode`](https://github.com/SSheldon/rust-objc-encode)
 - [`objc_exception`](https://github.com/SSheldon/rust-objc-exception)
 - [`objc_id`](https://github.com/SSheldon/rust-objc-id)
