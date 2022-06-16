@@ -28,7 +28,7 @@ const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_he
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
-    layout: ffi::Block_layout,
+    pub(crate) layout: ffi::Block_layout,
     p: PhantomData<(A, R)>,
 }
 
@@ -188,6 +188,9 @@ macro_rules! global_block {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use alloc::format;
+
     global_block! {
         /// Test comments and visibility
         pub(super) static NOOP_BLOCK = || {};
@@ -212,5 +215,60 @@ mod tests {
             42
         });
         assert_eq!(unsafe { MY_BLOCK.call(()) }, 42);
+    }
+
+    #[cfg(feature = "apple")]
+    const DEBUG_BLOCKFLAGS: &str = r#"BlockFlags {
+        value: "00110000000000000000000000000000",
+        deallocating: false,
+        inline_layout_string: false,
+        small_descriptor: false,
+        is_noescape: false,
+        needs_free: false,
+        has_copy_dispose: false,
+        has_ctor: false,
+        is_gc: false,
+        is_global: true,
+        use_stret: true,
+        has_signature: false,
+        has_extended_layout: false,
+        over_referenced: false,
+        reference_count: 0,
+        ..
+    }"#;
+
+    #[cfg(not(feature = "apple"))]
+    const DEBUG_BLOCKFLAGS: &str = r#"BlockFlags {
+        value: "00110000000000000000000000000000",
+        has_copy_dispose: false,
+        has_ctor: false,
+        is_global: true,
+        use_stret: true,
+        has_signature: false,
+        over_referenced: false,
+        reference_count: 0,
+        ..
+    }"#;
+
+    #[test]
+    fn test_debug() {
+        let invoke = NOOP_BLOCK.layout.invoke.unwrap();
+        let size = mem::size_of::<ffi::Block_layout>();
+        let expected = format!(
+            "GlobalBlock {{
+    isa: _NSConcreteGlobalBlock,
+    flags: {DEBUG_BLOCKFLAGS},
+    reserved: 0,
+    invoke: Some(
+        {invoke:#?},
+    ),
+    descriptor: BlockDescriptor {{
+        reserved: 0,
+        size: {size},
+    }},
+    ..
+}}"
+        );
+        assert_eq!(format!("{:#?}", NOOP_BLOCK), expected);
     }
 }
