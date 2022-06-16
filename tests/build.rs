@@ -12,10 +12,11 @@ fn main() {
         builder.flag(flag);
     }
 
-    // TODO???
-    // for flag in env::var("DEP_OBJC_0_2_CC_ARGS").unwrap().split(' ') {
-    //     builder.flag(flag);
-    // }
+    for flag in env::var("DEP_OBJC_0_2_CC_ARGS").unwrap().split(' ') {
+        builder.flag(flag);
+    }
+
+    builder.flag("-fno-objc-arc");
 
     builder.flag("-xobjective-c");
 

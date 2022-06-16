@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <Block.h>
+#include <Foundation/NSObject.h>
 
 typedef struct {
     float x;
@@ -54,8 +55,6 @@ LargeStruct invoke_large_struct_block(LargeStructBlock block, LargeStruct s) {
     return block(s);
 }
 
-
-#include <Foundation/NSObject.h>
 
 typedef int32_t (^ABlock)(void);
 
