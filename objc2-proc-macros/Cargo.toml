@@ -1,0 +1,34 @@
+[package]
+name = "objc2-proc-macros"
+# Remember to update html_root_url in lib.rs
+version = "0.0.0"
+authors = ["Mads Marquart <mads@marquart.dk>"]
+edition = "2021"
+
+description = "Procedural macros for the objc2 project"
+keywords = ["objective-c", "macos", "ios", "proc-macro"]
+categories = [
+    "development-tools",
+    "os::macos-apis",
+]
+readme = "README.md"
+repository = "https://github.com/madsmtm/objc2"
+documentation = "https://docs.rs/objc2-proc-macros/"
+license = "MIT"
+
+[lib]
+proc-macro = true
+
+[features]
+default = ["apple"]
+
+# Runtime selection (for future compatibility)
+apple = []
+gnustep-1-7 = []
+gnustep-1-8 = ["gnustep-1-7"]
+gnustep-1-9 = ["gnustep-1-8"]
+gnustep-2-0 = ["gnustep-1-9"]
+gnustep-2-1 = ["gnustep-2-0"]
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"
