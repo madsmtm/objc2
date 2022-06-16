@@ -256,7 +256,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "gnustep-1-7")]
+    #[cfg(not(feature = "apple"))]
     fn test_debug() {
         let invoke = NOOP_BLOCK.layout.invoke.unwrap();
         let expected = format!(
