@@ -188,6 +188,8 @@ macro_rules! global_block {
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
+
     global_block! {
         /// Test comments and visibility
         pub(super) static NOOP_BLOCK = || {};
@@ -212,5 +214,43 @@ mod tests {
             42
         });
         assert_eq!(unsafe { MY_BLOCK.call(()) }, 42);
+    }
+
+    #[test]
+    fn test_debug() {
+        let invoke = NOOP_BLOCK.layout.invoke.unwrap();
+        let expected = format!(
+            "GlobalBlock {{
+    isa: _NSConcreteGlobalBlock,
+    flags: BlockFlags {{
+        value: \"00110000000000000000000000000000\",
+        deallocating: false,
+        inline_layout_string: false,
+        small_descriptor: false,
+        is_noescape: false,
+        needs_free: false,
+        has_copy_dispose: false,
+        has_ctor: false,
+        is_gc: false,
+        is_global: true,
+        use_stret: true,
+        has_signature: false,
+        has_extended_layout: false,
+        over_referenced: false,
+        reference_count: 0,
+        ..
+    }},
+    reserved: 0,
+    invoke: Some(
+        {invoke:#?},
+    ),
+    descriptor: BlockDescriptor {{
+        reserved: 0,
+        size: 32,
+    }},
+    ..
+}}"
+        );
+        assert_eq!(format!("{:#?}", NOOP_BLOCK), expected);
     }
 }
