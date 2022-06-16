@@ -115,3 +115,5 @@ mod static_str;
 
 pub use self::encode::{Encode, EncodeArguments, RefEncode};
 pub use self::encoding::Encoding;
+#[cfg(feature = "derive")]
+pub use objc2_proc_macros::{Encode, RefEncode};

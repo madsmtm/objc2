@@ -153,7 +153,7 @@ jobs:
       ARGS: --no-default-features --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
-      FEATURES: ${{ matrix.features || 'malloc,block,exception,catch_all,verify_message' }}
+      FEATURES: ${{ matrix.features || 'malloc,block,exception,catch_all,verify_message,derive' }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe' }}
 
     runs-on: ${{ matrix.os }}
