@@ -181,6 +181,10 @@
 extern crate alloc;
 extern crate std;
 
+#[cfg(feature = "static-sel")]
+#[doc(hidden)]
+pub extern crate objc2_proc_macros as __proc_macros;
+
 // The example uses NSObject without doing the __gnustep_hack
 #[cfg(all(feature = "apple", doctest))]
 #[doc = include_str!("../README.md")]

@@ -2,7 +2,7 @@
 name = "objc2-proc-macros"
 # Remember to update html_root_url in lib.rs
 version = "0.0.0"
-authors = ["Mads Marquart <mads@marquart.dk>"]
+authors = ["Mads Marquart <mads@marquart.dk>", "Calvin Watford"]
 edition = "2021"
 
 description = "Procedural macros for the objc2 project"

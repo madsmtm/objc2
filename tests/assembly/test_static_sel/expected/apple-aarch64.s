@@ -2,27 +2,27 @@
 	.globl	_get_sel
 	.p2align	2
 _get_sel:
-	b	__ZN15test_static_sel7get_sel22objc_static_workaround17h13c8afaaf6336561E
+	b	__ZN15test_static_sel7get_sel22objc_static_workaround17hd01b8e03bc7ee2f2E
 
 	.globl	_get_same_sel
 	.p2align	2
 _get_same_sel:
-	b	__ZN15test_static_sel12get_same_sel22objc_static_workaround17hcc291441d7e8a59fE
+	b	__ZN15test_static_sel12get_same_sel22objc_static_workaround17h6fded10733d3d13eE
 
 	.globl	_get_common
 	.p2align	2
 _get_common:
-	b	__ZN15test_static_sel10get_common22objc_static_workaround17hce555de02adf8700E
+	b	__ZN15test_static_sel10get_common22objc_static_workaround17h3099714314719ae4E
 
 	.globl	_get_different_sel
 	.p2align	2
 _get_different_sel:
-	b	__ZN15test_static_sel17get_different_sel22objc_static_workaround17hfa539aa3b979256cE
+	b	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h2df9cd4849db8a71E
 
 	.globl	_unused_sel
 	.p2align	2
 _unused_sel:
-	b	__ZN15test_static_sel10unused_sel22objc_static_workaround17h0a7026e7e912a1c5E
+	b	__ZN15test_static_sel10unused_sel22objc_static_workaround17h751ade9083325dbfE
 
 	.globl	_use_fns
 	.p2align	2
@@ -32,13 +32,13 @@ _use_fns:
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
 	mov	x19, x8
-	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17h13c8afaaf6336561E
+	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17hd01b8e03bc7ee2f2E
 	mov	x20, x0
-	bl	__ZN15test_static_sel12get_same_sel22objc_static_workaround17hcc291441d7e8a59fE
+	bl	__ZN15test_static_sel12get_same_sel22objc_static_workaround17h6fded10733d3d13eE
 	mov	x21, x0
-	bl	__ZN15test_static_sel17get_different_sel22objc_static_workaround17hfa539aa3b979256cE
+	bl	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h2df9cd4849db8a71E
 	mov	x22, x0
-	bl	__ZN15test_static_sel7use_fns22objc_static_workaround17h5f244955651662d0E
+	bl	__ZN15test_static_sel7use_fns22objc_static_workaround17h0a4a70767a5df0c7E
 	stp	x20, x21, [x19]
 	stp	x22, x0, [x19, #16]
 	ldp	x29, x30, [sp, #32]
@@ -53,9 +53,9 @@ _use_same_twice:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x19, x8
-	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17h13c8afaaf6336561E
+	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17hd01b8e03bc7ee2f2E
 	mov	x20, x0
-	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17h13c8afaaf6336561E
+	bl	__ZN15test_static_sel7get_sel22objc_static_workaround17hd01b8e03bc7ee2f2E
 	stp	x20, x0, [x19]
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
@@ -70,7 +70,7 @@ _use_in_loop:
 	cbz	x0, LBB7_3
 	mov	x19, x0
 LBB7_2:
-	bl	__ZN15test_static_sel11use_in_loop22objc_static_workaround17h835e149ff2fe6f9bE
+	bl	__ZN15test_static_sel11use_in_loop22objc_static_workaround17hd571f39365fc8d75E
 	subs	x19, x19, #1
 	b.ne	LBB7_2
 LBB7_3:
@@ -79,129 +79,143 @@ LBB7_3:
 	ret
 
 	.p2align	2
-__ZN15test_static_sel7get_sel22objc_static_workaround17h13c8afaaf6336561E:
+__ZN15test_static_sel7get_sel22objc_static_workaround17hd01b8e03bc7ee2f2E:
 Lloh0:
-	adrp	x8, __ZN15test_static_sel7get_sel22objc_static_workaround3REF17hb6b95604312c057fE@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9@PAGE
 Lloh1:
-	ldr	x0, [x8, __ZN15test_static_sel7get_sel22objc_static_workaround3REF17hb6b95604312c057fE@PAGEOFF]
+	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh0, Lloh1
 
 	.p2align	2
-__ZN15test_static_sel12get_same_sel22objc_static_workaround17hcc291441d7e8a59fE:
+__ZN15test_static_sel12get_same_sel22objc_static_workaround17h6fded10733d3d13eE:
 Lloh2:
-	adrp	x8, __ZN15test_static_sel12get_same_sel22objc_static_workaround3REF17hf2d20958868b8e47E@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35@PAGE
 Lloh3:
-	ldr	x0, [x8, __ZN15test_static_sel12get_same_sel22objc_static_workaround3REF17hf2d20958868b8e47E@PAGEOFF]
+	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh2, Lloh3
 
 	.p2align	2
-__ZN15test_static_sel10get_common22objc_static_workaround17hce555de02adf8700E:
+__ZN15test_static_sel10get_common22objc_static_workaround17h3099714314719ae4E:
 Lloh4:
-	adrp	x8, __ZN15test_static_sel10get_common22objc_static_workaround3REF17hbc6679a9cff6619cE@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964@PAGE
 Lloh5:
-	ldr	x0, [x8, __ZN15test_static_sel10get_common22objc_static_workaround3REF17hbc6679a9cff6619cE@PAGEOFF]
+	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh4, Lloh5
 
 	.p2align	2
-__ZN15test_static_sel17get_different_sel22objc_static_workaround17hfa539aa3b979256cE:
+__ZN15test_static_sel17get_different_sel22objc_static_workaround17h2df9cd4849db8a71E:
 Lloh6:
-	adrp	x8, __ZN15test_static_sel17get_different_sel22objc_static_workaround3REF17hdb6933336b563c79E@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b@PAGE
 Lloh7:
-	ldr	x0, [x8, __ZN15test_static_sel17get_different_sel22objc_static_workaround3REF17hdb6933336b563c79E@PAGEOFF]
+	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh6, Lloh7
 
 	.p2align	2
-__ZN15test_static_sel10unused_sel22objc_static_workaround17h0a7026e7e912a1c5E:
+__ZN15test_static_sel10unused_sel22objc_static_workaround17h751ade9083325dbfE:
 Lloh8:
-	adrp	x8, __ZN15test_static_sel10unused_sel22objc_static_workaround3REF17h40777f2046a98be5E@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477@PAGE
 Lloh9:
-	ldr	xzr, [x8, __ZN15test_static_sel10unused_sel22objc_static_workaround3REF17h40777f2046a98be5E@PAGEOFF]
+	ldr	xzr, [x8, L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh8, Lloh9
 
 	.p2align	2
-__ZN15test_static_sel7use_fns22objc_static_workaround17h5f244955651662d0E:
+__ZN15test_static_sel7use_fns22objc_static_workaround17h0a4a70767a5df0c7E:
 Lloh10:
-	adrp	x8, __ZN15test_static_sel7use_fns22objc_static_workaround3REF17hdaf81138d104b376E@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860@PAGE
 Lloh11:
-	ldr	x0, [x8, __ZN15test_static_sel7use_fns22objc_static_workaround3REF17hdaf81138d104b376E@PAGEOFF]
+	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh10, Lloh11
 
 	.p2align	2
-__ZN15test_static_sel11use_in_loop22objc_static_workaround17h835e149ff2fe6f9bE:
+__ZN15test_static_sel11use_in_loop22objc_static_workaround17hd571f39365fc8d75E:
 Lloh12:
-	adrp	x8, __ZN15test_static_sel11use_in_loop22objc_static_workaround3REF17h31ccfb6b27d8c440E@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07@PAGE
 Lloh13:
-	ldr	xzr, [x8, __ZN15test_static_sel11use_in_loop22objc_static_workaround3REF17h31ccfb6b27d8c440E@PAGEOFF]
+	ldr	xzr, [x8, L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07@PAGEOFF]
 	ret
 	.loh AdrpLdr	Lloh12, Lloh13
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7get_sel22objc_static_workaround4NAME17hdc8765740ecc3d11E:
+	.globl	L_OBJC_METH_VAR_NAME_68381ba894e318e9
+L_OBJC_METH_VAR_NAME_68381ba894e318e9:
 	.asciz	"simple"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9
 	.p2align	3
-__ZN15test_static_sel7get_sel22objc_static_workaround3REF17hb6b95604312c057fE:
-	.quad	__ZN15test_static_sel7get_sel22objc_static_workaround4NAME17hdc8765740ecc3d11E
+L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9:
+	.quad	L_OBJC_METH_VAR_NAME_68381ba894e318e9
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel12get_same_sel22objc_static_workaround4NAME17hf316d81d46a5ef66E:
+	.globl	L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35
+L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35:
 	.asciz	"simple"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35
 	.p2align	3
-__ZN15test_static_sel12get_same_sel22objc_static_workaround3REF17hf2d20958868b8e47E:
-	.quad	__ZN15test_static_sel12get_same_sel22objc_static_workaround4NAME17hf316d81d46a5ef66E
+L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35:
+	.quad	L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel10get_common22objc_static_workaround4NAME17h455f306cf0f80e51E:
+	.globl	L_OBJC_METH_VAR_NAME_34d6c3ed70e85964
+L_OBJC_METH_VAR_NAME_34d6c3ed70e85964:
 	.asciz	"alloc"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964
 	.p2align	3
-__ZN15test_static_sel10get_common22objc_static_workaround3REF17hbc6679a9cff6619cE:
-	.quad	__ZN15test_static_sel10get_common22objc_static_workaround4NAME17h455f306cf0f80e51E
+L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964:
+	.quad	L_OBJC_METH_VAR_NAME_34d6c3ed70e85964
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel17get_different_sel22objc_static_workaround4NAME17hbce34864cd8eb8ffE:
+	.globl	L_OBJC_METH_VAR_NAME_ab5e106a55f71e5b
+L_OBJC_METH_VAR_NAME_ab5e106a55f71e5b:
 	.asciz	"i:am:different:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b
 	.p2align	3
-__ZN15test_static_sel17get_different_sel22objc_static_workaround3REF17hdb6933336b563c79E:
-	.quad	__ZN15test_static_sel17get_different_sel22objc_static_workaround4NAME17hbce34864cd8eb8ffE
+L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b:
+	.quad	L_OBJC_METH_VAR_NAME_ab5e106a55f71e5b
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel10unused_sel22objc_static_workaround4NAME17hfc0e0c35212550d0E:
+	.globl	L_OBJC_METH_VAR_NAME_6f2d5ee51a69c477
+L_OBJC_METH_VAR_NAME_6f2d5ee51a69c477:
 	.asciz	"unused"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477
 	.p2align	3
-__ZN15test_static_sel10unused_sel22objc_static_workaround3REF17h40777f2046a98be5E:
-	.quad	__ZN15test_static_sel10unused_sel22objc_static_workaround4NAME17hfc0e0c35212550d0E
+L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477:
+	.quad	L_OBJC_METH_VAR_NAME_6f2d5ee51a69c477
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7use_fns22objc_static_workaround4NAME17h33067d740a4050feE:
+	.globl	L_OBJC_METH_VAR_NAME_1d27e854714b8860
+L_OBJC_METH_VAR_NAME_1d27e854714b8860:
 	.asciz	"fourthSel"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860
 	.p2align	3
-__ZN15test_static_sel7use_fns22objc_static_workaround3REF17hdaf81138d104b376E:
-	.quad	__ZN15test_static_sel7use_fns22objc_static_workaround4NAME17h33067d740a4050feE
+L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860:
+	.quad	L_OBJC_METH_VAR_NAME_1d27e854714b8860
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel11use_in_loop22objc_static_workaround4NAME17h7946000586832262E:
+	.globl	L_OBJC_METH_VAR_NAME_e56637a4c1a15b07
+L_OBJC_METH_VAR_NAME_e56637a4c1a15b07:
 	.asciz	"loopedSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07
 	.p2align	3
-__ZN15test_static_sel11use_in_loop22objc_static_workaround3REF17h31ccfb6b27d8c440E:
-	.quad	__ZN15test_static_sel11use_in_loop22objc_static_workaround4NAME17h7946000586832262E
+L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07:
+	.quad	L_OBJC_METH_VAR_NAME_e56637a4c1a15b07
 
 .subsections_via_symbols

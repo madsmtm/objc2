@@ -6,7 +6,7 @@ _get_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__ZN15test_static_sel7get_sel22objc_static_workaround17h81b7b987eca6a3a4E
+	jmp	__ZN15test_static_sel7get_sel22objc_static_workaround17hbd28d1f4da2b6e6eE
 
 	.globl	_get_same_sel
 	.p2align	4, 0x90
@@ -14,7 +14,7 @@ _get_same_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__ZN15test_static_sel12get_same_sel22objc_static_workaround17h42fe6964f04a7ccaE
+	jmp	__ZN15test_static_sel12get_same_sel22objc_static_workaround17hcf8c438d0e807292E
 
 	.globl	_get_common
 	.p2align	4, 0x90
@@ -22,7 +22,7 @@ _get_common:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__ZN15test_static_sel10get_common22objc_static_workaround17h8ab540c389e482ebE
+	jmp	__ZN15test_static_sel10get_common22objc_static_workaround17hd73a38a3512c60a4E
 
 	.globl	_get_different_sel
 	.p2align	4, 0x90
@@ -30,7 +30,7 @@ _get_different_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h728dd0c6759019a1E
+	jmp	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h0437e7638527cbcbE
 
 	.globl	_unused_sel
 	.p2align	4, 0x90
@@ -38,7 +38,7 @@ _unused_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__ZN15test_static_sel10unused_sel22objc_static_workaround17hde06c029659e697eE
+	jmp	__ZN15test_static_sel10unused_sel22objc_static_workaround17h9d08c6f2f30054acE
 
 	.globl	_use_fns
 	.p2align	4, 0x90
@@ -50,13 +50,13 @@ _use_fns:
 	push	esi
 	sub	esp, 12
 	mov	esi, dword ptr [ebp + 8]
-	call	__ZN15test_static_sel7get_sel22objc_static_workaround17h81b7b987eca6a3a4E
+	call	__ZN15test_static_sel7get_sel22objc_static_workaround17hbd28d1f4da2b6e6eE
 	mov	dword ptr [ebp - 16], eax
-	call	__ZN15test_static_sel12get_same_sel22objc_static_workaround17h42fe6964f04a7ccaE
+	call	__ZN15test_static_sel12get_same_sel22objc_static_workaround17hcf8c438d0e807292E
 	mov	ebx, eax
-	call	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h728dd0c6759019a1E
+	call	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h0437e7638527cbcbE
 	mov	edi, eax
-	call	__ZN15test_static_sel7use_fns22objc_static_workaround17ha83e06d45bafd771E
+	call	__ZN15test_static_sel7use_fns22objc_static_workaround17hb2af229df09794e6E
 	mov	ecx, dword ptr [ebp - 16]
 	mov	dword ptr [esi], ecx
 	mov	dword ptr [esi + 4], ebx
@@ -78,9 +78,9 @@ _use_same_twice:
 	push	edi
 	push	esi
 	mov	esi, dword ptr [ebp + 8]
-	call	__ZN15test_static_sel7get_sel22objc_static_workaround17h81b7b987eca6a3a4E
+	call	__ZN15test_static_sel7get_sel22objc_static_workaround17hbd28d1f4da2b6e6eE
 	mov	edi, eax
-	call	__ZN15test_static_sel7get_sel22objc_static_workaround17h81b7b987eca6a3a4E
+	call	__ZN15test_static_sel7get_sel22objc_static_workaround17hbd28d1f4da2b6e6eE
 	mov	dword ptr [esi], edi
 	mov	dword ptr [esi + 4], eax
 	mov	eax, esi
@@ -101,7 +101,7 @@ _use_in_loop:
 	je	LBB7_2
 	.p2align	4, 0x90
 LBB7_1:
-	call	__ZN15test_static_sel11use_in_loop22objc_static_workaround17h601e1f59fa6876fdE
+	call	__ZN15test_static_sel11use_in_loop22objc_static_workaround17h0d03d9d1392db5daE
 	dec	esi
 	jne	LBB7_1
 LBB7_2:
@@ -111,143 +111,157 @@ LBB7_2:
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel7get_sel22objc_static_workaround17h81b7b987eca6a3a4E:
+__ZN15test_static_sel7get_sel22objc_static_workaround17hbd28d1f4da2b6e6eE:
 	push	ebp
 	mov	ebp, esp
 	call	L8$pb
 L8$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel7get_sel22objc_static_workaround3REF17hc37abb4197ef951bE-L8$pb]
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-L8$pb]
 	pop	ebp
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel12get_same_sel22objc_static_workaround17h42fe6964f04a7ccaE:
+__ZN15test_static_sel12get_same_sel22objc_static_workaround17hcf8c438d0e807292E:
 	push	ebp
 	mov	ebp, esp
 	call	L9$pb
 L9$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel12get_same_sel22objc_static_workaround3REF17hd3b05de0d9a96eecE-L9$pb]
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-L9$pb]
 	pop	ebp
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel10get_common22objc_static_workaround17h8ab540c389e482ebE:
+__ZN15test_static_sel10get_common22objc_static_workaround17hd73a38a3512c60a4E:
 	push	ebp
 	mov	ebp, esp
 	call	L10$pb
 L10$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel10get_common22objc_static_workaround3REF17h3d670595527dbbb7E-L10$pb]
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964-L10$pb]
 	pop	ebp
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel17get_different_sel22objc_static_workaround17h728dd0c6759019a1E:
+__ZN15test_static_sel17get_different_sel22objc_static_workaround17h0437e7638527cbcbE:
 	push	ebp
 	mov	ebp, esp
 	call	L11$pb
 L11$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel17get_different_sel22objc_static_workaround3REF17h5c87d7158e6ff828E-L11$pb]
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b-L11$pb]
 	pop	ebp
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel10unused_sel22objc_static_workaround17hde06c029659e697eE:
+__ZN15test_static_sel10unused_sel22objc_static_workaround17h9d08c6f2f30054acE:
 	push	ebp
 	mov	ebp, esp
 	call	L12$pb
 L12$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel10unused_sel22objc_static_workaround3REF17hb7b3ebb79de7386dE-L12$pb]
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477-L12$pb]
 	pop	ebp
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel7use_fns22objc_static_workaround17ha83e06d45bafd771E:
+__ZN15test_static_sel7use_fns22objc_static_workaround17hb2af229df09794e6E:
 	push	ebp
 	mov	ebp, esp
 	call	L13$pb
 L13$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel7use_fns22objc_static_workaround3REF17h1a4a387de8da6e06E-L13$pb]
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860-L13$pb]
 	pop	ebp
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel11use_in_loop22objc_static_workaround17h601e1f59fa6876fdE:
+__ZN15test_static_sel11use_in_loop22objc_static_workaround17h0d03d9d1392db5daE:
 	push	ebp
 	mov	ebp, esp
 	call	L14$pb
 L14$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + __ZN15test_static_sel11use_in_loop22objc_static_workaround3REF17hafed3287c99de420E-L14$pb]
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07-L14$pb]
 	pop	ebp
 	ret
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7get_sel22objc_static_workaround4NAME17h90deb32c3cc9afbfE:
+	.globl	L_OBJC_METH_VAR_NAME_68381ba894e318e9
+L_OBJC_METH_VAR_NAME_68381ba894e318e9:
 	.asciz	"simple"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9
 	.p2align	2
-__ZN15test_static_sel7get_sel22objc_static_workaround3REF17hc37abb4197ef951bE:
-	.long	__ZN15test_static_sel7get_sel22objc_static_workaround4NAME17h90deb32c3cc9afbfE
+L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9:
+	.long	L_OBJC_METH_VAR_NAME_68381ba894e318e9
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel12get_same_sel22objc_static_workaround4NAME17h79fb7ea50d2382ecE:
+	.globl	L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35
+L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35:
 	.asciz	"simple"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35
 	.p2align	2
-__ZN15test_static_sel12get_same_sel22objc_static_workaround3REF17hd3b05de0d9a96eecE:
-	.long	__ZN15test_static_sel12get_same_sel22objc_static_workaround4NAME17h79fb7ea50d2382ecE
+L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35:
+	.long	L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel10get_common22objc_static_workaround4NAME17h4c782c7fdf617c72E:
+	.globl	L_OBJC_METH_VAR_NAME_34d6c3ed70e85964
+L_OBJC_METH_VAR_NAME_34d6c3ed70e85964:
 	.asciz	"alloc"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964
 	.p2align	2
-__ZN15test_static_sel10get_common22objc_static_workaround3REF17h3d670595527dbbb7E:
-	.long	__ZN15test_static_sel10get_common22objc_static_workaround4NAME17h4c782c7fdf617c72E
+L_OBJC_SELECTOR_REFERENCES_34d6c3ed70e85964:
+	.long	L_OBJC_METH_VAR_NAME_34d6c3ed70e85964
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel17get_different_sel22objc_static_workaround4NAME17h69a9c6cf0d4df9cbE:
+	.globl	L_OBJC_METH_VAR_NAME_ab5e106a55f71e5b
+L_OBJC_METH_VAR_NAME_ab5e106a55f71e5b:
 	.asciz	"i:am:different:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b
 	.p2align	2
-__ZN15test_static_sel17get_different_sel22objc_static_workaround3REF17h5c87d7158e6ff828E:
-	.long	__ZN15test_static_sel17get_different_sel22objc_static_workaround4NAME17h69a9c6cf0d4df9cbE
+L_OBJC_SELECTOR_REFERENCES_ab5e106a55f71e5b:
+	.long	L_OBJC_METH_VAR_NAME_ab5e106a55f71e5b
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel10unused_sel22objc_static_workaround4NAME17h7123d51632cd4661E:
+	.globl	L_OBJC_METH_VAR_NAME_6f2d5ee51a69c477
+L_OBJC_METH_VAR_NAME_6f2d5ee51a69c477:
 	.asciz	"unused"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477
 	.p2align	2
-__ZN15test_static_sel10unused_sel22objc_static_workaround3REF17hb7b3ebb79de7386dE:
-	.long	__ZN15test_static_sel10unused_sel22objc_static_workaround4NAME17h7123d51632cd4661E
+L_OBJC_SELECTOR_REFERENCES_6f2d5ee51a69c477:
+	.long	L_OBJC_METH_VAR_NAME_6f2d5ee51a69c477
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel7use_fns22objc_static_workaround4NAME17ha768eb127f2dc8a6E:
+	.globl	L_OBJC_METH_VAR_NAME_1d27e854714b8860
+L_OBJC_METH_VAR_NAME_1d27e854714b8860:
 	.asciz	"fourthSel"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860
 	.p2align	2
-__ZN15test_static_sel7use_fns22objc_static_workaround3REF17h1a4a387de8da6e06E:
-	.long	__ZN15test_static_sel7use_fns22objc_static_workaround4NAME17ha768eb127f2dc8a6E
+L_OBJC_SELECTOR_REFERENCES_1d27e854714b8860:
+	.long	L_OBJC_METH_VAR_NAME_1d27e854714b8860
 
 	.section	__TEXT,__objc_methname,cstring_literals
-__ZN15test_static_sel11use_in_loop22objc_static_workaround4NAME17hff06965bc2df53daE:
+	.globl	L_OBJC_METH_VAR_NAME_e56637a4c1a15b07
+L_OBJC_METH_VAR_NAME_e56637a4c1a15b07:
 	.asciz	"loopedSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07
 	.p2align	2
-__ZN15test_static_sel11use_in_loop22objc_static_workaround3REF17hafed3287c99de420E:
-	.long	__ZN15test_static_sel11use_in_loop22objc_static_workaround4NAME17hff06965bc2df53daE
+L_OBJC_SELECTOR_REFERENCES_e56637a4c1a15b07:
+	.long	L_OBJC_METH_VAR_NAME_e56637a4c1a15b07
 
 .subsections_via_symbols

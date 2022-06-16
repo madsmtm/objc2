@@ -58,12 +58,12 @@ macro_rules! sel {
 #[cfg(feature = "static-sel")]
 macro_rules! sel {
     ($name:ident) => {
-        $crate::sel!(@__inner concat!(stringify!($name), '\0'))
+        $crate::sel!(@__inner concat!(stringify!($name), '\0'), $name)
     };
     ($($name:ident :)+) => {
-        $crate::sel!(@__inner concat!($(stringify!($name), ':'),+, '\0'))
+        $crate::sel!(@__inner concat!($(stringify!($name), ':'),+, '\0'), $($name),+)
     };
-    (@__inner $sel:expr) => {{
+    (@__inner $sel:expr, $($idents:ident),+) => {{
         // HACK: Wrap the statics in a non-generic, `#[inline(never)]`
         // function to "coerce" the compiler to group all of them into the
         // same codegen unit to avoid link errors
@@ -72,6 +72,7 @@ macro_rules! sel {
             const X: &[u8] = $sel.as_bytes();
 
             #[link_section = "__TEXT,__objc_methname,cstring_literals"]
+            #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__proc_macros::hash_idents!($($idents)+))]
             static NAME: [u8; X.len()] = {
                 let mut res: [u8; X.len()] = [0; X.len()];
                 let mut i = 0;
@@ -84,6 +85,7 @@ macro_rules! sel {
 
             // Place the constant value in the correct section.
             #[link_section = "__DATA,__objc_selrefs,literal_pointers"]
+            #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__proc_macros::hash_idents!($($idents)+))]
             static mut REF: &[u8; X.len()] = &NAME;
 
             // The actual selector is replaced by dyld when the program is
