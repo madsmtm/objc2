@@ -275,12 +275,11 @@ impl<T: Message, O: Ownership> Id<T, O> {
     #[doc(alias = "objc_retain")]
     #[inline]
     pub unsafe fn retain(ptr: *mut T) -> Option<Id<T, O>> {
-        let ptr = ptr as *mut ffi::objc_object;
         // SAFETY: The caller upholds that the pointer is valid
-        let res = unsafe { ffi::objc_retain(ptr) };
+        let res: *mut T = unsafe { ffi::objc_retain(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
         // SAFETY: We just retained the object, so it has +1 retain count
-        unsafe { Self::new(res as *mut T) }
+        unsafe { Self::new(res) }
     }
 
     /// Retains a previously autoreleased object pointer.
@@ -370,11 +369,9 @@ impl<T: Message, O: Ownership> Id<T, O> {
             };
         }
 
-        let ptr = ptr as *mut ffi::objc_object;
-
         // SAFETY: Same as `retain`, `objc_retainAutoreleasedReturnValue` is
         // just an optimization.
-        let res = unsafe { ffi::objc_retainAutoreleasedReturnValue(ptr) };
+        let res: *mut T = unsafe { ffi::objc_retainAutoreleasedReturnValue(ptr.cast()) }.cast();
 
         // Ideally, we'd be able to specify that the above call should never
         // be tail-call optimized (become a `jmp` instruction instead of a
@@ -402,7 +399,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
             res, ptr,
             "objc_retainAutoreleasedReturnValue did not return the same pointer"
         );
-        unsafe { Self::new(res as *mut T) }
+        unsafe { Self::new(res) }
     }
 
     #[inline]
@@ -413,14 +410,14 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // retained objects it is hard to imagine a case where the inner type
         // has a method with the same name.
 
-        let ptr = ManuallyDrop::new(self).ptr.as_ptr() as *mut ffi::objc_object;
+        let ptr = ManuallyDrop::new(self).ptr.as_ptr();
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
         // And because of the ManuallyDrop, we don't call the Drop
         // implementation, so the object won't also be released there.
-        let res = unsafe { ffi::objc_autorelease(ptr) };
+        let res: *mut T = unsafe { ffi::objc_autorelease(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
-        res as *mut T
+        res
     }
 
     // TODO: objc_autoreleaseReturnValue
@@ -543,7 +540,7 @@ impl<T: ?Sized, O: Ownership> Drop for Id<T, O> {
 
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count
-        unsafe { ffi::objc_release(self.ptr.as_ptr() as *mut _) };
+        unsafe { ffi::objc_release(self.ptr.as_ptr().cast()) };
     }
 }
 

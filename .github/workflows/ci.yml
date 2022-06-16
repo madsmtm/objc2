@@ -67,7 +67,7 @@ jobs:
             rust:
               toolchain: nightly
               target: x86_64-apple-darwin
-              components: rust-src
+              components: clippy, rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             # 32-bit support was removed in 10.15, so we can't test the
             # binary, only build it
@@ -114,7 +114,7 @@ jobs:
             rust:
               toolchain: nightly
               target: x86_64-apple-darwin
-              components: rust-src
+              components: clippy, rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             test-args: --no-run
           - name: Build iOS ARMv7s
@@ -123,7 +123,7 @@ jobs:
             rust:
               toolchain: nightly
               target: x86_64-apple-darwin
-              components: rust-src
+              components: clippy, rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             test-args: --no-run
           - name: Build iOS 32bit x86
@@ -132,7 +132,7 @@ jobs:
             rust:
               toolchain: nightly
               target: x86_64-apple-darwin
-              components: rust-src
+              components: clippy, rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             test-args: --no-run
           - name: Test Compiler-RT
@@ -302,7 +302,7 @@ jobs:
         toolchain: ${{ matrix.rust.toolchain || 'stable' }}
         profile: minimal
         override: true
-        components: ${{ matrix.rust.components }}
+        components: ${{ matrix.rust.components || 'clippy' }}
         # Allows installing for a different base target
         target: ${{ matrix.rust.target || matrix.target }}
 
@@ -311,6 +311,13 @@ jobs:
       # TODO: Replace once cargo dinghy gets updated
       # cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
       run: cargo install --git https://github.com/madsmtm/dinghy.git --branch update-cargo --bin cargo-dinghy --root=$HOME/extern --target=x86_64-apple-darwin
+
+    - name: Lint
+      uses: actions-rs/cargo@v1
+      with:
+        command: clippy
+        # Temporarily allow `clippy::let_unit_value`
+        args: ${{ env.ARGS }} --all-targets -- --deny warnings --allow clippy::let_unit_value
 
     - name: Build
       if: ${{ !matrix.dinghy }}

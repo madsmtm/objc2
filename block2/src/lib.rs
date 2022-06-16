@@ -80,6 +80,8 @@
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
+#![warn(clippy::cargo)]
+#![warn(clippy::ptr_as_ptr)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block2/0.2.0-alpha.4")]
 
@@ -177,7 +179,12 @@ block_args_impl!(
 #[repr(C)]
 pub struct Block<A, R> {
     _inner: [u8; 0],
-    p: PhantomData<(ffi::Block_layout, fn(A) -> R)>,
+    // We effectively store `Block_layout` + a bit more, but `Block` has to
+    // remain an empty type otherwise the compiler thinks we only have
+    // provenance over `Block_layout`.
+    _layout: PhantomData<ffi::Block_layout>,
+    // To get correct variance on args and return types
+    _p: PhantomData<fn(A) -> R>,
 }
 
 unsafe impl<A: BlockArguments + EncodeArguments, R: Encode> RefEncode for Block<A, R> {

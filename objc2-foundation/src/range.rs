@@ -150,6 +150,7 @@ mod tests {
 
     #[test]
     #[should_panic = "Range end < start"]
+    #[allow(clippy::reversed_empty_ranges)]
     fn test_from_range_inverted() {
         let _ = NSRange::from(10..0);
     }

@@ -222,7 +222,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
 unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        self as *mut T as *mut Object
+        (self as *mut T).cast()
     }
 }
 
@@ -244,7 +244,7 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         let ptr: *const T = self;
-        ptr as *mut T as *mut Object
+        (ptr as *mut T).cast()
     }
 }
 
@@ -259,7 +259,7 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
 unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T, O> {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        Id::as_ptr(self) as *mut T as *mut Object
+        (Id::as_ptr(self) as *mut T).cast()
     }
 }
 
@@ -280,7 +280,7 @@ unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<
 unsafe impl MessageReceiver for *const Class {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
-        self as *mut Class as *mut Object
+        (self as *mut Class).cast()
     }
 }
 
@@ -288,7 +288,7 @@ unsafe impl<'a> MessageReceiver for &'a Class {
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         let ptr: *const Class = self;
-        ptr as *mut Class as *mut Object
+        (ptr as *mut Class).cast()
     }
 }
 

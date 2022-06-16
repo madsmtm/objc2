@@ -83,7 +83,7 @@ pub(crate) fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a st
 
 fn chomp_int(s: &str) -> Option<(usize, &str)> {
     // Chomp until we hit a non-digit
-    let (num, t) = match s.find(|c: char| !c.is_digit(10)) {
+    let (num, t) = match s.find(|c: char| !c.is_ascii_digit()) {
         Some(i) => s.split_at(i),
         None => (s, ""),
     };

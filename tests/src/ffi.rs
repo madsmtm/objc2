@@ -86,7 +86,7 @@ mod tests {
     #[test]
     fn test_large_struct_block() {
         let data = LargeStruct::get();
-        let mut expected = data.clone();
+        let mut expected = data;
         expected.mutate();
 
         assert_eq!(

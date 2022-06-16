@@ -6,9 +6,11 @@ use std::os::raw::c_int;
 use crate::{id, objc_class, BOOL};
 
 /// The equivalent of `true` for Objective-C's [`BOOL`][`super::BOOL`] type.
+#[allow(clippy::unnecessary_cast)]
 pub const YES: BOOL = true as BOOL; // true -> 1
 
 /// The equivalent of `false` for Objective-C's [`BOOL`][`super::BOOL`] type.
+#[allow(clippy::unnecessary_cast)]
 pub const NO: BOOL = false as BOOL; // false -> 0
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] object / instance.

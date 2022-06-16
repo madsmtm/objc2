@@ -129,7 +129,7 @@ mod tests {
         }
 
         let data = LargeStruct::get();
-        let mut new_data = data.clone();
+        let mut new_data = data;
         new_data.mutate();
 
         assert_eq!(unsafe { BLOCK.call((data,)) }, new_data);

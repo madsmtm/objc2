@@ -8,7 +8,7 @@ use crate::runtime::{Bool, Class, Object, Sel};
 use crate::{msg_send, msg_send_bool};
 use crate::{Encoding, Message, RefEncode};
 
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub(crate) struct ThreadTestData {
     pub(crate) alloc: usize,
     pub(crate) dealloc: usize,
