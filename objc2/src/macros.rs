@@ -89,9 +89,15 @@ macro_rules! sel {
             #[link_section = "__DATA,__objc_selrefs,literal_pointers,no_dead_strip"]
             static mut REF: Cheaty = Cheaty(&VALUE);
 
+            // The actual selector is replaced by dyld when the program is
+            // loaded, so we need to use a volatile read to prevent the
+            // optimizer from thinking it can circumvent the read through REF.
+            //
             // Produce a sel type as a result.
             // XXX(nika): Don't use transmute?
-            unsafe { ::std::mem::transmute::<_, $crate::runtime::Sel>(REF.0) }
+            unsafe {
+                ::std::mem::transmute::<_, $crate::runtime::Sel>(::std::ptr::read_volatile(&REF.0))
+            }
         }
 
         do_it()
