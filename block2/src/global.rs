@@ -188,6 +188,7 @@ macro_rules! global_block {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use alloc::format;
 
     global_block! {
@@ -216,15 +217,9 @@ mod tests {
         assert_eq!(unsafe { MY_BLOCK.call(()) }, 42);
     }
 
-    #[test]
     #[cfg(feature = "apple")]
-    fn test_debug() {
-        let invoke = NOOP_BLOCK.layout.invoke.unwrap();
-        let expected = format!(
-            "GlobalBlock {{
-    isa: _NSConcreteGlobalBlock,
-    flags: BlockFlags {{
-        value: \"00110000000000000000000000000000\",
+    const DEBUG_BLOCKFLAGS: &str = r#"BlockFlags {
+        value: "00110000000000000000000000000000",
         deallocating: false,
         inline_layout_string: false,
         small_descriptor: false,
@@ -240,30 +235,11 @@ mod tests {
         over_referenced: false,
         reference_count: 0,
         ..
-    }},
-    reserved: 0,
-    invoke: Some(
-        {invoke:#?},
-    ),
-    descriptor: BlockDescriptor {{
-        reserved: 0,
-        size: 32,
-    }},
-    ..
-}}"
-        );
-        assert_eq!(format!("{:#?}", NOOP_BLOCK), expected);
-    }
+    }"#;
 
-    #[test]
     #[cfg(not(feature = "apple"))]
-    fn test_debug() {
-        let invoke = NOOP_BLOCK.layout.invoke.unwrap();
-        let expected = format!(
-            "GlobalBlock {{
-    isa: _NSConcreteGlobalBlock,
-    flags: BlockFlags {{
-        value: \"00110000000000000000000000000000\",
+    const DEBUG_BLOCKFLAGS: &str = r#"BlockFlags {
+        value: "00110000000000000000000000000000",
         has_copy_dispose: false,
         has_ctor: false,
         is_global: true,
@@ -272,14 +248,23 @@ mod tests {
         over_referenced: false,
         reference_count: 0,
         ..
-    }},
+    }"#;
+
+    #[test]
+    fn test_debug() {
+        let invoke = NOOP_BLOCK.layout.invoke.unwrap();
+        let size = mem::size_of::<ffi::Block_layout>();
+        let expected = format!(
+            "GlobalBlock {{
+    isa: _NSConcreteGlobalBlock,
+    flags: {DEBUG_BLOCKFLAGS},
     reserved: 0,
     invoke: Some(
         {invoke:#?},
     ),
     descriptor: BlockDescriptor {{
         reserved: 0,
-        size: 32,
+        size: {size},
     }},
     ..
 }}"
