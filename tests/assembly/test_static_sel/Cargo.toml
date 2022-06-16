@@ -1,5 +1,5 @@
 [package]
-name = "test_retain_autoreleased"
+name = "test_static_sel"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -21,4 +21,4 @@ gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1"]
 
 # Hack
-assembly-features = []
+assembly-features = ["objc2/static-sel"]

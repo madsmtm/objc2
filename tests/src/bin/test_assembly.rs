@@ -85,6 +85,7 @@ fn main() {
             .args(args().skip(2))
             .arg("--release")
             .arg("--message-format=json-render-diagnostics")
+            .arg("--features=assembly-features")
             .arg("--")
             .arg("--emit=asm")
             // .arg("-Zplt=no")

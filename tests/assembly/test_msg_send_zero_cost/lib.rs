@@ -6,8 +6,8 @@ use objc2::runtime::{Object, Sel};
 use objc2::MessageReceiver;
 
 #[no_mangle]
-pub fn handle(obj: &Object, sel: Sel) -> *mut Object {
-    unsafe { MessageReceiver::send_message(obj, sel, ()).unwrap() }
+unsafe fn handle(obj: &Object, sel: Sel) -> *mut Object {
+    MessageReceiver::send_message(obj, sel, ()).unwrap()
 }
 
 // This will definitely not work, but is useful for making the assembly look
@@ -22,6 +22,6 @@ fn selector() -> Sel {
 }
 
 #[no_mangle]
-pub fn handle_with_sel(obj: &Object) -> *mut Object {
-    unsafe { MessageReceiver::send_message(obj, selector(), ()).unwrap() }
+unsafe fn handle_with_sel(obj: &Object) -> *mut Object {
+    MessageReceiver::send_message(obj, selector(), ()).unwrap()
 }
