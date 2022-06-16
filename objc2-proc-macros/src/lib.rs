@@ -13,6 +13,8 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.1.0")]
 
+mod available;
+
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}
@@ -79,4 +81,13 @@ pub fn __hash_idents(input: TokenStream) -> TokenStream {
     // Get the hash from the hasher and return it as 16 hexadecimal characters
     let s = format!("{:016x}", hasher.finish());
     TokenTree::Literal(Literal::string(&s)).into()
+}
+
+#[proc_macro_attribute]
+pub fn macos(attr: TokenStream, item: TokenStream) -> TokenStream {
+    println!("attr: \"{}\"", attr.to_string());
+    println!("item: \"{}\"", item.to_string());
+    println!("static: {:?}", option_env!("MACOSX_DEPLOYMENT_TARGET"));
+    println!("dynamic: {:?}", std::env::var("MACOSX_DEPLOYMENT_TARGET"));
+    item
 }

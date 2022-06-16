@@ -187,4 +187,14 @@ mod tests {
         let rtn = unsafe { CStr::from_ptr(sel_getName(sel)) };
         assert_eq!(name, rtn);
     }
+
+    #[objc2_proc_macros::macos]
+    fn answer() -> &'static str {
+        "Nope"
+    }
+
+    #[test]
+    fn test_thing() {
+        assert_eq!(answer(), "abc");
+    }
 }
