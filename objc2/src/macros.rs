@@ -37,6 +37,11 @@ macro_rules! class {
 /// [`Sel`]: crate::runtime::Sel
 ///
 ///
+/// # Panics
+///
+/// Panics if the runtime failed allocating space for the selector.
+///
+///
 /// # Specification
 ///
 /// This has similar syntax and functionality as the `@selector` directive in
@@ -233,7 +238,7 @@ macro_rules! __sel_inner_statics_apple_generic {
         #[link_section = $selector_ref_section]
         #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", __hash_idents!($($idents)+))]
         static mut REF: UnsafeCell<Sel> = unsafe {
-            UnsafeCell::new(Sel::from_ptr(NAME_DATA.as_ptr().cast()))
+            UnsafeCell::new(Sel::__internal_from_ptr(NAME_DATA.as_ptr().cast()))
         };
     };
 }

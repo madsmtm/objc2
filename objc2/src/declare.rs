@@ -258,7 +258,7 @@ impl ClassBuilder {
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
                 self.as_mut_ptr(),
-                sel.as_ptr().cast(),
+                sel.as_ptr(),
                 Some(func.__imp()),
                 types.as_ptr(),
             )
@@ -299,7 +299,7 @@ impl ClassBuilder {
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
                 self.metaclass_mut(),
-                sel.as_ptr().cast(),
+                sel.as_ptr(),
                 Some(func.__imp()),
                 types.as_ptr(),
             )
@@ -409,7 +409,7 @@ impl ProtocolBuilder {
         unsafe {
             ffi::protocol_addMethodDescription(
                 self.as_mut_ptr(),
-                sel.as_ptr().cast(),
+                sel.as_ptr(),
                 types.as_ptr(),
                 Bool::new(is_required).as_raw(),
                 Bool::new(is_instance_method).as_raw(),

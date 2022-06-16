@@ -23,8 +23,7 @@ where
         return unsafe { mem::zeroed() };
     }
 
-    let sel_ptr = sel.as_ptr().cast();
-    let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver.cast(), sel_ptr) };
+    let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver.cast(), sel.as_ptr()) };
     let msg_send_fn = msg_send_fn.expect("Null IMP");
     unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }
@@ -49,8 +48,7 @@ where
         receiver: receiver.cast(),
         super_class: superclass.cast(),
     };
-    let sel_ptr = sel.as_ptr().cast();
-    let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel_ptr) };
+    let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel.as_ptr()) };
     let msg_send_fn = msg_send_fn.expect("Null IMP");
     unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }

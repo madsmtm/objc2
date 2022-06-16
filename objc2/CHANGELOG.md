@@ -29,6 +29,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   feature flags to make the `sel!` macro (and by extension, the `msg_send!`
   macros) faster.
 
+### Changed
+* **BREAKING:** `Sel` is now required to be non-null, which means that you
+  have to ensure that any selectors you receive from method calls are
+  non-null before using them.
+
+### Removed
+* **BREAKING:** Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.
+
 
 ## 0.3.0-beta.0 - 2022-06-13
 
