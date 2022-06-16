@@ -82,8 +82,8 @@ with every following release.
 
   As such, we'll try to be as safe and idiomatic as possible; using references
   instead of pointers to represent objects and their mutability, `Option`
-  instead of `null`, and so on. These abstractions should try be zero cost,
-  but this is of course a balancing act against being ergonomic.
+  instead of `null`, and so on. These abstractions should be zero cost, but
+  this is of course a balancing act against being ergonomic.
 
   Some APIs will still have to remain `unsafe` though, so these should contain
   thorough `# Safety` sections, to let users know _exactly_ which safety
