@@ -217,6 +217,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "apple")]
     fn test_debug() {
         let invoke = NOOP_BLOCK.layout.invoke.unwrap();
         let expected = format!(
@@ -236,6 +237,38 @@ mod tests {
         use_stret: true,
         has_signature: false,
         has_extended_layout: false,
+        over_referenced: false,
+        reference_count: 0,
+        ..
+    }},
+    reserved: 0,
+    invoke: Some(
+        {invoke:#?},
+    ),
+    descriptor: BlockDescriptor {{
+        reserved: 0,
+        size: 32,
+    }},
+    ..
+}}"
+        );
+        assert_eq!(format!("{:#?}", NOOP_BLOCK), expected);
+    }
+
+    #[test]
+    #[cfg(feature = "gnustep-1-7")]
+    fn test_debug() {
+        let invoke = NOOP_BLOCK.layout.invoke.unwrap();
+        let expected = format!(
+            "GlobalBlock {{
+    isa: _NSConcreteGlobalBlock,
+    flags: BlockFlags {{
+        value: \"00110000000000000000000000000000\",
+        has_copy_dispose: false,
+        has_ctor: false,
+        is_global: true,
+        use_stret: true,
+        has_signature: false,
         over_referenced: false,
         reference_count: 0,
         ..

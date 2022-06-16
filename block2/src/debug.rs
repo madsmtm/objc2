@@ -97,22 +97,33 @@ impl Debug for BlockFlags {
         f.field("value", &format!("{:032b}", self.0));
 
         macro_rules! test_flags {
-            ($($name:ident: $flag:ident);* $(;)?) => ($(
+            {$(
+                $(#[$m:meta])?
+                $name:ident: $flag:ident
+            );* $(;)?} => ($(
+                $(#[$m])?
                 f.field(stringify!($name), &(self.0 & ffi::$flag != 0));
             )*)
         }
         test_flags! {
+            #[cfg(feature = "apple")]
             deallocating: BLOCK_DEALLOCATING;
+            #[cfg(feature = "apple")]
             inline_layout_string: BLOCK_INLINE_LAYOUT_STRING;
+            #[cfg(feature = "apple")]
             small_descriptor: BLOCK_SMALL_DESCRIPTOR;
+            #[cfg(feature = "apple")]
             is_noescape: BLOCK_IS_NOESCAPE;
+            #[cfg(feature = "apple")]
             needs_free: BLOCK_NEEDS_FREE;
             has_copy_dispose: BLOCK_HAS_COPY_DISPOSE;
             has_ctor: BLOCK_HAS_CTOR;
+            #[cfg(feature = "apple")]
             is_gc: BLOCK_IS_GC;
             is_global: BLOCK_IS_GLOBAL;
             use_stret: BLOCK_USE_STRET;
             has_signature: BLOCK_HAS_SIGNATURE;
+            #[cfg(feature = "apple")]
             has_extended_layout: BLOCK_HAS_EXTENDED_LAYOUT;
         }
 
