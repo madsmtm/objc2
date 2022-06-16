@@ -40,6 +40,9 @@ malloc = ["malloc_buf"]
 # Uses nightly features to make AutoreleasePool zero-cost even in debug mode
 unstable-autoreleasesafe = []
 
+# Marks `rc::Id` with nightly `fundamental` feature.
+unstable-id-fundamental = []
+
 # Runtime selection. See `objc-sys` for details.
 apple = ["objc-sys/apple"]
 gnustep-1-7 = ["objc-sys/gnustep-1-7"]
