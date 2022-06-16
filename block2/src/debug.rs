@@ -6,7 +6,7 @@ use std::ffi::CStr;
 
 use crate::{ffi, Block, ConcreteBlock, GlobalBlock, RcBlock};
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 struct Isa(*const ffi::Class);
 
 impl Isa {
@@ -88,7 +88,7 @@ impl<A, R> Debug for GlobalBlock<A, R> {
     }
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 struct BlockFlags(ffi::block_flags);
 
 impl Debug for BlockFlags {
@@ -128,7 +128,7 @@ impl Debug for BlockFlags {
     }
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 struct BlockDescriptor {
     has_copy_dispose: bool,
     has_signature: bool,
