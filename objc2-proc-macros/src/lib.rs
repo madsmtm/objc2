@@ -51,7 +51,8 @@ fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
 /// Creates a hash from the input and source code locations in the provided
 /// idents.
 #[proc_macro]
-pub fn hash_idents(input: TokenStream) -> TokenStream {
+#[doc(hidden)]
+pub fn __hash_idents(input: TokenStream) -> TokenStream {
     // Create the hasher
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
 

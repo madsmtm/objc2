@@ -5,7 +5,7 @@ use crate::{Message, MessageArguments, MessageError, MessageReceiver};
 pub use core::compile_error;
 pub use core::ptr::read_volatile;
 #[cfg(feature = "unstable-static-sel")]
-pub use objc2_proc_macros::hash_idents;
+pub use objc2_proc_macros::__hash_idents;
 
 /// Helper for specifying the retain semantics for a given selector family.
 ///

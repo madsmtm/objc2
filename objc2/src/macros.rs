@@ -43,39 +43,48 @@ macro_rules! class {
 /// let sel = sel!(setObject:forKey:);
 /// ```
 #[macro_export]
-#[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! sel {
     ($first:ident $(: $($rest:ident :)*)?) => ({
-        static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
-        let name = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
-        #[allow(unused_unsafe)]
-        unsafe { SEL.get(name) }
+        const SELECTOR_DATA: &str = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
+        $crate::__sel_inner!(SELECTOR_DATA, $first $($($rest)*)?)
     });
 }
 
-/// TODO
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(feature = "unstable-static-sel"))]
+macro_rules! __sel_inner {
+    ($data:ident, $($idents:ident)+) => {{
+        static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
+        #[allow(unused_unsafe)]
+        unsafe {
+            SEL.get($data)
+        }
+    }};
+}
+
+#[doc(hidden)]
 #[macro_export]
 #[cfg(feature = "unstable-static-sel")]
-macro_rules! sel {
-    ($first:ident $(: $($rest:ident :)*)?) => ({
+macro_rules! __sel_inner {
+    ($data:ident, $($idents:ident)+) => {{
         // HACK: Wrap the statics in a non-generic, `#[inline(never)]`
         // function to "coerce" the compiler to group all of them into the
         // same codegen unit to avoid link errors
         #[inline(never)]
         fn objc_static_workaround() -> $crate::runtime::Sel {
             #[link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"]
-            #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::hash_idents!($first $($($rest)*)?))]
+            #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
             #[used]
             static _IMAGE_TAG: [u32; 2] = [0, 0];
 
-            // Intermediate selecter data.
-            const X: &[u8] = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0').as_bytes();
+            const X: &[u8] = $data.as_bytes();
 
             // Marked with `unnamed_addr` in Objective-C's LLVM.
             // See rust-lang/rust#18297
             // Should only be an optimization (?)
             #[link_section = "__TEXT,__objc_methname,cstring_literals"]
-            #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__macro_helpers::hash_idents!($first $($($rest)*)?))]
+            #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
             static NAME_DATA: [u8; X.len()] = {
                 // Convert the `&[u8]` slice to an array with known length, so
                 // that we can place that directly in a static.
@@ -92,7 +101,7 @@ macro_rules! sel {
             //
             // Clang uses `no_dead_strip` here for some reason?
             #[link_section = "__DATA,__objc_selrefs,literal_pointers"]
-            #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::hash_idents!($first $($($rest)*)?))]
+            #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
             static mut REF: $crate::runtime::Sel = unsafe {
                 $crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast())
             };
@@ -107,7 +116,7 @@ macro_rules! sel {
         }
 
         objc_static_workaround()
-    });
+    }};
 }
 
 /// Send a message to an object or class.
