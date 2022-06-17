@@ -13,8 +13,8 @@ fn get_same_sel() -> Sel {
 }
 
 #[no_mangle]
-fn get_common() -> Sel {
-    sel!(alloc)
+fn get_common_twice() -> (Sel, Sel) {
+    (sel!(alloc), sel!(alloc))
 }
 
 #[no_mangle]

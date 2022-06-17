@@ -6,7 +6,7 @@ _handle_with_sel:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x19, x0
-	bl	__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17h7e2219bd31d55268E
+	bl	__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17hc2646b773d8b21f1E
 	mov	x1, x0
 	mov	x0, x19
 	ldp	x29, x30, [sp, #16]
@@ -20,9 +20,9 @@ _handle_alloc_init:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x19, x0
-	bl	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h3d919388c23fdf68E
+	bl	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hef5436b0c5b82354E
 	mov	x20, x0
-	bl	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h208b45a18d15451eE
+	bl	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hab60d3c69560846dE
 	mov	x1, x0
 	mov	x0, x19
 	bl	_objc_msgSend
@@ -38,23 +38,23 @@ _use_generic:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x19, x0
-	bl	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h29677622e36cf330E
+	bl	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hf3b0aee156775a82E
 	mov	x20, x0
-	bl	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h432a20390f91c26fE
+	bl	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h7ecc61ed0718f1d3E
 	mov	x2, x0
 	mov	x0, x19
 	mov	x1, x20
 	bl	_objc_msgSend
-	bl	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h777a3aa99de98b73E
+	bl	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h66cda140112bf183E
 	mov	x20, x0
-	bl	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h432a20390f91c26fE
+	bl	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h7ecc61ed0718f1d3E
 	mov	x2, x0
 	mov	x0, x19
 	mov	x1, x20
 	bl	_objc_msgSend
-	bl	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h82d96cce58f7d605E
+	bl	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h5cc6e34851580441E
 	mov	x20, x0
-	bl	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h432a20390f91c26fE
+	bl	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h7ecc61ed0718f1d3E
 	mov	x2, x0
 	mov	x0, x19
 	mov	x1, x20
@@ -63,7 +63,7 @@ _use_generic:
 	b	_objc_msgSend
 
 	.p2align	2
-__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17h7e2219bd31d55268E:
+__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17hc2646b773d8b21f1E:
 Lloh0:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_40f5b12005284286@PAGE
 Lloh1:
@@ -72,7 +72,7 @@ Lloh1:
 	.loh AdrpLdr	Lloh0, Lloh1
 
 	.p2align	2
-__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h3d919388c23fdf68E:
+__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hef5436b0c5b82354E:
 Lloh2:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9@PAGE
 Lloh3:
@@ -81,7 +81,7 @@ Lloh3:
 	.loh AdrpLdr	Lloh2, Lloh3
 
 	.p2align	2
-__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h208b45a18d15451eE:
+__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hab60d3c69560846dE:
 Lloh4:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9@PAGE
 Lloh5:
@@ -90,7 +90,7 @@ Lloh5:
 	.loh AdrpLdr	Lloh4, Lloh5
 
 	.p2align	2
-__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h432a20390f91c26fE:
+__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h7ecc61ed0718f1d3E:
 Lloh6:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_31f63858e271db32@PAGE
 Lloh7:
@@ -99,7 +99,7 @@ Lloh7:
 	.loh AdrpLdr	Lloh6, Lloh7
 
 	.p2align	2
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h29677622e36cf330E:
+__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hf3b0aee156775a82E:
 Lloh8:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4@PAGE
 Lloh9:
@@ -108,7 +108,7 @@ Lloh9:
 	.loh AdrpLdr	Lloh8, Lloh9
 
 	.p2align	2
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h777a3aa99de98b73E:
+__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h66cda140112bf183E:
 Lloh10:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1@PAGE
 Lloh11:
@@ -117,7 +117,7 @@ Lloh11:
 	.loh AdrpLdr	Lloh10, Lloh11
 
 	.p2align	2
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h82d96cce58f7d605E:
+__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h5cc6e34851580441E:
 Lloh12:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720@PAGE
 Lloh13:

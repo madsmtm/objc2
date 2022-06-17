@@ -8,7 +8,7 @@ _handle_with_sel:
 	push	rbx
 	push	rax
 	mov	rbx, rdi
-	call	__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17ha942fb2a10f030e2E
+	call	__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17h2820d4d77d6b733eE
 	mov	rdi, rbx
 	mov	rsi, rax
 	add	rsp, 8
@@ -24,9 +24,9 @@ _handle_alloc_init:
 	push	r14
 	push	rbx
 	mov	rbx, rdi
-	call	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hd4cb31996e6a0379E
+	call	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hd2eea05d9287eb6eE
 	mov	r14, rax
-	call	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h5f238466fcc6efaeE
+	call	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17he4d88d821168c396E
 	mov	rdi, rbx
 	mov	rsi, rax
 	call	_objc_msgSend
@@ -45,23 +45,23 @@ _use_generic:
 	push	r14
 	push	rbx
 	mov	rbx, rdi
-	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h3464617adbf28153E
+	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hc09df8c93c434797E
 	mov	r14, rax
-	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h71fc2d7ad9beb033E
+	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h718bb262b34494f9E
 	mov	rdi, rbx
 	mov	rsi, r14
 	mov	rdx, rax
 	call	_objc_msgSend
-	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hfa132600ad7bf08dE
+	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17ha6bd7949e4e080bfE
 	mov	r14, rax
-	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h71fc2d7ad9beb033E
+	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h718bb262b34494f9E
 	mov	rdi, rbx
 	mov	rsi, r14
 	mov	rdx, rax
 	call	_objc_msgSend
-	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hbd4ba246c21e9c56E
+	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hbb9885f8e326afa5E
 	mov	r14, rax
-	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h71fc2d7ad9beb033E
+	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h718bb262b34494f9E
 	mov	rdi, rbx
 	mov	rsi, r14
 	mov	rdx, rax
@@ -71,7 +71,7 @@ _use_generic:
 	jmp	_objc_msgSend
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17ha942fb2a10f030e2E:
+__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17h2820d4d77d6b733eE:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_40f5b12005284286]
@@ -79,7 +79,7 @@ __ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17ha942fb
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hd4cb31996e6a0379E:
+__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hd2eea05d9287eb6eE:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9]
@@ -87,7 +87,7 @@ __ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hd4cb
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h5f238466fcc6efaeE:
+__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17he4d88d821168c396E:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9]
@@ -95,7 +95,7 @@ __ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h5f23
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h71fc2d7ad9beb033E:
+__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h718bb262b34494f9E:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32]
@@ -103,7 +103,7 @@ __ZN24test_msg_send_static_sel7generic22objc_static_workaround17h71fc2d7ad9beb03
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h3464617adbf28153E:
+__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hc09df8c93c434797E:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4]
@@ -111,7 +111,7 @@ __ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17h3464617adb
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hfa132600ad7bf08dE:
+__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17ha6bd7949e4e080bfE:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1]
@@ -119,7 +119,7 @@ __ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hfa132600ad
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hbd4ba246c21e9c56E:
+__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hbb9885f8e326afa5E:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720]
