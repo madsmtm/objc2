@@ -372,4 +372,31 @@ mod tests {
             let _obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
         }
     }
+
+    #[test]
+    #[cfg(feature = "objc2-proc-macros")]
+    fn hash_idents_different() {
+        assert_ne!(__hash_idents!(abc), __hash_idents!(def));
+    }
+
+    #[test]
+    #[cfg(feature = "objc2-proc-macros")]
+    fn hash_idents_same_no_equal() {
+        assert_ne!(__hash_idents!(abc), __hash_idents!(abc));
+        assert_ne!(__hash_idents!(abc def ghi), __hash_idents!(abc def ghi));
+    }
+
+    #[test]
+    #[cfg(feature = "objc2-proc-macros")]
+    fn hash_idents_exact_same_ident() {
+        macro_rules! x {
+            ($x:ident) => {
+                (__hash_idents!($x), __hash_idents!($x))
+            };
+        }
+        let (ident1, ident2) = x!(abc);
+        // This is a limitation of `__hash_idents`, ideally we'd like these
+        // to be different!
+        assert_eq!(ident1, ident2);
+    }
 }

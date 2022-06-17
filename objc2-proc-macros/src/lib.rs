@@ -50,6 +50,8 @@ fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
 
 /// Creates a hash from the input and source code locations in the provided
 /// idents.
+///
+/// Tests are in [`objc2::__macro_helpers`].
 #[proc_macro]
 #[doc(hidden)]
 pub fn __hash_idents(input: TokenStream) -> TokenStream {
