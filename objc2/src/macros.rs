@@ -43,7 +43,7 @@ macro_rules! class {
 /// let sel = sel!(setObject:forKey:);
 /// ```
 #[macro_export]
-#[cfg(not(feature = "static-sel"))]
+#[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! sel {
     ($first:ident $(: $($rest:ident :)*)?) => ({
         static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
@@ -55,7 +55,7 @@ macro_rules! sel {
 
 /// TODO
 #[macro_export]
-#[cfg(feature = "static-sel")]
+#[cfg(feature = "unstable-static-sel")]
 macro_rules! sel {
     ($first:ident $(: $($rest:ident :)*)?) => ({
         // HACK: Wrap the statics in a non-generic, `#[inline(never)]`

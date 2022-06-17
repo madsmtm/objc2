@@ -383,7 +383,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --features static-sel ${{ env.TESTARGS }}
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features unstable-static-sel
 
     - name: Run assembly tests
       # Not run on GNUStep yet since a lot of function labels are mangled and
