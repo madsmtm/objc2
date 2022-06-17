@@ -8,7 +8,7 @@ _handle_with_sel:
 	push	esi
 	push	eax
 	mov	esi, dword ptr [ebp + 8]
-	call	__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17hbb9ea5cc3c2bc673E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel15handle_with_sel22objc_static_workaround
 	sub	esp, 8
 	push	eax
 	push	esi
@@ -26,9 +26,9 @@ _handle_alloc_init:
 	push	edi
 	push	esi
 	mov	edi, dword ptr [ebp + 8]
-	call	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h7d94dc0b9670a033E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround
 	mov	esi, eax
-	call	__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hbaa7a4a9b9409fa8E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel17handle_alloc_inits_22objc_static_workaround
 	sub	esp, 8
 	push	eax
 	push	edi
@@ -51,27 +51,27 @@ _use_generic:
 	push	edi
 	push	esi
 	mov	edi, dword ptr [ebp + 8]
-	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17ha939665a1bf8cb80E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel11use_generic22objc_static_workaround
 	mov	esi, eax
-	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h9239e0c88e043694E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel7generic22objc_static_workaround
 	sub	esp, 4
 	push	eax
 	push	esi
 	push	edi
 	call	_objc_msgSend
 	add	esp, 16
-	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hd014b6181fe46df3E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel11use_generics_22objc_static_workaround
 	mov	esi, eax
-	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h9239e0c88e043694E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel7generic22objc_static_workaround
 	sub	esp, 4
 	push	eax
 	push	esi
 	push	edi
 	call	_objc_msgSend
 	add	esp, 16
-	call	__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hbfbcb6f3695b31d1E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel11use_generics0_22objc_static_workaround
 	mov	esi, eax
-	call	__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h9239e0c88e043694E
+	call	__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel7generic22objc_static_workaround
 	sub	esp, 4
 	push	eax
 	push	esi
@@ -84,7 +84,7 @@ _use_generic:
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel15handle_with_sel22objc_static_workaround17hbb9ea5cc3c2bc673E:
+__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel15handle_with_sel22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L3$pb
@@ -95,7 +95,7 @@ L3$pb:
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17h7d94dc0b9670a033E:
+__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L4$pb
@@ -106,7 +106,7 @@ L4$pb:
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround17hbaa7a4a9b9409fa8E:
+__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel17handle_alloc_inits_22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L5$pb
@@ -117,7 +117,7 @@ L5$pb:
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel7generic22objc_static_workaround17h9239e0c88e043694E:
+__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel7generic22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L6$pb
@@ -128,7 +128,7 @@ L6$pb:
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17ha939665a1bf8cb80E:
+__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel11use_generic22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L7$pb
@@ -139,7 +139,7 @@ L7$pb:
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hd014b6181fe46df3E:
+__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel11use_generics_22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L8$pb
@@ -150,7 +150,7 @@ L8$pb:
 	ret
 
 	.p2align	4, 0x90
-__ZN24test_msg_send_static_sel11use_generic22objc_static_workaround17hbfbcb6f3695b31d1E:
+__RNvNvCs66pPOBPZDax_24test_msg_send_static_sel11use_generics0_22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L9$pb

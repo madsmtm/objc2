@@ -90,6 +90,7 @@ fn main() {
             .arg("--emit=asm")
             // .arg("-Zplt=no")
             .arg("-Cllvm-args=--x86-asm-syntax=intel")
+            .arg("-Csymbol-mangling-version=v0")
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
             .output()

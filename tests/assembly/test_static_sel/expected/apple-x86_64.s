@@ -6,7 +6,7 @@ _get_sel:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
-	jmp	__ZN15test_static_sel7get_sel22objc_static_workaround17hc12703947ea497bbE
+	jmp	__RNvNvCsfPBiXXRyxlm_15test_static_sel7get_sel22objc_static_workaround
 
 	.globl	_get_same_sel
 	.p2align	4, 0x90
@@ -14,7 +14,7 @@ _get_same_sel:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
-	jmp	__ZN15test_static_sel12get_same_sel22objc_static_workaround17hca258d69d3e23d5eE
+	jmp	__RNvNvCsfPBiXXRyxlm_15test_static_sel12get_same_sel22objc_static_workaround
 
 	.globl	_get_common_twice
 	.p2align	4, 0x90
@@ -23,9 +23,9 @@ _get_common_twice:
 	mov	rbp, rsp
 	push	rbx
 	push	rax
-	call	__ZN15test_static_sel16get_common_twice22objc_static_workaround17h8dadd4b63e132a5cE
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel16get_common_twice22objc_static_workaround
 	mov	rbx, rax
-	call	__ZN15test_static_sel16get_common_twice22objc_static_workaround17h23fd0bdb743e9e9cE
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel16get_common_twices_22objc_static_workaround
 	mov	rdx, rax
 	mov	rax, rbx
 	add	rsp, 8
@@ -39,7 +39,7 @@ _get_different_sel:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
-	jmp	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h0647461fa2fb8e0aE
+	jmp	__RNvNvCsfPBiXXRyxlm_15test_static_sel17get_different_sel22objc_static_workaround
 
 	.globl	_unused_sel
 	.p2align	4, 0x90
@@ -47,7 +47,7 @@ _unused_sel:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
-	jmp	__ZN15test_static_sel10unused_sel22objc_static_workaround17h89dff92e2e97ddb8E
+	jmp	__RNvNvCsfPBiXXRyxlm_15test_static_sel10unused_sel22objc_static_workaround
 
 	.globl	_use_fns
 	.p2align	4, 0x90
@@ -59,13 +59,13 @@ _use_fns:
 	push	r12
 	push	rbx
 	mov	rbx, rdi
-	call	__ZN15test_static_sel7get_sel22objc_static_workaround17hc12703947ea497bbE
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel7get_sel22objc_static_workaround
 	mov	r14, rax
-	call	__ZN15test_static_sel12get_same_sel22objc_static_workaround17hca258d69d3e23d5eE
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel12get_same_sel22objc_static_workaround
 	mov	r15, rax
-	call	__ZN15test_static_sel17get_different_sel22objc_static_workaround17h0647461fa2fb8e0aE
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel17get_different_sel22objc_static_workaround
 	mov	r12, rax
-	call	__ZN15test_static_sel7use_fns22objc_static_workaround17hc7ea4a687b01e5f9E
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel7use_fns22objc_static_workaround
 	mov	qword ptr [rbx], r14
 	mov	qword ptr [rbx + 8], r15
 	mov	qword ptr [rbx + 16], r12
@@ -86,9 +86,9 @@ _use_same_twice:
 	push	r14
 	push	rbx
 	mov	rbx, rdi
-	call	__ZN15test_static_sel7get_sel22objc_static_workaround17hc12703947ea497bbE
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel7get_sel22objc_static_workaround
 	mov	r14, rax
-	call	__ZN15test_static_sel7get_sel22objc_static_workaround17hc12703947ea497bbE
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel7get_sel22objc_static_workaround
 	mov	qword ptr [rbx], r14
 	mov	qword ptr [rbx + 8], rax
 	mov	rax, rbx
@@ -109,7 +109,7 @@ _use_in_loop:
 	mov	rbx, rdi
 	.p2align	4, 0x90
 LBB7_2:
-	call	__ZN15test_static_sel11use_in_loop22objc_static_workaround17h7c93fa32030b5498E
+	call	__RNvNvCsfPBiXXRyxlm_15test_static_sel11use_in_loop22objc_static_workaround
 	dec	rbx
 	jne	LBB7_2
 LBB7_3:
@@ -119,7 +119,7 @@ LBB7_3:
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel7get_sel22objc_static_workaround17hc12703947ea497bbE:
+__RNvNvCsfPBiXXRyxlm_15test_static_sel7get_sel22objc_static_workaround:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9]
@@ -127,7 +127,7 @@ __ZN15test_static_sel7get_sel22objc_static_workaround17hc12703947ea497bbE:
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel12get_same_sel22objc_static_workaround17hca258d69d3e23d5eE:
+__RNvNvCsfPBiXXRyxlm_15test_static_sel12get_same_sel22objc_static_workaround:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35]
@@ -135,7 +135,7 @@ __ZN15test_static_sel12get_same_sel22objc_static_workaround17hca258d69d3e23d5eE:
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel16get_common_twice22objc_static_workaround17h8dadd4b63e132a5cE:
+__RNvNvCsfPBiXXRyxlm_15test_static_sel16get_common_twice22objc_static_workaround:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77]
@@ -143,7 +143,7 @@ __ZN15test_static_sel16get_common_twice22objc_static_workaround17h8dadd4b63e132a
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel16get_common_twice22objc_static_workaround17h23fd0bdb743e9e9cE:
+__RNvNvCsfPBiXXRyxlm_15test_static_sel16get_common_twices_22objc_static_workaround:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7]
@@ -151,7 +151,7 @@ __ZN15test_static_sel16get_common_twice22objc_static_workaround17h23fd0bdb743e9e
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel17get_different_sel22objc_static_workaround17h0647461fa2fb8e0aE:
+__RNvNvCsfPBiXXRyxlm_15test_static_sel17get_different_sel22objc_static_workaround:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0]
@@ -159,7 +159,7 @@ __ZN15test_static_sel17get_different_sel22objc_static_workaround17h0647461fa2fb8
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel10unused_sel22objc_static_workaround17h89dff92e2e97ddb8E:
+__RNvNvCsfPBiXXRyxlm_15test_static_sel10unused_sel22objc_static_workaround:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_2c505e110d181b25]
@@ -167,7 +167,7 @@ __ZN15test_static_sel10unused_sel22objc_static_workaround17h89dff92e2e97ddb8E:
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel7use_fns22objc_static_workaround17hc7ea4a687b01e5f9E:
+__RNvNvCsfPBiXXRyxlm_15test_static_sel7use_fns22objc_static_workaround:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99]
@@ -175,7 +175,7 @@ __ZN15test_static_sel7use_fns22objc_static_workaround17hc7ea4a687b01e5f9E:
 	ret
 
 	.p2align	4, 0x90
-__ZN15test_static_sel11use_in_loop22objc_static_workaround17h7c93fa32030b5498E:
+__RNvNvCsfPBiXXRyxlm_15test_static_sel11use_in_loop22objc_static_workaround:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_9845965b987ed54b]
