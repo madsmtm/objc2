@@ -188,7 +188,10 @@ macro_rules! __sel_inner_statics_apple_generic {
 
         /// Place the constant value in the correct section.
         ///
-        /// Clang uses `no_dead_strip` in the link section for some reason?
+        /// Clang uses `no_dead_strip` in the link section for some reason,
+        /// which other tools now assume is present (so we have to add it as
+        /// well). Doesn't really matter, since the selector access can't be
+        /// optimized away anyhow (it uses read_volatile).
         #[link_section = $selector_ref_section]
         #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
         static mut REF: $crate::runtime::Sel = unsafe {
@@ -202,10 +205,11 @@ macro_rules! __sel_inner_statics_apple_generic {
 #[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
 macro_rules! __sel_inner_statics {
     ($($args:tt)*) => {
+        // Found by reading clang/LLVM sources
         $crate::__sel_inner_statics_apple_generic! {
             "__DATA,__objc_imageinfo,regular,no_dead_strip";
             "__TEXT,__objc_methname,cstring_literals";
-            "__DATA,__objc_selrefs,literal_pointers";
+            "__DATA,__objc_selrefs,literal_pointers,no_dead_strip";
             $($args)*
         }
     };
@@ -219,7 +223,7 @@ macro_rules! __sel_inner_statics {
         $crate::__sel_inner_statics_apple_generic! {
             "__OBJC,__image_info,regular";
             "__TEXT,__cstring,cstring_literals";
-            "__OBJC,__message_refs,literal_pointers";
+            "__OBJC,__message_refs,literal_pointers,no_dead_strip";
             $($args)*
         }
     };
