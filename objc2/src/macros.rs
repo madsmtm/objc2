@@ -188,14 +188,24 @@ macro_rules! __sel_inner_statics_apple_generic {
 
         /// Place the constant value in the correct section.
         ///
+        /// We use `UnsafeCell` because this somewhat resembles internal
+        /// mutation - this pointer will be changed by dyld at startup, so we
+        /// _must_ prevent Rust/LLVM from trying to "peek inside" it and just
+        /// use a pointer to `NAME_DATA` directly.
+        ///
+        /// Clang does this by marking `REF` with LLVM's
+        /// `externally_initialized`.
+        ///
+        /// `static mut` is used so that we don't need to wrap the
+        /// `UnsafeCell` in something that implements `Sync`.
+        ///
         /// Clang uses `no_dead_strip` in the link section for some reason,
-        /// which other tools now assume is present (so we have to add it as
-        /// well). Doesn't really matter, since the selector access can't be
-        /// optimized away anyhow (it uses read_volatile).
+        /// which other tools (notably some LLVM tools) now assume is present,
+        /// so we have to add it as well.
         #[link_section = $selector_ref_section]
         #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
-        static mut REF: $crate::runtime::Sel = unsafe {
-            $crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast())
+        static mut REF: $crate::__macro_helpers::UnsafeCell<$crate::runtime::Sel> = unsafe {
+            $crate::__macro_helpers::UnsafeCell::new($crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast()))
         };
     };
 }
@@ -261,13 +271,11 @@ macro_rules! __sel_inner {
         #[inline(never)]
         fn objc_static_workaround() -> $crate::runtime::Sel {
             // SAFETY: The actual selector is replaced by dyld when the
-            // program is loaded, so we need to use a volatile read to prevent
-            // the optimizer from thinking it can circumvent the read through
-            // REF.
+            // program is loaded.
             //
-            // Clang avoids this by marking `REF` with LLVM's
-            // `externally_initialized`.
-            unsafe { $crate::__macro_helpers::read_volatile(&REF) }
+            // This is similar to a volatile read, except it can be stripped
+            // if unused.
+            unsafe { *REF.get() }
         }
 
         objc_static_workaround()
@@ -283,7 +291,7 @@ macro_rules! __sel_inner {
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
-        unsafe { $crate::__macro_helpers::read_volatile(&REF) }
+        unsafe { *REF.get() }
     }};
 }
 

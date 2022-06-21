@@ -35,7 +35,7 @@ _get_different_sel:
 	.p2align	2
 	.code	32
 _unused_sel:
-	b	__RNvNvCs8GaUp4KaTG0_15test_static_sel10unused_sel22objc_static_workaround
+	bx	lr
 
 	.globl	_use_fns
 	.p2align	2
@@ -65,31 +65,17 @@ _use_fns:
 _use_same_twice:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	push	{r8}
 	mov	r4, r0
 	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel7get_sel22objc_static_workaround
-	mov	r8, r0
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel7get_sel22objc_static_workaround
-	mov	r9, r0
-	strd	r8, r9, [r4]
-	pop	{r8}
+	str	r0, [r4]
+	str	r0, [r4, #4]
 	pop	{r4, r7, pc}
 
 	.globl	_use_in_loop
 	.p2align	2
 	.code	32
 _use_in_loop:
-	push	{r4, r7, lr}
-	add	r7, sp, #4
-	cmp	r0, #0
-	popeq	{r4, r7, pc}
-LBB7_1:
-	mov	r4, r0
-LBB7_2:
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel11use_in_loop22objc_static_workaround
-	subs	r4, r4, #1
-	bne	LBB7_2
-	pop	{r4, r7, pc}
+	bx	lr
 
 	.p2align	2
 	.code	32
@@ -138,28 +124,10 @@ LPC12_0:
 
 	.p2align	2
 	.code	32
-__RNvNvCs8GaUp4KaTG0_15test_static_sel10unused_sel22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_2c505e110d181b25-(LPC13_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_2c505e110d181b25-(LPC13_0+8))
-LPC13_0:
-	ldr	r0, [pc, r0]
-	bx	lr
-
-	.p2align	2
-	.code	32
 __RNvNvCs8GaUp4KaTG0_15test_static_sel7use_fns22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-(LPC14_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-(LPC14_0+8))
-LPC14_0:
-	ldr	r0, [pc, r0]
-	bx	lr
-
-	.p2align	2
-	.code	32
-__RNvNvCs8GaUp4KaTG0_15test_static_sel11use_in_loop22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_9845965b987ed54b-(LPC15_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_9845965b987ed54b-(LPC15_0+8))
-LPC15_0:
+	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-(LPC13_0+8))
+	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-(LPC13_0+8))
+LPC13_0:
 	ldr	r0, [pc, r0]
 	bx	lr
 
@@ -283,20 +251,20 @@ L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99:
 	.long	L_OBJC_METH_VAR_NAME_5419c3f7fc0a6f99
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_9845965b987ed54b
+	.globl	L_OBJC_IMAGE_INFO_f46908e864c86c6b
 	.p2align	2
-L_OBJC_IMAGE_INFO_9845965b987ed54b:
+L_OBJC_IMAGE_INFO_f46908e864c86c6b:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_9845965b987ed54b
-L_OBJC_METH_VAR_NAME_9845965b987ed54b:
+	.globl	L_OBJC_METH_VAR_NAME_f46908e864c86c6b
+L_OBJC_METH_VAR_NAME_f46908e864c86c6b:
 	.asciz	"loopedSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_9845965b987ed54b
+	.globl	L_OBJC_SELECTOR_REFERENCES_f46908e864c86c6b
 	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_9845965b987ed54b:
-	.long	L_OBJC_METH_VAR_NAME_9845965b987ed54b
+L_OBJC_SELECTOR_REFERENCES_f46908e864c86c6b:
+	.long	L_OBJC_METH_VAR_NAME_f46908e864c86c6b
 
 .subsections_via_symbols

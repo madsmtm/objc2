@@ -16,14 +16,14 @@ LPC0_0:
 _handle_alloc_init:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	movw	r4, :lower16:(L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9-(LPC1_0+8))
-	movt	r4, :upper16:(L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9-(LPC1_0+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9-(LPC1_0+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9-(LPC1_0+8))
 LPC1_0:
-	ldr	r4, [pc, r4]
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9-(LPC1_1+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9-(LPC1_1+8))
-LPC1_1:
 	ldr	r1, [pc, r1]
+	movw	r4, :lower16:(L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9-(LPC1_1+8))
+	movt	r4, :upper16:(L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9-(LPC1_1+8))
+LPC1_1:
+	ldr	r4, [pc, r4]
 	bl	_objc_msgSend
 	mov	r1, r4
 	pop	{r4, r7, lr}
@@ -35,35 +35,35 @@ LPC1_1:
 _use_generic:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4-(LPC2_0+8))
+	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_0+8))
 	mov	r4, r0
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4-(LPC2_0+8))
+	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_0+8))
 LPC2_0:
-	ldr	r1, [pc, r1]
-	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_1+8))
-	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_1+8))
+	ldr	r2, [pc, r2]
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4-(LPC2_1+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4-(LPC2_1+8))
 LPC2_1:
-	ldr	r2, [pc, r2]
+	ldr	r1, [pc, r1]
 	bl	_objc_msgSend
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1-(LPC2_2+8))
+	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_2+8))
 	mov	r0, r4
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1-(LPC2_2+8))
+	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_2+8))
 LPC2_2:
-	ldr	r1, [pc, r1]
-	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_3+8))
-	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_3+8))
+	ldr	r2, [pc, r2]
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1-(LPC2_3+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1-(LPC2_3+8))
 LPC2_3:
-	ldr	r2, [pc, r2]
-	bl	_objc_msgSend
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720-(LPC2_4+8))
-	mov	r0, r4
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720-(LPC2_4+8))
-LPC2_4:
 	ldr	r1, [pc, r1]
-	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_5+8))
-	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_5+8))
-LPC2_5:
+	bl	_objc_msgSend
+	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_4+8))
+	mov	r0, r4
+	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-(LPC2_4+8))
+LPC2_4:
 	ldr	r2, [pc, r2]
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720-(LPC2_5+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720-(LPC2_5+8))
+LPC2_5:
+	ldr	r1, [pc, r1]
 	pop	{r4, r7, lr}
 	b	_objc_msgSend
 

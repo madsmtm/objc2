@@ -47,7 +47,7 @@ _unused_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__RNvNvCs6BnsG4fGG5c_15test_static_sel10unused_sel22objc_static_workaround
+	ret
 
 	.globl	_use_fns
 	.p2align	4, 0x90
@@ -84,17 +84,15 @@ _use_fns:
 _use_same_twice:
 	push	ebp
 	mov	ebp, esp
-	push	edi
 	push	esi
+	push	eax
 	mov	esi, dword ptr [ebp + 8]
 	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
-	mov	edi, eax
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
-	mov	dword ptr [esi], edi
+	mov	dword ptr [esi], eax
 	mov	dword ptr [esi + 4], eax
 	mov	eax, esi
+	add	esp, 4
 	pop	esi
-	pop	edi
 	pop	ebp
 	ret	4
 
@@ -103,19 +101,6 @@ _use_same_twice:
 _use_in_loop:
 	push	ebp
 	mov	ebp, esp
-	push	esi
-	push	eax
-	mov	esi, dword ptr [ebp + 8]
-	test	esi, esi
-	je	LBB7_2
-	.p2align	4, 0x90
-LBB7_1:
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel11use_in_loop22objc_static_workaround
-	dec	esi
-	jne	LBB7_1
-LBB7_2:
-	add	esp, 4
-	pop	esi
 	pop	ebp
 	ret
 
@@ -175,35 +160,13 @@ L12$pb:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel10unused_sel22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel7use_fns22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L13$pb
 L13$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_2c505e110d181b25-L13$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel7use_fns22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L14$pb
-L14$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-L14$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel11use_in_loop22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L15$pb
-L15$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_9845965b987ed54b-L15$pb]
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-L13$pb]
 	pop	ebp
 	ret
 
@@ -327,20 +290,20 @@ L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99:
 	.long	L_OBJC_METH_VAR_NAME_5419c3f7fc0a6f99
 
 	.section	__OBJC,__image_info
-	.globl	L_OBJC_IMAGE_INFO_9845965b987ed54b
+	.globl	L_OBJC_IMAGE_INFO_f46908e864c86c6b
 	.p2align	2
-L_OBJC_IMAGE_INFO_9845965b987ed54b:
+L_OBJC_IMAGE_INFO_f46908e864c86c6b:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_9845965b987ed54b
-L_OBJC_METH_VAR_NAME_9845965b987ed54b:
+	.globl	L_OBJC_METH_VAR_NAME_f46908e864c86c6b
+L_OBJC_METH_VAR_NAME_f46908e864c86c6b:
 	.asciz	"loopedSelector"
 
 	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_9845965b987ed54b
+	.globl	L_OBJC_SELECTOR_REFERENCES_f46908e864c86c6b
 	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_9845965b987ed54b:
-	.long	L_OBJC_METH_VAR_NAME_9845965b987ed54b
+L_OBJC_SELECTOR_REFERENCES_f46908e864c86c6b:
+	.long	L_OBJC_METH_VAR_NAME_f46908e864c86c6b
 
 .subsections_via_symbols

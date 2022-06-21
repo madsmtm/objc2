@@ -38,14 +38,14 @@ fn use_fns() -> [Sel; 4] {
 
 #[no_mangle]
 fn use_same_twice() -> [Sel; 2] {
-    // Should ideally not need to load twice
+    // Should not need to load twice
     [get_sel(), get_sel()]
 }
 
 #[no_mangle]
 fn use_in_loop(n: usize) {
     for _i in 0..n {
-        // Should ideally be a noop
+        // Should be a noop
         let _ = sel!(loopedSelector);
     }
 }
