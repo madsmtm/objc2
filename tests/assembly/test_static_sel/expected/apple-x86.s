@@ -6,7 +6,7 @@ _get_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__RNvNvCsiw6xRX1pmbi_15test_static_sel7get_sel22objc_static_workaround
+	jmp	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
 
 	.globl	_get_same_sel
 	.p2align	4, 0x90
@@ -14,7 +14,7 @@ _get_same_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__RNvNvCsiw6xRX1pmbi_15test_static_sel12get_same_sel22objc_static_workaround
+	jmp	__RNvNvCs6BnsG4fGG5c_15test_static_sel12get_same_sel22objc_static_workaround
 
 	.globl	_get_common_twice
 	.p2align	4, 0x90
@@ -23,9 +23,9 @@ _get_common_twice:
 	mov	ebp, esp
 	push	esi
 	push	eax
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel16get_common_twice22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel16get_common_twice22objc_static_workaround
 	mov	esi, eax
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel16get_common_twices_22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel16get_common_twices_22objc_static_workaround
 	mov	edx, eax
 	mov	eax, esi
 	add	esp, 4
@@ -39,7 +39,7 @@ _get_different_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__RNvNvCsiw6xRX1pmbi_15test_static_sel17get_different_sel22objc_static_workaround
+	jmp	__RNvNvCs6BnsG4fGG5c_15test_static_sel17get_different_sel22objc_static_workaround
 
 	.globl	_unused_sel
 	.p2align	4, 0x90
@@ -47,7 +47,7 @@ _unused_sel:
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
-	jmp	__RNvNvCsiw6xRX1pmbi_15test_static_sel10unused_sel22objc_static_workaround
+	jmp	__RNvNvCs6BnsG4fGG5c_15test_static_sel10unused_sel22objc_static_workaround
 
 	.globl	_use_fns
 	.p2align	4, 0x90
@@ -59,13 +59,13 @@ _use_fns:
 	push	esi
 	sub	esp, 12
 	mov	esi, dword ptr [ebp + 8]
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel7get_sel22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
 	mov	dword ptr [ebp - 16], eax
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel12get_same_sel22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel12get_same_sel22objc_static_workaround
 	mov	ebx, eax
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel17get_different_sel22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel17get_different_sel22objc_static_workaround
 	mov	edi, eax
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel7use_fns22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7use_fns22objc_static_workaround
 	mov	ecx, dword ptr [ebp - 16]
 	mov	dword ptr [esi], ecx
 	mov	dword ptr [esi + 4], ebx
@@ -87,9 +87,9 @@ _use_same_twice:
 	push	edi
 	push	esi
 	mov	esi, dword ptr [ebp + 8]
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel7get_sel22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
 	mov	edi, eax
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel7get_sel22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
 	mov	dword ptr [esi], edi
 	mov	dword ptr [esi + 4], eax
 	mov	eax, esi
@@ -110,7 +110,7 @@ _use_in_loop:
 	je	LBB7_2
 	.p2align	4, 0x90
 LBB7_1:
-	call	__RNvNvCsiw6xRX1pmbi_15test_static_sel11use_in_loop22objc_static_workaround
+	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel11use_in_loop22objc_static_workaround
 	dec	esi
 	jne	LBB7_1
 LBB7_2:
@@ -120,7 +120,7 @@ LBB7_2:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCsiw6xRX1pmbi_15test_static_sel7get_sel22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L8$pb
@@ -131,7 +131,7 @@ L8$pb:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCsiw6xRX1pmbi_15test_static_sel12get_same_sel22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel12get_same_sel22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L9$pb
@@ -142,7 +142,7 @@ L9$pb:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCsiw6xRX1pmbi_15test_static_sel16get_common_twice22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel16get_common_twice22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L10$pb
@@ -153,7 +153,7 @@ L10$pb:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCsiw6xRX1pmbi_15test_static_sel16get_common_twices_22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel16get_common_twices_22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L11$pb
@@ -164,7 +164,7 @@ L11$pb:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCsiw6xRX1pmbi_15test_static_sel17get_different_sel22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel17get_different_sel22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L12$pb
@@ -175,7 +175,7 @@ L12$pb:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCsiw6xRX1pmbi_15test_static_sel10unused_sel22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel10unused_sel22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L13$pb
@@ -186,7 +186,7 @@ L13$pb:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCsiw6xRX1pmbi_15test_static_sel7use_fns22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel7use_fns22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L14$pb
@@ -197,7 +197,7 @@ L14$pb:
 	ret
 
 	.p2align	4, 0x90
-__RNvNvCsiw6xRX1pmbi_15test_static_sel11use_in_loop22objc_static_workaround:
+__RNvNvCs6BnsG4fGG5c_15test_static_sel11use_in_loop22objc_static_workaround:
 	push	ebp
 	mov	ebp, esp
 	call	L15$pb

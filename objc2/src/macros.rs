@@ -143,44 +143,48 @@ macro_rules! __sel_inner {
 #[cfg(feature = "unstable-static-sel")]
 macro_rules! __sel_inner {
     ($data:ident, $($idents:ident)+) => {{
-        // HACK: Wrap the statics in a non-generic, `#[inline(never)]`
-        // function to "coerce" the compiler to group all of them into the
-        // same codegen unit to avoid link errors
+        #[link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"]
+        #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
+        #[used] // Make sure this reaches the linker
+        static _IMAGE_TAG: [u32; 2] = [0, 0];
+
+        const X: &[u8] = $data.as_bytes();
+
+        /// Clang marks this with LLVM's `unnamed_addr`.
+        /// See rust-lang/rust#18297
+        /// Should only be an optimization (?)
+        #[link_section = "__TEXT,__objc_methname,cstring_literals"]
+        #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
+        static NAME_DATA: [u8; X.len()] = {
+            // Convert the `&[u8]` slice to an array with known length, so
+            // that we can place that directly in a static.
+            let mut res: [u8; X.len()] = [0; X.len()];
+            let mut i = 0;
+            while i < X.len() {
+                res[i] = X[i];
+                i += 1;
+            }
+            res
+        };
+
+        /// Place the constant value in the correct section.
+        ///
+        /// Clang uses `no_dead_strip` here for some reason?
+        #[link_section = "__DATA,__objc_selrefs,literal_pointers"]
+        #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
+        static mut REF: $crate::runtime::Sel = unsafe {
+            $crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast())
+        };
+
+        /// HACK: Wrap the access in a non-generic, `#[inline(never)]`
+        /// function to make the compiler group it into the same codegen unit
+        /// as the statics.
+        ///
+        /// See the following link for details on how the compiler decides
+        /// to partition code into codegen units:
+        /// <https://doc.rust-lang.org/1.61.0/nightly-rustc/rustc_monomorphize/partitioning/index.html>
         #[inline(never)]
         fn objc_static_workaround() -> $crate::runtime::Sel {
-            #[link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"]
-            #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
-            #[used]
-            static _IMAGE_TAG: [u32; 2] = [0, 0];
-
-            const X: &[u8] = $data.as_bytes();
-
-            // Marked with `unnamed_addr` in Objective-C's LLVM.
-            // See rust-lang/rust#18297
-            // Should only be an optimization (?)
-            #[link_section = "__TEXT,__objc_methname,cstring_literals"]
-            #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
-            static NAME_DATA: [u8; X.len()] = {
-                // Convert the `&[u8]` slice to an array with known length, so
-                // that we can place that directly in a static.
-                let mut res: [u8; X.len()] = [0; X.len()];
-                let mut i = 0;
-                while i < X.len() {
-                    res[i] = X[i];
-                    i += 1;
-                }
-                res
-            };
-
-            // Place the constant value in the correct section.
-            //
-            // Clang uses `no_dead_strip` here for some reason?
-            #[link_section = "__DATA,__objc_selrefs,literal_pointers"]
-            #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
-            static mut REF: $crate::runtime::Sel = unsafe {
-                $crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast())
-            };
-
             // The actual selector is replaced by dyld when the program is
             // loaded, so we need to use a volatile read to prevent the
             // optimizer from thinking it can circumvent the read through REF.
