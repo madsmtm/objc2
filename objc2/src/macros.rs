@@ -149,14 +149,20 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __sel_inner_statics {
-    ($data:ident, $($idents:ident)+) => {
+macro_rules! __sel_inner_statics_apple_generic {
+    {
+        $image_info_section:literal;
+        $var_name_section:literal;
+        $selector_ref_section:literal;
+        $data:ident,
+        $($idents:ident)+
+    } => {
         /// We always emit the image info tag, since we need it to:
         /// - End up in the same codegen unit as the other statics below.
         /// - End up in the final binary so it can be read by dyld.
         ///
         /// Unfortunately however, this leads to duplicated tags.
-        #[link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"]
+        #[link_section = $image_info_section]
         #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
         #[used] // Make sure this reaches the linker
         static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
@@ -166,7 +172,7 @@ macro_rules! __sel_inner_statics {
         /// Clang marks this with LLVM's `unnamed_addr`.
         /// See rust-lang/rust#18297
         /// Should only be an optimization (?)
-        #[link_section = "__TEXT,__objc_methname,cstring_literals"]
+        #[link_section = $var_name_section]
         #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
         static NAME_DATA: [u8; X.len()] = {
             // Convert the `&[u8]` slice to an array with known length, so
@@ -182,12 +188,52 @@ macro_rules! __sel_inner_statics {
 
         /// Place the constant value in the correct section.
         ///
-        /// Clang uses `no_dead_strip` here for some reason?
-        #[link_section = "__DATA,__objc_selrefs,literal_pointers"]
+        /// Clang uses `no_dead_strip` in the link section for some reason?
+        #[link_section = $selector_ref_section]
         #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
         static mut REF: $crate::runtime::Sel = unsafe {
             $crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast())
         };
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
+macro_rules! __sel_inner_statics {
+    ($($args:tt)*) => {
+        $crate::__sel_inner_statics_apple_generic! {
+            "__DATA,__objc_imageinfo,regular,no_dead_strip";
+            "__TEXT,__objc_methname,cstring_literals";
+            "__DATA,__objc_selrefs,literal_pointers";
+            $($args)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86"))]
+macro_rules! __sel_inner_statics {
+    ($($args:tt)*) => {
+        $crate::__sel_inner_statics_apple_generic! {
+            "__OBJC,__image_info,regular";
+            "__TEXT,__cstring,cstring_literals";
+            "__OBJC,__message_refs,literal_pointers";
+            $($args)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(feature = "apple"))]
+macro_rules! __sel_inner_statics {
+    ($($args:tt)*) => {
+        // TODO
+        $crate::__macro_helpers::compile_error!(
+            "The `\"unstable-static-sel\"` feature is not yet supported on GNUStep!"
+        )
     };
 }
 
@@ -198,8 +244,8 @@ macro_rules! __sel_inner_statics {
     not(feature = "unstable-static-sel-inlined")
 ))]
 macro_rules! __sel_inner {
-    ($data:ident, $($idents:ident)+) => {{
-        $crate::__sel_inner_statics!($data, $($idents)+);
+    ($($args:tt)*) => {{
+        $crate::__sel_inner_statics!($($args)*);
 
         /// HACK: Wrap the access in a non-generic, `#[inline(never)]`
         /// function to make the compiler group it into the same codegen unit
@@ -228,8 +274,8 @@ macro_rules! __sel_inner {
 #[macro_export]
 #[cfg(all(feature = "unstable-static-sel-inlined"))]
 macro_rules! __sel_inner {
-    ($data:ident, $($idents:ident)+) => {{
-        $crate::__sel_inner_statics!($data, $($idents)+);
+    ($($args:tt)*) => {{
+        $crate::__sel_inner_statics!($($args)*);
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
