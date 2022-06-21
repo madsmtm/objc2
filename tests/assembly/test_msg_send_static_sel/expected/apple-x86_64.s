@@ -5,14 +5,7 @@
 _handle_with_sel:
 	push	rbp
 	mov	rbp, rsp
-	push	rbx
-	push	rax
-	mov	rbx, rdi
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel15handle_with_sel22objc_static_workaround
-	mov	rdi, rbx
-	mov	rsi, rax
-	add	rsp, 8
-	pop	rbx
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_40f5b12005284286]
 	pop	rbp
 	jmp	_objc_msgSend
 
@@ -21,19 +14,15 @@ _handle_with_sel:
 _handle_alloc_init:
 	push	rbp
 	mov	rbp, rsp
-	push	r14
 	push	rbx
-	mov	rbx, rdi
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround
-	mov	r14, rax
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel17handle_alloc_inits_22objc_static_workaround
-	mov	rdi, rbx
-	mov	rsi, rax
+	push	rax
+	mov	rbx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9]
 	call	_objc_msgSend
 	mov	rdi, rax
-	mov	rsi, r14
+	mov	rsi, rbx
+	add	rsp, 8
 	pop	rbx
-	pop	r14
 	pop	rbp
 	jmp	_objc_msgSend
 
@@ -42,89 +31,23 @@ _handle_alloc_init:
 _use_generic:
 	push	rbp
 	mov	rbp, rsp
-	push	r14
 	push	rbx
+	push	rax
 	mov	rbx, rdi
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel11use_generic22objc_static_workaround
-	mov	r14, rax
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel7generic22objc_static_workaround
-	mov	rdi, rbx
-	mov	rsi, r14
-	mov	rdx, rax
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4]
+	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32]
 	call	_objc_msgSend
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel11use_generics_22objc_static_workaround
-	mov	r14, rax
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel7generic22objc_static_workaround
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1]
+	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32]
 	mov	rdi, rbx
-	mov	rsi, r14
-	mov	rdx, rax
 	call	_objc_msgSend
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel11use_generics0_22objc_static_workaround
-	mov	r14, rax
-	call	__RNvNvCshotFXcDShqK_24test_msg_send_static_sel7generic22objc_static_workaround
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720]
+	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32]
 	mov	rdi, rbx
-	mov	rsi, r14
-	mov	rdx, rax
+	add	rsp, 8
 	pop	rbx
-	pop	r14
 	pop	rbp
 	jmp	_objc_msgSend
-
-	.p2align	4, 0x90
-__RNvNvCshotFXcDShqK_24test_msg_send_static_sel15handle_with_sel22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_40f5b12005284286]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCshotFXcDShqK_24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCshotFXcDShqK_24test_msg_send_static_sel17handle_alloc_inits_22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCshotFXcDShqK_24test_msg_send_static_sel7generic22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCshotFXcDShqK_24test_msg_send_static_sel11use_generic22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCshotFXcDShqK_24test_msg_send_static_sel11use_generics_22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCshotFXcDShqK_24test_msg_send_static_sel11use_generics0_22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720]
-	pop	rbp
-	ret
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_40f5b12005284286

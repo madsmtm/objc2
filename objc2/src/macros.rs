@@ -42,16 +42,25 @@ macro_rules! class {
 /// Objective-C. This calls [`Sel::register`] internally. The result is cached
 /// for efficiency.
 ///
-/// If the `"unstable-static-sel"` feature is enabled, this will emit special
-/// statics that will be replaced by the dynamic linker (dyld) when the
-/// program starts up - in exactly the same manner as Objective-C does. This
-/// should be significantly faster (and allow better native debugging),
+/// Non-ascii identifiers are ill-tested, if supported at all.
+///
+/// If the experimental `"unstable-static-sel"` feature is enabled, this will
+/// emit special statics that will be replaced by the dynamic linker (dyld)
+/// when the program starts up - in exactly the same manner as normal
+/// Objective-C code does.
+/// This should be significantly faster (and allow better native debugging),
 /// however due to the Rust compilation model, and since we don't have
 /// low-level control over it, it is currently unlikely that this will work
-/// correctly in all cases. See the source code and [rust-lang/rust#53929] for
-/// more info.
+/// correctly in all cases.
+/// See the source code and [rust-lang/rust#53929] for more info.
 ///
-/// Non-ascii identifiers are ill-tested, if supported at all.
+/// Concretely, this may fail at link-time (likely), at dynamic link-time/just
+/// before the program is run, or possibly also at runtime, causing UB.
+///
+/// The `"unstable-static-sel-inlined"` feature is the even more extreme
+/// version of this - it yields the best performance and is closest to real
+/// Objective-C code, but probably won't work unless your code and its
+/// inlining is written in a very certain way.
 ///
 /// [`Sel::register`]: crate::runtime::Sel::register
 /// [rust-lang/rust#53929]: https://github.com/rust-lang/rust/issues/53929
@@ -140,9 +149,8 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(feature = "unstable-static-sel")]
-macro_rules! __sel_inner {
-    ($data:ident, $($idents:ident)+) => {{
+macro_rules! __sel_inner_statics {
+    ($data:ident, $($idents:ident)+) => {
         #[link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"]
         #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
         #[used] // Make sure this reaches the linker
@@ -175,6 +183,18 @@ macro_rules! __sel_inner {
         static mut REF: $crate::runtime::Sel = unsafe {
             $crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast())
         };
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-static-sel",
+    not(feature = "unstable-static-sel-inlined")
+))]
+macro_rules! __sel_inner {
+    ($data:ident, $($idents:ident)+) => {{
+        $crate::__sel_inner_statics!($data, $($idents)+);
 
         /// HACK: Wrap the access in a non-generic, `#[inline(never)]`
         /// function to make the compiler group it into the same codegen unit
@@ -185,9 +205,10 @@ macro_rules! __sel_inner {
         /// <https://doc.rust-lang.org/1.61.0/nightly-rustc/rustc_monomorphize/partitioning/index.html>
         #[inline(never)]
         fn objc_static_workaround() -> $crate::runtime::Sel {
-            // The actual selector is replaced by dyld when the program is
-            // loaded, so we need to use a volatile read to prevent the
-            // optimizer from thinking it can circumvent the read through REF.
+            // SAFETY: The actual selector is replaced by dyld when the
+            // program is loaded, so we need to use a volatile read to prevent
+            // the optimizer from thinking it can circumvent the read through
+            // REF.
             //
             // Clang avoids this by marking `REF` with LLVM's
             // `externally_initialized`.
@@ -195,6 +216,19 @@ macro_rules! __sel_inner {
         }
 
         objc_static_workaround()
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "unstable-static-sel-inlined"))]
+macro_rules! __sel_inner {
+    ($data:ident, $($idents:ident)+) => {{
+        $crate::__sel_inner_statics!($data, $($idents)+);
+
+        #[allow(unused_unsafe)]
+        // SAFETY: See above
+        unsafe { $crate::__macro_helpers::read_volatile(&REF) }
     }};
 }
 

@@ -5,16 +5,15 @@
 _handle_with_sel:
 	push	ebp
 	mov	ebp, esp
-	push	esi
-	push	eax
-	mov	esi, dword ptr [ebp + 8]
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel15handle_with_sel22objc_static_workaround
 	sub	esp, 8
-	push	eax
-	push	esi
+	call	L0$pb
+L0$pb:
+	pop	eax
+	sub	esp, 8
+	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_40f5b12005284286-L0$pb]
+	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
-	add	esp, 20
-	pop	esi
+	add	esp, 24
 	pop	ebp
 	ret
 
@@ -23,23 +22,22 @@ _handle_with_sel:
 _handle_alloc_init:
 	push	ebp
 	mov	ebp, esp
-	push	edi
 	push	esi
-	mov	edi, dword ptr [ebp + 8]
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround
-	mov	esi, eax
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel17handle_alloc_inits_22objc_static_workaround
-	sub	esp, 8
 	push	eax
-	push	edi
+	call	L1$pb
+L1$pb:
+	pop	eax
+	mov	esi, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9-L1$pb]
+	sub	esp, 8
+	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9-L1$pb]
+	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 8
 	push	esi
 	push	eax
 	call	_objc_msgSend
-	add	esp, 16
+	add	esp, 20
 	pop	esi
-	pop	edi
 	pop	ebp
 	ret
 
@@ -50,113 +48,28 @@ _use_generic:
 	mov	ebp, esp
 	push	edi
 	push	esi
+	call	L2$pb
+L2$pb:
+	pop	esi
 	mov	edi, dword ptr [ebp + 8]
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel11use_generic22objc_static_workaround
-	mov	esi, eax
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel7generic22objc_static_workaround
 	sub	esp, 4
-	push	eax
-	push	esi
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4-L2$pb]
 	push	edi
 	call	_objc_msgSend
-	add	esp, 16
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel11use_generics_22objc_static_workaround
-	mov	esi, eax
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel7generic22objc_static_workaround
-	sub	esp, 4
-	push	eax
-	push	esi
+	add	esp, 12
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1-L2$pb]
 	push	edi
 	call	_objc_msgSend
-	add	esp, 16
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel11use_generics0_22objc_static_workaround
-	mov	esi, eax
-	call	__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel7generic22objc_static_workaround
-	sub	esp, 4
-	push	eax
-	push	esi
+	add	esp, 12
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720-L2$pb]
 	push	edi
 	call	_objc_msgSend
 	add	esp, 16
 	pop	esi
 	pop	edi
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel15handle_with_sel22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L3$pb
-L3$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_40f5b12005284286-L3$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel17handle_alloc_init22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L4$pb
-L4$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9-L4$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel17handle_alloc_inits_22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L5$pb
-L5$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9-L5$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel7generic22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L6$pb
-L6$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_31f63858e271db32-L6$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel11use_generic22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L7$pb
-L7$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4-L7$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel11use_generics_22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L8$pb
-L8$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1-L8$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs5uS3pY1EMjp_24test_msg_send_static_sel11use_generics0_22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L9$pb
-L9$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720-L9$pb]
 	pop	ebp
 	ret
 
