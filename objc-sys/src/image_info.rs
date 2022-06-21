@@ -36,6 +36,10 @@ impl __ImageInfo {
         // let's just mimic what Clang does!
         let mut flags = Self::CLASS_PROPERTIES;
 
+        if cfg!(target_simulator) {
+            flags |= Self::IMAGE_IS_SIMULATED;
+        }
+
         Self { version: 0, flags }
     }
 }
