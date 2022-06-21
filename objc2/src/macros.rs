@@ -29,18 +29,93 @@ macro_rules! class {
     }};
 }
 
-/// Registers a selector with the Objective-C runtime.
+/// Register a selector with the Objective-C runtime.
 ///
-/// Returns a [`Sel`].
+/// Returns the [`Sel`] corresponding to the specified selector.
 ///
 /// [`Sel`]: crate::runtime::Sel
 ///
+///
+/// # Specification
+///
+/// This has similar syntax and functionality as the `@selector` directive in
+/// Objective-C. This calls [`Sel::register`] internally. The result is cached
+/// for efficiency.
+///
+/// If the `"unstable-static-sel"` feature is enabled, this will emit special
+/// statics that will be replaced by the dynamic linker (dyld) when the
+/// program starts up - in exactly the same manner as Objective-C does. This
+/// should be significantly faster (and allow better native debugging),
+/// however due to the Rust compilation model, and since we don't have
+/// low-level control over it, it is currently unlikely that this will work
+/// correctly in all cases. See the source code and [rust-lang/rust#53929] for
+/// more info.
+///
+/// Non-ascii identifiers are ill-tested, if supported at all.
+///
+/// [`Sel::register`]: crate::runtime::Sel::register
+/// [rust-lang/rust#53929]: https://github.com/rust-lang/rust/issues/53929
+///
+///
 /// # Examples
+///
+/// Get a few different selectors:
+///
+/// ```rust
+/// use objc2::sel;
+/// let sel = sel!(alloc);
+/// let sel = sel!(description);
+/// let sel = sel!(_privateMethod);
+/// let sel = sel!(storyboardWithName:bundle:);
+/// let sel = sel!(
+///     otherEventWithType:
+///     location:
+///     modifierFlags:
+///     timestamp:
+///     windowNumber:
+///     context:
+///     subtype:
+///     data1:
+///     data2:
+/// );
+/// ```
+///
+/// Whitespace is ignored:
 ///
 /// ```
 /// # use objc2::sel;
-/// let sel = sel!(description);
-/// let sel = sel!(setObject:forKey:);
+/// let sel1 = sel!(setObject:forKey:);
+/// let sel2 = sel!(  setObject  :
+///
+///     forKey  : );
+/// assert_eq!(sel1, sel2);
+/// ```
+///
+/// Invalid selector:
+///
+/// ```compile_fail
+/// # use objc2::sel;
+/// let sel = sel!(aSelector:withoutTrailingColon);
+/// ```
+///
+/// Unsupported usage that you may run into when using macros - fails to
+/// compile when the `"unstable-static-sel"` feature is enabled.
+///
+/// Instead, define a wrapper function that retrieves the selector.
+///
+#[cfg_attr(not(feature = "unstable-static-sel"), doc = "```no_run")]
+#[cfg_attr(feature = "unstable-static-sel", doc = "```compile_fail")]
+/// use objc2::sel;
+/// macro_rules! x {
+///     ($x:ident) => {
+///         // One of these is fine
+///         sel!($x);
+///         // But using the identifier again in the same way is not!
+///         sel!($x);
+///     };
+/// }
+/// // Identifier `abc`
+/// x!(abc);
 /// ```
 #[macro_export]
 macro_rules! sel {
