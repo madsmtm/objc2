@@ -151,10 +151,15 @@ macro_rules! __sel_inner {
 #[macro_export]
 macro_rules! __sel_inner_statics {
     ($data:ident, $($idents:ident)+) => {
+        /// We always emit the image info tag, since we need it to:
+        /// - End up in the same codegen unit as the other statics below.
+        /// - End up in the final binary so it can be read by dyld.
+        ///
+        /// Unfortunately however, this leads to duplicated tags.
         #[link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"]
         #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
         #[used] // Make sure this reaches the linker
-        static _IMAGE_TAG: [u32; 2] = [0, 0];
+        static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
 
         const X: &[u8] = $data.as_bytes();
 

@@ -9,9 +9,6 @@ fn ensure_linkage() {
 
 #[test]
 fn use_class_and_msg_send() {
-    // TEMPORARY!
-    objc2::image_info();
-
     unsafe {
         let cls = class!(NSObject);
         let obj: *mut Object = msg_send![cls, new];

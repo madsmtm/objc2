@@ -70,7 +70,7 @@ Lloh11:
 	.globl	L_OBJC_IMAGE_INFO_40f5b12005284286
 	.p2align	2
 L_OBJC_IMAGE_INFO_40f5b12005284286:
-	.space	8
+	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_40f5b12005284286
@@ -87,7 +87,7 @@ L_OBJC_SELECTOR_REFERENCES_40f5b12005284286:
 	.globl	L_OBJC_IMAGE_INFO_904c14aa63c4eec9
 	.p2align	2
 L_OBJC_IMAGE_INFO_904c14aa63c4eec9:
-	.space	8
+	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_904c14aa63c4eec9
@@ -104,7 +104,7 @@ L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9:
 	.globl	L_OBJC_IMAGE_INFO_b1ab35d3713395f9
 	.p2align	2
 L_OBJC_IMAGE_INFO_b1ab35d3713395f9:
-	.space	8
+	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_b1ab35d3713395f9
@@ -121,7 +121,7 @@ L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9:
 	.globl	L_OBJC_IMAGE_INFO_31f63858e271db32
 	.p2align	2
 L_OBJC_IMAGE_INFO_31f63858e271db32:
-	.space	8
+	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_31f63858e271db32
@@ -138,7 +138,7 @@ L_OBJC_SELECTOR_REFERENCES_31f63858e271db32:
 	.globl	L_OBJC_IMAGE_INFO_cdfe92d39025fdf4
 	.p2align	2
 L_OBJC_IMAGE_INFO_cdfe92d39025fdf4:
-	.space	8
+	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_cdfe92d39025fdf4
@@ -155,7 +155,7 @@ L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4:
 	.globl	L_OBJC_IMAGE_INFO_79bd65c86d46fbf1
 	.p2align	2
 L_OBJC_IMAGE_INFO_79bd65c86d46fbf1:
-	.space	8
+	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_79bd65c86d46fbf1
@@ -172,7 +172,7 @@ L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1:
 	.globl	L_OBJC_IMAGE_INFO_8e0840c6b39b7720
 	.p2align	2
 L_OBJC_IMAGE_INFO_8e0840c6b39b7720:
-	.space	8
+	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_8e0840c6b39b7720
