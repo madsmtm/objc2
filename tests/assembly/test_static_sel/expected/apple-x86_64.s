@@ -5,31 +5,26 @@
 _get_sel:
 	push	rbp
 	mov	rbp, rsp
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9]
 	pop	rbp
-	jmp	__RNvNvCs3LjJa8BQyj0_15test_static_sel7get_sel22objc_static_workaround
+	ret
 
 	.globl	_get_same_sel
 	.p2align	4, 0x90
 _get_same_sel:
 	push	rbp
 	mov	rbp, rsp
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35]
 	pop	rbp
-	jmp	__RNvNvCs3LjJa8BQyj0_15test_static_sel12get_same_sel22objc_static_workaround
+	ret
 
 	.globl	_get_common_twice
 	.p2align	4, 0x90
 _get_common_twice:
 	push	rbp
 	mov	rbp, rsp
-	push	rbx
-	push	rax
-	call	__RNvNvCs3LjJa8BQyj0_15test_static_sel16get_common_twice22objc_static_workaround
-	mov	rbx, rax
-	call	__RNvNvCs3LjJa8BQyj0_15test_static_sel16get_common_twices_22objc_static_workaround
-	mov	rdx, rax
-	mov	rax, rbx
-	add	rsp, 8
-	pop	rbx
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77]
+	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7]
 	pop	rbp
 	ret
 
@@ -38,8 +33,9 @@ _get_common_twice:
 _get_different_sel:
 	push	rbp
 	mov	rbp, rsp
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0]
 	pop	rbp
-	jmp	__RNvNvCs3LjJa8BQyj0_15test_static_sel17get_different_sel22objc_static_workaround
+	ret
 
 	.globl	_unused_sel
 	.p2align	4, 0x90
@@ -54,27 +50,15 @@ _unused_sel:
 _use_fns:
 	push	rbp
 	mov	rbp, rsp
-	push	r15
-	push	r14
-	push	r12
-	push	rbx
-	mov	rbx, rdi
-	call	__RNvNvCs3LjJa8BQyj0_15test_static_sel7get_sel22objc_static_workaround
-	mov	r14, rax
-	call	__RNvNvCs3LjJa8BQyj0_15test_static_sel12get_same_sel22objc_static_workaround
-	mov	r15, rax
-	call	__RNvNvCs3LjJa8BQyj0_15test_static_sel17get_different_sel22objc_static_workaround
-	mov	r12, rax
-	call	__RNvNvCs3LjJa8BQyj0_15test_static_sel7use_fns22objc_static_workaround
-	mov	qword ptr [rbx], r14
-	mov	qword ptr [rbx + 8], r15
-	mov	qword ptr [rbx + 16], r12
-	mov	qword ptr [rbx + 24], rax
-	mov	rax, rbx
-	pop	rbx
-	pop	r12
-	pop	r14
-	pop	r15
+	mov	rax, rdi
+	mov	rcx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9]
+	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0]
+	mov	rdi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99]
+	mov	qword ptr [rax], rcx
+	mov	qword ptr [rax + 8], rdx
+	mov	qword ptr [rax + 16], rsi
+	mov	qword ptr [rax + 24], rdi
 	pop	rbp
 	ret
 
@@ -83,15 +67,10 @@ _use_fns:
 _use_same_twice:
 	push	rbp
 	mov	rbp, rsp
-	push	rbx
-	push	rax
-	mov	rbx, rdi
-	call	__RNvNvCs3LjJa8BQyj0_15test_static_sel7get_sel22objc_static_workaround
-	mov	qword ptr [rbx], rax
-	mov	qword ptr [rbx + 8], rax
-	mov	rax, rbx
-	add	rsp, 8
-	pop	rbx
+	mov	rax, rdi
+	mov	rcx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9]
+	mov	qword ptr [rdi], rcx
+	mov	qword ptr [rdi + 8], rcx
 	pop	rbp
 	ret
 
@@ -100,54 +79,6 @@ _use_same_twice:
 _use_in_loop:
 	push	rbp
 	mov	rbp, rsp
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs3LjJa8BQyj0_15test_static_sel7get_sel22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs3LjJa8BQyj0_15test_static_sel12get_same_sel22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs3LjJa8BQyj0_15test_static_sel16get_common_twice22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs3LjJa8BQyj0_15test_static_sel16get_common_twices_22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs3LjJa8BQyj0_15test_static_sel17get_different_sel22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0]
-	pop	rbp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs3LjJa8BQyj0_15test_static_sel7use_fns22objc_static_workaround:
-	push	rbp
-	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99]
 	pop	rbp
 	ret
 

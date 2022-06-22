@@ -4,32 +4,45 @@
 	.p2align	2
 	.code	32
 _get_sel:
-	b	__RNvNvCs8GaUp4KaTG0_15test_static_sel7get_sel22objc_static_workaround
+	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-(LPC0_0+8))
+	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-(LPC0_0+8))
+LPC0_0:
+	ldr	r0, [pc, r0]
+	bx	lr
 
 	.globl	_get_same_sel
 	.p2align	2
 	.code	32
 _get_same_sel:
-	b	__RNvNvCs8GaUp4KaTG0_15test_static_sel12get_same_sel22objc_static_workaround
+	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-(LPC1_0+8))
+	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-(LPC1_0+8))
+LPC1_0:
+	ldr	r0, [pc, r0]
+	bx	lr
 
 	.globl	_get_common_twice
 	.p2align	2
 	.code	32
 _get_common_twice:
-	push	{r4, r7, lr}
-	add	r7, sp, #4
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel16get_common_twice22objc_static_workaround
-	mov	r4, r0
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel16get_common_twices_22objc_static_workaround
-	mov	r1, r0
-	mov	r0, r4
-	pop	{r4, r7, pc}
+	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-(LPC2_0+8))
+	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-(LPC2_0+8))
+LPC2_0:
+	ldr	r0, [pc, r0]
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-(LPC2_1+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-(LPC2_1+8))
+LPC2_1:
+	ldr	r1, [pc, r1]
+	bx	lr
 
 	.globl	_get_different_sel
 	.p2align	2
 	.code	32
 _get_different_sel:
-	b	__RNvNvCs8GaUp4KaTG0_15test_static_sel17get_different_sel22objc_static_workaround
+	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-(LPC3_0+8))
+	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-(LPC3_0+8))
+LPC3_0:
+	ldr	r0, [pc, r0]
+	bx	lr
 
 	.globl	_unused_sel
 	.p2align	2
@@ -41,94 +54,43 @@ _unused_sel:
 	.p2align	2
 	.code	32
 _use_fns:
-	push	{r4, r5, r6, r7, lr}
-	add	r7, sp, #12
-	push	{r8}
-	mov	r4, r0
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel7get_sel22objc_static_workaround
-	mov	r8, r0
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel12get_same_sel22objc_static_workaround
-	mov	r6, r0
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel17get_different_sel22objc_static_workaround
-	mov	r5, r0
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel7use_fns22objc_static_workaround
-	str	r8, [r4]
-	str	r6, [r4, #4]
-	str	r5, [r4, #8]
-	str	r0, [r4, #12]
-	pop	{r8}
-	pop	{r4, r5, r6, r7, pc}
+	movw	r9, :lower16:(L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-(LPC5_0+8))
+	movt	r9, :upper16:(L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-(LPC5_0+8))
+LPC5_0:
+	ldr	r9, [pc, r9]
+	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-(LPC5_1+8))
+	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-(LPC5_1+8))
+LPC5_1:
+	ldr	r2, [pc, r2]
+	movw	r3, :lower16:(L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-(LPC5_2+8))
+	movt	r3, :upper16:(L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-(LPC5_2+8))
+LPC5_2:
+	ldr	r3, [pc, r3]
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-(LPC5_3+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-(LPC5_3+8))
+	str	r2, [r0, #8]
+LPC5_3:
+	ldr	r1, [pc, r1]
+	str	r9, [r0, #12]
+	stm	r0, {r1, r3}
+	bx	lr
 
 	.globl	_use_same_twice
 	.p2align	2
 	.code	32
 _use_same_twice:
-	push	{r4, r7, lr}
-	add	r7, sp, #4
-	mov	r4, r0
-	bl	__RNvNvCs8GaUp4KaTG0_15test_static_sel7get_sel22objc_static_workaround
-	str	r0, [r4]
-	str	r0, [r4, #4]
-	pop	{r4, r7, pc}
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-(LPC6_0+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-(LPC6_0+8))
+LPC6_0:
+	ldr	r1, [pc, r1]
+	str	r1, [r0]
+	str	r1, [r0, #4]
+	bx	lr
 
 	.globl	_use_in_loop
 	.p2align	2
 	.code	32
 _use_in_loop:
-	bx	lr
-
-	.p2align	2
-	.code	32
-__RNvNvCs8GaUp4KaTG0_15test_static_sel7get_sel22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-(LPC8_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-(LPC8_0+8))
-LPC8_0:
-	ldr	r0, [pc, r0]
-	bx	lr
-
-	.p2align	2
-	.code	32
-__RNvNvCs8GaUp4KaTG0_15test_static_sel12get_same_sel22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-(LPC9_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-(LPC9_0+8))
-LPC9_0:
-	ldr	r0, [pc, r0]
-	bx	lr
-
-	.p2align	2
-	.code	32
-__RNvNvCs8GaUp4KaTG0_15test_static_sel16get_common_twice22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-(LPC10_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-(LPC10_0+8))
-LPC10_0:
-	ldr	r0, [pc, r0]
-	bx	lr
-
-	.p2align	2
-	.code	32
-__RNvNvCs8GaUp4KaTG0_15test_static_sel16get_common_twices_22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-(LPC11_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-(LPC11_0+8))
-LPC11_0:
-	ldr	r0, [pc, r0]
-	bx	lr
-
-	.p2align	2
-	.code	32
-__RNvNvCs8GaUp4KaTG0_15test_static_sel17get_different_sel22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-(LPC12_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-(LPC12_0+8))
-LPC12_0:
-	ldr	r0, [pc, r0]
-	bx	lr
-
-	.p2align	2
-	.code	32
-__RNvNvCs8GaUp4KaTG0_15test_static_sel7use_fns22objc_static_workaround:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-(LPC13_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-(LPC13_0+8))
-LPC13_0:
-	ldr	r0, [pc, r0]
 	bx	lr
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

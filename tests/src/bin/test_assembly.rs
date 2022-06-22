@@ -1,6 +1,9 @@
 //! A helper script for testing the assembly output.
 //!
 //! Similar to `trybuild` and `compiletest`, except specialized to our setup!
+//!
+//! Very limited currently, for example we can't stably test things that emits
+//! mangled symbols, nor things that are emitted in different crates.
 
 use cargo_metadata::Message;
 use std::env;

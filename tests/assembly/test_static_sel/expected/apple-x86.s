@@ -5,31 +5,35 @@
 _get_sel:
 	push	ebp
 	mov	ebp, esp
+	call	L0$pb
+L0$pb:
+	pop	eax
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-L0$pb]
 	pop	ebp
-	jmp	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
+	ret
 
 	.globl	_get_same_sel
 	.p2align	4, 0x90
 _get_same_sel:
 	push	ebp
 	mov	ebp, esp
+	call	L1$pb
+L1$pb:
+	pop	eax
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-L1$pb]
 	pop	ebp
-	jmp	__RNvNvCs6BnsG4fGG5c_15test_static_sel12get_same_sel22objc_static_workaround
+	ret
 
 	.globl	_get_common_twice
 	.p2align	4, 0x90
 _get_common_twice:
 	push	ebp
 	mov	ebp, esp
-	push	esi
-	push	eax
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel16get_common_twice22objc_static_workaround
-	mov	esi, eax
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel16get_common_twices_22objc_static_workaround
-	mov	edx, eax
-	mov	eax, esi
-	add	esp, 4
-	pop	esi
+	call	L2$pb
+L2$pb:
+	pop	ecx
+	mov	eax, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-L2$pb]
+	mov	edx, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-L2$pb]
 	pop	ebp
 	ret
 
@@ -38,8 +42,12 @@ _get_common_twice:
 _get_different_sel:
 	push	ebp
 	mov	ebp, esp
+	call	L3$pb
+L3$pb:
+	pop	eax
+	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-L3$pb]
 	pop	ebp
-	jmp	__RNvNvCs6BnsG4fGG5c_15test_static_sel17get_different_sel22objc_static_workaround
+	ret
 
 	.globl	_unused_sel
 	.p2align	4, 0x90
@@ -54,28 +62,22 @@ _unused_sel:
 _use_fns:
 	push	ebp
 	mov	ebp, esp
-	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 12
-	mov	esi, dword ptr [ebp + 8]
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
-	mov	dword ptr [ebp - 16], eax
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel12get_same_sel22objc_static_workaround
-	mov	ebx, eax
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel17get_different_sel22objc_static_workaround
-	mov	edi, eax
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7use_fns22objc_static_workaround
-	mov	ecx, dword ptr [ebp - 16]
-	mov	dword ptr [esi], ecx
-	mov	dword ptr [esi + 4], ebx
-	mov	dword ptr [esi + 8], edi
-	mov	dword ptr [esi + 12], eax
-	mov	eax, esi
-	add	esp, 12
+	call	L5$pb
+L5$pb:
+	pop	ecx
+	mov	eax, dword ptr [ebp + 8]
+	mov	edx, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-L5$pb]
+	mov	esi, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-L5$pb]
+	mov	edi, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-L5$pb]
+	mov	ecx, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-L5$pb]
+	mov	dword ptr [eax], edx
+	mov	dword ptr [eax + 4], esi
+	mov	dword ptr [eax + 8], edi
+	mov	dword ptr [eax + 12], ecx
 	pop	esi
 	pop	edi
-	pop	ebx
 	pop	ebp
 	ret	4
 
@@ -84,15 +86,13 @@ _use_fns:
 _use_same_twice:
 	push	ebp
 	mov	ebp, esp
-	push	esi
-	push	eax
-	mov	esi, dword ptr [ebp + 8]
-	call	__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround
-	mov	dword ptr [esi], eax
-	mov	dword ptr [esi + 4], eax
-	mov	eax, esi
-	add	esp, 4
-	pop	esi
+	call	L6$pb
+L6$pb:
+	pop	ecx
+	mov	eax, dword ptr [ebp + 8]
+	mov	ecx, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-L6$pb]
+	mov	dword ptr [eax], ecx
+	mov	dword ptr [eax + 4], ecx
 	pop	ebp
 	ret	4
 
@@ -101,72 +101,6 @@ _use_same_twice:
 _use_in_loop:
 	push	ebp
 	mov	ebp, esp
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel7get_sel22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L8$pb
-L8$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9-L8$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel12get_same_sel22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L9$pb
-L9$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35-L9$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel16get_common_twice22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L10$pb
-L10$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-L10$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel16get_common_twices_22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L11$pb
-L11$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-L11$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel17get_different_sel22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L12$pb
-L12$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0-L12$pb]
-	pop	ebp
-	ret
-
-	.p2align	4, 0x90
-__RNvNvCs6BnsG4fGG5c_15test_static_sel7use_fns22objc_static_workaround:
-	push	ebp
-	mov	ebp, esp
-	call	L13$pb
-L13$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99-L13$pb]
 	pop	ebp
 	ret
 
