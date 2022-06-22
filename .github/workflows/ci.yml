@@ -379,7 +379,7 @@ jobs:
         args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
     - name: Test static selectors
-      if: ${{ !matrix.dinghy }}
+      if: ${{ !matrix.dinghy && (matrix.runtime || 'apple') == 'apple' }}
       uses: actions-rs/cargo@v1
       with:
         command: test
