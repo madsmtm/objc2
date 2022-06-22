@@ -134,12 +134,14 @@ fn main() {
             .unwrap_or(host);
 
         println!("Target {target}.");
-        let architecture = target.split_once("-").unwrap().0;
-        let architecture = if matches!(architecture, "i386" | "i686") {
-            "x86"
-        } else {
-            architecture
+        let mut architecture = target.split_once("-").unwrap().0;
+        if matches!(architecture, "i386" | "i686") {
+            architecture = "x86";
         };
+        if target == "i686-apple-darwin" {
+            // Old ABI, we frequently have to do things differently there
+            architecture = "old-x86";
+        }
         println!("Architecture {architecture}.");
 
         let expected_file = package_path
