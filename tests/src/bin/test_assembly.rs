@@ -53,6 +53,12 @@ fn read_assembly<P: AsRef<Path>>(path: P) -> io::Result<String> {
         .to_str()
         .unwrap();
     let s = s.replace(workspace_dir, "$WORKSPACE");
+    // HACK: Replace Objective-C image info for simulator targets
+    let s = s.replace(
+        ".asciz\t\"\\000\\000\\000\\000`\\000\\000\"",
+        ".asciz\t\"\\000\\000\\000\\000@\\000\\000\"",
+    );
+    // Strip various uninteresting directives
     let s = strip_lines(&s, ".cfi_");
     let s = strip_lines(&s, ".macosx_version_");
     let s = strip_lines(&s, ".ios_version_");
