@@ -33,6 +33,12 @@ pub const YES: ffi::BOOL = ffi::YES;
 pub const NO: ffi::BOOL = ffi::NO;
 
 /// A type that represents a method selector.
+///
+/// The main reason the Objective-C runtime uses a custom types for selectors
+/// is to support efficient comparison - a selector is effectively just an
+/// [interned string], so this makes that very easy!
+///
+/// [interned string]: https://en.wikipedia.org/wiki/String_interning
 #[repr(transparent)]
 // ffi::sel_isEqual is just pointer comparison, so just generate PartialEq
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
@@ -118,7 +124,7 @@ impl Sel {
     ///
     /// This is almost never what you want; use [`Sel::register`] instead.
     #[inline]
-    pub unsafe fn from_ptr(ptr: *const c_void) -> Self {
+    pub const unsafe fn from_ptr(ptr: *const c_void) -> Self {
         Self { ptr: ptr.cast() }
     }
 

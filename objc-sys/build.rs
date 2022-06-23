@@ -58,9 +58,25 @@ fn main() {
     // The script doesn't depend on our code
     println!("cargo:rerun-if-changed=build.rs");
 
+    let target = env::var("TARGET").unwrap();
+
     // Used to figure out when BOOL should be i8 vs. bool
-    if env::var("TARGET").unwrap().ends_with("macabi") {
+    // Matches:
+    // aarch64-apple-ios-macabi
+    // x86_64-apple-ios-macabi
+    if target.ends_with("macabi") {
         println!("cargo:rustc-cfg=target_abi_macabi");
+    }
+
+    // Used to set correct image info in `objc2`
+    // Matches:
+    // aarch64-apple-ios-sim
+    // aarch64-apple-watchos-sim
+    // x86_64-apple-watchos-sim
+    // i386-apple-ios
+    // x86_64-apple-ios
+    if target.ends_with("sim") || target == "i386-apple-ios" || target == "x86_64-apple-ios" {
+        println!("cargo:rustc-cfg=target_simulator");
     }
 
     // TODO: Figure out when to enable this

@@ -25,6 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       msg_send_id![msg_send_id![Self::class(), alloc], new].unwrap()
   };
   ```
+* Added the `"unstable-static-sel"` and `"unstable-static-sel-inlined"`
+  feature flags to make the `sel!` macro (and by extension, the `msg_send!`
+  macros) faster.
 
 
 ## 0.3.0-beta.0 - 2022-06-13

@@ -2,8 +2,10 @@ use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
 
-#[doc(hidden)]
+pub use core::cell::UnsafeCell;
 pub use core::compile_error;
+#[cfg(feature = "unstable-static-sel")]
+pub use objc2_proc_macros::__hash_idents;
 
 /// Helper for specifying the retain semantics for a given selector family.
 ///
@@ -28,7 +30,6 @@ pub use core::compile_error;
 /// ARC though!
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
-#[doc(hidden)]
 pub struct RetainSemantics<
     // `new` family
     const NEW: bool,
@@ -40,7 +41,6 @@ pub struct RetainSemantics<
     const COPY_OR_MUT_COPY: bool,
 > {}
 
-#[doc(hidden)]
 pub trait MsgSendId<T, U> {
     unsafe fn send_message_id<A: MessageArguments>(
         obj: T,
@@ -131,7 +131,6 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
 /// Checks whether a given selector is said to be in a given selector family.
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families>
-#[doc(hidden)]
 pub const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool {
     // Skip leading underscores from selector
     loop {
@@ -372,5 +371,32 @@ mod tests {
             let cls = class!(NSObject);
             let _obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
         }
+    }
+
+    #[test]
+    #[cfg(feature = "objc2-proc-macros")]
+    fn hash_idents_different() {
+        assert_ne!(__hash_idents!(abc), __hash_idents!(def));
+    }
+
+    #[test]
+    #[cfg(feature = "objc2-proc-macros")]
+    fn hash_idents_same_no_equal() {
+        assert_ne!(__hash_idents!(abc), __hash_idents!(abc));
+        assert_ne!(__hash_idents!(abc def ghi), __hash_idents!(abc def ghi));
+    }
+
+    #[test]
+    #[cfg(feature = "objc2-proc-macros")]
+    fn hash_idents_exact_same_ident() {
+        macro_rules! x {
+            ($x:ident) => {
+                (__hash_idents!($x), __hash_idents!($x))
+            };
+        }
+        let (ident1, ident2) = x!(abc);
+        // This is a limitation of `__hash_idents`, ideally we'd like these
+        // to be different!
+        assert_eq!(ident1, ident2);
     }
 }

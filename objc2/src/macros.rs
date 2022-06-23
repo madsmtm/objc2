@@ -29,27 +29,291 @@ macro_rules! class {
     }};
 }
 
-/// Registers a selector with the Objective-C runtime.
+/// Register a selector with the Objective-C runtime.
 ///
-/// Returns a [`Sel`].
+/// Returns the [`Sel`] corresponding to the specified selector.
 ///
 /// [`Sel`]: crate::runtime::Sel
 ///
+///
+/// # Specification
+///
+/// This has similar syntax and functionality as the `@selector` directive in
+/// Objective-C. This calls [`Sel::register`] internally. The result is cached
+/// for efficiency.
+///
+/// Non-ascii identifiers are ill-tested, if supported at all.
+///
+/// [`Sel::register`]: crate::runtime::Sel::register
+///
+///
+/// # Features
+///
+/// If the experimental `"unstable-static-sel"` feature is enabled, this will
+/// emit special statics that will be replaced by the dynamic linker (dyld)
+/// when the program starts up - in exactly the same manner as normal
+/// Objective-C code does.
+/// This should be significantly faster (and allow better native debugging),
+/// however due to the Rust compilation model, and since we don't have
+/// low-level control over it, it is currently unlikely that this will work
+/// correctly in all cases.
+/// See the source code and [rust-lang/rust#53929] for more info.
+///
+/// Concretely, this may fail at:
+/// - link-time (likely)
+/// - dynamic link-time/just before the program is run (fairly likely)
+/// - runtime, causing UB (unlikely)
+///
+/// The `"unstable-static-sel-inlined"` feature is the even more extreme
+/// version - it yields the best performance and is closest to real
+/// Objective-C code, but probably won't work unless your code and its
+/// inlining is written in a very certain way.
+///
+/// Enabling LTO greatly increases the chance that these features work.
+///
+/// [rust-lang/rust#53929]: https://github.com/rust-lang/rust/issues/53929
+///
+///
 /// # Examples
+///
+/// Get a few different selectors:
+///
+/// ```rust
+/// use objc2::sel;
+/// let sel = sel!(alloc);
+/// let sel = sel!(description);
+/// let sel = sel!(_privateMethod);
+/// let sel = sel!(storyboardWithName:bundle:);
+/// let sel = sel!(
+///     otherEventWithType:
+///     location:
+///     modifierFlags:
+///     timestamp:
+///     windowNumber:
+///     context:
+///     subtype:
+///     data1:
+///     data2:
+/// );
+/// ```
+///
+/// Whitespace is ignored:
 ///
 /// ```
 /// # use objc2::sel;
-/// let sel = sel!(description);
-/// let sel = sel!(setObject:forKey:);
+/// let sel1 = sel!(setObject:forKey:);
+/// let sel2 = sel!(  setObject  :
+///
+///     forKey  : );
+/// assert_eq!(sel1, sel2);
+/// ```
+///
+/// Invalid selector:
+///
+/// ```compile_fail
+/// # use objc2::sel;
+/// let sel = sel!(aSelector:withoutTrailingColon);
+/// ```
+///
+/// Unsupported usage that you may run into when using macros - fails to
+/// compile when the `"unstable-static-sel"` feature is enabled.
+///
+/// Instead, define a wrapper function that retrieves the selector.
+///
+#[cfg_attr(not(feature = "unstable-static-sel"), doc = "```no_run")]
+#[cfg_attr(feature = "unstable-static-sel", doc = "```compile_fail")]
+/// use objc2::sel;
+/// macro_rules! x {
+///     ($x:ident) => {
+///         // One of these is fine
+///         sel!($x);
+///         // But using the identifier again in the same way is not!
+///         sel!($x);
+///     };
+/// }
+/// // Identifier `abc`
+/// x!(abc);
 /// ```
 #[macro_export]
 macro_rules! sel {
     ($first:ident $(: $($rest:ident :)*)?) => ({
-        static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
-        let name = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
-        #[allow(unused_unsafe)]
-        unsafe { SEL.get(name) }
+        const SELECTOR_DATA: &str = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
+        $crate::__sel_inner!(SELECTOR_DATA, $first $($($rest)*)?)
     });
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(feature = "unstable-static-sel"))]
+macro_rules! __sel_inner {
+    ($data:ident, $($idents:ident)+) => {{
+        static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
+        #[allow(unused_unsafe)]
+        unsafe {
+            SEL.get($data)
+        }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __sel_inner_statics_apple_generic {
+    {
+        $image_info_section:literal;
+        $var_name_section:literal;
+        $selector_ref_section:literal;
+        $data:ident,
+        $($idents:ident)+
+    } => {
+        /// We always emit the image info tag, since we need it to:
+        /// - End up in the same codegen unit as the other statics below.
+        /// - End up in the final binary so it can be read by dyld.
+        ///
+        /// Unfortunately however, this leads to duplicated tags - the linker
+        /// reports `__DATA/__objc_imageinfo has unexpectedly large size XXX`,
+        /// but things still seems to work.
+        #[link_section = $image_info_section]
+        #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
+        #[used] // Make sure this reaches the linker
+        static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
+
+        const X: &[u8] = $data.as_bytes();
+
+        /// Clang marks this with LLVM's `unnamed_addr`.
+        /// See rust-lang/rust#18297
+        /// Should only be an optimization (?)
+        #[link_section = $var_name_section]
+        #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
+        static NAME_DATA: [u8; X.len()] = {
+            // Convert the `&[u8]` slice to an array with known length, so
+            // that we can place that directly in a static.
+            let mut res: [u8; X.len()] = [0; X.len()];
+            let mut i = 0;
+            while i < X.len() {
+                res[i] = X[i];
+                i += 1;
+            }
+            res
+        };
+
+        /// Place the constant value in the correct section.
+        ///
+        /// We use `UnsafeCell` because this somewhat resembles internal
+        /// mutation - this pointer will be changed by dyld at startup, so we
+        /// _must_ prevent Rust/LLVM from trying to "peek inside" it and just
+        /// use a pointer to `NAME_DATA` directly.
+        ///
+        /// Clang does this by marking `REF` with LLVM's
+        /// `externally_initialized`.
+        ///
+        /// `static mut` is used so that we don't need to wrap the
+        /// `UnsafeCell` in something that implements `Sync`.
+        ///
+        /// Clang uses `no_dead_strip` in the link section for some reason,
+        /// which other tools (notably some LLVM tools) now assume is present,
+        /// so we have to add it as well.
+        ///
+        ///
+        /// # Safety
+        ///
+        /// I'm quite uncertain of how safe this is, since the Rust abstract
+        /// machine has no concept of a static that is initialized outside of
+        /// it - perhaps it would be better to use `read_volatile` instead of
+        /// relying on `UnsafeCell`? Or perhaps `MaybeUninit` would help?
+        ///
+        /// See the [`ctor`](https://crates.io/crates/ctor) crate for more
+        /// info on "life before main".
+        #[link_section = $selector_ref_section]
+        #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
+        static mut REF: $crate::__macro_helpers::UnsafeCell<$crate::runtime::Sel> = unsafe {
+            $crate::__macro_helpers::UnsafeCell::new($crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast()))
+        };
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
+macro_rules! __sel_inner_statics {
+    ($($args:tt)*) => {
+        // Found by reading clang/LLVM sources
+        $crate::__sel_inner_statics_apple_generic! {
+            "__DATA,__objc_imageinfo,regular,no_dead_strip";
+            "__TEXT,__objc_methname,cstring_literals";
+            "__DATA,__objc_selrefs,literal_pointers,no_dead_strip";
+            $($args)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86"))]
+macro_rules! __sel_inner_statics {
+    ($($args:tt)*) => {
+        $crate::__sel_inner_statics_apple_generic! {
+            "__OBJC,__image_info,regular";
+            "__TEXT,__cstring,cstring_literals";
+            "__OBJC,__message_refs,literal_pointers,no_dead_strip";
+            $($args)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(feature = "apple"))]
+macro_rules! __sel_inner_statics {
+    ($($args:tt)*) => {
+        // TODO
+        $crate::__macro_helpers::compile_error!(
+            "The `\"unstable-static-sel\"` feature is not yet supported on GNUStep!"
+        )
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-static-sel",
+    not(feature = "unstable-static-sel-inlined")
+))]
+macro_rules! __sel_inner {
+    ($($args:tt)*) => {{
+        $crate::__sel_inner_statics!($($args)*);
+
+        /// HACK: Wrap the access in a non-generic, `#[inline(never)]`
+        /// function to make the compiler group it into the same codegen unit
+        /// as the statics.
+        ///
+        /// See the following link for details on how the compiler decides
+        /// to partition code into codegen units:
+        /// <https://doc.rust-lang.org/1.61.0/nightly-rustc/rustc_monomorphize/partitioning/index.html>
+        #[inline(never)]
+        fn objc_static_workaround() -> $crate::runtime::Sel {
+            // SAFETY: The actual selector is replaced by dyld when the
+            // program is loaded.
+            //
+            // This is similar to a volatile read, except it can be stripped
+            // if unused.
+            unsafe { *REF.get() }
+        }
+
+        objc_static_workaround()
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "unstable-static-sel-inlined"))]
+macro_rules! __sel_inner {
+    ($($args:tt)*) => {{
+        $crate::__sel_inner_statics!($($args)*);
+
+        #[allow(unused_unsafe)]
+        // SAFETY: See above
+        unsafe { *REF.get() }
+    }};
 }
 
 /// Send a message to an object or class.

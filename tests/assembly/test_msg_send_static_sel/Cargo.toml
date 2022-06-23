@@ -1,5 +1,5 @@
 [package]
-name = "test_retain_autoreleased"
+name = "test_msg_send_static_sel"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -20,5 +20,5 @@ gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1"]
 
-# Hack
-assembly-features = []
+# Hack to prevent the feature flag from being enabled in the entire project
+assembly-features = ["objc2/unstable-static-sel-inlined"]

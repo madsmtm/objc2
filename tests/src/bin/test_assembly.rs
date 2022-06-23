@@ -1,6 +1,9 @@
 //! A helper script for testing the assembly output.
 //!
 //! Similar to `trybuild` and `compiletest`, except specialized to our setup!
+//!
+//! Very limited currently, for example we can't stably test things that emits
+//! mangled symbols, nor things that are emitted in different crates.
 
 use cargo_metadata::Message;
 use std::env;
@@ -50,6 +53,12 @@ fn read_assembly<P: AsRef<Path>>(path: P) -> io::Result<String> {
         .to_str()
         .unwrap();
     let s = s.replace(workspace_dir, "$WORKSPACE");
+    // HACK: Replace Objective-C image info for simulator targets
+    let s = s.replace(
+        ".asciz\t\"\\000\\000\\000\\000`\\000\\000\"",
+        ".asciz\t\"\\000\\000\\000\\000@\\000\\000\"",
+    );
+    // Strip various uninteresting directives
     let s = strip_lines(&s, ".cfi_");
     let s = strip_lines(&s, ".macosx_version_");
     let s = strip_lines(&s, ".ios_version_");
@@ -85,10 +94,12 @@ fn main() {
             .args(args().skip(2))
             .arg("--release")
             .arg("--message-format=json-render-diagnostics")
+            .arg("--features=assembly-features")
             .arg("--")
             .arg("--emit=asm")
             // .arg("-Zplt=no")
             .arg("-Cllvm-args=--x86-asm-syntax=intel")
+            .arg("-Csymbol-mangling-version=v0")
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
             .output()
@@ -123,12 +134,14 @@ fn main() {
             .unwrap_or(host);
 
         println!("Target {target}.");
-        let architecture = target.split_once("-").unwrap().0;
-        let architecture = if matches!(architecture, "i386" | "i686") {
-            "x86"
-        } else {
-            architecture
+        let mut architecture = target.split_once("-").unwrap().0;
+        if matches!(architecture, "i386" | "i686") {
+            architecture = "x86";
         };
+        if target == "i686-apple-darwin" {
+            // Old ABI, we frequently have to do things differently there
+            architecture = "old-x86";
+        }
         println!("Architecture {architecture}.");
 
         let expected_file = package_path

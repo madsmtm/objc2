@@ -37,6 +37,17 @@ verify_message = ["malloc"] # TODO: Remove malloc feature here
 # increases compilation time.
 malloc = ["malloc_buf"]
 
+# Make the `sel!` macro look up the selector statically.
+#
+# The plan is to enable this by default, but right now we are uncertain of
+# it's stability, and it might need significant changes before being fully
+# ready!
+#
+# Please test it, and report any issues you may find:
+# https://github.com/madsmtm/objc2/issues/new
+unstable-static-sel = ["objc2-proc-macros"]
+unstable-static-sel-inlined = ["unstable-static-sel"]
+
 # Uses nightly features to make AutoreleasePool zero-cost even in debug mode
 unstable-autoreleasesafe = []
 
@@ -52,6 +63,7 @@ gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1"]
 malloc_buf = { version = "1.0", optional = true }
 objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.0", default-features = false }
 objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.0", default-features = false }
+objc2-proc-macros = { path = "../objc2-proc-macros", optional = true }
 
 [dev-dependencies]
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
