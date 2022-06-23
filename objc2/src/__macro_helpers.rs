@@ -6,7 +6,10 @@ pub use crate::cache::CachedClass;
 pub use crate::cache::CachedSel;
 
 pub use core::cell::UnsafeCell;
-pub use core::compile_error;
+pub use core::option::Option::{self, None, Some};
+pub use core::primitive::{bool, str, u8};
+pub use core::result::Result::{Err, Ok};
+pub use core::{compile_error, concat, panic, stringify};
 #[cfg(feature = "unstable-static-sel")]
 pub use objc2_proc_macros::__hash_idents;
 
