@@ -51,6 +51,8 @@ fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
 /// Creates a hash from the input and source code locations in the provided
 /// idents.
 ///
+/// This hash is not guaranteed to be stable across compiler versions.
+///
 /// Tests are in [`objc2::__macro_helpers`].
 #[proc_macro]
 #[doc(hidden)]
@@ -68,6 +70,9 @@ pub fn __hash_idents(input: TokenStream) -> TokenStream {
         // proc macro right now is from the `Debug` formatter for spans which
         // includes the source code location... so just hash the whole `Debug`
         // format output of the span
+        //
+        // Prior art in the `defmt` crate, see here:
+        // https://github.com/knurling-rs/defmt/blob/defmt-v0.3.1/macros/src/construct.rs
         format!("{:?}", ident.span()).hash(&mut hasher);
     }
 

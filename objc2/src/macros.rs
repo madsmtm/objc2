@@ -44,6 +44,11 @@ macro_rules! class {
 ///
 /// Non-ascii identifiers are ill-tested, if supported at all.
 ///
+/// [`Sel::register`]: crate::runtime::Sel::register
+///
+///
+/// # Features
+///
 /// If the experimental `"unstable-static-sel"` feature is enabled, this will
 /// emit special statics that will be replaced by the dynamic linker (dyld)
 /// when the program starts up - in exactly the same manner as normal
@@ -54,15 +59,18 @@ macro_rules! class {
 /// correctly in all cases.
 /// See the source code and [rust-lang/rust#53929] for more info.
 ///
-/// Concretely, this may fail at link-time (likely), at dynamic link-time/just
-/// before the program is run, or possibly also at runtime, causing UB.
+/// Concretely, this may fail at:
+/// - link-time (likely)
+/// - dynamic link-time/just before the program is run (fairly likely)
+/// - runtime, causing UB (unlikely)
 ///
 /// The `"unstable-static-sel-inlined"` feature is the even more extreme
-/// version of this - it yields the best performance and is closest to real
+/// version - it yields the best performance and is closest to real
 /// Objective-C code, but probably won't work unless your code and its
 /// inlining is written in a very certain way.
 ///
-/// [`Sel::register`]: crate::runtime::Sel::register
+/// Enabling LTO greatly increases the chance that these features work.
+///
 /// [rust-lang/rust#53929]: https://github.com/rust-lang/rust/issues/53929
 ///
 ///
@@ -161,7 +169,9 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// - End up in the same codegen unit as the other statics below.
         /// - End up in the final binary so it can be read by dyld.
         ///
-        /// Unfortunately however, this leads to duplicated tags.
+        /// Unfortunately however, this leads to duplicated tags - the linker
+        /// reports `__DATA/__objc_imageinfo has unexpectedly large size XXX`,
+        /// but things still seems to work.
         #[link_section = $image_info_section]
         #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
         #[used] // Make sure this reaches the linker
@@ -202,6 +212,17 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// Clang uses `no_dead_strip` in the link section for some reason,
         /// which other tools (notably some LLVM tools) now assume is present,
         /// so we have to add it as well.
+        ///
+        ///
+        /// # Safety
+        ///
+        /// I'm quite uncertain of how safe this is, since the Rust abstract
+        /// machine has no concept of a static that is initialized outside of
+        /// it - perhaps it would be better to use `read_volatile` instead of
+        /// relying on `UnsafeCell`? Or perhaps `MaybeUninit` would help?
+        ///
+        /// See the [`ctor`](https://crates.io/crates/ctor) crate for more
+        /// info on "life before main".
         #[link_section = $selector_ref_section]
         #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
         static mut REF: $crate::__macro_helpers::UnsafeCell<$crate::runtime::Sel> = unsafe {
