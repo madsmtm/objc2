@@ -59,7 +59,7 @@ pub trait MsgSendId<T, U> {
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for RetainSemantics<true, false, false, false>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: &Class,
         sel: Sel,
@@ -73,7 +73,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for RetainSemantics<false, true, false, false>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         cls: &Class,
         sel: Sel,
@@ -87,7 +87,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
     for RetainSemantics<false, false, true, false>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: Option<Id<T, O>>,
         sel: Sel,
@@ -108,7 +108,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
 impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
     for RetainSemantics<false, false, false, true>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: T,
         sel: Sel,
@@ -122,7 +122,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
     for RetainSemantics<false, false, false, false>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: T,
         sel: Sel,

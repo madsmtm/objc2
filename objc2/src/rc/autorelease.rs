@@ -302,7 +302,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// # panic!("Does not panic in release mode, so for testing we make it!");
 /// ```
 #[doc(alias = "@autoreleasepool")]
-#[inline(always)]
+#[inline]
 pub fn autoreleasepool<T, F>(f: F) -> T
 where
     for<'p> F: FnOnce(&'p AutoreleasePool) -> T + AutoreleaseSafe,

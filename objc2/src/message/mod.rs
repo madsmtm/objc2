@@ -22,7 +22,7 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, Message
 }
 
 #[cfg(not(feature = "catch_all"))]
-#[inline(always)]
+#[inline]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, MessageError> {
     Ok(f())
 }
@@ -121,7 +121,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     ///
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
-    #[cfg_attr(not(feature = "verify_message"), inline(always))]
+    #[inline]
     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> Result<R, MessageError>
     where
         A: MessageArguments,
@@ -163,7 +163,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     ///
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
-    #[cfg_attr(not(feature = "verify_message"), inline(always))]
+    #[inline]
     unsafe fn send_super_message<A, R>(
         self,
         superclass: &Class,

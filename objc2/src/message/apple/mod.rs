@@ -23,7 +23,7 @@ unsafe trait MsgSendFn: Encode {
     const MSG_SEND_SUPER: Imp;
 }
 
-#[inline(always)]
+#[inline]
 pub(crate) unsafe fn send_unverified<A, R>(
     receiver: *mut Object,
     sel: Sel,
