@@ -9,7 +9,7 @@ extern "C" fn my_fn(_x: &i32) {}
 fn impls_encode<T: Encode>(_x: T) {}
 
 fn main() {
-    // Works (though currently fails on nightly, see https://github.com/rust-lang/rust/issues/97997).
+    // Works
     impls_encode(my_fn as extern "C" fn(_));
     // Can't be written:
     // let encoding = <extern "C" fn(_) as Encode>::ENCODING;

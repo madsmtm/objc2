@@ -1,13 +1,4 @@
 error: implementation of `Encode` is not general enough
-  --> ui/fn_ptr_reference_encode.rs:13:5
-   |
-13 |     impls_encode(my_fn as extern "C" fn(_));
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `Encode` is not general enough
-   |
-   = note: `Encode` would have to be implemented for the type `for<'r> extern "C" fn(&'r i32)`
-   = note: ...but `Encode` is actually implemented for the type `extern "C" fn(&'0 i32)`, for some specific lifetime `'0`
-
-error: implementation of `Encode` is not general enough
   --> ui/fn_ptr_reference_encode.rs:18:5
    |
 18 |     impls_encode(my_fn as extern "C" fn(&i32));
