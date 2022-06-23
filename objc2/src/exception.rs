@@ -127,8 +127,10 @@ mod tests {
     }
 
     #[test]
-    // TODO: `NULL` exceptions are invalid on 32-bit / w. fragile runtime
-    #[cfg(target_pointer_width = "64")]
+    #[cfg_attr(
+        not(target_pointer_width = "64"),
+        ignore = "`NULL` exceptions are invalid on 32-bit / w. fragile runtime. TODO: Fix this!"
+    )]
     fn test_throw_catch_none() {
         let s = "Hello".to_string();
         let result = unsafe {

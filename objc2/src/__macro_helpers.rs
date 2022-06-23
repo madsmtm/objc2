@@ -10,7 +10,7 @@ pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, str, u8};
 pub use core::result::Result::{Err, Ok};
 pub use core::{compile_error, concat, panic, stringify};
-#[cfg(feature = "unstable-static-sel")]
+#[cfg(feature = "objc2-proc-macros")]
 pub use objc2_proc_macros::__hash_idents;
 
 /// Helper for specifying the retain semantics for a given selector family.
