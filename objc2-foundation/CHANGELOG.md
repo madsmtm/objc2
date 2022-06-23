@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `MainThreadMarker` to help with designing APIs where a method is only
+  safe to call on the main thread.
+
 
 ## 0.2.0-alpha.5 - 2022-06-13
 
