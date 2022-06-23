@@ -2,6 +2,9 @@ use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
 
+pub use crate::cache::CachedClass;
+pub use crate::cache::CachedSel;
+
 pub use core::cell::UnsafeCell;
 pub use core::compile_error;
 #[cfg(feature = "unstable-static-sel")]

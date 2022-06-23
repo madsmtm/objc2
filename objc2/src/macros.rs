@@ -18,10 +18,11 @@
 #[macro_export]
 macro_rules! class {
     ($name:ident) => {{
-        static CLASS: $crate::__CachedClass = $crate::__CachedClass::new();
+        static CACHED_CLASS: $crate::__macro_helpers::CachedClass =
+            $crate::__macro_helpers::CachedClass::new();
         let name = concat!(stringify!($name), '\0');
         #[allow(unused_unsafe)]
-        let cls = unsafe { CLASS.get(name) };
+        let cls = unsafe { CACHED_CLASS.get(name) };
         match cls {
             Some(cls) => cls,
             None => panic!("Class with name {} could not be found", stringify!($name)),
@@ -147,10 +148,11 @@ macro_rules! sel {
 #[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! __sel_inner {
     ($data:ident, $($idents:ident)+) => {{
-        static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
+        static CACHED_SEL: $crate::__macro_helpers::CachedSel =
+            $crate::__macro_helpers::CachedSel::new();
         #[allow(unused_unsafe)]
         unsafe {
-            SEL.get($data)
+            CACHED_SEL.get($data)
         }
     }};
 }
