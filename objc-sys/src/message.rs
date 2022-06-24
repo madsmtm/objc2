@@ -20,7 +20,12 @@ pub struct objc_super {
     pub super_class: *const objc_class,
 }
 
-extern_c! {
+// All message sending functions should use "C-unwind"!
+//
+// Note that lookup functions won't throw exceptions themselves, but they can
+// call hooks, `resolveClassMethod:` and `resolveInstanceMethod:`, so we have
+// to make those "C-unwind" as well!
+extern_c_unwind! {
     #[cfg(any(gnustep, objfw))]
     pub fn objc_msg_lookup(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
     #[cfg(objfw)]

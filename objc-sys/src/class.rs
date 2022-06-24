@@ -23,6 +23,21 @@ pub struct objc_class {
 /// difference.
 type ivar_layout_type = u8;
 
+// May call `resolveClassMethod:` or `resolveInstanceMethod:`.
+extern_c_unwind! {
+    #[cfg(not(objfw))]
+    pub fn class_getClassMethod(
+        cls: *const objc_class,
+        name: *const objc_selector,
+    ) -> *const objc_method;
+    #[cfg(not(objfw))] // Available in newer versions
+    pub fn class_getInstanceMethod(
+        cls: *const objc_class,
+        name: *const objc_selector,
+    ) -> *const objc_method;
+}
+
+// TODO: Hooks registered with objc_setHook_getClass may be allowed to unwind?
 extern_c! {
     pub fn objc_getClass(name: *const c_char) -> *const objc_class;
     pub fn objc_getRequiredClass(name: *const c_char) -> *const objc_class;
@@ -97,19 +112,9 @@ extern_c! {
     #[cfg(not(objfw))]
     pub fn class_createInstance(cls: *const objc_class, extra_bytes: usize) -> *mut objc_object;
     #[cfg(not(objfw))]
-    pub fn class_getClassMethod(
-        cls: *const objc_class,
-        name: *const objc_selector,
-    ) -> *const objc_method;
-    #[cfg(not(objfw))]
     pub fn class_getClassVariable(cls: *const objc_class, name: *const c_char) -> *const objc_ivar;
     #[cfg(apple)]
     pub fn class_getImageName(cls: *const objc_class) -> *const c_char;
-    #[cfg(not(objfw))] // Available in newer versions
-    pub fn class_getInstanceMethod(
-        cls: *const objc_class,
-        name: *const objc_selector,
-    ) -> *const objc_method;
     pub fn class_getInstanceSize(cls: *const objc_class) -> usize;
     #[cfg(not(objfw))]
     pub fn class_getInstanceVariable(
@@ -140,6 +145,7 @@ extern_c! {
         attributes: *const objc_property_attribute_t,
         attributes_len: c_uint,
     );
+    // TODO: Verify unwinding
     pub fn class_respondsToSelector(cls: *const objc_class, sel: *const objc_selector) -> BOOL;
     #[cfg(not(objfw))]
     pub fn class_setIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);

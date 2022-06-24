@@ -26,6 +26,9 @@ default = ["std"]
 std = ["alloc"]
 alloc = []
 
+# Enables support for the nightly c_unwind feature
+unstable-c-unwind = []
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 

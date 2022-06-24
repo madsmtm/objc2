@@ -28,11 +28,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added the `"unstable-static-sel"` and `"unstable-static-sel-inlined"`
   feature flags to make the `sel!` macro (and by extension, the `msg_send!`
   macros) faster.
+* Added `"unstable-c-unwind"` feature.
 
 ### Changed
 * **BREAKING:** `Sel` is now required to be non-null, which means that you
   have to ensure that any selectors you receive from method calls are
   non-null before using them.
+* **BREAKING**: `ClassBuilder::root` is now generic over the function pointer,
+  meaning you will have to coerce initializer functions to pointers like in
+  `ClassBuilder::add_method` before you can use it.
 
 ### Removed
 * **BREAKING:** Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.

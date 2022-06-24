@@ -16,10 +16,15 @@ pub struct objc_ivar {
     _p: OpaqueData,
 }
 
+#[cfg(not(feature = "unstable-c-unwind"))]
+type InnerImp = unsafe extern "C" fn();
+#[cfg(feature = "unstable-c-unwind")]
+type InnerImp = unsafe extern "C-unwind" fn();
+
 /// A nullable pointer to the start of a method implementation.
 ///
 /// Not all APIs are guaranteed to take NULL values; read the docs!
-pub type IMP = Option<unsafe extern "C" fn()>;
+pub type IMP = Option<InnerImp>;
 
 // /// Not available on macOS x86.
 // ///
@@ -34,6 +39,12 @@ pub type IMP = Option<unsafe extern "C" fn()>;
 // #[cfg(apple_new)]
 // pub type objc_hook_lazyClassNamer =
 //     unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
+
+extern_c_unwind! {
+    // Instead of being able to change this, it's a weak symbol on GNUStep.
+    #[cfg(any(apple, objfw))]
+    pub fn objc_enumerationMutation(obj: *mut objc_object);
+}
 
 extern_c! {
     #[cfg(not(objfw))]
@@ -58,9 +69,6 @@ extern_c! {
     #[cfg(apple)]
     pub fn objc_copyImageNames(out_len: *mut c_uint) -> *mut *const c_char;
 
-    // Instead of being able to change this, it's a weak symbol on GNUStep.
-    #[cfg(any(apple, objfw))]
-    pub fn objc_enumerationMutation(obj: *mut objc_object);
     #[cfg(any(apple, objfw))]
     pub fn objc_setEnumerationMutationHandler(
         handler: Option<unsafe extern "C" fn(obj: *mut objc_object)>,

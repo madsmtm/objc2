@@ -38,17 +38,28 @@ pub type objc_uncaught_exception_handler =
 pub type objc_exception_handler =
     unsafe extern "C" fn(unused: *mut objc_object, context: *mut c_void);
 
-extern_c! {
-    #[cfg(any(gnustep, apple_new))]
-    pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;
-    #[cfg(any(gnustep, apple_new))]
-    pub fn objc_end_catch();
+#[cfg(all(feature = "unstable-exception", not(feature = "unstable-c-unwind")))]
+type TryCatchClosure = extern "C" fn(*mut c_void);
+#[cfg(all(feature = "unstable-exception", feature = "unstable-c-unwind"))]
+type TryCatchClosure = extern "C-unwind" fn(*mut c_void);
+
+extern_c_unwind! {
     /// See [`objc-exception.h`].
     ///
     /// [`objc-exception.h`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/objc-exception.h
     pub fn objc_exception_throw(exception: *mut objc_object) -> !;
     #[cfg(apple_new)]
     pub fn objc_exception_rethrow() -> !;
+
+    #[cfg(gnustep)]
+    pub fn objc_exception_rethrow(exc_buf: *mut c_void) -> !;
+}
+
+extern_c! {
+    #[cfg(any(gnustep, apple_new))]
+    pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;
+    #[cfg(any(gnustep, apple_new))]
+    pub fn objc_end_catch();
 
     #[cfg(apple_old)]
     pub fn objc_exception_try_enter(exception_data: *const c_void);
@@ -60,9 +71,6 @@ extern_c! {
     // objc_exception_match
     // objc_exception_get_functions
     // objc_exception_set_functions
-
-    #[cfg(gnustep)]
-    pub fn objc_exception_rethrow(exc_buf: *mut c_void) -> !;
 
     #[cfg(apple_new)]
     pub fn objc_setExceptionMatcher(f: objc_exception_matcher) -> objc_exception_matcher;
@@ -105,7 +113,7 @@ extern_c! {
     /// [manual-asm]: https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/exception.rs
     #[cfg(feature = "unstable-exception")]
     pub fn rust_objc_sys_0_2_try_catch_exception(
-        f: extern "C" fn(*mut c_void),
+        f: TryCatchClosure,
         context: *mut c_void,
         error: *mut *mut objc_object,
     ) -> c_uchar;

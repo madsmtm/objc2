@@ -25,9 +25,7 @@
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
 #![doc(html_root_url = "https://docs.rs/objc-sys/0.2.0-beta.0")]
-
-// TODO: Replace `extern "C"` with `extern "C-unwind"` where applicable.
-// See https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html.
+#![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 
 // TODO: Remove this and add "no-std" category to Cargo.toml
 // Requires a better solution for C-types in `no_std` crates.
@@ -51,6 +49,7 @@ macro_rules! generate_linking_tests {
             $(#[$m:meta])*
             $v:vis fn $name:ident($($a:ident: $t:ty),* $(,)?) $(-> $r:ty)?;
         )+}
+        mod $test_name:ident;
     } => {
         $(#[$extern_m])*
         extern $abi {$(
@@ -61,10 +60,9 @@ macro_rules! generate_linking_tests {
         $(#[$extern_m])*
         #[allow(deprecated)]
         #[cfg(test)]
-        mod test_linkable {
+        mod $test_name {
             #[allow(unused)]
             use super::*;
-            use std::println;
 
             $(
                 $(#[$m])*
@@ -73,8 +71,12 @@ macro_rules! generate_linking_tests {
                     // Get function pointer to make the linker require the
                     // symbol to be available.
                     let f: unsafe extern $abi fn($($t),*) $(-> $r)? = crate::$name;
+                    // Workaround for https://github.com/rust-lang/rust/pull/92964
+                    #[cfg(feature = "unstable-c-unwind")]
+                    #[allow(clippy::useless_transmute)]
+                    let f: unsafe extern "C" fn() = unsafe { core::mem::transmute(f) };
                     // Execute side-effect to ensure it is not optimized away.
-                    println!("{:p}", f);
+                    std::println!("{:p}", f);
                 }
             )+
         }
@@ -95,6 +97,40 @@ macro_rules! extern_c {
                 $(#[$m])*
                 $v fn $name($($a: $t),*) $(-> $r)?;
             )+}
+            mod test_linkable;
+        }
+    };
+}
+
+// A lot of places may call `+initialize`, but the runtime guards those calls
+// with `@try/@catch` blocks already, so we don't need to mark every function
+// "C-unwind", only certain ones!
+macro_rules! extern_c_unwind {
+    {
+        $(#![$extern_m:meta])*
+        $(
+            $(#[$m:meta])*
+            $v:vis fn $name:ident($($a:ident: $t:ty),* $(,)?) $(-> $r:ty)?;
+        )+
+    } => {
+        #[cfg(not(feature = "unstable-c-unwind"))]
+        generate_linking_tests! {
+            $(#[$extern_m])*
+            extern "C" {$(
+                $(#[$m])*
+                $v fn $name($($a: $t),*) $(-> $r)?;
+            )+}
+            mod test_linkable_unwind;
+        }
+
+        #[cfg(feature = "unstable-c-unwind")]
+        generate_linking_tests! {
+            $(#[$extern_m])*
+            extern "C-unwind" {$(
+                $(#[$m])*
+                $v fn $name($($a: $t),*) $(-> $r)?;
+            )+}
+            mod test_linkable_unwind;
         }
     };
 }

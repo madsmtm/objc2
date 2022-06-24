@@ -92,7 +92,11 @@ pub(crate) fn custom_class() -> &'static Class {
         // The runtime will call this method, so it has to be implemented
         extern "C" fn custom_obj_class_initialize(_this: &Class, _cmd: Sel) {}
 
-        let mut builder = ClassBuilder::root("CustomObject", custom_obj_class_initialize).unwrap();
+        let mut builder = ClassBuilder::root(
+            "CustomObject",
+            custom_obj_class_initialize as extern "C" fn(&Class, Sel),
+        )
+        .unwrap();
         let proto = custom_protocol();
 
         builder.add_protocol(proto);

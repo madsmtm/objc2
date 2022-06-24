@@ -320,7 +320,12 @@ macro_rules! message_args_impl {
                 // type before being called; the msgSend functions are not
                 // parametric, but instead "trampolines" to the actual
                 // method implementations.
+                #[cfg(not(feature = "unstable-c-unwind"))]
                 let imp: unsafe extern "C" fn(*mut Object, Sel $(, $t)*) -> R = unsafe {
+                    mem::transmute(imp)
+                };
+                #[cfg(feature = "unstable-c-unwind")]
+                let imp: unsafe extern "C-unwind" fn(*mut Object, Sel $(, $t)*) -> R = unsafe {
                     mem::transmute(imp)
                 };
                 // TODO: On x86_64 it would be more efficient to use a GOT

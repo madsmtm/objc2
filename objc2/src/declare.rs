@@ -110,17 +110,22 @@ macro_rules! method_decl_impl {
             }
         }
     };
-    ($($t:ident),*) => {
-        method_decl_impl!(-T, R, extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern "C" fn(*const T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern "C" fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+    (# $abi:literal; $($t:ident),*) => {
+        method_decl_impl!(-T, R, extern $abi fn(&T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, extern $abi fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern $abi fn(&T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern $abi fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
 
-        method_decl_impl!(@Class, R, extern "C" fn(&Class, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@Class, R, unsafe extern "C" fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@Class, R, unsafe extern "C" fn(&Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@Class, R, extern $abi fn(&Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@Class, R, unsafe extern $abi fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@Class, R, unsafe extern $abi fn(&Class, Sel $(, $t)*) -> R, $($t),*);
+    };
+    ($($t:ident),*) => {
+        method_decl_impl!(# "C"; $($t),*);
+        #[cfg(feature = "unstable-c-unwind")]
+        method_decl_impl!(# "C-unwind"; $($t),*);
     };
 }
 
@@ -221,7 +226,10 @@ impl ClassBuilder {
     /// the entire `NSObject` protocol is implemented.
     /// Functionality it expects, like implementations of `-retain` and
     /// `-release` used by ARC, will not be present otherwise.
-    pub fn root(name: &str, intitialize_fn: extern "C" fn(&Class, Sel)) -> Option<Self> {
+    pub fn root<F>(name: &str, intitialize_fn: F) -> Option<Self>
+    where
+        F: MethodImplementation<Callee = Class, Args = (), Ret = ()>,
+    {
         Self::with_superclass(name, None).map(|mut this| {
             unsafe { this.add_class_method(sel!(initialize), intitialize_fn) };
             this

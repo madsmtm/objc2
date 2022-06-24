@@ -103,13 +103,18 @@ standard_pointer_impls!(Ivar, Method, Class);
 #[repr(C)]
 pub struct Object(ffi::objc_object);
 
+#[cfg(not(feature = "unstable-c-unwind"))]
+type InnerImp = unsafe extern "C" fn();
+#[cfg(feature = "unstable-c-unwind")]
+type InnerImp = unsafe extern "C-unwind" fn();
+
 /// A pointer to the start of a method implementation.
 ///
 /// # Safety
 ///
 /// This is a "catch all" type; it must be transmuted to the correct type
 /// before being called!
-pub type Imp = unsafe extern "C" fn();
+pub type Imp = InnerImp;
 
 impl Sel {
     #[inline]

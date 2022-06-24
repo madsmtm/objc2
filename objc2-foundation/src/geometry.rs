@@ -315,6 +315,7 @@ mod tests {
     fn test_partial_eq() {
         use objc2::runtime::Bool;
 
+        // Note: No need to use "C-unwind"
         extern "C" {
             fn NSEqualPoints(a: NSPoint, b: NSPoint) -> Bool;
             fn NSEqualSizes(a: NSSize, b: NSSize) -> Bool;

@@ -455,18 +455,23 @@ macro_rules! encode_fn_pointer_impl {
             const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
         }
     };
-    ($($Arg: ident),+) => {
+    (# $abi:literal; $($Arg: ident),+) => {
         // Normal functions
-        encode_fn_pointer_impl!(@ extern "C" fn($($Arg),+) -> Ret, $($Arg),+ );
-        encode_fn_pointer_impl!(@ unsafe extern "C" fn($($Arg),+) -> Ret, $($Arg),+ );
+        encode_fn_pointer_impl!(@ extern $abi fn($($Arg),+) -> Ret, $($Arg),+ );
+        encode_fn_pointer_impl!(@ unsafe extern $abi fn($($Arg),+) -> Ret, $($Arg),+ );
         // Variadic functions
-        encode_fn_pointer_impl!(@ extern "C" fn($($Arg),+ , ...) -> Ret, $($Arg),+ );
-        encode_fn_pointer_impl!(@ unsafe extern "C" fn($($Arg),+ , ...) -> Ret, $($Arg),+ );
+        encode_fn_pointer_impl!(@ extern $abi fn($($Arg),+ , ...) -> Ret, $($Arg),+ );
+        encode_fn_pointer_impl!(@ unsafe extern $abi fn($($Arg),+ , ...) -> Ret, $($Arg),+ );
     };
-    () => {
+    (# $abi:literal; ) => {
         // No variadic functions with 0 parameters
-        encode_fn_pointer_impl!(@ extern "C" fn() -> Ret, );
-        encode_fn_pointer_impl!(@ unsafe extern "C" fn() -> Ret, );
+        encode_fn_pointer_impl!(@ extern $abi fn() -> Ret, );
+        encode_fn_pointer_impl!(@ unsafe extern $abi fn() -> Ret, );
+    };
+    ($($Arg: ident),*) => {
+        encode_fn_pointer_impl!(# "C"; $($Arg),*);
+        #[cfg(feature = "unstable-c-unwind")]
+        encode_fn_pointer_impl!(# "C-unwind"; $($Arg),*);
     };
 }
 
@@ -605,6 +610,11 @@ mod tests {
         );
         assert_eq!(
             <Option<unsafe extern "C" fn()>>::ENCODING,
+            Encoding::Pointer(&Encoding::Unknown)
+        );
+        #[cfg(feature = "unstable-c-unwind")]
+        assert_eq!(
+            <extern "C-unwind" fn()>::ENCODING,
             Encoding::Pointer(&Encoding::Unknown)
         );
     }
