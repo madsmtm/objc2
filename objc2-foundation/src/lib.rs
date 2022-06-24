@@ -58,7 +58,7 @@ pub use self::object::NSObject;
 pub use self::process_info::NSProcessInfo;
 pub use self::range::NSRange;
 pub use self::string::NSString;
-pub use self::thread::{is_main_thread, is_multi_threaded, NSThread};
+pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSThread};
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
 
