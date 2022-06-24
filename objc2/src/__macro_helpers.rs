@@ -2,9 +2,15 @@ use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageError, MessageReceiver};
 
+pub use crate::cache::CachedClass;
+pub use crate::cache::CachedSel;
+
 pub use core::cell::UnsafeCell;
-pub use core::compile_error;
-#[cfg(feature = "unstable-static-sel")]
+pub use core::option::Option::{self, None, Some};
+pub use core::primitive::{bool, str, u8};
+pub use core::result::Result::{Err, Ok};
+pub use core::{compile_error, concat, panic, stringify};
+#[cfg(feature = "objc2-proc-macros")]
 pub use objc2_proc_macros::__hash_idents;
 
 /// Helper for specifying the retain semantics for a given selector family.
@@ -53,7 +59,7 @@ pub trait MsgSendId<T, U> {
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for RetainSemantics<true, false, false, false>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: &Class,
         sel: Sel,
@@ -67,7 +73,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for RetainSemantics<false, true, false, false>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         cls: &Class,
         sel: Sel,
@@ -81,7 +87,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
     for RetainSemantics<false, false, true, false>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: Option<Id<T, O>>,
         sel: Sel,
@@ -102,7 +108,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
 impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
     for RetainSemantics<false, false, false, true>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: T,
         sel: Sel,
@@ -116,7 +122,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
     for RetainSemantics<false, false, false, false>
 {
-    #[inline(always)]
+    #[inline]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: T,
         sel: Sel,

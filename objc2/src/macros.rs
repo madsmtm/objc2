@@ -18,10 +18,11 @@
 #[macro_export]
 macro_rules! class {
     ($name:ident) => {{
-        static CLASS: $crate::__CachedClass = $crate::__CachedClass::new();
+        use $crate::__macro_helpers::{concat, panic, stringify, CachedClass, None, Some};
+        static CACHED_CLASS: CachedClass = CachedClass::new();
         let name = concat!(stringify!($name), '\0');
         #[allow(unused_unsafe)]
-        let cls = unsafe { CLASS.get(name) };
+        let cls = unsafe { CACHED_CLASS.get(name) };
         match cls {
             Some(cls) => cls,
             None => panic!("Class with name {} could not be found", stringify!($name)),
@@ -137,6 +138,7 @@ macro_rules! class {
 #[macro_export]
 macro_rules! sel {
     ($first:ident $(: $($rest:ident :)*)?) => ({
+        use $crate::__macro_helpers::{concat, stringify, str};
         const SELECTOR_DATA: &str = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
         $crate::__sel_inner!(SELECTOR_DATA, $first $($($rest)*)?)
     });
@@ -147,10 +149,11 @@ macro_rules! sel {
 #[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! __sel_inner {
     ($data:ident, $($idents:ident)+) => {{
-        static SEL: $crate::__CachedSel = $crate::__CachedSel::new();
+        use $crate::__macro_helpers::CachedSel;
+        static CACHED_SEL: CachedSel = CachedSel::new();
         #[allow(unused_unsafe)]
         unsafe {
-            SEL.get($data)
+            CACHED_SEL.get($data)
         }
     }};
 }
@@ -165,6 +168,10 @@ macro_rules! __sel_inner_statics_apple_generic {
         $data:ident,
         $($idents:ident)+
     } => {
+        use $crate::__macro_helpers::{__hash_idents, u8, UnsafeCell};
+        use $crate::ffi::__ImageInfo;
+        use $crate::runtime::Sel;
+
         /// We always emit the image info tag, since we need it to:
         /// - End up in the same codegen unit as the other statics below.
         /// - End up in the final binary so it can be read by dyld.
@@ -173,9 +180,9 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// reports `__DATA/__objc_imageinfo has unexpectedly large size XXX`,
         /// but things still seems to work.
         #[link_section = $image_info_section]
-        #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
+        #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", __hash_idents!($($idents)+))]
         #[used] // Make sure this reaches the linker
-        static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
+        static _IMAGE_INFO: __ImageInfo = __ImageInfo::system();
 
         const X: &[u8] = $data.as_bytes();
 
@@ -183,7 +190,7 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// See rust-lang/rust#18297
         /// Should only be an optimization (?)
         #[link_section = $var_name_section]
-        #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
+        #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", __hash_idents!($($idents)+))]
         static NAME_DATA: [u8; X.len()] = {
             // Convert the `&[u8]` slice to an array with known length, so
             // that we can place that directly in a static.
@@ -224,9 +231,9 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// See the [`ctor`](https://crates.io/crates/ctor) crate for more
         /// info on "life before main".
         #[link_section = $selector_ref_section]
-        #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $crate::__macro_helpers::__hash_idents!($($idents)+))]
-        static mut REF: $crate::__macro_helpers::UnsafeCell<$crate::runtime::Sel> = unsafe {
-            $crate::__macro_helpers::UnsafeCell::new($crate::runtime::Sel::from_ptr(NAME_DATA.as_ptr().cast()))
+        #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", __hash_idents!($($idents)+))]
+        static mut REF: UnsafeCell<Sel> = unsafe {
+            UnsafeCell::new(Sel::from_ptr(NAME_DATA.as_ptr().cast()))
         };
     };
 }
@@ -443,6 +450,9 @@ macro_rules! __sel_inner {
 #[macro_export]
 macro_rules! msg_send {
     [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
+        // Note: this import means that using these types inside `expr` will
+        // generate an error. We won't bother with that (yet) though.
+        use $crate::__macro_helpers::{Err, Ok, panic};
         let sel = $crate::sel!($selector);
         let result;
         match $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ()) {
@@ -452,6 +462,7 @@ macro_rules! msg_send {
         result
     });
     [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr $(,)?)+] => ({
+        use $crate::__macro_helpers::{Err, Ok, panic};
         let sel = $crate::sel!($($selector :)+);
         let result;
         match $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ($($argument,)+)) {
@@ -461,6 +472,7 @@ macro_rules! msg_send {
         result
     });
     [$obj:expr, $selector:ident $(,)?] => ({
+        use $crate::__macro_helpers::{Err, Ok, panic};
         let sel = $crate::sel!($selector);
         let result;
         match $crate::MessageReceiver::send_message($obj, sel, ()) {
@@ -470,6 +482,7 @@ macro_rules! msg_send {
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr $(,)?)+] => ({
+        use $crate::__macro_helpers::{Err, Ok, panic};
         let sel = $crate::sel!($($selector :)+);
         let result;
         match $crate::MessageReceiver::send_message($obj, sel, ($($argument,)+)) {
@@ -650,6 +663,9 @@ macro_rules! msg_send_bool {
 macro_rules! msg_send_id {
     [$obj:expr, $selector:ident $(,)?] => ({
         $crate::__msg_send_id_helper!(@verify $selector);
+
+        use $crate::__macro_helpers::{u8, Err, Ok, Option, panic, stringify};
+
         let sel = $crate::sel!($selector);
         const NAME: &[u8] = stringify!($selector).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
@@ -661,6 +677,8 @@ macro_rules! msg_send_id {
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
+        use $crate::__macro_helpers::{concat, u8, Err, Ok, Option, panic, stringify};
+
         let sel = $crate::sel!($($selector:)+);
         const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
@@ -694,13 +712,13 @@ macro_rules! __msg_send_id_helper {
     }};
     (@verify $selector:ident) => {{}};
     (@get_assert_consts $selector:ident) => {
-        const NEW: bool = $crate::__macro_helpers::in_selector_family($selector, b"new");
-        const ALLOC: bool = $crate::__macro_helpers::in_selector_family($selector, b"alloc");
-        const INIT: bool = $crate::__macro_helpers::in_selector_family($selector, b"init");
+        use $crate::__macro_helpers::{bool, in_selector_family, RetainSemantics};
+        const NEW: bool = in_selector_family($selector, b"new");
+        const ALLOC: bool = in_selector_family($selector, b"alloc");
+        const INIT: bool = in_selector_family($selector, b"init");
         const COPY_OR_MUT_COPY: bool = {
-            $crate::__macro_helpers::in_selector_family($selector, b"copy")
-                || $crate::__macro_helpers::in_selector_family($selector, b"mutableCopy")
+            in_selector_family($selector, b"copy") || in_selector_family($selector, b"mutableCopy")
         };
-        type RS = $crate::__macro_helpers::RetainSemantics<NEW, ALLOC, INIT, COPY_OR_MUT_COPY>;
+        type RS = RetainSemantics<NEW, ALLOC, INIT, COPY_OR_MUT_COPY>;
     };
 }

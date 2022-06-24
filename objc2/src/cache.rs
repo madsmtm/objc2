@@ -21,7 +21,7 @@ impl CachedSel {
 
     /// Returns the cached selector. If no selector is yet cached, registers
     /// one with the given name and stores it.
-    #[inline(always)]
+    #[inline]
     #[doc(hidden)]
     pub unsafe fn get(&self, name: &str) -> Sel {
         // `Relaxed` should be fine since `sel_registerName` is thread-safe.
@@ -52,7 +52,7 @@ impl CachedClass {
 
     /// Returns the cached class. If no class is yet cached, gets one with
     /// the given name and stores it.
-    #[inline(always)]
+    #[inline]
     #[doc(hidden)]
     pub unsafe fn get(&self, name: &str) -> Option<&'static Class> {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.

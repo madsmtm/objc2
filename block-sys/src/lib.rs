@@ -58,15 +58,17 @@ pub type block_flags = i32;
 #[cfg(feature = "apple")]
 pub const BLOCK_DEALLOCATING: block_flags = 0x0001;
 
-/// Mask for the reference count in byref structure's flags field. The low
-/// 3 bytes are reserved for the reference count, the top byte for the flags.
-#[cfg(feature = "gnustep-1-7")]
-pub const BLOCK_REFCOUNT_MASK: block_flags = 0x00ffffff;
-#[cfg(any(feature = "compiler-rt", feature = "objfw"))]
-pub const BLOCK_REFCOUNT_MASK: block_flags = 0xffff;
-#[cfg(feature = "apple")]
-/// runtime
-pub const BLOCK_REFCOUNT_MASK: block_flags = 0xfffe;
+pub const BLOCK_REFCOUNT_MASK: block_flags = if cfg!(feature = "gnustep-1-7") {
+    // Mask for the reference count in byref structure's flags field. The low
+    // 3 bytes are reserved for the reference count, the top byte for the flags.
+    0x00ffffff
+} else if cfg!(any(feature = "compiler-rt", feature = "objfw")) {
+    0xffff
+} else if cfg!(feature = "apple") {
+    0xfffe // runtime
+} else {
+    0
+};
 
 #[cfg(feature = "apple")]
 /// compiler

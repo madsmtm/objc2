@@ -300,7 +300,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// Same as [`Id::retain`].
     #[doc(alias = "objc_retainAutoreleasedReturnValue")]
-    #[inline(always)]
+    #[inline]
     pub unsafe fn retain_autoreleased(ptr: *mut T) -> Option<Id<T, O>> {
         // Add magic nop instruction to participate in the fast autorelease
         // scheme.
