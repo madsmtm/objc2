@@ -175,18 +175,15 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     #[inline]
     // Note: We don't take a reference as a parameter since it would be too
     // easy to accidentally create two aliasing mutable references.
-    pub unsafe fn new(ptr: *mut T) -> Option<Id<T, O>> {
-        #[cfg(debug_assertions)]
-        unsafe {
-            O::__ensure_unique_if_owned(ptr as *mut _)
-        };
+    pub unsafe fn new(ptr: *mut T) -> Option<Self> {
+        unsafe { O::__ensure_unique_if_owned(ptr.cast()) };
         // Should optimize down to nothing.
         // SAFETY: Upheld by the caller
-        NonNull::new(ptr).map(|ptr| unsafe { Id::new_nonnull(ptr) })
+        NonNull::new(ptr).map(|ptr| unsafe { Self::new_nonnull(ptr) })
     }
 
     #[inline]
-    unsafe fn new_nonnull(ptr: NonNull<T>) -> Id<T, O> {
+    unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
         Self {
             ptr,
             item: PhantomData,
@@ -203,12 +200,13 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     ///
     /// This is an associated method, and must be called as `Id::as_ptr(obj)`.
     #[inline]
-    pub fn as_ptr(this: &Id<T, O>) -> *const T {
+    pub fn as_ptr(this: &Self) -> *const T {
         this.ptr.as_ptr()
     }
 
     #[inline]
     pub(crate) fn consume_as_ptr(this: ManuallyDrop<Self>) -> *mut T {
+        unsafe { O::__relinquish_ownership(this.ptr.as_ptr().cast()) };
         this.ptr.as_ptr()
     }
 
@@ -218,17 +216,17 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
         // So we just hack it with transmute!
 
         // SAFETY: Option<Id<T, _>> has the same size as *mut T
-        unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(ManuallyDrop::new(obj)) }
+        let obj = ManuallyDrop::new(obj);
+        let ptr = unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(obj) };
+        unsafe { O::__relinquish_ownership(ptr.cast()) };
+        ptr
     }
 
     // TODO: Pub?
     #[inline]
-    fn forget(self) -> *mut T {
-        #[cfg(debug_assertions)]
-        unsafe {
-            O::__relinquish_ownership(self.as_ptr() as *mut _)
-        };
-        ManuallyDrop::new(self).as_ptr()
+    fn forget(this: Self) -> *mut T {
+        unsafe { O::__relinquish_ownership(this.ptr.as_ptr().cast()) };
+        ManuallyDrop::new(this).ptr.as_ptr()
     }
 }
 
@@ -424,7 +422,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // retained objects it is hard to imagine a case where the inner type
         // has a method with the same name.
 
-        let ptr = self.forget();
+        let ptr = Self::forget(self);
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
         // And because of the `forget`, we don't call the Drop implementation,
@@ -482,7 +480,7 @@ impl<T: Message> Id<T, Owned> {
     pub unsafe fn from_shared(obj: Id<T, Shared>) -> Self {
         // Note: We can't debug_assert retainCount because of autoreleases
         let ptr = obj.ptr;
-        obj.forget();
+        Id::forget(obj);
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
         unsafe { <Id<T, Owned>>::new_nonnull(ptr) }
@@ -512,7 +510,7 @@ impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
     #[inline]
     fn from(obj: Id<T, Owned>) -> Self {
         let ptr = obj.ptr;
-        obj.forget();
+        Id::forget(obj);
         // SAFETY: The pointer is valid, and ownership is simply decreased
         unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
     }
@@ -550,10 +548,7 @@ impl<T: ?Sized, O: Ownership> Drop for Id<T, O> {
     #[doc(alias = "release")]
     #[inline]
     fn drop(&mut self) {
-        #[cfg(debug_assertions)]
-        unsafe {
-            O::__relinquish_ownership(self.ptr.as_ptr() as *mut _)
-        };
+        unsafe { O::__relinquish_ownership(self.ptr.as_ptr().cast()) };
 
         // We could technically run the destructor for `T` when `O = Owned`,
         // and when `O = Shared` with (retainCount == 1), but that would be
@@ -652,7 +647,7 @@ mod tests {
         unsafe {
             let obj: *mut Object = msg_send![cls, alloc];
             let obj: *mut Object = msg_send![obj, init];
-            Id::new(NonNull::new_unchecked(obj))
+            Id::new(obj).unwrap()
         }
     }
 
@@ -746,12 +741,12 @@ mod tests {
         // To/from autoreleased
         let obj: Id<Object, Owned> = autoreleasepool(|pool| {
             let obj = obj.autorelease(pool);
-            unsafe { Id::retain_null(obj).unwrap() }
+            unsafe { Id::retain(obj).unwrap() }
         });
 
         // Forget and bring back
-        let ptr = obj.forget();
-        let _obj: Id<Object, Owned> = unsafe { Id::new_null(ptr).unwrap() };
+        let ptr = Id::forget(obj);
+        let _obj: Id<Object, Owned> = unsafe { Id::new(ptr).unwrap() };
     }
 
     #[test]
@@ -760,9 +755,9 @@ mod tests {
         should_panic = "Another `Id<T, Owned>` has already been created from that object"
     )]
     fn test_double_owned() {
-        let obj = new();
+        let mut obj = new();
         // Double-retain: This is unsound!
-        let _obj2: Id<Object, Owned> = unsafe { Id::retain_null(obj.as_ptr()).unwrap() };
+        let _obj2: Id<Object, Owned> = unsafe { Id::retain(Id::as_mut_ptr(&mut obj)).unwrap() };
     }
 
     #[test]
@@ -772,12 +767,13 @@ mod tests {
     )]
     fn test_double_forgotten() {
         let obj = new();
-        let ptr = obj.forget();
+        let ptr = Id::forget(obj);
 
         let _obj: Id<Object, Owned> = Id {
             ptr: NonNull::new(ptr).unwrap(),
             item: PhantomData,
             own: PhantomData,
+            notunwindsafe: PhantomData,
         };
         // Dropping fails
     }
@@ -788,7 +784,7 @@ mod tests {
         should_panic = "An `Id<T, Owned>` exists while trying to create `Id<T, Shared>`!"
     )]
     fn test_create_shared_when_owned_exists() {
-        let obj = new();
-        let _obj: Id<Object, Shared> = unsafe { Id::retain(obj.ptr) };
+        let mut obj = new();
+        let _obj: Id<Object, Shared> = unsafe { Id::retain(Id::as_mut_ptr(&mut obj)).unwrap() };
     }
 }
