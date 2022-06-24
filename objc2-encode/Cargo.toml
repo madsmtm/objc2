@@ -18,6 +18,14 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2-encode/"
 license = "MIT"
 
+[features]
+default = ["std"]
+
+# Doesn't do anything (this crate works on no_std), put here for forwards
+# compatibility.
+std = ["alloc"]
+alloc = []
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 

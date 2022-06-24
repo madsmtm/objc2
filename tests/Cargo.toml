@@ -10,7 +10,8 @@ license = "MIT"
 build = "build.rs"
 
 [features]
-default = ["apple"]
+default = ["apple", "std"]
+std = ["block2/std", "objc2-foundation/std"]
 # Enable UI tests
 #
 # These are not enabled by default because trybuild doesn't pass feature flags

@@ -19,7 +19,11 @@ license = "MIT"
 # NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
 # and may be removed in a minor release.
 [features]
-default = ["apple"]
+default = ["std", "apple"]
+
+# Currently not possible to turn off, put here for forwards compatibility.
+std = ["alloc", "objc2-encode/std", "objc-sys/std"]
+alloc = ["objc2-encode/alloc", "objc-sys/alloc"]
 
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["objc-sys/unstable-exception"]

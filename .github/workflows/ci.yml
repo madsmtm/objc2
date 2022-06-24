@@ -149,8 +149,8 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
-      HOSTARGS: --no-default-features --features ${{ matrix.runtime || 'apple' }}
-      ARGS: --no-default-features --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
+      HOSTARGS: --no-default-features --features std --features ${{ matrix.runtime || 'apple' }}
+      ARGS: --no-default-features --features std --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
       FEATURES: ${{ matrix.features || 'malloc,block,exception,catch_all,verify_message' }}

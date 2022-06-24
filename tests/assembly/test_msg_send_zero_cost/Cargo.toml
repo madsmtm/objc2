@@ -11,7 +11,8 @@ path = "lib.rs"
 objc2 = { path = "../../../objc2", default-features = false }
 
 [features]
-default = ["apple"]
+default = ["apple", "std"]
+std = ["objc2/std"]
 # Runtime
 apple = ["objc2/apple"]
 gnustep-1-7 = ["objc2/gnustep-1-7"]

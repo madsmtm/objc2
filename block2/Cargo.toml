@@ -18,7 +18,11 @@ documentation = "https://docs.rs/block2/"
 license = "MIT"
 
 [features]
-default = ["apple"]
+default = ["std", "apple"]
+
+# Currently not possible to turn off, put here for forwards compatibility.
+std = ["alloc", "objc2-encode/std", "block-sys/std"]
+alloc = ["objc2-encode/alloc", "block-sys/alloc"]
 
 # Runtime selection. Default is `apple`. See `block-sys` for details.
 apple = ["block-sys/apple"]
