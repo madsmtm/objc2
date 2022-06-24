@@ -302,6 +302,7 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
 
     #[doc(alias = "sortUsingFunction:context:")]
     pub fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {
+        // TODO: "C-unwind"
         extern "C" fn compare_with_closure<U, F: FnMut(&U, &U) -> Ordering>(
             obj1: &U,
             obj2: &U,

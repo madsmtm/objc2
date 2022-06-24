@@ -110,17 +110,22 @@ macro_rules! method_decl_impl {
             }
         }
     };
-    ($($t:ident),*) => {
-        method_decl_impl!(-T, R, extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern "C" fn(*const T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern "C" fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern "C" fn(&T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern "C" fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+    (# $abi:literal; $($t:ident),*) => {
+        method_decl_impl!(-T, R, extern $abi fn(&T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, extern $abi fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern $abi fn(&T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(-T, R, unsafe extern $abi fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
 
-        method_decl_impl!(@Class, R, extern "C" fn(&Class, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@Class, R, unsafe extern "C" fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@Class, R, unsafe extern "C" fn(&Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@Class, R, extern $abi fn(&Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@Class, R, unsafe extern $abi fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@Class, R, unsafe extern $abi fn(&Class, Sel $(, $t)*) -> R, $($t),*);
+    };
+    ($($t:ident),*) => {
+        method_decl_impl!(# "C"; $($t),*);
+        #[cfg(feature = "unstable-c-unwind")]
+        method_decl_impl!(# "C-unwind"; $($t),*);
     };
 }
 

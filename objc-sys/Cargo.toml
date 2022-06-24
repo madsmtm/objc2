@@ -49,6 +49,9 @@ unstable-winobjc = ["gnustep-1-8"]
 # Link to ObjFW
 unstable-objfw = []
 
+# Use nightly c_unwind feature
+unstable-c-unwind = []
+
 # Private
 unstable-exception = ["cc"]
 unstable-docsrs = []

@@ -36,7 +36,8 @@ use crate::runtime::Object;
 /// [`catch_unwind`]).
 ///
 /// This also invokes undefined behaviour until `C-unwind` is stabilized, see
-/// [RFC-2945].
+/// [RFC-2945] - you can try this out on nightly using the `unstable-c-unwind`
+/// feature flag.
 ///
 /// [`catch_unwind`]: std::panic::catch_unwind
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
@@ -50,14 +51,38 @@ pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
 }
 
 unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Shared>>> {
-    extern "C" fn try_objc_execute_closure<F: FnOnce()>(closure: &mut Option<F>) {
-        // This is always passed Some, so it's safe to unwrap
-        let closure = closure.take().unwrap();
-        closure();
-    }
+    #[cfg(not(feature = "unstable-c-unwind"))]
+    let f = {
+        extern "C" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
+        where
+            F: FnOnce(),
+        {
+            // This is always passed Some, so it's safe to unwrap
+            let closure = closure.take().unwrap();
+            closure();
+        }
 
-    let f: extern "C" fn(&mut Option<F>) = try_objc_execute_closure;
-    let f: extern "C" fn(*mut c_void) = unsafe { mem::transmute(f) };
+        let f: extern "C" fn(&mut Option<F>) = try_objc_execute_closure;
+        let f: extern "C" fn(*mut c_void) = unsafe { mem::transmute(f) };
+        f
+    };
+
+    #[cfg(feature = "unstable-c-unwind")]
+    let f = {
+        extern "C-unwind" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
+        where
+            F: FnOnce(),
+        {
+            // This is always passed Some, so it's safe to unwrap
+            let closure = closure.take().unwrap();
+            closure();
+        }
+
+        let f: extern "C-unwind" fn(&mut Option<F>) = try_objc_execute_closure;
+        let f: extern "C-unwind" fn(*mut c_void) = unsafe { mem::transmute(f) };
+        f
+    };
+
     // Wrap the closure in an Option so it can be taken
     let mut closure = Some(closure);
     let context: *mut Option<F> = &mut closure;
@@ -94,7 +119,8 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
 /// causes undefined behaviour).
 ///
 /// Additionally, this unwinds through the closure from Objective-C, which is
-/// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945].
+/// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945] - you
+/// can try this out on nightly using the `unstable-c-unwind` feature flag.
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 pub unsafe fn catch<R>(closure: impl FnOnce() -> R) -> Result<R, Option<Id<Object, Shared>>> {

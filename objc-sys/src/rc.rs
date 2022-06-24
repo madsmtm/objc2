@@ -14,7 +14,9 @@ use core::ffi::c_void;
 
 use crate::objc_object;
 
-extern_c! {
+// All of these very rarely unwind, but may if the user defined methods
+// `retain`, `release`, `autorelease` or `dealloc` do.
+extern_c_unwind! {
     // Autoreleasepool
     // ObjFW: Defined in `autorelease.h`, not available with libobjfw-rt!
 
