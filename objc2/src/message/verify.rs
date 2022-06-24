@@ -92,3 +92,20 @@ where
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::test_utils;
+
+    #[test]
+    fn test_verify_message() {
+        let cls = test_utils::custom_class();
+        assert!(cls.verify_sel::<(), u32>(sel!(foo)).is_ok());
+        assert!(cls.verify_sel::<(u32,), ()>(sel!(setFoo:)).is_ok());
+
+        // Incorrect types
+        assert!(cls.verify_sel::<(), u64>(sel!(setFoo:)).is_err());
+        // Unimplemented selector
+        assert!(cls.verify_sel::<(u32,), ()>(sel!(setFoo)).is_err());
+    }
+}
