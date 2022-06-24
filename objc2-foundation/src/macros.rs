@@ -295,8 +295,8 @@ macro_rules! __def_fn {
     // some of that specialization though!
     {} => {};
     {
-        #[sel($($sel:tt)+)]
         $(#[$m:meta])*
+        #sel!($($sel:tt)+)
         $v:vis fn $name:ident(
             $(&$self:ident)?
             $(&mut $mut_self:ident)?
@@ -329,8 +329,8 @@ macro_rules! __def_fn {
         }
     };
     {
-        #[sel($($sel:tt)+)]
         $(#[$m:meta])*
+        #sel!($($sel:tt)+)
         $v:vis fn $name:ident(
             $(&$self:ident)?
             $(&mut $mut_self:ident)?
@@ -363,8 +363,8 @@ macro_rules! __def_fn {
         }
     };
     {
-        #[sel($($sel:tt)+)]
         $(#[$m:meta])*
+        #sel!($($sel:tt)+)
         $v:vis fn $name:ident(
             $(&$self:ident)?
             $(&mut $mut_self:ident)?
@@ -397,8 +397,8 @@ macro_rules! __def_fn {
         }
     };
     {
-        #[sel($($sel:tt)+)]
         $(#[$m:meta])*
+        #sel!($($sel:tt)+)
         $v:vis fn $name:ident(
             $(&$self:ident)?
             $(&mut $mut_self:ident)?

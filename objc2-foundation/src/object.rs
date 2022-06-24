@@ -11,20 +11,20 @@ __inner_extern_class! {
     unsafe pub struct NSObject<>: Object {}
 
     unsafe impl {
-        #[sel(new)]
+        #sel!(new)
         pub fn new() -> Id<Self, Owned>;
 
-        #[sel(hash)]
+        #sel!(hash)
         pub fn hash_code(&self) -> usize;
 
-        #[sel(isEqual:)]
+        #sel!(isEqual:)
         pub fn is_equal(&self, other: &NSObject) -> bool;
 
         // TODO: Verify that description always returns a non-null string
-        #[sel(description)]
+        #sel!(description)
         pub fn description(&self) -> Id<NSString, Shared>;
 
-        #[sel(isKindOfClass:)]
+        #sel!(isKindOfClass:)
         pub fn is_kind_of(&self, cls: &Class) -> bool;
     }
 }
