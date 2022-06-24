@@ -259,7 +259,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// safely take it out of the pool:
 ///
 /// ```compile_fail
-/// # use objc2::{class, msg_send_id, Id, Owned};
+/// # use objc2::{class, msg_send_id};
 /// # use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 /// # use objc2::runtime::Object;
 /// #
