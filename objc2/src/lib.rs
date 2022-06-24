@@ -212,6 +212,8 @@ pub mod exception;
 mod message;
 pub mod rc;
 pub mod runtime;
+#[cfg(feature = "malloc")]
+mod verify;
 
 #[cfg(test)]
 mod test_utils;

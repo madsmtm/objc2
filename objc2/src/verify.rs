@@ -3,7 +3,8 @@ use core::fmt;
 use crate::runtime::{Class, Method, Object, Sel};
 use crate::{Encode, EncodeArguments, Encoding};
 
-pub enum VerificationError<'a> {
+#[allow(dead_code)]
+pub(crate) enum VerificationError<'a> {
     NilReceiver(Sel),
     MethodNotFound(&'a Class, Sel),
     MismatchedReturn(&'a Method, Encoding<'static>),

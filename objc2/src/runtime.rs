@@ -16,11 +16,9 @@ use std::os::raw::c_char;
 use std::os::raw::c_uint;
 
 pub use super::bool::Bool;
-#[cfg(feature = "malloc")]
-use super::message::{verify_message_signature, MessageError};
-#[cfg(feature = "malloc")]
-use super::EncodeArguments;
 use crate::{ffi, Encode, Encoding, RefEncode};
+#[cfg(feature = "malloc")]
+use crate::{verify::verify_message_signature, EncodeArguments, MessageError};
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
