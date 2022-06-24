@@ -13,3 +13,8 @@ members = [
     "test-ui",
 ]
 resolver = "2"
+
+[profile.assembly-tests]
+inherits = "release"
+# Enable LTO to allow testing the `unstable-static-sel-inlined` feature
+lto = true

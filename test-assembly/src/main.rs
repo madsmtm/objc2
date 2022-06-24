@@ -42,7 +42,7 @@ fn main() {
             .arg("rustc")
             .arg(format!("--package={package}"))
             .args(args().skip(1))
-            .arg("--release")
+            .arg("--profile=assembly-tests")
             .arg("--message-format=json-render-diagnostics")
             .arg("--features=assembly-features")
             .arg("--")

@@ -24,14 +24,12 @@ LPC1_0:
 	.p2align	2
 	.code	32
 _get_common_twice:
-	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-(LPC2_0+8))
-	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-(LPC2_0+8))
+	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr-(LPC2_0+8))
+	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr-(LPC2_0+8))
 LPC2_0:
 	ldr	r0, [pc, r0]
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-(LPC2_1+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-(LPC2_1+8))
-LPC2_1:
-	ldr	r1, [pc, r1]
+	ldr	r0, [r0]
+	mov	r1, r0
 	bx	lr
 
 	.globl	_get_different_sel
@@ -128,40 +126,6 @@ L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35:
 	.long	L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_e4a45d49bfea5d77
-	.p2align	2
-L_OBJC_IMAGE_INFO_e4a45d49bfea5d77:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77
-L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77:
-	.long	L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_33db9f67352fe9a7
-	.p2align	2
-L_OBJC_IMAGE_INFO_33db9f67352fe9a7:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_33db9f67352fe9a7
-L_OBJC_METH_VAR_NAME_33db9f67352fe9a7:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7:
-	.long	L_OBJC_METH_VAR_NAME_33db9f67352fe9a7
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_bb37877368f0b7a0
 	.p2align	2
 L_OBJC_IMAGE_INFO_bb37877368f0b7a0:
@@ -228,5 +192,11 @@ L_OBJC_METH_VAR_NAME_f46908e864c86c6b:
 	.p2align	2
 L_OBJC_SELECTOR_REFERENCES_f46908e864c86c6b:
 	.long	L_OBJC_METH_VAR_NAME_f46908e864c86c6b
+
+	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
+	.p2align	2
+LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2
+	.long	0
 
 .subsections_via_symbols

@@ -16,14 +16,16 @@ LPC0_0:
 _handle_alloc_init:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9-(LPC1_0+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9-(LPC1_0+8))
+	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32$non_lazy_ptr-(LPC1_0+8))
+	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32$non_lazy_ptr-(LPC1_0+8))
+	movw	r2, :lower16:(LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr-(LPC1_1+8))
+	movt	r2, :upper16:(LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr-(LPC1_1+8))
 LPC1_0:
 	ldr	r1, [pc, r1]
-	movw	r4, :lower16:(L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9-(LPC1_1+8))
-	movt	r4, :upper16:(L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9-(LPC1_1+8))
 LPC1_1:
-	ldr	r4, [pc, r4]
+	ldr	r2, [pc, r2]
+	ldr	r4, [r1]
+	ldr	r1, [r2]
 	bl	_objc_msgSend
 	mov	r1, r4
 	pop	{r4, r7, lr}
@@ -83,40 +85,6 @@ L_OBJC_METH_VAR_NAME_40f5b12005284286:
 	.p2align	2
 L_OBJC_SELECTOR_REFERENCES_40f5b12005284286:
 	.long	L_OBJC_METH_VAR_NAME_40f5b12005284286
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_904c14aa63c4eec9
-	.p2align	2
-L_OBJC_IMAGE_INFO_904c14aa63c4eec9:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_904c14aa63c4eec9
-L_OBJC_METH_VAR_NAME_904c14aa63c4eec9:
-	.asciz	"init"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9:
-	.long	L_OBJC_METH_VAR_NAME_904c14aa63c4eec9
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_b1ab35d3713395f9
-	.p2align	2
-L_OBJC_IMAGE_INFO_b1ab35d3713395f9:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_b1ab35d3713395f9
-L_OBJC_METH_VAR_NAME_b1ab35d3713395f9:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9:
-	.long	L_OBJC_METH_VAR_NAME_b1ab35d3713395f9
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_31f63858e271db32
@@ -185,5 +153,14 @@ L_OBJC_METH_VAR_NAME_8e0840c6b39b7720:
 	.p2align	2
 L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720:
 	.long	L_OBJC_METH_VAR_NAME_8e0840c6b39b7720
+
+	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
+	.p2align	2
+LL_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32
+	.long	0
+LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2
+	.long	0
 
 .subsections_via_symbols

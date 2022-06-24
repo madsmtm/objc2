@@ -23,8 +23,9 @@ _get_same_sel:
 _get_common_twice:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77]
-	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2@GOTPCREL]
+	mov	rax, qword ptr [rax]
+	mov	rdx, rax
 	pop	rbp
 	ret
 
@@ -115,40 +116,6 @@ L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35:
 	.p2align	3
 L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35:
 	.quad	L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_e4a45d49bfea5d77
-	.p2align	2
-L_OBJC_IMAGE_INFO_e4a45d49bfea5d77:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77
-L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77:
-	.quad	L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_33db9f67352fe9a7
-	.p2align	2
-L_OBJC_IMAGE_INFO_33db9f67352fe9a7:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_33db9f67352fe9a7
-L_OBJC_METH_VAR_NAME_33db9f67352fe9a7:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7:
-	.quad	L_OBJC_METH_VAR_NAME_33db9f67352fe9a7
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_bb37877368f0b7a0

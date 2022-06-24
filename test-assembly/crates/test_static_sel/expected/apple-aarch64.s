@@ -23,27 +23,24 @@ Lloh3:
 	.p2align	2
 _get_common_twice:
 Lloh4:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2@GOTPAGE
 Lloh5:
-	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77@PAGEOFF]
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2@GOTPAGEOFF]
 Lloh6:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7@PAGE
-Lloh7:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7@PAGEOFF]
+	ldr	x0, [x8]
+	mov	x1, x0
 	ret
-	.loh AdrpLdr	Lloh6, Lloh7
-	.loh AdrpAdrp	Lloh4, Lloh6
-	.loh AdrpLdr	Lloh4, Lloh5
+	.loh AdrpLdrGotLdr	Lloh4, Lloh5, Lloh6
 
 	.globl	_get_different_sel
 	.p2align	2
 _get_different_sel:
-Lloh8:
+Lloh7:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0@PAGE
-Lloh9:
+Lloh8:
 	ldr	x0, [x8, L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0@PAGEOFF]
 	ret
-	.loh AdrpLdr	Lloh8, Lloh9
+	.loh AdrpLdr	Lloh7, Lloh8
 
 	.globl	_unused_sel
 	.p2align	2
@@ -53,40 +50,40 @@ _unused_sel:
 	.globl	_use_fns
 	.p2align	2
 _use_fns:
-Lloh10:
+Lloh9:
 	adrp	x9, L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9@PAGE
-Lloh11:
+Lloh10:
 	ldr	x9, [x9, L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9@PAGEOFF]
-Lloh12:
+Lloh11:
 	adrp	x10, L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35@PAGE
-Lloh13:
+Lloh12:
 	ldr	x10, [x10, L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35@PAGEOFF]
-Lloh14:
+Lloh13:
 	adrp	x11, L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0@PAGE
-Lloh15:
+Lloh14:
 	ldr	x11, [x11, L_OBJC_SELECTOR_REFERENCES_bb37877368f0b7a0@PAGEOFF]
-Lloh16:
+Lloh15:
 	adrp	x12, L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99@PAGE
-Lloh17:
+Lloh16:
 	ldr	x12, [x12, L_OBJC_SELECTOR_REFERENCES_5419c3f7fc0a6f99@PAGEOFF]
 	stp	x9, x10, [x8]
 	stp	x11, x12, [x8, #16]
 	ret
-	.loh AdrpLdr	Lloh16, Lloh17
-	.loh AdrpLdr	Lloh14, Lloh15
-	.loh AdrpLdr	Lloh12, Lloh13
-	.loh AdrpLdr	Lloh10, Lloh11
+	.loh AdrpLdr	Lloh15, Lloh16
+	.loh AdrpLdr	Lloh13, Lloh14
+	.loh AdrpLdr	Lloh11, Lloh12
+	.loh AdrpLdr	Lloh9, Lloh10
 
 	.globl	_use_same_twice
 	.p2align	2
 _use_same_twice:
-Lloh18:
+Lloh17:
 	adrp	x9, L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9@PAGE
-Lloh19:
+Lloh18:
 	ldr	x9, [x9, L_OBJC_SELECTOR_REFERENCES_68381ba894e318e9@PAGEOFF]
 	stp	x9, x9, [x8]
 	ret
-	.loh AdrpLdr	Lloh18, Lloh19
+	.loh AdrpLdr	Lloh17, Lloh18
 
 	.globl	_use_in_loop
 	.p2align	2
@@ -126,40 +123,6 @@ L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35:
 	.p2align	3
 L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35:
 	.quad	L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_e4a45d49bfea5d77
-	.p2align	2
-L_OBJC_IMAGE_INFO_e4a45d49bfea5d77:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77
-L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77:
-	.quad	L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_33db9f67352fe9a7
-	.p2align	2
-L_OBJC_IMAGE_INFO_33db9f67352fe9a7:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_33db9f67352fe9a7
-L_OBJC_METH_VAR_NAME_33db9f67352fe9a7:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7:
-	.quad	L_OBJC_METH_VAR_NAME_33db9f67352fe9a7
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_bb37877368f0b7a0

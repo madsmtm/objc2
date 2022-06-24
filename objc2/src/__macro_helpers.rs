@@ -1,3 +1,4 @@
+use crate::__sel_inner;
 use crate::rc::{Allocated, Id, Ownership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
@@ -11,6 +12,31 @@ pub use core::primitive::{bool, str, u8};
 pub use core::{compile_error, concat, panic, stringify};
 #[cfg(feature = "objc2-proc-macros")]
 pub use objc2_proc_macros::__hash_idents;
+
+// Common selectors.
+//
+// These are put here to deduplicate the cached selector, and when using
+// `unstable-static-sel`, the statics.
+//
+// Note that our assembly tests of `unstable-static-sel-inlined` output a GOT
+// entry for such accesses, but that is just a limitation of our tests - the
+// actual assembly is as one would expect.
+
+#[inline]
+pub fn alloc() -> Sel {
+    // SAFETY: Must have NUL byte
+    __sel_inner!("alloc\0", uniqueIdent)
+}
+#[inline]
+pub fn init() -> Sel {
+    // SAFETY: Must have NUL byte
+    __sel_inner!("init\0", uniqueIdent)
+}
+#[inline]
+pub fn new() -> Sel {
+    // SAFETY: Must have NUL byte
+    __sel_inner!("new\0", uniqueIdent)
+}
 
 /// Helper for specifying the retain semantics for a given selector family.
 ///

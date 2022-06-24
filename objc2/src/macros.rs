@@ -45,8 +45,11 @@ macro_rules! class {
 /// # Specification
 ///
 /// This has similar syntax and functionality as the `@selector` directive in
-/// Objective-C. This calls [`Sel::register`] internally. The result is cached
-/// for efficiency.
+/// Objective-C.
+///
+/// This calls [`Sel::register`] internally. The result is cached for
+/// efficiency. The cache for certain common selectors (`alloc`, `init` and
+/// `new`) is deduplicated to reduce code-size.
 ///
 /// Non-ascii identifiers are ill-tested, if supported at all.
 ///
@@ -142,6 +145,15 @@ macro_rules! class {
 /// ```
 #[macro_export]
 macro_rules! sel {
+    (alloc) => ({
+        $crate::__macro_helpers::alloc()
+    });
+    (init) => ({
+        $crate::__macro_helpers::init()
+    });
+    (new) => ({
+        $crate::__macro_helpers::new()
+    });
     ($first:ident $(: $($rest:ident :)*)?) => ({
         use $crate::__macro_helpers::{concat, stringify, str};
         const SELECTOR_DATA: &str = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
@@ -153,7 +165,7 @@ macro_rules! sel {
 #[macro_export]
 #[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! __sel_inner {
-    ($data:ident, $($idents:ident)+) => {{
+    ($data:expr, $($idents:ident)+) => {{
         use $crate::__macro_helpers::CachedSel;
         static CACHED_SEL: CachedSel = CachedSel::new();
         #[allow(unused_unsafe)]
@@ -170,10 +182,10 @@ macro_rules! __sel_inner_statics_apple_generic {
         $image_info_section:literal;
         $var_name_section:literal;
         $selector_ref_section:literal;
-        $data:ident,
+        $data:expr,
         $($idents:ident)+
     } => {
-        use $crate::__macro_helpers::{__hash_idents, u8, UnsafeCell};
+        use $crate::__macro_helpers::{u8, UnsafeCell};
         use $crate::ffi::__ImageInfo;
         use $crate::runtime::Sel;
 
@@ -185,7 +197,10 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// reports `__DATA/__objc_imageinfo has unexpectedly large size XXX`,
         /// but things still seems to work.
         #[link_section = $image_info_section]
-        #[export_name = concat!("\x01L_OBJC_IMAGE_INFO_", __hash_idents!($($idents)+))]
+        #[export_name = $crate::__macro_helpers::concat!(
+            "\x01L_OBJC_IMAGE_INFO_",
+            $crate::__macro_helpers::__hash_idents!($($idents)+),
+        )]
         #[used] // Make sure this reaches the linker
         static _IMAGE_INFO: __ImageInfo = __ImageInfo::system();
 
@@ -195,7 +210,10 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// See rust-lang/rust#18297
         /// Should only be an optimization (?)
         #[link_section = $var_name_section]
-        #[export_name = concat!("\x01L_OBJC_METH_VAR_NAME_", __hash_idents!($($idents)+))]
+        #[export_name = $crate::__macro_helpers::concat!(
+            "\x01L_OBJC_METH_VAR_NAME_",
+            $crate::__macro_helpers::__hash_idents!($($idents)+),
+        )]
         static NAME_DATA: [u8; X.len()] = {
             // Convert the `&[u8]` slice to an array with known length, so
             // that we can place that directly in a static.
@@ -236,7 +254,10 @@ macro_rules! __sel_inner_statics_apple_generic {
         /// See the [`ctor`](https://crates.io/crates/ctor) crate for more
         /// info on "life before main".
         #[link_section = $selector_ref_section]
-        #[export_name = concat!("\x01L_OBJC_SELECTOR_REFERENCES_", __hash_idents!($($idents)+))]
+        #[export_name = $crate::__macro_helpers::concat!(
+            "\x01L_OBJC_SELECTOR_REFERENCES_",
+            $crate::__macro_helpers::__hash_idents!($($idents)+),
+        )]
         static mut REF: UnsafeCell<Sel> = unsafe {
             UnsafeCell::new(Sel::__internal_from_ptr(NAME_DATA.as_ptr().cast()))
         };
