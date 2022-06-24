@@ -27,9 +27,11 @@ _handle_alloc_init:
 	call	L1$pb
 L1$pb:
 	pop	eax
-	mov	esi, dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328-L1$pb]
+	mov	ecx, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32$non_lazy_ptr-L1$pb]
+	mov	esi, dword ptr [ecx]
+	mov	eax, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr-L1$pb]
 	sub	esp, 8
-	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_dcb825748735621d-L1$pb]
+	push	dword ptr [eax]
 	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 8
@@ -89,40 +91,6 @@ L_OBJC_METH_VAR_NAME_044375a4329d08dc:
 	.p2align	2
 L_OBJC_SELECTOR_REFERENCES_044375a4329d08dc:
 	.long	L_OBJC_METH_VAR_NAME_044375a4329d08dc
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_cb49b9ab1b00e328
-	.p2align	2
-L_OBJC_IMAGE_INFO_cb49b9ab1b00e328:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328
-L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328:
-	.asciz	"init"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328:
-	.long	L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_dcb825748735621d
-	.p2align	2
-L_OBJC_IMAGE_INFO_dcb825748735621d:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_dcb825748735621d
-L_OBJC_METH_VAR_NAME_dcb825748735621d:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_dcb825748735621d
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_dcb825748735621d:
-	.long	L_OBJC_METH_VAR_NAME_dcb825748735621d
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_457d234345d46cbe
@@ -191,5 +159,13 @@ L_OBJC_METH_VAR_NAME_e76e01e8b2327e5d:
 	.p2align	2
 L_OBJC_SELECTOR_REFERENCES_e76e01e8b2327e5d:
 	.long	L_OBJC_METH_VAR_NAME_e76e01e8b2327e5d
+
+	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
+LL_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32
+	.long	0
+LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2
+	.long	0
 
 .subsections_via_symbols

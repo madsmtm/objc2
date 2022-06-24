@@ -16,8 +16,10 @@ _handle_alloc_init:
 	mov	rbp, rsp
 	push	rbx
 	push	rax
-	mov	rbx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328]
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dcb825748735621d]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32@GOTPCREL]
+	mov	rbx, qword ptr [rax]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2@GOTPCREL]
+	mov	rsi, qword ptr [rax]
 	call	_objc_msgSend
 	mov	rdi, rax
 	mov	rsi, rbx
@@ -65,40 +67,6 @@ L_OBJC_METH_VAR_NAME_044375a4329d08dc:
 	.p2align	3
 L_OBJC_SELECTOR_REFERENCES_044375a4329d08dc:
 	.quad	L_OBJC_METH_VAR_NAME_044375a4329d08dc
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_cb49b9ab1b00e328
-	.p2align	2
-L_OBJC_IMAGE_INFO_cb49b9ab1b00e328:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328
-L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328:
-	.asciz	"init"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328:
-	.quad	L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_dcb825748735621d
-	.p2align	2
-L_OBJC_IMAGE_INFO_dcb825748735621d:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_dcb825748735621d
-L_OBJC_METH_VAR_NAME_dcb825748735621d:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_dcb825748735621d
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_dcb825748735621d:
-	.quad	L_OBJC_METH_VAR_NAME_dcb825748735621d
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_457d234345d46cbe
