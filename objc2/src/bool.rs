@@ -133,6 +133,7 @@ unsafe impl RefEncode for Bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::format;
 
     #[test]
     fn test_basic() {
@@ -176,6 +177,12 @@ mod tests {
 
         assert!(Bool::from(true).is_true());
         assert!(Bool::from(false).is_false());
+    }
+
+    #[test]
+    fn test_debug() {
+        assert_eq!(format!("{:?}", Bool::from(true)), "YES");
+        assert_eq!(format!("{:?}", Bool::from(false)), "NO");
     }
 
     // Can't really do this test since it won't compile on platforms where
