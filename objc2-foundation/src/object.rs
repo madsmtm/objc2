@@ -3,33 +3,29 @@ use core::hash;
 
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
-use objc2::{msg_send, msg_send_bool, msg_send_id};
 
 use super::NSString;
 
 __inner_extern_class! {
     @__inner
     unsafe pub struct NSObject<>: Object {}
-}
 
-impl NSObject {
-    unsafe_def_fn!(pub fn new -> Owned);
+    unsafe impl {
+        #[sel(new)]
+        pub fn new() -> Id<Self, Owned>;
 
-    pub fn hash_code(&self) -> usize {
-        unsafe { msg_send![self, hash] }
-    }
+        #[sel(hash)]
+        pub fn hash_code(&self) -> usize;
 
-    pub fn is_equal(&self, other: &NSObject) -> bool {
-        unsafe { msg_send_bool![self, isEqual: other] }
-    }
+        #[sel(isEqual:)]
+        pub fn is_equal(&self, other: &NSObject) -> bool;
 
-    pub fn description(&self) -> Id<NSString, Shared> {
         // TODO: Verify that description always returns a non-null string
-        unsafe { msg_send_id![self, description].unwrap() }
-    }
+        #[sel(description)]
+        pub fn description(&self) -> Id<NSString, Shared>;
 
-    pub fn is_kind_of(&self, cls: &Class) -> bool {
-        unsafe { msg_send_bool![self, isKindOfClass: cls] }
+        #[sel(isKindOfClass:)]
+        pub fn is_kind_of(&self, cls: &Class) -> bool;
     }
 }
 

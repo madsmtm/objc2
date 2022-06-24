@@ -88,11 +88,21 @@ macro_rules! extern_class {
     (
         $(#[$m:meta])*
         unsafe $v:vis struct $name:ident: $($inheritance_chain:ty),+;
+
+        $(
+            unsafe impl {
+                $($methods:tt)*
+            }
+        )?
     ) => {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
             unsafe $v struct $name<>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {}
+
+            unsafe impl {
+                $($($methods)*)?
+            }
         }
     };
 }
@@ -153,12 +163,22 @@ macro_rules! __inner_extern_class {
         unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $($inheritance_chain:ty),+ {
             $($p:ident: $pty:ty,)*
         }
+
+        $(
+            unsafe impl {
+                $($methods:tt)*
+            }
+        )?
     ) => {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
             unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {
                 $($p: $pty,)*
+            }
+
+            unsafe impl {
+                $($($methods)*)?
             }
         }
     };
@@ -167,6 +187,10 @@ macro_rules! __inner_extern_class {
         $(#[$m:meta])*
         unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $inherits:ty $(, $inheritance_rest:ty)* {
             $($p:ident: $pty:ty,)*
+        }
+
+        unsafe impl {
+            $($methods:tt)*
         }
     ) => {
         $(#[$m])*
@@ -251,7 +275,229 @@ macro_rules! __inner_extern_class {
         }
 
         $crate::__impl_as_ref_borrow!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
+
+        impl<$($t $(: $b)?),*> $name<$($t),*> {
+            $crate::__def_fn!{
+                $($methods)*
+            }
+        }
     };
+}
+
+#[macro_export]
+macro_rules! __def_fn {
+    // Choosing the correct type of msg_send! based on the return type
+    //
+    // We have to do it like this, since otherwise we won't be able to capture
+    // the return type in the way we want.
+    //
+    // Yup, this is _ugly_, but hey, it works for now. Would really like
+    // some of that specialization though!
+    {} => {};
+    {
+        #[sel($($sel:tt)+)]
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            $(&$self:ident)?
+            $(&mut $mut_self:ident)?
+            $($first_arg:ident: $first_arg_ty:ty)?
+            $(, $rest_arg:ident: $rest_arg_ty:ty)* $(,)?
+        ) -> bool;
+
+        $($rest:tt)*
+    } => {
+        $(#[$m])*
+        $v fn $name(
+            $(&$self)?
+            $(&mut $mut_self)?
+            $($first_arg: $first_arg_ty)?
+            $(, $rest_arg: $rest_arg_ty)*
+        ) -> bool {
+            unsafe {
+                $crate::__def_fn!(
+                    @instance_or_class;
+                    msg_send_bool;
+                    ($($sel)+);
+                    ($($self)? $($mut_self)?);
+                    ($($self)? $($mut_self)? $($first_arg)? $(, $rest_arg)*);
+                )
+            }
+        }
+
+        $crate::__def_fn!{
+            $($rest)*
+        }
+    };
+    {
+        #[sel($($sel:tt)+)]
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            $(&$self:ident)?
+            $(&mut $mut_self:ident)?
+            $($first_arg:ident: $first_arg_ty:ty)?
+            $(, $rest_arg:ident: $rest_arg_ty:ty)* $(,)?
+        ) -> Id<$obj:ty, $o:ty>;
+
+        $($rest:tt)*
+    } => {
+        $(#[$m])*
+        $v fn $name(
+            $(&$self)?
+            $(&mut $mut_self)?
+            $($first_arg: $first_arg_ty)?
+            $(, $rest_arg: $rest_arg_ty)*
+        ) -> Id<$obj, $o> {
+            unsafe {
+                $crate::__def_fn!(
+                    @instance_or_class;
+                    msg_send_id;
+                    ($($sel)+);
+                    ($($self)? $($mut_self)?);
+                    ($($self)? $($mut_self)? $($first_arg)? $(, $rest_arg)*);
+                ).unwrap()
+            }
+        }
+
+        $crate::__def_fn!{
+            $($rest)*
+        }
+    };
+    {
+        #[sel($($sel:tt)+)]
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            $(&$self:ident)?
+            $(&mut $mut_self:ident)?
+            $($first_arg:ident: $first_arg_ty:ty)?
+            $(, $rest_arg:ident: $rest_arg_ty:ty)* $(,)?
+        ) -> Option<Id<$obj:ty, $o:ty>>;
+
+        $($rest:tt)*
+    } => {
+        $(#[$m])*
+        $v fn $name(
+            $(&$self)?
+            $(&mut $mut_self)?
+            $($first_arg: $first_arg_ty)?
+            $(, $rest_arg: $rest_arg_ty)*
+        ) -> Option<Id<$obj, $o>> {
+            unsafe {
+                $crate::__def_fn!(
+                    @instance_or_class;
+                    msg_send_id;
+                    ($($sel)+);
+                    ($($self)? $($mut_self)?);
+                    ($($self)? $($mut_self)? $($first_arg)? $(, $rest_arg)*);
+                )
+            }
+        }
+
+        $crate::__def_fn!{
+            $($rest)*
+        }
+    };
+    {
+        #[sel($($sel:tt)+)]
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            $(&$self:ident)?
+            $(&mut $mut_self:ident)?
+            $($first_arg:ident: $first_arg_ty:ty)?
+            $(, $rest_arg:ident: $rest_arg_ty:ty)* $(,)?
+        ) $(-> $ret:ty)?;
+
+        $($rest:tt)*
+    } => {
+        $(#[$m])*
+        $v fn $name(
+            $(&$self)?
+            $(&mut $mut_self)?
+            $($first_arg: $first_arg_ty)?
+            $(, $rest_arg: $rest_arg_ty)*
+        ) $(-> $ret)? {
+            // TODO: Verify that the return type is not `bool` accidentally
+            // (we match on the literal `bool`, not the actual type, so people
+            // could have written `core::primitive::bool`).
+            unsafe {
+                $crate::__def_fn!(
+                    @instance_or_class;
+                    msg_send;
+                    ($($sel)+);
+                    ($($self)? $($mut_self)?);
+                    ($($self)? $($mut_self)? $($first_arg)? $(, $rest_arg)*);
+                )
+            }
+        }
+
+        $crate::__def_fn!{
+            $($rest)*
+        }
+    };
+
+    // Do things differently depending on instance or class method
+
+    (
+        @instance_or_class;
+        $macro:ident;
+        ($($sel:tt)+);
+        (self);
+        ($self:ident $(, $rest_arg:ident)*);
+    ) => {
+        $crate::__def_fn!(
+            @collect_msg_send;
+            $macro;
+            $self;
+            ($($sel)+);
+            ($($rest_arg)*);
+        )
+    };
+    (
+        @instance_or_class;
+        $macro:ident;
+        ($($sel:tt)+);
+        ();
+        ($($rest_arg:ident)*);
+    ) => {
+        $crate::__def_fn!(
+            @collect_msg_send;
+            $macro;
+            Self::class();
+            ($($sel)+);
+            ($($rest_arg)*);
+        )
+    };
+
+    // Collecting selector and argument streams
+    // TODO: More of these
+
+    (
+        @collect_msg_send;
+        $macro:ident;
+        $obj:expr;
+        ($sel1:ident);
+        ();
+    ) => { ::objc2::$macro![$obj, $sel1] };
+    (
+        @collect_msg_send;
+        $macro:ident;
+        $obj:expr;
+        ($sel1:ident:);
+        ($arg1:expr);
+    ) => { ::objc2::$macro![$obj, $sel1: $arg1] };
+    (
+        @collect_msg_send;
+        $macro:ident;
+        $obj:expr;
+        ($sel1:ident: $sel2:ident:);
+        ($arg1:expr, $arg2:expr);
+    ) => { ::objc2::$macro![$obj, $sel1: $arg1, $sel2: $arg2] };
+    (
+        @collect_msg_send;
+        $macro:ident;
+        $obj:expr;
+        ($sel1:ident: $sel2:ident: $sel3:ident:);
+        ($arg1:expr, $arg2:expr, $arg3:expr);
+    ) => { ::objc2::$macro![$obj, $sel1: $arg1, $sel2: $arg2, $sel3: $arg3] };
 }
 
 macro_rules! unsafe_def_fn {
