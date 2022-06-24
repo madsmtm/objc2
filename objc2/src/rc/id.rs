@@ -175,14 +175,15 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     #[inline]
     // Note: We don't take a reference as a parameter since it would be too
     // easy to accidentally create two aliasing mutable references.
-    pub unsafe fn new(ptr: *mut T) -> Option<Id<T, O>> {
+    pub unsafe fn new(ptr: *mut T) -> Option<Self> {
         // Should optimize down to nothing.
         // SAFETY: Upheld by the caller
-        NonNull::new(ptr).map(|ptr| unsafe { Id::new_nonnull(ptr) })
+        NonNull::new(ptr).map(|ptr| unsafe { Self::new_nonnull(ptr) })
     }
 
     #[inline]
-    unsafe fn new_nonnull(ptr: NonNull<T>) -> Id<T, O> {
+    unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
+        unsafe { O::__ensure_unique_if_owned(ptr.as_ptr().cast()) };
         Self {
             ptr,
             item: PhantomData,
@@ -199,12 +200,13 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     ///
     /// This is an associated method, and must be called as `Id::as_ptr(obj)`.
     #[inline]
-    pub fn as_ptr(this: &Id<T, O>) -> *const T {
+    pub fn as_ptr(this: &Self) -> *const T {
         this.ptr.as_ptr()
     }
 
     #[inline]
     pub(crate) fn consume_as_ptr(this: ManuallyDrop<Self>) -> *mut T {
+        unsafe { O::__relinquish_ownership(this.ptr.as_ptr().cast()) };
         this.ptr.as_ptr()
     }
 
@@ -214,7 +216,25 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
         // So we just hack it with transmute!
 
         // SAFETY: Option<Id<T, _>> has the same size as *mut T
-        unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(ManuallyDrop::new(obj)) }
+        let obj = ManuallyDrop::new(obj);
+        let ptr = unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(obj) };
+        if !ptr.is_null() {
+            unsafe { O::__relinquish_ownership(ptr.cast()) };
+        }
+        ptr
+    }
+
+    // TODO: Pub?
+    #[inline]
+    fn forget(this: Self) -> *mut T {
+        unsafe { O::__relinquish_ownership(this.ptr.as_ptr().cast()) };
+        ManuallyDrop::new(this).ptr.as_ptr()
+    }
+
+    #[inline]
+    fn forget_nonnull(this: Self) -> NonNull<T> {
+        unsafe { O::__relinquish_ownership(this.ptr.as_ptr().cast()) };
+        ManuallyDrop::new(this).ptr
     }
 }
 
@@ -410,11 +430,11 @@ impl<T: Message, O: Ownership> Id<T, O> {
         // retained objects it is hard to imagine a case where the inner type
         // has a method with the same name.
 
-        let ptr = ManuallyDrop::new(self).ptr.as_ptr();
+        let ptr = Self::forget(self);
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
-        // And because of the ManuallyDrop, we don't call the Drop
-        // implementation, so the object won't also be released there.
+        // And because of the `forget`, we don't call the Drop implementation,
+        // so the object won't also be released there.
         let res: *mut T = unsafe { ffi::objc_autorelease(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
         res
@@ -467,7 +487,7 @@ impl<T: Message> Id<T, Owned> {
     #[inline]
     pub unsafe fn from_shared(obj: Id<T, Shared>) -> Self {
         // Note: We can't debug_assert retainCount because of autoreleases
-        let ptr = ManuallyDrop::new(obj).ptr;
+        let ptr = Id::forget_nonnull(obj);
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
         unsafe { <Id<T, Owned>>::new_nonnull(ptr) }
@@ -496,7 +516,7 @@ impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
     /// Downgrade from an owned to a shared [`Id`], allowing it to be cloned.
     #[inline]
     fn from(obj: Id<T, Owned>) -> Self {
-        let ptr = ManuallyDrop::new(obj).ptr;
+        let ptr = Id::forget_nonnull(obj);
         // SAFETY: The pointer is valid, and ownership is simply decreased
         unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
     }
@@ -534,6 +554,8 @@ impl<T: ?Sized, O: Ownership> Drop for Id<T, O> {
     #[doc(alias = "release")]
     #[inline]
     fn drop(&mut self) {
+        unsafe { O::__relinquish_ownership(self.ptr.as_ptr().cast()) };
+
         // We could technically run the destructor for `T` when `O = Owned`,
         // and when `O = Shared` with (retainCount == 1), but that would be
         // confusing and inconsistent since we cannot guarantee that it's run.
@@ -703,5 +725,59 @@ mod tests {
         let _obj2: Id<_, Shared> = unsafe { Id::retain_autoreleased(ptr) }.unwrap();
         expected.retain += 1;
         expected.assert_current();
+    }
+
+    #[test]
+    fn test_unique_owned() {
+        // Tests patterns that `unstable-verify-ownership` should allow
+        let obj = RcTestObject::new();
+
+        // To/from shared
+        let obj = obj.into();
+        let obj: Id<_, Owned> = unsafe { Id::from_shared(obj) };
+
+        // To/from autoreleased
+        let obj: Id<_, Owned> = autoreleasepool(|pool| {
+            let obj = obj.autorelease(pool);
+            unsafe { Id::retain(obj).unwrap() }
+        });
+
+        // Forget and bring back
+        let ptr = Id::forget(obj);
+        let _obj: Id<_, Owned> = unsafe { Id::new(ptr).unwrap() };
+    }
+
+    #[test]
+    #[cfg(feature = "unstable-verify-ownership")]
+    #[should_panic = "Another `Id<T, Owned>` has already been created from that object"]
+    fn test_double_owned() {
+        let mut obj = RcTestObject::new();
+        // Double-retain: This is unsound!
+        let _obj2: Id<_, Owned> = unsafe { Id::retain(&mut *obj).unwrap() };
+    }
+
+    #[test]
+    #[cfg(feature = "unstable-verify-ownership")]
+    #[should_panic = "Tried to give up ownership of `Id<T, Owned>` that wasn't owned"]
+    fn test_double_forgotten() {
+        let obj = RcTestObject::new();
+        let ptr = Id::forget(obj);
+
+        let _obj: Id<_, Owned> = Id {
+            ptr: NonNull::new(ptr).unwrap(),
+            item: PhantomData,
+            own: PhantomData,
+            notunwindsafe: PhantomData,
+        };
+        // Dropping fails
+    }
+
+    #[test]
+    #[cfg(feature = "unstable-verify-ownership")]
+    #[should_panic = "An `Id<T, Owned>` exists while trying to create `Id<T, Shared>`!"]
+    fn test_create_shared_when_owned_exists() {
+        let obj = RcTestObject::new();
+        let ptr: *const RcTestObject = &*obj;
+        let _obj: Id<_, Shared> = unsafe { Id::retain(ptr as *mut RcTestObject).unwrap() };
     }
 }

@@ -272,6 +272,8 @@ mod tests {
             // let copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy].unwrap() };
             // let mutable_copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, mutableCopy].unwrap() };
 
+            let obj: Id<RcTestObject, Shared> = obj.into();
+            expected.assert_current();
             let _self: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, self].unwrap() };
             expected.retain += 1;
             expected.assert_current();

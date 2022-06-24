@@ -58,6 +58,10 @@ unstable-autoreleasesafe = []
 # Uses the nightly c_unwind feature to make throwing safe
 unstable-c-unwind = ["objc-sys/unstable-c-unwind"]
 
+# Uses associated types on every object to check whether Id's ownership rules
+# are being upheld.
+unstable-verify-ownership = []
+
 # Runtime selection. See `objc-sys` for details.
 apple = ["objc-sys/apple"]
 gnustep-1-7 = ["objc-sys/gnustep-1-7"]
