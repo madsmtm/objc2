@@ -3,11 +3,10 @@
 //! For more information on foreign functions, see Apple's documentation:
 //! <https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html>
 
-use core::ffi::c_void;
 use core::fmt;
 use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
-use core::ptr;
+use core::ptr::{self, NonNull};
 use core::str;
 #[cfg(feature = "malloc")]
 use malloc_buf::Malloc;
@@ -32,18 +31,25 @@ pub const YES: ffi::BOOL = ffi::YES;
 #[deprecated = "Use `Bool::NO` or `ffi::NO` instead"]
 pub const NO: ffi::BOOL = ffi::NO;
 
-/// A type that represents a method selector.
+/// A method selector.
+///
+/// The Rust equivalent of Objective-C's `SEL` type. You can easily create
+/// this using the [`sel!`] macro.
 ///
 /// The main reason the Objective-C runtime uses a custom types for selectors
 /// is to support efficient comparison - a selector is effectively just an
 /// [interned string], so this makes that very easy!
 ///
+/// This guarantees the null-pointer optimization, namely that `Option<Sel>`
+/// is the same size as `Sel`.
+///
 /// [interned string]: https://en.wikipedia.org/wiki/String_interning
 #[repr(transparent)]
-// ffi::sel_isEqual is just pointer comparison, so just generate PartialEq
+// ffi::sel_isEqual is just pointer comparison, so we just generate PartialEq
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[doc(alias = "SEL")]
 pub struct Sel {
-    ptr: *const ffi::objc_selector,
+    ptr: NonNull<ffi::objc_selector>,
 }
 
 /// A type that represents an instance variable.
@@ -98,43 +104,85 @@ standard_pointer_impls!(Ivar, Method, Class);
 pub struct Object(ffi::objc_object);
 
 /// A pointer to the start of a method implementation.
+///
+/// # Safety
+///
+/// This is a "catch all" type; it must be transmuted to the correct type
+/// before being called!
 pub type Imp = unsafe extern "C" fn();
 
 impl Sel {
-    /// Registers a method with the Objective-C runtime system,
-    /// maps the method name to a selector, and returns the selector value.
+    #[inline]
+    #[doc(hidden)]
+    pub const unsafe fn __internal_from_ptr(ptr: *const ffi::objc_selector) -> Self {
+        // Used in static selectors.
+        // SAFETY: Upheld by caller.
+        let ptr = unsafe { NonNull::new_unchecked(ptr as *mut ffi::objc_selector) };
+        Self { ptr }
+    }
+
+    #[inline]
+    pub(crate) unsafe fn from_ptr(ptr: *const ffi::objc_selector) -> Option<Self> {
+        // SAFETY: Caller verifies that the pointer is valid.
+        NonNull::new(ptr as *mut ffi::objc_selector).map(|ptr| Self { ptr })
+    }
+
+    #[inline]
+    pub(crate) const fn as_ptr(&self) -> *const ffi::objc_selector {
+        self.ptr.as_ptr()
+    }
+
+    pub(crate) unsafe fn register_unchecked(name: *const c_char) -> Self {
+        let ptr = unsafe { ffi::sel_registerName(name) };
+        // SAFETY: `sel_registerName` declares return type as `SEL _Nonnull`,
+        // at least when input is also `_Nonnull` (which it is in our case).
+        //
+        // Looking at the source code, it can fail and will return NULL if
+        // allocating space for the selector failed (which then subsequently
+        // invokes UB by calling `memcpy` with a NULL argument):
+        // <https://github.com/apple-oss-distributions/objc4/blob/objc4-841.13/runtime/objc-os.h#L1002-L1004>
+        //
+        // I suspect this will be really uncommon in practice, since the
+        // called selector is almost always going to be present in the binary
+        // already; but alas, we'll handle it!
+        unsafe { Self::from_ptr(ptr).unwrap() }
+    }
+
+    /// Registers a selector with the Objective-C runtime.
+    ///
+    /// This is the dynamic version of the [`sel!`] macro, prefer to use that
+    /// when your selector is static.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `name` contains an internal NUL byte, or if the runtime
+    /// failed allocating space for the selector.
+    #[doc(alias = "sel_registerName")]
     pub fn register(name: &str) -> Self {
         let name = CString::new(name).unwrap();
-        Self {
-            ptr: unsafe { ffi::sel_registerName(name.as_ptr()) },
-        }
+        // SAFETY: Input is a non-null, NUL-terminated C-string pointer.
+        unsafe { Self::register_unchecked(name.as_ptr()) }
     }
 
-    /// Returns the name of the method specified by self.
+    /// Returns the string representation of the selector.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the selector is not valid UTF-8 (however unlikely!)
+    #[doc(alias = "sel_getName")]
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::sel_getName(self.ptr)) };
+        // SAFETY: Input is non-null selector. Declares return type as
+        // `const char * _Nonnull`, source code agrees.
+        let ptr = unsafe { ffi::sel_getName(self.as_ptr()) };
+        // SAFETY: The string is a valid C-style NUL-terminated string, and
+        // likely has static lifetime since the selector has static lifetime
+        // (though we bind it to `&self` just to be safe).
+        let name = unsafe { CStr::from_ptr(ptr) };
         str::from_utf8(name.to_bytes()).unwrap()
-    }
-
-    /// Wraps a raw pointer to a selector into a [`Sel`] object.
-    ///
-    /// # Safety
-    ///
-    /// The pointer must a valid, registered selector.
-    ///
-    /// This is almost never what you want; use [`Sel::register`] instead.
-    #[inline]
-    pub const unsafe fn from_ptr(ptr: *const c_void) -> Self {
-        Self { ptr: ptr.cast() }
-    }
-
-    /// Returns a pointer to the raw selector.
-    #[inline]
-    pub fn as_ptr(&self) -> *const c_void {
-        self.ptr.cast()
     }
 }
 
+// SAFETY: `Sel` is FFI compatible, and the encoding is of course `Sel`.
 unsafe impl Encode for Sel {
     const ENCODING: Encoding<'static> = Encoding::Sel;
 }
@@ -200,9 +248,7 @@ impl Method {
 
     /// Returns the name of self.
     pub fn name(&self) -> Sel {
-        Sel {
-            ptr: unsafe { ffi::method_getName(self.as_ptr()) },
-        }
+        unsafe { Sel::from_ptr(ffi::method_getName(self.as_ptr())).unwrap() }
     }
 
     /// Returns the `Encoding` of self's return type.
@@ -317,7 +363,7 @@ impl Class {
     /// selector.
     pub fn instance_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
-            let method = ffi::class_getInstanceMethod(self.as_ptr(), sel.ptr);
+            let method = ffi::class_getInstanceMethod(self.as_ptr(), sel.as_ptr());
             method.cast::<Method>().as_ref()
         }
     }

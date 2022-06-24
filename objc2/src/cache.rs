@@ -1,4 +1,3 @@
-use core::ffi::c_void;
 use core::ptr;
 use core::sync::atomic::{AtomicPtr, Ordering};
 
@@ -8,7 +7,7 @@ use crate::runtime::{Class, Sel};
 /// Allows storing a [`Sel`] in a static and lazily loading it.
 #[doc(hidden)]
 pub struct CachedSel {
-    ptr: AtomicPtr<c_void>,
+    ptr: AtomicPtr<ffi::objc_selector>,
 }
 
 impl CachedSel {
@@ -26,13 +25,18 @@ impl CachedSel {
     pub unsafe fn get(&self, name: &str) -> Sel {
         // `Relaxed` should be fine since `sel_registerName` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);
-        if ptr.is_null() {
-            let ptr: *const c_void = unsafe { ffi::sel_registerName(name.as_ptr().cast()).cast() };
-            self.ptr.store(ptr as *mut c_void, Ordering::Relaxed);
-            unsafe { Sel::from_ptr(ptr) }
-        } else {
-            unsafe { Sel::from_ptr(ptr) }
-        }
+        unsafe { Sel::from_ptr(ptr) }.unwrap_or_else(|| {
+            // The panic inside `Sel::register_unchecked` is unfortunate, but
+            // strict correctness is more important than speed
+
+            // SAFETY: Input is a non-null, NUL-terminated C-string pointer.
+            //
+            // We know this, because we construct it in `sel!` ourselves
+            let sel = unsafe { Sel::register_unchecked(name.as_ptr().cast()) };
+            self.ptr
+                .store(sel.as_ptr() as *mut ffi::objc_selector, Ordering::Relaxed);
+            sel
+        })
     }
 }
 
