@@ -39,7 +39,8 @@ static OBJC2_ID_OWNED_UNIQUE_KEY: i32 = 0;
 #[inline]
 #[allow(unused)]
 fn key() -> *const c_void {
-    &OBJC2_ID_OWNED_UNIQUE_KEY as *const i32 as *const _
+    let ptr: *const i32 = &OBJC2_ID_OWNED_UNIQUE_KEY;
+    ptr.cast()
 }
 
 #[cfg(feature = "unstable-verify-ownership")]
