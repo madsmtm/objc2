@@ -646,15 +646,6 @@ mod tests {
         assert_eq!(retain_count, expected);
     }
 
-    fn new() -> Id<Object, Owned> {
-        let cls = class!(NSObject);
-        unsafe {
-            let obj: *mut Object = msg_send![cls, alloc];
-            let obj: *mut Object = msg_send![obj, init];
-            Id::new(obj).unwrap()
-        }
-    }
-
     #[test]
     fn test_drop() {
         let mut expected = ThreadTestData::current();
@@ -736,40 +727,41 @@ mod tests {
 
     #[test]
     fn test_unique_owned() {
-        let obj = new();
+        // Tests patterns that `unstable-verify-ownership` should allow
+        let obj = RcTestObject::new();
 
         // To/from shared
         let obj = obj.into();
-        let obj: Id<Object, Owned> = unsafe { Id::from_shared(obj) };
+        let obj: Id<_, Owned> = unsafe { Id::from_shared(obj) };
 
         // To/from autoreleased
-        let obj: Id<Object, Owned> = autoreleasepool(|pool| {
+        let obj: Id<_, Owned> = autoreleasepool(|pool| {
             let obj = obj.autorelease(pool);
             unsafe { Id::retain(obj).unwrap() }
         });
 
         // Forget and bring back
         let ptr = Id::forget(obj);
-        let _obj: Id<Object, Owned> = unsafe { Id::new(ptr).unwrap() };
+        let _obj: Id<_, Owned> = unsafe { Id::new(ptr).unwrap() };
     }
 
     #[test]
     #[cfg(feature = "unstable-verify-ownership")]
     #[should_panic = "Another `Id<T, Owned>` has already been created from that object"]
     fn test_double_owned() {
-        let mut obj = new();
+        let mut obj = RcTestObject::new();
         // Double-retain: This is unsound!
-        let _obj2: Id<Object, Owned> = unsafe { Id::retain(Id::as_mut_ptr(&mut obj)).unwrap() };
+        let _obj2: Id<_, Owned> = unsafe { Id::retain(&mut *obj).unwrap() };
     }
 
     #[test]
     #[cfg(feature = "unstable-verify-ownership")]
     #[should_panic = "Tried to give up ownership of `Id<T, Owned>` that wasn't owned"]
     fn test_double_forgotten() {
-        let obj = new();
+        let obj = RcTestObject::new();
         let ptr = Id::forget(obj);
 
-        let _obj: Id<Object, Owned> = Id {
+        let _obj: Id<_, Owned> = Id {
             ptr: NonNull::new(ptr).unwrap(),
             item: PhantomData,
             own: PhantomData,
@@ -782,7 +774,8 @@ mod tests {
     #[cfg(feature = "unstable-verify-ownership")]
     #[should_panic = "An `Id<T, Owned>` exists while trying to create `Id<T, Shared>`!"]
     fn test_create_shared_when_owned_exists() {
-        let mut obj = new();
-        let _obj: Id<Object, Shared> = unsafe { Id::retain(Id::as_mut_ptr(&mut obj)).unwrap() };
+        let obj = RcTestObject::new();
+        let ptr: *const RcTestObject = &*obj;
+        let _obj: Id<_, Shared> = unsafe { Id::retain(ptr as *mut RcTestObject).unwrap() };
     }
 }

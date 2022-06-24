@@ -46,9 +46,9 @@ fn key() -> *const c_void {
 impl Ownership for Owned {
     #[track_caller]
     unsafe fn __ensure_unique_if_owned(obj: *mut ffi::objc_object) {
-        std::println!("\n__ensure_unique_if_owned: {:?} / {:?}", obj, key());
+        std::println!("\nOwned __ensure_unique_if_owned: {:?} / {:?}", obj, key());
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
-        std::println!("associated: {:?}", associated);
+        std::println!("Owned associated: {:?}", associated);
         if associated.is_null() {
             // Set the associated object to something (it can be anything, so
             // we just set it to the current object).
@@ -60,14 +60,14 @@ impl Ownership for Owned {
             panic!("Another `Id<T, Owned>` has already been created from that object!");
         }
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
-        std::println!("associated: {:?}", associated);
+        std::println!("Owned associated: {:?}", associated);
     }
 
     #[track_caller]
     unsafe fn __relinquish_ownership(obj: *mut ffi::objc_object) {
-        std::println!("\n__relinquish_ownership: {:?} / {:?}", obj, key());
+        std::println!("\nOwned __relinquish_ownership: {:?} / {:?}", obj, key());
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
-        std::println!("associated: {:?}", associated);
+        std::println!("Owned associated: {:?}", associated);
         if associated.is_null() {
             panic!("Tried to give up ownership of `Id<T, Owned>` that wasn't owned!");
         } else {
@@ -77,7 +77,7 @@ impl Ownership for Owned {
             };
         }
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
-        std::println!("associated: {:?}", associated);
+        std::println!("Owned associated: {:?}", associated);
     }
 }
 
@@ -88,18 +88,18 @@ impl Ownership for Owned {}
 impl Ownership for Shared {
     #[track_caller]
     unsafe fn __ensure_unique_if_owned(obj: *mut ffi::objc_object) {
-        std::println!("\n__ensure_unique_if_owned: {:?} / {:?}", obj, key());
+        std::println!("\nShared __ensure_unique_if_owned: {:?} / {:?}", obj, key());
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
-        std::println!("associated: {:?}", associated);
+        std::println!("Shared associated: {:?}", associated);
         if !associated.is_null() {
             panic!("An `Id<T, Owned>` exists while trying to create `Id<T, Shared>`!");
         }
     }
     #[track_caller]
     unsafe fn __relinquish_ownership(obj: *mut ffi::objc_object) {
-        std::println!("\n__relinquish_ownership: {:?} / {:?}", obj, key());
+        std::println!("\nShared __relinquish_ownership: {:?} / {:?}", obj, key());
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
-        std::println!("associated: {:?}", associated);
+        std::println!("Shared associated: {:?}", associated);
         if !associated.is_null() {
             panic!("Tried to give up ownership of `Id<T, Shared>`!");
         }
