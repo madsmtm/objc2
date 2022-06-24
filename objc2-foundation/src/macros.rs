@@ -423,7 +423,7 @@ macro_rules! __def_fn {
                     @instance_or_class;
                     msg_send;
                     ($($sel)+);
-                    ($($self)? $($mut_self)?);
+                    ($($self)? $($mut_self)? $($first_arg)?);
                     ($($self)? $($mut_self)? $($first_arg)? $(, $rest_arg)*);
                 )
             }
@@ -447,6 +447,21 @@ macro_rules! __def_fn {
             @collect_msg_send;
             $macro;
             $self;
+            ($($sel)+);
+            ($($rest_arg)*);
+        )
+    };
+    (
+        @instance_or_class;
+        $macro:ident;
+        ($($sel:tt)+);
+        (this);
+        ($this:ident $(, $rest_arg:ident)*);
+    ) => {
+        $crate::__def_fn!(
+            @collect_msg_send;
+            $macro;
+            $this;
             ($($sel)+);
             ($($rest_arg)*);
         )
