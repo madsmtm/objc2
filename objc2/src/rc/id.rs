@@ -750,10 +750,8 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        debug_assertions,
-        should_panic = "Another `Id<T, Owned>` has already been created from that object"
-    )]
+    #[cfg(feature = "unstable-verify-ownership")]
+    #[should_panic = "Another `Id<T, Owned>` has already been created from that object"]
     fn test_double_owned() {
         let mut obj = new();
         // Double-retain: This is unsound!
@@ -761,10 +759,8 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        debug_assertions,
-        should_panic = "Tried to give up ownership of `Id<T, Owned>` that wasn't owned"
-    )]
+    #[cfg(feature = "unstable-verify-ownership")]
+    #[should_panic = "Tried to give up ownership of `Id<T, Owned>` that wasn't owned"]
     fn test_double_forgotten() {
         let obj = new();
         let ptr = Id::forget(obj);
@@ -779,10 +775,8 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        debug_assertions,
-        should_panic = "An `Id<T, Owned>` exists while trying to create `Id<T, Shared>`!"
-    )]
+    #[cfg(feature = "unstable-verify-ownership")]
+    #[should_panic = "An `Id<T, Owned>` exists while trying to create `Id<T, Shared>`!"]
     fn test_create_shared_when_owned_exists() {
         let mut obj = new();
         let _obj: Id<Object, Shared> = unsafe { Id::retain(Id::as_mut_ptr(&mut obj)).unwrap() };

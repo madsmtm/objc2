@@ -26,18 +26,23 @@ mod private {
 /// crate.
 pub trait Ownership: private::Sealed + 'static {
     #[doc(hidden)]
-    unsafe fn __ensure_unique_if_owned(_: *mut ffi::objc_object);
+    #[inline]
+    unsafe fn __ensure_unique_if_owned(_: *mut ffi::objc_object) {}
     #[doc(hidden)]
-    unsafe fn __relinquish_ownership(_: *mut ffi::objc_object);
+    #[inline]
+    unsafe fn __relinquish_ownership(_: *mut ffi::objc_object) {}
 }
 
 /// The value of this doesn't matter, it's only the address that we use.
 static OBJC2_ID_OWNED_UNIQUE_KEY: i32 = 0;
-#[inline(always)]
+
+#[inline]
+#[allow(unused)]
 fn key() -> *const c_void {
     &OBJC2_ID_OWNED_UNIQUE_KEY as *const i32 as *const _
 }
 
+#[cfg(feature = "unstable-verify-ownership")]
 impl Ownership for Owned {
     #[track_caller]
     unsafe fn __ensure_unique_if_owned(obj: *mut ffi::objc_object) {
@@ -76,6 +81,10 @@ impl Ownership for Owned {
     }
 }
 
+#[cfg(not(feature = "unstable-verify-ownership"))]
+impl Ownership for Owned {}
+
+#[cfg(feature = "unstable-verify-ownership")]
 impl Ownership for Shared {
     #[track_caller]
     unsafe fn __ensure_unique_if_owned(obj: *mut ffi::objc_object) {
@@ -96,3 +105,6 @@ impl Ownership for Shared {
         }
     }
 }
+
+#[cfg(not(feature = "unstable-verify-ownership"))]
+impl Ownership for Shared {}
