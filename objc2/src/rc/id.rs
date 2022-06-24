@@ -218,7 +218,9 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
         // SAFETY: Option<Id<T, _>> has the same size as *mut T
         let obj = ManuallyDrop::new(obj);
         let ptr = unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(obj) };
-        unsafe { O::__relinquish_ownership(ptr.cast()) };
+        if !ptr.is_null() {
+            unsafe { O::__relinquish_ownership(ptr.cast()) };
+        }
         ptr
     }
 

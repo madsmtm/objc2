@@ -47,6 +47,10 @@ impl Ownership for Owned {
     #[track_caller]
     unsafe fn __ensure_unique_if_owned(obj: *mut ffi::objc_object) {
         std::println!("\nOwned __ensure_unique_if_owned: {:?} / {:?}", obj, key());
+        if obj.is_null() {
+            panic!("Tried to take ownership of nil object!");
+        }
+
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
         std::println!("Owned associated: {:?}", associated);
         if associated.is_null() {
@@ -66,6 +70,10 @@ impl Ownership for Owned {
     #[track_caller]
     unsafe fn __relinquish_ownership(obj: *mut ffi::objc_object) {
         std::println!("\nOwned __relinquish_ownership: {:?} / {:?}", obj, key());
+        if obj.is_null() {
+            panic!("Tried to release ownership of nil object!");
+        }
+
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
         std::println!("Owned associated: {:?}", associated);
         if associated.is_null() {
@@ -89,6 +97,10 @@ impl Ownership for Shared {
     #[track_caller]
     unsafe fn __ensure_unique_if_owned(obj: *mut ffi::objc_object) {
         std::println!("\nShared __ensure_unique_if_owned: {:?} / {:?}", obj, key());
+        if obj.is_null() {
+            panic!("Tried to take shared ownership of nil object!");
+        }
+
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
         std::println!("Shared associated: {:?}", associated);
         if !associated.is_null() {
@@ -98,6 +110,10 @@ impl Ownership for Shared {
     #[track_caller]
     unsafe fn __relinquish_ownership(obj: *mut ffi::objc_object) {
         std::println!("\nShared __relinquish_ownership: {:?} / {:?}", obj, key());
+        if obj.is_null() {
+            panic!("Tried to release shared ownership of nil object!");
+        }
+
         let associated = unsafe { ffi::objc_getAssociatedObject(obj, key()) };
         std::println!("Shared associated: {:?}", associated);
         if !associated.is_null() {
