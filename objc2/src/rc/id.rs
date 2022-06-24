@@ -176,7 +176,6 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     // Note: We don't take a reference as a parameter since it would be too
     // easy to accidentally create two aliasing mutable references.
     pub unsafe fn new(ptr: *mut T) -> Option<Self> {
-        unsafe { O::__ensure_unique_if_owned(ptr.cast()) };
         // Should optimize down to nothing.
         // SAFETY: Upheld by the caller
         NonNull::new(ptr).map(|ptr| unsafe { Self::new_nonnull(ptr) })
@@ -184,6 +183,7 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
 
     #[inline]
     unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
+        unsafe { O::__ensure_unique_if_owned(ptr.as_ptr().cast()) };
         Self {
             ptr,
             item: PhantomData,
@@ -227,6 +227,12 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     fn forget(this: Self) -> *mut T {
         unsafe { O::__relinquish_ownership(this.ptr.as_ptr().cast()) };
         ManuallyDrop::new(this).ptr.as_ptr()
+    }
+
+    #[inline]
+    fn forget_nonnull(this: Self) -> NonNull<T> {
+        unsafe { O::__relinquish_ownership(this.ptr.as_ptr().cast()) };
+        ManuallyDrop::new(this).ptr
     }
 }
 
@@ -479,8 +485,7 @@ impl<T: Message> Id<T, Owned> {
     #[inline]
     pub unsafe fn from_shared(obj: Id<T, Shared>) -> Self {
         // Note: We can't debug_assert retainCount because of autoreleases
-        let ptr = obj.ptr;
-        Id::forget(obj);
+        let ptr = Id::forget_nonnull(obj);
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
         unsafe { <Id<T, Owned>>::new_nonnull(ptr) }
@@ -509,8 +514,7 @@ impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
     /// Downgrade from an owned to a shared [`Id`], allowing it to be cloned.
     #[inline]
     fn from(obj: Id<T, Owned>) -> Self {
-        let ptr = obj.ptr;
-        Id::forget(obj);
+        let ptr = Id::forget_nonnull(obj);
         // SAFETY: The pointer is valid, and ownership is simply decreased
         unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
     }
