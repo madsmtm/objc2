@@ -3,6 +3,8 @@
 //! For more information on foreign functions, see Apple's documentation:
 //! <https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html>
 
+#[cfg(doc)]
+use core::cell::UnsafeCell;
 use core::fmt;
 use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
@@ -592,6 +594,11 @@ fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
 /// a subclass of `NSObject`).
 ///
 /// `Id<Object, _>` is equivalent to Objective-C's `id`.
+///
+/// This contains [`UnsafeCell`], and is similar to that in that one can
+/// safely access and perform interior mutability on this (both via.
+/// [`msg_send!`] and through ivars), so long as Rust's mutability rules are
+/// upheld, and that data races are avoided.
 ///
 /// Note: This is intentionally neither [`Sync`], [`Send`], [`UnwindSafe`],
 /// [`RefUnwindSafe`] nor [`Unpin`], since that is something that may change
