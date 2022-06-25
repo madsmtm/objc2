@@ -111,12 +111,22 @@ mod tests {
         assert_eq!(exc.reason().unwrap(), NSString::from_str("def"));
         assert!(exc.user_info().is_none());
 
-        assert_eq!(exc.description(), NSString::from_str("def"));
-        assert_eq!(format!("{:?}", exc), "\"def\"");
+        let description = if cfg!(feature = "gnustep-1-7") {
+            format!("<NSException: {:p}> NAME:abc REASON:def", exc)
+        } else {
+            "def".into()
+        };
+
+        assert_eq!(exc.description(), NSString::from_str(&description));
+        assert_eq!(format!("{:?}", exc), format!("\"{}\"", description));
     }
 
     #[test]
-    #[should_panic = "called `Result::unwrap()` on an `Err` value: \"def\""]
+    #[cfg_attr(
+        feature = "apple",
+        should_panic = "called `Result::unwrap()` on an `Err` value: \"def\""
+    )]
+    #[cfg_attr(feature = "gnustep-1-7", should_panic = "> NAME:abc REASON:def")]
     fn unwrap() {
         let exc = NSException::new(
             &NSString::from_str("abc"),

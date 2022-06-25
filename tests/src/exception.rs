@@ -20,7 +20,10 @@ fn throw_catch_raise_catch() {
     let reason = NSString::from_str("def");
 
     let exc = NSException::new(&name, Some(&reason), None).unwrap();
-    assert_retain_count(&exc, 1);
+    // TODO: Investigate why this is required on GNUStep!
+    let _exc2 = exc.clone();
+
+    assert_retain_count(&exc, 2);
 
     // TODO: Investigate this!
     let extra_retain = if cfg!(all(
@@ -45,11 +48,11 @@ fn throw_catch_raise_catch() {
         let exc = res.unwrap_err().unwrap();
         let exc = unsafe { Id::cast::<NSException>(exc) };
 
-        assert_retain_count(&exc, 2 + extra_retain);
+        assert_retain_count(&exc, 3 + extra_retain);
         exc
     });
 
-    assert_retain_count(&exc, 1 + extra_retain);
+    assert_retain_count(&exc, 2 + extra_retain);
 
     assert_eq!(exc.name(), name);
     assert_eq!(exc.reason().unwrap(), reason);
@@ -116,8 +119,22 @@ fn catch_actual() {
     let exc = res.unwrap_err().unwrap();
     let exc = unsafe { Id::cast::<NSException>(exc) };
 
-    assert_eq!(exc.name(), NSString::from_str("NSRangeException"));
-    let reason = "*** -[__NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray";
+    let name = "NSRangeException";
+    assert_eq!(exc.name(), NSString::from_str(name));
+
+    let reason = if cfg!(feature = "gnustep-1-7") {
+        "Index 0 is out of range 0 (in 'objectAtIndex:')"
+    } else {
+        "*** -[__NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray"
+    };
     assert_eq!(exc.reason().unwrap(), NSString::from_str(reason));
-    assert!(exc.user_info().is_none());
+
+    let user_info = exc.user_info();
+    if cfg!(feature = "gnustep-1-7") {
+        let user_info = user_info.unwrap();
+        assert_eq!(user_info.len(), 3);
+        // TODO: Verify contents of userInfo
+    } else {
+        assert!(user_info.is_none());
+    }
 }
