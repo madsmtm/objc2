@@ -1,17 +1,42 @@
 use core::fmt;
+use core::hash::{Hash, Hasher};
 use malloc_buf::Malloc;
 
 use crate::runtime::{Class, Object, Sel};
 use crate::{Encode, EncodeArguments, Encoding};
 
+/// Workaround for `Malloc<str>` not implementing common traits
 #[derive(Debug)]
+pub(crate) struct MallocEncoding(Malloc<str>);
+
+impl PartialEq for MallocEncoding {
+    fn eq(&self, other: &Self) -> bool {
+        *self.0 == *other.0
+    }
+}
+
+impl Eq for MallocEncoding {}
+
+impl Hash for MallocEncoding {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        Hash::hash(&*self.0, state)
+    }
+}
+
+impl fmt::Display for MallocEncoding {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&*self.0, f)
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
 #[allow(dead_code)]
 pub(crate) enum VerificationError {
     NilReceiver(Sel),
     MethodNotFound(Sel),
-    MismatchedReturn(Sel, Malloc<str>, Encoding<'static>),
+    MismatchedReturn(Sel, MallocEncoding, Encoding<'static>),
     MismatchedArgumentsCount(Sel, usize, usize),
-    MismatchedArgument(Sel, usize, Malloc<str>, Encoding<'static>),
+    MismatchedArgument(Sel, usize, MallocEncoding, Encoding<'static>),
 }
 
 impl fmt::Display for VerificationError {
@@ -61,7 +86,11 @@ where
     let actual = R::ENCODING;
     let expected = method.return_type();
     if !actual.equivalent_to_str(&*expected) {
-        return Err(VerificationError::MismatchedReturn(sel, expected, actual));
+        return Err(VerificationError::MismatchedReturn(
+            sel,
+            MallocEncoding(expected),
+            actual,
+        ));
     }
 
     let self_and_cmd = [<*mut Object>::ENCODING, Sel::ENCODING];
@@ -79,7 +108,10 @@ where
         let expected = method.argument_type(i).unwrap();
         if !actual.equivalent_to_str(&*expected) {
             return Err(VerificationError::MismatchedArgument(
-                sel, i, expected, actual,
+                sel,
+                i,
+                MallocEncoding(expected),
+                actual,
             ));
         }
     }
