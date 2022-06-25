@@ -22,7 +22,7 @@
 //!
 //! // Add an ObjC method for getting the number
 //! extern "C" fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
-//!     unsafe { *this.ivar("_number") }
+//!     unsafe { *this.ivar::<u32>("_number") }
 //! }
 //! unsafe {
 //!     decl.add_method(
