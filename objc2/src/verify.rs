@@ -1,93 +1,86 @@
 use core::fmt;
+use malloc_buf::Malloc;
 
-use crate::runtime::{Class, Method, Object, Sel};
+use crate::runtime::{Class, Object, Sel};
 use crate::{Encode, EncodeArguments, Encoding};
 
+#[derive(Debug)]
 #[allow(dead_code)]
-pub(crate) enum VerificationError<'a> {
+pub(crate) enum VerificationError {
     NilReceiver(Sel),
-    MethodNotFound(&'a Class, Sel),
-    MismatchedReturn(&'a Method, Encoding<'static>),
-    MismatchedArgumentsCount(&'a Method, usize),
-    MismatchedArgument(&'a Method, usize, Encoding<'static>),
+    MethodNotFound(Sel),
+    MismatchedReturn(Sel, Malloc<str>, Encoding<'static>),
+    MismatchedArgumentsCount(Sel, usize, usize),
+    MismatchedArgument(Sel, usize, Malloc<str>, Encoding<'static>),
 }
 
-impl<'a> fmt::Display for VerificationError<'a> {
+impl fmt::Display for VerificationError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {
-            VerificationError::NilReceiver(sel) => {
+        match self {
+            Self::NilReceiver(sel) => {
                 write!(f, "Messsaging {:?} to nil", sel)
             }
-            VerificationError::MethodNotFound(cls, sel) => {
-                write!(f, "Method {:?} not found on class {:?}", sel, cls)
+            Self::MethodNotFound(sel) => {
+                write!(f, "Method {:?} not found on class", sel)
             }
-            VerificationError::MismatchedReturn(method, ret) => {
-                let expected_ret = method.return_type();
+            Self::MismatchedReturn(sel, expected, actual) => {
                 write!(
                     f,
                     "Return type code {} does not match expected {} for method {:?}",
-                    ret,
-                    expected_ret,
-                    method.name()
+                    actual, expected, sel
                 )
             }
-            VerificationError::MismatchedArgumentsCount(method, count) => {
-                let expected_count = method.arguments_count();
+            Self::MismatchedArgumentsCount(sel, expected, actual) => {
                 write!(
                     f,
                     "Method {:?} accepts {} arguments, but {} were given",
-                    method.name(),
-                    expected_count,
-                    count
+                    sel, expected, actual
                 )
             }
-            VerificationError::MismatchedArgument(method, i, arg) => {
-                let expected = method.argument_type(i).unwrap();
+            Self::MismatchedArgument(sel, i, expected, actual) => {
                 write!(
                     f,
                     "Method {:?} expected argument at index {} with type code {} but was given {}",
-                    method.name(),
-                    i,
-                    expected,
-                    arg
+                    sel, i, expected, actual
                 )
             }
         }
     }
 }
 
-pub(crate) fn verify_message_signature<A, R>(
-    cls: &Class,
-    sel: Sel,
-) -> Result<(), VerificationError<'_>>
+pub(crate) fn verify_message_signature<A, R>(cls: &Class, sel: Sel) -> Result<(), VerificationError>
 where
     A: EncodeArguments,
     R: Encode,
 {
     let method = match cls.instance_method(sel) {
         Some(method) => method,
-        None => return Err(VerificationError::MethodNotFound(cls, sel)),
+        None => return Err(VerificationError::MethodNotFound(sel)),
     };
 
-    let ret = R::ENCODING;
-    let expected_ret = method.return_type();
-    if !ret.equivalent_to_str(&*expected_ret) {
-        return Err(VerificationError::MismatchedReturn(method, ret));
+    let actual = R::ENCODING;
+    let expected = method.return_type();
+    if !actual.equivalent_to_str(&*expected) {
+        return Err(VerificationError::MismatchedReturn(sel, expected, actual));
     }
 
     let self_and_cmd = [<*mut Object>::ENCODING, Sel::ENCODING];
     let args = A::ENCODINGS;
 
-    let count = self_and_cmd.len() + args.len();
-    let expected_count = method.arguments_count();
-    if count != expected_count {
-        return Err(VerificationError::MismatchedArgumentsCount(method, count));
+    let actual = self_and_cmd.len() + args.len();
+    let expected = method.arguments_count();
+    if actual != expected {
+        return Err(VerificationError::MismatchedArgumentsCount(
+            sel, expected, actual,
+        ));
     }
 
-    for (i, arg) in self_and_cmd.iter().chain(args).copied().enumerate() {
+    for (i, actual) in self_and_cmd.iter().chain(args).copied().enumerate() {
         let expected = method.argument_type(i).unwrap();
-        if !arg.equivalent_to_str(&*expected) {
-            return Err(VerificationError::MismatchedArgument(method, i, arg));
+        if !actual.equivalent_to_str(&*expected) {
+            return Err(VerificationError::MismatchedArgument(
+                sel, i, expected, actual,
+            ));
         }
     }
 
@@ -114,10 +107,7 @@ mod tests {
 
         // Unimplemented selector (missing colon)
         let err = cls.verify_sel::<(), ()>(sel!(setFoo)).unwrap_err();
-        assert_eq!(
-            err.to_string(),
-            "Method setFoo not found on class CustomObject"
-        );
+        assert_eq!(err.to_string(), "Method setFoo not found on class");
 
         // Incorrect return type
         let err = cls.verify_sel::<(u32,), u64>(sel!(setFoo:)).unwrap_err();

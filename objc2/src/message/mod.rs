@@ -399,8 +399,8 @@ impl Error for MessageError {
 }
 
 #[cfg(feature = "malloc")]
-impl<'a> From<VerificationError<'a>> for MessageError {
-    fn from(err: VerificationError<'_>) -> MessageError {
+impl From<VerificationError> for MessageError {
+    fn from(err: VerificationError) -> MessageError {
         use alloc::string::ToString;
         MessageError(err.to_string())
     }
