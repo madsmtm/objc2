@@ -453,8 +453,11 @@ mod tests {
         assert_eq!(result, expected);
     }
 
-    #[cfg(not(feature = "verify_message"))]
     #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "Messsaging description to nil"
+    )]
     fn test_send_message_nil() {
         use crate::rc::Shared;
 

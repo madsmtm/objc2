@@ -96,17 +96,63 @@ where
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::test_utils;
+    use alloc::string::ToString;
 
     #[test]
     fn test_verify_message() {
         let cls = test_utils::custom_class();
+
         assert!(cls.verify_sel::<(), u32>(sel!(foo)).is_ok());
         assert!(cls.verify_sel::<(u32,), ()>(sel!(setFoo:)).is_ok());
+    }
 
-        // Incorrect types
-        assert!(cls.verify_sel::<(), u64>(sel!(setFoo:)).is_err());
-        // Unimplemented selector
-        assert!(cls.verify_sel::<(u32,), ()>(sel!(setFoo)).is_err());
+    #[test]
+    fn test_verify_message_errors() {
+        let cls = test_utils::custom_class();
+
+        // Unimplemented selector (missing colon)
+        let err = cls.verify_sel::<(), ()>(sel!(setFoo)).unwrap_err();
+        assert_eq!(
+            err.to_string(),
+            "Method setFoo not found on class CustomObject"
+        );
+
+        // Incorrect return type
+        let err = cls.verify_sel::<(u32,), u64>(sel!(setFoo:)).unwrap_err();
+        assert_eq!(
+            err.to_string(),
+            "Return type code Q does not match expected v for method setFoo:"
+        );
+
+        // Too many arguments
+        let err = cls.verify_sel::<(u32, i8), ()>(sel!(setFoo:)).unwrap_err();
+        assert_eq!(
+            err.to_string(),
+            "Method setFoo: accepts 3 arguments, but 4 were given"
+        );
+
+        // Too few arguments
+        let err = cls.verify_sel::<(), ()>(sel!(setFoo:)).unwrap_err();
+        assert_eq!(
+            err.to_string(),
+            "Method setFoo: accepts 3 arguments, but 2 were given"
+        );
+
+        // Incorrect argument type
+        let err = cls.verify_sel::<(Sel,), ()>(sel!(setFoo:)).unwrap_err();
+        assert_eq!(
+            err.to_string(),
+            "Method setFoo: expected argument at index 2 with type code I but was given :"
+        );
+    }
+
+    #[test]
+    #[cfg(feature = "verify_message")]
+    #[should_panic = "Return type code i does not match expected I for method foo"]
+    fn test_send_message_verified() {
+        let obj = test_utils::custom_object();
+        let _: i32 = unsafe { msg_send![&obj, foo] };
     }
 }
