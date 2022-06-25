@@ -235,6 +235,36 @@ impl<T: Message + ?Sized> Id<T, Owned> {
 
 // TODO: Add ?Sized bound
 impl<T: Message, O: Ownership> Id<T, O> {
+    /// Convert the type of the given object to another.
+    ///
+    /// This is equivalent to a `cast` between two pointers.
+    ///
+    /// This is common to do when you know that an object is a subclass of
+    /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
+    /// is safe because `NSString` is a subclass of `NSObject`).
+    ///
+    /// All objects can safely be cast to [`Object`], since that assumes no
+    /// specific class.
+    ///
+    /// [`Object`]: crate::runtime::Object
+    ///
+    ///
+    /// # Safety
+    ///
+    /// You must ensure that the object can be reinterpreted as the given
+    /// type.
+    ///
+    /// Additionally, you must ensure that any safety invariants that the new
+    /// type has are upheld.
+    #[inline]
+    pub unsafe fn cast<U: Message>(this: Self) -> Id<U, O> {
+        let ptr = ManuallyDrop::new(this).ptr.cast();
+        // SAFETY: The object is forgotten, so we have +1 retain count.
+        //
+        // Caller verifies that the returned object is of the correct type.
+        unsafe { Id::new_nonnull(ptr) }
+    }
+
     /// Retains the given object pointer.
     ///
     /// This is useful when you have been given a pointer to an object from
@@ -702,6 +732,20 @@ mod tests {
         let ptr = Id::as_ptr(&obj) as *mut RcTestObject;
         let _obj2: Id<_, Shared> = unsafe { Id::retain_autoreleased(ptr) }.unwrap();
         expected.retain += 1;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_cast() {
+        let obj: Id<RcTestObject, _> = RcTestObject::new();
+        let expected = ThreadTestData::current();
+
+        // SAFETY: Any object can be cast to `Object`
+        let obj: Id<Object, _> = unsafe { Id::cast(obj) };
+        expected.assert_current();
+
+        // SAFETY: The object was originally `RcTestObject`
+        let _obj: Id<RcTestObject, _> = unsafe { Id::cast(obj) };
         expected.assert_current();
     }
 }

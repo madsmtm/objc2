@@ -94,17 +94,6 @@ macro_rules! standard_pointer_impls {
 // really a better way to do it.
 standard_pointer_impls!(Ivar, Method, Class);
 
-/// A type that represents an instance of a class.
-///
-/// Note: This is intentionally neither [`Sync`], [`Send`], [`UnwindSafe`],
-/// [`RefUnwindSafe`] nor [`Unpin`], since it is something that changes
-/// depending on the specific subclass.
-///
-/// Examples: `NSAutoreleasePool` is not `Send`, it has to be deallocated
-/// on the same thread that it was created. `NSLock` is not `Send` either.
-#[repr(C)]
-pub struct Object(ffi::objc_object);
-
 #[cfg(not(feature = "unstable-c-unwind"))]
 type InnerImp = unsafe extern "C" fn();
 #[cfg(feature = "unstable-c-unwind")]
@@ -596,6 +585,27 @@ fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
     }
 }
 
+/// An Objective-C object.
+///
+/// This is slightly different from `NSObject` in that it may represent an
+/// instance of an _arbitary_ Objective-C class (e.g. it does not have to be
+/// a subclass of `NSObject`).
+///
+/// `Id<Object, _>` is equivalent to Objective-C's `id`.
+///
+/// Note: This is intentionally neither [`Sync`], [`Send`], [`UnwindSafe`],
+/// [`RefUnwindSafe`] nor [`Unpin`], since that is something that may change
+/// depending on the specific subclass. For example, `NSAutoreleasePool` is
+/// not `Send`, it has to be deallocated on the same thread that it was
+/// created. `NSLock` is not `Send` either.
+#[doc(alias = "id")]
+#[repr(C)]
+pub struct Object(ffi::objc_object);
+
+unsafe impl RefEncode for Object {
+    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+}
+
 impl Object {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_object {
         let ptr: *const Self = self;
@@ -698,10 +708,6 @@ impl Object {
     // objc_setAssociatedObject
     // objc_getAssociatedObject
     // objc_removeAssociatedObjects
-}
-
-unsafe impl RefEncode for Object {
-    const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }
 
 impl fmt::Debug for Object {

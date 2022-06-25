@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   feature flags to make the `sel!` macro (and by extension, the `msg_send!`
   macros) faster.
 * Added `"unstable-c-unwind"` feature.
+* Added unsafe function `Id::cast` for converting between different types of
+  objects.
 
 ### Changed
 * **BREAKING:** `Sel` is now required to be non-null, which means that you
