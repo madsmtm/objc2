@@ -22,6 +22,17 @@ fn throw_catch_raise_catch() {
     let exc = NSException::new(&name, Some(&reason), None).unwrap();
     assert_retain_count(&exc, 1);
 
+    // TODO: Investigate this!
+    let extra_retain = if cfg!(all(
+        feature = "apple",
+        target_os = "macos",
+        target_arch = "x86"
+    )) {
+        1
+    } else {
+        0
+    };
+
     let exc = autoreleasepool(|_| {
         let res = unsafe {
             catch(|| {
@@ -34,11 +45,11 @@ fn throw_catch_raise_catch() {
         let exc = res.unwrap_err().unwrap();
         let exc = unsafe { Id::cast::<NSException>(exc) };
 
-        assert_retain_count(&exc, 2);
+        assert_retain_count(&exc, 2 + extra_retain);
         exc
     });
 
-    assert_retain_count(&exc, 1);
+    assert_retain_count(&exc, 1 + extra_retain);
 
     assert_eq!(exc.name(), name);
     assert_eq!(exc.reason().unwrap(), reason);
