@@ -44,18 +44,49 @@ use self::platform::{send_super_unverified, send_unverified};
 /// pointer types and references to the type, which allows using them as the
 /// receiver (first argument) in the [`msg_send!`][`crate::msg_send`] macro.
 ///
+/// This trait also allows the object to be used in [`rc::Id`][`Id`].
+///
+/// This is a subtrait of [`RefEncode`], meaning the type must also implement
+/// that, almost always as [`Encoding::Object`].
+///
+/// [`Encoding::Object`]: crate::Encoding::Object
+///
+///
 /// # Safety
 ///
-/// A pointer to the type must be able to be the receiver of an Objective-C
-/// message sent with [`objc_msgSend`] or similar.
-///
-/// The object must also respond to the `retain`, `release` and `autorelease`
-/// messages, as that allows it to be used with [`rc::Id`][`Id`].
-///
-/// Additionally, the type must implement [`RefEncode`] and adhere to the
-/// safety requirements therein.
+/// The type must represent an Objective-C object, meaning it:
+/// - Must be valid to reinterpret as [`runtime::Object`][`Object`].
+/// - Must be able to be the receiver of an Objective-C message sent with
+///   [`objc_msgSend`] or similar.
+/// - Must respond to the standard memory management `retain`, `release` and
+///   `autorelease` messages.
 ///
 /// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
+///
+///
+/// # Example
+///
+/// ```
+/// use objc2::runtime::Object;
+/// use objc2::{Encoding, Message, RefEncode};
+///
+/// #[repr(C)]
+/// struct MyObject {
+///     // This has the exact same layout as `Object`
+///     inner: Object
+/// }
+///
+/// unsafe impl RefEncode for MyObject {
+///     const ENCODING_REF: Encoding<'static> = Encoding::Object;
+/// }
+///
+/// unsafe impl Message for MyObject {}
+///
+/// // `*mut MyObject` and other pointer/reference types to the object can
+/// // now be used in `msg_send!`
+/// //
+/// // And `Id<MyObject, O>` can now be constructed.
+/// ```
 pub unsafe trait Message: RefEncode {}
 
 unsafe impl Message for Object {}
