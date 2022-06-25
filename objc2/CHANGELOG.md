@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `ClassBuilder::root` is now generic over the function pointer,
   meaning you will have to coerce initializer functions to pointers like in
   `ClassBuilder::add_method` before you can use it.
+* **BREAKING**: Moved `MessageReceiver::verify_message` to `Class::verify_sel`.
 
 ### Removed
 * **BREAKING:** Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.

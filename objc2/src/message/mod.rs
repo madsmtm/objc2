@@ -7,6 +7,8 @@ use std::error::Error;
 
 use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
+#[cfg(feature = "malloc")]
+use crate::verify::VerificationError;
 use crate::{Encode, EncodeArguments, RefEncode};
 
 #[cfg(feature = "catch_all")]
@@ -27,9 +29,6 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, Message
     Ok(f())
 }
 
-#[cfg(feature = "malloc")]
-mod verify;
-
 #[cfg(feature = "apple")]
 #[path = "apple/mod.rs"]
 mod platform;
@@ -38,8 +37,6 @@ mod platform;
 mod platform;
 
 use self::platform::{send_super_unverified, send_unverified};
-#[cfg(feature = "malloc")]
-use self::verify::{verify_message_signature, VerificationError};
 
 /// Types that can be sent Objective-C messages.
 ///
@@ -139,7 +136,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 return Err(VerificationError::NilReceiver(sel).into());
             };
 
-            verify_message_signature::<A, R>(cls, sel)?;
+            cls.verify_sel::<A, R>(sel)?;
         }
         unsafe { send_unverified(this, sel, args) }
     }
@@ -180,39 +177,9 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             if this.is_null() {
                 return Err(VerificationError::NilReceiver(sel).into());
             }
-            verify_message_signature::<A, R>(superclass, sel)?;
+            superclass.verify_sel::<A, R>(sel)?;
         }
         unsafe { send_super_unverified(this, superclass, sel, args) }
-    }
-
-    /// Verify that the argument and return types match the encoding of the
-    /// method for the given selector.
-    ///
-    /// This will look up the encoding of the method for the given selector,
-    /// `sel`, and return a [`MessageError`] if any encodings differ for the
-    /// arguments `A` and return type `R`.
-    ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// # use objc2::{class, msg_send, sel};
-    /// # use objc2::runtime::{Bool, Class, Object};
-    /// # use objc2::MessageReceiver;
-    /// let obj: &Object;
-    /// # obj = unsafe { msg_send![class!(NSObject), new] };
-    /// let sel = sel!(isKindOfClass:);
-    /// // Verify isKindOfClass: takes one Class and returns a BOOL
-    /// let result = obj.verify_message::<(&Class,), Bool>(sel);
-    /// assert!(result.is_ok());
-    /// ```
-    #[cfg(feature = "malloc")]
-    fn verify_message<A, R>(self, sel: Sel) -> Result<(), MessageError>
-    where
-        A: EncodeArguments,
-        R: Encode,
-    {
-        let obj = unsafe { self.__as_raw_receiver().as_ref().unwrap() };
-        verify_message_signature::<A, R>(obj.class(), sel).map_err(MessageError::from)
     }
 }
 
@@ -510,18 +477,5 @@ mod tests {
             let _: () = msg_send![obj, release];
         };
         // `obj` is consumed, can't use here
-    }
-
-    #[test]
-    #[cfg(feature = "malloc")]
-    fn test_verify_message() {
-        let obj = test_utils::custom_object();
-        assert!(obj.verify_message::<(), u32>(sel!(foo)).is_ok());
-        assert!(obj.verify_message::<(u32,), ()>(sel!(setFoo:)).is_ok());
-
-        // Incorrect types
-        assert!(obj.verify_message::<(), u64>(sel!(setFoo:)).is_err());
-        // Unimplemented selector
-        assert!(obj.verify_message::<(u32,), ()>(sel!(setFoo)).is_err());
     }
 }

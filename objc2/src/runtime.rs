@@ -17,6 +17,8 @@ use std::os::raw::c_uint;
 
 pub use super::bool::Bool;
 use crate::{ffi, Encode, Encoding, RefEncode};
+#[cfg(feature = "malloc")]
+use crate::{verify::verify_message_signature, EncodeArguments, MessageError};
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
@@ -451,6 +453,36 @@ impl Class {
 
     // fn get_version(&self) -> u32;
     // unsafe fn set_version(&mut self, version: u32);
+
+    /// Verify argument and return types for a given selector.
+    ///
+    /// This will look up the encoding of the method for the given selector
+    /// and return a [`MessageError`] if any encodings differ for the
+    /// arguments `A` and return type `R`.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// # use objc2::{class, sel};
+    /// # use objc2::runtime::{Bool, Class};
+    /// let cls = class!(NSObject);
+    /// let sel = sel!(isKindOfClass:);
+    /// // Verify that `isKindOfClass:`:
+    /// // - Exists on the class
+    /// // - Takes a class as a parameter
+    /// // - Returns a BOOL
+    /// let result = cls.verify_sel::<(&Class,), Bool>(sel);
+    /// assert!(result.is_ok());
+    /// ```
+    #[cfg(feature = "malloc")]
+    pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), MessageError>
+    where
+        A: EncodeArguments,
+        R: Encode,
+    {
+        verify_message_signature::<A, R>(self, sel).map_err(MessageError::from)
+    }
 }
 
 // SAFETY: Class is immutable (and can be retrieved from any thread using the

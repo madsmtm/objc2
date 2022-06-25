@@ -3,7 +3,8 @@ use core::fmt;
 use crate::runtime::{Class, Method, Object, Sel};
 use crate::{Encode, EncodeArguments, Encoding};
 
-pub enum VerificationError<'a> {
+#[allow(dead_code)]
+pub(crate) enum VerificationError<'a> {
     NilReceiver(Sel),
     MethodNotFound(&'a Class, Sel),
     MismatchedReturn(&'a Method, Encoding<'static>),
@@ -91,4 +92,21 @@ where
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::test_utils;
+
+    #[test]
+    fn test_verify_message() {
+        let cls = test_utils::custom_class();
+        assert!(cls.verify_sel::<(), u32>(sel!(foo)).is_ok());
+        assert!(cls.verify_sel::<(u32,), ()>(sel!(setFoo:)).is_ok());
+
+        // Incorrect types
+        assert!(cls.verify_sel::<(), u64>(sel!(setFoo:)).is_err());
+        // Unimplemented selector
+        assert!(cls.verify_sel::<(u32,), ()>(sel!(setFoo)).is_err());
+    }
 }
