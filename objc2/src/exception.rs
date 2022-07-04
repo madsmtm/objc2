@@ -48,12 +48,11 @@ use crate::runtime::Object;
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[inline]
 #[cfg(feature = "exception")] // For consistency, not strictly required
-pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
-    let exception = match exception {
-        Some(id) => id.as_ptr() as *mut ffi::objc_object,
-        None => ptr::null_mut(),
-    };
-    unsafe { ffi::objc_exception_throw(exception) }
+pub unsafe fn throw(exception: Id<Object, Shared>) -> ! {
+    let ptr = exception.as_ptr() as *mut ffi::objc_object;
+    // SAFETY: Object is valid and non-null (nil exceptions are not valid in
+    // the old runtime).
+    unsafe { ffi::objc_exception_throw(ptr) }
 }
 
 #[cfg(feature = "exception")]
@@ -125,7 +124,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
 ///
 /// The exception is `None` in the extremely exceptional case that the
 /// exception object is `nil`. This should basically never happen, but is
-/// techincally possible with `@throw nil`.
+/// technically possible on newer systems with `@throw nil`.
 ///
 ///
 /// # Safety
@@ -171,15 +170,15 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        not(target_pointer_width = "64"),
-        ignore = "`NULL` exceptions are invalid on 32-bit / w. fragile runtime. TODO: Fix this!"
+        all(feature = "apple", target_os = "macos", target_arch = "x86"),
+        ignore = "`NULL` exceptions are invalid on 32-bit / w. fragile runtime"
     )]
-    fn test_throw_catch_none() {
+    fn test_catch_null() {
         let s = "Hello".to_string();
         let result = unsafe {
             catch(move || {
                 if !s.is_empty() {
-                    throw(None);
+                    ffi::objc_exception_throw(ptr::null_mut())
                 }
                 s.len()
             })
@@ -190,9 +189,13 @@ mod tests {
     #[test]
     fn test_throw_catch_object() {
         let obj: Id<Object, Shared> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+        // TODO: Investigate why this is required on GNUStep!
+        let _obj2 = obj.clone();
+        let ptr: *const Object = &*obj;
 
-        let result = unsafe { catch(|| throw(Some(&obj))) };
-        let exception = result.unwrap_err().unwrap();
-        assert!(ptr::eq(&*exception, &*obj));
+        let result = unsafe { catch(|| throw(obj)) };
+        let obj = result.unwrap_err().unwrap();
+
+        assert!(ptr::eq(&*obj, ptr));
     }
 }

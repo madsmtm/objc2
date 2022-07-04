@@ -41,7 +41,7 @@ fn throw_catch_raise_catch() {
             catch(|| {
                 let exc = exc; // Move into closure
                 let exc = Id::cast::<Object>(exc);
-                throw(Some(&exc))
+                throw(exc)
                 // exc is dropped on unwind here
             })
         };
