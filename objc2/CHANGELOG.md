@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `"unstable-c-unwind"` feature.
 * Added unsafe function `Id::cast` for converting between different types of
   objects.
+* Added `Object::ivar_ptr` to allow direct access to instance variables
+  through `&Object`.
 
 ### Changed
 * **BREAKING:** `Sel` is now required to be non-null, which means that you

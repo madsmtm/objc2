@@ -34,7 +34,7 @@ impl<'a> MyObject<'a> {
     }
 
     fn get(&self) -> Option<&'a u8> {
-        unsafe { *self.inner.ivar("_number_ptr") }
+        unsafe { *self.inner.ivar::<Option<&'a u8>>("_number_ptr") }
     }
 
     fn write(&mut self, number: u8) {
@@ -57,9 +57,7 @@ impl<'a> MyObject<'a> {
             ) -> *mut Object {
                 let this: *mut Object = unsafe { msg_send![super(this, NSObject::class()), init] };
                 if let Some(this) = unsafe { this.as_mut() } {
-                    unsafe {
-                        this.set_ivar("_number_ptr", ptr);
-                    }
+                    unsafe { this.set_ivar::<*mut u8>("_number_ptr", ptr) };
                 }
                 this
             }
