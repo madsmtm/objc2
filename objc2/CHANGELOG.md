@@ -33,6 +33,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   objects.
 * Added `Object::ivar_ptr` to allow direct access to instance variables
   through `&Object`.
+* Added `VerificationError` as more specific return type from
+  `Class::verify_sel`.
 
 ### Changed
 * **BREAKING:** `Sel` is now required to be non-null, which means that you
@@ -41,7 +43,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `ClassBuilder::root` is now generic over the function pointer,
   meaning you will have to coerce initializer functions to pointers like in
   `ClassBuilder::add_method` before you can use it.
-* **BREAKING**: Moved `MessageReceiver::verify_message` to `Class::verify_sel`.
+* **BREAKING**: Moved `MessageReceiver::verify_message` to `Class::verify_sel`
+  and changed return type.
 
 ### Removed
 * **BREAKING:** Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.

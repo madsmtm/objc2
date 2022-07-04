@@ -200,6 +200,8 @@ pub use objc_sys as ffi;
 pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 pub use crate::message::{Message, MessageArguments, MessageError, MessageReceiver};
+#[cfg(feature = "malloc")]
+pub use crate::verify::VerificationError;
 
 #[macro_use]
 mod macros;
