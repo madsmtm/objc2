@@ -773,6 +773,7 @@ impl fmt::Debug for Object {
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
     use alloc::string::ToString;
 
     use super::{Bool, Class, Imp, Ivar, Method, Object, Protocol, Sel};
@@ -951,5 +952,20 @@ mod tests {
         assert_send_sync::<Method>();
         assert_send_sync::<Protocol>();
         assert_send_sync::<Sel>();
+    }
+
+    #[test]
+    fn test_debug() {
+        assert_eq!(format!("{:?}", sel!(abc:)), "abc:");
+        let cls = test_utils::custom_class();
+        assert_eq!(format!("{:?}", cls), "CustomObject");
+        let protocol = test_utils::custom_protocol();
+        assert_eq!(format!("{:?}", protocol), "CustomProtocol");
+
+        let object = test_utils::custom_object();
+        assert_eq!(
+            format!("{:?}", &*object),
+            format!("<CustomObject: {:p}>", &*object)
+        );
     }
 }

@@ -14,6 +14,7 @@ use core::fmt;
 use core::future::Future;
 use core::hash;
 use core::iter::FusedIterator;
+use core::ops::{Deref, DerefMut};
 use core::pin::Pin;
 use core::task::{Context, Poll};
 use std::error::Error;
@@ -161,25 +162,25 @@ impl<I: FusedIterator + ?Sized> FusedIterator for Id<I, Owned> {}
 
 impl<T, O: Ownership> borrow::Borrow<T> for Id<T, O> {
     fn borrow(&self) -> &T {
-        &**self
+        Deref::deref(self)
     }
 }
 
 impl<T> borrow::BorrowMut<T> for Id<T, Owned> {
     fn borrow_mut(&mut self) -> &mut T {
-        &mut **self
+        DerefMut::deref_mut(self)
     }
 }
 
 impl<T: ?Sized, O: Ownership> AsRef<T> for Id<T, O> {
     fn as_ref(&self) -> &T {
-        &**self
+        Deref::deref(self)
     }
 }
 
 impl<T: ?Sized> AsMut<T> for Id<T, Owned> {
     fn as_mut(&mut self) -> &mut T {
-        &mut **self
+        DerefMut::deref_mut(self)
     }
 }
 

@@ -101,6 +101,8 @@ impl NSPasteboard {
             let cls = cls as *mut Object;
             unsafe { ManuallyDrop::new([Id::new(cls).unwrap()]) }
         };
+        // Temporary, see https://github.com/rust-lang/rust-clippy/issues/9101
+        #[allow(unknown_lints, clippy::explicit_auto_deref)]
         let class_array = NSArray::from_slice(&*string_classes);
         let options = NSDictionary::new();
         let objects = unsafe { self.read_objects_for_classes(&class_array, &options) };

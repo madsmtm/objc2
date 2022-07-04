@@ -420,6 +420,7 @@ mod tests {
             // let _: () = msg_send![x, mutable2];
             let _: () = msg_send![&mut *obj, mutable1];
             let _: () = msg_send![&mut *obj, mutable2];
+            #[allow(clippy::needless_borrow)]
             let obj: NonNull<Object> = (&mut *obj).into();
             let _: () = msg_send![obj, mutable1];
             let _: () = msg_send![obj, mutable2];

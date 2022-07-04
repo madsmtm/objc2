@@ -47,10 +47,10 @@ mod tests {
     #[test]
     fn test_deref() {
         let mut obj: Id<NSObject, Owned> = NSObject::new();
-        let _: &NSObject = &*obj;
-        let _: &mut NSObject = &mut *obj;
-        let _: &Object = &*obj;
-        let _: &mut Object = &mut *obj;
+        let _: &NSObject = &obj;
+        let _: &mut NSObject = &mut obj;
+        let _: &Object = &obj;
+        let _: &mut Object = &mut obj;
     }
 
     #[test]
