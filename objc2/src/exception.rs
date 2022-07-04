@@ -3,31 +3,36 @@
 //! By default, if the [`msg_send!`] macro causes an exception to be thrown,
 //! this will unwind into Rust, resulting in undefined behavior. However, this
 //! crate has an `"catch_all"` feature which, when enabled, wraps each
-//! [`msg_send!`] in a [`catch`] and panics if an exception is caught,
+//! [`msg_send!`] in a `@catch` and panics if an exception is caught,
 //! preventing Objective-C from unwinding into Rust.
 //!
-//! This module is only available when the `"exception"` feature is enabled.
+//! The `@try`/`@catch` functionality in this module is only available when
+//! the `"exception"` feature is enabled.
 //!
 //! See the following links for more information:
-//! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Tasks/HandlingExceptions.html>
-//! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocExceptionHandling.html>
-//! - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html>
-//! - <https://llvm.org/docs/ExceptionHandling.html>
+//! - [Exception Programming Topics for Cocoa](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html)
+//! - [The Objective-C Programming Language - Exception Handling](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocExceptionHandling.html)
+//! - [Exception Handling in LLVM](https://llvm.org/docs/ExceptionHandling.html)
 
 // TODO: Test this with panic=abort, and ensure that the code-size is
 // reasonable in that case.
 
+#[cfg(feature = "exception")]
 use core::ffi::c_void;
+#[cfg(feature = "exception")]
 use core::mem;
+#[cfg(feature = "exception")]
 use core::ptr;
 
+#[cfg(feature = "exception")]
 use crate::ffi;
+#[cfg(feature = "exception")]
 use crate::rc::{Id, Shared};
+#[cfg(feature = "exception")]
 use crate::runtime::Object;
 
 /// Throws an Objective-C exception.
 ///
-/// The argument must be a pointer to an Objective-C object.
 ///
 /// # Safety
 ///
@@ -42,6 +47,7 @@ use crate::runtime::Object;
 /// [`catch_unwind`]: std::panic::catch_unwind
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[inline]
+#[cfg(feature = "exception")] // For consistency, not strictly required
 pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
     let exception = match exception {
         Some(id) => id.as_ptr() as *mut ffi::objc_object,
@@ -50,6 +56,7 @@ pub unsafe fn throw(exception: Option<&Id<Object, Shared>>) -> ! {
     unsafe { ffi::objc_exception_throw(exception) }
 }
 
+#[cfg(feature = "exception")]
 unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Shared>>> {
     #[cfg(not(feature = "unstable-c-unwind"))]
     let f = {
@@ -110,8 +117,16 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
 /// if one is thrown.
 ///
 /// Returns a `Result` that is either `Ok` if the closure succeeded without an
-/// exception being thrown, or an `Err` with a pointer to an exception if one
-/// was thrown. The exception is retained and so must be released.
+/// exception being thrown, or an `Err` with the exception. The exception is
+/// automatically released.
+///
+/// Note that if your Rust code is compiled with `panic=abort` this cannot
+/// catch the exception.
+///
+/// The exception is `None` in the extremely exceptional case that the
+/// exception object is `nil`. This should basically never happen, but is
+/// techincally possible with `@throw nil`.
+///
 ///
 /// # Safety
 ///
@@ -123,6 +138,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Object, Sh
 /// can try this out on nightly using the `unstable-c-unwind` feature flag.
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
+#[cfg(feature = "exception")]
 pub unsafe fn catch<R>(closure: impl FnOnce() -> R) -> Result<R, Option<Id<Object, Shared>>> {
     let mut value = None;
     let value_ref = &mut value;
@@ -135,6 +151,7 @@ pub unsafe fn catch<R>(closure: impl FnOnce() -> R) -> Result<R, Option<Id<Objec
 }
 
 #[cfg(test)]
+#[cfg(feature = "exception")]
 mod tests {
     use alloc::string::ToString;
 

@@ -158,8 +158,7 @@
 //! classes][declare], [advanced reference-counting utilities][rc], and more -
 //! peruse the documentation at will!
 //!
-#![cfg_attr(feature = "exception", doc = "[exc]: crate::exception")]
-#![cfg_attr(not(feature = "exception"), doc = "[exc]: #exception-feature-disabled")]
+//! [exc]: crate::exception
 //! [declare]: crate::declare
 //! [rc]: crate::rc
 
@@ -209,7 +208,6 @@ mod macros;
 mod bool;
 mod cache;
 pub mod declare;
-#[cfg(feature = "exception")]
 pub mod exception;
 mod message;
 pub mod rc;
