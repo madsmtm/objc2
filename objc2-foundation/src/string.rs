@@ -265,11 +265,7 @@ impl ToOwned for NSString {
 
 impl fmt::Display for NSString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // The call to `to_owned` is unfortunate, but is required to work
-        // around `f` not being AutoreleaseSafe.
-        // TODO: Fix this!
-        let s = autoreleasepool(|pool| self.as_str(pool).to_owned());
-        fmt::Display::fmt(&s, f)
+        autoreleasepool(|pool| fmt::Display::fmt(self.as_str(pool), f))
     }
 }
 

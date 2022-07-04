@@ -204,6 +204,11 @@ unsafe impl<T: ?Sized> AutoreleaseSafe for T {}
 #[cfg(feature = "unstable-autoreleasesafe")]
 impl !AutoreleaseSafe for AutoreleasePool {}
 
+// SAFETY: This is not strictly correct, it contains a `dyn Write` which may
+// come from the user (e.g. via. `fmt::write`).
+#[cfg(feature = "unstable-autoreleasesafe")]
+unsafe impl AutoreleaseSafe for fmt::Formatter<'_> {}
+
 /// Execute `f` in the context of a new autorelease pool. The pool is
 /// drained after the execution of `f` completes.
 ///
@@ -311,9 +316,9 @@ where
     f(&pool)
 }
 
-#[cfg(all(test, feature = "unstable-autoreleasesafe"))]
+#[cfg(test)]
 mod tests {
-    use super::AutoreleaseSafe;
+    use super::*;
     use crate::runtime::Object;
 
     fn requires_autoreleasesafe<T: AutoreleaseSafe>() {}
@@ -323,5 +328,8 @@ mod tests {
         requires_autoreleasesafe::<usize>();
         requires_autoreleasesafe::<*mut Object>();
         requires_autoreleasesafe::<&mut Object>();
+        requires_autoreleasesafe::<Id<Object, Shared>>();
+        requires_autoreleasesafe::<fmt::Result>();
+        requires_autoreleasesafe::<&mut fmt::Formatter<'_>>();
     }
 }

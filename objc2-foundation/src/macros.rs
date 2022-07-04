@@ -204,16 +204,10 @@ macro_rules! object {
         // TODO: Consider T: Debug bound
         impl<$($t $(: $b)?),*> ::core::fmt::Debug for $name<$($t),*> {
             fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                use ::alloc::borrow::ToOwned;
-                use $crate::NSObject;
-                // "downgrading" to  NSObject and calling `to_owned` to work
-                // around `f` and Self not being AutoreleaseSafe.
-                // TODO: Fix this!
-                let this: &NSObject = self.as_ref();
-                let s = ::objc2::rc::autoreleasepool(|pool| {
-                    this.description().as_str(pool).to_owned()
-                });
-                ::core::fmt::Debug::fmt(&s, f)
+                let description = self.description();
+                ::objc2::rc::autoreleasepool(|pool| {
+                    ::core::fmt::Debug::fmt(description.as_str(pool), f)
+                })
             }
         }
     };
