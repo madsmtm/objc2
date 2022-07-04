@@ -7,8 +7,6 @@ use std::error::Error;
 
 use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
-#[cfg(feature = "malloc")]
-use crate::verify::VerificationError;
 use crate::{Encode, EncodeArguments, RefEncode};
 
 #[cfg(feature = "catch_all")]
@@ -167,7 +165,8 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 return Err(MessageError(alloc::format!("Messsaging {:?} to nil", sel)));
             };
 
-            cls.verify_sel::<A, R>(sel)?;
+            cls.verify_sel::<A, R>(sel)
+                .map_err(|err| MessageError::from_verify(cls, sel, err))?;
         }
         unsafe { send_unverified(this, sel, args) }
     }
@@ -208,7 +207,9 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             if this.is_null() {
                 return Err(MessageError(alloc::format!("Messsaging {:?} to nil", sel)));
             }
-            superclass.verify_sel::<A, R>(sel)?;
+            superclass
+                .verify_sel::<A, R>(sel)
+                .map_err(|err| MessageError::from_verify(superclass, sel, err))?;
         }
         unsafe { send_super_unverified(this, superclass, sel, args) }
     }
@@ -386,6 +387,19 @@ message_args_impl!(
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct MessageError(String);
 
+#[cfg(feature = "verify_message")]
+impl MessageError {
+    pub(crate) fn from_verify(cls: &Class, sel: Sel, err: crate::VerificationError) -> Self {
+        MessageError(alloc::format!(
+            "invalid message send to {}[{:?} {:?}]: {}",
+            if cls.is_metaclass() { "+" } else { "-" },
+            cls,
+            sel,
+            err
+        ))
+    }
+}
+
 impl fmt::Display for MessageError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.0, f)
@@ -395,14 +409,6 @@ impl fmt::Display for MessageError {
 impl Error for MessageError {
     fn description(&self) -> &str {
         &self.0
-    }
-}
-
-#[cfg(feature = "malloc")]
-impl From<VerificationError> for MessageError {
-    fn from(err: VerificationError) -> MessageError {
-        use alloc::string::ToString;
-        MessageError(err.to_string())
     }
 }
 

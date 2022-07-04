@@ -32,37 +32,37 @@ impl fmt::Display for MallocEncoding {
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 enum Inner {
-    MethodNotFound(Sel),
-    MismatchedReturn(Sel, MallocEncoding, Encoding<'static>),
-    MismatchedArgumentsCount(Sel, usize, usize),
-    MismatchedArgument(Sel, usize, MallocEncoding, Encoding<'static>),
+    MethodNotFound,
+    MismatchedReturn(MallocEncoding, Encoding<'static>),
+    MismatchedArgumentsCount(usize, usize),
+    MismatchedArgument(usize, MallocEncoding, Encoding<'static>),
 }
 
 impl fmt::Display for Inner {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::MethodNotFound(sel) => {
-                write!(f, "Method {:?} not found on class", sel)
+            Self::MethodNotFound => {
+                write!(f, "method not found")
             }
-            Self::MismatchedReturn(sel, expected, actual) => {
+            Self::MismatchedReturn(expected, actual) => {
                 write!(
                     f,
-                    "Return type code {} does not match expected {} for method {:?}",
-                    actual, expected, sel
+                    "expected return to have type code {}, but found {}",
+                    expected, actual
                 )
             }
-            Self::MismatchedArgumentsCount(sel, expected, actual) => {
+            Self::MismatchedArgumentsCount(expected, actual) => {
                 write!(
                     f,
-                    "Method {:?} accepts {} arguments, but {} were given",
-                    sel, expected, actual
+                    "expected {} arguments, but {} were given",
+                    expected, actual
                 )
             }
-            Self::MismatchedArgument(sel, i, expected, actual) => {
+            Self::MismatchedArgument(i, expected, actual) => {
                 write!(
                     f,
-                    "Method {:?} expected argument at index {} with type code {} but was given {}",
-                    sel, i, expected, actual
+                    "expected argument at index {} to have type code {}, but found {}",
+                    i, expected, actual
                 )
             }
         }
@@ -101,13 +101,13 @@ where
 {
     let method = match cls.instance_method(sel) {
         Some(method) => method,
-        None => return Err(Inner::MethodNotFound(sel).into()),
+        None => return Err(Inner::MethodNotFound.into()),
     };
 
     let actual = R::ENCODING;
     let expected = method.return_type();
     if !actual.equivalent_to_str(&*expected) {
-        return Err(Inner::MismatchedReturn(sel, MallocEncoding(expected), actual).into());
+        return Err(Inner::MismatchedReturn(MallocEncoding(expected), actual).into());
     }
 
     let self_and_cmd = [<*mut Object>::ENCODING, Sel::ENCODING];
@@ -116,13 +116,13 @@ where
     let actual = self_and_cmd.len() + args.len();
     let expected = method.arguments_count();
     if actual != expected {
-        return Err(Inner::MismatchedArgumentsCount(sel, expected, actual).into());
+        return Err(Inner::MismatchedArgumentsCount(expected, actual).into());
     }
 
     for (i, actual) in self_and_cmd.iter().chain(args).copied().enumerate() {
         let expected = method.argument_type(i).unwrap();
         if !actual.equivalent_to_str(&*expected) {
-            return Err(Inner::MismatchedArgument(sel, i, MallocEncoding(expected), actual).into());
+            return Err(Inner::MismatchedArgument(i, MallocEncoding(expected), actual).into());
         }
     }
 
@@ -154,42 +154,51 @@ mod tests {
 
         // Unimplemented selector (missing colon)
         let err = cls.verify_sel::<(), ()>(sel!(setFoo)).unwrap_err();
-        assert_eq!(err.to_string(), "Method setFoo not found on class");
+        assert_eq!(err.to_string(), "method not found");
 
         // Incorrect return type
         let err = cls.verify_sel::<(u32,), u64>(sel!(setFoo:)).unwrap_err();
         assert_eq!(
             err.to_string(),
-            "Return type code Q does not match expected v for method setFoo:"
+            "expected return to have type code v, but found Q"
         );
 
         // Too many arguments
         let err = cls.verify_sel::<(u32, i8), ()>(sel!(setFoo:)).unwrap_err();
-        assert_eq!(
-            err.to_string(),
-            "Method setFoo: accepts 3 arguments, but 4 were given"
-        );
+        assert_eq!(err.to_string(), "expected 3 arguments, but 4 were given");
 
         // Too few arguments
         let err = cls.verify_sel::<(), ()>(sel!(setFoo:)).unwrap_err();
-        assert_eq!(
-            err.to_string(),
-            "Method setFoo: accepts 3 arguments, but 2 were given"
-        );
+        assert_eq!(err.to_string(), "expected 3 arguments, but 2 were given");
 
         // Incorrect argument type
         let err = cls.verify_sel::<(Sel,), ()>(sel!(setFoo:)).unwrap_err();
         assert_eq!(
             err.to_string(),
-            "Method setFoo: expected argument at index 2 with type code I but was given :"
+            "expected argument at index 2 to have type code I, but found :"
         );
+
+        // Metaclass
+        let metaclass = cls.metaclass();
+        let err = metaclass
+            .verify_sel::<(i32, i32, i32), i32>(sel!(addNumber:toNumber:))
+            .unwrap_err();
+        assert_eq!(err.to_string(), "expected 4 arguments, but 5 were given");
     }
 
     #[test]
     #[cfg(feature = "verify_message")]
-    #[should_panic = "Return type code i does not match expected I for method foo"]
+    #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code I, but found i"]
     fn test_send_message_verified() {
         let obj = test_utils::custom_object();
         let _: i32 = unsafe { msg_send![&obj, foo] };
+    }
+
+    #[test]
+    #[cfg(feature = "verify_message")]
+    #[should_panic = "invalid message send to +[CustomObject abcDef]: method not found"]
+    fn test_send_message_verified_to_class() {
+        let cls = test_utils::custom_class();
+        let _: i32 = unsafe { msg_send![cls, abcDef] };
     }
 }

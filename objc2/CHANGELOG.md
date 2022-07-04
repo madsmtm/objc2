@@ -45,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `ClassBuilder::add_method` before you can use it.
 * **BREAKING**: Moved `MessageReceiver::verify_message` to `Class::verify_sel`
   and changed return type.
+* Improved debug output with `verify_message` feature enabled.
 
 ### Removed
 * **BREAKING:** Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.
