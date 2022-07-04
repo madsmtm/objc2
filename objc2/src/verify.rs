@@ -10,6 +10,10 @@ use crate::{Encode, EncodeArguments, Encoding};
 #[derive(Debug)]
 struct MallocEncoding(Malloc<str>);
 
+// SAFETY: `char*` strings can safely be free'd on other threads.
+unsafe impl Send for MallocEncoding {}
+unsafe impl Sync for MallocEncoding {}
+
 impl PartialEq for MallocEncoding {
     fn eq(&self, other: &Self) -> bool {
         *self.0 == *other.0
@@ -134,6 +138,7 @@ mod tests {
     use super::*;
     use crate::test_utils;
     use alloc::string::ToString;
+    use core::panic::{RefUnwindSafe, UnwindSafe};
 
     #[test]
     fn test_verify_message() {
@@ -200,5 +205,11 @@ mod tests {
     fn test_send_message_verified_to_class() {
         let cls = test_utils::custom_class();
         let _: i32 = unsafe { msg_send![cls, abcDef] };
+    }
+
+    #[test]
+    fn test_marker_traits() {
+        fn assert_marker_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe + Unpin>() {}
+        assert_marker_traits::<VerificationError>();
     }
 }
