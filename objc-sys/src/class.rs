@@ -35,6 +35,15 @@ extern_c_unwind! {
         cls: *const objc_class,
         name: *const objc_selector,
     ) -> *const objc_method;
+
+    pub fn class_respondsToSelector(cls: *const objc_class, sel: *const objc_selector) -> BOOL;
+
+    // #[deprecated = "use class_getMethodImplementation instead"]
+    // #[cfg(apple)]
+    // pub fn class_lookupMethod
+    // #[deprecated = "use class_respondsToSelector instead"]
+    // #[cfg(apple)]
+    // pub fn class_respondsToMethod
 }
 
 // TODO: Hooks registered with objc_setHook_getClass may be allowed to unwind?
@@ -145,8 +154,6 @@ extern_c! {
         attributes: *const objc_property_attribute_t,
         attributes_len: c_uint,
     );
-    // TODO: Verify unwinding
-    pub fn class_respondsToSelector(cls: *const objc_class, sel: *const objc_selector) -> BOOL;
     #[cfg(not(objfw))]
     pub fn class_setIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);
     #[cfg(not(objfw))]
@@ -156,10 +163,4 @@ extern_c! {
 
     // #[deprecated = "not recommended"]
     // pub fn class_setSuperclass
-    // #[deprecated = "use class_getMethodImplementation instead"]
-    // #[cfg(apple)]
-    // pub fn class_lookupMethod
-    // #[deprecated = "use class_respondsToSelector instead"]
-    // #[cfg(apple)]
-    // pub fn class_respondsToMethod
 }
