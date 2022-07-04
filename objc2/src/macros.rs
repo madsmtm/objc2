@@ -455,45 +455,30 @@ macro_rules! __sel_inner {
 #[macro_export]
 macro_rules! msg_send {
     [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
-        // Note: this import means that using these types inside `expr` will
-        // generate an error. We won't bother with that (yet) though.
-        use $crate::__macro_helpers::{Err, Ok, panic};
         let sel = $crate::sel!($selector);
         let result;
-        match $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ()) {
-            Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
-        }
+        // Note: `sel` and `result` can be accessed from the `obj` and
+        // `superclass` expressions - we won't (yet) bother with preventing
+        // that though.
+        result = $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ());
         result
     });
     [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr $(,)?)+] => ({
-        use $crate::__macro_helpers::{Err, Ok, panic};
         let sel = $crate::sel!($($selector :)+);
         let result;
-        match $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ($($argument,)+)) {
-            Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
-        }
+        result = $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ($($argument,)+));
         result
     });
     [$obj:expr, $selector:ident $(,)?] => ({
-        use $crate::__macro_helpers::{Err, Ok, panic};
         let sel = $crate::sel!($selector);
         let result;
-        match $crate::MessageReceiver::send_message($obj, sel, ()) {
-            Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
-        }
+        result = $crate::MessageReceiver::send_message($obj, sel, ());
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr $(,)?)+] => ({
-        use $crate::__macro_helpers::{Err, Ok, panic};
         let sel = $crate::sel!($($selector :)+);
         let result;
-        match $crate::MessageReceiver::send_message($obj, sel, ($($argument,)+)) {
-            Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
-        }
+        result = $crate::MessageReceiver::send_message($obj, sel, ($($argument,)+));
         result
     });
 }
@@ -669,29 +654,25 @@ macro_rules! msg_send_id {
     [$obj:expr, $selector:ident $(,)?] => ({
         $crate::__msg_send_id_helper!(@verify $selector);
 
-        use $crate::__macro_helpers::{u8, Err, Ok, Option, panic, stringify};
+        // Note: this import means that using these types inside `expr` may
+        // generate an error. We won't (yet) bother with that though.
+        use $crate::__macro_helpers::{u8, Option, stringify};
 
         let sel = $crate::sel!($selector);
         const NAME: &[u8] = stringify!($selector).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result: Option<$crate::rc::Id<_, _>>;
-        match <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ()) {
-            Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
-        }
+        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
-        use $crate::__macro_helpers::{concat, u8, Err, Ok, Option, panic, stringify};
+        use $crate::__macro_helpers::{concat, u8, Option, stringify};
 
         let sel = $crate::sel!($($selector:)+);
         const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result: Option<$crate::rc::Id<_, _>>;
-        match <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+)) {
-            Err(s) => panic!("{}", s),
-            Ok(r) => result = r,
-        }
+        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
         result
     });
 }

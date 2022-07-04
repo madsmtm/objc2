@@ -13,5 +13,5 @@ error[E0382]: use of moved value: `obj`
 note: this function takes ownership of the receiver `self`, which moves `obj`
    --> $WORKSPACE/objc2/src/message/mod.rs
     |
-    |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> Result<R, MessageError>
+    |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
     |                                  ^^^^

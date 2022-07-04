@@ -1,30 +1,43 @@
-use alloc::string::String;
-use core::fmt;
 use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
-use std::error::Error;
 
 use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::{Encode, EncodeArguments, RefEncode};
 
 #[cfg(feature = "catch_all")]
-unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, MessageError> {
-    use alloc::borrow::ToOwned;
-    unsafe { crate::exception::catch(f) }.map_err(|exception| {
-        if let Some(exception) = exception {
-            MessageError(alloc::format!("Uncaught exception {:?}", exception))
-        } else {
-            MessageError("Uncaught exception nil".to_owned())
+#[track_caller]
+unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
+    match unsafe { crate::exception::catch(f) } {
+        Ok(r) => r,
+        Err(exception) => {
+            if let Some(exception) = exception {
+                panic!("uncaught exception {:?}", exception)
+            } else {
+                panic!("uncaught exception nil")
+            }
         }
-    })
+    }
 }
 
 #[cfg(not(feature = "catch_all"))]
 #[inline]
-unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> Result<R, MessageError> {
-    Ok(f())
+#[track_caller]
+unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
+    f()
+}
+
+#[cfg(feature = "verify_message")]
+#[track_caller]
+fn panic_verify(cls: &Class, sel: Sel, err: crate::VerificationError) -> ! {
+    panic!(
+        "invalid message send to {}[{:?} {:?}]: {}",
+        if cls.is_metaclass() { "+" } else { "-" },
+        cls,
+        sel,
+        err
+    )
 }
 
 #[cfg(feature = "apple")]
@@ -148,7 +161,8 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
     #[inline]
-    unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> Result<R, MessageError>
+    #[track_caller]
+    unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
         R: Encode,
@@ -162,11 +176,12 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             let cls = if let Some(this) = this {
                 this.class()
             } else {
-                return Err(MessageError(alloc::format!("Messsaging {:?} to nil", sel)));
+                panic!("messsaging {:?} to nil", sel);
             };
 
-            cls.verify_sel::<A, R>(sel)
-                .map_err(|err| MessageError::from_verify(cls, sel, err))?;
+            if let Err(err) = cls.verify_sel::<A, R>(sel) {
+                panic_verify(cls, sel, err);
+            }
         }
         unsafe { send_unverified(this, sel, args) }
     }
@@ -191,12 +206,8 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
     #[inline]
-    unsafe fn send_super_message<A, R>(
-        self,
-        superclass: &Class,
-        sel: Sel,
-        args: A,
-    ) -> Result<R, MessageError>
+    #[track_caller]
+    unsafe fn send_super_message<A, R>(self, superclass: &Class, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
         R: Encode,
@@ -205,11 +216,11 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         #[cfg(feature = "verify_message")]
         {
             if this.is_null() {
-                return Err(MessageError(alloc::format!("Messsaging {:?} to nil", sel)));
+                panic!("messsaging {:?} to nil", sel);
             }
-            superclass
-                .verify_sel::<A, R>(sel)
-                .map_err(|err| MessageError::from_verify(superclass, sel, err))?;
+            if let Err(err) = superclass.verify_sel::<A, R>(sel) {
+                panic_verify(superclass, sel, err);
+            }
         }
         unsafe { send_super_unverified(this, superclass, sel, args) }
     }
@@ -375,43 +386,6 @@ message_args_impl!(
     l: L
 );
 
-/// An error encountered while attempting to send a message.
-///
-/// Currently, an error may be returned in two cases:
-///
-/// - an Objective-C exception is thrown and the `catch_all` feature is
-///   enabled
-/// - the encodings of the arguments do not match the encoding of the method
-///   and the `verify_message` feature is enabled
-// Currently not Clone for future compat
-#[derive(Debug, PartialEq, Eq, Hash)]
-pub struct MessageError(String);
-
-#[cfg(feature = "verify_message")]
-impl MessageError {
-    pub(crate) fn from_verify(cls: &Class, sel: Sel, err: crate::VerificationError) -> Self {
-        MessageError(alloc::format!(
-            "invalid message send to {}[{:?} {:?}]: {}",
-            if cls.is_metaclass() { "+" } else { "-" },
-            cls,
-            sel,
-            err
-        ))
-    }
-}
-
-impl fmt::Display for MessageError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.0, f)
-    }
-}
-
-impl Error for MessageError {
-    fn description(&self) -> &str {
-        &self.0
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -462,7 +436,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         feature = "verify_message",
-        should_panic = "Messsaging description to nil"
+        should_panic = "messsaging description to nil"
     )]
     fn test_send_message_nil() {
         use crate::rc::Shared;

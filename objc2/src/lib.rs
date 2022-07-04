@@ -199,7 +199,7 @@ pub use objc_sys as ffi;
 #[doc(no_inline)]
 pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
-pub use crate::message::{Message, MessageArguments, MessageError, MessageReceiver};
+pub use crate::message::{Message, MessageArguments, MessageReceiver};
 #[cfg(feature = "malloc")]
 pub use crate::verify::VerificationError;
 
