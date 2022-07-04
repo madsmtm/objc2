@@ -12,6 +12,9 @@ build = "build.rs"
 [features]
 default = ["apple", "std"]
 std = ["block2/std", "objc2-foundation/std"]
+exception = ["objc2/exception"]
+catch_all = ["objc2/catch_all", "exception"]
+
 # Enable UI tests
 #
 # These are not enabled by default because trybuild doesn't pass feature flags

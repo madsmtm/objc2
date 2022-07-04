@@ -153,6 +153,7 @@ jobs:
       ARGS: --no-default-features --features std --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
+      SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception' }}
       FEATURES: ${{ matrix.features || 'malloc,block,exception,catch_all,verify_message' }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
 
@@ -339,6 +340,13 @@ jobs:
       with:
         command: test
         args: ${{ env.ARGS }} ${{ env.TESTARGS }}
+
+    - name: Test with some features
+      if: ${{ !matrix.dinghy }}
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --tests --features ${{ env.SOME_FEATURES }}
 
     - name: Test with features
       if: ${{ !matrix.dinghy }}
