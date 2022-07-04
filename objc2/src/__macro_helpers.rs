@@ -1,6 +1,6 @@
 use crate::rc::{Id, Ownership};
 use crate::runtime::{Class, Sel};
-use crate::{Message, MessageArguments, MessageError, MessageReceiver};
+use crate::{Message, MessageArguments, MessageReceiver};
 
 pub use crate::cache::CachedClass;
 pub use crate::cache::CachedSel;
@@ -8,7 +8,6 @@ pub use crate::cache::CachedSel;
 pub use core::cell::UnsafeCell;
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, str, u8};
-pub use core::result::Result::{Err, Ok};
 pub use core::{compile_error, concat, panic, stringify};
 #[cfg(feature = "objc2-proc-macros")]
 pub use objc2_proc_macros::__hash_idents;
@@ -48,11 +47,7 @@ pub struct RetainSemantics<
 > {}
 
 pub trait MsgSendId<T, U> {
-    unsafe fn send_message_id<A: MessageArguments>(
-        obj: T,
-        sel: Sel,
-        args: A,
-    ) -> Result<Option<U>, MessageError>;
+    unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<U>;
 }
 
 // `new`
@@ -60,12 +55,16 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for RetainSemantics<true, false, false, false>
 {
     #[inline]
+    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: &Class,
         sel: Sel,
         args: A,
-    ) -> Result<Option<Id<T, O>>, MessageError> {
-        unsafe { MessageReceiver::send_message(obj, sel, args).map(|r| Id::new(r)) }
+    ) -> Option<Id<T, O>> {
+        // SAFETY: Checked by caller
+        let obj = unsafe { MessageReceiver::send_message(obj, sel, args) };
+        // SAFETY: The selector is `new`, so this has +1 retain count
+        unsafe { Id::new(obj) }
     }
 }
 
@@ -74,12 +73,16 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     for RetainSemantics<false, true, false, false>
 {
     #[inline]
+    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments>(
         cls: &Class,
         sel: Sel,
         args: A,
-    ) -> Result<Option<Id<T, O>>, MessageError> {
-        unsafe { MessageReceiver::send_message(cls, sel, args).map(|r| Id::new(r)) }
+    ) -> Option<Id<T, O>> {
+        // SAFETY: Checked by caller
+        let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
+        // SAFETY: The selector is `alloc`, so this has +1 retain count
+        unsafe { Id::new(obj) }
     }
 }
 
@@ -88,11 +91,12 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
     for RetainSemantics<false, false, true, false>
 {
     #[inline]
+    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments>(
         obj: Option<Id<T, O>>,
         sel: Sel,
         args: A,
-    ) -> Result<Option<Id<T, O>>, MessageError> {
+    ) -> Option<Id<T, O>> {
         let ptr = Id::option_into_ptr(obj);
         // SAFETY: `ptr` may be null here, but that's fine since the return
         // is `*mut T`, which is one of the few types where messages to nil is
@@ -100,7 +104,9 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<T, O>>, Id<T, O>>
         //
         // We do this for efficiency, to avoid having a branch after every
         // `alloc`, that the user did not intend.
-        unsafe { MessageReceiver::send_message(ptr, sel, args).map(|r| Id::new(r)) }
+        let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
+        // SAFETY: The selector is `init`, so this has +1 retain count
+        unsafe { Id::new(obj) }
     }
 }
 
@@ -109,12 +115,13 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
     for RetainSemantics<false, false, false, true>
 {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments>(
-        obj: T,
-        sel: Sel,
-        args: A,
-    ) -> Result<Option<Id<U, O>>, MessageError> {
-        unsafe { MessageReceiver::send_message(obj, sel, args).map(|r| Id::new(r)) }
+    #[track_caller]
+    unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<Id<U, O>> {
+        // SAFETY: Checked by caller
+        let obj = unsafe { MessageReceiver::send_message(obj, sel, args) };
+        // SAFETY: The selector is `copy` or `mutableCopy`, so this has +1
+        // retain count
+        unsafe { Id::new(obj) }
     }
 }
 
@@ -123,14 +130,16 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
     for RetainSemantics<false, false, false, false>
 {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments>(
-        obj: T,
-        sel: Sel,
-        args: A,
-    ) -> Result<Option<Id<U, O>>, MessageError> {
+    #[track_caller]
+    unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<Id<U, O>> {
+        // SAFETY: Checked by caller
+        let obj = unsafe { MessageReceiver::send_message(obj, sel, args) };
         // All code between the message send and the `retain_autoreleased`
         // must be able to be optimized away for this to work.
-        unsafe { MessageReceiver::send_message(obj, sel, args).map(|r| Id::retain_autoreleased(r)) }
+
+        // SAFETY: The selector is not `new`, `alloc`, `init`, `copy` nor
+        // `mutableCopy`, so the object must be manually retained.
+        unsafe { Id::retain_autoreleased(obj) }
     }
 }
 

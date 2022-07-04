@@ -20,7 +20,7 @@ use std::os::raw::c_uint;
 pub use super::bool::Bool;
 use crate::{ffi, Encode, Encoding, RefEncode};
 #[cfg(feature = "malloc")]
-use crate::{verify::verify_message_signature, EncodeArguments, MessageError};
+use crate::{verify::verify_message_signature, EncodeArguments, VerificationError};
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
@@ -347,7 +347,7 @@ impl Class {
     // objc_getMetaClass -> Same as `Class::get(name).metaclass()`
 
     #[allow(unused)]
-    fn is_metaclass(&self) -> bool {
+    pub(crate) fn is_metaclass(&self) -> bool {
         unsafe { Bool::from_raw(ffi::class_isMetaClass(self.as_ptr())).as_bool() }
     }
 
@@ -448,7 +448,7 @@ impl Class {
     /// Verify argument and return types for a given selector.
     ///
     /// This will look up the encoding of the method for the given selector
-    /// and return a [`MessageError`] if any encodings differ for the
+    /// and return a [`VerificationError`] if any encodings differ for the
     /// arguments `A` and return type `R`.
     ///
     ///
@@ -467,12 +467,12 @@ impl Class {
     /// assert!(result.is_ok());
     /// ```
     #[cfg(feature = "malloc")]
-    pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), MessageError>
+    pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,
         R: Encode,
     {
-        verify_message_signature::<A, R>(self, sel).map_err(MessageError::from)
+        verify_message_signature::<A, R>(self, sel)
     }
 }
 

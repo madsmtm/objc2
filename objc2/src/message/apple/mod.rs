@@ -1,6 +1,7 @@
-use super::{conditional_try, Encode, MessageArguments, MessageError};
+use super::conditional_try;
 use crate::ffi;
 use crate::runtime::{Class, Imp, Object, Sel};
+use crate::{Encode, MessageArguments};
 
 #[cfg(target_arch = "x86")]
 #[path = "x86.rs"]
@@ -24,11 +25,8 @@ unsafe trait MsgSendFn: Encode {
 }
 
 #[inline]
-pub(crate) unsafe fn send_unverified<A, R>(
-    receiver: *mut Object,
-    sel: Sel,
-    args: A,
-) -> Result<R, MessageError>
+#[track_caller]
+pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut Object, sel: Sel, args: A) -> R
 where
     A: MessageArguments,
     R: Encode,
@@ -38,12 +36,13 @@ where
 }
 
 #[inline]
+#[track_caller]
 pub(crate) unsafe fn send_super_unverified<A, R>(
     receiver: *mut Object,
     superclass: &Class,
     sel: Sel,
     args: A,
-) -> Result<R, MessageError>
+) -> R
 where
     A: MessageArguments,
     R: Encode,

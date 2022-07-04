@@ -6,6 +6,6 @@ use objc2::MessageReceiver;
 
 #[no_mangle]
 unsafe fn handle(obj: &Object, sel: Sel) -> Option<Id<Object, Shared>> {
-    let ptr: *mut Object = MessageReceiver::send_message(obj, sel, ()).unwrap();
+    let ptr: *mut Object = MessageReceiver::send_message(obj, sel, ());
     Id::retain_autoreleased(ptr)
 }
