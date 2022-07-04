@@ -30,9 +30,7 @@ impl fmt::Display for MallocEncoding {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
-#[allow(dead_code)]
 pub(crate) enum VerificationError {
-    NilReceiver(Sel),
     MethodNotFound(Sel),
     MismatchedReturn(Sel, MallocEncoding, Encoding<'static>),
     MismatchedArgumentsCount(Sel, usize, usize),
@@ -42,9 +40,6 @@ pub(crate) enum VerificationError {
 impl fmt::Display for VerificationError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::NilReceiver(sel) => {
-                write!(f, "Messsaging {:?} to nil", sel)
-            }
             Self::MethodNotFound(sel) => {
                 write!(f, "Method {:?} not found on class", sel)
             }

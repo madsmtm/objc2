@@ -164,7 +164,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             let cls = if let Some(this) = this {
                 this.class()
             } else {
-                return Err(VerificationError::NilReceiver(sel).into());
+                return Err(MessageError(alloc::format!("Messsaging {:?} to nil", sel)));
             };
 
             cls.verify_sel::<A, R>(sel)?;
@@ -206,7 +206,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         #[cfg(feature = "verify_message")]
         {
             if this.is_null() {
-                return Err(VerificationError::NilReceiver(sel).into());
+                return Err(MessageError(alloc::format!("Messsaging {:?} to nil", sel)));
             }
             superclass.verify_sel::<A, R>(sel)?;
         }
