@@ -469,22 +469,22 @@ mod tests {
     fn test_get_does_not_autorelease() {
         let obj: Id<_, Shared> = NSObject::new().into();
 
-        assert_eq!(retain_count(&*obj), 1);
+        assert_eq!(retain_count(&obj), 1);
 
         let array = NSArray::from_slice(&[obj.clone()]);
 
-        assert_eq!(retain_count(&*obj), 2);
+        assert_eq!(retain_count(&obj), 2);
 
         autoreleasepool(|_pool| {
             let obj2 = array.first().unwrap();
             assert_eq!(retain_count(obj2), 2);
         });
 
-        assert_eq!(retain_count(&*obj), 2);
+        assert_eq!(retain_count(&obj), 2);
 
         drop(array);
 
-        assert_eq!(retain_count(&*obj), 1);
+        assert_eq!(retain_count(&obj), 1);
     }
 
     #[test]

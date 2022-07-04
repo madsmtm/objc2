@@ -483,11 +483,11 @@ mod tests {
         impls_as_mut::<NSMutableData, [u8]>(&mut obj);
         impls_as_ref::<NSData, [u8]>(&obj);
 
-        let obj: &mut NSMutableData = &mut *obj;
+        let obj: &mut NSMutableData = &mut obj;
         let _: &[u8] = obj.as_ref();
         let _: &mut [u8] = obj.as_mut();
 
-        let obj: &mut NSData = &mut **obj;
+        let obj: &mut NSData = obj;
         let _: &[u8] = obj.as_ref();
     }
 }
