@@ -220,7 +220,7 @@ impl Encoding<'_> {
 /// may change if found to be required to be compatible with exisiting
 /// Objective-C compilers.
 impl fmt::Display for Encoding<'_> {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         use Encoding::*;
         let code = match *self {
             Char => "c",
@@ -249,33 +249,33 @@ impl fmt::Display for Encoding<'_> {
             Unknown => "?",
             BitField(b, _type) => {
                 // TODO: Use the type on GNUStep
-                return write!(formatter, "b{}", b);
+                return write!(f, "b{}", b);
             }
             Pointer(t) => {
-                return write!(formatter, "^{}", t);
+                return write!(f, "^{}", t);
             }
             Atomic(t) => {
-                return write!(formatter, "A{}", t);
+                return write!(f, "A{}", t);
             }
             Array(len, item) => {
-                return write!(formatter, "[{}{}]", len, item);
+                return write!(f, "[{}{}]", len, item);
             }
             Struct(name, fields) => {
-                write!(formatter, "{{{}=", name)?;
+                write!(f, "{{{}=", name)?;
                 for field in fields {
-                    fmt::Display::fmt(field, formatter)?;
+                    fmt::Display::fmt(field, f)?;
                 }
-                return formatter.write_str("}");
+                return f.write_str("}");
             }
             Union(name, members) => {
-                write!(formatter, "({}=", name)?;
+                write!(f, "({}=", name)?;
                 for member in members {
-                    fmt::Display::fmt(member, formatter)?;
+                    fmt::Display::fmt(member, f)?;
                 }
-                return formatter.write_str(")");
+                return f.write_str(")");
             }
         };
-        formatter.write_str(code)
+        f.write_str(code)
     }
 }
 
