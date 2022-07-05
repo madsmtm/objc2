@@ -1,3 +1,6 @@
+use core::fmt;
+use core::hash;
+
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{msg_send, msg_send_bool, msg_send_id};
@@ -27,6 +30,42 @@ impl NSObject {
 
     pub fn is_kind_of(&self, cls: &Class) -> bool {
         unsafe { msg_send_bool![self, isKindOfClass: cls] }
+    }
+}
+
+/// Objective-C equality has approximately the same semantics as Rust
+/// equality (although less aptly specified).
+///
+/// At the very least, equality is _expected_ to be symmetric and
+/// transitive, and that's about the best we can do.
+///
+/// See also <https://nshipster.com/equality/>
+impl PartialEq for NSObject {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.is_equal(other)
+    }
+}
+
+/// Most types' equality is reflexive.
+impl Eq for NSObject {}
+
+/// Hashing in Objective-C has the exact same requirement as in Rust:
+///
+/// > If two objects are equal (as determined by the isEqual: method),
+/// > they must have the same hash value.
+///
+/// See <https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418859-hash>
+impl hash::Hash for NSObject {
+    #[inline]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        self.hash_code().hash(state);
+    }
+}
+
+impl fmt::Debug for NSObject {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&self.description(), f)
     }
 }
 

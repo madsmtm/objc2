@@ -9,6 +9,7 @@ object! {
     /// Can be used to identify types, interfaces, and other items.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsuuid?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSUUID: NSObject;
 }
 

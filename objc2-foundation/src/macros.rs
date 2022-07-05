@@ -99,7 +99,7 @@ macro_rules! object {
         }
 
         impl<$($t $(: $b)?),*> $name<$($t),*> {
-            pub fn class() -> &'static ::objc2::runtime::Class {
+            $v fn class() -> &'static ::objc2::runtime::Class {
                 ::objc2::class!($name)
             }
         }
@@ -164,58 +164,6 @@ macro_rules! object {
         }
 
         __impl_as_ref_borrow!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
-
-        // Objective-C equality has approximately the same semantics as Rust
-        // equality (although less aptly specified).
-        //
-        // At the very least, equality is _expected_ to be symmetric and
-        // transitive, and that's about the best we can do.
-        //
-        // `T: PartialEq` bound added because e.g. `NSArray` does deep
-        // (instead of shallow) equality comparisons.
-        //
-        // See also https://nshipster.com/equality/
-        impl<$($t: ::core::cmp::PartialEq $(+ $b)?),*> ::core::cmp::PartialEq for $name<$($t),*> {
-            #[inline]
-            fn eq(&self, other: &Self) -> bool {
-                self.is_equal(other.as_ref())
-            }
-        }
-
-        // Most types' equality is reflexive.
-        //
-        // `T: Eq` bound added to prevent e.g. `NSValue<f32>` from being `Eq`
-        // (even though `[NAN isEqual: NAN]` is true in Objective-C).
-        impl<$($t: ::core::cmp::Eq $(+ $b)?),*> ::core::cmp::Eq for $name<$($t),*> {}
-
-        // Hashing in Objective-C has the exact same requirement as in Rust:
-        //
-        // > If two objects are equal (as determined by the isEqual: method),
-        // > they must have the same hash value.
-        //
-        // See https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418859-hash
-        impl<$($t: ::core::hash::Hash $(+ $b)?),*> ::core::hash::Hash for $name<$($t),*> {
-            #[inline]
-            fn hash<H: ::core::hash::Hasher>(&self, state: &mut H) {
-                self.hash_code().hash(state);
-            }
-        }
-
-        // TODO: Consider T: Debug bound
-        impl<$($t $(: $b)?),*> ::core::fmt::Debug for $name<$($t),*> {
-            fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-                use ::alloc::borrow::ToOwned;
-                use $crate::NSObject;
-                // "downgrading" to  NSObject and calling `to_owned` to work
-                // around `f` and Self not being AutoreleaseSafe.
-                // TODO: Fix this!
-                let this: &NSObject = self.as_ref();
-                let s = ::objc2::rc::autoreleasepool(|pool| {
-                    this.description().as_str(pool).to_owned()
-                });
-                ::core::fmt::Debug::fmt(&s, f)
-            }
-        }
     };
 }
 

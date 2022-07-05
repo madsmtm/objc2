@@ -17,6 +17,7 @@ object! {
     /// This is similar to a [`slice`][`prim@slice`] of [`u8`].
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsdata?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSData: NSObject;
 }
 
@@ -32,6 +33,7 @@ object! {
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutabledata?language=objc).
     ///
     /// [`Vec`]: std::vec::Vec
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableData: NSData, NSObject;
 }
 

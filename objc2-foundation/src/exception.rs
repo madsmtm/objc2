@@ -1,3 +1,4 @@
+use core::fmt;
 use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
@@ -18,6 +19,7 @@ object! {
     /// See also [Apple's documentation][doc].
     ///
     /// [doc]: https://developer.apple.com/documentation/foundation/nsexception?language=objc
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSException: NSObject;
 }
 
@@ -120,7 +122,18 @@ impl alloc::borrow::ToOwned for NSException {
     }
 }
 
-// TODO: Better Debug impl
+impl fmt::Debug for NSException {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let obj: &Object = self.as_ref();
+        write!(f, "{:?} '{}'", obj, self.name())?;
+        if let Some(reason) = self.reason() {
+            write!(f, " reason:{}", reason)?;
+        } else {
+            write!(f, " reason:(NULL)")?;
+        }
+        Ok(())
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -148,15 +161,13 @@ mod tests {
         };
 
         assert_eq!(exc.description(), NSString::from_str(&description));
-        assert_eq!(format!("{:?}", exc), format!("\"{}\"", description));
+
+        let debug = format!("<NSException: {:p}> 'abc' reason:def", exc);
+        assert_eq!(format!("{:?}", exc), debug);
     }
 
     #[test]
-    #[cfg_attr(
-        feature = "apple",
-        should_panic = "called `Result::unwrap()` on an `Err` value: \"def\""
-    )]
-    #[cfg_attr(feature = "gnustep-1-7", should_panic = "> NAME:abc REASON:def")]
+    #[should_panic = "'abc' reason:def"]
     fn unwrap() {
         let exc = NSException::new(
             &NSString::from_str("abc"),

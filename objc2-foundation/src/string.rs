@@ -31,11 +31,10 @@ object! {
     /// A static, plain-text Unicode string object.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring?language=objc).
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSString: NSObject;
     // TODO: Use isEqualToString: for comparison (instead of just isEqual:)
     // The former is more performant
-
-    // TODO: Use more performant Debug implementation.
 
     // TODO: Check if performance of NSSelectorFromString is worthwhile
 }
@@ -279,6 +278,16 @@ impl fmt::Display for NSString {
         // TODO: Fix this!
         let s = autoreleasepool(|pool| self.as_str(pool).to_owned());
         fmt::Display::fmt(&s, f)
+    }
+}
+
+impl fmt::Debug for NSString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // The call to `to_owned` is unfortunate, but is required to work
+        // around `f` not being AutoreleaseSafe.
+        // TODO: Fix this!
+        let s = autoreleasepool(|pool| self.as_str(pool).to_owned());
+        fmt::Debug::fmt(&s, f)
     }
 }
 

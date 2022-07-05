@@ -9,6 +9,7 @@ object! {
     /// A thread of execution.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsthread?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSThread: NSObject;
 }
 

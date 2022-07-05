@@ -7,6 +7,7 @@ object! {
     /// A collection of information about the current process.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsprocessinfo?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSProcessInfo: NSObject;
 
     // TODO: This contains a lot more important functionality!

@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   safe to call on the main thread.
 * Added `NSException` object.
 
+### Changed
+* Changed a few `Debug` impls.
+
 
 ## 0.2.0-alpha.5 - 2022-06-13
 

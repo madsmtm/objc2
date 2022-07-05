@@ -7,6 +7,7 @@ object! {
     /// A mutable string that has associated attributes.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutableattributedstring?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableAttributedString: NSAttributedString, NSObject;
 }
 

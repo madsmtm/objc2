@@ -25,6 +25,9 @@ object! {
     /// TODO: Can we make it impossible? Should we?
     ///
     /// What about `Id<NSArray<T, Shared>, Owned>`?
+    // `T: PartialEq` bound correct because `NSArray` does deep (instead of
+    // shallow) equality comparisons.
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSArray<T, O: Ownership>: NSObject {
         item: PhantomData<Id<T, O>>,
     }
@@ -43,6 +46,7 @@ unsafe impl<T: Send> Send for NSArray<T, Owned> {}
 object! {
     // TODO: Ensure that this deref to NSArray is safe!
     // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O>, NSObject {}
 }
 
