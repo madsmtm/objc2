@@ -229,6 +229,18 @@ assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS => WITH_ARRAYS);
 assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS_POINTER => Encoding::Pointer(&WITH_ARRAYS));
 assert_inner!(str ENCODING_STRUCT_WITH_ARRAYS_ATOMIC => "A{with_arrays}");
 
+const WITH_BLOCK: Encoding<'static> = Encoding::Struct(
+    "with_block",
+    &[
+        Encoding::Block,
+        Encoding::Object,
+        Encoding::Pointer(&Encoding::Unknown),
+    ],
+);
+assert_inner!(str ENCODING_STRUCT_WITH_BLOCK => WITH_BLOCK);
+assert_inner!(str ENCODING_STRUCT_WITH_BLOCK_POINTER => Encoding::Pointer(&WITH_BLOCK));
+assert_inner!(str ENCODING_STRUCT_WITH_BLOCK_ATOMIC => "A{with_block}");
+
 // Bitfields
 
 #[cfg(feature = "apple")]

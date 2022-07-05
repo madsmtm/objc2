@@ -177,6 +177,10 @@ impl Encoding<'_> {
     /// For example, you should not rely on two equivalent encodings to have
     /// the same size or ABI - that is provided on a best-effort basis.
     pub fn equivalent_to(&self, other: &Self) -> bool {
+        // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
+        // should compare equal, but we don't bother since in practice a plain
+        // `Unknown` will never appear.
+
         // For now, because we don't allow representing qualifiers
         self == other
     }
@@ -405,11 +409,11 @@ mod tests {
             "?";
         }
 
+        // Note: A raw `?` cannot happen in practice, since functions can only
+        // be accessed through pointers, and that will yield `^?`
         fn object_unknown_in_struct() {
-            Encoding::Struct("S", &[Encoding::Object, Encoding::Unknown]);
-            // TODO:
-            // | Encoding::Struct("S", &[Encoding::Block]);
-            "{S=@?}";
+            Encoding::Struct("S", &[Encoding::Block, Encoding::Object, Encoding::Unknown]);
+            "{S=@?@?}";
         }
 
         fn double() {

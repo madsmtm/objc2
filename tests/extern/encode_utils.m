@@ -76,6 +76,13 @@ struct with_arrays {
 };
 ENCODING(STRUCT_WITH_ARRAYS, struct with_arrays);
 
+struct with_block {
+    void (^a)(void);
+    id b;
+    void (*c)(void);
+};
+ENCODING(STRUCT_WITH_BLOCK, struct with_block);
+
 // Bit field
 
 struct bitfield {
