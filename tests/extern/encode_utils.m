@@ -55,6 +55,12 @@ struct one_item {
 };
 ENCODING(STRUCT_ONE_ITEM, struct one_item);
 
+struct nested {
+    struct one_item a;
+    struct one_item* b;
+};
+ENCODING(STRUCT_NESTED, struct nested);
+
 struct two_items {
     float a;
     int b;

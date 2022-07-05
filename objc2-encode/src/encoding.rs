@@ -462,6 +462,26 @@ mod tests {
             "{☃=c}";
         }
 
+        fn pointer_struct() {
+            Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]));
+            !Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
+            !Encoding::Pointer(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]));
+            "^{SomeStruct=ci}";
+            !"^{SomeStruct=ci";
+            !"^{SomeStruct}";
+            !"^{SomeStruct=}";
+        }
+
+        fn pointer_pointer_struct() {
+            Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int])));
+            !Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char])));
+            !Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int])));
+            "^^{SomeStruct=ci}";
+            !"^^{SomeStruct=ci";
+            !"^^{SomeStruct}"; // TODO
+            !"^^{SomeStruct=}";
+        }
+
         fn empty_struct() {
             Encoding::Struct("SomeStruct", &[]);
             "{SomeStruct=}";
@@ -484,11 +504,13 @@ mod tests {
                 "A",
                 &[
                     Encoding::Struct("B", &[Encoding::Int]),
+                    Encoding::Pointer(&Encoding::Struct("C", &[Encoding::Double])),
                     Encoding::Char,
                 ],
             );
-            "{A={B=i}c}";
-            !"{A={B=i}c";
+            "{A={B=i}^{C=d}c}";
+            !"{A={B=i}^{C}c}"; // TODO
+            !"{A={B=i}^{C=d}c";
         }
 
         fn various() {

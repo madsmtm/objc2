@@ -119,6 +119,7 @@ assert_types! {
 
     // STRUCT_EMPTY
     // STRUCT_ONE_ITEM
+    // STRUCT_NESTED
     // STRUCT_TWO_ITEMS
     // STRUCT_WITH_ARRAYS
 
@@ -197,6 +198,15 @@ assert_inner!(enc ENCODING_STRUCT_ONE_ITEM_POINTER => Encoding::Pointer(&ENC1));
 assert_inner!(str ENCODING_STRUCT_ONE_ITEM_POINTER_POINTER => "^^{one_item}");
 assert_inner!(str ENCODING_STRUCT_ONE_ITEM_POINTER_POINTER_POINTER => "^^^{one_item}");
 assert_inner!(str ENCODING_STRUCT_ONE_ITEM_ATOMIC => "A{one_item}");
+
+// const ENC_NESTED: Encoding<'static> = Encoding::Struct("nested", &[ENC1, Encoding::Pointer(&ENC1)]);
+// assert_inner!(enc ENCODING_STRUCT_NESTED => ENC_NESTED);
+// assert_inner!(enc ENCODING_STRUCT_NESTED_POINTER => Encoding::Pointer(&ENC_NESTED));
+assert_inner!(str ENCODING_STRUCT_NESTED => "{nested={one_item=^v}^{one_item}}");
+assert_inner!(str ENCODING_STRUCT_NESTED_POINTER => "^{nested={one_item=^v}^{one_item}}");
+assert_inner!(str ENCODING_STRUCT_NESTED_POINTER_POINTER => "^^{nested}");
+assert_inner!(str ENCODING_STRUCT_NESTED_POINTER_POINTER_POINTER => "^^^{nested}");
+assert_inner!(str ENCODING_STRUCT_NESTED_ATOMIC => "A{nested}");
 
 const ENC2: Encoding<'static> = Encoding::Struct("two_items", &[f32::ENCODING, c_int::ENCODING]);
 assert_inner!(enc ENCODING_STRUCT_TWO_ITEMS => ENC2);
