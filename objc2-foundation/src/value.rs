@@ -14,7 +14,7 @@ use objc2::{msg_send, msg_send_id};
 
 use super::{NSCopying, NSObject};
 
-object! {
+__inner_object! {
     // `T: Eq` bound correct to prevent `NSValue<f32>` from being `Eq`
     // (even though `[NAN isEqual: NAN]` is true in Objective-C).
     #[derive(Debug, PartialEq, Eq, Hash)]

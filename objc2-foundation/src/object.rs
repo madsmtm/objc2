@@ -7,7 +7,7 @@ use objc2::{msg_send, msg_send_bool, msg_send_id};
 
 use super::NSString;
 
-object! {
+__inner_object! {
     @__inner
     unsafe pub struct NSObject<>: Object {}
 }

@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `MainThreadMarker` to help with designing APIs where a method is only
   safe to call on the main thread.
 * Added `NSException` object.
+* Added `object!` macro to help with defining other classes.
+* Expose the `objc2` version that this uses in the crate root.
 
 ### Changed
 * Changed a few `Debug` impls.
