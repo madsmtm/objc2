@@ -590,11 +590,12 @@ macro_rules! msg_send_bool {
 ///   is a generic `Option<Id<T, O>>`.
 ///
 /// - The `alloc` family: The receiver must be `&Class`, and the return type
-///   is a generic `Option<Id<T, O>>`. (This will change, see [#172]).
+///   is a generic `Option<Id<Allocated<T>, O>>`.
 ///
-/// - The `init` family: The receiver must be `Option<Id<T, O>>` as returned
-///   from `alloc`. The receiver is consumed, and a the now-initialized
-///   `Option<Id<T, O>>` (with the same `T` and `O`) is returned.
+/// - The `init` family: The receiver must be `Option<Id<Allocated<T>, O>>`
+///   as returned from `alloc`. The receiver is consumed, and a the
+///   now-initialized `Option<Id<T, O>>` (with the same `T` and `O`) is
+///   returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
 ///   [`MessageReceiver`] and the return type is a generic `Option<Id<T, O>>`.
@@ -615,7 +616,6 @@ macro_rules! msg_send_bool {
 /// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
 ///
 /// [sel-families]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families
-/// [#172]: https://github.com/madsmtm/objc2/pull/172
 /// [`MessageReceiver`]: crate::MessageReceiver
 /// [`Id::retain_autoreleased`]: crate::rc::Id::retain_autoreleased
 /// [arc-retainable]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments

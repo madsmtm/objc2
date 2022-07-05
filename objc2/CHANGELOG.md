@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   through `&Object`.
 * Added `VerificationError` as more specific return type from
   `Class::verify_sel`.
+* Added `rc::Allocated` struct which is used within `msg_send_id!`.
 
 ### Changed
 * **BREAKING**: `Sel` is now required to be non-null, which means that you

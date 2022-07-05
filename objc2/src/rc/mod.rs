@@ -55,6 +55,7 @@
 //! assert!(weak.load().is_none());
 //! ```
 
+mod allocated;
 mod autorelease;
 mod id;
 mod id_forwarding_impls;
@@ -65,6 +66,7 @@ mod weak_id;
 #[cfg(test)]
 mod test_object;
 
+pub use self::allocated::Allocated;
 pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
 pub use self::id::Id;
 pub use self::id_traits::{DefaultId, SliceId, SliceIdMut};
