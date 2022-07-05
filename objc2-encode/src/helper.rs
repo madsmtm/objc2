@@ -1,5 +1,13 @@
 use crate::Encoding;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub(crate) enum NestingLevel {
+    Bottom = 1,
+    WithinPointer = 2,
+    WithinStruct = 3,
+    Top = 4,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub(crate) enum Primitive {
@@ -76,6 +84,16 @@ impl IndirectionKind {
         match self {
             Self::Atomic => b'A',
             Self::Pointer => b'^',
+        }
+    }
+
+    pub(crate) const fn get_level(self, prev_level: NestingLevel) -> NestingLevel {
+        match self {
+            Self::Atomic => NestingLevel::Bottom,
+            Self::Pointer => match prev_level {
+                NestingLevel::Top => NestingLevel::WithinPointer,
+                _ => NestingLevel::Bottom,
+            },
         }
     }
 }
