@@ -1,7 +1,9 @@
 //! Parsing encodings from their string representation.
 #![deny(unsafe_code)]
 
-use crate::helper::{Helper, NestingLevel};
+use core::convert::TryInto;
+
+use crate::helper::{ContainerKind, Helper, IndirectionKind, NestingLevel, Primitive};
 use crate::Encoding;
 
 /// Check whether a struct or union name is a valid identifier
@@ -87,4 +89,98 @@ fn chomp_int(s: &str) -> Option<(usize, &str)> {
 
 fn rm_int_prefix(s: &str, other: usize) -> Option<&str> {
     chomp_int(s).and_then(|(n, t)| if other == n { Some(t) } else { None })
+}
+
+#[allow(unused)]
+enum EncodingToken<'a> {
+    Primitive(Primitive),
+    BitFieldStart(u8),
+    Indirection(IndirectionKind),
+    ArrayStart(usize),
+    ArrayEnd,
+    ContainerStart(ContainerKind, &'a str),
+    ContainerSeparator,
+    ContainerEnd(ContainerKind),
+}
+
+#[allow(unused)]
+fn chomp(s: &str) -> Option<(EncodingToken<'_>, &str)> {
+    let (first, rest) = {
+        let mut chars = s.chars();
+        match chars.next() {
+            Some(first) => (first, chars.as_str()),
+            None => return None,
+        }
+    };
+
+    let primitive = match first {
+        'c' => Primitive::Char,
+        's' => Primitive::Short,
+        'i' => Primitive::Int,
+        'l' => Primitive::Long,
+        'q' => Primitive::LongLong,
+        'C' => Primitive::UChar,
+        'S' => Primitive::UShort,
+        'I' => Primitive::UInt,
+        'L' => Primitive::ULong,
+        'Q' => Primitive::ULongLong,
+        'f' => Primitive::Float,
+        'd' => Primitive::Double,
+        'D' => Primitive::LongDouble,
+        'j' => {
+            if let Some(rest) = rest.strip_prefix('f') {
+                return Some((EncodingToken::Primitive(Primitive::FloatComplex), rest));
+            }
+            if let Some(rest) = rest.strip_prefix('d') {
+                return Some((EncodingToken::Primitive(Primitive::DoubleComplex), rest));
+            }
+            if let Some(rest) = rest.strip_prefix('D') {
+                return Some((EncodingToken::Primitive(Primitive::LongDoubleComplex), rest));
+            }
+            return None;
+        }
+        'B' => Primitive::Bool,
+        'v' => Primitive::Void,
+        '*' => Primitive::String,
+        '@' => {
+            // Special handling for blocks
+            if let Some(rest) = rest.strip_prefix('?') {
+                return Some((EncodingToken::Primitive(Primitive::Block), rest));
+            }
+            Primitive::Object
+        }
+        '#' => Primitive::Class,
+        ':' => Primitive::Sel,
+        '?' => Primitive::Unknown,
+        'b' => {
+            return chomp_int(rest)
+                .map(|(b, rest)| (EncodingToken::BitFieldStart(b.try_into().unwrap()), rest));
+        }
+        '^' => return Some((EncodingToken::Indirection(IndirectionKind::Pointer), rest)),
+        'A' => return Some((EncodingToken::Indirection(IndirectionKind::Atomic), rest)),
+        '[' => {
+            return chomp_int(rest).map(|(n, rest)| (EncodingToken::ArrayStart(n), rest));
+        }
+        ']' => return Some((EncodingToken::ArrayEnd, rest)),
+        '{' => {
+            return rest.split_once('=').map(|(name, rest)| {
+                (
+                    EncodingToken::ContainerStart(ContainerKind::Struct, name),
+                    rest,
+                )
+            });
+        }
+        '}' => return Some((EncodingToken::ContainerEnd(ContainerKind::Struct), rest)),
+        '(' => {
+            return rest.split_once('=').map(|(name, rest)| {
+                (
+                    EncodingToken::ContainerStart(ContainerKind::Union, name),
+                    rest,
+                )
+            });
+        }
+        ')' => return Some((EncodingToken::ContainerEnd(ContainerKind::Union), rest)),
+        _ => return None,
+    };
+    Some((EncodingToken::Primitive(primitive), rest))
 }
