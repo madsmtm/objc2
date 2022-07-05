@@ -434,13 +434,30 @@ impl Class {
         }
     }
 
+    /// Check whether instances of this class respond to the given selector.
+    ///
+    /// This doesn't call `respondsToSelector:`, but works entirely within the
+    /// runtime, which means it'll always be safe to call, but may not return
+    /// exactly what you'd expect if `respondsToSelector:` has been
+    /// overwritten.
+    ///
+    /// That said, it will always return `true` if an instance of the class
+    /// responds to the selector, but may return `false` if they don't
+    /// directly (e.g. does so by using forwarding instead).
+    #[doc(alias = "class_respondsToSelector")]
+    pub fn responds_to(&self, sel: Sel) -> bool {
+        // This may call `resolveInstanceMethod:` and `resolveClassMethod:`
+        // SAFETY: The selector is guaranteed non-null.
+        let res = unsafe { ffi::class_respondsToSelector(self.as_ptr(), sel.as_ptr()) };
+        Bool::from_raw(res).as_bool()
+    }
+
     // fn property(&self, name: &str) -> Option<&Property>;
     // fn properties(&self) -> Malloc<[&Property]>;
     // unsafe fn replace_method(&self, name: Sel, imp: Imp, types: &str) -> Imp;
     // unsafe fn replace_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
     // unsafe fn set_ivar_layout(&mut self, layout: &[u8]);
     // fn method_imp(&self, name: Sel) -> Imp; // + _stret
-    // fn responds_to(&self, sel: Sel) -> bool;
 
     // fn get_version(&self) -> u32;
     // unsafe fn set_version(&mut self, version: u32);
@@ -846,11 +863,19 @@ mod tests {
         assert!(cls.instance_size() > 0);
         assert!(cls.superclass().is_none());
 
+        assert!(cls.responds_to(sel!(foo)));
+        assert!(cls.responds_to(sel!(setBar:)));
+        assert!(!cls.responds_to(sel!(abc)));
+        assert!(!cls.responds_to(sel!(addNumber:toNumber:)));
+
         assert_eq!(Class::get(cls.name()), Some(cls));
 
         let metaclass = cls.metaclass();
         // The metaclass of a root class is a subclass of the root class
         assert_eq!(metaclass.superclass().unwrap(), cls);
+        assert!(metaclass.responds_to(sel!(addNumber:toNumber:)));
+        // TODO: This is unexpected!
+        assert!(metaclass.responds_to(sel!(foo)));
 
         let subclass = test_utils::custom_subclass();
         assert_eq!(subclass.superclass().unwrap(), cls);

@@ -6,14 +6,15 @@ use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::{Encode, EncodeArguments, RefEncode};
 
-#[cfg(feature = "catch_all")]
+#[cfg(feature = "catch-all")]
 #[track_caller]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
+    let f = core::panic::AssertUnwindSafe(f);
     match unsafe { crate::exception::catch(f) } {
         Ok(r) => r,
         Err(exception) => {
             if let Some(exception) = exception {
-                panic!("uncaught exception {:?}", exception)
+                panic!("uncaught {:?}", exception)
             } else {
                 panic!("uncaught exception nil")
             }
@@ -21,7 +22,7 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
     }
 }
 
-#[cfg(not(feature = "catch_all"))]
+#[cfg(not(feature = "catch-all"))]
 #[inline]
 #[track_caller]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {

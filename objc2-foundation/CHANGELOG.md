@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `MainThreadMarker` to help with designing APIs where a method is only
   safe to call on the main thread.
+* Added `NSException` object.
 
 
 ## 0.2.0-alpha.5 - 2022-06-13

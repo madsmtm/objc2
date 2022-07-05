@@ -1,7 +1,7 @@
 #!/usr/local/bin/fish
 # A test script I use to test on my local devices
 
-echo 'Add this to objc2/Cargo.toml: `default = ["exception", "verify_message", "catch_all"]`'
+echo 'Add this to objc2/Cargo.toml: `default = ["exception", "verify_message", "catch-all"]`'
 read
 
 export MACOSX_DEPLOYMENT_TARGET=10.7
@@ -34,5 +34,5 @@ rm -d .cargo
 export SDKROOT=(pwd)/ideas/MacOSX10.13.sdk
 export CARGO_BUILD_TARGET=i686-apple-darwin
 cargo +nightly test -Zbuild-std
-cargo +nightly test -Zbuild-std --features malloc,block,exception,catch_all,verify_message
+cargo +nightly test -Zbuild-std --features malloc,block,exception,catch-all,verify_message
 cargo +nightly test -Zbuild-std --release

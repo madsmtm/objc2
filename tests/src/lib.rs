@@ -7,6 +7,8 @@ use block2::{Block, RcBlock};
 extern crate alloc;
 extern crate std;
 
+#[cfg(all(test, feature = "exception"))]
+mod exception;
 pub mod ffi;
 #[cfg(test)]
 mod test_encode_utils;

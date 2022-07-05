@@ -36,6 +36,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `VerificationError` as more specific return type from
   `Class::verify_sel`.
 * Added `rc::Allocated` struct which is used within `msg_send_id!`.
+* Added `Class::responds_to`.
+* Added `exception::Exception` object to improve error messages from caught
+  exceptions.
 
 ### Changed
 * **BREAKING**: `Sel` is now required to be non-null, which means that you
@@ -49,6 +52,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Improved debug output with `verify_message` feature enabled.
 * **BREAKING**: Changed `MessageReceiver::send_message` to panic instead of
   returning an error.
+* **BREAKING**: Renamed `catch_all` feature to `catch-all`.
+
+### Fixed
+* **BREAKING**: Disallow throwing `nil` exceptions in `exception::throw`.
 
 ### Removed
 * **BREAKING**: Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.

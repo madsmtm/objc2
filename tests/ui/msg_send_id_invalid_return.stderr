@@ -17,15 +17,15 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
    |                                         ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `objc2::runtime::Class`
    |
    = help: the following other types implement trait `Message`:
+             Exception
              NSArray<T, O>
              NSAttributedString
              NSData
              NSDictionary<K, V>
+             NSException
              NSMutableArray<T, O>
              NSMutableAttributedString
-             NSMutableData
-             NSMutableString
-           and 7 others
+           and 9 others
    = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Class, Id<objc2::runtime::Class, Shared>>` for `RetainSemantics<true, false, false, false>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -45,15 +45,15 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
    |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `objc2::runtime::Class`
    |
    = help: the following other types implement trait `Message`:
+             Exception
              NSArray<T, O>
              NSAttributedString
              NSData
              NSDictionary<K, V>
+             NSException
              NSMutableArray<T, O>
              NSMutableAttributedString
-             NSMutableData
-             NSMutableString
-           and 7 others
+           and 9 others
    = note: required because of the requirements on the impl of `MsgSendId<&objc2::runtime::Class, Id<Allocated<objc2::runtime::Class>, Shared>>` for `RetainSemantics<false, true, false, false>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
