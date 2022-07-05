@@ -66,7 +66,9 @@ macro_rules! assert_types {
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => Encoding::Pointer(&$encoding));
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER>] => Encoding::Pointer(&Encoding::Pointer(&$encoding)));
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER_POINTER>] => Encoding::Pointer(&Encoding::Pointer(&Encoding::Pointer(&$encoding))));
-            assert_inner!(str $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => format!("A{}", $encoding));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => Encoding::Atomic(&$encoding));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _ATOMIC_POINTER>] => Encoding::Pointer(&Encoding::Atomic(&$encoding)));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_ATOMIC>] => Encoding::Atomic(&Encoding::Pointer(&$encoding)));
         }
     };
     (@
@@ -78,7 +80,9 @@ macro_rules! assert_types {
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => <*const $type>::ENCODING);
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER>] => <*const *const $type>::ENCODING);
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER_POINTER>] => <*const *const *const $type>::ENCODING);
-            assert_inner!(str $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => format!("A{}", <$type>::ENCODING));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => Encoding::Atomic(&<$type>::ENCODING));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _ATOMIC_POINTER>] => Encoding::Pointer(&Encoding::Atomic(&<$type>::ENCODING)));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_ATOMIC>] => Encoding::Atomic(&<*const $type>::ENCODING));
         }
     };
 }

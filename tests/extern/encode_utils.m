@@ -12,7 +12,9 @@
     ENCODING_INNER(name ## _POINTER, type*); \
     ENCODING_INNER(name ## _POINTER_POINTER, type**); \
     ENCODING_INNER(name ## _POINTER_POINTER_POINTER, type***); \
-    ENCODING_INNER(name ## _ATOMIC, _Atomic type);
+    ENCODING_INNER(name ## _ATOMIC, _Atomic type); \
+    ENCODING_INNER(name ## _ATOMIC_POINTER, _Atomic type*); \
+    ENCODING_INNER(name ## _POINTER_ATOMIC, _Atomic (type*));
 
 // C types
 
@@ -118,6 +120,8 @@ ENCODING_INNER(ID_POINTER, const id*);
 ENCODING_INNER(ID_POINTER_POINTER, const id**);
 ENCODING_INNER(ID_POINTER_POINTER_POINTER, const id***);
 ENCODING_INNER(ID_ATOMIC, _Atomic id);
+ENCODING_INNER(ID_ATOMIC_POINTER, _Atomic const id*);
+ENCODING_INNER(ID_POINTER_ATOMIC, _Atomic (const id*));
 ENCODING(CLASS, Class);
 ENCODING(SEL, SEL);
 ENCODING(NS_INTEGER, NSInteger);

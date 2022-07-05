@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `Encoding::Atomic`.
+* Implement `Encode` and `RefEncode` for `std::sync::atomic` types.
+
 ### Changed
 * **BREAKING**: Renamed `Encoding::C_U_LONG` to `Encoding::C_ULONG`.
 

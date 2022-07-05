@@ -5,6 +5,7 @@ use core::num::{
     NonZeroU64, NonZeroU8, NonZeroUsize, Wrapping,
 };
 use core::ptr::NonNull;
+use core::sync::atomic;
 
 use crate::Encoding;
 
@@ -168,6 +169,9 @@ encode_impls!(
     u64 => ULongLong,
     f32 => Float,
     f64 => Double,
+
+    // TODO: i128 & u128
+    // https://github.com/rust-lang/rust/issues/54341
 );
 
 // TODO: Structs in core::arch?
@@ -285,8 +289,72 @@ encode_impls_nonzero!(
     NonZeroUsize => usize,
 );
 
-// Note: I'm not sure atomic integers would be safe, since they might need the
-// Objective-C runtime to insert proper memory fences and ordering stuff?
+/// Simple helper for implementing for atomic types.
+macro_rules! encode_atomic_impls {
+    ($(
+        $(#[$m:meta])*
+        $atomic:ident => $type:ty,
+    )*) => ($(
+        // SAFETY: C11 `_Atomic` types use compatible synchronization
+        // primitives, and the atomic type is guaranteed to have the same
+        // in-memory representation as the underlying type.
+        $(#[$m])*
+        unsafe impl Encode for atomic::$atomic {
+            const ENCODING: Encoding<'static> = Encoding::Atomic(&<$type>::ENCODING);
+        }
+
+        $(#[$m])*
+        unsafe impl RefEncode for atomic::$atomic {
+            const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+        }
+    )*);
+}
+
+encode_atomic_impls!(
+    #[cfg(target_has_atomic = "8")]
+    AtomicBool => bool,
+    #[cfg(target_has_atomic = "8")]
+    AtomicI8 => i8,
+    #[cfg(target_has_atomic = "8")]
+    AtomicU8 => u8,
+
+    #[cfg(target_has_atomic = "16")]
+    AtomicI16 => i16,
+    #[cfg(target_has_atomic = "16")]
+    AtomicU16 => u16,
+
+    #[cfg(target_has_atomic = "32")]
+    AtomicI32 => i32,
+    #[cfg(target_has_atomic = "32")]
+    AtomicU32 => u32,
+
+    #[cfg(target_has_atomic = "64")]
+    AtomicI64 => i64,
+    #[cfg(target_has_atomic = "64")]
+    AtomicU64 => u64,
+
+    // TODO
+    // #[cfg(target_has_atomic = "128")]
+    // AtomicI128 => i128,
+    // #[cfg(target_has_atomic = "128")]
+    // AtomicU128 => u128,
+
+    #[cfg(target_has_atomic = "ptr")]
+    AtomicIsize => isize,
+    #[cfg(target_has_atomic = "ptr")]
+    AtomicUsize => usize,
+);
+
+// SAFETY: Guaranteed to have the same in-memory representation as `*mut T`.
+#[cfg(target_has_atomic = "ptr")]
+unsafe impl<T: RefEncode> Encode for atomic::AtomicPtr<T> {
+    const ENCODING: Encoding<'static> = Encoding::Atomic(&T::ENCODING_REF);
+}
+
+#[cfg(target_has_atomic = "ptr")]
+unsafe impl<T: RefEncode> RefEncode for atomic::AtomicPtr<T> {
+    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+}
 
 /// [`Encode`] is implemented manually for `*const c_void`, instead of
 /// implementing [`RefEncode`], to discourage creating `&c_void`.
@@ -539,6 +607,7 @@ encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
+    use super::atomic::*;
     use super::*;
 
     #[test]
@@ -565,6 +634,29 @@ mod tests {
         assert_eq!(
             <&&i32>::ENCODING,
             Encoding::Pointer(&Encoding::Pointer(&Encoding::Int))
+        );
+    }
+
+    #[test]
+    fn test_atomic() {
+        assert_eq!(AtomicI32::ENCODING, Encoding::Atomic(&Encoding::Int));
+        assert_eq!(
+            AtomicI32::ENCODING_REF,
+            Encoding::Pointer(&Encoding::Atomic(&Encoding::Int))
+        );
+        assert_eq!(
+            AtomicPtr::<i32>::ENCODING,
+            Encoding::Atomic(&Encoding::Pointer(&Encoding::Int))
+        );
+
+        assert_eq!(AtomicI8::ENCODING, Encoding::Atomic(&Encoding::Char));
+        assert_eq!(
+            AtomicI8::ENCODING_REF,
+            Encoding::Pointer(&Encoding::Atomic(&Encoding::Char))
+        );
+        assert_eq!(
+            AtomicPtr::<i8>::ENCODING,
+            Encoding::Atomic(&Encoding::String)
         );
     }
 

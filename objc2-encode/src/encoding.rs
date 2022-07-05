@@ -33,6 +33,7 @@ use crate::parse;
 /// assert!(Encoding::Array(10, &Encoding::FloatComplex).equivalent_to_str("[10jf]"));
 /// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+// See <https://en.cppreference.com/w/c/language/type>
 #[non_exhaustive] // Maybe we're missing some encodings?
 pub enum Encoding<'a> {
     /// A C `char`. Corresponds to the `c` code.
@@ -94,12 +95,19 @@ pub enum Encoding<'a> {
     /// The type is not currently used, but may be in the future for better
     /// compatibility with Objective-C runtimes.
     ///
-    /// Corresponds to the `b`num code.
+    /// Corresponds to the `b num` code.
     BitField(u8, &'a Encoding<'a>),
     /// A pointer to the given type.
     ///
-    /// Corresponds to the `^`type code.
+    /// Corresponds to the `^ type` code.
     Pointer(&'a Encoding<'a>),
+    /// A C11 [`_Atomic`] type.
+    ///
+    /// Corresponds to the `A type` code. Not all encodings are possible in
+    /// this.
+    ///
+    /// [`_Atomic`]: https://en.cppreference.com/w/c/language/atomic
+    Atomic(&'a Encoding<'a>),
     /// An array with the given length and type.
     ///
     /// Corresponds to the `[len type]` code.
@@ -119,19 +127,6 @@ pub enum Encoding<'a> {
     /// Corresponds to the `(name=fields...)` code.
     Union(&'a str, &'a [Encoding<'a>]),
     // "Vector" types have the '!' encoding, but are not implemented in clang
-
-    // TODO: Atomic, const and other such specifiers
-    // typedef struct x {
-    //     int a;
-    //     void* b;
-    // } x_t;
-    // NSLog(@"Encoding: %s", @encode(_Atomic x_t)); // -> A{x}
-    // NSLog(@"Encoding: %s", @encode(const int*)); // -> r^i
-    //
-    // Note that const only applies to the outermost pointer!
-    //
-    // And how does atomic objects work?
-    // core::sync::atomic::AtomicPtr<T: Message>?
 
     // TODO: `t` and `T` codes for i128 and u128?
 }
@@ -258,6 +253,9 @@ impl fmt::Display for Encoding<'_> {
             }
             Pointer(t) => {
                 return write!(formatter, "^{}", t);
+            }
+            Atomic(t) => {
+                return write!(formatter, "A{}", t);
             }
             Array(len, item) => {
                 return write!(formatter, "[{}{}]", len, item);
@@ -429,8 +427,22 @@ mod tests {
             !"b-32";
         }
 
+        fn atomic() {
+            Encoding::Atomic(&Encoding::Int);
+            !Encoding::Pointer(&Encoding::Int);
+            !Encoding::Atomic(&Encoding::Char);
+            !Encoding::Atomic(&Encoding::Atomic(&Encoding::Int));
+            "Ai";
+        }
+
+        fn atomic_string() {
+            Encoding::Atomic(&Encoding::String);
+            "A*";
+        }
+
         fn pointer() {
             Encoding::Pointer(&Encoding::Int);
+            !Encoding::Atomic(&Encoding::Int);
             !Encoding::Pointer(&Encoding::Char);
             !Encoding::Pointer(&Encoding::Pointer(&Encoding::Int));
             "^i";
@@ -480,6 +492,16 @@ mod tests {
             !"^^{SomeStruct=ci";
             !"^^{SomeStruct}"; // TODO
             !"^^{SomeStruct=}";
+        }
+
+        fn atomic_struct() {
+            Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]));
+            !Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
+            !Encoding::Atomic(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]));
+            "A{SomeStruct=ci}";
+            !"A{SomeStruct=ci";
+            !"A{SomeStruct}"; // TODO
+            !"A{SomeStruct=}";
         }
 
         fn empty_struct() {

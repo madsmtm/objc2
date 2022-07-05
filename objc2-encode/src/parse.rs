@@ -49,6 +49,10 @@ pub(crate) fn rm_enc_prefix<'a>(s: &'a str, enc: &Encoding<'_>) -> Option<&'a st
             let s = s.strip_prefix('^')?;
             return rm_enc_prefix(s, t);
         }
+        Atomic(t) => {
+            let s = s.strip_prefix('A')?;
+            return rm_enc_prefix(s, t);
+        }
         Array(len, item) => {
             let mut s = s;
             s = s.strip_prefix('[')?;

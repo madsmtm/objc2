@@ -44,7 +44,7 @@ pub(crate) const fn static_encoding_str_len(encoding: Encoding<'_>) -> usize {
         | Float | Double | LongDouble | Bool | Void | String | Object | Class | Sel | Unknown => 1,
         Block | FloatComplex | DoubleComplex | LongDoubleComplex => 2,
         BitField(b, _type) => 1 + static_int_str_len(b as u128),
-        Pointer(&t) => 1 + static_encoding_str_len(t),
+        Atomic(&t) | Pointer(&t) => 1 + static_encoding_str_len(t),
         Array(len, &item) => {
             1 + static_int_str_len(len as u128) + static_encoding_str_len(item) + 1
         }
@@ -123,6 +123,21 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
             let mut res_i = 0;
 
             res[res_i] = b'^';
+            res_i += 1;
+
+            let mut i = 0;
+            // We use LEN even though it creates an oversized array
+            let arr = static_encoding_str_array::<LEN>(t);
+            while i < static_encoding_str_len(t) {
+                res[res_i] = arr[i];
+                res_i += 1;
+                i += 1;
+            }
+        }
+        Atomic(&t) => {
+            let mut res_i = 0;
+
+            res[res_i] = b'A';
             res_i += 1;
 
             let mut i = 0;
