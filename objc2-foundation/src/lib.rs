@@ -70,6 +70,8 @@ pub use self::value::NSValue;
 #[doc(no_inline)]
 pub use objc2::ffi::{NSInteger, NSUInteger};
 
+pub use objc2_foundation_sys as ffi;
+
 #[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
