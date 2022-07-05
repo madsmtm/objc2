@@ -1,3 +1,5 @@
+use alloc::format;
+
 use objc2::exception::{catch, throw};
 use objc2::msg_send;
 use objc2::rc::{autoreleasepool, Id};
@@ -37,16 +39,10 @@ fn throw_catch_raise_catch() {
     };
 
     let exc = autoreleasepool(|_| {
-        let res = unsafe {
-            catch(|| {
-                let exc = exc; // Move into closure
-                let exc = Id::cast::<Object>(exc);
-                throw(exc)
-                // exc is dropped on unwind here
-            })
-        };
+        let exc = NSException::into_exception(exc);
+        let res = unsafe { catch(|| throw(exc)) };
         let exc = res.unwrap_err().unwrap();
-        let exc = unsafe { Id::cast::<NSException>(exc) };
+        let exc = NSException::from_exception(exc).unwrap();
 
         assert_retain_count(&exc, 3 + extra_retain);
         exc
@@ -61,9 +57,19 @@ fn throw_catch_raise_catch() {
 
 #[test]
 #[cfg(feature = "catch_all")]
-// Intentionally truncated panic message
 #[should_panic = "uncaught exception <NSException: 0x"]
-fn raise_catch_all() {
+fn raise_catch_all1() {
+    let name = NSString::from_str("abc");
+    let reason = NSString::from_str("def");
+
+    let exc = NSException::new(&name, Some(&reason), None).unwrap();
+    unsafe { exc.raise() };
+}
+
+#[test]
+#[cfg(feature = "catch_all")]
+#[should_panic = "> 'abc' reason:def"]
+fn raise_catch_all2() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
 
@@ -76,9 +82,7 @@ fn raise_catch_all() {
     feature = "catch_all",
     ignore = "Panics inside `catch` when catch_all is enabled"
 )]
-// Intentionally truncated panic message
-#[should_panic = "called `Result::unwrap()` on an `Err` value: Some(<NSException: 0x"]
-fn raise_catch_unwrap() {
+fn raise_catch() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
 
@@ -101,7 +105,13 @@ fn raise_catch_unwrap() {
 
     assert_retain_count(&exc, 2);
 
-    let _ = res.unwrap();
+    let obj = res.unwrap_err().unwrap();
+
+    assert_eq!(format!("{}", obj), "def");
+    assert_eq!(
+        format!("{:?}", obj),
+        format!("exception <NSException: {:p}> 'abc' reason:def", &*obj)
+    );
 }
 
 #[test]
@@ -117,18 +127,26 @@ fn catch_actual() {
         })
     };
     let exc = res.unwrap_err().unwrap();
-    let exc = unsafe { Id::cast::<NSException>(exc) };
 
     let name = "NSRangeException";
-    assert_eq!(exc.name(), NSString::from_str(name));
-
     let reason = if cfg!(feature = "gnustep-1-7") {
         "Index 0 is out of range 0 (in 'objectAtIndex:')"
     } else {
         "*** -[__NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray"
     };
-    assert_eq!(exc.reason().unwrap(), NSString::from_str(reason));
 
+    assert_eq!(format!("{}", exc), reason);
+    assert_eq!(
+        format!("{:?}", exc),
+        format!(
+            "exception <NSException: {:p}> '{}' reason:{}",
+            &*exc, name, reason
+        )
+    );
+
+    let exc = NSException::from_exception(exc).unwrap();
+    assert_eq!(exc.name(), NSString::from_str(name));
+    assert_eq!(exc.reason().unwrap(), NSString::from_str(reason));
     let user_info = exc.user_info();
     if cfg!(feature = "gnustep-1-7") {
         let user_info = user_info.unwrap();

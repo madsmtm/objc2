@@ -37,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Class::verify_sel`.
 * Added `rc::Allocated` struct which is used within `msg_send_id!`.
 * Added `Class::responds_to`.
+* Added `exception::Exception` object to improve error messages from caught
+  exceptions.
 
 ### Changed
 * **BREAKING**: `Sel` is now required to be non-null, which means that you

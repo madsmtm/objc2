@@ -1,8 +1,9 @@
 use core::hint::unreachable_unchecked;
 
+use objc2::exception::Exception;
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
-use objc2::{msg_send, msg_send_id};
+use objc2::{msg_send, msg_send_id, sel};
 
 use crate::{NSCopying, NSDictionary, NSObject, NSString};
 
@@ -75,6 +76,31 @@ impl NSException {
     /// Application-specific data pertaining to the exception.
     pub fn user_info(&self) -> Option<Id<NSDictionary<Object, Object>, Shared>> {
         unsafe { msg_send_id![self, userInfo] }
+    }
+
+    /// Convert this into an [`Exception`] object.
+    pub fn into_exception(this: Id<Self, Shared>) -> Id<Exception, Shared> {
+        // SAFETY: Downcasting to "subclass"
+        unsafe { Id::cast(this) }
+    }
+
+    /// Convert this into an [`Exception`] object.
+    pub fn from_exception(
+        obj: Id<Exception, Shared>,
+    ) -> Result<Id<Self, Shared>, Id<Exception, Shared>> {
+        if obj.class().responds_to(sel!(isKindOfClass:)) {
+            // SAFETY: We only use `isKindOfClass:` on NSObject
+            let obj = unsafe { Id::cast::<NSObject>(obj) };
+            if obj.is_kind_of(Self::class()) {
+                // SAFETY: Just checked the object is an NSException
+                Ok(unsafe { Id::cast::<Self>(obj) })
+            } else {
+                // SAFETY: Cast back
+                Err(unsafe { Id::cast(obj) })
+            }
+        } else {
+            Err(obj)
+        }
     }
 }
 

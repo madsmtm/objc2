@@ -121,6 +121,8 @@ impl NSString {
     /// TODO: Further explain this.
     #[doc(alias = "UTF8String")]
     pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
+        // NOTE: Please keep up to date with `objc2::exception`!
+
         // This is necessary until `auto` types stabilizes.
         pool.__verify_is_inner();
 
@@ -155,6 +157,8 @@ impl NSString {
 
         // TODO: Always UTF-8, so should we use `from_utf8_unchecked`?
         str::from_utf8(bytes).unwrap()
+
+        // NOTE: Please keep up to date with `objc2::exception`!
     }
 
     // TODO: Allow usecases where the NUL byte from `UTF8String` is kept?

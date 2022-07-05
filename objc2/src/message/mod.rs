@@ -13,7 +13,7 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
         Ok(r) => r,
         Err(exception) => {
             if let Some(exception) = exception {
-                panic!("uncaught exception {:?}", exception)
+                panic!("uncaught {:?}", exception)
             } else {
                 panic!("uncaught exception nil")
             }
