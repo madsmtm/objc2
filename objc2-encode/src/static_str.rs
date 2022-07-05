@@ -233,32 +233,5 @@ mod tests {
         assert_eq!(STR_1236018655, "1236018655");
     }
 
-    macro_rules! const_encoding {
-        ($e:expr) => {{
-            const E: $crate::Encoding<'static> = $e;
-            const X: [u8; static_encoding_str_len(E)] = static_encoding_str_array(E);
-            unsafe { core::str::from_utf8_unchecked(&X) }
-        }};
-    }
-
-    #[test]
-    fn test_const_encoding() {
-        const CHAR: &str = const_encoding!(Encoding::Char);
-        assert_eq!(CHAR, "c");
-        const BLOCK: &str = const_encoding!(Encoding::Block);
-        assert_eq!(BLOCK, "@?");
-        const STRUCT: &str =
-            const_encoding!(Encoding::Struct("abc", &[Encoding::Int, Encoding::Double]));
-        assert_eq!(STRUCT, "{abc=id}");
-        const VARIOUS: &str = const_encoding!(Encoding::Struct(
-            "abc",
-            &[
-                Encoding::Pointer(&Encoding::Array(8, &Encoding::Bool)),
-                Encoding::Union("def", &[Encoding::Block]),
-                Encoding::Pointer(&Encoding::Pointer(&Encoding::BitField(255, &Encoding::Int))),
-                Encoding::Unknown,
-            ]
-        ));
-        assert_eq!(VARIOUS, "{abc=^[8B](def=@?)^^b255?}");
-    }
+    // static encoding tests are in `encoding.rs`
 }

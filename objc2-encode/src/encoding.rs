@@ -284,6 +284,7 @@ impl fmt::Display for Encoding<'_> {
 #[cfg(test)]
 mod tests {
     use super::Encoding;
+    use crate::static_str::{static_encoding_str_array, static_encoding_str_len};
     use alloc::string::ToString;
 
     fn send_sync<T: Send + Sync>() {}
@@ -294,68 +295,213 @@ mod tests {
     }
 
     #[test]
-    fn test_array_display() {
-        let e = Encoding::Array(12, &Encoding::Int);
-        assert_eq!(e.to_string(), "[12i]");
-        assert!(e.equivalent_to_str("[12i]"));
+    fn smoke() {
+        assert!(Encoding::Short.equivalent_to_str("s"));
     }
 
     #[test]
-    fn test_pointer_display() {
-        let e = Encoding::Pointer(&Encoding::Int);
-        assert_eq!(e.to_string(), "^i");
-        assert!(e.equivalent_to_str("^i"));
+    fn qualifiers() {
+        assert!(Encoding::Void.equivalent_to_str("v"));
+        assert!(Encoding::Void.equivalent_to_str("Vv"));
+        assert!(Encoding::String.equivalent_to_str("*"));
+        assert!(Encoding::String.equivalent_to_str("r*"));
     }
 
-    #[test]
-    fn test_pointer_eq() {
-        let i = Encoding::Int;
-        let p = Encoding::Pointer(&Encoding::Int);
+    macro_rules! assert_enc {
+        ($(
+            fn $name:ident() {
+                $encoding:expr;
+                $(
+                    ~$equivalent_encoding:expr;
+                )*
+                $(
+                    !$not_encoding:expr;
+                )*
+                $string:literal;
+                $(
+                    ~$equivalent_string:expr;
+                )*
+                $(
+                    !$not_string:literal;
+                )*
+            }
+        )+) => {$(
+            #[test]
+            fn $name() {
+                const E: Encoding<'static> = $encoding;
 
-        assert_eq!(p, p);
-        assert_ne!(p, i);
+                // Check PartialEq
+                assert_eq!(E, E);
+
+                // Check Display
+                assert_eq!(E.to_string(), $string);
+
+                // Check equivalence comparisons
+                assert!(E.equivalent_to(&E));
+                assert!(E.equivalent_to_str($string));
+                assert_eq!(E.equivalent_to_start_of_str(concat!($string, "xyz")), Some("xyz"));
+                $(
+                    assert!(E.equivalent_to(&$equivalent_encoding));
+                    assert!(E.equivalent_to_str(&$equivalent_encoding.to_string()));
+                )*
+                $(
+                    assert!(E.equivalent_to_str($equivalent_string));
+                )*
+
+                // Negative checks
+                $(
+                    assert_ne!(E, $not_encoding);
+                    assert!(!E.equivalent_to(&$not_encoding));
+                    assert!(!E.equivalent_to_str(&$not_encoding.to_string()));
+                )*
+                $(
+                    assert!(!E.equivalent_to_str(&$not_string));
+                )*
+
+                // Check static str
+                const STATIC_ENCODING_DATA: [u8; static_encoding_str_len(E)] = static_encoding_str_array(E);
+                const STATIC_ENCODING_STR: &str = unsafe { core::str::from_utf8_unchecked(&STATIC_ENCODING_DATA) };
+                assert_eq!(STATIC_ENCODING_STR, $string);
+            }
+        )+};
     }
 
-    #[test]
-    fn test_int_display() {
-        assert_eq!(Encoding::Int.to_string(), "i");
-        assert!(Encoding::Int.equivalent_to_str("i"));
-    }
+    assert_enc! {
+        fn int() {
+            Encoding::Int;
+            !Encoding::Char;
+            "i";
+        }
 
-    #[test]
-    fn test_eq() {
-        let i = Encoding::Int;
-        let c = Encoding::Char;
+        fn char() {
+            Encoding::Char;
+            !Encoding::Int;
+            "c";
+            // Qualifiers
+            ~"rc";
+            ~"nc";
+            ~"Nc";
+            ~"oc";
+            ~"Oc";
+            ~"Rc";
+            ~"Vc";
 
-        assert_eq!(i, i);
-        assert_ne!(i, c);
-    }
+            !"ri";
+        }
 
-    #[test]
-    fn test_struct_display() {
-        let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(s.to_string(), "{CGPoint=ci}");
-        assert!(s.equivalent_to_str("{CGPoint=ci}"));
-    }
+        fn block() {
+            Encoding::Block;
+            "@?";
+        }
 
-    #[test]
-    fn test_struct_eq() {
-        let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(s, s);
-        assert_ne!(s, Encoding::Int);
-    }
+        fn object() {
+            Encoding::Object;
+            !Encoding::Block;
+            "@";
+            !"@?";
+        }
 
-    #[test]
-    fn test_union_display() {
-        let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(u.to_string(), "(Onion=ci)");
-        assert!(u.equivalent_to_str("(Onion=ci)"));
-    }
+        fn unknown() {
+            Encoding::Unknown;
+            !Encoding::Block;
+            "?";
+        }
 
-    #[test]
-    fn test_union_eq() {
-        let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(u, u);
-        assert_ne!(u, Encoding::Int);
+        fn object_unknown_in_struct() {
+            Encoding::Struct("S", &[Encoding::Object, Encoding::Unknown]);
+            // TODO:
+            // | Encoding::Struct("S", &[Encoding::Block]);
+            "{S=@?}";
+        }
+
+        fn double() {
+            Encoding::Double;
+            "d";
+        }
+
+        fn bitfield() {
+            Encoding::BitField(32, &Encoding::Int);
+            !Encoding::Int;
+            !Encoding::BitField(33, &Encoding::Int);
+            "b32";
+            !"b32a";
+            !"b";
+            !"b-32";
+        }
+
+        fn pointer() {
+            Encoding::Pointer(&Encoding::Int);
+            !Encoding::Pointer(&Encoding::Char);
+            !Encoding::Pointer(&Encoding::Pointer(&Encoding::Int));
+            "^i";
+        }
+
+        fn array() {
+            Encoding::Array(12, &Encoding::Int);
+            !Encoding::Int;
+            !Encoding::Array(11, &Encoding::Int);
+            !Encoding::Array(12, &Encoding::Char);
+            "[12i]";
+            !"[12i";
+        }
+
+        fn struct_() {
+            Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]);
+            !Encoding::Union("SomeStruct", &[Encoding::Char, Encoding::Int]);
+            !Encoding::Int;
+            !Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]);
+            !Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]);
+            "{SomeStruct=ci}";
+            !"{SomeStruct=ci";
+            !"{SomeStruct}";
+            !"{SomeStruct=}";
+        }
+
+        fn struct_unicode() {
+            Encoding::Struct("☃", &[Encoding::Char]);
+            "{☃=c}";
+        }
+
+        fn empty_struct() {
+            Encoding::Struct("SomeStruct", &[]);
+            "{SomeStruct=}";
+            // TODO: Unsure about this
+            !"{SomeStruct}";
+        }
+
+        fn union_() {
+            Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
+            !Encoding::Struct("Onion", &[Encoding::Char, Encoding::Int]);
+            !Encoding::Int;
+            !Encoding::Union("Onion", &[Encoding::Int, Encoding::Char]);
+            !Encoding::Union("AnotherUnion", &[Encoding::Char, Encoding::Int]);
+            "(Onion=ci)";
+            !"(Onion=ci";
+        }
+
+        fn nested() {
+            Encoding::Struct(
+                "A",
+                &[
+                    Encoding::Struct("B", &[Encoding::Int]),
+                    Encoding::Char,
+                ],
+            );
+            "{A={B=i}c}";
+            !"{A={B=i}c";
+        }
+
+        fn various() {
+            Encoding::Struct(
+                "abc",
+                &[
+                    Encoding::Pointer(&Encoding::Array(8, &Encoding::Bool)),
+                    Encoding::Union("def", &[Encoding::Block]),
+                    Encoding::Pointer(&Encoding::Pointer(&Encoding::BitField(255, &Encoding::Int))),
+                    Encoding::Unknown,
+                ]
+            );
+            "{abc=^[8B](def=@?)^^b255?}";
+        }
     }
 }

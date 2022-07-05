@@ -53,14 +53,34 @@ macro_rules! assert_inner {
 macro_rules! assert_types {
     ($(
         $(#[$m:meta])*
-        $stat:ident => $type:ty,
+        $stat:ident => $type:ident $($encoding:expr)?,
     )+) => {$(
+        assert_types!(@ $(#[$m])* $stat => $type $($encoding)?);
+    )+};
+    (@
+        $(#[$m:meta])*
+        $stat:ident => enc $encoding:expr
+    ) => {
+        paste! {
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat>] => $encoding);
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => Encoding::Pointer(&$encoding));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER>] => Encoding::Pointer(&Encoding::Pointer(&$encoding)));
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER_POINTER>] => Encoding::Pointer(&Encoding::Pointer(&Encoding::Pointer(&$encoding))));
+            assert_inner!(str $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => format!("A{}", $encoding));
+        }
+    };
+    (@
+        $(#[$m:meta])*
+        $stat:ident => $type:ident
+    ) => {
         paste! {
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat>] => <$type>::ENCODING);
-            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => <$type>::ENCODING_REF);
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => <*const $type>::ENCODING);
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER>] => <*const *const $type>::ENCODING);
+            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER_POINTER>] => <*const *const *const $type>::ENCODING);
             assert_inner!(str $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => format!("A{}", <$type>::ENCODING));
         }
-    )+};
+    };
 }
 
 assert_types! {
@@ -74,17 +94,20 @@ assert_types! {
     UNSIGNED_SHORT => c_ushort,
     INT => c_int,
     UNSIGNED_INT => c_uint,
-    // LONG => c_long,
-    // UNSIGNED_LONG => c_ulong,
+    // `long` is weird:
+    LONG => enc Encoding::C_LONG,
+    // `unsigned long` is weird:
+    UNSIGNED_LONG => enc Encoding::C_ULONG,
     LONG_LONG => c_longlong,
     UNSIGNED_LONG_LONG => c_ulonglong,
     FLOAT => c_float,
     DOUBLE => c_double,
-    // LONG_DOUBLE => c_longdouble,
+    // No appropriate Rust types for these:
+    LONG_DOUBLE => enc Encoding::LongDouble, // long double
+    FLOAT_COMPLEX => enc Encoding::FloatComplex, // float _Complex
+    DOUBLE_COMPLEX => enc Encoding::DoubleComplex, // double _Complex
+    LONG_DOUBLE_COMPLEX => enc Encoding::LongDoubleComplex, // long double _Complex
 
-    // FLOAT_COMPLEX => float _Complex,
-    // DOUBLE_COMPLEX => double _Complex,
-    // LONG_DOUBLE_COMPLEX => long double _Complex,
     // TODO:
     // FLOAT_IMAGINARY => float _Imaginary,
     // DOUBLE_IMAGINARY => double _Imaginary,
@@ -113,9 +136,10 @@ assert_types! {
     // Objective-C
 
     OBJC_BOOL => Bool,
-    ID => *mut Object,
-    CLASS => &Class,
-    // SEL => Sel,
+    ID => enc <*mut Object>::ENCODING,
+    CLASS => enc <&Class>::ENCODING,
+    // Sel is (intentionally) not RefEncode
+    SEL => enc <Sel>::ENCODING,
     NS_INTEGER => NSInteger,
     NS_UINTEGER => NSUInteger,
 
@@ -152,44 +176,11 @@ assert_types! {
     // UNSIGNED_INT_128 => u128,
 }
 
-// Sel is (intentionally) not RefEncode
-assert_inner!(enc ENCODING_SEL => Sel::ENCODING);
-assert_inner!(enc ENCODING_SEL_POINTER => Encoding::Pointer(&Sel::ENCODING));
-assert_inner!(str ENCODING_SEL_ATOMIC => format!("A{}", Sel::ENCODING));
-
 // _Atomic void* is not available
 assert_inner!(enc ENCODING_VOID => <()>::ENCODING);
 assert_inner!(enc ENCODING_VOID_POINTER => <*const c_void>::ENCODING);
 assert_inner!(str ENCODING_VOID_POINTER_CONST => format!("r{}", <*const c_void>::ENCODING));
 assert_inner!(enc ENCODING_VOID_POINTER_POINTER => <*const *const c_void>::ENCODING);
-
-// `[unsigned] long`s are weird:
-
-assert_inner!(enc ENCODING_LONG => Encoding::C_LONG);
-assert_inner!(enc ENCODING_LONG_POINTER => Encoding::Pointer(&Encoding::C_LONG));
-assert_inner!(str ENCODING_LONG_ATOMIC => format!("A{}", Encoding::C_LONG));
-
-assert_inner!(enc ENCODING_UNSIGNED_LONG => Encoding::C_ULONG);
-assert_inner!(enc ENCODING_UNSIGNED_LONG_POINTER => Encoding::Pointer(&Encoding::C_ULONG));
-assert_inner!(str ENCODING_UNSIGNED_LONG_ATOMIC => format!("A{}", Encoding::C_ULONG));
-
-// No appropriate Rust types for these:
-
-assert_inner!(enc ENCODING_LONG_DOUBLE => Encoding::LongDouble);
-assert_inner!(enc ENCODING_LONG_DOUBLE_POINTER => Encoding::Pointer(&Encoding::LongDouble));
-assert_inner!(str ENCODING_LONG_DOUBLE_ATOMIC => format!("A{}", Encoding::LongDouble));
-
-assert_inner!(enc ENCODING_FLOAT_COMPLEX => Encoding::FloatComplex);
-assert_inner!(enc ENCODING_FLOAT_COMPLEX_POINTER => Encoding::Pointer(&Encoding::FloatComplex));
-assert_inner!(str ENCODING_FLOAT_COMPLEX_ATOMIC => format!("A{}", Encoding::FloatComplex));
-
-assert_inner!(enc ENCODING_DOUBLE_COMPLEX => Encoding::DoubleComplex);
-assert_inner!(enc ENCODING_DOUBLE_COMPLEX_POINTER => Encoding::Pointer(&Encoding::DoubleComplex));
-assert_inner!(str ENCODING_DOUBLE_COMPLEX_ATOMIC => format!("A{}", Encoding::DoubleComplex));
-
-assert_inner!(enc ENCODING_LONG_DOUBLE_COMPLEX => Encoding::LongDoubleComplex);
-assert_inner!(enc ENCODING_LONG_DOUBLE_COMPLEX_POINTER => Encoding::Pointer(&Encoding::LongDoubleComplex));
-assert_inner!(str ENCODING_LONG_DOUBLE_COMPLEX_ATOMIC => format!("A{}", Encoding::LongDoubleComplex));
 
 // Structs (atomics or double indirection erase type information)
 
