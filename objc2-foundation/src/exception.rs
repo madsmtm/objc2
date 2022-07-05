@@ -1,4 +1,5 @@
 use core::hint::unreachable_unchecked;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::exception::Exception;
 use objc2::rc::{Id, Shared};
@@ -24,6 +25,9 @@ object! {
 // thread safe.
 unsafe impl Sync for NSException {}
 unsafe impl Send for NSException {}
+
+impl UnwindSafe for NSException {}
+impl RefUnwindSafe for NSException {}
 
 type NSExceptionName = NSString;
 

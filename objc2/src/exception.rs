@@ -182,6 +182,8 @@ impl RefUnwindSafe for Exception {}
 
 /// Throws an Objective-C exception.
 ///
+/// This is the Objective-C equivalent of Rust's [`panic!`].
+///
 ///
 /// # Safety
 ///
@@ -264,16 +266,19 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception,
 /// Tries to execute the given closure and catches an Objective-C exception
 /// if one is thrown.
 ///
+/// This is the Objective-C equivalent of Rust's [`catch_unwind`].
+/// Accordingly, if your Rust code is compiled with `panic=abort` this cannot
+/// catch the exception.
+///
 /// Returns a `Result` that is either `Ok` if the closure succeeded without an
 /// exception being thrown, or an `Err` with the exception. The exception is
 /// automatically released.
 ///
-/// Note that if your Rust code is compiled with `panic=abort` this cannot
-/// catch the exception.
-///
 /// The exception is `None` in the extremely exceptional case that the
 /// exception object is `nil`. This should basically never happen, but is
 /// technically possible on some systems with `@throw nil`.
+///
+/// [`catch_unwind`]: std::panic::catch_unwind
 ///
 ///
 /// # Safety
@@ -287,7 +292,9 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception,
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[cfg(feature = "exception")]
-pub unsafe fn catch<R>(closure: impl FnOnce() -> R) -> Result<R, Option<Id<Exception, Shared>>> {
+pub unsafe fn catch<R>(
+    closure: impl FnOnce() -> R + UnwindSafe,
+) -> Result<R, Option<Id<Exception, Shared>>> {
     let mut value = None;
     let value_ref = &mut value;
     let closure = move || {

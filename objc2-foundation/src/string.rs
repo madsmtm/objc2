@@ -2,6 +2,8 @@ use alloc::borrow::ToOwned;
 use core::cmp;
 use core::ffi::c_void;
 use core::fmt;
+use core::panic::RefUnwindSafe;
+use core::panic::UnwindSafe;
 use core::ptr::NonNull;
 use core::slice;
 use core::str;
@@ -41,6 +43,9 @@ object! {
 // TODO: SAFETY
 unsafe impl Sync for NSString {}
 unsafe impl Send for NSString {}
+
+impl UnwindSafe for NSString {}
+impl RefUnwindSafe for NSString {}
 
 impl NSString {
     unsafe_def_fn! {

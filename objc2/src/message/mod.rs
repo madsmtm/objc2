@@ -9,6 +9,7 @@ use crate::{Encode, EncodeArguments, RefEncode};
 #[cfg(feature = "catch_all")]
 #[track_caller]
 unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
+    let f = core::panic::AssertUnwindSafe(f);
     match unsafe { crate::exception::catch(f) } {
         Ok(r) => r,
         Err(exception) => {
