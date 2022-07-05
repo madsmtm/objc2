@@ -1,7 +1,7 @@
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
-use objc2::{msg_send, msg_send_bool, msg_send_id};
 
+use super::ffi;
 use super::NSString;
 
 object! {
@@ -10,23 +10,29 @@ object! {
 }
 
 impl NSObject {
-    unsafe_def_fn!(pub fn new -> Owned);
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { Id::cast(ffi::NSObject::new().unwrap()).into_owned() }
+    }
+
+    fn r(&self) -> &ffi::NSObject {
+        unsafe { &*(self as *const Self as *const ffi::NSObject) }
+    }
 
     pub fn hash_code(&self) -> usize {
-        unsafe { msg_send![self, hash] }
+        unsafe { self.r().hash() }
     }
 
     pub fn is_equal(&self, other: &NSObject) -> bool {
-        unsafe { msg_send_bool![self, isEqual: other] }
+        unsafe { self.r().isEqual_(other.r()).as_bool() }
     }
 
     pub fn description(&self) -> Id<NSString, Shared> {
         // TODO: Verify that description always returns a non-null string
-        unsafe { msg_send_id![self, description].unwrap() }
+        unsafe { Id::cast(self.r().description().unwrap()).into_shared() }
     }
 
     pub fn is_kind_of(&self, cls: &Class) -> bool {
-        unsafe { msg_send_bool![self, isKindOfClass: cls] }
+        unsafe { self.r().isKindOfClass_(cls).as_bool() }
     }
 }
 

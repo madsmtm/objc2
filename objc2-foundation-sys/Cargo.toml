@@ -1,0 +1,45 @@
+[package]
+name = "objc2-foundation-sys"
+version = "0.0.1" # Remember to update html_root_url in lib.rs
+authors = ["Mads Marquart <mads@marquart.dk>"]
+edition = "2021"
+
+# TODO: More metadata
+
+[features]
+default = ["std", "apple"]
+
+std = ["alloc", "objc2/std"]
+alloc = ["objc2/alloc"]
+
+apple = ["objc2/apple"]
+gnustep-1-7 = ["objc2/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1"]
+
+[dependencies]
+objc2 = { path = "../objc2", default-features = false }
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"
+features = ["block"]
+
+targets = [
+    # MacOS
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
+    # "i686-apple-darwin",
+    # iOS
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    # "armv7-apple-ios",
+    # "i386-apple-ios",
+    # GNUStep
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+    # Windows
+    "x86_64-pc-windows-msvc",
+]
+

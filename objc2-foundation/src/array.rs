@@ -3,6 +3,7 @@ use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut, Range};
+use core::ptr::NonNull;
 
 use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
@@ -10,8 +11,8 @@ use objc2::runtime::{Class, Object};
 use objc2::Message;
 
 use super::{
-    NSComparisonResult, NSCopying, NSEnumerator, NSFastEnumeration, NSMutableCopying, NSObject,
-    NSRange,
+    ffi, NSComparisonResult, NSCopying, NSEnumerator, NSFastEnumeration, NSMutableCopying,
+    NSObject, NSRange,
 };
 
 object! {
@@ -55,6 +56,11 @@ unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Objec
             count: refs.len(),
         ]
     }
+
+    // let ptr = unsafe { NonNull::new_unchecked(refs.as_ptr() as *mut _) };
+    // let obj: *mut ffi::NSArray = unsafe { msg_send![cls, alloc] };
+    // let obj = unsafe { ffi::NSArray::initWithObjects_count_(obj, ptr, refs.len()) };
+    // unsafe { obj.cast() }
 }
 
 impl<T: Message> NSArray<T, Shared> {
@@ -64,9 +70,13 @@ impl<T: Message> NSArray<T, Shared> {
 }
 
 impl<T: Message, O: Ownership> NSArray<T, O> {
+    fn r(&self) -> &ffi::NSArray {
+        unsafe { &*(self as *const Self as *const ffi::NSArray) }
+    }
+
     #[doc(alias = "count")]
     pub fn len(&self) -> usize {
-        unsafe { msg_send![self, count] }
+        unsafe { self.r().count() }
     }
 
     pub fn is_empty(&self) -> bool {
@@ -78,7 +88,7 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
         // TODO: Replace this check with catching the thrown NSRangeException
         if index < self.len() {
             // SAFETY: The index is checked to be in bounds.
-            Some(unsafe { msg_send![self, objectAtIndex: index] })
+            Some(unsafe { self.r().objectAtIndex_(index).cast().as_ref() })
         } else {
             None
         }
@@ -86,12 +96,12 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
 
     #[doc(alias = "firstObject")]
     pub fn first(&self) -> Option<&T> {
-        unsafe { msg_send![self, firstObject] }
+        unsafe { self.r().firstObject().map(|ptr| ptr.cast().as_ref()) }
     }
 
     #[doc(alias = "lastObject")]
     pub fn last(&self) -> Option<&T> {
-        unsafe { msg_send![self, lastObject] }
+        unsafe { self.r().lastObject().map(|ptr| ptr.cast().as_ref()) }
     }
 
     #[doc(alias = "objectEnumerator")]
@@ -113,7 +123,9 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
         let range = NSRange::from(range);
         let mut vec = Vec::with_capacity(range.length);
         unsafe {
-            let _: () = msg_send![self, getObjects: vec.as_ptr(), range: range];
+            let tmp = [range.location, range.length]; // TMP
+            let ptr = NonNull::new_unchecked(vec.as_mut_ptr()).cast();
+            self.r().getObjects_range_(ptr, tmp);
             vec.set_len(range.length);
         }
         vec
@@ -159,7 +171,7 @@ impl<T: Message> NSArray<T, Owned> {
         // TODO: Replace this check with catching the thrown NSRangeException
         if index < self.len() {
             // SAFETY: The index is checked to be in bounds.
-            Some(unsafe { msg_send![self, objectAtIndex: index] })
+            Some(unsafe { self.r().objectAtIndex_(index).cast().as_mut() })
         } else {
             None
         }
@@ -167,12 +179,12 @@ impl<T: Message> NSArray<T, Owned> {
 
     #[doc(alias = "firstObject")]
     pub fn first_mut(&mut self) -> Option<&mut T> {
-        unsafe { msg_send![self, firstObject] }
+        unsafe { self.r().firstObject().map(|ptr| ptr.cast().as_mut()) }
     }
 
     #[doc(alias = "lastObject")]
     pub fn last_mut(&mut self) -> Option<&mut T> {
-        unsafe { msg_send![self, lastObject] }
+        unsafe { self.r().lastObject().map(|ptr| ptr.cast().as_mut()) }
     }
 }
 

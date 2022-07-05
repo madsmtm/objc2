@@ -7,14 +7,13 @@ use core::slice;
 use core::str;
 use std::os::raw::c_char;
 
-use objc2::ffi;
 use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{msg_send, msg_send_bool};
 
-use crate::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
+use crate::{ffi, NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;
@@ -23,7 +22,7 @@ const UTF8_ENCODING: i32 = 4;
 
 #[allow(unused)]
 #[allow(non_upper_case_globals)]
-const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
+const NSNotFound: objc2::ffi::NSInteger = objc2::ffi::NSIntegerMax;
 
 object! {
     /// A static, plain-text Unicode string object.
@@ -48,11 +47,18 @@ impl NSString {
         pub fn new -> Shared;
     }
 
+    fn r(&self) -> &ffi::NSString {
+        unsafe { &*(self as *const Self as *const ffi::NSString) }
+    }
+
     /// The number of UTF-8 code units in `self`.
     #[doc(alias = "lengthOfBytesUsingEncoding")]
     #[doc(alias = "lengthOfBytesUsingEncoding:")]
     pub fn len(&self) -> usize {
-        unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
+        unsafe {
+            self.r()
+                .lengthOfBytesUsingEncoding_(ffi::NSUTF8StringEncoding)
+        }
     }
 
     /// The number of UTF-16 code units in `self`.
@@ -139,7 +145,7 @@ impl NSString {
         // NSString OR the lifetime of the innermost @autoreleasepool.
         //
         // https://developer.apple.com/documentation/foundation/nsstring/1411189-utf8string?language=objc
-        let bytes: *const c_char = unsafe { msg_send![self, UTF8String] };
+        let bytes: *const c_char = unsafe { self.r().UTF8String() };
         let bytes: *const u8 = bytes.cast();
         let len = self.len();
 
@@ -164,9 +170,18 @@ impl NSString {
     #[doc(alias = "initWithBytes:length:encoding:")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name
     pub fn from_str(string: &str) -> Id<Self, Shared> {
+        let bytes = string.as_ptr() as *const c_void;
         unsafe {
-            let obj = from_str(Self::class(), string);
-            Id::new(obj.cast()).unwrap()
+            Id::cast(
+                ffi::NSString::initWithBytes_length_encoding_(
+                    ffi::NSString::alloc(),
+                    bytes,
+                    string.len(),
+                    ffi::NSUTF8StringEncoding,
+                )
+                .unwrap(),
+            )
+            .into_shared()
         }
     }
 
