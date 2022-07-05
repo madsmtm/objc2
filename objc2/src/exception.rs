@@ -2,7 +2,7 @@
 //!
 //! By default, if the [`msg_send!`] macro causes an exception to be thrown,
 //! this will unwind into Rust, resulting in undefined behavior. However, this
-//! crate has an `"catch_all"` feature which, when enabled, wraps each
+//! crate has an `"catch-all"` feature which, when enabled, wraps each
 //! [`msg_send!`] in a `@catch` and panics if an exception is caught,
 //! preventing Objective-C from unwinding into Rust.
 //!
@@ -134,7 +134,7 @@ impl Exception {
 // This is not in any way efficient, but that's not really the point!
 //
 // We mostly just want to present a somewhat usable error message when the
-// `catch_all` feature is enabled!
+// `catch-all` feature is enabled!
 impl fmt::Debug for Exception {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "exception {:?}", self.0)?;

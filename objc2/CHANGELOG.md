@@ -52,6 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Improved debug output with `verify_message` feature enabled.
 * **BREAKING**: Changed `MessageReceiver::send_message` to panic instead of
   returning an error.
+* **BREAKING**: Renamed `catch_all` feature to `catch-all`.
 
 ### Fixed
 * **BREAKING**: Disallow throwing `nil` exceptions in `exception::throw`.

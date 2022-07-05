@@ -154,7 +154,7 @@ jobs:
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
       SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception' }}
-      FEATURES: ${{ matrix.features || 'malloc,block,exception,catch_all,verify_message' }}
+      FEATURES: ${{ matrix.features || 'malloc,block,exception,catch-all,verify_message' }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
 
     runs-on: ${{ matrix.os }}

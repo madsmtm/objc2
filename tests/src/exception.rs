@@ -14,8 +14,8 @@ fn assert_retain_count(obj: &Object, expected: usize) {
 
 #[test]
 #[cfg_attr(
-    feature = "catch_all",
-    ignore = "Panics inside `catch` when catch_all is enabled"
+    feature = "catch-all",
+    ignore = "Panics inside `catch` when catch-all is enabled"
 )]
 fn throw_catch_raise_catch() {
     let name = NSString::from_str("abc");
@@ -56,7 +56,7 @@ fn throw_catch_raise_catch() {
 }
 
 #[test]
-#[cfg(feature = "catch_all")]
+#[cfg(feature = "catch-all")]
 #[should_panic = "uncaught exception <NSException: 0x"]
 fn raise_catch_all1() {
     let name = NSString::from_str("abc");
@@ -67,7 +67,7 @@ fn raise_catch_all1() {
 }
 
 #[test]
-#[cfg(feature = "catch_all")]
+#[cfg(feature = "catch-all")]
 #[should_panic = "> 'abc' reason:def"]
 fn raise_catch_all2() {
     let name = NSString::from_str("abc");
@@ -79,8 +79,8 @@ fn raise_catch_all2() {
 
 #[test]
 #[cfg_attr(
-    feature = "catch_all",
-    ignore = "Panics inside `catch` when catch_all is enabled"
+    feature = "catch-all",
+    ignore = "Panics inside `catch` when catch-all is enabled"
 )]
 fn raise_catch() {
     let name = NSString::from_str("abc");
@@ -116,8 +116,8 @@ fn raise_catch() {
 
 #[test]
 #[cfg_attr(
-    feature = "catch_all",
-    ignore = "Panics inside `catch` when catch_all is enabled"
+    feature = "catch-all",
+    ignore = "Panics inside `catch` when catch-all is enabled"
 )]
 fn catch_actual() {
     let res = unsafe {

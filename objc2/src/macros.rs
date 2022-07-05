@@ -390,7 +390,7 @@ macro_rules! __sel_inner {
 ///
 /// # Panics
 ///
-/// Panics if the `"catch_all"` feature is enabled and the Objective-C method
+/// Panics if the `"catch-all"` feature is enabled and the Objective-C method
 /// throws an exception. Exceptions may still cause UB until
 /// `extern "C-unwind"` is stable, see [RFC-2945].
 ///

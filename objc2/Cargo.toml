@@ -29,7 +29,7 @@ alloc = ["objc2-encode/alloc", "objc-sys/alloc"]
 exception = ["objc-sys/unstable-exception"]
 
 # Wrap every `objc2::msg_send` call in a `@try/@catch` block
-catch_all = ["exception"]
+catch-all = ["exception"]
 
 # Verify type encodings on every message send
 # Only intended to be used while debugging!
