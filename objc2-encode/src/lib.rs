@@ -108,6 +108,7 @@ extern crate alloc;
 
 mod encode;
 mod encoding;
+mod helper;
 mod parse;
 
 // Will be used at some point when generic constants are available

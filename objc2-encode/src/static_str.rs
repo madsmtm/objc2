@@ -1,3 +1,5 @@
+use crate::helper::Helper;
+
 use super::Encoding;
 
 pub(crate) const fn static_int_str_len(mut n: u128) -> usize {
@@ -37,18 +39,16 @@ pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u128) -> [u8; 
 }
 
 pub(crate) const fn static_encoding_str_len(encoding: Encoding<'_>) -> usize {
-    use Encoding::*;
+    use Helper::*;
 
-    match encoding {
-        Char | Short | Int | Long | LongLong | UChar | UShort | UInt | ULong | ULongLong
-        | Float | Double | LongDouble | Bool | Void | String | Object | Class | Sel | Unknown => 1,
-        Block | FloatComplex | DoubleComplex | LongDoubleComplex => 2,
+    match Helper::new(encoding) {
+        Primitive(primitive) => primitive.to_str().len(),
         BitField(b, _type) => 1 + static_int_str_len(b as u128),
-        Atomic(&t) | Pointer(&t) => 1 + static_encoding_str_len(t),
+        Indirection(_, &t) => 1 + static_encoding_str_len(t),
         Array(len, &item) => {
             1 + static_int_str_len(len as u128) + static_encoding_str_len(item) + 1
         }
-        Struct(name, items) | Union(name, items) => {
+        Container(_, name, items) => {
             let mut res = 1 + name.len() + 1;
             let mut i = 0;
             while i < items.len() {
@@ -63,50 +63,21 @@ pub(crate) const fn static_encoding_str_len(encoding: Encoding<'_>) -> usize {
 pub(crate) const fn static_encoding_str_array<const LEN: usize>(
     encoding: Encoding<'_>,
 ) -> [u8; LEN] {
-    use Encoding::*;
+    use Helper::*;
 
     let mut res: [u8; LEN] = [0; LEN];
+    let mut res_i = 0;
 
-    match encoding {
-        Char => res[0] = b'c',
-        Short => res[0] = b's',
-        Int => res[0] = b'i',
-        Long => res[0] = b'l',
-        LongLong => res[0] = b'q',
-        UChar => res[0] = b'C',
-        UShort => res[0] = b'S',
-        UInt => res[0] = b'I',
-        ULong => res[0] = b'L',
-        ULongLong => res[0] = b'Q',
-        Float => res[0] = b'f',
-        Double => res[0] = b'd',
-        LongDouble => res[0] = b'D',
-        FloatComplex => {
-            res[0] = b'j';
-            res[1] = b'f';
+    match Helper::new(encoding) {
+        Primitive(primitive) => {
+            let s = primitive.to_str().as_bytes();
+            let mut i = 0;
+            while i < s.len() {
+                res[i] = s[i];
+                i += 1;
+            }
         }
-        DoubleComplex => {
-            res[0] = b'j';
-            res[1] = b'd';
-        }
-        LongDoubleComplex => {
-            res[0] = b'j';
-            res[1] = b'D';
-        }
-        Bool => res[0] = b'B',
-        Void => res[0] = b'v',
-        Block => {
-            res[0] = b'@';
-            res[1] = b'?';
-        }
-        String => res[0] = b'*',
-        Object => res[0] = b'@',
-        Class => res[0] = b'#',
-        Sel => res[0] = b':',
-        Unknown => res[0] = b'?',
         BitField(b, &_type) => {
-            let mut res_i = 0;
-
             res[res_i] = b'b';
             res_i += 1;
 
@@ -119,25 +90,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
         }
-        Pointer(&t) => {
-            let mut res_i = 0;
-
-            res[res_i] = b'^';
-            res_i += 1;
-
-            let mut i = 0;
-            // We use LEN even though it creates an oversized array
-            let arr = static_encoding_str_array::<LEN>(t);
-            while i < static_encoding_str_len(t) {
-                res[res_i] = arr[i];
-                res_i += 1;
-                i += 1;
-            }
-        }
-        Atomic(&t) => {
-            let mut res_i = 0;
-
-            res[res_i] = b'A';
+        Indirection(kind, &t) => {
+            res[res_i] = kind.prefix_byte();
             res_i += 1;
 
             let mut i = 0;
@@ -175,14 +129,10 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
 
             res[res_i] = b']';
         }
-        Struct(name, items) | Union(name, items) => {
+        Container(kind, name, items) => {
             let mut res_i = 0;
 
-            match encoding {
-                Struct(_, _) => res[res_i] = b'{',
-                Union(_, _) => res[res_i] = b'(',
-                _ => {}
-            };
+            res[res_i] = kind.start_byte();
             res_i += 1;
 
             let mut name_i = 0;
@@ -210,11 +160,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 items_i += 1;
             }
 
-            match encoding {
-                Struct(_, _) => res[res_i] = b'}',
-                Union(_, _) => res[res_i] = b')',
-                _ => {}
-            };
+            res[res_i] = kind.end_byte();
         }
     };
     res

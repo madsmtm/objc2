@@ -1,5 +1,6 @@
 use core::fmt;
 
+use crate::helper::Helper;
 use crate::parse;
 
 /// An Objective-C type-encoding.
@@ -225,61 +226,29 @@ impl Encoding<'_> {
 /// Objective-C compilers.
 impl fmt::Display for Encoding<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use Encoding::*;
-        let code = match *self {
-            Char => "c",
-            Short => "s",
-            Int => "i",
-            Long => "l",
-            LongLong => "q",
-            UChar => "C",
-            UShort => "S",
-            UInt => "I",
-            ULong => "L",
-            ULongLong => "Q",
-            Float => "f",
-            Double => "d",
-            LongDouble => "D",
-            FloatComplex => "jf",
-            DoubleComplex => "jd",
-            LongDoubleComplex => "jD",
-            Bool => "B",
-            Void => "v",
-            String => "*",
-            Object => "@",
-            Block => "@?",
-            Class => "#",
-            Sel => ":",
-            Unknown => "?",
+        use Helper::*;
+        match Helper::new(*self) {
+            Primitive(primitive) => f.write_str(primitive.to_str()),
             BitField(b, _type) => {
                 // TODO: Use the type on GNUStep
-                return write!(f, "b{}", b);
+                write!(f, "b{}", b)
             }
-            Pointer(t) => {
-                return write!(f, "^{}", t);
-            }
-            Atomic(t) => {
-                return write!(f, "A{}", t);
+            Indirection(kind, t) => {
+                write!(f, "{}", kind.prefix())?;
+                write!(f, "{}", t)
             }
             Array(len, item) => {
-                return write!(f, "[{}{}]", len, item);
+                write!(f, "[{}{}]", len, item)
             }
-            Struct(name, fields) => {
-                write!(f, "{{{}=", name)?;
+            Container(kind, name, fields) => {
+                write!(f, "{}", kind.start())?;
+                write!(f, "{}=", name)?;
                 for field in fields {
                     fmt::Display::fmt(field, f)?;
                 }
-                return f.write_str("}");
+                write!(f, "{}", kind.end())
             }
-            Union(name, members) => {
-                write!(f, "({}=", name)?;
-                for member in members {
-                    fmt::Display::fmt(member, f)?;
-                }
-                return f.write_str(")");
-            }
-        };
-        f.write_str(code)
+        }
     }
 }
 
