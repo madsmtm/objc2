@@ -12,5 +12,8 @@ mod generated;
 #[allow(improper_ctypes)] // TODO
 mod generated_nsstring;
 
+mod generated_others_shim;
+
 pub use generated::*;
 pub use generated_nsstring::*;
+pub use generated_others_shim::*;

@@ -14,7 +14,6 @@ use crate::NSObject;
 pub type NSRange = [NSUInteger; 2];
 pub type NSComparisonResult = NSInteger;
 
-pub type NSArray = NSObject;
 pub type NSCoder = NSObject;
 pub type NSLocale = NSObject;
 pub type NSError = NSObject;
