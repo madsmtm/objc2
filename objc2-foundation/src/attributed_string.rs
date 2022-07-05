@@ -6,7 +6,7 @@ use crate::{
     NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
 };
 
-object! {
+extern_class! {
     /// A string that has associated attributes for portions of its text.
     ///
     /// Examples of attributes could be: Visual style, hyperlinks, or

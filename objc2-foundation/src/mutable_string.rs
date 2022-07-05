@@ -8,7 +8,7 @@ use objc2::{msg_send, msg_send_id};
 
 use crate::{NSCopying, NSMutableCopying, NSObject, NSString};
 
-object! {
+extern_class! {
     /// A dynamic plain-text Unicode string object.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutablestring?language=objc).

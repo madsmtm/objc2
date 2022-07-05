@@ -11,7 +11,7 @@ use objc2::{msg_send, msg_send_id};
 
 use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
 
-object! {
+extern_class! {
     /// A static byte buffer in memory.
     ///
     /// This is similar to a [`slice`][`prim@slice`] of [`u8`].
@@ -25,7 +25,7 @@ object! {
 unsafe impl Sync for NSData {}
 unsafe impl Send for NSData {}
 
-object! {
+extern_class! {
     /// A dynamic byte buffer in memory.
     ///
     /// This is the Objective-C equivalent of a [`Vec`] containing [`u8`].

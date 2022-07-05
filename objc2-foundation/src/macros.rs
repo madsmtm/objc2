@@ -43,12 +43,12 @@
 /// ```
 /// use objc2::msg_send_id;
 /// use objc2::rc::{Id, Shared};
-/// use objc2_foundation::{object, NSObject};
+/// use objc2_foundation::{extern_class, NSObject};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
-/// object! {
+/// extern_class! {
 ///     /// An example description.
 ///     #[derive(PartialEq, Eq, Hash)] // Uses `NSObject`'s implementation
 ///     // Specify class and superclass
@@ -67,14 +67,14 @@
 /// declared previously to specify as its superclass.
 ///
 /// ```
-/// use objc2_foundation::{object, NSObject};
+/// use objc2_foundation::{extern_class, NSObject};
 /// #
-/// # object! {
+/// # extern_class! {
 /// #     #[derive(PartialEq, Eq, Hash)]
 /// #     unsafe pub struct NSFormatter: NSObject;
 /// # }
 ///
-/// object! {
+/// extern_class! {
 ///     #[derive(PartialEq, Eq, Hash)]
 ///     // Specify the correct inheritance chain
 ///     // `NSDateFormatter` subclasses `NSFormatter` which subclasses `NSObject`
@@ -84,12 +84,12 @@
 ///
 /// See the source code of `objc2_foundation` in general for more examples.
 #[macro_export]
-macro_rules! object {
+macro_rules! extern_class {
     (
         $(#[$m:meta])*
         unsafe $v:vis struct $name:ident: $($inheritance_chain:ty),+;
     ) => {
-        $crate::__inner_object! {
+        $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
             unsafe $v struct $name<>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {}
@@ -146,7 +146,7 @@ macro_rules! __impl_as_ref_borrow {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_object {
+macro_rules! __inner_extern_class {
     // TODO: Expose this variant in the `object` macro.
     (
         $(#[$m:meta])*
@@ -154,7 +154,7 @@ macro_rules! __inner_object {
             $($p:ident: $pty:ty,)*
         }
     ) => {
-        $crate::__inner_object! {
+        $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
             unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {

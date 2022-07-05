@@ -3,7 +3,7 @@ use objc2::rc::{Id, Shared};
 
 use crate::{NSObject, NSString};
 
-object! {
+extern_class! {
     /// A collection of information about the current process.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsprocessinfo?language=objc).

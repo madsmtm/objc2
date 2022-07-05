@@ -27,7 +27,7 @@ const UTF8_ENCODING: i32 = 4;
 #[allow(non_upper_case_globals)]
 const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
-object! {
+extern_class! {
     /// A static, plain-text Unicode string object.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring?language=objc).

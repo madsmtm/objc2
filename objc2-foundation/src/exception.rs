@@ -9,7 +9,7 @@ use objc2::{msg_send, msg_send_id, sel};
 
 use crate::{NSCopying, NSDictionary, NSObject, NSString};
 
-object! {
+extern_class! {
     /// A special condition that interrupts the normal flow of program
     /// execution.
     ///

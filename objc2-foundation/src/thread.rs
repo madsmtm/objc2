@@ -5,7 +5,7 @@ use objc2::{msg_send, msg_send_bool, msg_send_id};
 
 use crate::{NSObject, NSString};
 
-object! {
+extern_class! {
     /// A thread of execution.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsthread?language=objc).
