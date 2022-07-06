@@ -6,7 +6,7 @@ use crate::{
     NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
 };
 
-object! {
+extern_class! {
     /// A string that has associated attributes for portions of its text.
     ///
     /// Examples of attributes could be: Visual style, hyperlinks, or
@@ -19,6 +19,7 @@ object! {
     /// framework contains most of the extension methods.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsattributedstring?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSAttributedString: NSObject;
 }
 

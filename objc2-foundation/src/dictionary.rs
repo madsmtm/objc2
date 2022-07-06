@@ -9,7 +9,8 @@ use objc2::{msg_send, msg_send_id, Message};
 
 use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
 
-object! {
+__inner_extern_class! {
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSDictionary<K, V>: NSObject {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,

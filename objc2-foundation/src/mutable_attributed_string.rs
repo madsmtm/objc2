@@ -3,10 +3,11 @@ use objc2::{msg_send, msg_send_id};
 
 use crate::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
 
-object! {
+extern_class! {
     /// A mutable string that has associated attributes.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutableattributedstring?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableAttributedString: NSAttributedString, NSObject;
 }
 

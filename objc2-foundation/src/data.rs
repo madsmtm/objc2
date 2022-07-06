@@ -11,12 +11,13 @@ use objc2::{msg_send, msg_send_id};
 
 use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
 
-object! {
+extern_class! {
     /// A static byte buffer in memory.
     ///
     /// This is similar to a [`slice`][`prim@slice`] of [`u8`].
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsdata?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSData: NSObject;
 }
 
@@ -24,7 +25,7 @@ object! {
 unsafe impl Sync for NSData {}
 unsafe impl Send for NSData {}
 
-object! {
+extern_class! {
     /// A dynamic byte buffer in memory.
     ///
     /// This is the Objective-C equivalent of a [`Vec`] containing [`u8`].
@@ -32,6 +33,7 @@ object! {
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutabledata?language=objc).
     ///
     /// [`Vec`]: std::vec::Vec
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableData: NSData, NSObject;
 }
 

@@ -3,12 +3,13 @@ use objc2::{msg_send, msg_send_id, Encode, Encoding, RefEncode};
 
 use super::{NSCopying, NSObject};
 
-object! {
+extern_class! {
     /// A universally unique value.
     ///
     /// Can be used to identify types, interfaces, and other items.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsuuid?language=objc).
+    #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSUUID: NSObject;
 }
 

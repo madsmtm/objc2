@@ -71,6 +71,12 @@ pub use self::value::NSValue;
 #[doc(no_inline)]
 pub use objc2::ffi::{NSInteger, NSUInteger};
 
+#[doc(hidden)]
+pub use core as __core;
+
+// Expose the version of objc2 that this crate uses
+pub use objc2;
+
 #[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
