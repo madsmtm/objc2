@@ -3,7 +3,7 @@
 macro_rules! declare_class {
     {
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident: $inherits:ty $(, $inheritance_rest:ty)* {
+        unsafe $v:vis struct $name:ident: $inherits:ident $(, $inheritance_rest:ident)* $(<$($protocols:ident),+ $(,)?>)? {
             $($ivar_v:vis $ivar:ident: $ivar_ty:ty,)*
         }
 
@@ -39,6 +39,13 @@ macro_rules! declare_class {
             fn create_class() -> &'static $crate::objc2::runtime::Class {
                 let superclass = <$inherits>::class();
                 let mut builder = $crate::objc2::declare::ClassBuilder::new(stringify!($name), superclass).unwrap();
+
+                // Implement protocols
+                $(
+                    $(
+                        builder.add_protocol($crate::objc2::runtime::Protocol::get(stringify!($protocols)).unwrap());
+                    )+
+                )?
 
                 $(
                     builder.add_ivar::<$ivar_ty>(stringify!($ivar));
