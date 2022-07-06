@@ -1,4 +1,4 @@
-use crate::rc::{Allocated, Id, Ownership};
+use crate::rc::{Allocated, Id, MaybeOwnership};
 use crate::runtime::{Class, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
 
@@ -51,7 +51,7 @@ pub trait MsgSendId<T, U> {
 }
 
 // `new`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
+impl<T: ?Sized + Message, O: MaybeOwnership> MsgSendId<&'_ Class, Id<T, O>>
     for RetainSemantics<true, false, false, false>
 {
     #[inline]
@@ -69,7 +69,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
 }
 
 // `alloc`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<Allocated<T>, O>>
+impl<T: ?Sized + Message, O: MaybeOwnership> MsgSendId<&'_ Class, Id<Allocated<T>, O>>
     for RetainSemantics<false, true, false, false>
 {
     #[inline]
@@ -87,7 +87,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<Allocated<T>, O>
 }
 
 // `init`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, Id<T, O>>
+impl<T: ?Sized + Message, O: MaybeOwnership> MsgSendId<Option<Id<Allocated<T>, O>>, Id<T, O>>
     for RetainSemantics<false, false, true, false>
 {
     #[inline]
@@ -111,7 +111,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, I
 }
 
 // `copy` and `mutableCopy`
-impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
+impl<T: MessageReceiver, U: ?Sized + Message, O: MaybeOwnership> MsgSendId<T, Id<U, O>>
     for RetainSemantics<false, false, false, true>
 {
     #[inline]
@@ -126,7 +126,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 }
 
 // All other selectors
-impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
+impl<T: MessageReceiver, U: Message, O: MaybeOwnership> MsgSendId<T, Id<U, O>>
     for RetainSemantics<false, false, false, false>
 {
     #[inline]
