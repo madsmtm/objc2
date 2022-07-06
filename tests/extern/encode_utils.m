@@ -10,7 +10,11 @@
 #define ENCODING(name, type) \
     ENCODING_INNER(name, type); \
     ENCODING_INNER(name ## _POINTER, type*); \
-    ENCODING_INNER(name ## _ATOMIC, _Atomic type);
+    ENCODING_INNER(name ## _POINTER_POINTER, type**); \
+    ENCODING_INNER(name ## _POINTER_POINTER_POINTER, type***); \
+    ENCODING_INNER(name ## _ATOMIC, _Atomic type); \
+    ENCODING_INNER(name ## _ATOMIC_POINTER, _Atomic type*); \
+    ENCODING_INNER(name ## _POINTER_ATOMIC, _Atomic (type*));
 
 // C types
 
@@ -47,14 +51,18 @@ ENCODING_INNER(VOID_POINTER_POINTER, void**);
 
 struct empty {};
 ENCODING(STRUCT_EMPTY, struct empty);
-ENCODING_INNER(STRUCT_EMPTY_POINTER_POINTER, struct empty**);
-ENCODING_INNER(STRUCT_EMPTY_POINTER_POINTER_POINTER, struct empty***);
+
 struct one_item {
     void* a;
 };
 ENCODING(STRUCT_ONE_ITEM, struct one_item);
-ENCODING_INNER(STRUCT_ONE_ITEM_POINTER_POINTER, struct one_item**);
-ENCODING_INNER(STRUCT_ONE_ITEM_POINTER_POINTER_POINTER, struct one_item***);
+
+struct nested {
+    struct one_item a;
+    struct one_item* b;
+};
+ENCODING(STRUCT_NESTED, struct nested);
+
 struct two_items {
     float a;
     int b;
@@ -67,6 +75,13 @@ struct with_arrays {
     int (*c)[3];
 };
 ENCODING(STRUCT_WITH_ARRAYS, struct with_arrays);
+
+struct with_block {
+    void (^a)(void);
+    id b;
+    void (*c)(void);
+};
+ENCODING(STRUCT_WITH_BLOCK, struct with_block);
 
 // Bit field
 
@@ -109,7 +124,11 @@ ENCODING_INNER(ARRAY_STRUCT_POINTER, arr_struct*);
 ENCODING(OBJC_BOOL, BOOL);
 ENCODING_INNER(ID, id);
 ENCODING_INNER(ID_POINTER, const id*);
+ENCODING_INNER(ID_POINTER_POINTER, const id**);
+ENCODING_INNER(ID_POINTER_POINTER_POINTER, const id***);
 ENCODING_INNER(ID_ATOMIC, _Atomic id);
+ENCODING_INNER(ID_ATOMIC_POINTER, _Atomic const id*);
+ENCODING_INNER(ID_POINTER_ATOMIC, _Atomic (const id*));
 ENCODING(CLASS, Class);
 ENCODING(SEL, SEL);
 ENCODING(NS_INTEGER, NSInteger);

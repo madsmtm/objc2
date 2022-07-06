@@ -1,5 +1,6 @@
 use core::fmt;
 
+use crate::helper::Helper;
 use crate::parse;
 
 /// An Objective-C type-encoding.
@@ -33,6 +34,7 @@ use crate::parse;
 /// assert!(Encoding::Array(10, &Encoding::FloatComplex).equivalent_to_str("[10jf]"));
 /// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+// See <https://en.cppreference.com/w/c/language/type>
 #[non_exhaustive] // Maybe we're missing some encodings?
 pub enum Encoding<'a> {
     /// A C `char`. Corresponds to the `c` code.
@@ -94,12 +96,19 @@ pub enum Encoding<'a> {
     /// The type is not currently used, but may be in the future for better
     /// compatibility with Objective-C runtimes.
     ///
-    /// Corresponds to the `b`num code.
+    /// Corresponds to the `b num` code.
     BitField(u8, &'a Encoding<'a>),
     /// A pointer to the given type.
     ///
-    /// Corresponds to the `^`type code.
+    /// Corresponds to the `^ type` code.
     Pointer(&'a Encoding<'a>),
+    /// A C11 [`_Atomic`] type.
+    ///
+    /// Corresponds to the `A type` code. Not all encodings are possible in
+    /// this.
+    ///
+    /// [`_Atomic`]: https://en.cppreference.com/w/c/language/atomic
+    Atomic(&'a Encoding<'a>),
     /// An array with the given length and type.
     ///
     /// Corresponds to the `[len type]` code.
@@ -119,19 +128,6 @@ pub enum Encoding<'a> {
     /// Corresponds to the `(name=fields...)` code.
     Union(&'a str, &'a [Encoding<'a>]),
     // "Vector" types have the '!' encoding, but are not implemented in clang
-
-    // TODO: Atomic, const and other such specifiers
-    // typedef struct x {
-    //     int a;
-    //     void* b;
-    // } x_t;
-    // NSLog(@"Encoding: %s", @encode(_Atomic x_t)); // -> A{x}
-    // NSLog(@"Encoding: %s", @encode(const int*)); // -> r^i
-    //
-    // Note that const only applies to the outermost pointer!
-    //
-    // And how does atomic objects work?
-    // core::sync::atomic::AtomicPtr<T: Message>?
 
     // TODO: `t` and `T` codes for i128 and u128?
 }
@@ -182,6 +178,10 @@ impl Encoding<'_> {
     /// For example, you should not rely on two equivalent encodings to have
     /// the same size or ABI - that is provided on a best-effort basis.
     pub fn equivalent_to(&self, other: &Self) -> bool {
+        // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
+        // should compare equal, but we don't bother since in practice a plain
+        // `Unknown` will never appear.
+
         // For now, because we don't allow representing qualifiers
         self == other
     }
@@ -225,65 +225,37 @@ impl Encoding<'_> {
 /// may change if found to be required to be compatible with exisiting
 /// Objective-C compilers.
 impl fmt::Display for Encoding<'_> {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use Encoding::*;
-        let code = match *self {
-            Char => "c",
-            Short => "s",
-            Int => "i",
-            Long => "l",
-            LongLong => "q",
-            UChar => "C",
-            UShort => "S",
-            UInt => "I",
-            ULong => "L",
-            ULongLong => "Q",
-            Float => "f",
-            Double => "d",
-            LongDouble => "D",
-            FloatComplex => "jf",
-            DoubleComplex => "jd",
-            LongDoubleComplex => "jD",
-            Bool => "B",
-            Void => "v",
-            String => "*",
-            Object => "@",
-            Block => "@?",
-            Class => "#",
-            Sel => ":",
-            Unknown => "?",
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use Helper::*;
+        match Helper::new(*self) {
+            Primitive(primitive) => f.write_str(primitive.to_str()),
             BitField(b, _type) => {
                 // TODO: Use the type on GNUStep
-                return write!(formatter, "b{}", b);
+                write!(f, "b{}", b)
             }
-            Pointer(t) => {
-                return write!(formatter, "^{}", t);
+            Indirection(kind, t) => {
+                write!(f, "{}", kind.prefix())?;
+                write!(f, "{}", t)
             }
             Array(len, item) => {
-                return write!(formatter, "[{}{}]", len, item);
+                write!(f, "[{}{}]", len, item)
             }
-            Struct(name, fields) => {
-                write!(formatter, "{{{}=", name)?;
+            Container(kind, name, fields) => {
+                write!(f, "{}", kind.start())?;
+                write!(f, "{}=", name)?;
                 for field in fields {
-                    fmt::Display::fmt(field, formatter)?;
+                    fmt::Display::fmt(field, f)?;
                 }
-                return formatter.write_str("}");
+                write!(f, "{}", kind.end())
             }
-            Union(name, members) => {
-                write!(formatter, "({}=", name)?;
-                for member in members {
-                    fmt::Display::fmt(member, formatter)?;
-                }
-                return formatter.write_str(")");
-            }
-        };
-        formatter.write_str(code)
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::Encoding;
+    use crate::static_str::{static_encoding_str_array, static_encoding_str_len};
     use alloc::string::ToString;
 
     fn send_sync<T: Send + Sync>() {}
@@ -294,68 +266,259 @@ mod tests {
     }
 
     #[test]
-    fn test_array_display() {
-        let e = Encoding::Array(12, &Encoding::Int);
-        assert_eq!(e.to_string(), "[12i]");
-        assert!(e.equivalent_to_str("[12i]"));
+    fn smoke() {
+        assert!(Encoding::Short.equivalent_to_str("s"));
     }
 
     #[test]
-    fn test_pointer_display() {
-        let e = Encoding::Pointer(&Encoding::Int);
-        assert_eq!(e.to_string(), "^i");
-        assert!(e.equivalent_to_str("^i"));
+    fn qualifiers() {
+        assert!(Encoding::Void.equivalent_to_str("v"));
+        assert!(Encoding::Void.equivalent_to_str("Vv"));
+        assert!(Encoding::String.equivalent_to_str("*"));
+        assert!(Encoding::String.equivalent_to_str("r*"));
     }
 
-    #[test]
-    fn test_pointer_eq() {
-        let i = Encoding::Int;
-        let p = Encoding::Pointer(&Encoding::Int);
+    macro_rules! assert_enc {
+        ($(
+            fn $name:ident() {
+                $encoding:expr;
+                $(
+                    ~$equivalent_encoding:expr;
+                )*
+                $(
+                    !$not_encoding:expr;
+                )*
+                $string:literal;
+                $(
+                    ~$equivalent_string:expr;
+                )*
+                $(
+                    !$not_string:literal;
+                )*
+            }
+        )+) => {$(
+            #[test]
+            fn $name() {
+                const E: Encoding<'static> = $encoding;
 
-        assert_eq!(p, p);
-        assert_ne!(p, i);
+                // Check PartialEq
+                assert_eq!(E, E);
+
+                // Check Display
+                assert_eq!(E.to_string(), $string);
+
+                // Check equivalence comparisons
+                assert!(E.equivalent_to(&E));
+                assert!(E.equivalent_to_str($string));
+                assert_eq!(E.equivalent_to_start_of_str(concat!($string, "xyz")), Some("xyz"));
+                $(
+                    assert!(E.equivalent_to(&$equivalent_encoding));
+                    assert!(E.equivalent_to_str(&$equivalent_encoding.to_string()));
+                )*
+                $(
+                    assert!(E.equivalent_to_str($equivalent_string));
+                )*
+
+                // Negative checks
+                $(
+                    assert_ne!(E, $not_encoding);
+                    assert!(!E.equivalent_to(&$not_encoding));
+                    assert!(!E.equivalent_to_str(&$not_encoding.to_string()));
+                )*
+                $(
+                    assert!(!E.equivalent_to_str(&$not_string));
+                )*
+
+                // Check static str
+                const STATIC_ENCODING_DATA: [u8; static_encoding_str_len(E)] = static_encoding_str_array(E);
+                const STATIC_ENCODING_STR: &str = unsafe { core::str::from_utf8_unchecked(&STATIC_ENCODING_DATA) };
+                assert_eq!(STATIC_ENCODING_STR, $string);
+            }
+        )+};
     }
 
-    #[test]
-    fn test_int_display() {
-        assert_eq!(Encoding::Int.to_string(), "i");
-        assert!(Encoding::Int.equivalent_to_str("i"));
-    }
+    assert_enc! {
+        fn int() {
+            Encoding::Int;
+            !Encoding::Char;
+            "i";
+        }
 
-    #[test]
-    fn test_eq() {
-        let i = Encoding::Int;
-        let c = Encoding::Char;
+        fn char() {
+            Encoding::Char;
+            !Encoding::Int;
+            "c";
+            // Qualifiers
+            ~"rc";
+            ~"nc";
+            ~"Nc";
+            ~"oc";
+            ~"Oc";
+            ~"Rc";
+            ~"Vc";
 
-        assert_eq!(i, i);
-        assert_ne!(i, c);
-    }
+            !"ri";
+        }
 
-    #[test]
-    fn test_struct_display() {
-        let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(s.to_string(), "{CGPoint=ci}");
-        assert!(s.equivalent_to_str("{CGPoint=ci}"));
-    }
+        fn block() {
+            Encoding::Block;
+            "@?";
+        }
 
-    #[test]
-    fn test_struct_eq() {
-        let s = Encoding::Struct("CGPoint", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(s, s);
-        assert_ne!(s, Encoding::Int);
-    }
+        fn object() {
+            Encoding::Object;
+            !Encoding::Block;
+            "@";
+            !"@?";
+        }
 
-    #[test]
-    fn test_union_display() {
-        let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(u.to_string(), "(Onion=ci)");
-        assert!(u.equivalent_to_str("(Onion=ci)"));
-    }
+        fn unknown() {
+            Encoding::Unknown;
+            !Encoding::Block;
+            "?";
+        }
 
-    #[test]
-    fn test_union_eq() {
-        let u = Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
-        assert_eq!(u, u);
-        assert_ne!(u, Encoding::Int);
+        // Note: A raw `?` cannot happen in practice, since functions can only
+        // be accessed through pointers, and that will yield `^?`
+        fn object_unknown_in_struct() {
+            Encoding::Struct("S", &[Encoding::Block, Encoding::Object, Encoding::Unknown]);
+            "{S=@?@?}";
+        }
+
+        fn double() {
+            Encoding::Double;
+            "d";
+        }
+
+        fn bitfield() {
+            Encoding::BitField(32, &Encoding::Int);
+            !Encoding::Int;
+            !Encoding::BitField(33, &Encoding::Int);
+            "b32";
+            !"b32a";
+            !"b";
+            !"b-32";
+        }
+
+        fn atomic() {
+            Encoding::Atomic(&Encoding::Int);
+            !Encoding::Pointer(&Encoding::Int);
+            !Encoding::Atomic(&Encoding::Char);
+            !Encoding::Atomic(&Encoding::Atomic(&Encoding::Int));
+            "Ai";
+        }
+
+        fn atomic_string() {
+            Encoding::Atomic(&Encoding::String);
+            "A*";
+        }
+
+        fn pointer() {
+            Encoding::Pointer(&Encoding::Int);
+            !Encoding::Atomic(&Encoding::Int);
+            !Encoding::Pointer(&Encoding::Char);
+            !Encoding::Pointer(&Encoding::Pointer(&Encoding::Int));
+            "^i";
+        }
+
+        fn array() {
+            Encoding::Array(12, &Encoding::Int);
+            !Encoding::Int;
+            !Encoding::Array(11, &Encoding::Int);
+            !Encoding::Array(12, &Encoding::Char);
+            "[12i]";
+            !"[12i";
+        }
+
+        fn struct_() {
+            Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]);
+            !Encoding::Union("SomeStruct", &[Encoding::Char, Encoding::Int]);
+            !Encoding::Int;
+            !Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]);
+            !Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]);
+            "{SomeStruct=ci}";
+            !"{SomeStruct=ci";
+            !"{SomeStruct}";
+            !"{SomeStruct=}";
+        }
+
+        fn struct_unicode() {
+            Encoding::Struct("☃", &[Encoding::Char]);
+            "{☃=c}";
+        }
+
+        fn pointer_struct() {
+            Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]));
+            !Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
+            !Encoding::Pointer(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]));
+            "^{SomeStruct=ci}";
+            !"^{SomeStruct=ci";
+            !"^{SomeStruct}";
+            !"^{SomeStruct=}";
+        }
+
+        fn pointer_pointer_struct() {
+            Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int])));
+            !Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char])));
+            !Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int])));
+            "^^{SomeStruct=ci}";
+            !"^^{SomeStruct=ci";
+            !"^^{SomeStruct}"; // TODO
+            !"^^{SomeStruct=}";
+        }
+
+        fn atomic_struct() {
+            Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]));
+            !Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
+            !Encoding::Atomic(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]));
+            "A{SomeStruct=ci}";
+            !"A{SomeStruct=ci";
+            !"A{SomeStruct}"; // TODO
+            !"A{SomeStruct=}";
+        }
+
+        fn empty_struct() {
+            Encoding::Struct("SomeStruct", &[]);
+            "{SomeStruct=}";
+            // TODO: Unsure about this
+            !"{SomeStruct}";
+        }
+
+        fn union_() {
+            Encoding::Union("Onion", &[Encoding::Char, Encoding::Int]);
+            !Encoding::Struct("Onion", &[Encoding::Char, Encoding::Int]);
+            !Encoding::Int;
+            !Encoding::Union("Onion", &[Encoding::Int, Encoding::Char]);
+            !Encoding::Union("AnotherUnion", &[Encoding::Char, Encoding::Int]);
+            "(Onion=ci)";
+            !"(Onion=ci";
+        }
+
+        fn nested() {
+            Encoding::Struct(
+                "A",
+                &[
+                    Encoding::Struct("B", &[Encoding::Int]),
+                    Encoding::Pointer(&Encoding::Struct("C", &[Encoding::Double])),
+                    Encoding::Char,
+                ],
+            );
+            "{A={B=i}^{C=d}c}";
+            !"{A={B=i}^{C}c}"; // TODO
+            !"{A={B=i}^{C=d}c";
+        }
+
+        fn various() {
+            Encoding::Struct(
+                "abc",
+                &[
+                    Encoding::Pointer(&Encoding::Array(8, &Encoding::Bool)),
+                    Encoding::Union("def", &[Encoding::Block]),
+                    Encoding::Pointer(&Encoding::Pointer(&Encoding::BitField(255, &Encoding::Int))),
+                    Encoding::Unknown,
+                ]
+            );
+            "{abc=^[8B](def=@?)^^b255?}";
+        }
     }
 }

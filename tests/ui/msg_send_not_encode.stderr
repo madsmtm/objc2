@@ -12,8 +12,8 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
               *const c_void
               *mut T
               *mut c_void
-              ManuallyDrop<T>
-            and 142 others
+              AtomicBool
+            and 154 others
 note: required by a bound in `send_message`
    --> $WORKSPACE/objc2/src/message/mod.rs
     |
@@ -35,8 +35,8 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
               *const c_void
               *mut T
               *mut c_void
-              ManuallyDrop<T>
-            and 142 others
+              AtomicBool
+            and 154 others
     = note: required because of the requirements on the impl of `MessageArguments` for `(Vec<u8>,)`
 note: required by a bound in `send_message`
    --> $WORKSPACE/objc2/src/message/mod.rs
