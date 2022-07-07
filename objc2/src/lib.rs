@@ -1,17 +1,17 @@
 //! # Objective-C interface and runtime bindings
 //!
-//! Objective-C is<sup>1</sup> the standard programming language on Apple
-//! platforms like macOS, iOS, iPadOS, tvOS and watchOS. It is an
-//! object-oriented language centered around sending messages to it's
-//! instances - can for the most part be viewed as a simple method call.
+//! Objective-C is[^note] the standard programming language on Apple platforms
+//! like macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented
+//! language centered around "sending messages" to it's instances - this can
+//! for the most part be viewed as a simple method call.
 //!
 //! Most of the core libraries and frameworks that are in use on Apple systems
 //! are written in Objective-C, and hence we would like the ability to
 //! interract with these using Rust; this crate enables you to do that, in
 //! as safe a manner as possible.
 //!
-//! <sup>1: Yes, I know, "was", Swift now exists. All the existing frameworks
-//! are written in Objective-C though, so the point still holds.</sup>
+//! [^note]: Yes, I know, "was", Swift now exists. All the existing frameworks
+//!   are written in Objective-C though, so the point still holds.
 //!
 //!
 //! ## Basic usage
