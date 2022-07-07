@@ -350,6 +350,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html
     ///
+    ///
     /// # Safety
     ///
     /// Same as [`Id::retain`].
@@ -423,8 +424,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
             };
         }
 
-        // SAFETY: Same as `retain`, `objc_retainAutoreleasedReturnValue` is
-        // just an optimization.
+        // SAFETY: Same as `retain`, this is just an optimization.
         let res: *mut T = unsafe { ffi::objc_retainAutoreleasedReturnValue(ptr.cast()) }.cast();
 
         // Ideally, we'd be able to specify that the above call should never
@@ -474,11 +474,73 @@ impl<T: Message, O: Ownership> Id<T, O> {
         res
     }
 
-    // TODO: objc_autoreleaseReturnValue
-    // TODO: objc_retainAutorelease
-    // TODO: objc_retainAutoreleaseReturnValue
-    // TODO: objc_autoreleaseReturnValue
-    // TODO: objc_autoreleaseReturnValue
+    /// Autoreleases and prepares the [`Id`] to be returned to Objective-C.
+    ///
+    /// The object is not immediately released, but will be when the innermost
+    /// autorelease pool is drained.
+    ///
+    /// This is useful when [declaring your own methods][declare] where you
+    /// will often find yourself in need of returning autoreleased objects to
+    /// properly follow [Cocoa's Memory Management Policy][mmRules].
+    ///
+    /// To that end, you could use [`Id::autorelease`], but that would require
+    /// you to have an [`AutoreleasePool`] object at hand, which you clearly
+    /// won't have in such cases. This function doesn't require a `pool`
+    /// object (but as a downside returns a pointer instead of a reference).
+    ///
+    /// This is also more efficient than a normal `autorelease`, it makes a
+    /// best effort attempt to hand off ownership of the retain count to a
+    /// subsequent call to `objc_retainAutoreleasedReturnValue` /
+    /// [`Id::retain_autoreleased`] in the enclosing call frame. Note: This
+    /// optimization relies heavily on this function being tail called, so be
+    /// careful to call this function at the end of your method.
+    ///
+    /// [declare]: crate::declare
+    /// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use objc2::{class, msg_send_id, sel};
+    /// use objc2::declare::ClassBuilder;
+    /// use objc2::rc::{Id, Owned};
+    /// use objc2::runtime::{Class, Object, Sel};
+    /// #
+    /// # #[cfg(feature = "gnustep-1-7")]
+    /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+    ///
+    /// let mut builder = ClassBuilder::new("ExampleObject", class!(NSObject)).unwrap();
+    ///
+    /// extern "C" fn get(cls: &Class, _cmd: Sel) -> *mut Object {
+    ///     let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+    ///     obj.autorelease_return()
+    /// }
+    ///
+    /// unsafe {
+    ///     builder.add_class_method(
+    ///         sel!(get),
+    ///         get as extern "C" fn(&Class, Sel) -> *mut Object,
+    ///     );
+    /// }
+    ///
+    /// let cls = builder.register();
+    /// ```
+    #[doc(alias = "objc_autoreleaseReturnValue")]
+    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
+    #[inline]
+    pub fn autorelease_return(self) -> *mut T {
+        // See `autorelease_inner` for why this is an inherent method
+
+        let ptr = ManuallyDrop::new(self).ptr.as_ptr();
+        // SAFETY: Same as `autorelease_inner`, this is just an optimization.
+        let res: *mut T = unsafe { ffi::objc_autoreleaseReturnValue(ptr.cast()) }.cast();
+        debug_assert_eq!(
+            res, ptr,
+            "objc_autoreleaseReturnValue did not return the same pointer"
+        );
+        res
+    }
 }
 
 // TODO: Consider something like this
