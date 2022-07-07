@@ -52,9 +52,9 @@ impl MYObject {
             }
 
             unsafe {
-                let set_number: extern "C" fn(&mut MYObject, Sel, u32) = my_object_set_number;
+                let set_number: extern "C" fn(_, _, _) = my_object_set_number;
                 builder.add_method(sel!(setNumber:), set_number);
-                let get_number: extern "C" fn(&MYObject, Sel) -> u32 = my_object_get_number;
+                let get_number: extern "C" fn(_, _) -> _ = my_object_get_number;
                 builder.add_method(sel!(number), get_number);
             }
 

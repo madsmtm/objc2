@@ -39,7 +39,8 @@ runtime libraries.
 It is recommended that you upgrade in small steps, to decrease the chance of
 making a mistake somewhere. This way, you can under each release review the
 relevant changelogs and run your test suite, to ensure you haven't missed
-something.
+something. For the most common errors, the changelogs will include a helpful
+example on how to upgrade.
 
 As an example, if you want to migrate to `objc2`, you'd start by using it
 instead of `objc` in your `Cargo.toml`:

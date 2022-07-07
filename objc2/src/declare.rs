@@ -30,7 +30,7 @@
 //! unsafe {
 //!     decl.add_method(
 //!         sel!(number),
-//!         my_number_get as extern "C" fn(&Object, Sel) -> u32,
+//!         my_number_get as extern "C" fn(_, _) -> _,
 //!     );
 //! }
 //!
@@ -69,21 +69,21 @@ pub trait MethodImplementation: private::Sealed {
 }
 
 macro_rules! method_decl_impl {
-    (-$s:ident, $r:ident, $f:ty, $($t:ident),*) => {
-        impl<$s, $r, $($t),*> private::Sealed for $f
+    (@<$($l:lifetime),*> T, $r:ident, $f:ty, $($t:ident),*) => {
+        impl<$($l,)* T, $r, $($t),*> private::Sealed for $f
         where
-            $s: Message + ?Sized,
+            T: Message + ?Sized,
             $r: Encode,
             $($t: Encode,)*
         {}
 
-        impl<$s, $r, $($t),*> MethodImplementation for $f
+        impl<$($l,)* T, $r, $($t),*> MethodImplementation for $f
         where
-            $s: Message + ?Sized,
+            T: Message + ?Sized,
             $r: Encode,
             $($t: Encode,)*
         {
-            type Callee = $s;
+            type Callee = T;
             type Ret = $r;
             type Args = ($($t,)*);
 
@@ -92,19 +92,19 @@ macro_rules! method_decl_impl {
             }
         }
     };
-    (@$s:ident, $r:ident, $f:ty, $($t:ident),*) => {
-        impl<$r, $($t),*> private::Sealed for $f
+    (@<$($l:lifetime),*> Class, $r:ident, $f:ty, $($t:ident),*) => {
+        impl<$($l,)* $r, $($t),*> private::Sealed for $f
         where
             $r: Encode,
             $($t: Encode,)*
         {}
 
-        impl<$r, $($t),*> MethodImplementation for $f
+        impl<$($l,)* $r, $($t),*> MethodImplementation for $f
         where
             $r: Encode,
             $($t: Encode,)*
         {
-            type Callee = $s;
+            type Callee = Class;
             type Ret = $r;
             type Args = ($($t,)*);
 
@@ -114,16 +114,16 @@ macro_rules! method_decl_impl {
         }
     };
     (# $abi:literal; $($t:ident),*) => {
-        method_decl_impl!(-T, R, extern $abi fn(&T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, extern $abi fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern $abi fn(&T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(-T, R, unsafe extern $abi fn(&mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<> T, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<> T, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
 
-        method_decl_impl!(@Class, R, extern $abi fn(&Class, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@Class, R, unsafe extern $abi fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@Class, R, unsafe extern $abi fn(&Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> Class, R, extern $abi fn(&'a Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<> Class, R, unsafe extern $abi fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> Class, R, unsafe extern $abi fn(&'a Class, Sel $(, $t)*) -> R, $($t),*);
     };
     ($($t:ident),*) => {
         method_decl_impl!(# "C"; $($t),*);

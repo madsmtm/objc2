@@ -118,31 +118,16 @@ impl RcTestObject {
 
             let mut builder = ClassBuilder::new("RcTestObject", class!(NSObject)).unwrap();
             unsafe {
-                builder.add_class_method(
-                    sel!(alloc),
-                    alloc as extern "C" fn(&Class, Sel) -> *mut RcTestObject,
-                );
-                builder.add_method(
-                    sel!(init),
-                    init as extern "C" fn(&mut RcTestObject, Sel) -> _,
-                );
-                builder.add_method(
-                    sel!(retain),
-                    retain as extern "C" fn(&RcTestObject, Sel) -> _,
-                );
+                builder.add_class_method(sel!(alloc), alloc as extern "C" fn(_, _) -> _);
+                builder.add_method(sel!(init), init as extern "C" fn(_, _) -> _);
+                builder.add_method(sel!(retain), retain as extern "C" fn(_, _) -> _);
                 builder.add_method(
                     sel!(_tryRetain),
-                    try_retain as unsafe extern "C" fn(&RcTestObject, Sel) -> Bool,
+                    try_retain as unsafe extern "C" fn(_, _) -> _,
                 );
-                builder.add_method(sel!(release), release as extern "C" fn(&RcTestObject, Sel));
-                builder.add_method(
-                    sel!(autorelease),
-                    autorelease as extern "C" fn(&RcTestObject, Sel) -> _,
-                );
-                builder.add_method(
-                    sel!(dealloc),
-                    dealloc as unsafe extern "C" fn(*mut RcTestObject, Sel),
-                );
+                builder.add_method(sel!(release), release as extern "C" fn(_, _));
+                builder.add_method(sel!(autorelease), autorelease as extern "C" fn(_, _) -> _);
+                builder.add_method(sel!(dealloc), dealloc as unsafe extern "C" fn(_, _));
             }
 
             builder.register();

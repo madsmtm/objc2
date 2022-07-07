@@ -94,7 +94,7 @@ pub(crate) fn custom_class() -> &'static Class {
 
         let mut builder = ClassBuilder::root(
             "CustomObject",
-            custom_obj_class_initialize as extern "C" fn(&Class, Sel),
+            custom_obj_class_initialize as extern "C" fn(_, _),
         )
         .unwrap();
         let proto = custom_protocol();
@@ -113,6 +113,10 @@ pub(crate) fn custom_class() -> &'static Class {
 
         extern "C" fn custom_obj_get_foo(this: &Object, _cmd: Sel) -> u32 {
             unsafe { *this.ivar::<u32>("_foo") }
+        }
+
+        extern "C" fn custom_obj_get_foo_reference(this: &Object, _cmd: Sel) -> &u32 {
+            unsafe { this.ivar::<u32>("_foo") }
         }
 
         extern "C" fn custom_obj_get_struct(_this: &Object, _cmd: Sel) -> CustomStruct {
@@ -144,21 +148,23 @@ pub(crate) fn custom_class() -> &'static Class {
         }
 
         unsafe {
-            let release: unsafe extern "C" fn(*mut Object, Sel) = custom_obj_release;
+            let release: unsafe extern "C" fn(_, _) = custom_obj_release;
             builder.add_method(sel!(release), release);
 
-            let set_foo: extern "C" fn(&mut Object, Sel, u32) = custom_obj_set_foo;
+            let set_foo: extern "C" fn(_, _, _) = custom_obj_set_foo;
             builder.add_method(sel!(setFoo:), set_foo);
-            let get_foo: extern "C" fn(&Object, Sel) -> u32 = custom_obj_get_foo;
+            let get_foo: extern "C" fn(_, _) -> _ = custom_obj_get_foo;
             builder.add_method(sel!(foo), get_foo);
-            let get_struct: extern "C" fn(&Object, Sel) -> CustomStruct = custom_obj_get_struct;
+            let get_foo_reference: extern "C" fn(_, _) -> _ = custom_obj_get_foo_reference;
+            builder.add_method(sel!(fooReference), get_foo_reference);
+            let get_struct: extern "C" fn(_, _) -> CustomStruct = custom_obj_get_struct;
             builder.add_method(sel!(customStruct), get_struct);
-            let class_method: extern "C" fn(&Class, Sel) -> u32 = custom_obj_class_method;
+            let class_method: extern "C" fn(_, _) -> _ = custom_obj_class_method;
             builder.add_class_method(sel!(classFoo), class_method);
 
-            let protocol_instance_method: extern "C" fn(&mut Object, Sel, u32) = custom_obj_set_bar;
+            let protocol_instance_method: extern "C" fn(_, _, _) = custom_obj_set_bar;
             builder.add_method(sel!(setBar:), protocol_instance_method);
-            let protocol_class_method: extern "C" fn(&Class, Sel, i32, i32) -> i32 =
+            let protocol_class_method: extern "C" fn(_, _, _, _) -> _ =
                 custom_obj_add_number_to_number;
             builder.add_class_method(sel!(addNumber:toNumber:), protocol_class_method);
         }
@@ -218,7 +224,7 @@ pub(crate) fn custom_subclass() -> &'static Class {
         }
 
         unsafe {
-            let get_foo: extern "C" fn(&Object, Sel) -> u32 = custom_subclass_get_foo;
+            let get_foo: extern "C" fn(_, _) -> _ = custom_subclass_get_foo;
             builder.add_method(sel!(foo), get_foo);
         }
 

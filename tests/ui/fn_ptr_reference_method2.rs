@@ -9,6 +9,7 @@ extern "C" fn my_fn(_this: &Object, _cmd: Sel, _x: &Object) {}
 fn main() {
     let mut builder = ClassBuilder::new("SomeTestClass", class!(NSObject)).unwrap();
     unsafe {
+        builder.add_method(sel!(first:), my_fn as extern "C" fn(&Object, _, _));
         builder.add_method(sel!(both:), my_fn as extern "C" fn(&Object, Sel, &Object));
     }
 }
