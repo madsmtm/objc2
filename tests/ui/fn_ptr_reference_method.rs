@@ -15,13 +15,13 @@ fn main() {
     let mut builder = ClassBuilder::new("SomeTestClass", class!(NSObject)).unwrap();
     unsafe {
         // Works
-        builder.add_method(sel!(first:), my_fn as extern "C" fn(&Object, _, _));
+        builder.add_method(sel!(none:), my_fn as extern "C" fn(_, _, _));
 
         // Fails
-        builder.add_method(sel!(none:), my_fn as extern "C" fn(_, _, _));
         builder.add_method(sel!(third:), my_fn as extern "C" fn(_, _, &Object));
 
         // Also fails, properly tested in `fn_ptr_reference_method2`
+        builder.add_method(sel!(first:), my_fn as extern "C" fn(&Object, _, _));
         builder.add_method(sel!(both:), my_fn as extern "C" fn(&Object, _, &Object));
     }
 }

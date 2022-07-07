@@ -63,8 +63,7 @@ impl<'a> MyObject<'a> {
             }
 
             unsafe {
-                let init_with_ptr: unsafe extern "C" fn(*mut Object, Sel, *mut u8) -> *mut Object =
-                    init_with_ptr;
+                let init_with_ptr: unsafe extern "C" fn(_, _, _) -> _ = init_with_ptr;
                 builder.add_method(sel!(initWithPtr:), init_with_ptr);
             }
 

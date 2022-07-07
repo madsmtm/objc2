@@ -520,7 +520,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// unsafe {
     ///     builder.add_class_method(
     ///         sel!(get),
-    ///         get as extern "C" fn(&Class, Sel) -> *mut Object,
+    ///         get as extern "C" fn(_, _) -> _,
     ///     );
     /// }
     ///

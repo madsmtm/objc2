@@ -53,6 +53,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Changed `MessageReceiver::send_message` to panic instead of
   returning an error.
 * **BREAKING**: Renamed `catch_all` feature to `catch-all`.
+* **BREAKING**: Made passing the function pointer argument to
+  `ClassBuilder::add_method`, `ClassBuilder::add_class_method` and similar
+  more ergonomic.
+
+  Let's say you have the following code:
+  ```rust
+  // Before
+  let init: extern "C" fn(&mut Object, Sel) -> *mut Object = init;
+  builder.add_method(sel!(init), init);
+  ```
+
+  Unfortunately, you will now encounter a very confusing error:
+  ```
+    |
+  2 | builder.add_method(sel!(init), init);
+    |         ^^^^^^^^^^ implementation of `MethodImplementation` is not general enough
+    |
+     = note: `MethodImplementation` would have to be implemented for the type `for<'r> extern "C" fn(&'r mut Object, Sel) -> *mut Object`
+     = note: ...but `MethodImplementation` is actually implemented for the type `extern "C" fn(&'0 mut Object, Sel) -> *mut Object`, for some specific lifetime `'0`
+  ```
+
+  Fret not, the fix is easy! Just let the compiler infer the argument and
+  return types:
+  ```rust
+  // After
+  let init: extern "C" fn(_, _) -> _ = init;
+  builder.add_method(sel!(init), init);
+  ```
 
 ### Fixed
 * **BREAKING**: Disallow throwing `nil` exceptions in `exception::throw`.
