@@ -9,10 +9,13 @@
 //! has one ivar, a `u32` named `_number` and a `number` method that returns
 //! it:
 //!
-//! ```no_run
+//! ```
 //! use objc2::{class, sel};
 //! use objc2::declare::ClassBuilder;
 //! use objc2::runtime::{Class, Object, Sel};
+//! #
+//! # #[cfg(feature = "gnustep-1-7")]
+//! # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 //!
 //! let superclass = class!(NSObject);
 //! let mut decl = ClassBuilder::new("MyNumber", superclass).unwrap();
