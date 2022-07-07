@@ -14,6 +14,12 @@ extern_class! {
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutablestring?language=objc).
     #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableString: NSString, NSObject;
+
+    unsafe impl {
+        /// Construct an empty [`NSMutableString`].
+        #sel!(new)
+        pub fn new() -> Id<Self, Owned>;
+    }
 }
 
 // TODO: SAFETY
@@ -22,11 +28,6 @@ unsafe impl Send for NSMutableString {}
 
 /// Creating mutable strings.
 impl NSMutableString {
-    unsafe_def_fn! {
-        /// Construct an empty [`NSMutableString`].
-        pub fn new -> Owned;
-    }
-
     /// Creates a new [`NSMutableString`] by copying the given string slice.
     #[doc(alias = "initWithBytes:length:encoding:")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name
