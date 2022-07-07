@@ -1,12 +1,12 @@
-error[E0282]: type annotations needed
+error[E0282]: type annotations needed for `Option<Id<objc2::runtime::Object, O>>`
  --> ui/msg_send_id_underspecified.rs:7:33
   |
 7 |     let _: &Object = &*unsafe { msg_send_id![obj, description].unwrap() };
-  |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `T` declared on the trait `MsgSendId`
+  |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
-help: consider specifying the generic arguments
+help: consider giving `result` an explicit type, where the type for type parameter `O` is specified
  --> $WORKSPACE/objc2/src/macros.rs
   |
-  |         result = <RS as $crate::__macro_helpers::MsgSendId::<&objc2::runtime::Object, Id<objc2::runtime::Object, O>>>::send_message_id($obj, sel, ());
-  |                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  |         let result: Option<Id<objc2::runtime::Object, O>>;
+  |                   +++++++++++++++++++++++++++++++++++++++

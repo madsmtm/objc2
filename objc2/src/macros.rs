@@ -653,25 +653,19 @@ macro_rules! msg_send_bool {
 macro_rules! msg_send_id {
     [$obj:expr, $selector:ident $(,)?] => ({
         $crate::__msg_send_id_helper!(@verify $selector);
-
-        // Note: this import means that using these types inside `expr` may
-        // generate an error. We won't (yet) bother with that though.
-        use $crate::__macro_helpers::{u8, Option, stringify};
-
         let sel = $crate::sel!($selector);
-        const NAME: &[u8] = stringify!($selector).as_bytes();
+        const NAME: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::stringify!($selector).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
-        let result: Option<$crate::rc::Id<_, _>>;
+        let result;
         result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
-        use $crate::__macro_helpers::{concat, u8, Option, stringify};
-
         let sel = $crate::sel!($($selector:)+);
-        const NAME: &[u8] = concat!($(stringify!($selector), ':'),+).as_bytes();
+        const NAME: &[$crate::__macro_helpers::u8] =
+            $crate::__macro_helpers::concat!($($crate::__macro_helpers::stringify!($selector), ':'),+).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
-        let result: Option<$crate::rc::Id<_, _>>;
+        let result;
         result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
         result
     });
