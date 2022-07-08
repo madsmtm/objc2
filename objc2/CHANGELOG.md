@@ -39,6 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Class::responds_to`.
 * Added `exception::Exception` object to improve error messages from caught
   exceptions.
+* Added `declare::Ivar<T>` helper struct. This is useful for building safe
+  abstractions that access instance variables.
 
 ### Changed
 * **BREAKING**: `Sel` is now required to be non-null, which means that you
