@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::helper::Helper;
+use crate::helper::{Helper, NestingLevel};
 use crate::parse;
 
 /// An Objective-C type-encoding.
@@ -178,12 +178,7 @@ impl Encoding<'_> {
     /// For example, you should not rely on two equivalent encodings to have
     /// the same size or ABI - that is provided on a best-effort basis.
     pub fn equivalent_to(&self, other: &Self) -> bool {
-        // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
-        // should compare equal, but we don't bother since in practice a plain
-        // `Unknown` will never appear.
-
-        // For now, because we don't allow representing qualifiers
-        self == other
+        equivalent_to(self, other, NestingLevel::Top)
     }
 
     /// Check if an encoding is equivalent to the given string representation.
@@ -214,7 +209,82 @@ impl Encoding<'_> {
 
         // TODO: Allow missing/"?" names in structs and unions?
 
-        parse::rm_enc_prefix(s, self)
+        parse::rm_enc_prefix(s, self, NestingLevel::Top)
+    }
+}
+
+fn equivalent_to(enc1: &Encoding<'_>, enc2: &Encoding<'_>, level: NestingLevel) -> bool {
+    // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
+    // should compare equal, but we don't bother since in practice a plain
+    // `Unknown` will never appear.
+    use Helper::*;
+    match (Helper::new(*enc1), Helper::new(*enc2)) {
+        (Primitive(p1), Primitive(p2)) => p1 == p2,
+        (BitField(b1, type1), BitField(b2, type2)) => {
+            // TODO: Level
+            b1 == b2 && equivalent_to(type1, type2, level)
+        }
+        (Indirection(kind1, t1), Indirection(kind2, t2)) => {
+            kind1 == kind2 && equivalent_to(t1, t2, kind1.get_level(level))
+        }
+        (Array(len1, item1), Array(len2, item2)) => {
+            // TODO: Level
+            len1 == len2 && equivalent_to(item1, item2, level)
+        }
+        (Container(kind1, name1, fields1), Container(kind2, name2, fields2)) => {
+            if kind1 != kind2 {
+                return false;
+            }
+            if name1 != name2 {
+                return false;
+            }
+            if level >= NestingLevel::WithinPointer {
+                if fields1.len() != fields2.len() {
+                    return false;
+                }
+                for (field1, field2) in fields1.into_iter().zip(fields2.into_iter()) {
+                    if !equivalent_to(field1, field2, NestingLevel::WithinStruct) {
+                        return false;
+                    }
+                }
+            }
+            true
+        }
+        (_, _) => false,
+    }
+}
+
+fn display_fmt(this: Encoding<'_>, f: &mut fmt::Formatter<'_>, level: NestingLevel) -> fmt::Result {
+    use Helper::*;
+    match Helper::new(this) {
+        Primitive(primitive) => f.write_str(primitive.to_str()),
+        BitField(b, _type) => {
+            // TODO: Use the type on GNUStep (nesting level?)
+            write!(f, "b{}", b)
+        }
+        Indirection(kind, t) => {
+            write!(f, "{}", kind.prefix())?;
+            display_fmt(*t, f, kind.get_level(level))
+        }
+        Array(len, item) => {
+            write!(f, "[")?;
+            write!(f, "{}", len)?;
+            // TODO: Level
+            display_fmt(*item, f, level)?;
+            write!(f, "]")
+        }
+        Container(kind, name, fields) => {
+            write!(f, "{}", kind.start())?;
+            write!(f, "{}", name)?;
+            if level >= NestingLevel::WithinPointer {
+                write!(f, "=")?;
+                for field in fields {
+                    // TODO: Level
+                    display_fmt(*field, f, NestingLevel::WithinStruct)?;
+                }
+            }
+            write!(f, "{}", kind.end())
+        }
     }
 }
 
@@ -226,29 +296,7 @@ impl Encoding<'_> {
 /// Objective-C compilers.
 impl fmt::Display for Encoding<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use Helper::*;
-        match Helper::new(*self) {
-            Primitive(primitive) => f.write_str(primitive.to_str()),
-            BitField(b, _type) => {
-                // TODO: Use the type on GNUStep
-                write!(f, "b{}", b)
-            }
-            Indirection(kind, t) => {
-                write!(f, "{}", kind.prefix())?;
-                write!(f, "{}", t)
-            }
-            Array(len, item) => {
-                write!(f, "[{}{}]", len, item)
-            }
-            Container(kind, name, fields) => {
-                write!(f, "{}", kind.start())?;
-                write!(f, "{}=", name)?;
-                for field in fields {
-                    fmt::Display::fmt(field, f)?;
-                }
-                write!(f, "{}", kind.end())
-            }
-        }
+        display_fmt(*self, f, NestingLevel::Top)
     }
 }
 
@@ -434,6 +482,8 @@ mod tests {
             Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]);
             !Encoding::Union("SomeStruct", &[Encoding::Char, Encoding::Int]);
             !Encoding::Int;
+            !Encoding::Struct("SomeStruct", &[Encoding::Int]);
+            !Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int, Encoding::Int]);
             !Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]);
             !Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]);
             "{SomeStruct=ci}";
@@ -459,21 +509,22 @@ mod tests {
 
         fn pointer_pointer_struct() {
             Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int])));
-            !Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char])));
+            ~Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char])));
             !Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int])));
-            "^^{SomeStruct=ci}";
+            "^^{SomeStruct}";
+            ~"^^{SomeStruct=ci}";
+            !"^^{SomeStruct=ii}";
             !"^^{SomeStruct=ci";
-            !"^^{SomeStruct}"; // TODO
             !"^^{SomeStruct=}";
         }
 
         fn atomic_struct() {
             Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]));
-            !Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
+            ~Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
             !Encoding::Atomic(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]));
-            "A{SomeStruct=ci}";
+            "A{SomeStruct}";
+            ~"A{SomeStruct=ci}";
             !"A{SomeStruct=ci";
-            !"A{SomeStruct}"; // TODO
             !"A{SomeStruct=}";
         }
 
@@ -503,8 +554,17 @@ mod tests {
                     Encoding::Char,
                 ],
             );
-            "{A={B=i}^{C=d}c}";
-            !"{A={B=i}^{C}c}"; // TODO
+            ~Encoding::Struct(
+                "A",
+                &[
+                    Encoding::Struct("B", &[Encoding::Int]),
+                    Encoding::Pointer(&Encoding::Struct("C", &[])),
+                    Encoding::Char,
+                ],
+            );
+            "{A={B=i}^{C}c}";
+            ~"{A={B=i}^{C=d}c}";
+            !"{A={B=i}^{C=i}c}";
             !"{A={B=i}^{C=d}c";
         }
 
