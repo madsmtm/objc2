@@ -60,7 +60,7 @@ macro_rules! __inner_declare_class {
             $(#[$m])*
             extern "C" fn $name(
                 &mut $self,
-                _cmd: $crate::objc2::runtime::Sel,
+                _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
             ) $(-> $ret)? $body
         }
@@ -89,7 +89,7 @@ macro_rules! __inner_declare_class {
             $(#[$m])*
             extern "C" fn $name(
                 &$self,
-                _cmd: $crate::objc2::runtime::Sel,
+                _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
             ) $(-> $ret)? $body
         }
@@ -121,7 +121,7 @@ macro_rules! __inner_declare_class {
             $(#[$m])*
             extern "C" fn $name(
                 mut $self: $self_ty,
-                _cmd: $crate::objc2::runtime::Sel,
+                _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
             ) $(-> $ret)? $body
         }
@@ -153,7 +153,7 @@ macro_rules! __inner_declare_class {
             $(#[$m])*
             extern "C" fn $name(
                 $self: $self_ty,
-                _cmd: $crate::objc2::runtime::Sel,
+                _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
             ) $(-> $ret)? $body
         }
@@ -182,8 +182,8 @@ macro_rules! __inner_declare_class {
 
             $(#[$m])*
             extern "C" fn $name(
-                _cls: &$crate::objc2::runtime::Class,
-                _cmd: $crate::objc2::runtime::Sel,
+                _: &$crate::objc2::runtime::Class,
+                _: $crate::objc2::runtime::Sel,
                 $($args)*
             ) $(-> $ret)? $body
         }
