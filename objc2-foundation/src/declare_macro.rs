@@ -415,13 +415,192 @@ macro_rules! __inner_declare_class {
     };
 }
 
-/// TODO
+/// Declare a new Objective-C class.
 ///
-/// This macro is limited in a few spots, in particular:
-/// - A transformation step is performed on the methods, and hence they should
-///   not be called manually, only through a `msg_send!` (they can't be marked
-///   `pub` nor `unsafe` for the same reason).
-/// - ...
+/// This is mostly just a convenience macro on top of [`extern_class!`] and
+/// the functionality in the [`objc2::declare`] module, but it can really help
+/// with cutting down on boilerplate, in particular when defining delegate
+/// classes!
+///
+///
+/// # Specification
+///
+/// This macro consists of two parts; the class definition, and the method
+/// definition.
+///
+///
+/// ## Class and ivar definition
+///
+/// The class definition works a lot like [`extern_class!`], with the added
+/// functionality that you can define custom instance variables on your class,
+/// which are then wrapped in a [`objc2::runtime::Ivar`] and made accessible
+/// through the class. (E.g. you can use `self.my_ivar` as if it was a normal
+/// Rust struct).
+///
+/// You can also specify the protocols that the class is expected to implement
+///
+/// Note that the class name should be unique across the entire application!
+/// As a tip, you can declare the class with the desired unique name like
+/// `MyCrateCustomObject` using this macro, and then expose a renamed type
+/// alias like `pub type CustomObject = MyCrateCustomObject;` instead.
+///
+/// The class is guaranteed to have been created and registered with the
+/// Objective-C runtime after the associated function `class` has been called.
+///
+///
+/// ## Method definition
+///
+/// Within the `impl` block you can define two types of functions;
+/// ["associated functions"] and ["methods"]. These are then mapped to the
+/// Objective-C equivalents "class methods" and "instance methods". In
+/// particular, if you use `self` your method will be registered as an
+/// instance method, and if you don't it will be registered as a class method.
+///
+/// The desired selector can be specified using a special `@sel(my:selector:)`
+/// directive directly before the function definition.
+///
+/// A transformation step is performed on the functions (to make them have the
+/// correct ABI) and hence they shouldn't really be called manually. (You
+/// can't mark them as `pub` for the same reason). Instead, define a new
+/// function that calls it via. [`objc2::msg_send!`].
+///
+/// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
+/// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
+///
+///
+/// # Safety
+///
+/// Using this macro requires writing two `unsafe` markers:
+///
+/// The one for the class definition has the following safety requirements:
+/// - Same as [`extern_class!`] (the inheritance chain has to be correct).
+/// - Any instance variables you specify must either be able to be created
+///   using [`MaybeUninit::zeroed`], or be properly initialized in an `init`
+///   method.
+/// - All requirements (e.g. required methods) of the specified protocols must
+///   be upheld.
+///
+/// The one for the method implementation asserts that the types match those
+/// that are expected when the method is invoked from Objective-C. Note that
+/// there are no safe-guards here; you can easily write `i8`, but if
+/// Objective-C thinks it's an `u32`, it will cause UB when called!
+///
+/// [`MaybeUninit::zeroed`]: core::mem::MaybeUninit::zeroed
+///
+///
+/// # Examples
+///
+/// Declare a class `MyCustomObject` with a few instance variables and
+/// methods.
+///
+/// ```
+/// use std::os::raw::c_int;
+/// use objc2::{msg_send, msg_send_bool, msg_send_id};
+/// use objc2::rc::{Id, Owned};
+/// use objc2::runtime::Bool;
+/// use objc2_foundation::{declare_class, NSObject};
+/// #
+/// # #[cfg(feature = "gnustep-1-7")]
+/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+///
+/// declare_class! {
+///     unsafe struct MyCustomObject: NSObject {
+///         foo: u8,
+///         pub bar: c_int,
+///     }
+///
+///     unsafe impl {
+///         @sel(initWithFoo:)
+///         fn init_with(&mut self, foo: u8) -> Option<&mut Self> {
+///             let this: Option<&mut Self> = unsafe {
+///                 msg_send![super(self, NSObject::class()), init]
+///             };
+///             this.map(|this| {
+///                 // TODO: Initialization through MaybeUninit
+///                 // (The below is only safe because these variables are
+///                 // safe to initialize with `MaybeUninit::zeroed`).
+///                 *this.foo = foo;
+///                 *this.bar = 42;
+///                 this
+///             })
+///         }
+///
+///         @sel(foo)
+///         fn __get_foo(&self) -> u8 {
+///             *self.foo
+///         }
+///
+///         @sel(myClassMethod)
+///         fn __my_class_method() -> Bool {
+///             Bool::YES
+///         }
+///     }
+/// }
+///
+/// impl MyCustomObject {
+///     pub fn new(foo: u8) -> Id<Self, Owned> {
+///         let cls = Self::class();
+///         unsafe { msg_send_id![msg_send_id![cls, alloc], initWithFoo: foo,].unwrap() }
+///     }
+///
+///     pub fn get_foo(&self) -> u8 {
+///         unsafe { msg_send![self, foo] }
+///     }
+///
+///     pub fn my_class_method() -> bool {
+///         unsafe { msg_send_bool![Self::class(), myClassMethod] }
+///     }
+/// }
+///
+/// fn main() {
+///     let obj = MyCustomObject::new(3);
+///     assert_eq!(*obj.foo, 3);
+///     assert_eq!(*obj.bar, 42);
+///     assert_eq!(obj.get_foo(), 3);
+///     assert!(MyCustomObject::my_class_method());
+/// }
+/// ```
+///
+/// Approximately equivalent to the following Objective-C code.
+///
+/// ```text
+/// #import <Foundation/Foundation.h>
+///
+/// @interface MyCustomObject: NSObject {
+///     int bar;
+/// }
+///
+/// - (instancetype)initWithFoo:(uint8_t)foo;
+/// - (uint8_t)foo;
+/// + (BOOL)myClassMethod;
+///
+/// @end
+///
+///
+/// @implementation MyCustomObject {
+///     // Private
+///     uint8_t foo;
+/// }
+///
+/// - (instancetype)initWithFoo:(uint8_t)foo_arg {
+///     self = [super init];
+///     if (self) {
+///         self->foo = foo_arg;
+///         self->bar = 42;
+///     }
+///     return self;
+/// }
+///
+/// - (uint8_t)foo {
+///     return self->foo; // Or just `foo`
+/// }
+///
+/// + (BOOL)myClassMethod {
+///     return YES;
+/// }
+///
+/// @end
+/// ```
 #[macro_export]
 macro_rules! declare_class {
     {
@@ -450,7 +629,13 @@ macro_rules! declare_class {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
+            // SAFETY: Upheld by caller
             unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::objc2::runtime::Object {
+                // SAFETY:
+                // - The ivars are in a type used as an Objective-C object
+                // - The instance variable is defined in the exact same manner
+                //   in `create_class`.
+                // - Rust prevents having two fields with the same name.
                 $($ivar_v $ivar: $crate::objc2::declare::Ivar<$ivar>,)*
             }
         }
@@ -477,9 +662,12 @@ macro_rules! declare_class {
                     )?
 
                     $(
-                        builder.add_ivar::<$ivar_ty>(stringify!($ivar));
+                        builder.add_ivar::<<$ivar as $crate::objc2::declare::IvarType>::Type>(
+                            <$ivar as $crate::objc2::declare::IvarType>::NAME
+                        );
                     )*
 
+                    // SAFETY: Upheld by caller
                     unsafe {
                         $crate::__inner_declare_class! {
                             @rewrite_methods
