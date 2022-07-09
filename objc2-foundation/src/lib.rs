@@ -65,6 +65,7 @@ pub use self::string::NSString;
 pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSThread};
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
+pub use self::zone::NSZone;
 
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
@@ -111,3 +112,4 @@ mod string;
 mod thread;
 mod uuid;
 mod value;
+mod zone;

@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSException` object.
 * Added `extern_class!` macro to help with defining other classes.
 * Expose the `objc2` version that this uses in the crate root.
+* Added `NSZone`.
 
 ### Changed
 * Changed a few `Debug` impls.
