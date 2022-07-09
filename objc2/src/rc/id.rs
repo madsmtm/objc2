@@ -267,8 +267,8 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
     /// is safe because `NSString` is a subclass of `NSObject`).
     ///
-    /// All objects can safely be cast to [`Object`], since that assumes no
-    /// specific class.
+    /// All `'static` objects can safely be cast to [`Object`], since that
+    /// assumes no specific class.
     ///
     /// [`Object`]: crate::runtime::Object
     ///
@@ -277,6 +277,9 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// You must ensure that the object can be reinterpreted as the given
     /// type.
+    ///
+    /// If `T` is not `'static`, you must ensure that `U` ensures that the
+    /// data contained by `T` is kept alive for as long as `U` lives.
     ///
     /// Additionally, you must ensure that any safety invariants that the new
     /// type has are upheld.
