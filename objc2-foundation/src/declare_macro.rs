@@ -9,7 +9,7 @@ macro_rules! __inner_declare_class {
 
         $(#[$m:meta])*
         @sel($($sel:tt)+)
-        $v:vis fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+        fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
 
         $($rest:tt)*
     } => {
@@ -23,7 +23,7 @@ macro_rules! __inner_declare_class {
 
             $(#[$m])*
             @sel($($sel)+)
-            $v fn $name($($args)*) $(-> $ret)? $body
+            fn $name($($args)*) $(-> $ret)? $body
         }
 
         $crate::__inner_declare_class! {
@@ -44,7 +44,7 @@ macro_rules! __inner_declare_class {
 
         $(#[$m:meta])*
         @sel($($sel:tt)+)
-        $v:vis fn $name:ident(
+        fn $name:ident(
             &mut $self:ident
             $(, $($rest_args:tt)*)?
         ) $(-> $ret:ty)? $body:block
@@ -58,7 +58,7 @@ macro_rules! __inner_declare_class {
             @($($($rest_args)*)?)
 
             $(#[$m])*
-            $v extern "C" fn $name(
+            extern "C" fn $name(
                 &mut $self,
                 _cmd: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
@@ -73,7 +73,7 @@ macro_rules! __inner_declare_class {
 
         $(#[$m:meta])*
         @sel($($sel:tt)+)
-        $v:vis fn $name:ident(
+        fn $name:ident(
             &$self:ident
             $(, $($rest_args:tt)*)?
         ) $(-> $ret:ty)? $body:block
@@ -87,7 +87,7 @@ macro_rules! __inner_declare_class {
             @($($($rest_args)*)?)
 
             $(#[$m])*
-            $v extern "C" fn $name(
+            extern "C" fn $name(
                 &$self,
                 _cmd: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
@@ -105,7 +105,7 @@ macro_rules! __inner_declare_class {
 
         $(#[$m:meta])*
         @sel($($sel:tt)+)
-        $v:vis fn $name:ident(
+        fn $name:ident(
             mut $self:ident: $self_ty:ty
             $(, $($rest_args:tt)*)?
         ) $(-> $ret:ty)? $body:block
@@ -119,7 +119,7 @@ macro_rules! __inner_declare_class {
             @($($($rest_args)*)?)
 
             $(#[$m])*
-            $v extern "C" fn $name(
+            extern "C" fn $name(
                 mut $self: $self_ty,
                 _cmd: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
@@ -137,7 +137,7 @@ macro_rules! __inner_declare_class {
 
         $(#[$m:meta])*
         @sel($($sel:tt)+)
-        $v:vis fn $name:ident(
+        fn $name:ident(
             $self:ident: $self_ty:ty
             $(, $($rest_args:tt)*)?
         ) $(-> $ret:ty)? $body:block
@@ -151,7 +151,7 @@ macro_rules! __inner_declare_class {
             @($($($rest_args)*)?)
 
             $(#[$m])*
-            $v extern "C" fn $name(
+            extern "C" fn $name(
                 $self: $self_ty,
                 _cmd: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
@@ -168,7 +168,7 @@ macro_rules! __inner_declare_class {
 
         $(#[$m:meta])*
         @sel($($sel:tt)+)
-        $v:vis fn $name:ident(
+        fn $name:ident(
             $($args:tt)*
         ) $(-> $ret:ty)? $body:block
     } => {
@@ -181,7 +181,7 @@ macro_rules! __inner_declare_class {
             @($($args)*)
 
             $(#[$m])*
-            $v extern "C" fn $name(
+            extern "C" fn $name(
                 _cls: &$crate::objc2::runtime::Class,
                 _cmd: $crate::objc2::runtime::Sel,
                 $($args)*
@@ -416,6 +416,12 @@ macro_rules! __inner_declare_class {
 }
 
 /// TODO
+///
+/// This macro is limited in a few spots, in particular:
+/// - A transformation step is performed on the methods, and hence they should
+///   not be called manually, only through a `msg_send!` (they can't be marked
+///   `pub` nor `unsafe` for the same reason).
+/// - ...
 #[macro_export]
 macro_rules! declare_class {
     {
