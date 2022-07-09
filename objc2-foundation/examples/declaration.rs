@@ -42,19 +42,16 @@ declare_class! {
             this
         }
 
-        #[allow(unused)] // TMP
         @sel(applicationDidFinishLaunching:)
         fn did_finish_launching(&self, _sender: *mut Object) {
             println!("Did finish launching!");
         }
 
-        #[allow(unused)] // TMP
         @sel(applicationWillTerminate:)
         fn will_terminate(&self, _sender: *mut Object) {
             println!("Will terminate!");
         }
 
-        #[allow(unused)] // TMP
         @sel(myClassMethod)
         fn my_class_method() {
             println!("A class method!");
