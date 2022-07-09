@@ -27,12 +27,12 @@ declare_class! {
     unsafe impl {
         // #[selector(initWith:another:)]
         fn init_with(
-            this: &mut Self,
+            self: &mut Self,
             ivar: u8,
             another_ivar: Bool,
         ) -> *mut Self {
             let this: *mut Self = unsafe {
-                msg_send![super(this, NSResponder::class()), init]
+                msg_send![super(self, NSResponder::class()), init]
             };
             if let Some(this) = unsafe { this.as_mut() } {
                 // TODO: Allow initialization through MaybeUninit
@@ -52,6 +52,12 @@ declare_class! {
         #[allow(unused)] // TMP
         fn will_terminate(&self, _sender: *mut Object) {
             println!("Will terminate!");
+        }
+
+        // #[selector(myClassMethod)]
+        #[allow(unused)] // TMP
+        fn my_class_method() {
+            println!("A class method!");
         }
     }
 }

@@ -1,3 +1,133 @@
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __inner_declare_class {
+    {@rewrite_methods} => {};
+    {
+        @rewrite_methods
+
+        $(#[$m:meta])*
+        $v:vis fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__inner_declare_class! {
+            @rewrite_methods_inner
+
+            // Split args out so that we can match on `self`, while still use
+            // it as a function argument
+            ($($args)*)
+
+            $(#[$m])*
+            $v fn $name($($args)*) $(-> $ret)? $body
+        }
+
+        $crate::__inner_declare_class! {
+            @rewrite_methods
+
+            $($rest)*
+        }
+    };
+
+    // Instance method
+    {
+        @rewrite_methods_inner
+
+        (&mut self $($__rest_args:tt)*)
+
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            &mut $self:ident
+            $($rest_args:tt)*
+        ) $(-> $ret:ty)? $body:block
+    } => {
+        $(#[$m])*
+        $v extern "C" fn $name(
+            &mut $self,
+            _cmd: $crate::objc2::runtime::Sel
+            $($rest_args)*
+        ) $(-> $ret)? $body
+    };
+    {
+        @rewrite_methods_inner
+
+        (&self $($__rest_args:tt)*)
+
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            &$self:ident
+            $($rest_args:tt)*
+        ) $(-> $ret:ty)? $body:block
+    } => {
+        $(#[$m])*
+        $v extern "C" fn $name(
+            &$self,
+            _cmd: $crate::objc2::runtime::Sel
+            $($rest_args)*
+        ) $(-> $ret)? $body
+    };
+    {
+        @rewrite_methods_inner
+
+        (
+            mut self: $__self_ty:ty
+            $(, $($__rest_args:tt)*)?
+        )
+
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            mut $self:ident: $self_ty:ty
+            $(, $($rest_args:tt)*)?
+        ) $(-> $ret:ty)? $body:block
+    } => {
+        $(#[$m])*
+        $v extern "C" fn $name(
+            mut $self: $self_ty,
+            _cmd: $crate::objc2::runtime::Sel
+            $(, $($rest_args)*)?
+        ) $(-> $ret)? $body
+    };
+    {
+        @rewrite_methods_inner
+
+        (
+            self: $__self_ty:ty
+            $(, $($__rest_args:tt)*)?
+        )
+
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            $self:ident: $self_ty:ty
+            $(, $($rest_args:tt)*)?
+        ) $(-> $ret:ty)? $body:block
+    } => {
+        $(#[$m])*
+        $v extern "C" fn $name(
+            $self: $self_ty,
+            _cmd: $crate::objc2::runtime::Sel
+            $(, $($rest_args)*)?
+        ) $(-> $ret)? $body
+    };
+
+    // Class method
+    {
+        @rewrite_methods_inner
+
+        ($($__args:tt)*)
+
+        $(#[$m:meta])*
+        $v:vis fn $name:ident(
+            $($args:tt)*
+        ) $(-> $ret:ty)? $body:block
+    } => {
+        $(#[$m])*
+        $v extern "C" fn $name(
+            _cls: &$crate::objc2::runtime::Class,
+            _cmd: $crate::objc2::runtime::Sel,
+            $($args)*
+        ) $(-> $ret)? $body
+    };
+}
+
 /// TODO
 #[macro_export]
 macro_rules! declare_class {
@@ -9,9 +139,7 @@ macro_rules! declare_class {
 
         $(#[$impl_m:meta])*
         unsafe impl {
-            $(
-                $s:item
-            )*
+            $($methods:tt)*
         }
     } => {
         $(
@@ -51,20 +179,10 @@ macro_rules! declare_class {
                     builder.add_ivar::<$ivar_ty>(stringify!($ivar));
                 )*
 
-                // TODO: Fix shim
-                extern "C" fn init_with(
-                    this: &mut CustomAppDelegate,
-                    _cmd: $crate::objc2::runtime::Sel,
-                    ivar: u8,
-                    another_ivar: Bool,
-                ) -> *mut CustomAppDelegate {
-                    CustomAppDelegate::init_with(this, ivar, another_ivar)
-                }
-
                 unsafe {
                     builder.add_method(
                         $crate::objc2::sel!(initWith:another:),
-                        init_with as unsafe extern "C" fn(_, _, _, _) -> _,
+                        $name::init_with as unsafe extern "C" fn(_, _, _, _) -> _,
                     );
                 }
 
@@ -75,9 +193,11 @@ macro_rules! declare_class {
         // Methods
         $(#[$impl_m])*
         impl $name {
-            $(
-                $s
-            )*
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+
+                $($methods)*
+            }
         }
     };
 }
