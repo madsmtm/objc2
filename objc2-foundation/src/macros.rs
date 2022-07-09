@@ -94,6 +94,12 @@ macro_rules! extern_class {
             $(#[$m])*
             unsafe $v struct $name<>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {}
         }
+
+        impl $name {
+            $v fn class() -> &'static $crate::objc2::runtime::Class {
+                $crate::objc2::class!($name)
+            }
+        }
     };
 }
 
@@ -161,6 +167,12 @@ macro_rules! __inner_extern_class {
                 $($p: $pty,)*
             }
         }
+
+        impl<$($t $(: $b)?),*> $name<$($t),*> {
+            $v fn class() -> &'static $crate::objc2::runtime::Class {
+                $crate::objc2::class!($name)
+            }
+        }
     };
     (
         @__inner
@@ -183,12 +195,6 @@ macro_rules! __inner_extern_class {
         unsafe impl<$($t $(: $b)?),*> $crate::objc2::RefEncode for $name<$($t),*> {
             const ENCODING_REF: $crate::objc2::Encoding<'static>
                 = <$inherits as $crate::objc2::RefEncode>::ENCODING_REF;
-        }
-
-        impl<$($t $(: $b)?),*> $name<$($t),*> {
-            $v fn class() -> &'static $crate::objc2::runtime::Class {
-                $crate::objc2::class!($name)
-            }
         }
 
         // SAFETY: An instance can always be _used_ in exactly the same way as

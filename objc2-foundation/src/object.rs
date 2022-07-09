@@ -3,13 +3,19 @@ use core::hash;
 
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
-use objc2::{msg_send, msg_send_bool, msg_send_id};
+use objc2::{class, msg_send, msg_send_bool, msg_send_id};
 
 use super::NSString;
 
 __inner_extern_class! {
     @__inner
     unsafe pub struct NSObject<>: Object {}
+}
+
+impl NSObject {
+    pub fn class() -> &'static Class {
+        class!(NSObject)
+    }
 }
 
 impl NSObject {

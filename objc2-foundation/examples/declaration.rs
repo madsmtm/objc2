@@ -74,8 +74,6 @@ impl CustomAppDelegate {
 }
 
 fn main() {
-    let _cls = CustomAppDelegate::create_class(); // TMP
-
     let delegate = CustomAppDelegate::new(42, true);
 
     println!("{}", delegate.ivar);

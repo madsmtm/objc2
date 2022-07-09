@@ -457,32 +457,43 @@ macro_rules! declare_class {
 
         // Creation
         impl $name {
-            fn create_class() -> &'static $crate::objc2::runtime::Class {
-                let superclass = <$inherits>::class();
-                let mut builder = $crate::objc2::declare::ClassBuilder::new(stringify!($name), superclass).unwrap();
+            fn class() -> &'static $crate::objc2::runtime::Class {
+                // TODO: Use `core::cell::LazyCell`
+                use $crate::__std::sync::Once;
 
-                // Implement protocols
-                $(
+                use $crate::objc2::declare::ClassBuilder;
+                use $crate::objc2::runtime::Protocol;
+                static REGISTER_CLASS: Once = Once::new();
+
+                REGISTER_CLASS.call_once(|| {
+                    let superclass = <$inherits>::class();
+                    let mut builder = ClassBuilder::new(stringify!($name), superclass).unwrap();
+
+                    // Implement protocols
                     $(
-                        builder.add_protocol($crate::objc2::runtime::Protocol::get(stringify!($protocols)).unwrap());
-                    )+
-                )?
+                        $(
+                            builder.add_protocol(Protocol::get(stringify!($protocols)).unwrap());
+                        )+
+                    )?
 
-                $(
-                    builder.add_ivar::<$ivar_ty>(stringify!($ivar));
-                )*
+                    $(
+                        builder.add_ivar::<$ivar_ty>(stringify!($ivar));
+                    )*
 
-                unsafe {
-                    $crate::__inner_declare_class! {
-                        @rewrite_methods
-                        @register_out
-                        @builder
+                    unsafe {
+                        $crate::__inner_declare_class! {
+                            @rewrite_methods
+                            @register_out
+                            @builder
 
-                        $($methods)*
+                            $($methods)*
+                        }
                     }
-                }
 
-                builder.register()
+                    let _cls = builder.register();
+                });
+
+                $crate::objc2::class!($name)
             }
         }
 

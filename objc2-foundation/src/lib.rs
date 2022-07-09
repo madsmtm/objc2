@@ -71,8 +71,11 @@ pub use self::value::NSValue;
 #[doc(no_inline)]
 pub use objc2::ffi::{NSInteger, NSUInteger};
 
+// For macros
 #[doc(hidden)]
 pub use core as __core;
+#[doc(hidden)]
+pub extern crate std as __std;
 
 // Expose the version of objc2 that this crate uses
 pub use objc2;
