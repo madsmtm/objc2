@@ -1,9 +1,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __inner_declare_class {
-    {@rewrite_methods} => {};
+    {@rewrite_methods @$output_type:ident} => {};
     {
         @rewrite_methods
+        @$output_type:ident
 
         $(#[$m:meta])*
         @sel($($sel:tt)+)
@@ -13,7 +14,7 @@ macro_rules! __inner_declare_class {
     } => {
         $crate::__inner_declare_class! {
             @rewrite_methods_inner
-
+            @$output_type
             // Split args out so that we can match on `self`, while still use
             // it as a function argument
             ($($args)*)
@@ -25,6 +26,7 @@ macro_rules! __inner_declare_class {
 
         $crate::__inner_declare_class! {
             @rewrite_methods
+            @$output_type
 
             $($rest)*
         }
@@ -33,7 +35,7 @@ macro_rules! __inner_declare_class {
     // Instance method
     {
         @rewrite_methods_inner
-
+        @$output_type:ident
         (&mut self $($__rest_args:tt)*)
 
         $(#[$m:meta])*
@@ -43,16 +45,20 @@ macro_rules! __inner_declare_class {
             $($rest_args:tt)*
         ) $(-> $ret:ty)? $body:block
     } => {
-        $(#[$m])*
-        $v extern "C" fn $name(
-            &mut $self,
-            _cmd: $crate::objc2::runtime::Sel
-            $($rest_args)*
-        ) $(-> $ret)? $body
+        $crate::__inner_declare_class! {
+            @$output_type
+
+            $(#[$m])*
+            $v extern "C" fn $name(
+                &mut $self,
+                _cmd: $crate::objc2::runtime::Sel
+                $($rest_args)*
+            ) $(-> $ret)? $body
+        }
     };
     {
         @rewrite_methods_inner
-
+        @$output_type:ident
         (&self $($__rest_args:tt)*)
 
         $(#[$m:meta])*
@@ -62,16 +68,20 @@ macro_rules! __inner_declare_class {
             $($rest_args:tt)*
         ) $(-> $ret:ty)? $body:block
     } => {
-        $(#[$m])*
-        $v extern "C" fn $name(
-            &$self,
-            _cmd: $crate::objc2::runtime::Sel
-            $($rest_args)*
-        ) $(-> $ret)? $body
+        $crate::__inner_declare_class! {
+            @$output_type
+
+            $(#[$m])*
+            $v extern "C" fn $name(
+                &$self,
+                _cmd: $crate::objc2::runtime::Sel
+                $($rest_args)*
+            ) $(-> $ret)? $body
+        }
     };
     {
         @rewrite_methods_inner
-
+        @$output_type:ident
         (
             mut self: $__self_ty:ty
             $(, $($__rest_args:tt)*)?
@@ -84,16 +94,20 @@ macro_rules! __inner_declare_class {
             $(, $($rest_args:tt)*)?
         ) $(-> $ret:ty)? $body:block
     } => {
-        $(#[$m])*
-        $v extern "C" fn $name(
-            mut $self: $self_ty,
-            _cmd: $crate::objc2::runtime::Sel
-            $(, $($rest_args)*)?
-        ) $(-> $ret)? $body
+        $crate::__inner_declare_class! {
+            @$output_type
+
+            $(#[$m])*
+            $v extern "C" fn $name(
+                mut $self: $self_ty,
+                _cmd: $crate::objc2::runtime::Sel
+                $(, $($rest_args)*)?
+            ) $(-> $ret)? $body
+        }
     };
     {
         @rewrite_methods_inner
-
+        @$output_type:ident
         (
             self: $__self_ty:ty
             $(, $($__rest_args:tt)*)?
@@ -106,18 +120,22 @@ macro_rules! __inner_declare_class {
             $(, $($rest_args:tt)*)?
         ) $(-> $ret:ty)? $body:block
     } => {
-        $(#[$m])*
-        $v extern "C" fn $name(
-            $self: $self_ty,
-            _cmd: $crate::objc2::runtime::Sel
-            $(, $($rest_args)*)?
-        ) $(-> $ret)? $body
+        $crate::__inner_declare_class! {
+            @$output_type
+
+            $(#[$m])*
+            $v extern "C" fn $name(
+                $self: $self_ty,
+                _cmd: $crate::objc2::runtime::Sel
+                $(, $($rest_args)*)?
+            ) $(-> $ret)? $body
+        }
     };
 
     // Class method
     {
         @rewrite_methods_inner
-
+        @$output_type:ident
         ($($__args:tt)*)
 
         $(#[$m:meta])*
@@ -126,12 +144,24 @@ macro_rules! __inner_declare_class {
             $($args:tt)*
         ) $(-> $ret:ty)? $body:block
     } => {
-        $(#[$m])*
-        $v extern "C" fn $name(
-            _cls: &$crate::objc2::runtime::Class,
-            _cmd: $crate::objc2::runtime::Sel,
-            $($args)*
-        ) $(-> $ret)? $body
+        $crate::__inner_declare_class! {
+            @$output_type
+
+            $(#[$m])*
+            $v extern "C" fn $name(
+                _cls: &$crate::objc2::runtime::Class,
+                _cmd: $crate::objc2::runtime::Sel,
+                $($args)*
+            ) $(-> $ret)? $body
+        }
+    };
+
+    {
+        @method_out
+
+        $($method:item)*
+    } => {
+        $($method)*
     };
 }
 
@@ -202,6 +232,7 @@ macro_rules! declare_class {
         impl $name {
             $crate::__inner_declare_class! {
                 @rewrite_methods
+                @method_out
 
                 $($methods)*
             }
