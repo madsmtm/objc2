@@ -682,7 +682,7 @@ macro_rules! declare_class {
 
         // Creation
         impl $name {
-            fn class() -> &'static $crate::objc2::runtime::Class {
+            $v fn class() -> &'static $crate::objc2::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
                 use $crate::__std::sync::Once;
 
