@@ -14,11 +14,6 @@ extern_class! {
 }
 
 declare_class! {
-    // For some reason, `NSApplicationDelegate` is not a "real" protocol we
-    // can retrieve using `objc_getProtocol` - it seems it is created by
-    // `clang` only when used in Objective-C...
-    //
-    // TODO: Investigate this!
     unsafe struct CustomAppDelegate: NSResponder, NSObject {
         pub ivar: u8,
         another_ivar: Bool,
@@ -57,6 +52,12 @@ declare_class! {
             println!("A class method!");
         }
     }
+
+    // For some reason, `NSApplicationDelegate` is not a "real" protocol we
+    // can retrieve using `objc_getProtocol` - it seems it is created by
+    // `clang` only when used in Objective-C...
+    //
+    // TODO: Investigate this!
 }
 
 impl CustomAppDelegate {

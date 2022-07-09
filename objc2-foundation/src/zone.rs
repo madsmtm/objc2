@@ -5,7 +5,8 @@ use objc2::{Encoding, RefEncode};
 /// A type used to identify and manage memory zones.
 ///
 /// Zones are ignored on all newer platforms, you should very rarely need to
-/// use this.
+/// use this, but may be useful if you need to implement `copyWithZone:` or
+/// `allocWithZone:`.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nszone?language=objc).
 #[derive(Debug)]

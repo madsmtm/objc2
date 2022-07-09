@@ -425,8 +425,8 @@ macro_rules! __inner_declare_class {
 ///
 /// # Specification
 ///
-/// This macro consists of two parts; the class definition, and the method
-/// definition.
+/// This macro consists of three parts; the class definition, the method
+/// definition, and the protocol definition.
 ///
 ///
 /// ## Class and ivar definition
@@ -436,8 +436,6 @@ macro_rules! __inner_declare_class {
 /// which are then wrapped in a [`objc2::runtime::Ivar`] and made accessible
 /// through the class. (E.g. you can use `self.my_ivar` as if it was a normal
 /// Rust struct).
-///
-/// You can also specify the protocols that the class is expected to implement
 ///
 /// Note that the class name should be unique across the entire application!
 /// As a tip, you can declare the class with the desired unique name like
@@ -468,37 +466,49 @@ macro_rules! __inner_declare_class {
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 ///
 ///
+/// ## Protocol definition
+///
+/// You can specify the protocols that the class should implement, along with
+/// any required methods for said protocols.
+///
+/// The methods work exactly as above, they're only put here to make things
+/// easier to read.
+///
+///
 /// # Safety
 ///
-/// Using this macro requires writing two `unsafe` markers:
+/// Using this macro requires writing a few `unsafe` markers:
 ///
 /// The one for the class definition has the following safety requirements:
 /// - Same as [`extern_class!`] (the inheritance chain has to be correct).
 /// - Any instance variables you specify must either be able to be created
 ///   using [`MaybeUninit::zeroed`], or be properly initialized in an `init`
 ///   method.
-/// - All requirements (e.g. required methods) of the specified protocols must
-///   be upheld.
 ///
 /// The one for the method implementation asserts that the types match those
 /// that are expected when the method is invoked from Objective-C. Note that
 /// there are no safe-guards here; you can easily write `i8`, but if
 /// Objective-C thinks it's an `u32`, it will cause UB when called!
 ///
+/// The one for the protocol definition requires that all required methods of
+/// the specified protocol is implemented, and that any extra requirements
+/// (implicit or explicit) that the protocol has are upheld. The methods in
+/// this definition has the same safety requirements as above.
+///
 /// [`MaybeUninit::zeroed`]: core::mem::MaybeUninit::zeroed
 ///
 ///
 /// # Examples
 ///
-/// Declare a class `MyCustomObject` with a few instance variables and
-/// methods.
+/// Declare a class `MyCustomObject` that inherits `NSObject`, has a few
+/// instance variables and methods, and implements the `NSCopying` protocol.
 ///
 /// ```
 /// use std::os::raw::c_int;
 /// use objc2::{msg_send, msg_send_bool, msg_send_id};
 /// use objc2::rc::{Id, Owned};
 /// use objc2::runtime::Bool;
-/// use objc2_foundation::{declare_class, NSObject};
+/// use objc2_foundation::{declare_class, NSCopying, NSObject, NSZone};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -535,6 +545,15 @@ macro_rules! __inner_declare_class {
 ///             Bool::YES
 ///         }
 ///     }
+///
+///     unsafe impl protocol NSCopying {
+///         @sel(copyWithZone:)
+///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
+///             let mut obj = Self::new(*self.foo);
+///             *obj.bar = *self.bar;
+///             obj.autorelease_return()
+///         }
+///     }
 /// }
 ///
 /// impl MyCustomObject {
@@ -552,11 +571,19 @@ macro_rules! __inner_declare_class {
 ///     }
 /// }
 ///
+/// unsafe impl NSCopying for MyCustomObject {
+///     type Ownership = Owned;
+///     type Output = Self;
+/// }
+///
 /// fn main() {
 ///     let obj = MyCustomObject::new(3);
 ///     assert_eq!(*obj.foo, 3);
 ///     assert_eq!(*obj.bar, 42);
+///
+///     let obj = obj.copy();
 ///     assert_eq!(obj.get_foo(), 3);
+///
 ///     assert!(MyCustomObject::my_class_method());
 /// }
 /// ```
@@ -566,7 +593,7 @@ macro_rules! __inner_declare_class {
 /// ```text
 /// #import <Foundation/Foundation.h>
 ///
-/// @interface MyCustomObject: NSObject {
+/// @interface MyCustomObject: NSObject <NSCopying> {
 ///     int bar;
 /// }
 ///
@@ -599,13 +626,19 @@ macro_rules! __inner_declare_class {
 ///     return YES;
 /// }
 ///
+/// - (id)copyWithZone:(NSZone *)_zone {
+///     MyCustomObject* obj = [[MyCustomObject alloc] initWithFoo: self->foo];
+///     obj->bar = self->bar;
+///     return obj;
+/// }
+///
 /// @end
 /// ```
 #[macro_export]
 macro_rules! declare_class {
     {
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident: $inherits:ident $(, $inheritance_rest:ident)* $(<$($protocols:ident),+ $(,)?>)? {
+        unsafe $v:vis struct $name:ident: $inherits:ty $(, $inheritance_rest:ty)* {
             $($ivar_v:vis $ivar:ident: $ivar_ty:ty,)*
         }
 
@@ -613,6 +646,13 @@ macro_rules! declare_class {
         unsafe impl {
             $($methods:tt)*
         }
+
+        $(
+            $(#[$impl_protocol_m:meta])*
+            unsafe impl protocol $protocols:ident {
+                $($protocol_methods:tt)*
+            }
+        ),*
     } => {
         $(
             #[allow(non_camel_case_types)]
@@ -654,13 +694,6 @@ macro_rules! declare_class {
                     let superclass = <$inherits>::class();
                     let mut builder = ClassBuilder::new(stringify!($name), superclass).unwrap();
 
-                    // Implement protocols
-                    $(
-                        $(
-                            builder.add_protocol(Protocol::get(stringify!($protocols)).unwrap());
-                        )+
-                    )?
-
                     $(
                         builder.add_ivar::<<$ivar as $crate::objc2::declare::IvarType>::Type>(
                             <$ivar as $crate::objc2::declare::IvarType>::NAME
@@ -677,6 +710,22 @@ macro_rules! declare_class {
                             $($methods)*
                         }
                     }
+
+                    // Implement protocols
+                    $(
+                        builder.add_protocol(Protocol::get(stringify!($protocols)).unwrap());
+
+                        // SAFETY: Upheld by caller
+                        unsafe {
+                            $crate::__inner_declare_class! {
+                                @rewrite_methods
+                                @register_out
+                                @builder
+
+                                $($protocol_methods)*
+                            }
+                        }
+                    )*
 
                     let _cls = builder.register();
                 });
@@ -696,5 +745,19 @@ macro_rules! declare_class {
                 $($methods)*
             }
         }
+
+        // Protocol methods
+        $(
+            $(#[$impl_protocol_m])*
+            impl $name {
+                $crate::__inner_declare_class! {
+                    @rewrite_methods
+                    @method_out
+                    @__builder
+
+                    $($protocol_methods)*
+                }
+            }
+        )*
     };
 }
