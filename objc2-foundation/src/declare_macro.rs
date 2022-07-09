@@ -6,6 +6,7 @@ macro_rules! __inner_declare_class {
         @rewrite_methods
 
         $(#[$m:meta])*
+        @sel($($sel:tt)+)
         $v:vis fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
 
         $($rest:tt)*
@@ -18,6 +19,7 @@ macro_rules! __inner_declare_class {
             ($($args)*)
 
             $(#[$m])*
+            @sel($($sel)+)
             $v fn $name($($args)*) $(-> $ret)? $body
         }
 
@@ -35,6 +37,7 @@ macro_rules! __inner_declare_class {
         (&mut self $($__rest_args:tt)*)
 
         $(#[$m:meta])*
+        @sel($($sel:tt)+)
         $v:vis fn $name:ident(
             &mut $self:ident
             $($rest_args:tt)*
@@ -53,6 +56,7 @@ macro_rules! __inner_declare_class {
         (&self $($__rest_args:tt)*)
 
         $(#[$m:meta])*
+        @sel($($sel:tt)+)
         $v:vis fn $name:ident(
             &$self:ident
             $($rest_args:tt)*
@@ -74,6 +78,7 @@ macro_rules! __inner_declare_class {
         )
 
         $(#[$m:meta])*
+        @sel($($sel:tt)+)
         $v:vis fn $name:ident(
             mut $self:ident: $self_ty:ty
             $(, $($rest_args:tt)*)?
@@ -95,6 +100,7 @@ macro_rules! __inner_declare_class {
         )
 
         $(#[$m:meta])*
+        @sel($($sel:tt)+)
         $v:vis fn $name:ident(
             $self:ident: $self_ty:ty
             $(, $($rest_args:tt)*)?
@@ -115,6 +121,7 @@ macro_rules! __inner_declare_class {
         ($($__args:tt)*)
 
         $(#[$m:meta])*
+        @sel($($sel:tt)+)
         $v:vis fn $name:ident(
             $($args:tt)*
         ) $(-> $ret:ty)? $body:block
