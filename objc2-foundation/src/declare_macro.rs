@@ -255,7 +255,7 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _) -> _
     };
@@ -263,8 +263,8 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _) -> _
     };
@@ -272,9 +272,9 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _) -> _
     };
@@ -282,10 +282,10 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _) -> _
     };
@@ -293,11 +293,11 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty,
-        $param5:ident: $param5_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _, _) -> _
     };
@@ -305,12 +305,12 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty,
-        $param5:ident: $param5_ty:ty,
-        $param6:ident: $param6_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _, _, _) -> _
     };
@@ -318,13 +318,13 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty,
-        $param5:ident: $param5_ty:ty,
-        $param6:ident: $param6_ty:ty,
-        $param7:ident: $param7_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _) -> _
     };
@@ -332,14 +332,14 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty,
-        $param5:ident: $param5_ty:ty,
-        $param6:ident: $param6_ty:ty,
-        $param7:ident: $param7_ty:ty,
-        $param8:ident: $param8_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _) -> _
     };
@@ -347,15 +347,15 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty,
-        $param5:ident: $param5_ty:ty,
-        $param6:ident: $param6_ty:ty,
-        $param7:ident: $param7_ty:ty,
-        $param8:ident: $param8_ty:ty,
-        $param9:ident: $param9_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty,
+        $($param9:ident)? $(_)?: $param9_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _, _) -> _
     };
@@ -363,16 +363,16 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty,
-        $param5:ident: $param5_ty:ty,
-        $param6:ident: $param6_ty:ty,
-        $param7:ident: $param7_ty:ty,
-        $param8:ident: $param8_ty:ty,
-        $param9:ident: $param9_ty:ty,
-        $param10:ident: $param10_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty,
+        $($param9:ident)? $(_)?: $param9_ty:ty,
+        $($param10:ident)? $(_)?: $param10_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _) -> _
     };
@@ -380,17 +380,17 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty,
-        $param5:ident: $param5_ty:ty,
-        $param6:ident: $param6_ty:ty,
-        $param7:ident: $param7_ty:ty,
-        $param8:ident: $param8_ty:ty,
-        $param9:ident: $param9_ty:ty,
-        $param10:ident: $param10_ty:ty,
-        $param11:ident: $param11_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty,
+        $($param9:ident)? $(_)?: $param9_ty:ty,
+        $($param10:ident)? $(_)?: $param10_ty:ty,
+        $($param11:ident)? $(_)?: $param11_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _, _) -> _
     };
@@ -398,18 +398,18 @@ macro_rules! __inner_declare_class {
         @cast_extern_fn
         @$name:ident
 
-        $param1:ident: $param1_ty:ty,
-        $param2:ident: $param2_ty:ty,
-        $param3:ident: $param3_ty:ty,
-        $param4:ident: $param4_ty:ty,
-        $param5:ident: $param5_ty:ty,
-        $param6:ident: $param6_ty:ty,
-        $param7:ident: $param7_ty:ty,
-        $param8:ident: $param8_ty:ty,
-        $param9:ident: $param9_ty:ty,
-        $param10:ident: $param10_ty:ty,
-        $param11:ident: $param11_ty:ty,
-        $param12:ident: $param12_ty:ty $(,)?
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty,
+        $($param9:ident)? $(_)?: $param9_ty:ty,
+        $($param10:ident)? $(_)?: $param10_ty:ty,
+        $($param11:ident)? $(_)?: $param11_ty:ty,
+        $($param12:ident)? $(_)?: $param12_ty:ty $(,)?
     } => {
         Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _, _, _) -> _
     };

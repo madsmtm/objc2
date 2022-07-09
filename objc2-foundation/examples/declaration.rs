@@ -43,7 +43,7 @@ declare_class! {
         }
 
         @sel(applicationWillTerminate:)
-        fn will_terminate(&self, _sender: *mut Object) {
+        fn will_terminate(&self, _: *mut Object) {
             println!("Will terminate!");
         }
 
