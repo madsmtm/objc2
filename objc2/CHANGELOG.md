@@ -88,7 +88,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Disallow throwing `nil` exceptions in `exception::throw`.
 
 ### Removed
-* **BREAKING**: Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.
+* **BREAKING**: Removed the `Sel::from_ptr` method.
 * **BREAKING**: Removed `MessageError`.
 
 
