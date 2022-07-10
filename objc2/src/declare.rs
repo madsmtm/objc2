@@ -265,7 +265,8 @@ impl ClassBuilder {
         assert_eq!(
             sel_args,
             encs.len(),
-            "Selector accepts {} arguments, but function accepts {}",
+            "Selector {:?} accepts {} arguments, but function accepts {}",
+            sel,
             sel_args,
             encs.len(),
         );
@@ -306,7 +307,8 @@ impl ClassBuilder {
         assert_eq!(
             sel_args,
             encs.len(),
-            "Selector accepts {} arguments, but function accepts {}",
+            "Selector {:?} accepts {} arguments, but function accepts {}",
+            sel,
             sel_args,
             encs.len(),
         );
@@ -417,7 +419,8 @@ impl ProtocolBuilder {
         assert_eq!(
             sel_args,
             encs.len(),
-            "Selector accepts {} arguments, but function accepts {}",
+            "Selector {:?} accepts {} arguments, but function accepts {}",
+            sel,
             sel_args,
             encs.len(),
         );
