@@ -87,6 +87,8 @@ extern "C" {}
 
 #[macro_use]
 mod macros;
+#[macro_use]
+mod declare_macro;
 
 mod array;
 mod attributed_string;

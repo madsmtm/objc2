@@ -166,7 +166,7 @@ macro_rules! __inner_extern_class {
         @__inner
         $(#[$m:meta])*
         unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $inherits:ty $(, $inheritance_rest:ty)* {
-            $($p:ident: $pty:ty,)*
+            $($p_v:vis $p:ident: $pty:ty,)*
         }
     ) => {
         $(#[$m])*
@@ -174,8 +174,8 @@ macro_rules! __inner_extern_class {
         #[repr(C)]
         $v struct $name<$($t $(: $b)?),*> {
             __inner: $inherits,
-            // Additional fields (should only be zero-sized PhantomData).
-            $($p: $pty),*
+            // Additional fields (should only be zero-sized PhantomData or ivars).
+            $($p_v $p: $pty),*
         }
 
         unsafe impl<$($t $(: $b)?),*> $crate::objc2::Message for $name<$($t),*> { }
