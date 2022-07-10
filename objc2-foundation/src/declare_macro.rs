@@ -692,7 +692,12 @@ macro_rules! declare_class {
 
                 REGISTER_CLASS.call_once(|| {
                     let superclass = <$inherits>::class();
-                    let mut builder = ClassBuilder::new(stringify!($name), superclass).unwrap();
+                    let err_str = concat!(
+                        "could not create new class ",
+                        stringify!($name),
+                        ". Perhaps a class with that name already exists?",
+                    );
+                    let mut builder = ClassBuilder::new(stringify!($name), superclass).expect(err_str);
 
                     $(
                         builder.add_ivar::<<$ivar as $crate::objc2::declare::IvarType>::Type>(
@@ -713,7 +718,8 @@ macro_rules! declare_class {
 
                     // Implement protocols
                     $(
-                        builder.add_protocol(Protocol::get(stringify!($protocols)).unwrap());
+                        let err_str = concat!("could not find protocol ", stringify!($protocols));
+                        builder.add_protocol(Protocol::get(stringify!($protocols)).expect(err_str));
 
                         // SAFETY: Upheld by caller
                         unsafe {
