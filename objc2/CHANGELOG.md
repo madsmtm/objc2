@@ -41,6 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   exceptions.
 * Added `declare::Ivar<T>` helper struct. This is useful for building safe
   abstractions that access instance variables.
+* Added `Id::from_owned` helper function.
 
 ### Changed
 * **BREAKING**: `Sel` is now required to be non-null, which means that you

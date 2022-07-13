@@ -27,12 +27,13 @@ use crate::Message;
 /// may be other references to the object, since a shared [`Id`] can be cloned
 /// to provide exactly that.
 ///
-/// An [`Id<T, Owned>`] can be safely "downgraded", that is, turned into to a
-/// `Id<T, Shared>` using `From`/`Into`. The opposite is not safely possible,
+/// An [`Id<T, Owned>`] can be safely converted to a [`Id<T, Shared>`] using
+/// [`Id::from_owned`] or `From`/`Into`. The opposite is not safely possible,
 /// but the unsafe option [`Id::from_shared`] is provided.
 ///
 /// `Option<Id<T, O>>` is guaranteed to have the same size as a pointer to the
 /// object.
+///
 ///
 /// # Comparison to `std` types
 ///
@@ -611,13 +612,26 @@ impl<T: Message> Id<T, Shared> {
     }
 }
 
-impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
-    /// Downgrade from an owned to a shared [`Id`], allowing it to be cloned.
+impl<T: Message + ?Sized> Id<T, Shared> {
+    /// Convert an owned to a shared [`Id`], allowing it to be cloned.
+    ///
+    /// This is also implemented as a `From` conversion, but this name is more
+    /// explicit, which may be useful in some cases.
     #[inline]
-    fn from(obj: Id<T, Owned>) -> Self {
+    pub fn from_owned(obj: Id<T, Owned>) -> Self {
         let ptr = ManuallyDrop::new(obj).ptr;
         // SAFETY: The pointer is valid, and ownership is simply decreased
         unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
+    }
+}
+
+impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
+    /// Convert an owned to a shared [`Id`], allowing it to be cloned.
+    ///
+    /// Same as [`Id::from_owned`].
+    #[inline]
+    fn from(obj: Id<T, Owned>) -> Self {
+        Self::from_owned(obj)
     }
 }
 
