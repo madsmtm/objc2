@@ -4,31 +4,7 @@
 use core::fmt;
 use core::num::ParseIntError;
 use core::str;
-
-#[derive(Debug, PartialEq, Eq)]
-pub(crate) struct StackLayout<'a> {
-    s: &'a str,
-}
-
-impl<'a> StackLayout<'a> {
-    fn new(s: &'a str) -> Self {
-        Self { s }
-    }
-
-    fn extract(types: &'a str) -> (Self, &'a str) {
-        let rest = types.trim_start_matches(|c: char| c.is_ascii_digit() || c == '-' || c == '+');
-        let stack_layout = &types[..types.len() - rest.len()];
-        (Self::new(stack_layout), rest)
-    }
-
-    fn to_int(&self) -> Result<Option<isize>, ParseIntError> {
-        if self.s.is_empty() {
-            return Ok(None);
-        }
-        // TODO: Unsure of the type here!
-        self.s.parse().map(Some)
-    }
-}
+use std::error::Error;
 
 /// The string is approximately equivalent to:
 ///
@@ -54,7 +30,7 @@ impl<'a> MethodTypesEncodingIter<'a> {
         Self { s }
     }
 
-    fn extract_encoding(&mut self) -> Result<(&'a str, Option<isize>), EncodingParseError> {
+    fn extract_encoding(&mut self) -> Result<(&'a str, Option<isize>), EncodingParseError<'a>> {
         // TODO: See objrs' approach:
         // https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/test.rs
         // https://github.com/gnustep/libobjc2/blob/v2.1/encoding2.c
@@ -85,7 +61,7 @@ impl<'a> MethodTypesEncodingIter<'a> {
 }
 
 impl<'a> Iterator for MethodTypesEncodingIter<'a> {
-    type Item = Result<(&'a str, Option<isize>), EncodingParseError>;
+    type Item = Result<(&'a str, Option<isize>), EncodingParseError<'a>>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.s.is_empty() {
@@ -95,28 +71,47 @@ impl<'a> Iterator for MethodTypesEncodingIter<'a> {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub(crate) enum EncodingParseError {
-    UnexpectedEnd,
-    Unknown,
-    UnknownAfterComplex,
-    ExpectedInteger,
-    WrongEndArray,
-    WrongEndContainer,
-    InvalidStackLayoutInteger,
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub(crate) struct StackLayout<'a> {
+    s: &'a str,
 }
 
-impl fmt::Display for EncodingParseError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "TODO: {:?}", self)
+impl<'a> StackLayout<'a> {
+    fn new(s: &'a str) -> Self {
+        Self { s }
+    }
+
+    fn extract(types: &'a str) -> (Self, &'a str) {
+        let rest = types.trim_start_matches(|c: char| c.is_ascii_digit() || c == '-' || c == '+');
+        let stack_layout = &types[..types.len() - rest.len()];
+        (Self::new(stack_layout), rest)
+    }
+
+    fn to_int(&self) -> Result<Option<isize>, ParseIntError> {
+        if self.s.is_empty() {
+            return Ok(None);
+        }
+        // TODO: Unsure of the type here!
+        self.s.parse().map(Some)
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 struct Data<'a> {
     // Always "behind"/"at" the current character
     split_point: usize,
     b: &'a [u8],
+}
+
+impl fmt::Display for Data<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "byte-index {} in {}",
+            self.split_point,
+            str::from_utf8(self.b).unwrap()
+        )
+    }
 }
 
 impl<'a> Data<'a> {
@@ -127,8 +122,9 @@ impl<'a> Data<'a> {
         }
     }
 
-    fn peek(&self) -> Result<u8, EncodingParseError> {
-        self.try_peek().ok_or(EncodingParseError::UnexpectedEnd)
+    fn peek(&self) -> Result<u8, EncodingParseError<'a>> {
+        self.try_peek()
+            .ok_or(EncodingParseError::UnexpectedEnd(self.clone()))
     }
 
     fn try_peek(&self) -> Option<u8> {
@@ -139,17 +135,17 @@ impl<'a> Data<'a> {
         self.split_point += 1;
     }
 
-    fn next(&mut self) -> Result<u8, EncodingParseError> {
+    fn next(&mut self) -> Result<u8, EncodingParseError<'a>> {
         let res = self.peek();
         self.advance();
         res
     }
 
-    fn strip_int(&mut self) -> Result<(), EncodingParseError> {
+    fn strip_int(&mut self) -> Result<(), EncodingParseError<'a>> {
         // + and - are not supported
 
         if !(self.peek()? as char).is_ascii_digit() {
-            return Err(EncodingParseError::ExpectedInteger);
+            return Err(EncodingParseError::ExpectedInteger(self.clone()));
         }
 
         while let Some(b) = self.try_peek() {
@@ -162,9 +158,8 @@ impl<'a> Data<'a> {
         Ok(())
     }
 
-    fn extract_encoding_part(&mut self) -> Result<(), EncodingParseError> {
-        let current = self.peek()?;
-        match current {
+    fn extract_encoding_part(&mut self) -> Result<(), EncodingParseError<'a>> {
+        match self.peek()? {
             // Primitive
             b'c' | b's' | b'i' | b'l' | b'q' | b'C' | b'S' | b'I' | b'L' | b'Q' | b'f' | b'd'
             | b'D' | b'B' | b'v' | b'*' | b'#' | b':' | b'?' => {
@@ -184,7 +179,7 @@ impl<'a> Data<'a> {
                         self.advance();
                         Ok(())
                     }
-                    _ => Err(EncodingParseError::UnknownAfterComplex),
+                    b => Err(EncodingParseError::UnknownAfterComplex(self.clone(), b)),
                 }
             }
             // Object / Block
@@ -225,14 +220,14 @@ impl<'a> Data<'a> {
                         self.advance();
                         Ok(())
                     }
-                    _ => Err(EncodingParseError::WrongEndArray),
+                    _ => Err(EncodingParseError::WrongEndArray(self.clone())),
                 }
             }
             // Container (struct + union)
-            b'{' | b'(' => {
+            b @ (b'{' | b'(') => {
                 self.advance();
 
-                let end = match current {
+                let end = match b {
                     b'{' => b'}',
                     b'(' => b')',
                     _ => unreachable!(),
@@ -252,7 +247,7 @@ impl<'a> Data<'a> {
                             self.advance();
                         }
                     } else {
-                        return Err(EncodingParseError::WrongEndArray);
+                        return Err(EncodingParseError::WrongEndContainer(self.clone()));
                     }
                 }
 
@@ -267,13 +262,13 @@ impl<'a> Data<'a> {
                             self.extract_encoding_part()?;
                         }
                     } else {
-                        return Err(EncodingParseError::WrongEndArray);
+                        return Err(EncodingParseError::WrongEndContainer(self.clone()));
                     }
                 }
 
                 Ok(())
             }
-            _ => Err(EncodingParseError::Unknown),
+            b => Err(EncodingParseError::Unknown(self.clone(), b)),
         }
     }
 
@@ -281,6 +276,41 @@ impl<'a> Data<'a> {
         str::from_utf8(self.b).unwrap().split_at(self.split_point)
     }
 }
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub(crate) enum EncodingParseError<'a> {
+    UnexpectedEnd(Data<'a>),
+    Unknown(Data<'a>, u8),
+    UnknownAfterComplex(Data<'a>, u8),
+    ExpectedInteger(Data<'a>),
+    WrongEndArray(Data<'a>),
+    WrongEndContainer(Data<'a>),
+    InvalidStackLayoutInteger,
+}
+
+impl fmt::Display for EncodingParseError<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "failed parsing encoding: ")?;
+        match self {
+            Self::UnexpectedEnd(data) => write!(f, "unexpected end at {}", data)?,
+            Self::Unknown(data, b) => {
+                write!(f, "unknown encoding character {} at {}", *b as char, data)?
+            }
+            Self::UnknownAfterComplex(data, b) => {
+                write!(f, "unknown encoding character {}", *b as char)?
+            }
+            Self::ExpectedInteger(data) => write!(f, "Expected integer at {}", data)?,
+            Self::WrongEndArray(data) => write!(f, "Expected array to be closed at {}", data)?,
+            Self::WrongEndContainer(data) => {
+                write!(f, "Expected union/struct to be closed at {}", data)?
+            }
+            Self::InvalidStackLayoutInteger => write!(f, "Invalid integer for stack layout")?,
+        }
+        write!(f, ". This is likely a bug, please report it!")
+    }
+}
+
+impl Error for EncodingParseError<'_> {}
 
 #[cfg(test)]
 mod tests {
