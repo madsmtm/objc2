@@ -33,7 +33,7 @@ catch-all = ["exception"]
 
 # Verify type encodings on every message send
 # Only intended to be used while debugging!
-verify_message = ["malloc"] # TODO: Remove malloc feature here
+verify_message = []
 
 # Expose features that require linking to `libc::free`.
 #
