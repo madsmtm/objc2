@@ -97,7 +97,7 @@ impl<'a> StackLayout<'a> {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-struct Data<'a> {
+pub(crate) struct Data<'a> {
     // Always "behind"/"at" the current character
     split_point: usize,
     b: &'a [u8],
@@ -133,12 +133,6 @@ impl<'a> Data<'a> {
 
     fn advance(&mut self) {
         self.split_point += 1;
-    }
-
-    fn next(&mut self) -> Result<u8, EncodingParseError<'a>> {
-        let res = self.peek();
-        self.advance();
-        res
     }
 
     fn strip_int(&mut self) -> Result<(), EncodingParseError<'a>> {
@@ -296,9 +290,11 @@ impl fmt::Display for EncodingParseError<'_> {
             Self::Unknown(data, b) => {
                 write!(f, "unknown encoding character {} at {}", *b as char, data)?
             }
-            Self::UnknownAfterComplex(data, b) => {
-                write!(f, "unknown encoding character {}", *b as char)?
-            }
+            Self::UnknownAfterComplex(data, b) => write!(
+                f,
+                "unknown encoding character {} after complex at {}",
+                *b as char, data
+            )?,
             Self::ExpectedInteger(data) => write!(f, "Expected integer at {}", data)?,
             Self::WrongEndArray(data) => write!(f, "Expected array to be closed at {}", data)?,
             Self::WrongEndContainer(data) => {
