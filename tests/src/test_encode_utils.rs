@@ -241,6 +241,10 @@ assert_inner!(str ENCODING_STRUCT_WITH_BLOCK => WITH_BLOCK);
 assert_inner!(str ENCODING_STRUCT_WITH_BLOCK_POINTER => Encoding::Pointer(&WITH_BLOCK));
 assert_inner!(str ENCODING_STRUCT_WITH_BLOCK_ATOMIC => "A{with_block}");
 
+assert_inner!(str ENCODING_STRUCT_WITH_ATOMIC => "{with_atomic=Ai^Ai{with_atomic_inner=Ai^Ai}^{with_atomic_inner}^A{with_atomic_inner}}");
+assert_inner!(str ENCODING_STRUCT_WITH_ATOMIC_POINTER => "^{with_atomic=Ai^Ai{with_atomic_inner=Ai^Ai}^{with_atomic_inner}^A{with_atomic_inner}}");
+assert_inner!(str ENCODING_STRUCT_WITH_ATOMIC_ATOMIC => "A{with_atomic}");
+
 // Bitfields
 
 #[cfg(feature = "apple")]
