@@ -17,7 +17,8 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
-pub use super::bool::Bool;
+pub use crate::bool::Bool;
+use crate::encoding_parse::{EncodingParseError, MethodTypesEncodingIter};
 use crate::{ffi, Encode, Encoding, RefEncode};
 #[cfg(feature = "malloc")]
 use crate::{verify::verify_message_signature, EncodeArguments, VerificationError};
@@ -269,8 +270,25 @@ impl Method {
         }
     }
 
-    // method_getTypeEncoding, efficient version of:
-    // -> return_type() + sum(argument_type(i) for i in arguments_count())
+    /// A combination of the method's types.
+    #[doc(alias = "method_getTypeEncoding")]
+    pub(crate) fn types<'a>(
+        &'a self,
+    ) -> Result<(&'a str, MethodTypesEncodingIter<'a>), EncodingParseError> {
+        // SAFETY: The method pointer is valid and non-null
+        let cstr = unsafe { ffi::method_getTypeEncoding(self.as_ptr()) };
+        if cstr.is_null() {
+            panic!("`method_getTypeEncoding` returned NULL.");
+        }
+        // SAFETY: The C-string is valid and non-null
+        let encoding = unsafe { CStr::from_ptr(cstr) };
+        let s = str::from_utf8(encoding.to_bytes()).unwrap();
+        let mut iter = MethodTypesEncodingIter::new(s);
+        let ret = iter
+            .next()
+            .expect("Expected to find return type in encoding type");
+        ret.map(|ret| (ret.0, iter))
+    }
 
     /// Returns the number of arguments accepted by self.
     pub fn arguments_count(&self) -> usize {

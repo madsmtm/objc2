@@ -208,6 +208,7 @@ mod macros;
 mod bool;
 mod cache;
 pub mod declare;
+mod encoding_parse;
 pub mod exception;
 mod message;
 pub mod rc;
