@@ -81,6 +81,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let init: extern "C" fn(_, _) -> _ = init;
   builder.add_method(sel!(init), init);
   ```
+* **BREAKING**: The `"verify_message"` is now enabled by default - your
+  message sends might panic with `debug_assertions` enabled where they
+  otherwise wouldn't before. Test your code to see if you are affected!
 
 ### Fixed
 * **BREAKING**: Disallow throwing `nil` exceptions in `exception::throw`.
@@ -88,6 +91,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 * **BREAKING**: Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.
 * **BREAKING**: Removed `MessageError`.
+* **BREAKING**: Removed `"verify_message"` feature. It is now enabled by
+  default when `debug_assertions` are.
 
 
 ## 0.3.0-beta.0 - 2022-06-13

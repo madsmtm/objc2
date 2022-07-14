@@ -394,9 +394,8 @@ macro_rules! __sel_inner {
 /// throws an exception. Exceptions may still cause UB until
 /// `extern "C-unwind"` is stable, see [RFC-2945].
 ///
-/// Panics if the `"verify_message"` feature is enabled and the Objective-C
-/// method's argument's encoding does not match the encoding of the given
-/// arguments. This is highly recommended to enable while testing!
+/// Panics with `debug_assertions` enabled and the Objective-C method's
+/// encoding does not match the encoding of the given arguments and return.
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 ///
