@@ -3,6 +3,7 @@
 //! TODO: Move these to `objc2-encode` when more stable.
 use core::fmt;
 use core::num::ParseIntError;
+use core::str;
 
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct StackLayout<'a> {
@@ -20,7 +21,7 @@ impl<'a> StackLayout<'a> {
         (Self::new(stack_layout), rest)
     }
 
-    fn to_int(&self) -> Result<Option<i64>, ParseIntError> {
+    fn to_int(&self) -> Result<Option<isize>, ParseIntError> {
         if self.s.is_empty() {
             return Ok(None);
         }
@@ -52,20 +53,45 @@ impl<'a> MethodTypesEncodingIter<'a> {
     pub(crate) fn new(s: &'a str) -> Self {
         Self { s }
     }
+
+    fn extract_encoding(&mut self) -> Result<(&'a str, Option<isize>), EncodingParseError> {
+        // TODO: See objrs' approach:
+        // https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/test.rs
+        // https://github.com/gnustep/libobjc2/blob/v2.1/encoding2.c
+        // https://github.com/apple-oss-distributions/objc4/blob/objc4-841.13/runtime/objc-typeencoding.mm
+
+        let mut data = Data::new(self.s);
+
+        // Qualifiers
+        // These can only appear at the start of a specific type's encoding
+        // Note: We know this can't fail, since it is checked in `Iterator`
+        if let b'r' | b'n' | b'N' | b'o' | b'O' | b'R' | b'V' = data.peek().unwrap() {
+            // Skip qualifier
+            data.advance();
+        }
+
+        data.extract_encoding_part()?;
+
+        let (enc, rest) = data.split_final();
+
+        let (stack_layout, rest) = StackLayout::extract(rest);
+        self.s = rest;
+
+        let stack_layout = stack_layout
+            .to_int()
+            .map_err(|_| EncodingParseError::InvalidStackLayoutInteger)?;
+        Ok((enc, stack_layout))
+    }
 }
 
 impl<'a> Iterator for MethodTypesEncodingIter<'a> {
-    type Item = Result<(&'a str, StackLayout<'a>), EncodingParseError>;
+    type Item = Result<(&'a str, Option<isize>), EncodingParseError>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.s.is_empty() {
             return None;
         }
-        Some(extract_encoding(self.s).map(|(enc, rest)| {
-            let (stack_layout, rest) = StackLayout::extract(rest);
-            self.s = rest;
-            (enc, stack_layout)
-        }))
+        Some(self.extract_encoding())
     }
 }
 
@@ -74,11 +100,15 @@ pub(crate) enum EncodingParseError {
     UnexpectedEnd,
     Unknown,
     UnknownAfterComplex,
+    ExpectedInteger,
+    WrongEndArray,
+    WrongEndContainer,
+    InvalidStackLayoutInteger,
 }
 
 impl fmt::Display for EncodingParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
+        write!(f, "TODO: {:?}", self)
     }
 }
 
@@ -86,7 +116,7 @@ impl fmt::Display for EncodingParseError {
 struct Data<'a> {
     // Always "behind"/"at" the current character
     split_point: usize,
-    b: &[u8],
+    b: &'a [u8],
 }
 
 impl<'a> Data<'a> {
@@ -98,113 +128,158 @@ impl<'a> Data<'a> {
     }
 
     fn peek(&self) -> Result<u8, EncodingParseError> {
-        self.b
-            .get(self.split_point)
-            .ok_or(EncodingParseError::UnexpectedEnd)
+        self.try_peek().ok_or(EncodingParseError::UnexpectedEnd)
     }
 
-    fn next(&mut self) -> u8 {
-        let res = self
-            .b
-            .get(self.split_point)
-            .ok_or(EncodingParseError::UnexpectedEnd);
-        self.advance();
-        res
+    fn try_peek(&self) -> Option<u8> {
+        self.b.get(self.split_point).cloned()
     }
 
     fn advance(&mut self) {
         self.split_point += 1;
     }
-}
 
-fn extract_encoding_part(
-    data: &mut Data<'a>,
-    enclosing: Option<char>,
-) -> Result<(), EncodingParseError> {
-    match data.peek()? {
-        // Primitive
-        b'c' | b's' | b'i' | b'l' | b'q' | b'C' | b'S' | b'I' | b'L' | b'Q' | b'f' | b'd'
-        | b'D' | b'B' | b'v' | b'*' | b'#' | b':' | b'?' => {
-            data.advance();
-            Ok(())
-        }
-        // Primitive 128bit (TODO: Properly support)
-        b't' | b'T' => {
-            data.advance();
-            Ok(())
-        }
-        // Complex
-        b'j' => {
-            data.advance();
-            match data.peek()? {
-                'f' | 'd' | 'D' => {
-                    data.advance();
-                    Ok(())
-                }
-                _ => Err(EncodingParseError::UnknownAfterComplex),
-            }
-        }
-        // Object / Block
-        b'@' => {
-            data.advance();
-            match data.peek()? {
-                '?' => {
-                    // Block
-                    data.advance();
-                    Ok(())
-                }
-                _ => {
-                    // Object
-                    Ok(())
-                }
-            }
-        }
-        // Indirection types (atomic + pointer)
-        b'A' | b'^' => {
-            data.advance();
-            // Parse inner item
-            return extract_encoding_part(data, enclosing);
-        }
-        b'b' => {
-            // TODO: Parse the type on GNUStep
-            todo!()
-        }
-        // Container (struct + union)
-        b'{' | b'(' => {
-            res_i += 1;
-            todo!()
-        }
-        b'(' => {}
-        // Array
-        b'[' => {
-            res_i += 1;
-            todo!()
-        }
-        _ => Err(EncodingParseError::Unknown),
-    }
-}
-
-fn extract_encoding(s: &str) -> Result<(&str, &str), EncodingParseError> {
-    // TODO: See objrs' approach:
-    // https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/test.rs
-    // https://github.com/gnustep/libobjc2/blob/v2.1/encoding2.c
-    // https://github.com/apple-oss-distributions/objc4/blob/objc4-841.13/runtime/objc-typeencoding.mm
-
-    let mut data = Data::new(s);
-
-    // Qualifiers
-    // These can only appear at the start of a specific type's encoding
-    if let b'r' | b'n' | b'N' | b'o' | b'O' | b'R' | b'V' = data.peek()? {
-        // Skip qualifier
-        data.advance();
+    fn next(&mut self) -> Result<u8, EncodingParseError> {
+        let res = self.peek();
+        self.advance();
+        res
     }
 
-    extract_encoding_part(&mut data, None)?;
+    fn strip_int(&mut self) -> Result<(), EncodingParseError> {
+        // + and - are not supported
 
-    Ok((
-        &s[..res_i],
-        core::str::from_utf8(&s.as_bytes()[res_i..]).unwrap(),
-    ))
+        if !(self.peek()? as char).is_ascii_digit() {
+            return Err(EncodingParseError::ExpectedInteger);
+        }
+
+        while let Some(b) = self.try_peek() {
+            if (b as char).is_ascii_digit() {
+                self.advance();
+            }
+            break;
+        }
+
+        Ok(())
+    }
+
+    fn extract_encoding_part(&mut self) -> Result<(), EncodingParseError> {
+        let current = self.peek()?;
+        match current {
+            // Primitive
+            b'c' | b's' | b'i' | b'l' | b'q' | b'C' | b'S' | b'I' | b'L' | b'Q' | b'f' | b'd'
+            | b'D' | b'B' | b'v' | b'*' | b'#' | b':' | b'?' => {
+                self.advance();
+                Ok(())
+            }
+            // Primitive 128bit (TODO: Properly support)
+            b't' | b'T' => {
+                self.advance();
+                Ok(())
+            }
+            // Complex
+            b'j' => {
+                self.advance();
+                match self.peek()? {
+                    b'f' | b'd' | b'D' => {
+                        self.advance();
+                        Ok(())
+                    }
+                    _ => Err(EncodingParseError::UnknownAfterComplex),
+                }
+            }
+            // Object / Block
+            b'@' => {
+                self.advance();
+                match self.peek()? {
+                    b'?' => {
+                        // Block
+                        self.advance();
+                        Ok(())
+                    }
+                    _ => {
+                        // Object
+                        Ok(())
+                    }
+                }
+            }
+            // Indirection types (atomic + pointer)
+            b'A' | b'^' => {
+                self.advance();
+                // Parse inner item
+                self.extract_encoding_part()
+            }
+            // Bitfield (can only appear inside struct/union)
+            b'b' => {
+                // TODO: Parse the type on GNUStep
+                self.advance();
+                self.strip_int()?;
+                Ok(())
+            }
+            // Array
+            b'[' => {
+                self.advance();
+                self.strip_int()?;
+                self.extract_encoding_part()?;
+                match self.peek()? {
+                    b']' => {
+                        self.advance();
+                        Ok(())
+                    }
+                    _ => Err(EncodingParseError::WrongEndArray),
+                }
+            }
+            // Container (struct + union)
+            b'{' | b'(' => {
+                self.advance();
+
+                let end = match current {
+                    b'{' => b'}',
+                    b'(' => b')',
+                    _ => unreachable!(),
+                };
+
+                // Parse struct name until hits `=`
+                loop {
+                    if let Some(b) = self.try_peek() {
+                        if b == b'=' {
+                            self.advance();
+                            break;
+                        } else if b == end {
+                            // Premature end, struct has no content
+                            break;
+                        } else {
+                            // Part of struct name
+                            self.advance();
+                        }
+                    } else {
+                        return Err(EncodingParseError::WrongEndArray);
+                    }
+                }
+
+                // Parse items (if any) until hits end
+                loop {
+                    if let Some(b) = self.try_peek() {
+                        if b == end {
+                            self.advance();
+                            break;
+                        } else {
+                            // Wasn't the end, so try to extract one more encoding
+                            self.extract_encoding_part()?;
+                        }
+                    } else {
+                        return Err(EncodingParseError::WrongEndArray);
+                    }
+                }
+
+                Ok(())
+            }
+            _ => Err(EncodingParseError::Unknown),
+        }
+    }
+
+    fn split_final(self) -> (&'a str, &'a str) {
+        str::from_utf8(self.b).unwrap().split_at(self.split_point)
+    }
 }
 
 #[cfg(test)]
@@ -235,16 +310,15 @@ mod tests {
         assert_stack_layout("+1a", ("+1", "a"));
     }
 
-    fn assert_encoding_extract(s: &str, expected: &[(&str, Option<i64>)]) {
+    fn assert_encoding_extract(s: &str, expected: &[(&str, Option<isize>)]) {
         let actual: Vec<_> = MethodTypesEncodingIter::new(s)
-            .map(|res| res.map(|(enc, sl)| (enc, sl.to_int().unwrap())))
             .collect::<Result<_, _>>()
             .unwrap();
         assert_eq!(&actual, expected);
     }
 
     #[test]
-    fn extract_encoding_bitfield() {
+    fn parse_bitfield() {
         assert_encoding_extract(
             "@48@0:8Ad16r^*24{bitfield=b64b1}32i48",
             &[
@@ -260,7 +334,7 @@ mod tests {
     }
 
     #[test]
-    fn extract_encoding_complex() {
+    fn parse_complex() {
         assert_encoding_extract(
             "jf16@0:8",
             &[("jf", Some(16)), ("@", Some(0)), (":", Some(8))],
