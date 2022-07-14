@@ -8,7 +8,7 @@ use std::error::Error;
 
 /// The string is approximately equivalent to:
 ///
-/// ```no_run
+/// ```ignore
 /// # use objc2::{sel, class};
 /// use objc2::runtime::Method;
 /// let method: Method;
@@ -107,7 +107,7 @@ impl fmt::Display for Data<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "byte-index {} in {}",
+            "byte-index {} in {:?}",
             self.split_point,
             str::from_utf8(self.b).unwrap()
         )
@@ -145,8 +145,9 @@ impl<'a> Data<'a> {
         while let Some(b) = self.try_peek() {
             if (b as char).is_ascii_digit() {
                 self.advance();
+            } else {
+                break;
             }
-            break;
         }
 
         Ok(())
@@ -339,7 +340,7 @@ mod tests {
     fn assert_encoding_extract(s: &str, expected: &[(&str, Option<isize>)]) {
         let actual: Vec<_> = MethodTypesEncodingIter::new(s)
             .collect::<Result<_, _>>()
-            .unwrap();
+            .unwrap_or_else(|e| panic!("{}", e));
         assert_eq!(&actual, expected);
     }
 
