@@ -4,6 +4,31 @@
 use core::fmt;
 use core::num::ParseIntError;
 
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct StackLayout<'a> {
+    s: &'a str,
+}
+
+impl<'a> StackLayout<'a> {
+    fn new(s: &'a str) -> Self {
+        Self { s }
+    }
+
+    fn extract(types: &'a str) -> (Self, &'a str) {
+        let rest = types.trim_start_matches(|c: char| c.is_ascii_digit() || c == '-' || c == '+');
+        let stack_layout = &types[..types.len() - rest.len()];
+        (Self::new(stack_layout), rest)
+    }
+
+    fn to_int(&self) -> Result<Option<i64>, ParseIntError> {
+        if self.s.is_empty() {
+            return Ok(None);
+        }
+        // TODO: Unsure of the type here!
+        self.s.parse().map(Some)
+    }
+}
+
 /// The string is approximately equivalent to:
 ///
 /// ```no_run
@@ -21,31 +46,6 @@ use core::num::ParseIntError;
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct MethodTypesEncodingIter<'a> {
     s: &'a str,
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub(crate) struct StackLayout<'a> {
-    s: &'a str,
-}
-
-impl<'a> StackLayout<'a> {
-    fn new(s: &'a str) -> Self {
-        Self { s }
-    }
-
-    fn extract(types: &'a str) -> (Self, &'a str) {
-        let rest = types.trim_start_matches(|c: char| c.is_ascii_digit());
-        let stack_layout = &types[..types.len() - rest.len()];
-        (Self::new(stack_layout), rest)
-    }
-
-    fn to_int(&self) -> Result<Option<u64>, ParseIntError> {
-        if self.s.is_empty() {
-            return Ok(None);
-        }
-        // TODO: Unsure of the type here!
-        self.s.parse().map(Some)
-    }
 }
 
 impl<'a> MethodTypesEncodingIter<'a> {
@@ -70,11 +70,117 @@ impl<'a> Iterator for MethodTypesEncodingIter<'a> {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub(crate) enum EncodingParseError {}
+pub(crate) enum EncodingParseError {
+    UnexpectedEnd,
+    Unknown,
+    UnknownAfterComplex,
+}
 
 impl fmt::Display for EncodingParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {}
+        todo!()
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct Data<'a> {
+    // Always "behind"/"at" the current character
+    split_point: usize,
+    b: &[u8],
+}
+
+impl<'a> Data<'a> {
+    fn new(s: &'a str) -> Self {
+        Self {
+            split_point: 0,
+            b: s.as_bytes(),
+        }
+    }
+
+    fn peek(&self) -> Result<u8, EncodingParseError> {
+        self.b
+            .get(self.split_point)
+            .ok_or(EncodingParseError::UnexpectedEnd)
+    }
+
+    fn next(&mut self) -> u8 {
+        let res = self
+            .b
+            .get(self.split_point)
+            .ok_or(EncodingParseError::UnexpectedEnd);
+        self.advance();
+        res
+    }
+
+    fn advance(&mut self) {
+        self.split_point += 1;
+    }
+}
+
+fn extract_encoding_part(
+    data: &mut Data<'a>,
+    enclosing: Option<char>,
+) -> Result<(), EncodingParseError> {
+    match data.peek()? {
+        // Primitive
+        b'c' | b's' | b'i' | b'l' | b'q' | b'C' | b'S' | b'I' | b'L' | b'Q' | b'f' | b'd'
+        | b'D' | b'B' | b'v' | b'*' | b'#' | b':' | b'?' => {
+            data.advance();
+            Ok(())
+        }
+        // Primitive 128bit (TODO: Properly support)
+        b't' | b'T' => {
+            data.advance();
+            Ok(())
+        }
+        // Complex
+        b'j' => {
+            data.advance();
+            match data.peek()? {
+                'f' | 'd' | 'D' => {
+                    data.advance();
+                    Ok(())
+                }
+                _ => Err(EncodingParseError::UnknownAfterComplex),
+            }
+        }
+        // Object / Block
+        b'@' => {
+            data.advance();
+            match data.peek()? {
+                '?' => {
+                    // Block
+                    data.advance();
+                    Ok(())
+                }
+                _ => {
+                    // Object
+                    Ok(())
+                }
+            }
+        }
+        // Indirection types (atomic + pointer)
+        b'A' | b'^' => {
+            data.advance();
+            // Parse inner item
+            return extract_encoding_part(data, enclosing);
+        }
+        b'b' => {
+            // TODO: Parse the type on GNUStep
+            todo!()
+        }
+        // Container (struct + union)
+        b'{' | b'(' => {
+            res_i += 1;
+            todo!()
+        }
+        b'(' => {}
+        // Array
+        b'[' => {
+            res_i += 1;
+            todo!()
+        }
+        _ => Err(EncodingParseError::Unknown),
     }
 }
 
@@ -84,36 +190,16 @@ fn extract_encoding(s: &str) -> Result<(&str, &str), EncodingParseError> {
     // https://github.com/gnustep/libobjc2/blob/v2.1/encoding2.c
     // https://github.com/apple-oss-distributions/objc4/blob/objc4-841.13/runtime/objc-typeencoding.mm
 
-    let mut res_i = 0;
-    loop {
-        match &s.as_bytes()[res_i..] {
-            [b'r' | b'n' | b'N' | b'o' | b'O' | b'R' | b'V' | b'j' | b'A' | b'^', ..] => {
-                res_i += 1;
-            }
-            [b'@', b'?', ..] => {
-                res_i += 2;
-            }
-            [b'{', ..] => {
-                res_i += 1;
-                todo!();
-                break;
-            }
-            [b'(', ..] => {
-                res_i += 1;
-                todo!();
-                break;
-            }
-            [b'[', ..] => {
-                res_i += 1;
-                todo!();
-                break;
-            }
-            _ => {
-                res_i += 1;
-                break;
-            }
-        }
+    let mut data = Data::new(s);
+
+    // Qualifiers
+    // These can only appear at the start of a specific type's encoding
+    if let b'r' | b'n' | b'N' | b'o' | b'O' | b'R' | b'V' = data.peek()? {
+        // Skip qualifier
+        data.advance();
     }
+
+    extract_encoding_part(&mut data, None)?;
 
     Ok((
         &s[..res_i],
@@ -141,9 +227,15 @@ mod tests {
         assert_stack_layout("1abc", ("1", "abc"));
         assert_stack_layout("42def24", ("42", "def24"));
         assert_stack_layout("12345678909876543210xyz", ("12345678909876543210", "xyz"));
+
+        assert_stack_layout("-1a", ("-1", "a"));
+        assert_stack_layout("-1a", ("-1", "a"));
+
+        // GNU runtime's register parameter hint??
+        assert_stack_layout("+1a", ("+1", "a"));
     }
 
-    fn assert_encoding_extract(s: &str, expected: &[(&str, Option<u64>)]) {
+    fn assert_encoding_extract(s: &str, expected: &[(&str, Option<i64>)]) {
         let actual: Vec<_> = MethodTypesEncodingIter::new(s)
             .map(|res| res.map(|(enc, sl)| (enc, sl.to_int().unwrap())))
             .collect::<Result<_, _>>()
