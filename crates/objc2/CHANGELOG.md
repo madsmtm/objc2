@@ -15,6 +15,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `AnyClass::verify_sel` now take more well-defined types
   `EncodeArguments` and  `EncodeReturn`.
 
+### Deprecated
+* Soft deprecated using `msg_send!` without a comma between arguments (i.e.
+  deprecated when the `"unstable-msg-send-always-comma"` feature is enabled).
+
+  See the following for an example of how to upgrade:
+  ```rust
+  // Before
+  let _: NSInteger = msg_send![
+      obj,
+      addTrackingRect:rect
+      owner:obj
+      userData:ptr::null_mut::<c_void>()
+      assumeInside:Bool::NO
+  ];
+  // After
+  let _: NSInteger = msg_send![
+      obj,
+      addTrackingRect: rect,
+      owner: obj,
+      userData: ptr::null_mut::<c_void>(),
+      assumeInside: false,
+  ];
+  ```
+
 
 ## 0.4.1 - 2023-07-31
 

@@ -1,0 +1,58 @@
+error: use of deprecated macro `msg_send_bool`: use a normal msg_send! instead, it will perform the conversion for you
+ --> ui/msg_send_missing_comma.rs
+  |
+  |     unsafe { msg_send_bool![obj, c:obj d:obj] };
+  |              ^^^^^^^^^^^^^
+  |
+  = note: `-D deprecated` implied by `-D warnings`
+
+error: use of deprecated macro `objc2::msg_send_bool`: use a normal msg_send! instead, it will perform the conversion for you
+ --> ui/msg_send_missing_comma.rs
+  |
+  | use objc2::{msg_send, msg_send_bool, msg_send_id, ClassType};
+  |                       ^^^^^^^^^^^^^
+
+error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
+       msg_send![super(obj), a: obj, b: obj]
+ --> ui/msg_send_missing_comma.rs
+  |
+  |     let _: () = unsafe { msg_send![super(obj), a:obj b:obj] };
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
+       msg_send![super(obj, NSString::class()), a: obj, b: obj]
+  --> ui/msg_send_missing_comma.rs
+   |
+   |     let _: () = unsafe { msg_send![super(obj, NSString::class()), a:obj b:obj] };
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
+       msg_send![obj, a: obj, b: obj]
+  --> ui/msg_send_missing_comma.rs
+   |
+   |     let _: () = unsafe { msg_send![obj, a:obj b:obj] };
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
+       msg_send![obj, c: obj, d: obj]
+  --> ui/msg_send_missing_comma.rs
+   |
+   |     unsafe { msg_send_bool![obj, c:obj d:obj] };
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send_bool` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send_id! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
+       msg_send_id![obj, e: obj, f: obj]
+  --> ui/msg_send_missing_comma.rs
+   |
+   |     let _: Id<NSString> = unsafe { msg_send_id![obj, e:obj f:obj] };
+   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

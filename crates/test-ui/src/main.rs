@@ -2,7 +2,7 @@
 //!
 //! Use as:
 //! ```
-//! TRYBUILD=overwrite cargo +nightly run --features=run --bin test-ui
+//! TRYBUILD=overwrite RUSTFLAGS="--deny=warnings" cargo +nightly run --features=run --bin test-ui
 //! ```
 //!
 //! These are not part of the normal test suite, because trybuild doesn't pass
