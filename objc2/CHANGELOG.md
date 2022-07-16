@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Deprecated
+* Deprecated using `msg_send!` without a comma between arguments. See the
+  following example for migration instructions:
+  ```rust
+  // Before
+  let _: NSInteger = msg_send![
+      obj,
+      addTrackingRect:rect
+      owner:obj
+      userData:ptr::null_mut::<c_void>()
+      assumeInside:Bool::NO
+  ];
+  // After
+  let _: NSInteger = msg_send![
+      obj,
+      addTrackingRect: rect,
+      owner: obj,
+      userData: ptr::null_mut::<c_void>(),
+      assumeInside: Bool::NO,
+  ];
+  ```
+
 
 ## 0.3.0-beta.1 - 2022-07-19
 

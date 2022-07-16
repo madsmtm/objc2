@@ -363,9 +363,9 @@ macro_rules! __sel_inner {
 ///
 /// # Specification
 ///
-/// The syntax is similar to the message syntax in Objective-C, except with
-/// an (optional, though consider that deprecated) comma between arguments,
-/// since that works much better with rustfmt.
+/// The syntax is somewhat similar to the message syntax in Objective-C,
+/// except with a comma between arguments (eliding the comma was previously
+/// possible, but is now deprecated).
 ///
 /// The first expression, know as the "receiver", can be any type that
 /// implements [`MessageReceiver`], like a reference or a pointer to an
@@ -463,7 +463,23 @@ macro_rules! msg_send {
         result = $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ());
         result
     });
-    [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr $(,)?)+] => ({
+    [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr),+ $(,)?] => ({
+        let sel = $crate::sel!($($selector :)+);
+        let result;
+        result = $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ($($argument,)+));
+        result
+    });
+    [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr)+ $(,)?] => ({
+        $crate::__msg_send_helper! {
+            @deprecated_without_comma
+            stringify!(super($obj, $superclass)),
+            $(
+                ", ",
+                stringify!($selector),
+                ": ",
+                stringify!($argument),
+            )+
+        };
         let sel = $crate::sel!($($selector :)+);
         let result;
         result = $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ($($argument,)+));
@@ -475,7 +491,23 @@ macro_rules! msg_send {
         result = $crate::MessageReceiver::send_message($obj, sel, ());
         result
     });
-    [$obj:expr, $($selector:ident : $argument:expr $(,)?)+] => ({
+    [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
+        let sel = $crate::sel!($($selector :)+);
+        let result;
+        result = $crate::MessageReceiver::send_message($obj, sel, ($($argument,)+));
+        result
+    });
+    [$obj:expr, $($selector:ident : $argument:expr)+ $(,)?] => ({
+        $crate::__msg_send_helper! {
+            @deprecated_without_comma
+            stringify!($obj),
+            $(
+                ", ",
+                stringify!($selector),
+                ": ",
+                stringify!($argument),
+            )+
+        };
         let sel = $crate::sel!($($selector :)+);
         let result;
         result = $crate::MessageReceiver::send_message($obj, sel, ($($argument,)+));
@@ -652,10 +684,10 @@ macro_rules! msg_send_bool {
 #[macro_export]
 macro_rules! msg_send_id {
     [$obj:expr, $selector:ident $(,)?] => ({
-        $crate::__msg_send_id_helper!(@verify $selector);
+        $crate::__msg_send_helper!(@verify $selector);
         let sel = $crate::sel!($selector);
         const NAME: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::stringify!($selector).as_bytes();
-        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
+        $crate::__msg_send_helper!(@get_assert_consts NAME);
         let result;
         result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
@@ -664,7 +696,7 @@ macro_rules! msg_send_id {
         let sel = $crate::sel!($($selector:)+);
         const NAME: &[$crate::__macro_helpers::u8] =
             $crate::__macro_helpers::concat!($($crate::__macro_helpers::stringify!($selector), ':'),+).as_bytes();
-        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
+        $crate::__msg_send_helper!(@get_assert_consts NAME);
         let result;
         result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
         result
@@ -674,7 +706,7 @@ macro_rules! msg_send_id {
 /// Helper macro to avoid exposing these in the docs for [`msg_send_id!`].
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __msg_send_id_helper {
+macro_rules! __msg_send_helper {
     (@verify retain) => {{
         $crate::__macro_helpers::compile_error!(
             "msg_send_id![obj, retain] is not supported. Use `Id::retain` instead"
@@ -701,4 +733,16 @@ macro_rules! __msg_send_id_helper {
         };
         type RS = RetainSemantics<NEW, ALLOC, INIT, COPY_OR_MUT_COPY>;
     };
+    (@deprecated_without_comma $($t:tt)*) => {{
+        #[deprecated = concat!(
+            "using msg_send! without a comma between arguments is ",
+            "technically not valid macro syntax, and may break in a future ",
+            "version of Rust. You should use msg_send![",
+            $($t)*
+            "] instead."
+        )]
+        #[inline]
+        fn __msg_send_missing_comma() {}
+        __msg_send_missing_comma();
+    }};
 }

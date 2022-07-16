@@ -1,0 +1,32 @@
+error: no rules expected the token `f`
+  --> ui/msg_send_missing_comma.rs:15:66
+   |
+15 |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, e:obj f:obj] };
+   |                                                                 -^ no rules expected this token in macro call
+   |                                                                 |
+   |                                                                 help: missing comma here
+
+warning: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use msg_send![super(obj, superclass), a: obj, b: obj] instead.
+  --> ui/msg_send_missing_comma.rs:10:26
+   |
+10 |     let _: () = unsafe { msg_send![super(obj, superclass), a:obj b:obj] };
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+   = note: this warning originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use msg_send![obj, a: obj, b: obj] instead.
+  --> ui/msg_send_missing_comma.rs:11:26
+   |
+11 |     let _: () = unsafe { msg_send![obj, a:obj b:obj] };
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this warning originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use msg_send![obj, c: obj, d: obj] instead.
+  --> ui/msg_send_missing_comma.rs:13:14
+   |
+13 |     unsafe { msg_send_bool![obj, c:obj d:obj] };
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this warning originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send_bool` (in Nightly builds, run with -Z macro-backtrace for more info)
