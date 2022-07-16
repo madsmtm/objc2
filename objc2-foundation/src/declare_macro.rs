@@ -559,7 +559,7 @@ macro_rules! __inner_declare_class {
 /// impl MyCustomObject {
 ///     pub fn new(foo: u8) -> Id<Self, Owned> {
 ///         let cls = Self::class();
-///         unsafe { msg_send_id![msg_send_id![cls, alloc], initWithFoo: foo,].unwrap() }
+///         unsafe { msg_send_id![msg_send_id![cls, alloc], initWithFoo: foo].unwrap() }
 ///     }
 ///
 ///     pub fn get_foo(&self) -> u8 {
@@ -594,6 +594,7 @@ macro_rules! __inner_declare_class {
 /// #import <Foundation/Foundation.h>
 ///
 /// @interface MyCustomObject: NSObject <NSCopying> {
+///     // Public ivar
 ///     int bar;
 /// }
 ///
@@ -605,7 +606,7 @@ macro_rules! __inner_declare_class {
 ///
 ///
 /// @implementation MyCustomObject {
-///     // Private
+///     // Private ivar
 ///     uint8_t foo;
 /// }
 ///
@@ -625,6 +626,8 @@ macro_rules! __inner_declare_class {
 /// + (BOOL)myClassMethod {
 ///     return YES;
 /// }
+///
+/// // NSCopying
 ///
 /// - (id)copyWithZone:(NSZone *)_zone {
 ///     MyCustomObject* obj = [[MyCustomObject alloc] initWithFoo: self->foo];
@@ -667,10 +670,11 @@ macro_rules! declare_class {
             // SAFETY: Upheld by caller
             unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::objc2::runtime::Object {
                 // SAFETY:
-                // - The ivars are in a type used as an Objective-C object
+                // - The ivars are in a type used as an Objective-C object.
                 // - The instance variable is defined in the exact same manner
-                //   in `create_class`.
+                //   in `class` below.
                 // - Rust prevents having two fields with the same name.
+                // - Caller upholds that the ivars are properly initialized.
                 $($ivar_v $ivar: $crate::objc2::declare::Ivar<$ivar>,)*
             }
         }
@@ -701,12 +705,13 @@ macro_rules! declare_class {
                     )*
 
                     $(
-                        // Implement protocols
+                        // Implement protocol if any specified
                         $(
                             let err_str = concat!("could not find protocol ", stringify!($protocol));
                             builder.add_protocol(Protocol::get(stringify!($protocol)).expect(err_str));
                         )?
 
+                        // Implement methods
                         // SAFETY: Upheld by caller
                         unsafe {
                             $crate::__inner_declare_class! {
