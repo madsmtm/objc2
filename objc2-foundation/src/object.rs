@@ -13,6 +13,8 @@ __inner_extern_class! {
 }
 
 impl NSObject {
+    /// Get a reference to the Objective-C class `NSObject`.
+    #[inline]
     pub fn class() -> &'static Class {
         class!(NSObject)
     }

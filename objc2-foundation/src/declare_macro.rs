@@ -681,6 +681,14 @@ macro_rules! declare_class {
 
         // Creation
         impl $name {
+            #[doc = concat!(
+                "Get a reference to the Objective-C class `",
+                stringify!($name),
+                "`.",
+                "\n\n",
+                "May register the class if it wasn't already.",
+            )]
+            // TODO: Allow users to configure this?
             $v fn class() -> &'static $crate::objc2::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
                 use $crate::__std::sync::Once;

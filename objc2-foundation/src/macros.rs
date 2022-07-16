@@ -13,6 +13,10 @@
 /// The traits [`objc2::RefEncode`] and [`objc2::Message`] are implemented to
 /// allow sending messages to the object and using it in [`objc2::rc::Id`].
 ///
+/// An associated function `class` is created on the object as a convenient
+/// shorthand so that you can do `MyObject::class()` instead of
+/// `class!(MyObject)`.
+///
 /// [`Deref`] and [`DerefMut`] are implemented and delegate to the first
 /// superclass (direct parent). Auto traits are inherited from this superclass
 /// as well (this macro effectively just creates a newtype wrapper around the
@@ -96,6 +100,13 @@ macro_rules! extern_class {
         }
 
         impl $name {
+            #[doc = concat!(
+                "Get a reference to the Objective-C class `",
+                stringify!($name),
+                "`.",
+            )]
+            #[inline]
+            // TODO: Allow users to configure this?
             $v fn class() -> &'static $crate::objc2::runtime::Class {
                 $crate::objc2::class!($name)
             }
@@ -169,6 +180,13 @@ macro_rules! __inner_extern_class {
         }
 
         impl<$($t $(: $b)?),*> $name<$($t),*> {
+            #[doc = concat!(
+                "Get a reference to the Objective-C class `",
+                stringify!($name),
+                "`.",
+            )]
+            #[inline]
+            // TODO: Allow users to configure this?
             $v fn class() -> &'static $crate::objc2::runtime::Class {
                 $crate::objc2::class!($name)
             }
