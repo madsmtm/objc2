@@ -37,16 +37,6 @@ declare_class! {
             this
         }
 
-        @sel(applicationDidFinishLaunching:)
-        fn did_finish_launching(&self, _sender: *mut Object) {
-            println!("Did finish launching!");
-        }
-
-        @sel(applicationWillTerminate:)
-        fn will_terminate(&self, _: *mut Object) {
-            println!("Will terminate!");
-        }
-
         @sel(myClassMethod)
         fn my_class_method() {
             println!("A class method!");
@@ -58,6 +48,17 @@ declare_class! {
     // `clang` only when used in Objective-C...
     //
     // TODO: Investigate this!
+    unsafe impl {
+        @sel(applicationDidFinishLaunching:)
+        fn did_finish_launching(&self, _sender: *mut Object) {
+            println!("Did finish launching!");
+        }
+
+        @sel(applicationWillTerminate:)
+        fn will_terminate(&self, _: *mut Object) {
+            println!("Will terminate!");
+        }
+    }
 }
 
 impl CustomAppDelegate {

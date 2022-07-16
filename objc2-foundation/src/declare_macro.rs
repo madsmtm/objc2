@@ -471,26 +471,26 @@ macro_rules! __inner_declare_class {
 /// You can specify the protocols that the class should implement, along with
 /// any required methods for said protocols.
 ///
-/// The methods work exactly as above, they're only put here to make things
-/// easier to read.
+/// The methods work exactly as normal, they're only put "under" the protocol
+/// definition to make things easier to read.
 ///
 ///
 /// # Safety
 ///
 /// Using this macro requires writing a few `unsafe` markers:
 ///
-/// The one for the class definition has the following safety requirements:
+/// `unsafe struct ...` has the following safety requirements:
 /// - Same as [`extern_class!`] (the inheritance chain has to be correct).
 /// - Any instance variables you specify must either be able to be created
 ///   using [`MaybeUninit::zeroed`], or be properly initialized in an `init`
 ///   method.
 ///
-/// The one for the method implementation asserts that the types match those
-/// that are expected when the method is invoked from Objective-C. Note that
-/// there are no safe-guards here; you can easily write `i8`, but if
-/// Objective-C thinks it's an `u32`, it will cause UB when called!
+/// `unsafe impl { ... }` asserts that the types match those that are expected
+/// when the method is invoked from Objective-C. Note that there are no
+/// safe-guards here; you can easily write `i8`, but if Objective-C thinks
+/// it's an `u32`, it will cause UB when called!
 ///
-/// The one for the protocol definition requires that all required methods of
+/// `unsafe impl protocol ... { ... }` requires that all required methods of
 /// the specified protocol is implemented, and that any extra requirements
 /// (implicit or explicit) that the protocol has are upheld. The methods in
 /// this definition has the same safety requirements as above.
@@ -642,17 +642,12 @@ macro_rules! declare_class {
             $($ivar_v:vis $ivar:ident: $ivar_ty:ty,)*
         }
 
-        $(#[$impl_m:meta])*
-        unsafe impl {
-            $($methods:tt)*
-        }
-
         $(
-            $(#[$impl_protocol_m:meta])*
-            unsafe impl protocol $protocols:ident {
-                $($protocol_methods:tt)*
+            $(#[$impl_m:meta])*
+            unsafe impl $(protocol $protocol:ident)? {
+                $($methods:tt)*
             }
-        ),*
+        )*
     } => {
         $(
             #[allow(non_camel_case_types)]
@@ -705,21 +700,12 @@ macro_rules! declare_class {
                         );
                     )*
 
-                    // SAFETY: Upheld by caller
-                    unsafe {
-                        $crate::__inner_declare_class! {
-                            @rewrite_methods
-                            @register_out
-                            @builder
-
-                            $($methods)*
-                        }
-                    }
-
-                    // Implement protocols
                     $(
-                        let err_str = concat!("could not find protocol ", stringify!($protocols));
-                        builder.add_protocol(Protocol::get(stringify!($protocols)).expect(err_str));
+                        // Implement protocols
+                        $(
+                            let err_str = concat!("could not find protocol ", stringify!($protocol));
+                            builder.add_protocol(Protocol::get(stringify!($protocol)).expect(err_str));
+                        )?
 
                         // SAFETY: Upheld by caller
                         unsafe {
@@ -728,7 +714,7 @@ macro_rules! declare_class {
                                 @register_out
                                 @builder
 
-                                $($protocol_methods)*
+                                $($methods)*
                             }
                         }
                     )*
@@ -741,27 +727,15 @@ macro_rules! declare_class {
         }
 
         // Methods
-        $(#[$impl_m])*
-        impl $name {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @method_out
-                @__builder
-
-                $($methods)*
-            }
-        }
-
-        // Protocol methods
         $(
-            $(#[$impl_protocol_m])*
+            $(#[$impl_m])*
             impl $name {
                 $crate::__inner_declare_class! {
                     @rewrite_methods
                     @method_out
                     @__builder
 
-                    $($protocol_methods)*
+                    $($methods)*
                 }
             }
         )*
