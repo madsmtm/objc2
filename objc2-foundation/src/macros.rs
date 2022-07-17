@@ -25,7 +25,7 @@
 /// Finally, [`AsRef`], [`AsMut`], [`Borrow`] and [`BorrowMut`] are
 /// implemented to allow conversion to an arbitary superclasses in the
 /// inheritance chain (since an instance of a class can always be interpreted
-/// as it's superclasses).
+/// as its superclasses).
 ///
 /// [`Deref`]: core::ops::Deref
 /// [`DerefMut`]: core::ops::DerefMut
@@ -231,7 +231,7 @@ macro_rules! __inner_extern_class {
         unsafe impl<$($t $(: $b)?),*> $crate::objc2::Message for $name<$($t),*> {}
 
         // SAFETY: An instance can always be _used_ in exactly the same way as
-        // it's superclasses (though not necessarily _constructed_ in the same
+        // its superclasses (though not necessarily _constructed_ in the same
         // way, but `Deref` doesn't allow this).
         //
         // Remember; while we (the Rust side) may intentionally be forgetting

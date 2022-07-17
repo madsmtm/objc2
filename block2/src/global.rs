@@ -16,7 +16,7 @@ const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_he
     size: mem::size_of::<ffi::Block_layout>() as c_ulong,
 };
 
-/// An Objective-C block that does not capture it's environment.
+/// An Objective-C block that does not capture its environment.
 ///
 /// This is effectively just a glorified function pointer, and can created and
 /// stored in static memory using the [`global_block!`] macro.
@@ -93,8 +93,8 @@ where
 /// Construct a static [`GlobalBlock`].
 ///
 /// The syntax is similar to a static closure (except that all types have to
-/// be specified). Note that the block cannot capture it's environment, and
-/// it's argument types and return type must be [`Encode`].
+/// be specified). Note that the block cannot capture its environment, and
+/// its argument types and return type must be [`Encode`].
 ///
 /// # Examples
 ///
@@ -139,7 +139,7 @@ where
 /// }
 /// ```
 ///
-/// There is also no way to get a block function that's generic over it's
+/// There is also no way to get a block function that's generic over its
 /// arguments. One could imagine the following syntax would work, but it can't
 /// due to implementation limitations:
 ///

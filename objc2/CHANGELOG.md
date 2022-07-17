@@ -150,7 +150,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `Class` no longer implements `Message` (but it can still be
   used as the receiver in `msg_send!`, so this is unlikely to break anything
   in practice).
-* **BREAKING**: Sealed the `MethodImplementation` trait, and made it's `imp`
+* **BREAKING**: Sealed the `MethodImplementation` trait, and made its `imp`
   method privat.
 * **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-beta.0`.
 * **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
