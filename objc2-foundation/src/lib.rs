@@ -65,14 +65,18 @@ pub use self::string::NSString;
 pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSThread};
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
+pub use self::zone::NSZone;
 
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
 #[doc(no_inline)]
 pub use objc2::ffi::{NSInteger, NSUInteger};
 
+// For macros
 #[doc(hidden)]
 pub use core as __core;
+#[doc(hidden)]
+pub extern crate std as __std;
 
 // Expose the version of objc2 that this crate uses
 pub use objc2;
@@ -87,6 +91,8 @@ extern "C" {}
 
 #[macro_use]
 mod macros;
+#[macro_use]
+mod declare_macro;
 
 mod array;
 mod attributed_string;
@@ -106,3 +112,4 @@ mod string;
 mod thread;
 mod uuid;
 mod value;
+mod zone;

@@ -37,6 +37,9 @@
 //! decl.register();
 //! ```
 
+mod ivar;
+mod ivar_forwarding_impls;
+
 use alloc::format;
 use alloc::string::ToString;
 use core::mem;
@@ -47,6 +50,8 @@ use std::ffi::CString;
 
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::{ffi, Encode, EncodeArguments, Encoding, Message, RefEncode};
+
+pub use ivar::{Ivar, IvarType};
 
 pub(crate) mod private {
     pub trait Sealed {}
@@ -260,7 +265,8 @@ impl ClassBuilder {
         assert_eq!(
             sel_args,
             encs.len(),
-            "Selector accepts {} arguments, but function accepts {}",
+            "Selector {:?} accepts {} arguments, but function accepts {}",
+            sel,
             sel_args,
             encs.len(),
         );
@@ -301,7 +307,8 @@ impl ClassBuilder {
         assert_eq!(
             sel_args,
             encs.len(),
-            "Selector accepts {} arguments, but function accepts {}",
+            "Selector {:?} accepts {} arguments, but function accepts {}",
+            sel,
             sel_args,
             encs.len(),
         );
@@ -412,7 +419,8 @@ impl ProtocolBuilder {
         assert_eq!(
             sel_args,
             encs.len(),
-            "Selector accepts {} arguments, but function accepts {}",
+            "Selector {:?} accepts {} arguments, but function accepts {}",
+            sel,
             sel_args,
             encs.len(),
         );
