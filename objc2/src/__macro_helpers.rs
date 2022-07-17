@@ -212,7 +212,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        all(feature = "gnustep-1-7", feature = "verify_message"),
+        all(debug_assertions, feature = "gnustep-1-7"),
         ignore = "NSZone's encoding is quite complex on GNUStep"
     )]
     fn test_alloc_with_zone() {

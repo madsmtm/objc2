@@ -105,22 +105,14 @@
 //! (some Rust types have the same Objective-C encoding, but are not
 //! equivalent), but it gets us much closer to it!
 //!
-//! To use this functionality, enable the `"verify_message"` cargo feature
-//! while debugging. With this feature enabled, encodings are checked every
-//! time you send a message, and the message send will panic if they are not
+//! When `debug_assertions` are enabled we check the encoding every time you
+//! send a message, and the message send will panic if they are not
 //! equivalent.
 //!
 //! To take the example above, if we changed the `hash` method's return type
-//! as in the following example, it panics when the feature is enabled:
+//! as in the following example, it'll panic in debug mode:
 //!
-#![cfg_attr(
-    all(feature = "apple", feature = "verify_message"),
-    doc = "```should_panic"
-)]
-#![cfg_attr(
-    not(all(feature = "apple", feature = "verify_message")),
-    doc = "```no_run"
-)]
+//! ```should_panic
 //! # use objc2::{class, msg_send, msg_send_id};
 //! # use objc2::rc::{Id, Owned};
 //! # use objc2::runtime::Object;
@@ -130,6 +122,9 @@
 //! #
 //! // Wrong return type - this is UB!
 //! let hash1: f32 = unsafe { msg_send![&obj1, hash] };
+//! #
+//! # #[cfg(not(debug_assertions))]
+//! # panic!("Does not panic without debug assertions, so for testing we make it!");
 //! ```
 //!
 //! [`objc2-encode`]: objc2_encode
@@ -199,7 +194,6 @@ pub use objc_sys as ffi;
 pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 pub use crate::message::{Message, MessageArguments, MessageReceiver};
-#[cfg(feature = "malloc")]
 pub use crate::verify::VerificationError;
 
 #[macro_use]
@@ -208,11 +202,11 @@ mod macros;
 mod bool;
 mod cache;
 pub mod declare;
+mod encoding_parse;
 pub mod exception;
 mod message;
 pub mod rc;
 pub mod runtime;
-#[cfg(feature = "malloc")]
 mod verify;
 
 #[cfg(test)]

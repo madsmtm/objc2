@@ -17,10 +17,10 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
-pub use super::bool::Bool;
-use crate::{ffi, Encode, Encoding, RefEncode};
-#[cfg(feature = "malloc")]
-use crate::{verify::verify_message_signature, EncodeArguments, VerificationError};
+pub use crate::bool::Bool;
+use crate::encoding_parse::MethodTypesEncodingIter;
+use crate::verify::verify_message_signature;
+use crate::{ffi, Encode, EncodeArguments, Encoding, RefEncode, VerificationError};
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
@@ -269,8 +269,19 @@ impl Method {
         }
     }
 
-    // method_getTypeEncoding, efficient version of:
-    // -> return_type() + sum(argument_type(i) for i in arguments_count())
+    /// A combination of the method's types.
+    #[doc(alias = "method_getTypeEncoding")]
+    pub(crate) fn types(&self) -> MethodTypesEncodingIter<'_> {
+        // SAFETY: The method pointer is valid and non-null
+        let cstr = unsafe { ffi::method_getTypeEncoding(self.as_ptr()) };
+        if cstr.is_null() {
+            panic!("`method_getTypeEncoding` returned NULL.");
+        }
+        // SAFETY: The C-string is valid and non-null
+        let encoding = unsafe { CStr::from_ptr(cstr) };
+        let s = str::from_utf8(encoding.to_bytes()).unwrap();
+        MethodTypesEncodingIter::new(s)
+    }
 
     /// Returns the number of arguments accepted by self.
     pub fn arguments_count(&self) -> usize {
@@ -483,7 +494,6 @@ impl Class {
     /// let result = cls.verify_sel::<(&Class,), Bool>(sel);
     /// assert!(result.is_ok());
     /// ```
-    #[cfg(feature = "malloc")]
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,
