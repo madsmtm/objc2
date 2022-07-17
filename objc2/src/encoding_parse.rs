@@ -124,7 +124,7 @@ impl<'a> Data<'a> {
 
     fn peek(&self) -> Result<u8, EncodingParseError<'a>> {
         self.try_peek()
-            .ok_or(EncodingParseError::UnexpectedEnd(self.clone()))
+            .ok_or_else(|| EncodingParseError::UnexpectedEnd(self.clone()))
     }
 
     fn try_peek(&self) -> Option<u8> {

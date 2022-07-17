@@ -115,7 +115,7 @@ where
 
     let actual_count = A::ENCODINGS.len();
 
-    for (i, &actual) in A::ENCODINGS.into_iter().enumerate() {
+    for (i, &actual) in A::ENCODINGS.iter().enumerate() {
         if let Some(res) = iter.next() {
             let (expected, _stack_layout) = res.unwrap_or_else(|e| panic!("{}", e));
             if !actual.equivalent_to_str(expected) {

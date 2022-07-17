@@ -271,7 +271,7 @@ impl Method {
 
     /// A combination of the method's types.
     #[doc(alias = "method_getTypeEncoding")]
-    pub(crate) fn types<'a>(&'a self) -> MethodTypesEncodingIter<'a> {
+    pub(crate) fn types(&self) -> MethodTypesEncodingIter<'_> {
         // SAFETY: The method pointer is valid and non-null
         let cstr = unsafe { ffi::method_getTypeEncoding(self.as_ptr()) };
         if cstr.is_null() {
