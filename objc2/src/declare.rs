@@ -553,24 +553,29 @@ mod tests {
     #[test]
     #[cfg(feature = "malloc")]
     fn test_in_all_classes() {
-        fn assert_is_present(cls: *const Class) {
-            // Check that the class is present in Class::classes()
-            assert!(Class::classes()
+        fn is_present(cls: *const Class) -> bool {
+            // Check whether the class is present in Class::classes()
+            Class::classes()
                 .into_iter()
                 .find(|&item| ptr::eq(cls, *item))
-                .is_some());
+                .is_some()
         }
 
         let superclass = test_utils::custom_class();
         let builder = ClassBuilder::new("TestFetchWhileCreatingClass", superclass).unwrap();
 
-        if cfg!(feature = "apple") {
-            // It is IMO a bug in Apple's runtime that it is present here
-            assert_is_present(builder.cls.as_ptr());
+        if cfg!(all(
+            feature = "apple",
+            not(all(target_os = "macos", target_arch = "x86"))
+        )) {
+            // It is IMO a bug in Apple's new runtime that it is present here
+            assert!(is_present(builder.cls.as_ptr()));
+        } else {
+            assert!(!is_present(builder.cls.as_ptr()));
         }
 
         let cls = builder.register();
-        assert_is_present(cls);
+        assert!(is_present(cls));
     }
 
     #[test]
