@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `unstable-c-unwind` feature.
+* Use `doc_auto_cfg` to improve documentation output.
 
 
 ## 0.2.0-beta.0 - 2022-06-13

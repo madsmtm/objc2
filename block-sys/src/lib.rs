@@ -21,6 +21,8 @@
 #![warn(clippy::ptr_as_ptr)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block-sys/0.0.4")]
+#![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
+#![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
 
 extern crate std;
 
@@ -58,7 +60,7 @@ pub struct Class {
 #[allow(non_camel_case_types)]
 pub type block_flags = i32;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 pub const BLOCK_DEALLOCATING: block_flags = 0x0001;
 
 pub const BLOCK_REFCOUNT_MASK: block_flags = if cfg!(feature = "gnustep-1-7") {
@@ -73,19 +75,19 @@ pub const BLOCK_REFCOUNT_MASK: block_flags = if cfg!(feature = "gnustep-1-7") {
     0
 };
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// compiler
 pub const BLOCK_INLINE_LAYOUT_STRING: block_flags = 1 << 21;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// compiler
 pub const BLOCK_SMALL_DESCRIPTOR: block_flags = 1 << 22;
 
-#[cfg(feature = "apple")] // Part of ABI?
+#[cfg(any(doc, feature = "apple"))] // Part of ABI?
 /// compiler
 pub const BLOCK_IS_NOESCAPE: block_flags = 1 << 23;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// runtime
 pub const BLOCK_NEEDS_FREE: block_flags = 1 << 24;
 
@@ -97,7 +99,7 @@ pub const BLOCK_HAS_COPY_DISPOSE: block_flags = 1 << 25;
 /// compiler: helpers have C++ code
 pub const BLOCK_HAS_CTOR: block_flags = 1 << 26;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// compiler
 pub const BLOCK_IS_GC: block_flags = 1 << 27;
 
@@ -124,7 +126,7 @@ pub const BLOCK_USE_STRET: block_flags = 1 << 29;
 /// compiler
 pub const BLOCK_HAS_SIGNATURE: block_flags = 1 << 30;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// compiler
 pub const BLOCK_HAS_EXTENDED_LAYOUT: block_flags = 1 << 31;
 
@@ -167,7 +169,7 @@ pub const BLOCK_FIELD_IS_WEAK: block_assign_dispose_flags = 16;
 /// called from __block (byref) copy/dispose support routines.
 pub const BLOCK_BYREF_CALLER: block_assign_dispose_flags = 128;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 pub const BLOCK_ALL_COPY_DISPOSE_FLAGS: block_assign_dispose_flags = BLOCK_FIELD_IS_OBJECT
     | BLOCK_FIELD_IS_BLOCK
     | BLOCK_FIELD_IS_BYREF
@@ -200,7 +202,7 @@ extern "C" {
     pub fn _Block_object_dispose(object: *const c_void, flags: block_assign_dispose_flags);
 }
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 extern "C" {
     // Whether the return value of the block is on the stack.
     // macOS 10.7
@@ -227,7 +229,7 @@ extern "C" {
     // pub fn _Block_isDeallocating(block: *const c_void) -> bool;
 }
 
-#[cfg(any(feature = "apple", feature = "compiler-rt"))]
+#[cfg(any(doc, feature = "apple", feature = "compiler-rt"))]
 extern "C" {
     // the raw data space for runtime classes for blocks
     // class+meta used for stack, malloc, and collectable based blocks
@@ -239,7 +241,7 @@ extern "C" {
     pub fn Block_size(block: *mut c_void) -> c_ulong; // usize
 }
 
-#[cfg(any(feature = "apple", feature = "gnustep-1-7"))]
+#[cfg(any(doc, feature = "apple", feature = "gnustep-1-7"))]
 extern "C" {
     // indicates whether block was compiled with compiler that sets the ABI
     // related metadata bits
@@ -340,7 +342,7 @@ pub struct Block_descriptor_with_signature {
     pub encoding: *const c_char,
 }
 
-// #[cfg(feature = "apple")]
+// #[cfg(any(doc, feature = "apple"))]
 // pub layout: *const c_char,
 
 // #[repr(C)]
@@ -400,7 +402,7 @@ pub struct Block_byref {
     pub destroy: Option<unsafe extern "C" fn(src: *mut c_void)>,
 }
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// Structure used for on-stack variables that are referenced by blocks.
 ///
 /// requires BLOCK_BYREF_LAYOUT_EXTENDED

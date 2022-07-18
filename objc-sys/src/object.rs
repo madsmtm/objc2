@@ -1,8 +1,8 @@
-#[cfg(not(objfw))]
+#[cfg(any(doc, not(objfw)))]
 use core::ffi::c_void;
 use std::os::raw::c_char;
 
-#[cfg(not(objfw))]
+#[cfg(any(doc, not(objfw)))]
 use crate::objc_ivar;
 use crate::{objc_class, OpaqueData};
 
@@ -20,23 +20,23 @@ extern_c! {
     pub fn object_getClassName(obj: *const objc_object) -> *const c_char;
     pub fn object_setClass(obj: *mut objc_object, cls: *const objc_class) -> *const objc_class;
 
-    #[cfg(not(objfw))]
+    #[cfg(any(doc, not(objfw)))]
     pub fn object_getIndexedIvars(obj: *const objc_object) -> *const c_void;
-    #[cfg(not(objfw))]
+    #[cfg(any(doc, not(objfw)))]
     pub fn object_getIvar(obj: *const objc_object, ivar: *const objc_ivar) -> *const objc_object;
-    #[cfg(not(objfw))]
+    #[cfg(any(doc, not(objfw)))]
     pub fn object_setIvar(obj: *mut objc_object, ivar: *const objc_ivar, value: *mut objc_object);
 
     #[deprecated = "Not needed since ARC"]
-    #[cfg(apple)]
+    #[cfg(any(doc, apple))]
     pub fn object_copy(obj: *const objc_object, size: usize) -> *mut objc_object;
 
     #[deprecated = "Not needed since ARC"]
-    #[cfg(not(objfw))]
+    #[cfg(any(doc, not(objfw)))]
     pub fn object_dispose(obj: *mut objc_object) -> *mut objc_object;
 
     #[deprecated = "Not needed since ARC"]
-    #[cfg(not(objfw))]
+    #[cfg(any(doc, not(objfw)))]
     pub fn object_setInstanceVariable(
         obj: *mut objc_object,
         name: *const c_char,
@@ -45,7 +45,7 @@ extern_c! {
 
     // Available in macOS 10.12
     // #[deprecated = "Not needed since ARC"]
-    // #[cfg(apple)]
+    // #[cfg(any(doc, apple))]
     // pub fn object_setInstanceVariableWithStrongDefault(
     //     obj: *mut objc_object,
     //     name: *const c_char,
@@ -53,7 +53,7 @@ extern_c! {
     // ) -> *const objc_ivar;
 
     #[deprecated = "Not needed since ARC"]
-    #[cfg(not(objfw))]
+    #[cfg(any(doc, not(objfw)))]
     pub fn object_getInstanceVariable(
         obj: *const objc_object,
         name: *const c_char,
@@ -61,13 +61,13 @@ extern_c! {
     ) -> *const objc_ivar;
 
     #[deprecated = "Not needed since ARC"]
-    #[cfg(apple)]
+    #[cfg(any(doc, apple))]
     pub fn objc_getFutureClass(name: *const c_char) -> *const objc_class;
     #[deprecated = "Not needed since ARC"]
-    #[cfg(apple)]
+    #[cfg(any(doc, apple))]
     pub fn objc_constructInstance(cls: *const objc_class, bytes: *mut c_void) -> *mut objc_object;
     #[deprecated = "Not needed since ARC"]
-    #[cfg(apple)]
+    #[cfg(any(doc, apple))]
     pub fn objc_destructInstance(obj: *mut objc_object) -> *mut c_void;
 
     // TODO: Unsure if we should expose these; are they useful, and stable?
@@ -96,9 +96,9 @@ extern_c! {
     // );
 
     // #[deprecated = "use object_copy instead"]
-    // #[cfg(all(apple, target_os = "macos"))]
+    // #[cfg(any(doc, all(apple, target_os = "macos")))]
     // object_copyFromZone
     // #[deprecated = "use class_createInstance instead"]
-    // #[cfg(all(apple, target_os = "macos"))]
+    // #[cfg(any(doc, all(apple, target_os = "macos")))]
     // class_createInstanceFromZone
 }

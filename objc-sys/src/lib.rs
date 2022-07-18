@@ -26,6 +26,8 @@
 #![allow(non_snake_case)]
 #![doc(html_root_url = "https://docs.rs/objc-sys/0.2.0-beta.0")]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
+#![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
+#![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
 
 // TODO: Remove this and add "no-std" category to Cargo.toml
 // Requires a better solution for C-types in `no_std` crates.
@@ -47,14 +49,16 @@ macro_rules! generate_linking_tests {
         $(#[$extern_m:meta])*
         extern $abi:literal {$(
             $(#[$m:meta])*
-            $v:vis fn $name:ident($($a:ident: $t:ty),* $(,)?) $(-> $r:ty)?;
+            $v:vis fn $name:ident(
+                $($(#[$a_m:meta])* $a:ident: $t:ty),* $(,)?
+            ) $(-> $r:ty)?;
         )+}
         mod $test_name:ident;
     } => {
         $(#[$extern_m])*
         extern $abi {$(
             $(#[$m])*
-            $v fn $name($($a: $t),*) $(-> $r)?;
+            $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
         )+}
 
         $(#[$extern_m])*
@@ -70,7 +74,7 @@ macro_rules! generate_linking_tests {
                 fn $name() {
                     // Get function pointer to make the linker require the
                     // symbol to be available.
-                    let f: unsafe extern $abi fn($($t),*) $(-> $r)? = crate::$name;
+                    let f: unsafe extern $abi fn($($(#[$a_m])* $t),*) $(-> $r)? = crate::$name;
                     // Workaround for https://github.com/rust-lang/rust/pull/92964
                     #[cfg(feature = "unstable-c-unwind")]
                     #[allow(clippy::useless_transmute)]
@@ -88,14 +92,16 @@ macro_rules! extern_c {
         $(#![$extern_m:meta])*
         $(
             $(#[$m:meta])*
-            $v:vis fn $name:ident($($a:ident: $t:ty),* $(,)?) $(-> $r:ty)?;
+            $v:vis fn $name:ident(
+                $($(#[$a_m:meta])* $a:ident: $t:ty),* $(,)?
+            ) $(-> $r:ty)?;
         )+
     } => {
         generate_linking_tests! {
             $(#[$extern_m])*
             extern "C" {$(
                 $(#[$m])*
-                $v fn $name($($a: $t),*) $(-> $r)?;
+                $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
             )+}
             mod test_linkable;
         }
@@ -110,7 +116,9 @@ macro_rules! extern_c_unwind {
         $(#![$extern_m:meta])*
         $(
             $(#[$m:meta])*
-            $v:vis fn $name:ident($($a:ident: $t:ty),* $(,)?) $(-> $r:ty)?;
+            $v:vis fn $name:ident(
+                $($(#[$a_m:meta])* $a:ident: $t:ty),* $(,)?
+            ) $(-> $r:ty)?;
         )+
     } => {
         #[cfg(not(feature = "unstable-c-unwind"))]
@@ -118,7 +126,7 @@ macro_rules! extern_c_unwind {
             $(#[$extern_m])*
             extern "C" {$(
                 $(#[$m])*
-                $v fn $name($($a: $t),*) $(-> $r)?;
+                $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
             )+}
             mod test_linkable_unwind;
         }
@@ -128,7 +136,7 @@ macro_rules! extern_c_unwind {
             $(#[$extern_m])*
             extern "C-unwind" {$(
                 $(#[$m])*
-                $v fn $name($($a: $t),*) $(-> $r)?;
+                $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
             )+}
             mod test_linkable_unwind;
         }

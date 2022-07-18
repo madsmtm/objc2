@@ -1,5 +1,5 @@
 use std::os::raw::c_char;
-#[cfg(not(objfw))]
+#[cfg(any(doc, not(objfw)))]
 use std::os::raw::c_uint;
 
 use crate::OpaqueData;
@@ -24,7 +24,7 @@ pub struct objc_property_attribute_t {
 }
 
 extern_c! {
-    #![cfg(not(objfw))]
+    #![cfg(any(doc, not(objfw)))]
 
     pub fn property_copyAttributeList(
         property: *const objc_property,

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Use `doc_auto_cfg` to improve documentation output.
+
 
 ## 0.0.4 - 2022-06-13
 

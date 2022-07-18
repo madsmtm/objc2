@@ -1,8 +1,8 @@
 use std::os::raw::c_char;
-#[cfg(not(objfw))]
+#[cfg(any(doc, not(objfw)))]
 use std::os::raw::c_uint;
 
-#[cfg(not(objfw))]
+#[cfg(any(doc, not(objfw)))]
 use crate::IMP;
 use crate::{objc_selector, OpaqueData};
 
@@ -24,7 +24,7 @@ pub struct objc_method_description {
 }
 
 extern_c! {
-    #![cfg(not(objfw))]
+    #![cfg(any(doc, not(objfw)))]
 
     pub fn method_copyArgumentType(method: *const objc_method, index: c_uint) -> *mut c_char;
     pub fn method_copyReturnType(method: *const objc_method) -> *mut c_char;
@@ -35,7 +35,7 @@ extern_c! {
         dst: *mut c_char,
         dst_len: usize,
     );
-    #[cfg(apple)]
+    #[cfg(any(doc, apple))]
     pub fn method_getDescription(m: *const objc_method) -> *const objc_method_description;
     pub fn method_getImplementation(method: *const objc_method) -> IMP;
     pub fn method_getName(method: *const objc_method) -> *const objc_selector;
