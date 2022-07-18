@@ -8,12 +8,12 @@
 //!
 //! To enforce aliasing rules, an `Id` can be either owned or shared; if it is
 //! owned, meaning the `Id` is the only reference to the object, it can be
-//! mutably dereferenced. An owned `Id` can be downgraded to a shared `Id`
+//! mutably dereferenced. An owned `Id` can be converted to a shared `Id`,
 //! which can be cloned to allow multiple references.
 //!
 //! Weak references may be created using the [`WeakId`] struct; these will not
-//! retain the object, but they can upgraded to an `Id` in a manner that
-//! safely fails if the object has been deallocated.
+//! retain the object, but one can attempt to load them and obtain an `Id`, or
+//! safely fail if the object has been deallocated.
 //!
 //! See [the clang documentation][clang-arc] and [the Apple article on memory
 //! management][mem-mgmt] (similar document exists [for Core Foundation][cf])

@@ -176,7 +176,7 @@ fn main() {
                 (MacOS(_), _) => "macosx",
                 (IOS(_), _) => "ios",
                 (WatchOS(_), _) => "watchos",
-                // tvOS doesn't have it's own -fobjc-runtime string
+                // tvOS doesn't have its own -fobjc-runtime string
                 (TvOS(_), _) => "ios",
             };
             match runtime {

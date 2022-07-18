@@ -15,14 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```rust
   // Before
   let obj: Id<Object, Shared> = unsafe {
-      let obj: *mut Self = msg_send![Self::class(), alloc];
-      let obj: *mut Self = msg_send![obj, init];
+      let obj: *mut Object = msg_send![class!(MyObject), alloc];
+      let obj: *mut Object = msg_send![obj, init];
       Id::new(obj).unwrap()
   };
 
   // After
   let obj: Id<Object, Shared> = unsafe {
-      msg_send_id![msg_send_id![Self::class(), alloc], new].unwrap()
+      msg_send_id![msg_send_id![class!(MyObject), alloc], new].unwrap()
   };
   ```
 * Added the `"unstable-static-sel"` and `"unstable-static-sel-inlined"`
@@ -41,6 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   exceptions.
 * Added `declare::Ivar<T>` helper struct. This is useful for building safe
   abstractions that access instance variables.
+* Added `Id::from_owned` helper function.
 
 ### Changed
 * **BREAKING**: `Sel` is now required to be non-null, which means that you
@@ -88,7 +89,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Disallow throwing `nil` exceptions in `exception::throw`.
 
 ### Removed
-* **BREAKING**: Removed the `Sel::from_ptr` and `Sel::as_ptr` methods.
+* **BREAKING**: Removed the `Sel::from_ptr` method.
 * **BREAKING**: Removed `MessageError`.
 
 
@@ -149,7 +150,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `Class` no longer implements `Message` (but it can still be
   used as the receiver in `msg_send!`, so this is unlikely to break anything
   in practice).
-* **BREAKING**: Sealed the `MethodImplementation` trait, and made it's `imp`
+* **BREAKING**: Sealed the `MethodImplementation` trait, and made its `imp`
   method privat.
 * **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-beta.0`.
 * **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and

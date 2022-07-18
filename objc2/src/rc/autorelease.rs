@@ -294,7 +294,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 ///         let obj = needs_lifetime_from_pool(outer_pool);
 ///         obj
 ///     });
-///     // `obj` could wrongly be used here because it's lifetime was
+///     // `obj` could wrongly be used here because its lifetime was
 ///     // assigned to the outer pool, even though it was released by the
 ///     // inner pool already.
 /// });

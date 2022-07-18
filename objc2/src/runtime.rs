@@ -125,8 +125,11 @@ impl Sel {
         NonNull::new(ptr as *mut ffi::objc_selector).map(|ptr| Self { ptr })
     }
 
+    /// Get a pointer to the raw selector.
+    ///
+    /// Useful when working with raw FFI methods.
     #[inline]
-    pub(crate) const fn as_ptr(&self) -> *const ffi::objc_selector {
+    pub const fn as_ptr(&self) -> *const ffi::objc_selector {
         self.ptr.as_ptr()
     }
 

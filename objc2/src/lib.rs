@@ -2,7 +2,7 @@
 //!
 //! Objective-C is[^note] the standard programming language on Apple platforms
 //! like macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented
-//! language centered around "sending messages" to it's instances - this can
+//! language centered around "sending messages" to its instances - this can
 //! for the most part be viewed as a simple method call.
 //!
 //! Most of the core libraries and frameworks that are in use on Apple systems

@@ -44,7 +44,7 @@ malloc = ["malloc_buf"]
 # Make the `sel!` macro look up the selector statically.
 #
 # The plan is to enable this by default, but right now we are uncertain of
-# it's stability, and it might need significant changes before being fully
+# its stability, and it might need significant changes before being fully
 # ready!
 #
 # Please test it, and report any issues you may find:

@@ -486,6 +486,49 @@ mod tests {
     }
 
     #[test]
+    #[should_panic = "Failed to add ivar xyz"]
+    fn duplicate_ivar() {
+        let cls = test_utils::custom_class();
+        let builder = ClassBuilder::new("TestClassBuilderDuplicateIvar", cls).unwrap();
+        // ManuallyDrop to work around GNUStep issue
+        let mut builder = ManuallyDrop::new(builder);
+
+        builder.add_ivar::<i32>("xyz");
+        // Should panic:
+        builder.add_ivar::<i32>("xyz");
+    }
+
+    #[test]
+    #[should_panic = "Failed to add method xyz"]
+    fn duplicate_method() {
+        let cls = test_utils::custom_class();
+        let builder = ClassBuilder::new("TestClassBuilderDuplicateMethod", cls).unwrap();
+        let mut builder = ManuallyDrop::new(builder);
+
+        extern "C" fn xyz(_this: &Object, _cmd: Sel) {}
+
+        unsafe {
+            builder.add_method(sel!(xyz), xyz as extern "C" fn(_, _));
+            // Should panic:
+            builder.add_method(sel!(xyz), xyz as extern "C" fn(_, _));
+        }
+    }
+
+    #[test]
+    #[should_panic = "Failed to add protocol NSObject"]
+    fn duplicate_protocol() {
+        let cls = test_utils::custom_class();
+        let builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
+        let mut builder = ManuallyDrop::new(builder);
+
+        let protocol = Protocol::get("NSObject").unwrap();
+
+        builder.add_protocol(protocol);
+        // Should panic:
+        builder.add_protocol(protocol);
+    }
+
+    #[test]
     #[cfg_attr(
         feature = "gnustep-1-7",
         ignore = "Dropping ClassBuilder has weird threading side effects on GNUStep"

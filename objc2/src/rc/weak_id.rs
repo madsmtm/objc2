@@ -30,7 +30,7 @@ pub struct WeakId<T: ?Sized> {
     /// TODO: Investigate if we can avoid some allocations using `Pin`.
     inner: Box<UnsafeCell<*mut ffi::objc_object>>,
     /// WeakId inherits variance, dropck and various marker traits from
-    /// `Id<T, Shared>` because it can be upgraded to a shared Id.
+    /// `Id<T, Shared>` because it can be loaded as a shared Id.
     item: PhantomData<Id<T, Shared>>,
 }
 
@@ -63,7 +63,6 @@ impl<T: Message> WeakId<T> {
     ///
     /// Returns [`None`] if the object has been deallocated or was created
     /// with [`Default::default`].
-    #[doc(alias = "upgrade")]
     #[doc(alias = "retain")]
     #[doc(alias = "objc_loadWeak")]
     #[doc(alias = "objc_loadWeakRetained")]

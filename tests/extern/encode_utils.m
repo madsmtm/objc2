@@ -83,6 +83,19 @@ struct with_block {
 };
 ENCODING(STRUCT_WITH_BLOCK, struct with_block);
 
+struct with_atomic_inner {
+    _Atomic int a;
+    _Atomic int* b;
+};
+struct with_atomic {
+    _Atomic int a;
+    _Atomic const int* b;
+    struct with_atomic_inner c;
+    struct with_atomic_inner* d;
+    _Atomic struct with_atomic_inner* e;
+};
+ENCODING(STRUCT_WITH_ATOMIC, struct with_atomic);
+
 // Bit field
 
 struct bitfield {
