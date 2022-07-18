@@ -37,7 +37,7 @@ gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "block2?/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1"]
 
 [dependencies]
-block2 = { path = "../block2", version = "=0.2.0-alpha.4", default-features = false, optional = true }
+block2 = { path = "../block2", version = "=0.2.0-alpha.5", default-features = false, optional = true }
 objc2 = { path = "../objc2", version = "=0.3.0-beta.0", default-features = false }
 
 [package.metadata.docs.rs]

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-alpha.5 - 2022-07-19
+
 ### Added
 * Implemented `Debug` for `Block`, `ConcreteBlock`, `RcBlock` and
   `GlobalBlock`.
