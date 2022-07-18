@@ -58,6 +58,9 @@ unstable-autoreleasesafe = []
 # Uses the nightly c_unwind feature to make throwing safe
 unstable-c-unwind = ["objc-sys/unstable-c-unwind"]
 
+# For better documentation on docs.rs
+unstable-docsrs = []
+
 # Runtime selection. See `objc-sys` for details.
 apple = ["objc-sys/apple"]
 gnustep-1-7 = ["objc-sys/gnustep-1-7"]
@@ -81,7 +84,7 @@ harness = false
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
-features = ["exception", "malloc"]
+features = ["exception", "malloc", "unstable-docsrs"]
 
 targets = [
     # MacOS
