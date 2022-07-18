@@ -15,14 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```rust
   // Before
   let obj: Id<Object, Shared> = unsafe {
-      let obj: *mut Self = msg_send![Self::class(), alloc];
-      let obj: *mut Self = msg_send![obj, init];
+      let obj: *mut Object = msg_send![class!(MyObject), alloc];
+      let obj: *mut Object = msg_send![obj, init];
       Id::new(obj).unwrap()
   };
 
   // After
   let obj: Id<Object, Shared> = unsafe {
-      msg_send_id![msg_send_id![Self::class(), alloc], new].unwrap()
+      msg_send_id![msg_send_id![class!(MyObject), alloc], new].unwrap()
   };
   ```
 * Added the `"unstable-static-sel"` and `"unstable-static-sel-inlined"`
