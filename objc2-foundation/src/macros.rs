@@ -35,9 +35,12 @@
 ///
 /// # Safety
 ///
-/// The specified inheritance chain must be correct (including in the correct
-/// order), and the types in said chain must be valid as Objective-C objects -
-/// this is easiest to ensure by also creating those using this macro.
+/// The specified inheritance chain must be correct, including in the correct
+/// order, and the types in said chain must be valid as Objective-C objects
+/// (this is easy to ensure by also creating those using this macro).
+///
+/// The object must respond to standard memory management messages (this is
+/// upheld if `NSObject` is part of its inheritance chain).
 ///
 ///
 /// # Example
@@ -208,12 +211,24 @@ macro_rules! __inner_extern_class {
             $($p_v $p: $pty),*
         }
 
-        unsafe impl<$($t $(: $b)?),*> $crate::objc2::Message for $name<$($t),*> { }
-
+        // SAFETY:
+        // - The item is FFI-safe with `#[repr(C)]`.
+        // - The encoding is taken from the inner item, and caller verifies
+        //   that it actually inherits said object.
+        // - The rest of the struct's fields are ZSTs, so they don't influence
+        //   the layout.
         unsafe impl<$($t $(: $b)?),*> $crate::objc2::RefEncode for $name<$($t),*> {
             const ENCODING_REF: $crate::objc2::Encoding<'static>
                 = <$inherits as $crate::objc2::RefEncode>::ENCODING_REF;
         }
+
+        // SAFETY: This is essentially just a newtype wrapper over `Object`
+        // (we even ensure that `Object` is always last in our inheritance
+        // tree), so it is always safe to reinterpret as that.
+        //
+        // That the object must work with standard memory management is upheld
+        // by the caller.
+        unsafe impl<$($t $(: $b)?),*> $crate::objc2::Message for $name<$($t),*> {}
 
         // SAFETY: An instance can always be _used_ in exactly the same way as
         // it's superclasses (though not necessarily _constructed_ in the same
