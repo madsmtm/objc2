@@ -84,6 +84,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let init: extern "C" fn(_, _) -> _ = init;
   builder.add_method(sel!(init), init);
   ```
+* Updated `ffi` module to `objc-sys v0.2.0-beta.1`.
 
 ### Fixed
 * **BREAKING**: Disallow throwing `nil` exceptions in `exception::throw`.
