@@ -6,8 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.1.0-beta.0 - 2022-07-19
+
 ### Added
 * Use `doc_auto_cfg` to improve documentation output.
+
+### Changed
+* **BREAKING**: Changed `links` key from `block_0_0` to `block_0_1` (so
+  `DEP_BLOCK_0_0_CC_ARGS` in build scripts becomes `DEP_BLOCK_0_1_CC_ARGS`).
 
 
 ## 0.0.4 - 2022-06-13

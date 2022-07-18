@@ -1,6 +1,6 @@
 [package]
 name = "block-sys"
-version = "0.0.4" # Remember to update html_root_url in lib.rs
+version = "0.1.0-beta.0" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 
@@ -19,7 +19,7 @@ readme = "README.md"
 
 # Downstream users can customize the linking!
 # See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
-links = "block_0_0"
+links = "block_0_1"
 build = "build.rs"
 
 [features]

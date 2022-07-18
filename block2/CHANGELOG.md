@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.1`.
+* Updated `ffi` module to `block-sys v0.1.0-beta.0`.
 
 
 ## 0.2.0-alpha.4 - 2022-06-13
