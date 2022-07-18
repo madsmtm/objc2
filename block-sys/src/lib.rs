@@ -21,6 +21,8 @@
 #![warn(clippy::ptr_as_ptr)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block-sys/0.0.4")]
+#![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
+#![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
 
 extern crate std;
 
@@ -58,7 +60,7 @@ pub struct Class {
 #[allow(non_camel_case_types)]
 pub type block_flags = i32;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 pub const BLOCK_DEALLOCATING: block_flags = 0x0001;
 
 pub const BLOCK_REFCOUNT_MASK: block_flags = if cfg!(feature = "gnustep-1-7") {
@@ -73,19 +75,19 @@ pub const BLOCK_REFCOUNT_MASK: block_flags = if cfg!(feature = "gnustep-1-7") {
     0
 };
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// compiler
 pub const BLOCK_INLINE_LAYOUT_STRING: block_flags = 1 << 21;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// compiler
 pub const BLOCK_SMALL_DESCRIPTOR: block_flags = 1 << 22;
 
-#[cfg(feature = "apple")] // Part of ABI?
+#[cfg(any(doc, feature = "apple"))] // Part of ABI?
 /// compiler
 pub const BLOCK_IS_NOESCAPE: block_flags = 1 << 23;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// runtime
 pub const BLOCK_NEEDS_FREE: block_flags = 1 << 24;
 
@@ -97,7 +99,7 @@ pub const BLOCK_HAS_COPY_DISPOSE: block_flags = 1 << 25;
 /// compiler: helpers have C++ code
 pub const BLOCK_HAS_CTOR: block_flags = 1 << 26;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// compiler
 pub const BLOCK_IS_GC: block_flags = 1 << 27;
 
@@ -124,7 +126,7 @@ pub const BLOCK_USE_STRET: block_flags = 1 << 29;
 /// compiler
 pub const BLOCK_HAS_SIGNATURE: block_flags = 1 << 30;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// compiler
 pub const BLOCK_HAS_EXTENDED_LAYOUT: block_flags = 1 << 31;
 
@@ -167,7 +169,7 @@ pub const BLOCK_FIELD_IS_WEAK: block_assign_dispose_flags = 16;
 /// called from __block (byref) copy/dispose support routines.
 pub const BLOCK_BYREF_CALLER: block_assign_dispose_flags = 128;
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 pub const BLOCK_ALL_COPY_DISPOSE_FLAGS: block_assign_dispose_flags = BLOCK_FIELD_IS_OBJECT
     | BLOCK_FIELD_IS_BLOCK
     | BLOCK_FIELD_IS_BYREF
@@ -183,6 +185,12 @@ extern "C" {
     pub static _NSConcreteGlobalBlock: Class;
     pub static _NSConcreteStackBlock: Class;
     pub static _NSConcreteMallocBlock: Class;
+    #[cfg(any(doc, feature = "apple", feature = "compiler-rt"))]
+    pub static _NSConcreteAutoBlock: Class;
+    #[cfg(any(doc, feature = "apple", feature = "compiler-rt"))]
+    pub static _NSConcreteFinalizingBlock: Class;
+    #[cfg(any(doc, feature = "apple", feature = "compiler-rt"))]
+    pub static _NSConcreteWeakBlockVariable: Class;
 
     pub fn _Block_copy(block: *const c_void) -> *mut c_void;
     pub fn _Block_release(block: *const c_void);
@@ -198,58 +206,50 @@ extern "C" {
     /// runtime entry point called by the compiler when disposing of objects
     /// inside dispose helper routine
     pub fn _Block_object_dispose(object: *const c_void, flags: block_assign_dispose_flags);
-}
 
-#[cfg(feature = "apple")]
-extern "C" {
+    #[cfg(any(doc, feature = "apple", feature = "compiler-rt"))]
+    pub fn Block_size(block: *mut c_void) -> c_ulong; // usize
+
     // Whether the return value of the block is on the stack.
     // macOS 10.7
+    // #[cfg(any(doc, feature = "apple"))]
     // pub fn _Block_use_stret(block: *mut c_void) -> bool;
 
     // Returns a string describing the block's GC layout.
     // This uses the GC skip/scan encoding.
     // May return NULL.
     // macOS 10.7
+    // #[cfg(any(doc, feature = "apple"))]
     // pub fn _Block_layout(block: *mut c_void) -> *const c_char;
 
     // Returns a string describing the block's layout.
     // This uses the "extended layout" form described above.
     // May return NULL.
     // macOS 10.8
+    // #[cfg(any(doc, feature = "apple"))]
     // pub fn _Block_extended_layout(block: *mut c_void) -> *const c_char;
 
     // Callable only from the ARR weak subsystem while in exclusion zone
     // macOS 10.7
+    // #[cfg(any(doc, feature = "apple"))]
     // pub fn _Block_tryRetain(block: *const c_void) -> bool;
 
     // Callable only from the ARR weak subsystem while in exclusion zone
     // macOS 10.7
+    // #[cfg(any(doc, feature = "apple"))]
     // pub fn _Block_isDeallocating(block: *const c_void) -> bool;
-}
 
-#[cfg(any(feature = "apple", feature = "compiler-rt"))]
-extern "C" {
-    // the raw data space for runtime classes for blocks
-    // class+meta used for stack, malloc, and collectable based blocks
-
-    pub static _NSConcreteAutoBlock: Class;
-    pub static _NSConcreteFinalizingBlock: Class;
-    pub static _NSConcreteWeakBlockVariable: Class;
-
-    pub fn Block_size(block: *mut c_void) -> c_ulong; // usize
-}
-
-#[cfg(any(feature = "apple", feature = "gnustep-1-7"))]
-extern "C" {
     // indicates whether block was compiled with compiler that sets the ABI
     // related metadata bits
     // macOS 10.7
+    // #[cfg(any(doc, feature = "apple", feature = "gnustep-1-7"))]
     // pub fn _Block_has_signature(block: *mut c_void) -> bool;
 
     // Returns a string describing the block's parameter and return types.
     // The encoding scheme is the same as Objective-C @encode.
     // Returns NULL for blocks compiled with some compilers.
     // macOS 10.7
+    // #[cfg(any(doc, feature = "apple", feature = "gnustep-1-7"))]
     // pub fn _Block_signature(block: *mut c_void) -> *const c_char;
 }
 
@@ -340,7 +340,7 @@ pub struct Block_descriptor_with_signature {
     pub encoding: *const c_char,
 }
 
-// #[cfg(feature = "apple")]
+// #[cfg(any(doc, feature = "apple"))]
 // pub layout: *const c_char,
 
 // #[repr(C)]
@@ -400,7 +400,7 @@ pub struct Block_byref {
     pub destroy: Option<unsafe extern "C" fn(src: *mut c_void)>,
 }
 
-#[cfg(feature = "apple")]
+#[cfg(any(doc, feature = "apple"))]
 /// Structure used for on-stack variables that are referenced by blocks.
 ///
 /// requires BLOCK_BYREF_LAYOUT_EXTENDED

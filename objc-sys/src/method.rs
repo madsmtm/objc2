@@ -1,8 +1,8 @@
 use std::os::raw::c_char;
-#[cfg(not(objfw))]
+#[cfg(any(doc, not(objfw)))]
 use std::os::raw::c_uint;
 
-#[cfg(not(objfw))]
+#[cfg(any(doc, not(objfw)))]
 use crate::IMP;
 use crate::{objc_selector, OpaqueData};
 
@@ -24,23 +24,31 @@ pub struct objc_method_description {
 }
 
 extern_c! {
-    #![cfg(not(objfw))]
-
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_copyArgumentType(method: *const objc_method, index: c_uint) -> *mut c_char;
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_copyReturnType(method: *const objc_method) -> *mut c_char;
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_exchangeImplementations(method1: *mut objc_method, method2: *mut objc_method);
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_getArgumentType(
         method: *const objc_method,
         index: c_uint,
         dst: *mut c_char,
         dst_len: usize,
     );
-    #[cfg(apple)]
+    #[cfg(any(doc, apple))]
     pub fn method_getDescription(m: *const objc_method) -> *const objc_method_description;
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_getImplementation(method: *const objc_method) -> IMP;
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_getName(method: *const objc_method) -> *const objc_selector;
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_getNumberOfArguments(method: *const objc_method) -> c_uint;
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_getReturnType(method: *const objc_method, dst: *mut c_char, dst_len: usize);
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_getTypeEncoding(method: *const objc_method) -> *const c_char;
+    #[cfg(any(doc, not(objfw)))]
     pub fn method_setImplementation(method: *const objc_method, imp: IMP) -> IMP;
 }

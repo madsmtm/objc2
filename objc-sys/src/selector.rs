@@ -16,9 +16,9 @@ extern_c! {
     pub fn sel_isEqual(lhs: *const objc_selector, rhs: *const objc_selector) -> BOOL;
     pub fn sel_registerName(name: *const c_char) -> *const objc_selector;
 
-    #[cfg(not(objfw))]
+    #[cfg(any(doc, not(objfw)))]
     pub fn sel_getUid(name: *const c_char) -> *const objc_selector;
 
-    #[cfg(apple)]
+    #[cfg(any(doc, apple))]
     pub fn sel_isMapped(sel: *const objc_selector) -> BOOL;
 }

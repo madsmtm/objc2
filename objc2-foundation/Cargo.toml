@@ -25,6 +25,9 @@ block = ["block2"]
 std = ["alloc", "objc2/std", "block2?/std"]
 alloc = ["objc2/alloc", "block2?/alloc"]
 
+# For better documentation on docs.rs
+unstable-docsrs = []
+
 # Runtime selection. See `objc-sys` and `block-sys` for details.
 apple = ["objc2/apple", "block2?/apple"]
 gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7"]
@@ -39,7 +42,7 @@ objc2 = { path = "../objc2", version = "=0.3.0-beta.0", default-features = false
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
-features = ["block"]
+features = ["block", "unstable-docsrs"]
 
 targets = [
     # MacOS

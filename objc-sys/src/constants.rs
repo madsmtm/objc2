@@ -1,6 +1,6 @@
 //! Various common #defines and enum constants.
 
-#[cfg(apple)]
+#[cfg(any(doc, apple))]
 use std::os::raw::c_int;
 
 use crate::{id, objc_class, BOOL};
@@ -26,13 +26,13 @@ pub const OBJC_ASSOCIATION_COPY_NONATOMIC: objc_AssociationPolicy = 3;
 pub const OBJC_ASSOCIATION_RETAIN: objc_AssociationPolicy = 769;
 pub const OBJC_ASSOCIATION_COPY: objc_AssociationPolicy = 771;
 
-#[cfg(apple)]
+#[cfg(any(doc, apple))]
 pub const OBJC_SYNC_SUCCESS: c_int = 0;
-#[cfg(apple)]
+#[cfg(any(doc, apple))]
 pub const OBJC_SYNC_NOT_OWNING_THREAD_ERROR: c_int = -1;
 /// Only relevant before macOS 10.13
-#[cfg(apple)]
+#[cfg(any(doc, apple))]
 pub const OBJC_SYNC_TIMED_OUT: c_int = -2;
 /// Only relevant before macOS 10.13
-#[cfg(apple)]
+#[cfg(any(doc, apple))]
 pub const OBJC_SYNC_NOT_INITIALIZED: c_int = -3;
