@@ -46,7 +46,6 @@ use core::marker::{PhantomData, PhantomPinned};
 
 macro_rules! generate_linking_tests {
     {
-        $(#[$extern_m:meta])*
         extern $abi:literal {$(
             $(#[$m:meta])*
             $v:vis fn $name:ident(
@@ -55,13 +54,11 @@ macro_rules! generate_linking_tests {
         )+}
         mod $test_name:ident;
     } => {
-        $(#[$extern_m])*
         extern $abi {$(
             $(#[$m])*
             $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
         )+}
 
-        $(#[$extern_m])*
         #[allow(deprecated)]
         #[cfg(test)]
         mod $test_name {
@@ -89,7 +86,6 @@ macro_rules! generate_linking_tests {
 
 macro_rules! extern_c {
     {
-        $(#![$extern_m:meta])*
         $(
             $(#[$m:meta])*
             $v:vis fn $name:ident(
@@ -98,7 +94,6 @@ macro_rules! extern_c {
         )+
     } => {
         generate_linking_tests! {
-            $(#[$extern_m])*
             extern "C" {$(
                 $(#[$m])*
                 $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
@@ -113,7 +108,6 @@ macro_rules! extern_c {
 // "C-unwind", only certain ones!
 macro_rules! extern_c_unwind {
     {
-        $(#![$extern_m:meta])*
         $(
             $(#[$m:meta])*
             $v:vis fn $name:ident(
@@ -123,7 +117,6 @@ macro_rules! extern_c_unwind {
     } => {
         #[cfg(not(feature = "unstable-c-unwind"))]
         generate_linking_tests! {
-            $(#[$extern_m])*
             extern "C" {$(
                 $(#[$m])*
                 $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
@@ -133,7 +126,6 @@ macro_rules! extern_c_unwind {
 
         #[cfg(feature = "unstable-c-unwind")]
         generate_linking_tests! {
-            $(#[$extern_m])*
             extern "C-unwind" {$(
                 $(#[$m])*
                 $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
