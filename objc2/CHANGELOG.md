@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0-beta.1 - 2022-07-19
+
 ### Added
 * Added `msg_send_id!` to help with following Objective-C's memory management
   rules. **It is highly recommended that you use this instead of doing memory
@@ -84,6 +87,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let init: extern "C" fn(_, _) -> _ = init;
   builder.add_method(sel!(init), init);
   ```
+* Updated `ffi` module to `objc-sys v0.2.0-beta.1`.
+* **BREAKING**: Updated `encode` module `objc2-encode v2.0.0-pre.1`.
 
 ### Fixed
 * **BREAKING**: Disallow throwing `nil` exceptions in `exception::throw`.

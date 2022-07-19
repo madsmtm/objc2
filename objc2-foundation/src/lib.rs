@@ -35,7 +35,7 @@
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-foundation/0.2.0-alpha.5")]
+#![doc(html_root_url = "https://docs.rs/objc2-foundation/0.2.0-alpha.6")]
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg))]
 
 extern crate alloc;
