@@ -353,6 +353,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// be careful not accidentally require instructions between these.
     ///
     /// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html
+    /// [`msg_send!`]: crate::msg_send
     ///
     ///
     /// # Safety

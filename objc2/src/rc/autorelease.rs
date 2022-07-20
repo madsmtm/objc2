@@ -224,6 +224,8 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// you can instead, since having to use this function can be quite cumbersome
 /// for your users!
 ///
+/// [`msg_send_id!`]: crate::msg_send_id
+///
 ///
 /// # Examples
 ///
