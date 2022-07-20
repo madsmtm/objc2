@@ -48,16 +48,18 @@ compile_error!("The `std` feature currently must be enabled.");
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-pub use self::array::{NSArray, NSMutableArray};
+pub use self::array::NSArray;
 pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
-pub use self::data::{NSData, NSMutableData};
+pub use self::data::NSData;
 pub use self::dictionary::NSDictionary;
 pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
 pub use self::exception::NSException;
 pub use self::geometry::{CGFloat, NSPoint, NSRect, NSSize};
+pub use self::mutable_array::NSMutableArray;
 pub use self::mutable_attributed_string::NSMutableAttributedString;
+pub use self::mutable_data::NSMutableData;
 pub use self::mutable_string::NSMutableString;
 pub use self::object::NSObject;
 pub use self::process_info::NSProcessInfo;
@@ -101,7 +103,9 @@ mod enumerator;
 mod exception;
 mod geometry;
 mod macros;
+mod mutable_array;
 mod mutable_attributed_string;
+mod mutable_data;
 mod mutable_string;
 mod object;
 mod process_info;
