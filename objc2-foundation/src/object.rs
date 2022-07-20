@@ -71,7 +71,7 @@ impl fmt::Debug for NSObject {
 
         match description {
             // Attempt to format with description
-            Some(description) => fmt::Debug::fmt(&description, f),
+            Some(description) => fmt::Display::fmt(&description, f),
             // If description was `NULL`, use `Object`'s `Debug` impl instead
             None => {
                 let obj: &Object = self;
@@ -155,7 +155,7 @@ mod tests {
     fn test_debug() {
         let obj = NSObject::new();
         let expected = format!("<NSObject: {:p}>", &*obj);
-        assert_eq!(format!("{:?}", obj), format!("{:?}", expected));
+        assert_eq!(format!("{:?}", obj), expected);
     }
 
     #[test]

@@ -1,4 +1,5 @@
 use alloc::vec::Vec;
+use core::fmt;
 use core::marker::PhantomData;
 use core::ops::{Index, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
@@ -26,7 +27,7 @@ __inner_extern_class! {
     /// What about `Id<NSArray<T, Shared>, Owned>`?
     // `T: PartialEq` bound correct because `NSArray` does deep (instead of
     // shallow) equality comparisons.
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSArray<T, O: Ownership>: NSObject {
         item: PhantomData<Id<T, O>>,
         notunwindsafe: PhantomData<&'static mut ()>,
@@ -215,6 +216,13 @@ impl<T: Message> DefaultId for NSArray<T, Shared> {
     }
 }
 
+impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSArray<T, O> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_list().entries(self.iter_fast()).finish()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::format;
@@ -276,15 +284,11 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Output is different depending on OS version and runtime"]
     fn test_debug() {
+        let obj = sample_number_array(0);
+        assert_eq!(format!("{:?}", obj), "[]");
         let obj = sample_number_array(3);
-        let expected = r#"(
-    "<00>",
-    "<01>",
-    "<02>"
-)"#;
-        assert_eq!(format!("{:?}", obj), format!("{:?}", expected));
+        assert_eq!(format!("{:?}", obj), "[0, 1, 2]");
     }
 
     #[test]

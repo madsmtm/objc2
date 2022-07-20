@@ -1,6 +1,7 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
 use core::ffi::c_void;
+use core::fmt;
 use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
@@ -17,7 +18,7 @@ extern_class! {
     /// This is similar to a [`slice`][`prim@slice`] of [`u8`].
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsdata?language=objc).
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSData: NSObject;
 }
 
@@ -120,6 +121,14 @@ impl DefaultId for NSData {
     }
 }
 
+impl fmt::Debug for NSData {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // -[NSData description] is quite unreadable
+        fmt::Debug::fmt(self.bytes(), f)
+    }
+}
+
 pub(crate) unsafe fn data_with_bytes(cls: &Class, bytes: &[u8]) -> *mut Object {
     let bytes_ptr: *const c_void = bytes.as_ptr().cast();
     unsafe {
@@ -164,6 +173,7 @@ pub(crate) unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> *mut Object {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::format;
     #[cfg(feature = "block")]
     use alloc::vec;
 
@@ -189,5 +199,12 @@ mod tests {
 
         let data = NSData::from_vec(bytes);
         assert_eq!(data.bytes().as_ptr(), bytes_ptr);
+    }
+
+    #[test]
+    fn test_debug() {
+        let bytes = [3, 7, 16, 52, 112, 19];
+        let data = NSData::with_bytes(&bytes);
+        assert_eq!(format!("{:?}", data), "[3, 7, 16, 52, 112, 19]");
     }
 }

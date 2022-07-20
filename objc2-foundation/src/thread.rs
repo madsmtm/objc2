@@ -1,3 +1,4 @@
+use core::fmt;
 use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
@@ -10,7 +11,7 @@ extern_class! {
     /// A thread of execution.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsthread?language=objc).
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSThread: NSObject;
 }
 
@@ -23,14 +24,11 @@ impl RefUnwindSafe for NSThread {}
 impl NSThread {
     /// Returns the [`NSThread`] object representing the current thread.
     pub fn current() -> Id<Self, Shared> {
-        // TODO: currentThread is @property(strong), what does that mean?
-        // TODO: Always available?
         unsafe { msg_send_id![Self::class(), currentThread].unwrap() }
     }
 
     /// Returns the [`NSThread`] object representing the main thread.
     pub fn main() -> Id<NSThread, Shared> {
-        // TODO: mainThread is @property(strong), what does that mean?
         // The main thread static may not have been initialized
         // This can at least fail in GNUStep!
         unsafe { msg_send_id![Self::class(), mainThread] }.expect("Could not retrieve main thread.")
@@ -46,12 +44,20 @@ impl NSThread {
         unsafe { msg_send_id![self, name] }
     }
 
-    fn new() -> Id<Self, Shared> {
+    unsafe fn new() -> Id<Self, Shared> {
         unsafe { msg_send_id![Self::class(), new] }.unwrap()
     }
 
-    fn start(&self) {
+    unsafe fn start(&self) {
         unsafe { msg_send![self, start] }
+    }
+}
+
+impl fmt::Debug for NSThread {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Use -[NSThread description] since that includes the thread number
+        let obj: &NSObject = self;
+        fmt::Debug::fmt(obj, f)
     }
 }
 
@@ -67,8 +73,8 @@ pub fn is_main_thread() -> bool {
 
 #[allow(unused)]
 fn make_multithreaded() {
-    let thread = NSThread::new();
-    thread.start();
+    let thread = unsafe { NSThread::new() };
+    unsafe { thread.start() };
     // Don't bother waiting for it to complete!
 }
 
@@ -108,7 +114,7 @@ fn make_multithreaded() {
 /// let mtm = MainThreadMarker::new().unwrap();
 /// unsafe { do_thing(obj, mtm) }
 /// ```
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 // This is valid to Copy because it's still `!Send` and `!Sync`.
 pub struct MainThreadMarker {
     // No lifetime information needed; the main thread is static and available
@@ -141,8 +147,15 @@ impl MainThreadMarker {
     }
 }
 
+impl fmt::Debug for MainThreadMarker {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("MainThreadMarker").finish()
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use alloc::format;
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
     use super::*;
@@ -180,5 +193,21 @@ mod tests {
         fn assert_traits<T: Unpin + UnwindSafe + RefUnwindSafe + Sized>() {}
 
         assert_traits::<MainThreadMarker>()
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "gnustep-1-7",
+        ignore = "Retrieving main thread is weirdly broken, only works with --test-threads=1"
+    )]
+    fn test_debug() {
+        let thread = NSThread::main();
+        let expected = format!("<NSThread: {:p}>{{number = 1, name = (null)}}", thread);
+        assert_eq!(format!("{:?}", thread), expected);
+
+        // SAFETY: We don't use the marker for anything other than its Debug
+        // impl, so this test doesn't actually need to run on the main thread!
+        let marker = unsafe { MainThreadMarker::new_unchecked() };
+        assert_eq!(format!("{:?}", marker), "MainThreadMarker");
     }
 }

@@ -1,3 +1,5 @@
+use core::fmt;
+
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{msg_send, msg_send_id};
 
@@ -7,7 +9,7 @@ extern_class! {
     /// A mutable string that has associated attributes.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutableattributedstring?language=objc).
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableAttributedString: NSAttributedString, NSObject;
 }
 
@@ -73,6 +75,12 @@ impl alloc::borrow::ToOwned for NSMutableAttributedString {
     type Owned = Id<NSMutableAttributedString, Owned>;
     fn to_owned(&self) -> Self::Owned {
         self.mutable_copy()
+    }
+}
+
+impl fmt::Debug for NSMutableAttributedString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
     }
 }
 

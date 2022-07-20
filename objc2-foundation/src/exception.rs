@@ -158,9 +158,9 @@ mod tests {
         assert_eq!(format!("{:?}", exc), debug);
 
         let description = if cfg!(feature = "gnustep-1-7") {
-            format!("\"<NSException: {:p}> NAME:abc REASON:def\"", exc)
+            format!("<NSException: {:p}> NAME:abc REASON:def", exc)
         } else {
-            "\"def\"".into()
+            "def".into()
         };
 
         let exc: &NSObject = &exc;

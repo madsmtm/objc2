@@ -1,3 +1,4 @@
+use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::{DefaultId, Id, Shared};
@@ -22,7 +23,7 @@ extern_class! {
     /// framework contains most of the extension methods.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsattributedstring?language=objc).
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSAttributedString: NSObject;
 }
 
@@ -132,10 +133,19 @@ impl alloc::borrow::ToOwned for NSAttributedString {
     }
 }
 
+impl fmt::Debug for NSAttributedString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Use -[NSAttributedString description] since it is pretty good
+        let obj: &NSObject = self;
+        fmt::Debug::fmt(obj, f)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use alloc::string::ToString;
-    use objc2::rc::autoreleasepool;
+    use alloc::{format, vec};
+    use objc2::rc::{autoreleasepool, Owned};
 
     use super::*;
 
@@ -173,5 +183,29 @@ mod tests {
         let s3 = s1.mutable_copy();
         assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
         assert!(s3.is_kind_of(NSMutableAttributedString::class()));
+    }
+
+    #[test]
+    fn test_debug() {
+        let s = NSAttributedString::from_nsstring(&NSString::from_str("abc"));
+        let expected = if cfg!(feature = "gnustep-1-7") {
+            "abc{}"
+        } else {
+            "abc{\n}"
+        };
+        assert_eq!(format!("{:?}", s), expected);
+
+        let obj: Id<Object, Owned> = unsafe { Id::cast(NSObject::new()) };
+        let ptr: *const Object = &*obj;
+        let s = NSAttributedString::new_with_attributes(
+            &NSString::from_str("abc"),
+            &NSDictionary::from_keys_and_objects(&[&*NSString::from_str("test")], vec![obj]),
+        );
+        let expected = if cfg!(feature = "gnustep-1-7") {
+            format!("abc{{test = \"<NSObject: {:?}>\"; }}", ptr)
+        } else {
+            format!("abc{{\n    test = \"<NSObject: {:?}>\";\n}}", ptr)
+        };
+        assert_eq!(format!("{:?}", s), expected);
     }
 }

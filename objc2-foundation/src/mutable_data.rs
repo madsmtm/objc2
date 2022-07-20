@@ -1,6 +1,7 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
 use core::ffi::c_void;
+use core::fmt;
 use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use std::io;
@@ -19,7 +20,7 @@ extern_class! {
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutabledata?language=objc).
     ///
     /// [`Vec`]: std::vec::Vec
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableData: NSData, NSObject;
 }
 
@@ -205,6 +206,13 @@ impl DefaultId for NSMutableData {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
+    }
+}
+
+impl fmt::Debug for NSMutableData {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
     }
 }
 

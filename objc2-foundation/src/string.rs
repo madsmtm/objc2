@@ -320,11 +320,10 @@ mod tests {
     }
 
     #[test]
-    fn test_debug_display() {
-        let s = "xyz123";
-        let obj = NSString::from_str(s);
-        assert_eq!(format!("{:?}", obj), format!("{:?}", s));
-        assert_eq!(format!("{}", obj), format!("{}", s));
+    fn display_debug() {
+        let s = NSString::from_str("xyz\"123");
+        assert_eq!(format!("{}", s), "xyz\"123");
+        assert_eq!(format!("{:?}", s), r#""xyz\"123""#);
     }
 
     #[test]

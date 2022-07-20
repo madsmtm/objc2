@@ -1,6 +1,7 @@
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::ffi::c_void;
+use core::fmt;
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
 
@@ -17,7 +18,7 @@ use crate::{
 __inner_extern_class! {
     // TODO: Ensure that this deref to NSArray is safe!
     // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O>, NSObject {
         p: PhantomData<*mut ()>,
     }
@@ -194,6 +195,13 @@ impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
+    }
+}
+
+impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableArray<T, O> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
     }
 }
 

@@ -1,3 +1,4 @@
+use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 #[cfg(feature = "gnustep-1-7")]
@@ -16,6 +17,12 @@ pub struct NSZone {
     //
     // This works since `objc_object` is a ZST
     _inner: ffi::objc_object,
+}
+
+impl fmt::Debug for NSZone {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "<NSZone {:p}>", self)
+    }
 }
 
 // Note: We don't know anything about the internals of `NSZone`, so best not

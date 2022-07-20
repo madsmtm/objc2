@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Implement `UnwindSafe` and `RefUnwindSafe` for all objects.
 
+### Fixed
+* Made `Debug` impls for all objects print something useful.
+
 ### Removed
 * `NSObject::hash_code`, `NSObject::is_equal` and `NSObject::description` in
   favour of just having the trait implementations `Hash`, `PartiqalEq` and

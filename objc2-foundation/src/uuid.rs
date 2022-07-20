@@ -1,10 +1,11 @@
+use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::DefaultId;
 use objc2::rc::{Id, Shared};
 use objc2::{msg_send, msg_send_id, Encode, Encoding, RefEncode};
 
-use super::{extern_class, NSCopying, NSObject};
+use crate::{extern_class, NSCopying, NSObject, NSString};
 
 extern_class! {
     /// A universally unique value.
@@ -15,7 +16,7 @@ extern_class! {
     /// enabled with the `uuid` crate feature.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsuuid?language=objc).
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSUUID: NSObject;
 }
 
@@ -68,6 +69,23 @@ impl NSUUID {
         let _: () = unsafe { msg_send![self, getUUIDBytes: &mut bytes] };
         bytes.0
     }
+
+    pub fn string(&self) -> Id<NSString, Shared> {
+        unsafe { msg_send_id![self, UUIDString].expect("expected UUID string to be non-NULL") }
+    }
+}
+
+impl fmt::Display for NSUUID {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&self.string(), f)
+    }
+}
+
+impl fmt::Debug for NSUUID {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // The `uuid` crate does `Debug` and `Display` equally, and so do we
+        fmt::Display::fmt(&self.string(), f)
+    }
 }
 
 // UUID `compare:` is broken for some reason?
@@ -119,6 +137,8 @@ impl alloc::borrow::ToOwned for NSUUID {
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
+
     use super::*;
 
     #[test]
@@ -132,6 +152,14 @@ mod tests {
     fn test_bytes() {
         let uuid = NSUUID::from_bytes([10; 16]);
         assert_eq!(uuid.as_bytes(), [10; 16]);
+    }
+
+    #[test]
+    fn display_debug() {
+        let uuid = NSUUID::from_bytes([10; 16]);
+        let expected = "0A0A0A0A-0A0A-0A0A-0A0A-0A0A0A0A0A0A";
+        assert_eq!(format!("{}", uuid), expected);
+        assert_eq!(format!("{:?}", uuid), expected);
     }
 
     // #[test]
