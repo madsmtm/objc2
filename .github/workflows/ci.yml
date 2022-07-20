@@ -54,13 +54,13 @@ jobs:
             target: x86_64-apple-darwin
             # Oldest macOS version we support
             sdk: "10.7"
-          - name: Test macOS nightly w. ui tests
+          - name: Test macOS nightly (w. ui tests)
             os: macos-latest
             target: x86_64-apple-darwin
             rust:
               toolchain: nightly
-            # Run on nightly to help find regressions
-            test-args: --features tests/ui
+            # Run UI tests on nightly to help find regressions
+            ui: true
           - name: Build macOS 32bit
             os: macos-10.15
             target: i686-apple-darwin
@@ -368,6 +368,16 @@ jobs:
       with:
         command: test
         args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }} --release
+
+    - name: Run UI tests
+      if: ${{ matrix.ui }}
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} -ptests --features tests/ui --tests ui
+      env:
+        # Allow warnings
+        RUSTFLAGS: "-C debuginfo=0"
 
     - name: Run benchmarks
       # Difficult to install Valgrind on macOS
