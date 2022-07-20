@@ -5,7 +5,7 @@ use std::sync::Once;
 use super::{Id, Owned};
 use crate::declare::ClassBuilder;
 use crate::runtime::{Bool, Class, Object, Sel};
-use crate::{msg_send, msg_send_bool};
+use crate::{class, msg_send, msg_send_bool, sel};
 use crate::{Encoding, Message, RefEncode};
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]

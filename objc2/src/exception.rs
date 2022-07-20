@@ -42,6 +42,7 @@ use crate::rc::{Id, Shared};
 use crate::runtime::Class;
 use crate::runtime::Object;
 use crate::Message;
+use crate::{msg_send, msg_send_bool, msg_send_id, sel};
 
 /// Unfortunate reimplementation of `objc2_foundation::NSString`.
 ///
@@ -312,6 +313,7 @@ mod tests {
     use alloc::string::ToString;
 
     use super::*;
+    use crate::{class, msg_send_id};
 
     #[test]
     fn test_catch() {

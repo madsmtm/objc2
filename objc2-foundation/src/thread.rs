@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 use objc2::rc::{Id, Shared};
 use objc2::{msg_send, msg_send_bool, msg_send_id};
 
-use crate::{NSObject, NSString};
+use crate::{extern_class, NSObject, NSString};
 
 extern_class! {
     /// A thread of execution.

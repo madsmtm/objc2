@@ -203,7 +203,6 @@ pub use crate::message::{Message, MessageArguments, MessageReceiver};
 #[cfg(feature = "malloc")]
 pub use crate::verify::VerificationError;
 
-#[macro_use]
 mod macros;
 
 mod bool;

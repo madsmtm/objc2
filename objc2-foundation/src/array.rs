@@ -11,7 +11,7 @@ use objc2::{msg_send, msg_send_id};
 
 use super::{
     NSComparisonResult, NSCopying, NSEnumerator, NSFastEnumeration, NSMutableCopying, NSObject,
-    NSRange,
+    NSRange, __inner_extern_class,
 };
 
 __inner_extern_class! {

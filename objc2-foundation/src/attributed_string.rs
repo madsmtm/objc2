@@ -3,7 +3,8 @@ use objc2::runtime::Object;
 use objc2::{msg_send, msg_send_id};
 
 use crate::{
-    NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
+    extern_class, NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject,
+    NSString,
 };
 
 extern_class! {

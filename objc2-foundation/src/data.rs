@@ -9,7 +9,7 @@ use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{msg_send, msg_send_id};
 
-use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
+use super::{extern_class, NSCopying, NSMutableCopying, NSObject, NSRange};
 
 extern_class! {
     /// A static byte buffer in memory.

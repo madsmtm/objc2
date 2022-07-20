@@ -6,7 +6,7 @@ use core::str;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{msg_send, msg_send_id};
 
-use crate::{NSCopying, NSMutableCopying, NSObject, NSString};
+use crate::{extern_class, NSCopying, NSMutableCopying, NSObject, NSString};
 
 extern_class! {
     /// A dynamic plain-text Unicode string object.

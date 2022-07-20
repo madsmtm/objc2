@@ -1,7 +1,7 @@
 use objc2::rc::{Id, Shared};
 use objc2::{msg_send, msg_send_id, Encode, Encoding, RefEncode};
 
-use super::{NSCopying, NSObject};
+use super::{extern_class, NSCopying, NSObject};
 
 extern_class! {
     /// A universally unique value.

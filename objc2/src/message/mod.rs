@@ -392,6 +392,7 @@ mod tests {
     use super::*;
     use crate::rc::{Id, Owned};
     use crate::test_utils;
+    use crate::{msg_send, msg_send_id};
 
     #[allow(unused)]
     fn test_different_receivers(mut obj: Id<Object, Owned>) {

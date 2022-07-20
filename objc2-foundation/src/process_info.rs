@@ -1,7 +1,7 @@
 use objc2::msg_send_id;
 use objc2::rc::{Id, Shared};
 
-use crate::{NSObject, NSString};
+use crate::{extern_class, NSObject, NSString};
 
 extern_class! {
     /// A collection of information about the current process.

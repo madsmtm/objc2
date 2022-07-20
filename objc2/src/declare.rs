@@ -49,6 +49,7 @@ use core::ptr::NonNull;
 use std::ffi::CString;
 
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
+use crate::sel;
 use crate::{ffi, Encode, EncodeArguments, Encoding, Message, RefEncode};
 
 pub use ivar::{Ivar, IvarType};
@@ -474,6 +475,7 @@ impl ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::msg_send;
     use crate::test_utils;
 
     #[test]

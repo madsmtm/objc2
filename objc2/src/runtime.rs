@@ -799,6 +799,7 @@ mod tests {
     use super::{Bool, Class, Imp, Ivar, Method, Object, Protocol, Sel};
     use crate::test_utils;
     use crate::Encode;
+    use crate::{msg_send, sel};
 
     #[test]
     fn test_selector() {

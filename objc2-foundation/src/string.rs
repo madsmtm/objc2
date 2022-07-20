@@ -16,7 +16,9 @@ use objc2::rc::{Id, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{msg_send, msg_send_bool, msg_send_id};
 
-use crate::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
+use crate::{
+    extern_class, NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject,
+};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;

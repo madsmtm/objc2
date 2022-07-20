@@ -106,7 +106,6 @@ pub use block_sys as ffi;
 use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 mod debug;
-#[macro_use]
 mod global;
 
 pub use global::GlobalBlock;

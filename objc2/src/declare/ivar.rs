@@ -200,7 +200,7 @@ mod tests {
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
     use super::*;
-    use crate::{test_utils, MessageReceiver};
+    use crate::{msg_send, test_utils, MessageReceiver};
 
     struct TestIvar;
 
