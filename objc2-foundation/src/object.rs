@@ -21,7 +21,9 @@ impl NSObject {
 }
 
 impl NSObject {
-    unsafe_def_fn!(pub fn new -> Owned);
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     pub fn hash_code(&self) -> usize {
         unsafe { msg_send![self, hash] }

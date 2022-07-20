@@ -22,7 +22,9 @@ unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
 unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
-    unsafe_def_fn!(pub fn new -> Shared);
+    pub fn new() -> Id<Self, Shared> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     #[doc(alias = "count")]
     pub fn len(&self) -> usize {

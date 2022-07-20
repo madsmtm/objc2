@@ -22,9 +22,9 @@ unsafe impl Send for NSMutableString {}
 
 /// Creating mutable strings.
 impl NSMutableString {
-    unsafe_def_fn! {
-        /// Construct an empty [`NSMutableString`].
-        pub fn new -> Owned;
+    /// Construct an empty [`NSMutableString`].
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
     /// Creates a new [`NSMutableString`] by copying the given string slice.

@@ -17,9 +17,9 @@ unsafe impl Send for NSMutableAttributedString {}
 
 /// Creating mutable attributed strings.
 impl NSMutableAttributedString {
-    unsafe_def_fn! {
-        /// Construct an empty mutable attributed string.
-        pub fn new -> Owned;
+    /// Construct an empty mutable attributed string.
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
     // TODO: new_with_attributes

@@ -292,16 +292,3 @@ macro_rules! __inner_extern_class {
         $crate::__impl_as_ref_borrow!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
     };
 }
-
-macro_rules! unsafe_def_fn {
-    (
-        $(#[$m:meta])*
-        $v:vis fn new -> $o:ty $(;)?
-    ) => {
-        $(#[$m])*
-        $v fn new() -> Id<Self, $o> {
-            let cls = Self::class();
-            unsafe { $crate::objc2::msg_send_id![cls, new].unwrap() }
-        }
-    };
-}

@@ -4,10 +4,10 @@ use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut, Range};
 
-use objc2::msg_send;
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::{Class, Object};
 use objc2::Message;
+use objc2::{msg_send, msg_send_id};
 
 use super::{
     NSComparisonResult, NSCopying, NSEnumerator, NSFastEnumeration, NSMutableCopying, NSObject,
@@ -62,8 +62,8 @@ unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Objec
 }
 
 impl<T: Message> NSArray<T, Shared> {
-    unsafe_def_fn! {
-        pub fn new -> Shared;
+    pub fn new() -> Id<Self, Shared> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 }
 
@@ -220,7 +220,9 @@ impl<T: Message> DefaultId for NSArray<T, Shared> {
 }
 
 impl<T: Message, O: Ownership> NSMutableArray<T, O> {
-    unsafe_def_fn!(pub fn new -> Owned);
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
         unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()).unwrap() }

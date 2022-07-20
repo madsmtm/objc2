@@ -32,9 +32,9 @@ pub type NSAttributedStringKey = NSString;
 
 /// Creating attributed strings.
 impl NSAttributedString {
-    unsafe_def_fn! {
-        /// Construct an empty attributed string.
-        pub fn new -> Shared;
+    /// Construct an empty attributed string.
+    pub fn new() -> Id<Self, Shared> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
     /// Creates a new attributed string from the given string and attributes.

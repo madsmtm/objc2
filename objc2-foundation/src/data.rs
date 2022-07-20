@@ -42,7 +42,9 @@ unsafe impl Sync for NSMutableData {}
 unsafe impl Send for NSMutableData {}
 
 impl NSData {
-    unsafe_def_fn!(fn new -> Shared);
+    pub fn new() -> Id<Self, Shared> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     #[doc(alias = "length")]
     pub fn len(&self) -> usize {
@@ -132,7 +134,9 @@ impl DefaultId for NSData {
 
 /// Creation methods
 impl NSMutableData {
-    unsafe_def_fn!(fn new -> Owned);
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
         unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()).unwrap() }
