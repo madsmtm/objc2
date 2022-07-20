@@ -203,23 +203,20 @@ pub use crate::message::{Message, MessageArguments, MessageReceiver};
 #[cfg(feature = "malloc")]
 pub use crate::verify::VerificationError;
 
-mod macros;
-
+#[doc(hidden)]
+pub mod __macro_helpers;
 mod bool;
 mod cache;
 pub mod declare;
 pub mod exception;
+mod macros;
 mod message;
 pub mod rc;
 pub mod runtime;
-#[cfg(feature = "malloc")]
-mod verify;
-
 #[cfg(test)]
 mod test_utils;
-
-#[doc(hidden)]
-pub mod __macro_helpers;
+#[cfg(feature = "malloc")]
+mod verify;
 
 /// Hacky way to make GNUStep link properly to Foundation while testing.
 ///
