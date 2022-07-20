@@ -151,16 +151,18 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// Messages" in Apple's [documentation][runtime].
     ///
     /// If the selector is known at compile-time, it is recommended to use the
-    /// [`msg_send!`][`crate::msg_send`] macro rather than this method.
+    /// [`msg_send!`] macro rather than this method.
     ///
     /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
     ///
     /// # Safety
     ///
-    /// This shares the same safety requirements as [`msg_send!`][`msg_send`].
+    /// This shares the same safety requirements as [`msg_send!`].
     ///
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
+    ///
+    /// [`msg_send!`]: crate::msg_send
     #[inline]
     #[track_caller]
     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
@@ -195,17 +197,19 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// Messages" in Apple's [documentation][runtime].
     ///
     /// If the selector is known at compile-time, it is recommended to use the
-    /// [`msg_send!(super)`][`crate::msg_send`] macro rather than this method.
+    /// [`msg_send!(super(...), ...)`] macro rather than this method.
     ///
     /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
     ///
     /// # Safety
     ///
     /// This shares the same safety requirements as
-    /// [`msg_send!(super(...), ...)`][`msg_send`].
+    /// [`msg_send!(super(...), ...)`].
     ///
     /// The added invariant is that the selector must take the same number of
     /// arguments as is given.
+    ///
+    /// [`msg_send!(super(...), ...)`]: crate::msg_send
     #[inline]
     #[track_caller]
     unsafe fn send_super_message<A, R>(self, superclass: &Class, sel: Sel, args: A) -> R
@@ -392,6 +396,7 @@ mod tests {
     use super::*;
     use crate::rc::{Id, Owned};
     use crate::test_utils;
+    use crate::{msg_send, msg_send_id};
 
     #[allow(unused)]
     fn test_different_receivers(mut obj: Id<Object, Owned>) {

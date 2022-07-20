@@ -7,7 +7,7 @@ use core::ptr;
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
 use objc2::{msg_send, msg_send_id, Message};
 
-use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
+use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject, __inner_extern_class};
 
 __inner_extern_class! {
     #[derive(Debug, PartialEq, Eq, Hash)]
@@ -22,7 +22,9 @@ unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
 unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
-    unsafe_def_fn!(pub fn new -> Shared);
+    pub fn new() -> Id<Self, Shared> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     #[doc(alias = "count")]
     pub fn len(&self) -> usize {

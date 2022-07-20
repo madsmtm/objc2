@@ -9,7 +9,7 @@ use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{msg_send, msg_send_id};
 
-use super::{NSCopying, NSMutableCopying, NSObject, NSRange};
+use super::{extern_class, NSCopying, NSMutableCopying, NSObject, NSRange};
 
 extern_class! {
     /// A static byte buffer in memory.
@@ -42,7 +42,9 @@ unsafe impl Sync for NSMutableData {}
 unsafe impl Send for NSMutableData {}
 
 impl NSData {
-    unsafe_def_fn!(fn new -> Shared);
+    pub fn new() -> Id<Self, Shared> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     #[doc(alias = "length")]
     pub fn len(&self) -> usize {
@@ -132,7 +134,9 @@ impl DefaultId for NSData {
 
 /// Creation methods
 impl NSMutableData {
-    unsafe_def_fn!(fn new -> Owned);
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
         unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()).unwrap() }

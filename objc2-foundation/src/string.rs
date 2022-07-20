@@ -14,9 +14,11 @@ use objc2::rc::DefaultId;
 use objc2::rc::{autoreleasepool, AutoreleasePool};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::{Class, Object};
-use objc2::{msg_send, msg_send_bool};
+use objc2::{msg_send, msg_send_bool, msg_send_id};
 
-use crate::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
+use crate::{
+    extern_class, NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject,
+};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;
@@ -47,9 +49,9 @@ impl UnwindSafe for NSString {}
 impl RefUnwindSafe for NSString {}
 
 impl NSString {
-    unsafe_def_fn! {
-        /// Construct an empty NSString.
-        pub fn new -> Shared;
+    /// Construct an empty NSString.
+    pub fn new() -> Id<Self, Shared> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
     /// The number of UTF-8 code units in `self`.

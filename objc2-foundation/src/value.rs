@@ -12,7 +12,7 @@ use objc2::rc::{DefaultId, Id, Shared};
 use objc2::Encode;
 use objc2::{msg_send, msg_send_id};
 
-use super::{NSCopying, NSObject};
+use super::{NSCopying, NSObject, __inner_extern_class};
 
 __inner_extern_class! {
     // `T: Eq` bound correct to prevent `NSValue<f32>` from being `Eq`

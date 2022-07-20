@@ -136,6 +136,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::sel;
     use crate::test_utils;
     use alloc::string::ToString;
     use core::panic::{RefUnwindSafe, UnwindSafe};
@@ -196,7 +197,7 @@ mod tests {
     #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code I, but found i"]
     fn test_send_message_verified() {
         let obj = test_utils::custom_object();
-        let _: i32 = unsafe { msg_send![&obj, foo] };
+        let _: i32 = unsafe { crate::msg_send![&obj, foo] };
     }
 
     #[test]
@@ -204,7 +205,7 @@ mod tests {
     #[should_panic = "invalid message send to +[CustomObject abcDef]: method not found"]
     fn test_send_message_verified_to_class() {
         let cls = test_utils::custom_class();
-        let _: i32 = unsafe { msg_send![cls, abcDef] };
+        let _: i32 = unsafe { crate::msg_send![cls, abcDef] };
     }
 
     #[test]

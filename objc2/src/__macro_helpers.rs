@@ -193,6 +193,7 @@ mod tests {
 
     use crate::rc::{Allocated, Owned, RcTestObject, Shared, ThreadTestData};
     use crate::runtime::Object;
+    use crate::{class, msg_send_id};
     use crate::{Encoding, RefEncode};
 
     #[test]

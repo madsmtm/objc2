@@ -5,7 +5,7 @@ use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send, msg_send_bool, msg_send_id};
 
-use super::NSString;
+use crate::{NSString, __inner_extern_class};
 
 __inner_extern_class! {
     @__inner
@@ -21,7 +21,9 @@ impl NSObject {
 }
 
 impl NSObject {
-    unsafe_def_fn!(pub fn new -> Owned);
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
+    }
 
     pub fn hash_code(&self) -> usize {
         unsafe { msg_send![self, hash] }

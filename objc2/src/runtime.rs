@@ -47,6 +47,7 @@ pub const NO: ffi::BOOL = ffi::NO;
 /// This guarantees the null-pointer optimization, namely that `Option<Sel>`
 /// is the same size as `Sel`.
 ///
+/// [`sel!`]: crate::sel
 /// [interned string]: https://en.wikipedia.org/wiki/String_interning
 #[repr(transparent)]
 // ffi::sel_isEqual is just pointer comparison, so we just generate PartialEq
@@ -153,6 +154,9 @@ impl Sel {
     ///
     /// This is the dynamic version of the [`sel!`] macro, prefer to use that
     /// when your selector is static.
+    ///
+    /// [`sel!`]: crate::sel
+    ///
     ///
     /// # Panics
     ///
@@ -625,6 +629,8 @@ fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
 /// depending on the specific subclass. For example, `NSAutoreleasePool` is
 /// not `Send`, it has to be deallocated on the same thread that it was
 /// created. `NSLock` is not `Send` either.
+///
+/// [`msg_send!`]: crate::msg_send
 #[doc(alias = "id")]
 #[repr(C)]
 pub struct Object(ffi::objc_object);
@@ -799,6 +805,7 @@ mod tests {
     use super::{Bool, Class, Imp, Ivar, Method, Object, Protocol, Sel};
     use crate::test_utils;
     use crate::Encode;
+    use crate::{msg_send, sel};
 
     #[test]
     fn test_selector() {

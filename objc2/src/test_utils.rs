@@ -5,6 +5,7 @@ use std::sync::Once;
 
 use crate::declare::{ClassBuilder, ProtocolBuilder};
 use crate::runtime::{Class, Object, Protocol, Sel};
+use crate::{class, msg_send, sel};
 use crate::{ffi, Encode, Encoding, MessageReceiver};
 
 #[derive(Debug)]

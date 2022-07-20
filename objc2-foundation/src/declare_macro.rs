@@ -637,6 +637,8 @@ macro_rules! __inner_declare_class {
 ///
 /// @end
 /// ```
+///
+/// [`extern_class!`]: crate::extern_class
 #[macro_export]
 macro_rules! declare_class {
     {

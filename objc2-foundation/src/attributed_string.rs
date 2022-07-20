@@ -3,7 +3,8 @@ use objc2::runtime::Object;
 use objc2::{msg_send, msg_send_id};
 
 use crate::{
-    NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
+    extern_class, NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject,
+    NSString,
 };
 
 extern_class! {
@@ -32,9 +33,9 @@ pub type NSAttributedStringKey = NSString;
 
 /// Creating attributed strings.
 impl NSAttributedString {
-    unsafe_def_fn! {
-        /// Construct an empty attributed string.
-        pub fn new -> Shared;
+    /// Construct an empty attributed string.
+    pub fn new() -> Id<Self, Shared> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
     /// Creates a new attributed string from the given string and attributes.

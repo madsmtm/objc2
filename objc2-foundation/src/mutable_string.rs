@@ -6,7 +6,7 @@ use core::str;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{msg_send, msg_send_id};
 
-use crate::{NSCopying, NSMutableCopying, NSObject, NSString};
+use crate::{extern_class, NSCopying, NSMutableCopying, NSObject, NSString};
 
 extern_class! {
     /// A dynamic plain-text Unicode string object.
@@ -22,9 +22,9 @@ unsafe impl Send for NSMutableString {}
 
 /// Creating mutable strings.
 impl NSMutableString {
-    unsafe_def_fn! {
-        /// Construct an empty [`NSMutableString`].
-        pub fn new -> Owned;
+    /// Construct an empty [`NSMutableString`].
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
     /// Creates a new [`NSMutableString`] by copying the given string slice.

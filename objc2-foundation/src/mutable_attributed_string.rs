@@ -1,7 +1,7 @@
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{msg_send, msg_send_id};
 
-use crate::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
+use crate::{extern_class, NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
 
 extern_class! {
     /// A mutable string that has associated attributes.
@@ -17,9 +17,9 @@ unsafe impl Send for NSMutableAttributedString {}
 
 /// Creating mutable attributed strings.
 impl NSMutableAttributedString {
-    unsafe_def_fn! {
-        /// Construct an empty mutable attributed string.
-        pub fn new -> Owned;
+    /// Construct an empty mutable attributed string.
+    pub fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
     // TODO: new_with_attributes
