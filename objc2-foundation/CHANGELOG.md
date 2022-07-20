@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Removed
+* `NSObject::hash_code`, `NSObject::is_equal` and `NSObject::description` in
+  favour of just having the trait implementations `Hash`, `PartiqalEq` and
+  `Debug`.
+
 
 ## 0.2.0-alpha.6 - 2022-07-19
 
