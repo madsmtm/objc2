@@ -41,7 +41,8 @@ extern_class! {
     // TODO: Check if performance of NSSelectorFromString is worthwhile
 }
 
-// TODO: SAFETY
+// SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
+// from `&mut` methods.
 unsafe impl Sync for NSString {}
 unsafe impl Send for NSString {}
 

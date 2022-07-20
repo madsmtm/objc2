@@ -16,10 +16,6 @@ extern_class! {
     unsafe pub struct NSMutableString: NSString, NSObject;
 }
 
-// TODO: SAFETY
-unsafe impl Sync for NSMutableString {}
-unsafe impl Send for NSMutableString {}
-
 /// Creating mutable strings.
 impl NSMutableString {
     /// Construct an empty [`NSMutableString`].

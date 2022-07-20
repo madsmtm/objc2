@@ -11,10 +11,6 @@ extern_class! {
     unsafe pub struct NSMutableAttributedString: NSAttributedString, NSObject;
 }
 
-// TODO: SAFETY
-unsafe impl Sync for NSMutableAttributedString {}
-unsafe impl Send for NSMutableAttributedString {}
-
 /// Creating mutable attributed strings.
 impl NSMutableAttributedString {
     /// Construct an empty mutable attributed string.

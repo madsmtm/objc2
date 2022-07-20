@@ -1,6 +1,7 @@
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::ffi::c_void;
+use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
 
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
@@ -17,8 +18,18 @@ __inner_extern_class! {
     // TODO: Ensure that this deref to NSArray is safe!
     // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
     #[derive(Debug, PartialEq, Eq, Hash)]
-    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O>, NSObject {}
+    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O>, NSObject {
+        p: PhantomData<*mut ()>,
+    }
 }
+
+// SAFETY: Same as NSArray<T, O>
+//
+// Put here because rustdoc doesn't show these otherwise
+unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
 
 impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     pub fn new() -> Id<Self, Owned> {

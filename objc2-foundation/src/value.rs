@@ -23,7 +23,8 @@ __inner_extern_class! {
     }
 }
 
-// TODO: SAFETY
+// SAFETY: `NSValue<T>` is basically just a wrapper around an inner type, and
+// is immutable.
 unsafe impl<T: Sync> Sync for NSValue<T> {}
 unsafe impl<T: Send> Send for NSValue<T> {}
 

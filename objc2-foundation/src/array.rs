@@ -33,8 +33,6 @@ __inner_extern_class! {
 
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
 //
-// The `PhantomData` can't get these impls to display in the docs.
-//
 // TODO: Properly verify this
 unsafe impl<T: Sync + Send> Sync for NSArray<T, Shared> {}
 unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
@@ -218,7 +216,7 @@ mod tests {
     use objc2::rc::autoreleasepool;
 
     use super::*;
-    use crate::{NSString, NSValue};
+    use crate::NSValue;
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -349,15 +347,5 @@ mod tests {
 
         let vec = NSArray::into_vec(array);
         assert_eq!(vec.len(), 4);
-    }
-
-    #[test]
-    fn test_send_sync() {
-        fn assert_send_sync<T: Send + Sync>() {}
-
-        assert_send_sync::<NSArray<NSString, Shared>>();
-        assert_send_sync::<NSMutableArray<NSString, Shared>>();
-        assert_send_sync::<Id<NSArray<NSString, Shared>, Shared>>();
-        assert_send_sync::<Id<NSMutableArray<NSString, Shared>, Owned>>();
     }
 }

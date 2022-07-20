@@ -18,6 +18,7 @@ __inner_extern_class! {
 }
 
 // TODO: SAFETY
+// Approximately same as `NSArray<T, Shared>`
 unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
 unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
 

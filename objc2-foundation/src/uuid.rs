@@ -25,7 +25,7 @@ unsafe impl RefEncode for UuidBytes {
     const ENCODING_REF: Encoding<'static> = Encoding::Array(16, &u8::ENCODING);
 }
 
-// TODO: SAFETY
+// SAFETY: `NSUUID` is immutable.
 unsafe impl Sync for NSUUID {}
 unsafe impl Send for NSUUID {}
 

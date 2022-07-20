@@ -24,7 +24,8 @@ extern_class! {
     unsafe pub struct NSAttributedString: NSObject;
 }
 
-// TODO: SAFETY
+// SAFETY: `NSAttributedString` is immutable and `NSMutableAttributedString`
+// can only be mutated from `&mut` methods.
 unsafe impl Sync for NSAttributedString {}
 unsafe impl Send for NSAttributedString {}
 

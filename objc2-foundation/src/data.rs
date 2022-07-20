@@ -20,7 +20,8 @@ extern_class! {
     unsafe pub struct NSData: NSObject;
 }
 
-// TODO: SAFETY
+// SAFETY: `NSData` is immutable and `NSMutableData` can only be mutated from
+// `&mut` methods.
 unsafe impl Sync for NSData {}
 unsafe impl Send for NSData {}
 

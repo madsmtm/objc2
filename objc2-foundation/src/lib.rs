@@ -115,3 +115,48 @@ mod thread;
 mod uuid;
 mod value;
 mod zone;
+
+#[cfg(test)]
+mod tests {
+    use objc2::rc::{Id, Owned, Shared};
+
+    use super::*;
+
+    fn assert_send_sync<T: Send + Sync>() {}
+
+    #[test]
+    fn send_sync() {
+        assert_send_sync::<NSArray<NSString, Shared>>();
+        assert_send_sync::<NSArray<NSString, Owned>>();
+        assert_send_sync::<Id<NSArray<NSString, Shared>, Shared>>();
+        assert_send_sync::<Id<NSArray<NSString, Owned>, Shared>>();
+        assert_send_sync::<Id<NSArray<NSString, Shared>, Owned>>();
+        assert_send_sync::<Id<NSArray<NSString, Owned>, Owned>>();
+
+        assert_send_sync::<NSAttributedString>();
+        assert_send_sync::<NSComparisonResult>();
+        assert_send_sync::<NSData>();
+        assert_send_sync::<NSDictionary<NSString, Shared>>();
+        // TODO: Figure out if safe?
+        // assert_send_sync::<NSEnumerator<NSString>>();
+        // assert_send_sync::<NSFastEnumerator<NSArray<NSString, Shared>>>();
+        assert_send_sync::<NSException>();
+        assert_send_sync::<CGFloat>();
+        assert_send_sync::<NSPoint>();
+        assert_send_sync::<NSRect>();
+        assert_send_sync::<NSSize>();
+        assert_send_sync::<NSMutableArray<NSString, Shared>>();
+        assert_send_sync::<NSMutableAttributedString>();
+        assert_send_sync::<NSMutableData>();
+        assert_send_sync::<NSMutableString>();
+        // assert_send_sync::<NSObject>(); // Intentional
+        assert_send_sync::<NSProcessInfo>();
+        assert_send_sync::<NSRange>();
+        assert_send_sync::<NSString>();
+        // assert_send_sync::<MainThreadMarker>(); // Intentional
+        assert_send_sync::<NSThread>();
+        assert_send_sync::<NSUUID>();
+        assert_send_sync::<NSValue<i32>>();
+        assert_send_sync::<NSZone>();
+    }
+}
