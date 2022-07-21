@@ -10,24 +10,19 @@ get_ascii:
 	call	.L0$pb
 .L0$pb:
 	pop	ebx
-	mov	dword ptr [esp + 4], 3
 .Ltmp0:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L0$pb)
+	sub	esp, 8
 	lea	eax, [ebx + .L__unnamed_1@GOTOFF]
-	mov	dword ptr [esp], eax
+	push	3
+	push	eax
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@PLT
+	add	esp, 16
+	lea	edx, [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@GOTOFF]
+	lea	ecx, [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@GOTOFF]
 	test	al, al
-	je	.LBB0_1
-	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@GOTOFF]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@PLT
-	add	esp, 8
-	pop	ebx
-	ret
-.LBB0_1:
-	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@GOTOFF]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@PLT
+	cmovne	ecx, edx
+	mov	eax, ecx
 	add	esp, 8
 	pop	ebx
 	ret
@@ -44,24 +39,19 @@ get_utf16:
 	call	.L1$pb
 .L1$pb:
 	pop	ebx
-	mov	dword ptr [esp + 4], 5
 .Ltmp1:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L1$pb)
+	sub	esp, 8
 	lea	eax, [ebx + .L__unnamed_2@GOTOFF]
-	mov	dword ptr [esp], eax
+	push	5
+	push	eax
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@PLT
+	add	esp, 16
+	lea	edx, [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@GOTOFF]
+	lea	ecx, [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@GOTOFF]
 	test	al, al
-	je	.LBB1_1
-	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@GOTOFF]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@PLT
-	add	esp, 8
-	pop	ebx
-	ret
-.LBB1_1:
-	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@GOTOFF]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@PLT
+	cmovne	ecx, edx
+	mov	eax, ecx
 	add	esp, 8
 	pop	ebx
 	ret
@@ -78,24 +68,19 @@ get_with_nul:
 	call	.L2$pb
 .L2$pb:
 	pop	ebx
-	mov	dword ptr [esp + 4], 6
 .Ltmp2:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L2$pb)
+	sub	esp, 8
 	lea	eax, [ebx + .L__unnamed_3@GOTOFF]
-	mov	dword ptr [esp], eax
+	push	6
+	push	eax
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@PLT
+	add	esp, 16
+	lea	edx, [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@GOTOFF]
+	lea	ecx, [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@GOTOFF]
 	test	al, al
-	je	.LBB2_1
-	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@GOTOFF]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@PLT
-	add	esp, 8
-	pop	ebx
-	ret
-.LBB2_1:
-	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@GOTOFF]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@PLT
+	cmovne	ecx, edx
+	mov	eax, ecx
 	add	esp, 8
 	pop	ebx
 	ret

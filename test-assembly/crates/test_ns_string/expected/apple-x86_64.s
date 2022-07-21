@@ -8,15 +8,13 @@ _get_ascii:
 	lea	rdi, [rip + l___unnamed_1]
 	mov	esi, 3
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
+	lea	rdx, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)]
+	lea	rcx, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)]
 	test	al, al
-	je	LBB0_1
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)]
+	cmovne	rcx, rdx
+	mov	rax, rcx
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-LBB0_1:
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)]
-	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
+	ret
 
 	.globl	_get_utf16
 	.p2align	4, 0x90
@@ -26,15 +24,13 @@ _get_utf16:
 	lea	rdi, [rip + l___unnamed_2]
 	mov	esi, 5
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
+	lea	rdx, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)]
+	lea	rcx, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)]
 	test	al, al
-	je	LBB1_1
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)]
+	cmovne	rcx, rdx
+	mov	rax, rcx
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-LBB1_1:
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)]
-	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
+	ret
 
 	.globl	_get_with_nul
 	.p2align	4, 0x90
@@ -44,15 +40,13 @@ _get_with_nul:
 	lea	rdi, [rip + l___unnamed_3]
 	mov	esi, 6
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
+	lea	rdx, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)]
+	lea	rcx, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)]
 	test	al, al
-	je	LBB2_1
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)]
+	cmovne	rcx, rdx
+	mov	rax, rcx
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-LBB2_1:
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)]
-	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
+	ret
 
 	.section	__DATA,__const
 	.globl	_EMPTY

@@ -44,6 +44,7 @@ impl CFStringAscii {
         }
     }
 
+    #[inline]
     pub const fn as_nsstring(&self) -> &NSString {
         unsafe { &*(self as *const Self as *const NSString) }
     }
@@ -71,6 +72,7 @@ impl CFStringUtf16 {
         }
     }
 
+    #[inline]
     pub const fn as_nsstring(&self) -> &NSString {
         unsafe { &*(self as *const Self as *const NSString) }
     }

@@ -6,28 +6,22 @@ _get_ascii:
 	push	ebp
 	mov	ebp, esp
 	push	esi
-	sub	esp, 20
+	push	eax
 	call	L0$pb
 L0$pb:
 	pop	esi
+	sub	esp, 8
 	lea	eax, [esi + l___unnamed_1-L0$pb]
-	mov	dword ptr [esp], eax
-	mov	dword ptr [esp + 4], 3
+	push	3
+	push	eax
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
+	add	esp, 16
+	lea	edx, [esi + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)-L0$pb]
+	lea	ecx, [esi + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)-L0$pb]
 	test	al, al
-	je	LBB0_1
-	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)-L0$pb]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-	add	esp, 20
-	pop	esi
-	pop	ebp
-	ret
-LBB0_1:
-	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)-L0$pb]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
-	add	esp, 20
+	cmovne	ecx, edx
+	mov	eax, ecx
+	add	esp, 4
 	pop	esi
 	pop	ebp
 	ret
@@ -38,28 +32,22 @@ _get_utf16:
 	push	ebp
 	mov	ebp, esp
 	push	esi
-	sub	esp, 20
+	push	eax
 	call	L1$pb
 L1$pb:
 	pop	esi
+	sub	esp, 8
 	lea	eax, [esi + l___unnamed_2-L1$pb]
-	mov	dword ptr [esp], eax
-	mov	dword ptr [esp + 4], 5
+	push	5
+	push	eax
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
+	add	esp, 16
+	lea	edx, [esi + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)-L1$pb]
+	lea	ecx, [esi + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)-L1$pb]
 	test	al, al
-	je	LBB1_1
-	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)-L1$pb]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-	add	esp, 20
-	pop	esi
-	pop	ebp
-	ret
-LBB1_1:
-	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)-L1$pb]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
-	add	esp, 20
+	cmovne	ecx, edx
+	mov	eax, ecx
+	add	esp, 4
 	pop	esi
 	pop	ebp
 	ret
@@ -70,28 +58,22 @@ _get_with_nul:
 	push	ebp
 	mov	ebp, esp
 	push	esi
-	sub	esp, 20
+	push	eax
 	call	L2$pb
 L2$pb:
 	pop	esi
+	sub	esp, 8
 	lea	eax, [esi + l___unnamed_3-L2$pb]
-	mov	dword ptr [esp], eax
-	mov	dword ptr [esp + 4], 6
+	push	6
+	push	eax
 	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
+	add	esp, 16
+	lea	edx, [esi + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)-L2$pb]
+	lea	ecx, [esi + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)-L2$pb]
 	test	al, al
-	je	LBB2_1
-	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)-L2$pb]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-	add	esp, 20
-	pop	esi
-	pop	ebp
-	ret
-LBB2_1:
-	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)-L2$pb]
-	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
-	add	esp, 20
+	cmovne	ecx, edx
+	mov	eax, ecx
+	add	esp, 4
 	pop	esi
 	pop	ebp
 	ret
