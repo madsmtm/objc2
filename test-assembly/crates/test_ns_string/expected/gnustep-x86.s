@@ -20,14 +20,14 @@ get_ascii:
 	je	.LBB0_1
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@PLT
 	add	esp, 8
 	pop	ebx
 	ret
 .LBB0_1:
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@PLT
 	add	esp, 8
 	pop	ebx
 	ret
@@ -54,14 +54,14 @@ get_utf16:
 	je	.LBB1_1
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@PLT
 	add	esp, 8
 	pop	ebx
 	ret
 .LBB1_1:
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@PLT
 	add	esp, 8
 	pop	ebx
 	ret
@@ -88,14 +88,14 @@ get_with_nul:
 	je	.LBB2_1
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@PLT
 	add	esp, 8
 	pop	ebx
 	ret
 .LBB2_1:
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@PLT
 	add	esp, 8
 	pop	ebx
 	ret

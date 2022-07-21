@@ -19,14 +19,14 @@ LPC0_0:
 LPC0_2:
 	add	r0, pc, r0
 	pop	{r7, lr}
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB0_2:
 	movw	r0, :lower16:(SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)-(LPC0_1+8))
 	movt	r0, :upper16:(SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)-(LPC0_1+8))
 LPC0_1:
 	add	r0, pc, r0
 	pop	{r7, lr}
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 
 	.globl	_get_utf16
 	.p2align	2
@@ -47,14 +47,14 @@ LPC1_0:
 LPC1_2:
 	add	r0, pc, r0
 	pop	{r7, lr}
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB1_2:
 	movw	r0, :lower16:(SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)-(LPC1_1+8))
 	movt	r0, :upper16:(SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)-(LPC1_1+8))
 LPC1_1:
 	add	r0, pc, r0
 	pop	{r7, lr}
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 
 	.globl	_get_with_nul
 	.p2align	2
@@ -75,14 +75,14 @@ LPC2_0:
 LPC2_2:
 	add	r0, pc, r0
 	pop	{r7, lr}
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB2_2:
 	movw	r0, :lower16:(SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)-(LPC2_1+8))
 	movt	r0, :upper16:(SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)-(LPC2_1+8))
 LPC2_1:
 	add	r0, pc, r0
 	pop	{r7, lr}
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 
 	.section	__DATA,__const
 	.globl	_EMPTY

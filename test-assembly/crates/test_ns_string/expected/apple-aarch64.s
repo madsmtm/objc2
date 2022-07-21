@@ -16,14 +16,14 @@ Lloh2:
 Lloh3:
 	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@PAGEOFF
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB0_2:
 Lloh4:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@PAGE
 Lloh5:
 	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@PAGEOFF
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh0, Lloh1
 	.loh AdrpAdd	Lloh2, Lloh3
 	.loh AdrpAdd	Lloh4, Lloh5
@@ -45,14 +45,14 @@ Lloh8:
 Lloh9:
 	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@PAGEOFF
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB1_2:
 Lloh10:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@PAGE
 Lloh11:
 	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@PAGEOFF
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh6, Lloh7
 	.loh AdrpAdd	Lloh8, Lloh9
 	.loh AdrpAdd	Lloh10, Lloh11
@@ -74,14 +74,14 @@ Lloh14:
 Lloh15:
 	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@PAGEOFF
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB2_2:
 Lloh16:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@PAGE
 Lloh17:
 	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@PAGEOFF
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh12, Lloh13
 	.loh AdrpAdd	Lloh14, Lloh15
 	.loh AdrpAdd	Lloh16, Lloh17
