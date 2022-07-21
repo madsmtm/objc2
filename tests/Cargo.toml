@@ -23,7 +23,6 @@ catch-all = ["objc2/catch-all", "exception"]
 #
 # Also, they're slower than most tests.
 ui = ["trybuild"]
-assembly = ["cargo_metadata"]
 
 # Runtime features. Rely on `objc2-foundation` and `block2` to enable these
 # for the other dependencies.
@@ -45,14 +44,9 @@ objc2-foundation = { path = "../objc2-foundation", default-features = false }
 
 # Put here instead of dev-dependencies because we want to make it optional
 trybuild = { version = "1.0", optional = true }
-cargo_metadata = { version = "0.14", optional = true }
 
 [build-dependencies]
 cc = "1.0"
 
 [dev-dependencies]
 paste = "1.0"
-
-[[bin]]
-name = "test_assembly"
-required-features = ["assembly"]

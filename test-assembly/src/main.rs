@@ -2,6 +2,11 @@
 //!
 //! Similar to `trybuild` and `compiletest`, except specialized to our setup!
 //!
+//! Use as:
+//! ```
+//! TEST_OVERWRITE=1 cargo run --bin test-assembly --target=x86_64-apple-darwin
+//! ```
+//!
 //! Very limited currently, for example we can't stably test things that emits
 //! mangled symbols, nor things that are emitted in different crates.
 
@@ -75,7 +80,7 @@ fn main() {
     let should_overwrite = option_env!("TEST_OVERWRITE").is_some();
     let host = env!("TARGET");
 
-    for entry in manifest_dir.join("assembly").read_dir().unwrap() {
+    for entry in manifest_dir.join("crates").read_dir().unwrap() {
         let entry = entry.unwrap();
         if !entry.file_type().unwrap().is_dir() {
             continue;

@@ -8,6 +8,7 @@ members = [
     "block2",
     "block-sys",
     "tests",
-    "tests/assembly/*",
+    "test-assembly",
+    "test-assembly/crates/*",
 ]
 resolver = "2"

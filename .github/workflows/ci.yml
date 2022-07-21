@@ -149,7 +149,6 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
-      HOSTARGS: --no-default-features --features std --features ${{ matrix.runtime || 'apple' }}
       ARGS: --no-default-features --features std --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
@@ -412,7 +411,7 @@ jobs:
       run:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
 
-        cargo run ${{ env.HOSTARGS }} --features assembly --target=$HOST_TARGET test_assembly ${{ env.ARGS }}
+        cargo run --target=$HOST_TARGET --bin test-assembly ${{ env.ARGS }}
 
     - name: Launch XCode Simulator
       if: matrix.dinghy
