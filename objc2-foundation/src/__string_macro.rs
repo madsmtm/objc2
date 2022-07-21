@@ -74,15 +74,7 @@ impl CFStringUtf16 {
     }
 }
 
-/// Returns `s` with any 0 byte at the end removed.
-pub const fn trim_trailing_nul(s: &str) -> &[u8] {
-    match s.as_bytes() {
-        [b @ .., 0] => b,
-        b => b,
-    }
-}
-
-/// Returns `true` if `bytes` is entirely ASCII with no interior nulls.
+/// Returns `true` if `bytes` is entirely ASCII with no interior NULs.
 pub const fn is_ascii(bytes: &[u8]) -> bool {
     let mut i = 0;
     loop {
@@ -240,23 +232,16 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 /// limit.
 ///
 ///
-/// # Null-Terminated Strings
+/// # NUL handling
 ///
-/// If the input string already ends with a 0 byte, then this macro does not
-/// append one.
-///
-/// ```
-/// # use objc2_foundation::ns_string;
-/// let cstr = ns_string!("example\0");
-/// let normal = ns_string!("example");
-///
-/// assert_eq!(cstr, normal);
-/// ```
-///
-/// Interior null bytes are allowed and are not stripped:
+/// Strings containing ASCII NUL is allowed, the NUL is preserved as one would
+/// expect:
 ///
 /// ```
 /// # use objc2_foundation::ns_string;
+/// let example = ns_string!("example\0");
+/// assert_eq!(example.to_string(), "example\0");
+///
 /// let example = ns_string!("exa\0mple");
 /// assert_eq!(example.to_string(), "exa\0mple");
 /// ```
@@ -291,11 +276,10 @@ macro_rules! ns_string {
         // other names outside of this macro.
 
         let cfstring_ptr: *const $crate::__core::ffi::c_void = {
-            // Remove any trailing null early.
-            const INPUT: &[u8] = $crate::__string_macro::trim_trailing_nul($s);
+            const INPUT: &[u8] = $s.as_bytes();
 
             if $crate::__string_macro::is_ascii(INPUT) {
-                // The ASCII bytes with a trailing null byte.
+                // The ASCII bytes with a trailing NUL.
                 #[repr(C)]
                 struct Ascii {
                     data: [u8; INPUT.len()],
@@ -315,7 +299,7 @@ macro_rules! ns_string {
                     $crate::__string_macro::CFStringAscii::new(
                         unsafe { &$crate::__string_macro::__CFConstantStringClassReference },
                         ASCII_ARRAY.as_ptr(),
-                        // The length does not include the trailing null.
+                        // The length does not include the trailing NUL.
                         INPUT.len(),
                     );
 
@@ -341,7 +325,7 @@ macro_rules! ns_string {
                     (&{ out }, written)
                 };
 
-                // The written UTF-16 contents with a trailing null code point.
+                // The written UTF-16 contents with a trailing NUL code point.
                 #[repr(C)]
                 struct Utf16 {
                     data: [u16; UTF16_FULL.1],
@@ -363,7 +347,7 @@ macro_rules! ns_string {
                     $crate::__string_macro::CFStringUtf16::new(
                         unsafe { &$crate::__string_macro::__CFConstantStringClassReference },
                         UTF16_ARRAY.as_ptr(),
-                        // The length does not include the trailing null.
+                        // The length does not include the trailing NUL.
                         UTF16_FULL.1,
                     );
 
@@ -394,6 +378,19 @@ mod tests {
 
     use super::*;
     use crate::NSString;
+
+    #[test]
+    fn test_is_ascii() {
+        assert!(is_ascii(b"a"));
+        assert!(is_ascii(b"abc"));
+
+        assert!(!is_ascii(b"\xff"));
+
+        assert!(!is_ascii(b"\0"));
+        assert!(!is_ascii(b"a\0b"));
+        assert!(!is_ascii(b"ab\0"));
+        assert!(!is_ascii(b"a\0b\0"));
+    }
 
     #[test]
     fn test_decode_utf8() {
@@ -440,6 +437,7 @@ mod tests {
         }
 
         test! {
+            "",
             "asdf",
             "🦀",
             "🏳️‍🌈",
@@ -450,6 +448,8 @@ mod tests {
             "lööps, bröther?",
             "\u{fffd} \u{fffd} \u{fffd}",
             "讓每個人都能打造出。",
+            "\0",
+            "\0\x01\x02\x03\x04\x05\x06\x07\x08\x09",
         }
     }
 }

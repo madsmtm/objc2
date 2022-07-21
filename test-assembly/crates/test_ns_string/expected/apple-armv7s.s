@@ -63,7 +63,7 @@ _get_with_nul:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r0, :lower16:(l___unnamed_3-(LPC2_0+8))
-	mov	r1, #5
+	mov	r1, #6
 	movt	r0, :upper16:(l___unnamed_3-(LPC2_0+8))
 LPC2_0:
 	add	r0, pc, r0
@@ -208,24 +208,29 @@ SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1):
 	.long	L___unnamed_11
 	.asciz	"\003\000\000"
 
+	.section	__TEXT,__const
+l___unnamed_12:
+	.asciz	"a\000b\000c\000"
+
+	.section	__DATA,__cfstring
 	.p2align	2
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
 	.long	___CFConstantStringClassReference
 	.asciz	"\310\007\000"
-	.long	l___unnamed_3
-	.asciz	"\005\000\000"
+	.long	l___unnamed_12
+	.asciz	"\006\000\000"
 
 	.section	__TEXT,__const
 	.p2align	1
-l___unnamed_12:
-	.asciz	"a\000\000\000b\000\000\000c\000\000"
+l___unnamed_13:
+	.asciz	"a\000\000\000b\000\000\000c\000\000\000\000"
 
 	.section	__DATA,__cfstring
 	.p2align	2
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1):
 	.long	___CFConstantStringClassReference
 	.asciz	"\320\007\000"
-	.long	l___unnamed_12
-	.asciz	"\005\000\000"
+	.long	l___unnamed_13
+	.asciz	"\006\000\000"
 
 .subsections_via_symbols
