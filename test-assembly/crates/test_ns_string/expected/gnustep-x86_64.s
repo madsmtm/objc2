@@ -91,172 +91,172 @@ XYZ:
 	.asciz	"a\000b\000c"
 	.size	.L__unnamed_3, 6
 
-	.type	.L__unnamed_4,@object
-	.section	.rodata..L__unnamed_4,"a",@progbits
-.L__unnamed_4:
+	.type	SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0),@object
+	.section	"__TEXT,__cstring,cstring_literals","a",@progbits
+SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0):
 	.zero	1
-	.size	.L__unnamed_4, 1
+	.size	SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0), 1
 
 	.type	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.globl	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0)
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	.L__unnamed_4
+	.quad	SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0)
 	.zero	8
 	.size	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0), 32
 
-	.type	.L__unnamed_5,@object
-	.section	.rodata..L__unnamed_5,"a",@progbits
+	.type	SYM(test_ns_string[CRATE_ID]::EMPTY::UTF16, 0),@object
+	.section	"__TEXT,__ustring","a",@progbits
 	.p2align	1
-.L__unnamed_5:
+SYM(test_ns_string[CRATE_ID]::EMPTY::UTF16, 0):
 	.zero	2
-	.size	.L__unnamed_5, 2
+	.size	SYM(test_ns_string[CRATE_ID]::EMPTY::UTF16, 0), 2
 
 	.type	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 1),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.globl	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 1)
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 1):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	.L__unnamed_5
+	.quad	SYM(test_ns_string[CRATE_ID]::EMPTY::UTF16, 0)
 	.zero	8
 	.size	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 1), 32
 
-	.type	.L__unnamed_6,@object
-	.section	.rodata.cst4,"aM",@progbits,4
-.L__unnamed_6:
+	.type	SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0),@object
+	.section	"__TEXT,__cstring,cstring_literals","a",@progbits
+SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0):
 	.asciz	"xyz"
-	.size	.L__unnamed_6, 4
+	.size	SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0), 4
 
 	.type	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.globl	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0)
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	.L__unnamed_6
+	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0), 32
 
-	.type	.L__unnamed_7,@object
-	.section	.rodata.cst8,"aM",@progbits,8
+	.type	SYM(test_ns_string[CRATE_ID]::XYZ::UTF16, 0),@object
+	.section	"__TEXT,__ustring","a",@progbits
 	.p2align	1
-.L__unnamed_7:
+SYM(test_ns_string[CRATE_ID]::XYZ::UTF16, 0):
 	.asciz	"x\000y\000z\000\000"
-	.size	.L__unnamed_7, 8
+	.size	SYM(test_ns_string[CRATE_ID]::XYZ::UTF16, 0), 8
 
 	.type	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 1),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.globl	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 1)
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 1):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	.L__unnamed_7
+	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::UTF16, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 1), 32
 
-	.type	.L__unnamed_8,@object
-	.section	.rodata.cst4,"aM",@progbits,4
-.L__unnamed_8:
+	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0),@object
+	.section	"__TEXT,__cstring,cstring_literals","a",@progbits
+SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0):
 	.asciz	"abc"
-	.size	.L__unnamed_8, 4
+	.size	SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0), 4
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	.L__unnamed_8
+	.quad	SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0), 32
 
-	.type	.L__unnamed_9,@object
-	.section	.rodata.cst8,"aM",@progbits,8
+	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::UTF16, 0),@object
+	.section	"__TEXT,__ustring","a",@progbits
 	.p2align	1
-.L__unnamed_9:
+SYM(test_ns_string[CRATE_ID]::get_ascii::UTF16, 0):
 	.asciz	"a\000b\000c\000\000"
-	.size	.L__unnamed_9, 8
+	.size	SYM(test_ns_string[CRATE_ID]::get_ascii::UTF16, 0), 8
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	.L__unnamed_9
+	.quad	SYM(test_ns_string[CRATE_ID]::get_ascii::UTF16, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1), 32
 
-	.type	.L__unnamed_10,@object
-	.section	.rodata..L__unnamed_10,"a",@progbits
-.L__unnamed_10:
+	.type	SYM(test_ns_string[CRATE_ID]::get_utf16::ASCII, 0),@object
+	.section	"__TEXT,__cstring,cstring_literals","a",@progbits
+SYM(test_ns_string[CRATE_ID]::get_utf16::ASCII, 0):
 	.asciz	"\303\241b\304\207"
-	.size	.L__unnamed_10, 6
+	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::ASCII, 0), 6
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	.L__unnamed_10
+	.quad	SYM(test_ns_string[CRATE_ID]::get_utf16::ASCII, 0)
 	.asciz	"\005\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0), 32
 
-	.type	.L__unnamed_11,@object
-	.section	.rodata.cst8,"aM",@progbits,8
+	.type	SYM(test_ns_string[CRATE_ID]::get_utf16::UTF16, 0),@object
+	.section	"__TEXT,__ustring","a",@progbits
 	.p2align	1
-.L__unnamed_11:
+SYM(test_ns_string[CRATE_ID]::get_utf16::UTF16, 0):
 	.asciz	"\341\000b\000\007\001\000"
-	.size	.L__unnamed_11, 8
+	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::UTF16, 0), 8
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	.L__unnamed_11
+	.quad	SYM(test_ns_string[CRATE_ID]::get_utf16::UTF16, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1), 32
 
-	.type	.L__unnamed_12,@object
-	.section	.rodata..L__unnamed_12,"a",@progbits
-.L__unnamed_12:
+	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::ASCII, 0),@object
+	.section	"__TEXT,__cstring,cstring_literals","a",@progbits
+SYM(test_ns_string[CRATE_ID]::get_with_nul::ASCII, 0):
 	.asciz	"a\000b\000c\000"
-	.size	.L__unnamed_12, 7
+	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::ASCII, 0), 7
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	.L__unnamed_12
+	.quad	SYM(test_ns_string[CRATE_ID]::get_with_nul::ASCII, 0)
 	.asciz	"\006\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0), 32
 
-	.type	.L__unnamed_13,@object
-	.section	.rodata..L__unnamed_13,"a",@progbits
+	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::UTF16, 0),@object
+	.section	"__TEXT,__ustring","a",@progbits
 	.p2align	1
-.L__unnamed_13:
+SYM(test_ns_string[CRATE_ID]::get_with_nul::UTF16, 0):
 	.asciz	"a\000\000\000b\000\000\000c\000\000\000\000"
-	.size	.L__unnamed_13, 14
+	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::UTF16, 0), 14
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1),@object
-	.section	"__DATA,__cfstring,regular","aw",@progbits
+	.section	"__DATA,__cfstring","aw",@progbits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	.L__unnamed_13
+	.quad	SYM(test_ns_string[CRATE_ID]::get_with_nul::UTF16, 0)
 	.asciz	"\006\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1), 32
 

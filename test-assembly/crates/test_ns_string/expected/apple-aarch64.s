@@ -101,7 +101,8 @@ l___unnamed_2:
 l___unnamed_3:
 	.asciz	"a\000b\000c"
 
-l___unnamed_4:
+	.section	__TEXT,__cstring,cstring_literals
+SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0):
 	.space	1
 
 	.section	__DATA,__cfstring
@@ -110,12 +111,12 @@ l___unnamed_4:
 SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	l___unnamed_4
+	.quad	SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0)
 	.space	8
 
-	.section	__TEXT,__const
+	.section	__TEXT,__ustring
 	.p2align	1
-l___unnamed_5:
+SYM(test_ns_string[CRATE_ID]::EMPTY::UTF16, 0):
 	.space	2
 
 	.section	__DATA,__cfstring
@@ -124,11 +125,11 @@ l___unnamed_5:
 SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 1):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	l___unnamed_5
+	.quad	SYM(test_ns_string[CRATE_ID]::EMPTY::UTF16, 0)
 	.space	8
 
-	.section	__TEXT,__literal4,4byte_literals
-l___unnamed_6:
+	.section	__TEXT,__cstring,cstring_literals
+SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0):
 	.asciz	"xyz"
 
 	.section	__DATA,__cfstring
@@ -137,12 +138,12 @@ l___unnamed_6:
 SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	l___unnamed_6
+	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 
-	.section	__TEXT,__literal8,8byte_literals
+	.section	__TEXT,__ustring
 	.p2align	1
-l___unnamed_7:
+SYM(test_ns_string[CRATE_ID]::XYZ::UTF16, 0):
 	.asciz	"x\000y\000z\000\000"
 
 	.section	__DATA,__cfstring
@@ -151,11 +152,11 @@ l___unnamed_7:
 SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 1):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	l___unnamed_7
+	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::UTF16, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 
-	.section	__TEXT,__literal4,4byte_literals
-l___unnamed_8:
+	.section	__TEXT,__cstring,cstring_literals
+SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0):
 	.asciz	"abc"
 
 	.section	__DATA,__cfstring
@@ -163,12 +164,12 @@ l___unnamed_8:
 SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	l___unnamed_8
+	.quad	SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 
-	.section	__TEXT,__literal8,8byte_literals
+	.section	__TEXT,__ustring
 	.p2align	1
-l___unnamed_9:
+SYM(test_ns_string[CRATE_ID]::get_ascii::UTF16, 0):
 	.asciz	"a\000b\000c\000\000"
 
 	.section	__DATA,__cfstring
@@ -176,11 +177,11 @@ l___unnamed_9:
 SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	l___unnamed_9
+	.quad	SYM(test_ns_string[CRATE_ID]::get_ascii::UTF16, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 
-	.section	__TEXT,__const
-l___unnamed_10:
+	.section	__TEXT,__cstring,cstring_literals
+SYM(test_ns_string[CRATE_ID]::get_utf16::ASCII, 0):
 	.asciz	"\303\241b\304\207"
 
 	.section	__DATA,__cfstring
@@ -188,12 +189,12 @@ l___unnamed_10:
 SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	l___unnamed_10
+	.quad	SYM(test_ns_string[CRATE_ID]::get_utf16::ASCII, 0)
 	.asciz	"\005\000\000\000\000\000\000"
 
-	.section	__TEXT,__literal8,8byte_literals
+	.section	__TEXT,__ustring
 	.p2align	1
-l___unnamed_11:
+SYM(test_ns_string[CRATE_ID]::get_utf16::UTF16, 0):
 	.asciz	"\341\000b\000\007\001\000"
 
 	.section	__DATA,__cfstring
@@ -201,11 +202,11 @@ l___unnamed_11:
 SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	l___unnamed_11
+	.quad	SYM(test_ns_string[CRATE_ID]::get_utf16::UTF16, 0)
 	.asciz	"\003\000\000\000\000\000\000"
 
-	.section	__TEXT,__const
-l___unnamed_12:
+	.section	__TEXT,__cstring,cstring_literals
+SYM(test_ns_string[CRATE_ID]::get_with_nul::ASCII, 0):
 	.asciz	"a\000b\000c\000"
 
 	.section	__DATA,__cfstring
@@ -213,12 +214,12 @@ l___unnamed_12:
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	l___unnamed_12
+	.quad	SYM(test_ns_string[CRATE_ID]::get_with_nul::ASCII, 0)
 	.asciz	"\006\000\000\000\000\000\000"
 
-	.section	__TEXT,__const
+	.section	__TEXT,__ustring
 	.p2align	1
-l___unnamed_13:
+SYM(test_ns_string[CRATE_ID]::get_with_nul::UTF16, 0):
 	.asciz	"a\000\000\000b\000\000\000c\000\000\000\000"
 
 	.section	__DATA,__cfstring
@@ -226,7 +227,7 @@ l___unnamed_13:
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	l___unnamed_13
+	.quad	SYM(test_ns_string[CRATE_ID]::get_with_nul::UTF16, 0)
 	.asciz	"\006\000\000\000\000\000\000"
 
 .subsections_via_symbols
