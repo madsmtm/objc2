@@ -1,6 +1,18 @@
-pub use std::ffi::c_void;
+use core::ffi::c_void;
+
+use objc2::runtime::Class;
+
+// This is defined in CoreFoundation, but we don't emit a link attribute
+// here because it is already linked via Foundation.
+//
+// Although this is a "private" (underscored) symbol, it is directly
+// referenced in Objective-C binaries. So it's safe for us to reference.
+extern "C" {
+    pub static __CFConstantStringClassReference: Class;
+}
 
 // From `CFString.c`:
+// https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFString.c#L184-L212
 // > !!! Note: Constant CFStrings use the bit patterns:
 // > C8 (11001000 = default allocator, not inline, not freed contents; 8-bit; has NULL byte; doesn't have length; is immutable)
 // > D0 (11010000 = default allocator, not inline, not freed contents; Unicode; is immutable)
@@ -12,7 +24,7 @@ const FLAGS_UTF16: usize = 0x07_D0;
 
 #[repr(C)]
 pub struct CFStringAscii {
-    isa: *const c_void,
+    isa: &'static Class,
     flags: usize,
     data: *const u8,
     len: usize,
@@ -22,7 +34,7 @@ pub struct CFStringAscii {
 unsafe impl Sync for CFStringAscii {}
 
 impl CFStringAscii {
-    pub const fn new(isa: *const c_void, data: *const u8, len: usize) -> Self {
+    pub const fn new(isa: &'static Class, data: *const u8, len: usize) -> Self {
         Self {
             isa,
             data,
@@ -38,7 +50,7 @@ impl CFStringAscii {
 
 #[repr(C)]
 pub struct CFStringUtf16 {
-    isa: *const c_void,
+    isa: &'static Class,
     flags: usize,
     data: *const u16,
     len: usize,
@@ -48,7 +60,7 @@ pub struct CFStringUtf16 {
 unsafe impl Sync for CFStringUtf16 {}
 
 impl CFStringUtf16 {
-    pub const fn new(isa: *const c_void, data: *const u16, len: usize) -> Self {
+    pub const fn new(isa: &'static Class, data: *const u16, len: usize) -> Self {
         Self {
             isa,
             data,
@@ -278,16 +290,7 @@ macro_rules! ns_string {
         // The only names directly used are expressions, whose names shadow any
         // other names outside of this macro.
 
-        // This is defined in CoreFoundation, but we don't emit a link attribute
-        // here because it is already linked via Foundation.
-        //
-        // Although this is a "private" (underscored) symbol, it is directly
-        // referenced in Objective-C binaries. So it's safe for us to reference.
-        extern "C" {
-            static __CFConstantStringClassReference: $crate::__string_macro::c_void;
-        }
-
-        let cfstring_ptr: *const $crate::__string_macro::c_void = {
+        let cfstring_ptr: *const $crate::__core::ffi::c_void = {
             // Remove any trailing null early.
             const INPUT: &[u8] = $crate::__string_macro::trim_trailing_nul($s);
 
@@ -310,7 +313,7 @@ macro_rules! ns_string {
                 #[link_section = "__DATA,__cfstring,regular"]
                 static CFSTRING: $crate::__string_macro::CFStringAscii =
                     $crate::__string_macro::CFStringAscii::new(
-                        unsafe { &__CFConstantStringClassReference },
+                        unsafe { &$crate::__string_macro::__CFConstantStringClassReference },
                         ASCII_ARRAY.as_ptr(),
                         // The length does not include the trailing null.
                         INPUT.len(),
@@ -358,7 +361,7 @@ macro_rules! ns_string {
                 #[link_section = "__DATA,__cfstring,regular"]
                 static CFSTRING: $crate::__string_macro::CFStringUtf16 =
                     $crate::__string_macro::CFStringUtf16::new(
-                        unsafe { &__CFConstantStringClassReference },
+                        unsafe { &$crate::__string_macro::__CFConstantStringClassReference },
                         UTF16_ARRAY.as_ptr(),
                         // The length does not include the trailing null.
                         UTF16_FULL.1,
