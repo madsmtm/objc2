@@ -10,23 +10,21 @@ Lloh1:
 	add	x0, x0, l___unnamed_1@PAGEOFF
 	mov	w1, #3
 	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
-	tbz	w0, #0, LBB0_2
 Lloh2:
-	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@PAGE
+	adrp	x8, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@PAGE
 Lloh3:
-	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@PAGEOFF
-	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-LBB0_2:
+	add	x8, x8, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@PAGEOFF
 Lloh4:
-	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@PAGE
+	adrp	x9, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@PAGE
 Lloh5:
-	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@PAGEOFF
+	add	x9, x9, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)@PAGEOFF
+	cmp	w0, #0
+	csel	x0, x9, x8, ne
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh0, Lloh1
-	.loh AdrpAdd	Lloh2, Lloh3
+	ret
 	.loh AdrpAdd	Lloh4, Lloh5
+	.loh AdrpAdd	Lloh2, Lloh3
+	.loh AdrpAdd	Lloh0, Lloh1
 
 	.globl	_get_utf16
 	.p2align	2
@@ -39,23 +37,21 @@ Lloh7:
 	add	x0, x0, l___unnamed_2@PAGEOFF
 	mov	w1, #5
 	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
-	tbz	w0, #0, LBB1_2
 Lloh8:
-	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@PAGE
+	adrp	x8, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@PAGE
 Lloh9:
-	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@PAGEOFF
-	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-LBB1_2:
+	add	x8, x8, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@PAGEOFF
 Lloh10:
-	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@PAGE
+	adrp	x9, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@PAGE
 Lloh11:
-	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@PAGEOFF
+	add	x9, x9, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)@PAGEOFF
+	cmp	w0, #0
+	csel	x0, x9, x8, ne
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh6, Lloh7
-	.loh AdrpAdd	Lloh8, Lloh9
+	ret
 	.loh AdrpAdd	Lloh10, Lloh11
+	.loh AdrpAdd	Lloh8, Lloh9
+	.loh AdrpAdd	Lloh6, Lloh7
 
 	.globl	_get_with_nul
 	.p2align	2
@@ -68,23 +64,21 @@ Lloh13:
 	add	x0, x0, l___unnamed_3@PAGEOFF
 	mov	w1, #6
 	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
-	tbz	w0, #0, LBB2_2
 Lloh14:
-	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@PAGE
+	adrp	x8, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@PAGE
 Lloh15:
-	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@PAGEOFF
-	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
-LBB2_2:
+	add	x8, x8, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@PAGEOFF
 Lloh16:
-	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@PAGE
+	adrp	x9, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@PAGE
 Lloh17:
-	add	x0, x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@PAGEOFF
+	add	x9, x9, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)@PAGEOFF
+	cmp	w0, #0
+	csel	x0, x9, x8, ne
 	ldp	x29, x30, [sp], #16
-	b	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh12, Lloh13
-	.loh AdrpAdd	Lloh14, Lloh15
+	ret
 	.loh AdrpAdd	Lloh16, Lloh17
+	.loh AdrpAdd	Lloh14, Lloh15
+	.loh AdrpAdd	Lloh12, Lloh13
 
 	.section	__DATA,__const
 	.globl	_EMPTY
@@ -166,7 +160,7 @@ l___unnamed_8:
 
 	.section	__DATA,__cfstring
 	.p2align	3
-SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0):
+SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
 	.quad	l___unnamed_8
@@ -179,7 +173,7 @@ l___unnamed_9:
 
 	.section	__DATA,__cfstring
 	.p2align	3
-SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1):
+SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
 	.quad	l___unnamed_9
@@ -191,7 +185,7 @@ l___unnamed_10:
 
 	.section	__DATA,__cfstring
 	.p2align	3
-SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0):
+SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
 	.quad	l___unnamed_10
@@ -204,7 +198,7 @@ l___unnamed_11:
 
 	.section	__DATA,__cfstring
 	.p2align	3
-SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1):
+SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
 	.quad	l___unnamed_11
@@ -216,7 +210,7 @@ l___unnamed_12:
 
 	.section	__DATA,__cfstring
 	.p2align	3
-SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
+SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
 	.quad	l___unnamed_12
@@ -229,7 +223,7 @@ l___unnamed_13:
 
 	.section	__DATA,__cfstring
 	.p2align	3
-SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1):
+SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
 	.quad	l___unnamed_13

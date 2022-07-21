@@ -9,15 +9,13 @@ get_ascii:
 	lea	rdi, [rip + .L__unnamed_1]
 	mov	esi, 3
 	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@GOTPCREL]
+	lea	rdx, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)]
+	lea	rcx, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)]
 	test	al, al
-	je	.LBB0_1
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)]
-	pop	rax
-	jmp	qword ptr [rip + SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@GOTPCREL]
-.LBB0_1:
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)]
-	pop	rax
-	jmp	qword ptr [rip + SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@GOTPCREL]
+	cmovne	rcx, rdx
+	mov	rax, rcx
+	pop	rcx
+	ret
 .Lfunc_end0:
 	.size	get_ascii, .Lfunc_end0-get_ascii
 
@@ -30,15 +28,13 @@ get_utf16:
 	lea	rdi, [rip + .L__unnamed_2]
 	mov	esi, 5
 	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@GOTPCREL]
+	lea	rdx, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)]
+	lea	rcx, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)]
 	test	al, al
-	je	.LBB1_1
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)]
-	pop	rax
-	jmp	qword ptr [rip + SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@GOTPCREL]
-.LBB1_1:
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)]
-	pop	rax
-	jmp	qword ptr [rip + SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@GOTPCREL]
+	cmovne	rcx, rdx
+	mov	rax, rcx
+	pop	rcx
+	ret
 .Lfunc_end1:
 	.size	get_utf16, .Lfunc_end1-get_utf16
 
@@ -51,15 +47,13 @@ get_with_nul:
 	lea	rdi, [rip + .L__unnamed_3]
 	mov	esi, 6
 	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@GOTPCREL]
+	lea	rdx, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)]
+	lea	rcx, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)]
 	test	al, al
-	je	.LBB2_1
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)]
-	pop	rax
-	jmp	qword ptr [rip + SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)@GOTPCREL]
-.LBB2_1:
-	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)]
-	pop	rax
-	jmp	qword ptr [rip + SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)@GOTPCREL]
+	cmovne	rcx, rdx
+	mov	rax, rcx
+	pop	rcx
+	ret
 .Lfunc_end2:
 	.size	get_with_nul, .Lfunc_end2-get_with_nul
 
