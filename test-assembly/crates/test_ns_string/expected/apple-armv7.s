@@ -11,7 +11,7 @@ _get_ascii:
 	movt	r0, :upper16:(l___unnamed_1-(LPC0_0+8))
 LPC0_0:
 	add	r0, pc, r0
-	bl	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	cmp	r0, #0
 	beq	LBB0_2
 	movw	r0, :lower16:(SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)-(LPC0_2+8))
@@ -39,7 +39,7 @@ _get_utf16:
 	movt	r0, :upper16:(l___unnamed_2-(LPC1_0+8))
 LPC1_0:
 	add	r0, pc, r0
-	bl	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	cmp	r0, #0
 	beq	LBB1_2
 	movw	r0, :lower16:(SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)-(LPC1_2+8))
@@ -67,7 +67,7 @@ _get_with_nul:
 	movt	r0, :upper16:(l___unnamed_3-(LPC2_0+8))
 LPC2_0:
 	add	r0, pc, r0
-	bl	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	cmp	r0, #0
 	beq	LBB2_2
 	movw	r0, :lower16:(SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)-(LPC2_2+8))

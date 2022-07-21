@@ -13,7 +13,7 @@ L0$pb:
 	lea	eax, [esi + l___unnamed_1-L0$pb]
 	mov	dword ptr [esp], eax
 	mov	dword ptr [esp + 4], 3
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	test	al, al
 	je	LBB0_1
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)-L0$pb]
@@ -45,7 +45,7 @@ L1$pb:
 	lea	eax, [esi + l___unnamed_2-L1$pb]
 	mov	dword ptr [esp], eax
 	mov	dword ptr [esp + 4], 5
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	test	al, al
 	je	LBB1_1
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)-L1$pb]
@@ -77,7 +77,7 @@ L2$pb:
 	lea	eax, [esi + l___unnamed_3-L2$pb]
 	mov	dword ptr [esp], eax
 	mov	dword ptr [esp + 4], 6
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	test	al, al
 	je	LBB2_1
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)-L2$pb]
