@@ -178,9 +178,16 @@ impl Extend<u8> for NSMutableData {
     ///
     /// [`extend_from_slice`]: Self::extend_from_slice
     fn extend<T: IntoIterator<Item = u8>>(&mut self, iter: T) {
-        for item in iter {
-            self.push(item);
-        }
+        let iterator = iter.into_iter();
+        iterator.for_each(move |item| self.push(item));
+    }
+}
+
+// Vec also has this impl
+impl<'a> Extend<&'a u8> for NSMutableData {
+    fn extend<T: IntoIterator<Item = &'a u8>>(&mut self, iter: T) {
+        let iterator = iter.into_iter();
+        iterator.for_each(move |item| self.push(*item));
     }
 }
 
@@ -213,6 +220,24 @@ impl fmt::Debug for NSMutableData {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
+    }
+}
+
+impl<'a> IntoIterator for &'a NSMutableData {
+    type Item = &'a u8;
+    type IntoIter = core::slice::Iter<'a, u8>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.bytes().iter()
+    }
+}
+
+impl<'a> IntoIterator for &'a mut NSMutableData {
+    type Item = &'a mut u8;
+    type IntoIter = core::slice::IterMut<'a, u8>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.bytes_mut().iter_mut()
     }
 }
 
@@ -287,6 +312,8 @@ mod tests {
         let mut data = NSMutableData::with_bytes(&[1, 2]);
         data.extend(3..=5);
         assert_eq!(data.bytes(), &[1, 2, 3, 4, 5]);
+        data.extend(&*NSData::with_bytes(&[6, 7]));
+        assert_eq!(data.bytes(), &[1, 2, 3, 4, 5, 6, 7]);
     }
 
     #[test]

@@ -160,6 +160,19 @@ impl<I: ExactSizeIterator + ?Sized> ExactSizeIterator for Id<I, Owned> {
 
 impl<I: FusedIterator + ?Sized> FusedIterator for Id<I, Owned> {}
 
+// TODO: Consider this impl
+// impl<'a, T, O: Ownership> IntoIterator for &'a Id<T, O>
+// where
+//     &'a T: IntoIterator,
+// {
+//     type Item = <&'a T as IntoIterator>::Item;
+//     type IntoIter = <&'a T as IntoIterator>::IntoIter;
+//
+//     fn into_iter(self) -> Self::IntoIter {
+//         (**self).into_iter()
+//     }
+// }
+
 impl<T, O: Ownership> borrow::Borrow<T> for Id<T, O> {
     fn borrow(&self) -> &T {
         Deref::deref(self)

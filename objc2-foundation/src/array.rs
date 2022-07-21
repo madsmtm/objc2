@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
-use core::ops::{Index, Range};
+use core::ops::{Index, IndexMut, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
@@ -10,8 +10,8 @@ use objc2::Message;
 use objc2::{msg_send, msg_send_id};
 
 use crate::{
-    NSCopying, NSEnumerator, NSFastEnumeration, NSMutableArray, NSMutableCopying, NSObject,
-    NSRange, __inner_extern_class,
+    NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableArray, NSMutableCopying,
+    NSObject, NSRange, __inner_extern_class,
 };
 
 __inner_extern_class! {
@@ -199,11 +199,26 @@ unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
 
+impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSArray<T, O> {
+    type Item = &'a T;
+    type IntoIter = NSFastEnumerator<'a, NSArray<T, O>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter_fast()
+    }
+}
+
 impl<T: Message, O: Ownership> Index<usize> for NSArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
         self.get(index).unwrap()
+    }
+}
+
+impl<T: Message> IndexMut<usize> for NSArray<T, Owned> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
+        self.get_mut(index).unwrap()
     }
 }
 

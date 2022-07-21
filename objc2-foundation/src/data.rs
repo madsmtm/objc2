@@ -129,6 +129,15 @@ impl fmt::Debug for NSData {
     }
 }
 
+impl<'a> IntoIterator for &'a NSData {
+    type Item = &'a u8;
+    type IntoIter = core::slice::Iter<'a, u8>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.bytes().iter()
+    }
+}
+
 pub(crate) unsafe fn data_with_bytes(cls: &Class, bytes: &[u8]) -> *mut Object {
     let bytes_ptr: *const c_void = bytes.as_ptr().cast();
     unsafe {

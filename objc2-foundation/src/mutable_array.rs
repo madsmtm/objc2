@@ -11,8 +11,8 @@ use objc2::{msg_send, msg_send_id};
 
 use crate::array::from_refs;
 use crate::{
-    NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSMutableCopying, NSObject,
-    __inner_extern_class,
+    NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
+    NSObject, __inner_extern_class,
 };
 
 __inner_extern_class! {
@@ -173,6 +173,22 @@ impl<T: Message> alloc::borrow::ToOwned for NSMutableArray<T, Shared> {
 
 unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableArray<T, O> {
     type Item = T;
+}
+
+impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
+    type Item = &'a T;
+    type IntoIter = NSFastEnumerator<'a, NSMutableArray<T, O>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter_fast()
+    }
+}
+
+impl<T: Message, O: Ownership> Extend<Id<T, O>> for NSMutableArray<T, O> {
+    fn extend<I: IntoIterator<Item = Id<T, O>>>(&mut self, iter: I) {
+        let iterator = iter.into_iter();
+        iterator.for_each(move |item| self.push(item));
+    }
 }
 
 impl<T: Message, O: Ownership> Index<usize> for NSMutableArray<T, O> {
