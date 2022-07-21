@@ -78,7 +78,7 @@ get_with_nul:
 	call	.L2$pb
 .L2$pb:
 	pop	ebx
-	mov	dword ptr [esp + 4], 5
+	mov	dword ptr [esp + 4], 6
 .Ltmp2:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L2$pb)
 	lea	eax, [ebx + .L__unnamed_3@GOTOFF]
@@ -272,21 +272,28 @@ SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1):
 	.asciz	"\003\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1), 16
 
+	.type	.L__unnamed_12,@object
+	.section	.rodata..L__unnamed_12,"a",@progbits
+.L__unnamed_12:
+	.asciz	"a\000b\000c\000"
+	.size	.L__unnamed_12, 7
+
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0),@object
+	.section	"__DATA,__cfstring,regular","aw",@progbits
 	.p2align	2
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
 	.long	__CFConstantStringClassReference
 	.asciz	"\310\007\000"
-	.long	.L__unnamed_3
-	.asciz	"\005\000\000"
+	.long	.L__unnamed_12
+	.asciz	"\006\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0), 16
 
-	.type	.L__unnamed_12,@object
-	.section	.rodata..L__unnamed_12,"a",@progbits
+	.type	.L__unnamed_13,@object
+	.section	.rodata..L__unnamed_13,"a",@progbits
 	.p2align	1
-.L__unnamed_12:
-	.asciz	"a\000\000\000b\000\000\000c\000\000"
-	.size	.L__unnamed_12, 12
+.L__unnamed_13:
+	.asciz	"a\000\000\000b\000\000\000c\000\000\000\000"
+	.size	.L__unnamed_13, 14
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1),@object
 	.section	"__DATA,__cfstring,regular","aw",@progbits
@@ -294,8 +301,8 @@ SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1):
 	.long	__CFConstantStringClassReference
 	.asciz	"\320\007\000"
-	.long	.L__unnamed_12
-	.asciz	"\005\000\000"
+	.long	.L__unnamed_13
+	.asciz	"\006\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1), 16
 
 	.section	".note.GNU-stack","",@progbits

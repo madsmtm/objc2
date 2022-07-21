@@ -49,7 +49,7 @@ get_utf16:
 get_with_nul:
 	push	rax
 	lea	rdi, [rip + .L__unnamed_3]
-	mov	esi, 5
+	mov	esi, 6
 	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)@GOTPCREL]
 	test	al, al
 	je	.LBB2_1
@@ -233,21 +233,28 @@ SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1):
 	.asciz	"\003\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1), 32
 
+	.type	.L__unnamed_12,@object
+	.section	.rodata..L__unnamed_12,"a",@progbits
+.L__unnamed_12:
+	.asciz	"a\000b\000c\000"
+	.size	.L__unnamed_12, 7
+
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0),@object
+	.section	"__DATA,__cfstring,regular","aw",@progbits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\310\007\000\000\000\000\000"
-	.quad	.L__unnamed_3
-	.asciz	"\005\000\000\000\000\000\000"
+	.quad	.L__unnamed_12
+	.asciz	"\006\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0), 32
 
-	.type	.L__unnamed_12,@object
-	.section	.rodata..L__unnamed_12,"a",@progbits
+	.type	.L__unnamed_13,@object
+	.section	.rodata..L__unnamed_13,"a",@progbits
 	.p2align	1
-.L__unnamed_12:
-	.asciz	"a\000\000\000b\000\000\000c\000\000"
-	.size	.L__unnamed_12, 12
+.L__unnamed_13:
+	.asciz	"a\000\000\000b\000\000\000c\000\000\000\000"
+	.size	.L__unnamed_13, 14
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1),@object
 	.section	"__DATA,__cfstring,regular","aw",@progbits
@@ -255,8 +262,8 @@ SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0):
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1):
 	.quad	__CFConstantStringClassReference
 	.asciz	"\320\007\000\000\000\000\000"
-	.quad	.L__unnamed_12
-	.asciz	"\005\000\000\000\000\000\000"
+	.quad	.L__unnamed_13
+	.asciz	"\006\000\000\000\000\000\000"
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1), 32
 
 	.section	".note.GNU-stack","",@progbits
