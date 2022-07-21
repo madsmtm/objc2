@@ -25,21 +25,23 @@ extern "C" {
     pub static __CFConstantStringClassReference: Class;
 }
 
-// From `CFString.c`:
-// https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFString.c#L184-L212
-// > !!! Note: Constant CFStrings use the bit patterns:
-// > C8 (11001000 = default allocator, not inline, not freed contents; 8-bit; has NULL byte; doesn't have length; is immutable)
-// > D0 (11010000 = default allocator, not inline, not freed contents; Unicode; is immutable)
-// > The bit usages should not be modified in a way that would effect these bit patterns.
-//
-// The 7 byte is the `CFTypeID` of `CFStringRef`.
-const FLAGS_ASCII: usize = 0x07_C8;
-const FLAGS_UTF16: usize = 0x07_D0;
-
+/// Structure used to describe a constant `CFString`.
+///
+/// This struct is the same as [`CF_CONST_STRING`], which contains
+/// [`CFRuntimeBase`]. While the documentation clearly says that the ABI of
+/// `CFRuntimeBase` should not be relied on, we can rely on it as long as we
+/// only do it with regards to `CFString` (because `clang` does this as well).
+///
+/// [`CFRuntimeBase`]: <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFRuntime.h#L216-L228>
+/// [`CF_CONST_STRING`]: <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFInternal.h#L332-L336>
 #[repr(C)]
 pub struct CFConstString {
     isa: &'static Class,
-    flags: usize,
+    // Important that we don't just use `usize` here, since that would be
+    // wrong on big-endian systems!
+    cfinfo: u32,
+    #[cfg(target_pointer_width = "64")]
+    _rc: u32,
     data: *const c_void,
     len: usize,
 }
@@ -48,10 +50,26 @@ pub struct CFConstString {
 unsafe impl Sync for CFConstString {}
 
 impl CFConstString {
+    // From `CFString.c`:
+    // <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFString.c#L184-L212>
+    // > !!! Note: Constant CFStrings use the bit patterns:
+    // > C8 (11001000 = default allocator, not inline, not freed contents; 8-bit; has NULL byte; doesn't have length; is immutable)
+    // > D0 (11010000 = default allocator, not inline, not freed contents; Unicode; is immutable)
+    // > The bit usages should not be modified in a way that would effect these bit patterns.
+    //
+    // Hence CoreFoundation guarantees that these two are always valid.
+    //
+    // The `CFTypeID` of `CFStringRef` is guaranteed to always be 7:
+    // <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFRuntime.c#L982>
+    const FLAGS_ASCII: u32 = 0x07_C8;
+    const FLAGS_UTF16: u32 = 0x07_D0;
+
     pub const unsafe fn new_ascii(isa: &'static Class, data: &'static [u8]) -> Self {
         Self {
             isa,
-            flags: FLAGS_ASCII,
+            cfinfo: Self::FLAGS_ASCII,
+            #[cfg(target_pointer_width = "64")]
+            _rc: 0,
             data: data.as_ptr().cast(),
             // The length does not include the trailing NUL.
             len: data.len() - 1,
@@ -61,7 +79,9 @@ impl CFConstString {
     pub const unsafe fn new_utf16(isa: &'static Class, data: &'static [u16]) -> Self {
         Self {
             isa,
-            flags: FLAGS_UTF16,
+            cfinfo: Self::FLAGS_UTF16,
+            #[cfg(target_pointer_width = "64")]
+            _rc: 0,
             data: data.as_ptr().cast(),
             // The length does not include the trailing NUL.
             len: data.len() - 1,
