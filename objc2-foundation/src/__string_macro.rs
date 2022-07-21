@@ -246,14 +246,6 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 /// where possible.
 ///
 /// [`NSString::from_str`]: crate::NSString::from_str
-///
-///
-/// # Compile-time Cost
-///
-/// Minimal.
-///
-/// This is implemented entirely with `const` evaluation. It is not a
-/// procedural macro that requires dependencies for parsing.
 #[macro_export]
 macro_rules! ns_string {
     ($s:expr) => {{
