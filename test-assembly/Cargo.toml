@@ -9,5 +9,8 @@ license = "MIT"
 
 build = "build.rs"
 
+[features]
+run = ["cargo_metadata"]
+
 [dependencies]
-cargo_metadata = "0.14"
+cargo_metadata = { version = "0.14", optional = true }

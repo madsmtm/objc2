@@ -373,7 +373,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: run
-        args: --bin test-ui
+        args: --features=run --bin test-ui
       env:
         # Allow warnings
         RUSTFLAGS: "-C debuginfo=0"
@@ -411,7 +411,7 @@ jobs:
       run:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
 
-        cargo run --target=$HOST_TARGET --bin test-assembly ${{ env.ARGS }}
+        cargo run --target=$HOST_TARGET --features=run --bin test-assembly -- ${{ env.ARGS }}
 
     - name: Launch XCode Simulator
       if: matrix.dinghy

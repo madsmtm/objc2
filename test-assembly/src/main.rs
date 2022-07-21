@@ -4,81 +4,26 @@
 //!
 //! Use as:
 //! ```
-//! TEST_OVERWRITE=1 cargo run --bin test-assembly --target=x86_64-apple-darwin
+//! TEST_OVERWRITE=1 cargo run --features=run --bin test-assembly -- --target=x86_64-apple-darwin
 //! ```
 //!
 //! Very limited currently, for example we can't stably test things that emits
 //! mangled symbols, nor things that are emitted in different crates.
 
-use cargo_metadata::Message;
 use std::env;
 use std::env::args;
 use std::fs;
-use std::io;
 use std::path::Path;
 use std::process::{Command, Stdio};
 
-fn strip_lines(data: &str, starts_with: &str) -> String {
-    data.lines()
-        .filter(|line| !line.trim_start().starts_with(starts_with))
-        .collect::<Vec<_>>()
-        .join("\n")
-}
-
-fn strip_section(data: &str, section: &str) -> String {
-    let mut res = String::with_capacity(data.len());
-    let mut in_removed_section = false;
-    for line in data.lines() {
-        // This only works for the __LLVM sections we're interested in
-        if line.trim().starts_with(".section") {
-            if line.contains(section) {
-                in_removed_section = true;
-                println!("Stripped {section} section");
-            } else {
-                in_removed_section = false;
-            }
-        }
-        if !in_removed_section {
-            res.push_str(line);
-            res.push('\n');
-        }
-        if line == "" {
-            in_removed_section = false;
-        }
-    }
-    res
-}
-
-fn read_assembly<P: AsRef<Path>>(path: P) -> io::Result<String> {
-    let s = fs::read_to_string(path)?;
-    let workspace_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap()
-        .as_os_str()
-        .to_str()
-        .unwrap();
-    let s = s.replace(workspace_dir, "$WORKSPACE");
-    // HACK: Replace Objective-C image info for simulator targets
-    let s = s.replace(
-        ".asciz\t\"\\000\\000\\000\\000`\\000\\000\"",
-        ".asciz\t\"\\000\\000\\000\\000@\\000\\000\"",
-    );
-    // Strip various uninteresting directives
-    let s = strip_lines(&s, ".cfi_");
-    let s = strip_lines(&s, ".macosx_version_");
-    let s = strip_lines(&s, ".ios_version_");
-    let s = strip_lines(&s, ".build_version");
-    // We remove the __LLVM,__bitcode and __LLVM,__cmdline sections because
-    // they're uninteresting for out use-case.
-    //
-    // See https://github.com/rust-lang/rust/blob/1.59.0/compiler/rustc_codegen_llvm/src/back/write.rs#L978-L1074
-    Ok(strip_section(&s, "__LLVM"))
-}
+use test_assembly::{get_artifact, read_assembly};
 
 fn main() {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let should_overwrite = option_env!("TEST_OVERWRITE").is_some();
     let host = env!("TARGET");
+
+    println!("Host {host}");
 
     for entry in manifest_dir.join("crates").read_dir().unwrap() {
         let entry = entry.unwrap();
@@ -90,13 +35,13 @@ fn main() {
 
         println!("Testing {package}.");
 
-        let result = Command::new(std::env::var("CARGO").unwrap_or("cargo".into()))
+        let result = Command::new(std::env::var("CARGO").unwrap_or_else(|_| "cargo".into()))
             // .arg("+nightly")
             // .arg("-Zbuild-std")
             // .arg("-vv")
             .arg("rustc")
             .arg(format!("--package={package}"))
-            .args(args().skip(2))
+            .args(args().skip(1))
             .arg("--release")
             .arg("--message-format=json-render-diagnostics")
             .arg("--features=assembly-features")
@@ -110,36 +55,20 @@ fn main() {
             .output()
             .unwrap();
 
-        let artifact = Message::parse_stream(&*result.stdout)
-            .find_map(|message| {
-                if let Message::CompilerArtifact(artifact) = message.unwrap() {
-                    // Brittle!
-                    if artifact.target.name == package && artifact.filenames.len() == 2 {
-                        let path = artifact.filenames[1].clone();
-                        let stem = path.file_stem().unwrap().strip_prefix("lib").unwrap();
-                        return Some(path.with_file_name(format!("{stem}.s")));
-                    }
-                }
-                None
-            })
-            .unwrap_or_else(|| {
-                panic!(
-                    "Could not find package data:\n{}",
-                    String::from_utf8_lossy(&result.stdout)
-                )
-            });
+        let artifact = get_artifact(&result.stdout, package);
+
+        println!("{}", artifact.display());
 
         // Very brittle!
         let target = artifact
             .components()
-            .map(|component| component.as_str())
+            .map(|component| component.as_os_str().to_str().unwrap())
             .skip_while(|&component| component != "target")
-            .skip(1)
-            .next()
+            .nth(1)
             .unwrap_or(host);
 
         println!("Target {target}.");
-        let mut architecture = target.split_once("-").unwrap().0;
+        let mut architecture = target.split_once('-').unwrap().0;
         if matches!(architecture, "i386" | "i686") {
             architecture = "x86";
         };
@@ -149,9 +78,11 @@ fn main() {
         }
         println!("Architecture {architecture}.");
 
+        let extension = artifact.extension().unwrap().to_str().unwrap();
+
         let expected_file = package_path
             .join("expected")
-            .join(format!("apple-{architecture}.s"));
+            .join(format!("apple-{architecture}.{extension}"));
 
         let actual = read_assembly(&artifact).unwrap();
         if should_overwrite {
