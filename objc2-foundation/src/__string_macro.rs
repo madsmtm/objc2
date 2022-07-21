@@ -90,7 +90,8 @@ impl CFConstString {
 
     #[inline]
     pub const fn as_nsstring(&self) -> &NSString {
-        unsafe { &*(self as *const Self as *const NSString) }
+        let ptr: *const Self = self;
+        unsafe { &*ptr.cast::<NSString>() }
     }
 }
 
