@@ -257,94 +257,95 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 #[macro_export]
 macro_rules! ns_string {
     ($s:expr) => {{
-        // Note that this always uses full paths to items from `$crate`. This
-        // does not import any items because doing so could cause ambiguity if
-        // the same names are exposed at the call site of this macro.
+        // Note: We create both the ASCII + NUL and the UTF-16 + NUL versions
+        // of the string, since we can't conditionally create a static.
         //
-        // The only names directly used are expressions, whose names shadow any
-        // other names outside of this macro.
+        // Since we don't add the `#[used]` attribute, Rust can fairly easily
+        // figure out that one of the variants are never used, and simply
+        // exclude it.
 
         const INPUT: &[u8] = $s.as_bytes();
 
-        if $crate::__string_macro::is_ascii_no_nul(INPUT) {
-            // Convert the input slice to an array with known length so that
-            // we can add a NUL byte to it.
-            //
-            // The section is the same as what clang sets, see:
-            // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5192
-            #[link_section = "__TEXT,__cstring,cstring_literals"]
-            static ASCII: [u8; INPUT.len() + 1] = {
-                // Zero-fill with INPUT.len() + 1
-                let mut res: [u8; INPUT.len() + 1] = [0; INPUT.len() + 1];
-                let mut i = 0;
-                // Fill with data from INPUT
-                while i < INPUT.len() {
-                    res[i] = INPUT[i];
-                    i += 1;
-                }
-                // Now contains INPUT + '\0'
-                res
-            };
+        // Convert the input slice to a C-style string with a NUL byte.
+        //
+        // The section is the same as what clang sets, see:
+        // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5192
+        #[link_section = "__TEXT,__cstring,cstring_literals"]
+        static ASCII: [u8; INPUT.len() + 1] = {
+            // Zero-fill with INPUT.len() + 1
+            let mut res: [u8; INPUT.len() + 1] = [0; INPUT.len() + 1];
+            let mut i = 0;
+            // Fill with data from INPUT
+            while i < INPUT.len() {
+                res[i] = INPUT[i];
+                i += 1;
+            }
+            // Now contains INPUT + '\0'
+            res
+        };
 
-            #[link_section = "__DATA,__cfstring"]
-            static CFSTRING: $crate::__string_macro::CFConstString = unsafe {
+        // The full UTF-16 contents along with the written length.
+        const UTF16_FULL: (&[u16; INPUT.len()], usize) = {
+            let mut out = [0u16; INPUT.len()];
+            let mut iter = $crate::__string_macro::EncodeUtf16Iter::new(INPUT);
+            let mut written = 0;
+
+            while let Some((state, chars)) = iter.next() {
+                iter = state;
+                out[written] = chars.repr[0];
+                written += 1;
+
+                if chars.len > 1 {
+                    out[written] = chars.repr[1];
+                    written += 1;
+                }
+            }
+
+            (&{ out }, written)
+        };
+
+        // Convert the slice to an UTF-16 array + a final NUL byte.
+        //
+        // The section is the same as what clang sets, see:
+        // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5193
+        #[link_section = "__TEXT,__ustring"]
+        static UTF16: [u16; UTF16_FULL.1 + 1] = {
+            // Zero-fill with UTF16_FULL.1 + 1
+            let mut res: [u16; UTF16_FULL.1 + 1] = [0; UTF16_FULL.1 + 1];
+            let mut i = 0;
+            // Fill with data from UTF16_FULL.0 up until UTF16_FULL.1
+            while i < UTF16_FULL.1 {
+                res[i] = UTF16_FULL.0[i];
+                i += 1;
+            }
+            // Now contains UTF16_FULL.1 + NUL
+            res
+        };
+
+        // Create the constant string structure, and store it in a static
+        // within a special section.
+        //
+        // The section is the same as what clang sets, see:
+        // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5243
+        #[link_section = "__DATA,__cfstring"]
+        static CFSTRING: $crate::__string_macro::CFConstString = unsafe {
+            if $crate::__string_macro::is_ascii_no_nul(INPUT) {
+                // This is technically an optimization (UTF-16 strings are
+                // always valid), but it's a fairly important one!
                 $crate::__string_macro::CFConstString::new_ascii(
                     &$crate::__string_macro::__CFConstantStringClassReference,
                     &ASCII,
                 )
-            };
-
-            CFSTRING.as_nsstring()
-        } else {
-            // The full UTF-16 contents along with the written length.
-            const UTF16_FULL: (&[u16; INPUT.len()], usize) = {
-                let mut out = [0u16; INPUT.len()];
-                let mut iter = $crate::__string_macro::EncodeUtf16Iter::new(INPUT);
-                let mut written = 0;
-
-                while let Some((state, chars)) = iter.next() {
-                    iter = state;
-                    out[written] = chars.repr[0];
-                    written += 1;
-
-                    if chars.len > 1 {
-                        out[written] = chars.repr[1];
-                        written += 1;
-                    }
-                }
-
-                (&{ out }, written)
-            };
-
-            // Convert the slice to an array with known length so that we can
-            // add a NUL byte to it.
-            //
-            // The section is the same as what clang sets, see:
-            // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5193
-            #[link_section = "__TEXT,__ustring"]
-            static UTF16: [u16; UTF16_FULL.1 + 1] = {
-                // Zero-fill with UTF16_FULL.1 + 1
-                let mut res: [u16; UTF16_FULL.1 + 1] = [0; UTF16_FULL.1 + 1];
-                let mut i = 0;
-                // Fill with data from UTF16_FULL.0 up until UTF16_FULL.1
-                while i < UTF16_FULL.1 {
-                    res[i] = UTF16_FULL.0[i];
-                    i += 1;
-                }
-                // Now contains UTF16_FULL.1 + NUL
-                res
-            };
-
-            #[link_section = "__DATA,__cfstring"]
-            static CFSTRING: $crate::__string_macro::CFConstString = unsafe {
+            } else {
                 $crate::__string_macro::CFConstString::new_utf16(
                     &$crate::__string_macro::__CFConstantStringClassReference,
                     &UTF16,
                 )
-            };
+            }
+        };
 
-            CFSTRING.as_nsstring()
-        }
+        // Return &'static NSString
+        CFSTRING.as_nsstring()
     }};
 }
 
