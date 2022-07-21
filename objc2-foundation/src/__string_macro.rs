@@ -9,6 +9,7 @@
 //! generating a pure `NSString`. We don't support that yet (since I don't
 //! know the use-case), but we definitely could!
 //! See: <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L2007-L2068>
+use core::ffi::c_void;
 
 use objc2::runtime::Class;
 
@@ -35,50 +36,32 @@ const FLAGS_ASCII: usize = 0x07_C8;
 const FLAGS_UTF16: usize = 0x07_D0;
 
 #[repr(C)]
-pub struct CFStringAscii {
+pub struct CFConstString {
     isa: &'static Class,
     flags: usize,
-    data: *const u8,
+    data: *const c_void,
     len: usize,
 }
 
 // Required to place in a `static`.
-unsafe impl Sync for CFStringAscii {}
+unsafe impl Sync for CFConstString {}
 
-impl CFStringAscii {
-    pub const unsafe fn new(isa: &'static Class, data: &'static [u8]) -> Self {
+impl CFConstString {
+    pub const unsafe fn new_ascii(isa: &'static Class, data: &'static [u8]) -> Self {
         Self {
             isa,
             flags: FLAGS_ASCII,
-            data: data.as_ptr(),
+            data: data.as_ptr().cast(),
             // The length does not include the trailing NUL.
             len: data.len() - 1,
         }
     }
 
-    #[inline]
-    pub const fn as_nsstring(&self) -> &NSString {
-        unsafe { &*(self as *const Self as *const NSString) }
-    }
-}
-
-#[repr(C)]
-pub struct CFStringUtf16 {
-    isa: &'static Class,
-    flags: usize,
-    data: *const u16,
-    len: usize,
-}
-
-// Required to place in a `static`.
-unsafe impl Sync for CFStringUtf16 {}
-
-impl CFStringUtf16 {
-    pub const unsafe fn new(isa: &'static Class, data: &'static [u16]) -> Self {
+    pub const unsafe fn new_utf16(isa: &'static Class, data: &'static [u16]) -> Self {
         Self {
             isa,
             flags: FLAGS_UTF16,
-            data: data.as_ptr(),
+            data: data.as_ptr().cast(),
             // The length does not include the trailing NUL.
             len: data.len() - 1,
         }
@@ -304,8 +287,8 @@ macro_rules! ns_string {
             };
 
             #[link_section = "__DATA,__cfstring"]
-            static CFSTRING: $crate::__string_macro::CFStringAscii = unsafe {
-                $crate::__string_macro::CFStringAscii::new(
+            static CFSTRING: $crate::__string_macro::CFConstString = unsafe {
+                $crate::__string_macro::CFConstString::new_ascii(
                     &$crate::__string_macro::__CFConstantStringClassReference,
                     &ASCII,
                 )
@@ -353,8 +336,8 @@ macro_rules! ns_string {
             };
 
             #[link_section = "__DATA,__cfstring"]
-            static CFSTRING: $crate::__string_macro::CFStringUtf16 = unsafe {
-                $crate::__string_macro::CFStringUtf16::new(
+            static CFSTRING: $crate::__string_macro::CFConstString = unsafe {
+                $crate::__string_macro::CFConstString::new_utf16(
                     &$crate::__string_macro::__CFConstantStringClassReference,
                     &UTF16,
                 )
