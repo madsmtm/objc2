@@ -117,7 +117,7 @@ impl Utf16Char {
     }
 
     #[cfg(test)]
-    pub fn as_slice(&self) -> &[u16] {
+    fn as_slice(&self) -> &[u16] {
         &self.repr[..self.len]
     }
 }
@@ -406,7 +406,13 @@ mod tests {
         macro_rules! test {
             ($($s:expr,)+) => {$({
                 static STRING: &NSString = ns_string!($s);
+                let s = NSString::from_str($s);
+
+                assert_eq!(STRING, STRING);
+                assert_eq!(STRING, &*s);
+
                 assert_eq!(STRING.to_string(), $s);
+                assert_eq!(s.to_string(), $s);
             })+};
         }
 
@@ -424,6 +430,7 @@ mod tests {
             "讓每個人都能打造出。",
             "\0",
             "\0\x01\x02\x03\x04\x05\x06\x07\x08\x09",
+            // "\u{feff}", // TODO
         }
     }
 
