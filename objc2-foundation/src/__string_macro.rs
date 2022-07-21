@@ -207,20 +207,18 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 ///
 /// # Unicode Strings
 ///
-/// In Objective-C, non-ASCII strings are UTF-16. However, Rust strings are
-/// UTF-8.
-///
-/// This macro transcodes non-ASCII strings to UTF-16:
+/// An NSString can contain strings with many different encodings, including
+/// ASCII, UTF-8, UTF-16, and so on. This macro automatically converts your
+/// string to the most efficient encoding, you don't have to do anything!
 ///
 /// ```
 /// # use objc2_foundation::{ns_string, NSString};
 /// static HELLO_RU: &NSString = ns_string!("Привет");
-///
 /// assert_eq!(HELLO_RU.to_string(), "Привет");
 /// ```
 ///
 /// Note that because this is implemented with `const` evaluation, massive
-/// strings can increase compile time and even hit the `const` evaluation
+/// strings can increase compile time, and may even hit the `const` evaluation
 /// limit.
 ///
 ///
@@ -429,6 +427,7 @@ mod tests {
             "\0",
             "\0\x01\x02\x03\x04\x05\x06\x07\x08\x09",
             // "\u{feff}", // TODO
+            include_str!("__string_macro.rs"),
         }
     }
 
