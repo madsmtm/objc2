@@ -1,3 +1,4 @@
+#![cfg(feature = "apple")]
 //! Test the output of the `ns_string!` macro.
 use objc2_foundation::{ns_string, NSString};
 
