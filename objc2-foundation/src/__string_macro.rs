@@ -9,6 +9,7 @@
 //! generating a pure `NSString`. We don't support that yet (since I don't
 //! know the use-case), but we definitely could!
 //! See: <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L2007-L2068>
+#![cfg(feature = "apple")]
 use core::ffi::c_void;
 
 use objc2::runtime::Class;
@@ -173,6 +174,8 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 
 /// Creates an [`NSString`][`crate::NSString`] from a static string.
 ///
+/// Currently only supported on Apple targets.
+///
 ///
 /// # Examples
 ///
@@ -247,6 +250,7 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 ///
 /// [`NSString::from_str`]: crate::NSString::from_str
 #[macro_export]
+#[cfg(feature = "apple")] // To make `auto_doc_cfg` pick this up
 macro_rules! ns_string {
     ($s:expr) => {{
         // Note: We create both the ASCII + NUL and the UTF-16 + NUL versions
