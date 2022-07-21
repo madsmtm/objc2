@@ -15,7 +15,7 @@ get_ascii:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L0$pb)
 	lea	eax, [ebx + .L__unnamed_1@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@PLT
 	test	al, al
 	je	.LBB0_1
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@GOTOFF]
@@ -49,7 +49,7 @@ get_utf16:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L1$pb)
 	lea	eax, [ebx + .L__unnamed_2@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@PLT
 	test	al, al
 	je	.LBB1_1
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@GOTOFF]
@@ -83,7 +83,7 @@ get_with_nul:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L2$pb)
 	lea	eax, [ebx + .L__unnamed_3@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@PLT
 	test	al, al
 	je	.LBB2_1
 	lea	eax, [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@GOTOFF]

@@ -8,7 +8,7 @@ get_ascii:
 	push	rax
 	lea	rdi, [rip + .L__unnamed_1]
 	mov	esi, 3
-	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@GOTPCREL]
 	test	al, al
 	je	.LBB0_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)]
@@ -29,7 +29,7 @@ get_utf16:
 	push	rax
 	lea	rdi, [rip + .L__unnamed_2]
 	mov	esi, 5
-	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@GOTPCREL]
 	test	al, al
 	je	.LBB1_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)]
@@ -50,7 +50,7 @@ get_with_nul:
 	push	rax
 	lea	rdi, [rip + .L__unnamed_3]
 	mov	esi, 6
-	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)@GOTPCREL]
 	test	al, al
 	je	.LBB2_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)]

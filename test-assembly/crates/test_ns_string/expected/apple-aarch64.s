@@ -9,7 +9,7 @@ Lloh0:
 Lloh1:
 	add	x0, x0, l___unnamed_1@PAGEOFF
 	mov	w1, #3
-	bl	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	tbz	w0, #0, LBB0_2
 Lloh2:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@PAGE
@@ -38,7 +38,7 @@ Lloh6:
 Lloh7:
 	add	x0, x0, l___unnamed_2@PAGEOFF
 	mov	w1, #5
-	bl	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	tbz	w0, #0, LBB1_2
 Lloh8:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@PAGE
@@ -67,7 +67,7 @@ Lloh12:
 Lloh13:
 	add	x0, x0, l___unnamed_3@PAGEOFF
 	mov	w1, #6
-	bl	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	bl	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	tbz	w0, #0, LBB2_2
 Lloh14:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@PAGE

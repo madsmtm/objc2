@@ -7,7 +7,7 @@ _get_ascii:
 	mov	rbp, rsp
 	lea	rdi, [rip + l___unnamed_1]
 	mov	esi, 3
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	test	al, al
 	je	LBB0_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)]
@@ -25,7 +25,7 @@ _get_utf16:
 	mov	rbp, rsp
 	lea	rdi, [rip + l___unnamed_2]
 	mov	esi, 5
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	test	al, al
 	je	LBB1_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)]
@@ -43,7 +43,7 @@ _get_with_nul:
 	mov	rbp, rsp
 	lea	rdi, [rip + l___unnamed_3]
 	mov	esi, 6
-	call	SYM(objc2_foundation::__string_macro::is_ascii::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::is_ascii_no_nul::GENERATED_ID, 0)
 	test	al, al
 	je	LBB2_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)]

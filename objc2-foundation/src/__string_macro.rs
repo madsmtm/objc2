@@ -77,20 +77,16 @@ impl CFStringUtf16 {
 }
 
 /// Returns `true` if `bytes` is entirely ASCII with no interior NULs.
-pub const fn is_ascii(bytes: &[u8]) -> bool {
+pub const fn is_ascii_no_nul(bytes: &[u8]) -> bool {
     let mut i = 0;
-    loop {
-        if i == bytes.len() {
-            return true;
-        }
-
+    while i < bytes.len() {
         let byte = bytes[i];
-        if !byte.is_ascii() || byte == 0 {
+        if !byte.is_ascii() || byte == b'\0' {
             return false;
         }
-
         i += 1;
     }
+    true
 }
 
 pub struct Utf16Char {
@@ -273,7 +269,7 @@ macro_rules! ns_string {
 
         const INPUT: &[u8] = $s.as_bytes();
 
-        if $crate::__string_macro::is_ascii(INPUT) {
+        if $crate::__string_macro::is_ascii_no_nul(INPUT) {
             // Convert the input slice to an array with known length so that
             // we can add a NUL byte to it.
             const ASCII: [u8; INPUT.len() + 1] = {
@@ -355,15 +351,15 @@ mod tests {
 
     #[test]
     fn test_is_ascii() {
-        assert!(is_ascii(b"a"));
-        assert!(is_ascii(b"abc"));
+        assert!(is_ascii_no_nul(b"a"));
+        assert!(is_ascii_no_nul(b"abc"));
 
-        assert!(!is_ascii(b"\xff"));
+        assert!(!is_ascii_no_nul(b"\xff"));
 
-        assert!(!is_ascii(b"\0"));
-        assert!(!is_ascii(b"a\0b"));
-        assert!(!is_ascii(b"ab\0"));
-        assert!(!is_ascii(b"a\0b\0"));
+        assert!(!is_ascii_no_nul(b"\0"));
+        assert!(!is_ascii_no_nul(b"a\0b"));
+        assert!(!is_ascii_no_nul(b"ab\0"));
+        assert!(!is_ascii_no_nul(b"a\0b\0"));
     }
 
     #[test]
