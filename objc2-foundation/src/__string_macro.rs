@@ -34,11 +34,12 @@ pub struct CFStringAscii {
 unsafe impl Sync for CFStringAscii {}
 
 impl CFStringAscii {
-    pub const fn new(isa: &'static Class, data: *const u8, len: usize) -> Self {
+    pub const fn new(isa: &'static Class, data: &'static [u8]) -> Self {
         Self {
             isa,
-            data,
-            len,
+            data: data.as_ptr(),
+            // The length does not include the trailing NUL.
+            len: data.len() - 1,
             flags: FLAGS_ASCII,
         }
     }
@@ -60,11 +61,12 @@ pub struct CFStringUtf16 {
 unsafe impl Sync for CFStringUtf16 {}
 
 impl CFStringUtf16 {
-    pub const fn new(isa: &'static Class, data: *const u16, len: usize) -> Self {
+    pub const fn new(isa: &'static Class, data: &'static [u16]) -> Self {
         Self {
             isa,
-            data,
-            len,
+            data: data.as_ptr(),
+            // The length does not include the trailing NUL.
+            len: data.len() - 1,
             flags: FLAGS_UTF16,
         }
     }
@@ -273,28 +275,26 @@ macro_rules! ns_string {
             const INPUT: &[u8] = $s.as_bytes();
 
             if $crate::__string_macro::is_ascii(INPUT) {
-                // The ASCII bytes with a trailing NUL.
-                #[repr(C)]
-                struct Ascii {
-                    data: [u8; INPUT.len()],
-                    nul: u8,
-                }
-
-                const ASCII: Ascii = Ascii {
-                    data: unsafe { *$crate::__core::mem::transmute::<_, &_>(INPUT.as_ptr()) },
-                    nul: 0,
+                // Convert the input slice to an array with known length
+                // so that we can add a NUL byte to it.
+                const ASCII: [u8; INPUT.len() + 1] = {
+                    // Zero-fill with INPUT.len() + 1
+                    let mut res: [u8; INPUT.len() + 1] = [0; INPUT.len() + 1];
+                    let mut i = 0;
+                    // Fill with data from INPUT
+                    while i < INPUT.len() {
+                        res[i] = INPUT[i];
+                        i += 1;
+                    }
+                    // Now contains INPUT + '\0'
+                    res
                 };
-
-                const ASCII_ARRAY: &[u8; INPUT.len() + 1] =
-                    unsafe { $crate::__core::mem::transmute(&ASCII) };
 
                 #[link_section = "__DATA,__cfstring,regular"]
                 static CFSTRING: $crate::__string_macro::CFStringAscii =
                     $crate::__string_macro::CFStringAscii::new(
                         unsafe { &$crate::__string_macro::__CFConstantStringClassReference },
-                        ASCII_ARRAY.as_ptr(),
-                        // The length does not include the trailing NUL.
-                        INPUT.len(),
+                        &ASCII,
                     );
 
                 CFSTRING.as_ptr()
@@ -319,30 +319,26 @@ macro_rules! ns_string {
                     (&{ out }, written)
                 };
 
-                // The written UTF-16 contents with a trailing NUL code point.
-                #[repr(C)]
-                struct Utf16 {
-                    data: [u16; UTF16_FULL.1],
-                    nul: u16,
-                }
-
-                const UTF16: Utf16 = Utf16 {
-                    data: unsafe {
-                        *$crate::__core::mem::transmute::<_, &_>(UTF16_FULL.0.as_ptr())
-                    },
-                    nul: 0,
+                // Convert the input slice to an array with known length
+                // so that we can add a NUL byte to it.
+                const UTF16: [u16; UTF16_FULL.1 + 1] = {
+                    // Zero-fill with UTF16_FULL.1 + 1
+                    let mut res: [u16; UTF16_FULL.1 + 1] = [0; UTF16_FULL.1 + 1];
+                    let mut i = 0;
+                    // Fill with data from UTF16_FULL.0 up until UTF16_FULL.1
+                    while i < UTF16_FULL.1 {
+                        res[i] = UTF16_FULL.0[i];
+                        i += 1;
+                    }
+                    // Now contains UTF16_FULL.1 + NUL
+                    res
                 };
-
-                const UTF16_ARRAY: &[u16; UTF16_FULL.1 + 1] =
-                    unsafe { $crate::__core::mem::transmute(&UTF16) };
 
                 #[link_section = "__DATA,__cfstring,regular"]
                 static CFSTRING: $crate::__string_macro::CFStringUtf16 =
                     $crate::__string_macro::CFStringUtf16::new(
                         unsafe { &$crate::__string_macro::__CFConstantStringClassReference },
-                        UTF16_ARRAY.as_ptr(),
-                        // The length does not include the trailing NUL.
-                        UTF16_FULL.1,
+                        &UTF16,
                     );
 
                 CFSTRING.as_ptr()

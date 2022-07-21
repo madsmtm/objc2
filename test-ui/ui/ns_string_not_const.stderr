@@ -22,11 +22,3 @@ error[E0080]: evaluation of constant value failed
   |             ^^^^^^^^^^^^^ referenced constant has errors
   |
   = note: this error originates in the macro `ns_string` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0080]: evaluation of constant value failed
- --> ui/ns_string_not_const.rs
-  |
-  |     let _ = ns_string!(s);
-  |             ^^^^^^^^^^^^^ referenced constant has errors
-  |
-  = note: this error originates in the macro `ns_string` (in Nightly builds, run with -Z macro-backtrace for more info)
