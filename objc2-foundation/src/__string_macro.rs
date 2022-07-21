@@ -161,7 +161,7 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
                 | (s[i + 2] as u32 & 0x3f);
             (i + 3, decoded)
         }
-        // 3 byte seq
+        // 4 byte seq
         0b1111_0000..=0b1111_0111 => {
             let decoded = ((b0 as u32 & 0x07) << 18)
                 | ((s[i + 1] as u32 & 0x3f) << 12)
@@ -171,13 +171,7 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
         }
         // continuation bytes, or never-valid bytes.
         0b1000_0000..=0b1011_1111 | 0b1111_1000..=0b1111_1111 => {
-            #[allow(unconditional_panic)]
-            {
-                // replace this with unreachable!() when possible in const fn.
-                const NOT_POSSIBLE_FOR_VALID_UTF8: [(); 0] = [];
-                let _ = NOT_POSSIBLE_FOR_VALID_UTF8[0];
-            }
-            (s.len(), 0xfffd)
+            panic!("Encountered invalid bytes")
         }
     }
 }
