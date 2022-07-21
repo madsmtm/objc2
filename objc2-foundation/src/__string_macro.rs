@@ -1,3 +1,15 @@
+//! Macro for making a static NSString.
+//!
+//! This basically does what clang does, see:
+//! - Apple: <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5057-L5249>
+//! - GNUStep 2.0 (not yet supported): <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCGNU.cpp#L973-L1118>
+//! - Other (not yet supported): <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCGNU.cpp#L2471-L2507>
+//!
+//! Note that this uses the `CFString` static, while `clang` has support for
+//! generating a pure `NSString`. We don't support that yet (since I don't
+//! know the use-case), but we definitely could!
+//! See: <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L2007-L2068>
+
 use objc2::runtime::Class;
 
 use crate::NSString;
@@ -274,7 +286,11 @@ macro_rules! ns_string {
         if $crate::__string_macro::is_ascii_no_nul(INPUT) {
             // Convert the input slice to an array with known length so that
             // we can add a NUL byte to it.
-            const ASCII: [u8; INPUT.len() + 1] = {
+            //
+            // The section is the same as what clang sets, see:
+            // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5192
+            #[link_section = "__TEXT,__cstring,cstring_literals"]
+            static ASCII: [u8; INPUT.len() + 1] = {
                 // Zero-fill with INPUT.len() + 1
                 let mut res: [u8; INPUT.len() + 1] = [0; INPUT.len() + 1];
                 let mut i = 0;
@@ -287,7 +303,7 @@ macro_rules! ns_string {
                 res
             };
 
-            #[link_section = "__DATA,__cfstring,regular"]
+            #[link_section = "__DATA,__cfstring"]
             static CFSTRING: $crate::__string_macro::CFStringAscii = unsafe {
                 $crate::__string_macro::CFStringAscii::new(
                     &$crate::__string_macro::__CFConstantStringClassReference,
@@ -319,7 +335,11 @@ macro_rules! ns_string {
 
             // Convert the slice to an array with known length so that we can
             // add a NUL byte to it.
-            const UTF16: [u16; UTF16_FULL.1 + 1] = {
+            //
+            // The section is the same as what clang sets, see:
+            // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5193
+            #[link_section = "__TEXT,__ustring"]
+            static UTF16: [u16; UTF16_FULL.1 + 1] = {
                 // Zero-fill with UTF16_FULL.1 + 1
                 let mut res: [u16; UTF16_FULL.1 + 1] = [0; UTF16_FULL.1 + 1];
                 let mut i = 0;
@@ -332,7 +352,7 @@ macro_rules! ns_string {
                 res
             };
 
-            #[link_section = "__DATA,__cfstring,regular"]
+            #[link_section = "__DATA,__cfstring"]
             static CFSTRING: $crate::__string_macro::CFStringUtf16 = unsafe {
                 $crate::__string_macro::CFStringUtf16::new(
                     &$crate::__string_macro::__CFConstantStringClassReference,
