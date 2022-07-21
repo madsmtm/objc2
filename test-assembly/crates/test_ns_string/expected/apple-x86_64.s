@@ -12,11 +12,11 @@ _get_ascii:
 	je	LBB0_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)]
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB0_1:
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)]
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 
 	.globl	_get_utf16
 	.p2align	4, 0x90
@@ -30,11 +30,11 @@ _get_utf16:
 	je	LBB1_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)]
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB1_1:
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)]
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 
 	.globl	_get_with_nul
 	.p2align	4, 0x90
@@ -48,11 +48,11 @@ _get_with_nul:
 	je	LBB2_1
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)]
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	jmp	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 LBB2_1:
 	lea	rdi, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)]
 	pop	rbp
-	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	jmp	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 
 	.section	__DATA,__const
 	.globl	_EMPTY

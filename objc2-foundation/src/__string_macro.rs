@@ -1,6 +1,6 @@
-use core::ffi::c_void;
-
 use objc2::runtime::Class;
+
+use crate::NSString;
 
 // This is defined in CoreFoundation, but we don't emit a link attribute
 // here because it is already linked via Foundation.
@@ -34,18 +34,18 @@ pub struct CFStringAscii {
 unsafe impl Sync for CFStringAscii {}
 
 impl CFStringAscii {
-    pub const fn new(isa: &'static Class, data: &'static [u8]) -> Self {
+    pub const unsafe fn new(isa: &'static Class, data: &'static [u8]) -> Self {
         Self {
             isa,
+            flags: FLAGS_ASCII,
             data: data.as_ptr(),
             // The length does not include the trailing NUL.
             len: data.len() - 1,
-            flags: FLAGS_ASCII,
         }
     }
 
-    pub const fn as_ptr(&self) -> *const c_void {
-        self as *const Self as *const c_void
+    pub const fn as_nsstring(&self) -> &NSString {
+        unsafe { &*(self as *const Self as *const NSString) }
     }
 }
 
@@ -61,18 +61,18 @@ pub struct CFStringUtf16 {
 unsafe impl Sync for CFStringUtf16 {}
 
 impl CFStringUtf16 {
-    pub const fn new(isa: &'static Class, data: &'static [u16]) -> Self {
+    pub const unsafe fn new(isa: &'static Class, data: &'static [u16]) -> Self {
         Self {
             isa,
+            flags: FLAGS_UTF16,
             data: data.as_ptr(),
             // The length does not include the trailing NUL.
             len: data.len() - 1,
-            flags: FLAGS_UTF16,
         }
     }
 
-    pub const fn as_ptr(&self) -> *const c_void {
-        self as *const Self as *const c_void
+    pub const fn as_nsstring(&self) -> &NSString {
+        unsafe { &*(self as *const Self as *const NSString) }
     }
 }
 
@@ -271,94 +271,79 @@ macro_rules! ns_string {
         // The only names directly used are expressions, whose names shadow any
         // other names outside of this macro.
 
-        let cfstring_ptr: *const $crate::__core::ffi::c_void = {
-            const INPUT: &[u8] = $s.as_bytes();
+        const INPUT: &[u8] = $s.as_bytes();
 
-            if $crate::__string_macro::is_ascii(INPUT) {
-                // Convert the input slice to an array with known length
-                // so that we can add a NUL byte to it.
-                const ASCII: [u8; INPUT.len() + 1] = {
-                    // Zero-fill with INPUT.len() + 1
-                    let mut res: [u8; INPUT.len() + 1] = [0; INPUT.len() + 1];
-                    let mut i = 0;
-                    // Fill with data from INPUT
-                    while i < INPUT.len() {
-                        res[i] = INPUT[i];
-                        i += 1;
-                    }
-                    // Now contains INPUT + '\0'
-                    res
-                };
+        if $crate::__string_macro::is_ascii(INPUT) {
+            // Convert the input slice to an array with known length so that
+            // we can add a NUL byte to it.
+            const ASCII: [u8; INPUT.len() + 1] = {
+                // Zero-fill with INPUT.len() + 1
+                let mut res: [u8; INPUT.len() + 1] = [0; INPUT.len() + 1];
+                let mut i = 0;
+                // Fill with data from INPUT
+                while i < INPUT.len() {
+                    res[i] = INPUT[i];
+                    i += 1;
+                }
+                // Now contains INPUT + '\0'
+                res
+            };
 
-                #[link_section = "__DATA,__cfstring,regular"]
-                static CFSTRING: $crate::__string_macro::CFStringAscii =
-                    $crate::__string_macro::CFStringAscii::new(
-                        unsafe { &$crate::__string_macro::__CFConstantStringClassReference },
-                        &ASCII,
-                    );
+            #[link_section = "__DATA,__cfstring,regular"]
+            static CFSTRING: $crate::__string_macro::CFStringAscii = unsafe {
+                $crate::__string_macro::CFStringAscii::new(
+                    &$crate::__string_macro::__CFConstantStringClassReference,
+                    &ASCII,
+                )
+            };
 
-                CFSTRING.as_ptr()
-            } else {
-                // The full UTF-16 contents along with the written length.
-                const UTF16_FULL: (&[u16; INPUT.len()], usize) = {
-                    let mut out = [0u16; INPUT.len()];
-                    let mut iter = $crate::__string_macro::EncodeUtf16Iter::new(INPUT);
-                    let mut written = 0;
+            CFSTRING.as_nsstring()
+        } else {
+            // The full UTF-16 contents along with the written length.
+            const UTF16_FULL: (&[u16; INPUT.len()], usize) = {
+                let mut out = [0u16; INPUT.len()];
+                let mut iter = $crate::__string_macro::EncodeUtf16Iter::new(INPUT);
+                let mut written = 0;
 
-                    while let Some((state, chars)) = iter.next() {
-                        iter = state;
-                        out[written] = chars.repr[0];
+                while let Some((state, chars)) = iter.next() {
+                    iter = state;
+                    out[written] = chars.repr[0];
+                    written += 1;
+
+                    if chars.len > 1 {
+                        out[written] = chars.repr[1];
                         written += 1;
-
-                        if chars.len > 1 {
-                            out[written] = chars.repr[1];
-                            written += 1;
-                        }
                     }
+                }
 
-                    (&{ out }, written)
-                };
+                (&{ out }, written)
+            };
 
-                // Convert the input slice to an array with known length
-                // so that we can add a NUL byte to it.
-                const UTF16: [u16; UTF16_FULL.1 + 1] = {
-                    // Zero-fill with UTF16_FULL.1 + 1
-                    let mut res: [u16; UTF16_FULL.1 + 1] = [0; UTF16_FULL.1 + 1];
-                    let mut i = 0;
-                    // Fill with data from UTF16_FULL.0 up until UTF16_FULL.1
-                    while i < UTF16_FULL.1 {
-                        res[i] = UTF16_FULL.0[i];
-                        i += 1;
-                    }
-                    // Now contains UTF16_FULL.1 + NUL
-                    res
-                };
+            // Convert the slice to an array with known length so that we can
+            // add a NUL byte to it.
+            const UTF16: [u16; UTF16_FULL.1 + 1] = {
+                // Zero-fill with UTF16_FULL.1 + 1
+                let mut res: [u16; UTF16_FULL.1 + 1] = [0; UTF16_FULL.1 + 1];
+                let mut i = 0;
+                // Fill with data from UTF16_FULL.0 up until UTF16_FULL.1
+                while i < UTF16_FULL.1 {
+                    res[i] = UTF16_FULL.0[i];
+                    i += 1;
+                }
+                // Now contains UTF16_FULL.1 + NUL
+                res
+            };
 
-                #[link_section = "__DATA,__cfstring,regular"]
-                static CFSTRING: $crate::__string_macro::CFStringUtf16 =
-                    $crate::__string_macro::CFStringUtf16::new(
-                        unsafe { &$crate::__string_macro::__CFConstantStringClassReference },
-                        &UTF16,
-                    );
+            #[link_section = "__DATA,__cfstring,regular"]
+            static CFSTRING: $crate::__string_macro::CFStringUtf16 = unsafe {
+                $crate::__string_macro::CFStringUtf16::new(
+                    &$crate::__string_macro::__CFConstantStringClassReference,
+                    &UTF16,
+                )
+            };
 
-                CFSTRING.as_ptr()
-            }
-        };
-
-        union Cast<T: 'static> {
-            pointer: *const T,
-            reference: &'static T,
+            CFSTRING.as_nsstring()
         }
-
-        #[allow(unused_unsafe)]
-        let ns_string: &$crate::NSString = unsafe {
-            Cast {
-                pointer: cfstring_ptr.cast(),
-            }
-            .reference
-        };
-
-        ns_string
     }};
 }
 
@@ -367,7 +352,6 @@ mod tests {
     use alloc::string::ToString;
 
     use super::*;
-    use crate::NSString;
 
     #[test]
     fn test_is_ascii() {
@@ -441,5 +425,15 @@ mod tests {
             "\0",
             "\0\x01\x02\x03\x04\x05\x06\x07\x08\x09",
         }
+    }
+
+    #[test]
+    fn ns_string_in_unsafe() {
+        // Test that the `unused_unsafe` lint doesn't trigger
+        let s = unsafe {
+            let s: *const NSString = ns_string!("abc");
+            &*s
+        };
+        assert_eq!(s.to_string(), "abc");
     }
 }

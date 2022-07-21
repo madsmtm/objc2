@@ -18,7 +18,7 @@ L0$pb:
 	je	LBB0_1
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)-L0$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 	add	esp, 20
 	pop	esi
 	pop	ebp
@@ -26,7 +26,7 @@ L0$pb:
 LBB0_1:
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 1)-L0$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 	add	esp, 20
 	pop	esi
 	pop	ebp
@@ -50,7 +50,7 @@ L1$pb:
 	je	LBB1_1
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)-L1$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 	add	esp, 20
 	pop	esi
 	pop	ebp
@@ -58,7 +58,7 @@ L1$pb:
 LBB1_1:
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 1)-L1$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 	add	esp, 20
 	pop	esi
 	pop	ebp
@@ -82,7 +82,7 @@ L2$pb:
 	je	LBB2_1
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)-L2$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_ptr::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::CFStringAscii::as_nsstring::GENERATED_ID, 0)
 	add	esp, 20
 	pop	esi
 	pop	ebp
@@ -90,7 +90,7 @@ L2$pb:
 LBB2_1:
 	lea	eax, [esi + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 1)-L2$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_ptr::GENERATED_ID, 0)
+	call	SYM(objc2_foundation::__string_macro::CFStringUtf16::as_nsstring::GENERATED_ID, 0)
 	add	esp, 20
 	pop	esi
 	pop	ebp
