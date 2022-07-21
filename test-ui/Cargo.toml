@@ -1,5 +1,5 @@
 [package]
-name = "tests"
+name = "test-ui"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -7,13 +7,9 @@ publish = false
 repository = "https://github.com/madsmtm/objc2"
 license = "MIT"
 
-build = "build.rs"
-
 [features]
 default = ["apple", "std"]
 std = ["block2/std", "objc2-foundation/std"]
-exception = ["objc2/exception"]
-catch-all = ["objc2/catch-all", "exception"]
 
 # Runtime features. Rely on `objc2-foundation` and `block2` to enable these
 # for the other dependencies.
@@ -24,17 +20,9 @@ gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2-foundation/gnustep-1-
 gnustep-2-0 = ["gnustep-1-9", "block2/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
 
-malloc = ["objc2/malloc"]
 
 [dependencies]
+trybuild = "1.0"
 block2 = { path = "../block2", default-features = false }
-block-sys = { path = "../block-sys", default-features = false }
-objc-sys = { path = "../objc-sys", default-features = false }
 objc2 = { path = "../objc2", default-features = false }
 objc2-foundation = { path = "../objc2-foundation", default-features = false }
-
-[build-dependencies]
-cc = "1.0"
-
-[dev-dependencies]
-paste = "1.0"

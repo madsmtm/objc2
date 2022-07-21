@@ -10,5 +10,6 @@ members = [
     "tests",
     "test-assembly",
     "test-assembly/crates/*",
+    "test-ui",
 ]
 resolver = "2"
