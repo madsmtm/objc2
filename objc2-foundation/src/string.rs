@@ -41,10 +41,13 @@ extern_class! {
     // TODO: Check if performance of NSSelectorFromString is worthwhile
 }
 
-// TODO: SAFETY
+// SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
+// from `&mut` methods.
 unsafe impl Sync for NSString {}
 unsafe impl Send for NSString {}
 
+// Even if an exception occurs inside a string method, the state of the string
+// (should) still be perfectly safe to access.
 impl UnwindSafe for NSString {}
 impl RefUnwindSafe for NSString {}
 
@@ -317,11 +320,10 @@ mod tests {
     }
 
     #[test]
-    fn test_debug_display() {
-        let s = "xyz123";
-        let obj = NSString::from_str(s);
-        assert_eq!(format!("{:?}", obj), format!("{:?}", s));
-        assert_eq!(format!("{}", obj), format!("{}", s));
+    fn display_debug() {
+        let s = NSString::from_str("xyz\"123");
+        assert_eq!(format!("{}", s), "xyz\"123");
+        assert_eq!(format!("{:?}", s), r#""xyz\"123""#);
     }
 
     #[test]

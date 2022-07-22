@@ -154,16 +154,17 @@ mod tests {
         assert_eq!(exc.reason().unwrap(), NSString::from_str("def"));
         assert!(exc.user_info().is_none());
 
+        let debug = format!("<NSException: {:p}> 'abc' reason:def", exc);
+        assert_eq!(format!("{:?}", exc), debug);
+
         let description = if cfg!(feature = "gnustep-1-7") {
             format!("<NSException: {:p}> NAME:abc REASON:def", exc)
         } else {
             "def".into()
         };
 
-        assert_eq!(exc.description(), NSString::from_str(&description));
-
-        let debug = format!("<NSException: {:p}> 'abc' reason:def", exc);
-        assert_eq!(format!("{:?}", exc), debug);
+        let exc: &NSObject = &exc;
+        assert_eq!(format!("{:?}", exc), description);
     }
 
     #[test]

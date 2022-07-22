@@ -48,16 +48,18 @@ compile_error!("The `std` feature currently must be enabled.");
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-pub use self::array::{NSArray, NSMutableArray};
+pub use self::array::NSArray;
 pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
-pub use self::data::{NSData, NSMutableData};
+pub use self::data::NSData;
 pub use self::dictionary::NSDictionary;
 pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
 pub use self::exception::NSException;
 pub use self::geometry::{CGFloat, NSPoint, NSRect, NSSize};
+pub use self::mutable_array::NSMutableArray;
 pub use self::mutable_attributed_string::NSMutableAttributedString;
+pub use self::mutable_data::NSMutableData;
 pub use self::mutable_string::NSMutableString;
 pub use self::object::NSObject;
 pub use self::process_info::NSProcessInfo;
@@ -101,7 +103,9 @@ mod enumerator;
 mod exception;
 mod geometry;
 mod macros;
+mod mutable_array;
 mod mutable_attributed_string;
+mod mutable_data;
 mod mutable_string;
 mod object;
 mod process_info;
@@ -111,3 +115,68 @@ mod thread;
 mod uuid;
 mod value;
 mod zone;
+
+#[cfg(test)]
+mod tests {
+    use core::panic::{RefUnwindSafe, UnwindSafe};
+    use objc2::rc::{Id, Owned, Shared};
+
+    use super::*;
+
+    // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
+    // since they follow Rust's usual mutability rules (&T = immutable).
+    //
+    // A _lot_ of Objective-C code out there would be subtly broken if e.g.
+    // `NSString` wasn't exception safe!
+    // As an example: -[NSArray objectAtIndex:] can throw, but it is still
+    // perfectly valid to access the array after that!
+    //
+    // Note that e.g. `&mut NSMutableString` is still not exception safe, but
+    // that is the entire idea of `UnwindSafe` (that if the object could have
+    // been mutated, it is not exception safe).
+    //
+    // Also note that this is still just a speed bump, not actually part of
+    // any unsafe contract; we really protect against it if something is not
+    // exception safe, since `UnwindSafe` is a safe trait.
+    fn assert_unwindsafe<T: UnwindSafe + RefUnwindSafe>() {}
+
+    fn assert_auto_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe>() {
+        assert_unwindsafe::<T>();
+    }
+
+    #[test]
+    fn send_sync_unwindsafe() {
+        assert_auto_traits::<NSArray<NSString, Shared>>();
+        assert_auto_traits::<NSArray<NSString, Owned>>();
+        assert_auto_traits::<Id<NSArray<NSString, Shared>, Shared>>();
+        assert_auto_traits::<Id<NSArray<NSString, Owned>, Shared>>();
+        assert_auto_traits::<Id<NSArray<NSString, Shared>, Owned>>();
+        assert_auto_traits::<Id<NSArray<NSString, Owned>, Owned>>();
+
+        assert_auto_traits::<NSAttributedString>();
+        assert_auto_traits::<NSComparisonResult>();
+        assert_auto_traits::<NSData>();
+        assert_auto_traits::<NSDictionary<NSString, Shared>>();
+        // TODO: Figure out if Send + Sync is safe?
+        // assert_auto_traits::<NSEnumerator<NSString>>();
+        // assert_auto_traits::<NSFastEnumerator<NSArray<NSString, Shared>>>();
+        assert_auto_traits::<NSException>();
+        assert_auto_traits::<CGFloat>();
+        assert_auto_traits::<NSPoint>();
+        assert_auto_traits::<NSRect>();
+        assert_auto_traits::<NSSize>();
+        assert_auto_traits::<NSMutableArray<NSString, Shared>>();
+        assert_auto_traits::<NSMutableAttributedString>();
+        assert_auto_traits::<NSMutableData>();
+        assert_auto_traits::<NSMutableString>();
+        // assert_auto_traits::<NSObject>(); // Intentional
+        assert_auto_traits::<NSProcessInfo>();
+        assert_auto_traits::<NSRange>();
+        assert_auto_traits::<NSString>();
+        assert_unwindsafe::<MainThreadMarker>(); // Intentional
+        assert_auto_traits::<NSThread>();
+        assert_auto_traits::<NSUUID>();
+        assert_auto_traits::<NSValue<i32>>();
+        assert_unwindsafe::<NSZone>(); // Intentional
+    }
+}

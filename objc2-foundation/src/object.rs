@@ -25,19 +25,6 @@ impl NSObject {
         unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
-    pub fn hash_code(&self) -> usize {
-        unsafe { msg_send![self, hash] }
-    }
-
-    pub fn is_equal(&self, other: &NSObject) -> bool {
-        unsafe { msg_send_bool![self, isEqual: other] }
-    }
-
-    pub fn description(&self) -> Id<NSString, Shared> {
-        // TODO: Verify that description always returns a non-null string
-        unsafe { msg_send_id![self, description].unwrap() }
-    }
-
     pub fn is_kind_of(&self, cls: &Class) -> bool {
         unsafe { msg_send_bool![self, isKindOfClass: cls] }
     }
@@ -52,8 +39,9 @@ impl NSObject {
 /// See also <https://nshipster.com/equality/>
 impl PartialEq for NSObject {
     #[inline]
+    #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        self.is_equal(other)
+        unsafe { msg_send_bool![self, isEqual: other] }
     }
 }
 
@@ -69,13 +57,27 @@ impl Eq for NSObject {}
 impl hash::Hash for NSObject {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        self.hash_code().hash(state);
+        let hash_code: usize = unsafe { msg_send![self, hash] };
+        hash_code.hash(state);
     }
 }
 
 impl fmt::Debug for NSObject {
+    #[doc(alias = "description")]
+    #[doc(alias = "debugDescription")]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&self.description(), f)
+        // Get description
+        let description: Option<Id<NSString, Shared>> = unsafe { msg_send_id![self, description] };
+
+        match description {
+            // Attempt to format with description
+            Some(description) => fmt::Display::fmt(&description, f),
+            // If description was `NULL`, use `Object`'s `Debug` impl instead
+            None => {
+                let obj: &Object = self;
+                fmt::Debug::fmt(obj, f)
+            }
+        }
     }
 }
 
@@ -128,16 +130,32 @@ mod tests {
     }
 
     #[test]
-    fn test_hash_code() {
-        let obj = NSObject::new();
-        assert_eq!(obj.hash_code(), obj.hash_code());
+    fn test_hash() {
+        use core::hash::Hasher;
+        use std::collections::hash_map::DefaultHasher;
+        use std::hash::Hash;
+
+        let obj1 = NSObject::new();
+
+        let mut hashstate1 = DefaultHasher::new();
+        let mut hashstate2 = DefaultHasher::new();
+
+        obj1.hash(&mut hashstate1);
+        obj1.hash(&mut hashstate2);
+
+        assert_eq!(hashstate1.finish(), hashstate2.finish());
+
+        let obj2 = NSObject::new();
+        let mut hashstate2 = DefaultHasher::new();
+        obj2.hash(&mut hashstate2);
+        assert_ne!(hashstate1.finish(), hashstate2.finish());
     }
 
     #[test]
     fn test_debug() {
         let obj = NSObject::new();
         let expected = format!("<NSObject: {:p}>", &*obj);
-        assert_eq!(format!("{:?}", obj), format!("{:?}", expected));
+        assert_eq!(format!("{:?}", obj), expected);
     }
 
     #[test]

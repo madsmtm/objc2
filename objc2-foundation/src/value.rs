@@ -3,6 +3,7 @@ use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 use core::{fmt, str};
 use std::ffi::{CStr, CString};
@@ -15,17 +16,21 @@ use objc2::{msg_send, msg_send_id};
 use super::{NSCopying, NSObject, __inner_extern_class};
 
 __inner_extern_class! {
-    // `T: Eq` bound correct to prevent `NSValue<f32>` from being `Eq`
+    // `T: Eq` bound to prevent `NSValue<f32>` from being `Eq`
     // (even though `[NAN isEqual: NAN]` is true in Objective-C).
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSValue<T>: NSObject {
         value: PhantomData<T>,
     }
 }
 
-// TODO: SAFETY
+// SAFETY: `NSValue<T>` is basically just a wrapper around an inner type, and
+// is immutable.
 unsafe impl<T: Sync> Sync for NSValue<T> {}
 unsafe impl<T: Send> Send for NSValue<T> {}
+
+impl<T: UnwindSafe> UnwindSafe for NSValue<T> {}
+impl<T: RefUnwindSafe> RefUnwindSafe for NSValue<T> {}
 
 impl<T: 'static + Copy + Encode> NSValue<T> {
     // Default / empty new is not provided because `-init` returns `nil` on
@@ -117,7 +122,13 @@ impl<T: 'static + Copy + Encode + Default> DefaultId for NSValue<T> {
 
 impl<T: 'static + Copy + Encode + fmt::Display> fmt::Display for NSValue<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.get().fmt(f)
+        fmt::Display::fmt(&self.get(), f)
+    }
+}
+
+impl<T: 'static + Copy + Encode + fmt::Debug> fmt::Debug for NSValue<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&self.get(), f)
     }
 }
 
@@ -125,9 +136,8 @@ impl<T: 'static + Copy + Encode + fmt::Display> fmt::Display for NSValue<T> {
 mod tests {
     use alloc::format;
 
-    use crate::{NSRange, NSValue};
-    use objc2::rc::{Id, Shared};
-    use objc2::Encode;
+    use super::*;
+    use crate::NSRange;
 
     #[test]
     fn test_value() {
@@ -158,30 +168,22 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Output is different depending on OS version and runtime"]
-    fn test_debug() {
-        fn assert_debug(val: impl core::fmt::Debug, expected: &str) {
-            assert_eq!(format!("{:?}", val), format!("{:?}", expected));
+    fn test_display_debug() {
+        fn assert_display_debug<T: fmt::Debug + fmt::Display>(val: T, expected: &str) {
+            // The two impls for these happen to be the same
+            assert_eq!(format!("{}", val), expected);
+            assert_eq!(format!("{:?}", val), expected);
         }
-        let val = NSValue::new(0xabu8);
-        let expected = "<ab>";
-        assert_debug(val, expected);
+        assert_display_debug(NSValue::new(171u8), "171");
+        assert_display_debug(NSValue::new(-12i8), "-12");
+        assert_display_debug(NSValue::new(0xdeadbeefu32), "3735928559");
+        assert_display_debug(NSValue::new(1.1f32), "1.1");
+        assert_display_debug(NSValue::new(true), "true");
+        assert_display_debug(NSValue::new(false), "false");
 
-        let val = NSValue::new(0x12i8);
-        let expected = "<12>";
-        assert_debug(val, expected);
-
-        let val = NSValue::new(0xdeadbeefu32);
-        let expected = "<efbeadde>";
-        assert_debug(val, expected);
-
-        // Very brittle
         let val = NSValue::new(1.0f32);
-        let expected = &format!(
-            "<{:08x}>",
-            u32::from_le_bytes(1.0f32.to_le_bytes()).reverse_bits()
-        );
-        assert_debug(val, expected);
+        assert_eq!(format!("{}", val), "1");
+        assert_eq!(format!("{:?}", val), "1.0");
     }
 
     #[test]

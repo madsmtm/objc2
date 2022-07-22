@@ -1,7 +1,9 @@
 use alloc::vec::Vec;
 use core::cmp::min;
+use core::fmt;
 use core::marker::PhantomData;
 use core::ops::Index;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
@@ -10,7 +12,7 @@ use objc2::{msg_send, msg_send_id, Message};
 use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject, __inner_extern_class};
 
 __inner_extern_class! {
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSDictionary<K, V>: NSObject {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
@@ -18,8 +20,13 @@ __inner_extern_class! {
 }
 
 // TODO: SAFETY
+// Approximately same as `NSArray<T, Shared>`
 unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
 unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
+
+// Approximately same as `NSArray<T, Shared>`
+impl<K: UnwindSafe, V: UnwindSafe> UnwindSafe for NSDictionary<K, V> {}
+impl<K: RefUnwindSafe, V: RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
     pub fn new() -> Id<Self, Shared> {
@@ -153,8 +160,17 @@ impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
     }
 }
 
+impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSDictionary<K, V> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let iter = self.iter_keys().zip(self.iter_values());
+        f.debug_map().entries(iter).finish()
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use alloc::format;
     use alloc::vec;
     use objc2::rc::{autoreleasepool, Id, Shared};
 
@@ -243,5 +259,14 @@ mod tests {
 
         // let objs = NSDictionary::into_values_array(dict);
         // assert_eq!(objs.len(), 1);
+    }
+
+    #[test]
+    fn test_debug() {
+        let key = NSString::from_str("a");
+        // TODO: Fix this
+        let val = unsafe { Id::from_shared(NSString::from_str("b")) };
+        let dict = NSDictionary::from_keys_and_objects(&[&*key], vec![val]);
+        assert_eq!(format!("{:?}", dict), r#"{"a": "b"}"#);
     }
 }

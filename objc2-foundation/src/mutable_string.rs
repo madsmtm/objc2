@@ -16,10 +16,6 @@ extern_class! {
     unsafe pub struct NSMutableString: NSString, NSObject;
 }
 
-// TODO: SAFETY
-unsafe impl Sync for NSMutableString {}
-unsafe impl Send for NSMutableString {}
-
 /// Creating mutable strings.
 impl NSMutableString {
     /// Construct an empty [`NSMutableString`].
@@ -168,16 +164,25 @@ impl fmt::Display for NSMutableString {
 }
 
 impl fmt::Debug for NSMutableString {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&**self, f)
+        fmt::Debug::fmt(&**self, f)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
     use alloc::string::ToString;
 
     use super::*;
+
+    #[test]
+    fn display_debug() {
+        let s = NSMutableString::from_str("test\"123");
+        assert_eq!(format!("{}", s), "test\"123");
+        assert_eq!(format!("{:?}", s), r#""test\"123""#);
+    }
 
     #[test]
     fn test_from_nsstring() {
