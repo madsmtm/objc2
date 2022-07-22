@@ -8,8 +8,8 @@ handle:
 	push	ebx
 	push	edi
 	push	esi
-	mov	edi, dword ptr [esp + 20]
 	mov	esi, dword ptr [esp + 16]
+	mov	edi, dword ptr [esp + 20]
 	call	.L0$pb
 .L0$pb:
 	pop	ebx
@@ -19,10 +19,7 @@ handle:
 	push	edi
 	push	esi
 	call	objc_msg_lookup@PLT
-	add	esp, 16
-	test	eax, eax
-	je	.LBB0_1
-	sub	esp, 8
+	add	esp, 8
 	push	edi
 	push	esi
 	call	eax
@@ -31,16 +28,6 @@ handle:
 	pop	edi
 	pop	ebx
 	ret
-.LBB0_1:
-	sub	esp, 4
-	lea	eax, [ebx + .L__unnamed_1@GOTOFF]
-	lea	ecx, [ebx + .L__unnamed_2@GOTOFF]
-	push	eax
-	push	8
-	push	ecx
-	call	SYM(core::option::expect_failed::GENERATED_ID, 0)@PLT
-	add	esp, 16
-	ud2
 .Lfunc_end0:
 	.size	handle, .Lfunc_end0-handle
 
@@ -64,10 +51,7 @@ handle_with_sel:
 	push	edi
 	push	esi
 	call	objc_msg_lookup@PLT
-	add	esp, 16
-	test	eax, eax
-	je	.LBB1_1
-	sub	esp, 8
+	add	esp, 8
 	push	edi
 	push	esi
 	call	eax
@@ -76,38 +60,8 @@ handle_with_sel:
 	pop	edi
 	pop	ebx
 	ret
-.LBB1_1:
-	sub	esp, 4
-	lea	eax, [ebx + .L__unnamed_3@GOTOFF]
-	lea	ecx, [ebx + .L__unnamed_2@GOTOFF]
-	push	eax
-	push	8
-	push	ecx
-	call	SYM(core::option::expect_failed::GENERATED_ID, 0)@PLT
-	add	esp, 16
-	ud2
 .Lfunc_end1:
 	.size	handle_with_sel, .Lfunc_end1-handle_with_sel
-
-	.type	.L__unnamed_2,@object
-	.section	.rodata.cst8,"aM",@progbits,8
-.L__unnamed_2:
-	.ascii	"Null IMP"
-	.size	.L__unnamed_2, 8
-
-	.type	.L__unnamed_4,@object
-	.section	.rodata..L__unnamed_4,"a",@progbits
-.L__unnamed_4:
-	.ascii	"$DIR/lib.rs"
-	.size	.L__unnamed_4, 51
-
-	.type	.L__unnamed_1,@object
-	.section	.data.rel.ro..L__unnamed_1,"aw",@progbits
-	.p2align	2
-.L__unnamed_1:
-	.long	.L__unnamed_4
-	.asciz	"3\000\000\000\n\000\000\000\005\000\000"
-	.size	.L__unnamed_1, 16
 
 	.type	SEL,@object
 	.section	.rodata.SEL,"a",@progbits
@@ -123,13 +77,5 @@ SEL:
 SEL_REF:
 	.long	SEL
 	.size	SEL_REF, 4
-
-	.type	.L__unnamed_3,@object
-	.section	.data.rel.ro..L__unnamed_3,"aw",@progbits
-	.p2align	2
-.L__unnamed_3:
-	.long	.L__unnamed_4
-	.asciz	"3\000\000\000\032\000\000\000\005\000\000"
-	.size	.L__unnamed_3, 16
 
 	.section	".note.GNU-stack","",@progbits
