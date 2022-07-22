@@ -38,7 +38,4 @@ fn main() {
     }
 
     builder.compile("libobjc_utils.a");
-
-    // For assembly tests
-    println!("cargo:rustc-env=TARGET={}", env::var("TARGET").unwrap());
 }
