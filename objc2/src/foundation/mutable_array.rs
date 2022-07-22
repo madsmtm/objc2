@@ -22,7 +22,7 @@ __inner_extern_class! {
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutablearray?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSMutableArray<T: Message, O: Ownership>: NSArray<T, O>, NSObject {
+    unsafe pub struct NSMutableArray<T: Message, O: Ownership = Owned>: NSArray<T, O>, NSObject {
         p: PhantomData<*mut ()>,
     }
 }

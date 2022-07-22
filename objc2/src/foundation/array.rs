@@ -53,7 +53,7 @@ __inner_extern_class! {
     // `T: PartialEq` bound correct because `NSArray` does deep (instead of
     // shallow) equality comparisons.
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSArray<T: Message, O: Ownership>: NSObject {
+    unsafe pub struct NSArray<T: Message, O: Ownership = Shared>: NSObject {
         item: PhantomData<Id<T, O>>,
         notunwindsafe: PhantomData<&'static mut ()>,
     }
@@ -324,13 +324,13 @@ mod tests {
 
     #[test]
     fn test_two_empty() {
-        let _empty_array1 = NSArray::<NSObject, Shared>::new();
-        let _empty_array2 = NSArray::<NSObject, Shared>::new();
+        let _empty_array1 = NSArray::<NSObject>::new();
+        let _empty_array2 = NSArray::<NSObject>::new();
     }
 
     #[test]
     fn test_len() {
-        let empty_array = NSArray::<NSObject, Shared>::new();
+        let empty_array = NSArray::<NSObject>::new();
         assert_eq!(empty_array.len(), 0);
 
         let array = sample_array(4);
@@ -367,7 +367,7 @@ mod tests {
         assert_eq!(array.first(), array.get(0));
         assert_eq!(array.last(), array.get(3));
 
-        let empty_array = <NSArray<NSObject, Shared>>::new();
+        let empty_array = <NSArray<NSObject>>::new();
         assert!(empty_array.first().is_none());
         assert!(empty_array.last().is_none());
     }
