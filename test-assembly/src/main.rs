@@ -20,7 +20,9 @@ use test_assembly::{get_artifact, get_runtime, read_assembly};
 
 fn main() {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let should_overwrite = option_env!("TEST_OVERWRITE").is_some();
+    let should_overwrite = env::var("TEST_OVERWRITE")
+        .map(|var| var == "1")
+        .unwrap_or(false);
     let host = env!("TARGET");
 
     println!("Host {host}");
