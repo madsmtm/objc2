@@ -1,6 +1,8 @@
+use core::panic::{RefUnwindSafe, UnwindSafe};
+
 #[cfg(feature = "gnustep-1-7")]
 use objc2::Encode;
-use objc2::{Encoding, RefEncode};
+use objc2::{ffi, Encoding, RefEncode};
 
 /// A type used to identify and manage memory zones.
 ///
@@ -9,10 +11,18 @@ use objc2::{Encoding, RefEncode};
 /// `allocWithZone:`.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nszone?language=objc).
-#[derive(Debug)]
 pub struct NSZone {
-    _inner: [u8; 0],
+    // Use `objc_object` to mark the types as !Send, !Sync and UnsafeCell.
+    //
+    // This works since `objc_object` is a ZST
+    _inner: ffi::objc_object,
 }
+
+// Note: We don't know anything about the internals of `NSZone`, so best not
+// to make it `Send` and `Sync` for now.
+
+impl UnwindSafe for NSZone {}
+impl RefUnwindSafe for NSZone {}
 
 unsafe impl RefEncode for NSZone {
     #[cfg(feature = "apple")]

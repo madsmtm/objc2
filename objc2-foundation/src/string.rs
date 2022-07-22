@@ -46,6 +46,8 @@ extern_class! {
 unsafe impl Sync for NSString {}
 unsafe impl Send for NSString {}
 
+// Even if an exception occurs inside a string method, the state of the string
+// (should) still be perfectly safe to access.
 impl UnwindSafe for NSString {}
 impl RefUnwindSafe for NSString {}
 

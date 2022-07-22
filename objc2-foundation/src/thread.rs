@@ -1,4 +1,5 @@
 use core::marker::PhantomData;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::{Id, Shared};
 use objc2::{msg_send, msg_send_bool, msg_send_id};
@@ -15,6 +16,9 @@ extern_class! {
 
 unsafe impl Send for NSThread {}
 unsafe impl Sync for NSThread {}
+
+impl UnwindSafe for NSThread {}
+impl RefUnwindSafe for NSThread {}
 
 impl NSThread {
     /// Returns the [`NSThread`] object representing the current thread.

@@ -2,6 +2,7 @@ use alloc::vec::Vec;
 use core::cmp::min;
 use core::marker::PhantomData;
 use core::ops::Index;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
@@ -21,6 +22,10 @@ __inner_extern_class! {
 // Approximately same as `NSArray<T, Shared>`
 unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
 unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
+
+// Approximately same as `NSArray<T, Shared>`
+impl<K: UnwindSafe, V: UnwindSafe> UnwindSafe for NSDictionary<K, V> {}
+impl<K: RefUnwindSafe, V: RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
     pub fn new() -> Id<Self, Shared> {

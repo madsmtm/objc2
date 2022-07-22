@@ -118,45 +118,65 @@ mod zone;
 
 #[cfg(test)]
 mod tests {
+    use core::panic::{RefUnwindSafe, UnwindSafe};
     use objc2::rc::{Id, Owned, Shared};
 
     use super::*;
 
-    fn assert_send_sync<T: Send + Sync>() {}
+    // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
+    // since they follow Rust's usual mutability rules (&T = immutable).
+    //
+    // A _lot_ of Objective-C code out there would be subtly broken if e.g.
+    // `NSString` wasn't exception safe!
+    // As an example: -[NSArray objectAtIndex:] can throw, but it is still
+    // perfectly valid to access the array after that!
+    //
+    // Note that e.g. `&mut NSMutableString` is still not exception safe, but
+    // that is the entire idea of `UnwindSafe` (that if the object could have
+    // been mutated, it is not exception safe).
+    //
+    // Also note that this is still just a speed bump, not actually part of
+    // any unsafe contract; we really protect against it if something is not
+    // exception safe, since `UnwindSafe` is a safe trait.
+    fn assert_unwindsafe<T: UnwindSafe + RefUnwindSafe>() {}
+
+    fn assert_auto_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe>() {
+        assert_unwindsafe::<T>();
+    }
 
     #[test]
-    fn send_sync() {
-        assert_send_sync::<NSArray<NSString, Shared>>();
-        assert_send_sync::<NSArray<NSString, Owned>>();
-        assert_send_sync::<Id<NSArray<NSString, Shared>, Shared>>();
-        assert_send_sync::<Id<NSArray<NSString, Owned>, Shared>>();
-        assert_send_sync::<Id<NSArray<NSString, Shared>, Owned>>();
-        assert_send_sync::<Id<NSArray<NSString, Owned>, Owned>>();
+    fn send_sync_unwindsafe() {
+        assert_auto_traits::<NSArray<NSString, Shared>>();
+        assert_auto_traits::<NSArray<NSString, Owned>>();
+        assert_auto_traits::<Id<NSArray<NSString, Shared>, Shared>>();
+        assert_auto_traits::<Id<NSArray<NSString, Owned>, Shared>>();
+        assert_auto_traits::<Id<NSArray<NSString, Shared>, Owned>>();
+        assert_auto_traits::<Id<NSArray<NSString, Owned>, Owned>>();
 
-        assert_send_sync::<NSAttributedString>();
-        assert_send_sync::<NSComparisonResult>();
-        assert_send_sync::<NSData>();
-        assert_send_sync::<NSDictionary<NSString, Shared>>();
-        // TODO: Figure out if safe?
-        // assert_send_sync::<NSEnumerator<NSString>>();
-        // assert_send_sync::<NSFastEnumerator<NSArray<NSString, Shared>>>();
-        assert_send_sync::<NSException>();
-        assert_send_sync::<CGFloat>();
-        assert_send_sync::<NSPoint>();
-        assert_send_sync::<NSRect>();
-        assert_send_sync::<NSSize>();
-        assert_send_sync::<NSMutableArray<NSString, Shared>>();
-        assert_send_sync::<NSMutableAttributedString>();
-        assert_send_sync::<NSMutableData>();
-        assert_send_sync::<NSMutableString>();
-        // assert_send_sync::<NSObject>(); // Intentional
-        assert_send_sync::<NSProcessInfo>();
-        assert_send_sync::<NSRange>();
-        assert_send_sync::<NSString>();
-        // assert_send_sync::<MainThreadMarker>(); // Intentional
-        assert_send_sync::<NSThread>();
-        assert_send_sync::<NSUUID>();
-        assert_send_sync::<NSValue<i32>>();
-        assert_send_sync::<NSZone>();
+        assert_auto_traits::<NSAttributedString>();
+        assert_auto_traits::<NSComparisonResult>();
+        assert_auto_traits::<NSData>();
+        assert_auto_traits::<NSDictionary<NSString, Shared>>();
+        // TODO: Figure out if Send + Sync is safe?
+        // assert_auto_traits::<NSEnumerator<NSString>>();
+        // assert_auto_traits::<NSFastEnumerator<NSArray<NSString, Shared>>>();
+        assert_auto_traits::<NSException>();
+        assert_auto_traits::<CGFloat>();
+        assert_auto_traits::<NSPoint>();
+        assert_auto_traits::<NSRect>();
+        assert_auto_traits::<NSSize>();
+        assert_auto_traits::<NSMutableArray<NSString, Shared>>();
+        assert_auto_traits::<NSMutableAttributedString>();
+        assert_auto_traits::<NSMutableData>();
+        assert_auto_traits::<NSMutableString>();
+        // assert_auto_traits::<NSObject>(); // Intentional
+        assert_auto_traits::<NSProcessInfo>();
+        assert_auto_traits::<NSRange>();
+        assert_auto_traits::<NSString>();
+        assert_unwindsafe::<MainThreadMarker>(); // Intentional
+        assert_auto_traits::<NSThread>();
+        assert_auto_traits::<NSUUID>();
+        assert_auto_traits::<NSValue<i32>>();
+        assert_unwindsafe::<NSZone>(); // Intentional
     }
 }

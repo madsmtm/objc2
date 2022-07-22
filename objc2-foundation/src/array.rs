@@ -1,6 +1,7 @@
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 use core::ops::{Index, Range};
+use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::{Class, Object};
@@ -28,6 +29,7 @@ __inner_extern_class! {
     #[derive(Debug, PartialEq, Eq, Hash)]
     unsafe pub struct NSArray<T, O: Ownership>: NSObject {
         item: PhantomData<Id<T, O>>,
+        notunwindsafe: PhantomData<&'static mut ()>,
     }
 }
 
@@ -38,6 +40,11 @@ unsafe impl<T: Sync + Send> Sync for NSArray<T, Shared> {}
 unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
 unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
 unsafe impl<T: Send> Send for NSArray<T, Owned> {}
+
+// Also same as Id<T, O>
+impl<T: RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
+impl<T: RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
+impl<T: UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
 
 pub(crate) unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Object {
     let obj: *mut Object = unsafe { msg_send![cls, alloc] };

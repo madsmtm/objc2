@@ -1,3 +1,5 @@
+use core::panic::{RefUnwindSafe, UnwindSafe};
+
 use objc2::rc::{DefaultId, Id, Shared};
 use objc2::runtime::Object;
 use objc2::{msg_send, msg_send_id};
@@ -28,6 +30,10 @@ extern_class! {
 // can only be mutated from `&mut` methods.
 unsafe impl Sync for NSAttributedString {}
 unsafe impl Send for NSAttributedString {}
+
+// Same reasoning as `NSString`.
+impl UnwindSafe for NSAttributedString {}
+impl RefUnwindSafe for NSAttributedString {}
 
 /// Attributes that you can apply to text in an attributed string.
 pub type NSAttributedStringKey = NSString;

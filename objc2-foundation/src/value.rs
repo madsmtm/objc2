@@ -3,6 +3,7 @@ use core::cmp::Ordering;
 use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem::MaybeUninit;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 use core::{fmt, str};
 use std::ffi::{CStr, CString};
@@ -27,6 +28,9 @@ __inner_extern_class! {
 // is immutable.
 unsafe impl<T: Sync> Sync for NSValue<T> {}
 unsafe impl<T: Send> Send for NSValue<T> {}
+
+impl<T: UnwindSafe> UnwindSafe for NSValue<T> {}
+impl<T: RefUnwindSafe> RefUnwindSafe for NSValue<T> {}
 
 impl<T: 'static + Copy + Encode> NSValue<T> {
     // Default / empty new is not provided because `-init` returns `nil` on

@@ -2,6 +2,7 @@
 use alloc::vec::Vec;
 use core::ffi::c_void;
 use core::ops::Index;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
 use objc2::rc::{DefaultId, Id, Shared};
@@ -24,6 +25,9 @@ extern_class! {
 // `&mut` methods.
 unsafe impl Sync for NSData {}
 unsafe impl Send for NSData {}
+
+impl UnwindSafe for NSData {}
+impl RefUnwindSafe for NSData {}
 
 impl NSData {
     pub fn new() -> Id<Self, Shared> {

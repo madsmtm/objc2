@@ -1,3 +1,5 @@
+use core::panic::{RefUnwindSafe, UnwindSafe};
+
 use objc2::msg_send_id;
 use objc2::rc::{Id, Shared};
 
@@ -17,6 +19,9 @@ extern_class! {
 // > NSProcessInfo is thread-safe in macOS 10.7 and later.
 unsafe impl Send for NSProcessInfo {}
 unsafe impl Sync for NSProcessInfo {}
+
+impl UnwindSafe for NSProcessInfo {}
+impl RefUnwindSafe for NSProcessInfo {}
 
 impl NSProcessInfo {
     pub fn process_info() -> Id<NSProcessInfo, Shared> {

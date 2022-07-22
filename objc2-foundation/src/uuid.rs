@@ -1,3 +1,5 @@
+use core::panic::{RefUnwindSafe, UnwindSafe};
+
 use objc2::rc::{Id, Shared};
 use objc2::{msg_send, msg_send_id, Encode, Encoding, RefEncode};
 
@@ -28,6 +30,9 @@ unsafe impl RefEncode for UuidBytes {
 // SAFETY: `NSUUID` is immutable.
 unsafe impl Sync for NSUUID {}
 unsafe impl Send for NSUUID {}
+
+impl UnwindSafe for NSUUID {}
+impl RefUnwindSafe for NSUUID {}
 
 impl NSUUID {
     // TODO: `nil` method?
