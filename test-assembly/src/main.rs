@@ -16,14 +16,17 @@ use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
 
-use test_assembly::{get_artifact, read_assembly};
+use test_assembly::{get_artifact, get_runtime, read_assembly};
 
 fn main() {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let should_overwrite = option_env!("TEST_OVERWRITE").is_some();
+    let should_overwrite = env::var("TEST_OVERWRITE")
+        .map(|var| var == "1")
+        .unwrap_or(false);
     let host = env!("TARGET");
 
     println!("Host {host}");
+    let runtime = get_runtime();
 
     for entry in manifest_dir.join("crates").read_dir().unwrap() {
         let entry = entry.unwrap();
@@ -72,31 +75,44 @@ fn main() {
         if matches!(architecture, "i386" | "i686") {
             architecture = "x86";
         };
+        println!("Architecture {architecture}.");
+
+        let mut runtime = &*runtime;
         if target == "i686-apple-darwin" {
             // Old ABI, we frequently have to do things differently there
-            architecture = "old-x86";
+            runtime = "apple-old";
         }
-        println!("Architecture {architecture}.");
+        println!("Runtime {runtime}.");
 
         let extension = artifact.extension().unwrap().to_str().unwrap();
 
         let expected_file = package_path
             .join("expected")
-            .join(format!("apple-{architecture}.{extension}"));
+            .join(format!("{runtime}-{architecture}.{extension}"));
+        let expected_file = runtime
+            .strip_suffix("-old")
+            .map(|runtime| {
+                if expected_file.exists() {
+                    expected_file.clone()
+                } else {
+                    package_path
+                        .join("expected")
+                        .join(format!("{runtime}-{architecture}.{extension}"))
+                }
+            })
+            .unwrap_or(expected_file);
+        println!("Expected file: {}", expected_file.display());
 
-        let actual = read_assembly(&artifact).unwrap();
+        let actual = read_assembly(&artifact, &package_path).unwrap();
         if should_overwrite {
             fs::write(expected_file, actual).unwrap();
         } else if let Ok(expected) = fs::read_to_string(expected_file) {
             if expected != actual {
                 eprintln!("\n===Expected===\n{}\n===Actual===\n{}", expected, actual);
-                panic!("Expected and actual did not match.");
+                panic!("expected and actual did not match.");
             }
         } else {
-            panic!(
-                "Missing assembly output for architecture {}:\n{}",
-                architecture, actual
-            );
+            panic!("missing assembly output for {runtime}-{architecture}");
         }
     }
 }

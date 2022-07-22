@@ -1,9 +1,24 @@
+use core::hint;
 use core::mem;
 
 use super::conditional_try;
 use crate::ffi;
-use crate::runtime::{Class, Object, Sel};
+use crate::runtime::{Class, Imp, Object, Sel};
 use crate::{Encode, MessageArguments};
+
+#[inline]
+fn unwrap_msg_send_fn(msg_send_fn: Option<Imp>) -> Imp {
+    match msg_send_fn {
+        Some(msg_send_fn) => msg_send_fn,
+        None => {
+            // SAFETY: This will never be NULL, even if the selector is not
+            // found a callable function pointer will still be returned!
+            //
+            // `clang` doesn't insert a NULL check here either.
+            unsafe { hint::unreachable_unchecked() }
+        }
+    }
+}
 
 #[track_caller]
 pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut Object, sel: Sel, args: A) -> R
@@ -22,7 +37,7 @@ where
     }
 
     let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver.cast(), sel.as_ptr()) };
-    let msg_send_fn = msg_send_fn.expect("Null IMP");
+    let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
     unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }
 
@@ -48,6 +63,6 @@ where
         super_class: superclass.cast(),
     };
     let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel.as_ptr()) };
-    let msg_send_fn = msg_send_fn.expect("Null IMP");
+    let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
     unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }

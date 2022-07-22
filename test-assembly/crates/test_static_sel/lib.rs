@@ -1,4 +1,5 @@
 //! Test the output of the `sel!` macro.
+#![cfg(feature = "apple")]
 use objc2::runtime::Sel;
 use objc2::sel;
 
