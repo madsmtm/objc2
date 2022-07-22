@@ -54,6 +54,8 @@ pub fn read_assembly<P: AsRef<Path>>(path: P) -> io::Result<String> {
     let s = strip_lines(&s, ".macosx_version_");
     let s = strip_lines(&s, ".ios_version_");
     let s = strip_lines(&s, ".build_version");
+    // Added in nightly-2022-07-21
+    let s = strip_lines(&s, ".no_dead_strip");
     // We remove the __LLVM,__bitcode and __LLVM,__cmdline sections because
     // they're uninteresting for out use-case.
     //
