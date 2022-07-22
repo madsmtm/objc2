@@ -101,7 +101,7 @@ fn main() {
             .unwrap_or(expected_file);
         println!("Expected file: {}", expected_file.display());
 
-        let actual = read_assembly(&artifact).unwrap();
+        let actual = read_assembly(&artifact, &package_path).unwrap();
         if should_overwrite {
             fs::write(expected_file, actual).unwrap();
         } else if let Ok(expected) = fs::read_to_string(expected_file) {

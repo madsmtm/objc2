@@ -387,7 +387,7 @@ handle_autoreleased:
 	.type	.L__unnamed_11,@object
 	.section	.rodata..L__unnamed_11,"a",@progbits
 .L__unnamed_11:
-	.ascii	"test-assembly/crates/test_msg_send_id/lib.rs"
+	.ascii	"$DIR/lib.rs"
 	.size	.L__unnamed_11, 44
 
 	.type	.L__unnamed_1,@object

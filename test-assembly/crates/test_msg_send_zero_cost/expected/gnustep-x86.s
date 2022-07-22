@@ -98,7 +98,7 @@ handle_with_sel:
 	.type	.L__unnamed_4,@object
 	.section	.rodata..L__unnamed_4,"a",@progbits
 .L__unnamed_4:
-	.ascii	"test-assembly/crates/test_msg_send_zero_cost/lib.rs"
+	.ascii	"$DIR/lib.rs"
 	.size	.L__unnamed_4, 51
 
 	.type	.L__unnamed_1,@object

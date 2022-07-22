@@ -39,7 +39,7 @@ handle:
 	.type	.L__unnamed_3,@object
 	.section	.rodata..L__unnamed_3,"a",@progbits
 .L__unnamed_3:
-	.ascii	"test-assembly/crates/test_retain_autoreleased/lib.rs"
+	.ascii	"$DIR/lib.rs"
 	.size	.L__unnamed_3, 52
 
 	.type	.L__unnamed_2,@object

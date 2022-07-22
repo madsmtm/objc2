@@ -62,8 +62,8 @@ fn strip_section(data: &str, section: &str) -> String {
     res
 }
 
-pub fn read_assembly<P: AsRef<Path>>(path: P) -> io::Result<String> {
-    let s = fs::read_to_string(path)?;
+pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result<String> {
+    let s = fs::read_to_string(path.as_ref())?;
     let workspace_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .unwrap()
@@ -71,6 +71,17 @@ pub fn read_assembly<P: AsRef<Path>>(path: P) -> io::Result<String> {
         .to_str()
         .unwrap();
     let s = s.replace(workspace_dir, "$WORKSPACE");
+    let s = s.replace(
+        package_path
+            .as_os_str()
+            .to_str()
+            .unwrap()
+            .strip_prefix(workspace_dir)
+            .unwrap()
+            .strip_prefix('/')
+            .unwrap(),
+        "$DIR",
+    );
     // HACK: Replace Objective-C image info for simulator targets
     let s = s.replace(
         ".asciz\t\"\\000\\000\\000\\000`\\000\\000\"",
