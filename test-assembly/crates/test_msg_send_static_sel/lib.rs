@@ -1,4 +1,5 @@
 //! Test how static selectors work in relation to `msg_send!` and `msg_send_id!`
+#![cfg(feature = "apple")]
 use objc2::rc::{Id, Shared};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, msg_send_id, sel};

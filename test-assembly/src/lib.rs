@@ -4,6 +4,33 @@ use std::io;
 use std::path::Path;
 use std::path::PathBuf;
 
+#[cfg(feature = "run")]
+pub fn get_runtime() -> String {
+    use regex::Regex;
+    let re = Regex::new(r"--features[= ]+(([a-z0-9_-]+,?)+)").unwrap();
+
+    let combined = std::env::args().collect::<Vec<_>>().join(" ");
+
+    let result = re
+        .captures_iter(&combined)
+        .find_map(|c| {
+            c.get(1).unwrap().as_str().split(',').find_map(|f| match f {
+                "apple" => Some("apple"),
+                "gnustep-1-7" | "gnustep-1-8" | "gnustep-1-9" => Some("gnustep-old"),
+                "gnustep-2-0" | "gnustep-2-1" => Some("gnustep"),
+                _ => None,
+            })
+        })
+        .unwrap_or("apple")
+        .to_string();
+    result
+}
+
+#[cfg(not(feature = "run"))]
+pub fn get_runtime() -> String {
+    panic!("`run` feature must be enabled")
+}
+
 fn strip_lines(data: &str, starts_with: &str) -> String {
     data.lines()
         .filter(|line| !line.trim_start().starts_with(starts_with))
@@ -54,6 +81,7 @@ pub fn read_assembly<P: AsRef<Path>>(path: P) -> io::Result<String> {
     let s = strip_lines(&s, ".macosx_version_");
     let s = strip_lines(&s, ".ios_version_");
     let s = strip_lines(&s, ".build_version");
+    let s = strip_lines(&s, ".file");
     // Added in nightly-2022-07-21
     let s = strip_lines(&s, ".no_dead_strip");
     // We remove the __LLVM,__bitcode and __LLVM,__cmdline sections because

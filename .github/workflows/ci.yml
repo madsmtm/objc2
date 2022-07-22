@@ -403,10 +403,7 @@ jobs:
         args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features unstable-static-sel
 
     - name: Run assembly tests
-      # Not run on GNUStep yet since a lot of function labels are mangled and
-      # not inlined (and hence quite hard to match on, at some point we'll
-      # need to find a solution to that).
-      if: ${{ !contains(matrix.os, 'ubuntu') }}
+      if: ${{ !contains(matrix.runtime, 'compiler-rt') }}
       shell: bash
       run:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
