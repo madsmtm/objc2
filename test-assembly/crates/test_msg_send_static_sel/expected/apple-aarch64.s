@@ -16,21 +16,24 @@ _handle_alloc_init:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh2:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32@GOTPAGE
 Lloh3:
-	ldr	x19, [x8, L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9@PAGEOFF]
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32@GOTPAGEOFF]
 Lloh4:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9@PAGE
+	ldr	x19, [x8]
 Lloh5:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9@PAGEOFF]
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2@GOTPAGE
+Lloh6:
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2@GOTPAGEOFF]
+Lloh7:
+	ldr	x1, [x8]
 	bl	_objc_msgSend
 	mov	x1, x19
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	b	_objc_msgSend
-	.loh AdrpLdr	Lloh4, Lloh5
-	.loh AdrpAdrp	Lloh2, Lloh4
-	.loh AdrpLdr	Lloh2, Lloh3
+	.loh AdrpLdrGotLdr	Lloh5, Lloh6, Lloh7
+	.loh AdrpLdrGotLdr	Lloh2, Lloh3, Lloh4
 
 	.globl	_use_generic
 	.p2align	2
@@ -39,32 +42,32 @@ _use_generic:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x19, x0
-Lloh6:
+Lloh8:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4@PAGE
-Lloh7:
+Lloh9:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_cdfe92d39025fdf4@PAGEOFF]
 	adrp	x20, L_OBJC_SELECTOR_REFERENCES_31f63858e271db32@PAGE
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_31f63858e271db32@PAGEOFF]
 	bl	_objc_msgSend
-Lloh8:
+Lloh10:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1@PAGE
-Lloh9:
+Lloh11:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_79bd65c86d46fbf1@PAGEOFF]
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_31f63858e271db32@PAGEOFF]
 	mov	x0, x19
 	bl	_objc_msgSend
-Lloh10:
+Lloh12:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720@PAGE
-Lloh11:
+Lloh13:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_8e0840c6b39b7720@PAGEOFF]
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_31f63858e271db32@PAGEOFF]
 	mov	x0, x19
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	b	_objc_msgSend
+	.loh AdrpLdr	Lloh12, Lloh13
 	.loh AdrpLdr	Lloh10, Lloh11
 	.loh AdrpLdr	Lloh8, Lloh9
-	.loh AdrpLdr	Lloh6, Lloh7
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_40f5b12005284286
@@ -82,40 +85,6 @@ L_OBJC_METH_VAR_NAME_40f5b12005284286:
 	.p2align	3
 L_OBJC_SELECTOR_REFERENCES_40f5b12005284286:
 	.quad	L_OBJC_METH_VAR_NAME_40f5b12005284286
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_904c14aa63c4eec9
-	.p2align	2
-L_OBJC_IMAGE_INFO_904c14aa63c4eec9:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_904c14aa63c4eec9
-L_OBJC_METH_VAR_NAME_904c14aa63c4eec9:
-	.asciz	"init"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_904c14aa63c4eec9:
-	.quad	L_OBJC_METH_VAR_NAME_904c14aa63c4eec9
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_b1ab35d3713395f9
-	.p2align	2
-L_OBJC_IMAGE_INFO_b1ab35d3713395f9:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_b1ab35d3713395f9
-L_OBJC_METH_VAR_NAME_b1ab35d3713395f9:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_b1ab35d3713395f9:
-	.quad	L_OBJC_METH_VAR_NAME_b1ab35d3713395f9
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_31f63858e271db32

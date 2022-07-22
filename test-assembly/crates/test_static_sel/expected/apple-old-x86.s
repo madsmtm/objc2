@@ -31,9 +31,10 @@ _get_common_twice:
 	mov	ebp, esp
 	call	L2$pb
 L2$pb:
-	pop	ecx
-	mov	eax, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77-L2$pb]
-	mov	edx, dword ptr [ecx + L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7-L2$pb]
+	pop	eax
+	mov	eax, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr-L2$pb]
+	mov	eax, dword ptr [eax]
+	mov	edx, eax
 	pop	ebp
 	ret
 
@@ -139,40 +140,6 @@ L_OBJC_SELECTOR_REFERENCES_cd2fd6e7d2adcc35:
 	.long	L_OBJC_METH_VAR_NAME_cd2fd6e7d2adcc35
 
 	.section	__OBJC,__image_info
-	.globl	L_OBJC_IMAGE_INFO_e4a45d49bfea5d77
-	.p2align	2
-L_OBJC_IMAGE_INFO_e4a45d49bfea5d77:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__cstring,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77
-L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77:
-	.asciz	"alloc"
-
-	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_e4a45d49bfea5d77:
-	.long	L_OBJC_METH_VAR_NAME_e4a45d49bfea5d77
-
-	.section	__OBJC,__image_info
-	.globl	L_OBJC_IMAGE_INFO_33db9f67352fe9a7
-	.p2align	2
-L_OBJC_IMAGE_INFO_33db9f67352fe9a7:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__cstring,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_33db9f67352fe9a7
-L_OBJC_METH_VAR_NAME_33db9f67352fe9a7:
-	.asciz	"alloc"
-
-	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_33db9f67352fe9a7:
-	.long	L_OBJC_METH_VAR_NAME_33db9f67352fe9a7
-
-	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_bb37877368f0b7a0
 	.p2align	2
 L_OBJC_IMAGE_INFO_bb37877368f0b7a0:
@@ -239,5 +206,10 @@ L_OBJC_METH_VAR_NAME_f46908e864c86c6b:
 	.p2align	2
 L_OBJC_SELECTOR_REFERENCES_f46908e864c86c6b:
 	.long	L_OBJC_METH_VAR_NAME_f46908e864c86c6b
+
+	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
+LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2
+	.long	0
 
 .subsections_via_symbols
