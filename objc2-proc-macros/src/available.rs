@@ -2,38 +2,148 @@
 //! https://developer.apple.com/library/archive/technotes/tn2064/_index.html
 //! See also AvailabilityMacros.h and Availability.h
 //! https://clang.llvm.org/docs/LanguageExtensions.html#objective-c-available
+use std::iter;
 
-// Generate relevant cfg attributes based on:
-// - MACOSX_DEPLOYMENT_TARGET (default 10.7)
-// - IPHONEOS_DEPLOYMENT_TARGET (default 7.0)
-// - TVOS_DEPLOYMENT_TARGET
-// - WATCHOS_DEPLOYMENT_TARGET
-// - BRIDGEOS_DEPLOYMENT_TARGET
+use crate::deployment_target::{self, Version};
+use proc_macro::TokenStream;
 
-// And figure out the macabi thing
+fn macos(min: Version) -> Option<&'static str> {
+    // Note: Implicitly assumes that `macos_aarch64` will return an equal or
+    // higher value than `macos`
 
-// Clang flags:
-// -mmacos-version-min
-// -mios-version-min
-// -mtvos-version-min
-// -mwatchos-version-min
-// -mbridgeos-version-min
-// -mmaccatalyst-version-min
-// -mios-simulator-version-min
-// -mtvos-simulator-version-min
-// -mwatchos-simulator-version-min
-// -mdriverkit-version-min
+    if deployment_target::macos_aarch64() >= min {
+        // Available on all macOS
+        Some(r#"target_os = "macos""#)
+    } else if deployment_target::macos() >= min {
+        // Available on Aarch64, not available on others
+        Some(r#"not(all(target_os = "macos", not(target_arch = "aarch64")))"#)
+    } else {
+        // Not available on macOS
+        None
+    }
+}
 
-// Cargo's compilation process works as follows:
-//
-// `std::env::var`
-// mod deployment_target {
-//     pub const MACOSX: &'static str = option_env!("MACOSX_DEPLOYMENT_TARGET").unwrap_or("10.7");
-//     pub const IPHONEOS: &'static str = option_env!("IPHONEOS_DEPLOYMENT_TARGET").unwrap_or("7.0");
-//     pub const TVOS: &'static str = option_env!("TVOS_DEPLOYMENT_TARGET").unwrap_or("");
-//     pub const WATCHOS: &'static str = option_env!("WATCHOS_DEPLOYMENT_TARGET").unwrap_or("");
-//     pub const BRIDGEOS: &'static str = option_env!("BRIDGEOS_DEPLOYMENT_TARGET").unwrap_or("");
-// }
+fn ios(min: Version) -> Option<&'static str> {
+    if deployment_target::ios() >= min {
+        Some(r#"target_os = "ios""#)
+    } else {
+        None
+    }
+}
+
+fn tvos(min: Version) -> Option<&'static str> {
+    match deployment_target::tvos() {
+        Some(v) if v >= min => Some(r#"target_os = "tvos""#),
+        // Disable everything on tvOS if deployment target is not specified
+        // TODO: Change this once rustc sets a default deployment target
+        _ => None,
+    }
+}
+
+fn watchos(min: Version) -> Option<&'static str> {
+    if deployment_target::watchos() >= min {
+        Some(r#"target_os = "watchos""#)
+    } else {
+        None
+    }
+}
+
+#[derive(Debug, Default)]
+pub(crate) struct AvailableSince {
+    macos: Option<Version>,
+    ios: Option<Version>,
+    tvos: Option<Version>,
+    watchos: Option<Version>,
+}
+
+impl AvailableSince {
+    pub(crate) fn from_tokenstream(attr: TokenStream) -> Self {
+        todo!()
+    }
+
+    fn into_cfg_string(&self) -> String {
+        let mut result = "any(".to_string();
+        if let Some(s) = self.macos.and_then(macos) {
+            result += s;
+            result += ", ";
+        }
+        if let Some(s) = self.ios.and_then(ios) {
+            result += s;
+            result += ", ";
+        }
+        if let Some(s) = self.tvos.and_then(tvos) {
+            result += s;
+            result += ", ";
+        }
+        if let Some(s) = self.watchos.and_then(watchos) {
+            result += s;
+            result += ", ";
+        }
+        if result == "any(" {
+            // If didn't change
+            result.push_str("__not_available_anywhere");
+        } else {
+            // Remove extra ", "
+            result.pop();
+            result.pop();
+        }
+        result += ")";
+        result
+    }
+
+    pub(crate) fn into_cfg(self) -> TokenStream {
+        format!("cfg({})", self.into_cfg_string())
+            .parse()
+            .expect("invalid cfg string")
+    }
+
+    pub(crate) fn into_not_cfg(self) -> TokenStream {
+        format!("cfg(not({}))", self.into_cfg_string())
+            .parse()
+            .expect("invalid cfg string")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_availability_cfg_string() {
+        #[track_caller]
+        fn assert_cfg(available_since: &AvailableSince, expected: &str) {
+            assert_eq!(available_since.into_cfg_string(), expected);
+        }
+
+        let mut available_since = AvailableSince::default();
+        assert_cfg(&available_since, r#"any(__not_available_anywhere)"#);
+
+        available_since.macos = Some(Version::new(12, 0));
+        assert_cfg(&available_since, r#"any(__not_available_anywhere)"#);
+        available_since.macos = Some(Version::new(10, 0));
+        assert_cfg(&available_since, r#"any(target_os = "macos")"#);
+
+        available_since.ios = Some(Version::new(9, 0));
+        assert_cfg(&available_since, r#"any(target_os = "macos")"#);
+        available_since.ios = Some(Version::new(5, 0));
+        assert_cfg(
+            &available_since,
+            r#"any(target_os = "macos", target_os = "ios")"#,
+        );
+
+        available_since.tvos = Some(Version::new(0, 0));
+        assert_cfg(
+            &available_since,
+            r#"any(target_os = "macos", target_os = "ios")"#,
+        );
+
+        available_since.watchos = Some(Version::new(0, 0));
+        assert_cfg(
+            &available_since,
+            r#"any(target_os = "macos", target_os = "ios", target_os = "watchos")"#,
+        );
+    }
+}
 
 #[cfg(ideas)]
 mod ideas {
@@ -43,7 +153,7 @@ mod ideas {
 
     // Mimic Objective-C:
     // __API_AVAILABLE(macos(10.4), ios(8.0), watchos(2.0), tvos(10.0))
-    #[available(macos(10.9), ios(8.0))]
+    #[available_since(macos(10.9), ios(8.0))]
     // #[not_available(macos(10.9), ios(8.0))]
     fn my_fn() {}
 
@@ -65,44 +175,8 @@ mod ideas {
     fn my_fn() {}
 
     // https://crates.io/crates/assert2
-    #[available(macos > 10.9, ios > 8.0)]
+    #[available(macos >= 10.9, ios >= 8.0)]
     fn my_fn() {}
-
-    // Simple macros
-
-    available! {
-        [macos(10.9), ios(8.0)]
-
-        fn my_fn1() {}
-        fn my_fn2() {}
-    }
-
-    // Configs (the user would have to have a build script that made these)
-
-    #[cfg(macos_10_9, ios_8_0)]
-    fn my_fn() {}
-
-    // Consider using darwin instead of macos? And iphoneos instead of ios?
-
-    // Consider conditional deprecation?
-    // __API_DEPRECATED("No longer supported", macos(10.4, 10.8))
-
-    // Control when they are enabled like this:
-    // - MACOSX_DEPLOYMENT_TARGET=10.9
-    // - IPHONEOS_DEPLOYMENT_TARGET=8.0
-    // - availability = { features = ["macos-10-9", "ios-8-0"] } ???
-    //
-    // Should we try to handle weak linking? Or just point to options on how
-    // to do that?
-    //
-    // The user's SDK version has an effect as well?
-    // Nope (unless compiling some C files), rather the SDK version that our
-    // Rust code is created from is relevant.
-
-    // OBJC_OSX_DEPRECATED_OTHERS_UNAVAILABLE / OBJC_OSX_AVAILABLE_OTHERS_UNAVAILABLE
-    // OBJC2_UNAVAILABLE
-
-    // The user setting `cargo:rustc-env=MACOSX_DEPLOYMENT_TARGET=10.11` in their build scripts...
 
     // Helper functions / macros for doing runtime version checks (and omit
     // them when the DEPLOYMENT_TARGET is high enough).

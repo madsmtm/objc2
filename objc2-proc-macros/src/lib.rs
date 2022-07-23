@@ -84,9 +84,32 @@ pub fn __hash_idents(input: TokenStream) -> TokenStream {
     TokenTree::Literal(Literal::string(&s)).into()
 }
 
-/// TODO
+///
+///
+/// The syntax mimic's Objective-C's `@available`.
+///
+/// ```no_run
+/// use objc2_proc_macros::cfg_available;
+///
+/// // In -sys crate
+/// extern "C" {
+///     #[cfg_available(macos(10.15), ios(13.0), watchos(6.0), tvos(13.0))]
+///     fn my_fn();
+/// }
+///
+/// // Usage
+/// #[cfg_available(macOS(10.15), iOS(13.0), watchOS(6.0), tvOS(13.0))]
+/// fn my_pretty_fn() {
+///     my_fn();
+/// }
+///
+/// // #[cfg_not_available(macOS(10.15), iOS(13.0), watchOS(6.0), tvOS(13.0))]
+/// fn my_pretty_fn() {
+///     // Fallback
+/// }
+/// ```
 #[proc_macro_attribute]
-pub fn macos(attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn cfg_available(attr: TokenStream, item: TokenStream) -> TokenStream {
     println!("attr: \"{}\"", attr.to_string());
     println!("item: \"{}\"", item.to_string());
     format!(
@@ -99,4 +122,12 @@ pub fn macos(attr: TokenStream, item: TokenStream) -> TokenStream {
     )
     .parse()
     .unwrap()
+}
+
+/// The inverse of [`cfg_available`].
+#[proc_macro_attribute]
+pub fn cfg_not_available(attr: TokenStream, item: TokenStream) -> TokenStream {
+    println!("attr: \"{}\"", attr.to_string());
+    println!("item: \"{}\"", item.to_string());
+    item
 }

@@ -56,7 +56,7 @@ impl fmt::Display for Version {
 }
 
 impl Version {
-    fn new(major: u32, minor: u32) -> Self {
+    pub(crate) fn new(major: u32, minor: u32) -> Self {
         Self {
             major,
             minor,
