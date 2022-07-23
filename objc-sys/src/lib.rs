@@ -140,6 +140,7 @@ mod constants;
 
 mod exception;
 mod image_info;
+mod internal;
 mod message;
 mod method;
 mod object;
@@ -154,6 +155,7 @@ pub use class::*;
 pub use constants::*;
 pub use exception::*;
 pub use image_info::*;
+pub use internal::*;
 pub use message::*;
 pub use method::*;
 pub use object::*;
@@ -186,15 +188,5 @@ mod tests {
         let sel = unsafe { sel_registerName(name.as_ptr()) };
         let rtn = unsafe { CStr::from_ptr(sel_getName(sel)) };
         assert_eq!(name, rtn);
-    }
-
-    #[objc2_proc_macros::macos]
-    fn answer() -> &'static str {
-        "Nope"
-    }
-
-    #[test]
-    fn test_thing() {
-        assert_eq!(answer(), "abc");
     }
 }

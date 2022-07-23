@@ -17,8 +17,7 @@ _handle_alloc_init:
 	push	rbx
 	push	rax
 	mov	rbx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328]
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dcb825748735621d]
-	call	_objc_msgSend
+	call	_objc_alloc
 	mov	rdi, rax
 	mov	rsi, rbx
 	add	rsp, 8
@@ -82,23 +81,6 @@ L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328:
 	.p2align	3
 L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328:
 	.quad	L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_dcb825748735621d
-	.p2align	2
-L_OBJC_IMAGE_INFO_dcb825748735621d:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_dcb825748735621d
-L_OBJC_METH_VAR_NAME_dcb825748735621d:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_dcb825748735621d
-	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_dcb825748735621d:
-	.quad	L_OBJC_METH_VAR_NAME_dcb825748735621d
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_457d234345d46cbe

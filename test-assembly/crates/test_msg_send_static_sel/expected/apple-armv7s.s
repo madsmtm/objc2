@@ -19,15 +19,11 @@ LPC0_0:
 _handle_alloc_init:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_dcb825748735621d-(LPC1_0+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_dcb825748735621d-(LPC1_0+8))
+	movw	r4, :lower16:(L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328-(LPC1_0+8))
+	movt	r4, :upper16:(L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328-(LPC1_0+8))
 LPC1_0:
-	ldr	r1, [pc, r1]
-	movw	r4, :lower16:(L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328-(LPC1_1+8))
-	movt	r4, :upper16:(L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328-(LPC1_1+8))
-LPC1_1:
 	ldr	r4, [pc, r4]
-	bl	_objc_msgSend
+	bl	_objc_alloc
 	mov	r1, r4
 	bl	_objc_msgSend
 	pop	{r4, r7, pc}
@@ -103,23 +99,6 @@ L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328:
 	.p2align	2
 L_OBJC_SELECTOR_REFERENCES_cb49b9ab1b00e328:
 	.long	L_OBJC_METH_VAR_NAME_cb49b9ab1b00e328
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_dcb825748735621d
-	.p2align	2
-L_OBJC_IMAGE_INFO_dcb825748735621d:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_dcb825748735621d
-L_OBJC_METH_VAR_NAME_dcb825748735621d:
-	.asciz	"alloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_dcb825748735621d
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_dcb825748735621d:
-	.long	L_OBJC_METH_VAR_NAME_dcb825748735621d
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_457d234345d46cbe
