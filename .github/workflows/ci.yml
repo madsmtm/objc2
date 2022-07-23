@@ -395,12 +395,12 @@ jobs:
         # Not using --all-features because that would enable e.g. gnustep
         args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
-    - name: Test static selectors
+    - name: Test static class and selectors
       if: ${{ !matrix.dinghy && (matrix.runtime || 'apple') == 'apple' }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features unstable-static-sel
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features unstable-static-sel,unstable-static-class
 
     - name: Run assembly tests
       if: ${{ !contains(matrix.runtime, 'compiler-rt') }}

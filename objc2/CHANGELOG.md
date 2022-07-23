@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added the `"unstable-static-class"` and `"unstable-static-class-inlined"`
+  feature flags to make the `class!` macro zero cost.
+
 
 ## 0.3.0-beta.1 - 2022-07-19
 

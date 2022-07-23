@@ -12,6 +12,9 @@ use std::ffi::c_void;
 #[cfg(feature = "apple")]
 #[link(name = "AVFoundation", kind = "framework")]
 extern "C" {}
+#[cfg(feature = "apple")]
+#[link(name = "Foundation", kind = "framework")]
+extern "C" {}
 
 const UTF8_ENCODING: NSUInteger = 4;
 

@@ -130,10 +130,11 @@ impl RcTestObject {
                 builder.add_method(sel!(dealloc), dealloc as unsafe extern "C" fn(_, _));
             }
 
-            builder.register();
+            let _cls = builder.register();
         });
 
-        class!(RcTestObject)
+        // Can't use `class!` here since `RcTestObject` is dynamically created.
+        Class::get("RcTestObject").unwrap()
     }
 
     pub(crate) fn new() -> Id<Self, Owned> {

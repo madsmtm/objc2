@@ -4,6 +4,16 @@ use objc2::rc::{autoreleasepool, Id, Shared};
 use objc2::runtime::Object;
 use objc2::{class, msg_send};
 
+#[cfg(feature = "gnustep-1-7")]
+#[test]
+fn ensure_linkage() {
+    unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+}
+
+#[cfg(feature = "apple")]
+#[link(name = "Foundation", kind = "framework")]
+extern "C" {}
+
 fn retain_count(obj: &Object) -> usize {
     unsafe { msg_send![obj, retainCount] }
 }
@@ -37,15 +47,6 @@ fn create_data(bytes: &[u8]) -> Id<Object, Shared> {
 
 #[test]
 fn test_retain_autoreleased() {
-    #[cfg(feature = "gnustep-1-7")]
-    unsafe {
-        objc2::__gnustep_hack::get_class_to_force_linkage()
-    };
-
-    #[cfg(feature = "apple")]
-    #[link(name = "Foundation", kind = "framework")]
-    extern "C" {}
-
     autoreleasepool(|_| {
         // Run once to allow DYLD to resolve the symbol stubs.
         // Required for making `retain_autoreleased` work on x86_64.
