@@ -99,6 +99,8 @@ fn main() {
         }
     }
 
+    println!("cargo:rustc-env=MACOSX_DEPLOYMENT_TARGET=10.11");
+
     let runtime = match (apple, gnustep, objfw) {
         (true, false, false) => {
             Apple(match &*target_os {

@@ -651,6 +651,17 @@ macro_rules! msg_send_bool {
 /// ```
 #[macro_export]
 macro_rules! msg_send_id {
+    // Special case `new` and `alloc` for performance
+    [$obj:expr, alloc $(,)?] => ({
+        let result;
+        result = $crate::__macro_helpers::send_message_id_alloc($obj);
+        result
+    });
+    [$obj:expr, new $(,)?] => ({
+        let result;
+        result = $crate::__macro_helpers::send_message_id_new($obj);
+        result
+    });
     [$obj:expr, $selector:ident $(,)?] => ({
         $crate::__msg_send_id_helper!(@verify $selector);
         let sel = $crate::sel!($selector);

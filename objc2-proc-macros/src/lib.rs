@@ -13,6 +13,9 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.1.0")]
 
+mod available;
+mod deployment_target;
+
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}
@@ -23,6 +26,8 @@ use proc_macro::Ident;
 use proc_macro::Literal;
 use proc_macro::TokenStream;
 use proc_macro::TokenTree;
+
+use crate::available::AvailableSince;
 
 /// Quick n' dirty way to extract the idents given by the `sel!` macro.
 fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
@@ -79,4 +84,54 @@ pub fn __hash_idents(input: TokenStream) -> TokenStream {
     // Get the hash from the hasher and return it as 16 hexadecimal characters
     let s = format!("{:016x}", hasher.finish());
     TokenTree::Literal(Literal::string(&s)).into()
+}
+
+/// TODO.
+///
+/// The syntax mimic's Objective-C's `@available`.
+///
+/// ```no_run
+/// use objc2_proc_macros::{cfg_available, cfg_not_available};
+///
+/// // In `-sys` crate
+/// extern "C" {
+///     #[cfg_available(macOS(10.15), iOS(7.0), tvOS(13.0), watchOS(6.0))]
+///     fn my_fn();
+/// }
+///
+/// // Later usage
+/// #[cfg_available(macOS(10.15), iOS(7.0), tvOS(13.0), watchOS(6.0))]
+/// fn my_safe_fn() {
+///     unsafe { my_fn() };
+/// }
+/// #[cfg_not_available(macOS(10.15), iOS(7.0), tvOS(13.0), watchOS(6.0))]
+/// fn my_safe_fn() {
+///     // Fallback
+/// }
+/// ```
+#[proc_macro_attribute]
+pub fn cfg_available(attr: TokenStream, item: TokenStream) -> TokenStream {
+    println!("attr: \"{}\"", attr.to_string());
+    println!("item: \"{}\"", item.to_string());
+    let available_since = AvailableSince::from_tokenstream(attr);
+    println!("available_since: \"{:?}\"", available_since);
+
+    let mut res = available_since.into_cfg();
+    println!("res: \"{}\"", res.to_string());
+    res.extend(item);
+    res
+}
+
+/// The inverse of [`cfg_available`].
+#[proc_macro_attribute]
+pub fn cfg_not_available(attr: TokenStream, item: TokenStream) -> TokenStream {
+    println!("attr: \"{}\"", attr.to_string());
+    println!("item: \"{}\"", item.to_string());
+    let available_since = AvailableSince::from_tokenstream(attr);
+    println!("available_since: \"{:?}\"", available_since);
+
+    let mut res = available_since.into_not_cfg();
+    println!("res: \"{}\"", res.to_string());
+    res.extend(item);
+    res
 }

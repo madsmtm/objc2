@@ -59,6 +59,9 @@ unstable-docsrs = []
 [build-dependencies]
 cc = { version = "1", optional = true }
 
+[dependencies]
+objc2-proc-macros = { path = "../objc2-proc-macros" }
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 no-default-features = true

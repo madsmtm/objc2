@@ -140,6 +140,7 @@ mod constants;
 
 mod exception;
 mod image_info;
+mod internal;
 mod message;
 mod method;
 mod object;
@@ -154,6 +155,7 @@ pub use class::*;
 pub use constants::*;
 pub use exception::*;
 pub use image_info::*;
+pub use internal::*;
 pub use message::*;
 pub use method::*;
 pub use object::*;

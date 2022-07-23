@@ -9,8 +9,7 @@ pub use core::cell::UnsafeCell;
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, str, u8};
 pub use core::{compile_error, concat, panic, stringify};
-#[cfg(feature = "objc2-proc-macros")]
-pub use objc2_proc_macros::__hash_idents;
+pub use objc2_proc_macros::{__hash_idents, cfg_available, cfg_not_available};
 
 /// Helper for specifying the retain semantics for a given selector family.
 ///
@@ -140,6 +139,55 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
         // SAFETY: The selector is not `new`, `alloc`, `init`, `copy` nor
         // `mutableCopy`, so the object must be manually retained.
         unsafe { Id::retain_autoreleased(obj) }
+    }
+}
+
+#[inline]
+#[track_caller]
+#[cfg_available(macOS(10.9), iOS(7.0), tvOS(9.0), watchOS(1.0))]
+pub unsafe fn send_message_id_alloc<T: Message, O: Ownership>(
+    cls: &Class,
+) -> Option<Id<Allocated<T>, O>> {
+    // SAFETY: Checked by caller that [cls alloc] is valid
+    let obj = unsafe { crate::ffi::objc_alloc(cls.as_ptr()) as *mut T };
+    unsafe { Id::new_allocated(obj) }
+}
+
+#[inline]
+#[track_caller]
+#[cfg_not_available(macOS(10.9), iOS(7.0), tvOS(9.0), watchOS(1.0))]
+pub unsafe fn send_message_id_alloc<T: Message, O: Ownership>(
+    cls: &Class,
+) -> Option<Id<Allocated<T>, O>> {
+    // SAFETY: Checked by caller
+    unsafe {
+        <RetainSemantics<false, true, false, false>>::send_message_id(cls, crate::sel!(alloc), ())
+    }
+}
+
+#[inline]
+#[track_caller]
+#[cfg(feature = "apple")]
+#[cfg_attr(
+    feature = "apple",
+    cfg_available(macOS(10.15), iOS(13.0), tvOS(13.0), watchOS(6.0))
+)]
+pub unsafe fn send_message_id_new<T: Message, O: Ownership>(cls: &Class) -> Option<Id<T, O>> {
+    // SAFETY: Checked by caller that [cls new] is valid
+    let obj = unsafe { crate::ffi::objc_opt_new(cls.as_ptr()) as *mut T };
+    unsafe { Id::new(obj) }
+}
+
+#[inline]
+#[track_caller]
+#[cfg_attr(
+    feature = "apple",
+    cfg_not_available(macOS(10.15), iOS(13.0), tvOS(13.0), watchOS(6.0))
+)]
+pub unsafe fn send_message_id_new<T: Message, O: Ownership>(cls: &Class) -> Option<Id<T, O>> {
+    // SAFETY: Checked by caller
+    unsafe {
+        <RetainSemantics<true, false, false, false>>::send_message_id(cls, crate::sel!(new), ())
     }
 }
 

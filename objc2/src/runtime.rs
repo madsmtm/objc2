@@ -300,6 +300,7 @@ impl UnwindSafe for Method {}
 impl RefUnwindSafe for Method {}
 
 impl Class {
+    #[inline]
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_class {
         let ptr: *const Self = self;
         ptr.cast()
