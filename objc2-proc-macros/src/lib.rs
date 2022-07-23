@@ -27,6 +27,8 @@ use proc_macro::Literal;
 use proc_macro::TokenStream;
 use proc_macro::TokenTree;
 
+use crate::available::AvailableSince;
+
 /// Quick n' dirty way to extract the idents given by the `sel!` macro.
 fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
     input.into_iter().flat_map(|token| {
@@ -84,27 +86,26 @@ pub fn __hash_idents(input: TokenStream) -> TokenStream {
     TokenTree::Literal(Literal::string(&s)).into()
 }
 
-///
+/// TODO.
 ///
 /// The syntax mimic's Objective-C's `@available`.
 ///
 /// ```no_run
-/// use objc2_proc_macros::cfg_available;
+/// use objc2_proc_macros::{cfg_available, cfg_not_available};
 ///
-/// // In -sys crate
+/// // In `-sys` crate
 /// extern "C" {
-///     #[cfg_available(macos(10.15), ios(13.0), watchos(6.0), tvos(13.0))]
+///     #[cfg_available(macOS(10.15), iOS(7.0), tvOS(13.0), watchOS(6.0))]
 ///     fn my_fn();
 /// }
 ///
-/// // Usage
-/// #[cfg_available(macOS(10.15), iOS(13.0), watchOS(6.0), tvOS(13.0))]
-/// fn my_pretty_fn() {
-///     my_fn();
+/// // Later usage
+/// #[cfg_available(macOS(10.15), iOS(7.0), tvOS(13.0), watchOS(6.0))]
+/// fn my_safe_fn() {
+///     unsafe { my_fn() };
 /// }
-///
-/// // #[cfg_not_available(macOS(10.15), iOS(13.0), watchOS(6.0), tvOS(13.0))]
-/// fn my_pretty_fn() {
+/// #[cfg_not_available(macOS(10.15), iOS(7.0), tvOS(13.0), watchOS(6.0))]
+/// fn my_safe_fn() {
 ///     // Fallback
 /// }
 /// ```
@@ -112,16 +113,13 @@ pub fn __hash_idents(input: TokenStream) -> TokenStream {
 pub fn cfg_available(attr: TokenStream, item: TokenStream) -> TokenStream {
     println!("attr: \"{}\"", attr.to_string());
     println!("item: \"{}\"", item.to_string());
-    format!(
-        "fn answer() -> &'static str {{ \"{}, {}, {}, {}, {}\" }}",
-        deployment_target::macos(),
-        deployment_target::macos_aarch64(),
-        deployment_target::ios(),
-        deployment_target::tvos().unwrap_or(deployment_target::ios()),
-        deployment_target::watchos(),
-    )
-    .parse()
-    .unwrap()
+    let available_since = AvailableSince::from_tokenstream(attr);
+    println!("available_since: \"{:?}\"", available_since);
+
+    let mut res = available_since.into_cfg();
+    println!("res: \"{}\"", res.to_string());
+    res.extend(item);
+    res
 }
 
 /// The inverse of [`cfg_available`].
@@ -129,5 +127,11 @@ pub fn cfg_available(attr: TokenStream, item: TokenStream) -> TokenStream {
 pub fn cfg_not_available(attr: TokenStream, item: TokenStream) -> TokenStream {
     println!("attr: \"{}\"", attr.to_string());
     println!("item: \"{}\"", item.to_string());
-    item
+    let available_since = AvailableSince::from_tokenstream(attr);
+    println!("available_since: \"{:?}\"", available_since);
+
+    let mut res = available_since.into_not_cfg();
+    println!("res: \"{}\"", res.to_string());
+    res.extend(item);
+    res
 }

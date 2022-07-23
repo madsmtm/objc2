@@ -3,17 +3,19 @@
 //! See also AvailabilityMacros.h and Availability.h
 //! https://clang.llvm.org/docs/LanguageExtensions.html#objective-c-available
 
+use std::str::FromStr;
+
 use crate::deployment_target::{self, Version};
-use proc_macro::TokenStream;
+use proc_macro::{Delimiter, TokenStream, TokenTree};
 
 fn macos(min: Version) -> Option<&'static str> {
     // Note: Implicitly assumes that `macos_aarch64` will return an equal or
     // higher value than `macos`
 
-    if deployment_target::macos_aarch64() >= min {
+    if deployment_target::macos() >= min {
         // Available on all macOS
         Some(r#"target_os = "macos""#)
-    } else if deployment_target::macos() >= min {
+    } else if deployment_target::macos_aarch64() >= min {
         // Available on Aarch64, not available on others
         Some(r#"not(all(target_os = "macos", not(target_arch = "aarch64")))"#)
     } else {
@@ -57,7 +59,39 @@ pub(crate) struct AvailableSince {
 
 impl AvailableSince {
     pub(crate) fn from_tokenstream(attr: TokenStream) -> Self {
-        todo!()
+        let mut this = Self::default();
+        let mut iter = attr.into_iter();
+        loop {
+            let ident = match iter.next() {
+                Some(TokenTree::Ident(ident)) => ident,
+                None => return this,
+                _ => panic!("expected ident"),
+            };
+            let version = match iter.next() {
+                Some(TokenTree::Group(group)) => {
+                    assert_eq!(
+                        group.delimiter(),
+                        Delimiter::Parenthesis,
+                        "Invalid delimiters"
+                    );
+                    Version::from_str(&group.stream().to_string()).expect("Invalid version")
+                }
+                _ => panic!("expected version string"),
+            };
+            let os = ident.to_string();
+            match &*os {
+                "macOS" => this.macos = Some(version),
+                "iOS" => this.ios = Some(version),
+                "tvOS" => this.tvos = Some(version),
+                "watchOS" => this.watchos = Some(version),
+                _ => panic!("Unknown OS {}", os),
+            }
+            let _comma = match iter.next() {
+                Some(TokenTree::Punct(ident)) => ident,
+                None => return this,
+                _ => panic!("expected ident"),
+            };
+        }
     }
 
     fn into_cfg_string(&self) -> String {
