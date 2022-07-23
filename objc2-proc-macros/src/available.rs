@@ -2,7 +2,6 @@
 //! https://developer.apple.com/library/archive/technotes/tn2064/_index.html
 //! See also AvailabilityMacros.h and Availability.h
 //! https://clang.llvm.org/docs/LanguageExtensions.html#objective-c-available
-use std::iter;
 
 use crate::deployment_target::{self, Version};
 use proc_macro::TokenStream;
@@ -92,13 +91,13 @@ impl AvailableSince {
     }
 
     pub(crate) fn into_cfg(self) -> TokenStream {
-        format!("cfg({})", self.into_cfg_string())
+        format!("#[cfg({})]", self.into_cfg_string())
             .parse()
             .expect("invalid cfg string")
     }
 
     pub(crate) fn into_not_cfg(self) -> TokenStream {
-        format!("cfg(not({}))", self.into_cfg_string())
+        format!("#[cfg(not({}))]", self.into_cfg_string())
             .parse()
             .expect("invalid cfg string")
     }

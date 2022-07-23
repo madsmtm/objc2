@@ -30,7 +30,8 @@
 //! assume a different deployment target!
 //! But more importantly, we can't ensure that the target crate is recompiled
 //! when the environment variable changes (could be hacked by _also_
-//! outputting `option_env!` into the target crate, but that seems brittle).
+//! outputting `option_env!` into the target crate, but that seems brittle,
+//! and the solution , `proc_macro::tracked_env::var` is nightly-only).
 //!
 //! Basically, option 1 seemed the most stable.
 
