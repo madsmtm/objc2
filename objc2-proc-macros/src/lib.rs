@@ -14,6 +14,7 @@
 #![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.1.0")]
 
 mod available;
+mod deployment_target;
 
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
@@ -83,11 +84,19 @@ pub fn __hash_idents(input: TokenStream) -> TokenStream {
     TokenTree::Literal(Literal::string(&s)).into()
 }
 
+/// TODO
 #[proc_macro_attribute]
 pub fn macos(attr: TokenStream, item: TokenStream) -> TokenStream {
     println!("attr: \"{}\"", attr.to_string());
     println!("item: \"{}\"", item.to_string());
-    println!("static: {:?}", option_env!("MACOSX_DEPLOYMENT_TARGET"));
-    println!("dynamic: {:?}", std::env::var("MACOSX_DEPLOYMENT_TARGET"));
-    item
+    format!(
+        "fn answer() -> &'static str {{ \"{}, {}, {}, {}, {}\" }}",
+        deployment_target::macos(),
+        deployment_target::macos_aarch64(),
+        deployment_target::ios(),
+        deployment_target::tvos().unwrap_or(deployment_target::ios()),
+        deployment_target::watchos(),
+    )
+    .parse()
+    .unwrap()
 }
