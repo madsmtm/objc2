@@ -47,8 +47,6 @@
 /// standard memory management messages (this is upheld if [`NSObject`] is
 /// part of its inheritance chain).
 ///
-/// Additionally, any fields (if specified) must be zero-sized.
-///
 /// [`NSObject`]: crate::foundation::NSObject
 ///
 ///
@@ -107,6 +105,7 @@ macro_rules! extern_class {
         $(#[$m:meta])*
         unsafe $v:vis struct $name:ident: $superclass:ty $(, $inheritance_rest:ty)*;
     ) => {
+        // Just shorthand syntax for the following
         $crate::extern_class! {
             $(#[$m])*
             unsafe $v struct $name: $superclass $(, $inheritance_rest)* {}
@@ -124,6 +123,16 @@ macro_rules! extern_class {
                 $($field_vis $field: $field_ty,)*
             }
         }
+
+        const _: () = {
+            if $crate::__macro_helpers::size_of::<$name>() != 0 {
+                panic!(concat!(
+                    "the struct ",
+                    stringify!($name),
+                    " is not zero-sized!",
+                ))
+            }
+        };
     };
 }
 
