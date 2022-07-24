@@ -1,11 +1,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __inner_declare_class {
-    {@rewrite_methods @$output_type:ident @$builder:ident} => {};
+    {@rewrite_methods @($($output:tt)*)} => {};
     {
         @rewrite_methods
-        @$output_type:ident
-        @$builder:ident
+        @($($output:tt)*)
 
         $(#[$($m:tt)*])*
         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
@@ -13,21 +12,25 @@ macro_rules! __inner_declare_class {
         $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @rewrite_methods_inner
-            @$output_type
-            @$builder
-            // Split args out so that we can match on `self`, while still use
-            // it as a function argument
-            ($($args)*)
+            @rewrite_self_arg
 
-            $(#[$($m)*])*
-            fn $name($($args)*) $(-> $ret)? $body
+            // Duplicate args out so that we can match on `self`, while still
+            // use it as a function argument
+            @($($args)*)
+            // Split the function into parts, and send the arguments down to
+            // be used later on
+            @($($args)*)
+            @($(#[$($m)*])*)
+            @($name)
+            @($($ret)?)
+            @($body)
+
+            #($($output)*)
         }
 
         $crate::__inner_declare_class! {
             @rewrite_methods
-            @$output_type
-            @$builder
+            @($($output)*)
 
             $($rest)*
         }
@@ -35,174 +38,133 @@ macro_rules! __inner_declare_class {
 
     // Instance method
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        (&mut self $($__rest_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            &mut $self:ident
-            $(, $($rest_args:tt)*)?
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @(&mut self $($__rest_args:tt)*)
+        @(&mut $self:ident $(, $($rest_args:tt)*)?)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @instance_method
-            @$name
-            @$builder
-            @($($($rest_args)*)?)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
-                &mut $self,
+            @dispatch
+            @(instance_method)
+            @(
+                $self: &mut Self,
                 _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
         }
     };
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        (&self $($__rest_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            &$self:ident
-            $(, $($rest_args:tt)*)?
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @(&self $($__rest_args:tt)*)
+        @(&$self:ident $(, $($rest_args:tt)*)?)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @instance_method
-            @$name
-            @$builder
-            @($($($rest_args)*)?)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
-                &$self,
+            @dispatch
+            @(instance_method)
+            @(
+                $self: &Self,
                 _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
         }
     };
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        (
-            mut self: $__self_ty:ty
-            $(, $($__rest_args:tt)*)?
-        )
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            mut $self:ident: $self_ty:ty
-            $(, $($rest_args:tt)*)?
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @(mut self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
+        @(mut $self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @instance_method
-            @$name
-            @$builder
-            @($($($rest_args)*)?)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
+            @dispatch
+            @(instance_method)
+            @(
                 mut $self: $self_ty,
                 _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
         }
     };
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        (
-            self: $__self_ty:ty
-            $(, $($__rest_args:tt)*)?
-        )
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            $self:ident: $self_ty:ty
-            $(, $($rest_args:tt)*)?
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @(self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
+        @($self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @instance_method
-            @$name
-            @$builder
-            @($($($rest_args)*)?)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
+            @dispatch
+            @(instance_method)
+            @(
                 $self: $self_ty,
                 _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
         }
     };
-
     // Class method
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        ($($__args:tt)*)
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            $($args:tt)*
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @($($__args:tt)*)
+        @($($args:tt)*)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @class_method
-            @$name
-            @$builder
-            @($($args)*)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
+            @dispatch
+            @(class_method)
+            @(
                 _: &$crate::objc2::runtime::Class,
                 _: $crate::objc2::runtime::Sel,
                 $($args)*
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
+        }
+    };
+
+    {
+        @dispatch
+        $(
+            @($($items:tt)*)
+        )*
+
+        #($($output:tt)*)
+    } => {
+        $crate::__inner_declare_class! {
+            @$($output)*
+            $(
+                @($($items)*)
+            )*
         }
     };
 
     {
         @method_out
-        @$method_type:ident
-        @$_name:ident
-        @$builder:ident
-        @($($builder_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        extern "C" fn $($fn:tt)*
+        @($($_kind:tt)*)
+        @($($args:tt)*)
+        @($(#[$($m:tt)*])*)
+        @($name:ident)
+        @($($ret:ty)?)
+        @($($body:tt)*)
+        $($x:tt)*
     } => {
         $crate::__attribute_helper! {
             @strip_sel
             $(@[$($m)*])*
-            (extern "C" fn $($fn)*)
+            (extern "C" fn $name($($args)*) $(-> $ret)? $($body)*)
         }
     };
 
     {
-        @register_out
-        @class_method
-        @$name:ident
-        @$builder:ident
-        @($($builder_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        extern "C" fn $($fn:tt)*
+        @register_out($builder:ident)
+        @(class_method)
+        @($($args:tt)*)
+        @($(#[$($m:tt)*])*)
+        @($name:ident)
+        @($($_ret:tt)*)
+        @($($_body:tt)*)
     } => {
         $builder.add_class_method(
             $crate::__attribute_helper! {
@@ -210,19 +172,18 @@ macro_rules! __inner_declare_class {
                 $(#[$($m)*])*
             },
             Self::$name as $crate::__extern_fn_ptr! {
-                $($builder_args)*
+                $($args)*
             },
         );
     };
     {
-        @register_out
-        @instance_method
-        @$name:ident
-        @$builder:ident
-        @($($builder_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        extern "C" fn $($fn:tt)*
+        @register_out($builder:ident)
+        @(instance_method)
+        @($($args:tt)*)
+        @($(#[$($m:tt)*])*)
+        @($name:ident)
+        @($($_ret:tt)*)
+        @($($_body:tt)*)
     } => {
         $builder.add_method(
             $crate::__attribute_helper! {
@@ -230,7 +191,7 @@ macro_rules! __inner_declare_class {
                 $(#[$($m)*])*
             },
             Self::$name as $crate::__extern_fn_ptr! {
-                $($builder_args)*
+                $($args)*
             },
         );
     };
@@ -549,8 +510,7 @@ macro_rules! declare_class {
                         unsafe {
                             $crate::__inner_declare_class! {
                                 @rewrite_methods
-                                @register_out
-                                @builder
+                                @(register_out(builder))
 
                                 $($methods)*
                             }
@@ -570,8 +530,7 @@ macro_rules! declare_class {
             impl $name {
                 $crate::__inner_declare_class! {
                     @rewrite_methods
-                    @method_out
-                    @__builder
+                    @(method_out)
 
                     $($methods)*
                 }
