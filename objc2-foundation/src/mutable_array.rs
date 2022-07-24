@@ -11,11 +11,11 @@ use objc2::{msg_send, msg_send_id};
 
 use crate::array::from_refs;
 use crate::{
-    NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
-    NSObject, __inner_extern_class,
+    extern_class, NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator,
+    NSMutableCopying, NSObject,
 };
 
-__inner_extern_class! {
+extern_class! {
     // TODO: Ensure that this deref to NSArray is safe!
     // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
     #[derive(PartialEq, Eq, Hash)]

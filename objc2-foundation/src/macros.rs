@@ -1,46 +1,50 @@
 /// Create a new type to represent an Objective-C class.
 ///
-/// The given name should correspond to a valid Objective-C class, whose
-/// instances have the encoding `Encoding::Object` (as an example:
-/// `NSAutoreleasePool` does not have this).
+/// This is similar to an `@interface` declaration in Objective-C.
+///
+/// The given struct name should correspond to a valid Objective-C class,
+/// whose instances have the encoding [`objc2::Encoding::Object`].
+/// (as an example: `NSAutoreleasePool` does not have this!)
+///
+/// You must specify the superclass of this class, similar to how you would
+/// in Objective-C. Due to Rust trait limitations, specifying e.g. the
+/// superclass `NSData` would not give you easy access to `NSObject`'s
+/// functionality, therefore you may specify additional parts of the
+/// inheritance chain.
 ///
 ///
 /// # Specification
 ///
-/// This creates an opaque struct, and implements traits for it to allow
-/// easier usage as an Objective-C object.
+/// This creates an opaque struct containing the superclass (which means that
+/// auto traits are inherited from the superclass), and implements the
+/// following traits for it to allow easier usage as an Objective-C object:
 ///
-/// The traits [`objc2::RefEncode`] and [`objc2::Message`] are implemented to
-/// allow sending messages to the object and using it in [`objc2::rc::Id`].
+/// - [`objc2::RefEncode`]
+/// - [`objc2::Message`]
+/// - [`Deref<Target = $superclass>`][core::ops::Deref]
+/// - [`DerefMut`][core::ops::DerefMut]
+/// - [`AsRef<$inheritance_chain>`][AsRef]
+/// - [`AsMut<$inheritance_chain>`][AsMut]
+/// - [`Borrow<$inheritance_chain>`][core::borrow::Borrow]
+/// - [`BorrowMut<$inheritance_chain>`][core::borrow::BorrowMut]
 ///
 /// An associated function `class` is created on the object as a convenient
 /// shorthand so that you can do `MyObject::class()` instead of
 /// `class!(MyObject)`.
 ///
-/// [`Deref`] and [`DerefMut`] are implemented and delegate to the first
-/// superclass (direct parent). Auto traits are inherited from this superclass
-/// as well (this macro effectively just creates a newtype wrapper around the
-/// superclass).
+/// The macro allows specifying fields on the struct, but _only_ zero-sized
+/// types like [`PhantomData`] and [`objc2::declare::Ivar`] are allowed here!
 ///
-/// Finally, [`AsRef`], [`AsMut`], [`Borrow`] and [`BorrowMut`] are
-/// implemented to allow conversion to an arbitary superclasses in the
-/// inheritance chain (since an instance of a class can always be interpreted
-/// as its superclasses).
-///
-/// [`Deref`]: core::ops::Deref
-/// [`DerefMut`]: core::ops::DerefMut
-/// [`Borrow`]: core::borrow::Borrow
-/// [`BorrowMut`]: core::borrow::BorrowMut
+/// [`PhantomData`]: core::marker::PhantomData
 ///
 ///
 /// # Safety
 ///
-/// The specified inheritance chain must be correct, including in the correct
-/// order, and the types in said chain must be valid as Objective-C objects
-/// (this is easy to ensure by also creating those using this macro).
+/// The specified superclass must be correct. The object must also respond to
+/// standard memory management messages (this is upheld if `NSObject` is part
+/// of its inheritance chain).
 ///
-/// The object must respond to standard memory management messages (this is
-/// upheld if `NSObject` is part of its inheritance chain).
+/// Additionally, any fields (if specified) must be zero-sized.
 ///
 ///
 /// # Example
@@ -90,19 +94,33 @@
 /// ```
 ///
 /// See the source code of `objc2_foundation` in general for more examples.
+#[doc(alias = "@interface")]
 #[macro_export]
 macro_rules! extern_class {
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident: $($inheritance_chain:ty),+;
+        unsafe $v:vis struct $name:ident: $superclass:ty $(, $inheritance_rest:ty)*;
+    ) => {
+        $crate::extern_class! {
+            $(#[$m])*
+            unsafe $v struct $name: $superclass $(, $inheritance_rest)* {}
+        }
+    };
+    (
+        $(#[$m:meta])*
+        unsafe $v:vis struct $name:ident$(<$($t:ident $(: $b:ident)?),*>)?: $superclass:ty $(, $inheritance_rest:ty)* {
+            $($p:ident: $pty:ty,)*
+        }
     ) => {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
-            unsafe $v struct $name<>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {}
+            unsafe $v struct $name<$($($t $(: $b)?),*)?>: $superclass, $($inheritance_rest, )* $crate::objc2::runtime::Object {
+                $($p: $pty,)*
+            }
         }
 
-        impl $name {
+        impl$(<$($t $(: $b)?),*>)? $name$(<$($t),*>)? {
             #[doc = concat!(
                 "Get a reference to the Objective-C class `",
                 stringify!($name),
@@ -167,38 +185,10 @@ macro_rules! __impl_as_ref_borrow {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __inner_extern_class {
-    // TODO: Expose this variant in the `object` macro.
-    (
-        $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $($inheritance_chain:ty),+ {
-            $($p:ident: $pty:ty,)*
-        }
-    ) => {
-        $crate::__inner_extern_class! {
-            @__inner
-            $(#[$m])*
-            unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {
-                $($p: $pty,)*
-            }
-        }
-
-        impl<$($t $(: $b)?),*> $name<$($t),*> {
-            #[doc = concat!(
-                "Get a reference to the Objective-C class `",
-                stringify!($name),
-                "`.",
-            )]
-            #[inline]
-            // TODO: Allow users to configure this?
-            $v fn class() -> &'static $crate::objc2::runtime::Class {
-                $crate::objc2::class!($name)
-            }
-        }
-    };
     (
         @__inner
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $inherits:ty $(, $inheritance_rest:ty)* {
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $superclass:ty $(, $inheritance_rest:ty)* {
             $($p_v:vis $p:ident: $pty:ty,)*
         }
     ) => {
@@ -206,7 +196,7 @@ macro_rules! __inner_extern_class {
         // TODO: repr(transparent) when the inner pointer is no longer a ZST.
         #[repr(C)]
         $v struct $name<$($t $(: $b)?),*> {
-            __inner: $inherits,
+            __inner: $superclass,
             // Additional fields (should only be zero-sized PhantomData or ivars).
             $($p_v $p: $pty),*
         }
@@ -219,7 +209,7 @@ macro_rules! __inner_extern_class {
         //   the layout.
         unsafe impl<$($t $(: $b)?),*> $crate::objc2::RefEncode for $name<$($t),*> {
             const ENCODING_REF: $crate::objc2::Encoding<'static>
-                = <$inherits as $crate::objc2::RefEncode>::ENCODING_REF;
+                = <$superclass as $crate::objc2::RefEncode>::ENCODING_REF;
         }
 
         // SAFETY: This is essentially just a newtype wrapper over `Object`
@@ -249,7 +239,7 @@ macro_rules! __inner_extern_class {
         // the same object, `x: &T` and `y: &T::Target`, and this would be
         // perfectly safe!
         impl<$($t $(: $b)?),*> $crate::__core::ops::Deref for $name<$($t),*> {
-            type Target = $inherits;
+            type Target = $superclass;
 
             #[inline]
             fn deref(&self) -> &Self::Target {
@@ -289,6 +279,6 @@ macro_rules! __inner_extern_class {
             }
         }
 
-        $crate::__impl_as_ref_borrow!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
+        $crate::__impl_as_ref_borrow!($name<$($t $(: $b)?),*>, $superclass, $($inheritance_rest,)*);
     };
 }

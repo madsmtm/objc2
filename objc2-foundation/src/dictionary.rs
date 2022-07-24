@@ -9,9 +9,9 @@ use core::ptr;
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
 use objc2::{msg_send, msg_send_id, Message};
 
-use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject, __inner_extern_class};
+use super::{extern_class, NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
 
-__inner_extern_class! {
+extern_class! {
     #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSDictionary<K, V>: NSObject {
         key: PhantomData<Id<K, Shared>>,

@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSData` and `NSMutableData`.
 * Implemented `Extend` for `NSMutableArray`.
 * Add extra `Extend<&u8>` impl for `NSMutableData`.
+* Exposed generic version of `extern_class!` macro.
 
 ### Fixed
 * Made `Debug` impls for all objects print something useful.

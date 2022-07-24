@@ -10,11 +10,11 @@ use objc2::Message;
 use objc2::{msg_send, msg_send_id};
 
 use crate::{
-    NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableArray, NSMutableCopying,
-    NSObject, NSRange, __inner_extern_class,
+    extern_class, NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableArray,
+    NSMutableCopying, NSObject, NSRange,
 };
 
-__inner_extern_class! {
+extern_class! {
     /// TODO
     ///
     /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access

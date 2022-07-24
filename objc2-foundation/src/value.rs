@@ -13,9 +13,9 @@ use objc2::rc::{DefaultId, Id, Shared};
 use objc2::Encode;
 use objc2::{msg_send, msg_send_id};
 
-use super::{NSCopying, NSObject, __inner_extern_class};
+use super::{extern_class, NSCopying, NSObject};
 
-__inner_extern_class! {
+extern_class! {
     // `T: Eq` bound to prevent `NSValue<f32>` from being `Eq`
     // (even though `[NAN isEqual: NAN]` is true in Objective-C).
     #[derive(PartialEq, Eq, Hash)]
