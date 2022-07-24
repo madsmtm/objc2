@@ -638,6 +638,8 @@ macro_rules! __inner_declare_class {
 /// ```
 ///
 /// [`extern_class!`]: crate::extern_class
+#[doc(alias = "@interface")]
+#[doc(alias = "@implementation")]
 #[macro_export]
 macro_rules! declare_class {
     {
