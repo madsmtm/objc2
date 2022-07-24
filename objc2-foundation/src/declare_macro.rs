@@ -7,8 +7,7 @@ macro_rules! __inner_declare_class {
         @$output_type:ident
         @$builder:ident
 
-        $(#[$m:meta])*
-        @sel($($sel:tt)+)
+        $(#[$($m:tt)*])*
         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
 
         $($rest:tt)*
@@ -21,8 +20,7 @@ macro_rules! __inner_declare_class {
             // it as a function argument
             ($($args)*)
 
-            $(#[$m])*
-            @sel($($sel)+)
+            $(#[$($m)*])*
             fn $name($($args)*) $(-> $ret)? $body
         }
 
@@ -42,8 +40,7 @@ macro_rules! __inner_declare_class {
         @$builder:ident
         (&mut self $($__rest_args:tt)*)
 
-        $(#[$m:meta])*
-        @sel($($sel:tt)+)
+        $(#[$($m:tt)*])*
         fn $name:ident(
             &mut $self:ident
             $(, $($rest_args:tt)*)?
@@ -52,12 +49,11 @@ macro_rules! __inner_declare_class {
         $crate::__inner_declare_class! {
             @$output_type
             @instance_method
-            @sel($($sel)*)
             @$name
             @$builder
             @($($($rest_args)*)?)
 
-            $(#[$m])*
+            $(#[$($m)*])*
             extern "C" fn $name(
                 &mut $self,
                 _: $crate::objc2::runtime::Sel,
@@ -71,8 +67,7 @@ macro_rules! __inner_declare_class {
         @$builder:ident
         (&self $($__rest_args:tt)*)
 
-        $(#[$m:meta])*
-        @sel($($sel:tt)+)
+        $(#[$($m:tt)*])*
         fn $name:ident(
             &$self:ident
             $(, $($rest_args:tt)*)?
@@ -81,12 +76,11 @@ macro_rules! __inner_declare_class {
         $crate::__inner_declare_class! {
             @$output_type
             @instance_method
-            @sel($($sel)*)
             @$name
             @$builder
             @($($($rest_args)*)?)
 
-            $(#[$m])*
+            $(#[$($m)*])*
             extern "C" fn $name(
                 &$self,
                 _: $crate::objc2::runtime::Sel,
@@ -103,8 +97,7 @@ macro_rules! __inner_declare_class {
             $(, $($__rest_args:tt)*)?
         )
 
-        $(#[$m:meta])*
-        @sel($($sel:tt)+)
+        $(#[$($m:tt)*])*
         fn $name:ident(
             mut $self:ident: $self_ty:ty
             $(, $($rest_args:tt)*)?
@@ -113,12 +106,11 @@ macro_rules! __inner_declare_class {
         $crate::__inner_declare_class! {
             @$output_type
             @instance_method
-            @sel($($sel)*)
             @$name
             @$builder
             @($($($rest_args)*)?)
 
-            $(#[$m])*
+            $(#[$($m)*])*
             extern "C" fn $name(
                 mut $self: $self_ty,
                 _: $crate::objc2::runtime::Sel,
@@ -135,8 +127,7 @@ macro_rules! __inner_declare_class {
             $(, $($__rest_args:tt)*)?
         )
 
-        $(#[$m:meta])*
-        @sel($($sel:tt)+)
+        $(#[$($m:tt)*])*
         fn $name:ident(
             $self:ident: $self_ty:ty
             $(, $($rest_args:tt)*)?
@@ -145,12 +136,11 @@ macro_rules! __inner_declare_class {
         $crate::__inner_declare_class! {
             @$output_type
             @instance_method
-            @sel($($sel)*)
             @$name
             @$builder
             @($($($rest_args)*)?)
 
-            $(#[$m])*
+            $(#[$($m)*])*
             extern "C" fn $name(
                 $self: $self_ty,
                 _: $crate::objc2::runtime::Sel,
@@ -166,8 +156,7 @@ macro_rules! __inner_declare_class {
         @$builder:ident
         ($($__args:tt)*)
 
-        $(#[$m:meta])*
-        @sel($($sel:tt)+)
+        $(#[$($m:tt)*])*
         fn $name:ident(
             $($args:tt)*
         ) $(-> $ret:ty)? $body:block
@@ -175,12 +164,11 @@ macro_rules! __inner_declare_class {
         $crate::__inner_declare_class! {
             @$output_type
             @class_method
-            @sel($($sel)*)
             @$name
             @$builder
             @($($args)*)
 
-            $(#[$m])*
+            $(#[$($m)*])*
             extern "C" fn $name(
                 _: &$crate::objc2::runtime::Class,
                 _: $crate::objc2::runtime::Sel,
@@ -192,27 +180,35 @@ macro_rules! __inner_declare_class {
     {
         @method_out
         @$method_type:ident
-        @sel($($sel:tt)*)
-        @$name:ident
+        @$_name:ident
         @$builder:ident
         @($($builder_args:tt)*)
 
-        $method:item
+        $(#[$($m:tt)*])*
+        extern "C" fn $($fn:tt)*
     } => {
-        $method
+        $crate::__attribute_helper! {
+            @strip_sel
+            $(@[$($m)*])*
+            (extern "C" fn $($fn)*)
+        }
     };
+
     {
         @register_out
         @class_method
-        @sel($($sel:tt)*)
         @$name:ident
         @$builder:ident
         @($($builder_args:tt)*)
 
-        $method:item
+        $(#[$($m:tt)*])*
+        extern "C" fn $($fn:tt)*
     } => {
         $builder.add_class_method(
-            $crate::objc2::sel!($($sel)*),
+            $crate::__attribute_helper! {
+                @extract_sel
+                $(#[$($m)*])*
+            },
             $crate::__inner_declare_class! {
                 @cast_extern_fn
                 @$name
@@ -223,15 +219,18 @@ macro_rules! __inner_declare_class {
     {
         @register_out
         @instance_method
-        @sel($($sel:tt)*)
         @$name:ident
         @$builder:ident
         @($($builder_args:tt)*)
 
-        $method:item
+        $(#[$($m:tt)*])*
+        extern "C" fn $($fn:tt)*
     } => {
         $builder.add_method(
-            $crate::objc2::sel!($($sel)*),
+            $crate::__attribute_helper! {
+                @extract_sel
+                $(#[$($m)*])*
+            },
             $crate::__inner_declare_class! {
                 @cast_extern_fn
                 @$name
@@ -454,8 +453,8 @@ macro_rules! __inner_declare_class {
 /// particular, if you use `self` your method will be registered as an
 /// instance method, and if you don't it will be registered as a class method.
 ///
-/// The desired selector can be specified using a special `@sel(my:selector:)`
-/// directive directly before the function definition.
+/// The desired selector can be specified using the `#[sel(my:selector:)]`
+/// attribute.
 ///
 /// A transformation step is performed on the functions (to make them have the
 /// correct ABI) and hence they shouldn't really be called manually. (You
@@ -520,7 +519,7 @@ macro_rules! __inner_declare_class {
 ///     }
 ///
 ///     unsafe impl {
-///         @sel(initWithFoo:)
+///         #[sel(initWithFoo:)]
 ///         fn init_with(&mut self, foo: u8) -> Option<&mut Self> {
 ///             let this: Option<&mut Self> = unsafe {
 ///                 msg_send![super(self, NSObject::class()), init]
@@ -535,19 +534,19 @@ macro_rules! __inner_declare_class {
 ///             })
 ///         }
 ///
-///         @sel(foo)
+///         #[sel(foo)]
 ///         fn __get_foo(&self) -> u8 {
 ///             *self.foo
 ///         }
 ///
-///         @sel(myClassMethod)
+///         #[sel(myClassMethod)]
 ///         fn __my_class_method() -> Bool {
 ///             Bool::YES
 ///         }
 ///     }
 ///
 ///     unsafe impl protocol NSCopying {
-///         @sel(copyWithZone:)
+///         #[sel(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
 ///             let mut obj = Self::new(*self.foo);
 ///             *obj.bar = *self.bar;

@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Implemented `Extend` for `NSMutableArray`.
 * Add extra `Extend<&u8>` impl for `NSMutableData`.
 
+### Changed
+* Change selector syntax in `declare_class!` macro to be more Rust-like.
+
 ### Fixed
 * Made `Debug` impls for all objects print something useful.
 
