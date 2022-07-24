@@ -20,7 +20,7 @@ declare_class! {
     }
 
     unsafe impl {
-        @sel(initWith:another:)
+        #[sel(initWith:another:)]
         fn init_with(
             self: &mut Self,
             ivar: u8,
@@ -37,7 +37,7 @@ declare_class! {
             this
         }
 
-        @sel(myClassMethod)
+        #[sel(myClassMethod)]
         fn my_class_method() {
             println!("A class method!");
         }
@@ -49,12 +49,14 @@ declare_class! {
     //
     // TODO: Investigate this!
     unsafe impl {
-        @sel(applicationDidFinishLaunching:)
+        #[sel(applicationDidFinishLaunching:)]
         fn did_finish_launching(&self, _sender: *mut Object) {
             println!("Did finish launching!");
         }
 
-        @sel(applicationWillTerminate:)
+        /// Some comment before `sel`.
+        #[sel(applicationWillTerminate:)]
+        /// Some comment after `sel`.
         fn will_terminate(&self, _: *mut Object) {
             println!("Will terminate!");
         }

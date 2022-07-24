@@ -292,3 +292,98 @@ macro_rules! __inner_extern_class {
         $crate::__impl_as_ref_borrow!($name<$($t $(: $b)?),*>, $inherits, $($inheritance_rest,)*);
     };
 }
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __attribute_helper {
+    // Convert a set of attributes described with `@[...]` to `#[...]`, while
+    // parsing out the `sel(...)` attribute.
+    {
+        @strip_sel
+        @[sel($($_sel_args:tt)*)]
+        $(@[$($m_rest:tt)*])*
+
+        $(#[$($m:tt)*])*
+        ($($fn:tt)*)
+    } => {
+        $crate::__attribute_helper! {
+            @strip_sel
+            $(@[$($m_rest)*])*
+
+            $(#[$($m)*])*
+            ($($fn)*)
+        }
+    };
+    {
+        @strip_sel
+        @[$($m_checked:tt)*]
+        $(@[$($m_rest:tt)*])*
+
+        $(#[$($m:tt)*])*
+        ($($fn:tt)*)
+    } => {
+        $crate::__attribute_helper! {
+            @strip_sel
+            $(@[$($m_rest)*])*
+
+            $(#[$($m)*])*
+            #[$($m_checked)*]
+            ($($fn)*)
+        }
+    };
+    {
+        @strip_sel
+        $(#[$($m:tt)*])*
+        ($($fn:tt)*)
+    } => {
+        $(#[$($m)*])*
+        $($fn)*
+    };
+
+    // Extract and convert the `#[sel(...)]` attribute to a `sel!` invocation.
+    {
+        @extract_sel
+        #[sel($($sel:tt)*)]
+        $($rest:tt)*
+    } => {{
+        $crate::__attribute_helper! {
+            @extract_sel_duplicate
+            $($rest)*
+        }
+
+        $crate::objc2::sel!($($sel)*)
+    }};
+    {
+        @extract_sel
+        #[$($m_checked:tt)*]
+        $($rest:tt)*
+    } => {{
+        $crate::__attribute_helper! {
+            @extract_sel
+            $($rest)*
+        }
+    }};
+    {@extract_sel} => {{
+        compile_error!("Must specify the desired selector using `#[sel(...)]`");
+    }};
+
+    {
+        @extract_sel_duplicate
+        #[sel($($_sel_args:tt)*)]
+        $($rest:tt)*
+    } => {{
+        compile_error!("Cannot not specify a selector twice!");
+    }};
+    {
+        @extract_sel_duplicate
+        #[$($m_checked:tt)*]
+        $($rest:tt)*
+    } => {{
+        $crate::__attribute_helper! {
+            @extract_sel_duplicate
+            $($rest)*
+        }
+    }};
+    {@extract_sel_duplicate} => {};
+
+}
