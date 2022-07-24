@@ -391,3 +391,142 @@ macro_rules! __attribute_helper {
     {@extract_sel_duplicate} => {};
 
 }
+
+/// Create an `extern "C" fn(_, _, ...) -> _` type.
+///
+/// TODO: Investigate if there's a better way of doing this.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_fn_ptr {
+    {
+        $(,)?
+    } => {
+        extern "C" fn(_, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty,
+        $($param9:ident)? $(_)?: $param9_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _, _, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty,
+        $($param9:ident)? $(_)?: $param9_ty:ty,
+        $($param10:ident)? $(_)?: $param10_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty,
+        $($param9:ident)? $(_)?: $param9_ty:ty,
+        $($param10:ident)? $(_)?: $param10_ty:ty,
+        $($param11:ident)? $(_)?: $param11_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _, _) -> _
+    };
+    {
+        $($param1:ident)? $(_)?: $param1_ty:ty,
+        $($param2:ident)? $(_)?: $param2_ty:ty,
+        $($param3:ident)? $(_)?: $param3_ty:ty,
+        $($param4:ident)? $(_)?: $param4_ty:ty,
+        $($param5:ident)? $(_)?: $param5_ty:ty,
+        $($param6:ident)? $(_)?: $param6_ty:ty,
+        $($param7:ident)? $(_)?: $param7_ty:ty,
+        $($param8:ident)? $(_)?: $param8_ty:ty,
+        $($param9:ident)? $(_)?: $param9_ty:ty,
+        $($param10:ident)? $(_)?: $param10_ty:ty,
+        $($param11:ident)? $(_)?: $param11_ty:ty,
+        $($param12:ident)? $(_)?: $param12_ty:ty $(,)?
+    } => {
+        extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _, _, _) -> _
+    };
+}
