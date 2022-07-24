@@ -3,11 +3,12 @@
 macro_rules! __inner_declare_class {
     {@rewrite_methods @($($output:tt)*)} => {};
     {
+        // Unsafe variant
         @rewrite_methods
         @($($output:tt)*)
 
         $(#[$($m:tt)*])*
-        fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+        unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
 
         $($rest:tt)*
     } => {
@@ -21,6 +22,38 @@ macro_rules! __inner_declare_class {
             // be used later on
             @($($args)*)
             @($(#[$($m)*])*)
+            @(unsafe extern "C")
+            @($name)
+            @($($ret)?)
+            @($body)
+
+            #($($output)*)
+        }
+
+        $crate::__inner_declare_class! {
+            @rewrite_methods
+            @($($output)*)
+
+            $($rest)*
+        }
+    };
+    {
+        // Safe variant
+        @rewrite_methods
+        @($($output:tt)*)
+
+        $(#[$($m:tt)*])*
+        fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__inner_declare_class! {
+            @rewrite_self_arg
+
+            @($($args)*)
+            @($($args)*)
+            @($(#[$($m)*])*)
+            @(extern "C")
             @($name)
             @($($ret)?)
             @($body)
@@ -145,15 +178,15 @@ macro_rules! __inner_declare_class {
         @($($_kind:tt)*)
         @($($args:tt)*)
         @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
         @($name:ident)
         @($($ret:ty)?)
         @($($body:tt)*)
-        $($x:tt)*
     } => {
         $crate::__attribute_helper! {
             @strip_sel
             $(@[$($m)*])*
-            (extern "C" fn $name($($args)*) $(-> $ret)? $($body)*)
+            ($($qualifiers)* fn $name($($args)*) $(-> $ret)? $($body)*)
         }
     };
 
@@ -162,6 +195,7 @@ macro_rules! __inner_declare_class {
         @(class_method)
         @($($args:tt)*)
         @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
         @($name:ident)
         @($($_ret:tt)*)
         @($($_body:tt)*)
@@ -171,8 +205,8 @@ macro_rules! __inner_declare_class {
                 @extract_sel
                 $(#[$($m)*])*
             },
-            Self::$name as $crate::__extern_fn_ptr! {
-                $($args)*
+            Self::$name as $crate::__fn_ptr! {
+                @($($qualifiers)*) $($args)*
             },
         );
     };
@@ -181,6 +215,7 @@ macro_rules! __inner_declare_class {
         @(instance_method)
         @($($args:tt)*)
         @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
         @($name:ident)
         @($($_ret:tt)*)
         @($($_body:tt)*)
@@ -190,8 +225,8 @@ macro_rules! __inner_declare_class {
                 @extract_sel
                 $(#[$($m)*])*
             },
-            Self::$name as $crate::__extern_fn_ptr! {
-                $($args)*
+            Self::$name as $crate::__fn_ptr! {
+                @($($qualifiers)*) $($args)*
             },
         );
     };
