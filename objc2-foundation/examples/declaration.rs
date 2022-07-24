@@ -49,9 +49,12 @@ declare_class! {
     //
     // TODO: Investigate this!
     unsafe impl {
+        /// This is `unsafe` because it expects `sender` to be valid
         #[sel(applicationDidFinishLaunching:)]
-        fn did_finish_launching(&self, _sender: *mut Object) {
+        unsafe fn did_finish_launching(&self, sender: *mut Object) {
             println!("Did finish launching!");
+            // Do something with `sender`
+            dbg!(sender);
         }
 
         /// Some comment before `sel`.

@@ -1,11 +1,46 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __inner_declare_class {
-    {@rewrite_methods @$output_type:ident @$builder:ident} => {};
+    {@rewrite_methods @($($output:tt)*)} => {};
     {
+        // Unsafe variant
         @rewrite_methods
-        @$output_type:ident
-        @$builder:ident
+        @($($output:tt)*)
+
+        $(#[$($m:tt)*])*
+        unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__inner_declare_class! {
+            @rewrite_self_arg
+
+            // Duplicate args out so that we can match on `self`, while still
+            // use it as a function argument
+            @($($args)*)
+            // Split the function into parts, and send the arguments down to
+            // be used later on
+            @($($args)*)
+            @($(#[$($m)*])*)
+            @(unsafe extern "C")
+            @($name)
+            @($($ret)?)
+            @($body)
+
+            #($($output)*)
+        }
+
+        $crate::__inner_declare_class! {
+            @rewrite_methods
+            @($($output)*)
+
+            $($rest)*
+        }
+    };
+    {
+        // Safe variant
+        @rewrite_methods
+        @($($output:tt)*)
 
         $(#[$($m:tt)*])*
         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
@@ -13,21 +48,22 @@ macro_rules! __inner_declare_class {
         $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @rewrite_methods_inner
-            @$output_type
-            @$builder
-            // Split args out so that we can match on `self`, while still use
-            // it as a function argument
-            ($($args)*)
+            @rewrite_self_arg
 
-            $(#[$($m)*])*
-            fn $name($($args)*) $(-> $ret)? $body
+            @($($args)*)
+            @($($args)*)
+            @($(#[$($m)*])*)
+            @(extern "C")
+            @($name)
+            @($($ret)?)
+            @($body)
+
+            #($($output)*)
         }
 
         $crate::__inner_declare_class! {
             @rewrite_methods
-            @$output_type
-            @$builder
+            @($($output)*)
 
             $($rest)*
         }
@@ -35,382 +71,164 @@ macro_rules! __inner_declare_class {
 
     // Instance method
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        (&mut self $($__rest_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            &mut $self:ident
-            $(, $($rest_args:tt)*)?
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @(&mut self $($__rest_args:tt)*)
+        @(&mut $self:ident $(, $($rest_args:tt)*)?)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @instance_method
-            @$name
-            @$builder
-            @($($($rest_args)*)?)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
-                &mut $self,
+            @dispatch
+            @(instance_method)
+            @(
+                $self: &mut Self,
                 _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
         }
     };
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        (&self $($__rest_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            &$self:ident
-            $(, $($rest_args:tt)*)?
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @(&self $($__rest_args:tt)*)
+        @(&$self:ident $(, $($rest_args:tt)*)?)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @instance_method
-            @$name
-            @$builder
-            @($($($rest_args)*)?)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
-                &$self,
+            @dispatch
+            @(instance_method)
+            @(
+                $self: &Self,
                 _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
         }
     };
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        (
-            mut self: $__self_ty:ty
-            $(, $($__rest_args:tt)*)?
-        )
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            mut $self:ident: $self_ty:ty
-            $(, $($rest_args:tt)*)?
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @(mut self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
+        @(mut $self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @instance_method
-            @$name
-            @$builder
-            @($($($rest_args)*)?)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
+            @dispatch
+            @(instance_method)
+            @(
                 mut $self: $self_ty,
                 _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
         }
     };
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        (
-            self: $__self_ty:ty
-            $(, $($__rest_args:tt)*)?
-        )
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            $self:ident: $self_ty:ty
-            $(, $($rest_args:tt)*)?
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @(self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
+        @($self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @instance_method
-            @$name
-            @$builder
-            @($($($rest_args)*)?)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
+            @dispatch
+            @(instance_method)
+            @(
                 $self: $self_ty,
                 _: $crate::objc2::runtime::Sel,
                 $($($rest_args)*)?
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
         }
     };
-
     // Class method
     {
-        @rewrite_methods_inner
-        @$output_type:ident
-        @$builder:ident
-        ($($__args:tt)*)
-
-        $(#[$($m:tt)*])*
-        fn $name:ident(
-            $($args:tt)*
-        ) $(-> $ret:ty)? $body:block
+        @rewrite_self_arg
+        @($($__args:tt)*)
+        @($($args:tt)*)
+        $($rest:tt)*
     } => {
         $crate::__inner_declare_class! {
-            @$output_type
-            @class_method
-            @$name
-            @$builder
-            @($($args)*)
-
-            $(#[$($m)*])*
-            extern "C" fn $name(
+            @dispatch
+            @(class_method)
+            @(
                 _: &$crate::objc2::runtime::Class,
                 _: $crate::objc2::runtime::Sel,
                 $($args)*
-            ) $(-> $ret)? $body
+            )
+            $($rest)*
+        }
+    };
+
+    {
+        @dispatch
+        $(
+            @($($items:tt)*)
+        )*
+
+        #($($output:tt)*)
+    } => {
+        $crate::__inner_declare_class! {
+            @$($output)*
+            $(
+                @($($items)*)
+            )*
         }
     };
 
     {
         @method_out
-        @$method_type:ident
-        @$_name:ident
-        @$builder:ident
-        @($($builder_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        extern "C" fn $($fn:tt)*
+        @($($_kind:tt)*)
+        @($($args:tt)*)
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @($($ret:ty)?)
+        @($($body:tt)*)
     } => {
         $crate::__attribute_helper! {
             @strip_sel
             $(@[$($m)*])*
-            (extern "C" fn $($fn)*)
+            ($($qualifiers)* fn $name($($args)*) $(-> $ret)? $($body)*)
         }
     };
 
     {
-        @register_out
-        @class_method
-        @$name:ident
-        @$builder:ident
-        @($($builder_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        extern "C" fn $($fn:tt)*
+        @register_out($builder:ident)
+        @(class_method)
+        @($($args:tt)*)
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @($($_ret:tt)*)
+        @($($_body:tt)*)
     } => {
         $builder.add_class_method(
             $crate::__attribute_helper! {
                 @extract_sel
                 $(#[$($m)*])*
             },
-            $crate::__inner_declare_class! {
-                @cast_extern_fn
-                @$name
-                $($builder_args)*
+            Self::$name as $crate::__fn_ptr! {
+                @($($qualifiers)*) $($args)*
             },
         );
     };
     {
-        @register_out
-        @instance_method
-        @$name:ident
-        @$builder:ident
-        @($($builder_args:tt)*)
-
-        $(#[$($m:tt)*])*
-        extern "C" fn $($fn:tt)*
+        @register_out($builder:ident)
+        @(instance_method)
+        @($($args:tt)*)
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @($($_ret:tt)*)
+        @($($_body:tt)*)
     } => {
         $builder.add_method(
             $crate::__attribute_helper! {
                 @extract_sel
                 $(#[$($m)*])*
             },
-            $crate::__inner_declare_class! {
-                @cast_extern_fn
-                @$name
-                $($builder_args)*
+            Self::$name as $crate::__fn_ptr! {
+                @($($qualifiers)*) $($args)*
             },
         );
-    };
-
-    // Create the `as extern "C" fn(...) -> _` cast
-    //
-    // TODO: Investigate if there's a better way of doing this
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty,
-        $($param5:ident)? $(_)?: $param5_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty,
-        $($param5:ident)? $(_)?: $param5_ty:ty,
-        $($param6:ident)? $(_)?: $param6_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty,
-        $($param5:ident)? $(_)?: $param5_ty:ty,
-        $($param6:ident)? $(_)?: $param6_ty:ty,
-        $($param7:ident)? $(_)?: $param7_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty,
-        $($param5:ident)? $(_)?: $param5_ty:ty,
-        $($param6:ident)? $(_)?: $param6_ty:ty,
-        $($param7:ident)? $(_)?: $param7_ty:ty,
-        $($param8:ident)? $(_)?: $param8_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty,
-        $($param5:ident)? $(_)?: $param5_ty:ty,
-        $($param6:ident)? $(_)?: $param6_ty:ty,
-        $($param7:ident)? $(_)?: $param7_ty:ty,
-        $($param8:ident)? $(_)?: $param8_ty:ty,
-        $($param9:ident)? $(_)?: $param9_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty,
-        $($param5:ident)? $(_)?: $param5_ty:ty,
-        $($param6:ident)? $(_)?: $param6_ty:ty,
-        $($param7:ident)? $(_)?: $param7_ty:ty,
-        $($param8:ident)? $(_)?: $param8_ty:ty,
-        $($param9:ident)? $(_)?: $param9_ty:ty,
-        $($param10:ident)? $(_)?: $param10_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty,
-        $($param5:ident)? $(_)?: $param5_ty:ty,
-        $($param6:ident)? $(_)?: $param6_ty:ty,
-        $($param7:ident)? $(_)?: $param7_ty:ty,
-        $($param8:ident)? $(_)?: $param8_ty:ty,
-        $($param9:ident)? $(_)?: $param9_ty:ty,
-        $($param10:ident)? $(_)?: $param10_ty:ty,
-        $($param11:ident)? $(_)?: $param11_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _, _) -> _
-    };
-    {
-        @cast_extern_fn
-        @$name:ident
-
-        $($param1:ident)? $(_)?: $param1_ty:ty,
-        $($param2:ident)? $(_)?: $param2_ty:ty,
-        $($param3:ident)? $(_)?: $param3_ty:ty,
-        $($param4:ident)? $(_)?: $param4_ty:ty,
-        $($param5:ident)? $(_)?: $param5_ty:ty,
-        $($param6:ident)? $(_)?: $param6_ty:ty,
-        $($param7:ident)? $(_)?: $param7_ty:ty,
-        $($param8:ident)? $(_)?: $param8_ty:ty,
-        $($param9:ident)? $(_)?: $param9_ty:ty,
-        $($param10:ident)? $(_)?: $param10_ty:ty,
-        $($param11:ident)? $(_)?: $param11_ty:ty,
-        $($param12:ident)? $(_)?: $param12_ty:ty $(,)?
-    } => {
-        Self::$name as extern "C" fn(_, _, _, _, _, _, _, _, _, _, _, _, _, _) -> _
     };
 }
 
@@ -727,8 +545,7 @@ macro_rules! declare_class {
                         unsafe {
                             $crate::__inner_declare_class! {
                                 @rewrite_methods
-                                @register_out
-                                @builder
+                                @(register_out(builder))
 
                                 $($methods)*
                             }
@@ -748,8 +565,7 @@ macro_rules! declare_class {
             impl $name {
                 $crate::__inner_declare_class! {
                     @rewrite_methods
-                    @method_out
-                    @__builder
+                    @(method_out)
 
                     $($methods)*
                 }
