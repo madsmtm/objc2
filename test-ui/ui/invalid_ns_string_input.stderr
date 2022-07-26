@@ -1,0 +1,38 @@
+error[E0308]: mismatched types
+  --> ui/invalid_ns_string_input.rs
+   |
+   |     let _ = ns_string!(1u8);
+   |             -----------^^^-
+   |             |          |
+   |             |          expected `&str`, found `u8`
+   |             arguments to this function are incorrect
+   |
+note: function defined here
+  --> $WORKSPACE/objc2-foundation/src/__string_macro.rs
+   |
+   | pub const fn trim_trailing_nul(s: &str) -> &[u8] {
+   |              ^^^^^^^^^^^^^^^^^
+
+error[E0080]: evaluation of constant value failed
+ --> ui/invalid_ns_string_input.rs
+  |
+  |     let _ = ns_string!(1u8);
+  |             ^^^^^^^^^^^^^^^ referenced constant has errors
+  |
+  = note: this error originates in the macro `ns_string` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0080]: evaluation of constant value failed
+ --> ui/invalid_ns_string_input.rs
+  |
+  |     let _ = ns_string!(1u8);
+  |             ^^^^^^^^^^^^^^^ referenced constant has errors
+  |
+  = note: this error originates in the macro `ns_string` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0080]: evaluation of constant value failed
+ --> ui/invalid_ns_string_input.rs
+  |
+  |     let _ = ns_string!(1u8);
+  |             ^^^^^^^^^^^^^^^ referenced constant has errors
+  |
+  = note: this error originates in the macro `ns_string` (in Nightly builds, run with -Z macro-backtrace for more info)
