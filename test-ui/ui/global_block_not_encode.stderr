@@ -1,9 +1,9 @@
 error[E0277]: the trait bound `Box<i32>: objc2_encode::encode::Encode` is not satisfied
- --> ui/global_block_not_encode.rs:3:1
+ --> ui/global_block_not_encode.rs
   |
-3 | / global_block! {
-4 | |     pub static BLOCK = |_b: Box<i32>| {};
-5 | | }
+  | / global_block! {
+  | |     pub static BLOCK = |_b: Box<i32>| {};
+  | | }
   | |_^ the trait `objc2_encode::encode::Encode` is not implemented for `Box<i32>`
   |
   = help: the following other types implement trait `objc2_encode::encode::Encode`:

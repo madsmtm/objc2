@@ -1,7 +1,7 @@
 error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
-   --> ui/msg_send_not_encode.rs:7:26
+   --> ui/msg_send_not_encode.rs
     |
-7   |         let _: Vec<u8> = msg_send![cls, new];
+    |         let _: Vec<u8> = msg_send![cls, new];
     |                          ^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`
     |
     = help: the following other types implement trait `Encode`:
@@ -22,9 +22,9 @@ note: required by a bound in `send_message`
     = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
-   --> ui/msg_send_not_encode.rs:10:21
+   --> ui/msg_send_not_encode.rs
     |
-10  |         let _: () = msg_send![cls, newWith: x];
+    |         let _: () = msg_send![cls, newWith: x];
     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`
     |
     = help: the following other types implement trait `Encode`:

@@ -1,17 +1,17 @@
 error: unexpected end of macro invocation
- --> ui/invalid_sel.rs:5:5
+ --> ui/invalid_sel.rs
   |
-5 |     sel!();
+  |     sel!();
   |     ^^^^^^ missing tokens in macro arguments
 
 error: unexpected end of macro invocation
- --> ui/invalid_sel.rs:6:14
+ --> ui/invalid_sel.rs
   |
-6 |     sel!(a: b);
+  |     sel!(a: b);
   |              ^ missing tokens in macro arguments
 
 error: unexpected end of macro invocation
- --> ui/invalid_sel.rs:7:17
+ --> ui/invalid_sel.rs
   |
-7 |     sel!(a: b: c);
+  |     sel!(a: b: c);
   |                 ^ missing tokens in macro arguments

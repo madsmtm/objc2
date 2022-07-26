@@ -1,7 +1,7 @@
 error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
- --> ui/nsarray_bound_not_send_sync.rs:9:5
+ --> ui/nsarray_bound_not_send_sync.rs
   |
-9 |     needs_sync::<NSArray<Object, Shared>>();
+  |     needs_sync::<NSArray<Object, Shared>>();
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `objc2::runtime::Object`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
@@ -9,15 +9,15 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   = note: required because it appears within the type `objc2::runtime::Object`
   = note: required because of the requirements on the impl of `Sync` for `NSArray<objc2::runtime::Object, Shared>`
 note: required by a bound in `needs_sync`
- --> ui/nsarray_bound_not_send_sync.rs:5:27
+ --> ui/nsarray_bound_not_send_sync.rs
   |
-5 | fn needs_sync<T: ?Sized + Sync>() {}
+  | fn needs_sync<T: ?Sized + Sync>() {}
   |                           ^^^^ required by this bound in `needs_sync`
 
 error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
- --> ui/nsarray_bound_not_send_sync.rs:9:5
+ --> ui/nsarray_bound_not_send_sync.rs
   |
-9 |     needs_sync::<NSArray<Object, Shared>>();
+  |     needs_sync::<NSArray<Object, Shared>>();
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
   = help: within `objc2::runtime::Object`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
@@ -28,15 +28,15 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   = note: required because it appears within the type `objc2::runtime::Object`
   = note: required because of the requirements on the impl of `Sync` for `NSArray<objc2::runtime::Object, Shared>`
 note: required by a bound in `needs_sync`
- --> ui/nsarray_bound_not_send_sync.rs:5:27
+ --> ui/nsarray_bound_not_send_sync.rs
   |
-5 | fn needs_sync<T: ?Sized + Sync>() {}
+  | fn needs_sync<T: ?Sized + Sync>() {}
   |                           ^^^^ required by this bound in `needs_sync`
 
 error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
-  --> ui/nsarray_bound_not_send_sync.rs:10:5
+  --> ui/nsarray_bound_not_send_sync.rs
    |
-10 |     needs_send::<NSArray<Object, Shared>>();
+   |     needs_send::<NSArray<Object, Shared>>();
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
    |
    = help: within `objc2::runtime::Object`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
@@ -44,15 +44,15 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
    = note: required because it appears within the type `objc2::runtime::Object`
    = note: required because of the requirements on the impl of `Send` for `NSArray<objc2::runtime::Object, Shared>`
 note: required by a bound in `needs_send`
-  --> ui/nsarray_bound_not_send_sync.rs:6:27
+  --> ui/nsarray_bound_not_send_sync.rs
    |
-6  | fn needs_send<T: ?Sized + Send>() {}
+   | fn needs_send<T: ?Sized + Send>() {}
    |                           ^^^^ required by this bound in `needs_send`
 
 error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
-  --> ui/nsarray_bound_not_send_sync.rs:10:5
+  --> ui/nsarray_bound_not_send_sync.rs
    |
-10 |     needs_send::<NSArray<Object, Shared>>();
+   |     needs_send::<NSArray<Object, Shared>>();
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
    |
    = help: within `objc2::runtime::Object`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
@@ -63,7 +63,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
    = note: required because it appears within the type `objc2::runtime::Object`
    = note: required because of the requirements on the impl of `Send` for `NSArray<objc2::runtime::Object, Shared>`
 note: required by a bound in `needs_send`
-  --> ui/nsarray_bound_not_send_sync.rs:6:27
+  --> ui/nsarray_bound_not_send_sync.rs
    |
-6  | fn needs_send<T: ?Sized + Send>() {}
+   | fn needs_send<T: ?Sized + Send>() {}
    |                           ^^^^ required by this bound in `needs_send`
