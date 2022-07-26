@@ -9,9 +9,12 @@
 //! generating a pure `NSString`. We don't support that yet (since I don't
 //! know the use-case), but we definitely could!
 //! See: <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L2007-L2068>
-#![cfg(feature = "apple")]
 use core::ffi::c_void;
+use core::mem::ManuallyDrop;
+use core::ptr;
+use core::sync::atomic::{AtomicPtr, Ordering};
 
+use objc2::rc::Id;
 use objc2::runtime::Class;
 
 use crate::NSString;
@@ -89,9 +92,16 @@ impl CFConstString {
     }
 
     #[inline]
-    pub const fn as_nsstring(&self) -> &NSString {
+    pub const fn as_nsstring_const(&self) -> &NSString {
         let ptr: *const Self = self;
         unsafe { &*ptr.cast::<NSString>() }
+    }
+
+    // This is deliberately not `const` to prevent the result from being used
+    // in other statics, since not all platforms support that (yet).
+    #[inline]
+    pub fn as_nsstring(&self) -> &NSString {
+        self.as_nsstring_const()
     }
 }
 
@@ -193,6 +203,40 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
     }
 }
 
+/// Allows storing a [`NSString`] in a static and lazily loading it.
+#[doc(hidden)]
+pub struct CachedNSString {
+    ptr: AtomicPtr<NSString>,
+}
+
+impl CachedNSString {
+    /// Constructs a new [`CachedNSString`].
+    pub const fn new() -> Self {
+        Self {
+            ptr: AtomicPtr::new(ptr::null_mut()),
+        }
+    }
+
+    /// Returns the cached NSString. If no string is yet cached, creates one
+    /// with the given name and stores it.
+    #[inline]
+    pub fn get(&self, s: &str) -> &'static NSString {
+        // TODO: Investigate if we can use weaker orderings.
+        let ptr = self.ptr.load(Ordering::SeqCst);
+        // SAFETY: The pointer is either NULL, or has been created below.
+        unsafe { ptr.as_ref() }.unwrap_or_else(|| {
+            // "Forget" about releasing the string, effectively promoting it
+            // to a static.
+            let s = ManuallyDrop::new(NSString::from_str(s));
+            let ptr = Id::as_ptr(&s);
+            self.ptr.store(ptr as *mut NSString, Ordering::SeqCst);
+            // SAFETY: The pointer is valid, and will always be valid, since
+            // we haven't released it.
+            unsafe { ptr.as_ref().unwrap_unchecked() }
+        })
+    }
+}
+
 /// Creates an [`NSString`][`crate::NSString`] from a static string.
 ///
 /// Currently only supported on Apple targets.
@@ -201,29 +245,19 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 /// # Examples
 ///
 /// This macro takes a either a `"string"` literal or `const` string slice as
-/// the argument:
+/// the argument, and produces a `&'static NSString`:
 ///
 /// ```
-/// use objc2_foundation::ns_string;
-/// let hello = ns_string!("hello");
+/// use objc2_foundation::{ns_string, NSString};
+/// # #[cfg(feature = "gnustep-1-7")]
+/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+/// let hello: &'static NSString = ns_string!("hello");
 /// assert_eq!(hello.to_string(), "hello");
 ///
 /// const WORLD: &str = "world";
 /// let world = ns_string!(WORLD);
 /// assert_eq!(world.to_string(), WORLD);
 /// ```
-///
-/// The result of this macro can even be used to create `static` values:
-///
-/// ```
-/// # use objc2_foundation::{ns_string, NSString};
-/// static WORLD: &NSString = ns_string!("world");
-///
-/// assert_eq!(WORLD.to_string(), "world");
-/// ```
-///
-/// Note that the result cannot be used in a `const` because it refers to
-/// static data outside of this library.
 ///
 ///
 /// # Unicode Strings
@@ -233,9 +267,11 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 /// string to the most efficient encoding, you don't have to do anything!
 ///
 /// ```
-/// # use objc2_foundation::{ns_string, NSString};
-/// static HELLO_RU: &NSString = ns_string!("Привет");
-/// assert_eq!(HELLO_RU.to_string(), "Привет");
+/// # use objc2_foundation::ns_string;
+/// # #[cfg(feature = "gnustep-1-7")]
+/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+/// let hello_ru = ns_string!("Привет");
+/// assert_eq!(hello_ru.to_string(), "Привет");
 /// ```
 ///
 /// Note that because this is implemented with `const` evaluation, massive
@@ -250,6 +286,8 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 ///
 /// ```
 /// # use objc2_foundation::ns_string;
+/// # #[cfg(feature = "gnustep-1-7")]
+/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let example = ns_string!("example\0");
 /// assert_eq!(example.to_string(), "example\0");
 ///
@@ -269,9 +307,25 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
 ///
 /// [`NSString::from_str`]: crate::NSString::from_str
 #[macro_export]
-#[cfg(feature = "apple")] // To make `auto_doc_cfg` pick this up
 macro_rules! ns_string {
     ($s:expr) => {{
+        // Immediately place in constant for better UI
+        const INPUT: &str = $s;
+        $crate::__ns_string_inner!(INPUT)
+    }};
+}
+
+#[doc(hidden)]
+#[cfg(feature = "apple")]
+#[macro_export]
+macro_rules! __ns_string_inner {
+    ($inp:ident) => {{
+        const X: &[u8] = $inp.as_bytes();
+        $crate::__ns_string_inner!(@inner X);
+        // Return &'static NSString
+        CFSTRING.as_nsstring()
+    }};
+    (@inner $inp:ident) => {
         // Note: We create both the ASCII + NUL and the UTF-16 + NUL versions
         // of the string, since we can't conditionally create a static.
         //
@@ -279,30 +333,28 @@ macro_rules! ns_string {
         // figure out that one of the variants are never used, and simply
         // exclude it.
 
-        const INPUT: &[u8] = $s.as_bytes();
-
         // Convert the input slice to a C-style string with a NUL byte.
         //
         // The section is the same as what clang sets, see:
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5192
         #[link_section = "__TEXT,__cstring,cstring_literals"]
-        static ASCII: [u8; INPUT.len() + 1] = {
-            // Zero-fill with INPUT.len() + 1
-            let mut res: [u8; INPUT.len() + 1] = [0; INPUT.len() + 1];
+        static ASCII: [u8; $inp.len() + 1] = {
+            // Zero-fill with $inp.len() + 1
+            let mut res: [u8; $inp.len() + 1] = [0; $inp.len() + 1];
             let mut i = 0;
-            // Fill with data from INPUT
-            while i < INPUT.len() {
-                res[i] = INPUT[i];
+            // Fill with data from $inp
+            while i < $inp.len() {
+                res[i] = $inp[i];
                 i += 1;
             }
-            // Now contains INPUT + '\0'
+            // Now contains $inp + '\0'
             res
         };
 
         // The full UTF-16 contents along with the written length.
-        const UTF16_FULL: (&[u16; INPUT.len()], usize) = {
-            let mut out = [0u16; INPUT.len()];
-            let mut iter = $crate::__string_macro::EncodeUtf16Iter::new(INPUT);
+        const UTF16_FULL: (&[u16; $inp.len()], usize) = {
+            let mut out = [0u16; $inp.len()];
+            let mut iter = $crate::__string_macro::EncodeUtf16Iter::new($inp);
             let mut written = 0;
 
             while let Some((state, chars)) = iter.next() {
@@ -344,7 +396,7 @@ macro_rules! ns_string {
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5243
         #[link_section = "__DATA,__cfstring"]
         static CFSTRING: $crate::__string_macro::CFConstString = unsafe {
-            if $crate::__string_macro::is_ascii_no_nul(INPUT) {
+            if $crate::__string_macro::is_ascii_no_nul($inp) {
                 // This is technically an optimization (UTF-16 strings are
                 // always valid), but it's a fairly important one!
                 $crate::__string_macro::CFConstString::new_ascii(
@@ -358,9 +410,17 @@ macro_rules! ns_string {
                 )
             }
         };
+    };
+}
 
-        // Return &'static NSString
-        CFSTRING.as_nsstring()
+#[doc(hidden)]
+#[cfg(not(feature = "apple"))]
+#[macro_export]
+macro_rules! __ns_string_inner {
+    ($inp:ident) => {{
+        use $crate::__string_macro::CachedNSString;
+        static CACHED_NSSTRING: CachedNSString = CachedNSString::new();
+        CACHED_NSSTRING.get($inp)
     }};
 }
 
@@ -422,14 +482,14 @@ mod tests {
     fn ns_string() {
         macro_rules! test {
             ($($s:expr,)+) => {$({
-                static STRING: &NSString = ns_string!($s);
-                let s = NSString::from_str($s);
+                let s1 = ns_string!($s);
+                let s2 = NSString::from_str($s);
 
-                assert_eq!(STRING, STRING);
-                assert_eq!(STRING, &*s);
+                assert_eq!(s1, s1);
+                assert_eq!(s1, &*s2);
 
-                assert_eq!(STRING.to_string(), $s);
-                assert_eq!(s.to_string(), $s);
+                assert_eq!(s1.to_string(), $s);
+                assert_eq!(s2.to_string(), $s);
             })+};
         }
 
