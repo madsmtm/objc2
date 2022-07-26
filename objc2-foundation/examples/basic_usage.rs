@@ -1,5 +1,5 @@
 use objc2::rc::autoreleasepool;
-use objc2_foundation::{NSArray, NSCopying, NSDictionary, NSObject, NSString};
+use objc2_foundation::{ns_string, NSArray, NSDictionary, NSObject};
 
 fn main() {
     // Create and compare NSObjects
@@ -24,19 +24,20 @@ fn main() {
     let mut objs = NSArray::into_vec(array);
     let obj = objs.pop().unwrap();
 
-    // Create an NSString from a str slice
-    let string = NSString::from_str("Hello, world!");
+    // Create a static NSString
+    let string = ns_string!("Hello, world!");
     // Use an autoreleasepool to get the `str` contents of the NSString
     autoreleasepool(|pool| {
         println!("{}", string.as_str(pool));
-        let string2 = string.copy();
-        println!("{}", string2.as_str(pool));
     });
+    // Or simply use the `Display` implementation
+    let _s = string.to_string(); // Using ToString
+    println!("{}", string); // Or Display directly
 
     // Create a dictionary mapping strings to objects
-    let keys = &[&*string];
+    let keys = &[string];
     let vals = vec![obj];
     let dict = NSDictionary::from_keys_and_objects(keys, vals);
-    println!("{:?}", dict.get(&string));
+    println!("{:?}", dict.get(string));
     println!("{}", dict.len());
 }
