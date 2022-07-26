@@ -1,34 +1,34 @@
 error: msg_send_id![obj, retain] is not supported. Use `Id::retain` instead
-  --> ui/msg_send_id_invalid_method.rs:11:14
+  --> ui/msg_send_id_invalid_method.rs
    |
-11 |     unsafe { msg_send_id![object, retain] };
+   |     unsafe { msg_send_id![object, retain] };
    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, release] is not supported. Drop an `Id` instead
-  --> ui/msg_send_id_invalid_method.rs:12:14
+  --> ui/msg_send_id_invalid_method.rs
    |
-12 |     unsafe { msg_send_id![object, release] };
+   |     unsafe { msg_send_id![object, release] };
    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`
-  --> ui/msg_send_id_invalid_method.rs:13:14
+  --> ui/msg_send_id_invalid_method.rs
    |
-13 |     unsafe { msg_send_id![object, autorelease] };
+   |     unsafe { msg_send_id![object, autorelease] };
    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, retain] is not supported. Use `Id::retain` instead
-  --> ui/msg_send_id_invalid_method.rs:15:9
+  --> ui/msg_send_id_invalid_method.rs
    |
-15 | /         msg_send_id![
-16 | |             object,
-17 | |             retain,
-18 | |         ]
+   | /         msg_send_id![
+   | |             object,
+   | |             retain,
+   | |         ]
    | |_________^
    |
    = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

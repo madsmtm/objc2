@@ -1,22 +1,22 @@
 error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
-  --> ui/object_not_send_sync.rs:11:5
+  --> ui/object_not_send_sync.rs
    |
-11 |     needs_sync::<Object>();
+   |     needs_sync::<Object>();
    |     ^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
    |
    = help: within `objc2::runtime::Object`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
    = note: required because it appears within the type `objc_object`
    = note: required because it appears within the type `objc2::runtime::Object`
 note: required by a bound in `needs_sync`
-  --> ui/object_not_send_sync.rs:7:27
+  --> ui/object_not_send_sync.rs
    |
-7  | fn needs_sync<T: ?Sized + Sync>() {}
+   | fn needs_sync<T: ?Sized + Sync>() {}
    |                           ^^^^ required by this bound in `needs_sync`
 
 error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
-  --> ui/object_not_send_sync.rs:12:5
+  --> ui/object_not_send_sync.rs
    |
-12 |     needs_send::<Object>();
+   |     needs_send::<Object>();
    |     ^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
    |
    = help: within `objc2::runtime::Object`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
@@ -26,15 +26,15 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
    = note: required because it appears within the type `objc_object`
    = note: required because it appears within the type `objc2::runtime::Object`
 note: required by a bound in `needs_send`
-  --> ui/object_not_send_sync.rs:8:27
+  --> ui/object_not_send_sync.rs
    |
-8  | fn needs_send<T: ?Sized + Send>() {}
+   | fn needs_send<T: ?Sized + Send>() {}
    |                           ^^^^ required by this bound in `needs_send`
 
 error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
-  --> ui/object_not_send_sync.rs:13:5
+  --> ui/object_not_send_sync.rs
    |
-13 |     needs_sync::<NSObject>();
+   |     needs_sync::<NSObject>();
    |     ^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
    |
    = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
@@ -42,15 +42,15 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
    = note: required because it appears within the type `objc2::runtime::Object`
    = note: required because it appears within the type `NSObject`
 note: required by a bound in `needs_sync`
-  --> ui/object_not_send_sync.rs:7:27
+  --> ui/object_not_send_sync.rs
    |
-7  | fn needs_sync<T: ?Sized + Sync>() {}
+   | fn needs_sync<T: ?Sized + Sync>() {}
    |                           ^^^^ required by this bound in `needs_sync`
 
 error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
-  --> ui/object_not_send_sync.rs:14:5
+  --> ui/object_not_send_sync.rs
    |
-14 |     needs_send::<NSObject>();
+   |     needs_send::<NSObject>();
    |     ^^^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
    |
    = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
@@ -61,7 +61,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
    = note: required because it appears within the type `objc2::runtime::Object`
    = note: required because it appears within the type `NSObject`
 note: required by a bound in `needs_send`
-  --> ui/object_not_send_sync.rs:8:27
+  --> ui/object_not_send_sync.rs
    |
-8  | fn needs_send<T: ?Sized + Send>() {}
+   | fn needs_send<T: ?Sized + Send>() {}
    |                           ^^^^ required by this bound in `needs_send`
