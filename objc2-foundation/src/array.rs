@@ -246,7 +246,7 @@ mod tests {
     use objc2::rc::autoreleasepool;
 
     use super::*;
-    use crate::NSValue;
+    use crate::{NSString, NSValue};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -373,5 +373,20 @@ mod tests {
 
         let vec = NSArray::into_vec(array);
         assert_eq!(vec.len(), 4);
+    }
+
+    #[test]
+    fn test_generic_ownership_traits() {
+        fn assert_partialeq<T: PartialEq>() {}
+
+        assert_partialeq::<NSArray<NSString, Shared>>();
+        assert_partialeq::<NSArray<NSString, Owned>>();
+
+        fn test_ownership_implies_partialeq<O: Ownership>() {
+            assert_partialeq::<NSArray<NSString, O>>();
+        }
+
+        test_ownership_implies_partialeq::<Shared>();
+        test_ownership_implies_partialeq::<Owned>();
     }
 }
