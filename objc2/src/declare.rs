@@ -402,9 +402,11 @@ impl ClassBuilder {
 
     /// Adds an ivar with type `T` and the provided name.
     ///
+    ///
     /// # Panics
     ///
-    /// If the ivar wasn't successfully added.
+    /// If the ivar wasn't successfully added for some reason - this usually
+    /// happens if there already was an ivar with that name.
     pub fn add_ivar<T: Encode>(&mut self, name: &str) {
         let c_name = CString::new(name).unwrap();
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
@@ -420,6 +422,16 @@ impl ClassBuilder {
             )
         });
         assert!(success.as_bool(), "Failed to add ivar {}", name);
+    }
+
+    /// Adds an instance variable from an [`IvarType`].
+    ///
+    ///
+    /// # Panics
+    ///
+    /// Same as [`ClassBuilder::add_ivar`].
+    pub fn add_static_ivar<T: IvarType>(&mut self) {
+        self.add_ivar::<T::Type>(T::NAME);
     }
 
     /// Adds the given protocol to self.

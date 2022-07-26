@@ -495,8 +495,7 @@ macro_rules! declare_class {
             unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::runtime::Object {
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
-                // - The instance variable is defined in the exact same manner
-                //   in `class` below.
+                // - The ivar is added to the class below.
                 // - Rust prevents having two fields with the same name.
                 // - Caller upholds that the ivars are properly initialized.
                 $($ivar_v $ivar: $crate::declare::Ivar<$ivar>,)*
@@ -527,10 +526,9 @@ macro_rules! declare_class {
                     );
                     let mut builder = $crate::declare::ClassBuilder::new(stringify!($name), superclass).expect(err_str);
 
+                    // Ivars
                     $(
-                        builder.add_ivar::<<$ivar as $crate::declare::IvarType>::Type>(
-                            <$ivar as $crate::declare::IvarType>::NAME
-                        );
+                        builder.add_static_ivar::<$ivar>();
                     )*
 
                     $(

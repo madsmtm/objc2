@@ -72,9 +72,13 @@ unsafe impl<T: IvarType> IvarType for MaybeUninit<T> {
 /// particular, this is never safe to have on the stack by itself.
 ///
 /// Additionally, the instance variable described by `T` must be available on
-/// the specific instance, and be of the exact same type.
+/// the specific instance, and be of the exact same type. When declaring the
+/// object yourself, you can ensure this using
+/// [`ClassBuilder::add_static_ivar`].
 ///
 /// Finally, two ivars with the same name must not be used on the same object.
+///
+/// [`ClassBuilder::add_static_ivar`]: crate::declare::ClassBuilder::add_static_ivar
 ///
 ///
 /// # Examples
@@ -106,7 +110,7 @@ unsafe impl<T: IvarType> IvarType for MaybeUninit<T> {
 /// # use objc2::declare::ClassBuilder;
 /// # let mut builder = ClassBuilder::new("MyObject", class!(NSObject)).unwrap();
 /// // Declare the class and add the instance variable to it
-/// builder.add_ivar::<<MyCustomIvar as IvarType>::Type>(MyCustomIvar::NAME);
+/// builder.add_static_ivar::<MyCustomIvar>();
 /// # let _cls = builder.register();
 ///
 /// let obj: MyObject;
