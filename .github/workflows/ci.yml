@@ -206,7 +206,10 @@ jobs:
     - name: Setup SDK environment
       if: matrix.sdk
       # This changes a variable, so is only set when a custom SDK is used
-      run: echo "SDKROOT=$HOME/extern/sdk" >> $GITHUB_ENV
+      run: |
+        echo "SDKROOT=$HOME/extern/sdk" >> $GITHUB_ENV
+        # Temporary
+        echo "RUSTFLAGS=$RUSTFLAGS --cfg=macos_10_7" >> $GITHUB_ENV
 
     - name: Install Clang & Valgrind
       if: contains(matrix.os, 'ubuntu')
@@ -395,12 +398,12 @@ jobs:
         # Not using --all-features because that would enable e.g. gnustep
         args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
-    - name: Test static selectors
+    - name: Test static class and selectors
       if: ${{ !matrix.dinghy && (matrix.runtime || 'apple') == 'apple' }}
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features unstable-static-sel
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features unstable-static-sel,unstable-static-class
 
     - name: Run assembly tests
       if: ${{ !contains(matrix.runtime, 'compiler-rt') }}

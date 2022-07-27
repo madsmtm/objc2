@@ -15,6 +15,8 @@ extern_class! {
     /// Conversion methods to/from UUIDs from the `uuid` crate can be
     /// enabled with the `uuid` crate feature.
     ///
+    /// macOS: This is only available on 10.8 and above.
+    ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsuuid?language=objc).
     #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSUUID: NSObject;

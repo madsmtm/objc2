@@ -7,6 +7,10 @@ fn ensure_linkage() {
     unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 }
 
+#[cfg(feature = "apple")]
+#[link(name = "Foundation", kind = "framework")]
+extern "C" {}
+
 #[test]
 fn use_class_and_msg_send() {
     unsafe {

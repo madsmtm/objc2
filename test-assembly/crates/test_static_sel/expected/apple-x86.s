@@ -32,7 +32,7 @@ _get_common_twice:
 	call	L2$pb
 L2$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr-L2$pb]
+	mov	eax, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr-L2$pb]
 	mov	eax, dword ptr [eax]
 	mov	edx, eax
 	pop	ebp
@@ -208,8 +208,8 @@ L_OBJC_SELECTOR_REFERENCES_c831c01ba82dcc2e:
 	.long	L_OBJC_METH_VAR_NAME_c831c01ba82dcc2e
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2
+LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_234aca269670483c
 	.long	0
 
 .subsections_via_symbols

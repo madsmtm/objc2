@@ -34,5 +34,5 @@ rm -d .cargo
 export SDKROOT=(pwd)/ideas/MacOSX10.13.sdk
 export CARGO_BUILD_TARGET=i686-apple-darwin
 cargo +nightly test -Zbuild-std
-cargo +nightly test -Zbuild-std --features malloc,block,exception,catch-all,verify_message
+cargo +nightly test -Zbuild-std --features malloc,block,exception,catch-all,verify_message,unstable-static-class,unstable-static-sel
 cargo +nightly test -Zbuild-std --release

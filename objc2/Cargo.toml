@@ -51,6 +51,8 @@ malloc = ["malloc_buf"]
 # https://github.com/madsmtm/objc2/issues/new
 unstable-static-sel = ["objc2-proc-macros"]
 unstable-static-sel-inlined = ["unstable-static-sel"]
+unstable-static-class = ["objc2-proc-macros"]
+unstable-static-class-inlined = ["unstable-static-class"]
 
 # Uses nightly features to make AutoreleasePool zero-cost even in debug mode
 unstable-autoreleasesafe = []

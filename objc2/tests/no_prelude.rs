@@ -9,6 +9,16 @@
 
 extern crate objc2 as new_objc2;
 
+#[cfg(feature = "gnustep-1-7")]
+#[test]
+fn ensure_linkage() {
+    unsafe { new_objc2::__gnustep_hack::get_class_to_force_linkage() };
+}
+
+#[cfg(feature = "apple")]
+#[link(name = "Foundation", kind = "framework")]
+extern "C" {}
+
 mod core {}
 mod std {}
 mod libc {}
