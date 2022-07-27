@@ -9,8 +9,9 @@ use std::io;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{msg_send, msg_send_id};
 
-use crate::data::data_with_bytes;
-use crate::{extern_class, NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
+use super::data::data_with_bytes;
+use super::{NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
+use crate::extern_class;
 
 extern_class! {
     /// A dynamic byte buffer in memory.
@@ -36,7 +37,7 @@ impl NSMutableData {
 
     #[cfg(feature = "block")]
     pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
-        unsafe { Id::new(crate::data::data_from_vec(Self::class(), bytes).cast()).unwrap() }
+        unsafe { Id::new(super::data::data_from_vec(Self::class(), bytes).cast()).unwrap() }
     }
 
     // TODO: Use malloc_buf/mbox and `initWithBytesNoCopy:...`?

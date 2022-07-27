@@ -9,7 +9,8 @@ use core::ptr;
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
 use objc2::{msg_send, msg_send_id, Message};
 
-use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject, __inner_extern_class};
+use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
+use crate::__inner_extern_class;
 
 __inner_extern_class! {
     #[derive(PartialEq, Eq, Hash)]

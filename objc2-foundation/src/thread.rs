@@ -5,7 +5,8 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::rc::{Id, Shared};
 use objc2::{msg_send, msg_send_bool, msg_send_id};
 
-use crate::{extern_class, NSObject, NSString};
+use super::{NSObject, NSString};
+use crate::extern_class;
 
 extern_class! {
     /// A thread of execution.

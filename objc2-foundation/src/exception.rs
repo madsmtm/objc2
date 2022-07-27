@@ -7,7 +7,8 @@ use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
 use objc2::{msg_send, msg_send_id, sel};
 
-use crate::{extern_class, NSCopying, NSDictionary, NSObject, NSString};
+use super::{NSCopying, NSDictionary, NSObject, NSString};
+use crate::extern_class;
 
 extern_class! {
     /// A special condition that interrupts the normal flow of program

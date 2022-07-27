@@ -17,7 +17,7 @@ use core::sync::atomic::{AtomicPtr, Ordering};
 use objc2::rc::Id;
 use objc2::runtime::Class;
 
-use crate::NSString;
+use super::NSString;
 
 // This is defined in CoreFoundation, but we don't emit a link attribute
 // here because it is already linked via Foundation.
