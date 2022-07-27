@@ -219,11 +219,6 @@ mod test_utils;
 #[cfg(feature = "malloc")]
 mod verify;
 
-// Hack to make doctests work
-#[cfg(all(feature = "apple", feature = "unstable-static-class"))]
-#[link(name = "Foundation", kind = "framework")]
-extern "C" {}
-
 /// Hacky way to make GNUStep link properly to Foundation while testing.
 ///
 /// This is a temporary solution to make our CI work for now!
@@ -232,8 +227,6 @@ extern "C" {}
 pub mod __gnustep_hack {
     use super::runtime::Class;
 
-    #[link(name = "gnustep-base", kind = "dylib")]
-    // This linking doesn't have to be on the correct `extern` block.
     extern "C" {
         // The linking changed in libobjc2 v2.0
         #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSObject")]

@@ -1,16 +1,13 @@
+use objc2::msg_send;
 use objc2::rc::{Id, Owned};
-use objc2::runtime::{Class, Object};
-use objc2::{class, msg_send, msg_send_id};
+use objc2::runtime::Class;
+use objc2::{foundation::NSObject, msg_send_id};
 #[cfg(feature = "malloc")]
 use objc2::{sel, Encode};
 
-#[cfg(feature = "apple")]
-#[link(name = "Foundation", kind = "framework")]
-extern "C" {}
-
 fn main() {
     // Get a class
-    let cls = class!(NSObject);
+    let cls = NSObject::class();
     println!("NSObject size: {}", cls.instance_size());
 
     #[cfg(feature = "malloc")]
@@ -23,10 +20,12 @@ fn main() {
     }
 
     // Allocate an instance
-    let obj: Id<Object, Owned> = unsafe {
+    let obj: Id<NSObject, Owned> = unsafe {
         let obj = msg_send_id![cls, alloc];
         msg_send_id![obj, init].unwrap()
     };
+    // In this case `let obj = NSObject::new()` would have been the same
+
     println!("NSObject address: {:p}", obj);
 
     // Access an ivar of the object

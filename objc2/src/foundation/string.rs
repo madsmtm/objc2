@@ -307,12 +307,6 @@ mod tests {
     use alloc::format;
     use core::ptr;
 
-    #[cfg(feature = "gnustep-1-7")]
-    #[test]
-    fn ensure_linkage() {
-        unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
-    }
-
     #[test]
     fn test_equality() {
         let s1 = NSString::from_str("abc");

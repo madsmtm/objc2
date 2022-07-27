@@ -3,10 +3,6 @@
 use objc2::class;
 use objc2::runtime::Class;
 
-#[cfg(feature = "apple")]
-#[link(name = "Foundation", kind = "framework")]
-extern "C" {}
-
 #[no_mangle]
 fn get_class() -> &'static Class {
     class!(NSObject)
