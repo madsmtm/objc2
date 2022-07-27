@@ -5,10 +5,11 @@
 [![Documentation](https://docs.rs/objc2/badge.svg)](https://docs.rs/objc2/)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
-Objective-C interface and runtime bindings for Rust.
+Objective-C interface and bindings to the `Foundation` framework in Rust.
 
 Most of the core libraries and frameworks that are in use on Apple systems are
-written in Objective-C; this crate enables you to interract with those.
+written in Objective-C; this crate enables you to interract with those, and
+provides ready-made bindings for the `Foundation` framework in particular.
 
 ## Example
 

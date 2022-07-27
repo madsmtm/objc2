@@ -1,6 +1,6 @@
 //! Test that NSValue has proper bounds on its Eq implementation.
 
-use objc2_foundation::NSValue;
+use objc2::foundation::NSValue;
 
 fn needs_eq<T: Eq>() {}
 

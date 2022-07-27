@@ -1,11 +1,11 @@
 use std::sync::Once;
 
 use objc2::declare::{ClassBuilder, Ivar, IvarType};
+use objc2::foundation::NSObject;
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{Encoding, Message, RefEncode};
-use objc2_foundation::NSObject;
 
 struct NumberIvar;
 unsafe impl IvarType for NumberIvar {

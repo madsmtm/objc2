@@ -1,12 +1,12 @@
 use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
+use objc2::foundation::NSObject;
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 use objc2::runtime::{Bool, Class, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_bool, msg_send_id};
-use objc2_foundation::NSObject;
 
 #[repr(C)]
 struct MyTestObject {

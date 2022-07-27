@@ -5,7 +5,8 @@ use objc2::rc::DefaultId;
 use objc2::rc::{Id, Shared};
 use objc2::{msg_send, msg_send_id, Encode, Encoding, RefEncode};
 
-use crate::{extern_class, NSCopying, NSObject, NSString};
+use super::{NSCopying, NSObject, NSString};
+use crate::extern_class;
 
 extern_class! {
     /// A universally unique value.

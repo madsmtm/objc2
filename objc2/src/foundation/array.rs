@@ -9,10 +9,11 @@ use objc2::runtime::{Class, Object};
 use objc2::Message;
 use objc2::{msg_send, msg_send_id};
 
-use crate::{
+use super::{
     NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableArray, NSMutableCopying,
-    NSObject, NSRange, __inner_extern_class,
+    NSObject, NSRange,
 };
+use crate::__inner_extern_class;
 
 __inner_extern_class! {
     /// TODO
@@ -246,7 +247,7 @@ mod tests {
     use objc2::rc::autoreleasepool;
 
     use super::*;
-    use crate::{NSString, NSValue};
+    use crate::foundation::{NSString, NSValue};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);

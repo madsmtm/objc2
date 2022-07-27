@@ -25,28 +25,9 @@
 //!
 //! [pull requests]: https://github.com/madsmtm/objc2/pulls
 
-#![no_std]
-#![warn(elided_lifetimes_in_paths)]
-#![deny(non_ascii_idents)]
-#![warn(unreachable_pub)]
-// TODO: #![warn(missing_docs)]
-#![deny(unsafe_op_in_unsafe_fn)]
-#![allow(clippy::missing_safety_doc)] // TODO: Remove this
-#![warn(clippy::cargo)]
-#![warn(clippy::ptr_as_ptr)]
-// Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-foundation/0.2.0-alpha.6")]
-#![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg))]
-
-extern crate alloc;
-extern crate std;
-
-#[cfg(not(feature = "std"))]
-compile_error!("The `std` feature currently must be enabled.");
-
-#[cfg(doctest)]
-#[doc = include_str!("../README.md")]
-extern "C" {}
+// TODO: Remove these
+#![allow(missing_docs)]
+#![allow(clippy::missing_safety_doc)]
 
 pub use self::array::NSArray;
 pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
@@ -76,15 +57,6 @@ pub use self::zone::NSZone;
 #[doc(no_inline)]
 pub use objc2::ffi::{NSInteger, NSUInteger};
 
-// For macros
-#[doc(hidden)]
-pub use core as __core;
-#[doc(hidden)]
-pub extern crate std as __std;
-
-// Expose the version of objc2 that this crate uses
-pub use objc2;
-
 #[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
@@ -93,19 +65,15 @@ extern "C" {}
 #[link(name = "gnustep-base", kind = "dylib")]
 extern "C" {}
 
-#[doc(hidden)]
-pub mod __string_macro;
 mod array;
 mod attributed_string;
 mod comparison_result;
 mod copying;
 mod data;
-mod declare_macro;
 mod dictionary;
 mod enumerator;
 mod exception;
 mod geometry;
-mod macros;
 mod mutable_array;
 mod mutable_attributed_string;
 mod mutable_data;

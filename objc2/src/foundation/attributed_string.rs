@@ -5,10 +5,10 @@ use objc2::rc::{DefaultId, Id, Shared};
 use objc2::runtime::Object;
 use objc2::{msg_send, msg_send_id};
 
-use crate::{
-    extern_class, NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject,
-    NSString,
+use super::{
+    NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
 };
+use crate::extern_class;
 
 extern_class! {
     /// A string that has associated attributes for portions of its text.

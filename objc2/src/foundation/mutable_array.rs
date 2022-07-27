@@ -9,11 +9,12 @@ use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::Message;
 use objc2::{msg_send, msg_send_id};
 
-use crate::array::from_refs;
-use crate::{
+use super::array::from_refs;
+use super::{
     NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
-    NSObject, __inner_extern_class,
+    NSObject,
 };
+use crate::__inner_extern_class;
 
 __inner_extern_class! {
     // TODO: Ensure that this deref to NSArray is safe!
@@ -228,7 +229,7 @@ mod tests {
     use objc2::rc::autoreleasepool;
 
     use super::*;
-    use crate::NSString;
+    use crate::foundation::NSString;
 
     #[test]
     fn test_adding() {

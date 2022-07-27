@@ -6,12 +6,11 @@ use std::ops::{Deref, DerefMut};
 use std::thread;
 use std::time::Duration;
 
+use objc2::foundation::{NSObject, NSString};
 use objc2::rc::{Id, Owned};
 use objc2::runtime::Class;
 use objc2::{msg_send, msg_send_bool, msg_send_id};
 use objc2::{Encoding, Message, RefEncode};
-
-use objc2_foundation::{NSObject, NSString};
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 #[link(name = "AppKit", kind = "framework")]

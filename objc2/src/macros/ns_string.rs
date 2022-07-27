@@ -17,7 +17,7 @@ use core::sync::atomic::{AtomicPtr, Ordering};
 use objc2::rc::Id;
 use objc2::runtime::Class;
 
-use crate::NSString;
+use crate::foundation::NSString;
 
 // This is defined in CoreFoundation, but we don't emit a link attribute
 // here because it is already linked via Foundation.
@@ -508,7 +508,7 @@ mod tests {
             "\0",
             "\0\x01\x02\x03\x04\x05\x06\x07\x08\x09",
             // "\u{feff}", // TODO
-            include_str!("__string_macro.rs"),
+            include_str!("ns_string.rs"),
         }
     }
 

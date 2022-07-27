@@ -1,6 +1,6 @@
+use objc2::foundation::NSArray;
 use objc2::rc::Shared;
 use objc2::runtime::Object;
-use objc2_foundation::NSArray;
 
 fn needs_sync<T: ?Sized + Sync>() {}
 fn needs_send<T: ?Sized + Send>() {}

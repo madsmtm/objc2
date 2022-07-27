@@ -4,8 +4,8 @@ version = "0.3.0-beta.1" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 
-description = "Objective-C interface and runtime bindings"
-keywords = ["objective-c", "macos", "ios", "objc_msgSend"]
+description = "Objective-C interface and bindings to the Cocoa Foundation framework"
+keywords = ["objective-c", "macos", "ios", "objc_msgSend", "cocoa"]
 categories = [
     "api-bindings",
     "development-tools::ffi",
@@ -19,11 +19,14 @@ license = "MIT"
 # NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
 # and may be removed in a minor release.
 [features]
-default = ["std", "apple"]
+default = ["std", "apple", "foundation"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2-encode/std", "objc-sys/std"]
-alloc = ["objc2-encode/alloc", "objc-sys/alloc"]
+std = ["alloc", "objc2-encode/std", "objc-sys/std", "block2?/std"]
+alloc = ["objc2-encode/alloc", "objc-sys/alloc", "block2?/alloc"]
+
+# Enable the `objc2::foundation` submodule. It is enabled by default.
+foundation = []
 
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["objc-sys/unstable-exception"]
@@ -40,6 +43,9 @@ verify_message = ["malloc"] # TODO: Remove malloc feature here
 # This is not enabled by default because most users won't need it, and it
 # increases compilation time.
 malloc = ["malloc_buf"]
+
+# Expose features that requires creating blocks.
+block = ["block2"]
 
 # Make the `sel!` macro look up the selector statically.
 #
@@ -64,18 +70,22 @@ unstable-c-unwind = ["objc-sys/unstable-c-unwind"]
 unstable-docsrs = []
 
 # Runtime selection. See `objc-sys` for details.
-apple = ["objc-sys/apple"]
-gnustep-1-7 = ["objc-sys/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1"]
+apple = ["objc-sys/apple", "block2?/apple"]
+gnustep-1-7 = ["objc-sys/gnustep-1-7", "block2?/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8", "block2?/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9", "block2?/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0", "block2?/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1", "block2?/gnustep-2-1"]
 
 [dependencies]
 malloc_buf = { version = "1.0", optional = true }
 objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.1", default-features = false }
 objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.1", default-features = false }
 objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.0", optional = true }
+block2 = { path = "../block2", version = "=0.2.0-alpha.5", default-features = false, optional = true }
+
+# Provide methods to convert between `uuid::Uuid` and `objc2::foundation::NSUUID`
+uuid = { version = "1.1.2", optional = true, default-features = false }
 
 [dev-dependencies]
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
@@ -86,7 +96,7 @@ harness = false
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
-features = ["exception", "malloc", "unstable-docsrs"]
+features = ["exception", "malloc", "block", "uuid", "unstable-docsrs"]
 
 targets = [
     # MacOS

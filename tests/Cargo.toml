@@ -11,18 +11,16 @@ build = "build.rs"
 
 [features]
 default = ["apple", "std"]
-std = ["block2/std", "objc2-foundation/std"]
+std = ["block2/std", "objc2/std"]
 exception = ["objc2/exception"]
 catch-all = ["objc2/catch-all", "exception"]
 
-# Runtime features. Rely on `objc2-foundation` and `block2` to enable these
-# for the other dependencies.
-apple = ["block2/apple", "objc2-foundation/apple"]
-gnustep-1-7 = ["block2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "block2/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
+apple = ["block2/apple", "objc2/apple"]
+gnustep-1-7 = ["block2/gnustep-1-7", "objc2/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "block2/gnustep-2-0", "objc2/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2/gnustep-2-1"]
 
 malloc = ["objc2/malloc"]
 
@@ -30,8 +28,7 @@ malloc = ["objc2/malloc"]
 block2 = { path = "../block2", default-features = false }
 block-sys = { path = "../block-sys", default-features = false }
 objc-sys = { path = "../objc-sys", default-features = false }
-objc2 = { path = "../objc2", default-features = false }
-objc2-foundation = { path = "../objc2-foundation", default-features = false }
+objc2 = { path = "../objc2", default-features = false, features = ["foundation"] }
 
 [build-dependencies]
 cc = "1.0"

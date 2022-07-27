@@ -13,7 +13,8 @@ use objc2::rc::{DefaultId, Id, Shared};
 use objc2::Encode;
 use objc2::{msg_send, msg_send_id};
 
-use super::{NSCopying, NSObject, __inner_extern_class};
+use super::{NSCopying, NSObject};
+use crate::__inner_extern_class;
 
 __inner_extern_class! {
     // `T: Eq` bound to prevent `NSValue<f32>` from being `Eq`
@@ -137,7 +138,7 @@ mod tests {
     use alloc::format;
 
     use super::*;
-    use crate::NSRange;
+    use crate::foundation::NSRange;
 
     #[test]
     fn test_value() {

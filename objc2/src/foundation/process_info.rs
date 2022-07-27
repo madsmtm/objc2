@@ -4,7 +4,8 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::msg_send_id;
 use objc2::rc::{Id, Shared};
 
-use crate::{extern_class, NSObject, NSString};
+use super::{NSObject, NSString};
+use crate::extern_class;
 
 extern_class! {
     /// A collection of information about the current process.

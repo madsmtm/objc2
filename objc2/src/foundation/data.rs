@@ -10,7 +10,8 @@ use objc2::rc::{DefaultId, Id, Shared};
 use objc2::runtime::{Class, Object};
 use objc2::{msg_send, msg_send_id};
 
-use crate::{extern_class, NSCopying, NSMutableCopying, NSMutableData, NSObject};
+use super::{NSCopying, NSMutableCopying, NSMutableData, NSObject};
+use crate::extern_class;
 
 extern_class! {
     /// A static byte buffer in memory.

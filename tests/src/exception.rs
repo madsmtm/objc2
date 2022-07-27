@@ -1,10 +1,10 @@
 use alloc::format;
 
 use objc2::exception::{catch, throw};
+use objc2::foundation::{NSArray, NSException, NSString};
 use objc2::msg_send;
 use objc2::rc::{autoreleasepool, Id};
 use objc2::runtime::Object;
-use objc2_foundation::{NSArray, NSException, NSString};
 
 #[track_caller]
 fn assert_retain_count(obj: &Object, expected: usize) {
