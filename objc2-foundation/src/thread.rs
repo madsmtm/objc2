@@ -202,8 +202,18 @@ mod tests {
     )]
     fn test_debug() {
         let thread = NSThread::main();
-        let expected = format!("<NSThread: {:p}>{{number = 1, name = (null)}}", thread);
-        assert_eq!(format!("{:?}", thread), expected);
+
+        let actual = format!("{:?}", thread);
+        let expected_macos_11 = format!("<NSThread: {:p}>{{number = 1, name = (null)}}", thread);
+        let expected_macos_12 =
+            format!("<_NSMainThread: {:p}>{{number = 1, name = (null)}}", thread);
+        assert!(
+            actual == expected_macos_11 || actual == expected_macos_12,
+            "Expected one of {:?} or {:?}, got {:?}",
+            expected_macos_11,
+            expected_macos_12,
+            actual,
+        );
 
         // SAFETY: We don't use the marker for anything other than its Debug
         // impl, so this test doesn't actually need to run on the main thread!

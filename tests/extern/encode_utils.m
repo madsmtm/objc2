@@ -81,7 +81,8 @@ struct with_block {
     id b;
     void (*c)(void);
 };
-ENCODING(STRUCT_WITH_BLOCK, struct with_block);
+ENCODING_INNER(STRUCT_WITH_BLOCK, struct with_block); \
+ENCODING_INNER(STRUCT_WITH_BLOCK_POINTER, struct with_block*); \
 
 struct with_atomic_inner {
     _Atomic int a;
