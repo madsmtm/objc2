@@ -243,6 +243,32 @@ macro_rules! __inner_statics_apple_generic {
         static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
     };
     {
+        @module_info;
+        $($idents:ident)+
+    } => {
+        #[link_section = "__TEXT,__cstring,cstring_literals"]
+        #[export_name = $crate::__macro_helpers::concat!(
+            "\x01L_OBJC_CLASS_NAME_",
+            $crate::__macro_helpers::__hash_idents!($($idents)+),
+            "_MODULE_INFO"
+        )]
+        static MODULE_INFO_NAME: [$crate::__macro_helpers::u8; 1] = [0];
+
+        /// Emit module info.
+        ///
+        /// This is similar to image info, and must be present in the final
+        /// binary on macOS 32-bit.
+        #[link_section = "__OBJC,__module_info,regular,no_dead_strip"]
+        #[export_name = $crate::__macro_helpers::concat!(
+            "\x01L_OBJC_MODULES_",
+            $crate::__macro_helpers::__hash_idents!($($idents)+)
+        )]
+        #[used] // Make sure this reaches the linker
+        static _MODULE_INFO: $crate::__macro_helpers::ModuleInfo = $crate::__macro_helpers::ModuleInfo::new(
+            MODULE_INFO_NAME.as_ptr()
+        );
+    };
+    {
         @sel;
         $var_name_section:literal;
         $selector_ref_section:literal;
@@ -372,8 +398,6 @@ macro_rules! __inner_statics_apple_generic {
             let ptr: *const Class = NAME_DATA.as_ptr().cast();
             UnsafeCell::new(&*ptr)
         };
-
-        // TODO: module info?
     }
 }
 
@@ -430,6 +454,10 @@ macro_rules! __inner_statics {
     (@class $($args:tt)*) => {
         $crate::__inner_statics_apple_generic! {
             @class_old;
+            $($args)*
+        }
+        $crate::__inner_statics_apple_generic! {
+            @module_info;
             $($args)*
         }
     };

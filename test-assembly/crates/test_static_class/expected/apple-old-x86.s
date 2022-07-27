@@ -108,6 +108,19 @@ L_OBJC_CLASS_NAME_9657804a2a54ab6f:
 L_OBJC_CLASS_REFERENCES_9657804a2a54ab6f:
 	.long	L_OBJC_CLASS_NAME_9657804a2a54ab6f
 
+	.section	__TEXT,__cstring,cstring_literals
+	.globl	L_OBJC_CLASS_NAME_9657804a2a54ab6f_MODULE_INFO
+L_OBJC_CLASS_NAME_9657804a2a54ab6f_MODULE_INFO:
+	.space	1
+
+	.section	__OBJC,__module_info,regular,no_dead_strip
+	.globl	L_OBJC_MODULES_9657804a2a54ab6f
+	.p2align	2
+L_OBJC_MODULES_9657804a2a54ab6f:
+	.asciz	"\007\000\000\000\020\000\000"
+	.long	L_OBJC_CLASS_NAME_9657804a2a54ab6f_MODULE_INFO
+	.space	4
+
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_e897a41b218dcf79
 	.p2align	2
@@ -124,6 +137,19 @@ L_OBJC_CLASS_NAME_e897a41b218dcf79:
 	.p2align	2
 L_OBJC_CLASS_REFERENCES_e897a41b218dcf79:
 	.long	L_OBJC_CLASS_NAME_e897a41b218dcf79
+
+	.section	__TEXT,__cstring,cstring_literals
+	.globl	L_OBJC_CLASS_NAME_e897a41b218dcf79_MODULE_INFO
+L_OBJC_CLASS_NAME_e897a41b218dcf79_MODULE_INFO:
+	.space	1
+
+	.section	__OBJC,__module_info,regular,no_dead_strip
+	.globl	L_OBJC_MODULES_e897a41b218dcf79
+	.p2align	2
+L_OBJC_MODULES_e897a41b218dcf79:
+	.asciz	"\007\000\000\000\020\000\000"
+	.long	L_OBJC_CLASS_NAME_e897a41b218dcf79_MODULE_INFO
+	.space	4
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_3b7780b4dcfcb9d4
@@ -142,6 +168,19 @@ L_OBJC_CLASS_NAME_3b7780b4dcfcb9d4:
 L_OBJC_CLASS_REFERENCES_3b7780b4dcfcb9d4:
 	.long	L_OBJC_CLASS_NAME_3b7780b4dcfcb9d4
 
+	.section	__TEXT,__cstring,cstring_literals
+	.globl	L_OBJC_CLASS_NAME_3b7780b4dcfcb9d4_MODULE_INFO
+L_OBJC_CLASS_NAME_3b7780b4dcfcb9d4_MODULE_INFO:
+	.space	1
+
+	.section	__OBJC,__module_info,regular,no_dead_strip
+	.globl	L_OBJC_MODULES_3b7780b4dcfcb9d4
+	.p2align	2
+L_OBJC_MODULES_3b7780b4dcfcb9d4:
+	.asciz	"\007\000\000\000\020\000\000"
+	.long	L_OBJC_CLASS_NAME_3b7780b4dcfcb9d4_MODULE_INFO
+	.space	4
+
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_f2fb7c579d3c0a74
 	.p2align	2
@@ -158,6 +197,19 @@ L_OBJC_CLASS_NAME_f2fb7c579d3c0a74:
 	.p2align	2
 L_OBJC_CLASS_REFERENCES_f2fb7c579d3c0a74:
 	.long	L_OBJC_CLASS_NAME_f2fb7c579d3c0a74
+
+	.section	__TEXT,__cstring,cstring_literals
+	.globl	L_OBJC_CLASS_NAME_f2fb7c579d3c0a74_MODULE_INFO
+L_OBJC_CLASS_NAME_f2fb7c579d3c0a74_MODULE_INFO:
+	.space	1
+
+	.section	__OBJC,__module_info,regular,no_dead_strip
+	.globl	L_OBJC_MODULES_f2fb7c579d3c0a74
+	.p2align	2
+L_OBJC_MODULES_f2fb7c579d3c0a74:
+	.asciz	"\007\000\000\000\020\000\000"
+	.long	L_OBJC_CLASS_NAME_f2fb7c579d3c0a74_MODULE_INFO
+	.space	4
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_2f45d8445f72bd9b
@@ -176,6 +228,19 @@ L_OBJC_CLASS_NAME_2f45d8445f72bd9b:
 L_OBJC_CLASS_REFERENCES_2f45d8445f72bd9b:
 	.long	L_OBJC_CLASS_NAME_2f45d8445f72bd9b
 
+	.section	__TEXT,__cstring,cstring_literals
+	.globl	L_OBJC_CLASS_NAME_2f45d8445f72bd9b_MODULE_INFO
+L_OBJC_CLASS_NAME_2f45d8445f72bd9b_MODULE_INFO:
+	.space	1
+
+	.section	__OBJC,__module_info,regular,no_dead_strip
+	.globl	L_OBJC_MODULES_2f45d8445f72bd9b
+	.p2align	2
+L_OBJC_MODULES_2f45d8445f72bd9b:
+	.asciz	"\007\000\000\000\020\000\000"
+	.long	L_OBJC_CLASS_NAME_2f45d8445f72bd9b_MODULE_INFO
+	.space	4
+
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_3bf610c78df2b6bb
 	.p2align	2
@@ -192,5 +257,18 @@ L_OBJC_CLASS_NAME_3bf610c78df2b6bb:
 	.p2align	2
 L_OBJC_CLASS_REFERENCES_3bf610c78df2b6bb:
 	.long	L_OBJC_CLASS_NAME_3bf610c78df2b6bb
+
+	.section	__TEXT,__cstring,cstring_literals
+	.globl	L_OBJC_CLASS_NAME_3bf610c78df2b6bb_MODULE_INFO
+L_OBJC_CLASS_NAME_3bf610c78df2b6bb_MODULE_INFO:
+	.space	1
+
+	.section	__OBJC,__module_info,regular,no_dead_strip
+	.globl	L_OBJC_MODULES_3bf610c78df2b6bb
+	.p2align	2
+L_OBJC_MODULES_3bf610c78df2b6bb:
+	.asciz	"\007\000\000\000\020\000\000"
+	.long	L_OBJC_CLASS_NAME_3bf610c78df2b6bb_MODULE_INFO
+	.space	4
 
 .subsections_via_symbols

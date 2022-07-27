@@ -211,6 +211,35 @@ pub const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool 
     }
 }
 
+/// Helper struct for emitting the module info that macOS 32-bit requires.
+///
+/// <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L5211-L5234>
+#[repr(C)]
+pub struct ModuleInfo {
+    version: usize,
+    size: usize,
+    name: *const u8,
+    symtab: *const (),
+}
+
+// SAFETY: ModuleInfo is immutable.
+unsafe impl Sync for ModuleInfo {}
+
+impl ModuleInfo {
+    /// This is hardcoded in clang as 7.
+    const VERSION: usize = 7;
+
+    pub const fn new(name: *const u8) -> Self {
+        Self {
+            version: Self::VERSION,
+            size: core::mem::size_of::<Self>(),
+            name,
+            // We don't expose any symbols
+            symtab: core::ptr::null(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -440,5 +469,14 @@ mod tests {
         // This is a limitation of `__hash_idents`, ideally we'd like these
         // to be different!
         assert_eq!(ident1, ident2);
+    }
+
+    #[test]
+    #[cfg_attr(
+        not(all(feature = "apple", target_os = "macos", target_arch = "x86")),
+        ignore = "Only relevant on macOS 32-bit"
+    )]
+    fn ensure_size_of_module_info() {
+        assert_eq!(core::mem::size_of::<ModuleInfo>(), 16);
     }
 }
