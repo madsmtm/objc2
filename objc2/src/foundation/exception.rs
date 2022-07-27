@@ -70,7 +70,7 @@ impl NSException {
     /// [doc]: https://developer.apple.com/documentation/foundation/nsexceptionname?language=objc
     pub fn name(&self) -> Id<NSExceptionName, Shared> {
         // Nullability not documented, but a name is expected in most places.
-        unsafe { msg_send_id![self, name].unwrap() }
+        unsafe { msg_send_id![self, name].expect("unexpected NULL NSException name") }
     }
 
     /// A human-readable message summarizing the reason for the exception.
@@ -89,20 +89,27 @@ impl NSException {
         unsafe { Id::cast(this) }
     }
 
-    /// Convert this into an [`Exception`] object.
+    pub(crate) fn is_nsexception(obj: &Exception) -> bool {
+        if obj.class().responds_to(sel!(isKindOfClass:)) {
+            // SAFETY: We only use `isKindOfClass:` on NSObject
+            let obj: *const Exception = obj;
+            let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
+            obj.is_kind_of(Self::class())
+        } else {
+            false
+        }
+    }
+
+    /// Create this from an [`Exception`] object.
+    ///
+    /// This should be considered a hint; it may return `Err` in very, very
+    /// few cases where the object is actually an instance of `NSException`.
     pub fn from_exception(
         obj: Id<Exception, Shared>,
     ) -> Result<Id<Self, Shared>, Id<Exception, Shared>> {
-        if obj.class().responds_to(sel!(isKindOfClass:)) {
-            // SAFETY: We only use `isKindOfClass:` on NSObject
-            let obj = unsafe { Id::cast::<NSObject>(obj) };
-            if obj.is_kind_of(Self::class()) {
-                // SAFETY: Just checked the object is an NSException
-                Ok(unsafe { Id::cast::<Self>(obj) })
-            } else {
-                // SAFETY: Cast back
-                Err(unsafe { Id::cast(obj) })
-            }
+        if Self::is_nsexception(&obj) {
+            // SAFETY: Just checked the object is an NSException
+            Ok(unsafe { Id::cast::<Self>(obj) })
         } else {
             Err(obj)
         }
