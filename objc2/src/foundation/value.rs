@@ -138,7 +138,7 @@ mod tests {
     use alloc::format;
 
     use super::*;
-    use crate::NSRange;
+    use crate::foundation::NSRange;
 
     #[test]
     fn test_value() {

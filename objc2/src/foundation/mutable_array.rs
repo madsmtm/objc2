@@ -229,7 +229,7 @@ mod tests {
     use objc2::rc::autoreleasepool;
 
     use super::*;
-    use crate::NSString;
+    use crate::foundation::NSString;
 
     #[test]
     fn test_adding() {

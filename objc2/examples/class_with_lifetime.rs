@@ -3,11 +3,11 @@ use std::marker::PhantomData;
 use std::sync::Once;
 
 use objc2::declare::ClassBuilder;
+use objc2::foundation::NSObject;
 use objc2::rc::{Id, Owned, Shared};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{Encoding, Message, RefEncode};
-use objc2_foundation::NSObject;
 
 #[repr(C)]
 pub struct MyObject<'a> {

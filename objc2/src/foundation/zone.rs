@@ -59,7 +59,7 @@ unsafe impl RefEncode for NSZone {
 
 #[cfg(test)]
 mod tests {
-    use crate::NSObject;
+    use crate::foundation::NSObject;
     use core::ptr;
     use objc2::msg_send_id;
     use objc2::rc::{Allocated, Id, Owned};
