@@ -235,7 +235,7 @@ macro_rules! __inner_declare_class {
 /// Declare a new Objective-C class.
 ///
 /// This is mostly just a convenience macro on top of [`extern_class!`] and
-/// the functionality in the [`objc2::declare`] module, but it can really help
+/// the functionality in the [`declare`] module, but it can really help
 /// with cutting down on boilerplate, in particular when defining delegate
 /// classes!
 ///
@@ -250,7 +250,7 @@ macro_rules! __inner_declare_class {
 ///
 /// The class definition works a lot like [`extern_class!`], with the added
 /// functionality that you can define custom instance variables on your class,
-/// which are then wrapped in a [`objc2::runtime::Ivar`] and made accessible
+/// which are then wrapped in a [`declare::Ivar`] and made accessible
 /// through the class. (E.g. you can use `self.my_ivar` as if it was a normal
 /// Rust struct).
 ///
@@ -277,10 +277,11 @@ macro_rules! __inner_declare_class {
 /// A transformation step is performed on the functions (to make them have the
 /// correct ABI) and hence they shouldn't really be called manually. (You
 /// can't mark them as `pub` for the same reason). Instead, define a new
-/// function that calls it via. [`objc2::msg_send!`].
+/// function that calls it via. [`msg_send!`].
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
+/// [`msg_send!`]: crate::msg_send
 ///
 ///
 /// ## Protocol definition
@@ -456,6 +457,8 @@ macro_rules! __inner_declare_class {
 /// ```
 ///
 /// [`extern_class!`]: crate::extern_class
+/// [`declare`]: crate::declare
+/// [`declare::Ivar`]: crate::declare::Ivar
 #[doc(alias = "@interface")]
 #[doc(alias = "@implementation")]
 #[macro_export]

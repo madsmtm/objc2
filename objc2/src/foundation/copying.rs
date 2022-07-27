@@ -21,7 +21,7 @@ pub unsafe trait NSCopying: Message {
     /// `copy` message (and others) does not create a new instance, but
     /// instead just retains the instance).
     ///
-    /// [`NSString`]: crate::NSString
+    /// [`NSString`]: crate::foundation::NSString
     type Ownership: Ownership;
 
     /// The output type.

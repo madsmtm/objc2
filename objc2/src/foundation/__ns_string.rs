@@ -305,7 +305,7 @@ impl CachedNSString {
 /// Because of that, this should be preferred over [`NSString::from_str`]
 /// where possible.
 ///
-/// [`NSString::from_str`]: crate::NSString::from_str
+/// [`NSString::from_str`]: crate::foundation::NSString::from_str
 #[macro_export]
 macro_rules! ns_string {
     ($s:expr) => {{

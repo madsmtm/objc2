@@ -3,14 +3,16 @@
 /// This is similar to an `@interface` declaration in Objective-C.
 ///
 /// The given struct name should correspond to a valid Objective-C class,
-/// whose instances have the encoding [`objc2::Encoding::Object`].
-/// (as an example: `NSAutoreleasePool` does not have this!)
+/// whose instances have the encoding [`Encoding::Object`]. (as an example:
+/// `NSAutoreleasePool` does not have this!)
 ///
 /// You must specify the superclass of this class, similar to how you would
 /// in Objective-C. Due to Rust trait limitations, specifying e.g. the
 /// superclass `NSData` would not give you easy access to `NSObject`'s
 /// functionality, therefore you may specify additional parts of the
 /// inheritance chain.
+///
+/// [`Encoding::Object`]: crate::Encoding::Object
 ///
 ///
 /// # Specification
@@ -19,8 +21,8 @@
 /// auto traits are inherited from the superclass), and implements the
 /// following traits for it to allow easier usage as an Objective-C object:
 ///
-/// - [`objc2::RefEncode`]
-/// - [`objc2::Message`]
+/// - [`RefEncode`][crate::RefEncode]
+/// - [`Message`][crate::Message]
 /// - [`Deref<Target = $superclass>`][core::ops::Deref]
 /// - [`DerefMut`][core::ops::DerefMut]
 /// - [`AsRef<$inheritance_chain>`][AsRef]
@@ -33,18 +35,21 @@
 /// `class!(MyObject)`.
 ///
 /// The macro allows specifying fields on the struct, but _only_ zero-sized
-/// types like [`PhantomData`] and [`objc2::declare::Ivar`] are allowed here!
+/// types like [`PhantomData`] and [`declare::Ivar`] are allowed here!
 ///
 /// [`PhantomData`]: core::marker::PhantomData
+/// [`declare::Ivar`]: crate::declare::Ivar
 ///
 ///
 /// # Safety
 ///
 /// The specified superclass must be correct. The object must also respond to
-/// standard memory management messages (this is upheld if `NSObject` is part
-/// of its inheritance chain).
+/// standard memory management messages (this is upheld if [`NSObject`] is
+/// part of its inheritance chain).
 ///
 /// Additionally, any fields (if specified) must be zero-sized.
+///
+/// [`NSObject`]: crate::foundation::NSObject
 ///
 ///
 /// # Example
