@@ -75,7 +75,7 @@
 //! other type, and this would trigger undefined behaviour!
 //!
 //! Making the ergonomics better is something that is currently being worked
-//! on, see e.g. the [`objc2-foundation`] crate for more ergonomic usage of at
+//! on, the [`objc2::foundation`] module contains more ergonomic usage of at
 //! least parts of the `Foundation` framework.
 //!
 //! Anyhow, all of this `unsafe` nicely leads us to another feature that this
@@ -85,7 +85,6 @@
 //! [`runtime::Object`]: crate::runtime::Object
 //! [`rc::Owned`]: crate::rc::Owned
 //! [`rc::Id`]: crate::rc::Id
-//! [`objc2-foundation`]: https://crates.io/crates/objc2-foundation
 //!
 //!
 //! ## Encodings and message type verification
