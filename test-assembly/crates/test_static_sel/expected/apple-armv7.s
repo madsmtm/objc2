@@ -24,8 +24,8 @@ LPC1_0:
 	.p2align	2
 	.code	32
 _get_common_twice:
-	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr-(LPC2_0+8))
-	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr-(LPC2_0+8))
+	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC2_0+8))
+	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC2_0+8))
 LPC2_0:
 	ldr	r0, [pc, r0]
 	ldr	r0, [r0]
@@ -195,8 +195,8 @@ L_OBJC_SELECTOR_REFERENCES_c831c01ba82dcc2e:
 
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2
-LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_234aca269670483c
+LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_alloc
 	.long	0
 
 .subsections_via_symbols

@@ -13,8 +13,6 @@ pub use core::ops::{Deref, DerefMut};
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, str, u8};
 pub use core::{compile_error, concat, panic, stringify};
-#[cfg(feature = "objc2-proc-macros")]
-pub use objc2_proc_macros::__hash_idents;
 // TODO: Use `core::cell::LazyCell`
 pub use std::sync::Once;
 
@@ -30,17 +28,17 @@ pub use std::sync::Once;
 #[inline]
 pub fn alloc() -> Sel {
     // SAFETY: Must have NUL byte
-    __sel_inner!("alloc\0", uniqueIdent)
+    __sel_inner!("alloc\0", "alloc")
 }
 #[inline]
 pub fn init() -> Sel {
     // SAFETY: Must have NUL byte
-    __sel_inner!("init\0", uniqueIdent)
+    __sel_inner!("init\0", "init")
 }
 #[inline]
 pub fn new() -> Sel {
     // SAFETY: Must have NUL byte
-    __sel_inner!("new\0", uniqueIdent)
+    __sel_inner!("new\0", "new")
 }
 
 /// Helper for specifying the retain semantics for a given selector family.
@@ -251,6 +249,8 @@ mod tests {
 
     use core::ptr;
 
+    #[cfg(feature = "objc2-proc-macros")]
+    use crate::__hash_idents;
     use crate::rc::{Allocated, Owned, RcTestObject, Shared, ThreadTestData};
     use crate::runtime::Object;
     use crate::{class, msg_send_id};

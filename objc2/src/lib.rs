@@ -203,6 +203,18 @@ pub use crate::message::{Message, MessageArguments, MessageReceiver};
 #[cfg(feature = "malloc")]
 pub use crate::verify::VerificationError;
 
+#[cfg(feature = "objc2-proc-macros")]
+#[doc(hidden)]
+pub use objc2_proc_macros::__hash_idents;
+
+#[cfg(not(feature = "objc2-proc-macros"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __hash_idents {
+    // Noop; used to make our other macros a bit easier to read
+    ($($x:tt)*) => {$($x)*};
+}
+
 #[doc(hidden)]
 pub mod __macro_helpers;
 mod bool;

@@ -23,7 +23,7 @@ _get_same_sel:
 _get_common_twice:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_234aca269670483c@GOTPCREL]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_alloc@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	rdx, rax
 	pop	rbp

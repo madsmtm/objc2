@@ -43,7 +43,7 @@ mod extern_class;
 #[macro_export]
 macro_rules! class {
     ($name:ident) => {{
-        $crate::__class_inner!($name)
+        $crate::__class_inner!($name, $crate::__hash_idents!($name))
     }};
 }
 
@@ -51,7 +51,7 @@ macro_rules! class {
 #[macro_export]
 #[cfg(not(feature = "unstable-static-class"))]
 macro_rules! __class_inner {
-    ($name:ident) => {{
+    ($name:ident, $_hash:expr) => {{
         use $crate::__macro_helpers::{concat, panic, stringify, CachedClass, None, Some};
         static CACHED_CLASS: CachedClass = CachedClass::new();
         let name = concat!(stringify!($name), '\0');
@@ -191,7 +191,7 @@ macro_rules! sel {
     ($first:ident $(: $($rest:ident :)*)?) => ({
         use $crate::__macro_helpers::{concat, stringify, str};
         const SELECTOR_DATA: &str = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
-        $crate::__sel_inner!(SELECTOR_DATA, $first $($($rest)*)?)
+        $crate::__sel_inner!(SELECTOR_DATA, $crate::__hash_idents!($first $($($rest)*)?))
     });
 }
 
@@ -199,7 +199,7 @@ macro_rules! sel {
 #[macro_export]
 #[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! __sel_inner {
-    ($data:expr, $($idents:ident)+) => {{
+    ($data:expr, $_hash:expr) => {{
         use $crate::__macro_helpers::CachedSel;
         static CACHED_SEL: CachedSel = CachedSel::new();
         #[allow(unused_unsafe)]
@@ -229,7 +229,7 @@ macro_rules! __inner_statics_apple_generic {
     {
         @image_info;
         $image_info_section:literal;
-        $($idents:ident)+
+        $hash:expr;
     } => {
         /// We always emit the image info tag, since we need it to:
         /// - End up in the same codegen unit as the other statics below.
@@ -241,19 +241,19 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = $image_info_section]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_IMAGE_INFO_",
-            $crate::__macro_helpers::__hash_idents!($($idents)+),
+            $hash,
         )]
         #[used] // Make sure this reaches the linker
         static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
     };
     {
         @module_info;
-        $($idents:ident)+
+        $hash:expr;
     } => {
         #[link_section = "__TEXT,__cstring,cstring_literals"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_NAME_",
-            $crate::__macro_helpers::__hash_idents!($($idents)+),
+            $hash,
             "_MODULE_INFO"
         )]
         static MODULE_INFO_NAME: [$crate::__macro_helpers::u8; 1] = [0];
@@ -265,7 +265,7 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = "__OBJC,__module_info,regular,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_MODULES_",
-            $crate::__macro_helpers::__hash_idents!($($idents)+)
+            $hash,
         )]
         #[used] // Make sure this reaches the linker
         static _MODULE_INFO: $crate::__macro_helpers::ModuleInfo = $crate::__macro_helpers::ModuleInfo::new(
@@ -276,8 +276,8 @@ macro_rules! __inner_statics_apple_generic {
         @sel;
         $var_name_section:literal;
         $selector_ref_section:literal;
-        $data:expr,
-        $($idents:ident)+
+        $data:expr;
+        $hash:expr;
     } => {
         use $crate::__macro_helpers::{u8, UnsafeCell};
         use $crate::runtime::Sel;
@@ -290,7 +290,7 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = $var_name_section]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_METH_VAR_NAME_",
-            $crate::__macro_helpers::__hash_idents!($($idents)+),
+            $hash,
         )]
         static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
             @string_to_known_length_bytes;
@@ -323,7 +323,7 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = $selector_ref_section]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_SELECTOR_REFERENCES_",
-            $crate::__macro_helpers::__hash_idents!($($idents)+),
+            $hash,
         )]
         static mut REF: UnsafeCell<Sel> = unsafe {
             UnsafeCell::new(Sel::__internal_from_ptr(NAME_DATA.as_ptr().cast()))
@@ -331,7 +331,8 @@ macro_rules! __inner_statics_apple_generic {
     };
     {
         @class;
-        $name:ident
+        $name:ident;
+        $hash:expr;
     } => {
         use $crate::__macro_helpers::UnsafeCell;
         use $crate::runtime::Class;
@@ -366,7 +367,7 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = "__DATA,__objc_classrefs,regular,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
-            $crate::__macro_helpers::__hash_idents!($name),
+            $crate::__hash_idents!($name),
         )]
         static mut REF: UnsafeCell<&Class> = unsafe {
             UnsafeCell::new(&CLASS)
@@ -374,7 +375,8 @@ macro_rules! __inner_statics_apple_generic {
     };
     {
         @class_old;
-        $name:ident
+        $name:ident;
+        $hash:expr;
     } => {
         use $crate::__macro_helpers::{u8, UnsafeCell};
         use $crate::runtime::Class;
@@ -385,7 +387,7 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = "__TEXT,__cstring,cstring_literals"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_NAME_",
-            $crate::__macro_helpers::__hash_idents!($name),
+            $crate::__hash_idents!($name),
         )]
         static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
             @string_to_known_length_bytes;
@@ -396,7 +398,7 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = "__OBJC,__cls_refs,literal_pointers,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_REFERENCES_",
-            $crate::__macro_helpers::__hash_idents!($name),
+            $crate::__hash_idents!($name),
         )]
         static mut REF: UnsafeCell<&Class> = unsafe {
             let ptr: *const Class = NAME_DATA.as_ptr().cast();
@@ -410,14 +412,14 @@ macro_rules! __inner_statics_apple_generic {
 #[macro_export]
 #[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
 macro_rules! __inner_statics {
-    (@image_info $($args:tt)*) => {
+    (@image_info $hash:expr) => {
         $crate::__inner_statics_apple_generic! {
             @image_info;
             "__DATA,__objc_imageinfo,regular,no_dead_strip";
-            $($args)*
+            $hash;
         }
     };
-    (@sel $($args:tt)*) => {
+    (@sel $data:expr, $hash:expr) => {
         $crate::__inner_statics_apple_generic! {
             @sel;
             "__TEXT,__objc_methname,cstring_literals";
@@ -425,13 +427,15 @@ macro_rules! __inner_statics {
             // which other tools (notably some LLVM tools) now assume is
             // present, so we have to add it as well.
             "__DATA,__objc_selrefs,literal_pointers,no_dead_strip";
-            $($args)*
+            $data;
+            $hash;
         }
     };
-    (@class $($args:tt)*) => {
+    (@class $name:ident, $hash:expr) => {
         $crate::__inner_statics_apple_generic! {
             @class;
-            $($args)*
+            $name;
+            $hash;
         }
     };
 }
@@ -440,29 +444,31 @@ macro_rules! __inner_statics {
 #[macro_export]
 #[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86"))]
 macro_rules! __inner_statics {
-    (@image_info $($args:tt)*) => {
+    (@image_info $hash:expr) => {
         $crate::__inner_statics_apple_generic! {
             @image_info;
             "__OBJC,__image_info,regular";
-            $($args)*
+            $hash;
         }
     };
-    (@sel $($args:tt)*) => {
+    (@sel $data:expr, $hash:expr) => {
         $crate::__inner_statics_apple_generic! {
             @sel;
             "__TEXT,__cstring,cstring_literals";
             "__OBJC,__message_refs,literal_pointers,no_dead_strip";
-            $($args)*
+            $data;
+            $hash;
         }
     };
-    (@class $($args:tt)*) => {
+    (@class $name:ident, $hash:expr) => {
         $crate::__inner_statics_apple_generic! {
             @class_old;
-            $($args)*
+            $name;
+            $hash;
         }
         $crate::__inner_statics_apple_generic! {
             @module_info;
-            $($args)*
+            $hash;
         }
     };
 }
@@ -495,9 +501,9 @@ macro_rules! __inner_statics {
     not(feature = "unstable-static-sel-inlined")
 ))]
 macro_rules! __sel_inner {
-    ($data:expr, $($idents:ident)+) => {{
-        $crate::__inner_statics!(@image_info $($idents)+);
-        $crate::__inner_statics!(@sel $data, $($idents)+);
+    ($data:expr, $hash:expr) => {{
+        $crate::__inner_statics!(@image_info $hash);
+        $crate::__inner_statics!(@sel $data, $hash);
 
         /// HACK: Wrap the access in a non-generic, `#[inline(never)]`
         /// function to make the compiler group it into the same codegen unit
@@ -524,9 +530,9 @@ macro_rules! __sel_inner {
 #[macro_export]
 #[cfg(all(feature = "unstable-static-sel-inlined"))]
 macro_rules! __sel_inner {
-    ($data:expr, $($idents:ident)+) => {{
-        $crate::__inner_statics!(@image_info $($idents)+);
-        $crate::__inner_statics!(@sel $data, $($idents)+);
+    ($data:expr, $hash:expr) => {{
+        $crate::__inner_statics!(@image_info $hash);
+        $crate::__inner_statics!(@sel $data, $hash);
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
@@ -541,9 +547,9 @@ macro_rules! __sel_inner {
     not(feature = "unstable-static-class-inlined")
 ))]
 macro_rules! __class_inner {
-    ($name:ident) => {{
-        $crate::__inner_statics!(@image_info $name);
-        $crate::__inner_statics!(@class $name);
+    ($name:ident, $hash:expr) => {{
+        $crate::__inner_statics!(@image_info $hash);
+        $crate::__inner_statics!(@class $name, $hash);
 
         #[inline(never)]
         fn objc_static_workaround() -> &'static Class {
@@ -559,9 +565,9 @@ macro_rules! __class_inner {
 #[macro_export]
 #[cfg(all(feature = "unstable-static-class-inlined"))]
 macro_rules! __class_inner {
-    ($name:ident) => {{
-        $crate::__inner_statics!(@image_info $name);
-        $crate::__inner_statics!(@class $name);
+    ($name:ident, $hash:expr) => {{
+        $crate::__inner_statics!(@image_info $hash);
+        $crate::__inner_statics!(@class $name, $hash);
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
