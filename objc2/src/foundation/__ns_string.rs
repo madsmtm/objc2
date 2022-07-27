@@ -238,8 +238,6 @@ impl CachedNSString {
 
 /// Creates an [`NSString`][`crate::foundation::NSString`] from a static string.
 ///
-/// Currently only supported on Apple targets.
-///
 ///
 /// # Examples
 ///
@@ -306,6 +304,7 @@ impl CachedNSString {
 /// where possible.
 ///
 /// [`NSString::from_str`]: crate::foundation::NSString::from_str
+#[cfg(feature = "foundation")] // For auto_doc_cfg
 #[macro_export]
 macro_rules! ns_string {
     ($s:expr) => {{

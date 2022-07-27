@@ -13,12 +13,12 @@
 //! - [Exception Programming Topics for Cocoa](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html)
 //! - [The Objective-C Programming Language - Exception Handling](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocExceptionHandling.html)
 //! - [Exception Handling in LLVM](https://llvm.org/docs/ExceptionHandling.html)
+//!
+//! [`msg_send!`]: crate::msg_send
 
 // TODO: Test this with panic=abort, and ensure that the code-size is
 // reasonable in that case.
 
-use alloc::string::String;
-use alloc::string::ToString;
 #[cfg(feature = "exception")]
 use core::ffi::c_void;
 use core::fmt;
@@ -29,41 +29,16 @@ use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
 #[cfg(feature = "exception")]
 use core::ptr;
-use core::slice;
 use objc2_encode::Encoding;
 use objc2_encode::RefEncode;
 use std::error::Error;
-use std::os::raw::c_char;
 
 #[cfg(feature = "exception")]
 use crate::ffi;
-use crate::rc::autoreleasepool;
+#[cfg(feature = "exception")]
 use crate::rc::{Id, Shared};
-use crate::runtime::Class;
 use crate::runtime::Object;
 use crate::Message;
-use crate::{msg_send, msg_send_bool, msg_send_id, sel};
-
-/// Unfortunate reimplementation of `objc2::foundation::NSString`.
-///
-/// I guess this is the price of wanting to do things "right"...
-unsafe fn to_string_hack(obj: Id<Object, Shared>) -> String {
-    #[cfg(feature = "apple")]
-    const UTF8_ENCODING: usize = 4;
-    #[cfg(feature = "gnustep-1-7")]
-    const UTF8_ENCODING: i32 = 4;
-
-    autoreleasepool(|_| {
-        let len: usize = unsafe { msg_send![&obj, lengthOfBytesUsingEncoding: UTF8_ENCODING] };
-
-        let bytes: *const c_char = unsafe { msg_send![&obj, UTF8String] };
-        let bytes: *const u8 = bytes.cast();
-        let bytes: &[u8] = unsafe { slice::from_raw_parts(bytes, len) };
-
-        // Use lossy to avoid panic in error situations
-        String::from_utf8_lossy(bytes).to_string()
-    })
-}
 
 /// An Objective-C exception.
 ///
@@ -100,78 +75,45 @@ impl AsRef<Object> for Exception {
 // Note: We can't implement `Send` nor `Sync` since the exception could be
 // anything!
 
-impl Exception {
-    /// Checks whether this is an instance of `NSException`.
-    ///
-    /// This should be considered a hint; it may return `false` in very, very
-    /// few cases where it is actually `true`, but if it returns `true`, then
-    /// it is definitely an instance of `NSException`.
-    fn is_nsexception(&self) -> bool {
-        // If `NSException` class is present
-        if let Some(cls) = Class::get("NSException") {
-            if self.0.class().responds_to(sel!(isKindOfClass:)) {
-                unsafe { msg_send_bool![self, isKindOfClass: cls] }
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    }
-
-    // SAFETY: Must ensure that self is NSException
-    unsafe fn name(&self) -> Option<String> {
-        let obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![self, name] };
-        obj.map(|obj| unsafe { to_string_hack(obj) })
-    }
-
-    // SAFETY: Must ensure that self is NSException
-    unsafe fn reason(&self) -> Option<String> {
-        let obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![self, reason] };
-        obj.map(|obj| unsafe { to_string_hack(obj) })
-    }
-}
-
-// This is not in any way efficient, but that's not really the point!
-//
-// We mostly just want to present a somewhat usable error message when the
-// `catch-all` feature is enabled!
 impl fmt::Debug for Exception {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "exception {:?}", self.0)?;
+        write!(f, "exception ")?;
 
-        // Attempt to provide better error message
-        if self.is_nsexception() {
-            // SAFETY: We know that these are safe to call since this is an
-            // instance of `NSException`.
-            let name = unsafe { self.name() };
-            let reason = unsafe { self.reason() };
-
-            if let Some(name) = name {
-                write!(f, " '{}'", name)?;
-            } else {
-                write!(f, " (NULL)")?;
-            }
-
-            if let Some(reason) = reason {
-                write!(f, " reason:{}", reason)?;
-            } else {
-                write!(f, " reason:(NULL)")?;
-            }
+        // Attempt to present a somewhat usable error message if the
+        // `foundation` feature is enabled
+        #[cfg(feature = "foundation")]
+        if crate::foundation::NSException::is_nsexception(self) {
+            // SAFETY: Just checked that object is an NSException
+            let obj: *const Self = self;
+            let obj = unsafe {
+                obj.cast::<crate::foundation::NSException>()
+                    .as_ref()
+                    .unwrap()
+            };
+            return write!(f, "{:?}", obj);
         }
 
-        Ok(())
+        // Fall back to `Object` Debug
+        write!(f, "{:?}", self.0)
     }
 }
 
 impl fmt::Display for Exception {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.is_nsexception() {
-            // SAFETY: Just checked that this is NSException.
-            if let Some(reason) = unsafe { self.reason() } {
+        #[cfg(feature = "foundation")]
+        if crate::foundation::NSException::is_nsexception(self) {
+            // SAFETY: Just checked that object is an NSException
+            let obj: *const Self = self;
+            let obj = unsafe {
+                obj.cast::<crate::foundation::NSException>()
+                    .as_ref()
+                    .unwrap()
+            };
+            if let Some(reason) = obj.reason() {
                 return write!(f, "{}", reason);
             }
         }
+
         write!(f, "unknown exception")
     }
 }
