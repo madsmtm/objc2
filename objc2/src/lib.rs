@@ -219,15 +219,6 @@ mod test_utils;
 #[cfg(feature = "malloc")]
 mod verify;
 
-// Hack to make foundation work for now
-#[doc(hidden)]
-pub extern crate core as __core;
-#[doc(hidden)]
-pub extern crate std as __std;
-#[doc(hidden)]
-#[cfg(feature = "foundation")]
-pub use self::macros::ns_string as __string_macro;
-
 // Hack to make doctests work
 #[cfg(all(feature = "apple", feature = "unstable-static-class"))]
 #[link(name = "Foundation", kind = "framework")]

@@ -6,12 +6,17 @@ use crate::{Message, MessageArguments, MessageReceiver};
 pub use crate::cache::CachedClass;
 pub use crate::cache::CachedSel;
 
+pub use core::borrow::{Borrow, BorrowMut};
 pub use core::cell::UnsafeCell;
+pub use core::convert::{AsMut, AsRef};
+pub use core::ops::{Deref, DerefMut};
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, str, u8};
 pub use core::{compile_error, concat, panic, stringify};
 #[cfg(feature = "objc2-proc-macros")]
 pub use objc2_proc_macros::__hash_idents;
+// TODO: Use `core::cell::LazyCell`
+pub use std::sync::Once;
 
 // Common selectors.
 //

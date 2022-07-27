@@ -127,7 +127,7 @@ macro_rules! extern_class {
 macro_rules! __impl_as_ref_borrow {
     ($name:ident<$($t:ident $(: $b:ident)?),*>,) => {};
     ($name:ident<$($t:ident $(: $b:ident)?),*>, $item:ty, $($tail:ty,)*) => {
-        impl<$($t $(: $b)?),*> $crate::__core::convert::AsRef<$item> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::AsRef<$item> for $name<$($t),*> {
             #[inline]
             fn as_ref(&self) -> &$item {
                 // Triggers Deref coercion depending on return type
@@ -135,7 +135,7 @@ macro_rules! __impl_as_ref_borrow {
             }
         }
 
-        impl<$($t $(: $b)?),*> $crate::__core::convert::AsMut<$item> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::AsMut<$item> for $name<$($t),*> {
             #[inline]
             fn as_mut(&mut self) -> &mut $item {
                 // Triggers DerefMut coercion depending on return type
@@ -149,7 +149,7 @@ macro_rules! __impl_as_ref_borrow {
         // In particular, `Eq`, `Ord` and `Hash` all give the same results
         // after borrow.
 
-        impl<$($t $(: $b)?),*> $crate::__core::borrow::Borrow<$item> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::Borrow<$item> for $name<$($t),*> {
             #[inline]
             fn borrow(&self) -> &$item {
                 // Triggers Deref coercion depending on return type
@@ -157,7 +157,7 @@ macro_rules! __impl_as_ref_borrow {
             }
         }
 
-        impl<$($t $(: $b)?),*> $crate::__core::borrow::BorrowMut<$item> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::BorrowMut<$item> for $name<$($t),*> {
             #[inline]
             fn borrow_mut(&mut self) -> &mut $item {
                 // Triggers Deref coercion depending on return type
@@ -253,7 +253,7 @@ macro_rules! __inner_extern_class {
         // Note that you can easily have two different variables pointing to
         // the same object, `x: &T` and `y: &T::Target`, and this would be
         // perfectly safe!
-        impl<$($t $(: $b)?),*> $crate::__core::ops::Deref for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::Deref for $name<$($t),*> {
             type Target = $superclass;
 
             #[inline]
@@ -273,21 +273,21 @@ macro_rules! __inner_extern_class {
         // But `&mut NSMutableString` -> `&mut NSString` safe, since the
         // `NSCopying` implementation of `NSMutableString` is used, and that
         // is guaranteed to return a different object.
-        impl<$($t $(: $b)?),*> $crate::__core::ops::DerefMut for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::DerefMut for $name<$($t),*> {
             #[inline]
             fn deref_mut(&mut self) -> &mut Self::Target {
                 &mut self.__inner
             }
         }
 
-        impl<$($t $(: $b)?),*> $crate::__core::convert::AsRef<Self> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::AsRef<Self> for $name<$($t),*> {
             #[inline]
             fn as_ref(&self) -> &Self {
                 self
             }
         }
 
-        impl<$($t $(: $b)?),*> $crate::__core::convert::AsMut<Self> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::AsMut<Self> for $name<$($t),*> {
             #[inline]
             fn as_mut(&mut self) -> &mut Self {
                 self

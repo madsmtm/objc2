@@ -511,8 +511,7 @@ macro_rules! declare_class {
             )]
             // TODO: Allow users to configure this?
             $v fn class() -> &'static $crate::runtime::Class {
-                // TODO: Use `core::cell::LazyCell`
-                use $crate::__std::sync::Once;
+                use $crate::__macro_helpers::Once;
 
                 use $crate::declare::ClassBuilder;
                 use $crate::runtime::{Class, Protocol};

@@ -62,6 +62,8 @@ extern "C" {}
 #[link(name = "gnustep-base", kind = "dylib")]
 extern "C" {}
 
+#[doc(hidden)]
+pub mod __ns_string;
 mod array;
 mod attributed_string;
 mod comparison_result;
