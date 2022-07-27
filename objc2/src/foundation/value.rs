@@ -9,12 +9,10 @@ use core::{fmt, str};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-use objc2::rc::{DefaultId, Id, Shared};
-use objc2::Encode;
-use objc2::{msg_send, msg_send_id};
-
 use super::{NSCopying, NSObject};
-use crate::__inner_extern_class;
+use crate::rc::{DefaultId, Id, Shared};
+use crate::Encode;
+use crate::{__inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
     // `T: Eq` bound to prevent `NSValue<f32>` from being `Eq`
@@ -139,6 +137,7 @@ mod tests {
 
     use super::*;
     use crate::foundation::NSRange;
+    use crate::msg_send;
 
     #[test]
     fn test_value() {
@@ -191,7 +190,7 @@ mod tests {
     fn test_value_nsrange() {
         let val = NSValue::new(NSRange::from(1..2));
         assert!(NSRange::ENCODING.equivalent_to_str(val.encoding().unwrap()));
-        let range: NSRange = unsafe { objc2::msg_send![&val, rangeValue] };
+        let range: NSRange = unsafe { msg_send![&val, rangeValue] };
         assert_eq!(range, NSRange::from(1..2));
         // NSValue -getValue is broken on GNUStep for some types
         #[cfg(not(feature = "gnustep-1-7"))]

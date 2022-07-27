@@ -181,7 +181,7 @@ macro_rules! __inner_extern_class {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
-            unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {
+            unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::runtime::Object {
                 $($p: $pty,)*
             }
         }
@@ -194,8 +194,8 @@ macro_rules! __inner_extern_class {
             )]
             #[inline]
             // TODO: Allow users to configure this?
-            $v fn class() -> &'static $crate::objc2::runtime::Class {
-                $crate::objc2::class!($name)
+            $v fn class() -> &'static $crate::runtime::Class {
+                $crate::class!($name)
             }
         }
     };
@@ -221,9 +221,9 @@ macro_rules! __inner_extern_class {
         //   that it actually inherits said object.
         // - The rest of the struct's fields are ZSTs, so they don't influence
         //   the layout.
-        unsafe impl<$($t $(: $b)?),*> $crate::objc2::RefEncode for $name<$($t),*> {
-            const ENCODING_REF: $crate::objc2::Encoding<'static>
-                = <$superclass as $crate::objc2::RefEncode>::ENCODING_REF;
+        unsafe impl<$($t $(: $b)?),*> $crate::RefEncode for $name<$($t),*> {
+            const ENCODING_REF: $crate::Encoding<'static>
+                = <$superclass as $crate::RefEncode>::ENCODING_REF;
         }
 
         // SAFETY: This is essentially just a newtype wrapper over `Object`
@@ -232,7 +232,7 @@ macro_rules! __inner_extern_class {
         //
         // That the object must work with standard memory management is upheld
         // by the caller.
-        unsafe impl<$($t $(: $b)?),*> $crate::objc2::Message for $name<$($t),*> {}
+        unsafe impl<$($t $(: $b)?),*> $crate::Message for $name<$($t),*> {}
 
         // SAFETY: An instance can always be _used_ in exactly the same way as
         // its superclasses (though not necessarily _constructed_ in the same
@@ -355,7 +355,7 @@ macro_rules! __attribute_helper {
             $($rest)*
         }
 
-        $crate::objc2::sel!($($sel)*)
+        $crate::sel!($($sel)*)
     }};
     {
         @extract_sel

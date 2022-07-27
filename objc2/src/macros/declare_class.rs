@@ -81,7 +81,7 @@ macro_rules! __inner_declare_class {
             @(instance_method)
             @(
                 $self: &mut Self,
-                _: $crate::objc2::runtime::Sel,
+                _: $crate::runtime::Sel,
                 $($($rest_args)*)?
             )
             $($rest)*
@@ -98,7 +98,7 @@ macro_rules! __inner_declare_class {
             @(instance_method)
             @(
                 $self: &Self,
-                _: $crate::objc2::runtime::Sel,
+                _: $crate::runtime::Sel,
                 $($($rest_args)*)?
             )
             $($rest)*
@@ -115,7 +115,7 @@ macro_rules! __inner_declare_class {
             @(instance_method)
             @(
                 mut $self: $self_ty,
-                _: $crate::objc2::runtime::Sel,
+                _: $crate::runtime::Sel,
                 $($($rest_args)*)?
             )
             $($rest)*
@@ -132,7 +132,7 @@ macro_rules! __inner_declare_class {
             @(instance_method)
             @(
                 $self: $self_ty,
-                _: $crate::objc2::runtime::Sel,
+                _: $crate::runtime::Sel,
                 $($($rest_args)*)?
             )
             $($rest)*
@@ -149,8 +149,8 @@ macro_rules! __inner_declare_class {
             @dispatch
             @(class_method)
             @(
-                _: &$crate::objc2::runtime::Class,
-                _: $crate::objc2::runtime::Sel,
+                _: &$crate::runtime::Class,
+                _: $crate::runtime::Sel,
                 $($args)*
             )
             $($rest)*
@@ -479,7 +479,7 @@ macro_rules! declare_class {
                 __priv: (),
             }
 
-            unsafe impl $crate::objc2::declare::IvarType for $ivar {
+            unsafe impl $crate::declare::IvarType for $ivar {
                 type Type = $ivar_ty;
                 const NAME: &'static str = stringify!($ivar);
             }
@@ -489,14 +489,14 @@ macro_rules! declare_class {
             @__inner
             $(#[$m])*
             // SAFETY: Upheld by caller
-            unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::objc2::runtime::Object {
+            unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::runtime::Object {
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
                 // - The instance variable is defined in the exact same manner
                 //   in `class` below.
                 // - Rust prevents having two fields with the same name.
                 // - Caller upholds that the ivars are properly initialized.
-                $($ivar_v $ivar: $crate::objc2::declare::Ivar<$ivar>,)*
+                $($ivar_v $ivar: $crate::declare::Ivar<$ivar>,)*
             }
         }
 
@@ -510,12 +510,12 @@ macro_rules! declare_class {
                 "May register the class if it wasn't already.",
             )]
             // TODO: Allow users to configure this?
-            $v fn class() -> &'static $crate::objc2::runtime::Class {
+            $v fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
                 use $crate::__std::sync::Once;
 
-                use $crate::objc2::declare::ClassBuilder;
-                use $crate::objc2::runtime::{Class, Protocol};
+                use $crate::declare::ClassBuilder;
+                use $crate::runtime::{Class, Protocol};
                 static REGISTER_CLASS: Once = Once::new();
 
                 REGISTER_CLASS.call_once(|| {
@@ -528,8 +528,8 @@ macro_rules! declare_class {
                     let mut builder = ClassBuilder::new(stringify!($name), superclass).expect(err_str);
 
                     $(
-                        builder.add_ivar::<<$ivar as $crate::objc2::declare::IvarType>::Type>(
-                            <$ivar as $crate::objc2::declare::IvarType>::NAME
+                        builder.add_ivar::<<$ivar as $crate::declare::IvarType>::Type>(
+                            <$ivar as $crate::declare::IvarType>::NAME
                         );
                     )*
 

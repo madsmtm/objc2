@@ -1,10 +1,8 @@
 use core::fmt;
 
-use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{msg_send, msg_send_id};
-
 use super::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
-use crate::extern_class;
+use crate::rc::{DefaultId, Id, Owned, Shared};
+use crate::{extern_class, msg_send, msg_send_id};
 
 extern_class! {
     /// A mutable string that has associated attributes.

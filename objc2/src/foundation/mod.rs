@@ -52,7 +52,7 @@ pub use self::zone::NSZone;
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
 #[doc(no_inline)]
-pub use objc2::ffi::{NSInteger, NSUInteger};
+pub use crate::ffi::{NSInteger, NSUInteger};
 
 #[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
@@ -89,9 +89,9 @@ mod zone;
 #[cfg(test)]
 mod tests {
     use core::panic::{RefUnwindSafe, UnwindSafe};
-    use objc2::rc::{Id, Owned, Shared};
 
     use super::*;
+    use crate::rc::{Id, Owned, Shared};
 
     // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
     // since they follow Rust's usual mutability rules (&T = immutable).

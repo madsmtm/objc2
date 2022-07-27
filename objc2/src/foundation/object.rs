@@ -1,12 +1,10 @@
 use core::fmt;
 use core::hash;
 
-use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::runtime::{Class, Object};
-use objc2::{class, msg_send, msg_send_bool, msg_send_id};
-
 use super::NSString;
-use crate::__inner_extern_class;
+use crate::rc::{DefaultId, Id, Owned, Shared};
+use crate::runtime::{Class, Object};
+use crate::{__inner_extern_class, class, msg_send, msg_send_bool, msg_send_id};
 
 __inner_extern_class! {
     @__inner

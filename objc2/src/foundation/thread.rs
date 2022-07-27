@@ -2,11 +2,9 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::{Id, Shared};
-use objc2::{msg_send, msg_send_bool, msg_send_id};
-
 use super::{NSObject, NSString};
-use crate::extern_class;
+use crate::rc::{Id, Shared};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
 
 extern_class! {
     /// A thread of execution.

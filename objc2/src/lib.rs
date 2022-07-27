@@ -223,8 +223,6 @@ mod verify;
 #[doc(hidden)]
 pub extern crate core as __core;
 #[doc(hidden)]
-pub extern crate self as objc2;
-#[doc(hidden)]
 pub extern crate std as __std;
 #[doc(hidden)]
 #[cfg(feature = "foundation")]

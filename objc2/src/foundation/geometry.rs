@@ -1,4 +1,4 @@
-use objc2::{Encode, Encoding, RefEncode};
+use crate::{Encode, Encoding, RefEncode};
 
 #[cfg(target_pointer_width = "64")]
 type InnerFloat = f64;
@@ -313,7 +313,7 @@ mod tests {
     #[test]
     #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
     fn test_partial_eq() {
-        use objc2::runtime::Bool;
+        use crate::runtime::Bool;
 
         // Note: No need to use "C-unwind"
         extern "C" {

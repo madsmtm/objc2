@@ -9,15 +9,13 @@ use core::slice;
 use core::str;
 use std::os::raw::c_char;
 
-use objc2::ffi;
-use objc2::rc::DefaultId;
-use objc2::rc::{autoreleasepool, AutoreleasePool};
-use objc2::rc::{Id, Shared};
-use objc2::runtime::{Class, Object};
-use objc2::{msg_send, msg_send_bool, msg_send_id};
-
 use super::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
-use crate::extern_class;
+use crate::ffi;
+use crate::rc::DefaultId;
+use crate::rc::{autoreleasepool, AutoreleasePool};
+use crate::rc::{Id, Shared};
+use crate::runtime::{Class, Object};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;

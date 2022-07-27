@@ -6,12 +6,10 @@ use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use std::io;
 
-use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{msg_send, msg_send_id};
-
 use super::data::data_with_bytes;
 use super::{NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
-use crate::extern_class;
+use crate::rc::{DefaultId, Id, Owned, Shared};
+use crate::{extern_class, msg_send, msg_send_id};
 
 extern_class! {
     /// A dynamic byte buffer in memory.
@@ -244,9 +242,8 @@ impl<'a> IntoIterator for &'a mut NSMutableData {
 
 #[cfg(test)]
 mod tests {
-    use objc2::runtime::Object;
-
     use super::*;
+    use crate::runtime::Object;
 
     #[test]
     fn test_bytes_mut() {

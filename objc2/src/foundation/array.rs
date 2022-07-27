@@ -4,16 +4,14 @@ use core::marker::PhantomData;
 use core::ops::{Index, IndexMut, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::runtime::{Class, Object};
-use objc2::Message;
-use objc2::{msg_send, msg_send_id};
-
 use super::{
     NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableArray, NSMutableCopying,
     NSObject, NSRange,
 };
-use crate::__inner_extern_class;
+use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use crate::runtime::{Class, Object};
+use crate::Message;
+use crate::{__inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
     /// TODO
@@ -244,10 +242,9 @@ mod tests {
     use alloc::format;
     use alloc::vec::Vec;
 
-    use objc2::rc::autoreleasepool;
-
     use super::*;
     use crate::foundation::{NSString, NSValue};
+    use crate::rc::autoreleasepool;
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);

@@ -2,8 +2,8 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 #[cfg(feature = "gnustep-1-7")]
-use objc2::Encode;
-use objc2::{ffi, Encoding, RefEncode};
+use crate::Encode;
+use crate::{ffi, Encoding, RefEncode};
 
 /// A type used to identify and manage memory zones.
 ///
@@ -59,12 +59,12 @@ unsafe impl RefEncode for NSZone {
 
 #[cfg(test)]
 mod tests {
-    use crate::foundation::NSObject;
     use core::ptr;
-    use objc2::msg_send_id;
-    use objc2::rc::{Allocated, Id, Owned};
 
     use super::*;
+    use crate::foundation::NSObject;
+    use crate::msg_send_id;
+    use crate::rc::{Allocated, Id, Owned};
 
     #[test]
     #[cfg_attr(

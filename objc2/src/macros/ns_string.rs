@@ -14,10 +14,9 @@ use core::mem::ManuallyDrop;
 use core::ptr;
 use core::sync::atomic::{AtomicPtr, Ordering};
 
-use objc2::rc::Id;
-use objc2::runtime::Class;
-
 use crate::foundation::NSString;
+use crate::rc::Id;
+use crate::runtime::Class;
 
 // This is defined in CoreFoundation, but we don't emit a link attribute
 // here because it is already linked via Foundation.
