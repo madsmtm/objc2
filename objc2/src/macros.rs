@@ -29,6 +29,7 @@
 /// `"unstable-static-sel-inlined"` feature here.
 ///
 /// [sel#features]: crate::sel#features
+/// [`sel!`]: crate::sel
 ///
 /// # Examples
 ///
@@ -622,6 +623,7 @@ macro_rules! __class_inner {
 /// [`MessageReceiver`]: crate::MessageReceiver
 /// [`rc::Id`]: crate::rc::Id
 /// [`Encode`]: crate::Encode
+/// [`sel!`]: crate::sel
 /// [`MessageReceiver::send_message`]: crate::MessageReceiver::send_message
 ///
 ///
