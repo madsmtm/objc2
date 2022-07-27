@@ -1,14 +1,10 @@
-//! # Bindings to the Objective-C Cocoa `Foundation` framework
+//! Bindings to the `Foundation` framework.
 //!
-//! The [`std`] equivalent for Objective-C, containing essential data types,
-//! collections, and operating-system services.
+//! This is the [`std`] equivalent for Objective-C, containing essential data
+//! types, collections, and operating-system services.
 //!
 //! See [Apple's documentation](https://developer.apple.com/documentation/foundation?language=objc).
 //!
-//! **NOTICE: This library is very much in progress, consider using the more
-//! battle-tested [`cocoa-foundation`] crate in the meantime.**
-//!
-//! [`cocoa-foundation`]: https://crates.io/crates/cocoa-foundation
 //!
 //! ## Philosophy
 //!
@@ -18,12 +14,13 @@
 //! on conversion methods, to allow easily using them from Rust.
 //!
 //! If you find some API that an object doesn't expose (but should), we gladly
-//! accept [pull requests]. Anyhow, if it is something that is out of scope,
-//! these objects implement the [`objc2::Message`] trait, so you can always
-//! just manually implement call a method using the [`objc2::msg_send!`]
-//! macro.
+//! accept [pull requests]. If it is something that is out of scope, these
+//! objects implement the [`Message`] trait, so you can always just manually
+//! call a method on them using the [`msg_send!`] family of macros.
 //!
 //! [pull requests]: https://github.com/madsmtm/objc2/pulls
+//! [`Message`]: crate::Message
+//! [`msg_send!`]: crate::msg_send
 
 // TODO: Remove these
 #![allow(missing_docs)]
@@ -55,7 +52,7 @@ pub use self::zone::NSZone;
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
 #[doc(no_inline)]
-pub use objc2::ffi::{NSInteger, NSUInteger};
+pub use crate::ffi::{NSInteger, NSUInteger};
 
 #[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
@@ -65,6 +62,8 @@ extern "C" {}
 #[link(name = "gnustep-base", kind = "dylib")]
 extern "C" {}
 
+#[doc(hidden)]
+pub mod __ns_string;
 mod array;
 mod attributed_string;
 mod comparison_result;
@@ -92,9 +91,9 @@ mod zone;
 #[cfg(test)]
 mod tests {
     use core::panic::{RefUnwindSafe, UnwindSafe};
-    use objc2::rc::{Id, Owned, Shared};
 
     use super::*;
+    use crate::rc::{Id, Owned, Shared};
 
     // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
     // since they follow Rust's usual mutability rules (&T = immutable).

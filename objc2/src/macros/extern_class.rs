@@ -3,14 +3,16 @@
 /// This is similar to an `@interface` declaration in Objective-C.
 ///
 /// The given struct name should correspond to a valid Objective-C class,
-/// whose instances have the encoding [`objc2::Encoding::Object`].
-/// (as an example: `NSAutoreleasePool` does not have this!)
+/// whose instances have the encoding [`Encoding::Object`]. (as an example:
+/// `NSAutoreleasePool` does not have this!)
 ///
 /// You must specify the superclass of this class, similar to how you would
 /// in Objective-C. Due to Rust trait limitations, specifying e.g. the
 /// superclass `NSData` would not give you easy access to `NSObject`'s
 /// functionality, therefore you may specify additional parts of the
 /// inheritance chain.
+///
+/// [`Encoding::Object`]: crate::Encoding::Object
 ///
 ///
 /// # Specification
@@ -19,8 +21,8 @@
 /// auto traits are inherited from the superclass), and implements the
 /// following traits for it to allow easier usage as an Objective-C object:
 ///
-/// - [`objc2::RefEncode`]
-/// - [`objc2::Message`]
+/// - [`RefEncode`][crate::RefEncode]
+/// - [`Message`][crate::Message]
 /// - [`Deref<Target = $superclass>`][core::ops::Deref]
 /// - [`DerefMut`][core::ops::DerefMut]
 /// - [`AsRef<$inheritance_chain>`][AsRef]
@@ -33,18 +35,21 @@
 /// `class!(MyObject)`.
 ///
 /// The macro allows specifying fields on the struct, but _only_ zero-sized
-/// types like [`PhantomData`] and [`objc2::declare::Ivar`] are allowed here!
+/// types like [`PhantomData`] and [`declare::Ivar`] are allowed here!
 ///
 /// [`PhantomData`]: core::marker::PhantomData
+/// [`declare::Ivar`]: crate::declare::Ivar
 ///
 ///
 /// # Safety
 ///
 /// The specified superclass must be correct. The object must also respond to
-/// standard memory management messages (this is upheld if `NSObject` is part
-/// of its inheritance chain).
+/// standard memory management messages (this is upheld if [`NSObject`] is
+/// part of its inheritance chain).
 ///
 /// Additionally, any fields (if specified) must be zero-sized.
+///
+/// [`NSObject`]: crate::foundation::NSObject
 ///
 ///
 /// # Example
@@ -52,9 +57,9 @@
 /// Create a new type to represent the `NSFormatter` class.
 ///
 /// ```
-/// use objc2::msg_send_id;
+/// use objc2::foundation::NSObject;
 /// use objc2::rc::{Id, Shared};
-/// use objc2_foundation::{extern_class, NSObject};
+/// use objc2::{extern_class, msg_send_id};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -78,7 +83,8 @@
 /// declared previously to specify as its superclass.
 ///
 /// ```
-/// use objc2_foundation::{extern_class, NSObject};
+/// use objc2::extern_class;
+/// use objc2::foundation::NSObject;
 /// #
 /// # extern_class! {
 /// #     #[derive(PartialEq, Eq, Hash)]
@@ -93,7 +99,7 @@
 /// }
 /// ```
 ///
-/// See the source code of `objc2_foundation` in general for more examples.
+/// See the source code of `objc2::foundation` in general for more examples.
 #[doc(alias = "@interface")]
 #[macro_export]
 macro_rules! extern_class {
@@ -126,7 +132,7 @@ macro_rules! extern_class {
 macro_rules! __impl_as_ref_borrow {
     ($name:ident<$($t:ident $(: $b:ident)?),*>,) => {};
     ($name:ident<$($t:ident $(: $b:ident)?),*>, $item:ty, $($tail:ty,)*) => {
-        impl<$($t $(: $b)?),*> $crate::__core::convert::AsRef<$item> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::AsRef<$item> for $name<$($t),*> {
             #[inline]
             fn as_ref(&self) -> &$item {
                 // Triggers Deref coercion depending on return type
@@ -134,7 +140,7 @@ macro_rules! __impl_as_ref_borrow {
             }
         }
 
-        impl<$($t $(: $b)?),*> $crate::__core::convert::AsMut<$item> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::AsMut<$item> for $name<$($t),*> {
             #[inline]
             fn as_mut(&mut self) -> &mut $item {
                 // Triggers DerefMut coercion depending on return type
@@ -148,7 +154,7 @@ macro_rules! __impl_as_ref_borrow {
         // In particular, `Eq`, `Ord` and `Hash` all give the same results
         // after borrow.
 
-        impl<$($t $(: $b)?),*> $crate::__core::borrow::Borrow<$item> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::Borrow<$item> for $name<$($t),*> {
             #[inline]
             fn borrow(&self) -> &$item {
                 // Triggers Deref coercion depending on return type
@@ -156,7 +162,7 @@ macro_rules! __impl_as_ref_borrow {
             }
         }
 
-        impl<$($t $(: $b)?),*> $crate::__core::borrow::BorrowMut<$item> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::BorrowMut<$item> for $name<$($t),*> {
             #[inline]
             fn borrow_mut(&mut self) -> &mut $item {
                 // Triggers Deref coercion depending on return type
@@ -181,7 +187,7 @@ macro_rules! __inner_extern_class {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
-            unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::objc2::runtime::Object {
+            unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::runtime::Object {
                 $($p: $pty,)*
             }
         }
@@ -194,8 +200,8 @@ macro_rules! __inner_extern_class {
             )]
             #[inline]
             // TODO: Allow users to configure this?
-            $v fn class() -> &'static $crate::objc2::runtime::Class {
-                $crate::objc2::class!($name)
+            $v fn class() -> &'static $crate::runtime::Class {
+                $crate::class!($name)
             }
         }
     };
@@ -221,9 +227,9 @@ macro_rules! __inner_extern_class {
         //   that it actually inherits said object.
         // - The rest of the struct's fields are ZSTs, so they don't influence
         //   the layout.
-        unsafe impl<$($t $(: $b)?),*> $crate::objc2::RefEncode for $name<$($t),*> {
-            const ENCODING_REF: $crate::objc2::Encoding<'static>
-                = <$superclass as $crate::objc2::RefEncode>::ENCODING_REF;
+        unsafe impl<$($t $(: $b)?),*> $crate::RefEncode for $name<$($t),*> {
+            const ENCODING_REF: $crate::Encoding<'static>
+                = <$superclass as $crate::RefEncode>::ENCODING_REF;
         }
 
         // SAFETY: This is essentially just a newtype wrapper over `Object`
@@ -232,7 +238,7 @@ macro_rules! __inner_extern_class {
         //
         // That the object must work with standard memory management is upheld
         // by the caller.
-        unsafe impl<$($t $(: $b)?),*> $crate::objc2::Message for $name<$($t),*> {}
+        unsafe impl<$($t $(: $b)?),*> $crate::Message for $name<$($t),*> {}
 
         // SAFETY: An instance can always be _used_ in exactly the same way as
         // its superclasses (though not necessarily _constructed_ in the same
@@ -252,7 +258,7 @@ macro_rules! __inner_extern_class {
         // Note that you can easily have two different variables pointing to
         // the same object, `x: &T` and `y: &T::Target`, and this would be
         // perfectly safe!
-        impl<$($t $(: $b)?),*> $crate::__core::ops::Deref for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::Deref for $name<$($t),*> {
             type Target = $superclass;
 
             #[inline]
@@ -272,21 +278,21 @@ macro_rules! __inner_extern_class {
         // But `&mut NSMutableString` -> `&mut NSString` safe, since the
         // `NSCopying` implementation of `NSMutableString` is used, and that
         // is guaranteed to return a different object.
-        impl<$($t $(: $b)?),*> $crate::__core::ops::DerefMut for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::DerefMut for $name<$($t),*> {
             #[inline]
             fn deref_mut(&mut self) -> &mut Self::Target {
                 &mut self.__inner
             }
         }
 
-        impl<$($t $(: $b)?),*> $crate::__core::convert::AsRef<Self> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::AsRef<Self> for $name<$($t),*> {
             #[inline]
             fn as_ref(&self) -> &Self {
                 self
             }
         }
 
-        impl<$($t $(: $b)?),*> $crate::__core::convert::AsMut<Self> for $name<$($t),*> {
+        impl<$($t $(: $b)?),*> $crate::__macro_helpers::AsMut<Self> for $name<$($t),*> {
             #[inline]
             fn as_mut(&mut self) -> &mut Self {
                 self
@@ -355,7 +361,7 @@ macro_rules! __attribute_helper {
             $($rest)*
         }
 
-        $crate::objc2::sel!($($sel)*)
+        $crate::sel!($($sel)*)
     }};
     {
         @extract_sel

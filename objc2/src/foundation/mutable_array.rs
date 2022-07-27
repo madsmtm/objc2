@@ -5,16 +5,14 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
 
-use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::Message;
-use objc2::{msg_send, msg_send_id};
-
 use super::array::from_refs;
 use super::{
     NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
     NSObject,
 };
-use crate::__inner_extern_class;
+use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use crate::Message;
+use crate::{__inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
     // TODO: Ensure that this deref to NSArray is safe!
@@ -226,10 +224,9 @@ impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableArray<T, O> 
 mod tests {
     use alloc::vec;
 
-    use objc2::rc::autoreleasepool;
-
     use super::*;
     use crate::foundation::NSString;
+    use crate::rc::autoreleasepool;
 
     #[test]
     fn test_adding() {

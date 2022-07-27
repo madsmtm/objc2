@@ -81,7 +81,7 @@ macro_rules! __inner_declare_class {
             @(instance_method)
             @(
                 $self: &mut Self,
-                _: $crate::objc2::runtime::Sel,
+                _: $crate::runtime::Sel,
                 $($($rest_args)*)?
             )
             $($rest)*
@@ -98,7 +98,7 @@ macro_rules! __inner_declare_class {
             @(instance_method)
             @(
                 $self: &Self,
-                _: $crate::objc2::runtime::Sel,
+                _: $crate::runtime::Sel,
                 $($($rest_args)*)?
             )
             $($rest)*
@@ -115,7 +115,7 @@ macro_rules! __inner_declare_class {
             @(instance_method)
             @(
                 mut $self: $self_ty,
-                _: $crate::objc2::runtime::Sel,
+                _: $crate::runtime::Sel,
                 $($($rest_args)*)?
             )
             $($rest)*
@@ -132,7 +132,7 @@ macro_rules! __inner_declare_class {
             @(instance_method)
             @(
                 $self: $self_ty,
-                _: $crate::objc2::runtime::Sel,
+                _: $crate::runtime::Sel,
                 $($($rest_args)*)?
             )
             $($rest)*
@@ -149,8 +149,8 @@ macro_rules! __inner_declare_class {
             @dispatch
             @(class_method)
             @(
-                _: &$crate::objc2::runtime::Class,
-                _: $crate::objc2::runtime::Sel,
+                _: &$crate::runtime::Class,
+                _: $crate::runtime::Sel,
                 $($args)*
             )
             $($rest)*
@@ -235,7 +235,7 @@ macro_rules! __inner_declare_class {
 /// Declare a new Objective-C class.
 ///
 /// This is mostly just a convenience macro on top of [`extern_class!`] and
-/// the functionality in the [`objc2::declare`] module, but it can really help
+/// the functionality in the [`declare`] module, but it can really help
 /// with cutting down on boilerplate, in particular when defining delegate
 /// classes!
 ///
@@ -250,7 +250,7 @@ macro_rules! __inner_declare_class {
 ///
 /// The class definition works a lot like [`extern_class!`], with the added
 /// functionality that you can define custom instance variables on your class,
-/// which are then wrapped in a [`objc2::runtime::Ivar`] and made accessible
+/// which are then wrapped in a [`declare::Ivar`] and made accessible
 /// through the class. (E.g. you can use `self.my_ivar` as if it was a normal
 /// Rust struct).
 ///
@@ -277,10 +277,11 @@ macro_rules! __inner_declare_class {
 /// A transformation step is performed on the functions (to make them have the
 /// correct ABI) and hence they shouldn't really be called manually. (You
 /// can't mark them as `pub` for the same reason). Instead, define a new
-/// function that calls it via. [`objc2::msg_send!`].
+/// function that calls it via. [`msg_send!`].
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
+/// [`msg_send!`]: crate::msg_send
 ///
 ///
 /// ## Protocol definition
@@ -322,10 +323,10 @@ macro_rules! __inner_declare_class {
 ///
 /// ```
 /// use std::os::raw::c_int;
-/// use objc2::{msg_send, msg_send_bool, msg_send_id};
+/// use objc2::{declare_class, msg_send, msg_send_bool, msg_send_id};
 /// use objc2::rc::{Id, Owned};
+/// use objc2::foundation::{NSCopying, NSObject, NSZone};
 /// use objc2::runtime::Bool;
-/// use objc2_foundation::{declare_class, NSCopying, NSObject, NSZone};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -456,6 +457,8 @@ macro_rules! __inner_declare_class {
 /// ```
 ///
 /// [`extern_class!`]: crate::extern_class
+/// [`declare`]: crate::declare
+/// [`declare::Ivar`]: crate::declare::Ivar
 #[doc(alias = "@interface")]
 #[doc(alias = "@implementation")]
 #[macro_export]
@@ -479,7 +482,7 @@ macro_rules! declare_class {
                 __priv: (),
             }
 
-            unsafe impl $crate::objc2::declare::IvarType for $ivar {
+            unsafe impl $crate::declare::IvarType for $ivar {
                 type Type = $ivar_ty;
                 const NAME: &'static str = stringify!($ivar);
             }
@@ -489,14 +492,14 @@ macro_rules! declare_class {
             @__inner
             $(#[$m])*
             // SAFETY: Upheld by caller
-            unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::objc2::runtime::Object {
+            unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::runtime::Object {
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
                 // - The instance variable is defined in the exact same manner
                 //   in `class` below.
                 // - Rust prevents having two fields with the same name.
                 // - Caller upholds that the ivars are properly initialized.
-                $($ivar_v $ivar: $crate::objc2::declare::Ivar<$ivar>,)*
+                $($ivar_v $ivar: $crate::declare::Ivar<$ivar>,)*
             }
         }
 
@@ -510,12 +513,11 @@ macro_rules! declare_class {
                 "May register the class if it wasn't already.",
             )]
             // TODO: Allow users to configure this?
-            $v fn class() -> &'static $crate::objc2::runtime::Class {
-                // TODO: Use `core::cell::LazyCell`
-                use $crate::__std::sync::Once;
+            $v fn class() -> &'static $crate::runtime::Class {
+                use $crate::__macro_helpers::Once;
 
-                use $crate::objc2::declare::ClassBuilder;
-                use $crate::objc2::runtime::{Class, Protocol};
+                use $crate::declare::ClassBuilder;
+                use $crate::runtime::{Class, Protocol};
                 static REGISTER_CLASS: Once = Once::new();
 
                 REGISTER_CLASS.call_once(|| {
@@ -528,8 +530,8 @@ macro_rules! declare_class {
                     let mut builder = ClassBuilder::new(stringify!($name), superclass).expect(err_str);
 
                     $(
-                        builder.add_ivar::<<$ivar as $crate::objc2::declare::IvarType>::Type>(
-                            <$ivar as $crate::objc2::declare::IvarType>::NAME
+                        builder.add_ivar::<<$ivar as $crate::declare::IvarType>::Type>(
+                            <$ivar as $crate::declare::IvarType>::NAME
                         );
                     )*
 

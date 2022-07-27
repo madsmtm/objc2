@@ -4,9 +4,9 @@ use core::ptr;
 use core::slice;
 use std::os::raw::c_ulong;
 
-use objc2::rc::{Id, Owned};
-use objc2::runtime::Object;
-use objc2::{msg_send, Encode, Encoding, Message, RefEncode};
+use crate::rc::{Id, Owned};
+use crate::runtime::Object;
+use crate::{msg_send, Encode, Encoding, Message, RefEncode};
 
 // TODO: https://doc.rust-lang.org/stable/reference/trait-bounds.html#lifetime-bounds
 pub struct NSEnumerator<'a, T: Message> {

@@ -2,11 +2,9 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::{Id, Shared};
-use objc2::{msg_send, msg_send_bool, msg_send_id};
-
 use super::{NSObject, NSString};
-use crate::extern_class;
+use crate::rc::{Id, Shared};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
 
 extern_class! {
     /// A thread of execution.
@@ -100,9 +98,9 @@ fn make_multithreaded() {
 /// Use when designing APIs that are only safe to use on the main thread:
 ///
 /// ```no_run
-/// use objc2::msg_send;
+/// use objc2::foundation::MainThreadMarker;
 /// use objc2::runtime::Object;
-/// use objc2_foundation::MainThreadMarker;
+/// use objc2::msg_send;
 /// # let obj = 0 as *const Object;
 ///
 /// // This action requires the main thread, so we take a marker as parameter.

@@ -75,7 +75,7 @@
 //! other type, and this would trigger undefined behaviour!
 //!
 //! Making the ergonomics better is something that is currently being worked
-//! on, see e.g. the [`objc2-foundation`] crate for more ergonomic usage of at
+//! on, the [`foundation`] module contains more ergonomic usage of at
 //! least parts of the `Foundation` framework.
 //!
 //! Anyhow, all of this `unsafe` nicely leads us to another feature that this
@@ -85,7 +85,7 @@
 //! [`runtime::Object`]: crate::runtime::Object
 //! [`rc::Owned`]: crate::rc::Owned
 //! [`rc::Id`]: crate::rc::Id
-//! [`objc2-foundation`]: https://crates.io/crates/objc2-foundation
+//! [`foundation`]: crate::foundation
 //!
 //!
 //! ## Encodings and message type verification
@@ -220,22 +220,6 @@ mod test_utils;
 #[cfg(feature = "malloc")]
 mod verify;
 
-// Hack to make foundation work for now
-#[doc(hidden)]
-pub extern crate core as __core;
-#[doc(hidden)]
-pub extern crate self as objc2;
-#[doc(hidden)]
-pub extern crate std as __std;
-#[doc(hidden)]
-#[cfg(feature = "foundation")]
-pub use self::macros::ns_string as __string_macro;
-
-// Hack to make doctests work
-#[cfg(all(feature = "apple", feature = "unstable-static-class"))]
-#[link(name = "Foundation", kind = "framework")]
-extern "C" {}
-
 /// Hacky way to make GNUStep link properly to Foundation while testing.
 ///
 /// This is a temporary solution to make our CI work for now!
@@ -244,8 +228,6 @@ extern "C" {}
 pub mod __gnustep_hack {
     use super::runtime::Class;
 
-    #[link(name = "gnustep-base", kind = "dylib")]
-    // This linking doesn't have to be on the correct `extern` block.
     extern "C" {
         // The linking changed in libobjc2 v2.0
         #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSObject")]

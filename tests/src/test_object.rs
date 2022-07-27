@@ -7,16 +7,17 @@ use objc2::runtime::{Bool, Class, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_bool, msg_send_id};
+use objc2::{Encoding, Message, RefEncode};
 
 #[repr(C)]
 struct MyTestObject {
     inner: NSObject,
 }
 
-unsafe impl ::objc2::Message for MyTestObject {}
+unsafe impl Message for MyTestObject {}
 
-unsafe impl ::objc2::RefEncode for MyTestObject {
-    const ENCODING_REF: ::objc2::Encoding<'static> = ::objc2::Encoding::Object;
+unsafe impl RefEncode for MyTestObject {
+    const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }
 
 impl MyTestObject {

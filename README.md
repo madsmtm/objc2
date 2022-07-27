@@ -12,9 +12,8 @@ appreciated!
 ## Crate overview
 
 The core crate is [`objc2`], which contains everything you need to interface
-with Objective-C. We use it in [`objc2-foundation`] to provide a safe
-abstraction over some core objects from the Foundation Framework, since these
-are used in almost all other Objective-C frameworks.
+with Objective-C. It also provides safe abstraction over (parts of) the
+Foundation Framework, since that is used in almost all Objective-C code.
 
 [`block2`] has a bit of a weird position in all of this: Apple's C language
 extension of blocks is _technically_ not limited to being used in Objective-C,
@@ -27,7 +26,6 @@ separate crate to help people cutting down on unneeded dependencies.
 runtime libraries.
 
 [`objc2`]: ./objc2
-[`objc2-foundation`]: ./objc2-foundation
 [`block2`]: ./block2
 [`objc2-encode`]: ./objc2-encode
 [`objc-sys`]: ./objc-sys
@@ -126,21 +124,27 @@ Work is in progress to make it dual-licensed under the Apache License
 
 ## Acknowledgements
 
-This repository is originally a fork of [`objc`] (hence the name `objc2`),
-with the following projects merged into it (see reasoning for the fork
-[here][origin-issue-101]):
+This repository is a merge of the following projects, see reasoning for the
+fork [here][origin-issue-101]:
+- [`objc`](https://github.com/SSheldon/rust-objc)
+  - Renamed to `objc2`.
 - [`objc-encode`](https://github.com/SSheldon/rust-objc-encode)
+  - Renamed to `objc2-encode`.
 - [`objc_exception`](https://github.com/SSheldon/rust-objc-exception)
+  - Moved to `objc2::exception`.
 - [`objc_id`](https://github.com/SSheldon/rust-objc-id)
+  - Moved to `objc2::rc`.
 - [`objc-foundation`](https://github.com/SSheldon/rust-objc-foundation)
+  - Moved to `objc2::foundation`.
 - [`block`](https://github.com/SSheldon/rust-block)
+  - Renamed to `block2`.
 
 These were created almost solely by [@SSheldon](https://github.com/SSheldon),
 so a huge thanks for their fantastic work on these crates!
 
-This project also draws heavy inspiration from [`fruity`] and [`objrs`].
+This project also draws heavy inspiration from [`fruity`], the [`core-foundation-rs` project] and [`objrs`].
 
-[`objc`]: https://github.com/SSheldon/rust-objc
 [origin-issue-101]: https://github.com/SSheldon/rust-objc/issues/101
 [`fruity`]: https://github.com/nvzqz/fruity
+[`core-foundation-rs` project]: https://github.com/servo/core-foundation-rs
 [`objrs`]: https://gitlab.com/objrs/objrs

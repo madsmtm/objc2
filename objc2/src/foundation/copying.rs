@@ -1,5 +1,5 @@
-use objc2::rc::{Id, Owned, Ownership};
-use objc2::{msg_send_id, Message};
+use crate::rc::{Id, Owned, Ownership};
+use crate::{msg_send_id, Message};
 
 pub unsafe trait NSCopying: Message {
     /// Indicates whether the type is mutable or immutable.
@@ -21,7 +21,7 @@ pub unsafe trait NSCopying: Message {
     /// `copy` message (and others) does not create a new instance, but
     /// instead just retains the instance).
     ///
-    /// [`NSString`]: crate::NSString
+    /// [`NSString`]: crate::foundation::NSString
     type Ownership: Ownership;
 
     /// The output type.

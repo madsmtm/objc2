@@ -15,10 +15,6 @@ fn ensure_linkage() {
     unsafe { new_objc2::__gnustep_hack::get_class_to_force_linkage() };
 }
 
-#[cfg(feature = "apple")]
-#[link(name = "Foundation", kind = "framework")]
-extern "C" {}
-
 mod core {}
 mod std {}
 mod libc {}

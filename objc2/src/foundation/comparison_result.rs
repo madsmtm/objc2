@@ -1,6 +1,6 @@
 use core::cmp::Ordering;
 
-use objc2::{Encode, Encoding, RefEncode};
+use crate::{Encode, Encoding, RefEncode};
 
 /// Constants that indicate sort order.
 ///

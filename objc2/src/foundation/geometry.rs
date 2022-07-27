@@ -1,4 +1,4 @@
-use objc2::{Encode, Encoding, RefEncode};
+use crate::{Encode, Encoding, RefEncode};
 
 #[cfg(target_pointer_width = "64")]
 type InnerFloat = f64;
@@ -71,7 +71,7 @@ impl NSPoint {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::NSPoint;
+    /// use objc2::foundation::NSPoint;
     /// assert_eq!(NSPoint::new(10.0, -2.3), NSPoint { x: 10.0, y: -2.3 });
     /// ```
     #[inline]
@@ -129,14 +129,14 @@ impl NSSize {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::NSSize;
+    /// use objc2::foundation::NSSize;
     /// let size = NSSize::new(10.0, 2.3);
     /// assert_eq!(size.width(), 10.0);
     /// assert_eq!(size.height(), 2.3);
     /// ```
     ///
     /// ```should_panic
-    /// use objc2_foundation::NSSize;
+    /// use objc2::foundation::NSSize;
     /// let size = NSSize::new(-1.0, 0.0);
     /// ```
     #[inline]
@@ -214,7 +214,7 @@ impl NSRect {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::{NSPoint, NSRect, NSSize};
+    /// use objc2::foundation::{NSPoint, NSRect, NSSize};
     /// let origin = NSPoint::new(10.0, -2.3);
     /// let size = NSSize::new(5.0, 0.0);
     /// let rect = NSRect::new(origin, size);
@@ -313,7 +313,7 @@ mod tests {
     #[test]
     #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
     fn test_partial_eq() {
-        use objc2::runtime::Bool;
+        use crate::runtime::Bool;
 
         // Note: No need to use "C-unwind"
         extern "C" {

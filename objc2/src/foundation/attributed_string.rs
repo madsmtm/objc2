@@ -1,14 +1,12 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::{DefaultId, Id, Shared};
-use objc2::runtime::Object;
-use objc2::{msg_send, msg_send_id};
-
 use super::{
     NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
 };
-use crate::extern_class;
+use crate::rc::{DefaultId, Id, Shared};
+use crate::runtime::Object;
+use crate::{extern_class, msg_send, msg_send_id};
 
 extern_class! {
     /// A string that has associated attributes for portions of its text.
@@ -145,9 +143,9 @@ impl fmt::Debug for NSAttributedString {
 mod tests {
     use alloc::string::ToString;
     use alloc::{format, vec};
-    use objc2::rc::{autoreleasepool, Owned};
 
     use super::*;
+    use crate::rc::{autoreleasepool, Owned};
 
     #[test]
     fn test_new() {

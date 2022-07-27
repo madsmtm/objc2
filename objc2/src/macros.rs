@@ -1,8 +1,5 @@
 mod declare_class;
 mod extern_class;
-#[doc(hidden)]
-#[cfg(feature = "foundation")]
-pub mod ns_string;
 
 /// Gets a reference to a [`Class`] from the given name.
 ///
