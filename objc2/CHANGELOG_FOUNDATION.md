@@ -1,6 +1,8 @@
 # Changelog
 
-Notable changes to this crate will be documented in this file.
+Changes to the `objc2::foundation` module will be documented in this file.
+This previously existed as a separate crate `objc2_foundation`, hence the
+separation.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
@@ -15,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * Change selector syntax in `declare_class!` macro to be more Rust-like.
+* **BREAKING**: Moved from external crate `objc2_foundation` into
+  `objc2::foundation`.
 
 ### Fixed
 * Made `Debug` impls for all objects print something useful.
@@ -25,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Debug`.
 
 
-## 0.2.0-alpha.6 - 2022-07-19
+## objc2-foundation 0.2.0-alpha.6 - 2022-07-19
 
 ### Added
 * Added `MainThreadMarker` to help with designing APIs where a method is only
@@ -40,7 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Changed a few `Debug` impls.
 
 
-## 0.2.0-alpha.5 - 2022-06-13
+## objc2-foundation 0.2.0-alpha.5 - 2022-06-13
 
 ### Added
 * Objects now `Deref` to their superclasses. E.g. `NSMutableArray` derefs to
@@ -109,7 +113,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   easily lead to hard-to-diagnose performance issues.
 
 
-## 0.2.0-alpha.3 - 2021-12-22
+## objc2-foundation 0.2.0-alpha.3 - 2021-12-22
 
 ### Added
 * **BREAKING**: Added associated `Ownership` type to `NSCopying`.
@@ -135,7 +139,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   subclasses may not be).
 
 
-## 0.2.0-alpha.2 - 2021-11-22
+## objc2-foundation 0.2.0-alpha.2 - 2021-11-22
 
 ### Added
 * **BREAKING**: Added associated `Ownership` type to `INSObject` to specify
@@ -197,7 +201,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed `NSData::from_vec` on GNUStep.
 
 
-## 0.2.0-alpha.1 - 2021-10-28
+## objc2-foundation 0.2.0-alpha.1 - 2021-10-28
 
 ### Added
 * Implement new `RefEncode` trait for objects.
@@ -213,7 +217,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `INSString::from_str` on GNUStep (`UTF8_ENCODING` was the wrong type).
 
 
-## 0.2.0-alpha.0 - 2021-08-29
+## objc2-foundation 0.2.0-alpha.0 - 2021-08-29
 
 Note: This is the version that is, as of this writing, available on the
 `master` branch in the original `objc-foundation` project.
@@ -229,27 +233,27 @@ Note: This is the version that is, as of this writing, available on the
 * Fixed types in various calls to `objc::msg_send!` for better verification.
 
 
-## [0.1.1] - 2016-06-19
+## objc-foundation [0.1.1] - 2016-06-19
 
 ### Fixed
 * An issue with passing functions (instead of function pointers) in
   `INSMutableArray::sort_by`.
 
 
-## [0.1.0] - 2016-03-20
+## objc-foundation [0.1.0] - 2016-03-20
 
 ### Changed
 * Update `objc` to `v0.2`.
 * Update `objc_id` to `v0.1`.
 
 
-## [0.0.4] - 2015-12-09
+## objc-foundation [0.0.4] - 2015-12-09
 
 ### Removed
 * `libc` dependency.
 
 
-## [0.0.3] - 2015-11-07
+## objc-foundation [0.0.3] - 2015-11-07
 
 ### Added
 * `object_struct!` macro.
@@ -258,13 +262,13 @@ Note: This is the version that is, as of this writing, available on the
 * `libc` version can both be `0.1` and `0.2`.
 
 
-## [0.0.2] - 2015-09-03
+## objc-foundation [0.0.2] - 2015-09-03
 
 ### Added
 * `Any` bound on `INSObject`, because of a change in `objc` `v0.1.6`.
 
 
-## [0.0.1] - 2015-06-13
+## objc-foundation [0.0.1] - 2015-06-13
 
 Initial release.
 

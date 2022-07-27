@@ -209,6 +209,8 @@ mod bool;
 mod cache;
 pub mod declare;
 pub mod exception;
+#[cfg(feature = "foundation")]
+pub mod foundation;
 mod macros;
 mod message;
 pub mod rc;
@@ -217,6 +219,16 @@ pub mod runtime;
 mod test_utils;
 #[cfg(feature = "malloc")]
 mod verify;
+
+// Hack to make foundation work for now
+#[doc(hidden)]
+pub extern crate core as __core;
+#[doc(hidden)]
+pub extern crate self as objc2;
+#[doc(hidden)]
+pub extern crate std as __std;
+#[doc(hidden)]
+pub use self::foundation::__string_macro;
 
 // Hack to make doctests work
 #[cfg(all(feature = "apple", feature = "unstable-static-class"))]

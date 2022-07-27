@@ -1,6 +1,7 @@
 # Changelog
 
-Notable changes to this crate will be documented in this file.
+Notable changes to this crate will be documented in this file. See the
+`CHANGELOG_FOUNDATION.md` file for changes to the `objc2::foundation` module!
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
@@ -9,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added the `"unstable-static-class"` and `"unstable-static-class-inlined"`
   feature flags to make the `class!` macro zero cost.
+* Moved the external crate `objc2_foundation` into `objc2::foundation` under
+  (default) feature flag `"foundation"`.
 
 
 ## 0.3.0-beta.1 - 2022-07-19
