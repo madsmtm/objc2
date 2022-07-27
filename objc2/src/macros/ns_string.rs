@@ -236,7 +236,7 @@ impl CachedNSString {
     }
 }
 
-/// Creates an [`NSString`][`crate::NSString`] from a static string.
+/// Creates an [`NSString`][`crate::foundation::NSString`] from a static string.
 ///
 /// Currently only supported on Apple targets.
 ///
@@ -247,7 +247,8 @@ impl CachedNSString {
 /// the argument, and produces a `&'static NSString`:
 ///
 /// ```
-/// use objc2_foundation::{ns_string, NSString};
+/// use objc2::ns_string;
+/// use objc2::foundation::NSString;
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let hello: &'static NSString = ns_string!("hello");
@@ -266,7 +267,7 @@ impl CachedNSString {
 /// string to the most efficient encoding, you don't have to do anything!
 ///
 /// ```
-/// # use objc2_foundation::ns_string;
+/// # use objc2::ns_string;
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let hello_ru = ns_string!("Привет");
@@ -284,7 +285,7 @@ impl CachedNSString {
 /// expect:
 ///
 /// ```
-/// # use objc2_foundation::ns_string;
+/// # use objc2::ns_string;
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let example = ns_string!("example\0");

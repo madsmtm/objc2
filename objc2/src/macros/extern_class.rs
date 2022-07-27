@@ -52,9 +52,9 @@
 /// Create a new type to represent the `NSFormatter` class.
 ///
 /// ```
-/// use objc2::msg_send_id;
+/// use objc2::foundation::NSObject;
 /// use objc2::rc::{Id, Shared};
-/// use objc2_foundation::{extern_class, NSObject};
+/// use objc2::{extern_class, msg_send_id};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -78,7 +78,8 @@
 /// declared previously to specify as its superclass.
 ///
 /// ```
-/// use objc2_foundation::{extern_class, NSObject};
+/// use objc2::extern_class;
+/// use objc2::foundation::NSObject;
 /// #
 /// # extern_class! {
 /// #     #[derive(PartialEq, Eq, Hash)]
@@ -93,7 +94,7 @@
 /// }
 /// ```
 ///
-/// See the source code of `objc2_foundation` in general for more examples.
+/// See the source code of `objc2::foundation` in general for more examples.
 #[doc(alias = "@interface")]
 #[macro_export]
 macro_rules! extern_class {

@@ -71,7 +71,7 @@ impl NSPoint {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::NSPoint;
+    /// use objc2::foundation::NSPoint;
     /// assert_eq!(NSPoint::new(10.0, -2.3), NSPoint { x: 10.0, y: -2.3 });
     /// ```
     #[inline]
@@ -129,14 +129,14 @@ impl NSSize {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::NSSize;
+    /// use objc2::foundation::NSSize;
     /// let size = NSSize::new(10.0, 2.3);
     /// assert_eq!(size.width(), 10.0);
     /// assert_eq!(size.height(), 2.3);
     /// ```
     ///
     /// ```should_panic
-    /// use objc2_foundation::NSSize;
+    /// use objc2::foundation::NSSize;
     /// let size = NSSize::new(-1.0, 0.0);
     /// ```
     #[inline]
@@ -214,7 +214,7 @@ impl NSRect {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::{NSPoint, NSRect, NSSize};
+    /// use objc2::foundation::{NSPoint, NSRect, NSSize};
     /// let origin = NSPoint::new(10.0, -2.3);
     /// let size = NSSize::new(5.0, 0.0);
     /// let rect = NSRect::new(origin, size);

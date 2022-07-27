@@ -322,10 +322,10 @@ macro_rules! __inner_declare_class {
 ///
 /// ```
 /// use std::os::raw::c_int;
-/// use objc2::{msg_send, msg_send_bool, msg_send_id};
+/// use objc2::{declare_class, msg_send, msg_send_bool, msg_send_id};
 /// use objc2::rc::{Id, Owned};
+/// use objc2::foundation::{NSCopying, NSObject, NSZone};
 /// use objc2::runtime::Bool;
-/// use objc2_foundation::{declare_class, NSCopying, NSObject, NSZone};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };

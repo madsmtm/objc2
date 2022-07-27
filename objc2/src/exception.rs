@@ -44,7 +44,7 @@ use crate::runtime::Object;
 use crate::Message;
 use crate::{msg_send, msg_send_bool, msg_send_id, sel};
 
-/// Unfortunate reimplementation of `objc2_foundation::NSString`.
+/// Unfortunate reimplementation of `objc2::foundation::NSString`.
 ///
 /// I guess this is the price of wanting to do things "right"...
 unsafe fn to_string_hack(obj: Id<Object, Shared>) -> String {
