@@ -39,18 +39,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Test macOS 10.15
-            os: macos-10.15
-            target: x86_64-apple-darwin
           - name: Test macOS 11
             os: macos-11
             target: x86_64-apple-darwin
+          - name: Test macOS 12
+            os: macos-12
+            target: x86_64-apple-darwin
           - name: Build macOS AArch64
-            os: macos-11
+            os: macos-latest
             target: aarch64-apple-darwin
             test-args: --no-run
           - name: Test macOS old SDK
-            os: macos-11
+            os: macos-latest
             target: x86_64-apple-darwin
             # Oldest macOS version we support
             sdk: "10.7"
@@ -62,7 +62,7 @@ jobs:
             # Run UI tests on nightly to help find regressions
             ui: true
           - name: Build macOS 32bit
-            os: macos-10.15
+            os: macos-latest
             target: i686-apple-darwin
             rust:
               toolchain: nightly
@@ -97,7 +97,7 @@ jobs:
             runtime: gnustep-1-9
             libobjc2: "1.9"
           - name: Test iOS simulator x86 64bit
-            os: macos-11
+            os: macos-latest
             target: x86_64-apple-ios
             dinghy: true
           - name: Build iOS simulator ARM64
