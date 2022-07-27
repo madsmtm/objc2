@@ -152,8 +152,8 @@ jobs:
       ARGS: --no-default-features --features std --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
-      SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception' }}
-      FEATURES: ${{ matrix.features || 'malloc,block,exception,catch-all,verify_message,uuid' }}
+      SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation' }}
+      FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation,catch-all,verify_message,uuid' }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
 
     runs-on: ${{ matrix.os }}
@@ -403,7 +403,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features unstable-static-sel,unstable-static-class
+        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features foundation,unstable-static-sel,unstable-static-class
 
     - name: Run assembly tests
       if: ${{ !contains(matrix.runtime, 'compiler-rt') }}
