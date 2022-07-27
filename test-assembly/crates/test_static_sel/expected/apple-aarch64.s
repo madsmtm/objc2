@@ -23,9 +23,9 @@ Lloh3:
 	.p2align	2
 _get_common_twice:
 Lloh4:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_234aca269670483c@GOTPAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_alloc@GOTPAGE
 Lloh5:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_234aca269670483c@GOTPAGEOFF]
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_alloc@GOTPAGEOFF]
 Lloh6:
 	ldr	x0, [x8]
 	mov	x1, x0

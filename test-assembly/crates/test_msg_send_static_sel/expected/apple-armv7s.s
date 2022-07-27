@@ -19,10 +19,10 @@ LPC0_0:
 _handle_alloc_init:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_a4d24db6a5648d44$non_lazy_ptr-(LPC1_0+8))
-	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_a4d24db6a5648d44$non_lazy_ptr-(LPC1_0+8))
-	movw	r2, :lower16:(LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr-(LPC1_1+8))
-	movt	r2, :upper16:(LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr-(LPC1_1+8))
+	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_0+8))
+	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_0+8))
+	movw	r2, :lower16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC1_1+8))
+	movt	r2, :upper16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC1_1+8))
 LPC1_0:
 	ldr	r1, [pc, r1]
 LPC1_1:
@@ -159,11 +159,11 @@ L_OBJC_SELECTOR_REFERENCES_e76e01e8b2327e5d:
 
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2
-LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_234aca269670483c
+LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_alloc
 	.long	0
-LL_OBJC_SELECTOR_REFERENCES_a4d24db6a5648d44$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_a4d24db6a5648d44
+LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_init
 	.long	0
 
 .subsections_via_symbols
