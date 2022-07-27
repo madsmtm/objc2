@@ -1,0 +1,8 @@
+error[E0015]: cannot call non-const fn `CFConstString::as_nsstring` in statics
+ --> ui/ns_string_output_not_const.rs
+  |
+  |     static STRING: &NSString = ns_string!("abc");
+  |                                ^^^^^^^^^^^^^^^^^
+  |
+  = note: calls in statics are limited to constant functions, tuple structs and tuple variants
+  = note: this error originates in the macro `$crate::__ns_string_inner` which comes from the expansion of the macro `ns_string` (in Nightly builds, run with -Z macro-backtrace for more info)

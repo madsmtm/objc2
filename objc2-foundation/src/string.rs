@@ -30,9 +30,13 @@ const UTF8_ENCODING: i32 = 4;
 const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
 extern_class! {
-    /// A static, plain-text Unicode string object.
+    /// An immutable, plain-text Unicode string object.
+    ///
+    /// Can be created statically using the [`ns_string!`] macro.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring?language=objc).
+    ///
+    /// [`ns_string!`]: crate::ns_string
     #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSString: NSObject;
     // TODO: Use isEqualToString: for comparison (instead of just isEqual:)
@@ -173,6 +177,10 @@ impl NSString {
     // TODO: Allow usecases where the NUL byte from `UTF8String` is kept?
 
     /// Creates an immutable `NSString` by copying the given string slice.
+    ///
+    /// Prefer using the [`ns_string!`] macro when possible.
+    ///
+    /// [`ns_string!`]: crate::ns_string
     #[doc(alias = "initWithBytes")]
     #[doc(alias = "initWithBytes:length:encoding:")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name

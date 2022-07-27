@@ -1,0 +1,7 @@
+error[E0308]: mismatched types
+ --> ui/invalid_ns_string_output.rs
+  |
+  |     let _: u8 = ns_string!("abc");
+  |                 ^^^^^^^^^^^^^^^^^ expected `u8`, found `&NSString`
+  |
+  = note: this error originates in the macro `$crate::__ns_string_inner` which comes from the expansion of the macro `ns_string` (in Nightly builds, run with -Z macro-backtrace for more info)
