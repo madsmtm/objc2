@@ -1,5 +1,5 @@
 //! Test the output of the `class!` macro.
-#![cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
+#![cfg(feature = "apple")]
 use objc2::class;
 use objc2::runtime::Class;
 

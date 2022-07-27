@@ -209,6 +209,20 @@ macro_rules! __sel_inner {
 #[macro_export]
 macro_rules! __inner_statics_apple_generic {
     {
+        @string_to_known_length_bytes;
+        $x:ident;
+    } => {{
+        // Convert the `&[u8]` slice to an array with known length, so
+        // that we can place that directly in a static.
+        let mut res: [u8; $x.len()] = [0; $x.len()];
+        let mut i = 0;
+        while i < $x.len() {
+            res[i] = $x[i];
+            i += 1;
+        }
+        res
+    }};
+    {
         @image_info;
         $image_info_section:literal;
         $($idents:ident)+
@@ -248,16 +262,9 @@ macro_rules! __inner_statics_apple_generic {
             "\x01L_OBJC_METH_VAR_NAME_",
             $crate::__macro_helpers::__hash_idents!($($idents)+),
         )]
-        static NAME_DATA: [u8; X.len()] = {
-            // Convert the `&[u8]` slice to an array with known length, so
-            // that we can place that directly in a static.
-            let mut res: [u8; X.len()] = [0; X.len()];
-            let mut i = 0;
-            while i < X.len() {
-                res[i] = X[i];
-                i += 1;
-            }
-            res
+        static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
+            @string_to_known_length_bytes;
+            X;
         };
 
         /// Place the constant value in the correct section.
@@ -272,10 +279,6 @@ macro_rules! __inner_statics_apple_generic {
         ///
         /// `static mut` is used so that we don't need to wrap the
         /// `UnsafeCell` in something that implements `Sync`.
-        ///
-        /// Clang uses `no_dead_strip` in the link section for some reason,
-        /// which other tools (notably some LLVM tools) now assume is present,
-        /// so we have to add it as well.
         ///
         ///
         /// # Safety
@@ -298,7 +301,6 @@ macro_rules! __inner_statics_apple_generic {
     };
     {
         @class;
-        $class_ref_section:literal;
         $name:ident
     } => {
         use $crate::__macro_helpers::UnsafeCell;
@@ -330,8 +332,8 @@ macro_rules! __inner_statics_apple_generic {
             static CLASS: Class;
         }
 
-        /// SAFETY: Same as `REF` above.
-        #[link_section = $class_ref_section]
+        /// SAFETY: Same as `REF` above in `@sel`.
+        #[link_section = "__DATA,__objc_classrefs,regular,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
             $crate::__macro_helpers::__hash_idents!($name),
@@ -340,6 +342,39 @@ macro_rules! __inner_statics_apple_generic {
             UnsafeCell::new(&CLASS)
         };
     };
+    {
+        @class_old;
+        $name:ident
+    } => {
+        use $crate::__macro_helpers::{u8, UnsafeCell};
+        use $crate::runtime::Class;
+
+        const X: &[u8] = $crate::__macro_helpers::stringify!($name).as_bytes();
+
+        /// Similar to NAME_DATA above in `@sel`.
+        #[link_section = "__TEXT,__cstring,cstring_literals"]
+        #[export_name = $crate::__macro_helpers::concat!(
+            "\x01L_OBJC_CLASS_NAME_",
+            $crate::__macro_helpers::__hash_idents!($name),
+        )]
+        static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
+            @string_to_known_length_bytes;
+            X;
+        };
+
+        /// SAFETY: Same as `REF` above in `@sel`.
+        #[link_section = "__OBJC,__cls_refs,literal_pointers,no_dead_strip"]
+        #[export_name = $crate::__macro_helpers::concat!(
+            "\x01L_OBJC_CLASS_REFERENCES_",
+            $crate::__macro_helpers::__hash_idents!($name),
+        )]
+        static mut REF: UnsafeCell<&Class> = unsafe {
+            let ptr: *const Class = NAME_DATA.as_ptr().cast();
+            UnsafeCell::new(&*ptr)
+        };
+
+        // TODO: module info?
+    }
 }
 
 // These sections are found by reading clang/LLVM sources
@@ -358,6 +393,9 @@ macro_rules! __inner_statics {
         $crate::__inner_statics_apple_generic! {
             @sel;
             "__TEXT,__objc_methname,cstring_literals";
+            // Clang uses `no_dead_strip` in the link section for some reason,
+            // which other tools (notably some LLVM tools) now assume is
+            // present, so we have to add it as well.
             "__DATA,__objc_selrefs,literal_pointers,no_dead_strip";
             $($args)*
         }
@@ -365,7 +403,6 @@ macro_rules! __inner_statics {
     (@class $($args:tt)*) => {
         $crate::__inner_statics_apple_generic! {
             @class;
-            "__DATA,__objc_classrefs,regular,no_dead_strip";
             $($args)*
         }
     };
@@ -391,11 +428,10 @@ macro_rules! __inner_statics {
         }
     };
     (@class $($args:tt)*) => {
-        // TODO
-        $crate::__macro_helpers::compile_error!(
-            "The `\"unstable-static-class\"` feature is not yet supported on 32bit macOS!"
-        )
-        // TODO: module info
+        $crate::__inner_statics_apple_generic! {
+            @class_old;
+            $($args)*
+        }
     };
 }
 
