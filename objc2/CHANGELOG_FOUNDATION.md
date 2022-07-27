@@ -16,7 +16,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Add extra `Extend<&u8>` impl for `NSMutableData`.
 
 ### Changed
-* Change selector syntax in `declare_class!` macro to be more Rust-like.
 * **BREAKING**: Moved from external crate `objc2_foundation` into
   `objc2::foundation`.
 
@@ -36,7 +35,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   safe to call on the main thread.
 * Added `NSException` object.
 * Added `extern_class!` macro to help with defining interfaces to classes.
+  Further changelog for this can be found in `CHANGELOG.md`.
 * Added `declare_class!` macro to help with declaring custom classes.
+  Further changelog for this can be found in `CHANGELOG.md`.
 * Expose the `objc2` version that this uses in the crate root.
 * Added `NSZone`.
 

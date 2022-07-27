@@ -65,19 +65,15 @@ extern "C" {}
 #[link(name = "gnustep-base", kind = "dylib")]
 extern "C" {}
 
-#[doc(hidden)]
-pub mod __string_macro;
 mod array;
 mod attributed_string;
 mod comparison_result;
 mod copying;
 mod data;
-mod declare_macro;
 mod dictionary;
 mod enumerator;
 mod exception;
 mod geometry;
-mod macros;
 mod mutable_array;
 mod mutable_attributed_string;
 mod mutable_data;

@@ -228,7 +228,8 @@ pub extern crate self as objc2;
 #[doc(hidden)]
 pub extern crate std as __std;
 #[doc(hidden)]
-pub use self::foundation::__string_macro;
+#[cfg(feature = "foundation")]
+pub use self::macros::ns_string as __string_macro;
 
 // Hack to make doctests work
 #[cfg(all(feature = "apple", feature = "unstable-static-class"))]

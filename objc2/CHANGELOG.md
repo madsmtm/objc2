@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   feature flags to make the `class!` macro zero cost.
 * Moved the external crate `objc2_foundation` into `objc2::foundation` under
   (default) feature flag `"foundation"`.
+* Added `declare_class!`, `extern_class!` and `ns_string!` macros from
+  `objc2-foundation`.
+
+### Changed
+* Change selector syntax in `declare_class!` macro to be more Rust-like.
 
 
 ## 0.3.0-beta.1 - 2022-07-19
