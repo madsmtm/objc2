@@ -515,7 +515,7 @@ macro_rules! declare_class {
                 use $crate::__std::sync::Once;
 
                 use $crate::objc2::declare::ClassBuilder;
-                use $crate::objc2::runtime::Protocol;
+                use $crate::objc2::runtime::{Class, Protocol};
                 static REGISTER_CLASS: Once = Once::new();
 
                 REGISTER_CLASS.call_once(|| {
@@ -555,7 +555,8 @@ macro_rules! declare_class {
                     let _cls = builder.register();
                 });
 
-                $crate::objc2::class!($name)
+                // We just registered the class, so it should be available
+                Class::get(stringify!($name)).unwrap()
             }
         }
 

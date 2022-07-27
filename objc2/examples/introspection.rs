@@ -4,6 +4,10 @@ use objc2::{class, msg_send, msg_send_id};
 #[cfg(feature = "malloc")]
 use objc2::{sel, Encode};
 
+#[cfg(feature = "apple")]
+#[link(name = "Foundation", kind = "framework")]
+extern "C" {}
+
 fn main() {
     // Get a class
     let cls = class!(NSObject);

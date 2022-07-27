@@ -218,6 +218,11 @@ mod test_utils;
 #[cfg(feature = "malloc")]
 mod verify;
 
+// Hack to make doctests work
+#[cfg(all(feature = "apple", feature = "unstable-static-class"))]
+#[link(name = "Foundation", kind = "framework")]
+extern "C" {}
+
 /// Hacky way to make GNUStep link properly to Foundation while testing.
 ///
 /// This is a temporary solution to make our CI work for now!

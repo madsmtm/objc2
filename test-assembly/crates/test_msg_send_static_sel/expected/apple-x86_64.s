@@ -16,9 +16,9 @@ _handle_alloc_init:
 	mov	rbp, rsp
 	push	rbx
 	push	rax
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32@GOTPCREL]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_a4d24db6a5648d44@GOTPCREL]
 	mov	rbx, qword ptr [rax]
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2@GOTPCREL]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_234aca269670483c@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	call	_objc_msgSend
 	mov	rdi, rax

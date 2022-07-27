@@ -27,9 +27,9 @@ _handle_alloc_init:
 	call	L1$pb
 L1$pb:
 	pop	eax
-	mov	ecx, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32$non_lazy_ptr-L1$pb]
+	mov	ecx, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_a4d24db6a5648d44$non_lazy_ptr-L1$pb]
 	mov	esi, dword ptr [ecx]
-	mov	eax, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr-L1$pb]
+	mov	eax, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr-L1$pb]
 	sub	esp, 8
 	push	dword ptr [eax]
 	push	dword ptr [ebp + 8]
@@ -161,11 +161,11 @@ L_OBJC_SELECTOR_REFERENCES_e76e01e8b2327e5d:
 	.long	L_OBJC_METH_VAR_NAME_e76e01e8b2327e5d
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LL_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_0ea0a15a3d108c32
+LL_OBJC_SELECTOR_REFERENCES_234aca269670483c$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_234aca269670483c
 	.long	0
-LL_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_1678d2f7468155d2
+LL_OBJC_SELECTOR_REFERENCES_a4d24db6a5648d44$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_a4d24db6a5648d44
 	.long	0
 
 .subsections_via_symbols
