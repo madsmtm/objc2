@@ -206,7 +206,10 @@ jobs:
     - name: Setup SDK environment
       if: matrix.sdk
       # This changes a variable, so is only set when a custom SDK is used
-      run: echo "SDKROOT=$HOME/extern/sdk" >> $GITHUB_ENV
+      run: |
+        echo "SDKROOT=$HOME/extern/sdk" >> $GITHUB_ENV
+        # Temporary
+        echo "RUSTFLAGS=$RUSTFLAGS --cfg=macos_10_7" >> $GITHUB_ENV
 
     - name: Install Clang & Valgrind
       if: contains(matrix.os, 'ubuntu')

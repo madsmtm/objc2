@@ -8,7 +8,7 @@ use std::time::Duration;
 
 use objc2::rc::{Id, Owned};
 use objc2::runtime::Class;
-use objc2::{class, msg_send, msg_send_bool, msg_send_id};
+use objc2::{msg_send, msg_send_bool, msg_send_id};
 use objc2::{Encoding, Message, RefEncode};
 
 use objc2_foundation::{NSObject, NSString};
@@ -47,7 +47,14 @@ impl DerefMut for NSSpeechSynthesizer {
 // TODO: Unsure about when to use `&mut` here?
 impl NSSpeechSynthesizer {
     pub fn class() -> &'static Class {
-        class!(NSSpeechSynthesizer)
+        #[cfg(all(feature = "apple", target_os = "macos"))]
+        {
+            objc2::class!(NSSpeechSynthesizer)
+        }
+        #[cfg(not(all(feature = "apple", target_os = "macos")))]
+        {
+            panic!("this example only works on macOS")
+        }
     }
 
     // Uses default voice

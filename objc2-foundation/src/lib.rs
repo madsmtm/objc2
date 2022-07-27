@@ -66,6 +66,7 @@ pub use self::process_info::NSProcessInfo;
 pub use self::range::NSRange;
 pub use self::string::NSString;
 pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSThread};
+#[cfg(not(macos_10_7))] // Temporary
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
 pub use self::zone::NSZone;
@@ -112,6 +113,8 @@ mod process_info;
 mod range;
 mod string;
 mod thread;
+// Temporarily disable testing UUID on macOS 10.7 until
+#[cfg(not(macos_10_7))]
 mod uuid;
 mod value;
 mod zone;
@@ -175,6 +178,7 @@ mod tests {
         assert_auto_traits::<NSString>();
         assert_unwindsafe::<MainThreadMarker>(); // Intentional
         assert_auto_traits::<NSThread>();
+        #[cfg(not(macos_10_7))]
         assert_auto_traits::<NSUUID>();
         assert_auto_traits::<NSValue<i32>>();
         assert_unwindsafe::<NSZone>(); // Intentional

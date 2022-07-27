@@ -1,18 +1,22 @@
+#[cfg(all(feature = "apple", target_os = "macos"))]
 use objc2::{
     msg_send, msg_send_id,
     rc::{Id, Shared},
     runtime::{Bool, Object},
 };
+#[cfg(all(feature = "apple", target_os = "macos"))]
 use objc2_foundation::{declare_class, extern_class, NSObject};
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}
 
+#[cfg(all(feature = "apple", target_os = "macos"))]
 extern_class! {
     unsafe struct NSResponder: NSObject;
 }
 
+#[cfg(all(feature = "apple", target_os = "macos"))]
 declare_class! {
     unsafe struct CustomAppDelegate: NSResponder, NSObject {
         pub ivar: u8,
@@ -66,6 +70,7 @@ declare_class! {
     }
 }
 
+#[cfg(all(feature = "apple", target_os = "macos"))]
 impl CustomAppDelegate {
     pub fn new(ivar: u8, another_ivar: bool) -> Id<Self, Shared> {
         let cls = Self::class();
@@ -80,9 +85,15 @@ impl CustomAppDelegate {
     }
 }
 
+#[cfg(all(feature = "apple", target_os = "macos"))]
 fn main() {
     let delegate = CustomAppDelegate::new(42, true);
 
     println!("{}", delegate.ivar);
     println!("{}", delegate.another_ivar.as_bool());
+}
+
+#[cfg(not(all(feature = "apple", target_os = "macos")))]
+fn main() {
+    panic!("This example uses AppKit, which is only present on macOS");
 }
