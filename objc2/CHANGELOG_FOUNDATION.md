@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Add extra `Extend<&u8>` impl for `NSMutableData`.
 * Added function `NSValue::contains_encoding` for determining if the encoding
   of the `NSValue` matches the encoding of the given type.
+* Added functions `get_range`, `get_point`, `get_size` and `get_rect` to
+  `NSValue` to help safely returning various types it will commonly contain.
 
 ### Changed
 * **BREAKING**: Moved from external crate `objc2_foundation` into

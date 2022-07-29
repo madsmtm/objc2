@@ -8,7 +8,7 @@ use core::str;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-use super::{NSCopying, NSObject};
+use super::{NSCopying, NSObject, NSPoint, NSRange, NSRect, NSSize};
 use crate::rc::{Id, Shared};
 use crate::Encode;
 use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
@@ -129,6 +129,54 @@ impl NSValue {
         unsafe { value.assume_init() }
     }
 
+    pub fn get_range(&self) -> Option<NSRange> {
+        if self.contains_encoding::<NSRange>() {
+            // SAFETY: We just checked that this contains an NSRange
+            Some(unsafe { msg_send![self, rangeValue] })
+        } else {
+            None
+        }
+    }
+
+    pub fn get_point(&self) -> Option<NSPoint> {
+        if self.contains_encoding::<NSPoint>() {
+            // SAFETY: We just checked that this contains an NSPoint
+            #[cfg(any(feature = "gnustep-1-7", target_os = "macos"))]
+            let res = unsafe { msg_send![self, pointValue] };
+            #[cfg(all(feature = "apple", not(target_os = "macos")))]
+            let res = unsafe { msg_send![self, CGPointValue] };
+            Some(res)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_size(&self) -> Option<NSSize> {
+        if self.contains_encoding::<NSSize>() {
+            // SAFETY: We just checked that this contains an NSSize
+            #[cfg(any(feature = "gnustep-1-7", target_os = "macos"))]
+            let res = unsafe { msg_send![self, sizeValue] };
+            #[cfg(all(feature = "apple", not(target_os = "macos")))]
+            let res = unsafe { msg_send![self, CGSizeValue] };
+            Some(res)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_rect(&self) -> Option<NSRect> {
+        if self.contains_encoding::<NSRect>() {
+            // SAFETY: We just checked that this contains an NSRect
+            #[cfg(any(feature = "gnustep-1-7", target_os = "macos"))]
+            let res = unsafe { msg_send![self, rectValue] };
+            #[cfg(all(feature = "apple", not(target_os = "macos")))]
+            let res = unsafe { msg_send![self, CGRectValue] };
+            Some(res)
+        } else {
+            None
+        }
+    }
+
     pub fn encoding(&self) -> Option<&str> {
         let result: Option<NonNull<c_char>> = unsafe { msg_send![self, objCType] };
         result.map(|s| unsafe { CStr::from_ptr(s.as_ptr()) }.to_str().unwrap())
@@ -187,8 +235,6 @@ mod tests {
     use core::slice;
 
     use super::*;
-    use crate::foundation::NSRange;
-    use crate::msg_send;
 
     #[test]
     fn basic() {
@@ -230,14 +276,43 @@ mod tests {
     }
 
     #[test]
-    fn test_value_nsrange() {
-        let val = NSValue::new(NSRange::from(1..2));
-        assert!(val.contains_encoding::<NSRange>());
-        let range: NSRange = unsafe { msg_send![&val, rangeValue] };
-        assert_eq!(range, NSRange::from(1..2));
+    fn nsrange() {
+        let range = NSRange::from(1..2);
+        let val = NSValue::new(range);
+        assert_eq!(val.get_range(), Some(range));
+        assert_eq!(val.get_point(), None);
+        assert_eq!(val.get_size(), None);
+        assert_eq!(val.get_rect(), None);
         // NSValue -getValue is broken on GNUStep for some types
         #[cfg(not(feature = "gnustep-1-7"))]
-        assert_eq!(unsafe { val.get::<NSRange>() }, NSRange::from(1..2));
+        assert_eq!(unsafe { val.get::<NSRange>() }, range);
+    }
+
+    #[test]
+    fn nspoint() {
+        let point = NSPoint::new(1.0, 2.0);
+        let val = NSValue::new(point);
+        assert_eq!(val.get_point(), Some(point));
+        #[cfg(not(feature = "gnustep-1-7"))]
+        assert_eq!(unsafe { val.get::<NSPoint>() }, point);
+    }
+
+    #[test]
+    fn nssize() {
+        let point = NSSize::new(1.0, 2.0);
+        let val = NSValue::new(point);
+        assert_eq!(val.get_size(), Some(point));
+        #[cfg(not(feature = "gnustep-1-7"))]
+        assert_eq!(unsafe { val.get::<NSSize>() }, point);
+    }
+
+    #[test]
+    fn nsrect() {
+        let rect = NSRect::new(NSPoint::new(1.0, 2.0), NSSize::new(3.0, 4.0));
+        let val = NSValue::new(rect);
+        assert_eq!(val.get_rect(), Some(rect));
+        #[cfg(not(feature = "gnustep-1-7"))]
+        assert_eq!(unsafe { val.get::<NSRect>() }, rect);
     }
 
     #[test]
