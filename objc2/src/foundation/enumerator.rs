@@ -168,29 +168,29 @@ impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
 #[cfg(test)]
 mod tests {
     use super::NSFastEnumeration;
-    use crate::foundation::{NSArray, NSValue};
+    use crate::foundation::{NSArray, NSNumber};
 
     #[test]
     fn test_enumerator() {
-        let vec = (0usize..4).map(NSValue::new).collect();
+        let vec = (0..4).map(NSNumber::new_usize).collect();
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.iter();
         assert_eq!(enumerator.count(), 4);
 
         let enumerator = array.iter();
-        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i));
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.as_usize() == i));
     }
 
     #[test]
     fn test_fast_enumerator() {
-        let vec = (0usize..4).map(NSValue::new).collect();
+        let vec = (0..4).map(NSNumber::new_usize).collect();
         let array = NSArray::from_vec(vec);
 
         let enumerator = array.iter_fast();
         assert_eq!(enumerator.count(), 4);
 
         let enumerator = array.iter_fast();
-        assert!(enumerator.enumerate().all(|(i, obj)| obj.get() == i));
+        assert!(enumerator.enumerate().all(|(i, obj)| obj.as_usize() == i));
     }
 }

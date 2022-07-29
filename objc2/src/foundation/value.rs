@@ -1,66 +1,131 @@
 use alloc::string::ToString;
-use core::cmp::Ordering;
 use core::ffi::c_void;
-use core::marker::PhantomData;
+use core::fmt;
+use core::hash;
 use core::mem::MaybeUninit;
-use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
-use core::{fmt, str};
+use core::str;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
 use super::{NSCopying, NSObject};
-use crate::rc::{DefaultId, Id, Shared};
+use crate::rc::{Id, Shared};
 use crate::Encode;
-use crate::{__inner_extern_class, msg_send, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
 
-__inner_extern_class! {
-    // `T: Eq` bound to prevent `NSValue<f32>` from being `Eq`
-    // (even though `[NAN isEqual: NAN]` is true in Objective-C).
-    #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSValue<T>: NSObject {
-        value: PhantomData<T>,
-    }
+extern_class! {
+    /// A container wrapping any encodable type as an Obective-C object.
+    ///
+    /// Since Objective-C collections like [`NSArray`] can only contain
+    /// objects, it is common to wrap pointers or structures like [`NSRange`].
+    ///
+    /// Note that creating `NSValue`s is not `unsafe`, but almost all usage of
+    /// it is, since we cannot guarantee that the type that was used to
+    /// construct it is the same as the expected output type.
+    ///
+    /// See also the [`NSNumber`] subclass for when you want to wrap numbers.
+    ///
+    /// See [Apple's documentation][apple-doc] for more information.
+    ///
+    /// [`NSArray`]: super::NSArray
+    /// [`NSRange`]: super::NSRange
+    /// [`NSNumber`]: super::NSNumber
+    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsnumber?language=objc
+    unsafe pub struct NSValue: NSObject;
 }
 
-// SAFETY: `NSValue<T>` is basically just a wrapper around an inner type, and
-// is immutable.
-unsafe impl<T: Sync> Sync for NSValue<T> {}
-unsafe impl<T: Send> Send for NSValue<T> {}
+// We can't implement any auto traits for NSValue, since it can contain an
+// arbitary object!
 
-impl<T: UnwindSafe> UnwindSafe for NSValue<T> {}
-impl<T: RefUnwindSafe> RefUnwindSafe for NSValue<T> {}
-
-impl<T: 'static + Copy + Encode> NSValue<T> {
+/// Creation methods.
+impl NSValue {
     // Default / empty new is not provided because `-init` returns `nil` on
     // Apple and GNUStep throws an exception on all other messages to this
     // invalid instance.
 
-    /// TODO.
+    /// Create a new `NSValue` containing the given type.
+    ///
+    /// Be careful when using this since you may accidentally pass a reference
+    /// when you wanted to pass a concrete type instead.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Create an `NSValue` containing an [`NSPoint`][super::NSPoint].
+    ///
+    /// ```
+    /// use objc2::foundation::{NSPoint, NSValue};
+    /// # #[cfg(feature = "gnustep-1-7")]
+    /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+    /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
+    /// ```
+    pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self, Shared> {
+        let bytes: *const T = &value;
+        let bytes: *const c_void = bytes.cast();
+        let encoding = CString::new(T::ENCODING.to_string()).unwrap();
+        unsafe {
+            msg_send_id![
+                msg_send_id![Self::class(), alloc],
+                initWithBytes: bytes,
+                objCType: encoding.as_ptr(),
+            ]
+            .expect("unexpected NULL NSValue")
+        }
+    }
+}
+
+/// Getter methods.
+impl NSValue {
+    /// Retrieve the data contained in the `NSValue`.
     ///
     /// Note that this is broken on GNUStep for some types, see
     /// [gnustep/libs-base#216].
     ///
     /// [gnustep/libs-base#216]: https://github.com/gnustep/libs-base/pull/216
-    pub fn get(&self) -> T {
-        if let Some(encoding) = self.encoding() {
-            // TODO: This can be a debug assertion (?)
-            assert!(T::ENCODING.equivalent_to_str(encoding), "Wrong encoding");
-            unsafe { self.get_unchecked() }
-        } else {
-            panic!("Missing NSValue encoding");
-        }
-    }
-
-    /// TODO
+    ///
     ///
     /// # Safety
     ///
-    /// The user must ensure that the inner value is properly initialized.
-    pub unsafe fn get_unchecked(&self) -> T {
+    /// The type of `T` must be what the NSValue actually stores, and any
+    /// safety invariants that the value has must be upheld.
+    ///
+    /// Note that it may be, but is not always, enough to simply check whether
+    /// [`contains_encoding`] returns `true`. For example, `NonNull<T>` have
+    /// the same encoding as `*const T`, but `NonNull<T>` is clearly not
+    /// safe to return from this function even if you've checked the encoding
+    /// beforehand.
+    ///
+    /// [`contains_encoding`]: Self::contains_encoding
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Store a pointer in `NSValue`, and retrieve it again afterwards.
+    ///
+    /// ```
+    /// use std::ffi::c_void;
+    /// use std::ptr;
+    /// use objc2::foundation::NSValue;
+    ///
+    /// # #[cfg(feature = "gnustep-1-7")]
+    /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+    /// let val = NSValue::new::<*const c_void>(ptr::null());
+    /// // SAFETY: The value was just created with a pointer
+    /// let res = unsafe { val.get::<*const c_void>() };
+    /// assert!(res.is_null());
+    /// ```
+    pub unsafe fn get<T: 'static + Copy + Encode>(&self) -> T {
+        debug_assert!(
+            self.contains_encoding::<T>(),
+            "wrong encoding. NSValue tried to return something with encoding {}, but the encoding of the given type was {}",
+            self.encoding().unwrap_or("(NULL)"),
+            T::ENCODING,
+        );
         let mut value = MaybeUninit::<T>::uninit();
         let ptr: *mut c_void = value.as_mut_ptr().cast();
         let _: () = unsafe { msg_send![self, getValue: ptr] };
+        // SAFETY: We know that `getValue:` initialized the value, and user
+        // ensures that it is safe to access.
         unsafe { value.assume_init() }
     }
 
@@ -69,81 +134,66 @@ impl<T: 'static + Copy + Encode> NSValue<T> {
         result.map(|s| unsafe { CStr::from_ptr(s.as_ptr()) }.to_str().unwrap())
     }
 
-    pub fn new(value: T) -> Id<Self, Shared> {
-        let cls = Self::class();
-        let bytes: *const T = &value;
-        let bytes: *const c_void = bytes.cast();
-        let encoding = CString::new(T::ENCODING.to_string()).unwrap();
-        unsafe {
-            let obj = msg_send_id![cls, alloc];
-            msg_send_id![
-                obj,
-                initWithBytes: bytes,
-                objCType: encoding.as_ptr(),
-            ]
-            .unwrap()
+    pub fn contains_encoding<T: 'static + Copy + Encode>(&self) -> bool {
+        if let Some(encoding) = self.encoding() {
+            T::ENCODING.equivalent_to_str(encoding)
+        } else {
+            panic!("missing NSValue encoding");
         }
     }
 }
 
-unsafe impl<T: 'static> NSCopying for NSValue<T> {
+unsafe impl NSCopying for NSValue {
     type Ownership = Shared;
-    type Output = NSValue<T>;
+    type Output = NSValue;
 }
 
-impl<T: 'static> alloc::borrow::ToOwned for NSValue<T> {
-    type Owned = Id<NSValue<T>, Shared>;
+impl alloc::borrow::ToOwned for NSValue {
+    type Owned = Id<NSValue, Shared>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
     }
 }
 
-impl<T: 'static + Copy + Encode + Ord> Ord for NSValue<T> {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.get().cmp(&other.get())
+impl PartialEq for NSValue {
+    #[doc(alias = "isEqualToValue:")]
+    fn eq(&self, other: &Self) -> bool {
+        // Use isEqualToValue: instaed of isEqual: since it is faster
+        unsafe { msg_send_bool![self, isEqualToValue: other] }
     }
 }
 
-impl<T: 'static + Copy + Encode + PartialOrd> PartialOrd for NSValue<T> {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.get().partial_cmp(&other.get())
+impl hash::Hash for NSValue {
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        // Delegate to NSObject
+        (**self).hash(state)
     }
 }
 
-impl<T: 'static + Copy + Encode + Default> DefaultId for NSValue<T> {
-    type Ownership = Shared;
-
-    #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
-        Self::new(Default::default())
-    }
-}
-
-impl<T: 'static + Copy + Encode + fmt::Display> fmt::Display for NSValue<T> {
+impl fmt::Debug for NSValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.get(), f)
-    }
-}
-
-impl<T: 'static + Copy + Encode + fmt::Debug> fmt::Debug for NSValue<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&self.get(), f)
+        let enc = self.encoding().unwrap_or("(NULL)");
+        let bytes = &**self; // Delegate to -[NSObject description]
+        f.debug_struct("NSValue")
+            .field("encoding", &enc)
+            .field("bytes", bytes)
+            .finish()
     }
 }
 
 #[cfg(test)]
 mod tests {
     use alloc::format;
+    use core::slice;
 
     use super::*;
     use crate::foundation::NSRange;
     use crate::msg_send;
 
     #[test]
-    fn test_value() {
+    fn basic() {
         let val = NSValue::new(13u32);
-        assert_eq!(val.get(), 13);
-        assert!(u32::ENCODING.equivalent_to_str(val.encoding().unwrap()));
+        assert_eq!(unsafe { val.get::<u32>() }, 13);
     }
 
     #[test]
@@ -159,41 +209,56 @@ mod tests {
 
     #[test]
     fn test_equality_across_types() {
-        let val1 = NSValue::new(123);
-        let val2: Id<NSValue<u32>, Shared> = NSValue::new(123);
-        let val2: Id<NSValue<u8>, Shared> = unsafe { core::mem::transmute(val2) };
+        let val1 = NSValue::new(123i32);
+        let val2 = NSValue::new(123u32);
 
         // Test that `objCType` is checked when comparing equality
         assert_ne!(val1, val2);
     }
 
     #[test]
-    fn test_display_debug() {
-        fn assert_display_debug<T: fmt::Debug + fmt::Display>(val: T, expected: &str) {
-            // The two impls for these happen to be the same
-            assert_eq!(format!("{}", val), expected);
-            assert_eq!(format!("{:?}", val), expected);
-        }
-        assert_display_debug(NSValue::new(171u8), "171");
-        assert_display_debug(NSValue::new(-12i8), "-12");
-        assert_display_debug(NSValue::new(0xdeadbeefu32), "3735928559");
-        assert_display_debug(NSValue::new(1.1f32), "1.1");
-        assert_display_debug(NSValue::new(true), "true");
-        assert_display_debug(NSValue::new(false), "false");
-
-        let val = NSValue::new(1.0f32);
-        assert_eq!(format!("{}", val), "1");
-        assert_eq!(format!("{:?}", val), "1.0");
+    #[ignore = "the debug output changes depending on OS version"]
+    fn test_debug() {
+        let expected = if cfg!(feature = "gnustep-1-7") {
+            r#"NSValue { encoding: "C", bytes: (C) <ab> }"#
+        } else if cfg!(newer_apple) {
+            r#"NSValue { encoding: "C", bytes: {length = 1, bytes = 0xab} }"#
+        } else {
+            r#"NSValue { encoding: "C", bytes: <ab> }"#
+        };
+        assert_eq!(format!("{:?}", NSValue::new(171u8)), expected);
     }
 
     #[test]
     fn test_value_nsrange() {
         let val = NSValue::new(NSRange::from(1..2));
-        assert!(NSRange::ENCODING.equivalent_to_str(val.encoding().unwrap()));
+        assert!(val.contains_encoding::<NSRange>());
         let range: NSRange = unsafe { msg_send![&val, rangeValue] };
         assert_eq!(range, NSRange::from(1..2));
         // NSValue -getValue is broken on GNUStep for some types
         #[cfg(not(feature = "gnustep-1-7"))]
-        assert_eq!(val.get(), NSRange::from(1..2));
+        assert_eq!(unsafe { val.get::<NSRange>() }, NSRange::from(1..2));
+    }
+
+    #[test]
+    fn store_str() {
+        let s = "abc";
+        let val = NSValue::new(s.as_ptr());
+        assert!(val.contains_encoding::<*const u8>());
+        let slice = unsafe { slice::from_raw_parts(val.get(), s.len()) };
+        let s2 = str::from_utf8(slice).unwrap();
+        assert_eq!(s2, s);
+    }
+
+    #[test]
+    fn store_cstr() {
+        // The following Apple article says that NSValue can't easily store
+        // C-strings, but apparently that doesn't apply to us!
+        // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/NumbersandValues/Articles/Values.html#//apple_ref/doc/uid/20000174-BAJJHDEG>
+        let s = CStr::from_bytes_with_nul(b"test123\0").unwrap();
+        let val = NSValue::new(s.as_ptr());
+        assert!(val.contains_encoding::<*const c_char>());
+        let s2 = unsafe { CStr::from_ptr(val.get()) };
+        assert_eq!(s2, s);
     }
 }

@@ -9,15 +9,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
+* Added `NSNumber`.
 * Implement `UnwindSafe` and `RefUnwindSafe` for all objects.
 * Implemented `IntoIterator` for references to `NSArray`, `NSMutableArray`,
   `NSData` and `NSMutableData`.
 * Implemented `Extend` for `NSMutableArray`.
 * Add extra `Extend<&u8>` impl for `NSMutableData`.
+* Added function `NSValue::contains_encoding` for determining if the encoding
+  of the `NSValue` matches the encoding of the given type.
 
 ### Changed
 * **BREAKING**: Moved from external crate `objc2_foundation` into
   `objc2::foundation`.
+* **BREAKING**: Made `NSValue` not generic any more. While we loose some
+  type-safety from this, it makes `NSValue` much more useful in the real
+  world!
 
 ### Fixed
 * Made `Debug` impls for all objects print something useful.
