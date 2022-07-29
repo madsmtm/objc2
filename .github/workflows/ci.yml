@@ -36,7 +36,9 @@ jobs:
     name: ${{ matrix.name }}
 
     strategy:
-      fail-fast: false
+      # MacOS instances are rate-limited, which means that whenever we can
+      # avoid do some work, we should!
+      fail-fast: true
       matrix:
         include:
           - name: Test macOS 11
