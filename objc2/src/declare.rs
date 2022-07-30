@@ -566,11 +566,8 @@ mod tests {
         let superclass = test_utils::custom_class();
         let builder = ClassBuilder::new("TestFetchWhileCreatingClass", superclass).unwrap();
 
-        if cfg!(all(
-            feature = "apple",
-            not(all(target_os = "macos", target_arch = "x86"))
-        )) {
-            // It is IMO a bug in Apple's new runtime that it is present here
+        if cfg!(all(feature = "apple", target_arch = "x86_64")) {
+            // It is IMO a bug that it is present here!
             assert!(is_present(builder.cls.as_ptr()));
         } else {
             assert!(!is_present(builder.cls.as_ptr()));
