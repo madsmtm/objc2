@@ -154,6 +154,7 @@ jobs:
       SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation' }}
       FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation,catch-all,verify_message,uuid' }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
+      CMD: cargo
 
     runs-on: ${{ matrix.os }}
 
@@ -187,7 +188,7 @@ jobs:
           ~/extern/include
           ~/extern/sdk
         # Change this key if we start caching more things
-        key: ${{ matrix.name }}-extern-v2
+        key: ${{ matrix.name }}-extern-v3
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -310,32 +311,33 @@ jobs:
 
     - name: Install Cargo Dinghy
       if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
-      # TODO: Replace once cargo dinghy gets updated
-      # cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
-      run: cargo install --git https://github.com/madsmtm/dinghy.git --branch update-cargo --bin cargo-dinghy --root=$HOME/extern --target=x86_64-apple-darwin
+      run: cargo install cargo-dinghy --version=^0.6.0 --root=$HOME/extern --target=x86_64-apple-darwin
 
     - name: Launch XCode Simulator and prepare Dinghy
       if: matrix.dinghy
+      # Note that we're not testing all configurations with dinghy, since that
+      # takes a very long time to run, and hence impedes general development.
       run: |
         # Get system info
         xcrun simctl list runtimes
 
         # Launch the simulator
         RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
-        export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
+        SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
         xcrun simctl boot $SIM_ID
+
+        # Export variable
+        echo "CMD=$HOME/extern/bin/cargo-dinghy -d=$SIM_ID" >> $GITHUB_ENV
 
     - name: Lint
       # Temporarily allow `clippy::let_unit_value`
       run: cargo clippy ${{ env.ARGS }} --all-targets -- --deny warnings --allow clippy::let_unit_value
 
     - name: Build
-      if: ${{ !matrix.dinghy }}
-      run: cargo build ${{ env.ARGS }}
+      run: $CMD build ${{ env.ARGS }}
 
     - name: Check documentation
-      if: ${{ !matrix.dinghy }}
-      run: cargo doc ${{ env.ARGS }} --no-deps --document-private-items
+      run: $CMD doc ${{ env.ARGS }} --no-deps --document-private-items
 
     - name: Test without features
       if: ${{ !matrix.dinghy }}
@@ -346,8 +348,7 @@ jobs:
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --tests --features ${{ env.SOME_FEATURES }}
 
     - name: Test with features
-      if: ${{ !matrix.dinghy }}
-      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }}
+      run: $CMD test ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }}
 
     - name: Test in release mode without features
       if: ${{ !matrix.dinghy }}
@@ -386,14 +387,3 @@ jobs:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
 
         cargo run --target=$HOST_TARGET --features=run --bin test-assembly -- ${{ env.ARGS }}
-
-    - name: Build w. Cargo Dinghy
-      if: matrix.dinghy
-      run: cargo dinghy --device=$SIM_ID build ${{ matrix.args }}
-
-    - name: Test w. Cargo Dinghy
-      if: matrix.dinghy
-      # Note that we're not testing more complex configurations, since that
-      # takes a very long time to run in CI, and that impedes general
-      # development work.
-      run: cargo dinghy --device=$SIM_ID test ${{ matrix.args }}
