@@ -291,13 +291,21 @@ jobs:
         make install
         ls -al $HOME/extern/*
 
-    - name: Cache Rust
+    - name: Cache Cargo
       uses: actions/cache@v2
       with:
         path: |
-          ~/.cargo/
-          target/
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
         key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
+
+    - name: Cache Rust Target
+      uses: actions/cache@v2
+      with:
+        path: target/
+        key: rust-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
