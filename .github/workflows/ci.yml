@@ -314,6 +314,17 @@ jobs:
       # cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
       run: cargo install --git https://github.com/madsmtm/dinghy.git --branch update-cargo --bin cargo-dinghy --root=$HOME/extern --target=x86_64-apple-darwin
 
+    - name: Launch XCode Simulator and prepare Dinghy
+      if: matrix.dinghy
+      run: |
+        # Get system info
+        xcrun simctl list runtimes
+
+        # Launch the simulator
+        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
+        export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
+        xcrun simctl boot $SIM_ID
+
     - name: Lint
       # Temporarily allow `clippy::let_unit_value`
       run: cargo clippy ${{ env.ARGS }} --all-targets -- --deny warnings --allow clippy::let_unit_value
@@ -375,17 +386,6 @@ jobs:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
 
         cargo run --target=$HOST_TARGET --features=run --bin test-assembly -- ${{ env.ARGS }}
-
-    - name: Launch XCode Simulator
-      if: matrix.dinghy
-      run: |
-        # Get system info
-        xcrun simctl list runtimes
-
-        # Launch the simulator
-        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
-        export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
-        xcrun simctl boot $SIM_ID
 
     - name: Build w. Cargo Dinghy
       if: matrix.dinghy
