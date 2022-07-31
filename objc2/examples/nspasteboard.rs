@@ -2,14 +2,14 @@
 //!
 //! Works on macOS 10.7+
 #![deny(unsafe_op_in_unsafe_fn)]
+#![cfg_attr(not(all(feature = "apple", target_os = "macos")), allow(unused))]
+
 use std::mem::ManuallyDrop;
-use std::ops::{Deref, DerefMut};
 
 use objc2::foundation::{NSArray, NSDictionary, NSInteger, NSObject, NSString};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::{Class, Object};
-use objc2::{msg_send, msg_send_bool, msg_send_id};
-use objc2::{Encoding, Message, RefEncode};
+use objc2::{extern_class, msg_send, msg_send_bool, msg_send_id};
 
 type NSPasteboardType = NSString;
 type NSPasteboardReadingOptionKey = NSString;
@@ -20,54 +20,16 @@ extern "C" {
     /// <https://developer.apple.com/documentation/appkit/nspasteboardtypestring?language=objc>
     static NSPasteboardTypeString: Option<&'static NSPasteboardType>;
 }
-#[cfg(not(all(feature = "apple", target_os = "macos")))]
-#[allow(non_upper_case_globals)]
-const NSPasteboardTypeString: Option<&'static NSPasteboardType> = None;
 
-/// <https://developer.apple.com/documentation/appkit/nspasteboard?language=objc>
-#[repr(C)]
-pub struct NSPasteboard {
-    // Required for proper layout
-    inner: NSObject,
+#[cfg(all(feature = "apple", target_os = "macos"))]
+extern_class! {
+    /// <https://developer.apple.com/documentation/appkit/nspasteboard?language=objc>
+    // SAFETY: NSPasteboard actually inherits from NSObject.
+    unsafe pub struct NSPasteboard: NSObject;
 }
 
-// SAFETY: NSPasteboard is an FFI-safe struct and is encoded as an object.
-unsafe impl RefEncode for NSPasteboard {
-    const ENCODING_REF: Encoding<'static> = Encoding::Object;
-}
-
-// SAFETY: NSPasteboard can safely be sent messages, and it responds to the
-// normal `retain`, `release` and `autorelease` messages.
-unsafe impl Message for NSPasteboard {}
-
-impl Deref for NSPasteboard {
-    type Target = NSObject;
-
-    #[inline]
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
-}
-
-impl DerefMut for NSPasteboard {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
-    }
-}
-
+#[cfg(all(feature = "apple", target_os = "macos"))]
 impl NSPasteboard {
-    /// Common convenience method.
-    pub fn class() -> &'static Class {
-        #[cfg(all(feature = "apple", target_os = "macos"))]
-        {
-            objc2::class!(NSPasteboard)
-        }
-        #[cfg(not(all(feature = "apple", target_os = "macos")))]
-        {
-            panic!("this example only works on macOS")
-        }
-    }
-
     /// We return a `Shared` `Id` because `general` can easily be called
     /// again, and it would return the same object, resulting in two aliasing
     /// mutable references if we returned an `Owned` Id.
@@ -86,7 +48,8 @@ impl NSPasteboard {
     ///
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1533566-stringfortype?language=objc>
     pub fn text_impl_1(&self) -> Id<NSString, Shared> {
-        unsafe { msg_send_id![self, stringForType: NSPasteboardTypeString.unwrap()].unwrap() }
+        let s = unsafe { NSPasteboardTypeString }.unwrap();
+        unsafe { msg_send_id![self, stringForType: s].unwrap() }
     }
 
     /// More complex implementation using `readObjectsForClasses:options:`,
@@ -155,10 +118,11 @@ impl NSPasteboard {
     }
 }
 
+#[cfg(all(feature = "apple", target_os = "macos"))]
 fn main() {
     let pasteboard = NSPasteboard::general();
     let impl_1 = pasteboard.text_impl_1();
-    let impl_2 = pasteboard.text_impl_1();
+    let impl_2 = pasteboard.text_impl_2();
     println!("Pasteboard text from implementation 1 was: {:?}", impl_1);
     println!("Pasteboard text from implementation 2 was: {:?}", impl_2);
     assert_eq!(impl_1, impl_2);
@@ -167,4 +131,9 @@ fn main() {
     pasteboard.set_text(s.clone());
     println!("Now the pasteboard text should be: {:?}", s);
     assert_eq!(s, pasteboard.text_impl_1());
+}
+
+#[cfg(not(all(feature = "apple", target_os = "macos")))]
+fn main() {
+    panic!("this example only works on macOS");
 }
