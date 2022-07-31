@@ -1,20 +1,42 @@
+//! A custom Objective-C class with a lifetime parameter.
+//!
+//! Note that we can't use the `declare_class!` macro for this, it doesn't
+//! support such use-cases. Instead, we'll declare the class manually!
 #![deny(unsafe_op_in_unsafe_fn)]
 use std::marker::PhantomData;
+use std::mem::MaybeUninit;
 use std::sync::Once;
 
-use objc2::declare::ClassBuilder;
+use objc2::declare::{ClassBuilder, Ivar, IvarType};
 use objc2::foundation::NSObject;
-use objc2::rc::{Id, Owned, Shared};
+use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{Encoding, Message, RefEncode};
 
+/// Helper type for the instance variable
+struct NumberIvar<'a> {
+    // Doesn't actually matter what we put here, but we have to use the
+    // lifetime parameter somehow
+    p: PhantomData<&'a mut u8>,
+}
+
+unsafe impl<'a> IvarType for NumberIvar<'a> {
+    type Type = &'a mut u8;
+    const NAME: &'static str = "_number_ptr";
+}
+
+/// Struct that represents our custom object.
 #[repr(C)]
 pub struct MyObject<'a> {
-    inner: Object,
-    // `init` defaults ivars to all zeroes, so allow for that here
-    // TODO: Verify this claim!
-    p: PhantomData<Option<&'a mut u8>>,
+    // Required to give MyObject the proper layout
+    superclass: NSObject,
+    // SAFETY: The ivar is declared below, and is properly initialized in the
+    // designated initializer.
+    //
+    // Note! Attempting to acess the ivar before it has been initialized is
+    // undefined behaviour!
+    number: Ivar<NumberIvar<'a>>,
 }
 
 unsafe impl RefEncode for MyObject<'_> {
@@ -23,51 +45,70 @@ unsafe impl RefEncode for MyObject<'_> {
 
 unsafe impl Message for MyObject<'_> {}
 
-static MYOBJECT_REGISTER_CLASS: Once = Once::new();
-
 impl<'a> MyObject<'a> {
-    fn new(number_ptr: &'a mut u8) -> Id<Self, Owned> {
+    pub fn new(number: &'a mut u8) -> Id<Self, Owned> {
+        // SAFETY: The lifetime of the reference is properly bound to the
+        // returned type
         unsafe {
             let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithPtr: number_ptr].unwrap()
+            msg_send_id![obj, initWithPtr: number].unwrap()
         }
     }
 
-    fn get(&self) -> Option<&'a u8> {
-        unsafe { *self.inner.ivar::<Option<&'a u8>>("_number_ptr") }
+    pub fn get(&self) -> &u8 {
+        &self.number
     }
 
-    fn write(&mut self, number: u8) {
-        let ptr = unsafe { self.inner.ivar_mut::<Option<&'a mut u8>>("_number_ptr") };
-        if let Some(ptr) = ptr {
-            **ptr = number;
-        }
+    pub fn set(&mut self, number: u8) {
+        **self.number = number;
     }
 
-    fn class() -> &'static Class {
-        MYOBJECT_REGISTER_CLASS.call_once(|| {
+    pub fn class() -> &'static Class {
+        // TODO: Use std::lazy::LazyCell
+        static REGISTER_CLASS: Once = Once::new();
+
+        REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
             let mut builder = ClassBuilder::new("MyObject", superclass).unwrap();
-            builder.add_ivar::<Option<&mut u8>>("_number_ptr");
 
-            unsafe extern "C" fn init_with_ptr(
-                this: *mut Object,
-                _cmd: Sel,
-                ptr: *mut u8,
-            ) -> *mut Object {
-                let this: *mut Object = unsafe { msg_send![super(this, NSObject::class()), init] };
-                if let Some(this) = unsafe { this.as_mut() } {
-                    unsafe { this.set_ivar::<*mut u8>("_number_ptr", ptr) };
+            builder.add_ivar::<<NumberIvar<'a> as IvarType>::Type>(<NumberIvar<'a>>::NAME);
+
+            /// Helper struct since we can't access the instance variable
+            /// from inside MyObject, since it hasn't been initialized yet!
+            #[repr(C)]
+            struct PartialInit<'a> {
+                inner: NSObject,
+                number: Ivar<MaybeUninit<NumberIvar<'a>>>,
+            }
+            unsafe impl RefEncode for PartialInit<'_> {
+                const ENCODING_REF: Encoding<'static> = Encoding::Object;
+            }
+            unsafe impl Message for PartialInit<'_> {}
+
+            impl<'a> PartialInit<'a> {
+                unsafe extern "C" fn init_with_ptr(
+                    this: &mut Self,
+                    _cmd: Sel,
+                    ptr: Option<&'a mut u8>,
+                ) -> Option<&'a mut Self> {
+                    let this: Option<&mut Self> =
+                        unsafe { msg_send![super(this, NSObject::class()), init] };
+                    this.map(|this| {
+                        // Properly initialize the number reference
+                        this.number.write(ptr.expect("got NULL number ptr"));
+                        this
+                    })
                 }
-                this
             }
 
             unsafe {
-                let init_with_ptr: unsafe extern "C" fn(_, _, _) -> _ = init_with_ptr;
-                builder.add_method(sel!(initWithPtr:), init_with_ptr);
+                builder.add_method(
+                    sel!(initWithPtr:),
+                    PartialInit::init_with_ptr as unsafe extern "C" fn(_, _, _) -> _,
+                );
             }
 
-            builder.register();
+            let _cls = builder.register();
         });
 
         Class::get("MyObject").unwrap()
@@ -78,18 +119,21 @@ fn main() {
     let mut number = 54;
     let mut obj = MyObject::new(&mut number);
 
-    println!("Number: {}", obj.get().unwrap());
+    println!("Number: {}", obj.get());
 
-    obj.write(7);
+    obj.set(7);
     // Won't compile, since `obj` holds a mutable reference to number
     // println!("Number: {}", number);
-    println!("Number: {}", obj.get().unwrap());
+    println!("Number: {}", obj.get());
 
-    let obj: Id<_, Shared> = obj.into();
+    let obj = Id::from_owned(obj);
     let obj2 = obj.clone();
 
-    println!("Number: {}", obj.get().unwrap());
-    println!("Number: {}", obj2.get().unwrap());
+    // We gave up ownership above, so can't edit the number any more!
+    // obj.set(7);
+
+    println!("Number: {}", obj.get());
+    println!("Number: {}", obj2.get());
 
     drop(obj);
     drop(obj2);
