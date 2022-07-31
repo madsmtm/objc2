@@ -181,14 +181,14 @@ macro_rules! __inner_extern_class {
     (
         $(#[$m:meta])*
         unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $($inheritance_chain:ty),+ {
-            $($p:ident: $pty:ty,)*
+            $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
     ) => {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
             unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::runtime::Object {
-                $($p: $pty,)*
+                $($field_vis $field: $field_ty,)*
             }
         }
 
@@ -209,7 +209,7 @@ macro_rules! __inner_extern_class {
         @__inner
         $(#[$m:meta])*
         unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $superclass:ty $(, $inheritance_rest:ty)* {
-            $($p_v:vis $p:ident: $pty:ty,)*
+            $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
     ) => {
         $(#[$m])*
@@ -218,7 +218,7 @@ macro_rules! __inner_extern_class {
         $v struct $name<$($t $(: $b)?),*> {
             __inner: $superclass,
             // Additional fields (should only be zero-sized PhantomData or ivars).
-            $($p_v $p: $pty),*
+            $($field_vis $field: $field_ty,)*
         }
 
         // SAFETY:
