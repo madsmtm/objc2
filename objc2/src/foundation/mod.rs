@@ -33,6 +33,7 @@ pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::data::NSData;
 pub use self::dictionary::NSDictionary;
 pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
+pub use self::error::{NSError, NSErrorDomain, NSErrorUserInfoKey};
 pub use self::exception::NSException;
 pub use self::geometry::{CGFloat, NSPoint, NSRect, NSSize};
 pub use self::mutable_array::NSMutableArray;
@@ -72,6 +73,7 @@ mod copying;
 mod data;
 mod dictionary;
 mod enumerator;
+mod error;
 mod exception;
 mod geometry;
 mod mutable_array;
@@ -134,6 +136,7 @@ mod tests {
         // TODO: Figure out if Send + Sync is safe?
         // assert_auto_traits::<NSEnumerator<NSString>>();
         // assert_auto_traits::<NSFastEnumerator<NSArray<NSString, Shared>>>();
+        assert_auto_traits::<NSError>();
         assert_auto_traits::<NSException>();
         assert_auto_traits::<CGFloat>();
         assert_auto_traits::<NSPoint>();

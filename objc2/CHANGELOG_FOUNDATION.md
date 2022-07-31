@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `NSNumber`.
+* Added `NSError`.
 * Implement `UnwindSafe` and `RefUnwindSafe` for all objects.
 * Implemented `IntoIterator` for references to `NSArray`, `NSMutableArray`,
   `NSData` and `NSMutableData`.
