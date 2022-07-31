@@ -27,10 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Check formatting
-      uses: actions-rs/cargo@v1
-      with:
-        command: fmt
-        args: -- --check
+      run: cargo fmt -- --check
 
   test:
     name: ${{ matrix.name }}
@@ -157,6 +154,7 @@ jobs:
       SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation' }}
       FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation,catch-all,verify_message,uuid' }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
+      CMD: cargo
 
     runs-on: ${{ matrix.os }}
 
@@ -190,7 +188,7 @@ jobs:
           ~/extern/include
           ~/extern/sdk
         # Change this key if we start caching more things
-        key: ${{ matrix.name }}-extern-v2
+        key: ${{ matrix.name }}-extern-v3
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -293,13 +291,21 @@ jobs:
         make install
         ls -al $HOME/extern/*
 
-    - name: Cache Rust
+    - name: Cache Cargo
       uses: actions/cache@v2
       with:
         path: |
-          ~/.cargo/
-          target/
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
         key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
+
+    - name: Cache Rust Target
+      uses: actions/cache@v2
+      with:
+        path: target/
+        key: rust-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
@@ -313,72 +319,56 @@ jobs:
 
     - name: Install Cargo Dinghy
       if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
-      # TODO: Replace once cargo dinghy gets updated
-      # cargo install cargo-dinghy --version=^0.4 --root=$HOME/extern --target=x86_64-apple-darwin
-      run: cargo install --git https://github.com/madsmtm/dinghy.git --branch update-cargo --bin cargo-dinghy --root=$HOME/extern --target=x86_64-apple-darwin
+      run: cargo install cargo-dinghy --version=^0.6.0 --root=$HOME/extern --target=x86_64-apple-darwin
+
+    - name: Launch XCode Simulator and prepare Dinghy
+      if: matrix.dinghy
+      # Note that we're not testing all configurations with dinghy, since that
+      # takes a very long time to run, and hence impedes general development.
+      run: |
+        # Get system info
+        xcrun simctl list runtimes
+
+        # Launch the simulator
+        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
+        SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
+        xcrun simctl boot $SIM_ID
+
+        # Export variable
+        echo "CMD=$HOME/extern/bin/cargo-dinghy -d=$SIM_ID" >> $GITHUB_ENV
 
     - name: Lint
-      uses: actions-rs/cargo@v1
-      with:
-        command: clippy
-        # Temporarily allow `clippy::let_unit_value`
-        args: ${{ env.ARGS }} --all-targets -- --deny warnings --allow clippy::let_unit_value
+      # Temporarily allow `clippy::let_unit_value`
+      run: cargo clippy ${{ env.ARGS }} --all-targets -- --deny warnings --allow clippy::let_unit_value
 
     - name: Build
-      if: ${{ !matrix.dinghy }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: ${{ env.ARGS }}
+      run: $CMD build ${{ env.ARGS }}
 
     - name: Check documentation
-      if: ${{ !matrix.dinghy }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: doc
-        args: ${{ env.ARGS }} --no-deps --document-private-items
+      run: $CMD doc ${{ env.ARGS }} --no-deps --document-private-items
 
     - name: Test without features
       if: ${{ !matrix.dinghy }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }}
+      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }}
 
     - name: Test with some features
       if: ${{ !matrix.dinghy }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --tests --features ${{ env.SOME_FEATURES }}
+      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --tests --features ${{ env.SOME_FEATURES }}
 
     - name: Test with features
-      if: ${{ !matrix.dinghy }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }}
+      run: $CMD test ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }}
 
     - name: Test in release mode without features
       if: ${{ !matrix.dinghy }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --release
+      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --release
 
     - name: Test in release mode with features
       if: ${{ !matrix.dinghy }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }} --release
+      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }} --release
 
     - name: Run UI tests
       if: ${{ matrix.ui }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: run
-        args: --features=run --bin test-ui
+      run: cargo run --features=run --bin test-ui
       env:
         # Allow warnings
         RUSTFLAGS: "-C debuginfo=0"
@@ -387,25 +377,16 @@ jobs:
       # Difficult to install Valgrind on macOS
       # See https://github.com/LouisBrunner/valgrind-macos
       if: contains(matrix.os, 'ubuntu')
-      uses: actions-rs/cargo@v1
-      with:
-        command: bench
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }}
+      run: cargo bench ${{ env.ARGS }} ${{ env.TESTARGS }}
 
     - name: Test with unstable features
       if: ${{ !matrix.dinghy && matrix.rust.toolchain == 'nightly' }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        # Not using --all-features because that would enable e.g. gnustep
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
+      # Not using --all-features because that would enable e.g. gnustep
+      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features ${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
     - name: Test static class and selectors
       if: ${{ !matrix.dinghy && (matrix.runtime || 'apple') == 'apple' }}
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: ${{ env.ARGS }} ${{ env.TESTARGS }} --features foundation,unstable-static-sel,unstable-static-class
+      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features foundation,unstable-static-sel,unstable-static-class
 
     - name: Run assembly tests
       if: ${{ !contains(matrix.runtime, 'compiler-rt') }}
@@ -414,25 +395,3 @@ jobs:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
 
         cargo run --target=$HOST_TARGET --features=run --bin test-assembly -- ${{ env.ARGS }}
-
-    - name: Launch XCode Simulator
-      if: matrix.dinghy
-      run: |
-        # Get system info
-        xcrun simctl list runtimes
-
-        # Launch the simulator
-        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
-        export SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
-        xcrun simctl boot $SIM_ID
-
-    - name: Build w. Cargo Dinghy
-      if: matrix.dinghy
-      run: cargo dinghy --device=$SIM_ID build ${{ matrix.args }}
-
-    - name: Test w. Cargo Dinghy
-      if: matrix.dinghy
-      # Note that we're not testing more complex configurations, since that
-      # takes a very long time to run in CI, and that impedes general
-      # development work.
-      run: cargo dinghy --device=$SIM_ID test ${{ matrix.args }}
