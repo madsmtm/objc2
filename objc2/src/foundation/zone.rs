@@ -51,7 +51,9 @@ unsafe impl RefEncode for NSZone {
             usize::ENCODING,
             // Name of zone
             Encoding::Object,
-            // Next zone
+            // Next zone - note that the contents of this doesn't matter,
+            // since this is nested far enough that the encoding string just
+            // ends up ignoring it.
             Encoding::Pointer(&Encoding::Struct("_NSZone", &[])),
         ],
     ));
@@ -59,6 +61,7 @@ unsafe impl RefEncode for NSZone {
 
 #[cfg(test)]
 mod tests {
+    use alloc::string::ToString;
     use core::ptr;
 
     use super::*;
@@ -67,13 +70,24 @@ mod tests {
     use crate::rc::{Allocated, Id, Owned};
 
     #[test]
-    #[cfg_attr(
-        feature = "gnustep-1-7",
-        ignore = "The encoding is not really correct yet!"
-    )]
     fn alloc_with_zone() {
         let zone: *const NSZone = ptr::null();
         let _obj: Id<Allocated<NSObject>, Owned> =
             unsafe { msg_send_id![NSObject::class(), allocWithZone: zone].unwrap() };
+    }
+
+    #[test]
+    fn verify_encoding() {
+        let expected = if cfg!(all(feature = "gnustep-1-7", target_pointer_width = "64")) {
+            "^{_NSZone=^?^?^?^?^?^?^?Q@^{_NSZone}}"
+        } else if cfg!(all(
+            feature = "gnustep-1-7",
+            not(target_pointer_width = "64")
+        )) {
+            "^{_NSZone=^?^?^?^?^?^?^?I@^{_NSZone}}"
+        } else {
+            "^{_NSZone=}"
+        };
+        assert_eq!(NSZone::ENCODING_REF.to_string(), expected);
     }
 }

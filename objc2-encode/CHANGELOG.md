@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Fixed
+* Fixed the encoding output and comparison of structs behind pointers.
+
 
 ## 2.0.0-pre.1 - 2022-07-19
 

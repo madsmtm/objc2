@@ -252,10 +252,10 @@ mod tests {
 
     #[cfg(feature = "objc2-proc-macros")]
     use crate::__hash_idents;
+    use crate::foundation::NSZone;
     use crate::rc::{Allocated, Owned, RcTestObject, Shared, ThreadTestData};
     use crate::runtime::Object;
     use crate::{class, msg_send_id};
-    use crate::{Encoding, RefEncode};
 
     #[test]
     fn test_macro_alloc() {
@@ -273,25 +273,11 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        all(feature = "gnustep-1-7", feature = "verify_message"),
-        ignore = "NSZone's encoding is quite complex on GNUStep"
-    )]
     fn test_alloc_with_zone() {
-        #[repr(C)]
-        struct _NSZone {
-            _inner: [u8; 0],
-        }
-
-        unsafe impl RefEncode for _NSZone {
-            const ENCODING_REF: Encoding<'static> =
-                Encoding::Pointer(&Encoding::Struct("_NSZone", &[]));
-        }
-
         let expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 
-        let zone: *const _NSZone = ptr::null();
+        let zone: *const NSZone = ptr::null();
         let _obj: Id<Allocated<RcTestObject>, Owned> =
             unsafe { msg_send_id![cls, allocWithZone: zone].unwrap() };
         // `+[NSObject alloc]` delegates to `+[NSObject allocWithZone:]`, but

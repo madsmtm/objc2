@@ -1,6 +1,52 @@
 use crate::Encoding;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub(crate) enum NestingLevel {
+    Top,
+    Within,
+    Bottom,
+}
+
+impl NestingLevel {
+    pub(crate) const fn new() -> Self {
+        Self::Top
+    }
+
+    pub(crate) const fn bitfield(self) -> Self {
+        // TODO: Is this correct?
+        self
+    }
+
+    pub(crate) const fn indirection(self, kind: IndirectionKind) -> Self {
+        match kind {
+            // Move all the way down
+            IndirectionKind::Atomic => Self::Bottom,
+            // Move one step down
+            IndirectionKind::Pointer => match self {
+                Self::Top => Self::Within,
+                Self::Bottom | Self::Within => Self::Bottom,
+            },
+        }
+    }
+
+    pub(crate) const fn array(self) -> Self {
+        // TODO: Is this correct?
+        self
+    }
+
+    pub(crate) const fn container(self) -> Option<Self> {
+        match self {
+            // Move one step down, and output
+            Self::Top => Some(Self::Within),
+            // Output
+            Self::Within => Some(Self::Within),
+            // Don't output
+            Self::Bottom => None,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub(crate) enum Primitive {
     Char,
