@@ -832,7 +832,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
+    #[should_panic = "NulError"]
     fn test_sel_register_null() {
         let _ = Sel::register("\0");
     }

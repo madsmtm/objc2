@@ -141,10 +141,11 @@ impl NSValue {
     pub fn get_point(&self) -> Option<NSPoint> {
         if self.contains_encoding::<NSPoint>() {
             // SAFETY: We just checked that this contains an NSPoint
-            #[cfg(any(feature = "gnustep-1-7", target_os = "macos"))]
+            //
+            // Note: The documentation says that `pointValue`, `sizeValue` and
+            // `rectValue` is only available on macOS, but turns out that they
+            // are actually available everywhere!
             let res = unsafe { msg_send![self, pointValue] };
-            #[cfg(all(feature = "apple", not(target_os = "macos")))]
-            let res = unsafe { msg_send![self, CGPointValue] };
             Some(res)
         } else {
             None
@@ -154,10 +155,7 @@ impl NSValue {
     pub fn get_size(&self) -> Option<NSSize> {
         if self.contains_encoding::<NSSize>() {
             // SAFETY: We just checked that this contains an NSSize
-            #[cfg(any(feature = "gnustep-1-7", target_os = "macos"))]
             let res = unsafe { msg_send![self, sizeValue] };
-            #[cfg(all(feature = "apple", not(target_os = "macos")))]
-            let res = unsafe { msg_send![self, CGSizeValue] };
             Some(res)
         } else {
             None
@@ -167,10 +165,7 @@ impl NSValue {
     pub fn get_rect(&self) -> Option<NSRect> {
         if self.contains_encoding::<NSRect>() {
             // SAFETY: We just checked that this contains an NSRect
-            #[cfg(any(feature = "gnustep-1-7", target_os = "macos"))]
             let res = unsafe { msg_send![self, rectValue] };
-            #[cfg(all(feature = "apple", not(target_os = "macos")))]
-            let res = unsafe { msg_send![self, CGRectValue] };
             Some(res)
         } else {
             None
