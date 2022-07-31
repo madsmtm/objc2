@@ -226,30 +226,41 @@ mod tests {
 
     use super::*;
     use crate::foundation::NSString;
-    use crate::rc::autoreleasepool;
+    use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
 
     #[test]
     fn test_adding() {
         let mut array = NSMutableArray::new();
-        let obj = NSObject::new();
-        array.push(obj);
+        let obj1 = RcTestObject::new();
+        let obj2 = RcTestObject::new();
+        let mut expected = ThreadTestData::current();
 
+        array.push(obj1);
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
         assert_eq!(array.len(), 1);
         assert_eq!(array.get(0), array.get(0));
 
-        let obj = NSObject::new();
-        array.insert(0, obj);
+        array.insert(0, obj2);
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
         assert_eq!(array.len(), 2);
     }
 
     #[test]
     fn test_replace() {
         let mut array = NSMutableArray::new();
-        let obj = NSObject::new();
-        array.push(obj);
+        let obj1 = RcTestObject::new();
+        let obj2 = RcTestObject::new();
+        array.push(obj1);
+        let mut expected = ThreadTestData::current();
 
-        let obj = NSObject::new();
-        let old_obj = array.replace(0, obj);
+        let old_obj = array.replace(0, obj2);
+        expected.retain += 2;
+        expected.release += 2;
+        expected.assert_current();
         assert_ne!(&*old_obj, array.get(0).unwrap());
     }
 
@@ -257,16 +268,26 @@ mod tests {
     fn test_remove() {
         let mut array = NSMutableArray::new();
         for _ in 0..4 {
-            array.push(NSObject::new());
+            array.push(RcTestObject::new());
         }
+        let mut expected = ThreadTestData::current();
 
-        let _ = array.remove(1);
+        let _obj = array.remove(1);
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
         assert_eq!(array.len(), 3);
 
-        let _ = array.pop();
+        let _obj = array.pop();
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
         assert_eq!(array.len(), 2);
 
         array.clear();
+        expected.release += 2;
+        expected.dealloc += 2;
+        expected.assert_current();
         assert_eq!(array.len(), 0);
     }
 

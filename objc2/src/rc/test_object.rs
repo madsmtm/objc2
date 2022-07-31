@@ -1,12 +1,11 @@
 use core::cell::RefCell;
-use core::ops::{Deref, DerefMut};
-use std::sync::Once;
+use core::mem::ManuallyDrop;
+use core::ptr;
 
 use super::{Id, Owned};
-use crate::declare::ClassBuilder;
-use crate::runtime::{Bool, Class, Object, Sel};
-use crate::{class, msg_send, msg_send_bool, sel};
-use crate::{Encoding, Message, RefEncode};
+use crate::foundation::{NSObject, NSZone};
+use crate::runtime::Bool;
+use crate::{declare_class, msg_send, msg_send_bool};
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub(crate) struct ThreadTestData {
@@ -14,6 +13,8 @@ pub(crate) struct ThreadTestData {
     pub(crate) dealloc: usize,
     pub(crate) init: usize,
     pub(crate) retain: usize,
+    pub(crate) copy: usize,
+    pub(crate) mutable_copy: usize,
     pub(crate) release: usize,
     pub(crate) autorelease: usize,
     pub(crate) try_retain: usize,
@@ -47,96 +48,87 @@ std::thread_local! {
     pub(crate) static TEST_DATA: RefCell<ThreadTestData> = RefCell::new(Default::default());
 }
 
-/// A helper object that counts how many times various reference-counting
-/// primitives are called.
-#[repr(C)]
-pub(crate) struct RcTestObject {
-    inner: Object,
-}
+declare_class! {
+    /// A helper object that counts how many times various reference-counting
+    /// primitives are called.
+    #[derive(Debug, PartialEq)]
+    unsafe pub(crate) struct RcTestObject: NSObject {}
 
-unsafe impl RefEncode for RcTestObject {
-    const ENCODING_REF: Encoding<'static> = Object::ENCODING_REF;
-}
+    unsafe impl {
+        #[sel(alloc)]
+        fn alloc() -> *mut Self {
+            TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
+            let superclass = NSObject::class().metaclass();
+            let zone: *const NSZone = ptr::null();
+            unsafe { msg_send![super(Self::class(), superclass), allocWithZone: zone] }
+        }
 
-unsafe impl Message for RcTestObject {}
+        #[sel(allocWithZone:)]
+        fn alloc_with_zone(zone: *const NSZone) -> *mut Self {
+            TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
+            let superclass = NSObject::class().metaclass();
+            unsafe { msg_send![super(Self::class(), superclass), allocWithZone: zone] }
+        }
+
+        #[sel(init)]
+        fn init(&mut self) -> *mut Self {
+            TEST_DATA.with(|data| data.borrow_mut().init += 1);
+            unsafe { msg_send![super(self, NSObject::class()), init] }
+        }
+
+        #[sel(retain)]
+        fn retain(&self) -> *mut Self {
+            TEST_DATA.with(|data| data.borrow_mut().retain += 1);
+            unsafe { msg_send![super(self, NSObject::class()), retain] }
+        }
+
+        #[sel(release)]
+        fn release(&self) {
+            TEST_DATA.with(|data| data.borrow_mut().release += 1);
+            unsafe { msg_send![super(self, NSObject::class()), release] }
+        }
+
+        #[sel(autorelease)]
+        fn autorelease(&self) -> *mut Self {
+            TEST_DATA.with(|data| data.borrow_mut().autorelease += 1);
+            unsafe { msg_send![super(self, NSObject::class()), autorelease] }
+        }
+
+        #[sel(dealloc)]
+        unsafe fn dealloc(&mut self) {
+            TEST_DATA.with(|data| data.borrow_mut().dealloc += 1);
+            // Don't call superclass
+        }
+
+        #[sel(_tryRetain)]
+        unsafe fn try_retain(&self) -> Bool {
+            TEST_DATA.with(|data| data.borrow_mut().try_retain += 1);
+            let res = unsafe { msg_send_bool![super(self, NSObject::class()), _tryRetain] };
+            if !res {
+                TEST_DATA.with(|data| data.borrow_mut().try_retain -= 1);
+                TEST_DATA.with(|data| data.borrow_mut().try_retain_fail += 1);
+            }
+            Bool::from(res)
+        }
+
+        #[sel(copyWithZone:)]
+        fn copy_with_zone(&self, _zone: *const NSZone) -> *const Self {
+            TEST_DATA.with(|data| data.borrow_mut().copy += 1);
+            Id::consume_as_ptr(ManuallyDrop::new(Self::new()))
+        }
+
+        #[sel(mutableCopyWithZone:)]
+        fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> *const Self {
+            TEST_DATA.with(|data| data.borrow_mut().mutable_copy += 1);
+            Id::consume_as_ptr(ManuallyDrop::new(Self::new()))
+        }
+    }
+}
 
 unsafe impl Send for RcTestObject {}
 unsafe impl Sync for RcTestObject {}
 
-impl Deref for RcTestObject {
-    type Target = Object;
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
-}
-
-impl DerefMut for RcTestObject {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
-    }
-}
-
 impl RcTestObject {
-    pub(crate) fn class() -> &'static Class {
-        static REGISTER_CLASS: Once = Once::new();
-
-        REGISTER_CLASS.call_once(|| {
-            extern "C" fn alloc(cls: &Class, _cmd: Sel) -> *mut RcTestObject {
-                TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
-                let superclass = class!(NSObject).metaclass();
-                unsafe { msg_send![super(cls, superclass), alloc] }
-            }
-            extern "C" fn init(this: &mut RcTestObject, _cmd: Sel) -> *mut RcTestObject {
-                TEST_DATA.with(|data| data.borrow_mut().init += 1);
-                unsafe { msg_send![super(this, class!(NSObject)), init] }
-            }
-            extern "C" fn retain(this: &RcTestObject, _cmd: Sel) -> *mut RcTestObject {
-                TEST_DATA.with(|data| data.borrow_mut().retain += 1);
-                unsafe { msg_send![super(this, class!(NSObject)), retain] }
-            }
-            extern "C" fn release(this: &RcTestObject, _cmd: Sel) {
-                TEST_DATA.with(|data| data.borrow_mut().release += 1);
-                unsafe { msg_send![super(this, class!(NSObject)), release] }
-            }
-            extern "C" fn autorelease(this: &RcTestObject, _cmd: Sel) -> *mut RcTestObject {
-                TEST_DATA.with(|data| data.borrow_mut().autorelease += 1);
-                unsafe { msg_send![super(this, class!(NSObject)), autorelease] }
-            }
-            unsafe extern "C" fn dealloc(_this: *mut RcTestObject, _cmd: Sel) {
-                TEST_DATA.with(|data| data.borrow_mut().dealloc += 1);
-                // Don't call superclass
-            }
-            unsafe extern "C" fn try_retain(this: &RcTestObject, _cmd: Sel) -> Bool {
-                TEST_DATA.with(|data| data.borrow_mut().try_retain += 1);
-                let res = unsafe { msg_send_bool![super(this, class!(NSObject)), _tryRetain] };
-                if !res {
-                    TEST_DATA.with(|data| data.borrow_mut().try_retain -= 1);
-                    TEST_DATA.with(|data| data.borrow_mut().try_retain_fail += 1);
-                }
-                Bool::from(res)
-            }
-
-            let mut builder = ClassBuilder::new("RcTestObject", class!(NSObject)).unwrap();
-            unsafe {
-                builder.add_class_method(sel!(alloc), alloc as extern "C" fn(_, _) -> _);
-                builder.add_method(sel!(init), init as extern "C" fn(_, _) -> _);
-                builder.add_method(sel!(retain), retain as extern "C" fn(_, _) -> _);
-                builder.add_method(
-                    sel!(_tryRetain),
-                    try_retain as unsafe extern "C" fn(_, _) -> _,
-                );
-                builder.add_method(sel!(release), release as extern "C" fn(_, _));
-                builder.add_method(sel!(autorelease), autorelease as extern "C" fn(_, _) -> _);
-                builder.add_method(sel!(dealloc), dealloc as unsafe extern "C" fn(_, _));
-            }
-
-            let _cls = builder.register();
-        });
-
-        // Can't use `class!` here since `RcTestObject` is dynamically created.
-        Class::get("RcTestObject").unwrap()
-    }
-
     pub(crate) fn new() -> Id<Self, Owned> {
         // Use msg_send! - msg_send_id! is tested elsewhere!
         unsafe { Id::new(msg_send![Self::class(), new]) }.unwrap()

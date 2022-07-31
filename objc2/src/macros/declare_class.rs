@@ -516,8 +516,6 @@ macro_rules! declare_class {
             $v fn class() -> &'static $crate::runtime::Class {
                 use $crate::__macro_helpers::Once;
 
-                use $crate::declare::ClassBuilder;
-                use $crate::runtime::{Class, Protocol};
                 static REGISTER_CLASS: Once = Once::new();
 
                 REGISTER_CLASS.call_once(|| {
@@ -527,7 +525,7 @@ macro_rules! declare_class {
                         stringify!($name),
                         ". Perhaps a class with that name already exists?",
                     );
-                    let mut builder = ClassBuilder::new(stringify!($name), superclass).expect(err_str);
+                    let mut builder = $crate::declare::ClassBuilder::new(stringify!($name), superclass).expect(err_str);
 
                     $(
                         builder.add_ivar::<<$ivar as $crate::declare::IvarType>::Type>(
@@ -539,7 +537,7 @@ macro_rules! declare_class {
                         // Implement protocol if any specified
                         $(
                             let err_str = concat!("could not find protocol ", stringify!($protocol));
-                            builder.add_protocol(Protocol::get(stringify!($protocol)).expect(err_str));
+                            builder.add_protocol($crate::runtime::Protocol::get(stringify!($protocol)).expect(err_str));
                         )?
 
                         // Implement methods
@@ -558,7 +556,7 @@ macro_rules! declare_class {
                 });
 
                 // We just registered the class, so it should be available
-                Class::get(stringify!($name)).unwrap()
+                $crate::runtime::Class::get(stringify!($name)).unwrap()
             }
         }
 

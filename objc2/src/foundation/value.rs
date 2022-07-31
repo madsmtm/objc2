@@ -227,14 +227,36 @@ impl fmt::Debug for NSValue {
 #[cfg(test)]
 mod tests {
     use alloc::format;
-    use core::slice;
+    use core::{ptr, slice};
 
     use super::*;
+    use crate::rc::{RcTestObject, ThreadTestData};
 
     #[test]
     fn basic() {
         let val = NSValue::new(13u32);
         assert_eq!(unsafe { val.get::<u32>() }, 13);
+    }
+
+    #[test]
+    fn does_not_retain() {
+        let obj = RcTestObject::new();
+        let expected = ThreadTestData::current();
+
+        let val = NSValue::new::<*const RcTestObject>(&*obj);
+        expected.assert_current();
+
+        assert!(ptr::eq(unsafe { val.get::<*const RcTestObject>() }, &*obj));
+        expected.assert_current();
+
+        let _clone = val.clone();
+        expected.assert_current();
+
+        let _copy = val.copy();
+        expected.assert_current();
+
+        drop(val);
+        expected.assert_current();
     }
 
     #[test]

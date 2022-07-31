@@ -244,7 +244,7 @@ mod tests {
 
     use super::*;
     use crate::foundation::{NSNumber, NSString};
-    use crate::rc::autoreleasepool;
+    use crate::rc::{RcTestObject, ThreadTestData};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -260,10 +260,6 @@ mod tests {
             vec.push(NSNumber::new_u8(i));
         }
         NSArray::from_vec(vec)
-    }
-
-    fn retain_count(obj: &NSObject) -> usize {
-        unsafe { msg_send![obj, retainCount] }
     }
 
     #[test]
@@ -317,25 +313,76 @@ mod tests {
     }
 
     #[test]
-    fn test_get_does_not_autorelease() {
-        let obj: Id<_, Shared> = NSObject::new().into();
+    fn test_retains_stored() {
+        let obj = Id::from_owned(RcTestObject::new());
+        let mut expected = ThreadTestData::current();
 
-        assert_eq!(retain_count(&obj), 1);
+        let input = [obj.clone(), obj.clone()];
+        expected.retain += 2;
+        expected.assert_current();
 
-        let array = NSArray::from_slice(&[obj.clone()]);
+        let array = NSArray::from_slice(&input);
+        expected.retain += 2;
+        expected.assert_current();
 
-        assert_eq!(retain_count(&obj), 2);
-
-        autoreleasepool(|_pool| {
-            let obj2 = array.first().unwrap();
-            assert_eq!(retain_count(obj2), 2);
-        });
-
-        assert_eq!(retain_count(&obj), 2);
+        let _obj = array.first().unwrap();
+        expected.assert_current();
 
         drop(array);
+        expected.release += 2;
+        expected.assert_current();
 
-        assert_eq!(retain_count(&obj), 1);
+        let array = NSArray::from_vec(Vec::from(input));
+        expected.retain += 2;
+        expected.release += 2;
+        expected.assert_current();
+
+        let _obj = array.get(0).unwrap();
+        let _obj = array.get(1).unwrap();
+        assert!(array.get(2).is_none());
+        expected.assert_current();
+
+        drop(array);
+        expected.release += 2;
+        expected.assert_current();
+
+        drop(obj);
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_nscopying_uses_retain() {
+        let obj = Id::from_owned(RcTestObject::new());
+        let array = NSArray::from_slice(&[obj]);
+        let mut expected = ThreadTestData::current();
+
+        let _copy = array.copy();
+        expected.assert_current();
+
+        let _copy = array.mutable_copy();
+        expected.retain += 1;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_iter_no_retain() {
+        let obj = Id::from_owned(RcTestObject::new());
+        let array = NSArray::from_slice(&[obj]);
+        let mut expected = ThreadTestData::current();
+
+        let iter = array.iter();
+        expected.retain += if cfg!(feature = "gnustep-1-7") { 0 } else { 1 };
+        expected.assert_current();
+
+        assert_eq!(iter.count(), 1);
+        expected.autorelease += if cfg!(feature = "gnustep-1-7") { 0 } else { 1 };
+        expected.assert_current();
+
+        let iter = array.iter_fast();
+        assert_eq!(iter.count(), 1);
+        expected.assert_current();
     }
 
     #[test]
