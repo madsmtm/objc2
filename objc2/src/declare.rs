@@ -1,40 +1,114 @@
-//! Functionality for declaring Objective-C classes.
+//! Functionality for dynamically declaring Objective-C classes.
 //!
-//! Classes can be declared using the [`ClassBuilder`] struct. Instance variables
-//! and methods can then be added before the class is ultimately registered.
+//! Classes can be declared using the [`ClassBuilder`] struct. Instance
+//! variables and methods can then be added before the class is ultimately
+//! registered.
+//!
+//! **Note**: You likely don't need the dynamicism that this module provides!
+//! Consider using the [`declare_class!`][crate::declare_class] macro instead.
+//!
 //!
 //! # Example
 //!
 //! The following example demonstrates declaring a class named `MyNumber` that
-//! has one ivar, a `u32` named `_number` and a `number` method that returns
-//! it:
+//! has one ivar, a `u32` named `_number` and a few methods for constructor
+//! methods and methods for interfacing with the number.
 //!
 //! ```
-//! use objc2::{class, sel};
+//! use objc2::{class, sel, msg_send, msg_send_id};
 //! use objc2::declare::ClassBuilder;
+//! use objc2::foundation::NSObject;
+//! use objc2::rc::{Id, Owned};
 //! use objc2::runtime::{Class, Object, Sel};
-//! #
 //! # #[cfg(feature = "gnustep-1-7")]
 //! # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 //!
-//! let superclass = class!(NSObject);
-//! let mut decl = ClassBuilder::new("MyNumber", superclass).unwrap();
+//! fn register_class() -> &'static Class {
+//!     // Inherit from NSObject
+//!     let mut builder = ClassBuilder::new("MyNumber", NSObject::class())
+//!         .expect("a class with the name MyNumber likely already exists");
 //!
-//! // Add an instance variable
-//! decl.add_ivar::<u32>("_number");
+//!     // Add an instance variable of type `u32`
+//!     builder.add_ivar::<u32>("_number");
 //!
-//! // Add an ObjC method for getting the number
-//! extern "C" fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
-//!     unsafe { *this.ivar::<u32>("_number") }
+//!     // Add an Objective-C method for initializing an instance with a number
+//!     unsafe extern "C" fn init_with_number(
+//!         this: &mut Object,
+//!         _cmd: Sel,
+//!         number: u32,
+//!     ) -> Option<&mut Object> {
+//!         let this: Option<&mut Object> = msg_send![super(this, NSObject::class()), init];
+//!         this.map(|this| {
+//!             // SAFETY: The ivar is added with the same type above
+//!             this.set_ivar::<u32>("_number", number);
+//!             this
+//!         })
+//!     }
+//!     unsafe {
+//!         builder.add_method(
+//!             sel!(initWithNumber:),
+//!             init_with_number as unsafe extern "C" fn(_, _, _) -> _,
+//!         );
+//!     }
+//!
+//!     // Add convenience method for getting a new instance with the number
+//!     extern "C" fn with_number(
+//!         cls: &Class,
+//!         _cmd: Sel,
+//!         number: u32,
+//!     ) -> *mut Object {
+//!         let obj: Option<Id<Object, Owned>> = unsafe {
+//!             msg_send_id![
+//!                 msg_send_id![cls, alloc],
+//!                 initWithNumber: number,
+//!             ]
+//!         };
+//!         obj.map(|obj| obj.autorelease_return()).unwrap_or(std::ptr::null_mut())
+//!     }
+//!     unsafe {
+//!         builder.add_class_method(
+//!             sel!(withNumber:),
+//!             with_number as extern "C" fn(_, _, _) -> _,
+//!         );
+//!     }
+//!
+//!     // Add an Objective-C method for setting the number
+//!     extern "C" fn my_number_set(this: &mut Object, _cmd: Sel, number: u32) {
+//!         // SAFETY: The ivar is added with the same type above
+//!         unsafe { this.set_ivar::<u32>("_number", number) }
+//!     }
+//!     unsafe {
+//!         builder.add_method(sel!(setNumber:), my_number_set as extern "C" fn(_, _, _));
+//!     }
+//!
+//!     // Add an Objective-C method for getting the number
+//!     extern "C" fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
+//!         // SAFETY: The ivar is added with the same type above
+//!         unsafe { *this.ivar::<u32>("_number") }
+//!     }
+//!     unsafe {
+//!         builder.add_method(sel!(number), my_number_get as extern "C" fn(_, _) -> _);
+//!     }
+//!
+//!     builder.register()
 //! }
-//! unsafe {
-//!     decl.add_method(
-//!         sel!(number),
-//!         my_number_get as extern "C" fn(_, _) -> _,
-//!     );
-//! }
 //!
-//! decl.register();
+//! // Usage
+//!
+//! // Note: you should only do class registration once! This can be ensure
+//! // with `std::sync::Once` or the `once_cell` crate.
+//! let cls = register_class();
+//!
+//! let obj: Id<Object, Owned> = unsafe {
+//!     msg_send_id![cls, withNumber: 42u32].unwrap()
+//! };
+//!
+//! let n: u32 = unsafe { msg_send![&obj, number] };
+//! assert_eq!(n, 42);
+//!
+//! let _: () = unsafe { msg_send![&obj, setNumber: 12u32] };
+//! let n: u32 = unsafe { msg_send![&obj, number] };
+//! assert_eq!(n, 12);
 //! ```
 
 mod ivar;
