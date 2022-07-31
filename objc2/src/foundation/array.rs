@@ -27,7 +27,7 @@ __inner_extern_class! {
     // `T: PartialEq` bound correct because `NSArray` does deep (instead of
     // shallow) equality comparisons.
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSArray<T, O: Ownership>: NSObject {
+    unsafe pub struct NSArray<T: Message, O: Ownership>: NSObject {
         item: PhantomData<Id<T, O>>,
         notunwindsafe: PhantomData<&'static mut ()>,
     }
@@ -36,15 +36,15 @@ __inner_extern_class! {
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
 //
 // TODO: Properly verify this
-unsafe impl<T: Sync + Send> Sync for NSArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSArray<T, Owned> {}
+unsafe impl<T: Message + Sync + Send> Sync for NSArray<T, Shared> {}
+unsafe impl<T: Message + Sync + Send> Send for NSArray<T, Shared> {}
+unsafe impl<T: Message + Sync> Sync for NSArray<T, Owned> {}
+unsafe impl<T: Message + Send> Send for NSArray<T, Owned> {}
 
 // Also same as Id<T, O>
-impl<T: RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
-impl<T: RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
-impl<T: UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
+impl<T: Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
+impl<T: Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
 
 pub(crate) unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Object {
     let obj: *mut Object = unsafe { msg_send![cls, alloc] };

@@ -18,7 +18,7 @@ __inner_extern_class! {
     // TODO: Ensure that this deref to NSArray is safe!
     // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O>, NSObject {
+    unsafe pub struct NSMutableArray<T: Message, O: Ownership>: NSArray<T, O>, NSObject {
         p: PhantomData<*mut ()>,
     }
 }
@@ -26,10 +26,10 @@ __inner_extern_class! {
 // SAFETY: Same as NSArray<T, O>
 //
 // Put here because rustdoc doesn't show these otherwise
-unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
+unsafe impl<T: Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
 
 impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     pub fn new() -> Id<Self, Owned> {

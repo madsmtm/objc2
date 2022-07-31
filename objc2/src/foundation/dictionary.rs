@@ -12,7 +12,7 @@ use crate::{__inner_extern_class, msg_send, msg_send_id, Message};
 
 __inner_extern_class! {
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSDictionary<K, V>: NSObject {
+    unsafe pub struct NSDictionary<K: Message, V: Message>: NSObject {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
     }
@@ -20,12 +20,12 @@ __inner_extern_class! {
 
 // TODO: SAFETY
 // Approximately same as `NSArray<T, Shared>`
-unsafe impl<K: Sync + Send, V: Sync> Sync for NSDictionary<K, V> {}
-unsafe impl<K: Sync + Send, V: Send> Send for NSDictionary<K, V> {}
+unsafe impl<K: Message + Sync + Send, V: Message + Sync> Sync for NSDictionary<K, V> {}
+unsafe impl<K: Message + Sync + Send, V: Message + Send> Send for NSDictionary<K, V> {}
 
 // Approximately same as `NSArray<T, Shared>`
-impl<K: UnwindSafe, V: UnwindSafe> UnwindSafe for NSDictionary<K, V> {}
-impl<K: RefUnwindSafe, V: RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
+impl<K: Message + UnwindSafe, V: Message + UnwindSafe> UnwindSafe for NSDictionary<K, V> {}
+impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
     pub fn new() -> Id<Self, Shared> {
