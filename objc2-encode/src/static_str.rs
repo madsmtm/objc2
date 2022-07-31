@@ -1,4 +1,4 @@
-use crate::helper::Helper;
+use crate::helper::{Helper, NestingLevel};
 
 use super::Encoding;
 
@@ -38,22 +38,28 @@ pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u128) -> [u8; 
     rev
 }
 
-pub(crate) const fn static_encoding_str_len(encoding: Encoding<'_>) -> usize {
+pub(crate) const fn static_encoding_str_len(encoding: Encoding<'_>, level: NestingLevel) -> usize {
     use Helper::*;
 
     match Helper::new(encoding) {
         Primitive(primitive) => primitive.to_str().len(),
-        BitField(b, _type) => 1 + static_int_str_len(b as u128),
-        Indirection(_, &t) => 1 + static_encoding_str_len(t),
+        BitField(b, _type) => {
+            // TODO: Use the type on GNUStep (nesting level?)
+            1 + static_int_str_len(b as u128)
+        }
+        Indirection(kind, &t) => 1 + static_encoding_str_len(t, level.indirection(kind)),
         Array(len, &item) => {
-            1 + static_int_str_len(len as u128) + static_encoding_str_len(item) + 1
+            1 + static_int_str_len(len as u128) + static_encoding_str_len(item, level.array()) + 1
         }
         Container(_, name, items) => {
-            let mut res = 1 + name.len() + 1;
-            let mut i = 0;
-            while i < items.len() {
-                res += static_encoding_str_len(items[i]);
-                i += 1;
+            let mut res = 1 + name.len();
+            if let Some(level) = level.container() {
+                res += 1;
+                let mut i = 0;
+                while i < items.len() {
+                    res += static_encoding_str_len(items[i], level);
+                    i += 1;
+                }
             }
             res + 1
         }
@@ -62,6 +68,7 @@ pub(crate) const fn static_encoding_str_len(encoding: Encoding<'_>) -> usize {
 
 pub(crate) const fn static_encoding_str_array<const LEN: usize>(
     encoding: Encoding<'_>,
+    level: NestingLevel,
 ) -> [u8; LEN] {
     use Helper::*;
 
@@ -78,6 +85,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
             }
         }
         BitField(b, &_type) => {
+            // TODO: Use the type on GNUStep (nesting level?)
             res[res_i] = b'b';
             res_i += 1;
 
@@ -96,8 +104,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
 
             let mut i = 0;
             // We use LEN even though it creates an oversized array
-            let arr = static_encoding_str_array::<LEN>(t);
-            while i < static_encoding_str_len(t) {
+            let arr = static_encoding_str_array::<LEN>(t, level.indirection(kind));
+            while i < static_encoding_str_len(t, level.indirection(kind)) {
                 res[res_i] = arr[i];
                 res_i += 1;
                 i += 1;
@@ -120,8 +128,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
 
             let mut i = 0;
             // We use LEN even though it creates an oversized array
-            let arr = static_encoding_str_array::<LEN>(item);
-            while i < static_encoding_str_len(item) {
+            let arr = static_encoding_str_array::<LEN>(item, level.array());
+            while i < static_encoding_str_len(item, level.array()) {
                 res[res_i] = arr[i];
                 res_i += 1;
                 i += 1;
@@ -143,21 +151,23 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 name_i += 1;
             }
 
-            res[res_i] = b'=';
-            res_i += 1;
+            if let Some(level) = level.container() {
+                res[res_i] = b'=';
+                res_i += 1;
 
-            let mut items_i = 0;
-            while items_i < items.len() {
-                // We use LEN even though it creates an oversized array
-                let field_res = static_encoding_str_array::<LEN>(items[items_i]);
+                let mut items_i = 0;
+                while items_i < items.len() {
+                    // We use LEN even though it creates an oversized array
+                    let field_res = static_encoding_str_array::<LEN>(items[items_i], level);
 
-                let mut item_res_i = 0;
-                while item_res_i < static_encoding_str_len(items[items_i]) {
-                    res[res_i] = field_res[item_res_i];
-                    res_i += 1;
-                    item_res_i += 1;
+                    let mut item_res_i = 0;
+                    while item_res_i < static_encoding_str_len(items[items_i], level) {
+                        res[res_i] = field_res[item_res_i];
+                        res_i += 1;
+                        item_res_i += 1;
+                    }
+                    items_i += 1;
                 }
-                items_i += 1;
             }
 
             res[res_i] = kind.end_byte();

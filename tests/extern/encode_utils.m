@@ -7,14 +7,17 @@
 
 #define ENCODING_INNER(name, type) char* ENCODING_ ## name = @encode(type);
 
-#define ENCODING(name, type) \
+#define ENCODING_NO_ATOMIC(name, type) \
     ENCODING_INNER(name, type); \
     ENCODING_INNER(name ## _POINTER, type*); \
     ENCODING_INNER(name ## _POINTER_POINTER, type**); \
     ENCODING_INNER(name ## _POINTER_POINTER_POINTER, type***); \
-    ENCODING_INNER(name ## _ATOMIC, _Atomic type); \
-    ENCODING_INNER(name ## _ATOMIC_POINTER, _Atomic type*); \
     ENCODING_INNER(name ## _POINTER_ATOMIC, _Atomic (type*));
+
+#define ENCODING(name, type) \
+    ENCODING_NO_ATOMIC(name, type); \
+    ENCODING_INNER(name ## _ATOMIC_POINTER, _Atomic type*); \
+    ENCODING_INNER(name ## _ATOMIC, _Atomic type);
 
 // C types
 
@@ -42,10 +45,8 @@ ENCODING(LONG_DOUBLE_COMPLEX, long double _Complex);
 // ENCODING(DOUBLE_IMAGINARY, double _Imaginary);
 // ENCODING(LONG_DOUBLE_IMAGINARY, long double _Imaginary);
 
-ENCODING_INNER(VOID, void);
-ENCODING_INNER(VOID_POINTER, void*);
+ENCODING_NO_ATOMIC(VOID, void);
 ENCODING_INNER(VOID_POINTER_CONST, const void*);
-ENCODING_INNER(VOID_POINTER_POINTER, void**);
 
 // Struct
 
@@ -81,19 +82,20 @@ struct with_block {
     id b;
     void (*c)(void);
 };
-ENCODING_INNER(STRUCT_WITH_BLOCK, struct with_block); \
-ENCODING_INNER(STRUCT_WITH_BLOCK_POINTER, struct with_block*); \
+ENCODING_NO_ATOMIC(STRUCT_WITH_BLOCK, struct with_block); \
 
 struct with_atomic_inner {
     _Atomic int a;
     _Atomic int* b;
+    _Atomic (int*) c;
 };
 struct with_atomic {
     _Atomic int a;
     _Atomic const int* b;
-    struct with_atomic_inner c;
-    struct with_atomic_inner* d;
-    _Atomic struct with_atomic_inner* e;
+    _Atomic (int*) c;
+    struct with_atomic_inner d;
+    struct with_atomic_inner* e;
+    _Atomic struct with_atomic_inner* f;
 };
 ENCODING(STRUCT_WITH_ATOMIC, struct with_atomic);
 
@@ -118,20 +120,16 @@ ENCODING(UNION, union union_);
 // Also, atomic arrays does not exist
 
 typedef int arr[10];
-ENCODING_INNER(ARRAY_INT, arr);
-ENCODING_INNER(ARRAY_INT_POINTER, arr*);
+ENCODING_NO_ATOMIC(ARRAY_INT, arr);
 
 typedef int* arr_ptr[10];
-ENCODING_INNER(ARRAY_POINTER, arr_ptr);
-ENCODING_INNER(ARRAY_POINTER_POINTER, arr_ptr*);
+ENCODING_NO_ATOMIC(ARRAY_POINTER, arr_ptr);
 
 typedef int arr_nested[10][20];
-ENCODING_INNER(ARRAY_NESTED, arr_nested);
-ENCODING_INNER(ARRAY_NESTED_POINTER, arr_nested*);
+ENCODING_NO_ATOMIC(ARRAY_NESTED, arr_nested);
 
 typedef struct two_items arr_struct[0];
-ENCODING_INNER(ARRAY_STRUCT, arr_struct);
-ENCODING_INNER(ARRAY_STRUCT_POINTER, arr_struct*);
+ENCODING_NO_ATOMIC(ARRAY_STRUCT, arr_struct);
 
 // Objective-C
 
@@ -168,8 +166,7 @@ ENCODING(PTRDIFF_T, ptrdiff_t);
 
 // uuid.h
 
-ENCODING_INNER(UUID_T, uuid_t);
-ENCODING_INNER(UUID_T_POINTER, uuid_t*);
+ENCODING_NO_ATOMIC(UUID_T, uuid_t);
 
 // Possible extras
 
