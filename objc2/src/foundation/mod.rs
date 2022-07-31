@@ -39,6 +39,7 @@ pub use self::mutable_array::NSMutableArray;
 pub use self::mutable_attributed_string::NSMutableAttributedString;
 pub use self::mutable_data::NSMutableData;
 pub use self::mutable_string::NSMutableString;
+pub use self::number::NSNumber;
 pub use self::object::NSObject;
 pub use self::process_info::NSProcessInfo;
 pub use self::range::NSRange;
@@ -77,6 +78,7 @@ mod mutable_array;
 mod mutable_attributed_string;
 mod mutable_data;
 mod mutable_string;
+mod number;
 mod object;
 mod process_info;
 mod range;
@@ -141,6 +143,7 @@ mod tests {
         assert_auto_traits::<NSMutableAttributedString>();
         assert_auto_traits::<NSMutableData>();
         assert_auto_traits::<NSMutableString>();
+        assert_auto_traits::<NSNumber>();
         // assert_auto_traits::<NSObject>(); // Intentional
         assert_auto_traits::<NSProcessInfo>();
         assert_auto_traits::<NSRange>();
@@ -149,7 +152,7 @@ mod tests {
         assert_auto_traits::<NSThread>();
         #[cfg(not(macos_10_7))]
         assert_auto_traits::<NSUUID>();
-        assert_auto_traits::<NSValue<i32>>();
+        // assert_auto_traits::<NSValue>(); // Intentional
         assert_unwindsafe::<NSZone>(); // Intentional
     }
 }

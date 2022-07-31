@@ -243,7 +243,7 @@ mod tests {
     use alloc::vec::Vec;
 
     use super::*;
-    use crate::foundation::{NSString, NSValue};
+    use crate::foundation::{NSNumber, NSString};
     use crate::rc::autoreleasepool;
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
@@ -254,10 +254,10 @@ mod tests {
         NSArray::from_vec(vec)
     }
 
-    fn sample_number_array(len: u8) -> Id<NSArray<NSValue<u8>, Shared>, Shared> {
+    fn sample_number_array(len: u8) -> Id<NSArray<NSNumber, Shared>, Shared> {
         let mut vec = Vec::with_capacity(len as usize);
         for i in 0..len {
-            vec.push(NSValue::new(i));
+            vec.push(NSNumber::new_u8(i));
         }
         NSArray::from_vec(vec)
     }

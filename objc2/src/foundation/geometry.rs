@@ -25,9 +25,9 @@ pub type CGFloat = InnerFloat;
     not(all(target_os = "macos", target_pointer_width = "32"))
 ))]
 mod names {
-    pub(super) const POINT: &str = "_CGPoint";
-    pub(super) const SIZE: &str = "_CGSize";
-    pub(super) const RECT: &str = "_CGRect";
+    pub(super) const POINT: &str = "CGPoint";
+    pub(super) const SIZE: &str = "CGSize";
+    pub(super) const RECT: &str = "CGRect";
 }
 
 #[cfg(any(

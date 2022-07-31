@@ -251,8 +251,8 @@ macro_rules! __inner_extern_class {
         // Any lifetime information that the object may have been holding is
         // safely kept in the returned reference.
         //
-        // Generics are discarded (for example in the case of `&NSValue<T>` to
-        // `&NSObject`), but if the generic contained a lifetime, that
+        // Generics are discarded (for example in the case of `&NSArray<T, O>`
+        // to `&NSObject`), but if the generic contained a lifetime, that
         // lifetime is still included in the returned reference.
         //
         // Note that you can easily have two different variables pointing to
