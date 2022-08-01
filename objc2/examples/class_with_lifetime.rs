@@ -71,7 +71,7 @@ impl<'a> MyObject<'a> {
             let superclass = NSObject::class();
             let mut builder = ClassBuilder::new("MyObject", superclass).unwrap();
 
-            builder.add_ivar::<<NumberIvar<'a> as IvarType>::Type>(<NumberIvar<'a>>::NAME);
+            builder.add_static_ivar::<NumberIvar<'a>>();
 
             /// Helper struct since we can't access the instance variable
             /// from inside MyObject, since it hasn't been initialized yet!

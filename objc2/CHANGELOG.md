@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (default) feature flag `"foundation"`.
 * Added `declare_class!`, `extern_class!` and `ns_string!` macros from
   `objc2-foundation`.
+* Added helper method `ClassBuilder::add_static_ivar`.
 
 ### Changed
 * **BREAKING**: Change selector syntax in `declare_class!` macro to be more Rust-like.

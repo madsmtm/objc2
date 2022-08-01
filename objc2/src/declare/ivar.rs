@@ -72,9 +72,13 @@ unsafe impl<T: IvarType> IvarType for MaybeUninit<T> {
 /// particular, this is never safe to have on the stack by itself.
 ///
 /// Additionally, the instance variable described by `T` must be available on
-/// the specific instance, and be of the exact same type.
+/// the specific instance, and be of the exact same type. When declaring the
+/// object yourself, you can ensure this using
+/// [`ClassBuilder::add_static_ivar`].
 ///
 /// Finally, two ivars with the same name must not be used on the same object.
+///
+/// [`ClassBuilder::add_static_ivar`]: crate::declare::ClassBuilder::add_static_ivar
 ///
 ///
 /// # Examples
@@ -106,7 +110,7 @@ unsafe impl<T: IvarType> IvarType for MaybeUninit<T> {
 /// # use objc2::declare::ClassBuilder;
 /// # let mut builder = ClassBuilder::new("MyObject", class!(NSObject)).unwrap();
 /// // Declare the class and add the instance variable to it
-/// builder.add_ivar::<<MyCustomIvar as IvarType>::Type>(MyCustomIvar::NAME);
+/// builder.add_static_ivar::<MyCustomIvar>();
 /// # let _cls = builder.register();
 ///
 /// let obj: MyObject;
@@ -123,11 +127,8 @@ pub struct Ivar<T: IvarType> {
     item: PhantomData<T::Type>,
 }
 
-impl<T: IvarType> Deref for Ivar<T> {
-    type Target = T::Type;
-
-    #[inline]
-    fn deref(&self) -> &Self::Target {
+impl<T: IvarType> Ivar<T> {
+    fn get_ref(&self) -> &T::Type {
         // SAFETY: The user ensures that this is placed in a struct that can
         // be reinterpreted as an `Object`. Since `Ivar` can never be
         // constructed by itself (and is neither Copy nor Clone), we know that
@@ -146,13 +147,10 @@ impl<T: IvarType> Deref for Ivar<T> {
         // exists and has the correct type
         unsafe { obj.ivar::<T::Type>(T::NAME) }
     }
-}
 
-impl<T: IvarType> DerefMut for Ivar<T> {
-    #[inline]
-    fn deref_mut(&mut self) -> &mut Self::Target {
+    fn get_mut_ptr(&mut self) -> *mut T::Type {
         let ptr = NonNull::from(self).cast::<Object>();
-        // SAFETY: Same as `deref`.
+        // SAFETY: Same as `get_ref`.
         //
         // Note: We don't use `mut` because the user might have two mutable
         // references to different ivars, as such:
@@ -177,12 +175,33 @@ impl<T: IvarType> DerefMut for Ivar<T> {
         // this is definitely safe.
         let obj = unsafe { ptr.as_ref() };
 
-        // SAFETY: Same as `deref`
-        //
-        // Safe as mutable because there is only one access to a particular
-        // ivar at a time (since we have `&mut self`). `Object` is
+        // SAFETY: User ensures that the `Ivar<T>` is only used when the ivar
+        // exists and has the correct type
+        unsafe { obj.ivar_ptr::<T::Type>(T::NAME) }
+    }
+
+    #[inline]
+    fn get_mut(&mut self) -> &mut T::Type {
+        // SAFETY: Safe as mutable because there is only one access to a
+        // particular ivar at a time (since we have `&mut self`). `Object` is
         // `UnsafeCell`, so mutable access through `&Object` is allowed.
-        unsafe { obj.ivar_ptr::<T::Type>(T::NAME).as_mut().unwrap_unchecked() }
+        unsafe { self.get_mut_ptr().as_mut().unwrap_unchecked() }
+    }
+}
+
+impl<T: IvarType> Deref for Ivar<T> {
+    type Target = T::Type;
+
+    #[inline]
+    fn deref(&self) -> &Self::Target {
+        self.get_ref()
+    }
+}
+
+impl<T: IvarType> DerefMut for Ivar<T> {
+    #[inline]
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.get_mut()
     }
 }
 
