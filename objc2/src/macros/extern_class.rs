@@ -355,30 +355,48 @@ macro_rules! __attribute_helper {
         $($fn)*
     };
 
-    // Extract and convert the `#[sel(...)]` attribute to a `sel!` invocation.
+    // Extract the `#[sel(...)]` attribute and send it to another macro
     {
         @extract_sel
-        #[sel($($sel:tt)*)]
-        $($rest:tt)*
+        ($out_macro:path)
+        (
+            #[sel($($sel:tt)*)]
+            $($rest:tt)*
+        )
+        $($macro_args:tt)*
     } => {{
         $crate::__attribute_helper! {
             @extract_sel_duplicate
             $($rest)*
         }
 
-        $crate::sel!($($sel)*)
+        $out_macro!(
+            $($macro_args)*
+            @($($sel)*)
+        )
     }};
     {
         @extract_sel
-        #[$($m_checked:tt)*]
-        $($rest:tt)*
+        ($out_macro:path)
+        (
+            #[$($m_checked:tt)*]
+            $($rest:tt)*
+        )
+        $($macro_args:tt)*
     } => {{
         $crate::__attribute_helper! {
             @extract_sel
-            $($rest)*
+            ($out_macro)
+            ($($rest)*)
+            $($macro_args)*
         }
     }};
-    {@extract_sel} => {{
+    {
+        @extract_sel
+        ($out_macro:path)
+        ()
+        $($macro_args:tt)*
+    } => {{
         compile_error!("Must specify the desired selector using `#[sel(...)]`");
     }};
 

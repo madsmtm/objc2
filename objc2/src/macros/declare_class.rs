@@ -203,7 +203,9 @@ macro_rules! __inner_declare_class {
         $builder.add_class_method(
             $crate::__attribute_helper! {
                 @extract_sel
-                $(#[$($m)*])*
+                ($crate::__inner_declare_class)
+                ($(#[$($m)*])*)
+                @call_sel
             },
             Self::$name as $crate::__fn_ptr! {
                 @($($qualifiers)*) $($args)*
@@ -223,12 +225,21 @@ macro_rules! __inner_declare_class {
         $builder.add_method(
             $crate::__attribute_helper! {
                 @extract_sel
-                $(#[$($m)*])*
+                ($crate::__inner_declare_class)
+                ($(#[$($m)*])*)
+                @call_sel
             },
             Self::$name as $crate::__fn_ptr! {
                 @($($qualifiers)*) $($args)*
             },
         );
+    };
+
+    {
+        @call_sel
+        @($($sel:tt)*)
+    } => {
+        $crate::sel!($($sel)*)
     };
 }
 
