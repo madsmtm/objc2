@@ -35,22 +35,31 @@ unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
 
+/// Generic creation methods.
 impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     pub fn new() -> Id<Self, Owned> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
+        // SAFETY: Same as `NSArray::new`, except mutable arrays are always
+        // unique.
+        unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSMutableArray") }
     }
 
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
+        // SAFETY: Same as `NSArray::from_vec`, except mutable arrays are
+        // always unique.
         unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
     }
 }
 
+/// Creation methods that produce shared arrays.
 impl<T: Message> NSMutableArray<T, Shared> {
     pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
+        // SAFETY: Same as `NSArray::from_slice`, except mutable arrays are
+        // always unique.
         unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
     }
 }
 
+/// Generic accessor methods.
 impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     #[doc(alias = "addObject:")]
     pub fn push(&mut self, obj: Id<T, O>) {
@@ -158,11 +167,13 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
 
 // Copying only possible when ItemOwnership = Shared
 
+/// This is implemented as a shallow copy.
 unsafe impl<T: Message> NSCopying for NSMutableArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
+/// This is implemented as a shallow copy.
 unsafe impl<T: Message> NSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }

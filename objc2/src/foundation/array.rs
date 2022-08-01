@@ -85,6 +85,7 @@ pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>
     }
 }
 
+/// Generic creation methods.
 impl<T: Message, O: Ownership> NSArray<T, O> {
     /// Get an empty array.
     pub fn new() -> Id<Self, Shared> {
@@ -96,8 +97,39 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
         //   hence the notion of ownership over the elements is void.
         unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSArray") }
     }
+
+    pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
+        // SAFETY:
+        // `initWithObjects:` may choose to deduplicate arrays (I could
+        // imagine it having a special case for arrays with one `NSNumber`
+        // object), and returning mutable references to those would be
+        // unsound!
+        // However, when we know that we have ownership over the variables, we
+        // also know that there cannot be another array in existence with the
+        // same objects, so `Id<NSArray<T, Owned>, Owned>` is safe to return.
+        //
+        // In essence, we can choose between always returning `Id<T, Shared>`
+        // or `Id<T, O>`, and the latter is probably the most useful, as we
+        // would like to know when we're the only owner of the array, to
+        // allow mutation of the array's items.
+        unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
+    }
 }
 
+/// Creation methods that produce shared arrays.
+impl<T: Message> NSArray<T, Shared> {
+    pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
+        // SAFETY: Taking `&T` would not be sound, since the `&T` could come
+        // from an `Id<T, Owned>` that would now no longer be owned!
+        //
+        // (Note that NSArray internally retains all the objects it is given,
+        // effectively making the safety requirements the same as
+        // `Id::retain`).
+        unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
+    }
+}
+
+/// Generic accessor methods.
 impl<T: Message, O: Ownership> NSArray<T, O> {
     #[doc(alias = "count")]
     pub fn len(&self) -> usize {
@@ -137,13 +169,6 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
         }
     }
 
-    // The `NSArray` itself (length and number of items) is always immutable,
-    // but we would like to know when we're the only owner of the array, to
-    // allow mutation of the array's items.
-    pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
-        unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
-    }
-
     pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
         let range = NSRange::from(range);
         let mut vec = Vec::with_capacity(range.length);
@@ -168,11 +193,8 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
     }
 }
 
+/// Accessor methods that work on shared arrays.
 impl<T: Message> NSArray<T, Shared> {
-    pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
-        unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
-    }
-
     #[doc(alias = "objectAtIndex:")]
     pub fn get_retained(&self, index: usize) -> Id<T, Shared> {
         let obj = self.get(index).unwrap();
@@ -188,6 +210,7 @@ impl<T: Message> NSArray<T, Shared> {
     }
 }
 
+/// Accessor methods that work on owned arrays.
 impl<T: Message> NSArray<T, Owned> {
     #[doc(alias = "objectAtIndex:")]
     pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
@@ -211,13 +234,15 @@ impl<T: Message> NSArray<T, Owned> {
     }
 }
 
-// Copying only possible when ItemOwnership = Shared
-
+/// This is implemented as a shallow copy.
+///
+/// As such, it is only possible when the array's contents are `Shared`.
 unsafe impl<T: Message> NSCopying for NSArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
+/// This is implemented as a shallow copy.
 unsafe impl<T: Message> NSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
