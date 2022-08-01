@@ -5,7 +5,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
 
-use super::array::from_refs;
+use super::array::with_objects;
 use super::{
     NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
     NSObject,
@@ -41,13 +41,13 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     }
 
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
-        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()).unwrap() }
+        unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
     }
 }
 
 impl<T: Message> NSMutableArray<T, Shared> {
     pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
-        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()).unwrap() }
+        unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
     }
 }
 

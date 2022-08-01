@@ -70,14 +70,18 @@ impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {
 impl<T: Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
 
-pub(crate) unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Object {
-    let obj: *mut Object = unsafe { msg_send![cls, alloc] };
+#[track_caller]
+pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>(
+    cls: &Class,
+    objects: &[&T],
+) -> Id<R, O> {
     unsafe {
-        msg_send![
-            obj,
-            initWithObjects: refs.as_ptr(),
-            count: refs.len(),
+        msg_send_id![
+            msg_send_id![cls, alloc],
+            initWithObjects: objects.as_ptr(),
+            count: objects.len(),
         ]
+        .expect("unexpected NULL array")
     }
 }
 
@@ -137,7 +141,7 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
     // but we would like to know when we're the only owner of the array, to
     // allow mutation of the array's items.
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
-        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()).unwrap() }
+        unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
     }
 
     pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
@@ -166,7 +170,7 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
 
 impl<T: Message> NSArray<T, Shared> {
     pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
-        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()).unwrap() }
+        unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
     }
 
     #[doc(alias = "objectAtIndex:")]
