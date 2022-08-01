@@ -100,10 +100,10 @@ mod tests {
         let s1 = NSMutableAttributedString::from_nsstring(&NSString::from_str("abc"));
         let s2 = s1.copy();
         assert_ne!(Id::as_ptr(&s1).cast(), Id::as_ptr(&s2));
-        assert!(s2.is_kind_of(NSAttributedString::class()));
+        assert!(s2.is_kind_of::<NSAttributedString>());
 
         let s3 = s1.mutable_copy();
         assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3));
-        assert!(s3.is_kind_of(NSMutableAttributedString::class()));
+        assert!(s3.is_kind_of::<NSMutableAttributedString>());
     }
 }

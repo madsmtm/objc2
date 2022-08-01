@@ -25,9 +25,28 @@ impl NSObject {
         unsafe { msg_send_id![Self::class(), new].unwrap() }
     }
 
-    pub fn is_kind_of(&self, cls: &Class) -> bool {
+    fn is_kind_of_inner(&self, cls: &Class) -> bool {
         unsafe { msg_send_bool![self, isKindOfClass: cls] }
     }
+
+    /// Check if the object is an instance of the class, or one of it's
+    /// subclasses.
+    ///
+    /// See [Apple's documentation][apple-doc] for more details on what you
+    /// may (and what you may not) do with this information.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass
+    #[doc(alias = "isKindOfClass:")]
+    pub fn is_kind_of<T: ClassType>(&self) -> bool {
+        self.is_kind_of_inner(T::class())
+    }
+
+    // Note: We don't provide a method to convert `NSObject` to `T` based on
+    // `is_kind_of`, since that is not possible to do in general!
+    //
+    // For example, something may have a return type of `NSString`, while
+    // behind the scenes they really return `NSMutableString` and expect it to
+    // not be modified.
 }
 
 /// Objective-C equality has approximately the same semantics as Rust
@@ -161,7 +180,7 @@ mod tests {
     #[test]
     fn test_is_kind_of() {
         let obj = NSObject::new();
-        assert!(obj.is_kind_of(NSObject::class()));
-        assert!(!obj.is_kind_of(NSString::class()));
+        assert!(obj.is_kind_of::<NSObject>());
+        assert!(!obj.is_kind_of::<NSString>());
     }
 }

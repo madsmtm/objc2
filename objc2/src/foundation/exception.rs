@@ -94,7 +94,7 @@ impl NSException {
             // SAFETY: We only use `isKindOfClass:` on NSObject
             let obj: *const Exception = obj;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
-            obj.is_kind_of(Self::class())
+            obj.is_kind_of::<Self>()
         } else {
             false
         }

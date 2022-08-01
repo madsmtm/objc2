@@ -176,11 +176,11 @@ mod tests {
         // NSAttributedString performs this optimization in GNUStep's runtime,
         // but not in Apple's; so we don't test for it!
         // assert_eq!(Id::as_ptr(&s1), Id::as_ptr(&s2));
-        assert!(s2.is_kind_of(NSAttributedString::class()));
+        assert!(s2.is_kind_of::<NSAttributedString>());
 
         let s3 = s1.mutable_copy();
         assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
-        assert!(s3.is_kind_of(NSMutableAttributedString::class()));
+        assert!(s3.is_kind_of::<NSMutableAttributedString>());
     }
 
     #[test]

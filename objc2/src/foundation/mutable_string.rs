@@ -218,10 +218,10 @@ mod tests {
         let s1 = NSMutableString::from_str("abc");
         let s2 = s1.copy();
         assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s2).cast());
-        assert!(s2.is_kind_of(NSString::class()));
+        assert!(s2.is_kind_of::<NSString>());
 
         let s3 = s1.mutable_copy();
         assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3));
-        assert!(s3.is_kind_of(NSMutableString::class()));
+        assert!(s3.is_kind_of::<NSMutableString>());
     }
 }

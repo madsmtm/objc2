@@ -30,6 +30,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   type-safety from this, it makes `NSValue` much more useful in the real
   world!
 * **BREAKING**: Made `NSArray::new` generic over ownership.
+* **BREAKING**: Made `NSObject::is_kind_of` take a generic `T: ClassType`
+  instead of a `runtime::Class`.
 
 ### Fixed
 * Made `Debug` impls for all objects print something useful.
