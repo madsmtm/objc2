@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `declare_class!`, `extern_class!` and `ns_string!` macros from
   `objc2-foundation`.
 * Added helper method `ClassBuilder::add_static_ivar`.
+* **BREAKING**: Added `ClassType` trait, and moved the associated `class`
+  methods that `extern_class!` and `declare_class!` generated to that. This
+  means you'll have to `use objc2::ClassType` whenever you want to use e.g.
+  `NSData::class()`.
 
 ### Changed
 * **BREAKING**: Change selector syntax in `declare_class!` macro to be more Rust-like.

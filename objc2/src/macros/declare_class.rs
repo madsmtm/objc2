@@ -323,10 +323,10 @@ macro_rules! __inner_declare_class {
 ///
 /// ```
 /// use std::os::raw::c_int;
-/// use objc2::{declare_class, msg_send, msg_send_bool, msg_send_id};
 /// use objc2::rc::{Id, Owned};
 /// use objc2::foundation::{NSCopying, NSObject, NSZone};
 /// use objc2::runtime::Bool;
+/// use objc2::{declare_class, msg_send, msg_send_bool, msg_send_id, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -503,22 +503,15 @@ macro_rules! declare_class {
         }
 
         // Creation
-        impl $name {
-            #[doc = concat!(
-                "Get a reference to the Objective-C class `",
-                stringify!($name),
-                "`.",
-                "\n\n",
-                "May register the class if it wasn't already.",
-            )]
-            // TODO: Allow users to configure this?
-            $v fn class() -> &'static $crate::runtime::Class {
+        unsafe impl $crate::ClassType for $name {
+            fn class() -> &'static $crate::runtime::Class {
+                // TODO: Use `core::cell::LazyCell`
                 use $crate::__macro_helpers::Once;
 
                 static REGISTER_CLASS: Once = Once::new();
 
                 REGISTER_CLASS.call_once(|| {
-                    let superclass = <$inherits>::class();
+                    let superclass = <$inherits as $crate::ClassType>::class();
                     let err_str = concat!(
                         "could not create new class ",
                         stringify!($name),

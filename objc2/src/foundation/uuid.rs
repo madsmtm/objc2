@@ -2,9 +2,8 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSCopying, NSObject, NSString};
-use crate::rc::DefaultId;
-use crate::rc::{Id, Shared};
-use crate::{extern_class, msg_send, msg_send_id, Encode, Encoding, RefEncode};
+use crate::rc::{DefaultId, Id, Shared};
+use crate::{extern_class, msg_send, msg_send_id, ClassType, Encode, Encoding, RefEncode};
 
 extern_class! {
     /// A universally unique value.

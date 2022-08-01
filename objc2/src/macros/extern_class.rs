@@ -57,7 +57,7 @@
 /// ```
 /// use objc2::foundation::NSObject;
 /// use objc2::rc::{Id, Shared};
-/// use objc2::{extern_class, msg_send_id};
+/// use objc2::{ClassType, extern_class, msg_send_id};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -70,7 +70,7 @@
 ///     unsafe pub struct NSFormatter: NSObject;
 /// }
 ///
-/// // Provided by the macro
+/// // Provided by the macro (it implements `ClassType`)
 /// let cls = NSFormatter::class();
 ///
 /// // `NSFormatter` implements `Message`:
@@ -201,15 +201,9 @@ macro_rules! __inner_extern_class {
             }
         }
 
-        impl<$($t $(: $b)?),*> $name<$($t),*> {
-            #[doc = concat!(
-                "Get a reference to the Objective-C class `",
-                stringify!($name),
-                "`.",
-            )]
+        unsafe impl<$($t $(: $b)?),*> $crate::ClassType for $name<$($t),*> {
             #[inline]
-            // TODO: Allow users to configure this?
-            $v fn class() -> &'static $crate::runtime::Class {
+            fn class() -> &'static $crate::runtime::Class {
                 $crate::class!($name)
             }
         }

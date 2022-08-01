@@ -6,7 +6,7 @@ use super::{
 };
 use crate::rc::{DefaultId, Id, Shared};
 use crate::runtime::Object;
-use crate::{extern_class, msg_send, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
 extern_class! {
     /// A string that has associated attributes for portions of its text.

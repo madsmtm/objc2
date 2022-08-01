@@ -11,8 +11,7 @@ use super::{
 };
 use crate::rc::{Id, Shared};
 use crate::runtime::Bool;
-use crate::Encoding;
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType, Encoding};
 
 extern_class! {
     /// An object wrapper for primitive scalars.

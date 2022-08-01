@@ -199,6 +199,7 @@ pub use objc_sys as ffi;
 #[doc(no_inline)]
 pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
+pub use crate::class_type::ClassType;
 pub use crate::message::{Message, MessageArguments, MessageReceiver};
 #[cfg(feature = "malloc")]
 pub use crate::verify::VerificationError;
@@ -219,6 +220,7 @@ macro_rules! __hash_idents {
 pub mod __macro_helpers;
 mod bool;
 mod cache;
+mod class_type;
 pub mod declare;
 pub mod exception;
 #[cfg(feature = "foundation")]

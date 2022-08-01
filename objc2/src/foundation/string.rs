@@ -11,11 +11,9 @@ use std::os::raw::c_char;
 
 use super::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
 use crate::ffi;
-use crate::rc::DefaultId;
-use crate::rc::{autoreleasepool, AutoreleasePool};
-use crate::rc::{Id, Shared};
+use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;

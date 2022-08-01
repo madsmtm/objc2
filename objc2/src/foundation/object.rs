@@ -4,17 +4,16 @@ use core::hash;
 use super::NSString;
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::runtime::{Class, Object};
-use crate::{__inner_extern_class, class, msg_send, msg_send_bool, msg_send_id};
+use crate::{ClassType, __inner_extern_class, class, msg_send, msg_send_bool, msg_send_id};
 
 __inner_extern_class! {
     @__inner
     unsafe pub struct NSObject<>: Object {}
 }
 
-impl NSObject {
-    /// Get a reference to the Objective-C class `NSObject`.
+unsafe impl ClassType for NSObject {
     #[inline]
-    pub fn class() -> &'static Class {
+    fn class() -> &'static Class {
         class!(NSObject)
     }
 }

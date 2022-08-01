@@ -5,7 +5,7 @@ use core::ptr;
 use super::{Id, Owned};
 use crate::foundation::{NSObject, NSZone};
 use crate::runtime::Bool;
-use crate::{declare_class, msg_send, msg_send_bool};
+use crate::{declare_class, msg_send, msg_send_bool, ClassType};
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub(crate) struct ThreadTestData {

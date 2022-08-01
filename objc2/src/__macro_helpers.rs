@@ -255,6 +255,7 @@ mod tests {
     use crate::foundation::NSZone;
     use crate::rc::{Allocated, Owned, RcTestObject, Shared, ThreadTestData};
     use crate::runtime::Object;
+    use crate::ClassType;
     use crate::{class, msg_send_id};
 
     #[test]

@@ -12,7 +12,7 @@ use objc2::foundation::NSObject;
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, msg_send_id, sel};
-use objc2::{Encoding, Message, RefEncode};
+use objc2::{ClassType, Encoding, Message, RefEncode};
 
 /// Helper type for the instance variable
 struct NumberIvar<'a> {
@@ -62,8 +62,10 @@ impl<'a> MyObject<'a> {
     pub fn set(&mut self, number: u8) {
         **self.number = number;
     }
+}
 
-    pub fn class() -> &'static Class {
+unsafe impl<'a> ClassType for MyObject<'a> {
+    fn class() -> &'static Class {
         // TODO: Use std::lazy::LazyCell
         static REGISTER_CLASS: Once = Once::new();
 

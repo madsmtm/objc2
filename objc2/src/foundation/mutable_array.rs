@@ -11,8 +11,7 @@ use super::{
     NSObject,
 };
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::Message;
-use crate::{__inner_extern_class, msg_send, msg_send_id};
+use crate::{ClassType, Message, __inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
     /// A growable ordered collection of objects.

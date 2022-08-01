@@ -10,8 +10,7 @@ use super::{
 };
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use crate::runtime::{Class, Object};
-use crate::Message;
-use crate::{__inner_extern_class, msg_send, msg_send_id};
+use crate::{ClassType, Message, __inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
     /// An immutable ordered collection of objects.
