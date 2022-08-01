@@ -16,7 +16,13 @@ use crate::Message;
 ///
 /// # Safety
 ///
-/// TODO
+/// The class returned by [`Self::class`] must be a subclass of the class that
+/// [`Self::Superclass`] represents.
+///
+/// In pseudocode:
+/// ```ignore
+/// Self::class().superclass() == <Self::Superclass as ClassType>::class()
+/// ```
 ///
 ///
 /// # Examples
@@ -44,8 +50,19 @@ use crate::Message;
 ///
 /// let cls = MyClass::class();
 /// ```
-// TODO: Figure out if we should use `Deref`, or an associated type.
 pub unsafe trait ClassType: Message {
+    /// The superclass of this class.
+    ///
+    /// If you have implemented [`Deref`] for your type, it is highly
+    /// recommended that this is equal to [`Deref::Target`].
+    ///
+    /// This may be [`runtime::Object`] if the class is a root class.
+    ///
+    /// [`Deref`]: std::ops::Deref
+    /// [`Deref::Target`]: std::ops::Deref::Target
+    /// [`runtime::Object`]: crate::runtime::Object
+    type Superclass: Message;
+
     /// Get a reference to the Objective-C class that this type represents.
     ///
     /// May register the class with the runtime if it wasn't already.

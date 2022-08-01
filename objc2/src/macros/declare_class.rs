@@ -504,6 +504,8 @@ macro_rules! declare_class {
 
         // Creation
         unsafe impl $crate::ClassType for $name {
+            type Superclass = $inherits;
+
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
                 use $crate::__macro_helpers::Once;

@@ -189,19 +189,21 @@ macro_rules! __inner_extern_class {
     // TODO: Expose this variant in the `object` macro.
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident $(= $default:ty)?)?),*>: $($inheritance_chain:ty),+ {
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident $(= $default:ty)?)?),*>: $superclass:ty $(, $inheritance_rest:ty)* {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
     ) => {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
-            unsafe $v struct $name<$($t $(: $b $(= $default)?)?),*>: $($inheritance_chain,)+ $crate::runtime::Object {
+            unsafe $v struct $name<$($t $(: $b $(= $default)?)?),*>: $superclass, $($inheritance_rest,)* $crate::runtime::Object {
                 $($field_vis $field: $field_ty,)*
             }
         }
 
         unsafe impl<$($t $(: $b)?),*> $crate::ClassType for $name<$($t),*> {
+            type Superclass = $superclass;
+
             #[inline]
             fn class() -> &'static $crate::runtime::Class {
                 $crate::class!($name)

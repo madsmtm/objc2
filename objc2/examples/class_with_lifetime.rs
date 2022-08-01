@@ -65,6 +65,8 @@ impl<'a> MyObject<'a> {
 }
 
 unsafe impl<'a> ClassType for MyObject<'a> {
+    type Superclass = NSObject;
+
     fn class() -> &'static Class {
         // TODO: Use std::lazy::LazyCell
         static REGISTER_CLASS: Once = Once::new();
