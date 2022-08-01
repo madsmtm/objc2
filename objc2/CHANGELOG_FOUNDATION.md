@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Made `NSValue` not generic any more. While we loose some
   type-safety from this, it makes `NSValue` much more useful in the real
   world!
+* **BREAKING**: Made `NSArray::new` generic over ownership.
 
 ### Fixed
 * Made `Debug` impls for all objects print something useful.

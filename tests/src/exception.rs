@@ -3,7 +3,7 @@ use alloc::format;
 use objc2::exception::{catch, throw};
 use objc2::foundation::{NSArray, NSException, NSString};
 use objc2::msg_send;
-use objc2::rc::{autoreleasepool, Id};
+use objc2::rc::{autoreleasepool, Id, Shared};
 use objc2::runtime::Object;
 
 #[track_caller]
@@ -122,7 +122,7 @@ fn raise_catch() {
 fn catch_actual() {
     let res = unsafe {
         catch(|| {
-            let arr: Id<NSArray<Object, _>, _> = NSArray::new();
+            let arr: Id<NSArray<Object, Shared>, Shared> = NSArray::new();
             let _obj: *mut Object = msg_send![&arr, objectAtIndex: 0usize];
         })
     };

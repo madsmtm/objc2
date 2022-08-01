@@ -81,9 +81,16 @@ pub(crate) unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) ->
     }
 }
 
-impl<T: Message> NSArray<T, Shared> {
+impl<T: Message, O: Ownership> NSArray<T, O> {
+    /// Get an empty array.
     pub fn new() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
+        // SAFETY:
+        // - `new` may not create a new object, but instead return a shared
+        //   instance. We remedy this by returning `Id<Self, Shared>`.
+        // - `O` don't actually matter here! E.g. `NSArray<T, Owned>` is
+        //   perfectly legal, since the array doesn't have any elements, and
+        //   hence the notion of ownership over the elements is void.
+        unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSArray") }
     }
 }
 
@@ -245,7 +252,7 @@ impl<T: Message> IndexMut<usize> for NSArray<T, Owned> {
     }
 }
 
-impl<T: Message> DefaultId for NSArray<T, Shared> {
+impl<T: Message, O: Ownership> DefaultId for NSArray<T, O> {
     type Ownership = Shared;
 
     #[inline]
@@ -288,13 +295,13 @@ mod tests {
 
     #[test]
     fn test_two_empty() {
-        let _empty_array1 = NSArray::<NSObject, _>::new();
-        let _empty_array2 = NSArray::<NSObject, _>::new();
+        let _empty_array1 = NSArray::<NSObject, Shared>::new();
+        let _empty_array2 = NSArray::<NSObject, Shared>::new();
     }
 
     #[test]
     fn test_len() {
-        let empty_array = NSArray::<NSObject, _>::new();
+        let empty_array = NSArray::<NSObject, Shared>::new();
         assert_eq!(empty_array.len(), 0);
 
         let array = sample_array(4);
