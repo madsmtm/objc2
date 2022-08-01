@@ -14,55 +14,122 @@ use crate::Message;
 use crate::{__inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
-    /// TODO
+    /// An immutable ordered collection of objects.
     ///
-    /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
-    /// to the elements (without modifying the array itself), and
-    /// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
+    /// This is the Objective-C equivalent of a "boxed slice" (`Box<[T]>`),
+    /// so effectively a `Vec<T>` where you can't change the number of
+    /// elements.
     ///
-    /// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
-    /// TODO: Can we make it impossible? Should we?
+    /// The type of the contained objects is described by the generic
+    /// parameter `T`, and the ownership of the objects is described with the
+    /// generic parameter `O`.
     ///
-    /// What about `Id<NSArray<T, Shared>, Owned>`?
+    ///
+    /// # Ownership
+    ///
+    /// While `NSArray` _itself_ is immutable, i.e. the number of objects it
+    /// contains can't change, it is still possible to modify the contained
+    /// objects themselves, if you know you're the sole owner of them -
+    /// quite similar to how you can modify elements in `Box<[T]>`.
+    ///
+    /// To mutate the contained objects the ownership must be `O = Owned`. A
+    /// summary of what the different "types" of arrays allow you to do can be
+    /// found below. `Array` refers to either `NSArray` or `NSMutableArray`.
+    /// - `Id<NSMutableArray<T, Owned>, Owned>`: Allows you to mutate the
+    ///   objects, and the array itself.
+    /// - `Id<NSMutableArray<T, Shared>, Owned>`: Allows you to mutate the
+    ///   array itself, but not it's contents.
+    /// - `Id<NSArray<T, Owned>, Owned>`: Allows you to mutate the objects,
+    ///   but not the array itself.
+    /// - `Id<NSArray<T, Shared>, Owned>`: Effectively the same as the below.
+    /// - `Id<Array<T, Shared>, Shared>`: Allows you to copy the array, but
+    ///   does not allow you to modify it in any way.
+    /// - `Id<Array<T, Owned>, Shared>`: Pretty useless compared to the
+    ///   others, avoid this.
+    ///
+    /// See [Apple's documentation][apple-doc].
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsarray?language=objc
     // `T: PartialEq` bound correct because `NSArray` does deep (instead of
     // shallow) equality comparisons.
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSArray<T, O: Ownership>: NSObject {
+    unsafe pub struct NSArray<T: Message, O: Ownership = Shared>: NSObject {
         item: PhantomData<Id<T, O>>,
         notunwindsafe: PhantomData<&'static mut ()>,
     }
 }
 
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
-//
-// TODO: Properly verify this
-unsafe impl<T: Sync + Send> Sync for NSArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSArray<T, Owned> {}
+unsafe impl<T: Message + Sync + Send> Sync for NSArray<T, Shared> {}
+unsafe impl<T: Message + Sync + Send> Send for NSArray<T, Shared> {}
+unsafe impl<T: Message + Sync> Sync for NSArray<T, Owned> {}
+unsafe impl<T: Message + Send> Send for NSArray<T, Owned> {}
 
 // Also same as Id<T, O>
-impl<T: RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
-impl<T: RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
-impl<T: UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
+impl<T: Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
+impl<T: Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
 
-pub(crate) unsafe fn from_refs<T: Message + ?Sized>(cls: &Class, refs: &[&T]) -> *mut Object {
-    let obj: *mut Object = unsafe { msg_send![cls, alloc] };
+#[track_caller]
+pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>(
+    cls: &Class,
+    objects: &[&T],
+) -> Id<R, O> {
     unsafe {
-        msg_send![
-            obj,
-            initWithObjects: refs.as_ptr(),
-            count: refs.len(),
+        msg_send_id![
+            msg_send_id![cls, alloc],
+            initWithObjects: objects.as_ptr(),
+            count: objects.len(),
         ]
+        .expect("unexpected NULL array")
     }
 }
 
-impl<T: Message> NSArray<T, Shared> {
+/// Generic creation methods.
+impl<T: Message, O: Ownership> NSArray<T, O> {
+    /// Get an empty array.
     pub fn new() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
+        // SAFETY:
+        // - `new` may not create a new object, but instead return a shared
+        //   instance. We remedy this by returning `Id<Self, Shared>`.
+        // - `O` don't actually matter here! E.g. `NSArray<T, Owned>` is
+        //   perfectly legal, since the array doesn't have any elements, and
+        //   hence the notion of ownership over the elements is void.
+        unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSArray") }
+    }
+
+    pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
+        // SAFETY:
+        // `initWithObjects:` may choose to deduplicate arrays (I could
+        // imagine it having a special case for arrays with one `NSNumber`
+        // object), and returning mutable references to those would be
+        // unsound!
+        // However, when we know that we have ownership over the variables, we
+        // also know that there cannot be another array in existence with the
+        // same objects, so `Id<NSArray<T, Owned>, Owned>` is safe to return.
+        //
+        // In essence, we can choose between always returning `Id<T, Shared>`
+        // or `Id<T, O>`, and the latter is probably the most useful, as we
+        // would like to know when we're the only owner of the array, to
+        // allow mutation of the array's items.
+        unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
     }
 }
 
+/// Creation methods that produce shared arrays.
+impl<T: Message> NSArray<T, Shared> {
+    pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
+        // SAFETY: Taking `&T` would not be sound, since the `&T` could come
+        // from an `Id<T, Owned>` that would now no longer be owned!
+        //
+        // (Note that NSArray internally retains all the objects it is given,
+        // effectively making the safety requirements the same as
+        // `Id::retain`).
+        unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
+    }
+}
+
+/// Generic accessor methods.
 impl<T: Message, O: Ownership> NSArray<T, O> {
     #[doc(alias = "count")]
     pub fn len(&self) -> usize {
@@ -102,13 +169,6 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
         }
     }
 
-    // The `NSArray` itself (length and number of items) is always immutable,
-    // but we would like to know when we're the only owner of the array, to
-    // allow mutation of the array's items.
-    pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
-        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()).unwrap() }
-    }
-
     pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
         let range = NSRange::from(range);
         let mut vec = Vec::with_capacity(range.length);
@@ -133,11 +193,8 @@ impl<T: Message, O: Ownership> NSArray<T, O> {
     }
 }
 
+/// Accessor methods that work on shared arrays.
 impl<T: Message> NSArray<T, Shared> {
-    pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
-        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()).unwrap() }
-    }
-
     #[doc(alias = "objectAtIndex:")]
     pub fn get_retained(&self, index: usize) -> Id<T, Shared> {
         let obj = self.get(index).unwrap();
@@ -153,6 +210,7 @@ impl<T: Message> NSArray<T, Shared> {
     }
 }
 
+/// Accessor methods that work on owned arrays.
 impl<T: Message> NSArray<T, Owned> {
     #[doc(alias = "objectAtIndex:")]
     pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
@@ -176,13 +234,15 @@ impl<T: Message> NSArray<T, Owned> {
     }
 }
 
-// Copying only possible when ItemOwnership = Shared
-
+/// This is implemented as a shallow copy.
+///
+/// As such, it is only possible when the array's contents are `Shared`.
 unsafe impl<T: Message> NSCopying for NSArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
+/// This is implemented as a shallow copy.
 unsafe impl<T: Message> NSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
@@ -221,7 +281,7 @@ impl<T: Message> IndexMut<usize> for NSArray<T, Owned> {
     }
 }
 
-impl<T: Message> DefaultId for NSArray<T, Shared> {
+impl<T: Message, O: Ownership> DefaultId for NSArray<T, O> {
     type Ownership = Shared;
 
     #[inline]
@@ -244,7 +304,7 @@ mod tests {
 
     use super::*;
     use crate::foundation::{NSNumber, NSString};
-    use crate::rc::autoreleasepool;
+    use crate::rc::{RcTestObject, ThreadTestData};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -262,19 +322,15 @@ mod tests {
         NSArray::from_vec(vec)
     }
 
-    fn retain_count(obj: &NSObject) -> usize {
-        unsafe { msg_send![obj, retainCount] }
-    }
-
     #[test]
     fn test_two_empty() {
-        let _empty_array1 = NSArray::<NSObject, _>::new();
-        let _empty_array2 = NSArray::<NSObject, _>::new();
+        let _empty_array1 = NSArray::<NSObject>::new();
+        let _empty_array2 = NSArray::<NSObject>::new();
     }
 
     #[test]
     fn test_len() {
-        let empty_array = NSArray::<NSObject, _>::new();
+        let empty_array = NSArray::<NSObject>::new();
         assert_eq!(empty_array.len(), 0);
 
         let array = sample_array(4);
@@ -311,31 +367,82 @@ mod tests {
         assert_eq!(array.first(), array.get(0));
         assert_eq!(array.last(), array.get(3));
 
-        let empty_array = <NSArray<NSObject, Shared>>::new();
+        let empty_array = <NSArray<NSObject>>::new();
         assert!(empty_array.first().is_none());
         assert!(empty_array.last().is_none());
     }
 
     #[test]
-    fn test_get_does_not_autorelease() {
-        let obj: Id<_, Shared> = NSObject::new().into();
+    fn test_retains_stored() {
+        let obj = Id::from_owned(RcTestObject::new());
+        let mut expected = ThreadTestData::current();
 
-        assert_eq!(retain_count(&obj), 1);
+        let input = [obj.clone(), obj.clone()];
+        expected.retain += 2;
+        expected.assert_current();
 
-        let array = NSArray::from_slice(&[obj.clone()]);
+        let array = NSArray::from_slice(&input);
+        expected.retain += 2;
+        expected.assert_current();
 
-        assert_eq!(retain_count(&obj), 2);
-
-        autoreleasepool(|_pool| {
-            let obj2 = array.first().unwrap();
-            assert_eq!(retain_count(obj2), 2);
-        });
-
-        assert_eq!(retain_count(&obj), 2);
+        let _obj = array.first().unwrap();
+        expected.assert_current();
 
         drop(array);
+        expected.release += 2;
+        expected.assert_current();
 
-        assert_eq!(retain_count(&obj), 1);
+        let array = NSArray::from_vec(Vec::from(input));
+        expected.retain += 2;
+        expected.release += 2;
+        expected.assert_current();
+
+        let _obj = array.get(0).unwrap();
+        let _obj = array.get(1).unwrap();
+        assert!(array.get(2).is_none());
+        expected.assert_current();
+
+        drop(array);
+        expected.release += 2;
+        expected.assert_current();
+
+        drop(obj);
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_nscopying_uses_retain() {
+        let obj = Id::from_owned(RcTestObject::new());
+        let array = NSArray::from_slice(&[obj]);
+        let mut expected = ThreadTestData::current();
+
+        let _copy = array.copy();
+        expected.assert_current();
+
+        let _copy = array.mutable_copy();
+        expected.retain += 1;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_iter_no_retain() {
+        let obj = Id::from_owned(RcTestObject::new());
+        let array = NSArray::from_slice(&[obj]);
+        let mut expected = ThreadTestData::current();
+
+        let iter = array.iter();
+        expected.retain += if cfg!(feature = "gnustep-1-7") { 0 } else { 1 };
+        expected.assert_current();
+
+        assert_eq!(iter.count(), 1);
+        expected.autorelease += if cfg!(feature = "gnustep-1-7") { 0 } else { 1 };
+        expected.assert_current();
+
+        let iter = array.iter_fast();
+        assert_eq!(iter.count(), 1);
+        expected.assert_current();
     }
 
     #[test]

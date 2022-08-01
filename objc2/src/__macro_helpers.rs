@@ -274,15 +274,13 @@ mod tests {
 
     #[test]
     fn test_alloc_with_zone() {
-        let expected = ThreadTestData::current();
+        let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 
         let zone: *const NSZone = ptr::null();
         let _obj: Id<Allocated<RcTestObject>, Owned> =
             unsafe { msg_send_id![cls, allocWithZone: zone].unwrap() };
-        // `+[NSObject alloc]` delegates to `+[NSObject allocWithZone:]`, but
-        // `RcTestObject` only catches `alloc`.
-        // expected.alloc += 1;
+        expected.alloc += 1;
         expected.assert_current();
     }
 
@@ -325,9 +323,18 @@ mod tests {
             expected.init += 1;
             expected.assert_current();
 
-            // TODO:
-            // let copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy].unwrap() };
-            // let mutable_copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, mutableCopy].unwrap() };
+            let _copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy].unwrap() };
+            expected.copy += 1;
+            expected.alloc += 1;
+            expected.init += 1;
+            expected.assert_current();
+
+            let _mutable_copy: Id<RcTestObject, Shared> =
+                unsafe { msg_send_id![&obj, mutableCopy].unwrap() };
+            expected.mutable_copy += 1;
+            expected.alloc += 1;
+            expected.init += 1;
+            expected.assert_current();
 
             let _self: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, self].unwrap() };
             expected.retain += 1;
@@ -337,8 +344,8 @@ mod tests {
                 unsafe { msg_send_id![&obj, description] };
             expected.assert_current();
         });
-        expected.release += 3;
-        expected.dealloc += 2;
+        expected.release += 5;
+        expected.dealloc += 4;
         expected.assert_current();
     }
 

@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of the `NSValue` matches the encoding of the given type.
 * Added functions `get_range`, `get_point`, `get_size` and `get_rect` to
   `NSValue` to help safely returning various types it will commonly contain.
+* `NSArray` and `NSMutableArray` now have sensible defaults for the ownership
+  of the objects they contain.
 
 ### Changed
 * **BREAKING**: Moved from external crate `objc2_foundation` into
@@ -27,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Made `NSValue` not generic any more. While we loose some
   type-safety from this, it makes `NSValue` much more useful in the real
   world!
+* **BREAKING**: Made `NSArray::new` generic over ownership.
 
 ### Fixed
 * Made `Debug` impls for all objects print something useful.

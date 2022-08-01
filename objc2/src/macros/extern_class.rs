@@ -189,14 +189,14 @@ macro_rules! __inner_extern_class {
     // TODO: Expose this variant in the `object` macro.
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $($inheritance_chain:ty),+ {
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident $(= $default:ty)?)?),*>: $($inheritance_chain:ty),+ {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
     ) => {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
-            unsafe $v struct $name<$($t $(: $b)?),*>: $($inheritance_chain,)+ $crate::runtime::Object {
+            unsafe $v struct $name<$($t $(: $b $(= $default)?)?),*>: $($inheritance_chain,)+ $crate::runtime::Object {
                 $($field_vis $field: $field_ty,)*
             }
         }
@@ -217,14 +217,14 @@ macro_rules! __inner_extern_class {
     (
         @__inner
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident)?),*>: $superclass:ty $(, $inheritance_rest:ty)* {
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident $(= $default:ty)?)?),*>: $superclass:ty $(, $inheritance_rest:ty)* {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
     ) => {
         $(#[$m])*
         // TODO: repr(transparent) when the inner pointer is no longer a ZST.
         #[repr(C)]
-        $v struct $name<$($t $(: $b)?),*> {
+        $v struct $name<$($t $(: $b $(= $default)?)?),*> {
             __inner: $superclass,
             // Additional fields (should only be zero-sized PhantomData or ivars).
             $($field_vis $field: $field_ty,)*

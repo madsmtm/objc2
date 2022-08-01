@@ -6,7 +6,7 @@ use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use std::io;
 
-use super::data::data_with_bytes;
+use super::data::with_slice;
 use super::{NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::{extern_class, msg_send, msg_send_id};
@@ -30,12 +30,12 @@ impl NSMutableData {
     }
 
     pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
-        unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()).unwrap() }
+        unsafe { Id::from_shared(Id::cast(with_slice(Self::class(), bytes))) }
     }
 
     #[cfg(feature = "block")]
     pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
-        unsafe { Id::new(super::data::data_from_vec(Self::class(), bytes).cast()).unwrap() }
+        unsafe { Id::from_shared(Id::cast(super::data::with_vec(Self::class(), bytes))) }
     }
 
     // TODO: Use malloc_buf/mbox and `initWithBytesNoCopy:...`?

@@ -5,7 +5,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
 
-use super::array::from_refs;
+use super::array::with_objects;
 use super::{
     NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
     NSObject,
@@ -15,10 +15,14 @@ use crate::Message;
 use crate::{__inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
-    // TODO: Ensure that this deref to NSArray is safe!
-    // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
+    /// A growable ordered collection of objects.
+    ///
+    /// See the documentation for [`NSArray`] and/or [Apple's
+    /// documentation][apple-doc] for more information.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutablearray?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSMutableArray<T, O: Ownership>: NSArray<T, O>, NSObject {
+    unsafe pub struct NSMutableArray<T: Message, O: Ownership = Owned>: NSArray<T, O>, NSObject {
         p: PhantomData<*mut ()>,
     }
 }
@@ -26,27 +30,36 @@ __inner_extern_class! {
 // SAFETY: Same as NSArray<T, O>
 //
 // Put here because rustdoc doesn't show these otherwise
-unsafe impl<T: Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Send> Send for NSMutableArray<T, Owned> {}
+unsafe impl<T: Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
 
+/// Generic creation methods.
 impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     pub fn new() -> Id<Self, Owned> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
+        // SAFETY: Same as `NSArray::new`, except mutable arrays are always
+        // unique.
+        unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSMutableArray") }
     }
 
     pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
-        unsafe { Id::new(from_refs(Self::class(), vec.as_slice_ref()).cast()).unwrap() }
+        // SAFETY: Same as `NSArray::from_vec`, except mutable arrays are
+        // always unique.
+        unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
     }
 }
 
+/// Creation methods that produce shared arrays.
 impl<T: Message> NSMutableArray<T, Shared> {
     pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
-        unsafe { Id::new(from_refs(Self::class(), slice.as_slice_ref()).cast()).unwrap() }
+        // SAFETY: Same as `NSArray::from_slice`, except mutable arrays are
+        // always unique.
+        unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
     }
 }
 
+/// Generic accessor methods.
 impl<T: Message, O: Ownership> NSMutableArray<T, O> {
     #[doc(alias = "addObject:")]
     pub fn push(&mut self, obj: Id<T, O>) {
@@ -154,11 +167,13 @@ impl<T: Message, O: Ownership> NSMutableArray<T, O> {
 
 // Copying only possible when ItemOwnership = Shared
 
+/// This is implemented as a shallow copy.
 unsafe impl<T: Message> NSCopying for NSMutableArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
+/// This is implemented as a shallow copy.
 unsafe impl<T: Message> NSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
@@ -226,30 +241,41 @@ mod tests {
 
     use super::*;
     use crate::foundation::NSString;
-    use crate::rc::autoreleasepool;
+    use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
 
     #[test]
     fn test_adding() {
         let mut array = NSMutableArray::new();
-        let obj = NSObject::new();
-        array.push(obj);
+        let obj1 = RcTestObject::new();
+        let obj2 = RcTestObject::new();
+        let mut expected = ThreadTestData::current();
 
+        array.push(obj1);
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
         assert_eq!(array.len(), 1);
         assert_eq!(array.get(0), array.get(0));
 
-        let obj = NSObject::new();
-        array.insert(0, obj);
+        array.insert(0, obj2);
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
         assert_eq!(array.len(), 2);
     }
 
     #[test]
     fn test_replace() {
         let mut array = NSMutableArray::new();
-        let obj = NSObject::new();
-        array.push(obj);
+        let obj1 = RcTestObject::new();
+        let obj2 = RcTestObject::new();
+        array.push(obj1);
+        let mut expected = ThreadTestData::current();
 
-        let obj = NSObject::new();
-        let old_obj = array.replace(0, obj);
+        let old_obj = array.replace(0, obj2);
+        expected.retain += 2;
+        expected.release += 2;
+        expected.assert_current();
         assert_ne!(&*old_obj, array.get(0).unwrap());
     }
 
@@ -257,16 +283,26 @@ mod tests {
     fn test_remove() {
         let mut array = NSMutableArray::new();
         for _ in 0..4 {
-            array.push(NSObject::new());
+            array.push(RcTestObject::new());
         }
+        let mut expected = ThreadTestData::current();
 
-        let _ = array.remove(1);
+        let _obj = array.remove(1);
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
         assert_eq!(array.len(), 3);
 
-        let _ = array.pop();
+        let _obj = array.pop();
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
         assert_eq!(array.len(), 2);
 
         array.clear();
+        expected.release += 2;
+        expected.dealloc += 2;
+        expected.assert_current();
         assert_eq!(array.len(), 0);
     }
 

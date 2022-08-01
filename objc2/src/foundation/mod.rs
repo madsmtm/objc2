@@ -132,7 +132,7 @@ mod tests {
         assert_auto_traits::<NSAttributedString>();
         assert_auto_traits::<NSComparisonResult>();
         assert_auto_traits::<NSData>();
-        assert_auto_traits::<NSDictionary<NSString, Shared>>();
+        assert_auto_traits::<NSDictionary<NSString, NSString>>();
         // TODO: Figure out if Send + Sync is safe?
         // assert_auto_traits::<NSEnumerator<NSString>>();
         // assert_auto_traits::<NSFastEnumerator<NSArray<NSString, Shared>>>();

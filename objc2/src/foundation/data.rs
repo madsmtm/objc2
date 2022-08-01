@@ -55,7 +55,7 @@ impl NSData {
     }
 
     pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
-        unsafe { Id::new(data_with_bytes(Self::class(), bytes).cast()).unwrap() }
+        unsafe { Id::cast(with_slice(Self::class(), bytes)) }
     }
 
     #[cfg(feature = "block")]
@@ -72,7 +72,7 @@ impl NSData {
         #[cfg(not(feature = "gnustep-1-7"))]
         let cls = Self::class();
 
-        unsafe { Id::new(data_from_vec(cls, bytes).cast()).unwrap() }
+        unsafe { Id::cast(with_vec(cls, bytes)) }
     }
 }
 
@@ -137,20 +137,20 @@ impl<'a> IntoIterator for &'a NSData {
     }
 }
 
-pub(crate) unsafe fn data_with_bytes(cls: &Class, bytes: &[u8]) -> *mut Object {
+pub(crate) unsafe fn with_slice(cls: &Class, bytes: &[u8]) -> Id<Object, Shared> {
     let bytes_ptr: *const c_void = bytes.as_ptr().cast();
     unsafe {
-        let obj: *mut Object = msg_send![cls, alloc];
-        msg_send![
-            obj,
+        msg_send_id![
+            msg_send_id![cls, alloc],
             initWithBytes: bytes_ptr,
             length: bytes.len(),
         ]
+        .expect("unexpected NULL data")
     }
 }
 
 #[cfg(feature = "block")]
-pub(crate) unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> *mut Object {
+pub(crate) unsafe fn with_vec(cls: &Class, bytes: Vec<u8>) -> Id<Object, Shared> {
     use core::mem::ManuallyDrop;
 
     use block2::{Block, ConcreteBlock};
@@ -168,13 +168,13 @@ pub(crate) unsafe fn data_from_vec(cls: &Class, bytes: Vec<u8>) -> *mut Object {
     let bytes_ptr: *mut c_void = bytes.as_mut_ptr().cast();
 
     unsafe {
-        let obj: *mut Object = msg_send![cls, alloc];
-        msg_send![
-            obj,
+        msg_send_id![
+            msg_send_id![cls, alloc],
             initWithBytesNoCopy: bytes_ptr,
             length: bytes.len(),
             deallocator: dealloc,
         ]
+        .expect("unexpected NULL data")
     }
 }
 
