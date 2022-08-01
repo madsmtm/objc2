@@ -175,11 +175,13 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     ///
     /// Returns `None` if the pointer was null.
     ///
+    ///
     /// # Safety
     ///
     /// The caller must ensure the given object has +1 retain count, and that
     /// the object pointer otherwise follows the same safety requirements as
     /// in [`Id::retain`].
+    ///
     ///
     /// # Example
     ///
@@ -309,6 +311,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// Returns `None` if the pointer was null.
     ///
+    ///
     /// # Safety
     ///
     /// The caller must ensure that the ownership is correct; that is, there
@@ -319,6 +322,10 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// Additionally, the pointer must be valid as a reference (aligned,
     /// dereferencable and initialized, see the [`std::ptr`] module for more
     /// information).
+    ///
+    /// Finally, if you do not know the concrete type of `T`, it may not be
+    /// `'static`, and hence you must ensure that the data that `T` references
+    /// lives for as long as `T`.
     ///
     /// [`std::ptr`]: core::ptr
     //
@@ -580,6 +587,7 @@ impl<T: Message> Id<T, Owned> {
 
     /// Promote a shared [`Id`] to an owned one, allowing it to be mutated.
     ///
+    ///
     /// # Safety
     ///
     /// The caller must ensure that there are no other pointers (including
@@ -587,6 +595,9 @@ impl<T: Message> Id<T, Owned> {
     ///
     /// This also means that the given [`Id`] should have a retain count of
     /// exactly 1 (except when autoreleases are involved).
+    ///
+    /// In general, this is wildly unsafe, do see if you can find a different
+    /// solution!
     #[inline]
     pub unsafe fn from_shared(obj: Id<T, Shared>) -> Self {
         // Note: We can't debug_assert retainCount because of autoreleases
