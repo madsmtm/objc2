@@ -12,22 +12,20 @@ macro_rules! __inner_declare_class {
 
         $($rest:tt)*
     } => {
-        $crate::__inner_declare_class! {
-            @rewrite_self_arg
+        $crate::__rewrite_self_arg! {
+            ($crate::__inner_declare_class)
+            ($($args)*)
 
-            // Duplicate args out so that we can match on `self`, while still
-            // use it as a function argument
-            @($($args)*)
             // Split the function into parts, and send the arguments down to
             // be used later on
-            @($($args)*)
+            @$($output)*
             @($(#[$($m)*])*)
             @(unsafe extern "C")
             @($name)
             @($($ret)?)
             @($body)
-
-            #($($output)*)
+            // Will add @(kind)
+            // Will add @(args)
         }
 
         $crate::__inner_declare_class! {
@@ -47,18 +45,15 @@ macro_rules! __inner_declare_class {
 
         $($rest:tt)*
     } => {
-        $crate::__inner_declare_class! {
-            @rewrite_self_arg
-
-            @($($args)*)
-            @($($args)*)
+        $crate::__rewrite_self_arg! {
+            ($crate::__inner_declare_class)
+            ($($args)*)
+            @$($output)*
             @($(#[$($m)*])*)
             @(extern "C")
             @($name)
             @($($ret)?)
             @($body)
-
-            #($($output)*)
         }
 
         $crate::__inner_declare_class! {
@@ -69,119 +64,15 @@ macro_rules! __inner_declare_class {
         }
     };
 
-    // Instance method
-    {
-        @rewrite_self_arg
-        @(&mut self $($__rest_args:tt)*)
-        @(&mut $self:ident $(, $($rest_args:tt)*)?)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(instance_method)
-            @(
-                $self: &mut Self,
-                _: $crate::runtime::Sel,
-                $($($rest_args)*)?
-            )
-            $($rest)*
-        }
-    };
-    {
-        @rewrite_self_arg
-        @(&self $($__rest_args:tt)*)
-        @(&$self:ident $(, $($rest_args:tt)*)?)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(instance_method)
-            @(
-                $self: &Self,
-                _: $crate::runtime::Sel,
-                $($($rest_args)*)?
-            )
-            $($rest)*
-        }
-    };
-    {
-        @rewrite_self_arg
-        @(mut self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        @(mut $self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(instance_method)
-            @(
-                mut $self: $self_ty,
-                _: $crate::runtime::Sel,
-                $($($rest_args)*)?
-            )
-            $($rest)*
-        }
-    };
-    {
-        @rewrite_self_arg
-        @(self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        @($self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(instance_method)
-            @(
-                $self: $self_ty,
-                _: $crate::runtime::Sel,
-                $($($rest_args)*)?
-            )
-            $($rest)*
-        }
-    };
-    // Class method
-    {
-        @rewrite_self_arg
-        @($($__args:tt)*)
-        @($($args:tt)*)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(class_method)
-            @(
-                _: &$crate::runtime::Class,
-                _: $crate::runtime::Sel,
-                $($args)*
-            )
-            $($rest)*
-        }
-    };
-
-    {
-        @dispatch
-        $(
-            @($($items:tt)*)
-        )*
-
-        #($($output:tt)*)
-    } => {
-        $crate::__inner_declare_class! {
-            @$($output)*
-            $(
-                @($($items)*)
-            )*
-        }
-    };
-
     {
         @method_out
-        @($($_kind:tt)*)
-        @($($args:tt)*)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
         @($($ret:ty)?)
         @($($body:tt)*)
+        @($($_kind:tt)*)
+        @($($args:tt)*)
     } => {
         $crate::__attribute_helper! {
             @strip_sel
@@ -192,13 +83,13 @@ macro_rules! __inner_declare_class {
 
     {
         @register_out($builder:ident)
-        @(class_method)
-        @($($args:tt)*)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
         @($($_ret:tt)*)
         @($($_body:tt)*)
+        @(class_method)
+        @($($args:tt)*)
     } => {
         $builder.add_class_method(
             $crate::__attribute_helper! {
@@ -214,13 +105,13 @@ macro_rules! __inner_declare_class {
     };
     {
         @register_out($builder:ident)
-        @(instance_method)
-        @($($args:tt)*)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
         @($($_ret:tt)*)
         @($($_body:tt)*)
+        @(instance_method)
+        @($($args:tt)*)
     } => {
         $builder.add_method(
             $crate::__attribute_helper! {
