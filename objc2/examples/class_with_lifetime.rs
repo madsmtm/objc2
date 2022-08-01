@@ -130,7 +130,7 @@ fn main() {
     // println!("Number: {}", number);
     println!("Number: {}", obj.get());
 
-    let obj = Id::from_owned(obj);
+    let obj = Id::into_shared(obj);
     let obj2 = obj.clone();
 
     // We gave up ownership above, so can't edit the number any more!

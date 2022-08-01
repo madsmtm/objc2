@@ -373,7 +373,7 @@ mod tests {
 
     #[test]
     fn test_retains_stored() {
-        let obj = Id::from_owned(RcTestObject::new());
+        let obj = Id::into_shared(RcTestObject::new());
         let mut expected = ThreadTestData::current();
 
         let input = [obj.clone(), obj.clone()];
@@ -413,7 +413,7 @@ mod tests {
 
     #[test]
     fn test_nscopying_uses_retain() {
-        let obj = Id::from_owned(RcTestObject::new());
+        let obj = Id::into_shared(RcTestObject::new());
         let array = NSArray::from_slice(&[obj]);
         let mut expected = ThreadTestData::current();
 
@@ -427,7 +427,7 @@ mod tests {
 
     #[test]
     fn test_iter_no_retain() {
-        let obj = Id::from_owned(RcTestObject::new());
+        let obj = Id::into_shared(RcTestObject::new());
         let array = NSArray::from_slice(&[obj]);
         let mut expected = ThreadTestData::current();
 

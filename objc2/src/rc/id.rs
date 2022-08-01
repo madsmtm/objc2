@@ -28,7 +28,7 @@ use crate::Message;
 /// to provide exactly that.
 ///
 /// An [`Id<T, Owned>`] can be safely converted to a [`Id<T, Shared>`] using
-/// [`Id::from_owned`] or `From`/`Into`. The opposite is not safely possible,
+/// [`Id::into_shared`] or `From`/`Into`. The opposite is not safely possible,
 /// but the unsafe option [`Id::from_shared`] is provided.
 ///
 /// `Option<Id<T, O>>` is guaranteed to have the same size as a pointer to the
@@ -593,6 +593,17 @@ impl<T: Message> Id<T, Owned> {
         // Ownership rules are upheld by the caller
         unsafe { <Id<T, Owned>>::new_nonnull(ptr) }
     }
+
+    /// Convert an owned to a shared [`Id`], allowing it to be cloned.
+    ///
+    /// This is also implemented as a `From` conversion, but this name is more
+    /// explicit, which may be useful in some cases.
+    #[inline]
+    pub fn into_shared(obj: Self) -> Id<T, Shared> {
+        let ptr = ManuallyDrop::new(obj).ptr;
+        // SAFETY: The pointer is valid, and ownership is simply decreased
+        unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
+    }
 }
 
 // TODO: Add ?Sized bound
@@ -613,26 +624,13 @@ impl<T: Message> Id<T, Shared> {
     }
 }
 
-impl<T: Message + ?Sized> Id<T, Shared> {
+impl<T: Message> From<Id<T, Owned>> for Id<T, Shared> {
     /// Convert an owned to a shared [`Id`], allowing it to be cloned.
     ///
-    /// This is also implemented as a `From` conversion, but this name is more
-    /// explicit, which may be useful in some cases.
-    #[inline]
-    pub fn from_owned(obj: Id<T, Owned>) -> Self {
-        let ptr = ManuallyDrop::new(obj).ptr;
-        // SAFETY: The pointer is valid, and ownership is simply decreased
-        unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
-    }
-}
-
-impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
-    /// Convert an owned to a shared [`Id`], allowing it to be cloned.
-    ///
-    /// Same as [`Id::from_owned`].
+    /// Same as [`Id::into_shared`].
     #[inline]
     fn from(obj: Id<T, Owned>) -> Self {
-        Self::from_owned(obj)
+        Id::into_shared(obj)
     }
 }
 
