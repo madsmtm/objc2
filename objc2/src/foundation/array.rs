@@ -14,16 +14,42 @@ use crate::Message;
 use crate::{__inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
-    /// TODO
+    /// An immutable ordered collection of objects.
     ///
-    /// You can have a `Id<NSArray<T, Owned>, Owned>`, which allows mutable access
-    /// to the elements (without modifying the array itself), and
-    /// `Id<NSArray<T, Shared>, Shared>` which allows sharing the array.
+    /// This is the Objective-C equivalent of a "boxed slice" (`Box<[T]>`),
+    /// so effectively a `Vec<T>` where you can't change the number of
+    /// elements.
     ///
-    /// `Id<NSArray<T, Owned>, Shared>` is possible, but pretty useless.
-    /// TODO: Can we make it impossible? Should we?
+    /// The type of the contained objects is described by the generic
+    /// parameter `T`, and the ownership of the objects is described with the
+    /// generic parameter `O`.
     ///
-    /// What about `Id<NSArray<T, Shared>, Owned>`?
+    ///
+    /// # Ownership
+    ///
+    /// While `NSArray` _itself_ is immutable, i.e. the number of objects it
+    /// contains can't change, it is still possible to modify the contained
+    /// objects themselves, if you know you're the sole owner of them -
+    /// quite similar to how you can modify elements in `Box<[T]>`.
+    ///
+    /// To mutate the contained objects the ownership must be `O = Owned`. A
+    /// summary of what the different "types" of arrays allow you to do can be
+    /// found below. `Array` refers to either `NSArray` or `NSMutableArray`.
+    /// - `Id<NSMutableArray<T, Owned>, Owned>`: Allows you to mutate the
+    ///   objects, and the array itself.
+    /// - `Id<NSMutableArray<T, Shared>, Owned>`: Allows you to mutate the
+    ///   array itself, but not it's contents.
+    /// - `Id<NSArray<T, Owned>, Owned>`: Allows you to mutate the objects,
+    ///   but not the array itself.
+    /// - `Id<NSArray<T, Shared>, Owned>`: Effectively the same as the below.
+    /// - `Id<Array<T, Shared>, Shared>`: Allows you to copy the array, but
+    ///   does not allow you to modify it in any way.
+    /// - `Id<Array<T, Owned>, Shared>`: Pretty useless compared to the
+    ///   others, avoid this.
+    ///
+    /// See [Apple's documentation][apple-doc].
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsarray?language=objc
     // `T: PartialEq` bound correct because `NSArray` does deep (instead of
     // shallow) equality comparisons.
     #[derive(PartialEq, Eq, Hash)]
@@ -34,8 +60,6 @@ __inner_extern_class! {
 }
 
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
-//
-// TODO: Properly verify this
 unsafe impl<T: Message + Sync + Send> Sync for NSArray<T, Shared> {}
 unsafe impl<T: Message + Sync + Send> Send for NSArray<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSArray<T, Owned> {}

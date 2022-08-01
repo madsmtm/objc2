@@ -15,8 +15,12 @@ use crate::Message;
 use crate::{__inner_extern_class, msg_send, msg_send_id};
 
 __inner_extern_class! {
-    // TODO: Ensure that this deref to NSArray is safe!
-    // This "inherits" NSArray, and has the same `Send`/`Sync` impls as that.
+    /// A growable ordered collection of objects.
+    ///
+    /// See the documentation for [`NSArray`] and/or [Apple's
+    /// documentation][apple-doc] for more information.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutablearray?language=objc
     #[derive(PartialEq, Eq, Hash)]
     unsafe pub struct NSMutableArray<T: Message, O: Ownership>: NSArray<T, O>, NSObject {
         p: PhantomData<*mut ()>,
