@@ -123,6 +123,10 @@ fn main() {
     let mut number = 54;
     let mut obj = MyObject::new(&mut number);
 
+    // It is not possible to convert to `Id<NSObject, Owned>` since that would
+    // loose the lifetime information that `MyObject` stores
+    // let obj = Id::into_superclass(obj);
+
     println!("Number: {}", obj.get());
 
     obj.set(7);

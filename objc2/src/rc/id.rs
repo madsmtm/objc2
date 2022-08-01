@@ -9,7 +9,7 @@ use super::Allocated;
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
-use crate::Message;
+use crate::{ClassType, Message};
 
 /// An pointer for Objective-C reference counted objects.
 ///
@@ -263,6 +263,8 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// Convert the type of the given object to another.
     ///
     /// This is equivalent to a `cast` between two pointers.
+    ///
+    /// See [`Id::into_superclass`] for a safe alternative.
     ///
     /// This is common to do when you know that an object is a subclass of
     /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
@@ -621,6 +623,21 @@ impl<T: Message> Id<T, Shared> {
         let ptr = self.autorelease_inner();
         // SAFETY: The pointer is valid as a reference
         unsafe { pool.ptr_as_ref(ptr) }
+    }
+}
+
+impl<T: ClassType + 'static, O: Ownership> Id<T, O>
+where
+    T::Superclass: 'static,
+{
+    /// Convert the object into it's superclass.
+    #[inline]
+    pub fn into_superclass(this: Self) -> Id<T::Superclass, O> {
+        // SAFETY:
+        // - The casted-to type is a superclass of the type.
+        // - Both types are `'static` (this could maybe be relaxed a bit, but
+        //   let's just be on the safe side)!
+        unsafe { Self::cast::<T::Superclass>(this) }
     }
 }
 

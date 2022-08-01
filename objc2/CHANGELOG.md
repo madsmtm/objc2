@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   methods that `extern_class!` and `declare_class!` generated to that. This
   means you'll have to `use objc2::ClassType` whenever you want to use e.g.
   `NSData::class()`.
+* Added `Id::into_superclass`.
 
 ### Changed
 * **BREAKING**: Change selector syntax in `declare_class!` macro to be more Rust-like.
