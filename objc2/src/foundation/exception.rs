@@ -6,7 +6,7 @@ use super::{NSCopying, NSDictionary, NSObject, NSString};
 use crate::exception::Exception;
 use crate::rc::{Id, Shared};
 use crate::runtime::Object;
-use crate::{extern_class, msg_send, msg_send_id, sel};
+use crate::{extern_class, msg_send, msg_send_id, sel, ClassType};
 
 extern_class! {
     /// A special condition that interrupts the normal flow of program
@@ -94,7 +94,7 @@ impl NSException {
             // SAFETY: We only use `isKindOfClass:` on NSObject
             let obj: *const Exception = obj;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
-            obj.is_kind_of(Self::class())
+            obj.is_kind_of::<Self>()
         } else {
             false
         }

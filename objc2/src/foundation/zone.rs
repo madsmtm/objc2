@@ -1,9 +1,10 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
+use crate::ffi;
 #[cfg(feature = "gnustep-1-7")]
 use crate::Encode;
-use crate::{ffi, Encoding, RefEncode};
+use crate::{Encoding, RefEncode};
 
 /// A type used to identify and manage memory zones.
 ///
@@ -68,6 +69,7 @@ mod tests {
     use crate::foundation::NSObject;
     use crate::msg_send_id;
     use crate::rc::{Allocated, Id, Owned};
+    use crate::ClassType;
 
     #[test]
     fn alloc_with_zone() {

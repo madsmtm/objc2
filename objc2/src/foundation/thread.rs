@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSObject, NSString};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType};
 
 extern_class! {
     /// A thread of execution.

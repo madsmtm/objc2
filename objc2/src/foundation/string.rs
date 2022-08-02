@@ -11,11 +11,9 @@ use std::os::raw::c_char;
 
 use super::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
 use crate::ffi;
-use crate::rc::DefaultId;
-use crate::rc::{autoreleasepool, AutoreleasePool};
-use crate::rc::{Id, Shared};
+use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;
@@ -377,11 +375,11 @@ mod tests {
         let s2 = s1.copy();
         // An optimization that NSString makes, since it is immutable
         assert_eq!(Id::as_ptr(&s1), Id::as_ptr(&s2));
-        assert!(s2.is_kind_of(NSString::class()));
+        assert!(s2.is_kind_of::<NSString>());
 
         let s3 = s1.mutable_copy();
         assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
-        assert!(s3.is_kind_of(NSMutableString::class()));
+        assert!(s3.is_kind_of::<NSMutableString>());
     }
 
     #[test]

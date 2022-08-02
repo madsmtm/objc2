@@ -57,7 +57,7 @@
 /// ```
 /// use objc2::foundation::NSObject;
 /// use objc2::rc::{Id, Shared};
-/// use objc2::{extern_class, msg_send_id};
+/// use objc2::{ClassType, extern_class, msg_send_id};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -70,7 +70,7 @@
 ///     unsafe pub struct NSFormatter: NSObject;
 /// }
 ///
-/// // Provided by the macro
+/// // Provided by the macro (it implements `ClassType`)
 /// let cls = NSFormatter::class();
 ///
 /// // `NSFormatter` implements `Message`:
@@ -189,27 +189,23 @@ macro_rules! __inner_extern_class {
     // TODO: Expose this variant in the `object` macro.
     (
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident $(= $default:ty)?)?),*>: $($inheritance_chain:ty),+ {
+        unsafe $v:vis struct $name:ident<$($t:ident $(: $b:ident $(= $default:ty)?)?),*>: $superclass:ty $(, $inheritance_rest:ty)* {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
     ) => {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
-            unsafe $v struct $name<$($t $(: $b $(= $default)?)?),*>: $($inheritance_chain,)+ $crate::runtime::Object {
+            unsafe $v struct $name<$($t $(: $b $(= $default)?)?),*>: $superclass, $($inheritance_rest,)* $crate::runtime::Object {
                 $($field_vis $field: $field_ty,)*
             }
         }
 
-        impl<$($t $(: $b)?),*> $name<$($t),*> {
-            #[doc = concat!(
-                "Get a reference to the Objective-C class `",
-                stringify!($name),
-                "`.",
-            )]
+        unsafe impl<$($t $(: $b)?),*> $crate::ClassType for $name<$($t),*> {
+            type Superclass = $superclass;
+
             #[inline]
-            // TODO: Allow users to configure this?
-            $v fn class() -> &'static $crate::runtime::Class {
+            fn class() -> &'static $crate::runtime::Class {
                 $crate::class!($name)
             }
         }

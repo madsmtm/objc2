@@ -9,7 +9,7 @@ use super::Allocated;
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
-use crate::Message;
+use crate::{ClassType, Message};
 
 /// An pointer for Objective-C reference counted objects.
 ///
@@ -28,7 +28,7 @@ use crate::Message;
 /// to provide exactly that.
 ///
 /// An [`Id<T, Owned>`] can be safely converted to a [`Id<T, Shared>`] using
-/// [`Id::from_owned`] or `From`/`Into`. The opposite is not safely possible,
+/// [`Id::into_shared`] or `From`/`Into`. The opposite is not safely possible,
 /// but the unsafe option [`Id::from_shared`] is provided.
 ///
 /// `Option<Id<T, O>>` is guaranteed to have the same size as a pointer to the
@@ -175,11 +175,13 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     ///
     /// Returns `None` if the pointer was null.
     ///
+    ///
     /// # Safety
     ///
     /// The caller must ensure the given object has +1 retain count, and that
     /// the object pointer otherwise follows the same safety requirements as
     /// in [`Id::retain`].
+    ///
     ///
     /// # Example
     ///
@@ -264,6 +266,8 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// This is equivalent to a `cast` between two pointers.
     ///
+    /// See [`Id::into_superclass`] for a safe alternative.
+    ///
     /// This is common to do when you know that an object is a subclass of
     /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
     /// is safe because `NSString` is a subclass of `NSObject`).
@@ -307,6 +311,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// Returns `None` if the pointer was null.
     ///
+    ///
     /// # Safety
     ///
     /// The caller must ensure that the ownership is correct; that is, there
@@ -317,6 +322,10 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// Additionally, the pointer must be valid as a reference (aligned,
     /// dereferencable and initialized, see the [`std::ptr`] module for more
     /// information).
+    ///
+    /// Finally, if you do not know the concrete type of `T`, it may not be
+    /// `'static`, and hence you must ensure that the data that `T` references
+    /// lives for as long as `T`.
     ///
     /// [`std::ptr`]: core::ptr
     //
@@ -578,6 +587,7 @@ impl<T: Message> Id<T, Owned> {
 
     /// Promote a shared [`Id`] to an owned one, allowing it to be mutated.
     ///
+    ///
     /// # Safety
     ///
     /// The caller must ensure that there are no other pointers (including
@@ -585,6 +595,9 @@ impl<T: Message> Id<T, Owned> {
     ///
     /// This also means that the given [`Id`] should have a retain count of
     /// exactly 1 (except when autoreleases are involved).
+    ///
+    /// In general, this is wildly unsafe, do see if you can find a different
+    /// solution!
     #[inline]
     pub unsafe fn from_shared(obj: Id<T, Shared>) -> Self {
         // Note: We can't debug_assert retainCount because of autoreleases
@@ -592,6 +605,17 @@ impl<T: Message> Id<T, Owned> {
         // SAFETY: The pointer is valid
         // Ownership rules are upheld by the caller
         unsafe { <Id<T, Owned>>::new_nonnull(ptr) }
+    }
+
+    /// Convert an owned to a shared [`Id`], allowing it to be cloned.
+    ///
+    /// This is also implemented as a `From` conversion, but this name is more
+    /// explicit, which may be useful in some cases.
+    #[inline]
+    pub fn into_shared(obj: Self) -> Id<T, Shared> {
+        let ptr = ManuallyDrop::new(obj).ptr;
+        // SAFETY: The pointer is valid, and ownership is simply decreased
+        unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
     }
 }
 
@@ -613,26 +637,28 @@ impl<T: Message> Id<T, Shared> {
     }
 }
 
-impl<T: Message + ?Sized> Id<T, Shared> {
-    /// Convert an owned to a shared [`Id`], allowing it to be cloned.
-    ///
-    /// This is also implemented as a `From` conversion, but this name is more
-    /// explicit, which may be useful in some cases.
+impl<T: ClassType + 'static, O: Ownership> Id<T, O>
+where
+    T::Superclass: 'static,
+{
+    /// Convert the object into it's superclass.
     #[inline]
-    pub fn from_owned(obj: Id<T, Owned>) -> Self {
-        let ptr = ManuallyDrop::new(obj).ptr;
-        // SAFETY: The pointer is valid, and ownership is simply decreased
-        unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
+    pub fn into_superclass(this: Self) -> Id<T::Superclass, O> {
+        // SAFETY:
+        // - The casted-to type is a superclass of the type.
+        // - Both types are `'static` (this could maybe be relaxed a bit, but
+        //   let's just be on the safe side)!
+        unsafe { Self::cast::<T::Superclass>(this) }
     }
 }
 
-impl<T: Message + ?Sized> From<Id<T, Owned>> for Id<T, Shared> {
+impl<T: Message> From<Id<T, Owned>> for Id<T, Shared> {
     /// Convert an owned to a shared [`Id`], allowing it to be cloned.
     ///
-    /// Same as [`Id::from_owned`].
+    /// Same as [`Id::into_shared`].
     #[inline]
     fn from(obj: Id<T, Owned>) -> Self {
-        Self::from_owned(obj)
+        Id::into_shared(obj)
     }
 }
 

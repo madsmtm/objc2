@@ -1,7 +1,6 @@
 use objc2::foundation::NSObject;
 use objc2::runtime::Class;
-use objc2::sel;
-use objc2::Encode;
+use objc2::{sel, ClassType, Encode};
 
 fn main() {
     // Get the class representing `NSObject`

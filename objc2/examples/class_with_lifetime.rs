@@ -12,7 +12,7 @@ use objc2::foundation::NSObject;
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{msg_send, msg_send_id, sel};
-use objc2::{Encoding, Message, RefEncode};
+use objc2::{ClassType, Encoding, Message, RefEncode};
 
 /// Helper type for the instance variable
 struct NumberIvar<'a> {
@@ -62,8 +62,12 @@ impl<'a> MyObject<'a> {
     pub fn set(&mut self, number: u8) {
         **self.number = number;
     }
+}
 
-    pub fn class() -> &'static Class {
+unsafe impl<'a> ClassType for MyObject<'a> {
+    type Superclass = NSObject;
+
+    fn class() -> &'static Class {
         // TODO: Use std::lazy::LazyCell
         static REGISTER_CLASS: Once = Once::new();
 
@@ -119,6 +123,10 @@ fn main() {
     let mut number = 54;
     let mut obj = MyObject::new(&mut number);
 
+    // It is not possible to convert to `Id<NSObject, Owned>` since that would
+    // loose the lifetime information that `MyObject` stores
+    // let obj = Id::into_superclass(obj);
+
     println!("Number: {}", obj.get());
 
     obj.set(7);
@@ -126,7 +134,7 @@ fn main() {
     // println!("Number: {}", number);
     println!("Number: {}", obj.get());
 
-    let obj = Id::from_owned(obj);
+    let obj = Id::into_shared(obj);
     let obj2 = obj.clone();
 
     // We gave up ownership above, so can't edit the number any more!

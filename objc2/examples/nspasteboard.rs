@@ -9,7 +9,7 @@ use std::mem::ManuallyDrop;
 use objc2::foundation::{NSArray, NSDictionary, NSInteger, NSObject, NSString};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::{Class, Object};
-use objc2::{extern_class, msg_send, msg_send_bool, msg_send_id};
+use objc2::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType};
 
 type NSPasteboardType = NSString;
 type NSPasteboardReadingOptionKey = NSString;

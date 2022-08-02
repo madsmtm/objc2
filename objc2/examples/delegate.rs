@@ -1,11 +1,8 @@
-#[cfg(all(feature = "apple", target_os = "macos"))]
-use objc2::{
-    declare_class, extern_class,
-    foundation::NSObject,
-    msg_send, msg_send_id,
-    rc::{Id, Shared},
-    runtime::{Bool, Object},
-};
+#![cfg_attr(not(all(feature = "apple", target_os = "macos")), allow(unused))]
+use objc2::foundation::NSObject;
+use objc2::rc::{Id, Shared};
+use objc2::runtime::{Bool, Object};
+use objc2::{declare_class, extern_class, msg_send, msg_send_id, ClassType};
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 #[link(name = "AppKit", kind = "framework")]

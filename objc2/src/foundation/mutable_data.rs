@@ -9,7 +9,7 @@ use std::io;
 use super::data::with_slice;
 use super::{NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
 use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{extern_class, msg_send, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
 extern_class! {
     /// A dynamic byte buffer in memory.

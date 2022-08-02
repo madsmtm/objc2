@@ -7,7 +7,7 @@ use objc2::runtime::{Bool, Class, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_bool, msg_send_id};
-use objc2::{Encoding, Message, RefEncode};
+use objc2::{ClassType, Encoding, Message, RefEncode};
 
 #[repr(C)]
 struct MyTestObject {
@@ -20,11 +20,15 @@ unsafe impl RefEncode for MyTestObject {
     const ENCODING_REF: Encoding<'static> = Encoding::Object;
 }
 
-impl MyTestObject {
+unsafe impl ClassType for MyTestObject {
+    type Superclass = NSObject;
+
     fn class() -> &'static Class {
         class!(MyTestObject)
     }
+}
 
+impl MyTestObject {
     fn new() -> Id<Self, Owned> {
         let cls = Self::class();
         unsafe { msg_send_id![cls, new].unwrap() }

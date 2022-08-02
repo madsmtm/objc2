@@ -10,8 +10,7 @@ use std::os::raw::c_char;
 
 use super::{NSCopying, NSObject, NSPoint, NSRange, NSRect, NSSize};
 use crate::rc::{Id, Shared};
-use crate::Encode;
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType, Encode};
 
 extern_class! {
     /// A container wrapping any encodable type as an Obective-C object.

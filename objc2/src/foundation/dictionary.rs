@@ -8,7 +8,7 @@ use core::ptr;
 
 use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
 use crate::rc::{DefaultId, Id, Owned, Shared, SliceId};
-use crate::{__inner_extern_class, msg_send, msg_send_id, Message};
+use crate::{ClassType, __inner_extern_class, msg_send, msg_send_id, Message};
 
 __inner_extern_class! {
     #[derive(PartialEq, Eq, Hash)]

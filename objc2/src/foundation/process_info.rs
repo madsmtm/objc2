@@ -3,7 +3,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSObject, NSString};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, msg_send_id};
+use crate::{extern_class, msg_send_id, ClassType};
 
 extern_class! {
     /// A collection of information about the current process.

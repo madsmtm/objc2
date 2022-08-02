@@ -9,7 +9,7 @@ use core::slice::{self, SliceIndex};
 use super::{NSCopying, NSMutableCopying, NSMutableData, NSObject};
 use crate::rc::{DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
-use crate::{extern_class, msg_send, msg_send_id};
+use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
 extern_class! {
     /// A static byte buffer in memory.
