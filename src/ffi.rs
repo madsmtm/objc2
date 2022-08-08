@@ -399,9 +399,11 @@ extern "C" {
     pub static _dispatch_source_type_data_replace: dispatch_source_type_s;
     pub static _dispatch_source_type_mach_send: dispatch_source_type_s;
     pub static _dispatch_source_type_memorypressure: dispatch_source_type_s;
+    #[cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))]
     pub static _dispatch_source_type_proc: dispatch_source_type_s;
     pub static _dispatch_source_type_read: dispatch_source_type_s;
     pub static _dispatch_source_type_timer: dispatch_source_type_s;
+    #[cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))]
     pub static _dispatch_source_type_vnode: dispatch_source_type_s;
     pub static _dispatch_source_type_write: dispatch_source_type_s;
     pub fn dispatch_source_create(
