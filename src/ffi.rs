@@ -62,8 +62,10 @@ create_opaque_type!(dispatch_queue_s, dispatch_queue_t);
 create_opaque_type!(dispatch_workloop_s, dispatch_workloop_t);
 
 pub const DISPATCH_QUEUE_SERIAL: dispatch_queue_attr_t = core::ptr::null_mut();
-pub static DISPATCH_QUEUE_CONCURRENT: &dispatch_queue_attr_s =
-    unsafe { &_dispatch_queue_attr_concurrent };
+pub static DISPATCH_QUEUE_CONCURRENT: &dispatch_queue_attr_s = {
+    // Safety: immutable external definition
+    unsafe { &_dispatch_queue_attr_concurrent }
+};
 
 pub const DISPATCH_APPLY_AUTO: dispatch_queue_t = core::ptr::null_mut();
 pub const DISPATCH_TARGET_QUEUE_DEFAULT: dispatch_queue_t = core::ptr::null_mut();

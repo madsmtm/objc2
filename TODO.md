@@ -2,7 +2,6 @@
 
 ## Road to 0.1.0 release
 
-- Fully document unsafe usage and ``#![deny(undocumented_unsafe_blocks)]``
 - Fully document all public safe APIs
 - Feature guard block related APIs
 - Feature guard apple platform only APIs

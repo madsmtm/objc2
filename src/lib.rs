@@ -1,4 +1,5 @@
 #![allow(unused_unsafe, unreachable_patterns)]
+#![deny(clippy::undocumented_unsafe_blocks)]
 
 use self::ffi::dispatch_qos_class_t;
 

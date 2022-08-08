@@ -16,16 +16,15 @@ impl Semaphore {
             return None;
         }
 
+        // Safety: value is valid
         let object = unsafe { dispatch_semaphore_create(value) };
 
         if object.is_null() {
             return None;
         }
 
-        let dispatch_object = unsafe {
-            // Safety: object cannot be null.
-            DispatchObject::new_owned(object as *mut _)
-        };
+        // Safety: object cannot be null.
+        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
 
         Some(Semaphore { dispatch_object })
     }
@@ -37,6 +36,7 @@ impl Semaphore {
             DISPATCH_TIME_FOREVER
         };
 
+        // Safety: Semaphore cannot be null.
         let result = unsafe { dispatch_semaphore_wait(self.as_raw(), timeout) };
 
         match result {
@@ -62,6 +62,7 @@ pub struct SemaphoreGuard(Semaphore, bool);
 
 impl SemaphoreGuard {
     pub fn release(mut self) -> bool {
+        // Safety: Semaphore cannot be null.
         let result = unsafe { dispatch_semaphore_signal(self.0.as_raw()) };
 
         self.1 = true;
@@ -73,6 +74,7 @@ impl SemaphoreGuard {
 impl Drop for SemaphoreGuard {
     fn drop(&mut self) {
         if !self.1 {
+            // Safety: Semaphore cannot be null.
             unsafe {
                 dispatch_semaphore_signal(self.0.as_raw());
             }

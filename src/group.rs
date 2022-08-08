@@ -17,16 +17,15 @@ pub struct GroupGuard(Group, bool);
 
 impl Group {
     pub fn new() -> Option<Self> {
+        // Safety: valid to call.
         let object = unsafe { dispatch_group_create() };
 
         if object.is_null() {
             return None;
         }
 
-        let dispatch_object = unsafe {
-            // Safety: object cannot be null.
-            DispatchObject::new_owned(object as *mut _)
-        };
+        // Safety: object cannot be null.
+        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
 
         Some(Group { dispatch_object })
     }
@@ -37,8 +36,8 @@ impl Group {
     {
         let work_boxed = Box::leak(Box::new(work)) as *mut _ as *mut c_void;
 
+        // Safety: All parameters cannot be null.
         unsafe {
-            // Safety: All parameters cannot be null.
             dispatch_group_async_f(
                 self.as_raw(),
                 queue.as_raw(),
@@ -55,6 +54,7 @@ impl Group {
             DISPATCH_TIME_FOREVER
         };
 
+        // Safety: object cannot be null and timeout is valid.
         let result = unsafe { dispatch_group_wait(self.as_raw(), timeout) };
 
         match result {
@@ -69,8 +69,8 @@ impl Group {
     {
         let work_boxed = Box::leak(Box::new(work)) as *mut _ as *mut c_void;
 
+        // Safety: All parameters cannot be null.
         unsafe {
-            // Safety: All parameters cannot be null.
             dispatch_group_notify_f(
                 self.as_raw(),
                 queue.as_raw(),
@@ -81,6 +81,7 @@ impl Group {
     }
 
     pub fn enter(&self) -> GroupGuard {
+        // Safety: object cannot be null.
         unsafe {
             dispatch_group_enter(self.as_raw());
         }
@@ -102,6 +103,7 @@ impl Group {
 
 impl GroupGuard {
     pub fn leave(mut self) {
+        // Safety: object cannot be null.
         unsafe {
             dispatch_group_leave(self.0.as_raw());
         }
@@ -113,6 +115,7 @@ impl GroupGuard {
 impl Drop for GroupGuard {
     fn drop(&mut self) {
         if !self.1 {
+            // Safety: object cannot be null.
             unsafe {
                 dispatch_group_leave(self.0.as_raw());
             }

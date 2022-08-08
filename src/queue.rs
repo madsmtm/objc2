@@ -107,17 +107,15 @@ impl Queue {
     pub fn new(label: &str, queue_attribute: QueueAttribute) -> Self {
         let label = CString::new(label).expect("Invalid label!");
 
+        // Safety: label and queue_attribute can only be valid.
         let object = unsafe {
-            // Safety: label and queue_attribute can only be valid.
             dispatch_queue_create(label.as_ptr(), dispatch_queue_attr_t::from(queue_attribute))
         };
 
         assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
 
-        let dispatch_object = unsafe {
-            // Safety: object cannot be null.
-            DispatchObject::new_owned(object as *mut _)
-        };
+        // Safety: object cannot be null.
+        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
 
         Queue {
             dispatch_object,
@@ -128,8 +126,8 @@ impl Queue {
     pub fn new_with_target(label: &str, queue_attribute: QueueAttribute, target: &Queue) -> Self {
         let label = CString::new(label).expect("Invalid label!");
 
+        // Safety: label, queue_attribute and target can only be valid.
         let object = unsafe {
-            // Safety: label, queue_attribute and target can only be valid.
             dispatch_queue_create_with_target(
                 label.as_ptr(),
                 dispatch_queue_attr_t::from(queue_attribute),
@@ -139,10 +137,8 @@ impl Queue {
 
         assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
 
-        let dispatch_object = unsafe {
-            // Safety: object cannot be null.
-            DispatchObject::new_owned(object as *mut _)
-        };
+        // Safety: object cannot be null.
+        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
 
         // NOTE: dispatch_queue_create_with_target is in charge of retaining the target Queue.
 
@@ -155,20 +151,16 @@ impl Queue {
     pub fn global_queue(identifier: GlobalQueueIdentifier) -> Self {
         let raw_identifier = identifier.to_identifier();
 
-        let object = unsafe {
-            // Safety: raw_identifier cannot be invalid, flags is reserved.
-            dispatch_get_global_queue(raw_identifier, 0)
-        };
+        // Safety: raw_identifier cannot be invalid, flags is reserved.
+        let object = unsafe { dispatch_get_global_queue(raw_identifier, 0) };
 
         assert!(
             !object.is_null(),
             "dispatch_get_global_queue shouldn't fail!"
         );
 
-        let dispatch_object = unsafe {
-            // Safety: object cannot be null.
-            DispatchObject::new_shared(object as *mut _)
-        };
+        // Safety: object cannot be null.
+        let dispatch_object = unsafe { DispatchObject::new_shared(object as *mut _) };
 
         Queue {
             dispatch_object,
@@ -184,6 +176,7 @@ impl Queue {
 
         let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
 
+        // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
 
@@ -193,6 +186,7 @@ impl Queue {
     {
         let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
 
+        // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_async_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
 
@@ -204,6 +198,7 @@ impl Queue {
             dispatch_time_t::try_from(wait_time).map_err(|_| QueueAfterError::TimeOverflow)?;
         let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
 
+        // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe {
             dispatch_after_f(when, self.as_raw(), work_boxed, function_wrapper::<F>);
         }
@@ -217,6 +212,7 @@ impl Queue {
     {
         let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
 
+        // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_barrier_async_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
 
@@ -226,6 +222,7 @@ impl Queue {
     {
         let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
 
+        // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_barrier_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
 
@@ -235,6 +232,7 @@ impl Queue {
     {
         let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
 
+        // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe {
             dispatch_barrier_async_and_wait_f(self.as_raw(), work_boxed, function_wrapper::<F>)
         }
@@ -246,6 +244,7 @@ impl Queue {
     {
         let destructor_boxed = Box::leak(Box::new(destructor)) as *mut F as *mut _;
 
+        // Safety: object cannot be null and destructor is wrapped to avoid ABI incompatibility.
         unsafe {
             dispatch_queue_set_specific(
                 self.as_raw(),
@@ -264,10 +263,8 @@ impl Queue {
     }
 
     pub fn set_target_queue(&self, queue: &Queue) -> Result<(), TargetQueueError> {
-        unsafe {
-            // Safety: We are in Queue instance.
-            self.dispatch_object.set_target_queue(queue)
-        }
+        // Safety: We are in Queue instance.
+        unsafe { self.dispatch_object.set_target_queue(queue) }
     }
 
     pub fn set_qos_class_floor(
@@ -275,8 +272,8 @@ impl Queue {
         qos_class: QualityOfServiceClass,
         relative_priority: i32,
     ) -> Result<(), QualityOfServiceClassFloorError> {
+        // Safety: We are in Queue instance.
         unsafe {
-            // Safety: We are in Queue instance.
             self.dispatch_object
                 .set_qos_class_floor(qos_class, relative_priority)
         }
@@ -308,8 +305,8 @@ impl WorkloopQueue {
     pub fn new(label: &str, inactive: bool) -> Self {
         let label = CString::new(label).expect("Invalid label!");
 
+        // Safety: label can only be valid.
         let object = unsafe {
-            // Safety: label can only be valid.
             if inactive {
                 dispatch_workloop_create_inactive(label.as_ptr())
             } else {
@@ -319,10 +316,8 @@ impl WorkloopQueue {
 
         assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
 
-        let dispatch_object = unsafe {
-            // Safety: object cannot be null.
-            DispatchObject::new_owned(object as *mut _)
-        };
+        // Safety: object cannot be null.
+        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
 
         WorkloopQueue {
             queue: Queue {
@@ -333,6 +328,7 @@ impl WorkloopQueue {
     }
 
     pub fn set_autorelease_frequency(&self, frequency: DispatchAutoReleaseFrequency) {
+        // Safety: object and frequency can only be valid.
         unsafe {
             dispatch_workloop_set_autorelease_frequency(
                 self.as_raw(),

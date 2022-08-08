@@ -43,8 +43,8 @@ impl<T> DispatchObject<T> {
             is_activated: false,
         };
 
+        // Safety: We own a reference to the object.
         unsafe {
-            // Safety: We own a reference to the object.
             dispatch_retain(result.object as *mut _);
         }
 
@@ -57,12 +57,11 @@ impl<T> DispatchObject<T> {
     {
         let destructor_boxed = Box::leak(Box::new(destructor)) as *mut F as *mut _;
 
+        // Safety: As this use the dispatch object's context, and because we need some way to wrap the Rust function, we set the context.
+        //         Once the finalizer is executed, the context will be dangling.
+        //         This isn't an issue as the context shall not be accessed after the dispatch object is destroyed.
         unsafe {
-            // As this use the dispatch object's context, and because we need some way to wrap the Rust function, we set the context.
-            // Once the finalizer is executed, the context will be dangling.
-            // This isn't an issue as the context shall not be accessed after the dispatch object is destroyed.
             dispatch_set_context(self.object as *mut _, destructor_boxed);
-
             dispatch_set_finalizer_f(self.object as *mut _, function_wrapper::<F>)
         }
     }
@@ -77,6 +76,7 @@ impl<T> DispatchObject<T> {
             return Err(TargetQueueError::ObjectAlreadyActive);
         }
 
+        // Safety: object and queue cannot be null.
         unsafe {
             dispatch_set_target_queue(self.as_raw() as *mut _, queue.as_raw());
         }
@@ -98,8 +98,8 @@ impl<T> DispatchObject<T> {
             return Err(QualityOfServiceClassFloorError::InvalidRelativePriority);
         }
 
+        // Safety: Safe as relative_priority can only be valid.
         unsafe {
-            // Safety: Safe as relative_priority can only be valid.
             dispatch_set_qos_class_floor(
                 self.as_raw() as *mut _,
                 dispatch_qos_class_t::from(qos_class),
@@ -111,6 +111,7 @@ impl<T> DispatchObject<T> {
     }
 
     pub fn activate(&mut self) {
+        // Safety: object cannot be null.
         unsafe {
             dispatch_activate(self.as_raw() as *mut _);
         }
@@ -119,12 +120,14 @@ impl<T> DispatchObject<T> {
     }
 
     pub fn suspend(&self) {
+        // Safety: object cannot be null.
         unsafe {
             dispatch_suspend(self.as_raw() as *mut _);
         }
     }
 
     pub fn resume(&self) {
+        // Safety: object cannot be null.
         unsafe {
             dispatch_resume(self.as_raw() as *mut _);
         }
@@ -137,17 +140,15 @@ impl<T> DispatchObject<T> {
 
 impl<T> Clone for DispatchObject<T> {
     fn clone(&self) -> Self {
-        unsafe {
-            // Safety: We own a reference to the object.
-            Self::new_shared(self.object)
-        }
+        // Safety: We own a reference to the object.
+        unsafe { Self::new_shared(self.object) }
     }
 }
 
 impl<T> Drop for DispatchObject<T> {
     fn drop(&mut self) {
+        // Safety: We own a reference to the object.
         unsafe {
-            // Safety: We own a reference to the object.
             dispatch_release(self.object as *mut _);
         }
     }
