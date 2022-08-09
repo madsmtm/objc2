@@ -1,6 +1,7 @@
 mod __rewrite_self_arg;
 mod declare_class;
 mod extern_class;
+mod extern_methods;
 
 /// Gets a reference to a [`Class`] from the given name.
 ///
