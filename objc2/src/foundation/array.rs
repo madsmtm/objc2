@@ -136,34 +136,34 @@ extern_methods!(
     /// Generic accessor methods.
     unsafe impl<T: Message, O: Ownership> NSArray<T, O> {
         #[doc(alias = "count")]
-        pub fn len(&self) -> usize {
-            unsafe { msg_send![self, count] }
-        }
+        #[sel(count)]
+        pub fn len(&self) -> usize;
 
         pub fn is_empty(&self) -> bool {
             self.len() == 0
         }
+
+        #[sel(objectAtIndex:)]
+        unsafe fn get_unchecked(&self, index: usize) -> &T;
 
         #[doc(alias = "objectAtIndex:")]
         pub fn get(&self, index: usize) -> Option<&T> {
             // TODO: Replace this check with catching the thrown NSRangeException
             if index < self.len() {
                 // SAFETY: The index is checked to be in bounds.
-                Some(unsafe { msg_send![self, objectAtIndex: index] })
+                Some(unsafe { self.get_unchecked(index) })
             } else {
                 None
             }
         }
 
         #[doc(alias = "firstObject")]
-        pub fn first(&self) -> Option<&T> {
-            unsafe { msg_send![self, firstObject] }
-        }
+        #[sel(firstObject)]
+        pub fn first(&self) -> Option<&T>;
 
         #[doc(alias = "lastObject")]
-        pub fn last(&self) -> Option<&T> {
-            unsafe { msg_send![self, lastObject] }
-        }
+        #[sel(lastObject)]
+        pub fn last(&self) -> Option<&T>;
 
         #[doc(alias = "objectEnumerator")]
         pub fn iter(&self) -> NSEnumerator<'_, T> {
@@ -173,11 +173,14 @@ extern_methods!(
             }
         }
 
+        #[sel(getObjects:range:)]
+        unsafe fn get_objects(&self, ptr: *mut &T, range: NSRange);
+
         pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
             let range = NSRange::from(range);
             let mut vec = Vec::with_capacity(range.length);
             unsafe {
-                let _: () = msg_send![self, getObjects: vec.as_ptr(), range: range];
+                self.get_objects(vec.as_mut_ptr(), range);
                 vec.set_len(range.length);
             }
             vec
@@ -228,14 +231,12 @@ extern_methods!(
         }
 
         #[doc(alias = "firstObject")]
-        pub fn first_mut(&mut self) -> Option<&mut T> {
-            unsafe { msg_send![self, firstObject] }
-        }
+        #[sel(firstObject)]
+        pub fn first_mut(&mut self) -> Option<&mut T>;
 
         #[doc(alias = "lastObject")]
-        pub fn last_mut(&mut self) -> Option<&mut T> {
-            unsafe { msg_send![self, lastObject] }
-        }
+        #[sel(lastObject)]
+        pub fn last_mut(&mut self) -> Option<&mut T>;
     }
 );
 

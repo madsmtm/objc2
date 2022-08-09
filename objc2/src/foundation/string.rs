@@ -73,9 +73,8 @@ extern_methods!(
         /// See also [`NSString::len`].
         #[doc(alias = "length")]
         // TODO: Finish this
-        fn len_utf16(&self) -> usize {
-            unsafe { msg_send![self, length] }
-        }
+        #[sel(length)]
+        fn len_utf16(&self) -> usize;
 
         pub fn is_empty(&self) -> bool {
             // TODO: lengthOfBytesUsingEncoding: might sometimes return 0 for

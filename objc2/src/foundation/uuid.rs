@@ -3,9 +3,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSCopying, NSObject, NSString};
 use crate::rc::{DefaultId, Id, Shared};
-use crate::{
-    extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encode, Encoding, RefEncode,
-};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType, Encode, Encoding, RefEncode};
 
 extern_class!(
     /// A universally unique value.
@@ -71,9 +69,12 @@ extern_methods!(
             }
         }
 
+        #[sel(getUUIDBytes:)]
+        fn get_bytes_raw(&self, bytes: &mut UuidBytes);
+
         pub fn as_bytes(&self) -> [u8; 16] {
             let mut bytes = UuidBytes([0; 16]);
-            let _: () = unsafe { msg_send![self, getUUIDBytes: &mut bytes] };
+            self.get_bytes_raw(&mut bytes);
             bytes.0
         }
 

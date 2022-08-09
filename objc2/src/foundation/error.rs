@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use super::{NSCopying, NSDictionary, NSObject, NSString};
 use crate::ffi::NSInteger;
 use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// Information about an error condition including a domain, a
@@ -68,9 +68,8 @@ extern_methods!(
             unsafe { msg_send_id![self, domain].expect("unexpected NULL NSError domain") }
         }
 
-        pub fn code(&self) -> NSInteger {
-            unsafe { msg_send![self, code] }
-        }
+        #[sel(code)]
+        pub fn code(&self) -> NSInteger;
 
         pub fn user_info(&self) -> Option<Id<NSDictionary<NSErrorUserInfoKey, NSObject>, Shared>> {
             unsafe { msg_send_id![self, userInfo] }

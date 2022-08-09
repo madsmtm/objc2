@@ -5,7 +5,7 @@ use core::str;
 
 use super::{NSCopying, NSMutableCopying, NSObject, NSString};
 use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A dynamic plain-text Unicode string object.
@@ -60,17 +60,15 @@ extern_methods!(
     unsafe impl NSMutableString {
         /// Appends the given [`NSString`] onto the end of this.
         #[doc(alias = "appendString:")]
-        pub fn push_nsstring(&mut self, nsstring: &NSString) {
-            // SAFETY: The string is not nil
-            unsafe { msg_send![self, appendString: nsstring] }
-        }
+        // SAFETY: The string is not nil
+        #[sel(appendString:)]
+        pub fn push_nsstring(&mut self, nsstring: &NSString);
 
         /// Replaces the entire string.
         #[doc(alias = "setString:")]
-        pub fn replace(&mut self, nsstring: &NSString) {
-            // SAFETY: The string is not nil
-            unsafe { msg_send![self, setString: nsstring] }
-        }
+        // SAFETY: The string is not nil
+        #[sel(setString:)]
+        pub fn replace(&mut self, nsstring: &NSString);
 
         // TODO:
         // - deleteCharactersInRange:

@@ -104,6 +104,9 @@ extern_methods!(
             old_obj
         }
 
+        #[sel(removeObjectAtIndex:)]
+        unsafe fn remove_at(&mut self, index: usize);
+
         #[doc(alias = "removeObjectAtIndex:")]
         pub fn remove(&mut self, index: usize) -> Id<T, O> {
             let obj = if let Some(obj) = self.get(index) {
@@ -111,30 +114,27 @@ extern_methods!(
             } else {
                 panic!("removal index should be < len");
             };
-            unsafe {
-                let _: () = msg_send![self, removeObjectAtIndex: index];
-            }
+            unsafe { self.remove_at(index) };
             obj
         }
 
-        fn remove_last(&mut self) {
-            unsafe { msg_send![self, removeLastObject] }
-        }
+        #[sel(removeLastObject)]
+        unsafe fn remove_last(&mut self);
 
         #[doc(alias = "removeLastObject")]
         pub fn pop(&mut self) -> Option<Id<T, O>> {
             self.last()
                 .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
                 .map(|obj| {
-                    self.remove_last();
+                    // SAFETY: `Self::last` just checked that there is an object
+                    unsafe { self.remove_last() };
                     obj
                 })
         }
 
         #[doc(alias = "removeAllObjects")]
-        pub fn clear(&mut self) {
-            unsafe { msg_send![self, removeAllObjects] }
-        }
+        #[sel(removeAllObjects)]
+        pub fn clear(&mut self);
 
         #[doc(alias = "sortUsingFunction:context:")]
         pub fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {

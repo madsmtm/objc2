@@ -6,7 +6,7 @@ use super::{NSCopying, NSDictionary, NSObject, NSString};
 use crate::exception::Exception;
 use crate::rc::{Id, Shared};
 use crate::runtime::Object;
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, sel, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, sel, ClassType};
 
 extern_class!(
     /// A special condition that interrupts the normal flow of program
@@ -50,6 +50,9 @@ extern_methods!(
             unsafe { msg_send_id![obj, initWithName: name, reason: reason, userInfo: user_info] }
         }
 
+        #[sel(raise)]
+        unsafe fn raise_raw(&self);
+
         /// Raises the exception, causing program flow to jump to the local
         /// exception handler.
         ///
@@ -62,7 +65,9 @@ extern_methods!(
         pub unsafe fn raise(&self) -> ! {
             // SAFETY: We only create `Shared` NSExceptions, so it is safe to give
             // to the place where `@catch` receives it.
-            let _: () = unsafe { msg_send![self, raise] };
+            unsafe { self.raise_raw() };
+            // SAFETY: `raise` will throw an exception, or abort if something
+            // unexpected happened.
             unsafe { unreachable_unchecked() }
         }
 

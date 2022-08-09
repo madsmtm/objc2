@@ -6,7 +6,7 @@ use super::{
 };
 use crate::rc::{DefaultId, Id, Shared};
 use crate::runtime::Object;
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A string that has associated attributes for portions of its text.
@@ -84,11 +84,10 @@ extern_methods!(
 
         /// Alias for `self.string().len_utf16()`.
         #[doc(alias = "length")]
+        #[sel(length)]
         #[allow(unused)]
         // TODO: Finish this
-        fn len_utf16(&self) -> usize {
-            unsafe { msg_send![self, length] }
-        }
+        fn len_utf16(&self) -> usize;
 
         // /// TODO
         // ///

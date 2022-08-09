@@ -9,7 +9,7 @@ use core::slice::{self, SliceIndex};
 use super::{NSCopying, NSMutableCopying, NSMutableData, NSObject};
 use crate::rc::{DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A static byte buffer in memory.
@@ -34,29 +34,10 @@ impl UnwindSafe for NSData {}
 impl RefUnwindSafe for NSData {}
 
 extern_methods!(
+    /// Creation methods.
     unsafe impl NSData {
         pub fn new() -> Id<Self, Shared> {
             unsafe { msg_send_id![Self::class(), new].unwrap() }
-        }
-
-        #[doc(alias = "length")]
-        pub fn len(&self) -> usize {
-            unsafe { msg_send![self, length] }
-        }
-
-        pub fn is_empty(&self) -> bool {
-            self.len() == 0
-        }
-
-        pub fn bytes(&self) -> &[u8] {
-            let ptr: *const c_void = unsafe { msg_send![self, bytes] };
-            let ptr: *const u8 = ptr.cast();
-            // The bytes pointer may be null for length zero
-            if ptr.is_null() {
-                &[]
-            } else {
-                unsafe { slice::from_raw_parts(ptr, self.len()) }
-            }
         }
 
         pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
@@ -78,6 +59,31 @@ extern_methods!(
             let cls = Self::class();
 
             unsafe { Id::cast(with_vec(cls, bytes)) }
+        }
+    }
+
+    /// Accessor methods.
+    unsafe impl NSData {
+        #[sel(length)]
+        #[doc(alias = "length")]
+        pub fn len(&self) -> usize;
+
+        pub fn is_empty(&self) -> bool {
+            self.len() == 0
+        }
+
+        #[sel(bytes)]
+        fn bytes_raw(&self) -> *const c_void;
+
+        pub fn bytes(&self) -> &[u8] {
+            let ptr = self.bytes_raw();
+            let ptr: *const u8 = ptr.cast();
+            // The bytes pointer may be null for length zero
+            if ptr.is_null() {
+                &[]
+            } else {
+                unsafe { slice::from_raw_parts(ptr, self.len()) }
+            }
         }
     }
 );

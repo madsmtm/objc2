@@ -2,7 +2,7 @@ use core::fmt;
 
 use super::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
 use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A mutable string that has associated attributes.
@@ -53,9 +53,8 @@ extern_methods!(
 
         /// Replaces the entire attributed string.
         #[doc(alias = "setAttributedString:")]
-        pub fn replace(&mut self, attributed_string: &NSAttributedString) {
-            unsafe { msg_send![self, setAttributedString: attributed_string] }
-        }
+        #[sel(setAttributedString:)]
+        pub fn replace(&mut self, attributed_string: &NSAttributedString);
     }
 );
 

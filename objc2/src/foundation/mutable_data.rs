@@ -9,7 +9,7 @@ use std::io;
 use super::data::with_slice;
 use super::{NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
 use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A dynamic byte buffer in memory.
@@ -66,14 +66,17 @@ extern_methods!(
 
     /// Mutation methods
     unsafe impl NSMutableData {
-        // Helps with reborrowing issue
-        fn raw_bytes_mut(&mut self) -> *mut c_void {
-            unsafe { msg_send![self, mutableBytes] }
-        }
+        /// Expands with zeroes, or truncates the buffer.
+        #[doc(alias = "setLength:")]
+        #[sel(setLength:)]
+        pub fn set_len(&mut self, len: usize);
+
+        #[sel(mutableBytes)]
+        fn bytes_mut_raw(&mut self) -> *mut c_void;
 
         #[doc(alias = "mutableBytes")]
         pub fn bytes_mut(&mut self) -> &mut [u8] {
-            let ptr = self.raw_bytes_mut();
+            let ptr = self.bytes_mut_raw();
             let ptr: *mut u8 = ptr.cast();
             // The bytes pointer may be null for length zero
             if ptr.is_null() {
@@ -83,21 +86,21 @@ extern_methods!(
             }
         }
 
-        /// Expands with zeroes, or truncates the buffer.
-        #[doc(alias = "setLength:")]
-        pub fn set_len(&mut self, len: usize) {
-            unsafe { msg_send![self, setLength: len] }
-        }
+        #[sel(appendBytes:length:)]
+        unsafe fn append_raw(&mut self, ptr: *const c_void, len: usize);
 
         #[doc(alias = "appendBytes:length:")]
         pub fn extend_from_slice(&mut self, bytes: &[u8]) {
             let bytes_ptr: *const c_void = bytes.as_ptr().cast();
-            unsafe { msg_send![self, appendBytes: bytes_ptr, length: bytes.len()] }
+            unsafe { self.append_raw(bytes_ptr, bytes.len()) }
         }
 
         pub fn push(&mut self, byte: u8) {
             self.extend_from_slice(&[byte])
         }
+
+        #[sel(replaceBytesInRange:withBytes:length:)]
+        unsafe fn replace_raw(&mut self, range: NSRange, ptr: *const c_void, len: usize);
 
         #[doc(alias = "replaceBytesInRange:withBytes:length:")]
         pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
@@ -105,14 +108,7 @@ extern_methods!(
             // No need to verify the length of the range here,
             // `replaceBytesInRange:` just zero-fills if out of bounds.
             let ptr: *const c_void = bytes.as_ptr().cast();
-            unsafe {
-                msg_send![
-                    self,
-                    replaceBytesInRange: range,
-                    withBytes: ptr,
-                    length: bytes.len(),
-                ]
-            }
+            unsafe { self.replace_raw(range, ptr, bytes.len()) }
         }
 
         pub fn set_bytes(&mut self, bytes: &[u8]) {

@@ -4,9 +4,7 @@ use core::hash;
 use super::NSString;
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::runtime::{Class, Object};
-use crate::{
-    ClassType, __inner_extern_class, class, extern_methods, msg_send, msg_send_bool, msg_send_id,
-};
+use crate::{ClassType, __inner_extern_class, class, extern_methods, msg_send_bool, msg_send_id};
 
 __inner_extern_class! {
     @__inner
@@ -35,6 +33,9 @@ extern_methods!(
         fn is_kind_of_inner(&self, cls: &Class) -> bool {
             unsafe { msg_send_bool![self, isKindOfClass: cls] }
         }
+
+        #[sel(hash)]
+        fn hash_code(&self) -> usize;
 
         /// Check if the object is an instance of the class, or one of it's
         /// subclasses.
@@ -84,8 +85,7 @@ impl Eq for NSObject {}
 impl hash::Hash for NSObject {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        let hash_code: usize = unsafe { msg_send![self, hash] };
-        hash_code.hash(state);
+        self.hash_code().hash(state);
     }
 }
 

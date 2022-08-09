@@ -37,29 +37,26 @@ extern_methods!(
         }
 
         #[doc(alias = "count")]
-        pub fn len(&self) -> usize {
-            unsafe { msg_send![self, count] }
-        }
+        #[sel(count)]
+        pub fn len(&self) -> usize;
 
         pub fn is_empty(&self) -> bool {
             self.len() == 0
         }
 
         #[doc(alias = "objectForKey:")]
-        pub fn get(&self, key: &K) -> Option<&V> {
-            unsafe { msg_send![self, objectForKey: key] }
-        }
+        #[sel(objectForKey:)]
+        pub fn get(&self, key: &K) -> Option<&V>;
+
+        #[sel(getObjects:andKeys:)]
+        unsafe fn get_objects_and_keys(&self, objects: *mut &V, keys: *mut &K);
 
         #[doc(alias = "getObjects:andKeys:")]
         pub fn keys(&self) -> Vec<&K> {
             let len = self.len();
             let mut keys = Vec::with_capacity(len);
             unsafe {
-                let _: () = msg_send![
-                    self,
-                    getObjects: ptr::null_mut::<&V>(),
-                    andKeys: keys.as_mut_ptr(),
-                ];
+                self.get_objects_and_keys(ptr::null_mut(), keys.as_mut_ptr());
                 keys.set_len(len);
             }
             keys
@@ -70,11 +67,7 @@ extern_methods!(
             let len = self.len();
             let mut vals = Vec::with_capacity(len);
             unsafe {
-                let _: () = msg_send![
-                    self,
-                    getObjects: vals.as_mut_ptr(),
-                    andKeys: ptr::null_mut::<&K>(),
-                ];
+                self.get_objects_and_keys(vals.as_mut_ptr(), ptr::null_mut());
                 vals.set_len(len);
             }
             vals
@@ -86,11 +79,7 @@ extern_methods!(
             let mut keys = Vec::with_capacity(len);
             let mut objs = Vec::with_capacity(len);
             unsafe {
-                let _: () = msg_send![
-                    self,
-                    getObjects: objs.as_mut_ptr(),
-                    andKeys: keys.as_mut_ptr(),
-                ];
+                self.get_objects_and_keys(objs.as_mut_ptr(), keys.as_mut_ptr());
                 keys.set_len(len);
                 objs.set_len(len);
             }
