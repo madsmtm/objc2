@@ -26,10 +26,14 @@ mod appkit {
     #[link(name = "AppKit", kind = "framework")]
     extern "C" {}
 
-    extern_class! {
+    extern_class!(
         /// <https://developer.apple.com/documentation/appkit/nsspeechsynthesizer?language=objc>
-        unsafe pub struct NSSpeechSynthesizer: NSObject;
-    }
+        pub struct NSSpeechSynthesizer;
+
+        unsafe impl ClassType for NSSpeechSynthesizer {
+            type Superclass = NSObject;
+        }
+    );
 
     impl NSSpeechSynthesizer {
         // Uses default voice
@@ -100,11 +104,15 @@ mod avfaudio {
     #[link(name = "AVFoundation", kind = "framework")]
     extern "C" {}
 
-    extern_class! {
+    extern_class!(
         /// <https://developer.apple.com/documentation/avfaudio/avspeechsynthesizer?language=objc>
         #[derive(Debug)]
-        unsafe pub struct AVSpeechSynthesizer: NSObject;
-    }
+        pub struct AVSpeechSynthesizer;
+
+        unsafe impl ClassType for AVSpeechSynthesizer {
+            type Superclass = NSObject;
+        }
+    );
 
     impl AVSpeechSynthesizer {
         pub fn new() -> Id<Self, Owned> {
@@ -122,11 +130,15 @@ mod avfaudio {
         }
     }
 
-    extern_class! {
+    extern_class!(
         /// <https://developer.apple.com/documentation/avfaudio/avspeechutterance?language=objc>
         #[derive(Debug)]
-        unsafe pub struct AVSpeechUtterance: NSObject;
-    }
+        pub struct AVSpeechUtterance;
+
+        unsafe impl ClassType for AVSpeechUtterance {
+            type Superclass = NSObject;
+        }
+    );
 
     impl AVSpeechUtterance {
         pub fn new(string: &NSString) -> Id<Self, Owned> {

@@ -8,7 +8,7 @@ use crate::rc::{Id, Shared};
 use crate::runtime::Object;
 use crate::{extern_class, msg_send, msg_send_id, sel, ClassType};
 
-extern_class! {
+extern_class!(
     /// A special condition that interrupts the normal flow of program
     /// execution.
     ///
@@ -19,8 +19,12 @@ extern_class! {
     ///
     /// [doc]: https://developer.apple.com/documentation/foundation/nsexception?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSException: NSObject;
-}
+    pub struct NSException;
+
+    unsafe impl ClassType for NSException {
+        type Superclass = NSObject;
+    }
+);
 
 // SAFETY: Exception objects are immutable data containers, and documented as
 // thread safe.

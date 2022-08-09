@@ -12,22 +12,20 @@ macro_rules! __inner_declare_class {
 
         $($rest:tt)*
     } => {
-        $crate::__inner_declare_class! {
-            @rewrite_self_arg
+        $crate::__rewrite_self_arg! {
+            ($crate::__inner_declare_class)
+            ($($args)*)
 
-            // Duplicate args out so that we can match on `self`, while still
-            // use it as a function argument
-            @($($args)*)
             // Split the function into parts, and send the arguments down to
             // be used later on
-            @($($args)*)
+            @$($output)*
             @($(#[$($m)*])*)
             @(unsafe extern "C")
             @($name)
             @($($ret)?)
             @($body)
-
-            #($($output)*)
+            // Will add @(kind)
+            // Will add @(args)
         }
 
         $crate::__inner_declare_class! {
@@ -47,18 +45,15 @@ macro_rules! __inner_declare_class {
 
         $($rest:tt)*
     } => {
-        $crate::__inner_declare_class! {
-            @rewrite_self_arg
-
-            @($($args)*)
-            @($($args)*)
+        $crate::__rewrite_self_arg! {
+            ($crate::__inner_declare_class)
+            ($($args)*)
+            @$($output)*
             @($(#[$($m)*])*)
             @(extern "C")
             @($name)
             @($($ret)?)
             @($body)
-
-            #($($output)*)
         }
 
         $crate::__inner_declare_class! {
@@ -69,119 +64,15 @@ macro_rules! __inner_declare_class {
         }
     };
 
-    // Instance method
-    {
-        @rewrite_self_arg
-        @(&mut self $($__rest_args:tt)*)
-        @(&mut $self:ident $(, $($rest_args:tt)*)?)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(instance_method)
-            @(
-                $self: &mut Self,
-                _: $crate::runtime::Sel,
-                $($($rest_args)*)?
-            )
-            $($rest)*
-        }
-    };
-    {
-        @rewrite_self_arg
-        @(&self $($__rest_args:tt)*)
-        @(&$self:ident $(, $($rest_args:tt)*)?)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(instance_method)
-            @(
-                $self: &Self,
-                _: $crate::runtime::Sel,
-                $($($rest_args)*)?
-            )
-            $($rest)*
-        }
-    };
-    {
-        @rewrite_self_arg
-        @(mut self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        @(mut $self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(instance_method)
-            @(
-                mut $self: $self_ty,
-                _: $crate::runtime::Sel,
-                $($($rest_args)*)?
-            )
-            $($rest)*
-        }
-    };
-    {
-        @rewrite_self_arg
-        @(self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        @($self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(instance_method)
-            @(
-                $self: $self_ty,
-                _: $crate::runtime::Sel,
-                $($($rest_args)*)?
-            )
-            $($rest)*
-        }
-    };
-    // Class method
-    {
-        @rewrite_self_arg
-        @($($__args:tt)*)
-        @($($args:tt)*)
-        $($rest:tt)*
-    } => {
-        $crate::__inner_declare_class! {
-            @dispatch
-            @(class_method)
-            @(
-                _: &$crate::runtime::Class,
-                _: $crate::runtime::Sel,
-                $($args)*
-            )
-            $($rest)*
-        }
-    };
-
-    {
-        @dispatch
-        $(
-            @($($items:tt)*)
-        )*
-
-        #($($output:tt)*)
-    } => {
-        $crate::__inner_declare_class! {
-            @$($output)*
-            $(
-                @($($items)*)
-            )*
-        }
-    };
-
     {
         @method_out
-        @($($_kind:tt)*)
-        @($($args:tt)*)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
         @($($ret:ty)?)
         @($($body:tt)*)
+        @($($_kind:tt)*)
+        @($($args:tt)*)
     } => {
         $crate::__attribute_helper! {
             @strip_sel
@@ -192,18 +83,20 @@ macro_rules! __inner_declare_class {
 
     {
         @register_out($builder:ident)
-        @(class_method)
-        @($($args:tt)*)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
         @($($_ret:tt)*)
         @($($_body:tt)*)
+        @(class_method)
+        @($($args:tt)*)
     } => {
         $builder.add_class_method(
             $crate::__attribute_helper! {
                 @extract_sel
-                $(#[$($m)*])*
+                ($crate::__inner_declare_class)
+                ($(#[$($m)*])*)
+                @call_sel
             },
             Self::$name as $crate::__fn_ptr! {
                 @($($qualifiers)*) $($args)*
@@ -212,23 +105,32 @@ macro_rules! __inner_declare_class {
     };
     {
         @register_out($builder:ident)
-        @(instance_method)
-        @($($args:tt)*)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
         @($($_ret:tt)*)
         @($($_body:tt)*)
+        @(instance_method)
+        @($($args:tt)*)
     } => {
         $builder.add_method(
             $crate::__attribute_helper! {
                 @extract_sel
-                $(#[$($m)*])*
+                ($crate::__inner_declare_class)
+                ($(#[$($m)*])*)
+                @call_sel
             },
             Self::$name as $crate::__fn_ptr! {
                 @($($qualifiers)*) $($args)*
             },
         );
+    };
+
+    {
+        @call_sel
+        @($($sel:tt)*)
+    } => {
+        $crate::sel!($($sel)*)
     };
 }
 
@@ -242,8 +144,10 @@ macro_rules! __inner_declare_class {
 ///
 /// # Specification
 ///
-/// This macro consists of three parts; the class definition, the method
-/// definition, and the protocol definition.
+/// This macro consists of three parts:
+/// - The class definition + ivar definition + inheritance specification.
+/// - A set of method definitions.
+/// - A set of protocol definitions.
 ///
 ///
 /// ## Class and ivar definition
@@ -260,10 +164,13 @@ macro_rules! __inner_declare_class {
 /// alias like `pub type CustomObject = MyCrateCustomObject;` instead.
 ///
 /// The class is guaranteed to have been created and registered with the
-/// Objective-C runtime after the associated function `class` has been called.
+/// Objective-C runtime after the [`ClassType::class`] function has been
+/// called.
+///
+/// [`ClassType::class`]: crate::ClassType::class
 ///
 ///
-/// ## Method definition
+/// ## Method definitions
 ///
 /// Within the `impl` block you can define two types of functions;
 /// ["associated functions"] and ["methods"]. These are then mapped to the
@@ -284,10 +191,10 @@ macro_rules! __inner_declare_class {
 /// [`msg_send!`]: crate::msg_send
 ///
 ///
-/// ## Protocol definition
+/// ## Protocol definitions
 ///
-/// You can specify the protocols that the class should implement, along with
-/// any required methods for said protocols.
+/// You can specify protocols that the class should implement, along with any
+/// required/optional methods for said protocols.
 ///
 /// The methods work exactly as normal, they're only put "under" the protocol
 /// definition to make things easier to read.
@@ -297,19 +204,19 @@ macro_rules! __inner_declare_class {
 ///
 /// Using this macro requires writing a few `unsafe` markers:
 ///
-/// `unsafe struct ...` has the following safety requirements:
+/// `unsafe impl ClassType for T` has the following safety requirements:
 /// - Same as [`extern_class!`] (the inheritance chain has to be correct).
-/// - Any instance variables you specify must either be able to be created
-///   using [`MaybeUninit::zeroed`], or be properly initialized in an `init`
-///   method.
+/// - Any instance variables you specify under the struct definition must
+///   either be able to be created using [`MaybeUninit::zeroed`], or be
+///   properly initialized in an `init` method.
 ///
-/// `unsafe impl { ... }` asserts that the types match those that are expected
-/// when the method is invoked from Objective-C. Note that there are no
-/// safe-guards here; you can easily write `i8`, but if Objective-C thinks
+/// `unsafe impl T { ... }` asserts that the types match those that are
+/// expected when the method is invoked from Objective-C. Note that there are
+/// no safe-guards here; you can easily write `i8`, but if Objective-C thinks
 /// it's an `u32`, it will cause UB when called!
 ///
-/// `unsafe impl protocol ... { ... }` requires that all required methods of
-/// the specified protocol is implemented, and that any extra requirements
+/// `unsafe impl Protocol<P> for T { ... }` requires that all required methods
+/// of the specified protocol is implemented, and that any extra requirements
 /// (implicit or explicit) that the protocol has are upheld. The methods in
 /// this definition has the same safety requirements as above.
 ///
@@ -331,13 +238,17 @@ macro_rules! __inner_declare_class {
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
-/// declare_class! {
-///     unsafe struct MyCustomObject: NSObject {
+/// declare_class!(
+///     struct MyCustomObject {
 ///         foo: u8,
 ///         pub bar: c_int,
 ///     }
 ///
-///     unsafe impl {
+///     unsafe impl ClassType for MyCustomObject {
+///         type Superclass = NSObject;
+///     }
+///
+///     unsafe impl MyCustomObject {
 ///         #[sel(initWithFoo:)]
 ///         fn init_with(&mut self, foo: u8) -> Option<&mut Self> {
 ///             let this: Option<&mut Self> = unsafe {
@@ -364,7 +275,7 @@ macro_rules! __inner_declare_class {
 ///         }
 ///     }
 ///
-///     unsafe impl protocol NSCopying {
+///     unsafe impl Protocol<NSCopying> for MyCustomObject {
 ///         #[sel(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
 ///             let mut obj = Self::new(*self.foo);
@@ -372,7 +283,7 @@ macro_rules! __inner_declare_class {
 ///             obj.autorelease_return()
 ///         }
 ///     }
-/// }
+/// );
 ///
 /// impl MyCustomObject {
 ///     pub fn new(foo: u8) -> Id<Self, Owned> {
@@ -465,16 +376,16 @@ macro_rules! __inner_declare_class {
 macro_rules! declare_class {
     {
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident: $inherits:ty $(, $inheritance_rest:ty)* {
+        $v:vis struct $name:ident {
             $($ivar_v:vis $ivar:ident: $ivar_ty:ty,)*
         }
 
-        $(
-            $(#[$impl_m:meta])*
-            unsafe impl $(protocol $protocol:ident)? {
-                $($methods:tt)*
-            }
-        )*
+        unsafe impl ClassType for $for:ty {
+            $(#[inherits($($inheritance_rest:ty)+)])?
+            type Superclass = $superclass:ty;
+        }
+
+        $($methods:tt)*
     } => {
         $(
             #[allow(non_camel_case_types)]
@@ -492,7 +403,7 @@ macro_rules! declare_class {
             @__inner
             $(#[$m])*
             // SAFETY: Upheld by caller
-            unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::runtime::Object {
+            $v struct $name () {
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
                 // - The ivar is added to the class below.
@@ -500,11 +411,15 @@ macro_rules! declare_class {
                 // - Caller upholds that the ivars are properly initialized.
                 $($ivar_v $ivar: $crate::declare::Ivar<$ivar>,)*
             }
+
+            unsafe impl () for $for {
+                INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
+            }
         }
 
         // Creation
-        unsafe impl $crate::ClassType for $name {
-            type Superclass = $inherits;
+        unsafe impl $crate::ClassType for $for {
+            type Superclass = $superclass;
 
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
@@ -513,7 +428,7 @@ macro_rules! declare_class {
                 static REGISTER_CLASS: Once = Once::new();
 
                 REGISTER_CLASS.call_once(|| {
-                    let superclass = <$inherits as $crate::ClassType>::class();
+                    let superclass = <$superclass as $crate::ClassType>::class();
                     let err_str = concat!(
                         "could not create new class ",
                         stringify!($name),
@@ -526,24 +441,11 @@ macro_rules! declare_class {
                         builder.add_static_ivar::<$ivar>();
                     )*
 
-                    $(
-                        // Implement protocol if any specified
-                        $(
-                            let err_str = concat!("could not find protocol ", stringify!($protocol));
-                            builder.add_protocol($crate::runtime::Protocol::get(stringify!($protocol)).expect(err_str));
-                        )?
-
-                        // Implement methods
-                        // SAFETY: Upheld by caller
-                        unsafe {
-                            $crate::__inner_declare_class! {
-                                @rewrite_methods
-                                @(register_out(builder))
-
-                                $($methods)*
-                            }
-                        }
-                    )*
+                    // Implement protocols and methods
+                    $crate::__declare_class_methods!(
+                        @register_out(builder)
+                        $($methods)*
+                    );
 
                     let _cls = builder.register();
                 });
@@ -554,16 +456,123 @@ macro_rules! declare_class {
         }
 
         // Methods
-        $(
-            $(#[$impl_m])*
-            impl $name {
-                $crate::__inner_declare_class! {
-                    @rewrite_methods
-                    @(method_out)
+        $crate::__declare_class_methods!(
+            @method_out
+            $($methods)*
+        );
+    };
+}
 
-                    $($methods)*
-                }
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_methods {
+    (@method_out) => {};
+    // With protocol
+    (
+        @method_out
+
+        $(#[$m:meta])*
+        unsafe impl Protocol<$protocol:ident> for $for:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        $(#[$m])*
+        impl $for {
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+                @(method_out)
+                $($methods)*
             }
-        )*
+        }
+
+        $crate::__declare_class_methods!(
+            @method_out
+            $($rest)*
+        );
+    };
+    // Without protocol
+    (
+        @method_out
+
+        $(#[$m:meta])*
+        unsafe impl $for:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        $(#[$m])*
+        impl $for {
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+                @(method_out)
+                $($methods)*
+            }
+        }
+
+        $crate::__declare_class_methods!(
+            @method_out
+            $($rest)*
+        );
+    };
+
+    (@register_out($builder:ident)) => {};
+    // With protocol
+    (
+        @register_out($builder:ident)
+
+        $(#[$m:meta])*
+        unsafe impl Protocol<$protocol:ident> for $for:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        // Implement protocol
+        let err_str = concat!("could not find protocol ", stringify!($protocol));
+        $builder.add_protocol($crate::runtime::Protocol::get(stringify!($protocol)).expect(err_str));
+
+        // SAFETY: Upheld by caller
+        unsafe {
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+                @(register_out($builder))
+
+                $($methods)*
+            }
+        }
+
+        $crate::__declare_class_methods!(
+            @register_out($builder)
+            $($rest)*
+        );
+    };
+    // Without protocol
+    (
+        @register_out($builder:ident)
+
+        $(#[$m:meta])*
+        unsafe impl $for:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        // SAFETY: Upheld by caller
+        unsafe {
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+                @(register_out($builder))
+
+                $($methods)*
+            }
+        }
+
+        $crate::__declare_class_methods!(
+            @register_out($builder)
+            $($rest)*
+        );
     };
 }

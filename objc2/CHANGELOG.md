@@ -22,7 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Id::into_superclass`.
 
 ### Changed
-* **BREAKING**: Change selector syntax in `declare_class!` macro to be more Rust-like.
+* **BREAKING**: Change syntax in `extern_class!` macro to be more Rust-like.
+* **BREAKING**: Change syntax in `declare_class!` macro to be more Rust-like.
 * **BREAKING**: Renamed `Id::from_owned` to `Id::into_shared`.
 
 

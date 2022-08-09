@@ -24,7 +24,7 @@ const UTF8_ENCODING: i32 = 4;
 #[allow(non_upper_case_globals)]
 const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
-extern_class! {
+extern_class!(
     /// An immutable, plain-text Unicode string object.
     ///
     /// Can be created statically using the [`ns_string!`] macro.
@@ -33,12 +33,16 @@ extern_class! {
     ///
     /// [`ns_string!`]: crate::ns_string
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSString: NSObject;
+    pub struct NSString;
     // TODO: Use isEqualToString: for comparison (instead of just isEqual:)
     // The former is more performant
 
     // TODO: Check if performance of NSSelectorFromString is worthwhile
-}
+
+    unsafe impl ClassType for NSString {
+        type Superclass = NSObject;
+    }
+);
 
 // SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
 // from `&mut` methods.

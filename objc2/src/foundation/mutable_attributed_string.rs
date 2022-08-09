@@ -4,13 +4,18 @@ use super::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString}
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
-extern_class! {
+extern_class!(
     /// A mutable string that has associated attributes.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutableattributedstring?language=objc).
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSMutableAttributedString: NSAttributedString, NSObject;
-}
+    pub struct NSMutableAttributedString;
+
+    unsafe impl ClassType for NSMutableAttributedString {
+        #[inherits(NSObject)]
+        type Superclass = NSAttributedString;
+    }
+);
 
 /// Creating mutable attributed strings.
 impl NSMutableAttributedString {

@@ -12,7 +12,7 @@ use super::{NSCopying, NSObject, NSPoint, NSRange, NSRect, NSSize};
 use crate::rc::{Id, Shared};
 use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType, Encode};
 
-extern_class! {
+extern_class!(
     /// A container wrapping any encodable type as an Obective-C object.
     ///
     /// Since Objective-C collections like [`NSArray`] can only contain
@@ -30,8 +30,12 @@ extern_class! {
     /// [`NSRange`]: super::NSRange
     /// [`NSNumber`]: super::NSNumber
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsnumber?language=objc
-    unsafe pub struct NSValue: NSObject;
-}
+    pub struct NSValue;
+
+    unsafe impl ClassType for NSValue {
+        type Superclass = NSObject;
+    }
+);
 
 // We can't implement any auto traits for NSValue, since it can contain an
 // arbitary object!

@@ -9,27 +9,30 @@ use objc2::{declare_class, extern_class, msg_send, msg_send_id, ClassType};
 extern "C" {}
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
-extern_class! {
-    unsafe struct NSResponder: NSObject;
-}
+extern_class!(
+    struct NSResponder;
+
+    unsafe impl ClassType for NSResponder {
+        type Superclass = NSObject;
+    }
+);
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
-declare_class! {
-    unsafe struct CustomAppDelegate: NSResponder, NSObject {
+declare_class!(
+    struct CustomAppDelegate {
         pub ivar: u8,
         another_ivar: Bool,
     }
 
-    unsafe impl {
+    unsafe impl ClassType for CustomAppDelegate {
+        #[inherits(NSObject)]
+        type Superclass = NSResponder;
+    }
+
+    unsafe impl CustomAppDelegate {
         #[sel(initWith:another:)]
-        fn init_with(
-            self: &mut Self,
-            ivar: u8,
-            another_ivar: Bool,
-        ) -> *mut Self {
-            let this: *mut Self = unsafe {
-                msg_send![super(self, NSResponder::class()), init]
-            };
+        fn init_with(self: &mut Self, ivar: u8, another_ivar: Bool) -> *mut Self {
+            let this: *mut Self = unsafe { msg_send![super(self, NSResponder::class()), init] };
             if let Some(this) = unsafe { this.as_mut() } {
                 // TODO: Allow initialization through MaybeUninit
                 *this.ivar = ivar;
@@ -49,7 +52,7 @@ declare_class! {
     // `clang` only when used in Objective-C...
     //
     // TODO: Investigate this!
-    unsafe impl {
+    unsafe impl CustomAppDelegate {
         /// This is `unsafe` because it expects `sender` to be valid
         #[sel(applicationDidFinishLaunching:)]
         unsafe fn did_finish_launching(&self, sender: *mut Object) {
@@ -65,7 +68,7 @@ declare_class! {
             println!("Will terminate!");
         }
     }
-}
+);
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 impl CustomAppDelegate {

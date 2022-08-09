@@ -6,7 +6,7 @@ use crate::ffi::NSInteger;
 use crate::rc::{Id, Shared};
 use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
-extern_class! {
+extern_class!(
     /// Information about an error condition including a domain, a
     /// domain-specific error code, and application-specific information.
     ///
@@ -16,8 +16,12 @@ extern_class! {
     /// [err]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ErrorHandlingCocoa/ErrorHandling/ErrorHandling.html#//apple_ref/doc/uid/TP40001806-CH201-SW1
     /// [api]: https://developer.apple.com/documentation/foundation/nserror?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSError: NSObject;
-}
+    pub struct NSError;
+
+    unsafe impl ClassType for NSError {
+        type Superclass = NSObject;
+    }
+);
 
 // SAFETY: Error objects are immutable data containers.
 unsafe impl Sync for NSError {}

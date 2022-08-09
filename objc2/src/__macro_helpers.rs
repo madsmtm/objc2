@@ -180,7 +180,7 @@ pub const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool 
     // Skip leading underscores from selector
     loop {
         selector = match selector {
-            [b'_', selector @ ..] => (selector),
+            [b'_', rest @ ..] => rest,
             _ => break,
         }
     }

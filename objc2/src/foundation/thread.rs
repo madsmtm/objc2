@@ -6,13 +6,17 @@ use super::{NSObject, NSString};
 use crate::rc::{Id, Shared};
 use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType};
 
-extern_class! {
+extern_class!(
     /// A thread of execution.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsthread?language=objc).
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSThread: NSObject;
-}
+    pub struct NSThread;
+
+    unsafe impl ClassType for NSThread {
+        type Superclass = NSObject;
+    }
+);
 
 unsafe impl Send for NSThread {}
 unsafe impl Sync for NSThread {}

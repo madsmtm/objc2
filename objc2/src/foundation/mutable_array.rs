@@ -13,7 +13,7 @@ use super::{
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use crate::{ClassType, Message, __inner_extern_class, msg_send, msg_send_id};
 
-__inner_extern_class! {
+__inner_extern_class!(
     /// A growable ordered collection of objects.
     ///
     /// See the documentation for [`NSArray`] and/or [Apple's
@@ -21,10 +21,15 @@ __inner_extern_class! {
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutablearray?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSMutableArray<T: Message, O: Ownership = Owned>: NSArray<T, O>, NSObject {
+    pub struct NSMutableArray<T: Message, O: Ownership = Owned> {
         p: PhantomData<*mut ()>,
     }
-}
+
+    unsafe impl<T: Message, O: Ownership> ClassType for NSMutableArray<T, O> {
+        #[inherits(NSObject)]
+        type Superclass = NSArray<T, O>;
+    }
+);
 
 // SAFETY: Same as NSArray<T, O>
 //

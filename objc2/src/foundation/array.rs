@@ -12,7 +12,7 @@ use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use crate::runtime::{Class, Object};
 use crate::{ClassType, Message, __inner_extern_class, msg_send, msg_send_id};
 
-__inner_extern_class! {
+__inner_extern_class!(
     /// An immutable ordered collection of objects.
     ///
     /// This is the Objective-C equivalent of a "boxed slice" (`Box<[T]>`),
@@ -52,11 +52,15 @@ __inner_extern_class! {
     // `T: PartialEq` bound correct because `NSArray` does deep (instead of
     // shallow) equality comparisons.
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSArray<T: Message, O: Ownership = Shared>: NSObject {
+    pub struct NSArray<T: Message, O: Ownership = Shared> {
         item: PhantomData<Id<T, O>>,
         notunwindsafe: PhantomData<&'static mut ()>,
     }
-}
+
+    unsafe impl<T: Message, O: Ownership> ClassType for NSArray<T, O> {
+        type Superclass = NSObject;
+    }
+);
 
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
 unsafe impl<T: Message + Sync + Send> Sync for NSArray<T, Shared> {}
