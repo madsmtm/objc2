@@ -3,7 +3,9 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSCopying, NSObject, NSString};
 use crate::rc::{DefaultId, Id, Shared};
-use crate::{extern_class, msg_send, msg_send_id, ClassType, Encode, Encoding, RefEncode};
+use crate::{
+    extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encode, Encoding, RefEncode,
+};
 
 extern_class!(
     /// A universally unique value.
@@ -43,41 +45,43 @@ unsafe impl Send for NSUUID {}
 impl UnwindSafe for NSUUID {}
 impl RefUnwindSafe for NSUUID {}
 
-impl NSUUID {
-    pub fn new_v4() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
+extern_methods!(
+    unsafe impl NSUUID {
+        pub fn new_v4() -> Id<Self, Shared> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
+        }
 
-    /// The 'nil UUID'.
-    pub fn nil() -> Id<Self, Shared> {
-        Self::from_bytes([0; 16])
-    }
+        /// The 'nil UUID'.
+        pub fn nil() -> Id<Self, Shared> {
+            Self::from_bytes([0; 16])
+        }
 
-    pub fn from_bytes(bytes: [u8; 16]) -> Id<Self, Shared> {
-        let bytes = UuidBytes(bytes);
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithUUIDBytes: &bytes].unwrap()
+        pub fn from_bytes(bytes: [u8; 16]) -> Id<Self, Shared> {
+            let bytes = UuidBytes(bytes);
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithUUIDBytes: &bytes].unwrap()
+            }
+        }
+
+        pub fn from_string(string: &NSString) -> Option<Id<Self, Shared>> {
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithUUIDString: string]
+            }
+        }
+
+        pub fn as_bytes(&self) -> [u8; 16] {
+            let mut bytes = UuidBytes([0; 16]);
+            let _: () = unsafe { msg_send![self, getUUIDBytes: &mut bytes] };
+            bytes.0
+        }
+
+        pub fn string(&self) -> Id<NSString, Shared> {
+            unsafe { msg_send_id![self, UUIDString].expect("expected UUID string to be non-NULL") }
         }
     }
-
-    pub fn from_string(string: &NSString) -> Option<Id<Self, Shared>> {
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithUUIDString: string]
-        }
-    }
-
-    pub fn as_bytes(&self) -> [u8; 16] {
-        let mut bytes = UuidBytes([0; 16]);
-        let _: () = unsafe { msg_send![self, getUUIDBytes: &mut bytes] };
-        bytes.0
-    }
-
-    pub fn string(&self) -> Id<NSString, Shared> {
-        unsafe { msg_send_id![self, UUIDString].expect("expected UUID string to be non-NULL") }
-    }
-}
+);
 
 impl fmt::Display for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

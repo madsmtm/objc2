@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSObject, NSString};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send, msg_send_bool, msg_send_id, ClassType};
 
 extern_class!(
     /// A thread of execution.
@@ -24,37 +24,40 @@ unsafe impl Sync for NSThread {}
 impl UnwindSafe for NSThread {}
 impl RefUnwindSafe for NSThread {}
 
-impl NSThread {
-    /// Returns the [`NSThread`] object representing the current thread.
-    pub fn current() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), currentThread].unwrap() }
-    }
+extern_methods!(
+    unsafe impl NSThread {
+        /// Returns the [`NSThread`] object representing the current thread.
+        pub fn current() -> Id<Self, Shared> {
+            unsafe { msg_send_id![Self::class(), currentThread].unwrap() }
+        }
 
-    /// Returns the [`NSThread`] object representing the main thread.
-    pub fn main() -> Id<NSThread, Shared> {
-        // The main thread static may not have been initialized
-        // This can at least fail in GNUStep!
-        unsafe { msg_send_id![Self::class(), mainThread] }.expect("Could not retrieve main thread.")
-    }
+        /// Returns the [`NSThread`] object representing the main thread.
+        pub fn main() -> Id<NSThread, Shared> {
+            // The main thread static may not have been initialized
+            // This can at least fail in GNUStep!
+            unsafe { msg_send_id![Self::class(), mainThread] }
+                .expect("Could not retrieve main thread.")
+        }
 
-    /// Returns `true` if the thread is the main thread.
-    pub fn is_main(&self) -> bool {
-        unsafe { msg_send_bool![self, isMainThread] }
-    }
+        /// Returns `true` if the thread is the main thread.
+        pub fn is_main(&self) -> bool {
+            unsafe { msg_send_bool![self, isMainThread] }
+        }
 
-    /// The name of the thread.
-    pub fn name(&self) -> Option<Id<NSString, Shared>> {
-        unsafe { msg_send_id![self, name] }
-    }
+        /// The name of the thread.
+        pub fn name(&self) -> Option<Id<NSString, Shared>> {
+            unsafe { msg_send_id![self, name] }
+        }
 
-    unsafe fn new() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), new] }.unwrap()
-    }
+        unsafe fn new() -> Id<Self, Shared> {
+            unsafe { msg_send_id![Self::class(), new] }.unwrap()
+        }
 
-    unsafe fn start(&self) {
-        unsafe { msg_send![self, start] }
+        unsafe fn start(&self) {
+            unsafe { msg_send![self, start] }
+        }
     }
-}
+);
 
 impl fmt::Debug for NSThread {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

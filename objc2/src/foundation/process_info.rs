@@ -3,7 +3,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSObject, NSString};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A collection of information about the current process.
@@ -25,17 +25,19 @@ unsafe impl Sync for NSProcessInfo {}
 impl UnwindSafe for NSProcessInfo {}
 impl RefUnwindSafe for NSProcessInfo {}
 
-impl NSProcessInfo {
-    pub fn process_info() -> Id<NSProcessInfo, Shared> {
-        unsafe { msg_send_id![Self::class(), processInfo].unwrap() }
-    }
+extern_methods!(
+    unsafe impl NSProcessInfo {
+        pub fn process_info() -> Id<NSProcessInfo, Shared> {
+            unsafe { msg_send_id![Self::class(), processInfo].unwrap() }
+        }
 
-    pub fn process_name(&self) -> Id<NSString, Shared> {
-        unsafe { msg_send_id![self, processName].unwrap() }
-    }
+        pub fn process_name(&self) -> Id<NSString, Shared> {
+            unsafe { msg_send_id![self, processName].unwrap() }
+        }
 
-    // TODO: This contains a lot more important functionality!
-}
+        // TODO: This contains a lot more important functionality!
+    }
+);
 
 impl fmt::Debug for NSProcessInfo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

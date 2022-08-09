@@ -5,7 +5,7 @@ use core::str;
 
 use super::{NSCopying, NSMutableCopying, NSObject, NSString};
 use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{extern_class, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 
 extern_class!(
     /// A dynamic plain-text Unicode string object.
@@ -20,63 +20,65 @@ extern_class!(
     }
 );
 
-/// Creating mutable strings.
-impl NSMutableString {
-    /// Construct an empty [`NSMutableString`].
-    pub fn new() -> Id<Self, Owned> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
+extern_methods!(
+    /// Creating mutable strings.
+    unsafe impl NSMutableString {
+        /// Construct an empty [`NSMutableString`].
+        pub fn new() -> Id<Self, Owned> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
+        }
 
-    /// Creates a new [`NSMutableString`] by copying the given string slice.
-    #[doc(alias = "initWithBytes:length:encoding:")]
-    #[allow(clippy::should_implement_trait)] // Not really sure of a better name
-    pub fn from_str(string: &str) -> Id<Self, Owned> {
-        unsafe {
-            let obj = super::string::from_str(Self::class(), string);
-            Id::new(obj.cast()).unwrap()
+        /// Creates a new [`NSMutableString`] by copying the given string slice.
+        #[doc(alias = "initWithBytes:length:encoding:")]
+        #[allow(clippy::should_implement_trait)] // Not really sure of a better name
+        pub fn from_str(string: &str) -> Id<Self, Owned> {
+            unsafe {
+                let obj = super::string::from_str(Self::class(), string);
+                Id::new(obj.cast()).unwrap()
+            }
+        }
+
+        /// Creates a new [`NSMutableString`] from the given [`NSString`].
+        #[doc(alias = "initWithString:")]
+        pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithString: string].unwrap()
+            }
+        }
+
+        #[doc(alias = "initWithCapacity:")]
+        pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithCapacity: capacity].unwrap()
+            }
         }
     }
 
-    /// Creates a new [`NSMutableString`] from the given [`NSString`].
-    #[doc(alias = "initWithString:")]
-    pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithString: string].unwrap()
+    /// Mutating strings.
+    unsafe impl NSMutableString {
+        /// Appends the given [`NSString`] onto the end of this.
+        #[doc(alias = "appendString:")]
+        pub fn push_nsstring(&mut self, nsstring: &NSString) {
+            // SAFETY: The string is not nil
+            unsafe { msg_send![self, appendString: nsstring] }
         }
-    }
 
-    #[doc(alias = "initWithCapacity:")]
-    pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithCapacity: capacity].unwrap()
+        /// Replaces the entire string.
+        #[doc(alias = "setString:")]
+        pub fn replace(&mut self, nsstring: &NSString) {
+            // SAFETY: The string is not nil
+            unsafe { msg_send![self, setString: nsstring] }
         }
-    }
-}
 
-/// Mutating strings.
-impl NSMutableString {
-    /// Appends the given [`NSString`] onto the end of this.
-    #[doc(alias = "appendString:")]
-    pub fn push_nsstring(&mut self, nsstring: &NSString) {
-        // SAFETY: The string is not nil
-        unsafe { msg_send![self, appendString: nsstring] }
+        // TODO:
+        // - deleteCharactersInRange:
+        // - replaceCharactersInRange:withString:
+        // - insertString:atIndex:
+        // Figure out how these work on character boundaries
     }
-
-    /// Replaces the entire string.
-    #[doc(alias = "setString:")]
-    pub fn replace(&mut self, nsstring: &NSString) {
-        // SAFETY: The string is not nil
-        unsafe { msg_send![self, setString: nsstring] }
-    }
-
-    // TODO:
-    // - deleteCharactersInRange:
-    // - replaceCharactersInRange:withString:
-    // - insertString:atIndex:
-    // Figure out how these work on character boundaries
-}
+);
 
 impl DefaultId for NSMutableString {
     type Ownership = Owned;

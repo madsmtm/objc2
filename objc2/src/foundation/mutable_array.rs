@@ -11,7 +11,7 @@ use super::{
     NSObject,
 };
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::{ClassType, Message, __inner_extern_class, msg_send, msg_send_id};
+use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
 
 __inner_extern_class!(
     /// A growable ordered collection of objects.
@@ -39,135 +39,137 @@ unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
 
-/// Generic creation methods.
-impl<T: Message, O: Ownership> NSMutableArray<T, O> {
-    pub fn new() -> Id<Self, Owned> {
-        // SAFETY: Same as `NSArray::new`, except mutable arrays are always
-        // unique.
-        unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSMutableArray") }
-    }
+extern_methods!(
+    /// Generic creation methods.
+    unsafe impl<T: Message, O: Ownership> NSMutableArray<T, O> {
+        pub fn new() -> Id<Self, Owned> {
+            // SAFETY: Same as `NSArray::new`, except mutable arrays are always
+            // unique.
+            unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSMutableArray") }
+        }
 
-    pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
-        // SAFETY: Same as `NSArray::from_vec`, except mutable arrays are
-        // always unique.
-        unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
-    }
-}
-
-/// Creation methods that produce shared arrays.
-impl<T: Message> NSMutableArray<T, Shared> {
-    pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
-        // SAFETY: Same as `NSArray::from_slice`, except mutable arrays are
-        // always unique.
-        unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
-    }
-}
-
-/// Generic accessor methods.
-impl<T: Message, O: Ownership> NSMutableArray<T, O> {
-    #[doc(alias = "addObject:")]
-    pub fn push(&mut self, obj: Id<T, O>) {
-        // SAFETY: The object is not nil
-        unsafe { msg_send![self, addObject: &*obj] }
-    }
-
-    #[doc(alias = "insertObject:atIndex:")]
-    pub fn insert(&mut self, index: usize, obj: Id<T, O>) {
-        // TODO: Replace this check with catching the thrown NSRangeException
-        let len = self.len();
-        if index < len {
-            // SAFETY: The object is not nil and the index is checked to be in
-            // bounds.
-            unsafe { msg_send![self, insertObject: &*obj, atIndex: index] }
-        } else {
-            panic!(
-                "insertion index (is {}) should be <= len (is {})",
-                index, len
-            );
+        pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
+            // SAFETY: Same as `NSArray::from_vec`, except mutable arrays are
+            // always unique.
+            unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
         }
     }
 
-    #[doc(alias = "replaceObjectAtIndex:withObject:")]
-    pub fn replace(&mut self, index: usize, obj: Id<T, O>) -> Id<T, O> {
-        let old_obj = unsafe {
-            let obj = self.get(index).unwrap();
-            Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked()
-        };
-        unsafe {
-            let _: () = msg_send![
-                self,
-                replaceObjectAtIndex: index,
-                withObject: &*obj,
-            ];
+    /// Creation methods that produce shared arrays.
+    unsafe impl<T: Message> NSMutableArray<T, Shared> {
+        pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
+            // SAFETY: Same as `NSArray::from_slice`, except mutable arrays are
+            // always unique.
+            unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
         }
-        old_obj
     }
 
-    #[doc(alias = "removeObjectAtIndex:")]
-    pub fn remove(&mut self, index: usize) -> Id<T, O> {
-        let obj = if let Some(obj) = self.get(index) {
-            unsafe { Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked() }
-        } else {
-            panic!("removal index should be < len");
-        };
-        unsafe {
-            let _: () = msg_send![self, removeObjectAtIndex: index];
-        }
-        obj
-    }
-
-    fn remove_last(&mut self) {
-        unsafe { msg_send![self, removeLastObject] }
-    }
-
-    #[doc(alias = "removeLastObject")]
-    pub fn pop(&mut self) -> Option<Id<T, O>> {
-        self.last()
-            .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
-            .map(|obj| {
-                self.remove_last();
-                obj
-            })
-    }
-
-    #[doc(alias = "removeAllObjects")]
-    pub fn clear(&mut self) {
-        unsafe { msg_send![self, removeAllObjects] }
-    }
-
-    #[doc(alias = "sortUsingFunction:context:")]
-    pub fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {
-        // TODO: "C-unwind"
-        extern "C" fn compare_with_closure<U, F: FnMut(&U, &U) -> Ordering>(
-            obj1: &U,
-            obj2: &U,
-            context: *mut c_void,
-        ) -> NSComparisonResult {
-            // Bring back a reference to the closure.
-            // Guaranteed to be unique, we gave `sortUsingFunction` unique is
-            // ownership, and that method only runs one function at a time.
-            let closure: &mut F = unsafe { context.cast::<F>().as_mut().unwrap_unchecked() };
-
-            NSComparisonResult::from((*closure)(obj1, obj2))
+    /// Generic accessor methods.
+    unsafe impl<T: Message, O: Ownership> NSMutableArray<T, O> {
+        #[doc(alias = "addObject:")]
+        pub fn push(&mut self, obj: Id<T, O>) {
+            // SAFETY: The object is not nil
+            unsafe { msg_send![self, addObject: &*obj] }
         }
 
-        // We can't name the actual lifetimes in use here, so use `_`.
-        // See also https://github.com/rust-lang/rust/issues/56105
-        let f: extern "C" fn(_, _, *mut c_void) -> NSComparisonResult =
-            compare_with_closure::<T, F>;
-
-        // Grab a type-erased pointer to the closure (a pointer to stack).
-        let mut closure = compare;
-        let context: *mut F = &mut closure;
-        let context: *mut c_void = context.cast();
-
-        unsafe {
-            let _: () = msg_send![self, sortUsingFunction: f, context: context];
+        #[doc(alias = "insertObject:atIndex:")]
+        pub fn insert(&mut self, index: usize, obj: Id<T, O>) {
+            // TODO: Replace this check with catching the thrown NSRangeException
+            let len = self.len();
+            if index < len {
+                // SAFETY: The object is not nil and the index is checked to be in
+                // bounds.
+                unsafe { msg_send![self, insertObject: &*obj, atIndex: index] }
+            } else {
+                panic!(
+                    "insertion index (is {}) should be <= len (is {})",
+                    index, len
+                );
+            }
         }
-        // Keep the closure alive until the function has run.
-        drop(closure);
+
+        #[doc(alias = "replaceObjectAtIndex:withObject:")]
+        pub fn replace(&mut self, index: usize, obj: Id<T, O>) -> Id<T, O> {
+            let old_obj = unsafe {
+                let obj = self.get(index).unwrap();
+                Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked()
+            };
+            unsafe {
+                let _: () = msg_send![
+                    self,
+                    replaceObjectAtIndex: index,
+                    withObject: &*obj,
+                ];
+            }
+            old_obj
+        }
+
+        #[doc(alias = "removeObjectAtIndex:")]
+        pub fn remove(&mut self, index: usize) -> Id<T, O> {
+            let obj = if let Some(obj) = self.get(index) {
+                unsafe { Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked() }
+            } else {
+                panic!("removal index should be < len");
+            };
+            unsafe {
+                let _: () = msg_send![self, removeObjectAtIndex: index];
+            }
+            obj
+        }
+
+        fn remove_last(&mut self) {
+            unsafe { msg_send![self, removeLastObject] }
+        }
+
+        #[doc(alias = "removeLastObject")]
+        pub fn pop(&mut self) -> Option<Id<T, O>> {
+            self.last()
+                .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
+                .map(|obj| {
+                    self.remove_last();
+                    obj
+                })
+        }
+
+        #[doc(alias = "removeAllObjects")]
+        pub fn clear(&mut self) {
+            unsafe { msg_send![self, removeAllObjects] }
+        }
+
+        #[doc(alias = "sortUsingFunction:context:")]
+        pub fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {
+            // TODO: "C-unwind"
+            extern "C" fn compare_with_closure<U, F: FnMut(&U, &U) -> Ordering>(
+                obj1: &U,
+                obj2: &U,
+                context: *mut c_void,
+            ) -> NSComparisonResult {
+                // Bring back a reference to the closure.
+                // Guaranteed to be unique, we gave `sortUsingFunction` unique is
+                // ownership, and that method only runs one function at a time.
+                let closure: &mut F = unsafe { context.cast::<F>().as_mut().unwrap_unchecked() };
+
+                NSComparisonResult::from((*closure)(obj1, obj2))
+            }
+
+            // We can't name the actual lifetimes in use here, so use `_`.
+            // See also https://github.com/rust-lang/rust/issues/56105
+            let f: extern "C" fn(_, _, *mut c_void) -> NSComparisonResult =
+                compare_with_closure::<T, F>;
+
+            // Grab a type-erased pointer to the closure (a pointer to stack).
+            let mut closure = compare;
+            let context: *mut F = &mut closure;
+            let context: *mut c_void = context.cast();
+
+            unsafe {
+                let _: () = msg_send![self, sortUsingFunction: f, context: context];
+            }
+            // Keep the closure alive until the function has run.
+            drop(closure);
+        }
     }
-}
+);
 
 // Copying only possible when ItemOwnership = Shared
 

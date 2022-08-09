@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use super::{NSCopying, NSDictionary, NSObject, NSString};
 use crate::ffi::NSInteger;
 use crate::rc::{Id, Shared};
-use crate::{extern_class, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 
 extern_class!(
     /// Information about an error condition including a domain, a
@@ -33,81 +33,83 @@ impl RefUnwindSafe for NSError {}
 pub type NSErrorUserInfoKey = NSString;
 pub type NSErrorDomain = NSString;
 
-/// Creation methods.
-impl NSError {
-    /// Construct a new [`NSError`] with the given code in the given domain.
-    pub fn new(code: NSInteger, domain: &NSString) -> Id<Self, Shared> {
-        unsafe { Self::with_user_info(code, domain, None) }
-    }
-
-    // TODO: Figure out safety of `user_info` dict!
-    unsafe fn with_user_info(
-        code: NSInteger,
-        domain: &NSString,
-        user_info: Option<&NSDictionary<NSErrorUserInfoKey, NSObject>>,
-    ) -> Id<Self, Shared> {
-        // SAFETY: `domain` and `user_info` are copied to the error object, so
-        // even if the `&NSString` came from a `&mut NSMutableString`, we're
-        // still good!
-        unsafe {
-            msg_send_id![
-                msg_send_id![Self::class(), alloc],
-                initWithDomain: domain,
-                code: code,
-                userInfo: user_info,
-            ]
-            .expect("unexpected NULL NSError")
+extern_methods!(
+    /// Creation methods.
+    unsafe impl NSError {
+        /// Construct a new [`NSError`] with the given code in the given domain.
+        pub fn new(code: NSInteger, domain: &NSString) -> Id<Self, Shared> {
+            unsafe { Self::with_user_info(code, domain, None) }
         }
-    }
-}
 
-/// Accessor methods.
-impl NSError {
-    pub fn domain(&self) -> Id<NSString, Shared> {
-        unsafe { msg_send_id![self, domain].expect("unexpected NULL NSError domain") }
-    }
-
-    pub fn code(&self) -> NSInteger {
-        unsafe { msg_send![self, code] }
-    }
-
-    pub fn user_info(&self) -> Option<Id<NSDictionary<NSErrorUserInfoKey, NSObject>, Shared>> {
-        unsafe { msg_send_id![self, userInfo] }
-    }
-
-    pub fn localized_description(&self) -> Id<NSString, Shared> {
-        unsafe {
-            msg_send_id![self, localizedDescription].expect(
-                "unexpected NULL localized description; a default should have been generated!",
-            )
+        // TODO: Figure out safety of `user_info` dict!
+        unsafe fn with_user_info(
+            code: NSInteger,
+            domain: &NSString,
+            user_info: Option<&NSDictionary<NSErrorUserInfoKey, NSObject>>,
+        ) -> Id<Self, Shared> {
+            // SAFETY: `domain` and `user_info` are copied to the error object, so
+            // even if the `&NSString` came from a `&mut NSMutableString`, we're
+            // still good!
+            unsafe {
+                msg_send_id![
+                    msg_send_id![Self::class(), alloc],
+                    initWithDomain: domain,
+                    code: code,
+                    userInfo: user_info,
+                ]
+                .expect("unexpected NULL NSError")
+            }
         }
     }
 
-    // TODO: localizedRecoveryOptions
-    // TODO: localizedRecoverySuggestion
-    // TODO: localizedFailureReason
-    // TODO: helpAnchor
-    // TODO: +setUserInfoValueProviderForDomain:provider:
-    // TODO: +userInfoValueProviderForDomain:
-
-    // TODO: recoveryAttempter
-    // TODO: attemptRecoveryFromError:...
-
-    // TODO: Figure out if this is a good design, or if we should do something
-    // differently (like a Rusty name for the function, or putting a bunch of
-    // statics in a module instead)?
-    #[allow(non_snake_case)]
-    pub fn NSLocalizedDescriptionKey() -> &'static NSErrorUserInfoKey {
-        extern "C" {
-            #[link_name = "NSLocalizedDescriptionKey"]
-            static VALUE: &'static NSErrorUserInfoKey;
+    /// Accessor methods.
+    unsafe impl NSError {
+        pub fn domain(&self) -> Id<NSString, Shared> {
+            unsafe { msg_send_id![self, domain].expect("unexpected NULL NSError domain") }
         }
-        unsafe { VALUE }
-    }
 
-    // TODO: Other NSErrorUserInfoKey values
-    // TODO: NSErrorDomain values
-}
+        pub fn code(&self) -> NSInteger {
+            unsafe { msg_send![self, code] }
+        }
+
+        pub fn user_info(&self) -> Option<Id<NSDictionary<NSErrorUserInfoKey, NSObject>, Shared>> {
+            unsafe { msg_send_id![self, userInfo] }
+        }
+
+        pub fn localized_description(&self) -> Id<NSString, Shared> {
+            unsafe {
+                msg_send_id![self, localizedDescription].expect(
+                    "unexpected NULL localized description; a default should have been generated!",
+                )
+            }
+        }
+
+        // TODO: localizedRecoveryOptions
+        // TODO: localizedRecoverySuggestion
+        // TODO: localizedFailureReason
+        // TODO: helpAnchor
+        // TODO: +setUserInfoValueProviderForDomain:provider:
+        // TODO: +userInfoValueProviderForDomain:
+
+        // TODO: recoveryAttempter
+        // TODO: attemptRecoveryFromError:...
+
+        // TODO: Figure out if this is a good design, or if we should do something
+        // differently (like a Rusty name for the function, or putting a bunch of
+        // statics in a module instead)?
+        #[allow(non_snake_case)]
+        pub fn NSLocalizedDescriptionKey() -> &'static NSErrorUserInfoKey {
+            extern "C" {
+                #[link_name = "NSLocalizedDescriptionKey"]
+                static VALUE: &'static NSErrorUserInfoKey;
+            }
+            unsafe { VALUE }
+        }
+
+        // TODO: Other NSErrorUserInfoKey values
+        // TODO: NSErrorDomain values
+    }
+);
 
 impl fmt::Debug for NSError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

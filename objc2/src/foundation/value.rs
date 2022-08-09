@@ -10,7 +10,9 @@ use std::os::raw::c_char;
 
 use super::{NSCopying, NSObject, NSPoint, NSRange, NSRect, NSSize};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType, Encode};
+use crate::{
+    extern_class, extern_methods, msg_send, msg_send_bool, msg_send_id, ClassType, Encode,
+};
 
 extern_class!(
     /// A container wrapping any encodable type as an Obective-C object.
@@ -40,154 +42,156 @@ extern_class!(
 // We can't implement any auto traits for NSValue, since it can contain an
 // arbitary object!
 
-/// Creation methods.
-impl NSValue {
-    // Default / empty new is not provided because `-init` returns `nil` on
-    // Apple and GNUStep throws an exception on all other messages to this
-    // invalid instance.
+extern_methods!(
+    /// Creation methods.
+    unsafe impl NSValue {
+        // Default / empty new is not provided because `-init` returns `nil` on
+        // Apple and GNUStep throws an exception on all other messages to this
+        // invalid instance.
 
-    /// Create a new `NSValue` containing the given type.
-    ///
-    /// Be careful when using this since you may accidentally pass a reference
-    /// when you wanted to pass a concrete type instead.
-    ///
-    ///
-    /// # Examples
-    ///
-    /// Create an `NSValue` containing an [`NSPoint`][super::NSPoint].
-    ///
-    /// ```
-    /// use objc2::foundation::{NSPoint, NSValue};
-    /// # #[cfg(feature = "gnustep-1-7")]
-    /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
-    /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
-    /// ```
-    pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self, Shared> {
-        let bytes: *const T = &value;
-        let bytes: *const c_void = bytes.cast();
-        let encoding = CString::new(T::ENCODING.to_string()).unwrap();
-        unsafe {
-            msg_send_id![
-                msg_send_id![Self::class(), alloc],
-                initWithBytes: bytes,
-                objCType: encoding.as_ptr(),
-            ]
-            .expect("unexpected NULL NSValue")
+        /// Create a new `NSValue` containing the given type.
+        ///
+        /// Be careful when using this since you may accidentally pass a reference
+        /// when you wanted to pass a concrete type instead.
+        ///
+        ///
+        /// # Examples
+        ///
+        /// Create an `NSValue` containing an [`NSPoint`][super::NSPoint].
+        ///
+        /// ```
+        /// use objc2::foundation::{NSPoint, NSValue};
+        /// # #[cfg(feature = "gnustep-1-7")]
+        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+        /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
+        /// ```
+        pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self, Shared> {
+            let bytes: *const T = &value;
+            let bytes: *const c_void = bytes.cast();
+            let encoding = CString::new(T::ENCODING.to_string()).unwrap();
+            unsafe {
+                msg_send_id![
+                    msg_send_id![Self::class(), alloc],
+                    initWithBytes: bytes,
+                    objCType: encoding.as_ptr(),
+                ]
+                .expect("unexpected NULL NSValue")
+            }
         }
     }
-}
 
-/// Getter methods.
-impl NSValue {
-    /// Retrieve the data contained in the `NSValue`.
-    ///
-    /// Note that this is broken on GNUStep for some types, see
-    /// [gnustep/libs-base#216].
-    ///
-    /// [gnustep/libs-base#216]: https://github.com/gnustep/libs-base/pull/216
-    ///
-    ///
-    /// # Safety
-    ///
-    /// The type of `T` must be what the NSValue actually stores, and any
-    /// safety invariants that the value has must be upheld.
-    ///
-    /// Note that it may be, but is not always, enough to simply check whether
-    /// [`contains_encoding`] returns `true`. For example, `NonNull<T>` have
-    /// the same encoding as `*const T`, but `NonNull<T>` is clearly not
-    /// safe to return from this function even if you've checked the encoding
-    /// beforehand.
-    ///
-    /// [`contains_encoding`]: Self::contains_encoding
-    ///
-    ///
-    /// # Examples
-    ///
-    /// Store a pointer in `NSValue`, and retrieve it again afterwards.
-    ///
-    /// ```
-    /// use std::ffi::c_void;
-    /// use std::ptr;
-    /// use objc2::foundation::NSValue;
-    ///
-    /// # #[cfg(feature = "gnustep-1-7")]
-    /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
-    /// let val = NSValue::new::<*const c_void>(ptr::null());
-    /// // SAFETY: The value was just created with a pointer
-    /// let res = unsafe { val.get::<*const c_void>() };
-    /// assert!(res.is_null());
-    /// ```
-    pub unsafe fn get<T: 'static + Copy + Encode>(&self) -> T {
-        debug_assert!(
+    /// Getter methods.
+    unsafe impl NSValue {
+        /// Retrieve the data contained in the `NSValue`.
+        ///
+        /// Note that this is broken on GNUStep for some types, see
+        /// [gnustep/libs-base#216].
+        ///
+        /// [gnustep/libs-base#216]: https://github.com/gnustep/libs-base/pull/216
+        ///
+        ///
+        /// # Safety
+        ///
+        /// The type of `T` must be what the NSValue actually stores, and any
+        /// safety invariants that the value has must be upheld.
+        ///
+        /// Note that it may be, but is not always, enough to simply check whether
+        /// [`contains_encoding`] returns `true`. For example, `NonNull<T>` have
+        /// the same encoding as `*const T`, but `NonNull<T>` is clearly not
+        /// safe to return from this function even if you've checked the encoding
+        /// beforehand.
+        ///
+        /// [`contains_encoding`]: Self::contains_encoding
+        ///
+        ///
+        /// # Examples
+        ///
+        /// Store a pointer in `NSValue`, and retrieve it again afterwards.
+        ///
+        /// ```
+        /// use std::ffi::c_void;
+        /// use std::ptr;
+        /// use objc2::foundation::NSValue;
+        ///
+        /// # #[cfg(feature = "gnustep-1-7")]
+        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+        /// let val = NSValue::new::<*const c_void>(ptr::null());
+        /// // SAFETY: The value was just created with a pointer
+        /// let res = unsafe { val.get::<*const c_void>() };
+        /// assert!(res.is_null());
+        /// ```
+        pub unsafe fn get<T: 'static + Copy + Encode>(&self) -> T {
+            debug_assert!(
             self.contains_encoding::<T>(),
             "wrong encoding. NSValue tried to return something with encoding {}, but the encoding of the given type was {}",
             self.encoding().unwrap_or("(NULL)"),
             T::ENCODING,
         );
-        let mut value = MaybeUninit::<T>::uninit();
-        let ptr: *mut c_void = value.as_mut_ptr().cast();
-        let _: () = unsafe { msg_send![self, getValue: ptr] };
-        // SAFETY: We know that `getValue:` initialized the value, and user
-        // ensures that it is safe to access.
-        unsafe { value.assume_init() }
-    }
+            let mut value = MaybeUninit::<T>::uninit();
+            let ptr: *mut c_void = value.as_mut_ptr().cast();
+            let _: () = unsafe { msg_send![self, getValue: ptr] };
+            // SAFETY: We know that `getValue:` initialized the value, and user
+            // ensures that it is safe to access.
+            unsafe { value.assume_init() }
+        }
 
-    pub fn get_range(&self) -> Option<NSRange> {
-        if self.contains_encoding::<NSRange>() {
-            // SAFETY: We just checked that this contains an NSRange
-            Some(unsafe { msg_send![self, rangeValue] })
-        } else {
-            None
+        pub fn get_range(&self) -> Option<NSRange> {
+            if self.contains_encoding::<NSRange>() {
+                // SAFETY: We just checked that this contains an NSRange
+                Some(unsafe { msg_send![self, rangeValue] })
+            } else {
+                None
+            }
+        }
+
+        pub fn get_point(&self) -> Option<NSPoint> {
+            if self.contains_encoding::<NSPoint>() {
+                // SAFETY: We just checked that this contains an NSPoint
+                //
+                // Note: The documentation says that `pointValue`, `sizeValue` and
+                // `rectValue` is only available on macOS, but turns out that they
+                // are actually available everywhere!
+                let res = unsafe { msg_send![self, pointValue] };
+                Some(res)
+            } else {
+                None
+            }
+        }
+
+        pub fn get_size(&self) -> Option<NSSize> {
+            if self.contains_encoding::<NSSize>() {
+                // SAFETY: We just checked that this contains an NSSize
+                let res = unsafe { msg_send![self, sizeValue] };
+                Some(res)
+            } else {
+                None
+            }
+        }
+
+        pub fn get_rect(&self) -> Option<NSRect> {
+            if self.contains_encoding::<NSRect>() {
+                // SAFETY: We just checked that this contains an NSRect
+                let res = unsafe { msg_send![self, rectValue] };
+                Some(res)
+            } else {
+                None
+            }
+        }
+
+        pub fn encoding(&self) -> Option<&str> {
+            let result: Option<NonNull<c_char>> = unsafe { msg_send![self, objCType] };
+            result.map(|s| unsafe { CStr::from_ptr(s.as_ptr()) }.to_str().unwrap())
+        }
+
+        pub fn contains_encoding<T: 'static + Copy + Encode>(&self) -> bool {
+            if let Some(encoding) = self.encoding() {
+                T::ENCODING.equivalent_to_str(encoding)
+            } else {
+                panic!("missing NSValue encoding");
+            }
         }
     }
-
-    pub fn get_point(&self) -> Option<NSPoint> {
-        if self.contains_encoding::<NSPoint>() {
-            // SAFETY: We just checked that this contains an NSPoint
-            //
-            // Note: The documentation says that `pointValue`, `sizeValue` and
-            // `rectValue` is only available on macOS, but turns out that they
-            // are actually available everywhere!
-            let res = unsafe { msg_send![self, pointValue] };
-            Some(res)
-        } else {
-            None
-        }
-    }
-
-    pub fn get_size(&self) -> Option<NSSize> {
-        if self.contains_encoding::<NSSize>() {
-            // SAFETY: We just checked that this contains an NSSize
-            let res = unsafe { msg_send![self, sizeValue] };
-            Some(res)
-        } else {
-            None
-        }
-    }
-
-    pub fn get_rect(&self) -> Option<NSRect> {
-        if self.contains_encoding::<NSRect>() {
-            // SAFETY: We just checked that this contains an NSRect
-            let res = unsafe { msg_send![self, rectValue] };
-            Some(res)
-        } else {
-            None
-        }
-    }
-
-    pub fn encoding(&self) -> Option<&str> {
-        let result: Option<NonNull<c_char>> = unsafe { msg_send![self, objCType] };
-        result.map(|s| unsafe { CStr::from_ptr(s.as_ptr()) }.to_str().unwrap())
-    }
-
-    pub fn contains_encoding<T: 'static + Copy + Encode>(&self) -> bool {
-        if let Some(encoding) = self.encoding() {
-            T::ENCODING.equivalent_to_str(encoding)
-        } else {
-            panic!("missing NSValue encoding");
-        }
-    }
-}
+);
 
 unsafe impl NSCopying for NSValue {
     type Ownership = Shared;

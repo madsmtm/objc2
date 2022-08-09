@@ -4,7 +4,9 @@ use core::hash;
 use super::NSString;
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::runtime::{Class, Object};
-use crate::{ClassType, __inner_extern_class, class, msg_send, msg_send_bool, msg_send_id};
+use crate::{
+    ClassType, __inner_extern_class, class, extern_methods, msg_send, msg_send_bool, msg_send_id,
+};
 
 __inner_extern_class! {
     @__inner
@@ -24,34 +26,36 @@ unsafe impl ClassType for NSObject {
     }
 }
 
-impl NSObject {
-    pub fn new() -> Id<Self, Owned> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
+extern_methods!(
+    unsafe impl NSObject {
+        pub fn new() -> Id<Self, Owned> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
+        }
 
-    fn is_kind_of_inner(&self, cls: &Class) -> bool {
-        unsafe { msg_send_bool![self, isKindOfClass: cls] }
-    }
+        fn is_kind_of_inner(&self, cls: &Class) -> bool {
+            unsafe { msg_send_bool![self, isKindOfClass: cls] }
+        }
 
-    /// Check if the object is an instance of the class, or one of it's
-    /// subclasses.
-    ///
-    /// See [Apple's documentation][apple-doc] for more details on what you
-    /// may (and what you may not) do with this information.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass
-    #[doc(alias = "isKindOfClass:")]
-    pub fn is_kind_of<T: ClassType>(&self) -> bool {
-        self.is_kind_of_inner(T::class())
-    }
+        /// Check if the object is an instance of the class, or one of it's
+        /// subclasses.
+        ///
+        /// See [Apple's documentation][apple-doc] for more details on what you
+        /// may (and what you may not) do with this information.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass
+        #[doc(alias = "isKindOfClass:")]
+        pub fn is_kind_of<T: ClassType>(&self) -> bool {
+            self.is_kind_of_inner(T::class())
+        }
 
-    // Note: We don't provide a method to convert `NSObject` to `T` based on
-    // `is_kind_of`, since that is not possible to do in general!
-    //
-    // For example, something may have a return type of `NSString`, while
-    // behind the scenes they really return `NSMutableString` and expect it to
-    // not be modified.
-}
+        // Note: We don't provide a method to convert `NSObject` to `T` based on
+        // `is_kind_of`, since that is not possible to do in general!
+        //
+        // For example, something may have a return type of `NSString`, while
+        // behind the scenes they really return `NSMutableString` and expect it to
+        // not be modified.
+    }
+);
 
 /// Objective-C equality has approximately the same semantics as Rust
 /// equality (although less aptly specified).

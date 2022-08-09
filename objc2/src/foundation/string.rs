@@ -13,7 +13,7 @@ use super::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NS
 use crate::ffi;
 use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send, msg_send_bool, msg_send_id, ClassType};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;
@@ -54,170 +54,173 @@ unsafe impl Send for NSString {}
 impl UnwindSafe for NSString {}
 impl RefUnwindSafe for NSString {}
 
-impl NSString {
-    /// Construct an empty NSString.
-    pub fn new() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
-
-    /// The number of UTF-8 code units in `self`.
-    #[doc(alias = "lengthOfBytesUsingEncoding")]
-    #[doc(alias = "lengthOfBytesUsingEncoding:")]
-    pub fn len(&self) -> usize {
-        unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
-    }
-
-    /// The number of UTF-16 code units in `self`.
-    ///
-    /// See also [`NSString::len`].
-    #[doc(alias = "length")]
-    // TODO: Finish this
-    fn len_utf16(&self) -> usize {
-        unsafe { msg_send![self, length] }
-    }
-
-    pub fn is_empty(&self) -> bool {
-        // TODO: lengthOfBytesUsingEncoding: might sometimes return 0 for
-        // other reasons, so this is not really correct!
-        self.len() == 0
-    }
-
-    /// Get the [`str`](`prim@str`) representation of this string if it can be
-    /// done efficiently.
-    ///
-    /// Returns [`None`] if the internal storage does not allow this to be
-    /// done efficiently. Use [`NSString::as_str`] or `NSString::to_string`
-    /// if performance is not an issue.
-    #[doc(alias = "CFStringGetCStringPtr")]
-    #[allow(unused)]
-    // TODO: Finish this
-    fn as_str_wip(&self) -> Option<&str> {
-        type CFStringEncoding = u32;
-        #[allow(non_upper_case_globals)]
-        // https://developer.apple.com/documentation/corefoundation/cfstringbuiltinencodings/kcfstringencodingutf8?language=objc
-        const kCFStringEncodingUTF8: CFStringEncoding = 0x08000100;
-        extern "C" {
-            // https://developer.apple.com/documentation/corefoundation/1542133-cfstringgetcstringptr?language=objc
-            fn CFStringGetCStringPtr(s: &NSString, encoding: CFStringEncoding) -> *const c_char;
+extern_methods!(
+    unsafe impl NSString {
+        /// Construct an empty NSString.
+        pub fn new() -> Id<Self, Shared> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
         }
-        let bytes = unsafe { CFStringGetCStringPtr(self, kCFStringEncodingUTF8) };
-        NonNull::new(bytes as *mut u8).map(|bytes| {
+
+        /// The number of UTF-8 code units in `self`.
+        #[doc(alias = "lengthOfBytesUsingEncoding")]
+        #[doc(alias = "lengthOfBytesUsingEncoding:")]
+        pub fn len(&self) -> usize {
+            unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
+        }
+
+        /// The number of UTF-16 code units in `self`.
+        ///
+        /// See also [`NSString::len`].
+        #[doc(alias = "length")]
+        // TODO: Finish this
+        fn len_utf16(&self) -> usize {
+            unsafe { msg_send![self, length] }
+        }
+
+        pub fn is_empty(&self) -> bool {
+            // TODO: lengthOfBytesUsingEncoding: might sometimes return 0 for
+            // other reasons, so this is not really correct!
+            self.len() == 0
+        }
+
+        /// Get the [`str`](`prim@str`) representation of this string if it can be
+        /// done efficiently.
+        ///
+        /// Returns [`None`] if the internal storage does not allow this to be
+        /// done efficiently. Use [`NSString::as_str`] or `NSString::to_string`
+        /// if performance is not an issue.
+        #[doc(alias = "CFStringGetCStringPtr")]
+        #[allow(unused)]
+        // TODO: Finish this
+        fn as_str_wip(&self) -> Option<&str> {
+            type CFStringEncoding = u32;
+            #[allow(non_upper_case_globals)]
+            // https://developer.apple.com/documentation/corefoundation/cfstringbuiltinencodings/kcfstringencodingutf8?language=objc
+            const kCFStringEncodingUTF8: CFStringEncoding = 0x08000100;
+            extern "C" {
+                // https://developer.apple.com/documentation/corefoundation/1542133-cfstringgetcstringptr?language=objc
+                fn CFStringGetCStringPtr(s: &NSString, encoding: CFStringEncoding)
+                    -> *const c_char;
+            }
+            let bytes = unsafe { CFStringGetCStringPtr(self, kCFStringEncodingUTF8) };
+            NonNull::new(bytes as *mut u8).map(|bytes| {
+                let len = self.len();
+                let bytes: &[u8] = unsafe { slice::from_raw_parts(bytes.as_ptr(), len) };
+                str::from_utf8(bytes).unwrap()
+            })
+        }
+
+        /// Get an [UTF-16] string slice if it can be done efficiently.
+        ///
+        /// Returns [`None`] if the internal storage of `self` does not allow this
+        /// to be returned efficiently.
+        ///
+        /// See [`as_str`](Self::as_str) for the UTF-8 equivalent.
+        ///
+        /// [UTF-16]: https://en.wikipedia.org/wiki/UTF-16
+        #[allow(unused)]
+        // TODO: Finish this
+        fn as_utf16(&self) -> Option<&[u16]> {
+            extern "C" {
+                // https://developer.apple.com/documentation/corefoundation/1542939-cfstringgetcharactersptr?language=objc
+                fn CFStringGetCharactersPtr(s: &NSString) -> *const u16;
+            }
+            let ptr = unsafe { CFStringGetCharactersPtr(self) };
+            NonNull::new(ptr as *mut u16)
+                .map(|ptr| unsafe { slice::from_raw_parts(ptr.as_ptr(), self.len_utf16()) })
+        }
+
+        /// Get the [`str`](`prim@str`) representation of this.
+        ///
+        /// TODO: Further explain this.
+        #[doc(alias = "UTF8String")]
+        pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
+            // NOTE: Please keep up to date with `objc2::exception`!
+
+            // This is necessary until `auto` types stabilizes.
+            pool.__verify_is_inner();
+
+            // The documentation on `UTF8String` is a bit sparse, but with
+            // educated guesses and testing I've determined that NSString stores
+            // a pointer to the string data, sometimes with an UTF-8 encoding,
+            // (usual for ascii data), sometimes in other encodings (UTF-16?).
+            //
+            // `UTF8String` then checks the internal encoding:
+            // - If the data is UTF-8 encoded, it returns the internal pointer.
+            // - If the data is in another encoding, it creates a new allocation,
+            //   writes the UTF-8 representation of the string into it,
+            //   autoreleases the allocation and returns a pointer to it.
+            //
+            // So the lifetime of the returned pointer is either the same as the
+            // NSString OR the lifetime of the innermost @autoreleasepool.
+            //
+            // https://developer.apple.com/documentation/foundation/nsstring/1411189-utf8string?language=objc
+            let bytes: *const c_char = unsafe { msg_send![self, UTF8String] };
+            let bytes: *const u8 = bytes.cast();
             let len = self.len();
-            let bytes: &[u8] = unsafe { slice::from_raw_parts(bytes.as_ptr(), len) };
+
+            // SAFETY:
+            // The held AutoreleasePool is the innermost, and the reference is
+            // constrained both by the pool and the NSString.
+            //
+            // `len` is the length of the string in the UTF-8 encoding.
+            //
+            // `bytes` is a null-terminated C string (with length = len + 1), so
+            // it is never a NULL pointer.
+            let bytes: &'r [u8] = unsafe { slice::from_raw_parts(bytes, len) };
+
+            // TODO: Always UTF-8, so should we use `from_utf8_unchecked`?
             str::from_utf8(bytes).unwrap()
-        })
-    }
 
-    /// Get an [UTF-16] string slice if it can be done efficiently.
-    ///
-    /// Returns [`None`] if the internal storage of `self` does not allow this
-    /// to be returned efficiently.
-    ///
-    /// See [`as_str`](Self::as_str) for the UTF-8 equivalent.
-    ///
-    /// [UTF-16]: https://en.wikipedia.org/wiki/UTF-16
-    #[allow(unused)]
-    // TODO: Finish this
-    fn as_utf16(&self) -> Option<&[u16]> {
-        extern "C" {
-            // https://developer.apple.com/documentation/corefoundation/1542939-cfstringgetcharactersptr?language=objc
-            fn CFStringGetCharactersPtr(s: &NSString) -> *const u16;
+            // NOTE: Please keep up to date with `objc2::exception`!
         }
-        let ptr = unsafe { CFStringGetCharactersPtr(self) };
-        NonNull::new(ptr as *mut u16)
-            .map(|ptr| unsafe { slice::from_raw_parts(ptr.as_ptr(), self.len_utf16()) })
-    }
 
-    /// Get the [`str`](`prim@str`) representation of this.
-    ///
-    /// TODO: Further explain this.
-    #[doc(alias = "UTF8String")]
-    pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
-        // NOTE: Please keep up to date with `objc2::exception`!
+        // TODO: Allow usecases where the NUL byte from `UTF8String` is kept?
 
-        // This is necessary until `auto` types stabilizes.
-        pool.__verify_is_inner();
-
-        // The documentation on `UTF8String` is a bit sparse, but with
-        // educated guesses and testing I've determined that NSString stores
-        // a pointer to the string data, sometimes with an UTF-8 encoding,
-        // (usual for ascii data), sometimes in other encodings (UTF-16?).
-        //
-        // `UTF8String` then checks the internal encoding:
-        // - If the data is UTF-8 encoded, it returns the internal pointer.
-        // - If the data is in another encoding, it creates a new allocation,
-        //   writes the UTF-8 representation of the string into it,
-        //   autoreleases the allocation and returns a pointer to it.
-        //
-        // So the lifetime of the returned pointer is either the same as the
-        // NSString OR the lifetime of the innermost @autoreleasepool.
-        //
-        // https://developer.apple.com/documentation/foundation/nsstring/1411189-utf8string?language=objc
-        let bytes: *const c_char = unsafe { msg_send![self, UTF8String] };
-        let bytes: *const u8 = bytes.cast();
-        let len = self.len();
-
-        // SAFETY:
-        // The held AutoreleasePool is the innermost, and the reference is
-        // constrained both by the pool and the NSString.
-        //
-        // `len` is the length of the string in the UTF-8 encoding.
-        //
-        // `bytes` is a null-terminated C string (with length = len + 1), so
-        // it is never a NULL pointer.
-        let bytes: &'r [u8] = unsafe { slice::from_raw_parts(bytes, len) };
-
-        // TODO: Always UTF-8, so should we use `from_utf8_unchecked`?
-        str::from_utf8(bytes).unwrap()
-
-        // NOTE: Please keep up to date with `objc2::exception`!
-    }
-
-    // TODO: Allow usecases where the NUL byte from `UTF8String` is kept?
-
-    /// Creates an immutable `NSString` by copying the given string slice.
-    ///
-    /// Prefer using the [`ns_string!`] macro when possible.
-    ///
-    /// [`ns_string!`]: crate::ns_string
-    #[doc(alias = "initWithBytes")]
-    #[doc(alias = "initWithBytes:length:encoding:")]
-    #[allow(clippy::should_implement_trait)] // Not really sure of a better name
-    pub fn from_str(string: &str) -> Id<Self, Shared> {
-        unsafe {
-            let obj = from_str(Self::class(), string);
-            Id::new(obj.cast()).unwrap()
+        /// Creates an immutable `NSString` by copying the given string slice.
+        ///
+        /// Prefer using the [`ns_string!`] macro when possible.
+        ///
+        /// [`ns_string!`]: crate::ns_string
+        #[doc(alias = "initWithBytes")]
+        #[doc(alias = "initWithBytes:length:encoding:")]
+        #[allow(clippy::should_implement_trait)] // Not really sure of a better name
+        pub fn from_str(string: &str) -> Id<Self, Shared> {
+            unsafe {
+                let obj = from_str(Self::class(), string);
+                Id::new(obj.cast()).unwrap()
+            }
         }
+
+        // TODO: initWithBytesNoCopy:, maybe add lifetime parameter to NSString?
+        // See https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L350-L381
+        // Might be quite difficult, as Objective-C code might assume the NSString
+        // is always alive?
+        // See https://github.com/drewcrawford/foundationr/blob/b27683417a35510e8e5d78a821f081905b803de6/src/nsstring.rs
+
+        /// Whether the given string matches the beginning characters of this
+        /// string.
+        ///
+        /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1410309-hasprefix?language=objc).
+        #[doc(alias = "hasPrefix")]
+        #[doc(alias = "hasPrefix:")]
+        pub fn has_prefix(&self, prefix: &NSString) -> bool {
+            unsafe { msg_send_bool![self, hasPrefix: prefix] }
+        }
+
+        /// Whether the given string matches the ending characters of this string.
+        ///
+        /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1416529-hassuffix?language=objc).
+        #[doc(alias = "hasSuffix")]
+        #[doc(alias = "hasSuffix:")]
+        pub fn has_suffix(&self, suffix: &NSString) -> bool {
+            unsafe { msg_send_bool![self, hasSuffix: suffix] }
+        }
+
+        // pub fn from_nsrange(range: NSRange) -> Id<Self, Shared>
+        // https://developer.apple.com/documentation/foundation/1415155-nsstringfromrange?language=objc
     }
-
-    // TODO: initWithBytesNoCopy:, maybe add lifetime parameter to NSString?
-    // See https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L350-L381
-    // Might be quite difficult, as Objective-C code might assume the NSString
-    // is always alive?
-    // See https://github.com/drewcrawford/foundationr/blob/b27683417a35510e8e5d78a821f081905b803de6/src/nsstring.rs
-
-    /// Whether the given string matches the beginning characters of this
-    /// string.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1410309-hasprefix?language=objc).
-    #[doc(alias = "hasPrefix")]
-    #[doc(alias = "hasPrefix:")]
-    pub fn has_prefix(&self, prefix: &NSString) -> bool {
-        unsafe { msg_send_bool![self, hasPrefix: prefix] }
-    }
-
-    /// Whether the given string matches the ending characters of this string.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1416529-hassuffix?language=objc).
-    #[doc(alias = "hasSuffix")]
-    #[doc(alias = "hasSuffix:")]
-    pub fn has_suffix(&self, suffix: &NSString) -> bool {
-        unsafe { msg_send_bool![self, hasSuffix: suffix] }
-    }
-
-    // pub fn from_nsrange(range: NSRange) -> Id<Self, Shared>
-    // https://developer.apple.com/documentation/foundation/1415155-nsstringfromrange?language=objc
-}
+);
 
 pub(crate) fn from_str(cls: &Class, string: &str) -> *mut Object {
     let bytes: *const c_void = string.as_ptr().cast();
