@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `Encode::ENCODING_CSTR` for statically generating an encoding string.
+
 
 ## 3.0.0 - 2023-07-31
 

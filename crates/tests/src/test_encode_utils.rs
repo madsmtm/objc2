@@ -20,6 +20,12 @@ unsafe fn assert_encoding(s: *const c_char, e: Encoding) {
     assert_eq!(e.to_string(), s.trim_start_matches('r'));
 }
 
+unsafe fn assert_ty<T: Encode>(s: *const c_char) {
+    assert_encoding(s, T::ENCODING);
+    // To ensure ENCODING_CSTR is implemented correctly
+    assert_eq!(T::ENCODING_CSTR.to_str().unwrap(), T::ENCODING.to_string());
+}
+
 #[allow(unused)]
 unsafe fn assert_str<T: Display>(s: *const c_char, expected: T) {
     let s = CStr::from_ptr(s).to_str().unwrap();
@@ -36,6 +42,16 @@ macro_rules! assert_inner {
                 static $stat: *const c_char;
             }
             unsafe { assert_encoding($stat, $expected) };
+        }
+    };
+    (ty $(#[$m:meta])* $stat:ident => $expected:ty) => {
+        $(#[$m])*
+        #[test]
+        fn $stat() {
+            extern "C" {
+                static $stat: *const c_char;
+            }
+            unsafe { assert_ty::<$expected>($stat) };
         }
     };
     (str $(#[$m:meta])* $stat:ident => $expected:expr) => {
@@ -77,10 +93,10 @@ macro_rules! assert_types {
         $stat:ident $($should_atomic:ident)? => $type:ident
     ) => {
         paste! {
-            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat>] => <$type>::ENCODING);
-            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => <*const $type>::ENCODING);
-            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER>] => <*const *const $type>::ENCODING);
-            assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER_POINTER>] => <*const *const *const $type>::ENCODING);
+            assert_inner!(ty $(#[$m])* [<ENCODING_ $stat>] => $type);
+            assert_inner!(ty $(#[$m])* [<ENCODING_ $stat _POINTER>] => *const $type);
+            assert_inner!(ty $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER>] => *const *const $type);
+            assert_inner!(ty $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER_POINTER>] => *const *const *const $type);
             $(assert_types!(#$should_atomic);)?
             assert_inner!(enc $(#[$m])* $(#[cfg($should_atomic)])? [<ENCODING_ $stat _ATOMIC>] => Encoding::Atomic(&<$type>::ENCODING));
             assert_inner!(enc $(#[$m])* $(#[cfg($should_atomic)])? [<ENCODING_ $stat _ATOMIC_POINTER>] => Encoding::Pointer(&Encoding::Atomic(&<$type>::ENCODING)));

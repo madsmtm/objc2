@@ -2,6 +2,7 @@ use core::fmt;
 
 use crate::helper::{compare_encodings, Helper, NestingLevel};
 use crate::parse::Parser;
+use crate::static_str::{static_encoding_str_array, static_encoding_str_len};
 use crate::EncodingBox;
 
 /// An Objective-C type-encoding.
@@ -180,6 +181,16 @@ impl Encoding {
             Self::ULongLong
         }
     };
+
+    /// TODO
+    pub const fn static_encoding_str_len(&self) -> usize {
+        static_encoding_str_len(self, NestingLevel::new())
+    }
+
+    /// TODO
+    pub const fn static_encoding_str_array<const LEN: usize>(&self) -> [u8; LEN] {
+        static_encoding_str_array(self, NestingLevel::new())
+    }
 
     /// Check if one encoding is equivalent to another.
     ///
