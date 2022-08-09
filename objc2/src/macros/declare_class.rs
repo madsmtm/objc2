@@ -210,13 +210,13 @@ macro_rules! __inner_declare_class {
 ///   either be able to be created using [`MaybeUninit::zeroed`], or be
 ///   properly initialized in an `init` method.
 ///
-/// `unsafe impl { ... }` asserts that the types match those that are expected
-/// when the method is invoked from Objective-C. Note that there are no
-/// safe-guards here; you can easily write `i8`, but if Objective-C thinks
+/// `unsafe impl T { ... }` asserts that the types match those that are
+/// expected when the method is invoked from Objective-C. Note that there are
+/// no safe-guards here; you can easily write `i8`, but if Objective-C thinks
 /// it's an `u32`, it will cause UB when called!
 ///
-/// `unsafe impl protocol ... { ... }` requires that all required methods of
-/// the specified protocol is implemented, and that any extra requirements
+/// `unsafe impl Protocol<P> for T { ... }` requires that all required methods
+/// of the specified protocol is implemented, and that any extra requirements
 /// (implicit or explicit) that the protocol has are upheld. The methods in
 /// this definition has the same safety requirements as above.
 ///
@@ -238,7 +238,7 @@ macro_rules! __inner_declare_class {
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
-/// declare_class! {
+/// declare_class!(
 ///     struct MyCustomObject {
 ///         foo: u8,
 ///         pub bar: c_int,
@@ -248,7 +248,7 @@ macro_rules! __inner_declare_class {
 ///         type Superclass = NSObject;
 ///     }
 ///
-///     unsafe impl {
+///     unsafe impl MyCustomObject {
 ///         #[sel(initWithFoo:)]
 ///         fn init_with(&mut self, foo: u8) -> Option<&mut Self> {
 ///             let this: Option<&mut Self> = unsafe {
@@ -275,7 +275,7 @@ macro_rules! __inner_declare_class {
 ///         }
 ///     }
 ///
-///     unsafe impl protocol NSCopying {
+///     unsafe impl Protocol<NSCopying> for MyCustomObject {
 ///         #[sel(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
 ///             let mut obj = Self::new(*self.foo);
@@ -283,7 +283,7 @@ macro_rules! __inner_declare_class {
 ///             obj.autorelease_return()
 ///         }
 ///     }
-/// }
+/// );
 ///
 /// impl MyCustomObject {
 ///     pub fn new(foo: u8) -> Id<Self, Owned> {
@@ -385,12 +385,7 @@ macro_rules! declare_class {
             type Superclass = $superclass:ty;
         }
 
-        $(
-            $(#[$impl_m:meta])*
-            unsafe impl $(protocol $protocol:ident)? {
-                $($methods:tt)*
-            }
-        )*
+        $($methods:tt)*
     } => {
         $(
             #[allow(non_camel_case_types)]
@@ -446,24 +441,11 @@ macro_rules! declare_class {
                         builder.add_static_ivar::<$ivar>();
                     )*
 
-                    $(
-                        // Implement protocol if any specified
-                        $(
-                            let err_str = concat!("could not find protocol ", stringify!($protocol));
-                            builder.add_protocol($crate::runtime::Protocol::get(stringify!($protocol)).expect(err_str));
-                        )?
-
-                        // Implement methods
-                        // SAFETY: Upheld by caller
-                        unsafe {
-                            $crate::__inner_declare_class! {
-                                @rewrite_methods
-                                @(register_out(builder))
-
-                                $($methods)*
-                            }
-                        }
-                    )*
+                    // Implement protocols and methods
+                    $crate::__declare_class_methods!(
+                        @register_out(builder)
+                        $($methods)*
+                    );
 
                     let _cls = builder.register();
                 });
@@ -474,16 +456,123 @@ macro_rules! declare_class {
         }
 
         // Methods
-        $(
-            $(#[$impl_m])*
-            impl $name {
-                $crate::__inner_declare_class! {
-                    @rewrite_methods
-                    @(method_out)
+        $crate::__declare_class_methods!(
+            @method_out
+            $($methods)*
+        );
+    };
+}
 
-                    $($methods)*
-                }
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_methods {
+    (@method_out) => {};
+    // With protocol
+    (
+        @method_out
+
+        $(#[$m:meta])*
+        unsafe impl Protocol<$protocol:ident> for $for:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        $(#[$m])*
+        impl $for {
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+                @(method_out)
+                $($methods)*
             }
-        )*
+        }
+
+        $crate::__declare_class_methods!(
+            @method_out
+            $($rest)*
+        );
+    };
+    // Without protocol
+    (
+        @method_out
+
+        $(#[$m:meta])*
+        unsafe impl $for:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        $(#[$m])*
+        impl $for {
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+                @(method_out)
+                $($methods)*
+            }
+        }
+
+        $crate::__declare_class_methods!(
+            @method_out
+            $($rest)*
+        );
+    };
+
+    (@register_out($builder:ident)) => {};
+    // With protocol
+    (
+        @register_out($builder:ident)
+
+        $(#[$m:meta])*
+        unsafe impl Protocol<$protocol:ident> for $for:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        // Implement protocol
+        let err_str = concat!("could not find protocol ", stringify!($protocol));
+        $builder.add_protocol($crate::runtime::Protocol::get(stringify!($protocol)).expect(err_str));
+
+        // SAFETY: Upheld by caller
+        unsafe {
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+                @(register_out($builder))
+
+                $($methods)*
+            }
+        }
+
+        $crate::__declare_class_methods!(
+            @register_out($builder)
+            $($rest)*
+        );
+    };
+    // Without protocol
+    (
+        @register_out($builder:ident)
+
+        $(#[$m:meta])*
+        unsafe impl $for:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        // SAFETY: Upheld by caller
+        unsafe {
+            $crate::__inner_declare_class! {
+                @rewrite_methods
+                @(register_out($builder))
+
+                $($methods)*
+            }
+        }
+
+        $crate::__declare_class_methods!(
+            @register_out($builder)
+            $($rest)*
+        );
     };
 }

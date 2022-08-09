@@ -18,7 +18,7 @@ extern_class!(
 );
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
-declare_class! {
+declare_class!(
     struct CustomAppDelegate {
         pub ivar: u8,
         another_ivar: Bool,
@@ -29,16 +29,10 @@ declare_class! {
         type Superclass = NSResponder;
     }
 
-    unsafe impl {
+    unsafe impl CustomAppDelegate {
         #[sel(initWith:another:)]
-        fn init_with(
-            self: &mut Self,
-            ivar: u8,
-            another_ivar: Bool,
-        ) -> *mut Self {
-            let this: *mut Self = unsafe {
-                msg_send![super(self, NSResponder::class()), init]
-            };
+        fn init_with(self: &mut Self, ivar: u8, another_ivar: Bool) -> *mut Self {
+            let this: *mut Self = unsafe { msg_send![super(self, NSResponder::class()), init] };
             if let Some(this) = unsafe { this.as_mut() } {
                 // TODO: Allow initialization through MaybeUninit
                 *this.ivar = ivar;
@@ -58,7 +52,7 @@ declare_class! {
     // `clang` only when used in Objective-C...
     //
     // TODO: Investigate this!
-    unsafe impl {
+    unsafe impl CustomAppDelegate {
         /// This is `unsafe` because it expects `sender` to be valid
         #[sel(applicationDidFinishLaunching:)]
         unsafe fn did_finish_launching(&self, sender: *mut Object) {
@@ -74,7 +68,7 @@ declare_class! {
             println!("Will terminate!");
         }
     }
-}
+);
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 impl CustomAppDelegate {

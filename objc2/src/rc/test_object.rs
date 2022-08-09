@@ -48,7 +48,7 @@ std::thread_local! {
     pub(crate) static TEST_DATA: RefCell<ThreadTestData> = RefCell::new(Default::default());
 }
 
-declare_class! {
+declare_class!(
     /// A helper object that counts how many times various reference-counting
     /// primitives are called.
     #[derive(Debug, PartialEq)]
@@ -58,7 +58,7 @@ declare_class! {
         type Superclass = NSObject;
     }
 
-    unsafe impl {
+    unsafe impl RcTestObject {
         #[sel(alloc)]
         fn alloc() -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
@@ -127,7 +127,7 @@ declare_class! {
             Id::consume_as_ptr(ManuallyDrop::new(Self::new()))
         }
     }
-}
+);
 
 unsafe impl Send for RcTestObject {}
 unsafe impl Sync for RcTestObject {}
