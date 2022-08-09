@@ -13,7 +13,7 @@ use crate::rc::{Id, Shared};
 use crate::runtime::Bool;
 use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType, Encoding};
 
-extern_class! {
+extern_class!(
     /// An object wrapper for primitive scalars.
     ///
     /// This is the Objective-C equivalant of a Rust enum containing the
@@ -39,8 +39,13 @@ extern_class! {
     /// See [Apple's documentation][apple-doc] for more information.
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsnumber?language=objc
-    unsafe pub struct NSNumber: NSValue, NSObject;
-}
+    pub struct NSNumber;
+
+    unsafe impl ClassType for NSNumber {
+        #[inherits(NSObject)]
+        type Superclass = NSValue;
+    }
+);
 
 // SAFETY: `NSNumber` is just a wrapper around an integer/float/bool, and it
 // is immutable.

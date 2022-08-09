@@ -10,13 +10,17 @@ use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
 use crate::rc::{DefaultId, Id, Owned, Shared, SliceId};
 use crate::{ClassType, __inner_extern_class, msg_send, msg_send_id, Message};
 
-__inner_extern_class! {
+__inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSDictionary<K: Message, V: Message>: NSObject {
+    pub struct NSDictionary<K: Message, V: Message> {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
     }
-}
+
+    unsafe impl<K: Message, V: Message> ClassType for NSDictionary<K, V> {
+        type Superclass = NSObject;
+    }
+);
 
 // TODO: SAFETY
 // Approximately same as `NSArray<T, Shared>`

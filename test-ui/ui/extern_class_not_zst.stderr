@@ -1,11 +1,13 @@
 error[E0080]: evaluation of constant value failed
- --> ui/extern_class_not_zst.rs
-  |
-  | / extern_class! {
-  | |     unsafe pub struct NSNumber: NSObject {
-  | |         var: u32,
-  | |     }
-  | | }
-  | |_^ the evaluated program panicked at 'the struct NSNumber is not zero-sized!', $DIR/ui/extern_class_not_zst.rs:4:1
-  |
-  = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/extern_class_not_zst.rs
+   |
+   | / extern_class!(
+   | |     pub struct NSNumber {
+   | |         var: u32,
+   | |     }
+...  |
+   | |     }
+   | | );
+   | |_^ the evaluated program panicked at 'the struct NSNumber is not zero-sized!', $DIR/ui/extern_class_not_zst.rs:4:1
+   |
+   = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

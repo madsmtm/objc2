@@ -7,13 +7,18 @@ use super::{NSCopying, NSMutableCopying, NSObject, NSString};
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
-extern_class! {
+extern_class!(
     /// A dynamic plain-text Unicode string object.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutablestring?language=objc).
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSMutableString: NSString, NSObject;
-}
+    pub struct NSMutableString;
+
+    unsafe impl ClassType for NSMutableString {
+        #[inherits(NSObject)]
+        type Superclass = NSString;
+    }
+);
 
 /// Creating mutable strings.
 impl NSMutableString {

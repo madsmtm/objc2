@@ -5,7 +5,7 @@ use super::{NSCopying, NSObject, NSString};
 use crate::rc::{DefaultId, Id, Shared};
 use crate::{extern_class, msg_send, msg_send_id, ClassType, Encode, Encoding, RefEncode};
 
-extern_class! {
+extern_class!(
     /// A universally unique value.
     ///
     /// Can be used to identify types, interfaces, and other items.
@@ -17,8 +17,12 @@ extern_class! {
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsuuid?language=objc).
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSUUID: NSObject;
-}
+    pub struct NSUUID;
+
+    unsafe impl ClassType for NSUUID {
+        type Superclass = NSObject;
+    }
+);
 
 /// The headers describe `initWithUUIDBytes:` and `getUUIDBytes:` as
 /// taking `uuid_t`, but something fishy is going on, in reality they

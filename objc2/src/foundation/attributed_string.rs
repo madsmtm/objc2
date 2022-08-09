@@ -8,7 +8,7 @@ use crate::rc::{DefaultId, Id, Shared};
 use crate::runtime::Object;
 use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
-extern_class! {
+extern_class!(
     /// A string that has associated attributes for portions of its text.
     ///
     /// Examples of attributes could be: Visual style, hyperlinks, or
@@ -22,8 +22,12 @@ extern_class! {
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsattributedstring?language=objc).
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSAttributedString: NSObject;
-}
+    pub struct NSAttributedString;
+
+    unsafe impl ClassType for NSAttributedString {
+        type Superclass = NSObject;
+    }
+);
 
 // SAFETY: `NSAttributedString` is immutable and `NSMutableAttributedString`
 // can only be mutated from `&mut` methods.

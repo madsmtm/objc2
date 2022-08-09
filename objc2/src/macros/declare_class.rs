@@ -144,8 +144,10 @@ macro_rules! __inner_declare_class {
 ///
 /// # Specification
 ///
-/// This macro consists of three parts; the class definition, the method
-/// definition, and the protocol definition.
+/// This macro consists of three parts:
+/// - The class definition + ivar definition + inheritance specification.
+/// - A set of method definitions.
+/// - A set of protocol definitions.
 ///
 ///
 /// ## Class and ivar definition
@@ -162,10 +164,13 @@ macro_rules! __inner_declare_class {
 /// alias like `pub type CustomObject = MyCrateCustomObject;` instead.
 ///
 /// The class is guaranteed to have been created and registered with the
-/// Objective-C runtime after the associated function `class` has been called.
+/// Objective-C runtime after the [`ClassType::class`] function has been
+/// called.
+///
+/// [`ClassType::class`]: crate::ClassType::class
 ///
 ///
-/// ## Method definition
+/// ## Method definitions
 ///
 /// Within the `impl` block you can define two types of functions;
 /// ["associated functions"] and ["methods"]. These are then mapped to the
@@ -186,10 +191,10 @@ macro_rules! __inner_declare_class {
 /// [`msg_send!`]: crate::msg_send
 ///
 ///
-/// ## Protocol definition
+/// ## Protocol definitions
 ///
-/// You can specify the protocols that the class should implement, along with
-/// any required methods for said protocols.
+/// You can specify protocols that the class should implement, along with any
+/// required/optional methods for said protocols.
 ///
 /// The methods work exactly as normal, they're only put "under" the protocol
 /// definition to make things easier to read.
@@ -199,11 +204,11 @@ macro_rules! __inner_declare_class {
 ///
 /// Using this macro requires writing a few `unsafe` markers:
 ///
-/// `unsafe struct ...` has the following safety requirements:
+/// `unsafe impl ClassType for T` has the following safety requirements:
 /// - Same as [`extern_class!`] (the inheritance chain has to be correct).
-/// - Any instance variables you specify must either be able to be created
-///   using [`MaybeUninit::zeroed`], or be properly initialized in an `init`
-///   method.
+/// - Any instance variables you specify under the struct definition must
+///   either be able to be created using [`MaybeUninit::zeroed`], or be
+///   properly initialized in an `init` method.
 ///
 /// `unsafe impl { ... }` asserts that the types match those that are expected
 /// when the method is invoked from Objective-C. Note that there are no
@@ -234,9 +239,13 @@ macro_rules! __inner_declare_class {
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
 /// declare_class! {
-///     unsafe struct MyCustomObject: NSObject {
+///     struct MyCustomObject {
 ///         foo: u8,
 ///         pub bar: c_int,
+///     }
+///
+///     unsafe impl ClassType for MyCustomObject {
+///         type Superclass = NSObject;
 ///     }
 ///
 ///     unsafe impl {
@@ -367,8 +376,13 @@ macro_rules! __inner_declare_class {
 macro_rules! declare_class {
     {
         $(#[$m:meta])*
-        unsafe $v:vis struct $name:ident: $inherits:ty $(, $inheritance_rest:ty)* {
+        $v:vis struct $name:ident {
             $($ivar_v:vis $ivar:ident: $ivar_ty:ty,)*
+        }
+
+        unsafe impl ClassType for $for:ty {
+            $(#[inherits($($inheritance_rest:ty)+)])?
+            type Superclass = $superclass:ty;
         }
 
         $(
@@ -394,7 +408,7 @@ macro_rules! declare_class {
             @__inner
             $(#[$m])*
             // SAFETY: Upheld by caller
-            unsafe $v struct $name<>: $inherits, $($inheritance_rest,)* $crate::runtime::Object {
+            $v struct $name () {
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
                 // - The ivar is added to the class below.
@@ -402,11 +416,15 @@ macro_rules! declare_class {
                 // - Caller upholds that the ivars are properly initialized.
                 $($ivar_v $ivar: $crate::declare::Ivar<$ivar>,)*
             }
+
+            unsafe impl () for $for {
+                INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
+            }
         }
 
         // Creation
-        unsafe impl $crate::ClassType for $name {
-            type Superclass = $inherits;
+        unsafe impl $crate::ClassType for $for {
+            type Superclass = $superclass;
 
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
@@ -415,7 +433,7 @@ macro_rules! declare_class {
                 static REGISTER_CLASS: Once = Once::new();
 
                 REGISTER_CLASS.call_once(|| {
-                    let superclass = <$inherits as $crate::ClassType>::class();
+                    let superclass = <$superclass as $crate::ClassType>::class();
                     let err_str = concat!(
                         "could not create new class ",
                         stringify!($name),

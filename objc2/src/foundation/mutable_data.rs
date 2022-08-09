@@ -11,7 +11,7 @@ use super::{NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
-extern_class! {
+extern_class!(
     /// A dynamic byte buffer in memory.
     ///
     /// This is the Objective-C equivalent of a [`Vec`] containing [`u8`].
@@ -20,8 +20,13 @@ extern_class! {
     ///
     /// [`Vec`]: std::vec::Vec
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSMutableData: NSData, NSObject;
-}
+    pub struct NSMutableData;
+
+    unsafe impl ClassType for NSMutableData {
+        #[inherits(NSObject)]
+        type Superclass = NSData;
+    }
+);
 
 /// Creation methods
 impl NSMutableData {

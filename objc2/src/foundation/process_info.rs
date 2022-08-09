@@ -5,13 +5,17 @@ use super::{NSObject, NSString};
 use crate::rc::{Id, Shared};
 use crate::{extern_class, msg_send_id, ClassType};
 
-extern_class! {
+extern_class!(
     /// A collection of information about the current process.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsprocessinfo?language=objc).
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSProcessInfo: NSObject;
-}
+    pub struct NSProcessInfo;
+
+    unsafe impl ClassType for NSProcessInfo {
+        type Superclass = NSObject;
+    }
+);
 
 // SAFETY: The documentation explicitly states:
 // > NSProcessInfo is thread-safe in macOS 10.7 and later.

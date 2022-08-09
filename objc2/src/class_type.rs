@@ -44,9 +44,13 @@ use crate::Message;
 /// ```ignore
 /// use objc2::{extern_class, ClassType};
 ///
-/// extern_class! {
-///     unsafe struct MyClass: NSObject;
-/// }
+/// extern_class!(
+///     struct MyClass;
+///
+///     unsafe impl ClassType for MyClass {
+///         type Superclass = NSObject;
+///     }
+/// );
 ///
 /// let cls = MyClass::class();
 /// ```

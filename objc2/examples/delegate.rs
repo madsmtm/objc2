@@ -9,15 +9,24 @@ use objc2::{declare_class, extern_class, msg_send, msg_send_id, ClassType};
 extern "C" {}
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
-extern_class! {
-    unsafe struct NSResponder: NSObject;
-}
+extern_class!(
+    struct NSResponder;
+
+    unsafe impl ClassType for NSResponder {
+        type Superclass = NSObject;
+    }
+);
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 declare_class! {
-    unsafe struct CustomAppDelegate: NSResponder, NSObject {
+    struct CustomAppDelegate {
         pub ivar: u8,
         another_ivar: Bool,
+    }
+
+    unsafe impl ClassType for CustomAppDelegate {
+        #[inherits(NSObject)]
+        type Superclass = NSResponder;
     }
 
     unsafe impl {

@@ -52,7 +52,11 @@ declare_class! {
     /// A helper object that counts how many times various reference-counting
     /// primitives are called.
     #[derive(Debug, PartialEq)]
-    unsafe pub(crate) struct RcTestObject: NSObject {}
+    pub(crate) struct RcTestObject {}
+
+    unsafe impl ClassType for RcTestObject {
+        type Superclass = NSObject;
+    }
 
     unsafe impl {
         #[sel(alloc)]

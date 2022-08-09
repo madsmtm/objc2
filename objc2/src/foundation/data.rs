@@ -11,15 +11,19 @@ use crate::rc::{DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
 use crate::{extern_class, msg_send, msg_send_id, ClassType};
 
-extern_class! {
+extern_class!(
     /// A static byte buffer in memory.
     ///
     /// This is similar to a [`slice`][`prim@slice`] of [`u8`].
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsdata?language=objc).
     #[derive(PartialEq, Eq, Hash)]
-    unsafe pub struct NSData: NSObject;
-}
+    pub struct NSData;
+
+    unsafe impl ClassType for NSData {
+        type Superclass = NSObject;
+    }
+);
 
 // SAFETY: `NSData` is immutable and `NSMutableData` can only be mutated from
 // `&mut` methods.

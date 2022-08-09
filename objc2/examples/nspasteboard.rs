@@ -22,11 +22,15 @@ extern "C" {
 }
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
-extern_class! {
+extern_class!(
     /// <https://developer.apple.com/documentation/appkit/nspasteboard?language=objc>
+    pub struct NSPasteboard;
+
     // SAFETY: NSPasteboard actually inherits from NSObject.
-    unsafe pub struct NSPasteboard: NSObject;
-}
+    unsafe impl ClassType for NSPasteboard {
+        type Superclass = NSObject;
+    }
+);
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 impl NSPasteboard {
