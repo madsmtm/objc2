@@ -109,12 +109,13 @@ fn textured_vertex(position: [f32; 2], texture_coord: [f32; 2]) -> TexturedVerte
 fn create_texture_to_display(device: &Device) -> Texture {
     let img = include_bytes!("../gfx-rs.png");
     let decoder = png::Decoder::new(img.as_ref());
-    let (info, mut reader) = decoder.read_info().unwrap();
+    let mut reader = decoder.read_info().unwrap();
 
-    let mut buf = vec![0; info.buffer_size()];
-    reader.next_frame(&mut buf).unwrap();
-
+    let info = reader.info();
     let (width, height) = (info.width as u64, info.height as u64);
+
+    let mut buf = vec![0; reader.output_buffer_size()];
+    reader.next_frame(&mut buf).unwrap();
 
     for idx in 0..buf.len() / 4 {
         let idx = idx * 4;

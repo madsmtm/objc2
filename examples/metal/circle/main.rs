@@ -34,13 +34,12 @@ pub struct AAPLVertex {
 fn main() {
     // Create a window for viewing the content
     let event_loop = EventLoop::new();
-    let events_loop = winit::event_loop::EventLoop::new();
     let size = winit::dpi::LogicalSize::new(800, 600);
 
     let window = winit::window::WindowBuilder::new()
         .with_inner_size(size)
         .with_title("Metal".to_string())
-        .build(&events_loop)
+        .build(&event_loop)
         .unwrap();
 
     // Set up the GPU device found in the system

@@ -6,14 +6,14 @@ publish = false
 edition = "2018"
 
 [build-dependencies]
-bindgen = "0.53.2"
+bindgen = { version = "0.60", default-features = false, features = ["logging", "runtime", "which-rustfmt"] }
 
 [dependencies]
-cocoa = "0.23"
+cocoa = "0.24"
 core-graphics = "0.22"
-png = "0.16"
+png = "0.17"
 metal = { path = "../../" }
-winit = "0.22"
+winit = "0.27"
 
 [dependencies.objc]
 version = "0.2.4"
