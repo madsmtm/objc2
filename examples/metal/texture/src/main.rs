@@ -4,6 +4,7 @@
 use std::path::PathBuf;
 
 use cocoa::{appkit::NSView, base::id as cocoa_id};
+use core_graphics_types::geometry::CGSize;
 use objc::rc::autoreleasepool;
 use winit::dpi::LogicalSize;
 use winit::event_loop::{ControlFlow, EventLoop};
@@ -11,10 +12,10 @@ use winit::platform::macos::WindowExtMacOS;
 use winit::window::Window;
 
 use metal::{
-    Buffer, CGSize, CommandQueue, Device, Library, MTLClearColor, MTLLoadAction, MTLOrigin,
-    MTLPixelFormat, MTLPrimitiveType, MTLRegion, MTLResourceOptions, MTLSize, MTLStoreAction,
-    MetalLayer, MetalLayerRef, RenderPassDescriptor, RenderPassDescriptorRef,
-    RenderPipelineDescriptor, RenderPipelineState, Texture, TextureDescriptor, TextureRef,
+    Buffer, CommandQueue, Device, Library, MTLClearColor, MTLLoadAction, MTLOrigin, MTLPixelFormat,
+    MTLPrimitiveType, MTLRegion, MTLResourceOptions, MTLSize, MTLStoreAction, MetalLayer,
+    MetalLayerRef, RenderPassDescriptor, RenderPassDescriptorRef, RenderPipelineDescriptor,
+    RenderPipelineState, Texture, TextureDescriptor, TextureRef,
 };
 use shader_bindings::{
     TextureIndex_TextureIndexBaseColor as TextureBaseColorIdx, TexturedVertex,
