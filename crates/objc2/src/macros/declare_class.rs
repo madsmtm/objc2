@@ -374,10 +374,10 @@ macro_rules! declare_class {
 
                 REGISTER_CLASS.call_once(|| {
                     let superclass = <$superclass as $crate::ClassType>::class();
-                    let mut builder = $crate::declare::ClassBuilder::new(Self::NAME, superclass).unwrap_or_else(|| {
+                    let mut builder = $crate::declare::ClassBuilder::new(<Self as ClassType>::NAME, superclass).unwrap_or_else(|| {
                         $crate::__macro_helpers::panic!(
                             "could not create new class {}. Perhaps a class with that name already exists?",
-                            Self::NAME,
+                            <Self as ClassType>::NAME,
                         )
                     });
 
@@ -408,7 +408,7 @@ macro_rules! declare_class {
                 });
 
                 // We just registered the class, so it should be available
-                $crate::runtime::Class::get(Self::NAME).unwrap()
+                $crate::runtime::Class::get(<Self as ClassType>::NAME).unwrap()
             }
 
             #[inline]
