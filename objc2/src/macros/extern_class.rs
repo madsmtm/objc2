@@ -122,7 +122,7 @@ macro_rules! extern_class {
         $v:vis struct $name:ident;
 
         unsafe impl ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty)+)])?
+            $(#[inherits($($inheritance_rest:ty),+)])?
             type Superclass = $superclass:ty;
         }
     ) => {
@@ -132,7 +132,7 @@ macro_rules! extern_class {
             $v struct $name {}
 
             unsafe impl ClassType for $for {
-                $(#[inherits($($inheritance_rest)+)])?
+                $(#[inherits($($inheritance_rest),+)])?
                 type Superclass = $superclass;
             }
         );
@@ -144,7 +144,7 @@ macro_rules! extern_class {
         }
 
         unsafe impl ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty)+)])?
+            $(#[inherits($($inheritance_rest:ty),+)])?
             type Superclass = $superclass:ty;
         }
     ) => {
@@ -155,7 +155,7 @@ macro_rules! extern_class {
             }
 
             unsafe impl<> ClassType for $for {
-                $(#[inherits($($inheritance_rest)+)])?
+                $(#[inherits($($inheritance_rest),+)])?
                 type Superclass = $superclass;
             }
         );
@@ -236,7 +236,7 @@ macro_rules! __inner_extern_class {
         }
 
         unsafe impl<$($t_for:ident $(: $b_for:ident)?),*> ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty)+)])?
+            $(#[inherits($($inheritance_rest:ty),+)])?
             type Superclass = $superclass:ty;
         }
     ) => {

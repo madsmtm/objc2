@@ -381,7 +381,7 @@ macro_rules! declare_class {
         }
 
         unsafe impl ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty)+)])?
+            $(#[inherits($($inheritance_rest:ty),+)])?
             type Superclass = $superclass:ty;
         }
 
@@ -418,7 +418,7 @@ macro_rules! declare_class {
         }
 
         // Creation
-        unsafe impl $crate::ClassType for $for {
+        unsafe impl ClassType for $for {
             type Superclass = $superclass;
 
             fn class() -> &'static $crate::runtime::Class {
