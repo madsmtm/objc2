@@ -94,7 +94,7 @@ pub struct Block<A, R> {
 }
 
 unsafe impl<A: BlockArguments, R: Encode> RefEncode for Block<A, R> {
-    const ENCODING_REF: Encoding<'static> = Encoding::Block;
+    const ENCODING_REF: Encoding = Encoding::Block;
 }
 
 impl<A: BlockArguments, R: Encode> Block<A, R> {

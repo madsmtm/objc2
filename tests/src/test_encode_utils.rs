@@ -91,7 +91,7 @@ macro_rules! assert_types {
     (#no_atomic) => {};
 }
 
-const WITH_ATOMIC_INNER: Encoding<'static> = Encoding::Struct(
+const WITH_ATOMIC_INNER: Encoding = Encoding::Struct(
     "with_atomic_inner",
     &[
         AtomicI32::ENCODING,

@@ -57,12 +57,12 @@ pub struct NSPoint {
 }
 
 unsafe impl Encode for NSPoint {
-    const ENCODING: Encoding<'static> =
+    const ENCODING: Encoding =
         Encoding::Struct(names::POINT, &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
 unsafe impl RefEncode for NSPoint {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 impl NSPoint {
@@ -115,12 +115,12 @@ pub struct NSSize {
 }
 
 unsafe impl Encode for NSSize {
-    const ENCODING: Encoding<'static> =
+    const ENCODING: Encoding =
         Encoding::Struct(names::SIZE, &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
 unsafe impl RefEncode for NSSize {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 impl NSSize {
@@ -200,12 +200,12 @@ pub struct NSRect {
 }
 
 unsafe impl Encode for NSRect {
-    const ENCODING: Encoding<'static> =
+    const ENCODING: Encoding =
         Encoding::Struct(names::RECT, &[NSPoint::ENCODING, NSSize::ENCODING]);
 }
 
 unsafe impl RefEncode for NSRect {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 impl NSRect {

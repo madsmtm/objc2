@@ -38,7 +38,7 @@ pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u128) -> [u8; 
     rev
 }
 
-pub(crate) const fn static_encoding_str_len(encoding: &Encoding<'_>, level: NestingLevel) -> usize {
+pub(crate) const fn static_encoding_str_len(encoding: &Encoding, level: NestingLevel) -> usize {
     use Helper::*;
 
     match Helper::new(encoding) {
@@ -67,7 +67,7 @@ pub(crate) const fn static_encoding_str_len(encoding: &Encoding<'_>, level: Nest
 }
 
 pub(crate) const fn static_encoding_str_array<const LEN: usize>(
-    encoding: &Encoding<'_>,
+    encoding: &Encoding,
     level: NestingLevel,
 ) -> [u8; LEN] {
     use Helper::*;

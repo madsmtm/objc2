@@ -160,14 +160,14 @@ impl ContainerKind {
 #[non_exhaustive]
 pub(crate) enum Helper<'a> {
     Primitive(Primitive),
-    BitField(u8, &'a Encoding<'a>),
-    Indirection(IndirectionKind, &'a Encoding<'a>),
-    Array(usize, &'a Encoding<'a>),
-    Container(ContainerKind, &'a str, &'a [Encoding<'a>]),
+    BitField(u8, &'a Encoding),
+    Indirection(IndirectionKind, &'a Encoding),
+    Array(usize, &'a Encoding),
+    Container(ContainerKind, &'a str, &'a [Encoding]),
 }
 
 impl<'a> Helper<'a> {
-    pub(crate) const fn new(encoding: &Encoding<'a>) -> Self {
+    pub(crate) const fn new(encoding: &'a Encoding) -> Self {
         use Encoding::*;
         match encoding {
             Char => Self::Primitive(Primitive::Char),

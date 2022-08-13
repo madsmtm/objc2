@@ -33,7 +33,7 @@ extern_class!(
 struct UuidBytes([u8; 16]);
 
 unsafe impl RefEncode for UuidBytes {
-    const ENCODING_REF: Encoding<'static> = Encoding::Array(16, &u8::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Array(16, &u8::ENCODING);
 }
 
 // SAFETY: `NSUUID` is immutable.

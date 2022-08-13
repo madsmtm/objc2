@@ -16,7 +16,7 @@ pub(crate) const QUALIFIERS: &[char] = &[
 
 pub(crate) fn rm_enc_prefix<'a>(
     s: &'a str,
-    enc: &Encoding<'_>,
+    enc: &Encoding,
     level: NestingLevel,
 ) -> Option<&'a str> {
     use Helper::*;

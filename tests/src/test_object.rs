@@ -17,7 +17,7 @@ struct MyTestObject {
 unsafe impl Message for MyTestObject {}
 
 unsafe impl RefEncode for MyTestObject {
-    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+    const ENCODING_REF: Encoding = Encoding::Object;
 }
 
 unsafe impl ClassType for MyTestObject {

@@ -37,9 +37,9 @@ impl fmt::Display for MallocEncoding {
 #[derive(Debug, PartialEq, Eq, Hash)]
 enum Inner {
     MethodNotFound,
-    MismatchedReturn(MallocEncoding, Encoding<'static>),
+    MismatchedReturn(MallocEncoding, Encoding),
     MismatchedArgumentsCount(usize, usize),
-    MismatchedArgument(usize, MallocEncoding, Encoding<'static>),
+    MismatchedArgument(usize, MallocEncoding, Encoding),
 }
 
 impl fmt::Display for Inner {

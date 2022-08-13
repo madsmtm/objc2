@@ -36,7 +36,7 @@ use crate::parse;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 // See <https://en.cppreference.com/w/c/language/type>
 #[non_exhaustive] // Maybe we're missing some encodings?
-pub enum Encoding<'a> {
+pub enum Encoding {
     /// A C `char`. Corresponds to the `c` code.
     Char,
     /// A C `short`. Corresponds to the `s` code.
@@ -97,22 +97,22 @@ pub enum Encoding<'a> {
     /// compatibility with Objective-C runtimes.
     ///
     /// Corresponds to the `b num` code.
-    BitField(u8, &'a Encoding<'a>),
+    BitField(u8, &'static Encoding),
     /// A pointer to the given type.
     ///
     /// Corresponds to the `^ type` code.
-    Pointer(&'a Encoding<'a>),
+    Pointer(&'static Encoding),
     /// A C11 [`_Atomic`] type.
     ///
     /// Corresponds to the `A type` code. Not all encodings are possible in
     /// this.
     ///
     /// [`_Atomic`]: https://en.cppreference.com/w/c/language/atomic
-    Atomic(&'a Encoding<'a>),
+    Atomic(&'static Encoding),
     /// An array with the given length and type.
     ///
     /// Corresponds to the `[len type]` code.
-    Array(usize, &'a Encoding<'a>),
+    Array(usize, &'static Encoding),
     /// A struct with the given name and fields.
     ///
     /// The order of the fields must match the order of the order in this.
@@ -120,19 +120,19 @@ pub enum Encoding<'a> {
     /// It is not uncommon for the name to be `"?"`.
     ///
     /// Corresponds to the `{name=fields...}` code.
-    Struct(&'a str, &'a [Encoding<'a>]),
+    Struct(&'static str, &'static [Encoding]),
     /// A union with the given name and fields.
     ///
     /// The order of the fields must match the order of the order in this.
     ///
     /// Corresponds to the `(name=fields...)` code.
-    Union(&'a str, &'a [Encoding<'a>]),
+    Union(&'static str, &'static [Encoding]),
     // "Vector" types have the '!' encoding, but are not implemented in clang
 
     // TODO: `t` and `T` codes for i128 and u128?
 }
 
-impl Encoding<'_> {
+impl Encoding {
     /// The encoding of [`c_long`](`std::os::raw::c_long`).
     ///
     /// Ideally the encoding of `long` would just be the same as `int` when
@@ -213,7 +213,7 @@ impl Encoding<'_> {
     }
 }
 
-fn equivalent_to(enc1: &Encoding<'_>, enc2: &Encoding<'_>, level: NestingLevel) -> bool {
+fn equivalent_to(enc1: &Encoding, enc2: &Encoding, level: NestingLevel) -> bool {
     // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
     // should compare equal, but we don't bother since in practice a plain
     // `Unknown` will never appear.
@@ -252,11 +252,7 @@ fn equivalent_to(enc1: &Encoding<'_>, enc2: &Encoding<'_>, level: NestingLevel) 
     }
 }
 
-fn display_fmt(
-    this: &Encoding<'_>,
-    f: &mut fmt::Formatter<'_>,
-    level: NestingLevel,
-) -> fmt::Result {
+fn display_fmt(this: &Encoding, f: &mut fmt::Formatter<'_>, level: NestingLevel) -> fmt::Result {
     use Helper::*;
     match Helper::new(this) {
         Primitive(primitive) => f.write_str(primitive.to_str()),
@@ -294,7 +290,7 @@ fn display_fmt(
 /// You should not rely on the output of this to be stable across versions. It
 /// may change if found to be required to be compatible with exisiting
 /// Objective-C compilers.
-impl fmt::Display for Encoding<'_> {
+impl fmt::Display for Encoding {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         display_fmt(self, f, NestingLevel::new())
     }
@@ -311,7 +307,7 @@ mod tests {
 
     #[test]
     fn test_send_sync() {
-        send_sync::<Encoding<'_>>();
+        send_sync::<Encoding>();
     }
 
     #[test]
@@ -348,7 +344,7 @@ mod tests {
         )+) => {$(
             #[test]
             fn $name() {
-                const E: Encoding<'static> = $encoding;
+                const E: Encoding = $encoding;
 
                 // Check PartialEq
                 assert_eq!(E, E);

@@ -89,7 +89,7 @@ use self::platform::{send_super_unverified, send_unverified};
 /// }
 ///
 /// unsafe impl RefEncode for MyObject {
-///     const ENCODING_REF: Encoding<'static> = Encoding::Object;
+///     const ENCODING_REF: Encoding = Encoding::Object;
 /// }
 ///
 /// unsafe impl Message for MyObject {}

@@ -24,11 +24,11 @@ impl Default for NSComparisonResult {
 }
 
 unsafe impl Encode for NSComparisonResult {
-    const ENCODING: Encoding<'static> = isize::ENCODING;
+    const ENCODING: Encoding = isize::ENCODING;
 }
 
 unsafe impl RefEncode for NSComparisonResult {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 impl From<Ordering> for NSComparisonResult {

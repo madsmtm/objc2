@@ -86,7 +86,7 @@ pub(crate) struct CustomStruct {
 }
 
 unsafe impl Encode for CustomStruct {
-    const ENCODING: Encoding<'static> = Encoding::Struct(
+    const ENCODING: Encoding = Encoding::Struct(
         "CustomStruct",
         &[u64::ENCODING, u64::ENCODING, u64::ENCODING, u64::ENCODING],
     );
