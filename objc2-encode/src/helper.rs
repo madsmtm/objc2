@@ -167,7 +167,7 @@ pub(crate) enum Helper<'a> {
 }
 
 impl<'a> Helper<'a> {
-    pub(crate) const fn new(encoding: Encoding<'a>) -> Self {
+    pub(crate) const fn new(encoding: &Encoding<'a>) -> Self {
         use Encoding::*;
         match encoding {
             Char => Self::Primitive(Primitive::Char),
@@ -194,10 +194,10 @@ impl<'a> Helper<'a> {
             Class => Self::Primitive(Primitive::Class),
             Sel => Self::Primitive(Primitive::Sel),
             Unknown => Self::Primitive(Primitive::Unknown),
-            BitField(b, t) => Self::BitField(b, t),
+            BitField(b, t) => Self::BitField(*b, t),
             Pointer(t) => Self::Indirection(IndirectionKind::Pointer, t),
             Atomic(t) => Self::Indirection(IndirectionKind::Atomic, t),
-            Array(len, item) => Self::Array(len, item),
+            Array(len, item) => Self::Array(*len, item),
             Struct(name, fields) => Self::Container(ContainerKind::Struct, name, fields),
             Union(name, members) => Self::Container(ContainerKind::Union, name, members),
         }

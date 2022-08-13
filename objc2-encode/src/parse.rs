@@ -20,7 +20,7 @@ pub(crate) fn rm_enc_prefix<'a>(
     level: NestingLevel,
 ) -> Option<&'a str> {
     use Helper::*;
-    match Helper::new(*enc) {
+    match Helper::new(enc) {
         Primitive(primitive) => s.strip_prefix(primitive.to_str()),
         BitField(b, _type) => {
             // TODO: Use the type on GNUStep (nesting level?)

@@ -218,7 +218,7 @@ fn equivalent_to(enc1: &Encoding<'_>, enc2: &Encoding<'_>, level: NestingLevel) 
     // should compare equal, but we don't bother since in practice a plain
     // `Unknown` will never appear.
     use Helper::*;
-    match (Helper::new(*enc1), Helper::new(*enc2)) {
+    match (Helper::new(enc1), Helper::new(enc2)) {
         (Primitive(p1), Primitive(p2)) => p1 == p2,
         (BitField(b1, type1), BitField(b2, type2)) => {
             b1 == b2 && equivalent_to(type1, type2, level.bitfield())
@@ -252,7 +252,11 @@ fn equivalent_to(enc1: &Encoding<'_>, enc2: &Encoding<'_>, level: NestingLevel) 
     }
 }
 
-fn display_fmt(this: Encoding<'_>, f: &mut fmt::Formatter<'_>, level: NestingLevel) -> fmt::Result {
+fn display_fmt(
+    this: &Encoding<'_>,
+    f: &mut fmt::Formatter<'_>,
+    level: NestingLevel,
+) -> fmt::Result {
     use Helper::*;
     match Helper::new(this) {
         Primitive(primitive) => f.write_str(primitive.to_str()),
@@ -262,12 +266,12 @@ fn display_fmt(this: Encoding<'_>, f: &mut fmt::Formatter<'_>, level: NestingLev
         }
         Indirection(kind, t) => {
             write!(f, "{}", kind.prefix())?;
-            display_fmt(*t, f, level.indirection(kind))
+            display_fmt(t, f, level.indirection(kind))
         }
         Array(len, item) => {
             write!(f, "[")?;
             write!(f, "{}", len)?;
-            display_fmt(*item, f, level.array())?;
+            display_fmt(item, f, level.array())?;
             write!(f, "]")
         }
         Container(kind, name, fields) => {
@@ -276,7 +280,7 @@ fn display_fmt(this: Encoding<'_>, f: &mut fmt::Formatter<'_>, level: NestingLev
             if let Some(level) = level.container() {
                 write!(f, "=")?;
                 for field in fields {
-                    display_fmt(*field, f, level)?;
+                    display_fmt(field, f, level)?;
                 }
             }
             write!(f, "{}", kind.end())
@@ -292,7 +296,7 @@ fn display_fmt(this: Encoding<'_>, f: &mut fmt::Formatter<'_>, level: NestingLev
 /// Objective-C compilers.
 impl fmt::Display for Encoding<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        display_fmt(*self, f, NestingLevel::new())
+        display_fmt(self, f, NestingLevel::new())
     }
 }
 
@@ -375,7 +379,7 @@ mod tests {
                 )*
 
                 // Check static str
-                const STATIC_ENCODING_DATA: [u8; static_encoding_str_len(E, NestingLevel::new())] = static_encoding_str_array(E, NestingLevel::new());
+                const STATIC_ENCODING_DATA: [u8; static_encoding_str_len(&E, NestingLevel::new())] = static_encoding_str_array(&E, NestingLevel::new());
                 const STATIC_ENCODING_STR: &str = unsafe { core::str::from_utf8_unchecked(&STATIC_ENCODING_DATA) };
                 assert_eq!(STATIC_ENCODING_STR, $string);
             }
