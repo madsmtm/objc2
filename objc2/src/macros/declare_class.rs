@@ -134,6 +134,19 @@ macro_rules! __inner_declare_class {
     };
 }
 
+/// Create function pointer type with inferred arguments.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __fn_ptr {
+    (
+        @($($qualifiers:tt)*)
+        $($($param:ident)? $(_)?: $param_ty:ty),* $(,)?
+    ) => {
+        $($qualifiers)* fn($($crate::__fn_ptr!(@__to_anonymous $param_ty)),*) -> _
+    };
+    (@__to_anonymous $param_ty:ty) => { _ }
+}
+
 /// Declare a new Objective-C class.
 ///
 /// This is mostly just a convenience macro on top of [`extern_class!`] and
