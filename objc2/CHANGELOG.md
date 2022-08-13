@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added ability to call `msg_send![super(obj), ...]` without explicitly
   specifying the superclass.
 * Added automatic conversion of `bool` to/from the Objective-C `BOOL` in
-  `msg_send!`, `msg_send_id!` and `extern_methods!`.
+  `msg_send!`, `msg_send_id!`, `extern_methods!` and `declare_class!`.
 
   Example:
   ```rust

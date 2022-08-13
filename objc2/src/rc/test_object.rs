@@ -4,7 +4,6 @@ use core::ptr;
 
 use super::{Id, Owned};
 use crate::foundation::{NSObject, NSZone};
-use crate::runtime::Bool;
 use crate::{declare_class, msg_send, ClassType};
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -120,14 +119,14 @@ declare_class!(
         }
 
         #[sel(_tryRetain)]
-        unsafe fn try_retain(&self) -> Bool {
+        unsafe fn try_retain(&self) -> bool {
             TEST_DATA.with(|data| data.borrow_mut().try_retain += 1);
             let res: bool = unsafe { msg_send![super(self), _tryRetain] };
             if !res {
                 TEST_DATA.with(|data| data.borrow_mut().try_retain -= 1);
                 TEST_DATA.with(|data| data.borrow_mut().try_retain_fail += 1);
             }
-            Bool::new(res)
+            res
         }
 
         #[sel(copyWithZone:)]
