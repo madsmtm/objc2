@@ -76,14 +76,17 @@ pub struct RetainSemantics<
     const COPY_OR_MUT_COPY: bool,
 > {}
 
+type New = RetainSemantics<true, false, false, false>;
+type Alloc = RetainSemantics<false, true, false, false>;
+type Init = RetainSemantics<false, false, true, false>;
+type CopyOrMutCopy = RetainSemantics<false, false, false, true>;
+type Other = RetainSemantics<false, false, false, false>;
+
 pub trait MsgSendId<T, U> {
     unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<U>;
 }
 
-// `new`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
-    for RetainSemantics<true, false, false, false>
-{
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>> for New {
     #[inline]
     #[track_caller]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -98,10 +101,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
     }
 }
 
-// `alloc`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<Allocated<T>, O>>
-    for RetainSemantics<false, true, false, false>
-{
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<Allocated<T>, O>> for Alloc {
     #[inline]
     #[track_caller]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -116,10 +116,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<Allocated<T>, O>
     }
 }
 
-// `init`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, Id<T, O>>
-    for RetainSemantics<false, false, true, false>
-{
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, Id<T, O>> for Init {
     #[inline]
     #[track_caller]
     unsafe fn send_message_id<A: MessageArguments>(
@@ -140,9 +137,8 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, I
     }
 }
 
-// `copy` and `mutableCopy`
 impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
-    for RetainSemantics<false, false, false, true>
+    for CopyOrMutCopy
 {
     #[inline]
     #[track_caller]
@@ -155,10 +151,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
     }
 }
 
-// All other selectors
-impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
-    for RetainSemantics<false, false, false, false>
-{
+impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>> for Other {
     #[inline]
     #[track_caller]
     unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<Id<U, O>> {
