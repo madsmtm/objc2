@@ -8,7 +8,6 @@
 //!
 //! Works on macOS >= 10.7 and iOS > 7.0.
 #![deny(unsafe_op_in_unsafe_fn)]
-#![cfg_attr(feature = "gnustep-1-7", allow(unused))]
 
 use std::thread;
 use std::time::Duration;
@@ -17,7 +16,7 @@ use objc2::foundation::{NSObject, NSString};
 use objc2::rc::{Id, Owned};
 use objc2::{extern_class, msg_send, msg_send_id, ns_string, ClassType};
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 mod appkit {
     use objc2::{foundation::NSCopying, rc::Shared};
 
@@ -96,7 +95,7 @@ mod appkit {
     }
 }
 
-#[cfg(all(feature = "apple", not(target_os = "macos")))]
+#[cfg(not(target_os = "macos"))]
 mod avfaudio {
     use super::*;
 
@@ -154,12 +153,11 @@ mod avfaudio {
     }
 }
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 use appkit::{Synthesizer, Utterance};
-#[cfg(all(feature = "apple", not(target_os = "macos")))]
+#[cfg(not(target_os = "macos"))]
 use avfaudio::{Synthesizer, Utterance};
 
-#[cfg(feature = "apple")]
 fn main() {
     let mut synthesizer = Synthesizer::new();
     let mut utterance = Utterance::new(ns_string!("Hello from Rust!"));
@@ -173,9 +171,4 @@ fn main() {
     while synthesizer.is_speaking() {
         thread::sleep(Duration::from_millis(100));
     }
-}
-
-#[cfg(feature = "gnustep-1-7")]
-fn main() {
-    panic!("this example is only available on Apple targets");
 }

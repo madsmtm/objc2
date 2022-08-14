@@ -24,3 +24,7 @@ run = ["trybuild"]
 trybuild = { version = "1.0.63", optional = true }
 block2 = { path = "../block2", default-features = false }
 objc2 = { path = "../objc2", default-features = false, features = ["foundation"] }
+
+[[bin]]
+name = "test-ui"
+required-features = ["run"]

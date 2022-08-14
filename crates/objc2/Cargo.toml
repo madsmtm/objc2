@@ -96,6 +96,18 @@ iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callg
 name = "autorelease"
 harness = false
 
+[[example]]
+name = "speech_synthesis"
+required-features = ["apple"]
+
+[[example]]
+name = "nspasteboard"
+required-features = ["apple"]
+
+[[example]]
+name = "delegate"
+required-features = ["apple"]
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 features = ["exception", "malloc", "block", "uuid", "unstable-docsrs"]
