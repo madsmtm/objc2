@@ -36,10 +36,14 @@ LPC1_1:
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
 LBB1_1:
+	movw	r2, :lower16:(l_anon.[ID].1-(LPC1_2+8))
 	mov	r0, r5
+	movt	r2, :upper16:(l_anon.[ID].1-(LPC1_2+8))
 	mov	r1, r4
+LPC1_2:
+	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::init_failed::GENERATED_ID, 0)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_use_generic
 	.p2align	2
@@ -78,6 +82,16 @@ LPC2_5:
 	ldr	r1, [pc, r1]
 	bl	_objc_msgSend
 	pop	{r4, r7, pc}
+
+	.section	__TEXT,__const
+l_anon.[ID].0:
+	.ascii	"$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	2
+l_anon.[ID].1:
+	.long	l_anon.[ID].0
+	.asciz	"4\000\000\000\016\000\000\000\005\000\000"
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_044375a4329d08dc

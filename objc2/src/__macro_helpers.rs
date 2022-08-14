@@ -102,7 +102,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, T, O> for New {
         let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
         // SAFETY: The selector is `new`, so this has +1 retain count
         let obj = unsafe { Id::new(obj) };
-        R::maybe_unwrap_with(obj, || new_failed(cls, sel))
+        R::maybe_unwrap::<Self>(obj, (cls, sel))
     }
 }
 
@@ -118,7 +118,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Allocated<T>, O> fo
         let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
         // SAFETY: The selector is `alloc`, so this has +1 retain count
         let obj = unsafe { Id::new_allocated(obj) };
-        R::maybe_unwrap_with(obj, || alloc_failed(cls, sel))
+        R::maybe_unwrap::<Self>(obj, (cls, sel))
     }
 }
 
@@ -140,7 +140,7 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, T
         let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
         // SAFETY: The selector is `init`, so this has +1 retain count
         let obj = unsafe { Id::new(obj) };
-        R::maybe_unwrap_with(obj, || init_failed(ptr.cast(), sel))
+        R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
     }
 }
 
@@ -157,7 +157,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> f
         // SAFETY: The selector is `copy` or `mutableCopy`, so this has +1
         // retain count
         let obj = unsafe { Id::new(obj) };
-        R::maybe_unwrap_with(obj, || copy_failed())
+        R::maybe_unwrap::<Self>(obj, ())
     }
 }
 
@@ -178,82 +178,128 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, U, O> for Other 
         // SAFETY: The selector is not `new`, `alloc`, `init`, `copy` nor
         // `mutableCopy`, so the object must be manually retained.
         let obj = unsafe { Id::retain_autoreleased(obj) };
-        R::maybe_unwrap_with(obj, || {
-            // SAFETY: The object is still valid after a message send to a
-            // normal method (while it would not be if the method was `init`).
-            normal_failed(unsafe { ptr.as_ref() }, sel)
-        })
+
+        // SAFETY: The object is still valid after a message send to a
+        // normal method - it would not be if the method was `init`.
+        R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
     }
 }
 
 pub trait MaybeUnwrap<T: ?Sized, O: Ownership> {
-    fn maybe_unwrap_with<F: FnOnce() -> Self>(obj: Option<Id<T, O>>, unwrap: F) -> Self;
+    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
+        obj: Option<Id<T, O>>,
+        args: Failed::Args,
+    ) -> Self;
 }
 
 impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Option<Id<T, O>> {
     #[inline]
-    fn maybe_unwrap_with<F: FnOnce() -> Self>(obj: Option<Id<T, O>>, _unwrap: F) -> Self {
+    #[track_caller]
+    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
+        obj: Option<Id<T, O>>,
+        _args: Failed::Args,
+    ) -> Self {
         obj
     }
 }
 
 impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Id<T, O> {
     #[inline]
-    fn maybe_unwrap_with<F: FnOnce() -> Self>(obj: Option<Id<T, O>>, unwrap: F) -> Self {
-        obj.unwrap_or_else(unwrap)
-    }
-}
-
-#[cold]
-fn new_failed(cls: &Class, sel: Sel) -> ! {
-    if sel == new() {
-        panic!("failed creating new instance of {:?}", cls)
-    } else {
-        panic!("failed creating new instance using +[{:?} {:?}]", cls, sel)
-    }
-}
-
-#[cold]
-fn alloc_failed(cls: &Class, sel: Sel) -> ! {
-    if sel == alloc() {
-        panic!("failed allocating {:?}", cls)
-    } else {
-        panic!("failed allocating with +[{:?} {:?}]", cls, sel)
-    }
-}
-
-#[cold]
-fn init_failed(ptr: *const Object, sel: Sel) -> ! {
-    if ptr.is_null() {
-        panic!("failed allocating object")
-    } else {
-        // We can't really display a more descriptive message here since the
-        // object is consumed by `init` and may not be valid any more.
-        if sel == init() {
-            panic!("failed initializing object")
-        } else {
-            panic!("failed initializing object with -{:?}", sel)
+    #[track_caller]
+    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
+        obj: Option<Id<T, O>>,
+        args: Failed::Args,
+    ) -> Self {
+        match obj {
+            Some(obj) => obj,
+            None => Failed::failed(args),
         }
     }
 }
 
-#[cold]
-fn copy_failed() -> ! {
-    panic!("failed copying object")
+// Note: It would have been much easier to do this kind of thing using
+// closures, but then `track_caller` doesn't work properly!
+pub trait MsgSendIdFailed<'a> {
+    type Args;
+
+    fn failed(args: Self::Args) -> !;
 }
 
-#[cold]
-fn normal_failed(obj: Option<&Object>, sel: Sel) -> ! {
-    if let Some(obj) = obj {
-        let cls = obj.class();
-        panic!(
-            "unexpected NULL returned from {}[{:?} {:?}]",
-            if cls.is_metaclass() { "+" } else { "-" },
-            cls,
-            sel,
-        )
-    } else {
-        panic!("unexpected NULL {:?}; receiver was NULL", sel);
+impl<'a> MsgSendIdFailed<'a> for New {
+    type Args = (&'a Class, Sel);
+
+    #[cold]
+    #[track_caller]
+    fn failed((cls, sel): Self::Args) -> ! {
+        if sel == new() {
+            panic!("failed creating new instance of {:?}", cls)
+        } else {
+            panic!("failed creating new instance using +[{:?} {:?}]", cls, sel)
+        }
+    }
+}
+
+impl<'a> MsgSendIdFailed<'a> for Alloc {
+    type Args = (&'a Class, Sel);
+
+    #[cold]
+    #[track_caller]
+    fn failed((cls, sel): Self::Args) -> ! {
+        if sel == alloc() {
+            panic!("failed allocating {:?}", cls)
+        } else {
+            panic!("failed allocating with +[{:?} {:?}]", cls, sel)
+        }
+    }
+}
+
+impl MsgSendIdFailed<'_> for Init {
+    type Args = (*const Object, Sel);
+
+    #[cold]
+    #[track_caller]
+    fn failed((ptr, sel): Self::Args) -> ! {
+        if ptr.is_null() {
+            panic!("failed allocating object")
+        } else {
+            // We can't really display a more descriptive message here since the
+            // object is consumed by `init` and may not be valid any more.
+            if sel == init() {
+                panic!("failed initializing object")
+            } else {
+                panic!("failed initializing object with -{:?}", sel)
+            }
+        }
+    }
+}
+
+impl MsgSendIdFailed<'_> for CopyOrMutCopy {
+    type Args = ();
+
+    #[cold]
+    #[track_caller]
+    fn failed(_: Self::Args) -> ! {
+        panic!("failed copying object")
+    }
+}
+
+impl<'a> MsgSendIdFailed<'a> for Other {
+    type Args = (Option<&'a Object>, Sel);
+
+    #[cold]
+    #[track_caller]
+    fn failed((obj, sel): Self::Args) -> ! {
+        if let Some(obj) = obj {
+            let cls = obj.class();
+            panic!(
+                "unexpected NULL returned from {}[{:?} {:?}]",
+                if cls.is_metaclass() { "+" } else { "-" },
+                cls,
+                sel,
+            )
+        } else {
+            panic!("unexpected NULL {:?}; receiver was NULL", sel);
+        }
     }
 }
 

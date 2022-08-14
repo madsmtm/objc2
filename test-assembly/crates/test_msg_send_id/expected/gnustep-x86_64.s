@@ -41,9 +41,10 @@ handle_new_fallible:
 	pop	r14
 	ret
 .LBB1_1:
+	lea	rdx, [rip + .Lanon.[ID].1]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::new_failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 	ud2
 .Lfunc_end1:
 	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
@@ -89,9 +90,10 @@ handle_alloc_fallible:
 	pop	r14
 	ret
 .LBB3_1:
+	lea	rdx, [rip + .Lanon.[ID].2]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::alloc_failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 1)@GOTPCREL]
 	ud2
 .Lfunc_end3:
 	.size	handle_alloc_fallible, .Lfunc_end3-handle_alloc_fallible
@@ -146,9 +148,10 @@ handle_init_fallible:
 	pop	r14
 	ret
 .LBB5_2:
+	lea	rdx, [rip + .Lanon.[ID].3]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::init_failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 2)@GOTPCREL]
 	ud2
 .Lfunc_end5:
 	.size	handle_init_fallible, .Lfunc_end5-handle_init_fallible
@@ -290,7 +293,8 @@ handle_copy_fallible:
 	pop	r14
 	ret
 .LBB10_1:
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::copy_failed::GENERATED_ID, 0)@GOTPCREL]
+	lea	rdi, [rip + .Lanon.[ID].4]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 3)@GOTPCREL]
 	ud2
 .Lfunc_end10:
 	.size	handle_copy_fallible, .Lfunc_end10-handle_copy_fallible
@@ -340,11 +344,58 @@ handle_autoreleased_fallible:
 	pop	r14
 	ret
 .LBB12_1:
+	lea	rdx, [rip + .Lanon.[ID].5]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::normal_failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 4)@GOTPCREL]
 	ud2
 .Lfunc_end12:
 	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
+
+	.type	.Lanon.[ID].0,@object
+	.section	.rodata..Lanon.[ID].0,"a",@progbits
+.Lanon.[ID].0:
+	.ascii	"$DIR/lib.rs"
+	.size	.Lanon.[ID].0, 44
+
+	.type	.Lanon.[ID].1,@object
+	.section	.data.rel.ro..Lanon.[ID].1,"aw",@progbits
+	.p2align	3
+.Lanon.[ID].1:
+	.quad	.Lanon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000\r\000\000\000\005\000\000"
+	.size	.Lanon.[ID].1, 24
+
+	.type	.Lanon.[ID].2,@object
+	.section	.data.rel.ro..Lanon.[ID].2,"aw",@progbits
+	.p2align	3
+.Lanon.[ID].2:
+	.quad	.Lanon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000\027\000\000\000\005\000\000"
+	.size	.Lanon.[ID].2, 24
+
+	.type	.Lanon.[ID].3,@object
+	.section	.data.rel.ro..Lanon.[ID].3,"aw",@progbits
+	.p2align	3
+.Lanon.[ID].3:
+	.quad	.Lanon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000'\000\000\000\005\000\000"
+	.size	.Lanon.[ID].3, 24
+
+	.type	.Lanon.[ID].4,@object
+	.section	.data.rel.ro..Lanon.[ID].4,"aw",@progbits
+	.p2align	3
+.Lanon.[ID].4:
+	.quad	.Lanon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000F\000\000\000\005\000\000"
+	.size	.Lanon.[ID].4, 24
+
+	.type	.Lanon.[ID].5,@object
+	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
+	.p2align	3
+.Lanon.[ID].5:
+	.quad	.Lanon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000P\000\000\000\005\000\000"
+	.size	.Lanon.[ID].5, 24
 
 	.section	".note.GNU-stack","",@progbits

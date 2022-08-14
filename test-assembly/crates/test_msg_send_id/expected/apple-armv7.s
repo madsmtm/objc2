@@ -18,10 +18,14 @@ _handle_new_fallible:
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
 LBB1_1:
+	movw	r2, :lower16:(l_anon.[ID].1-(LPC1_0+8))
 	mov	r0, r5
+	movt	r2, :upper16:(l_anon.[ID].1-(LPC1_0+8))
 	mov	r1, r4
+LPC1_0:
+	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::new_failed::GENERATED_ID, 0)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	2
@@ -41,10 +45,14 @@ _handle_alloc_fallible:
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
 LBB3_1:
+	movw	r2, :lower16:(l_anon.[ID].2-(LPC3_0+8))
 	mov	r0, r5
+	movt	r2, :upper16:(l_anon.[ID].2-(LPC3_0+8))
 	mov	r1, r4
+LPC3_0:
+	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::alloc_failed::GENERATED_ID, 0)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 1)
 
 	.globl	_handle_init
 	.p2align	2
@@ -64,10 +72,14 @@ _handle_init_fallible:
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
 LBB5_1:
+	movw	r2, :lower16:(l_anon.[ID].3-(LPC5_0+8))
 	mov	r0, r5
+	movt	r2, :upper16:(l_anon.[ID].3-(LPC5_0+8))
 	mov	r1, r4
+LPC5_0:
+	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::init_failed::GENERATED_ID, 0)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 2)
 
 	.globl	_handle_alloc_init
 	.p2align	2
@@ -120,8 +132,12 @@ _handle_copy_fallible:
 	cmp	r0, #0
 	popne	{r7, pc}
 LBB10_1:
+	movw	r0, :lower16:(l_anon.[ID].4-(LPC10_0+8))
+	movt	r0, :upper16:(l_anon.[ID].4-(LPC10_0+8))
+LPC10_0:
+	add	r0, pc, r0
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::copy_failed::GENERATED_ID, 0)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 3)
 
 	.globl	_handle_autoreleased
 	.p2align	2
@@ -152,9 +168,43 @@ _handle_autoreleased_fallible:
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
 LBB12_1:
+	movw	r2, :lower16:(l_anon.[ID].5-(LPC12_0+8))
 	mov	r0, r5
+	movt	r2, :upper16:(l_anon.[ID].5-(LPC12_0+8))
 	mov	r1, r4
+LPC12_0:
+	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::normal_failed::GENERATED_ID, 0)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 4)
+
+	.section	__TEXT,__const
+l_anon.[ID].0:
+	.ascii	"$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	2
+l_anon.[ID].1:
+	.long	l_anon.[ID].0
+	.asciz	",\000\000\000\r\000\000\000\005\000\000"
+
+	.p2align	2
+l_anon.[ID].2:
+	.long	l_anon.[ID].0
+	.asciz	",\000\000\000\027\000\000\000\005\000\000"
+
+	.p2align	2
+l_anon.[ID].3:
+	.long	l_anon.[ID].0
+	.asciz	",\000\000\000'\000\000\000\005\000\000"
+
+	.p2align	2
+l_anon.[ID].4:
+	.long	l_anon.[ID].0
+	.asciz	",\000\000\000F\000\000\000\005\000\000"
+
+	.p2align	2
+l_anon.[ID].5:
+	.long	l_anon.[ID].0
+	.asciz	",\000\000\000P\000\000\000\005\000\000"
 
 .subsections_via_symbols

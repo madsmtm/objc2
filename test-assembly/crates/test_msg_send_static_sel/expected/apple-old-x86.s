@@ -22,14 +22,16 @@ L0$pb:
 _handle_alloc_init:
 	push	ebp
 	mov	ebp, esp
+	push	ebx
 	push	edi
 	push	esi
+	sub	esp, 12
 	call	L1$pb
 L1$pb:
-	pop	eax
-	mov	ecx, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L1$pb]
-	mov	edi, dword ptr [ecx]
-	mov	eax, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-L1$pb]
+	pop	ebx
+	mov	eax, dword ptr [ebx + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L1$pb]
+	mov	edi, dword ptr [eax]
+	mov	eax, dword ptr [ebx + LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-L1$pb]
 	sub	esp, 8
 	push	dword ptr [eax]
 	push	dword ptr [ebp + 8]
@@ -43,15 +45,19 @@ L1$pb:
 	add	esp, 16
 	test	eax, eax
 	je	LBB1_2
+	add	esp, 12
 	pop	esi
 	pop	edi
+	pop	ebx
 	pop	ebp
 	ret
 LBB1_2:
-	sub	esp, 8
+	sub	esp, 4
+	lea	eax, [ebx + l_anon.[ID].1-L1$pb]
+	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macro_helpers::init_failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_use_generic
 	.p2align	4, 0x90
@@ -84,6 +90,16 @@ L2$pb:
 	pop	edi
 	pop	ebp
 	ret
+
+	.section	__TEXT,__const
+l_anon.[ID].0:
+	.ascii	"$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	2
+l_anon.[ID].1:
+	.long	l_anon.[ID].0
+	.asciz	"4\000\000\000\016\000\000\000\005\000\000"
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_044375a4329d08dc

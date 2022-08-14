@@ -25,9 +25,10 @@ _handle_new_fallible:
 	pop	rbp
 	ret
 LBB1_2:
+	lea	rdx, [rip + l_anon.[ID].1]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	SYM(objc2::__macro_helpers::new_failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	4, 0x90
@@ -54,9 +55,10 @@ _handle_alloc_fallible:
 	pop	rbp
 	ret
 LBB3_2:
+	lea	rdx, [rip + l_anon.[ID].2]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	SYM(objc2::__macro_helpers::alloc_failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 1)
 
 	.globl	_handle_init
 	.p2align	4, 0x90
@@ -83,9 +85,10 @@ _handle_init_fallible:
 	pop	rbp
 	ret
 LBB5_2:
+	lea	rdx, [rip + l_anon.[ID].3]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	SYM(objc2::__macro_helpers::init_failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 2)
 
 	.globl	_handle_alloc_init
 	.p2align	4, 0x90
@@ -150,7 +153,8 @@ _handle_copy_fallible:
 	pop	rbp
 	ret
 LBB10_2:
-	call	SYM(objc2::__macro_helpers::copy_failed::GENERATED_ID, 0)
+	lea	rdi, [rip + l_anon.[ID].4]
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 3)
 
 	.globl	_handle_autoreleased
 	.p2align	4, 0x90
@@ -192,8 +196,39 @@ _handle_autoreleased_fallible:
 	pop	rbp
 	ret
 LBB12_2:
+	lea	rdx, [rip + l_anon.[ID].5]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	SYM(objc2::__macro_helpers::normal_failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 4)
+
+	.section	__TEXT,__const
+l_anon.[ID].0:
+	.ascii	"$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	3
+l_anon.[ID].1:
+	.quad	l_anon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000\r\000\000\000\005\000\000"
+
+	.p2align	3
+l_anon.[ID].2:
+	.quad	l_anon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000\027\000\000\000\005\000\000"
+
+	.p2align	3
+l_anon.[ID].3:
+	.quad	l_anon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000'\000\000\000\005\000\000"
+
+	.p2align	3
+l_anon.[ID].4:
+	.quad	l_anon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000F\000\000\000\005\000\000"
+
+	.p2align	3
+l_anon.[ID].5:
+	.quad	l_anon.[ID].0
+	.asciz	",\000\000\000\000\000\000\000P\000\000\000\005\000\000"
 
 .subsections_via_symbols

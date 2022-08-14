@@ -62,10 +62,12 @@ handle_new_fallible:
 	pop	ebx
 	ret
 .LBB1_1:
-	sub	esp, 8
+	sub	esp, 4
+	lea	eax, [ebx + .Lanon.[ID].1@GOTOFF]
+	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macro_helpers::new_failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end1:
@@ -133,10 +135,12 @@ handle_alloc_fallible:
 	pop	ebx
 	ret
 .LBB3_1:
-	sub	esp, 8
+	sub	esp, 4
+	lea	eax, [ebx + .Lanon.[ID].2@GOTOFF]
+	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macro_helpers::alloc_failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 1)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end3:
@@ -214,10 +218,12 @@ handle_init_fallible:
 	pop	ebx
 	ret
 .LBB5_2:
-	sub	esp, 8
+	sub	esp, 4
+	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
+	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macro_helpers::init_failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 2)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end5:
@@ -390,30 +396,31 @@ handle_copy_fallible:
 	push	ebx
 	push	edi
 	push	esi
-	mov	esi, dword ptr [esp + 16]
-	mov	edi, dword ptr [esp + 20]
+	sub	esp, 16
+	mov	esi, dword ptr [esp + 32]
+	mov	edi, dword ptr [esp + 36]
 	call	.L10$pb
 .L10$pb:
 	pop	ebx
 .Ltmp10:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp10-.L10$pb)
-	sub	esp, 8
-	push	edi
-	push	esi
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
 	call	objc_msg_lookup@PLT
-	add	esp, 8
-	push	edi
-	push	esi
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
 	call	eax
-	add	esp, 16
 	test	eax, eax
 	je	.LBB10_1
+	add	esp, 16
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
 .LBB10_1:
-	call	SYM(objc2::__macro_helpers::copy_failed::GENERATED_ID, 0)@PLT
+	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
+	mov	dword ptr [esp], eax
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 3)@PLT
 	ud2
 .Lfunc_end10:
 	.size	handle_copy_fallible, .Lfunc_end10-handle_copy_fallible
@@ -458,35 +465,87 @@ handle_autoreleased_fallible:
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 16
-	mov	edi, dword ptr [esp + 36]
-	mov	esi, dword ptr [esp + 32]
+	mov	edi, dword ptr [esp + 20]
+	mov	esi, dword ptr [esp + 16]
 	call	.L12$pb
 .L12$pb:
 	pop	ebx
 .Ltmp12:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp12-.L12$pb)
-	mov	dword ptr [esp + 4], edi
-	mov	dword ptr [esp], esi
+	sub	esp, 8
+	push	edi
+	push	esi
 	call	objc_msg_lookup@PLT
-	mov	dword ptr [esp + 4], edi
-	mov	dword ptr [esp], esi
+	add	esp, 8
+	push	edi
+	push	esi
 	call	eax
-	mov	dword ptr [esp], eax
+	add	esp, 4
+	push	eax
 	call	objc_retainAutoreleasedReturnValue@PLT
+	add	esp, 16
 	test	eax, eax
 	je	.LBB12_1
-	add	esp, 16
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
 .LBB12_1:
-	mov	dword ptr [esp + 4], edi
-	mov	dword ptr [esp], esi
-	call	SYM(objc2::__macro_helpers::normal_failed::GENERATED_ID, 0)@PLT
+	sub	esp, 4
+	lea	eax, [ebx + .Lanon.[ID].5@GOTOFF]
+	push	eax
+	push	edi
+	push	esi
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 4)@PLT
+	add	esp, 16
 	ud2
 .Lfunc_end12:
 	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
+
+	.type	.Lanon.[ID].0,@object
+	.section	.rodata..Lanon.[ID].0,"a",@progbits
+.Lanon.[ID].0:
+	.ascii	"$DIR/lib.rs"
+	.size	.Lanon.[ID].0, 44
+
+	.type	.Lanon.[ID].1,@object
+	.section	.data.rel.ro..Lanon.[ID].1,"aw",@progbits
+	.p2align	2
+.Lanon.[ID].1:
+	.long	.Lanon.[ID].0
+	.asciz	",\000\000\000\r\000\000\000\005\000\000"
+	.size	.Lanon.[ID].1, 16
+
+	.type	.Lanon.[ID].2,@object
+	.section	.data.rel.ro..Lanon.[ID].2,"aw",@progbits
+	.p2align	2
+.Lanon.[ID].2:
+	.long	.Lanon.[ID].0
+	.asciz	",\000\000\000\027\000\000\000\005\000\000"
+	.size	.Lanon.[ID].2, 16
+
+	.type	.Lanon.[ID].3,@object
+	.section	.data.rel.ro..Lanon.[ID].3,"aw",@progbits
+	.p2align	2
+.Lanon.[ID].3:
+	.long	.Lanon.[ID].0
+	.asciz	",\000\000\000'\000\000\000\005\000\000"
+	.size	.Lanon.[ID].3, 16
+
+	.type	.Lanon.[ID].4,@object
+	.section	.data.rel.ro..Lanon.[ID].4,"aw",@progbits
+	.p2align	2
+.Lanon.[ID].4:
+	.long	.Lanon.[ID].0
+	.asciz	",\000\000\000F\000\000\000\005\000\000"
+	.size	.Lanon.[ID].4, 16
+
+	.type	.Lanon.[ID].5,@object
+	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
+	.p2align	2
+.Lanon.[ID].5:
+	.long	.Lanon.[ID].0
+	.asciz	",\000\000\000P\000\000\000\005\000\000"
+	.size	.Lanon.[ID].5, 16
 
 	.section	".note.GNU-stack","",@progbits
