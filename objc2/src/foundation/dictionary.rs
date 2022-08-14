@@ -8,7 +8,7 @@ use core::ptr;
 
 use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
 use crate::rc::{DefaultId, Id, Owned, Shared, SliceId};
-use crate::{ClassType, __inner_extern_class, msg_send, msg_send_id, Message};
+use crate::{ClassType, __inner_extern_class, extern_methods, msg_send, msg_send_id, Message};
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
@@ -30,117 +30,107 @@ unsafe impl<K: Message + Sync + Send, V: Message + Send> Send for NSDictionary<K
 // Approximately same as `NSArray<T, Shared>`
 impl<K: Message + UnwindSafe, V: Message + UnwindSafe> UnwindSafe for NSDictionary<K, V> {}
 impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
-
-impl<K: Message, V: Message> NSDictionary<K, V> {
-    pub fn new() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
-
-    #[doc(alias = "count")]
-    pub fn len(&self) -> usize {
-        unsafe { msg_send![self, count] }
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
-    #[doc(alias = "objectForKey:")]
-    pub fn get(&self, key: &K) -> Option<&V> {
-        unsafe { msg_send![self, objectForKey: key] }
-    }
-
-    #[doc(alias = "getObjects:andKeys:")]
-    pub fn keys(&self) -> Vec<&K> {
-        let len = self.len();
-        let mut keys = Vec::with_capacity(len);
-        unsafe {
-            let _: () = msg_send![
-                self,
-                getObjects: ptr::null_mut::<&V>(),
-                andKeys: keys.as_mut_ptr(),
-            ];
-            keys.set_len(len);
+extern_methods!(
+    unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
+        pub fn new() -> Id<Self, Shared> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
         }
-        keys
-    }
 
-    #[doc(alias = "getObjects:andKeys:")]
-    pub fn values(&self) -> Vec<&V> {
-        let len = self.len();
-        let mut vals = Vec::with_capacity(len);
-        unsafe {
-            let _: () = msg_send![
-                self,
-                getObjects: vals.as_mut_ptr(),
-                andKeys: ptr::null_mut::<&K>(),
-            ];
-            vals.set_len(len);
+        #[doc(alias = "count")]
+        #[sel(count)]
+        pub fn len(&self) -> usize;
+
+        pub fn is_empty(&self) -> bool {
+            self.len() == 0
         }
-        vals
-    }
 
-    #[doc(alias = "getObjects:andKeys:")]
-    pub fn keys_and_objects(&self) -> (Vec<&K>, Vec<&V>) {
-        let len = self.len();
-        let mut keys = Vec::with_capacity(len);
-        let mut objs = Vec::with_capacity(len);
-        unsafe {
-            let _: () = msg_send![
-                self,
-                getObjects: objs.as_mut_ptr(),
-                andKeys: keys.as_mut_ptr(),
-            ];
-            keys.set_len(len);
-            objs.set_len(len);
+        #[doc(alias = "objectForKey:")]
+        #[sel(objectForKey:)]
+        pub fn get(&self, key: &K) -> Option<&V>;
+
+        #[sel(getObjects:andKeys:)]
+        unsafe fn get_objects_and_keys(&self, objects: *mut &V, keys: *mut &K);
+
+        #[doc(alias = "getObjects:andKeys:")]
+        pub fn keys(&self) -> Vec<&K> {
+            let len = self.len();
+            let mut keys = Vec::with_capacity(len);
+            unsafe {
+                self.get_objects_and_keys(ptr::null_mut(), keys.as_mut_ptr());
+                keys.set_len(len);
+            }
+            keys
         }
-        (keys, objs)
-    }
 
-    #[doc(alias = "keyEnumerator")]
-    pub fn iter_keys(&self) -> NSEnumerator<'_, K> {
-        unsafe {
-            let result = msg_send![self, keyEnumerator];
-            NSEnumerator::from_ptr(result)
+        #[doc(alias = "getObjects:andKeys:")]
+        pub fn values(&self) -> Vec<&V> {
+            let len = self.len();
+            let mut vals = Vec::with_capacity(len);
+            unsafe {
+                self.get_objects_and_keys(vals.as_mut_ptr(), ptr::null_mut());
+                vals.set_len(len);
+            }
+            vals
+        }
+
+        #[doc(alias = "getObjects:andKeys:")]
+        pub fn keys_and_objects(&self) -> (Vec<&K>, Vec<&V>) {
+            let len = self.len();
+            let mut keys = Vec::with_capacity(len);
+            let mut objs = Vec::with_capacity(len);
+            unsafe {
+                self.get_objects_and_keys(objs.as_mut_ptr(), keys.as_mut_ptr());
+                keys.set_len(len);
+                objs.set_len(len);
+            }
+            (keys, objs)
+        }
+
+        #[doc(alias = "keyEnumerator")]
+        pub fn iter_keys(&self) -> NSEnumerator<'_, K> {
+            unsafe {
+                let result = msg_send![self, keyEnumerator];
+                NSEnumerator::from_ptr(result)
+            }
+        }
+
+        #[doc(alias = "objectEnumerator")]
+        pub fn iter_values(&self) -> NSEnumerator<'_, V> {
+            unsafe {
+                let result = msg_send![self, objectEnumerator];
+                NSEnumerator::from_ptr(result)
+            }
+        }
+
+        pub fn keys_array(&self) -> Id<NSArray<K, Shared>, Shared> {
+            unsafe { msg_send_id![self, allKeys] }.unwrap()
+        }
+
+        pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Shared>
+        where
+            T: NSCopying<Output = K>,
+        {
+            let vals = vals.as_slice_ref();
+
+            let cls = Self::class();
+            let count = min(keys.len(), vals.len());
+            let obj = unsafe { msg_send_id![cls, alloc] };
+            unsafe {
+                msg_send_id![
+                    obj,
+                    initWithObjects: vals.as_ptr(),
+                    forKeys: keys.as_ptr(),
+                    count: count,
+                ]
+            }
+            .unwrap()
+        }
+
+        pub fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<V, Owned>, Shared> {
+            unsafe { msg_send_id![&dict, allValues] }.unwrap()
         }
     }
-
-    #[doc(alias = "objectEnumerator")]
-    pub fn iter_values(&self) -> NSEnumerator<'_, V> {
-        unsafe {
-            let result = msg_send![self, objectEnumerator];
-            NSEnumerator::from_ptr(result)
-        }
-    }
-
-    pub fn keys_array(&self) -> Id<NSArray<K, Shared>, Shared> {
-        unsafe { msg_send_id![self, allKeys] }.unwrap()
-    }
-
-    pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Shared>
-    where
-        T: NSCopying<Output = K>,
-    {
-        let vals = vals.as_slice_ref();
-
-        let cls = Self::class();
-        let count = min(keys.len(), vals.len());
-        let obj = unsafe { msg_send_id![cls, alloc] };
-        unsafe {
-            msg_send_id![
-                obj,
-                initWithObjects: vals.as_ptr(),
-                forKeys: keys.as_ptr(),
-                count: count,
-            ]
-        }
-        .unwrap()
-    }
-
-    pub fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<V, Owned>, Shared> {
-        unsafe { msg_send_id![&dict, allValues] }.unwrap()
-    }
-}
+);
 
 impl<K: Message, V: Message> DefaultId for NSDictionary<K, V> {
     type Ownership = Shared;

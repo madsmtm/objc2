@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   means you'll have to `use objc2::ClassType` whenever you want to use e.g.
   `NSData::class()`.
 * Added `Id::into_superclass`.
+* Added `extern_methods!` macro.
 
 ### Changed
 * **BREAKING**: Change syntax in `extern_class!` macro to be more Rust-like.

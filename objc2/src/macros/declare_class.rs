@@ -179,15 +179,16 @@ macro_rules! __inner_declare_class {
 /// instance method, and if you don't it will be registered as a class method.
 ///
 /// The desired selector can be specified using the `#[sel(my:selector:)]`
-/// attribute.
+/// attribute, similar to the [`extern_methods!`] macro.
 ///
 /// A transformation step is performed on the functions (to make them have the
 /// correct ABI) and hence they shouldn't really be called manually. (You
-/// can't mark them as `pub` for the same reason). Instead, define a new
-/// function that calls it via. [`msg_send!`].
+/// can't mark them as `pub` for the same reason). Instead, use the
+/// [`extern_methods!`] macro to create a Rust interface to the methods.
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
+/// [`extern_methods!`]: crate::extern_methods
 /// [`msg_send!`]: crate::msg_send
 ///
 ///

@@ -9,7 +9,7 @@ use std::io;
 use super::data::with_slice;
 use super::{NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
 use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{extern_class, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A dynamic byte buffer in memory.
@@ -28,97 +28,95 @@ extern_class!(
     }
 );
 
-/// Creation methods
-impl NSMutableData {
-    pub fn new() -> Id<Self, Owned> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
+extern_methods!(
+    /// Creation methods
+    unsafe impl NSMutableData {
+        pub fn new() -> Id<Self, Owned> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
+        }
 
-    pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
-        unsafe { Id::from_shared(Id::cast(with_slice(Self::class(), bytes))) }
-    }
+        pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
+            unsafe { Id::from_shared(Id::cast(with_slice(Self::class(), bytes))) }
+        }
 
-    #[cfg(feature = "block")]
-    pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
-        unsafe { Id::from_shared(Id::cast(super::data::with_vec(Self::class(), bytes))) }
-    }
+        #[cfg(feature = "block")]
+        pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
+            unsafe { Id::from_shared(Id::cast(super::data::with_vec(Self::class(), bytes))) }
+        }
 
-    // TODO: Use malloc_buf/mbox and `initWithBytesNoCopy:...`?
+        // TODO: Use malloc_buf/mbox and `initWithBytesNoCopy:...`?
 
-    #[doc(alias = "initWithData:")]
-    pub fn from_data(data: &NSData) -> Id<Self, Owned> {
-        // Not provided on NSData, one should just use NSData::copy or similar
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithData: data].unwrap()
+        #[doc(alias = "initWithData:")]
+        pub fn from_data(data: &NSData) -> Id<Self, Owned> {
+            // Not provided on NSData, one should just use NSData::copy or similar
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithData: data].unwrap()
+            }
+        }
+
+        #[doc(alias = "initWithCapacity:")]
+        pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithCapacity: capacity].unwrap()
+            }
         }
     }
 
-    #[doc(alias = "initWithCapacity:")]
-    pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithCapacity: capacity].unwrap()
+    /// Mutation methods
+    unsafe impl NSMutableData {
+        /// Expands with zeroes, or truncates the buffer.
+        #[doc(alias = "setLength:")]
+        #[sel(setLength:)]
+        pub fn set_len(&mut self, len: usize);
+
+        #[sel(mutableBytes)]
+        fn bytes_mut_raw(&mut self) -> *mut c_void;
+
+        #[doc(alias = "mutableBytes")]
+        pub fn bytes_mut(&mut self) -> &mut [u8] {
+            let ptr = self.bytes_mut_raw();
+            let ptr: *mut u8 = ptr.cast();
+            // The bytes pointer may be null for length zero
+            if ptr.is_null() {
+                &mut []
+            } else {
+                unsafe { slice::from_raw_parts_mut(ptr, self.len()) }
+            }
+        }
+
+        #[sel(appendBytes:length:)]
+        unsafe fn append_raw(&mut self, ptr: *const c_void, len: usize);
+
+        #[doc(alias = "appendBytes:length:")]
+        pub fn extend_from_slice(&mut self, bytes: &[u8]) {
+            let bytes_ptr: *const c_void = bytes.as_ptr().cast();
+            unsafe { self.append_raw(bytes_ptr, bytes.len()) }
+        }
+
+        pub fn push(&mut self, byte: u8) {
+            self.extend_from_slice(&[byte])
+        }
+
+        #[sel(replaceBytesInRange:withBytes:length:)]
+        unsafe fn replace_raw(&mut self, range: NSRange, ptr: *const c_void, len: usize);
+
+        #[doc(alias = "replaceBytesInRange:withBytes:length:")]
+        pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
+            let range = NSRange::from(range);
+            // No need to verify the length of the range here,
+            // `replaceBytesInRange:` just zero-fills if out of bounds.
+            let ptr: *const c_void = bytes.as_ptr().cast();
+            unsafe { self.replace_raw(range, ptr, bytes.len()) }
+        }
+
+        pub fn set_bytes(&mut self, bytes: &[u8]) {
+            let len = self.len();
+            self.replace_range(0..len, bytes);
         }
     }
-}
-
-/// Mutation methods
-impl NSMutableData {
-    // Helps with reborrowing issue
-    fn raw_bytes_mut(&mut self) -> *mut c_void {
-        unsafe { msg_send![self, mutableBytes] }
-    }
-
-    #[doc(alias = "mutableBytes")]
-    pub fn bytes_mut(&mut self) -> &mut [u8] {
-        let ptr = self.raw_bytes_mut();
-        let ptr: *mut u8 = ptr.cast();
-        // The bytes pointer may be null for length zero
-        if ptr.is_null() {
-            &mut []
-        } else {
-            unsafe { slice::from_raw_parts_mut(ptr, self.len()) }
-        }
-    }
-
-    /// Expands with zeroes, or truncates the buffer.
-    #[doc(alias = "setLength:")]
-    pub fn set_len(&mut self, len: usize) {
-        unsafe { msg_send![self, setLength: len] }
-    }
-
-    #[doc(alias = "appendBytes:length:")]
-    pub fn extend_from_slice(&mut self, bytes: &[u8]) {
-        let bytes_ptr: *const c_void = bytes.as_ptr().cast();
-        unsafe { msg_send![self, appendBytes: bytes_ptr, length: bytes.len()] }
-    }
-
-    pub fn push(&mut self, byte: u8) {
-        self.extend_from_slice(&[byte])
-    }
-
-    #[doc(alias = "replaceBytesInRange:withBytes:length:")]
-    pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
-        let range = NSRange::from(range);
-        // No need to verify the length of the range here,
-        // `replaceBytesInRange:` just zero-fills if out of bounds.
-        let ptr: *const c_void = bytes.as_ptr().cast();
-        unsafe {
-            msg_send![
-                self,
-                replaceBytesInRange: range,
-                withBytes: ptr,
-                length: bytes.len(),
-            ]
-        }
-    }
-
-    pub fn set_bytes(&mut self, bytes: &[u8]) {
-        let len = self.len();
-        self.replace_range(0..len, bytes);
-    }
-}
+);
 
 unsafe impl NSCopying for NSMutableData {
     type Ownership = Shared;

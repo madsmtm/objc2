@@ -6,7 +6,7 @@ use super::{
 };
 use crate::rc::{DefaultId, Id, Shared};
 use crate::runtime::Object;
-use crate::{extern_class, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A string that has associated attributes for portions of its text.
@@ -41,74 +41,75 @@ impl RefUnwindSafe for NSAttributedString {}
 /// Attributes that you can apply to text in an attributed string.
 pub type NSAttributedStringKey = NSString;
 
-/// Creating attributed strings.
-impl NSAttributedString {
-    /// Construct an empty attributed string.
-    pub fn new() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
+extern_methods!(
+    /// Creating attributed strings.
+    unsafe impl NSAttributedString {
+        /// Construct an empty attributed string.
+        pub fn new() -> Id<Self, Shared> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
+        }
 
-    /// Creates a new attributed string from the given string and attributes.
-    ///
-    /// The attributes are associated with every UTF-16 code unit in the
-    /// string.
-    #[doc(alias = "initWithString:")]
-    pub fn new_with_attributes(
-        string: &NSString,
-        // TODO: Mutability of the dictionary should be (Shared, Shared)
-        attributes: &NSDictionary<NSAttributedStringKey, Object>,
-    ) -> Id<Self, Shared> {
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithString: string, attributes: attributes].unwrap()
+        /// Creates a new attributed string from the given string and attributes.
+        ///
+        /// The attributes are associated with every UTF-16 code unit in the
+        /// string.
+        #[doc(alias = "initWithString:")]
+        pub fn new_with_attributes(
+            string: &NSString,
+            // TODO: Mutability of the dictionary should be (Shared, Shared)
+            attributes: &NSDictionary<NSAttributedStringKey, Object>,
+        ) -> Id<Self, Shared> {
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithString: string, attributes: attributes].unwrap()
+            }
+        }
+
+        /// Creates a new attributed string without any attributes.
+        #[doc(alias = "initWithString:")]
+        pub fn from_nsstring(string: &NSString) -> Id<Self, Shared> {
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithString: string].unwrap()
+            }
         }
     }
 
-    /// Creates a new attributed string without any attributes.
-    #[doc(alias = "initWithString:")]
-    pub fn from_nsstring(string: &NSString) -> Id<Self, Shared> {
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithString: string].unwrap()
+    /// Querying.
+    unsafe impl NSAttributedString {
+        // TODO: Lifetimes?
+        pub fn string(&self) -> Id<NSString, Shared> {
+            unsafe { msg_send_id![self, string].unwrap() }
         }
+
+        /// Alias for `self.string().len_utf16()`.
+        #[doc(alias = "length")]
+        #[sel(length)]
+        #[allow(unused)]
+        // TODO: Finish this
+        fn len_utf16(&self) -> usize;
+
+        // /// TODO
+        // ///
+        // /// See [Apple's documentation on Effective and Maximal Ranges][doc].
+        // ///
+        // /// [doc]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/AttributedStrings/Tasks/AccessingAttrs.html#//apple_ref/doc/uid/20000161-SW2
+        // #[doc(alias = "attributesAtIndex:effectiveRange:")]
+        // pub fn attributes_in_effective_range(
+        //     &self,
+        //     index: usize,
+        //     range: Range<usize>,
+        // ) -> Id<Self, Shared> {
+        //     let range = NSRange::from(range);
+        //     todo!()
+        // }
+        //
+        // attributesAtIndex:longestEffectiveRange:inRange:
+
+        // TODO: attributedSubstringFromRange:
+        // TODO: enumerateAttributesInRange:options:usingBlock:
     }
-}
-
-/// Querying.
-impl NSAttributedString {
-    // TODO: Lifetimes?
-    pub fn string(&self) -> Id<NSString, Shared> {
-        unsafe { msg_send_id![self, string].unwrap() }
-    }
-
-    /// Alias for `self.string().len_utf16()`.
-    #[doc(alias = "length")]
-    #[allow(unused)]
-    // TODO: Finish this
-    fn len_utf16(&self) -> usize {
-        unsafe { msg_send![self, length] }
-    }
-
-    // /// TODO
-    // ///
-    // /// See [Apple's documentation on Effective and Maximal Ranges][doc].
-    // ///
-    // /// [doc]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/AttributedStrings/Tasks/AccessingAttrs.html#//apple_ref/doc/uid/20000161-SW2
-    // #[doc(alias = "attributesAtIndex:effectiveRange:")]
-    // pub fn attributes_in_effective_range(
-    //     &self,
-    //     index: usize,
-    //     range: Range<usize>,
-    // ) -> Id<Self, Shared> {
-    //     let range = NSRange::from(range);
-    //     todo!()
-    // }
-    //
-    // attributesAtIndex:longestEffectiveRange:inRange:
-
-    // TODO: attributedSubstringFromRange:
-    // TODO: enumerateAttributesInRange:options:usingBlock:
-}
+);
 
 impl DefaultId for NSAttributedString {
     type Ownership = Shared;

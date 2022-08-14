@@ -2,7 +2,7 @@ use core::fmt;
 
 use super::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
 use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{extern_class, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A mutable string that has associated attributes.
@@ -17,45 +17,46 @@ extern_class!(
     }
 );
 
-/// Creating mutable attributed strings.
-impl NSMutableAttributedString {
-    /// Construct an empty mutable attributed string.
-    pub fn new() -> Id<Self, Owned> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
+extern_methods!(
+    /// Creating mutable attributed strings.
+    unsafe impl NSMutableAttributedString {
+        /// Construct an empty mutable attributed string.
+        pub fn new() -> Id<Self, Owned> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
+        }
 
-    // TODO: new_with_attributes
+        // TODO: new_with_attributes
 
-    #[doc(alias = "initWithString:")]
-    pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithString: string].unwrap()
+        #[doc(alias = "initWithString:")]
+        pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithString: string].unwrap()
+            }
+        }
+
+        #[doc(alias = "initWithAttributedString:")]
+        pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self, Owned> {
+            unsafe {
+                let obj = msg_send_id![Self::class(), alloc];
+                msg_send_id![obj, initWithAttributedString: attributed_string].unwrap()
+            }
         }
     }
 
-    #[doc(alias = "initWithAttributedString:")]
-    pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self, Owned> {
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithAttributedString: attributed_string].unwrap()
-        }
-    }
-}
+    /// Modifying the attributed string.
+    unsafe impl NSMutableAttributedString {
+        // TODO
+        // - mutableString
+        // - replaceCharactersInRange:withString:
+        // - setAttributes:range:
 
-/// Modifying the attributed string.
-impl NSMutableAttributedString {
-    // TODO
-    // - mutableString
-    // - replaceCharactersInRange:withString:
-    // - setAttributes:range:
-
-    /// Replaces the entire attributed string.
-    #[doc(alias = "setAttributedString:")]
-    pub fn replace(&mut self, attributed_string: &NSAttributedString) {
-        unsafe { msg_send![self, setAttributedString: attributed_string] }
+        /// Replaces the entire attributed string.
+        #[doc(alias = "setAttributedString:")]
+        #[sel(setAttributedString:)]
+        pub fn replace(&mut self, attributed_string: &NSAttributedString);
     }
-}
+);
 
 impl DefaultId for NSMutableAttributedString {
     type Ownership = Owned;

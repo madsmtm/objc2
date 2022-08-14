@@ -9,7 +9,7 @@ use core::slice::{self, SliceIndex};
 use super::{NSCopying, NSMutableCopying, NSMutableData, NSObject};
 use crate::rc::{DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
-use crate::{extern_class, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A static byte buffer in memory.
@@ -33,52 +33,60 @@ unsafe impl Send for NSData {}
 impl UnwindSafe for NSData {}
 impl RefUnwindSafe for NSData {}
 
-impl NSData {
-    pub fn new() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), new].unwrap() }
-    }
+extern_methods!(
+    /// Creation methods.
+    unsafe impl NSData {
+        pub fn new() -> Id<Self, Shared> {
+            unsafe { msg_send_id![Self::class(), new].unwrap() }
+        }
 
-    #[doc(alias = "length")]
-    pub fn len(&self) -> usize {
-        unsafe { msg_send![self, length] }
-    }
+        pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
+            unsafe { Id::cast(with_slice(Self::class(), bytes)) }
+        }
 
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
+        #[cfg(feature = "block")]
+        pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Shared> {
+            // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
+            // bug; it forgets to assign the input buffer and length to the
+            // instance before it swizzles to NSDataWithDeallocatorBlock.
+            // See https://github.com/gnustep/libs-base/pull/213
+            // So we just use NSDataWithDeallocatorBlock directly.
+            //
+            // NSMutableData does not have this problem.
+            #[cfg(feature = "gnustep-1-7")]
+            let cls = crate::class!(NSDataWithDeallocatorBlock);
+            #[cfg(not(feature = "gnustep-1-7"))]
+            let cls = Self::class();
 
-    pub fn bytes(&self) -> &[u8] {
-        let ptr: *const c_void = unsafe { msg_send![self, bytes] };
-        let ptr: *const u8 = ptr.cast();
-        // The bytes pointer may be null for length zero
-        if ptr.is_null() {
-            &[]
-        } else {
-            unsafe { slice::from_raw_parts(ptr, self.len()) }
+            unsafe { Id::cast(with_vec(cls, bytes)) }
         }
     }
 
-    pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
-        unsafe { Id::cast(with_slice(Self::class(), bytes)) }
-    }
+    /// Accessor methods.
+    unsafe impl NSData {
+        #[sel(length)]
+        #[doc(alias = "length")]
+        pub fn len(&self) -> usize;
 
-    #[cfg(feature = "block")]
-    pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Shared> {
-        // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
-        // bug; it forgets to assign the input buffer and length to the
-        // instance before it swizzles to NSDataWithDeallocatorBlock.
-        // See https://github.com/gnustep/libs-base/pull/213
-        // So we just use NSDataWithDeallocatorBlock directly.
-        //
-        // NSMutableData does not have this problem.
-        #[cfg(feature = "gnustep-1-7")]
-        let cls = crate::class!(NSDataWithDeallocatorBlock);
-        #[cfg(not(feature = "gnustep-1-7"))]
-        let cls = Self::class();
+        pub fn is_empty(&self) -> bool {
+            self.len() == 0
+        }
 
-        unsafe { Id::cast(with_vec(cls, bytes)) }
+        #[sel(bytes)]
+        fn bytes_raw(&self) -> *const c_void;
+
+        pub fn bytes(&self) -> &[u8] {
+            let ptr = self.bytes_raw();
+            let ptr: *const u8 = ptr.cast();
+            // The bytes pointer may be null for length zero
+            if ptr.is_null() {
+                &[]
+            } else {
+                unsafe { slice::from_raw_parts(ptr, self.len()) }
+            }
+        }
     }
-}
+);
 
 unsafe impl NSCopying for NSData {
     type Ownership = Shared;

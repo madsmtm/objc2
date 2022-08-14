@@ -10,7 +10,7 @@ use super::{
 };
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use crate::runtime::{Class, Object};
-use crate::{ClassType, Message, __inner_extern_class, msg_send, msg_send_id};
+use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
 
 __inner_extern_class!(
     /// An immutable ordered collection of objects.
@@ -88,154 +88,157 @@ pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>
     }
 }
 
-/// Generic creation methods.
-impl<T: Message, O: Ownership> NSArray<T, O> {
-    /// Get an empty array.
-    pub fn new() -> Id<Self, Shared> {
-        // SAFETY:
-        // - `new` may not create a new object, but instead return a shared
-        //   instance. We remedy this by returning `Id<Self, Shared>`.
-        // - `O` don't actually matter here! E.g. `NSArray<T, Owned>` is
-        //   perfectly legal, since the array doesn't have any elements, and
-        //   hence the notion of ownership over the elements is void.
-        unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSArray") }
-    }
+extern_methods!(
+    /// Generic creation methods.
+    unsafe impl<T: Message, O: Ownership> NSArray<T, O> {
+        /// Get an empty array.
+        pub fn new() -> Id<Self, Shared> {
+            // SAFETY:
+            // - `new` may not create a new object, but instead return a shared
+            //   instance. We remedy this by returning `Id<Self, Shared>`.
+            // - `O` don't actually matter here! E.g. `NSArray<T, Owned>` is
+            //   perfectly legal, since the array doesn't have any elements, and
+            //   hence the notion of ownership over the elements is void.
+            unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSArray") }
+        }
 
-    pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
-        // SAFETY:
-        // `initWithObjects:` may choose to deduplicate arrays (I could
-        // imagine it having a special case for arrays with one `NSNumber`
-        // object), and returning mutable references to those would be
-        // unsound!
-        // However, when we know that we have ownership over the variables, we
-        // also know that there cannot be another array in existence with the
-        // same objects, so `Id<NSArray<T, Owned>, Owned>` is safe to return.
-        //
-        // In essence, we can choose between always returning `Id<T, Shared>`
-        // or `Id<T, O>`, and the latter is probably the most useful, as we
-        // would like to know when we're the only owner of the array, to
-        // allow mutation of the array's items.
-        unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
-    }
-}
-
-/// Creation methods that produce shared arrays.
-impl<T: Message> NSArray<T, Shared> {
-    pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
-        // SAFETY: Taking `&T` would not be sound, since the `&T` could come
-        // from an `Id<T, Owned>` that would now no longer be owned!
-        //
-        // (Note that NSArray internally retains all the objects it is given,
-        // effectively making the safety requirements the same as
-        // `Id::retain`).
-        unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
-    }
-}
-
-/// Generic accessor methods.
-impl<T: Message, O: Ownership> NSArray<T, O> {
-    #[doc(alias = "count")]
-    pub fn len(&self) -> usize {
-        unsafe { msg_send![self, count] }
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
-    #[doc(alias = "objectAtIndex:")]
-    pub fn get(&self, index: usize) -> Option<&T> {
-        // TODO: Replace this check with catching the thrown NSRangeException
-        if index < self.len() {
-            // SAFETY: The index is checked to be in bounds.
-            Some(unsafe { msg_send![self, objectAtIndex: index] })
-        } else {
-            None
+        pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
+            // SAFETY:
+            // `initWithObjects:` may choose to deduplicate arrays (I could
+            // imagine it having a special case for arrays with one `NSNumber`
+            // object), and returning mutable references to those would be
+            // unsound!
+            // However, when we know that we have ownership over the variables, we
+            // also know that there cannot be another array in existence with the
+            // same objects, so `Id<NSArray<T, Owned>, Owned>` is safe to return.
+            //
+            // In essence, we can choose between always returning `Id<T, Shared>`
+            // or `Id<T, O>`, and the latter is probably the most useful, as we
+            // would like to know when we're the only owner of the array, to
+            // allow mutation of the array's items.
+            unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
         }
     }
 
-    #[doc(alias = "firstObject")]
-    pub fn first(&self) -> Option<&T> {
-        unsafe { msg_send![self, firstObject] }
-    }
-
-    #[doc(alias = "lastObject")]
-    pub fn last(&self) -> Option<&T> {
-        unsafe { msg_send![self, lastObject] }
-    }
-
-    #[doc(alias = "objectEnumerator")]
-    pub fn iter(&self) -> NSEnumerator<'_, T> {
-        unsafe {
-            let result: *mut Object = msg_send![self, objectEnumerator];
-            NSEnumerator::from_ptr(result)
+    /// Creation methods that produce shared arrays.
+    unsafe impl<T: Message> NSArray<T, Shared> {
+        pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
+            // SAFETY: Taking `&T` would not be sound, since the `&T` could come
+            // from an `Id<T, Owned>` that would now no longer be owned!
+            //
+            // (Note that NSArray internally retains all the objects it is given,
+            // effectively making the safety requirements the same as
+            // `Id::retain`).
+            unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
         }
     }
 
-    pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
-        let range = NSRange::from(range);
-        let mut vec = Vec::with_capacity(range.length);
-        unsafe {
-            let _: () = msg_send![self, getObjects: vec.as_ptr(), range: range];
-            vec.set_len(range.length);
+    /// Generic accessor methods.
+    unsafe impl<T: Message, O: Ownership> NSArray<T, O> {
+        #[doc(alias = "count")]
+        #[sel(count)]
+        pub fn len(&self) -> usize;
+
+        pub fn is_empty(&self) -> bool {
+            self.len() == 0
         }
-        vec
-    }
 
-    pub fn to_vec(&self) -> Vec<&T> {
-        self.objects_in_range(0..self.len())
-    }
+        #[sel(objectAtIndex:)]
+        unsafe fn get_unchecked(&self, index: usize) -> &T;
 
-    // TODO: Take Id<Self, Self::ItemOwnership> ?
-    pub fn into_vec(array: Id<Self, Owned>) -> Vec<Id<T, O>> {
-        array
-            .to_vec()
-            .into_iter()
-            .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
-            .collect()
-    }
-}
+        #[doc(alias = "objectAtIndex:")]
+        pub fn get(&self, index: usize) -> Option<&T> {
+            // TODO: Replace this check with catching the thrown NSRangeException
+            if index < self.len() {
+                // SAFETY: The index is checked to be in bounds.
+                Some(unsafe { self.get_unchecked(index) })
+            } else {
+                None
+            }
+        }
 
-/// Accessor methods that work on shared arrays.
-impl<T: Message> NSArray<T, Shared> {
-    #[doc(alias = "objectAtIndex:")]
-    pub fn get_retained(&self, index: usize) -> Id<T, Shared> {
-        let obj = self.get(index).unwrap();
-        // SAFETY: The object is originally shared (see `where` bound).
-        unsafe { Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked() }
-    }
+        #[doc(alias = "firstObject")]
+        #[sel(firstObject)]
+        pub fn first(&self) -> Option<&T>;
 
-    pub fn to_shared_vec(&self) -> Vec<Id<T, Shared>> {
-        self.to_vec()
-            .into_iter()
-            .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
-            .collect()
-    }
-}
+        #[doc(alias = "lastObject")]
+        #[sel(lastObject)]
+        pub fn last(&self) -> Option<&T>;
 
-/// Accessor methods that work on owned arrays.
-impl<T: Message> NSArray<T, Owned> {
-    #[doc(alias = "objectAtIndex:")]
-    pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
-        // TODO: Replace this check with catching the thrown NSRangeException
-        if index < self.len() {
-            // SAFETY: The index is checked to be in bounds.
-            Some(unsafe { msg_send![self, objectAtIndex: index] })
-        } else {
-            None
+        #[doc(alias = "objectEnumerator")]
+        pub fn iter(&self) -> NSEnumerator<'_, T> {
+            unsafe {
+                let result: *mut Object = msg_send![self, objectEnumerator];
+                NSEnumerator::from_ptr(result)
+            }
+        }
+
+        #[sel(getObjects:range:)]
+        unsafe fn get_objects(&self, ptr: *mut &T, range: NSRange);
+
+        pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
+            let range = NSRange::from(range);
+            let mut vec = Vec::with_capacity(range.length);
+            unsafe {
+                self.get_objects(vec.as_mut_ptr(), range);
+                vec.set_len(range.length);
+            }
+            vec
+        }
+
+        pub fn to_vec(&self) -> Vec<&T> {
+            self.objects_in_range(0..self.len())
+        }
+
+        // TODO: Take Id<Self, Self::ItemOwnership> ?
+        pub fn into_vec(array: Id<Self, Owned>) -> Vec<Id<T, O>> {
+            array
+                .to_vec()
+                .into_iter()
+                .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
+                .collect()
         }
     }
 
-    #[doc(alias = "firstObject")]
-    pub fn first_mut(&mut self) -> Option<&mut T> {
-        unsafe { msg_send![self, firstObject] }
+    /// Accessor methods that work on shared arrays.
+    unsafe impl<T: Message> NSArray<T, Shared> {
+        #[doc(alias = "objectAtIndex:")]
+        pub fn get_retained(&self, index: usize) -> Id<T, Shared> {
+            let obj = self.get(index).unwrap();
+            // SAFETY: The object is originally shared (see `where` bound).
+            unsafe { Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked() }
+        }
+
+        pub fn to_shared_vec(&self) -> Vec<Id<T, Shared>> {
+            self.to_vec()
+                .into_iter()
+                .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
+                .collect()
+        }
     }
 
-    #[doc(alias = "lastObject")]
-    pub fn last_mut(&mut self) -> Option<&mut T> {
-        unsafe { msg_send![self, lastObject] }
+    /// Accessor methods that work on owned arrays.
+    unsafe impl<T: Message> NSArray<T, Owned> {
+        #[doc(alias = "objectAtIndex:")]
+        pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
+            // TODO: Replace this check with catching the thrown NSRangeException
+            if index < self.len() {
+                // SAFETY: The index is checked to be in bounds.
+                Some(unsafe { msg_send![self, objectAtIndex: index] })
+            } else {
+                None
+            }
+        }
+
+        #[doc(alias = "firstObject")]
+        #[sel(firstObject)]
+        pub fn first_mut(&mut self) -> Option<&mut T>;
+
+        #[doc(alias = "lastObject")]
+        #[sel(lastObject)]
+        pub fn last_mut(&mut self) -> Option<&mut T>;
     }
-}
+);
 
 /// This is implemented as a shallow copy.
 ///
