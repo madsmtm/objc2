@@ -7,7 +7,7 @@ extern_class!(
     }
 
     unsafe impl ClassType for NSNumber {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

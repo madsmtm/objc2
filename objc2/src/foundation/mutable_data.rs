@@ -24,7 +24,7 @@ extern_class!(
 
     unsafe impl ClassType for NSMutableData {
         #[inherits(NSObject)]
-        type Superclass = NSData;
+        type Super = NSData;
     }
 );
 

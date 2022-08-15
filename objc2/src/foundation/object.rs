@@ -16,7 +16,7 @@ __inner_extern_class! {
 }
 
 unsafe impl ClassType for NSObject {
-    type Superclass = Object;
+    type Super = Object;
 
     #[inline]
     fn class() -> &'static Class {

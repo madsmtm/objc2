@@ -13,7 +13,7 @@ extern_class!(
     pub struct NSProcessInfo;
 
     unsafe impl ClassType for NSProcessInfo {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

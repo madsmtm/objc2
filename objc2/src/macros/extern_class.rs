@@ -74,7 +74,7 @@
 ///
 ///     // Specify the superclass, in this case `NSObject`
 ///     unsafe impl ClassType for NSFormatter {
-///         type Superclass = NSObject;
+///         type Super = NSObject;
 ///     }
 /// );
 ///
@@ -97,7 +97,7 @@
 /// #     pub struct NSFormatter;
 /// #
 /// #     unsafe impl ClassType for NSFormatter {
-/// #         type Superclass = NSObject;
+/// #         type Super = NSObject;
 /// #     }
 /// # );
 ///
@@ -108,7 +108,7 @@
 ///     unsafe impl ClassType for NSDateFormatter {
 ///         // Specify the correct inheritance chain
 ///         #[inherits(NSObject)]
-///         type Superclass = NSFormatter;
+///         type Super = NSFormatter;
 ///     }
 /// );
 /// ```
@@ -123,7 +123,7 @@ macro_rules! extern_class {
 
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
-            type Superclass = $superclass:ty;
+            type Super = $superclass:ty;
         }
     ) => {
         // Just shorthand syntax for the following
@@ -133,7 +133,7 @@ macro_rules! extern_class {
 
             unsafe impl ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
-                type Superclass = $superclass;
+                type Super = $superclass;
             }
         );
     };
@@ -145,7 +145,7 @@ macro_rules! extern_class {
 
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
-            type Superclass = $superclass:ty;
+            type Super = $superclass:ty;
         }
     ) => {
         $crate::__inner_extern_class!(
@@ -156,7 +156,7 @@ macro_rules! extern_class {
 
             unsafe impl<> ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
-                type Superclass = $superclass;
+                type Super = $superclass;
             }
         );
 
@@ -237,7 +237,7 @@ macro_rules! __inner_extern_class {
 
         unsafe impl<$($t_for:ident $(: $b_for:ident)?),*> ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
-            type Superclass = $superclass:ty;
+            type Super = $superclass:ty;
         }
     ) => {
         $crate::__inner_extern_class! {
@@ -253,7 +253,7 @@ macro_rules! __inner_extern_class {
         }
 
         unsafe impl<$($t_for $(: $b_for)?),*> ClassType for $for {
-            type Superclass = $superclass;
+            type Super = $superclass;
 
             #[inline]
             fn class() -> &'static $crate::runtime::Class {

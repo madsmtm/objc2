@@ -55,7 +55,7 @@ declare_class!(
     pub(crate) struct RcTestObject {}
 
     unsafe impl ClassType for RcTestObject {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 
     unsafe impl RcTestObject {

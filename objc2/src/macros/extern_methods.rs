@@ -50,7 +50,7 @@
 ///     pub struct NSCalendar;
 ///
 ///     unsafe impl ClassType for NSCalendar {
-///         type Superclass = NSObject;
+///         type Super = NSObject;
 ///     }
 /// );
 ///
@@ -130,7 +130,7 @@
 /// #     pub struct NSCalendar;
 /// #
 /// #     unsafe impl ClassType for NSCalendar {
-/// #         type Superclass = NSObject;
+/// #         type Super = NSObject;
 /// #     }
 /// # );
 /// #

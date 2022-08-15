@@ -20,7 +20,7 @@ extern_class!(
     pub struct NSUUID;
 
     unsafe impl ClassType for NSUUID {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

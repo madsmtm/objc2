@@ -25,7 +25,7 @@ extern_class!(
     pub struct NSAttributedString;
 
     unsafe impl ClassType for NSAttributedString {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

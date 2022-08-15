@@ -43,7 +43,7 @@ extern_class!(
 
     unsafe impl ClassType for NSNumber {
         #[inherits(NSObject)]
-        type Superclass = NSValue;
+        type Super = NSValue;
     }
 );
 

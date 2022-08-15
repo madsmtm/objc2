@@ -17,11 +17,11 @@ use crate::Message;
 /// # Safety
 ///
 /// The class returned by [`Self::class`] must be a subclass of the class that
-/// [`Self::Superclass`] represents.
+/// [`Self::Super`] represents.
 ///
 /// In pseudocode:
 /// ```ignore
-/// Self::class().superclass() == <Self::Superclass as ClassType>::class()
+/// Self::class().superclass() == <Self::Super as ClassType>::class()
 /// ```
 ///
 ///
@@ -48,7 +48,7 @@ use crate::Message;
 ///     struct MyClass;
 ///
 ///     unsafe impl ClassType for MyClass {
-///         type Superclass = NSObject;
+///         type Super = NSObject;
 ///     }
 /// );
 ///
@@ -65,7 +65,7 @@ pub unsafe trait ClassType: Message {
     /// [`Deref`]: std::ops::Deref
     /// [`Deref::Target`]: std::ops::Deref::Target
     /// [`runtime::Object`]: crate::runtime::Object
-    type Superclass: Message;
+    type Super: Message;
 
     /// Get a reference to the Objective-C class that this type represents.
     ///

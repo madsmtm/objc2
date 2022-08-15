@@ -13,7 +13,7 @@ extern_class!(
 
     unsafe impl ClassType for NSMutableAttributedString {
         #[inherits(NSObject)]
-        type Superclass = NSAttributedString;
+        type Super = NSAttributedString;
     }
 );
 

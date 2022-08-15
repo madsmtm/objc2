@@ -21,7 +21,7 @@ extern_class!(
     pub struct NSData;
 
     unsafe impl ClassType for NSData {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

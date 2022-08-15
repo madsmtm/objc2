@@ -246,7 +246,7 @@ macro_rules! __inner_declare_class {
 ///     }
 ///
 ///     unsafe impl ClassType for MyCustomObject {
-///         type Superclass = NSObject;
+///         type Super = NSObject;
 ///     }
 ///
 ///     unsafe impl MyCustomObject {
@@ -383,7 +383,7 @@ macro_rules! declare_class {
 
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
-            type Superclass = $superclass:ty;
+            type Super = $superclass:ty;
         }
 
         $($methods:tt)*
@@ -420,7 +420,7 @@ macro_rules! declare_class {
 
         // Creation
         unsafe impl ClassType for $for {
-            type Superclass = $superclass;
+            type Super = $superclass;
 
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`

@@ -19,7 +19,7 @@ extern_class!(
     pub struct NSError;
 
     unsafe impl ClassType for NSError {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

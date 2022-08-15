@@ -13,7 +13,7 @@ extern_class!(
     struct NSResponder;
 
     unsafe impl ClassType for NSResponder {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 
@@ -26,7 +26,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomAppDelegate {
         #[inherits(NSObject)]
-        type Superclass = NSResponder;
+        type Super = NSResponder;
     }
 
     unsafe impl CustomAppDelegate {
