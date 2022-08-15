@@ -18,7 +18,7 @@ __inner_extern_class!(
     }
 
     unsafe impl<K: Message, V: Message> ClassType for NSDictionary<K, V> {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

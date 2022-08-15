@@ -246,14 +246,14 @@ macro_rules! __inner_declare_class {
 ///     }
 ///
 ///     unsafe impl ClassType for MyCustomObject {
-///         type Superclass = NSObject;
+///         type Super = NSObject;
 ///     }
 ///
 ///     unsafe impl MyCustomObject {
 ///         #[sel(initWithFoo:)]
 ///         fn init_with(&mut self, foo: u8) -> Option<&mut Self> {
 ///             let this: Option<&mut Self> = unsafe {
-///                 msg_send![super(self, NSObject::class()), init]
+///                 msg_send![super(self), init]
 ///             };
 ///             this.map(|this| {
 ///                 // TODO: Initialization through MaybeUninit
@@ -383,7 +383,7 @@ macro_rules! declare_class {
 
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
-            type Superclass = $superclass:ty;
+            type Super = $superclass:ty;
         }
 
         $($methods:tt)*
@@ -420,7 +420,7 @@ macro_rules! declare_class {
 
         // Creation
         unsafe impl ClassType for $for {
-            type Superclass = $superclass;
+            type Super = $superclass;
 
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
@@ -453,6 +453,16 @@ macro_rules! declare_class {
 
                 // We just registered the class, so it should be available
                 $crate::runtime::Class::get(stringify!($name)).unwrap()
+            }
+
+            #[inline]
+            fn as_super(&self) -> &Self::Super {
+                &self.__inner
+            }
+
+            #[inline]
+            fn as_super_mut(&mut self) -> &mut Self::Super {
+                &mut self.__inner
             }
         }
 

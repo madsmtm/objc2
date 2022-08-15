@@ -21,10 +21,18 @@ unsafe impl RefEncode for MyTestObject {
 }
 
 unsafe impl ClassType for MyTestObject {
-    type Superclass = NSObject;
+    type Super = NSObject;
 
     fn class() -> &'static Class {
         class!(MyTestObject)
+    }
+
+    fn as_super(&self) -> &Self::Super {
+        &self.inner
+    }
+
+    fn as_super_mut(&mut self) -> &mut Self::Super {
+        &mut self.inner
     }
 }
 

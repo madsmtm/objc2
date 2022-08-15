@@ -14,7 +14,7 @@ extern_class!(
     pub struct NSThread;
 
     unsafe impl ClassType for NSThread {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

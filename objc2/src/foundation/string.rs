@@ -40,7 +40,7 @@ extern_class!(
     // TODO: Check if performance of NSSelectorFromString is worthwhile
 
     unsafe impl ClassType for NSString {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

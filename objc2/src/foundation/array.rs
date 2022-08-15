@@ -58,7 +58,7 @@ __inner_extern_class!(
     }
 
     unsafe impl<T: Message, O: Ownership> ClassType for NSArray<T, O> {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

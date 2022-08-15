@@ -17,11 +17,12 @@ use crate::Message;
 /// # Safety
 ///
 /// The class returned by [`Self::class`] must be a subclass of the class that
-/// [`Self::Superclass`] represents.
+/// [`Self::Super`] represents, and `as_super`/`as_super_mut` must be
+/// implemented correctly.
 ///
 /// In pseudocode:
 /// ```ignore
-/// Self::class().superclass() == <Self::Superclass as ClassType>::class()
+/// Self::class().superclass() == <Self::Super as ClassType>::class()
 /// ```
 ///
 ///
@@ -48,7 +49,7 @@ use crate::Message;
 ///     struct MyClass;
 ///
 ///     unsafe impl ClassType for MyClass {
-///         type Superclass = NSObject;
+///         type Super = NSObject;
 ///     }
 /// );
 ///
@@ -65,7 +66,7 @@ pub unsafe trait ClassType: Message {
     /// [`Deref`]: std::ops::Deref
     /// [`Deref::Target`]: std::ops::Deref::Target
     /// [`runtime::Object`]: crate::runtime::Object
-    type Superclass: Message;
+    type Super: Message;
 
     /// Get a reference to the Objective-C class that this type represents.
     ///
@@ -78,4 +79,12 @@ pub unsafe trait ClassType: Message {
     /// class, e.g. if the program is not properly linked to the framework
     /// that defines the class.
     fn class() -> &'static Class;
+
+    /// Get an immutable reference to the superclass.
+    // Note: It'd be safe to provide a default impl using transmute here if
+    // we wanted to!
+    fn as_super(&self) -> &Self::Super;
+
+    /// Get a mutable reference to the superclass.
+    fn as_super_mut(&mut self) -> &mut Self::Super;
 }

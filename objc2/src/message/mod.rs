@@ -4,7 +4,7 @@ use core::ptr::NonNull;
 
 use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
-use crate::{Encode, EncodeArguments, RefEncode};
+use crate::{ClassType, Encode, EncodeArguments, RefEncode};
 
 #[cfg(feature = "catch-all")]
 #[track_caller]
@@ -136,11 +136,15 @@ pub(crate) mod private {
 /// This is mostly an implementation detail; you'll want to implement
 /// [`Message`] for your type instead.
 ///
+///
 /// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
 pub unsafe trait MessageReceiver: private::Sealed + Sized {
+    #[doc(hidden)]
+    type __Inner: ?Sized;
+
     #[doc(hidden)]
     fn __as_raw_receiver(self) -> *mut Object;
 
@@ -154,6 +158,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// [`msg_send!`] macro rather than this method.
     ///
     /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+    ///
     ///
     /// # Safety
     ///
@@ -189,7 +194,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         unsafe { send_unverified(this, sel, args) }
     }
 
-    /// Sends a message to self's superclass with the given selector and
+    /// Sends a message to a specific superclass with the given selector and
     /// arguments.
     ///
     /// The correct version of `objc_msgSend_super` will be chosen based on the
@@ -200,6 +205,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// [`msg_send!(super(...), ...)`] macro rather than this method.
     ///
     /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+    ///
     ///
     /// # Safety
     ///
@@ -229,12 +235,27 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         }
         unsafe { send_super_unverified(this, superclass, sel, args) }
     }
+
+    #[inline]
+    #[track_caller]
+    #[doc(hidden)]
+    unsafe fn __send_super_message_static<A, R>(self, sel: Sel, args: A) -> R
+    where
+        Self::__Inner: ClassType,
+        <Self::__Inner as ClassType>::Super: ClassType,
+        A: MessageArguments,
+        R: Encode,
+    {
+        unsafe { self.send_super_message(<Self::__Inner as ClassType>::Super::class(), sel, args) }
+    }
 }
 
 // Note that we implement MessageReceiver for unsized types as well, this is
 // to support `extern type`s in the future, not because we want to allow DSTs.
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
+    type __Inner = T;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         (self as *mut T).cast()
@@ -242,6 +263,8 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
 }
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
+    type __Inner = T;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         self.cast()
@@ -249,6 +272,8 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
 }
 
 unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
+    type __Inner = T;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         self.as_ptr().cast()
@@ -256,6 +281,8 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
+    type __Inner = T;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         let ptr: *const T = self;
@@ -264,6 +291,8 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
+    type __Inner = T;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         let ptr: *mut T = self;
@@ -272,6 +301,8 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
 }
 
 unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T, O> {
+    type __Inner = T;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         (Id::as_ptr(self) as *mut T).cast()
@@ -279,6 +310,8 @@ unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T,
 }
 
 unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
+    type __Inner = T;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         Id::as_mut_ptr(self).cast()
@@ -286,6 +319,8 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
 }
 
 unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<Id<T, O>> {
+    type __Inner = T;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         Id::consume_as_ptr(self).cast()
@@ -293,6 +328,8 @@ unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<
 }
 
 unsafe impl MessageReceiver for *const Class {
+    type __Inner = Class;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         (self as *mut Class).cast()
@@ -300,6 +337,8 @@ unsafe impl MessageReceiver for *const Class {
 }
 
 unsafe impl<'a> MessageReceiver for &'a Class {
+    type __Inner = Class;
+
     #[inline]
     fn __as_raw_receiver(self) -> *mut Object {
         let ptr: *const Class = self;

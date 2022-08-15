@@ -31,7 +31,7 @@ mod appkit {
         pub struct NSSpeechSynthesizer;
 
         unsafe impl ClassType for NSSpeechSynthesizer {
-            type Superclass = NSObject;
+            type Super = NSObject;
         }
     );
 
@@ -110,7 +110,7 @@ mod avfaudio {
         pub struct AVSpeechSynthesizer;
 
         unsafe impl ClassType for AVSpeechSynthesizer {
-            type Superclass = NSObject;
+            type Super = NSObject;
         }
     );
 
@@ -136,7 +136,7 @@ mod avfaudio {
         pub struct AVSpeechUtterance;
 
         unsafe impl ClassType for AVSpeechUtterance {
-            type Superclass = NSObject;
+            type Super = NSObject;
         }
     );
 

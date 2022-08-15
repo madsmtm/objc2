@@ -1,3 +1,4 @@
+use objc2::foundation::NSString;
 use objc2::runtime::{Class, Object};
 use objc2::{class, msg_send, sel};
 
@@ -24,7 +25,7 @@ fn use_sel() {
 }
 
 #[allow(unused)]
-fn test_msg_send_comma_handling(obj: &Object, superclass: &Class) {
+fn test_msg_send_comma_handling(obj: &NSString, superclass: &Class) {
     unsafe {
         let _: () = msg_send![obj, a];
         let _: () = msg_send![obj, a,];
@@ -45,5 +46,14 @@ fn test_msg_send_comma_handling(obj: &Object, superclass: &Class) {
         let _: () = msg_send![super(obj, superclass), a: 32i32 b: 32i32,];
         let _: () = msg_send![super(obj, superclass), a: 32i32, b: 32i32];
         let _: () = msg_send![super(obj, superclass), a: 32i32, b: 32i32,];
+    }
+
+    unsafe {
+        let _: () = msg_send![super(obj), a];
+        let _: () = msg_send![super(obj), a,];
+        let _: () = msg_send![super(obj), a: 32i32];
+        let _: () = msg_send![super(obj), a: 32i32,];
+        let _: () = msg_send![super(obj), a: 32i32, b: 32i32];
+        let _: () = msg_send![super(obj), a: 32i32, b: 32i32,];
     }
 }

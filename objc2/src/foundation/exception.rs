@@ -22,7 +22,7 @@ extern_class!(
     pub struct NSException;
 
     unsafe impl ClassType for NSException {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

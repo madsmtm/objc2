@@ -13,12 +13,6 @@ error[E0433]: failed to resolve: there are too many leading `super` keywords
 error[E0433]: failed to resolve: there are too many leading `super` keywords
   --> ui/invalid_msg_send_super.rs
    |
-   |     let _: () = unsafe { msg_send![super(obj), init] };
-   |                                    ^^^^^ there are too many leading `super` keywords
-
-error[E0433]: failed to resolve: there are too many leading `super` keywords
-  --> ui/invalid_msg_send_super.rs
-   |
    |     let _: () = unsafe { msg_send![super(obj,), init] };
    |                                    ^^^^^ there are too many leading `super` keywords
 

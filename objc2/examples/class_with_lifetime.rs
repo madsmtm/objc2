@@ -65,7 +65,7 @@ impl<'a> MyObject<'a> {
 }
 
 unsafe impl<'a> ClassType for MyObject<'a> {
-    type Superclass = NSObject;
+    type Super = NSObject;
 
     fn class() -> &'static Class {
         // TODO: Use std::lazy::LazyCell
@@ -117,6 +117,14 @@ unsafe impl<'a> ClassType for MyObject<'a> {
 
         Class::get("MyObject").unwrap()
     }
+
+    fn as_super(&self) -> &Self::Super {
+        &self.superclass
+    }
+
+    fn as_super_mut(&mut self) -> &mut Self::Super {
+        &mut self.superclass
+    }
 }
 
 fn main() {
@@ -125,7 +133,7 @@ fn main() {
 
     // It is not possible to convert to `Id<NSObject, Owned>` since that would
     // loose the lifetime information that `MyObject` stores
-    // let obj = Id::into_superclass(obj);
+    // let obj = Id::into_super(obj);
 
     println!("Number: {}", obj.get());
 

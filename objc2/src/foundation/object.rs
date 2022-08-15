@@ -16,11 +16,19 @@ __inner_extern_class! {
 }
 
 unsafe impl ClassType for NSObject {
-    type Superclass = Object;
+    type Super = Object;
 
     #[inline]
     fn class() -> &'static Class {
         class!(NSObject)
+    }
+
+    fn as_super(&self) -> &Self::Super {
+        &self.__inner
+    }
+
+    fn as_super_mut(&mut self) -> &mut Self::Super {
+        &mut self.__inner
     }
 }
 

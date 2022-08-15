@@ -266,7 +266,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// This is equivalent to a `cast` between two pointers.
     ///
-    /// See [`Id::into_superclass`] for a safe alternative.
+    /// See [`Id::into_super`] for a safe alternative.
     ///
     /// This is common to do when you know that an object is a subclass of
     /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
@@ -639,16 +639,16 @@ impl<T: Message> Id<T, Shared> {
 
 impl<T: ClassType + 'static, O: Ownership> Id<T, O>
 where
-    T::Superclass: 'static,
+    T::Super: 'static,
 {
     /// Convert the object into it's superclass.
     #[inline]
-    pub fn into_superclass(this: Self) -> Id<T::Superclass, O> {
+    pub fn into_super(this: Self) -> Id<T::Super, O> {
         // SAFETY:
         // - The casted-to type is a superclass of the type.
         // - Both types are `'static` (this could maybe be relaxed a bit, but
         //   let's just be on the safe side)!
-        unsafe { Self::cast::<T::Superclass>(this) }
+        unsafe { Self::cast::<T::Super>(this) }
     }
 }
 

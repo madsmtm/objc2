@@ -95,18 +95,22 @@ pub fn test_class() {
     let _class = new_objc2::class!(NSObject);
 }
 
-pub fn test_msg_send(obj: &new_objc2::runtime::Object) {
+pub fn test_msg_send(obj: &new_objc2::foundation::NSString) {
     let superclass = obj.class().superclass().unwrap();
     let _: () = unsafe { new_objc2::msg_send![obj, a] };
     let _: () = unsafe { new_objc2::msg_send![obj, a: obj, b: obj] };
+    let _: () = unsafe { new_objc2::msg_send![super(obj), a] };
+    let _: () = unsafe { new_objc2::msg_send![super(obj), a: obj, b: obj] };
     let _: () = unsafe { new_objc2::msg_send![super(obj, superclass), a] };
     let _: () = unsafe { new_objc2::msg_send![super(obj, superclass), a: obj, b: obj] };
 }
 
-pub fn test_msg_send_bool(obj: &new_objc2::runtime::Object) {
+pub fn test_msg_send_bool(obj: &new_objc2::foundation::NSString) {
     let superclass = obj.class().superclass().unwrap();
     unsafe { new_objc2::msg_send_bool![obj, a] };
     unsafe { new_objc2::msg_send_bool![obj, a: obj, b: obj] };
+    unsafe { new_objc2::msg_send_bool![super(obj), a] };
+    unsafe { new_objc2::msg_send_bool![super(obj), a: obj, b: obj] };
     unsafe { new_objc2::msg_send_bool![super(obj, superclass), a] };
     unsafe { new_objc2::msg_send_bool![super(obj, superclass), a: obj, b: obj] };
 }

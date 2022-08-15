@@ -28,7 +28,7 @@ extern_class!(
 
     // SAFETY: NSPasteboard actually inherits from NSObject.
     unsafe impl ClassType for NSPasteboard {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

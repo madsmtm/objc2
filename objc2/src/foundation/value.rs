@@ -35,7 +35,7 @@ extern_class!(
     pub struct NSValue;
 
     unsafe impl ClassType for NSValue {
-        type Superclass = NSObject;
+        type Super = NSObject;
     }
 );
 

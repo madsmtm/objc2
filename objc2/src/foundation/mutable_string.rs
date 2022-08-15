@@ -16,7 +16,7 @@ extern_class!(
 
     unsafe impl ClassType for NSMutableString {
         #[inherits(NSObject)]
-        type Superclass = NSString;
+        type Super = NSString;
     }
 );
 
