@@ -4,5 +4,5 @@ use objc2::runtime::Object;
 
 fn main() {
     let obj: &Object;
-    let _: &Object = &*unsafe { msg_send_id![obj, description].unwrap() };
+    let _: &Object = &*unsafe { msg_send_id![obj, description] };
 }

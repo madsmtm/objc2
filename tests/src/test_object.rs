@@ -31,7 +31,7 @@ unsafe impl ClassType for MyTestObject {
 impl MyTestObject {
     fn new() -> Id<Self, Owned> {
         let cls = Self::class();
-        unsafe { msg_send_id![cls, new].unwrap() }
+        unsafe { msg_send_id![cls, new] }
     }
 
     #[allow(clippy::needless_lifetimes)]
@@ -43,7 +43,7 @@ impl MyTestObject {
 
     fn new_autoreleased_retained() -> Id<Self, Owned> {
         let cls = Self::class();
-        unsafe { msg_send_id![cls, getAutoreleasedInstance].unwrap_unchecked() }
+        unsafe { msg_send_id![cls, getAutoreleasedInstance] }
     }
 
     fn add_numbers(a: c_int, b: c_int) -> c_int {

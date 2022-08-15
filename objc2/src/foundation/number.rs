@@ -64,7 +64,7 @@ macro_rules! def_new_fn {
         pub fn $fn_name(val: $fn_inp) -> Id<Self, Shared> {
             let val = val as $method_inp;
             unsafe {
-                msg_send_id![Self::class(), $method_name: val].expect("unexpected NULL NSNumber")
+                msg_send_id![Self::class(), $method_name: val]
             }
         }
     )*}
@@ -74,9 +74,7 @@ macro_rules! def_new_fn {
 impl NSNumber {
     pub fn new_bool(val: bool) -> Id<Self, Shared> {
         let val = Bool::new(val);
-        unsafe {
-            msg_send_id![Self::class(), numberWithBool: val].expect("unexpected NULL NSNumber")
-        }
+        unsafe { msg_send_id![Self::class(), numberWithBool: val] }
     }
 
     def_new_fn! {
@@ -246,9 +244,7 @@ impl NSNumber {
     }
 
     fn string(&self) -> Id<NSString, Shared> {
-        unsafe {
-            msg_send_id![self, stringValue].expect("unexpected NULL from -[NSNumber stringValue]")
-        }
+        unsafe { msg_send_id![self, stringValue] }
     }
 }
 

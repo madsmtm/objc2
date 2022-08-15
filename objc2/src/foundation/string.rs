@@ -58,7 +58,7 @@ extern_methods!(
     unsafe impl NSString {
         /// Construct an empty NSString.
         pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new].unwrap() }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         /// The number of UTF-8 code units in `self`.

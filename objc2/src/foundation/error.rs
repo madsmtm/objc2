@@ -57,7 +57,6 @@ extern_methods!(
                     code: code,
                     userInfo: user_info,
                 ]
-                .expect("unexpected NULL NSError")
             }
         }
     }
@@ -65,7 +64,7 @@ extern_methods!(
     /// Accessor methods.
     unsafe impl NSError {
         pub fn domain(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, domain].expect("unexpected NULL NSError domain") }
+            unsafe { msg_send_id![self, domain] }
         }
 
         #[sel(code)]
@@ -76,11 +75,10 @@ extern_methods!(
         }
 
         pub fn localized_description(&self) -> Id<NSString, Shared> {
-            unsafe {
-                msg_send_id![self, localizedDescription].expect(
-                    "unexpected NULL localized description; a default should have been generated!",
-                )
-            }
+            let obj: Option<_> = unsafe { msg_send_id![self, localizedDescription] };
+            obj.expect(
+                "unexpected NULL localized description; a default should have been generated!",
+            )
         }
 
         // TODO: localizedRecoveryOptions

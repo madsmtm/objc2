@@ -38,7 +38,7 @@
 //!
 //! // Id will release the object when dropped
 //! let obj: Id<Object, Shared> = unsafe {
-//!     msg_send_id![class!(NSObject), new].unwrap()
+//!     msg_send_id![class!(NSObject), new]
 //! };
 //!
 //! // Cloning retains the object an additional time

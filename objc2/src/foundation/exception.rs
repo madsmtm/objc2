@@ -79,7 +79,7 @@ extern_methods!(
         /// [doc]: https://developer.apple.com/documentation/foundation/nsexceptionname?language=objc
         pub fn name(&self) -> Id<NSExceptionName, Shared> {
             // Nullability not documented, but a name is expected in most places.
-            unsafe { msg_send_id![self, name].expect("unexpected NULL NSException name") }
+            unsafe { msg_send_id![self, name] }
         }
 
         /// A human-readable message summarizing the reason for the exception.

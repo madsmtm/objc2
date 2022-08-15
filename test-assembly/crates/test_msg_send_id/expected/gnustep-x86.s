@@ -1,10 +1,10 @@
 	.text
 	.intel_syntax noprefix
-	.section	.text.handle_alloc,"ax",@progbits
-	.globl	handle_alloc
+	.section	.text.handle_new,"ax",@progbits
+	.globl	handle_new
 	.p2align	4, 0x90
-	.type	handle_alloc,@function
-handle_alloc:
+	.type	handle_new,@function
+handle_new:
 	push	ebx
 	push	edi
 	push	esi
@@ -29,25 +29,23 @@ handle_alloc:
 	pop	ebx
 	ret
 .Lfunc_end0:
-	.size	handle_alloc, .Lfunc_end0-handle_alloc
+	.size	handle_new, .Lfunc_end0-handle_new
 
-	.section	.text.handle_init,"ax",@progbits
-	.globl	handle_init
+	.section	.text.handle_new_fallible,"ax",@progbits
+	.globl	handle_new_fallible
 	.p2align	4, 0x90
-	.type	handle_init,@function
-handle_init:
+	.type	handle_new_fallible,@function
+handle_new_fallible:
 	push	ebx
 	push	edi
 	push	esi
+	mov	edi, dword ptr [esp + 20]
 	mov	esi, dword ptr [esp + 16]
 	call	.L1$pb
 .L1$pb:
 	pop	ebx
 .Ltmp1:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L1$pb)
-	test	esi, esi
-	je	.LBB1_2
-	mov	edi, dword ptr [esp + 20]
 	sub	esp, 8
 	push	edi
 	push	esi
@@ -57,24 +55,27 @@ handle_init:
 	push	esi
 	call	eax
 	add	esp, 16
+	test	eax, eax
+	je	.LBB1_1
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB1_2:
-	xor	eax, eax
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
+.LBB1_1:
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	SYM(objc2::__macro_helpers::new_failed::GENERATED_ID, 0)@PLT
+	add	esp, 16
+	ud2
 .Lfunc_end1:
-	.size	handle_init, .Lfunc_end1-handle_init
+	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
 
-	.section	.text.handle_alloc_init,"ax",@progbits
-	.globl	handle_alloc_init
+	.section	.text.handle_alloc,"ax",@progbits
+	.globl	handle_alloc
 	.p2align	4, 0x90
-	.type	handle_alloc_init,@function
-handle_alloc_init:
+	.type	handle_alloc,@function
+handle_alloc:
 	push	ebx
 	push	edi
 	push	esi
@@ -94,8 +95,160 @@ handle_alloc_init:
 	push	esi
 	call	eax
 	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.Lfunc_end2:
+	.size	handle_alloc, .Lfunc_end2-handle_alloc
+
+	.section	.text.handle_alloc_fallible,"ax",@progbits
+	.globl	handle_alloc_fallible
+	.p2align	4, 0x90
+	.type	handle_alloc_fallible,@function
+handle_alloc_fallible:
+	push	ebx
+	push	edi
+	push	esi
+	mov	edi, dword ptr [esp + 20]
+	mov	esi, dword ptr [esp + 16]
+	call	.L3$pb
+.L3$pb:
+	pop	ebx
+.Ltmp3:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L3$pb)
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 8
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 16
 	test	eax, eax
-	je	.LBB2_2
+	je	.LBB3_1
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB3_1:
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	SYM(objc2::__macro_helpers::alloc_failed::GENERATED_ID, 0)@PLT
+	add	esp, 16
+	ud2
+.Lfunc_end3:
+	.size	handle_alloc_fallible, .Lfunc_end3-handle_alloc_fallible
+
+	.section	.text.handle_init,"ax",@progbits
+	.globl	handle_init
+	.p2align	4, 0x90
+	.type	handle_init,@function
+handle_init:
+	push	ebx
+	push	edi
+	push	esi
+	mov	esi, dword ptr [esp + 16]
+	call	.L4$pb
+.L4$pb:
+	pop	ebx
+.Ltmp4:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp4-.L4$pb)
+	test	esi, esi
+	je	.LBB4_2
+	mov	edi, dword ptr [esp + 20]
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 8
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB4_2:
+	xor	eax, eax
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.Lfunc_end4:
+	.size	handle_init, .Lfunc_end4-handle_init
+
+	.section	.text.handle_init_fallible,"ax",@progbits
+	.globl	handle_init_fallible
+	.p2align	4, 0x90
+	.type	handle_init_fallible,@function
+handle_init_fallible:
+	push	ebx
+	push	edi
+	push	esi
+	mov	esi, dword ptr [esp + 16]
+	mov	edi, dword ptr [esp + 20]
+	call	.L5$pb
+.L5$pb:
+	pop	ebx
+.Ltmp5:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp5-.L5$pb)
+	test	esi, esi
+	je	.LBB5_2
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 8
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 16
+	test	eax, eax
+	je	.LBB5_2
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB5_2:
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	SYM(objc2::__macro_helpers::init_failed::GENERATED_ID, 0)@PLT
+	add	esp, 16
+	ud2
+.Lfunc_end5:
+	.size	handle_init_fallible, .Lfunc_end5-handle_init_fallible
+
+	.section	.text.handle_alloc_init,"ax",@progbits
+	.globl	handle_alloc_init
+	.p2align	4, 0x90
+	.type	handle_alloc_init,@function
+handle_alloc_init:
+	push	ebx
+	push	edi
+	push	esi
+	mov	esi, dword ptr [esp + 16]
+	mov	edi, dword ptr [esp + 20]
+	call	.L6$pb
+.L6$pb:
+	pop	ebx
+.Ltmp6:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp6-.L6$pb)
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 8
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 16
+	test	eax, eax
+	je	.LBB6_2
 	mov	edi, dword ptr [esp + 24]
 	mov	esi, eax
 	sub	esp, 8
@@ -111,14 +264,14 @@ handle_alloc_init:
 	pop	edi
 	pop	ebx
 	ret
-.LBB2_2:
+.LBB6_2:
 	xor	eax, eax
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.Lfunc_end2:
-	.size	handle_alloc_init, .Lfunc_end2-handle_alloc_init
+.Lfunc_end6:
+	.size	handle_alloc_init, .Lfunc_end6-handle_alloc_init
 
 	.section	.text.handle_alloc_release,"ax",@progbits
 	.globl	handle_alloc_release
@@ -131,11 +284,11 @@ handle_alloc_release:
 	sub	esp, 16
 	mov	esi, dword ptr [esp + 32]
 	mov	edi, dword ptr [esp + 36]
-	call	.L3$pb
-.L3$pb:
+	call	.L7$pb
+.L7$pb:
 	pop	ebx
-.Ltmp3:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L3$pb)
+.Ltmp7:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp7-.L7$pb)
 	mov	dword ptr [esp + 4], edi
 	mov	dword ptr [esp], esi
 	call	objc_msg_lookup@PLT
@@ -149,8 +302,8 @@ handle_alloc_release:
 	pop	edi
 	pop	ebx
 	ret
-.Lfunc_end3:
-	.size	handle_alloc_release, .Lfunc_end3-handle_alloc_release
+.Lfunc_end7:
+	.size	handle_alloc_release, .Lfunc_end7-handle_alloc_release
 
 	.section	.text.handle_alloc_init_release,"ax",@progbits
 	.globl	handle_alloc_init_release
@@ -163,11 +316,11 @@ handle_alloc_init_release:
 	sub	esp, 16
 	mov	esi, dword ptr [esp + 32]
 	mov	edi, dword ptr [esp + 36]
-	call	.L4$pb
-.L4$pb:
+	call	.L8$pb
+.L8$pb:
 	pop	ebx
-.Ltmp4:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp4-.L4$pb)
+.Ltmp8:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp8-.L8$pb)
 	mov	dword ptr [esp + 4], edi
 	mov	dword ptr [esp], esi
 	call	objc_msg_lookup@PLT
@@ -175,7 +328,7 @@ handle_alloc_init_release:
 	mov	dword ptr [esp], esi
 	call	eax
 	test	eax, eax
-	je	.LBB4_1
+	je	.LBB8_1
 	mov	edi, dword ptr [esp + 40]
 	mov	esi, eax
 	mov	dword ptr [esp], eax
@@ -184,10 +337,10 @@ handle_alloc_init_release:
 	mov	dword ptr [esp + 4], edi
 	mov	dword ptr [esp], esi
 	call	eax
-	jmp	.LBB4_3
-.LBB4_1:
+	jmp	.LBB8_3
+.LBB8_1:
 	xor	eax, eax
-.LBB4_3:
+.LBB8_3:
 	mov	dword ptr [esp], eax
 	call	objc_release@PLT
 	add	esp, 16
@@ -195,8 +348,8 @@ handle_alloc_init_release:
 	pop	edi
 	pop	ebx
 	ret
-.Lfunc_end4:
-	.size	handle_alloc_init_release, .Lfunc_end4-handle_alloc_init_release
+.Lfunc_end8:
+	.size	handle_alloc_init_release, .Lfunc_end8-handle_alloc_init_release
 
 	.section	.text.handle_copy,"ax",@progbits
 	.globl	handle_copy
@@ -208,11 +361,11 @@ handle_copy:
 	push	esi
 	mov	esi, dword ptr [esp + 16]
 	mov	edi, dword ptr [esp + 20]
-	call	.L5$pb
-.L5$pb:
+	call	.L9$pb
+.L9$pb:
 	pop	ebx
-.Ltmp5:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp5-.L5$pb)
+.Ltmp9:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp9-.L9$pb)
 	sub	esp, 8
 	push	edi
 	push	esi
@@ -226,8 +379,44 @@ handle_copy:
 	pop	edi
 	pop	ebx
 	ret
-.Lfunc_end5:
-	.size	handle_copy, .Lfunc_end5-handle_copy
+.Lfunc_end9:
+	.size	handle_copy, .Lfunc_end9-handle_copy
+
+	.section	.text.handle_copy_fallible,"ax",@progbits
+	.globl	handle_copy_fallible
+	.p2align	4, 0x90
+	.type	handle_copy_fallible,@function
+handle_copy_fallible:
+	push	ebx
+	push	edi
+	push	esi
+	mov	esi, dword ptr [esp + 16]
+	mov	edi, dword ptr [esp + 20]
+	call	.L10$pb
+.L10$pb:
+	pop	ebx
+.Ltmp10:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp10-.L10$pb)
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 8
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 16
+	test	eax, eax
+	je	.LBB10_1
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB10_1:
+	call	SYM(objc2::__macro_helpers::copy_failed::GENERATED_ID, 0)@PLT
+	ud2
+.Lfunc_end10:
+	.size	handle_copy_fallible, .Lfunc_end10-handle_copy_fallible
 
 	.section	.text.handle_autoreleased,"ax",@progbits
 	.globl	handle_autoreleased
@@ -240,11 +429,11 @@ handle_autoreleased:
 	sub	esp, 16
 	mov	esi, dword ptr [esp + 32]
 	mov	edi, dword ptr [esp + 36]
-	call	.L6$pb
-.L6$pb:
+	call	.L11$pb
+.L11$pb:
 	pop	ebx
-.Ltmp6:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp6-.L6$pb)
+.Ltmp11:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp11-.L11$pb)
 	mov	dword ptr [esp + 4], edi
 	mov	dword ptr [esp], esi
 	call	objc_msg_lookup@PLT
@@ -258,7 +447,46 @@ handle_autoreleased:
 	pop	edi
 	pop	ebx
 	ret
-.Lfunc_end6:
-	.size	handle_autoreleased, .Lfunc_end6-handle_autoreleased
+.Lfunc_end11:
+	.size	handle_autoreleased, .Lfunc_end11-handle_autoreleased
+
+	.section	.text.handle_autoreleased_fallible,"ax",@progbits
+	.globl	handle_autoreleased_fallible
+	.p2align	4, 0x90
+	.type	handle_autoreleased_fallible,@function
+handle_autoreleased_fallible:
+	push	ebx
+	push	edi
+	push	esi
+	sub	esp, 16
+	mov	edi, dword ptr [esp + 36]
+	mov	esi, dword ptr [esp + 32]
+	call	.L12$pb
+.L12$pb:
+	pop	ebx
+.Ltmp12:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp12-.L12$pb)
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
+	call	objc_msg_lookup@PLT
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
+	call	eax
+	mov	dword ptr [esp], eax
+	call	objc_retainAutoreleasedReturnValue@PLT
+	test	eax, eax
+	je	.LBB12_1
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB12_1:
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
+	call	SYM(objc2::__macro_helpers::normal_failed::GENERATED_ID, 0)@PLT
+	ud2
+.Lfunc_end12:
+	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
 
 	.section	".note.GNU-stack","",@progbits

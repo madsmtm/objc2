@@ -22,7 +22,7 @@ extern_methods!(
     unsafe impl NSMutableAttributedString {
         /// Construct an empty mutable attributed string.
         pub fn new() -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::class(), new].unwrap() }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         // TODO: new_with_attributes
@@ -31,7 +31,7 @@ extern_methods!(
         pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithString: string].unwrap()
+                msg_send_id![obj, initWithString: string]
             }
         }
 
@@ -39,7 +39,7 @@ extern_methods!(
         pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self, Owned> {
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithAttributedString: attributed_string].unwrap()
+                msg_send_id![obj, initWithAttributedString: attributed_string]
             }
         }
     }

@@ -37,7 +37,7 @@ extern_methods!(
     /// Creation methods.
     unsafe impl NSData {
         pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new].unwrap() }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
@@ -157,7 +157,6 @@ pub(crate) unsafe fn with_slice(cls: &Class, bytes: &[u8]) -> Id<Object, Shared>
             initWithBytes: bytes_ptr,
             length: bytes.len(),
         ]
-        .expect("unexpected NULL data")
     }
 }
 
@@ -186,7 +185,6 @@ pub(crate) unsafe fn with_vec(cls: &Class, bytes: Vec<u8>) -> Id<Object, Shared>
             length: bytes.len(),
             deallocator: dealloc,
         ]
-        .expect("unexpected NULL data")
     }
 }
 

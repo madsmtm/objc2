@@ -238,14 +238,14 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// use objc2::runtime::Object;
 ///
 /// fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-///     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+///     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
 ///     let obj = ManuallyDrop::new(obj);
 ///     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
 ///     // Lifetime of the returned reference is bounded by the pool
 ///     unsafe { pool.ptr_as_mut(obj) }
 ///
 ///     // Or simply
-///     // let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+///     // let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
 ///     // obj.autorelease(pool)
 /// }
 ///
@@ -266,7 +266,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// # use objc2::runtime::Object;
 /// #
 /// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-/// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+/// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
 /// #     obj.autorelease(pool)
 /// # }
 /// #
@@ -287,7 +287,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// # use objc2::runtime::Object;
 /// #
 /// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
-/// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+/// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
 /// #     obj.autorelease(pool)
 /// # }
 /// #

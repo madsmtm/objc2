@@ -80,7 +80,6 @@ impl CustomAppDelegate {
                 initWith: ivar,
                 another: Bool::from(another_ivar),
             ]
-            .unwrap()
         }
     }
 }

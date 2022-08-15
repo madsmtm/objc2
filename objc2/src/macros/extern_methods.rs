@@ -73,7 +73,7 @@
 ///     // TODO: Support methods returning `Id`
 ///     unsafe impl NSCalendar {
 ///         pub fn current() -> Id<Self, Shared> {
-///             unsafe { msg_send_id![Self::class(), currentCalendar].expect("unexpected NULL NSCalendar") }
+///             unsafe { msg_send_id![Self::class(), currentCalendar] }
 ///         }
 ///
 ///         pub fn new(identifier: &NSCalendarIdentifier) -> Id<Self, Shared> {
@@ -82,7 +82,6 @@
 ///                     msg_send_id![Self::class(), alloc],
 ///                     initWithCalendarIdentifier: identifier,
 ///                 ]
-///                 .expect("failed initializing NSCalendar")
 ///             }
 ///         }
 ///     }
@@ -95,7 +94,7 @@
 ///         pub fn first_weekday(&self) -> NSUInteger;
 ///
 ///         pub fn am_symbol(&self) -> Id<NSString, Shared> {
-///             unsafe { msg_send_id![self, amSymbol].expect("unexpected NULL AM symbol") }
+///             unsafe { msg_send_id![self, amSymbol] }
 ///         }
 ///
 ///         #[sel(date:matchesComponents:)]
@@ -152,7 +151,7 @@
 /// /// Creation methods.
 /// impl NSCalendar {
 ///     pub fn current() -> Id<Self, Shared> {
-///         unsafe { msg_send_id![Self::class(), currentCalendar].expect("unexpected NULL NSCalendar") }
+///         unsafe { msg_send_id![Self::class(), currentCalendar] }
 ///     }
 ///
 ///     pub fn new(identifier: &NSCalendarIdentifier) -> Id<Self, Shared> {
@@ -161,7 +160,6 @@
 ///                 msg_send_id![Self::class(), alloc],
 ///                 initWithCalendarIdentifier: identifier,
 ///             ]
-///             .expect("failed initializing NSCalendar")
 ///         }
 ///     }
 /// }
@@ -173,7 +171,7 @@
 ///     }
 ///
 ///     pub fn am_symbol(&self) -> Id<NSString, Shared> {
-///         unsafe { msg_send_id![self, amSymbol].expect("unexpected NULL AM symbol") }
+///         unsafe { msg_send_id![self, amSymbol] }
 ///     }
 ///
 ///     pub unsafe fn date_matches_raw(&self, date: &NSObject, components: &NSObject) -> Bool {

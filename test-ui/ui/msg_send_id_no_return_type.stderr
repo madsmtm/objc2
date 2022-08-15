@@ -1,8 +1,8 @@
 error[E0282]: type annotations needed
- --> ui/msg_send_id_underspecified.rs
+ --> ui/msg_send_id_no_return_type.rs
   |
-  |     let _: &Object = &*unsafe { msg_send_id![obj, description] };
-  |                       ----------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-- type must be known at this point
+  |     unsafe { msg_send_id![NSObject::class(), new] };
+  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider giving `result` an explicit type

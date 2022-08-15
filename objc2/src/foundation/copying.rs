@@ -31,7 +31,7 @@ pub unsafe trait NSCopying: Message {
     type Output: Message;
 
     fn copy(&self) -> Id<Self::Output, Self::Ownership> {
-        unsafe { msg_send_id![self, copy].unwrap() }
+        unsafe { msg_send_id![self, copy] }
     }
 }
 
@@ -43,6 +43,6 @@ pub unsafe trait NSMutableCopying: Message {
     type Output: Message;
 
     fn mutable_copy(&self) -> Id<Self::Output, Owned> {
-        unsafe { msg_send_id![self, mutableCopy].unwrap() }
+        unsafe { msg_send_id![self, mutableCopy] }
     }
 }

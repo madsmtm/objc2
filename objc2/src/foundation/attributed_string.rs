@@ -46,7 +46,7 @@ extern_methods!(
     unsafe impl NSAttributedString {
         /// Construct an empty attributed string.
         pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new].unwrap() }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         /// Creates a new attributed string from the given string and attributes.
@@ -61,7 +61,7 @@ extern_methods!(
         ) -> Id<Self, Shared> {
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithString: string, attributes: attributes].unwrap()
+                msg_send_id![obj, initWithString: string, attributes: attributes]
             }
         }
 
@@ -70,7 +70,7 @@ extern_methods!(
         pub fn from_nsstring(string: &NSString) -> Id<Self, Shared> {
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithString: string].unwrap()
+                msg_send_id![obj, initWithString: string]
             }
         }
     }
@@ -79,7 +79,7 @@ extern_methods!(
     unsafe impl NSAttributedString {
         // TODO: Lifetimes?
         pub fn string(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, string].unwrap() }
+            unsafe { msg_send_id![self, string] }
         }
 
         /// Alias for `self.string().len_utf16()`.

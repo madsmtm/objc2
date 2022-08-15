@@ -26,6 +26,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Change syntax in `extern_class!` macro to be more Rust-like.
 * **BREAKING**: Change syntax in `declare_class!` macro to be more Rust-like.
 * **BREAKING**: Renamed `Id::from_owned` to `Id::into_shared`.
+* **BREAKING**: The return type of `msg_send_id!` is now more generic; it can
+  now either be `Option<Id<_, _>>` or `Id<_, _>` (if the latter, it'll simply
+  panic).
+
+  Example:
+  ```rust
+  // Before
+  let obj: Id<Object, Shared> = unsafe {
+      msg_send_id![msg_send_id![class!(MyObject), alloc], init].unwrap()
+  };
+
+  // After
+  let obj: Id<Object, Shared> = unsafe {
+      msg_send_id![msg_send_id![class!(MyObject), alloc], init]
+  };
+  ```
 
 
 ## 0.3.0-beta.1 - 2022-07-19
@@ -46,7 +62,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   // After
   let obj: Id<Object, Shared> = unsafe {
-      msg_send_id![msg_send_id![class!(MyObject), alloc], new].unwrap()
+      msg_send_id![msg_send_id![class!(MyObject), alloc], init].unwrap()
   };
   ```
 * Added the `"unstable-static-sel"` and `"unstable-static-sel-inlined"`

@@ -289,7 +289,7 @@ mod tests {
 
     #[test]
     fn test_throw_catch_object() {
-        let obj: Id<Exception, Shared> = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+        let obj: Id<Exception, Shared> = unsafe { msg_send_id![class!(NSObject), new] };
         // TODO: Investigate why this is required on GNUStep!
         let _obj2 = obj.clone();
         let ptr: *const Exception = &*obj;

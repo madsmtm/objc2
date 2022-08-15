@@ -1,8 +1,8 @@
 error[E0282]: type annotations needed
- --> ui/msg_send_id_underspecified.rs
+ --> ui/msg_send_id_unwrap.rs
   |
-  |     let _: &Object = &*unsafe { msg_send_id![obj, description] };
-  |                       ----------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-- type must be known at this point
+  |     let _: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+  |                                         ^^^^^^^^^^^^^^^^^^^^^^
   |
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider giving `result` an explicit type

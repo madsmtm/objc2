@@ -32,7 +32,7 @@ extern_methods!(
     /// Creation methods
     unsafe impl NSMutableData {
         pub fn new() -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::class(), new].unwrap() }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
@@ -51,7 +51,7 @@ extern_methods!(
             // Not provided on NSData, one should just use NSData::copy or similar
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithData: data].unwrap()
+                msg_send_id![obj, initWithData: data]
             }
         }
 
@@ -59,7 +59,7 @@ extern_methods!(
         pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithCapacity: capacity].unwrap()
+                msg_send_id![obj, initWithCapacity: capacity]
             }
         }
     }

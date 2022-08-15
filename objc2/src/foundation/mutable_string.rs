@@ -25,7 +25,7 @@ extern_methods!(
     unsafe impl NSMutableString {
         /// Construct an empty [`NSMutableString`].
         pub fn new() -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::class(), new].unwrap() }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         /// Creates a new [`NSMutableString`] by copying the given string slice.
@@ -43,7 +43,7 @@ extern_methods!(
         pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithString: string].unwrap()
+                msg_send_id![obj, initWithString: string]
             }
         }
 
@@ -51,7 +51,7 @@ extern_methods!(
         pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithCapacity: capacity].unwrap()
+                msg_send_id![obj, initWithCapacity: capacity]
             }
         }
     }

@@ -45,7 +45,7 @@ impl NSPasteboard {
     ///
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1530091-generalpasteboard?language=objc>
     pub fn general() -> Id<Self, Shared> {
-        unsafe { msg_send_id![Self::class(), generalPasteboard].unwrap() }
+        unsafe { msg_send_id![Self::class(), generalPasteboard] }
     }
 
     /// Simple, straightforward implementation
@@ -53,7 +53,7 @@ impl NSPasteboard {
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1533566-stringfortype?language=objc>
     pub fn text_impl_1(&self) -> Id<NSString, Shared> {
         let s = unsafe { NSPasteboardTypeString }.unwrap();
-        unsafe { msg_send_id![self, stringForType: s].unwrap() }
+        unsafe { msg_send_id![self, stringForType: s] }
     }
 
     /// More complex implementation using `readObjectsForClasses:options:`,
@@ -99,7 +99,7 @@ impl NSPasteboard {
         class_array: &NSArray<Object, Shared>,
         options: &NSDictionary<NSPasteboardReadingOptionKey, Object>,
     ) -> Id<NSArray<Object, Shared>, Shared> {
-        unsafe { msg_send_id![self, readObjectsForClasses: class_array, options: options].unwrap() }
+        unsafe { msg_send_id![self, readObjectsForClasses: class_array, options: options] }
     }
 
     /// This takes `&self` even though `writeObjects:` would seem to mutate

@@ -51,7 +51,7 @@ impl<'a> MyObject<'a> {
         // returned type
         unsafe {
             let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithPtr: number].unwrap()
+            msg_send_id![obj, initWithPtr: number]
         }
     }
 
