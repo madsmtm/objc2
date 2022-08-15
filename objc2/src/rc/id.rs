@@ -66,9 +66,7 @@ use crate::{ClassType, Message};
 /// use objc2::rc::{Id, Owned, Shared, WeakId};
 ///
 /// let cls = Class::get("NSObject").unwrap();
-/// let obj: Id<Object, Owned> = unsafe {
-///     msg_send_id![cls, new].unwrap()
-/// };
+/// let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
 /// // obj will be released when it goes out of scope
 ///
 /// // share the object so we can clone it
@@ -90,7 +88,7 @@ use crate::{ClassType, Message};
 /// # use objc2::rc::{Id, Owned, Shared};
 /// # type T = Object;
 /// let mut owned: Id<T, Owned>;
-/// # owned = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+/// # owned = unsafe { msg_send_id![class!(NSObject), new] };
 /// let mut_ref: &mut T = &mut *owned;
 /// // Do something with `&mut T` here
 ///
@@ -195,9 +193,9 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// let obj: Id<Object, Owned> = unsafe { Id::new(msg_send![obj, init]).unwrap() };
     /// // Or utilizing `msg_send_id`:
     /// let obj = unsafe { msg_send_id![cls, alloc] };
-    /// let obj: Id<Object, Owned> = unsafe { msg_send_id![obj, init].unwrap() };
+    /// let obj: Id<Object, Owned> = unsafe { msg_send_id![obj, init] };
     /// // Or in this case simply just:
-    /// let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+    /// let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
     /// ```
     ///
     /// ```no_run
@@ -207,7 +205,7 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// # type NSString = Object;
     /// let cls = class!(NSString);
     /// // NSString is immutable, so don't create an owned reference to it
-    /// let obj: Id<NSString, Shared> = unsafe { msg_send_id![cls, new].unwrap() };
+    /// let obj: Id<NSString, Shared> = unsafe { msg_send_id![cls, new] };
     /// ```
     #[inline]
     // Note: We don't take a reference as a parameter since it would be too
@@ -527,7 +525,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// let mut builder = ClassBuilder::new("ExampleObject", class!(NSObject)).unwrap();
     ///
     /// extern "C" fn get(cls: &Class, _cmd: Sel) -> *mut Object {
-    ///     let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+    ///     let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
     ///     obj.autorelease_return()
     /// }
     ///

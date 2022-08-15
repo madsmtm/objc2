@@ -28,15 +28,15 @@ extern_methods!(
     unsafe impl NSThread {
         /// Returns the [`NSThread`] object representing the current thread.
         pub fn current() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), currentThread].unwrap() }
+            unsafe { msg_send_id![Self::class(), currentThread] }
         }
 
         /// Returns the [`NSThread`] object representing the main thread.
         pub fn main() -> Id<NSThread, Shared> {
             // The main thread static may not have been initialized
             // This can at least fail in GNUStep!
-            unsafe { msg_send_id![Self::class(), mainThread] }
-                .expect("Could not retrieve main thread.")
+            let obj: Option<_> = unsafe { msg_send_id![Self::class(), mainThread] };
+            obj.expect("Could not retrieve main thread.")
         }
 
         /// Returns `true` if the thread is the main thread.
@@ -50,7 +50,7 @@ extern_methods!(
         }
 
         unsafe fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }.unwrap()
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         #[sel(start)]

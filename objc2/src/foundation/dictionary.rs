@@ -33,7 +33,7 @@ impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for N
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
         pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new].unwrap() }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         #[doc(alias = "count")]
@@ -103,7 +103,7 @@ extern_methods!(
         }
 
         pub fn keys_array(&self) -> Id<NSArray<K, Shared>, Shared> {
-            unsafe { msg_send_id![self, allKeys] }.unwrap()
+            unsafe { msg_send_id![self, allKeys] }
         }
 
         pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Shared>
@@ -123,11 +123,10 @@ extern_methods!(
                     count: count,
                 ]
             }
-            .unwrap()
         }
 
         pub fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<V, Owned>, Shared> {
-            unsafe { msg_send_id![&dict, allValues] }.unwrap()
+            unsafe { msg_send_id![&dict, allValues] }
         }
     }
 );

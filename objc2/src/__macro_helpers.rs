@@ -1,6 +1,6 @@
 use crate::__sel_inner;
 use crate::rc::{Allocated, Id, Ownership};
-use crate::runtime::{Class, Sel};
+use crate::runtime::{Class, Object, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
 
 pub use crate::cache::CachedClass;
@@ -76,57 +76,60 @@ pub struct RetainSemantics<
     const COPY_OR_MUT_COPY: bool,
 > {}
 
-pub trait MsgSendId<T, U> {
-    unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<U>;
-}
+type New = RetainSemantics<true, false, false, false>;
+type Alloc = RetainSemantics<false, true, false, false>;
+type Init = RetainSemantics<false, false, true, false>;
+type CopyOrMutCopy = RetainSemantics<false, false, false, true>;
+type Other = RetainSemantics<false, false, false, false>;
 
-// `new`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<T, O>>
-    for RetainSemantics<true, false, false, false>
-{
-    #[inline]
-    #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments>(
-        obj: &Class,
+pub trait MsgSendId<T, U: ?Sized, O: Ownership> {
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+        obj: T,
         sel: Sel,
         args: A,
-    ) -> Option<Id<T, O>> {
-        // SAFETY: Checked by caller
-        let obj = unsafe { MessageReceiver::send_message(obj, sel, args) };
-        // SAFETY: The selector is `new`, so this has +1 retain count
-        unsafe { Id::new(obj) }
-    }
+    ) -> R;
 }
 
-// `alloc`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Id<Allocated<T>, O>>
-    for RetainSemantics<false, true, false, false>
-{
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, T, O> for New {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<T, O>>(
         cls: &Class,
         sel: Sel,
         args: A,
-    ) -> Option<Id<Allocated<T>, O>> {
+    ) -> R {
         // SAFETY: Checked by caller
         let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
-        // SAFETY: The selector is `alloc`, so this has +1 retain count
-        unsafe { Id::new_allocated(obj) }
+        // SAFETY: The selector is `new`, so this has +1 retain count
+        let obj = unsafe { Id::new(obj) };
+        R::maybe_unwrap::<Self>(obj, (cls, sel))
     }
 }
 
-// `init`
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, Id<T, O>>
-    for RetainSemantics<false, false, true, false>
-{
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Allocated<T>, O> for Alloc {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Allocated<T>, O>>(
+        cls: &Class,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        // SAFETY: Checked by caller
+        let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
+        // SAFETY: The selector is `alloc`, so this has +1 retain count
+        let obj = unsafe { Id::new_allocated(obj) };
+        R::maybe_unwrap::<Self>(obj, (cls, sel))
+    }
+}
+
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, T, O> for Init {
+    #[inline]
+    #[track_caller]
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<T, O>>(
         obj: Option<Id<Allocated<T>, O>>,
         sel: Sel,
         args: A,
-    ) -> Option<Id<T, O>> {
+    ) -> R {
         let ptr = Id::option_into_ptr(obj.map(|obj| unsafe { Id::assume_init(obj) }));
         // SAFETY: `ptr` may be null here, but that's fine since the return
         // is `*mut T`, which is one of the few types where messages to nil is
@@ -136,40 +139,167 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, I
         // `alloc`, that the user did not intend.
         let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
         // SAFETY: The selector is `init`, so this has +1 retain count
-        unsafe { Id::new(obj) }
+        let obj = unsafe { Id::new(obj) };
+        R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
     }
 }
 
-// `copy` and `mutableCopy`
-impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
-    for RetainSemantics<false, false, false, true>
-{
+impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> for CopyOrMutCopy {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<Id<U, O>> {
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+        obj: T,
+        sel: Sel,
+        args: A,
+    ) -> R {
         // SAFETY: Checked by caller
         let obj = unsafe { MessageReceiver::send_message(obj, sel, args) };
         // SAFETY: The selector is `copy` or `mutableCopy`, so this has +1
         // retain count
-        unsafe { Id::new(obj) }
+        let obj = unsafe { Id::new(obj) };
+        R::maybe_unwrap::<Self>(obj, ())
     }
 }
 
-// All other selectors
-impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>>
-    for RetainSemantics<false, false, false, false>
-{
+impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, U, O> for Other {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments>(obj: T, sel: Sel, args: A) -> Option<Id<U, O>> {
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+        obj: T,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        let ptr = obj.__as_raw_receiver();
         // SAFETY: Checked by caller
-        let obj = unsafe { MessageReceiver::send_message(obj, sel, args) };
+        let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
         // All code between the message send and the `retain_autoreleased`
         // must be able to be optimized away for this to work.
 
         // SAFETY: The selector is not `new`, `alloc`, `init`, `copy` nor
         // `mutableCopy`, so the object must be manually retained.
-        unsafe { Id::retain_autoreleased(obj) }
+        let obj = unsafe { Id::retain_autoreleased(obj) };
+
+        // SAFETY: The object is still valid after a message send to a
+        // normal method - it would not be if the method was `init`.
+        R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
+    }
+}
+
+pub trait MaybeUnwrap<T: ?Sized, O: Ownership> {
+    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
+        obj: Option<Id<T, O>>,
+        args: Failed::Args,
+    ) -> Self;
+}
+
+impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Option<Id<T, O>> {
+    #[inline]
+    #[track_caller]
+    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
+        obj: Option<Id<T, O>>,
+        _args: Failed::Args,
+    ) -> Self {
+        obj
+    }
+}
+
+impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Id<T, O> {
+    #[inline]
+    #[track_caller]
+    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
+        obj: Option<Id<T, O>>,
+        args: Failed::Args,
+    ) -> Self {
+        match obj {
+            Some(obj) => obj,
+            None => Failed::failed(args),
+        }
+    }
+}
+
+// Note: It would have been much easier to do this kind of thing using
+// closures, but then `track_caller` doesn't work properly!
+pub trait MsgSendIdFailed<'a> {
+    type Args;
+
+    fn failed(args: Self::Args) -> !;
+}
+
+impl<'a> MsgSendIdFailed<'a> for New {
+    type Args = (&'a Class, Sel);
+
+    #[cold]
+    #[track_caller]
+    fn failed((cls, sel): Self::Args) -> ! {
+        if sel == new() {
+            panic!("failed creating new instance of {:?}", cls)
+        } else {
+            panic!("failed creating new instance using +[{:?} {:?}]", cls, sel)
+        }
+    }
+}
+
+impl<'a> MsgSendIdFailed<'a> for Alloc {
+    type Args = (&'a Class, Sel);
+
+    #[cold]
+    #[track_caller]
+    fn failed((cls, sel): Self::Args) -> ! {
+        if sel == alloc() {
+            panic!("failed allocating {:?}", cls)
+        } else {
+            panic!("failed allocating with +[{:?} {:?}]", cls, sel)
+        }
+    }
+}
+
+impl MsgSendIdFailed<'_> for Init {
+    type Args = (*const Object, Sel);
+
+    #[cold]
+    #[track_caller]
+    fn failed((ptr, sel): Self::Args) -> ! {
+        if ptr.is_null() {
+            panic!("failed allocating object")
+        } else {
+            // We can't really display a more descriptive message here since the
+            // object is consumed by `init` and may not be valid any more.
+            if sel == init() {
+                panic!("failed initializing object")
+            } else {
+                panic!("failed initializing object with -{:?}", sel)
+            }
+        }
+    }
+}
+
+impl MsgSendIdFailed<'_> for CopyOrMutCopy {
+    type Args = ();
+
+    #[cold]
+    #[track_caller]
+    fn failed(_: Self::Args) -> ! {
+        panic!("failed copying object")
+    }
+}
+
+impl<'a> MsgSendIdFailed<'a> for Other {
+    type Args = (Option<&'a Object>, Sel);
+
+    #[cold]
+    #[track_caller]
+    fn failed((obj, sel): Self::Args) -> ! {
+        if let Some(obj) = obj {
+            let cls = obj.class();
+            panic!(
+                "unexpected NULL returned from {}[{:?} {:?}]",
+                if cls.is_metaclass() { "+" } else { "-" },
+                cls,
+                sel,
+            )
+        } else {
+            panic!("unexpected NULL {:?}; receiver was NULL", sel);
+        }
     }
 }
 
@@ -248,22 +378,54 @@ impl ModuleInfo {
 mod tests {
     use super::*;
 
+    use alloc::vec;
     use core::ptr;
 
     #[cfg(feature = "objc2-proc-macros")]
     use crate::__hash_idents;
-    use crate::foundation::NSZone;
-    use crate::rc::{Allocated, Owned, RcTestObject, Shared, ThreadTestData};
+    use crate::foundation::{NSDictionary, NSObject, NSString, NSValue, NSZone};
+    use crate::rc::{Owned, RcTestObject, Shared, ThreadTestData};
     use crate::runtime::Object;
-    use crate::ClassType;
-    use crate::{class, msg_send_id};
+    use crate::{class, msg_send_id, ns_string, ClassType};
+
+    #[test]
+    fn test_new() {
+        let _obj: Id<Object, Shared> = unsafe { msg_send_id![NSObject::class(), new] };
+        let _obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![NSObject::class(), new] };
+    }
+
+    #[test]
+    // newScriptingObjectOfClass only available on macOS
+    #[cfg_attr(not(all(feature = "apple", target_os = "macos")), ignore)]
+    fn test_new_with_args() {
+        let mut expected = ThreadTestData::current();
+
+        let object_class = RcTestObject::class();
+        let key = ns_string!("");
+        let contents_value: *const Object = ptr::null();
+        let properties: Id<NSDictionary<NSString, Object>, _> =
+            NSDictionary::from_keys_and_objects::<NSString>(&[], vec![]);
+
+        let _obj: Option<Id<Object, Shared>> = unsafe {
+            msg_send_id![
+                NSObject::class(),
+                newScriptingObjectOfClass: object_class,
+                forValueForKey: key,
+                withContentsValue: contents_value,
+                properties: &*properties,
+            ]
+        };
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.assert_current();
+    }
 
     #[test]
     fn test_macro_alloc() {
         let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 
-        let obj: Id<Allocated<RcTestObject>, Shared> = unsafe { msg_send_id![cls, alloc].unwrap() };
+        let obj: Id<Allocated<RcTestObject>, Shared> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         expected.assert_current();
 
@@ -280,7 +442,7 @@ mod tests {
 
         let zone: *const NSZone = ptr::null();
         let _obj: Id<Allocated<RcTestObject>, Owned> =
-            unsafe { msg_send_id![cls, allocWithZone: zone].unwrap() };
+            unsafe { msg_send_id![cls, allocWithZone: zone] };
         expected.alloc += 1;
         expected.assert_current();
     }
@@ -293,7 +455,7 @@ mod tests {
         let obj: Option<Id<Allocated<RcTestObject>, Shared>> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         // Don't check allocation error
-        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![obj, init] };
         expected.init += 1;
         expected.assert_current();
 
@@ -301,7 +463,7 @@ mod tests {
         expected.alloc += 1;
         // Check allocation error before init
         let obj = obj.unwrap();
-        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![Some(obj), init].unwrap() };
+        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![Some(obj), init] };
         expected.init += 1;
         expected.assert_current();
     }
@@ -311,7 +473,7 @@ mod tests {
         let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
         crate::rc::autoreleasepool(|_| {
-            let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+            let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![cls, new] };
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
@@ -320,24 +482,24 @@ mod tests {
             expected.alloc += 1;
             expected.assert_current();
 
-            let obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, init].unwrap() };
+            let obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
             expected.init += 1;
             expected.assert_current();
 
-            let _copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy].unwrap() };
+            let _copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy] };
             expected.copy += 1;
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
 
             let _mutable_copy: Id<RcTestObject, Shared> =
-                unsafe { msg_send_id![&obj, mutableCopy].unwrap() };
+                unsafe { msg_send_id![&obj, mutableCopy] };
             expected.mutable_copy += 1;
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
 
-            let _self: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, self].unwrap() };
+            let _self: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, self] };
             expected.retain += 1;
             expected.assert_current();
 
@@ -348,6 +510,66 @@ mod tests {
         expected.release += 5;
         expected.dealloc += 4;
         expected.assert_current();
+    }
+
+    #[test]
+    #[should_panic = "failed creating new instance of NSValue"]
+    // GNUStep instead returns an invalid instance that panics on accesses
+    #[cfg_attr(feature = "gnustep-1-7", ignore)]
+    fn new_nsvalue_fails() {
+        let _val: Id<NSValue, Shared> = unsafe { msg_send_id![NSValue::class(), new] };
+    }
+
+    #[test]
+    #[should_panic = "failed creating new instance using +[RcTestObject newReturningNull]"]
+    fn test_new_with_null() {
+        let _obj: Id<RcTestObject, Owned> =
+            unsafe { msg_send_id![RcTestObject::class(), newReturningNull] };
+    }
+
+    #[test]
+    #[should_panic = "failed allocating with +[RcTestObject allocReturningNull]"]
+    fn test_alloc_with_null() {
+        let _obj: Id<Allocated<RcTestObject>, Owned> =
+            unsafe { msg_send_id![RcTestObject::class(), allocReturningNull] };
+    }
+
+    #[test]
+    #[should_panic = "failed initializing object with -initReturningNull"]
+    fn test_init_with_null() {
+        let obj: Option<Id<Allocated<RcTestObject>, Owned>> =
+            unsafe { msg_send_id![RcTestObject::class(), alloc] };
+        let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, initReturningNull] };
+    }
+
+    #[test]
+    #[should_panic = "failed allocating object"]
+    #[cfg(not(feature = "verify_message"))] // Does NULL receiver checks
+    fn test_init_with_null_receiver() {
+        let obj: Option<Id<Allocated<RcTestObject>, Owned>> = None;
+        let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
+    }
+
+    #[test]
+    #[should_panic = "failed copying object"]
+    fn test_copy_with_null() {
+        let obj = Id::into_shared(RcTestObject::new());
+        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copyReturningNull] };
+    }
+
+    #[test]
+    #[should_panic = "unexpected NULL returned from -[RcTestObject methodReturningNull]"]
+    fn test_normal_with_null() {
+        let obj = Id::into_shared(RcTestObject::new());
+        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, methodReturningNull] };
+    }
+
+    #[test]
+    #[should_panic = "unexpected NULL description; receiver was NULL"]
+    #[cfg(not(feature = "verify_message"))] // Does NULL receiver checks
+    fn test_normal_with_null_receiver() {
+        let obj: *const NSObject = ptr::null();
+        let _obj: Id<NSString, Shared> = unsafe { msg_send_id![obj, description] };
     }
 
     #[test]
@@ -440,7 +662,7 @@ mod tests {
         #[test]
         fn test_macro_still_works() {
             let cls = class!(NSObject);
-            let _obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+            let _obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
         }
     }
 

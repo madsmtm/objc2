@@ -38,9 +38,7 @@ mod appkit {
     impl NSSpeechSynthesizer {
         // Uses default voice
         pub fn new() -> Id<Self, Owned> {
-            unsafe {
-                msg_send_id![Self::class(), new].expect("unexpected NULL NSSpeechSynthesizer")
-            }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         fn set_rate(&mut self, rate: f32) {
@@ -116,9 +114,7 @@ mod avfaudio {
 
     impl AVSpeechSynthesizer {
         pub fn new() -> Id<Self, Owned> {
-            unsafe {
-                msg_send_id![Self::class(), new].expect("unexpected NULL AVSpeechSynthesizer")
-            }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         pub fn speak(&mut self, utterance: &AVSpeechUtterance) {
@@ -142,10 +138,7 @@ mod avfaudio {
 
     impl AVSpeechUtterance {
         pub fn new(string: &NSString) -> Id<Self, Owned> {
-            unsafe {
-                msg_send_id![msg_send_id![Self::class(), alloc], initWithString: string,]
-                    .expect("unexpected NULL AVSpeechUtterance")
-            }
+            unsafe { msg_send_id![msg_send_id![Self::class(), alloc], initWithString: string] }
         }
 
         pub fn set_rate(&mut self, rate: f32) {

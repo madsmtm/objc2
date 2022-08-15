@@ -75,7 +75,7 @@ mod tests {
     fn alloc_with_zone() {
         let zone: *const NSZone = ptr::null();
         let _obj: Id<Allocated<NSObject>, Owned> =
-            unsafe { msg_send_id![NSObject::class(), allocWithZone: zone].unwrap() };
+            unsafe { msg_send_id![NSObject::class(), allocWithZone: zone] };
     }
 
     #[test]

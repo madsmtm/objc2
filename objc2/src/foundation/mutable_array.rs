@@ -45,7 +45,7 @@ extern_methods!(
         pub fn new() -> Id<Self, Owned> {
             // SAFETY: Same as `NSArray::new`, except mutable arrays are always
             // unique.
-            unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSMutableArray") }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {

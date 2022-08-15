@@ -10,7 +10,7 @@ unsafe fn handle_with_sel(obj: &Object) -> *mut Object {
 }
 
 #[no_mangle]
-unsafe fn handle_alloc_init(cls: &Class) -> Option<Id<Object, Shared>> {
+unsafe fn handle_alloc_init(cls: &Class) -> Id<Object, Shared> {
     msg_send_id![msg_send_id![cls, alloc], init]
 }
 

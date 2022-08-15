@@ -82,7 +82,7 @@
 /// let cls = NSFormatter::class();
 ///
 /// // `NSFormatter` implements `Message`:
-/// let obj: Id<NSFormatter, Shared> = unsafe { msg_send_id![cls, new].unwrap() };
+/// let obj: Id<NSFormatter, Shared> = unsafe { msg_send_id![cls, new] };
 /// ```
 ///
 /// Represent the `NSDateFormatter` class, using the `NSFormatter` type we

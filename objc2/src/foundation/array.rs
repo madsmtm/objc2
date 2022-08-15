@@ -84,7 +84,6 @@ pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>
             initWithObjects: objects.as_ptr(),
             count: objects.len(),
         ]
-        .expect("unexpected NULL array")
     }
 }
 
@@ -99,7 +98,7 @@ extern_methods!(
             // - `O` don't actually matter here! E.g. `NSArray<T, Owned>` is
             //   perfectly legal, since the array doesn't have any elements, and
             //   hence the notion of ownership over the elements is void.
-            unsafe { msg_send_id![Self::class(), new].expect("unexpected NULL NSArray") }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {

@@ -1,0 +1,13 @@
+error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MaybeUnwrap<NSObject, Shared>` is not satisfied
+  --> ui/msg_send_id_alloc_init_different.rs
+   |
+   |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap<NSObject, Shared>` is not implemented for `Id<objc2::runtime::Object, Shared>`
+   |
+   = help: the trait `MaybeUnwrap<T, O>` is implemented for `Id<T, O>`
+note: required by a bound in `send_message_id`
+  --> $WORKSPACE/objc2/src/__macro_helpers.rs
+   |
+   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+   |                                                       ^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
+   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

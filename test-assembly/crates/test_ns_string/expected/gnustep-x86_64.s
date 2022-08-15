@@ -12,7 +12,7 @@ get_ascii:
 	pop	rcx
 	ret
 .LBB0_1:
-	lea	rdi, [rip + .Lanon.ebccacd9e14cd5382d61cd57489efe98.0]
+	lea	rdi, [rip + .Lanon.[ID].0]
 	mov	esi, 3
 	call	qword ptr [rip + SYM(objc2::foundation::string::NSString::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
@@ -34,7 +34,7 @@ get_utf16:
 	pop	rcx
 	ret
 .LBB1_1:
-	lea	rdi, [rip + .Lanon.ebccacd9e14cd5382d61cd57489efe98.1]
+	lea	rdi, [rip + .Lanon.[ID].1]
 	mov	esi, 5
 	call	qword ptr [rip + SYM(objc2::foundation::string::NSString::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
@@ -56,7 +56,7 @@ get_with_nul:
 	pop	rcx
 	ret
 .LBB2_1:
-	lea	rdi, [rip + .Lanon.ebccacd9e14cd5382d61cd57489efe98.2]
+	lea	rdi, [rip + .Lanon.[ID].2]
 	mov	esi, 6
 	call	qword ptr [rip + SYM(objc2::foundation::string::NSString::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
@@ -66,23 +66,23 @@ get_with_nul:
 .Lfunc_end2:
 	.size	get_with_nul, .Lfunc_end2-get_with_nul
 
-	.type	.Lanon.ebccacd9e14cd5382d61cd57489efe98.0,@object
-	.section	.rodata..Lanon.ebccacd9e14cd5382d61cd57489efe98.0,"a",@progbits
-.Lanon.ebccacd9e14cd5382d61cd57489efe98.0:
+	.type	.Lanon.[ID].0,@object
+	.section	.rodata..Lanon.[ID].0,"a",@progbits
+.Lanon.[ID].0:
 	.ascii	"abc"
-	.size	.Lanon.ebccacd9e14cd5382d61cd57489efe98.0, 3
+	.size	.Lanon.[ID].0, 3
 
-	.type	.Lanon.ebccacd9e14cd5382d61cd57489efe98.1,@object
-	.section	.rodata..Lanon.ebccacd9e14cd5382d61cd57489efe98.1,"a",@progbits
-.Lanon.ebccacd9e14cd5382d61cd57489efe98.1:
+	.type	.Lanon.[ID].1,@object
+	.section	.rodata..Lanon.[ID].1,"a",@progbits
+.Lanon.[ID].1:
 	.ascii	"\303\241b\304\207"
-	.size	.Lanon.ebccacd9e14cd5382d61cd57489efe98.1, 5
+	.size	.Lanon.[ID].1, 5
 
-	.type	.Lanon.ebccacd9e14cd5382d61cd57489efe98.2,@object
-	.section	.rodata..Lanon.ebccacd9e14cd5382d61cd57489efe98.2,"a",@progbits
-.Lanon.ebccacd9e14cd5382d61cd57489efe98.2:
+	.type	.Lanon.[ID].2,@object
+	.section	.rodata..Lanon.[ID].2,"a",@progbits
+.Lanon.[ID].2:
 	.asciz	"a\000b\000c"
-	.size	.Lanon.ebccacd9e14cd5382d61cd57489efe98.2, 6
+	.size	.Lanon.[ID].2, 6
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,"aw",@nobits

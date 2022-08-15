@@ -821,7 +821,7 @@ macro_rules! msg_send {
 /// # use objc2::rc::{Id, Owned};
 /// # use objc2::runtime::Object;
 /// let obj: Id<Object, Owned>;
-/// # obj = unsafe { msg_send_id![class!(NSObject), new].unwrap() };
+/// # obj = unsafe { msg_send_id![class!(NSObject), new] };
 /// assert!(unsafe { msg_send_bool![&obj, isEqual: &*obj] });
 /// ```
 #[macro_export]
@@ -837,8 +837,8 @@ macro_rules! msg_send_bool {
 ///
 /// Object pointers in Objective-C have certain rules for when they should be
 /// retained and released across function calls. This macro helps doing that,
-/// and returns an [`Option`] (letting you handle failures) containing an
-/// [`rc::Id`] with the object.
+/// and returns an [`rc::Id`] with the object, optionally wrapped in an
+/// [`Option`] if you want to handle failures yourself.
 ///
 /// [`rc::Id`]: crate::rc::Id
 ///
@@ -885,29 +885,37 @@ macro_rules! msg_send_bool {
 /// `O: Ownership`):
 ///
 /// - The `new` family: The receiver must be `&Class`, and the return type
-///   is a generic `Option<Id<T, O>>`.
+///   is a generic `Id<T, O>` or `Option<Id<T, O>>`.
 ///
 /// - The `alloc` family: The receiver must be `&Class`, and the return type
-///   is a generic `Option<Id<Allocated<T>, O>>`.
+///   is a generic `Id<Allocated<T>, O>` or `Option<Id<Allocated<T>, O>>`.
 ///
 /// - The `init` family: The receiver must be `Option<Id<Allocated<T>, O>>`
 ///   as returned from `alloc`. The receiver is consumed, and a the
-///   now-initialized `Option<Id<T, O>>` (with the same `T` and `O`) is
-///   returned.
+///   now-initialized `Id<T, O>` or `Option<Id<T, O>>` (with the same `T` and
+///   `O`) is returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
-///   [`MessageReceiver`] and the return type is a generic `Option<Id<T, O>>`.
+///   [`MessageReceiver`] and the return type is a generic `Id<T, O>` or
+///   `Option<Id<T, O>>`.
 ///
 /// - The `mutableCopy` family: Same as the `copy` family.
 ///
 /// - No family: The receiver may be anything that implements
 ///   [`MessageReceiver`]. The result is retained using
-///   [`Id::retain_autoreleased`], and a generic `Option<Id<T, O>>` is
-///   returned. This retain is in most cases faster than using autorelease
-///   pools!
+///   [`Id::retain_autoreleased`], and a generic `Id<T, O>` or
+///   `Option<Id<T, O>>` is returned. This retain is in most cases faster than
+///   using autorelease pools!
 ///
 /// See [the clang documentation][arc-retainable] for the precise
 /// specification of Objective-C's ownership rules.
+///
+/// As you may have noticed, the return type is always either `Id<_, _>` or
+/// `Option<Id<_, _>>`. Internally, the return type is always
+/// `Option<Id<_, _>>` (for example: almost all `new` methods can fail if the
+/// allocation failed), but for convenience, if the return type is `Id<_, _>`
+/// this macro will automatically unwrap the object, or panic with an error
+/// message if it couldn't be retrieved.
 ///
 /// This macro doesn't support super methods yet, see [#173].
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
@@ -923,12 +931,34 @@ macro_rules! msg_send_bool {
 /// [`Id::autorelease`]: crate::rc::Id::autorelease
 ///
 ///
+/// # Panics
+///
+/// Panics if the return type is specified as `Id<_, _>` and the method
+/// returned NULL.
+///
+/// Additional panicking cases are documented in [`msg_send!`].
+///
+///
 /// # Safety
 ///
 /// Same as [`msg_send!`], with an expected return type of `id`,
 /// `instancetype`, `NSObject*`, or other such object pointers. The method
 /// must not have any attributes that changes the how it handles memory
 /// management.
+///
+/// Note that if you're using this inside a context that expects unwinding to
+/// have Objective-C semantics (like [`exception::catch`]), you should make
+/// sure that the return type is `Option<Id<_, _>>` so that you don't get an
+/// unexpected unwind through incompatible ABIs!
+///
+#[cfg_attr(
+    feature = "exception",
+    doc = "[`exception::catch`]: crate::exception::catch"
+)]
+#[cfg_attr(
+    not(feature = "exception"),
+    doc = "[`exception::catch`]: crate::exception#feature-not-enabled"
+)]
 ///
 ///
 /// # Examples
@@ -941,11 +971,13 @@ macro_rules! msg_send_bool {
 // Allocate new object
 /// let obj = unsafe { msg_send_id![class!(NSObject), alloc] };
 /// // Consume the allocated object, return initialized object
-/// let obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init].unwrap() };
+/// let obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
 /// // Copy the object
-/// let copy: Id<Object, Shared> = unsafe { msg_send_id![&obj, copy].unwrap() };
+/// let copy: Id<Object, Shared> = unsafe { msg_send_id![&obj, copy] };
 /// // Call ordinary selector that returns an object
-/// let s: Id<Object, Shared> = unsafe { msg_send_id![&obj, description].unwrap() };
+/// // This time, we handle failures ourselves
+/// let s: Option<Id<Object, Shared>> = unsafe { msg_send_id![&obj, description] };
+/// let s = s.expect("description was NULL");
 /// ```
 #[macro_export]
 macro_rules! msg_send_id {
@@ -955,7 +987,7 @@ macro_rules! msg_send_id {
         const NAME: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::stringify!($selector).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = <RS as $crate::__macro_helpers::MsgSendId<_, _, _>>::send_message_id($obj, sel, ());
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
@@ -964,7 +996,7 @@ macro_rules! msg_send_id {
             $crate::__macro_helpers::concat!($($crate::__macro_helpers::stringify!($selector), ':'),+).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
+        result = <RS as $crate::__macro_helpers::MsgSendId<_, _, _>>::send_message_id($obj, sel, ($($argument,)+));
         result
     });
 }

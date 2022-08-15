@@ -100,7 +100,7 @@
 //! let cls = register_class();
 //!
 //! let obj: Id<Object, Owned> = unsafe {
-//!     msg_send_id![cls, withNumber: 42u32].unwrap()
+//!     msg_send_id![cls, withNumber: 42u32]
 //! };
 //!
 //! let n: u32 = unsafe { msg_send![&obj, number] };

@@ -40,12 +40,10 @@
 //!
 //! // Creation
 //!
-//! let obj1: Id<Object, Owned> = unsafe {
-//!     msg_send_id![cls, new].expect("Failed allocating")
-//! };
+//! let obj1: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
 //! let obj2: Id<Object, Owned> = unsafe {
 //!     // Equivalent to using `new`
-//!     msg_send_id![msg_send_id![cls, alloc], init].expect("Failed allocating")
+//!     msg_send_id![msg_send_id![cls, alloc], init]
 //! };
 //!
 //! // Usage
@@ -60,7 +58,7 @@
 //! // We're going to create a new reference to the first object, so
 //! // relinquish mutable ownership.
 //! let obj1: Id<Object, Shared> = obj1.into();
-//! let obj1_self: Id<Object, Shared> = unsafe { msg_send_id![&obj1, self].unwrap() };
+//! let obj1_self: Id<Object, Shared> = unsafe { msg_send_id![&obj1, self] };
 //! let is_equal = unsafe { msg_send_bool![&obj1, isEqual: &*obj1_self] };
 //! assert!(is_equal);
 //!
@@ -126,7 +124,7 @@
 //! # use objc2::runtime::Object;
 //! #
 //! # let cls = class!(NSObject);
-//! # let obj1: Id<Object, Owned> = unsafe { msg_send_id![cls, new].unwrap() };
+//! # let obj1: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
 //! #
 //! // Wrong return type - this is UB!
 //! let hash1: f32 = unsafe { msg_send![&obj1, hash] };

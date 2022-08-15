@@ -117,7 +117,10 @@ pub fn test_msg_send_bool(obj: &new_objc2::foundation::NSString) {
 
 pub fn test_msg_send_id(obj: &new_objc2::runtime::Object) {
     let _: new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared> =
-        unsafe { new_objc2::msg_send_id![obj, a].unwrap() };
+        unsafe { new_objc2::msg_send_id![obj, a] };
+    let _: new_objc2::__macro_helpers::Option<
+        new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared>,
+    > = unsafe { new_objc2::msg_send_id![obj, a] };
     let _: new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared> =
-        unsafe { new_objc2::msg_send_id![obj, a: obj, b: obj].unwrap() };
+        unsafe { new_objc2::msg_send_id![obj, a: obj, b: obj] };
 }

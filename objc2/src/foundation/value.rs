@@ -75,7 +75,6 @@ extern_methods!(
                     initWithBytes: bytes,
                     objCType: encoding.as_ptr(),
                 ]
-                .expect("unexpected NULL NSValue")
             }
         }
     }

@@ -46,7 +46,7 @@ impl RefUnwindSafe for NSUUID {}
 extern_methods!(
     unsafe impl NSUUID {
         pub fn new_v4() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new].unwrap() }
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         /// The 'nil UUID'.
@@ -58,7 +58,7 @@ extern_methods!(
             let bytes = UuidBytes(bytes);
             unsafe {
                 let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithUUIDBytes: &bytes].unwrap()
+                msg_send_id![obj, initWithUUIDBytes: &bytes]
             }
         }
 
@@ -79,7 +79,7 @@ extern_methods!(
         }
 
         pub fn string(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, UUIDString].expect("expected UUID string to be non-NULL") }
+            unsafe { msg_send_id![self, UUIDString] }
         }
     }
 );

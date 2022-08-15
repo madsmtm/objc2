@@ -59,6 +59,11 @@ declare_class!(
     }
 
     unsafe impl RcTestObject {
+        #[sel(newReturningNull)]
+        fn new_returning_null() -> *mut Self {
+            ptr::null_mut()
+        }
+
         #[sel(alloc)]
         fn alloc() -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
@@ -74,10 +79,20 @@ declare_class!(
             unsafe { msg_send![super(Self::class(), superclass), allocWithZone: zone] }
         }
 
+        #[sel(allocReturningNull)]
+        fn alloc_returning_null() -> *mut Self {
+            ptr::null_mut()
+        }
+
         #[sel(init)]
         fn init(&mut self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
             unsafe { msg_send![super(self), init] }
+        }
+
+        #[sel(initReturningNull)]
+        fn init_returning_null(&mut self) -> *mut Self {
+            ptr::null_mut()
         }
 
         #[sel(retain)]
@@ -125,6 +140,16 @@ declare_class!(
         fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> *const Self {
             TEST_DATA.with(|data| data.borrow_mut().mutable_copy += 1);
             Id::consume_as_ptr(ManuallyDrop::new(Self::new()))
+        }
+
+        #[sel(copyReturningNull)]
+        fn copy_returning_null(&self) -> *const Self {
+            ptr::null()
+        }
+
+        #[sel(methodReturningNull)]
+        fn method_returning_null(&self) -> *const Self {
+            ptr::null()
         }
     }
 );

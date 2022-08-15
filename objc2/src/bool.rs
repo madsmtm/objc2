@@ -20,7 +20,7 @@ use core::fmt;
 /// use objc2::rc::{Id, Shared};
 /// use objc2::runtime::{Object, Bool};
 /// let ns_value: Id<Object, Shared> = unsafe {
-///     msg_send_id![class!(NSNumber), numberWithBool: Bool::YES].unwrap()
+///     msg_send_id![class!(NSNumber), numberWithBool: Bool::YES]
 /// };
 /// assert!(unsafe { msg_send_bool![&ns_value, boolValue] });
 /// ```

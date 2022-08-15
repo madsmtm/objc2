@@ -289,7 +289,7 @@ macro_rules! __inner_declare_class {
 /// impl MyCustomObject {
 ///     pub fn new(foo: u8) -> Id<Self, Owned> {
 ///         let cls = Self::class();
-///         unsafe { msg_send_id![msg_send_id![cls, alloc], initWithFoo: foo].unwrap() }
+///         unsafe { msg_send_id![msg_send_id![cls, alloc], initWithFoo: foo] }
 ///     }
 ///
 ///     pub fn get_foo(&self) -> u8 {

@@ -20,7 +20,7 @@ use objc2::rc::{Id, Owned};
 use objc2::runtime::Object;
 
 let cls = class!(NSObject);
-let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] }.unwrap();
+let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
 
 let hash: NSUInteger = unsafe { msg_send![&obj, hash] };
 println!("NSObject hash: {}", hash);

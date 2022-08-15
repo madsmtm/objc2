@@ -28,11 +28,11 @@ impl RefUnwindSafe for NSProcessInfo {}
 extern_methods!(
     unsafe impl NSProcessInfo {
         pub fn process_info() -> Id<NSProcessInfo, Shared> {
-            unsafe { msg_send_id![Self::class(), processInfo].unwrap() }
+            unsafe { msg_send_id![Self::class(), processInfo] }
         }
 
         pub fn process_name(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, processName].unwrap() }
+            unsafe { msg_send_id![self, processName] }
         }
 
         // TODO: This contains a lot more important functionality!
