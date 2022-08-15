@@ -22,6 +22,14 @@ unsafe impl ClassType for NSObject {
     fn class() -> &'static Class {
         class!(NSObject)
     }
+
+    fn as_super(&self) -> &Self::Super {
+        &self.__inner
+    }
+
+    fn as_super_mut(&mut self) -> &mut Self::Super {
+        &mut self.__inner
+    }
 }
 
 extern_methods!(

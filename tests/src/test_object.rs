@@ -26,6 +26,14 @@ unsafe impl ClassType for MyTestObject {
     fn class() -> &'static Class {
         class!(MyTestObject)
     }
+
+    fn as_super(&self) -> &Self::Super {
+        &self.inner
+    }
+
+    fn as_super_mut(&mut self) -> &mut Self::Super {
+        &mut self.inner
+    }
 }
 
 impl MyTestObject {

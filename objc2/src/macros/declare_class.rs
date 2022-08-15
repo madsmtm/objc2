@@ -454,6 +454,16 @@ macro_rules! declare_class {
                 // We just registered the class, so it should be available
                 $crate::runtime::Class::get(stringify!($name)).unwrap()
             }
+
+            #[inline]
+            fn as_super(&self) -> &Self::Super {
+                &self.__inner
+            }
+
+            #[inline]
+            fn as_super_mut(&mut self) -> &mut Self::Super {
+                &mut self.__inner
+            }
         }
 
         // Methods

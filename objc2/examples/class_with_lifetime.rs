@@ -117,6 +117,14 @@ unsafe impl<'a> ClassType for MyObject<'a> {
 
         Class::get("MyObject").unwrap()
     }
+
+    fn as_super(&self) -> &Self::Super {
+        &self.superclass
+    }
+
+    fn as_super_mut(&mut self) -> &mut Self::Super {
+        &mut self.superclass
+    }
 }
 
 fn main() {

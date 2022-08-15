@@ -259,6 +259,16 @@ macro_rules! __inner_extern_class {
             fn class() -> &'static $crate::runtime::Class {
                 $crate::class!($name)
             }
+
+            #[inline]
+            fn as_super(&self) -> &Self::Super {
+                &self.__inner
+            }
+
+            #[inline]
+            fn as_super_mut(&mut self) -> &mut Self::Super {
+                &mut self.__inner
+            }
         }
     };
     (

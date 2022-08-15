@@ -17,7 +17,8 @@ use crate::Message;
 /// # Safety
 ///
 /// The class returned by [`Self::class`] must be a subclass of the class that
-/// [`Self::Super`] represents.
+/// [`Self::Super`] represents, and `as_super`/`as_super_mut` must be
+/// implemented correctly.
 ///
 /// In pseudocode:
 /// ```ignore
@@ -78,4 +79,12 @@ pub unsafe trait ClassType: Message {
     /// class, e.g. if the program is not properly linked to the framework
     /// that defines the class.
     fn class() -> &'static Class;
+
+    /// Get an immutable reference to the superclass.
+    // Note: It'd be safe to provide a default impl using transmute here if
+    // we wanted to!
+    fn as_super(&self) -> &Self::Super;
+
+    /// Get a mutable reference to the superclass.
+    fn as_super_mut(&mut self) -> &mut Self::Super;
 }
