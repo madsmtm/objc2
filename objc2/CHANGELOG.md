@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSData::class()`.
 * Added `Id::into_super`.
 * Added `extern_methods!` macro.
+* Added ability to call `msg_send![super(obj), ...]` without explicitly
+  specifying the superclass.
 
 ### Changed
 * **BREAKING**: Change syntax in `extern_class!` macro to be more Rust-like.

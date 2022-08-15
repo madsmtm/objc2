@@ -253,7 +253,7 @@ macro_rules! __inner_declare_class {
 ///         #[sel(initWithFoo:)]
 ///         fn init_with(&mut self, foo: u8) -> Option<&mut Self> {
 ///             let this: Option<&mut Self> = unsafe {
-///                 msg_send![super(self, NSObject::class()), init]
+///                 msg_send![super(self), init]
 ///             };
 ///             this.map(|this| {
 ///                 // TODO: Initialization through MaybeUninit

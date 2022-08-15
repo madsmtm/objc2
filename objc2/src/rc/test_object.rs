@@ -77,25 +77,25 @@ declare_class!(
         #[sel(init)]
         fn init(&mut self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
-            unsafe { msg_send![super(self, NSObject::class()), init] }
+            unsafe { msg_send![super(self), init] }
         }
 
         #[sel(retain)]
         fn retain(&self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().retain += 1);
-            unsafe { msg_send![super(self, NSObject::class()), retain] }
+            unsafe { msg_send![super(self), retain] }
         }
 
         #[sel(release)]
         fn release(&self) {
             TEST_DATA.with(|data| data.borrow_mut().release += 1);
-            unsafe { msg_send![super(self, NSObject::class()), release] }
+            unsafe { msg_send![super(self), release] }
         }
 
         #[sel(autorelease)]
         fn autorelease(&self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().autorelease += 1);
-            unsafe { msg_send![super(self, NSObject::class()), autorelease] }
+            unsafe { msg_send![super(self), autorelease] }
         }
 
         #[sel(dealloc)]
@@ -107,7 +107,7 @@ declare_class!(
         #[sel(_tryRetain)]
         unsafe fn try_retain(&self) -> Bool {
             TEST_DATA.with(|data| data.borrow_mut().try_retain += 1);
-            let res = unsafe { msg_send_bool![super(self, NSObject::class()), _tryRetain] };
+            let res = unsafe { msg_send_bool![super(self), _tryRetain] };
             if !res {
                 TEST_DATA.with(|data| data.borrow_mut().try_retain -= 1);
                 TEST_DATA.with(|data| data.borrow_mut().try_retain_fail += 1);

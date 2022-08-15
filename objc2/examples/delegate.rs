@@ -32,7 +32,7 @@ declare_class!(
     unsafe impl CustomAppDelegate {
         #[sel(initWith:another:)]
         fn init_with(self: &mut Self, ivar: u8, another_ivar: Bool) -> *mut Self {
-            let this: *mut Self = unsafe { msg_send![super(self, NSResponder::class()), init] };
+            let this: *mut Self = unsafe { msg_send![super(self), init] };
             if let Some(this) = unsafe { this.as_mut() } {
                 // TODO: Allow initialization through MaybeUninit
                 *this.ivar = ivar;

@@ -620,6 +620,10 @@ macro_rules! __class_inner {
 /// implements [`MessageReceiver`], like a reference or a pointer to an
 /// object, or even a reference to an [`rc::Id`] containing an object.
 ///
+/// The expression can be wrapped in `super`, with an optional superclass
+/// as the second argument. If no specific superclass is specified, the
+/// direct superclass is retrieved from [`ClassType`].
+///
 /// All arguments, and the return type, must implement [`Encode`].
 ///
 /// This macro translates into a call to [`sel!`], and afterwards a fully
@@ -633,6 +637,7 @@ macro_rules! __class_inner {
 ///
 /// [`MessageReceiver`]: crate::MessageReceiver
 /// [`rc::Id`]: crate::rc::Id
+/// [`ClassType`]: crate::ClassType
 /// [`Encode`]: crate::Encode
 /// [`sel!`]: crate::sel
 /// [`MessageReceiver::send_message`]: crate::MessageReceiver::send_message
@@ -691,25 +696,68 @@ macro_rules! __class_inner {
 ///
 /// # Examples
 ///
+/// Sending messages to an object.
+///
 /// ```no_run
-/// # use objc2::msg_send;
-/// # use objc2::runtime::Object;
+/// use objc2::msg_send;
+/// use objc2::runtime::Object;
+///
 /// let obj: *mut Object;
-/// # let obj: *mut Object = 0 as *mut Object;
+/// # obj = 0 as *mut Object;
 /// let description: *const Object = unsafe { msg_send![obj, description] };
 /// // Usually you'd use msg_send_id here ^
-/// let _: () = unsafe { msg_send![obj, setArg1: 1u32, arg2: 2i32] };
+/// let _: () = unsafe { msg_send![obj, setArg1: 1u32, arg2: 2u8] };
 /// let arg1: i32 = unsafe { msg_send![obj, getArg1] };
-/// let arg2: i32 = unsafe { msg_send![obj, getArg2] };
+/// let arg2: u8 = unsafe { msg_send![obj, getArg2] };
+/// ```
+///
+/// Sending messages to the direct superclass of an object.
+///
+/// ```no_run
+/// use objc2::msg_send;
+/// # use objc2::ns_string;
+/// # use objc2::foundation::{NSString as MyObject};
+///
+/// let obj: &MyObject; // Some object that implements ClassType
+/// # obj = ns_string!("");
+/// let _: () = unsafe { msg_send![super(obj), someMethod] };
+/// ```
+///
+/// Sending messages to a specific superclass of an object.
+///
+/// ```no_run
+/// # use objc2::class;
+/// use objc2::msg_send;
+/// use objc2::runtime::{Class, Object};
+///
+/// // Since we specify the superclass ourselves, this doesn't need to
+/// // implement ClassType
+/// let obj: *mut Object;
+/// # obj = 0 as *mut Object;
+/// let superclass: &Class;
+/// # superclass = class!(NSObject);
+/// let arg3: u32 = unsafe { msg_send![super(obj, superclass), getArg3] };
 /// ```
 #[macro_export]
 macro_rules! msg_send {
-    [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
+    [super($obj:expr), $selector:ident $(,)?] => ({
         let sel = $crate::sel!($selector);
         let result;
         // Note: `sel` and `result` can be accessed from the `obj` and
         // `superclass` expressions - we won't (yet) bother with preventing
         // that though.
+        result = $crate::MessageReceiver::__send_super_message_static($obj, sel, ());
+        result
+    });
+    [super($obj:expr), $($selector:ident : $argument:expr),+ $(,)?] => ({
+        let sel = $crate::sel!($($selector :)+);
+        let result;
+        result = $crate::MessageReceiver::__send_super_message_static($obj, sel, ($($argument,)+));
+        result
+    });
+    [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
+        let sel = $crate::sel!($selector);
+        let result;
         result = $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ());
         result
     });

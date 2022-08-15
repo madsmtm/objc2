@@ -8,7 +8,6 @@ fn main() {
 
     let _: () = unsafe { msg_send![super, init] };
     let _: () = unsafe { msg_send![super(), init] };
-    let _: () = unsafe { msg_send![super(obj), init] };
     let _: () = unsafe { msg_send![super(obj,), init] };
     let _: () = unsafe { msg_send![super(obj, superclass,), init] };
 }
