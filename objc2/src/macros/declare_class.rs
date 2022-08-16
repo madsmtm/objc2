@@ -25,7 +25,8 @@ macro_rules! __inner_declare_class {
             @($($ret)?)
             @($body)
             // Will add @(kind)
-            // Will add @(args)
+            // Will add @(args_start)
+            // Will add @(args_rest)
         }
 
         $crate::__inner_declare_class! {
@@ -54,6 +55,8 @@ macro_rules! __inner_declare_class {
             @($name)
             @($($ret)?)
             @($body)
+
+            // Same as above
         }
 
         $crate::__inner_declare_class! {
@@ -72,12 +75,13 @@ macro_rules! __inner_declare_class {
         @($($ret:ty)?)
         @($($body:tt)*)
         @($($_kind:tt)*)
-        @($($args:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
     } => {
         $crate::__attribute_helper! {
             @strip_sel
             $(@[$($m)*])*
-            ($($qualifiers)* fn $name($($args)*) $(-> $ret)? $($body)*)
+            ($($qualifiers)* fn $name($($args_start)* $($args_rest)*) $(-> $ret)? $($body)*)
         }
     };
 
@@ -89,7 +93,8 @@ macro_rules! __inner_declare_class {
         @($($_ret:tt)*)
         @($($_body:tt)*)
         @(class_method)
-        @($($args:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
     } => {
         $builder.add_class_method(
             $crate::__attribute_helper! {
@@ -99,7 +104,7 @@ macro_rules! __inner_declare_class {
                 @call_sel
             },
             Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args)*
+                @($($qualifiers)*) $($args_start)* $($args_rest)*
             },
         );
     };
@@ -111,7 +116,8 @@ macro_rules! __inner_declare_class {
         @($($_ret:tt)*)
         @($($_body:tt)*)
         @(instance_method)
-        @($($args:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
     } => {
         $builder.add_method(
             $crate::__attribute_helper! {
@@ -121,7 +127,7 @@ macro_rules! __inner_declare_class {
                 @call_sel
             },
             Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args)*
+                @($($qualifiers)*) $($args_start)* $($args_rest)*
             },
         );
     };

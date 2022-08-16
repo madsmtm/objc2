@@ -235,6 +235,9 @@ macro_rules! __inner_extern_methods {
             @method_out
             @($(#[$($m)*])*)
             @($v unsafe fn $name($($args)*) $(-> $ret)?)
+            // Will add @(kind)
+            // Will add @(args_start)
+            // Will add @(args_rest)
         }
 
         $crate::__inner_extern_methods! {
@@ -283,7 +286,8 @@ macro_rules! __inner_extern_methods {
         @($(#[$($m:tt)*])*)
         @($($function_start:tt)*)
         @($($kind:tt)*)
-        @($($args:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
     } => {
         $crate::__attribute_helper! {
             @strip_sel
@@ -297,7 +301,8 @@ macro_rules! __inner_extern_methods {
                         ($(#[$($m)*])*)
                         @unsafe_method_body
                         @($($kind)*)
-                        @($($args)*)
+                        @($($args_start)*)
+                        @($($args_rest)*)
                     }
                 }
             })
@@ -310,8 +315,8 @@ macro_rules! __inner_extern_methods {
         @(
             $self:ident: $self_ty:ty,
             _: $sel_ty:ty,
-            $($arg:ident: $arg_ty:ty),* $(,)?
         )
+        @($($arg:ident: $arg_ty:ty),* $(,)?)
         @($($sel:tt)*)
     } => {
         $crate::__collect_msg_send!(
@@ -327,8 +332,8 @@ macro_rules! __inner_extern_methods {
         @(
             _: $cls_ty:ty,
             _: $sel_ty:ty,
-            $($arg:ident: $arg_ty:ty),* $(,)?
         )
+        @($($arg:ident: $arg_ty:ty),* $(,)?)
         @($($sel:tt)*)
     } => {
         $crate::__collect_msg_send!(
