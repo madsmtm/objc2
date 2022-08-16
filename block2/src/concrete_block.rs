@@ -5,17 +5,30 @@ use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
 
-use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
+use objc2_encode::{Encode, Encoding, RefEncode};
 
 use crate::{ffi, Block, BlockArguments, RcBlock};
 
-/// Types that may be converted into a `ConcreteBlock`.
-pub trait IntoConcreteBlock<A: BlockArguments + EncodeArguments>: Sized {
-    /// The return type of the resulting `ConcreteBlock`.
-    type Ret: Encode;
+mod private {
+    pub trait Sealed<A> {}
+}
 
-    /// Consumes self to create a `ConcreteBlock`.
-    fn into_concrete_block(self) -> ConcreteBlock<A, Self::Ret, Self>;
+/// Types that may be converted into a [`ConcreteBlock`].
+///
+/// This is implemented for [`Fn`] closures of up to 12 arguments, where each
+/// argument and the return type implements [`Encode`].
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait IntoConcreteBlock<A: BlockArguments>: private::Sealed<A> + Sized {
+    /// The return type of the resulting `ConcreteBlock`.
+    type Output: Encode;
+
+    #[doc(hidden)]
+    fn __into_concrete_block(self) -> ConcreteBlock<A, Self::Output, Self>;
 }
 
 macro_rules! concrete_block_impl {
@@ -23,13 +36,18 @@ macro_rules! concrete_block_impl {
         concrete_block_impl!($f,);
     );
     ($f:ident, $($a:ident : $t:ident),*) => (
-        impl<$($t: Encode,)* R: Encode, X> IntoConcreteBlock<($($t,)*)> for X
+        impl<$($t: Encode,)* R: Encode, X> private::Sealed<($($t,)*)> for X
+        where
+            X: Fn($($t,)*) -> R,
+        {}
+
+        unsafe impl<$($t: Encode,)* R: Encode, X> IntoConcreteBlock<($($t,)*)> for X
         where
             X: Fn($($t,)*) -> R,
         {
-            type Ret = R;
+            type Output = R;
 
-            fn into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
+            fn __into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
                 extern "C" fn $f<$($t,)* R, X>(
                     block: &ConcreteBlock<($($t,)*), R, X>,
                     $($a: $t,)*
@@ -148,23 +166,21 @@ pub struct ConcreteBlock<A, R, F> {
     pub(crate) closure: F,
 }
 
-unsafe impl<A: BlockArguments + EncodeArguments, R: Encode, F> RefEncode
-    for ConcreteBlock<A, R, F>
-{
+unsafe impl<A: BlockArguments, R: Encode, F> RefEncode for ConcreteBlock<A, R, F> {
     const ENCODING_REF: Encoding<'static> = Encoding::Block;
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F>
 where
-    A: BlockArguments + EncodeArguments,
+    A: BlockArguments,
     R: Encode,
-    F: IntoConcreteBlock<A, Ret = R>,
+    F: IntoConcreteBlock<A, Output = R>,
 {
     /// Constructs a `ConcreteBlock` with the given closure.
     /// When the block is called, it will return the value that results from
     /// calling the closure.
     pub fn new(closure: F) -> Self {
-        closure.into_concrete_block()
+        closure.__into_concrete_block()
     }
 }
 

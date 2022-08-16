@@ -5,30 +5,37 @@ use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 use crate::ffi;
 
-/// Types that may be used as the arguments to an Objective-C block.
-pub trait BlockArguments: Sized {
-    /// Calls the given `Block` with self as the arguments.
-    ///
-    /// # Safety
-    ///
-    /// The given block must point to a valid `Block`.
-    ///
-    /// This invokes foreign code whose safety the user must guarantee.
-    unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R;
+/// Types that may be used as the arguments of an Objective-C block.
+///
+/// This is implemented for tuples of up to 12 arguments, where each argument
+/// implements [`Encode`].
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait BlockArguments: EncodeArguments + Sized {
+    /// Calls the given method the block and arguments.
+    #[doc(hidden)]
+    unsafe fn __call_block<R: Encode>(
+        invoke: unsafe extern "C" fn(),
+        block: *mut Block<Self, R>,
+        args: Self,
+    ) -> R;
 }
 
 macro_rules! block_args_impl {
-    ($($a:ident : $t:ident),*) => (
-        impl<$($t),*> BlockArguments for ($($t,)*) {
-            unsafe fn call_block<R>(self, block: *mut Block<Self, R>) -> R {
-                let layout = unsafe { block.cast::<ffi::Block_layout>().as_ref().unwrap_unchecked() };
-                // TODO: Can `invoke` actually be null?
-                let invoke: unsafe extern "C" fn() = layout.invoke.unwrap();
-                let invoke: unsafe extern "C" fn(*mut Block<Self, R>, $($t),*) -> R =
-                    unsafe { mem::transmute(invoke) }
-                ;
-                let ($($a,)*) = self;
-                unsafe { invoke(block, $($a),*) }
+    ($($a:ident: $t:ident),*) => (
+        unsafe impl<$($t: Encode),*> BlockArguments for ($($t,)*) {
+            #[inline]
+            unsafe fn __call_block<R: Encode>(invoke: unsafe extern "C" fn(), block: *mut Block<Self, R>, ($($a,)*): Self) -> R {
+                // Very similar to `MessageArguments::__invoke`
+                let invoke: unsafe extern "C" fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
+                    mem::transmute(invoke)
+                };
+
+                unsafe { invoke(block $(, $a)*) }
             }
         }
     );
@@ -86,11 +93,11 @@ pub struct Block<A, R> {
     _p: PhantomData<fn(A) -> R>,
 }
 
-unsafe impl<A: BlockArguments + EncodeArguments, R: Encode> RefEncode for Block<A, R> {
+unsafe impl<A: BlockArguments, R: Encode> RefEncode for Block<A, R> {
     const ENCODING_REF: Encoding<'static> = Encoding::Block;
 }
 
-impl<A: BlockArguments + EncodeArguments, R: Encode> Block<A, R> {
+impl<A: BlockArguments, R: Encode> Block<A, R> {
     /// Call self with the given arguments.
     ///
     /// # Safety
@@ -101,6 +108,11 @@ impl<A: BlockArguments + EncodeArguments, R: Encode> Block<A, R> {
     /// For example, if this block is shared with multiple references, the
     /// caller must ensure that calling it will not cause a data race.
     pub unsafe fn call(&self, args: A) -> R {
-        unsafe { args.call_block(self as *const Self as *mut Self) }
+        let ptr: *const Self = self;
+        let layout = unsafe { ptr.cast::<ffi::Block_layout>().as_ref().unwrap_unchecked() };
+        // TODO: Is `invoke` actually ever null?
+        let invoke = layout.invoke.unwrap();
+
+        unsafe { A::__call_block(invoke, ptr as *mut Self, args) }
     }
 }

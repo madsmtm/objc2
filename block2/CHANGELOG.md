@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Fixed
+* **BREAKING**: Cleaned up `BlockArguments` trait, it is now sealed and a
+  subtrait of `EncodeArguments`.
+* **BREAKING**: Cleaned up `IntoConcreteBlock` trait, it is now sealed and the
+  associated output type has been renamed to `Output`.
 
 ## 0.2.0-alpha.5 - 2022-07-19
 
