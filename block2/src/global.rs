@@ -5,7 +5,7 @@ use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
 
-use objc2_encode::{Encode, EncodeArguments};
+use objc2_encode::Encode;
 
 use super::{ffi, Block};
 use crate::BlockArguments;
@@ -34,13 +34,13 @@ pub struct GlobalBlock<A, R = ()> {
 
 unsafe impl<A, R> Sync for GlobalBlock<A, R>
 where
-    A: BlockArguments + EncodeArguments,
+    A: BlockArguments,
     R: Encode,
 {
 }
 unsafe impl<A, R> Send for GlobalBlock<A, R>
 where
-    A: BlockArguments + EncodeArguments,
+    A: BlockArguments,
     R: Encode,
 {
 }
@@ -77,7 +77,7 @@ impl<A, R> GlobalBlock<A, R> {
 
 impl<A, R> Deref for GlobalBlock<A, R>
 where
-    A: BlockArguments + EncodeArguments,
+    A: BlockArguments,
     R: Encode,
 {
     type Target = Block<A, R>;

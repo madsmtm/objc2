@@ -5,12 +5,12 @@ use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
 
-use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
+use objc2_encode::{Encode, Encoding, RefEncode};
 
 use crate::{ffi, Block, BlockArguments, RcBlock};
 
 /// Types that may be converted into a `ConcreteBlock`.
-pub trait IntoConcreteBlock<A: BlockArguments + EncodeArguments>: Sized {
+pub trait IntoConcreteBlock<A: BlockArguments>: Sized {
     /// The return type of the resulting `ConcreteBlock`.
     type Ret: Encode;
 
@@ -148,15 +148,13 @@ pub struct ConcreteBlock<A, R, F> {
     pub(crate) closure: F,
 }
 
-unsafe impl<A: BlockArguments + EncodeArguments, R: Encode, F> RefEncode
-    for ConcreteBlock<A, R, F>
-{
+unsafe impl<A: BlockArguments, R: Encode, F> RefEncode for ConcreteBlock<A, R, F> {
     const ENCODING_REF: Encoding<'static> = Encoding::Block;
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F>
 where
-    A: BlockArguments + EncodeArguments,
+    A: BlockArguments,
     R: Encode,
     F: IntoConcreteBlock<A, Ret = R>,
 {
