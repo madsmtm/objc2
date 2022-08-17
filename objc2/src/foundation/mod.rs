@@ -64,11 +64,13 @@ pub use self::geometry::{CGFloat, NSPoint, NSRect, NSSize};
 pub use self::mutable_array::NSMutableArray;
 pub use self::mutable_attributed_string::NSMutableAttributedString;
 pub use self::mutable_data::NSMutableData;
+pub use self::mutable_set::NSMutableSet;
 pub use self::mutable_string::NSMutableString;
 pub use self::number::NSNumber;
 pub use self::object::NSObject;
 pub use self::process_info::NSProcessInfo;
 pub use self::range::NSRange;
+pub use self::set::NSSet;
 pub use self::string::NSString;
 pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSThread};
 #[cfg(not(macos_10_7))] // Temporary
@@ -104,11 +106,13 @@ mod geometry;
 mod mutable_array;
 mod mutable_attributed_string;
 mod mutable_data;
+mod mutable_set;
 mod mutable_string;
 mod number;
 mod object;
 mod process_info;
 mod range;
+mod set;
 mod string;
 mod thread;
 // Temporarily disable testing UUID on macOS 10.7 until
@@ -158,6 +162,12 @@ mod tests {
         assert_auto_traits::<NSComparisonResult>();
         assert_auto_traits::<NSData>();
         assert_auto_traits::<NSDictionary<NSString, NSString>>();
+        assert_auto_traits::<NSSet<NSString, Shared>>();
+        assert_auto_traits::<NSSet<NSString, Owned>>();
+        assert_auto_traits::<Id<NSSet<NSString, Shared>, Shared>>();
+        assert_auto_traits::<Id<NSSet<NSString, Owned>, Shared>>();
+        assert_auto_traits::<Id<NSSet<NSString, Shared>, Owned>>();
+        assert_auto_traits::<Id<NSSet<NSString, Owned>, Owned>>();
         // TODO: Figure out if Send + Sync is safe?
         // assert_auto_traits::<NSEnumerator<NSString>>();
         // assert_auto_traits::<NSFastEnumerator<NSArray<NSString, Shared>>>();
@@ -170,6 +180,7 @@ mod tests {
         assert_auto_traits::<NSMutableArray<NSString, Shared>>();
         assert_auto_traits::<NSMutableAttributedString>();
         assert_auto_traits::<NSMutableData>();
+        assert_auto_traits::<NSMutableSet<NSString, Shared>>();
         assert_auto_traits::<NSMutableString>();
         assert_auto_traits::<NSNumber>();
         // assert_auto_traits::<NSObject>(); // Intentional
