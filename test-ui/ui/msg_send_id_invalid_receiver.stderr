@@ -109,5 +109,5 @@ error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiv
    = help: the following other types implement trait `MessageReceiver`:
              &'a Id<T, O>
              &'a mut Id<T, objc2::rc::Owned>
-   = note: required because of the requirements on the impl of `MsgSendId<Id<objc2::runtime::Object, Shared>, _, _>` for `RetainSemantics<false, false, false, true>`
+   = note: required for `RetainSemantics<false, false, false, true>` to implement `MsgSendId<Id<objc2::runtime::Object, Shared>, _, _>`
    = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
