@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## 0.1.0-beta.1 - 2022-08-28
+
+### Fixed
+* Fixed `docs.rs` setup.
+
 
 ## 0.1.0-beta.0 - 2022-07-19
 
