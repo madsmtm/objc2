@@ -122,9 +122,11 @@ use core::ptr;
 use core::ptr::NonNull;
 use std::ffi::CString;
 
+use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, RefEncode};
+use crate::ffi;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::sel;
-use crate::{ffi, Encode, EncodeArguments, Encoding, Message, RefEncode};
+use crate::Message;
 
 pub use ivar::{Ivar, IvarType};
 
@@ -408,8 +410,12 @@ impl ClassBuilder {
     /// If the ivar wasn't successfully added for some reason - this usually
     /// happens if there already was an ivar with that name.
     pub fn add_ivar<T: Encode>(&mut self, name: &str) {
+        self.add_ivar_inner::<T>(name)
+    }
+
+    fn add_ivar_inner<T: EncodeConvert>(&mut self, name: &str) {
         let c_name = CString::new(name).unwrap();
-        let encoding = CString::new(T::ENCODING.to_string()).unwrap();
+        let encoding = CString::new(T::__ENCODING.to_string()).unwrap();
         let size = mem::size_of::<T>();
         let align = log2_align_of::<T>();
         let success = Bool::from_raw(unsafe {
@@ -431,7 +437,7 @@ impl ClassBuilder {
     ///
     /// Same as [`ClassBuilder::add_ivar`].
     pub fn add_static_ivar<T: IvarType>(&mut self) {
-        self.add_ivar::<T::Type>(T::NAME);
+        self.add_ivar_inner::<T::Type>(T::NAME)
     }
 
     /// Adds the given protocol to self.

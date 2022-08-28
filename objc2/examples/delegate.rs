@@ -21,7 +21,7 @@ extern_class!(
 declare_class!(
     struct CustomAppDelegate {
         pub ivar: u8,
-        another_ivar: Bool,
+        another_ivar: bool,
     }
 
     unsafe impl ClassType for CustomAppDelegate {
@@ -36,7 +36,7 @@ declare_class!(
             if let Some(this) = unsafe { this.as_mut() } {
                 // TODO: Allow initialization through MaybeUninit
                 *this.ivar = ivar;
-                *this.another_ivar = another_ivar;
+                *this.another_ivar = another_ivar.as_bool();
             }
             this
         }
@@ -78,7 +78,7 @@ impl CustomAppDelegate {
             msg_send_id![
                 msg_send_id![cls, alloc],
                 initWith: ivar,
-                another: Bool::from(another_ivar),
+                another: another_ivar,
             ]
         }
     }
@@ -89,7 +89,7 @@ fn main() {
     let delegate = CustomAppDelegate::new(42, true);
 
     println!("{}", delegate.ivar);
-    println!("{}", delegate.another_ivar.as_bool());
+    println!("{}", delegate.another_ivar);
 }
 
 #[cfg(not(all(feature = "apple", target_os = "macos")))]
