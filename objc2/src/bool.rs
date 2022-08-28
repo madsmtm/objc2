@@ -113,6 +113,7 @@ impl fmt::Debug for Bool {
 
 // SAFETY: `Bool` is `repr(transparent)`.
 unsafe impl Encode for Bool {
+    // TODO: Fix this!
     const ENCODING: Encoding = ffi::BOOL::ENCODING;
 }
 

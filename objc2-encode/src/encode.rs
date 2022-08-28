@@ -207,14 +207,6 @@ unsafe impl Encode for () {
 /// ```
 extern "C" {}
 
-/// Using this directly is heavily discouraged, since the type of BOOL differs
-/// across platforms.
-///
-/// Use `objc2::runtime::Bool::ENCODING` instead.
-unsafe impl Encode for bool {
-    const ENCODING: Encoding = Encoding::Bool;
-}
-
 macro_rules! encode_impls_size {
     ($($t:ty => ($t16:ty, $t32:ty, $t64:ty),)*) => ($(
         #[doc = concat!("The encoding of [`", stringify!($t), "`] varies based on the target pointer width.")]
@@ -243,7 +235,7 @@ macro_rules! pointer_refencode_impl {
     )*);
 }
 
-pointer_refencode_impl!(bool, i16, i32, i64, isize, u16, u32, u64, usize, f32, f64);
+pointer_refencode_impl!(i16, i32, i64, isize, u16, u32, u64, usize, f32, f64);
 
 /// Pointers to [`i8`] use the special [`Encoding::String`] encoding.
 unsafe impl RefEncode for i8 {
@@ -311,8 +303,6 @@ macro_rules! encode_atomic_impls {
 }
 
 encode_atomic_impls!(
-    #[cfg(target_has_atomic = "8")]
-    AtomicBool => bool,
     #[cfg(target_has_atomic = "8")]
     AtomicI8 => i8,
     #[cfg(target_has_atomic = "8")]

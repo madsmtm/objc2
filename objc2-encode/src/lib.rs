@@ -68,13 +68,9 @@
 //! bunch of subtraits for very specific purposes). However, that might
 //! sometimes be slightly surprising.
 //!
-//! Notably we have implemented these for [`bool`], which, in reality, you
-//! would never actually see in an Objective-C method (they use `BOOL`, see
-//! `objc2::runtime::Bool`), but which _can_ techincally occur, and as such
-//! does make sense to define an encoding for.
-//!
-//! The other example is [`()`][`unit`], which doesn't make sense as a method
-//! argument, but is a very common return type, and hence implements `Encode`.
+//! The primary example is [`()`][`unit`], which doesn't make sense as a
+//! method argument, but is a very common return type, and hence implements
+//! [`Encode`].
 //!
 //!
 //! ## Further resources

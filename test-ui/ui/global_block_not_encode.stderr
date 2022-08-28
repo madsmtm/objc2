@@ -14,8 +14,8 @@ error[E0277]: the trait bound `Box<i32>: objc2_encode::encode::Encode` is not sa
             *const c_void
             *mut T
             *mut c_void
-            AtomicBool
-          and 152 others
+            AtomicI16
+          and 150 others
   = note: required for `(Box<i32>,)` to implement `BlockArguments`
   = note: required for `GlobalBlock<(Box<i32>,)>` to implement `Sync`
   = note: shared static variables must have a type that implements `Sync`
