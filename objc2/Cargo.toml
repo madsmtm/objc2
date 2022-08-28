@@ -1,6 +1,6 @@
 [package]
 name = "objc2"
-version = "0.3.0-beta.1" # Remember to update html_root_url in lib.rs
+version = "0.3.0-beta.2" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 
@@ -82,10 +82,10 @@ gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1", "objc2-encode/gnustep-2-1"
 
 [dependencies]
 malloc_buf = { version = "1.0", optional = true }
-objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.1", default-features = false }
-objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.1", default-features = false }
+objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.2", default-features = false }
+objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.2", default-features = false }
 objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.0", optional = true }
-block2 = { path = "../block2", version = "=0.2.0-alpha.5", default-features = false, optional = true }
+block2 = { path = "../block2", version = "=0.2.0-alpha.6", default-features = false, optional = true }
 
 # Provide methods to convert between `uuid::Uuid` and `objc2::foundation::NSUUID`
 uuid = { version = "1.1.2", optional = true, default-features = false }

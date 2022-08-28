@@ -432,17 +432,21 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        feature = "apple",
+        ignore = "this works differently on different framework versions"
+    )]
     fn test_iter_no_retain() {
         let obj = Id::into_shared(RcTestObject::new());
         let array = NSArray::from_slice(&[obj]);
         let mut expected = ThreadTestData::current();
 
         let iter = array.iter();
-        expected.retain += if cfg!(feature = "gnustep-1-7") { 0 } else { 1 };
+        expected.retain += 0;
         expected.assert_current();
 
         assert_eq!(iter.count(), 1);
-        expected.autorelease += if cfg!(feature = "gnustep-1-7") { 0 } else { 1 };
+        expected.autorelease += 0;
         expected.assert_current();
 
         let iter = array.iter_fast();

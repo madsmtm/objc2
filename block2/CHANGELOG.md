@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## 0.2.0-alpha.6 - 2022-08-28
+
+### Changed
+* **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.2`.
+* Updated `ffi` module to `block-sys v0.1.0-beta.1`.
+
 ### Fixed
 * **BREAKING**: Cleaned up `BlockArguments` trait, it is now sealed and a
   subtrait of `EncodeArguments`.

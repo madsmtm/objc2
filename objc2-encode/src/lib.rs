@@ -89,7 +89,7 @@
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-encode/2.0.0-pre.1")]
+#![doc(html_root_url = "https://docs.rs/objc2-encode/2.0.0-pre.2")]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 
 #[cfg(doctest)]
