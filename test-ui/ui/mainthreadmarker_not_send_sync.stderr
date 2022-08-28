@@ -2,7 +2,7 @@ error[E0277]: `*mut ()` cannot be shared between threads safely
  --> ui/mainthreadmarker_not_send_sync.rs
   |
   |     needs_sync::<MainThreadMarker>();
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `*mut ()` cannot be shared between threads safely
+  |                  ^^^^^^^^^^^^^^^^ `*mut ()` cannot be shared between threads safely
   |
   = help: within `MainThreadMarker`, the trait `Sync` is not implemented for `*mut ()`
   = note: required because it appears within the type `PhantomData<*mut ()>`
@@ -17,7 +17,7 @@ error[E0277]: `*mut ()` cannot be sent between threads safely
  --> ui/mainthreadmarker_not_send_sync.rs
   |
   |     needs_send::<MainThreadMarker>();
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `*mut ()` cannot be sent between threads safely
+  |                  ^^^^^^^^^^^^^^^^ `*mut ()` cannot be sent between threads safely
   |
   = help: within `MainThreadMarker`, the trait `Send` is not implemented for `*mut ()`
   = note: required because it appears within the type `PhantomData<*mut ()>`

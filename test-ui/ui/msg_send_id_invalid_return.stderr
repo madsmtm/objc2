@@ -18,7 +18,10 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
   --> ui/msg_send_id_invalid_return.rs
    |
    |     let _: Id<Class, Shared> = unsafe { msg_send_id![cls, new] };
-   |                                         ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `objc2::runtime::Class`
+   |                                         -------------^^^------
+   |                                         |            |
+   |                                         |            the trait `Message` is not implemented for `objc2::runtime::Class`
+   |                                         required by a bound introduced by this call
    |
    = help: the following other types implement trait `Message`:
              Exception
@@ -31,13 +34,15 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
              NSMutableArray<T, O>
            and 11 others
    = note: required for `RetainSemantics<true, false, false, false>` to implement `MsgSendId<&objc2::runtime::Class, objc2::runtime::Class, Shared>`
-   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
   --> ui/msg_send_id_invalid_return.rs
    |
    |     let _: Option<Id<Class, Shared>> = unsafe { msg_send_id![cls, new] };
-   |                                                 ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `objc2::runtime::Class`
+   |                                                 -------------^^^------
+   |                                                 |            |
+   |                                                 |            the trait `Message` is not implemented for `objc2::runtime::Class`
+   |                                                 required by a bound introduced by this call
    |
    = help: the following other types implement trait `Message`:
              Exception
@@ -50,7 +55,6 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
              NSMutableArray<T, O>
            and 11 others
    = note: required for `RetainSemantics<true, false, false, false>` to implement `MsgSendId<&objc2::runtime::Class, objc2::runtime::Class, Shared>`
-   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap<Allocated<_>, _>` is not satisfied
   --> ui/msg_send_id_invalid_return.rs
@@ -72,7 +76,10 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
   --> ui/msg_send_id_invalid_return.rs
    |
    |     let _: Id<Allocated<Class>, Shared> = unsafe { msg_send_id![cls, alloc] };
-   |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `objc2::runtime::Class`
+   |                                                    -------------^^^--------
+   |                                                    |            |
+   |                                                    |            the trait `Message` is not implemented for `objc2::runtime::Class`
+   |                                                    required by a bound introduced by this call
    |
    = help: the following other types implement trait `Message`:
              Exception
@@ -85,7 +92,6 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
              NSMutableArray<T, O>
            and 11 others
    = note: required for `RetainSemantics<false, true, false, false>` to implement `MsgSendId<&objc2::runtime::Class, Allocated<objc2::runtime::Class>, Shared>`
-   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MaybeUnwrap<Allocated<_>, _>` is not satisfied
   --> ui/msg_send_id_invalid_return.rs

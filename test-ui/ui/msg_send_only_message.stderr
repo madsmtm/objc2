@@ -2,7 +2,10 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
  --> ui/msg_send_only_message.rs
   |
   |     unsafe { msg_send![1, new] };
-  |              ^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `{integer}`
+  |              ----------^------
+  |              |         |
+  |              |         the trait `MessageReceiver` is not implemented for `{integer}`
+  |              required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
             &'a Id<T, O>
@@ -14,4 +17,3 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
             *const objc2::runtime::Class
             *mut T
           and 2 others
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
