@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## 2.0.0-pre.2 - 2022-08-28
+
 ### Added
 * Added `EncodeConvert` trait to help with correctly handling `BOOL`/`bool`.
 

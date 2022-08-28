@@ -68,6 +68,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   };
   ```
 * Updated `ffi` module to `objc-sys v0.2.0-beta.2`.
+* **BREAKING**: Updated `encode` module `objc2-encode v2.0.0-pre.2`.
+
+  In particular, `Encoding` no longer has a lifetime parameter:
+  ```rust
+  // Before
+  #[repr(C)]
+  pub struct NSRange {
+      pub location: usize,
+      pub length: usize,
+  }
+  unsafe impl Encode for NSRange {
+      const ENCODING: Encoding<'static> = Encoding::Struct(
+          "_NSRange", // This is how the struct is defined in C header files
+          &[usize::ENCODING, usize::ENCODING]
+      );
+  }
+  unsafe impl RefEncode for NSRange {
+      const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+  }
+
+  // After
+  #[repr(C)]
+  pub struct NSRange {
+      pub location: usize,
+      pub length: usize,
+  }
+  unsafe impl Encode for NSRange {
+      const ENCODING: Encoding = Encoding::Struct(
+          "_NSRange", // This is how the struct is defined in C header files
+          &[usize::ENCODING, usize::ENCODING]
+      );
+  }
+  unsafe impl RefEncode for NSRange {
+      const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+  }
+  ```
 
 ### Deprecated
 * Depreacted `msg_send_bool!` in favour of new functionality on `msg_send!`

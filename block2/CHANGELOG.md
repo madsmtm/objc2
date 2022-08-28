@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.2`.
+
 ### Fixed
 * **BREAKING**: Cleaned up `BlockArguments` trait, it is now sealed and a
   subtrait of `EncodeArguments`.
