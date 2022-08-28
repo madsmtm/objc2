@@ -4,8 +4,8 @@ use core::mem::MaybeUninit;
 use core::ops::{Deref, DerefMut};
 use core::ptr::NonNull;
 
+use crate::encode::{Encode, EncodeConvert};
 use crate::runtime::Object;
-use crate::Encode;
 
 /// Helper trait for defining instance variables.
 ///
@@ -39,12 +39,15 @@ use crate::Encode;
 /// ```
 pub unsafe trait IvarType {
     /// The type of the instance variable.
-    type Type: Encode;
+    type Type: EncodeConvert;
     /// The name of the instance variable.
     const NAME: &'static str;
 }
 
-unsafe impl<T: IvarType> IvarType for MaybeUninit<T> {
+unsafe impl<T: IvarType> IvarType for MaybeUninit<T>
+where
+    T::Type: Encode,
+{
     type Type = MaybeUninit<T::Type>;
     const NAME: &'static str = T::NAME;
 }
@@ -64,6 +67,13 @@ unsafe impl<T: IvarType> IvarType for MaybeUninit<T> {
 ///
 /// [sb]: https://github.com/rust-lang/unsafe-code-guidelines/blob/e21202c60c7be03dd2ab016ada92fb5305d40438/wip/stacked-borrows.md
 /// [zst-hack]: https://github.com/rust-lang/unsafe-code-guidelines/issues/305
+///
+///
+/// # `bool` handling
+///
+/// This does _not_ perform a conversion step between [`bool`] and the
+/// Objective-C `BOOL`; use [`runtime::Bool`][crate::runtime::Bool] when you
+/// want your instance variable to be accessible from other Objective-C code.
 ///
 ///
 /// # Safety
@@ -145,7 +155,11 @@ impl<T: IvarType> Ivar<T> {
 
         // SAFETY: User ensures that the `Ivar<T>` is only used when the ivar
         // exists and has the correct type
-        unsafe { obj.ivar::<T::Type>(T::NAME) }
+        unsafe {
+            obj.inner_ivar_ptr::<T::Type>(T::NAME)
+                .as_ref()
+                .unwrap_unchecked()
+        }
     }
 
     fn get_mut_ptr(&mut self) -> *mut T::Type {
@@ -177,7 +191,7 @@ impl<T: IvarType> Ivar<T> {
 
         // SAFETY: User ensures that the `Ivar<T>` is only used when the ivar
         // exists and has the correct type
-        unsafe { obj.ivar_ptr::<T::Type>(T::NAME) }
+        unsafe { obj.inner_ivar_ptr::<T::Type>(T::NAME) }
     }
 
     #[inline]

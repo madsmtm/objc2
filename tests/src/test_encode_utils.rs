@@ -103,7 +103,7 @@ const WITH_ATOMIC_INNER: Encoding = Encoding::Struct(
 assert_types! {
     // C types
 
-    C99_BOOL => bool,
+    C99_BOOL => enc Encoding::Bool,
     CHAR => c_char,
     SIGNED_CHAR => c_schar,
     UNSIGNED_CHAR => c_uchar,

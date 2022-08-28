@@ -4,7 +4,7 @@ use core::hash;
 use super::NSString;
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::runtime::{Class, Object};
-use crate::{ClassType, __inner_extern_class, class, extern_methods, msg_send_bool, msg_send_id};
+use crate::{ClassType, __inner_extern_class, class, extern_methods, msg_send_id};
 
 __inner_extern_class! {
     @__inner
@@ -38,9 +38,11 @@ extern_methods!(
             unsafe { msg_send_id![Self::class(), new] }
         }
 
-        fn is_kind_of_inner(&self, cls: &Class) -> bool {
-            unsafe { msg_send_bool![self, isKindOfClass: cls] }
-        }
+        #[sel(isKindOfClass:)]
+        fn is_kind_of_inner(&self, cls: &Class) -> bool;
+
+        #[sel(isEqual:)]
+        fn is_equal(&self, other: &Self) -> bool;
 
         #[sel(hash)]
         fn hash_code(&self) -> usize;
@@ -77,7 +79,7 @@ impl PartialEq for NSObject {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        unsafe { msg_send_bool![self, isEqual: other] }
+        self.is_equal(other)
     }
 }
 

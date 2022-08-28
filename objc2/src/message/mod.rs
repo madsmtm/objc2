@@ -2,13 +2,14 @@ use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 
+use crate::encode::{Encode, EncodeArguments, EncodeConvert, RefEncode};
 use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
-use crate::{ClassType, Encode, EncodeArguments, RefEncode};
+use crate::ClassType;
 
 #[cfg(feature = "catch-all")]
 #[track_caller]
-unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
+unsafe fn conditional_try<R: EncodeConvert>(f: impl FnOnce() -> R) -> R {
     let f = core::panic::AssertUnwindSafe(f);
     match unsafe { crate::exception::catch(f) } {
         Ok(r) => r,
@@ -25,7 +26,7 @@ unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
 #[cfg(not(feature = "catch-all"))]
 #[inline]
 #[track_caller]
-unsafe fn conditional_try<R: Encode>(f: impl FnOnce() -> R) -> R {
+unsafe fn conditional_try<R: EncodeConvert>(f: impl FnOnce() -> R) -> R {
     f()
 }
 
@@ -173,7 +174,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
-        R: Encode,
+        R: EncodeConvert,
     {
         let this = self.__as_raw_receiver();
         // TODO: Always enable this when `debug_assertions` are on.
@@ -191,7 +192,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 panic_verify(cls, sel, err);
             }
         }
-        unsafe { send_unverified(this, sel, args) }
+        unsafe { EncodeConvert::__from_inner(send_unverified(this, sel, args)) }
     }
 
     /// Sends a message to a specific superclass with the given selector and
@@ -221,7 +222,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     unsafe fn send_super_message<A, R>(self, superclass: &Class, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
-        R: Encode,
+        R: EncodeConvert,
     {
         let this = self.__as_raw_receiver();
         #[cfg(feature = "verify_message")]
@@ -233,7 +234,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 panic_verify(superclass, sel, err);
             }
         }
-        unsafe { send_super_unverified(this, superclass, sel, args) }
+        unsafe { EncodeConvert::__from_inner(send_super_unverified(this, superclass, sel, args)) }
     }
 
     #[inline]
@@ -244,7 +245,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         Self::__Inner: ClassType,
         <Self::__Inner as ClassType>::Super: ClassType,
         A: MessageArguments,
-        R: Encode,
+        R: EncodeConvert,
     {
         unsafe { self.send_super_message(<Self::__Inner as ClassType>::Super::class(), sel, args) }
     }
@@ -349,7 +350,8 @@ unsafe impl<'a> MessageReceiver for &'a Class {
 /// Types that may be used as the arguments of an Objective-C message.
 ///
 /// This is implemented for tuples of up to 12 arguments, where each argument
-/// implements [`Encode`].
+/// implements [`Encode`][crate::Encode] (or can be converted from one).
+///
 ///
 /// # Safety
 ///
@@ -366,8 +368,8 @@ pub unsafe trait MessageArguments: EncodeArguments {
 }
 
 macro_rules! message_args_impl {
-    ($($a:ident : $t:ident),*) => (
-        unsafe impl<$($t: Encode),*> MessageArguments for ($($t,)*) {
+    ($($a:ident: $t:ident),*) => (
+        unsafe impl<$($t: EncodeConvert),*> MessageArguments for ($($t,)*) {
             #[inline]
             unsafe fn __invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
                 // The imp must be cast to the appropriate function pointer
@@ -375,17 +377,17 @@ macro_rules! message_args_impl {
                 // parametric, but instead "trampolines" to the actual
                 // method implementations.
                 #[cfg(not(feature = "unstable-c-unwind"))]
-                let imp: unsafe extern "C" fn(*mut Object, Sel $(, $t)*) -> R = unsafe {
+                let imp: unsafe extern "C" fn(*mut Object, Sel $(, $t::__Inner)*) -> R = unsafe {
                     mem::transmute(imp)
                 };
                 #[cfg(feature = "unstable-c-unwind")]
-                let imp: unsafe extern "C-unwind" fn(*mut Object, Sel $(, $t)*) -> R = unsafe {
+                let imp: unsafe extern "C-unwind" fn(*mut Object, Sel $(, $t::__Inner)*) -> R = unsafe {
                     mem::transmute(imp)
                 };
                 // TODO: On x86_64 it would be more efficient to use a GOT
                 // entry here (e.g. adding `nonlazybind` in LLVM).
                 // Same can be said of e.g. `objc_retain` and `objc_release`.
-                unsafe { imp(obj, sel $(, $a)*) }
+                unsafe { imp(obj, sel $(, EncodeConvert::__into_inner($a))*) }
             }
         }
     );

@@ -1,7 +1,7 @@
 #![cfg_attr(not(all(feature = "apple", target_os = "macos")), allow(unused))]
 use objc2::foundation::NSObject;
 use objc2::rc::{Id, Shared};
-use objc2::runtime::{Bool, Object};
+use objc2::runtime::Object;
 use objc2::{declare_class, extern_class, msg_send, msg_send_id, ClassType};
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
@@ -21,7 +21,7 @@ extern_class!(
 declare_class!(
     struct CustomAppDelegate {
         pub ivar: u8,
-        another_ivar: Bool,
+        another_ivar: bool,
     }
 
     unsafe impl ClassType for CustomAppDelegate {
@@ -31,7 +31,7 @@ declare_class!(
 
     unsafe impl CustomAppDelegate {
         #[sel(initWith:another:)]
-        fn init_with(self: &mut Self, ivar: u8, another_ivar: Bool) -> *mut Self {
+        fn init_with(self: &mut Self, ivar: u8, another_ivar: bool) -> *mut Self {
             let this: *mut Self = unsafe { msg_send![super(self), init] };
             if let Some(this) = unsafe { this.as_mut() } {
                 // TODO: Allow initialization through MaybeUninit
@@ -78,7 +78,7 @@ impl CustomAppDelegate {
             msg_send_id![
                 msg_send_id![cls, alloc],
                 initWith: ivar,
-                another: Bool::from(another_ivar),
+                another: another_ivar,
             ]
         }
     }
@@ -89,7 +89,7 @@ fn main() {
     let delegate = CustomAppDelegate::new(42, true);
 
     println!("{}", delegate.ivar);
-    println!("{}", delegate.another_ivar.as_bool());
+    println!("{}", delegate.another_ivar);
 }
 
 #[cfg(not(all(feature = "apple", target_os = "macos")))]

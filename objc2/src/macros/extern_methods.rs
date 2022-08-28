@@ -39,7 +39,6 @@
 /// ```
 /// use objc2::foundation::{NSObject, NSRange, NSString, NSUInteger};
 /// use objc2::rc::{Id, Shared};
-/// use objc2::runtime::Bool;
 /// use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
@@ -88,7 +87,6 @@
 ///
 ///     /// Accessor methods.
 ///     // SAFETY: `first_weekday` is correctly defined
-///     // TODO: Support methods returning `bool`
 ///     unsafe impl NSCalendar {
 ///         #[sel(firstWeekday)]
 ///         pub fn first_weekday(&self) -> NSUInteger;
@@ -101,11 +99,7 @@
 ///         // `unsafe` because we don't have definitions for `NSDate` and
 ///         // `NSDateComponents` yet, so the user must ensure that is what's
 ///         // passed.
-///         pub unsafe fn date_matches_raw(&self, date: &NSObject, components: &NSObject) -> Bool;
-///
-///         pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool {
-///             self.date_matches_raw(date, components).as_bool()
-///         }
+///         pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool;
 ///
 ///         #[sel(maximumRangeOfUnit:)]
 ///         pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange;
@@ -118,7 +112,6 @@
 /// ```
 /// # use objc2::foundation::{NSObject, NSRange, NSString, NSUInteger};
 /// # use objc2::rc::{Id, Shared};
-/// # use objc2::runtime::Bool;
 /// # use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
@@ -174,12 +167,8 @@
 ///         unsafe { msg_send_id![self, amSymbol] }
 ///     }
 ///
-///     pub unsafe fn date_matches_raw(&self, date: &NSObject, components: &NSObject) -> Bool {
-///         unsafe { msg_send![self, date: date, matchesComponents: components] }
-///     }
-///
 ///     pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool {
-///         self.date_matches_raw(date, components).as_bool()
+///         unsafe { msg_send![self, date: date, matchesComponents: components] }
 ///     }
 ///
 ///     pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange {
@@ -246,6 +235,9 @@ macro_rules! __inner_extern_methods {
             @method_out
             @($(#[$($m)*])*)
             @($v unsafe fn $name($($args)*) $(-> $ret)?)
+            // Will add @(kind)
+            // Will add @(args_start)
+            // Will add @(args_rest)
         }
 
         $crate::__inner_extern_methods! {
@@ -294,7 +286,8 @@ macro_rules! __inner_extern_methods {
         @($(#[$($m:tt)*])*)
         @($($function_start:tt)*)
         @($($kind:tt)*)
-        @($($args:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
     } => {
         $crate::__attribute_helper! {
             @strip_sel
@@ -308,7 +301,8 @@ macro_rules! __inner_extern_methods {
                         ($(#[$($m)*])*)
                         @unsafe_method_body
                         @($($kind)*)
-                        @($($args)*)
+                        @($($args_start)*)
+                        @($($args_rest)*)
                     }
                 }
             })
@@ -321,15 +315,15 @@ macro_rules! __inner_extern_methods {
         @(
             $self:ident: $self_ty:ty,
             _: $sel_ty:ty,
-            $($arg:ident: $arg_ty:ty),* $(,)?
         )
+        @($($args_rest:tt)*)
         @($($sel:tt)*)
     } => {
         $crate::__collect_msg_send!(
             $crate::msg_send;
             $self;
             ($($sel)*);
-            ($($arg),*);
+            ($($args_rest)*);
         )
     };
     {
@@ -338,206 +332,63 @@ macro_rules! __inner_extern_methods {
         @(
             _: $cls_ty:ty,
             _: $sel_ty:ty,
-            $($arg:ident: $arg_ty:ty),* $(,)?
         )
+        @($($args_rest:tt)*)
         @($($sel:tt)*)
     } => {
         $crate::__collect_msg_send!(
             $crate::msg_send;
             Self::class();
             ($($sel)*);
-            ($($arg),*);
+            ($($args_rest)*);
         )
     };
 }
 
 /// Zip selector and arguments, and forward to macro.
-///
-/// TODO: Investigate if there's a better way of doing this.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __collect_msg_send {
+    // Selector with no arguments
     (
         $macro:path;
         $obj:expr;
-        ($s:ident);
+        ($sel:ident);
         ();
     ) => {{
-        $macro![$obj, $s]
+        $macro![$obj, $sel]
     }};
+
+    // Base case
     (
         $macro:path;
         $obj:expr;
-        ($s1:ident:);
-        ($a1:expr);
+        ();
+        ();
+        $($output:tt)+
     ) => {{
-        $macro![$obj, $s1: $a1]
+        $macro![$obj, $($output)+]
     }};
+
+    // tt-munch each argument
     (
         $macro:path;
         $obj:expr;
-        ($s1:ident: $s2:ident:);
-        ($a1:expr, $a2:expr);
+        ($sel:ident : $($sel_rest:tt)*);
+        ($arg:ident: $arg_ty:ty $(, $($args_rest:tt)*)?);
+        $($output:tt)*
     ) => {{
-        $macro![$obj, $s1: $a1, $s2: $a2]
+        $crate::__collect_msg_send!(
+            $macro;
+            $obj;
+            ($($sel_rest)*);
+            ($($($args_rest)*)?);
+            $($output)*
+            $sel: $arg,
+        )
     }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident:);
-        ($a1:expr, $a2:expr, $a3:expr);
-    ) => {{
-        $macro![$obj, $s1: $a1, $s2: $a2, $s3: $a3]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr);
-    ) => {{
-        $macro![$obj, $s1: $a1, $s2: $a2, $s3: $a3, $s4: $a4]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident: $s5:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr, $a5:expr);
-    ) => {{
-        $macro![$obj, $s1: $a1, $s2: $a2, $s3: $a3, $s4: $a4, $s5: $a5]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident: $s5:ident: $s6:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr, $a5:expr, $a6:expr);
-    ) => {{
-        $macro![
-            $obj,
-            $s1: $a1,
-            $s2: $a2,
-            $s3: $a3,
-            $s4: $a4,
-            $s5: $a5,
-            $s6: $a6
-        ]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident: $s5:ident: $s6:ident: $s7:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr, $a5:expr, $a6:expr, $a7:expr);
-    ) => {{
-        $macro![
-            $obj,
-            $s1: $a1,
-            $s2: $a2,
-            $s3: $a3,
-            $s4: $a4,
-            $s5: $a5,
-            $s6: $a6,
-            $s7: $a7
-        ]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident: $s5:ident: $s6:ident: $s7:ident: $s8:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr, $a5:expr, $a6:expr, $a7:expr, $a8:expr);
-    ) => {{
-        $macro![
-            $obj,
-            $s1: $a1,
-            $s2: $a2,
-            $s3: $a3,
-            $s4: $a4,
-            $s5: $a5,
-            $s6: $a6,
-            $s7: $a7,
-            $s8: $a8
-        ]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident: $s5:ident: $s6:ident: $s7:ident: $s8:ident: $s9:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr, $a5:expr, $a6:expr, $a7:expr, $a8:expr, $a9:expr);
-    ) => {{
-        $macro![
-            $obj,
-            $s1: $a1,
-            $s2: $a2,
-            $s3: $a3,
-            $s4: $a4,
-            $s5: $a5,
-            $s6: $a6,
-            $s7: $a7,
-            $s8: $a8,
-            $s9: $a9
-        ]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident: $s5:ident: $s6:ident: $s7:ident: $s8:ident: $s9:ident: $s10:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr, $a5:expr, $a6:expr, $a7:expr, $a8:expr, $a9:expr, $a10:expr);
-    ) => {{
-        $macro![
-            $obj,
-            $s1: $a1,
-            $s2: $a2,
-            $s3: $a3,
-            $s4: $a4,
-            $s5: $a5,
-            $s6: $a6,
-            $s7: $a7,
-            $s8: $a8,
-            $s9: $a9,
-            $s10: $a10
-        ]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident: $s5:ident: $s6:ident: $s7:ident: $s8:ident: $s9:ident: $s10:ident: $s11:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr, $a5:expr, $a6:expr, $a7:expr, $a8:expr, $a9:expr, $a10:expr, $a11:expr);
-    ) => {{
-        $macro![
-            $obj,
-            $s1: $a1,
-            $s2: $a2,
-            $s3: $a3,
-            $s4: $a4,
-            $s5: $a5,
-            $s6: $a6,
-            $s7: $a7,
-            $s8: $a8,
-            $s9: $a9,
-            $s10: $a10,
-            $s11: $a11
-        ]
-    }};
-    (
-        $macro:path;
-        $obj:expr;
-        ($s1:ident: $s2:ident: $s3:ident: $s4:ident: $s5:ident: $s6:ident: $s7:ident: $s8:ident: $s9:ident: $s10:ident: $s11:ident: $s12:ident:);
-        ($a1:expr, $a2:expr, $a3:expr, $a4:expr, $a5:expr, $a6:expr, $a7:expr, $a8:expr, $a9:expr, $a10:expr, $a11:expr, $a12:expr);
-    ) => {{
-        $macro![
-            $obj,
-            $s1: $a1,
-            $s2: $a2,
-            $s3: $a3,
-            $s4: $a4,
-            $s5: $a5,
-            $s6: $a6,
-            $s7: $a7,
-            $s8: $a8,
-            $s9: $a9,
-            $s10: $a10,
-            $s11: $a11,
-            $s12: $a12
-        ]
-    }};
+
+    // If couldn't zip selector and arguments, show useful error message
     ($($_any:tt)*) => {{
         compile_error!("Number of arguments in function and selector did not match!")
     }};

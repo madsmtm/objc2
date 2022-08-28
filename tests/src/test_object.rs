@@ -6,7 +6,7 @@ use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 use objc2::runtime::{Bool, Class, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
-use objc2::{class, msg_send, msg_send_bool, msg_send_id};
+use objc2::{class, msg_send, msg_send_id};
 use objc2::{ClassType, Encoding, Message, RefEncode};
 
 #[repr(C)]
@@ -76,7 +76,7 @@ impl MyTestObject {
     }
 
     fn var2(&self) -> bool {
-        unsafe { msg_send_bool![self, var2] }
+        unsafe { msg_send![self, var2] }
     }
 
     fn var2_ivar(&self) -> &Bool {

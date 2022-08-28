@@ -1,5 +1,8 @@
-use crate::{ffi, Encode, Encoding, RefEncode};
+//! This belongs in `objc2`, but it is put here to make `EncodeConvert` work
+//! properly!
 use core::fmt;
+
+use crate::{Encode, EncodeConvert, Encoding, RefEncode};
 
 /// The Objective-C `BOOL` type.
 ///
@@ -7,23 +10,11 @@ use core::fmt;
 /// you convert this into a Rust [`bool`] with the [`Bool::as_bool`] method as
 /// soon as possible.
 ///
-/// This is FFI-safe and can be used in directly with
-/// [`msg_send!`][`crate::msg_send`].
+/// This is FFI-safe and can be used directly with `msg_send!` and `extern`
+/// functions.
 ///
 /// Note that this is able to contain more states than `bool` on some
 /// platforms, but these cases should not be relied on!
-///
-/// # Example
-///
-/// ```no_run
-/// use objc2::{class, msg_send_bool, msg_send_id};
-/// use objc2::rc::{Id, Shared};
-/// use objc2::runtime::{Object, Bool};
-/// let ns_value: Id<Object, Shared> = unsafe {
-///     msg_send_id![class!(NSNumber), numberWithBool: Bool::YES]
-/// };
-/// assert!(unsafe { msg_send_bool![&ns_value, boolValue] });
-/// ```
 #[repr(transparent)]
 // We don't implement comparison traits because they could be implemented with
 // two slightly different semantics:
@@ -32,62 +23,60 @@ use core::fmt;
 // And it is not immediately clear for users which one was chosen.
 #[derive(Copy, Clone, Default)]
 pub struct Bool {
-    value: ffi::BOOL,
+    value: objc_sys::BOOL,
 }
 
 impl Bool {
     /// The equivalent of [`true`] for Objective-C's `BOOL` type.
-    pub const YES: Self = Self::from_raw(ffi::YES);
+    pub const YES: Self = Self::from_raw(objc_sys::YES);
 
     /// The equivalent of [`false`] for Objective-C's `BOOL` type.
-    pub const NO: Self = Self::from_raw(ffi::NO);
+    pub const NO: Self = Self::from_raw(objc_sys::NO);
 
     /// Creates an Objective-C boolean from a Rust boolean.
     #[inline]
     pub const fn new(value: bool) -> Self {
-        // true as u8 => 1
-        // false as u8 => 0
-        let value = value as ffi::BOOL;
+        // true as BOOL => 1 (YES)
+        // false as BOOL => 0 (NO)
+        let value = value as objc_sys::BOOL;
         Self { value }
     }
 
     /// Creates this from a boolean value received from a raw Objective-C API.
     #[inline]
-    pub const fn from_raw(value: ffi::BOOL) -> Self {
+    pub const fn from_raw(value: objc_sys::BOOL) -> Self {
         Self { value }
     }
 
     /// Retrieves the inner [`objc_sys::BOOL`] boolean type, to be used in raw
     /// Objective-C APIs.
     #[inline]
-    pub const fn as_raw(self) -> ffi::BOOL {
+    pub const fn as_raw(self) -> objc_sys::BOOL {
         self.value
     }
 
-    /// Returns `true` if `self` is [`NO`][`Self::NO`].
+    /// Returns `true` if `self` is [`NO`][Self::NO].
     ///
-    /// You should prefer using [`as_bool`][`Self::as_bool`].
+    /// You should prefer using [`as_bool`][Self::as_bool].
     #[inline]
     pub const fn is_false(self) -> bool {
-        // Always compare with 0
-        // This is what happens with the `!` operator in C.
-        self.value as u8 == 0
+        !self.as_bool()
     }
 
-    /// Returns `true` if `self` is the opposite of [`NO`][`Self::NO`].
+    /// Returns `true` if `self` is not [`NO`][Self::NO].
     ///
-    /// You should prefer using [`as_bool`][`Self::as_bool`].
+    /// You should prefer using [`as_bool`][Self::as_bool].
     #[inline]
     pub const fn is_true(self) -> bool {
-        // Always compare with 0
-        // This is what happens when using `if` in C.
-        self.value as u8 != 0
+        self.as_bool()
     }
 
     /// Converts this into the [`bool`] equivalent.
     #[inline]
     pub const fn as_bool(self) -> bool {
-        self.is_true()
+        // Always compare with 0 (NO)
+        // This is what happens with the `!` operator / when using `if` in C.
+        self.value != objc_sys::NO
     }
 }
 
@@ -113,7 +102,11 @@ impl fmt::Debug for Bool {
 
 // SAFETY: `Bool` is `repr(transparent)`.
 unsafe impl Encode for Bool {
-    const ENCODING: Encoding = ffi::BOOL::ENCODING;
+    // i8::__ENCODING == Encoding::Char
+    // u8::__ENCODING == Encoding::UChar
+    // bool::__ENCODING == Encoding::Bool
+    // i32::__ENCODING == Encoding::Int
+    const ENCODING: Encoding = objc_sys::BOOL::__ENCODING;
 }
 
 // Note that we shouldn't delegate to `BOOL`'s  `ENCODING_REF` since `BOOL` is
@@ -185,14 +178,13 @@ mod tests {
         assert_eq!(format!("{:?}", Bool::from(false)), "NO");
     }
 
-    // Can't really do this test since it won't compile on platforms where
-    // type BOOL = bool.
-    //
-    // #[test]
-    // fn test_outside_normal() {
-    //     let b = Bool::from_raw(42);
-    //     assert!(b.is_true());
-    //     assert!(!b.is_false());
-    //     assert_eq!(b.as_raw(), 42);
-    // }
+    #[test]
+    // Test on platform where we know the type of BOOL
+    #[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86_64"))]
+    fn test_outside_normal() {
+        let b = Bool::from_raw(42);
+        assert!(b.is_true());
+        assert!(!b.is_false());
+        assert_eq!(b.as_raw(), 42);
+    }
 }

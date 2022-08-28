@@ -6,12 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `EncodeConvert` trait to help with correctly handling `BOOL`/`bool`.
+
 ### Changed
 * **BREAKING**: Remove the lifetime specifier from `Encoding`, since the non
   -`'static` version was essentially useless.
 
 ### Fixed
 * Fixed the encoding output and comparison of structs behind pointers.
+
+### Removed
+* **BREAKING**: `bool` (and `AtomicBool`) no longer implements `Encode`, since
+  that was difficult to use correctly. See the `EncodeConvert` trait, or use
+  `objc2::runtime::Bool` instead.
 
 
 ## 2.0.0-pre.1 - 2022-07-19

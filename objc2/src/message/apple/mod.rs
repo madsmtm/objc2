@@ -1,7 +1,8 @@
 use super::conditional_try;
+use crate::encode::Encode;
 use crate::ffi;
 use crate::runtime::{Class, Imp, Object, Sel};
-use crate::{Encode, MessageArguments};
+use crate::MessageArguments;
 
 #[cfg(target_arch = "x86")]
 #[path = "x86.rs"]

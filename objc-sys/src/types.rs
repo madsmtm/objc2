@@ -68,12 +68,11 @@ mod inner {
 /// The Objective-C `BOOL` type.
 ///
 /// The type of this varies across platforms, so to convert an it into a Rust
-/// [`bool`], always compare it with [`YES`][`crate::YES`] or [`NO`][`crate::NO`].
+/// [`bool`], compare it with [`NO`][crate::NO].
 ///
-/// Note that this type implements `objc2_encode::Encode` and
-/// `objc2_encode::RefEncode`, but the `RefEncode` implementation is wrong
-/// on some platforms! You should only use this on FFI boundaries, otherwise
-/// prefer `objc2::runtime::Bool`.
+/// Note that this does _not_ implement `objc2::Encode` on all platforms! You
+/// should only use this on FFI boundaries, otherwise prefer
+/// `objc2::runtime::Bool`.
 ///
 /// See also the [corresponding documentation entry][docs].
 ///

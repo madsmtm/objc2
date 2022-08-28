@@ -25,7 +25,8 @@ macro_rules! __inner_declare_class {
             @($($ret)?)
             @($body)
             // Will add @(kind)
-            // Will add @(args)
+            // Will add @(args_start)
+            // Will add @(args_rest)
         }
 
         $crate::__inner_declare_class! {
@@ -54,6 +55,8 @@ macro_rules! __inner_declare_class {
             @($name)
             @($($ret)?)
             @($body)
+
+            // Same as above
         }
 
         $crate::__inner_declare_class! {
@@ -72,12 +75,69 @@ macro_rules! __inner_declare_class {
         @($($ret:ty)?)
         @($($body:tt)*)
         @($($_kind:tt)*)
-        @($($args:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
+    } => {
+        $crate::__fn_args! {
+            ($crate::__inner_declare_class)
+            ($($args_rest)*,)
+            ()
+            ()
+            @method_out_inner
+            @($(#[$($m)*])*)
+            @($($qualifiers)*)
+            @($name)
+            @($($ret)?)
+            @($($body)*)
+            @($($_kind)*)
+            @($($args_start)*)
+            // Will add @(args_converted)
+            // Will add @(body_prefix)
+        }
+    };
+
+    // No return type
+    {
+        @method_out_inner
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @()
+        @($($body:tt)*)
+        @($($_kind:tt)*)
+        @($($args_start:tt)*)
+        @($($args_converted:tt)*)
+        @($($body_prefix:tt)*)
     } => {
         $crate::__attribute_helper! {
             @strip_sel
             $(@[$($m)*])*
-            ($($qualifiers)* fn $name($($args)*) $(-> $ret)? $($body)*)
+            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) {
+                $($body_prefix)*
+                $($body)*
+            })
+        }
+    };
+    // With return type
+    {
+        @method_out_inner
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @($ret:ty)
+        @($($body:tt)*)
+        @($($_kind:tt)*)
+        @($($args_start:tt)*)
+        @($($args_converted:tt)*)
+        @($($body_prefix:tt)*)
+    } => {
+        $crate::__attribute_helper! {
+            @strip_sel
+            $(@[$($m)*])*
+            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) -> <$ret as $crate::encode::EncodeConvert>::__Inner {
+                $($body_prefix)*
+                <$ret as $crate::encode::EncodeConvert>::__into_inner($($body)*)
+            })
         }
     };
 
@@ -89,7 +149,8 @@ macro_rules! __inner_declare_class {
         @($($_ret:tt)*)
         @($($_body:tt)*)
         @(class_method)
-        @($($args:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
     } => {
         $builder.add_class_method(
             $crate::__attribute_helper! {
@@ -99,7 +160,7 @@ macro_rules! __inner_declare_class {
                 @call_sel
             },
             Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args)*
+                @($($qualifiers)*) $($args_start)* $($args_rest)*
             },
         );
     };
@@ -111,7 +172,8 @@ macro_rules! __inner_declare_class {
         @($($_ret:tt)*)
         @($($_body:tt)*)
         @(instance_method)
-        @($($args:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
     } => {
         $builder.add_method(
             $crate::__attribute_helper! {
@@ -121,7 +183,7 @@ macro_rules! __inner_declare_class {
                 @call_sel
             },
             Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args)*
+                @($($qualifiers)*) $($args_start)* $($args_rest)*
             },
         );
     };
@@ -131,6 +193,92 @@ macro_rules! __inner_declare_class {
         @($($sel:tt)*)
     } => {
         $crate::sel!($($sel)*)
+    };
+}
+
+/// Create function pointer type with inferred arguments.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __fn_ptr {
+    (
+        @($($qualifiers:tt)*)
+        $($(mut)? $($param:ident)? $(_)?: $param_ty:ty),* $(,)?
+    ) => {
+        $($qualifiers)* fn($($crate::__fn_ptr!(@__to_anonymous $param_ty)),*) -> _
+    };
+    (@__to_anonymous $param_ty:ty) => { _ }
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __fn_args {
+    // Ignore `_`
+    {
+        ($out_macro:path)
+        (_: $param_ty:ty, $($rest:tt)*)
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+        $($macro_args:tt)*
+    } => {
+        $crate::__fn_args! {
+            ($out_macro)
+            ($($rest)*)
+            ($($args_converted)* _: $param_ty,)
+            ($($body_prefix)*)
+            $($macro_args)*
+        }
+    };
+    // Convert mut
+    {
+        ($out_macro:path)
+        (mut $param:ident: $param_ty:ty, $($rest:tt)*)
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+        $($macro_args:tt)*
+    } => {
+        $crate::__fn_args! {
+            ($out_macro)
+            ($($rest)*)
+            ($($args_converted)* $param: <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            (
+                $($body_prefix)*
+                let mut $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
+            )
+            $($macro_args)*
+        }
+    };
+    // Convert
+    {
+        ($out_macro:path)
+        ($param:ident: $param_ty:ty, $($rest:tt)*)
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+        $($macro_args:tt)*
+    } => {
+        $crate::__fn_args! {
+            ($out_macro)
+            ($($rest)*)
+            ($($args_converted)* $param: <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            (
+                $($body_prefix)*
+                let $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
+            )
+            $($macro_args)*
+        }
+    };
+    // Output result
+    {
+        ($out_macro:path)
+        ($(,)*)
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+        $($macro_args:tt)*
+    } => {
+        $out_macro! {
+            $($macro_args)*
+            @($($args_converted)*)
+            @($($body_prefix)*)
+        }
     };
 }
 
@@ -186,10 +334,15 @@ macro_rules! __inner_declare_class {
 /// can't mark them as `pub` for the same reason). Instead, use the
 /// [`extern_methods!`] macro to create a Rust interface to the methods.
 ///
+/// If the argument or return type is [`bool`], a conversion is performed to
+/// make it behave similarly to the Objective-C `BOOL`. Use [`runtime::Bool`]
+/// if you want to control this manually.
+///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// [`extern_methods!`]: crate::extern_methods
 /// [`msg_send!`]: crate::msg_send
+/// [`runtime::Bool`]: crate::runtime::Bool
 ///
 ///
 /// ## Protocol definitions
@@ -233,8 +386,7 @@ macro_rules! __inner_declare_class {
 /// use std::os::raw::c_int;
 /// use objc2::rc::{Id, Owned};
 /// use objc2::foundation::{NSCopying, NSObject, NSZone};
-/// use objc2::runtime::Bool;
-/// use objc2::{declare_class, msg_send, msg_send_bool, msg_send_id, ClassType};
+/// use objc2::{declare_class, msg_send, msg_send_id, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -271,8 +423,8 @@ macro_rules! __inner_declare_class {
 ///         }
 ///
 ///         #[sel(myClassMethod)]
-///         fn __my_class_method() -> Bool {
-///             Bool::YES
+///         fn __my_class_method() -> bool {
+///             true
 ///         }
 ///     }
 ///
@@ -297,7 +449,7 @@ macro_rules! __inner_declare_class {
 ///     }
 ///
 ///     pub fn my_class_method() -> bool {
-///         unsafe { msg_send_bool![Self::class(), myClassMethod] }
+///         unsafe { msg_send![Self::class(), myClassMethod] }
 ///     }
 /// }
 ///

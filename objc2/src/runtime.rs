@@ -17,10 +17,13 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
-pub use super::bool::Bool;
-use crate::{ffi, Encode, Encoding, RefEncode};
+use crate::encode::{Encode, EncodeConvert, Encoding, RefEncode};
+use crate::ffi;
 #[cfg(feature = "malloc")]
 use crate::{verify::verify_message_signature, EncodeArguments, VerificationError};
+
+#[doc(inline)]
+pub use crate::encode::__bool::Bool;
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
@@ -478,23 +481,25 @@ impl Class {
     ///
     /// # Example
     ///
-    /// ```no_run
+    /// ```
+    /// # #[cfg(feature = "gnustep-1-7")]
+    /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
     /// # use objc2::{class, sel};
-    /// # use objc2::runtime::{Bool, Class};
+    /// # use objc2::runtime::Class;
     /// let cls = class!(NSObject);
     /// let sel = sel!(isKindOfClass:);
     /// // Verify that `isKindOfClass:`:
     /// // - Exists on the class
     /// // - Takes a class as a parameter
     /// // - Returns a BOOL
-    /// let result = cls.verify_sel::<(&Class,), Bool>(sel);
+    /// let result = cls.verify_sel::<(&Class,), bool>(sel);
     /// assert!(result.is_ok());
     /// ```
     #[cfg(feature = "malloc")]
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,
-        R: Encode,
+        R: EncodeConvert,
     {
         verify_message_signature::<A, R>(self, sel)
     }
@@ -601,10 +606,16 @@ impl UnwindSafe for Protocol {}
 impl RefUnwindSafe for Protocol {}
 // Note that Unpin is not applicable.
 
-fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
+fn ivar_offset<T: EncodeConvert>(cls: &Class, name: &str) -> isize {
     match cls.instance_variable(name) {
         Some(ivar) => {
-            assert!(T::ENCODING.equivalent_to_str(ivar.type_encoding()));
+            let encoding = ivar.type_encoding();
+            assert!(
+                T::__ENCODING.equivalent_to_str(encoding),
+                "wrong encoding. Tried to retrieve ivar with encoding {}, but the encoding of the given type was {}",
+                encoding,
+                T::__ENCODING,
+            );
             ivar.offset()
         }
         None => panic!("Ivar {} not found on class {:?}", name, cls),
@@ -690,6 +701,11 @@ impl Object {
     /// must ensure that any access to the returned pointer do not cause data
     /// races, and that Rust's mutability rules are not otherwise violated.
     pub unsafe fn ivar_ptr<T: Encode>(&self, name: &str) -> *mut T {
+        // SAFETY: Upheld by caller
+        unsafe { self.inner_ivar_ptr::<T>(name) }
+    }
+
+    pub(crate) unsafe fn inner_ivar_ptr<T: EncodeConvert>(&self, name: &str) -> *mut T {
         let offset = ivar_offset::<T>(self.class(), name);
         let ptr: *const Self = self;
 
@@ -958,7 +974,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "assertion failed: T::ENCODING.equivalent_to_str(ivar.type_encoding())"]
+    #[should_panic = "wrong encoding. Tried to retrieve ivar with encoding I, but the encoding of the given type was C"]
     fn test_object_ivar_wrong_type() {
         let obj = test_utils::custom_object();
         let _ = unsafe { *obj.ivar::<u8>("_foo") };

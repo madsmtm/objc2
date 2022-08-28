@@ -13,7 +13,7 @@ use super::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NS
 use crate::ffi;
 use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
-use crate::{extern_class, extern_methods, msg_send, msg_send_bool, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;
@@ -203,18 +203,27 @@ extern_methods!(
         /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1410309-hasprefix?language=objc).
         #[doc(alias = "hasPrefix")]
         #[doc(alias = "hasPrefix:")]
-        pub fn has_prefix(&self, prefix: &NSString) -> bool {
-            unsafe { msg_send_bool![self, hasPrefix: prefix] }
-        }
+        #[sel(hasPrefix:)]
+        pub fn has_prefix(&self, prefix: &NSString) -> bool;
 
         /// Whether the given string matches the ending characters of this string.
         ///
         /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1416529-hassuffix?language=objc).
         #[doc(alias = "hasSuffix")]
         #[doc(alias = "hasSuffix:")]
-        pub fn has_suffix(&self, suffix: &NSString) -> bool {
-            unsafe { msg_send_bool![self, hasSuffix: suffix] }
-        }
+        #[sel(hasSuffix:)]
+        pub fn has_suffix(&self, suffix: &NSString) -> bool;
+
+        // TODO: Other comparison methods:
+        // - compare:options:
+        // - compare:options:range:
+        // - compare:options:range:locale:
+        // - localizedCompare:
+        // - caseInsensitiveCompare:
+        // - localizedCaseInsensitiveCompare:
+        // - localizedStandardCompare:
+        #[sel(compare:)]
+        fn compare(&self, other: &Self) -> NSComparisonResult;
 
         // pub fn from_nsrange(range: NSRange) -> Id<Self, Shared>
         // https://developer.apple.com/documentation/foundation/1415155-nsstringfromrange?language=objc
@@ -243,16 +252,7 @@ impl PartialOrd for NSString {
 
 impl Ord for NSString {
     fn cmp(&self, other: &Self) -> cmp::Ordering {
-        let res: NSComparisonResult = unsafe { msg_send![self, compare: other] };
-        // TODO: Other comparison methods:
-        // - compare:options:
-        // - compare:options:range:
-        // - compare:options:range:locale:
-        // - localizedCompare:
-        // - caseInsensitiveCompare:
-        // - localizedCaseInsensitiveCompare:
-        // - localizedStandardCompare:
-        res.into()
+        self.compare(other).into()
     }
 }
 

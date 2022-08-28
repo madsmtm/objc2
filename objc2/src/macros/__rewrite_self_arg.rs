@@ -20,7 +20,7 @@ macro_rules! __rewrite_self_arg {
     {
         ($out_macro:path)
         @(&mut self $($__rest_args:tt)*)
-        @(&mut $self:ident $(, $($rest_args:tt)*)?)
+        @(&mut $self:ident $(, $($rest:tt)*)?)
         $($macro_args:tt)*
     } => {
         $out_macro! {
@@ -29,14 +29,14 @@ macro_rules! __rewrite_self_arg {
             @(
                 $self: &mut Self,
                 _: $crate::runtime::Sel,
-                $($($rest_args)*)?
             )
+            @($($($rest)*)?)
         }
     };
     {
         ($out_macro:path)
         @(&self $($__rest_args:tt)*)
-        @(&$self:ident $(, $($rest_args:tt)*)?)
+        @(&$self:ident $(, $($rest:tt)*)?)
         $($macro_args:tt)*
     } => {
         $out_macro! {
@@ -45,14 +45,14 @@ macro_rules! __rewrite_self_arg {
             @(
                 $self: &Self,
                 _: $crate::runtime::Sel,
-                $($($rest_args)*)?
             )
+            @($($($rest)*)?)
         }
     };
     {
         ($out_macro:path)
         @(mut self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        @(mut $self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
+        @(mut $self:ident: $self_ty:ty $(, $($rest:tt)*)?)
         $($macro_args:tt)*
     } => {
         $out_macro! {
@@ -61,14 +61,14 @@ macro_rules! __rewrite_self_arg {
             @(
                 mut $self: $self_ty,
                 _: $crate::runtime::Sel,
-                $($($rest_args)*)?
             )
+            @($($($rest)*)?)
         }
     };
     {
         ($out_macro:path)
         @(self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        @($self:ident: $self_ty:ty $(, $($rest_args:tt)*)?)
+        @($self:ident: $self_ty:ty $(, $($rest:tt)*)?)
         $($macro_args:tt)*
     } => {
         $out_macro! {
@@ -77,8 +77,8 @@ macro_rules! __rewrite_self_arg {
             @(
                 $self: $self_ty,
                 _: $crate::runtime::Sel,
-                $($($rest_args)*)?
             )
+            @($($($rest)*)?)
         }
     };
 
@@ -95,8 +95,8 @@ macro_rules! __rewrite_self_arg {
             @(
                 _: &$crate::runtime::Class,
                 _: $crate::runtime::Sel,
-                $($args)*
             )
+            @($($args)*)
         }
     };
 }
