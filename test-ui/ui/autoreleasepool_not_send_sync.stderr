@@ -2,7 +2,7 @@ error[E0277]: `*mut c_void` cannot be shared between threads safely
   --> ui/autoreleasepool_not_send_sync.rs
    |
    |     needs_sync::<AutoreleasePool>();
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `*mut c_void` cannot be shared between threads safely
+   |                  ^^^^^^^^^^^^^^^ `*mut c_void` cannot be shared between threads safely
    |
    = help: within `AutoreleasePool`, the trait `Sync` is not implemented for `*mut c_void`
    = note: required because it appears within the type `AutoreleasePool`
@@ -16,7 +16,7 @@ error[E0277]: `*mut UnsafeCell<c_void>` cannot be shared between threads safely
   --> ui/autoreleasepool_not_send_sync.rs
    |
    |     needs_sync::<AutoreleasePool>();
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `*mut UnsafeCell<c_void>` cannot be shared between threads safely
+   |                  ^^^^^^^^^^^^^^^ `*mut UnsafeCell<c_void>` cannot be shared between threads safely
    |
    = help: within `AutoreleasePool`, the trait `Sync` is not implemented for `*mut UnsafeCell<c_void>`
    = note: required because it appears within the type `PhantomData<*mut UnsafeCell<c_void>>`
@@ -31,7 +31,7 @@ error[E0277]: `*mut c_void` cannot be sent between threads safely
   --> ui/autoreleasepool_not_send_sync.rs
    |
    |     needs_send::<AutoreleasePool>();
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `*mut c_void` cannot be sent between threads safely
+   |                  ^^^^^^^^^^^^^^^ `*mut c_void` cannot be sent between threads safely
    |
    = help: within `AutoreleasePool`, the trait `Send` is not implemented for `*mut c_void`
    = note: required because it appears within the type `AutoreleasePool`
@@ -45,7 +45,7 @@ error[E0277]: `*mut UnsafeCell<c_void>` cannot be sent between threads safely
   --> ui/autoreleasepool_not_send_sync.rs
    |
    |     needs_send::<AutoreleasePool>();
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `*mut UnsafeCell<c_void>` cannot be sent between threads safely
+   |                  ^^^^^^^^^^^^^^^ `*mut UnsafeCell<c_void>` cannot be sent between threads safely
    |
    = help: within `AutoreleasePool`, the trait `Send` is not implemented for `*mut UnsafeCell<c_void>`
    = note: required because it appears within the type `PhantomData<*mut UnsafeCell<c_void>>`

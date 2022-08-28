@@ -104,10 +104,12 @@ error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiv
   --> ui/msg_send_id_invalid_receiver.rs
    |
    |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, copy] };
-   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Id<objc2::runtime::Object, Shared>`
+   |                                          -------------^^^-------
+   |                                          |            |
+   |                                          |            the trait `MessageReceiver` is not implemented for `Id<objc2::runtime::Object, Shared>`
+   |                                          required by a bound introduced by this call
    |
    = help: the following other types implement trait `MessageReceiver`:
              &'a Id<T, O>
              &'a mut Id<T, objc2::rc::Owned>
    = note: required for `RetainSemantics<false, false, false, true>` to implement `MsgSendId<Id<objc2::runtime::Object, Shared>, _, _>`
-   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
