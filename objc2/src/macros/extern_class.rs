@@ -299,7 +299,7 @@ macro_rules! __inner_extern_class {
         // - The rest of the struct's fields are ZSTs, so they don't influence
         //   the layout.
         unsafe impl<$($t)*> $crate::RefEncode for $for {
-            const ENCODING_REF: $crate::Encoding<'static>
+            const ENCODING_REF: $crate::Encoding
                 = <$superclass as $crate::RefEncode>::ENCODING_REF;
         }
 

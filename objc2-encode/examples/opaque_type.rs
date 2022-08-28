@@ -15,7 +15,7 @@ struct NSDecimal {
 // SAFETY: `&NSDecimal` is a pointer.
 unsafe impl RefEncode for NSDecimal {
     // Running `@encode` on `NSDecimal*` on my 64-bit system gives `^{?=cCCC[38C]}`.
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Encoding::Struct(
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Encoding::Struct(
         "?",
         &[
             Encoding::Char,

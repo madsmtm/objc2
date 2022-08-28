@@ -167,7 +167,7 @@ pub struct ConcreteBlock<A, R, F> {
 }
 
 unsafe impl<A: BlockArguments, R: Encode, F> RefEncode for ConcreteBlock<A, R, F> {
-    const ENCODING_REF: Encoding<'static> = Encoding::Block;
+    const ENCODING_REF: Encoding = Encoding::Block;
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F>

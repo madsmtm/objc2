@@ -65,7 +65,7 @@
 /// }
 ///
 /// unsafe impl Encode for NSCalendarUnit {
-///     const ENCODING: Encoding<'static> = usize::ENCODING;
+///     const ENCODING: Encoding = usize::ENCODING;
 /// }
 ///
 /// extern_methods!(
@@ -144,7 +144,7 @@
 /// # }
 /// #
 /// # unsafe impl Encode for NSCalendarUnit {
-/// #     const ENCODING: Encoding<'static> = usize::ENCODING;
+/// #     const ENCODING: Encoding = usize::ENCODING;
 /// # }
 /// #
 /// # use objc2::msg_send;

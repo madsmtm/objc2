@@ -121,12 +121,11 @@ impl From<NSRange> for Range<usize> {
 }
 
 unsafe impl Encode for NSRange {
-    const ENCODING: Encoding<'static> =
-        Encoding::Struct("_NSRange", &[usize::ENCODING, usize::ENCODING]);
+    const ENCODING: Encoding = Encoding::Struct("_NSRange", &[usize::ENCODING, usize::ENCODING]);
 }
 
 unsafe impl RefEncode for NSRange {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 #[cfg(test)]

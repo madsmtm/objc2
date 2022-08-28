@@ -36,7 +36,7 @@ impl LargeStruct {
 }
 
 unsafe impl Encode for LargeStruct {
-    const ENCODING: Encoding<'static> =
+    const ENCODING: Encoding =
         Encoding::Struct("LargeStruct", &[f32::ENCODING, <[u8; 100]>::ENCODING]);
 }
 

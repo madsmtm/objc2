@@ -51,7 +51,7 @@ use crate::Message;
 pub struct Exception(Object);
 
 unsafe impl RefEncode for Exception {
-    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+    const ENCODING_REF: Encoding = Encoding::Object;
 }
 
 unsafe impl Message for Exception {}

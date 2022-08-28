@@ -40,7 +40,7 @@ pub struct MyObject<'a> {
 }
 
 unsafe impl RefEncode for MyObject<'_> {
-    const ENCODING_REF: Encoding<'static> = Object::ENCODING_REF;
+    const ENCODING_REF: Encoding = Object::ENCODING_REF;
 }
 
 unsafe impl Message for MyObject<'_> {}
@@ -85,7 +85,7 @@ unsafe impl<'a> ClassType for MyObject<'a> {
                 number: Ivar<MaybeUninit<NumberIvar<'a>>>,
             }
             unsafe impl RefEncode for PartialInit<'_> {
-                const ENCODING_REF: Encoding<'static> = Encoding::Object;
+                const ENCODING_REF: Encoding = Encoding::Object;
             }
             unsafe impl Message for PartialInit<'_> {}
 

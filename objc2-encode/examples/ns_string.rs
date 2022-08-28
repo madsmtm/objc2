@@ -12,7 +12,7 @@ struct NSString {
 
 /// Implement `RefEncode` for pointers and references to the string.
 unsafe impl RefEncode for NSString {
-    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+    const ENCODING_REF: Encoding = Encoding::Object;
 }
 
 fn main() {

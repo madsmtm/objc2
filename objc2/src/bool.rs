@@ -113,7 +113,7 @@ impl fmt::Debug for Bool {
 
 // SAFETY: `Bool` is `repr(transparent)`.
 unsafe impl Encode for Bool {
-    const ENCODING: Encoding<'static> = ffi::BOOL::ENCODING;
+    const ENCODING: Encoding = ffi::BOOL::ENCODING;
 }
 
 // Note that we shouldn't delegate to `BOOL`'s  `ENCODING_REF` since `BOOL` is
@@ -127,7 +127,7 @@ unsafe impl Encode for Bool {
 // @encode(char*); // -> "*"
 // ```
 unsafe impl RefEncode for Bool {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 #[cfg(test)]

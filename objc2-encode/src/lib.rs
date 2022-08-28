@@ -34,7 +34,7 @@
 //! }
 //!
 //! unsafe impl Encode for MyStruct {
-//!     const ENCODING: Encoding<'static> = Encoding::Struct(
+//!     const ENCODING: Encoding = Encoding::Struct(
 //!         "MyStruct", // Must use the same name as defined in C header files
 //!         &[
 //!             f32::ENCODING, // Same as Encoding::Float
@@ -49,7 +49,7 @@
 //! unsafe impl RefEncode for MyStruct {
 //!     // Note that if `MyStruct` is an Objective-C instance, this should
 //!     // be `Encoding::Object`.
-//!     const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+//!     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 //! }
 //!
 //! // @encode(MyStruct*) -> "^{MyStruct=fs}"

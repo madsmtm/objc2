@@ -189,7 +189,7 @@ impl Sel {
 
 // SAFETY: `Sel` is FFI compatible, and the encoding is of course `Sel`.
 unsafe impl Encode for Sel {
-    const ENCODING: Encoding<'static> = Encoding::Sel;
+    const ENCODING: Encoding = Encoding::Sel;
 }
 
 // RefEncode is not implemented for Sel, because there is literally no API
@@ -509,7 +509,7 @@ impl RefUnwindSafe for Class {}
 // Note that Unpin is not applicable.
 
 unsafe impl RefEncode for Class {
-    const ENCODING_REF: Encoding<'static> = Encoding::Class;
+    const ENCODING_REF: Encoding = Encoding::Class;
 }
 
 impl fmt::Debug for Class {
@@ -583,7 +583,7 @@ impl PartialEq for Protocol {
 
 unsafe impl RefEncode for Protocol {
     // Protocol is an object internally
-    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+    const ENCODING_REF: Encoding = Encoding::Object;
 }
 
 impl Eq for Protocol {}
@@ -636,7 +636,7 @@ fn ivar_offset<T: Encode>(cls: &Class, name: &str) -> isize {
 pub struct Object(ffi::objc_object);
 
 unsafe impl RefEncode for Object {
-    const ENCODING_REF: Encoding<'static> = Encoding::Object;
+    const ENCODING_REF: Encoding = Encoding::Object;
 }
 
 impl Object {

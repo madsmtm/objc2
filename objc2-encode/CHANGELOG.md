@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Remove the lifetime specifier from `Encoding`, since the non
+  -`'static` version was essentially useless.
+
 ### Fixed
 * Fixed the encoding output and comparison of structs behind pointers.
 

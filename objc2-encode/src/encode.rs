@@ -49,7 +49,7 @@ use crate::Encoding;
 /// }
 ///
 /// unsafe impl Encode for MyType {
-///     const ENCODING: Encoding<'static> = Encoding::Struct(
+///     const ENCODING: Encoding = Encoding::Struct(
 ///         // The name of the type that Objective-C sees.
 ///         "MyType",
 ///         &[
@@ -68,7 +68,7 @@ use crate::Encoding;
 /// [reprs]: https://doc.rust-lang.org/nomicon/other-reprs.html
 pub unsafe trait Encode {
     /// The Objective-C type-encoding for this type.
-    const ENCODING: Encoding<'static>;
+    const ENCODING: Encoding;
 }
 
 /// Types whoose references has an Objective-C type-encoding.
@@ -127,7 +127,7 @@ pub unsafe trait RefEncode {
     /// #     _priv: [u8; 0],
     /// # }
     /// # unsafe impl RefEncode for MyObject {
-    /// const ENCODING_REF: Encoding<'static> = Encoding::Object;
+    /// const ENCODING_REF: Encoding = Encoding::Object;
     /// # }
     /// ```
     ///
@@ -138,13 +138,13 @@ pub unsafe trait RefEncode {
     /// # #[repr(transparent)]
     /// # struct MyType(i32);
     /// # unsafe impl Encode for MyType {
-    /// #     const ENCODING: Encoding<'static> = i32::ENCODING;
+    /// #     const ENCODING: Encoding = i32::ENCODING;
     /// # }
     /// # unsafe impl RefEncode for MyType {
-    /// const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    /// const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
     /// # }
     /// ```
-    const ENCODING_REF: Encoding<'static>;
+    const ENCODING_REF: Encoding;
 }
 
 // TODO: Implement for `PhantomData` and `PhantomPinned`?
@@ -153,7 +153,7 @@ pub unsafe trait RefEncode {
 macro_rules! encode_impls {
     ($($t:ty => $e:ident,)*) => ($(
         unsafe impl Encode for $t {
-            const ENCODING: Encoding<'static> = Encoding::$e;
+            const ENCODING: Encoding = Encoding::$e;
         }
     )*);
 }
@@ -182,7 +182,7 @@ encode_impls!(
 /// `()` is not FFI-safe)!
 // TODO: Figure out a way to remove this - maybe with a `EncodeReturn` trait?
 unsafe impl Encode for () {
-    const ENCODING: Encoding<'static> = Encoding::Void;
+    const ENCODING: Encoding = Encoding::Void;
 }
 
 // UI tests of this is too brittle.
@@ -212,7 +212,7 @@ extern "C" {}
 ///
 /// Use `objc2::runtime::Bool::ENCODING` instead.
 unsafe impl Encode for bool {
-    const ENCODING: Encoding<'static> = Encoding::Bool;
+    const ENCODING: Encoding = Encoding::Bool;
 }
 
 macro_rules! encode_impls_size {
@@ -220,11 +220,11 @@ macro_rules! encode_impls_size {
         #[doc = concat!("The encoding of [`", stringify!($t), "`] varies based on the target pointer width.")]
         unsafe impl Encode for $t {
             #[cfg(target_pointer_width = "16")]
-            const ENCODING: Encoding<'static> = <$t16>::ENCODING;
+            const ENCODING: Encoding = <$t16>::ENCODING;
             #[cfg(target_pointer_width = "32")]
-            const ENCODING: Encoding<'static> = <$t32>::ENCODING;
+            const ENCODING: Encoding = <$t32>::ENCODING;
             #[cfg(target_pointer_width = "64")]
-            const ENCODING: Encoding<'static> = <$t64>::ENCODING;
+            const ENCODING: Encoding = <$t64>::ENCODING;
         }
     )*);
 }
@@ -238,7 +238,7 @@ encode_impls_size!(
 macro_rules! pointer_refencode_impl {
     ($($t:ty),*) => ($(
         unsafe impl RefEncode for $t {
-            const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+            const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
         }
     )*);
 }
@@ -247,31 +247,31 @@ pointer_refencode_impl!(bool, i16, i32, i64, isize, u16, u32, u64, usize, f32, f
 
 /// Pointers to [`i8`] use the special [`Encoding::String`] encoding.
 unsafe impl RefEncode for i8 {
-    const ENCODING_REF: Encoding<'static> = Encoding::String;
+    const ENCODING_REF: Encoding = Encoding::String;
 }
 
 /// Pointers to [`u8`] use the special [`Encoding::String`] encoding.
 unsafe impl RefEncode for u8 {
-    const ENCODING_REF: Encoding<'static> = Encoding::String;
+    const ENCODING_REF: Encoding = Encoding::String;
 }
 
 /// Simple helper for implementing [`Encode`] for nonzero integer types.
 macro_rules! encode_impls_nonzero {
     ($($nonzero:ident => $type:ty,)*) => ($(
         unsafe impl Encode for $nonzero {
-            const ENCODING: Encoding<'static> = <$type>::ENCODING;
+            const ENCODING: Encoding = <$type>::ENCODING;
         }
 
         unsafe impl Encode for Option<$nonzero> {
-            const ENCODING: Encoding<'static> = <$type>::ENCODING;
+            const ENCODING: Encoding = <$type>::ENCODING;
         }
 
         unsafe impl RefEncode for $nonzero {
-            const ENCODING_REF: Encoding<'static> = <$type>::ENCODING_REF;
+            const ENCODING_REF: Encoding = <$type>::ENCODING_REF;
         }
 
         unsafe impl RefEncode for Option<$nonzero> {
-            const ENCODING_REF: Encoding<'static> = <$type>::ENCODING_REF;
+            const ENCODING_REF: Encoding = <$type>::ENCODING_REF;
         }
     )*);
 }
@@ -300,12 +300,12 @@ macro_rules! encode_atomic_impls {
         // in-memory representation as the underlying type.
         $(#[$m])*
         unsafe impl Encode for atomic::$atomic {
-            const ENCODING: Encoding<'static> = Encoding::Atomic(&<$type>::ENCODING);
+            const ENCODING: Encoding = Encoding::Atomic(&<$type>::ENCODING);
         }
 
         $(#[$m])*
         unsafe impl RefEncode for atomic::$atomic {
-            const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+            const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
         }
     )*);
 }
@@ -348,50 +348,50 @@ encode_atomic_impls!(
 // SAFETY: Guaranteed to have the same in-memory representation as `*mut T`.
 #[cfg(target_has_atomic = "ptr")]
 unsafe impl<T: RefEncode> Encode for atomic::AtomicPtr<T> {
-    const ENCODING: Encoding<'static> = Encoding::Atomic(&T::ENCODING_REF);
+    const ENCODING: Encoding = Encoding::Atomic(&T::ENCODING_REF);
 }
 
 #[cfg(target_has_atomic = "ptr")]
 unsafe impl<T: RefEncode> RefEncode for atomic::AtomicPtr<T> {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 /// [`Encode`] is implemented manually for `*const c_void`, instead of
 /// implementing [`RefEncode`], to discourage creating `&c_void`.
 unsafe impl Encode for *const c_void {
-    const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Void);
+    const ENCODING: Encoding = Encoding::Pointer(&Encoding::Void);
 }
 
 unsafe impl RefEncode for *const c_void {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 /// [`Encode`] is implemented manually for `*mut c_void`, instead of
 /// implementing [`RefEncode`], to discourage creating `&mut c_void`.
 unsafe impl Encode for *mut c_void {
-    const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Void);
+    const ENCODING: Encoding = Encoding::Pointer(&Encoding::Void);
 }
 
 unsafe impl RefEncode for *mut c_void {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
-    const ENCODING: Encoding<'static> = Encoding::Array(LENGTH, &T::ENCODING);
+    const ENCODING: Encoding = Encoding::Array(LENGTH, &T::ENCODING);
 }
 
 unsafe impl<T: Encode, const LENGTH: usize> RefEncode for [T; LENGTH] {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 macro_rules! encode_impls_transparent {
     ($($t:ident<T $(: ?$b:ident)?>,)*) => ($(
         unsafe impl<T: Encode $(+ ?$b)?> Encode for $t<T> {
-            const ENCODING: Encoding<'static> = T::ENCODING;
+            const ENCODING: Encoding = T::ENCODING;
         }
 
         unsafe impl<T: RefEncode $(+ ?$b)?> RefEncode for $t<T> {
-            const ENCODING_REF: Encoding<'static> = T::ENCODING_REF;
+            const ENCODING_REF: Encoding = T::ENCODING_REF;
         }
     )*);
 }
@@ -439,35 +439,35 @@ macro_rules! encode_pointer_impls {
         const $c:ident = $e:expr;
     }) => (
         unsafe impl<T: RefEncode + ?Sized> $x for *const T {
-            const $c: Encoding<'static> = $e;
+            const $c: Encoding = $e;
         }
 
         unsafe impl<T: RefEncode + ?Sized> $x for *mut T {
-            const $c: Encoding<'static> = $e;
+            const $c: Encoding = $e;
         }
 
         unsafe impl<'a, T: RefEncode + ?Sized> $x for &'a T {
-            const $c: Encoding<'static> = $e;
+            const $c: Encoding = $e;
         }
 
         unsafe impl<'a, T: RefEncode + ?Sized> $x for &'a mut T {
-            const $c: Encoding<'static> = $e;
+            const $c: Encoding = $e;
         }
 
         unsafe impl<T: RefEncode + ?Sized> $x for NonNull<T> {
-            const $c: Encoding<'static> = $e;
+            const $c: Encoding = $e;
         }
 
         unsafe impl<'a, T: RefEncode + ?Sized> $x for Option<&'a T> {
-            const $c: Encoding<'static> = $e;
+            const $c: Encoding = $e;
         }
 
         unsafe impl<'a, T: RefEncode + ?Sized> $x for Option<&'a mut T> {
-            const $c: Encoding<'static> = $e;
+            const $c: Encoding = $e;
         }
 
         unsafe impl<T: RefEncode + ?Sized> $x for Option<NonNull<T>> {
-            const $c: Encoding<'static> = $e;
+            const $c: Encoding = $e;
         }
     );
 }
@@ -510,17 +510,17 @@ encode_pointer_impls!(
 macro_rules! encode_fn_pointer_impl {
     (@ $FnTy: ty, $($Arg: ident),*) => {
         unsafe impl<Ret: Encode, $($Arg: Encode),*> Encode for $FnTy {
-            const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Unknown);
+            const ENCODING: Encoding = Encoding::Pointer(&Encoding::Unknown);
         }
         unsafe impl<Ret: Encode, $($Arg: Encode),*> RefEncode for $FnTy {
-            const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+            const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
         }
 
         unsafe impl<Ret: Encode, $($Arg: Encode),*> Encode for Option<$FnTy> {
-            const ENCODING: Encoding<'static> = Encoding::Pointer(&Encoding::Unknown);
+            const ENCODING: Encoding = Encoding::Pointer(&Encoding::Unknown);
         }
         unsafe impl<Ret: Encode, $($Arg: Encode),*> RefEncode for Option<$FnTy> {
-            const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+            const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
         }
     };
     (# $abi:literal; $($Arg: ident),+) => {
@@ -576,7 +576,7 @@ mod private {
 /// issue if you know a use-case where this restrition should be lifted!
 pub unsafe trait EncodeArguments: private::Sealed {
     /// The encodings for the arguments.
-    const ENCODINGS: &'static [Encoding<'static>];
+    const ENCODINGS: &'static [Encoding];
 }
 
 macro_rules! encode_args_impl {
@@ -584,7 +584,7 @@ macro_rules! encode_args_impl {
         impl<$($Arg: Encode),*> private::Sealed for ($($Arg,)*) {}
 
         unsafe impl<$($Arg: Encode),*> EncodeArguments for ($($Arg,)*) {
-            const ENCODINGS: &'static [Encoding<'static>] = &[
+            const ENCODINGS: &'static [Encoding] = &[
                 $($Arg::ENCODING),*
             ];
         }

@@ -54,7 +54,7 @@ struct NSFastEnumerationState<T: Message> {
 }
 
 unsafe impl<T: Message> Encode for NSFastEnumerationState<T> {
-    const ENCODING: Encoding<'static> = Encoding::Struct(
+    const ENCODING: Encoding = Encoding::Struct(
         "?",
         &[
             Encoding::C_ULONG,
@@ -66,7 +66,7 @@ unsafe impl<T: Message> Encode for NSFastEnumerationState<T> {
 }
 
 unsafe impl<T: Message> RefEncode for NSFastEnumerationState<T> {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 fn enumerate<'a, 'b: 'a, C: NSFastEnumeration + ?Sized>(

@@ -218,7 +218,7 @@ impl NSNumber {
     ///     }
     /// }
     /// ```
-    pub fn encoding(&self) -> Encoding<'static> {
+    pub fn encoding(&self) -> Encoding {
         // Use NSValue::encoding
         let enc = (**self)
             .encoding()

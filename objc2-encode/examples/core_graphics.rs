@@ -13,8 +13,7 @@ struct CGPoint {
 }
 
 unsafe impl Encode for CGPoint {
-    const ENCODING: Encoding<'static> =
-        Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
+    const ENCODING: Encoding = Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
 #[repr(C)]
@@ -24,8 +23,7 @@ struct CGSize {
 }
 
 unsafe impl Encode for CGSize {
-    const ENCODING: Encoding<'static> =
-        Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
+    const ENCODING: Encoding = Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
 #[repr(C)]
@@ -35,8 +33,7 @@ struct CGRect {
 }
 
 unsafe impl Encode for CGRect {
-    const ENCODING: Encoding<'static> =
-        Encoding::Struct("CGRect", &[CGPoint::ENCODING, CGSize::ENCODING]);
+    const ENCODING: Encoding = Encoding::Struct("CGRect", &[CGPoint::ENCODING, CGSize::ENCODING]);
 }
 
 fn main() {
