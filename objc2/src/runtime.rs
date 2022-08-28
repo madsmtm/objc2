@@ -17,11 +17,17 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
-use crate::{ffi, Encode, Encoding, RefEncode};
+use crate::encode::{Encode, Encoding, RefEncode};
+use crate::ffi;
 #[cfg(feature = "malloc")]
-use crate::{verify::verify_message_signature, EncodeArguments, VerificationError};
+use crate::{
+    encode::{EncodeArguments, EncodeConvert},
+    verify::verify_message_signature,
+    VerificationError,
+};
+
 #[doc(inline)]
-pub use objc2_encode::__bool::Bool;
+pub use crate::encode::__bool::Bool;
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
@@ -479,23 +485,25 @@ impl Class {
     ///
     /// # Example
     ///
-    /// ```no_run
+    /// ```
+    /// # #[cfg(feature = "gnustep-1-7")]
+    /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
     /// # use objc2::{class, sel};
-    /// # use objc2::runtime::{Bool, Class};
+    /// # use objc2::runtime::Class;
     /// let cls = class!(NSObject);
     /// let sel = sel!(isKindOfClass:);
     /// // Verify that `isKindOfClass:`:
     /// // - Exists on the class
     /// // - Takes a class as a parameter
     /// // - Returns a BOOL
-    /// let result = cls.verify_sel::<(&Class,), Bool>(sel);
+    /// let result = cls.verify_sel::<(&Class,), bool>(sel);
     /// assert!(result.is_ok());
     /// ```
     #[cfg(feature = "malloc")]
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,
-        R: Encode,
+        R: EncodeConvert,
     {
         verify_message_signature::<A, R>(self, sel)
     }

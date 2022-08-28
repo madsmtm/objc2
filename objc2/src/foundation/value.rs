@@ -10,9 +10,7 @@ use std::os::raw::c_char;
 
 use super::{NSCopying, NSObject, NSPoint, NSRange, NSRect, NSSize};
 use crate::rc::{Id, Shared};
-use crate::{
-    extern_class, extern_methods, msg_send, msg_send_bool, msg_send_id, ClassType, Encode,
-};
+use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encode};
 
 extern_class!(
     /// A container wrapping any encodable type as an Obective-C object.
@@ -189,6 +187,9 @@ extern_methods!(
                 panic!("missing NSValue encoding");
             }
         }
+
+        #[sel(isEqualToValue:)]
+        fn is_equal_to_value(&self, other: &Self) -> bool;
     }
 );
 
@@ -208,7 +209,7 @@ impl PartialEq for NSValue {
     #[doc(alias = "isEqualToValue:")]
     fn eq(&self, other: &Self) -> bool {
         // Use isEqualToValue: instaed of isEqual: since it is faster
-        unsafe { msg_send_bool![self, isEqualToValue: other] }
+        self.is_equal_to_value(other)
     }
 }
 

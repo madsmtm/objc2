@@ -15,7 +15,7 @@ use std::time::Duration;
 
 use objc2::foundation::{NSObject, NSString};
 use objc2::rc::{Id, Owned};
-use objc2::{extern_class, msg_send, msg_send_bool, msg_send_id, ns_string, ClassType};
+use objc2::{extern_class, msg_send, msg_send_id, ns_string, ClassType};
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 mod appkit {
@@ -65,7 +65,7 @@ mod appkit {
         }
 
         pub fn is_speaking(&self) -> bool {
-            unsafe { msg_send_bool![self, isSpeaking] }
+            unsafe { msg_send![self, isSpeaking] }
         }
     }
 
@@ -122,7 +122,7 @@ mod avfaudio {
         }
 
         pub fn is_speaking(&self) -> bool {
-            unsafe { msg_send_bool![self, isSpeaking] }
+            unsafe { msg_send![self, isSpeaking] }
         }
     }
 

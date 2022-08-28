@@ -10,8 +10,7 @@ use super::{
     CGFloat, NSComparisonResult, NSCopying, NSInteger, NSObject, NSString, NSUInteger, NSValue,
 };
 use crate::rc::{Id, Shared};
-use crate::runtime::Bool;
-use crate::{extern_class, msg_send, msg_send_bool, msg_send_id, ClassType, Encoding};
+use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encoding};
 
 extern_class!(
     /// An object wrapper for primitive scalars.
@@ -72,12 +71,8 @@ macro_rules! def_new_fn {
 
 /// Creation methods.
 impl NSNumber {
-    pub fn new_bool(val: bool) -> Id<Self, Shared> {
-        let val = Bool::new(val);
-        unsafe { msg_send_id![Self::class(), numberWithBool: val] }
-    }
-
     def_new_fn! {
+        (new_bool(bool); numberWithBool: bool),
         (new_i8(i8); numberWithChar: c_char),
         (new_u8(u8); numberWithUnsignedChar: c_uchar),
         (new_i16(i16); numberWithShort: c_short),
@@ -120,11 +115,8 @@ macro_rules! def_get_fn {
 
 /// Getter methods.
 impl NSNumber {
-    pub fn as_bool(&self) -> bool {
-        unsafe { msg_send_bool![self, boolValue] }
-    }
-
     def_get_fn! {
+        (as_bool -> bool; boolValue -> bool),
         (as_i8 -> i8; charValue -> c_char),
         (as_u8 -> u8; unsignedCharValue -> c_uchar),
         (as_i16 -> i16; shortValue -> c_short),
@@ -242,11 +234,21 @@ impl NSNumber {
             _ => unreachable!("invalid encoding for NSNumber"),
         }
     }
-
-    fn string(&self) -> Id<NSString, Shared> {
-        unsafe { msg_send_id![self, stringValue] }
-    }
 }
+
+extern_methods!(
+    unsafe impl NSNumber {
+        #[sel(compare:)]
+        fn compare(&self, other: &Self) -> NSComparisonResult;
+
+        #[sel(isEqualToNumber:)]
+        fn is_equal_to_number(&self, other: &Self) -> bool;
+
+        fn string(&self) -> Id<NSString, Shared> {
+            unsafe { msg_send_id![self, stringValue] }
+        }
+    }
+);
 
 unsafe impl NSCopying for NSNumber {
     type Ownership = Shared;
@@ -266,7 +268,7 @@ impl PartialEq for NSNumber {
     #[doc(alias = "isEqualToNumber:")]
     fn eq(&self, other: &Self) -> bool {
         // Use isEqualToNumber: instaed of isEqual: since it is faster
-        unsafe { msg_send_bool![self, isEqualToNumber: other] }
+        self.is_equal_to_number(other)
     }
 }
 
@@ -283,8 +285,7 @@ impl PartialOrd for NSNumber {
     #[doc(alias = "compare:")]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         // Use Objective-C semantics for comparison
-        let res: NSComparisonResult = unsafe { msg_send![self, compare: other] };
-        Some(res.into())
+        Some(self.compare(other).into())
     }
 }
 

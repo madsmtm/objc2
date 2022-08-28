@@ -601,12 +601,11 @@ macro_rules! __class_inner {
 /// C-compatible string. Now it's much, _much_ easier to make a safe
 /// abstraction around this!
 ///
-/// There exists two variants of this macro, [`msg_send_bool!`] and
-/// [`msg_send_id!`], which can help with upholding certain requirements of
-/// methods that return respectively Objective-C's `BOOL` and `id` (or any
-/// object pointer). Use those whenever you want to call such a method!
+/// There exists a variant of this macro, [`msg_send_id!`], which can help
+/// with upholding certain requirements of methods that return Objective-C's
+/// `id`, or other object pointers. Use that whenever you want to call such a
+/// method!
 ///
-/// [`msg_send_bool!`]: crate::msg_send_bool
 /// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
@@ -641,6 +640,23 @@ macro_rules! __class_inner {
 /// [`Encode`]: crate::Encode
 /// [`sel!`]: crate::sel
 /// [`MessageReceiver::send_message`]: crate::MessageReceiver::send_message
+///
+///
+/// # `bool` handling
+///
+/// Objective-C's `BOOL` is different from Rust's [`bool`], and hence a
+/// conversion step must be performed before using it. This is _very_ easy to
+/// forget (because it'll happen to work in _most_ cases), so for ease of use,
+/// this macro does the conversion step automatically whenever the argument or
+/// return type is `bool`!
+///
+/// That means that any Objective-C method that take or return `BOOL` can
+/// simply be translated to use `bool` on the Rust side.
+///
+/// If you want to handle the conversion explicitly, or the Objective-C method
+/// expects a pointer to a `BOOL`, use [`runtime::Bool`] instead.
+///
+/// [`runtime::Bool`]: crate::runtime::Bool
 ///
 ///
 /// # Panics
@@ -706,9 +722,9 @@ macro_rules! __class_inner {
 /// # obj = 0 as *mut Object;
 /// let description: *const Object = unsafe { msg_send![obj, description] };
 /// // Usually you'd use msg_send_id here ^
-/// let _: () = unsafe { msg_send![obj, setArg1: 1u32, arg2: 2u8] };
+/// let _: () = unsafe { msg_send![obj, setArg1: 1i32, arg2: true] };
 /// let arg1: i32 = unsafe { msg_send![obj, getArg1] };
-/// let arg2: u8 = unsafe { msg_send![obj, getArg2] };
+/// let arg2: bool = unsafe { msg_send![obj, getArg2] };
 /// ```
 ///
 /// Sending messages to the direct superclass of an object.
@@ -781,52 +797,12 @@ macro_rules! msg_send {
     });
 }
 
-/// [`msg_send!`] for methods returning `BOOL`.
-///
-/// Objective-C's `BOOL` is different from Rust's [`bool`], see
-/// [`runtime::Bool`] for more information, so a conversion step must be
-/// performed before using it - this can easily be forgotted using the
-/// [`msg_send!`] macro, so this is a less error-prone version does the
-/// conversion for you!
-///
-/// [`runtime::Bool`]: crate::runtime::Bool
-///
-///
-/// # Specification
-///
-/// Equivalent to the following:
-///
-/// ```no_run
-/// # use objc2::msg_send;
-/// # use objc2::runtime::{Bool, Object};
-/// # let obj: *mut Object = 0 as *mut Object;
-/// # unsafe
-/// {
-///     let result: Bool = msg_send![obj, selector];
-///     result.as_bool()
-/// };
-/// ```
-///
-///
-/// # Safety
-///
-/// Same as [`msg_send!`], with the expected return type of `BOOL`.
-///
-///
-/// # Examples
-///
-#[cfg_attr(feature = "apple", doc = "```")]
-#[cfg_attr(not(feature = "apple"), doc = "```no_run")]
-/// # use objc2::{class, msg_send_bool, msg_send_id};
-/// # use objc2::rc::{Id, Owned};
-/// # use objc2::runtime::Object;
-/// let obj: Id<Object, Owned>;
-/// # obj = unsafe { msg_send_id![class!(NSObject), new] };
-/// assert!(unsafe { msg_send_bool![&obj, isEqual: &*obj] });
-/// ```
+/// Deprecated. Use [`msg_send!`] instead.
 #[macro_export]
+#[deprecated = "use a normal msg_send! instead, it will perform the conversion for you"]
 macro_rules! msg_send_bool {
     [$($msg_send_args:tt)+] => ({
+        // Use old impl for backwards compat
         let result: $crate::runtime::Bool = $crate::msg_send![$($msg_send_args)+];
         result.as_bool()
     });
@@ -964,7 +940,7 @@ macro_rules! msg_send_bool {
 /// # Examples
 ///
 /// ```no_run
-/// use objc2::{class, msg_send, msg_send_bool, msg_send_id};
+/// use objc2::{class, msg_send_id};
 /// use objc2::ffi::NSUInteger;
 /// use objc2::rc::{Id, Shared};
 /// use objc2::runtime::Object;

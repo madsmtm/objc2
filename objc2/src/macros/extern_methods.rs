@@ -39,7 +39,6 @@
 /// ```
 /// use objc2::foundation::{NSObject, NSRange, NSString, NSUInteger};
 /// use objc2::rc::{Id, Shared};
-/// use objc2::runtime::Bool;
 /// use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
@@ -88,7 +87,6 @@
 ///
 ///     /// Accessor methods.
 ///     // SAFETY: `first_weekday` is correctly defined
-///     // TODO: Support methods returning `bool`
 ///     unsafe impl NSCalendar {
 ///         #[sel(firstWeekday)]
 ///         pub fn first_weekday(&self) -> NSUInteger;
@@ -101,11 +99,7 @@
 ///         // `unsafe` because we don't have definitions for `NSDate` and
 ///         // `NSDateComponents` yet, so the user must ensure that is what's
 ///         // passed.
-///         pub unsafe fn date_matches_raw(&self, date: &NSObject, components: &NSObject) -> Bool;
-///
-///         pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool {
-///             self.date_matches_raw(date, components).as_bool()
-///         }
+///         pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool;
 ///
 ///         #[sel(maximumRangeOfUnit:)]
 ///         pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange;
@@ -118,7 +112,6 @@
 /// ```
 /// # use objc2::foundation::{NSObject, NSRange, NSString, NSUInteger};
 /// # use objc2::rc::{Id, Shared};
-/// # use objc2::runtime::Bool;
 /// # use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
@@ -174,12 +167,8 @@
 ///         unsafe { msg_send_id![self, amSymbol] }
 ///     }
 ///
-///     pub unsafe fn date_matches_raw(&self, date: &NSObject, components: &NSObject) -> Bool {
-///         unsafe { msg_send![self, date: date, matchesComponents: components] }
-///     }
-///
 ///     pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool {
-///         self.date_matches_raw(date, components).as_bool()
+///         unsafe { msg_send![self, date: date, matchesComponents: components] }
 ///     }
 ///
 ///     pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange {

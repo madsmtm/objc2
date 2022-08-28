@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSObject, NSString};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send_bool, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A thread of execution.
@@ -40,9 +40,8 @@ extern_methods!(
         }
 
         /// Returns `true` if the thread is the main thread.
-        pub fn is_main(&self) -> bool {
-            unsafe { msg_send_bool![self, isMainThread] }
-        }
+        #[sel(isMainThread)]
+        pub fn is_main(&self) -> bool;
 
         /// The name of the thread.
         pub fn name(&self) -> Option<Id<NSString, Shared>> {
@@ -55,6 +54,12 @@ extern_methods!(
 
         #[sel(start)]
         unsafe fn start(&self);
+
+        #[sel(isMainThread)]
+        fn is_current_main() -> bool;
+
+        #[sel(isMultiThreaded)]
+        fn is_global_multi() -> bool;
     }
 );
 
@@ -68,12 +73,12 @@ impl fmt::Debug for NSThread {
 
 /// Whether the application is multithreaded according to Cocoa.
 pub fn is_multi_threaded() -> bool {
-    unsafe { msg_send_bool![NSThread::class(), isMultiThreaded] }
+    NSThread::is_global_multi()
 }
 
 /// Whether the current thread is the main thread.
 pub fn is_main_thread() -> bool {
-    unsafe { msg_send_bool![NSThread::class(), isMainThread] }
+    NSThread::is_current_main()
 }
 
 #[allow(unused)]

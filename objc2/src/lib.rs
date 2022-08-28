@@ -24,14 +24,14 @@
 //! deallocated after we've used it by putting it into an [`rc::Owned`]
 //! [`rc::Id`].
 //! Now we're free to send messages to the object to our hearts desire using
-//! the [`msg_send!`], [`msg_send_bool!`] or [`msg_send_id!`] macros
-//! (depending on the return type of the method).
+//! the [`msg_send!`] or [`msg_send_id!`] macros (depending on the return type
+//! of the method).
 //! Finally, the `Id<Object, _>` goes out of scope, and the object is released
 //! and deallocated.
 //!
 #![cfg_attr(feature = "apple", doc = "```")]
 #![cfg_attr(not(feature = "apple"), doc = "```no_run")]
-//! use objc2::{class, msg_send, msg_send_bool, msg_send_id};
+//! use objc2::{class, msg_send, msg_send_id};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::{Id, Owned, Shared};
 //! use objc2::runtime::Object;
@@ -52,14 +52,14 @@
 //! let hash2: NSUInteger = unsafe { msg_send![&obj2, hash] };
 //! assert_ne!(hash1, hash2);
 //!
-//! let is_kind = unsafe { msg_send_bool![&obj1, isKindOfClass: cls] };
+//! let is_kind: bool = unsafe { msg_send![&obj1, isKindOfClass: cls] };
 //! assert!(is_kind);
 //!
 //! // We're going to create a new reference to the first object, so
 //! // relinquish mutable ownership.
 //! let obj1: Id<Object, Shared> = obj1.into();
 //! let obj1_self: Id<Object, Shared> = unsafe { msg_send_id![&obj1, self] };
-//! let is_equal = unsafe { msg_send_bool![&obj1, isEqual: &*obj1_self] };
+//! let is_equal: bool = unsafe { msg_send![&obj1, isEqual: &*obj1_self] };
 //! assert!(is_equal);
 //!
 //! // Deallocation on drop

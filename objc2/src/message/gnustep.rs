@@ -2,9 +2,10 @@ use core::hint;
 use core::mem;
 
 use super::conditional_try;
+use crate::encode::Encode;
 use crate::ffi;
 use crate::runtime::{Class, Imp, Object, Sel};
-use crate::{Encode, MessageArguments};
+use crate::MessageArguments;
 
 #[inline]
 fn unwrap_msg_send_fn(msg_send_fn: Option<Imp>) -> Imp {

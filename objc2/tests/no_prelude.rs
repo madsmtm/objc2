@@ -105,16 +105,6 @@ pub fn test_msg_send(obj: &new_objc2::foundation::NSString) {
     let _: () = unsafe { new_objc2::msg_send![super(obj, superclass), a: obj, b: obj] };
 }
 
-pub fn test_msg_send_bool(obj: &new_objc2::foundation::NSString) {
-    let superclass = obj.class().superclass().unwrap();
-    unsafe { new_objc2::msg_send_bool![obj, a] };
-    unsafe { new_objc2::msg_send_bool![obj, a: obj, b: obj] };
-    unsafe { new_objc2::msg_send_bool![super(obj), a] };
-    unsafe { new_objc2::msg_send_bool![super(obj), a: obj, b: obj] };
-    unsafe { new_objc2::msg_send_bool![super(obj, superclass), a] };
-    unsafe { new_objc2::msg_send_bool![super(obj, superclass), a: obj, b: obj] };
-}
-
 pub fn test_msg_send_id(obj: &new_objc2::runtime::Object) {
     let _: new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared> =
         unsafe { new_objc2::msg_send_id![obj, a] };

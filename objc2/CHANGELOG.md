@@ -23,6 +23,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `extern_methods!` macro.
 * Added ability to call `msg_send![super(obj), ...]` without explicitly
   specifying the superclass.
+* Added automatic conversion of `bool` to/from the Objective-C `BOOL` in
+  `msg_send!`, `msg_send_id!` and `extern_methods!`.
+
+  Example:
+  ```rust
+  // Before
+  use objc2::{msg_send, msg_send_bool};
+  use objc2::rc::{Id, Shared};
+  use objc2::runtime::{Bool, Object};
+
+  let obj: Id<Object, Shared>;
+  let _: () = unsafe { msg_send![&obj, setArg: Bool::YES] };
+  let is_equal = unsafe { msg_send_bool![&obj, isEqual: &*obj] };
+
+  // After
+  use objc2::msg_send;
+  use objc2::rc::{Id, Shared};
+  use objc2::runtime::Object;
+
+  let obj: Id<Object, Shared>;
+  let _: () = unsafe { msg_send![&obj, setArg: true] };
+  let is_equal: bool = unsafe { msg_send![&obj, isEqual: &*obj] };
+  ```
 
 ### Changed
 * **BREAKING**: Change syntax in `extern_class!` macro to be more Rust-like.
@@ -44,6 +67,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       msg_send_id![msg_send_id![class!(MyObject), alloc], init]
   };
   ```
+
+### Deprecated
+* Depreacted `msg_send_bool!` in favour of new functionality on `msg_send!`
+  that allows seamlessly handling `bool`.
 
 
 ## 0.3.0-beta.1 - 2022-07-19

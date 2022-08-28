@@ -3,8 +3,8 @@ use core::hash::{Hash, Hasher};
 use malloc_buf::Malloc;
 use std::error::Error;
 
+use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding};
 use crate::runtime::{Class, Object, Sel};
-use crate::{Encode, EncodeArguments, Encoding};
 
 /// Workaround for `Malloc<str>` not implementing common traits
 #[derive(Debug)]
@@ -101,14 +101,14 @@ impl Error for VerificationError {}
 pub(crate) fn verify_message_signature<A, R>(cls: &Class, sel: Sel) -> Result<(), VerificationError>
 where
     A: EncodeArguments,
-    R: Encode,
+    R: EncodeConvert,
 {
     let method = match cls.instance_method(sel) {
         Some(method) => method,
         None => return Err(Inner::MethodNotFound.into()),
     };
 
-    let actual = R::ENCODING;
+    let actual = R::__Inner::ENCODING;
     let expected = method.return_type();
     if !actual.equivalent_to_str(&*expected) {
         return Err(Inner::MismatchedReturn(MallocEncoding(expected), actual).into());

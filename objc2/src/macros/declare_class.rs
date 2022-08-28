@@ -234,7 +234,7 @@ macro_rules! __inner_declare_class {
 /// use objc2::rc::{Id, Owned};
 /// use objc2::foundation::{NSCopying, NSObject, NSZone};
 /// use objc2::runtime::Bool;
-/// use objc2::{declare_class, msg_send, msg_send_bool, msg_send_id, ClassType};
+/// use objc2::{declare_class, msg_send, msg_send_id, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -297,7 +297,7 @@ macro_rules! __inner_declare_class {
 ///     }
 ///
 ///     pub fn my_class_method() -> bool {
-///         unsafe { msg_send_bool![Self::class(), myClassMethod] }
+///         unsafe { msg_send![Self::class(), myClassMethod] }
 ///     }
 /// }
 ///
