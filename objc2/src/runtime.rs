@@ -17,10 +17,11 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
-pub use super::bool::Bool;
 use crate::{ffi, Encode, Encoding, RefEncode};
 #[cfg(feature = "malloc")]
 use crate::{verify::verify_message_signature, EncodeArguments, VerificationError};
+#[doc(inline)]
+pub use objc2_encode::__bool::Bool;
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]

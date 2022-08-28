@@ -102,6 +102,8 @@ extern crate std;
 #[cfg(any(feature = "alloc", test, doc))]
 extern crate alloc;
 
+#[doc(hidden)]
+pub mod __bool;
 mod encode;
 mod encoding;
 mod helper;
@@ -111,5 +113,5 @@ mod parse;
 #[allow(dead_code)]
 mod static_str;
 
-pub use self::encode::{Encode, EncodeArguments, RefEncode};
+pub use self::encode::{Encode, EncodeArguments, EncodeConvert, RefEncode};
 pub use self::encoding::Encoding;

@@ -8,6 +8,7 @@ use core::ptr::NonNull;
 use core::sync::atomic;
 
 use crate::Encoding;
+use crate::__bool::Bool;
 
 /// Types that have an Objective-C type-encoding.
 ///
@@ -547,35 +548,106 @@ encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 
-mod private {
+mod convert_private {
+    use super::*;
+
+    pub trait Sealed {}
+    impl<T: Encode> Sealed for T {}
+    impl Sealed for bool {}
+}
+
+/// Represents types that can easily be converted to/from an [`Encode`] type.
+///
+/// This is implemented specially for [`bool`] to allow using that as
+/// Objective-C `BOOL`, where it would otherwise not be allowed (since they
+/// are not ABI compatible).
+///
+/// This is mostly an implementation detail, and hence the trait is sealed.
+/// Open an issue if you know a use-case where this restrition should be
+/// lifted!
+pub trait EncodeConvert: convert_private::Sealed {
+    /// The inner type that this can be converted to and from.
+    #[doc(hidden)]
+    type __Inner: Encode;
+
+    /// The actual encoding this type has.
+    #[doc(hidden)]
+    const __ENCODING: Encoding;
+
+    #[doc(hidden)]
+    fn __from_inner(inner: Self::__Inner) -> Self;
+
+    #[doc(hidden)]
+    fn __into_inner(self) -> Self::__Inner;
+}
+
+impl<T: Encode> EncodeConvert for T {
+    type __Inner = Self;
+    const __ENCODING: Encoding = Self::ENCODING;
+
+    #[inline]
+    fn __from_inner(inner: Self::__Inner) -> Self {
+        inner
+    }
+
+    #[inline]
+    fn __into_inner(self) -> Self::__Inner {
+        self
+    }
+}
+
+impl EncodeConvert for bool {
+    type __Inner = Bool;
+    const __ENCODING: Encoding = Encoding::Bool;
+
+    #[inline]
+    fn __from_inner(inner: Self::__Inner) -> Self {
+        inner.as_bool()
+    }
+
+    #[inline]
+    fn __into_inner(self) -> Self::__Inner {
+        Bool::new(self)
+    }
+}
+
+mod args_private {
     pub trait Sealed {}
 }
 
 /// Types that represent an ordered group of function arguments, where each
-/// argument has an Objective-C type-encoding.
+/// argument has an Objective-C type-encoding, or can be converted from one.
 ///
 /// This is implemented for tuples of up to 12 arguments, where each argument
-/// implements [`Encode`]. It is primarily used to make generic code easier.
+/// implements [`EncodeConvert`]. It is primarily used to make generic code
+/// a bit easier.
 ///
-/// Note that tuples themselves don't implement [`Encode`] directly because
+/// Note that tuples themselves don't implement [`Encode`] directly, because
 /// they're not FFI-safe!
-///
-/// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait EncodeArguments: private::Sealed {
+///
+///
+/// # Safety
+///
+/// You cannot rely on this trait for ensuring that the arguments all
+/// are [`Encode`], since they may only implement [`EncodeConvert`]. Use your
+/// own trait and add [`Encode`] bounds on that.
+pub unsafe trait EncodeArguments: args_private::Sealed {
     /// The encodings for the arguments.
     const ENCODINGS: &'static [Encoding];
 }
 
 macro_rules! encode_args_impl {
     ($($Arg: ident),*) => {
-        impl<$($Arg: Encode),*> private::Sealed for ($($Arg,)*) {}
+        impl<$($Arg: EncodeConvert),*> args_private::Sealed for ($($Arg,)*) {}
 
-        unsafe impl<$($Arg: Encode),*> EncodeArguments for ($($Arg,)*) {
+        unsafe impl<$($Arg: EncodeConvert),*> EncodeArguments for ($($Arg,)*) {
             const ENCODINGS: &'static [Encoding] = &[
-                $($Arg::ENCODING),*
+                // T::__Inner::ENCODING => T::ENCODING
+                // bool::__Inner::ENCODING => Bool::ENCODING
+                $($Arg::__Inner::ENCODING),*
             ];
         }
     };
@@ -597,8 +669,10 @@ encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 #[cfg(test)]
 mod tests {
-    use super::atomic::*;
     use super::*;
+
+    use core::any::TypeId;
+    use core::sync::atomic::*;
 
     #[test]
     fn test_c_string() {
@@ -718,6 +792,44 @@ mod tests {
         impls_encode(my_fn2 as extern "C" fn(_, _));
         impls_encode(my_fn3 as extern "C" fn(_) -> _);
         impls_encode(my_fn4 as extern "C" fn(_, _) -> _);
+    }
+
+    #[test]
+    fn convert_normally_noop() {
+        assert_eq!(
+            TypeId::of::<<i32 as EncodeConvert>::__Inner>(),
+            TypeId::of::<i32>()
+        );
+        assert_eq!(<i32 as EncodeConvert>::__from_inner(42), 42);
+        assert_eq!(42i32.__into_inner(), 42);
+    }
+
+    #[test]
+    fn convert_i8() {
+        assert_eq!(
+            TypeId::of::<<i8 as EncodeConvert>::__Inner>(),
+            TypeId::of::<i8>()
+        );
+        assert_eq!(<i8 as EncodeConvert>::__from_inner(-3), -3);
+        assert_eq!((-3i32).__into_inner(), -3);
+    }
+
+    #[test]
+    fn convert_bool() {
+        assert!(!<bool as EncodeConvert>::__from_inner(Bool::NO));
+        assert!(<bool as EncodeConvert>::__from_inner(Bool::YES));
+
+        assert!(!false.__into_inner().as_bool());
+        assert!(true.__into_inner().as_bool());
+        assert_eq!(bool::__ENCODING, Encoding::Bool);
+
+        assert_eq!(
+            <bool as EncodeConvert>::__Inner::__ENCODING,
+            <bool as EncodeConvert>::__Inner::ENCODING
+        );
+
+        #[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86_64"))]
+        assert_eq!(<bool as EncodeConvert>::__Inner::ENCODING, Encoding::Char);
     }
 
     #[test]

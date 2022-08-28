@@ -216,7 +216,6 @@ macro_rules! __hash_idents {
 
 #[doc(hidden)]
 pub mod __macro_helpers;
-mod bool;
 mod cache;
 mod class_type;
 pub mod declare;
