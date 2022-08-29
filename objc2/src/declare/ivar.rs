@@ -5,7 +5,7 @@ use core::ops::{Deref, DerefMut};
 use core::ptr::NonNull;
 
 use crate::encode::EncodeConvert;
-use crate::runtime::Object;
+use crate::runtime::{ivar_offset, Object};
 
 /// Helper trait for defining instance variables.
 ///
@@ -42,6 +42,12 @@ pub unsafe trait IvarType {
     type Type: EncodeConvert;
     /// The name of the instance variable.
     const NAME: &'static str;
+
+    #[doc(hidden)]
+    unsafe fn __offset(ptr: NonNull<Object>) -> isize {
+        let obj = unsafe { ptr.as_ref() };
+        ivar_offset(obj.class(), Self::NAME, &Self::Type::__ENCODING)
+    }
 }
 
 /// A wrapper type over a custom instance variable.
@@ -138,6 +144,8 @@ impl<T: IvarType> Ivar<T> {
     /// This is similar to [`MaybeUninit::as_ptr`], see that for usage
     /// instructions.
     pub fn as_ptr(this: &Self) -> *const T::Type {
+        let ptr: NonNull<Object> = NonNull::from(this).cast();
+
         // SAFETY: The user ensures that this is placed in a struct that can
         // be reinterpreted as an `Object`. Since `Ivar` can never be
         // constructed by itself (and is neither Copy nor Clone), we know that
@@ -149,12 +157,11 @@ impl<T: IvarType> Ivar<T> {
         // Note: We technically don't have provenance over the object, nor the
         // ivar, but the object doesn't have provenance over the ivar either,
         // so that is fine.
-        let ptr = NonNull::from(this).cast::<Object>();
-        let obj = unsafe { ptr.as_ref() };
+        let offset = unsafe { T::__offset(ptr) };
+        // SAFETY: The offset is valid
+        let ptr = unsafe { Object::ivar_at_offset::<T::Type>(ptr, offset) };
 
-        // SAFETY: User ensures that the `Ivar<T>` is only used when the ivar
-        // exists and has the correct type
-        unsafe { obj.inner_ivar_ptr::<T::Type>(T::NAME) }
+        ptr.as_ptr()
     }
 
     /// Get a mutable pointer to the instance variable.
@@ -168,38 +175,15 @@ impl<T: IvarType> Ivar<T> {
     /// This is similar to [`MaybeUninit::as_mut_ptr`], see that for usage
     /// instructions.
     fn as_mut_ptr(this: &mut Self) -> *mut T::Type {
-        let ptr = NonNull::from(this).cast::<Object>();
-        // SAFETY: Same as `as_ptr`.
-        //
-        // Note: We don't use `mut` because the user might have two mutable
-        // references to different ivars, as such:
-        //
-        // ```
-        // #[repr(C)]
-        // struct X {
-        //     inner: Object,
-        //     ivar1: Ivar<Ivar1>,
-        //     ivar2: Ivar<Ivar2>,
-        // }
-        //
-        // let mut x: X;
-        // let ivar1: &mut Ivar<Ivar1> = &mut x.ivar1;
-        // let ivar2: &mut Ivar<Ivar2> = &mut x.ivar2;
-        // ```
-        //
-        // And using `mut` would create aliasing mutable reference to the
-        // object.
-        //
-        // Since `Object` is `UnsafeCell`, so mutable access through `&Object`
-        // is allowed.
-        //
-        // TODO: Not entirely sure, it might be safe to just do `as_mut`, but
-        // this is definitely safe.
-        let obj = unsafe { ptr.as_ref() };
+        let ptr: NonNull<Object> = NonNull::from(this).cast();
 
-        // SAFETY: User ensures that the `Ivar<T>` is only used when the ivar
-        // exists and has the correct type
-        unsafe { obj.inner_ivar_ptr::<T::Type>(T::NAME) }
+        // SAFETY: Same as `as_ptr`
+        let offset = unsafe { T::__offset(ptr) };
+        // SAFETY: The offset is valid
+        let ptr = unsafe { Object::ivar_at_offset::<T::Type>(ptr, offset) };
+
+        // Safe as *mut T because it came from `&mut Self`
+        ptr.as_ptr()
     }
 
     /// Sets the value of the instance variable.
@@ -221,7 +205,8 @@ impl<T: IvarType> Deref for Ivar<T> {
 
     #[inline]
     fn deref(&self) -> &Self::Target {
-        // SAFETY: The ivar pointer always points to a valid instance.
+        // SAFETY: User ensures that the `Ivar<T>` is only used when the ivar
+        // exists, has the correct type, and has been properly initialized.
         //
         // Since all accesses to a particular ivar only goes through one
         // `Ivar`, if we have `&Ivar` we know that `&T` is safe.
@@ -232,8 +217,30 @@ impl<T: IvarType> Deref for Ivar<T> {
 impl<T: IvarType> DerefMut for Ivar<T> {
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
-        // SAFETY: Safe as mutable because there is only one access to a
+        // SAFETY: User ensures that the `Ivar<T>` is only used when the ivar
+        // exists, has the correct type, and has been properly initialized.
+        //
+        // Safe as mutable because there is only one access to a
         // particular ivar at a time (since we have `&mut self`).
+
+        // Note: We're careful not to create `&mut Object` because the user
+        // might have two mutable references to different ivars, as such:
+        //
+        // ```
+        // #[repr(C)]
+        // struct X {
+        //     inner: Object,
+        //     ivar1: Ivar<Ivar1>,
+        //     ivar2: Ivar<Ivar2>,
+        // }
+        //
+        // let mut x: X;
+        // let ivar1: &mut Ivar<Ivar1> = &mut x.ivar1;
+        // let ivar2: &mut Ivar<Ivar2> = &mut x.ivar2;
+        // ```
+        //
+        // And using `mut` would create aliasing mutable reference to the
+        // object.
         unsafe { Self::as_mut_ptr(self).as_mut().unwrap_unchecked() }
     }
 }

@@ -410,12 +410,13 @@ impl ClassBuilder {
     /// If the ivar wasn't successfully added for some reason - this usually
     /// happens if there already was an ivar with that name.
     pub fn add_ivar<T: Encode>(&mut self, name: &str) {
-        self.add_ivar_inner::<T>(name)
+        // SAFETY: The encoding is correct
+        unsafe { self.add_ivar_inner::<T>(name, &T::ENCODING) }
     }
 
-    fn add_ivar_inner<T: EncodeConvert>(&mut self, name: &str) {
+    unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
         let c_name = CString::new(name).unwrap();
-        let encoding = CString::new(T::__ENCODING.to_string()).unwrap();
+        let encoding = CString::new(encoding.to_string()).unwrap();
         let size = mem::size_of::<T>();
         let align = log2_align_of::<T>();
         let success = Bool::from_raw(unsafe {
@@ -437,7 +438,8 @@ impl ClassBuilder {
     ///
     /// Same as [`ClassBuilder::add_ivar`].
     pub fn add_static_ivar<T: IvarType>(&mut self) {
-        self.add_ivar_inner::<T::Type>(T::NAME)
+        // SAFETY: The encoding is correct
+        unsafe { self.add_ivar_inner::<T::Type>(T::NAME, &T::Type::__ENCODING) }
     }
 
     /// Adds the given protocol to self.
