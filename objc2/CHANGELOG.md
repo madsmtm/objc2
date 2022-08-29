@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* `Ivar::write`, `Ivar::as_ptr` and `Ivar::as_mut_ptr` for querying/modifying
+  the instance variable inside `init` methods.
+
+### Removed
+* **BREAKING**: `MaybeUninit` no longer implements `IvarType` directly; use
+  `Ivar::write` instead.
+
 ## 0.3.0-beta.2 - 2022-08-28
 
 ### Added

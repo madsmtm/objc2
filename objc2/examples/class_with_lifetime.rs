@@ -4,7 +4,6 @@
 //! support such use-cases. Instead, we'll declare the class manually!
 #![deny(unsafe_op_in_unsafe_fn)]
 use std::marker::PhantomData;
-use std::mem::MaybeUninit;
 use std::sync::Once;
 
 use objc2::declare::{ClassBuilder, Ivar, IvarType};
@@ -46,6 +45,19 @@ unsafe impl RefEncode for MyObject<'_> {
 unsafe impl Message for MyObject<'_> {}
 
 impl<'a> MyObject<'a> {
+    unsafe extern "C" fn init_with_ptr(
+        &mut self,
+        _cmd: Sel,
+        ptr: Option<&'a mut u8>,
+    ) -> Option<&'a mut Self> {
+        let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
+        this.map(|this| {
+            // Properly initialize the number reference
+            Ivar::write(&mut this.number, ptr.expect("got NULL number ptr"));
+            this
+        })
+    }
+
     pub fn new(number: &'a mut u8) -> Id<Self, Owned> {
         // SAFETY: The lifetime of the reference is properly bound to the
         // returned type
@@ -77,38 +89,10 @@ unsafe impl<'a> ClassType for MyObject<'a> {
 
             builder.add_static_ivar::<NumberIvar<'a>>();
 
-            /// Helper struct since we can't access the instance variable
-            /// from inside MyObject, since it hasn't been initialized yet!
-            #[repr(C)]
-            struct PartialInit<'a> {
-                inner: NSObject,
-                number: Ivar<MaybeUninit<NumberIvar<'a>>>,
-            }
-            unsafe impl RefEncode for PartialInit<'_> {
-                const ENCODING_REF: Encoding = Encoding::Object;
-            }
-            unsafe impl Message for PartialInit<'_> {}
-
-            impl<'a> PartialInit<'a> {
-                unsafe extern "C" fn init_with_ptr(
-                    this: &mut Self,
-                    _cmd: Sel,
-                    ptr: Option<&'a mut u8>,
-                ) -> Option<&'a mut Self> {
-                    let this: Option<&mut Self> =
-                        unsafe { msg_send![super(this, NSObject::class()), init] };
-                    this.map(|this| {
-                        // Properly initialize the number reference
-                        this.number.write(ptr.expect("got NULL number ptr"));
-                        this
-                    })
-                }
-            }
-
             unsafe {
                 builder.add_method(
                     sel!(initWithPtr:),
-                    PartialInit::init_with_ptr as unsafe extern "C" fn(_, _, _) -> _,
+                    Self::init_with_ptr as unsafe extern "C" fn(_, _, _) -> _,
                 );
             }
 
