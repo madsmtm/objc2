@@ -4,7 +4,7 @@ use core::mem::MaybeUninit;
 use core::ops::{Deref, DerefMut};
 use core::ptr::NonNull;
 
-use crate::encode::{Encode, EncodeConvert};
+use crate::encode::EncodeConvert;
 use crate::runtime::Object;
 
 /// Helper trait for defining instance variables.
@@ -42,14 +42,6 @@ pub unsafe trait IvarType {
     type Type: EncodeConvert;
     /// The name of the instance variable.
     const NAME: &'static str;
-}
-
-unsafe impl<T: IvarType> IvarType for MaybeUninit<T>
-where
-    T::Type: Encode,
-{
-    type Type = MaybeUninit<T::Type>;
-    const NAME: &'static str = T::NAME;
 }
 
 /// A wrapper type over a custom instance variable.
@@ -138,7 +130,14 @@ pub struct Ivar<T: IvarType> {
 }
 
 impl<T: IvarType> Ivar<T> {
-    fn get_ref(&self) -> &T::Type {
+    /// Get a pointer to the instance variable.
+    ///
+    /// Note that if the ivar has already been initialized, you can simply
+    /// use the `Deref` implementation to get a reference.
+    ///
+    /// This is similar to [`MaybeUninit::as_ptr`], see that for usage
+    /// instructions.
+    pub fn as_ptr(this: &Self) -> *const T::Type {
         // SAFETY: The user ensures that this is placed in a struct that can
         // be reinterpreted as an `Object`. Since `Ivar` can never be
         // constructed by itself (and is neither Copy nor Clone), we know that
@@ -150,21 +149,27 @@ impl<T: IvarType> Ivar<T> {
         // Note: We technically don't have provenance over the object, nor the
         // ivar, but the object doesn't have provenance over the ivar either,
         // so that is fine.
-        let ptr = NonNull::from(self).cast::<Object>();
+        let ptr = NonNull::from(this).cast::<Object>();
         let obj = unsafe { ptr.as_ref() };
 
         // SAFETY: User ensures that the `Ivar<T>` is only used when the ivar
         // exists and has the correct type
-        unsafe {
-            obj.inner_ivar_ptr::<T::Type>(T::NAME)
-                .as_ref()
-                .unwrap_unchecked()
-        }
+        unsafe { obj.inner_ivar_ptr::<T::Type>(T::NAME) }
     }
 
-    fn get_mut_ptr(&mut self) -> *mut T::Type {
-        let ptr = NonNull::from(self).cast::<Object>();
-        // SAFETY: Same as `get_ref`.
+    /// Get a mutable pointer to the instance variable.
+    ///
+    /// This is useful when you want to initialize the ivar inside an `init`
+    /// method (where it may otherwise not have been safely initialized yet).
+    ///
+    /// Note that if the ivar has already been initialized, you can simply
+    /// use the `DerefMut` implementation to get a mutable reference.
+    ///
+    /// This is similar to [`MaybeUninit::as_mut_ptr`], see that for usage
+    /// instructions.
+    fn as_mut_ptr(this: &mut Self) -> *mut T::Type {
+        let ptr = NonNull::from(this).cast::<Object>();
+        // SAFETY: Same as `as_ptr`.
         //
         // Note: We don't use `mut` because the user might have two mutable
         // references to different ivars, as such:
@@ -185,6 +190,9 @@ impl<T: IvarType> Ivar<T> {
         // And using `mut` would create aliasing mutable reference to the
         // object.
         //
+        // Since `Object` is `UnsafeCell`, so mutable access through `&Object`
+        // is allowed.
+        //
         // TODO: Not entirely sure, it might be safe to just do `as_mut`, but
         // this is definitely safe.
         let obj = unsafe { ptr.as_ref() };
@@ -194,12 +202,17 @@ impl<T: IvarType> Ivar<T> {
         unsafe { obj.inner_ivar_ptr::<T::Type>(T::NAME) }
     }
 
-    #[inline]
-    fn get_mut(&mut self) -> &mut T::Type {
-        // SAFETY: Safe as mutable because there is only one access to a
-        // particular ivar at a time (since we have `&mut self`). `Object` is
-        // `UnsafeCell`, so mutable access through `&Object` is allowed.
-        unsafe { self.get_mut_ptr().as_mut().unwrap_unchecked() }
+    /// Sets the value of the instance variable.
+    ///
+    /// This is useful when you want to initialize the ivar inside an `init`
+    /// method (where it may otherwise not have been safely initialized yet).
+    ///
+    /// This is similar to [`MaybeUninit::write`], see that for usage
+    /// instructions.
+    pub fn write(this: &mut Self, val: T::Type) -> &mut T::Type {
+        let ptr: *mut MaybeUninit<T::Type> = Self::as_mut_ptr(this).cast();
+        let ivar = unsafe { ptr.as_mut().unwrap_unchecked() };
+        ivar.write(val)
     }
 }
 
@@ -208,14 +221,20 @@ impl<T: IvarType> Deref for Ivar<T> {
 
     #[inline]
     fn deref(&self) -> &Self::Target {
-        self.get_ref()
+        // SAFETY: The ivar pointer always points to a valid instance.
+        //
+        // Since all accesses to a particular ivar only goes through one
+        // `Ivar`, if we have `&Ivar` we know that `&T` is safe.
+        unsafe { Self::as_ptr(self).as_ref().unwrap_unchecked() }
     }
 }
 
 impl<T: IvarType> DerefMut for Ivar<T> {
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
-        self.get_mut()
+        // SAFETY: Safe as mutable because there is only one access to a
+        // particular ivar at a time (since we have `&mut self`).
+        unsafe { Self::as_mut_ptr(self).as_mut().unwrap_unchecked() }
     }
 }
 

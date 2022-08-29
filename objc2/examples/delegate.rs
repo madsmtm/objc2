@@ -1,4 +1,5 @@
 #![cfg_attr(not(all(feature = "apple", target_os = "macos")), allow(unused))]
+use objc2::declare::Ivar;
 use objc2::foundation::NSObject;
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
@@ -31,14 +32,22 @@ declare_class!(
 
     unsafe impl CustomAppDelegate {
         #[sel(initWith:another:)]
-        fn init_with(self: &mut Self, ivar: u8, another_ivar: bool) -> *mut Self {
-            let this: *mut Self = unsafe { msg_send![super(self), init] };
-            if let Some(this) = unsafe { this.as_mut() } {
-                // TODO: Allow initialization through MaybeUninit
-                *this.ivar = ivar;
-                *this.another_ivar = another_ivar;
-            }
-            this
+        fn init_with(self: &mut Self, ivar: u8, another_ivar: bool) -> Option<&mut Self> {
+            let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
+            this.map(|this| {
+                Ivar::write(&mut this.ivar, ivar);
+                Ivar::write(&mut this.another_ivar, another_ivar);
+                // Note that we could have done this with just:
+                // *this.ivar = ivar;
+                // *this.another_ivar = another_ivar;
+                //
+                // Since these two ivar types (`u8` and `bool`) are safe to
+                // initialize from all zeroes; but for this example, we chose
+                // to be explicit.
+
+                // SAFETY: All the instance variables have been initialized
+                this
+            })
         }
 
         #[sel(myClassMethod)]
