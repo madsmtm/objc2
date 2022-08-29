@@ -612,6 +612,7 @@ macro_rules! declare_class {
         // Creation
         unsafe impl ClassType for $for {
             type Super = $superclass;
+            const NAME: &'static str = stringify!($name);
 
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
@@ -626,7 +627,7 @@ macro_rules! declare_class {
                         stringify!($name),
                         ". Perhaps a class with that name already exists?",
                     );
-                    let mut builder = $crate::declare::ClassBuilder::new(stringify!($name), superclass).expect(err_str);
+                    let mut builder = $crate::declare::ClassBuilder::new(Self::NAME, superclass).expect(err_str);
 
                     // Ivars
                     $(

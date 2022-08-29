@@ -17,6 +17,7 @@ __inner_extern_class! {
 
 unsafe impl ClassType for NSObject {
     type Super = Object;
+    const NAME: &'static str = "NSObject";
 
     #[inline]
     fn class() -> &'static Class {

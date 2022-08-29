@@ -22,6 +22,7 @@ unsafe impl RefEncode for MyTestObject {
 
 unsafe impl ClassType for MyTestObject {
     type Super = NSObject;
+    const NAME: &'static str = "MyTestObject";
 
     fn class() -> &'static Class {
         class!(MyTestObject)

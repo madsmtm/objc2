@@ -254,6 +254,7 @@ macro_rules! __inner_extern_class {
 
         unsafe impl<$($t_for $(: $b_for)?),*> ClassType for $for {
             type Super = $superclass;
+            const NAME: &'static str = stringify!($name);
 
             #[inline]
             fn class() -> &'static $crate::runtime::Class {
