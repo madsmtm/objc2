@@ -24,7 +24,7 @@ use super::{Ivar, IvarType};
 
 impl<T: IvarType> PartialEq for Ivar<T>
 where
-    T::Type: PartialEq,
+    <Self as Deref>::Target: PartialEq,
 {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
@@ -38,11 +38,11 @@ where
     }
 }
 
-impl<T: IvarType> Eq for Ivar<T> where T::Type: Eq {}
+impl<T: IvarType> Eq for Ivar<T> where <Self as Deref>::Target: Eq {}
 
 impl<T: IvarType> PartialOrd for Ivar<T>
 where
-    T::Type: PartialOrd,
+    <Self as Deref>::Target: PartialOrd,
 {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
@@ -68,7 +68,7 @@ where
 
 impl<T: IvarType> Ord for Ivar<T>
 where
-    T::Type: Ord,
+    <Self as Deref>::Target: Ord,
 {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
@@ -78,7 +78,7 @@ where
 
 impl<T: IvarType> hash::Hash for Ivar<T>
 where
-    T::Type: hash::Hash,
+    <Self as Deref>::Target: hash::Hash,
 {
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         (**self).hash(state)
@@ -87,7 +87,7 @@ where
 
 impl<T: IvarType> hash::Hasher for Ivar<T>
 where
-    T::Type: hash::Hasher,
+    <Self as Deref>::Target: hash::Hasher,
 {
     fn finish(&self) -> u64 {
         (**self).finish()
@@ -135,7 +135,7 @@ where
 
 impl<T: IvarType> fmt::Display for Ivar<T>
 where
-    T::Type: fmt::Display,
+    <Self as Deref>::Target: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
@@ -144,7 +144,7 @@ where
 
 impl<T: IvarType> fmt::Debug for Ivar<T>
 where
-    T::Type: fmt::Debug,
+    <Self as Deref>::Target: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
@@ -153,70 +153,70 @@ where
 
 impl<I: IvarType> Iterator for Ivar<I>
 where
-    I::Type: Iterator,
+    <Self as Deref>::Target: Iterator,
 {
-    type Item = <I::Type as Iterator>::Item;
-    fn next(&mut self) -> Option<<I::Type as Iterator>::Item> {
+    type Item = <<Self as Deref>::Target as Iterator>::Item;
+    fn next(&mut self) -> Option<<<Self as Deref>::Target as Iterator>::Item> {
         (**self).next()
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
         (**self).size_hint()
     }
-    fn nth(&mut self, n: usize) -> Option<<I::Type as Iterator>::Item> {
+    fn nth(&mut self, n: usize) -> Option<<<Self as Deref>::Target as Iterator>::Item> {
         (**self).nth(n)
     }
 }
 
 impl<I: IvarType> DoubleEndedIterator for Ivar<I>
 where
-    I::Type: DoubleEndedIterator,
+    <Self as Deref>::Target: DoubleEndedIterator,
 {
-    fn next_back(&mut self) -> Option<<I::Type as Iterator>::Item> {
+    fn next_back(&mut self) -> Option<<<Self as Deref>::Target as Iterator>::Item> {
         (**self).next_back()
     }
-    fn nth_back(&mut self, n: usize) -> Option<<I::Type as Iterator>::Item> {
+    fn nth_back(&mut self, n: usize) -> Option<<<Self as Deref>::Target as Iterator>::Item> {
         (**self).nth_back(n)
     }
 }
 
 impl<I: IvarType> ExactSizeIterator for Ivar<I>
 where
-    I::Type: ExactSizeIterator,
+    <Self as Deref>::Target: ExactSizeIterator,
 {
     fn len(&self) -> usize {
         (**self).len()
     }
 }
 
-impl<I: IvarType> FusedIterator for Ivar<I> where I::Type: FusedIterator {}
+impl<I: IvarType> FusedIterator for Ivar<I> where <Self as Deref>::Target: FusedIterator {}
 
-// impl<T: IvarType> borrow::Borrow<T::Type> for Ivar<T> {
-//     fn borrow(&self) -> &T::Type {
+// impl<T: IvarType> borrow::Borrow<<Self as Deref>::Target> for Ivar<T> {
+//     fn borrow(&self) -> &<Self as Deref>::Target {
 //         Deref::deref(self)
 //     }
 // }
 //
-// impl<T: IvarType> borrow::BorrowMut<T::Type> for Ivar<T> {
-//     fn borrow_mut(&mut self) -> &mut T::Type {
+// impl<T: IvarType> borrow::BorrowMut<<Self as Deref>::Target> for Ivar<T> {
+//     fn borrow_mut(&mut self) -> &mut <Self as Deref>::Target {
 //         DerefMut::deref_mut(self)
 //     }
 // }
 
-impl<T: IvarType> AsRef<T::Type> for Ivar<T> {
-    fn as_ref(&self) -> &T::Type {
+impl<T: IvarType> AsRef<<Self as Deref>::Target> for Ivar<T> {
+    fn as_ref(&self) -> &<Self as Deref>::Target {
         Deref::deref(self)
     }
 }
 
-impl<T: IvarType> AsMut<T::Type> for Ivar<T> {
-    fn as_mut(&mut self) -> &mut T::Type {
+impl<T: IvarType> AsMut<<Self as Deref>::Target> for Ivar<T> {
+    fn as_mut(&mut self) -> &mut <Self as Deref>::Target {
         DerefMut::deref_mut(self)
     }
 }
 
 impl<T: IvarType> Error for Ivar<T>
 where
-    T::Type: Error,
+    <Self as Deref>::Target: Error,
 {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         (**self).source()
@@ -225,7 +225,7 @@ where
 
 impl<T: IvarType> io::Read for Ivar<T>
 where
-    T::Type: io::Read,
+    <Self as Deref>::Target: io::Read,
 {
     #[inline]
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
@@ -255,7 +255,7 @@ where
 
 impl<T: IvarType> io::Write for Ivar<T>
 where
-    T::Type: io::Write,
+    <Self as Deref>::Target: io::Write,
 {
     #[inline]
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
@@ -285,7 +285,7 @@ where
 
 impl<T: IvarType> io::Seek for Ivar<T>
 where
-    T::Type: io::Seek,
+    <Self as Deref>::Target: io::Seek,
 {
     #[inline]
     fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> {
@@ -300,7 +300,7 @@ where
 
 impl<T: IvarType> io::BufRead for Ivar<T>
 where
-    T::Type: io::BufRead,
+    <Self as Deref>::Target: io::BufRead,
 {
     #[inline]
     fn fill_buf(&mut self) -> io::Result<&[u8]> {
@@ -325,12 +325,12 @@ where
 
 impl<T: IvarType> Future for Ivar<T>
 where
-    T::Type: Future + Unpin,
+    <Self as Deref>::Target: Future + Unpin,
 {
-    type Output = <T::Type as Future>::Output;
+    type Output = <<Self as Deref>::Target as Future>::Output;
 
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        <T::Type as Future>::poll(Pin::new(&mut *self), cx)
+        <<Self as Deref>::Target as Future>::poll(Pin::new(&mut *self), cx)
     }
 }
 
