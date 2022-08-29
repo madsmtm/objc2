@@ -32,7 +32,7 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
              NSError
              NSException
              NSMutableArray<T, O>
-           and 11 others
+           and 13 others
    = note: required for `RetainSemantics<true, false, false, false>` to implement `MsgSendId<&objc2::runtime::Class, objc2::runtime::Class, Shared>`
 
 error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
@@ -53,7 +53,7 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
              NSError
              NSException
              NSMutableArray<T, O>
-           and 11 others
+           and 13 others
    = note: required for `RetainSemantics<true, false, false, false>` to implement `MsgSendId<&objc2::runtime::Class, objc2::runtime::Class, Shared>`
 
 error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap<Allocated<_>, _>` is not satisfied
@@ -90,7 +90,7 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
              NSError
              NSException
              NSMutableArray<T, O>
-           and 11 others
+           and 13 others
    = note: required for `RetainSemantics<false, true, false, false>` to implement `MsgSendId<&objc2::runtime::Class, Allocated<objc2::runtime::Class>, Shared>`
 
 error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MaybeUnwrap<Allocated<_>, _>` is not satisfied
