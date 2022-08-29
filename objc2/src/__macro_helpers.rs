@@ -13,6 +13,7 @@ pub use core::mem::size_of;
 pub use core::ops::{Deref, DerefMut};
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, str, u8};
+pub use core::ptr::drop_in_place;
 pub use core::{compile_error, concat, panic, stringify};
 // TODO: Use `core::cell::LazyCell`
 pub use std::sync::Once;

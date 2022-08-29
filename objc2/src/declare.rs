@@ -112,6 +112,7 @@
 //! ```
 
 mod ivar;
+mod ivar_drop;
 mod ivar_forwarding_impls;
 
 use alloc::format;
@@ -122,13 +123,14 @@ use core::ptr;
 use core::ptr::NonNull;
 use std::ffi::CString;
 
-use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, RefEncode};
+use crate::encode::{Encode, EncodeArguments, Encoding, RefEncode};
 use crate::ffi;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::sel;
 use crate::Message;
 
-pub use ivar::{Ivar, IvarType};
+pub use ivar::{InnerIvarType, Ivar, IvarType};
+pub use ivar_drop::IvarDrop;
 
 pub(crate) mod private {
     pub trait Sealed {}
@@ -439,7 +441,12 @@ impl ClassBuilder {
     /// Same as [`ClassBuilder::add_ivar`].
     pub fn add_static_ivar<T: IvarType>(&mut self) {
         // SAFETY: The encoding is correct
-        unsafe { self.add_ivar_inner::<T::Type>(T::NAME, &T::Type::__ENCODING) }
+        unsafe {
+            self.add_ivar_inner::<<T::Type as InnerIvarType>::__Inner>(
+                T::NAME,
+                &T::Type::__ENCODING,
+            )
+        }
     }
 
     /// Adds the given protocol to self.
