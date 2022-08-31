@@ -63,13 +63,12 @@ extern_methods!(
             unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
         }
 
-        /// The number of UTF-16 code units in `self`.
+        /// The number of UTF-16 code units in the string.
         ///
         /// See also [`NSString::len`].
         #[doc(alias = "length")]
-        // TODO: Finish this
         #[sel(length)]
-        fn len_utf16(&self) -> usize;
+        pub fn len_utf16(&self) -> usize;
 
         pub fn is_empty(&self) -> bool {
             // TODO: lengthOfBytesUsingEncoding: might sometimes return 0 for
