@@ -51,8 +51,11 @@
 #![allow(missing_docs)]
 #![allow(clippy::missing_safety_doc)]
 
+use std::os::raw::c_double;
+
 pub use self::array::NSArray;
 pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
+pub use self::bundle::NSBundle;
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::data::NSData;
@@ -84,6 +87,17 @@ pub use self::zone::NSZone;
 #[doc(no_inline)]
 pub use crate::ffi::{NSInteger, NSUInteger};
 
+/// A value indicating that a requested item couldn’t be found or doesn’t exist.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsnotfound?language=objc).
+#[allow(non_upper_case_globals)]
+pub const NSNotFound: NSInteger = crate::ffi::NSIntegerMax;
+
+/// A number of seconds.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nstimeinterval?language=objc).
+pub type NSTimeInterval = c_double;
+
 #[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
@@ -96,6 +110,7 @@ extern "C" {}
 pub mod __ns_string;
 mod array;
 mod attributed_string;
+mod bundle;
 mod comparison_result;
 mod copying;
 mod data;

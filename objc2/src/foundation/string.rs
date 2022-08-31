@@ -10,7 +10,6 @@ use core::str;
 use std::os::raw::c_char;
 
 use super::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
-use crate::ffi;
 use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
 use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
@@ -19,10 +18,6 @@ use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 const UTF8_ENCODING: usize = 4;
 #[cfg(feature = "gnustep-1-7")]
 const UTF8_ENCODING: i32 = 4;
-
-#[allow(unused)]
-#[allow(non_upper_case_globals)]
-const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
 extern_class!(
     /// An immutable, plain-text Unicode string object.
@@ -61,6 +56,57 @@ extern_methods!(
             unsafe { msg_send_id![Self::class(), new] }
         }
 
+        /// Create a new string by appending the given string to self.
+        ///
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// # #[cfg(feature = "gnustep-1-7")]
+        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+        /// use objc2::ns_string;
+        /// let error_tag = ns_string!("Error: ");
+        /// let error_string = ns_string!("premature end of file.");
+        /// let error_message = error_tag.concat(error_string);
+        /// assert_eq!(&*error_message, ns_string!("Error: premature end of file."));
+        /// ```
+        #[doc(alias = "stringByAppendingString")]
+        #[doc(alias = "stringByAppendingString:")]
+        pub fn concat(&self, other: &Self) -> Id<Self, Shared> {
+            // SAFETY: The other string is non-null, and won't be retained
+            // by the function.
+            unsafe { msg_send_id![self, stringByAppendingString: other] }
+        }
+
+        /// Create a new string by appending the given string, separated by
+        /// a path separator.
+        ///
+        /// This is similar to [`Path::join`][std::path::Path::join].
+        ///
+        /// Note that this method only works with file paths (not, for
+        /// example, string representations of URLs).
+        ///
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// # #[cfg(feature = "gnustep-1-7")]
+        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+        /// use objc2::ns_string;
+        ///
+        /// let extension = ns_string!("scratch.tiff");
+        /// assert_eq!(&*ns_string!("/tmp").join_path(extension), ns_string!("/tmp/scratch.tiff"));
+        /// assert_eq!(&*ns_string!("/tmp/").join_path(extension), ns_string!("/tmp/scratch.tiff"));
+        /// assert_eq!(&*ns_string!("/").join_path(extension), ns_string!("/scratch.tiff"));
+        /// assert_eq!(&*ns_string!("").join_path(extension), ns_string!("scratch.tiff"));
+        /// ```
+        #[doc(alias = "stringByAppendingPathComponent")]
+        #[doc(alias = "stringByAppendingPathComponent:")]
+        pub fn join_path(&self, other: &Self) -> Id<Self, Shared> {
+            // SAFETY: Same as `Self::concat`.
+            unsafe { msg_send_id![self, stringByAppendingPathComponent: other] }
+        }
+
         /// The number of UTF-8 code units in `self`.
         #[doc(alias = "lengthOfBytesUsingEncoding")]
         #[doc(alias = "lengthOfBytesUsingEncoding:")]
@@ -68,13 +114,12 @@ extern_methods!(
             unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
         }
 
-        /// The number of UTF-16 code units in `self`.
+        /// The number of UTF-16 code units in the string.
         ///
         /// See also [`NSString::len`].
         #[doc(alias = "length")]
-        // TODO: Finish this
         #[sel(length)]
-        fn len_utf16(&self) -> usize;
+        pub fn len_utf16(&self) -> usize;
 
         pub fn is_empty(&self) -> bool {
             // TODO: lengthOfBytesUsingEncoding: might sometimes return 0 for

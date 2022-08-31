@@ -9,6 +9,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
+* Added `NSSet`.
+* Added `NSMutableSet`.
+* Added `NSMutableDictionary`.
+* Added `NSNotFound`.
+* Added `NSBundle`.
+* Added `NSTimeInterval`.
+* Added `NSString::len_utf16` and `NSAttributedString::len_utf16`.
+* Added `NSString::concat` and `NSString::join_path`.
+
+
+## objc2 0.3.0-beta.2 - 2022-08-28
+
+### Added
 * Added `NSNumber`.
 * Added `NSError`.
 * Implement `UnwindSafe` and `RefUnwindSafe` for all objects.
