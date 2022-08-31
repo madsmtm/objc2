@@ -53,6 +53,7 @@
 
 pub use self::array::NSArray;
 pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
+pub use self::bundle::NSBundle;
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::data::NSData;
@@ -102,6 +103,7 @@ extern "C" {}
 pub mod __ns_string;
 mod array;
 mod attributed_string;
+mod bundle;
 mod comparison_result;
 mod copying;
 mod data;
