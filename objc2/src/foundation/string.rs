@@ -10,7 +10,6 @@ use core::str;
 use std::os::raw::c_char;
 
 use super::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
-use crate::ffi;
 use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
 use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
@@ -19,10 +18,6 @@ use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 const UTF8_ENCODING: usize = 4;
 #[cfg(feature = "gnustep-1-7")]
 const UTF8_ENCODING: i32 = 4;
-
-#[allow(unused)]
-#[allow(non_upper_case_globals)]
-const NSNotFound: ffi::NSInteger = ffi::NSIntegerMax;
 
 extern_class!(
     /// An immutable, plain-text Unicode string object.

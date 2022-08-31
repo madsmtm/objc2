@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSSet`.
 * Added `NSMutableSet`.
 * Added `NSMutableDictionary`.
+* Added `NSNotFound`.
 
 
 ## objc2 0.3.0-beta.2 - 2022-08-28

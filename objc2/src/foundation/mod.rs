@@ -84,6 +84,12 @@ pub use self::zone::NSZone;
 #[doc(no_inline)]
 pub use crate::ffi::{NSInteger, NSUInteger};
 
+/// A value indicating that a requested item couldn’t be found or doesn’t exist.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsnotfound?language=objc).
+#[allow(non_upper_case_globals)]
+pub const NSNotFound: NSInteger = crate::ffi::NSIntegerMax;
+
 #[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {}
