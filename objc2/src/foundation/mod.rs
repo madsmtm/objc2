@@ -51,6 +51,8 @@
 #![allow(missing_docs)]
 #![allow(clippy::missing_safety_doc)]
 
+use std::os::raw::c_double;
+
 pub use self::array::NSArray;
 pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
 pub use self::bundle::NSBundle;
@@ -90,6 +92,11 @@ pub use crate::ffi::{NSInteger, NSUInteger};
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsnotfound?language=objc).
 #[allow(non_upper_case_globals)]
 pub const NSNotFound: NSInteger = crate::ffi::NSIntegerMax;
+
+/// A number of seconds.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nstimeinterval?language=objc).
+pub type NSTimeInterval = c_double;
 
 #[cfg(feature = "apple")]
 #[link(name = "Foundation", kind = "framework")]
