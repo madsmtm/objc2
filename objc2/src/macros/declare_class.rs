@@ -307,9 +307,9 @@ macro_rules! __fn_args {
 /// Rust struct).
 ///
 /// Note that the class name should be unique across the entire application!
-/// As a tip, you can declare the class with the desired unique name like
-/// `MyCrateCustomObject` using this macro, and then expose a renamed type
-/// alias like `pub type CustomObject = MyCrateCustomObject;` instead.
+/// You can declare the class with the desired unique name like
+/// `"MyCrateCustomObject"` by specifying it in `ClassType::NAME`, and then
+/// give the exposed type a different name like `CustomObject`.
 ///
 /// The class is guaranteed to have been created and registered with the
 /// Objective-C runtime after the [`ClassType::class`] function has been
@@ -406,6 +406,8 @@ macro_rules! __fn_args {
 ///
 ///     unsafe impl ClassType for MyCustomObject {
 ///         type Super = NSObject;
+///         // Optionally specify a different name
+///         // const NAME: &'static str = "MyCustomObject";
 ///     }
 ///
 ///     unsafe impl MyCustomObject {
@@ -575,6 +577,8 @@ macro_rules! declare_class {
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
+
+            $(const NAME: &'static str = $name_const:literal;)?
         }
 
         $($methods:tt)*
@@ -612,6 +616,7 @@ macro_rules! declare_class {
         // Creation
         unsafe impl ClassType for $for {
             type Super = $superclass;
+            const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
 
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
@@ -623,10 +628,10 @@ macro_rules! declare_class {
                     let superclass = <$superclass as $crate::ClassType>::class();
                     let err_str = concat!(
                         "could not create new class ",
-                        stringify!($name),
+                        $crate::__select_name!($name; $($name_const)?),
                         ". Perhaps a class with that name already exists?",
                     );
-                    let mut builder = $crate::declare::ClassBuilder::new(stringify!($name), superclass).expect(err_str);
+                    let mut builder = $crate::declare::ClassBuilder::new(Self::NAME, superclass).expect(err_str);
 
                     // Ivars
                     $(
@@ -655,7 +660,7 @@ macro_rules! declare_class {
                 });
 
                 // We just registered the class, so it should be available
-                $crate::runtime::Class::get(stringify!($name)).unwrap()
+                $crate::runtime::Class::get(Self::NAME).unwrap()
             }
 
             #[inline]
@@ -686,6 +691,17 @@ macro_rules! declare_class {
             @method_out
             $($methods)*
         );
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __select_name {
+    ($_name:ident; $name_const:literal) => {
+        $name_const
+    };
+    ($name:ident;) => {
+        $crate::__macro_helpers::stringify!($name)
     };
 }
 

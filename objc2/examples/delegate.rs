@@ -11,6 +11,7 @@ extern "C" {}
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 extern_class!(
+    #[derive(Debug)]
     struct NSResponder;
 
     unsafe impl ClassType for NSResponder {
@@ -20,6 +21,7 @@ extern_class!(
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
 declare_class!(
+    #[derive(Debug)]
     struct CustomAppDelegate {
         pub ivar: u8,
         another_ivar: bool,
@@ -32,6 +34,7 @@ declare_class!(
     unsafe impl ClassType for CustomAppDelegate {
         #[inherits(NSObject)]
         type Super = NSResponder;
+        const NAME: &'static str = "MyCustomAppDelegate";
     }
 
     unsafe impl CustomAppDelegate {
@@ -100,6 +103,7 @@ impl CustomAppDelegate {
 fn main() {
     let delegate = CustomAppDelegate::new(42, true);
 
+    println!("{:?}", delegate);
     println!("{:?}", delegate.ivar);
     println!("{:?}", delegate.another_ivar);
     println!("{:?}", delegate.box_ivar);

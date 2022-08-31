@@ -78,6 +78,7 @@ impl<'a> MyObject<'a> {
 
 unsafe impl<'a> ClassType for MyObject<'a> {
     type Super = NSObject;
+    const NAME: &'static str = "MyObject";
 
     fn class() -> &'static Class {
         // TODO: Use std::lazy::LazyCell
@@ -85,7 +86,7 @@ unsafe impl<'a> ClassType for MyObject<'a> {
 
         REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
-            let mut builder = ClassBuilder::new("MyObject", superclass).unwrap();
+            let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();
 
             builder.add_static_ivar::<NumberIvar<'a>>();
 

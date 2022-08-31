@@ -162,3 +162,13 @@ impl RcTestObject {
         unsafe { Id::new(msg_send![Self::class(), new]) }.unwrap()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ensure_declared_name() {
+        assert_eq!(RcTestObject::class().name(), RcTestObject::NAME);
+    }
+}

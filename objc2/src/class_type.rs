@@ -18,11 +18,12 @@ use crate::Message;
 ///
 /// The class returned by [`Self::class`] must be a subclass of the class that
 /// [`Self::Super`] represents, and `as_super`/`as_super_mut` must be
-/// implemented correctly.
+/// implemented correctly. Finally [`Self::NAME`] must be correct.
 ///
 /// In pseudocode:
 /// ```ignore
 /// Self::class().superclass() == <Self::Super as ClassType>::class()
+/// Self::class().name() == Self::NAME
 /// ```
 ///
 ///
@@ -67,6 +68,9 @@ pub unsafe trait ClassType: Message {
     /// [`Deref::Target`]: std::ops::Deref::Target
     /// [`runtime::Object`]: crate::runtime::Object
     type Super: Message;
+
+    /// The name of the Objective-C class that this type represents.
+    const NAME: &'static str;
 
     /// Get a reference to the Objective-C class that this type represents.
     ///

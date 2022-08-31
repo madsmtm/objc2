@@ -13,10 +13,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `IvarDrop<T>` to allow storing complex `Drop` values in ivars
   (currently `rc::Id<T, O>`, `Box<T>`, `Option<rc::Id<T, O>>` or
   `Option<Box<T>>`).
+* **BREAKING**: Added required `ClassType::NAME` constant for statically
+  determining the name of a specific class.
+* Allow directly specifying class name in declare_class! macro.
 
 ### Removed
 * **BREAKING**: `MaybeUninit` no longer implements `IvarType` directly; use
   `Ivar::write` instead.
+
 
 ## 0.3.0-beta.2 - 2022-08-28
 
