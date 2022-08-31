@@ -138,7 +138,10 @@ impl<T: ?Sized + Thin, O: Ownership> Id<T, O> {
     }
 }
 
-impl<T: ?Sized + Message, O: Ownership> Id<Allocated<T>, O> {
+impl<T: ?Sized + Message, O: Ownership> Id<Allocated<T>, O>
+where
+    Allocated<T>: Thin,
+{
     #[inline]
     pub(crate) unsafe fn new_allocated(ptr: *mut T) -> Option<Self> {
         // SAFETY: Upheld by the caller

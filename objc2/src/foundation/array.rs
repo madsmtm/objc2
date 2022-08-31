@@ -8,9 +8,11 @@ use super::{
     NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableArray, NSMutableCopying,
     NSObject, NSRange,
 };
-use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use crate::rc::{Allocated, DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use crate::runtime::{Class, Object};
-use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
+use crate::{
+    ClassType, Message, Thin, __inner_extern_class, extern_methods, msg_send, msg_send_id,
+};
 
 __inner_extern_class!(
     /// An immutable ordered collection of objects.
@@ -79,7 +81,10 @@ impl<T: ?Sized + Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
 pub(crate) unsafe fn with_objects<T: ?Sized + Message, R: ?Sized + Message, O: Ownership>(
     cls: &Class,
     objects: &[&T],
-) -> Id<R, O> {
+) -> Id<R, O>
+where
+    Allocated<R>: Thin,
+{
     unsafe {
         msg_send_id![
             msg_send_id![cls, alloc],

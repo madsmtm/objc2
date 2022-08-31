@@ -107,7 +107,10 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, T, O> for New {
     }
 }
 
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Allocated<T>, O> for Alloc {
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Allocated<T>, O> for Alloc
+where
+    Allocated<T>: Thin,
+{
     #[inline]
     #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Allocated<T>, O>>(
@@ -123,7 +126,10 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Allocated<T>, O> fo
     }
 }
 
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, T, O> for Init {
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, T, O> for Init
+where
+    Allocated<T>: Thin,
+{
     #[inline]
     #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<T, O>>(
