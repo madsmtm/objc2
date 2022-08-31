@@ -9,12 +9,12 @@ use crate::runtime::Object;
 use crate::{msg_send, Encode, Encoding, Message, RefEncode};
 
 // TODO: https://doc.rust-lang.org/stable/reference/trait-bounds.html#lifetime-bounds
-pub struct NSEnumerator<'a, T: Message> {
+pub struct NSEnumerator<'a, T: ?Sized + Message> {
     id: Id<Object, Owned>,
     item: PhantomData<&'a T>,
 }
 
-impl<'a, T: Message> NSEnumerator<'a, T> {
+impl<'a, T: ?Sized + Message> NSEnumerator<'a, T> {
     /// TODO
     ///
     /// # Safety
@@ -29,7 +29,7 @@ impl<'a, T: Message> NSEnumerator<'a, T> {
     }
 }
 
-impl<'a, T: Message> Iterator for NSEnumerator<'a, T> {
+impl<'a, T: ?Sized + Message> Iterator for NSEnumerator<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
@@ -38,7 +38,7 @@ impl<'a, T: Message> Iterator for NSEnumerator<'a, T> {
 }
 
 pub unsafe trait NSFastEnumeration: Message {
-    type Item: Message;
+    type Item: ?Sized + Message;
 
     fn iter_fast(&self) -> NSFastEnumerator<'_, Self> {
         NSFastEnumerator::new(self)
@@ -46,14 +46,14 @@ pub unsafe trait NSFastEnumeration: Message {
 }
 
 #[repr(C)]
-struct NSFastEnumerationState<T: Message> {
+struct NSFastEnumerationState<T: ?Sized + Message> {
     state: c_ulong, // TODO: Verify this is actually always 64 bit
     items_ptr: *const *const T,
     mutations_ptr: *mut c_ulong,
     extra: [c_ulong; 5],
 }
 
-unsafe impl<T: Message> Encode for NSFastEnumerationState<T> {
+unsafe impl<T: ?Sized + Message> Encode for NSFastEnumerationState<T> {
     const ENCODING: Encoding = Encoding::Struct(
         "?",
         &[
@@ -65,11 +65,11 @@ unsafe impl<T: Message> Encode for NSFastEnumerationState<T> {
     );
 }
 
-unsafe impl<T: Message> RefEncode for NSFastEnumerationState<T> {
+unsafe impl<T: ?Sized + Message> RefEncode for NSFastEnumerationState<T> {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
-fn enumerate<'a, 'b: 'a, C: NSFastEnumeration + ?Sized>(
+fn enumerate<'a, 'b: 'a, C: ?Sized + NSFastEnumeration>(
     object: &'b C,
     state: &mut NSFastEnumerationState<C::Item>,
     buf: &'a mut [*const C::Item],
@@ -94,7 +94,7 @@ fn enumerate<'a, 'b: 'a, C: NSFastEnumeration + ?Sized>(
 
 const FAST_ENUM_BUF_SIZE: usize = 16;
 
-pub struct NSFastEnumerator<'a, C: 'a + NSFastEnumeration + ?Sized> {
+pub struct NSFastEnumerator<'a, C: 'a + ?Sized + NSFastEnumeration> {
     object: &'a C,
 
     ptr: *const *const C::Item,
@@ -104,7 +104,7 @@ pub struct NSFastEnumerator<'a, C: 'a + NSFastEnumeration + ?Sized> {
     buf: [*const C::Item; FAST_ENUM_BUF_SIZE],
 }
 
-impl<'a, C: NSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
+impl<'a, C: ?Sized + NSFastEnumeration> NSFastEnumerator<'a, C> {
     fn new(object: &'a C) -> Self {
         Self {
             object,
@@ -149,7 +149,7 @@ impl<'a, C: NSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
     }
 }
 
-impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
+impl<'a, C: ?Sized + NSFastEnumeration> Iterator for NSFastEnumerator<'a, C> {
     type Item = &'a C::Item;
 
     fn next(&mut self) -> Option<&'a C::Item> {

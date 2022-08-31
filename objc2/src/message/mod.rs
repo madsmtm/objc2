@@ -5,7 +5,7 @@ use core::ptr::NonNull;
 use crate::encode::{Encode, EncodeArguments, EncodeConvert, RefEncode};
 use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
-use crate::ClassType;
+use crate::{ClassType, Thin};
 
 #[cfg(feature = "catch-all")]
 #[track_caller]
@@ -100,7 +100,7 @@ use self::platform::{send_super_unverified, send_unverified};
 /// //
 /// // And `Id<MyObject, O>` can now be constructed.
 /// ```
-pub unsafe trait Message: RefEncode {}
+pub unsafe trait Message: RefEncode + Thin {}
 
 unsafe impl Message for Object {}
 
@@ -110,17 +110,17 @@ pub(crate) mod private {
 
     pub trait Sealed {}
 
-    impl<T: Message + ?Sized> Sealed for *const T {}
-    impl<T: Message + ?Sized> Sealed for *mut T {}
-    impl<T: Message + ?Sized> Sealed for NonNull<T> {}
+    impl<T: ?Sized + Message> Sealed for *const T {}
+    impl<T: ?Sized + Message> Sealed for *mut T {}
+    impl<T: ?Sized + Message> Sealed for NonNull<T> {}
 
-    impl<'a, T: Message + ?Sized> Sealed for &'a T {}
-    impl<'a, T: Message + ?Sized> Sealed for &'a mut T {}
+    impl<'a, T: ?Sized + Message> Sealed for &'a T {}
+    impl<'a, T: ?Sized + Message> Sealed for &'a mut T {}
 
-    impl<'a, T: Message + ?Sized, O: Ownership> Sealed for &'a Id<T, O> {}
-    impl<'a, T: Message + ?Sized> Sealed for &'a mut Id<T, Owned> {}
+    impl<'a, T: ?Sized + Message, O: Ownership> Sealed for &'a Id<T, O> {}
+    impl<'a, T: ?Sized + Message> Sealed for &'a mut Id<T, Owned> {}
 
-    impl<T: Message + ?Sized, O: Ownership> Sealed for ManuallyDrop<Id<T, O>> {}
+    impl<T: ?Sized + Message, O: Ownership> Sealed for ManuallyDrop<Id<T, O>> {}
 
     impl Sealed for *const Class {}
     impl<'a> Sealed for &'a Class {}
@@ -144,7 +144,7 @@ pub(crate) mod private {
 /// issue if you know a use-case where this restrition should be lifted!
 pub unsafe trait MessageReceiver: private::Sealed + Sized {
     #[doc(hidden)]
-    type __Inner: ?Sized;
+    type __Inner: ?Sized + Thin;
 
     #[doc(hidden)]
     fn __as_raw_receiver(self) -> *mut Object;
@@ -254,7 +254,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
 // Note that we implement MessageReceiver for unsized types as well, this is
 // to support `extern type`s in the future, not because we want to allow DSTs.
 
-unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
+unsafe impl<T: ?Sized + Message> MessageReceiver for *const T {
     type __Inner = T;
 
     #[inline]
@@ -263,7 +263,7 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
     }
 }
 
-unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
+unsafe impl<T: ?Sized + Message> MessageReceiver for *mut T {
     type __Inner = T;
 
     #[inline]
@@ -272,7 +272,7 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
     }
 }
 
-unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
+unsafe impl<T: ?Sized + Message> MessageReceiver for NonNull<T> {
     type __Inner = T;
 
     #[inline]
@@ -281,7 +281,7 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
+unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a T {
     type __Inner = T;
 
     #[inline]
@@ -291,7 +291,7 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
+unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a mut T {
     type __Inner = T;
 
     #[inline]
@@ -301,7 +301,7 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T, O> {
+unsafe impl<'a, T: ?Sized + Message, O: Ownership> MessageReceiver for &'a Id<T, O> {
     type __Inner = T;
 
     #[inline]
@@ -310,7 +310,7 @@ unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T,
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
+unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a mut Id<T, Owned> {
     type __Inner = T;
 
     #[inline]
@@ -319,7 +319,7 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
     }
 }
 
-unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<Id<T, O>> {
+unsafe impl<T: ?Sized + Message, O: Ownership> MessageReceiver for ManuallyDrop<Id<T, O>> {
     type __Inner = T;
 
     #[inline]

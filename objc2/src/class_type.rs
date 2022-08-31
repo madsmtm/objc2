@@ -67,7 +67,7 @@ pub unsafe trait ClassType: Message {
     /// [`Deref`]: std::ops::Deref
     /// [`Deref::Target`]: std::ops::Deref::Target
     /// [`runtime::Object`]: crate::runtime::Object
-    type Super: Message;
+    type Super: ?Sized + Message;
 
     /// The name of the Objective-C class that this type represents.
     const NAME: &'static str;

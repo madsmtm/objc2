@@ -9,7 +9,7 @@ use super::Allocated;
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
-use crate::{ClassType, Message};
+use crate::{ClassType, Message, Thin};
 
 /// An pointer for Objective-C reference counted objects.
 ///
@@ -48,6 +48,7 @@ use crate::{ClassType, Message};
 /// [`Box`]: alloc::boxed::Box
 /// [`Arc`]: alloc::sync::Arc
 ///
+///
 /// # Caveats
 ///
 /// If the inner type implements [`Drop`], that implementation will not be
@@ -55,8 +56,6 @@ use crate::{ClassType, Message};
 /// do so. If you need to run some code when the object is destroyed,
 /// implement the `dealloc` method instead.
 ///
-/// This allows `?Sized` types `T`, but the intention is to only support when
-/// `T` is an `extern type` (yet unstable).
 ///
 /// # Examples
 ///
@@ -97,10 +96,13 @@ use crate::{ClassType, Message};
 /// // Do something with `&T` here
 /// ```
 #[repr(transparent)]
-// TODO: Figure out if `Message` bound on `T` would be better here?
-// TODO: Add `ptr::Thin` bound on `T` to allow for only extern types
-// TODO: Consider changing the name of Id -> Retain
-pub struct Id<T: ?Sized, O: Ownership> {
+// Alternative names:
+#[doc(alias = "Retain")]
+#[doc(alias = "Retained")]
+#[doc(alias = "Arc")]
+#[doc(alias = "Box")]
+// Note: We explicitly don't use `T: Message` here to support `T=Allocated`.
+pub struct Id<T: ?Sized + Thin, O: Ownership> {
     /// A pointer to the contained object. The pointer is always retained.
     ///
     /// It is important that this is `NonNull`, since we want to dereference
@@ -124,7 +126,7 @@ pub struct Id<T: ?Sized, O: Ownership> {
     notunwindsafe: PhantomData<&'static mut ()>,
 }
 
-impl<T: ?Sized, O: Ownership> Id<T, O> {
+impl<T: ?Sized + Thin, O: Ownership> Id<T, O> {
     #[inline]
     unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
         Self {
@@ -136,7 +138,7 @@ impl<T: ?Sized, O: Ownership> Id<T, O> {
     }
 }
 
-impl<T: Message + ?Sized, O: Ownership> Id<Allocated<T>, O> {
+impl<T: ?Sized + Message, O: Ownership> Id<Allocated<T>, O> {
     #[inline]
     pub(crate) unsafe fn new_allocated(ptr: *mut T) -> Option<Self> {
         // SAFETY: Upheld by the caller
@@ -157,7 +159,7 @@ impl<T: Message + ?Sized, O: Ownership> Id<Allocated<T>, O> {
     }
 }
 
-impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
+impl<T: ?Sized + Message, O: Ownership> Id<T, O> {
     /// Constructs an [`Id`] to an object that already has +1 retain count.
     ///
     /// This is useful when you have a retain count that has been handed off
@@ -243,7 +245,7 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     }
 }
 
-impl<T: Message + ?Sized> Id<T, Owned> {
+impl<T: ?Sized + Message> Id<T, Owned> {
     /// Returns a raw mutable pointer to the object.
     ///
     /// The pointer is valid for at least as long as the `Id` is held.
@@ -258,8 +260,7 @@ impl<T: Message + ?Sized> Id<T, Owned> {
     }
 }
 
-// TODO: Add ?Sized bound
-impl<T: Message, O: Ownership> Id<T, O> {
+impl<T: ?Sized + Message, O: Ownership> Id<T, O> {
     /// Convert the type of the given object to another.
     ///
     /// This is equivalent to a `cast` between two pointers.
@@ -287,7 +288,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// Additionally, you must ensure that any safety invariants that the new
     /// type has are upheld.
     #[inline]
-    pub unsafe fn cast<U: Message>(this: Self) -> Id<U, O> {
+    pub unsafe fn cast<U: ?Sized + Message>(this: Self) -> Id<U, O> {
         let ptr = ManuallyDrop::new(this).ptr.cast();
         // SAFETY: The object is forgotten, so we have +1 retain count.
         //
@@ -564,8 +565,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
 //     }
 // }
 
-// TODO: Add ?Sized bound
-impl<T: Message> Id<T, Owned> {
+impl<T: ?Sized + Message> Id<T, Owned> {
     /// Autoreleases the owned [`Id`], returning a mutable reference bound to
     /// the pool.
     ///
@@ -617,8 +617,7 @@ impl<T: Message> Id<T, Owned> {
     }
 }
 
-// TODO: Add ?Sized bound
-impl<T: Message> Id<T, Shared> {
+impl<T: ?Sized + Message> Id<T, Shared> {
     /// Autoreleases the shared [`Id`], returning an aliased reference bound
     /// to the pool.
     ///
@@ -635,7 +634,7 @@ impl<T: Message> Id<T, Shared> {
     }
 }
 
-impl<T: ClassType + 'static, O: Ownership> Id<T, O>
+impl<T: ?Sized + ClassType + 'static, O: Ownership> Id<T, O>
 where
     T::Super: 'static,
 {
@@ -650,7 +649,7 @@ where
     }
 }
 
-impl<T: Message> From<Id<T, Owned>> for Id<T, Shared> {
+impl<T: ?Sized + Message> From<Id<T, Owned>> for Id<T, Shared> {
     /// Convert an owned to a shared [`Id`], allowing it to be cloned.
     ///
     /// Same as [`Id::into_shared`].
@@ -660,8 +659,7 @@ impl<T: Message> From<Id<T, Owned>> for Id<T, Shared> {
     }
 }
 
-// TODO: Add ?Sized bound
-impl<T: Message> Clone for Id<T, Shared> {
+impl<T: ?Sized + Message> Clone for Id<T, Shared> {
     /// Makes a clone of the shared object.
     ///
     /// This increases the object's reference count.
@@ -684,7 +682,7 @@ impl<T: Message> Clone for Id<T, Shared> {
 /// borrowed data.
 ///
 /// [dropck_eyepatch]: https://doc.rust-lang.org/nightly/nomicon/dropck.html#an-escape-hatch
-impl<T: ?Sized, O: Ownership> Drop for Id<T, O> {
+impl<T: ?Sized + Thin, O: Ownership> Drop for Id<T, O> {
     /// Releases the retained object.
     ///
     /// The contained object's destructor (if it has one) is never run!
@@ -710,7 +708,7 @@ impl<T: ?Sized, O: Ownership> Drop for Id<T, O> {
 /// clone a `Id<T, Shared>`, send it to another thread, and drop the clone
 /// last, making `dealloc` get called on the other thread, and violate
 /// `T: !Send`.
-unsafe impl<T: Sync + Send + ?Sized> Send for Id<T, Shared> {}
+unsafe impl<T: ?Sized + Thin + Sync + Send> Send for Id<T, Shared> {}
 
 /// The `Sync` implementation requires `T: Sync` because `&Id<T, Shared>` give
 /// access to `&T`.
@@ -718,17 +716,17 @@ unsafe impl<T: Sync + Send + ?Sized> Send for Id<T, Shared> {}
 /// Additiontally, it requires `T: Send`, because if `T: !Send`, you could
 /// clone a `&Id<T, Shared>` from another thread, and drop the clone last,
 /// making `dealloc` get called on the other thread, and violate `T: !Send`.
-unsafe impl<T: Sync + Send + ?Sized> Sync for Id<T, Shared> {}
+unsafe impl<T: ?Sized + Thin + Sync + Send> Sync for Id<T, Shared> {}
 
 /// `Id<T, Owned>` are `Send` if `T` is `Send` because they give the same
 /// access as having a T directly.
-unsafe impl<T: Send + ?Sized> Send for Id<T, Owned> {}
+unsafe impl<T: ?Sized + Thin + Send> Send for Id<T, Owned> {}
 
 /// `Id<T, Owned>` are `Sync` if `T` is `Sync` because they give the same
 /// access as having a `T` directly.
-unsafe impl<T: Sync + ?Sized> Sync for Id<T, Owned> {}
+unsafe impl<T: ?Sized + Thin + Sync> Sync for Id<T, Owned> {}
 
-impl<T: ?Sized, O: Ownership> Deref for Id<T, O> {
+impl<T: ?Sized + Thin, O: Ownership> Deref for Id<T, O> {
     type Target = T;
 
     /// Obtain an immutable reference to the object.
@@ -740,7 +738,7 @@ impl<T: ?Sized, O: Ownership> Deref for Id<T, O> {
     }
 }
 
-impl<T: ?Sized> DerefMut for Id<T, Owned> {
+impl<T: ?Sized + Thin> DerefMut for Id<T, Owned> {
     /// Obtain a mutable reference to the object.
     #[inline]
     fn deref_mut(&mut self) -> &mut T {
@@ -751,7 +749,7 @@ impl<T: ?Sized> DerefMut for Id<T, Owned> {
     }
 }
 
-impl<T: ?Sized, O: Ownership> fmt::Pointer for Id<T, O> {
+impl<T: ?Sized + Thin, O: Ownership> fmt::Pointer for Id<T, O> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Pointer::fmt(&self.ptr.as_ptr(), f)
     }
@@ -761,15 +759,15 @@ impl<T: ?Sized, O: Ownership> fmt::Pointer for Id<T, O> {
 //
 // See https://doc.rust-lang.org/1.54.0/src/alloc/boxed.rs.html#1652-1675
 // and the `Arc` implementation.
-impl<T: ?Sized, O: Ownership> Unpin for Id<T, O> {}
+impl<T: ?Sized + Thin, O: Ownership> Unpin for Id<T, O> {}
 
-impl<T: RefUnwindSafe + ?Sized, O: Ownership> RefUnwindSafe for Id<T, O> {}
+impl<T: ?Sized + Thin + RefUnwindSafe, O: Ownership> RefUnwindSafe for Id<T, O> {}
 
 // Same as `Arc<T>`.
-impl<T: RefUnwindSafe + ?Sized> UnwindSafe for Id<T, Shared> {}
+impl<T: ?Sized + Thin + RefUnwindSafe> UnwindSafe for Id<T, Shared> {}
 
 // Same as `Box<T>`.
-impl<T: UnwindSafe + ?Sized> UnwindSafe for Id<T, Owned> {}
+impl<T: ?Sized + Thin + UnwindSafe> UnwindSafe for Id<T, Owned> {}
 
 #[cfg(test)]
 mod tests {

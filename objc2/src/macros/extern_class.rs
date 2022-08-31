@@ -231,11 +231,11 @@ macro_rules! __inner_extern_class {
     // TODO: Expose this variant in the `object` macro.
     (
         $(#[$m:meta])*
-        $v:vis struct $name:ident<$($t_struct:ident $(: $b_struct:ident $(= $default:ty)?)?),*> {
+        $v:vis struct $name:ident<$($t_struct:ident $(: $(?$s_struct:ident + )? $b_struct:ident $(= $default:ty)?)?),*> {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
 
-        unsafe impl<$($t_for:ident $(: $b_for:ident)?),*> ClassType for $for:ty {
+        unsafe impl<$($t_for:ident $(: $(?$s_for:ident + )? $b_for:ident)?),*> ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
         }
@@ -243,16 +243,16 @@ macro_rules! __inner_extern_class {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
-            $v struct $name ($($t_struct $(: $b_struct $(= $default)?)?),*) {
+            $v struct $name ($($t_struct $(: $(?$s_struct + )? $b_struct $(= $default)?)?),*) {
                 $($field_vis $field: $field_ty,)*
             }
 
-            unsafe impl ($($t_for $(: $b_for)?),*) for $for {
+            unsafe impl ($($t_for $(: $(?$s_for + )? $b_for)?),*) for $for {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
             }
         }
 
-        unsafe impl<$($t_for $(: $b_for)?),*> ClassType for $for {
+        unsafe impl<$($t_for $(: $(?$s_for + )? $b_for)?),*> ClassType for $for {
             type Super = $superclass;
             const NAME: &'static str = stringify!($name);
 

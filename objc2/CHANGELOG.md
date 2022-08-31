@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   determining the name of a specific class.
 * Allow directly specifying class name in declare_class! macro.
 
+### Changed
+* **BREAKING**: Slightly changed when a type implements `?Sized` to support
+  `extern type` in the future. In particular, `Message` now requires `Sized`.
+
 ### Removed
 * **BREAKING**: `MaybeUninit` no longer implements `IvarType` directly; use
   `Ivar::write` instead.

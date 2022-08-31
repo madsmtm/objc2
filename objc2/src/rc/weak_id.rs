@@ -7,7 +7,7 @@ use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{Id, Shared};
 use crate::ffi;
-use crate::Message;
+use crate::{Message, Thin};
 
 /// A pointer type for a weak reference to an Objective-C reference counted
 /// object.
@@ -15,7 +15,7 @@ use crate::Message;
 /// Allows breaking reference cycles and safely checking whether the object
 /// has been deallocated.
 #[repr(transparent)]
-pub struct WeakId<T: ?Sized> {
+pub struct WeakId<T: ?Sized + Thin> {
     /// We give the runtime the address to this box, so that it can modify it
     /// even if the `WeakId` is moved.
     ///
@@ -34,7 +34,7 @@ pub struct WeakId<T: ?Sized> {
     item: PhantomData<Id<T, Shared>>,
 }
 
-impl<T: Message> WeakId<T> {
+impl<T: ?Sized + Message> WeakId<T> {
     /// Construct a new [`WeakId`] referencing the given shared [`Id`].
     #[doc(alias = "objc_initWeak")]
     #[inline]
@@ -76,7 +76,7 @@ impl<T: Message> WeakId<T> {
     // TODO: Add `autorelease(&self) -> Option<&T>` using `objc_loadWeak`?
 }
 
-impl<T: ?Sized> Drop for WeakId<T> {
+impl<T: ?Sized + Thin> Drop for WeakId<T> {
     /// Drops the `WeakId` pointer.
     #[doc(alias = "objc_destroyWeak")]
     #[inline]
@@ -85,8 +85,7 @@ impl<T: ?Sized> Drop for WeakId<T> {
     }
 }
 
-// TODO: Add ?Sized
-impl<T> Clone for WeakId<T> {
+impl<T: ?Sized + Thin> Clone for WeakId<T> {
     /// Makes a clone of the `WeakId` that points to the same object.
     #[doc(alias = "objc_copyWeak")]
     fn clone(&self) -> Self {
@@ -99,8 +98,7 @@ impl<T> Clone for WeakId<T> {
     }
 }
 
-// TODO: Add ?Sized
-impl<T: Message> Default for WeakId<T> {
+impl<T: ?Sized + Message> Default for WeakId<T> {
     /// Constructs a new `WeakId<T>` that doesn't reference any object.
     ///
     /// Calling [`Self::load`] on the return value always gives [`None`].
@@ -112,35 +110,35 @@ impl<T: Message> Default for WeakId<T> {
 }
 
 /// This implementation follows the same reasoning as `Id<T, Shared>`.
-unsafe impl<T: Sync + Send + ?Sized> Sync for WeakId<T> {}
+unsafe impl<T: Sync + Send + ?Sized + Thin> Sync for WeakId<T> {}
 
 /// This implementation follows the same reasoning as `Id<T, Shared>`.
-unsafe impl<T: Sync + Send + ?Sized> Send for WeakId<T> {}
+unsafe impl<T: Sync + Send + ?Sized + Thin> Send for WeakId<T> {}
 
 // Unsure about the Debug bound on T, see std::sync::Weak
-impl<T: fmt::Debug + ?Sized> fmt::Debug for WeakId<T> {
+impl<T: fmt::Debug + ?Sized + Thin> fmt::Debug for WeakId<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "(WeakId)")
     }
 }
 
 // Underneath this is just a `Box`
-impl<T: ?Sized> Unpin for WeakId<T> {}
+impl<T: ?Sized + Thin> Unpin for WeakId<T> {}
 
 // Same as `Id<T, Shared>`.
-impl<T: RefUnwindSafe + ?Sized> RefUnwindSafe for WeakId<T> {}
+impl<T: RefUnwindSafe + ?Sized + Thin> RefUnwindSafe for WeakId<T> {}
 
 // Same as `Id<T, Shared>`.
-impl<T: RefUnwindSafe + ?Sized> UnwindSafe for WeakId<T> {}
+impl<T: RefUnwindSafe + ?Sized + Thin> UnwindSafe for WeakId<T> {}
 
-impl<T: Message> From<Id<T, Shared>> for WeakId<T> {
+impl<T: ?Sized + Message> From<Id<T, Shared>> for WeakId<T> {
     #[inline]
     fn from(obj: Id<T, Shared>) -> Self {
         WeakId::new(&obj)
     }
 }
 
-impl<T: Message> TryFrom<WeakId<T>> for Id<T, Shared> {
+impl<T: ?Sized + Message> TryFrom<WeakId<T>> for Id<T, Shared> {
     type Error = ();
     fn try_from(weak: WeakId<T>) -> Result<Self, ()> {
         weak.load().ok_or(())

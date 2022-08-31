@@ -52,29 +52,29 @@ __inner_extern_class!(
     // `T: PartialEq` bound correct because `NSArray` does deep (instead of
     // shallow) equality comparisons.
     #[derive(PartialEq, Eq, Hash)]
-    pub struct NSArray<T: Message, O: Ownership = Shared> {
+    pub struct NSArray<T: ?Sized + Message, O: Ownership = Shared> {
         item: PhantomData<Id<T, O>>,
         notunwindsafe: PhantomData<&'static mut ()>,
     }
 
-    unsafe impl<T: Message, O: Ownership> ClassType for NSArray<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> ClassType for NSArray<T, O> {
         type Super = NSObject;
     }
 );
 
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
-unsafe impl<T: Message + Sync + Send> Sync for NSArray<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSArray<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSArray<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSArray<T, Owned> {}
+unsafe impl<T: ?Sized + Message + Sync + Send> Sync for NSArray<T, Shared> {}
+unsafe impl<T: ?Sized + Message + Sync + Send> Send for NSArray<T, Shared> {}
+unsafe impl<T: ?Sized + Message + Sync> Sync for NSArray<T, Owned> {}
+unsafe impl<T: ?Sized + Message + Send> Send for NSArray<T, Owned> {}
 
 // Also same as Id<T, O>
-impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
-impl<T: Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
-impl<T: Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
+impl<T: ?Sized + Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
+impl<T: ?Sized + Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
+impl<T: ?Sized + Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
 
 #[track_caller]
-pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>(
+pub(crate) unsafe fn with_objects<T: ?Sized + Message, R: ?Sized + Message, O: Ownership>(
     cls: &Class,
     objects: &[&T],
 ) -> Id<R, O> {
@@ -89,7 +89,7 @@ pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>
 
 extern_methods!(
     /// Generic creation methods.
-    unsafe impl<T: Message, O: Ownership> NSArray<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> NSArray<T, O> {
         /// Get an empty array.
         pub fn new() -> Id<Self, Shared> {
             // SAFETY:
@@ -120,7 +120,7 @@ extern_methods!(
     }
 
     /// Creation methods that produce shared arrays.
-    unsafe impl<T: Message> NSArray<T, Shared> {
+    unsafe impl<T: ?Sized + Message> NSArray<T, Shared> {
         pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Shared> {
             // SAFETY: Taking `&T` would not be sound, since the `&T` could come
             // from an `Id<T, Owned>` that would now no longer be owned!
@@ -133,7 +133,7 @@ extern_methods!(
     }
 
     /// Generic accessor methods.
-    unsafe impl<T: Message, O: Ownership> NSArray<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> NSArray<T, O> {
         #[doc(alias = "count")]
         #[sel(count)]
         pub fn len(&self) -> usize;
@@ -200,7 +200,7 @@ extern_methods!(
     }
 
     /// Accessor methods that work on shared arrays.
-    unsafe impl<T: Message> NSArray<T, Shared> {
+    unsafe impl<T: ?Sized + Message> NSArray<T, Shared> {
         #[doc(alias = "objectAtIndex:")]
         pub fn get_retained(&self, index: usize) -> Id<T, Shared> {
             let obj = self.get(index).unwrap();
@@ -217,7 +217,7 @@ extern_methods!(
     }
 
     /// Accessor methods that work on owned arrays.
-    unsafe impl<T: Message> NSArray<T, Owned> {
+    unsafe impl<T: ?Sized + Message> NSArray<T, Owned> {
         #[doc(alias = "objectAtIndex:")]
         pub fn get_mut(&mut self, index: usize) -> Option<&mut T> {
             // TODO: Replace this check with catching the thrown NSRangeException
@@ -242,28 +242,28 @@ extern_methods!(
 /// This is implemented as a shallow copy.
 ///
 /// As such, it is only possible when the array's contents are `Shared`.
-unsafe impl<T: Message> NSCopying for NSArray<T, Shared> {
+unsafe impl<T: ?Sized + Message> NSCopying for NSArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
 /// This is implemented as a shallow copy.
-unsafe impl<T: Message> NSMutableCopying for NSArray<T, Shared> {
+unsafe impl<T: ?Sized + Message> NSMutableCopying for NSArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-impl<T: Message> alloc::borrow::ToOwned for NSArray<T, Shared> {
+impl<T: ?Sized + Message> alloc::borrow::ToOwned for NSArray<T, Shared> {
     type Owned = Id<NSArray<T, Shared>, Shared>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSArray<T, O> {
+unsafe impl<T: ?Sized + Message, O: Ownership> NSFastEnumeration for NSArray<T, O> {
     type Item = T;
 }
 
-impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSArray<T, O> {
+impl<'a, T: ?Sized + Message, O: Ownership> IntoIterator for &'a NSArray<T, O> {
     type Item = &'a T;
     type IntoIter = NSFastEnumerator<'a, NSArray<T, O>>;
 
@@ -272,7 +272,7 @@ impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSArray<T, O> {
     }
 }
 
-impl<T: Message, O: Ownership> Index<usize> for NSArray<T, O> {
+impl<T: ?Sized + Message, O: Ownership> Index<usize> for NSArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -280,13 +280,13 @@ impl<T: Message, O: Ownership> Index<usize> for NSArray<T, O> {
     }
 }
 
-impl<T: Message> IndexMut<usize> for NSArray<T, Owned> {
+impl<T: ?Sized + Message> IndexMut<usize> for NSArray<T, Owned> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
     }
 }
 
-impl<T: Message, O: Ownership> DefaultId for NSArray<T, O> {
+impl<T: ?Sized + Message, O: Ownership> DefaultId for NSArray<T, O> {
     type Ownership = Shared;
 
     #[inline]
@@ -295,7 +295,7 @@ impl<T: Message, O: Ownership> DefaultId for NSArray<T, O> {
     }
 }
 
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSArray<T, O> {
+impl<T: ?Sized + fmt::Debug + Message, O: Ownership> fmt::Debug for NSArray<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self.iter_fast()).finish()

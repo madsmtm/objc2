@@ -11,7 +11,9 @@ use super::{
     NSObject,
 };
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
+use crate::{
+    ClassType, Message, Thin, __inner_extern_class, extern_methods, msg_send, msg_send_id,
+};
 
 __inner_extern_class!(
     /// A growable ordered collection of objects.
@@ -21,11 +23,11 @@ __inner_extern_class!(
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutablearray?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableArray<T: Message, O: Ownership = Owned> {
+    pub struct NSMutableArray<T: ?Sized + Message, O: Ownership = Owned> {
         p: PhantomData<*mut ()>,
     }
 
-    unsafe impl<T: Message, O: Ownership> ClassType for NSMutableArray<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> ClassType for NSMutableArray<T, O> {
         #[inherits(NSObject)]
         type Super = NSArray<T, O>;
     }
@@ -34,14 +36,14 @@ __inner_extern_class!(
 // SAFETY: Same as NSArray<T, O>
 //
 // Put here because rustdoc doesn't show these otherwise
-unsafe impl<T: Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
+unsafe impl<T: ?Sized + Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: ?Sized + Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: ?Sized + Message + Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: ?Sized + Message + Send> Send for NSMutableArray<T, Owned> {}
 
 extern_methods!(
     /// Generic creation methods.
-    unsafe impl<T: Message, O: Ownership> NSMutableArray<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> NSMutableArray<T, O> {
         pub fn new() -> Id<Self, Owned> {
             // SAFETY: Same as `NSArray::new`, except mutable arrays are always
             // unique.
@@ -56,7 +58,7 @@ extern_methods!(
     }
 
     /// Creation methods that produce shared arrays.
-    unsafe impl<T: Message> NSMutableArray<T, Shared> {
+    unsafe impl<T: ?Sized + Message> NSMutableArray<T, Shared> {
         pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
             // SAFETY: Same as `NSArray::from_slice`, except mutable arrays are
             // always unique.
@@ -65,7 +67,7 @@ extern_methods!(
     }
 
     /// Generic accessor methods.
-    unsafe impl<T: Message, O: Ownership> NSMutableArray<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> NSMutableArray<T, O> {
         #[doc(alias = "addObject:")]
         pub fn push(&mut self, obj: Id<T, O>) {
             // SAFETY: The object is not nil
@@ -139,7 +141,7 @@ extern_methods!(
         #[doc(alias = "sortUsingFunction:context:")]
         pub fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {
             // TODO: "C-unwind"
-            extern "C" fn compare_with_closure<U, F: FnMut(&U, &U) -> Ordering>(
+            extern "C" fn compare_with_closure<U: ?Sized + Thin, F: FnMut(&U, &U) -> Ordering>(
                 obj1: &U,
                 obj2: &U,
                 context: *mut c_void,
@@ -174,28 +176,28 @@ extern_methods!(
 // Copying only possible when ItemOwnership = Shared
 
 /// This is implemented as a shallow copy.
-unsafe impl<T: Message> NSCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: ?Sized + Message> NSCopying for NSMutableArray<T, Shared> {
     type Ownership = Shared;
     type Output = NSArray<T, Shared>;
 }
 
 /// This is implemented as a shallow copy.
-unsafe impl<T: Message> NSMutableCopying for NSMutableArray<T, Shared> {
+unsafe impl<T: ?Sized + Message> NSMutableCopying for NSMutableArray<T, Shared> {
     type Output = NSMutableArray<T, Shared>;
 }
 
-impl<T: Message> alloc::borrow::ToOwned for NSMutableArray<T, Shared> {
+impl<T: ?Sized + Message> alloc::borrow::ToOwned for NSMutableArray<T, Shared> {
     type Owned = Id<NSMutableArray<T, Shared>, Owned>;
     fn to_owned(&self) -> Self::Owned {
         self.mutable_copy()
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableArray<T, O> {
+unsafe impl<T: ?Sized + Message, O: Ownership> NSFastEnumeration for NSMutableArray<T, O> {
     type Item = T;
 }
 
-impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
+impl<'a, T: ?Sized + Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
     type Item = &'a T;
     type IntoIter = NSFastEnumerator<'a, NSMutableArray<T, O>>;
 
@@ -204,14 +206,14 @@ impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
     }
 }
 
-impl<T: Message, O: Ownership> Extend<Id<T, O>> for NSMutableArray<T, O> {
+impl<T: ?Sized + Message, O: Ownership> Extend<Id<T, O>> for NSMutableArray<T, O> {
     fn extend<I: IntoIterator<Item = Id<T, O>>>(&mut self, iter: I) {
         let iterator = iter.into_iter();
         iterator.for_each(move |item| self.push(item));
     }
 }
 
-impl<T: Message, O: Ownership> Index<usize> for NSMutableArray<T, O> {
+impl<T: ?Sized + Message, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -219,13 +221,13 @@ impl<T: Message, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     }
 }
 
-impl<T: Message> IndexMut<usize> for NSMutableArray<T, Owned> {
+impl<T: ?Sized + Message> IndexMut<usize> for NSMutableArray<T, Owned> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
     }
 }
 
-impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
+impl<T: ?Sized + Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
     type Ownership = Owned;
 
     #[inline]
@@ -234,7 +236,7 @@ impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
     }
 }
 
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableArray<T, O> {
+impl<T: ?Sized + fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableArray<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)

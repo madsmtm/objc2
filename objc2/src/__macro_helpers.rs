@@ -1,7 +1,7 @@
 use crate::__sel_inner;
 use crate::rc::{Allocated, Id, Ownership};
 use crate::runtime::{Class, Object, Sel};
-use crate::{Message, MessageArguments, MessageReceiver};
+use crate::{Message, MessageArguments, MessageReceiver, Thin};
 
 pub use crate::cache::CachedClass;
 pub use crate::cache::CachedSel;
@@ -83,7 +83,7 @@ type Init = RetainSemantics<false, false, true, false>;
 type CopyOrMutCopy = RetainSemantics<false, false, false, true>;
 type Other = RetainSemantics<false, false, false, false>;
 
-pub trait MsgSendId<T, U: ?Sized, O: Ownership> {
+pub trait MsgSendId<T, U: ?Sized + Thin, O: Ownership> {
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
         obj: T,
         sel: Sel,
@@ -162,7 +162,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> f
     }
 }
 
-impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, U, O> for Other {
+impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> for Other {
     #[inline]
     #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
@@ -186,14 +186,14 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, U, O> for Other 
     }
 }
 
-pub trait MaybeUnwrap<T: ?Sized, O: Ownership> {
+pub trait MaybeUnwrap<T: ?Sized + Thin, O: Ownership> {
     fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
         obj: Option<Id<T, O>>,
         args: Failed::Args,
     ) -> Self;
 }
 
-impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Option<Id<T, O>> {
+impl<T: ?Sized + Thin, O: Ownership> MaybeUnwrap<T, O> for Option<Id<T, O>> {
     #[inline]
     #[track_caller]
     fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
@@ -204,7 +204,7 @@ impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Option<Id<T, O>> {
     }
 }
 
-impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Id<T, O> {
+impl<T: ?Sized + Thin, O: Ownership> MaybeUnwrap<T, O> for Id<T, O> {
     #[inline]
     #[track_caller]
     fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(

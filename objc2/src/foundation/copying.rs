@@ -28,7 +28,7 @@ pub unsafe trait NSCopying: Message {
     ///
     /// This is usually `Self`, but e.g. `NSMutableString` returns `NSString`.
     /// TODO: Verify???
-    type Output: Message;
+    type Output: ?Sized + Message;
 
     fn copy(&self) -> Id<Self::Output, Self::Ownership> {
         unsafe { msg_send_id![self, copy] }
@@ -40,7 +40,7 @@ pub unsafe trait NSCopying: Message {
 /// Note that the `mutableCopy` selector must return an owned object!
 pub unsafe trait NSMutableCopying: Message {
     /// TODO
-    type Output: Message;
+    type Output: ?Sized + Message;
 
     fn mutable_copy(&self) -> Id<Self::Output, Owned> {
         unsafe { msg_send_id![self, mutableCopy] }

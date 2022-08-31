@@ -186,6 +186,8 @@ compile_error!("The `std` feature currently must be enabled.");
 extern crate alloc;
 extern crate std;
 
+pub(crate) use core::marker::Sized as Thin;
+
 // The example uses NSObject without doing the __gnustep_hack
 #[cfg(all(feature = "apple", doctest))]
 #[doc = include_str!("../README.md")]

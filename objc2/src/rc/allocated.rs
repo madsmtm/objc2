@@ -1,3 +1,5 @@
+use crate::Thin;
+
 /// A marker type that can be used within [`Id`] to indicate that the object
 /// has been allocated but not initialized.
 ///
@@ -10,6 +12,6 @@
 /// [`Id`]: crate::rc::Id
 #[repr(transparent)]
 #[derive(Debug)]
-pub struct Allocated<T: ?Sized>(T);
+pub struct Allocated<T: ?Sized + Thin>(T);
 
 // Explicitly don't implement `Deref`, `Message` nor `RefEncode`!

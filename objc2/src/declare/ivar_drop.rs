@@ -98,7 +98,7 @@ unsafe impl<T: Sized> InnerIvarType for IvarDrop<Option<Box<T>>> {
     }
 }
 
-impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Id<T, O>> {}
+impl<T: ?Sized + Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Id<T, O>> {}
 // SAFETY: `Id` is `NonNull<T>`, and hence safe to store as a pointer.
 //
 // The user ensures that the Id has been initialized in an `init` method
@@ -107,7 +107,7 @@ impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Id<T, O
 // Note: We could technically do `impl InnerIvarType for Ivar<Id<T, O>>`
 // directly today, but since we can't do so for `Box` (because that is
 // `#[fundamental]`), I think it makes sense to handle them similarly.
-unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Id<T, O>> {
+unsafe impl<T: ?Sized + Message, O: Ownership> InnerIvarType for IvarDrop<Id<T, O>> {
     const __ENCODING: Encoding = <*const T as EncodeConvert>::__ENCODING;
 
     type __Inner = Option<Id<T, O>>;
@@ -137,12 +137,15 @@ unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Id<T, O>> {
     }
 }
 
-impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Option<Id<T, O>>> {}
+impl<T: ?Sized + Message, O: Ownership> super::ivar::private::Sealed
+    for IvarDrop<Option<Id<T, O>>>
+{
+}
 // SAFETY: `Id<T, O>` guarantees the null-pointer optimization.
 //
 // This is valid to initialize as all-zeroes, so the user doesn't have to do
 // anything to initialize it.
-unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Option<Id<T, O>>> {
+unsafe impl<T: ?Sized + Message, O: Ownership> InnerIvarType for IvarDrop<Option<Id<T, O>>> {
     const __ENCODING: Encoding = <*const T as EncodeConvert>::__ENCODING;
 
     type __Inner = Option<Id<T, O>>;

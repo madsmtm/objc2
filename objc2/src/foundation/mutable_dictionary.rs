@@ -17,30 +17,39 @@ __inner_extern_class!(
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutabledictionary?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableDictionary<K: Message, V: Message> {
+    pub struct NSMutableDictionary<K: ?Sized + Message, V: ?Sized + Message> {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
     }
 
-    unsafe impl<K: Message, V: Message> ClassType for NSMutableDictionary<K, V> {
+    unsafe impl<K: ?Sized + Message, V: ?Sized + Message> ClassType for NSMutableDictionary<K, V> {
         #[inherits(NSObject)]
         type Super = NSDictionary<K, V>;
     }
 );
 
 // Same as `NSDictionary<K, V>`
-unsafe impl<K: Message + Sync + Send, V: Message + Sync> Sync for NSMutableDictionary<K, V> {}
-unsafe impl<K: Message + Sync + Send, V: Message + Send> Send for NSMutableDictionary<K, V> {}
+unsafe impl<K: ?Sized + Message + Sync + Send, V: ?Sized + Message + Sync> Sync
+    for NSMutableDictionary<K, V>
+{
+}
+unsafe impl<K: ?Sized + Message + Sync + Send, V: ?Sized + Message + Send> Send
+    for NSMutableDictionary<K, V>
+{
+}
 
 // Same as `NSDictionary<K, V>`
-impl<K: Message + UnwindSafe, V: Message + UnwindSafe> UnwindSafe for NSMutableDictionary<K, V> {}
-impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe
+impl<K: ?Sized + Message + UnwindSafe, V: ?Sized + Message + UnwindSafe> UnwindSafe
+    for NSMutableDictionary<K, V>
+{
+}
+impl<K: ?Sized + Message + RefUnwindSafe, V: ?Sized + Message + RefUnwindSafe> RefUnwindSafe
     for NSMutableDictionary<K, V>
 {
 }
 
 extern_methods!(
-    unsafe impl<K: Message, V: Message> NSMutableDictionary<K, V> {
+    unsafe impl<K: ?Sized + Message, V: ?Sized + Message> NSMutableDictionary<K, V> {
         /// Creates an empty [`NSMutableDictionary`].
         ///
         /// # Examples
@@ -238,11 +247,13 @@ extern_methods!(
     }
 );
 
-unsafe impl<K: Message, V: Message> NSFastEnumeration for NSMutableDictionary<K, V> {
+unsafe impl<K: ?Sized + Message, V: ?Sized + Message> NSFastEnumeration
+    for NSMutableDictionary<K, V>
+{
     type Item = K;
 }
 
-impl<'a, K: Message, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
+impl<'a, K: ?Sized + Message, V: ?Sized + Message> Index<&'a K> for NSMutableDictionary<K, V> {
     type Output = V;
 
     fn index<'s>(&'s self, index: &'a K) -> &'s V {
@@ -250,13 +261,13 @@ impl<'a, K: Message, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
     }
 }
 
-impl<'a, K: Message, V: Message> IndexMut<&'a K> for NSMutableDictionary<K, V> {
+impl<'a, K: ?Sized + Message, V: ?Sized + Message> IndexMut<&'a K> for NSMutableDictionary<K, V> {
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
     }
 }
 
-impl<K: Message, V: Message> DefaultId for NSMutableDictionary<K, V> {
+impl<K: ?Sized + Message, V: ?Sized + Message> DefaultId for NSMutableDictionary<K, V> {
     type Ownership = Owned;
 
     #[inline]
@@ -265,7 +276,9 @@ impl<K: Message, V: Message> DefaultId for NSMutableDictionary<K, V> {
     }
 }
 
-impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSMutableDictionary<K, V> {
+impl<K: ?Sized + fmt::Debug + Message, V: ?Sized + fmt::Debug + Message> fmt::Debug
+    for NSMutableDictionary<K, V>
+{
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)

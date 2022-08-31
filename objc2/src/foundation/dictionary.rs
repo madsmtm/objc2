@@ -12,26 +12,38 @@ use crate::{ClassType, __inner_extern_class, extern_methods, msg_send, msg_send_
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    pub struct NSDictionary<K: Message, V: Message> {
+    pub struct NSDictionary<K: ?Sized + Message, V: ?Sized + Message> {
         key: PhantomData<Id<K, Shared>>,
         obj: PhantomData<Id<V, Owned>>,
     }
 
-    unsafe impl<K: Message, V: Message> ClassType for NSDictionary<K, V> {
+    unsafe impl<K: ?Sized + Message, V: ?Sized + Message> ClassType for NSDictionary<K, V> {
         type Super = NSObject;
     }
 );
 
 // TODO: SAFETY
 // Approximately same as `NSArray<T, Shared>`
-unsafe impl<K: Message + Sync + Send, V: Message + Sync> Sync for NSDictionary<K, V> {}
-unsafe impl<K: Message + Sync + Send, V: Message + Send> Send for NSDictionary<K, V> {}
+unsafe impl<K: ?Sized + Message + Sync + Send, V: ?Sized + Message + Sync> Sync
+    for NSDictionary<K, V>
+{
+}
+unsafe impl<K: ?Sized + Message + Sync + Send, V: ?Sized + Message + Send> Send
+    for NSDictionary<K, V>
+{
+}
 
 // Approximately same as `NSArray<T, Shared>`
-impl<K: Message + UnwindSafe, V: Message + UnwindSafe> UnwindSafe for NSDictionary<K, V> {}
-impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
+impl<K: ?Sized + Message + UnwindSafe, V: ?Sized + Message + UnwindSafe> UnwindSafe
+    for NSDictionary<K, V>
+{
+}
+impl<K: ?Sized + Message + RefUnwindSafe, V: ?Sized + Message + RefUnwindSafe> RefUnwindSafe
+    for NSDictionary<K, V>
+{
+}
 extern_methods!(
-    unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
+    unsafe impl<K: ?Sized + Message, V: ?Sized + Message> NSDictionary<K, V> {
         pub fn new() -> Id<Self, Shared> {
             unsafe { msg_send_id![Self::class(), new] }
         }
@@ -131,7 +143,7 @@ extern_methods!(
     }
 );
 
-impl<K: Message, V: Message> DefaultId for NSDictionary<K, V> {
+impl<K: ?Sized + Message, V: ?Sized + Message> DefaultId for NSDictionary<K, V> {
     type Ownership = Shared;
 
     #[inline]
@@ -140,11 +152,11 @@ impl<K: Message, V: Message> DefaultId for NSDictionary<K, V> {
     }
 }
 
-unsafe impl<K: Message, V: Message> NSFastEnumeration for NSDictionary<K, V> {
+unsafe impl<K: ?Sized + Message, V: ?Sized + Message> NSFastEnumeration for NSDictionary<K, V> {
     type Item = K;
 }
 
-impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
+impl<'a, K: ?Sized + Message, V: ?Sized + Message> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
 
     fn index<'s>(&'s self, index: &'a K) -> &'s V {
@@ -152,7 +164,9 @@ impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
     }
 }
 
-impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSDictionary<K, V> {
+impl<K: ?Sized + fmt::Debug + Message, V: ?Sized + fmt::Debug + Message> fmt::Debug
+    for NSDictionary<K, V>
+{
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let iter = self.iter_keys().zip(self.iter_values());

@@ -15,24 +15,24 @@ __inner_extern_class!(
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutableset?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableSet<T: Message, O: Ownership = Owned> {
+    pub struct NSMutableSet<T: ?Sized + Message, O: Ownership = Owned> {
         p: PhantomData<*mut ()>,
     }
 
-    unsafe impl<T: Message, O: Ownership> ClassType for NSMutableSet<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> ClassType for NSMutableSet<T, O> {
         #[inherits(NSObject)]
         type Super = NSSet<T, O>;
     }
 );
 
 // SAFETY: Same as NSSet<T, O>
-unsafe impl<T: Message + Sync + Send> Sync for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSMutableSet<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSMutableSet<T, Owned> {}
+unsafe impl<T: ?Sized + Message + Sync + Send> Sync for NSMutableSet<T, Shared> {}
+unsafe impl<T: ?Sized + Message + Sync + Send> Send for NSMutableSet<T, Shared> {}
+unsafe impl<T: ?Sized + Message + Sync> Sync for NSMutableSet<T, Owned> {}
+unsafe impl<T: ?Sized + Message + Send> Send for NSMutableSet<T, Owned> {}
 
 extern_methods!(
-    unsafe impl<T: Message, O: Ownership> NSMutableSet<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> NSMutableSet<T, O> {
         /// Creates an empty [`NSMutableSet`].
         ///
         /// # Examples
@@ -112,7 +112,7 @@ extern_methods!(
         }
     }
 
-    unsafe impl<T: Message> NSMutableSet<T, Shared> {
+    unsafe impl<T: ?Sized + Message> NSMutableSet<T, Shared> {
         /// Creates an [`NSMutableSet`] from a slice.
         ///
         /// # Examples
@@ -139,7 +139,7 @@ extern_methods!(
     // We're explicit about `T` being `PartialEq` for these methods because the
     // set compares the input value with elements in the set
     // For comparison: Rust's HashSet requires similar methods to be `Hash` + `Eq`
-    unsafe impl<T: Message + PartialEq, O: Ownership> NSMutableSet<T, O> {
+    unsafe impl<T: ?Sized + Message + PartialEq, O: Ownership> NSMutableSet<T, O> {
         #[sel(addObject:)]
         fn add_object(&mut self, value: &T);
 
@@ -201,27 +201,27 @@ extern_methods!(
     }
 );
 
-unsafe impl<T: Message> NSCopying for NSMutableSet<T, Shared> {
+unsafe impl<T: ?Sized + Message> NSCopying for NSMutableSet<T, Shared> {
     type Ownership = Shared;
     type Output = NSSet<T, Shared>;
 }
 
-unsafe impl<T: Message> NSMutableCopying for NSMutableSet<T, Shared> {
+unsafe impl<T: ?Sized + Message> NSMutableCopying for NSMutableSet<T, Shared> {
     type Output = NSMutableSet<T, Shared>;
 }
 
-impl<T: Message> alloc::borrow::ToOwned for NSMutableSet<T, Shared> {
+impl<T: ?Sized + Message> alloc::borrow::ToOwned for NSMutableSet<T, Shared> {
     type Owned = Id<NSMutableSet<T, Shared>, Owned>;
     fn to_owned(&self) -> Self::Owned {
         self.mutable_copy()
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableSet<T, O> {
+unsafe impl<T: ?Sized + Message, O: Ownership> NSFastEnumeration for NSMutableSet<T, O> {
     type Item = T;
 }
 
-impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableSet<T, O> {
+impl<'a, T: ?Sized + Message, O: Ownership> IntoIterator for &'a NSMutableSet<T, O> {
     type Item = &'a T;
     type IntoIter = NSFastEnumerator<'a, NSMutableSet<T, O>>;
 
@@ -230,7 +230,7 @@ impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableSet<T, O> {
     }
 }
 
-impl<T: Message + PartialEq, O: Ownership> Extend<Id<T, O>> for NSMutableSet<T, O> {
+impl<T: ?Sized + Message + PartialEq, O: Ownership> Extend<Id<T, O>> for NSMutableSet<T, O> {
     fn extend<I: IntoIterator<Item = Id<T, O>>>(&mut self, iter: I) {
         for item in iter {
             self.insert(item);
@@ -238,7 +238,7 @@ impl<T: Message + PartialEq, O: Ownership> Extend<Id<T, O>> for NSMutableSet<T, 
     }
 }
 
-impl<T: Message, O: Ownership> DefaultId for NSMutableSet<T, O> {
+impl<T: ?Sized + Message, O: Ownership> DefaultId for NSMutableSet<T, O> {
     type Ownership = Owned;
 
     #[inline]
@@ -247,7 +247,7 @@ impl<T: Message, O: Ownership> DefaultId for NSMutableSet<T, O> {
     }
 }
 
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableSet<T, O> {
+impl<T: ?Sized + fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableSet<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)

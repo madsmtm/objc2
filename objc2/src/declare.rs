@@ -127,7 +127,7 @@ use crate::encode::{Encode, EncodeArguments, Encoding, RefEncode};
 use crate::ffi;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::sel;
-use crate::Message;
+use crate::{Message, Thin};
 
 pub use ivar::{InnerIvarType, Ivar, IvarType};
 pub use ivar_drop::IvarDrop;
@@ -142,7 +142,7 @@ pub(crate) mod private {
 /// function pointer types.
 pub trait MethodImplementation: private::Sealed {
     /// The callee type of the method.
-    type Callee: RefEncode + ?Sized;
+    type Callee: RefEncode + ?Sized + Thin;
     /// The return type of the method.
     type Ret: Encode;
     /// The argument types of the method.
@@ -156,14 +156,14 @@ macro_rules! method_decl_impl {
     (@<$($l:lifetime),*> T, $r:ident, $f:ty, $($t:ident),*) => {
         impl<$($l,)* T, $r, $($t),*> private::Sealed for $f
         where
-            T: Message + ?Sized,
+            T: ?Sized + Message,
             $r: Encode,
             $($t: Encode,)*
         {}
 
         impl<$($l,)* T, $r, $($t),*> MethodImplementation for $f
         where
-            T: Message + ?Sized,
+            T: ?Sized + Message,
             $r: Encode,
             $($t: Encode,)*
         {
@@ -336,7 +336,7 @@ impl ClassBuilder {
     /// when the method is invoked from Objective-C.
     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
     where
-        T: Message + ?Sized,
+        T: ?Sized + Message,
         F: MethodImplementation<Callee = T>,
     {
         let encs = F::Args::ENCODINGS;

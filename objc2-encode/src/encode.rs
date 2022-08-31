@@ -496,8 +496,8 @@ encode_pointer_impls!(
 /// well. So trying to do it quickly requires generating a polynomial amount of
 /// implementations, which IMO is overkill for such a small issue.
 ///
-/// Using `?Sized` is probably not safe here because C functions can only take
-/// and return items with a known size.
+/// Using `?Sized` is not safe here because C functions can only take and
+/// return items with a known size.
 macro_rules! encode_fn_pointer_impl {
     (@ $FnTy: ty, $($Arg: ident),*) => {
         unsafe impl<Ret: Encode, $($Arg: Encode),*> Encode for $FnTy {

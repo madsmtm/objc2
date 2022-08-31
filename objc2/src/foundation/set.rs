@@ -18,29 +18,29 @@ __inner_extern_class!(
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsset?language=objc
     #[derive(PartialEq, Eq, Hash)]
-    pub struct NSSet<T: Message, O: Ownership = Shared> {
+    pub struct NSSet<T: ?Sized + Message, O: Ownership = Shared> {
         item: PhantomData<Id<T, O>>,
         notunwindsafe: PhantomData<&'static mut ()>,
     }
 
-    unsafe impl<T: Message, O: Ownership> ClassType for NSSet<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> ClassType for NSSet<T, O> {
         type Super = NSObject;
     }
 );
 
 // SAFETY: Same as NSArray<T, O>
-unsafe impl<T: Message + Sync + Send> Sync for NSSet<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSSet<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSSet<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSSet<T, Owned> {}
+unsafe impl<T: ?Sized + Message + Sync + Send> Sync for NSSet<T, Shared> {}
+unsafe impl<T: ?Sized + Message + Sync + Send> Send for NSSet<T, Shared> {}
+unsafe impl<T: ?Sized + Message + Sync> Sync for NSSet<T, Owned> {}
+unsafe impl<T: ?Sized + Message + Send> Send for NSSet<T, Owned> {}
 
 // SAFETY: Same as NSArray<T, O>
-impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSSet<T, O> {}
-impl<T: Message + RefUnwindSafe> UnwindSafe for NSSet<T, Shared> {}
-impl<T: Message + UnwindSafe> UnwindSafe for NSSet<T, Owned> {}
+impl<T: ?Sized + Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSSet<T, O> {}
+impl<T: ?Sized + Message + RefUnwindSafe> UnwindSafe for NSSet<T, Shared> {}
+impl<T: ?Sized + Message + UnwindSafe> UnwindSafe for NSSet<T, Owned> {}
 
 #[track_caller]
-pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>(
+pub(crate) unsafe fn with_objects<T: ?Sized + Message, R: ?Sized + Message, O: Ownership>(
     cls: &Class,
     objects: &[&T],
 ) -> Id<R, O> {
@@ -54,7 +54,7 @@ pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>
 }
 
 extern_methods!(
-    unsafe impl<T: Message, O: Ownership> NSSet<T, O> {
+    unsafe impl<T: ?Sized + Message, O: Ownership> NSSet<T, O> {
         /// Creates an empty [`NSSet`].
         ///
         /// # Examples
@@ -197,7 +197,7 @@ extern_methods!(
         }
     }
 
-    unsafe impl<T: Message> NSSet<T, Shared> {
+    unsafe impl<T: ?Sized + Message> NSSet<T, Shared> {
         /// Creates an [`NSSet`] from a slice.
         ///
         /// # Examples
@@ -248,7 +248,7 @@ extern_methods!(
     // We're explicit about `T` being `PartialEq` for these methods because the
     // set compares the input value(s) with elements in the set
     // For comparison: Rust's HashSet requires similar methods to be `Hash` + `Eq`
-    unsafe impl<T: Message + PartialEq, O: Ownership> NSSet<T, O> {
+    unsafe impl<T: ?Sized + Message + PartialEq, O: Ownership> NSSet<T, O> {
         /// Returns `true` if the set contains a value.
         ///
         /// # Examples
@@ -353,27 +353,27 @@ extern_methods!(
     }
 );
 
-unsafe impl<T: Message> NSCopying for NSSet<T, Shared> {
+unsafe impl<T: ?Sized + Message> NSCopying for NSSet<T, Shared> {
     type Ownership = Shared;
     type Output = NSSet<T, Shared>;
 }
 
-unsafe impl<T: Message> NSMutableCopying for NSSet<T, Shared> {
+unsafe impl<T: ?Sized + Message> NSMutableCopying for NSSet<T, Shared> {
     type Output = NSMutableSet<T, Shared>;
 }
 
-impl<T: Message> alloc::borrow::ToOwned for NSSet<T, Shared> {
+impl<T: ?Sized + Message> alloc::borrow::ToOwned for NSSet<T, Shared> {
     type Owned = Id<NSSet<T, Shared>, Shared>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSSet<T, O> {
+unsafe impl<T: ?Sized + Message, O: Ownership> NSFastEnumeration for NSSet<T, O> {
     type Item = T;
 }
 
-impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSSet<T, O> {
+impl<'a, T: ?Sized + Message, O: Ownership> IntoIterator for &'a NSSet<T, O> {
     type Item = &'a T;
     type IntoIter = NSFastEnumerator<'a, NSSet<T, O>>;
 
@@ -382,7 +382,7 @@ impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSSet<T, O> {
     }
 }
 
-impl<T: Message, O: Ownership> DefaultId for NSSet<T, O> {
+impl<T: ?Sized + Message, O: Ownership> DefaultId for NSSet<T, O> {
     type Ownership = Shared;
 
     #[inline]
@@ -391,7 +391,7 @@ impl<T: Message, O: Ownership> DefaultId for NSSet<T, O> {
     }
 }
 
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSSet<T, O> {
+impl<T: ?Sized + Message + fmt::Debug, O: Ownership> fmt::Debug for NSSet<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_set().entries(self.iter_fast()).finish()

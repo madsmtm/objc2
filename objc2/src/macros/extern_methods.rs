@@ -181,14 +181,14 @@ macro_rules! extern_methods {
     (
         $(
             $(#[$impl_m:meta])*
-            unsafe impl<$($t:ident $(: $b:ident $(+ $rest:ident)*)?),*> $type:ty {
+            unsafe impl<$($t:ident $(: $(?$sized:ident +)? $b:ident $(+ $rest:ident)*)?),*> $type:ty {
                 $($methods:tt)*
             }
         )+
     ) => {
         $(
             $(#[$impl_m])*
-            impl<$($t $(: $b $(+ $rest)*)?),*> $type {
+            impl<$($t $(: $(?$sized +)? $b $(+ $rest)*)?),*> $type {
                 $crate::__inner_extern_methods! {
                     @rewrite_methods
                     $($methods)*
