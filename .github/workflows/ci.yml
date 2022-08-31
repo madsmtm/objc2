@@ -153,7 +153,7 @@ jobs:
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
       SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation' }}
       FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation,catch-all,verify_message,uuid' }}
-      UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
+      UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind,unstable-extern-types' }}
       CMD: cargo
 
     runs-on: ${{ matrix.os }}

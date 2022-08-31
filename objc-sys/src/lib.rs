@@ -28,6 +28,7 @@
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
+#![cfg_attr(feature = "unstable-extern-types", feature(extern_types))]
 
 // TODO: Remove this and add "no-std" category to Cargo.toml
 // Requires a better solution for C-types in `no_std` crates.
@@ -40,9 +41,6 @@ compile_error!("The `std` feature currently must be enabled.");
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}
-
-use core::cell::UnsafeCell;
-use core::marker::{PhantomData, PhantomPinned};
 
 macro_rules! generate_linking_tests {
     {
@@ -170,9 +168,18 @@ pub use various::*;
 ///
 /// Downstream libraries can always manually opt in to these types afterwards.
 /// (It's also less of a breaking change on our part if we re-add these).
-///
-/// TODO: Replace this with `extern type` to also mark it as `!Sized`.
-type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
+#[cfg(not(feature = "unstable-extern-types"))]
+type OpaqueData = core::cell::UnsafeCell<
+    core::marker::PhantomData<(
+        *const core::cell::UnsafeCell<()>,
+        core::marker::PhantomPinned,
+    )>,
+>;
+
+#[cfg(feature = "unstable-extern-types")]
+extern "C" {
+    type OpaqueData;
+}
 
 #[cfg(test)]
 mod tests {

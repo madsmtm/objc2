@@ -63,6 +63,8 @@ __inner_extern_class!(
 );
 
 // SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
+//
+// Duplicated here, rustdoc doesn't show these otherwise.
 unsafe impl<T: ?Sized + Message + Sync + Send> Sync for NSArray<T, Shared> {}
 unsafe impl<T: ?Sized + Message + Sync + Send> Send for NSArray<T, Shared> {}
 unsafe impl<T: ?Sized + Message + Sync> Sync for NSArray<T, Owned> {}

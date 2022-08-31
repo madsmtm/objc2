@@ -167,6 +167,7 @@
 )]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg))]
+#![cfg_attr(feature = "unstable-extern-types", feature(extern_types, ptr_metadata))]
 #![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
 #![deny(non_ascii_idents)]
@@ -186,7 +187,10 @@ compile_error!("The `std` feature currently must be enabled.");
 extern crate alloc;
 extern crate std;
 
+#[cfg(not(feature = "unstable-extern-types"))]
 pub(crate) use core::marker::Sized as Thin;
+#[cfg(feature = "unstable-extern-types")]
+pub(crate) use core::ptr::Thin;
 
 // The example uses NSObject without doing the __gnustep_hack
 #[cfg(all(feature = "apple", doctest))]

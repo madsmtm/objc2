@@ -1,3 +1,4 @@
+use core::ffi::c_void;
 use core::ptr;
 use core::sync::atomic::{AtomicPtr, Ordering};
 
@@ -7,7 +8,7 @@ use crate::runtime::{Class, Sel};
 /// Allows storing a [`Sel`] in a static and lazily loading it.
 #[doc(hidden)]
 pub struct CachedSel {
-    ptr: AtomicPtr<ffi::objc_selector>,
+    ptr: AtomicPtr<c_void>,
 }
 
 impl CachedSel {
@@ -24,7 +25,7 @@ impl CachedSel {
     #[doc(hidden)]
     pub unsafe fn get(&self, name: &str) -> Sel {
         // `Relaxed` should be fine since `sel_registerName` is thread-safe.
-        let ptr = self.ptr.load(Ordering::Relaxed);
+        let ptr: *const ffi::objc_selector = self.ptr.load(Ordering::Relaxed).cast();
         unsafe { Sel::from_ptr(ptr) }.unwrap_or_else(|| {
             // The panic inside `Sel::register_unchecked` is unfortunate, but
             // strict correctness is more important than speed
@@ -34,7 +35,7 @@ impl CachedSel {
             // We know this, because we construct it in `sel!` ourselves
             let sel = unsafe { Sel::register_unchecked(name.as_ptr().cast()) };
             self.ptr
-                .store(sel.as_ptr() as *mut ffi::objc_selector, Ordering::Relaxed);
+                .store(sel.as_ptr() as *mut c_void, Ordering::Relaxed);
             sel
         })
     }
@@ -43,7 +44,7 @@ impl CachedSel {
 /// Allows storing a [`Class`] reference in a static and lazily loading it.
 #[doc(hidden)]
 pub struct CachedClass {
-    ptr: AtomicPtr<Class>,
+    ptr: AtomicPtr<c_void>,
 }
 
 impl CachedClass {
@@ -60,12 +61,12 @@ impl CachedClass {
     #[doc(hidden)]
     pub unsafe fn get(&self, name: &str) -> Option<&'static Class> {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.
-        let ptr = self.ptr.load(Ordering::Relaxed);
+        let ptr: *const Class = self.ptr.load(Ordering::Relaxed).cast();
         if let Some(cls) = unsafe { ptr.as_ref() } {
             Some(cls)
         } else {
             let ptr: *const Class = unsafe { ffi::objc_getClass(name.as_ptr().cast()) }.cast();
-            self.ptr.store(ptr as *mut Class, Ordering::Relaxed);
+            self.ptr.store(ptr as *mut c_void, Ordering::Relaxed);
             unsafe { ptr.as_ref() }
         }
     }

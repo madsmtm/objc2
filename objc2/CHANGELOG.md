@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Added required `ClassType::NAME` constant for statically
   determining the name of a specific class.
 * Allow directly specifying class name in declare_class! macro.
+* Added the `"unstable-extern-types"` feature flags to make relevant types
+  `!Sized`.
 
 ### Changed
 * **BREAKING**: Slightly changed when a type implements `?Sized` to support

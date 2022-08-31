@@ -35,7 +35,7 @@ __inner_extern_class!(
 
 // SAFETY: Same as NSArray<T, O>
 //
-// Put here because rustdoc doesn't show these otherwise
+// Duplicated here, rustdoc doesn't show these otherwise.
 unsafe impl<T: ?Sized + Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
 unsafe impl<T: ?Sized + Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
 unsafe impl<T: ?Sized + Message + Sync> Sync for NSMutableArray<T, Owned> {}
