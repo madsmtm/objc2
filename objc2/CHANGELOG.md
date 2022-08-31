@@ -8,8 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
-* `Ivar::write`, `Ivar::as_ptr` and `Ivar::as_mut_ptr` for querying/modifying
-  the instance variable inside `init` methods.
+* Added `Ivar::write`, `Ivar::as_ptr` and `Ivar::as_mut_ptr` for safely
+  querying and modifying instance variables inside `init` methods.
+* Added `IvarDrop<T>` to allow storing complex `Drop` values in ivars
+  (currently `rc::Id<T, O>`, `Box<T>`, `Option<rc::Id<T, O>>` or
+  `Option<Box<T>>`).
 
 ### Removed
 * **BREAKING**: `MaybeUninit` no longer implements `IvarType` directly; use

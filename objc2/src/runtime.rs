@@ -17,10 +17,14 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
-use crate::encode::{Encode, EncodeConvert, Encoding, RefEncode};
+use crate::encode::{Encode, Encoding, RefEncode};
 use crate::ffi;
 #[cfg(feature = "malloc")]
-use crate::{verify::verify_message_signature, EncodeArguments, VerificationError};
+use crate::{
+    encode::{EncodeArguments, EncodeConvert},
+    verify::verify_message_signature,
+    VerificationError,
+};
 
 #[doc(inline)]
 pub use crate::encode::__bool::Bool;
@@ -274,8 +278,7 @@ impl Method {
     pub fn argument_type(&self, index: usize) -> Option<Malloc<str>> {
         unsafe {
             let encoding = ffi::method_copyArgumentType(self.as_ptr(), index as c_uint);
-            ptr::NonNull::new(encoding)
-                .map(|encoding| Malloc::from_c_str(encoding.as_ptr()).unwrap())
+            NonNull::new(encoding).map(|encoding| Malloc::from_c_str(encoding.as_ptr()).unwrap())
         }
     }
 
@@ -606,15 +609,15 @@ impl UnwindSafe for Protocol {}
 impl RefUnwindSafe for Protocol {}
 // Note that Unpin is not applicable.
 
-fn ivar_offset<T: EncodeConvert>(cls: &Class, name: &str) -> isize {
+pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize {
     match cls.instance_variable(name) {
         Some(ivar) => {
             let encoding = ivar.type_encoding();
             assert!(
-                T::__ENCODING.equivalent_to_str(encoding),
+                expected.equivalent_to_str(encoding),
                 "wrong encoding. Tried to retrieve ivar with encoding {}, but the encoding of the given type was {}",
                 encoding,
-                T::__ENCODING,
+                expected,
             );
             ivar.offset()
         }
@@ -662,6 +665,26 @@ impl Object {
         unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
+    /// Offset an object pointer to get a pointer to an ivar.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The offset must be valid for the given type.
+    #[inline]
+    pub(crate) unsafe fn ivar_at_offset<T>(ptr: NonNull<Self>, offset: isize) -> NonNull<T> {
+        // `offset` is given in bytes, so we convert to `u8` and back to `T`
+        let ptr: NonNull<u8> = ptr.cast();
+        let ptr: *mut u8 = ptr.as_ptr();
+        // SAFETY: The offset is valid
+        let ptr: *mut u8 = unsafe { ptr.offset(offset) };
+        // SAFETY: The offset operation is guaranteed to not end up computing
+        // a NULL pointer.
+        let ptr: NonNull<u8> = unsafe { NonNull::new_unchecked(ptr) };
+        let ptr: NonNull<T> = ptr.cast();
+        ptr
+    }
+
     /// Returns a pointer to the instance variable / ivar with the given name.
     ///
     /// This is similar to [`UnsafeCell::get`], see that for more information
@@ -701,21 +724,14 @@ impl Object {
     /// must ensure that any access to the returned pointer do not cause data
     /// races, and that Rust's mutability rules are not otherwise violated.
     pub unsafe fn ivar_ptr<T: Encode>(&self, name: &str) -> *mut T {
-        // SAFETY: Upheld by caller
-        unsafe { self.inner_ivar_ptr::<T>(name) }
-    }
+        let offset = ivar_offset(self.class(), name, &T::ENCODING);
 
-    pub(crate) unsafe fn inner_ivar_ptr<T: EncodeConvert>(&self, name: &str) -> *mut T {
-        let offset = ivar_offset::<T>(self.class(), name);
-        let ptr: *const Self = self;
-
-        // `offset` is given in bytes, so we convert to `u8` and back to `T`
-        let ptr: *const u8 = ptr.cast();
-        let ptr = unsafe { ptr.offset(offset) };
-        let ptr: *const T = ptr.cast();
+        let ptr = NonNull::from(self);
+        // SAFETY: The offset is valid
+        let ptr = unsafe { Self::ivar_at_offset::<T>(ptr, offset) };
 
         // Safe as *mut T because `self` is `UnsafeCell`
-        ptr as *mut T
+        ptr.as_ptr()
     }
 
     /// Returns a reference to the instance variable with the given name.
@@ -765,15 +781,14 @@ impl Object {
     /// the only reference, hence you do not need to do any work to ensure
     /// that data races do not happen.
     pub unsafe fn ivar_mut<T: Encode>(&mut self, name: &str) -> &mut T {
-        let offset = ivar_offset::<T>(self.class(), name);
-        let ptr: *mut Self = self;
+        let offset = ivar_offset(self.class(), name, &T::ENCODING);
 
-        // `offset` is given in bytes, so we convert to `u8` and back to `T`
-        let ptr: *mut u8 = ptr.cast();
-        let ptr = unsafe { ptr.offset(offset) };
-        let ptr: *mut T = ptr.cast();
+        let ptr = NonNull::from(self);
+        // SAFETY: The offset is valid
+        let mut ptr = unsafe { Self::ivar_at_offset::<T>(ptr, offset) };
 
-        unsafe { ptr.as_mut().unwrap_unchecked() }
+        // SAFETY:
+        unsafe { ptr.as_mut() }
     }
 
     /// Use [`Object::ivar_mut`] instead.

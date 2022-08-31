@@ -315,7 +315,12 @@ macro_rules! __fn_args {
 /// Objective-C runtime after the [`ClassType::class`] function has been
 /// called.
 ///
+/// If any of the instance variables require being `Drop`'ed (e.g. are wrapped
+/// in [`declare::IvarDrop`]), this macro will generate a `dealloc` method
+/// automatically.
+///
 /// [`ClassType::class`]: crate::ClassType::class
+/// [`declare::IvarDrop`]: crate::declare::IvarDrop
 ///
 ///
 /// ## Method definitions
@@ -384,9 +389,10 @@ macro_rules! __fn_args {
 ///
 /// ```
 /// use std::os::raw::c_int;
-/// use objc2::rc::{Id, Owned};
-/// use objc2::foundation::{NSCopying, NSObject, NSZone};
-/// use objc2::{declare_class, msg_send, msg_send_id, ClassType};
+/// use objc2::declare::{Ivar, IvarDrop};
+/// use objc2::rc::{Id, Owned, Shared};
+/// use objc2::foundation::{NSCopying, NSObject, NSString, NSZone};
+/// use objc2::{declare_class, msg_send, msg_send_id, ns_string, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -395,6 +401,7 @@ macro_rules! __fn_args {
 ///     struct MyCustomObject {
 ///         foo: u8,
 ///         pub bar: c_int,
+///         string: IvarDrop<Id<NSString, Shared>>,
 ///     }
 ///
 ///     unsafe impl ClassType for MyCustomObject {
@@ -407,12 +414,25 @@ macro_rules! __fn_args {
 ///             let this: Option<&mut Self> = unsafe {
 ///                 msg_send![super(self), init]
 ///             };
+///
+///             // TODO: `ns_string` can't be used inside closures.
+///             let s = ns_string!("abc");
+///
 ///             this.map(|this| {
-///                 // TODO: Initialization through MaybeUninit
-///                 // (The below is only safe because these variables are
-///                 // safe to initialize with `MaybeUninit::zeroed`).
+///                 // Initialize instance variables
+///
+///                 // Some types like `u8`, `bool`, `Option<Box<T>>` and
+///                 // `Option<Id<T, O>>` are safe to zero-initialize, and
+///                 // we can simply write to the variable as normal:
 ///                 *this.foo = foo;
 ///                 *this.bar = 42;
+///
+///                 // For others like `&u8`, `Box<T>` or `Id<T, O>`, we have
+///                 // to initialize them with `Ivar::write`:
+///                 Ivar::write(&mut this.string, s.copy());
+///
+///                 // All the instance variables have been initialized; our
+///                 // initializer is sound
 ///                 this
 ///             })
 ///         }
@@ -420,6 +440,11 @@ macro_rules! __fn_args {
 ///         #[sel(foo)]
 ///         fn __get_foo(&self) -> u8 {
 ///             *self.foo
+///         }
+///
+///         #[sel(string)]
+///         fn __get_string(&self) -> *mut NSString {
+///             Id::autorelease_return((*self.string).copy())
 ///         }
 ///
 ///         #[sel(myClassMethod)]
@@ -448,6 +473,10 @@ macro_rules! __fn_args {
 ///         unsafe { msg_send![self, foo] }
 ///     }
 ///
+///     pub fn get_string(&self) -> Id<NSString, Shared> {
+///         unsafe { msg_send_id![self, string] }
+///     }
+///
 ///     pub fn my_class_method() -> bool {
 ///         unsafe { msg_send![Self::class(), myClassMethod] }
 ///     }
@@ -462,15 +491,17 @@ macro_rules! __fn_args {
 ///     let obj = MyCustomObject::new(3);
 ///     assert_eq!(*obj.foo, 3);
 ///     assert_eq!(*obj.bar, 42);
+///     assert_eq!(*obj.string, NSString::from_str("abc"));
 ///
 ///     let obj = obj.copy();
 ///     assert_eq!(obj.get_foo(), 3);
+///     assert_eq!(obj.get_string(), NSString::from_str("abc"));
 ///
 ///     assert!(MyCustomObject::my_class_method());
 /// }
 /// ```
 ///
-/// Approximately equivalent to the following Objective-C code.
+/// Approximately equivalent to the following ARC-enabled Objective-C code.
 ///
 /// ```text
 /// #import <Foundation/Foundation.h>
@@ -482,6 +513,7 @@ macro_rules! __fn_args {
 ///
 /// - (instancetype)initWithFoo:(uint8_t)foo;
 /// - (uint8_t)foo;
+/// - (NSString*)string;
 /// + (BOOL)myClassMethod;
 ///
 /// @end
@@ -490,6 +522,7 @@ macro_rules! __fn_args {
 /// @implementation MyCustomObject {
 ///     // Private ivar
 ///     uint8_t foo;
+///     NSString* _Nonnull string;
 /// }
 ///
 /// - (instancetype)initWithFoo:(uint8_t)foo_arg {
@@ -497,12 +530,17 @@ macro_rules! __fn_args {
 ///     if (self) {
 ///         self->foo = foo_arg;
 ///         self->bar = 42;
+///         self->string = @"abc";
 ///     }
 ///     return self;
 /// }
 ///
 /// - (uint8_t)foo {
 ///     return self->foo; // Or just `foo`
+/// }
+///
+/// - (NSString*)string {
+///     return self->string;
 /// }
 ///
 /// + (BOOL)myClassMethod {
@@ -514,6 +552,7 @@ macro_rules! __fn_args {
 /// - (id)copyWithZone:(NSZone *)_zone {
 ///     MyCustomObject* obj = [[MyCustomObject alloc] initWithFoo: self->foo];
 ///     obj->bar = self->bar;
+///     obj->string = self->string;
 ///     return obj;
 /// }
 ///
@@ -594,6 +633,18 @@ macro_rules! declare_class {
                         builder.add_static_ivar::<$ivar>();
                     )*
 
+                    // Check whether we need to add a `dealloc` method
+                    if false $(
+                        || <<$ivar as $crate::declare::IvarType>::Type as $crate::declare::InnerIvarType>::__MAY_DROP
+                    )* {
+                        unsafe {
+                            builder.add_method(
+                                $crate::sel!(dealloc),
+                                Self::__objc2_dealloc as unsafe extern "C" fn(_, _),
+                            );
+                        }
+                    }
+
                     // Implement protocols and methods
                     $crate::__declare_class_methods!(
                         @register_out(builder)
@@ -615,6 +666,18 @@ macro_rules! declare_class {
             #[inline]
             fn as_super_mut(&mut self) -> &mut Self::Super {
                 &mut self.__inner
+            }
+        }
+
+        impl $for {
+            unsafe extern "C" fn __objc2_dealloc(&mut self, _cmd: $crate::runtime::Sel) {
+                $(
+                    let ptr: *mut $crate::declare::Ivar<$ivar> = &mut self.$ivar;
+                    // SAFETY: The ivar is valid, and since this is the
+                    // `dealloc` method, we know the ivars are never going to
+                    // be touched again.
+                    unsafe { $crate::__macro_helpers::drop_in_place(ptr) };
+                )*
             }
         }
 
