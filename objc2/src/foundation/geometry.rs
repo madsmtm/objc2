@@ -12,14 +12,16 @@ type InnerFloat = f32;
 /// This technically belongs to the `CoreGraphics` framework, but we define it
 /// here for convenience.
 ///
-/// See [Apple's documentation](https://developer.apple.com/documentation/coregraphics/cgfloat?language=objc)
-/// and the related [`core_graphics_types::base::CGFloat`](https://docs.rs/core-graphics-types/0.1.1/core_graphics_types/base/type.CGFloat.html).
+/// See [Apple's documentation](https://developer.apple.com/documentation/coregraphics/cgfloat?language=objc).
 // Defined in CoreGraphics/CGBase.h
 // TODO: Use a newtype here?
 pub type CGFloat = InnerFloat;
 
 // NSGeometry types are just aliases to CGGeometry types on iOS, tvOS, watchOS
 // and macOS 64bit (and hence their Objective-C encodings are different).
+//
+// TODO: Adjust `objc2-encode` so that this is handled there, and so that we
+// can effectively just forget about it and use `NS` and `CG` types equally.
 #[cfg(all(
     feature = "apple",
     not(all(target_os = "macos", target_pointer_width = "32"))
@@ -40,107 +42,107 @@ mod names {
     pub(super) const RECT: &str = "_NSRect";
 }
 
-/// A point in a Cartesian coordinate system.
+/// A point in a two-dimensional coordinate system.
 ///
-/// For ease of use, this is available on all platforms, though in practice it
-/// is only useful on macOS.
+/// This technically belongs to the `CoreGraphics` framework, but we define it
+/// here for convenience.
 ///
-/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nspoint?language=objc).
-/// and the related [`core_graphics_types::geometry::CGPoint`](https://docs.rs/core-graphics-types/0.1.1/core_graphics_types/geometry/struct.CGPoint.html).
+/// See [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cgpoint?language=objc).
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Default)]
-pub struct NSPoint {
+pub struct CGPoint {
     /// The x-coordinate of the point.
     pub x: CGFloat,
     /// The y-coordinate of the point.
     pub y: CGFloat,
 }
 
-unsafe impl Encode for NSPoint {
+unsafe impl Encode for CGPoint {
     const ENCODING: Encoding =
         Encoding::Struct(names::POINT, &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
-unsafe impl RefEncode for NSPoint {
+unsafe impl RefEncode for CGPoint {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
-impl NSPoint {
+impl CGPoint {
     /// Create a new point with the given coordinates.
+    ///
     ///
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::NSPoint;
-    /// assert_eq!(NSPoint::new(10.0, -2.3), NSPoint { x: 10.0, y: -2.3 });
+    /// use objc2::foundation::CGPoint;
+    /// assert_eq!(CGPoint::new(10.0, -2.3), CGPoint { x: 10.0, y: -2.3 });
     /// ```
     #[inline]
     #[doc(alias = "NSMakePoint")]
+    #[doc(alias = "CGPointMake")]
     pub const fn new(x: CGFloat, y: CGFloat) -> Self {
-        // TODO: Prevent NaN?
         Self { x, y }
     }
 
     /// A point with both coordinates set to `0.0`.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use objc2::foundation::CGPoint;
+    /// assert_eq!(CGPoint::ZERO, CGPoint { x: 0.0, y: 0.0 });
+    /// ```
     #[doc(alias = "NSZeroPoint")]
+    #[doc(alias = "CGPointZero")]
     #[doc(alias = "ORIGIN")]
     pub const ZERO: Self = Self::new(0.0, 0.0);
-
-    // #[inline]
-    // pub const fn x_f64(self) -> f64 {
-    //     self.x.into()
-    // }
-
-    // #[inline]
-    // pub const fn y_f64(self) -> f64 {
-    //     self.y.into()
-    // }
 }
 
 /// A two-dimensional size.
 ///
 /// The width and height are guaranteed to be non-negative, so methods that
-/// expect that can safely accept [`NSSize`] as a parameter.
+/// expect that can safely accept [`CGSize`] as a parameter.
 ///
-/// For ease of use, this is available on all platforms, though in practice it
-/// is only useful on macOS.
+/// This technically belongs to the `CoreGraphics` framework, but we define it
+/// here for convenience.
 ///
-/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nssize?language=objc).
-/// and the related [`core_graphics_types::geometry::CGSize`](https://docs.rs/core-graphics-types/0.1.1/core_graphics_types/geometry/struct.CGSize.html).
+/// See [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cgsize?language=objc).
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Default)]
-pub struct NSSize {
+pub struct CGSize {
     width: CGFloat,
     height: CGFloat,
 }
 
-unsafe impl Encode for NSSize {
+unsafe impl Encode for CGSize {
     const ENCODING: Encoding =
         Encoding::Struct(names::SIZE, &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
-unsafe impl RefEncode for NSSize {
+unsafe impl RefEncode for CGSize {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
-impl NSSize {
+impl CGSize {
     /// Create a new size with the given dimensions.
+    ///
     ///
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::NSSize;
-    /// let size = NSSize::new(10.0, 2.3);
+    /// use objc2::foundation::CGSize;
+    /// let size = CGSize::new(10.0, 2.3);
     /// assert_eq!(size.width(), 10.0);
     /// assert_eq!(size.height(), 2.3);
     /// ```
     ///
     /// ```should_panic
-    /// use objc2::foundation::NSSize;
-    /// let size = NSSize::new(-1.0, 0.0);
+    /// use objc2::foundation::CGSize;
+    /// let size = CGSize::new(-1.0, 0.0);
     /// ```
     #[inline]
     #[doc(alias = "NSMakeSize")]
+    #[doc(alias = "CGSizeMake")]
     pub fn new(width: CGFloat, height: CGFloat) -> Self {
         // The documentation explicitly says:
         // > If the value of width or height is negative, however, the
@@ -150,15 +152,16 @@ impl NSSize {
 
         // TODO: Prevent NaN? Prevent infinities?
         match (width < 0.0, height < 0.0) {
-            (true, true) => panic!("NSSize cannot have negative width and height"),
-            (true, false) => panic!("NSSize cannot have negative width"),
-            (false, true) => panic!("NSSize cannot have negative height"),
+            (true, true) => panic!("CGSize cannot have negative width and height"),
+            (true, false) => panic!("CGSize cannot have negative width"),
+            (false, true) => panic!("CGSize cannot have negative height"),
             (false, false) => Self { width, height },
         }
     }
 
     /// A size that is 0.0 in both dimensions.
     #[doc(alias = "NSZeroSize")]
+    #[doc(alias = "CGSizeZero")]
     pub const ZERO: Self = Self {
         width: 0.0,
         height: 0.0,
@@ -185,60 +188,70 @@ impl NSSize {
 /// origin is in the upper-left corner and the rectangle extends towards the
 /// lower-right corner.
 ///
-/// For ease of use, this is available on all platforms, though in practice it
-/// is only useful on macOS.
+/// This technically belongs to the `CoreGraphics` framework, but we define it
+/// here for convenience.
 ///
-/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsrect?language=objc).
-/// and the related [`core_graphics_types::geometry::CGRect`](https://docs.rs/core-graphics-types/0.1.1/core_graphics_types/geometry/struct.CGRect.html).
+/// See [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cgrect?language=objc).
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Default)]
-pub struct NSRect {
+pub struct CGRect {
     /// The coordinates of the rectangle’s origin.
-    pub origin: NSPoint,
+    pub origin: CGPoint,
     /// The dimensions of the rectangle.
-    pub size: NSSize,
+    pub size: CGSize,
 }
 
-unsafe impl Encode for NSRect {
+unsafe impl Encode for CGRect {
     const ENCODING: Encoding =
-        Encoding::Struct(names::RECT, &[NSPoint::ENCODING, NSSize::ENCODING]);
+        Encoding::Struct(names::RECT, &[CGPoint::ENCODING, CGSize::ENCODING]);
 }
 
-unsafe impl RefEncode for NSRect {
+unsafe impl RefEncode for CGRect {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
-impl NSRect {
+impl CGRect {
     /// Create a new rectangle with the given origin and dimensions.
+    ///
     ///
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::{NSPoint, NSRect, NSSize};
-    /// let origin = NSPoint::new(10.0, -2.3);
-    /// let size = NSSize::new(5.0, 0.0);
-    /// let rect = NSRect::new(origin, size);
+    /// use objc2::foundation::{CGPoint, CGRect, CGSize};
+    /// let origin = CGPoint::new(10.0, -2.3);
+    /// let size = CGSize::new(5.0, 0.0);
+    /// let rect = CGRect::new(origin, size);
     /// ```
     #[inline]
     #[doc(alias = "NSMakeRect")]
-    pub const fn new(origin: NSPoint, size: NSSize) -> Self {
+    #[doc(alias = "CGRectMake")]
+    pub const fn new(origin: CGPoint, size: CGSize) -> Self {
         Self { origin, size }
     }
 
     /// A rectangle with origin (0.0, 0.0) and zero width and height.
     #[doc(alias = "NSZeroRect")]
-    pub const ZERO: Self = Self::new(NSPoint::ZERO, NSSize::ZERO);
+    #[doc(alias = "CGRectZero")]
+    pub const ZERO: Self = Self::new(CGPoint::ZERO, CGSize::ZERO);
 
     /// The smallest coordinate of the rectangle.
     #[inline]
-    pub fn min(self) -> NSPoint {
+    #[doc(alias = "CGRectGetMinX")]
+    #[doc(alias = "CGRectGetMinY")]
+    #[doc(alias = "NSMinX")]
+    #[doc(alias = "NSMinY")]
+    pub fn min(self) -> CGPoint {
         self.origin
     }
 
     /// The center point of the rectangle.
     #[inline]
-    pub fn mid(self) -> NSPoint {
-        NSPoint::new(
+    #[doc(alias = "CGRectGetMidX")]
+    #[doc(alias = "CGRectGetMidY")]
+    #[doc(alias = "NSMidX")]
+    #[doc(alias = "NSMidY")]
+    pub fn mid(self) -> CGPoint {
+        CGPoint::new(
             self.origin.x + (self.size.width * 0.5),
             self.origin.y + (self.size.height * 0.5),
         )
@@ -246,33 +259,82 @@ impl NSRect {
 
     /// The largest coordinate of the rectangle.
     #[inline]
-    pub fn max(self) -> NSPoint {
-        NSPoint::new(
+    #[doc(alias = "CGRectGetMaxX")]
+    #[doc(alias = "CGRectGetMaxY")]
+    #[doc(alias = "NSMaxX")]
+    #[doc(alias = "NSMaxY")]
+    pub fn max(self) -> CGPoint {
+        CGPoint::new(
             self.origin.x + self.size.width,
             self.origin.y + self.size.height,
         )
     }
 
-    /// Returns whether the area of the rectangle is zero.
+    /// Returns whether a rectangle has zero width or height.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use objc2::foundation::{CGPoint, CGRect, CGSize};
+    /// assert!(CGRect::ZERO.is_empty());
+    /// let point = CGPoint::new(1.0, 2.0);
+    /// assert!(CGRect::new(point, CGSize::ZERO).is_empty());
+    /// assert!(!CGRect::new(point, CGSize::new(1.0, 1.0)).is_empty());
+    /// ```
     #[inline]
+    #[doc(alias = "CGRectIsEmpty")]
     pub fn is_empty(self) -> bool {
         !(self.size.width > 0.0 && self.size.height > 0.0)
         // TODO: NaN handling?
         // self.size.width <= 0.0 || self.size.height <= 0.0
     }
 
-    // TODO: NSContainsRect
-    // TODO: NSDivideRect
-    // TODO: NSInsetRect
-    // TODO: NSIntegralRect
-    // TODO: NSIntersectionRect
-    // TODO: NSUnionRect
-    // TODO: NSIntersectsRect
+    // TODO: NSContainsRect / CGRectContainsRect
+    // TODO: NSDivideRect / CGRectDivide
+    // TODO: NSInsetRect / CGRectInset
+    // TODO: NSIntegralRect / CGRectIntegral
+    // TODO: NSIntersectionRect / CGRectIntersection
+    // TODO: NSUnionRect / CGRectUnion
+    // TODO: NSIntersectsRect / CGRectIntersectsRect
     // TODO: NSMouseInRect
     // TODO: NSMouseInRect
-    // TODO: NSPointInRect
-    // TODO: NSOffsetRect
+    // TODO: NSPointInRect / CGRectContainsPoint
+    // TODO: NSOffsetRect / CGRectOffset
+
+    // TODO: CGRectStandardize
+    // TODO: CGRectIsNull
+    // TODO: CGRectIsInfinite
+    // TODO: CGRectInfinite
+    // TODO: CGRectNull
+
+    // TODO: NSHeight / CGRectGetHeight (standardized)
+    // TODO: NSWidth / CGRectGetWidth (standardized)
 }
+
+/// A point in a Cartesian coordinate system.
+///
+/// This is just a convenience alias for [`CGPoint`]. For ease of use, it is
+/// available on all platforms, though in practice it is only useful on macOS.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nspoint?language=objc).
+pub type NSPoint = CGPoint;
+
+/// A two-dimensional size.
+///
+/// This is just a convenience alias for [`CGSize`]. For ease of use, it is
+/// available on all platforms, though in practice it is only useful on macOS.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nssize?language=objc).
+pub type NSSize = CGSize;
+
+/// A rectangle.
+///
+/// This is just a convenience alias for [`CGRect`]. For ease of use, it is
+/// available on all platforms, though in practice it is only useful on macOS.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsrect?language=objc).
+pub type NSRect = CGRect;
 
 // TODO: struct NSEdgeInsets
 // TODO: enum NSRectEdge
@@ -282,29 +344,29 @@ mod tests {
     use super::*;
 
     #[test]
-    #[should_panic = "NSSize cannot have negative width and height"]
-    fn test_nssize_new_both_negative() {
-        NSSize::new(-1.0, -1.0);
+    #[should_panic = "CGSize cannot have negative width and height"]
+    fn test_cgsize_new_both_negative() {
+        CGSize::new(-1.0, -1.0);
     }
 
     #[test]
-    #[should_panic = "NSSize cannot have negative width"]
-    fn test_nssize_new_width_negative() {
-        NSSize::new(-1.0, 1.0);
+    #[should_panic = "CGSize cannot have negative width"]
+    fn test_cgsize_new_width_negative() {
+        CGSize::new(-1.0, 1.0);
     }
 
     #[test]
-    #[should_panic = "NSSize cannot have negative height"]
-    fn test_nssize_new_height_negative() {
-        NSSize::new(1.0, -1.0);
+    #[should_panic = "CGSize cannot have negative height"]
+    fn test_cgsize_new_height_negative() {
+        CGSize::new(1.0, -1.0);
     }
 
     #[test]
-    fn test_nssize_new() {
-        NSSize::new(1.0, 1.0);
-        NSSize::new(0.0, -0.0);
-        NSSize::new(-0.0, 0.0);
-        NSSize::new(-0.0, -0.0);
+    fn test_cgsize_new() {
+        CGSize::new(1.0, 1.0);
+        CGSize::new(0.0, -0.0);
+        CGSize::new(-0.0, 0.0);
+        CGSize::new(-0.0, -0.0);
     }
 
     // We know the Rust implementation handles NaN, infinite, negative zero
