@@ -100,8 +100,10 @@ impl CGPoint {
 
 /// A two-dimensional size.
 ///
-/// The width and height are guaranteed to be non-negative, so methods that
-/// expect that can safely accept [`CGSize`] as a parameter.
+/// As this is sometimes used to represent a distance vector, rather than a
+/// physical size, the width and height are _not_ guaranteed to be
+/// non-negative! Methods that expect that must use one of [`CGSize::abs`] or
+/// [`CGRect::standardize`].
 ///
 /// This technically belongs to the `CoreGraphics` framework, but we define it
 /// here for convenience.
@@ -110,8 +112,10 @@ impl CGPoint {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub struct CGSize {
-    width: CGFloat,
-    height: CGFloat,
+    /// The dimensions along the x-axis.
+    pub width: CGFloat,
+    /// The dimensions along the y-axis.
+    pub height: CGFloat,
 }
 
 unsafe impl Encode for CGSize {
@@ -132,50 +136,58 @@ impl CGSize {
     /// ```
     /// use objc2::foundation::CGSize;
     /// let size = CGSize::new(10.0, 2.3);
-    /// assert_eq!(size.width(), 10.0);
-    /// assert_eq!(size.height(), 2.3);
+    /// assert_eq!(size.width, 10.0);
+    /// assert_eq!(size.height, 2.3);
     /// ```
     ///
-    /// ```should_panic
+    /// Negative values are allowed (though often undesired).
+    ///
+    /// ```
     /// use objc2::foundation::CGSize;
     /// let size = CGSize::new(-1.0, 0.0);
+    /// assert_eq!(size.width, -1.0);
     /// ```
     #[inline]
     #[doc(alias = "NSMakeSize")]
     #[doc(alias = "CGSizeMake")]
-    pub fn new(width: CGFloat, height: CGFloat) -> Self {
-        // The documentation explicitly says:
+    pub const fn new(width: CGFloat, height: CGFloat) -> Self {
+        // The documentation for NSSize explicitly says:
         // > If the value of width or height is negative, however, the
         // > behavior of some methods may be undefined.
         //
-        // Hence, we _must_ disallow negative widths and heights.
+        // But since this type can come from FFI, we'll leave it up to the
+        // user to ensure that it is used safely.
+        Self { width, height }
+    }
 
-        // TODO: Prevent NaN? Prevent infinities?
-        match (width < 0.0, height < 0.0) {
-            (true, true) => panic!("CGSize cannot have negative width and height"),
-            (true, false) => panic!("CGSize cannot have negative width"),
-            (false, true) => panic!("CGSize cannot have negative height"),
-            (false, false) => Self { width, height },
-        }
+    /// Convert the size to a non-negative size.
+    ///
+    /// This can be used to convert the size to a safe value.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use objc2::foundation::CGSize;
+    /// assert_eq!(CGSize::new(-1.0, 1.0).abs(), CGSize::new(1.0, 1.0));
+    /// ```
+    #[inline]
+    pub fn abs(self) -> Self {
+        Self::new(self.width.abs(), self.height.abs())
     }
 
     /// A size that is 0.0 in both dimensions.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use objc2::foundation::CGSize;
+    /// assert_eq!(CGSize::ZERO, CGSize { width: 0.0, height: 0.0 });
+    /// ```
     #[doc(alias = "NSZeroSize")]
     #[doc(alias = "CGSizeZero")]
-    pub const ZERO: Self = Self {
-        width: 0.0,
-        height: 0.0,
-    };
-
-    #[inline]
-    pub const fn width(self) -> CGFloat {
-        self.width
-    }
-
-    #[inline]
-    pub const fn height(self) -> CGFloat {
-        self.height
-    }
+    pub const ZERO: Self = Self::new(0.0, 0.0);
 }
 
 /// The location and dimensions of a rectangle.
@@ -233,6 +245,26 @@ impl CGRect {
     #[doc(alias = "NSZeroRect")]
     #[doc(alias = "CGRectZero")]
     pub const ZERO: Self = Self::new(CGPoint::ZERO, CGSize::ZERO);
+
+    /// Returns a rectangle with a positive width and height.
+    ///
+    /// This is often useful
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use objc2::foundation::{CGPoint, CGRect, CGSize};
+    /// let origin = CGPoint::new(1.0, 1.0);
+    /// let size = CGSize::new(-5.0, -2.0);
+    /// let rect = CGRect::new(origin, size);
+    /// assert_eq!(rect.standardize().size, CGSize::new(5.0, 2.0));
+    /// ```
+    #[inline]
+    #[doc(alias = "CGRectStandardize")]
+    pub fn standardize(self) -> Self {
+        Self::new(self.origin, self.size.abs())
+    }
 
     /// The smallest coordinate of the rectangle.
     #[inline]
@@ -302,7 +334,6 @@ impl CGRect {
     // TODO: NSPointInRect / CGRectContainsPoint
     // TODO: NSOffsetRect / CGRectOffset
 
-    // TODO: CGRectStandardize
     // TODO: CGRectIsNull
     // TODO: CGRectIsInfinite
     // TODO: CGRectInfinite
@@ -344,29 +375,14 @@ mod tests {
     use super::*;
 
     #[test]
-    #[should_panic = "CGSize cannot have negative width and height"]
-    fn test_cgsize_new_both_negative() {
-        CGSize::new(-1.0, -1.0);
-    }
-
-    #[test]
-    #[should_panic = "CGSize cannot have negative width"]
-    fn test_cgsize_new_width_negative() {
-        CGSize::new(-1.0, 1.0);
-    }
-
-    #[test]
-    #[should_panic = "CGSize cannot have negative height"]
-    fn test_cgsize_new_height_negative() {
-        CGSize::new(1.0, -1.0);
-    }
-
-    #[test]
     fn test_cgsize_new() {
         CGSize::new(1.0, 1.0);
         CGSize::new(0.0, -0.0);
         CGSize::new(-0.0, 0.0);
         CGSize::new(-0.0, -0.0);
+        CGSize::new(-1.0, -1.0);
+        CGSize::new(-1.0, 1.0);
+        CGSize::new(1.0, -1.0);
     }
 
     // We know the Rust implementation handles NaN, infinite, negative zero
