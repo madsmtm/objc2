@@ -63,7 +63,7 @@ pub use self::dictionary::NSDictionary;
 pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
 pub use self::error::{NSError, NSErrorDomain, NSErrorUserInfoKey};
 pub use self::exception::NSException;
-pub use self::geometry::{CGFloat, NSPoint, NSRect, NSSize};
+pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize, NSPoint, NSRect, NSSize};
 pub use self::mutable_array::NSMutableArray;
 pub use self::mutable_attributed_string::NSMutableAttributedString;
 pub use self::mutable_data::NSMutableData;

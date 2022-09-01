@@ -17,6 +17,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSTimeInterval`.
 * Added `NSString::len_utf16` and `NSAttributedString::len_utf16`.
 * Added `NSString::concat` and `NSString::join_path`.
+* Added `CGSize`, `CGPoint` and `CGRect` (just aliases to equivalent
+  `NS`-types, but helps readability).
+
+### Changed
+* **BREAKING**: `NSSize::new` no longer requires it's arguments to be
+  non-negative. Use `NSSize::abs` or `NSRect::standardize` if the API you're
+  binding to requires a non-negative size.
 
 
 ## objc2 0.3.0-beta.2 - 2022-08-28
