@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## objc2 0.3.0-beta.3 - 2022-09-01
+
 ### Added
 * Added `NSSet`.
 * Added `NSMutableSet`.
