@@ -599,7 +599,7 @@ macro_rules! declare_class {
             @__inner
             $(#[$m])*
             // SAFETY: Upheld by caller
-            $v struct $name () {
+            $v struct ($name) {
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
                 // - The ivar is added to the class below.

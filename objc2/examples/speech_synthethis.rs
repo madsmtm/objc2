@@ -28,14 +28,15 @@ mod appkit {
 
     extern_class!(
         /// <https://developer.apple.com/documentation/appkit/nsspeechsynthesizer?language=objc>
-        pub struct NSSpeechSynthesizer;
+        pub struct Synthesizer;
 
-        unsafe impl ClassType for NSSpeechSynthesizer {
+        unsafe impl ClassType for Synthesizer {
             type Super = NSObject;
+            const NAME: &'static str = "NSSpeechSynthesizer";
         }
     );
 
-    impl NSSpeechSynthesizer {
+    impl Synthesizer {
         // Uses default voice
         pub fn new() -> Id<Self, Owned> {
             unsafe { msg_send_id![Self::class(), new] }
@@ -105,19 +106,20 @@ mod avfaudio {
     extern_class!(
         /// <https://developer.apple.com/documentation/avfaudio/avspeechsynthesizer?language=objc>
         #[derive(Debug)]
-        pub struct AVSpeechSynthesizer;
+        pub struct Synthesizer;
 
-        unsafe impl ClassType for AVSpeechSynthesizer {
+        unsafe impl ClassType for Synthesizer {
             type Super = NSObject;
+            const NAME: &'static str = "AVSpeechSynthesizer";
         }
     );
 
-    impl AVSpeechSynthesizer {
+    impl Synthesizer {
         pub fn new() -> Id<Self, Owned> {
             unsafe { msg_send_id![Self::class(), new] }
         }
 
-        pub fn speak(&mut self, utterance: &AVSpeechUtterance) {
+        pub fn speak(&mut self, utterance: &Utterance) {
             unsafe { msg_send![self, speakUtterance: utterance] }
         }
 
@@ -129,14 +131,15 @@ mod avfaudio {
     extern_class!(
         /// <https://developer.apple.com/documentation/avfaudio/avspeechutterance?language=objc>
         #[derive(Debug)]
-        pub struct AVSpeechUtterance;
+        pub struct Utterance;
 
-        unsafe impl ClassType for AVSpeechUtterance {
+        unsafe impl ClassType for Utterance {
             type Super = NSObject;
+            const NAME: &'static str = "AVSpeechUtterance";
         }
     );
 
-    impl AVSpeechUtterance {
+    impl Utterance {
         pub fn new(string: &NSString) -> Id<Self, Owned> {
             unsafe { msg_send_id![msg_send_id![Self::class(), alloc], initWithString: string] }
         }
@@ -152,9 +155,9 @@ mod avfaudio {
 }
 
 #[cfg(all(feature = "apple", target_os = "macos"))]
-use appkit::{NSSpeechSynthesizer as Synthesizer, Utterance};
+use appkit::{Synthesizer, Utterance};
 #[cfg(all(feature = "apple", not(target_os = "macos")))]
-use avfaudio::{AVSpeechSynthesizer as Synthesizer, AVSpeechUtterance as Utterance};
+use avfaudio::{Synthesizer, Utterance};
 
 #[cfg(feature = "apple")]
 fn main() {
