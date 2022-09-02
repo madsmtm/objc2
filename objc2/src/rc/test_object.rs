@@ -63,6 +63,16 @@ declare_class!(
             ptr::null_mut()
         }
 
+        #[sel(newMethodOnInstance)]
+        fn new_method_on_instance(&self) -> *mut Self {
+            Id::consume_as_ptr(ManuallyDrop::new(Self::new()))
+        }
+
+        #[sel(newMethodOnInstanceNull)]
+        fn new_method_on_instance_null(&self) -> *mut Self {
+            ptr::null_mut()
+        }
+
         #[sel(alloc)]
         fn alloc() -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().alloc += 1);

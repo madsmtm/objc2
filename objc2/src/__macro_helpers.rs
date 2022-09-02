@@ -61,10 +61,6 @@ pub fn new() -> Sel {
 ///     Objective-C pointer type - We ensure this by taking `Id<T, O>`, which
 ///     means it can't be a class method!
 ///
-/// While we're at it, we also limit a few other things to help the user out,
-/// like only allowing `&Class` in `new` - this is not strictly required by
-/// ARC though!
-///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
 pub struct RetainSemantics<
     // `new` family
@@ -91,19 +87,23 @@ pub trait MsgSendId<T, U: ?Sized, O: Ownership> {
     ) -> R;
 }
 
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, T, O> for New {
+impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> for New {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<T, O>>(
-        cls: &Class,
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+        obj: T,
         sel: Sel,
         args: A,
     ) -> R {
+        let ptr = obj.__as_raw_receiver();
         // SAFETY: Checked by caller
-        let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
+        let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
         // SAFETY: The selector is `new`, so this has +1 retain count
         let obj = unsafe { Id::new(obj) };
-        R::maybe_unwrap::<Self>(obj, (cls, sel))
+
+        // SAFETY: The object is still valid after a message send to a `new`
+        // method - it would not be if the method was `init`.
+        R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
     }
 }
 
@@ -227,15 +227,24 @@ pub trait MsgSendIdFailed<'a> {
 }
 
 impl<'a> MsgSendIdFailed<'a> for New {
-    type Args = (&'a Class, Sel);
+    type Args = (Option<&'a Object>, Sel);
 
     #[cold]
     #[track_caller]
-    fn failed((cls, sel): Self::Args) -> ! {
-        if sel == new() {
-            panic!("failed creating new instance of {:?}", cls)
+    fn failed((obj, sel): Self::Args) -> ! {
+        if let Some(obj) = obj {
+            let cls = obj.class();
+            if cls.is_metaclass() {
+                if sel == new() {
+                    panic!("failed creating new instance of {:?}", cls)
+                } else {
+                    panic!("failed creating new instance using +[{:?} {:?}]", cls, sel)
+                }
+            } else {
+                panic!("unexpected NULL returned from -[{:?} {:?}]", cls, sel)
+            }
         } else {
-            panic!("failed creating new instance using +[{:?} {:?}]", cls, sel)
+            panic!("unexpected NULL {:?}; receiver was NULL", sel);
         }
     }
 }
@@ -396,6 +405,18 @@ mod tests {
     }
 
     #[test]
+    fn test_new_not_on_class() {
+        let mut expected = ThreadTestData::current();
+        let obj = RcTestObject::new();
+
+        let _obj: Id<Object, Shared> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
+        let _obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
+        expected.alloc += 3;
+        expected.init += 3;
+        expected.assert_current();
+    }
+
+    #[test]
     // newScriptingObjectOfClass only available on macOS
     #[cfg_attr(not(all(feature = "apple", target_os = "macos")), ignore)]
     fn test_new_with_args() {
@@ -526,6 +547,21 @@ mod tests {
     fn test_new_with_null() {
         let _obj: Id<RcTestObject, Owned> =
             unsafe { msg_send_id![RcTestObject::class(), newReturningNull] };
+    }
+
+    #[test]
+    #[should_panic = "unexpected NULL returned from -[RcTestObject newMethodOnInstanceNull]"]
+    fn test_new_any_with_null() {
+        let obj = RcTestObject::new();
+        let _obj: Id<Object, Shared> = unsafe { msg_send_id![&obj, newMethodOnInstanceNull] };
+    }
+
+    #[test]
+    #[should_panic = "unexpected NULL newMethodOnInstance; receiver was NULL"]
+    #[cfg(not(feature = "verify_message"))] // Does NULL receiver checks
+    fn test_new_any_with_null_receiver() {
+        let obj: *const NSObject = ptr::null();
+        let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, newMethodOnInstance] };
     }
 
     #[test]
