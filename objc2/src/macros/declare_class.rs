@@ -599,7 +599,7 @@ macro_rules! declare_class {
             @__inner
             $(#[$m])*
             // SAFETY: Upheld by caller
-            $v struct $name () {
+            $v struct ($name) {
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
                 // - The ivar is added to the class below.
@@ -626,12 +626,12 @@ macro_rules! declare_class {
 
                 REGISTER_CLASS.call_once(|| {
                     let superclass = <$superclass as $crate::ClassType>::class();
-                    let err_str = concat!(
-                        "could not create new class ",
-                        $crate::__select_name!($name; $($name_const)?),
-                        ". Perhaps a class with that name already exists?",
-                    );
-                    let mut builder = $crate::declare::ClassBuilder::new(Self::NAME, superclass).expect(err_str);
+                    let mut builder = $crate::declare::ClassBuilder::new(Self::NAME, superclass).unwrap_or_else(|| {
+                        $crate::__macro_helpers::panic!(
+                            "could not create new class {}. Perhaps a class with that name already exists?",
+                            Self::NAME,
+                        )
+                    });
 
                     // Ivars
                     $(
@@ -773,8 +773,14 @@ macro_rules! __declare_class_methods {
         $($rest:tt)*
     ) => {
         // Implement protocol
-        let err_str = concat!("could not find protocol ", stringify!($protocol));
-        $builder.add_protocol($crate::runtime::Protocol::get(stringify!($protocol)).expect(err_str));
+        $builder.add_protocol(
+            $crate::runtime::Protocol::get(stringify!($protocol)).unwrap_or_else(|| {
+                $crate::__macro_helpers::panic!(
+                    "could not find protocol {}",
+                    $crate::__macro_helpers::stringify!($protocol),
+                )
+            })
+        );
 
         // SAFETY: Upheld by caller
         unsafe {

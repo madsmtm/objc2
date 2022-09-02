@@ -75,6 +75,9 @@
 ///     // Specify the superclass, in this case `NSObject`
 ///     unsafe impl ClassType for NSFormatter {
 ///         type Super = NSObject;
+///         // Optionally, specify the name of the class, if it differs from
+///         // the struct name.
+///         // const NAME: &'static str = "NSFormatter";
 ///     }
 /// );
 ///
@@ -124,6 +127,8 @@ macro_rules! extern_class {
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
+
+            $(const NAME: &'static str = $name_const:literal;)?
         }
     ) => {
         // Just shorthand syntax for the following
@@ -134,6 +139,8 @@ macro_rules! extern_class {
             unsafe impl ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
+
+                $(const NAME: &'static str = $name_const;)?
             }
         );
     };
@@ -146,6 +153,8 @@ macro_rules! extern_class {
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
+
+            $(const NAME: &'static str = $name_const:literal;)?
         }
     ) => {
         $crate::__inner_extern_class!(
@@ -157,6 +166,8 @@ macro_rules! extern_class {
             unsafe impl<> ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
+
+                $(const NAME: &'static str = $name_const;)?
             }
         );
 
@@ -228,7 +239,7 @@ macro_rules! __impl_as_ref_borrow {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __inner_extern_class {
-    // TODO: Expose this variant in the `object` macro.
+    // TODO: Expose this variant of the macro.
     (
         $(#[$m:meta])*
         $v:vis struct $name:ident<$($t_struct:ident $(: $b_struct:ident $(= $default:ty)?)?),*> {
@@ -238,12 +249,14 @@ macro_rules! __inner_extern_class {
         unsafe impl<$($t_for:ident $(: $b_for:ident)?),*> ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
+
+            $(const NAME: &'static str = $name_const:literal;)?
         }
     ) => {
         $crate::__inner_extern_class! {
             @__inner
             $(#[$m])*
-            $v struct $name ($($t_struct $(: $b_struct $(= $default)?)?),*) {
+            $v struct ($name<$($t_struct $(: $b_struct $(= $default)?)?),*>) {
                 $($field_vis $field: $field_ty,)*
             }
 
@@ -254,11 +267,14 @@ macro_rules! __inner_extern_class {
 
         unsafe impl<$($t_for $(: $b_for)?),*> ClassType for $for {
             type Super = $superclass;
-            const NAME: &'static str = stringify!($name);
+            const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
 
             #[inline]
             fn class() -> &'static $crate::runtime::Class {
-                $crate::class!($name)
+                $crate::__class_inner!(
+                    $crate::__select_name!($name; $($name_const)?),
+                    $crate::__hash_idents!($name),
+                )
             }
 
             #[inline]
@@ -276,7 +292,7 @@ macro_rules! __inner_extern_class {
         @__inner
 
         $(#[$m:meta])*
-        $v:vis struct $name:ident ($($t_struct:tt)*) {
+        $v:vis struct ($($struct:tt)*) {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
 
@@ -287,7 +303,7 @@ macro_rules! __inner_extern_class {
         $(#[$m])*
         // TODO: repr(transparent) when the inner pointer is no longer a ZST.
         #[repr(C)]
-        $v struct $name<$($t_struct)*> {
+        $v struct $($struct)* {
             __inner: $superclass,
             // Additional fields (should only be zero-sized PhantomData or ivars).
             $($field_vis $field: $field_ty,)*

@@ -45,7 +45,10 @@ mod extern_methods;
 #[macro_export]
 macro_rules! class {
     ($name:ident) => {{
-        $crate::__class_inner!($name, $crate::__hash_idents!($name))
+        $crate::__class_inner!(
+            $crate::__macro_helpers::stringify!($name),
+            $crate::__hash_idents!($name),
+        )
     }};
 }
 
@@ -53,15 +56,15 @@ macro_rules! class {
 #[macro_export]
 #[cfg(not(feature = "unstable-static-class"))]
 macro_rules! __class_inner {
-    ($name:ident, $_hash:expr) => {{
-        use $crate::__macro_helpers::{concat, panic, stringify, CachedClass, None, Some};
+    ($name:expr, $_hash:expr,) => {{
+        use $crate::__macro_helpers::{concat, panic, CachedClass, None, Some};
         static CACHED_CLASS: CachedClass = CachedClass::new();
-        let name = concat!(stringify!($name), '\0');
+        let name = concat!($name, '\0');
         #[allow(unused_unsafe)]
         let cls = unsafe { CACHED_CLASS.get(name) };
         match cls {
             Some(cls) => cls,
-            None => panic!("Class with name {} could not be found", stringify!($name)),
+            None => panic!("Class with name {} could not be found", $name),
         }
     }};
 }
@@ -333,7 +336,7 @@ macro_rules! __inner_statics_apple_generic {
     };
     {
         @class;
-        $name:ident;
+        $name:expr;
         $hash:expr;
     } => {
         use $crate::__macro_helpers::UnsafeCell;
@@ -360,7 +363,7 @@ macro_rules! __inner_statics_apple_generic {
             /// <http://sealiesoftware.com/blog/archive/2010/4/8/Do-it-yourself_Objective-C_weak_import.html>
             #[link_name = $crate::__macro_helpers::concat!(
                 "OBJC_CLASS_$_",
-                $crate::__macro_helpers::stringify!($name),
+                $name,
             )]
             static CLASS: Class;
         }
@@ -369,7 +372,7 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = "__DATA,__objc_classrefs,regular,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
-            $crate::__hash_idents!($name),
+            $hash,
         )]
         static mut REF: UnsafeCell<&Class> = unsafe {
             UnsafeCell::new(&CLASS)
@@ -377,19 +380,19 @@ macro_rules! __inner_statics_apple_generic {
     };
     {
         @class_old;
-        $name:ident;
+        $name:expr;
         $hash:expr;
     } => {
         use $crate::__macro_helpers::{u8, UnsafeCell};
         use $crate::runtime::Class;
 
-        const X: &[u8] = $crate::__macro_helpers::stringify!($name).as_bytes();
+        const X: &[u8] = $name.as_bytes();
 
         /// Similar to NAME_DATA above in `@sel`.
         #[link_section = "__TEXT,__cstring,cstring_literals"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_NAME_",
-            $crate::__hash_idents!($name),
+            $hash,
         )]
         static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
             @string_to_known_length_bytes;
@@ -400,7 +403,7 @@ macro_rules! __inner_statics_apple_generic {
         #[link_section = "__OBJC,__cls_refs,literal_pointers,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_REFERENCES_",
-            $crate::__hash_idents!($name),
+            $hash,
         )]
         static mut REF: UnsafeCell<&Class> = unsafe {
             let ptr: *const Class = NAME_DATA.as_ptr().cast();
@@ -433,7 +436,7 @@ macro_rules! __inner_statics {
             $hash;
         }
     };
-    (@class $name:ident, $hash:expr) => {
+    (@class $name:expr, $hash:expr) => {
         $crate::__inner_statics_apple_generic! {
             @class;
             $name;
@@ -462,7 +465,7 @@ macro_rules! __inner_statics {
             $hash;
         }
     };
-    (@class $name:ident, $hash:expr) => {
+    (@class $name:expr, $hash:expr) => {
         $crate::__inner_statics_apple_generic! {
             @class_old;
             $name;
@@ -549,7 +552,7 @@ macro_rules! __sel_inner {
     not(feature = "unstable-static-class-inlined")
 ))]
 macro_rules! __class_inner {
-    ($name:ident, $hash:expr) => {{
+    ($name:expr, $hash:expr,) => {{
         $crate::__inner_statics!(@image_info $hash);
         $crate::__inner_statics!(@class $name, $hash);
 
@@ -567,7 +570,7 @@ macro_rules! __class_inner {
 #[macro_export]
 #[cfg(all(feature = "unstable-static-class-inlined"))]
 macro_rules! __class_inner {
-    ($name:ident, $hash:expr) => {{
+    ($name:expr, $hash:expr,) => {{
         $crate::__inner_statics!(@image_info $hash);
         $crate::__inner_statics!(@class $name, $hash);
 

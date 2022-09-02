@@ -8,7 +8,7 @@ use crate::{ClassType, __inner_extern_class, class, extern_methods, msg_send_id}
 
 __inner_extern_class! {
     @__inner
-    pub struct NSObject () {}
+    pub struct (NSObject) {}
 
     unsafe impl () for NSObject {
         INHERITS = [Object];

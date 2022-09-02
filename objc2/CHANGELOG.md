@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Allow directly specifying class name in `extern_class!` macro.
+
+
 ## 0.3.0-beta.3 - 2022-09-01
 
 ### Added
@@ -17,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Option<Box<T>>`).
 * **BREAKING**: Added required `ClassType::NAME` constant for statically
   determining the name of a specific class.
-* Allow directly specifying class name in declare_class! macro.
+* Allow directly specifying class name in `declare_class!` macro.
 
 ### Removed
 * **BREAKING**: `MaybeUninit` no longer implements `IvarType` directly; use
