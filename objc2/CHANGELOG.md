@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Allow directly specifying class name in `extern_class!` macro.
 
+### Changed
+* Allow other types than `&Class` as the receiver in `msg_send_id!` methods
+  of the `new` family.
+
 
 ## 0.3.0-beta.3 - 2022-09-01
 

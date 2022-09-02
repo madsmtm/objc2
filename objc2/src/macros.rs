@@ -863,8 +863,9 @@ macro_rules! msg_send_bool {
 /// families][sel-families] the selector belongs to (here `T: Message` and
 /// `O: Ownership`):
 ///
-/// - The `new` family: The receiver must be `&Class`, and the return type
-///   is a generic `Id<T, O>` or `Option<Id<T, O>>`.
+/// - The `new` family: The receiver may be anything that implements
+///   [`MessageReceiver`] (though often you'll want to use `&Class`). The
+///   return type is a generic `Id<T, O>` or `Option<Id<T, O>>`.
 ///
 /// - The `alloc` family: The receiver must be `&Class`, and the return type
 ///   is a generic `Id<Allocated<T>, O>` or `Option<Id<Allocated<T>, O>>`.

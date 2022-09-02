@@ -5,7 +5,6 @@ use objc2::runtime::{Class, Object};
 
 fn main() {
     let obj: &Object;
-    let _: Id<Object, Shared> = unsafe { msg_send_id![obj, new] };
     let _: Id<Allocated<Object>, Shared> = unsafe { msg_send_id![obj, alloc] };
     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
 
@@ -16,6 +15,8 @@ fn main() {
     let obj: Option<Id<Object, Shared>>;
     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
 
+    let obj: Id<Object, Shared>;
+    let _: Id<Object, Shared> = unsafe { msg_send_id![obj, new] };
     let obj: Id<Object, Shared>;
     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, copy] };
 }
