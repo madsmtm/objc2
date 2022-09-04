@@ -1,0 +1,213 @@
+imports = ["Foundation"]
+
+[class.NSObject.methods]
+# Uses NS_REPLACES_RECEIVER
+awakeAfterUsingCoder = { skipped = true }
+
+[protocol.NSKeyedUnarchiverDelegate.methods]
+# Uses NS_RELEASES_ARGUMENT and NS_RETURNS_RETAINED
+unarchiver_didDecodeObject = { skipped = true }
+
+[class.NSString.methods]
+new = { unsafe = false }
+# Assuming that (non-)nullability is properly set
+stringByAppendingString = { unsafe = false }
+stringByAppendingPathComponent = { unsafe = false }
+# Assuming `NSStringEncoding` can be made safe
+lengthOfBytesUsingEncoding = { unsafe = false }
+
+[class.NSString.properties]
+length = { unsafe = false }
+# Safe to call, but the returned pointer may not be safe to use
+UTF8String = { unsafe = false }
+
+[class.NSMutableString.methods]
+new = { unsafe = false }
+initWithString = { unsafe = false }
+# "appendString:" = { unsafe = false, mutable = true }
+# "setString:" = { unsafe = false, mutable = true }
+
+[class.NSBlockOperation.properties]
+# Uses `NSArray<void (^)(void)>`, which is difficult to handle
+executionBlocks = { skipped = true }
+
+# These use `Class<NSItemProvider...>`, which is unsupported
+[class.NSItemProvider.methods]
+registerObjectOfClass_visibility_loadHandler = { skipped = true }
+canLoadObjectOfClass = { skipped = true }
+loadObjectOfClass_completionHandler = { skipped = true }
+
+# These use `SomeObject * __strong *`, which is unsupported
+[class.NSNetService.methods]
+getInputStream_outputStream = { skipped = true }
+[class.NSPropertyListSerialization.methods]
+dataFromPropertyList_format_errorDescription = { skipped = true }
+propertyListFromData_mutabilityOption_format_errorDescription = { skipped = true }
+
+# Has `error:` parameter, but returns NSInteger (where 0 means error)
+[class.NSJSONSerialization.methods.writeJSONObject_toStream_options_error]
+skipped = true
+[class.NSPropertyListSerialization.methods.writePropertyList_toStream_format_options_error]
+skipped = true
+
+# Not supported on clang 11.0.0
+[class.NSBundle.methods.localizedAttributedStringForKey_value_table]
+skipped = true
+
+# Both instance and class methods
+[class.NSUnarchiver.methods.decodeClassName_asClassName]
+skipped = true
+[class.NSUnarchiver.methods.classNameDecodedForArchiveClassName]
+skipped = true
+[class.NSAutoreleasePool.methods.addObject]
+skipped = true
+[class.NSBundle.methods.pathForResource_ofType_inDirectory]
+skipped = true
+[class.NSBundle.methods.pathsForResourcesOfType_inDirectory]
+skipped = true
+[class.NSKeyedArchiver.methods.setClassName_forClass]
+skipped = true
+[class.NSKeyedArchiver.methods.classNameForClass]
+skipped = true
+[class.NSKeyedUnarchiver.methods.setClass_forClassName]
+skipped = true
+[class.NSKeyedUnarchiver.methods.classForClassName]
+skipped = true
+[class.NSThread.properties.threadPriority]
+skipped = true
+[class.NSThread.properties.isMainThread]
+skipped = true
+[class.NSDate.properties.timeIntervalSinceReferenceDate]
+skipped = true
+
+# Root class
+[class.NSProxy]
+skipped = true
+
+# Contains bitfields
+[struct.NSDecimal]
+skipped = true
+
+# Uses stuff from core Darwin libraries which we have not yet mapped
+[class.NSAppleEventDescriptor.methods]
+descriptorWithDescriptorType_bytes_length = { skipped = true }
+descriptorWithDescriptorType_data = { skipped = true }
+appleEventWithEventClass_eventID_targetDescriptor_returnID_transactionID = { skipped = true }
+descriptorWithProcessIdentifier = { skipped = true }
+initWithAEDescNoCopy = { skipped = true }
+initWithDescriptorType_bytes_length = { skipped = true }
+initWithDescriptorType_data = { skipped = true }
+initWithEventClass_eventID_targetDescriptor_returnID_transactionID = { skipped = true }
+setParamDescriptor_forKeyword = { skipped = true }
+paramDescriptorForKeyword = { skipped = true }
+removeParamDescriptorWithKeyword = { skipped = true }
+setAttributeDescriptor_forKeyword = { skipped = true }
+attributeDescriptorForKeyword = { skipped = true }
+sendEventWithOptions_timeout_error = { skipped = true }
+setDescriptor_forKeyword = { skipped = true }
+descriptorForKeyword = { skipped = true }
+removeDescriptorWithKeyword = { skipped = true }
+keywordForDescriptorAtIndex = { skipped = true }
+coerceToDescriptorType = { skipped = true }
+[class.NSAppleEventDescriptor.properties]
+aeDesc = { skipped = true }
+descriptorType = { skipped = true }
+eventClass = { skipped = true }
+eventID = { skipped = true }
+returnID = { skipped = true }
+transactionID = { skipped = true }
+[class.NSAppleEventManager.methods]
+setEventHandler_andSelector_forEventClass_andEventID = { skipped = true }
+removeEventHandlerForEventClass_andEventID = { skipped = true }
+dispatchRawAppleEvent_withRawReply_handlerRefCon = { skipped = true }
+[class.NSOperationQueue.properties.underlyingQueue]
+skipped = true
+[class.NSRunLoop.methods.getCFRunLoop]
+skipped = true
+[class.NSURLCredential.methods]
+initWithIdentity_certificates_persistence = { skipped = true }
+credentialWithIdentity_certificates_persistence = { skipped = true }
+initWithTrust = { skipped = true }
+credentialForTrust = { skipped = true }
+[class.NSURLCredential.properties.identity]
+skipped = true
+[class.NSURLProtectionSpace.properties.serverTrust]
+skipped = true
+[class.NSURLSessionConfiguration.properties]
+TLSMinimumSupportedProtocol = { skipped = true }
+TLSMaximumSupportedProtocol = { skipped = true }
+TLSMinimumSupportedProtocolVersion = { skipped = true }
+TLSMaximumSupportedProtocolVersion = { skipped = true }
+[class.NSUUID.methods]
+initWithUUIDBytes = { skipped = true }
+getUUIDBytes = { skipped = true }
+[class.NSXPCConnection.properties]
+auditSessionIdentifier = { skipped = true }
+processIdentifier = { skipped = true }
+effectiveUserIdentifier = { skipped = true }
+effectiveGroupIdentifier = { skipped = true }
+[class.NSXPCInterface.methods]
+setXPCType_forSelector_argumentIndex_ofReply = { skipped = true }
+XPCTypeForSelector_argumentIndex_ofReply = { skipped = true }
+[class.NSXPCCoder.methods]
+encodeXPCObject_forKey = { skipped = true }
+decodeXPCObjectOfType_forKey = { skipped = true }
+
+# Uses constants from CoreFoundation or similar frameworks
+[enum.NSAppleEventSendOptions]
+use-value = true
+[enum.NSCalendarUnit]
+use-value = true
+[enum.NSDateFormatterStyle]
+use-value = true
+[enum.NSRectEdge]
+use-value = true
+[enum.NSISO8601DateFormatOptions]
+use-value = true
+[enum.NSLocaleLanguageDirection]
+use-value = true
+[enum.NSNumberFormatterStyle]
+use-value = true
+[enum.NSNumberFormatterPadPosition]
+use-value = true
+[enum.NSNumberFormatterRoundingMode]
+use-value = true
+[enum.NSPropertyListMutabilityOptions]
+use-value = true
+[enum.NSPropertyListFormat]
+use-value = true
+[enum.anonymous.constants.NS_UnknownByteOrder]
+skipped = true
+[enum.anonymous.constants.NS_LittleEndian]
+skipped = true
+[enum.anonymous.constants.NS_BigEndian]
+skipped = true
+
+# Uses va_list
+[class.NSAttributedString.methods.initWithFormat_options_locale_arguments]
+skipped = true
+[class.NSException.methods.raise_format_arguments]
+skipped = true
+[class.NSExpression.methods.expressionWithFormat_arguments]
+skipped = true
+[class.NSPredicate.methods.predicateWithFormat_arguments]
+skipped = true
+[class.NSString.methods.initWithFormat_arguments]
+skipped = true
+[class.NSString.methods.initWithFormat_locale_arguments]
+skipped = true
+[fn.NSLogv]
+skipped = true
+
+# Wrong type compared to value
+[enum.anonymous.constants.NSWrapCalendarComponents]
+skipped = true
+
+# Uses NSImage, which is only available in AppKit
+[class.NSUserNotification.properties.contentImage]
+skipped = true
+
+# Has the wrong generic parameter
+[class.NSDictionary.methods]
+initWithContentsOfURL_error = { skipped = true }
+dictionaryWithContentsOfURL_error = { skipped = true }
