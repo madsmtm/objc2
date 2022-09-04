@@ -1,0 +1,14 @@
+[package]
+name = "header-translator"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+repository = "https://github.com/madsmtm/objc2"
+license = "Zlib OR Apache-2.0 OR MIT"
+
+[dependencies]
+clang = { version = "2.0", features = ["runtime", "clang_10_0"] }
+clang-sys = "1.0"
+quote = "1.0"
+proc-macro2 = "1.0"
