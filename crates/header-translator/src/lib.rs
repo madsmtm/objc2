@@ -13,9 +13,8 @@ fn get_rust_name(selector: &str) -> Ident {
     )
 }
 
-fn get_rust_type(ty: &Type<'_>) -> (TokenStream, bool) {
+fn get_simple_ty(ty: &Type<'_>) -> Option<TokenStream> {
     use TypeKind::*;
-
     let tokens = match ty.get_kind() {
         Void => quote!(c_void),
         Bool => quote!(bool),
@@ -32,74 +31,187 @@ fn get_rust_type(ty: &Type<'_>) -> (TokenStream, bool) {
         ULongLong => quote!(c_ulonglong),
         Float => quote!(c_float),
         Double => quote!(c_double),
+        Typedef => {
+            let display_name = ty.get_display_name();
+            match &*display_name {
+                "BOOL" => quote!(bool),
+                display_name => {
+                    let ident = format_ident!("{}", display_name);
+                    quote!(#ident)
+                }
+            }
+        }
+        _ => return None,
+    };
+    Some(tokens)
+}
+
+fn get_rust_type(ty: &Type<'_>, is_return: bool) -> (TokenStream, bool) {
+    use TypeKind::*;
+
+    let tokens = match ty.get_kind() {
         // ObjCId => quote!(Option<Id<Object, Shared>>),
         // ObjCClass => quote!(Option<&Class>),
         // ObjCSel => quote!(Option<Sel>),
         Pointer => {
             let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
-            let (ty_tokens, _) = get_rust_type(&pointee);
+            let pointee_tokens = get_simple_ty(&pointee).expect("pointer is simple type");
 
             // TODO: Nullability
             if ty.is_const_qualified() {
-                quote!(*const #ty_tokens)
+                quote!(*const #pointee_tokens)
             } else {
-                quote!(*mut #ty_tokens)
+                quote!(*mut #pointee_tokens)
             }
-        }
-        ObjCInterface => {
-            let base_ty = ty
-                .get_objc_object_base_type()
-                .expect("interface to have base type");
-            if base_ty != *ty {
-                // TODO: Figure out what the base type is
-                panic!("base {:?} was not equal to {:?}", base_ty, ty);
-            }
-            let ident = format_ident!("{}", ty.get_display_name());
-            quote!(#ident)
         }
         // ObjCObjectPointer => quote!(Option<Id<Object, Shared>>),
         Attributed => {
             let nullability = ty
                 .get_nullability()
                 .expect("attributed type to have nullability");
-            let modified = ty
+            let ty = ty
                 .get_modified_type()
                 .expect("attributed type to have modified type");
-            match modified.get_kind() {
+            match ty.get_kind() {
                 ObjCObjectPointer => {
-                    let pointee = modified
-                        .get_pointee_type()
-                        .expect("pointer type to have pointee");
-                    let (ty_tokens, _) = get_rust_type(&pointee);
-                    if nullability == Nullability::NonNull {
-                        return (quote!(Id<#ty_tokens, Shared>), true);
+                    let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                    let tokens = match ty.get_kind() {
+                        ObjCInterface => {
+                            let base_ty = ty
+                                .get_objc_object_base_type()
+                                .expect("interface to have base type");
+                            if base_ty != ty {
+                                // TODO: Figure out what the base type is
+                                panic!("base {:?} was not equal to {:?}", base_ty, ty);
+                            }
+                            let ident = format_ident!("{}", ty.get_display_name());
+                            quote!(#ident)
+                        }
+                        _ => panic!("pointee was not objcinterface: {:?}", ty),
+                    };
+                    let tokens = if is_return {
+                        quote!(Id<#tokens, Shared>)
                     } else {
-                        return (quote!(Option<Id<#ty_tokens, Shared>>), true);
+                        quote!(&#tokens)
+                    };
+                    if nullability == Nullability::NonNull {
+                        return (quote!(#tokens), true);
+                    } else {
+                        return (quote!(Option<#tokens>), true);
                     }
                 }
-                Typedef => {
-                    let (ty_tokens, _) = get_rust_type(&modified);
+                Typedef if ty.get_display_name() == "instancetype" => {
+                    if !is_return {
+                        panic!("instancetype in non-return position")
+                    }
                     if nullability == Nullability::NonNull {
-                        return (quote!(Id<#ty_tokens, Shared>), true);
+                        return (quote!(Id<Self, Shared>), true);
                     } else {
-                        return (quote!(Option<Id<#ty_tokens, Shared>>), true);
+                        return (quote!(Option<Id<Self, Shared>>), true);
                     }
                 }
-                _ => panic!("Unsupported attributed type: {:?}", modified),
+                _ => panic!("Unsupported attributed type: {:?}", ty),
             }
         }
-        Typedef => {
-            let display_name = ty.get_display_name();
-            if display_name == "instancetype" {
-                quote!(Self)
+        _ => {
+            if let Some(tokens) = get_simple_ty(&ty) {
+                tokens
             } else {
-                let ident = format_ident!("{}", ty.get_display_name());
-                quote!(#ident)
+                panic!("Unsupported type: {:?}", ty)
             }
         }
-        _ => panic!("Unsupported type: {:?}", ty),
     };
     (tokens, false)
+}
+
+// One of EntityKind::ObjCInstanceMethodDecl or EntityKind::ObjCClassMethodDecl
+fn parse_method(entity: Entity<'_>) -> TokenStream {
+    // println!("Method {:?}", entity.get_display_name());
+    // println!("Availability: {:?}", entity.get_platform_availability());
+    // TODO: Handle `NSConsumesSelf` and `NSReturnsRetained`
+    // println!("Children: {:?}", entity.get_children());
+
+    if entity.is_variadic() {
+        panic!("Can't handle variadic methods");
+    }
+
+    let selector = entity.get_name().expect("method selector");
+    let fn_name = get_rust_name(&selector);
+
+    let result_type = entity.get_result_type().expect("method return type");
+    let (ret, is_id) = if result_type.get_kind() == TypeKind::Void {
+        (quote! {}, false)
+    } else {
+        let (return_item, is_id) = get_rust_type(&result_type, true);
+        (
+            quote! {
+                -> #return_item
+            },
+            is_id,
+        )
+    };
+
+    let macro_name = if is_id {
+        format_ident!("msg_send_id")
+    } else {
+        format_ident!("msg_send")
+    };
+
+    let arguments: Vec<_> = entity
+        .get_arguments()
+        .expect("method arguments")
+        .into_iter()
+        .map(|arg| {
+            (
+                format_ident!("{}", arg.get_name().expect("arg display name")),
+                arg.get_type().expect("argument type"),
+            )
+        })
+        .collect();
+
+    let fn_args = arguments.iter().map(|(param, arg_ty)| {
+        let (ty, _) = get_rust_type(&arg_ty, false);
+        quote!(#param: #ty)
+    });
+
+    let method_call = if selector.contains(':') {
+        let split_selector: Vec<_> = selector.split(':').filter(|sel| !sel.is_empty()).collect();
+        assert!(
+            arguments.len() == split_selector.len(),
+            "incorrect method argument length",
+        );
+
+        let iter = arguments
+            .iter()
+            .zip(split_selector)
+            .map(|((param, _), sel)| {
+                let sel = format_ident!("{}", sel);
+                quote!(#sel: #param)
+            });
+        quote!(#(#iter),*)
+    } else {
+        assert_eq!(arguments.len(), 0, "too many arguments");
+        let sel = format_ident!("{}", selector);
+        quote!(#sel)
+    };
+
+    match entity.get_kind() {
+        EntityKind::ObjCInstanceMethodDecl => {
+            quote! {
+                pub unsafe fn #fn_name(&self #(, #fn_args)*) #ret {
+                    #macro_name![self, #method_call]
+                }
+            }
+        }
+        EntityKind::ObjCClassMethodDecl => {
+            quote! {
+                pub unsafe fn #fn_name(#(#fn_args),*) #ret {
+                    #macro_name![Self::class(), #method_call]
+                }
+            }
+        }
+        _ => panic!("unknown method kind"),
+    }
 }
 
 pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
@@ -108,7 +220,9 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
             TokenStream::new()
         }
         EntityKind::ObjCInterfaceDecl => {
+            // entity.get_mangled_objc_names()
             let name = format_ident!("{}", entity.get_name().expect("class name"));
+            // println!("Availability: {:?}", entity.get_platform_availability());
             let mut superclass = None;
             let mut protocols = Vec::new();
             let mut methods = Vec::new();
@@ -124,60 +238,19 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                     EntityKind::ObjCProtocolRef => {
                         protocols.push(entity);
                     }
-                    kind @ (EntityKind::ObjCInstanceMethodDecl
-                    | EntityKind::ObjCClassMethodDecl) => {
-                        // TODO: Handle `NSConsumesSelf` and `NSReturnsRetained`
-                        println!("Children: {:?}", entity.get_children());
-
-                        let selector = entity.get_name().expect("method selector");
-                        let fn_name = get_rust_name(&selector);
-
-                        if entity.is_variadic() {
-                            panic!("Can't handle variadic methods");
-                        }
-
-                        let args = Vec::<i32>::new();
-                        let method_call = Vec::<i32>::new();
-
-                        let result_type = entity.get_result_type().expect("method return type");
-                        let (ret, is_id) = if result_type.get_kind() == TypeKind::Void {
-                            (quote! {}, false)
-                        } else {
-                            let (return_item, is_id) = get_rust_type(&result_type);
-                            (
-                                quote! {
-                                    -> #return_item
-                                },
-                                is_id,
-                            )
-                        };
-
-                        let macro_name = if is_id {
-                            format_ident!("msg_send_id")
-                        } else {
-                            format_ident!("msg_send")
-                        };
-
-                        if EntityKind::ObjCInstanceMethodDecl == kind {
-                            methods.push(quote! {
-                                pub unsafe fn #fn_name(&self #(, #args)*) #ret {
-                                    #macro_name![self, #(#method_call),*]
-                                }
-                            });
-                        } else {
-                            methods.push(quote! {
-                                pub unsafe fn #fn_name(#(#args),*) #ret {
-                                    #macro_name![Self::class(), #(#method_call),*]
-                                }
-                            });
-                        }
+                    EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
+                        methods.push(parse_method(entity));
                     }
                     EntityKind::ObjCPropertyDecl => {
-                        methods.push(quote! {});
+                        // println!(
+                        //     "Property {:?}, {:?}",
+                        //     entity.get_display_name().unwrap(),
+                        //     entity.get_objc_attributes().unwrap()
+                        // );
+                        // methods.push(quote! {});
                     }
-                    _ => {
-                        println!("{:?}: {:?}", entity.get_kind(), entity.get_display_name());
-                    }
+                    EntityKind::UnexposedAttr => {}
+                    _ => panic!("Unknown {:?}", entity),
                 }
                 EntityVisitResult::Continue
             });
@@ -202,7 +275,44 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
             }
         }
         EntityKind::ObjCCategoryDecl => {
-            quote! {}
+            let doc = entity.get_name().expect("category name");
+            let mut class = None;
+            let mut methods = Vec::new();
+
+            entity.visit_children(|entity, _parent| {
+                match entity.get_kind() {
+                    EntityKind::ObjCClassRef => {
+                        if class.is_some() {
+                            panic!("could not find unique category class")
+                        }
+                        class = Some(entity);
+                    }
+                    EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
+                        methods.push(parse_method(entity));
+                    }
+                    EntityKind::ObjCPropertyDecl => {
+                        // println!(
+                        //     "Property {:?}, {:?}",
+                        //     entity.get_display_name().unwrap(),
+                        //     entity.get_objc_attributes().unwrap()
+                        // );
+                        // methods.push(quote! {});
+                    }
+                    EntityKind::UnexposedAttr => {}
+                    _ => panic!("Unknown {:?}", entity),
+                }
+                EntityVisitResult::Continue
+            });
+
+            let class = class.expect("could not find category class");
+            let class_name = format_ident!("{}", class.get_name().expect("class name"));
+
+            quote! {
+                #[doc = #doc]
+                impl #class_name {
+                    #(#methods)*
+                }
+            }
         }
         _ => {
             println!(
