@@ -2,33 +2,104 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use clang::source::File;
-use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index, Type};
+use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index, Nullability, Type, TypeKind};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
-pub fn get_rust_name(selector: &str) -> Ident {
-    format_ident!("{}", selector.split(':').collect::<Vec<&str>>().join("_"))
+fn get_rust_name(selector: &str) -> Ident {
+    format_ident!(
+        "{}",
+        selector.trim_end_matches(|c| c == ':').replace(':', "_")
+    )
 }
 
-pub fn get_return_type(return_type: &Type<'_>) -> TokenStream {
-    // let return_item = ctx.resolve_item(sig.return_type());
-    // if let TypeKind::Void = *return_item.get_kind().expect_type().kind() {
-    //     quote! {}
-    // } else {
-    //     let ret_ty = return_item.to_rust_ty_or_opaque(ctx, &());
-    //     quote! {
-    //         -> #ret_ty
-    //     }
-    // }
-    quote! {}
-}
+fn get_rust_type(ty: &Type<'_>) -> (TokenStream, bool) {
+    use TypeKind::*;
 
-pub fn get_macro_name(return_type: &Type<'_>) -> Ident {
-    if true {
-        format_ident!("msg_send")
-    } else {
-        format_ident!("msg_send_id")
-    }
+    let tokens = match ty.get_kind() {
+        Void => quote!(c_void),
+        Bool => quote!(bool),
+        CharS | CharU => quote!(c_char),
+        SChar => quote!(c_schar),
+        UChar => quote!(c_uchar),
+        Short => quote!(c_short),
+        UShort => quote!(c_ushort),
+        Int => quote!(c_int),
+        UInt => quote!(c_uint),
+        Long => quote!(c_long),
+        ULong => quote!(c_ulong),
+        LongLong => quote!(c_longlong),
+        ULongLong => quote!(c_ulonglong),
+        Float => quote!(c_float),
+        Double => quote!(c_double),
+        // ObjCId => quote!(Option<Id<Object, Shared>>),
+        // ObjCClass => quote!(Option<&Class>),
+        // ObjCSel => quote!(Option<Sel>),
+        Pointer => {
+            let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
+            let (ty_tokens, _) = get_rust_type(&pointee);
+
+            // TODO: Nullability
+            if ty.is_const_qualified() {
+                quote!(*const #ty_tokens)
+            } else {
+                quote!(*mut #ty_tokens)
+            }
+        }
+        ObjCInterface => {
+            let base_ty = ty
+                .get_objc_object_base_type()
+                .expect("interface to have base type");
+            if base_ty != *ty {
+                // TODO: Figure out what the base type is
+                panic!("base {:?} was not equal to {:?}", base_ty, ty);
+            }
+            let ident = format_ident!("{}", ty.get_display_name());
+            quote!(#ident)
+        }
+        // ObjCObjectPointer => quote!(Option<Id<Object, Shared>>),
+        Attributed => {
+            let nullability = ty
+                .get_nullability()
+                .expect("attributed type to have nullability");
+            let modified = ty
+                .get_modified_type()
+                .expect("attributed type to have modified type");
+            match modified.get_kind() {
+                ObjCObjectPointer => {
+                    let pointee = modified
+                        .get_pointee_type()
+                        .expect("pointer type to have pointee");
+                    let (ty_tokens, _) = get_rust_type(&pointee);
+                    if nullability == Nullability::NonNull {
+                        return (quote!(Id<#ty_tokens, Shared>), true);
+                    } else {
+                        return (quote!(Option<Id<#ty_tokens, Shared>>), true);
+                    }
+                }
+                Typedef => {
+                    let (ty_tokens, _) = get_rust_type(&modified);
+                    if nullability == Nullability::NonNull {
+                        return (quote!(Id<#ty_tokens, Shared>), true);
+                    } else {
+                        return (quote!(Option<Id<#ty_tokens, Shared>>), true);
+                    }
+                }
+                _ => panic!("Unsupported attributed type: {:?}", modified),
+            }
+        }
+        Typedef => {
+            let display_name = ty.get_display_name();
+            if display_name == "instancetype" {
+                quote!(Self)
+            } else {
+                let ident = format_ident!("{}", ty.get_display_name());
+                quote!(#ident)
+            }
+        }
+        _ => panic!("Unsupported type: {:?}", ty),
+    };
+    (tokens, false)
 }
 
 pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
@@ -53,36 +124,53 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                     EntityKind::ObjCProtocolRef => {
                         protocols.push(entity);
                     }
-                    EntityKind::ObjCInstanceMethodDecl => {
-                        let selector = entity.get_name().expect("instance method selector");
+                    kind @ (EntityKind::ObjCInstanceMethodDecl
+                    | EntityKind::ObjCClassMethodDecl) => {
+                        // TODO: Handle `NSConsumesSelf` and `NSReturnsRetained`
+                        println!("Children: {:?}", entity.get_children());
+
+                        let selector = entity.get_name().expect("method selector");
                         let fn_name = get_rust_name(&selector);
 
-                        let result_type = entity
-                            .get_result_type()
-                            .expect("instance method return type");
-                        let ret = get_return_type(&result_type);
-                        let macro_name = get_macro_name(&result_type);
+                        if entity.is_variadic() {
+                            panic!("Can't handle variadic methods");
+                        }
 
-                        methods.push(quote! {
-                            pub unsafe fn #fn_name(&self) #ret {
-                                #macro_name![self, ]
-                            }
-                        });
-                    }
-                    EntityKind::ObjCClassMethodDecl => {
-                        let selector = entity.get_name().expect("class method selector");
-                        let fn_name = get_rust_name(&selector);
+                        let args = Vec::<i32>::new();
+                        let method_call = Vec::<i32>::new();
 
-                        let result_type =
-                            entity.get_result_type().expect("class method return type");
-                        let ret = get_return_type(&result_type);
-                        let macro_name = get_macro_name(&result_type);
+                        let result_type = entity.get_result_type().expect("method return type");
+                        let (ret, is_id) = if result_type.get_kind() == TypeKind::Void {
+                            (quote! {}, false)
+                        } else {
+                            let (return_item, is_id) = get_rust_type(&result_type);
+                            (
+                                quote! {
+                                    -> #return_item
+                                },
+                                is_id,
+                            )
+                        };
 
-                        methods.push(quote! {
-                            pub unsafe fn #fn_name() #ret {
-                                #macro_name![Self::class(), ]
-                            }
-                        });
+                        let macro_name = if is_id {
+                            format_ident!("msg_send_id")
+                        } else {
+                            format_ident!("msg_send")
+                        };
+
+                        if EntityKind::ObjCInstanceMethodDecl == kind {
+                            methods.push(quote! {
+                                pub unsafe fn #fn_name(&self #(, #args)*) #ret {
+                                    #macro_name![self, #(#method_call),*]
+                                }
+                            });
+                        } else {
+                            methods.push(quote! {
+                                pub unsafe fn #fn_name(#(#args),*) #ret {
+                                    #macro_name![Self::class(), #(#method_call),*]
+                                }
+                            });
+                        }
                     }
                     EntityKind::ObjCPropertyDecl => {
                         methods.push(quote! {});

@@ -1,5 +1,7 @@
 use std::collections::HashMap;
+use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
 
 use clang::source::File;
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
@@ -126,7 +128,23 @@ fn main() {
     //     }
     // }
 
-    println!("{:#}", create_rust_file(&result[&dir.join("NSCursor.h")]));
+    let res = format!("{}", create_rust_file(&result[&dir.join("NSCursor.h")]));
+
+    println!("{}\n\n\n\n", res);
+
+    let mut child = Command::new("rustfmt")
+        .stdin(Stdio::piped())
+        .spawn()
+        .expect("failed running rustfmt");
+
+    let mut stdin = child.stdin.take().expect("failed to open stdin");
+    stdin.write_all(res.as_bytes()).expect("failed writing");
+    drop(stdin);
+
+    println!(
+        "{}",
+        String::from_utf8(child.wait_with_output().expect("failed formatting").stdout).unwrap()
+    );
 
     //     }
     // }
