@@ -50,14 +50,10 @@ fn get_rust_type(ty: &Type<'_>, is_return: bool) -> (TokenStream, bool) {
     use TypeKind::*;
 
     let tokens = match ty.get_kind() {
-        // ObjCId => quote!(Option<Id<Object, Shared>>),
-        // ObjCClass => quote!(Option<&Class>),
-        // ObjCSel => quote!(Option<Sel>),
         Pointer => {
             let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
             let pointee_tokens = get_simple_ty(&pointee).expect("pointer is simple type");
 
-            // TODO: Nullability
             if ty.is_const_qualified() {
                 quote!(*const #pointee_tokens)
             } else {
@@ -72,10 +68,39 @@ fn get_rust_type(ty: &Type<'_>, is_return: bool) -> (TokenStream, bool) {
             let ty = ty
                 .get_modified_type()
                 .expect("attributed type to have modified type");
-            match ty.get_kind() {
+            let tokens = match ty.get_kind() {
+                ObjCId => quote!(Object),
+                ObjCClass => {
+                    if nullability == Nullability::NonNull {
+                        return (quote!(&Class), false);
+                    } else {
+                        return (quote!(Option<&Class>), false);
+                    }
+                }
+                ObjCSel => {
+                    if nullability == Nullability::NonNull {
+                        return (quote!(Sel), false);
+                    } else {
+                        return (quote!(Option<Sel>), false);
+                    }
+                }
+                Pointer => {
+                    let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
+                    let pointee_tokens = get_simple_ty(&pointee).expect("pointer is simple type");
+
+                    if nullability == Nullability::NonNull {
+                        return (quote!(NonNull<#pointee_tokens>), false);
+                    } else {
+                        if ty.is_const_qualified() {
+                            return (quote!(*const #pointee_tokens), false);
+                        } else {
+                            return (quote!(*mut #pointee_tokens), false);
+                        }
+                    }
+                }
                 ObjCObjectPointer => {
                     let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                    let tokens = match ty.get_kind() {
+                    match ty.get_kind() {
                         ObjCInterface => {
                             let base_ty = ty
                                 .get_objc_object_base_type()
@@ -87,30 +112,35 @@ fn get_rust_type(ty: &Type<'_>, is_return: bool) -> (TokenStream, bool) {
                             let ident = format_ident!("{}", ty.get_display_name());
                             quote!(#ident)
                         }
+                        ObjCObject => {
+                            quote!(TodoGenerics)
+                        }
                         _ => panic!("pointee was not objcinterface: {:?}", ty),
-                    };
-                    let tokens = if is_return {
-                        quote!(Id<#tokens, Shared>)
-                    } else {
-                        quote!(&#tokens)
-                    };
-                    if nullability == Nullability::NonNull {
-                        return (quote!(#tokens), true);
-                    } else {
-                        return (quote!(Option<#tokens>), true);
                     }
                 }
                 Typedef if ty.get_display_name() == "instancetype" => {
                     if !is_return {
                         panic!("instancetype in non-return position")
                     }
-                    if nullability == Nullability::NonNull {
-                        return (quote!(Id<Self, Shared>), true);
-                    } else {
-                        return (quote!(Option<Id<Self, Shared>>), true);
-                    }
+                    quote!(Self)
+                }
+                Typedef => {
+                    quote!(TodoTypedef)
+                }
+                BlockPointer => {
+                    quote!(TodoBlock)
                 }
                 _ => panic!("Unsupported attributed type: {:?}", ty),
+            };
+            let tokens = if is_return {
+                quote!(Id<#tokens, Shared>)
+            } else {
+                quote!(&#tokens)
+            };
+            if nullability == Nullability::NonNull {
+                return (quote!(#tokens), true);
+            } else {
+                return (quote!(Option<#tokens>), true);
             }
         }
         _ => {
@@ -125,18 +155,21 @@ fn get_rust_type(ty: &Type<'_>, is_return: bool) -> (TokenStream, bool) {
 }
 
 // One of EntityKind::ObjCInstanceMethodDecl or EntityKind::ObjCClassMethodDecl
-fn parse_method(entity: Entity<'_>) -> TokenStream {
+fn parse_method(entity: Entity<'_>) -> Option<TokenStream> {
     // println!("Method {:?}", entity.get_display_name());
     // println!("Availability: {:?}", entity.get_platform_availability());
     // TODO: Handle `NSConsumesSelf` and `NSReturnsRetained`
     // println!("Children: {:?}", entity.get_children());
 
-    if entity.is_variadic() {
-        panic!("Can't handle variadic methods");
-    }
-
     let selector = entity.get_name().expect("method selector");
     let fn_name = get_rust_name(&selector);
+
+    if entity.is_variadic() {
+        println!("Can't handle variadic method {}", selector);
+        return None;
+    }
+
+    println!("{}", selector);
 
     let result_type = entity.get_result_type().expect("method return type");
     let (ret, is_id) = if result_type.get_kind() == TypeKind::Void {
@@ -196,20 +229,16 @@ fn parse_method(entity: Entity<'_>) -> TokenStream {
     };
 
     match entity.get_kind() {
-        EntityKind::ObjCInstanceMethodDecl => {
-            quote! {
-                pub unsafe fn #fn_name(&self #(, #fn_args)*) #ret {
-                    #macro_name![self, #method_call]
-                }
+        EntityKind::ObjCInstanceMethodDecl => Some(quote! {
+            pub unsafe fn #fn_name(&self #(, #fn_args)*) #ret {
+                #macro_name![self, #method_call]
             }
-        }
-        EntityKind::ObjCClassMethodDecl => {
-            quote! {
-                pub unsafe fn #fn_name(#(#fn_args),*) #ret {
-                    #macro_name![Self::class(), #method_call]
-                }
+        }),
+        EntityKind::ObjCClassMethodDecl => Some(quote! {
+            pub unsafe fn #fn_name(#(#fn_args),*) #ret {
+                #macro_name![Self::class(), #method_call]
             }
-        }
+        }),
         _ => panic!("unknown method kind"),
     }
 }
@@ -239,7 +268,9 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                         protocols.push(entity);
                     }
                     EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-                        methods.push(parse_method(entity));
+                        if let Some(tokens) = parse_method(entity) {
+                            methods.push(tokens);
+                        }
                     }
                     EntityKind::ObjCPropertyDecl => {
                         // println!(
@@ -288,7 +319,9 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                         class = Some(entity);
                     }
                     EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-                        methods.push(parse_method(entity));
+                        if let Some(tokens) = parse_method(entity) {
+                            methods.push(tokens);
+                        }
                     }
                     EntityKind::ObjCPropertyDecl => {
                         // println!(

@@ -128,7 +128,7 @@ fn main() {
     //     }
     // }
 
-    let res = format!("{}", create_rust_file(&result[&dir.join("NSCursor.h")]));
+    let res = format!("{}", create_rust_file(&result[&dir.join("NSAlert.h")]));
 
     println!("{}\n\n\n\n", res);
 
