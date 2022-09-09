@@ -33,6 +33,7 @@ fn get_simple_ty(ty: &Type<'_>) -> Option<TokenStream> {
         Double => quote!(c_double),
         Typedef => {
             let display_name = ty.get_display_name();
+            // TODO: Handle typedefs properly
             match &*display_name {
                 "BOOL" => quote!(bool),
                 display_name => {
@@ -46,102 +47,95 @@ fn get_simple_ty(ty: &Type<'_>) -> Option<TokenStream> {
     Some(tokens)
 }
 
-fn get_rust_type(ty: &Type<'_>, is_return: bool) -> (TokenStream, bool) {
+fn get_id_type(tokens: TokenStream, is_return: bool, nullability: Nullability) -> TokenStream {
+    let tokens = if is_return {
+        quote!(Id<#tokens, Shared>)
+    } else {
+        quote!(&#tokens)
+    };
+    if nullability == Nullability::NonNull {
+        quote!(#tokens)
+    } else {
+        quote!(Option<#tokens>)
+    }
+}
+
+fn get_rust_type(mut ty: Type<'_>, is_return: bool) -> (TokenStream, bool) {
     use TypeKind::*;
 
-    let tokens = match ty.get_kind() {
+    let mut nullability = Nullability::Nullable;
+    let mut kind = ty.get_kind();
+    if kind == Attributed {
+        nullability = ty
+            .get_nullability()
+            .expect("attributed type to have nullability");
+        ty = ty
+            .get_modified_type()
+            .expect("attributed type to have modified type");
+        kind = ty.get_kind();
+    }
+
+    let tokens = match kind {
+        ObjCId => {
+            return (get_id_type(quote!(Object), is_return, nullability), true);
+        }
+        ObjCClass => {
+            if nullability == Nullability::NonNull {
+                quote!(&Class)
+            } else {
+                quote!(Option<&Class>)
+            }
+        }
+        ObjCSel => {
+            if nullability == Nullability::NonNull {
+                quote!(Sel)
+            } else {
+                quote!(Option<Sel>)
+            }
+        }
         Pointer => {
             let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
             let pointee_tokens = get_simple_ty(&pointee).expect("pointer is simple type");
 
-            if ty.is_const_qualified() {
-                quote!(*const #pointee_tokens)
+            if nullability == Nullability::NonNull {
+                quote!(NonNull<#pointee_tokens>)
             } else {
-                quote!(*mut #pointee_tokens)
+                if ty.is_const_qualified() {
+                    quote!(*const #pointee_tokens)
+                } else {
+                    quote!(*mut #pointee_tokens)
+                }
             }
         }
-        // ObjCObjectPointer => quote!(Option<Id<Object, Shared>>),
-        Attributed => {
-            let nullability = ty
-                .get_nullability()
-                .expect("attributed type to have nullability");
-            let ty = ty
-                .get_modified_type()
-                .expect("attributed type to have modified type");
+        ObjCObjectPointer => {
+            let ty = ty.get_pointee_type().expect("pointer type to have pointee");
             let tokens = match ty.get_kind() {
-                ObjCId => quote!(Object),
-                ObjCClass => {
-                    if nullability == Nullability::NonNull {
-                        return (quote!(&Class), false);
-                    } else {
-                        return (quote!(Option<&Class>), false);
+                ObjCInterface => {
+                    let base_ty = ty
+                        .get_objc_object_base_type()
+                        .expect("interface to have base type");
+                    if base_ty != ty {
+                        // TODO: Figure out what the base type is
+                        panic!("base {:?} was not equal to {:?}", base_ty, ty);
                     }
+                    let ident = format_ident!("{}", ty.get_display_name());
+                    quote!(#ident)
                 }
-                ObjCSel => {
-                    if nullability == Nullability::NonNull {
-                        return (quote!(Sel), false);
-                    } else {
-                        return (quote!(Option<Sel>), false);
-                    }
+                ObjCObject => {
+                    quote!(TodoGenerics)
                 }
-                Pointer => {
-                    let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
-                    let pointee_tokens = get_simple_ty(&pointee).expect("pointer is simple type");
-
-                    if nullability == Nullability::NonNull {
-                        return (quote!(NonNull<#pointee_tokens>), false);
-                    } else {
-                        if ty.is_const_qualified() {
-                            return (quote!(*const #pointee_tokens), false);
-                        } else {
-                            return (quote!(*mut #pointee_tokens), false);
-                        }
-                    }
-                }
-                ObjCObjectPointer => {
-                    let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                    match ty.get_kind() {
-                        ObjCInterface => {
-                            let base_ty = ty
-                                .get_objc_object_base_type()
-                                .expect("interface to have base type");
-                            if base_ty != ty {
-                                // TODO: Figure out what the base type is
-                                panic!("base {:?} was not equal to {:?}", base_ty, ty);
-                            }
-                            let ident = format_ident!("{}", ty.get_display_name());
-                            quote!(#ident)
-                        }
-                        ObjCObject => {
-                            quote!(TodoGenerics)
-                        }
-                        _ => panic!("pointee was not objcinterface: {:?}", ty),
-                    }
-                }
-                Typedef if ty.get_display_name() == "instancetype" => {
-                    if !is_return {
-                        panic!("instancetype in non-return position")
-                    }
-                    quote!(Self)
-                }
-                Typedef => {
-                    quote!(TodoTypedef)
-                }
-                BlockPointer => {
-                    quote!(TodoBlock)
-                }
-                _ => panic!("Unsupported attributed type: {:?}", ty),
+                _ => panic!("pointee was not objcinterface: {:?}", ty),
             };
-            let tokens = if is_return {
-                quote!(Id<#tokens, Shared>)
-            } else {
-                quote!(&#tokens)
-            };
-            if nullability == Nullability::NonNull {
-                return (quote!(#tokens), true);
-            } else {
-                return (quote!(Option<#tokens>), true);
+            return (get_id_type(tokens, is_return, nullability), true);
+        }
+        Typedef if ty.get_display_name() == "instancetype" => {
+            if !is_return {
+                panic!("instancetype in non-return position")
             }
+            return (get_id_type(quote!(Self), is_return, nullability), true);
+        }
+        BlockPointer => {
+            quote!(TodoBlock)
         }
         _ => {
             if let Some(tokens) = get_simple_ty(&ty) {
@@ -175,7 +169,7 @@ fn parse_method(entity: Entity<'_>) -> Option<TokenStream> {
     let (ret, is_id) = if result_type.get_kind() == TypeKind::Void {
         (quote! {}, false)
     } else {
-        let (return_item, is_id) = get_rust_type(&result_type, true);
+        let (return_item, is_id) = get_rust_type(result_type, true);
         (
             quote! {
                 -> #return_item
@@ -203,7 +197,7 @@ fn parse_method(entity: Entity<'_>) -> Option<TokenStream> {
         .collect();
 
     let fn_args = arguments.iter().map(|(param, arg_ty)| {
-        let (ty, _) = get_rust_type(&arg_ty, false);
+        let (ty, _) = get_rust_type(arg_ty.clone(), false);
         quote!(#param: #ty)
     });
 
