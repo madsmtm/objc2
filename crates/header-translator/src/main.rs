@@ -144,10 +144,7 @@ fn main() {
         drop(stdin);
 
         let output = child.wait_with_output().expect("failed formatting");
-        // println!(
-        //     "{}",
-        //     String::from_utf8(output.stdout).unwrap()
-        // );
+        // println!("{}", String::from_utf8(output.stdout).unwrap());
     }
 
     //     }
