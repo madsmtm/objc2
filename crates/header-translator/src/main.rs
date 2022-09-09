@@ -24,8 +24,8 @@ fn main() {
     //     println!("{:?}", dir.file_name());
     //     if dir.file_type().unwrap().is_dir() {
 
-    let dir = framework_path.join("AppKit.framework").join("Headers");
-    let header = dir.join("AppKit.h");
+    let dir = framework_path.join("Foundation.framework").join("Headers");
+    let header = dir.join("Foundation.h");
 
     let tu = index
         .parser(&header)
@@ -65,10 +65,10 @@ fn main() {
         );
     };
 
-    dbg_file(tu.get_file(&header).unwrap());
-    dbg_file(tu.get_file(&dir.join("NSAccessibility.h")).unwrap());
-    let cursor_file = tu.get_file(&dir.join("NSCursor.h")).unwrap();
-    dbg_file(cursor_file);
+    // dbg_file(tu.get_file(&header).unwrap());
+    // dbg_file(tu.get_file(&dir.join("NSAccessibility.h")).unwrap());
+    // let cursor_file = tu.get_file(&dir.join("NSCursor.h")).unwrap();
+    // dbg_file(cursor_file);
 
     let entity = tu.get_entity();
 

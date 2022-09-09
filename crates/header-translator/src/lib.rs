@@ -36,12 +36,18 @@ fn get_id_type(tokens: TokenStream, is_return: bool, nullability: Nullability) -
 fn get_rust_type(mut ty: Type<'_>, is_return: bool) -> (TokenStream, bool) {
     use TypeKind::*;
 
-    let mut nullability = Nullability::Nullable;
+    let mut nullability = Nullability::Unspecified;
     let mut kind = ty.get_kind();
-    if kind == Attributed {
-        nullability = ty
+    while kind == Attributed {
+        let new = ty
             .get_nullability()
             .expect("attributed type to have nullability");
+        nullability = match (nullability, new) {
+            (Nullability::NonNull, Nullability::Nullable) => Nullability::Nullable,
+            (Nullability::NonNull, _) => Nullability::NonNull,
+            (Nullability::Nullable, _) => Nullability::Nullable,
+            (Nullability::Unspecified, new) => new,
+        };
         ty = ty
             .get_modified_type()
             .expect("attributed type to have modified type");
@@ -266,14 +272,24 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
             // entity.get_mangled_objc_names()
             let name = format_ident!("{}", entity.get_name().expect("class name"));
             // println!("Availability: {:?}", entity.get_platform_availability());
-            let mut superclass = None;
+            let mut superclass_name = None;
             let mut protocols = Vec::new();
             let mut methods = Vec::new();
 
             entity.visit_children(|entity, _parent| {
                 match entity.get_kind() {
+                    EntityKind::ObjCIvarDecl => {
+                        // Explicitly ignored
+                    }
                     EntityKind::ObjCSuperClassRef => {
-                        superclass = Some(entity);
+                        superclass_name = Some(format_ident!(
+                            "{}",
+                            entity.get_name().expect("superclass name")
+                        ));
+                    }
+                    EntityKind::ObjCRootClass => {
+                        // TODO: Maybe just skip root classes entirely?
+                        superclass_name = Some(format_ident!("Object"));
                     }
                     EntityKind::ObjCClassRef => {
                         println!("ObjCClassRef: {:?}", entity.get_display_name());
@@ -301,15 +317,20 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                         // NS_CLASS_AVAILABLE_MAC??
                         println!("TODO: VisibilityAttr")
                     }
+                    EntityKind::TypeRef => {
+                        // TODO
+                    }
+                    EntityKind::ObjCException => {
+                        // Maybe useful for knowing when to implement `Error` for the type
+                    }
                     EntityKind::UnexposedAttr => {}
                     _ => panic!("Unknown in ObjCInterfaceDecl {:?}", entity),
                 }
                 EntityVisitResult::Continue
             });
 
-            let superclass = superclass.expect("only classes with a superclass is supported");
             let superclass_name =
-                format_ident!("{}", superclass.get_name().expect("superclass name"));
+                superclass_name.expect("only classes with a superclass is supported");
 
             quote! {
                 extern_class!(
@@ -360,6 +381,9 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                         //     entity.get_objc_attributes().unwrap()
                         // );
                         // methods.push(quote! {});
+                    }
+                    EntityKind::TemplateTypeParameter => {
+                        println!("TODO: Template parameters")
                     }
                     EntityKind::UnexposedAttr => {}
                     _ => panic!("Unknown in ObjCCategoryDecl {:?}", entity),
