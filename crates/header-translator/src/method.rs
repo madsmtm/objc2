@@ -113,6 +113,8 @@ impl Method {
                             is_consumed = true;
                         }
                         EntityKind::UnexposedAttr => {}
+                        // For some reason we recurse into array types
+                        EntityKind::IntegerLiteral => {}
                         _ => panic!("Unknown method argument child: {:?}, {:?}", entity, _parent),
                     };
                     EntityVisitResult::Continue
@@ -171,6 +173,13 @@ impl Method {
                 }
                 EntityKind::NSConsumed => {
                     // Handled inside arguments
+                }
+                EntityKind::IbActionAttr => {
+                    // TODO: What is this?
+                }
+                EntityKind::ObjCRequiresSuper => {
+                    // TODO: Can we use this for something?
+                    // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
                 }
                 EntityKind::UnexposedAttr => {}
                 _ => panic!("Unknown method child: {:?}, {:?}", entity, _parent),

@@ -131,10 +131,11 @@ fn main() {
     for res in result.values() {
         let res = format!("{}", create_rust_file(&res));
 
-        println!("{}\n\n\n\n", res);
+        // println!("{}\n\n\n\n", res);
 
         let mut child = Command::new("rustfmt")
             .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
             .spawn()
             .expect("failed running rustfmt");
 
@@ -142,10 +143,11 @@ fn main() {
         stdin.write_all(res.as_bytes()).expect("failed writing");
         drop(stdin);
 
-        println!(
-            "{}",
-            String::from_utf8(child.wait_with_output().expect("failed formatting").stdout).unwrap()
-        );
+        let output = child.wait_with_output().expect("failed formatting");
+        // println!(
+        //     "{}",
+        //     String::from_utf8(output.stdout).unwrap()
+        // );
     }
 
     //     }
