@@ -251,15 +251,16 @@ fn parse_method(entity: Entity<'_>) -> Option<TokenStream> {
                 #macro_name![Self::class(), #method_call]
             }
         }),
-        _ => panic!("unknown method kind"),
+        _ => unreachable!("unknown method kind"),
     }
 }
 
 pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
     match entity.get_kind() {
-        EntityKind::InclusionDirective | EntityKind::MacroExpansion | EntityKind::ObjCClassRef => {
-            TokenStream::new()
-        }
+        EntityKind::InclusionDirective
+        | EntityKind::MacroExpansion
+        | EntityKind::ObjCClassRef
+        | EntityKind::MacroDefinition => TokenStream::new(),
         EntityKind::ObjCInterfaceDecl => {
             // entity.get_mangled_objc_names()
             let name = format_ident!("{}", entity.get_name().expect("class name"));
@@ -371,6 +372,49 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
             quote! {
                 #meta
                 impl #class_name {
+                    #(#methods)*
+                }
+            }
+        }
+        EntityKind::ObjCProtocolDecl => {
+            let name = format_ident!("{}", entity.get_name().expect("protocol name"));
+            let mut protocols = Vec::new();
+            let mut methods = Vec::new();
+
+            entity.visit_children(|entity, _parent| {
+                match entity.get_kind() {
+                    EntityKind::ObjCExplicitProtocolImpl => {
+                        // TODO
+                    }
+                    EntityKind::ObjCProtocolRef => {
+                        protocols.push(entity);
+                    }
+                    EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
+                        // TODO: Required vs. optional methods
+                        if let Some(tokens) = parse_method(entity) {
+                            methods.push(tokens);
+                        }
+                    }
+                    EntityKind::ObjCPropertyDecl => {
+                        // TODO
+                    }
+                    EntityKind::UnexposedAttr => {}
+                    _ => panic!("Unknown in ObjCProtocolDecl {:?}", entity),
+                }
+                EntityVisitResult::Continue
+            });
+
+            quote! {
+                extern_protocol!(
+                    #[derive(Debug)]
+                    struct #name;
+
+                    unsafe impl ProtocolType for #name {
+                        type Super = todo!();
+                    }
+                );
+
+                impl #name {
                     #(#methods)*
                 }
             }
