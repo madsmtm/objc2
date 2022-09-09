@@ -2,6 +2,7 @@ use clang::{Entity, EntityKind, EntityVisitResult};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
+use crate::availability::Availability;
 use crate::method::Method;
 
 #[derive(Debug, Clone)]
@@ -9,6 +10,7 @@ pub enum Stmt {
     /// @interface
     ClassDecl {
         name: String,
+        availability: Availability,
         // TODO: Generics
         superclass: Option<String>,
         protocols: Vec<String>,
@@ -16,6 +18,7 @@ pub enum Stmt {
     },
     CategoryDecl {
         class_name: String,
+        availability: Availability,
         /// Some categories don't have a name. Example: NSClipView
         name: Option<String>,
         /// I don't quite know what this means?
@@ -24,6 +27,7 @@ pub enum Stmt {
     },
     ProtocolDecl {
         name: String,
+        availability: Availability,
         protocols: Vec<String>,
         methods: Vec<Method>,
     },
@@ -40,6 +44,11 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let name = entity.get_name().expect("class name");
+                let availability = Availability::parse(
+                    entity
+                        .get_platform_availability()
+                        .expect("class availability"),
+                );
                 // println!("Availability: {:?}", entity.get_platform_availability());
                 let mut superclass = None;
                 let mut protocols = Vec::new();
@@ -99,6 +108,7 @@ impl Stmt {
 
                 Some(Self::ClassDecl {
                     name,
+                    availability,
                     superclass,
                     protocols,
                     methods,
@@ -106,6 +116,11 @@ impl Stmt {
             }
             EntityKind::ObjCCategoryDecl => {
                 let mut class = None;
+                let availability = Availability::parse(
+                    entity
+                        .get_platform_availability()
+                        .expect("category availability"),
+                );
                 let mut protocols = Vec::new();
                 let mut methods = Vec::new();
 
@@ -147,6 +162,7 @@ impl Stmt {
 
                 Some(Self::CategoryDecl {
                     class_name,
+                    availability,
                     name: entity.get_name(),
                     protocols,
                     methods,
@@ -154,6 +170,11 @@ impl Stmt {
             }
             EntityKind::ObjCProtocolDecl => {
                 let name = entity.get_name().expect("protocol name");
+                let availability = Availability::parse(
+                    entity
+                        .get_platform_availability()
+                        .expect("protocol availability"),
+                );
                 let mut protocols = Vec::new();
                 let mut methods = Vec::new();
 
@@ -182,6 +203,7 @@ impl Stmt {
 
                 Some(Self::ProtocolDecl {
                     name,
+                    availability,
                     protocols,
                     methods,
                 })
@@ -206,6 +228,7 @@ impl ToTokens for Stmt {
         let result = match self {
             Self::ClassDecl {
                 name,
+                availability,
                 superclass,
                 protocols,
                 methods,
@@ -231,6 +254,7 @@ impl ToTokens for Stmt {
             }
             Self::CategoryDecl {
                 class_name,
+                availability,
                 name,
                 protocols,
                 methods,
@@ -251,6 +275,7 @@ impl ToTokens for Stmt {
             }
             Self::ProtocolDecl {
                 name,
+                availability,
                 protocols,
                 methods,
             } => {

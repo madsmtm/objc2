@@ -2,6 +2,7 @@ use clang::Entity;
 use proc_macro2::TokenStream;
 use quote::quote;
 
+mod availability;
 mod method;
 mod objc2_utils;
 mod rust_type;

@@ -2,6 +2,7 @@ use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
+use crate::availability::Availability;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::RustType;
 
@@ -63,6 +64,7 @@ impl MemoryManagement {
 #[derive(Debug, Clone)]
 pub struct Method {
     selector: String,
+    availability: Availability,
     is_class_method: bool,
     is_optional_protocol_method: bool,
     memory_management: MemoryManagement,
@@ -76,14 +78,18 @@ impl Method {
     /// `EntityKind::ObjCClassMethodDecl`.
     pub fn parse(entity: Entity<'_>) -> Option<Self> {
         // println!("Method {:?}", entity.get_display_name());
-        // println!("Availability: {:?}", entity.get_platform_availability());
-
         let selector = entity.get_name().expect("method selector");
 
         if entity.is_variadic() {
             println!("Can't handle variadic method {}", selector);
             return None;
         }
+
+        let availability = Availability::parse(
+            entity
+                .get_platform_availability()
+                .expect("method availability"),
+        );
 
         let is_class_method = match entity.get_kind() {
             EntityKind::ObjCInstanceMethodDecl => false,
@@ -195,6 +201,7 @@ impl Method {
             memory_management = MemoryManagement::Init;
         }
 
+        // Verify that memory management is as expected
         if let Some(RustType { is_id, .. }) = result_type {
             if is_id {
                 memory_management.verify_sel(&selector);
@@ -203,6 +210,7 @@ impl Method {
 
         Some(Self {
             selector,
+            availability,
             is_class_method,
             is_optional_protocol_method: entity.is_objc_optional(),
             memory_management,
