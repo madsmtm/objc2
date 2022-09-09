@@ -237,6 +237,8 @@ impl ToTokens for Stmt {
                 let superclass_name =
                     format_ident!("{}", superclass.as_deref().unwrap_or("Object"));
 
+                // TODO: Use ty.get_objc_protocol_declarations()
+
                 quote! {
                     extern_class!(
                         #[derive(Debug)]

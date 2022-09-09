@@ -2,43 +2,63 @@ use clang::{Nullability, Type, TypeKind};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
-#[derive(Debug, Clone)]
-pub struct RustType {
-    tokens: TokenStream,
-    is_id: bool,
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum RustType {
+    // Primitives
+    Void,
+    C99Bool,
+    Char,
+    SChar,
+    UChar,
+    Short,
+    UShort,
+    Int,
+    UInt,
+    Long,
+    ULong,
+    LongLong,
+    ULongLong,
+    Float,
+    Double,
+
+    // Objective-C
+    Id {
+        name: String,
+        // generics: Vec<String>,
+        is_return: bool,
+        nullability: Nullability,
+    },
+    Class {
+        nullability: Nullability,
+    },
+    Sel {
+        nullability: Nullability,
+    },
+    ObjcBool,
+
+    // Others
+    Pointer {
+        nullability: Nullability,
+        is_const: bool,
+        pointee: Box<RustType>,
+    },
+    Array {
+        element_type: Box<RustType>,
+        num_elements: usize,
+    },
+
+    TypeDef(String),
 }
 
 impl RustType {
-    fn new(tokens: TokenStream) -> Self {
-        Self {
-            tokens,
-            is_id: false,
-        }
-    }
-
-    fn new_id(tokens: TokenStream, is_return: bool, nullability: Nullability) -> Self {
-        let tokens = if is_return {
-            quote!(Id<#tokens, Shared>)
-        } else {
-            quote!(&#tokens)
-        };
-        let tokens = if nullability == Nullability::NonNull {
-            tokens
-        } else {
-            quote!(Option<#tokens>)
-        };
-        Self {
-            tokens,
-            is_id: true,
-        }
-    }
-
     pub fn is_id(&self) -> bool {
-        self.is_id
+        matches!(self, Self::Id { .. })
     }
 
     pub fn parse(mut ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
         use TypeKind::*;
+
+        // println!("{:?}, {:?}", ty, ty.get_class_type());
 
         let mut nullability = Nullability::Unspecified;
         let mut kind = ty.get_kind();
@@ -58,10 +78,115 @@ impl RustType {
             kind = ty.get_kind();
         }
 
-        let tokens = match kind {
+        match kind {
+            Void => Self::Void,
+            Bool => Self::C99Bool,
+            CharS | CharU => Self::Char,
+            SChar => Self::SChar,
+            UChar => Self::UChar,
+            Short => Self::Short,
+            UShort => Self::UShort,
+            Int => Self::Int,
+            UInt => Self::UInt,
+            Long => Self::Long,
+            ULong => Self::ULong,
+            LongLong => Self::LongLong,
+            ULongLong => Self::ULongLong,
+            Float => Self::Float,
+            Double => Self::Double,
+            ObjCId => Self::Id {
+                name: "Object".to_string(),
+                is_return,
+                nullability,
+            },
+            ObjCClass => Self::Class { nullability },
+            ObjCSel => Self::Sel { nullability },
+            Pointer => {
+                println!("{:?}", &ty);
+                let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
+                println!("{:?}", &pointee);
+                let pointee = Self::parse(pointee, false, is_consumed);
+
+                Self::Pointer {
+                    nullability,
+                    is_const: ty.is_const_qualified(),
+                    pointee: Box::new(pointee),
+                }
+            }
+            ObjCObjectPointer => {
+                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                match ty.get_kind() {
+                    ObjCInterface => {
+                        let base_ty = ty
+                            .get_objc_object_base_type()
+                            .expect("interface to have base type");
+                        if base_ty != ty {
+                            // TODO: Figure out what the base type is
+                            panic!("base {:?} was not equal to {:?}", base_ty, ty);
+                        }
+                        let name = ty.get_display_name();
+                        Self::Id {
+                            name,
+                            is_return,
+                            nullability,
+                        }
+                    }
+                    ObjCObject => Self::TypeDef("TodoGenerics".to_string()),
+                    Attributed => Self::TypeDef("TodoAttributed".to_string()),
+                    _ => panic!("pointee was not objcinterface: {:?}", ty),
+                }
+            }
+            Typedef => {
+                let display_name = ty.get_display_name();
+                let display_name = display_name.strip_prefix("const ").unwrap_or(&display_name);
+                // TODO: Handle typedefs properly
+                match &*display_name {
+                    "BOOL" => Self::ObjcBool,
+                    "instancetype" => {
+                        if !is_return {
+                            panic!("instancetype in non-return position")
+                        }
+                        Self::Id {
+                            name: "Self".to_string(),
+                            is_return,
+                            nullability,
+                        }
+                    }
+                    display_name => Self::TypeDef(display_name.to_string()),
+                }
+            }
+            BlockPointer => Self::TypeDef("TodoBlock".to_string()),
+            FunctionPrototype => Self::TypeDef("TodoFunction".to_string()),
+            IncompleteArray => Self::TypeDef("TodoArray".to_string()),
+            ConstantArray => {
+                let element_type = Self::parse(
+                    ty.get_element_type().expect("array to have element type"),
+                    false,
+                    is_consumed,
+                );
+                let num_elements = ty
+                    .get_size()
+                    .expect("constant array to have element length");
+                Self::Array {
+                    element_type: Box::new(element_type),
+                    num_elements,
+                }
+            }
+            _ => {
+                panic!("Unsupported type: {:?}", ty)
+            }
+        }
+    }
+}
+
+impl ToTokens for RustType {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        use RustType::*;
+        let result = match self {
+            // Primitives
             Void => quote!(c_void),
-            Bool => quote!(bool),
-            CharS | CharU => quote!(c_char),
+            C99Bool => panic!("C99's bool is unsupported"), // quote!(bool)
+            Char => quote!(c_char),
             SChar => quote!(c_schar),
             UChar => quote!(c_uchar),
             Short => quote!(c_short),
@@ -74,109 +199,66 @@ impl RustType {
             ULongLong => quote!(c_ulonglong),
             Float => quote!(c_float),
             Double => quote!(c_double),
-            ObjCId => {
-                return Self::new_id(quote!(Object), is_return, nullability);
+
+            // Objective-C
+            Id {
+                name,
+                is_return,
+                nullability,
+            } => {
+                let tokens = format_ident!("{}", name);
+                let tokens = if *is_return {
+                    quote!(Id<#tokens, Shared>)
+                } else {
+                    quote!(&#tokens)
+                };
+                if *nullability == Nullability::NonNull {
+                    tokens
+                } else {
+                    quote!(Option<#tokens>)
+                }
             }
-            ObjCClass => {
-                if nullability == Nullability::NonNull {
+            Class { nullability } => {
+                if *nullability == Nullability::NonNull {
                     quote!(&Class)
                 } else {
                     quote!(Option<&Class>)
                 }
             }
-            ObjCSel => {
-                if nullability == Nullability::NonNull {
+            Sel { nullability } => {
+                if *nullability == Nullability::NonNull {
                     quote!(Sel)
                 } else {
                     quote!(Option<Sel>)
                 }
             }
-            Pointer => {
-                println!("{:?}", &ty);
-                let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
-                println!("{:?}", &pointee);
-                let Self { tokens, .. } = Self::parse(pointee, false, is_consumed);
+            ObjcBool => quote!(bool),
 
-                if nullability == Nullability::NonNull {
-                    quote!(NonNull<#tokens>)
+            // Others
+            Pointer {
+                nullability,
+                is_const,
+                pointee,
+            } => {
+                if *nullability == Nullability::NonNull {
+                    quote!(NonNull<#pointee>)
                 } else {
-                    if ty.is_const_qualified() {
-                        quote!(*const #tokens)
+                    if *is_const {
+                        quote!(*const #pointee)
                     } else {
-                        quote!(*mut #tokens)
+                        quote!(*mut #pointee)
                     }
                 }
             }
-            ObjCObjectPointer => {
-                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                let tokens = match ty.get_kind() {
-                    ObjCInterface => {
-                        let base_ty = ty
-                            .get_objc_object_base_type()
-                            .expect("interface to have base type");
-                        if base_ty != ty {
-                            // TODO: Figure out what the base type is
-                            panic!("base {:?} was not equal to {:?}", base_ty, ty);
-                        }
-                        let ident = format_ident!("{}", ty.get_display_name());
-                        quote!(#ident)
-                    }
-                    ObjCObject => {
-                        quote!(TodoGenerics)
-                    }
-                    Attributed => {
-                        quote!(TodoAttributed)
-                    }
-                    _ => panic!("pointee was not objcinterface: {:?}", ty),
-                };
-                return Self::new_id(tokens, is_return, nullability);
-            }
-            Typedef if ty.get_display_name() == "instancetype" => {
-                if !is_return {
-                    panic!("instancetype in non-return position")
-                }
-                return Self::new_id(quote!(Self), is_return, nullability);
-            }
-            Typedef => {
-                let display_name = ty.get_display_name();
-                let display_name = display_name.strip_prefix("const ").unwrap_or(&display_name);
-                // TODO: Handle typedefs properly
-                match &*display_name {
-                    "BOOL" => quote!(bool),
-                    display_name => {
-                        let ident = format_ident!("{}", display_name);
-                        quote!(#ident)
-                    }
-                }
-            }
-            BlockPointer => {
-                quote!(TodoBlock)
-            }
-            FunctionPrototype => {
-                quote!(TodoFunction)
-            }
-            IncompleteArray => quote!(TodoArray),
-            ConstantArray => {
-                let Self { tokens, .. } = Self::parse(
-                    ty.get_element_type().expect("array to have element type"),
-                    false,
-                    is_consumed,
-                );
-                let num_elements = ty
-                    .get_size()
-                    .expect("constant array to have element length");
-                quote!([#tokens; #num_elements])
-            }
-            _ => {
-                panic!("Unsupported type: {:?}", ty)
+            Array {
+                element_type,
+                num_elements,
+            } => quote!([#element_type; #num_elements]),
+            TypeDef(s) => {
+                let x = format_ident!("{}", s);
+                quote!(#x)
             }
         };
-        Self::new(tokens)
-    }
-}
-
-impl ToTokens for RustType {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        tokens.append_all(self.tokens.clone());
+        tokens.append_all(result);
     }
 }
