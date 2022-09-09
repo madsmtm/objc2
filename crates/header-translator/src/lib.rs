@@ -3,6 +3,7 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 mod method;
+mod objc2_utils;
 mod rust_type;
 use self::method::Method;
 

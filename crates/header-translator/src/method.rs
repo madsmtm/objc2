@@ -2,6 +2,7 @@ use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
+use crate::objc2_utils::in_selector_family;
 use crate::rust_type::RustType;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -11,6 +12,51 @@ enum MemoryManagement {
     ReturnsRetained,
     ReturnsInnerPointer,
     Normal,
+}
+
+impl MemoryManagement {
+    /// Verifies that the selector and the memory management rules match up
+    /// in a way that we can just use `msg_send_id!`.
+    fn verify_sel(self, sel: &str) {
+        // TODO: Handle these differently
+        if sel == "unarchiver:didDecodeObject:" {
+            return;
+        }
+        if sel == "awakeAfterUsingCoder:" {
+            return;
+        }
+
+        let bytes = sel.as_bytes();
+        if in_selector_family(bytes, b"new") {
+            assert!(
+                self == Self::ReturnsRetained,
+                "{:?} did not match {}",
+                self,
+                sel
+            );
+        } else if in_selector_family(bytes, b"alloc") {
+            assert!(
+                self == Self::ReturnsRetained,
+                "{:?} did not match {}",
+                self,
+                sel
+            );
+        } else if in_selector_family(bytes, b"init") {
+            assert!(self == Self::Init, "{:?} did not match {}", self, sel);
+        } else if in_selector_family(bytes, b"copy") || in_selector_family(bytes, b"mutableCopy") {
+            assert!(
+                self == Self::ReturnsRetained,
+                "{:?} did not match {}",
+                self,
+                sel
+            );
+        } else {
+            if self == Self::ReturnsInnerPointer {
+                return;
+            }
+            assert!(self == Self::Normal, "{:?} did not match {}", self, sel);
+        }
+    }
 }
 
 #[allow(dead_code)]
@@ -138,6 +184,12 @@ impl Method {
                 panic!("got NSConsumesSelf without NSReturnsRetained");
             }
             memory_management = MemoryManagement::Init;
+        }
+
+        if let Some(RustType { is_id, .. }) = result_type {
+            if is_id {
+                memory_management.verify_sel(&selector);
+            }
         }
 
         Some(Self {
