@@ -1,8 +1,4 @@
-use std::collections::HashMap;
-use std::path::{Path, PathBuf};
-
-use clang::source::File;
-use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index, Nullability, Type, TypeKind};
+use clang::{Entity, EntityKind, EntityVisitResult, Nullability, Type, TypeKind};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
@@ -453,20 +449,13 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
             TokenStream::new()
         }
         _ => {
-            panic!(
-                "Unknown: {:?}: {}",
-                entity.get_kind(),
-                entity
-                    .get_display_name()
-                    .unwrap_or_else(|| "`None`".to_string())
-            );
-            TokenStream::new()
+            panic!("Unknown: {:?}", entity)
         }
     }
 }
 
 pub fn create_rust_file(entities: &[Entity<'_>]) -> TokenStream {
-    let mut iter = entities.iter().map(get_tokens);
+    let iter = entities.iter().map(get_tokens);
     quote! {
         #(#iter)*
     }

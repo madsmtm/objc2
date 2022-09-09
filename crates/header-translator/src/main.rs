@@ -54,17 +54,17 @@ fn main() {
     dbg!(tu.get_memory_usage());
     dbg!(tu.get_diagnostics());
 
-    let dbg_file = |file: File<'_>| {
-        dbg!(
-            &file,
-            file.get_module(),
-            file.get_skipped_ranges(),
-            file.is_include_guarded(),
-            // file.get_includes(),
-            // file.get_references(),
-        );
-    };
-
+    // let dbg_file = |file: File<'_>| {
+    //     dbg!(
+    //         &file,
+    //         file.get_module(),
+    //         file.get_skipped_ranges(),
+    //         file.is_include_guarded(),
+    //         // file.get_includes(),
+    //         // file.get_references(),
+    //     );
+    // };
+    //
     // dbg_file(tu.get_file(&header).unwrap());
     // dbg_file(tu.get_file(&dir.join("NSAccessibility.h")).unwrap());
     // let cursor_file = tu.get_file(&dir.join("NSCursor.h")).unwrap();
