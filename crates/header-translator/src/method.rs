@@ -6,7 +6,10 @@ use crate::rust_type::RustType;
 
 #[derive(Debug, Clone)]
 pub struct Method {
-    tokens: TokenStream,
+    selector: String,
+    is_class_method: bool,
+    arguments: Vec<(String, RustType)>,
+    result_type: Option<RustType>,
 }
 
 impl Method {
@@ -19,35 +22,16 @@ impl Method {
         // println!("Children: {:?}", entity.get_children());
 
         let selector = entity.get_name().expect("method selector");
-        let fn_name = format_ident!(
-            "{}",
-            selector.trim_end_matches(|c| c == ':').replace(':', "_")
-        );
 
         if entity.is_variadic() {
             println!("Can't handle variadic method {}", selector);
             return None;
         }
 
-        println!("{}", selector);
-
-        let result_type = entity.get_result_type().expect("method return type");
-        let (ret, is_id) = if result_type.get_kind() == TypeKind::Void {
-            (quote! {}, false)
-        } else {
-            let RustType { tokens, is_id } = RustType::parse(result_type, true);
-            (
-                quote! {
-                    -> #tokens
-                },
-                is_id,
-            )
-        };
-
-        let macro_name = if is_id {
-            format_ident!("msg_send_id")
-        } else {
-            format_ident!("msg_send")
+        let is_class_method = match entity.get_kind() {
+            EntityKind::ObjCInstanceMethodDecl => false,
+            EntityKind::ObjCClassMethodDecl => true,
+            _ => unreachable!("unknown method kind"),
         };
 
         let arguments: Vec<_> = entity
@@ -56,23 +40,54 @@ impl Method {
             .into_iter()
             .map(|arg| {
                 (
-                    format_ident!(
-                        "{}",
-                        handle_reserved(&arg.get_name().expect("arg display name"))
-                    ),
-                    arg.get_type().expect("argument type"),
+                    arg.get_name().expect("arg display name"),
+                    RustType::parse(arg.get_type().expect("argument type"), false),
                 )
             })
             .collect();
 
+        let result_type = entity.get_result_type().expect("method return type");
+        let result_type = if result_type.get_kind() != TypeKind::Void {
+            Some(RustType::parse(result_type, true))
+        } else {
+            None
+        };
+
+        Some(Self {
+            selector,
+            is_class_method,
+            arguments,
+            result_type,
+        })
+    }
+}
+
+impl ToTokens for Method {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let fn_name = format_ident!(
+            "{}",
+            self.selector
+                .trim_end_matches(|c| c == ':')
+                .replace(':', "_")
+        );
+
+        let arguments: Vec<_> = self
+            .arguments
+            .iter()
+            .map(|(param, ty)| (format_ident!("{}", handle_reserved(&param)), ty))
+            .collect();
+
         let fn_args = arguments.iter().map(|(param, arg_ty)| {
-            let RustType { tokens, .. } = RustType::parse(arg_ty.clone(), false);
+            let tokens = &arg_ty.tokens;
             quote!(#param: #tokens)
         });
 
-        let method_call = if selector.contains(':') {
-            let split_selector: Vec<_> =
-                selector.split(':').filter(|sel| !sel.is_empty()).collect();
+        let method_call = if self.selector.contains(':') {
+            let split_selector: Vec<_> = self
+                .selector
+                .split(':')
+                .filter(|sel| !sel.is_empty())
+                .collect();
             assert!(
                 arguments.len() == split_selector.len(),
                 "incorrect method argument length",
@@ -88,30 +103,36 @@ impl Method {
             quote!(#(#iter),*)
         } else {
             assert_eq!(arguments.len(), 0, "too many arguments");
-            let sel = format_ident!("{}", selector);
+            let sel = format_ident!("{}", self.selector);
             quote!(#sel)
         };
 
-        let tokens = match entity.get_kind() {
-            EntityKind::ObjCInstanceMethodDecl => quote! {
-                pub unsafe fn #fn_name(&self #(, #fn_args)*) #ret {
-                    #macro_name![self, #method_call]
-                }
-            },
-            EntityKind::ObjCClassMethodDecl => quote! {
+        let (ret, is_id) = if let Some(RustType { tokens, is_id }) = &self.result_type {
+            (quote!(-> #tokens), *is_id)
+        } else {
+            (quote!(), false)
+        };
+
+        let macro_name = if is_id {
+            format_ident!("msg_send_id")
+        } else {
+            format_ident!("msg_send")
+        };
+
+        let result = if self.is_class_method {
+            quote! {
                 pub unsafe fn #fn_name(#(#fn_args),*) #ret {
                     #macro_name![Self::class(), #method_call]
                 }
-            },
-            _ => unreachable!("unknown method kind"),
+            }
+        } else {
+            quote! {
+                pub unsafe fn #fn_name(&self #(, #fn_args)*) #ret {
+                    #macro_name![self, #method_call]
+                }
+            }
         };
-        Some(Self { tokens })
-    }
-}
-
-impl ToTokens for Method {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        tokens.append_all(self.tokens.clone());
+        tokens.append_all(result);
     }
 }
 
