@@ -202,8 +202,8 @@ impl Method {
         }
 
         // Verify that memory management is as expected
-        if let Some(RustType { is_id, .. }) = result_type {
-            if is_id {
+        if let Some(type_) = &result_type {
+            if type_.is_id() {
                 memory_management.verify_sel(&selector);
             }
         }
@@ -239,10 +239,9 @@ impl ToTokens for Method {
             .map(|(param, ty)| (format_ident!("{}", handle_reserved(&param)), ty))
             .collect();
 
-        let fn_args = arguments.iter().map(|(param, arg_ty)| {
-            let tokens = &arg_ty.tokens;
-            quote!(#param: #tokens)
-        });
+        let fn_args = arguments
+            .iter()
+            .map(|(param, arg_ty)| quote!(#param: #arg_ty));
 
         let method_call = if self.selector.contains(':') {
             let split_selector: Vec<_> = self
@@ -269,8 +268,8 @@ impl ToTokens for Method {
             quote!(#sel)
         };
 
-        let (ret, is_id) = if let Some(RustType { tokens, is_id }) = &self.result_type {
-            (quote!(-> #tokens), *is_id)
+        let (ret, is_id) = if let Some(type_) = &self.result_type {
+            (quote!(-> #type_), type_.is_id())
         } else {
             (quote!(), false)
         };

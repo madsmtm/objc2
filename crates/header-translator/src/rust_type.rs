@@ -1,11 +1,11 @@
 use clang::{Nullability, Type, TypeKind};
 use proc_macro2::TokenStream;
-use quote::{format_ident, quote};
+use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 #[derive(Debug, Clone)]
 pub struct RustType {
-    pub tokens: TokenStream,
-    pub is_id: bool,
+    tokens: TokenStream,
+    is_id: bool,
 }
 
 impl RustType {
@@ -31,6 +31,10 @@ impl RustType {
             tokens,
             is_id: true,
         }
+    }
+
+    pub fn is_id(&self) -> bool {
+        self.is_id
     }
 
     pub fn parse(mut ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
@@ -168,5 +172,11 @@ impl RustType {
             }
         };
         Self::new(tokens)
+    }
+}
+
+impl ToTokens for RustType {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.append_all(self.tokens.clone());
     }
 }
