@@ -260,6 +260,7 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
         EntityKind::InclusionDirective
         | EntityKind::MacroExpansion
         | EntityKind::ObjCClassRef
+        | EntityKind::ObjCProtocolRef
         | EntityKind::MacroDefinition => TokenStream::new(),
         EntityKind::ObjCInterfaceDecl => {
             // entity.get_mangled_objc_names()
@@ -419,8 +420,16 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                 }
             }
         }
+        EntityKind::EnumDecl
+        | EntityKind::VarDecl
+        | EntityKind::FunctionDecl
+        | EntityKind::TypedefDecl
+        | EntityKind::StructDecl => {
+            // TODO
+            TokenStream::new()
+        }
         _ => {
-            println!(
+            panic!(
                 "Unknown: {:?}: {}",
                 entity.get_kind(),
                 entity
