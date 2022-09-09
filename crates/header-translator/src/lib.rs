@@ -13,6 +13,13 @@ fn get_rust_name(selector: &str) -> Ident {
     )
 }
 
+fn handle_reserved(s: &str) -> &str {
+    match s {
+        "type" => "type_",
+        s => s,
+    }
+}
+
 fn get_id_type(tokens: TokenStream, is_return: bool, nullability: Nullability) -> TokenStream {
     let tokens = if is_return {
         quote!(Id<#tokens, Shared>)
@@ -198,7 +205,10 @@ fn parse_method(entity: Entity<'_>) -> Option<TokenStream> {
         .into_iter()
         .map(|arg| {
             (
-                format_ident!("{}", arg.get_name().expect("arg display name")),
+                format_ident!(
+                    "{}",
+                    handle_reserved(&arg.get_name().expect("arg display name"))
+                ),
                 arg.get_type().expect("argument type"),
             )
         })
