@@ -33,7 +33,7 @@ impl RustType {
         }
     }
 
-    pub fn parse(mut ty: Type<'_>, is_return: bool) -> Self {
+    pub fn parse(mut ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
         use TypeKind::*;
 
         let mut nullability = Nullability::Unspecified;
@@ -91,7 +91,7 @@ impl RustType {
                 println!("{:?}", &ty);
                 let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
                 println!("{:?}", &pointee);
-                let Self { tokens, .. } = Self::parse(pointee, false);
+                let Self { tokens, .. } = Self::parse(pointee, false, is_consumed);
 
                 if nullability == Nullability::NonNull {
                     quote!(NonNull<#tokens>)
@@ -156,6 +156,7 @@ impl RustType {
                 let Self { tokens, .. } = Self::parse(
                     ty.get_element_type().expect("array to have element type"),
                     false,
+                    is_consumed,
                 );
                 let num_elements = ty
                     .get_size()

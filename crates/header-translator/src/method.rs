@@ -49,17 +49,43 @@ impl Method {
             .get_arguments()
             .expect("method arguments")
             .into_iter()
-            .map(|arg| {
+            .map(|entity| {
+                let mut is_consumed = false;
+
+                entity.visit_children(|entity, _parent| {
+                    match entity.get_kind() {
+                        EntityKind::ObjCClassRef
+                        | EntityKind::ObjCProtocolRef
+                        | EntityKind::TypeRef
+                        | EntityKind::ParmDecl => {
+                            // Ignore
+                        }
+                        EntityKind::NSConsumed => {
+                            if is_consumed {
+                                panic!("got NSConsumed twice");
+                            }
+                            is_consumed = true;
+                        }
+                        EntityKind::UnexposedAttr => {}
+                        _ => panic!("Unknown method argument child: {:?}, {:?}", entity, _parent),
+                    };
+                    EntityVisitResult::Continue
+                });
+
                 (
-                    arg.get_name().expect("arg display name"),
-                    RustType::parse(arg.get_type().expect("argument type"), false),
+                    entity.get_name().expect("arg display name"),
+                    RustType::parse(
+                        entity.get_type().expect("argument type"),
+                        false,
+                        is_consumed,
+                    ),
                 )
             })
             .collect();
 
         let result_type = entity.get_result_type().expect("method return type");
         let result_type = if result_type.get_kind() != TypeKind::Void {
-            Some(RustType::parse(result_type, true))
+            Some(RustType::parse(result_type, true, false))
         } else {
             None
         };
@@ -98,12 +124,13 @@ impl Method {
                     memory_management = MemoryManagement::ReturnsInnerPointer;
                 }
                 EntityKind::NSConsumed => {
-                    // TODO: Handle consumed arguments
+                    // Handled inside arguments
                 }
                 EntityKind::UnexposedAttr => {}
                 _ => panic!("Unknown method child: {:?}, {:?}", entity, _parent),
             };
-            EntityVisitResult::Recurse
+            // TODO: Verify that Continue is good enough
+            EntityVisitResult::Continue
         });
 
         if consumes_self {
