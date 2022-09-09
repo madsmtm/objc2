@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
@@ -77,7 +77,7 @@ fn main() {
 
     let mut entities_left = usize::MAX;
 
-    let mut result: HashMap<PathBuf, Vec<Entity<'_>>> = HashMap::new();
+    let mut result: BTreeMap<PathBuf, Vec<Entity<'_>>> = BTreeMap::new();
 
     entity.visit_children(|entity, _parent| {
         // EntityKind::InclusionDirective
@@ -128,23 +128,25 @@ fn main() {
     //     }
     // }
 
-    let res = format!("{}", create_rust_file(&result[&dir.join("NSAlert.h")]));
+    for res in result.values() {
+        let res = format!("{}", create_rust_file(&res));
 
-    println!("{}\n\n\n\n", res);
+        println!("{}\n\n\n\n", res);
 
-    let mut child = Command::new("rustfmt")
-        .stdin(Stdio::piped())
-        .spawn()
-        .expect("failed running rustfmt");
+        let mut child = Command::new("rustfmt")
+            .stdin(Stdio::piped())
+            .spawn()
+            .expect("failed running rustfmt");
 
-    let mut stdin = child.stdin.take().expect("failed to open stdin");
-    stdin.write_all(res.as_bytes()).expect("failed writing");
-    drop(stdin);
+        let mut stdin = child.stdin.take().expect("failed to open stdin");
+        stdin.write_all(res.as_bytes()).expect("failed writing");
+        drop(stdin);
 
-    println!(
-        "{}",
-        String::from_utf8(child.wait_with_output().expect("failed formatting").stdout).unwrap()
-    );
+        println!(
+            "{}",
+            String::from_utf8(child.wait_with_output().expect("failed formatting").stdout).unwrap()
+        );
+    }
 
     //     }
     // }

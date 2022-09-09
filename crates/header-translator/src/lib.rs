@@ -13,40 +13,6 @@ fn get_rust_name(selector: &str) -> Ident {
     )
 }
 
-fn get_simple_ty(ty: &Type<'_>) -> Option<TokenStream> {
-    use TypeKind::*;
-    let tokens = match ty.get_kind() {
-        Void => quote!(c_void),
-        Bool => quote!(bool),
-        CharS | CharU => quote!(c_char),
-        SChar => quote!(c_schar),
-        UChar => quote!(c_uchar),
-        Short => quote!(c_short),
-        UShort => quote!(c_ushort),
-        Int => quote!(c_int),
-        UInt => quote!(c_uint),
-        Long => quote!(c_long),
-        ULong => quote!(c_ulong),
-        LongLong => quote!(c_longlong),
-        ULongLong => quote!(c_ulonglong),
-        Float => quote!(c_float),
-        Double => quote!(c_double),
-        Typedef => {
-            let display_name = ty.get_display_name();
-            // TODO: Handle typedefs properly
-            match &*display_name {
-                "BOOL" => quote!(bool),
-                display_name => {
-                    let ident = format_ident!("{}", display_name);
-                    quote!(#ident)
-                }
-            }
-        }
-        _ => return None,
-    };
-    Some(tokens)
-}
-
 fn get_id_type(tokens: TokenStream, is_return: bool, nullability: Nullability) -> TokenStream {
     let tokens = if is_return {
         quote!(Id<#tokens, Shared>)
@@ -76,6 +42,21 @@ fn get_rust_type(mut ty: Type<'_>, is_return: bool) -> (TokenStream, bool) {
     }
 
     let tokens = match kind {
+        Void => quote!(c_void),
+        Bool => quote!(bool),
+        CharS | CharU => quote!(c_char),
+        SChar => quote!(c_schar),
+        UChar => quote!(c_uchar),
+        Short => quote!(c_short),
+        UShort => quote!(c_ushort),
+        Int => quote!(c_int),
+        UInt => quote!(c_uint),
+        Long => quote!(c_long),
+        ULong => quote!(c_ulong),
+        LongLong => quote!(c_longlong),
+        ULongLong => quote!(c_ulonglong),
+        Float => quote!(c_float),
+        Double => quote!(c_double),
         ObjCId => {
             return (get_id_type(quote!(Object), is_return, nullability), true);
         }
@@ -94,8 +75,10 @@ fn get_rust_type(mut ty: Type<'_>, is_return: bool) -> (TokenStream, bool) {
             }
         }
         Pointer => {
+            println!("{:?}", &ty);
             let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
-            let pointee_tokens = get_simple_ty(&pointee).expect("pointer is simple type");
+            println!("{:?}", &pointee);
+            let (pointee_tokens, _) = get_rust_type(pointee, false);
 
             if nullability == Nullability::NonNull {
                 quote!(NonNull<#pointee_tokens>)
@@ -124,6 +107,9 @@ fn get_rust_type(mut ty: Type<'_>, is_return: bool) -> (TokenStream, bool) {
                 ObjCObject => {
                     quote!(TodoGenerics)
                 }
+                Attributed => {
+                    quote!(TodoAttributed)
+                }
                 _ => panic!("pointee was not objcinterface: {:?}", ty),
             };
             return (get_id_type(tokens, is_return, nullability), true);
@@ -134,15 +120,37 @@ fn get_rust_type(mut ty: Type<'_>, is_return: bool) -> (TokenStream, bool) {
             }
             return (get_id_type(quote!(Self), is_return, nullability), true);
         }
+        Typedef => {
+            let display_name = ty.get_display_name();
+            let display_name = display_name.strip_prefix("const ").unwrap_or(&display_name);
+            // TODO: Handle typedefs properly
+            match &*display_name {
+                "BOOL" => quote!(bool),
+                display_name => {
+                    let ident = format_ident!("{}", display_name);
+                    quote!(#ident)
+                }
+            }
+        }
         BlockPointer => {
             quote!(TodoBlock)
         }
+        FunctionPrototype => {
+            quote!(TodoFunction)
+        }
+        IncompleteArray => quote!(TodoArray),
+        ConstantArray => {
+            let (element_type, _) = get_rust_type(
+                ty.get_element_type().expect("array to have element type"),
+                false,
+            );
+            let num_elements = ty
+                .get_size()
+                .expect("constant array to have element length");
+            quote!([#element_type; #num_elements])
+        }
         _ => {
-            if let Some(tokens) = get_simple_ty(&ty) {
-                tokens
-            } else {
-                panic!("Unsupported type: {:?}", ty)
-            }
+            panic!("Unsupported type: {:?}", ty)
         }
     };
     (tokens, false)
@@ -274,8 +282,15 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                         // );
                         // methods.push(quote! {});
                     }
+                    EntityKind::TemplateTypeParameter => {
+                        println!("TODO: Template parameters")
+                    }
+                    EntityKind::VisibilityAttr => {
+                        // NS_CLASS_AVAILABLE_MAC??
+                        println!("TODO: VisibilityAttr")
+                    }
                     EntityKind::UnexposedAttr => {}
-                    _ => panic!("Unknown {:?}", entity),
+                    _ => panic!("Unknown in ObjCInterfaceDecl {:?}", entity),
                 }
                 EntityVisitResult::Continue
             });
@@ -300,8 +315,14 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
             }
         }
         EntityKind::ObjCCategoryDecl => {
-            let doc = entity.get_name().expect("category name");
+            let meta = if let Some(doc) = entity.get_name() {
+                quote!(#[doc = #doc])
+            } else {
+                // Some categories don't have a name. Example: NSClipView
+                quote!()
+            };
             let mut class = None;
+            let mut protocols = Vec::new();
             let mut methods = Vec::new();
 
             entity.visit_children(|entity, _parent| {
@@ -311,6 +332,9 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                             panic!("could not find unique category class")
                         }
                         class = Some(entity);
+                    }
+                    EntityKind::ObjCProtocolRef => {
+                        protocols.push(entity);
                     }
                     EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
                         if let Some(tokens) = parse_method(entity) {
@@ -326,7 +350,7 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
                         // methods.push(quote! {});
                     }
                     EntityKind::UnexposedAttr => {}
-                    _ => panic!("Unknown {:?}", entity),
+                    _ => panic!("Unknown in ObjCCategoryDecl {:?}", entity),
                 }
                 EntityVisitResult::Continue
             });
@@ -335,7 +359,7 @@ pub fn get_tokens(entity: &Entity<'_>) -> TokenStream {
             let class_name = format_ident!("{}", class.get_name().expect("class name"));
 
             quote! {
-                #[doc = #doc]
+                #meta
                 impl #class_name {
                     #(#methods)*
                 }
