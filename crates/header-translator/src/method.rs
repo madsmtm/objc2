@@ -217,9 +217,12 @@ impl ToTokens for Method {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let fn_name = format_ident!(
             "{}",
-            self.selector
-                .trim_end_matches(|c| c == ':')
-                .replace(':', "_")
+            handle_reserved(
+                &self
+                    .selector
+                    .trim_end_matches(|c| c == ':')
+                    .replace(':', "_")
+            )
         );
 
         let arguments: Vec<_> = self
@@ -290,6 +293,7 @@ impl ToTokens for Method {
 fn handle_reserved(s: &str) -> &str {
     match s {
         "type" => "type_",
+        "trait" => "trait_",
         s => s,
     }
 }
