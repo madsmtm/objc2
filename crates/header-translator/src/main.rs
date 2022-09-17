@@ -158,6 +158,10 @@ fn main() {
     let mut mod_tokens = TokenStream::new();
 
     for (path, res) in result {
+        if path == header {
+            continue;
+        }
+
         let tokens = create_rust_file(&res, &config.unsafe_);
         let formatted = run_rustfmt(tokens);
 

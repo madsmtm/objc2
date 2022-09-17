@@ -1,6 +1,3 @@
-
-mod Foundation;
-pub use self::Foundation::*;
 mod FoundationErrors;
 pub use self::FoundationErrors::*;
 mod FoundationLegacySwiftCompatibility;
