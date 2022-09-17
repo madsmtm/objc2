@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::Result;
 use std::path::{Path, PathBuf};
@@ -11,7 +11,7 @@ type Selector = String;
 #[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize)]
 pub struct Unsafe {
     #[serde(rename = "safe-methods")]
-    pub safe_methods: HashMap<ClassName, Vec<Selector>>,
+    pub safe_methods: HashMap<ClassName, HashSet<Selector>>,
 }
 
 #[derive(Deserialize)]
@@ -25,7 +25,7 @@ struct InnerConfig {
     unsafe_: Unsafe,
     #[serde(rename = "mutating-methods")]
     #[serde(default)]
-    mutating_methods: HashMap<ClassName, Vec<Selector>>,
+    mutating_methods: HashMap<ClassName, HashSet<Selector>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -35,7 +35,7 @@ pub struct Config {
     /// The output path, relative to the toml file.
     pub output: PathBuf,
     pub unsafe_: Unsafe,
-    pub mutating_methods: HashMap<ClassName, Vec<Selector>>,
+    pub mutating_methods: HashMap<ClassName, HashSet<Selector>>,
 }
 
 impl Config {

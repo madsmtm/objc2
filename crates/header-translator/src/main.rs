@@ -1,12 +1,35 @@
 use std::collections::BTreeMap;
-use std::io::Write;
+use std::fs;
+use std::io::{Result, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 use clang::source::File;
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote, TokenStreamExt};
 
 use header_translator::{create_rust_file, Config};
+
+fn run_rustfmt(tokens: TokenStream) -> Vec<u8> {
+    let mut child = Command::new("rustfmt")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("failed running rustfmt");
+
+    let mut stdin = child.stdin.take().expect("failed to open stdin");
+    write!(stdin, "{}", tokens).expect("failed writing");
+    drop(stdin);
+
+    let output = child.wait_with_output().expect("failed formatting");
+
+    if !output.status.success() {
+        panic!("failed running rustfmt with exit code {}", output.status)
+    }
+
+    output.stdout
+}
 
 fn main() {
     // let sysroot = Path::new("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk");
@@ -17,9 +40,7 @@ fn main() {
 
     let index = Index::new(&clang, true, true);
 
-    let config = dbg!(Config::from_file(Path::new("icrate/src/AppKit.toml")).unwrap());
-    let config =
-        dbg!(Config::from_file(Path::new("objc2/src/foundation/Foundation.toml")).unwrap());
+    let _config = dbg!(Config::from_file(Path::new("icrate/src/AppKit.toml")).unwrap());
 
     let _module_path = framework_path.join("module.map");
 
@@ -132,24 +153,34 @@ fn main() {
     //     }
     // }
 
-    for res in result.values() {
-        let res = format!("{}", create_rust_file(&res));
+    let config = dbg!(Config::from_file(Path::new("icrate/src/Foundation.toml")).unwrap());
+
+    let mut mod_tokens = TokenStream::new();
+
+    for (path, res) in result {
+        let tokens = create_rust_file(&res, &config.unsafe_);
+        let formatted = run_rustfmt(tokens);
 
         // println!("{}\n\n\n\n", res);
 
-        let mut child = Command::new("rustfmt")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .spawn()
-            .expect("failed running rustfmt");
+        let mut path = config
+            .output
+            .join(path.file_name().expect("header file name"));
+        path.set_extension("rs");
 
-        let mut stdin = child.stdin.take().expect("failed to open stdin");
-        stdin.write_all(res.as_bytes()).expect("failed writing");
-        drop(stdin);
+        // truncate if the file exists
+        fs::write(&path, formatted).unwrap();
 
-        let output = child.wait_with_output().expect("failed formatting");
-        // println!("{}", String::from_utf8(output.stdout).unwrap());
+        let name = format_ident!("{}", path.file_stem().unwrap().to_string_lossy());
+
+        mod_tokens.append_all(quote! {
+            mod #name;
+            pub use self::#name::*;
+        });
     }
+
+    // truncate if the file exists
+    fs::write(config.output.join("mod.rs"), run_rustfmt(mod_tokens)).unwrap();
 
     //     }
     // }

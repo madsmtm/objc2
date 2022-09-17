@@ -11,10 +11,13 @@ mod stmt;
 
 pub use self::config::Config;
 
+use self::config::Unsafe;
 use self::stmt::Stmt;
 
-pub fn create_rust_file(entities: &[Entity<'_>]) -> TokenStream {
-    let iter = entities.iter().filter_map(Stmt::parse);
+pub fn create_rust_file(entities: &[Entity<'_>], unsafe_: &Unsafe) -> TokenStream {
+    let iter = entities
+        .iter()
+        .filter_map(|entity| Stmt::parse(entity, &unsafe_));
     quote! {
         #(#iter)*
     }

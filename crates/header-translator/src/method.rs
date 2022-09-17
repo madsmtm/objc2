@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
@@ -71,14 +73,20 @@ pub struct Method {
     designated_initializer: bool,
     arguments: Vec<(String, RustType)>,
     result_type: Option<RustType>,
+    safe: bool,
 }
 
 impl Method {
     /// Takes one of `EntityKind::ObjCInstanceMethodDecl` or
     /// `EntityKind::ObjCClassMethodDecl`.
-    pub fn parse(entity: Entity<'_>) -> Option<Self> {
+    pub fn parse(entity: Entity<'_>, safe_methods: Option<&HashSet<String>>) -> Option<Self> {
         // println!("Method {:?}", entity.get_display_name());
         let selector = entity.get_name().expect("method selector");
+        let safe = if let Some(safe_methods) = safe_methods {
+            safe_methods.contains(&selector)
+        } else {
+            false
+        };
 
         if entity.is_variadic() {
             println!("Can't handle variadic method {}", selector);
@@ -217,6 +225,7 @@ impl Method {
             designated_initializer,
             arguments,
             result_type,
+            safe,
         })
     }
 }
