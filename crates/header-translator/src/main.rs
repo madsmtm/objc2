@@ -6,7 +6,7 @@ use std::process::{Command, Stdio};
 use clang::source::File;
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
 
-use header_translator::create_rust_file;
+use header_translator::{create_rust_file, Config};
 
 fn main() {
     // let sysroot = Path::new("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk");
@@ -16,6 +16,10 @@ fn main() {
     let clang = Clang::new().unwrap();
 
     let index = Index::new(&clang, true, true);
+
+    let config = dbg!(Config::from_file(Path::new("icrate/src/AppKit.toml")).unwrap());
+    let config =
+        dbg!(Config::from_file(Path::new("objc2/src/foundation/Foundation.toml")).unwrap());
 
     let _module_path = framework_path.join("module.map");
 

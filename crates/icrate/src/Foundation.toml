@@ -1,0 +1,28 @@
+name = "Foundation"
+headers = ["Foundation.h"]
+output = "generated/Foundation"
+
+[unsafe.safe-methods]
+NSString = [
+    "new",
+    # Assuming that (non-)nullability is properly set
+    "stringByAppendingString:",
+    "stringByAppendingPathComponent:",
+    # Assuming `NSStringEncoding` can be made safe
+    "lengthOfBytesUsingEncoding:",
+    "length",
+    # Safe to call, but the returned pointer may not be safe to use
+    "UTF8String",
+]
+NSMutableString = [
+    "new",
+    "initWithString:",
+    "appendString:",
+    "setString:",
+]
+
+[mutating-methods]
+NSMutableString = [
+    "appendString:",
+    "setString:",
+]

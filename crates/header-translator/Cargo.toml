@@ -12,3 +12,5 @@ clang = { version = "2.0", features = ["runtime", "clang_10_0"] }
 clang-sys = "1.0"
 quote = "1.0"
 proc-macro2 = "1.0"
+toml = "0.5.9"
+serde = { version = "1.0.144", features = ["derive"] }

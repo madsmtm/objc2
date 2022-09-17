@@ -3,10 +3,13 @@ use proc_macro2::TokenStream;
 use quote::quote;
 
 mod availability;
+mod config;
 mod method;
 mod objc2_utils;
 mod rust_type;
 mod stmt;
+
+pub use self::config::Config;
 
 use self::stmt::Stmt;
 
