@@ -45,14 +45,14 @@ targets = [
 ]
 
 [features]
-default = ["std", "objc"]
+default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2?/std"]
 alloc = ["objc2?/alloc"]
 
 # Expose features that requires Objective-C.
-objc = ["objc2"]
+objective-c = ["objc2"]
 
 # Expose features that requires creating blocks.
 block = ["objc2?/block", "block2"]
@@ -76,7 +76,7 @@ unstable-docsrs = []
 # AppClip = []
 # AppIntents = []
 # AppTrackingTransparency = []
-AppKit = ["Foundation"]
+AppKit = ["objective-c", "Foundation"]
 # AppleScriptKit = []
 # AppleScriptObjC = []
 # ApplicationServices = []
@@ -170,7 +170,7 @@ AppKit = ["Foundation"]
 # FileProviderUI = []
 # FinderSync = []
 # ForceFeedback = []
-Foundation = ["objc", "objc2/foundation"]
+Foundation = ["objective-c", "objc2/foundation"]
 # FWAUserLib = []
 # GameController = []
 # GameKit = []

@@ -12,7 +12,7 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/icrate/0.0.1")]
 
-#[cfg(feature = "objc")]
+#[cfg(feature = "objective-c")]
 pub use objc2;
 
 // Frameworks
