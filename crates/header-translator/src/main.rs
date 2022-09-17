@@ -162,7 +162,7 @@ fn main() {
             continue;
         }
 
-        let tokens = create_rust_file(&res, &config.unsafe_);
+        let tokens = create_rust_file(&res, &config);
         let formatted = run_rustfmt(tokens);
 
         // println!("{}\n\n\n\n", res);

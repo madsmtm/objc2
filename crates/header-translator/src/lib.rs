@@ -11,13 +11,12 @@ mod stmt;
 
 pub use self::config::Config;
 
-use self::config::Unsafe;
 use self::stmt::Stmt;
 
-pub fn create_rust_file(entities: &[Entity<'_>], unsafe_: &Unsafe) -> TokenStream {
+pub fn create_rust_file(entities: &[Entity<'_>], config: &Config) -> TokenStream {
     let iter = entities
         .iter()
-        .filter_map(|entity| Stmt::parse(entity, &unsafe_));
+        .filter_map(|entity| Stmt::parse(entity, config));
     quote! {
         #[allow(unused_imports)]
         use objc2::{ClassType, extern_class, msg_send, msg_send_id};

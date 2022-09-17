@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fs;
 use std::io::Result;
 use std::path::{Path, PathBuf};
@@ -8,10 +8,15 @@ use serde::Deserialize;
 type ClassName = String;
 type Selector = String;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize)]
-pub struct Unsafe {
+#[derive(Default, Deserialize)]
+struct Unsafe {
     #[serde(rename = "safe-methods")]
-    pub safe_methods: HashMap<ClassName, HashSet<Selector>>,
+    safe_methods: HashMap<ClassName, Vec<Selector>>,
+}
+
+#[derive(Default, Deserialize)]
+struct Skipped {
+    methods: HashMap<ClassName, Vec<Selector>>,
 }
 
 #[derive(Deserialize)]
@@ -25,7 +30,21 @@ struct InnerConfig {
     unsafe_: Unsafe,
     #[serde(rename = "mutating-methods")]
     #[serde(default)]
-    mutating_methods: HashMap<ClassName, HashSet<Selector>>,
+    mutating_methods: HashMap<ClassName, Vec<Selector>>,
+    #[serde(default)]
+    skipped: Skipped,
+}
+
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+pub struct ClassData {
+    pub selector_data: HashMap<Selector, MethodData>,
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub struct MethodData {
+    pub safe: bool,
+    pub skipped: bool,
+    // TODO: mutating
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -34,8 +53,7 @@ pub struct Config {
     pub headers: Vec<String>,
     /// The output path, relative to the toml file.
     pub output: PathBuf,
-    pub unsafe_: Unsafe,
-    pub mutating_methods: HashMap<ClassName, HashSet<Selector>>,
+    pub class_data: HashMap<ClassName, ClassData>,
 }
 
 impl Config {
@@ -58,12 +76,27 @@ impl Config {
                 .unwrap_or_else(|| Path::new("generated").join(&name)),
         );
 
+        let mut class_data: HashMap<ClassName, ClassData> = HashMap::new();
+
+        for (class_name, selectors) in config.unsafe_.safe_methods {
+            let data = class_data.entry(class_name).or_default();
+            for sel in selectors {
+                data.selector_data.entry(sel).or_default().safe = true;
+            }
+        }
+
+        for (class_name, selectors) in config.skipped.methods {
+            let data = class_data.entry(class_name).or_default();
+            for sel in selectors {
+                data.selector_data.entry(sel).or_default().skipped = true;
+            }
+        }
+
         Ok(Self {
             name,
             headers,
             output,
-            unsafe_: config.unsafe_,
-            mutating_methods: config.mutating_methods,
+            class_data,
         })
     }
 }

@@ -1,10 +1,9 @@
-use std::collections::HashSet;
-
 use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 use crate::availability::Availability;
+use crate::config::ClassData;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::RustType;
 
@@ -21,14 +20,6 @@ impl MemoryManagement {
     /// Verifies that the selector and the memory management rules match up
     /// in a way that we can just use `msg_send_id!`.
     fn verify_sel(self, sel: &str) {
-        // TODO: Handle these differently
-        if sel == "unarchiver:didDecodeObject:" {
-            return;
-        }
-        if sel == "awakeAfterUsingCoder:" {
-            return;
-        }
-
         let bytes = sel.as_bytes();
         if in_selector_family(bytes, b"new") {
             assert!(
@@ -79,14 +70,23 @@ pub struct Method {
 impl Method {
     /// Takes one of `EntityKind::ObjCInstanceMethodDecl` or
     /// `EntityKind::ObjCClassMethodDecl`.
-    pub fn parse(entity: Entity<'_>, safe_methods: Option<&HashSet<String>>) -> Option<Self> {
+    pub fn parse(entity: Entity<'_>, class_data: Option<&ClassData>) -> Option<Self> {
         // println!("Method {:?}", entity.get_display_name());
         let selector = entity.get_name().expect("method selector");
-        let safe = if let Some(safe_methods) = safe_methods {
-            safe_methods.contains(&selector)
-        } else {
-            false
-        };
+
+        let data = class_data
+            .map(|class_data| {
+                class_data
+                    .selector_data
+                    .get(&selector)
+                    .copied()
+                    .unwrap_or_default()
+            })
+            .unwrap_or_default();
+
+        if data.skipped {
+            return None;
+        }
 
         if entity.is_variadic() {
             println!("Can't handle variadic method {}", selector);
@@ -225,7 +225,7 @@ impl Method {
             designated_initializer,
             arguments,
             result_type,
-            safe,
+            safe: data.safe,
         })
     }
 }

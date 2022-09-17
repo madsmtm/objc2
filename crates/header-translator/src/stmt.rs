@@ -3,7 +3,7 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 use crate::availability::Availability;
-use crate::config::Unsafe;
+use crate::config::Config;
 use crate::method::Method;
 
 #[derive(Debug, Clone)]
@@ -37,7 +37,7 @@ pub enum Stmt {
 }
 
 impl Stmt {
-    pub fn parse(entity: &Entity<'_>, unsafe_: &Unsafe) -> Option<Self> {
+    pub fn parse(entity: &Entity<'_>, config: &Config) -> Option<Self> {
         match entity.get_kind() {
             EntityKind::InclusionDirective
             | EntityKind::MacroExpansion
@@ -47,7 +47,7 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let name = entity.get_name().expect("class name");
-                let safe_methods = unsafe_.safe_methods.get(&name);
+                let class_data = config.class_data.get(&name);
                 let availability = Availability::parse(
                     entity
                         .get_platform_availability()
@@ -77,7 +77,7 @@ impl Stmt {
                             protocols.push(entity.get_name().expect("protocolref to have name"));
                         }
                         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-                            if let Some(method) = Method::parse(entity, safe_methods) {
+                            if let Some(method) = Method::parse(entity, class_data) {
                                 methods.push(method);
                             }
                         }
@@ -140,12 +140,12 @@ impl Stmt {
                             protocols.push(entity.get_name().expect("protocolref to have name"));
                         }
                         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-                            let safe_methods = unsafe_.safe_methods.get(
+                            let class_data = config.class_data.get(
                                 class_name
                                     .as_ref()
                                     .expect("no category class before methods"),
                             );
-                            if let Some(method) = Method::parse(entity, safe_methods) {
+                            if let Some(method) = Method::parse(entity, class_data) {
                                 methods.push(method);
                             }
                         }
@@ -179,7 +179,7 @@ impl Stmt {
             }
             EntityKind::ObjCProtocolDecl => {
                 let name = entity.get_name().expect("protocol name");
-                let safe_methods = unsafe_.safe_methods.get(&name);
+                let class_data = config.class_data.get(&name);
                 let availability = Availability::parse(
                     entity
                         .get_platform_availability()
@@ -198,7 +198,7 @@ impl Stmt {
                         }
                         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
                             // TODO: Required vs. optional methods
-                            if let Some(method) = Method::parse(entity, safe_methods) {
+                            if let Some(method) = Method::parse(entity, class_data) {
                                 methods.push(method);
                             }
                         }
