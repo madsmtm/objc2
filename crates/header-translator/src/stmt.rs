@@ -283,20 +283,23 @@ impl ToTokens for Stmt {
             } => {
                 let name = format_ident!("{}", name);
 
-                quote! {
-                    extern_protocol!(
-                        #[derive(Debug)]
-                        struct #name;
+                // TODO
 
-                        unsafe impl ProtocolType for #name {
-                            type Super = todo!();
-                        }
-                    );
-
-                    impl #name {
-                        #(#methods)*
-                    }
-                }
+                // quote! {
+                //     extern_protocol!(
+                //         #[derive(Debug)]
+                //         struct #name;
+                //
+                //         unsafe impl ProtocolType for #name {
+                //             type Super = todo!();
+                //         }
+                //     );
+                //
+                //     impl #name {
+                //         #(#methods)*
+                //     }
+                // }
+                quote!()
             }
         };
         tokens.append_all(result);
