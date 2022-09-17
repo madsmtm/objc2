@@ -1,4 +1,4 @@
-use super::NSArray;
+use super::__exported::NSArray;
 use crate::Foundation::generated::NSEnumerator::*;
 use crate::Foundation::generated::NSIndexSet::*;
 use crate::Foundation::generated::NSOrderedCollectionChange::*;

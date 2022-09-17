@@ -1,6 +1,6 @@
-use super::NSArray;
-use super::NSOrthography;
-use super::NSValue;
+use super::__exported::NSArray;
+use super::__exported::NSOrthography;
+use super::__exported::NSValue;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSString::*;
 #[allow(unused_imports)]

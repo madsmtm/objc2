@@ -1,9 +1,9 @@
-use super::NSConnection;
-use super::NSData;
-use super::NSDate;
-use super::NSMutableArray;
-use super::NSPortMessage;
-use super::NSRunLoop;
+use super::__exported::NSConnection;
+use super::__exported::NSData;
+use super::__exported::NSDate;
+use super::__exported::NSMutableArray;
+use super::__exported::NSPortMessage;
+use super::__exported::NSRunLoop;
 use crate::Foundation::generated::NSNotification::*;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSRunLoop::*;

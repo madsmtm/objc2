@@ -1,4 +1,4 @@
-use super::NSScriptCommandDescription;
+use super::__exported::NSScriptCommandDescription;
 use crate::Foundation::generated::NSClassDescription::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

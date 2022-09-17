@@ -1,4 +1,4 @@
-use super::NSDate;
+use super::__exported::NSDate;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

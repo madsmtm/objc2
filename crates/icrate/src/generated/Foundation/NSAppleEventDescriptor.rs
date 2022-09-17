@@ -1,4 +1,4 @@
-use super::NSData;
+use super::__exported::NSData;
 use crate::CoreServices::generated::CoreServices::*;
 use crate::Foundation::generated::NSDate::*;
 use crate::Foundation::generated::NSObject::*;

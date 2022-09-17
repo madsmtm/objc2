@@ -1,8 +1,8 @@
-use super::NSDictionary;
-use super::NSString;
-use super::NSURLCredential;
-use super::NSURLCredentialStorageInternal;
-use super::NSURLSessionTask;
+use super::__exported::NSDictionary;
+use super::__exported::NSString;
+use super::__exported::NSURLCredential;
+use super::__exported::NSURLCredentialStorageInternal;
+use super::__exported::NSURLSessionTask;
 use crate::Foundation::generated::NSNotification::*;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSURLProtectionSpace::*;

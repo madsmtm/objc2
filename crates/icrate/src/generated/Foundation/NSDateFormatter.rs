@@ -1,11 +1,11 @@
-use super::NSArray;
-use super::NSCalendar;
-use super::NSDate;
-use super::NSError;
-use super::NSLocale;
-use super::NSMutableDictionary;
-use super::NSString;
-use super::NSTimeZone;
+use super::__exported::NSArray;
+use super::__exported::NSCalendar;
+use super::__exported::NSDate;
+use super::__exported::NSError;
+use super::__exported::NSLocale;
+use super::__exported::NSMutableDictionary;
+use super::__exported::NSString;
+use super::__exported::NSTimeZone;
 use crate::CoreFoundation::generated::CFDateFormatter::*;
 use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]

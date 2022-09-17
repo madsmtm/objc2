@@ -1,8 +1,8 @@
-use super::NSData;
-use super::NSMutableArray;
-use super::NSMutableData;
-use super::NSMutableDictionary;
-use super::NSString;
+use super::__exported::NSData;
+use super::__exported::NSMutableArray;
+use super::__exported::NSMutableData;
+use super::__exported::NSMutableDictionary;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSCoder::*;
 use crate::Foundation::generated::NSException::*;
 #[allow(unused_imports)]

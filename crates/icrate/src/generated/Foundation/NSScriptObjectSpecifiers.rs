@@ -1,9 +1,9 @@
-use super::NSAppleEventDescriptor;
-use super::NSArray;
-use super::NSNumber;
-use super::NSScriptClassDescription;
-use super::NSScriptWhoseTest;
-use super::NSString;
+use super::__exported::NSAppleEventDescriptor;
+use super::__exported::NSArray;
+use super::__exported::NSNumber;
+use super::__exported::NSScriptClassDescription;
+use super::__exported::NSScriptWhoseTest;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

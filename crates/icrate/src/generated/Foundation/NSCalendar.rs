@@ -1,7 +1,7 @@
-use super::NSArray;
-use super::NSLocale;
-use super::NSString;
-use super::NSTimeZone;
+use super::__exported::NSArray;
+use super::__exported::NSLocale;
+use super::__exported::NSString;
+use super::__exported::NSTimeZone;
 use crate::CoreFoundation::generated::CFCalendar::*;
 use crate::Foundation::generated::NSDate::*;
 use crate::Foundation::generated::NSNotification::*;

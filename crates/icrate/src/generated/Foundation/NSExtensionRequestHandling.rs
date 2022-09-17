@@ -1,4 +1,4 @@
-use super::NSExtensionContext;
+use super::__exported::NSExtensionContext;
 use crate::Foundation::generated::Foundation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

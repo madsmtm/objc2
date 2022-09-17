@@ -1,8 +1,8 @@
-use super::NSArray;
-use super::NSDictionary;
-use super::NSEnumerator;
-use super::NSMutableArray;
-use super::NSString;
+use super::__exported::NSArray;
+use super::__exported::NSDictionary;
+use super::__exported::NSEnumerator;
+use super::__exported::NSMutableArray;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSXMLNode::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

@@ -1,11 +1,11 @@
-use super::NSData;
-use super::NSError;
-use super::NSString;
-use super::NSURLAuthenticationChallenge;
-use super::NSURLDownloadInternal;
-use super::NSURLProtectionSpace;
-use super::NSURLRequest;
-use super::NSURLResponse;
+use super::__exported::NSData;
+use super::__exported::NSError;
+use super::__exported::NSString;
+use super::__exported::NSURLAuthenticationChallenge;
+use super::__exported::NSURLDownloadInternal;
+use super::__exported::NSURLProtectionSpace;
+use super::__exported::NSURLRequest;
+use super::__exported::NSURLResponse;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

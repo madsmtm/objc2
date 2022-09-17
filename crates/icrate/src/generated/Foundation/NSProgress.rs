@@ -1,10 +1,10 @@
-use super::NSDictionary;
-use super::NSLock;
-use super::NSMutableDictionary;
-use super::NSMutableSet;
-use super::NSXPCConnection;
-use super::NSURL;
-use super::NSUUID;
+use super::__exported::NSDictionary;
+use super::__exported::NSLock;
+use super::__exported::NSMutableDictionary;
+use super::__exported::NSMutableSet;
+use super::__exported::NSXPCConnection;
+use super::__exported::NSURL;
+use super::__exported::NSUUID;
 use crate::Foundation::generated::NSDictionary::*;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]

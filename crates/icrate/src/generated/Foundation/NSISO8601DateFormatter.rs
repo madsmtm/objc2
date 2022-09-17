@@ -1,6 +1,6 @@
-use super::NSDate;
-use super::NSString;
-use super::NSTimeZone;
+use super::__exported::NSDate;
+use super::__exported::NSString;
+use super::__exported::NSTimeZone;
 use crate::CoreFoundation::generated::CFDateFormatter::*;
 use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]

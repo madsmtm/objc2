@@ -1,7 +1,7 @@
-use super::NSArray;
-use super::NSPort;
-use super::NSString;
-use super::NSTimer;
+use super::__exported::NSArray;
+use super::__exported::NSPort;
+use super::__exported::NSString;
+use super::__exported::NSTimer;
 use crate::CoreFoundation::generated::CFRunLoop::*;
 use crate::Foundation::generated::NSDate::*;
 use crate::Foundation::generated::NSObject::*;

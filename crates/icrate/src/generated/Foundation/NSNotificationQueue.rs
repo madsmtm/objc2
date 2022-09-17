@@ -1,7 +1,7 @@
-use super::NSArray;
-use super::NSNotification;
-use super::NSNotificationCenter;
-use super::NSString;
+use super::__exported::NSArray;
+use super::__exported::NSNotification;
+use super::__exported::NSNotificationCenter;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSRunLoop::*;
 #[allow(unused_imports)]

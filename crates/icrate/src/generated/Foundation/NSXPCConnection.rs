@@ -1,9 +1,9 @@
-use super::NSError;
-use super::NSLock;
-use super::NSMutableDictionary;
-use super::NSOperationQueue;
-use super::NSSet;
-use super::NSString;
+use super::__exported::NSError;
+use super::__exported::NSLock;
+use super::__exported::NSMutableDictionary;
+use super::__exported::NSOperationQueue;
+use super::__exported::NSSet;
+use super::__exported::NSString;
 use crate::bsm::generated::audit::*;
 use crate::dispatch::generated::dispatch::*;
 use crate::xpc::generated::xpc::*;

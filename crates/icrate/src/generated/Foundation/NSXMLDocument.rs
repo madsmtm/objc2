@@ -1,7 +1,7 @@
-use super::NSArray;
-use super::NSData;
-use super::NSDictionary;
-use super::NSXMLDTD;
+use super::__exported::NSArray;
+use super::__exported::NSData;
+use super::__exported::NSDictionary;
+use super::__exported::NSXMLDTD;
 use crate::Foundation::generated::NSXMLNode::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

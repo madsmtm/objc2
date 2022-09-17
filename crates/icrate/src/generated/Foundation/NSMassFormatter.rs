@@ -1,4 +1,4 @@
-use super::NSNumberFormatter;
+use super::__exported::NSNumberFormatter;
 use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

@@ -1,4 +1,4 @@
-use super::NSArray;
+use super::__exported::NSArray;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSString::*;
 use crate::Foundation::generated::NSTextCheckingResult::*;

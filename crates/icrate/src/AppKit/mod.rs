@@ -1,4 +1,4 @@
 #[path = "../generated/AppKit/mod.rs"]
-mod generated;
+pub(crate) mod generated;
 
-pub use self::generated::*;
+pub use self::generated::__exported::*;

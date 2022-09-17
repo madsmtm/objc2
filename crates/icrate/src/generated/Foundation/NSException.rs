@@ -1,7 +1,7 @@
-use super::NSArray;
-use super::NSDictionary;
-use super::NSNumber;
-use super::NSString;
+use super::__exported::NSArray;
+use super::__exported::NSDictionary;
+use super::__exported::NSNumber;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSString::*;
 #[allow(unused_imports)]

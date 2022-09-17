@@ -1,7 +1,7 @@
-use super::NSData;
-use super::NSIndexSet;
-use super::NSString;
-use super::NSURL;
+use super::__exported::NSData;
+use super::__exported::NSIndexSet;
+use super::__exported::NSString;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSEnumerator::*;
 use crate::Foundation::generated::NSObjCRuntime::*;
 use crate::Foundation::generated::NSObject::*;

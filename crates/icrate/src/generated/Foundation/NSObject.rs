@@ -1,9 +1,9 @@
-use super::NSCoder;
-use super::NSEnumerator;
-use super::NSInvocation;
-use super::NSMethodSignature;
-use super::NSString;
-use super::Protocol;
+use super::__exported::NSCoder;
+use super::__exported::NSEnumerator;
+use super::__exported::NSInvocation;
+use super::__exported::NSMethodSignature;
+use super::__exported::NSString;
+use super::__exported::Protocol;
 use crate::objc::generated::NSObject::*;
 use crate::Foundation::generated::NSObjCRuntime::*;
 use crate::Foundation::generated::NSZone::*;

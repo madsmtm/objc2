@@ -1,6 +1,6 @@
-use super::NSCoder;
-use super::NSConnection;
-use super::Protocol;
+use super::__exported::NSCoder;
+use super::__exported::NSConnection;
+use super::__exported::Protocol;
 use crate::Foundation::generated::NSProxy::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

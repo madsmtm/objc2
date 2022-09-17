@@ -1,10 +1,10 @@
-use super::NSArray;
-use super::NSDictionary;
-use super::NSOperationQueue;
-use super::NSPredicate;
-use super::NSSortDescriptor;
-use super::NSString;
-use super::NSURL;
+use super::__exported::NSArray;
+use super::__exported::NSDictionary;
+use super::__exported::NSOperationQueue;
+use super::__exported::NSPredicate;
+use super::__exported::NSSortDescriptor;
+use super::__exported::NSString;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSDate::*;
 use crate::Foundation::generated::NSMetadataAttributes::*;
 use crate::Foundation::generated::NSNotification::*;

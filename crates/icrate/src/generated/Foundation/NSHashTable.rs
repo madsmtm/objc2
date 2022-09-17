@@ -1,5 +1,5 @@
-use super::NSArray;
-use super::NSSet;
+use super::__exported::NSArray;
+use super::__exported::NSSet;
 use crate::Foundation::generated::NSEnumerator::*;
 use crate::Foundation::generated::NSPointerFunctions::*;
 use crate::Foundation::generated::NSString::*;

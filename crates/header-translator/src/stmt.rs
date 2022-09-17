@@ -279,7 +279,7 @@ impl ToTokens for Stmt {
                 let name = format_ident!("{}", name);
 
                 quote! {
-                    use super::#name;
+                    use super::__exported::#name;
                 }
             }
             Self::ClassDecl {

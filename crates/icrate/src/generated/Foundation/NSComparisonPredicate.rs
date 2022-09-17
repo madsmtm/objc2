@@ -1,5 +1,5 @@
-use super::NSExpression;
-use super::NSPredicateOperator;
+use super::__exported::NSExpression;
+use super::__exported::NSPredicateOperator;
 use crate::Foundation::generated::NSPredicate::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

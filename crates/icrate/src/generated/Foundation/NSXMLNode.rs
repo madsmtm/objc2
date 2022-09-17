@@ -1,10 +1,10 @@
-use super::NSArray;
-use super::NSDictionary;
-use super::NSError;
-use super::NSString;
-use super::NSXMLDocument;
-use super::NSXMLElement;
-use super::NSURL;
+use super::__exported::NSArray;
+use super::__exported::NSDictionary;
+use super::__exported::NSError;
+use super::__exported::NSString;
+use super::__exported::NSXMLDocument;
+use super::__exported::NSXMLElement;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSXMLNodeOptions::*;
 #[allow(unused_imports)]

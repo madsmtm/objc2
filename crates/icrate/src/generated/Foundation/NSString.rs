@@ -1,10 +1,10 @@
-use super::NSArray;
-use super::NSCharacterSet;
-use super::NSData;
-use super::NSDictionary;
-use super::NSError;
-use super::NSLocale;
-use super::NSURL;
+use super::__exported::NSArray;
+use super::__exported::NSCharacterSet;
+use super::__exported::NSData;
+use super::__exported::NSDictionary;
+use super::__exported::NSError;
+use super::__exported::NSLocale;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSItemProvider::*;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSRange::*;

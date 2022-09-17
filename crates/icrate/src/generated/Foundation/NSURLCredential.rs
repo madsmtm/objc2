@@ -1,6 +1,6 @@
-use super::NSArray;
-use super::NSString;
-use super::NSURLCredentialInternal;
+use super::__exported::NSArray;
+use super::__exported::NSString;
+use super::__exported::NSURLCredentialInternal;
 use crate::Foundation::generated::NSObject::*;
 use crate::Security::generated::Security::*;
 #[allow(unused_imports)]

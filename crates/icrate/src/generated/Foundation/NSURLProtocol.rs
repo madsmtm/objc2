@@ -1,12 +1,12 @@
-use super::NSCachedURLResponse;
-use super::NSError;
-use super::NSMutableURLRequest;
-use super::NSURLAuthenticationChallenge;
-use super::NSURLConnection;
-use super::NSURLProtocolInternal;
-use super::NSURLRequest;
-use super::NSURLResponse;
-use super::NSURLSessionTask;
+use super::__exported::NSCachedURLResponse;
+use super::__exported::NSError;
+use super::__exported::NSMutableURLRequest;
+use super::__exported::NSURLAuthenticationChallenge;
+use super::__exported::NSURLConnection;
+use super::__exported::NSURLProtocolInternal;
+use super::__exported::NSURLRequest;
+use super::__exported::NSURLResponse;
+use super::__exported::NSURLSessionTask;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSURLCache::*;
 #[allow(unused_imports)]

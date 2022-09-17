@@ -1,7 +1,7 @@
-use super::NSAppleEventDescriptor;
-use super::NSDictionary;
-use super::NSString;
-use super::NSURL;
+use super::__exported::NSAppleEventDescriptor;
+use super::__exported::NSDictionary;
+use super::__exported::NSString;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

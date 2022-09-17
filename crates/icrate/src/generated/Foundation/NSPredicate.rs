@@ -1,5 +1,5 @@
-use super::NSDictionary;
-use super::NSString;
+use super::__exported::NSDictionary;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSArray::*;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSOrderedSet::*;

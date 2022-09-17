@@ -1,6 +1,6 @@
-use super::NSAttributedString;
-use super::NSDictionary;
-use super::NSString;
+use super::__exported::NSAttributedString;
+use super::__exported::NSDictionary;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSAttributedString::*;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSRange::*;

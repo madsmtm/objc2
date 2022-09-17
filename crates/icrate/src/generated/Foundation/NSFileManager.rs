@@ -1,10 +1,10 @@
-use super::NSArray;
-use super::NSData;
-use super::NSDate;
-use super::NSError;
-use super::NSLock;
-use super::NSNumber;
-use super::NSXPCConnection;
+use super::__exported::NSArray;
+use super::__exported::NSData;
+use super::__exported::NSDate;
+use super::__exported::NSError;
+use super::__exported::NSLock;
+use super::__exported::NSNumber;
+use super::__exported::NSXPCConnection;
 use crate::dispatch::generated::dispatch::*;
 use crate::CoreFoundation::generated::CFBase::*;
 use crate::Foundation::generated::NSDictionary::*;

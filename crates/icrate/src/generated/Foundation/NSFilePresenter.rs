@@ -1,7 +1,7 @@
-use super::NSError;
-use super::NSFileVersion;
-use super::NSOperationQueue;
-use super::NSSet;
+use super::__exported::NSError;
+use super::__exported::NSFileVersion;
+use super::__exported::NSOperationQueue;
+use super::__exported::NSSet;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSURL::*;
 #[allow(unused_imports)]

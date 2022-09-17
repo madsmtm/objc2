@@ -1,6 +1,6 @@
-use super::NSCalendar;
-use super::NSDateComponents;
-use super::NSLocale;
+use super::__exported::NSCalendar;
+use super::__exported::NSDateComponents;
+use super::__exported::NSLocale;
 use crate::Foundation::generated::NSDate::*;
 use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]

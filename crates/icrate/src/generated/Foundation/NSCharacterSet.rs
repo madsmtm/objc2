@@ -1,4 +1,4 @@
-use super::NSData;
+use super::__exported::NSData;
 use crate::CoreFoundation::generated::CFCharacterSet::*;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSRange::*;

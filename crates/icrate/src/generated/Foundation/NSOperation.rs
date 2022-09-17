@@ -1,5 +1,5 @@
-use super::NSArray;
-use super::NSSet;
+use super::__exported::NSArray;
+use super::__exported::NSSet;
 use crate::dispatch::generated::dispatch::*;
 use crate::sys::generated::qos::*;
 use crate::Foundation::generated::NSException::*;

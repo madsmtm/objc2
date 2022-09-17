@@ -1,9 +1,9 @@
-use super::NSData;
-use super::NSDictionary;
-use super::NSInputStream;
-use super::NSString;
-use super::NSURLRequestInternal;
-use super::NSURL;
+use super::__exported::NSData;
+use super::__exported::NSDictionary;
+use super::__exported::NSInputStream;
+use super::__exported::NSString;
+use super::__exported::NSURLRequestInternal;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSDate::*;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]

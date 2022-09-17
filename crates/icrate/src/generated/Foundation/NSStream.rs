@@ -1,10 +1,10 @@
-use super::NSData;
-use super::NSDictionary;
-use super::NSError;
-use super::NSHost;
-use super::NSRunLoop;
-use super::NSString;
-use super::NSURL;
+use super::__exported::NSData;
+use super::__exported::NSDictionary;
+use super::__exported::NSError;
+use super::__exported::NSHost;
+use super::__exported::NSRunLoop;
+use super::__exported::NSString;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSError::*;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]

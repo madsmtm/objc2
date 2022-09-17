@@ -1,6 +1,6 @@
-use super::NSError;
-use super::NSString;
-use super::NSURL;
+use super::__exported::NSError;
+use super::__exported::NSString;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]

@@ -1,7 +1,7 @@
-use super::NSArray;
-use super::NSIndexSet;
-use super::NSSet;
-use super::NSString;
+use super::__exported::NSArray;
+use super::__exported::NSIndexSet;
+use super::__exported::NSSet;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSArray::*;
 use crate::Foundation::generated::NSEnumerator::*;
 use crate::Foundation::generated::NSObject::*;

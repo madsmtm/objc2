@@ -1,8 +1,8 @@
-use super::NSArray;
-use super::NSDate;
-use super::NSMutableDictionary;
-use super::NSNumber;
-use super::NSString;
+use super::__exported::NSArray;
+use super::__exported::NSDate;
+use super::__exported::NSMutableDictionary;
+use super::__exported::NSNumber;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSDate::*;
 use crate::Foundation::generated::NSNotification::*;
 use crate::Foundation::generated::NSObject::*;

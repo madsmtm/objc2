@@ -1,7 +1,7 @@
-use super::NSCalendar;
-use super::NSDate;
-use super::NSLocale;
-use super::NSTimeZone;
+use super::__exported::NSCalendar;
+use super::__exported::NSDate;
+use super::__exported::NSLocale;
+use super::__exported::NSTimeZone;
 use crate::dispatch::generated::dispatch::*;
 use crate::Foundation::generated::NSDateInterval::*;
 use crate::Foundation::generated::NSFormatter::*;

@@ -1,6 +1,6 @@
-use super::NSArray;
-use super::NSDictionary;
-use super::NSOrthography;
+use super::__exported::NSArray;
+use super::__exported::NSDictionary;
+use super::__exported::NSOrthography;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSRange::*;
 use crate::Foundation::generated::NSTextCheckingResult::*;

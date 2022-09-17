@@ -1,8 +1,8 @@
-use super::NSDictionary;
-use super::NSString;
-use super::NSURLRequest;
-use super::NSURLResponseInternal;
-use super::NSURL;
+use super::__exported::NSDictionary;
+use super::__exported::NSString;
+use super::__exported::NSURLRequest;
+use super::__exported::NSURLResponseInternal;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
@@ -47,7 +47,7 @@ impl NSURLResponse {
         msg_send_id![self, suggestedFilename]
     }
 }
-use super::NSHTTPURLResponseInternal;
+use super::__exported::NSHTTPURLResponseInternal;
 extern_class!(
     #[derive(Debug)]
     pub struct NSHTTPURLResponse;

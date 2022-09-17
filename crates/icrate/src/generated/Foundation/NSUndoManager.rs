@@ -1,5 +1,5 @@
-use super::NSArray;
-use super::NSString;
+use super::__exported::NSArray;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSNotification::*;
 use crate::Foundation::generated::NSObject::*;
 use crate::Foundation::generated::NSRunLoop::*;

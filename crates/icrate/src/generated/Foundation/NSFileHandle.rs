@@ -1,6 +1,6 @@
-use super::NSData;
-use super::NSError;
-use super::NSString;
+use super::__exported::NSData;
+use super::__exported::NSError;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSArray::*;
 use crate::Foundation::generated::NSException::*;
 use crate::Foundation::generated::NSNotification::*;

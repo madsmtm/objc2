@@ -1,7 +1,7 @@
-use super::NSArray;
-use super::NSData;
-use super::NSDictionary;
-use super::NSNumber;
+use super::__exported::NSArray;
+use super::__exported::NSData;
+use super::__exported::NSDictionary;
+use super::__exported::NSNumber;
 use crate::Foundation::generated::NSCharacterSet::*;
 use crate::Foundation::generated::NSItemProvider::*;
 use crate::Foundation::generated::NSObject::*;

@@ -1,9 +1,9 @@
-use super::NSCache;
-use super::NSError;
-use super::NSLocale;
-use super::NSMutableDictionary;
-use super::NSRecursiveLock;
-use super::NSString;
+use super::__exported::NSCache;
+use super::__exported::NSError;
+use super::__exported::NSLocale;
+use super::__exported::NSMutableDictionary;
+use super::__exported::NSRecursiveLock;
+use super::__exported::NSString;
 use crate::CoreFoundation::generated::CFNumberFormatter::*;
 use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]
@@ -443,7 +443,7 @@ impl NSNumberFormatter {
         ]
     }
 }
-use super::NSDecimalNumberHandler;
+use super::__exported::NSDecimalNumberHandler;
 #[doc = "NSNumberFormatterCompatibility"]
 impl NSNumberFormatter {
     pub unsafe fn hasThousandSeparators(&self) -> bool {

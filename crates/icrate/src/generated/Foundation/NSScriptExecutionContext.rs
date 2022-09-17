@@ -1,4 +1,4 @@
-use super::NSConnection;
+use super::__exported::NSConnection;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

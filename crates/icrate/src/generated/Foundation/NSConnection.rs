@@ -1,14 +1,14 @@
-use super::NSArray;
-use super::NSData;
-use super::NSDictionary;
-use super::NSDistantObject;
-use super::NSException;
-use super::NSMutableData;
-use super::NSNumber;
-use super::NSPort;
-use super::NSPortNameServer;
-use super::NSRunLoop;
-use super::NSString;
+use super::__exported::NSArray;
+use super::__exported::NSData;
+use super::__exported::NSDictionary;
+use super::__exported::NSDistantObject;
+use super::__exported::NSException;
+use super::__exported::NSMutableData;
+use super::__exported::NSNumber;
+use super::__exported::NSPort;
+use super::__exported::NSPortNameServer;
+use super::__exported::NSRunLoop;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSDate::*;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]

@@ -1,7 +1,7 @@
-use super::NSDictionary;
-use super::NSScriptClassDescription;
-use super::NSScriptObjectSpecifier;
-use super::NSString;
+use super::__exported::NSDictionary;
+use super::__exported::NSScriptClassDescription;
+use super::__exported::NSScriptObjectSpecifier;
+use super::__exported::NSString;
 use crate::Foundation::generated::NSScriptCommand::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

@@ -1,7 +1,7 @@
-use super::NSData;
-use super::NSMutableArray;
-use super::NSMutableData;
-use super::NSURL;
+use super::__exported::NSData;
+use super::__exported::NSMutableArray;
+use super::__exported::NSMutableData;
+use super::__exported::NSURL;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};

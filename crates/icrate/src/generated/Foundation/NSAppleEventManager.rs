@@ -1,4 +1,4 @@
-use super::NSAppleEventDescriptor;
+use super::__exported::NSAppleEventDescriptor;
 use crate::CoreServices::generated::CoreServices::*;
 use crate::Foundation::generated::NSNotification::*;
 use crate::Foundation::generated::NSObject::*;

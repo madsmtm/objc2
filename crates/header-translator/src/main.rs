@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::fs;
 use std::io::{Result, Write};
 use std::path::{Path, PathBuf};
@@ -6,7 +6,7 @@ use std::process::{Command, Stdio};
 
 use clang::source::File;
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
-use proc_macro2::TokenStream;
+use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote, TokenStreamExt};
 
 use header_translator::{create_rust_file, Config};
@@ -155,7 +155,7 @@ fn main() {
 
     let config = dbg!(Config::from_file(Path::new("icrate/src/Foundation.toml")).unwrap());
 
-    let mut mod_tokens = TokenStream::new();
+    let mut declared: Vec<(Ident, HashSet<String>)> = Vec::new();
 
     for (path, res) in result {
         if path == header {
@@ -183,13 +183,22 @@ fn main() {
 
         let name = format_ident!("{}", path.file_stem().unwrap().to_string_lossy());
 
-        let declared_types = declared_types.iter().map(|name| format_ident!("{}", name));
-
-        mod_tokens.append_all(quote! {
-            mod #name;
-            pub use self::#name::{#(#declared_types,)*};
-        });
+        declared.push((name, declared_types));
     }
+
+    let mod_names = declared.iter().map(|(name, _)| name);
+    let mod_imports = declared.iter().map(|(name, declared_types)| {
+        let declared_types = declared_types.iter().map(|name| format_ident!("{}", name));
+        quote!(super::#name::{#(#declared_types,)*})
+    });
+
+    let mut mod_tokens = quote! {
+        #(pub(crate) mod #mod_names;)*
+
+        mod __exported {
+            #(pub use #mod_imports;)*
+        }
+    };
 
     // truncate if the file exists
     fs::write(config.output.join("mod.rs"), run_rustfmt(mod_tokens)).unwrap();
