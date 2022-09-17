@@ -1,3 +1,18 @@
+use super::NSArray;
+use super::NSCachedURLResponse;
+use super::NSData;
+use super::NSError;
+use super::NSInputStream;
+use super::NSOperationQueue;
+use super::NSRunLoop;
+use super::NSURLAuthenticationChallenge;
+use super::NSURLConnectionInternal;
+use super::NSURLProtectionSpace;
+use super::NSURLRequest;
+use super::NSURLResponse;
+use super::NSURL;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSRunLoop::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -65,6 +80,9 @@ impl NSURLConnection {
         msg_send_id![self, currentRequest]
     }
 }
+pub type NSURLConnectionDelegate = NSObject;
+pub type NSURLConnectionDataDelegate = NSObject;
+pub type NSURLConnectionDownloadDelegate = NSObject;
 #[doc = "NSURLConnectionSynchronousLoading"]
 impl NSURLConnection {
     pub unsafe fn sendSynchronousRequest_returningResponse_error(

@@ -1,3 +1,13 @@
+use super::NSArray;
+use super::NSCharacterSet;
+use super::NSData;
+use super::NSDictionary;
+use super::NSError;
+use super::NSLocale;
+use super::NSURL;
+use crate::Foundation::generated::NSItemProvider::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

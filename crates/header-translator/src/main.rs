@@ -162,7 +162,13 @@ fn main() {
             continue;
         }
 
-        let tokens = create_rust_file(&res, &config);
+        let (declared_types, tokens) = create_rust_file(&res, &config);
+
+        if declared_types.is_empty() {
+            // Skip files that don't declare anything
+            continue;
+        }
+
         let formatted = run_rustfmt(tokens);
 
         // println!("{}\n\n\n\n", res);
@@ -177,9 +183,11 @@ fn main() {
 
         let name = format_ident!("{}", path.file_stem().unwrap().to_string_lossy());
 
+        let declared_types = declared_types.iter().map(|name| format_ident!("{}", name));
+
         mod_tokens.append_all(quote! {
             mod #name;
-            pub use self::#name::*;
+            pub use self::#name::{#(#declared_types,)*};
         });
     }
 

@@ -1,7 +1,20 @@
+use super::NSError;
+use super::NSLock;
+use super::NSMutableDictionary;
+use super::NSOperationQueue;
+use super::NSSet;
+use super::NSString;
+use crate::bsm::generated::audit::*;
+use crate::dispatch::generated::dispatch::*;
+use crate::xpc::generated::xpc::*;
+use crate::CoreFoundation::generated::CFDictionary::*;
+use crate::Foundation::generated::NSCoder::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSXPCProxyCreating = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSXPCConnection;
@@ -141,6 +154,7 @@ impl NSXPCListener {
         msg_send_id![self, endpoint]
     }
 }
+pub type NSXPCListenerDelegate = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSXPCInterface;

@@ -1,3 +1,9 @@
+use super::NSAttributedString;
+use super::NSDictionary;
+use super::NSString;
+use crate::Foundation::generated::NSAttributedString::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,3 +1,14 @@
+use super::NSArray;
+use super::NSArray;
+use super::NSDictionary;
+use super::NSError;
+use super::NSInputStream;
+use super::NSOutputStream;
+use super::NSSet;
+use super::NSString;
+use super::NSURL;
+use crate::Foundation::generated::NSObjCRuntime::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -159,3 +170,4 @@ impl NSUserActivity {
         msg_send![self, setPersistentIdentifier: persistentIdentifier]
     }
 }
+pub type NSUserActivityDelegate = NSObject;

@@ -1,3 +1,12 @@
+use super::NSArray;
+use super::NSAttributedString;
+use super::NSDate;
+use super::NSDateComponents;
+use super::NSDictionary;
+use super::NSImage;
+use super::NSString;
+use super::NSTimeZone;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -200,3 +209,4 @@ impl NSUserNotificationCenter {
         msg_send![self, deliveredNotifications]
     }
 }
+pub type NSUserNotificationCenterDelegate = NSObject;

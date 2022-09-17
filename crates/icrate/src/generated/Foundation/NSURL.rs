@@ -1,3 +1,12 @@
+use super::NSArray;
+use super::NSData;
+use super::NSDictionary;
+use super::NSNumber;
+use crate::Foundation::generated::NSCharacterSet::*;
+use crate::Foundation::generated::NSItemProvider::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSString::*;
+use crate::Foundation::generated::NSURLHandle::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

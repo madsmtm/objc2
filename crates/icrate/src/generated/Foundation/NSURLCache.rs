@@ -1,3 +1,11 @@
+use super::NSCachedURLResponseInternal;
+use super::NSData;
+use super::NSDate;
+use super::NSDictionary;
+use super::NSURLRequest;
+use super::NSURLResponse;
+use super::NSURLSessionDataTask;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -45,6 +53,8 @@ impl NSCachedURLResponse {
         msg_send![self, storagePolicy]
     }
 }
+use super::NSURLCacheInternal;
+use super::NSURLRequest;
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLCache;

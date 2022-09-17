@@ -1,3 +1,10 @@
+use super::NSData;
+use super::NSMutableArray;
+use super::NSMutableData;
+use super::NSMutableDictionary;
+use super::NSString;
+use crate::Foundation::generated::NSCoder::*;
+use crate::Foundation::generated::NSException::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,3 +1,16 @@
+use super::NSError;
+use super::NSLock;
+use super::NSNumber;
+use super::NSString;
+use super::NSURL;
+use super::NSUUID;
+use crate::Foundation::generated::NSArray::*;
+use crate::Foundation::generated::NSDictionary::*;
+use crate::Foundation::generated::NSNotification::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSProgress::*;
+use crate::Foundation::generated::NSSet::*;
+use crate::Foundation::generated::NSString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

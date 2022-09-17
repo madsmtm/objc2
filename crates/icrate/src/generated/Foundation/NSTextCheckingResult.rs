@@ -1,3 +1,14 @@
+use super::NSArray;
+use super::NSDate;
+use super::NSDictionary;
+use super::NSOrthography;
+use super::NSRegularExpression;
+use super::NSString;
+use super::NSTimeZone;
+use super::NSURL;
+use crate::Foundation::generated::NSDate::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

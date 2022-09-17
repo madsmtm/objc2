@@ -1,3 +1,12 @@
+use super::NSArray;
+use super::NSDictionary;
+use super::NSError;
+use super::NSString;
+use super::NSXMLDocument;
+use super::NSXMLElement;
+use super::NSURL;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSXMLNodeOptions::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

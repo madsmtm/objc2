@@ -1,3 +1,12 @@
+use super::NSData;
+use super::NSDictionary;
+use super::NSError;
+use super::NSInputStream;
+use super::NSSet;
+use super::NSString;
+use super::NSURL;
+use crate::Foundation::generated::NSError::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -95,3 +104,4 @@ impl NSXMLParser {
         msg_send![self, columnNumber]
     }
 }
+pub type NSXMLParserDelegate = NSObject;

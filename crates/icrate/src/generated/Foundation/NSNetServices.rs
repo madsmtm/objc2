@@ -1,3 +1,15 @@
+use super::NSArray;
+use super::NSData;
+use super::NSDictionary;
+use super::NSInputStream;
+use super::NSNumber;
+use super::NSOutputStream;
+use super::NSRunLoop;
+use super::NSString;
+use crate::Foundation::generated::NSDate::*;
+use crate::Foundation::generated::NSError::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSRunLoop::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -154,3 +166,5 @@ impl NSNetServiceBrowser {
         msg_send![self, setIncludesPeerToPeer: includesPeerToPeer]
     }
 }
+pub type NSNetServiceDelegate = NSObject;
+pub type NSNetServiceBrowserDelegate = NSObject;

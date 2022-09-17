@@ -1,3 +1,12 @@
+use super::NSData;
+use super::NSError;
+use super::NSString;
+use super::NSURLAuthenticationChallenge;
+use super::NSURLDownloadInternal;
+use super::NSURLProtectionSpace;
+use super::NSURLRequest;
+use super::NSURLResponse;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -55,3 +64,4 @@ impl NSURLDownload {
         msg_send![self, setDeletesFileUponFailure: deletesFileUponFailure]
     }
 }
+pub type NSURLDownloadDelegate = NSObject;

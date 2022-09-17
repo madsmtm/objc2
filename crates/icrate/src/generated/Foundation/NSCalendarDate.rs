@@ -1,3 +1,7 @@
+use super::NSArray;
+use super::NSString;
+use super::NSTimeZone;
+use crate::Foundation::generated::NSDate::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

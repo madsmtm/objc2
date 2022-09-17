@@ -1,3 +1,11 @@
+use super::NSArray;
+use super::NSData;
+use super::NSDictionary;
+use super::NSMutableDictionary;
+use super::NSString;
+use super::NSURL;
+use crate::Foundation::generated::NSNotification::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

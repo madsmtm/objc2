@@ -1,3 +1,11 @@
+use super::NSArray;
+use super::NSData;
+use super::NSMutableData;
+use super::NSString;
+use crate::Foundation::generated::NSCoder::*;
+use crate::Foundation::generated::NSException::*;
+use crate::Foundation::generated::NSGeometry::*;
+use crate::Foundation::generated::NSPropertyList::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -284,6 +292,8 @@ impl NSKeyedUnarchiver {
         msg_send![self, setDecodingFailurePolicy: decodingFailurePolicy]
     }
 }
+pub type NSKeyedArchiverDelegate = NSObject;
+pub type NSKeyedUnarchiverDelegate = NSObject;
 #[doc = "NSKeyedArchiverObjectSubstitution"]
 impl NSObject {
     pub unsafe fn replacementObjectForKeyedArchiver(

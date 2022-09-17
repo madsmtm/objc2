@@ -1,7 +1,13 @@
+use super::NSData;
+use super::NSMutableArray;
+use super::NSMutableData;
+use super::NSURL;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSURLHandleClient = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLHandle;

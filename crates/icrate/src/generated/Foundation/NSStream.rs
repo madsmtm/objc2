@@ -1,3 +1,12 @@
+use super::NSData;
+use super::NSDictionary;
+use super::NSError;
+use super::NSHost;
+use super::NSRunLoop;
+use super::NSString;
+use super::NSURL;
+use crate::Foundation::generated::NSError::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -209,3 +218,4 @@ impl NSOutputStream {
         ]
     }
 }
+pub type NSStreamDelegate = NSObject;

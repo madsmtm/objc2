@@ -1,3 +1,12 @@
+use super::NSDictionary;
+use super::NSLock;
+use super::NSMutableDictionary;
+use super::NSMutableSet;
+use super::NSXPCConnection;
+use super::NSURL;
+use super::NSUUID;
+use crate::Foundation::generated::NSDictionary::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -221,3 +230,4 @@ impl NSProgress {
         msg_send![self, isOld]
     }
 }
+pub type NSProgressReporting = NSObject;

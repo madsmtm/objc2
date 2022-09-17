@@ -1,3 +1,9 @@
+use super::NSArray;
+use super::NSNotification;
+use super::NSNotificationCenter;
+use super::NSString;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSRunLoop::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

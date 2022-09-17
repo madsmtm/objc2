@@ -1,3 +1,10 @@
+use super::NSArray;
+use super::NSPort;
+use super::NSString;
+use super::NSTimer;
+use crate::CoreFoundation::generated::CFRunLoop::*;
+use crate::Foundation::generated::NSDate::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

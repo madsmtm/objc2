@@ -1,3 +1,8 @@
+use super::NSArray;
+use super::NSDate;
+use super::NSMutableArray;
+use super::NSPort;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

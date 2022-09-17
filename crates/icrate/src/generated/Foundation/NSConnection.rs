@@ -1,3 +1,16 @@
+use super::NSArray;
+use super::NSData;
+use super::NSDictionary;
+use super::NSDistantObject;
+use super::NSException;
+use super::NSMutableData;
+use super::NSNumber;
+use super::NSPort;
+use super::NSPortNameServer;
+use super::NSRunLoop;
+use super::NSString;
+use crate::Foundation::generated::NSDate::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -197,6 +210,7 @@ impl NSConnection {
         msg_send_id![self, localObjects]
     }
 }
+pub type NSConnectionDelegate = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSDistantObjectRequest;

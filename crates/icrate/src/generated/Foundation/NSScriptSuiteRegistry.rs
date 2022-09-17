@@ -1,3 +1,13 @@
+use super::NSArray;
+use super::NSBundle;
+use super::NSData;
+use super::NSDictionary;
+use super::NSMutableArray;
+use super::NSMutableDictionary;
+use super::NSMutableSet;
+use super::NSScriptClassDescription;
+use super::NSScriptCommandDescription;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

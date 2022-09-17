@@ -1,3 +1,11 @@
+use super::NSData;
+use super::NSDictionary;
+use super::NSInputStream;
+use super::NSString;
+use super::NSURLRequestInternal;
+use super::NSURL;
+use crate::Foundation::generated::NSDate::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

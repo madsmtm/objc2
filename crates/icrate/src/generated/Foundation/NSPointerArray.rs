@@ -1,3 +1,6 @@
+use crate::Foundation::generated::NSArray::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSPointerFunctions::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

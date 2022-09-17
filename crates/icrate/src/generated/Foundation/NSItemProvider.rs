@@ -1,7 +1,11 @@
+use super::NSProgress;
+use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSItemProviderWriting = NSObject;
+pub type NSItemProviderReading = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSItemProvider;

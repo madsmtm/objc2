@@ -1,3 +1,8 @@
+use super::NSArray;
+use super::NSDictionary;
+use crate::Foundation::generated::NSEnumerator::*;
+use crate::Foundation::generated::NSPointerFunctions::*;
+use crate::Foundation::generated::NSString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

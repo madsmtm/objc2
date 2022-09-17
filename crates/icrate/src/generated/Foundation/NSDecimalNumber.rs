@@ -1,7 +1,13 @@
+use crate::Foundation::generated::NSDecimal::*;
+use crate::Foundation::generated::NSDictionary::*;
+use crate::Foundation::generated::NSException::*;
+use crate::Foundation::generated::NSScanner::*;
+use crate::Foundation::generated::NSValue::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSDecimalNumberBehaviors = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSDecimalNumber;

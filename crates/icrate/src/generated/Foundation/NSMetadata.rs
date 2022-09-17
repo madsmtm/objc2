@@ -1,3 +1,14 @@
+use super::NSArray;
+use super::NSDictionary;
+use super::NSOperationQueue;
+use super::NSPredicate;
+use super::NSSortDescriptor;
+use super::NSString;
+use super::NSURL;
+use crate::Foundation::generated::NSDate::*;
+use crate::Foundation::generated::NSMetadataAttributes::*;
+use crate::Foundation::generated::NSNotification::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -127,6 +138,7 @@ impl NSMetadataQuery {
         msg_send![self, groupedResults]
     }
 }
+pub type NSMetadataQueryDelegate = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSMetadataItem;

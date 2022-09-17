@@ -1,3 +1,9 @@
+use super::NSArray;
+use super::NSDictionary;
+use super::NSOrthography;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSRange::*;
+use crate::Foundation::generated::NSTextCheckingResult::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -34,3 +40,4 @@ impl NSSpellServer {
         msg_send![self, setDelegate: delegate]
     }
 }
+pub type NSSpellServerDelegate = NSObject;

@@ -1,3 +1,11 @@
+use super::NSDictionary;
+use super::NSString;
+use super::NSURLCredential;
+use super::NSURLCredentialStorageInternal;
+use super::NSURLSessionTask;
+use crate::Foundation::generated::NSNotification::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSURLProtectionSpace::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

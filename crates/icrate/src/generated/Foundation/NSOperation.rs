@@ -1,3 +1,10 @@
+use super::NSArray;
+use super::NSSet;
+use crate::dispatch::generated::dispatch::*;
+use crate::sys::generated::qos::*;
+use crate::Foundation::generated::NSException::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSProgress::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

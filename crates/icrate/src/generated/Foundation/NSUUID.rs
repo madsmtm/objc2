@@ -1,3 +1,6 @@
+use crate::uuid::generated::uuid::*;
+use crate::CoreFoundation::generated::CFUUID::*;
+use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

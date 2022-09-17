@@ -8,6 +8,11 @@ use crate::method::Method;
 
 #[derive(Debug, Clone)]
 pub enum Stmt {
+    /// #import <framework/file.h>
+    FileImport { framework: String, file: String },
+    /// @class Name;
+    /// @protocol Name;
+    ItemImport { name: String },
     /// @interface name: superclass <protocols*>
     ClassDecl {
         name: String,
@@ -39,8 +44,34 @@ pub enum Stmt {
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, config: &Config) -> Option<Self> {
         match entity.get_kind() {
-            EntityKind::InclusionDirective
-            | EntityKind::MacroExpansion
+            EntityKind::InclusionDirective => {
+                // let file = entity.get_file().expect("inclusion file");
+                let name = dbg!(entity.get_name().expect("inclusion name"));
+                let mut iter = name.split("/");
+                let framework = iter.next().expect("inclusion name has framework");
+                let file = if let Some(file) = iter.next() {
+                    file
+                } else {
+                    // Ignore
+                    return None;
+                };
+                assert!(iter.count() == 0, "no more left");
+
+                Some(Self::FileImport {
+                    framework: framework.to_string(),
+                    file: file
+                        .strip_suffix(".h")
+                        .expect("inclusion name file is header")
+                        .to_string(),
+                })
+            }
+            EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => {
+                let name = entity.get_name().expect("objc ref has name");
+
+                // We intentionally don't handle generics here
+                Some(Self::ItemImport { name })
+            }
+            EntityKind::MacroExpansion
             | EntityKind::ObjCClassRef
             | EntityKind::ObjCProtocolRef
             | EntityKind::MacroDefinition => None,
@@ -236,6 +267,21 @@ impl Stmt {
 impl ToTokens for Stmt {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let result = match self {
+            Self::FileImport { framework, file } => {
+                let framework = format_ident!("{}", framework);
+                let file = format_ident!("{}", file);
+
+                quote! {
+                    use crate::#framework::generated::#file::*;
+                }
+            }
+            Self::ItemImport { name } => {
+                let name = format_ident!("{}", name);
+
+                quote! {
+                    use super::#name;
+                }
+            }
             Self::ClassDecl {
                 name,
                 availability,
@@ -309,7 +355,7 @@ impl ToTokens for Stmt {
                 //         #(#methods)*
                 //     }
                 // }
-                quote!()
+                quote!(pub type #name = NSObject;)
             }
         };
         tokens.append_all(result);

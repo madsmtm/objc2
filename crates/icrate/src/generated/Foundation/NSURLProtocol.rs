@@ -1,7 +1,19 @@
+use super::NSCachedURLResponse;
+use super::NSError;
+use super::NSMutableURLRequest;
+use super::NSURLAuthenticationChallenge;
+use super::NSURLConnection;
+use super::NSURLProtocolInternal;
+use super::NSURLRequest;
+use super::NSURLResponse;
+use super::NSURLSessionTask;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSURLCache::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSURLProtocolClient = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLProtocol;

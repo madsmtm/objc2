@@ -1,3 +1,12 @@
+use super::NSConnection;
+use super::NSData;
+use super::NSDate;
+use super::NSMutableArray;
+use super::NSPortMessage;
+use super::NSRunLoop;
+use crate::Foundation::generated::NSNotification::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSRunLoop::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -88,6 +97,7 @@ impl NSPort {
         msg_send![self, reservedSpaceLength]
     }
 }
+pub type NSPortDelegate = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSMachPort;
@@ -131,6 +141,7 @@ impl NSMachPort {
         msg_send![self, machPort]
     }
 }
+pub type NSMachPortDelegate = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSMessagePort;

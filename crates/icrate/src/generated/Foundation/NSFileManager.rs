@@ -1,3 +1,19 @@
+use super::NSArray;
+use super::NSData;
+use super::NSDate;
+use super::NSError;
+use super::NSLock;
+use super::NSNumber;
+use super::NSXPCConnection;
+use crate::dispatch::generated::dispatch::*;
+use crate::CoreFoundation::generated::CFBase::*;
+use crate::Foundation::generated::NSDictionary::*;
+use crate::Foundation::generated::NSEnumerator::*;
+use crate::Foundation::generated::NSError::*;
+use crate::Foundation::generated::NSNotification::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSPathUtilities::*;
+use crate::Foundation::generated::NSURL::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -566,6 +582,7 @@ impl NSObject {
         msg_send![self, fileManager: fm, willProcessPath: path]
     }
 }
+pub type NSFileManagerDelegate = NSObject;
 extern_class!(
     #[derive(Debug)]
     pub struct NSDirectoryEnumerator;

@@ -1,3 +1,8 @@
+use super::NSArray;
+use super::NSString;
+use super::NSURLCredentialInternal;
+use crate::Foundation::generated::NSObject::*;
+use crate::Security::generated::Security::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

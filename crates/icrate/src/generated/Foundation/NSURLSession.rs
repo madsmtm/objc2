@@ -1,3 +1,28 @@
+use super::NSArray;
+use super::NSCachedURLResponse;
+use super::NSData;
+use super::NSDateInterval;
+use super::NSDictionary;
+use super::NSError;
+use super::NSHTTPCookie;
+use super::NSHTTPURLResponse;
+use super::NSInputStream;
+use super::NSNetService;
+use super::NSOperationQueue;
+use super::NSOutputStream;
+use super::NSString;
+use super::NSURLAuthenticationChallenge;
+use super::NSURLCache;
+use super::NSURLCredential;
+use super::NSURLCredentialStorage;
+use super::NSURLProtectionSpace;
+use super::NSURLResponse;
+use super::NSURL;
+use crate::Foundation::generated::NSHTTPCookieStorage::*;
+use crate::Foundation::generated::NSObject::*;
+use crate::Foundation::generated::NSProgress::*;
+use crate::Foundation::generated::NSURLRequest::*;
+use crate::Security::generated::SecureTransport::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -788,6 +813,12 @@ impl NSURLSessionConfiguration {
         msg_send![self, setMultipathServiceType: multipathServiceType]
     }
 }
+pub type NSURLSessionDelegate = NSObject;
+pub type NSURLSessionTaskDelegate = NSObject;
+pub type NSURLSessionDataDelegate = NSObject;
+pub type NSURLSessionDownloadDelegate = NSObject;
+pub type NSURLSessionStreamDelegate = NSObject;
+pub type NSURLSessionWebSocketDelegate = NSObject;
 #[doc = "NSURLSessionDeprecated"]
 impl NSURLSessionConfiguration {
     pub unsafe fn backgroundSessionConfiguration(

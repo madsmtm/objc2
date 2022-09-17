@@ -1,3 +1,11 @@
+use super::NSCache;
+use super::NSError;
+use super::NSLocale;
+use super::NSMutableDictionary;
+use super::NSRecursiveLock;
+use super::NSString;
+use crate::CoreFoundation::generated::CFNumberFormatter::*;
+use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -435,6 +443,7 @@ impl NSNumberFormatter {
         ]
     }
 }
+use super::NSDecimalNumberHandler;
 #[doc = "NSNumberFormatterCompatibility"]
 impl NSNumberFormatter {
     pub unsafe fn hasThousandSeparators(&self) -> bool {
