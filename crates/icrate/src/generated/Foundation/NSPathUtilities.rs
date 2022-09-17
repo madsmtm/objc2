@@ -7,7 +7,7 @@ impl NSString {
     pub unsafe fn pathWithComponents(components: TodoGenerics) -> Id<NSString, Shared> {
         msg_send_id![Self::class(), pathWithComponents: components]
     }
-    pub unsafe fn stringByAppendingPathComponent(&self, str: &NSString) -> Id<NSString, Shared> {
+    pub fn stringByAppendingPathComponent(&self, str: &NSString) -> Id<NSString, Shared> {
         msg_send_id![self, stringByAppendingPathComponent: str]
     }
     pub unsafe fn stringByAppendingPathExtension(

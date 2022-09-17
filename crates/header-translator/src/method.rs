@@ -289,15 +289,17 @@ impl ToTokens for Method {
             format_ident!("msg_send")
         };
 
+        let unsafe_ = if self.safe { quote!() } else { quote!(unsafe) };
+
         let result = if self.is_class_method {
             quote! {
-                pub unsafe fn #fn_name(#(#fn_args),*) #ret {
+                pub #unsafe_ fn #fn_name(#(#fn_args),*) #ret {
                     #macro_name![Self::class(), #method_call]
                 }
             }
         } else {
             quote! {
-                pub unsafe fn #fn_name(&self #(, #fn_args)*) #ret {
+                pub #unsafe_ fn #fn_name(&self #(, #fn_args)*) #ret {
                     #macro_name![self, #method_call]
                 }
             }

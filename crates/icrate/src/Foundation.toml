@@ -17,14 +17,14 @@ NSString = [
 NSMutableString = [
     "new",
     "initWithString:",
-    "appendString:",
-    "setString:",
+    # "appendString:",
+    # "setString:",
 ]
 
 [mutating-methods]
 NSMutableString = [
-    "appendString:",
-    "setString:",
+    # "appendString:",
+    # "setString:",
 ]
 
 [skipped.methods]

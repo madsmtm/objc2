@@ -19,7 +19,7 @@ impl NSString {
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
     }
-    pub unsafe fn length(&self) -> NSUInteger {
+    pub fn length(&self) -> NSUInteger {
         msg_send![self, length]
     }
 }
@@ -182,7 +182,7 @@ impl NSString {
     pub unsafe fn rangeOfComposedCharacterSequencesForRange(&self, range: NSRange) -> NSRange {
         msg_send![self, rangeOfComposedCharacterSequencesForRange: range]
     }
-    pub unsafe fn stringByAppendingString(&self, aString: &NSString) -> Id<NSString, Shared> {
+    pub fn stringByAppendingString(&self, aString: &NSString) -> Id<NSString, Shared> {
         msg_send_id![self, stringByAppendingString: aString]
     }
     pub unsafe fn uppercaseStringWithLocale(
@@ -315,7 +315,7 @@ impl NSString {
     pub unsafe fn maximumLengthOfBytesUsingEncoding(&self, enc: NSStringEncoding) -> NSUInteger {
         msg_send![self, maximumLengthOfBytesUsingEncoding: enc]
     }
-    pub unsafe fn lengthOfBytesUsingEncoding(&self, enc: NSStringEncoding) -> NSUInteger {
+    pub fn lengthOfBytesUsingEncoding(&self, enc: NSStringEncoding) -> NSUInteger {
         msg_send![self, lengthOfBytesUsingEncoding: enc]
     }
     pub unsafe fn localizedNameOfStringEncoding(
@@ -713,7 +713,7 @@ impl NSString {
     pub unsafe fn localizedCapitalizedString(&self) -> Id<NSString, Shared> {
         msg_send_id![self, localizedCapitalizedString]
     }
-    pub unsafe fn UTF8String(&self) -> *mut c_char {
+    pub fn UTF8String(&self) -> *mut c_char {
         msg_send![self, UTF8String]
     }
     pub unsafe fn fastestEncoding(&self) -> NSStringEncoding {
