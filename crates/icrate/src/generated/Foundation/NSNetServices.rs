@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSNetService;
+    pub struct NSNetService;
     unsafe impl ClassType for NSNetService {
         type Super = NSObject;
     }
@@ -110,7 +110,7 @@ impl NSNetService {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSNetServiceBrowser;
+    pub struct NSNetServiceBrowser;
     unsafe impl ClassType for NSNetServiceBrowser {
         type Super = NSObject;
     }

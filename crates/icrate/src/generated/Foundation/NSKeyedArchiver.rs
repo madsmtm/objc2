@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSKeyedArchiver;
+    pub struct NSKeyedArchiver;
     unsafe impl ClassType for NSKeyedArchiver {
         type Super = NSCoder;
     }
@@ -108,7 +108,7 @@ impl NSKeyedArchiver {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSKeyedUnarchiver;
+    pub struct NSKeyedUnarchiver;
     unsafe impl ClassType for NSKeyedUnarchiver {
         type Super = NSCoder;
     }

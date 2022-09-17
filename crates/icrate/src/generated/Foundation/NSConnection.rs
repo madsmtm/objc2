@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSConnection;
+    pub struct NSConnection;
     unsafe impl ClassType for NSConnection {
         type Super = NSObject;
     }
@@ -199,7 +199,7 @@ impl NSConnection {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSDistantObjectRequest;
+    pub struct NSDistantObjectRequest;
     unsafe impl ClassType for NSDistantObjectRequest {
         type Super = NSObject;
     }

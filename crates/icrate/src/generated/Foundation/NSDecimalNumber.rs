@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSDecimalNumber;
+    pub struct NSDecimalNumber;
     unsafe impl ClassType for NSDecimalNumber {
         type Super = NSNumber;
     }
@@ -213,7 +213,7 @@ impl NSDecimalNumber {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSDecimalNumberHandler;
+    pub struct NSDecimalNumberHandler;
     unsafe impl ClassType for NSDecimalNumberHandler {
         type Super = NSObject;
     }

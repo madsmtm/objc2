@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSPort;
+    pub struct NSPort;
     unsafe impl ClassType for NSPort {
         type Super = NSObject;
     }
@@ -90,7 +90,7 @@ impl NSPort {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMachPort;
+    pub struct NSMachPort;
     unsafe impl ClassType for NSMachPort {
         type Super = NSPort;
     }
@@ -133,7 +133,7 @@ impl NSMachPort {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMessagePort;
+    pub struct NSMessagePort;
     unsafe impl ClassType for NSMessagePort {
         type Super = NSPort;
     }
@@ -141,7 +141,7 @@ extern_class!(
 impl NSMessagePort {}
 extern_class!(
     #[derive(Debug)]
-    struct NSSocketPort;
+    pub struct NSSocketPort;
     unsafe impl ClassType for NSSocketPort {
         type Super = NSPort;
     }

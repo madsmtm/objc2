@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSMetadataQuery;
+    pub struct NSMetadataQuery;
     unsafe impl ClassType for NSMetadataQuery {
         type Super = NSObject;
     }
@@ -129,7 +129,7 @@ impl NSMetadataQuery {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMetadataItem;
+    pub struct NSMetadataItem;
     unsafe impl ClassType for NSMetadataItem {
         type Super = NSObject;
     }
@@ -150,7 +150,7 @@ impl NSMetadataItem {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMetadataQueryAttributeValueTuple;
+    pub struct NSMetadataQueryAttributeValueTuple;
     unsafe impl ClassType for NSMetadataQueryAttributeValueTuple {
         type Super = NSObject;
     }
@@ -168,7 +168,7 @@ impl NSMetadataQueryAttributeValueTuple {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMetadataQueryResultGroup;
+    pub struct NSMetadataQueryResultGroup;
     unsafe impl ClassType for NSMetadataQueryResultGroup {
         type Super = NSObject;
     }

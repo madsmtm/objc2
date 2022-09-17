@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSession;
+    pub struct NSURLSession;
     unsafe impl ClassType for NSURLSession {
         type Super = NSObject;
     }
@@ -232,7 +232,7 @@ impl NSURLSession {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionTask;
+    pub struct NSURLSessionTask;
     unsafe impl ClassType for NSURLSessionTask {
         type Super = NSObject;
     }
@@ -346,7 +346,7 @@ impl NSURLSessionTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionDataTask;
+    pub struct NSURLSessionDataTask;
     unsafe impl ClassType for NSURLSessionDataTask {
         type Super = NSURLSessionTask;
     }
@@ -361,7 +361,7 @@ impl NSURLSessionDataTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionUploadTask;
+    pub struct NSURLSessionUploadTask;
     unsafe impl ClassType for NSURLSessionUploadTask {
         type Super = NSURLSessionDataTask;
     }
@@ -376,7 +376,7 @@ impl NSURLSessionUploadTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionDownloadTask;
+    pub struct NSURLSessionDownloadTask;
     unsafe impl ClassType for NSURLSessionDownloadTask {
         type Super = NSURLSessionTask;
     }
@@ -394,7 +394,7 @@ impl NSURLSessionDownloadTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionStreamTask;
+    pub struct NSURLSessionStreamTask;
     unsafe impl ClassType for NSURLSessionStreamTask {
         type Super = NSURLSessionTask;
     }
@@ -452,7 +452,7 @@ impl NSURLSessionStreamTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionWebSocketMessage;
+    pub struct NSURLSessionWebSocketMessage;
     unsafe impl ClassType for NSURLSessionWebSocketMessage {
         type Super = NSObject;
     }
@@ -482,7 +482,7 @@ impl NSURLSessionWebSocketMessage {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionWebSocketTask;
+    pub struct NSURLSessionWebSocketTask;
     unsafe impl ClassType for NSURLSessionWebSocketTask {
         type Super = NSURLSessionTask;
     }
@@ -533,7 +533,7 @@ impl NSURLSessionWebSocketTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionConfiguration;
+    pub struct NSURLSessionConfiguration;
     unsafe impl ClassType for NSURLSessionConfiguration {
         type Super = NSObject;
     }
@@ -798,7 +798,7 @@ impl NSURLSessionConfiguration {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionTaskTransactionMetrics;
+    pub struct NSURLSessionTaskTransactionMetrics;
     unsafe impl ClassType for NSURLSessionTaskTransactionMetrics {
         type Super = NSObject;
     }
@@ -917,7 +917,7 @@ impl NSURLSessionTaskTransactionMetrics {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLSessionTaskMetrics;
+    pub struct NSURLSessionTaskMetrics;
     unsafe impl ClassType for NSURLSessionTaskMetrics {
         type Super = NSObject;
     }

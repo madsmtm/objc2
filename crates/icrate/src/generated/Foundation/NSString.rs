@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSString;
+    pub struct NSString;
     unsafe impl ClassType for NSString {
         type Super = NSObject;
     }
@@ -768,7 +768,7 @@ impl NSString {
 impl NSString {}
 extern_class!(
     #[derive(Debug)]
-    struct NSMutableString;
+    pub struct NSMutableString;
     unsafe impl ClassType for NSMutableString {
         type Super = NSString;
     }
@@ -926,7 +926,7 @@ impl NSString {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSSimpleCString;
+    pub struct NSSimpleCString;
     unsafe impl ClassType for NSSimpleCString {
         type Super = NSString;
     }
@@ -934,7 +934,7 @@ extern_class!(
 impl NSSimpleCString {}
 extern_class!(
     #[derive(Debug)]
-    struct NSConstantString;
+    pub struct NSConstantString;
     unsafe impl ClassType for NSConstantString {
         type Super = NSSimpleCString;
     }

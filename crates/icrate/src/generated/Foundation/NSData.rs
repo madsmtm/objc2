@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSData;
+    pub struct NSData;
     unsafe impl ClassType for NSData {
         type Super = NSObject;
     }
@@ -302,7 +302,7 @@ impl NSData {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMutableData;
+    pub struct NSMutableData;
     unsafe impl ClassType for NSMutableData {
         type Super = NSData;
     }
@@ -386,7 +386,7 @@ impl NSMutableData {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSPurgeableData;
+    pub struct NSPurgeableData;
     unsafe impl ClassType for NSPurgeableData {
         type Super = NSMutableData;
     }

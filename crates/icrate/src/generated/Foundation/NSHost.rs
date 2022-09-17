@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSHost;
+    pub struct NSHost;
     unsafe impl ClassType for NSHost {
         type Super = NSObject;
     }

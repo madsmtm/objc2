@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSMorphology;
+    pub struct NSMorphology;
     unsafe impl ClassType for NSMorphology {
         type Super = NSObject;
     }
@@ -53,7 +53,7 @@ impl NSMorphology {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMorphologyCustomPronoun;
+    pub struct NSMorphologyCustomPronoun;
     unsafe impl ClassType for NSMorphologyCustomPronoun {
         type Super = NSObject;
     }

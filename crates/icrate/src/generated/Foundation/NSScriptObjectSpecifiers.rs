@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSScriptObjectSpecifier;
+    pub struct NSScriptObjectSpecifier;
     unsafe impl ClassType for NSScriptObjectSpecifier {
         type Super = NSObject;
     }
@@ -139,7 +139,7 @@ impl NSObject {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSIndexSpecifier;
+    pub struct NSIndexSpecifier;
     unsafe impl ClassType for NSIndexSpecifier {
         type Super = NSScriptObjectSpecifier;
     }
@@ -169,7 +169,7 @@ impl NSIndexSpecifier {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMiddleSpecifier;
+    pub struct NSMiddleSpecifier;
     unsafe impl ClassType for NSMiddleSpecifier {
         type Super = NSScriptObjectSpecifier;
     }
@@ -177,7 +177,7 @@ extern_class!(
 impl NSMiddleSpecifier {}
 extern_class!(
     #[derive(Debug)]
-    struct NSNameSpecifier;
+    pub struct NSNameSpecifier;
     unsafe impl ClassType for NSNameSpecifier {
         type Super = NSScriptObjectSpecifier;
     }
@@ -210,7 +210,7 @@ impl NSNameSpecifier {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSPositionalSpecifier;
+    pub struct NSPositionalSpecifier;
     unsafe impl ClassType for NSPositionalSpecifier {
         type Super = NSObject;
     }
@@ -250,7 +250,7 @@ impl NSPositionalSpecifier {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSPropertySpecifier;
+    pub struct NSPropertySpecifier;
     unsafe impl ClassType for NSPropertySpecifier {
         type Super = NSScriptObjectSpecifier;
     }
@@ -258,7 +258,7 @@ extern_class!(
 impl NSPropertySpecifier {}
 extern_class!(
     #[derive(Debug)]
-    struct NSRandomSpecifier;
+    pub struct NSRandomSpecifier;
     unsafe impl ClassType for NSRandomSpecifier {
         type Super = NSScriptObjectSpecifier;
     }
@@ -266,7 +266,7 @@ extern_class!(
 impl NSRandomSpecifier {}
 extern_class!(
     #[derive(Debug)]
-    struct NSRangeSpecifier;
+    pub struct NSRangeSpecifier;
     unsafe impl ClassType for NSRangeSpecifier {
         type Super = NSScriptObjectSpecifier;
     }
@@ -307,7 +307,7 @@ impl NSRangeSpecifier {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSRelativeSpecifier;
+    pub struct NSRelativeSpecifier;
     unsafe impl ClassType for NSRelativeSpecifier {
         type Super = NSScriptObjectSpecifier;
     }
@@ -348,7 +348,7 @@ impl NSRelativeSpecifier {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUniqueIDSpecifier;
+    pub struct NSUniqueIDSpecifier;
     unsafe impl ClassType for NSUniqueIDSpecifier {
         type Super = NSScriptObjectSpecifier;
     }
@@ -381,7 +381,7 @@ impl NSUniqueIDSpecifier {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSWhoseSpecifier;
+    pub struct NSWhoseSpecifier;
     unsafe impl ClassType for NSWhoseSpecifier {
         type Super = NSScriptObjectSpecifier;
     }

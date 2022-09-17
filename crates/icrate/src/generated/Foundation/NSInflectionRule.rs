@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSInflectionRule;
+    pub struct NSInflectionRule;
     unsafe impl ClassType for NSInflectionRule {
         type Super = NSObject;
     }
@@ -19,7 +19,7 @@ impl NSInflectionRule {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSInflectionRuleExplicit;
+    pub struct NSInflectionRuleExplicit;
     unsafe impl ClassType for NSInflectionRuleExplicit {
         type Super = NSInflectionRule;
     }

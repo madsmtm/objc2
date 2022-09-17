@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSException;
+    pub struct NSException;
     unsafe impl ClassType for NSException {
         type Super = NSObject;
     }
@@ -71,7 +71,7 @@ impl NSException {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSAssertionHandler;
+    pub struct NSAssertionHandler;
     unsafe impl ClassType for NSAssertionHandler {
         type Super = NSObject;
     }

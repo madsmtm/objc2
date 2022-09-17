@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSBundle;
+    pub struct NSBundle;
     unsafe impl ClassType for NSBundle {
         type Super = NSObject;
     }
@@ -354,7 +354,7 @@ impl NSString {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSBundleResourceRequest;
+    pub struct NSBundleResourceRequest;
     unsafe impl ClassType for NSBundleResourceRequest {
         type Super = NSObject;
     }

@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSTimer;
+    pub struct NSTimer;
     unsafe impl ClassType for NSTimer {
         type Super = NSObject;
     }

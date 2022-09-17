@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSFileHandle;
+    pub struct NSFileHandle;
     unsafe impl ClassType for NSFileHandle {
         type Super = NSObject;
     }
@@ -199,7 +199,7 @@ impl NSFileHandle {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSPipe;
+    pub struct NSPipe;
     unsafe impl ClassType for NSPipe {
         type Super = NSObject;
     }

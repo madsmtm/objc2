@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSAttributedString;
+    pub struct NSAttributedString;
     unsafe impl ClassType for NSAttributedString {
         type Super = NSObject;
     }
@@ -123,7 +123,7 @@ impl NSAttributedString {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMutableAttributedString;
+    pub struct NSMutableAttributedString;
     unsafe impl ClassType for NSMutableAttributedString {
         type Super = NSAttributedString;
     }
@@ -191,7 +191,7 @@ impl NSMutableAttributedString {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSAttributedStringMarkdownParsingOptions;
+    pub struct NSAttributedStringMarkdownParsingOptions;
     unsafe impl ClassType for NSAttributedStringMarkdownParsingOptions {
         type Super = NSObject;
     }
@@ -307,7 +307,7 @@ impl NSAttributedString {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSPresentationIntent;
+    pub struct NSPresentationIntent;
     unsafe impl ClassType for NSPresentationIntent {
         type Super = NSObject;
     }

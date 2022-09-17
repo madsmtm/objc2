@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSURL;
+    pub struct NSURL;
     unsafe impl ClassType for NSURL {
         type Super = NSObject;
     }
@@ -425,7 +425,7 @@ impl NSURL {
 impl NSURL {}
 extern_class!(
     #[derive(Debug)]
-    struct NSURLQueryItem;
+    pub struct NSURLQueryItem;
     unsafe impl ClassType for NSURLQueryItem {
         type Super = NSObject;
     }
@@ -453,7 +453,7 @@ impl NSURLQueryItem {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLComponents;
+    pub struct NSURLComponents;
     unsafe impl ClassType for NSURLComponents {
         type Super = NSObject;
     }
@@ -715,7 +715,7 @@ impl NSURL {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSFileSecurity;
+    pub struct NSFileSecurity;
     unsafe impl ClassType for NSFileSecurity {
         type Super = NSObject;
     }

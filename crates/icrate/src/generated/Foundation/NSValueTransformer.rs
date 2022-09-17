@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSValueTransformer;
+    pub struct NSValueTransformer;
     unsafe impl ClassType for NSValueTransformer {
         type Super = NSObject;
     }
@@ -46,7 +46,7 @@ impl NSValueTransformer {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSSecureUnarchiveFromDataTransformer;
+    pub struct NSSecureUnarchiveFromDataTransformer;
     unsafe impl ClassType for NSSecureUnarchiveFromDataTransformer {
         type Super = NSValueTransformer;
     }

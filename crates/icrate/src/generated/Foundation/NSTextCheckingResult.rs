@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSTextCheckingResult;
+    pub struct NSTextCheckingResult;
     unsafe impl ClassType for NSTextCheckingResult {
         type Super = NSObject;
     }

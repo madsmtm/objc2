@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSValue;
+    pub struct NSValue;
     unsafe impl ClassType for NSValue {
         type Super = NSObject;
     }
@@ -62,7 +62,7 @@ impl NSValue {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSNumber;
+    pub struct NSNumber;
     unsafe impl ClassType for NSNumber {
         type Super = NSValue;
     }

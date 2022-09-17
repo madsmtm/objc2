@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSXPCConnection;
+    pub struct NSXPCConnection;
     unsafe impl ClassType for NSXPCConnection {
         type Super = NSObject;
     }
@@ -107,7 +107,7 @@ impl NSXPCConnection {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSXPCListener;
+    pub struct NSXPCListener;
     unsafe impl ClassType for NSXPCListener {
         type Super = NSObject;
     }
@@ -143,7 +143,7 @@ impl NSXPCListener {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSXPCInterface;
+    pub struct NSXPCInterface;
     unsafe impl ClassType for NSXPCInterface {
         type Super = NSObject;
     }
@@ -245,7 +245,7 @@ impl NSXPCInterface {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSXPCListenerEndpoint;
+    pub struct NSXPCListenerEndpoint;
     unsafe impl ClassType for NSXPCListenerEndpoint {
         type Super = NSObject;
     }
@@ -253,7 +253,7 @@ extern_class!(
 impl NSXPCListenerEndpoint {}
 extern_class!(
     #[derive(Debug)]
-    struct NSXPCCoder;
+    pub struct NSXPCCoder;
     unsafe impl ClassType for NSXPCCoder {
         type Super = NSCoder;
     }

@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSFileAccessIntent;
+    pub struct NSFileAccessIntent;
     unsafe impl ClassType for NSFileAccessIntent {
         type Super = NSObject;
     }
@@ -28,7 +28,7 @@ impl NSFileAccessIntent {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSFileCoordinator;
+    pub struct NSFileCoordinator;
     unsafe impl ClassType for NSFileCoordinator {
         type Super = NSObject;
     }

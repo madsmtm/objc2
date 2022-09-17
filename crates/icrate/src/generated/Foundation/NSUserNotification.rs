@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSUserNotification;
+    pub struct NSUserNotification;
     unsafe impl ClassType for NSUserNotification {
         type Super = NSObject;
     }
@@ -135,7 +135,7 @@ impl NSUserNotification {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUserNotificationAction;
+    pub struct NSUserNotificationAction;
     unsafe impl ClassType for NSUserNotificationAction {
         type Super = NSObject;
     }
@@ -160,7 +160,7 @@ impl NSUserNotificationAction {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUserNotificationCenter;
+    pub struct NSUserNotificationCenter;
     unsafe impl ClassType for NSUserNotificationCenter {
         type Super = NSObject;
     }

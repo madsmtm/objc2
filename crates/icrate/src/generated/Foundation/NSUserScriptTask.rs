@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSUserScriptTask;
+    pub struct NSUserScriptTask;
     unsafe impl ClassType for NSUserScriptTask {
         type Super = NSObject;
     }
@@ -26,7 +26,7 @@ impl NSUserScriptTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUserUnixTask;
+    pub struct NSUserUnixTask;
     unsafe impl ClassType for NSUserUnixTask {
         type Super = NSUserScriptTask;
     }
@@ -64,7 +64,7 @@ impl NSUserUnixTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUserAppleScriptTask;
+    pub struct NSUserAppleScriptTask;
     unsafe impl ClassType for NSUserAppleScriptTask {
         type Super = NSUserScriptTask;
     }
@@ -84,7 +84,7 @@ impl NSUserAppleScriptTask {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUserAutomatorTask;
+    pub struct NSUserAutomatorTask;
     unsafe impl ClassType for NSUserAutomatorTask {
         type Super = NSUserScriptTask;
     }

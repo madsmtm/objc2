@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSStream;
+    pub struct NSStream;
     unsafe impl ClassType for NSStream {
         type Super = NSObject;
     }
@@ -47,7 +47,7 @@ impl NSStream {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSInputStream;
+    pub struct NSInputStream;
     unsafe impl ClassType for NSInputStream {
         type Super = NSStream;
     }
@@ -75,7 +75,7 @@ impl NSInputStream {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSOutputStream;
+    pub struct NSOutputStream;
     unsafe impl ClassType for NSOutputStream {
         type Super = NSStream;
     }

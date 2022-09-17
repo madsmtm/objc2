@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSDateFormatter;
+    pub struct NSDateFormatter;
     unsafe impl ClassType for NSDateFormatter {
         type Super = NSFormatter;
     }

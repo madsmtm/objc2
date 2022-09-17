@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSDictionary;
+    pub struct NSDictionary;
     unsafe impl ClassType for NSDictionary {
         type Super = NSObject;
     }
@@ -223,7 +223,7 @@ impl NSDictionary {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMutableDictionary;
+    pub struct NSMutableDictionary;
     unsafe impl ClassType for NSMutableDictionary {
         type Super = NSDictionary;
     }

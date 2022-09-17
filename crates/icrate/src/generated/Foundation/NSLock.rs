@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSLock;
+    pub struct NSLock;
     unsafe impl ClassType for NSLock {
         type Super = NSObject;
     }
@@ -25,7 +25,7 @@ impl NSLock {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSConditionLock;
+    pub struct NSConditionLock;
     unsafe impl ClassType for NSConditionLock {
         type Super = NSObject;
     }
@@ -68,7 +68,7 @@ impl NSConditionLock {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSRecursiveLock;
+    pub struct NSRecursiveLock;
     unsafe impl ClassType for NSRecursiveLock {
         type Super = NSObject;
     }
@@ -89,7 +89,7 @@ impl NSRecursiveLock {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSCondition;
+    pub struct NSCondition;
     unsafe impl ClassType for NSCondition {
         type Super = NSObject;
     }

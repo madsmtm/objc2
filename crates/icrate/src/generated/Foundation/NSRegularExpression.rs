@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSRegularExpression;
+    pub struct NSRegularExpression;
     unsafe impl ClassType for NSRegularExpression {
         type Super = NSObject;
     }
@@ -171,7 +171,7 @@ impl NSRegularExpression {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSDataDetector;
+    pub struct NSDataDetector;
     unsafe impl ClassType for NSDataDetector {
         type Super = NSRegularExpression;
     }

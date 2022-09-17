@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSCloneCommand;
+    pub struct NSCloneCommand;
     unsafe impl ClassType for NSCloneCommand {
         type Super = NSScriptCommand;
     }
@@ -19,7 +19,7 @@ impl NSCloneCommand {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSCloseCommand;
+    pub struct NSCloseCommand;
     unsafe impl ClassType for NSCloseCommand {
         type Super = NSScriptCommand;
     }
@@ -31,7 +31,7 @@ impl NSCloseCommand {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSCountCommand;
+    pub struct NSCountCommand;
     unsafe impl ClassType for NSCountCommand {
         type Super = NSScriptCommand;
     }
@@ -39,7 +39,7 @@ extern_class!(
 impl NSCountCommand {}
 extern_class!(
     #[derive(Debug)]
-    struct NSCreateCommand;
+    pub struct NSCreateCommand;
     unsafe impl ClassType for NSCreateCommand {
         type Super = NSScriptCommand;
     }
@@ -54,7 +54,7 @@ impl NSCreateCommand {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSDeleteCommand;
+    pub struct NSDeleteCommand;
     unsafe impl ClassType for NSDeleteCommand {
         type Super = NSScriptCommand;
     }
@@ -69,7 +69,7 @@ impl NSDeleteCommand {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSExistsCommand;
+    pub struct NSExistsCommand;
     unsafe impl ClassType for NSExistsCommand {
         type Super = NSScriptCommand;
     }
@@ -77,7 +77,7 @@ extern_class!(
 impl NSExistsCommand {}
 extern_class!(
     #[derive(Debug)]
-    struct NSGetCommand;
+    pub struct NSGetCommand;
     unsafe impl ClassType for NSGetCommand {
         type Super = NSScriptCommand;
     }
@@ -85,7 +85,7 @@ extern_class!(
 impl NSGetCommand {}
 extern_class!(
     #[derive(Debug)]
-    struct NSMoveCommand;
+    pub struct NSMoveCommand;
     unsafe impl ClassType for NSMoveCommand {
         type Super = NSScriptCommand;
     }
@@ -100,7 +100,7 @@ impl NSMoveCommand {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSQuitCommand;
+    pub struct NSQuitCommand;
     unsafe impl ClassType for NSQuitCommand {
         type Super = NSScriptCommand;
     }
@@ -112,7 +112,7 @@ impl NSQuitCommand {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSSetCommand;
+    pub struct NSSetCommand;
     unsafe impl ClassType for NSSetCommand {
         type Super = NSScriptCommand;
     }

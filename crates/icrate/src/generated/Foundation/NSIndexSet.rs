@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSIndexSet;
+    pub struct NSIndexSet;
     unsafe impl ClassType for NSIndexSet {
         type Super = NSObject;
     }
@@ -175,7 +175,7 @@ impl NSIndexSet {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMutableIndexSet;
+    pub struct NSMutableIndexSet;
     unsafe impl ClassType for NSMutableIndexSet {
         type Super = NSIndexSet;
     }

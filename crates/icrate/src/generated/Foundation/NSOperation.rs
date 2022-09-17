@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSOperation;
+    pub struct NSOperation;
     unsafe impl ClassType for NSOperation {
         type Super = NSObject;
     }
@@ -82,7 +82,7 @@ impl NSOperation {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSBlockOperation;
+    pub struct NSBlockOperation;
     unsafe impl ClassType for NSBlockOperation {
         type Super = NSOperation;
     }
@@ -100,7 +100,7 @@ impl NSBlockOperation {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSInvocationOperation;
+    pub struct NSInvocationOperation;
     unsafe impl ClassType for NSInvocationOperation {
         type Super = NSOperation;
     }
@@ -126,7 +126,7 @@ impl NSInvocationOperation {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSOperationQueue;
+    pub struct NSOperationQueue;
     unsafe impl ClassType for NSOperationQueue {
         type Super = NSObject;
     }

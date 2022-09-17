@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSScriptWhoseTest;
+    pub struct NSScriptWhoseTest;
     unsafe impl ClassType for NSScriptWhoseTest {
         type Super = NSObject;
     }
@@ -22,7 +22,7 @@ impl NSScriptWhoseTest {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSLogicalTest;
+    pub struct NSLogicalTest;
     unsafe impl ClassType for NSLogicalTest {
         type Super = NSScriptWhoseTest;
     }
@@ -40,7 +40,7 @@ impl NSLogicalTest {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSSpecifierTest;
+    pub struct NSSpecifierTest;
     unsafe impl ClassType for NSSpecifierTest {
         type Super = NSScriptWhoseTest;
     }

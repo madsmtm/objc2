@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSURLProtocol;
+    pub struct NSURLProtocol;
     unsafe impl ClassType for NSURLProtocol {
         type Super = NSObject;
     }

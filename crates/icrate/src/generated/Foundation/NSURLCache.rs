@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSCachedURLResponse;
+    pub struct NSCachedURLResponse;
     unsafe impl ClassType for NSCachedURLResponse {
         type Super = NSObject;
     }
@@ -47,7 +47,7 @@ impl NSCachedURLResponse {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSURLCache;
+    pub struct NSURLCache;
     unsafe impl ClassType for NSURLCache {
         type Super = NSObject;
     }

@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSSet;
+    pub struct NSSet;
     unsafe impl ClassType for NSSet {
         type Super = NSObject;
     }
@@ -132,7 +132,7 @@ impl NSSet {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMutableSet;
+    pub struct NSMutableSet;
     unsafe impl ClassType for NSMutableSet {
         type Super = NSSet;
     }
@@ -183,7 +183,7 @@ impl NSMutableSet {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSCountedSet;
+    pub struct NSCountedSet;
     unsafe impl ClassType for NSCountedSet {
         type Super = NSMutableSet;
     }

@@ -252,7 +252,7 @@ impl ToTokens for Stmt {
                 quote! {
                     extern_class!(
                         #[derive(Debug)]
-                        struct #name;
+                        pub struct #name;
 
                         unsafe impl ClassType for #name {
                             type Super = #superclass_name;

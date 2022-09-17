@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSError;
+    pub struct NSError;
     unsafe impl ClassType for NSError {
         type Super = NSObject;
     }

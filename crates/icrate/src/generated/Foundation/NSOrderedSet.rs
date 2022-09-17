@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSOrderedSet;
+    pub struct NSOrderedSet;
     unsafe impl ClassType for NSOrderedSet {
         type Super = NSObject;
     }
@@ -325,7 +325,7 @@ impl NSOrderedSet {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSMutableOrderedSet;
+    pub struct NSMutableOrderedSet;
     unsafe impl ClassType for NSMutableOrderedSet {
         type Super = NSOrderedSet;
     }

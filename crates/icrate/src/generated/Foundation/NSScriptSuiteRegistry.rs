@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSScriptSuiteRegistry;
+    pub struct NSScriptSuiteRegistry;
     unsafe impl ClassType for NSScriptSuiteRegistry {
         type Super = NSObject;
     }

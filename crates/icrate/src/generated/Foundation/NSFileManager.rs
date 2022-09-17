@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSFileManager;
+    pub struct NSFileManager;
     unsafe impl ClassType for NSFileManager {
         type Super = NSObject;
     }
@@ -568,7 +568,7 @@ impl NSObject {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSDirectoryEnumerator;
+    pub struct NSDirectoryEnumerator;
     unsafe impl ClassType for NSDirectoryEnumerator {
         type Super = NSEnumerator;
     }
@@ -595,7 +595,7 @@ impl NSDirectoryEnumerator {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSFileProviderService;
+    pub struct NSFileProviderService;
     unsafe impl ClassType for NSFileProviderService {
         type Super = NSObject;
     }

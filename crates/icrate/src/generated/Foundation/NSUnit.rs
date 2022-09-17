@@ -4,7 +4,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitConverter;
+    pub struct NSUnitConverter;
     unsafe impl ClassType for NSUnitConverter {
         type Super = NSObject;
     }
@@ -19,7 +19,7 @@ impl NSUnitConverter {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitConverterLinear;
+    pub struct NSUnitConverterLinear;
     unsafe impl ClassType for NSUnitConverterLinear {
         type Super = NSUnitConverter;
     }
@@ -44,7 +44,7 @@ impl NSUnitConverterLinear {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnit;
+    pub struct NSUnit;
     unsafe impl ClassType for NSUnit {
         type Super = NSObject;
     }
@@ -65,7 +65,7 @@ impl NSUnit {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSDimension;
+    pub struct NSDimension;
     unsafe impl ClassType for NSDimension {
         type Super = NSUnit;
     }
@@ -87,7 +87,7 @@ impl NSDimension {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitAcceleration;
+    pub struct NSUnitAcceleration;
     unsafe impl ClassType for NSUnitAcceleration {
         type Super = NSDimension;
     }
@@ -102,7 +102,7 @@ impl NSUnitAcceleration {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitAngle;
+    pub struct NSUnitAngle;
     unsafe impl ClassType for NSUnitAngle {
         type Super = NSDimension;
     }
@@ -129,7 +129,7 @@ impl NSUnitAngle {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitArea;
+    pub struct NSUnitArea;
     unsafe impl ClassType for NSUnitArea {
         type Super = NSDimension;
     }
@@ -180,7 +180,7 @@ impl NSUnitArea {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitConcentrationMass;
+    pub struct NSUnitConcentrationMass;
     unsafe impl ClassType for NSUnitConcentrationMass {
         type Super = NSDimension;
     }
@@ -203,7 +203,7 @@ impl NSUnitConcentrationMass {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitDispersion;
+    pub struct NSUnitDispersion;
     unsafe impl ClassType for NSUnitDispersion {
         type Super = NSDimension;
     }
@@ -215,7 +215,7 @@ impl NSUnitDispersion {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitDuration;
+    pub struct NSUnitDuration;
     unsafe impl ClassType for NSUnitDuration {
         type Super = NSDimension;
     }
@@ -245,7 +245,7 @@ impl NSUnitDuration {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitElectricCharge;
+    pub struct NSUnitElectricCharge;
     unsafe impl ClassType for NSUnitElectricCharge {
         type Super = NSDimension;
     }
@@ -272,7 +272,7 @@ impl NSUnitElectricCharge {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitElectricCurrent;
+    pub struct NSUnitElectricCurrent;
     unsafe impl ClassType for NSUnitElectricCurrent {
         type Super = NSDimension;
     }
@@ -296,7 +296,7 @@ impl NSUnitElectricCurrent {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitElectricPotentialDifference;
+    pub struct NSUnitElectricPotentialDifference;
     unsafe impl ClassType for NSUnitElectricPotentialDifference {
         type Super = NSDimension;
     }
@@ -320,7 +320,7 @@ impl NSUnitElectricPotentialDifference {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitElectricResistance;
+    pub struct NSUnitElectricResistance;
     unsafe impl ClassType for NSUnitElectricResistance {
         type Super = NSDimension;
     }
@@ -344,7 +344,7 @@ impl NSUnitElectricResistance {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitEnergy;
+    pub struct NSUnitEnergy;
     unsafe impl ClassType for NSUnitEnergy {
         type Super = NSDimension;
     }
@@ -368,7 +368,7 @@ impl NSUnitEnergy {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitFrequency;
+    pub struct NSUnitFrequency;
     unsafe impl ClassType for NSUnitFrequency {
         type Super = NSDimension;
     }
@@ -404,7 +404,7 @@ impl NSUnitFrequency {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitFuelEfficiency;
+    pub struct NSUnitFuelEfficiency;
     unsafe impl ClassType for NSUnitFuelEfficiency {
         type Super = NSDimension;
     }
@@ -422,7 +422,7 @@ impl NSUnitFuelEfficiency {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitInformationStorage;
+    pub struct NSUnitInformationStorage;
     unsafe impl ClassType for NSUnitInformationStorage {
         type Super = NSDimension;
     }
@@ -536,7 +536,7 @@ impl NSUnitInformationStorage {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitLength;
+    pub struct NSUnitLength;
     unsafe impl ClassType for NSUnitLength {
         type Super = NSDimension;
     }
@@ -611,7 +611,7 @@ impl NSUnitLength {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitIlluminance;
+    pub struct NSUnitIlluminance;
     unsafe impl ClassType for NSUnitIlluminance {
         type Super = NSDimension;
     }
@@ -623,7 +623,7 @@ impl NSUnitIlluminance {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitMass;
+    pub struct NSUnitMass;
     unsafe impl ClassType for NSUnitMass {
         type Super = NSDimension;
     }
@@ -680,7 +680,7 @@ impl NSUnitMass {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitPower;
+    pub struct NSUnitPower;
     unsafe impl ClassType for NSUnitPower {
         type Super = NSDimension;
     }
@@ -722,7 +722,7 @@ impl NSUnitPower {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitPressure;
+    pub struct NSUnitPressure;
     unsafe impl ClassType for NSUnitPressure {
         type Super = NSDimension;
     }
@@ -761,7 +761,7 @@ impl NSUnitPressure {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitSpeed;
+    pub struct NSUnitSpeed;
     unsafe impl ClassType for NSUnitSpeed {
         type Super = NSDimension;
     }
@@ -782,7 +782,7 @@ impl NSUnitSpeed {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitTemperature;
+    pub struct NSUnitTemperature;
     unsafe impl ClassType for NSUnitTemperature {
         type Super = NSDimension;
     }
@@ -800,7 +800,7 @@ impl NSUnitTemperature {
 }
 extern_class!(
     #[derive(Debug)]
-    struct NSUnitVolume;
+    pub struct NSUnitVolume;
     unsafe impl ClassType for NSUnitVolume {
         type Super = NSDimension;
     }
