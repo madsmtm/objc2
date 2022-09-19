@@ -49,13 +49,13 @@ impl NSXMLDTD {
     pub unsafe fn insertChild_atIndex(&self, child: &NSXMLNode, index: NSUInteger) {
         msg_send![self, insertChild: child, atIndex: index]
     }
-    pub unsafe fn insertChildren_atIndex(&self, children: TodoGenerics, index: NSUInteger) {
+    pub unsafe fn insertChildren_atIndex(&self, children: &NSArray<NSXMLNode>, index: NSUInteger) {
         msg_send![self, insertChildren: children, atIndex: index]
     }
     pub unsafe fn removeChildAtIndex(&self, index: NSUInteger) {
         msg_send![self, removeChildAtIndex: index]
     }
-    pub unsafe fn setChildren(&self, children: TodoGenerics) {
+    pub unsafe fn setChildren(&self, children: Option<&NSArray<NSXMLNode>>) {
         msg_send![self, setChildren: children]
     }
     pub unsafe fn addChild(&self, child: &NSXMLNode) {

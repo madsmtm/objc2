@@ -15,16 +15,16 @@ impl<ObjectType: Message> NSOrderedCollectionChange<ObjectType> {
         anObject: Option<&ObjectType>,
         type_: NSCollectionChangeType,
         index: NSUInteger,
-    ) -> TodoGenerics {
-        msg_send ! [Self :: class () , changeWithObject : anObject , type : type_ , index : index]
+    ) -> Id<NSOrderedCollectionChange<ObjectType>, Shared> {
+        msg_send_id ! [Self :: class () , changeWithObject : anObject , type : type_ , index : index]
     }
     pub unsafe fn changeWithObject_type_index_associatedIndex(
         anObject: Option<&ObjectType>,
         type_: NSCollectionChangeType,
         index: NSUInteger,
         associatedIndex: NSUInteger,
-    ) -> TodoGenerics {
-        msg_send ! [Self :: class () , changeWithObject : anObject , type : type_ , index : index , associatedIndex : associatedIndex]
+    ) -> Id<NSOrderedCollectionChange<ObjectType>, Shared> {
+        msg_send_id ! [Self :: class () , changeWithObject : anObject , type : type_ , index : index , associatedIndex : associatedIndex]
     }
     pub unsafe fn init(&self) -> Id<Object, Shared> {
         msg_send_id![self, init]

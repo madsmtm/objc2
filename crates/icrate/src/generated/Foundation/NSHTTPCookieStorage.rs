@@ -36,12 +36,12 @@ impl NSHTTPCookieStorage {
     pub unsafe fn removeCookiesSinceDate(&self, date: &NSDate) {
         msg_send![self, removeCookiesSinceDate: date]
     }
-    pub unsafe fn cookiesForURL(&self, URL: &NSURL) -> TodoGenerics {
-        msg_send![self, cookiesForURL: URL]
+    pub unsafe fn cookiesForURL(&self, URL: &NSURL) -> Option<Id<NSArray<NSHTTPCookie>, Shared>> {
+        msg_send_id![self, cookiesForURL: URL]
     }
     pub unsafe fn setCookies_forURL_mainDocumentURL(
         &self,
-        cookies: TodoGenerics,
+        cookies: &NSArray<NSHTTPCookie>,
         URL: Option<&NSURL>,
         mainDocumentURL: Option<&NSURL>,
     ) {
@@ -52,14 +52,17 @@ impl NSHTTPCookieStorage {
             mainDocumentURL: mainDocumentURL
         ]
     }
-    pub unsafe fn sortedCookiesUsingDescriptors(&self, sortOrder: TodoGenerics) -> TodoGenerics {
-        msg_send![self, sortedCookiesUsingDescriptors: sortOrder]
+    pub unsafe fn sortedCookiesUsingDescriptors(
+        &self,
+        sortOrder: &NSArray<NSSortDescriptor>,
+    ) -> Id<NSArray<NSHTTPCookie>, Shared> {
+        msg_send_id![self, sortedCookiesUsingDescriptors: sortOrder]
     }
     pub unsafe fn sharedHTTPCookieStorage() -> Id<NSHTTPCookieStorage, Shared> {
         msg_send_id![Self::class(), sharedHTTPCookieStorage]
     }
-    pub unsafe fn cookies(&self) -> TodoGenerics {
-        msg_send![self, cookies]
+    pub unsafe fn cookies(&self) -> Option<Id<NSArray<NSHTTPCookie>, Shared>> {
+        msg_send_id![self, cookies]
     }
     pub unsafe fn cookieAcceptPolicy(&self) -> NSHTTPCookieAcceptPolicy {
         msg_send![self, cookieAcceptPolicy]
@@ -70,7 +73,11 @@ impl NSHTTPCookieStorage {
 }
 #[doc = "NSURLSessionTaskAdditions"]
 impl NSHTTPCookieStorage {
-    pub unsafe fn storeCookies_forTask(&self, cookies: TodoGenerics, task: &NSURLSessionTask) {
+    pub unsafe fn storeCookies_forTask(
+        &self,
+        cookies: &NSArray<NSHTTPCookie>,
+        task: &NSURLSessionTask,
+    ) {
         msg_send![self, storeCookies: cookies, forTask: task]
     }
     pub unsafe fn getCookiesForTask_completionHandler(

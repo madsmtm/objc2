@@ -53,8 +53,8 @@ impl NSCreateCommand {
     pub unsafe fn createClassDescription(&self) -> Id<NSScriptClassDescription, Shared> {
         msg_send_id![self, createClassDescription]
     }
-    pub unsafe fn resolvedKeyDictionary(&self) -> TodoGenerics {
-        msg_send![self, resolvedKeyDictionary]
+    pub unsafe fn resolvedKeyDictionary(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
+        msg_send_id![self, resolvedKeyDictionary]
     }
 }
 extern_class!(

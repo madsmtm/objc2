@@ -55,11 +55,17 @@ impl NSScriptSuiteRegistry {
     pub unsafe fn bundleForSuite(&self, suiteName: &NSString) -> Option<Id<NSBundle, Shared>> {
         msg_send_id![self, bundleForSuite: suiteName]
     }
-    pub unsafe fn classDescriptionsInSuite(&self, suiteName: &NSString) -> TodoGenerics {
-        msg_send![self, classDescriptionsInSuite: suiteName]
+    pub unsafe fn classDescriptionsInSuite(
+        &self,
+        suiteName: &NSString,
+    ) -> Option<Id<NSDictionary<NSString, NSScriptClassDescription>, Shared>> {
+        msg_send_id![self, classDescriptionsInSuite: suiteName]
     }
-    pub unsafe fn commandDescriptionsInSuite(&self, suiteName: &NSString) -> TodoGenerics {
-        msg_send![self, commandDescriptionsInSuite: suiteName]
+    pub unsafe fn commandDescriptionsInSuite(
+        &self,
+        suiteName: &NSString,
+    ) -> Option<Id<NSDictionary<NSString, NSScriptCommandDescription>, Shared>> {
+        msg_send_id![self, commandDescriptionsInSuite: suiteName]
     }
     pub unsafe fn suiteForAppleEventCode(
         &self,
@@ -87,7 +93,7 @@ impl NSScriptSuiteRegistry {
     pub unsafe fn aeteResource(&self, languageName: &NSString) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, aeteResource: languageName]
     }
-    pub unsafe fn suiteNames(&self) -> TodoGenerics {
-        msg_send![self, suiteNames]
+    pub unsafe fn suiteNames(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, suiteNames]
     }
 }

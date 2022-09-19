@@ -20,29 +20,36 @@ extern_class!(
     }
 );
 impl NSHTTPCookie {
-    pub unsafe fn initWithProperties(&self, properties: TodoGenerics) -> Option<Id<Self, Shared>> {
+    pub unsafe fn initWithProperties(
+        &self,
+        properties: &NSDictionary<NSHTTPCookiePropertyKey, Object>,
+    ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithProperties: properties]
     }
     pub unsafe fn cookieWithProperties(
-        properties: TodoGenerics,
+        properties: &NSDictionary<NSHTTPCookiePropertyKey, Object>,
     ) -> Option<Id<NSHTTPCookie, Shared>> {
         msg_send_id![Self::class(), cookieWithProperties: properties]
     }
-    pub unsafe fn requestHeaderFieldsWithCookies(cookies: TodoGenerics) -> TodoGenerics {
-        msg_send![Self::class(), requestHeaderFieldsWithCookies: cookies]
+    pub unsafe fn requestHeaderFieldsWithCookies(
+        cookies: &NSArray<NSHTTPCookie>,
+    ) -> Id<NSDictionary<NSString, NSString>, Shared> {
+        msg_send_id![Self::class(), requestHeaderFieldsWithCookies: cookies]
     }
     pub unsafe fn cookiesWithResponseHeaderFields_forURL(
-        headerFields: TodoGenerics,
+        headerFields: &NSDictionary<NSString, NSString>,
         URL: &NSURL,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSArray<NSHTTPCookie>, Shared> {
+        msg_send_id![
             Self::class(),
             cookiesWithResponseHeaderFields: headerFields,
             forURL: URL
         ]
     }
-    pub unsafe fn properties(&self) -> TodoGenerics {
-        msg_send![self, properties]
+    pub unsafe fn properties(
+        &self,
+    ) -> Option<Id<NSDictionary<NSHTTPCookiePropertyKey, Object>, Shared>> {
+        msg_send_id![self, properties]
     }
     pub unsafe fn version(&self) -> NSUInteger {
         msg_send![self, version]
@@ -77,8 +84,8 @@ impl NSHTTPCookie {
     pub unsafe fn commentURL(&self) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, commentURL]
     }
-    pub unsafe fn portList(&self) -> TodoGenerics {
-        msg_send![self, portList]
+    pub unsafe fn portList(&self) -> Option<Id<NSArray<NSNumber>, Shared>> {
+        msg_send_id![self, portList]
     }
     pub unsafe fn sameSitePolicy(&self) -> Option<Id<NSHTTPCookieStringPolicy, Shared>> {
         msg_send_id![self, sameSitePolicy]

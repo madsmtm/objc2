@@ -44,8 +44,8 @@ impl<KeyType: Message, ObjectType: Message> NSMapTable<KeyType, ObjectType> {
     pub unsafe fn mapTableWithKeyOptions_valueOptions(
         keyOptions: NSPointerFunctionsOptions,
         valueOptions: NSPointerFunctionsOptions,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSMapTable<KeyType, ObjectType>, Shared> {
+        msg_send_id![
             Self::class(),
             mapTableWithKeyOptions: keyOptions,
             valueOptions: valueOptions
@@ -63,17 +63,17 @@ impl<KeyType: Message, ObjectType: Message> NSMapTable<KeyType, ObjectType> {
     pub unsafe fn mapTableWithWeakToWeakObjects() -> Id<Object, Shared> {
         msg_send_id![Self::class(), mapTableWithWeakToWeakObjects]
     }
-    pub unsafe fn strongToStrongObjectsMapTable() -> TodoGenerics {
-        msg_send![Self::class(), strongToStrongObjectsMapTable]
+    pub unsafe fn strongToStrongObjectsMapTable() -> Id<NSMapTable<KeyType, ObjectType>, Shared> {
+        msg_send_id![Self::class(), strongToStrongObjectsMapTable]
     }
-    pub unsafe fn weakToStrongObjectsMapTable() -> TodoGenerics {
-        msg_send![Self::class(), weakToStrongObjectsMapTable]
+    pub unsafe fn weakToStrongObjectsMapTable() -> Id<NSMapTable<KeyType, ObjectType>, Shared> {
+        msg_send_id![Self::class(), weakToStrongObjectsMapTable]
     }
-    pub unsafe fn strongToWeakObjectsMapTable() -> TodoGenerics {
-        msg_send![Self::class(), strongToWeakObjectsMapTable]
+    pub unsafe fn strongToWeakObjectsMapTable() -> Id<NSMapTable<KeyType, ObjectType>, Shared> {
+        msg_send_id![Self::class(), strongToWeakObjectsMapTable]
     }
-    pub unsafe fn weakToWeakObjectsMapTable() -> TodoGenerics {
-        msg_send![Self::class(), weakToWeakObjectsMapTable]
+    pub unsafe fn weakToWeakObjectsMapTable() -> Id<NSMapTable<KeyType, ObjectType>, Shared> {
+        msg_send_id![Self::class(), weakToWeakObjectsMapTable]
     }
     pub unsafe fn objectForKey(&self, aKey: Option<&KeyType>) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, objectForKey: aKey]
@@ -84,17 +84,17 @@ impl<KeyType: Message, ObjectType: Message> NSMapTable<KeyType, ObjectType> {
     pub unsafe fn setObject_forKey(&self, anObject: Option<&ObjectType>, aKey: Option<&KeyType>) {
         msg_send![self, setObject: anObject, forKey: aKey]
     }
-    pub unsafe fn keyEnumerator(&self) -> TodoGenerics {
-        msg_send![self, keyEnumerator]
+    pub unsafe fn keyEnumerator(&self) -> Id<NSEnumerator<KeyType>, Shared> {
+        msg_send_id![self, keyEnumerator]
     }
-    pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
-        msg_send![self, objectEnumerator]
+    pub unsafe fn objectEnumerator(&self) -> Option<Id<NSEnumerator<ObjectType>, Shared>> {
+        msg_send_id![self, objectEnumerator]
     }
     pub unsafe fn removeAllObjects(&self) {
         msg_send![self, removeAllObjects]
     }
-    pub unsafe fn dictionaryRepresentation(&self) -> TodoGenerics {
-        msg_send![self, dictionaryRepresentation]
+    pub unsafe fn dictionaryRepresentation(&self) -> Id<NSDictionary<KeyType, ObjectType>, Shared> {
+        msg_send_id![self, dictionaryRepresentation]
     }
     pub unsafe fn keyPointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
         msg_send_id![self, keyPointerFunctions]

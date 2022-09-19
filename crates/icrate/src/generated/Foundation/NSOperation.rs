@@ -53,8 +53,8 @@ impl NSOperation {
     pub unsafe fn isReady(&self) -> bool {
         msg_send![self, isReady]
     }
-    pub unsafe fn dependencies(&self) -> TodoGenerics {
-        msg_send![self, dependencies]
+    pub unsafe fn dependencies(&self) -> Id<NSArray<NSOperation>, Shared> {
+        msg_send_id![self, dependencies]
     }
     pub unsafe fn queuePriority(&self) -> NSOperationQueuePriority {
         msg_send![self, queuePriority]
@@ -101,8 +101,8 @@ impl NSBlockOperation {
     pub unsafe fn addExecutionBlock(&self, block: TodoBlock) {
         msg_send![self, addExecutionBlock: block]
     }
-    pub unsafe fn executionBlocks(&self) -> TodoGenerics {
-        msg_send![self, executionBlocks]
+    pub unsafe fn executionBlocks(&self) -> Id<NSArray<TodoTypedef>, Shared> {
+        msg_send_id![self, executionBlocks]
     }
 }
 extern_class!(
@@ -142,7 +142,7 @@ impl NSOperationQueue {
     pub unsafe fn addOperation(&self, op: &NSOperation) {
         msg_send![self, addOperation: op]
     }
-    pub unsafe fn addOperations_waitUntilFinished(&self, ops: TodoGenerics, wait: bool) {
+    pub unsafe fn addOperations_waitUntilFinished(&self, ops: &NSArray<NSOperation>, wait: bool) {
         msg_send![self, addOperations: ops, waitUntilFinished: wait]
     }
     pub unsafe fn addOperationWithBlock(&self, block: TodoBlock) {
@@ -202,8 +202,8 @@ impl NSOperationQueue {
 }
 #[doc = "NSDeprecated"]
 impl NSOperationQueue {
-    pub unsafe fn operations(&self) -> TodoGenerics {
-        msg_send![self, operations]
+    pub unsafe fn operations(&self) -> Id<NSArray<TodoTypedef>, Shared> {
+        msg_send_id![self, operations]
     }
     pub unsafe fn operationCount(&self) -> NSUInteger {
         msg_send![self, operationCount]

@@ -13,7 +13,9 @@ extern_class!(
     }
 );
 impl NSListFormatter {
-    pub unsafe fn localizedStringByJoiningStrings(strings: TodoGenerics) -> Id<NSString, Shared> {
+    pub unsafe fn localizedStringByJoiningStrings(
+        strings: &NSArray<NSString>,
+    ) -> Id<NSString, Shared> {
         msg_send_id![Self::class(), localizedStringByJoiningStrings: strings]
     }
     pub unsafe fn stringFromItems(&self, items: &NSArray) -> Option<Id<NSString, Shared>> {

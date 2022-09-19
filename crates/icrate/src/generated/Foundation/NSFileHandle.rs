@@ -127,25 +127,34 @@ impl NSFileHandle {
 }
 #[doc = "NSFileHandleAsynchronousAccess"]
 impl NSFileHandle {
-    pub unsafe fn readInBackgroundAndNotifyForModes(&self, modes: TodoGenerics) {
+    pub unsafe fn readInBackgroundAndNotifyForModes(&self, modes: Option<&NSArray<NSRunLoopMode>>) {
         msg_send![self, readInBackgroundAndNotifyForModes: modes]
     }
     pub unsafe fn readInBackgroundAndNotify(&self) {
         msg_send![self, readInBackgroundAndNotify]
     }
-    pub unsafe fn readToEndOfFileInBackgroundAndNotifyForModes(&self, modes: TodoGenerics) {
+    pub unsafe fn readToEndOfFileInBackgroundAndNotifyForModes(
+        &self,
+        modes: Option<&NSArray<NSRunLoopMode>>,
+    ) {
         msg_send![self, readToEndOfFileInBackgroundAndNotifyForModes: modes]
     }
     pub unsafe fn readToEndOfFileInBackgroundAndNotify(&self) {
         msg_send![self, readToEndOfFileInBackgroundAndNotify]
     }
-    pub unsafe fn acceptConnectionInBackgroundAndNotifyForModes(&self, modes: TodoGenerics) {
+    pub unsafe fn acceptConnectionInBackgroundAndNotifyForModes(
+        &self,
+        modes: Option<&NSArray<NSRunLoopMode>>,
+    ) {
         msg_send![self, acceptConnectionInBackgroundAndNotifyForModes: modes]
     }
     pub unsafe fn acceptConnectionInBackgroundAndNotify(&self) {
         msg_send![self, acceptConnectionInBackgroundAndNotify]
     }
-    pub unsafe fn waitForDataInBackgroundAndNotifyForModes(&self, modes: TodoGenerics) {
+    pub unsafe fn waitForDataInBackgroundAndNotifyForModes(
+        &self,
+        modes: Option<&NSArray<NSRunLoopMode>>,
+    ) {
         msg_send![self, waitForDataInBackgroundAndNotifyForModes: modes]
     }
     pub unsafe fn waitForDataInBackgroundAndNotify(&self) {

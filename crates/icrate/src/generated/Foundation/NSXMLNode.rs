@@ -52,8 +52,8 @@ impl NSXMLNode {
     }
     pub unsafe fn elementWithName_children_attributes(
         name: &NSString,
-        children: TodoGenerics,
-        attributes: TodoGenerics,
+        children: Option<&NSArray<NSXMLNode>>,
+        attributes: Option<&NSArray<NSXMLNode>>,
     ) -> Id<Object, Shared> {
         msg_send_id![
             Self::class(),
@@ -144,13 +144,13 @@ impl NSXMLNode {
         &self,
         xpath: &NSString,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![self, nodesForXPath: xpath, error: error]
+    ) -> Option<Id<NSArray<TodoTypedef>, Shared>> {
+        msg_send_id![self, nodesForXPath: xpath, error: error]
     }
     pub unsafe fn objectsForXQuery_constants_error(
         &self,
         xquery: &NSString,
-        constants: TodoGenerics,
+        constants: Option<&NSDictionary<NSString, Object>>,
         error: *mut *mut NSError,
     ) -> Option<Id<NSArray, Shared>> {
         msg_send_id![
@@ -203,8 +203,8 @@ impl NSXMLNode {
     pub unsafe fn childCount(&self) -> NSUInteger {
         msg_send![self, childCount]
     }
-    pub unsafe fn children(&self) -> TodoGenerics {
-        msg_send![self, children]
+    pub unsafe fn children(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
+        msg_send_id![self, children]
     }
     pub unsafe fn previousSibling(&self) -> Option<Id<NSXMLNode, Shared>> {
         msg_send_id![self, previousSibling]

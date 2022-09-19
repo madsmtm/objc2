@@ -17,7 +17,7 @@ impl NSOrthography {
     pub unsafe fn initWithDominantScript_languageMap(
         &self,
         script: &NSString,
-        map: TodoGenerics,
+        map: &NSDictionary<NSString, NSArray>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithDominantScript: script, languageMap: map]
     }
@@ -27,14 +27,17 @@ impl NSOrthography {
     pub unsafe fn dominantScript(&self) -> Id<NSString, Shared> {
         msg_send_id![self, dominantScript]
     }
-    pub unsafe fn languageMap(&self) -> TodoGenerics {
-        msg_send![self, languageMap]
+    pub unsafe fn languageMap(&self) -> Id<NSDictionary<NSString, NSArray>, Shared> {
+        msg_send_id![self, languageMap]
     }
 }
 #[doc = "NSOrthographyExtended"]
 impl NSOrthography {
-    pub unsafe fn languagesForScript(&self, script: &NSString) -> TodoGenerics {
-        msg_send![self, languagesForScript: script]
+    pub unsafe fn languagesForScript(
+        &self,
+        script: &NSString,
+    ) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, languagesForScript: script]
     }
     pub unsafe fn dominantLanguageForScript(
         &self,
@@ -48,18 +51,18 @@ impl NSOrthography {
     pub unsafe fn dominantLanguage(&self) -> Id<NSString, Shared> {
         msg_send_id![self, dominantLanguage]
     }
-    pub unsafe fn allScripts(&self) -> TodoGenerics {
-        msg_send![self, allScripts]
+    pub unsafe fn allScripts(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, allScripts]
     }
-    pub unsafe fn allLanguages(&self) -> TodoGenerics {
-        msg_send![self, allLanguages]
+    pub unsafe fn allLanguages(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, allLanguages]
     }
 }
 #[doc = "NSOrthographyCreation"]
 impl NSOrthography {
     pub unsafe fn orthographyWithDominantScript_languageMap(
         script: &NSString,
-        map: TodoGenerics,
+        map: &NSDictionary<NSString, NSArray>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             Self::class(),

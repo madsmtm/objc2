@@ -29,8 +29,8 @@ impl NSValueTransformer {
     ) -> Option<Id<NSValueTransformer, Shared>> {
         msg_send_id![Self::class(), valueTransformerForName: name]
     }
-    pub unsafe fn valueTransformerNames() -> TodoGenerics {
-        msg_send![Self::class(), valueTransformerNames]
+    pub unsafe fn valueTransformerNames() -> Id<NSArray<NSValueTransformerName>, Shared> {
+        msg_send_id![Self::class(), valueTransformerNames]
     }
     pub unsafe fn transformedValueClass() -> &Class {
         msg_send![Self::class(), transformedValueClass]
@@ -56,7 +56,7 @@ extern_class!(
     }
 );
 impl NSSecureUnarchiveFromDataTransformer {
-    pub unsafe fn allowedTopLevelClasses() -> TodoGenerics {
-        msg_send![Self::class(), allowedTopLevelClasses]
+    pub unsafe fn allowedTopLevelClasses() -> Id<NSArray<TodoClass>, Shared> {
+        msg_send_id![Self::class(), allowedTopLevelClasses]
     }
 }

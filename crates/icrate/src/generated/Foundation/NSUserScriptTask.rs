@@ -43,7 +43,7 @@ extern_class!(
 impl NSUserUnixTask {
     pub unsafe fn executeWithArguments_completionHandler(
         &self,
-        arguments: TodoGenerics,
+        arguments: Option<&NSArray<NSString>>,
         handler: NSUserUnixTaskCompletionHandler,
     ) {
         msg_send![
@@ -101,15 +101,15 @@ extern_class!(
 impl NSUserAutomatorTask {
     pub unsafe fn executeWithInput_completionHandler(
         &self,
-        input: TodoGenerics,
+        input: Option<&id>,
         handler: NSUserAutomatorTaskCompletionHandler,
     ) {
         msg_send![self, executeWithInput: input, completionHandler: handler]
     }
-    pub unsafe fn variables(&self) -> TodoGenerics {
-        msg_send![self, variables]
+    pub unsafe fn variables(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, variables]
     }
-    pub unsafe fn setVariables(&self, variables: TodoGenerics) {
+    pub unsafe fn setVariables(&self, variables: Option<&NSDictionary<NSString, Object>>) {
         msg_send![self, setVariables: variables]
     }
 }

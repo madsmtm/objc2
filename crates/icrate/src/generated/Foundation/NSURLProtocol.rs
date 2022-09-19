@@ -26,7 +26,7 @@ impl NSURLProtocol {
         &self,
         request: &NSURLRequest,
         cachedResponse: Option<&NSCachedURLResponse>,
-        client: TodoGenerics,
+        client: Option<&id>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,
@@ -77,8 +77,8 @@ impl NSURLProtocol {
     pub unsafe fn unregisterClass(protocolClass: &Class) {
         msg_send![Self::class(), unregisterClass: protocolClass]
     }
-    pub unsafe fn client(&self) -> TodoGenerics {
-        msg_send![self, client]
+    pub unsafe fn client(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, client]
     }
     pub unsafe fn request(&self) -> Id<NSURLRequest, Shared> {
         msg_send_id![self, request]
@@ -96,7 +96,7 @@ impl NSURLProtocol {
         &self,
         task: &NSURLSessionTask,
         cachedResponse: Option<&NSCachedURLResponse>,
-        client: TodoGenerics,
+        client: Option<&id>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,

@@ -19,7 +19,7 @@ extern_class!(
 impl NSLinguisticTagger {
     pub unsafe fn initWithTagSchemes_options(
         &self,
-        tagSchemes: TodoGenerics,
+        tagSchemes: &NSArray<NSLinguisticTagScheme>,
         opts: NSUInteger,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithTagSchemes: tagSchemes, options: opts]
@@ -27,15 +27,17 @@ impl NSLinguisticTagger {
     pub unsafe fn availableTagSchemesForUnit_language(
         unit: NSLinguisticTaggerUnit,
         language: &NSString,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSArray<NSLinguisticTagScheme>, Shared> {
+        msg_send_id![
             Self::class(),
             availableTagSchemesForUnit: unit,
             language: language
         ]
     }
-    pub unsafe fn availableTagSchemesForLanguage(language: &NSString) -> TodoGenerics {
-        msg_send![Self::class(), availableTagSchemesForLanguage: language]
+    pub unsafe fn availableTagSchemesForLanguage(
+        language: &NSString,
+    ) -> Id<NSArray<NSLinguisticTagScheme>, Shared> {
+        msg_send_id![Self::class(), availableTagSchemesForLanguage: language]
     }
     pub unsafe fn setOrthography_range(&self, orthography: Option<&NSOrthography>, range: NSRange) {
         msg_send![self, setOrthography: orthography, range: range]
@@ -102,9 +104,9 @@ impl NSLinguisticTagger {
         unit: NSLinguisticTaggerUnit,
         scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
-        tokenRanges: *mut TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![
+        tokenRanges: *mut *mut NSArray,
+    ) -> Id<NSArray<NSLinguisticTag>, Shared> {
+        msg_send_id![
             self,
             tagsInRange: range,
             unit: unit,
@@ -148,9 +150,9 @@ impl NSLinguisticTagger {
         range: NSRange,
         tagScheme: &NSString,
         opts: NSLinguisticTaggerOptions,
-        tokenRanges: *mut TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![
+        tokenRanges: *mut *mut NSArray,
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![
             self,
             tagsInRange: range,
             scheme: tagScheme,
@@ -186,9 +188,9 @@ impl NSLinguisticTagger {
         scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         orthography: Option<&NSOrthography>,
-        tokenRanges: *mut TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![
+        tokenRanges: *mut *mut NSArray,
+    ) -> Id<NSArray<NSLinguisticTag>, Shared> {
+        msg_send_id![
             Self::class(),
             tagsForString: string,
             range: range,
@@ -225,9 +227,9 @@ impl NSLinguisticTagger {
         tagScheme: &NSString,
         tokenRange: NSRangePointer,
         sentenceRange: NSRangePointer,
-        scores: *mut TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![
+        scores: *mut *mut NSArray,
+    ) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![
             self,
             possibleTagsAtIndex: charIndex,
             scheme: tagScheme,
@@ -236,8 +238,8 @@ impl NSLinguisticTagger {
             scores: scores
         ]
     }
-    pub unsafe fn tagSchemes(&self) -> TodoGenerics {
-        msg_send![self, tagSchemes]
+    pub unsafe fn tagSchemes(&self) -> Id<NSArray<NSLinguisticTagScheme>, Shared> {
+        msg_send_id![self, tagSchemes]
     }
     pub unsafe fn string(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, string]
@@ -257,9 +259,9 @@ impl NSString {
         scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         orthography: Option<&NSOrthography>,
-        tokenRanges: *mut TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![
+        tokenRanges: *mut *mut NSArray,
+    ) -> Id<NSArray<NSLinguisticTag>, Shared> {
+        msg_send_id![
             self,
             linguisticTagsInRange: range,
             scheme: scheme,

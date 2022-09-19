@@ -39,16 +39,16 @@ impl NSTask {
     pub unsafe fn setExecutableURL(&self, executableURL: Option<&NSURL>) {
         msg_send![self, setExecutableURL: executableURL]
     }
-    pub unsafe fn arguments(&self) -> TodoGenerics {
-        msg_send![self, arguments]
+    pub unsafe fn arguments(&self) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, arguments]
     }
-    pub unsafe fn setArguments(&self, arguments: TodoGenerics) {
+    pub unsafe fn setArguments(&self, arguments: Option<&NSArray<NSString>>) {
         msg_send![self, setArguments: arguments]
     }
-    pub unsafe fn environment(&self) -> TodoGenerics {
-        msg_send![self, environment]
+    pub unsafe fn environment(&self) -> Option<Id<NSDictionary<NSString, NSString>, Shared>> {
+        msg_send_id![self, environment]
     }
-    pub unsafe fn setEnvironment(&self, environment: TodoGenerics) {
+    pub unsafe fn setEnvironment(&self, environment: Option<&NSDictionary<NSString, NSString>>) {
         msg_send![self, setEnvironment: environment]
     }
     pub unsafe fn currentDirectoryURL(&self) -> Option<Id<NSURL, Shared>> {
@@ -104,7 +104,7 @@ impl NSTask {
 impl NSTask {
     pub unsafe fn launchedTaskWithExecutableURL_arguments_error_terminationHandler(
         url: &NSURL,
-        arguments: TodoGenerics,
+        arguments: &NSArray<NSString>,
         error: *mut *mut NSError,
         terminationHandler: TodoBlock,
     ) -> Option<Id<NSTask, Shared>> {
@@ -127,7 +127,7 @@ impl NSTask {
     }
     pub unsafe fn launchedTaskWithLaunchPath_arguments(
         path: &NSString,
-        arguments: TodoGenerics,
+        arguments: &NSArray<NSString>,
     ) -> Id<NSTask, Shared> {
         msg_send_id![
             Self::class(),

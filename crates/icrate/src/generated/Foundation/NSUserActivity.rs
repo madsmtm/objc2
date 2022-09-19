@@ -47,7 +47,7 @@ impl NSUserActivity {
         ]
     }
     pub unsafe fn deleteSavedUserActivitiesWithPersistentIdentifiers_completionHandler(
-        persistentIdentifiers: TodoGenerics,
+        persistentIdentifiers: &NSArray<NSUserActivityPersistentIdentifier>,
         handler: TodoBlock,
     ) {
         msg_send![
@@ -77,10 +77,10 @@ impl NSUserActivity {
     pub unsafe fn setUserInfo(&self, userInfo: Option<&NSDictionary>) {
         msg_send![self, setUserInfo: userInfo]
     }
-    pub unsafe fn requiredUserInfoKeys(&self) -> TodoGenerics {
-        msg_send![self, requiredUserInfoKeys]
+    pub unsafe fn requiredUserInfoKeys(&self) -> Option<Id<NSSet<NSString>, Shared>> {
+        msg_send_id![self, requiredUserInfoKeys]
     }
-    pub unsafe fn setRequiredUserInfoKeys(&self, requiredUserInfoKeys: TodoGenerics) {
+    pub unsafe fn setRequiredUserInfoKeys(&self, requiredUserInfoKeys: Option<&NSSet<NSString>>) {
         msg_send![self, setRequiredUserInfoKeys: requiredUserInfoKeys]
     }
     pub unsafe fn needsSave(&self) -> bool {
@@ -107,10 +107,10 @@ impl NSUserActivity {
     pub unsafe fn setExpirationDate(&self, expirationDate: Option<&NSDate>) {
         msg_send![self, setExpirationDate: expirationDate]
     }
-    pub unsafe fn keywords(&self) -> TodoGenerics {
-        msg_send![self, keywords]
+    pub unsafe fn keywords(&self) -> Id<NSSet<NSString>, Shared> {
+        msg_send_id![self, keywords]
     }
-    pub unsafe fn setKeywords(&self, keywords: TodoGenerics) {
+    pub unsafe fn setKeywords(&self, keywords: &NSSet<NSString>) {
         msg_send![self, setKeywords: keywords]
     }
     pub unsafe fn supportsContinuationStreams(&self) -> bool {
@@ -122,10 +122,10 @@ impl NSUserActivity {
             setSupportsContinuationStreams: supportsContinuationStreams
         ]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn targetContentIdentifier(&self) -> Option<Id<NSString, Shared>> {

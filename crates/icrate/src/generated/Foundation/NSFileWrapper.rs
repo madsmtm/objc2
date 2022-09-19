@@ -26,7 +26,7 @@ impl NSFileWrapper {
     }
     pub unsafe fn initDirectoryWithFileWrappers(
         &self,
-        childrenByPreferredName: TodoGenerics,
+        childrenByPreferredName: &NSDictionary<NSString, NSFileWrapper>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initDirectoryWithFileWrappers: childrenByPreferredName]
     }
@@ -115,17 +115,17 @@ impl NSFileWrapper {
     pub unsafe fn setFilename(&self, filename: Option<&NSString>) {
         msg_send![self, setFilename: filename]
     }
-    pub unsafe fn fileAttributes(&self) -> TodoGenerics {
-        msg_send![self, fileAttributes]
+    pub unsafe fn fileAttributes(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
+        msg_send_id![self, fileAttributes]
     }
-    pub unsafe fn setFileAttributes(&self, fileAttributes: TodoGenerics) {
+    pub unsafe fn setFileAttributes(&self, fileAttributes: &NSDictionary<NSString, Object>) {
         msg_send![self, setFileAttributes: fileAttributes]
     }
     pub unsafe fn serializedRepresentation(&self) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, serializedRepresentation]
     }
-    pub unsafe fn fileWrappers(&self) -> TodoGenerics {
-        msg_send![self, fileWrappers]
+    pub unsafe fn fileWrappers(&self) -> Option<Id<NSDictionary<NSString, NSFileWrapper>, Shared>> {
+        msg_send_id![self, fileWrappers]
     }
     pub unsafe fn regularFileContents(&self) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, regularFileContents]

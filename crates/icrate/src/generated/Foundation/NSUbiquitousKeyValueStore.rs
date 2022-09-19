@@ -31,8 +31,11 @@ impl NSUbiquitousKeyValueStore {
     pub unsafe fn arrayForKey(&self, aKey: &NSString) -> Option<Id<NSArray, Shared>> {
         msg_send_id![self, arrayForKey: aKey]
     }
-    pub unsafe fn dictionaryForKey(&self, aKey: &NSString) -> TodoGenerics {
-        msg_send![self, dictionaryForKey: aKey]
+    pub unsafe fn dictionaryForKey(
+        &self,
+        aKey: &NSString,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, dictionaryForKey: aKey]
     }
     pub unsafe fn dataForKey(&self, aKey: &NSString) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, dataForKey: aKey]
@@ -55,7 +58,11 @@ impl NSUbiquitousKeyValueStore {
     pub unsafe fn setArray_forKey(&self, anArray: Option<&NSArray>, aKey: &NSString) {
         msg_send![self, setArray: anArray, forKey: aKey]
     }
-    pub unsafe fn setDictionary_forKey(&self, aDictionary: TodoGenerics, aKey: &NSString) {
+    pub unsafe fn setDictionary_forKey(
+        &self,
+        aDictionary: Option<&NSDictionary<NSString, Object>>,
+        aKey: &NSString,
+    ) {
         msg_send![self, setDictionary: aDictionary, forKey: aKey]
     }
     pub unsafe fn setLongLong_forKey(&self, value: c_longlong, aKey: &NSString) {
@@ -73,7 +80,7 @@ impl NSUbiquitousKeyValueStore {
     pub unsafe fn defaultStore() -> Id<NSUbiquitousKeyValueStore, Shared> {
         msg_send_id![Self::class(), defaultStore]
     }
-    pub unsafe fn dictionaryRepresentation(&self) -> TodoGenerics {
-        msg_send![self, dictionaryRepresentation]
+    pub unsafe fn dictionaryRepresentation(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
+        msg_send_id![self, dictionaryRepresentation]
     }
 }

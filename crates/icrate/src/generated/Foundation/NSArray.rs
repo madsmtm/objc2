@@ -41,11 +41,17 @@ impl<ObjectType: Message> NSArray<ObjectType> {
 }
 #[doc = "NSExtendedArray"]
 impl<ObjectType: Message> NSArray<ObjectType> {
-    pub unsafe fn arrayByAddingObject(&self, anObject: &ObjectType) -> TodoGenerics {
-        msg_send![self, arrayByAddingObject: anObject]
+    pub unsafe fn arrayByAddingObject(
+        &self,
+        anObject: &ObjectType,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, arrayByAddingObject: anObject]
     }
-    pub unsafe fn arrayByAddingObjectsFromArray(&self, otherArray: TodoGenerics) -> TodoGenerics {
-        msg_send![self, arrayByAddingObjectsFromArray: otherArray]
+    pub unsafe fn arrayByAddingObjectsFromArray(
+        &self,
+        otherArray: &NSArray<ObjectType>,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, arrayByAddingObjectsFromArray: otherArray]
     }
     pub unsafe fn componentsJoinedByString(&self, separator: &NSString) -> Id<NSString, Shared> {
         msg_send_id![self, componentsJoinedByString: separator]
@@ -65,7 +71,7 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     }
     pub unsafe fn firstObjectCommonWithArray(
         &self,
-        otherArray: TodoGenerics,
+        otherArray: &NSArray<ObjectType>,
     ) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, firstObjectCommonWithArray: otherArray]
     }
@@ -92,40 +98,43 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     ) -> NSUInteger {
         msg_send![self, indexOfObjectIdenticalTo: anObject, inRange: range]
     }
-    pub unsafe fn isEqualToArray(&self, otherArray: TodoGenerics) -> bool {
+    pub unsafe fn isEqualToArray(&self, otherArray: &NSArray<ObjectType>) -> bool {
         msg_send![self, isEqualToArray: otherArray]
     }
-    pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
-        msg_send![self, objectEnumerator]
+    pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
+        msg_send_id![self, objectEnumerator]
     }
-    pub unsafe fn reverseObjectEnumerator(&self) -> TodoGenerics {
-        msg_send![self, reverseObjectEnumerator]
+    pub unsafe fn reverseObjectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
+        msg_send_id![self, reverseObjectEnumerator]
     }
     pub unsafe fn sortedArrayUsingFunction_context(
         &self,
         comparator: NonNull<TodoFunction>,
         context: *mut c_void,
-    ) -> TodoGenerics {
-        msg_send![self, sortedArrayUsingFunction: comparator, context: context]
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayUsingFunction: comparator, context: context]
     }
     pub unsafe fn sortedArrayUsingFunction_context_hint(
         &self,
         comparator: NonNull<TodoFunction>,
         context: *mut c_void,
         hint: Option<&NSData>,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![
             self,
             sortedArrayUsingFunction: comparator,
             context: context,
             hint: hint
         ]
     }
-    pub unsafe fn sortedArrayUsingSelector(&self, comparator: Sel) -> TodoGenerics {
-        msg_send![self, sortedArrayUsingSelector: comparator]
+    pub unsafe fn sortedArrayUsingSelector(
+        &self,
+        comparator: Sel,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayUsingSelector: comparator]
     }
-    pub unsafe fn subarrayWithRange(&self, range: NSRange) -> TodoGenerics {
-        msg_send![self, subarrayWithRange: range]
+    pub unsafe fn subarrayWithRange(&self, range: NSRange) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, subarrayWithRange: range]
     }
     pub unsafe fn writeToURL_error(&self, url: &NSURL, error: *mut *mut NSError) -> bool {
         msg_send![self, writeToURL: url, error: error]
@@ -144,8 +153,8 @@ impl<ObjectType: Message> NSArray<ObjectType> {
             withObject: argument
         ]
     }
-    pub unsafe fn objectsAtIndexes(&self, indexes: &NSIndexSet) -> TodoGenerics {
-        msg_send![self, objectsAtIndexes: indexes]
+    pub unsafe fn objectsAtIndexes(&self, indexes: &NSIndexSet) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, objectsAtIndexes: indexes]
     }
     pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> Id<ObjectType, Shared> {
         msg_send_id![self, objectAtIndexedSubscript: idx]
@@ -226,15 +235,18 @@ impl<ObjectType: Message> NSArray<ObjectType> {
             passingTest: predicate
         ]
     }
-    pub unsafe fn sortedArrayUsingComparator(&self, cmptr: NSComparator) -> TodoGenerics {
-        msg_send![self, sortedArrayUsingComparator: cmptr]
+    pub unsafe fn sortedArrayUsingComparator(
+        &self,
+        cmptr: NSComparator,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayUsingComparator: cmptr]
     }
     pub unsafe fn sortedArrayWithOptions_usingComparator(
         &self,
         opts: NSSortOptions,
         cmptr: NSComparator,
-    ) -> TodoGenerics {
-        msg_send![self, sortedArrayWithOptions: opts, usingComparator: cmptr]
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayWithOptions: opts, usingComparator: cmptr]
     }
     pub unsafe fn indexOfObject_inSortedRange_options_usingComparator(
         &self,
@@ -275,15 +287,15 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn arrayWithObjects_count(objects: TodoArray, cnt: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![Self::class(), arrayWithObjects: objects, count: cnt]
     }
-    pub unsafe fn arrayWithArray(array: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn arrayWithArray(array: &NSArray<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![Self::class(), arrayWithArray: array]
     }
-    pub unsafe fn initWithArray(&self, array: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithArray(&self, array: &NSArray<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![self, initWithArray: array]
     }
     pub unsafe fn initWithArray_copyItems(
         &self,
-        array: TodoGenerics,
+        array: &NSArray<ObjectType>,
         flag: bool,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithArray: array, copyItems: flag]
@@ -292,25 +304,25 @@ impl<ObjectType: Message> NSArray<ObjectType> {
         &self,
         url: &NSURL,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![self, initWithContentsOfURL: url, error: error]
+    ) -> Option<Id<NSArray<ObjectType>, Shared>> {
+        msg_send_id![self, initWithContentsOfURL: url, error: error]
     }
     pub unsafe fn arrayWithContentsOfURL_error(
         url: &NSURL,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![Self::class(), arrayWithContentsOfURL: url, error: error]
+    ) -> Option<Id<NSArray<ObjectType>, Shared>> {
+        msg_send_id![Self::class(), arrayWithContentsOfURL: url, error: error]
     }
 }
 #[doc = "NSArrayDiffing"]
 impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn differenceFromArray_withOptions_usingEquivalenceTest(
         &self,
-        other: TodoGenerics,
+        other: &NSArray<ObjectType>,
         options: NSOrderedCollectionDifferenceCalculationOptions,
         block: TodoBlock,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared> {
+        msg_send_id![
             self,
             differenceFromArray: other,
             withOptions: options,
@@ -319,16 +331,22 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     }
     pub unsafe fn differenceFromArray_withOptions(
         &self,
-        other: TodoGenerics,
+        other: &NSArray<ObjectType>,
         options: NSOrderedCollectionDifferenceCalculationOptions,
-    ) -> TodoGenerics {
-        msg_send![self, differenceFromArray: other, withOptions: options]
+    ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared> {
+        msg_send_id![self, differenceFromArray: other, withOptions: options]
     }
-    pub unsafe fn differenceFromArray(&self, other: TodoGenerics) -> TodoGenerics {
-        msg_send![self, differenceFromArray: other]
+    pub unsafe fn differenceFromArray(
+        &self,
+        other: &NSArray<ObjectType>,
+    ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared> {
+        msg_send_id![self, differenceFromArray: other]
     }
-    pub unsafe fn arrayByApplyingDifference(&self, difference: TodoGenerics) -> TodoGenerics {
-        msg_send![self, arrayByApplyingDifference: difference]
+    pub unsafe fn arrayByApplyingDifference(
+        &self,
+        difference: &NSOrderedCollectionDifference<ObjectType>,
+    ) -> Option<Id<NSArray<ObjectType>, Shared>> {
+        msg_send_id![self, arrayByApplyingDifference: difference]
     }
 }
 #[doc = "NSDeprecated"]
@@ -336,17 +354,25 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn getObjects(&self, objects: TodoArray) {
         msg_send![self, getObjects: objects]
     }
-    pub unsafe fn arrayWithContentsOfFile(path: &NSString) -> TodoGenerics {
-        msg_send![Self::class(), arrayWithContentsOfFile: path]
+    pub unsafe fn arrayWithContentsOfFile(
+        path: &NSString,
+    ) -> Option<Id<NSArray<ObjectType>, Shared>> {
+        msg_send_id![Self::class(), arrayWithContentsOfFile: path]
     }
-    pub unsafe fn arrayWithContentsOfURL(url: &NSURL) -> TodoGenerics {
-        msg_send![Self::class(), arrayWithContentsOfURL: url]
+    pub unsafe fn arrayWithContentsOfURL(url: &NSURL) -> Option<Id<NSArray<ObjectType>, Shared>> {
+        msg_send_id![Self::class(), arrayWithContentsOfURL: url]
     }
-    pub unsafe fn initWithContentsOfFile(&self, path: &NSString) -> TodoGenerics {
-        msg_send![self, initWithContentsOfFile: path]
+    pub unsafe fn initWithContentsOfFile(
+        &self,
+        path: &NSString,
+    ) -> Option<Id<NSArray<ObjectType>, Shared>> {
+        msg_send_id![self, initWithContentsOfFile: path]
     }
-    pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> TodoGenerics {
-        msg_send![self, initWithContentsOfURL: url]
+    pub unsafe fn initWithContentsOfURL(
+        &self,
+        url: &NSURL,
+    ) -> Option<Id<NSArray<ObjectType>, Shared>> {
+        msg_send_id![self, initWithContentsOfURL: url]
     }
     pub unsafe fn writeToFile_atomically(&self, path: &NSString, useAuxiliaryFile: bool) -> bool {
         msg_send![self, writeToFile: path, atomically: useAuxiliaryFile]
@@ -390,7 +416,7 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
 }
 #[doc = "NSExtendedMutableArray"]
 impl<ObjectType: Message> NSMutableArray<ObjectType> {
-    pub unsafe fn addObjectsFromArray(&self, otherArray: TodoGenerics) {
+    pub unsafe fn addObjectsFromArray(&self, otherArray: &NSArray<ObjectType>) {
         msg_send![self, addObjectsFromArray: otherArray]
     }
     pub unsafe fn exchangeObjectAtIndex_withObjectAtIndex(
@@ -422,7 +448,7 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
     ) {
         msg_send![self, removeObjectsFromIndices: indices, numIndices: cnt]
     }
-    pub unsafe fn removeObjectsInArray(&self, otherArray: TodoGenerics) {
+    pub unsafe fn removeObjectsInArray(&self, otherArray: &NSArray<ObjectType>) {
         msg_send![self, removeObjectsInArray: otherArray]
     }
     pub unsafe fn removeObjectsInRange(&self, range: NSRange) {
@@ -431,7 +457,7 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn replaceObjectsInRange_withObjectsFromArray_range(
         &self,
         range: NSRange,
-        otherArray: TodoGenerics,
+        otherArray: &NSArray<ObjectType>,
         otherRange: NSRange,
     ) {
         msg_send![
@@ -444,7 +470,7 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn replaceObjectsInRange_withObjectsFromArray(
         &self,
         range: NSRange,
-        otherArray: TodoGenerics,
+        otherArray: &NSArray<ObjectType>,
     ) {
         msg_send![
             self,
@@ -452,7 +478,7 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
             withObjectsFromArray: otherArray
         ]
     }
-    pub unsafe fn setArray(&self, otherArray: TodoGenerics) {
+    pub unsafe fn setArray(&self, otherArray: &NSArray<ObjectType>) {
         msg_send![self, setArray: otherArray]
     }
     pub unsafe fn sortUsingFunction_context(
@@ -465,7 +491,11 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn sortUsingSelector(&self, comparator: Sel) {
         msg_send![self, sortUsingSelector: comparator]
     }
-    pub unsafe fn insertObjects_atIndexes(&self, objects: TodoGenerics, indexes: &NSIndexSet) {
+    pub unsafe fn insertObjects_atIndexes(
+        &self,
+        objects: &NSArray<ObjectType>,
+        indexes: &NSIndexSet,
+    ) {
         msg_send![self, insertObjects: objects, atIndexes: indexes]
     }
     pub unsafe fn removeObjectsAtIndexes(&self, indexes: &NSIndexSet) {
@@ -474,7 +504,7 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn replaceObjectsAtIndexes_withObjects(
         &self,
         indexes: &NSIndexSet,
-        objects: TodoGenerics,
+        objects: &NSArray<ObjectType>,
     ) {
         msg_send![self, replaceObjectsAtIndexes: indexes, withObjects: objects]
     }
@@ -493,22 +523,32 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn arrayWithCapacity(numItems: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![Self::class(), arrayWithCapacity: numItems]
     }
-    pub unsafe fn arrayWithContentsOfFile(path: &NSString) -> TodoGenerics {
-        msg_send![Self::class(), arrayWithContentsOfFile: path]
+    pub unsafe fn arrayWithContentsOfFile(
+        path: &NSString,
+    ) -> Option<Id<NSMutableArray<ObjectType>, Shared>> {
+        msg_send_id![Self::class(), arrayWithContentsOfFile: path]
     }
-    pub unsafe fn arrayWithContentsOfURL(url: &NSURL) -> TodoGenerics {
-        msg_send![Self::class(), arrayWithContentsOfURL: url]
+    pub unsafe fn arrayWithContentsOfURL(
+        url: &NSURL,
+    ) -> Option<Id<NSMutableArray<ObjectType>, Shared>> {
+        msg_send_id![Self::class(), arrayWithContentsOfURL: url]
     }
-    pub unsafe fn initWithContentsOfFile(&self, path: &NSString) -> TodoGenerics {
-        msg_send![self, initWithContentsOfFile: path]
+    pub unsafe fn initWithContentsOfFile(
+        &self,
+        path: &NSString,
+    ) -> Option<Id<NSMutableArray<ObjectType>, Shared>> {
+        msg_send_id![self, initWithContentsOfFile: path]
     }
-    pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> TodoGenerics {
-        msg_send![self, initWithContentsOfURL: url]
+    pub unsafe fn initWithContentsOfURL(
+        &self,
+        url: &NSURL,
+    ) -> Option<Id<NSMutableArray<ObjectType>, Shared>> {
+        msg_send_id![self, initWithContentsOfURL: url]
     }
 }
 #[doc = "NSMutableArrayDiffing"]
 impl<ObjectType: Message> NSMutableArray<ObjectType> {
-    pub unsafe fn applyDifference(&self, difference: TodoGenerics) {
+    pub unsafe fn applyDifference(&self, difference: &NSOrderedCollectionDifference<ObjectType>) {
         msg_send![self, applyDifference: difference]
     }
 }

@@ -40,14 +40,14 @@ impl NSClassDescription {
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, inverseForRelationshipKey: relationshipKey]
     }
-    pub unsafe fn attributeKeys(&self) -> TodoGenerics {
-        msg_send![self, attributeKeys]
+    pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, attributeKeys]
     }
-    pub unsafe fn toOneRelationshipKeys(&self) -> TodoGenerics {
-        msg_send![self, toOneRelationshipKeys]
+    pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, toOneRelationshipKeys]
     }
-    pub unsafe fn toManyRelationshipKeys(&self) -> TodoGenerics {
-        msg_send![self, toManyRelationshipKeys]
+    pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, toManyRelationshipKeys]
     }
 }
 #[doc = "NSClassDescriptionPrimitives"]
@@ -61,13 +61,13 @@ impl NSObject {
     pub unsafe fn classDescription(&self) -> Id<NSClassDescription, Shared> {
         msg_send_id![self, classDescription]
     }
-    pub unsafe fn attributeKeys(&self) -> TodoGenerics {
-        msg_send![self, attributeKeys]
+    pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, attributeKeys]
     }
-    pub unsafe fn toOneRelationshipKeys(&self) -> TodoGenerics {
-        msg_send![self, toOneRelationshipKeys]
+    pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, toOneRelationshipKeys]
     }
-    pub unsafe fn toManyRelationshipKeys(&self) -> TodoGenerics {
-        msg_send![self, toManyRelationshipKeys]
+    pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, toManyRelationshipKeys]
     }
 }

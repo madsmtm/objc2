@@ -57,10 +57,14 @@ impl NSNetService {
     pub unsafe fn stop(&self) {
         msg_send![self, stop]
     }
-    pub unsafe fn dictionaryFromTXTRecordData(txtData: &NSData) -> TodoGenerics {
-        msg_send![Self::class(), dictionaryFromTXTRecordData: txtData]
+    pub unsafe fn dictionaryFromTXTRecordData(
+        txtData: &NSData,
+    ) -> Id<NSDictionary<NSString, NSData>, Shared> {
+        msg_send_id![Self::class(), dictionaryFromTXTRecordData: txtData]
     }
-    pub unsafe fn dataFromTXTRecordDictionary(txtDictionary: TodoGenerics) -> Id<NSData, Shared> {
+    pub unsafe fn dataFromTXTRecordDictionary(
+        txtDictionary: &NSDictionary<NSString, NSData>,
+    ) -> Id<NSData, Shared> {
         msg_send_id![Self::class(), dataFromTXTRecordDictionary: txtDictionary]
     }
     pub unsafe fn resolveWithTimeout(&self, timeout: NSTimeInterval) {
@@ -89,10 +93,10 @@ impl NSNetService {
     pub unsafe fn stopMonitoring(&self) {
         msg_send![self, stopMonitoring]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn includesPeerToPeer(&self) -> bool {
@@ -113,8 +117,8 @@ impl NSNetService {
     pub unsafe fn hostName(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, hostName]
     }
-    pub unsafe fn addresses(&self) -> TodoGenerics {
-        msg_send![self, addresses]
+    pub unsafe fn addresses(&self) -> Option<Id<NSArray<NSData>, Shared>> {
+        msg_send_id![self, addresses]
     }
     pub unsafe fn port(&self) -> NSInteger {
         msg_send![self, port]
@@ -153,10 +157,10 @@ impl NSNetServiceBrowser {
     pub unsafe fn stop(&self) {
         msg_send![self, stop]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn includesPeerToPeer(&self) -> bool {

@@ -21,8 +21,8 @@ impl NSURLCredentialStorage {
     pub unsafe fn credentialsForProtectionSpace(
         &self,
         space: &NSURLProtectionSpace,
-    ) -> TodoGenerics {
-        msg_send![self, credentialsForProtectionSpace: space]
+    ) -> Option<Id<NSDictionary<NSString, NSURLCredential>, Shared>> {
+        msg_send_id![self, credentialsForProtectionSpace: space]
     }
     pub unsafe fn setCredential_forProtectionSpace(
         &self,
@@ -46,7 +46,7 @@ impl NSURLCredentialStorage {
         &self,
         credential: &NSURLCredential,
         space: &NSURLProtectionSpace,
-        options: TodoGenerics,
+        options: Option<&NSDictionary<NSString, Object>>,
     ) {
         msg_send![
             self,
@@ -75,8 +75,10 @@ impl NSURLCredentialStorage {
     pub unsafe fn sharedCredentialStorage() -> Id<NSURLCredentialStorage, Shared> {
         msg_send_id![Self::class(), sharedCredentialStorage]
     }
-    pub unsafe fn allCredentials(&self) -> TodoGenerics {
-        msg_send![self, allCredentials]
+    pub unsafe fn allCredentials(
+        &self,
+    ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary>, Shared> {
+        msg_send_id![self, allCredentials]
     }
 }
 #[doc = "NSURLSessionTaskAdditions"]
@@ -111,7 +113,7 @@ impl NSURLCredentialStorage {
         &self,
         credential: &NSURLCredential,
         protectionSpace: &NSURLProtectionSpace,
-        options: TodoGenerics,
+        options: Option<&NSDictionary<NSString, Object>>,
         task: &NSURLSessionTask,
     ) {
         msg_send![

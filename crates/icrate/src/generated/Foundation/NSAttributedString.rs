@@ -17,8 +17,8 @@ impl NSAttributedString {
         &self,
         location: NSUInteger,
         range: NSRangePointer,
-    ) -> TodoGenerics {
-        msg_send![self, attributesAtIndex: location, effectiveRange: range]
+    ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared> {
+        msg_send_id![self, attributesAtIndex: location, effectiveRange: range]
     }
     pub unsafe fn string(&self) -> Id<NSString, Shared> {
         msg_send_id![self, string]
@@ -50,8 +50,8 @@ impl NSAttributedString {
         location: NSUInteger,
         range: NSRangePointer,
         rangeLimit: NSRange,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared> {
+        msg_send_id![
             self,
             attributesAtIndex: location,
             longestEffectiveRange: range,
@@ -82,7 +82,7 @@ impl NSAttributedString {
     pub unsafe fn initWithString_attributes(
         &self,
         str: &NSString,
-        attrs: TodoGenerics,
+        attrs: Option<&NSDictionary<NSAttributedStringKey, Object>>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithString: str, attributes: attrs]
     }
@@ -135,7 +135,11 @@ impl NSMutableAttributedString {
     pub unsafe fn replaceCharactersInRange_withString(&self, range: NSRange, str: &NSString) {
         msg_send![self, replaceCharactersInRange: range, withString: str]
     }
-    pub unsafe fn setAttributes_range(&self, attrs: TodoGenerics, range: NSRange) {
+    pub unsafe fn setAttributes_range(
+        &self,
+        attrs: Option<&NSDictionary<NSAttributedStringKey, Object>>,
+        range: NSRange,
+    ) {
         msg_send![self, setAttributes: attrs, range: range]
     }
 }
@@ -149,7 +153,11 @@ impl NSMutableAttributedString {
     ) {
         msg_send![self, addAttribute: name, value: value, range: range]
     }
-    pub unsafe fn addAttributes_range(&self, attrs: TodoGenerics, range: NSRange) {
+    pub unsafe fn addAttributes_range(
+        &self,
+        attrs: &NSDictionary<NSAttributedStringKey, Object>,
+        range: NSRange,
+    ) {
         msg_send![self, addAttributes: attrs, range: range]
     }
     pub unsafe fn removeAttribute_range(&self, name: &NSAttributedStringKey, range: NSRange) {
@@ -408,7 +416,7 @@ impl NSPresentationIntent {
     pub unsafe fn tableIntentWithIdentity_columnCount_alignments_nestedInsideIntent(
         identity: NSInteger,
         columnCount: NSInteger,
-        alignments: TodoGenerics,
+        alignments: &NSArray<NSNumber>,
         parent: Option<&NSPresentationIntent>,
     ) -> Id<NSPresentationIntent, Shared> {
         msg_send_id![
@@ -468,8 +476,8 @@ impl NSPresentationIntent {
     pub unsafe fn ordinal(&self) -> NSInteger {
         msg_send![self, ordinal]
     }
-    pub unsafe fn columnAlignments(&self) -> TodoGenerics {
-        msg_send![self, columnAlignments]
+    pub unsafe fn columnAlignments(&self) -> Option<Id<NSArray<NSNumber>, Shared>> {
+        msg_send_id![self, columnAlignments]
     }
     pub unsafe fn columnCount(&self) -> NSInteger {
         msg_send![self, columnCount]

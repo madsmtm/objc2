@@ -33,10 +33,10 @@ impl<KeyType: Message, ObjectType: Message> NSCache<KeyType, ObjectType> {
     pub unsafe fn setName(&self, name: &NSString) {
         msg_send![self, setName: name]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn totalCostLimit(&self) -> NSUInteger {

@@ -33,10 +33,10 @@ impl NSSpellServer {
     pub unsafe fn run(&self) {
         msg_send![self, run]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
 }

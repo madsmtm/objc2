@@ -97,10 +97,10 @@ impl NSUndoManager {
     pub unsafe fn setLevelsOfUndo(&self, levelsOfUndo: NSUInteger) {
         msg_send![self, setLevelsOfUndo: levelsOfUndo]
     }
-    pub unsafe fn runLoopModes(&self) -> TodoGenerics {
-        msg_send![self, runLoopModes]
+    pub unsafe fn runLoopModes(&self) -> Id<NSArray<NSRunLoopMode>, Shared> {
+        msg_send_id![self, runLoopModes]
     }
-    pub unsafe fn setRunLoopModes(&self, runLoopModes: TodoGenerics) {
+    pub unsafe fn setRunLoopModes(&self, runLoopModes: &NSArray<NSRunLoopMode>) {
         msg_send![self, setRunLoopModes: runLoopModes]
     }
     pub unsafe fn canUndo(&self) -> bool {

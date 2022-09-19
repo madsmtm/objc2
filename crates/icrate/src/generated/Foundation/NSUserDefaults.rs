@@ -48,14 +48,20 @@ impl NSUserDefaults {
     pub unsafe fn arrayForKey(&self, defaultName: &NSString) -> Option<Id<NSArray, Shared>> {
         msg_send_id![self, arrayForKey: defaultName]
     }
-    pub unsafe fn dictionaryForKey(&self, defaultName: &NSString) -> TodoGenerics {
-        msg_send![self, dictionaryForKey: defaultName]
+    pub unsafe fn dictionaryForKey(
+        &self,
+        defaultName: &NSString,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, dictionaryForKey: defaultName]
     }
     pub unsafe fn dataForKey(&self, defaultName: &NSString) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, dataForKey: defaultName]
     }
-    pub unsafe fn stringArrayForKey(&self, defaultName: &NSString) -> TodoGenerics {
-        msg_send![self, stringArrayForKey: defaultName]
+    pub unsafe fn stringArrayForKey(
+        &self,
+        defaultName: &NSString,
+    ) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, stringArrayForKey: defaultName]
     }
     pub unsafe fn integerForKey(&self, defaultName: &NSString) -> NSInteger {
         msg_send![self, integerForKey: defaultName]
@@ -87,7 +93,7 @@ impl NSUserDefaults {
     pub unsafe fn setURL_forKey(&self, url: Option<&NSURL>, defaultName: &NSString) {
         msg_send![self, setURL: url, forKey: defaultName]
     }
-    pub unsafe fn registerDefaults(&self, registrationDictionary: TodoGenerics) {
+    pub unsafe fn registerDefaults(&self, registrationDictionary: &NSDictionary<NSString, Object>) {
         msg_send![self, registerDefaults: registrationDictionary]
     }
     pub unsafe fn addSuiteNamed(&self, suiteName: &NSString) {
@@ -96,13 +102,20 @@ impl NSUserDefaults {
     pub unsafe fn removeSuiteNamed(&self, suiteName: &NSString) {
         msg_send![self, removeSuiteNamed: suiteName]
     }
-    pub unsafe fn dictionaryRepresentation(&self) -> TodoGenerics {
-        msg_send![self, dictionaryRepresentation]
+    pub unsafe fn dictionaryRepresentation(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
+        msg_send_id![self, dictionaryRepresentation]
     }
-    pub unsafe fn volatileDomainForName(&self, domainName: &NSString) -> TodoGenerics {
-        msg_send![self, volatileDomainForName: domainName]
+    pub unsafe fn volatileDomainForName(
+        &self,
+        domainName: &NSString,
+    ) -> Id<NSDictionary<NSString, Object>, Shared> {
+        msg_send_id![self, volatileDomainForName: domainName]
     }
-    pub unsafe fn setVolatileDomain_forName(&self, domain: TodoGenerics, domainName: &NSString) {
+    pub unsafe fn setVolatileDomain_forName(
+        &self,
+        domain: &NSDictionary<NSString, Object>,
+        domainName: &NSString,
+    ) {
         msg_send![self, setVolatileDomain: domain, forName: domainName]
     }
     pub unsafe fn removeVolatileDomainForName(&self, domainName: &NSString) {
@@ -111,10 +124,17 @@ impl NSUserDefaults {
     pub unsafe fn persistentDomainNames(&self) -> Id<NSArray, Shared> {
         msg_send_id![self, persistentDomainNames]
     }
-    pub unsafe fn persistentDomainForName(&self, domainName: &NSString) -> TodoGenerics {
-        msg_send![self, persistentDomainForName: domainName]
+    pub unsafe fn persistentDomainForName(
+        &self,
+        domainName: &NSString,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, persistentDomainForName: domainName]
     }
-    pub unsafe fn setPersistentDomain_forName(&self, domain: TodoGenerics, domainName: &NSString) {
+    pub unsafe fn setPersistentDomain_forName(
+        &self,
+        domain: &NSDictionary<NSString, Object>,
+        domainName: &NSString,
+    ) {
         msg_send![self, setPersistentDomain: domain, forName: domainName]
     }
     pub unsafe fn removePersistentDomainForName(&self, domainName: &NSString) {
@@ -132,7 +152,7 @@ impl NSUserDefaults {
     pub unsafe fn standardUserDefaults() -> Id<NSUserDefaults, Shared> {
         msg_send_id![Self::class(), standardUserDefaults]
     }
-    pub unsafe fn volatileDomainNames(&self) -> TodoGenerics {
-        msg_send![self, volatileDomainNames]
+    pub unsafe fn volatileDomainNames(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, volatileDomainNames]
     }
 }

@@ -34,10 +34,10 @@ impl NSXMLParser {
     pub unsafe fn abortParsing(&self) {
         msg_send![self, abortParsing]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn shouldProcessNamespaces(&self) -> bool {
@@ -67,10 +67,13 @@ impl NSXMLParser {
             setExternalEntityResolvingPolicy: externalEntityResolvingPolicy
         ]
     }
-    pub unsafe fn allowedExternalEntityURLs(&self) -> TodoGenerics {
-        msg_send![self, allowedExternalEntityURLs]
+    pub unsafe fn allowedExternalEntityURLs(&self) -> Option<Id<NSSet<NSURL>, Shared>> {
+        msg_send_id![self, allowedExternalEntityURLs]
     }
-    pub unsafe fn setAllowedExternalEntityURLs(&self, allowedExternalEntityURLs: TodoGenerics) {
+    pub unsafe fn setAllowedExternalEntityURLs(
+        &self,
+        allowedExternalEntityURLs: Option<&NSSet<NSURL>>,
+    ) {
         msg_send![
             self,
             setAllowedExternalEntityURLs: allowedExternalEntityURLs

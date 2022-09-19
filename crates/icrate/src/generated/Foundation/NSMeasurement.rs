@@ -28,14 +28,17 @@ impl<UnitType: Message> NSMeasurement<UnitType> {
     pub unsafe fn measurementByConvertingToUnit(&self, unit: &NSUnit) -> Id<NSMeasurement, Shared> {
         msg_send_id![self, measurementByConvertingToUnit: unit]
     }
-    pub unsafe fn measurementByAddingMeasurement(&self, measurement: TodoGenerics) -> TodoGenerics {
-        msg_send![self, measurementByAddingMeasurement: measurement]
+    pub unsafe fn measurementByAddingMeasurement(
+        &self,
+        measurement: &NSMeasurement<UnitType>,
+    ) -> Id<NSMeasurement<UnitType>, Shared> {
+        msg_send_id![self, measurementByAddingMeasurement: measurement]
     }
     pub unsafe fn measurementBySubtractingMeasurement(
         &self,
-        measurement: TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![self, measurementBySubtractingMeasurement: measurement]
+        measurement: &NSMeasurement<UnitType>,
+    ) -> Id<NSMeasurement<UnitType>, Shared> {
+        msg_send_id![self, measurementBySubtractingMeasurement: measurement]
     }
     pub unsafe fn unit(&self) -> Id<UnitType, Shared> {
         msg_send_id![self, unit]

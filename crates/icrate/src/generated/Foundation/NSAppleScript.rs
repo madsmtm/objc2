@@ -18,26 +18,26 @@ impl NSAppleScript {
     pub unsafe fn initWithContentsOfURL_error(
         &self,
         url: &NSURL,
-        errorInfo: *mut TodoGenerics,
+        errorInfo: *mut *mut NSDictionary,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithContentsOfURL: url, error: errorInfo]
     }
     pub unsafe fn initWithSource(&self, source: &NSString) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithSource: source]
     }
-    pub unsafe fn compileAndReturnError(&self, errorInfo: *mut TodoGenerics) -> bool {
+    pub unsafe fn compileAndReturnError(&self, errorInfo: *mut *mut NSDictionary) -> bool {
         msg_send![self, compileAndReturnError: errorInfo]
     }
     pub unsafe fn executeAndReturnError(
         &self,
-        errorInfo: *mut TodoGenerics,
+        errorInfo: *mut *mut NSDictionary,
     ) -> Id<NSAppleEventDescriptor, Shared> {
         msg_send_id![self, executeAndReturnError: errorInfo]
     }
     pub unsafe fn executeAppleEvent_error(
         &self,
         event: &NSAppleEventDescriptor,
-        errorInfo: *mut TodoGenerics,
+        errorInfo: *mut *mut NSDictionary,
     ) -> Id<NSAppleEventDescriptor, Shared> {
         msg_send_id![self, executeAppleEvent: event, error: errorInfo]
     }

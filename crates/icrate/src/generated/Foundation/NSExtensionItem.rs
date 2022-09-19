@@ -27,10 +27,10 @@ impl NSExtensionItem {
     ) {
         msg_send![self, setAttributedContentText: attributedContentText]
     }
-    pub unsafe fn attachments(&self) -> TodoGenerics {
-        msg_send![self, attachments]
+    pub unsafe fn attachments(&self) -> Option<Id<NSArray<NSItemProvider>, Shared>> {
+        msg_send_id![self, attachments]
     }
-    pub unsafe fn setAttachments(&self, attachments: TodoGenerics) {
+    pub unsafe fn setAttachments(&self, attachments: Option<&NSArray<NSItemProvider>>) {
         msg_send![self, setAttachments: attachments]
     }
     pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>> {

@@ -113,23 +113,23 @@ impl NSSortDescriptor {
 impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn sortedArrayUsingDescriptors(
         &self,
-        sortDescriptors: TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![self, sortedArrayUsingDescriptors: sortDescriptors]
+        sortDescriptors: &NSArray<NSSortDescriptor>,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayUsingDescriptors: sortDescriptors]
     }
 }
 #[doc = "NSSortDescriptorSorting"]
 impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn sortedArrayUsingDescriptors(
         &self,
-        sortDescriptors: TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![self, sortedArrayUsingDescriptors: sortDescriptors]
+        sortDescriptors: &NSArray<NSSortDescriptor>,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayUsingDescriptors: sortDescriptors]
     }
 }
 #[doc = "NSSortDescriptorSorting"]
 impl<ObjectType: Message> NSMutableArray<ObjectType> {
-    pub unsafe fn sortUsingDescriptors(&self, sortDescriptors: TodoGenerics) {
+    pub unsafe fn sortUsingDescriptors(&self, sortDescriptors: &NSArray<NSSortDescriptor>) {
         msg_send![self, sortUsingDescriptors: sortDescriptors]
     }
 }
@@ -137,14 +137,14 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
 impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn sortedArrayUsingDescriptors(
         &self,
-        sortDescriptors: TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![self, sortedArrayUsingDescriptors: sortDescriptors]
+        sortDescriptors: &NSArray<NSSortDescriptor>,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayUsingDescriptors: sortDescriptors]
     }
 }
 #[doc = "NSKeyValueSorting"]
 impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
-    pub unsafe fn sortUsingDescriptors(&self, sortDescriptors: TodoGenerics) {
+    pub unsafe fn sortUsingDescriptors(&self, sortDescriptors: &NSArray<NSSortDescriptor>) {
         msg_send![self, sortUsingDescriptors: sortDescriptors]
     }
 }

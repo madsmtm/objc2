@@ -32,10 +32,16 @@ extern_class!(
     }
 );
 impl NSLogicalTest {
-    pub unsafe fn initAndTestWithTests(&self, subTests: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initAndTestWithTests(
+        &self,
+        subTests: &NSArray<NSSpecifierTest>,
+    ) -> Id<Self, Shared> {
         msg_send_id![self, initAndTestWithTests: subTests]
     }
-    pub unsafe fn initOrTestWithTests(&self, subTests: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initOrTestWithTests(
+        &self,
+        subTests: &NSArray<NSSpecifierTest>,
+    ) -> Id<Self, Shared> {
         msg_send_id![self, initOrTestWithTests: subTests]
     }
     pub unsafe fn initNotTestWithTest(&self, subTest: &NSScriptWhoseTest) -> Id<Self, Shared> {

@@ -23,8 +23,8 @@ extern_class!(
     }
 );
 impl NSConnection {
-    pub unsafe fn allConnections() -> TodoGenerics {
-        msg_send![Self::class(), allConnections]
+    pub unsafe fn allConnections() -> Id<NSArray<NSConnection>, Shared> {
+        msg_send_id![Self::class(), allConnections]
     }
     pub unsafe fn defaultConnection() -> Id<NSConnection, Shared> {
         msg_send_id![Self::class(), defaultConnection]
@@ -149,8 +149,8 @@ impl NSConnection {
     pub unsafe fn dispatchWithComponents(&self, components: &NSArray) {
         msg_send![self, dispatchWithComponents: components]
     }
-    pub unsafe fn statistics(&self) -> TodoGenerics {
-        msg_send![self, statistics]
+    pub unsafe fn statistics(&self) -> Id<NSDictionary<NSString, NSNumber>, Shared> {
+        msg_send_id![self, statistics]
     }
     pub unsafe fn requestTimeout(&self) -> NSTimeInterval {
         msg_send![self, requestTimeout]
@@ -170,10 +170,10 @@ impl NSConnection {
     pub unsafe fn setRootObject(&self, rootObject: Option<&Object>) {
         msg_send![self, setRootObject: rootObject]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn independentConversationQueueing(&self) -> bool {
@@ -191,8 +191,8 @@ impl NSConnection {
     pub unsafe fn rootProxy(&self) -> Id<NSDistantObject, Shared> {
         msg_send_id![self, rootProxy]
     }
-    pub unsafe fn requestModes(&self) -> TodoGenerics {
-        msg_send![self, requestModes]
+    pub unsafe fn requestModes(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, requestModes]
     }
     pub unsafe fn sendPort(&self) -> Id<NSPort, Shared> {
         msg_send_id![self, sendPort]

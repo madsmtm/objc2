@@ -43,11 +43,11 @@ impl NSProcessInfo {
     pub unsafe fn processInfo() -> Id<NSProcessInfo, Shared> {
         msg_send_id![Self::class(), processInfo]
     }
-    pub unsafe fn environment(&self) -> TodoGenerics {
-        msg_send![self, environment]
+    pub unsafe fn environment(&self) -> Id<NSDictionary<NSString, NSString>, Shared> {
+        msg_send_id![self, environment]
     }
-    pub unsafe fn arguments(&self) -> TodoGenerics {
-        msg_send![self, arguments]
+    pub unsafe fn arguments(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, arguments]
     }
     pub unsafe fn hostName(&self) -> Id<NSString, Shared> {
         msg_send_id![self, hostName]
@@ -101,10 +101,10 @@ impl NSProcessInfo {
         &self,
         options: NSActivityOptions,
         reason: &NSString,
-    ) -> TodoGenerics {
-        msg_send![self, beginActivityWithOptions: options, reason: reason]
+    ) -> Id<id, Shared> {
+        msg_send_id![self, beginActivityWithOptions: options, reason: reason]
     }
-    pub unsafe fn endActivity(&self, activity: TodoGenerics) {
+    pub unsafe fn endActivity(&self, activity: &id) {
         msg_send![self, endActivity: activity]
     }
     pub unsafe fn performActivityWithOptions_reason_usingBlock(

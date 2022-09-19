@@ -81,10 +81,16 @@ impl NSObject {
     pub unsafe fn setNilValueForKey(&self, key: &NSString) {
         msg_send![self, setNilValueForKey: key]
     }
-    pub unsafe fn dictionaryWithValuesForKeys(&self, keys: TodoGenerics) -> TodoGenerics {
-        msg_send![self, dictionaryWithValuesForKeys: keys]
+    pub unsafe fn dictionaryWithValuesForKeys(
+        &self,
+        keys: &NSArray<NSString>,
+    ) -> Id<NSDictionary<NSString, Object>, Shared> {
+        msg_send_id![self, dictionaryWithValuesForKeys: keys]
     }
-    pub unsafe fn setValuesForKeysWithDictionary(&self, keyedValues: TodoGenerics) {
+    pub unsafe fn setValuesForKeysWithDictionary(
+        &self,
+        keyedValues: &NSDictionary<NSString, Object>,
+    ) {
         msg_send![self, setValuesForKeysWithDictionary: keyedValues]
     }
     pub unsafe fn accessInstanceVariablesDirectly() -> bool {

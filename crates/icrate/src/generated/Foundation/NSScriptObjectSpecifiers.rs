@@ -137,8 +137,8 @@ impl NSObject {
     pub unsafe fn indicesOfObjectsByEvaluatingObjectSpecifier(
         &self,
         specifier: &NSScriptObjectSpecifier,
-    ) -> TodoGenerics {
-        msg_send![self, indicesOfObjectsByEvaluatingObjectSpecifier: specifier]
+    ) -> Option<Id<NSArray<NSNumber>, Shared>> {
+        msg_send_id![self, indicesOfObjectsByEvaluatingObjectSpecifier: specifier]
     }
     pub unsafe fn objectSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
         msg_send_id![self, objectSpecifier]

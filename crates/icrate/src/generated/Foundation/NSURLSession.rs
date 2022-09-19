@@ -42,7 +42,7 @@ impl NSURLSession {
     }
     pub unsafe fn sessionWithConfiguration_delegate_delegateQueue(
         configuration: &NSURLSessionConfiguration,
-        delegate: TodoGenerics,
+        delegate: Option<&id>,
         queue: Option<&NSOperationQueue>,
     ) -> Id<NSURLSession, Shared> {
         msg_send_id![
@@ -136,7 +136,7 @@ impl NSURLSession {
     pub unsafe fn webSocketTaskWithURL_protocols(
         &self,
         url: &NSURL,
-        protocols: TodoGenerics,
+        protocols: &NSArray<NSString>,
     ) -> Id<NSURLSessionWebSocketTask, Shared> {
         msg_send_id![self, webSocketTaskWithURL: url, protocols: protocols]
     }
@@ -158,8 +158,8 @@ impl NSURLSession {
     pub unsafe fn delegateQueue(&self) -> Id<NSOperationQueue, Shared> {
         msg_send_id![self, delegateQueue]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
     pub unsafe fn configuration(&self) -> Id<NSURLSessionConfiguration, Shared> {
         msg_send_id![self, configuration]
@@ -290,10 +290,10 @@ impl NSURLSessionTask {
     pub unsafe fn response(&self) -> Option<Id<NSURLResponse, Shared>> {
         msg_send_id![self, response]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn progress(&self) -> Id<NSProgress, Shared> {
@@ -797,10 +797,10 @@ impl NSURLSessionConfiguration {
             setShouldUseExtendedBackgroundIdleMode: shouldUseExtendedBackgroundIdleMode
         ]
     }
-    pub unsafe fn protocolClasses(&self) -> TodoGenerics {
-        msg_send![self, protocolClasses]
+    pub unsafe fn protocolClasses(&self) -> Option<Id<NSArray<TodoClass>, Shared>> {
+        msg_send_id![self, protocolClasses]
     }
-    pub unsafe fn setProtocolClasses(&self, protocolClasses: TodoGenerics) {
+    pub unsafe fn setProtocolClasses(&self, protocolClasses: Option<&NSArray<TodoClass>>) {
         msg_send![self, setProtocolClasses: protocolClasses]
     }
     pub unsafe fn multipathServiceType(&self) -> NSURLSessionMultipathServiceType {
@@ -960,8 +960,10 @@ impl NSURLSessionTaskMetrics {
     pub unsafe fn new() -> Id<Self, Shared> {
         msg_send_id![Self::class(), new]
     }
-    pub unsafe fn transactionMetrics(&self) -> TodoGenerics {
-        msg_send![self, transactionMetrics]
+    pub unsafe fn transactionMetrics(
+        &self,
+    ) -> Id<NSArray<NSURLSessionTaskTransactionMetrics>, Shared> {
+        msg_send_id![self, transactionMetrics]
     }
     pub unsafe fn taskInterval(&self) -> Id<NSDateInterval, Shared> {
         msg_send_id![self, taskInterval]

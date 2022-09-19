@@ -70,8 +70,8 @@ impl NSURLProtectionSpace {
 }
 #[doc = "NSClientCertificateSpace"]
 impl NSURLProtectionSpace {
-    pub unsafe fn distinguishedNames(&self) -> TodoGenerics {
-        msg_send![self, distinguishedNames]
+    pub unsafe fn distinguishedNames(&self) -> Option<Id<NSArray<NSData>, Shared>> {
+        msg_send_id![self, distinguishedNames]
     }
 }
 #[doc = "NSServerTrustValidationSpace"]

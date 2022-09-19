@@ -62,14 +62,14 @@ impl NSScriptCommand {
     pub unsafe fn evaluatedReceivers(&self) -> Option<Id<Object, Shared>> {
         msg_send_id![self, evaluatedReceivers]
     }
-    pub unsafe fn arguments(&self) -> TodoGenerics {
-        msg_send![self, arguments]
+    pub unsafe fn arguments(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, arguments]
     }
-    pub unsafe fn setArguments(&self, arguments: TodoGenerics) {
+    pub unsafe fn setArguments(&self, arguments: Option<&NSDictionary<NSString, Object>>) {
         msg_send![self, setArguments: arguments]
     }
-    pub unsafe fn evaluatedArguments(&self) -> TodoGenerics {
-        msg_send![self, evaluatedArguments]
+    pub unsafe fn evaluatedArguments(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, evaluatedArguments]
     }
     pub unsafe fn isWellFormed(&self) -> bool {
         msg_send![self, isWellFormed]

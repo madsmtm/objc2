@@ -56,10 +56,10 @@ impl NSMetadataQuery {
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, valueOfAttribute: attrName, forResultAtIndex: idx]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn predicate(&self) -> Option<Id<NSPredicate, Shared>> {
@@ -68,22 +68,22 @@ impl NSMetadataQuery {
     pub unsafe fn setPredicate(&self, predicate: Option<&NSPredicate>) {
         msg_send![self, setPredicate: predicate]
     }
-    pub unsafe fn sortDescriptors(&self) -> TodoGenerics {
-        msg_send![self, sortDescriptors]
+    pub unsafe fn sortDescriptors(&self) -> Id<NSArray<NSSortDescriptor>, Shared> {
+        msg_send_id![self, sortDescriptors]
     }
-    pub unsafe fn setSortDescriptors(&self, sortDescriptors: TodoGenerics) {
+    pub unsafe fn setSortDescriptors(&self, sortDescriptors: &NSArray<NSSortDescriptor>) {
         msg_send![self, setSortDescriptors: sortDescriptors]
     }
-    pub unsafe fn valueListAttributes(&self) -> TodoGenerics {
-        msg_send![self, valueListAttributes]
+    pub unsafe fn valueListAttributes(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, valueListAttributes]
     }
-    pub unsafe fn setValueListAttributes(&self, valueListAttributes: TodoGenerics) {
+    pub unsafe fn setValueListAttributes(&self, valueListAttributes: &NSArray<NSString>) {
         msg_send![self, setValueListAttributes: valueListAttributes]
     }
-    pub unsafe fn groupingAttributes(&self) -> TodoGenerics {
-        msg_send![self, groupingAttributes]
+    pub unsafe fn groupingAttributes(&self) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, groupingAttributes]
     }
-    pub unsafe fn setGroupingAttributes(&self, groupingAttributes: TodoGenerics) {
+    pub unsafe fn setGroupingAttributes(&self, groupingAttributes: Option<&NSArray<NSString>>) {
         msg_send![self, setGroupingAttributes: groupingAttributes]
     }
     pub unsafe fn notificationBatchingInterval(&self) -> NSTimeInterval {
@@ -131,11 +131,11 @@ impl NSMetadataQuery {
     pub unsafe fn results(&self) -> Id<NSArray, Shared> {
         msg_send_id![self, results]
     }
-    pub unsafe fn valueLists(&self) -> TodoGenerics {
-        msg_send![self, valueLists]
+    pub unsafe fn valueLists(&self) -> Id<NSDictionary<NSString, NSArray>, Shared> {
+        msg_send_id![self, valueLists]
     }
-    pub unsafe fn groupedResults(&self) -> TodoGenerics {
-        msg_send![self, groupedResults]
+    pub unsafe fn groupedResults(&self) -> Id<NSArray<NSMetadataQueryResultGroup>, Shared> {
+        msg_send_id![self, groupedResults]
     }
 }
 pub type NSMetadataQueryDelegate = NSObject;
@@ -153,11 +153,14 @@ impl NSMetadataItem {
     pub unsafe fn valueForAttribute(&self, key: &NSString) -> Option<Id<Object, Shared>> {
         msg_send_id![self, valueForAttribute: key]
     }
-    pub unsafe fn valuesForAttributes(&self, keys: TodoGenerics) -> TodoGenerics {
-        msg_send![self, valuesForAttributes: keys]
+    pub unsafe fn valuesForAttributes(
+        &self,
+        keys: &NSArray<NSString>,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, valuesForAttributes: keys]
     }
-    pub unsafe fn attributes(&self) -> TodoGenerics {
-        msg_send![self, attributes]
+    pub unsafe fn attributes(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, attributes]
     }
 }
 extern_class!(
@@ -195,8 +198,8 @@ impl NSMetadataQueryResultGroup {
     pub unsafe fn value(&self) -> Id<Object, Shared> {
         msg_send_id![self, value]
     }
-    pub unsafe fn subgroups(&self) -> TodoGenerics {
-        msg_send![self, subgroups]
+    pub unsafe fn subgroups(&self) -> Option<Id<NSArray<NSMetadataQueryResultGroup>, Shared>> {
+        msg_send_id![self, subgroups]
     }
     pub unsafe fn resultCount(&self) -> NSUInteger {
         msg_send![self, resultCount]

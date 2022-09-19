@@ -38,14 +38,14 @@ impl NSHost {
     pub unsafe fn name(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, name]
     }
-    pub unsafe fn names(&self) -> TodoGenerics {
-        msg_send![self, names]
+    pub unsafe fn names(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, names]
     }
     pub unsafe fn address(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, address]
     }
-    pub unsafe fn addresses(&self) -> TodoGenerics {
-        msg_send![self, addresses]
+    pub unsafe fn addresses(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, addresses]
     }
     pub unsafe fn localizedName(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, localizedName]

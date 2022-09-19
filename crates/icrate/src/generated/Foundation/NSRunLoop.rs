@@ -59,7 +59,7 @@ impl NSRunLoop {
     pub unsafe fn configureAsServer(&self) {
         msg_send![self, configureAsServer]
     }
-    pub unsafe fn performInModes_block(&self, modes: TodoGenerics, block: TodoBlock) {
+    pub unsafe fn performInModes_block(&self, modes: &NSArray<NSRunLoopMode>, block: TodoBlock) {
         msg_send![self, performInModes: modes, block: block]
     }
     pub unsafe fn performBlock(&self, block: TodoBlock) {
@@ -73,7 +73,7 @@ impl NSObject {
         aSelector: Sel,
         anArgument: Option<&Object>,
         delay: NSTimeInterval,
-        modes: TodoGenerics,
+        modes: &NSArray<NSRunLoopMode>,
     ) {
         msg_send![
             self,
@@ -123,7 +123,7 @@ impl NSRunLoop {
         target: &Object,
         arg: Option<&Object>,
         order: NSUInteger,
-        modes: TodoGenerics,
+        modes: &NSArray<NSRunLoopMode>,
     ) {
         msg_send![
             self,

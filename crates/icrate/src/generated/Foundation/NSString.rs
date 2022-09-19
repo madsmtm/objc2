@@ -334,14 +334,17 @@ impl NSString {
     ) -> Id<NSString, Shared> {
         msg_send_id![Self::class(), localizedNameOfStringEncoding: encoding]
     }
-    pub unsafe fn componentsSeparatedByString(&self, separator: &NSString) -> TodoGenerics {
-        msg_send![self, componentsSeparatedByString: separator]
+    pub unsafe fn componentsSeparatedByString(
+        &self,
+        separator: &NSString,
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, componentsSeparatedByString: separator]
     }
     pub unsafe fn componentsSeparatedByCharactersInSet(
         &self,
         separator: &NSCharacterSet,
-    ) -> TodoGenerics {
-        msg_send![self, componentsSeparatedByCharactersInSet: separator]
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, componentsSeparatedByCharactersInSet: separator]
     }
     pub unsafe fn stringByTrimmingCharactersInSet(
         &self,
@@ -763,7 +766,7 @@ pub type NSStringEncodingDetectionOptionsKey = NSString;
 impl NSString {
     pub unsafe fn stringEncodingForData_encodingOptions_convertedString_usedLossyConversion(
         data: &NSData,
-        opts: TodoGenerics,
+        opts: Option<&NSDictionary<NSStringEncodingDetectionOptionsKey, Object>>,
         string: *mut *mut NSString,
         usedLossyConversion: *mut bool,
     ) -> NSStringEncoding {

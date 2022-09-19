@@ -461,59 +461,59 @@ impl NSCalendar {
     pub unsafe fn setMinimumDaysInFirstWeek(&self, minimumDaysInFirstWeek: NSUInteger) {
         msg_send![self, setMinimumDaysInFirstWeek: minimumDaysInFirstWeek]
     }
-    pub unsafe fn eraSymbols(&self) -> TodoGenerics {
-        msg_send![self, eraSymbols]
+    pub unsafe fn eraSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, eraSymbols]
     }
-    pub unsafe fn longEraSymbols(&self) -> TodoGenerics {
-        msg_send![self, longEraSymbols]
+    pub unsafe fn longEraSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, longEraSymbols]
     }
-    pub unsafe fn monthSymbols(&self) -> TodoGenerics {
-        msg_send![self, monthSymbols]
+    pub unsafe fn monthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, monthSymbols]
     }
-    pub unsafe fn shortMonthSymbols(&self) -> TodoGenerics {
-        msg_send![self, shortMonthSymbols]
+    pub unsafe fn shortMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortMonthSymbols]
     }
-    pub unsafe fn veryShortMonthSymbols(&self) -> TodoGenerics {
-        msg_send![self, veryShortMonthSymbols]
+    pub unsafe fn veryShortMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, veryShortMonthSymbols]
     }
-    pub unsafe fn standaloneMonthSymbols(&self) -> TodoGenerics {
-        msg_send![self, standaloneMonthSymbols]
+    pub unsafe fn standaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, standaloneMonthSymbols]
     }
-    pub unsafe fn shortStandaloneMonthSymbols(&self) -> TodoGenerics {
-        msg_send![self, shortStandaloneMonthSymbols]
+    pub unsafe fn shortStandaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortStandaloneMonthSymbols]
     }
-    pub unsafe fn veryShortStandaloneMonthSymbols(&self) -> TodoGenerics {
-        msg_send![self, veryShortStandaloneMonthSymbols]
+    pub unsafe fn veryShortStandaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, veryShortStandaloneMonthSymbols]
     }
-    pub unsafe fn weekdaySymbols(&self) -> TodoGenerics {
-        msg_send![self, weekdaySymbols]
+    pub unsafe fn weekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, weekdaySymbols]
     }
-    pub unsafe fn shortWeekdaySymbols(&self) -> TodoGenerics {
-        msg_send![self, shortWeekdaySymbols]
+    pub unsafe fn shortWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortWeekdaySymbols]
     }
-    pub unsafe fn veryShortWeekdaySymbols(&self) -> TodoGenerics {
-        msg_send![self, veryShortWeekdaySymbols]
+    pub unsafe fn veryShortWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, veryShortWeekdaySymbols]
     }
-    pub unsafe fn standaloneWeekdaySymbols(&self) -> TodoGenerics {
-        msg_send![self, standaloneWeekdaySymbols]
+    pub unsafe fn standaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, standaloneWeekdaySymbols]
     }
-    pub unsafe fn shortStandaloneWeekdaySymbols(&self) -> TodoGenerics {
-        msg_send![self, shortStandaloneWeekdaySymbols]
+    pub unsafe fn shortStandaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortStandaloneWeekdaySymbols]
     }
-    pub unsafe fn veryShortStandaloneWeekdaySymbols(&self) -> TodoGenerics {
-        msg_send![self, veryShortStandaloneWeekdaySymbols]
+    pub unsafe fn veryShortStandaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, veryShortStandaloneWeekdaySymbols]
     }
-    pub unsafe fn quarterSymbols(&self) -> TodoGenerics {
-        msg_send![self, quarterSymbols]
+    pub unsafe fn quarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, quarterSymbols]
     }
-    pub unsafe fn shortQuarterSymbols(&self) -> TodoGenerics {
-        msg_send![self, shortQuarterSymbols]
+    pub unsafe fn shortQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortQuarterSymbols]
     }
-    pub unsafe fn standaloneQuarterSymbols(&self) -> TodoGenerics {
-        msg_send![self, standaloneQuarterSymbols]
+    pub unsafe fn standaloneQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, standaloneQuarterSymbols]
     }
-    pub unsafe fn shortStandaloneQuarterSymbols(&self) -> TodoGenerics {
-        msg_send![self, shortStandaloneQuarterSymbols]
+    pub unsafe fn shortStandaloneQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortStandaloneQuarterSymbols]
     }
     pub unsafe fn AMSymbol(&self) -> Id<NSString, Shared> {
         msg_send_id![self, AMSymbol]

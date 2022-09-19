@@ -46,10 +46,10 @@ impl NSUserNotification {
     pub unsafe fn setActionButtonTitle(&self, actionButtonTitle: &NSString) {
         msg_send![self, setActionButtonTitle: actionButtonTitle]
     }
-    pub unsafe fn userInfo(&self) -> TodoGenerics {
-        msg_send![self, userInfo]
+    pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, userInfo]
     }
-    pub unsafe fn setUserInfo(&self, userInfo: TodoGenerics) {
+    pub unsafe fn setUserInfo(&self, userInfo: Option<&NSDictionary<NSString, Object>>) {
         msg_send![self, setUserInfo: userInfo]
     }
     pub unsafe fn deliveryDate(&self) -> Option<Id<NSDate, Shared>> {
@@ -130,10 +130,15 @@ impl NSUserNotification {
     pub unsafe fn response(&self) -> Option<Id<NSAttributedString, Shared>> {
         msg_send_id![self, response]
     }
-    pub unsafe fn additionalActions(&self) -> TodoGenerics {
-        msg_send![self, additionalActions]
+    pub unsafe fn additionalActions(
+        &self,
+    ) -> Option<Id<NSArray<NSUserNotificationAction>, Shared>> {
+        msg_send_id![self, additionalActions]
     }
-    pub unsafe fn setAdditionalActions(&self, additionalActions: TodoGenerics) {
+    pub unsafe fn setAdditionalActions(
+        &self,
+        additionalActions: Option<&NSArray<NSUserNotificationAction>>,
+    ) {
         msg_send![self, setAdditionalActions: additionalActions]
     }
     pub unsafe fn additionalActivationAction(
@@ -193,20 +198,23 @@ impl NSUserNotificationCenter {
     pub unsafe fn defaultUserNotificationCenter() -> Id<NSUserNotificationCenter, Shared> {
         msg_send_id![Self::class(), defaultUserNotificationCenter]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
-    pub unsafe fn scheduledNotifications(&self) -> TodoGenerics {
-        msg_send![self, scheduledNotifications]
+    pub unsafe fn scheduledNotifications(&self) -> Id<NSArray<NSUserNotification>, Shared> {
+        msg_send_id![self, scheduledNotifications]
     }
-    pub unsafe fn setScheduledNotifications(&self, scheduledNotifications: TodoGenerics) {
+    pub unsafe fn setScheduledNotifications(
+        &self,
+        scheduledNotifications: &NSArray<NSUserNotification>,
+    ) {
         msg_send![self, setScheduledNotifications: scheduledNotifications]
     }
-    pub unsafe fn deliveredNotifications(&self) -> TodoGenerics {
-        msg_send![self, deliveredNotifications]
+    pub unsafe fn deliveredNotifications(&self) -> Id<NSArray<NSUserNotification>, Shared> {
+        msg_send_id![self, deliveredNotifications]
     }
 }
 pub type NSUserNotificationCenterDelegate = NSObject;

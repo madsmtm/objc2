@@ -97,11 +97,11 @@ impl NSThread {
     pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService) {
         msg_send![self, setQualityOfService: qualityOfService]
     }
-    pub unsafe fn callStackReturnAddresses() -> TodoGenerics {
-        msg_send![Self::class(), callStackReturnAddresses]
+    pub unsafe fn callStackReturnAddresses() -> Id<NSArray<NSNumber>, Shared> {
+        msg_send_id![Self::class(), callStackReturnAddresses]
     }
-    pub unsafe fn callStackSymbols() -> TodoGenerics {
-        msg_send![Self::class(), callStackSymbols]
+    pub unsafe fn callStackSymbols() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), callStackSymbols]
     }
     pub unsafe fn name(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, name]
@@ -141,7 +141,7 @@ impl NSObject {
         aSelector: Sel,
         arg: Option<&Object>,
         wait: bool,
-        array: TodoGenerics,
+        array: Option<&NSArray<NSString>>,
     ) {
         msg_send![
             self,
@@ -170,7 +170,7 @@ impl NSObject {
         thr: &NSThread,
         arg: Option<&Object>,
         wait: bool,
-        array: TodoGenerics,
+        array: Option<&NSArray<NSString>>,
     ) {
         msg_send![
             self,

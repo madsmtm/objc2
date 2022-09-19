@@ -128,8 +128,8 @@ impl NSNotificationCenter {
         obj: Option<&Object>,
         queue: Option<&NSOperationQueue>,
         block: TodoBlock,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<id, Shared> {
+        msg_send_id![
             self,
             addObserverForName: name,
             object: obj,

@@ -47,35 +47,35 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn getObjects_range(&self, objects: TodoArray, range: NSRange) {
         msg_send![self, getObjects: objects, range: range]
     }
-    pub unsafe fn objectsAtIndexes(&self, indexes: &NSIndexSet) -> TodoGenerics {
-        msg_send![self, objectsAtIndexes: indexes]
+    pub unsafe fn objectsAtIndexes(&self, indexes: &NSIndexSet) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, objectsAtIndexes: indexes]
     }
-    pub unsafe fn isEqualToOrderedSet(&self, other: TodoGenerics) -> bool {
+    pub unsafe fn isEqualToOrderedSet(&self, other: &NSOrderedSet<ObjectType>) -> bool {
         msg_send![self, isEqualToOrderedSet: other]
     }
     pub unsafe fn containsObject(&self, object: &ObjectType) -> bool {
         msg_send![self, containsObject: object]
     }
-    pub unsafe fn intersectsOrderedSet(&self, other: TodoGenerics) -> bool {
+    pub unsafe fn intersectsOrderedSet(&self, other: &NSOrderedSet<ObjectType>) -> bool {
         msg_send![self, intersectsOrderedSet: other]
     }
-    pub unsafe fn intersectsSet(&self, set: TodoGenerics) -> bool {
+    pub unsafe fn intersectsSet(&self, set: &NSSet<ObjectType>) -> bool {
         msg_send![self, intersectsSet: set]
     }
-    pub unsafe fn isSubsetOfOrderedSet(&self, other: TodoGenerics) -> bool {
+    pub unsafe fn isSubsetOfOrderedSet(&self, other: &NSOrderedSet<ObjectType>) -> bool {
         msg_send![self, isSubsetOfOrderedSet: other]
     }
-    pub unsafe fn isSubsetOfSet(&self, set: TodoGenerics) -> bool {
+    pub unsafe fn isSubsetOfSet(&self, set: &NSSet<ObjectType>) -> bool {
         msg_send![self, isSubsetOfSet: set]
     }
     pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> Id<ObjectType, Shared> {
         msg_send_id![self, objectAtIndexedSubscript: idx]
     }
-    pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
-        msg_send![self, objectEnumerator]
+    pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
+        msg_send_id![self, objectEnumerator]
     }
-    pub unsafe fn reverseObjectEnumerator(&self) -> TodoGenerics {
-        msg_send![self, reverseObjectEnumerator]
+    pub unsafe fn reverseObjectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
+        msg_send_id![self, reverseObjectEnumerator]
     }
     pub unsafe fn enumerateObjectsUsingBlock(&self, block: TodoBlock) {
         msg_send![self, enumerateObjectsUsingBlock: block]
@@ -168,15 +168,18 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
             usingComparator: cmp
         ]
     }
-    pub unsafe fn sortedArrayUsingComparator(&self, cmptr: NSComparator) -> TodoGenerics {
-        msg_send![self, sortedArrayUsingComparator: cmptr]
+    pub unsafe fn sortedArrayUsingComparator(
+        &self,
+        cmptr: NSComparator,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayUsingComparator: cmptr]
     }
     pub unsafe fn sortedArrayWithOptions_usingComparator(
         &self,
         opts: NSSortOptions,
         cmptr: NSComparator,
-    ) -> TodoGenerics {
-        msg_send![self, sortedArrayWithOptions: opts, usingComparator: cmptr]
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, sortedArrayWithOptions: opts, usingComparator: cmptr]
     }
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale]
@@ -194,14 +197,14 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, lastObject]
     }
-    pub unsafe fn reversedOrderedSet(&self) -> TodoGenerics {
-        msg_send![self, reversedOrderedSet]
+    pub unsafe fn reversedOrderedSet(&self) -> Id<NSOrderedSet<ObjectType>, Shared> {
+        msg_send_id![self, reversedOrderedSet]
     }
-    pub unsafe fn array(&self) -> TodoGenerics {
-        msg_send![self, array]
+    pub unsafe fn array(&self) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, array]
     }
-    pub unsafe fn set(&self) -> TodoGenerics {
-        msg_send![self, set]
+    pub unsafe fn set(&self) -> Id<NSSet<ObjectType>, Shared> {
+        msg_send_id![self, set]
     }
     pub unsafe fn description(&self) -> Id<NSString, Shared> {
         msg_send_id![self, description]
@@ -221,11 +224,11 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     ) -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSetWithObjects: objects, count: cnt]
     }
-    pub unsafe fn orderedSetWithOrderedSet(set: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn orderedSetWithOrderedSet(set: &NSOrderedSet<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSetWithOrderedSet: set]
     }
     pub unsafe fn orderedSetWithOrderedSet_range_copyItems(
-        set: TodoGenerics,
+        set: &NSOrderedSet<ObjectType>,
         range: NSRange,
         flag: bool,
     ) -> Id<Self, Shared> {
@@ -236,11 +239,11 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
             copyItems: flag
         ]
     }
-    pub unsafe fn orderedSetWithArray(array: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn orderedSetWithArray(array: &NSArray<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSetWithArray: array]
     }
     pub unsafe fn orderedSetWithArray_range_copyItems(
-        array: TodoGenerics,
+        array: &NSArray<ObjectType>,
         range: NSRange,
         flag: bool,
     ) -> Id<Self, Shared> {
@@ -251,55 +254,62 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
             copyItems: flag
         ]
     }
-    pub unsafe fn orderedSetWithSet(set: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn orderedSetWithSet(set: &NSSet<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSetWithSet: set]
     }
-    pub unsafe fn orderedSetWithSet_copyItems(set: TodoGenerics, flag: bool) -> Id<Self, Shared> {
+    pub unsafe fn orderedSetWithSet_copyItems(
+        set: &NSSet<ObjectType>,
+        flag: bool,
+    ) -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSetWithSet: set, copyItems: flag]
     }
     pub unsafe fn initWithObject(&self, object: &ObjectType) -> Id<Self, Shared> {
         msg_send_id![self, initWithObject: object]
     }
-    pub unsafe fn initWithOrderedSet(&self, set: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithOrderedSet(&self, set: &NSOrderedSet<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![self, initWithOrderedSet: set]
     }
     pub unsafe fn initWithOrderedSet_copyItems(
         &self,
-        set: TodoGenerics,
+        set: &NSOrderedSet<ObjectType>,
         flag: bool,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithOrderedSet: set, copyItems: flag]
     }
     pub unsafe fn initWithOrderedSet_range_copyItems(
         &self,
-        set: TodoGenerics,
+        set: &NSOrderedSet<ObjectType>,
         range: NSRange,
         flag: bool,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithOrderedSet: set, range: range, copyItems: flag]
     }
-    pub unsafe fn initWithArray(&self, array: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithArray(&self, array: &NSArray<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![self, initWithArray: array]
     }
     pub unsafe fn initWithArray_copyItems(
         &self,
-        set: TodoGenerics,
+        set: &NSArray<ObjectType>,
         flag: bool,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithArray: set, copyItems: flag]
     }
     pub unsafe fn initWithArray_range_copyItems(
         &self,
-        set: TodoGenerics,
+        set: &NSArray<ObjectType>,
         range: NSRange,
         flag: bool,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithArray: set, range: range, copyItems: flag]
     }
-    pub unsafe fn initWithSet(&self, set: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithSet(&self, set: &NSSet<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![self, initWithSet: set]
     }
-    pub unsafe fn initWithSet_copyItems(&self, set: TodoGenerics, flag: bool) -> Id<Self, Shared> {
+    pub unsafe fn initWithSet_copyItems(
+        &self,
+        set: &NSSet<ObjectType>,
+        flag: bool,
+    ) -> Id<Self, Shared> {
         msg_send_id![self, initWithSet: set, copyItems: flag]
     }
 }
@@ -307,11 +317,11 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
 impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn differenceFromOrderedSet_withOptions_usingEquivalenceTest(
         &self,
-        other: TodoGenerics,
+        other: &NSOrderedSet<ObjectType>,
         options: NSOrderedCollectionDifferenceCalculationOptions,
         block: TodoBlock,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared> {
+        msg_send_id![
             self,
             differenceFromOrderedSet: other,
             withOptions: options,
@@ -320,16 +330,22 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     }
     pub unsafe fn differenceFromOrderedSet_withOptions(
         &self,
-        other: TodoGenerics,
+        other: &NSOrderedSet<ObjectType>,
         options: NSOrderedCollectionDifferenceCalculationOptions,
-    ) -> TodoGenerics {
-        msg_send![self, differenceFromOrderedSet: other, withOptions: options]
+    ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared> {
+        msg_send_id![self, differenceFromOrderedSet: other, withOptions: options]
     }
-    pub unsafe fn differenceFromOrderedSet(&self, other: TodoGenerics) -> TodoGenerics {
-        msg_send![self, differenceFromOrderedSet: other]
+    pub unsafe fn differenceFromOrderedSet(
+        &self,
+        other: &NSOrderedSet<ObjectType>,
+    ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared> {
+        msg_send_id![self, differenceFromOrderedSet: other]
     }
-    pub unsafe fn orderedSetByApplyingDifference(&self, difference: TodoGenerics) -> TodoGenerics {
-        msg_send![self, orderedSetByApplyingDifference: difference]
+    pub unsafe fn orderedSetByApplyingDifference(
+        &self,
+        difference: &NSOrderedCollectionDifference<ObjectType>,
+    ) -> Option<Id<NSOrderedSet<ObjectType>, Shared>> {
+        msg_send_id![self, orderedSetByApplyingDifference: difference]
     }
 }
 __inner_extern_class!(
@@ -367,7 +383,7 @@ impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn addObjects_count(&self, objects: TodoArray, count: NSUInteger) {
         msg_send![self, addObjects: objects, count: count]
     }
-    pub unsafe fn addObjectsFromArray(&self, array: TodoGenerics) {
+    pub unsafe fn addObjectsFromArray(&self, array: &NSArray<ObjectType>) {
         msg_send![self, addObjectsFromArray: array]
     }
     pub unsafe fn exchangeObjectAtIndex_withObjectAtIndex(
@@ -380,7 +396,11 @@ impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn moveObjectsAtIndexes_toIndex(&self, indexes: &NSIndexSet, idx: NSUInteger) {
         msg_send![self, moveObjectsAtIndexes: indexes, toIndex: idx]
     }
-    pub unsafe fn insertObjects_atIndexes(&self, objects: TodoGenerics, indexes: &NSIndexSet) {
+    pub unsafe fn insertObjects_atIndexes(
+        &self,
+        objects: &NSArray<ObjectType>,
+        indexes: &NSIndexSet,
+    ) {
         msg_send![self, insertObjects: objects, atIndexes: indexes]
     }
     pub unsafe fn setObject_atIndex(&self, obj: &ObjectType, idx: NSUInteger) {
@@ -405,7 +425,7 @@ impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn replaceObjectsAtIndexes_withObjects(
         &self,
         indexes: &NSIndexSet,
-        objects: TodoGenerics,
+        objects: &NSArray<ObjectType>,
     ) {
         msg_send![self, replaceObjectsAtIndexes: indexes, withObjects: objects]
     }
@@ -421,25 +441,25 @@ impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn removeObject(&self, object: &ObjectType) {
         msg_send![self, removeObject: object]
     }
-    pub unsafe fn removeObjectsInArray(&self, array: TodoGenerics) {
+    pub unsafe fn removeObjectsInArray(&self, array: &NSArray<ObjectType>) {
         msg_send![self, removeObjectsInArray: array]
     }
-    pub unsafe fn intersectOrderedSet(&self, other: TodoGenerics) {
+    pub unsafe fn intersectOrderedSet(&self, other: &NSOrderedSet<ObjectType>) {
         msg_send![self, intersectOrderedSet: other]
     }
-    pub unsafe fn minusOrderedSet(&self, other: TodoGenerics) {
+    pub unsafe fn minusOrderedSet(&self, other: &NSOrderedSet<ObjectType>) {
         msg_send![self, minusOrderedSet: other]
     }
-    pub unsafe fn unionOrderedSet(&self, other: TodoGenerics) {
+    pub unsafe fn unionOrderedSet(&self, other: &NSOrderedSet<ObjectType>) {
         msg_send![self, unionOrderedSet: other]
     }
-    pub unsafe fn intersectSet(&self, other: TodoGenerics) {
+    pub unsafe fn intersectSet(&self, other: &NSSet<ObjectType>) {
         msg_send![self, intersectSet: other]
     }
-    pub unsafe fn minusSet(&self, other: TodoGenerics) {
+    pub unsafe fn minusSet(&self, other: &NSSet<ObjectType>) {
         msg_send![self, minusSet: other]
     }
-    pub unsafe fn unionSet(&self, other: TodoGenerics) {
+    pub unsafe fn unionSet(&self, other: &NSSet<ObjectType>) {
         msg_send![self, unionSet: other]
     }
     pub unsafe fn sortUsingComparator(&self, cmptr: NSComparator) {
@@ -470,7 +490,7 @@ impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
 }
 #[doc = "NSMutableOrderedSetDiffing"]
 impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
-    pub unsafe fn applyDifference(&self, difference: TodoGenerics) {
+    pub unsafe fn applyDifference(&self, difference: &NSOrderedCollectionDifference<ObjectType>) {
         msg_send![self, applyDifference: difference]
     }
 }

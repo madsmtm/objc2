@@ -144,10 +144,10 @@ impl NSXPCListener {
     pub unsafe fn invalidate(&self) {
         msg_send![self, invalidate]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn endpoint(&self) -> Id<NSXPCListenerEndpoint, Shared> {
@@ -168,7 +168,7 @@ impl NSXPCInterface {
     }
     pub unsafe fn setClasses_forSelector_argumentIndex_ofReply(
         &self,
-        classes: TodoGenerics,
+        classes: &NSSet<TodoClass>,
         sel: Sel,
         arg: NSUInteger,
         ofReply: bool,
@@ -186,8 +186,8 @@ impl NSXPCInterface {
         sel: Sel,
         arg: NSUInteger,
         ofReply: bool,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSSet<TodoClass>, Shared> {
+        msg_send_id![
             self,
             classesForSelector: sel,
             argumentIndex: arg,
@@ -283,10 +283,10 @@ impl NSXPCCoder {
     ) -> Option<Id<xpc_object_t, Shared>> {
         msg_send_id![self, decodeXPCObjectOfType: type_, forKey: key]
     }
-    pub unsafe fn userInfo(&self) -> TodoGenerics {
-        msg_send![self, userInfo]
+    pub unsafe fn userInfo(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, userInfo]
     }
-    pub unsafe fn setUserInfo(&self, userInfo: TodoGenerics) {
+    pub unsafe fn setUserInfo(&self, userInfo: Option<&id>) {
         msg_send![self, setUserInfo: userInfo]
     }
     pub unsafe fn connection(&self) -> Option<Id<NSXPCConnection, Shared>> {

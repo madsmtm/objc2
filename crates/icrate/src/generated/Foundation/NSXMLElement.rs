@@ -47,15 +47,15 @@ impl NSXMLElement {
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithKind: kind, options: options]
     }
-    pub unsafe fn elementsForName(&self, name: &NSString) -> TodoGenerics {
-        msg_send![self, elementsForName: name]
+    pub unsafe fn elementsForName(&self, name: &NSString) -> Id<NSArray<NSXMLElement>, Shared> {
+        msg_send_id![self, elementsForName: name]
     }
     pub unsafe fn elementsForLocalName_URI(
         &self,
         localName: &NSString,
         URI: Option<&NSString>,
-    ) -> TodoGenerics {
-        msg_send![self, elementsForLocalName: localName, URI: URI]
+    ) -> Id<NSArray<NSXMLElement>, Shared> {
+        msg_send_id![self, elementsForLocalName: localName, URI: URI]
     }
     pub unsafe fn addAttribute(&self, attribute: &NSXMLNode) {
         msg_send![self, addAttribute: attribute]
@@ -63,7 +63,10 @@ impl NSXMLElement {
     pub unsafe fn removeAttributeForName(&self, name: &NSString) {
         msg_send![self, removeAttributeForName: name]
     }
-    pub unsafe fn setAttributesWithDictionary(&self, attributes: TodoGenerics) {
+    pub unsafe fn setAttributesWithDictionary(
+        &self,
+        attributes: &NSDictionary<NSString, NSString>,
+    ) {
         msg_send![self, setAttributesWithDictionary: attributes]
     }
     pub unsafe fn attributeForName(&self, name: &NSString) -> Option<Id<NSXMLNode, Shared>> {
@@ -97,13 +100,13 @@ impl NSXMLElement {
     pub unsafe fn insertChild_atIndex(&self, child: &NSXMLNode, index: NSUInteger) {
         msg_send![self, insertChild: child, atIndex: index]
     }
-    pub unsafe fn insertChildren_atIndex(&self, children: TodoGenerics, index: NSUInteger) {
+    pub unsafe fn insertChildren_atIndex(&self, children: &NSArray<NSXMLNode>, index: NSUInteger) {
         msg_send![self, insertChildren: children, atIndex: index]
     }
     pub unsafe fn removeChildAtIndex(&self, index: NSUInteger) {
         msg_send![self, removeChildAtIndex: index]
     }
-    pub unsafe fn setChildren(&self, children: TodoGenerics) {
+    pub unsafe fn setChildren(&self, children: Option<&NSArray<NSXMLNode>>) {
         msg_send![self, setChildren: children]
     }
     pub unsafe fn addChild(&self, child: &NSXMLNode) {
@@ -115,16 +118,16 @@ impl NSXMLElement {
     pub unsafe fn normalizeAdjacentTextNodesPreservingCDATA(&self, preserve: bool) {
         msg_send![self, normalizeAdjacentTextNodesPreservingCDATA: preserve]
     }
-    pub unsafe fn attributes(&self) -> TodoGenerics {
-        msg_send![self, attributes]
+    pub unsafe fn attributes(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
+        msg_send_id![self, attributes]
     }
-    pub unsafe fn setAttributes(&self, attributes: TodoGenerics) {
+    pub unsafe fn setAttributes(&self, attributes: Option<&NSArray<NSXMLNode>>) {
         msg_send![self, setAttributes: attributes]
     }
-    pub unsafe fn namespaces(&self) -> TodoGenerics {
-        msg_send![self, namespaces]
+    pub unsafe fn namespaces(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
+        msg_send_id![self, namespaces]
     }
-    pub unsafe fn setNamespaces(&self, namespaces: TodoGenerics) {
+    pub unsafe fn setNamespaces(&self, namespaces: Option<&NSArray<NSXMLNode>>) {
         msg_send![self, setNamespaces: namespaces]
     }
 }

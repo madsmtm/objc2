@@ -24,7 +24,7 @@ pub enum RustType {
     // Objective-C
     Id {
         name: String,
-        // generics: Vec<String>,
+        generics: Vec<String>,
         is_return: bool,
         nullability: Nullability,
     },
@@ -134,6 +134,7 @@ impl RustType {
             Double => Self::Double,
             ObjCId => Self::Id {
                 name: "Object".to_string(),
+                generics: Vec::new(),
                 is_return,
                 nullability,
             },
@@ -142,23 +143,9 @@ impl RustType {
             Pointer => {
                 let is_const = ty.is_const_qualified();
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                // Note: Can't handle const id pointers
+                // assert!(!ty.is_const_qualified(), "expected pointee to not be const");
                 let pointee = Self::parse(ty, false, is_consumed);
-                let pointee = match pointee {
-                    Self::Id {
-                        name,
-                        is_return,
-                        nullability,
-                    } => {
-                        let is_const = ty.is_const_qualified();
-                        Self::Pointer {
-                            nullability,
-                            is_const,
-                            pointee: Box::new(Self::TypeDef { name }),
-                        }
-                    }
-                    pointee => pointee,
-                };
-
                 Self::Pointer {
                     nullability,
                     is_const,
@@ -169,23 +156,48 @@ impl RustType {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 match ty.get_kind() {
                     ObjCInterface => {
-                        let base_ty = ty
-                            .get_objc_object_base_type()
-                            .expect("interface to have base type");
-                        if base_ty != ty {
-                            // TODO: Figure out what the base type is
-                            panic!("base {:?} was not equal to {:?}", base_ty, ty);
+                        let generics = ty.get_objc_type_arguments();
+                        if !generics.is_empty() {
+                            panic!("not empty: {:?}, {:?}", ty, generics);
                         }
                         let name = ty.get_display_name();
                         Self::Id {
                             name,
+                            generics: Vec::new(),
                             is_return,
                             nullability,
                         }
                     }
-                    ObjCObject => Self::TypeDef {
-                        name: "TodoGenerics".to_string(),
-                    },
+                    ObjCObject => {
+                        let generics = ty
+                            .get_objc_type_arguments()
+                            .into_iter()
+                            .map(|ty| {
+                                match Self::parse(ty, false, false) {
+                                    Self::Id {
+                                        name,
+                                        generics,
+                                        is_return,
+                                        nullability,
+                                    } => name,
+                                    // TODO: Handle these two better
+                                    Self::Class { nullability } => "TodoClass".to_string(),
+                                    Self::TypeDef { name } => "TodoTypedef".to_string(),
+                                    ty => panic!("invalid {:?}", ty),
+                                }
+                            })
+                            .collect();
+                        let base_ty = ty
+                            .get_objc_object_base_type()
+                            .expect("object to have base type");
+                        let name = base_ty.get_display_name();
+                        Self::Id {
+                            name,
+                            generics,
+                            is_return,
+                            nullability,
+                        }
+                    }
                     Attributed => Self::TypeDef {
                         name: "TodoAttributed".to_string(),
                     },
@@ -202,14 +214,20 @@ impl RustType {
                         }
                         Self::Id {
                             name: "Self".to_string(),
+                            generics: Vec::new(),
                             is_return,
                             nullability,
                         }
                     }
                     _ => {
                         if Self::typedef_is_id(ty.get_canonical_type()).is_some() {
+                            let generics = ty.get_objc_type_arguments();
+                            if !generics.is_empty() {
+                                panic!("not empty: {:?}, {:?}", ty, generics);
+                            }
                             Self::Id {
                                 name: typedef_name,
+                                generics: Vec::new(),
                                 is_return,
                                 nullability,
                             }
@@ -273,10 +291,13 @@ impl ToTokens for RustType {
             // Objective-C
             Id {
                 name,
+                generics,
                 is_return,
                 nullability,
             } => {
                 let tokens = format_ident!("{}", name);
+                let generics = generics.iter().map(|param| format_ident!("{}", param));
+                let tokens = quote!(#tokens <#(#generics),*>);
                 let tokens = if *is_return {
                     quote!(Id<#tokens, Shared>)
                 } else {
@@ -310,13 +331,31 @@ impl ToTokens for RustType {
                 is_const,
                 pointee,
             } => {
+                let tokens = match &**pointee {
+                    Self::Id {
+                        name,
+                        generics,
+                        is_return,
+                        nullability,
+                    } => {
+                        let name = format_ident!("{}", name);
+                        let generics = generics.iter().map(|param| format_ident!("{}", param));
+                        if *nullability == Nullability::NonNull {
+                            quote!(NonNull<#name <#(#generics),*>>)
+                        } else {
+                            // TODO: const?
+                            quote!(*mut #name)
+                        }
+                    }
+                    pointee => quote!(#pointee),
+                };
                 if *nullability == Nullability::NonNull {
-                    quote!(NonNull<#pointee>)
+                    quote!(NonNull<#tokens>)
                 } else {
                     if *is_const {
-                        quote!(*const #pointee)
+                        quote!(*const #tokens)
                     } else {
-                        quote!(*mut #pointee)
+                        quote!(*mut #tokens)
                     }
                 }
             }

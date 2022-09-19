@@ -166,8 +166,10 @@ impl NSURLRequest {
     pub unsafe fn HTTPMethod(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, HTTPMethod]
     }
-    pub unsafe fn allHTTPHeaderFields(&self) -> TodoGenerics {
-        msg_send![self, allHTTPHeaderFields]
+    pub unsafe fn allHTTPHeaderFields(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>> {
+        msg_send_id![self, allHTTPHeaderFields]
     }
     pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, HTTPBody]
@@ -196,10 +198,15 @@ impl NSMutableURLRequest {
     pub unsafe fn setHTTPMethod(&self, HTTPMethod: &NSString) {
         msg_send![self, setHTTPMethod: HTTPMethod]
     }
-    pub unsafe fn allHTTPHeaderFields(&self) -> TodoGenerics {
-        msg_send![self, allHTTPHeaderFields]
+    pub unsafe fn allHTTPHeaderFields(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>> {
+        msg_send_id![self, allHTTPHeaderFields]
     }
-    pub unsafe fn setAllHTTPHeaderFields(&self, allHTTPHeaderFields: TodoGenerics) {
+    pub unsafe fn setAllHTTPHeaderFields(
+        &self,
+        allHTTPHeaderFields: Option<&NSDictionary<NSString, NSString>>,
+    ) {
         msg_send![self, setAllHTTPHeaderFields: allHTTPHeaderFields]
     }
     pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>> {

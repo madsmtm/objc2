@@ -15,7 +15,7 @@ impl NSCompoundPredicate {
     pub unsafe fn initWithType_subpredicates(
         &self,
         type_: NSCompoundPredicateType,
-        subpredicates: TodoGenerics,
+        subpredicates: &NSArray<NSPredicate>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithType: type_, subpredicates: subpredicates]
     }
@@ -23,12 +23,12 @@ impl NSCompoundPredicate {
         msg_send_id![self, initWithCoder: coder]
     }
     pub unsafe fn andPredicateWithSubpredicates(
-        subpredicates: TodoGenerics,
+        subpredicates: &NSArray<NSPredicate>,
     ) -> Id<NSCompoundPredicate, Shared> {
         msg_send_id![Self::class(), andPredicateWithSubpredicates: subpredicates]
     }
     pub unsafe fn orPredicateWithSubpredicates(
-        subpredicates: TodoGenerics,
+        subpredicates: &NSArray<NSPredicate>,
     ) -> Id<NSCompoundPredicate, Shared> {
         msg_send_id![Self::class(), orPredicateWithSubpredicates: subpredicates]
     }

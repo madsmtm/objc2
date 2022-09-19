@@ -53,11 +53,11 @@ impl NSException {
     pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>> {
         msg_send_id![self, userInfo]
     }
-    pub unsafe fn callStackReturnAddresses(&self) -> TodoGenerics {
-        msg_send![self, callStackReturnAddresses]
+    pub unsafe fn callStackReturnAddresses(&self) -> Id<NSArray<NSNumber>, Shared> {
+        msg_send_id![self, callStackReturnAddresses]
     }
-    pub unsafe fn callStackSymbols(&self) -> TodoGenerics {
-        msg_send![self, callStackSymbols]
+    pub unsafe fn callStackSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, callStackSymbols]
     }
 }
 #[doc = "NSExceptionRaisingConveniences"]

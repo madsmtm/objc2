@@ -91,12 +91,14 @@ impl NSNumberFormatter {
     pub unsafe fn setNegativeFormat(&self, negativeFormat: Option<&NSString>) {
         msg_send![self, setNegativeFormat: negativeFormat]
     }
-    pub unsafe fn textAttributesForNegativeValues(&self) -> TodoGenerics {
-        msg_send![self, textAttributesForNegativeValues]
+    pub unsafe fn textAttributesForNegativeValues(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, textAttributesForNegativeValues]
     }
     pub unsafe fn setTextAttributesForNegativeValues(
         &self,
-        textAttributesForNegativeValues: TodoGenerics,
+        textAttributesForNegativeValues: Option<&NSDictionary<NSString, Object>>,
     ) {
         msg_send![
             self,
@@ -109,12 +111,14 @@ impl NSNumberFormatter {
     pub unsafe fn setPositiveFormat(&self, positiveFormat: Option<&NSString>) {
         msg_send![self, setPositiveFormat: positiveFormat]
     }
-    pub unsafe fn textAttributesForPositiveValues(&self) -> TodoGenerics {
-        msg_send![self, textAttributesForPositiveValues]
+    pub unsafe fn textAttributesForPositiveValues(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, textAttributesForPositiveValues]
     }
     pub unsafe fn setTextAttributesForPositiveValues(
         &self,
-        textAttributesForPositiveValues: TodoGenerics,
+        textAttributesForPositiveValues: Option<&NSDictionary<NSString, Object>>,
     ) {
         msg_send![
             self,
@@ -166,10 +170,15 @@ impl NSNumberFormatter {
     pub unsafe fn setZeroSymbol(&self, zeroSymbol: Option<&NSString>) {
         msg_send![self, setZeroSymbol: zeroSymbol]
     }
-    pub unsafe fn textAttributesForZero(&self) -> TodoGenerics {
-        msg_send![self, textAttributesForZero]
+    pub unsafe fn textAttributesForZero(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, textAttributesForZero]
     }
-    pub unsafe fn setTextAttributesForZero(&self, textAttributesForZero: TodoGenerics) {
+    pub unsafe fn setTextAttributesForZero(
+        &self,
+        textAttributesForZero: Option<&NSDictionary<NSString, Object>>,
+    ) {
         msg_send![self, setTextAttributesForZero: textAttributesForZero]
     }
     pub unsafe fn nilSymbol(&self) -> Id<NSString, Shared> {
@@ -178,10 +187,15 @@ impl NSNumberFormatter {
     pub unsafe fn setNilSymbol(&self, nilSymbol: &NSString) {
         msg_send![self, setNilSymbol: nilSymbol]
     }
-    pub unsafe fn textAttributesForNil(&self) -> TodoGenerics {
-        msg_send![self, textAttributesForNil]
+    pub unsafe fn textAttributesForNil(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, textAttributesForNil]
     }
-    pub unsafe fn setTextAttributesForNil(&self, textAttributesForNil: TodoGenerics) {
+    pub unsafe fn setTextAttributesForNil(
+        &self,
+        textAttributesForNil: Option<&NSDictionary<NSString, Object>>,
+    ) {
         msg_send![self, setTextAttributesForNil: textAttributesForNil]
     }
     pub unsafe fn notANumberSymbol(&self) -> Id<NSString, Shared> {
@@ -190,10 +204,15 @@ impl NSNumberFormatter {
     pub unsafe fn setNotANumberSymbol(&self, notANumberSymbol: Option<&NSString>) {
         msg_send![self, setNotANumberSymbol: notANumberSymbol]
     }
-    pub unsafe fn textAttributesForNotANumber(&self) -> TodoGenerics {
-        msg_send![self, textAttributesForNotANumber]
+    pub unsafe fn textAttributesForNotANumber(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, textAttributesForNotANumber]
     }
-    pub unsafe fn setTextAttributesForNotANumber(&self, textAttributesForNotANumber: TodoGenerics) {
+    pub unsafe fn setTextAttributesForNotANumber(
+        &self,
+        textAttributesForNotANumber: Option<&NSDictionary<NSString, Object>>,
+    ) {
         msg_send![
             self,
             setTextAttributesForNotANumber: textAttributesForNotANumber
@@ -205,12 +224,14 @@ impl NSNumberFormatter {
     pub unsafe fn setPositiveInfinitySymbol(&self, positiveInfinitySymbol: &NSString) {
         msg_send![self, setPositiveInfinitySymbol: positiveInfinitySymbol]
     }
-    pub unsafe fn textAttributesForPositiveInfinity(&self) -> TodoGenerics {
-        msg_send![self, textAttributesForPositiveInfinity]
+    pub unsafe fn textAttributesForPositiveInfinity(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, textAttributesForPositiveInfinity]
     }
     pub unsafe fn setTextAttributesForPositiveInfinity(
         &self,
-        textAttributesForPositiveInfinity: TodoGenerics,
+        textAttributesForPositiveInfinity: Option<&NSDictionary<NSString, Object>>,
     ) {
         msg_send![
             self,
@@ -223,12 +244,14 @@ impl NSNumberFormatter {
     pub unsafe fn setNegativeInfinitySymbol(&self, negativeInfinitySymbol: &NSString) {
         msg_send![self, setNegativeInfinitySymbol: negativeInfinitySymbol]
     }
-    pub unsafe fn textAttributesForNegativeInfinity(&self) -> TodoGenerics {
-        msg_send![self, textAttributesForNegativeInfinity]
+    pub unsafe fn textAttributesForNegativeInfinity(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, textAttributesForNegativeInfinity]
     }
     pub unsafe fn setTextAttributesForNegativeInfinity(
         &self,
-        textAttributesForNegativeInfinity: TodoGenerics,
+        textAttributesForNegativeInfinity: Option<&NSDictionary<NSString, Object>>,
     ) {
         msg_send![
             self,

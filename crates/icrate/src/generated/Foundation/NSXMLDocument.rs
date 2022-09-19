@@ -62,13 +62,13 @@ impl NSXMLDocument {
     pub unsafe fn insertChild_atIndex(&self, child: &NSXMLNode, index: NSUInteger) {
         msg_send![self, insertChild: child, atIndex: index]
     }
-    pub unsafe fn insertChildren_atIndex(&self, children: TodoGenerics, index: NSUInteger) {
+    pub unsafe fn insertChildren_atIndex(&self, children: &NSArray<NSXMLNode>, index: NSUInteger) {
         msg_send![self, insertChildren: children, atIndex: index]
     }
     pub unsafe fn removeChildAtIndex(&self, index: NSUInteger) {
         msg_send![self, removeChildAtIndex: index]
     }
-    pub unsafe fn setChildren(&self, children: TodoGenerics) {
+    pub unsafe fn setChildren(&self, children: Option<&NSArray<NSXMLNode>>) {
         msg_send![self, setChildren: children]
     }
     pub unsafe fn addChild(&self, child: &NSXMLNode) {
@@ -83,7 +83,7 @@ impl NSXMLDocument {
     pub unsafe fn objectByApplyingXSLT_arguments_error(
         &self,
         xslt: &NSData,
-        arguments: TodoGenerics,
+        arguments: Option<&NSDictionary<NSString, NSString>>,
         error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
@@ -96,7 +96,7 @@ impl NSXMLDocument {
     pub unsafe fn objectByApplyingXSLTString_arguments_error(
         &self,
         xslt: &NSString,
-        arguments: TodoGenerics,
+        arguments: Option<&NSDictionary<NSString, NSString>>,
         error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
@@ -109,7 +109,7 @@ impl NSXMLDocument {
     pub unsafe fn objectByApplyingXSLTAtURL_arguments_error(
         &self,
         xsltURL: &NSURL,
-        argument: TodoGenerics,
+        argument: Option<&NSDictionary<NSString, NSString>>,
         error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![

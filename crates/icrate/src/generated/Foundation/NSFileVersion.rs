@@ -21,11 +21,15 @@ impl NSFileVersion {
     pub unsafe fn currentVersionOfItemAtURL(url: &NSURL) -> Option<Id<NSFileVersion, Shared>> {
         msg_send_id![Self::class(), currentVersionOfItemAtURL: url]
     }
-    pub unsafe fn otherVersionsOfItemAtURL(url: &NSURL) -> TodoGenerics {
-        msg_send![Self::class(), otherVersionsOfItemAtURL: url]
+    pub unsafe fn otherVersionsOfItemAtURL(
+        url: &NSURL,
+    ) -> Option<Id<NSArray<NSFileVersion>, Shared>> {
+        msg_send_id![Self::class(), otherVersionsOfItemAtURL: url]
     }
-    pub unsafe fn unresolvedConflictVersionsOfItemAtURL(url: &NSURL) -> TodoGenerics {
-        msg_send![Self::class(), unresolvedConflictVersionsOfItemAtURL: url]
+    pub unsafe fn unresolvedConflictVersionsOfItemAtURL(
+        url: &NSURL,
+    ) -> Option<Id<NSArray<NSFileVersion>, Shared>> {
+        msg_send_id![Self::class(), unresolvedConflictVersionsOfItemAtURL: url]
     }
     pub unsafe fn getNonlocalVersionsOfItemAtURL_completionHandler(
         url: &NSURL,
@@ -103,8 +107,8 @@ impl NSFileVersion {
     pub unsafe fn modificationDate(&self) -> Option<Id<NSDate, Shared>> {
         msg_send_id![self, modificationDate]
     }
-    pub unsafe fn persistentIdentifier(&self) -> TodoGenerics {
-        msg_send![self, persistentIdentifier]
+    pub unsafe fn persistentIdentifier(&self) -> Id<id, Shared> {
+        msg_send_id![self, persistentIdentifier]
     }
     pub unsafe fn isConflict(&self) -> bool {
         msg_send![self, isConflict]

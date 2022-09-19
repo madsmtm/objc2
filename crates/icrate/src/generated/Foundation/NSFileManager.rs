@@ -32,10 +32,10 @@ extern_class!(
 impl NSFileManager {
     pub unsafe fn mountedVolumeURLsIncludingResourceValuesForKeys_options(
         &self,
-        propertyKeys: TodoGenerics,
+        propertyKeys: Option<&NSArray<NSURLResourceKey>>,
         options: NSVolumeEnumerationOptions,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Option<Id<NSArray<NSURL>, Shared>> {
+        msg_send_id![
             self,
             mountedVolumeURLsIncludingResourceValuesForKeys: propertyKeys,
             options: options
@@ -57,11 +57,11 @@ impl NSFileManager {
     pub unsafe fn contentsOfDirectoryAtURL_includingPropertiesForKeys_options_error(
         &self,
         url: &NSURL,
-        keys: TodoGenerics,
+        keys: Option<&NSArray<NSURLResourceKey>>,
         mask: NSDirectoryEnumerationOptions,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Option<Id<NSArray<NSURL>, Shared>> {
+        msg_send_id![
             self,
             contentsOfDirectoryAtURL: url,
             includingPropertiesForKeys: keys,
@@ -73,8 +73,8 @@ impl NSFileManager {
         &self,
         directory: NSSearchPathDirectory,
         domainMask: NSSearchPathDomainMask,
-    ) -> TodoGenerics {
-        msg_send![self, URLsForDirectory: directory, inDomains: domainMask]
+    ) -> Id<NSArray<NSURL>, Shared> {
+        msg_send_id![self, URLsForDirectory: directory, inDomains: domainMask]
     }
     pub unsafe fn URLForDirectory_inDomain_appropriateForURL_create_error(
         &self,
@@ -129,7 +129,7 @@ impl NSFileManager {
         &self,
         url: &NSURL,
         createIntermediates: bool,
-        attributes: TodoGenerics,
+        attributes: Option<&NSDictionary<NSFileAttributeKey, Object>>,
         error: *mut *mut NSError,
     ) -> bool {
         msg_send![
@@ -155,7 +155,7 @@ impl NSFileManager {
     }
     pub unsafe fn setAttributes_ofItemAtPath_error(
         &self,
-        attributes: TodoGenerics,
+        attributes: &NSDictionary<NSFileAttributeKey, Object>,
         path: &NSString,
         error: *mut *mut NSError,
     ) -> bool {
@@ -170,7 +170,7 @@ impl NSFileManager {
         &self,
         path: &NSString,
         createIntermediates: bool,
-        attributes: TodoGenerics,
+        attributes: Option<&NSDictionary<NSFileAttributeKey, Object>>,
         error: *mut *mut NSError,
     ) -> bool {
         msg_send![
@@ -185,29 +185,29 @@ impl NSFileManager {
         &self,
         path: &NSString,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![self, contentsOfDirectoryAtPath: path, error: error]
+    ) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, contentsOfDirectoryAtPath: path, error: error]
     }
     pub unsafe fn subpathsOfDirectoryAtPath_error(
         &self,
         path: &NSString,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![self, subpathsOfDirectoryAtPath: path, error: error]
+    ) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, subpathsOfDirectoryAtPath: path, error: error]
     }
     pub unsafe fn attributesOfItemAtPath_error(
         &self,
         path: &NSString,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![self, attributesOfItemAtPath: path, error: error]
+    ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>> {
+        msg_send_id![self, attributesOfItemAtPath: path, error: error]
     }
     pub unsafe fn attributesOfFileSystemForPath_error(
         &self,
         path: &NSString,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![self, attributesOfFileSystemForPath: path, error: error]
+    ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>> {
+        msg_send_id![self, attributesOfFileSystemForPath: path, error: error]
     }
     pub unsafe fn createSymbolicLinkAtPath_withDestinationPath_error(
         &self,
@@ -401,20 +401,26 @@ impl NSFileManager {
     pub unsafe fn displayNameAtPath(&self, path: &NSString) -> Id<NSString, Shared> {
         msg_send_id![self, displayNameAtPath: path]
     }
-    pub unsafe fn componentsToDisplayForPath(&self, path: &NSString) -> TodoGenerics {
-        msg_send![self, componentsToDisplayForPath: path]
+    pub unsafe fn componentsToDisplayForPath(
+        &self,
+        path: &NSString,
+    ) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, componentsToDisplayForPath: path]
     }
-    pub unsafe fn enumeratorAtPath(&self, path: &NSString) -> TodoGenerics {
-        msg_send![self, enumeratorAtPath: path]
+    pub unsafe fn enumeratorAtPath(
+        &self,
+        path: &NSString,
+    ) -> Option<Id<NSDirectoryEnumerator<NSString>, Shared>> {
+        msg_send_id![self, enumeratorAtPath: path]
     }
     pub unsafe fn enumeratorAtURL_includingPropertiesForKeys_options_errorHandler(
         &self,
         url: &NSURL,
-        keys: TodoGenerics,
+        keys: Option<&NSArray<NSURLResourceKey>>,
         mask: NSDirectoryEnumerationOptions,
         handler: TodoBlock,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Option<Id<NSDirectoryEnumerator<NSURL>, Shared>> {
+        msg_send_id![
             self,
             enumeratorAtURL: url,
             includingPropertiesForKeys: keys,
@@ -422,8 +428,8 @@ impl NSFileManager {
             errorHandler: handler
         ]
     }
-    pub unsafe fn subpathsAtPath(&self, path: &NSString) -> TodoGenerics {
-        msg_send![self, subpathsAtPath: path]
+    pub unsafe fn subpathsAtPath(&self, path: &NSString) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, subpathsAtPath: path]
     }
     pub unsafe fn contentsAtPath(&self, path: &NSString) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, contentsAtPath: path]
@@ -432,7 +438,7 @@ impl NSFileManager {
         &self,
         path: &NSString,
         data: Option<&NSData>,
-        attr: TodoGenerics,
+        attr: Option<&NSDictionary<NSFileAttributeKey, Object>>,
     ) -> bool {
         msg_send![
             self,
@@ -544,17 +550,17 @@ impl NSFileManager {
     pub unsafe fn defaultManager() -> Id<NSFileManager, Shared> {
         msg_send_id![Self::class(), defaultManager]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared> {
         msg_send_id![self, currentDirectoryPath]
     }
-    pub unsafe fn ubiquityIdentityToken(&self) -> TodoGenerics {
-        msg_send![self, ubiquityIdentityToken]
+    pub unsafe fn ubiquityIdentityToken(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, ubiquityIdentityToken]
     }
 }
 #[doc = "NSUserInformation"]
@@ -597,11 +603,15 @@ impl<ObjectType: Message> NSDirectoryEnumerator<ObjectType> {
     pub unsafe fn skipDescendants(&self) {
         msg_send![self, skipDescendants]
     }
-    pub unsafe fn fileAttributes(&self) -> TodoGenerics {
-        msg_send![self, fileAttributes]
+    pub unsafe fn fileAttributes(
+        &self,
+    ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>> {
+        msg_send_id![self, fileAttributes]
     }
-    pub unsafe fn directoryAttributes(&self) -> TodoGenerics {
-        msg_send![self, directoryAttributes]
+    pub unsafe fn directoryAttributes(
+        &self,
+    ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>> {
+        msg_send_id![self, directoryAttributes]
     }
     pub unsafe fn isEnumeratingDirectoryPostOrder(&self) -> bool {
         msg_send![self, isEnumeratingDirectoryPostOrder]

@@ -19,7 +19,7 @@ impl<ObjectType: Message> NSEnumerator<ObjectType> {
 }
 #[doc = "NSExtendedEnumerator"]
 impl<ObjectType: Message> NSEnumerator<ObjectType> {
-    pub unsafe fn allObjects(&self) -> TodoGenerics {
-        msg_send![self, allObjects]
+    pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, allObjects]
     }
 }

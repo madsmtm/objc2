@@ -42,21 +42,21 @@ extern_class!(
     }
 );
 impl NSFileCoordinator {
-    pub unsafe fn addFilePresenter(filePresenter: TodoGenerics) {
+    pub unsafe fn addFilePresenter(filePresenter: &id) {
         msg_send![Self::class(), addFilePresenter: filePresenter]
     }
-    pub unsafe fn removeFilePresenter(filePresenter: TodoGenerics) {
+    pub unsafe fn removeFilePresenter(filePresenter: &id) {
         msg_send![Self::class(), removeFilePresenter: filePresenter]
     }
     pub unsafe fn initWithFilePresenter(
         &self,
-        filePresenterOrNil: TodoGenerics,
+        filePresenterOrNil: Option<&id>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithFilePresenter: filePresenterOrNil]
     }
     pub unsafe fn coordinateAccessWithIntents_queue_byAccessor(
         &self,
-        intents: TodoGenerics,
+        intents: &NSArray<NSFileAccessIntent>,
         queue: &NSOperationQueue,
         accessor: TodoBlock,
     ) {
@@ -137,9 +137,9 @@ impl NSFileCoordinator {
     }
     pub unsafe fn prepareForReadingItemsAtURLs_options_writingItemsAtURLs_options_error_byAccessor(
         &self,
-        readingURLs: TodoGenerics,
+        readingURLs: &NSArray<NSURL>,
         readingOptions: NSFileCoordinatorReadingOptions,
-        writingURLs: TodoGenerics,
+        writingURLs: &NSArray<NSURL>,
         writingOptions: NSFileCoordinatorWritingOptions,
         outError: *mut *mut NSError,
         batchAccessor: TodoBlock,
@@ -163,7 +163,7 @@ impl NSFileCoordinator {
     pub unsafe fn itemAtURL_didChangeUbiquityAttributes(
         &self,
         url: &NSURL,
-        attributes: TodoGenerics,
+        attributes: &NSSet<NSURLResourceKey>,
     ) {
         msg_send![
             self,
@@ -174,8 +174,8 @@ impl NSFileCoordinator {
     pub unsafe fn cancel(&self) {
         msg_send![self, cancel]
     }
-    pub unsafe fn filePresenters() -> TodoGenerics {
-        msg_send![Self::class(), filePresenters]
+    pub unsafe fn filePresenters() -> Id<NSArray<id>, Shared> {
+        msg_send_id![Self::class(), filePresenters]
     }
     pub unsafe fn purposeIdentifier(&self) -> Id<NSString, Shared> {
         msg_send_id![self, purposeIdentifier]

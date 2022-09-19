@@ -208,10 +208,10 @@ impl NSURL {
     }
     pub unsafe fn resourceValuesForKeys_error(
         &self,
-        keys: TodoGenerics,
+        keys: &NSArray<NSURLResourceKey>,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![self, resourceValuesForKeys: keys, error: error]
+    ) -> Option<Id<NSDictionary<NSURLResourceKey, Object>, Shared>> {
+        msg_send_id![self, resourceValuesForKeys: keys, error: error]
     }
     pub unsafe fn setResourceValue_forKey_error(
         &self,
@@ -223,7 +223,7 @@ impl NSURL {
     }
     pub unsafe fn setResourceValues_error(
         &self,
-        keyedValues: TodoGenerics,
+        keyedValues: &NSDictionary<NSURLResourceKey, Object>,
         error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, setResourceValues: keyedValues, error: error]
@@ -244,7 +244,7 @@ impl NSURL {
     pub unsafe fn bookmarkDataWithOptions_includingResourceValuesForKeys_relativeToURL_error(
         &self,
         options: NSURLBookmarkCreationOptions,
-        keys: TodoGenerics,
+        keys: Option<&NSArray<NSURLResourceKey>>,
         relativeURL: Option<&NSURL>,
         error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
@@ -290,10 +290,10 @@ impl NSURL {
         ]
     }
     pub unsafe fn resourceValuesForKeys_fromBookmarkData(
-        keys: TodoGenerics,
+        keys: &NSArray<NSURLResourceKey>,
         bookmarkData: &NSData,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Option<Id<NSDictionary<NSURLResourceKey, Object>, Shared>> {
+        msg_send_id![
             Self::class(),
             resourceValuesForKeys: keys,
             fromBookmarkData: bookmarkData
@@ -422,10 +422,10 @@ impl NSURL {
     }
     pub unsafe fn promisedItemResourceValuesForKeys_error(
         &self,
-        keys: TodoGenerics,
+        keys: &NSArray<NSURLResourceKey>,
         error: *mut *mut NSError,
-    ) -> TodoGenerics {
-        msg_send![self, promisedItemResourceValuesForKeys: keys, error: error]
+    ) -> Option<Id<NSDictionary<NSURLResourceKey, Object>, Shared>> {
+        msg_send_id![self, promisedItemResourceValuesForKeys: keys, error: error]
     }
     pub unsafe fn checkPromisedItemIsReachableAndReturnError(
         &self,
@@ -615,16 +615,19 @@ impl NSURLComponents {
     pub unsafe fn rangeOfFragment(&self) -> NSRange {
         msg_send![self, rangeOfFragment]
     }
-    pub unsafe fn queryItems(&self) -> TodoGenerics {
-        msg_send![self, queryItems]
+    pub unsafe fn queryItems(&self) -> Option<Id<NSArray<NSURLQueryItem>, Shared>> {
+        msg_send_id![self, queryItems]
     }
-    pub unsafe fn setQueryItems(&self, queryItems: TodoGenerics) {
+    pub unsafe fn setQueryItems(&self, queryItems: Option<&NSArray<NSURLQueryItem>>) {
         msg_send![self, setQueryItems: queryItems]
     }
-    pub unsafe fn percentEncodedQueryItems(&self) -> TodoGenerics {
-        msg_send![self, percentEncodedQueryItems]
+    pub unsafe fn percentEncodedQueryItems(&self) -> Option<Id<NSArray<NSURLQueryItem>, Shared>> {
+        msg_send_id![self, percentEncodedQueryItems]
     }
-    pub unsafe fn setPercentEncodedQueryItems(&self, percentEncodedQueryItems: TodoGenerics) {
+    pub unsafe fn setPercentEncodedQueryItems(
+        &self,
+        percentEncodedQueryItems: Option<&NSArray<NSURLQueryItem>>,
+    ) {
         msg_send![self, setPercentEncodedQueryItems: percentEncodedQueryItems]
     }
 }
@@ -678,7 +681,9 @@ impl NSString {
 }
 #[doc = "NSURLPathUtilities"]
 impl NSURL {
-    pub unsafe fn fileURLWithPathComponents(components: TodoGenerics) -> Option<Id<NSURL, Shared>> {
+    pub unsafe fn fileURLWithPathComponents(
+        components: &NSArray<NSString>,
+    ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![Self::class(), fileURLWithPathComponents: components]
     }
     pub unsafe fn URLByAppendingPathComponent(
@@ -704,8 +709,8 @@ impl NSURL {
     ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, URLByAppendingPathExtension: pathExtension]
     }
-    pub unsafe fn pathComponents(&self) -> TodoGenerics {
-        msg_send![self, pathComponents]
+    pub unsafe fn pathComponents(&self) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, pathComponents]
     }
     pub unsafe fn lastPathComponent(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, lastPathComponent]

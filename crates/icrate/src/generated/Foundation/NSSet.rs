@@ -18,8 +18,8 @@ impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn member(&self, object: &ObjectType) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, member: object]
     }
-    pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
-        msg_send![self, objectEnumerator]
+    pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
+        msg_send_id![self, objectEnumerator]
     }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
@@ -49,13 +49,13 @@ impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale]
     }
-    pub unsafe fn intersectsSet(&self, otherSet: TodoGenerics) -> bool {
+    pub unsafe fn intersectsSet(&self, otherSet: &NSSet<ObjectType>) -> bool {
         msg_send![self, intersectsSet: otherSet]
     }
-    pub unsafe fn isEqualToSet(&self, otherSet: TodoGenerics) -> bool {
+    pub unsafe fn isEqualToSet(&self, otherSet: &NSSet<ObjectType>) -> bool {
         msg_send![self, isEqualToSet: otherSet]
     }
-    pub unsafe fn isSubsetOfSet(&self, otherSet: TodoGenerics) -> bool {
+    pub unsafe fn isSubsetOfSet(&self, otherSet: &NSSet<ObjectType>) -> bool {
         msg_send![self, isSubsetOfSet: otherSet]
     }
     pub unsafe fn makeObjectsPerformSelector(&self, aSelector: Sel) {
@@ -72,14 +72,20 @@ impl<ObjectType: Message> NSSet<ObjectType> {
             withObject: argument
         ]
     }
-    pub unsafe fn setByAddingObject(&self, anObject: &ObjectType) -> TodoGenerics {
-        msg_send![self, setByAddingObject: anObject]
+    pub unsafe fn setByAddingObject(&self, anObject: &ObjectType) -> Id<NSSet<ObjectType>, Shared> {
+        msg_send_id![self, setByAddingObject: anObject]
     }
-    pub unsafe fn setByAddingObjectsFromSet(&self, other: TodoGenerics) -> TodoGenerics {
-        msg_send![self, setByAddingObjectsFromSet: other]
+    pub unsafe fn setByAddingObjectsFromSet(
+        &self,
+        other: &NSSet<ObjectType>,
+    ) -> Id<NSSet<ObjectType>, Shared> {
+        msg_send_id![self, setByAddingObjectsFromSet: other]
     }
-    pub unsafe fn setByAddingObjectsFromArray(&self, other: TodoGenerics) -> TodoGenerics {
-        msg_send![self, setByAddingObjectsFromArray: other]
+    pub unsafe fn setByAddingObjectsFromArray(
+        &self,
+        other: &NSArray<ObjectType>,
+    ) -> Id<NSSet<ObjectType>, Shared> {
+        msg_send_id![self, setByAddingObjectsFromArray: other]
     }
     pub unsafe fn enumerateObjectsUsingBlock(&self, block: TodoBlock) {
         msg_send![self, enumerateObjectsUsingBlock: block]
@@ -91,18 +97,18 @@ impl<ObjectType: Message> NSSet<ObjectType> {
     ) {
         msg_send![self, enumerateObjectsWithOptions: opts, usingBlock: block]
     }
-    pub unsafe fn objectsPassingTest(&self, predicate: TodoBlock) -> TodoGenerics {
-        msg_send![self, objectsPassingTest: predicate]
+    pub unsafe fn objectsPassingTest(&self, predicate: TodoBlock) -> Id<NSSet<ObjectType>, Shared> {
+        msg_send_id![self, objectsPassingTest: predicate]
     }
     pub unsafe fn objectsWithOptions_passingTest(
         &self,
         opts: NSEnumerationOptions,
         predicate: TodoBlock,
-    ) -> TodoGenerics {
-        msg_send![self, objectsWithOptions: opts, passingTest: predicate]
+    ) -> Id<NSSet<ObjectType>, Shared> {
+        msg_send_id![self, objectsWithOptions: opts, passingTest: predicate]
     }
-    pub unsafe fn allObjects(&self) -> TodoGenerics {
-        msg_send![self, allObjects]
+    pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, allObjects]
     }
     pub unsafe fn description(&self) -> Id<NSString, Shared> {
         msg_send_id![self, description]
@@ -119,19 +125,23 @@ impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn setWithObjects_count(objects: TodoArray, cnt: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![Self::class(), setWithObjects: objects, count: cnt]
     }
-    pub unsafe fn setWithSet(set: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn setWithSet(set: &NSSet<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![Self::class(), setWithSet: set]
     }
-    pub unsafe fn setWithArray(array: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn setWithArray(array: &NSArray<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![Self::class(), setWithArray: array]
     }
-    pub unsafe fn initWithSet(&self, set: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithSet(&self, set: &NSSet<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![self, initWithSet: set]
     }
-    pub unsafe fn initWithSet_copyItems(&self, set: TodoGenerics, flag: bool) -> Id<Self, Shared> {
+    pub unsafe fn initWithSet_copyItems(
+        &self,
+        set: &NSSet<ObjectType>,
+        flag: bool,
+    ) -> Id<Self, Shared> {
         msg_send_id![self, initWithSet: set, copyItems: flag]
     }
-    pub unsafe fn initWithArray(&self, array: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithArray(&self, array: &NSArray<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![self, initWithArray: array]
     }
 }
@@ -161,22 +171,22 @@ impl<ObjectType: Message> NSMutableSet<ObjectType> {
 }
 #[doc = "NSExtendedMutableSet"]
 impl<ObjectType: Message> NSMutableSet<ObjectType> {
-    pub unsafe fn addObjectsFromArray(&self, array: TodoGenerics) {
+    pub unsafe fn addObjectsFromArray(&self, array: &NSArray<ObjectType>) {
         msg_send![self, addObjectsFromArray: array]
     }
-    pub unsafe fn intersectSet(&self, otherSet: TodoGenerics) {
+    pub unsafe fn intersectSet(&self, otherSet: &NSSet<ObjectType>) {
         msg_send![self, intersectSet: otherSet]
     }
-    pub unsafe fn minusSet(&self, otherSet: TodoGenerics) {
+    pub unsafe fn minusSet(&self, otherSet: &NSSet<ObjectType>) {
         msg_send![self, minusSet: otherSet]
     }
     pub unsafe fn removeAllObjects(&self) {
         msg_send![self, removeAllObjects]
     }
-    pub unsafe fn unionSet(&self, otherSet: TodoGenerics) {
+    pub unsafe fn unionSet(&self, otherSet: &NSSet<ObjectType>) {
         msg_send![self, unionSet: otherSet]
     }
-    pub unsafe fn setSet(&self, otherSet: TodoGenerics) {
+    pub unsafe fn setSet(&self, otherSet: &NSSet<ObjectType>) {
         msg_send![self, setSet: otherSet]
     }
 }
@@ -197,17 +207,17 @@ impl<ObjectType: Message> NSCountedSet<ObjectType> {
     pub unsafe fn initWithCapacity(&self, numItems: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![self, initWithCapacity: numItems]
     }
-    pub unsafe fn initWithArray(&self, array: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithArray(&self, array: &NSArray<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![self, initWithArray: array]
     }
-    pub unsafe fn initWithSet(&self, set: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithSet(&self, set: &NSSet<ObjectType>) -> Id<Self, Shared> {
         msg_send_id![self, initWithSet: set]
     }
     pub unsafe fn countForObject(&self, object: &ObjectType) -> NSUInteger {
         msg_send![self, countForObject: object]
     }
-    pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
-        msg_send![self, objectEnumerator]
+    pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
+        msg_send_id![self, objectEnumerator]
     }
     pub unsafe fn addObject(&self, object: &ObjectType) {
         msg_send![self, addObject: object]

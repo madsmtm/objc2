@@ -46,8 +46,8 @@ impl NSTextCheckingResult {
     pub unsafe fn orthography(&self) -> Option<Id<NSOrthography, Shared>> {
         msg_send_id![self, orthography]
     }
-    pub unsafe fn grammarDetails(&self) -> TodoGenerics {
-        msg_send![self, grammarDetails]
+    pub unsafe fn grammarDetails(&self) -> Option<Id<NSArray<NSDictionary>, Shared>> {
+        msg_send_id![self, grammarDetails]
     }
     pub unsafe fn date(&self) -> Option<Id<NSDate, Shared>> {
         msg_send_id![self, date]
@@ -58,8 +58,10 @@ impl NSTextCheckingResult {
     pub unsafe fn duration(&self) -> NSTimeInterval {
         msg_send![self, duration]
     }
-    pub unsafe fn components(&self) -> TodoGenerics {
-        msg_send![self, components]
+    pub unsafe fn components(
+        &self,
+    ) -> Option<Id<NSDictionary<NSTextCheckingKey, NSString>, Shared>> {
+        msg_send_id![self, components]
     }
     pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, URL]
@@ -67,8 +69,8 @@ impl NSTextCheckingResult {
     pub unsafe fn replacementString(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, replacementString]
     }
-    pub unsafe fn alternativeStrings(&self) -> TodoGenerics {
-        msg_send![self, alternativeStrings]
+    pub unsafe fn alternativeStrings(&self) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, alternativeStrings]
     }
     pub unsafe fn regularExpression(&self) -> Option<Id<NSRegularExpression, Shared>> {
         msg_send_id![self, regularExpression]
@@ -79,8 +81,10 @@ impl NSTextCheckingResult {
     pub unsafe fn numberOfRanges(&self) -> NSUInteger {
         msg_send![self, numberOfRanges]
     }
-    pub unsafe fn addressComponents(&self) -> TodoGenerics {
-        msg_send![self, addressComponents]
+    pub unsafe fn addressComponents(
+        &self,
+    ) -> Option<Id<NSDictionary<NSTextCheckingKey, NSString>, Shared>> {
+        msg_send_id![self, addressComponents]
     }
 }
 #[doc = "NSTextCheckingResultCreation"]
@@ -100,7 +104,7 @@ impl NSTextCheckingResult {
     }
     pub unsafe fn grammarCheckingResultWithRange_details(
         range: NSRange,
-        details: TodoGenerics,
+        details: &NSArray<NSDictionary>,
     ) -> Id<NSTextCheckingResult, Shared> {
         msg_send_id![
             Self::class(),
@@ -134,7 +138,7 @@ impl NSTextCheckingResult {
     }
     pub unsafe fn addressCheckingResultWithRange_components(
         range: NSRange,
-        components: TodoGenerics,
+        components: &NSDictionary<NSTextCheckingKey, NSString>,
     ) -> Id<NSTextCheckingResult, Shared> {
         msg_send_id![
             Self::class(),
@@ -191,7 +195,7 @@ impl NSTextCheckingResult {
     pub unsafe fn correctionCheckingResultWithRange_replacementString_alternativeStrings(
         range: NSRange,
         replacementString: &NSString,
-        alternativeStrings: TodoGenerics,
+        alternativeStrings: &NSArray<NSString>,
     ) -> Id<NSTextCheckingResult, Shared> {
         msg_send_id![
             Self::class(),
@@ -224,7 +228,7 @@ impl NSTextCheckingResult {
     }
     pub unsafe fn transitInformationCheckingResultWithRange_components(
         range: NSRange,
-        components: TodoGenerics,
+        components: &NSDictionary<NSTextCheckingKey, NSString>,
     ) -> Id<NSTextCheckingResult, Shared> {
         msg_send_id![
             Self::class(),

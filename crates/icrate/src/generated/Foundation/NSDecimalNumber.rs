@@ -84,7 +84,7 @@ impl NSDecimalNumber {
     pub unsafe fn decimalNumberByAdding_withBehavior(
         &self,
         decimalNumber: &NSDecimalNumber,
-        behavior: TodoGenerics,
+        behavior: Option<&id>,
     ) -> Id<NSDecimalNumber, Shared> {
         msg_send_id![
             self,
@@ -101,7 +101,7 @@ impl NSDecimalNumber {
     pub unsafe fn decimalNumberBySubtracting_withBehavior(
         &self,
         decimalNumber: &NSDecimalNumber,
-        behavior: TodoGenerics,
+        behavior: Option<&id>,
     ) -> Id<NSDecimalNumber, Shared> {
         msg_send_id![
             self,
@@ -118,7 +118,7 @@ impl NSDecimalNumber {
     pub unsafe fn decimalNumberByMultiplyingBy_withBehavior(
         &self,
         decimalNumber: &NSDecimalNumber,
-        behavior: TodoGenerics,
+        behavior: Option<&id>,
     ) -> Id<NSDecimalNumber, Shared> {
         msg_send_id![
             self,
@@ -135,7 +135,7 @@ impl NSDecimalNumber {
     pub unsafe fn decimalNumberByDividingBy_withBehavior(
         &self,
         decimalNumber: &NSDecimalNumber,
-        behavior: TodoGenerics,
+        behavior: Option<&id>,
     ) -> Id<NSDecimalNumber, Shared> {
         msg_send_id![
             self,
@@ -152,7 +152,7 @@ impl NSDecimalNumber {
     pub unsafe fn decimalNumberByRaisingToPower_withBehavior(
         &self,
         power: NSUInteger,
-        behavior: TodoGenerics,
+        behavior: Option<&id>,
     ) -> Id<NSDecimalNumber, Shared> {
         msg_send_id![
             self,
@@ -169,7 +169,7 @@ impl NSDecimalNumber {
     pub unsafe fn decimalNumberByMultiplyingByPowerOf10_withBehavior(
         &self,
         power: c_short,
-        behavior: TodoGenerics,
+        behavior: Option<&id>,
     ) -> Id<NSDecimalNumber, Shared> {
         msg_send_id![
             self,
@@ -179,7 +179,7 @@ impl NSDecimalNumber {
     }
     pub unsafe fn decimalNumberByRoundingAccordingToBehavior(
         &self,
-        behavior: TodoGenerics,
+        behavior: Option<&id>,
     ) -> Id<NSDecimalNumber, Shared> {
         msg_send_id![self, decimalNumberByRoundingAccordingToBehavior: behavior]
     }
@@ -204,10 +204,10 @@ impl NSDecimalNumber {
     pub unsafe fn notANumber() -> Id<NSDecimalNumber, Shared> {
         msg_send_id![Self::class(), notANumber]
     }
-    pub unsafe fn defaultBehavior() -> TodoGenerics {
-        msg_send![Self::class(), defaultBehavior]
+    pub unsafe fn defaultBehavior() -> Id<id, Shared> {
+        msg_send_id![Self::class(), defaultBehavior]
     }
-    pub unsafe fn setDefaultBehavior(defaultBehavior: TodoGenerics) {
+    pub unsafe fn setDefaultBehavior(defaultBehavior: &id) {
         msg_send![Self::class(), setDefaultBehavior: defaultBehavior]
     }
     pub unsafe fn objCType(&self) -> NonNull<c_char> {

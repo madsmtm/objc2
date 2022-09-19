@@ -66,8 +66,8 @@ impl NSMorphologyCustomPronoun {
     pub unsafe fn isSupportedForLanguage(language: &NSString) -> bool {
         msg_send![Self::class(), isSupportedForLanguage: language]
     }
-    pub unsafe fn requiredKeysForLanguage(language: &NSString) -> TodoGenerics {
-        msg_send![Self::class(), requiredKeysForLanguage: language]
+    pub unsafe fn requiredKeysForLanguage(language: &NSString) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), requiredKeysForLanguage: language]
     }
     pub unsafe fn subjectForm(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, subjectForm]

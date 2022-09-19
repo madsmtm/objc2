@@ -48,8 +48,8 @@ impl NSItemProvider {
     pub unsafe fn registeredTypeIdentifiersWithFileOptions(
         &self,
         fileOptions: NSItemProviderFileOptions,
-    ) -> TodoGenerics {
-        msg_send![self, registeredTypeIdentifiersWithFileOptions: fileOptions]
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, registeredTypeIdentifiersWithFileOptions: fileOptions]
     }
     pub unsafe fn hasItemConformingToTypeIdentifier(&self, typeIdentifier: &NSString) -> bool {
         msg_send![self, hasItemConformingToTypeIdentifier: typeIdentifier]
@@ -98,19 +98,19 @@ impl NSItemProvider {
             completionHandler: completionHandler
         ]
     }
-    pub unsafe fn initWithObject(&self, object: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithObject(&self, object: &id) -> Id<Self, Shared> {
         msg_send_id![self, initWithObject: object]
     }
     pub unsafe fn registerObject_visibility(
         &self,
-        object: TodoGenerics,
+        object: &id,
         visibility: NSItemProviderRepresentationVisibility,
     ) {
         msg_send![self, registerObject: object, visibility: visibility]
     }
     pub unsafe fn registerObjectOfClass_visibility_loadHandler(
         &self,
-        aClass: TodoGenerics,
+        aClass: &Class,
         visibility: NSItemProviderRepresentationVisibility,
         loadHandler: TodoBlock,
     ) {
@@ -121,12 +121,12 @@ impl NSItemProvider {
             loadHandler: loadHandler
         ]
     }
-    pub unsafe fn canLoadObjectOfClass(&self, aClass: TodoGenerics) -> bool {
+    pub unsafe fn canLoadObjectOfClass(&self, aClass: &Class) -> bool {
         msg_send![self, canLoadObjectOfClass: aClass]
     }
     pub unsafe fn loadObjectOfClass_completionHandler(
         &self,
-        aClass: TodoGenerics,
+        aClass: &Class,
         completionHandler: TodoBlock,
     ) -> Id<NSProgress, Shared> {
         msg_send_id![
@@ -137,7 +137,7 @@ impl NSItemProvider {
     }
     pub unsafe fn initWithItem_typeIdentifier(
         &self,
-        item: TodoGenerics,
+        item: Option<&id>,
         typeIdentifier: Option<&NSString>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithItem: item, typeIdentifier: typeIdentifier]
@@ -172,8 +172,8 @@ impl NSItemProvider {
             completionHandler: completionHandler
         ]
     }
-    pub unsafe fn registeredTypeIdentifiers(&self) -> TodoGenerics {
-        msg_send![self, registeredTypeIdentifiers]
+    pub unsafe fn registeredTypeIdentifiers(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, registeredTypeIdentifiers]
     }
     pub unsafe fn suggestedName(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, suggestedName]

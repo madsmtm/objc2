@@ -61,7 +61,7 @@ impl NSHTTPURLResponse {
         url: &NSURL,
         statusCode: NSInteger,
         HTTPVersion: Option<&NSString>,
-        headerFields: TodoGenerics,
+        headerFields: Option<&NSDictionary<NSString, NSString>>,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,

@@ -38,7 +38,7 @@ impl NSNotificationQueue {
         notification: &NSNotification,
         postingStyle: NSPostingStyle,
         coalesceMask: NSNotificationCoalescing,
-        modes: TodoGenerics,
+        modes: Option<&NSArray<NSRunLoopMode>>,
     ) {
         msg_send![
             self,

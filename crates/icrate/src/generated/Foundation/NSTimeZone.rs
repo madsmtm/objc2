@@ -49,8 +49,8 @@ impl NSTimeZone {
     pub unsafe fn resetSystemTimeZone() {
         msg_send![Self::class(), resetSystemTimeZone]
     }
-    pub unsafe fn abbreviationDictionary() -> TodoGenerics {
-        msg_send![Self::class(), abbreviationDictionary]
+    pub unsafe fn abbreviationDictionary() -> Id<NSDictionary<NSString, NSString>, Shared> {
+        msg_send_id![Self::class(), abbreviationDictionary]
     }
     pub unsafe fn isEqualToTimeZone(&self, aTimeZone: &NSTimeZone) -> bool {
         msg_send![self, isEqualToTimeZone: aTimeZone]
@@ -74,10 +74,12 @@ impl NSTimeZone {
     pub unsafe fn localTimeZone() -> Id<NSTimeZone, Shared> {
         msg_send_id![Self::class(), localTimeZone]
     }
-    pub unsafe fn knownTimeZoneNames() -> TodoGenerics {
-        msg_send![Self::class(), knownTimeZoneNames]
+    pub unsafe fn knownTimeZoneNames() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), knownTimeZoneNames]
     }
-    pub unsafe fn setAbbreviationDictionary(abbreviationDictionary: TodoGenerics) {
+    pub unsafe fn setAbbreviationDictionary(
+        abbreviationDictionary: &NSDictionary<NSString, NSString>,
+    ) {
         msg_send![
             Self::class(),
             setAbbreviationDictionary: abbreviationDictionary

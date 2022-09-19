@@ -221,14 +221,14 @@ impl NSCoder {
     }
     pub unsafe fn decodeObjectOfClasses_forKey(
         &self,
-        classes: TodoGenerics,
+        classes: Option<&NSSet<TodoClass>>,
         key: &NSString,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, decodeObjectOfClasses: classes, forKey: key]
     }
     pub unsafe fn decodeTopLevelObjectOfClasses_forKey_error(
         &self,
-        classes: TodoGenerics,
+        classes: Option<&NSSet<TodoClass>>,
         key: &NSString,
         error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
@@ -241,15 +241,15 @@ impl NSCoder {
     }
     pub unsafe fn decodeArrayOfObjectsOfClasses_forKey(
         &self,
-        classes: TodoGenerics,
+        classes: &NSSet<TodoClass>,
         key: &NSString,
     ) -> Option<Id<NSArray, Shared>> {
         msg_send_id![self, decodeArrayOfObjectsOfClasses: classes, forKey: key]
     }
     pub unsafe fn decodeDictionaryWithKeysOfClasses_objectsOfClasses_forKey(
         &self,
-        keyClasses: TodoGenerics,
-        objectClasses: TodoGenerics,
+        keyClasses: &NSSet<TodoClass>,
+        objectClasses: &NSSet<TodoClass>,
         key: &NSString,
     ) -> Option<Id<NSDictionary, Shared>> {
         msg_send_id![
@@ -274,8 +274,8 @@ impl NSCoder {
     pub unsafe fn requiresSecureCoding(&self) -> bool {
         msg_send![self, requiresSecureCoding]
     }
-    pub unsafe fn allowedClasses(&self) -> TodoGenerics {
-        msg_send![self, allowedClasses]
+    pub unsafe fn allowedClasses(&self) -> Option<Id<NSSet<TodoClass>, Shared>> {
+        msg_send_id![self, allowedClasses]
     }
     pub unsafe fn decodingFailurePolicy(&self) -> NSDecodingFailurePolicy {
         msg_send![self, decodingFailurePolicy]

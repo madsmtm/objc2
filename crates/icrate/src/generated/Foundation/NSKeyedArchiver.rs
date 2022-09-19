@@ -92,10 +92,10 @@ impl NSKeyedArchiver {
     ) {
         msg_send![self, encodeBytes: bytes, length: length, forKey: key]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn outputFormat(&self) -> NSPropertyListFormat {
@@ -168,7 +168,7 @@ impl NSKeyedUnarchiver {
         ]
     }
     pub unsafe fn unarchivedObjectOfClasses_fromData_error(
-        classes: TodoGenerics,
+        classes: &NSSet<TodoClass>,
         data: &NSData,
         error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
@@ -180,7 +180,7 @@ impl NSKeyedUnarchiver {
         ]
     }
     pub unsafe fn unarchivedArrayOfObjectsOfClasses_fromData_error(
-        classes: TodoGenerics,
+        classes: &NSSet<TodoClass>,
         data: &NSData,
         error: *mut *mut NSError,
     ) -> Option<Id<NSArray, Shared>> {
@@ -192,8 +192,8 @@ impl NSKeyedUnarchiver {
         ]
     }
     pub unsafe fn unarchivedDictionaryWithKeysOfClasses_objectsOfClasses_fromData_error(
-        keyClasses: TodoGenerics,
-        valueClasses: TodoGenerics,
+        keyClasses: &NSSet<TodoClass>,
+        valueClasses: &NSSet<TodoClass>,
         data: &NSData,
         error: *mut *mut NSError,
     ) -> Option<Id<NSDictionary, Shared>> {
@@ -273,10 +273,10 @@ impl NSKeyedUnarchiver {
     ) -> *mut uint8_t {
         msg_send![self, decodeBytesForKey: key, returnedLength: lengthp]
     }
-    pub unsafe fn delegate(&self) -> TodoGenerics {
-        msg_send![self, delegate]
+    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+        msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: TodoGenerics) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn requiresSecureCoding(&self) -> bool {
@@ -302,8 +302,8 @@ impl NSObject {
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, replacementObjectForKeyedArchiver: archiver]
     }
-    pub unsafe fn classFallbacksForKeyedArchiver() -> TodoGenerics {
-        msg_send![Self::class(), classFallbacksForKeyedArchiver]
+    pub unsafe fn classFallbacksForKeyedArchiver() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), classFallbacksForKeyedArchiver]
     }
     pub unsafe fn classForKeyedArchiver(&self) -> Option<&Class> {
         msg_send![self, classForKeyedArchiver]

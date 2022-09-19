@@ -175,10 +175,14 @@ impl NSLocale {
 }
 #[doc = "NSLocaleGeneralInfo"]
 impl NSLocale {
-    pub unsafe fn componentsFromLocaleIdentifier(string: &NSString) -> TodoGenerics {
-        msg_send![Self::class(), componentsFromLocaleIdentifier: string]
+    pub unsafe fn componentsFromLocaleIdentifier(
+        string: &NSString,
+    ) -> Id<NSDictionary<NSString, NSString>, Shared> {
+        msg_send_id![Self::class(), componentsFromLocaleIdentifier: string]
     }
-    pub unsafe fn localeIdentifierFromComponents(dict: TodoGenerics) -> Id<NSString, Shared> {
+    pub unsafe fn localeIdentifierFromComponents(
+        dict: &NSDictionary<NSString, NSString>,
+    ) -> Id<NSString, Shared> {
         msg_send_id![Self::class(), localeIdentifierFromComponents: dict]
     }
     pub unsafe fn canonicalLocaleIdentifierFromString(string: &NSString) -> Id<NSString, Shared> {
@@ -206,22 +210,22 @@ impl NSLocale {
     pub unsafe fn lineDirectionForLanguage(isoLangCode: &NSString) -> NSLocaleLanguageDirection {
         msg_send![Self::class(), lineDirectionForLanguage: isoLangCode]
     }
-    pub unsafe fn availableLocaleIdentifiers() -> TodoGenerics {
-        msg_send![Self::class(), availableLocaleIdentifiers]
+    pub unsafe fn availableLocaleIdentifiers() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), availableLocaleIdentifiers]
     }
-    pub unsafe fn ISOLanguageCodes() -> TodoGenerics {
-        msg_send![Self::class(), ISOLanguageCodes]
+    pub unsafe fn ISOLanguageCodes() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), ISOLanguageCodes]
     }
-    pub unsafe fn ISOCountryCodes() -> TodoGenerics {
-        msg_send![Self::class(), ISOCountryCodes]
+    pub unsafe fn ISOCountryCodes() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), ISOCountryCodes]
     }
-    pub unsafe fn ISOCurrencyCodes() -> TodoGenerics {
-        msg_send![Self::class(), ISOCurrencyCodes]
+    pub unsafe fn ISOCurrencyCodes() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), ISOCurrencyCodes]
     }
-    pub unsafe fn commonISOCurrencyCodes() -> TodoGenerics {
-        msg_send![Self::class(), commonISOCurrencyCodes]
+    pub unsafe fn commonISOCurrencyCodes() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), commonISOCurrencyCodes]
     }
-    pub unsafe fn preferredLanguages() -> TodoGenerics {
-        msg_send![Self::class(), preferredLanguages]
+    pub unsafe fn preferredLanguages() -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![Self::class(), preferredLanguages]
     }
 }

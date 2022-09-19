@@ -74,8 +74,8 @@ impl NSRegularExpression {
         string: &NSString,
         options: NSMatchingOptions,
         range: NSRange,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSArray<NSTextCheckingResult>, Shared> {
+        msg_send_id![
             self,
             matchesInString: string,
             options: options,

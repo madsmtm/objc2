@@ -14,16 +14,19 @@ __inner_extern_class!(
     }
 );
 impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
-    pub unsafe fn initWithChanges(&self, changes: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithChanges(
+        &self,
+        changes: &NSArray<NSOrderedCollectionChange>,
+    ) -> Id<Self, Shared> {
         msg_send_id![self, initWithChanges: changes]
     }
     pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects_additionalChanges(
         &self,
         inserts: &NSIndexSet,
-        insertedObjects: TodoGenerics,
+        insertedObjects: Option<&NSArray<ObjectType>>,
         removes: &NSIndexSet,
-        removedObjects: TodoGenerics,
-        changes: TodoGenerics,
+        removedObjects: Option<&NSArray<ObjectType>>,
+        changes: &NSArray<NSOrderedCollectionChange>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,
@@ -37,9 +40,9 @@ impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
     pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects(
         &self,
         inserts: &NSIndexSet,
-        insertedObjects: TodoGenerics,
+        insertedObjects: Option<&NSArray<ObjectType>>,
         removes: &NSIndexSet,
-        removedObjects: TodoGenerics,
+        removedObjects: Option<&NSArray<ObjectType>>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,
@@ -52,17 +55,17 @@ impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
     pub unsafe fn differenceByTransformingChangesWithBlock(
         &self,
         block: TodoBlock,
-    ) -> TodoGenerics {
-        msg_send![self, differenceByTransformingChangesWithBlock: block]
+    ) -> Id<NSOrderedCollectionDifference<Object>, Shared> {
+        msg_send_id![self, differenceByTransformingChangesWithBlock: block]
     }
     pub unsafe fn inverseDifference(&self) -> Id<Self, Shared> {
         msg_send_id![self, inverseDifference]
     }
-    pub unsafe fn insertions(&self) -> TodoGenerics {
-        msg_send![self, insertions]
+    pub unsafe fn insertions(&self) -> Id<NSArray<NSOrderedCollectionChange>, Shared> {
+        msg_send_id![self, insertions]
     }
-    pub unsafe fn removals(&self) -> TodoGenerics {
-        msg_send![self, removals]
+    pub unsafe fn removals(&self) -> Id<NSArray<NSOrderedCollectionChange>, Shared> {
+        msg_send_id![self, removals]
     }
     pub unsafe fn hasChanges(&self) -> bool {
         msg_send![self, hasChanges]

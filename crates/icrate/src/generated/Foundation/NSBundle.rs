@@ -83,8 +83,8 @@ impl NSBundle {
         ext: Option<&NSString>,
         subpath: Option<&NSString>,
         bundleURL: &NSURL,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Option<Id<NSArray<NSURL>, Shared>> {
+        msg_send_id![
             Self::class(),
             URLsForResourcesWithExtension: ext,
             subdirectory: subpath,
@@ -130,8 +130,8 @@ impl NSBundle {
         &self,
         ext: Option<&NSString>,
         subpath: Option<&NSString>,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Option<Id<NSArray<NSURL>, Shared>> {
+        msg_send_id![
             self,
             URLsForResourcesWithExtension: ext,
             subdirectory: subpath
@@ -142,8 +142,8 @@ impl NSBundle {
         ext: Option<&NSString>,
         subpath: Option<&NSString>,
         localizationName: Option<&NSString>,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Option<Id<NSArray<NSURL>, Shared>> {
+        msg_send_id![
             self,
             URLsForResourcesWithExtension: ext,
             subdirectory: subpath,
@@ -165,8 +165,8 @@ impl NSBundle {
     pub unsafe fn pathsForResourcesOfType_inDirectory(
         ext: Option<&NSString>,
         bundlePath: &NSString,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![
             Self::class(),
             pathsForResourcesOfType: ext,
             inDirectory: bundlePath
@@ -211,16 +211,16 @@ impl NSBundle {
         &self,
         ext: Option<&NSString>,
         subpath: Option<&NSString>,
-    ) -> TodoGenerics {
-        msg_send![self, pathsForResourcesOfType: ext, inDirectory: subpath]
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, pathsForResourcesOfType: ext, inDirectory: subpath]
     }
     pub unsafe fn pathsForResourcesOfType_inDirectory_forLocalization(
         &self,
         ext: Option<&NSString>,
         subpath: Option<&NSString>,
         localizationName: Option<&NSString>,
-    ) -> TodoGenerics {
-        msg_send![
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![
             self,
             pathsForResourcesOfType: ext,
             inDirectory: subpath,
@@ -260,18 +260,18 @@ impl NSBundle {
         msg_send![self, classNamed: className]
     }
     pub unsafe fn preferredLocalizationsFromArray(
-        localizationsArray: TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![
+        localizationsArray: &NSArray<NSString>,
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![
             Self::class(),
             preferredLocalizationsFromArray: localizationsArray
         ]
     }
     pub unsafe fn preferredLocalizationsFromArray_forPreferences(
-        localizationsArray: TodoGenerics,
-        preferencesArray: TodoGenerics,
-    ) -> TodoGenerics {
-        msg_send![
+        localizationsArray: &NSArray<NSString>,
+        preferencesArray: Option<&NSArray<NSString>>,
+    ) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![
             Self::class(),
             preferredLocalizationsFromArray: localizationsArray,
             forPreferences: preferencesArray
@@ -280,11 +280,11 @@ impl NSBundle {
     pub unsafe fn mainBundle() -> Id<NSBundle, Shared> {
         msg_send_id![Self::class(), mainBundle]
     }
-    pub unsafe fn allBundles() -> TodoGenerics {
-        msg_send![Self::class(), allBundles]
+    pub unsafe fn allBundles() -> Id<NSArray<NSBundle>, Shared> {
+        msg_send_id![Self::class(), allBundles]
     }
-    pub unsafe fn allFrameworks() -> TodoGenerics {
-        msg_send![Self::class(), allFrameworks]
+    pub unsafe fn allFrameworks() -> Id<NSArray<NSBundle>, Shared> {
+        msg_send_id![Self::class(), allFrameworks]
     }
     pub unsafe fn isLoaded(&self) -> bool {
         msg_send![self, isLoaded]
@@ -337,26 +337,28 @@ impl NSBundle {
     pub unsafe fn bundleIdentifier(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, bundleIdentifier]
     }
-    pub unsafe fn infoDictionary(&self) -> TodoGenerics {
-        msg_send![self, infoDictionary]
+    pub unsafe fn infoDictionary(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, infoDictionary]
     }
-    pub unsafe fn localizedInfoDictionary(&self) -> TodoGenerics {
-        msg_send![self, localizedInfoDictionary]
+    pub unsafe fn localizedInfoDictionary(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, localizedInfoDictionary]
     }
     pub unsafe fn principalClass(&self) -> Option<&Class> {
         msg_send![self, principalClass]
     }
-    pub unsafe fn preferredLocalizations(&self) -> TodoGenerics {
-        msg_send![self, preferredLocalizations]
+    pub unsafe fn preferredLocalizations(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, preferredLocalizations]
     }
-    pub unsafe fn localizations(&self) -> TodoGenerics {
-        msg_send![self, localizations]
+    pub unsafe fn localizations(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, localizations]
     }
     pub unsafe fn developmentLocalization(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, developmentLocalization]
     }
-    pub unsafe fn executableArchitectures(&self) -> TodoGenerics {
-        msg_send![self, executableArchitectures]
+    pub unsafe fn executableArchitectures(&self) -> Option<Id<NSArray<NSNumber>, Shared>> {
+        msg_send_id![self, executableArchitectures]
     }
 }
 #[doc = "NSBundleExtensionMethods"]
@@ -376,12 +378,12 @@ impl NSBundleResourceRequest {
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
-    pub unsafe fn initWithTags(&self, tags: TodoGenerics) -> Id<Self, Shared> {
+    pub unsafe fn initWithTags(&self, tags: &NSSet<NSString>) -> Id<Self, Shared> {
         msg_send_id![self, initWithTags: tags]
     }
     pub unsafe fn initWithTags_bundle(
         &self,
-        tags: TodoGenerics,
+        tags: &NSSet<NSString>,
         bundle: &NSBundle,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithTags: tags, bundle: bundle]
@@ -413,8 +415,8 @@ impl NSBundleResourceRequest {
     pub unsafe fn setLoadingPriority(&self, loadingPriority: c_double) {
         msg_send![self, setLoadingPriority: loadingPriority]
     }
-    pub unsafe fn tags(&self) -> TodoGenerics {
-        msg_send![self, tags]
+    pub unsafe fn tags(&self) -> Id<NSSet<NSString>, Shared> {
+        msg_send_id![self, tags]
     }
     pub unsafe fn bundle(&self) -> Id<NSBundle, Shared> {
         msg_send_id![self, bundle]
@@ -425,7 +427,11 @@ impl NSBundleResourceRequest {
 }
 #[doc = "NSBundleResourceRequestAdditions"]
 impl NSBundle {
-    pub unsafe fn setPreservationPriority_forTags(&self, priority: c_double, tags: TodoGenerics) {
+    pub unsafe fn setPreservationPriority_forTags(
+        &self,
+        priority: c_double,
+        tags: &NSSet<NSString>,
+    ) {
         msg_send![self, setPreservationPriority: priority, forTags: tags]
     }
     pub unsafe fn preservationPriorityForTag(&self, tag: &NSString) -> c_double {

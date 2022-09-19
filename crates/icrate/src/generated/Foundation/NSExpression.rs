@@ -57,7 +57,9 @@ impl NSExpression {
             arguments: parameters
         ]
     }
-    pub unsafe fn expressionForAggregate(subexpressions: TodoGenerics) -> Id<NSExpression, Shared> {
+    pub unsafe fn expressionForAggregate(
+        subexpressions: &NSArray<NSExpression>,
+    ) -> Id<NSExpression, Shared> {
         msg_send_id![Self::class(), expressionForAggregate: subexpressions]
     }
     pub unsafe fn expressionForUnionSet_with(
@@ -107,7 +109,7 @@ impl NSExpression {
     }
     pub unsafe fn expressionForBlock_arguments(
         block: TodoBlock,
-        arguments: TodoGenerics,
+        arguments: Option<&NSArray<NSExpression>>,
     ) -> Id<NSExpression, Shared> {
         msg_send_id![
             Self::class(),
@@ -161,8 +163,8 @@ impl NSExpression {
     pub unsafe fn operand(&self) -> Id<NSExpression, Shared> {
         msg_send_id![self, operand]
     }
-    pub unsafe fn arguments(&self) -> TodoGenerics {
-        msg_send![self, arguments]
+    pub unsafe fn arguments(&self) -> Option<Id<NSArray<NSExpression>, Shared>> {
+        msg_send_id![self, arguments]
     }
     pub unsafe fn collection(&self) -> Id<Object, Shared> {
         msg_send_id![self, collection]

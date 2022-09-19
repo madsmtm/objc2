@@ -15,7 +15,7 @@ impl NSObject {
         &self,
         keyPath: Option<&NSString>,
         object: Option<&Object>,
-        change: TodoGenerics,
+        change: Option<&NSDictionary<NSKeyValueChangeKey, Object>>,
         context: *mut c_void,
     ) {
         msg_send![
@@ -271,8 +271,10 @@ impl NSObject {
 }
 #[doc = "NSKeyValueObservingCustomization"]
 impl NSObject {
-    pub unsafe fn keyPathsForValuesAffectingValueForKey(key: &NSString) -> TodoGenerics {
-        msg_send![Self::class(), keyPathsForValuesAffectingValueForKey: key]
+    pub unsafe fn keyPathsForValuesAffectingValueForKey(
+        key: &NSString,
+    ) -> Id<NSSet<NSString>, Shared> {
+        msg_send_id![Self::class(), keyPathsForValuesAffectingValueForKey: key]
     }
     pub unsafe fn automaticallyNotifiesObserversForKey(key: &NSString) -> bool {
         msg_send![Self::class(), automaticallyNotifiesObserversForKey: key]

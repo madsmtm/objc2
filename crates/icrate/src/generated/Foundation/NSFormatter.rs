@@ -25,7 +25,7 @@ impl NSFormatter {
     pub unsafe fn attributedStringForObjectValue_withDefaultAttributes(
         &self,
         obj: &Object,
-        attrs: TodoGenerics,
+        attrs: Option<&NSDictionary<NSAttributedStringKey, Object>>,
     ) -> Option<Id<NSAttributedString, Shared>> {
         msg_send_id![
             self,

@@ -49,7 +49,7 @@ impl NSPredicate {
     }
     pub unsafe fn predicateWithSubstitutionVariables(
         &self,
-        variables: TodoGenerics,
+        variables: &NSDictionary<NSString, Object>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, predicateWithSubstitutionVariables: variables]
     }
@@ -59,7 +59,7 @@ impl NSPredicate {
     pub unsafe fn evaluateWithObject_substitutionVariables(
         &self,
         object: Option<&Object>,
-        bindings: TodoGenerics,
+        bindings: Option<&NSDictionary<NSString, Object>>,
     ) -> bool {
         msg_send![
             self,
@@ -76,8 +76,11 @@ impl NSPredicate {
 }
 #[doc = "NSPredicateSupport"]
 impl<ObjectType: Message> NSArray<ObjectType> {
-    pub unsafe fn filteredArrayUsingPredicate(&self, predicate: &NSPredicate) -> TodoGenerics {
-        msg_send![self, filteredArrayUsingPredicate: predicate]
+    pub unsafe fn filteredArrayUsingPredicate(
+        &self,
+        predicate: &NSPredicate,
+    ) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, filteredArrayUsingPredicate: predicate]
     }
 }
 #[doc = "NSPredicateSupport"]
@@ -88,8 +91,11 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
 }
 #[doc = "NSPredicateSupport"]
 impl<ObjectType: Message> NSSet<ObjectType> {
-    pub unsafe fn filteredSetUsingPredicate(&self, predicate: &NSPredicate) -> TodoGenerics {
-        msg_send![self, filteredSetUsingPredicate: predicate]
+    pub unsafe fn filteredSetUsingPredicate(
+        &self,
+        predicate: &NSPredicate,
+    ) -> Id<NSSet<ObjectType>, Shared> {
+        msg_send_id![self, filteredSetUsingPredicate: predicate]
     }
 }
 #[doc = "NSPredicateSupport"]
@@ -100,8 +106,11 @@ impl<ObjectType: Message> NSMutableSet<ObjectType> {
 }
 #[doc = "NSPredicateSupport"]
 impl<ObjectType: Message> NSOrderedSet<ObjectType> {
-    pub unsafe fn filteredOrderedSetUsingPredicate(&self, p: &NSPredicate) -> TodoGenerics {
-        msg_send![self, filteredOrderedSetUsingPredicate: p]
+    pub unsafe fn filteredOrderedSetUsingPredicate(
+        &self,
+        p: &NSPredicate,
+    ) -> Id<NSOrderedSet<ObjectType>, Shared> {
+        msg_send_id![self, filteredOrderedSetUsingPredicate: p]
     }
 }
 #[doc = "NSPredicateSupport"]

@@ -20,14 +20,14 @@ impl NSError {
         &self,
         domain: &NSErrorDomain,
         code: NSInteger,
-        dict: TodoGenerics,
+        dict: Option<&NSDictionary<NSErrorUserInfoKey, Object>>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithDomain: domain, code: code, userInfo: dict]
     }
     pub unsafe fn errorWithDomain_code_userInfo(
         domain: &NSErrorDomain,
         code: NSInteger,
-        dict: TodoGenerics,
+        dict: Option<&NSDictionary<NSErrorUserInfoKey, Object>>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             Self::class(),
@@ -55,8 +55,8 @@ impl NSError {
     pub unsafe fn code(&self) -> NSInteger {
         msg_send![self, code]
     }
-    pub unsafe fn userInfo(&self) -> TodoGenerics {
-        msg_send![self, userInfo]
+    pub unsafe fn userInfo(&self) -> Id<NSDictionary<NSErrorUserInfoKey, Object>, Shared> {
+        msg_send_id![self, userInfo]
     }
     pub unsafe fn localizedDescription(&self) -> Id<NSString, Shared> {
         msg_send_id![self, localizedDescription]
@@ -67,8 +67,8 @@ impl NSError {
     pub unsafe fn localizedRecoverySuggestion(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, localizedRecoverySuggestion]
     }
-    pub unsafe fn localizedRecoveryOptions(&self) -> TodoGenerics {
-        msg_send![self, localizedRecoveryOptions]
+    pub unsafe fn localizedRecoveryOptions(&self) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, localizedRecoveryOptions]
     }
     pub unsafe fn recoveryAttempter(&self) -> Option<Id<Object, Shared>> {
         msg_send_id![self, recoveryAttempter]
@@ -76,8 +76,8 @@ impl NSError {
     pub unsafe fn helpAnchor(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, helpAnchor]
     }
-    pub unsafe fn underlyingErrors(&self) -> TodoGenerics {
-        msg_send![self, underlyingErrors]
+    pub unsafe fn underlyingErrors(&self) -> Id<NSArray<NSError>, Shared> {
+        msg_send_id![self, underlyingErrors]
     }
 }
 #[doc = "NSErrorRecoveryAttempting"]

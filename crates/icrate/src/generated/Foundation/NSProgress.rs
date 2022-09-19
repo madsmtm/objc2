@@ -46,7 +46,7 @@ impl NSProgress {
     pub unsafe fn initWithParent_userInfo(
         &self,
         parentProgressOrNil: Option<&NSProgress>,
-        userInfoOrNil: TodoGenerics,
+        userInfoOrNil: Option<&NSDictionary<NSProgressUserInfoKey, Object>>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,
@@ -184,8 +184,8 @@ impl NSProgress {
     pub unsafe fn isFinished(&self) -> bool {
         msg_send![self, isFinished]
     }
-    pub unsafe fn userInfo(&self) -> TodoGenerics {
-        msg_send![self, userInfo]
+    pub unsafe fn userInfo(&self) -> Id<NSDictionary<NSProgressUserInfoKey, Object>, Shared> {
+        msg_send_id![self, userInfo]
     }
     pub unsafe fn kind(&self) -> Option<Id<NSProgressKind, Shared>> {
         msg_send_id![self, kind]

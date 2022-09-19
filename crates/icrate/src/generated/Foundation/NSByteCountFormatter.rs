@@ -26,7 +26,7 @@ impl NSByteCountFormatter {
         msg_send_id![self, stringFromByteCount: byteCount]
     }
     pub unsafe fn stringFromMeasurement_countStyle(
-        measurement: TodoGenerics,
+        measurement: &NSMeasurement<NSUnitInformationStorage>,
         countStyle: NSByteCountFormatterCountStyle,
     ) -> Id<NSString, Shared> {
         msg_send_id![
@@ -35,7 +35,10 @@ impl NSByteCountFormatter {
             countStyle: countStyle
         ]
     }
-    pub unsafe fn stringFromMeasurement(&self, measurement: TodoGenerics) -> Id<NSString, Shared> {
+    pub unsafe fn stringFromMeasurement(
+        &self,
+        measurement: &NSMeasurement<NSUnitInformationStorage>,
+    ) -> Id<NSString, Shared> {
         msg_send_id![self, stringFromMeasurement: measurement]
     }
     pub unsafe fn stringForObjectValue(

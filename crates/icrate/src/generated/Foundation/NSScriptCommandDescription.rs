@@ -79,7 +79,7 @@ impl NSScriptCommandDescription {
     pub unsafe fn appleEventCodeForReturnType(&self) -> FourCharCode {
         msg_send![self, appleEventCodeForReturnType]
     }
-    pub unsafe fn argumentNames(&self) -> TodoGenerics {
-        msg_send![self, argumentNames]
+    pub unsafe fn argumentNames(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, argumentNames]
     }
 }
