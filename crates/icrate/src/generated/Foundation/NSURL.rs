@@ -18,6 +18,7 @@ pub type NSURLFileProtectionType = NSString;
 pub type NSURLUbiquitousItemDownloadingStatus = NSString;
 pub type NSURLUbiquitousSharedItemRole = NSString;
 pub type NSURLUbiquitousSharedItemPermissions = NSString;
+pub type NSURLBookmarkFileCreationOptions = NSUInteger;
 extern_class!(
     #[derive(Debug)]
     pub struct NSURL;

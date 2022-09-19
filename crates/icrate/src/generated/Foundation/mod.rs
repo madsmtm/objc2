@@ -223,11 +223,12 @@ mod __exported {
     pub use super::NSFileWrapper::NSFileWrapper;
     pub use super::NSFormatter::NSFormatter;
     pub use super::NSGarbageCollector::NSGarbageCollector;
+    pub use super::NSGeometry::{NSPoint, NSRect, NSSize};
     pub use super::NSHTTPCookie::{
         NSHTTPCookie, NSHTTPCookiePropertyKey, NSHTTPCookieStringPolicy,
     };
     pub use super::NSHTTPCookieStorage::NSHTTPCookieStorage;
-    pub use super::NSHashTable::NSHashTable;
+    pub use super::NSHashTable::{NSHashTable, NSHashTableOptions};
     pub use super::NSHost::NSHost;
     pub use super::NSISO8601DateFormatter::NSISO8601DateFormatter;
     pub use super::NSIndexPath::NSIndexPath;
@@ -248,7 +249,7 @@ mod __exported {
     pub use super::NSListFormatter::NSListFormatter;
     pub use super::NSLocale::{NSLocale, NSLocaleKey};
     pub use super::NSLock::{NSCondition, NSConditionLock, NSLock, NSLocking, NSRecursiveLock};
-    pub use super::NSMapTable::NSMapTable;
+    pub use super::NSMapTable::{NSMapTable, NSMapTableOptions};
     pub use super::NSMassFormatter::NSMassFormatter;
     pub use super::NSMeasurement::NSMeasurement;
     pub use super::NSMeasurementFormatter::NSMeasurementFormatter;
@@ -294,7 +295,9 @@ mod __exported {
         NSProgress, NSProgressFileOperationKind, NSProgressKind, NSProgressReporting,
         NSProgressUserInfoKey,
     };
-    pub use super::NSPropertyList::NSPropertyListSerialization;
+    pub use super::NSPropertyList::{
+        NSPropertyListReadOptions, NSPropertyListSerialization, NSPropertyListWriteOptions,
+    };
     pub use super::NSProtocolChecker::NSProtocolChecker;
     pub use super::NSProxy::NSProxy;
     pub use super::NSRegularExpression::{NSDataDetector, NSRegularExpression};
@@ -326,11 +329,13 @@ mod __exported {
         NSStreamSocketSecurityLevel,
     };
     pub use super::NSString::{
-        NSConstantString, NSMutableString, NSSimpleCString, NSString,
+        NSConstantString, NSMutableString, NSSimpleCString, NSString, NSStringEncoding,
         NSStringEncodingDetectionOptionsKey, NSStringTransform,
     };
     pub use super::NSTask::NSTask;
-    pub use super::NSTextCheckingResult::{NSTextCheckingKey, NSTextCheckingResult};
+    pub use super::NSTextCheckingResult::{
+        NSTextCheckingKey, NSTextCheckingResult, NSTextCheckingTypes,
+    };
     pub use super::NSThread::NSThread;
     pub use super::NSTimeZone::NSTimeZone;
     pub use super::NSTimer::NSTimer;
@@ -393,8 +398,8 @@ mod __exported {
         NSXPCListenerEndpoint, NSXPCProxyCreating,
     };
     pub use super::NSURL::{
-        NSFileSecurity, NSURLComponents, NSURLFileProtectionType, NSURLFileResourceType,
-        NSURLQueryItem, NSURLResourceKey, NSURLThumbnailDictionaryItem,
+        NSFileSecurity, NSURLBookmarkFileCreationOptions, NSURLComponents, NSURLFileProtectionType,
+        NSURLFileResourceType, NSURLQueryItem, NSURLResourceKey, NSURLThumbnailDictionaryItem,
         NSURLUbiquitousItemDownloadingStatus, NSURLUbiquitousSharedItemPermissions,
         NSURLUbiquitousSharedItemRole, NSURL,
     };

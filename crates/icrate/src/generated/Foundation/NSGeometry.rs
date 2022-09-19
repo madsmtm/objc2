@@ -1,4 +1,3 @@
-use super::__exported::NSString;
 use crate::CoreGraphics::generated::CGBase::*;
 use crate::CoreGraphics::generated::CGGeometry::*;
 use crate::Foundation::generated::NSCoder::*;
@@ -7,6 +6,10 @@ use crate::Foundation::generated::NSValue::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSPoint = CGPoint;
+pub type NSSize = CGSize;
+pub type NSRect = CGRect;
+use super::__exported::NSString;
 #[doc = "NSValueGeometryExtensions"]
 impl NSValue {
     pub unsafe fn valueWithPoint(point: NSPoint) -> Id<NSValue, Shared> {

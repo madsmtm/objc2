@@ -1,4 +1,4 @@
-use clang::{Entity, EntityKind, EntityVisitResult};
+use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
@@ -43,7 +43,7 @@ pub enum Stmt {
         methods: Vec<Method>,
     },
     /// typedef Type TypedefName;
-    AliasDecl { name: String, type_name: String },
+    AliasDecl { name: String, type_: RustType },
     // /// typedef struct Name { fields } TypedefName;
     // X,
 }
@@ -270,18 +270,28 @@ impl Stmt {
                 let underlying_ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                if let Some(type_name) = RustType::typedef_is_id(underlying_ty) {
-                    // println!("typedef: {:?}, {:?}", name, type_name);
-                    Some(Self::AliasDecl { name, type_name })
-                } else {
-                    // println!(
-                    //     "typedef: {:?}, {:?}, {:?}, {:?}",
-                    //     entity.get_display_name(),
-                    //     entity.has_attributes(),
-                    //     entity.get_children(),
-                    //     underlying_ty,
-                    // );
-                    None
+                match underlying_ty.get_kind() {
+                    TypeKind::ObjCObjectPointer => {
+                        let type_name = RustType::typedef_is_id(underlying_ty).expect("typedef id");
+                        Some(Self::AliasDecl {
+                            name,
+                            type_: RustType::TypeDef { name: type_name },
+                        })
+                    }
+                    TypeKind::Typedef => {
+                        let type_ = RustType::parse(underlying_ty, false, false);
+                        Some(Self::AliasDecl { name, type_ })
+                    }
+                    _ => {
+                        // println!(
+                        //     "typedef: {:#?}, {:#?}, {:#?}, {:#?}",
+                        //     entity.get_display_name(),
+                        //     entity.has_attributes(),
+                        //     entity.get_children(),
+                        //     underlying_ty,
+                        // );
+                        None
+                    }
                 }
             }
             EntityKind::StructDecl => {
@@ -422,11 +432,10 @@ impl ToTokens for Stmt {
                 // }
                 quote!(pub type #name = NSObject;)
             }
-            Self::AliasDecl { name, type_name } => {
+            Self::AliasDecl { name, type_ } => {
                 let name = format_ident!("{}", name);
-                let type_name = format_ident!("{}", type_name);
 
-                quote!(pub type #name = #type_name;)
+                quote!(pub type #name = #type_;)
             }
         };
         tokens.append_all(result);
