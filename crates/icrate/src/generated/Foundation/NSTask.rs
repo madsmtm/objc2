@@ -18,7 +18,7 @@ impl NSTask {
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
-    pub unsafe fn launchAndReturnError(&self, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn launchAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, launchAndReturnError: error]
     }
     pub unsafe fn interrupt(&self) {
@@ -105,7 +105,7 @@ impl NSTask {
     pub unsafe fn launchedTaskWithExecutableURL_arguments_error_terminationHandler(
         url: &NSURL,
         arguments: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
         terminationHandler: TodoBlock,
     ) -> Option<Id<NSTask, Shared>> {
         msg_send_id![

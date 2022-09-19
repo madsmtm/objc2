@@ -71,7 +71,7 @@ impl NSFileCoordinator {
         &self,
         url: &NSURL,
         options: NSFileCoordinatorReadingOptions,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
         reader: TodoBlock,
     ) {
         msg_send![
@@ -86,7 +86,7 @@ impl NSFileCoordinator {
         &self,
         url: &NSURL,
         options: NSFileCoordinatorWritingOptions,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
         writer: TodoBlock,
     ) {
         msg_send![
@@ -103,7 +103,7 @@ impl NSFileCoordinator {
         readingOptions: NSFileCoordinatorReadingOptions,
         writingURL: &NSURL,
         writingOptions: NSFileCoordinatorWritingOptions,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
         readerWriter: TodoBlock,
     ) {
         msg_send![
@@ -122,7 +122,7 @@ impl NSFileCoordinator {
         options1: NSFileCoordinatorWritingOptions,
         url2: &NSURL,
         options2: NSFileCoordinatorWritingOptions,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
         writer: TodoBlock,
     ) {
         msg_send![
@@ -141,7 +141,7 @@ impl NSFileCoordinator {
         readingOptions: NSFileCoordinatorReadingOptions,
         writingURLs: TodoGenerics,
         writingOptions: NSFileCoordinatorWritingOptions,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
         batchAccessor: TodoBlock,
     ) {
         msg_send![

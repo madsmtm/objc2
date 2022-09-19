@@ -38,9 +38,9 @@ impl NSFormatter {
     }
     pub unsafe fn getObjectValue_forString_errorDescription(
         &self,
-        obj: *mut Option<&Object>,
+        obj: *mut *mut Object,
         string: &NSString,
-        error: *mut Option<&NSString>,
+        error: *mut *mut NSString,
     ) -> bool {
         msg_send![
             self,
@@ -52,8 +52,8 @@ impl NSFormatter {
     pub unsafe fn isPartialStringValid_newEditingString_errorDescription(
         &self,
         partialString: &NSString,
-        newString: *mut Option<&NSString>,
-        error: *mut Option<&NSString>,
+        newString: *mut *mut NSString,
+        error: *mut *mut NSString,
     ) -> bool {
         msg_send![
             self,
@@ -64,11 +64,11 @@ impl NSFormatter {
     }
     pub unsafe fn isPartialStringValid_proposedSelectedRange_originalString_originalSelectedRange_errorDescription(
         &self,
-        partialStringPtr: NonNull<&NSString>,
+        partialStringPtr: NonNull<NonNull<NSString>>,
         proposedSelRangePtr: NSRangePointer,
         origString: &NSString,
         origSelRange: NSRange,
-        error: *mut Option<&NSString>,
+        error: *mut *mut NSString,
     ) -> bool {
         msg_send![
             self,

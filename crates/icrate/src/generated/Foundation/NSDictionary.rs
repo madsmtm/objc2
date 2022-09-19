@@ -68,7 +68,7 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     ) -> TodoGenerics {
         msg_send![self, objectsForKeys: keys, notFoundMarker: marker]
     }
-    pub unsafe fn writeToURL_error(&self, url: &NSURL, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn writeToURL_error(&self, url: &NSURL, error: *mut *mut NSError) -> bool {
         msg_send![self, writeToURL: url, error: error]
     }
     pub unsafe fn keysSortedByValueUsingSelector(&self, comparator: Sel) -> TodoGenerics {
@@ -212,13 +212,13 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn initWithContentsOfURL_error(
         &self,
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, initWithContentsOfURL: url, error: error]
     }
     pub unsafe fn dictionaryWithContentsOfURL_error(
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![
             Self::class(),

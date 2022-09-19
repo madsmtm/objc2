@@ -51,7 +51,7 @@ impl NSFileVersion {
         url: &NSURL,
         contentsURL: &NSURL,
         options: NSFileVersionAddingOptions,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
     ) -> Option<Id<NSFileVersion, Shared>> {
         msg_send_id![
             Self::class(),
@@ -71,16 +71,16 @@ impl NSFileVersion {
         &self,
         url: &NSURL,
         options: NSFileVersionReplacingOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, replaceItemAtURL: url, options: options, error: error]
     }
-    pub unsafe fn removeAndReturnError(&self, outError: *mut Option<&NSError>) -> bool {
+    pub unsafe fn removeAndReturnError(&self, outError: *mut *mut NSError) -> bool {
         msg_send![self, removeAndReturnError: outError]
     }
     pub unsafe fn removeOtherVersionsOfItemAtURL_error(
         url: &NSURL,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
     ) -> bool {
         msg_send![
             Self::class(),

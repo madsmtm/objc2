@@ -241,7 +241,7 @@ impl NSAttributedString {
         markdownFile: &NSURL,
         options: Option<&NSAttributedStringMarkdownParsingOptions>,
         baseURL: Option<&NSURL>,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -256,7 +256,7 @@ impl NSAttributedString {
         markdown: &NSData,
         options: Option<&NSAttributedStringMarkdownParsingOptions>,
         baseURL: Option<&NSURL>,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -271,7 +271,7 @@ impl NSAttributedString {
         markdownString: &NSString,
         options: Option<&NSAttributedStringMarkdownParsingOptions>,
         baseURL: Option<&NSURL>,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,

@@ -20,9 +20,9 @@ impl NSObject {
     }
     pub unsafe fn validateValue_forKey_error(
         &self,
-        ioValue: NonNull<Option<&Object>>,
+        ioValue: NonNull<*mut Object>,
         inKey: &NSString,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
     ) -> bool {
         msg_send![self, validateValue: ioValue, forKey: inKey, error: outError]
     }
@@ -46,9 +46,9 @@ impl NSObject {
     }
     pub unsafe fn validateValue_forKeyPath_error(
         &self,
-        ioValue: NonNull<Option<&Object>>,
+        ioValue: NonNull<*mut Object>,
         inKeyPath: &NSString,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,

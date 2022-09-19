@@ -22,7 +22,7 @@ impl NSUserScriptTask {
     pub unsafe fn initWithURL_error(
         &self,
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithURL: url, error: error]
     }

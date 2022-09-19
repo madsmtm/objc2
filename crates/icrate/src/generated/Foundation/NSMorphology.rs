@@ -45,7 +45,7 @@ impl NSMorphology {
         &self,
         features: Option<&NSMorphologyCustomPronoun>,
         language: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,

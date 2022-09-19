@@ -194,7 +194,7 @@ impl NSAppleEventDescriptor {
         &self,
         sendOptions: NSAppleEventSendOptions,
         timeoutInSeconds: NSTimeInterval,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSAppleEventDescriptor, Shared>> {
         msg_send_id![
             self,

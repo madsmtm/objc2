@@ -17,7 +17,7 @@ impl NSRegularExpression {
     pub unsafe fn regularExpressionWithPattern_options_error(
         pattern: &NSString,
         options: NSRegularExpressionOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSRegularExpression, Shared>> {
         msg_send_id![
             Self::class(),
@@ -30,7 +30,7 @@ impl NSRegularExpression {
         &self,
         pattern: &NSString,
         options: NSRegularExpressionOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -183,7 +183,7 @@ extern_class!(
 impl NSDataDetector {
     pub unsafe fn dataDetectorWithTypes_error(
         checkingTypes: NSTextCheckingTypes,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSDataDetector, Shared>> {
         msg_send_id![
             Self::class(),
@@ -194,7 +194,7 @@ impl NSDataDetector {
     pub unsafe fn initWithTypes_error(
         &self,
         checkingTypes: NSTextCheckingTypes,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithTypes: checkingTypes, error: error]
     }

@@ -20,7 +20,7 @@ impl NSFileWrapper {
         &self,
         url: &NSURL,
         options: NSFileWrapperReadingOptions,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithURL: url, options: options, error: outError]
     }
@@ -55,7 +55,7 @@ impl NSFileWrapper {
         &self,
         url: &NSURL,
         options: NSFileWrapperReadingOptions,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
     ) -> bool {
         msg_send![self, readFromURL: url, options: options, error: outError]
     }
@@ -64,7 +64,7 @@ impl NSFileWrapper {
         url: &NSURL,
         options: NSFileWrapperWritingOptions,
         originalContentsURL: Option<&NSURL>,
-        outError: *mut Option<&NSError>,
+        outError: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,

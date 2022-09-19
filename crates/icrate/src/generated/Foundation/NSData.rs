@@ -46,7 +46,7 @@ impl NSData {
         &self,
         path: &NSString,
         writeOptionsMask: NSDataWritingOptions,
-        errorPtr: *mut Option<&NSError>,
+        errorPtr: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -59,7 +59,7 @@ impl NSData {
         &self,
         url: &NSURL,
         writeOptionsMask: NSDataWritingOptions,
-        errorPtr: *mut Option<&NSError>,
+        errorPtr: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -117,7 +117,7 @@ impl NSData {
     pub unsafe fn dataWithContentsOfFile_options_error(
         path: &NSString,
         readOptionsMask: NSDataReadingOptions,
-        errorPtr: *mut Option<&NSError>,
+        errorPtr: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -129,7 +129,7 @@ impl NSData {
     pub unsafe fn dataWithContentsOfURL_options_error(
         url: &NSURL,
         readOptionsMask: NSDataReadingOptions,
-        errorPtr: *mut Option<&NSError>,
+        errorPtr: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -188,7 +188,7 @@ impl NSData {
         &self,
         path: &NSString,
         readOptionsMask: NSDataReadingOptions,
-        errorPtr: *mut Option<&NSError>,
+        errorPtr: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -201,7 +201,7 @@ impl NSData {
         &self,
         url: &NSURL,
         readOptionsMask: NSDataReadingOptions,
-        errorPtr: *mut Option<&NSError>,
+        errorPtr: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -265,7 +265,7 @@ impl NSData {
     pub unsafe fn decompressedDataUsingAlgorithm_error(
         &self,
         algorithm: NSDataCompressionAlgorithm,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -276,7 +276,7 @@ impl NSData {
     pub unsafe fn compressedDataUsingAlgorithm_error(
         &self,
         algorithm: NSDataCompressionAlgorithm,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, compressedDataUsingAlgorithm: algorithm, error: error]
     }
@@ -377,14 +377,14 @@ impl NSMutableData {
     pub unsafe fn decompressUsingAlgorithm_error(
         &self,
         algorithm: NSDataCompressionAlgorithm,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, decompressUsingAlgorithm: algorithm, error: error]
     }
     pub unsafe fn compressUsingAlgorithm_error(
         &self,
         algorithm: NSDataCompressionAlgorithm,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, compressUsingAlgorithm: algorithm, error: error]
     }

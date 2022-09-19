@@ -138,14 +138,28 @@ impl RustType {
             ObjCClass => Self::Class { nullability },
             ObjCSel => Self::Sel { nullability },
             Pointer => {
-                println!("{:?}", &ty);
-                let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
-                println!("{:?}", &pointee);
-                let pointee = Self::parse(pointee, false, is_consumed);
+                let is_const = ty.is_const_qualified();
+                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                let pointee = Self::parse(ty, false, is_consumed);
+                let pointee = match pointee {
+                    Self::Id {
+                        name,
+                        is_return,
+                        nullability,
+                    } => {
+                        let is_const = ty.is_const_qualified();
+                        Self::Pointer {
+                            nullability,
+                            is_const,
+                            pointee: Box::new(Self::TypeDef(name)),
+                        }
+                    }
+                    pointee => pointee,
+                };
 
                 Self::Pointer {
                     nullability,
-                    is_const: ty.is_const_qualified(),
+                    is_const,
                     pointee: Box::new(pointee),
                 }
             }

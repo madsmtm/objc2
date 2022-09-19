@@ -29,7 +29,7 @@ impl NSXMLDTD {
         &self,
         url: &NSURL,
         mask: NSXMLNodeOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -42,7 +42,7 @@ impl NSXMLDTD {
         &self,
         data: &NSData,
         mask: NSXMLNodeOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithData: data, options: mask, error: error]
     }

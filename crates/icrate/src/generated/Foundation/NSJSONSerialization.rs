@@ -21,7 +21,7 @@ impl NSJSONSerialization {
     pub unsafe fn dataWithJSONObject_options_error(
         obj: &Object,
         opt: NSJSONWritingOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![
             Self::class(),
@@ -33,7 +33,7 @@ impl NSJSONSerialization {
     pub unsafe fn JSONObjectWithData_options_error(
         data: &NSData,
         opt: NSJSONReadingOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             Self::class(),
@@ -46,7 +46,7 @@ impl NSJSONSerialization {
         obj: &Object,
         stream: &NSOutputStream,
         opt: NSJSONWritingOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> NSInteger {
         msg_send![
             Self::class(),
@@ -59,7 +59,7 @@ impl NSJSONSerialization {
     pub unsafe fn JSONObjectWithStream_options_error(
         stream: &NSInputStream,
         opt: NSJSONReadingOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             Self::class(),

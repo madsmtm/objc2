@@ -24,7 +24,7 @@ impl NSKeyedArchiver {
     pub unsafe fn archivedDataWithRootObject_requiringSecureCoding_error(
         object: &Object,
         requiresSecureCoding: bool,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![
             Self::class(),
@@ -125,14 +125,14 @@ impl NSKeyedUnarchiver {
     pub unsafe fn initForReadingFromData_error(
         &self,
         data: &NSData,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initForReadingFromData: data, error: error]
     }
     pub unsafe fn unarchivedObjectOfClass_fromData_error(
         cls: &Class,
         data: &NSData,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             Self::class(),
@@ -144,7 +144,7 @@ impl NSKeyedUnarchiver {
     pub unsafe fn unarchivedArrayOfObjectsOfClass_fromData_error(
         cls: &Class,
         data: &NSData,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSArray, Shared>> {
         msg_send_id![
             Self::class(),
@@ -157,7 +157,7 @@ impl NSKeyedUnarchiver {
         keyCls: &Class,
         valueCls: &Class,
         data: &NSData,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSDictionary, Shared>> {
         msg_send_id![
             Self::class(),
@@ -170,7 +170,7 @@ impl NSKeyedUnarchiver {
     pub unsafe fn unarchivedObjectOfClasses_fromData_error(
         classes: TodoGenerics,
         data: &NSData,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             Self::class(),
@@ -182,7 +182,7 @@ impl NSKeyedUnarchiver {
     pub unsafe fn unarchivedArrayOfObjectsOfClasses_fromData_error(
         classes: TodoGenerics,
         data: &NSData,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSArray, Shared>> {
         msg_send_id![
             Self::class(),
@@ -195,7 +195,7 @@ impl NSKeyedUnarchiver {
         keyClasses: TodoGenerics,
         valueClasses: TodoGenerics,
         data: &NSData,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSDictionary, Shared>> {
         msg_send_id![
             Self::class(),
@@ -216,7 +216,7 @@ impl NSKeyedUnarchiver {
     }
     pub unsafe fn unarchiveTopLevelObjectWithData_error(
         data: &NSData,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             Self::class(),

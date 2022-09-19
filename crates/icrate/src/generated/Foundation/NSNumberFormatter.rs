@@ -20,10 +20,10 @@ extern_class!(
 impl NSNumberFormatter {
     pub unsafe fn getObjectValue_forString_range_error(
         &self,
-        obj: *mut Option<&Object>,
+        obj: *mut *mut Object,
         string: &NSString,
         rangep: *mut NSRange,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,

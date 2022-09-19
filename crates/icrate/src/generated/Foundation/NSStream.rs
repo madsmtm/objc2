@@ -120,8 +120,8 @@ impl NSStream {
     pub unsafe fn getStreamsToHostWithName_port_inputStream_outputStream(
         hostname: &NSString,
         port: NSInteger,
-        inputStream: *mut Option<&NSInputStream>,
-        outputStream: *mut Option<&NSOutputStream>,
+        inputStream: *mut *mut NSInputStream,
+        outputStream: *mut *mut NSOutputStream,
     ) {
         msg_send![
             Self::class(),
@@ -134,8 +134,8 @@ impl NSStream {
     pub unsafe fn getStreamsToHost_port_inputStream_outputStream(
         host: &NSHost,
         port: NSInteger,
-        inputStream: *mut Option<&NSInputStream>,
-        outputStream: *mut Option<&NSOutputStream>,
+        inputStream: *mut *mut NSInputStream,
+        outputStream: *mut *mut NSOutputStream,
     ) {
         msg_send![
             Self::class(),
@@ -150,8 +150,8 @@ impl NSStream {
 impl NSStream {
     pub unsafe fn getBoundStreamsWithBufferSize_inputStream_outputStream(
         bufferSize: NSUInteger,
-        inputStream: *mut Option<&NSInputStream>,
-        outputStream: *mut Option<&NSOutputStream>,
+        inputStream: *mut *mut NSInputStream,
+        outputStream: *mut *mut NSOutputStream,
     ) {
         msg_send![
             Self::class(),

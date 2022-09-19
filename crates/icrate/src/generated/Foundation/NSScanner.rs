@@ -80,28 +80,28 @@ impl NSScanner {
     pub unsafe fn scanString_intoString(
         &self,
         string: &NSString,
-        result: *mut Option<&NSString>,
+        result: *mut *mut NSString,
     ) -> bool {
         msg_send![self, scanString: string, intoString: result]
     }
     pub unsafe fn scanCharactersFromSet_intoString(
         &self,
         set: &NSCharacterSet,
-        result: *mut Option<&NSString>,
+        result: *mut *mut NSString,
     ) -> bool {
         msg_send![self, scanCharactersFromSet: set, intoString: result]
     }
     pub unsafe fn scanUpToString_intoString(
         &self,
         string: &NSString,
-        result: *mut Option<&NSString>,
+        result: *mut *mut NSString,
     ) -> bool {
         msg_send![self, scanUpToString: string, intoString: result]
     }
     pub unsafe fn scanUpToCharactersFromSet_intoString(
         &self,
         set: &NSCharacterSet,
-        result: *mut Option<&NSString>,
+        result: *mut *mut NSString,
     ) -> bool {
         msg_send![self, scanUpToCharactersFromSet: set, intoString: result]
     }

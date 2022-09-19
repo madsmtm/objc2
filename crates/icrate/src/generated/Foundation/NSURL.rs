@@ -189,10 +189,7 @@ impl NSURL {
             maxLength: maxBufferLength
         ]
     }
-    pub unsafe fn checkResourceIsReachableAndReturnError(
-        &self,
-        error: *mut Option<&NSError>,
-    ) -> bool {
+    pub unsafe fn checkResourceIsReachableAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, checkResourceIsReachableAndReturnError: error]
     }
     pub unsafe fn isFileReferenceURL(&self) -> bool {
@@ -203,16 +200,16 @@ impl NSURL {
     }
     pub unsafe fn getResourceValue_forKey_error(
         &self,
-        value: NonNull<Option<&Object>>,
+        value: NonNull<*mut Object>,
         key: &NSURLResourceKey,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, getResourceValue: value, forKey: key, error: error]
     }
     pub unsafe fn resourceValuesForKeys_error(
         &self,
         keys: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, resourceValuesForKeys: keys, error: error]
     }
@@ -220,14 +217,14 @@ impl NSURL {
         &self,
         value: Option<&Object>,
         key: &NSURLResourceKey,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, setResourceValue: value, forKey: key, error: error]
     }
     pub unsafe fn setResourceValues_error(
         &self,
         keyedValues: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, setResourceValues: keyedValues, error: error]
     }
@@ -249,7 +246,7 @@ impl NSURL {
         options: NSURLBookmarkCreationOptions,
         keys: TodoGenerics,
         relativeURL: Option<&NSURL>,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![
             self,
@@ -265,7 +262,7 @@ impl NSURL {
         options: NSURLBookmarkResolutionOptions,
         relativeURL: Option<&NSURL>,
         isStale: *mut bool,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -281,7 +278,7 @@ impl NSURL {
         options: NSURLBookmarkResolutionOptions,
         relativeURL: Option<&NSURL>,
         isStale: *mut bool,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -306,7 +303,7 @@ impl NSURL {
         bookmarkData: &NSData,
         bookmarkFileURL: &NSURL,
         options: NSURLBookmarkFileCreationOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             Self::class(),
@@ -318,7 +315,7 @@ impl NSURL {
     }
     pub unsafe fn bookmarkDataWithContentsOfURL_error(
         bookmarkFileURL: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![
             Self::class(),
@@ -329,7 +326,7 @@ impl NSURL {
     pub unsafe fn URLByResolvingAliasFileAtURL_options_error(
         url: &NSURL,
         options: NSURLBookmarkResolutionOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -412,9 +409,9 @@ impl NSURL {
 impl NSURL {
     pub unsafe fn getPromisedItemResourceValue_forKey_error(
         &self,
-        value: NonNull<Option<&Object>>,
+        value: NonNull<*mut Object>,
         key: &NSURLResourceKey,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -426,13 +423,13 @@ impl NSURL {
     pub unsafe fn promisedItemResourceValuesForKeys_error(
         &self,
         keys: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, promisedItemResourceValuesForKeys: keys, error: error]
     }
     pub unsafe fn checkPromisedItemIsReachableAndReturnError(
         &self,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, checkPromisedItemIsReachableAndReturnError: error]
     }

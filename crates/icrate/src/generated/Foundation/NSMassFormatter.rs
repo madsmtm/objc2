@@ -42,9 +42,9 @@ impl NSMassFormatter {
     }
     pub unsafe fn getObjectValue_forString_errorDescription(
         &self,
-        obj: *mut Option<&Object>,
+        obj: *mut *mut Object,
         string: &NSString,
-        error: *mut Option<&NSString>,
+        error: *mut *mut NSString,
     ) -> bool {
         msg_send![
             self,

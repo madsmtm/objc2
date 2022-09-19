@@ -59,7 +59,7 @@ impl NSFileManager {
         url: &NSURL,
         keys: TodoGenerics,
         mask: NSDirectoryEnumerationOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![
             self,
@@ -82,7 +82,7 @@ impl NSFileManager {
         domain: NSSearchPathDomainMask,
         url: Option<&NSURL>,
         shouldCreate: bool,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![
             self,
@@ -98,7 +98,7 @@ impl NSFileManager {
         outRelationship: NonNull<NSURLRelationship>,
         directoryURL: &NSURL,
         otherURL: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -114,7 +114,7 @@ impl NSFileManager {
         directory: NSSearchPathDirectory,
         domainMask: NSSearchPathDomainMask,
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -130,7 +130,7 @@ impl NSFileManager {
         url: &NSURL,
         createIntermediates: bool,
         attributes: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -144,7 +144,7 @@ impl NSFileManager {
         &self,
         url: &NSURL,
         destURL: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -157,7 +157,7 @@ impl NSFileManager {
         &self,
         attributes: TodoGenerics,
         path: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -171,7 +171,7 @@ impl NSFileManager {
         path: &NSString,
         createIntermediates: bool,
         attributes: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -184,28 +184,28 @@ impl NSFileManager {
     pub unsafe fn contentsOfDirectoryAtPath_error(
         &self,
         path: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, contentsOfDirectoryAtPath: path, error: error]
     }
     pub unsafe fn subpathsOfDirectoryAtPath_error(
         &self,
         path: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, subpathsOfDirectoryAtPath: path, error: error]
     }
     pub unsafe fn attributesOfItemAtPath_error(
         &self,
         path: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, attributesOfItemAtPath: path, error: error]
     }
     pub unsafe fn attributesOfFileSystemForPath_error(
         &self,
         path: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, attributesOfFileSystemForPath: path, error: error]
     }
@@ -213,7 +213,7 @@ impl NSFileManager {
         &self,
         path: &NSString,
         destPath: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -225,7 +225,7 @@ impl NSFileManager {
     pub unsafe fn destinationOfSymbolicLinkAtPath_error(
         &self,
         path: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, destinationOfSymbolicLinkAtPath: path, error: error]
     }
@@ -233,7 +233,7 @@ impl NSFileManager {
         &self,
         srcPath: &NSString,
         dstPath: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, copyItemAtPath: srcPath, toPath: dstPath, error: error]
     }
@@ -241,7 +241,7 @@ impl NSFileManager {
         &self,
         srcPath: &NSString,
         dstPath: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, moveItemAtPath: srcPath, toPath: dstPath, error: error]
     }
@@ -249,22 +249,18 @@ impl NSFileManager {
         &self,
         srcPath: &NSString,
         dstPath: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, linkItemAtPath: srcPath, toPath: dstPath, error: error]
     }
-    pub unsafe fn removeItemAtPath_error(
-        &self,
-        path: &NSString,
-        error: *mut Option<&NSError>,
-    ) -> bool {
+    pub unsafe fn removeItemAtPath_error(&self, path: &NSString, error: *mut *mut NSError) -> bool {
         msg_send![self, removeItemAtPath: path, error: error]
     }
     pub unsafe fn copyItemAtURL_toURL_error(
         &self,
         srcURL: &NSURL,
         dstURL: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, copyItemAtURL: srcURL, toURL: dstURL, error: error]
     }
@@ -272,7 +268,7 @@ impl NSFileManager {
         &self,
         srcURL: &NSURL,
         dstURL: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, moveItemAtURL: srcURL, toURL: dstURL, error: error]
     }
@@ -280,18 +276,18 @@ impl NSFileManager {
         &self,
         srcURL: &NSURL,
         dstURL: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, linkItemAtURL: srcURL, toURL: dstURL, error: error]
     }
-    pub unsafe fn removeItemAtURL_error(&self, URL: &NSURL, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn removeItemAtURL_error(&self, URL: &NSURL, error: *mut *mut NSError) -> bool {
         msg_send![self, removeItemAtURL: URL, error: error]
     }
     pub unsafe fn trashItemAtURL_resultingItemURL_error(
         &self,
         url: &NSURL,
-        outResultingURL: *mut Option<&NSURL>,
-        error: *mut Option<&NSError>,
+        outResultingURL: *mut *mut NSURL,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -461,8 +457,8 @@ impl NSFileManager {
         newItemURL: &NSURL,
         backupItemName: Option<&NSString>,
         options: NSFileManagerItemReplacementOptions,
-        resultingURL: *mut Option<&NSURL>,
-        error: *mut Option<&NSError>,
+        resultingURL: *mut *mut NSURL,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -479,7 +475,7 @@ impl NSFileManager {
         flag: bool,
         url: &NSURL,
         destinationURL: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -495,14 +491,14 @@ impl NSFileManager {
     pub unsafe fn startDownloadingUbiquitousItemAtURL_error(
         &self,
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, startDownloadingUbiquitousItemAtURL: url, error: error]
     }
     pub unsafe fn evictUbiquitousItemAtURL_error(
         &self,
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, evictUbiquitousItemAtURL: url, error: error]
     }
@@ -515,8 +511,8 @@ impl NSFileManager {
     pub unsafe fn URLForPublishingUbiquitousItemAtURL_expirationDate_error(
         &self,
         url: &NSURL,
-        outDate: *mut Option<&NSDate>,
-        error: *mut Option<&NSError>,
+        outDate: *mut *mut NSDate,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![
             self,

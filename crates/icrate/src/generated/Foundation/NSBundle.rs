@@ -47,10 +47,10 @@ impl NSBundle {
     pub unsafe fn unload(&self) -> bool {
         msg_send![self, unload]
     }
-    pub unsafe fn preflightAndReturnError(&self, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn preflightAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, preflightAndReturnError: error]
     }
-    pub unsafe fn loadAndReturnError(&self, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn loadAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, loadAndReturnError: error]
     }
     pub unsafe fn URLForAuxiliaryExecutable(

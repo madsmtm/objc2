@@ -31,52 +31,48 @@ impl NSFileHandle {
     }
     pub unsafe fn readDataToEndOfFileAndReturnError(
         &self,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, readDataToEndOfFileAndReturnError: error]
     }
     pub unsafe fn readDataUpToLength_error(
         &self,
         length: NSUInteger,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, readDataUpToLength: length, error: error]
     }
-    pub unsafe fn writeData_error(&self, data: &NSData, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn writeData_error(&self, data: &NSData, error: *mut *mut NSError) -> bool {
         msg_send![self, writeData: data, error: error]
     }
     pub unsafe fn getOffset_error(
         &self,
         offsetInFile: NonNull<c_ulonglong>,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, getOffset: offsetInFile, error: error]
     }
     pub unsafe fn seekToEndReturningOffset_error(
         &self,
         offsetInFile: *mut c_ulonglong,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, seekToEndReturningOffset: offsetInFile, error: error]
     }
-    pub unsafe fn seekToOffset_error(
-        &self,
-        offset: c_ulonglong,
-        error: *mut Option<&NSError>,
-    ) -> bool {
+    pub unsafe fn seekToOffset_error(&self, offset: c_ulonglong, error: *mut *mut NSError) -> bool {
         msg_send![self, seekToOffset: offset, error: error]
     }
     pub unsafe fn truncateAtOffset_error(
         &self,
         offset: c_ulonglong,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![self, truncateAtOffset: offset, error: error]
     }
-    pub unsafe fn synchronizeAndReturnError(&self, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn synchronizeAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, synchronizeAndReturnError: error]
     }
-    pub unsafe fn closeAndReturnError(&self, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn closeAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, closeAndReturnError: error]
     }
     pub unsafe fn availableData(&self) -> Id<NSData, Shared> {
@@ -96,7 +92,7 @@ impl NSFileHandle {
     }
     pub unsafe fn fileHandleForReadingFromURL_error(
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -106,13 +102,13 @@ impl NSFileHandle {
     }
     pub unsafe fn fileHandleForWritingToURL_error(
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![Self::class(), fileHandleForWritingToURL: url, error: error]
     }
     pub unsafe fn fileHandleForUpdatingURL_error(
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![Self::class(), fileHandleForUpdatingURL: url, error: error]
     }

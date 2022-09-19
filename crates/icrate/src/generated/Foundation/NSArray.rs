@@ -127,7 +127,7 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn subarrayWithRange(&self, range: NSRange) -> TodoGenerics {
         msg_send![self, subarrayWithRange: range]
     }
-    pub unsafe fn writeToURL_error(&self, url: &NSURL, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn writeToURL_error(&self, url: &NSURL, error: *mut *mut NSError) -> bool {
         msg_send![self, writeToURL: url, error: error]
     }
     pub unsafe fn makeObjectsPerformSelector(&self, aSelector: Sel) {
@@ -291,13 +291,13 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn initWithContentsOfURL_error(
         &self,
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, initWithContentsOfURL: url, error: error]
     }
     pub unsafe fn arrayWithContentsOfURL_error(
         url: &NSURL,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![Self::class(), arrayWithContentsOfURL: url, error: error]
     }

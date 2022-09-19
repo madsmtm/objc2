@@ -418,7 +418,7 @@ impl NSString {
         url: &NSURL,
         useAuxiliaryFile: bool,
         enc: NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -433,7 +433,7 @@ impl NSString {
         path: &NSString,
         useAuxiliaryFile: bool,
         enc: NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> bool {
         msg_send![
             self,
@@ -592,7 +592,7 @@ impl NSString {
         &self,
         url: &NSURL,
         enc: NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -605,7 +605,7 @@ impl NSString {
         &self,
         path: &NSString,
         enc: NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -617,7 +617,7 @@ impl NSString {
     pub unsafe fn stringWithContentsOfURL_encoding_error(
         url: &NSURL,
         enc: NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -629,7 +629,7 @@ impl NSString {
     pub unsafe fn stringWithContentsOfFile_encoding_error(
         path: &NSString,
         enc: NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -642,7 +642,7 @@ impl NSString {
         &self,
         url: &NSURL,
         enc: *mut NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -655,7 +655,7 @@ impl NSString {
         &self,
         path: &NSString,
         enc: *mut NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -667,7 +667,7 @@ impl NSString {
     pub unsafe fn stringWithContentsOfURL_usedEncoding_error(
         url: &NSURL,
         enc: *mut NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -679,7 +679,7 @@ impl NSString {
     pub unsafe fn stringWithContentsOfFile_usedEncoding_error(
         path: &NSString,
         enc: *mut NSStringEncoding,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             Self::class(),
@@ -764,7 +764,7 @@ impl NSString {
     pub unsafe fn stringEncodingForData_encodingOptions_convertedString_usedLossyConversion(
         data: &NSData,
         opts: TodoGenerics,
-        string: *mut Option<&NSString>,
+        string: *mut *mut NSString,
         usedLossyConversion: *mut bool,
     ) -> NSStringEncoding {
         msg_send![

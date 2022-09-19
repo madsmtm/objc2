@@ -22,7 +22,7 @@ impl NSXMLDocument {
         &self,
         string: &NSString,
         mask: NSXMLNodeOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithXMLString: string, options: mask, error: error]
     }
@@ -30,7 +30,7 @@ impl NSXMLDocument {
         &self,
         url: &NSURL,
         mask: NSXMLNodeOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![
             self,
@@ -43,7 +43,7 @@ impl NSXMLDocument {
         &self,
         data: &NSData,
         mask: NSXMLNodeOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithData: data, options: mask, error: error]
     }
@@ -84,7 +84,7 @@ impl NSXMLDocument {
         &self,
         xslt: &NSData,
         arguments: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             self,
@@ -97,7 +97,7 @@ impl NSXMLDocument {
         &self,
         xslt: &NSString,
         arguments: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             self,
@@ -110,7 +110,7 @@ impl NSXMLDocument {
         &self,
         xsltURL: &NSURL,
         argument: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             self,
@@ -119,7 +119,7 @@ impl NSXMLDocument {
             error: error
         ]
     }
-    pub unsafe fn validateAndReturnError(&self, error: *mut Option<&NSError>) -> bool {
+    pub unsafe fn validateAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, validateAndReturnError: error]
     }
     pub unsafe fn characterEncoding(&self) -> Option<Id<NSString, Shared>> {

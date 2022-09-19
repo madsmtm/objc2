@@ -68,7 +68,7 @@ impl NSCoder {
     }
     pub unsafe fn decodeTopLevelObjectAndReturnError(
         &self,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, decodeTopLevelObjectAndReturnError: error]
     }
@@ -144,7 +144,7 @@ impl NSCoder {
     pub unsafe fn decodeTopLevelObjectForKey_error(
         &self,
         key: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, decodeTopLevelObjectForKey: key, error: error]
     }
@@ -190,7 +190,7 @@ impl NSCoder {
         &self,
         aClass: &Class,
         key: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             self,
@@ -230,7 +230,7 @@ impl NSCoder {
         &self,
         classes: TodoGenerics,
         key: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             self,

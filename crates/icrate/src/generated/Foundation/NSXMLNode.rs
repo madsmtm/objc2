@@ -143,7 +143,7 @@ impl NSXMLNode {
     pub unsafe fn nodesForXPath_error(
         &self,
         xpath: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> TodoGenerics {
         msg_send![self, nodesForXPath: xpath, error: error]
     }
@@ -151,7 +151,7 @@ impl NSXMLNode {
         &self,
         xquery: &NSString,
         constants: TodoGenerics,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSArray, Shared>> {
         msg_send_id![
             self,
@@ -163,7 +163,7 @@ impl NSXMLNode {
     pub unsafe fn objectsForXQuery_error(
         &self,
         xquery: &NSString,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSArray, Shared>> {
         msg_send_id![self, objectsForXQuery: xquery, error: error]
     }

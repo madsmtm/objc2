@@ -27,7 +27,7 @@ impl NSPropertyListSerialization {
         plist: &Object,
         format: NSPropertyListFormat,
         opt: NSPropertyListWriteOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![
             Self::class(),
@@ -42,7 +42,7 @@ impl NSPropertyListSerialization {
         stream: &NSOutputStream,
         format: NSPropertyListFormat,
         opt: NSPropertyListWriteOptions,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> NSInteger {
         msg_send![
             Self::class(),
@@ -57,7 +57,7 @@ impl NSPropertyListSerialization {
         data: &NSData,
         opt: NSPropertyListReadOptions,
         format: *mut NSPropertyListFormat,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             Self::class(),
@@ -71,7 +71,7 @@ impl NSPropertyListSerialization {
         stream: &NSInputStream,
         opt: NSPropertyListReadOptions,
         format: *mut NSPropertyListFormat,
-        error: *mut Option<&NSError>,
+        error: *mut *mut NSError,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             Self::class(),
@@ -84,7 +84,7 @@ impl NSPropertyListSerialization {
     pub unsafe fn dataFromPropertyList_format_errorDescription(
         plist: &Object,
         format: NSPropertyListFormat,
-        errorString: *mut Option<&NSString>,
+        errorString: *mut *mut NSString,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![
             Self::class(),
@@ -97,7 +97,7 @@ impl NSPropertyListSerialization {
         data: &NSData,
         opt: NSPropertyListMutabilityOptions,
         format: *mut NSPropertyListFormat,
-        errorString: *mut Option<&NSString>,
+        errorString: *mut *mut NSString,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![
             Self::class(),

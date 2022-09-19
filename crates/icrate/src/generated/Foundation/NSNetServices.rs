@@ -68,8 +68,8 @@ impl NSNetService {
     }
     pub unsafe fn getInputStream_outputStream(
         &self,
-        inputStream: *mut Option<&NSInputStream>,
-        outputStream: *mut Option<&NSOutputStream>,
+        inputStream: *mut *mut NSInputStream,
+        outputStream: *mut *mut NSOutputStream,
     ) -> bool {
         msg_send![
             self,
