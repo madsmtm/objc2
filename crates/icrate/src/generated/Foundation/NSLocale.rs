@@ -191,12 +191,10 @@ impl NSLocale {
     pub unsafe fn canonicalLanguageIdentifierFromString(string: &NSString) -> Id<NSString, Shared> {
         msg_send_id![Self::class(), canonicalLanguageIdentifierFromString: string]
     }
-    pub unsafe fn localeIdentifierFromWindowsLocaleCode(
-        lcid: uint32_t,
-    ) -> Option<Id<NSString, Shared>> {
+    pub unsafe fn localeIdentifierFromWindowsLocaleCode(lcid: u32) -> Option<Id<NSString, Shared>> {
         msg_send_id![Self::class(), localeIdentifierFromWindowsLocaleCode: lcid]
     }
-    pub unsafe fn windowsLocaleCodeFromLocaleIdentifier(localeIdentifier: &NSString) -> uint32_t {
+    pub unsafe fn windowsLocaleCodeFromLocaleIdentifier(localeIdentifier: &NSString) -> u32 {
         msg_send![
             Self::class(),
             windowsLocaleCodeFromLocaleIdentifier: localeIdentifier

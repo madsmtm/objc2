@@ -114,7 +114,7 @@ impl NSSocketPortNameServer {
         &self,
         name: &NSString,
         host: Option<&NSString>,
-        portNumber: uint16_t,
+        portNumber: u16,
     ) -> Option<Id<NSPort, Shared>> {
         msg_send_id![
             self,
@@ -127,7 +127,7 @@ impl NSSocketPortNameServer {
         &self,
         port: &NSPort,
         name: &NSString,
-        portNumber: uint16_t,
+        portNumber: u16,
     ) -> bool {
         msg_send![
             self,
@@ -136,10 +136,10 @@ impl NSSocketPortNameServer {
             nameServerPortNumber: portNumber
         ]
     }
-    pub unsafe fn defaultNameServerPortNumber(&self) -> uint16_t {
+    pub unsafe fn defaultNameServerPortNumber(&self) -> u16 {
         msg_send![self, defaultNameServerPortNumber]
     }
-    pub unsafe fn setDefaultNameServerPortNumber(&self, defaultNameServerPortNumber: uint16_t) {
+    pub unsafe fn setDefaultNameServerPortNumber(&self, defaultNameServerPortNumber: u16) {
         msg_send![
             self,
             setDefaultNameServerPortNumber: defaultNameServerPortNumber

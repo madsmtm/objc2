@@ -63,12 +63,12 @@ extern_class!(
     }
 );
 impl NSInputStream {
-    pub unsafe fn read_maxLength(&self, buffer: NonNull<uint8_t>, len: NSUInteger) -> NSInteger {
+    pub unsafe fn read_maxLength(&self, buffer: NonNull<u8>, len: NSUInteger) -> NSInteger {
         msg_send![self, read: buffer, maxLength: len]
     }
     pub unsafe fn getBuffer_length(
         &self,
-        buffer: NonNull<*mut uint8_t>,
+        buffer: NonNull<*mut u8>,
         len: NonNull<NSUInteger>,
     ) -> bool {
         msg_send![self, getBuffer: buffer, length: len]
@@ -91,7 +91,7 @@ extern_class!(
     }
 );
 impl NSOutputStream {
-    pub unsafe fn write_maxLength(&self, buffer: NonNull<uint8_t>, len: NSUInteger) -> NSInteger {
+    pub unsafe fn write_maxLength(&self, buffer: NonNull<u8>, len: NSUInteger) -> NSInteger {
         msg_send![self, write: buffer, maxLength: len]
     }
     pub unsafe fn initToMemory(&self) -> Id<Self, Shared> {
@@ -99,7 +99,7 @@ impl NSOutputStream {
     }
     pub unsafe fn initToBuffer_capacity(
         &self,
-        buffer: NonNull<uint8_t>,
+        buffer: NonNull<u8>,
         capacity: NSUInteger,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initToBuffer: buffer, capacity: capacity]
@@ -189,7 +189,7 @@ impl NSOutputStream {
         msg_send_id![Self::class(), outputStreamToMemory]
     }
     pub unsafe fn outputStreamToBuffer_capacity(
-        buffer: NonNull<uint8_t>,
+        buffer: NonNull<u8>,
         capacity: NSUInteger,
     ) -> Id<Self, Shared> {
         msg_send_id![

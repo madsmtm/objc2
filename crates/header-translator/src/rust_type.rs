@@ -34,6 +34,14 @@ pub enum RustType {
     ULongLong,
     Float,
     Double,
+    I8,
+    U8,
+    I16,
+    U16,
+    I32,
+    U32,
+    I64,
+    U64,
 
     // Objective-C
     Id {
@@ -234,6 +242,14 @@ impl RustType {
                 let typedef_name = ty.get_typedef_name().expect("typedef has name");
                 match &*typedef_name {
                     "BOOL" => Self::ObjcBool,
+                    "int8_t" => Self::I8,
+                    "uint8_t" => Self::U8,
+                    "int16_t" => Self::I16,
+                    "uint16_t" => Self::U16,
+                    "int32_t" => Self::I32,
+                    "uint32_t" => Self::U32,
+                    "int164_t" => Self::I64,
+                    "uint64_t" => Self::U64,
                     "instancetype" => {
                         if !is_return {
                             panic!("instancetype in non-return position")
@@ -317,6 +333,14 @@ impl ToTokens for RustType {
             ULongLong => quote!(c_ulonglong),
             Float => quote!(c_float),
             Double => quote!(c_double),
+            I8 => quote!(i8),
+            U8 => quote!(u8),
+            I16 => quote!(i16),
+            U16 => quote!(u16),
+            I32 => quote!(i32),
+            U32 => quote!(u32),
+            I64 => quote!(i64),
+            U64 => quote!(u64),
 
             // Objective-C
             Id {

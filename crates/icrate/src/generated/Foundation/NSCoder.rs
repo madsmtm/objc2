@@ -115,7 +115,7 @@ impl NSCoder {
     pub unsafe fn encodeInt_forKey(&self, value: c_int, key: &NSString) {
         msg_send![self, encodeInt: value, forKey: key]
     }
-    pub unsafe fn encodeInt32_forKey(&self, value: int32_t, key: &NSString) {
+    pub unsafe fn encodeInt32_forKey(&self, value: i32, key: &NSString) {
         msg_send![self, encodeInt32: value, forKey: key]
     }
     pub unsafe fn encodeInt64_forKey(&self, value: int64_t, key: &NSString) {
@@ -129,7 +129,7 @@ impl NSCoder {
     }
     pub unsafe fn encodeBytes_length_forKey(
         &self,
-        bytes: *mut uint8_t,
+        bytes: *mut u8,
         length: NSUInteger,
         key: &NSString,
     ) {
@@ -154,7 +154,7 @@ impl NSCoder {
     pub unsafe fn decodeIntForKey(&self, key: &NSString) -> c_int {
         msg_send![self, decodeIntForKey: key]
     }
-    pub unsafe fn decodeInt32ForKey(&self, key: &NSString) -> int32_t {
+    pub unsafe fn decodeInt32ForKey(&self, key: &NSString) -> i32 {
         msg_send![self, decodeInt32ForKey: key]
     }
     pub unsafe fn decodeInt64ForKey(&self, key: &NSString) -> int64_t {
@@ -170,7 +170,7 @@ impl NSCoder {
         &self,
         key: &NSString,
         lengthp: *mut NSUInteger,
-    ) -> *mut uint8_t {
+    ) -> *mut u8 {
         msg_send![self, decodeBytesForKey: key, returnedLength: lengthp]
     }
     pub unsafe fn encodeInteger_forKey(&self, value: NSInteger, key: &NSString) {

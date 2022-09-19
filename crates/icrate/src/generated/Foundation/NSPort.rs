@@ -106,10 +106,10 @@ extern_class!(
     }
 );
 impl NSMachPort {
-    pub unsafe fn portWithMachPort(machPort: uint32_t) -> Id<NSPort, Shared> {
+    pub unsafe fn portWithMachPort(machPort: u32) -> Id<NSPort, Shared> {
         msg_send_id![Self::class(), portWithMachPort: machPort]
     }
-    pub unsafe fn initWithMachPort(&self, machPort: uint32_t) -> Id<Self, Shared> {
+    pub unsafe fn initWithMachPort(&self, machPort: u32) -> Id<Self, Shared> {
         msg_send_id![self, initWithMachPort: machPort]
     }
     pub unsafe fn setDelegate(&self, anObject: Option<&id>) {
@@ -119,14 +119,14 @@ impl NSMachPort {
         msg_send_id![self, delegate]
     }
     pub unsafe fn portWithMachPort_options(
-        machPort: uint32_t,
+        machPort: u32,
         f: NSMachPortOptions,
     ) -> Id<NSPort, Shared> {
         msg_send_id![Self::class(), portWithMachPort: machPort, options: f]
     }
     pub unsafe fn initWithMachPort_options(
         &self,
-        machPort: uint32_t,
+        machPort: u32,
         f: NSMachPortOptions,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithMachPort: machPort, options: f]
@@ -137,7 +137,7 @@ impl NSMachPort {
     pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: runLoop, forMode: mode]
     }
-    pub unsafe fn machPort(&self) -> uint32_t {
+    pub unsafe fn machPort(&self) -> u32 {
         msg_send![self, machPort]
     }
 }

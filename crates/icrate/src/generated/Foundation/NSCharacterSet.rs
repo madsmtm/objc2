@@ -45,7 +45,7 @@ impl NSCharacterSet {
     pub unsafe fn isSupersetOfSet(&self, theOtherSet: &NSCharacterSet) -> bool {
         msg_send![self, isSupersetOfSet: theOtherSet]
     }
-    pub unsafe fn hasMemberInPlane(&self, thePlane: uint8_t) -> bool {
+    pub unsafe fn hasMemberInPlane(&self, thePlane: u8) -> bool {
         msg_send![self, hasMemberInPlane: thePlane]
     }
     pub unsafe fn controlCharacterSet() -> Id<NSCharacterSet, Shared> {

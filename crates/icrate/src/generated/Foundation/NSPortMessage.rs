@@ -40,10 +40,10 @@ impl NSPortMessage {
     pub unsafe fn sendPort(&self) -> Option<Id<NSPort, Shared>> {
         msg_send_id![self, sendPort]
     }
-    pub unsafe fn msgid(&self) -> uint32_t {
+    pub unsafe fn msgid(&self) -> u32 {
         msg_send![self, msgid]
     }
-    pub unsafe fn setMsgid(&self, msgid: uint32_t) {
+    pub unsafe fn setMsgid(&self, msgid: u32) {
         msg_send![self, setMsgid: msgid]
     }
 }
