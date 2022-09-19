@@ -77,7 +77,8 @@ impl NSURLCredentialStorage {
     }
     pub unsafe fn allCredentials(
         &self,
-    ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary>, Shared> {
+    ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary<NSString, NSURLCredential>>, Shared>
+    {
         msg_send_id![self, allCredentials]
     }
 }

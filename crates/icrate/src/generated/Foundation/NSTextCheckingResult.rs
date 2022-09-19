@@ -46,7 +46,9 @@ impl NSTextCheckingResult {
     pub unsafe fn orthography(&self) -> Option<Id<NSOrthography, Shared>> {
         msg_send_id![self, orthography]
     }
-    pub unsafe fn grammarDetails(&self) -> Option<Id<NSArray<NSDictionary>, Shared>> {
+    pub unsafe fn grammarDetails(
+        &self,
+    ) -> Option<Id<NSArray<NSDictionary<NSString, Object>>, Shared>> {
         msg_send_id![self, grammarDetails]
     }
     pub unsafe fn date(&self) -> Option<Id<NSDate, Shared>> {
@@ -104,7 +106,7 @@ impl NSTextCheckingResult {
     }
     pub unsafe fn grammarCheckingResultWithRange_details(
         range: NSRange,
-        details: &NSArray<NSDictionary>,
+        details: &NSArray<NSDictionary<NSString, Object>>,
     ) -> Id<NSTextCheckingResult, Shared> {
         msg_send_id![
             Self::class(),

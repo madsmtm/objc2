@@ -131,7 +131,9 @@ impl NSMetadataQuery {
     pub unsafe fn results(&self) -> Id<NSArray, Shared> {
         msg_send_id![self, results]
     }
-    pub unsafe fn valueLists(&self) -> Id<NSDictionary<NSString, NSArray>, Shared> {
+    pub unsafe fn valueLists(
+        &self,
+    ) -> Id<NSDictionary<NSString, NSArray<NSMetadataQueryAttributeValueTuple>>, Shared> {
         msg_send_id![self, valueLists]
     }
     pub unsafe fn groupedResults(&self) -> Id<NSArray<NSMetadataQueryResultGroup>, Shared> {

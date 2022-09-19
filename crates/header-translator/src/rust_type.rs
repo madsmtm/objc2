@@ -3,6 +3,20 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct GenericType {
+    pub name: String,
+    pub generics: Vec<GenericType>,
+}
+
+impl ToTokens for GenericType {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let name = format_ident!("{}", self.name);
+        let generics = &self.generics;
+        tokens.append_all(quote!(#name <#(#generics),*>));
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RustType {
     // Primitives
     Void,
@@ -23,8 +37,7 @@ pub enum RustType {
 
     // Objective-C
     Id {
-        name: String,
-        generics: Vec<String>,
+        type_: GenericType,
         is_return: bool,
         nullability: Nullability,
     },
@@ -142,8 +155,10 @@ impl RustType {
             Float => Self::Float,
             Double => Self::Double,
             ObjCId => Self::Id {
-                name: "Object".to_string(),
-                generics: Vec::new(),
+                type_: GenericType {
+                    name: "Object".to_string(),
+                    generics: Vec::new(),
+                },
                 is_return,
                 nullability,
             },
@@ -172,8 +187,10 @@ impl RustType {
                         }
                         let name = ty.get_display_name();
                         Self::Id {
-                            name,
-                            generics: Vec::new(),
+                            type_: GenericType {
+                                name,
+                                generics: Vec::new(),
+                            },
                             is_return,
                             nullability,
                         }
@@ -185,13 +202,15 @@ impl RustType {
                             .map(|param| {
                                 match Self::parse(param, false, false) {
                                     Self::Id {
-                                        name,
-                                        generics,
+                                        type_,
                                         is_return,
                                         nullability,
-                                    } => name,
+                                    } => type_,
                                     // TODO: Handle this better
-                                    Self::Class { nullability } => "TodoClass".to_string(),
+                                    Self::Class { nullability } => GenericType {
+                                        name: "TodoClass".to_string(),
+                                        generics: Vec::new(),
+                                    },
                                     param => {
                                         panic!("invalid generic parameter {:?} in {:?}", param, ty)
                                     }
@@ -203,8 +222,7 @@ impl RustType {
                             .expect("object to have base type");
                         let name = base_ty.get_display_name();
                         Self::Id {
-                            name,
-                            generics,
+                            type_: GenericType { name, generics },
                             is_return,
                             nullability,
                         }
@@ -221,8 +239,10 @@ impl RustType {
                             panic!("instancetype in non-return position")
                         }
                         Self::Id {
-                            name: "Self".to_string(),
-                            generics: Vec::new(),
+                            type_: GenericType {
+                                name: "Self".to_string(),
+                                generics: Vec::new(),
+                            },
                             is_return,
                             nullability,
                         }
@@ -234,8 +254,10 @@ impl RustType {
                                 panic!("not empty: {:?}, {:?}", ty, generics);
                             }
                             Self::Id {
-                                name: typedef_name,
-                                generics: Vec::new(),
+                                type_: GenericType {
+                                    name: typedef_name,
+                                    generics: Vec::new(),
+                                },
                                 is_return,
                                 nullability,
                             }
@@ -298,18 +320,14 @@ impl ToTokens for RustType {
 
             // Objective-C
             Id {
-                name,
-                generics,
+                type_,
                 is_return,
                 nullability,
             } => {
-                let tokens = format_ident!("{}", name);
-                let generics = generics.iter().map(|param| format_ident!("{}", param));
-                let tokens = quote!(#tokens <#(#generics),*>);
                 let tokens = if *is_return {
-                    quote!(Id<#tokens, Shared>)
+                    quote!(Id<#type_, Shared>)
                 } else {
-                    quote!(&#tokens)
+                    quote!(&#type_)
                 };
                 if *nullability == Nullability::NonNull {
                     tokens
@@ -341,18 +359,15 @@ impl ToTokens for RustType {
             } => {
                 let tokens = match &**pointee {
                     Self::Id {
-                        name,
-                        generics,
+                        type_,
                         is_return,
                         nullability,
                     } => {
-                        let name = format_ident!("{}", name);
-                        let generics = generics.iter().map(|param| format_ident!("{}", param));
                         if *nullability == Nullability::NonNull {
-                            quote!(NonNull<#name <#(#generics),*>>)
+                            quote!(NonNull<#type_>)
                         } else {
                             // TODO: const?
-                            quote!(*mut #name)
+                            quote!(*mut #type_)
                         }
                     }
                     pointee => quote!(#pointee),

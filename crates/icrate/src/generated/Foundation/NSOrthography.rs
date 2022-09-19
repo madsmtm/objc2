@@ -17,7 +17,7 @@ impl NSOrthography {
     pub unsafe fn initWithDominantScript_languageMap(
         &self,
         script: &NSString,
-        map: &NSDictionary<NSString, NSArray>,
+        map: &NSDictionary<NSString, NSArray<NSString>>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithDominantScript: script, languageMap: map]
     }
@@ -27,7 +27,7 @@ impl NSOrthography {
     pub unsafe fn dominantScript(&self) -> Id<NSString, Shared> {
         msg_send_id![self, dominantScript]
     }
-    pub unsafe fn languageMap(&self) -> Id<NSDictionary<NSString, NSArray>, Shared> {
+    pub unsafe fn languageMap(&self) -> Id<NSDictionary<NSString, NSArray<NSString>>, Shared> {
         msg_send_id![self, languageMap]
     }
 }
@@ -62,7 +62,7 @@ impl NSOrthography {
 impl NSOrthography {
     pub unsafe fn orthographyWithDominantScript_languageMap(
         script: &NSString,
-        map: &NSDictionary<NSString, NSArray>,
+        map: &NSDictionary<NSString, NSArray<NSString>>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             Self::class(),

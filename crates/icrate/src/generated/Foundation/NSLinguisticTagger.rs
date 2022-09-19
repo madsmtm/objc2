@@ -104,7 +104,7 @@ impl NSLinguisticTagger {
         unit: NSLinguisticTaggerUnit,
         scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
-        tokenRanges: *mut *mut NSArray,
+        tokenRanges: *mut *mut NSArray<NSValue>,
     ) -> Id<NSArray<NSLinguisticTag>, Shared> {
         msg_send_id![
             self,
@@ -150,7 +150,7 @@ impl NSLinguisticTagger {
         range: NSRange,
         tagScheme: &NSString,
         opts: NSLinguisticTaggerOptions,
-        tokenRanges: *mut *mut NSArray,
+        tokenRanges: *mut *mut NSArray<NSValue>,
     ) -> Id<NSArray<NSString>, Shared> {
         msg_send_id![
             self,
@@ -188,7 +188,7 @@ impl NSLinguisticTagger {
         scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         orthography: Option<&NSOrthography>,
-        tokenRanges: *mut *mut NSArray,
+        tokenRanges: *mut *mut NSArray<NSValue>,
     ) -> Id<NSArray<NSLinguisticTag>, Shared> {
         msg_send_id![
             Self::class(),
@@ -227,7 +227,7 @@ impl NSLinguisticTagger {
         tagScheme: &NSString,
         tokenRange: NSRangePointer,
         sentenceRange: NSRangePointer,
-        scores: *mut *mut NSArray,
+        scores: *mut *mut NSArray<NSValue>,
     ) -> Option<Id<NSArray<NSString>, Shared>> {
         msg_send_id![
             self,
@@ -259,7 +259,7 @@ impl NSString {
         scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         orthography: Option<&NSOrthography>,
-        tokenRanges: *mut *mut NSArray,
+        tokenRanges: *mut *mut NSArray<NSValue>,
     ) -> Id<NSArray<NSLinguisticTag>, Shared> {
         msg_send_id![
             self,

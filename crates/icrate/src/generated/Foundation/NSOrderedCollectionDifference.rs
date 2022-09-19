@@ -16,7 +16,7 @@ __inner_extern_class!(
 impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
     pub unsafe fn initWithChanges(
         &self,
-        changes: &NSArray<NSOrderedCollectionChange>,
+        changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithChanges: changes]
     }
@@ -26,7 +26,7 @@ impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
         insertedObjects: Option<&NSArray<ObjectType>>,
         removes: &NSIndexSet,
         removedObjects: Option<&NSArray<ObjectType>>,
-        changes: &NSArray<NSOrderedCollectionChange>,
+        changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,
@@ -61,10 +61,10 @@ impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
     pub unsafe fn inverseDifference(&self) -> Id<Self, Shared> {
         msg_send_id![self, inverseDifference]
     }
-    pub unsafe fn insertions(&self) -> Id<NSArray<NSOrderedCollectionChange>, Shared> {
+    pub unsafe fn insertions(&self) -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared> {
         msg_send_id![self, insertions]
     }
-    pub unsafe fn removals(&self) -> Id<NSArray<NSOrderedCollectionChange>, Shared> {
+    pub unsafe fn removals(&self) -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared> {
         msg_send_id![self, removals]
     }
     pub unsafe fn hasChanges(&self) -> bool {
