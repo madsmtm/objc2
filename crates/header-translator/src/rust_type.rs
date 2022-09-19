@@ -47,7 +47,9 @@ pub enum RustType {
         num_elements: usize,
     },
 
-    TypeDef(String),
+    TypeDef {
+        name: String,
+    },
 }
 
 impl RustType {
@@ -151,7 +153,7 @@ impl RustType {
                         Self::Pointer {
                             nullability,
                             is_const,
-                            pointee: Box::new(Self::TypeDef(name)),
+                            pointee: Box::new(Self::TypeDef { name }),
                         }
                     }
                     pointee => pointee,
@@ -181,8 +183,12 @@ impl RustType {
                             nullability,
                         }
                     }
-                    ObjCObject => Self::TypeDef("TodoGenerics".to_string()),
-                    Attributed => Self::TypeDef("TodoAttributed".to_string()),
+                    ObjCObject => Self::TypeDef {
+                        name: "TodoGenerics".to_string(),
+                    },
+                    Attributed => Self::TypeDef {
+                        name: "TodoAttributed".to_string(),
+                    },
                     _ => panic!("pointee was not objcinterface: {:?}", ty),
                 }
             }
@@ -208,14 +214,20 @@ impl RustType {
                                 nullability,
                             }
                         } else {
-                            Self::TypeDef(typedef_name)
+                            Self::TypeDef { name: typedef_name }
                         }
                     }
                 }
             }
-            BlockPointer => Self::TypeDef("TodoBlock".to_string()),
-            FunctionPrototype => Self::TypeDef("TodoFunction".to_string()),
-            IncompleteArray => Self::TypeDef("TodoArray".to_string()),
+            BlockPointer => Self::TypeDef {
+                name: "TodoBlock".to_string(),
+            },
+            FunctionPrototype => Self::TypeDef {
+                name: "TodoFunction".to_string(),
+            },
+            IncompleteArray => Self::TypeDef {
+                name: "TodoArray".to_string(),
+            },
             ConstantArray => {
                 let element_type = Self::parse(
                     ty.get_element_type().expect("array to have element type"),
@@ -312,9 +324,9 @@ impl ToTokens for RustType {
                 element_type,
                 num_elements,
             } => quote!([#element_type; #num_elements]),
-            TypeDef(s) => {
-                let x = format_ident!("{}", s);
-                quote!(#x)
+            TypeDef { name } => {
+                let name = format_ident!("{}", name);
+                quote!(#name)
             }
         };
         tokens.append_all(result);
