@@ -110,7 +110,7 @@ impl Stmt {
                             superclass = Some(None);
                         }
                         EntityKind::ObjCClassRef => {
-                            println!("ObjCClassRef: {:?}", entity.get_display_name());
+                            // println!("ObjCClassRef: {:?}", entity.get_display_name());
                         }
                         EntityKind::ObjCProtocolRef => {
                             protocols.push(entity.get_name().expect("protocolref to have name"));
@@ -195,12 +195,12 @@ impl Stmt {
                             }
                         }
                         EntityKind::ObjCPropertyDecl => {
-                            println!(
-                                "Property {:?}, {:?}, {:?}",
-                                class_name,
-                                entity.get_display_name(),
-                                entity.get_objc_attributes(),
-                            );
+                            // println!(
+                            //     "Property {:?}, {:?}, {:?}",
+                            //     class_name,
+                            //     entity.get_display_name(),
+                            //     entity.get_objc_attributes(),
+                            // );
                             // methods.push(quote! {});
                         }
                         EntityKind::TemplateTypeParameter => {
