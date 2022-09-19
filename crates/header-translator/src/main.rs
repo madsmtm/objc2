@@ -166,11 +166,6 @@ fn main() {
 
         let (declared_types, tokens) = create_rust_file(&res, &config);
 
-        if declared_types.is_empty() {
-            // Skip files that don't declare anything
-            continue;
-        }
-
         let formatted = run_rustfmt(tokens);
 
         // println!("{}\n\n\n\n", res);
@@ -187,9 +182,13 @@ fn main() {
     }
 
     let mod_names = declared.iter().map(|(name, _)| name);
-    let mod_imports = declared.iter().map(|(name, declared_types)| {
-        let declared_types = declared_types.iter().map(|name| format_ident!("{}", name));
-        quote!(super::#name::{#(#declared_types,)*})
+    let mod_imports = declared.iter().filter_map(|(name, declared_types)| {
+        if !declared_types.is_empty() {
+            let declared_types = declared_types.iter().map(|name| format_ident!("{}", name));
+            Some(quote!(super::#name::{#(#declared_types,)*}))
+        } else {
+            None
+        }
     });
 
     let mut mod_tokens = quote! {
