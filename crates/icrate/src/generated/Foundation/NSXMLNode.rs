@@ -144,7 +144,7 @@ impl NSXMLNode {
         &self,
         xpath: &NSString,
         error: *mut *mut NSError,
-    ) -> Option<Id<NSArray<TodoTypedef>, Shared>> {
+    ) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
         msg_send_id![self, nodesForXPath: xpath, error: error]
     }
     pub unsafe fn objectsForXQuery_constants_error(

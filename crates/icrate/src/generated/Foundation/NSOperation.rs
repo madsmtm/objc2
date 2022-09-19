@@ -101,9 +101,6 @@ impl NSBlockOperation {
     pub unsafe fn addExecutionBlock(&self, block: TodoBlock) {
         msg_send![self, addExecutionBlock: block]
     }
-    pub unsafe fn executionBlocks(&self) -> Id<NSArray<TodoTypedef>, Shared> {
-        msg_send_id![self, executionBlocks]
-    }
 }
 extern_class!(
     #[derive(Debug)]
@@ -202,7 +199,7 @@ impl NSOperationQueue {
 }
 #[doc = "NSDeprecated"]
 impl NSOperationQueue {
-    pub unsafe fn operations(&self) -> Id<NSArray<TodoTypedef>, Shared> {
+    pub unsafe fn operations(&self) -> Id<NSArray<NSOperation>, Shared> {
         msg_send_id![self, operations]
     }
     pub unsafe fn operationCount(&self) -> NSUInteger {

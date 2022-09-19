@@ -22,3 +22,7 @@ new = { unsafe = false }
 initWithString = { unsafe = false }
 # "appendString:" = { unsafe = false, mutable = true }
 # "setString:" = { unsafe = false, mutable = true }
+
+[class.NSBlockOperation.methods]
+# Uses `NSArray<void (^)(void)>`, which is difficult to handle
+executionBlocks = { skipped = true }

@@ -93,30 +93,39 @@ impl RustType {
         }
     }
 
+    pub fn parse_attributed(ty: &mut Type<'_>, nullability: &mut Nullability, kindof: &mut bool) {
+        while ty.get_kind() == TypeKind::Attributed {
+            match (
+                ty.get_display_name().starts_with("__kindof"),
+                ty.get_nullability(),
+            ) {
+                (false, Some(new)) => {
+                    *nullability = match (*nullability, new) {
+                        (Nullability::NonNull, Nullability::Nullable) => Nullability::Nullable,
+                        (Nullability::NonNull, _) => Nullability::NonNull,
+                        (Nullability::Nullable, _) => Nullability::Nullable,
+                        (Nullability::Unspecified, new) => new,
+                    }
+                }
+                (true, None) => *kindof = true,
+                _ => panic!("invalid attributed type: {:?}", ty),
+            }
+            *ty = ty
+                .get_modified_type()
+                .expect("attributed type to have modified type");
+        }
+    }
+
     pub fn parse(mut ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
         use TypeKind::*;
 
         // println!("{:?}, {:?}", ty, ty.get_class_type());
 
         let mut nullability = Nullability::Unspecified;
-        let mut kind = ty.get_kind();
-        while kind == Attributed {
-            let new = ty
-                .get_nullability()
-                .expect("attributed type to have nullability");
-            nullability = match (nullability, new) {
-                (Nullability::NonNull, Nullability::Nullable) => Nullability::Nullable,
-                (Nullability::NonNull, _) => Nullability::NonNull,
-                (Nullability::Nullable, _) => Nullability::Nullable,
-                (Nullability::Unspecified, new) => new,
-            };
-            ty = ty
-                .get_modified_type()
-                .expect("attributed type to have modified type");
-            kind = ty.get_kind();
-        }
+        let mut kindof = false;
+        Self::parse_attributed(&mut ty, &mut nullability, &mut kindof);
 
-        match kind {
+        match ty.get_kind() {
             Void => Self::Void,
             Bool => Self::C99Bool,
             CharS | CharU => Self::Char,
@@ -153,7 +162,8 @@ impl RustType {
                 }
             }
             ObjCObjectPointer => {
-                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                let mut ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                Self::parse_attributed(&mut ty, &mut nullability, &mut kindof);
                 match ty.get_kind() {
                     ObjCInterface => {
                         let generics = ty.get_objc_type_arguments();
@@ -172,18 +182,19 @@ impl RustType {
                         let generics = ty
                             .get_objc_type_arguments()
                             .into_iter()
-                            .map(|ty| {
-                                match Self::parse(ty, false, false) {
+                            .map(|param| {
+                                match Self::parse(param, false, false) {
                                     Self::Id {
                                         name,
                                         generics,
                                         is_return,
                                         nullability,
                                     } => name,
-                                    // TODO: Handle these two better
+                                    // TODO: Handle this better
                                     Self::Class { nullability } => "TodoClass".to_string(),
-                                    Self::TypeDef { name } => "TodoTypedef".to_string(),
-                                    ty => panic!("invalid {:?}", ty),
+                                    param => {
+                                        panic!("invalid generic parameter {:?} in {:?}", param, ty)
+                                    }
                                 }
                             })
                             .collect();
@@ -198,9 +209,6 @@ impl RustType {
                             nullability,
                         }
                     }
-                    Attributed => Self::TypeDef {
-                        name: "TodoAttributed".to_string(),
-                    },
                     _ => panic!("pointee was not objcinterface: {:?}", ty),
                 }
             }
