@@ -4,6 +4,7 @@ use crate::Foundation::generated::NSString::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSAttributedStringKey = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSAttributedString;
@@ -27,7 +28,7 @@ impl NSAttributedString {
 impl NSAttributedString {
     pub unsafe fn attribute_atIndex_effectiveRange(
         &self,
-        attrName: NSAttributedStringKey,
+        attrName: &NSAttributedStringKey,
         location: NSUInteger,
         range: NSRangePointer,
     ) -> Option<Id<Object, Shared>> {
@@ -59,7 +60,7 @@ impl NSAttributedString {
     }
     pub unsafe fn attribute_atIndex_longestEffectiveRange_inRange(
         &self,
-        attrName: NSAttributedStringKey,
+        attrName: &NSAttributedStringKey,
         location: NSUInteger,
         range: NSRangePointer,
         rangeLimit: NSRange,
@@ -106,7 +107,7 @@ impl NSAttributedString {
     }
     pub unsafe fn enumerateAttribute_inRange_options_usingBlock(
         &self,
-        attrName: NSAttributedStringKey,
+        attrName: &NSAttributedStringKey,
         enumerationRange: NSRange,
         opts: NSAttributedStringEnumerationOptions,
         block: TodoBlock,
@@ -142,7 +143,7 @@ impl NSMutableAttributedString {
 impl NSMutableAttributedString {
     pub unsafe fn addAttribute_value_range(
         &self,
-        name: NSAttributedStringKey,
+        name: &NSAttributedStringKey,
         value: &Object,
         range: NSRange,
     ) {
@@ -151,7 +152,7 @@ impl NSMutableAttributedString {
     pub unsafe fn addAttributes_range(&self, attrs: TodoGenerics, range: NSRange) {
         msg_send![self, addAttributes: attrs, range: range]
     }
-    pub unsafe fn removeAttribute_range(&self, name: NSAttributedStringKey, range: NSRange) {
+    pub unsafe fn removeAttribute_range(&self, name: &NSAttributedStringKey, range: NSRange) {
         msg_send![self, removeAttribute: name, range: range]
     }
     pub unsafe fn replaceCharactersInRange_withAttributedString(

@@ -187,10 +187,10 @@ impl NSOperationQueue {
     pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService) {
         msg_send![self, setQualityOfService: qualityOfService]
     }
-    pub unsafe fn underlyingQueue(&self) -> dispatch_queue_t {
-        msg_send![self, underlyingQueue]
+    pub unsafe fn underlyingQueue(&self) -> Option<Id<dispatch_queue_t, Shared>> {
+        msg_send_id![self, underlyingQueue]
     }
-    pub unsafe fn setUnderlyingQueue(&self, underlyingQueue: dispatch_queue_t) {
+    pub unsafe fn setUnderlyingQueue(&self, underlyingQueue: Option<&dispatch_queue_t>) {
         msg_send![self, setUnderlyingQueue: underlyingQueue]
     }
     pub unsafe fn currentQueue() -> Option<Id<NSOperationQueue, Shared>> {

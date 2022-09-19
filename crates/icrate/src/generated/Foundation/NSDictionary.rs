@@ -16,8 +16,8 @@ extern_class!(
     }
 );
 impl NSDictionary {
-    pub unsafe fn objectForKey(&self, aKey: KeyType) -> ObjectType {
-        msg_send![self, objectForKey: aKey]
+    pub unsafe fn objectForKey(&self, aKey: &KeyType) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, objectForKey: aKey]
     }
     pub unsafe fn keyEnumerator(&self) -> TodoGenerics {
         msg_send![self, keyEnumerator]
@@ -42,7 +42,7 @@ impl NSDictionary {
 }
 #[doc = "NSExtendedDictionary"]
 impl NSDictionary {
-    pub unsafe fn allKeysForObject(&self, anObject: ObjectType) -> TodoGenerics {
+    pub unsafe fn allKeysForObject(&self, anObject: &ObjectType) -> TodoGenerics {
         msg_send![self, allKeysForObject: anObject]
     }
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
@@ -64,7 +64,7 @@ impl NSDictionary {
     pub unsafe fn objectsForKeys_notFoundMarker(
         &self,
         keys: TodoGenerics,
-        marker: ObjectType,
+        marker: &ObjectType,
     ) -> TodoGenerics {
         msg_send![self, objectsForKeys: keys, notFoundMarker: marker]
     }
@@ -82,8 +82,8 @@ impl NSDictionary {
     ) {
         msg_send![self, getObjects: objects, andKeys: keys, count: count]
     }
-    pub unsafe fn objectForKeyedSubscript(&self, key: KeyType) -> ObjectType {
-        msg_send![self, objectForKeyedSubscript: key]
+    pub unsafe fn objectForKeyedSubscript(&self, key: &KeyType) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, objectForKeyedSubscript: key]
     }
     pub unsafe fn enumerateKeysAndObjectsUsingBlock(&self, block: TodoBlock) {
         msg_send![self, enumerateKeysAndObjectsUsingBlock: block]
@@ -166,7 +166,7 @@ impl NSDictionary {
         msg_send_id![Self::class(), dictionary]
     }
     pub unsafe fn dictionaryWithObject_forKey(
-        object: ObjectType,
+        object: &ObjectType,
         key: TodoGenerics,
     ) -> Id<Self, Shared> {
         msg_send_id![Self::class(), dictionaryWithObject: object, forKey: key]
@@ -235,10 +235,10 @@ extern_class!(
     }
 );
 impl NSMutableDictionary {
-    pub unsafe fn removeObjectForKey(&self, aKey: KeyType) {
+    pub unsafe fn removeObjectForKey(&self, aKey: &KeyType) {
         msg_send![self, removeObjectForKey: aKey]
     }
-    pub unsafe fn setObject_forKey(&self, anObject: ObjectType, aKey: TodoGenerics) {
+    pub unsafe fn setObject_forKey(&self, anObject: &ObjectType, aKey: TodoGenerics) {
         msg_send![self, setObject: anObject, forKey: aKey]
     }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
@@ -265,7 +265,7 @@ impl NSMutableDictionary {
     pub unsafe fn setDictionary(&self, otherDictionary: TodoGenerics) {
         msg_send![self, setDictionary: otherDictionary]
     }
-    pub unsafe fn setObject_forKeyedSubscript(&self, obj: ObjectType, key: TodoGenerics) {
+    pub unsafe fn setObject_forKeyedSubscript(&self, obj: Option<&ObjectType>, key: TodoGenerics) {
         msg_send![self, setObject: obj, forKeyedSubscript: key]
     }
 }

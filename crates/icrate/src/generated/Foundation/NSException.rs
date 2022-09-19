@@ -17,7 +17,7 @@ extern_class!(
 );
 impl NSException {
     pub unsafe fn exceptionWithName_reason_userInfo(
-        name: NSExceptionName,
+        name: &NSExceptionName,
         reason: Option<&NSString>,
         userInfo: Option<&NSDictionary>,
     ) -> Id<NSException, Shared> {
@@ -30,7 +30,7 @@ impl NSException {
     }
     pub unsafe fn initWithName_reason_userInfo(
         &self,
-        aName: NSExceptionName,
+        aName: &NSExceptionName,
         aReason: Option<&NSString>,
         aUserInfo: Option<&NSDictionary>,
     ) -> Id<Self, Shared> {
@@ -44,8 +44,8 @@ impl NSException {
     pub unsafe fn raise(&self) {
         msg_send![self, raise]
     }
-    pub unsafe fn name(&self) -> NSExceptionName {
-        msg_send![self, name]
+    pub unsafe fn name(&self) -> Id<NSExceptionName, Shared> {
+        msg_send_id![self, name]
     }
     pub unsafe fn reason(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, reason]
@@ -63,7 +63,7 @@ impl NSException {
 #[doc = "NSExceptionRaisingConveniences"]
 impl NSException {
     pub unsafe fn raise_format_arguments(
-        name: NSExceptionName,
+        name: &NSExceptionName,
         format: &NSString,
         argList: va_list,
     ) {

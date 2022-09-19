@@ -273,15 +273,15 @@ extern_class!(
     }
 );
 impl NSXPCCoder {
-    pub unsafe fn encodeXPCObject_forKey(&self, xpcObject: xpc_object_t, key: &NSString) {
+    pub unsafe fn encodeXPCObject_forKey(&self, xpcObject: &xpc_object_t, key: &NSString) {
         msg_send![self, encodeXPCObject: xpcObject, forKey: key]
     }
     pub unsafe fn decodeXPCObjectOfType_forKey(
         &self,
         type_: xpc_type_t,
         key: &NSString,
-    ) -> xpc_object_t {
-        msg_send![self, decodeXPCObjectOfType: type_, forKey: key]
+    ) -> Option<Id<xpc_object_t, Shared>> {
+        msg_send_id![self, decodeXPCObjectOfType: type_, forKey: key]
     }
     pub unsafe fn userInfo(&self) -> TodoGenerics {
         msg_send![self, userInfo]

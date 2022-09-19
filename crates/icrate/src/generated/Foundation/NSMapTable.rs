@@ -75,13 +75,13 @@ impl NSMapTable {
     pub unsafe fn weakToWeakObjectsMapTable() -> TodoGenerics {
         msg_send![Self::class(), weakToWeakObjectsMapTable]
     }
-    pub unsafe fn objectForKey(&self, aKey: KeyType) -> ObjectType {
-        msg_send![self, objectForKey: aKey]
+    pub unsafe fn objectForKey(&self, aKey: Option<&KeyType>) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, objectForKey: aKey]
     }
-    pub unsafe fn removeObjectForKey(&self, aKey: KeyType) {
+    pub unsafe fn removeObjectForKey(&self, aKey: Option<&KeyType>) {
         msg_send![self, removeObjectForKey: aKey]
     }
-    pub unsafe fn setObject_forKey(&self, anObject: ObjectType, aKey: KeyType) {
+    pub unsafe fn setObject_forKey(&self, anObject: Option<&ObjectType>, aKey: Option<&KeyType>) {
         msg_send![self, setObject: anObject, forKey: aKey]
     }
     pub unsafe fn keyEnumerator(&self) -> TodoGenerics {

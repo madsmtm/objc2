@@ -18,6 +18,10 @@ use crate::Foundation::generated::NSURL::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSFileAttributeKey = NSString;
+pub type NSFileAttributeType = NSString;
+pub type NSFileProtectionType = NSString;
+pub type NSFileProviderServiceName = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSFileManager;
@@ -627,8 +631,8 @@ impl NSFileProviderService {
             getFileProviderConnectionWithCompletionHandler: completionHandler
         ]
     }
-    pub unsafe fn name(&self) -> NSFileProviderServiceName {
-        msg_send![self, name]
+    pub unsafe fn name(&self) -> Id<NSFileProviderServiceName, Shared> {
+        msg_send_id![self, name]
     }
 }
 #[doc = "NSFileAttributes"]

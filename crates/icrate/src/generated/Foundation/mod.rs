@@ -56,6 +56,8 @@ pub(crate) mod NSInflectionRule;
 pub(crate) mod NSInvocation;
 pub(crate) mod NSItemProvider;
 pub(crate) mod NSJSONSerialization;
+pub(crate) mod NSKeyValueCoding;
+pub(crate) mod NSKeyValueObserving;
 pub(crate) mod NSKeyedArchiver;
 pub(crate) mod NSLengthFormatter;
 pub(crate) mod NSLinguisticTagger;
@@ -74,6 +76,7 @@ pub(crate) mod NSNotification;
 pub(crate) mod NSNotificationQueue;
 pub(crate) mod NSNull;
 pub(crate) mod NSNumberFormatter;
+pub(crate) mod NSObjCRuntime;
 pub(crate) mod NSObject;
 pub(crate) mod NSOperation;
 pub(crate) mod NSOrderedCollectionChange;
@@ -155,15 +158,15 @@ mod __exported {
     pub use super::NSArchiver::{NSArchiver, NSUnarchiver};
     pub use super::NSArray::{NSArray, NSMutableArray};
     pub use super::NSAttributedString::{
-        NSAttributedString, NSAttributedStringMarkdownParsingOptions, NSMutableAttributedString,
-        NSPresentationIntent,
+        NSAttributedString, NSAttributedStringKey, NSAttributedStringMarkdownParsingOptions,
+        NSMutableAttributedString, NSPresentationIntent,
     };
     pub use super::NSAutoreleasePool::NSAutoreleasePool;
     pub use super::NSBackgroundActivityScheduler::NSBackgroundActivityScheduler;
     pub use super::NSBundle::{NSBundle, NSBundleResourceRequest};
     pub use super::NSByteCountFormatter::NSByteCountFormatter;
     pub use super::NSCache::{NSCache, NSCacheDelegate};
-    pub use super::NSCalendar::{NSCalendar, NSDateComponents};
+    pub use super::NSCalendar::{NSCalendar, NSCalendarIdentifier, NSDateComponents};
     pub use super::NSCalendarDate::NSCalendarDate;
     pub use super::NSCharacterSet::{NSCharacterSet, NSMutableCharacterSet};
     pub use super::NSClassDescription::NSClassDescription;
@@ -183,10 +186,12 @@ mod __exported {
     pub use super::NSDictionary::{NSDictionary, NSMutableDictionary};
     pub use super::NSDistantObject::NSDistantObject;
     pub use super::NSDistributedLock::NSDistributedLock;
-    pub use super::NSDistributedNotificationCenter::NSDistributedNotificationCenter;
+    pub use super::NSDistributedNotificationCenter::{
+        NSDistributedNotificationCenter, NSDistributedNotificationCenterType,
+    };
     pub use super::NSEnergyFormatter::NSEnergyFormatter;
     pub use super::NSEnumerator::{NSEnumerator, NSFastEnumeration};
-    pub use super::NSError::NSError;
+    pub use super::NSError::{NSError, NSErrorDomain, NSErrorUserInfoKey};
     pub use super::NSException::{NSAssertionHandler, NSException};
     pub use super::NSExpression::NSExpression;
     pub use super::NSExtensionContext::NSExtensionContext;
@@ -195,14 +200,18 @@ mod __exported {
     pub use super::NSFileCoordinator::{NSFileAccessIntent, NSFileCoordinator};
     pub use super::NSFileHandle::{NSFileHandle, NSPipe};
     pub use super::NSFileManager::{
-        NSDirectoryEnumerator, NSFileManager, NSFileManagerDelegate, NSFileProviderService,
+        NSDirectoryEnumerator, NSFileAttributeKey, NSFileAttributeType, NSFileManager,
+        NSFileManagerDelegate, NSFileProtectionType, NSFileProviderService,
+        NSFileProviderServiceName,
     };
     pub use super::NSFilePresenter::NSFilePresenter;
     pub use super::NSFileVersion::NSFileVersion;
     pub use super::NSFileWrapper::NSFileWrapper;
     pub use super::NSFormatter::NSFormatter;
     pub use super::NSGarbageCollector::NSGarbageCollector;
-    pub use super::NSHTTPCookie::NSHTTPCookie;
+    pub use super::NSHTTPCookie::{
+        NSHTTPCookie, NSHTTPCookiePropertyKey, NSHTTPCookieStringPolicy,
+    };
     pub use super::NSHTTPCookieStorage::NSHTTPCookieStorage;
     pub use super::NSHashTable::NSHashTable;
     pub use super::NSHost::NSHost;
@@ -213,13 +222,17 @@ mod __exported {
     pub use super::NSInvocation::NSInvocation;
     pub use super::NSItemProvider::{NSItemProvider, NSItemProviderReading, NSItemProviderWriting};
     pub use super::NSJSONSerialization::NSJSONSerialization;
+    pub use super::NSKeyValueCoding::NSKeyValueOperator;
+    pub use super::NSKeyValueObserving::NSKeyValueChangeKey;
     pub use super::NSKeyedArchiver::{
         NSKeyedArchiver, NSKeyedArchiverDelegate, NSKeyedUnarchiver, NSKeyedUnarchiverDelegate,
     };
     pub use super::NSLengthFormatter::NSLengthFormatter;
-    pub use super::NSLinguisticTagger::NSLinguisticTagger;
+    pub use super::NSLinguisticTagger::{
+        NSLinguisticTag, NSLinguisticTagScheme, NSLinguisticTagger,
+    };
     pub use super::NSListFormatter::NSListFormatter;
-    pub use super::NSLocale::NSLocale;
+    pub use super::NSLocale::{NSLocale, NSLocaleKey};
     pub use super::NSLock::{NSCondition, NSConditionLock, NSLock, NSLocking, NSRecursiveLock};
     pub use super::NSMapTable::NSMapTable;
     pub use super::NSMassFormatter::NSMassFormatter;
@@ -234,10 +247,11 @@ mod __exported {
     pub use super::NSNetServices::{
         NSNetService, NSNetServiceBrowser, NSNetServiceBrowserDelegate, NSNetServiceDelegate,
     };
-    pub use super::NSNotification::{NSNotification, NSNotificationCenter};
+    pub use super::NSNotification::{NSNotification, NSNotificationCenter, NSNotificationName};
     pub use super::NSNotificationQueue::NSNotificationQueue;
     pub use super::NSNull::NSNull;
     pub use super::NSNumberFormatter::NSNumberFormatter;
+    pub use super::NSObjCRuntime::{NSExceptionName, NSRunLoopMode};
     pub use super::NSObject::{
         NSCoding, NSCopying, NSDiscardableContent, NSMutableCopying, NSSecureCoding,
     };
@@ -262,7 +276,10 @@ mod __exported {
     };
     pub use super::NSPredicate::NSPredicate;
     pub use super::NSProcessInfo::NSProcessInfo;
-    pub use super::NSProgress::{NSProgress, NSProgressReporting};
+    pub use super::NSProgress::{
+        NSProgress, NSProgressFileOperationKind, NSProgressKind, NSProgressReporting,
+        NSProgressUserInfoKey,
+    };
     pub use super::NSPropertyList::NSPropertyListSerialization;
     pub use super::NSProtocolChecker::NSProtocolChecker;
     pub use super::NSProxy::NSProxy;
@@ -289,10 +306,17 @@ mod __exported {
     pub use super::NSSet::{NSCountedSet, NSMutableSet, NSSet};
     pub use super::NSSortDescriptor::NSSortDescriptor;
     pub use super::NSSpellServer::{NSSpellServer, NSSpellServerDelegate};
-    pub use super::NSStream::{NSInputStream, NSOutputStream, NSStream, NSStreamDelegate};
-    pub use super::NSString::{NSConstantString, NSMutableString, NSSimpleCString, NSString};
+    pub use super::NSStream::{
+        NSInputStream, NSOutputStream, NSStream, NSStreamDelegate, NSStreamNetworkServiceTypeValue,
+        NSStreamPropertyKey, NSStreamSOCKSProxyConfiguration, NSStreamSOCKSProxyVersion,
+        NSStreamSocketSecurityLevel,
+    };
+    pub use super::NSString::{
+        NSConstantString, NSMutableString, NSSimpleCString, NSString,
+        NSStringEncodingDetectionOptionsKey, NSStringTransform,
+    };
     pub use super::NSTask::NSTask;
-    pub use super::NSTextCheckingResult::NSTextCheckingResult;
+    pub use super::NSTextCheckingResult::{NSTextCheckingKey, NSTextCheckingResult};
     pub use super::NSThread::NSThread;
     pub use super::NSTimeZone::NSTimeZone;
     pub use super::NSTimer::NSTimer;
@@ -330,7 +354,9 @@ mod __exported {
         NSUnitIlluminance, NSUnitInformationStorage, NSUnitLength, NSUnitMass, NSUnitPower,
         NSUnitPressure, NSUnitSpeed, NSUnitTemperature, NSUnitVolume,
     };
-    pub use super::NSUserActivity::{NSUserActivity, NSUserActivityDelegate};
+    pub use super::NSUserActivity::{
+        NSUserActivity, NSUserActivityDelegate, NSUserActivityPersistentIdentifier,
+    };
     pub use super::NSUserDefaults::NSUserDefaults;
     pub use super::NSUserNotification::{
         NSUserNotification, NSUserNotificationAction, NSUserNotificationCenter,
@@ -340,7 +366,9 @@ mod __exported {
         NSUserAppleScriptTask, NSUserAutomatorTask, NSUserScriptTask, NSUserUnixTask,
     };
     pub use super::NSValue::{NSNumber, NSValue};
-    pub use super::NSValueTransformer::{NSSecureUnarchiveFromDataTransformer, NSValueTransformer};
+    pub use super::NSValueTransformer::{
+        NSSecureUnarchiveFromDataTransformer, NSValueTransformer, NSValueTransformerName,
+    };
     pub use super::NSXMLDTDNode::NSXMLDTDNode;
     pub use super::NSXMLDocument::NSXMLDocument;
     pub use super::NSXMLElement::NSXMLElement;
@@ -350,7 +378,12 @@ mod __exported {
         NSXPCCoder, NSXPCConnection, NSXPCInterface, NSXPCListener, NSXPCListenerDelegate,
         NSXPCListenerEndpoint, NSXPCProxyCreating,
     };
-    pub use super::NSURL::{NSFileSecurity, NSURLComponents, NSURLQueryItem, NSURL};
+    pub use super::NSURL::{
+        NSFileSecurity, NSURLComponents, NSURLFileProtectionType, NSURLFileResourceType,
+        NSURLQueryItem, NSURLResourceKey, NSURLThumbnailDictionaryItem,
+        NSURLUbiquitousItemDownloadingStatus, NSURLUbiquitousSharedItemPermissions,
+        NSURLUbiquitousSharedItemRole, NSURL,
+    };
     pub use super::NSUUID::NSUUID;
     pub use super::NSXMLDTD::NSXMLDTD;
 }

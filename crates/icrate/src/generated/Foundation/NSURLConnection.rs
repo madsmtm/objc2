@@ -61,10 +61,10 @@ impl NSURLConnection {
     pub unsafe fn cancel(&self) {
         msg_send![self, cancel]
     }
-    pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, scheduleInRunLoop: aRunLoop, forMode: mode]
     }
-    pub unsafe fn unscheduleFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn unscheduleFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, unscheduleFromRunLoop: aRunLoop, forMode: mode]
     }
     pub unsafe fn setDelegateQueue(&self, queue: Option<&NSOperationQueue>) {

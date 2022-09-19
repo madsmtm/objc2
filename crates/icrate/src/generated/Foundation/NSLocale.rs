@@ -1,7 +1,4 @@
-use super::__exported::NSArray;
 use super::__exported::NSCalendar;
-use super::__exported::NSDictionary;
-use super::__exported::NSString;
 use crate::CoreFoundation::generated::CFLocale::*;
 use crate::Foundation::generated::NSNotification::*;
 use crate::Foundation::generated::NSObject::*;
@@ -9,6 +6,10 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSLocaleKey = NSString;
+use super::__exported::NSArray;
+use super::__exported::NSDictionary;
+use super::__exported::NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSLocale;
@@ -17,12 +18,12 @@ extern_class!(
     }
 );
 impl NSLocale {
-    pub unsafe fn objectForKey(&self, key: NSLocaleKey) -> Option<Id<Object, Shared>> {
+    pub unsafe fn objectForKey(&self, key: &NSLocaleKey) -> Option<Id<Object, Shared>> {
         msg_send_id![self, objectForKey: key]
     }
     pub unsafe fn displayNameForKey_value(
         &self,
-        key: NSLocaleKey,
+        key: &NSLocaleKey,
         value: &Object,
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, displayNameForKey: key, value: value]

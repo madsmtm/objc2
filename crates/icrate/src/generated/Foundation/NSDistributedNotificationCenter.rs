@@ -5,6 +5,7 @@ use crate::Foundation::generated::NSNotification::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSDistributedNotificationCenterType = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSDistributedNotificationCenter;
@@ -14,7 +15,7 @@ extern_class!(
 );
 impl NSDistributedNotificationCenter {
     pub unsafe fn notificationCenterForType(
-        notificationCenterType: NSDistributedNotificationCenterType,
+        notificationCenterType: &NSDistributedNotificationCenterType,
     ) -> Id<NSDistributedNotificationCenter, Shared> {
         msg_send_id![
             Self::class(),
@@ -28,7 +29,7 @@ impl NSDistributedNotificationCenter {
         &self,
         observer: &Object,
         selector: Sel,
-        name: NSNotificationName,
+        name: Option<&NSNotificationName>,
         object: Option<&NSString>,
         suspensionBehavior: NSNotificationSuspensionBehavior,
     ) {
@@ -43,7 +44,7 @@ impl NSDistributedNotificationCenter {
     }
     pub unsafe fn postNotificationName_object_userInfo_deliverImmediately(
         &self,
-        name: NSNotificationName,
+        name: &NSNotificationName,
         object: Option<&NSString>,
         userInfo: Option<&NSDictionary>,
         deliverImmediately: bool,
@@ -58,7 +59,7 @@ impl NSDistributedNotificationCenter {
     }
     pub unsafe fn postNotificationName_object_userInfo_options(
         &self,
-        name: NSNotificationName,
+        name: &NSNotificationName,
         object: Option<&NSString>,
         userInfo: Option<&NSDictionary>,
         options: NSDistributedNotificationOptions,
@@ -75,7 +76,7 @@ impl NSDistributedNotificationCenter {
         &self,
         observer: &Object,
         aSelector: Sel,
-        aName: NSNotificationName,
+        aName: Option<&NSNotificationName>,
         anObject: Option<&NSString>,
     ) {
         msg_send![
@@ -88,14 +89,14 @@ impl NSDistributedNotificationCenter {
     }
     pub unsafe fn postNotificationName_object(
         &self,
-        aName: NSNotificationName,
+        aName: &NSNotificationName,
         anObject: Option<&NSString>,
     ) {
         msg_send![self, postNotificationName: aName, object: anObject]
     }
     pub unsafe fn postNotificationName_object_userInfo(
         &self,
-        aName: NSNotificationName,
+        aName: &NSNotificationName,
         anObject: Option<&NSString>,
         aUserInfo: Option<&NSDictionary>,
     ) {
@@ -109,7 +110,7 @@ impl NSDistributedNotificationCenter {
     pub unsafe fn removeObserver_name_object(
         &self,
         observer: &Object,
-        aName: NSNotificationName,
+        aName: Option<&NSNotificationName>,
         anObject: Option<&NSString>,
     ) {
         msg_send![

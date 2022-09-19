@@ -5,6 +5,7 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSValueTransformerName = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSValueTransformer;
@@ -15,7 +16,7 @@ extern_class!(
 impl NSValueTransformer {
     pub unsafe fn setValueTransformer_forName(
         transformer: Option<&NSValueTransformer>,
-        name: NSValueTransformerName,
+        name: &NSValueTransformerName,
     ) {
         msg_send![
             Self::class(),
@@ -24,7 +25,7 @@ impl NSValueTransformer {
         ]
     }
     pub unsafe fn valueTransformerForName(
-        name: NSValueTransformerName,
+        name: &NSValueTransformerName,
     ) -> Option<Id<NSValueTransformer, Shared>> {
         msg_send_id![Self::class(), valueTransformerForName: name]
     }

@@ -1,7 +1,6 @@
 use super::__exported::NSArray;
 use super::__exported::NSDate;
 use super::__exported::NSDictionary;
-use super::__exported::NSHTTPCookieInternal;
 use super::__exported::NSNumber;
 use super::__exported::NSString;
 use super::__exported::NSURL;
@@ -10,6 +9,9 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSHTTPCookiePropertyKey = NSString;
+pub type NSHTTPCookieStringPolicy = NSString;
+use super::__exported::NSHTTPCookieInternal;
 extern_class!(
     #[derive(Debug)]
     pub struct NSHTTPCookie;
@@ -78,7 +80,7 @@ impl NSHTTPCookie {
     pub unsafe fn portList(&self) -> TodoGenerics {
         msg_send![self, portList]
     }
-    pub unsafe fn sameSitePolicy(&self) -> NSHTTPCookieStringPolicy {
-        msg_send![self, sameSitePolicy]
+    pub unsafe fn sameSitePolicy(&self) -> Option<Id<NSHTTPCookieStringPolicy, Shared>> {
+        msg_send_id![self, sameSitePolicy]
     }
 }

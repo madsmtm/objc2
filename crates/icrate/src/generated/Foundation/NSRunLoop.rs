@@ -20,19 +20,19 @@ impl NSRunLoop {
     pub unsafe fn getCFRunLoop(&self) -> CFRunLoopRef {
         msg_send![self, getCFRunLoop]
     }
-    pub unsafe fn addTimer_forMode(&self, timer: &NSTimer, mode: NSRunLoopMode) {
+    pub unsafe fn addTimer_forMode(&self, timer: &NSTimer, mode: &NSRunLoopMode) {
         msg_send![self, addTimer: timer, forMode: mode]
     }
-    pub unsafe fn addPort_forMode(&self, aPort: &NSPort, mode: NSRunLoopMode) {
+    pub unsafe fn addPort_forMode(&self, aPort: &NSPort, mode: &NSRunLoopMode) {
         msg_send![self, addPort: aPort, forMode: mode]
     }
-    pub unsafe fn removePort_forMode(&self, aPort: &NSPort, mode: NSRunLoopMode) {
+    pub unsafe fn removePort_forMode(&self, aPort: &NSPort, mode: &NSRunLoopMode) {
         msg_send![self, removePort: aPort, forMode: mode]
     }
-    pub unsafe fn limitDateForMode(&self, mode: NSRunLoopMode) -> Option<Id<NSDate, Shared>> {
+    pub unsafe fn limitDateForMode(&self, mode: &NSRunLoopMode) -> Option<Id<NSDate, Shared>> {
         msg_send_id![self, limitDateForMode: mode]
     }
-    pub unsafe fn acceptInputForMode_beforeDate(&self, mode: NSRunLoopMode, limitDate: &NSDate) {
+    pub unsafe fn acceptInputForMode_beforeDate(&self, mode: &NSRunLoopMode, limitDate: &NSDate) {
         msg_send![self, acceptInputForMode: mode, beforeDate: limitDate]
     }
     pub unsafe fn currentRunLoop() -> Id<NSRunLoop, Shared> {
@@ -41,8 +41,8 @@ impl NSRunLoop {
     pub unsafe fn mainRunLoop() -> Id<NSRunLoop, Shared> {
         msg_send_id![Self::class(), mainRunLoop]
     }
-    pub unsafe fn currentMode(&self) -> NSRunLoopMode {
-        msg_send![self, currentMode]
+    pub unsafe fn currentMode(&self) -> Option<Id<NSRunLoopMode, Shared>> {
+        msg_send_id![self, currentMode]
     }
 }
 #[doc = "NSRunLoopConveniences"]
@@ -53,7 +53,7 @@ impl NSRunLoop {
     pub unsafe fn runUntilDate(&self, limitDate: &NSDate) {
         msg_send![self, runUntilDate: limitDate]
     }
-    pub unsafe fn runMode_beforeDate(&self, mode: NSRunLoopMode, limitDate: &NSDate) -> bool {
+    pub unsafe fn runMode_beforeDate(&self, mode: &NSRunLoopMode, limitDate: &NSDate) -> bool {
         msg_send![self, runMode: mode, beforeDate: limitDate]
     }
     pub unsafe fn configureAsServer(&self) {

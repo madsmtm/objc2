@@ -11,6 +11,9 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSProgressKind = NSString;
+pub type NSProgressUserInfoKey = NSString;
+pub type NSProgressFileOperationKind = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSProgress;
@@ -74,7 +77,7 @@ impl NSProgress {
     pub unsafe fn setUserInfoObject_forKey(
         &self,
         objectOrNil: Option<&Object>,
-        key: NSProgressUserInfoKey,
+        key: &NSProgressUserInfoKey,
     ) {
         msg_send![self, setUserInfoObject: objectOrNil, forKey: key]
     }
@@ -184,10 +187,10 @@ impl NSProgress {
     pub unsafe fn userInfo(&self) -> TodoGenerics {
         msg_send![self, userInfo]
     }
-    pub unsafe fn kind(&self) -> NSProgressKind {
-        msg_send![self, kind]
+    pub unsafe fn kind(&self) -> Option<Id<NSProgressKind, Shared>> {
+        msg_send_id![self, kind]
     }
-    pub unsafe fn setKind(&self, kind: NSProgressKind) {
+    pub unsafe fn setKind(&self, kind: Option<&NSProgressKind>) {
         msg_send![self, setKind: kind]
     }
     pub unsafe fn estimatedTimeRemaining(&self) -> Option<Id<NSNumber, Shared>> {
@@ -202,10 +205,13 @@ impl NSProgress {
     pub unsafe fn setThroughput(&self, throughput: Option<&NSNumber>) {
         msg_send![self, setThroughput: throughput]
     }
-    pub unsafe fn fileOperationKind(&self) -> NSProgressFileOperationKind {
-        msg_send![self, fileOperationKind]
+    pub unsafe fn fileOperationKind(&self) -> Option<Id<NSProgressFileOperationKind, Shared>> {
+        msg_send_id![self, fileOperationKind]
     }
-    pub unsafe fn setFileOperationKind(&self, fileOperationKind: NSProgressFileOperationKind) {
+    pub unsafe fn setFileOperationKind(
+        &self,
+        fileOperationKind: Option<&NSProgressFileOperationKind>,
+    ) {
         msg_send![self, setFileOperationKind: fileOperationKind]
     }
     pub unsafe fn fileURL(&self) -> Option<Id<NSURL, Shared>> {

@@ -1,11 +1,12 @@
-use super::__exported::NSDictionary;
-use super::__exported::NSOperationQueue;
-use super::__exported::NSString;
 use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSNotificationName = NSString;
+use super::__exported::NSDictionary;
+use super::__exported::NSOperationQueue;
+use super::__exported::NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSNotification;
@@ -16,7 +17,7 @@ extern_class!(
 impl NSNotification {
     pub unsafe fn initWithName_object_userInfo(
         &self,
-        name: NSNotificationName,
+        name: &NSNotificationName,
         object: Option<&Object>,
         userInfo: Option<&NSDictionary>,
     ) -> Id<Self, Shared> {
@@ -25,8 +26,8 @@ impl NSNotification {
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
     }
-    pub unsafe fn name(&self) -> NSNotificationName {
-        msg_send![self, name]
+    pub unsafe fn name(&self) -> Id<NSNotificationName, Shared> {
+        msg_send_id![self, name]
     }
     pub unsafe fn object(&self) -> Option<Id<Object, Shared>> {
         msg_send_id![self, object]
@@ -38,13 +39,13 @@ impl NSNotification {
 #[doc = "NSNotificationCreation"]
 impl NSNotification {
     pub unsafe fn notificationWithName_object(
-        aName: NSNotificationName,
+        aName: &NSNotificationName,
         anObject: Option<&Object>,
     ) -> Id<Self, Shared> {
         msg_send_id![Self::class(), notificationWithName: aName, object: anObject]
     }
     pub unsafe fn notificationWithName_object_userInfo(
-        aName: NSNotificationName,
+        aName: &NSNotificationName,
         anObject: Option<&Object>,
         aUserInfo: Option<&NSDictionary>,
     ) -> Id<Self, Shared> {
@@ -71,7 +72,7 @@ impl NSNotificationCenter {
         &self,
         observer: &Object,
         aSelector: Sel,
-        aName: NSNotificationName,
+        aName: Option<&NSNotificationName>,
         anObject: Option<&Object>,
     ) {
         msg_send![
@@ -87,14 +88,14 @@ impl NSNotificationCenter {
     }
     pub unsafe fn postNotificationName_object(
         &self,
-        aName: NSNotificationName,
+        aName: &NSNotificationName,
         anObject: Option<&Object>,
     ) {
         msg_send![self, postNotificationName: aName, object: anObject]
     }
     pub unsafe fn postNotificationName_object_userInfo(
         &self,
-        aName: NSNotificationName,
+        aName: &NSNotificationName,
         anObject: Option<&Object>,
         aUserInfo: Option<&NSDictionary>,
     ) {
@@ -111,7 +112,7 @@ impl NSNotificationCenter {
     pub unsafe fn removeObserver_name_object(
         &self,
         observer: &Object,
-        aName: NSNotificationName,
+        aName: Option<&NSNotificationName>,
         anObject: Option<&Object>,
     ) {
         msg_send![
@@ -123,7 +124,7 @@ impl NSNotificationCenter {
     }
     pub unsafe fn addObserverForName_object_queue_usingBlock(
         &self,
-        name: NSNotificationName,
+        name: Option<&NSNotificationName>,
         obj: Option<&Object>,
         queue: Option<&NSOperationQueue>,
         block: TodoBlock,

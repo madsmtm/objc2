@@ -11,6 +11,7 @@ use crate::Foundation::generated::NSRange::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSCalendarIdentifier = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSCalendar;
@@ -20,7 +21,7 @@ extern_class!(
 );
 impl NSCalendar {
     pub unsafe fn calendarWithIdentifier(
-        calendarIdentifierConstant: NSCalendarIdentifier,
+        calendarIdentifierConstant: &NSCalendarIdentifier,
     ) -> Option<Id<NSCalendar, Shared>> {
         msg_send_id![
             Self::class(),
@@ -32,7 +33,7 @@ impl NSCalendar {
     }
     pub unsafe fn initWithCalendarIdentifier(
         &self,
-        ident: NSCalendarIdentifier,
+        ident: &NSCalendarIdentifier,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, initWithCalendarIdentifier: ident]
     }
@@ -433,8 +434,8 @@ impl NSCalendar {
     pub unsafe fn autoupdatingCurrentCalendar() -> Id<NSCalendar, Shared> {
         msg_send_id![Self::class(), autoupdatingCurrentCalendar]
     }
-    pub unsafe fn calendarIdentifier(&self) -> NSCalendarIdentifier {
-        msg_send![self, calendarIdentifier]
+    pub unsafe fn calendarIdentifier(&self) -> Id<NSCalendarIdentifier, Shared> {
+        msg_send_id![self, calendarIdentifier]
     }
     pub unsafe fn locale(&self) -> Option<Id<NSLocale, Shared>> {
         msg_send_id![self, locale]

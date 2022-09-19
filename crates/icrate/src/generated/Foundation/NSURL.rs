@@ -11,6 +11,13 @@ use crate::Foundation::generated::NSURLHandle::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSURLResourceKey = NSString;
+pub type NSURLFileResourceType = NSString;
+pub type NSURLThumbnailDictionaryItem = NSString;
+pub type NSURLFileProtectionType = NSString;
+pub type NSURLUbiquitousItemDownloadingStatus = NSString;
+pub type NSURLUbiquitousSharedItemRole = NSString;
+pub type NSURLUbiquitousSharedItemPermissions = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSURL;
@@ -197,7 +204,7 @@ impl NSURL {
     pub unsafe fn getResourceValue_forKey_error(
         &self,
         value: NonNull<Option<&Object>>,
-        key: NSURLResourceKey,
+        key: &NSURLResourceKey,
         error: *mut Option<&NSError>,
     ) -> bool {
         msg_send![self, getResourceValue: value, forKey: key, error: error]
@@ -212,7 +219,7 @@ impl NSURL {
     pub unsafe fn setResourceValue_forKey_error(
         &self,
         value: Option<&Object>,
-        key: NSURLResourceKey,
+        key: &NSURLResourceKey,
         error: *mut Option<&NSError>,
     ) -> bool {
         msg_send![self, setResourceValue: value, forKey: key, error: error]
@@ -224,7 +231,7 @@ impl NSURL {
     ) -> bool {
         msg_send![self, setResourceValues: keyedValues, error: error]
     }
-    pub unsafe fn removeCachedResourceValueForKey(&self, key: NSURLResourceKey) {
+    pub unsafe fn removeCachedResourceValueForKey(&self, key: &NSURLResourceKey) {
         msg_send![self, removeCachedResourceValueForKey: key]
     }
     pub unsafe fn removeAllCachedResourceValues(&self) {
@@ -233,7 +240,7 @@ impl NSURL {
     pub unsafe fn setTemporaryResourceValue_forKey(
         &self,
         value: Option<&Object>,
-        key: NSURLResourceKey,
+        key: &NSURLResourceKey,
     ) {
         msg_send![self, setTemporaryResourceValue: value, forKey: key]
     }
@@ -406,7 +413,7 @@ impl NSURL {
     pub unsafe fn getPromisedItemResourceValue_forKey_error(
         &self,
         value: NonNull<Option<&Object>>,
-        key: NSURLResourceKey,
+        key: &NSURLResourceKey,
         error: *mut Option<&NSError>,
     ) -> bool {
         msg_send![

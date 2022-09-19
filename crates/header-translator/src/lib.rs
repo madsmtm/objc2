@@ -27,13 +27,18 @@ pub fn create_rust_file(
     let mut declared_types = HashSet::new();
     for stmt in stmts.iter() {
         match stmt {
+            Stmt::FileImport { .. } => {}
+            Stmt::ItemImport { .. } => {}
             Stmt::ClassDecl { name, .. } => {
                 declared_types.insert(name.clone());
             }
+            Stmt::CategoryDecl { .. } => {}
             Stmt::ProtocolDecl { name, .. } => {
                 declared_types.insert(name.clone());
             }
-            _ => {}
+            Stmt::AliasDecl { name, .. } => {
+                declared_types.insert(name.clone());
+            }
         }
     }
 

@@ -13,6 +13,7 @@ use crate::Foundation::generated::NSRange::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSTextCheckingKey = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextCheckingResult;

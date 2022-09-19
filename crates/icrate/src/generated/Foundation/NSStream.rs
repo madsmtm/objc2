@@ -11,6 +11,7 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSStreamPropertyKey = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSStream;
@@ -25,20 +26,20 @@ impl NSStream {
     pub unsafe fn close(&self) {
         msg_send![self, close]
     }
-    pub unsafe fn propertyForKey(&self, key: NSStreamPropertyKey) -> Option<Id<Object, Shared>> {
+    pub unsafe fn propertyForKey(&self, key: &NSStreamPropertyKey) -> Option<Id<Object, Shared>> {
         msg_send_id![self, propertyForKey: key]
     }
     pub unsafe fn setProperty_forKey(
         &self,
         property: Option<&Object>,
-        key: NSStreamPropertyKey,
+        key: &NSStreamPropertyKey,
     ) -> bool {
         msg_send![self, setProperty: property, forKey: key]
     }
-    pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, scheduleInRunLoop: aRunLoop, forMode: mode]
     }
-    pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: aRunLoop, forMode: mode]
     }
     pub unsafe fn delegate(&self) -> TodoGenerics {
@@ -219,3 +220,7 @@ impl NSOutputStream {
     }
 }
 pub type NSStreamDelegate = NSObject;
+pub type NSStreamSocketSecurityLevel = NSString;
+pub type NSStreamSOCKSProxyConfiguration = NSString;
+pub type NSStreamSOCKSProxyVersion = NSString;
+pub type NSStreamNetworkServiceTypeValue = NSString;

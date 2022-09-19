@@ -33,6 +33,7 @@ impl NSString {
         msg_send![self, length]
     }
 }
+pub type NSStringTransform = NSString;
 #[doc = "NSStringExtensionMethods"]
 impl NSString {
     pub unsafe fn substringFromIndex(&self, from: NSUInteger) -> Id<NSString, Shared> {
@@ -407,7 +408,7 @@ impl NSString {
     }
     pub unsafe fn stringByApplyingTransform_reverse(
         &self,
-        transform: NSStringTransform,
+        transform: &NSStringTransform,
         reverse: bool,
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, stringByApplyingTransform: transform, reverse: reverse]
@@ -757,6 +758,7 @@ impl NSString {
         msg_send![self, hash]
     }
 }
+pub type NSStringEncodingDetectionOptionsKey = NSString;
 #[doc = "NSStringEncodingDetection"]
 impl NSString {
     pub unsafe fn stringEncodingForData_encodingOptions_convertedString_usedLossyConversion(
@@ -819,7 +821,7 @@ impl NSMutableString {
     }
     pub unsafe fn applyTransform_reverse_range_updatedRange(
         &self,
-        transform: NSStringTransform,
+        transform: &NSStringTransform,
         reverse: bool,
         range: NSRange,
         resultingRange: NSRangePointer,

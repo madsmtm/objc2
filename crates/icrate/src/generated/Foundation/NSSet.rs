@@ -15,8 +15,8 @@ extern_class!(
     }
 );
 impl NSSet {
-    pub unsafe fn member(&self, object: ObjectType) -> ObjectType {
-        msg_send![self, member: object]
+    pub unsafe fn member(&self, object: &ObjectType) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, member: object]
     }
     pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
         msg_send![self, objectEnumerator]
@@ -40,10 +40,10 @@ impl NSSet {
 }
 #[doc = "NSExtendedSet"]
 impl NSSet {
-    pub unsafe fn anyObject(&self) -> ObjectType {
-        msg_send![self, anyObject]
+    pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, anyObject]
     }
-    pub unsafe fn containsObject(&self, anObject: ObjectType) -> bool {
+    pub unsafe fn containsObject(&self, anObject: &ObjectType) -> bool {
         msg_send![self, containsObject: anObject]
     }
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
@@ -72,7 +72,7 @@ impl NSSet {
             withObject: argument
         ]
     }
-    pub unsafe fn setByAddingObject(&self, anObject: ObjectType) -> TodoGenerics {
+    pub unsafe fn setByAddingObject(&self, anObject: &ObjectType) -> TodoGenerics {
         msg_send![self, setByAddingObject: anObject]
     }
     pub unsafe fn setByAddingObjectsFromSet(&self, other: TodoGenerics) -> TodoGenerics {
@@ -113,7 +113,7 @@ impl NSSet {
     pub unsafe fn set() -> Id<Self, Shared> {
         msg_send_id![Self::class(), set]
     }
-    pub unsafe fn setWithObject(object: ObjectType) -> Id<Self, Shared> {
+    pub unsafe fn setWithObject(object: &ObjectType) -> Id<Self, Shared> {
         msg_send_id![Self::class(), setWithObject: object]
     }
     pub unsafe fn setWithObjects_count(objects: TodoArray, cnt: NSUInteger) -> Id<Self, Shared> {
@@ -143,10 +143,10 @@ extern_class!(
     }
 );
 impl NSMutableSet {
-    pub unsafe fn addObject(&self, object: ObjectType) {
+    pub unsafe fn addObject(&self, object: &ObjectType) {
         msg_send![self, addObject: object]
     }
-    pub unsafe fn removeObject(&self, object: ObjectType) {
+    pub unsafe fn removeObject(&self, object: &ObjectType) {
         msg_send![self, removeObject: object]
     }
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
@@ -203,16 +203,16 @@ impl NSCountedSet {
     pub unsafe fn initWithSet(&self, set: TodoGenerics) -> Id<Self, Shared> {
         msg_send_id![self, initWithSet: set]
     }
-    pub unsafe fn countForObject(&self, object: ObjectType) -> NSUInteger {
+    pub unsafe fn countForObject(&self, object: &ObjectType) -> NSUInteger {
         msg_send![self, countForObject: object]
     }
     pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
         msg_send![self, objectEnumerator]
     }
-    pub unsafe fn addObject(&self, object: ObjectType) {
+    pub unsafe fn addObject(&self, object: &ObjectType) {
         msg_send![self, addObject: object]
     }
-    pub unsafe fn removeObject(&self, object: ObjectType) {
+    pub unsafe fn removeObject(&self, object: &ObjectType) {
         msg_send![self, removeObject: object]
     }
 }

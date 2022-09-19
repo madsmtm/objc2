@@ -13,6 +13,7 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSUserActivityPersistentIdentifier = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSUserActivity;
@@ -160,12 +161,14 @@ impl NSUserActivity {
     pub unsafe fn setEligibleForPrediction(&self, eligibleForPrediction: bool) {
         msg_send![self, setEligibleForPrediction: eligibleForPrediction]
     }
-    pub unsafe fn persistentIdentifier(&self) -> NSUserActivityPersistentIdentifier {
-        msg_send![self, persistentIdentifier]
+    pub unsafe fn persistentIdentifier(
+        &self,
+    ) -> Option<Id<NSUserActivityPersistentIdentifier, Shared>> {
+        msg_send_id![self, persistentIdentifier]
     }
     pub unsafe fn setPersistentIdentifier(
         &self,
-        persistentIdentifier: NSUserActivityPersistentIdentifier,
+        persistentIdentifier: Option<&NSUserActivityPersistentIdentifier>,
     ) {
         msg_send![self, setPersistentIdentifier: persistentIdentifier]
     }

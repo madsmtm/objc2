@@ -42,22 +42,22 @@ impl NSHashTable {
     pub unsafe fn weakObjectsHashTable() -> TodoGenerics {
         msg_send![Self::class(), weakObjectsHashTable]
     }
-    pub unsafe fn member(&self, object: ObjectType) -> ObjectType {
-        msg_send![self, member: object]
+    pub unsafe fn member(&self, object: Option<&ObjectType>) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, member: object]
     }
     pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
         msg_send![self, objectEnumerator]
     }
-    pub unsafe fn addObject(&self, object: ObjectType) {
+    pub unsafe fn addObject(&self, object: Option<&ObjectType>) {
         msg_send![self, addObject: object]
     }
-    pub unsafe fn removeObject(&self, object: ObjectType) {
+    pub unsafe fn removeObject(&self, object: Option<&ObjectType>) {
         msg_send![self, removeObject: object]
     }
     pub unsafe fn removeAllObjects(&self) {
         msg_send![self, removeAllObjects]
     }
-    pub unsafe fn containsObject(&self, anObject: ObjectType) -> bool {
+    pub unsafe fn containsObject(&self, anObject: Option<&ObjectType>) -> bool {
         msg_send![self, containsObject: anObject]
     }
     pub unsafe fn intersectsHashTable(&self, other: TodoGenerics) -> bool {
@@ -87,8 +87,8 @@ impl NSHashTable {
     pub unsafe fn allObjects(&self) -> TodoGenerics {
         msg_send![self, allObjects]
     }
-    pub unsafe fn anyObject(&self) -> ObjectType {
-        msg_send![self, anyObject]
+    pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, anyObject]
     }
     pub unsafe fn setRepresentation(&self) -> TodoGenerics {
         msg_send![self, setRepresentation]

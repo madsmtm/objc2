@@ -12,16 +12,16 @@ extern_class!(
     }
 );
 impl NSCache {
-    pub unsafe fn objectForKey(&self, key: KeyType) -> ObjectType {
-        msg_send![self, objectForKey: key]
+    pub unsafe fn objectForKey(&self, key: &KeyType) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, objectForKey: key]
     }
-    pub unsafe fn setObject_forKey(&self, obj: ObjectType, key: KeyType) {
+    pub unsafe fn setObject_forKey(&self, obj: &ObjectType, key: &KeyType) {
         msg_send![self, setObject: obj, forKey: key]
     }
-    pub unsafe fn setObject_forKey_cost(&self, obj: ObjectType, key: KeyType, g: NSUInteger) {
+    pub unsafe fn setObject_forKey_cost(&self, obj: &ObjectType, key: &KeyType, g: NSUInteger) {
         msg_send![self, setObject: obj, forKey: key, cost: g]
     }
-    pub unsafe fn removeObjectForKey(&self, key: KeyType) {
+    pub unsafe fn removeObjectForKey(&self, key: &KeyType) {
         msg_send![self, removeObjectForKey: key]
     }
     pub unsafe fn removeAllObjects(&self) {

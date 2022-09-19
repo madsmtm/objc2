@@ -7,6 +7,8 @@ use crate::Foundation::generated::NSString::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSLinguisticTagScheme = NSString;
+pub type NSLinguisticTag = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSLinguisticTagger;
@@ -66,7 +68,7 @@ impl NSLinguisticTagger {
         &self,
         range: NSRange,
         unit: NSLinguisticTaggerUnit,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         block: TodoBlock,
     ) {
@@ -83,10 +85,10 @@ impl NSLinguisticTagger {
         &self,
         charIndex: NSUInteger,
         unit: NSLinguisticTaggerUnit,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         tokenRange: NSRangePointer,
-    ) -> NSLinguisticTag {
-        msg_send![
+    ) -> Option<Id<NSLinguisticTag, Shared>> {
+        msg_send_id![
             self,
             tagAtIndex: charIndex,
             unit: unit,
@@ -98,7 +100,7 @@ impl NSLinguisticTagger {
         &self,
         range: NSRange,
         unit: NSLinguisticTaggerUnit,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         tokenRanges: *mut TodoGenerics,
     ) -> TodoGenerics {
@@ -114,7 +116,7 @@ impl NSLinguisticTagger {
     pub unsafe fn enumerateTagsInRange_scheme_options_usingBlock(
         &self,
         range: NSRange,
-        tagScheme: NSLinguisticTagScheme,
+        tagScheme: &NSLinguisticTagScheme,
         opts: NSLinguisticTaggerOptions,
         block: TodoBlock,
     ) {
@@ -129,11 +131,11 @@ impl NSLinguisticTagger {
     pub unsafe fn tagAtIndex_scheme_tokenRange_sentenceRange(
         &self,
         charIndex: NSUInteger,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         tokenRange: NSRangePointer,
         sentenceRange: NSRangePointer,
-    ) -> NSLinguisticTag {
-        msg_send![
+    ) -> Option<Id<NSLinguisticTag, Shared>> {
+        msg_send_id![
             self,
             tagAtIndex: charIndex,
             scheme: scheme,
@@ -163,11 +165,11 @@ impl NSLinguisticTagger {
         string: &NSString,
         charIndex: NSUInteger,
         unit: NSLinguisticTaggerUnit,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         orthography: Option<&NSOrthography>,
         tokenRange: NSRangePointer,
-    ) -> NSLinguisticTag {
-        msg_send![
+    ) -> Option<Id<NSLinguisticTag, Shared>> {
+        msg_send_id![
             Self::class(),
             tagForString: string,
             atIndex: charIndex,
@@ -181,7 +183,7 @@ impl NSLinguisticTagger {
         string: &NSString,
         range: NSRange,
         unit: NSLinguisticTaggerUnit,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         orthography: Option<&NSOrthography>,
         tokenRanges: *mut TodoGenerics,
@@ -201,7 +203,7 @@ impl NSLinguisticTagger {
         string: &NSString,
         range: NSRange,
         unit: NSLinguisticTaggerUnit,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         orthography: Option<&NSOrthography>,
         block: TodoBlock,
@@ -252,7 +254,7 @@ impl NSString {
     pub unsafe fn linguisticTagsInRange_scheme_options_orthography_tokenRanges(
         &self,
         range: NSRange,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         orthography: Option<&NSOrthography>,
         tokenRanges: *mut TodoGenerics,
@@ -269,7 +271,7 @@ impl NSString {
     pub unsafe fn enumerateLinguisticTagsInRange_scheme_options_orthography_usingBlock(
         &self,
         range: NSRange,
-        scheme: NSLinguisticTagScheme,
+        scheme: &NSLinguisticTagScheme,
         options: NSLinguisticTaggerOptions,
         orthography: Option<&NSOrthography>,
         block: TodoBlock,

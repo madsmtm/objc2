@@ -39,10 +39,10 @@ impl NSNetService {
     ) -> Id<Self, Shared> {
         msg_send_id ! [self , initWithDomain : domain , type : type_ , name : name]
     }
-    pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, scheduleInRunLoop: aRunLoop, forMode: mode]
     }
-    pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: aRunLoop, forMode: mode]
     }
     pub unsafe fn publish(&self) {
@@ -131,10 +131,10 @@ impl NSNetServiceBrowser {
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
-    pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, scheduleInRunLoop: aRunLoop, forMode: mode]
     }
-    pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: aRunLoop, forMode: mode]
     }
     pub unsafe fn searchForBrowsableDomains(&self) {

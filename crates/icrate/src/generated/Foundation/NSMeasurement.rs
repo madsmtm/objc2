@@ -18,7 +18,7 @@ impl NSMeasurement {
     pub unsafe fn initWithDoubleValue_unit(
         &self,
         doubleValue: c_double,
-        unit: UnitType,
+        unit: &UnitType,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithDoubleValue: doubleValue, unit: unit]
     }
@@ -37,8 +37,8 @@ impl NSMeasurement {
     ) -> TodoGenerics {
         msg_send![self, measurementBySubtractingMeasurement: measurement]
     }
-    pub unsafe fn unit(&self) -> UnitType {
-        msg_send![self, unit]
+    pub unsafe fn unit(&self) -> Id<UnitType, Shared> {
+        msg_send_id![self, unit]
     }
     pub unsafe fn doubleValue(&self) -> c_double {
         msg_send![self, doubleValue]

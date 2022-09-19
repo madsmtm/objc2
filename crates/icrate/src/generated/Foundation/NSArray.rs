@@ -19,8 +19,8 @@ extern_class!(
     }
 );
 impl NSArray {
-    pub unsafe fn objectAtIndex(&self, index: NSUInteger) -> ObjectType {
-        msg_send![self, objectAtIndex: index]
+    pub unsafe fn objectAtIndex(&self, index: NSUInteger) -> Id<ObjectType, Shared> {
+        msg_send_id![self, objectAtIndex: index]
     }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
@@ -41,7 +41,7 @@ impl NSArray {
 }
 #[doc = "NSExtendedArray"]
 impl NSArray {
-    pub unsafe fn arrayByAddingObject(&self, anObject: ObjectType) -> TodoGenerics {
+    pub unsafe fn arrayByAddingObject(&self, anObject: &ObjectType) -> TodoGenerics {
         msg_send![self, arrayByAddingObject: anObject]
     }
     pub unsafe fn arrayByAddingObjectsFromArray(&self, otherArray: TodoGenerics) -> TodoGenerics {
@@ -50,7 +50,7 @@ impl NSArray {
     pub unsafe fn componentsJoinedByString(&self, separator: &NSString) -> Id<NSString, Shared> {
         msg_send_id![self, componentsJoinedByString: separator]
     }
-    pub unsafe fn containsObject(&self, anObject: ObjectType) -> bool {
+    pub unsafe fn containsObject(&self, anObject: &ObjectType) -> bool {
         msg_send![self, containsObject: anObject]
     }
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
@@ -63,24 +63,31 @@ impl NSArray {
     ) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale, indent: level]
     }
-    pub unsafe fn firstObjectCommonWithArray(&self, otherArray: TodoGenerics) -> ObjectType {
-        msg_send![self, firstObjectCommonWithArray: otherArray]
+    pub unsafe fn firstObjectCommonWithArray(
+        &self,
+        otherArray: TodoGenerics,
+    ) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, firstObjectCommonWithArray: otherArray]
     }
     pub unsafe fn getObjects_range(&self, objects: TodoArray, range: NSRange) {
         msg_send![self, getObjects: objects, range: range]
     }
-    pub unsafe fn indexOfObject(&self, anObject: ObjectType) -> NSUInteger {
+    pub unsafe fn indexOfObject(&self, anObject: &ObjectType) -> NSUInteger {
         msg_send![self, indexOfObject: anObject]
     }
-    pub unsafe fn indexOfObject_inRange(&self, anObject: ObjectType, range: NSRange) -> NSUInteger {
+    pub unsafe fn indexOfObject_inRange(
+        &self,
+        anObject: &ObjectType,
+        range: NSRange,
+    ) -> NSUInteger {
         msg_send![self, indexOfObject: anObject, inRange: range]
     }
-    pub unsafe fn indexOfObjectIdenticalTo(&self, anObject: ObjectType) -> NSUInteger {
+    pub unsafe fn indexOfObjectIdenticalTo(&self, anObject: &ObjectType) -> NSUInteger {
         msg_send![self, indexOfObjectIdenticalTo: anObject]
     }
     pub unsafe fn indexOfObjectIdenticalTo_inRange(
         &self,
-        anObject: ObjectType,
+        anObject: &ObjectType,
         range: NSRange,
     ) -> NSUInteger {
         msg_send![self, indexOfObjectIdenticalTo: anObject, inRange: range]
@@ -140,8 +147,8 @@ impl NSArray {
     pub unsafe fn objectsAtIndexes(&self, indexes: &NSIndexSet) -> TodoGenerics {
         msg_send![self, objectsAtIndexes: indexes]
     }
-    pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> ObjectType {
-        msg_send![self, objectAtIndexedSubscript: idx]
+    pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> Id<ObjectType, Shared> {
+        msg_send_id![self, objectAtIndexedSubscript: idx]
     }
     pub unsafe fn enumerateObjectsUsingBlock(&self, block: TodoBlock) {
         msg_send![self, enumerateObjectsUsingBlock: block]
@@ -231,7 +238,7 @@ impl NSArray {
     }
     pub unsafe fn indexOfObject_inSortedRange_options_usingComparator(
         &self,
-        obj: ObjectType,
+        obj: &ObjectType,
         r: NSRange,
         opts: NSBinarySearchingOptions,
         cmp: NSComparator,
@@ -247,11 +254,11 @@ impl NSArray {
     pub unsafe fn description(&self) -> Id<NSString, Shared> {
         msg_send_id![self, description]
     }
-    pub unsafe fn firstObject(&self) -> ObjectType {
-        msg_send![self, firstObject]
+    pub unsafe fn firstObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, firstObject]
     }
-    pub unsafe fn lastObject(&self) -> ObjectType {
-        msg_send![self, lastObject]
+    pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, lastObject]
     }
     pub unsafe fn sortedArrayHint(&self) -> Id<NSData, Shared> {
         msg_send_id![self, sortedArrayHint]
@@ -262,7 +269,7 @@ impl NSArray {
     pub unsafe fn array() -> Id<Self, Shared> {
         msg_send_id![Self::class(), array]
     }
-    pub unsafe fn arrayWithObject(anObject: ObjectType) -> Id<Self, Shared> {
+    pub unsafe fn arrayWithObject(anObject: &ObjectType) -> Id<Self, Shared> {
         msg_send_id![Self::class(), arrayWithObject: anObject]
     }
     pub unsafe fn arrayWithObjects_count(objects: TodoArray, cnt: NSUInteger) -> Id<Self, Shared> {
@@ -356,10 +363,10 @@ extern_class!(
     }
 );
 impl NSMutableArray {
-    pub unsafe fn addObject(&self, anObject: ObjectType) {
+    pub unsafe fn addObject(&self, anObject: &ObjectType) {
         msg_send![self, addObject: anObject]
     }
-    pub unsafe fn insertObject_atIndex(&self, anObject: ObjectType, index: NSUInteger) {
+    pub unsafe fn insertObject_atIndex(&self, anObject: &ObjectType, index: NSUInteger) {
         msg_send![self, insertObject: anObject, atIndex: index]
     }
     pub unsafe fn removeLastObject(&self) {
@@ -368,7 +375,7 @@ impl NSMutableArray {
     pub unsafe fn removeObjectAtIndex(&self, index: NSUInteger) {
         msg_send![self, removeObjectAtIndex: index]
     }
-    pub unsafe fn replaceObjectAtIndex_withObject(&self, index: NSUInteger, anObject: ObjectType) {
+    pub unsafe fn replaceObjectAtIndex_withObject(&self, index: NSUInteger, anObject: &ObjectType) {
         msg_send![self, replaceObjectAtIndex: index, withObject: anObject]
     }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
@@ -396,16 +403,16 @@ impl NSMutableArray {
     pub unsafe fn removeAllObjects(&self) {
         msg_send![self, removeAllObjects]
     }
-    pub unsafe fn removeObject_inRange(&self, anObject: ObjectType, range: NSRange) {
+    pub unsafe fn removeObject_inRange(&self, anObject: &ObjectType, range: NSRange) {
         msg_send![self, removeObject: anObject, inRange: range]
     }
-    pub unsafe fn removeObject(&self, anObject: ObjectType) {
+    pub unsafe fn removeObject(&self, anObject: &ObjectType) {
         msg_send![self, removeObject: anObject]
     }
-    pub unsafe fn removeObjectIdenticalTo_inRange(&self, anObject: ObjectType, range: NSRange) {
+    pub unsafe fn removeObjectIdenticalTo_inRange(&self, anObject: &ObjectType, range: NSRange) {
         msg_send![self, removeObjectIdenticalTo: anObject, inRange: range]
     }
-    pub unsafe fn removeObjectIdenticalTo(&self, anObject: ObjectType) {
+    pub unsafe fn removeObjectIdenticalTo(&self, anObject: &ObjectType) {
         msg_send![self, removeObjectIdenticalTo: anObject]
     }
     pub unsafe fn removeObjectsFromIndices_numIndices(
@@ -471,7 +478,7 @@ impl NSMutableArray {
     ) {
         msg_send![self, replaceObjectsAtIndexes: indexes, withObjects: objects]
     }
-    pub unsafe fn setObject_atIndexedSubscript(&self, obj: ObjectType, idx: NSUInteger) {
+    pub unsafe fn setObject_atIndexedSubscript(&self, obj: &ObjectType, idx: NSUInteger) {
         msg_send![self, setObject: obj, atIndexedSubscript: idx]
     }
     pub unsafe fn sortUsingComparator(&self, cmptr: NSComparator) {

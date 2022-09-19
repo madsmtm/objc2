@@ -12,14 +12,14 @@ extern_class!(
 );
 impl NSOrderedCollectionChange {
     pub unsafe fn changeWithObject_type_index(
-        anObject: ObjectType,
+        anObject: Option<&ObjectType>,
         type_: NSCollectionChangeType,
         index: NSUInteger,
     ) -> TodoGenerics {
         msg_send ! [Self :: class () , changeWithObject : anObject , type : type_ , index : index]
     }
     pub unsafe fn changeWithObject_type_index_associatedIndex(
-        anObject: ObjectType,
+        anObject: Option<&ObjectType>,
         type_: NSCollectionChangeType,
         index: NSUInteger,
         associatedIndex: NSUInteger,
@@ -31,7 +31,7 @@ impl NSOrderedCollectionChange {
     }
     pub unsafe fn initWithObject_type_index(
         &self,
-        anObject: ObjectType,
+        anObject: Option<&ObjectType>,
         type_: NSCollectionChangeType,
         index: NSUInteger,
     ) -> Id<Self, Shared> {
@@ -39,15 +39,15 @@ impl NSOrderedCollectionChange {
     }
     pub unsafe fn initWithObject_type_index_associatedIndex(
         &self,
-        anObject: ObjectType,
+        anObject: Option<&ObjectType>,
         type_: NSCollectionChangeType,
         index: NSUInteger,
         associatedIndex: NSUInteger,
     ) -> Id<Self, Shared> {
         msg_send_id ! [self , initWithObject : anObject , type : type_ , index : index , associatedIndex : associatedIndex]
     }
-    pub unsafe fn object(&self) -> ObjectType {
-        msg_send![self, object]
+    pub unsafe fn object(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, object]
     }
     pub unsafe fn changeType(&self) -> NSCollectionChangeType {
         msg_send![self, changeType]

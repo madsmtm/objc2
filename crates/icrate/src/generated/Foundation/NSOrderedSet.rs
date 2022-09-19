@@ -19,10 +19,10 @@ extern_class!(
     }
 );
 impl NSOrderedSet {
-    pub unsafe fn objectAtIndex(&self, idx: NSUInteger) -> ObjectType {
-        msg_send![self, objectAtIndex: idx]
+    pub unsafe fn objectAtIndex(&self, idx: NSUInteger) -> Id<ObjectType, Shared> {
+        msg_send_id![self, objectAtIndex: idx]
     }
-    pub unsafe fn indexOfObject(&self, object: ObjectType) -> NSUInteger {
+    pub unsafe fn indexOfObject(&self, object: &ObjectType) -> NSUInteger {
         msg_send![self, indexOfObject: object]
     }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
@@ -53,7 +53,7 @@ impl NSOrderedSet {
     pub unsafe fn isEqualToOrderedSet(&self, other: TodoGenerics) -> bool {
         msg_send![self, isEqualToOrderedSet: other]
     }
-    pub unsafe fn containsObject(&self, object: ObjectType) -> bool {
+    pub unsafe fn containsObject(&self, object: &ObjectType) -> bool {
         msg_send![self, containsObject: object]
     }
     pub unsafe fn intersectsOrderedSet(&self, other: TodoGenerics) -> bool {
@@ -68,8 +68,8 @@ impl NSOrderedSet {
     pub unsafe fn isSubsetOfSet(&self, set: TodoGenerics) -> bool {
         msg_send![self, isSubsetOfSet: set]
     }
-    pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> ObjectType {
-        msg_send![self, objectAtIndexedSubscript: idx]
+    pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> Id<ObjectType, Shared> {
+        msg_send_id![self, objectAtIndexedSubscript: idx]
     }
     pub unsafe fn objectEnumerator(&self) -> TodoGenerics {
         msg_send![self, objectEnumerator]
@@ -155,7 +155,7 @@ impl NSOrderedSet {
     }
     pub unsafe fn indexOfObject_inSortedRange_options_usingComparator(
         &self,
-        object: ObjectType,
+        object: &ObjectType,
         range: NSRange,
         opts: NSBinarySearchingOptions,
         cmp: NSComparator,
@@ -188,11 +188,11 @@ impl NSOrderedSet {
     ) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale, indent: level]
     }
-    pub unsafe fn firstObject(&self) -> ObjectType {
-        msg_send![self, firstObject]
+    pub unsafe fn firstObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, firstObject]
     }
-    pub unsafe fn lastObject(&self) -> ObjectType {
-        msg_send![self, lastObject]
+    pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, lastObject]
     }
     pub unsafe fn reversedOrderedSet(&self) -> TodoGenerics {
         msg_send![self, reversedOrderedSet]
@@ -212,7 +212,7 @@ impl NSOrderedSet {
     pub unsafe fn orderedSet() -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSet]
     }
-    pub unsafe fn orderedSetWithObject(object: ObjectType) -> Id<Self, Shared> {
+    pub unsafe fn orderedSetWithObject(object: &ObjectType) -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSetWithObject: object]
     }
     pub unsafe fn orderedSetWithObjects_count(
@@ -257,7 +257,7 @@ impl NSOrderedSet {
     pub unsafe fn orderedSetWithSet_copyItems(set: TodoGenerics, flag: bool) -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSetWithSet: set, copyItems: flag]
     }
-    pub unsafe fn initWithObject(&self, object: ObjectType) -> Id<Self, Shared> {
+    pub unsafe fn initWithObject(&self, object: &ObjectType) -> Id<Self, Shared> {
         msg_send_id![self, initWithObject: object]
     }
     pub unsafe fn initWithOrderedSet(&self, set: TodoGenerics) -> Id<Self, Shared> {
@@ -340,13 +340,13 @@ extern_class!(
     }
 );
 impl NSMutableOrderedSet {
-    pub unsafe fn insertObject_atIndex(&self, object: ObjectType, idx: NSUInteger) {
+    pub unsafe fn insertObject_atIndex(&self, object: &ObjectType, idx: NSUInteger) {
         msg_send![self, insertObject: object, atIndex: idx]
     }
     pub unsafe fn removeObjectAtIndex(&self, idx: NSUInteger) {
         msg_send![self, removeObjectAtIndex: idx]
     }
-    pub unsafe fn replaceObjectAtIndex_withObject(&self, idx: NSUInteger, object: ObjectType) {
+    pub unsafe fn replaceObjectAtIndex_withObject(&self, idx: NSUInteger, object: &ObjectType) {
         msg_send![self, replaceObjectAtIndex: idx, withObject: object]
     }
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
@@ -361,7 +361,7 @@ impl NSMutableOrderedSet {
 }
 #[doc = "NSExtendedMutableOrderedSet"]
 impl NSMutableOrderedSet {
-    pub unsafe fn addObject(&self, object: ObjectType) {
+    pub unsafe fn addObject(&self, object: &ObjectType) {
         msg_send![self, addObject: object]
     }
     pub unsafe fn addObjects_count(&self, objects: TodoArray, count: NSUInteger) {
@@ -383,10 +383,10 @@ impl NSMutableOrderedSet {
     pub unsafe fn insertObjects_atIndexes(&self, objects: TodoGenerics, indexes: &NSIndexSet) {
         msg_send![self, insertObjects: objects, atIndexes: indexes]
     }
-    pub unsafe fn setObject_atIndex(&self, obj: ObjectType, idx: NSUInteger) {
+    pub unsafe fn setObject_atIndex(&self, obj: &ObjectType, idx: NSUInteger) {
         msg_send![self, setObject: obj, atIndex: idx]
     }
-    pub unsafe fn setObject_atIndexedSubscript(&self, obj: ObjectType, idx: NSUInteger) {
+    pub unsafe fn setObject_atIndexedSubscript(&self, obj: &ObjectType, idx: NSUInteger) {
         msg_send![self, setObject: obj, atIndexedSubscript: idx]
     }
     pub unsafe fn replaceObjectsInRange_withObjects_count(
@@ -418,7 +418,7 @@ impl NSMutableOrderedSet {
     pub unsafe fn removeAllObjects(&self) {
         msg_send![self, removeAllObjects]
     }
-    pub unsafe fn removeObject(&self, object: ObjectType) {
+    pub unsafe fn removeObject(&self, object: &ObjectType) {
         msg_send![self, removeObject: object]
     }
     pub unsafe fn removeObjectsInArray(&self, array: TodoGenerics) {

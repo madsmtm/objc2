@@ -31,10 +31,10 @@ impl NSPort {
     pub unsafe fn delegate(&self) -> TodoGenerics {
         msg_send![self, delegate]
     }
-    pub unsafe fn scheduleInRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn scheduleInRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, scheduleInRunLoop: runLoop, forMode: mode]
     }
-    pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: runLoop, forMode: mode]
     }
     pub unsafe fn sendBeforeDate_components_from_reserved(
@@ -73,7 +73,7 @@ impl NSPort {
         &self,
         conn: &NSConnection,
         runLoop: &NSRunLoop,
-        mode: NSRunLoopMode,
+        mode: &NSRunLoopMode,
     ) {
         msg_send![self, addConnection: conn, toRunLoop: runLoop, forMode: mode]
     }
@@ -81,7 +81,7 @@ impl NSPort {
         &self,
         conn: &NSConnection,
         runLoop: &NSRunLoop,
-        mode: NSRunLoopMode,
+        mode: &NSRunLoopMode,
     ) {
         msg_send![
             self,
@@ -131,10 +131,10 @@ impl NSMachPort {
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithMachPort: machPort, options: f]
     }
-    pub unsafe fn scheduleInRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn scheduleInRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, scheduleInRunLoop: runLoop, forMode: mode]
     }
-    pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: NSRunLoopMode) {
+    pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: runLoop, forMode: mode]
     }
     pub unsafe fn machPort(&self) -> uint32_t {

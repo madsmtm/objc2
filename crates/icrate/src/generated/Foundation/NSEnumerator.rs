@@ -13,8 +13,8 @@ extern_class!(
     }
 );
 impl NSEnumerator {
-    pub unsafe fn nextObject(&self) -> ObjectType {
-        msg_send![self, nextObject]
+    pub unsafe fn nextObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, nextObject]
     }
 }
 #[doc = "NSExtendedEnumerator"]

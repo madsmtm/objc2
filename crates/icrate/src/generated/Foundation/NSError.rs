@@ -6,6 +6,8 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+pub type NSErrorDomain = NSString;
+pub type NSErrorUserInfoKey = NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSError;
@@ -16,14 +18,14 @@ extern_class!(
 impl NSError {
     pub unsafe fn initWithDomain_code_userInfo(
         &self,
-        domain: NSErrorDomain,
+        domain: &NSErrorDomain,
         code: NSInteger,
         dict: TodoGenerics,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithDomain: domain, code: code, userInfo: dict]
     }
     pub unsafe fn errorWithDomain_code_userInfo(
-        domain: NSErrorDomain,
+        domain: &NSErrorDomain,
         code: NSInteger,
         dict: TodoGenerics,
     ) -> Id<Self, Shared> {
@@ -35,7 +37,7 @@ impl NSError {
         ]
     }
     pub unsafe fn setUserInfoValueProviderForDomain_provider(
-        errorDomain: NSErrorDomain,
+        errorDomain: &NSErrorDomain,
         provider: TodoBlock,
     ) {
         msg_send![
@@ -44,11 +46,11 @@ impl NSError {
             provider: provider
         ]
     }
-    pub unsafe fn userInfoValueProviderForDomain(errorDomain: NSErrorDomain) -> TodoBlock {
+    pub unsafe fn userInfoValueProviderForDomain(errorDomain: &NSErrorDomain) -> TodoBlock {
         msg_send![Self::class(), userInfoValueProviderForDomain: errorDomain]
     }
-    pub unsafe fn domain(&self) -> NSErrorDomain {
-        msg_send![self, domain]
+    pub unsafe fn domain(&self) -> Id<NSErrorDomain, Shared> {
+        msg_send_id![self, domain]
     }
     pub unsafe fn code(&self) -> NSInteger {
         msg_send![self, code]

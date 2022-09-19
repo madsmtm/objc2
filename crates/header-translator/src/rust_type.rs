@@ -55,6 +55,42 @@ impl RustType {
         matches!(self, Self::Id { .. })
     }
 
+    pub fn typedef_is_id(ty: Type<'_>) -> Option<String> {
+        use TypeKind::*;
+
+        // Note: When we encounter a typedef declaration like this:
+        // typedef NSString* NSAbc;
+        //
+        // We parse it as one of:
+        // type NSAbc = NSString;
+        // struct NSAbc(NSString);
+        //
+        // Instead of:
+        // type NSAbc = *const NSString;
+        //
+        // Because that means we can use ordinary Id<...> handling.
+        match ty.get_kind() {
+            ObjCObjectPointer => {
+                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                let name = ty.get_display_name();
+                match ty.get_kind() {
+                    ObjCInterface => {
+                        match &*name {
+                            "NSString" => {}
+                            "NSUnit" => {} // TODO: Handle this differently
+                            _ => panic!("typedef interface was not NSString {:?}", ty),
+                        }
+                        Some(name)
+                    }
+                    ObjCObject => Some(name),
+                    _ => panic!("pointee was not objcinterface nor objcobject: {:?}", ty),
+                }
+            }
+            ObjCId => panic!("unexpected ObjCId {:?}", ty),
+            _ => None,
+        }
+    }
+
     pub fn parse(mut ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
         use TypeKind::*;
 
@@ -137,10 +173,8 @@ impl RustType {
                 }
             }
             Typedef => {
-                let display_name = ty.get_display_name();
-                let display_name = display_name.strip_prefix("const ").unwrap_or(&display_name);
-                // TODO: Handle typedefs properly
-                match &*display_name {
+                let typedef_name = ty.get_typedef_name().expect("typedef has name");
+                match &*typedef_name {
                     "BOOL" => Self::ObjcBool,
                     "instancetype" => {
                         if !is_return {
@@ -152,7 +186,17 @@ impl RustType {
                             nullability,
                         }
                     }
-                    display_name => Self::TypeDef(display_name.to_string()),
+                    _ => {
+                        if Self::typedef_is_id(ty.get_canonical_type()).is_some() {
+                            Self::Id {
+                                name: typedef_name,
+                                is_return,
+                                nullability,
+                            }
+                        } else {
+                            Self::TypeDef(typedef_name)
+                        }
+                    }
                 }
             }
             BlockPointer => Self::TypeDef("TodoBlock".to_string()),

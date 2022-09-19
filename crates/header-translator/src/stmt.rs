@@ -5,6 +5,7 @@ use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 use crate::availability::Availability;
 use crate::config::Config;
 use crate::method::Method;
+use crate::rust_type::RustType;
 
 #[derive(Debug, Clone)]
 pub enum Stmt {
@@ -39,6 +40,10 @@ pub enum Stmt {
         protocols: Vec<String>,
         methods: Vec<Method>,
     },
+    /// typedef Type TypedefName;
+    AliasDecl { name: String, type_name: String },
+    // /// typedef struct Name { fields } TypedefName;
+    // X,
 }
 
 impl Stmt {
@@ -46,7 +51,7 @@ impl Stmt {
         match entity.get_kind() {
             EntityKind::InclusionDirective => {
                 // let file = entity.get_file().expect("inclusion file");
-                let name = dbg!(entity.get_name().expect("inclusion name"));
+                let name = entity.get_name().expect("inclusion name");
                 let mut iter = name.split("/");
                 let framework = iter.next().expect("inclusion name has framework");
                 let file = if let Some(file) = iter.next() {
@@ -249,11 +254,30 @@ impl Stmt {
                     methods,
                 })
             }
-            EntityKind::EnumDecl
-            | EntityKind::VarDecl
-            | EntityKind::FunctionDecl
-            | EntityKind::TypedefDecl
-            | EntityKind::StructDecl => {
+            EntityKind::TypedefDecl => {
+                let name = entity.get_name().expect("typedef name");
+                let underlying_ty = entity
+                    .get_typedef_underlying_type()
+                    .expect("typedef underlying type");
+                if let Some(type_name) = RustType::typedef_is_id(underlying_ty) {
+                    // println!("typedef: {:?}, {:?}", name, type_name);
+                    Some(Self::AliasDecl { name, type_name })
+                } else {
+                    // println!(
+                    //     "typedef: {:?}, {:?}, {:?}, {:?}",
+                    //     entity.get_display_name(),
+                    //     entity.has_attributes(),
+                    //     entity.get_children(),
+                    //     underlying_ty,
+                    // );
+                    None
+                }
+            }
+            EntityKind::StructDecl => {
+                // println!("struct: {:?}", entity.get_display_name());
+                None
+            }
+            EntityKind::EnumDecl | EntityKind::VarDecl | EntityKind::FunctionDecl => {
                 // TODO
                 None
             }
@@ -356,6 +380,12 @@ impl ToTokens for Stmt {
                 //     }
                 // }
                 quote!(pub type #name = NSObject;)
+            }
+            Self::AliasDecl { name, type_name } => {
+                let name = format_ident!("{}", name);
+                let type_name = format_ident!("{}", type_name);
+
+                quote!(pub type #name = #type_name;)
             }
         };
         tokens.append_all(result);
