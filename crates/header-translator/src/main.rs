@@ -153,6 +153,8 @@ fn main() {
     //     }
     // }
 
+    let output_path = Path::new("icrate/src/generated/Foundation");
+
     let config = dbg!(Config::from_file(Path::new("icrate/src/Foundation.toml")).unwrap());
 
     let mut declared: Vec<(Ident, HashSet<String>)> = Vec::new();
@@ -173,9 +175,7 @@ fn main() {
 
         // println!("{}\n\n\n\n", res);
 
-        let mut path = config
-            .output
-            .join(path.file_name().expect("header file name"));
+        let mut path = output_path.join(path.file_name().expect("header file name"));
         path.set_extension("rs");
 
         // truncate if the file exists
@@ -201,7 +201,7 @@ fn main() {
     };
 
     // truncate if the file exists
-    fs::write(config.output.join("mod.rs"), run_rustfmt(mod_tokens)).unwrap();
+    fs::write(output_path.join("mod.rs"), run_rustfmt(mod_tokens)).unwrap();
 
     //     }
     // }

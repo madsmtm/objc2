@@ -1,38 +1,24 @@
-name = "Foundation"
-headers = ["Foundation.h"]
-output = "generated/Foundation"
+[class.NSObject.methods]
+# Uses NS_REPLACES_RECEIVER
+awakeAfterUsingCoder = { skipped = true }
 
-[unsafe.safe-methods]
-NSString = [
-    "new",
-    # Assuming that (non-)nullability is properly set
-    "stringByAppendingString:",
-    "stringByAppendingPathComponent:",
-    # Assuming `NSStringEncoding` can be made safe
-    "lengthOfBytesUsingEncoding:",
-    "length",
-    # Safe to call, but the returned pointer may not be safe to use
-    "UTF8String",
-]
-NSMutableString = [
-    "new",
-    "initWithString:",
-    # "appendString:",
-    # "setString:",
-]
+[class.NSKeyedUnarchiverDelegate.methods]
+# Uses NS_RELEASES_ARGUMENT and NS_RETURNS_RETAINED
+unarchiver_didDecodeObject = { skipped = true }
 
-[mutating-methods]
-NSMutableString = [
-    # "appendString:",
-    # "setString:",
-]
+[class.NSString.methods]
+new = { unsafe = false }
+# Assuming that (non-)nullability is properly set
+stringByAppendingString = { unsafe = false }
+stringByAppendingPathComponent = { unsafe = false }
+# Assuming `NSStringEncoding` can be made safe
+lengthOfBytesUsingEncoding = { unsafe = false }
+length = { unsafe = false }
+# Safe to call, but the returned pointer may not be safe to use
+UTF8String = { unsafe = false }
 
-[skipped.methods]
-NSKeyedUnarchiverDelegate = [
-    # Uses NS_RELEASES_ARGUMENT and NS_RETURNS_RETAINED
-    "unarchiver:didDecodeObject:",
-]
-NSObject = [
-    # Uses NS_REPLACES_RECEIVER
-    "awakeAfterUsingCoder:",
-]
+[class.NSMutableString.methods]
+new = { unsafe = false }
+initWithString = { unsafe = false }
+# "appendString:" = { unsafe = false, mutable = true }
+# "setString:" = { unsafe = false, mutable = true }

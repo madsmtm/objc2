@@ -57,6 +57,7 @@ impl MemoryManagement {
 #[derive(Debug, Clone)]
 pub struct Method {
     selector: String,
+    fn_name: String,
     availability: Availability,
     is_class_method: bool,
     is_optional_protocol_method: bool,
@@ -73,12 +74,13 @@ impl Method {
     pub fn parse(entity: Entity<'_>, class_data: Option<&ClassData>) -> Option<Self> {
         // println!("Method {:?}", entity.get_display_name());
         let selector = entity.get_name().expect("method selector");
+        let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
 
         let data = class_data
             .map(|class_data| {
                 class_data
-                    .selector_data
-                    .get(&selector)
+                    .methods
+                    .get(&fn_name)
                     .copied()
                     .unwrap_or_default()
             })
@@ -218,6 +220,7 @@ impl Method {
 
         Some(Self {
             selector,
+            fn_name,
             availability,
             is_class_method,
             is_optional_protocol_method: entity.is_objc_optional(),
@@ -225,22 +228,14 @@ impl Method {
             designated_initializer,
             arguments,
             result_type,
-            safe: data.safe,
+            safe: !data.unsafe_,
         })
     }
 }
 
 impl ToTokens for Method {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let fn_name = format_ident!(
-            "{}",
-            handle_reserved(
-                &self
-                    .selector
-                    .trim_end_matches(|c| c == ':')
-                    .replace(':', "_")
-            )
-        );
+        let fn_name = format_ident!("{}", handle_reserved(&self.fn_name));
 
         let arguments: Vec<_> = self
             .arguments
