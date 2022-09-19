@@ -4,14 +4,14 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSCache;
-    unsafe impl ClassType for NSCache {
+    pub struct NSCache<KeyType: Message, ObjectType: Message>;
+    unsafe impl<KeyType: Message, ObjectType: Message> ClassType for NSCache<KeyType, ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSCache {
+impl<KeyType: Message, ObjectType: Message> NSCache<KeyType, ObjectType> {
     pub unsafe fn objectForKey(&self, key: &KeyType) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, objectForKey: key]
     }

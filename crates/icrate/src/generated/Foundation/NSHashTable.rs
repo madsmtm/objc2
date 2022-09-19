@@ -7,14 +7,14 @@ use crate::Foundation::generated::NSString::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSHashTable;
-    unsafe impl ClassType for NSHashTable {
+    pub struct NSHashTable<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSHashTable<ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSHashTable {
+impl<ObjectType: Message> NSHashTable<ObjectType> {
     pub unsafe fn initWithOptions_capacity(
         &self,
         options: NSPointerFunctionsOptions,

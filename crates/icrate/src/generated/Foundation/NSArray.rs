@@ -11,14 +11,14 @@ use crate::Foundation::generated::NSRange::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSArray;
-    unsafe impl ClassType for NSArray {
+    pub struct NSArray<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSArray<ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn objectAtIndex(&self, index: NSUInteger) -> Id<ObjectType, Shared> {
         msg_send_id![self, objectAtIndex: index]
     }
@@ -40,7 +40,7 @@ impl NSArray {
     }
 }
 #[doc = "NSExtendedArray"]
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn arrayByAddingObject(&self, anObject: &ObjectType) -> TodoGenerics {
         msg_send![self, arrayByAddingObject: anObject]
     }
@@ -265,7 +265,7 @@ impl NSArray {
     }
 }
 #[doc = "NSArrayCreation"]
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn array() -> Id<Self, Shared> {
         msg_send_id![Self::class(), array]
     }
@@ -303,7 +303,7 @@ impl NSArray {
     }
 }
 #[doc = "NSArrayDiffing"]
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn differenceFromArray_withOptions_usingEquivalenceTest(
         &self,
         other: TodoGenerics,
@@ -332,7 +332,7 @@ impl NSArray {
     }
 }
 #[doc = "NSDeprecated"]
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn getObjects(&self, objects: TodoArray) {
         msg_send![self, getObjects: objects]
     }
@@ -355,14 +355,14 @@ impl NSArray {
         msg_send![self, writeToURL: url, atomically: atomically]
     }
 }
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMutableArray;
-    unsafe impl ClassType for NSMutableArray {
+    pub struct NSMutableArray<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSMutableArray<ObjectType> {
         type Super = NSArray;
     }
 );
-impl NSMutableArray {
+impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn addObject(&self, anObject: &ObjectType) {
         msg_send![self, addObject: anObject]
     }
@@ -389,7 +389,7 @@ impl NSMutableArray {
     }
 }
 #[doc = "NSExtendedMutableArray"]
-impl NSMutableArray {
+impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn addObjectsFromArray(&self, otherArray: TodoGenerics) {
         msg_send![self, addObjectsFromArray: otherArray]
     }
@@ -489,7 +489,7 @@ impl NSMutableArray {
     }
 }
 #[doc = "NSMutableArrayCreation"]
-impl NSMutableArray {
+impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn arrayWithCapacity(numItems: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![Self::class(), arrayWithCapacity: numItems]
     }
@@ -507,7 +507,7 @@ impl NSMutableArray {
     }
 }
 #[doc = "NSMutableArrayDiffing"]
-impl NSMutableArray {
+impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn applyDifference(&self, difference: TodoGenerics) {
         msg_send![self, applyDifference: difference]
     }

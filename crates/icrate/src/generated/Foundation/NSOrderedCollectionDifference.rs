@@ -6,14 +6,14 @@ use crate::Foundation::generated::NSOrderedCollectionChange::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSOrderedCollectionDifference;
-    unsafe impl ClassType for NSOrderedCollectionDifference {
+    pub struct NSOrderedCollectionDifference<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSOrderedCollectionDifference<ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSOrderedCollectionDifference {
+impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
     pub unsafe fn initWithChanges(&self, changes: TodoGenerics) -> Id<Self, Shared> {
         msg_send_id![self, initWithChanges: changes]
     }

@@ -587,14 +587,14 @@ impl NSObject {
     }
 }
 pub type NSFileManagerDelegate = NSObject;
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSDirectoryEnumerator;
-    unsafe impl ClassType for NSDirectoryEnumerator {
+    pub struct NSDirectoryEnumerator<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSDirectoryEnumerator<ObjectType> {
         type Super = NSEnumerator;
     }
 );
-impl NSDirectoryEnumerator {
+impl<ObjectType: Message> NSDirectoryEnumerator<ObjectType> {
     pub unsafe fn skipDescendents(&self) {
         msg_send![self, skipDescendents]
     }
@@ -636,7 +636,7 @@ impl NSFileProviderService {
     }
 }
 #[doc = "NSFileAttributes"]
-impl NSDictionary {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn fileSize(&self) -> c_ulonglong {
         msg_send![self, fileSize]
     }

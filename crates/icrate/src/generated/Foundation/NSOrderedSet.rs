@@ -11,14 +11,14 @@ use crate::Foundation::generated::NSRange::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSOrderedSet;
-    unsafe impl ClassType for NSOrderedSet {
+    pub struct NSOrderedSet<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSOrderedSet<ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSOrderedSet {
+impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn objectAtIndex(&self, idx: NSUInteger) -> Id<ObjectType, Shared> {
         msg_send_id![self, objectAtIndex: idx]
     }
@@ -43,7 +43,7 @@ impl NSOrderedSet {
     }
 }
 #[doc = "NSExtendedOrderedSet"]
-impl NSOrderedSet {
+impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn getObjects_range(&self, objects: TodoArray, range: NSRange) {
         msg_send![self, getObjects: objects, range: range]
     }
@@ -208,7 +208,7 @@ impl NSOrderedSet {
     }
 }
 #[doc = "NSOrderedSetCreation"]
-impl NSOrderedSet {
+impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn orderedSet() -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSet]
     }
@@ -304,7 +304,7 @@ impl NSOrderedSet {
     }
 }
 #[doc = "NSOrderedSetDiffing"]
-impl NSOrderedSet {
+impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn differenceFromOrderedSet_withOptions_usingEquivalenceTest(
         &self,
         other: TodoGenerics,
@@ -332,14 +332,14 @@ impl NSOrderedSet {
         msg_send![self, orderedSetByApplyingDifference: difference]
     }
 }
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMutableOrderedSet;
-    unsafe impl ClassType for NSMutableOrderedSet {
+    pub struct NSMutableOrderedSet<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSMutableOrderedSet<ObjectType> {
         type Super = NSOrderedSet;
     }
 );
-impl NSMutableOrderedSet {
+impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn insertObject_atIndex(&self, object: &ObjectType, idx: NSUInteger) {
         msg_send![self, insertObject: object, atIndex: idx]
     }
@@ -360,7 +360,7 @@ impl NSMutableOrderedSet {
     }
 }
 #[doc = "NSExtendedMutableOrderedSet"]
-impl NSMutableOrderedSet {
+impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn addObject(&self, object: &ObjectType) {
         msg_send![self, addObject: object]
     }
@@ -463,13 +463,13 @@ impl NSMutableOrderedSet {
     }
 }
 #[doc = "NSMutableOrderedSetCreation"]
-impl NSMutableOrderedSet {
+impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn orderedSetWithCapacity(numItems: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![Self::class(), orderedSetWithCapacity: numItems]
     }
 }
 #[doc = "NSMutableOrderedSetDiffing"]
-impl NSMutableOrderedSet {
+impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn applyDifference(&self, difference: TodoGenerics) {
         msg_send![self, applyDifference: difference]
     }

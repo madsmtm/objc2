@@ -3,14 +3,14 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSOrderedCollectionChange;
-    unsafe impl ClassType for NSOrderedCollectionChange {
+    pub struct NSOrderedCollectionChange<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSOrderedCollectionChange<ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSOrderedCollectionChange {
+impl<ObjectType: Message> NSOrderedCollectionChange<ObjectType> {
     pub unsafe fn changeWithObject_type_index(
         anObject: Option<&ObjectType>,
         type_: NSCollectionChangeType,

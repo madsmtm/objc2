@@ -5,20 +5,20 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 pub type NSFastEnumeration = NSObject;
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSEnumerator;
-    unsafe impl ClassType for NSEnumerator {
+    pub struct NSEnumerator<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSEnumerator<ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSEnumerator {
+impl<ObjectType: Message> NSEnumerator<ObjectType> {
     pub unsafe fn nextObject(&self) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, nextObject]
     }
 }
 #[doc = "NSExtendedEnumerator"]
-impl NSEnumerator {
+impl<ObjectType: Message> NSEnumerator<ObjectType> {
     pub unsafe fn allObjects(&self) -> TodoGenerics {
         msg_send![self, allObjects]
     }

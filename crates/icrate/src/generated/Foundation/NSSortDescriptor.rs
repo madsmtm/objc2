@@ -110,7 +110,7 @@ impl NSSortDescriptor {
     }
 }
 #[doc = "NSSortDescriptorSorting"]
-impl NSSet {
+impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn sortedArrayUsingDescriptors(
         &self,
         sortDescriptors: TodoGenerics,
@@ -119,7 +119,7 @@ impl NSSet {
     }
 }
 #[doc = "NSSortDescriptorSorting"]
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn sortedArrayUsingDescriptors(
         &self,
         sortDescriptors: TodoGenerics,
@@ -128,13 +128,13 @@ impl NSArray {
     }
 }
 #[doc = "NSSortDescriptorSorting"]
-impl NSMutableArray {
+impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn sortUsingDescriptors(&self, sortDescriptors: TodoGenerics) {
         msg_send![self, sortUsingDescriptors: sortDescriptors]
     }
 }
 #[doc = "NSKeyValueSorting"]
-impl NSOrderedSet {
+impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn sortedArrayUsingDescriptors(
         &self,
         sortDescriptors: TodoGenerics,
@@ -143,7 +143,7 @@ impl NSOrderedSet {
     }
 }
 #[doc = "NSKeyValueSorting"]
-impl NSMutableOrderedSet {
+impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn sortUsingDescriptors(&self, sortDescriptors: TodoGenerics) {
         msg_send![self, sortUsingDescriptors: sortDescriptors]
     }

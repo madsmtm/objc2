@@ -62,7 +62,7 @@ impl NSObject {
     }
 }
 #[doc = "NSKeyValueObserverRegistration"]
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn addObserver_toObjectsAtIndexes_forKeyPath_options_context(
         &self,
         observer: &NSObject,
@@ -141,7 +141,7 @@ impl NSArray {
     }
 }
 #[doc = "NSKeyValueObserverRegistration"]
-impl NSOrderedSet {
+impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn addObserver_forKeyPath_options_context(
         &self,
         observer: &NSObject,
@@ -175,7 +175,7 @@ impl NSOrderedSet {
     }
 }
 #[doc = "NSKeyValueObserverRegistration"]
-impl NSSet {
+impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn addObserver_forKeyPath_options_context(
         &self,
         observer: &NSObject,

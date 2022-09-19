@@ -7,14 +7,14 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSSet;
-    unsafe impl ClassType for NSSet {
+    pub struct NSSet<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSSet<ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSSet {
+impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn member(&self, object: &ObjectType) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, member: object]
     }
@@ -39,7 +39,7 @@ impl NSSet {
     }
 }
 #[doc = "NSExtendedSet"]
-impl NSSet {
+impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, anyObject]
     }
@@ -109,7 +109,7 @@ impl NSSet {
     }
 }
 #[doc = "NSSetCreation"]
-impl NSSet {
+impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn set() -> Id<Self, Shared> {
         msg_send_id![Self::class(), set]
     }
@@ -135,14 +135,14 @@ impl NSSet {
         msg_send_id![self, initWithArray: array]
     }
 }
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMutableSet;
-    unsafe impl ClassType for NSMutableSet {
+    pub struct NSMutableSet<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSMutableSet<ObjectType> {
         type Super = NSSet;
     }
 );
-impl NSMutableSet {
+impl<ObjectType: Message> NSMutableSet<ObjectType> {
     pub unsafe fn addObject(&self, object: &ObjectType) {
         msg_send![self, addObject: object]
     }
@@ -160,7 +160,7 @@ impl NSMutableSet {
     }
 }
 #[doc = "NSExtendedMutableSet"]
-impl NSMutableSet {
+impl<ObjectType: Message> NSMutableSet<ObjectType> {
     pub unsafe fn addObjectsFromArray(&self, array: TodoGenerics) {
         msg_send![self, addObjectsFromArray: array]
     }
@@ -181,19 +181,19 @@ impl NSMutableSet {
     }
 }
 #[doc = "NSMutableSetCreation"]
-impl NSMutableSet {
+impl<ObjectType: Message> NSMutableSet<ObjectType> {
     pub unsafe fn setWithCapacity(numItems: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![Self::class(), setWithCapacity: numItems]
     }
 }
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSCountedSet;
-    unsafe impl ClassType for NSCountedSet {
+    pub struct NSCountedSet<ObjectType: Message>;
+    unsafe impl<ObjectType: Message> ClassType for NSCountedSet<ObjectType> {
         type Super = NSMutableSet;
     }
 );
-impl NSCountedSet {
+impl<ObjectType: Message> NSCountedSet<ObjectType> {
     pub unsafe fn initWithCapacity(&self, numItems: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![self, initWithCapacity: numItems]
     }

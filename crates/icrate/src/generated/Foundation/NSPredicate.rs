@@ -75,37 +75,37 @@ impl NSPredicate {
     }
 }
 #[doc = "NSPredicateSupport"]
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn filteredArrayUsingPredicate(&self, predicate: &NSPredicate) -> TodoGenerics {
         msg_send![self, filteredArrayUsingPredicate: predicate]
     }
 }
 #[doc = "NSPredicateSupport"]
-impl NSMutableArray {
+impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub unsafe fn filterUsingPredicate(&self, predicate: &NSPredicate) {
         msg_send![self, filterUsingPredicate: predicate]
     }
 }
 #[doc = "NSPredicateSupport"]
-impl NSSet {
+impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn filteredSetUsingPredicate(&self, predicate: &NSPredicate) -> TodoGenerics {
         msg_send![self, filteredSetUsingPredicate: predicate]
     }
 }
 #[doc = "NSPredicateSupport"]
-impl NSMutableSet {
+impl<ObjectType: Message> NSMutableSet<ObjectType> {
     pub unsafe fn filterUsingPredicate(&self, predicate: &NSPredicate) {
         msg_send![self, filterUsingPredicate: predicate]
     }
 }
 #[doc = "NSPredicateSupport"]
-impl NSOrderedSet {
+impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn filteredOrderedSetUsingPredicate(&self, p: &NSPredicate) -> TodoGenerics {
         msg_send![self, filteredOrderedSetUsingPredicate: p]
     }
 }
 #[doc = "NSPredicateSupport"]
-impl NSMutableOrderedSet {
+impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
     pub unsafe fn filterUsingPredicate(&self, p: &NSPredicate) {
         msg_send![self, filterUsingPredicate: p]
     }

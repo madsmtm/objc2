@@ -20,6 +20,7 @@ pub enum Stmt {
         availability: Availability,
         // TODO: Generics
         superclass: Option<String>,
+        generics: Vec<String>,
         protocols: Vec<String>,
         methods: Vec<Method>,
     },
@@ -29,6 +30,7 @@ pub enum Stmt {
         availability: Availability,
         /// Some categories don't have a name. Example: NSClipView
         name: Option<String>,
+        generics: Vec<String>,
         /// I don't quite know what this means?
         protocols: Vec<String>,
         methods: Vec<Method>,
@@ -91,6 +93,7 @@ impl Stmt {
                 );
                 // println!("Availability: {:?}", entity.get_platform_availability());
                 let mut superclass = None;
+                let mut generics = Vec::new();
                 let mut protocols = Vec::new();
                 let mut methods = Vec::new();
 
@@ -126,7 +129,10 @@ impl Stmt {
                             // methods.push(quote! {});
                         }
                         EntityKind::TemplateTypeParameter => {
-                            println!("TODO: Template parameters")
+                            // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
+                            // let ty = entity.get_type().expect("template type");
+                            let name = entity.get_display_name().expect("template name");
+                            generics.push(name);
                         }
                         EntityKind::VisibilityAttr => {
                             // NS_CLASS_AVAILABLE_MAC??
@@ -150,12 +156,15 @@ impl Stmt {
                     name,
                     availability,
                     superclass,
+                    generics,
                     protocols,
                     methods,
                 })
             }
             EntityKind::ObjCCategoryDecl => {
+                let name = entity.get_name();
                 let mut class_name = None;
+                let mut generics = Vec::new();
                 let availability = Availability::parse(
                     entity
                         .get_platform_availability()
@@ -195,7 +204,8 @@ impl Stmt {
                             // methods.push(quote! {});
                         }
                         EntityKind::TemplateTypeParameter => {
-                            println!("TODO: Template parameters")
+                            let name = entity.get_display_name().expect("template name");
+                            generics.push(name);
                         }
                         EntityKind::UnexposedAttr => {}
                         _ => panic!("Unknown in ObjCCategoryDecl {:?}", entity),
@@ -208,7 +218,8 @@ impl Stmt {
                 Some(Self::CategoryDecl {
                     class_name,
                     availability,
-                    name: entity.get_name(),
+                    name,
+                    generics,
                     protocols,
                     methods,
                 })
@@ -310,26 +321,50 @@ impl ToTokens for Stmt {
                 name,
                 availability,
                 superclass,
+                generics,
                 protocols,
                 methods,
             } => {
                 let name = format_ident!("{}", name);
+                let generics: Vec<_> = generics
+                    .iter()
+                    .map(|name| format_ident!("{}", name))
+                    .collect();
+
+                let generic_params = if generics.is_empty() {
+                    quote!()
+                } else {
+                    quote!(<#(#generics: Message),*>)
+                };
+
+                let type_ = if generics.is_empty() {
+                    quote!(#name)
+                } else {
+                    quote!(#name<#(#generics),*>)
+                };
+
                 let superclass_name =
                     format_ident!("{}", superclass.as_deref().unwrap_or("Object"));
 
                 // TODO: Use ty.get_objc_protocol_declarations()
 
-                quote! {
-                    extern_class!(
-                        #[derive(Debug)]
-                        pub struct #name;
+                let macro_name = if generics.is_empty() {
+                    quote!(extern_class)
+                } else {
+                    quote!(__inner_extern_class)
+                };
 
-                        unsafe impl ClassType for #name {
+                quote! {
+                    #macro_name!(
+                        #[derive(Debug)]
+                        pub struct #name #generic_params;
+
+                        unsafe impl #generic_params ClassType for #type_ {
                             type Super = #superclass_name;
                         }
                     );
 
-                    impl #name {
+                    impl #generic_params #type_ {
                         #(#methods)*
                     }
                 }
@@ -338,6 +373,7 @@ impl ToTokens for Stmt {
                 class_name,
                 availability,
                 name,
+                generics,
                 protocols,
                 methods,
             } => {
@@ -348,9 +384,14 @@ impl ToTokens for Stmt {
                 };
                 let class_name = format_ident!("{}", class_name);
 
+                let generics: Vec<_> = generics
+                    .iter()
+                    .map(|name| format_ident!("{}", name))
+                    .collect();
+
                 quote! {
                     #meta
-                    impl #class_name {
+                    impl<#(#generics: Message),*> #class_name<#(#generics),*> {
                         #(#methods)*
                     }
                 }

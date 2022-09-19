@@ -92,7 +92,7 @@ impl NSObject {
     }
 }
 #[doc = "NSKeyValueCoding"]
-impl NSArray {
+impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn valueForKey(&self, key: &NSString) -> Id<Object, Shared> {
         msg_send_id![self, valueForKey: key]
     }
@@ -101,19 +101,19 @@ impl NSArray {
     }
 }
 #[doc = "NSKeyValueCoding"]
-impl NSDictionary {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn valueForKey(&self, key: &NSString) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, valueForKey: key]
     }
 }
 #[doc = "NSKeyValueCoding"]
-impl NSMutableDictionary {
+impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectType> {
     pub unsafe fn setValue_forKey(&self, value: Option<&ObjectType>, key: &NSString) {
         msg_send![self, setValue: value, forKey: key]
     }
 }
 #[doc = "NSKeyValueCoding"]
-impl NSOrderedSet {
+impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn valueForKey(&self, key: &NSString) -> Id<Object, Shared> {
         msg_send_id![self, valueForKey: key]
     }
@@ -122,7 +122,7 @@ impl NSOrderedSet {
     }
 }
 #[doc = "NSKeyValueCoding"]
-impl NSSet {
+impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn valueForKey(&self, key: &NSString) -> Id<Object, Shared> {
         msg_send_id![self, valueForKey: key]
     }

@@ -8,14 +8,14 @@ use crate::Foundation::generated::NSObject::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSDictionary;
-    unsafe impl ClassType for NSDictionary {
+    pub struct NSDictionary<KeyType: Message, ObjectType: Message>;
+    unsafe impl<KeyType: Message, ObjectType: Message> ClassType for NSDictionary<KeyType, ObjectType> {
         type Super = NSObject;
     }
 );
-impl NSDictionary {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn objectForKey(&self, aKey: &KeyType) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, objectForKey: aKey]
     }
@@ -41,7 +41,7 @@ impl NSDictionary {
     }
 }
 #[doc = "NSExtendedDictionary"]
-impl NSDictionary {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn allKeysForObject(&self, anObject: &ObjectType) -> TodoGenerics {
         msg_send![self, allKeysForObject: anObject]
     }
@@ -137,7 +137,7 @@ impl NSDictionary {
     }
 }
 #[doc = "NSDeprecated"]
-impl NSDictionary {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn getObjects_andKeys(&self, objects: TodoArray, keys: TodoArray) {
         msg_send![self, getObjects: objects, andKeys: keys]
     }
@@ -161,7 +161,7 @@ impl NSDictionary {
     }
 }
 #[doc = "NSDictionaryCreation"]
-impl NSDictionary {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn dictionary() -> Id<Self, Shared> {
         msg_send_id![Self::class(), dictionary]
     }
@@ -227,14 +227,16 @@ impl NSDictionary {
         ]
     }
 }
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMutableDictionary;
-    unsafe impl ClassType for NSMutableDictionary {
+    pub struct NSMutableDictionary<KeyType: Message, ObjectType: Message>;
+    unsafe impl<KeyType: Message, ObjectType: Message> ClassType
+        for NSMutableDictionary<KeyType, ObjectType>
+    {
         type Super = NSDictionary;
     }
 );
-impl NSMutableDictionary {
+impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectType> {
     pub unsafe fn removeObjectForKey(&self, aKey: &KeyType) {
         msg_send![self, removeObjectForKey: aKey]
     }
@@ -252,7 +254,7 @@ impl NSMutableDictionary {
     }
 }
 #[doc = "NSExtendedMutableDictionary"]
-impl NSMutableDictionary {
+impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectType> {
     pub unsafe fn addEntriesFromDictionary(&self, otherDictionary: TodoGenerics) {
         msg_send![self, addEntriesFromDictionary: otherDictionary]
     }
@@ -270,7 +272,7 @@ impl NSMutableDictionary {
     }
 }
 #[doc = "NSMutableDictionaryCreation"]
-impl NSMutableDictionary {
+impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectType> {
     pub unsafe fn dictionaryWithCapacity(numItems: NSUInteger) -> Id<Self, Shared> {
         msg_send_id![Self::class(), dictionaryWithCapacity: numItems]
     }
@@ -288,19 +290,19 @@ impl NSMutableDictionary {
     }
 }
 #[doc = "NSSharedKeySetDictionary"]
-impl NSDictionary {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn sharedKeySetForKeys(keys: TodoGenerics) -> Id<Object, Shared> {
         msg_send_id![Self::class(), sharedKeySetForKeys: keys]
     }
 }
 #[doc = "NSSharedKeySetDictionary"]
-impl NSMutableDictionary {
+impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectType> {
     pub unsafe fn dictionaryWithSharedKeySet(keyset: &Object) -> TodoGenerics {
         msg_send![Self::class(), dictionaryWithSharedKeySet: keyset]
     }
 }
 #[doc = "NSGenericFastEnumeraiton"]
-impl NSDictionary {
+impl<K: Message, V: Message> NSDictionary<K, V> {
     pub unsafe fn countByEnumeratingWithState_objects_count(
         &self,
         state: NonNull<NSFastEnumerationState>,

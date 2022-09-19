@@ -4,14 +4,14 @@ use crate::Foundation::generated::NSUnit::*;
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
-extern_class!(
+__inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMeasurement;
-    unsafe impl ClassType for NSMeasurement {
+    pub struct NSMeasurement<UnitType: Message>;
+    unsafe impl<UnitType: Message> ClassType for NSMeasurement<UnitType> {
         type Super = NSObject;
     }
 );
-impl NSMeasurement {
+impl<UnitType: Message> NSMeasurement<UnitType> {
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
