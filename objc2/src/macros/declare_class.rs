@@ -1,11 +1,15 @@
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_declare_class {
-    {@rewrite_methods @($($output:tt)*)} => {};
+macro_rules! __declare_class_rewrite_methods {
     {
-        // Unsafe variant
-        @rewrite_methods
-        @($($output:tt)*)
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
+    } => {};
+
+    // Unsafe variant
+    {
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
 
         $(#[$($m:tt)*])*
         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
@@ -13,12 +17,12 @@ macro_rules! __inner_declare_class {
         $($rest:tt)*
     } => {
         $crate::__rewrite_self_arg! {
-            ($crate::__inner_declare_class)
+            ($($macro)*)
             ($($args)*)
 
             // Split the function into parts, and send the arguments down to
             // be used later on
-            @$($output)*
+            @($($macro_arguments)*)
             @($(#[$($m)*])*)
             @(unsafe extern "C")
             @($name)
@@ -29,17 +33,18 @@ macro_rules! __inner_declare_class {
             // Will add @(args_rest)
         }
 
-        $crate::__inner_declare_class! {
-            @rewrite_methods
-            @($($output)*)
+        $crate::__declare_class_rewrite_methods! {
+            @($($macro)*)
+            @($($macro_arguments)*)
 
             $($rest)*
         }
     };
+
+    // Safe variant
     {
-        // Safe variant
-        @rewrite_methods
-        @($($output:tt)*)
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
 
         $(#[$($m:tt)*])*
         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
@@ -47,9 +52,10 @@ macro_rules! __inner_declare_class {
         $($rest:tt)*
     } => {
         $crate::__rewrite_self_arg! {
-            ($crate::__inner_declare_class)
+            ($($macro)*)
             ($($args)*)
-            @$($output)*
+
+            @($($macro_arguments)*)
             @($(#[$($m)*])*)
             @(extern "C")
             @($name)
@@ -59,16 +65,20 @@ macro_rules! __inner_declare_class {
             // Same as above
         }
 
-        $crate::__inner_declare_class! {
-            @rewrite_methods
-            @($($output)*)
+        $crate::__declare_class_rewrite_methods! {
+            @($($macro)*)
+            @($($macro_arguments)*)
 
             $($rest)*
         }
     };
+}
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_method_out {
     {
-        @method_out
+        @() // No arguments needed
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -79,11 +89,11 @@ macro_rules! __inner_declare_class {
         @($($args_rest:tt)*)
     } => {
         $crate::__fn_args! {
-            ($crate::__inner_declare_class)
+            ($crate::__declare_class_method_out)
             ($($args_rest)*,)
             ()
             ()
-            @method_out_inner
+            @inner
             @($(#[$($m)*])*)
             @($($qualifiers)*)
             @($name)
@@ -98,7 +108,7 @@ macro_rules! __inner_declare_class {
 
     // No return type
     {
-        @method_out_inner
+        @inner
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -118,9 +128,10 @@ macro_rules! __inner_declare_class {
             })
         }
     };
+
     // With return type
     {
-        @method_out_inner
+        @inner
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -140,9 +151,14 @@ macro_rules! __inner_declare_class {
             })
         }
     };
+}
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_register_out {
+    // Class method
     {
-        @register_out($builder:ident)
+        @($builder:ident)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -155,7 +171,7 @@ macro_rules! __inner_declare_class {
         $builder.add_class_method(
             $crate::__attribute_helper! {
                 @extract_sel
-                ($crate::__inner_declare_class)
+                ($crate::__declare_class_register_out)
                 ($(#[$($m)*])*)
                 @call_sel
             },
@@ -164,8 +180,10 @@ macro_rules! __inner_declare_class {
             },
         );
     };
+
+    // Instance method
     {
-        @register_out($builder:ident)
+        @($builder:ident)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -178,7 +196,7 @@ macro_rules! __inner_declare_class {
         $builder.add_method(
             $crate::__attribute_helper! {
                 @extract_sel
-                ($crate::__inner_declare_class)
+                ($crate::__declare_class_register_out)
                 ($(#[$($m)*])*)
                 @call_sel
             },
@@ -721,9 +739,9 @@ macro_rules! __declare_class_methods {
     ) => {
         $(#[$m])*
         impl $for {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @(method_out)
+            $crate::__declare_class_rewrite_methods! {
+                @($crate::__declare_class_method_out)
+                @()
                 $($methods)*
             }
         }
@@ -746,9 +764,9 @@ macro_rules! __declare_class_methods {
     ) => {
         $(#[$m])*
         impl $for {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @(method_out)
+            $crate::__declare_class_rewrite_methods! {
+                @($crate::__declare_class_method_out)
+                @()
                 $($methods)*
             }
         }
@@ -783,9 +801,9 @@ macro_rules! __declare_class_methods {
 
         // SAFETY: Upheld by caller
         unsafe {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @(register_out($builder))
+            $crate::__declare_class_rewrite_methods! {
+                @($crate::__declare_class_register_out)
+                @($builder)
 
                 $($methods)*
             }
@@ -809,9 +827,9 @@ macro_rules! __declare_class_methods {
     ) => {
         // SAFETY: Upheld by caller
         unsafe {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @(register_out($builder))
+            $crate::__declare_class_rewrite_methods! {
+                @($crate::__declare_class_register_out)
+                @($builder)
 
                 $($methods)*
             }
