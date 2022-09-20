@@ -379,7 +379,17 @@ impl Class {
         }
     }
 
-    // fn class_method(&self, sel: Sel) -> Option<&Method>;
+    /// Returns a specified class method for self, or [`None`] if self and
+    /// its superclasses do not contain a class method with the specified
+    /// selector.
+    ///
+    /// Same as `cls.metaclass().class_method()`.
+    pub fn class_method(&self, sel: Sel) -> Option<&Method> {
+        unsafe {
+            let method = ffi::class_getClassMethod(self.as_ptr(), sel.as_ptr());
+            method.cast::<Method>().as_ref()
+        }
+    }
 
     /// Returns the ivar for a specified instance variable of self, or
     /// [`None`] if self has no ivar with the given name.
@@ -881,7 +891,7 @@ mod tests {
     }
 
     #[test]
-    fn test_method() {
+    fn test_instance_method() {
         let cls = test_utils::custom_class();
         let sel = Sel::register("foo");
         let method = cls.instance_method(sel).unwrap();
@@ -892,8 +902,26 @@ mod tests {
             assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
             assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
 
-            let methods = cls.instance_methods();
-            assert!(methods.len() > 0);
+            assert!(cls.instance_methods().into_iter().any(|m| *m == method));
+        }
+    }
+
+    #[test]
+    fn test_class_method() {
+        let cls = test_utils::custom_class();
+        let method = cls.class_method(sel!(classFoo)).unwrap();
+        assert_eq!(method.name().name(), "classFoo");
+        assert_eq!(method.arguments_count(), 2);
+        #[cfg(feature = "malloc")]
+        {
+            assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
+            assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
+
+            assert!(cls
+                .metaclass()
+                .instance_methods()
+                .into_iter()
+                .any(|m| *m == method));
         }
     }
 
