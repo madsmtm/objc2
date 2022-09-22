@@ -109,3 +109,32 @@ pub unsafe trait ClassType: Message {
         unsafe { msg_send_id![Self::class(), alloc] }
     }
 }
+
+/// TODO
+pub unsafe trait SubclassOf<Super: ClassType> {}
+
+unsafe impl<T> SubclassOf<T> for T {}
+
+unsafe impl<T: ClassType> SubclassOf<T::Super> for T where T::Super: ClassType {}
+
+unsafe impl<T: ClassType> SubclassOf<<T::Super as ClassType>::Super> for T
+where
+    T::Super: ClassType,
+    <T::Super as ClassType>::Super: ClassType,
+{
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::foundation::{NSMutableString, NSObject, NSString};
+
+    fn assert_subclass_of<T: SubclassOf<C>, C: ClassType>() {}
+
+    #[test]
+    fn test_subclass_of() {
+        assert_subclass_of::<NSString, NSObject>();
+        assert_subclass_of::<NSMutableString, NSObject>();
+        assert_subclass_of::<NSMutableString, NSString>();
+    }
+}

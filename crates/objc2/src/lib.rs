@@ -195,7 +195,7 @@ pub use objc_sys as ffi;
 #[doc(no_inline)]
 pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
-pub use crate::class_type::ClassType;
+pub use crate::class_type::{ClassType, SubclassOf};
 pub use crate::message::{Message, MessageArguments, MessageReceiver};
 pub use crate::protocol::{ConformsTo, ProtocolType};
 pub use crate::verify::VerificationError;
