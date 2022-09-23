@@ -542,6 +542,17 @@ impl ClassBuilder {
 
 impl Drop for ClassBuilder {
     fn drop(&mut self) {
+        // Disposing un-registered classes doesn't work properly on GNUStep,
+        // so we register the class before disposing it.
+        //
+        // Doing it this way is _technically_ a race-condition, since other
+        // code could read e.g. `Class::classes()` and then pick the class
+        // before it got disposed - but let's not worry about that for now.
+        #[cfg(feature = "gnustep-1-7")]
+        unsafe {
+            ffi::objc_registerClassPair(self.as_mut_ptr());
+        }
+
         unsafe { ffi::objc_disposeClassPair(self.as_mut_ptr()) }
     }
 }
@@ -661,9 +672,7 @@ mod tests {
     #[should_panic = "Failed to add ivar xyz"]
     fn duplicate_ivar() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderDuplicateIvar", cls).unwrap();
-        // ManuallyDrop to work around GNUStep issue
-        let mut builder = ManuallyDrop::new(builder);
+        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateIvar", cls).unwrap();
 
         builder.add_ivar::<i32>("xyz");
         // Should panic:
@@ -674,8 +683,7 @@ mod tests {
     #[should_panic = "Failed to add method xyz"]
     fn duplicate_method() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderDuplicateMethod", cls).unwrap();
-        let mut builder = ManuallyDrop::new(builder);
+        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateMethod", cls).unwrap();
 
         extern "C" fn xyz(_this: &Object, _cmd: Sel) {}
 
@@ -693,8 +701,7 @@ mod tests {
     )]
     fn invalid_method() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderInvalidMethod", cls).unwrap();
-        let mut builder = ManuallyDrop::new(builder);
+        let mut builder = ClassBuilder::new("TestClassBuilderInvalidMethod", cls).unwrap();
 
         extern "C" fn foo(_this: &Object, _cmd: Sel) -> i32 {
             0
@@ -712,8 +719,7 @@ mod tests {
     )]
     fn invalid_class_method() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderInvalidClassMethod", cls).unwrap();
-        let mut builder = ManuallyDrop::new(builder);
+        let mut builder = ClassBuilder::new("TestClassBuilderInvalidClassMethod", cls).unwrap();
 
         extern "C" fn class_foo(_cls: &Class, _cmd: Sel) -> i32 {
             0
@@ -728,8 +734,7 @@ mod tests {
     #[should_panic = "Failed to add protocol NSObject"]
     fn duplicate_protocol() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
-        let mut builder = ManuallyDrop::new(builder);
+        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
 
         let protocol = Protocol::get("NSObject").unwrap();
 
@@ -739,10 +744,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        feature = "gnustep-1-7",
-        ignore = "Dropping ClassBuilder has weird threading side effects on GNUStep"
-    )]
     fn test_classbuilder_drop() {
         let cls = test_utils::custom_class();
         let builder = ClassBuilder::new("TestClassBuilderDrop", cls).unwrap();
