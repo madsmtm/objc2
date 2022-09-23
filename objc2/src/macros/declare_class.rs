@@ -377,6 +377,16 @@ macro_rules! __fn_args {
 /// definition to make things easier to read.
 ///
 ///
+/// # Panics
+///
+/// The implemented `ClassType::class` method may panic in a few cases, such
+/// as if:
+/// - A class with the name specified with `const NAME` already exists.
+/// - One of the
+/// - The `verify_message` feature is enabled, and an overriden method's
+///   signature is not equal to the superclass'.
+///
+///
 /// # Safety
 ///
 /// Using this macro requires writing a few `unsafe` markers:
@@ -800,6 +810,7 @@ macro_rules! __declare_class_methods {
         );
 
         // SAFETY: Upheld by caller
+        #[allow(unused_unsafe)]
         unsafe {
             $crate::__declare_class_rewrite_methods! {
                 @($crate::__declare_class_register_out)
@@ -826,6 +837,7 @@ macro_rules! __declare_class_methods {
         $($rest:tt)*
     ) => {
         // SAFETY: Upheld by caller
+        #[allow(unused_unsafe)]
         unsafe {
             $crate::__declare_class_rewrite_methods! {
                 @($crate::__declare_class_register_out)

@@ -644,8 +644,9 @@ impl ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::msg_send;
+    use crate::foundation::{NSObject, NSZone};
     use crate::test_utils;
+    use crate::{declare_class, msg_send, ClassType};
 
     #[test]
     fn test_classbuilder_duplicate() {
@@ -789,5 +790,82 @@ mod tests {
         let cls = test_utils::custom_class();
         let result: u32 = unsafe { msg_send![cls, classFoo] };
         assert_eq!(result, 7);
+    }
+
+    #[test]
+    #[should_panic = "could not create new class TestDeclareClassDuplicate. Perhaps a class with that name already exists?"]
+    fn test_declare_class_duplicate() {
+        declare_class!(
+            struct Custom1 {}
+
+            unsafe impl ClassType for Custom1 {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassDuplicate";
+            }
+        );
+
+        declare_class!(
+            struct Custom2 {}
+
+            unsafe impl ClassType for Custom2 {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassDuplicate";
+            }
+        );
+
+        let _cls = Custom1::class();
+        // Should panic
+        let _cls = Custom2::class();
+    }
+
+    #[test]
+    #[should_panic = "could not find protocol NotAProtocolName"]
+    fn test_declare_class_protocol_not_found() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassProtocolNotFound";
+            }
+
+            // Implementing this should work
+            unsafe impl Protocol<NSCopying> for Custom {
+                #[sel(copyWithZone:)]
+                #[allow(unreachable_code)]
+                fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
+                    unimplemented!()
+                }
+            }
+
+            // But this should fail
+            unsafe impl Protocol<NotAProtocolName> for Custom {}
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "declared invalid method -[TestDeclareClassInvalidMethod description]: expected return to have type code @, but found v"
+    )]
+    fn test_declare_class_invalid_method() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassInvalidMethod";
+            }
+
+            unsafe impl Custom {
+                // Override `description` with a bad return type
+                #[sel(description)]
+                fn description(&self) {}
+            }
+        );
+
+        let _cls = Custom::class();
     }
 }
