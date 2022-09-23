@@ -68,13 +68,13 @@ mod tests {
     use super::*;
     use crate::foundation::NSObject;
     use crate::msg_send_id;
-    use crate::rc::{Allocated, Id, Owned};
+    use crate::rc::Allocated;
     use crate::ClassType;
 
     #[test]
     fn alloc_with_zone() {
         let zone: *const NSZone = ptr::null();
-        let _obj: Id<Allocated<NSObject>, Owned> =
+        let _obj: Allocated<NSObject> =
             unsafe { msg_send_id![NSObject::class(), allocWithZone: zone] };
     }
 

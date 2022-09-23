@@ -5,7 +5,7 @@ use objc2::runtime::{Class, Object};
 
 fn main() {
     let obj: &Object;
-    let _: Id<Allocated<Object>, Shared> = unsafe { msg_send_id![obj, alloc] };
+    let _: Allocated<Object> = unsafe { msg_send_id![obj, alloc] };
     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
 
     let cls: &Class;

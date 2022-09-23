@@ -529,7 +529,7 @@ handle_autoreleased_fallible:
 	.p2align	2
 .Lanon.[ID].3:
 	.long	.Lanon.[ID].0
-	.asciz	",\000\000\000'\000\000\000\005\000\000"
+	.asciz	",\000\000\000!\000\000\000\005\000\000"
 	.size	.Lanon.[ID].3, 16
 
 	.type	.Lanon.[ID].4,@object
@@ -537,7 +537,7 @@ handle_autoreleased_fallible:
 	.p2align	2
 .Lanon.[ID].4:
 	.long	.Lanon.[ID].0
-	.asciz	",\000\000\000F\000\000\000\005\000\000"
+	.asciz	",\000\000\000@\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 16
 
 	.type	.Lanon.[ID].5,@object
@@ -545,7 +545,7 @@ handle_autoreleased_fallible:
 	.p2align	2
 .Lanon.[ID].5:
 	.long	.Lanon.[ID].0
-	.asciz	",\000\000\000P\000\000\000\005\000\000"
+	.asciz	",\000\000\000J\000\000\000\005\000\000"
 	.size	.Lanon.[ID].5, 16
 
 	.section	".note.GNU-stack","",@progbits

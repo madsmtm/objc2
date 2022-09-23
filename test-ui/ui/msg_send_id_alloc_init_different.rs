@@ -6,7 +6,7 @@ use objc2::runtime::Object;
 
 fn main() {
     let cls = class!(NSObject);
-    let obj: Option<Id<Allocated<NSObject>, Shared>> = unsafe { msg_send_id![cls, alloc] };
+    let obj: Option<Allocated<NSObject>> = unsafe { msg_send_id![cls, alloc] };
 
     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
 }

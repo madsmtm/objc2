@@ -278,8 +278,7 @@ mod tests {
     fn test_alloc_dealloc() {
         let expected = ThreadTestData::current();
 
-        let obj: Id<Allocated<IvarTester>, Owned> =
-            unsafe { msg_send_id![IvarTester::class(), alloc] };
+        let obj: Allocated<IvarTester> = unsafe { msg_send_id![IvarTester::class(), alloc] };
         expected.assert_current();
 
         drop(obj);

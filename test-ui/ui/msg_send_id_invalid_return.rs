@@ -1,7 +1,7 @@
 //! Test compiler output with invalid msg_send_id return values.
 use objc2::foundation::NSObject;
 use objc2::msg_send_id;
-use objc2::rc::{Allocated, Id, Owned, Shared};
+use objc2::rc::{Allocated, Id, Shared};
 use objc2::runtime::{Class, Object};
 
 fn main() {
@@ -11,17 +11,17 @@ fn main() {
     let _: Option<Id<Class, Shared>> = unsafe { msg_send_id![cls, new] };
 
     let _: &Object = unsafe { msg_send_id![cls, alloc] };
-    let _: Id<Allocated<Class>, Shared> = unsafe { msg_send_id![cls, alloc] };
+    let _: Allocated<Class> = unsafe { msg_send_id![cls, alloc] };
     let _: Id<Object, Shared> = unsafe { msg_send_id![cls, alloc] };
+    // Earlier design worked like this
+    let _: Id<Allocated<Object>, Shared> = unsafe { msg_send_id![cls, alloc] };
 
-    let obj: Option<Id<Allocated<Object>, Shared>>;
+    let obj: Option<Allocated<Object>>;
     let _: &Object = unsafe { msg_send_id![obj, init] };
-    let obj: Option<Id<Allocated<Object>, Shared>>;
+    let obj: Option<Allocated<Object>>;
     let _: Id<Class, Shared> = unsafe { msg_send_id![obj, init] };
-    let obj: Option<Id<Allocated<Object>, Shared>>;
+    let obj: Option<Allocated<Object>>;
     let _: Id<NSObject, Shared> = unsafe { msg_send_id![obj, init] };
-    let obj: Option<Id<Allocated<Object>, Shared>>;
-    let _: Id<Object, Owned> = unsafe { msg_send_id![obj, init] };
 
     let obj: &Object;
     let _: &Object = unsafe { msg_send_id![obj, copy] };
