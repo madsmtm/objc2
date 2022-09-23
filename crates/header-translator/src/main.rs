@@ -1,13 +1,12 @@
 use std::collections::{BTreeMap, HashSet};
 use std::fs;
-use std::io::{Result, Write};
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
-use clang::source::File;
-use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
+use clang::{Clang, Entity, EntityVisitResult, Index};
 use proc_macro2::{Ident, TokenStream};
-use quote::{format_ident, quote, TokenStreamExt};
+use quote::{format_ident, quote};
 
 use header_translator::{create_rust_file, Config};
 
@@ -100,7 +99,7 @@ fn main() {
     dbg!(&entity);
     dbg!(entity.get_availability());
 
-    let mut entities_left = usize::MAX;
+    let _entities_left = usize::MAX;
 
     let mut result: BTreeMap<PathBuf, Vec<Entity<'_>>> = BTreeMap::new();
 
@@ -191,7 +190,7 @@ fn main() {
         }
     });
 
-    let mut mod_tokens = quote! {
+    let mod_tokens = quote! {
         #(pub(crate) mod #mod_names;)*
 
         mod __exported {

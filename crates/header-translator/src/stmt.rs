@@ -54,14 +54,9 @@ impl Stmt {
             EntityKind::InclusionDirective => {
                 // let file = entity.get_file().expect("inclusion file");
                 let name = entity.get_name().expect("inclusion name");
-                let mut iter = name.split("/");
+                let mut iter = name.split('/');
                 let framework = iter.next().expect("inclusion name has framework");
-                let file = if let Some(file) = iter.next() {
-                    file
-                } else {
-                    // Ignore
-                    return None;
-                };
+                let file = iter.next()?;
                 assert!(iter.count() == 0, "no more left");
 
                 Some(Self::FileImport {
@@ -78,10 +73,7 @@ impl Stmt {
                 // We intentionally don't handle generics here
                 Some(Self::ItemImport { name })
             }
-            EntityKind::MacroExpansion
-            | EntityKind::ObjCClassRef
-            | EntityKind::ObjCProtocolRef
-            | EntityKind::MacroDefinition => None,
+            EntityKind::MacroExpansion | EntityKind::MacroDefinition => None,
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let name = entity.get_name().expect("class name");
@@ -329,10 +321,10 @@ impl ToTokens for Stmt {
             }
             Self::ClassDecl {
                 name,
-                availability,
+                availability: _,
                 superclass,
                 generics,
-                protocols,
+                protocols: _,
                 methods,
             } => {
                 let name = format_ident!("{}", name);
@@ -381,10 +373,10 @@ impl ToTokens for Stmt {
             }
             Self::CategoryDecl {
                 class_name,
-                availability,
+                availability: _,
                 name,
                 generics,
-                protocols,
+                protocols: _,
                 methods,
             } => {
                 let meta = if let Some(name) = name {
@@ -408,9 +400,9 @@ impl ToTokens for Stmt {
             }
             Self::ProtocolDecl {
                 name,
-                availability,
-                protocols,
-                methods,
+                availability: _,
+                protocols: _,
+                methods: _,
             } => {
                 let name = format_ident!("{}", name);
 

@@ -21,23 +21,13 @@ impl MemoryManagement {
     /// in a way that we can just use `msg_send_id!`.
     fn verify_sel(self, sel: &str) {
         let bytes = sel.as_bytes();
-        if in_selector_family(bytes, b"new") {
-            assert!(
-                self == Self::ReturnsRetained,
-                "{:?} did not match {}",
-                self,
-                sel
-            );
-        } else if in_selector_family(bytes, b"alloc") {
-            assert!(
-                self == Self::ReturnsRetained,
-                "{:?} did not match {}",
-                self,
-                sel
-            );
-        } else if in_selector_family(bytes, b"init") {
+        if in_selector_family(bytes, b"init") {
             assert!(self == Self::Init, "{:?} did not match {}", self, sel);
-        } else if in_selector_family(bytes, b"copy") || in_selector_family(bytes, b"mutableCopy") {
+        } else if in_selector_family(bytes, b"new")
+            || in_selector_family(bytes, b"alloc")
+            || in_selector_family(bytes, b"copy")
+            || in_selector_family(bytes, b"mutableCopy")
+        {
             assert!(
                 self == Self::ReturnsRetained,
                 "{:?} did not match {}",
@@ -240,7 +230,7 @@ impl ToTokens for Method {
         let arguments: Vec<_> = self
             .arguments
             .iter()
-            .map(|(param, ty)| (format_ident!("{}", handle_reserved(&param)), ty))
+            .map(|(param, ty)| (format_ident!("{}", handle_reserved(param)), ty))
             .collect();
 
         let fn_args = arguments

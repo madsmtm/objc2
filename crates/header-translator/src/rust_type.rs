@@ -211,11 +211,11 @@ impl RustType {
                                 match Self::parse(param, false, false) {
                                     Self::Id {
                                         type_,
-                                        is_return,
-                                        nullability,
+                                        is_return: _,
+                                        nullability: _,
                                     } => type_,
                                     // TODO: Handle this better
-                                    Self::Class { nullability } => GenericType {
+                                    Self::Class { nullability: _ } => GenericType {
                                         name: "TodoClass".to_string(),
                                         generics: Vec::new(),
                                     },
@@ -384,7 +384,7 @@ impl ToTokens for RustType {
                 let tokens = match &**pointee {
                     Self::Id {
                         type_,
-                        is_return,
+                        is_return: _,
                         nullability,
                     } => {
                         if *nullability == Nullability::NonNull {
@@ -398,12 +398,10 @@ impl ToTokens for RustType {
                 };
                 if *nullability == Nullability::NonNull {
                     quote!(NonNull<#tokens>)
+                } else if *is_const {
+                    quote!(*const #tokens)
                 } else {
-                    if *is_const {
-                        quote!(*const #tokens)
-                    } else {
-                        quote!(*mut #tokens)
-                    }
+                    quote!(*mut #tokens)
                 }
             }
             Array {
