@@ -80,7 +80,7 @@ type CopyOrMutCopy = RetainSemantics<false, false, false, true>;
 type Other = RetainSemantics<false, false, false, false>;
 
 pub trait MsgSendId<T, U> {
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -90,7 +90,7 @@ pub trait MsgSendId<T, U> {
 impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>> for New {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Id<U, O>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -110,7 +110,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 impl<T: ?Sized + Message> MsgSendId<&'_ Class, Allocated<T>> for Alloc {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Allocated<T>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &Class,
         sel: Sel,
         args: A,
@@ -126,7 +126,7 @@ impl<T: ?Sized + Message> MsgSendId<&'_ Class, Allocated<T>> for Alloc {
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Allocated<T>>, Id<T, O>> for Init {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Id<T, O>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<T, O>>>(
         obj: Option<Allocated<T>>,
         sel: Sel,
         args: A,
@@ -150,7 +150,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Id<U, O>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -167,7 +167,7 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>> for Other {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Id<U, O>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -188,11 +188,14 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>> for Ot
     }
 }
 
-pub trait MaybeUnwrap<T> {
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<T>, args: F::Args) -> Self;
+pub trait MaybeUnwrap {
+    type Input;
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Self::Input>, args: F::Args) -> Self;
 }
 
-impl<T: ?Sized, O: Ownership> MaybeUnwrap<Id<T, O>> for Option<Id<T, O>> {
+impl<T: ?Sized, O: Ownership> MaybeUnwrap for Option<Id<T, O>> {
+    type Input = Id<T, O>;
+
     #[inline]
     #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T, O>>, _args: F::Args) -> Self {
@@ -200,7 +203,9 @@ impl<T: ?Sized, O: Ownership> MaybeUnwrap<Id<T, O>> for Option<Id<T, O>> {
     }
 }
 
-impl<T: ?Sized, O: Ownership> MaybeUnwrap<Id<T, O>> for Id<T, O> {
+impl<T: ?Sized, O: Ownership> MaybeUnwrap for Id<T, O> {
+    type Input = Id<T, O>;
+
     #[inline]
     #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T, O>>, args: F::Args) -> Self {
@@ -211,7 +216,9 @@ impl<T: ?Sized, O: Ownership> MaybeUnwrap<Id<T, O>> for Id<T, O> {
     }
 }
 
-impl<T: ?Sized> MaybeUnwrap<Allocated<T>> for Option<Allocated<T>> {
+impl<T: ?Sized> MaybeUnwrap for Option<Allocated<T>> {
+    type Input = Allocated<T>;
+
     #[inline]
     #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Allocated<T>>, _args: F::Args) -> Self {
@@ -219,7 +226,9 @@ impl<T: ?Sized> MaybeUnwrap<Allocated<T>> for Option<Allocated<T>> {
     }
 }
 
-impl<T: ?Sized> MaybeUnwrap<Allocated<T>> for Allocated<T> {
+impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
+    type Input = Allocated<T>;
+
     #[inline]
     #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Allocated<T>>, args: F::Args) -> Self {
