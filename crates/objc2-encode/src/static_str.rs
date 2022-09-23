@@ -53,11 +53,11 @@ pub(crate) const fn static_encoding_str_len(encoding: &Encoding, level: NestingL
         }
         Container(_, name, items) => {
             let mut res = 1 + name.len();
-            if let Some(level) = level.container() {
+            if level.include_container_fields() {
                 res += 1;
                 let mut i = 0;
                 while i < items.len() {
-                    res += static_encoding_str_len(&items[i], level);
+                    res += static_encoding_str_len(&items[i], level.container());
                     i += 1;
                 }
             }
@@ -151,17 +151,18 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 name_i += 1;
             }
 
-            if let Some(level) = level.container() {
+            if level.include_container_fields() {
                 res[res_i] = b'=';
                 res_i += 1;
 
                 let mut items_i = 0;
                 while items_i < items.len() {
                     // We use LEN even though it creates an oversized array
-                    let field_res = static_encoding_str_array::<LEN>(&items[items_i], level);
+                    let field_res =
+                        static_encoding_str_array::<LEN>(&items[items_i], level.container());
 
                     let mut item_res_i = 0;
-                    while item_res_i < static_encoding_str_len(&items[items_i], level) {
+                    while item_res_i < static_encoding_str_len(&items[items_i], level.container()) {
                         res[res_i] = field_res[item_res_i];
                         res_i += 1;
                         item_res_i += 1;

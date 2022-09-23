@@ -3,7 +3,7 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt;
 
-use crate::helper::{Helper, NestingLevel};
+use crate::helper::{compare_encodings, Helper, NestingLevel};
 use crate::Encoding;
 
 /// The boxed version of [`Encoding`].
@@ -109,5 +109,51 @@ impl EncodingBox {
 impl fmt::Display for EncodingBox {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         Helper::from_box(self).display_fmt(f, NestingLevel::new())
+    }
+}
+
+impl PartialEq<Encoding> for EncodingBox {
+    fn eq(&self, other: &Encoding) -> bool {
+        compare_encodings(self, other, NestingLevel::new(), true)
+    }
+}
+
+impl PartialEq<EncodingBox> for Encoding {
+    fn eq(&self, other: &EncodingBox) -> bool {
+        other.eq(self)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use alloc::string::ToString;
+    use alloc::vec;
+
+    #[test]
+    fn eq_encodings() {
+        let enc1 = Encoding::Char;
+        let enc2 = EncodingBox::Char;
+        let enc3 = EncodingBox::String;
+        assert_eq!(enc1, enc2);
+        assert_ne!(enc1, enc3);
+    }
+
+    #[test]
+    fn eq_complex_encodings() {
+        let enc1 = Encoding::Atomic(&Encoding::Struct(
+            "test",
+            &[Encoding::Array(2, &Encoding::Int)],
+        ));
+        let enc2 = EncodingBox::Atomic(Box::new(EncodingBox::Struct(
+            "test".to_string(),
+            vec![EncodingBox::Array(2, Box::new(EncodingBox::Int))],
+        )));
+        let enc3 = EncodingBox::Atomic(Box::new(EncodingBox::Struct(
+            "test".to_string(),
+            vec![EncodingBox::Array(2, Box::new(EncodingBox::Char))],
+        )));
+        assert_eq!(enc1, enc2);
+        assert_ne!(enc1, enc3);
     }
 }

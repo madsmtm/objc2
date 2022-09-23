@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::helper::{Helper, NestingLevel};
+use crate::helper::{compare_encodings, Helper, NestingLevel};
 use crate::parse;
 
 /// An Objective-C type-encoding.
@@ -178,7 +178,7 @@ impl Encoding {
     /// For example, you should not rely on two equivalent encodings to have
     /// the same size or ABI - that is provided on a best-effort basis.
     pub fn equivalent_to(&self, other: &Self) -> bool {
-        equivalent_to(self, other, NestingLevel::new())
+        compare_encodings(self, other, NestingLevel::new(), false)
     }
 
     /// Check if an encoding is equivalent to the given string representation.
@@ -210,45 +210,6 @@ impl Encoding {
         // TODO: Allow missing/"?" names in structs and unions?
 
         parse::rm_enc_prefix(s, self, NestingLevel::new())
-    }
-}
-
-fn equivalent_to(enc1: &Encoding, enc2: &Encoding, level: NestingLevel) -> bool {
-    // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
-    // should compare equal, but we don't bother since in practice a plain
-    // `Unknown` will never appear.
-    use Helper::*;
-    match (Helper::new(enc1), Helper::new(enc2)) {
-        (Primitive(p1), Primitive(p2)) => p1 == p2,
-        (BitField(b1, type1), BitField(b2, type2)) => {
-            b1 == b2 && equivalent_to(type1, type2, level.bitfield())
-        }
-        (Indirection(kind1, t1), Indirection(kind2, t2)) => {
-            kind1 == kind2 && equivalent_to(t1, t2, level.indirection(kind1))
-        }
-        (Array(len1, item1), Array(len2, item2)) => {
-            len1 == len2 && equivalent_to(item1, item2, level.array())
-        }
-        (Container(kind1, name1, fields1), Container(kind2, name2, fields2)) => {
-            if kind1 != kind2 {
-                return false;
-            }
-            if name1 != name2 {
-                return false;
-            }
-            if let Some(level) = level.container() {
-                if fields1.len() != fields2.len() {
-                    return false;
-                }
-                for (field1, field2) in fields1.iter().zip(fields2.iter()) {
-                    if !equivalent_to(field1, field2, level) {
-                        return false;
-                    }
-                }
-            }
-            true
-        }
-        (_, _) => false,
     }
 }
 

@@ -42,10 +42,10 @@ pub(crate) fn rm_enc_prefix<'a>(
             let mut s = s;
             s = s.strip_prefix(kind.start())?;
             s = s.strip_prefix(name)?;
-            if let Some(level) = level.container() {
+            if level.include_container_fields() {
                 s = s.strip_prefix('=')?;
                 for field in fields {
-                    s = rm_enc_prefix(s, field, level)?;
+                    s = rm_enc_prefix(s, field, level.container())?;
                 }
             }
             s.strip_prefix(kind.end())

@@ -38,15 +38,61 @@ impl NestingLevel {
         self
     }
 
-    pub(crate) const fn container(self) -> Option<Self> {
+    pub(crate) const fn container(self) -> Self {
         match self {
-            // Move one step down, and output
-            Self::Top => Some(Self::Within),
-            // Output
-            Self::Within => Some(Self::Within),
-            // Don't output
-            Self::Bottom => None,
+            // Move top one step down
+            Self::Top | Self::Within => Self::Within,
+            Self::Bottom => Self::Bottom,
         }
+    }
+
+    pub(crate) const fn include_container_fields(self) -> bool {
+        match self {
+            Self::Top | Self::Within => true,
+            Self::Bottom => false,
+        }
+    }
+}
+
+pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
+    enc1: &E1,
+    enc2: &E2,
+    level: NestingLevel,
+    include_all: bool,
+) -> bool {
+    // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
+    // should compare equivalent, but we don't bother since in practice a
+    /// plain `Unknown` will never appear.
+    use Helper::*;
+    match (enc1.helper(), enc2.helper()) {
+        (Primitive(p1), Primitive(p2)) => p1 == p2,
+        (BitField(b1, type1), BitField(b2, type2)) => {
+            b1 == b2 && compare_encodings(type1, type2, level.bitfield(), include_all)
+        }
+        (Indirection(kind1, t1), Indirection(kind2, t2)) => {
+            kind1 == kind2 && compare_encodings(t1, t2, level.indirection(kind1), include_all)
+        }
+        (Array(len1, item1), Array(len2, item2)) => {
+            len1 == len2 && compare_encodings(item1, item2, level.array(), include_all)
+        }
+        (Container(kind1, name1, fields1), Container(kind2, name2, fields2)) => {
+            kind1 == kind2
+                && name1 == name2
+                && if level.include_container_fields() || include_all {
+                    if fields1.len() != fields2.len() {
+                        return false;
+                    }
+                    for (field1, field2) in fields1.iter().zip(fields2.iter()) {
+                        if !compare_encodings(field1, field2, level.container(), include_all) {
+                            return false;
+                        }
+                    }
+                    true
+                } else {
+                    true
+                }
+        }
+        (_, _) => false,
     }
 }
 
@@ -275,10 +321,10 @@ impl<'a, E: EncodingType> Helper<'a, E> {
             Self::Container(kind, name, fields) => {
                 write!(f, "{}", kind.start())?;
                 write!(f, "{name}")?;
-                if let Some(level) = level.container() {
+                if level.include_container_fields() {
                     write!(f, "=")?;
                     for field in *fields {
-                        field.helper().display_fmt(f, level)?;
+                        field.helper().display_fmt(f, level.container())?;
                     }
                 }
                 write!(f, "{}", kind.end())
