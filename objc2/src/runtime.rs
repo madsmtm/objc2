@@ -59,8 +59,7 @@ pub const NO: ffi::BOOL = ffi::NO;
 /// [`sel!`]: crate::sel
 /// [interned string]: https://en.wikipedia.org/wiki/String_interning
 #[repr(transparent)]
-// ffi::sel_isEqual is just pointer comparison, so we just generate PartialEq
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone)]
 #[doc(alias = "SEL")]
 pub struct Sel {
     ptr: NonNull<ffi::objc_selector>,
@@ -193,6 +192,33 @@ impl Sel {
         // (though we bind it to `&self` just to be safe).
         let name = unsafe { CStr::from_ptr(ptr) };
         str::from_utf8(name.to_bytes()).unwrap()
+    }
+}
+
+// `ffi::sel_isEqual` is just pointer comparison on Apple (the documentation
+// explicitly notes this); so as an optimization, let's do that as well!
+#[cfg(feature = "apple")]
+standard_pointer_impls!(Sel);
+
+// GNUStep implements "typed" selectors, which means their pointer values
+// sometimes differ; so let's use the runtime-provided `sel_isEqual`.
+#[cfg(not(feature = "apple"))]
+impl PartialEq for Sel {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        unsafe { Bool::from_raw(ffi::sel_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
+    }
+}
+
+#[cfg(not(feature = "apple"))]
+impl Eq for Sel {}
+
+#[cfg(not(feature = "apple"))]
+impl hash::Hash for Sel {
+    #[inline]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        // Note: We hash the name instead of the pointer
+        self.name().hash(state)
     }
 }
 
