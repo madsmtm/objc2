@@ -967,7 +967,7 @@ macro_rules! msg_send_id {
         const NAME: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::stringify!($selector).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _, _>>::send_message_id($obj, sel, ());
+        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
@@ -976,7 +976,7 @@ macro_rules! msg_send_id {
             $crate::__macro_helpers::concat!($($crate::__macro_helpers::stringify!($selector), ':'),+).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _, _>>::send_message_id($obj, sel, ($($argument,)+));
+        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
         result
     });
 }
