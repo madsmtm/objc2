@@ -127,6 +127,8 @@ use crate::encode::{Encode, EncodeArguments, Encoding, RefEncode};
 use crate::ffi;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::sel;
+#[cfg(feature = "verify_message")]
+use crate::verify::verify_method_signature;
 use crate::Message;
 
 pub use ivar::{InnerIvarType, Ivar, IvarType};
@@ -284,6 +286,22 @@ impl ClassBuilder {
         self.cls.as_ptr().cast()
     }
 
+    #[cfg(feature = "verify_message")]
+    fn superclass(&self) -> Option<&Class> {
+        // SAFETY: Unsure if this is safe to do before the class is finalized,
+        // but since we only do it when `verify_message` is enabled, it should
+        // be fine.
+        let cls = unsafe { self.cls.as_ref() };
+        cls.superclass()
+    }
+
+    #[cfg(feature = "verify_message")]
+    fn name(&self) -> &str {
+        // SAFETY: Same as `superclass`
+        let cls = unsafe { self.cls.as_ref() };
+        cls.name()
+    }
+
     fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<Self> {
         let name = CString::new(name).unwrap();
         let super_ptr = superclass.map_or(ptr::null(), |c| c).cast();
@@ -325,10 +343,17 @@ impl ClassBuilder {
 
     /// Adds a method with the given name and implementation.
     ///
+    ///
     /// # Panics
     ///
-    /// Panics if the method wasn't sucessfully added or if the selector and
-    /// function take different numbers of arguments.
+    /// Panics if the method wasn't sucessfully added (e.g. a method with that
+    /// name already exists).
+    ///
+    /// May also panic if the method was detected to be invalid in some way;
+    /// for example with the `verify_message` feature enabled, if the method
+    /// is overriding another method, we verify that their encodings are
+    /// equal.
+    ///
     ///
     /// # Safety
     ///
@@ -350,6 +375,24 @@ impl ClassBuilder {
             encs.len(),
         );
 
+        // Verify that, if the method is present on the superclass, that the
+        // encoding is correct.
+        #[cfg(feature = "verify_message")]
+        {
+            if let Some(superclass) = self.superclass() {
+                if let Some(method) = superclass.instance_method(sel) {
+                    if let Err(err) = verify_method_signature::<F::Args, F::Ret>(method) {
+                        panic!(
+                            "declared invalid method -[{} {:?}]: {}",
+                            self.name(),
+                            sel,
+                            err
+                        )
+                    }
+                }
+            }
+        }
+
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
@@ -368,10 +411,17 @@ impl ClassBuilder {
 
     /// Adds a class method with the given name and implementation.
     ///
+    ///
     /// # Panics
     ///
-    /// Panics if the method wasn't sucessfully added or if the selector and
-    /// function take different numbers of arguments.
+    /// Panics if the method wasn't sucessfully added (e.g. a method with that
+    /// name already exists).
+    ///
+    /// May also panic if the method was detected to be invalid in some way;
+    /// for example with the `verify_message` feature enabled, if the method
+    /// is overriding another method, we verify that their encodings are
+    /// equal.
+    ///
     ///
     /// # Safety
     ///
@@ -391,6 +441,24 @@ impl ClassBuilder {
             sel_args,
             encs.len(),
         );
+
+        // Verify that, if the method is present on the superclass, that the
+        // encoding is correct.
+        #[cfg(feature = "verify_message")]
+        {
+            if let Some(superclass) = self.superclass() {
+                if let Some(method) = superclass.class_method(sel) {
+                    if let Err(err) = verify_method_signature::<F::Args, F::Ret>(method) {
+                        panic!(
+                            "declared invalid method +[{} {:?}]: {}",
+                            self.name(),
+                            sel,
+                            err
+                        )
+                    }
+                }
+            }
+        }
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let success = Bool::from_raw(unsafe {
@@ -474,6 +542,17 @@ impl ClassBuilder {
 
 impl Drop for ClassBuilder {
     fn drop(&mut self) {
+        // Disposing un-registered classes doesn't work properly on GNUStep,
+        // so we register the class before disposing it.
+        //
+        // Doing it this way is _technically_ a race-condition, since other
+        // code could read e.g. `Class::classes()` and then pick the class
+        // before it got disposed - but let's not worry about that for now.
+        #[cfg(feature = "gnustep-1-7")]
+        unsafe {
+            ffi::objc_registerClassPair(self.as_mut_ptr());
+        }
+
         unsafe { ffi::objc_disposeClassPair(self.as_mut_ptr()) }
     }
 }
@@ -576,8 +655,9 @@ impl ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::msg_send;
+    use crate::foundation::{NSObject, NSZone};
     use crate::test_utils;
+    use crate::{declare_class, msg_send, ClassType};
 
     #[test]
     fn test_classbuilder_duplicate() {
@@ -592,9 +672,7 @@ mod tests {
     #[should_panic = "Failed to add ivar xyz"]
     fn duplicate_ivar() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderDuplicateIvar", cls).unwrap();
-        // ManuallyDrop to work around GNUStep issue
-        let mut builder = ManuallyDrop::new(builder);
+        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateIvar", cls).unwrap();
 
         builder.add_ivar::<i32>("xyz");
         // Should panic:
@@ -605,8 +683,7 @@ mod tests {
     #[should_panic = "Failed to add method xyz"]
     fn duplicate_method() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderDuplicateMethod", cls).unwrap();
-        let mut builder = ManuallyDrop::new(builder);
+        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateMethod", cls).unwrap();
 
         extern "C" fn xyz(_this: &Object, _cmd: Sel) {}
 
@@ -618,11 +695,46 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "declared invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code I, but found i"
+    )]
+    fn invalid_method() {
+        let cls = test_utils::custom_class();
+        let mut builder = ClassBuilder::new("TestClassBuilderInvalidMethod", cls).unwrap();
+
+        extern "C" fn foo(_this: &Object, _cmd: Sel) -> i32 {
+            0
+        }
+
+        unsafe {
+            builder.add_method(sel!(foo), foo as extern "C" fn(_, _) -> _);
+        }
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "declared invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code I, but found i"
+    )]
+    fn invalid_class_method() {
+        let cls = test_utils::custom_class();
+        let mut builder = ClassBuilder::new("TestClassBuilderInvalidClassMethod", cls).unwrap();
+
+        extern "C" fn class_foo(_cls: &Class, _cmd: Sel) -> i32 {
+            0
+        }
+
+        unsafe {
+            builder.add_class_method(sel!(classFoo), class_foo as extern "C" fn(_, _) -> _);
+        }
+    }
+
+    #[test]
     #[should_panic = "Failed to add protocol NSObject"]
     fn duplicate_protocol() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
-        let mut builder = ManuallyDrop::new(builder);
+        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
 
         let protocol = Protocol::get("NSObject").unwrap();
 
@@ -632,10 +744,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        feature = "gnustep-1-7",
-        ignore = "Dropping ClassBuilder has weird threading side effects on GNUStep"
-    )]
     fn test_classbuilder_drop() {
         let cls = test_utils::custom_class();
         let builder = ClassBuilder::new("TestClassBuilderDrop", cls).unwrap();
@@ -683,5 +791,155 @@ mod tests {
         let cls = test_utils::custom_class();
         let result: u32 = unsafe { msg_send![cls, classFoo] };
         assert_eq!(result, 7);
+    }
+
+    #[test]
+    #[should_panic = "could not create new class TestDeclareClassDuplicate. Perhaps a class with that name already exists?"]
+    fn test_declare_class_duplicate() {
+        declare_class!(
+            struct Custom1 {}
+
+            unsafe impl ClassType for Custom1 {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassDuplicate";
+            }
+        );
+
+        declare_class!(
+            struct Custom2 {}
+
+            unsafe impl ClassType for Custom2 {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassDuplicate";
+            }
+        );
+
+        let _cls = Custom1::class();
+        // Should panic
+        let _cls = Custom2::class();
+    }
+
+    #[test]
+    #[should_panic = "could not find protocol NotAProtocolName"]
+    fn test_declare_class_protocol_not_found() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassProtocolNotFound";
+            }
+
+            // Implementing this should work
+            unsafe impl Protocol<NSCopying> for Custom {
+                #[sel(copyWithZone:)]
+                #[allow(unreachable_code)]
+                fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
+                    unimplemented!()
+                }
+            }
+
+            // But this should fail
+            unsafe impl Protocol<NotAProtocolName> for Custom {}
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "declared invalid method -[TestDeclareClassInvalidMethod description]: expected return to have type code @, but found v"
+    )]
+    fn test_declare_class_invalid_method() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassInvalidMethod";
+            }
+
+            unsafe impl Custom {
+                // Override `description` with a bad return type
+                #[sel(description)]
+                fn description(&self) {}
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "must implement required protocol method -[NSCopying copyWithZone:]"
+    )]
+    fn test_declare_class_missing_protocol_method() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassMissingProtocolMethod";
+            }
+
+            unsafe impl Protocol<NSCopying> for Custom {
+                // Missing required method
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    // #[cfg_attr(feature = "verify_message", should_panic = "...")]
+    fn test_declare_class_invalid_protocol_method() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassInvalidProtocolMethod";
+            }
+
+            unsafe impl Protocol<NSCopying> for Custom {
+                // Override with a bad return type
+                #[sel(copyWithZone:)]
+                fn copy_with_zone(&self, _zone: *const NSZone) -> u8 {
+                    42
+                }
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    #[cfg(feature = "verify_message")]
+    #[should_panic = "failed overriding protocol method -[NSCopying someOtherMethod]: method not found"]
+    fn test_declare_class_extra_protocol_method() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassExtraProtocolMethod";
+            }
+
+            unsafe impl Protocol<NSCopying> for Custom {
+                #[sel(copyWithZone:)]
+                #[allow(unreachable_code)]
+                fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
+                    unimplemented!()
+                }
+
+                // This doesn't exist on the protocol
+                #[sel(someOtherMethod)]
+                fn some_other_method(&self) {}
+            }
+        );
+
+        let _cls = Custom::class();
     }
 }

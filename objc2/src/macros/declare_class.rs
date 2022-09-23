@@ -1,11 +1,15 @@
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_declare_class {
-    {@rewrite_methods @($($output:tt)*)} => {};
+macro_rules! __declare_class_rewrite_methods {
     {
-        // Unsafe variant
-        @rewrite_methods
-        @($($output:tt)*)
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
+    } => {};
+
+    // Unsafe variant
+    {
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
 
         $(#[$($m:tt)*])*
         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
@@ -13,12 +17,12 @@ macro_rules! __inner_declare_class {
         $($rest:tt)*
     } => {
         $crate::__rewrite_self_arg! {
-            ($crate::__inner_declare_class)
+            ($($macro)*)
             ($($args)*)
 
             // Split the function into parts, and send the arguments down to
             // be used later on
-            @$($output)*
+            @($($macro_arguments)*)
             @($(#[$($m)*])*)
             @(unsafe extern "C")
             @($name)
@@ -29,17 +33,18 @@ macro_rules! __inner_declare_class {
             // Will add @(args_rest)
         }
 
-        $crate::__inner_declare_class! {
-            @rewrite_methods
-            @($($output)*)
+        $crate::__declare_class_rewrite_methods! {
+            @($($macro)*)
+            @($($macro_arguments)*)
 
             $($rest)*
         }
     };
+
+    // Safe variant
     {
-        // Safe variant
-        @rewrite_methods
-        @($($output:tt)*)
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
 
         $(#[$($m:tt)*])*
         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
@@ -47,9 +52,10 @@ macro_rules! __inner_declare_class {
         $($rest:tt)*
     } => {
         $crate::__rewrite_self_arg! {
-            ($crate::__inner_declare_class)
+            ($($macro)*)
             ($($args)*)
-            @$($output)*
+
+            @($($macro_arguments)*)
             @($(#[$($m)*])*)
             @(extern "C")
             @($name)
@@ -59,16 +65,20 @@ macro_rules! __inner_declare_class {
             // Same as above
         }
 
-        $crate::__inner_declare_class! {
-            @rewrite_methods
-            @($($output)*)
+        $crate::__declare_class_rewrite_methods! {
+            @($($macro)*)
+            @($($macro_arguments)*)
 
             $($rest)*
         }
     };
+}
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_method_out {
     {
-        @method_out
+        @() // No arguments needed
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -79,11 +89,11 @@ macro_rules! __inner_declare_class {
         @($($args_rest:tt)*)
     } => {
         $crate::__fn_args! {
-            ($crate::__inner_declare_class)
+            ($crate::__declare_class_method_out)
             ($($args_rest)*,)
             ()
             ()
-            @method_out_inner
+            @inner
             @($(#[$($m)*])*)
             @($($qualifiers)*)
             @($name)
@@ -98,7 +108,7 @@ macro_rules! __inner_declare_class {
 
     // No return type
     {
-        @method_out_inner
+        @inner
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -118,9 +128,10 @@ macro_rules! __inner_declare_class {
             })
         }
     };
+
     // With return type
     {
-        @method_out_inner
+        @inner
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -140,9 +151,14 @@ macro_rules! __inner_declare_class {
             })
         }
     };
+}
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_register_out {
+    // Class method
     {
-        @register_out($builder:ident)
+        @($builder:ident)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -155,7 +171,7 @@ macro_rules! __inner_declare_class {
         $builder.add_class_method(
             $crate::__attribute_helper! {
                 @extract_sel
-                ($crate::__inner_declare_class)
+                ($crate::__declare_class_register_out)
                 ($(#[$($m)*])*)
                 @call_sel
             },
@@ -164,8 +180,10 @@ macro_rules! __inner_declare_class {
             },
         );
     };
+
+    // Instance method
     {
-        @register_out($builder:ident)
+        @($builder:ident)
         @($(#[$($m:tt)*])*)
         @($($qualifiers:tt)*)
         @($name:ident)
@@ -178,7 +196,7 @@ macro_rules! __inner_declare_class {
         $builder.add_method(
             $crate::__attribute_helper! {
                 @extract_sel
-                ($crate::__inner_declare_class)
+                ($crate::__declare_class_register_out)
                 ($(#[$($m)*])*)
                 @call_sel
             },
@@ -357,6 +375,18 @@ macro_rules! __fn_args {
 ///
 /// The methods work exactly as normal, they're only put "under" the protocol
 /// definition to make things easier to read.
+///
+///
+/// # Panics
+///
+/// The implemented `ClassType::class` method may panic in a few cases, such
+/// as if:
+/// - A class with the name specified with `const NAME` already exists.
+/// - One of the
+/// - The `verify_message` feature is enabled, and an overriden method's
+///   signature is not equal to the superclass'.
+/// - The `verify_message` feature is enabled, and the required protocol
+///   methods are not implemented.
 ///
 ///
 /// # Safety
@@ -721,9 +751,9 @@ macro_rules! __declare_class_methods {
     ) => {
         $(#[$m])*
         impl $for {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @(method_out)
+            $crate::__declare_class_rewrite_methods! {
+                @($crate::__declare_class_method_out)
+                @()
                 $($methods)*
             }
         }
@@ -746,9 +776,9 @@ macro_rules! __declare_class_methods {
     ) => {
         $(#[$m])*
         impl $for {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @(method_out)
+            $crate::__declare_class_rewrite_methods! {
+                @($crate::__declare_class_method_out)
+                @()
                 $($methods)*
             }
         }
@@ -772,7 +802,8 @@ macro_rules! __declare_class_methods {
         $($rest:tt)*
     ) => {
         // Implement protocol
-        $builder.add_protocol(
+        #[allow(unused_mut)]
+        let mut protocol_builder = $builder.__add_protocol_methods(
             $crate::runtime::Protocol::get(stringify!($protocol)).unwrap_or_else(|| {
                 $crate::__macro_helpers::panic!(
                     "could not find protocol {}",
@@ -782,14 +813,19 @@ macro_rules! __declare_class_methods {
         );
 
         // SAFETY: Upheld by caller
+        #[allow(unused_unsafe)]
         unsafe {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @(register_out($builder))
+            $crate::__declare_class_rewrite_methods! {
+                @($crate::__declare_class_register_out)
+                @(protocol_builder)
 
                 $($methods)*
             }
         }
+
+        // Finished declaring protocol; get error message if any
+        #[allow(clippy::drop_ref)]
+        drop(protocol_builder);
 
         $crate::__declare_class_methods!(
             @register_out($builder)
@@ -808,10 +844,11 @@ macro_rules! __declare_class_methods {
         $($rest:tt)*
     ) => {
         // SAFETY: Upheld by caller
+        #[allow(unused_unsafe)]
         unsafe {
-            $crate::__inner_declare_class! {
-                @rewrite_methods
-                @(register_out($builder))
+            $crate::__declare_class_rewrite_methods! {
+                @($crate::__declare_class_register_out)
+                @($builder)
 
                 $($methods)*
             }

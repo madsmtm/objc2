@@ -3,6 +3,8 @@
 //! For more information on foreign functions, see Apple's documentation:
 //! <https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html>
 
+#[cfg(feature = "malloc")]
+use alloc::vec::Vec;
 #[cfg(doc)]
 use core::cell::UnsafeCell;
 use core::fmt;
@@ -22,7 +24,7 @@ use crate::ffi;
 #[cfg(feature = "malloc")]
 use crate::{
     encode::{EncodeArguments, EncodeConvert},
-    verify::verify_message_signature,
+    verify::{verify_method_signature, Inner},
     VerificationError,
 };
 
@@ -57,8 +59,7 @@ pub const NO: ffi::BOOL = ffi::NO;
 /// [`sel!`]: crate::sel
 /// [interned string]: https://en.wikipedia.org/wiki/String_interning
 #[repr(transparent)]
-// ffi::sel_isEqual is just pointer comparison, so we just generate PartialEq
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone)]
 #[doc(alias = "SEL")]
 pub struct Sel {
     ptr: NonNull<ffi::objc_selector>,
@@ -194,6 +195,33 @@ impl Sel {
     }
 }
 
+// `ffi::sel_isEqual` is just pointer comparison on Apple (the documentation
+// explicitly notes this); so as an optimization, let's do that as well!
+#[cfg(feature = "apple")]
+standard_pointer_impls!(Sel);
+
+// GNUStep implements "typed" selectors, which means their pointer values
+// sometimes differ; so let's use the runtime-provided `sel_isEqual`.
+#[cfg(not(feature = "apple"))]
+impl PartialEq for Sel {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        unsafe { Bool::from_raw(ffi::sel_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
+    }
+}
+
+#[cfg(not(feature = "apple"))]
+impl Eq for Sel {}
+
+#[cfg(not(feature = "apple"))]
+impl hash::Hash for Sel {
+    #[inline]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        // Note: We hash the name instead of the pointer
+        self.name().hash(state)
+    }
+}
+
 // SAFETY: `Sel` is FFI compatible, and the encoding is of course `Sel`.
 unsafe impl Encode for Sel {
     const ENCODING: Encoding = Encoding::Sel;
@@ -251,6 +279,28 @@ unsafe impl Sync for Ivar {}
 unsafe impl Send for Ivar {}
 impl UnwindSafe for Ivar {}
 impl RefUnwindSafe for Ivar {}
+
+#[cfg_attr(not(feature = "malloc"), allow(dead_code))]
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub(crate) struct MethodDescription {
+    pub(crate) sel: Sel,
+    pub(crate) types: &'static str,
+}
+
+impl MethodDescription {
+    #[cfg_attr(not(feature = "malloc"), allow(dead_code))]
+    pub(crate) unsafe fn from_raw(raw: ffi::objc_method_description) -> Option<Self> {
+        // SAFETY: Sel::from_ptr checks for NULL, rest is checked by caller.
+        let sel = unsafe { Sel::from_ptr(raw.name) }?;
+        if raw.types.is_null() {
+            return None;
+        }
+        // SAFETY: We've checked that the pointer is not NULL, rest is checked
+        // by caller.
+        let types = unsafe { CStr::from_ptr(raw.types) }.to_str().unwrap();
+        Some(Self { sel, types })
+    }
+}
 
 impl Method {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_method {
@@ -379,7 +429,17 @@ impl Class {
         }
     }
 
-    // fn class_method(&self, sel: Sel) -> Option<&Method>;
+    /// Returns a specified class method for self, or [`None`] if self and
+    /// its superclasses do not contain a class method with the specified
+    /// selector.
+    ///
+    /// Same as `cls.metaclass().class_method()`.
+    pub fn class_method(&self, sel: Sel) -> Option<&Method> {
+        unsafe {
+            let method = ffi::class_getClassMethod(self.as_ptr(), sel.as_ptr());
+            method.cast::<Method>().as_ref()
+        }
+    }
 
     /// Returns the ivar for a specified instance variable of self, or
     /// [`None`] if self has no ivar with the given name.
@@ -504,7 +564,8 @@ impl Class {
         A: EncodeArguments,
         R: EncodeConvert,
     {
-        verify_message_signature::<A, R>(self, sel)
+        let method = self.instance_method(sel).ok_or(Inner::MethodNotFound)?;
+        verify_method_signature::<A, R>(method)
     }
 }
 
@@ -578,6 +639,38 @@ impl Protocol {
     pub fn name(&self) -> &str {
         let name = unsafe { CStr::from_ptr(ffi::protocol_getName(self.as_ptr())) };
         str::from_utf8(name.to_bytes()).unwrap()
+    }
+
+    #[cfg(feature = "malloc")]
+    fn method_descriptions_inner(&self, required: bool, instance: bool) -> Vec<MethodDescription> {
+        let mut count: c_uint = 0;
+        let descriptions = unsafe {
+            ffi::protocol_copyMethodDescriptionList(
+                self.as_ptr(),
+                Bool::new(required).as_raw(),
+                Bool::new(instance).as_raw(),
+                &mut count,
+            )
+        };
+        let descriptions = unsafe { Malloc::from_array(descriptions, count as usize) };
+        descriptions
+            .iter()
+            .map(|desc| {
+                unsafe { MethodDescription::from_raw(*desc) }.expect("invalid method description")
+            })
+            .collect()
+    }
+
+    #[cfg(feature = "malloc")]
+    #[allow(dead_code)]
+    pub(crate) fn method_descriptions(&self, required: bool) -> Vec<MethodDescription> {
+        self.method_descriptions_inner(required, true)
+    }
+
+    #[cfg(feature = "malloc")]
+    #[allow(dead_code)]
+    pub(crate) fn class_method_descriptions(&self, required: bool) -> Vec<MethodDescription> {
+        self.method_descriptions_inner(required, false)
     }
 }
 
@@ -833,9 +926,8 @@ mod tests {
     use alloc::format;
     use alloc::string::ToString;
 
-    use super::{Bool, Class, Imp, Ivar, Method, Object, Protocol, Sel};
+    use super::*;
     use crate::test_utils;
-    use crate::Encode;
     use crate::{msg_send, sel};
 
     #[test]
@@ -881,7 +973,7 @@ mod tests {
     }
 
     #[test]
-    fn test_method() {
+    fn test_instance_method() {
         let cls = test_utils::custom_class();
         let sel = Sel::register("foo");
         let method = cls.instance_method(sel).unwrap();
@@ -892,8 +984,26 @@ mod tests {
             assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
             assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
 
-            let methods = cls.instance_methods();
-            assert!(methods.len() > 0);
+            assert!(cls.instance_methods().into_iter().any(|m| *m == method));
+        }
+    }
+
+    #[test]
+    fn test_class_method() {
+        let cls = test_utils::custom_class();
+        let method = cls.class_method(sel!(classFoo)).unwrap();
+        assert_eq!(method.name().name(), "classFoo");
+        assert_eq!(method.arguments_count(), 2);
+        #[cfg(feature = "malloc")]
+        {
+            assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
+            assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
+
+            assert!(cls
+                .metaclass()
+                .instance_methods()
+                .into_iter()
+                .any(|m| *m == method));
         }
     }
 
@@ -940,8 +1050,31 @@ mod tests {
         assert_eq!(proto.name(), "CustomProtocol");
         let class = test_utils::custom_class();
         assert!(class.conforms_to(proto));
+
         #[cfg(feature = "malloc")]
-        assert!(class.adopted_protocols().len() > 0);
+        {
+            // The selectors are broken somehow on GNUStep < 2.0
+            if cfg!(any(not(feature = "gnustep-1-7"), feature = "gnustep-2-0")) {
+                let desc = MethodDescription {
+                    sel: sel!(setBar:),
+                    types: "v@:i",
+                };
+                assert_eq!(&proto.method_descriptions(true), &[desc]);
+                let desc = MethodDescription {
+                    sel: sel!(getName),
+                    types: "*@:",
+                };
+                assert_eq!(&proto.method_descriptions(false), &[desc]);
+                let desc = MethodDescription {
+                    sel: sel!(addNumber:toNumber:),
+                    types: "i@:ii",
+                };
+                assert_eq!(&proto.class_method_descriptions(true), &[desc]);
+            }
+            assert_eq!(&proto.class_method_descriptions(false), &[]);
+
+            assert!(class.adopted_protocols().iter().any(|p| *p == proto));
+        }
     }
 
     #[test]

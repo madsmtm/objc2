@@ -4,11 +4,11 @@ use malloc_buf::Malloc;
 use std::error::Error;
 
 use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding};
-use crate::runtime::{Class, Object, Sel};
+use crate::runtime::{Method, Object, Sel};
 
 /// Workaround for `Malloc<str>` not implementing common traits
 #[derive(Debug)]
-struct MallocEncoding(Malloc<str>);
+pub(crate) struct MallocEncoding(Malloc<str>);
 
 // SAFETY: `char*` strings can safely be free'd on other threads.
 unsafe impl Send for MallocEncoding {}
@@ -35,7 +35,7 @@ impl fmt::Display for MallocEncoding {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
-enum Inner {
+pub(crate) enum Inner {
     MethodNotFound,
     MismatchedReturn(MallocEncoding, Encoding),
     MismatchedArgumentsCount(usize, usize),
@@ -80,6 +80,8 @@ impl fmt::Display for Inner {
 ///
 /// This implements [`Error`], and a description of the error can be retrieved
 /// using [`fmt::Display`].
+///
+/// [`Class::verify_sel`]: crate::Class::verify_sel
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct VerificationError(Inner);
 
@@ -98,16 +100,11 @@ impl fmt::Display for VerificationError {
 
 impl Error for VerificationError {}
 
-pub(crate) fn verify_message_signature<A, R>(cls: &Class, sel: Sel) -> Result<(), VerificationError>
+pub(crate) fn verify_method_signature<A, R>(method: &Method) -> Result<(), VerificationError>
 where
     A: EncodeArguments,
     R: EncodeConvert,
 {
-    let method = match cls.instance_method(sel) {
-        Some(method) => method,
-        None => return Err(Inner::MethodNotFound.into()),
-    };
-
     let actual = R::__Inner::ENCODING;
     let expected = method.return_type();
     if !actual.equivalent_to_str(&*expected) {

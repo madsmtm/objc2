@@ -1,6 +1,16 @@
+#[cfg(feature = "verify_message")]
+use alloc::vec::Vec;
+#[cfg(feature = "verify_message")]
+use std::collections::HashSet;
+
 use crate::__sel_inner;
+use crate::declare::ClassBuilder;
+#[cfg(feature = "verify_message")]
+use crate::declare::MethodImplementation;
 use crate::rc::{Allocated, Id, Ownership};
-use crate::runtime::{Class, Object, Sel};
+#[cfg(feature = "verify_message")]
+use crate::runtime::MethodDescription;
+use crate::runtime::{Class, Object, Protocol, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
 
 pub use crate::cache::CachedClass;
@@ -401,6 +411,134 @@ impl ModuleInfo {
             name,
             // We don't expose any symbols
             symtab: core::ptr::null(),
+        }
+    }
+}
+
+impl ClassBuilder {
+    #[doc(hidden)]
+    #[cfg(feature = "verify_message")]
+    pub fn __add_protocol_methods<'a, 'b>(
+        &'a mut self,
+        protocol: &'b Protocol,
+    ) -> ClassProtocolMethodsBuilder<'a, 'b> {
+        self.add_protocol(protocol);
+        ClassProtocolMethodsBuilder {
+            builder: self,
+            protocol,
+            required_instance_methods: protocol.method_descriptions(true),
+            optional_instance_methods: protocol.method_descriptions(false),
+            registered_instance_methods: HashSet::new(),
+            required_class_methods: protocol.class_method_descriptions(true),
+            optional_class_methods: protocol.class_method_descriptions(false),
+            registered_class_methods: HashSet::new(),
+        }
+    }
+
+    #[doc(hidden)]
+    #[cfg(not(feature = "verify_message"))]
+    #[inline]
+    pub fn __add_protocol_methods(&mut self, protocol: &Protocol) -> &mut Self {
+        self.add_protocol(protocol);
+        self
+    }
+}
+
+/// Helper for ensuring that:
+/// - Only methods on the protocol are overriden.
+/// - TODO: The methods have the correct signature.
+/// - All required methods are overridden.
+#[cfg(feature = "verify_message")]
+pub struct ClassProtocolMethodsBuilder<'a, 'b> {
+    builder: &'a mut ClassBuilder,
+    protocol: &'b Protocol,
+    required_instance_methods: Vec<MethodDescription>,
+    optional_instance_methods: Vec<MethodDescription>,
+    registered_instance_methods: HashSet<Sel>,
+    required_class_methods: Vec<MethodDescription>,
+    optional_class_methods: Vec<MethodDescription>,
+    registered_class_methods: HashSet<Sel>,
+}
+
+#[cfg(feature = "verify_message")]
+impl ClassProtocolMethodsBuilder<'_, '_> {
+    #[inline]
+    pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+    where
+        T: Message + ?Sized,
+        F: MethodImplementation<Callee = T>,
+    {
+        let _types = self
+            .required_instance_methods
+            .iter()
+            .chain(&self.optional_instance_methods)
+            .find(|desc| desc.sel == sel)
+            .map(|desc| desc.types)
+            .unwrap_or_else(|| {
+                panic!(
+                    "failed overriding protocol method -[{} {:?}]: method not found",
+                    self.protocol.name(),
+                    sel
+                )
+            });
+
+        // SAFETY: Checked by caller
+        unsafe { self.builder.add_method(sel, func) };
+
+        if !self.registered_instance_methods.insert(sel) {
+            unreachable!("already added")
+        }
+    }
+
+    #[inline]
+    pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
+    where
+        F: MethodImplementation<Callee = Class>,
+    {
+        let _types = self
+            .required_class_methods
+            .iter()
+            .chain(&self.optional_class_methods)
+            .find(|desc| desc.sel == sel)
+            .map(|desc| desc.types)
+            .unwrap_or_else(|| {
+                panic!(
+                    "failed overriding protocol method +[{} {:?}]: method not found",
+                    self.protocol.name(),
+                    sel
+                )
+            });
+
+        // SAFETY: Checked by caller
+        unsafe { self.builder.add_class_method(sel, func) };
+
+        if !self.registered_class_methods.insert(sel) {
+            unreachable!("already added")
+        }
+    }
+}
+
+#[cfg(feature = "verify_message")]
+impl Drop for ClassProtocolMethodsBuilder<'_, '_> {
+    fn drop(&mut self) {
+        for desc in &self.required_instance_methods {
+            if !self.registered_instance_methods.contains(&desc.sel) {
+                panic!(
+                    "must implement required protocol method -[{} {:?}]",
+                    self.protocol.name(),
+                    desc.sel
+                )
+            }
+        }
+
+        for desc in &self.required_class_methods {
+            if !self.registered_class_methods.contains(&desc.sel) {
+                panic!(
+                    "must implement required protocol method +[{} {:?}]",
+                    self.protocol.name(),
+                    desc.sel
+                )
+            }
         }
     }
 }
