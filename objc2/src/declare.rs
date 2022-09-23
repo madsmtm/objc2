@@ -127,6 +127,8 @@ use crate::encode::{Encode, EncodeArguments, Encoding, RefEncode};
 use crate::ffi;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::sel;
+#[cfg(feature = "verify_message")]
+use crate::verify::verify_method_signature;
 use crate::Message;
 
 pub use ivar::{InnerIvarType, Ivar, IvarType};
@@ -284,6 +286,22 @@ impl ClassBuilder {
         self.cls.as_ptr().cast()
     }
 
+    #[cfg(feature = "verify_message")]
+    fn superclass(&self) -> Option<&Class> {
+        // SAFETY: Unsure if this is safe to do before the class is finalized,
+        // but since we only do it when `verify_message` is enabled, it should
+        // be fine.
+        let cls = unsafe { self.cls.as_ref() };
+        cls.superclass()
+    }
+
+    #[cfg(feature = "verify_message")]
+    fn name(&self) -> &str {
+        // SAFETY: Same as `superclass`
+        let cls = unsafe { self.cls.as_ref() };
+        cls.name()
+    }
+
     fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<Self> {
         let name = CString::new(name).unwrap();
         let super_ptr = superclass.map_or(ptr::null(), |c| c).cast();
@@ -325,10 +343,17 @@ impl ClassBuilder {
 
     /// Adds a method with the given name and implementation.
     ///
+    ///
     /// # Panics
     ///
-    /// Panics if the method wasn't sucessfully added or if the selector and
-    /// function take different numbers of arguments.
+    /// Panics if the method wasn't sucessfully added (e.g. a method with that
+    /// name already exists).
+    ///
+    /// May also panic if the method was detected to be invalid in some way;
+    /// for example with the `verify_message` feature enabled, if the method
+    /// is overriding another method, we verify that their encodings are
+    /// equal.
+    ///
     ///
     /// # Safety
     ///
@@ -350,6 +375,24 @@ impl ClassBuilder {
             encs.len(),
         );
 
+        // Verify that, if the method is present on the superclass, that the
+        // encoding is correct.
+        #[cfg(feature = "verify_message")]
+        {
+            if let Some(superclass) = self.superclass() {
+                if let Some(method) = superclass.instance_method(sel) {
+                    if let Err(err) = verify_method_signature::<F::Args, F::Ret>(method) {
+                        panic!(
+                            "declared invalid method -[{} {:?}]: {}",
+                            self.name(),
+                            sel,
+                            err
+                        )
+                    }
+                }
+            }
+        }
+
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
@@ -368,10 +411,17 @@ impl ClassBuilder {
 
     /// Adds a class method with the given name and implementation.
     ///
+    ///
     /// # Panics
     ///
-    /// Panics if the method wasn't sucessfully added or if the selector and
-    /// function take different numbers of arguments.
+    /// Panics if the method wasn't sucessfully added (e.g. a method with that
+    /// name already exists).
+    ///
+    /// May also panic if the method was detected to be invalid in some way;
+    /// for example with the `verify_message` feature enabled, if the method
+    /// is overriding another method, we verify that their encodings are
+    /// equal.
+    ///
     ///
     /// # Safety
     ///
@@ -391,6 +441,24 @@ impl ClassBuilder {
             sel_args,
             encs.len(),
         );
+
+        // Verify that, if the method is present on the superclass, that the
+        // encoding is correct.
+        #[cfg(feature = "verify_message")]
+        {
+            if let Some(superclass) = self.superclass() {
+                if let Some(method) = superclass.class_method(sel) {
+                    if let Err(err) = verify_method_signature::<F::Args, F::Ret>(method) {
+                        panic!(
+                            "declared invalid method +[{} {:?}]: {}",
+                            self.name(),
+                            sel,
+                            err
+                        )
+                    }
+                }
+            }
+        }
 
         let types = method_type_encoding(&F::Ret::ENCODING, encs);
         let success = Bool::from_raw(unsafe {
@@ -614,6 +682,44 @@ mod tests {
             builder.add_method(sel!(xyz), xyz as extern "C" fn(_, _));
             // Should panic:
             builder.add_method(sel!(xyz), xyz as extern "C" fn(_, _));
+        }
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "declared invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code I, but found i"
+    )]
+    fn invalid_method() {
+        let cls = test_utils::custom_class();
+        let builder = ClassBuilder::new("TestClassBuilderInvalidMethod", cls).unwrap();
+        let mut builder = ManuallyDrop::new(builder);
+
+        extern "C" fn foo(_this: &Object, _cmd: Sel) -> i32 {
+            0
+        }
+
+        unsafe {
+            builder.add_method(sel!(foo), foo as extern "C" fn(_, _) -> _);
+        }
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "declared invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code I, but found i"
+    )]
+    fn invalid_class_method() {
+        let cls = test_utils::custom_class();
+        let builder = ClassBuilder::new("TestClassBuilderInvalidClassMethod", cls).unwrap();
+        let mut builder = ManuallyDrop::new(builder);
+
+        extern "C" fn class_foo(_cls: &Class, _cmd: Sel) -> i32 {
+            0
+        }
+
+        unsafe {
+            builder.add_class_method(sel!(classFoo), class_foo as extern "C" fn(_, _) -> _);
         }
     }
 

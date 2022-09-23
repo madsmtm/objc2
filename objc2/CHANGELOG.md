@@ -30,6 +30,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of the `new` family.
 * **BREAKING**: Changed the `Allocated` struct to be used as `Allocated<T>`
   instead of `Id<Allocated<T>, O>`.
+* Verify the message signature of overriden methods when declaring classes if
+  the `verify_message` feature is enabled.
 
 
 ## 0.3.0-beta.3 - 2022-09-01

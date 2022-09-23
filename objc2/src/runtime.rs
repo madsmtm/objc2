@@ -22,7 +22,7 @@ use crate::ffi;
 #[cfg(feature = "malloc")]
 use crate::{
     encode::{EncodeArguments, EncodeConvert},
-    verify::verify_message_signature,
+    verify::{verify_method_signature, Inner},
     VerificationError,
 };
 
@@ -514,7 +514,8 @@ impl Class {
         A: EncodeArguments,
         R: EncodeConvert,
     {
-        verify_message_signature::<A, R>(self, sel)
+        let method = self.instance_method(sel).ok_or(Inner::MethodNotFound)?;
+        verify_method_signature::<A, R>(method)
     }
 }
 
