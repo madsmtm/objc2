@@ -49,18 +49,12 @@ extern_methods!(
         #[doc(alias = "initWithData:")]
         pub fn from_data(data: &NSData) -> Id<Self, Owned> {
             // Not provided on NSData, one should just use NSData::copy or similar
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithData: data]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithData: data] }
         }
 
         #[doc(alias = "initWithCapacity:")]
         pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithCapacity: capacity]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithCapacity: capacity] }
         }
     }
 

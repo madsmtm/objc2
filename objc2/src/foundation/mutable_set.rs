@@ -66,7 +66,7 @@ extern_methods!(
             // SAFETY:
             // We always return `Id<NSMutableSet<T, O>, Owned>` because mutable
             // sets are always unique.
-            unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
+            unsafe { with_objects(vec.as_slice_ref()) }
         }
 
         /// Clears the set, removing all values.
@@ -132,7 +132,7 @@ extern_methods!(
             //
             // We always return `Id<NSMutableSet<T, Shared>, Owned>` because
             // the elements are shared and mutable sets are always unique.
-            unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
+            unsafe { with_objects(slice.as_slice_ref()) }
         }
     }
 

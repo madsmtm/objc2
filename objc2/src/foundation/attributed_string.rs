@@ -60,18 +60,18 @@ extern_methods!(
             attributes: &NSDictionary<NSAttributedStringKey, Object>,
         ) -> Id<Self, Shared> {
             unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithString: string, attributes: attributes]
+                msg_send_id![
+                    Self::alloc(),
+                    initWithString: string,
+                    attributes: attributes,
+                ]
             }
         }
 
         /// Creates a new attributed string without any attributes.
         #[doc(alias = "initWithString:")]
         pub fn from_nsstring(string: &NSString) -> Id<Self, Shared> {
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithString: string]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithString: string] }
         }
     }
 

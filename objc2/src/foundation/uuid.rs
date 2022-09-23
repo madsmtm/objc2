@@ -56,17 +56,11 @@ extern_methods!(
 
         pub fn from_bytes(bytes: [u8; 16]) -> Id<Self, Shared> {
             let bytes = UuidBytes(bytes);
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithUUIDBytes: &bytes]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithUUIDBytes: &bytes] }
         }
 
         pub fn from_string(string: &NSString) -> Option<Id<Self, Shared>> {
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithUUIDString: string]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithUUIDString: string] }
         }
 
         #[sel(getUUIDBytes:)]

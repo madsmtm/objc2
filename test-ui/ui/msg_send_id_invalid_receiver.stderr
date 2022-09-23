@@ -1,18 +1,18 @@
 error[E0308]: mismatched types
   --> ui/msg_send_id_invalid_receiver.rs
    |
-   |     let _: Id<Allocated<Object>, Shared> = unsafe { msg_send_id![obj, alloc] };
-   |                                                     -------------^^^--------
-   |                                                     |            |
-   |                                                     |            expected struct `objc2::runtime::Class`, found struct `objc2::runtime::Object`
-   |                                                     arguments to this function are incorrect
+   |     let _: Allocated<Object> = unsafe { msg_send_id![obj, alloc] };
+   |                                         -------------^^^--------
+   |                                         |            |
+   |                                         |            expected struct `objc2::runtime::Class`, found struct `objc2::runtime::Object`
+   |                                         arguments to this function are incorrect
    |
    = note: expected reference `&objc2::runtime::Class`
               found reference `&objc2::runtime::Object`
 note: associated function defined here
   --> $WORKSPACE/objc2/src/__macro_helpers.rs
    |
-   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
    |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
@@ -24,12 +24,12 @@ error[E0308]: mismatched types
    |                                          |            expected enum `Option`, found `&objc2::runtime::Object`
    |                                          arguments to this function are incorrect
    |
-   = note:   expected enum `Option<Id<Allocated<_>, _>>`
+   = note:   expected enum `Option<Allocated<_>>`
            found reference `&objc2::runtime::Object`
 note: associated function defined here
   --> $WORKSPACE/objc2/src/__macro_helpers.rs
    |
-   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
    |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
@@ -41,12 +41,12 @@ error[E0308]: mismatched types
    |                                          |            expected enum `Option`, found `&objc2::runtime::Class`
    |                                          arguments to this function are incorrect
    |
-   = note:   expected enum `Option<Id<Allocated<_>, _>>`
+   = note:   expected enum `Option<Allocated<_>>`
            found reference `&objc2::runtime::Class`
 note: associated function defined here
   --> $WORKSPACE/objc2/src/__macro_helpers.rs
    |
-   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
    |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
@@ -58,12 +58,12 @@ error[E0308]: mismatched types
    |                                          |            expected enum `Option`, found struct `Id`
    |                                          arguments to this function are incorrect
    |
-   = note: expected enum `Option<Id<Allocated<_>, _>>`
+   = note: expected enum `Option<Allocated<_>>`
             found struct `Id<objc2::runtime::Object, Shared>`
 note: associated function defined here
   --> $WORKSPACE/objc2/src/__macro_helpers.rs
    |
-   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
    |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
@@ -72,15 +72,15 @@ error[E0308]: mismatched types
    |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
    |                                          -------------^^^-------
    |                                          |            |
-   |                                          |            expected struct `Allocated`, found struct `objc2::runtime::Object`
+   |                                          |            expected struct `Allocated`, found struct `Id`
    |                                          arguments to this function are incorrect
    |
-   = note: expected enum `Option<Id<Allocated<_>, _>>`
+   = note: expected enum `Option<Allocated<_>>`
               found enum `Option<Id<objc2::runtime::Object, Shared>>`
 note: associated function defined here
   --> $WORKSPACE/objc2/src/__macro_helpers.rs
    |
-   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
    |               ^^^^^^^^^^^^^^^
 
 error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiver` is not satisfied
@@ -95,7 +95,7 @@ error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiv
    = help: the following other types implement trait `MessageReceiver`:
              &'a Id<T, O>
              &'a mut Id<T, objc2::rc::Owned>
-   = note: required for `RetainSemantics<true, false, false, false>` to implement `MsgSendId<Id<objc2::runtime::Object, Shared>, _, _>`
+   = note: required for `RetainSemantics<true, false, false, false>` to implement `MsgSendId<Id<objc2::runtime::Object, Shared>, Id<_, _>>`
 
 error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiver` is not satisfied
   --> ui/msg_send_id_invalid_receiver.rs
@@ -109,4 +109,4 @@ error[E0277]: the trait bound `Id<objc2::runtime::Object, Shared>: MessageReceiv
    = help: the following other types implement trait `MessageReceiver`:
              &'a Id<T, O>
              &'a mut Id<T, objc2::rc::Owned>
-   = note: required for `RetainSemantics<false, false, false, true>` to implement `MsgSendId<Id<objc2::runtime::Object, Shared>, _, _>`
+   = note: required for `RetainSemantics<false, false, false, true>` to implement `MsgSendId<Id<objc2::runtime::Object, Shared>, Id<_, _>>`

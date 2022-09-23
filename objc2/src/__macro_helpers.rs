@@ -79,18 +79,18 @@ type Init = RetainSemantics<false, false, true, false>;
 type CopyOrMutCopy = RetainSemantics<false, false, false, true>;
 type Other = RetainSemantics<false, false, false, false>;
 
-pub trait MsgSendId<T, U: ?Sized, O: Ownership> {
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+pub trait MsgSendId<T, U> {
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
         obj: T,
         sel: Sel,
         args: A,
     ) -> R;
 }
 
-impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> for New {
+impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>> for New {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -107,10 +107,10 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> f
     }
 }
 
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Allocated<T>, O> for Alloc {
+impl<T: ?Sized + Message> MsgSendId<&'_ Class, Allocated<T>> for Alloc {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Allocated<T>, O>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &Class,
         sel: Sel,
         args: A,
@@ -118,26 +118,26 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<&'_ Class, Allocated<T>, O> fo
         // SAFETY: Checked by caller
         let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
         // SAFETY: The selector is `alloc`, so this has +1 retain count
-        let obj = unsafe { Id::new_allocated(obj) };
+        let obj = unsafe { Allocated::new(obj) };
         R::maybe_unwrap::<Self>(obj, (cls, sel))
     }
 }
 
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, T, O> for Init {
+impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Allocated<T>>, Id<T, O>> for Init {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<T, O>>(
-        obj: Option<Id<Allocated<T>, O>>,
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<T, O>>>(
+        obj: Option<Allocated<T>>,
         sel: Sel,
         args: A,
     ) -> R {
-        let ptr = Id::option_into_ptr(obj.map(|obj| unsafe { Id::assume_init(obj) }));
+        let ptr = Allocated::option_into_ptr(obj);
         // SAFETY: `ptr` may be null here, but that's fine since the return
         // is `*mut T`, which is one of the few types where messages to nil is
         // allowed.
         //
-        // We do this for efficiency, to avoid having a branch after every
-        // `alloc`, that the user did not intend.
+        // We do this for efficiency, to avoid having a branch that the user
+        // did not intend after every `alloc`.
         let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
         // SAFETY: The selector is `init`, so this has +1 retain count
         let obj = unsafe { Id::new(obj) };
@@ -145,10 +145,12 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Id<Allocated<T>, O>>, T
     }
 }
 
-impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> for CopyOrMutCopy {
+impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
+    for CopyOrMutCopy
+{
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -162,10 +164,10 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, U, O> f
     }
 }
 
-impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, U, O> for Other {
+impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>> for Other {
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<U, O>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -186,34 +188,53 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, U, O> for Other 
     }
 }
 
-pub trait MaybeUnwrap<T: ?Sized, O: Ownership> {
-    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
-        obj: Option<Id<T, O>>,
-        args: Failed::Args,
-    ) -> Self;
+pub trait MaybeUnwrap {
+    type Input;
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Self::Input>, args: F::Args) -> Self;
 }
 
-impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Option<Id<T, O>> {
+impl<T: ?Sized, O: Ownership> MaybeUnwrap for Option<Id<T, O>> {
+    type Input = Id<T, O>;
+
     #[inline]
     #[track_caller]
-    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
-        obj: Option<Id<T, O>>,
-        _args: Failed::Args,
-    ) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T, O>>, _args: F::Args) -> Self {
         obj
     }
 }
 
-impl<T: ?Sized, O: Ownership> MaybeUnwrap<T, O> for Id<T, O> {
+impl<T: ?Sized, O: Ownership> MaybeUnwrap for Id<T, O> {
+    type Input = Id<T, O>;
+
     #[inline]
     #[track_caller]
-    fn maybe_unwrap<'a, Failed: MsgSendIdFailed<'a>>(
-        obj: Option<Id<T, O>>,
-        args: Failed::Args,
-    ) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T, O>>, args: F::Args) -> Self {
         match obj {
             Some(obj) => obj,
-            None => Failed::failed(args),
+            None => F::failed(args),
+        }
+    }
+}
+
+impl<T: ?Sized> MaybeUnwrap for Option<Allocated<T>> {
+    type Input = Allocated<T>;
+
+    #[inline]
+    #[track_caller]
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Allocated<T>>, _args: F::Args) -> Self {
+        obj
+    }
+}
+
+impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
+    type Input = Allocated<T>;
+
+    #[inline]
+    #[track_caller]
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Allocated<T>>, args: F::Args) -> Self {
+        match obj {
+            Some(obj) => obj,
+            None => F::failed(args),
         }
     }
 }
@@ -447,7 +468,7 @@ mod tests {
         let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 
-        let obj: Id<Allocated<RcTestObject>, Shared> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Allocated<RcTestObject> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         expected.assert_current();
 
@@ -463,8 +484,7 @@ mod tests {
         let cls = RcTestObject::class();
 
         let zone: *const NSZone = ptr::null();
-        let _obj: Id<Allocated<RcTestObject>, Owned> =
-            unsafe { msg_send_id![cls, allocWithZone: zone] };
+        let _obj: Allocated<RcTestObject> = unsafe { msg_send_id![cls, allocWithZone: zone] };
         expected.alloc += 1;
         expected.assert_current();
     }
@@ -474,14 +494,14 @@ mod tests {
         let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 
-        let obj: Option<Id<Allocated<RcTestObject>, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Option<Allocated<RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         // Don't check allocation error
         let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![obj, init] };
         expected.init += 1;
         expected.assert_current();
 
-        let obj: Option<Id<Allocated<RcTestObject>, Shared>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Option<Allocated<RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         // Check allocation error before init
         let obj = obj.unwrap();
@@ -567,14 +587,14 @@ mod tests {
     #[test]
     #[should_panic = "failed allocating with +[RcTestObject allocReturningNull]"]
     fn test_alloc_with_null() {
-        let _obj: Id<Allocated<RcTestObject>, Owned> =
+        let _obj: Allocated<RcTestObject> =
             unsafe { msg_send_id![RcTestObject::class(), allocReturningNull] };
     }
 
     #[test]
     #[should_panic = "failed initializing object with -initReturningNull"]
     fn test_init_with_null() {
-        let obj: Option<Id<Allocated<RcTestObject>, Owned>> =
+        let obj: Option<Allocated<RcTestObject>> =
             unsafe { msg_send_id![RcTestObject::class(), alloc] };
         let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, initReturningNull] };
     }
@@ -583,7 +603,7 @@ mod tests {
     #[should_panic = "failed allocating object"]
     #[cfg(not(feature = "verify_message"))] // Does NULL receiver checks
     fn test_init_with_null_receiver() {
-        let obj: Option<Id<Allocated<RcTestObject>, Owned>> = None;
+        let obj: Option<Allocated<RcTestObject>> = None;
         let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
     }
 

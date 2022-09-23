@@ -1,11 +1,10 @@
 use core::fmt;
 use core::marker::PhantomData;
-use core::mem::{self, ManuallyDrop};
+use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 
-use super::Allocated;
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
@@ -136,27 +135,6 @@ impl<T: ?Sized, O: Ownership> Id<T, O> {
     }
 }
 
-impl<T: Message + ?Sized, O: Ownership> Id<Allocated<T>, O> {
-    #[inline]
-    pub(crate) unsafe fn new_allocated(ptr: *mut T) -> Option<Self> {
-        // SAFETY: Upheld by the caller
-        NonNull::new(ptr as *mut Allocated<T>).map(|ptr| unsafe { Self::new_nonnull(ptr) })
-    }
-
-    #[inline]
-    pub(crate) unsafe fn assume_init(this: Self) -> Id<T, O> {
-        let ptr = ManuallyDrop::new(this).ptr;
-
-        // NonNull::cast
-        let ptr = ptr.as_ptr() as *mut T;
-        let ptr = unsafe { NonNull::new_unchecked(ptr) };
-
-        // SAFETY: The pointer is valid.
-        // Caller verifies that the object is allocated.
-        unsafe { Id::new_nonnull(ptr) }
-    }
-}
-
 impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     /// Constructs an [`Id`] to an object that already has +1 retain count.
     ///
@@ -231,15 +209,6 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     #[inline]
     pub(crate) fn consume_as_ptr(this: ManuallyDrop<Self>) -> *mut T {
         this.ptr.as_ptr()
-    }
-
-    #[inline]
-    pub(crate) fn option_into_ptr(obj: Option<Self>) -> *mut T {
-        // Difficult to write this in an ergonomic way with ?Sized
-        // So we just hack it with transmute!
-
-        // SAFETY: Option<Id<T, _>> has the same size as *mut T
-        unsafe { mem::transmute::<ManuallyDrop<Option<Self>>, *mut T>(ManuallyDrop::new(obj)) }
     }
 }
 

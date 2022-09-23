@@ -9,10 +9,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Allow directly specifying class name in `extern_class!` macro.
+* Added `ClassType::alloc`.
+
+  This means you can now simplify your code as follows:
+  ```rust
+  // Before
+  let obj: Id<NSObject, Shared> = unsafe {
+      msg_send_id![msg_send_id![NSObject::class(), alloc], init]
+  };
+
+  // After
+  let obj: Id<NSObject, Shared> = unsafe {
+      msg_send_id![NSObject::alloc(), init]
+  };
+  ```
 
 ### Changed
 * Allow other types than `&Class` as the receiver in `msg_send_id!` methods
   of the `new` family.
+* **BREAKING**: Changed the `Allocated` struct to be used as `Allocated<T>`
+  instead of `Id<Allocated<T>, O>`.
 
 
 ## 0.3.0-beta.3 - 2022-09-01

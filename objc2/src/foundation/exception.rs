@@ -46,8 +46,14 @@ extern_methods!(
             reason: Option<&NSString>,
             user_info: Option<&NSDictionary<Object, Object>>,
         ) -> Option<Id<Self, Shared>> {
-            let obj = unsafe { msg_send_id![Self::class(), alloc] };
-            unsafe { msg_send_id![obj, initWithName: name, reason: reason, userInfo: user_info] }
+            unsafe {
+                msg_send_id![
+                    Self::alloc(),
+                    initWithName: name,
+                    reason: reason,
+                    userInfo: user_info,
+                ]
+            }
         }
 
         #[sel(raise)]

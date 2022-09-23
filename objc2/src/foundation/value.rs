@@ -69,7 +69,7 @@ extern_methods!(
             let encoding = CString::new(T::ENCODING.to_string()).unwrap();
             unsafe {
                 msg_send_id![
-                    msg_send_id![Self::class(), alloc],
+                    Self::alloc(),
                     initWithBytes: bytes,
                     objCType: encoding.as_ptr(),
                 ]

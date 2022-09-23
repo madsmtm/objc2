@@ -61,10 +61,7 @@ impl<'a> MyObject<'a> {
     pub fn new(number: &'a mut u8) -> Id<Self, Owned> {
         // SAFETY: The lifetime of the reference is properly bound to the
         // returned type
-        unsafe {
-            let obj = msg_send_id![Self::class(), alloc];
-            msg_send_id![obj, initWithPtr: number]
-        }
+        unsafe { msg_send_id![Self::alloc(), initWithPtr: number] }
     }
 
     pub fn get(&self) -> &u8 {

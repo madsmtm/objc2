@@ -41,18 +41,12 @@ extern_methods!(
         /// Creates a new [`NSMutableString`] from the given [`NSString`].
         #[doc(alias = "initWithString:")]
         pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithString: string]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithString: string] }
         }
 
         #[doc(alias = "initWithCapacity:")]
         pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithCapacity: capacity]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithCapacity: capacity] }
         }
     }
 

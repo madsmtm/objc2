@@ -868,12 +868,12 @@ macro_rules! msg_send_bool {
 ///   return type is a generic `Id<T, O>` or `Option<Id<T, O>>`.
 ///
 /// - The `alloc` family: The receiver must be `&Class`, and the return type
-///   is a generic `Id<Allocated<T>, O>` or `Option<Id<Allocated<T>, O>>`.
+///   is a generic `Allocated<T>` or `Option<Allocated<T>>`.
 ///
-/// - The `init` family: The receiver must be `Option<Id<Allocated<T>, O>>`
+/// - The `init` family: The receiver must be `Option<Allocated<T>>`
 ///   as returned from `alloc`. The receiver is consumed, and a the
-///   now-initialized `Id<T, O>` or `Option<Id<T, O>>` (with the same `T` and
-///   `O`) is returned.
+///   now-initialized `Id<T, O>` or `Option<Id<T, O>>` (with the same `T`) is
+///   returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
 ///   [`MessageReceiver`] and the return type is a generic `Id<T, O>` or
@@ -890,12 +890,12 @@ macro_rules! msg_send_bool {
 /// See [the clang documentation][arc-retainable] for the precise
 /// specification of Objective-C's ownership rules.
 ///
-/// As you may have noticed, the return type is always either `Id<_, _>` or
-/// `Option<Id<_, _>>`. Internally, the return type is always
-/// `Option<Id<_, _>>` (for example: almost all `new` methods can fail if the
-/// allocation failed), but for convenience, if the return type is `Id<_, _>`
-/// this macro will automatically unwrap the object, or panic with an error
-/// message if it couldn't be retrieved.
+/// As you may have noticed, the return type is always either `Id / Allocated`
+/// or `Option<Id / Allocated>`. Internally, the return type is always
+/// `Option<Id / Allocated>` (for example: almost all `new` methods can fail
+/// if the allocation failed), but for convenience, if the return type is
+/// `Id / Allocated` this macro will automatically unwrap the object, or panic
+/// with an error message if it couldn't be retrieved.
 ///
 /// This macro doesn't support super methods yet, see [#173].
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
@@ -967,7 +967,7 @@ macro_rules! msg_send_id {
         const NAME: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::stringify!($selector).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _, _>>::send_message_id($obj, sel, ());
+        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
@@ -976,7 +976,7 @@ macro_rules! msg_send_id {
             $crate::__macro_helpers::concat!($($crate::__macro_helpers::stringify!($selector), ':'),+).as_bytes();
         $crate::__msg_send_id_helper!(@get_assert_consts NAME);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _, _>>::send_message_id($obj, sel, ($($argument,)+));
+        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
         result
     });
 }

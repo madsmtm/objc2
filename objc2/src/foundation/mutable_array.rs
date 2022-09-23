@@ -51,7 +51,7 @@ extern_methods!(
         pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
             // SAFETY: Same as `NSArray::from_vec`, except mutable arrays are
             // always unique.
-            unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
+            unsafe { with_objects(vec.as_slice_ref()) }
         }
     }
 
@@ -60,7 +60,7 @@ extern_methods!(
         pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
             // SAFETY: Same as `NSArray::from_slice`, except mutable arrays are
             // always unique.
-            unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
+            unsafe { with_objects(slice.as_slice_ref()) }
         }
     }
 

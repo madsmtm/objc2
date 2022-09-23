@@ -467,8 +467,7 @@ macro_rules! __fn_args {
 ///
 /// impl MyCustomObject {
 ///     pub fn new(foo: u8) -> Id<Self, Owned> {
-///         let cls = Self::class();
-///         unsafe { msg_send_id![msg_send_id![cls, alloc], initWithFoo: foo] }
+///         unsafe { msg_send_id![Self::alloc(), initWithFoo: foo] }
 ///     }
 ///
 ///     pub fn get_foo(&self) -> u8 {

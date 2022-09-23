@@ -8,7 +8,6 @@ use super::{
     NSMutableSet, NSObject,
 };
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::runtime::Class;
 use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
 
 __inner_extern_class!(
@@ -40,13 +39,12 @@ impl<T: Message + RefUnwindSafe> UnwindSafe for NSSet<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSSet<T, Owned> {}
 
 #[track_caller]
-pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>(
-    cls: &Class,
+pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(
     objects: &[&T],
 ) -> Id<R, O> {
     unsafe {
         msg_send_id![
-            msg_send_id![cls, alloc],
+            R::alloc(),
             initWithObjects: objects.as_ptr(),
             count: objects.len()
         ]
@@ -94,7 +92,7 @@ extern_methods!(
             // know that there cannot be another set in existence with the same
             // objects, so `Id<NSSet<T, Owned>, Owned>` is safe to return when
             // we receive `Vec<Id<T, Owned>>`.
-            unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
+            unsafe { with_objects(vec.as_slice_ref()) }
         }
 
         /// Returns the number of elements in the set.
@@ -217,7 +215,7 @@ extern_methods!(
             //
             // We always return `Id<NSSet<T, Shared>, Shared>` because the
             // elements are shared.
-            unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
+            unsafe { with_objects(slice.as_slice_ref()) }
         }
 
         /// Returns an [`NSArray`] containing the set's elements, or an empty

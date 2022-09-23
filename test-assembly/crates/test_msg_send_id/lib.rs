@@ -14,28 +14,22 @@ unsafe fn handle_new_fallible(cls: &Class, sel: Sel) -> Id<Object, Shared> {
 }
 
 #[no_mangle]
-unsafe fn handle_alloc(cls: &Class, sel: Sel) -> Option<Id<Allocated<Object>, Shared>> {
+unsafe fn handle_alloc(cls: &Class, sel: Sel) -> Option<Allocated<Object>> {
     <RetainSemantics<false, true, false, false>>::send_message_id(cls, sel, ())
 }
 
 #[no_mangle]
-unsafe fn handle_alloc_fallible(cls: &Class, sel: Sel) -> Id<Allocated<Object>, Shared> {
+unsafe fn handle_alloc_fallible(cls: &Class, sel: Sel) -> Allocated<Object> {
     <RetainSemantics<false, true, false, false>>::send_message_id(cls, sel, ())
 }
 
 #[no_mangle]
-unsafe fn handle_init(
-    obj: Option<Id<Allocated<Object>, Shared>>,
-    sel: Sel,
-) -> Option<Id<Object, Shared>> {
+unsafe fn handle_init(obj: Option<Allocated<Object>>, sel: Sel) -> Option<Id<Object, Shared>> {
     <RetainSemantics<false, false, true, false>>::send_message_id(obj, sel, ())
 }
 
 #[no_mangle]
-unsafe fn handle_init_fallible(
-    obj: Option<Id<Allocated<Object>, Shared>>,
-    sel: Sel,
-) -> Id<Object, Shared> {
+unsafe fn handle_init_fallible(obj: Option<Allocated<Object>>, sel: Sel) -> Id<Object, Shared> {
     <RetainSemantics<false, false, true, false>>::send_message_id(obj, sel, ())
 }
 
@@ -47,7 +41,7 @@ unsafe fn handle_alloc_init(cls: &Class, sel1: Sel, sel2: Sel) -> Option<Id<Obje
 
 #[no_mangle]
 unsafe fn handle_alloc_release(cls: &Class, sel: Sel) {
-    let obj: Option<Id<Allocated<Object>, Shared>> =
+    let obj: Option<Allocated<Object>> =
         <RetainSemantics<false, true, false, false>>::send_message_id(cls, sel, ());
     let _obj = obj.unwrap_unchecked();
 }
