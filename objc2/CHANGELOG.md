@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   instead of `Id<Allocated<T>, O>`.
 * Verify the message signature of overriden methods when declaring classes if
   the `verify_message` feature is enabled.
+* Verify in `declare_class!` that protocols are implemented correctly.
 
 
 ## 0.3.0-beta.3 - 2022-09-01

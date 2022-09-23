@@ -868,4 +868,77 @@ mod tests {
 
         let _cls = Custom::class();
     }
+
+    #[test]
+    #[cfg_attr(
+        feature = "verify_message",
+        should_panic = "must implement required protocol method -[NSCopying copyWithZone:]"
+    )]
+    fn test_declare_class_missing_protocol_method() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassMissingProtocolMethod";
+            }
+
+            unsafe impl Protocol<NSCopying> for Custom {
+                // Missing required method
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    // #[cfg_attr(feature = "verify_message", should_panic = "...")]
+    fn test_declare_class_invalid_protocol_method() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassInvalidProtocolMethod";
+            }
+
+            unsafe impl Protocol<NSCopying> for Custom {
+                // Override with a bad return type
+                #[sel(copyWithZone:)]
+                fn copy_with_zone(&self, _zone: *const NSZone) -> u8 {
+                    42
+                }
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    #[cfg(feature = "verify_message")]
+    #[should_panic = "failed overriding protocol method -[NSCopying someOtherMethod]: method not found"]
+    fn test_declare_class_extra_protocol_method() {
+        declare_class!(
+            struct Custom {}
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                const NAME: &'static str = "TestDeclareClassExtraProtocolMethod";
+            }
+
+            unsafe impl Protocol<NSCopying> for Custom {
+                #[sel(copyWithZone:)]
+                #[allow(unreachable_code)]
+                fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
+                    unimplemented!()
+                }
+
+                // This doesn't exist on the protocol
+                #[sel(someOtherMethod)]
+                fn some_other_method(&self) {}
+            }
+        );
+
+        let _cls = Custom::class();
+    }
 }

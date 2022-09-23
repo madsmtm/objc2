@@ -3,6 +3,8 @@
 //! For more information on foreign functions, see Apple's documentation:
 //! <https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html>
 
+#[cfg(feature = "malloc")]
+use alloc::vec::Vec;
 #[cfg(doc)]
 use core::cell::UnsafeCell;
 use core::fmt;
@@ -251,6 +253,28 @@ unsafe impl Sync for Ivar {}
 unsafe impl Send for Ivar {}
 impl UnwindSafe for Ivar {}
 impl RefUnwindSafe for Ivar {}
+
+#[cfg_attr(not(feature = "malloc"), allow(dead_code))]
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub(crate) struct MethodDescription {
+    pub(crate) sel: Sel,
+    pub(crate) types: &'static str,
+}
+
+impl MethodDescription {
+    #[cfg_attr(not(feature = "malloc"), allow(dead_code))]
+    pub(crate) unsafe fn from_raw(raw: ffi::objc_method_description) -> Option<Self> {
+        // SAFETY: Sel::from_ptr checks for NULL, rest is checked by caller.
+        let sel = unsafe { Sel::from_ptr(raw.name) }?;
+        if raw.types.is_null() {
+            return None;
+        }
+        // SAFETY: We've checked that the pointer is not NULL, rest is checked
+        // by caller.
+        let types = unsafe { CStr::from_ptr(raw.types) }.to_str().unwrap();
+        Some(Self { sel, types })
+    }
+}
 
 impl Method {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_method {
@@ -590,6 +614,38 @@ impl Protocol {
         let name = unsafe { CStr::from_ptr(ffi::protocol_getName(self.as_ptr())) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
+
+    #[cfg(feature = "malloc")]
+    fn method_descriptions_inner(&self, required: bool, instance: bool) -> Vec<MethodDescription> {
+        let mut count: c_uint = 0;
+        let descriptions = unsafe {
+            ffi::protocol_copyMethodDescriptionList(
+                self.as_ptr(),
+                Bool::new(required).as_raw(),
+                Bool::new(instance).as_raw(),
+                &mut count,
+            )
+        };
+        let descriptions = unsafe { Malloc::from_array(descriptions, count as usize) };
+        descriptions
+            .iter()
+            .map(|desc| {
+                unsafe { MethodDescription::from_raw(*desc) }.expect("invalid method description")
+            })
+            .collect()
+    }
+
+    #[cfg(feature = "malloc")]
+    #[allow(dead_code)]
+    pub(crate) fn method_descriptions(&self, required: bool) -> Vec<MethodDescription> {
+        self.method_descriptions_inner(required, true)
+    }
+
+    #[cfg(feature = "malloc")]
+    #[allow(dead_code)]
+    pub(crate) fn class_method_descriptions(&self, required: bool) -> Vec<MethodDescription> {
+        self.method_descriptions_inner(required, false)
+    }
 }
 
 impl PartialEq for Protocol {
@@ -844,9 +900,8 @@ mod tests {
     use alloc::format;
     use alloc::string::ToString;
 
-    use super::{Bool, Class, Imp, Ivar, Method, Object, Protocol, Sel};
+    use super::*;
     use crate::test_utils;
-    use crate::Encode;
     use crate::{msg_send, sel};
 
     #[test]
@@ -969,8 +1024,31 @@ mod tests {
         assert_eq!(proto.name(), "CustomProtocol");
         let class = test_utils::custom_class();
         assert!(class.conforms_to(proto));
+
         #[cfg(feature = "malloc")]
-        assert!(class.adopted_protocols().len() > 0);
+        {
+            // The selectors are broken somehow on GNUStep < 2.0
+            if cfg!(any(not(feature = "gnustep-1-7"), feature = "gnustep-2-0")) {
+                let desc = MethodDescription {
+                    sel: sel!(setBar:),
+                    types: "v@:i",
+                };
+                assert_eq!(&proto.method_descriptions(true), &[desc]);
+                let desc = MethodDescription {
+                    sel: sel!(getName),
+                    types: "*@:",
+                };
+                assert_eq!(&proto.method_descriptions(false), &[desc]);
+                let desc = MethodDescription {
+                    sel: sel!(addNumber:toNumber:),
+                    types: "i@:ii",
+                };
+                assert_eq!(&proto.class_method_descriptions(true), &[desc]);
+            }
+            assert_eq!(&proto.class_method_descriptions(false), &[]);
+
+            assert!(class.adopted_protocols().iter().any(|p| *p == proto));
+        }
     }
 
     #[test]

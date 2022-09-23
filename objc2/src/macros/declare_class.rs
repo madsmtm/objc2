@@ -385,6 +385,8 @@ macro_rules! __fn_args {
 /// - One of the
 /// - The `verify_message` feature is enabled, and an overriden method's
 ///   signature is not equal to the superclass'.
+/// - The `verify_message` feature is enabled, and the required protocol
+///   methods are not implemented.
 ///
 ///
 /// # Safety
@@ -800,7 +802,8 @@ macro_rules! __declare_class_methods {
         $($rest:tt)*
     ) => {
         // Implement protocol
-        $builder.add_protocol(
+        #[allow(unused_mut)]
+        let mut protocol_builder = $builder.__add_protocol_methods(
             $crate::runtime::Protocol::get(stringify!($protocol)).unwrap_or_else(|| {
                 $crate::__macro_helpers::panic!(
                     "could not find protocol {}",
@@ -814,11 +817,15 @@ macro_rules! __declare_class_methods {
         unsafe {
             $crate::__declare_class_rewrite_methods! {
                 @($crate::__declare_class_register_out)
-                @($builder)
+                @(protocol_builder)
 
                 $($methods)*
             }
         }
+
+        // Finished declaring protocol; get error message if any
+        #[allow(clippy::drop_ref)]
+        drop(protocol_builder);
 
         $crate::__declare_class_methods!(
             @register_out($builder)
