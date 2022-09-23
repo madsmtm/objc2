@@ -141,7 +141,7 @@ mod avfaudio {
 
     impl Utterance {
         pub fn new(string: &NSString) -> Id<Self, Owned> {
-            unsafe { msg_send_id![msg_send_id![Self::class(), alloc], initWithString: string] }
+            unsafe { msg_send_id![Self::alloc(), initWithString: string] }
         }
 
         pub fn set_rate(&mut self, rate: f32) {

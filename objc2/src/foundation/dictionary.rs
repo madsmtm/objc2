@@ -112,12 +112,10 @@ extern_methods!(
         {
             let vals = vals.as_slice_ref();
 
-            let cls = Self::class();
             let count = min(keys.len(), vals.len());
-            let obj = unsafe { msg_send_id![cls, alloc] };
             unsafe {
                 msg_send_id![
-                    obj,
+                    Self::alloc(),
                     initWithObjects: vals.as_ptr(),
                     forKeys: keys.as_ptr(),
                     count: count,

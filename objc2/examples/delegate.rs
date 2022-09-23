@@ -88,14 +88,7 @@ declare_class!(
 #[cfg(all(feature = "apple", target_os = "macos"))]
 impl CustomAppDelegate {
     pub fn new(ivar: u8, another_ivar: bool) -> Id<Self, Shared> {
-        let cls = Self::class();
-        unsafe {
-            msg_send_id![
-                msg_send_id![cls, alloc],
-                initWith: ivar,
-                another: another_ivar,
-            ]
-        }
+        unsafe { msg_send_id![Self::alloc(), initWith: ivar, another: another_ivar] }
     }
 }
 

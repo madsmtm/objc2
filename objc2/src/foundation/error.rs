@@ -52,7 +52,7 @@ extern_methods!(
             // still good!
             unsafe {
                 msg_send_id![
-                    msg_send_id![Self::class(), alloc],
+                    Self::alloc(),
                     initWithDomain: domain,
                     code: code,
                     userInfo: user_info,

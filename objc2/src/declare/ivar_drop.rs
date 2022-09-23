@@ -314,8 +314,7 @@ mod tests {
     #[cfg_attr(not(debug_assertions), ignore = "only panics in debug mode")]
     #[should_panic = "an Id in instance variables must always be initialized before use"]
     fn test_init_invalid_ref() {
-        let obj: Id<IvarTester, Owned> =
-            unsafe { msg_send_id![msg_send_id![IvarTester::class(), alloc], initInvalid] };
+        let obj: Id<IvarTester, Owned> = unsafe { msg_send_id![IvarTester::alloc(), initInvalid] };
 
         std::println!("{:?}", obj.ivar1);
     }
@@ -325,7 +324,7 @@ mod tests {
     #[should_panic = "an Id in instance variables must always be initialized before use"]
     fn test_init_invalid_mut() {
         let mut obj: Id<IvarTester, Owned> =
-            unsafe { msg_send_id![msg_send_id![IvarTester::class(), alloc], initInvalid] };
+            unsafe { msg_send_id![IvarTester::alloc(), initInvalid] };
 
         *obj.ivar1 = RcTestObject::new().into();
     }

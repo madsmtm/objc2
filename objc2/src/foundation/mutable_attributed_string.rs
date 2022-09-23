@@ -29,18 +29,12 @@ extern_methods!(
 
         #[doc(alias = "initWithString:")]
         pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithString: string]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithString: string] }
         }
 
         #[doc(alias = "initWithAttributedString:")]
         pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self, Owned> {
-            unsafe {
-                let obj = msg_send_id![Self::class(), alloc];
-                msg_send_id![obj, initWithAttributedString: attributed_string]
-            }
+            unsafe { msg_send_id![Self::alloc(), initWithAttributedString: attributed_string] }
         }
     }
 

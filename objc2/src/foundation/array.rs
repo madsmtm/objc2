@@ -9,7 +9,7 @@ use super::{
     NSObject, NSRange,
 };
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::runtime::{Class, Object};
+use crate::runtime::Object;
 use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
 
 __inner_extern_class!(
@@ -74,13 +74,12 @@ impl<T: Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
 
 #[track_caller]
-pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: Message, O: Ownership>(
-    cls: &Class,
+pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(
     objects: &[&T],
 ) -> Id<R, O> {
     unsafe {
         msg_send_id![
-            msg_send_id![cls, alloc],
+            R::alloc(),
             initWithObjects: objects.as_ptr(),
             count: objects.len(),
         ]
@@ -115,7 +114,7 @@ extern_methods!(
             // or `Id<T, O>`, and the latter is probably the most useful, as we
             // would like to know when we're the only owner of the array, to
             // allow mutation of the array's items.
-            unsafe { with_objects(Self::class(), vec.as_slice_ref()) }
+            unsafe { with_objects(vec.as_slice_ref()) }
         }
     }
 
@@ -128,7 +127,7 @@ extern_methods!(
             // (Note that NSArray internally retains all the objects it is given,
             // effectively making the safety requirements the same as
             // `Id::retain`).
-            unsafe { with_objects(Self::class(), slice.as_slice_ref()) }
+            unsafe { with_objects(slice.as_slice_ref()) }
         }
     }
 

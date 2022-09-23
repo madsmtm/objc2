@@ -1,3 +1,5 @@
+use crate::msg_send_id;
+use crate::rc::Allocated;
 use crate::runtime::Class;
 use crate::Message;
 
@@ -91,4 +93,19 @@ pub unsafe trait ClassType: Message {
 
     /// Get a mutable reference to the superclass.
     fn as_super_mut(&mut self) -> &mut Self::Super;
+
+    /// Allocate a new instance of the class.
+    ///
+    /// The return value can be used directly inside [`msg_send_id!`] to
+    /// initialize the object.
+    ///
+    /// [`msg_send_id!`]: crate::msg_send_id
+    #[inline]
+    fn alloc() -> Option<Allocated<Self>> {
+        // SAFETY:
+        // - It is always safe to (attempt to) allocate an object.
+        // - The object is of the correct type, since we've used the class
+        //   from `Self::class`.
+        unsafe { msg_send_id![Self::class(), alloc] }
+    }
 }

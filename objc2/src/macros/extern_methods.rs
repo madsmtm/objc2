@@ -78,7 +78,7 @@
 ///         pub fn new(identifier: &NSCalendarIdentifier) -> Id<Self, Shared> {
 ///             unsafe {
 ///                 msg_send_id![
-///                     msg_send_id![Self::class(), alloc],
+///                     Self::alloc(),
 ///                     initWithCalendarIdentifier: identifier,
 ///                 ]
 ///             }
@@ -150,7 +150,7 @@
 ///     pub fn new(identifier: &NSCalendarIdentifier) -> Id<Self, Shared> {
 ///         unsafe {
 ///             msg_send_id![
-///                 msg_send_id![Self::class(), alloc],
+///                 Self::alloc(),
 ///                 initWithCalendarIdentifier: identifier,
 ///             ]
 ///         }
