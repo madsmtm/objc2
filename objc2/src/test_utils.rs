@@ -231,9 +231,15 @@ pub(crate) fn custom_subclass() -> &'static Class {
             foo + 2
         }
 
+        extern "C" fn custom_subclass_class_method(_cls: &Class, _cmd: Sel) -> u32 {
+            9
+        }
+
         unsafe {
             let get_foo: extern "C" fn(_, _) -> _ = custom_subclass_get_foo;
             builder.add_method(sel!(foo), get_foo);
+            let class_method: extern "C" fn(_, _) -> _ = custom_subclass_class_method;
+            builder.add_class_method(sel!(classFoo), class_method);
         }
 
         builder.register();

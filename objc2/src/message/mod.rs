@@ -533,6 +533,24 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        feature = "gnustep-1-7",
+        ignore = "GNUStep deadlocks here for some reason"
+    )]
+    fn test_send_message_class_super() {
+        let cls = test_utils::custom_subclass();
+        let superclass = test_utils::custom_class();
+        unsafe {
+            let foo: u32 = msg_send![super(cls, superclass.metaclass()), classFoo];
+            assert_eq!(foo, 7);
+
+            // The subclass is overriden to return + 2
+            let foo: u32 = msg_send![cls, classFoo];
+            assert_eq!(foo, 9);
+        }
+    }
+
+    #[test]
     fn test_send_message_manuallydrop() {
         let obj = ManuallyDrop::new(test_utils::custom_object());
         unsafe {
