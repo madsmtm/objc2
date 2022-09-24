@@ -1,8 +1,6 @@
 //! Parsing encodings from their string representation.
 #![deny(unsafe_code)]
 
-use core::convert::TryInto;
-
 use crate::helper::{ContainerKind, Helper, IndirectionKind, NestingLevel, Primitive};
 use crate::Encoding;
 
@@ -29,66 +27,167 @@ pub(crate) const fn verify_name(name: &str) -> bool {
     true
 }
 
-pub(crate) const QUALIFIERS: &[char] = &[
-    'r', // const
-    'n', // in
-    'N', // inout
-    'o', // out
-    'O', // bycopy
-    'R', // byref
-    'V', // oneway
-];
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub(crate) enum ErrorKind {
+    UnexpectedEnd,
+    Unknown(u8),
+    UnknownAfterComplex(u8),
+    ExpectedInteger,
+    IntegerTooLarge,
+    WrongEndContainer(ContainerKind),
+    InvalidIdentifier(ContainerKind),
+}
 
-pub(crate) fn rm_enc_prefix<'a>(
-    s: &'a str,
-    enc: &Encoding,
-    level: NestingLevel,
-) -> Option<&'a str> {
-    use Helper::*;
-    match Helper::new(enc) {
-        Primitive(primitive) => s.strip_prefix(primitive.to_str()),
-        BitField(b, _type) => {
-            // TODO: Use the type on GNUStep (nesting level?)
-            let s = s.strip_prefix('b')?;
-            rm_int_prefix(s, b as usize)
+type Result<T, E = ErrorKind> = core::result::Result<T, E>;
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub(crate) struct Parser<'a> {
+    data: &'a str,
+    // Always "behind"/"at" the current character
+    split_point: usize,
+}
+
+impl<'a> Parser<'a> {
+    pub(crate) fn new(data: &'a str) -> Self {
+        Self {
+            split_point: 0,
+            data,
         }
-        Indirection(kind, t) => {
-            let s = s.strip_prefix(kind.prefix())?;
-            rm_enc_prefix(s, t, level.indirection(kind))
-        }
-        Array(len, item) => {
-            let mut s = s;
-            s = s.strip_prefix('[')?;
-            s = rm_int_prefix(s, len)?;
-            s = rm_enc_prefix(s, item, level.array())?;
-            s.strip_prefix(']')
-        }
-        Container(kind, name, fields) => {
-            let mut s = s;
-            s = s.strip_prefix(kind.start())?;
-            s = s.strip_prefix(name)?;
-            if level.include_container_fields() {
-                s = s.strip_prefix('=')?;
-                for field in fields {
-                    s = rm_enc_prefix(s, field, level.container())?;
-                }
+    }
+
+    fn peek(&self) -> Result<u8> {
+        self.try_peek().ok_or(ErrorKind::UnexpectedEnd)
+    }
+
+    fn try_peek(&self) -> Option<u8> {
+        self.data.as_bytes().get(self.split_point).copied()
+    }
+
+    fn advance(&mut self) {
+        self.split_point += 1;
+    }
+
+    fn consume_while(&mut self, mut condition: impl FnMut(u8) -> bool) {
+        while let Some(b) = self.try_peek() {
+            if condition(b) {
+                self.advance();
+            } else {
+                break;
             }
-            s.strip_prefix(kind.end())
         }
+    }
+
+    pub(crate) fn is_empty(&self) -> bool {
+        self.try_peek().is_none()
     }
 }
 
-fn chomp_int(s: &str) -> Option<(usize, &str)> {
-    // Chomp until we hit a non-digit
-    let (num, t) = match s.find(|c: char| !c.is_ascii_digit()) {
-        Some(i) => s.split_at(i),
-        None => (s, ""),
-    };
-    num.parse().map(|n| (n, t)).ok()
+impl Parser<'_> {
+    /// Strip leading qualifiers, if any.
+    pub(crate) fn strip_leading_qualifiers(&mut self) {
+        const QUALIFIERS: &[u8] = &[
+            b'r', // const
+            b'n', // in
+            b'N', // inout
+            b'o', // out
+            b'O', // bycopy
+            b'R', // byref
+            b'V', // oneway
+                  // b'!', // GCINVISIBLE
+        ];
+
+        self.consume_while(|b| QUALIFIERS.contains(&b));
+    }
+
+    /// Chomp until we hit a non-digit.
+    ///
+    /// + and - prefixes are not supported.
+    fn chomp_digits(&mut self) -> Result<&str> {
+        let old_split_point = self.split_point;
+
+        // Parse first digit (which must be present).
+        if !self.peek()?.is_ascii_digit() {
+            return Err(ErrorKind::ExpectedInteger);
+        }
+
+        // Parse the rest, stopping if we hit a non-digit.
+        self.consume_while(|b| b.is_ascii_digit());
+
+        Ok(&self.data[old_split_point..self.split_point])
+    }
+
+    fn parse_usize(&mut self) -> Result<usize> {
+        self.chomp_digits()?
+            .parse()
+            .map_err(|_| ErrorKind::IntegerTooLarge)
+    }
+
+    fn parse_u8(&mut self) -> Result<u8> {
+        self.chomp_digits()?
+            .parse()
+            .map_err(|_| ErrorKind::IntegerTooLarge)
+    }
 }
 
-fn rm_int_prefix(s: &str, other: usize) -> Option<&str> {
-    chomp_int(s).and_then(|(n, t)| if other == n { Some(t) } else { None })
+/// Check if the data matches an expected value.
+///
+/// The errors here aren't currently used, so they're hackily set up.
+impl Parser<'_> {
+    fn expect_byte(&mut self, byte: u8) -> Option<()> {
+        if self.try_peek()? == byte {
+            self.advance();
+            Some(())
+        } else {
+            None
+        }
+    }
+
+    fn expect_str(&mut self, s: &str) -> Option<()> {
+        for b in s.as_bytes() {
+            self.expect_byte(*b)?;
+        }
+        Some(())
+    }
+
+    fn expect_usize(&mut self, int: usize) -> Option<()> {
+        if self.parse_usize().ok()? == int {
+            Some(())
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn expect_encoding(&mut self, enc: &Encoding, level: NestingLevel) -> Option<()> {
+        match Helper::new(enc) {
+            Helper::Primitive(primitive) => self.expect_str(primitive.to_str()),
+            Helper::BitField(b, _type) => {
+                // TODO: Use the type on GNUStep (nesting level?)
+                self.expect_byte(b'b')?;
+                self.expect_usize(b as usize)
+            }
+            Helper::Indirection(kind, t) => {
+                self.expect_byte(kind.prefix_byte())?;
+                self.expect_encoding(t, level.indirection(kind))
+            }
+            Helper::Array(len, item) => {
+                self.expect_byte(b'[')?;
+                self.expect_usize(len)?;
+                self.expect_encoding(item, level.array())?;
+                self.expect_byte(b']')
+            }
+            Helper::Container(kind, name, fields) => {
+                self.expect_byte(kind.start_byte())?;
+                self.expect_str(name)?;
+                if level.include_container_fields() {
+                    self.expect_byte(b'=')?;
+                    for field in fields {
+                        self.expect_encoding(field, level.container())?;
+                    }
+                }
+                self.expect_byte(kind.end_byte())
+            }
+        }
+    }
 }
 
 #[allow(unused)]
@@ -103,84 +202,125 @@ enum EncodingToken<'a> {
     ContainerEnd(ContainerKind),
 }
 
-#[allow(unused)]
-fn chomp(s: &str) -> Option<(EncodingToken<'_>, &str)> {
-    let (first, rest) = {
-        let mut chars = s.chars();
-        match chars.next() {
-            Some(first) => (first, chars.as_str()),
-            None => return None,
-        }
-    };
+impl Parser<'_> {
+    fn parse_container_name(&mut self, kind: ContainerKind) -> Result<&str> {
+        let old_split_point = self.split_point;
 
-    let primitive = match first {
-        'c' => Primitive::Char,
-        's' => Primitive::Short,
-        'i' => Primitive::Int,
-        'l' => Primitive::Long,
-        'q' => Primitive::LongLong,
-        'C' => Primitive::UChar,
-        'S' => Primitive::UShort,
-        'I' => Primitive::UInt,
-        'L' => Primitive::ULong,
-        'Q' => Primitive::ULongLong,
-        'f' => Primitive::Float,
-        'd' => Primitive::Double,
-        'D' => Primitive::LongDouble,
-        'j' => {
-            if let Some(rest) = rest.strip_prefix('f') {
-                return Some((EncodingToken::Primitive(Primitive::FloatComplex), rest));
+        // Parse name until hits `=`
+        loop {
+            let b = self
+                .try_peek()
+                .ok_or_else(|| ErrorKind::WrongEndContainer(kind))?;
+            if b == b'=' || b == kind.end_byte() {
+                break;
+            } else {
+                self.advance();
             }
-            if let Some(rest) = rest.strip_prefix('d') {
-                return Some((EncodingToken::Primitive(Primitive::DoubleComplex), rest));
+        }
+
+        let s = &self.data[old_split_point..self.split_point];
+
+        if !verify_name(s) {
+            return Err(ErrorKind::InvalidIdentifier(kind));
+        }
+
+        Ok(s)
+    }
+
+    #[allow(dead_code)]
+    fn parse_token(&mut self) -> Result<Option<EncodingToken<'_>>> {
+        Ok(if let Some(b) = self.try_peek() {
+            self.advance();
+            Some(self.parse_token_inner(b)?)
+        } else {
+            None
+        })
+    }
+
+    fn parse_token_inner(&mut self, b: u8) -> Result<EncodingToken<'_>> {
+        let prim = EncodingToken::Primitive;
+
+        Ok(match b {
+            b'c' => prim(Primitive::Char),
+            b's' => prim(Primitive::Short),
+            b'i' => prim(Primitive::Int),
+            b'l' => prim(Primitive::Long),
+            b'q' => prim(Primitive::LongLong),
+            b'C' => prim(Primitive::UChar),
+            b'S' => prim(Primitive::UShort),
+            b'I' => prim(Primitive::UInt),
+            b'L' => prim(Primitive::ULong),
+            b'Q' => prim(Primitive::ULongLong),
+            b'f' => prim(Primitive::Float),
+            b'd' => prim(Primitive::Double),
+            b'D' => prim(Primitive::LongDouble),
+            b'j' => prim({
+                let res = match self.peek()? {
+                    b'f' => Primitive::FloatComplex,
+                    b'd' => Primitive::DoubleComplex,
+                    b'D' => Primitive::LongDoubleComplex,
+                    b => return Err(ErrorKind::UnknownAfterComplex(b)),
+                };
+                self.advance();
+                res
+            }),
+            b'B' => prim(Primitive::Bool),
+            b'v' => prim(Primitive::Void),
+            b'*' => prim(Primitive::String),
+            b'@' => prim(match self.try_peek() {
+                // Special handling for blocks
+                Some(b'?') => {
+                    self.advance();
+                    Primitive::Block
+                }
+                _ => Primitive::Object,
+            }),
+            b'#' => prim(Primitive::Class),
+            b':' => prim(Primitive::Sel),
+            b'?' => prim(Primitive::Unknown),
+            b'b' => EncodingToken::BitFieldStart(self.parse_u8()?),
+            b'^' => EncodingToken::Indirection(IndirectionKind::Pointer),
+            b'A' => EncodingToken::Indirection(IndirectionKind::Atomic),
+            b'[' => EncodingToken::ArrayStart(self.parse_usize()?),
+            b']' => EncodingToken::ArrayEnd,
+            b'{' => {
+                let kind = ContainerKind::Struct;
+                let name = self.parse_container_name(kind)?;
+                EncodingToken::ContainerStart(kind, name)
             }
-            if let Some(rest) = rest.strip_prefix('D') {
-                return Some((EncodingToken::Primitive(Primitive::LongDoubleComplex), rest));
+            b'(' => {
+                let kind = ContainerKind::Union;
+                let name = self.parse_container_name(kind)?;
+                EncodingToken::ContainerStart(kind, name)
             }
-            return None;
+            b'=' => EncodingToken::ContainerSeparator,
+            b'}' => EncodingToken::ContainerEnd(ContainerKind::Struct),
+            b')' => EncodingToken::ContainerEnd(ContainerKind::Union),
+            b => return Err(ErrorKind::Unknown(b)),
+        })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_container_name() {
+        const KIND: ContainerKind = ContainerKind::Struct;
+
+        fn assert_name(enc: &str, expected: Result<&str>) {
+            let mut parser = Parser::new(enc);
+            assert_eq!(parser.parse_container_name(KIND), expected);
         }
-        'B' => Primitive::Bool,
-        'v' => Primitive::Void,
-        '*' => Primitive::String,
-        '@' => {
-            // Special handling for blocks
-            if let Some(rest) = rest.strip_prefix('?') {
-                return Some((EncodingToken::Primitive(Primitive::Block), rest));
-            }
-            Primitive::Object
-        }
-        '#' => Primitive::Class,
-        ':' => Primitive::Sel,
-        '?' => Primitive::Unknown,
-        'b' => {
-            return chomp_int(rest)
-                .map(|(b, rest)| (EncodingToken::BitFieldStart(b.try_into().unwrap()), rest));
-        }
-        '^' => return Some((EncodingToken::Indirection(IndirectionKind::Pointer), rest)),
-        'A' => return Some((EncodingToken::Indirection(IndirectionKind::Atomic), rest)),
-        '[' => {
-            return chomp_int(rest).map(|(n, rest)| (EncodingToken::ArrayStart(n), rest));
-        }
-        ']' => return Some((EncodingToken::ArrayEnd, rest)),
-        '{' => {
-            return rest.split_once('=').map(|(name, rest)| {
-                (
-                    EncodingToken::ContainerStart(ContainerKind::Struct, name),
-                    rest,
-                )
-            });
-        }
-        '}' => return Some((EncodingToken::ContainerEnd(ContainerKind::Struct), rest)),
-        '(' => {
-            return rest.split_once('=').map(|(name, rest)| {
-                (
-                    EncodingToken::ContainerStart(ContainerKind::Union, name),
-                    rest,
-                )
-            });
-        }
-        ')' => return Some((EncodingToken::ContainerEnd(ContainerKind::Union), rest)),
-        _ => return None,
-    };
-    Some((EncodingToken::Primitive(primitive), rest))
+
+        assert_name("abc=def", Ok("abc"));
+        assert_name("_=.a'", Ok("_"));
+        assert_name("abc}def", Ok("abc"));
+        assert_name("=def", Err(ErrorKind::InvalidIdentifier(KIND)));
+        assert_name(".=def", Err(ErrorKind::InvalidIdentifier(KIND)));
+        assert_name("", Err(ErrorKind::WrongEndContainer(KIND)));
+        assert_name("abc", Err(ErrorKind::WrongEndContainer(KIND)));
+        assert_name("abc)def", Err(ErrorKind::WrongEndContainer(KIND)));
+    }
 }

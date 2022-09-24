@@ -1,7 +1,7 @@
 use core::fmt;
 
 use crate::helper::{compare_encodings, Helper, NestingLevel};
-use crate::parse;
+use crate::parse::Parser;
 
 /// An Objective-C type-encoding.
 ///
@@ -187,15 +187,16 @@ impl Encoding {
     /// See [`Encoding::equivalent_to`] for details about the meaning of
     /// "equivalence".
     pub fn equivalent_to_str(&self, s: &str) -> bool {
-        // strip leading qualifiers
-        let s = s.trim_start_matches(parse::QUALIFIERS);
+        let mut parser = Parser::new(s);
+
+        parser.strip_leading_qualifiers();
 
         // TODO: Allow missing/"?" names in structs and unions?
 
-        if let Some(res) = parse::rm_enc_prefix(s, self, NestingLevel::new()) {
+        if let Some(()) = parser.expect_encoding(self, NestingLevel::new()) {
             // if the given encoding can be successfully removed from the
             // start and an empty string remains, they were fully equivalent!
-            res.is_empty()
+            parser.is_empty()
         } else {
             false
         }
