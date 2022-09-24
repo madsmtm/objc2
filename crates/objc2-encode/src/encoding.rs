@@ -179,7 +179,7 @@ impl Encoding {
     /// For example, you should not rely on two equivalent encodings to have
     /// the same size or ABI - that is provided on a best-effort basis.
     pub fn equivalent_to(&self, other: &Self) -> bool {
-        compare_encodings(self, other, NestingLevel::new(), false)
+        compare_encodings(self, NestingLevel::new(), other, NestingLevel::new(), false)
     }
 
     /// Check if an encoding is equivalent to the given string representation.
@@ -211,7 +211,7 @@ impl Encoding {
 /// Objective-C compilers.
 impl fmt::Display for Encoding {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        Helper::new(self).display_fmt(f, NestingLevel::new())
+        write!(f, "{}", Helper::new(self, NestingLevel::new()))
     }
 }
 

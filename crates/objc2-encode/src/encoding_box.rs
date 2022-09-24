@@ -76,7 +76,7 @@ pub enum EncodingBox {
     /// Same as [`Encoding::Unknown`].
     Unknown,
     /// Same as [`Encoding::BitField`].
-    BitField(u8, Box<Self>),
+    BitField(u8, Option<Box<Self>>),
     /// Same as [`Encoding::Pointer`].
     Pointer(Box<Self>),
     /// Same as [`Encoding::Atomic`].
@@ -84,9 +84,9 @@ pub enum EncodingBox {
     /// Same as [`Encoding::Array`].
     Array(usize, Box<Self>),
     /// Same as [`Encoding::Struct`].
-    Struct(String, Vec<Self>),
+    Struct(String, Option<Vec<Self>>),
     /// Same as [`Encoding::Union`].
-    Union(String, Vec<Self>),
+    Union(String, Option<Vec<Self>>),
 }
 
 impl EncodingBox {
@@ -108,13 +108,13 @@ impl EncodingBox {
 /// Same formatting as [`Encoding`]'s `Display` implementation.
 impl fmt::Display for EncodingBox {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        Helper::from_box(self).display_fmt(f, NestingLevel::new())
+        write!(f, "{}", Helper::from_box(self, NestingLevel::new()))
     }
 }
 
 impl PartialEq<Encoding> for EncodingBox {
     fn eq(&self, other: &Encoding) -> bool {
-        compare_encodings(self, other, NestingLevel::new(), true)
+        compare_encodings(self, NestingLevel::new(), other, NestingLevel::new(), true)
     }
 }
 
@@ -147,11 +147,11 @@ mod tests {
         ));
         let enc2 = EncodingBox::Atomic(Box::new(EncodingBox::Struct(
             "test".to_string(),
-            vec![EncodingBox::Array(2, Box::new(EncodingBox::Int))],
+            Some(vec![EncodingBox::Array(2, Box::new(EncodingBox::Int))]),
         )));
         let enc3 = EncodingBox::Atomic(Box::new(EncodingBox::Struct(
             "test".to_string(),
-            vec![EncodingBox::Array(2, Box::new(EncodingBox::Char))],
+            Some(vec![EncodingBox::Array(2, Box::new(EncodingBox::Char))]),
         )));
         assert_eq!(enc1, enc2);
         assert_ne!(enc1, enc3);

@@ -17,29 +17,30 @@ impl NestingLevel {
         Self::Top
     }
 
-    pub(crate) const fn bitfield(self) -> Self {
+    const fn bitfield(self) -> Self {
         // TODO: Is this correct?
         self
     }
 
-    pub(crate) const fn indirection(self, kind: IndirectionKind) -> Self {
-        match kind {
-            // Move all the way down
-            IndirectionKind::Atomic => Self::Bottom,
-            // Move one step down
-            IndirectionKind::Pointer => match self {
-                Self::Top => Self::Within,
-                Self::Bottom | Self::Within => Self::Bottom,
-            },
+    const fn atomic(self) -> Self {
+        // Move all the way down
+        Self::Bottom
+    }
+
+    const fn pointer(self) -> Self {
+        // Move one step down
+        match self {
+            Self::Top => Self::Within,
+            Self::Bottom | Self::Within => Self::Bottom,
         }
     }
 
-    pub(crate) const fn array(self) -> Self {
+    const fn array(self) -> Self {
         // TODO: Is this correct?
         self
     }
 
-    pub(crate) const fn container(self) -> Self {
+    const fn container(self) -> Self {
         match self {
             // Move top one step down
             Self::Top | Self::Within => Self::Within,
@@ -47,7 +48,7 @@ impl NestingLevel {
         }
     }
 
-    pub(crate) const fn include_container_fields(self) -> bool {
+    const fn include_container_fields(self) -> bool {
         match self {
             Self::Top | Self::Within => true,
             Self::Bottom => false,
@@ -57,40 +58,64 @@ impl NestingLevel {
 
 pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
     enc1: &E1,
+    level1: NestingLevel,
     enc2: &E2,
-    level: NestingLevel,
+    level2: NestingLevel,
     include_all: bool,
 ) -> bool {
+    use Helper::*;
     // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
     // should compare equivalent, but we don't bother since in practice a
-    /// plain `Unknown` will never appear.
-    use Helper::*;
-    match (enc1.helper(), enc2.helper()) {
+    // plain `Unknown` will never appear.
+
+    let level1 = if include_all {
+        NestingLevel::new()
+    } else {
+        level1
+    };
+    let level2 = if include_all {
+        NestingLevel::new()
+    } else {
+        level2
+    };
+
+    // TODO: Are level1 and level2 ever be different?
+
+    match (enc1.helper(level1), enc2.helper(level2)) {
         (Primitive(p1), Primitive(p2)) => p1 == p2,
-        (BitField(b1, type1), BitField(b2, type2)) => {
-            b1 == b2 && compare_encodings(type1, type2, level.bitfield(), include_all)
+        (BitField(b1, type1, level1), BitField(b2, type2, level2)) => {
+            b1 == b2
+                && match (type1, type2) {
+                    (None, None) => true,
+                    (Some(type1), Some(type2)) => {
+                        compare_encodings(type1, level1, type2, level2, include_all)
+                    }
+                    _ => true, // TODO
+                }
         }
-        (Indirection(kind1, t1), Indirection(kind2, t2)) => {
-            kind1 == kind2 && compare_encodings(t1, t2, level.indirection(kind1), include_all)
+        (Indirection(kind1, t1, level1), Indirection(kind2, t2, level2)) => {
+            kind1 == kind2 && compare_encodings(t1, level1, t2, level2, include_all)
         }
-        (Array(len1, item1), Array(len2, item2)) => {
-            len1 == len2 && compare_encodings(item1, item2, level.array(), include_all)
+        (Array(len1, item1, level1), Array(len2, item2, level2)) => {
+            len1 == len2 && compare_encodings(item1, level1, item2, level2, include_all)
         }
-        (Container(kind1, name1, fields1), Container(kind2, name2, fields2)) => {
+        (Container(kind1, name1, items1, level1), Container(kind2, name2, items2, level2)) => {
             kind1 == kind2
                 && name1 == name2
-                && if level.include_container_fields() || include_all {
-                    if fields1.len() != fields2.len() {
-                        return false;
-                    }
-                    for (field1, field2) in fields1.iter().zip(fields2.iter()) {
-                        if !compare_encodings(field1, field2, level.container(), include_all) {
+                && match (items1, items2) {
+                    (None, None) => true,
+                    (Some(items1), Some(items2)) => {
+                        if items1.len() != items2.len() {
                             return false;
                         }
+                        for (item1, item2) in items1.iter().zip(items2.iter()) {
+                            if !compare_encodings(item1, level1, item2, level2, include_all) {
+                                return false;
+                            }
+                        }
+                        true
                     }
-                    true
-                } else {
-                    true
+                    _ => false, // TODO
                 }
         }
         (_, _) => false,
@@ -208,21 +233,50 @@ impl ContainerKind {
 }
 
 pub(crate) trait EncodingType: Sized {
-    fn helper(&self) -> Helper<'_, Self>;
+    fn helper(&self, level: NestingLevel) -> Helper<'_, Self>;
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub(crate) enum Helper<'a, E = Encoding> {
     Primitive(Primitive),
-    BitField(u8, &'a E),
-    Indirection(IndirectionKind, &'a E),
-    Array(usize, &'a E),
-    Container(ContainerKind, &'a str, &'a [E]),
+    BitField(u8, Option<&'a E>, NestingLevel),
+    Indirection(IndirectionKind, &'a E, NestingLevel),
+    Array(usize, &'a E, NestingLevel),
+    Container(ContainerKind, &'a str, Option<&'a [E]>, NestingLevel),
+}
+
+impl<E: EncodingType> fmt::Display for Helper<'_, E> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Primitive(primitive) => write!(f, "{}", primitive.to_str()),
+            Self::BitField(b, _type, _level) => {
+                // TODO: Use the type on GNUStep (nesting level?)
+                write!(f, "b{}", b)
+            }
+            Self::Indirection(kind, t, level) => {
+                write!(f, "{}{}", kind.prefix(), t.helper(*level))
+            }
+            Self::Array(len, item, level) => {
+                write!(f, "[{}{}]", len, item.helper(*level))
+            }
+            Self::Container(kind, name, items, level) => {
+                write!(f, "{}", kind.start())?;
+                write!(f, "{}", name)?;
+                if let Some(items) = items {
+                    write!(f, "=")?;
+                    for item in *items {
+                        write!(f, "{}", item.helper(*level))?;
+                    }
+                }
+                write!(f, "{}", kind.end())
+            }
+        }
+    }
 }
 
 impl Helper<'_> {
-    pub(crate) const fn new(encoding: &Encoding) -> Self {
+    pub(crate) const fn new(encoding: &Encoding, level: NestingLevel) -> Self {
         use Encoding::*;
         match encoding {
             Char => Self::Primitive(Primitive::Char),
@@ -249,28 +303,38 @@ impl Helper<'_> {
             Class => Self::Primitive(Primitive::Class),
             Sel => Self::Primitive(Primitive::Sel),
             Unknown => Self::Primitive(Primitive::Unknown),
-            BitField(b, t) => Self::BitField(*b, t),
-            Pointer(t) => Self::Indirection(IndirectionKind::Pointer, t),
-            Atomic(t) => Self::Indirection(IndirectionKind::Atomic, t),
-            Array(len, item) => Self::Array(*len, item),
+            BitField(b, t) => Self::BitField(*b, Some(t), level.bitfield()),
+            Pointer(t) => Self::Indirection(IndirectionKind::Pointer, t, level.pointer()),
+            Atomic(t) => Self::Indirection(IndirectionKind::Atomic, t, level.atomic()),
+            Array(len, item) => Self::Array(*len, item, level.array()),
             Struct(name, fields) => {
                 if !verify_name(name) {
                     panic!("Struct name was not a valid identifier");
                 }
-                Self::Container(ContainerKind::Struct, name, fields)
+                let fields = if level.include_container_fields() {
+                    Some(*fields)
+                } else {
+                    None
+                };
+                Self::Container(ContainerKind::Struct, name, fields, level.container())
             }
             Union(name, members) => {
                 if !verify_name(name) {
                     panic!("Union name was not a valid identifier");
                 }
-                Self::Container(ContainerKind::Union, name, members)
+                let members = if level.include_container_fields() {
+                    Some(*members)
+                } else {
+                    None
+                };
+                Self::Container(ContainerKind::Union, name, members, level.container())
             }
         }
     }
 }
 
 impl<'a> Helper<'a, EncodingBox> {
-    pub(crate) fn from_box(encoding: &'a EncodingBox) -> Self {
+    pub(crate) fn from_box(encoding: &'a EncodingBox, level: NestingLevel) -> Self {
         use EncodingBox::*;
         match encoding {
             Char => Self::Primitive(Primitive::Char),
@@ -297,71 +361,44 @@ impl<'a> Helper<'a, EncodingBox> {
             Class => Self::Primitive(Primitive::Class),
             Sel => Self::Primitive(Primitive::Sel),
             Unknown => Self::Primitive(Primitive::Unknown),
-            BitField(b, t) => Self::BitField(*b, &**t),
-            Pointer(t) => Self::Indirection(IndirectionKind::Pointer, &**t),
-            Atomic(t) => Self::Indirection(IndirectionKind::Atomic, &**t),
-            Array(len, item) => Self::Array(*len, &**item),
+            BitField(b, t) => Self::BitField(*b, t.as_deref(), level.bitfield()),
+            Pointer(t) => Self::Indirection(IndirectionKind::Pointer, &t, level.pointer()),
+            Atomic(t) => Self::Indirection(IndirectionKind::Atomic, &t, level.atomic()),
+            Array(len, item) => Self::Array(*len, &item, level.array()),
             Struct(name, fields) => {
                 if !verify_name(name) {
                     panic!("Struct name was not a valid identifier");
                 }
-                Self::Container(ContainerKind::Struct, name, fields)
+                let fields = if level.include_container_fields() {
+                    fields.as_deref()
+                } else {
+                    None
+                };
+                Self::Container(ContainerKind::Struct, name, fields, level.container())
             }
             Union(name, members) => {
                 if !verify_name(name) {
                     panic!("Union name was not a valid identifier");
                 }
-                Self::Container(ContainerKind::Union, name, members)
-            }
-        }
-    }
-}
-
-impl<'a, E: EncodingType> Helper<'a, E> {
-    pub(crate) fn display_fmt(
-        &self,
-        f: &mut fmt::Formatter<'_>,
-        level: NestingLevel,
-    ) -> fmt::Result {
-        match self {
-            Self::Primitive(primitive) => f.write_str(primitive.to_str()),
-            Self::BitField(b, _type) => {
-                // TODO: Use the type on GNUStep (nesting level?)
-                write!(f, "b{b}")
-            }
-            Self::Indirection(kind, t) => {
-                write!(f, "{}", kind.prefix())?;
-                t.helper().display_fmt(f, level.indirection(*kind))
-            }
-            Self::Array(len, item) => {
-                write!(f, "[")?;
-                write!(f, "{len}")?;
-                item.helper().display_fmt(f, level.array())?;
-                write!(f, "]")
-            }
-            Self::Container(kind, name, fields) => {
-                write!(f, "{}", kind.start())?;
-                write!(f, "{name}")?;
-                if level.include_container_fields() {
-                    write!(f, "=")?;
-                    for field in *fields {
-                        field.helper().display_fmt(f, level.container())?;
-                    }
-                }
-                write!(f, "{}", kind.end())
+                let members = if level.include_container_fields() {
+                    members.as_deref()
+                } else {
+                    None
+                };
+                Self::Container(ContainerKind::Union, name, members, level.container())
             }
         }
     }
 }
 
 impl EncodingType for Encoding {
-    fn helper(&self) -> Helper<'_, Self> {
-        Helper::new(self)
+    fn helper(&self, level: NestingLevel) -> Helper<'_, Self> {
+        Helper::new(self, level)
     }
 }
 
 impl EncodingType for EncodingBox {
-    fn helper(&self) -> Helper<'_, Self> {
-        Helper::from_box(self)
+    fn helper(&self, level: NestingLevel) -> Helper<'_, Self> {
+        Helper::from_box(self, level)
     }
 }

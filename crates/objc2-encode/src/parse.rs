@@ -158,30 +158,31 @@ impl Parser<'_> {
     }
 
     pub(crate) fn expect_encoding(&mut self, enc: &Encoding, level: NestingLevel) -> Option<()> {
-        match Helper::new(enc) {
+        let helper = Helper::new(enc, level);
+        match helper {
             Helper::Primitive(primitive) => self.expect_str(primitive.to_str()),
-            Helper::BitField(b, _type) => {
+            Helper::BitField(b, _type, _level) => {
                 // TODO: Use the type on GNUStep (nesting level?)
                 self.expect_byte(b'b')?;
                 self.expect_usize(b as usize)
             }
-            Helper::Indirection(kind, t) => {
+            Helper::Indirection(kind, t, level) => {
                 self.expect_byte(kind.prefix_byte())?;
-                self.expect_encoding(t, level.indirection(kind))
+                self.expect_encoding(t, level)
             }
-            Helper::Array(len, item) => {
+            Helper::Array(len, item, level) => {
                 self.expect_byte(b'[')?;
                 self.expect_usize(len)?;
-                self.expect_encoding(item, level.array())?;
+                self.expect_encoding(item, level)?;
                 self.expect_byte(b']')
             }
-            Helper::Container(kind, name, fields) => {
+            Helper::Container(kind, name, items, level) => {
                 self.expect_byte(kind.start_byte())?;
                 self.expect_str(name)?;
-                if level.include_container_fields() {
+                if let Some(items) = items {
                     self.expect_byte(b'=')?;
-                    for field in fields {
-                        self.expect_encoding(field, level.container())?;
+                    for item in items {
+                        self.expect_encoding(item, level)?;
                     }
                 }
                 self.expect_byte(kind.end_byte())
