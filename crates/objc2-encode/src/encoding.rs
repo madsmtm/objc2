@@ -187,30 +187,18 @@ impl Encoding {
     /// See [`Encoding::equivalent_to`] for details about the meaning of
     /// "equivalence".
     pub fn equivalent_to_str(&self, s: &str) -> bool {
-        // if the given encoding can be successfully removed from the start
-        // and an empty string remains, they were fully equivalent!
-        if let Some(res) = self.equivalent_to_start_of_str(s) {
-            res.is_empty()
-        } else {
-            false
-        }
-    }
-
-    /// Check if an encoding is equivalent to the start of the given string
-    /// representation.
-    ///
-    /// If it is equivalent, the remaining part of the string is returned.
-    /// Otherwise this returns [`None`].
-    ///
-    /// See [`Encoding::equivalent_to`] for details about the meaning of
-    /// "equivalence".
-    pub fn equivalent_to_start_of_str<'a>(&self, s: &'a str) -> Option<&'a str> {
         // strip leading qualifiers
         let s = s.trim_start_matches(parse::QUALIFIERS);
 
         // TODO: Allow missing/"?" names in structs and unions?
 
-        parse::rm_enc_prefix(s, self, NestingLevel::new())
+        if let Some(res) = parse::rm_enc_prefix(s, self, NestingLevel::new()) {
+            // if the given encoding can be successfully removed from the
+            // start and an empty string remains, they were fully equivalent!
+            res.is_empty()
+        } else {
+            false
+        }
     }
 }
 
@@ -285,7 +273,6 @@ mod tests {
                 // Check equivalence comparisons
                 assert!(E.equivalent_to(&E));
                 assert!(E.equivalent_to_str($string));
-                assert_eq!(E.equivalent_to_start_of_str(concat!($string, "xyz")), Some("xyz"));
                 $(
                     assert!(E.equivalent_to(&$equivalent_encoding));
                     assert!(E.equivalent_to_str(&$equivalent_encoding.to_string()));

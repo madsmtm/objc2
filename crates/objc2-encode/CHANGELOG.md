@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 * **BREAKING**: `Encoding` no longer implements `Copy`, though it is still
   `Clone`.
+* **BREAKING**: Removed `Encoding::equivalent_to_start_of_str`, since it
+  wasn't really useful.
 
 
 ## 2.0.0-pre.2 - 2022-08-28
