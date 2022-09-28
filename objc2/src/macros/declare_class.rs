@@ -633,7 +633,15 @@ macro_rules! declare_class {
                 // - The ivars are in a type used as an Objective-C object.
                 // - The ivar is added to the class below.
                 // - Rust prevents having two fields with the same name.
-                // - Caller upholds that the ivars are properly initialized.
+                // - Caller upholds that the ivars are properly initialized
+                //
+                // Note that while I couldn't find a reference on whether
+                // ivars are zero-initialized or not, it has been true since
+                // the Objective-C version shipped with Mac OS X 10.0 [link]
+                // and is generally what one would expect coming from C. So I
+                // think it's a valid assumption to make!
+                //
+                // [link]: https://github.com/apple-oss-distributions/objc4/blob/objc4-208/runtime/objc-class.m#L367
                 $($ivar_v $ivar: $crate::declare::Ivar<$ivar>,)*
             }
 
