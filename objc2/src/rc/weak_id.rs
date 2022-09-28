@@ -175,7 +175,6 @@ mod tests {
         if cfg!(not(feature = "gnustep-1-7")) {
             // This loads the object on GNUStep for some reason??
             assert!(weak.load().is_none());
-            expected.try_retain_fail += 1;
             expected.assert_current();
         }
 
