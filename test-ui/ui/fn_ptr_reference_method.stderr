@@ -1,8 +1,8 @@
-error[E0277]: the trait bound `for<'r> extern "C" fn(_, _, &'r objc2::runtime::Object): MethodImplementation` is not satisfied
+error[E0277]: the trait bound `for<'a> extern "C" fn(_, _, &'a objc2::runtime::Object): MethodImplementation` is not satisfied
    --> ui/fn_ptr_reference_method.rs
     |
     |         builder.add_method(sel!(third:), my_fn as extern "C" fn(_, _, &Object));
-    |                 ----------               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `for<'r> extern "C" fn(_, _, &'r objc2::runtime::Object)`
+    |                 ----------               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `for<'a> extern "C" fn(_, _, &'a objc2::runtime::Object)`
     |                 |
     |                 required by a bound introduced by this call
     |

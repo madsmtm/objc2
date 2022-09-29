@@ -1,305 +1,3 @@
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __declare_class_rewrite_methods {
-    {
-        @($($macro:tt)*)
-        @($($macro_arguments:tt)*)
-    } => {};
-
-    // Unsafe variant
-    {
-        @($($macro:tt)*)
-        @($($macro_arguments:tt)*)
-
-        $(#[$($m:tt)*])*
-        unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
-
-        $($rest:tt)*
-    } => {
-        $crate::__rewrite_self_arg! {
-            ($($macro)*)
-            ($($args)*)
-
-            // Split the function into parts, and send the arguments down to
-            // be used later on
-            @($($macro_arguments)*)
-            @($(#[$($m)*])*)
-            @(unsafe extern "C")
-            @($name)
-            @($($ret)?)
-            @($body)
-            // Will add @(kind)
-            // Will add @(args_start)
-            // Will add @(args_rest)
-        }
-
-        $crate::__declare_class_rewrite_methods! {
-            @($($macro)*)
-            @($($macro_arguments)*)
-
-            $($rest)*
-        }
-    };
-
-    // Safe variant
-    {
-        @($($macro:tt)*)
-        @($($macro_arguments:tt)*)
-
-        $(#[$($m:tt)*])*
-        fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
-
-        $($rest:tt)*
-    } => {
-        $crate::__rewrite_self_arg! {
-            ($($macro)*)
-            ($($args)*)
-
-            @($($macro_arguments)*)
-            @($(#[$($m)*])*)
-            @(extern "C")
-            @($name)
-            @($($ret)?)
-            @($body)
-
-            // Same as above
-        }
-
-        $crate::__declare_class_rewrite_methods! {
-            @($($macro)*)
-            @($($macro_arguments)*)
-
-            $($rest)*
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __declare_class_method_out {
-    {
-        @() // No arguments needed
-        @($(#[$($m:tt)*])*)
-        @($($qualifiers:tt)*)
-        @($name:ident)
-        @($($ret:ty)?)
-        @($($body:tt)*)
-        @($($_kind:tt)*)
-        @($($args_start:tt)*)
-        @($($args_rest:tt)*)
-    } => {
-        $crate::__fn_args! {
-            ($crate::__declare_class_method_out)
-            ($($args_rest)*,)
-            ()
-            ()
-            @inner
-            @($(#[$($m)*])*)
-            @($($qualifiers)*)
-            @($name)
-            @($($ret)?)
-            @($($body)*)
-            @($($_kind)*)
-            @($($args_start)*)
-            // Will add @(args_converted)
-            // Will add @(body_prefix)
-        }
-    };
-
-    // No return type
-    {
-        @inner
-        @($(#[$($m:tt)*])*)
-        @($($qualifiers:tt)*)
-        @($name:ident)
-        @()
-        @($($body:tt)*)
-        @($($_kind:tt)*)
-        @($($args_start:tt)*)
-        @($($args_converted:tt)*)
-        @($($body_prefix:tt)*)
-    } => {
-        $crate::__attribute_helper! {
-            @strip_sel
-            $(@[$($m)*])*
-            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) {
-                $($body_prefix)*
-                $($body)*
-            })
-        }
-    };
-
-    // With return type
-    {
-        @inner
-        @($(#[$($m:tt)*])*)
-        @($($qualifiers:tt)*)
-        @($name:ident)
-        @($ret:ty)
-        @($($body:tt)*)
-        @($($_kind:tt)*)
-        @($($args_start:tt)*)
-        @($($args_converted:tt)*)
-        @($($body_prefix:tt)*)
-    } => {
-        $crate::__attribute_helper! {
-            @strip_sel
-            $(@[$($m)*])*
-            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) -> <$ret as $crate::encode::EncodeConvert>::__Inner {
-                $($body_prefix)*
-                <$ret as $crate::encode::EncodeConvert>::__into_inner($($body)*)
-            })
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __declare_class_register_out {
-    // Class method
-    {
-        @($builder:ident)
-        @($(#[$($m:tt)*])*)
-        @($($qualifiers:tt)*)
-        @($name:ident)
-        @($($_ret:tt)*)
-        @($($_body:tt)*)
-        @(class_method)
-        @($($args_start:tt)*)
-        @($($args_rest:tt)*)
-    } => {
-        $builder.add_class_method(
-            $crate::__attribute_helper! {
-                @extract_sel
-                ($crate::__declare_class_register_out)
-                ($(#[$($m)*])*)
-                @call_sel
-            },
-            Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args_start)* $($args_rest)*
-            },
-        );
-    };
-
-    // Instance method
-    {
-        @($builder:ident)
-        @($(#[$($m:tt)*])*)
-        @($($qualifiers:tt)*)
-        @($name:ident)
-        @($($_ret:tt)*)
-        @($($_body:tt)*)
-        @(instance_method)
-        @($($args_start:tt)*)
-        @($($args_rest:tt)*)
-    } => {
-        $builder.add_method(
-            $crate::__attribute_helper! {
-                @extract_sel
-                ($crate::__declare_class_register_out)
-                ($(#[$($m)*])*)
-                @call_sel
-            },
-            Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args_start)* $($args_rest)*
-            },
-        );
-    };
-
-    {
-        @call_sel
-        @($($sel:tt)*)
-    } => {
-        $crate::sel!($($sel)*)
-    };
-}
-
-/// Create function pointer type with inferred arguments.
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __fn_ptr {
-    (
-        @($($qualifiers:tt)*)
-        $($(mut)? $($param:ident)? $(_)?: $param_ty:ty),* $(,)?
-    ) => {
-        $($qualifiers)* fn($($crate::__fn_ptr!(@__to_anonymous $param_ty)),*) -> _
-    };
-    (@__to_anonymous $param_ty:ty) => { _ }
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __fn_args {
-    // Ignore `_`
-    {
-        ($out_macro:path)
-        (_: $param_ty:ty, $($rest:tt)*)
-        ($($args_converted:tt)*)
-        ($($body_prefix:tt)*)
-        $($macro_args:tt)*
-    } => {
-        $crate::__fn_args! {
-            ($out_macro)
-            ($($rest)*)
-            ($($args_converted)* _: $param_ty,)
-            ($($body_prefix)*)
-            $($macro_args)*
-        }
-    };
-    // Convert mut
-    {
-        ($out_macro:path)
-        (mut $param:ident: $param_ty:ty, $($rest:tt)*)
-        ($($args_converted:tt)*)
-        ($($body_prefix:tt)*)
-        $($macro_args:tt)*
-    } => {
-        $crate::__fn_args! {
-            ($out_macro)
-            ($($rest)*)
-            ($($args_converted)* $param: <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
-            (
-                $($body_prefix)*
-                let mut $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
-            )
-            $($macro_args)*
-        }
-    };
-    // Convert
-    {
-        ($out_macro:path)
-        ($param:ident: $param_ty:ty, $($rest:tt)*)
-        ($($args_converted:tt)*)
-        ($($body_prefix:tt)*)
-        $($macro_args:tt)*
-    } => {
-        $crate::__fn_args! {
-            ($out_macro)
-            ($($rest)*)
-            ($($args_converted)* $param: <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
-            (
-                $($body_prefix)*
-                let $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
-            )
-            $($macro_args)*
-        }
-    };
-    // Output result
-    {
-        ($out_macro:path)
-        ($(,)*)
-        ($($args_converted:tt)*)
-        ($($body_prefix:tt)*)
-        $($macro_args:tt)*
-    } => {
-        $out_macro! {
-            $($macro_args)*
-            @($($args_converted)*)
-            @($($body_prefix)*)
-        }
-    };
-}
-
 /// Declare a new Objective-C class.
 ///
 /// This is mostly just a convenience macro on top of [`extern_class!`] and
@@ -633,7 +331,15 @@ macro_rules! declare_class {
                 // - The ivars are in a type used as an Objective-C object.
                 // - The ivar is added to the class below.
                 // - Rust prevents having two fields with the same name.
-                // - Caller upholds that the ivars are properly initialized.
+                // - Caller upholds that the ivars are properly initialized
+                //
+                // Note that while I couldn't find a reference on whether
+                // ivars are zero-initialized or not, it has been true since
+                // the Objective-C version shipped with Mac OS X 10.0 [link]
+                // and is generally what one would expect coming from C. So I
+                // think it's a valid assumption to make!
+                //
+                // [link]: https://github.com/apple-oss-distributions/objc4/blob/objc4-208/runtime/objc-class.m#L367
                 $($ivar_v $ivar: $crate::declare::Ivar<$ivar>,)*
             }
 
@@ -859,4 +565,306 @@ macro_rules! __declare_class_methods {
             $($rest)*
         );
     };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_rewrite_methods {
+    {
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
+    } => {};
+
+    // Unsafe variant
+    {
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
+
+        $(#[$($m:tt)*])*
+        unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__rewrite_self_arg! {
+            ($($macro)*)
+            ($($args)*)
+
+            // Split the function into parts, and send the arguments down to
+            // be used later on
+            @($($macro_arguments)*)
+            @($(#[$($m)*])*)
+            @(unsafe extern "C")
+            @($name)
+            @($($ret)?)
+            @($body)
+            // Will add @(kind)
+            // Will add @(args_start)
+            // Will add @(args_rest)
+        }
+
+        $crate::__declare_class_rewrite_methods! {
+            @($($macro)*)
+            @($($macro_arguments)*)
+
+            $($rest)*
+        }
+    };
+
+    // Safe variant
+    {
+        @($($macro:tt)*)
+        @($($macro_arguments:tt)*)
+
+        $(#[$($m:tt)*])*
+        fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__rewrite_self_arg! {
+            ($($macro)*)
+            ($($args)*)
+
+            @($($macro_arguments)*)
+            @($(#[$($m)*])*)
+            @(extern "C")
+            @($name)
+            @($($ret)?)
+            @($body)
+
+            // Same as above
+        }
+
+        $crate::__declare_class_rewrite_methods! {
+            @($($macro)*)
+            @($($macro_arguments)*)
+
+            $($rest)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_method_out {
+    {
+        @() // No arguments needed
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @($($ret:ty)?)
+        @($($body:tt)*)
+        @($($_kind:tt)*)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
+    } => {
+        $crate::__fn_args! {
+            ($crate::__declare_class_method_out)
+            ($($args_rest)*,)
+            ()
+            ()
+            @inner
+            @($(#[$($m)*])*)
+            @($($qualifiers)*)
+            @($name)
+            @($($ret)?)
+            @($($body)*)
+            @($($_kind)*)
+            @($($args_start)*)
+            // Will add @(args_converted)
+            // Will add @(body_prefix)
+        }
+    };
+
+    // No return type
+    {
+        @inner
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @()
+        @($($body:tt)*)
+        @($($_kind:tt)*)
+        @($($args_start:tt)*)
+        @($($args_converted:tt)*)
+        @($($body_prefix:tt)*)
+    } => {
+        $crate::__attribute_helper! {
+            @strip_sel
+            $(@[$($m)*])*
+            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) {
+                $($body_prefix)*
+                $($body)*
+            })
+        }
+    };
+
+    // With return type
+    {
+        @inner
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @($ret:ty)
+        @($($body:tt)*)
+        @($($_kind:tt)*)
+        @($($args_start:tt)*)
+        @($($args_converted:tt)*)
+        @($($body_prefix:tt)*)
+    } => {
+        $crate::__attribute_helper! {
+            @strip_sel
+            $(@[$($m)*])*
+            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) -> <$ret as $crate::encode::EncodeConvert>::__Inner {
+                $($body_prefix)*
+                <$ret as $crate::encode::EncodeConvert>::__into_inner($($body)*)
+            })
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __fn_args {
+    // Ignore `_`
+    {
+        ($out_macro:path)
+        (_: $param_ty:ty, $($rest:tt)*)
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+        $($macro_args:tt)*
+    } => {
+        $crate::__fn_args! {
+            ($out_macro)
+            ($($rest)*)
+            ($($args_converted)* _: $param_ty,)
+            ($($body_prefix)*)
+            $($macro_args)*
+        }
+    };
+    // Convert mut
+    {
+        ($out_macro:path)
+        (mut $param:ident: $param_ty:ty, $($rest:tt)*)
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+        $($macro_args:tt)*
+    } => {
+        $crate::__fn_args! {
+            ($out_macro)
+            ($($rest)*)
+            ($($args_converted)* $param: <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            (
+                $($body_prefix)*
+                let mut $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
+            )
+            $($macro_args)*
+        }
+    };
+    // Convert
+    {
+        ($out_macro:path)
+        ($param:ident: $param_ty:ty, $($rest:tt)*)
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+        $($macro_args:tt)*
+    } => {
+        $crate::__fn_args! {
+            ($out_macro)
+            ($($rest)*)
+            ($($args_converted)* $param: <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            (
+                $($body_prefix)*
+                let $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
+            )
+            $($macro_args)*
+        }
+    };
+    // Output result
+    {
+        ($out_macro:path)
+        ($(,)*)
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+        $($macro_args:tt)*
+    } => {
+        $out_macro! {
+            $($macro_args)*
+            @($($args_converted)*)
+            @($($body_prefix)*)
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_register_out {
+    // Class method
+    {
+        @($builder:ident)
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @($($_ret:tt)*)
+        @($($_body:tt)*)
+        @(class_method)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
+    } => {
+        $builder.add_class_method(
+            $crate::__attribute_helper! {
+                @extract_sel
+                ($crate::__declare_class_register_out)
+                ($(#[$($m)*])*)
+                @call_sel
+            },
+            Self::$name as $crate::__fn_ptr! {
+                @($($qualifiers)*) $($args_start)* $($args_rest)*
+            },
+        );
+    };
+
+    // Instance method
+    {
+        @($builder:ident)
+        @($(#[$($m:tt)*])*)
+        @($($qualifiers:tt)*)
+        @($name:ident)
+        @($($_ret:tt)*)
+        @($($_body:tt)*)
+        @(instance_method)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
+    } => {
+        $builder.add_method(
+            $crate::__attribute_helper! {
+                @extract_sel
+                ($crate::__declare_class_register_out)
+                ($(#[$($m)*])*)
+                @call_sel
+            },
+            Self::$name as $crate::__fn_ptr! {
+                @($($qualifiers)*) $($args_start)* $($args_rest)*
+            },
+        );
+    };
+
+    {
+        @call_sel
+        @($($sel:tt)*)
+    } => {
+        $crate::sel!($($sel)*)
+    };
+}
+
+/// Create function pointer type with inferred arguments.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __fn_ptr {
+    (
+        @($($qualifiers:tt)*)
+        $($(mut)? $($param:ident)? $(_)?: $param_ty:ty),* $(,)?
+    ) => {
+        $($qualifiers)* fn($($crate::__fn_ptr!(@__to_anonymous $param_ty)),*) -> _
+    };
+    (@__to_anonymous $param_ty:ty) => { _ }
 }

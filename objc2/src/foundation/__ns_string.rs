@@ -9,6 +9,9 @@
 //! generating a pure `NSString`. We don't support that yet (since I don't
 //! know the use-case), but we definitely could!
 //! See: <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L2007-L2068>
+//!
+//! See also the following crates that implement UTF-16 conversion:
+//! `utf16_lit`, `windows`, `const_utf16`, `wide-literals`, ...
 use core::ffi::c_void;
 use core::mem::ManuallyDrop;
 use core::ptr;
@@ -237,6 +240,12 @@ impl CachedNSString {
 }
 
 /// Creates an [`NSString`][`crate::foundation::NSString`] from a static string.
+///
+/// Note: This works by placing statics in special sections, which may not
+/// work completely reliably yet, see [#258]; until then, you should be
+/// careful about using this in libraries intended for others to consume.
+///
+/// [#258]: https://github.com/madsmtm/objc2/issues/258
 ///
 ///
 /// # Examples

@@ -3,7 +3,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSCopying, NSDictionary, NSObject, NSString};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send_id, ns_string, ClassType};
+use crate::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A representation of the code and resources stored in a bundle
@@ -36,13 +36,16 @@ extern_methods!(
         }
 
         pub fn name(&self) -> Option<Id<NSString, Shared>> {
-            self.info().get(ns_string!("CFBundleName")).map(|name| {
-                let ptr: *const NSObject = name;
-                let ptr: *const NSString = ptr.cast();
-                // SAFETY: TODO
-                let name = unsafe { ptr.as_ref().unwrap_unchecked() };
-                name.copy()
-            })
+            // TODO: Use ns_string!
+            self.info()
+                .get(&NSString::from_str("CFBundleName"))
+                .map(|name| {
+                    let ptr: *const NSObject = name;
+                    let ptr: *const NSString = ptr.cast();
+                    // SAFETY: TODO
+                    let name = unsafe { ptr.as_ref().unwrap_unchecked() };
+                    name.copy()
+                })
         }
     }
 );
