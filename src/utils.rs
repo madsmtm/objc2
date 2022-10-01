@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use libc::c_void;
+use core::ffi::c_void;
 
 use super::ffi::{dispatch_time, dispatch_time_t, DISPATCH_TIME_NOW};
 

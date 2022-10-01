@@ -94,7 +94,7 @@ impl<T> DispatchObject<T> {
         qos_class: QualityOfServiceClass,
         relative_priority: i32,
     ) -> Result<(), QualityOfServiceClassFloorError> {
-        if relative_priority > 0 || relative_priority < QOS_MIN_RELATIVE_PRIORITY {
+        if !(QOS_MIN_RELATIVE_PRIORITY..=0).contains(&relative_priority) {
             return Err(QualityOfServiceClassFloorError::InvalidRelativePriority);
         }
 

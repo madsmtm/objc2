@@ -361,7 +361,7 @@ impl DerefMut for WorkloopQueue {
 impl AsRef<Queue> for WorkloopQueue {
     #[inline]
     fn as_ref(&self) -> &Queue {
-        &*self
+        self
     }
 }
 
@@ -375,7 +375,7 @@ impl AsMut<Queue> for WorkloopQueue {
 impl Borrow<Queue> for WorkloopQueue {
     #[inline]
     fn borrow(&self) -> &Queue {
-        &*self
+        self
     }
 }
 

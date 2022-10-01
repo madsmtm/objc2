@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use libc::c_void;
+use core::ffi::c_void;
 
 use super::object::DispatchObject;
 use super::queue::Queue;
