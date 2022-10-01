@@ -1,11 +1,26 @@
-//! TODO Write me
-
 #![allow(unused_unsafe, unreachable_patterns)]
 #![deny(
     missing_docs,
     clippy::undocumented_unsafe_blocks,
     clippy::missing_safety_doc
 )]
+
+//!
+//! Apple Dispatch (Grand Central Dispatch)
+//!
+//! This crate allows interaction with the [Apple Dispatch](https://developer.apple.com/documentation/dispatch) library in a safe (``dispatch2`` module) and unsafe (``ffi`` module) way.
+//!
+//! # Example:
+//!
+//! ```
+//! use dispatch2::{Queue, QueueAttribute};
+//!
+//! fn main() {
+//!     let queue = Queue::new("example_queue", QueueAttribute::Serial);
+//!     queue.exec_async(|| println!("Hello"));
+//!     queue.exec_sync(|| println!("World"));
+//! }
+//! ```
 
 use self::ffi::dispatch_qos_class_t;
 

@@ -1,6 +1,6 @@
 # dispatch2
 
-Rust bindings and wrappers for the Grand Central Dispatch (GCD)
+Allows interaction with the [Apple Dispatch](https://developer.apple.com/documentation/dispatch) library in a safe and unsafe way.
 
 ## Usage
 
@@ -8,7 +8,7 @@ To use `dispatch2`, add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-dispatch2 = { git = "https://github.com/Thog/dispatch2" }
+dispatch2 = "0.1.0"
 ```
 
 ## Example
@@ -16,10 +16,11 @@ dispatch2 = { git = "https://github.com/Thog/dispatch2" }
 ```rust
 use dispatch2::{Queue, QueueAttribute};
 
-let queue = Queue::new("example_queue", QueueAttribute::Serial);
-
-queue.exec_async(|| println!("Hello"));
-queue.exec_sync(|| println!("World"));
+fn main() {
+    let queue = Queue::new("example_queue", QueueAttribute::Serial);
+    queue.exec_async(|| println!("Hello"));
+    queue.exec_sync(|| println!("World"));
+}
 ```
 
 ## License
