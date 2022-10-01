@@ -1,5 +1,11 @@
+//! TODO Write me
+
 #![allow(unused_unsafe, unreachable_patterns)]
-#![deny(clippy::undocumented_unsafe_blocks)]
+#![deny(
+    missing_docs,
+    clippy::undocumented_unsafe_blocks,
+    clippy::missing_safety_doc
+)]
 
 use self::ffi::dispatch_qos_class_t;
 
@@ -10,21 +16,31 @@ pub mod queue;
 pub mod semaphore;
 mod utils;
 
+/// Wait error.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum WaitError {
+    /// The given timeout value will result in an overflow when converting to dispatch time.
     TimeOverflow,
+    /// The operation timed out.
     Timeout,
 }
 
+/// Quality of service that specify the priorities for executing tasks.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum QualityOfServiceClass {
+    /// Quality of service for user-interactive tasks.
     UserInteractive,
+    /// Quality of service for tasks that prevent the user from actively using your app.
     UserInitiated,
+    /// Default Quality of service.
     Default,
+    /// Quality of service for tasks that the user does not track actively.
     Utility,
+    /// Quality of service for maintenance or cleanup tasks.
     Background,
+    /// The absence of a Quality of service.
     Unspecified,
 }
 

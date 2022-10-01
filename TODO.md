@@ -1,12 +1,5 @@
 # TODO
 
-## Road to 0.1.0 release
-
-- Fully document all public safe APIs
-- Feature guard apple platform only APIs
-
-## For later
-
 - Fully document all ffi APIs
 - CI test on macOS
 - CI test on Linux using https://github.com/apple/swift-corelibs-libdispatch

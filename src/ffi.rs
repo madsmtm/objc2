@@ -1,6 +1,6 @@
 //! Bindings to the Apple Grand Central Dispatch (GCD).
 
-#![allow(non_camel_case_types)]
+#![allow(missing_docs, non_camel_case_types)]
 
 //use block2::Block;
 use core::ffi::{c_char, c_int, c_long, c_uint, c_ulong, c_void};
@@ -9,10 +9,13 @@ macro_rules! create_opaque_type {
     ($type_name: ident, $typedef_name: ident) => {
         #[repr(C)]
         #[derive(Debug)]
+        #[allow(missing_docs)]
         pub struct $type_name {
+            /// opaque value
             _inner: [u8; 0],
         }
 
+        #[allow(missing_docs)]
         pub type $typedef_name = *mut $type_name;
     };
 }
@@ -67,7 +70,9 @@ create_opaque_type!(dispatch_source_s, dispatch_source_t);
 create_opaque_type!(dispatch_queue_s, dispatch_queue_t);
 create_opaque_type!(dispatch_workloop_s, dispatch_workloop_t);
 
+/// A dispatch queue that executes blocks serially in FIFO order.
 pub const DISPATCH_QUEUE_SERIAL: dispatch_queue_attr_t = core::ptr::null_mut();
+/// A dispatch queue that executes blocks concurrently.
 pub static DISPATCH_QUEUE_CONCURRENT: &dispatch_queue_attr_s = {
     // Safety: immutable external definition
     unsafe { &_dispatch_queue_attr_concurrent }
@@ -363,9 +368,11 @@ extern "C" {
         context: *mut c_void,
         work: extern "C" fn(context: *mut c_void, iteration: usize),
     );
+    /// See [DISPATCH_QUEUE_CONCURRENT].
     pub static _dispatch_main_q: dispatch_queue_s;
     /// Returns a system-defined global concurrent queue with the specified quality-of-service class.
     pub fn dispatch_get_global_queue(identifier: usize, flags: usize) -> dispatch_queue_global_t;
+    /// See [DISPATCH_QUEUE_CONCURRENT].
     pub static _dispatch_queue_attr_concurrent: dispatch_queue_attr_s;
     /// Returns an attribute that configures a dispatch queue as initially inactive.
     pub fn dispatch_queue_attr_make_initially_inactive(

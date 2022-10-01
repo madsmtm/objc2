@@ -1,3 +1,5 @@
+//! Dispatch group definition.
+
 use std::time::Duration;
 
 use core::ffi::c_void;
@@ -7,15 +9,18 @@ use super::queue::Queue;
 use super::utils::function_wrapper;
 use super::{ffi::*, WaitError};
 
+/// Dispatch group.
 #[derive(Debug, Clone)]
 pub struct Group {
     dispatch_object: DispatchObject<dispatch_group_s>,
 }
 
+/// Dispatch group guard.
 #[derive(Debug)]
 pub struct GroupGuard(Group, bool);
 
 impl Group {
+    /// Creates a new [Group].
     pub fn new() -> Option<Self> {
         // Safety: valid to call.
         let object = unsafe { dispatch_group_create() };
@@ -30,6 +35,7 @@ impl Group {
         Some(Group { dispatch_object })
     }
 
+    /// Submit a function to a [Queue] and associates it with the [Group].
     pub fn exec_async<F>(&self, queue: &Queue, work: F)
     where
         F: Send + FnOnce(),
@@ -47,6 +53,13 @@ impl Group {
         }
     }
 
+    /// Wait synchronously for the previously submitted functions to finish.
+    ///
+    /// # Errors
+    ///
+    /// Return [WaitError::TimeOverflow] if the passed ``timeout`` is too big.
+    ///
+    /// Return [WaitError::Timeout] in case of timeout.
     pub fn wait(&self, timeout: Option<Duration>) -> Result<(), WaitError> {
         let timeout = if let Some(timeout) = timeout {
             dispatch_time_t::try_from(timeout).map_err(|_| WaitError::TimeOverflow)?
@@ -63,6 +76,7 @@ impl Group {
         }
     }
 
+    /// Schedule a function to be submitted to a [Queue] when a group of previously submitted functions have completed.
     pub fn notify<F>(&self, queue: &Queue, work: F)
     where
         F: Send + FnOnce(),
@@ -80,6 +94,7 @@ impl Group {
         }
     }
 
+    /// Explicitly indicates that the function has entered the [Group].
     pub fn enter(&self) -> GroupGuard {
         // Safety: object cannot be null.
         unsafe {
@@ -89,6 +104,7 @@ impl Group {
         GroupGuard(self.clone(), false)
     }
 
+    /// Set the finalizer function for the object.
     pub fn set_finalizer<F>(&mut self, destructor: F)
     where
         F: Send + FnOnce(),
@@ -96,12 +112,18 @@ impl Group {
         self.dispatch_object.set_finalizer(destructor);
     }
 
-    pub const fn as_raw(&self) -> dispatch_group_t {
+    /// Get the raw [dispatch_group_t] value.
+    ///
+    /// # Safety
+    ///
+    /// - Object shouldn't be released manually.
+    pub const unsafe fn as_raw(&self) -> dispatch_group_t {
         self.dispatch_object.as_raw()
     }
 }
 
 impl GroupGuard {
+    /// Explicitly indicates that the function in the [Group] finished executing.
     pub fn leave(mut self) {
         // Safety: object cannot be null.
         unsafe {

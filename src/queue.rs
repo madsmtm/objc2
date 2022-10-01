@@ -1,3 +1,5 @@
+//! Dispatch queue definition.
+
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CString;
 use std::ops::{Deref, DerefMut};
@@ -7,16 +9,21 @@ use super::object::{DispatchObject, QualityOfServiceClassFloorError, TargetQueue
 use super::utils::function_wrapper;
 use super::{ffi::*, QualityOfServiceClass};
 
+/// Error returned by [Queue::after].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum QueueAfterError {
+    /// The given timeout value will result in an overflow when converting to dispatch time.
     TimeOverflow,
 }
 
+/// Queue type attribute.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum QueueAttribute {
+    /// Serial queue.
     Serial,
+    /// Concurrent queue.
     Concurrent,
 }
 
@@ -30,12 +37,17 @@ impl From<QueueAttribute> for dispatch_queue_attr_t {
     }
 }
 
+/// Queue priority.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum QueuePriority {
+    /// High priority.
     High,
+    /// Default priority.
     Default,
+    /// Low priority.
     Low,
+    /// Background priority.
     Background,
 }
 
@@ -53,13 +65,17 @@ impl From<QueuePriority> for dispatch_queue_priority_t {
     }
 }
 
+/// Global queue identifier definition for [Queue::new] and [Queue::new_with_target].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum GlobalQueueIdentifier {
+    /// Standard priority based queue.
     Priority(QueuePriority),
+    /// Quality of service priority based queue.
     QualityOfService(QualityOfServiceClass),
 }
 
 impl GlobalQueueIdentifier {
+    /// Convert and consume [GlobalQueueIdentifier] into its raw value.
     pub fn to_identifier(self) -> usize {
         match self {
             GlobalQueueIdentifier::Priority(queue_priority) => {
@@ -72,11 +88,15 @@ impl GlobalQueueIdentifier {
     }
 }
 
+/// Auto release frequency for [WorkloopQueue::set_autorelease_frequency].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum DispatchAutoReleaseFrequency {
+    /// Inherit autorelease frequency from the target [Queue].
     Inherit,
+    /// Configure an autorelease pool before the execution of a function and releases the objects in that pool after the function finishes executing.
     WorkItem,
+    /// Never setup an autorelease pool.
     Never,
 }
 
@@ -97,6 +117,7 @@ impl From<DispatchAutoReleaseFrequency> for dispatch_autorelease_frequency_t {
     }
 }
 
+/// Dispatch queue.
 #[derive(Debug, Clone)]
 pub struct Queue {
     dispatch_object: DispatchObject<dispatch_queue_s>,
@@ -104,6 +125,7 @@ pub struct Queue {
 }
 
 impl Queue {
+    /// Create a new [Queue].
     pub fn new(label: &str, queue_attribute: QueueAttribute) -> Self {
         let label = CString::new(label).expect("Invalid label!");
 
@@ -123,6 +145,7 @@ impl Queue {
         }
     }
 
+    /// Create a new [Queue] with a given target [Queue].
     pub fn new_with_target(label: &str, queue_attribute: QueueAttribute, target: &Queue) -> Self {
         let label = CString::new(label).expect("Invalid label!");
 
@@ -148,6 +171,7 @@ impl Queue {
         }
     }
 
+    /// Return a system-defined global concurrent [Queue] with the priority derivated from [GlobalQueueIdentifier].
     pub fn global_queue(identifier: GlobalQueueIdentifier) -> Self {
         let raw_identifier = identifier.to_identifier();
 
@@ -168,6 +192,7 @@ impl Queue {
         }
     }
 
+    /// Submit a function for synchronous execution on the [Queue].
     pub fn exec_sync<F>(&self, work: F)
     where
         F: Send + FnOnce(),
@@ -180,6 +205,7 @@ impl Queue {
         unsafe { dispatch_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
 
+    /// Submit a function for asynchronous execution on the [Queue].
     pub fn exec_async<F>(&self, work: F)
     where
         F: Send + FnOnce(),
@@ -190,6 +216,7 @@ impl Queue {
         unsafe { dispatch_async_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
 
+    /// Enqueue a function for execution at the specified time on the [Queue].
     pub fn after<F>(&self, wait_time: Duration, work: F) -> Result<(), QueueAfterError>
     where
         F: Send + FnOnce(),
@@ -206,6 +233,7 @@ impl Queue {
         Ok(())
     }
 
+    /// Enqueue a barrier function for asynchronous execution on the [Queue] and return immediately.
     pub fn barrier_async<F>(&self, work: F)
     where
         F: Send + FnOnce(),
@@ -216,6 +244,7 @@ impl Queue {
         unsafe { dispatch_barrier_async_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
 
+    /// Enqueue a barrier function for synchronous execution on the [Queue] and wait until that function completes.
     pub fn barrier_sync<F>(&self, work: F)
     where
         F: Send + FnOnce(),
@@ -226,6 +255,7 @@ impl Queue {
         unsafe { dispatch_barrier_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
 
+    /// Submit a function for synchronous execution and mark the function as a barrier for subsequent concurrent tasks.
     pub fn barrier_async_and_wait<F>(&self, work: F)
     where
         F: Send + FnOnce(),
@@ -238,6 +268,7 @@ impl Queue {
         }
     }
 
+    /// Sets a function at the given key that will be executed at [Queue] destruction.
     pub fn set_specific<F>(&mut self, key: usize, destructor: F)
     where
         F: Send + FnOnce(),
@@ -255,6 +286,7 @@ impl Queue {
         }
     }
 
+    /// Set the finalizer function for the [Queue].
     pub fn set_finalizer<F>(&mut self, destructor: F)
     where
         F: Send + FnOnce(),
@@ -262,11 +294,13 @@ impl Queue {
         self.dispatch_object.set_finalizer(destructor);
     }
 
+    /// Set the target [Queue] of this [Queue].
     pub fn set_target_queue(&self, queue: &Queue) -> Result<(), TargetQueueError> {
         // Safety: We are in Queue instance.
         unsafe { self.dispatch_object.set_target_queue(queue) }
     }
 
+    /// Set the QOS class floor of the [Queue].
     pub fn set_qos_class_floor(
         &self,
         qos_class: QualityOfServiceClass,
@@ -279,29 +313,39 @@ impl Queue {
         }
     }
 
+    /// Activate the [Queue].
     pub fn activate(&mut self) {
         self.dispatch_object.activate();
     }
 
+    /// Suspend the invocation of functions on the [Queue].
     pub fn suspend(&self) {
         self.dispatch_object.suspend();
     }
 
+    /// Resume the invocation of functions on the [Queue].
     pub fn resume(&self) {
         self.dispatch_object.resume();
     }
 
-    pub const fn as_raw(&self) -> dispatch_queue_t {
+    /// Get the raw [dispatch_queue_t] value.
+    ///
+    /// # Safety
+    ///
+    /// - Object shouldn't be released manually.
+    pub const unsafe fn as_raw(&self) -> dispatch_queue_t {
         self.dispatch_object.as_raw()
     }
 }
 
+/// Dispatch workloop queue.
 #[derive(Debug, Clone)]
 pub struct WorkloopQueue {
     queue: Queue,
 }
 
 impl WorkloopQueue {
+    /// Create a new [WorkloopQueue].
     pub fn new(label: &str, inactive: bool) -> Self {
         let label = CString::new(label).expect("Invalid label!");
 
@@ -327,6 +371,7 @@ impl WorkloopQueue {
         }
     }
 
+    /// Configure how the [WorkloopQueue] manage the autorelease pools for the functions it executes.
     pub fn set_autorelease_frequency(&self, frequency: DispatchAutoReleaseFrequency) {
         // Safety: object and frequency can only be valid.
         unsafe {
@@ -337,7 +382,12 @@ impl WorkloopQueue {
         }
     }
 
-    pub const fn as_raw(&self) -> dispatch_workloop_t {
+    /// Get the raw [dispatch_workloop_t] value.
+    ///
+    /// # Safety
+    ///
+    /// - Object shouldn't be released manually.
+    pub const unsafe fn as_raw(&self) -> dispatch_workloop_t {
         self.queue.as_raw() as dispatch_workloop_t
     }
 }

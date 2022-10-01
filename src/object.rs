@@ -1,17 +1,24 @@
+//! Dispatch object definition.
+
 use super::{ffi::*, queue::Queue, utils::function_wrapper, QualityOfServiceClass};
 
+/// Error returned by [DispatchObject::set_target_queue].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum TargetQueueError {
+    /// The [DispatchObject] is already active.
     ObjectAlreadyActive,
 }
 
+/// Error returned by [DispatchObject::set_qos_class_floor].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum QualityOfServiceClassFloorError {
+    /// The relative priority is invalid.
     InvalidRelativePriority,
 }
 
+/// Represent a dispatch object.
 #[repr(C)]
 #[derive(Debug)]
 pub struct DispatchObject<T> {
@@ -51,6 +58,7 @@ impl<T> DispatchObject<T> {
         result
     }
 
+    /// Set the finalizer function for the object.
     pub fn set_finalizer<F>(&mut self, destructor: F)
     where
         F: Send + FnOnce(),
@@ -84,7 +92,7 @@ impl<T> DispatchObject<T> {
         Ok(())
     }
 
-    /// Sets the QOS class floor on a dispatch queue, source or workloop.
+    /// Set the QOS class floor on a dispatch queue, source or workloop.
     ///
     /// # Safety
     ///
@@ -110,6 +118,7 @@ impl<T> DispatchObject<T> {
         Ok(())
     }
 
+    /// Activate the object.
     pub fn activate(&mut self) {
         // Safety: object cannot be null.
         unsafe {
@@ -119,6 +128,7 @@ impl<T> DispatchObject<T> {
         self.is_activated = true;
     }
 
+    /// Suspend the invocation of functions on the object.
     pub fn suspend(&self) {
         // Safety: object cannot be null.
         unsafe {
@@ -126,6 +136,7 @@ impl<T> DispatchObject<T> {
         }
     }
 
+    /// Resume the invocation of functions on the object.
     pub fn resume(&self) {
         // Safety: object cannot be null.
         unsafe {
@@ -133,7 +144,12 @@ impl<T> DispatchObject<T> {
         }
     }
 
-    pub const fn as_raw(&self) -> *mut T {
+    /// Get the raw object value.
+    ///
+    /// # Safety
+    ///
+    /// - Object shouldn't be released manually.
+    pub const unsafe fn as_raw(&self) -> *mut T {
         self.object
     }
 }
