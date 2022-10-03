@@ -47,6 +47,7 @@ pub enum RustType {
     Id {
         type_: GenericType,
         is_return: bool,
+        is_const: bool,
         nullability: Nullability,
     },
     Class {
@@ -168,6 +169,7 @@ impl RustType {
                     generics: Vec::new(),
                 },
                 is_return,
+                is_const: ty.is_const_qualified(),
                 nullability,
             },
             ObjCClass => Self::Class { nullability },
@@ -200,6 +202,7 @@ impl RustType {
                                 generics: Vec::new(),
                             },
                             is_return,
+                            is_const: ty.is_const_qualified(),
                             nullability,
                         }
                     }
@@ -212,6 +215,7 @@ impl RustType {
                                     Self::Id {
                                         type_,
                                         is_return: _,
+                                        is_const: _,
                                         nullability: _,
                                     } => type_,
                                     // TODO: Handle this better
@@ -232,6 +236,7 @@ impl RustType {
                         Self::Id {
                             type_: GenericType { name, generics },
                             is_return,
+                            is_const: ty.is_const_qualified(),
                             nullability,
                         }
                     }
@@ -260,6 +265,7 @@ impl RustType {
                                 generics: Vec::new(),
                             },
                             is_return,
+                            is_const: ty.is_const_qualified(),
                             nullability,
                         }
                     }
@@ -275,6 +281,7 @@ impl RustType {
                                     generics: Vec::new(),
                                 },
                                 is_return,
+                                is_const: ty.is_const_qualified(),
                                 nullability,
                             }
                         } else {
@@ -346,6 +353,8 @@ impl ToTokens for RustType {
             Id {
                 type_,
                 is_return,
+                // Ignore
+                is_const: _,
                 nullability,
             } => {
                 let tokens = if *is_return {
@@ -385,12 +394,14 @@ impl ToTokens for RustType {
                     Self::Id {
                         type_,
                         is_return: _,
+                        is_const,
                         nullability,
                     } => {
                         if *nullability == Nullability::NonNull {
                             quote!(NonNull<#type_>)
+                        } else if *is_const {
+                            quote!(*const #type_)
                         } else {
-                            // TODO: const?
                             quote!(*mut #type_)
                         }
                     }
