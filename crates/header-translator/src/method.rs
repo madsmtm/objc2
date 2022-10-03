@@ -1,4 +1,4 @@
-use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
+use clang::{Entity, EntityKind, EntityVisitResult, ObjCQualifiers, TypeKind};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
@@ -6,6 +6,72 @@ use crate::availability::Availability;
 use crate::config::ClassData;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::RustType;
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+enum Qualifier {
+    In,
+    Inout,
+    Out,
+    Bycopy,
+    Byref,
+    Oneway,
+}
+
+impl Qualifier {
+    fn parse(qualifiers: ObjCQualifiers) -> Self {
+        match qualifiers {
+            ObjCQualifiers {
+                in_: true,
+                inout: false,
+                out: false,
+                bycopy: false,
+                byref: false,
+                oneway: false,
+            } => Self::In,
+            ObjCQualifiers {
+                in_: false,
+                inout: true,
+                out: false,
+                bycopy: false,
+                byref: false,
+                oneway: false,
+            } => Self::Inout,
+            ObjCQualifiers {
+                in_: false,
+                inout: false,
+                out: true,
+                bycopy: false,
+                byref: false,
+                oneway: false,
+            } => Self::Out,
+            ObjCQualifiers {
+                in_: false,
+                inout: false,
+                out: false,
+                bycopy: true,
+                byref: false,
+                oneway: false,
+            } => Self::Bycopy,
+            ObjCQualifiers {
+                in_: false,
+                inout: false,
+                out: false,
+                bycopy: false,
+                byref: true,
+                oneway: false,
+            } => Self::Byref,
+            ObjCQualifiers {
+                in_: false,
+                inout: false,
+                out: false,
+                bycopy: false,
+                byref: false,
+                oneway: true,
+            } => Self::Oneway,
+            _ => unreachable!("invalid qualifiers: {:?}", qualifiers),
+        }
+    }
+}
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 enum MemoryManagement {
@@ -53,7 +119,7 @@ pub struct Method {
     is_optional_protocol_method: bool,
     memory_management: MemoryManagement,
     designated_initializer: bool,
-    arguments: Vec<(String, RustType)>,
+    arguments: Vec<(String, Option<Qualifier>, RustType)>,
     result_type: Option<RustType>,
     safe: bool,
 }
@@ -102,6 +168,8 @@ impl Method {
             .expect("method arguments")
             .into_iter()
             .map(|entity| {
+                let name = entity.get_name().expect("arg display name");
+                let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
                 let mut is_consumed = false;
 
                 entity.visit_children(|entity, _parent| {
@@ -127,7 +195,8 @@ impl Method {
                 });
 
                 (
-                    entity.get_name().expect("arg display name"),
+                    name,
+                    qualifier,
                     RustType::parse(
                         entity.get_type().expect("argument type"),
                         false,
@@ -138,6 +207,13 @@ impl Method {
             .collect();
 
         let result_type = entity.get_result_type().expect("method return type");
+        if let Some(qualifiers) = entity.get_objc_qualifiers() {
+            let qualifier = Qualifier::parse(qualifiers);
+            panic!(
+                "unexpected qualifier `{:?}` on return type: {:?}",
+                qualifier, entity
+            );
+        }
         let result_type = if result_type.get_kind() != TypeKind::Void {
             Some(RustType::parse(result_type, true, false))
         } else {
@@ -230,7 +306,7 @@ impl ToTokens for Method {
         let arguments: Vec<_> = self
             .arguments
             .iter()
-            .map(|(param, ty)| (format_ident!("{}", handle_reserved(param)), ty))
+            .map(|(param, _qualifier, ty)| (format_ident!("{}", handle_reserved(param)), ty))
             .collect();
 
         let fn_args = arguments
