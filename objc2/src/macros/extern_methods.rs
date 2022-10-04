@@ -319,12 +319,12 @@ macro_rules! __inner_extern_methods {
         @($($args_rest:tt)*)
         @($($sel:tt)*)
     } => {
-        $crate::__collect_msg_send!(
+        $crate::__collect_msg_send! {
             $crate::msg_send;
             $self;
             ($($sel)*);
             ($($args_rest)*);
-        )
+        }
     };
     {
         @unsafe_method_body
@@ -336,12 +336,12 @@ macro_rules! __inner_extern_methods {
         @($($args_rest:tt)*)
         @($($sel:tt)*)
     } => {
-        $crate::__collect_msg_send!(
+        $crate::__collect_msg_send! {
             $crate::msg_send;
             Self::class();
             ($($sel)*);
             ($($args_rest)*);
-        )
+        }
     };
 }
 
@@ -377,16 +377,15 @@ macro_rules! __collect_msg_send {
         ($sel:ident : $($sel_rest:tt)*);
         ($arg:ident: $arg_ty:ty $(, $($args_rest:tt)*)?);
         $($output:tt)*
-    ) => {{
-        $crate::__collect_msg_send!(
+    ) => {
+        $crate::__collect_msg_send! {
             $macro;
             $obj;
             ($($sel_rest)*);
             ($($($args_rest)*)?);
-            $($output)*
-            $sel: $arg,
-        )
-    }};
+            $($output)* $sel: $arg,
+        }
+    };
 
     // If couldn't zip selector and arguments, show useful error message
     ($($_any:tt)*) => {{

@@ -449,17 +449,17 @@ macro_rules! __attribute_helper {
             $($rest:tt)*
         )
         $($macro_args:tt)*
-    } => {{
+    } => {
         $crate::__attribute_helper! {
             @extract_sel_duplicate
-            $($rest)*
+            ($($rest)*)
+            $out_macro!(
+                $($macro_args)*
+                // Append selector to the end of the macro arguments
+                @($($sel)*)
+            )
         }
-
-        $out_macro!(
-            $($macro_args)*
-            @($($sel)*)
-        )
-    }};
+    };
     {
         @extract_sel
         ($out_macro:path)
@@ -468,14 +468,14 @@ macro_rules! __attribute_helper {
             $($rest:tt)*
         )
         $($macro_args:tt)*
-    } => {{
+    } => {
         $crate::__attribute_helper! {
             @extract_sel
             ($out_macro)
             ($($rest)*)
             $($macro_args)*
         }
-    }};
+    };
     {
         @extract_sel
         ($out_macro:path)
@@ -487,21 +487,33 @@ macro_rules! __attribute_helper {
 
     {
         @extract_sel_duplicate
-        #[sel($($_sel_args:tt)*)]
-        $($rest:tt)*
+        (
+            #[sel($($_sel_args:tt)*)]
+            $($rest:tt)*
+        )
+        $($output:tt)*
     } => {{
         compile_error!("Cannot not specify a selector twice!");
     }};
     {
         @extract_sel_duplicate
-        #[$($m_checked:tt)*]
-        $($rest:tt)*
-    } => {{
+        (
+            #[$($m_checked:tt)*]
+            $($rest:tt)*
+        )
+        $($output:tt)*
+    } => {
         $crate::__attribute_helper! {
             @extract_sel_duplicate
-            $($rest)*
+            ($($rest:tt)*)
+            $($output)*
         }
+    };
+    {
+        @extract_sel_duplicate
+        ()
+        $($output:tt)*
+    } => {{
+        $($output)*
     }};
-    {@extract_sel_duplicate} => {};
-
 }
