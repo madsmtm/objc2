@@ -35,7 +35,7 @@ LBB1_2:
 	lea	rdx, [rip + l_anon.[ID].1]
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_use_generic
 	.p2align	4, 0x90

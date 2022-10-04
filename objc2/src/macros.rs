@@ -185,19 +185,32 @@ macro_rules! __class_inner {
 #[macro_export]
 macro_rules! sel {
     (alloc) => ({
-        $crate::__macro_helpers::alloc()
+        $crate::__macro_helpers::alloc_sel()
     });
     (init) => ({
-        $crate::__macro_helpers::init()
+        $crate::__macro_helpers::init_sel()
     });
     (new) => ({
-        $crate::__macro_helpers::new()
+        $crate::__macro_helpers::new_sel()
     });
     ($first:ident $(: $($rest:ident :)*)?) => ({
-        use $crate::__macro_helpers::{concat, stringify, str};
-        const SELECTOR_DATA: &str = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
-        $crate::__sel_inner!(SELECTOR_DATA, $crate::__hash_idents!($first $($($rest)*)?))
+        $crate::__sel_inner!(
+            $crate::__sel_data!($first $(: $($rest :)*)?),
+            $crate::__hash_idents!($first $($($rest)*)?)
+        )
     });
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __sel_data {
+    ($first:ident $(: $($rest:ident :)*)?) => {
+        $crate::__macro_helpers::concat!(
+            $crate::__macro_helpers::stringify!($first),
+            $(':', $($crate::__macro_helpers::stringify!($rest), ':',)*)?
+            '\0',
+        )
+    };
 }
 
 #[doc(hidden)]
@@ -961,22 +974,42 @@ macro_rules! msg_send_bool {
 /// ```
 #[macro_export]
 macro_rules! msg_send_id {
+    [$obj:expr, new $(,)?] => ({
+        let sel = $crate::sel!(new);
+        let result;
+        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result
+    });
+    [$obj:expr, alloc $(,)?] => ({
+        let sel = $crate::sel!(alloc);
+        let result;
+        result = <$crate::__macro_helpers::Alloc as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result
+    });
+    [$obj:expr, init $(,)?] => ({
+        let sel = $crate::sel!(init);
+        let result;
+        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result
+    });
     [$obj:expr, $selector:ident $(,)?] => ({
         $crate::__msg_send_id_helper!(@verify $selector);
         let sel = $crate::sel!($selector);
-        const NAME: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::stringify!($selector).as_bytes();
-        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
+        const NAME: &$crate::__macro_helpers::str = $crate::__macro_helpers::stringify!($selector);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = <$crate::__macro_helpers::RetainSemantics<{
+            $crate::__macro_helpers::retain_semantics(NAME)
+        }> as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
     [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
         let sel = $crate::sel!($($selector:)+);
-        const NAME: &[$crate::__macro_helpers::u8] =
-            $crate::__macro_helpers::concat!($($crate::__macro_helpers::stringify!($selector), ':'),+).as_bytes();
-        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
+        const NAME: &$crate::__macro_helpers::str =
+            $crate::__macro_helpers::concat!($($crate::__macro_helpers::stringify!($selector), ':'),+);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
+        result = <$crate::__macro_helpers::RetainSemantics<{
+            $crate::__macro_helpers::retain_semantics(NAME)
+        }> as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
         result
     });
 }
@@ -1001,14 +1034,4 @@ macro_rules! __msg_send_id_helper {
         )
     }};
     (@verify $selector:ident) => {{}};
-    (@get_assert_consts $selector:ident) => {
-        use $crate::__macro_helpers::{bool, in_selector_family, RetainSemantics};
-        const NEW: bool = in_selector_family($selector, b"new");
-        const ALLOC: bool = in_selector_family($selector, b"alloc");
-        const INIT: bool = in_selector_family($selector, b"init");
-        const COPY_OR_MUT_COPY: bool = {
-            in_selector_family($selector, b"copy") || in_selector_family($selector, b"mutableCopy")
-        };
-        type RS = RetainSemantics<NEW, ALLOC, INIT, COPY_OR_MUT_COPY>;
-    };
 }

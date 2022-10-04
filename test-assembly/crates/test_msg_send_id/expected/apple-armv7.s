@@ -25,7 +25,7 @@ LBB1_1:
 LPC1_0:
 	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<1_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	2
@@ -52,7 +52,7 @@ LBB3_1:
 LPC3_0:
 	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 1)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<2_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_init
 	.p2align	2
@@ -79,7 +79,7 @@ LBB5_1:
 LPC5_0:
 	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 2)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
 	.p2align	2
@@ -137,7 +137,7 @@ LBB10_1:
 LPC10_0:
 	add	r0, pc, r0
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 3)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<4_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
 	.p2align	2
@@ -175,7 +175,7 @@ LBB12_1:
 LPC12_0:
 	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 4)
+	b	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.section	__TEXT,__const
 l_anon.[ID].0:
@@ -200,11 +200,11 @@ l_anon.[ID].3:
 	.p2align	2
 l_anon.[ID].4:
 	.long	l_anon.[ID].0
-	.asciz	",\000\000\000@\000\000\000\005\000\000"
+	.asciz	",\000\000\000>\000\000\000\005\000\000"
 
 	.p2align	2
 l_anon.[ID].5:
 	.long	l_anon.[ID].0
-	.asciz	",\000\000\000J\000\000\000\005\000\000"
+	.asciz	",\000\000\000H\000\000\000\005\000\000"
 
 .subsections_via_symbols

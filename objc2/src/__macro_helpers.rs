@@ -3,7 +3,6 @@ use alloc::vec::Vec;
 #[cfg(feature = "verify_message")]
 use std::collections::HashSet;
 
-use crate::__sel_inner;
 use crate::declare::ClassBuilder;
 #[cfg(feature = "verify_message")]
 use crate::declare::MethodImplementation;
@@ -12,6 +11,7 @@ use crate::rc::{Allocated, Id, Ownership};
 use crate::runtime::MethodDescription;
 use crate::runtime::{Class, Object, Protocol, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
+use crate::{__sel_data, __sel_inner};
 
 pub use crate::cache::CachedClass;
 pub use crate::cache::CachedSel;
@@ -38,19 +38,16 @@ pub use std::sync::Once;
 // actual assembly is as one would expect.
 
 #[inline]
-pub fn alloc() -> Sel {
-    // SAFETY: Must have NUL byte
-    __sel_inner!("alloc\0", "alloc")
+pub fn alloc_sel() -> Sel {
+    __sel_inner!(__sel_data!(alloc), "alloc")
 }
 #[inline]
-pub fn init() -> Sel {
-    // SAFETY: Must have NUL byte
-    __sel_inner!("init\0", "init")
+pub fn init_sel() -> Sel {
+    __sel_inner!(__sel_data!(init), "init")
 }
 #[inline]
-pub fn new() -> Sel {
-    // SAFETY: Must have NUL byte
-    __sel_inner!("new\0", "new")
+pub fn new_sel() -> Sel {
+    __sel_inner!(__sel_data!(new), "new")
 }
 
 /// Helper for specifying the retain semantics for a given selector family.
@@ -72,22 +69,33 @@ pub fn new() -> Sel {
 ///     means it can't be a class method!
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
-pub struct RetainSemantics<
-    // `new` family
-    const NEW: bool,
-    // `alloc` family
-    const ALLOC: bool,
-    // `init` family
-    const INIT: bool,
-    // `copy` or `mutableCopy` family
-    const COPY_OR_MUT_COPY: bool,
-> {}
+// TODO: Use an enum instead of u8 here when stable
+pub struct RetainSemantics<const INNER: u8> {}
 
-type New = RetainSemantics<true, false, false, false>;
-type Alloc = RetainSemantics<false, true, false, false>;
-type Init = RetainSemantics<false, false, true, false>;
-type CopyOrMutCopy = RetainSemantics<false, false, false, true>;
-type Other = RetainSemantics<false, false, false, false>;
+pub type New = RetainSemantics<1>;
+pub type Alloc = RetainSemantics<2>;
+pub type Init = RetainSemantics<3>;
+pub type CopyOrMutCopy = RetainSemantics<4>;
+pub type Other = RetainSemantics<5>;
+
+pub const fn retain_semantics(selector: &str) -> u8 {
+    let selector = selector.as_bytes();
+    match (
+        in_selector_family(selector, b"new"),
+        in_selector_family(selector, b"alloc"),
+        in_selector_family(selector, b"init"),
+        in_selector_family(selector, b"copy"),
+        in_selector_family(selector, b"mutableCopy"),
+    ) {
+        (true, false, false, false, false) => 1,
+        (false, true, false, false, false) => 2,
+        (false, false, true, false, false) => 3,
+        (false, false, false, true, false) => 4,
+        (false, false, false, false, true) => 4,
+        (false, false, false, false, false) => 5,
+        _ => unreachable!(),
+    }
+}
 
 pub trait MsgSendId<T, U> {
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
@@ -266,7 +274,7 @@ impl<'a> MsgSendIdFailed<'a> for New {
         if let Some(obj) = obj {
             let cls = obj.class();
             if cls.is_metaclass() {
-                if sel == new() {
+                if sel == new_sel() {
                     panic!("failed creating new instance of {:?}", cls)
                 } else {
                     panic!("failed creating new instance using +[{:?} {:?}]", cls, sel)
@@ -286,7 +294,7 @@ impl<'a> MsgSendIdFailed<'a> for Alloc {
     #[cold]
     #[track_caller]
     fn failed((cls, sel): Self::Args) -> ! {
-        if sel == alloc() {
+        if sel == alloc_sel() {
             panic!("failed allocating {:?}", cls)
         } else {
             panic!("failed allocating with +[{:?} {:?}]", cls, sel)
@@ -305,7 +313,7 @@ impl MsgSendIdFailed<'_> for Init {
         } else {
             // We can't really display a more descriptive message here since the
             // object is consumed by `init` and may not be valid any more.
-            if sel == init() {
+            if sel == init_sel() {
                 panic!("failed initializing object")
             } else {
                 panic!("failed initializing object with -{:?}", sel)
@@ -347,7 +355,7 @@ impl<'a> MsgSendIdFailed<'a> for Other {
 /// Checks whether a given selector is said to be in a given selector family.
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families>
-pub const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool {
+const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool {
     // Skip leading underscores from selector
     loop {
         selector = match selector {
