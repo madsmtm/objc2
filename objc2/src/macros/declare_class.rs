@@ -410,6 +410,10 @@ macro_rules! declare_class {
         }
 
         impl $for {
+            // See the following links for more details:
+            // - <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#dealloc>
+            // - <https://developer.apple.com/documentation/objectivec/nsobject/1571947-dealloc>
+            // - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW2>
             unsafe extern "C" fn __objc2_dealloc(&mut self, _cmd: $crate::runtime::Sel) {
                 $(
                     let ptr: *mut $crate::declare::Ivar<$ivar> = &mut self.$ivar;
@@ -418,6 +422,13 @@ macro_rules! declare_class {
                     // be touched again.
                     unsafe { $crate::__macro_helpers::drop_in_place(ptr) };
                 )*
+
+                // Invoke the super class' `dealloc` method.
+                //
+                // Note: ARC does this automatically, so most Objective-C code
+                // in the wild don't contain this; but we don't have ARC, so
+                // we must do this.
+                unsafe { msg_send![super(self), dealloc] }
             }
         }
 
