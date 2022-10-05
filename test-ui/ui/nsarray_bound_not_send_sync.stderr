@@ -34,36 +34,36 @@ note: required by a bound in `needs_sync`
   |                           ^^^^ required by this bound in `needs_sync`
 
 error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
-  --> ui/nsarray_bound_not_send_sync.rs
-   |
-   |     needs_send::<NSArray<Object, Shared>>();
-   |                  ^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
-   |
-   = help: within `objc2::runtime::Object`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-   = note: required because it appears within the type `objc_object`
-   = note: required because it appears within the type `objc2::runtime::Object`
-   = note: required for `NSArray<objc2::runtime::Object>` to implement `Send`
+ --> ui/nsarray_bound_not_send_sync.rs
+  |
+  |     needs_send::<NSArray<Object, Shared>>();
+  |                  ^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
+  |
+  = help: within `objc2::runtime::Object`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = note: required because it appears within the type `objc_object`
+  = note: required because it appears within the type `objc2::runtime::Object`
+  = note: required for `NSArray<objc2::runtime::Object>` to implement `Send`
 note: required by a bound in `needs_send`
-  --> ui/nsarray_bound_not_send_sync.rs
-   |
-   | fn needs_send<T: ?Sized + Send>() {}
-   |                           ^^^^ required by this bound in `needs_send`
+ --> ui/nsarray_bound_not_send_sync.rs
+  |
+  | fn needs_send<T: ?Sized + Send>() {}
+  |                           ^^^^ required by this bound in `needs_send`
 
 error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
-  --> ui/nsarray_bound_not_send_sync.rs
-   |
-   |     needs_send::<NSArray<Object, Shared>>();
-   |                  ^^^^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
-   |
-   = help: within `objc2::runtime::Object`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
-   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
-   = note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
-   = note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-   = note: required because it appears within the type `objc_object`
-   = note: required because it appears within the type `objc2::runtime::Object`
-   = note: required for `NSArray<objc2::runtime::Object>` to implement `Send`
+ --> ui/nsarray_bound_not_send_sync.rs
+  |
+  |     needs_send::<NSArray<Object, Shared>>();
+  |                  ^^^^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
+  |
+  = help: within `objc2::runtime::Object`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
+  = note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
+  = note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = note: required because it appears within the type `objc_object`
+  = note: required because it appears within the type `objc2::runtime::Object`
+  = note: required for `NSArray<objc2::runtime::Object>` to implement `Send`
 note: required by a bound in `needs_send`
-  --> ui/nsarray_bound_not_send_sync.rs
-   |
-   | fn needs_send<T: ?Sized + Send>() {}
-   |                           ^^^^ required by this bound in `needs_send`
+ --> ui/nsarray_bound_not_send_sync.rs
+  |
+  | fn needs_send<T: ?Sized + Send>() {}
+  |                           ^^^^ required by this bound in `needs_send`
