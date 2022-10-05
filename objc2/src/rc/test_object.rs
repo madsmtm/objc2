@@ -91,6 +91,7 @@ declare_class!(
 
         #[sel(initReturningNull)]
         fn init_returning_null(&mut self) -> *mut Self {
+            let _: () = unsafe { msg_send![self, release] };
             ptr::null_mut()
         }
 
@@ -115,7 +116,7 @@ declare_class!(
         #[sel(dealloc)]
         unsafe fn dealloc(&mut self) {
             TEST_DATA.with(|data| data.borrow_mut().dealloc += 1);
-            // Don't call superclass
+            unsafe { msg_send![super(self), dealloc] }
         }
 
         #[sel(_tryRetain)]

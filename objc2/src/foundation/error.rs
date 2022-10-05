@@ -75,6 +75,7 @@ extern_methods!(
         }
 
         pub fn localized_description(&self) -> Id<NSString, Shared> {
+            // TODO: For some reason this leaks a lot?
             let obj: Option<_> = unsafe { msg_send_id![self, localizedDescription] };
             obj.expect(
                 "unexpected NULL localized description; a default should have been generated!",

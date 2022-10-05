@@ -410,6 +410,7 @@ mod tests {
                 #[sel(dealloc)]
                 fn dealloc(&mut self) {
                     HAS_RUN_DEALLOC.store(true, Ordering::SeqCst);
+                    unsafe { msg_send![super(self), dealloc] }
                 }
             }
         );

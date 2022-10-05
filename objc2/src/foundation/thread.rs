@@ -214,14 +214,18 @@ mod tests {
         let thread = NSThread::main();
 
         let actual = format!("{:?}", thread);
-        let expected_macos_11 = format!("<NSThread: {:p}>{{number = 1, name = (null)}}", thread);
-        let expected_macos_12 =
-            format!("<_NSMainThread: {:p}>{{number = 1, name = (null)}}", thread);
+        let expected = [
+            // macOS 11
+            format!("<NSThread: {:p}>{{number = 1, name = (null)}}", thread),
+            format!("<NSThread: {:p}>{{number = 1, name = main}}", thread),
+            // macOS 12
+            format!("<_NSMainThread: {:p}>{{number = 1, name = (null)}}", thread),
+            format!("<_NSMainThread: {:p}>{{number = 1, name = main}}", thread),
+        ];
         assert!(
-            actual == expected_macos_11 || actual == expected_macos_12,
-            "Expected one of {:?} or {:?}, got {:?}",
-            expected_macos_11,
-            expected_macos_12,
+            expected.contains(&actual),
+            "Expected one of {:?}, got {:?}",
+            expected,
             actual,
         );
 
