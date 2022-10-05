@@ -1,17 +1,17 @@
 error: implementation of `Encode` is not general enough
-  --> ui/fn_ptr_reference_encode.rs
-   |
-   |     impls_encode(my_fn as extern "C" fn(&i32));
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `Encode` is not general enough
-   |
-   = note: `Encode` would have to be implemented for the type `for<'a> extern "C" fn(&'a i32)`
-   = note: ...but `Encode` is actually implemented for the type `extern "C" fn(&'0 i32)`, for some specific lifetime `'0`
+ --> ui/fn_ptr_reference_encode.rs
+  |
+  |     impls_encode(my_fn as extern "C" fn(&i32));
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `Encode` is not general enough
+  |
+  = note: `Encode` would have to be implemented for the type `for<'a> extern "C" fn(&'a i32)`
+  = note: ...but `Encode` is actually implemented for the type `extern "C" fn(&'0 i32)`, for some specific lifetime `'0`
 
 error: implementation of `Encode` is not general enough
-  --> ui/fn_ptr_reference_encode.rs
-   |
-   |     let _encoding = <extern "C" fn(&i32) as Encode>::ENCODING;
-   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `Encode` is not general enough
-   |
-   = note: `Encode` would have to be implemented for the type `for<'a> extern "C" fn(&'a i32)`
-   = note: ...but `Encode` is actually implemented for the type `extern "C" fn(&'0 i32)`, for some specific lifetime `'0`
+ --> ui/fn_ptr_reference_encode.rs
+  |
+  |     let _encoding = <extern "C" fn(&i32) as Encode>::ENCODING;
+  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `Encode` is not general enough
+  |
+  = note: `Encode` would have to be implemented for the type `for<'a> extern "C" fn(&'a i32)`
+  = note: ...but `Encode` is actually implemented for the type `extern "C" fn(&'0 i32)`, for some specific lifetime `'0`

@@ -5,37 +5,37 @@ error: unexpected end of macro invocation
   |                                       ^ missing tokens in macro arguments
 
 error: unexpected end of macro invocation
-  --> ui/invalid_msg_send.rs
-   |
-   |     let _: () = unsafe { msg_send![obj,] };
-   |                                        ^ missing tokens in macro arguments
+ --> ui/invalid_msg_send.rs
+  |
+  |     let _: () = unsafe { msg_send![obj,] };
+  |                                        ^ missing tokens in macro arguments
 
 error: unexpected end of macro invocation
-  --> ui/invalid_msg_send.rs
-   |
-   |     let _: () = unsafe { msg_send![obj, a:] };
-   |                                           ^ missing tokens in macro arguments
+ --> ui/invalid_msg_send.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, a:] };
+  |                                           ^ missing tokens in macro arguments
 
 error: unexpected end of macro invocation
-  --> ui/invalid_msg_send.rs
-   |
-   |     let _: () = unsafe { msg_send![obj, a: b c] };
-   |                                               ^ missing tokens in macro arguments
+ --> ui/invalid_msg_send.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, a: b c] };
+  |                                               ^ missing tokens in macro arguments
 
 error: no rules expected the token `d`
-  --> ui/invalid_msg_send.rs
-   |
-   |     let _: () = unsafe { msg_send![obj, a: b, c d] };
-   |                                                 ^ no rules expected this token in macro call
+ --> ui/invalid_msg_send.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, a: b, c d] };
+  |                                                 ^ no rules expected this token in macro call
 
 error[E0412]: cannot find type `c` in this scope
-  --> ui/invalid_msg_send.rs
-   |
-   |     let _: () = unsafe { msg_send![obj, a: b: c] };
-   |                                               ^ expecting a type here because of type ascription
+ --> ui/invalid_msg_send.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, a: b: c] };
+  |                                               ^ expecting a type here because of type ascription
 
 error[E0412]: cannot find type `c` in this scope
-  --> ui/invalid_msg_send.rs
-   |
-   |     let _: () = unsafe { msg_send![obj, a: b: c] };
-   |                                               ^ expecting a type here because of type ascription
+ --> ui/invalid_msg_send.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, a: b: c] };
+  |                                               ^ expecting a type here because of type ascription

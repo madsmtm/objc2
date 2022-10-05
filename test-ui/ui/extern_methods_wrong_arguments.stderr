@@ -1,64 +1,64 @@
 error: Number of arguments in function and selector did not match!
-  --> ui/extern_methods_wrong_arguments.rs
-   |
-   | / extern_methods!(
-   | |     unsafe impl MyObject {
-   | |         #[sel(a:)]
-   | |         fn a();
-   | |     }
-   | | );
-   | |_^
-   |
-   = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[sel(a:)]
+  | |         fn a();
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: Number of arguments in function and selector did not match!
-  --> ui/extern_methods_wrong_arguments.rs
-   |
-   | / extern_methods!(
-   | |     unsafe impl MyObject {
-   | |         #[sel(b)]
-   | |         fn b(arg: i32);
-   | |     }
-   | | );
-   | |_^
-   |
-   = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[sel(b)]
+  | |         fn b(arg: i32);
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: Number of arguments in function and selector did not match!
-  --> ui/extern_methods_wrong_arguments.rs
-   |
-   | / extern_methods!(
-   | |     unsafe impl MyObject {
-   | |         #[sel(c:d:e:)]
-   | |         fn c(arg1: i32, arg2: u32);
-   | |     }
-   | | );
-   | |_^
-   |
-   = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[sel(c:d:e:)]
+  | |         fn c(arg1: i32, arg2: u32);
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: Number of arguments in function and selector did not match!
-  --> ui/extern_methods_wrong_arguments.rs
-   |
-   | / extern_methods!(
-   | |     unsafe impl MyObject {
-   | |         #[sel(x:)]
-   | |         fn x(&self);
-   | |     }
-   | | );
-   | |_^
-   |
-   = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[sel(x:)]
+  | |         fn x(&self);
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: Number of arguments in function and selector did not match!
-  --> ui/extern_methods_wrong_arguments.rs
-   |
-   | / extern_methods!(
-   | |     unsafe impl MyObject {
-   | |         #[sel(y)]
-   | |         fn y(&self, arg: i32);
-   | |     }
-   | | );
-   | |_^
-   |
-   = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[sel(y)]
+  | |         fn y(&self, arg: i32);
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
