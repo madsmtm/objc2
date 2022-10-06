@@ -187,7 +187,10 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn dictionary() -> Id<Self, Shared> {
         msg_send_id![Self::class(), dictionary]
     }
-    pub unsafe fn dictionaryWithObject_forKey(object: &ObjectType, key: &id) -> Id<Self, Shared> {
+    pub unsafe fn dictionaryWithObject_forKey(
+        object: &ObjectType,
+        key: &NSCopying,
+    ) -> Id<Self, Shared> {
         msg_send_id![Self::class(), dictionaryWithObject: object, forKey: key]
     }
     pub unsafe fn dictionaryWithObjects_forKeys_count(
@@ -209,7 +212,7 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     }
     pub unsafe fn dictionaryWithObjects_forKeys(
         objects: &NSArray<ObjectType>,
-        keys: &NSArray<id>,
+        keys: &NSArray<NSCopying>,
     ) -> Id<Self, Shared> {
         msg_send_id![Self::class(), dictionaryWithObjects: objects, forKeys: keys]
     }
@@ -229,7 +232,7 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn initWithObjects_forKeys(
         &self,
         objects: &NSArray<ObjectType>,
-        keys: &NSArray<id>,
+        keys: &NSArray<NSCopying>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithObjects: objects, forKeys: keys]
     }
@@ -264,7 +267,7 @@ impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectT
     pub unsafe fn removeObjectForKey(&self, aKey: &KeyType) {
         msg_send![self, removeObjectForKey: aKey]
     }
-    pub unsafe fn setObject_forKey(&self, anObject: &ObjectType, aKey: &id) {
+    pub unsafe fn setObject_forKey(&self, anObject: &ObjectType, aKey: &NSCopying) {
         msg_send![self, setObject: anObject, forKey: aKey]
     }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
@@ -294,7 +297,7 @@ impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectT
     pub unsafe fn setDictionary(&self, otherDictionary: &NSDictionary<KeyType, ObjectType>) {
         msg_send![self, setDictionary: otherDictionary]
     }
-    pub unsafe fn setObject_forKeyedSubscript(&self, obj: Option<&ObjectType>, key: &id) {
+    pub unsafe fn setObject_forKeyedSubscript(&self, obj: Option<&ObjectType>, key: &NSCopying) {
         msg_send![self, setObject: obj, forKeyedSubscript: key]
     }
 }
@@ -328,7 +331,7 @@ impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectT
 }
 #[doc = "NSSharedKeySetDictionary"]
 impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
-    pub unsafe fn sharedKeySetForKeys(keys: &NSArray<id>) -> Id<Object, Shared> {
+    pub unsafe fn sharedKeySetForKeys(keys: &NSArray<NSCopying>) -> Id<Object, Shared> {
         msg_send_id![Self::class(), sharedKeySetForKeys: keys]
     }
 }

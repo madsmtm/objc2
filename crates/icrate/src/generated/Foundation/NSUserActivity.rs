@@ -122,10 +122,10 @@ impl NSUserActivity {
             setSupportsContinuationStreams: supportsContinuationStreams
         ]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSUserActivityDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSUserActivityDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn targetContentIdentifier(&self) -> Option<Id<NSString, Shared>> {

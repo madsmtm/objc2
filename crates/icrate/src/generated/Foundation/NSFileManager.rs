@@ -550,16 +550,16 @@ impl NSFileManager {
     pub unsafe fn defaultManager() -> Id<NSFileManager, Shared> {
         msg_send_id![Self::class(), defaultManager]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSFileManagerDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSFileManagerDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared> {
         msg_send_id![self, currentDirectoryPath]
     }
-    pub unsafe fn ubiquityIdentityToken(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn ubiquityIdentityToken(&self) -> Option<Id<TodoProtocols, Shared>> {
         msg_send_id![self, ubiquityIdentityToken]
     }
 }

@@ -107,7 +107,7 @@ impl NSFileVersion {
     pub unsafe fn modificationDate(&self) -> Option<Id<NSDate, Shared>> {
         msg_send_id![self, modificationDate]
     }
-    pub unsafe fn persistentIdentifier(&self) -> Id<id, Shared> {
+    pub unsafe fn persistentIdentifier(&self) -> Id<NSCoding, Shared> {
         msg_send_id![self, persistentIdentifier]
     }
     pub unsafe fn isConflict(&self) -> bool {

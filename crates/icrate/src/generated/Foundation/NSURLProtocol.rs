@@ -26,7 +26,7 @@ impl NSURLProtocol {
         &self,
         request: &NSURLRequest,
         cachedResponse: Option<&NSCachedURLResponse>,
-        client: Option<&id>,
+        client: Option<&NSURLProtocolClient>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,
@@ -77,7 +77,7 @@ impl NSURLProtocol {
     pub unsafe fn unregisterClass(protocolClass: &Class) {
         msg_send![Self::class(), unregisterClass: protocolClass]
     }
-    pub unsafe fn client(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn client(&self) -> Option<Id<NSURLProtocolClient, Shared>> {
         msg_send_id![self, client]
     }
     pub unsafe fn request(&self) -> Id<NSURLRequest, Shared> {
@@ -96,7 +96,7 @@ impl NSURLProtocol {
         &self,
         task: &NSURLSessionTask,
         cachedResponse: Option<&NSCachedURLResponse>,
-        client: Option<&id>,
+        client: Option<&NSURLProtocolClient>,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,

@@ -42,15 +42,15 @@ extern_class!(
     }
 );
 impl NSFileCoordinator {
-    pub unsafe fn addFilePresenter(filePresenter: &id) {
+    pub unsafe fn addFilePresenter(filePresenter: &NSFilePresenter) {
         msg_send![Self::class(), addFilePresenter: filePresenter]
     }
-    pub unsafe fn removeFilePresenter(filePresenter: &id) {
+    pub unsafe fn removeFilePresenter(filePresenter: &NSFilePresenter) {
         msg_send![Self::class(), removeFilePresenter: filePresenter]
     }
     pub unsafe fn initWithFilePresenter(
         &self,
-        filePresenterOrNil: Option<&id>,
+        filePresenterOrNil: Option<&NSFilePresenter>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithFilePresenter: filePresenterOrNil]
     }
@@ -174,7 +174,7 @@ impl NSFileCoordinator {
     pub unsafe fn cancel(&self) {
         msg_send![self, cancel]
     }
-    pub unsafe fn filePresenters() -> Id<NSArray<id>, Shared> {
+    pub unsafe fn filePresenters() -> Id<NSArray<NSFilePresenter>, Shared> {
         msg_send_id![Self::class(), filePresenters]
     }
     pub unsafe fn purposeIdentifier(&self) -> Id<NSString, Shared> {

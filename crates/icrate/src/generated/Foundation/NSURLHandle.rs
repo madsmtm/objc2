@@ -28,10 +28,10 @@ impl NSURLHandle {
     pub unsafe fn failureReason(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, failureReason]
     }
-    pub unsafe fn addClient(&self, client: Option<&id>) {
+    pub unsafe fn addClient(&self, client: Option<&NSURLHandleClient>) {
         msg_send![self, addClient: client]
     }
-    pub unsafe fn removeClient(&self, client: Option<&id>) {
+    pub unsafe fn removeClient(&self, client: Option<&NSURLHandleClient>) {
         msg_send![self, removeClient: client]
     }
     pub unsafe fn loadInBackground(&self) {

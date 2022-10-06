@@ -92,10 +92,10 @@ impl NSKeyedArchiver {
     ) {
         msg_send![self, encodeBytes: bytes, length: length, forKey: key]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSKeyedArchiverDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSKeyedArchiverDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn outputFormat(&self) -> NSPropertyListFormat {
@@ -273,10 +273,10 @@ impl NSKeyedUnarchiver {
     ) -> *mut u8 {
         msg_send![self, decodeBytesForKey: key, returnedLength: lengthp]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSKeyedUnarchiverDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSKeyedUnarchiverDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn requiresSecureCoding(&self) -> bool {

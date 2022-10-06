@@ -101,10 +101,10 @@ impl NSProcessInfo {
         &self,
         options: NSActivityOptions,
         reason: &NSString,
-    ) -> Id<id, Shared> {
+    ) -> Id<NSObject, Shared> {
         msg_send_id![self, beginActivityWithOptions: options, reason: reason]
     }
-    pub unsafe fn endActivity(&self, activity: &id) {
+    pub unsafe fn endActivity(&self, activity: &NSObject) {
         msg_send![self, endActivity: activity]
     }
     pub unsafe fn performActivityWithOptions_reason_usingBlock(

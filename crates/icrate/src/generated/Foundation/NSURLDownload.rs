@@ -28,14 +28,14 @@ impl NSURLDownload {
     pub unsafe fn initWithRequest_delegate(
         &self,
         request: &NSURLRequest,
-        delegate: Option<&id>,
+        delegate: Option<&NSURLDownloadDelegate>,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithRequest: request, delegate: delegate]
     }
     pub unsafe fn initWithResumeData_delegate_path(
         &self,
         resumeData: &NSData,
-        delegate: Option<&id>,
+        delegate: Option<&NSURLDownloadDelegate>,
         path: &NSString,
     ) -> Id<Self, Shared> {
         msg_send_id![

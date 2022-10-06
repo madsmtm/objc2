@@ -170,10 +170,10 @@ impl NSConnection {
     pub unsafe fn setRootObject(&self, rootObject: Option<&Object>) {
         msg_send![self, setRootObject: rootObject]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSConnectionDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSConnectionDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn independentConversationQueueing(&self) -> bool {

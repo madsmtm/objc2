@@ -33,10 +33,10 @@ impl NSSpellServer {
     pub unsafe fn run(&self) {
         msg_send![self, run]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSSpellServerDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
 }

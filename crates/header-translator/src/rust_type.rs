@@ -106,7 +106,15 @@ impl RustType {
                         }
                         Some(name)
                     }
-                    ObjCObject => Some(name),
+                    ObjCObject => {
+                        if !ty.get_objc_type_arguments().is_empty() {
+                            Some("TodoGenerics".to_owned())
+                        } else if !ty.get_objc_protocol_declarations().is_empty() {
+                            Some("TodoProtocols".to_owned())
+                        } else {
+                            Some(name)
+                        }
+                    }
                     _ => panic!("pointee was not objcinterface nor objcobject: {:?}", ty),
                 }
             }
@@ -207,7 +215,7 @@ impl RustType {
                         }
                     }
                     ObjCObject => {
-                        let generics = ty
+                        let generics: Vec<_> = ty
                             .get_objc_type_arguments()
                             .into_iter()
                             .map(|param| {
@@ -232,7 +240,19 @@ impl RustType {
                         let base_ty = ty
                             .get_objc_object_base_type()
                             .expect("object to have base type");
-                        let name = base_ty.get_display_name();
+                        let mut name = base_ty.get_display_name();
+                        let protocols: Vec<_> = ty
+                            .get_objc_protocol_declarations()
+                            .into_iter()
+                            .map(|entity| entity.get_display_name().expect("protocol name"))
+                            .collect();
+                        if !protocols.is_empty() {
+                            if name == "id" && generics.is_empty() && protocols.len() == 1 {
+                                name = protocols[0].clone();
+                            } else {
+                                name = "TodoProtocols".to_string();
+                            }
+                        }
                         Self::Id {
                             type_: GenericType { name, generics },
                             is_return,

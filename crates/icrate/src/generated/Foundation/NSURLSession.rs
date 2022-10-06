@@ -42,7 +42,7 @@ impl NSURLSession {
     }
     pub unsafe fn sessionWithConfiguration_delegate_delegateQueue(
         configuration: &NSURLSessionConfiguration,
-        delegate: Option<&id>,
+        delegate: Option<&NSURLSessionDelegate>,
         queue: Option<&NSOperationQueue>,
     ) -> Id<NSURLSession, Shared> {
         msg_send_id![
@@ -158,7 +158,7 @@ impl NSURLSession {
     pub unsafe fn delegateQueue(&self) -> Id<NSOperationQueue, Shared> {
         msg_send_id![self, delegateQueue]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSURLSessionDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
     pub unsafe fn configuration(&self) -> Id<NSURLSessionConfiguration, Shared> {
@@ -290,10 +290,10 @@ impl NSURLSessionTask {
     pub unsafe fn response(&self) -> Option<Id<NSURLResponse, Shared>> {
         msg_send_id![self, response]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSURLSessionTaskDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSURLSessionTaskDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn progress(&self) -> Id<NSProgress, Shared> {

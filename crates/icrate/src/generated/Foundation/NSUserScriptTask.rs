@@ -101,7 +101,7 @@ extern_class!(
 impl NSUserAutomatorTask {
     pub unsafe fn executeWithInput_completionHandler(
         &self,
-        input: Option<&id>,
+        input: Option<&NSSecureCoding>,
         handler: NSUserAutomatorTaskCompletionHandler,
     ) {
         msg_send![self, executeWithInput: input, completionHandler: handler]

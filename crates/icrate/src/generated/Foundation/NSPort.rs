@@ -25,10 +25,10 @@ impl NSPort {
     pub unsafe fn invalidate(&self) {
         msg_send![self, invalidate]
     }
-    pub unsafe fn setDelegate(&self, anObject: Option<&id>) {
+    pub unsafe fn setDelegate(&self, anObject: Option<&NSPortDelegate>) {
         msg_send![self, setDelegate: anObject]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSPortDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
     pub unsafe fn scheduleInRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
@@ -112,10 +112,10 @@ impl NSMachPort {
     pub unsafe fn initWithMachPort(&self, machPort: u32) -> Id<Self, Shared> {
         msg_send_id![self, initWithMachPort: machPort]
     }
-    pub unsafe fn setDelegate(&self, anObject: Option<&id>) {
+    pub unsafe fn setDelegate(&self, anObject: Option<&NSMachPortDelegate>) {
         msg_send![self, setDelegate: anObject]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSMachPortDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
     pub unsafe fn portWithMachPort_options(

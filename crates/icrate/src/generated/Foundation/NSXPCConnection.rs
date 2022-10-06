@@ -144,10 +144,10 @@ impl NSXPCListener {
     pub unsafe fn invalidate(&self) {
         msg_send![self, invalidate]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSXPCListenerDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSXPCListenerDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn endpoint(&self) -> Id<NSXPCListenerEndpoint, Shared> {
@@ -283,10 +283,10 @@ impl NSXPCCoder {
     ) -> Option<Id<xpc_object_t, Shared>> {
         msg_send_id![self, decodeXPCObjectOfType: type_, forKey: key]
     }
-    pub unsafe fn userInfo(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn userInfo(&self) -> Option<Id<NSObject, Shared>> {
         msg_send_id![self, userInfo]
     }
-    pub unsafe fn setUserInfo(&self, userInfo: Option<&id>) {
+    pub unsafe fn setUserInfo(&self, userInfo: Option<&NSObject>) {
         msg_send![self, setUserInfo: userInfo]
     }
     pub unsafe fn connection(&self) -> Option<Id<NSXPCConnection, Shared>> {

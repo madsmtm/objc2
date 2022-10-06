@@ -198,10 +198,10 @@ impl NSUserNotificationCenter {
     pub unsafe fn defaultUserNotificationCenter() -> Id<NSUserNotificationCenter, Shared> {
         msg_send_id![Self::class(), defaultUserNotificationCenter]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSUserNotificationCenterDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSUserNotificationCenterDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn scheduledNotifications(&self) -> Id<NSArray<NSUserNotification>, Shared> {

@@ -93,10 +93,10 @@ impl NSNetService {
     pub unsafe fn stopMonitoring(&self) {
         msg_send![self, stopMonitoring]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSNetServiceDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn includesPeerToPeer(&self) -> bool {
@@ -157,10 +157,10 @@ impl NSNetServiceBrowser {
     pub unsafe fn stop(&self) {
         msg_send![self, stop]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceBrowserDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSNetServiceBrowserDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn includesPeerToPeer(&self) -> bool {

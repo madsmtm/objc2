@@ -34,10 +34,10 @@ impl NSXMLParser {
     pub unsafe fn abortParsing(&self) {
         msg_send![self, abortParsing]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSXMLParserDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSXMLParserDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn shouldProcessNamespaces(&self) -> bool {

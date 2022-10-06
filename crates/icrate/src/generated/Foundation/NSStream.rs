@@ -42,10 +42,10 @@ impl NSStream {
     pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: aRunLoop, forMode: mode]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSStreamDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSStreamDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn streamStatus(&self) -> NSStreamStatus {

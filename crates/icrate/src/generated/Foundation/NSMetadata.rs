@@ -56,10 +56,10 @@ impl NSMetadataQuery {
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, valueOfAttribute: attrName, forResultAtIndex: idx]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn delegate(&self) -> Option<Id<NSMetadataQueryDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&id>) {
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSMetadataQueryDelegate>) {
         msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn predicate(&self) -> Option<Id<NSPredicate, Shared>> {

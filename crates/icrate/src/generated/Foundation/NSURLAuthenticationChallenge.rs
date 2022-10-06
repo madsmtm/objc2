@@ -24,7 +24,7 @@ impl NSURLAuthenticationChallenge {
         previousFailureCount: NSInteger,
         response: Option<&NSURLResponse>,
         error: Option<&NSError>,
-        sender: &id,
+        sender: &NSURLAuthenticationChallengeSender,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,
@@ -39,7 +39,7 @@ impl NSURLAuthenticationChallenge {
     pub unsafe fn initWithAuthenticationChallenge_sender(
         &self,
         challenge: &NSURLAuthenticationChallenge,
-        sender: &id,
+        sender: &NSURLAuthenticationChallengeSender,
     ) -> Id<Self, Shared> {
         msg_send_id![
             self,
@@ -62,7 +62,7 @@ impl NSURLAuthenticationChallenge {
     pub unsafe fn error(&self) -> Option<Id<NSError, Shared>> {
         msg_send_id![self, error]
     }
-    pub unsafe fn sender(&self) -> Option<Id<id, Shared>> {
+    pub unsafe fn sender(&self) -> Option<Id<NSURLAuthenticationChallengeSender, Shared>> {
         msg_send_id![self, sender]
     }
 }
