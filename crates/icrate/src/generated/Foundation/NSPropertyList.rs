@@ -83,30 +83,4 @@ impl NSPropertyListSerialization {
             error: error
         ]
     }
-    pub unsafe fn dataFromPropertyList_format_errorDescription(
-        plist: &Object,
-        format: NSPropertyListFormat,
-        errorString: *mut *mut NSString,
-    ) -> Option<Id<NSData, Shared>> {
-        msg_send_id![
-            Self::class(),
-            dataFromPropertyList: plist,
-            format: format,
-            errorDescription: errorString
-        ]
-    }
-    pub unsafe fn propertyListFromData_mutabilityOption_format_errorDescription(
-        data: &NSData,
-        opt: NSPropertyListMutabilityOptions,
-        format: *mut NSPropertyListFormat,
-        errorString: *mut *mut NSString,
-    ) -> Option<Id<Object, Shared>> {
-        msg_send_id![
-            Self::class(),
-            propertyListFromData: data,
-            mutabilityOption: opt,
-            format: format,
-            errorDescription: errorString
-        ]
-    }
 }

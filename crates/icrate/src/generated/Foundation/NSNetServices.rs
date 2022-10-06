@@ -70,17 +70,6 @@ impl NSNetService {
     pub unsafe fn resolveWithTimeout(&self, timeout: NSTimeInterval) {
         msg_send![self, resolveWithTimeout: timeout]
     }
-    pub unsafe fn getInputStream_outputStream(
-        &self,
-        inputStream: *mut *mut NSInputStream,
-        outputStream: *mut *mut NSOutputStream,
-    ) -> bool {
-        msg_send![
-            self,
-            getInputStream: inputStream,
-            outputStream: outputStream
-        ]
-    }
     pub unsafe fn setTXTRecordData(&self, recordData: Option<&NSData>) -> bool {
         msg_send![self, setTXTRecordData: recordData]
     }

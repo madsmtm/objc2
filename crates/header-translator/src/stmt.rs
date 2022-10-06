@@ -299,7 +299,7 @@ impl Stmt {
                         })
                     }
                     TypeKind::Typedef => {
-                        let type_ = RustType::parse(ty, false, false);
+                        let type_ = RustType::parse_typedef(ty);
                         Some(Self::AliasDecl { name, type_ })
                     }
                     _ => {

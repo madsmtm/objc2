@@ -108,33 +108,6 @@ impl NSItemProvider {
     ) {
         msg_send![self, registerObject: object, visibility: visibility]
     }
-    pub unsafe fn registerObjectOfClass_visibility_loadHandler(
-        &self,
-        aClass: &TodoProtocols,
-        visibility: NSItemProviderRepresentationVisibility,
-        loadHandler: TodoBlock,
-    ) {
-        msg_send![
-            self,
-            registerObjectOfClass: aClass,
-            visibility: visibility,
-            loadHandler: loadHandler
-        ]
-    }
-    pub unsafe fn canLoadObjectOfClass(&self, aClass: &TodoProtocols) -> bool {
-        msg_send![self, canLoadObjectOfClass: aClass]
-    }
-    pub unsafe fn loadObjectOfClass_completionHandler(
-        &self,
-        aClass: &TodoProtocols,
-        completionHandler: TodoBlock,
-    ) -> Id<NSProgress, Shared> {
-        msg_send_id![
-            self,
-            loadObjectOfClass: aClass,
-            completionHandler: completionHandler
-        ]
-    }
     pub unsafe fn initWithItem_typeIdentifier(
         &self,
         item: Option<&NSSecureCoding>,

@@ -195,7 +195,7 @@ impl Method {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = RustType::parse(ty, false, is_consumed);
+                let ty = RustType::parse_argument(ty, is_consumed);
 
                 (name, qualifier, ty)
             })
@@ -210,7 +210,7 @@ impl Method {
             );
         }
         let result_type = if result_type.get_kind() != TypeKind::Void {
-            Some(RustType::parse(result_type, true, false))
+            Some(RustType::parse_return(result_type))
         } else {
             None
         };

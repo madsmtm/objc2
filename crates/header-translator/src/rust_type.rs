@@ -301,7 +301,7 @@ impl RustType {
         matches!(self, Self::Id { .. })
     }
 
-    pub fn parse(ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
+    fn parse(ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
         use TypeKind::*;
 
         // println!("{:?}, {:?}", ty, ty.get_class_type());
@@ -447,6 +447,60 @@ impl RustType {
                 panic!("Unsupported type: {:?}", ty)
             }
         }
+    }
+}
+
+impl RustType {
+    fn visit_lifetime(&self, mut f: impl FnMut(Lifetime)) {
+        match self {
+            Self::Id { lifetime, .. } => f(*lifetime),
+            Self::Pointer { pointee, .. } => pointee.visit_lifetime(f),
+            Self::Array { element_type, .. } => element_type.visit_lifetime(f),
+            _ => {}
+        }
+    }
+
+    pub fn parse_return(ty: Type<'_>) -> Self {
+        let this = Self::parse(ty, true, false);
+
+        this.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in return {this:?}");
+            }
+        });
+
+        this
+    }
+
+    pub fn parse_argument(ty: Type<'_>, is_consumed: bool) -> Self {
+        let this = Self::parse(ty, false, is_consumed);
+
+        match &this {
+            Self::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
+                if lifetime != Lifetime::Autoreleasing && lifetime != Lifetime::Unspecified {
+                    panic!("unexpected lifetime {lifetime:?} in pointer argument {ty:?}");
+                }
+            }),
+            _ => this.visit_lifetime(|lifetime| {
+                if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
+                    panic!("unexpected lifetime {lifetime:?} in argument {ty:?}");
+                }
+            }),
+        }
+
+        this
+    }
+
+    pub fn parse_typedef(ty: Type<'_>) -> Self {
+        let this = Self::parse(ty, false, false);
+
+        this.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in typedef {this:?}");
+            }
+        });
+
+        this
     }
 }
 

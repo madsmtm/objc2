@@ -26,3 +26,16 @@ initWithString = { unsafe = false }
 [class.NSBlockOperation.methods]
 # Uses `NSArray<void (^)(void)>`, which is difficult to handle
 executionBlocks = { skipped = true }
+
+# These use `Class<NSItemProvider...>`, which is unsupported
+[class.NSItemProvider.methods]
+registerObjectOfClass_visibility_loadHandler = { skipped = true }
+canLoadObjectOfClass = { skipped = true }
+loadObjectOfClass_completionHandler = { skipped = true }
+
+# These use `SomeObject * __strong *`, which is unsupported
+[class.NSNetService.methods]
+getInputStream_outputStream = { skipped = true }
+[class.NSPropertyListSerialization.methods]
+dataFromPropertyList_format_errorDescription = { skipped = true }
+propertyListFromData_mutabilityOption_format_errorDescription = { skipped = true }
