@@ -194,15 +194,10 @@ impl Method {
                     EntityVisitResult::Continue
                 });
 
-                (
-                    name,
-                    qualifier,
-                    RustType::parse(
-                        entity.get_type().expect("argument type"),
-                        false,
-                        is_consumed,
-                    ),
-                )
+                let ty = entity.get_type().expect("argument type");
+                let ty = RustType::parse(ty, false, is_consumed);
+
+                (name, qualifier, ty)
             })
             .collect();
 

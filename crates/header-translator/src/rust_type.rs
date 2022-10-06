@@ -8,12 +8,233 @@ pub struct GenericType {
     pub generics: Vec<GenericType>,
 }
 
+impl GenericType {
+    fn parse_objc_pointer(ty: Type<'_>) -> Self {
+        match ty.get_kind() {
+            TypeKind::ObjCInterface => {
+                let generics = ty.get_objc_type_arguments();
+                if !generics.is_empty() {
+                    panic!("generics not empty: {ty:?}, {generics:?}");
+                }
+                let protocols = ty.get_objc_protocol_declarations();
+                if !protocols.is_empty() {
+                    panic!("protocols not empty: {ty:?}, {protocols:?}");
+                }
+                let name = ty.get_display_name();
+                Self {
+                    name,
+                    generics: Vec::new(),
+                }
+            }
+            TypeKind::ObjCObject => {
+                let base_ty = ty
+                    .get_objc_object_base_type()
+                    .expect("object to have base type");
+                let mut name = base_ty.get_display_name();
+
+                let generics: Vec<_> = ty
+                    .get_objc_type_arguments()
+                    .into_iter()
+                    .map(|param| {
+                        match RustType::parse(param, false, false) {
+                            RustType::Id {
+                                type_,
+                                is_return: _,
+                                is_const: _,
+                                lifetime: _,
+                                nullability: _,
+                            } => type_,
+                            // TODO: Handle this better
+                            RustType::Class { nullability: _ } => Self {
+                                name: "TodoClass".to_string(),
+                                generics: Vec::new(),
+                            },
+                            param => {
+                                panic!("invalid generic parameter {:?} in {:?}", param, ty)
+                            }
+                        }
+                    })
+                    .collect();
+
+                let protocols: Vec<_> = ty
+                    .get_objc_protocol_declarations()
+                    .into_iter()
+                    .map(|entity| entity.get_display_name().expect("protocol name"))
+                    .collect();
+                if !protocols.is_empty() {
+                    if name == "id" && generics.is_empty() && protocols.len() == 1 {
+                        name = protocols[0].clone();
+                    } else {
+                        name = "TodoProtocols".to_string();
+                    }
+                }
+
+                Self { name, generics }
+            }
+            _ => panic!("pointee was neither objcinterface nor objcobject: {ty:?}"),
+        }
+    }
+}
+
 impl ToTokens for GenericType {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let name = format_ident!("{}", self.name);
         let generics = &self.generics;
         tokens.append_all(quote!(#name <#(#generics),*>));
     }
+}
+
+/// ObjCLifetime
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum Lifetime {
+    Unspecified,
+    /// OCL_ExplicitNone
+    Unretained,
+    /// OCL_Strong
+    Strong,
+    /// OCL_Weak
+    Weak,
+    /// OCL_Autoreleasing
+    Autoreleasing,
+}
+
+/// Parse attributes.
+///
+/// This is _very_ ugly, but required because libclang doesn't expose most
+/// of these.
+fn parse_attributed<'a>(
+    ty: Type<'a>,
+    nullability: &mut Nullability,
+    lifetime: &mut Lifetime,
+    kindof: Option<&mut bool>,
+) -> Type<'a> {
+    let mut modified_ty = ty.clone();
+    while modified_ty.get_kind() == TypeKind::Attributed {
+        // println!("{ty:?}, {modified_ty:?}");
+        modified_ty = modified_ty
+            .get_modified_type()
+            .expect("attributed type to have modified type");
+    }
+
+    if modified_ty == ty {
+        return ty;
+    }
+
+    let mut name = &*ty.get_display_name();
+    let mut modified_name = &*modified_ty.get_display_name();
+
+    fn get_inner_fn(name: &str) -> &str {
+        let (_, name) = name.split_once('(').expect("fn to have begin parenthesis");
+        let (name, _) = name.split_once(')').expect("fn to have end parenthesis");
+        name.trim()
+    }
+
+    match modified_ty.get_kind() {
+        TypeKind::ConstantArray => {
+            let (res, _) = name.split_once("[").expect("array to end with [");
+            name = res.trim();
+            let (res, _) = modified_name.split_once("[").expect("array to end with [");
+            modified_name = res.trim();
+        }
+        TypeKind::IncompleteArray => {
+            name = name
+                .strip_suffix("[]")
+                .expect("array to end with []")
+                .trim();
+            modified_name = modified_name
+                .strip_suffix("[]")
+                .expect("array to end with []")
+                .trim();
+        }
+        TypeKind::BlockPointer => {
+            name = get_inner_fn(name);
+            modified_name = get_inner_fn(modified_name);
+        }
+        TypeKind::Pointer => {
+            if modified_ty
+                .get_pointee_type()
+                .expect("pointer to have pointee")
+                .get_kind()
+                == TypeKind::FunctionPrototype
+            {
+                name = get_inner_fn(name);
+                modified_name = get_inner_fn(modified_name);
+            }
+        }
+        _ => {}
+    }
+
+    if let Some(kindof) = kindof {
+        if let Some(rest) = name.strip_prefix("__kindof") {
+            name = rest.trim();
+            *kindof = true;
+        }
+    }
+
+    if ty.is_const_qualified() {
+        if let Some(rest) = name.strip_suffix("const") {
+            name = rest.trim();
+        }
+        if !modified_ty.is_const_qualified() {
+            // TODO: Fix this
+            println!("unnecessarily stripped const");
+        }
+    }
+
+    if let Some(rest) = name.strip_suffix("__unsafe_unretained") {
+        *lifetime = Lifetime::Unretained;
+        name = rest.trim();
+    } else if let Some(rest) = name.strip_suffix("__strong") {
+        *lifetime = Lifetime::Strong;
+        name = rest.trim();
+    } else if let Some(rest) = name.strip_suffix("__weak") {
+        *lifetime = Lifetime::Weak;
+        name = rest.trim();
+    } else if let Some(rest) = name.strip_suffix("__autoreleasing") {
+        *lifetime = Lifetime::Autoreleasing;
+        name = rest.trim();
+    }
+
+    if let Some(rest) = name.strip_suffix("_Nullable") {
+        assert_eq!(
+            ty.get_nullability(),
+            Some(Nullability::Nullable),
+            "nullable"
+        );
+        *nullability = Nullability::Nullable;
+        name = rest.trim();
+    } else if let Some(rest) = name.strip_suffix("_Nonnull") {
+        assert_eq!(ty.get_nullability(), Some(Nullability::NonNull), "nonnull");
+        *nullability = match nullability {
+            Nullability::Nullable => Nullability::Nullable,
+            _ => Nullability::NonNull,
+        };
+        name = rest.trim();
+    } else if let Some(rest) = name.strip_suffix("_Null_unspecified") {
+        assert_eq!(
+            ty.get_nullability(),
+            Some(Nullability::Unspecified),
+            "unspecified"
+        );
+        // Do nothing
+        name = rest.trim();
+    } else {
+        assert_eq!(
+            ty.get_nullability(),
+            None,
+            "expected no nullability attribute on {name:?}"
+        );
+    }
+
+    if name != modified_name {
+        let original_name = ty.get_display_name();
+        println!("attributes: {original_name:?} -> {name:?} != {modified_name:?}");
+        panic!(
+            "could not extract all attributes from attributed type. Inner: {ty:?}, {modified_ty:?}"
+        );
+    }
+
+    modified_ty
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -48,6 +269,7 @@ pub enum RustType {
         type_: GenericType,
         is_return: bool,
         is_const: bool,
+        lifetime: Lifetime,
         nullability: Nullability,
     },
     Class {
@@ -123,39 +345,16 @@ impl RustType {
         }
     }
 
-    pub fn parse_attributed(ty: &mut Type<'_>, nullability: &mut Nullability, kindof: &mut bool) {
-        while ty.get_kind() == TypeKind::Attributed {
-            let mut found_attribute = false;
-            if ty.get_display_name().starts_with("__kindof") {
-                *kindof = true;
-                found_attribute = true;
-            }
-            if let Some(new) = ty.get_nullability() {
-                *nullability = match (*nullability, new) {
-                    (Nullability::NonNull, Nullability::Nullable) => Nullability::Nullable,
-                    (Nullability::NonNull, _) => Nullability::NonNull,
-                    (Nullability::Nullable, _) => Nullability::Nullable,
-                    (Nullability::Unspecified, new) => new,
-                };
-                found_attribute = true;
-            }
-            if !found_attribute {
-                panic!("could not extract attribute from attributed type: {ty:?}");
-            }
-            *ty = ty
-                .get_modified_type()
-                .expect("attributed type to have modified type");
-        }
-    }
-
-    pub fn parse(mut ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
+    pub fn parse(ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
         use TypeKind::*;
 
         // println!("{:?}, {:?}", ty, ty.get_class_type());
 
         let mut nullability = Nullability::Unspecified;
-        let mut kindof = false;
-        Self::parse_attributed(&mut ty, &mut nullability, &mut kindof);
+        let mut lifetime = Lifetime::Unspecified;
+        let ty = parse_attributed(ty, &mut nullability, &mut lifetime, None);
+
+        // println!("{:?}: {:?}", ty.get_kind(), ty.get_display_name());
 
         match ty.get_kind() {
             Void => Self::Void,
@@ -180,6 +379,7 @@ impl RustType {
                 },
                 is_return,
                 is_const: ty.is_const_qualified(),
+                lifetime,
                 nullability,
             },
             ObjCClass => Self::Class { nullability },
@@ -197,72 +397,17 @@ impl RustType {
                 }
             }
             ObjCObjectPointer => {
-                let mut ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                Self::parse_attributed(&mut ty, &mut nullability, &mut kindof);
-                match ty.get_kind() {
-                    ObjCInterface => {
-                        let generics = ty.get_objc_type_arguments();
-                        if !generics.is_empty() {
-                            panic!("not empty: {:?}, {:?}", ty, generics);
-                        }
-                        let name = ty.get_display_name();
-                        Self::Id {
-                            type_: GenericType {
-                                name,
-                                generics: Vec::new(),
-                            },
-                            is_return,
-                            is_const: ty.is_const_qualified(),
-                            nullability,
-                        }
-                    }
-                    ObjCObject => {
-                        let generics: Vec<_> = ty
-                            .get_objc_type_arguments()
-                            .into_iter()
-                            .map(|param| {
-                                match Self::parse(param, false, false) {
-                                    Self::Id {
-                                        type_,
-                                        is_return: _,
-                                        is_const: _,
-                                        nullability: _,
-                                    } => type_,
-                                    // TODO: Handle this better
-                                    Self::Class { nullability: _ } => GenericType {
-                                        name: "TodoClass".to_string(),
-                                        generics: Vec::new(),
-                                    },
-                                    param => {
-                                        panic!("invalid generic parameter {:?} in {:?}", param, ty)
-                                    }
-                                }
-                            })
-                            .collect();
-                        let base_ty = ty
-                            .get_objc_object_base_type()
-                            .expect("object to have base type");
-                        let mut name = base_ty.get_display_name();
-                        let protocols: Vec<_> = ty
-                            .get_objc_protocol_declarations()
-                            .into_iter()
-                            .map(|entity| entity.get_display_name().expect("protocol name"))
-                            .collect();
-                        if !protocols.is_empty() {
-                            if name == "id" && generics.is_empty() && protocols.len() == 1 {
-                                name = protocols[0].clone();
-                            } else {
-                                name = "TodoProtocols".to_string();
-                            }
-                        }
-                        Self::Id {
-                            type_: GenericType { name, generics },
-                            is_return,
-                            is_const: ty.is_const_qualified(),
-                            nullability,
-                        }
-                    }
-                    _ => panic!("pointee was not objcinterface: {:?}", ty),
+                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                let mut kindof = false;
+                let ty = parse_attributed(ty, &mut nullability, &mut lifetime, Some(&mut kindof));
+                let type_ = GenericType::parse_objc_pointer(ty);
+
+                Self::Id {
+                    type_,
+                    is_return,
+                    is_const: ty.is_const_qualified(),
+                    lifetime,
+                    nullability,
                 }
             }
             Typedef => {
@@ -288,6 +433,7 @@ impl RustType {
                             },
                             is_return,
                             is_const: ty.is_const_qualified(),
+                            lifetime,
                             nullability,
                         }
                     }
@@ -304,6 +450,7 @@ impl RustType {
                                 },
                                 is_return,
                                 is_const: ty.is_const_qualified(),
+                                lifetime,
                                 nullability,
                             }
                         } else {
@@ -377,6 +524,8 @@ impl ToTokens for RustType {
                 is_return,
                 // Ignore
                 is_const: _,
+                // Ignore
+                lifetime: _,
                 nullability,
             } => {
                 let tokens = if *is_return {
@@ -417,6 +566,7 @@ impl ToTokens for RustType {
                         type_,
                         is_return: _,
                         is_const,
+                        lifetime: _,
                         nullability,
                     } => {
                         if *nullability == Nullability::NonNull {
