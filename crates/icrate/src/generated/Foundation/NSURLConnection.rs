@@ -87,7 +87,7 @@ pub type NSURLConnectionDownloadDelegate = NSObject;
 impl NSURLConnection {
     pub unsafe fn sendSynchronousRequest_returningResponse_error(
         request: &NSURLRequest,
-        response: *mut *mut NSURLResponse,
+        response: Option<&mut Option<Id<NSURLResponse, Shared>>>,
         error: *mut *mut NSError,
     ) -> Option<Id<NSData, Shared>> {
         msg_send_id![

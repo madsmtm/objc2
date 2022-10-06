@@ -575,33 +575,68 @@ impl ToTokens for RustType {
                 nullability,
                 is_const,
                 pointee,
-            } => {
-                let tokens = match &**pointee {
-                    Self::Id {
-                        type_,
-                        is_return: _,
-                        is_const,
-                        lifetime: _,
-                        nullability,
-                    } => {
-                        if *nullability == Nullability::NonNull {
-                            quote!(NonNull<#type_>)
-                        } else if *is_const {
-                            quote!(*const #type_)
-                        } else {
-                            quote!(*mut #type_)
-                        }
+            } => match &**pointee {
+                Self::Id {
+                    type_: tokens,
+                    is_return: false,
+                    is_const: false,
+                    lifetime: Lifetime::Autoreleasing,
+                    nullability: inner_nullability,
+                } => {
+                    let tokens = quote!(Id<#tokens, Shared>);
+                    let tokens = if *inner_nullability == Nullability::NonNull {
+                        tokens
+                    } else {
+                        quote!(Option<#tokens>)
+                    };
+
+                    let tokens = if *is_const {
+                        quote!(&#tokens)
+                    } else {
+                        quote!(&mut #tokens)
+                    };
+                    if *nullability == Nullability::NonNull {
+                        tokens
+                    } else {
+                        quote!(Option<#tokens>)
                     }
-                    pointee => quote!(#pointee),
-                };
-                if *nullability == Nullability::NonNull {
-                    quote!(NonNull<#tokens>)
-                } else if *is_const {
-                    quote!(*const #tokens)
-                } else {
-                    quote!(*mut #tokens)
                 }
-            }
+                Self::Id {
+                    type_: tokens,
+                    is_return: false,
+                    is_const: false,
+                    lifetime: Lifetime::Unspecified,
+                    nullability: inner_nullability,
+                } => {
+                    if tokens.name != "NSError" {
+                        println!("id*: {self:?}");
+                    }
+                    let tokens = if *inner_nullability == Nullability::NonNull {
+                        quote!(NonNull<#tokens>)
+                    } else {
+                        quote!(*mut #tokens)
+                    };
+                    if *nullability == Nullability::NonNull {
+                        quote!(NonNull<#tokens>)
+                    } else if *is_const {
+                        quote!(*const #tokens)
+                    } else {
+                        quote!(*mut #tokens)
+                    }
+                }
+                Self::Id { .. } => {
+                    unreachable!("there should be no id with other values: {self:?}")
+                }
+                pointee => {
+                    if *nullability == Nullability::NonNull {
+                        quote!(NonNull<#pointee>)
+                    } else if *is_const {
+                        quote!(*const #pointee)
+                    } else {
+                        quote!(*mut #pointee)
+                    }
+                }
+            },
             Array {
                 element_type,
                 num_elements,

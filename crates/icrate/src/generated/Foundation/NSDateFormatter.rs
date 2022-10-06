@@ -22,7 +22,7 @@ extern_class!(
 impl NSDateFormatter {
     pub unsafe fn getObjectValue_forString_range_error(
         &self,
-        obj: *mut *mut Object,
+        obj: Option<&mut Option<Id<Object, Shared>>>,
         string: &NSString,
         rangep: *mut NSRange,
         error: *mut *mut NSError,

@@ -768,7 +768,7 @@ impl NSString {
     pub unsafe fn stringEncodingForData_encodingOptions_convertedString_usedLossyConversion(
         data: &NSData,
         opts: Option<&NSDictionary<NSStringEncodingDetectionOptionsKey, Object>>,
-        string: *mut *mut NSString,
+        string: Option<&mut Option<Id<NSString, Shared>>>,
         usedLossyConversion: *mut bool,
     ) -> NSStringEncoding {
         msg_send![

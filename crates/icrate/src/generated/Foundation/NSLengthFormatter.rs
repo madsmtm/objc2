@@ -37,9 +37,9 @@ impl NSLengthFormatter {
     }
     pub unsafe fn getObjectValue_forString_errorDescription(
         &self,
-        obj: *mut *mut Object,
+        obj: Option<&mut Option<Id<Object, Shared>>>,
         string: &NSString,
-        error: *mut *mut NSString,
+        error: Option<&mut Option<Id<NSString, Shared>>>,
     ) -> bool {
         msg_send![
             self,

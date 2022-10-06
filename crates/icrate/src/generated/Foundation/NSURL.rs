@@ -201,7 +201,7 @@ impl NSURL {
     }
     pub unsafe fn getResourceValue_forKey_error(
         &self,
-        value: NonNull<*mut Object>,
+        value: &mut Option<Id<Object, Shared>>,
         key: &NSURLResourceKey,
         error: *mut *mut NSError,
     ) -> bool {
@@ -410,7 +410,7 @@ impl NSURL {
 impl NSURL {
     pub unsafe fn getPromisedItemResourceValue_forKey_error(
         &self,
-        value: NonNull<*mut Object>,
+        value: &mut Option<Id<Object, Shared>>,
         key: &NSURLResourceKey,
         error: *mut *mut NSError,
     ) -> bool {

@@ -26,9 +26,9 @@ impl NSString {
     }
     pub unsafe fn completePathIntoString_caseSensitive_matchesIntoArray_filterTypes(
         &self,
-        outputName: *mut *mut NSString,
+        outputName: Option<&mut Option<Id<NSString, Shared>>>,
         flag: bool,
-        outputArray: *mut *mut NSArray<NSString>,
+        outputArray: Option<&mut Option<Id<NSArray<NSString>, Shared>>>,
         filterTypes: Option<&NSArray<NSString>>,
     ) -> NSUInteger {
         msg_send![

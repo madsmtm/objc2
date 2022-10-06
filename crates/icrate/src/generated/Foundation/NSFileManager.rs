@@ -286,7 +286,7 @@ impl NSFileManager {
     pub unsafe fn trashItemAtURL_resultingItemURL_error(
         &self,
         url: &NSURL,
-        outResultingURL: *mut *mut NSURL,
+        outResultingURL: Option<&mut Option<Id<NSURL, Shared>>>,
         error: *mut *mut NSError,
     ) -> bool {
         msg_send![
@@ -463,7 +463,7 @@ impl NSFileManager {
         newItemURL: &NSURL,
         backupItemName: Option<&NSString>,
         options: NSFileManagerItemReplacementOptions,
-        resultingURL: *mut *mut NSURL,
+        resultingURL: Option<&mut Option<Id<NSURL, Shared>>>,
         error: *mut *mut NSError,
     ) -> bool {
         msg_send![
@@ -517,7 +517,7 @@ impl NSFileManager {
     pub unsafe fn URLForPublishingUbiquitousItemAtURL_expirationDate_error(
         &self,
         url: &NSURL,
-        outDate: *mut *mut NSDate,
+        outDate: Option<&mut Option<Id<NSDate, Shared>>>,
         error: *mut *mut NSError,
     ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![

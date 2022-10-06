@@ -18,7 +18,7 @@ impl NSAppleScript {
     pub unsafe fn initWithContentsOfURL_error(
         &self,
         url: &NSURL,
-        errorInfo: *mut *mut NSDictionary<NSString, Object>,
+        errorInfo: Option<&mut Option<Id<NSDictionary<NSString, Object>, Shared>>>,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithContentsOfURL: url, error: errorInfo]
     }
@@ -27,20 +27,20 @@ impl NSAppleScript {
     }
     pub unsafe fn compileAndReturnError(
         &self,
-        errorInfo: *mut *mut NSDictionary<NSString, Object>,
+        errorInfo: Option<&mut Option<Id<NSDictionary<NSString, Object>, Shared>>>,
     ) -> bool {
         msg_send![self, compileAndReturnError: errorInfo]
     }
     pub unsafe fn executeAndReturnError(
         &self,
-        errorInfo: *mut *mut NSDictionary<NSString, Object>,
+        errorInfo: Option<&mut Option<Id<NSDictionary<NSString, Object>, Shared>>>,
     ) -> Id<NSAppleEventDescriptor, Shared> {
         msg_send_id![self, executeAndReturnError: errorInfo]
     }
     pub unsafe fn executeAppleEvent_error(
         &self,
         event: &NSAppleEventDescriptor,
-        errorInfo: *mut *mut NSDictionary<NSString, Object>,
+        errorInfo: Option<&mut Option<Id<NSDictionary<NSString, Object>, Shared>>>,
     ) -> Id<NSAppleEventDescriptor, Shared> {
         msg_send_id![self, executeAppleEvent: event, error: errorInfo]
     }
