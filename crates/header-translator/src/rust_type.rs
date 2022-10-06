@@ -9,7 +9,7 @@ pub struct GenericType {
 }
 
 impl GenericType {
-    fn parse_objc_pointer(ty: Type<'_>) -> Self {
+    pub fn parse_objc_pointer(ty: Type<'_>) -> Self {
         match ty.get_kind() {
             TypeKind::ObjCInterface => {
                 let generics = ty.get_objc_type_arguments();
@@ -301,50 +301,6 @@ impl RustType {
         matches!(self, Self::Id { .. })
     }
 
-    pub fn typedef_is_id(ty: Type<'_>) -> Option<String> {
-        use TypeKind::*;
-
-        // Note: When we encounter a typedef declaration like this:
-        // typedef NSString* NSAbc;
-        //
-        // We parse it as one of:
-        // type NSAbc = NSString;
-        // struct NSAbc(NSString);
-        //
-        // Instead of:
-        // type NSAbc = *const NSString;
-        //
-        // Because that means we can use ordinary Id<...> handling.
-        match ty.get_kind() {
-            ObjCObjectPointer => {
-                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                let name = ty.get_display_name();
-                match ty.get_kind() {
-                    ObjCInterface => {
-                        match &*name {
-                            "NSString" => {}
-                            "NSUnit" => {} // TODO: Handle this differently
-                            _ => panic!("typedef interface was not NSString {:?}", ty),
-                        }
-                        Some(name)
-                    }
-                    ObjCObject => {
-                        if !ty.get_objc_type_arguments().is_empty() {
-                            Some("TodoGenerics".to_owned())
-                        } else if !ty.get_objc_protocol_declarations().is_empty() {
-                            Some("TodoProtocols".to_owned())
-                        } else {
-                            Some(name)
-                        }
-                    }
-                    _ => panic!("pointee was not objcinterface nor objcobject: {:?}", ty),
-                }
-            }
-            ObjCId => panic!("unexpected ObjCId {:?}", ty),
-            _ => None,
-        }
-    }
-
     pub fn parse(ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
         use TypeKind::*;
 
@@ -438,23 +394,28 @@ impl RustType {
                         }
                     }
                     _ => {
-                        if Self::typedef_is_id(ty.get_canonical_type()).is_some() {
-                            let generics = ty.get_objc_type_arguments();
-                            if !generics.is_empty() {
-                                panic!("not empty: {:?}, {:?}", ty, generics);
+                        let ty = ty.get_canonical_type();
+                        match ty.get_kind() {
+                            ObjCObjectPointer => {
+                                let ty =
+                                    ty.get_pointee_type().expect("pointer type to have pointee");
+                                let type_ = GenericType::parse_objc_pointer(ty);
+                                if !type_.generics.is_empty() {
+                                    panic!("typedef generics not empty");
+                                }
+
+                                Self::Id {
+                                    type_: GenericType {
+                                        name: typedef_name,
+                                        generics: Vec::new(),
+                                    },
+                                    is_return,
+                                    is_const: ty.is_const_qualified(),
+                                    lifetime,
+                                    nullability,
+                                }
                             }
-                            Self::Id {
-                                type_: GenericType {
-                                    name: typedef_name,
-                                    generics: Vec::new(),
-                                },
-                                is_return,
-                                is_const: ty.is_const_qualified(),
-                                lifetime,
-                                nullability,
-                            }
-                        } else {
-                            Self::TypeDef { name: typedef_name }
+                            _ => Self::TypeDef { name: typedef_name },
                         }
                     }
                 }

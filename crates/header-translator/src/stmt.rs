@@ -5,7 +5,7 @@ use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 use crate::availability::Availability;
 use crate::config::Config;
 use crate::method::Method;
-use crate::rust_type::RustType;
+use crate::rust_type::{GenericType, RustType};
 
 #[derive(Debug, Clone)]
 pub enum Stmt {
@@ -263,19 +263,43 @@ impl Stmt {
             }
             EntityKind::TypedefDecl => {
                 let name = entity.get_name().expect("typedef name");
-                let underlying_ty = entity
+                let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                match underlying_ty.get_kind() {
+                match ty.get_kind() {
+                    // Note: When we encounter a typedef declaration like this:
+                    //     typedef NSString* NSAbc;
+                    //
+                    // We parse it as one of:
+                    //     type NSAbc = NSString;
+                    //     struct NSAbc(NSString);
+                    //
+                    // Instead of:
+                    //     type NSAbc = *const NSString;
+                    //
+                    // Because that means we can use ordinary Id<...> handling.
                     TypeKind::ObjCObjectPointer => {
-                        let type_name = RustType::typedef_is_id(underlying_ty).expect("typedef id");
+                        let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                        let type_ = GenericType::parse_objc_pointer(ty);
+
+                        match &*type_.name {
+                            "NSString" => {}
+                            "NSUnit" => {}        // TODO: Handle this differently
+                            "TodoProtocols" => {} // TODO
+                            _ => panic!("typedef declaration was not NSString: {type_:?}"),
+                        }
+
+                        if !type_.generics.is_empty() {
+                            panic!("typedef declaration generics not empty");
+                        }
+
                         Some(Self::AliasDecl {
                             name,
-                            type_: RustType::TypeDef { name: type_name },
+                            type_: RustType::TypeDef { name: type_.name },
                         })
                     }
                     TypeKind::Typedef => {
-                        let type_ = RustType::parse(underlying_ty, false, false);
+                        let type_ = RustType::parse(ty, false, false);
                         Some(Self::AliasDecl { name, type_ })
                     }
                     _ => {
@@ -284,7 +308,7 @@ impl Stmt {
                         //     entity.get_display_name(),
                         //     entity.has_attributes(),
                         //     entity.get_children(),
-                        //     underlying_ty,
+                        //     ty,
                         // );
                         None
                     }
