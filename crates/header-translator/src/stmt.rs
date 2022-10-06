@@ -57,7 +57,11 @@ impl Stmt {
                 let mut iter = name.split('/');
                 let framework = iter.next().expect("inclusion name has framework");
                 let file = iter.next()?;
-                assert!(iter.count() == 0, "no more left");
+                if iter.count() != 0 {
+                    // TODO: Fix this
+                    println!("skipping inclusion of {name:?}");
+                    return None;
+                }
 
                 Some(Self::FileImport {
                     framework: framework.to_string(),

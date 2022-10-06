@@ -125,20 +125,22 @@ impl RustType {
 
     pub fn parse_attributed(ty: &mut Type<'_>, nullability: &mut Nullability, kindof: &mut bool) {
         while ty.get_kind() == TypeKind::Attributed {
-            match (
-                ty.get_display_name().starts_with("__kindof"),
-                ty.get_nullability(),
-            ) {
-                (false, Some(new)) => {
-                    *nullability = match (*nullability, new) {
-                        (Nullability::NonNull, Nullability::Nullable) => Nullability::Nullable,
-                        (Nullability::NonNull, _) => Nullability::NonNull,
-                        (Nullability::Nullable, _) => Nullability::Nullable,
-                        (Nullability::Unspecified, new) => new,
-                    }
-                }
-                (true, None) => *kindof = true,
-                _ => panic!("invalid attributed type: {:?}", ty),
+            let mut found_attribute = false;
+            if ty.get_display_name().starts_with("__kindof") {
+                *kindof = true;
+                found_attribute = true;
+            }
+            if let Some(new) = ty.get_nullability() {
+                *nullability = match (*nullability, new) {
+                    (Nullability::NonNull, Nullability::Nullable) => Nullability::Nullable,
+                    (Nullability::NonNull, _) => Nullability::NonNull,
+                    (Nullability::Nullable, _) => Nullability::Nullable,
+                    (Nullability::Unspecified, new) => new,
+                };
+                found_attribute = true;
+            }
+            if !found_attribute {
+                panic!("could not extract attribute from attributed type: {ty:?}");
             }
             *ty = ty
                 .get_modified_type()
