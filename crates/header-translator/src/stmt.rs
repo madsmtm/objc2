@@ -3,9 +3,93 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 use crate::availability::Availability;
-use crate::config::Config;
+use crate::config::{ClassData, Config};
 use crate::method::Method;
 use crate::rust_type::{GenericType, RustType};
+
+/// Takes one of:
+/// - `EntityKind::ObjCInterfaceDecl`
+/// - `EntityKind::ObjCProtocolDecl`
+/// - `EntityKind::ObjCCategoryDecl`
+fn parse_objc_decl(
+    entity: &Entity<'_>,
+    mut superclass: Option<&mut Option<Option<String>>>,
+    mut generics: Option<&mut Vec<String>>,
+    class_data: Option<&ClassData>,
+) -> (Vec<String>, Vec<Method>) {
+    let mut protocols = Vec::new();
+    let mut methods = Vec::new();
+
+    entity.visit_children(|entity, _parent| {
+        match entity.get_kind() {
+            EntityKind::ObjCExplicitProtocolImpl if generics.is_some() && superclass.is_none() => {
+                // TODO
+            }
+            EntityKind::ObjCIvarDecl if superclass.is_some() => {
+                // Explicitly ignored
+            }
+            EntityKind::ObjCSuperClassRef => {
+                if let Some(superclass) = &mut superclass {
+                    **superclass = Some(Some(entity.get_name().expect("superclass name")));
+                } else {
+                    panic!("unsupported superclass {entity:?}");
+                }
+            }
+            EntityKind::ObjCRootClass => {
+                if let Some(superclass) = &mut superclass {
+                    // TODO: Maybe just skip root classes entirely?
+                    **superclass = Some(None);
+                } else {
+                    panic!("unsupported root class {entity:?}");
+                }
+            }
+            EntityKind::ObjCClassRef if generics.is_some() => {
+                // println!("ObjCClassRef: {:?}", entity.get_display_name());
+            }
+            EntityKind::TemplateTypeParameter => {
+                if let Some(generics) = &mut generics {
+                    // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
+                    // let ty = entity.get_type().expect("template type");
+                    let name = entity.get_display_name().expect("template name");
+                    generics.push(name);
+                } else {
+                    panic!("unsupported generics {entity:?}");
+                }
+            }
+            EntityKind::ObjCProtocolRef => {
+                protocols.push(entity.get_name().expect("protocolref to have name"));
+            }
+            EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
+                if let Some(method) = Method::parse(entity, class_data) {
+                    methods.push(method);
+                }
+            }
+            EntityKind::ObjCPropertyDecl => {
+                // println!(
+                //     "Property {:?}, {:?}",
+                //     entity.get_display_name().unwrap(),
+                //     entity.get_objc_attributes().unwrap()
+                // );
+                // methods.push(quote! {});
+            }
+            EntityKind::VisibilityAttr if superclass.is_some() => {
+                // NS_CLASS_AVAILABLE_MAC??
+                println!("TODO: VisibilityAttr")
+            }
+            EntityKind::TypeRef if superclass.is_some() => {
+                // TODO
+            }
+            EntityKind::ObjCException if superclass.is_some() => {
+                // Maybe useful for knowing when to implement `Error` for the type
+            }
+            EntityKind::UnexposedAttr => {}
+            _ => panic!("unknown objc decl child {entity:?}"),
+        };
+        EntityVisitResult::Continue
+    });
+
+    (protocols, methods)
+}
 
 #[derive(Debug, Clone)]
 pub enum Stmt {
@@ -90,61 +174,13 @@ impl Stmt {
                 // println!("Availability: {:?}", entity.get_platform_availability());
                 let mut superclass = None;
                 let mut generics = Vec::new();
-                let mut protocols = Vec::new();
-                let mut methods = Vec::new();
 
-                entity.visit_children(|entity, _parent| {
-                    match entity.get_kind() {
-                        EntityKind::ObjCIvarDecl => {
-                            // Explicitly ignored
-                        }
-                        EntityKind::ObjCSuperClassRef => {
-                            superclass = Some(Some(entity.get_name().expect("superclass name")));
-                        }
-                        EntityKind::ObjCRootClass => {
-                            // TODO: Maybe just skip root classes entirely?
-                            superclass = Some(None);
-                        }
-                        EntityKind::ObjCClassRef => {
-                            // println!("ObjCClassRef: {:?}", entity.get_display_name());
-                        }
-                        EntityKind::ObjCProtocolRef => {
-                            protocols.push(entity.get_name().expect("protocolref to have name"));
-                        }
-                        EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-                            if let Some(method) = Method::parse(entity, class_data) {
-                                methods.push(method);
-                            }
-                        }
-                        EntityKind::ObjCPropertyDecl => {
-                            // println!(
-                            //     "Property {:?}, {:?}",
-                            //     entity.get_display_name().unwrap(),
-                            //     entity.get_objc_attributes().unwrap()
-                            // );
-                            // methods.push(quote! {});
-                        }
-                        EntityKind::TemplateTypeParameter => {
-                            // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
-                            // let ty = entity.get_type().expect("template type");
-                            let name = entity.get_display_name().expect("template name");
-                            generics.push(name);
-                        }
-                        EntityKind::VisibilityAttr => {
-                            // NS_CLASS_AVAILABLE_MAC??
-                            println!("TODO: VisibilityAttr")
-                        }
-                        EntityKind::TypeRef => {
-                            // TODO
-                        }
-                        EntityKind::ObjCException => {
-                            // Maybe useful for knowing when to implement `Error` for the type
-                        }
-                        EntityKind::UnexposedAttr => {}
-                        _ => panic!("Unknown in ObjCInterfaceDecl {:?}", entity),
-                    }
-                    EntityVisitResult::Continue
-                });
+                let (protocols, methods) = parse_objc_decl(
+                    &entity,
+                    Some(&mut superclass),
+                    Some(&mut generics),
+                    class_data,
+                );
 
                 let superclass = superclass.expect("no superclass found");
 
@@ -159,57 +195,31 @@ impl Stmt {
             }
             EntityKind::ObjCCategoryDecl => {
                 let name = entity.get_name();
-                let mut class_name = None;
-                let mut generics = Vec::new();
                 let availability = Availability::parse(
                     entity
                         .get_platform_availability()
                         .expect("category availability"),
                 );
-                let mut protocols = Vec::new();
-                let mut methods = Vec::new();
 
+                let mut class_name = None;
                 entity.visit_children(|entity, _parent| {
-                    match entity.get_kind() {
-                        EntityKind::ObjCClassRef => {
-                            if class_name.is_some() {
-                                panic!("could not find unique category class")
-                            }
-                            class_name = Some(entity.get_name().expect("class name"));
+                    if entity.get_kind() == EntityKind::ObjCClassRef {
+                        if class_name.is_some() {
+                            panic!("could not find unique category class")
                         }
-                        EntityKind::ObjCProtocolRef => {
-                            protocols.push(entity.get_name().expect("protocolref to have name"));
-                        }
-                        EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-                            let class_data = config.class_data.get(
-                                class_name
-                                    .as_ref()
-                                    .expect("no category class before methods"),
-                            );
-                            if let Some(method) = Method::parse(entity, class_data) {
-                                methods.push(method);
-                            }
-                        }
-                        EntityKind::ObjCPropertyDecl => {
-                            // println!(
-                            //     "Property {:?}, {:?}, {:?}",
-                            //     class_name,
-                            //     entity.get_display_name(),
-                            //     entity.get_objc_attributes(),
-                            // );
-                            // methods.push(quote! {});
-                        }
-                        EntityKind::TemplateTypeParameter => {
-                            let name = entity.get_display_name().expect("template name");
-                            generics.push(name);
-                        }
-                        EntityKind::UnexposedAttr => {}
-                        _ => panic!("Unknown in ObjCCategoryDecl {:?}", entity),
+                        class_name = Some(entity.get_name().expect("class name"));
+                        EntityVisitResult::Break
+                    } else {
+                        EntityVisitResult::Continue
                     }
-                    EntityVisitResult::Continue
                 });
-
                 let class_name = class_name.expect("could not find category class");
+                let class_data = config.class_data.get(&class_name);
+
+                let mut generics = Vec::new();
+
+                let (protocols, methods) =
+                    parse_objc_decl(&entity, None, Some(&mut generics), class_data);
 
                 Some(Self::CategoryDecl {
                     class_name,
@@ -228,31 +238,8 @@ impl Stmt {
                         .get_platform_availability()
                         .expect("protocol availability"),
                 );
-                let mut protocols = Vec::new();
-                let mut methods = Vec::new();
 
-                entity.visit_children(|entity, _parent| {
-                    match entity.get_kind() {
-                        EntityKind::ObjCExplicitProtocolImpl => {
-                            // TODO
-                        }
-                        EntityKind::ObjCProtocolRef => {
-                            protocols.push(entity.get_name().expect("protocolref to have name"));
-                        }
-                        EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-                            // TODO: Required vs. optional methods
-                            if let Some(method) = Method::parse(entity, class_data) {
-                                methods.push(method);
-                            }
-                        }
-                        EntityKind::ObjCPropertyDecl => {
-                            // TODO
-                        }
-                        EntityKind::UnexposedAttr => {}
-                        _ => panic!("Unknown in ObjCProtocolDecl {:?}", entity),
-                    }
-                    EntityVisitResult::Continue
-                });
+                let (protocols, methods) = parse_objc_decl(&entity, None, None, class_data);
 
                 Some(Self::ProtocolDecl {
                     name,
