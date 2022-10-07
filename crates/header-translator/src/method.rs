@@ -1,11 +1,11 @@
-use clang::{Entity, EntityKind, EntityVisitResult, ObjCQualifiers, TypeKind};
+use clang::{Entity, EntityKind, EntityVisitResult, ObjCQualifiers};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 use crate::availability::Availability;
 use crate::config::ClassData;
 use crate::objc2_utils::in_selector_family;
-use crate::rust_type::RustType;
+use crate::rust_type::{RustType, RustTypeReturn};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 enum Qualifier {
@@ -120,7 +120,7 @@ pub struct Method {
     memory_management: MemoryManagement,
     designated_initializer: bool,
     arguments: Vec<(String, Option<Qualifier>, RustType)>,
-    result_type: Option<RustType>,
+    result_type: RustTypeReturn,
     safe: bool,
 }
 
@@ -201,7 +201,6 @@ impl Method {
             })
             .collect();
 
-        let result_type = entity.get_result_type().expect("method return type");
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
             let qualifier = Qualifier::parse(qualifiers);
             panic!(
@@ -209,11 +208,9 @@ impl Method {
                 qualifier, entity
             );
         }
-        let result_type = if result_type.get_kind() != TypeKind::Void {
-            Some(RustType::parse_return(result_type))
-        } else {
-            None
-        };
+
+        let result_type = entity.get_result_type().expect("method return type");
+        let result_type = RustTypeReturn::parse(result_type);
 
         let mut designated_initializer = false;
         let mut consumes_self = false;
@@ -273,10 +270,8 @@ impl Method {
         }
 
         // Verify that memory management is as expected
-        if let Some(type_) = &result_type {
-            if type_.is_id() {
-                memory_management.verify_sel(&selector);
-            }
+        if result_type.is_id() {
+            memory_management.verify_sel(&selector);
         }
 
         Some(Self {
@@ -333,13 +328,9 @@ impl ToTokens for Method {
             quote!(#sel)
         };
 
-        let (ret, is_id) = if let Some(type_) = &self.result_type {
-            (quote!(-> #type_), type_.is_id())
-        } else {
-            (quote!(), false)
-        };
+        let ret = &self.result_type;
 
-        let macro_name = if is_id {
+        let macro_name = if self.result_type.is_id() {
             format_ident!("msg_send_id")
         } else {
             format_ident!("msg_send")

@@ -36,10 +36,9 @@ impl GenericType {
                     .get_objc_type_arguments()
                     .into_iter()
                     .map(|param| {
-                        match RustType::parse(param, false, false) {
+                        match RustType::parse(param, false) {
                             RustType::Id {
                                 type_,
-                                is_return: _,
                                 is_const: _,
                                 lifetime: _,
                                 nullability: _,
@@ -267,7 +266,6 @@ pub enum RustType {
     // Objective-C
     Id {
         type_: GenericType,
-        is_return: bool,
         is_const: bool,
         lifetime: Lifetime,
         nullability: Nullability,
@@ -297,11 +295,7 @@ pub enum RustType {
 }
 
 impl RustType {
-    pub fn is_id(&self) -> bool {
-        matches!(self, Self::Id { .. })
-    }
-
-    fn parse(ty: Type<'_>, is_return: bool, is_consumed: bool) -> Self {
+    fn parse(ty: Type<'_>, is_consumed: bool) -> Self {
         use TypeKind::*;
 
         // println!("{:?}, {:?}", ty, ty.get_class_type());
@@ -333,7 +327,6 @@ impl RustType {
                     name: "Object".to_string(),
                     generics: Vec::new(),
                 },
-                is_return,
                 is_const: ty.is_const_qualified(),
                 lifetime,
                 nullability,
@@ -345,7 +338,7 @@ impl RustType {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 // Note: Can't handle const id pointers
                 // assert!(!ty.is_const_qualified(), "expected pointee to not be const");
-                let pointee = Self::parse(ty, false, is_consumed);
+                let pointee = Self::parse(ty, is_consumed);
                 Self::Pointer {
                     nullability,
                     is_const,
@@ -360,7 +353,6 @@ impl RustType {
 
                 Self::Id {
                     type_,
-                    is_return,
                     is_const: ty.is_const_qualified(),
                     lifetime,
                     nullability,
@@ -378,21 +370,15 @@ impl RustType {
                     "uint32_t" => Self::U32,
                     "int164_t" => Self::I64,
                     "uint64_t" => Self::U64,
-                    "instancetype" => {
-                        if !is_return {
-                            panic!("instancetype in non-return position")
-                        }
-                        Self::Id {
-                            type_: GenericType {
-                                name: "Self".to_string(),
-                                generics: Vec::new(),
-                            },
-                            is_return,
-                            is_const: ty.is_const_qualified(),
-                            lifetime,
-                            nullability,
-                        }
-                    }
+                    "instancetype" => Self::Id {
+                        type_: GenericType {
+                            name: "Self".to_string(),
+                            generics: Vec::new(),
+                        },
+                        is_const: ty.is_const_qualified(),
+                        lifetime,
+                        nullability,
+                    },
                     _ => {
                         let ty = ty.get_canonical_type();
                         match ty.get_kind() {
@@ -409,7 +395,6 @@ impl RustType {
                                         name: typedef_name,
                                         generics: Vec::new(),
                                     },
-                                    is_return,
                                     is_const: ty.is_const_qualified(),
                                     lifetime,
                                     nullability,
@@ -432,7 +417,6 @@ impl RustType {
             ConstantArray => {
                 let element_type = Self::parse(
                     ty.get_element_type().expect("array to have element type"),
-                    false,
                     is_consumed,
                 );
                 let num_elements = ty
@@ -460,20 +444,8 @@ impl RustType {
         }
     }
 
-    pub fn parse_return(ty: Type<'_>) -> Self {
-        let this = Self::parse(ty, true, false);
-
-        this.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                panic!("unexpected lifetime in return {this:?}");
-            }
-        });
-
-        this
-    }
-
     pub fn parse_argument(ty: Type<'_>, is_consumed: bool) -> Self {
-        let this = Self::parse(ty, false, is_consumed);
+        let this = Self::parse(ty, is_consumed);
 
         match &this {
             Self::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
@@ -492,7 +464,7 @@ impl RustType {
     }
 
     pub fn parse_typedef(ty: Type<'_>) -> Self {
-        let this = Self::parse(ty, false, false);
+        let this = Self::parse(ty, false);
 
         this.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -536,18 +508,13 @@ impl ToTokens for RustType {
             // Objective-C
             Id {
                 type_,
-                is_return,
                 // Ignore
                 is_const: _,
                 // Ignore
                 lifetime: _,
                 nullability,
             } => {
-                let tokens = if *is_return {
-                    quote!(Id<#type_, Shared>)
-                } else {
-                    quote!(&#type_)
-                };
+                let tokens = quote!(&#type_);
                 if *nullability == Nullability::NonNull {
                     tokens
                 } else {
@@ -578,7 +545,6 @@ impl ToTokens for RustType {
             } => match &**pointee {
                 Self::Id {
                     type_: tokens,
-                    is_return: false,
                     is_const: false,
                     lifetime: Lifetime::Autoreleasing,
                     nullability: inner_nullability,
@@ -603,7 +569,6 @@ impl ToTokens for RustType {
                 }
                 Self::Id {
                     type_: tokens,
-                    is_return: false,
                     is_const: false,
                     lifetime: Lifetime::Unspecified,
                     nullability: inner_nullability,
@@ -647,5 +612,56 @@ impl ToTokens for RustType {
             }
         };
         tokens.append_all(result);
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct RustTypeReturn {
+    inner: RustType,
+}
+
+impl RustTypeReturn {
+    pub fn is_id(&self) -> bool {
+        matches!(self.inner, RustType::Id { .. })
+    }
+
+    pub fn new(inner: RustType) -> Self {
+        Self { inner }
+    }
+
+    pub fn parse(ty: Type<'_>) -> Self {
+        let inner = RustType::parse(ty, false);
+
+        inner.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in return {inner:?}");
+            }
+        });
+
+        Self::new(inner)
+    }
+}
+
+impl ToTokens for RustTypeReturn {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let result = match &self.inner {
+            RustType::Void => return,
+            RustType::Id {
+                type_,
+                // Ignore
+                is_const: _,
+                // Ignore
+                lifetime: _,
+                nullability,
+            } => {
+                if *nullability == Nullability::NonNull {
+                    quote!(Id<#type_, Shared>)
+                } else {
+                    quote!(Option<Id<#type_, Shared>>)
+                }
+            }
+            type_ => quote!(#type_),
+        };
+        tokens.append_all(quote!(-> #result));
     }
 }
