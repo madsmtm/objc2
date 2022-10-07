@@ -26,6 +26,18 @@ impl<ObjectType: Message> NSOrderedCollectionChange<ObjectType> {
     ) -> Id<NSOrderedCollectionChange<ObjectType>, Shared> {
         msg_send_id ! [Self :: class () , changeWithObject : anObject , type : type_ , index : index , associatedIndex : associatedIndex]
     }
+    pub unsafe fn object(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, object]
+    }
+    pub unsafe fn changeType(&self) -> NSCollectionChangeType {
+        msg_send![self, changeType]
+    }
+    pub unsafe fn index(&self) -> NSUInteger {
+        msg_send![self, index]
+    }
+    pub unsafe fn associatedIndex(&self) -> NSUInteger {
+        msg_send![self, associatedIndex]
+    }
     pub unsafe fn init(&self) -> Id<Object, Shared> {
         msg_send_id![self, init]
     }
@@ -45,17 +57,5 @@ impl<ObjectType: Message> NSOrderedCollectionChange<ObjectType> {
         associatedIndex: NSUInteger,
     ) -> Id<Self, Shared> {
         msg_send_id ! [self , initWithObject : anObject , type : type_ , index : index , associatedIndex : associatedIndex]
-    }
-    pub unsafe fn object(&self) -> Option<Id<ObjectType, Shared>> {
-        msg_send_id![self, object]
-    }
-    pub unsafe fn changeType(&self) -> NSCollectionChangeType {
-        msg_send![self, changeType]
-    }
-    pub unsafe fn index(&self) -> NSUInteger {
-        msg_send![self, index]
-    }
-    pub unsafe fn associatedIndex(&self) -> NSUInteger {
-        msg_send![self, associatedIndex]
     }
 }

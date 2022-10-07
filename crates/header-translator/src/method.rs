@@ -3,12 +3,12 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 use crate::availability::Availability;
-use crate::config::ClassData;
+use crate::config::MethodData;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{RustType, RustTypeReturn};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-enum Qualifier {
+pub enum Qualifier {
     In,
     Inout,
     Out,
@@ -18,7 +18,7 @@ enum Qualifier {
 }
 
 impl Qualifier {
-    fn parse(qualifiers: ObjCQualifiers) -> Self {
+    pub fn parse(qualifiers: ObjCQualifiers) -> Self {
         match qualifiers {
             ObjCQualifiers {
                 in_: true,
@@ -74,7 +74,7 @@ impl Qualifier {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-enum MemoryManagement {
+pub enum MemoryManagement {
     /// Consumes self and returns retained pointer
     Init,
     ReturnsRetained,
@@ -112,36 +112,58 @@ impl MemoryManagement {
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct Method {
-    selector: String,
-    fn_name: String,
-    availability: Availability,
-    is_class_method: bool,
-    is_optional_protocol_method: bool,
-    memory_management: MemoryManagement,
-    designated_initializer: bool,
-    arguments: Vec<(String, Option<Qualifier>, RustType)>,
-    result_type: RustTypeReturn,
-    safe: bool,
+    pub selector: String,
+    pub fn_name: String,
+    pub availability: Availability,
+    pub is_class: bool,
+    pub is_optional_protocol: bool,
+    pub memory_management: MemoryManagement,
+    pub designated_initializer: bool,
+    pub arguments: Vec<(String, Option<Qualifier>, RustType)>,
+    pub result_type: RustTypeReturn,
+    pub safe: bool,
 }
 
 impl Method {
     /// Takes one of `EntityKind::ObjCInstanceMethodDecl` or
     /// `EntityKind::ObjCClassMethodDecl`.
-    pub fn parse(entity: Entity<'_>, class_data: Option<&ClassData>) -> Option<Self> {
-        // println!("Method {:?}", entity.get_display_name());
+    pub fn partial(entity: Entity<'_>) -> PartialMethod<'_> {
         let selector = entity.get_name().expect("method selector");
         let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
 
-        let data = class_data
-            .map(|class_data| {
-                class_data
-                    .methods
-                    .get(&fn_name)
-                    .copied()
-                    .unwrap_or_default()
-            })
-            .unwrap_or_default();
+        let is_class = match entity.get_kind() {
+            EntityKind::ObjCInstanceMethodDecl => false,
+            EntityKind::ObjCClassMethodDecl => true,
+            _ => unreachable!("unknown method kind"),
+        };
 
+        PartialMethod {
+            entity,
+            selector,
+            is_class,
+            fn_name,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PartialMethod<'tu> {
+    entity: Entity<'tu>,
+    selector: String,
+    pub is_class: bool,
+    pub fn_name: String,
+}
+
+impl<'tu> PartialMethod<'tu> {
+    pub fn parse(self, data: MethodData) -> Option<Method> {
+        let Self {
+            entity,
+            selector,
+            is_class,
+            fn_name,
+        } = self;
+
+        // println!("Method {:?}", selector);
         if data.skipped {
             return None;
         }
@@ -156,12 +178,6 @@ impl Method {
                 .get_platform_availability()
                 .expect("method availability"),
         );
-
-        let is_class_method = match entity.get_kind() {
-            EntityKind::ObjCInstanceMethodDecl => false,
-            EntityKind::ObjCClassMethodDecl => true,
-            _ => unreachable!("unknown method kind"),
-        };
 
         let arguments: Vec<_> = entity
             .get_arguments()
@@ -274,12 +290,12 @@ impl Method {
             memory_management.verify_sel(&selector);
         }
 
-        Some(Self {
+        Some(Method {
             selector,
             fn_name,
             availability,
-            is_class_method,
-            is_optional_protocol_method: entity.is_objc_optional(),
+            is_class,
+            is_optional_protocol: entity.is_objc_optional(),
             memory_management,
             designated_initializer,
             arguments,
@@ -338,7 +354,7 @@ impl ToTokens for Method {
 
         let unsafe_ = if self.safe { quote!() } else { quote!(unsafe) };
 
-        let result = if self.is_class_method {
+        let result = if self.is_class {
             quote! {
                 pub #unsafe_ fn #fn_name(#(#fn_args),*) #ret {
                     #macro_name![Self::class(), #method_call]
@@ -355,7 +371,7 @@ impl ToTokens for Method {
     }
 }
 
-fn handle_reserved(s: &str) -> &str {
+pub(crate) fn handle_reserved(s: &str) -> &str {
     match s {
         "type" => "type_",
         "trait" => "trait_",

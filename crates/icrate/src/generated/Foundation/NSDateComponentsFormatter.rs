@@ -48,19 +48,6 @@ impl NSDateComponentsFormatter {
             unitsStyle: unitsStyle
         ]
     }
-    pub unsafe fn getObjectValue_forString_errorDescription(
-        &self,
-        obj: Option<&mut Option<Id<Object, Shared>>>,
-        string: &NSString,
-        error: Option<&mut Option<Id<NSString, Shared>>>,
-    ) -> bool {
-        msg_send![
-            self,
-            getObjectValue: obj,
-            forString: string,
-            errorDescription: error
-        ]
-    }
     pub unsafe fn unitsStyle(&self) -> NSDateComponentsFormatterUnitsStyle {
         msg_send![self, unitsStyle]
     }
@@ -135,5 +122,18 @@ impl NSDateComponentsFormatter {
     }
     pub unsafe fn setFormattingContext(&self, formattingContext: NSFormattingContext) {
         msg_send![self, setFormattingContext: formattingContext]
+    }
+    pub unsafe fn getObjectValue_forString_errorDescription(
+        &self,
+        obj: Option<&mut Option<Id<Object, Shared>>>,
+        string: &NSString,
+        error: Option<&mut Option<Id<NSString, Shared>>>,
+    ) -> bool {
+        msg_send![
+            self,
+            getObjectValue: obj,
+            forString: string,
+            errorDescription: error
+        ]
     }
 }

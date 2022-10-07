@@ -15,39 +15,6 @@ extern_class!(
     }
 );
 impl NSCharacterSet {
-    pub unsafe fn characterSetWithRange(aRange: NSRange) -> Id<NSCharacterSet, Shared> {
-        msg_send_id![Self::class(), characterSetWithRange: aRange]
-    }
-    pub unsafe fn characterSetWithCharactersInString(
-        aString: &NSString,
-    ) -> Id<NSCharacterSet, Shared> {
-        msg_send_id![Self::class(), characterSetWithCharactersInString: aString]
-    }
-    pub unsafe fn characterSetWithBitmapRepresentation(
-        data: &NSData,
-    ) -> Id<NSCharacterSet, Shared> {
-        msg_send_id![Self::class(), characterSetWithBitmapRepresentation: data]
-    }
-    pub unsafe fn characterSetWithContentsOfFile(
-        fName: &NSString,
-    ) -> Option<Id<NSCharacterSet, Shared>> {
-        msg_send_id![Self::class(), characterSetWithContentsOfFile: fName]
-    }
-    pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared> {
-        msg_send_id![self, initWithCoder: coder]
-    }
-    pub unsafe fn characterIsMember(&self, aCharacter: unichar) -> bool {
-        msg_send![self, characterIsMember: aCharacter]
-    }
-    pub unsafe fn longCharacterIsMember(&self, theLongChar: UTF32Char) -> bool {
-        msg_send![self, longCharacterIsMember: theLongChar]
-    }
-    pub unsafe fn isSupersetOfSet(&self, theOtherSet: &NSCharacterSet) -> bool {
-        msg_send![self, isSupersetOfSet: theOtherSet]
-    }
-    pub unsafe fn hasMemberInPlane(&self, thePlane: u8) -> bool {
-        msg_send![self, hasMemberInPlane: thePlane]
-    }
     pub unsafe fn controlCharacterSet() -> Id<NSCharacterSet, Shared> {
         msg_send_id![Self::class(), controlCharacterSet]
     }
@@ -93,11 +60,44 @@ impl NSCharacterSet {
     pub unsafe fn newlineCharacterSet() -> Id<NSCharacterSet, Shared> {
         msg_send_id![Self::class(), newlineCharacterSet]
     }
+    pub unsafe fn characterSetWithRange(aRange: NSRange) -> Id<NSCharacterSet, Shared> {
+        msg_send_id![Self::class(), characterSetWithRange: aRange]
+    }
+    pub unsafe fn characterSetWithCharactersInString(
+        aString: &NSString,
+    ) -> Id<NSCharacterSet, Shared> {
+        msg_send_id![Self::class(), characterSetWithCharactersInString: aString]
+    }
+    pub unsafe fn characterSetWithBitmapRepresentation(
+        data: &NSData,
+    ) -> Id<NSCharacterSet, Shared> {
+        msg_send_id![Self::class(), characterSetWithBitmapRepresentation: data]
+    }
+    pub unsafe fn characterSetWithContentsOfFile(
+        fName: &NSString,
+    ) -> Option<Id<NSCharacterSet, Shared>> {
+        msg_send_id![Self::class(), characterSetWithContentsOfFile: fName]
+    }
+    pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared> {
+        msg_send_id![self, initWithCoder: coder]
+    }
+    pub unsafe fn characterIsMember(&self, aCharacter: unichar) -> bool {
+        msg_send![self, characterIsMember: aCharacter]
+    }
     pub unsafe fn bitmapRepresentation(&self) -> Id<NSData, Shared> {
         msg_send_id![self, bitmapRepresentation]
     }
     pub unsafe fn invertedSet(&self) -> Id<NSCharacterSet, Shared> {
         msg_send_id![self, invertedSet]
+    }
+    pub unsafe fn longCharacterIsMember(&self, theLongChar: UTF32Char) -> bool {
+        msg_send![self, longCharacterIsMember: theLongChar]
+    }
+    pub unsafe fn isSupersetOfSet(&self, theOtherSet: &NSCharacterSet) -> bool {
+        msg_send![self, isSupersetOfSet: theOtherSet]
+    }
+    pub unsafe fn hasMemberInPlane(&self, thePlane: u8) -> bool {
+        msg_send![self, hasMemberInPlane: thePlane]
     }
 }
 extern_class!(

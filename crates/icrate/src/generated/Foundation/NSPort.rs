@@ -25,6 +25,9 @@ impl NSPort {
     pub unsafe fn invalidate(&self) {
         msg_send![self, invalidate]
     }
+    pub unsafe fn isValid(&self) -> bool {
+        msg_send![self, isValid]
+    }
     pub unsafe fn setDelegate(&self, anObject: Option<&NSPortDelegate>) {
         msg_send![self, setDelegate: anObject]
     }
@@ -36,6 +39,9 @@ impl NSPort {
     }
     pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: runLoop, forMode: mode]
+    }
+    pub unsafe fn reservedSpaceLength(&self) -> NSUInteger {
+        msg_send![self, reservedSpaceLength]
     }
     pub unsafe fn sendBeforeDate_components_from_reserved(
         &self,
@@ -90,12 +96,6 @@ impl NSPort {
             forMode: mode
         ]
     }
-    pub unsafe fn isValid(&self) -> bool {
-        msg_send![self, isValid]
-    }
-    pub unsafe fn reservedSpaceLength(&self) -> NSUInteger {
-        msg_send![self, reservedSpaceLength]
-    }
 }
 pub type NSPortDelegate = NSObject;
 extern_class!(
@@ -131,14 +131,14 @@ impl NSMachPort {
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithMachPort: machPort, options: f]
     }
+    pub unsafe fn machPort(&self) -> u32 {
+        msg_send![self, machPort]
+    }
     pub unsafe fn scheduleInRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, scheduleInRunLoop: runLoop, forMode: mode]
     }
     pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: runLoop, forMode: mode]
-    }
-    pub unsafe fn machPort(&self) -> u32 {
-        msg_send![self, machPort]
     }
 }
 pub type NSMachPortDelegate = NSObject;

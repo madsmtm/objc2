@@ -23,6 +23,9 @@ extern_class!(
     }
 );
 impl NSConnection {
+    pub unsafe fn statistics(&self) -> Id<NSDictionary<NSString, NSNumber>, Shared> {
+        msg_send_id![self, statistics]
+    }
     pub unsafe fn allConnections() -> Id<NSArray<NSConnection>, Shared> {
         msg_send_id![Self::class(), allConnections]
     }
@@ -95,63 +98,6 @@ impl NSConnection {
             rootObject: root
         ]
     }
-    pub unsafe fn invalidate(&self) {
-        msg_send![self, invalidate]
-    }
-    pub unsafe fn addRequestMode(&self, rmode: &NSString) {
-        msg_send![self, addRequestMode: rmode]
-    }
-    pub unsafe fn removeRequestMode(&self, rmode: &NSString) {
-        msg_send![self, removeRequestMode: rmode]
-    }
-    pub unsafe fn registerName(&self, name: Option<&NSString>) -> bool {
-        msg_send![self, registerName: name]
-    }
-    pub unsafe fn registerName_withNameServer(
-        &self,
-        name: Option<&NSString>,
-        server: &NSPortNameServer,
-    ) -> bool {
-        msg_send![self, registerName: name, withNameServer: server]
-    }
-    pub unsafe fn connectionWithReceivePort_sendPort(
-        receivePort: Option<&NSPort>,
-        sendPort: Option<&NSPort>,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![
-            Self::class(),
-            connectionWithReceivePort: receivePort,
-            sendPort: sendPort
-        ]
-    }
-    pub unsafe fn currentConversation() -> Option<Id<Object, Shared>> {
-        msg_send_id![Self::class(), currentConversation]
-    }
-    pub unsafe fn initWithReceivePort_sendPort(
-        &self,
-        receivePort: Option<&NSPort>,
-        sendPort: Option<&NSPort>,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, initWithReceivePort: receivePort, sendPort: sendPort]
-    }
-    pub unsafe fn enableMultipleThreads(&self) {
-        msg_send![self, enableMultipleThreads]
-    }
-    pub unsafe fn addRunLoop(&self, runloop: &NSRunLoop) {
-        msg_send![self, addRunLoop: runloop]
-    }
-    pub unsafe fn removeRunLoop(&self, runloop: &NSRunLoop) {
-        msg_send![self, removeRunLoop: runloop]
-    }
-    pub unsafe fn runInNewThread(&self) {
-        msg_send![self, runInNewThread]
-    }
-    pub unsafe fn dispatchWithComponents(&self, components: &NSArray) {
-        msg_send![self, dispatchWithComponents: components]
-    }
-    pub unsafe fn statistics(&self) -> Id<NSDictionary<NSString, NSNumber>, Shared> {
-        msg_send_id![self, statistics]
-    }
     pub unsafe fn requestTimeout(&self) -> NSTimeInterval {
         msg_send![self, requestTimeout]
     }
@@ -191,8 +137,47 @@ impl NSConnection {
     pub unsafe fn rootProxy(&self) -> Id<NSDistantObject, Shared> {
         msg_send_id![self, rootProxy]
     }
+    pub unsafe fn invalidate(&self) {
+        msg_send![self, invalidate]
+    }
+    pub unsafe fn addRequestMode(&self, rmode: &NSString) {
+        msg_send![self, addRequestMode: rmode]
+    }
+    pub unsafe fn removeRequestMode(&self, rmode: &NSString) {
+        msg_send![self, removeRequestMode: rmode]
+    }
     pub unsafe fn requestModes(&self) -> Id<NSArray<NSString>, Shared> {
         msg_send_id![self, requestModes]
+    }
+    pub unsafe fn registerName(&self, name: Option<&NSString>) -> bool {
+        msg_send![self, registerName: name]
+    }
+    pub unsafe fn registerName_withNameServer(
+        &self,
+        name: Option<&NSString>,
+        server: &NSPortNameServer,
+    ) -> bool {
+        msg_send![self, registerName: name, withNameServer: server]
+    }
+    pub unsafe fn connectionWithReceivePort_sendPort(
+        receivePort: Option<&NSPort>,
+        sendPort: Option<&NSPort>,
+    ) -> Option<Id<Self, Shared>> {
+        msg_send_id![
+            Self::class(),
+            connectionWithReceivePort: receivePort,
+            sendPort: sendPort
+        ]
+    }
+    pub unsafe fn currentConversation() -> Option<Id<Object, Shared>> {
+        msg_send_id![Self::class(), currentConversation]
+    }
+    pub unsafe fn initWithReceivePort_sendPort(
+        &self,
+        receivePort: Option<&NSPort>,
+        sendPort: Option<&NSPort>,
+    ) -> Option<Id<Self, Shared>> {
+        msg_send_id![self, initWithReceivePort: receivePort, sendPort: sendPort]
     }
     pub unsafe fn sendPort(&self) -> Id<NSPort, Shared> {
         msg_send_id![self, sendPort]
@@ -200,14 +185,29 @@ impl NSConnection {
     pub unsafe fn receivePort(&self) -> Id<NSPort, Shared> {
         msg_send_id![self, receivePort]
     }
+    pub unsafe fn enableMultipleThreads(&self) {
+        msg_send![self, enableMultipleThreads]
+    }
     pub unsafe fn multipleThreadsEnabled(&self) -> bool {
         msg_send![self, multipleThreadsEnabled]
+    }
+    pub unsafe fn addRunLoop(&self, runloop: &NSRunLoop) {
+        msg_send![self, addRunLoop: runloop]
+    }
+    pub unsafe fn removeRunLoop(&self, runloop: &NSRunLoop) {
+        msg_send![self, removeRunLoop: runloop]
+    }
+    pub unsafe fn runInNewThread(&self) {
+        msg_send![self, runInNewThread]
     }
     pub unsafe fn remoteObjects(&self) -> Id<NSArray, Shared> {
         msg_send_id![self, remoteObjects]
     }
     pub unsafe fn localObjects(&self) -> Id<NSArray, Shared> {
         msg_send_id![self, localObjects]
+    }
+    pub unsafe fn dispatchWithComponents(&self, components: &NSArray) {
+        msg_send![self, dispatchWithComponents: components]
     }
 }
 pub type NSConnectionDelegate = NSObject;
@@ -219,9 +219,6 @@ extern_class!(
     }
 );
 impl NSDistantObjectRequest {
-    pub unsafe fn replyWithException(&self, exception: Option<&NSException>) {
-        msg_send![self, replyWithException: exception]
-    }
     pub unsafe fn invocation(&self) -> Id<NSInvocation, Shared> {
         msg_send_id![self, invocation]
     }
@@ -230,5 +227,8 @@ impl NSDistantObjectRequest {
     }
     pub unsafe fn conversation(&self) -> Id<Object, Shared> {
         msg_send_id![self, conversation]
+    }
+    pub unsafe fn replyWithException(&self, exception: Option<&NSException>) {
+        msg_send![self, replyWithException: exception]
     }
 }

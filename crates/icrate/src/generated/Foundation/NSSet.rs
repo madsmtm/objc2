@@ -15,6 +15,9 @@ __inner_extern_class!(
     }
 );
 impl<ObjectType: Message> NSSet<ObjectType> {
+    pub unsafe fn count(&self) -> NSUInteger {
+        msg_send![self, count]
+    }
     pub unsafe fn member(&self, object: &ObjectType) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, member: object]
     }
@@ -34,17 +37,20 @@ impl<ObjectType: Message> NSSet<ObjectType> {
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
     }
-    pub unsafe fn count(&self) -> NSUInteger {
-        msg_send![self, count]
-    }
 }
 #[doc = "NSExtendedSet"]
 impl<ObjectType: Message> NSSet<ObjectType> {
+    pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, allObjects]
+    }
     pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, anyObject]
     }
     pub unsafe fn containsObject(&self, anObject: &ObjectType) -> bool {
         msg_send![self, containsObject: anObject]
+    }
+    pub unsafe fn description(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, description]
     }
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale]
@@ -106,12 +112,6 @@ impl<ObjectType: Message> NSSet<ObjectType> {
         predicate: TodoBlock,
     ) -> Id<NSSet<ObjectType>, Shared> {
         msg_send_id![self, objectsWithOptions: opts, passingTest: predicate]
-    }
-    pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared> {
-        msg_send_id![self, allObjects]
-    }
-    pub unsafe fn description(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, description]
     }
 }
 #[doc = "NSSetCreation"]

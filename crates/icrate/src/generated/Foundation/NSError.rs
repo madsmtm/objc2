@@ -36,19 +36,6 @@ impl NSError {
             userInfo: dict
         ]
     }
-    pub unsafe fn setUserInfoValueProviderForDomain_provider(
-        errorDomain: &NSErrorDomain,
-        provider: TodoBlock,
-    ) {
-        msg_send![
-            Self::class(),
-            setUserInfoValueProviderForDomain: errorDomain,
-            provider: provider
-        ]
-    }
-    pub unsafe fn userInfoValueProviderForDomain(errorDomain: &NSErrorDomain) -> TodoBlock {
-        msg_send![Self::class(), userInfoValueProviderForDomain: errorDomain]
-    }
     pub unsafe fn domain(&self) -> Id<NSErrorDomain, Shared> {
         msg_send_id![self, domain]
     }
@@ -78,6 +65,19 @@ impl NSError {
     }
     pub unsafe fn underlyingErrors(&self) -> Id<NSArray<NSError>, Shared> {
         msg_send_id![self, underlyingErrors]
+    }
+    pub unsafe fn setUserInfoValueProviderForDomain_provider(
+        errorDomain: &NSErrorDomain,
+        provider: TodoBlock,
+    ) {
+        msg_send![
+            Self::class(),
+            setUserInfoValueProviderForDomain: errorDomain,
+            provider: provider
+        ]
+    }
+    pub unsafe fn userInfoValueProviderForDomain(errorDomain: &NSErrorDomain) -> TodoBlock {
+        msg_send![Self::class(), userInfoValueProviderForDomain: errorDomain]
     }
 }
 #[doc = "NSErrorRecoveryAttempting"]

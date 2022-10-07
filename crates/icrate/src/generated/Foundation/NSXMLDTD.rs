@@ -46,6 +46,18 @@ impl NSXMLDTD {
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithData: data, options: mask, error: error]
     }
+    pub unsafe fn publicID(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, publicID]
+    }
+    pub unsafe fn setPublicID(&self, publicID: Option<&NSString>) {
+        msg_send![self, setPublicID: publicID]
+    }
+    pub unsafe fn systemID(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, systemID]
+    }
+    pub unsafe fn setSystemID(&self, systemID: Option<&NSString>) {
+        msg_send![self, setSystemID: systemID]
+    }
     pub unsafe fn insertChild_atIndex(&self, child: &NSXMLNode, index: NSUInteger) {
         msg_send![self, insertChild: child, atIndex: index]
     }
@@ -97,17 +109,5 @@ impl NSXMLDTD {
         name: &NSString,
     ) -> Option<Id<NSXMLDTDNode, Shared>> {
         msg_send_id![Self::class(), predefinedEntityDeclarationForName: name]
-    }
-    pub unsafe fn publicID(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, publicID]
-    }
-    pub unsafe fn setPublicID(&self, publicID: Option<&NSString>) {
-        msg_send![self, setPublicID: publicID]
-    }
-    pub unsafe fn systemID(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, systemID]
-    }
-    pub unsafe fn setSystemID(&self, systemID: Option<&NSString>) {
-        msg_send![self, setSystemID: systemID]
     }
 }

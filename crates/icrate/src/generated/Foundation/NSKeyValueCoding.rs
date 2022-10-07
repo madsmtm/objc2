@@ -12,6 +12,9 @@ use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 pub type NSKeyValueOperator = NSString;
 #[doc = "NSKeyValueCoding"]
 impl NSObject {
+    pub unsafe fn accessInstanceVariablesDirectly() -> bool {
+        msg_send![Self::class(), accessInstanceVariablesDirectly]
+    }
     pub unsafe fn valueForKey(&self, key: &NSString) -> Option<Id<Object, Shared>> {
         msg_send_id![self, valueForKey: key]
     }
@@ -92,9 +95,6 @@ impl NSObject {
         keyedValues: &NSDictionary<NSString, Object>,
     ) {
         msg_send![self, setValuesForKeysWithDictionary: keyedValues]
-    }
-    pub unsafe fn accessInstanceVariablesDirectly() -> bool {
-        msg_send![Self::class(), accessInstanceVariablesDirectly]
     }
 }
 #[doc = "NSKeyValueCoding"]

@@ -8,6 +8,7 @@ mod availability;
 mod config;
 mod method;
 mod objc2_utils;
+mod property;
 mod rust_type;
 mod stmt;
 

@@ -71,16 +71,16 @@ impl NSHTTPURLResponse {
             headerFields: headerFields
         ]
     }
-    pub unsafe fn valueForHTTPHeaderField(&self, field: &NSString) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, valueForHTTPHeaderField: field]
-    }
-    pub unsafe fn localizedStringForStatusCode(statusCode: NSInteger) -> Id<NSString, Shared> {
-        msg_send_id![Self::class(), localizedStringForStatusCode: statusCode]
-    }
     pub unsafe fn statusCode(&self) -> NSInteger {
         msg_send![self, statusCode]
     }
     pub unsafe fn allHeaderFields(&self) -> Id<NSDictionary, Shared> {
         msg_send_id![self, allHeaderFields]
+    }
+    pub unsafe fn valueForHTTPHeaderField(&self, field: &NSString) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, valueForHTTPHeaderField: field]
+    }
+    pub unsafe fn localizedStringForStatusCode(statusCode: NSInteger) -> Id<NSString, Shared> {
+        msg_send_id![Self::class(), localizedStringForStatusCode: statusCode]
     }
 }

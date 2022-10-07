@@ -49,6 +49,9 @@ impl NSScriptSuiteRegistry {
     ) {
         msg_send![self, registerCommandDescription: commandDescription]
     }
+    pub unsafe fn suiteNames(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, suiteNames]
+    }
     pub unsafe fn appleEventCodeForSuite(&self, suiteName: &NSString) -> FourCharCode {
         msg_send![self, appleEventCodeForSuite: suiteName]
     }
@@ -92,8 +95,5 @@ impl NSScriptSuiteRegistry {
     }
     pub unsafe fn aeteResource(&self, languageName: &NSString) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, aeteResource: languageName]
-    }
-    pub unsafe fn suiteNames(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, suiteNames]
     }
 }

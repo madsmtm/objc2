@@ -16,12 +16,6 @@ impl NSBackgroundActivityScheduler {
     pub unsafe fn initWithIdentifier(&self, identifier: &NSString) -> Id<Self, Shared> {
         msg_send_id![self, initWithIdentifier: identifier]
     }
-    pub unsafe fn scheduleWithBlock(&self, block: TodoBlock) {
-        msg_send![self, scheduleWithBlock: block]
-    }
-    pub unsafe fn invalidate(&self) {
-        msg_send![self, invalidate]
-    }
     pub unsafe fn identifier(&self) -> Id<NSString, Shared> {
         msg_send_id![self, identifier]
     }
@@ -48,6 +42,12 @@ impl NSBackgroundActivityScheduler {
     }
     pub unsafe fn setTolerance(&self, tolerance: NSTimeInterval) {
         msg_send![self, setTolerance: tolerance]
+    }
+    pub unsafe fn scheduleWithBlock(&self, block: TodoBlock) {
+        msg_send![self, scheduleWithBlock: block]
+    }
+    pub unsafe fn invalidate(&self) {
+        msg_send![self, invalidate]
     }
     pub unsafe fn shouldDefer(&self) -> bool {
         msg_send![self, shouldDefer]

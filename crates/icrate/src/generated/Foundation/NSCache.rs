@@ -12,6 +12,18 @@ __inner_extern_class!(
     }
 );
 impl<KeyType: Message, ObjectType: Message> NSCache<KeyType, ObjectType> {
+    pub unsafe fn name(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, name]
+    }
+    pub unsafe fn setName(&self, name: &NSString) {
+        msg_send![self, setName: name]
+    }
+    pub unsafe fn delegate(&self) -> Option<Id<NSCacheDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSCacheDelegate>) {
+        msg_send![self, setDelegate: delegate]
+    }
     pub unsafe fn objectForKey(&self, key: &KeyType) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, objectForKey: key]
     }
@@ -26,18 +38,6 @@ impl<KeyType: Message, ObjectType: Message> NSCache<KeyType, ObjectType> {
     }
     pub unsafe fn removeAllObjects(&self) {
         msg_send![self, removeAllObjects]
-    }
-    pub unsafe fn name(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, name]
-    }
-    pub unsafe fn setName(&self, name: &NSString) {
-        msg_send![self, setName: name]
-    }
-    pub unsafe fn delegate(&self) -> Option<Id<NSCacheDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSCacheDelegate>) {
-        msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn totalCostLimit(&self) -> NSUInteger {
         msg_send![self, totalCostLimit]

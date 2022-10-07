@@ -16,6 +16,9 @@ impl NSValue {
     pub unsafe fn getValue_size(&self, value: NonNull<c_void>, size: NSUInteger) {
         msg_send![self, getValue: value, size: size]
     }
+    pub unsafe fn objCType(&self) -> NonNull<c_char> {
+        msg_send![self, objCType]
+    }
     pub unsafe fn initWithBytes_objCType(
         &self,
         value: NonNull<c_void>,
@@ -25,9 +28,6 @@ impl NSValue {
     }
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
-    }
-    pub unsafe fn objCType(&self) -> NonNull<c_char> {
-        msg_send![self, objCType]
     }
 }
 #[doc = "NSValueCreation"]
@@ -50,17 +50,17 @@ impl NSValue {
     pub unsafe fn valueWithNonretainedObject(anObject: Option<&Object>) -> Id<NSValue, Shared> {
         msg_send_id![Self::class(), valueWithNonretainedObject: anObject]
     }
-    pub unsafe fn valueWithPointer(pointer: *mut c_void) -> Id<NSValue, Shared> {
-        msg_send_id![Self::class(), valueWithPointer: pointer]
-    }
-    pub unsafe fn isEqualToValue(&self, value: &NSValue) -> bool {
-        msg_send![self, isEqualToValue: value]
-    }
     pub unsafe fn nonretainedObjectValue(&self) -> Option<Id<Object, Shared>> {
         msg_send_id![self, nonretainedObjectValue]
     }
+    pub unsafe fn valueWithPointer(pointer: *mut c_void) -> Id<NSValue, Shared> {
+        msg_send_id![Self::class(), valueWithPointer: pointer]
+    }
     pub unsafe fn pointerValue(&self) -> *mut c_void {
         msg_send![self, pointerValue]
+    }
+    pub unsafe fn isEqualToValue(&self, value: &NSValue) -> bool {
+        msg_send![self, isEqualToValue: value]
     }
 }
 extern_class!(
@@ -119,15 +119,6 @@ impl NSNumber {
     pub unsafe fn initWithUnsignedInteger(&self, value: NSUInteger) -> Id<NSNumber, Shared> {
         msg_send_id![self, initWithUnsignedInteger: value]
     }
-    pub unsafe fn compare(&self, otherNumber: &NSNumber) -> NSComparisonResult {
-        msg_send![self, compare: otherNumber]
-    }
-    pub unsafe fn isEqualToNumber(&self, number: &NSNumber) -> bool {
-        msg_send![self, isEqualToNumber: number]
-    }
-    pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
-        msg_send_id![self, descriptionWithLocale: locale]
-    }
     pub unsafe fn charValue(&self) -> c_char {
         msg_send![self, charValue]
     }
@@ -175,6 +166,15 @@ impl NSNumber {
     }
     pub unsafe fn stringValue(&self) -> Id<NSString, Shared> {
         msg_send_id![self, stringValue]
+    }
+    pub unsafe fn compare(&self, otherNumber: &NSNumber) -> NSComparisonResult {
+        msg_send![self, compare: otherNumber]
+    }
+    pub unsafe fn isEqualToNumber(&self, number: &NSNumber) -> bool {
+        msg_send![self, isEqualToNumber: number]
+    }
+    pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
+        msg_send_id![self, descriptionWithLocale: locale]
     }
 }
 #[doc = "NSNumberCreation"]

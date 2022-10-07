@@ -135,16 +135,6 @@ impl NSExpression {
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
     }
-    pub unsafe fn expressionValueWithObject_context(
-        &self,
-        object: Option<&Object>,
-        context: Option<&NSMutableDictionary>,
-    ) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, expressionValueWithObject: object, context: context]
-    }
-    pub unsafe fn allowEvaluation(&self) {
-        msg_send![self, allowEvaluation]
-    }
     pub unsafe fn expressionType(&self) -> NSExpressionType {
         msg_send![self, expressionType]
     }
@@ -186,5 +176,15 @@ impl NSExpression {
     }
     pub unsafe fn expressionBlock(&self) -> TodoBlock {
         msg_send![self, expressionBlock]
+    }
+    pub unsafe fn expressionValueWithObject_context(
+        &self,
+        object: Option<&Object>,
+        context: Option<&NSMutableDictionary>,
+    ) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, expressionValueWithObject: object, context: context]
+    }
+    pub unsafe fn allowEvaluation(&self) {
+        msg_send![self, allowEvaluation]
     }
 }

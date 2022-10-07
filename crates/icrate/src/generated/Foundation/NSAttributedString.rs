@@ -13,6 +13,9 @@ extern_class!(
     }
 );
 impl NSAttributedString {
+    pub unsafe fn string(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, string]
+    }
     pub unsafe fn attributesAtIndex_effectiveRange(
         &self,
         location: NSUInteger,
@@ -20,12 +23,12 @@ impl NSAttributedString {
     ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared> {
         msg_send_id![self, attributesAtIndex: location, effectiveRange: range]
     }
-    pub unsafe fn string(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, string]
-    }
 }
 #[doc = "NSExtendedAttributedString"]
 impl NSAttributedString {
+    pub unsafe fn length(&self) -> NSUInteger {
+        msg_send![self, length]
+    }
     pub unsafe fn attribute_atIndex_effectiveRange(
         &self,
         attrName: &NSAttributedStringKey,
@@ -120,9 +123,6 @@ impl NSAttributedString {
             usingBlock: block
         ]
     }
-    pub unsafe fn length(&self) -> NSUInteger {
-        msg_send![self, length]
-    }
 }
 extern_class!(
     #[derive(Debug)]
@@ -145,6 +145,9 @@ impl NSMutableAttributedString {
 }
 #[doc = "NSExtendedMutableAttributedString"]
 impl NSMutableAttributedString {
+    pub unsafe fn mutableString(&self) -> Id<NSMutableString, Shared> {
+        msg_send_id![self, mutableString]
+    }
     pub unsafe fn addAttribute_value_range(
         &self,
         name: &NSAttributedStringKey,
@@ -195,9 +198,6 @@ impl NSMutableAttributedString {
     }
     pub unsafe fn endEditing(&self) {
         msg_send![self, endEditing]
-    }
-    pub unsafe fn mutableString(&self) -> Id<NSMutableString, Shared> {
-        msg_send_id![self, mutableString]
     }
 }
 extern_class!(
@@ -324,8 +324,14 @@ extern_class!(
     }
 );
 impl NSPresentationIntent {
+    pub unsafe fn intentKind(&self) -> NSPresentationIntentKind {
+        msg_send![self, intentKind]
+    }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
+    }
+    pub unsafe fn parentIntent(&self) -> Option<Id<NSPresentationIntent, Shared>> {
+        msg_send_id![self, parentIntent]
     }
     pub unsafe fn paragraphIntentWithIdentity_nestedInsideIntent(
         identity: NSInteger,
@@ -461,15 +467,6 @@ impl NSPresentationIntent {
             nestedInsideIntent: parent
         ]
     }
-    pub unsafe fn isEquivalentToPresentationIntent(&self, other: &NSPresentationIntent) -> bool {
-        msg_send![self, isEquivalentToPresentationIntent: other]
-    }
-    pub unsafe fn intentKind(&self) -> NSPresentationIntentKind {
-        msg_send![self, intentKind]
-    }
-    pub unsafe fn parentIntent(&self) -> Option<Id<NSPresentationIntent, Shared>> {
-        msg_send_id![self, parentIntent]
-    }
     pub unsafe fn identity(&self) -> NSInteger {
         msg_send![self, identity]
     }
@@ -496,5 +493,8 @@ impl NSPresentationIntent {
     }
     pub unsafe fn indentationLevel(&self) -> NSInteger {
         msg_send![self, indentationLevel]
+    }
+    pub unsafe fn isEquivalentToPresentationIntent(&self, other: &NSPresentationIntent) -> bool {
+        msg_send![self, isEquivalentToPresentationIntent: other]
     }
 }

@@ -20,6 +20,9 @@ impl NSArchiver {
     pub unsafe fn initForWritingWithMutableData(&self, mdata: &NSMutableData) -> Id<Self, Shared> {
         msg_send_id![self, initForWritingWithMutableData: mdata]
     }
+    pub unsafe fn archiverData(&self) -> Id<NSMutableData, Shared> {
+        msg_send_id![self, archiverData]
+    }
     pub unsafe fn encodeRootObject(&self, rootObject: &Object) {
         msg_send![self, encodeRootObject: rootObject]
     }
@@ -52,9 +55,6 @@ impl NSArchiver {
     pub unsafe fn replaceObject_withObject(&self, object: &Object, newObject: &Object) {
         msg_send![self, replaceObject: object, withObject: newObject]
     }
-    pub unsafe fn archiverData(&self) -> Id<NSMutableData, Shared> {
-        msg_send_id![self, archiverData]
-    }
 }
 extern_class!(
     #[derive(Debug)]
@@ -72,6 +72,12 @@ impl NSUnarchiver {
     }
     pub unsafe fn objectZone(&self) -> *mut NSZone {
         msg_send![self, objectZone]
+    }
+    pub unsafe fn isAtEnd(&self) -> bool {
+        msg_send![self, isAtEnd]
+    }
+    pub unsafe fn systemVersion(&self) -> c_uint {
+        msg_send![self, systemVersion]
     }
     pub unsafe fn unarchiveObjectWithData(data: &NSData) -> Option<Id<Object, Shared>> {
         msg_send_id![Self::class(), unarchiveObjectWithData: data]
@@ -110,22 +116,16 @@ impl NSUnarchiver {
     pub unsafe fn replaceObject_withObject(&self, object: &Object, newObject: &Object) {
         msg_send![self, replaceObject: object, withObject: newObject]
     }
-    pub unsafe fn isAtEnd(&self) -> bool {
-        msg_send![self, isAtEnd]
-    }
-    pub unsafe fn systemVersion(&self) -> c_uint {
-        msg_send![self, systemVersion]
-    }
 }
 #[doc = "NSArchiverCallback"]
 impl NSObject {
+    pub unsafe fn classForArchiver(&self) -> Option<&Class> {
+        msg_send![self, classForArchiver]
+    }
     pub unsafe fn replacementObjectForArchiver(
         &self,
         archiver: &NSArchiver,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, replacementObjectForArchiver: archiver]
-    }
-    pub unsafe fn classForArchiver(&self) -> Option<&Class> {
-        msg_send![self, classForArchiver]
     }
 }

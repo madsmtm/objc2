@@ -39,9 +39,6 @@ impl NSRegularExpression {
             error: error
         ]
     }
-    pub unsafe fn escapedPatternForString(string: &NSString) -> Id<NSString, Shared> {
-        msg_send_id![Self::class(), escapedPatternForString: string]
-    }
     pub unsafe fn pattern(&self) -> Id<NSString, Shared> {
         msg_send_id![self, pattern]
     }
@@ -50,6 +47,9 @@ impl NSRegularExpression {
     }
     pub unsafe fn numberOfCaptureGroups(&self) -> NSUInteger {
         msg_send![self, numberOfCaptureGroups]
+    }
+    pub unsafe fn escapedPatternForString(string: &NSString) -> Id<NSString, Shared> {
+        msg_send_id![Self::class(), escapedPatternForString: string]
     }
 }
 #[doc = "NSMatching"]

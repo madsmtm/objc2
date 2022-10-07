@@ -40,14 +40,14 @@ impl NSIndexPath {
     pub unsafe fn indexAtPosition(&self, position: NSUInteger) -> NSUInteger {
         msg_send![self, indexAtPosition: position]
     }
+    pub unsafe fn length(&self) -> NSUInteger {
+        msg_send![self, length]
+    }
     pub unsafe fn getIndexes_range(&self, indexes: NonNull<NSUInteger>, positionRange: NSRange) {
         msg_send![self, getIndexes: indexes, range: positionRange]
     }
     pub unsafe fn compare(&self, otherObject: &NSIndexPath) -> NSComparisonResult {
         msg_send![self, compare: otherObject]
-    }
-    pub unsafe fn length(&self) -> NSUInteger {
-        msg_send![self, length]
     }
 }
 #[doc = "NSDeprecated"]

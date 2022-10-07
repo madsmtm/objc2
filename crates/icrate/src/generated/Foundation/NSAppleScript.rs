@@ -25,6 +25,12 @@ impl NSAppleScript {
     pub unsafe fn initWithSource(&self, source: &NSString) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithSource: source]
     }
+    pub unsafe fn source(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, source]
+    }
+    pub unsafe fn isCompiled(&self) -> bool {
+        msg_send![self, isCompiled]
+    }
     pub unsafe fn compileAndReturnError(
         &self,
         errorInfo: Option<&mut Option<Id<NSDictionary<NSString, Object>, Shared>>>,
@@ -43,11 +49,5 @@ impl NSAppleScript {
         errorInfo: Option<&mut Option<Id<NSDictionary<NSString, Object>, Shared>>>,
     ) -> Id<NSAppleEventDescriptor, Shared> {
         msg_send_id![self, executeAppleEvent: event, error: errorInfo]
-    }
-    pub unsafe fn source(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, source]
-    }
-    pub unsafe fn isCompiled(&self) -> bool {
-        msg_send![self, isCompiled]
     }
 }

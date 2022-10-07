@@ -113,14 +113,80 @@ impl NSXMLNode {
     pub unsafe fn DTDNodeWithXMLString(string: &NSString) -> Option<Id<Object, Shared>> {
         msg_send_id![Self::class(), DTDNodeWithXMLString: string]
     }
+    pub unsafe fn kind(&self) -> NSXMLNodeKind {
+        msg_send![self, kind]
+    }
+    pub unsafe fn name(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, name]
+    }
+    pub unsafe fn setName(&self, name: Option<&NSString>) {
+        msg_send![self, setName: name]
+    }
+    pub unsafe fn objectValue(&self) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, objectValue]
+    }
+    pub unsafe fn setObjectValue(&self, objectValue: Option<&Object>) {
+        msg_send![self, setObjectValue: objectValue]
+    }
+    pub unsafe fn stringValue(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, stringValue]
+    }
+    pub unsafe fn setStringValue(&self, stringValue: Option<&NSString>) {
+        msg_send![self, setStringValue: stringValue]
+    }
     pub unsafe fn setStringValue_resolvingEntities(&self, string: &NSString, resolve: bool) {
         msg_send![self, setStringValue: string, resolvingEntities: resolve]
+    }
+    pub unsafe fn index(&self) -> NSUInteger {
+        msg_send![self, index]
+    }
+    pub unsafe fn level(&self) -> NSUInteger {
+        msg_send![self, level]
+    }
+    pub unsafe fn rootDocument(&self) -> Option<Id<NSXMLDocument, Shared>> {
+        msg_send_id![self, rootDocument]
+    }
+    pub unsafe fn parent(&self) -> Option<Id<NSXMLNode, Shared>> {
+        msg_send_id![self, parent]
+    }
+    pub unsafe fn childCount(&self) -> NSUInteger {
+        msg_send![self, childCount]
+    }
+    pub unsafe fn children(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
+        msg_send_id![self, children]
     }
     pub unsafe fn childAtIndex(&self, index: NSUInteger) -> Option<Id<NSXMLNode, Shared>> {
         msg_send_id![self, childAtIndex: index]
     }
+    pub unsafe fn previousSibling(&self) -> Option<Id<NSXMLNode, Shared>> {
+        msg_send_id![self, previousSibling]
+    }
+    pub unsafe fn nextSibling(&self) -> Option<Id<NSXMLNode, Shared>> {
+        msg_send_id![self, nextSibling]
+    }
+    pub unsafe fn previousNode(&self) -> Option<Id<NSXMLNode, Shared>> {
+        msg_send_id![self, previousNode]
+    }
+    pub unsafe fn nextNode(&self) -> Option<Id<NSXMLNode, Shared>> {
+        msg_send_id![self, nextNode]
+    }
     pub unsafe fn detach(&self) {
         msg_send![self, detach]
+    }
+    pub unsafe fn XPath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, XPath]
+    }
+    pub unsafe fn localName(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, localName]
+    }
+    pub unsafe fn prefix(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, prefix]
+    }
+    pub unsafe fn URI(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, URI]
+    }
+    pub unsafe fn setURI(&self, URI: Option<&NSString>) {
+        msg_send![self, setURI: URI]
     }
     pub unsafe fn localNameForName(name: &NSString) -> Id<NSString, Shared> {
         msg_send_id![Self::class(), localNameForName: name]
@@ -130,6 +196,12 @@ impl NSXMLNode {
     }
     pub unsafe fn predefinedNamespaceForPrefix(name: &NSString) -> Option<Id<NSXMLNode, Shared>> {
         msg_send_id![Self::class(), predefinedNamespaceForPrefix: name]
+    }
+    pub unsafe fn description(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, description]
+    }
+    pub unsafe fn XMLString(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, XMLString]
     }
     pub unsafe fn XMLStringWithOptions(&self, options: NSXMLNodeOptions) -> Id<NSString, Shared> {
         msg_send_id![self, XMLStringWithOptions: options]
@@ -166,77 +238,5 @@ impl NSXMLNode {
         error: *mut *mut NSError,
     ) -> Option<Id<NSArray, Shared>> {
         msg_send_id![self, objectsForXQuery: xquery, error: error]
-    }
-    pub unsafe fn kind(&self) -> NSXMLNodeKind {
-        msg_send![self, kind]
-    }
-    pub unsafe fn name(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, name]
-    }
-    pub unsafe fn setName(&self, name: Option<&NSString>) {
-        msg_send![self, setName: name]
-    }
-    pub unsafe fn objectValue(&self) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, objectValue]
-    }
-    pub unsafe fn setObjectValue(&self, objectValue: Option<&Object>) {
-        msg_send![self, setObjectValue: objectValue]
-    }
-    pub unsafe fn stringValue(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, stringValue]
-    }
-    pub unsafe fn setStringValue(&self, stringValue: Option<&NSString>) {
-        msg_send![self, setStringValue: stringValue]
-    }
-    pub unsafe fn index(&self) -> NSUInteger {
-        msg_send![self, index]
-    }
-    pub unsafe fn level(&self) -> NSUInteger {
-        msg_send![self, level]
-    }
-    pub unsafe fn rootDocument(&self) -> Option<Id<NSXMLDocument, Shared>> {
-        msg_send_id![self, rootDocument]
-    }
-    pub unsafe fn parent(&self) -> Option<Id<NSXMLNode, Shared>> {
-        msg_send_id![self, parent]
-    }
-    pub unsafe fn childCount(&self) -> NSUInteger {
-        msg_send![self, childCount]
-    }
-    pub unsafe fn children(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
-        msg_send_id![self, children]
-    }
-    pub unsafe fn previousSibling(&self) -> Option<Id<NSXMLNode, Shared>> {
-        msg_send_id![self, previousSibling]
-    }
-    pub unsafe fn nextSibling(&self) -> Option<Id<NSXMLNode, Shared>> {
-        msg_send_id![self, nextSibling]
-    }
-    pub unsafe fn previousNode(&self) -> Option<Id<NSXMLNode, Shared>> {
-        msg_send_id![self, previousNode]
-    }
-    pub unsafe fn nextNode(&self) -> Option<Id<NSXMLNode, Shared>> {
-        msg_send_id![self, nextNode]
-    }
-    pub unsafe fn XPath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, XPath]
-    }
-    pub unsafe fn localName(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, localName]
-    }
-    pub unsafe fn prefix(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, prefix]
-    }
-    pub unsafe fn URI(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, URI]
-    }
-    pub unsafe fn setURI(&self, URI: Option<&NSString>) {
-        msg_send![self, setURI: URI]
-    }
-    pub unsafe fn description(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, description]
-    }
-    pub unsafe fn XMLString(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, XMLString]
     }
 }

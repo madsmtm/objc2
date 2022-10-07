@@ -19,6 +19,9 @@ __inner_extern_class!(
     }
 );
 impl<ObjectType: Message> NSArray<ObjectType> {
+    pub unsafe fn count(&self) -> NSUInteger {
+        msg_send![self, count]
+    }
     pub unsafe fn objectAtIndex(&self, index: NSUInteger) -> Id<ObjectType, Shared> {
         msg_send_id![self, objectAtIndex: index]
     }
@@ -34,9 +37,6 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     }
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
-    }
-    pub unsafe fn count(&self) -> NSUInteger {
-        msg_send![self, count]
     }
 }
 #[doc = "NSExtendedArray"]
@@ -58,6 +58,9 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     }
     pub unsafe fn containsObject(&self, anObject: &ObjectType) -> bool {
         msg_send![self, containsObject: anObject]
+    }
+    pub unsafe fn description(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, description]
     }
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale]
@@ -101,11 +104,20 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn isEqualToArray(&self, otherArray: &NSArray<ObjectType>) -> bool {
         msg_send![self, isEqualToArray: otherArray]
     }
+    pub unsafe fn firstObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, firstObject]
+    }
+    pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, lastObject]
+    }
     pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
         msg_send_id![self, objectEnumerator]
     }
     pub unsafe fn reverseObjectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
         msg_send_id![self, reverseObjectEnumerator]
+    }
+    pub unsafe fn sortedArrayHint(&self) -> Id<NSData, Shared> {
+        msg_send_id![self, sortedArrayHint]
     }
     pub unsafe fn sortedArrayUsingFunction_context(
         &self,
@@ -262,18 +274,6 @@ impl<ObjectType: Message> NSArray<ObjectType> {
             options: opts,
             usingComparator: cmp
         ]
-    }
-    pub unsafe fn description(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, description]
-    }
-    pub unsafe fn firstObject(&self) -> Option<Id<ObjectType, Shared>> {
-        msg_send_id![self, firstObject]
-    }
-    pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>> {
-        msg_send_id![self, lastObject]
-    }
-    pub unsafe fn sortedArrayHint(&self) -> Id<NSData, Shared> {
-        msg_send_id![self, sortedArrayHint]
     }
 }
 #[doc = "NSArrayCreation"]

@@ -18,6 +18,12 @@ extern_class!(
     }
 );
 impl NSNumberFormatter {
+    pub unsafe fn formattingContext(&self) -> NSFormattingContext {
+        msg_send![self, formattingContext]
+    }
+    pub unsafe fn setFormattingContext(&self, formattingContext: NSFormattingContext) {
+        msg_send![self, setFormattingContext: formattingContext]
+    }
     pub unsafe fn getObjectValue_forString_range_error(
         &self,
         obj: Option<&mut Option<Id<Object, Shared>>>,
@@ -54,12 +60,6 @@ impl NSNumberFormatter {
     }
     pub unsafe fn setDefaultFormatterBehavior(behavior: NSNumberFormatterBehavior) {
         msg_send![Self::class(), setDefaultFormatterBehavior: behavior]
-    }
-    pub unsafe fn formattingContext(&self) -> NSFormattingContext {
-        msg_send![self, formattingContext]
-    }
-    pub unsafe fn setFormattingContext(&self, formattingContext: NSFormattingContext) {
-        msg_send![self, setFormattingContext: formattingContext]
     }
     pub unsafe fn numberStyle(&self) -> NSNumberFormatterStyle {
         msg_send![self, numberStyle]

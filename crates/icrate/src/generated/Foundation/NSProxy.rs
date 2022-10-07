@@ -37,6 +37,12 @@ impl NSProxy {
     pub unsafe fn finalize(&self) {
         msg_send![self, finalize]
     }
+    pub unsafe fn description(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, description]
+    }
+    pub unsafe fn debugDescription(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, debugDescription]
+    }
     pub unsafe fn respondsToSelector(aSelector: Sel) -> bool {
         msg_send![Self::class(), respondsToSelector: aSelector]
     }
@@ -45,11 +51,5 @@ impl NSProxy {
     }
     pub unsafe fn retainWeakReference(&self) -> bool {
         msg_send![self, retainWeakReference]
-    }
-    pub unsafe fn description(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, description]
-    }
-    pub unsafe fn debugDescription(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, debugDescription]
     }
 }

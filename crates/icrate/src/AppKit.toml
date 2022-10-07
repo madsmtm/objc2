@@ -3,3 +3,7 @@
 skipped = true
 [class.NSView.methods.releaseGState]
 skipped = true
+
+# Works weirdly since it's defined both as a property, and as a method.
+[class.NSDocument.methods.setDisplayName]
+skipped = true

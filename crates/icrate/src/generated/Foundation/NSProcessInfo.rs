@@ -16,30 +16,6 @@ extern_class!(
     }
 );
 impl NSProcessInfo {
-    pub unsafe fn operatingSystem(&self) -> NSUInteger {
-        msg_send![self, operatingSystem]
-    }
-    pub unsafe fn operatingSystemName(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, operatingSystemName]
-    }
-    pub unsafe fn isOperatingSystemAtLeastVersion(
-        &self,
-        version: NSOperatingSystemVersion,
-    ) -> bool {
-        msg_send![self, isOperatingSystemAtLeastVersion: version]
-    }
-    pub unsafe fn disableSuddenTermination(&self) {
-        msg_send![self, disableSuddenTermination]
-    }
-    pub unsafe fn enableSuddenTermination(&self) {
-        msg_send![self, enableSuddenTermination]
-    }
-    pub unsafe fn disableAutomaticTermination(&self, reason: &NSString) {
-        msg_send![self, disableAutomaticTermination: reason]
-    }
-    pub unsafe fn enableAutomaticTermination(&self, reason: &NSString) {
-        msg_send![self, enableAutomaticTermination: reason]
-    }
     pub unsafe fn processInfo() -> Id<NSProcessInfo, Shared> {
         msg_send_id![Self::class(), processInfo]
     }
@@ -64,6 +40,12 @@ impl NSProcessInfo {
     pub unsafe fn globallyUniqueString(&self) -> Id<NSString, Shared> {
         msg_send_id![self, globallyUniqueString]
     }
+    pub unsafe fn operatingSystem(&self) -> NSUInteger {
+        msg_send![self, operatingSystem]
+    }
+    pub unsafe fn operatingSystemName(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, operatingSystemName]
+    }
     pub unsafe fn operatingSystemVersionString(&self) -> Id<NSString, Shared> {
         msg_send_id![self, operatingSystemVersionString]
     }
@@ -79,8 +61,26 @@ impl NSProcessInfo {
     pub unsafe fn physicalMemory(&self) -> c_ulonglong {
         msg_send![self, physicalMemory]
     }
+    pub unsafe fn isOperatingSystemAtLeastVersion(
+        &self,
+        version: NSOperatingSystemVersion,
+    ) -> bool {
+        msg_send![self, isOperatingSystemAtLeastVersion: version]
+    }
     pub unsafe fn systemUptime(&self) -> NSTimeInterval {
         msg_send![self, systemUptime]
+    }
+    pub unsafe fn disableSuddenTermination(&self) {
+        msg_send![self, disableSuddenTermination]
+    }
+    pub unsafe fn enableSuddenTermination(&self) {
+        msg_send![self, enableSuddenTermination]
+    }
+    pub unsafe fn disableAutomaticTermination(&self, reason: &NSString) {
+        msg_send![self, disableAutomaticTermination: reason]
+    }
+    pub unsafe fn enableAutomaticTermination(&self, reason: &NSString) {
+        msg_send![self, enableAutomaticTermination: reason]
     }
     pub unsafe fn automaticTerminationSupportEnabled(&self) -> bool {
         msg_send![self, automaticTerminationSupportEnabled]

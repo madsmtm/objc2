@@ -15,35 +15,6 @@ extern_class!(
     }
 );
 impl NSRelativeDateTimeFormatter {
-    pub unsafe fn localizedStringFromDateComponents(
-        &self,
-        dateComponents: &NSDateComponents,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![self, localizedStringFromDateComponents: dateComponents]
-    }
-    pub unsafe fn localizedStringFromTimeInterval(
-        &self,
-        timeInterval: NSTimeInterval,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![self, localizedStringFromTimeInterval: timeInterval]
-    }
-    pub unsafe fn localizedStringForDate_relativeToDate(
-        &self,
-        date: &NSDate,
-        referenceDate: &NSDate,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![
-            self,
-            localizedStringForDate: date,
-            relativeToDate: referenceDate
-        ]
-    }
-    pub unsafe fn stringForObjectValue(
-        &self,
-        obj: Option<&Object>,
-    ) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, stringForObjectValue: obj]
-    }
     pub unsafe fn dateTimeStyle(&self) -> NSRelativeDateTimeFormatterStyle {
         msg_send![self, dateTimeStyle]
     }
@@ -73,5 +44,34 @@ impl NSRelativeDateTimeFormatter {
     }
     pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
         msg_send![self, setLocale: locale]
+    }
+    pub unsafe fn localizedStringFromDateComponents(
+        &self,
+        dateComponents: &NSDateComponents,
+    ) -> Id<NSString, Shared> {
+        msg_send_id![self, localizedStringFromDateComponents: dateComponents]
+    }
+    pub unsafe fn localizedStringFromTimeInterval(
+        &self,
+        timeInterval: NSTimeInterval,
+    ) -> Id<NSString, Shared> {
+        msg_send_id![self, localizedStringFromTimeInterval: timeInterval]
+    }
+    pub unsafe fn localizedStringForDate_relativeToDate(
+        &self,
+        date: &NSDate,
+        referenceDate: &NSDate,
+    ) -> Id<NSString, Shared> {
+        msg_send_id![
+            self,
+            localizedStringForDate: date,
+            relativeToDate: referenceDate
+        ]
+    }
+    pub unsafe fn stringForObjectValue(
+        &self,
+        obj: Option<&Object>,
+    ) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, stringForObjectValue: obj]
     }
 }

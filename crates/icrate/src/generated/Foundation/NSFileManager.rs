@@ -30,6 +30,9 @@ extern_class!(
     }
 );
 impl NSFileManager {
+    pub unsafe fn defaultManager() -> Id<NSFileManager, Shared> {
+        msg_send_id![Self::class(), defaultManager]
+    }
     pub unsafe fn mountedVolumeURLsIncludingResourceValuesForKeys_options(
         &self,
         propertyKeys: Option<&NSArray<NSURLResourceKey>>,
@@ -152,6 +155,12 @@ impl NSFileManager {
             withDestinationURL: destURL,
             error: error
         ]
+    }
+    pub unsafe fn delegate(&self) -> Option<Id<NSFileManagerDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSFileManagerDelegate>) {
+        msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn setAttributes_ofItemAtPath_error(
         &self,
@@ -370,6 +379,9 @@ impl NSFileManager {
     ) -> bool {
         msg_send![self, removeFileAtPath: path, handler: handler]
     }
+    pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, currentDirectoryPath]
+    }
     pub unsafe fn changeCurrentDirectoryPath(&self, path: &NSString) -> bool {
         msg_send![self, changeCurrentDirectoryPath: path]
     }
@@ -527,6 +539,9 @@ impl NSFileManager {
             error: error
         ]
     }
+    pub unsafe fn ubiquityIdentityToken(&self) -> Option<Id<TodoProtocols, Shared>> {
+        msg_send_id![self, ubiquityIdentityToken]
+    }
     pub unsafe fn getFileProviderServicesForItemAtURL_completionHandler(
         &self,
         url: &NSURL,
@@ -547,32 +562,17 @@ impl NSFileManager {
             containerURLForSecurityApplicationGroupIdentifier: groupIdentifier
         ]
     }
-    pub unsafe fn defaultManager() -> Id<NSFileManager, Shared> {
-        msg_send_id![Self::class(), defaultManager]
-    }
-    pub unsafe fn delegate(&self) -> Option<Id<NSFileManagerDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSFileManagerDelegate>) {
-        msg_send![self, setDelegate: delegate]
-    }
-    pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, currentDirectoryPath]
-    }
-    pub unsafe fn ubiquityIdentityToken(&self) -> Option<Id<TodoProtocols, Shared>> {
-        msg_send_id![self, ubiquityIdentityToken]
-    }
 }
 #[doc = "NSUserInformation"]
 impl NSFileManager {
-    pub unsafe fn homeDirectoryForUser(&self, userName: &NSString) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, homeDirectoryForUser: userName]
-    }
     pub unsafe fn homeDirectoryForCurrentUser(&self) -> Id<NSURL, Shared> {
         msg_send_id![self, homeDirectoryForCurrentUser]
     }
     pub unsafe fn temporaryDirectory(&self) -> Id<NSURL, Shared> {
         msg_send_id![self, temporaryDirectory]
+    }
+    pub unsafe fn homeDirectoryForUser(&self, userName: &NSString) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, homeDirectoryForUser: userName]
     }
 }
 #[doc = "NSCopyLinkMoveHandler"]
@@ -597,12 +597,6 @@ __inner_extern_class!(
     }
 );
 impl<ObjectType: Message> NSDirectoryEnumerator<ObjectType> {
-    pub unsafe fn skipDescendents(&self) {
-        msg_send![self, skipDescendents]
-    }
-    pub unsafe fn skipDescendants(&self) {
-        msg_send![self, skipDescendants]
-    }
     pub unsafe fn fileAttributes(
         &self,
     ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>> {
@@ -616,8 +610,14 @@ impl<ObjectType: Message> NSDirectoryEnumerator<ObjectType> {
     pub unsafe fn isEnumeratingDirectoryPostOrder(&self) -> bool {
         msg_send![self, isEnumeratingDirectoryPostOrder]
     }
+    pub unsafe fn skipDescendents(&self) {
+        msg_send![self, skipDescendents]
+    }
     pub unsafe fn level(&self) -> NSUInteger {
         msg_send![self, level]
+    }
+    pub unsafe fn skipDescendants(&self) {
+        msg_send![self, skipDescendants]
     }
 }
 extern_class!(

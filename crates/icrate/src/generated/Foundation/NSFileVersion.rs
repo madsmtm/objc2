@@ -71,27 +71,6 @@ impl NSFileVersion {
             temporaryDirectoryURLForNewVersionOfItemAtURL: url
         ]
     }
-    pub unsafe fn replaceItemAtURL_options_error(
-        &self,
-        url: &NSURL,
-        options: NSFileVersionReplacingOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, replaceItemAtURL: url, options: options, error: error]
-    }
-    pub unsafe fn removeAndReturnError(&self, outError: *mut *mut NSError) -> bool {
-        msg_send![self, removeAndReturnError: outError]
-    }
-    pub unsafe fn removeOtherVersionsOfItemAtURL_error(
-        url: &NSURL,
-        outError: *mut *mut NSError,
-    ) -> bool {
-        msg_send![
-            Self::class(),
-            removeOtherVersionsOfItemAtURL: url,
-            error: outError
-        ]
-    }
     pub unsafe fn URL(&self) -> Id<NSURL, Shared> {
         msg_send_id![self, URL]
     }
@@ -130,5 +109,26 @@ impl NSFileVersion {
     }
     pub unsafe fn hasThumbnail(&self) -> bool {
         msg_send![self, hasThumbnail]
+    }
+    pub unsafe fn replaceItemAtURL_options_error(
+        &self,
+        url: &NSURL,
+        options: NSFileVersionReplacingOptions,
+        error: *mut *mut NSError,
+    ) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, replaceItemAtURL: url, options: options, error: error]
+    }
+    pub unsafe fn removeAndReturnError(&self, outError: *mut *mut NSError) -> bool {
+        msg_send![self, removeAndReturnError: outError]
+    }
+    pub unsafe fn removeOtherVersionsOfItemAtURL_error(
+        url: &NSURL,
+        outError: *mut *mut NSError,
+    ) -> bool {
+        msg_send![
+            Self::class(),
+            removeOtherVersionsOfItemAtURL: url,
+            error: outError
+        ]
     }
 }

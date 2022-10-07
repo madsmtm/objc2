@@ -21,6 +21,9 @@ impl NSURLRequest {
     pub unsafe fn requestWithURL(URL: &NSURL) -> Id<Self, Shared> {
         msg_send_id![Self::class(), requestWithURL: URL]
     }
+    pub unsafe fn supportsSecureCoding() -> bool {
+        msg_send![Self::class(), supportsSecureCoding]
+    }
     pub unsafe fn requestWithURL_cachePolicy_timeoutInterval(
         URL: &NSURL,
         cachePolicy: NSURLRequestCachePolicy,
@@ -48,9 +51,6 @@ impl NSURLRequest {
             cachePolicy: cachePolicy,
             timeoutInterval: timeoutInterval
         ]
-    }
-    pub unsafe fn supportsSecureCoding() -> bool {
-        msg_send![Self::class(), supportsSecureCoding]
     }
     pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, URL]
@@ -160,9 +160,6 @@ impl NSMutableURLRequest {
 }
 #[doc = "NSHTTPURLRequest"]
 impl NSURLRequest {
-    pub unsafe fn valueForHTTPHeaderField(&self, field: &NSString) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, valueForHTTPHeaderField: field]
-    }
     pub unsafe fn HTTPMethod(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, HTTPMethod]
     }
@@ -170,6 +167,9 @@ impl NSURLRequest {
         &self,
     ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>> {
         msg_send_id![self, allHTTPHeaderFields]
+    }
+    pub unsafe fn valueForHTTPHeaderField(&self, field: &NSString) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, valueForHTTPHeaderField: field]
     }
     pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, HTTPBody]
@@ -186,12 +186,6 @@ impl NSURLRequest {
 }
 #[doc = "NSMutableHTTPURLRequest"]
 impl NSMutableURLRequest {
-    pub unsafe fn setValue_forHTTPHeaderField(&self, value: Option<&NSString>, field: &NSString) {
-        msg_send![self, setValue: value, forHTTPHeaderField: field]
-    }
-    pub unsafe fn addValue_forHTTPHeaderField(&self, value: &NSString, field: &NSString) {
-        msg_send![self, addValue: value, forHTTPHeaderField: field]
-    }
     pub unsafe fn HTTPMethod(&self) -> Id<NSString, Shared> {
         msg_send_id![self, HTTPMethod]
     }
@@ -208,6 +202,12 @@ impl NSMutableURLRequest {
         allHTTPHeaderFields: Option<&NSDictionary<NSString, NSString>>,
     ) {
         msg_send![self, setAllHTTPHeaderFields: allHTTPHeaderFields]
+    }
+    pub unsafe fn setValue_forHTTPHeaderField(&self, value: Option<&NSString>, field: &NSString) {
+        msg_send![self, setValue: value, forHTTPHeaderField: field]
+    }
+    pub unsafe fn addValue_forHTTPHeaderField(&self, value: &NSString, field: &NSString) {
+        msg_send![self, addValue: value, forHTTPHeaderField: field]
     }
     pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, HTTPBody]

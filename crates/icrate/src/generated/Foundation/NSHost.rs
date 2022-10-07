@@ -26,15 +26,6 @@ impl NSHost {
     pub unsafe fn isEqualToHost(&self, aHost: &NSHost) -> bool {
         msg_send![self, isEqualToHost: aHost]
     }
-    pub unsafe fn setHostCacheEnabled(flag: bool) {
-        msg_send![Self::class(), setHostCacheEnabled: flag]
-    }
-    pub unsafe fn isHostCacheEnabled() -> bool {
-        msg_send![Self::class(), isHostCacheEnabled]
-    }
-    pub unsafe fn flushHostCache() {
-        msg_send![Self::class(), flushHostCache]
-    }
     pub unsafe fn name(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, name]
     }
@@ -49,5 +40,14 @@ impl NSHost {
     }
     pub unsafe fn localizedName(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, localizedName]
+    }
+    pub unsafe fn setHostCacheEnabled(flag: bool) {
+        msg_send![Self::class(), setHostCacheEnabled: flag]
+    }
+    pub unsafe fn isHostCacheEnabled() -> bool {
+        msg_send![Self::class(), isHostCacheEnabled]
+    }
+    pub unsafe fn flushHostCache() {
+        msg_send![Self::class(), flushHostCache]
     }
 }

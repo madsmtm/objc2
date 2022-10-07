@@ -45,23 +45,6 @@ impl NSScriptObjectSpecifier {
     pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: inCoder]
     }
-    pub unsafe fn indicesOfObjectsByEvaluatingWithContainer_count(
-        &self,
-        container: &Object,
-        count: NonNull<NSInteger>,
-    ) -> *mut NSInteger {
-        msg_send![
-            self,
-            indicesOfObjectsByEvaluatingWithContainer: container,
-            count: count
-        ]
-    }
-    pub unsafe fn objectsByEvaluatingWithContainers(
-        &self,
-        containers: &Object,
-    ) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, objectsByEvaluatingWithContainers: containers]
-    }
     pub unsafe fn childSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
         msg_send_id![self, childSpecifier]
     }
@@ -116,6 +99,23 @@ impl NSScriptObjectSpecifier {
     pub unsafe fn keyClassDescription(&self) -> Option<Id<NSScriptClassDescription, Shared>> {
         msg_send_id![self, keyClassDescription]
     }
+    pub unsafe fn indicesOfObjectsByEvaluatingWithContainer_count(
+        &self,
+        container: &Object,
+        count: NonNull<NSInteger>,
+    ) -> *mut NSInteger {
+        msg_send![
+            self,
+            indicesOfObjectsByEvaluatingWithContainer: container,
+            count: count
+        ]
+    }
+    pub unsafe fn objectsByEvaluatingWithContainers(
+        &self,
+        containers: &Object,
+    ) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, objectsByEvaluatingWithContainers: containers]
+    }
     pub unsafe fn objectsByEvaluatingSpecifier(&self) -> Option<Id<Object, Shared>> {
         msg_send_id![self, objectsByEvaluatingSpecifier]
     }
@@ -134,14 +134,14 @@ impl NSScriptObjectSpecifier {
 }
 #[doc = "NSScriptObjectSpecifiers"]
 impl NSObject {
+    pub unsafe fn objectSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
+        msg_send_id![self, objectSpecifier]
+    }
     pub unsafe fn indicesOfObjectsByEvaluatingObjectSpecifier(
         &self,
         specifier: &NSScriptObjectSpecifier,
     ) -> Option<Id<NSArray<NSNumber>, Shared>> {
         msg_send_id![self, indicesOfObjectsByEvaluatingObjectSpecifier: specifier]
-    }
-    pub unsafe fn objectSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-        msg_send_id![self, objectSpecifier]
     }
 }
 extern_class!(
@@ -230,17 +230,17 @@ impl NSPositionalSpecifier {
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithPosition: position, objectSpecifier: specifier]
     }
-    pub unsafe fn setInsertionClassDescription(&self, classDescription: &NSScriptClassDescription) {
-        msg_send![self, setInsertionClassDescription: classDescription]
-    }
-    pub unsafe fn evaluate(&self) {
-        msg_send![self, evaluate]
-    }
     pub unsafe fn position(&self) -> NSInsertionPosition {
         msg_send![self, position]
     }
     pub unsafe fn objectSpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
         msg_send_id![self, objectSpecifier]
+    }
+    pub unsafe fn setInsertionClassDescription(&self, classDescription: &NSScriptClassDescription) {
+        msg_send![self, setInsertionClassDescription: classDescription]
+    }
+    pub unsafe fn evaluate(&self) {
+        msg_send![self, evaluate]
     }
     pub unsafe fn insertionContainer(&self) -> Option<Id<Object, Shared>> {
         msg_send_id![self, insertionContainer]

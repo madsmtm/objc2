@@ -18,6 +18,8 @@ pub struct Config {
 pub struct ClassData {
     #[serde(default)]
     pub methods: HashMap<String, MethodData>,
+    #[serde(default)]
+    pub properties: HashMap<String, MethodData>,
 }
 
 #[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]

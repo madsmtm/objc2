@@ -35,6 +35,9 @@ extern_class!(
     }
 );
 impl NSURLSession {
+    pub unsafe fn sharedSession() -> Id<NSURLSession, Shared> {
+        msg_send_id![Self::class(), sharedSession]
+    }
     pub unsafe fn sessionWithConfiguration(
         configuration: &NSURLSessionConfiguration,
     ) -> Id<NSURLSession, Shared> {
@@ -51,6 +54,21 @@ impl NSURLSession {
             delegate: delegate,
             delegateQueue: queue
         ]
+    }
+    pub unsafe fn delegateQueue(&self) -> Id<NSOperationQueue, Shared> {
+        msg_send_id![self, delegateQueue]
+    }
+    pub unsafe fn delegate(&self) -> Option<Id<NSURLSessionDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn configuration(&self) -> Id<NSURLSessionConfiguration, Shared> {
+        msg_send_id![self, configuration]
+    }
+    pub unsafe fn sessionDescription(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, sessionDescription]
+    }
+    pub unsafe fn setSessionDescription(&self, sessionDescription: Option<&NSString>) {
+        msg_send![self, setSessionDescription: sessionDescription]
     }
     pub unsafe fn finishTasksAndInvalidate(&self) {
         msg_send![self, finishTasksAndInvalidate]
@@ -152,24 +170,6 @@ impl NSURLSession {
     pub unsafe fn new() -> Id<Self, Shared> {
         msg_send_id![Self::class(), new]
     }
-    pub unsafe fn sharedSession() -> Id<NSURLSession, Shared> {
-        msg_send_id![Self::class(), sharedSession]
-    }
-    pub unsafe fn delegateQueue(&self) -> Id<NSOperationQueue, Shared> {
-        msg_send_id![self, delegateQueue]
-    }
-    pub unsafe fn delegate(&self) -> Option<Id<NSURLSessionDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn configuration(&self) -> Id<NSURLSessionConfiguration, Shared> {
-        msg_send_id![self, configuration]
-    }
-    pub unsafe fn sessionDescription(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, sessionDescription]
-    }
-    pub unsafe fn setSessionDescription(&self, sessionDescription: Option<&NSString>) {
-        msg_send![self, setSessionDescription: sessionDescription]
-    }
 }
 #[doc = "NSURLSessionAsynchronousConvenience"]
 impl NSURLSession {
@@ -263,21 +263,6 @@ extern_class!(
     }
 );
 impl NSURLSessionTask {
-    pub unsafe fn cancel(&self) {
-        msg_send![self, cancel]
-    }
-    pub unsafe fn suspend(&self) {
-        msg_send![self, suspend]
-    }
-    pub unsafe fn resume(&self) {
-        msg_send![self, resume]
-    }
-    pub unsafe fn init(&self) -> Id<Self, Shared> {
-        msg_send_id![self, init]
-    }
-    pub unsafe fn new() -> Id<Self, Shared> {
-        msg_send_id![Self::class(), new]
-    }
     pub unsafe fn taskIdentifier(&self) -> NSUInteger {
         msg_send![self, taskIdentifier]
     }
@@ -347,11 +332,20 @@ impl NSURLSessionTask {
     pub unsafe fn setTaskDescription(&self, taskDescription: Option<&NSString>) {
         msg_send![self, setTaskDescription: taskDescription]
     }
+    pub unsafe fn cancel(&self) {
+        msg_send![self, cancel]
+    }
     pub unsafe fn state(&self) -> NSURLSessionTaskState {
         msg_send![self, state]
     }
     pub unsafe fn error(&self) -> Option<Id<NSError, Shared>> {
         msg_send_id![self, error]
+    }
+    pub unsafe fn suspend(&self) {
+        msg_send![self, suspend]
+    }
+    pub unsafe fn resume(&self) {
+        msg_send![self, resume]
     }
     pub unsafe fn priority(&self) -> c_float {
         msg_send![self, priority]
@@ -367,6 +361,12 @@ impl NSURLSessionTask {
             self,
             setPrefersIncrementalDelivery: prefersIncrementalDelivery
         ]
+    }
+    pub unsafe fn init(&self) -> Id<Self, Shared> {
+        msg_send_id![self, init]
+    }
+    pub unsafe fn new() -> Id<Self, Shared> {
+        msg_send_id![Self::class(), new]
     }
 }
 extern_class!(
@@ -489,12 +489,6 @@ impl NSURLSessionWebSocketMessage {
     pub unsafe fn initWithString(&self, string: &NSString) -> Id<Self, Shared> {
         msg_send_id![self, initWithString: string]
     }
-    pub unsafe fn init(&self) -> Id<Self, Shared> {
-        msg_send_id![self, init]
-    }
-    pub unsafe fn new() -> Id<Self, Shared> {
-        msg_send_id![Self::class(), new]
-    }
     pub unsafe fn type_(&self) -> NSURLSessionWebSocketMessageType {
         msg_send![self, type]
     }
@@ -503,6 +497,12 @@ impl NSURLSessionWebSocketMessage {
     }
     pub unsafe fn string(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, string]
+    }
+    pub unsafe fn init(&self) -> Id<Self, Shared> {
+        msg_send_id![self, init]
+    }
+    pub unsafe fn new() -> Id<Self, Shared> {
+        msg_send_id![Self::class(), new]
     }
 }
 extern_class!(
@@ -537,12 +537,6 @@ impl NSURLSessionWebSocketTask {
     ) {
         msg_send![self, cancelWithCloseCode: closeCode, reason: reason]
     }
-    pub unsafe fn init(&self) -> Id<Self, Shared> {
-        msg_send_id![self, init]
-    }
-    pub unsafe fn new() -> Id<Self, Shared> {
-        msg_send_id![Self::class(), new]
-    }
     pub unsafe fn maximumMessageSize(&self) -> NSInteger {
         msg_send![self, maximumMessageSize]
     }
@@ -555,6 +549,12 @@ impl NSURLSessionWebSocketTask {
     pub unsafe fn closeReason(&self) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, closeReason]
     }
+    pub unsafe fn init(&self) -> Id<Self, Shared> {
+        msg_send_id![self, init]
+    }
+    pub unsafe fn new() -> Id<Self, Shared> {
+        msg_send_id![Self::class(), new]
+    }
 }
 extern_class!(
     #[derive(Debug)]
@@ -564,6 +564,12 @@ extern_class!(
     }
 );
 impl NSURLSessionConfiguration {
+    pub unsafe fn defaultSessionConfiguration() -> Id<NSURLSessionConfiguration, Shared> {
+        msg_send_id![Self::class(), defaultSessionConfiguration]
+    }
+    pub unsafe fn ephemeralSessionConfiguration() -> Id<NSURLSessionConfiguration, Shared> {
+        msg_send_id![Self::class(), ephemeralSessionConfiguration]
+    }
     pub unsafe fn backgroundSessionConfigurationWithIdentifier(
         identifier: &NSString,
     ) -> Id<NSURLSessionConfiguration, Shared> {
@@ -571,18 +577,6 @@ impl NSURLSessionConfiguration {
             Self::class(),
             backgroundSessionConfigurationWithIdentifier: identifier
         ]
-    }
-    pub unsafe fn init(&self) -> Id<Self, Shared> {
-        msg_send_id![self, init]
-    }
-    pub unsafe fn new() -> Id<Self, Shared> {
-        msg_send_id![Self::class(), new]
-    }
-    pub unsafe fn defaultSessionConfiguration() -> Id<NSURLSessionConfiguration, Shared> {
-        msg_send_id![Self::class(), defaultSessionConfiguration]
-    }
-    pub unsafe fn ephemeralSessionConfiguration() -> Id<NSURLSessionConfiguration, Shared> {
-        msg_send_id![Self::class(), ephemeralSessionConfiguration]
     }
     pub unsafe fn identifier(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, identifier]
@@ -812,6 +806,12 @@ impl NSURLSessionConfiguration {
     ) {
         msg_send![self, setMultipathServiceType: multipathServiceType]
     }
+    pub unsafe fn init(&self) -> Id<Self, Shared> {
+        msg_send_id![self, init]
+    }
+    pub unsafe fn new() -> Id<Self, Shared> {
+        msg_send_id![Self::class(), new]
+    }
 }
 pub type NSURLSessionDelegate = NSObject;
 pub type NSURLSessionTaskDelegate = NSObject;
@@ -835,12 +835,6 @@ extern_class!(
     }
 );
 impl NSURLSessionTaskTransactionMetrics {
-    pub unsafe fn init(&self) -> Id<Self, Shared> {
-        msg_send_id![self, init]
-    }
-    pub unsafe fn new() -> Id<Self, Shared> {
-        msg_send_id![Self::class(), new]
-    }
     pub unsafe fn request(&self) -> Id<NSURLRequest, Shared> {
         msg_send_id![self, request]
     }
@@ -945,6 +939,12 @@ impl NSURLSessionTaskTransactionMetrics {
     ) -> NSURLSessionTaskMetricsDomainResolutionProtocol {
         msg_send![self, domainResolutionProtocol]
     }
+    pub unsafe fn init(&self) -> Id<Self, Shared> {
+        msg_send_id![self, init]
+    }
+    pub unsafe fn new() -> Id<Self, Shared> {
+        msg_send_id![Self::class(), new]
+    }
 }
 extern_class!(
     #[derive(Debug)]
@@ -954,12 +954,6 @@ extern_class!(
     }
 );
 impl NSURLSessionTaskMetrics {
-    pub unsafe fn init(&self) -> Id<Self, Shared> {
-        msg_send_id![self, init]
-    }
-    pub unsafe fn new() -> Id<Self, Shared> {
-        msg_send_id![Self::class(), new]
-    }
     pub unsafe fn transactionMetrics(
         &self,
     ) -> Id<NSArray<NSURLSessionTaskTransactionMetrics>, Shared> {
@@ -970,5 +964,11 @@ impl NSURLSessionTaskMetrics {
     }
     pub unsafe fn redirectCount(&self) -> NSUInteger {
         msg_send![self, redirectCount]
+    }
+    pub unsafe fn init(&self) -> Id<Self, Shared> {
+        msg_send_id![self, init]
+    }
+    pub unsafe fn new() -> Id<Self, Shared> {
+        msg_send_id![Self::class(), new]
     }
 }

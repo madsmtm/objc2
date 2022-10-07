@@ -52,15 +52,6 @@ impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
             removedObjects: removedObjects
         ]
     }
-    pub unsafe fn differenceByTransformingChangesWithBlock(
-        &self,
-        block: TodoBlock,
-    ) -> Id<NSOrderedCollectionDifference<Object>, Shared> {
-        msg_send_id![self, differenceByTransformingChangesWithBlock: block]
-    }
-    pub unsafe fn inverseDifference(&self) -> Id<Self, Shared> {
-        msg_send_id![self, inverseDifference]
-    }
     pub unsafe fn insertions(&self) -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared> {
         msg_send_id![self, insertions]
     }
@@ -69,5 +60,14 @@ impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
     }
     pub unsafe fn hasChanges(&self) -> bool {
         msg_send![self, hasChanges]
+    }
+    pub unsafe fn differenceByTransformingChangesWithBlock(
+        &self,
+        block: TodoBlock,
+    ) -> Id<NSOrderedCollectionDifference<Object>, Shared> {
+        msg_send_id![self, differenceByTransformingChangesWithBlock: block]
+    }
+    pub unsafe fn inverseDifference(&self) -> Id<Self, Shared> {
+        msg_send_id![self, inverseDifference]
     }
 }

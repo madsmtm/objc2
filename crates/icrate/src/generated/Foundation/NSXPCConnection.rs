@@ -26,6 +26,9 @@ impl NSXPCConnection {
     pub unsafe fn initWithServiceName(&self, serviceName: &NSString) -> Id<Self, Shared> {
         msg_send_id![self, initWithServiceName: serviceName]
     }
+    pub unsafe fn serviceName(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, serviceName]
+    }
     pub unsafe fn initWithMachServiceName_options(
         &self,
         name: &NSString,
@@ -38,36 +41,6 @@ impl NSXPCConnection {
         endpoint: &NSXPCListenerEndpoint,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithListenerEndpoint: endpoint]
-    }
-    pub unsafe fn remoteObjectProxyWithErrorHandler(
-        &self,
-        handler: TodoBlock,
-    ) -> Id<Object, Shared> {
-        msg_send_id![self, remoteObjectProxyWithErrorHandler: handler]
-    }
-    pub unsafe fn synchronousRemoteObjectProxyWithErrorHandler(
-        &self,
-        handler: TodoBlock,
-    ) -> Id<Object, Shared> {
-        msg_send_id![self, synchronousRemoteObjectProxyWithErrorHandler: handler]
-    }
-    pub unsafe fn resume(&self) {
-        msg_send![self, resume]
-    }
-    pub unsafe fn suspend(&self) {
-        msg_send![self, suspend]
-    }
-    pub unsafe fn invalidate(&self) {
-        msg_send![self, invalidate]
-    }
-    pub unsafe fn currentConnection() -> Option<Id<NSXPCConnection, Shared>> {
-        msg_send_id![Self::class(), currentConnection]
-    }
-    pub unsafe fn scheduleSendBarrierBlock(&self, block: TodoBlock) {
-        msg_send![self, scheduleSendBarrierBlock: block]
-    }
-    pub unsafe fn serviceName(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, serviceName]
     }
     pub unsafe fn endpoint(&self) -> Id<NSXPCListenerEndpoint, Shared> {
         msg_send_id![self, endpoint]
@@ -93,6 +66,18 @@ impl NSXPCConnection {
     pub unsafe fn remoteObjectProxy(&self) -> Id<Object, Shared> {
         msg_send_id![self, remoteObjectProxy]
     }
+    pub unsafe fn remoteObjectProxyWithErrorHandler(
+        &self,
+        handler: TodoBlock,
+    ) -> Id<Object, Shared> {
+        msg_send_id![self, remoteObjectProxyWithErrorHandler: handler]
+    }
+    pub unsafe fn synchronousRemoteObjectProxyWithErrorHandler(
+        &self,
+        handler: TodoBlock,
+    ) -> Id<Object, Shared> {
+        msg_send_id![self, synchronousRemoteObjectProxyWithErrorHandler: handler]
+    }
     pub unsafe fn interruptionHandler(&self) -> TodoBlock {
         msg_send![self, interruptionHandler]
     }
@@ -105,6 +90,15 @@ impl NSXPCConnection {
     pub unsafe fn setInvalidationHandler(&self, invalidationHandler: TodoBlock) {
         msg_send![self, setInvalidationHandler: invalidationHandler]
     }
+    pub unsafe fn resume(&self) {
+        msg_send![self, resume]
+    }
+    pub unsafe fn suspend(&self) {
+        msg_send![self, suspend]
+    }
+    pub unsafe fn invalidate(&self) {
+        msg_send![self, invalidate]
+    }
     pub unsafe fn auditSessionIdentifier(&self) -> au_asid_t {
         msg_send![self, auditSessionIdentifier]
     }
@@ -116,6 +110,12 @@ impl NSXPCConnection {
     }
     pub unsafe fn effectiveGroupIdentifier(&self) -> gid_t {
         msg_send![self, effectiveGroupIdentifier]
+    }
+    pub unsafe fn currentConnection() -> Option<Id<NSXPCConnection, Shared>> {
+        msg_send_id![Self::class(), currentConnection]
+    }
+    pub unsafe fn scheduleSendBarrierBlock(&self, block: TodoBlock) {
+        msg_send![self, scheduleSendBarrierBlock: block]
     }
 }
 extern_class!(
@@ -135,15 +135,6 @@ impl NSXPCListener {
     pub unsafe fn initWithMachServiceName(&self, name: &NSString) -> Id<Self, Shared> {
         msg_send_id![self, initWithMachServiceName: name]
     }
-    pub unsafe fn resume(&self) {
-        msg_send![self, resume]
-    }
-    pub unsafe fn suspend(&self) {
-        msg_send![self, suspend]
-    }
-    pub unsafe fn invalidate(&self) {
-        msg_send![self, invalidate]
-    }
     pub unsafe fn delegate(&self) -> Option<Id<NSXPCListenerDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
@@ -152,6 +143,15 @@ impl NSXPCListener {
     }
     pub unsafe fn endpoint(&self) -> Id<NSXPCListenerEndpoint, Shared> {
         msg_send_id![self, endpoint]
+    }
+    pub unsafe fn resume(&self) {
+        msg_send![self, resume]
+    }
+    pub unsafe fn suspend(&self) {
+        msg_send![self, suspend]
+    }
+    pub unsafe fn invalidate(&self) {
+        msg_send![self, invalidate]
     }
 }
 pub type NSXPCListenerDelegate = NSObject;
@@ -165,6 +165,12 @@ extern_class!(
 impl NSXPCInterface {
     pub unsafe fn interfaceWithProtocol(protocol: &Protocol) -> Id<NSXPCInterface, Shared> {
         msg_send_id![Self::class(), interfaceWithProtocol: protocol]
+    }
+    pub unsafe fn protocol(&self) -> Id<Protocol, Shared> {
+        msg_send_id![self, protocol]
+    }
+    pub unsafe fn setProtocol(&self, protocol: &Protocol) {
+        msg_send![self, setProtocol: protocol]
     }
     pub unsafe fn setClasses_forSelector_argumentIndex_ofReply(
         &self,
@@ -249,12 +255,6 @@ impl NSXPCInterface {
             argumentIndex: arg,
             ofReply: ofReply
         ]
-    }
-    pub unsafe fn protocol(&self) -> Id<Protocol, Shared> {
-        msg_send_id![self, protocol]
-    }
-    pub unsafe fn setProtocol(&self, protocol: &Protocol) {
-        msg_send![self, setProtocol: protocol]
     }
 }
 extern_class!(

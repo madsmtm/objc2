@@ -58,6 +58,15 @@ impl NSSortDescriptor {
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
     }
+    pub unsafe fn key(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, key]
+    }
+    pub unsafe fn ascending(&self) -> bool {
+        msg_send![self, ascending]
+    }
+    pub unsafe fn selector(&self) -> Option<Sel> {
+        msg_send![self, selector]
+    }
     pub unsafe fn allowEvaluation(&self) {
         msg_send![self, allowEvaluation]
     }
@@ -86,24 +95,15 @@ impl NSSortDescriptor {
             comparator: cmptr
         ]
     }
+    pub unsafe fn comparator(&self) -> NSComparator {
+        msg_send![self, comparator]
+    }
     pub unsafe fn compareObject_toObject(
         &self,
         object1: &Object,
         object2: &Object,
     ) -> NSComparisonResult {
         msg_send![self, compareObject: object1, toObject: object2]
-    }
-    pub unsafe fn key(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, key]
-    }
-    pub unsafe fn ascending(&self) -> bool {
-        msg_send![self, ascending]
-    }
-    pub unsafe fn selector(&self) -> Option<Sel> {
-        msg_send![self, selector]
-    }
-    pub unsafe fn comparator(&self) -> NSComparator {
-        msg_send![self, comparator]
     }
     pub unsafe fn reversedSortDescriptor(&self) -> Id<Object, Shared> {
         msg_send_id![self, reversedSortDescriptor]

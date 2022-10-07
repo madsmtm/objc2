@@ -33,6 +33,15 @@ impl NSIndexSet {
     pub unsafe fn isEqualToIndexSet(&self, indexSet: &NSIndexSet) -> bool {
         msg_send![self, isEqualToIndexSet: indexSet]
     }
+    pub unsafe fn count(&self) -> NSUInteger {
+        msg_send![self, count]
+    }
+    pub unsafe fn firstIndex(&self) -> NSUInteger {
+        msg_send![self, firstIndex]
+    }
+    pub unsafe fn lastIndex(&self) -> NSUInteger {
+        msg_send![self, lastIndex]
+    }
     pub unsafe fn indexGreaterThanIndex(&self, value: NSUInteger) -> NSUInteger {
         msg_send![self, indexGreaterThanIndex: value]
     }
@@ -164,15 +173,6 @@ impl NSIndexSet {
             options: opts,
             usingBlock: block
         ]
-    }
-    pub unsafe fn count(&self) -> NSUInteger {
-        msg_send![self, count]
-    }
-    pub unsafe fn firstIndex(&self) -> NSUInteger {
-        msg_send![self, firstIndex]
-    }
-    pub unsafe fn lastIndex(&self) -> NSUInteger {
-        msg_send![self, lastIndex]
     }
 }
 extern_class!(

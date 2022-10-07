@@ -24,6 +24,15 @@ impl NSLinguisticTagger {
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithTagSchemes: tagSchemes, options: opts]
     }
+    pub unsafe fn tagSchemes(&self) -> Id<NSArray<NSLinguisticTagScheme>, Shared> {
+        msg_send_id![self, tagSchemes]
+    }
+    pub unsafe fn string(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, string]
+    }
+    pub unsafe fn setString(&self, string: Option<&NSString>) {
+        msg_send![self, setString: string]
+    }
     pub unsafe fn availableTagSchemesForUnit_language(
         unit: NSLinguisticTaggerUnit,
         language: &NSString,
@@ -160,6 +169,9 @@ impl NSLinguisticTagger {
             tokenRanges: tokenRanges
         ]
     }
+    pub unsafe fn dominantLanguage(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, dominantLanguage]
+    }
     pub unsafe fn dominantLanguageForString(string: &NSString) -> Option<Id<NSString, Shared>> {
         msg_send_id![Self::class(), dominantLanguageForString: string]
     }
@@ -237,18 +249,6 @@ impl NSLinguisticTagger {
             sentenceRange: sentenceRange,
             scores: scores
         ]
-    }
-    pub unsafe fn tagSchemes(&self) -> Id<NSArray<NSLinguisticTagScheme>, Shared> {
-        msg_send_id![self, tagSchemes]
-    }
-    pub unsafe fn string(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, string]
-    }
-    pub unsafe fn setString(&self, string: Option<&NSString>) {
-        msg_send![self, setString: string]
-    }
-    pub unsafe fn dominantLanguage(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, dominantLanguage]
     }
 }
 #[doc = "NSLinguisticAnalysis"]

@@ -74,41 +74,6 @@ impl NSProgress {
     pub unsafe fn addChild_withPendingUnitCount(&self, child: &NSProgress, inUnitCount: int64_t) {
         msg_send![self, addChild: child, withPendingUnitCount: inUnitCount]
     }
-    pub unsafe fn setUserInfoObject_forKey(
-        &self,
-        objectOrNil: Option<&Object>,
-        key: &NSProgressUserInfoKey,
-    ) {
-        msg_send![self, setUserInfoObject: objectOrNil, forKey: key]
-    }
-    pub unsafe fn cancel(&self) {
-        msg_send![self, cancel]
-    }
-    pub unsafe fn pause(&self) {
-        msg_send![self, pause]
-    }
-    pub unsafe fn resume(&self) {
-        msg_send![self, resume]
-    }
-    pub unsafe fn publish(&self) {
-        msg_send![self, publish]
-    }
-    pub unsafe fn unpublish(&self) {
-        msg_send![self, unpublish]
-    }
-    pub unsafe fn addSubscriberForFileURL_withPublishingHandler(
-        url: &NSURL,
-        publishingHandler: NSProgressPublishingHandler,
-    ) -> Id<Object, Shared> {
-        msg_send_id![
-            Self::class(),
-            addSubscriberForFileURL: url,
-            withPublishingHandler: publishingHandler
-        ]
-    }
-    pub unsafe fn removeSubscriber(subscriber: &Object) {
-        msg_send![Self::class(), removeSubscriber: subscriber]
-    }
     pub unsafe fn totalUnitCount(&self) -> int64_t {
         msg_send![self, totalUnitCount]
     }
@@ -175,6 +140,13 @@ impl NSProgress {
     pub unsafe fn setResumingHandler(&self, resumingHandler: TodoBlock) {
         msg_send![self, setResumingHandler: resumingHandler]
     }
+    pub unsafe fn setUserInfoObject_forKey(
+        &self,
+        objectOrNil: Option<&Object>,
+        key: &NSProgressUserInfoKey,
+    ) {
+        msg_send![self, setUserInfoObject: objectOrNil, forKey: key]
+    }
     pub unsafe fn isIndeterminate(&self) -> bool {
         msg_send![self, isIndeterminate]
     }
@@ -183,6 +155,15 @@ impl NSProgress {
     }
     pub unsafe fn isFinished(&self) -> bool {
         msg_send![self, isFinished]
+    }
+    pub unsafe fn cancel(&self) {
+        msg_send![self, cancel]
+    }
+    pub unsafe fn pause(&self) {
+        msg_send![self, pause]
+    }
+    pub unsafe fn resume(&self) {
+        msg_send![self, resume]
     }
     pub unsafe fn userInfo(&self) -> Id<NSDictionary<NSProgressUserInfoKey, Object>, Shared> {
         msg_send_id![self, userInfo]
@@ -231,6 +212,25 @@ impl NSProgress {
     }
     pub unsafe fn setFileCompletedCount(&self, fileCompletedCount: Option<&NSNumber>) {
         msg_send![self, setFileCompletedCount: fileCompletedCount]
+    }
+    pub unsafe fn publish(&self) {
+        msg_send![self, publish]
+    }
+    pub unsafe fn unpublish(&self) {
+        msg_send![self, unpublish]
+    }
+    pub unsafe fn addSubscriberForFileURL_withPublishingHandler(
+        url: &NSURL,
+        publishingHandler: NSProgressPublishingHandler,
+    ) -> Id<Object, Shared> {
+        msg_send_id![
+            Self::class(),
+            addSubscriberForFileURL: url,
+            withPublishingHandler: publishingHandler
+        ]
+    }
+    pub unsafe fn removeSubscriber(subscriber: &Object) {
+        msg_send![Self::class(), removeSubscriber: subscriber]
     }
     pub unsafe fn isOld(&self) -> bool {
         msg_send![self, isOld]

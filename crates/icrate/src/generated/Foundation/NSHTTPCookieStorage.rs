@@ -19,6 +19,9 @@ extern_class!(
     }
 );
 impl NSHTTPCookieStorage {
+    pub unsafe fn sharedHTTPCookieStorage() -> Id<NSHTTPCookieStorage, Shared> {
+        msg_send_id![Self::class(), sharedHTTPCookieStorage]
+    }
     pub unsafe fn sharedCookieStorageForGroupContainerIdentifier(
         identifier: &NSString,
     ) -> Id<NSHTTPCookieStorage, Shared> {
@@ -26,6 +29,9 @@ impl NSHTTPCookieStorage {
             Self::class(),
             sharedCookieStorageForGroupContainerIdentifier: identifier
         ]
+    }
+    pub unsafe fn cookies(&self) -> Option<Id<NSArray<NSHTTPCookie>, Shared>> {
+        msg_send_id![self, cookies]
     }
     pub unsafe fn setCookie(&self, cookie: &NSHTTPCookie) {
         msg_send![self, setCookie: cookie]
@@ -52,23 +58,17 @@ impl NSHTTPCookieStorage {
             mainDocumentURL: mainDocumentURL
         ]
     }
-    pub unsafe fn sortedCookiesUsingDescriptors(
-        &self,
-        sortOrder: &NSArray<NSSortDescriptor>,
-    ) -> Id<NSArray<NSHTTPCookie>, Shared> {
-        msg_send_id![self, sortedCookiesUsingDescriptors: sortOrder]
-    }
-    pub unsafe fn sharedHTTPCookieStorage() -> Id<NSHTTPCookieStorage, Shared> {
-        msg_send_id![Self::class(), sharedHTTPCookieStorage]
-    }
-    pub unsafe fn cookies(&self) -> Option<Id<NSArray<NSHTTPCookie>, Shared>> {
-        msg_send_id![self, cookies]
-    }
     pub unsafe fn cookieAcceptPolicy(&self) -> NSHTTPCookieAcceptPolicy {
         msg_send![self, cookieAcceptPolicy]
     }
     pub unsafe fn setCookieAcceptPolicy(&self, cookieAcceptPolicy: NSHTTPCookieAcceptPolicy) {
         msg_send![self, setCookieAcceptPolicy: cookieAcceptPolicy]
+    }
+    pub unsafe fn sortedCookiesUsingDescriptors(
+        &self,
+        sortOrder: &NSArray<NSSortDescriptor>,
+    ) -> Id<NSArray<NSHTTPCookie>, Shared> {
+        msg_send_id![self, sortedCookiesUsingDescriptors: sortOrder]
     }
 }
 #[doc = "NSURLSessionTaskAdditions"]

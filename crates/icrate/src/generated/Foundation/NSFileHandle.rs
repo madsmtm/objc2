@@ -19,6 +19,9 @@ extern_class!(
     }
 );
 impl NSFileHandle {
+    pub unsafe fn availableData(&self) -> Id<NSData, Shared> {
+        msg_send_id![self, availableData]
+    }
     pub unsafe fn initWithFileDescriptor_closeOnDealloc(
         &self,
         fd: c_int,
@@ -75,12 +78,21 @@ impl NSFileHandle {
     pub unsafe fn closeAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, closeAndReturnError: error]
     }
-    pub unsafe fn availableData(&self) -> Id<NSData, Shared> {
-        msg_send_id![self, availableData]
-    }
 }
 #[doc = "NSFileHandleCreation"]
 impl NSFileHandle {
+    pub unsafe fn fileHandleWithStandardInput() -> Id<NSFileHandle, Shared> {
+        msg_send_id![Self::class(), fileHandleWithStandardInput]
+    }
+    pub unsafe fn fileHandleWithStandardOutput() -> Id<NSFileHandle, Shared> {
+        msg_send_id![Self::class(), fileHandleWithStandardOutput]
+    }
+    pub unsafe fn fileHandleWithStandardError() -> Id<NSFileHandle, Shared> {
+        msg_send_id![Self::class(), fileHandleWithStandardError]
+    }
+    pub unsafe fn fileHandleWithNullDevice() -> Id<NSFileHandle, Shared> {
+        msg_send_id![Self::class(), fileHandleWithNullDevice]
+    }
     pub unsafe fn fileHandleForReadingAtPath(path: &NSString) -> Option<Id<Self, Shared>> {
         msg_send_id![Self::class(), fileHandleForReadingAtPath: path]
     }
@@ -111,18 +123,6 @@ impl NSFileHandle {
         error: *mut *mut NSError,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![Self::class(), fileHandleForUpdatingURL: url, error: error]
-    }
-    pub unsafe fn fileHandleWithStandardInput() -> Id<NSFileHandle, Shared> {
-        msg_send_id![Self::class(), fileHandleWithStandardInput]
-    }
-    pub unsafe fn fileHandleWithStandardOutput() -> Id<NSFileHandle, Shared> {
-        msg_send_id![Self::class(), fileHandleWithStandardOutput]
-    }
-    pub unsafe fn fileHandleWithStandardError() -> Id<NSFileHandle, Shared> {
-        msg_send_id![Self::class(), fileHandleWithStandardError]
-    }
-    pub unsafe fn fileHandleWithNullDevice() -> Id<NSFileHandle, Shared> {
-        msg_send_id![Self::class(), fileHandleWithNullDevice]
     }
 }
 #[doc = "NSFileHandleAsynchronousAccess"]
@@ -219,13 +219,13 @@ extern_class!(
     }
 );
 impl NSPipe {
-    pub unsafe fn pipe() -> Id<NSPipe, Shared> {
-        msg_send_id![Self::class(), pipe]
-    }
     pub unsafe fn fileHandleForReading(&self) -> Id<NSFileHandle, Shared> {
         msg_send_id![self, fileHandleForReading]
     }
     pub unsafe fn fileHandleForWriting(&self) -> Id<NSFileHandle, Shared> {
         msg_send_id![self, fileHandleForWriting]
+    }
+    pub unsafe fn pipe() -> Id<NSPipe, Shared> {
+        msg_send_id![Self::class(), pipe]
     }
 }

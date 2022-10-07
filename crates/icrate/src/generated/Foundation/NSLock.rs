@@ -37,6 +37,9 @@ impl NSConditionLock {
     pub unsafe fn initWithCondition(&self, condition: NSInteger) -> Id<Self, Shared> {
         msg_send_id![self, initWithCondition: condition]
     }
+    pub unsafe fn condition(&self) -> NSInteger {
+        msg_send![self, condition]
+    }
     pub unsafe fn lockWhenCondition(&self, condition: NSInteger) {
         msg_send![self, lockWhenCondition: condition]
     }
@@ -58,9 +61,6 @@ impl NSConditionLock {
         limit: &NSDate,
     ) -> bool {
         msg_send![self, lockWhenCondition: condition, beforeDate: limit]
-    }
-    pub unsafe fn condition(&self) -> NSInteger {
-        msg_send![self, condition]
     }
     pub unsafe fn name(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, name]

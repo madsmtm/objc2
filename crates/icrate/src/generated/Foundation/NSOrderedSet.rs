@@ -19,6 +19,9 @@ __inner_extern_class!(
     }
 );
 impl<ObjectType: Message> NSOrderedSet<ObjectType> {
+    pub unsafe fn count(&self) -> NSUInteger {
+        msg_send![self, count]
+    }
     pub unsafe fn objectAtIndex(&self, idx: NSUInteger) -> Id<ObjectType, Shared> {
         msg_send_id![self, objectAtIndex: idx]
     }
@@ -38,9 +41,6 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
     }
-    pub unsafe fn count(&self) -> NSUInteger {
-        msg_send![self, count]
-    }
 }
 #[doc = "NSExtendedOrderedSet"]
 impl<ObjectType: Message> NSOrderedSet<ObjectType> {
@@ -49,6 +49,12 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     }
     pub unsafe fn objectsAtIndexes(&self, indexes: &NSIndexSet) -> Id<NSArray<ObjectType>, Shared> {
         msg_send_id![self, objectsAtIndexes: indexes]
+    }
+    pub unsafe fn firstObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, firstObject]
+    }
+    pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, lastObject]
     }
     pub unsafe fn isEqualToOrderedSet(&self, other: &NSOrderedSet<ObjectType>) -> bool {
         msg_send![self, isEqualToOrderedSet: other]
@@ -76,6 +82,15 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     }
     pub unsafe fn reverseObjectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared> {
         msg_send_id![self, reverseObjectEnumerator]
+    }
+    pub unsafe fn reversedOrderedSet(&self) -> Id<NSOrderedSet<ObjectType>, Shared> {
+        msg_send_id![self, reversedOrderedSet]
+    }
+    pub unsafe fn array(&self) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, array]
+    }
+    pub unsafe fn set(&self) -> Id<NSSet<ObjectType>, Shared> {
+        msg_send_id![self, set]
     }
     pub unsafe fn enumerateObjectsUsingBlock(&self, block: TodoBlock) {
         msg_send![self, enumerateObjectsUsingBlock: block]
@@ -181,6 +196,9 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
     ) -> Id<NSArray<ObjectType>, Shared> {
         msg_send_id![self, sortedArrayWithOptions: opts, usingComparator: cmptr]
     }
+    pub unsafe fn description(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, description]
+    }
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale]
     }
@@ -190,24 +208,6 @@ impl<ObjectType: Message> NSOrderedSet<ObjectType> {
         level: NSUInteger,
     ) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale, indent: level]
-    }
-    pub unsafe fn firstObject(&self) -> Option<Id<ObjectType, Shared>> {
-        msg_send_id![self, firstObject]
-    }
-    pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>> {
-        msg_send_id![self, lastObject]
-    }
-    pub unsafe fn reversedOrderedSet(&self) -> Id<NSOrderedSet<ObjectType>, Shared> {
-        msg_send_id![self, reversedOrderedSet]
-    }
-    pub unsafe fn array(&self) -> Id<NSArray<ObjectType>, Shared> {
-        msg_send_id![self, array]
-    }
-    pub unsafe fn set(&self) -> Id<NSSet<ObjectType>, Shared> {
-        msg_send_id![self, set]
-    }
-    pub unsafe fn description(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, description]
     }
 }
 #[doc = "NSOrderedSetCreation"]

@@ -17,6 +17,15 @@ extern_class!(
     }
 );
 impl NSRunLoop {
+    pub unsafe fn currentRunLoop() -> Id<NSRunLoop, Shared> {
+        msg_send_id![Self::class(), currentRunLoop]
+    }
+    pub unsafe fn mainRunLoop() -> Id<NSRunLoop, Shared> {
+        msg_send_id![Self::class(), mainRunLoop]
+    }
+    pub unsafe fn currentMode(&self) -> Option<Id<NSRunLoopMode, Shared>> {
+        msg_send_id![self, currentMode]
+    }
     pub unsafe fn getCFRunLoop(&self) -> CFRunLoopRef {
         msg_send![self, getCFRunLoop]
     }
@@ -34,15 +43,6 @@ impl NSRunLoop {
     }
     pub unsafe fn acceptInputForMode_beforeDate(&self, mode: &NSRunLoopMode, limitDate: &NSDate) {
         msg_send![self, acceptInputForMode: mode, beforeDate: limitDate]
-    }
-    pub unsafe fn currentRunLoop() -> Id<NSRunLoop, Shared> {
-        msg_send_id![Self::class(), currentRunLoop]
-    }
-    pub unsafe fn mainRunLoop() -> Id<NSRunLoop, Shared> {
-        msg_send_id![Self::class(), mainRunLoop]
-    }
-    pub unsafe fn currentMode(&self) -> Option<Id<NSRunLoopMode, Shared>> {
-        msg_send_id![self, currentMode]
     }
 }
 #[doc = "NSRunLoopConveniences"]

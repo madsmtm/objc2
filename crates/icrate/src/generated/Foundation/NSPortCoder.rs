@@ -60,13 +60,13 @@ impl NSPortCoder {
 }
 #[doc = "NSDistributedObjects"]
 impl NSObject {
+    pub unsafe fn classForPortCoder(&self) -> &Class {
+        msg_send![self, classForPortCoder]
+    }
     pub unsafe fn replacementObjectForPortCoder(
         &self,
         coder: &NSPortCoder,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, replacementObjectForPortCoder: coder]
-    }
-    pub unsafe fn classForPortCoder(&self) -> &Class {
-        msg_send![self, classForPortCoder]
     }
 }

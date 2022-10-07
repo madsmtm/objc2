@@ -16,6 +16,12 @@ extern_class!(
     }
 );
 impl NSSpellServer {
+    pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSSpellServerDelegate>) {
+        msg_send![self, setDelegate: delegate]
+    }
     pub unsafe fn registerLanguage_byVendor(
         &self,
         language: Option<&NSString>,
@@ -32,12 +38,6 @@ impl NSSpellServer {
     }
     pub unsafe fn run(&self) {
         msg_send![self, run]
-    }
-    pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSSpellServerDelegate>) {
-        msg_send![self, setDelegate: delegate]
     }
 }
 pub type NSSpellServerDelegate = NSObject;

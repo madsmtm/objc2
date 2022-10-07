@@ -20,6 +20,12 @@ extern_class!(
     }
 );
 impl NSDateFormatter {
+    pub unsafe fn formattingContext(&self) -> NSFormattingContext {
+        msg_send![self, formattingContext]
+    }
+    pub unsafe fn setFormattingContext(&self, formattingContext: NSFormattingContext) {
+        msg_send![self, setFormattingContext: formattingContext]
+    }
     pub unsafe fn getObjectValue_forString_range_error(
         &self,
         obj: Option<&mut Option<Id<Object, Shared>>>,
@@ -65,15 +71,6 @@ impl NSDateFormatter {
             locale: locale
         ]
     }
-    pub unsafe fn setLocalizedDateFormatFromTemplate(&self, dateFormatTemplate: &NSString) {
-        msg_send![self, setLocalizedDateFormatFromTemplate: dateFormatTemplate]
-    }
-    pub unsafe fn formattingContext(&self) -> NSFormattingContext {
-        msg_send![self, formattingContext]
-    }
-    pub unsafe fn setFormattingContext(&self, formattingContext: NSFormattingContext) {
-        msg_send![self, setFormattingContext: formattingContext]
-    }
     pub unsafe fn defaultFormatterBehavior() -> NSDateFormatterBehavior {
         msg_send![Self::class(), defaultFormatterBehavior]
     }
@@ -82,6 +79,9 @@ impl NSDateFormatter {
             Self::class(),
             setDefaultFormatterBehavior: defaultFormatterBehavior
         ]
+    }
+    pub unsafe fn setLocalizedDateFormatFromTemplate(&self, dateFormatTemplate: &NSString) {
+        msg_send![self, setLocalizedDateFormatFromTemplate: dateFormatTemplate]
     }
     pub unsafe fn dateFormat(&self) -> Id<NSString, Shared> {
         msg_send_id![self, dateFormat]

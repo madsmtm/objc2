@@ -11,6 +11,24 @@ extern_class!(
     }
 );
 impl NSEnergyFormatter {
+    pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared> {
+        msg_send_id![self, numberFormatter]
+    }
+    pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>) {
+        msg_send![self, setNumberFormatter: numberFormatter]
+    }
+    pub unsafe fn unitStyle(&self) -> NSFormattingUnitStyle {
+        msg_send![self, unitStyle]
+    }
+    pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle) {
+        msg_send![self, setUnitStyle: unitStyle]
+    }
+    pub unsafe fn isForFoodEnergyUse(&self) -> bool {
+        msg_send![self, isForFoodEnergyUse]
+    }
+    pub unsafe fn setForFoodEnergyUse(&self, forFoodEnergyUse: bool) {
+        msg_send![self, setForFoodEnergyUse: forFoodEnergyUse]
+    }
     pub unsafe fn stringFromValue_unit(
         &self,
         value: c_double,
@@ -47,23 +65,5 @@ impl NSEnergyFormatter {
             forString: string,
             errorDescription: error
         ]
-    }
-    pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared> {
-        msg_send_id![self, numberFormatter]
-    }
-    pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>) {
-        msg_send![self, setNumberFormatter: numberFormatter]
-    }
-    pub unsafe fn unitStyle(&self) -> NSFormattingUnitStyle {
-        msg_send![self, unitStyle]
-    }
-    pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle) {
-        msg_send![self, setUnitStyle: unitStyle]
-    }
-    pub unsafe fn isForFoodEnergyUse(&self) -> bool {
-        msg_send![self, isForFoodEnergyUse]
-    }
-    pub unsafe fn setForFoodEnergyUse(&self, forFoodEnergyUse: bool) {
-        msg_send![self, setForFoodEnergyUse: forFoodEnergyUse]
     }
 }

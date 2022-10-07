@@ -63,6 +63,12 @@ impl NSXMLElement {
     pub unsafe fn removeAttributeForName(&self, name: &NSString) {
         msg_send![self, removeAttributeForName: name]
     }
+    pub unsafe fn attributes(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
+        msg_send_id![self, attributes]
+    }
+    pub unsafe fn setAttributes(&self, attributes: Option<&NSArray<NSXMLNode>>) {
+        msg_send![self, setAttributes: attributes]
+    }
     pub unsafe fn setAttributesWithDictionary(
         &self,
         attributes: &NSDictionary<NSString, NSString>,
@@ -84,6 +90,12 @@ impl NSXMLElement {
     }
     pub unsafe fn removeNamespaceForPrefix(&self, name: &NSString) {
         msg_send![self, removeNamespaceForPrefix: name]
+    }
+    pub unsafe fn namespaces(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
+        msg_send_id![self, namespaces]
+    }
+    pub unsafe fn setNamespaces(&self, namespaces: Option<&NSArray<NSXMLNode>>) {
+        msg_send![self, setNamespaces: namespaces]
     }
     pub unsafe fn namespaceForPrefix(&self, name: &NSString) -> Option<Id<NSXMLNode, Shared>> {
         msg_send_id![self, namespaceForPrefix: name]
@@ -117,18 +129,6 @@ impl NSXMLElement {
     }
     pub unsafe fn normalizeAdjacentTextNodesPreservingCDATA(&self, preserve: bool) {
         msg_send![self, normalizeAdjacentTextNodesPreservingCDATA: preserve]
-    }
-    pub unsafe fn attributes(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
-        msg_send_id![self, attributes]
-    }
-    pub unsafe fn setAttributes(&self, attributes: Option<&NSArray<NSXMLNode>>) {
-        msg_send![self, setAttributes: attributes]
-    }
-    pub unsafe fn namespaces(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
-        msg_send_id![self, namespaces]
-    }
-    pub unsafe fn setNamespaces(&self, namespaces: Option<&NSArray<NSXMLNode>>) {
-        msg_send![self, setNamespaces: namespaces]
     }
 }
 #[doc = "NSDeprecated"]

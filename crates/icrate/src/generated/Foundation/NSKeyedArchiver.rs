@@ -45,6 +45,21 @@ impl NSKeyedArchiver {
     pub unsafe fn archiveRootObject_toFile(rootObject: &Object, path: &NSString) -> bool {
         msg_send![Self::class(), archiveRootObject: rootObject, toFile: path]
     }
+    pub unsafe fn delegate(&self) -> Option<Id<NSKeyedArchiverDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSKeyedArchiverDelegate>) {
+        msg_send![self, setDelegate: delegate]
+    }
+    pub unsafe fn outputFormat(&self) -> NSPropertyListFormat {
+        msg_send![self, outputFormat]
+    }
+    pub unsafe fn setOutputFormat(&self, outputFormat: NSPropertyListFormat) {
+        msg_send![self, setOutputFormat: outputFormat]
+    }
+    pub unsafe fn encodedData(&self) -> Id<NSData, Shared> {
+        msg_send_id![self, encodedData]
+    }
     pub unsafe fn finishEncoding(&self) {
         msg_send![self, finishEncoding]
     }
@@ -91,21 +106,6 @@ impl NSKeyedArchiver {
         key: &NSString,
     ) {
         msg_send![self, encodeBytes: bytes, length: length, forKey: key]
-    }
-    pub unsafe fn delegate(&self) -> Option<Id<NSKeyedArchiverDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSKeyedArchiverDelegate>) {
-        msg_send![self, setDelegate: delegate]
-    }
-    pub unsafe fn outputFormat(&self) -> NSPropertyListFormat {
-        msg_send![self, outputFormat]
-    }
-    pub unsafe fn setOutputFormat(&self, outputFormat: NSPropertyListFormat) {
-        msg_send![self, setOutputFormat: outputFormat]
-    }
-    pub unsafe fn encodedData(&self) -> Id<NSData, Shared> {
-        msg_send_id![self, encodedData]
     }
     pub unsafe fn requiresSecureCoding(&self) -> bool {
         msg_send![self, requiresSecureCoding]
@@ -227,6 +227,12 @@ impl NSKeyedUnarchiver {
     pub unsafe fn unarchiveObjectWithFile(path: &NSString) -> Option<Id<Object, Shared>> {
         msg_send_id![Self::class(), unarchiveObjectWithFile: path]
     }
+    pub unsafe fn delegate(&self) -> Option<Id<NSKeyedUnarchiverDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSKeyedUnarchiverDelegate>) {
+        msg_send![self, setDelegate: delegate]
+    }
     pub unsafe fn finishDecoding(&self) {
         msg_send![self, finishDecoding]
     }
@@ -273,12 +279,6 @@ impl NSKeyedUnarchiver {
     ) -> *mut u8 {
         msg_send![self, decodeBytesForKey: key, returnedLength: lengthp]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<NSKeyedUnarchiverDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSKeyedUnarchiverDelegate>) {
-        msg_send![self, setDelegate: delegate]
-    }
     pub unsafe fn requiresSecureCoding(&self) -> bool {
         msg_send![self, requiresSecureCoding]
     }
@@ -296,6 +296,9 @@ pub type NSKeyedArchiverDelegate = NSObject;
 pub type NSKeyedUnarchiverDelegate = NSObject;
 #[doc = "NSKeyedArchiverObjectSubstitution"]
 impl NSObject {
+    pub unsafe fn classForKeyedArchiver(&self) -> Option<&Class> {
+        msg_send![self, classForKeyedArchiver]
+    }
     pub unsafe fn replacementObjectForKeyedArchiver(
         &self,
         archiver: &NSKeyedArchiver,
@@ -304,9 +307,6 @@ impl NSObject {
     }
     pub unsafe fn classFallbacksForKeyedArchiver() -> Id<NSArray<NSString>, Shared> {
         msg_send_id![Self::class(), classFallbacksForKeyedArchiver]
-    }
-    pub unsafe fn classForKeyedArchiver(&self) -> Option<&Class> {
-        msg_send![self, classForKeyedArchiver]
     }
 }
 #[doc = "NSKeyedUnarchiverObjectSubstitution"]

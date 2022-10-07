@@ -12,6 +12,24 @@ extern_class!(
     }
 );
 impl NSPersonNameComponentsFormatter {
+    pub unsafe fn style(&self) -> NSPersonNameComponentsFormatterStyle {
+        msg_send![self, style]
+    }
+    pub unsafe fn setStyle(&self, style: NSPersonNameComponentsFormatterStyle) {
+        msg_send![self, setStyle: style]
+    }
+    pub unsafe fn isPhonetic(&self) -> bool {
+        msg_send![self, isPhonetic]
+    }
+    pub unsafe fn setPhonetic(&self, phonetic: bool) {
+        msg_send![self, setPhonetic: phonetic]
+    }
+    pub unsafe fn locale(&self) -> Id<NSLocale, Shared> {
+        msg_send_id![self, locale]
+    }
+    pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
+        msg_send![self, setLocale: locale]
+    }
     pub unsafe fn localizedStringFromPersonNameComponents_style_options(
         components: &NSPersonNameComponents,
         nameFormatStyle: NSPersonNameComponentsFormatterStyle,
@@ -54,23 +72,5 @@ impl NSPersonNameComponentsFormatter {
             forString: string,
             errorDescription: error
         ]
-    }
-    pub unsafe fn style(&self) -> NSPersonNameComponentsFormatterStyle {
-        msg_send![self, style]
-    }
-    pub unsafe fn setStyle(&self, style: NSPersonNameComponentsFormatterStyle) {
-        msg_send![self, setStyle: style]
-    }
-    pub unsafe fn isPhonetic(&self) -> bool {
-        msg_send![self, isPhonetic]
-    }
-    pub unsafe fn setPhonetic(&self, phonetic: bool) {
-        msg_send![self, setPhonetic: phonetic]
-    }
-    pub unsafe fn locale(&self) -> Id<NSLocale, Shared> {
-        msg_send_id![self, locale]
-    }
-    pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
-        msg_send![self, setLocale: locale]
     }
 }

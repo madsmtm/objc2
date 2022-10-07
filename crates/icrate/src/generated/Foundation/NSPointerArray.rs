@@ -32,6 +32,9 @@ impl NSPointerArray {
     ) -> Id<NSPointerArray, Shared> {
         msg_send_id![Self::class(), pointerArrayWithPointerFunctions: functions]
     }
+    pub unsafe fn pointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
+        msg_send_id![self, pointerFunctions]
+    }
     pub unsafe fn pointerAtIndex(&self, index: NSUInteger) -> *mut c_void {
         msg_send![self, pointerAtIndex: index]
     }
@@ -49,9 +52,6 @@ impl NSPointerArray {
     }
     pub unsafe fn compact(&self) {
         msg_send![self, compact]
-    }
-    pub unsafe fn pointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
-        msg_send_id![self, pointerFunctions]
     }
     pub unsafe fn count(&self) -> NSUInteger {
         msg_send![self, count]

@@ -26,21 +26,6 @@ impl NSScriptCommand {
     pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: inCoder]
     }
-    pub unsafe fn performDefaultImplementation(&self) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, performDefaultImplementation]
-    }
-    pub unsafe fn executeCommand(&self) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, executeCommand]
-    }
-    pub unsafe fn currentCommand() -> Option<Id<NSScriptCommand, Shared>> {
-        msg_send_id![Self::class(), currentCommand]
-    }
-    pub unsafe fn suspendExecution(&self) {
-        msg_send![self, suspendExecution]
-    }
-    pub unsafe fn resumeExecutionWithResult(&self, result: Option<&Object>) {
-        msg_send![self, resumeExecutionWithResult: result]
-    }
     pub unsafe fn commandDescription(&self) -> Id<NSScriptCommandDescription, Shared> {
         msg_send_id![self, commandDescription]
     }
@@ -73,6 +58,12 @@ impl NSScriptCommand {
     }
     pub unsafe fn isWellFormed(&self) -> bool {
         msg_send![self, isWellFormed]
+    }
+    pub unsafe fn performDefaultImplementation(&self) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, performDefaultImplementation]
+    }
+    pub unsafe fn executeCommand(&self) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, executeCommand]
     }
     pub unsafe fn scriptErrorNumber(&self) -> NSInteger {
         msg_send![self, scriptErrorNumber]
@@ -114,7 +105,16 @@ impl NSScriptCommand {
     pub unsafe fn setScriptErrorString(&self, scriptErrorString: Option<&NSString>) {
         msg_send![self, setScriptErrorString: scriptErrorString]
     }
+    pub unsafe fn currentCommand() -> Option<Id<NSScriptCommand, Shared>> {
+        msg_send_id![Self::class(), currentCommand]
+    }
     pub unsafe fn appleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>> {
         msg_send_id![self, appleEvent]
+    }
+    pub unsafe fn suspendExecution(&self) {
+        msg_send![self, suspendExecution]
+    }
+    pub unsafe fn resumeExecutionWithResult(&self, result: Option<&Object>) {
+        msg_send![self, resumeExecutionWithResult: result]
     }
 }

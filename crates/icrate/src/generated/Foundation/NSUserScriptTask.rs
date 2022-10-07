@@ -26,11 +26,11 @@ impl NSUserScriptTask {
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithURL: url, error: error]
     }
-    pub unsafe fn executeWithCompletionHandler(&self, handler: NSUserScriptTaskCompletionHandler) {
-        msg_send![self, executeWithCompletionHandler: handler]
-    }
     pub unsafe fn scriptURL(&self) -> Id<NSURL, Shared> {
         msg_send_id![self, scriptURL]
+    }
+    pub unsafe fn executeWithCompletionHandler(&self, handler: NSUserScriptTaskCompletionHandler) {
+        msg_send![self, executeWithCompletionHandler: handler]
     }
 }
 extern_class!(
@@ -41,17 +41,6 @@ extern_class!(
     }
 );
 impl NSUserUnixTask {
-    pub unsafe fn executeWithArguments_completionHandler(
-        &self,
-        arguments: Option<&NSArray<NSString>>,
-        handler: NSUserUnixTaskCompletionHandler,
-    ) {
-        msg_send![
-            self,
-            executeWithArguments: arguments,
-            completionHandler: handler
-        ]
-    }
     pub unsafe fn standardInput(&self) -> Option<Id<NSFileHandle, Shared>> {
         msg_send_id![self, standardInput]
     }
@@ -69,6 +58,17 @@ impl NSUserUnixTask {
     }
     pub unsafe fn setStandardError(&self, standardError: Option<&NSFileHandle>) {
         msg_send![self, setStandardError: standardError]
+    }
+    pub unsafe fn executeWithArguments_completionHandler(
+        &self,
+        arguments: Option<&NSArray<NSString>>,
+        handler: NSUserUnixTaskCompletionHandler,
+    ) {
+        msg_send![
+            self,
+            executeWithArguments: arguments,
+            completionHandler: handler
+        ]
     }
 }
 extern_class!(
@@ -99,17 +99,17 @@ extern_class!(
     }
 );
 impl NSUserAutomatorTask {
+    pub unsafe fn variables(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, variables]
+    }
+    pub unsafe fn setVariables(&self, variables: Option<&NSDictionary<NSString, Object>>) {
+        msg_send![self, setVariables: variables]
+    }
     pub unsafe fn executeWithInput_completionHandler(
         &self,
         input: Option<&NSSecureCoding>,
         handler: NSUserAutomatorTaskCompletionHandler,
     ) {
         msg_send![self, executeWithInput: input, completionHandler: handler]
-    }
-    pub unsafe fn variables(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
-        msg_send_id![self, variables]
-    }
-    pub unsafe fn setVariables(&self, variables: Option<&NSDictionary<NSString, Object>>) {
-        msg_send![self, setVariables: variables]
     }
 }

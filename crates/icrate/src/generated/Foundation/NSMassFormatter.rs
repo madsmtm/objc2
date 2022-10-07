@@ -12,6 +12,24 @@ extern_class!(
     }
 );
 impl NSMassFormatter {
+    pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared> {
+        msg_send_id![self, numberFormatter]
+    }
+    pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>) {
+        msg_send![self, setNumberFormatter: numberFormatter]
+    }
+    pub unsafe fn unitStyle(&self) -> NSFormattingUnitStyle {
+        msg_send![self, unitStyle]
+    }
+    pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle) {
+        msg_send![self, setUnitStyle: unitStyle]
+    }
+    pub unsafe fn isForPersonMassUse(&self) -> bool {
+        msg_send![self, isForPersonMassUse]
+    }
+    pub unsafe fn setForPersonMassUse(&self, forPersonMassUse: bool) {
+        msg_send![self, setForPersonMassUse: forPersonMassUse]
+    }
     pub unsafe fn stringFromValue_unit(
         &self,
         value: c_double,
@@ -52,23 +70,5 @@ impl NSMassFormatter {
             forString: string,
             errorDescription: error
         ]
-    }
-    pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared> {
-        msg_send_id![self, numberFormatter]
-    }
-    pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>) {
-        msg_send![self, setNumberFormatter: numberFormatter]
-    }
-    pub unsafe fn unitStyle(&self) -> NSFormattingUnitStyle {
-        msg_send![self, unitStyle]
-    }
-    pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle) {
-        msg_send![self, setUnitStyle: unitStyle]
-    }
-    pub unsafe fn isForPersonMassUse(&self) -> bool {
-        msg_send![self, isForPersonMassUse]
-    }
-    pub unsafe fn setForPersonMassUse(&self, forPersonMassUse: bool) {
-        msg_send![self, setForPersonMassUse: forPersonMassUse]
     }
 }

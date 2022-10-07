@@ -19,6 +19,12 @@ extern_class!(
     }
 );
 impl NSTimeZone {
+    pub unsafe fn name(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, name]
+    }
+    pub unsafe fn data(&self) -> Id<NSData, Shared> {
+        msg_send_id![self, data]
+    }
     pub unsafe fn secondsFromGMTForDate(&self, aDate: &NSDate) -> NSInteger {
         msg_send![self, secondsFromGMTForDate: aDate]
     }
@@ -37,33 +43,14 @@ impl NSTimeZone {
     ) -> Option<Id<NSDate, Shared>> {
         msg_send_id![self, nextDaylightSavingTimeTransitionAfterDate: aDate]
     }
-    pub unsafe fn name(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, name]
-    }
-    pub unsafe fn data(&self) -> Id<NSData, Shared> {
-        msg_send_id![self, data]
-    }
 }
 #[doc = "NSExtendedTimeZone"]
 impl NSTimeZone {
-    pub unsafe fn resetSystemTimeZone() {
-        msg_send![Self::class(), resetSystemTimeZone]
-    }
-    pub unsafe fn abbreviationDictionary() -> Id<NSDictionary<NSString, NSString>, Shared> {
-        msg_send_id![Self::class(), abbreviationDictionary]
-    }
-    pub unsafe fn isEqualToTimeZone(&self, aTimeZone: &NSTimeZone) -> bool {
-        msg_send![self, isEqualToTimeZone: aTimeZone]
-    }
-    pub unsafe fn localizedName_locale(
-        &self,
-        style: NSTimeZoneNameStyle,
-        locale: Option<&NSLocale>,
-    ) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, localizedName: style, locale: locale]
-    }
     pub unsafe fn systemTimeZone() -> Id<NSTimeZone, Shared> {
         msg_send_id![Self::class(), systemTimeZone]
+    }
+    pub unsafe fn resetSystemTimeZone() {
+        msg_send![Self::class(), resetSystemTimeZone]
     }
     pub unsafe fn defaultTimeZone() -> Id<NSTimeZone, Shared> {
         msg_send_id![Self::class(), defaultTimeZone]
@@ -76,6 +63,9 @@ impl NSTimeZone {
     }
     pub unsafe fn knownTimeZoneNames() -> Id<NSArray<NSString>, Shared> {
         msg_send_id![Self::class(), knownTimeZoneNames]
+    }
+    pub unsafe fn abbreviationDictionary() -> Id<NSDictionary<NSString, NSString>, Shared> {
+        msg_send_id![Self::class(), abbreviationDictionary]
     }
     pub unsafe fn setAbbreviationDictionary(
         abbreviationDictionary: &NSDictionary<NSString, NSString>,
@@ -105,6 +95,16 @@ impl NSTimeZone {
     }
     pub unsafe fn description(&self) -> Id<NSString, Shared> {
         msg_send_id![self, description]
+    }
+    pub unsafe fn isEqualToTimeZone(&self, aTimeZone: &NSTimeZone) -> bool {
+        msg_send![self, isEqualToTimeZone: aTimeZone]
+    }
+    pub unsafe fn localizedName_locale(
+        &self,
+        style: NSTimeZoneNameStyle,
+        locale: Option<&NSLocale>,
+    ) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, localizedName: style, locale: locale]
     }
 }
 #[doc = "NSTimeZoneCreation"]

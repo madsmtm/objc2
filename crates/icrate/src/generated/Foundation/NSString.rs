@@ -21,6 +21,9 @@ extern_class!(
     }
 );
 impl NSString {
+    pub fn length(&self) -> NSUInteger {
+        msg_send![self, length]
+    }
     pub unsafe fn characterAtIndex(&self, index: NSUInteger) -> unichar {
         msg_send![self, characterAtIndex: index]
     }
@@ -29,9 +32,6 @@ impl NSString {
     }
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
-    }
-    pub fn length(&self) -> NSUInteger {
-        msg_send![self, length]
     }
 }
 pub type NSStringTransform = NSString;
@@ -197,6 +197,42 @@ impl NSString {
     pub fn stringByAppendingString(&self, aString: &NSString) -> Id<NSString, Shared> {
         msg_send_id![self, stringByAppendingString: aString]
     }
+    pub unsafe fn doubleValue(&self) -> c_double {
+        msg_send![self, doubleValue]
+    }
+    pub unsafe fn floatValue(&self) -> c_float {
+        msg_send![self, floatValue]
+    }
+    pub unsafe fn intValue(&self) -> c_int {
+        msg_send![self, intValue]
+    }
+    pub unsafe fn integerValue(&self) -> NSInteger {
+        msg_send![self, integerValue]
+    }
+    pub unsafe fn longLongValue(&self) -> c_longlong {
+        msg_send![self, longLongValue]
+    }
+    pub unsafe fn boolValue(&self) -> bool {
+        msg_send![self, boolValue]
+    }
+    pub unsafe fn uppercaseString(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, uppercaseString]
+    }
+    pub unsafe fn lowercaseString(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, lowercaseString]
+    }
+    pub unsafe fn capitalizedString(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, capitalizedString]
+    }
+    pub unsafe fn localizedUppercaseString(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, localizedUppercaseString]
+    }
+    pub unsafe fn localizedLowercaseString(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, localizedLowercaseString]
+    }
+    pub unsafe fn localizedCapitalizedString(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, localizedCapitalizedString]
+    }
     pub unsafe fn uppercaseStringWithLocale(
         &self,
         locale: Option<&NSLocale>,
@@ -267,6 +303,15 @@ impl NSString {
     pub unsafe fn enumerateLinesUsingBlock(&self, block: TodoBlock) {
         msg_send![self, enumerateLinesUsingBlock: block]
     }
+    pub fn UTF8String(&self) -> *mut c_char {
+        msg_send![self, UTF8String]
+    }
+    pub unsafe fn fastestEncoding(&self) -> NSStringEncoding {
+        msg_send![self, fastestEncoding]
+    }
+    pub unsafe fn smallestEncoding(&self) -> NSStringEncoding {
+        msg_send![self, smallestEncoding]
+    }
     pub unsafe fn dataUsingEncoding_allowLossyConversion(
         &self,
         encoding: NSStringEncoding,
@@ -330,10 +375,28 @@ impl NSString {
     pub fn lengthOfBytesUsingEncoding(&self, enc: NSStringEncoding) -> NSUInteger {
         msg_send![self, lengthOfBytesUsingEncoding: enc]
     }
+    pub unsafe fn availableStringEncodings() -> NonNull<NSStringEncoding> {
+        msg_send![Self::class(), availableStringEncodings]
+    }
     pub unsafe fn localizedNameOfStringEncoding(
         encoding: NSStringEncoding,
     ) -> Id<NSString, Shared> {
         msg_send_id![Self::class(), localizedNameOfStringEncoding: encoding]
+    }
+    pub unsafe fn defaultCStringEncoding() -> NSStringEncoding {
+        msg_send![Self::class(), defaultCStringEncoding]
+    }
+    pub unsafe fn decomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, decomposedStringWithCanonicalMapping]
+    }
+    pub unsafe fn precomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, precomposedStringWithCanonicalMapping]
+    }
+    pub unsafe fn decomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, decomposedStringWithCompatibilityMapping]
+    }
+    pub unsafe fn precomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, precomposedStringWithCompatibilityMapping]
     }
     pub unsafe fn componentsSeparatedByString(
         &self,
@@ -446,6 +509,12 @@ impl NSString {
             encoding: enc,
             error: error
         ]
+    }
+    pub unsafe fn description(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, description]
+    }
+    pub unsafe fn hash(&self) -> NSUInteger {
+        msg_send![self, hash]
     }
     pub unsafe fn initWithCharactersNoCopy_length_freeWhenDone(
         &self,
@@ -691,75 +760,6 @@ impl NSString {
             usedEncoding: enc,
             error: error
         ]
-    }
-    pub unsafe fn doubleValue(&self) -> c_double {
-        msg_send![self, doubleValue]
-    }
-    pub unsafe fn floatValue(&self) -> c_float {
-        msg_send![self, floatValue]
-    }
-    pub unsafe fn intValue(&self) -> c_int {
-        msg_send![self, intValue]
-    }
-    pub unsafe fn integerValue(&self) -> NSInteger {
-        msg_send![self, integerValue]
-    }
-    pub unsafe fn longLongValue(&self) -> c_longlong {
-        msg_send![self, longLongValue]
-    }
-    pub unsafe fn boolValue(&self) -> bool {
-        msg_send![self, boolValue]
-    }
-    pub unsafe fn uppercaseString(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, uppercaseString]
-    }
-    pub unsafe fn lowercaseString(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, lowercaseString]
-    }
-    pub unsafe fn capitalizedString(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, capitalizedString]
-    }
-    pub unsafe fn localizedUppercaseString(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, localizedUppercaseString]
-    }
-    pub unsafe fn localizedLowercaseString(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, localizedLowercaseString]
-    }
-    pub unsafe fn localizedCapitalizedString(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, localizedCapitalizedString]
-    }
-    pub fn UTF8String(&self) -> *mut c_char {
-        msg_send![self, UTF8String]
-    }
-    pub unsafe fn fastestEncoding(&self) -> NSStringEncoding {
-        msg_send![self, fastestEncoding]
-    }
-    pub unsafe fn smallestEncoding(&self) -> NSStringEncoding {
-        msg_send![self, smallestEncoding]
-    }
-    pub unsafe fn availableStringEncodings() -> NonNull<NSStringEncoding> {
-        msg_send![Self::class(), availableStringEncodings]
-    }
-    pub unsafe fn defaultCStringEncoding() -> NSStringEncoding {
-        msg_send![Self::class(), defaultCStringEncoding]
-    }
-    pub unsafe fn decomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, decomposedStringWithCanonicalMapping]
-    }
-    pub unsafe fn precomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, precomposedStringWithCanonicalMapping]
-    }
-    pub unsafe fn decomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, decomposedStringWithCompatibilityMapping]
-    }
-    pub unsafe fn precomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, precomposedStringWithCompatibilityMapping]
-    }
-    pub unsafe fn description(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, description]
-    }
-    pub unsafe fn hash(&self) -> NSUInteger {
-        msg_send![self, hash]
     }
 }
 pub type NSStringEncodingDetectionOptionsKey = NSString;

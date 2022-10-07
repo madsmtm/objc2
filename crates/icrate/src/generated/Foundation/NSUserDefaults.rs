@@ -18,6 +18,9 @@ extern_class!(
     }
 );
 impl NSUserDefaults {
+    pub unsafe fn standardUserDefaults() -> Id<NSUserDefaults, Shared> {
+        msg_send_id![Self::class(), standardUserDefaults]
+    }
     pub unsafe fn resetStandardUserDefaults() {
         msg_send![Self::class(), resetStandardUserDefaults]
     }
@@ -105,6 +108,9 @@ impl NSUserDefaults {
     pub unsafe fn dictionaryRepresentation(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
         msg_send_id![self, dictionaryRepresentation]
     }
+    pub unsafe fn volatileDomainNames(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, volatileDomainNames]
+    }
     pub unsafe fn volatileDomainForName(
         &self,
         domainName: &NSString,
@@ -148,11 +154,5 @@ impl NSUserDefaults {
     }
     pub unsafe fn objectIsForcedForKey_inDomain(&self, key: &NSString, domain: &NSString) -> bool {
         msg_send![self, objectIsForcedForKey: key, inDomain: domain]
-    }
-    pub unsafe fn standardUserDefaults() -> Id<NSUserDefaults, Shared> {
-        msg_send_id![Self::class(), standardUserDefaults]
-    }
-    pub unsafe fn volatileDomainNames(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, volatileDomainNames]
     }
 }

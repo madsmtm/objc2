@@ -9,14 +9,44 @@ impl NSString {
     pub unsafe fn pathWithComponents(components: &NSArray<NSString>) -> Id<NSString, Shared> {
         msg_send_id![Self::class(), pathWithComponents: components]
     }
+    pub unsafe fn pathComponents(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, pathComponents]
+    }
+    pub unsafe fn isAbsolutePath(&self) -> bool {
+        msg_send![self, isAbsolutePath]
+    }
+    pub unsafe fn lastPathComponent(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, lastPathComponent]
+    }
+    pub unsafe fn stringByDeletingLastPathComponent(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, stringByDeletingLastPathComponent]
+    }
     pub fn stringByAppendingPathComponent(&self, str: &NSString) -> Id<NSString, Shared> {
         msg_send_id![self, stringByAppendingPathComponent: str]
+    }
+    pub unsafe fn pathExtension(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, pathExtension]
+    }
+    pub unsafe fn stringByDeletingPathExtension(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, stringByDeletingPathExtension]
     }
     pub unsafe fn stringByAppendingPathExtension(
         &self,
         str: &NSString,
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, stringByAppendingPathExtension: str]
+    }
+    pub unsafe fn stringByAbbreviatingWithTildeInPath(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, stringByAbbreviatingWithTildeInPath]
+    }
+    pub unsafe fn stringByExpandingTildeInPath(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, stringByExpandingTildeInPath]
+    }
+    pub unsafe fn stringByStandardizingPath(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, stringByStandardizingPath]
+    }
+    pub unsafe fn stringByResolvingSymlinksInPath(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, stringByResolvingSymlinksInPath]
     }
     pub unsafe fn stringsByAppendingPaths(
         &self,
@@ -39,45 +69,15 @@ impl NSString {
             filterTypes: filterTypes
         ]
     }
+    pub unsafe fn fileSystemRepresentation(&self) -> NonNull<c_char> {
+        msg_send![self, fileSystemRepresentation]
+    }
     pub unsafe fn getFileSystemRepresentation_maxLength(
         &self,
         cname: NonNull<c_char>,
         max: NSUInteger,
     ) -> bool {
         msg_send![self, getFileSystemRepresentation: cname, maxLength: max]
-    }
-    pub unsafe fn pathComponents(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, pathComponents]
-    }
-    pub unsafe fn isAbsolutePath(&self) -> bool {
-        msg_send![self, isAbsolutePath]
-    }
-    pub unsafe fn lastPathComponent(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, lastPathComponent]
-    }
-    pub unsafe fn stringByDeletingLastPathComponent(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, stringByDeletingLastPathComponent]
-    }
-    pub unsafe fn pathExtension(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, pathExtension]
-    }
-    pub unsafe fn stringByDeletingPathExtension(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, stringByDeletingPathExtension]
-    }
-    pub unsafe fn stringByAbbreviatingWithTildeInPath(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, stringByAbbreviatingWithTildeInPath]
-    }
-    pub unsafe fn stringByExpandingTildeInPath(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, stringByExpandingTildeInPath]
-    }
-    pub unsafe fn stringByStandardizingPath(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, stringByStandardizingPath]
-    }
-    pub unsafe fn stringByResolvingSymlinksInPath(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, stringByResolvingSymlinksInPath]
-    }
-    pub unsafe fn fileSystemRepresentation(&self) -> NonNull<c_char> {
-        msg_send![self, fileSystemRepresentation]
     }
 }
 #[doc = "NSArrayPathExtensions"]

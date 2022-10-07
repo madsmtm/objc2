@@ -41,9 +41,6 @@ impl NSException {
             userInfo: aUserInfo
         ]
     }
-    pub unsafe fn raise(&self) {
-        msg_send![self, raise]
-    }
     pub unsafe fn name(&self) -> Id<NSExceptionName, Shared> {
         msg_send_id![self, name]
     }
@@ -58,6 +55,9 @@ impl NSException {
     }
     pub unsafe fn callStackSymbols(&self) -> Id<NSArray<NSString>, Shared> {
         msg_send_id![self, callStackSymbols]
+    }
+    pub unsafe fn raise(&self) {
+        msg_send![self, raise]
     }
 }
 #[doc = "NSExceptionRaisingConveniences"]

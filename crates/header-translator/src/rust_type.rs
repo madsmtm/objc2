@@ -36,7 +36,7 @@ impl GenericType {
                     .get_objc_type_arguments()
                     .into_iter()
                     .map(|param| {
-                        match RustType::parse(param, false) {
+                        match RustType::parse(param, false, Nullability::Unspecified) {
                             RustType::Id {
                                 type_,
                                 is_const: _,
@@ -295,12 +295,11 @@ pub enum RustType {
 }
 
 impl RustType {
-    fn parse(ty: Type<'_>, is_consumed: bool) -> Self {
+    fn parse(ty: Type<'_>, is_consumed: bool, mut nullability: Nullability) -> Self {
         use TypeKind::*;
 
         // println!("{:?}, {:?}", ty, ty.get_class_type());
 
-        let mut nullability = Nullability::Unspecified;
         let mut lifetime = Lifetime::Unspecified;
         let ty = parse_attributed(ty, &mut nullability, &mut lifetime, None);
 
@@ -338,7 +337,7 @@ impl RustType {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 // Note: Can't handle const id pointers
                 // assert!(!ty.is_const_qualified(), "expected pointee to not be const");
-                let pointee = Self::parse(ty, is_consumed);
+                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified);
                 Self::Pointer {
                     nullability,
                     is_const,
@@ -418,6 +417,7 @@ impl RustType {
                 let element_type = Self::parse(
                     ty.get_element_type().expect("array to have element type"),
                     is_consumed,
+                    Nullability::Unspecified,
                 );
                 let num_elements = ty
                     .get_size()
@@ -445,7 +445,7 @@ impl RustType {
     }
 
     pub fn parse_argument(ty: Type<'_>, is_consumed: bool) -> Self {
-        let this = Self::parse(ty, is_consumed);
+        let this = Self::parse(ty, is_consumed, Nullability::Unspecified);
 
         match &this {
             Self::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
@@ -464,11 +464,23 @@ impl RustType {
     }
 
     pub fn parse_typedef(ty: Type<'_>) -> Self {
-        let this = Self::parse(ty, false);
+        let this = Self::parse(ty, false, Nullability::Unspecified);
 
         this.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
                 panic!("unexpected lifetime in typedef {this:?}");
+            }
+        });
+
+        this
+    }
+
+    pub fn parse_property(ty: Type<'_>, default_nullability: Nullability) -> Self {
+        let this = Self::parse(ty, false, default_nullability);
+
+        this.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in property {this:?}");
             }
         });
 
@@ -626,19 +638,17 @@ impl RustTypeReturn {
     }
 
     pub fn new(inner: RustType) -> Self {
-        Self { inner }
-    }
-
-    pub fn parse(ty: Type<'_>) -> Self {
-        let inner = RustType::parse(ty, false);
-
         inner.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
                 panic!("unexpected lifetime in return {inner:?}");
             }
         });
 
-        Self::new(inner)
+        Self { inner }
+    }
+
+    pub fn parse(ty: Type<'_>) -> Self {
+        Self::new(RustType::parse(ty, false, Nullability::Unspecified))
     }
 }
 

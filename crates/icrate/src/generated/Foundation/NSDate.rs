@@ -13,6 +13,9 @@ extern_class!(
     }
 );
 impl NSDate {
+    pub unsafe fn timeIntervalSinceReferenceDate(&self) -> NSTimeInterval {
+        msg_send![self, timeIntervalSinceReferenceDate]
+    }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
@@ -25,14 +28,17 @@ impl NSDate {
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
     }
-    pub unsafe fn timeIntervalSinceReferenceDate(&self) -> NSTimeInterval {
-        msg_send![self, timeIntervalSinceReferenceDate]
-    }
 }
 #[doc = "NSExtendedDate"]
 impl NSDate {
     pub unsafe fn timeIntervalSinceDate(&self, anotherDate: &NSDate) -> NSTimeInterval {
         msg_send![self, timeIntervalSinceDate: anotherDate]
+    }
+    pub unsafe fn timeIntervalSinceNow(&self) -> NSTimeInterval {
+        msg_send![self, timeIntervalSinceNow]
+    }
+    pub unsafe fn timeIntervalSince1970(&self) -> NSTimeInterval {
+        msg_send![self, timeIntervalSince1970]
     }
     pub unsafe fn addTimeInterval(&self, seconds: NSTimeInterval) -> Id<Object, Shared> {
         msg_send_id![self, addTimeInterval: seconds]
@@ -52,17 +58,11 @@ impl NSDate {
     pub unsafe fn isEqualToDate(&self, otherDate: &NSDate) -> bool {
         msg_send![self, isEqualToDate: otherDate]
     }
-    pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
-        msg_send_id![self, descriptionWithLocale: locale]
-    }
-    pub unsafe fn timeIntervalSinceNow(&self) -> NSTimeInterval {
-        msg_send![self, timeIntervalSinceNow]
-    }
-    pub unsafe fn timeIntervalSince1970(&self) -> NSTimeInterval {
-        msg_send![self, timeIntervalSince1970]
-    }
     pub unsafe fn description(&self) -> Id<NSString, Shared> {
         msg_send_id![self, description]
+    }
+    pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
+        msg_send_id![self, descriptionWithLocale: locale]
     }
     pub unsafe fn timeIntervalSinceReferenceDate() -> NSTimeInterval {
         msg_send![Self::class(), timeIntervalSinceReferenceDate]
@@ -92,6 +92,15 @@ impl NSDate {
             sinceDate: date
         ]
     }
+    pub unsafe fn distantFuture() -> Id<NSDate, Shared> {
+        msg_send_id![Self::class(), distantFuture]
+    }
+    pub unsafe fn distantPast() -> Id<NSDate, Shared> {
+        msg_send_id![Self::class(), distantPast]
+    }
+    pub unsafe fn now() -> Id<NSDate, Shared> {
+        msg_send_id![Self::class(), now]
+    }
     pub unsafe fn initWithTimeIntervalSinceNow(&self, secs: NSTimeInterval) -> Id<Self, Shared> {
         msg_send_id![self, initWithTimeIntervalSinceNow: secs]
     }
@@ -104,14 +113,5 @@ impl NSDate {
         date: &NSDate,
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithTimeInterval: secsToBeAdded, sinceDate: date]
-    }
-    pub unsafe fn distantFuture() -> Id<NSDate, Shared> {
-        msg_send_id![Self::class(), distantFuture]
-    }
-    pub unsafe fn distantPast() -> Id<NSDate, Shared> {
-        msg_send_id![Self::class(), distantPast]
-    }
-    pub unsafe fn now() -> Id<NSDate, Shared> {
-        msg_send_id![Self::class(), now]
     }
 }

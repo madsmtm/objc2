@@ -20,6 +20,12 @@ extern_class!(
     }
 );
 impl NSCalendar {
+    pub unsafe fn currentCalendar() -> Id<NSCalendar, Shared> {
+        msg_send_id![Self::class(), currentCalendar]
+    }
+    pub unsafe fn autoupdatingCurrentCalendar() -> Id<NSCalendar, Shared> {
+        msg_send_id![Self::class(), autoupdatingCurrentCalendar]
+    }
     pub unsafe fn calendarWithIdentifier(
         calendarIdentifierConstant: &NSCalendarIdentifier,
     ) -> Option<Id<NSCalendar, Shared>> {
@@ -36,6 +42,93 @@ impl NSCalendar {
         ident: &NSCalendarIdentifier,
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, initWithCalendarIdentifier: ident]
+    }
+    pub unsafe fn calendarIdentifier(&self) -> Id<NSCalendarIdentifier, Shared> {
+        msg_send_id![self, calendarIdentifier]
+    }
+    pub unsafe fn locale(&self) -> Option<Id<NSLocale, Shared>> {
+        msg_send_id![self, locale]
+    }
+    pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
+        msg_send![self, setLocale: locale]
+    }
+    pub unsafe fn timeZone(&self) -> Id<NSTimeZone, Shared> {
+        msg_send_id![self, timeZone]
+    }
+    pub unsafe fn setTimeZone(&self, timeZone: &NSTimeZone) {
+        msg_send![self, setTimeZone: timeZone]
+    }
+    pub unsafe fn firstWeekday(&self) -> NSUInteger {
+        msg_send![self, firstWeekday]
+    }
+    pub unsafe fn setFirstWeekday(&self, firstWeekday: NSUInteger) {
+        msg_send![self, setFirstWeekday: firstWeekday]
+    }
+    pub unsafe fn minimumDaysInFirstWeek(&self) -> NSUInteger {
+        msg_send![self, minimumDaysInFirstWeek]
+    }
+    pub unsafe fn setMinimumDaysInFirstWeek(&self, minimumDaysInFirstWeek: NSUInteger) {
+        msg_send![self, setMinimumDaysInFirstWeek: minimumDaysInFirstWeek]
+    }
+    pub unsafe fn eraSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, eraSymbols]
+    }
+    pub unsafe fn longEraSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, longEraSymbols]
+    }
+    pub unsafe fn monthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, monthSymbols]
+    }
+    pub unsafe fn shortMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortMonthSymbols]
+    }
+    pub unsafe fn veryShortMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, veryShortMonthSymbols]
+    }
+    pub unsafe fn standaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, standaloneMonthSymbols]
+    }
+    pub unsafe fn shortStandaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortStandaloneMonthSymbols]
+    }
+    pub unsafe fn veryShortStandaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, veryShortStandaloneMonthSymbols]
+    }
+    pub unsafe fn weekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, weekdaySymbols]
+    }
+    pub unsafe fn shortWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortWeekdaySymbols]
+    }
+    pub unsafe fn veryShortWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, veryShortWeekdaySymbols]
+    }
+    pub unsafe fn standaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, standaloneWeekdaySymbols]
+    }
+    pub unsafe fn shortStandaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortStandaloneWeekdaySymbols]
+    }
+    pub unsafe fn veryShortStandaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, veryShortStandaloneWeekdaySymbols]
+    }
+    pub unsafe fn quarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, quarterSymbols]
+    }
+    pub unsafe fn shortQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortQuarterSymbols]
+    }
+    pub unsafe fn standaloneQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, standaloneQuarterSymbols]
+    }
+    pub unsafe fn shortStandaloneQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, shortStandaloneQuarterSymbols]
+    }
+    pub unsafe fn AMSymbol(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, AMSymbol]
+    }
+    pub unsafe fn PMSymbol(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, PMSymbol]
     }
     pub unsafe fn minimumRangeOfUnit(&self, unit: NSCalendarUnit) -> NSRange {
         msg_send![self, minimumRangeOfUnit: unit]
@@ -428,99 +521,6 @@ impl NSCalendar {
     ) -> bool {
         msg_send![self, date: date, matchesComponents: components]
     }
-    pub unsafe fn currentCalendar() -> Id<NSCalendar, Shared> {
-        msg_send_id![Self::class(), currentCalendar]
-    }
-    pub unsafe fn autoupdatingCurrentCalendar() -> Id<NSCalendar, Shared> {
-        msg_send_id![Self::class(), autoupdatingCurrentCalendar]
-    }
-    pub unsafe fn calendarIdentifier(&self) -> Id<NSCalendarIdentifier, Shared> {
-        msg_send_id![self, calendarIdentifier]
-    }
-    pub unsafe fn locale(&self) -> Option<Id<NSLocale, Shared>> {
-        msg_send_id![self, locale]
-    }
-    pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
-        msg_send![self, setLocale: locale]
-    }
-    pub unsafe fn timeZone(&self) -> Id<NSTimeZone, Shared> {
-        msg_send_id![self, timeZone]
-    }
-    pub unsafe fn setTimeZone(&self, timeZone: &NSTimeZone) {
-        msg_send![self, setTimeZone: timeZone]
-    }
-    pub unsafe fn firstWeekday(&self) -> NSUInteger {
-        msg_send![self, firstWeekday]
-    }
-    pub unsafe fn setFirstWeekday(&self, firstWeekday: NSUInteger) {
-        msg_send![self, setFirstWeekday: firstWeekday]
-    }
-    pub unsafe fn minimumDaysInFirstWeek(&self) -> NSUInteger {
-        msg_send![self, minimumDaysInFirstWeek]
-    }
-    pub unsafe fn setMinimumDaysInFirstWeek(&self, minimumDaysInFirstWeek: NSUInteger) {
-        msg_send![self, setMinimumDaysInFirstWeek: minimumDaysInFirstWeek]
-    }
-    pub unsafe fn eraSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, eraSymbols]
-    }
-    pub unsafe fn longEraSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, longEraSymbols]
-    }
-    pub unsafe fn monthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, monthSymbols]
-    }
-    pub unsafe fn shortMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, shortMonthSymbols]
-    }
-    pub unsafe fn veryShortMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, veryShortMonthSymbols]
-    }
-    pub unsafe fn standaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, standaloneMonthSymbols]
-    }
-    pub unsafe fn shortStandaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, shortStandaloneMonthSymbols]
-    }
-    pub unsafe fn veryShortStandaloneMonthSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, veryShortStandaloneMonthSymbols]
-    }
-    pub unsafe fn weekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, weekdaySymbols]
-    }
-    pub unsafe fn shortWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, shortWeekdaySymbols]
-    }
-    pub unsafe fn veryShortWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, veryShortWeekdaySymbols]
-    }
-    pub unsafe fn standaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, standaloneWeekdaySymbols]
-    }
-    pub unsafe fn shortStandaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, shortStandaloneWeekdaySymbols]
-    }
-    pub unsafe fn veryShortStandaloneWeekdaySymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, veryShortStandaloneWeekdaySymbols]
-    }
-    pub unsafe fn quarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, quarterSymbols]
-    }
-    pub unsafe fn shortQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, shortQuarterSymbols]
-    }
-    pub unsafe fn standaloneQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, standaloneQuarterSymbols]
-    }
-    pub unsafe fn shortStandaloneQuarterSymbols(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, shortStandaloneQuarterSymbols]
-    }
-    pub unsafe fn AMSymbol(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, AMSymbol]
-    }
-    pub unsafe fn PMSymbol(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, PMSymbol]
-    }
 }
 extern_class!(
     #[derive(Debug)]
@@ -530,21 +530,6 @@ extern_class!(
     }
 );
 impl NSDateComponents {
-    pub unsafe fn week(&self) -> NSInteger {
-        msg_send![self, week]
-    }
-    pub unsafe fn setWeek(&self, v: NSInteger) {
-        msg_send![self, setWeek: v]
-    }
-    pub unsafe fn setValue_forComponent(&self, value: NSInteger, unit: NSCalendarUnit) {
-        msg_send![self, setValue: value, forComponent: unit]
-    }
-    pub unsafe fn valueForComponent(&self, unit: NSCalendarUnit) -> NSInteger {
-        msg_send![self, valueForComponent: unit]
-    }
-    pub unsafe fn isValidDateInCalendar(&self, calendar: &NSCalendar) -> bool {
-        msg_send![self, isValidDateInCalendar: calendar]
-    }
     pub unsafe fn calendar(&self) -> Option<Id<NSCalendar, Shared>> {
         msg_send_id![self, calendar]
     }
@@ -650,7 +635,22 @@ impl NSDateComponents {
     pub unsafe fn date(&self) -> Option<Id<NSDate, Shared>> {
         msg_send_id![self, date]
     }
+    pub unsafe fn week(&self) -> NSInteger {
+        msg_send![self, week]
+    }
+    pub unsafe fn setWeek(&self, v: NSInteger) {
+        msg_send![self, setWeek: v]
+    }
+    pub unsafe fn setValue_forComponent(&self, value: NSInteger, unit: NSCalendarUnit) {
+        msg_send![self, setValue: value, forComponent: unit]
+    }
+    pub unsafe fn valueForComponent(&self, unit: NSCalendarUnit) -> NSInteger {
+        msg_send![self, valueForComponent: unit]
+    }
     pub unsafe fn isValidDate(&self) -> bool {
         msg_send![self, isValidDate]
+    }
+    pub unsafe fn isValidDateInCalendar(&self, calendar: &NSCalendar) -> bool {
+        msg_send![self, isValidDateInCalendar: calendar]
     }
 }

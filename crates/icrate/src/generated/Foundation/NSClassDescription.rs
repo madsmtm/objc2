@@ -34,12 +34,6 @@ impl NSClassDescription {
     ) -> Option<Id<NSClassDescription, Shared>> {
         msg_send_id![Self::class(), classDescriptionForClass: aClass]
     }
-    pub unsafe fn inverseForRelationshipKey(
-        &self,
-        relationshipKey: &NSString,
-    ) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, inverseForRelationshipKey: relationshipKey]
-    }
     pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
         msg_send_id![self, attributeKeys]
     }
@@ -49,15 +43,15 @@ impl NSClassDescription {
     pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
         msg_send_id![self, toManyRelationshipKeys]
     }
-}
-#[doc = "NSClassDescriptionPrimitives"]
-impl NSObject {
     pub unsafe fn inverseForRelationshipKey(
         &self,
         relationshipKey: &NSString,
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, inverseForRelationshipKey: relationshipKey]
     }
+}
+#[doc = "NSClassDescriptionPrimitives"]
+impl NSObject {
     pub unsafe fn classDescription(&self) -> Id<NSClassDescription, Shared> {
         msg_send_id![self, classDescription]
     }
@@ -69,5 +63,11 @@ impl NSObject {
     }
     pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
         msg_send_id![self, toManyRelationshipKeys]
+    }
+    pub unsafe fn inverseForRelationshipKey(
+        &self,
+        relationshipKey: &NSString,
+    ) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, inverseForRelationshipKey: relationshipKey]
     }
 }

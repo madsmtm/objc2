@@ -180,21 +180,6 @@ extern_class!(
     }
 );
 impl NSUserNotificationCenter {
-    pub unsafe fn scheduleNotification(&self, notification: &NSUserNotification) {
-        msg_send![self, scheduleNotification: notification]
-    }
-    pub unsafe fn removeScheduledNotification(&self, notification: &NSUserNotification) {
-        msg_send![self, removeScheduledNotification: notification]
-    }
-    pub unsafe fn deliverNotification(&self, notification: &NSUserNotification) {
-        msg_send![self, deliverNotification: notification]
-    }
-    pub unsafe fn removeDeliveredNotification(&self, notification: &NSUserNotification) {
-        msg_send![self, removeDeliveredNotification: notification]
-    }
-    pub unsafe fn removeAllDeliveredNotifications(&self) {
-        msg_send![self, removeAllDeliveredNotifications]
-    }
     pub unsafe fn defaultUserNotificationCenter() -> Id<NSUserNotificationCenter, Shared> {
         msg_send_id![Self::class(), defaultUserNotificationCenter]
     }
@@ -213,8 +198,23 @@ impl NSUserNotificationCenter {
     ) {
         msg_send![self, setScheduledNotifications: scheduledNotifications]
     }
+    pub unsafe fn scheduleNotification(&self, notification: &NSUserNotification) {
+        msg_send![self, scheduleNotification: notification]
+    }
+    pub unsafe fn removeScheduledNotification(&self, notification: &NSUserNotification) {
+        msg_send![self, removeScheduledNotification: notification]
+    }
     pub unsafe fn deliveredNotifications(&self) -> Id<NSArray<NSUserNotification>, Shared> {
         msg_send_id![self, deliveredNotifications]
+    }
+    pub unsafe fn deliverNotification(&self, notification: &NSUserNotification) {
+        msg_send![self, deliverNotification: notification]
+    }
+    pub unsafe fn removeDeliveredNotification(&self, notification: &NSUserNotification) {
+        msg_send![self, removeDeliveredNotification: notification]
+    }
+    pub unsafe fn removeAllDeliveredNotifications(&self) {
+        msg_send![self, removeAllDeliveredNotifications]
     }
 }
 pub type NSUserNotificationCenterDelegate = NSObject;

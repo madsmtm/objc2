@@ -23,11 +23,11 @@ impl NSObject {
     pub unsafe fn setVersion(aVersion: NSInteger) {
         msg_send![Self::class(), setVersion: aVersion]
     }
-    pub unsafe fn replacementObjectForCoder(&self, coder: &NSCoder) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, replacementObjectForCoder: coder]
-    }
     pub unsafe fn classForCoder(&self) -> &Class {
         msg_send![self, classForCoder]
+    }
+    pub unsafe fn replacementObjectForCoder(&self, coder: &NSCoder) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, replacementObjectForCoder: coder]
     }
 }
 #[doc = "NSDeprecatedMethods"]

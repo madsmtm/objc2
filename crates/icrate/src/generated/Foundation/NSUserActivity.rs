@@ -28,40 +28,6 @@ impl NSUserActivity {
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
-    pub unsafe fn addUserInfoEntriesFromDictionary(&self, otherDictionary: &NSDictionary) {
-        msg_send![self, addUserInfoEntriesFromDictionary: otherDictionary]
-    }
-    pub unsafe fn becomeCurrent(&self) {
-        msg_send![self, becomeCurrent]
-    }
-    pub unsafe fn resignCurrent(&self) {
-        msg_send![self, resignCurrent]
-    }
-    pub unsafe fn invalidate(&self) {
-        msg_send![self, invalidate]
-    }
-    pub unsafe fn getContinuationStreamsWithCompletionHandler(&self, completionHandler: TodoBlock) {
-        msg_send![
-            self,
-            getContinuationStreamsWithCompletionHandler: completionHandler
-        ]
-    }
-    pub unsafe fn deleteSavedUserActivitiesWithPersistentIdentifiers_completionHandler(
-        persistentIdentifiers: &NSArray<NSUserActivityPersistentIdentifier>,
-        handler: TodoBlock,
-    ) {
-        msg_send![
-            Self::class(),
-            deleteSavedUserActivitiesWithPersistentIdentifiers: persistentIdentifiers,
-            completionHandler: handler
-        ]
-    }
-    pub unsafe fn deleteAllSavedUserActivitiesWithCompletionHandler(handler: TodoBlock) {
-        msg_send![
-            Self::class(),
-            deleteAllSavedUserActivitiesWithCompletionHandler: handler
-        ]
-    }
     pub unsafe fn activityType(&self) -> Id<NSString, Shared> {
         msg_send_id![self, activityType]
     }
@@ -76,6 +42,9 @@ impl NSUserActivity {
     }
     pub unsafe fn setUserInfo(&self, userInfo: Option<&NSDictionary>) {
         msg_send![self, setUserInfo: userInfo]
+    }
+    pub unsafe fn addUserInfoEntriesFromDictionary(&self, otherDictionary: &NSDictionary) {
+        msg_send![self, addUserInfoEntriesFromDictionary: otherDictionary]
     }
     pub unsafe fn requiredUserInfoKeys(&self) -> Option<Id<NSSet<NSString>, Shared>> {
         msg_send_id![self, requiredUserInfoKeys]
@@ -134,6 +103,21 @@ impl NSUserActivity {
     pub unsafe fn setTargetContentIdentifier(&self, targetContentIdentifier: Option<&NSString>) {
         msg_send![self, setTargetContentIdentifier: targetContentIdentifier]
     }
+    pub unsafe fn becomeCurrent(&self) {
+        msg_send![self, becomeCurrent]
+    }
+    pub unsafe fn resignCurrent(&self) {
+        msg_send![self, resignCurrent]
+    }
+    pub unsafe fn invalidate(&self) {
+        msg_send![self, invalidate]
+    }
+    pub unsafe fn getContinuationStreamsWithCompletionHandler(&self, completionHandler: TodoBlock) {
+        msg_send![
+            self,
+            getContinuationStreamsWithCompletionHandler: completionHandler
+        ]
+    }
     pub unsafe fn isEligibleForHandoff(&self) -> bool {
         msg_send![self, isEligibleForHandoff]
     }
@@ -171,6 +155,22 @@ impl NSUserActivity {
         persistentIdentifier: Option<&NSUserActivityPersistentIdentifier>,
     ) {
         msg_send![self, setPersistentIdentifier: persistentIdentifier]
+    }
+    pub unsafe fn deleteSavedUserActivitiesWithPersistentIdentifiers_completionHandler(
+        persistentIdentifiers: &NSArray<NSUserActivityPersistentIdentifier>,
+        handler: TodoBlock,
+    ) {
+        msg_send![
+            Self::class(),
+            deleteSavedUserActivitiesWithPersistentIdentifiers: persistentIdentifiers,
+            completionHandler: handler
+        ]
+    }
+    pub unsafe fn deleteAllSavedUserActivitiesWithCompletionHandler(handler: TodoBlock) {
+        msg_send![
+            Self::class(),
+            deleteAllSavedUserActivitiesWithCompletionHandler: handler
+        ]
     }
 }
 pub type NSUserActivityDelegate = NSObject;

@@ -17,8 +17,26 @@ impl NSInvocation {
     ) -> Id<NSInvocation, Shared> {
         msg_send_id![Self::class(), invocationWithMethodSignature: sig]
     }
+    pub unsafe fn methodSignature(&self) -> Id<NSMethodSignature, Shared> {
+        msg_send_id![self, methodSignature]
+    }
     pub unsafe fn retainArguments(&self) {
         msg_send![self, retainArguments]
+    }
+    pub unsafe fn argumentsRetained(&self) -> bool {
+        msg_send![self, argumentsRetained]
+    }
+    pub unsafe fn target(&self) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, target]
+    }
+    pub unsafe fn setTarget(&self, target: Option<&Object>) {
+        msg_send![self, setTarget: target]
+    }
+    pub unsafe fn selector(&self) -> Sel {
+        msg_send![self, selector]
+    }
+    pub unsafe fn setSelector(&self, selector: Sel) {
+        msg_send![self, setSelector: selector]
     }
     pub unsafe fn getReturnValue(&self, retLoc: NonNull<c_void>) {
         msg_send![self, getReturnValue: retLoc]
@@ -37,23 +55,5 @@ impl NSInvocation {
     }
     pub unsafe fn invokeWithTarget(&self, target: &Object) {
         msg_send![self, invokeWithTarget: target]
-    }
-    pub unsafe fn methodSignature(&self) -> Id<NSMethodSignature, Shared> {
-        msg_send_id![self, methodSignature]
-    }
-    pub unsafe fn argumentsRetained(&self) -> bool {
-        msg_send![self, argumentsRetained]
-    }
-    pub unsafe fn target(&self) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, target]
-    }
-    pub unsafe fn setTarget(&self, target: Option<&Object>) {
-        msg_send![self, setTarget: target]
-    }
-    pub unsafe fn selector(&self) -> Sel {
-        msg_send![self, selector]
-    }
-    pub unsafe fn setSelector(&self, selector: Sel) {
-        msg_send![self, setSelector: selector]
     }
 }

@@ -55,6 +55,12 @@ impl NSURLConnection {
             delegate: delegate
         ]
     }
+    pub unsafe fn originalRequest(&self) -> Id<NSURLRequest, Shared> {
+        msg_send_id![self, originalRequest]
+    }
+    pub unsafe fn currentRequest(&self) -> Id<NSURLRequest, Shared> {
+        msg_send_id![self, currentRequest]
+    }
     pub unsafe fn start(&self) {
         msg_send![self, start]
     }
@@ -72,12 +78,6 @@ impl NSURLConnection {
     }
     pub unsafe fn canHandleRequest(request: &NSURLRequest) -> bool {
         msg_send![Self::class(), canHandleRequest: request]
-    }
-    pub unsafe fn originalRequest(&self) -> Id<NSURLRequest, Shared> {
-        msg_send_id![self, originalRequest]
-    }
-    pub unsafe fn currentRequest(&self) -> Id<NSURLRequest, Shared> {
-        msg_send_id![self, currentRequest]
     }
 }
 pub type NSURLConnectionDelegate = NSObject;

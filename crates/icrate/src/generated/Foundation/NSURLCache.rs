@@ -63,6 +63,12 @@ extern_class!(
     }
 );
 impl NSURLCache {
+    pub unsafe fn sharedURLCache() -> Id<NSURLCache, Shared> {
+        msg_send_id![Self::class(), sharedURLCache]
+    }
+    pub unsafe fn setSharedURLCache(sharedURLCache: &NSURLCache) {
+        msg_send![Self::class(), setSharedURLCache: sharedURLCache]
+    }
     pub unsafe fn initWithMemoryCapacity_diskCapacity_diskPath(
         &self,
         memoryCapacity: NSUInteger,
@@ -114,12 +120,6 @@ impl NSURLCache {
     }
     pub unsafe fn removeCachedResponsesSinceDate(&self, date: &NSDate) {
         msg_send![self, removeCachedResponsesSinceDate: date]
-    }
-    pub unsafe fn sharedURLCache() -> Id<NSURLCache, Shared> {
-        msg_send_id![Self::class(), sharedURLCache]
-    }
-    pub unsafe fn setSharedURLCache(sharedURLCache: &NSURLCache) {
-        msg_send![Self::class(), setSharedURLCache: sharedURLCache]
     }
     pub unsafe fn memoryCapacity(&self) -> NSUInteger {
         msg_send![self, memoryCapacity]

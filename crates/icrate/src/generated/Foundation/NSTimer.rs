@@ -129,9 +129,6 @@ impl NSTimer {
     pub unsafe fn fire(&self) {
         msg_send![self, fire]
     }
-    pub unsafe fn invalidate(&self) {
-        msg_send![self, invalidate]
-    }
     pub unsafe fn fireDate(&self) -> Id<NSDate, Shared> {
         msg_send_id![self, fireDate]
     }
@@ -146,6 +143,9 @@ impl NSTimer {
     }
     pub unsafe fn setTolerance(&self, tolerance: NSTimeInterval) {
         msg_send![self, setTolerance: tolerance]
+    }
+    pub unsafe fn invalidate(&self) {
+        msg_send![self, invalidate]
     }
     pub unsafe fn isValid(&self) -> bool {
         msg_send![self, isValid]

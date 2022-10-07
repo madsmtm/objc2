@@ -16,6 +16,9 @@ extern_class!(
     }
 );
 impl NSUbiquitousKeyValueStore {
+    pub unsafe fn defaultStore() -> Id<NSUbiquitousKeyValueStore, Shared> {
+        msg_send_id![Self::class(), defaultStore]
+    }
     pub unsafe fn objectForKey(&self, aKey: &NSString) -> Option<Id<Object, Shared>> {
         msg_send_id![self, objectForKey: aKey]
     }
@@ -74,13 +77,10 @@ impl NSUbiquitousKeyValueStore {
     pub unsafe fn setBool_forKey(&self, value: bool, aKey: &NSString) {
         msg_send![self, setBool: value, forKey: aKey]
     }
-    pub unsafe fn synchronize(&self) -> bool {
-        msg_send![self, synchronize]
-    }
-    pub unsafe fn defaultStore() -> Id<NSUbiquitousKeyValueStore, Shared> {
-        msg_send_id![Self::class(), defaultStore]
-    }
     pub unsafe fn dictionaryRepresentation(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
         msg_send_id![self, dictionaryRepresentation]
+    }
+    pub unsafe fn synchronize(&self) -> bool {
+        msg_send![self, synchronize]
     }
 }

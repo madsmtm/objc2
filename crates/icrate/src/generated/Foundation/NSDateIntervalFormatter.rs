@@ -17,19 +17,6 @@ extern_class!(
     }
 );
 impl NSDateIntervalFormatter {
-    pub unsafe fn stringFromDate_toDate(
-        &self,
-        fromDate: &NSDate,
-        toDate: &NSDate,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![self, stringFromDate: fromDate, toDate: toDate]
-    }
-    pub unsafe fn stringFromDateInterval(
-        &self,
-        dateInterval: &NSDateInterval,
-    ) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, stringFromDateInterval: dateInterval]
-    }
     pub unsafe fn locale(&self) -> Id<NSLocale, Shared> {
         msg_send_id![self, locale]
     }
@@ -65,5 +52,18 @@ impl NSDateIntervalFormatter {
     }
     pub unsafe fn setTimeStyle(&self, timeStyle: NSDateIntervalFormatterStyle) {
         msg_send![self, setTimeStyle: timeStyle]
+    }
+    pub unsafe fn stringFromDate_toDate(
+        &self,
+        fromDate: &NSDate,
+        toDate: &NSDate,
+    ) -> Id<NSString, Shared> {
+        msg_send_id![self, stringFromDate: fromDate, toDate: toDate]
+    }
+    pub unsafe fn stringFromDateInterval(
+        &self,
+        dateInterval: &NSDateInterval,
+    ) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, stringFromDateInterval: dateInterval]
     }
 }

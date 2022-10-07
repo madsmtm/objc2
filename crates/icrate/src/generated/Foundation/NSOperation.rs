@@ -23,20 +23,11 @@ impl NSOperation {
     pub unsafe fn main(&self) {
         msg_send![self, main]
     }
-    pub unsafe fn cancel(&self) {
-        msg_send![self, cancel]
-    }
-    pub unsafe fn addDependency(&self, op: &NSOperation) {
-        msg_send![self, addDependency: op]
-    }
-    pub unsafe fn removeDependency(&self, op: &NSOperation) {
-        msg_send![self, removeDependency: op]
-    }
-    pub unsafe fn waitUntilFinished(&self) {
-        msg_send![self, waitUntilFinished]
-    }
     pub unsafe fn isCancelled(&self) -> bool {
         msg_send![self, isCancelled]
+    }
+    pub unsafe fn cancel(&self) {
+        msg_send![self, cancel]
     }
     pub unsafe fn isExecuting(&self) -> bool {
         msg_send![self, isExecuting]
@@ -53,6 +44,12 @@ impl NSOperation {
     pub unsafe fn isReady(&self) -> bool {
         msg_send![self, isReady]
     }
+    pub unsafe fn addDependency(&self, op: &NSOperation) {
+        msg_send![self, addDependency: op]
+    }
+    pub unsafe fn removeDependency(&self, op: &NSOperation) {
+        msg_send![self, removeDependency: op]
+    }
     pub unsafe fn dependencies(&self) -> Id<NSArray<NSOperation>, Shared> {
         msg_send_id![self, dependencies]
     }
@@ -67,6 +64,9 @@ impl NSOperation {
     }
     pub unsafe fn setCompletionBlock(&self, completionBlock: TodoBlock) {
         msg_send![self, setCompletionBlock: completionBlock]
+    }
+    pub unsafe fn waitUntilFinished(&self) {
+        msg_send![self, waitUntilFinished]
     }
     pub unsafe fn threadPriority(&self) -> c_double {
         msg_send![self, threadPriority]
@@ -136,6 +136,9 @@ extern_class!(
     }
 );
 impl NSOperationQueue {
+    pub unsafe fn progress(&self) -> Id<NSProgress, Shared> {
+        msg_send_id![self, progress]
+    }
     pub unsafe fn addOperation(&self, op: &NSOperation) {
         msg_send![self, addOperation: op]
     }
@@ -147,15 +150,6 @@ impl NSOperationQueue {
     }
     pub unsafe fn addBarrierBlock(&self, barrier: TodoBlock) {
         msg_send![self, addBarrierBlock: barrier]
-    }
-    pub unsafe fn cancelAllOperations(&self) {
-        msg_send![self, cancelAllOperations]
-    }
-    pub unsafe fn waitUntilAllOperationsAreFinished(&self) {
-        msg_send![self, waitUntilAllOperationsAreFinished]
-    }
-    pub unsafe fn progress(&self) -> Id<NSProgress, Shared> {
-        msg_send_id![self, progress]
     }
     pub unsafe fn maxConcurrentOperationCount(&self) -> NSInteger {
         msg_send![self, maxConcurrentOperationCount]
@@ -189,6 +183,12 @@ impl NSOperationQueue {
     }
     pub unsafe fn setUnderlyingQueue(&self, underlyingQueue: Option<&dispatch_queue_t>) {
         msg_send![self, setUnderlyingQueue: underlyingQueue]
+    }
+    pub unsafe fn cancelAllOperations(&self) {
+        msg_send![self, cancelAllOperations]
+    }
+    pub unsafe fn waitUntilAllOperationsAreFinished(&self) {
+        msg_send![self, waitUntilAllOperationsAreFinished]
     }
     pub unsafe fn currentQueue() -> Option<Id<NSOperationQueue, Shared>> {
         msg_send_id![Self::class(), currentQueue]

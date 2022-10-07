@@ -21,11 +21,35 @@ impl NSUndoManager {
     pub unsafe fn endUndoGrouping(&self) {
         msg_send![self, endUndoGrouping]
     }
+    pub unsafe fn groupingLevel(&self) -> NSInteger {
+        msg_send![self, groupingLevel]
+    }
     pub unsafe fn disableUndoRegistration(&self) {
         msg_send![self, disableUndoRegistration]
     }
     pub unsafe fn enableUndoRegistration(&self) {
         msg_send![self, enableUndoRegistration]
+    }
+    pub unsafe fn isUndoRegistrationEnabled(&self) -> bool {
+        msg_send![self, isUndoRegistrationEnabled]
+    }
+    pub unsafe fn groupsByEvent(&self) -> bool {
+        msg_send![self, groupsByEvent]
+    }
+    pub unsafe fn setGroupsByEvent(&self, groupsByEvent: bool) {
+        msg_send![self, setGroupsByEvent: groupsByEvent]
+    }
+    pub unsafe fn levelsOfUndo(&self) -> NSUInteger {
+        msg_send![self, levelsOfUndo]
+    }
+    pub unsafe fn setLevelsOfUndo(&self, levelsOfUndo: NSUInteger) {
+        msg_send![self, setLevelsOfUndo: levelsOfUndo]
+    }
+    pub unsafe fn runLoopModes(&self) -> Id<NSArray<NSRunLoopMode>, Shared> {
+        msg_send_id![self, runLoopModes]
+    }
+    pub unsafe fn setRunLoopModes(&self, runLoopModes: &NSArray<NSRunLoopMode>) {
+        msg_send![self, setRunLoopModes: runLoopModes]
     }
     pub unsafe fn undo(&self) {
         msg_send![self, undo]
@@ -35,6 +59,18 @@ impl NSUndoManager {
     }
     pub unsafe fn undoNestedGroup(&self) {
         msg_send![self, undoNestedGroup]
+    }
+    pub unsafe fn canUndo(&self) -> bool {
+        msg_send![self, canUndo]
+    }
+    pub unsafe fn canRedo(&self) -> bool {
+        msg_send![self, canRedo]
+    }
+    pub unsafe fn isUndoing(&self) -> bool {
+        msg_send![self, isUndoing]
+    }
+    pub unsafe fn isRedoing(&self) -> bool {
+        msg_send![self, isRedoing]
     }
     pub unsafe fn removeAllActions(&self) {
         msg_send![self, removeAllActions]
@@ -64,57 +100,6 @@ impl NSUndoManager {
     pub unsafe fn setActionIsDiscardable(&self, discardable: bool) {
         msg_send![self, setActionIsDiscardable: discardable]
     }
-    pub unsafe fn setActionName(&self, actionName: &NSString) {
-        msg_send![self, setActionName: actionName]
-    }
-    pub unsafe fn undoMenuTitleForUndoActionName(
-        &self,
-        actionName: &NSString,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![self, undoMenuTitleForUndoActionName: actionName]
-    }
-    pub unsafe fn redoMenuTitleForUndoActionName(
-        &self,
-        actionName: &NSString,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![self, redoMenuTitleForUndoActionName: actionName]
-    }
-    pub unsafe fn groupingLevel(&self) -> NSInteger {
-        msg_send![self, groupingLevel]
-    }
-    pub unsafe fn isUndoRegistrationEnabled(&self) -> bool {
-        msg_send![self, isUndoRegistrationEnabled]
-    }
-    pub unsafe fn groupsByEvent(&self) -> bool {
-        msg_send![self, groupsByEvent]
-    }
-    pub unsafe fn setGroupsByEvent(&self, groupsByEvent: bool) {
-        msg_send![self, setGroupsByEvent: groupsByEvent]
-    }
-    pub unsafe fn levelsOfUndo(&self) -> NSUInteger {
-        msg_send![self, levelsOfUndo]
-    }
-    pub unsafe fn setLevelsOfUndo(&self, levelsOfUndo: NSUInteger) {
-        msg_send![self, setLevelsOfUndo: levelsOfUndo]
-    }
-    pub unsafe fn runLoopModes(&self) -> Id<NSArray<NSRunLoopMode>, Shared> {
-        msg_send_id![self, runLoopModes]
-    }
-    pub unsafe fn setRunLoopModes(&self, runLoopModes: &NSArray<NSRunLoopMode>) {
-        msg_send![self, setRunLoopModes: runLoopModes]
-    }
-    pub unsafe fn canUndo(&self) -> bool {
-        msg_send![self, canUndo]
-    }
-    pub unsafe fn canRedo(&self) -> bool {
-        msg_send![self, canRedo]
-    }
-    pub unsafe fn isUndoing(&self) -> bool {
-        msg_send![self, isUndoing]
-    }
-    pub unsafe fn isRedoing(&self) -> bool {
-        msg_send![self, isRedoing]
-    }
     pub unsafe fn undoActionIsDiscardable(&self) -> bool {
         msg_send![self, undoActionIsDiscardable]
     }
@@ -127,10 +112,25 @@ impl NSUndoManager {
     pub unsafe fn redoActionName(&self) -> Id<NSString, Shared> {
         msg_send_id![self, redoActionName]
     }
+    pub unsafe fn setActionName(&self, actionName: &NSString) {
+        msg_send![self, setActionName: actionName]
+    }
     pub unsafe fn undoMenuItemTitle(&self) -> Id<NSString, Shared> {
         msg_send_id![self, undoMenuItemTitle]
     }
     pub unsafe fn redoMenuItemTitle(&self) -> Id<NSString, Shared> {
         msg_send_id![self, redoMenuItemTitle]
+    }
+    pub unsafe fn undoMenuTitleForUndoActionName(
+        &self,
+        actionName: &NSString,
+    ) -> Id<NSString, Shared> {
+        msg_send_id![self, undoMenuTitleForUndoActionName: actionName]
+    }
+    pub unsafe fn redoMenuTitleForUndoActionName(
+        &self,
+        actionName: &NSString,
+    ) -> Id<NSString, Shared> {
+        msg_send_id![self, redoMenuTitleForUndoActionName: actionName]
     }
 }

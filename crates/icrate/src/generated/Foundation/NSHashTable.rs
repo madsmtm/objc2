@@ -45,6 +45,12 @@ impl<ObjectType: Message> NSHashTable<ObjectType> {
     pub unsafe fn weakObjectsHashTable() -> Id<NSHashTable<ObjectType>, Shared> {
         msg_send_id![Self::class(), weakObjectsHashTable]
     }
+    pub unsafe fn pointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
+        msg_send_id![self, pointerFunctions]
+    }
+    pub unsafe fn count(&self) -> NSUInteger {
+        msg_send![self, count]
+    }
     pub unsafe fn member(&self, object: Option<&ObjectType>) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, member: object]
     }
@@ -59,6 +65,12 @@ impl<ObjectType: Message> NSHashTable<ObjectType> {
     }
     pub unsafe fn removeAllObjects(&self) {
         msg_send![self, removeAllObjects]
+    }
+    pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, allObjects]
+    }
+    pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>> {
+        msg_send_id![self, anyObject]
     }
     pub unsafe fn containsObject(&self, anObject: Option<&ObjectType>) -> bool {
         msg_send![self, containsObject: anObject]
@@ -80,18 +92,6 @@ impl<ObjectType: Message> NSHashTable<ObjectType> {
     }
     pub unsafe fn minusHashTable(&self, other: &NSHashTable<ObjectType>) {
         msg_send![self, minusHashTable: other]
-    }
-    pub unsafe fn pointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
-        msg_send_id![self, pointerFunctions]
-    }
-    pub unsafe fn count(&self) -> NSUInteger {
-        msg_send![self, count]
-    }
-    pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared> {
-        msg_send_id![self, allObjects]
-    }
-    pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>> {
-        msg_send_id![self, anyObject]
     }
     pub unsafe fn setRepresentation(&self) -> Id<NSSet<ObjectType>, Shared> {
         msg_send_id![self, setRepresentation]

@@ -11,6 +11,9 @@ extern_class!(
     }
 );
 impl NSExtensionContext {
+    pub unsafe fn inputItems(&self) -> Id<NSArray, Shared> {
+        msg_send_id![self, inputItems]
+    }
     pub unsafe fn completeRequestReturningItems_completionHandler(
         &self,
         items: Option<&NSArray>,
@@ -27,8 +30,5 @@ impl NSExtensionContext {
     }
     pub unsafe fn openURL_completionHandler(&self, URL: &NSURL, completionHandler: TodoBlock) {
         msg_send![self, openURL: URL, completionHandler: completionHandler]
-    }
-    pub unsafe fn inputItems(&self) -> Id<NSArray, Shared> {
-        msg_send_id![self, inputItems]
     }
 }

@@ -26,6 +26,12 @@ extern_class!(
     }
 );
 impl NSUnitConverterLinear {
+    pub unsafe fn coefficient(&self) -> c_double {
+        msg_send![self, coefficient]
+    }
+    pub unsafe fn constant(&self) -> c_double {
+        msg_send![self, constant]
+    }
     pub unsafe fn initWithCoefficient(&self, coefficient: c_double) -> Id<Self, Shared> {
         msg_send_id![self, initWithCoefficient: coefficient]
     }
@@ -36,12 +42,6 @@ impl NSUnitConverterLinear {
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithCoefficient: coefficient, constant: constant]
     }
-    pub unsafe fn coefficient(&self) -> c_double {
-        msg_send![self, coefficient]
-    }
-    pub unsafe fn constant(&self) -> c_double {
-        msg_send![self, constant]
-    }
 }
 extern_class!(
     #[derive(Debug)]
@@ -51,6 +51,9 @@ extern_class!(
     }
 );
 impl NSUnit {
+    pub unsafe fn symbol(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, symbol]
+    }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
@@ -59,9 +62,6 @@ impl NSUnit {
     }
     pub unsafe fn initWithSymbol(&self, symbol: &NSString) -> Id<Self, Shared> {
         msg_send_id![self, initWithSymbol: symbol]
-    }
-    pub unsafe fn symbol(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, symbol]
     }
 }
 extern_class!(
@@ -72,6 +72,9 @@ extern_class!(
     }
 );
 impl NSDimension {
+    pub unsafe fn converter(&self) -> Id<NSUnitConverter, Shared> {
+        msg_send_id![self, converter]
+    }
     pub unsafe fn initWithSymbol_converter(
         &self,
         symbol: &NSString,
@@ -81,9 +84,6 @@ impl NSDimension {
     }
     pub unsafe fn baseUnit() -> Id<Self, Shared> {
         msg_send_id![Self::class(), baseUnit]
-    }
-    pub unsafe fn converter(&self) -> Id<NSUnitConverter, Shared> {
-        msg_send_id![self, converter]
     }
 }
 extern_class!(
@@ -187,6 +187,12 @@ extern_class!(
     }
 );
 impl NSUnitConcentrationMass {
+    pub unsafe fn gramsPerLiter() -> Id<NSUnitConcentrationMass, Shared> {
+        msg_send_id![Self::class(), gramsPerLiter]
+    }
+    pub unsafe fn milligramsPerDeciliter() -> Id<NSUnitConcentrationMass, Shared> {
+        msg_send_id![Self::class(), milligramsPerDeciliter]
+    }
     pub unsafe fn millimolesPerLiterWithGramsPerMole(
         gramsPerMole: c_double,
     ) -> Id<NSUnitConcentrationMass, Shared> {
@@ -194,12 +200,6 @@ impl NSUnitConcentrationMass {
             Self::class(),
             millimolesPerLiterWithGramsPerMole: gramsPerMole
         ]
-    }
-    pub unsafe fn gramsPerLiter() -> Id<NSUnitConcentrationMass, Shared> {
-        msg_send_id![Self::class(), gramsPerLiter]
-    }
-    pub unsafe fn milligramsPerDeciliter() -> Id<NSUnitConcentrationMass, Shared> {
-        msg_send_id![Self::class(), milligramsPerDeciliter]
     }
 }
 extern_class!(

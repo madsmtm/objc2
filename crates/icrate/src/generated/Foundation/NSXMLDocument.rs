@@ -53,6 +53,42 @@ impl NSXMLDocument {
     pub unsafe fn replacementClassForClass(cls: &Class) -> &Class {
         msg_send![Self::class(), replacementClassForClass: cls]
     }
+    pub unsafe fn characterEncoding(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, characterEncoding]
+    }
+    pub unsafe fn setCharacterEncoding(&self, characterEncoding: Option<&NSString>) {
+        msg_send![self, setCharacterEncoding: characterEncoding]
+    }
+    pub unsafe fn version(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, version]
+    }
+    pub unsafe fn setVersion(&self, version: Option<&NSString>) {
+        msg_send![self, setVersion: version]
+    }
+    pub unsafe fn isStandalone(&self) -> bool {
+        msg_send![self, isStandalone]
+    }
+    pub unsafe fn setStandalone(&self, standalone: bool) {
+        msg_send![self, setStandalone: standalone]
+    }
+    pub unsafe fn documentContentKind(&self) -> NSXMLDocumentContentKind {
+        msg_send![self, documentContentKind]
+    }
+    pub unsafe fn setDocumentContentKind(&self, documentContentKind: NSXMLDocumentContentKind) {
+        msg_send![self, setDocumentContentKind: documentContentKind]
+    }
+    pub unsafe fn MIMEType(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, MIMEType]
+    }
+    pub unsafe fn setMIMEType(&self, MIMEType: Option<&NSString>) {
+        msg_send![self, setMIMEType: MIMEType]
+    }
+    pub unsafe fn DTD(&self) -> Option<Id<NSXMLDTD, Shared>> {
+        msg_send_id![self, DTD]
+    }
+    pub unsafe fn setDTD(&self, DTD: Option<&NSXMLDTD>) {
+        msg_send![self, setDTD: DTD]
+    }
     pub unsafe fn setRootElement(&self, root: &NSXMLElement) {
         msg_send![self, setRootElement: root]
     }
@@ -76,6 +112,9 @@ impl NSXMLDocument {
     }
     pub unsafe fn replaceChildAtIndex_withNode(&self, index: NSUInteger, node: &NSXMLNode) {
         msg_send![self, replaceChildAtIndex: index, withNode: node]
+    }
+    pub unsafe fn XMLData(&self) -> Id<NSData, Shared> {
+        msg_send_id![self, XMLData]
     }
     pub unsafe fn XMLDataWithOptions(&self, options: NSXMLNodeOptions) -> Id<NSData, Shared> {
         msg_send_id![self, XMLDataWithOptions: options]
@@ -121,44 +160,5 @@ impl NSXMLDocument {
     }
     pub unsafe fn validateAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, validateAndReturnError: error]
-    }
-    pub unsafe fn characterEncoding(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, characterEncoding]
-    }
-    pub unsafe fn setCharacterEncoding(&self, characterEncoding: Option<&NSString>) {
-        msg_send![self, setCharacterEncoding: characterEncoding]
-    }
-    pub unsafe fn version(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, version]
-    }
-    pub unsafe fn setVersion(&self, version: Option<&NSString>) {
-        msg_send![self, setVersion: version]
-    }
-    pub unsafe fn isStandalone(&self) -> bool {
-        msg_send![self, isStandalone]
-    }
-    pub unsafe fn setStandalone(&self, standalone: bool) {
-        msg_send![self, setStandalone: standalone]
-    }
-    pub unsafe fn documentContentKind(&self) -> NSXMLDocumentContentKind {
-        msg_send![self, documentContentKind]
-    }
-    pub unsafe fn setDocumentContentKind(&self, documentContentKind: NSXMLDocumentContentKind) {
-        msg_send![self, setDocumentContentKind: documentContentKind]
-    }
-    pub unsafe fn MIMEType(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, MIMEType]
-    }
-    pub unsafe fn setMIMEType(&self, MIMEType: Option<&NSString>) {
-        msg_send![self, setMIMEType: MIMEType]
-    }
-    pub unsafe fn DTD(&self) -> Option<Id<NSXMLDTD, Shared>> {
-        msg_send_id![self, DTD]
-    }
-    pub unsafe fn setDTD(&self, DTD: Option<&NSXMLDTD>) {
-        msg_send![self, setDTD: DTD]
-    }
-    pub unsafe fn XMLData(&self) -> Id<NSData, Shared> {
-        msg_send_id![self, XMLData]
     }
 }

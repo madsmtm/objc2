@@ -18,11 +18,20 @@ extern_class!(
     }
 );
 impl NSURLCredentialStorage {
+    pub unsafe fn sharedCredentialStorage() -> Id<NSURLCredentialStorage, Shared> {
+        msg_send_id![Self::class(), sharedCredentialStorage]
+    }
     pub unsafe fn credentialsForProtectionSpace(
         &self,
         space: &NSURLProtectionSpace,
     ) -> Option<Id<NSDictionary<NSString, NSURLCredential>, Shared>> {
         msg_send_id![self, credentialsForProtectionSpace: space]
+    }
+    pub unsafe fn allCredentials(
+        &self,
+    ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary<NSString, NSURLCredential>>, Shared>
+    {
+        msg_send_id![self, allCredentials]
     }
     pub unsafe fn setCredential_forProtectionSpace(
         &self,
@@ -71,15 +80,6 @@ impl NSURLCredentialStorage {
             setDefaultCredential: credential,
             forProtectionSpace: space
         ]
-    }
-    pub unsafe fn sharedCredentialStorage() -> Id<NSURLCredentialStorage, Shared> {
-        msg_send_id![Self::class(), sharedCredentialStorage]
-    }
-    pub unsafe fn allCredentials(
-        &self,
-    ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary<NSString, NSURLCredential>>, Shared>
-    {
-        msg_send_id![self, allCredentials]
     }
 }
 #[doc = "NSURLSessionTaskAdditions"]

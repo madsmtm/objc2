@@ -32,18 +32,6 @@ impl NSTextCheckingResult {
 }
 #[doc = "NSTextCheckingResultOptional"]
 impl NSTextCheckingResult {
-    pub unsafe fn rangeAtIndex(&self, idx: NSUInteger) -> NSRange {
-        msg_send![self, rangeAtIndex: idx]
-    }
-    pub unsafe fn rangeWithName(&self, name: &NSString) -> NSRange {
-        msg_send![self, rangeWithName: name]
-    }
-    pub unsafe fn resultByAdjustingRangesWithOffset(
-        &self,
-        offset: NSInteger,
-    ) -> Id<NSTextCheckingResult, Shared> {
-        msg_send_id![self, resultByAdjustingRangesWithOffset: offset]
-    }
     pub unsafe fn orthography(&self) -> Option<Id<NSOrthography, Shared>> {
         msg_send_id![self, orthography]
     }
@@ -83,6 +71,18 @@ impl NSTextCheckingResult {
     }
     pub unsafe fn numberOfRanges(&self) -> NSUInteger {
         msg_send![self, numberOfRanges]
+    }
+    pub unsafe fn rangeAtIndex(&self, idx: NSUInteger) -> NSRange {
+        msg_send![self, rangeAtIndex: idx]
+    }
+    pub unsafe fn rangeWithName(&self, name: &NSString) -> NSRange {
+        msg_send![self, rangeWithName: name]
+    }
+    pub unsafe fn resultByAdjustingRangesWithOffset(
+        &self,
+        offset: NSInteger,
+    ) -> Id<NSTextCheckingResult, Shared> {
+        msg_send_id![self, resultByAdjustingRangesWithOffset: offset]
     }
     pub unsafe fn addressComponents(
         &self,

@@ -28,12 +28,6 @@ impl NSXMLParser {
     pub unsafe fn initWithStream(&self, stream: &NSInputStream) -> Id<Self, Shared> {
         msg_send_id![self, initWithStream: stream]
     }
-    pub unsafe fn parse(&self) -> bool {
-        msg_send![self, parse]
-    }
-    pub unsafe fn abortParsing(&self) {
-        msg_send![self, abortParsing]
-    }
     pub unsafe fn delegate(&self) -> Option<Id<NSXMLParserDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
@@ -78,6 +72,12 @@ impl NSXMLParser {
             self,
             setAllowedExternalEntityURLs: allowedExternalEntityURLs
         ]
+    }
+    pub unsafe fn parse(&self) -> bool {
+        msg_send![self, parse]
+    }
+    pub unsafe fn abortParsing(&self) {
+        msg_send![self, abortParsing]
     }
     pub unsafe fn parserError(&self) -> Option<Id<NSError, Shared>> {
         msg_send_id![self, parserError]

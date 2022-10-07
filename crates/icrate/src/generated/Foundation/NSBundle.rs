@@ -23,6 +23,9 @@ extern_class!(
     }
 );
 impl NSBundle {
+    pub unsafe fn mainBundle() -> Id<NSBundle, Shared> {
+        msg_send_id![Self::class(), mainBundle]
+    }
     pub unsafe fn bundleWithPath(path: &NSString) -> Option<Id<Self, Shared>> {
         msg_send_id![Self::class(), bundleWithPath: path]
     }
@@ -41,8 +44,17 @@ impl NSBundle {
     pub unsafe fn bundleWithIdentifier(identifier: &NSString) -> Option<Id<NSBundle, Shared>> {
         msg_send_id![Self::class(), bundleWithIdentifier: identifier]
     }
+    pub unsafe fn allBundles() -> Id<NSArray<NSBundle>, Shared> {
+        msg_send_id![Self::class(), allBundles]
+    }
+    pub unsafe fn allFrameworks() -> Id<NSArray<NSBundle>, Shared> {
+        msg_send_id![Self::class(), allFrameworks]
+    }
     pub unsafe fn load(&self) -> bool {
         msg_send![self, load]
+    }
+    pub unsafe fn isLoaded(&self) -> bool {
+        msg_send![self, isLoaded]
     }
     pub unsafe fn unload(&self) -> bool {
         msg_send![self, unload]
@@ -53,17 +65,62 @@ impl NSBundle {
     pub unsafe fn loadAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, loadAndReturnError: error]
     }
+    pub unsafe fn bundleURL(&self) -> Id<NSURL, Shared> {
+        msg_send_id![self, bundleURL]
+    }
+    pub unsafe fn resourceURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, resourceURL]
+    }
+    pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, executableURL]
+    }
     pub unsafe fn URLForAuxiliaryExecutable(
         &self,
         executableName: &NSString,
     ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, URLForAuxiliaryExecutable: executableName]
     }
+    pub unsafe fn privateFrameworksURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, privateFrameworksURL]
+    }
+    pub unsafe fn sharedFrameworksURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, sharedFrameworksURL]
+    }
+    pub unsafe fn sharedSupportURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, sharedSupportURL]
+    }
+    pub unsafe fn builtInPlugInsURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, builtInPlugInsURL]
+    }
+    pub unsafe fn appStoreReceiptURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, appStoreReceiptURL]
+    }
+    pub unsafe fn bundlePath(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, bundlePath]
+    }
+    pub unsafe fn resourcePath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, resourcePath]
+    }
+    pub unsafe fn executablePath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, executablePath]
+    }
     pub unsafe fn pathForAuxiliaryExecutable(
         &self,
         executableName: &NSString,
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, pathForAuxiliaryExecutable: executableName]
+    }
+    pub unsafe fn privateFrameworksPath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, privateFrameworksPath]
+    }
+    pub unsafe fn sharedFrameworksPath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, sharedFrameworksPath]
+    }
+    pub unsafe fn sharedSupportPath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, sharedSupportPath]
+    }
+    pub unsafe fn builtInPlugInsPath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, builtInPlugInsPath]
     }
     pub unsafe fn URLForResource_withExtension_subdirectory_inBundleWithURL(
         name: Option<&NSString>,
@@ -253,11 +310,34 @@ impl NSBundle {
             table: tableName
         ]
     }
+    pub unsafe fn bundleIdentifier(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, bundleIdentifier]
+    }
+    pub unsafe fn infoDictionary(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, infoDictionary]
+    }
+    pub unsafe fn localizedInfoDictionary(
+        &self,
+    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, localizedInfoDictionary]
+    }
     pub unsafe fn objectForInfoDictionaryKey(&self, key: &NSString) -> Option<Id<Object, Shared>> {
         msg_send_id![self, objectForInfoDictionaryKey: key]
     }
     pub unsafe fn classNamed(&self, className: &NSString) -> Option<&Class> {
         msg_send![self, classNamed: className]
+    }
+    pub unsafe fn principalClass(&self) -> Option<&Class> {
+        msg_send![self, principalClass]
+    }
+    pub unsafe fn preferredLocalizations(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, preferredLocalizations]
+    }
+    pub unsafe fn localizations(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, localizations]
+    }
+    pub unsafe fn developmentLocalization(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, developmentLocalization]
     }
     pub unsafe fn preferredLocalizationsFromArray(
         localizationsArray: &NSArray<NSString>,
@@ -276,86 +356,6 @@ impl NSBundle {
             preferredLocalizationsFromArray: localizationsArray,
             forPreferences: preferencesArray
         ]
-    }
-    pub unsafe fn mainBundle() -> Id<NSBundle, Shared> {
-        msg_send_id![Self::class(), mainBundle]
-    }
-    pub unsafe fn allBundles() -> Id<NSArray<NSBundle>, Shared> {
-        msg_send_id![Self::class(), allBundles]
-    }
-    pub unsafe fn allFrameworks() -> Id<NSArray<NSBundle>, Shared> {
-        msg_send_id![Self::class(), allFrameworks]
-    }
-    pub unsafe fn isLoaded(&self) -> bool {
-        msg_send![self, isLoaded]
-    }
-    pub unsafe fn bundleURL(&self) -> Id<NSURL, Shared> {
-        msg_send_id![self, bundleURL]
-    }
-    pub unsafe fn resourceURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, resourceURL]
-    }
-    pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, executableURL]
-    }
-    pub unsafe fn privateFrameworksURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, privateFrameworksURL]
-    }
-    pub unsafe fn sharedFrameworksURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, sharedFrameworksURL]
-    }
-    pub unsafe fn sharedSupportURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, sharedSupportURL]
-    }
-    pub unsafe fn builtInPlugInsURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, builtInPlugInsURL]
-    }
-    pub unsafe fn appStoreReceiptURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, appStoreReceiptURL]
-    }
-    pub unsafe fn bundlePath(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, bundlePath]
-    }
-    pub unsafe fn resourcePath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, resourcePath]
-    }
-    pub unsafe fn executablePath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, executablePath]
-    }
-    pub unsafe fn privateFrameworksPath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, privateFrameworksPath]
-    }
-    pub unsafe fn sharedFrameworksPath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, sharedFrameworksPath]
-    }
-    pub unsafe fn sharedSupportPath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, sharedSupportPath]
-    }
-    pub unsafe fn builtInPlugInsPath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, builtInPlugInsPath]
-    }
-    pub unsafe fn bundleIdentifier(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, bundleIdentifier]
-    }
-    pub unsafe fn infoDictionary(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
-        msg_send_id![self, infoDictionary]
-    }
-    pub unsafe fn localizedInfoDictionary(
-        &self,
-    ) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
-        msg_send_id![self, localizedInfoDictionary]
-    }
-    pub unsafe fn principalClass(&self) -> Option<&Class> {
-        msg_send![self, principalClass]
-    }
-    pub unsafe fn preferredLocalizations(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, preferredLocalizations]
-    }
-    pub unsafe fn localizations(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, localizations]
-    }
-    pub unsafe fn developmentLocalization(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, developmentLocalization]
     }
     pub unsafe fn executableArchitectures(&self) -> Option<Id<NSArray<NSNumber>, Shared>> {
         msg_send_id![self, executableArchitectures]
@@ -388,6 +388,18 @@ impl NSBundleResourceRequest {
     ) -> Id<Self, Shared> {
         msg_send_id![self, initWithTags: tags, bundle: bundle]
     }
+    pub unsafe fn loadingPriority(&self) -> c_double {
+        msg_send![self, loadingPriority]
+    }
+    pub unsafe fn setLoadingPriority(&self, loadingPriority: c_double) {
+        msg_send![self, setLoadingPriority: loadingPriority]
+    }
+    pub unsafe fn tags(&self) -> Id<NSSet<NSString>, Shared> {
+        msg_send_id![self, tags]
+    }
+    pub unsafe fn bundle(&self) -> Id<NSBundle, Shared> {
+        msg_send_id![self, bundle]
+    }
     pub unsafe fn beginAccessingResourcesWithCompletionHandler(
         &self,
         completionHandler: TodoBlock,
@@ -408,18 +420,6 @@ impl NSBundleResourceRequest {
     }
     pub unsafe fn endAccessingResources(&self) {
         msg_send![self, endAccessingResources]
-    }
-    pub unsafe fn loadingPriority(&self) -> c_double {
-        msg_send![self, loadingPriority]
-    }
-    pub unsafe fn setLoadingPriority(&self, loadingPriority: c_double) {
-        msg_send![self, setLoadingPriority: loadingPriority]
-    }
-    pub unsafe fn tags(&self) -> Id<NSSet<NSString>, Shared> {
-        msg_send_id![self, tags]
-    }
-    pub unsafe fn bundle(&self) -> Id<NSBundle, Shared> {
-        msg_send_id![self, bundle]
     }
     pub unsafe fn progress(&self) -> Id<NSProgress, Shared> {
         msg_send_id![self, progress]

@@ -16,6 +16,9 @@ extern_class!(
     }
 );
 impl NSNotificationQueue {
+    pub unsafe fn defaultQueue() -> Id<NSNotificationQueue, Shared> {
+        msg_send_id![Self::class(), defaultQueue]
+    }
     pub unsafe fn initWithNotificationCenter(
         &self,
         notificationCenter: &NSNotificationCenter,
@@ -58,8 +61,5 @@ impl NSNotificationQueue {
             dequeueNotificationsMatching: notification,
             coalesceMask: coalesceMask
         ]
-    }
-    pub unsafe fn defaultQueue() -> Id<NSNotificationQueue, Shared> {
-        msg_send_id![Self::class(), defaultQueue]
     }
 }

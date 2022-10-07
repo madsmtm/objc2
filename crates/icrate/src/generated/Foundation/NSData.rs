@@ -24,6 +24,9 @@ impl NSData {
 }
 #[doc = "NSExtendedData"]
 impl NSData {
+    pub unsafe fn description(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, description]
+    }
     pub unsafe fn getBytes_length(&self, buffer: NonNull<c_void>, length: NSUInteger) {
         msg_send![self, getBytes: buffer, length: length]
     }
@@ -83,9 +86,6 @@ impl NSData {
     }
     pub unsafe fn enumerateByteRangesUsingBlock(&self, block: TodoBlock) {
         msg_send![self, enumerateByteRangesUsingBlock: block]
-    }
-    pub unsafe fn description(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, description]
     }
 }
 #[doc = "NSDataCreation"]

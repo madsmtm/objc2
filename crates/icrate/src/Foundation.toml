@@ -13,6 +13,8 @@ stringByAppendingString = { unsafe = false }
 stringByAppendingPathComponent = { unsafe = false }
 # Assuming `NSStringEncoding` can be made safe
 lengthOfBytesUsingEncoding = { unsafe = false }
+
+[class.NSString.properties]
 length = { unsafe = false }
 # Safe to call, but the returned pointer may not be safe to use
 UTF8String = { unsafe = false }
@@ -23,7 +25,7 @@ initWithString = { unsafe = false }
 # "appendString:" = { unsafe = false, mutable = true }
 # "setString:" = { unsafe = false, mutable = true }
 
-[class.NSBlockOperation.methods]
+[class.NSBlockOperation.properties]
 # Uses `NSArray<void (^)(void)>`, which is difficult to handle
 executionBlocks = { skipped = true }
 

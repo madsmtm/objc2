@@ -26,6 +26,12 @@ impl NSStream {
     pub unsafe fn close(&self) {
         msg_send![self, close]
     }
+    pub unsafe fn delegate(&self) -> Option<Id<NSStreamDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSStreamDelegate>) {
+        msg_send![self, setDelegate: delegate]
+    }
     pub unsafe fn propertyForKey(&self, key: &NSStreamPropertyKey) -> Option<Id<Object, Shared>> {
         msg_send_id![self, propertyForKey: key]
     }
@@ -41,12 +47,6 @@ impl NSStream {
     }
     pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: aRunLoop, forMode: mode]
-    }
-    pub unsafe fn delegate(&self) -> Option<Id<NSStreamDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSStreamDelegate>) {
-        msg_send![self, setDelegate: delegate]
     }
     pub unsafe fn streamStatus(&self) -> NSStreamStatus {
         msg_send![self, streamStatus]
@@ -73,14 +73,14 @@ impl NSInputStream {
     ) -> bool {
         msg_send![self, getBuffer: buffer, length: len]
     }
+    pub unsafe fn hasBytesAvailable(&self) -> bool {
+        msg_send![self, hasBytesAvailable]
+    }
     pub unsafe fn initWithData(&self, data: &NSData) -> Id<Self, Shared> {
         msg_send_id![self, initWithData: data]
     }
     pub unsafe fn initWithURL(&self, url: &NSURL) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithURL: url]
-    }
-    pub unsafe fn hasBytesAvailable(&self) -> bool {
-        msg_send![self, hasBytesAvailable]
     }
 }
 extern_class!(
@@ -93,6 +93,9 @@ extern_class!(
 impl NSOutputStream {
     pub unsafe fn write_maxLength(&self, buffer: NonNull<u8>, len: NSUInteger) -> NSInteger {
         msg_send![self, write: buffer, maxLength: len]
+    }
+    pub unsafe fn hasSpaceAvailable(&self) -> bool {
+        msg_send![self, hasSpaceAvailable]
     }
     pub unsafe fn initToMemory(&self) -> Id<Self, Shared> {
         msg_send_id![self, initToMemory]
@@ -110,9 +113,6 @@ impl NSOutputStream {
         shouldAppend: bool,
     ) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithURL: url, append: shouldAppend]
-    }
-    pub unsafe fn hasSpaceAvailable(&self) -> bool {
-        msg_send![self, hasSpaceAvailable]
     }
 }
 #[doc = "NSSocketStreamCreationExtensions"]

@@ -103,6 +103,12 @@ impl NSCoder {
     pub unsafe fn objectZone(&self) -> *mut NSZone {
         msg_send![self, objectZone]
     }
+    pub unsafe fn systemVersion(&self) -> c_uint {
+        msg_send![self, systemVersion]
+    }
+    pub unsafe fn allowsKeyedCoding(&self) -> bool {
+        msg_send![self, allowsKeyedCoding]
+    }
     pub unsafe fn encodeObject_forKey(&self, object: Option<&Object>, key: &NSString) {
         msg_send![self, encodeObject: object, forKey: key]
     }
@@ -178,6 +184,9 @@ impl NSCoder {
     }
     pub unsafe fn decodeIntegerForKey(&self, key: &NSString) -> NSInteger {
         msg_send![self, decodeIntegerForKey: key]
+    }
+    pub unsafe fn requiresSecureCoding(&self) -> bool {
+        msg_send![self, requiresSecureCoding]
     }
     pub unsafe fn decodeObjectOfClass_forKey(
         &self,
@@ -262,20 +271,11 @@ impl NSCoder {
     pub unsafe fn decodePropertyListForKey(&self, key: &NSString) -> Option<Id<Object, Shared>> {
         msg_send_id![self, decodePropertyListForKey: key]
     }
-    pub unsafe fn failWithError(&self, error: &NSError) {
-        msg_send![self, failWithError: error]
-    }
-    pub unsafe fn systemVersion(&self) -> c_uint {
-        msg_send![self, systemVersion]
-    }
-    pub unsafe fn allowsKeyedCoding(&self) -> bool {
-        msg_send![self, allowsKeyedCoding]
-    }
-    pub unsafe fn requiresSecureCoding(&self) -> bool {
-        msg_send![self, requiresSecureCoding]
-    }
     pub unsafe fn allowedClasses(&self) -> Option<Id<NSSet<TodoClass>, Shared>> {
         msg_send_id![self, allowedClasses]
+    }
+    pub unsafe fn failWithError(&self, error: &NSError) {
+        msg_send![self, failWithError: error]
     }
     pub unsafe fn decodingFailurePolicy(&self) -> NSDecodingFailurePolicy {
         msg_send![self, decodingFailurePolicy]

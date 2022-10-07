@@ -18,21 +18,6 @@ impl NSTask {
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
-    pub unsafe fn launchAndReturnError(&self, error: *mut *mut NSError) -> bool {
-        msg_send![self, launchAndReturnError: error]
-    }
-    pub unsafe fn interrupt(&self) {
-        msg_send![self, interrupt]
-    }
-    pub unsafe fn terminate(&self) {
-        msg_send![self, terminate]
-    }
-    pub unsafe fn suspend(&self) -> bool {
-        msg_send![self, suspend]
-    }
-    pub unsafe fn resume(&self) -> bool {
-        msg_send![self, resume]
-    }
     pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, executableURL]
     }
@@ -74,6 +59,21 @@ impl NSTask {
     }
     pub unsafe fn setStandardError(&self, standardError: Option<&Object>) {
         msg_send![self, setStandardError: standardError]
+    }
+    pub unsafe fn launchAndReturnError(&self, error: *mut *mut NSError) -> bool {
+        msg_send![self, launchAndReturnError: error]
+    }
+    pub unsafe fn interrupt(&self) {
+        msg_send![self, interrupt]
+    }
+    pub unsafe fn terminate(&self) {
+        msg_send![self, terminate]
+    }
+    pub unsafe fn suspend(&self) -> bool {
+        msg_send![self, suspend]
+    }
+    pub unsafe fn resume(&self) -> bool {
+        msg_send![self, resume]
     }
     pub unsafe fn processIdentifier(&self) -> c_int {
         msg_send![self, processIdentifier]
@@ -122,6 +122,18 @@ impl NSTask {
 }
 #[doc = "NSDeprecated"]
 impl NSTask {
+    pub unsafe fn launchPath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, launchPath]
+    }
+    pub unsafe fn setLaunchPath(&self, launchPath: Option<&NSString>) {
+        msg_send![self, setLaunchPath: launchPath]
+    }
+    pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, currentDirectoryPath]
+    }
+    pub unsafe fn setCurrentDirectoryPath(&self, currentDirectoryPath: &NSString) {
+        msg_send![self, setCurrentDirectoryPath: currentDirectoryPath]
+    }
     pub unsafe fn launch(&self) {
         msg_send![self, launch]
     }
@@ -134,17 +146,5 @@ impl NSTask {
             launchedTaskWithLaunchPath: path,
             arguments: arguments
         ]
-    }
-    pub unsafe fn launchPath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, launchPath]
-    }
-    pub unsafe fn setLaunchPath(&self, launchPath: Option<&NSString>) {
-        msg_send![self, setLaunchPath: launchPath]
-    }
-    pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, currentDirectoryPath]
-    }
-    pub unsafe fn setCurrentDirectoryPath(&self, currentDirectoryPath: &NSString) {
-        msg_send![self, setCurrentDirectoryPath: currentDirectoryPath]
     }
 }

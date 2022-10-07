@@ -18,6 +18,9 @@ extern_class!(
     }
 );
 impl NSThread {
+    pub unsafe fn currentThread() -> Id<NSThread, Shared> {
+        msg_send_id![Self::class(), currentThread]
+    }
     pub unsafe fn detachNewThreadWithBlock(block: TodoBlock) {
         msg_send![Self::class(), detachNewThreadWithBlock: block]
     }
@@ -36,6 +39,9 @@ impl NSThread {
     pub unsafe fn isMultiThreaded() -> bool {
         msg_send![Self::class(), isMultiThreaded]
     }
+    pub unsafe fn threadDictionary(&self) -> Id<NSMutableDictionary, Shared> {
+        msg_send_id![self, threadDictionary]
+    }
     pub unsafe fn sleepUntilDate(date: &NSDate) {
         msg_send![Self::class(), sleepUntilDate: date]
     }
@@ -50,40 +56,6 @@ impl NSThread {
     }
     pub unsafe fn setThreadPriority(p: c_double) -> bool {
         msg_send![Self::class(), setThreadPriority: p]
-    }
-    pub unsafe fn init(&self) -> Id<Self, Shared> {
-        msg_send_id![self, init]
-    }
-    pub unsafe fn initWithTarget_selector_object(
-        &self,
-        target: &Object,
-        selector: Sel,
-        argument: Option<&Object>,
-    ) -> Id<Self, Shared> {
-        msg_send_id![
-            self,
-            initWithTarget: target,
-            selector: selector,
-            object: argument
-        ]
-    }
-    pub unsafe fn initWithBlock(&self, block: TodoBlock) -> Id<Self, Shared> {
-        msg_send_id![self, initWithBlock: block]
-    }
-    pub unsafe fn cancel(&self) {
-        msg_send![self, cancel]
-    }
-    pub unsafe fn start(&self) {
-        msg_send![self, start]
-    }
-    pub unsafe fn main(&self) {
-        msg_send![self, main]
-    }
-    pub unsafe fn currentThread() -> Id<NSThread, Shared> {
-        msg_send_id![Self::class(), currentThread]
-    }
-    pub unsafe fn threadDictionary(&self) -> Id<NSMutableDictionary, Shared> {
-        msg_send_id![self, threadDictionary]
     }
     pub unsafe fn threadPriority(&self) -> c_double {
         msg_send![self, threadPriority]
@@ -124,6 +96,25 @@ impl NSThread {
     pub unsafe fn mainThread() -> Id<NSThread, Shared> {
         msg_send_id![Self::class(), mainThread]
     }
+    pub unsafe fn init(&self) -> Id<Self, Shared> {
+        msg_send_id![self, init]
+    }
+    pub unsafe fn initWithTarget_selector_object(
+        &self,
+        target: &Object,
+        selector: Sel,
+        argument: Option<&Object>,
+    ) -> Id<Self, Shared> {
+        msg_send_id![
+            self,
+            initWithTarget: target,
+            selector: selector,
+            object: argument
+        ]
+    }
+    pub unsafe fn initWithBlock(&self, block: TodoBlock) -> Id<Self, Shared> {
+        msg_send_id![self, initWithBlock: block]
+    }
     pub unsafe fn isExecuting(&self) -> bool {
         msg_send![self, isExecuting]
     }
@@ -132,6 +123,15 @@ impl NSThread {
     }
     pub unsafe fn isCancelled(&self) -> bool {
         msg_send![self, isCancelled]
+    }
+    pub unsafe fn cancel(&self) {
+        msg_send![self, cancel]
+    }
+    pub unsafe fn start(&self) {
+        msg_send![self, start]
+    }
+    pub unsafe fn main(&self) {
+        msg_send![self, main]
     }
 }
 #[doc = "NSThreadPerformAdditions"]

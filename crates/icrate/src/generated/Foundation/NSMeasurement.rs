@@ -12,6 +12,12 @@ __inner_extern_class!(
     }
 );
 impl<UnitType: Message> NSMeasurement<UnitType> {
+    pub unsafe fn unit(&self) -> Id<UnitType, Shared> {
+        msg_send_id![self, unit]
+    }
+    pub unsafe fn doubleValue(&self) -> c_double {
+        msg_send![self, doubleValue]
+    }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
@@ -39,11 +45,5 @@ impl<UnitType: Message> NSMeasurement<UnitType> {
         measurement: &NSMeasurement<UnitType>,
     ) -> Id<NSMeasurement<UnitType>, Shared> {
         msg_send_id![self, measurementBySubtractingMeasurement: measurement]
-    }
-    pub unsafe fn unit(&self) -> Id<UnitType, Shared> {
-        msg_send_id![self, unit]
-    }
-    pub unsafe fn doubleValue(&self) -> c_double {
-        msg_send![self, doubleValue]
     }
 }

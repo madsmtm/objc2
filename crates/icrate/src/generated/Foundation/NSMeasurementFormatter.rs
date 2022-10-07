@@ -15,15 +15,6 @@ extern_class!(
     }
 );
 impl NSMeasurementFormatter {
-    pub unsafe fn stringFromMeasurement(
-        &self,
-        measurement: &NSMeasurement,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![self, stringFromMeasurement: measurement]
-    }
-    pub unsafe fn stringFromUnit(&self, unit: &NSUnit) -> Id<NSString, Shared> {
-        msg_send_id![self, stringFromUnit: unit]
-    }
     pub unsafe fn unitOptions(&self) -> NSMeasurementFormatterUnitOptions {
         msg_send![self, unitOptions]
     }
@@ -47,5 +38,14 @@ impl NSMeasurementFormatter {
     }
     pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>) {
         msg_send![self, setNumberFormatter: numberFormatter]
+    }
+    pub unsafe fn stringFromMeasurement(
+        &self,
+        measurement: &NSMeasurement,
+    ) -> Id<NSString, Shared> {
+        msg_send_id![self, stringFromMeasurement: measurement]
+    }
+    pub unsafe fn stringFromUnit(&self, unit: &NSUnit) -> Id<NSString, Shared> {
+        msg_send_id![self, stringFromUnit: unit]
     }
 }

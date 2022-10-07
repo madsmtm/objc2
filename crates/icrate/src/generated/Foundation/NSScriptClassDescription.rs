@@ -30,6 +30,21 @@ impl NSScriptClassDescription {
             dictionary: classDeclaration
         ]
     }
+    pub unsafe fn suiteName(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, suiteName]
+    }
+    pub unsafe fn className(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, className]
+    }
+    pub unsafe fn implementationClassName(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, implementationClassName]
+    }
+    pub unsafe fn superclassDescription(&self) -> Option<Id<NSScriptClassDescription, Shared>> {
+        msg_send_id![self, superclassDescription]
+    }
+    pub unsafe fn appleEventCode(&self) -> FourCharCode {
+        msg_send![self, appleEventCode]
+    }
     pub unsafe fn matchesAppleEventCode(&self, appleEventCode: FourCharCode) -> bool {
         msg_send![self, matchesAppleEventCode: appleEventCode]
     }
@@ -60,6 +75,9 @@ impl NSScriptClassDescription {
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, keyWithAppleEventCode: appleEventCode]
     }
+    pub unsafe fn defaultSubcontainerAttributeKey(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, defaultSubcontainerAttributeKey]
+    }
     pub unsafe fn isLocationRequiredToCreateForKey(
         &self,
         toManyRelationshipKey: &NSString,
@@ -80,24 +98,6 @@ impl NSScriptClassDescription {
     }
     pub unsafe fn hasWritablePropertyForKey(&self, key: &NSString) -> bool {
         msg_send![self, hasWritablePropertyForKey: key]
-    }
-    pub unsafe fn suiteName(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, suiteName]
-    }
-    pub unsafe fn className(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, className]
-    }
-    pub unsafe fn implementationClassName(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, implementationClassName]
-    }
-    pub unsafe fn superclassDescription(&self) -> Option<Id<NSScriptClassDescription, Shared>> {
-        msg_send_id![self, superclassDescription]
-    }
-    pub unsafe fn appleEventCode(&self) -> FourCharCode {
-        msg_send![self, appleEventCode]
-    }
-    pub unsafe fn defaultSubcontainerAttributeKey(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, defaultSubcontainerAttributeKey]
     }
 }
 #[doc = "NSDeprecated"]

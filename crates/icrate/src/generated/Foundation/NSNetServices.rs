@@ -45,6 +45,36 @@ impl NSNetService {
     pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, removeFromRunLoop: aRunLoop, forMode: mode]
     }
+    pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSNetServiceDelegate>) {
+        msg_send![self, setDelegate: delegate]
+    }
+    pub unsafe fn includesPeerToPeer(&self) -> bool {
+        msg_send![self, includesPeerToPeer]
+    }
+    pub unsafe fn setIncludesPeerToPeer(&self, includesPeerToPeer: bool) {
+        msg_send![self, setIncludesPeerToPeer: includesPeerToPeer]
+    }
+    pub unsafe fn name(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, name]
+    }
+    pub unsafe fn type_(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, type]
+    }
+    pub unsafe fn domain(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, domain]
+    }
+    pub unsafe fn hostName(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, hostName]
+    }
+    pub unsafe fn addresses(&self) -> Option<Id<NSArray<NSData>, Shared>> {
+        msg_send_id![self, addresses]
+    }
+    pub unsafe fn port(&self) -> NSInteger {
+        msg_send![self, port]
+    }
     pub unsafe fn publish(&self) {
         msg_send![self, publish]
     }
@@ -82,36 +112,6 @@ impl NSNetService {
     pub unsafe fn stopMonitoring(&self) {
         msg_send![self, stopMonitoring]
     }
-    pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSNetServiceDelegate>) {
-        msg_send![self, setDelegate: delegate]
-    }
-    pub unsafe fn includesPeerToPeer(&self) -> bool {
-        msg_send![self, includesPeerToPeer]
-    }
-    pub unsafe fn setIncludesPeerToPeer(&self, includesPeerToPeer: bool) {
-        msg_send![self, setIncludesPeerToPeer: includesPeerToPeer]
-    }
-    pub unsafe fn name(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, name]
-    }
-    pub unsafe fn type_(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, type]
-    }
-    pub unsafe fn domain(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, domain]
-    }
-    pub unsafe fn hostName(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, hostName]
-    }
-    pub unsafe fn addresses(&self) -> Option<Id<NSArray<NSData>, Shared>> {
-        msg_send_id![self, addresses]
-    }
-    pub unsafe fn port(&self) -> NSInteger {
-        msg_send![self, port]
-    }
 }
 extern_class!(
     #[derive(Debug)]
@@ -123,6 +123,18 @@ extern_class!(
 impl NSNetServiceBrowser {
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
+    }
+    pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceBrowserDelegate, Shared>> {
+        msg_send_id![self, delegate]
+    }
+    pub unsafe fn setDelegate(&self, delegate: Option<&NSNetServiceBrowserDelegate>) {
+        msg_send![self, setDelegate: delegate]
+    }
+    pub unsafe fn includesPeerToPeer(&self) -> bool {
+        msg_send![self, includesPeerToPeer]
+    }
+    pub unsafe fn setIncludesPeerToPeer(&self, includesPeerToPeer: bool) {
+        msg_send![self, setIncludesPeerToPeer: includesPeerToPeer]
     }
     pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode) {
         msg_send![self, scheduleInRunLoop: aRunLoop, forMode: mode]
@@ -145,18 +157,6 @@ impl NSNetServiceBrowser {
     }
     pub unsafe fn stop(&self) {
         msg_send![self, stop]
-    }
-    pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceBrowserDelegate, Shared>> {
-        msg_send_id![self, delegate]
-    }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSNetServiceBrowserDelegate>) {
-        msg_send![self, setDelegate: delegate]
-    }
-    pub unsafe fn includesPeerToPeer(&self) -> bool {
-        msg_send![self, includesPeerToPeer]
-    }
-    pub unsafe fn setIncludesPeerToPeer(&self, includesPeerToPeer: bool) {
-        msg_send![self, setIncludesPeerToPeer: includesPeerToPeer]
     }
 }
 pub type NSNetServiceDelegate = NSObject;

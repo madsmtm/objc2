@@ -34,30 +34,6 @@ impl NSScriptCommandDescription {
     pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: inCoder]
     }
-    pub unsafe fn typeForArgumentWithName(
-        &self,
-        argumentName: &NSString,
-    ) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, typeForArgumentWithName: argumentName]
-    }
-    pub unsafe fn appleEventCodeForArgumentWithName(
-        &self,
-        argumentName: &NSString,
-    ) -> FourCharCode {
-        msg_send![self, appleEventCodeForArgumentWithName: argumentName]
-    }
-    pub unsafe fn isOptionalArgumentWithName(&self, argumentName: &NSString) -> bool {
-        msg_send![self, isOptionalArgumentWithName: argumentName]
-    }
-    pub unsafe fn createCommandInstance(&self) -> Id<NSScriptCommand, Shared> {
-        msg_send_id![self, createCommandInstance]
-    }
-    pub unsafe fn createCommandInstanceWithZone(
-        &self,
-        zone: *mut NSZone,
-    ) -> Id<NSScriptCommand, Shared> {
-        msg_send_id![self, createCommandInstanceWithZone: zone]
-    }
     pub unsafe fn suiteName(&self) -> Id<NSString, Shared> {
         msg_send_id![self, suiteName]
     }
@@ -81,5 +57,29 @@ impl NSScriptCommandDescription {
     }
     pub unsafe fn argumentNames(&self) -> Id<NSArray<NSString>, Shared> {
         msg_send_id![self, argumentNames]
+    }
+    pub unsafe fn typeForArgumentWithName(
+        &self,
+        argumentName: &NSString,
+    ) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, typeForArgumentWithName: argumentName]
+    }
+    pub unsafe fn appleEventCodeForArgumentWithName(
+        &self,
+        argumentName: &NSString,
+    ) -> FourCharCode {
+        msg_send![self, appleEventCodeForArgumentWithName: argumentName]
+    }
+    pub unsafe fn isOptionalArgumentWithName(&self, argumentName: &NSString) -> bool {
+        msg_send![self, isOptionalArgumentWithName: argumentName]
+    }
+    pub unsafe fn createCommandInstance(&self) -> Id<NSScriptCommand, Shared> {
+        msg_send_id![self, createCommandInstance]
+    }
+    pub unsafe fn createCommandInstanceWithZone(
+        &self,
+        zone: *mut NSZone,
+    ) -> Id<NSScriptCommand, Shared> {
+        msg_send_id![self, createCommandInstanceWithZone: zone]
     }
 }

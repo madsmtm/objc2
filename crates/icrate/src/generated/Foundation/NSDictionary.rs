@@ -16,6 +16,9 @@ __inner_extern_class!(
     }
 );
 impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
+    pub unsafe fn count(&self) -> NSUInteger {
+        msg_send![self, count]
+    }
     pub unsafe fn objectForKey(&self, aKey: &KeyType) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, objectForKey: aKey]
     }
@@ -36,14 +39,23 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
     }
-    pub unsafe fn count(&self) -> NSUInteger {
-        msg_send![self, count]
-    }
 }
 #[doc = "NSExtendedDictionary"]
 impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
+    pub unsafe fn allKeys(&self) -> Id<NSArray<KeyType>, Shared> {
+        msg_send_id![self, allKeys]
+    }
     pub unsafe fn allKeysForObject(&self, anObject: &ObjectType) -> Id<NSArray<KeyType>, Shared> {
         msg_send_id![self, allKeysForObject: anObject]
+    }
+    pub unsafe fn allValues(&self) -> Id<NSArray<ObjectType>, Shared> {
+        msg_send_id![self, allValues]
+    }
+    pub unsafe fn description(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, description]
+    }
+    pub unsafe fn descriptionInStringsFileFormat(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, descriptionInStringsFileFormat]
     }
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale]
@@ -134,18 +146,6 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
         predicate: TodoBlock,
     ) -> Id<NSSet<KeyType>, Shared> {
         msg_send_id![self, keysOfEntriesWithOptions: opts, passingTest: predicate]
-    }
-    pub unsafe fn allKeys(&self) -> Id<NSArray<KeyType>, Shared> {
-        msg_send_id![self, allKeys]
-    }
-    pub unsafe fn allValues(&self) -> Id<NSArray<ObjectType>, Shared> {
-        msg_send_id![self, allValues]
-    }
-    pub unsafe fn description(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, description]
-    }
-    pub unsafe fn descriptionInStringsFileFormat(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, descriptionInStringsFileFormat]
     }
 }
 #[doc = "NSDeprecated"]

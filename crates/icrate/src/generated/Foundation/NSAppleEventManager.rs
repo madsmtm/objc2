@@ -56,6 +56,12 @@ impl NSAppleEventManager {
             handlerRefCon: handlerRefCon
         ]
     }
+    pub unsafe fn currentAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>> {
+        msg_send_id![self, currentAppleEvent]
+    }
+    pub unsafe fn currentReplyAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>> {
+        msg_send_id![self, currentReplyAppleEvent]
+    }
     pub unsafe fn suspendCurrentAppleEvent(&self) -> NSAppleEventManagerSuspensionID {
         msg_send![self, suspendCurrentAppleEvent]
     }
@@ -82,11 +88,5 @@ impl NSAppleEventManager {
     }
     pub unsafe fn resumeWithSuspensionID(&self, suspensionID: NSAppleEventManagerSuspensionID) {
         msg_send![self, resumeWithSuspensionID: suspensionID]
-    }
-    pub unsafe fn currentAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>> {
-        msg_send_id![self, currentAppleEvent]
-    }
-    pub unsafe fn currentReplyAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>> {
-        msg_send_id![self, currentReplyAppleEvent]
     }
 }

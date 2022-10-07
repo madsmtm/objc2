@@ -14,6 +14,12 @@ extern_class!(
     }
 );
 impl NSOrthography {
+    pub unsafe fn dominantScript(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, dominantScript]
+    }
+    pub unsafe fn languageMap(&self) -> Id<NSDictionary<NSString, NSArray<NSString>>, Shared> {
+        msg_send_id![self, languageMap]
+    }
     pub unsafe fn initWithDominantScript_languageMap(
         &self,
         script: &NSString,
@@ -23,12 +29,6 @@ impl NSOrthography {
     }
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
-    }
-    pub unsafe fn dominantScript(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, dominantScript]
-    }
-    pub unsafe fn languageMap(&self) -> Id<NSDictionary<NSString, NSArray<NSString>>, Shared> {
-        msg_send_id![self, languageMap]
     }
 }
 #[doc = "NSOrthographyExtended"]
@@ -45,9 +45,6 @@ impl NSOrthography {
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, dominantLanguageForScript: script]
     }
-    pub unsafe fn defaultOrthographyForLanguage(language: &NSString) -> Id<Self, Shared> {
-        msg_send_id![Self::class(), defaultOrthographyForLanguage: language]
-    }
     pub unsafe fn dominantLanguage(&self) -> Id<NSString, Shared> {
         msg_send_id![self, dominantLanguage]
     }
@@ -56,6 +53,9 @@ impl NSOrthography {
     }
     pub unsafe fn allLanguages(&self) -> Id<NSArray<NSString>, Shared> {
         msg_send_id![self, allLanguages]
+    }
+    pub unsafe fn defaultOrthographyForLanguage(language: &NSString) -> Id<Self, Shared> {
+        msg_send_id![Self::class(), defaultOrthographyForLanguage: language]
     }
 }
 #[doc = "NSOrthographyCreation"]

@@ -47,6 +47,9 @@ impl NSPredicate {
     pub unsafe fn predicateWithBlock(block: TodoBlock) -> Id<NSPredicate, Shared> {
         msg_send_id![Self::class(), predicateWithBlock: block]
     }
+    pub unsafe fn predicateFormat(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, predicateFormat]
+    }
     pub unsafe fn predicateWithSubstitutionVariables(
         &self,
         variables: &NSDictionary<NSString, Object>,
@@ -69,9 +72,6 @@ impl NSPredicate {
     }
     pub unsafe fn allowEvaluation(&self) {
         msg_send![self, allowEvaluation]
-    }
-    pub unsafe fn predicateFormat(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, predicateFormat]
     }
 }
 #[doc = "NSPredicateSupport"]

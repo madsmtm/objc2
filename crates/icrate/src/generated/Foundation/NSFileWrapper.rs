@@ -48,52 +48,6 @@ impl NSFileWrapper {
     pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: inCoder]
     }
-    pub unsafe fn matchesContentsOfURL(&self, url: &NSURL) -> bool {
-        msg_send![self, matchesContentsOfURL: url]
-    }
-    pub unsafe fn readFromURL_options_error(
-        &self,
-        url: &NSURL,
-        options: NSFileWrapperReadingOptions,
-        outError: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, readFromURL: url, options: options, error: outError]
-    }
-    pub unsafe fn writeToURL_options_originalContentsURL_error(
-        &self,
-        url: &NSURL,
-        options: NSFileWrapperWritingOptions,
-        originalContentsURL: Option<&NSURL>,
-        outError: *mut *mut NSError,
-    ) -> bool {
-        msg_send![
-            self,
-            writeToURL: url,
-            options: options,
-            originalContentsURL: originalContentsURL,
-            error: outError
-        ]
-    }
-    pub unsafe fn addFileWrapper(&self, child: &NSFileWrapper) -> Id<NSString, Shared> {
-        msg_send_id![self, addFileWrapper: child]
-    }
-    pub unsafe fn addRegularFileWithContents_preferredFilename(
-        &self,
-        data: &NSData,
-        fileName: &NSString,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![
-            self,
-            addRegularFileWithContents: data,
-            preferredFilename: fileName
-        ]
-    }
-    pub unsafe fn removeFileWrapper(&self, child: &NSFileWrapper) {
-        msg_send![self, removeFileWrapper: child]
-    }
-    pub unsafe fn keyForFileWrapper(&self, child: &NSFileWrapper) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, keyForFileWrapper: child]
-    }
     pub unsafe fn isDirectory(&self) -> bool {
         msg_send![self, isDirectory]
     }
@@ -121,11 +75,57 @@ impl NSFileWrapper {
     pub unsafe fn setFileAttributes(&self, fileAttributes: &NSDictionary<NSString, Object>) {
         msg_send![self, setFileAttributes: fileAttributes]
     }
+    pub unsafe fn matchesContentsOfURL(&self, url: &NSURL) -> bool {
+        msg_send![self, matchesContentsOfURL: url]
+    }
+    pub unsafe fn readFromURL_options_error(
+        &self,
+        url: &NSURL,
+        options: NSFileWrapperReadingOptions,
+        outError: *mut *mut NSError,
+    ) -> bool {
+        msg_send![self, readFromURL: url, options: options, error: outError]
+    }
+    pub unsafe fn writeToURL_options_originalContentsURL_error(
+        &self,
+        url: &NSURL,
+        options: NSFileWrapperWritingOptions,
+        originalContentsURL: Option<&NSURL>,
+        outError: *mut *mut NSError,
+    ) -> bool {
+        msg_send![
+            self,
+            writeToURL: url,
+            options: options,
+            originalContentsURL: originalContentsURL,
+            error: outError
+        ]
+    }
     pub unsafe fn serializedRepresentation(&self) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, serializedRepresentation]
     }
+    pub unsafe fn addFileWrapper(&self, child: &NSFileWrapper) -> Id<NSString, Shared> {
+        msg_send_id![self, addFileWrapper: child]
+    }
+    pub unsafe fn addRegularFileWithContents_preferredFilename(
+        &self,
+        data: &NSData,
+        fileName: &NSString,
+    ) -> Id<NSString, Shared> {
+        msg_send_id![
+            self,
+            addRegularFileWithContents: data,
+            preferredFilename: fileName
+        ]
+    }
+    pub unsafe fn removeFileWrapper(&self, child: &NSFileWrapper) {
+        msg_send![self, removeFileWrapper: child]
+    }
     pub unsafe fn fileWrappers(&self) -> Option<Id<NSDictionary<NSString, NSFileWrapper>, Shared>> {
         msg_send_id![self, fileWrappers]
+    }
+    pub unsafe fn keyForFileWrapper(&self, child: &NSFileWrapper) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, keyForFileWrapper: child]
     }
     pub unsafe fn regularFileContents(&self) -> Option<Id<NSData, Shared>> {
         msg_send_id![self, regularFileContents]

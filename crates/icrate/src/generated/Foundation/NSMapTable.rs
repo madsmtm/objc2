@@ -76,6 +76,12 @@ impl<KeyType: Message, ObjectType: Message> NSMapTable<KeyType, ObjectType> {
     pub unsafe fn weakToWeakObjectsMapTable() -> Id<NSMapTable<KeyType, ObjectType>, Shared> {
         msg_send_id![Self::class(), weakToWeakObjectsMapTable]
     }
+    pub unsafe fn keyPointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
+        msg_send_id![self, keyPointerFunctions]
+    }
+    pub unsafe fn valuePointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
+        msg_send_id![self, valuePointerFunctions]
+    }
     pub unsafe fn objectForKey(&self, aKey: Option<&KeyType>) -> Option<Id<ObjectType, Shared>> {
         msg_send_id![self, objectForKey: aKey]
     }
@@ -84,6 +90,9 @@ impl<KeyType: Message, ObjectType: Message> NSMapTable<KeyType, ObjectType> {
     }
     pub unsafe fn setObject_forKey(&self, anObject: Option<&ObjectType>, aKey: Option<&KeyType>) {
         msg_send![self, setObject: anObject, forKey: aKey]
+    }
+    pub unsafe fn count(&self) -> NSUInteger {
+        msg_send![self, count]
     }
     pub unsafe fn keyEnumerator(&self) -> Id<NSEnumerator<KeyType>, Shared> {
         msg_send_id![self, keyEnumerator]
@@ -96,14 +105,5 @@ impl<KeyType: Message, ObjectType: Message> NSMapTable<KeyType, ObjectType> {
     }
     pub unsafe fn dictionaryRepresentation(&self) -> Id<NSDictionary<KeyType, ObjectType>, Shared> {
         msg_send_id![self, dictionaryRepresentation]
-    }
-    pub unsafe fn keyPointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
-        msg_send_id![self, keyPointerFunctions]
-    }
-    pub unsafe fn valuePointerFunctions(&self) -> Id<NSPointerFunctions, Shared> {
-        msg_send_id![self, valuePointerFunctions]
-    }
-    pub unsafe fn count(&self) -> NSUInteger {
-        msg_send![self, count]
     }
 }

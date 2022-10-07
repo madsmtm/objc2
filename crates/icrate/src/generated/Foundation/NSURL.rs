@@ -179,6 +179,57 @@ impl NSURL {
             relativeToURL: baseURL
         ]
     }
+    pub unsafe fn dataRepresentation(&self) -> Id<NSData, Shared> {
+        msg_send_id![self, dataRepresentation]
+    }
+    pub unsafe fn absoluteString(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, absoluteString]
+    }
+    pub unsafe fn relativeString(&self) -> Id<NSString, Shared> {
+        msg_send_id![self, relativeString]
+    }
+    pub unsafe fn baseURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, baseURL]
+    }
+    pub unsafe fn absoluteURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, absoluteURL]
+    }
+    pub unsafe fn scheme(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, scheme]
+    }
+    pub unsafe fn resourceSpecifier(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, resourceSpecifier]
+    }
+    pub unsafe fn host(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, host]
+    }
+    pub unsafe fn port(&self) -> Option<Id<NSNumber, Shared>> {
+        msg_send_id![self, port]
+    }
+    pub unsafe fn user(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, user]
+    }
+    pub unsafe fn password(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, password]
+    }
+    pub unsafe fn path(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, path]
+    }
+    pub unsafe fn fragment(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, fragment]
+    }
+    pub unsafe fn parameterString(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, parameterString]
+    }
+    pub unsafe fn query(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, query]
+    }
+    pub unsafe fn relativePath(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, relativePath]
+    }
+    pub unsafe fn hasDirectoryPath(&self) -> bool {
+        msg_send![self, hasDirectoryPath]
+    }
     pub unsafe fn getFileSystemRepresentation_maxLength(
         &self,
         buffer: NonNull<c_char>,
@@ -190,6 +241,15 @@ impl NSURL {
             maxLength: maxBufferLength
         ]
     }
+    pub unsafe fn fileSystemRepresentation(&self) -> NonNull<c_char> {
+        msg_send![self, fileSystemRepresentation]
+    }
+    pub unsafe fn isFileURL(&self) -> bool {
+        msg_send![self, isFileURL]
+    }
+    pub unsafe fn standardizedURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, standardizedURL]
+    }
     pub unsafe fn checkResourceIsReachableAndReturnError(&self, error: *mut *mut NSError) -> bool {
         msg_send![self, checkResourceIsReachableAndReturnError: error]
     }
@@ -198,6 +258,9 @@ impl NSURL {
     }
     pub unsafe fn fileReferenceURL(&self) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, fileReferenceURL]
+    }
+    pub unsafe fn filePathURL(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, filePathURL]
     }
     pub unsafe fn getResourceValue_forKey_error(
         &self,
@@ -342,69 +405,6 @@ impl NSURL {
     pub unsafe fn stopAccessingSecurityScopedResource(&self) {
         msg_send![self, stopAccessingSecurityScopedResource]
     }
-    pub unsafe fn dataRepresentation(&self) -> Id<NSData, Shared> {
-        msg_send_id![self, dataRepresentation]
-    }
-    pub unsafe fn absoluteString(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, absoluteString]
-    }
-    pub unsafe fn relativeString(&self) -> Id<NSString, Shared> {
-        msg_send_id![self, relativeString]
-    }
-    pub unsafe fn baseURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, baseURL]
-    }
-    pub unsafe fn absoluteURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, absoluteURL]
-    }
-    pub unsafe fn scheme(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, scheme]
-    }
-    pub unsafe fn resourceSpecifier(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, resourceSpecifier]
-    }
-    pub unsafe fn host(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, host]
-    }
-    pub unsafe fn port(&self) -> Option<Id<NSNumber, Shared>> {
-        msg_send_id![self, port]
-    }
-    pub unsafe fn user(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, user]
-    }
-    pub unsafe fn password(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, password]
-    }
-    pub unsafe fn path(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, path]
-    }
-    pub unsafe fn fragment(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, fragment]
-    }
-    pub unsafe fn parameterString(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, parameterString]
-    }
-    pub unsafe fn query(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, query]
-    }
-    pub unsafe fn relativePath(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, relativePath]
-    }
-    pub unsafe fn hasDirectoryPath(&self) -> bool {
-        msg_send![self, hasDirectoryPath]
-    }
-    pub unsafe fn fileSystemRepresentation(&self) -> NonNull<c_char> {
-        msg_send![self, fileSystemRepresentation]
-    }
-    pub unsafe fn isFileURL(&self) -> bool {
-        msg_send![self, isFileURL]
-    }
-    pub unsafe fn standardizedURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, standardizedURL]
-    }
-    pub unsafe fn filePathURL(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, filePathURL]
-    }
 }
 #[doc = "NSPromisedItems"]
 impl NSURL {
@@ -499,11 +499,11 @@ impl NSURLComponents {
     pub unsafe fn componentsWithString(URLString: &NSString) -> Option<Id<Self, Shared>> {
         msg_send_id![Self::class(), componentsWithString: URLString]
     }
-    pub unsafe fn URLRelativeToURL(&self, baseURL: Option<&NSURL>) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, URLRelativeToURL: baseURL]
-    }
     pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, URL]
+    }
+    pub unsafe fn URLRelativeToURL(&self, baseURL: Option<&NSURL>) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, URLRelativeToURL: baseURL]
     }
     pub unsafe fn string(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, string]
@@ -664,6 +664,9 @@ impl NSString {
             stringByAddingPercentEncodingWithAllowedCharacters: allowedCharacters
         ]
     }
+    pub unsafe fn stringByRemovingPercentEncoding(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, stringByRemovingPercentEncoding]
+    }
     pub unsafe fn stringByAddingPercentEscapesUsingEncoding(
         &self,
         enc: NSStringEncoding,
@@ -676,9 +679,6 @@ impl NSString {
     ) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, stringByReplacingPercentEscapesUsingEncoding: enc]
     }
-    pub unsafe fn stringByRemovingPercentEncoding(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, stringByRemovingPercentEncoding]
-    }
 }
 #[doc = "NSURLPathUtilities"]
 impl NSURL {
@@ -686,6 +686,15 @@ impl NSURL {
         components: &NSArray<NSString>,
     ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![Self::class(), fileURLWithPathComponents: components]
+    }
+    pub unsafe fn pathComponents(&self) -> Option<Id<NSArray<NSString>, Shared>> {
+        msg_send_id![self, pathComponents]
+    }
+    pub unsafe fn lastPathComponent(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, lastPathComponent]
+    }
+    pub unsafe fn pathExtension(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, pathExtension]
     }
     pub unsafe fn URLByAppendingPathComponent(
         &self,
@@ -704,23 +713,14 @@ impl NSURL {
             isDirectory: isDirectory
         ]
     }
+    pub unsafe fn URLByDeletingLastPathComponent(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, URLByDeletingLastPathComponent]
+    }
     pub unsafe fn URLByAppendingPathExtension(
         &self,
         pathExtension: &NSString,
     ) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, URLByAppendingPathExtension: pathExtension]
-    }
-    pub unsafe fn pathComponents(&self) -> Option<Id<NSArray<NSString>, Shared>> {
-        msg_send_id![self, pathComponents]
-    }
-    pub unsafe fn lastPathComponent(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, lastPathComponent]
-    }
-    pub unsafe fn pathExtension(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, pathExtension]
-    }
-    pub unsafe fn URLByDeletingLastPathComponent(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, URLByDeletingLastPathComponent]
     }
     pub unsafe fn URLByDeletingPathExtension(&self) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, URLByDeletingPathExtension]

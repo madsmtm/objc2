@@ -72,6 +72,12 @@ impl NSDistributedNotificationCenter {
             options: options
         ]
     }
+    pub unsafe fn suspended(&self) -> bool {
+        msg_send![self, suspended]
+    }
+    pub unsafe fn setSuspended(&self, suspended: bool) {
+        msg_send![self, setSuspended: suspended]
+    }
     pub unsafe fn addObserver_selector_name_object(
         &self,
         observer: &Object,
@@ -119,11 +125,5 @@ impl NSDistributedNotificationCenter {
             name: aName,
             object: anObject
         ]
-    }
-    pub unsafe fn suspended(&self) -> bool {
-        msg_send![self, suspended]
-    }
-    pub unsafe fn setSuspended(&self, suspended: bool) {
-        msg_send![self, setSuspended: suspended]
     }
 }

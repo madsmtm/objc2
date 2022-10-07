@@ -14,6 +14,15 @@ impl NSObject {
     ) -> Option<Id<Object, Shared>> {
         msg_send_id![self, scriptingValueForSpecifier: objectSpecifier]
     }
+    pub unsafe fn scriptingProperties(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
+        msg_send_id![self, scriptingProperties]
+    }
+    pub unsafe fn setScriptingProperties(
+        &self,
+        scriptingProperties: Option<&NSDictionary<NSString, Object>>,
+    ) {
+        msg_send![self, setScriptingProperties: scriptingProperties]
+    }
     pub unsafe fn copyScriptingValue_forKey_withProperties(
         &self,
         value: &Object,
@@ -41,14 +50,5 @@ impl NSObject {
             withContentsValue: contentsValue,
             properties: properties
         ]
-    }
-    pub unsafe fn scriptingProperties(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
-        msg_send_id![self, scriptingProperties]
-    }
-    pub unsafe fn setScriptingProperties(
-        &self,
-        scriptingProperties: Option<&NSDictionary<NSString, Object>>,
-    ) {
-        msg_send![self, setScriptingProperties: scriptingProperties]
     }
 }

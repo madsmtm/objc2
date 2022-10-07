@@ -13,6 +13,15 @@ extern_class!(
     }
 );
 impl NSDateInterval {
+    pub unsafe fn startDate(&self) -> Id<NSDate, Shared> {
+        msg_send_id![self, startDate]
+    }
+    pub unsafe fn endDate(&self) -> Id<NSDate, Shared> {
+        msg_send_id![self, endDate]
+    }
+    pub unsafe fn duration(&self) -> NSTimeInterval {
+        msg_send![self, duration]
+    }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
         msg_send_id![self, init]
     }
@@ -50,14 +59,5 @@ impl NSDateInterval {
     }
     pub unsafe fn containsDate(&self, date: &NSDate) -> bool {
         msg_send![self, containsDate: date]
-    }
-    pub unsafe fn startDate(&self) -> Id<NSDate, Shared> {
-        msg_send_id![self, startDate]
-    }
-    pub unsafe fn endDate(&self) -> Id<NSDate, Shared> {
-        msg_send_id![self, endDate]
-    }
-    pub unsafe fn duration(&self) -> NSTimeInterval {
-        msg_send![self, duration]
     }
 }

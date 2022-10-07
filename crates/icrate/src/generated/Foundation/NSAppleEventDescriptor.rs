@@ -157,6 +157,51 @@ impl NSAppleEventDescriptor {
     pub unsafe fn initRecordDescriptor(&self) -> Id<Self, Shared> {
         msg_send_id![self, initRecordDescriptor]
     }
+    pub unsafe fn aeDesc(&self) -> *mut AEDesc {
+        msg_send![self, aeDesc]
+    }
+    pub unsafe fn descriptorType(&self) -> DescType {
+        msg_send![self, descriptorType]
+    }
+    pub unsafe fn data(&self) -> Id<NSData, Shared> {
+        msg_send_id![self, data]
+    }
+    pub unsafe fn booleanValue(&self) -> Boolean {
+        msg_send![self, booleanValue]
+    }
+    pub unsafe fn enumCodeValue(&self) -> OSType {
+        msg_send![self, enumCodeValue]
+    }
+    pub unsafe fn int32Value(&self) -> SInt32 {
+        msg_send![self, int32Value]
+    }
+    pub unsafe fn doubleValue(&self) -> c_double {
+        msg_send![self, doubleValue]
+    }
+    pub unsafe fn typeCodeValue(&self) -> OSType {
+        msg_send![self, typeCodeValue]
+    }
+    pub unsafe fn stringValue(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, stringValue]
+    }
+    pub unsafe fn dateValue(&self) -> Option<Id<NSDate, Shared>> {
+        msg_send_id![self, dateValue]
+    }
+    pub unsafe fn fileURLValue(&self) -> Option<Id<NSURL, Shared>> {
+        msg_send_id![self, fileURLValue]
+    }
+    pub unsafe fn eventClass(&self) -> AEEventClass {
+        msg_send![self, eventClass]
+    }
+    pub unsafe fn eventID(&self) -> AEEventID {
+        msg_send![self, eventID]
+    }
+    pub unsafe fn returnID(&self) -> AEReturnID {
+        msg_send![self, returnID]
+    }
+    pub unsafe fn transactionID(&self) -> AETransactionID {
+        msg_send![self, transactionID]
+    }
     pub unsafe fn setParamDescriptor_forKeyword(
         &self,
         descriptor: &NSAppleEventDescriptor,
@@ -203,6 +248,12 @@ impl NSAppleEventDescriptor {
             error: error
         ]
     }
+    pub unsafe fn isRecordDescriptor(&self) -> bool {
+        msg_send![self, isRecordDescriptor]
+    }
+    pub unsafe fn numberOfItems(&self) -> NSInteger {
+        msg_send![self, numberOfItems]
+    }
     pub unsafe fn insertDescriptor_atIndex(
         &self,
         descriptor: &NSAppleEventDescriptor,
@@ -243,56 +294,5 @@ impl NSAppleEventDescriptor {
         descriptorType: DescType,
     ) -> Option<Id<NSAppleEventDescriptor, Shared>> {
         msg_send_id![self, coerceToDescriptorType: descriptorType]
-    }
-    pub unsafe fn aeDesc(&self) -> *mut AEDesc {
-        msg_send![self, aeDesc]
-    }
-    pub unsafe fn descriptorType(&self) -> DescType {
-        msg_send![self, descriptorType]
-    }
-    pub unsafe fn data(&self) -> Id<NSData, Shared> {
-        msg_send_id![self, data]
-    }
-    pub unsafe fn booleanValue(&self) -> Boolean {
-        msg_send![self, booleanValue]
-    }
-    pub unsafe fn enumCodeValue(&self) -> OSType {
-        msg_send![self, enumCodeValue]
-    }
-    pub unsafe fn int32Value(&self) -> SInt32 {
-        msg_send![self, int32Value]
-    }
-    pub unsafe fn doubleValue(&self) -> c_double {
-        msg_send![self, doubleValue]
-    }
-    pub unsafe fn typeCodeValue(&self) -> OSType {
-        msg_send![self, typeCodeValue]
-    }
-    pub unsafe fn stringValue(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, stringValue]
-    }
-    pub unsafe fn dateValue(&self) -> Option<Id<NSDate, Shared>> {
-        msg_send_id![self, dateValue]
-    }
-    pub unsafe fn fileURLValue(&self) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, fileURLValue]
-    }
-    pub unsafe fn eventClass(&self) -> AEEventClass {
-        msg_send![self, eventClass]
-    }
-    pub unsafe fn eventID(&self) -> AEEventID {
-        msg_send![self, eventID]
-    }
-    pub unsafe fn returnID(&self) -> AEReturnID {
-        msg_send![self, returnID]
-    }
-    pub unsafe fn transactionID(&self) -> AETransactionID {
-        msg_send![self, transactionID]
-    }
-    pub unsafe fn isRecordDescriptor(&self) -> bool {
-        msg_send![self, isRecordDescriptor]
-    }
-    pub unsafe fn numberOfItems(&self) -> NSInteger {
-        msg_send![self, numberOfItems]
     }
 }

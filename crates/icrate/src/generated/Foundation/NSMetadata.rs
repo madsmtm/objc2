@@ -21,41 +21,6 @@ extern_class!(
     }
 );
 impl NSMetadataQuery {
-    pub unsafe fn startQuery(&self) -> bool {
-        msg_send![self, startQuery]
-    }
-    pub unsafe fn stopQuery(&self) {
-        msg_send![self, stopQuery]
-    }
-    pub unsafe fn disableUpdates(&self) {
-        msg_send![self, disableUpdates]
-    }
-    pub unsafe fn enableUpdates(&self) {
-        msg_send![self, enableUpdates]
-    }
-    pub unsafe fn resultAtIndex(&self, idx: NSUInteger) -> Id<Object, Shared> {
-        msg_send_id![self, resultAtIndex: idx]
-    }
-    pub unsafe fn enumerateResultsUsingBlock(&self, block: TodoBlock) {
-        msg_send![self, enumerateResultsUsingBlock: block]
-    }
-    pub unsafe fn enumerateResultsWithOptions_usingBlock(
-        &self,
-        opts: NSEnumerationOptions,
-        block: TodoBlock,
-    ) {
-        msg_send![self, enumerateResultsWithOptions: opts, usingBlock: block]
-    }
-    pub unsafe fn indexOfResult(&self, result: &Object) -> NSUInteger {
-        msg_send![self, indexOfResult: result]
-    }
-    pub unsafe fn valueOfAttribute_forResultAtIndex(
-        &self,
-        attrName: &NSString,
-        idx: NSUInteger,
-    ) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, valueOfAttribute: attrName, forResultAtIndex: idx]
-    }
     pub unsafe fn delegate(&self) -> Option<Id<NSMetadataQueryDelegate, Shared>> {
         msg_send_id![self, delegate]
     }
@@ -116,6 +81,12 @@ impl NSMetadataQuery {
     pub unsafe fn setOperationQueue(&self, operationQueue: Option<&NSOperationQueue>) {
         msg_send![self, setOperationQueue: operationQueue]
     }
+    pub unsafe fn startQuery(&self) -> bool {
+        msg_send![self, startQuery]
+    }
+    pub unsafe fn stopQuery(&self) {
+        msg_send![self, stopQuery]
+    }
     pub unsafe fn isStarted(&self) -> bool {
         msg_send![self, isStarted]
     }
@@ -125,11 +96,33 @@ impl NSMetadataQuery {
     pub unsafe fn isStopped(&self) -> bool {
         msg_send![self, isStopped]
     }
+    pub unsafe fn disableUpdates(&self) {
+        msg_send![self, disableUpdates]
+    }
+    pub unsafe fn enableUpdates(&self) {
+        msg_send![self, enableUpdates]
+    }
     pub unsafe fn resultCount(&self) -> NSUInteger {
         msg_send![self, resultCount]
     }
+    pub unsafe fn resultAtIndex(&self, idx: NSUInteger) -> Id<Object, Shared> {
+        msg_send_id![self, resultAtIndex: idx]
+    }
+    pub unsafe fn enumerateResultsUsingBlock(&self, block: TodoBlock) {
+        msg_send![self, enumerateResultsUsingBlock: block]
+    }
+    pub unsafe fn enumerateResultsWithOptions_usingBlock(
+        &self,
+        opts: NSEnumerationOptions,
+        block: TodoBlock,
+    ) {
+        msg_send![self, enumerateResultsWithOptions: opts, usingBlock: block]
+    }
     pub unsafe fn results(&self) -> Id<NSArray, Shared> {
         msg_send_id![self, results]
+    }
+    pub unsafe fn indexOfResult(&self, result: &Object) -> NSUInteger {
+        msg_send![self, indexOfResult: result]
     }
     pub unsafe fn valueLists(
         &self,
@@ -138,6 +131,13 @@ impl NSMetadataQuery {
     }
     pub unsafe fn groupedResults(&self) -> Id<NSArray<NSMetadataQueryResultGroup>, Shared> {
         msg_send_id![self, groupedResults]
+    }
+    pub unsafe fn valueOfAttribute_forResultAtIndex(
+        &self,
+        attrName: &NSString,
+        idx: NSUInteger,
+    ) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, valueOfAttribute: attrName, forResultAtIndex: idx]
     }
 }
 pub type NSMetadataQueryDelegate = NSObject;
@@ -191,9 +191,6 @@ extern_class!(
     }
 );
 impl NSMetadataQueryResultGroup {
-    pub unsafe fn resultAtIndex(&self, idx: NSUInteger) -> Id<Object, Shared> {
-        msg_send_id![self, resultAtIndex: idx]
-    }
     pub unsafe fn attribute(&self) -> Id<NSString, Shared> {
         msg_send_id![self, attribute]
     }
@@ -205,6 +202,9 @@ impl NSMetadataQueryResultGroup {
     }
     pub unsafe fn resultCount(&self) -> NSUInteger {
         msg_send![self, resultCount]
+    }
+    pub unsafe fn resultAtIndex(&self, idx: NSUInteger) -> Id<Object, Shared> {
+        msg_send_id![self, resultAtIndex: idx]
     }
     pub unsafe fn results(&self) -> Id<NSArray, Shared> {
         msg_send_id![self, results]

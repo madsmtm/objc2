@@ -14,9 +14,6 @@ extern_class!(
     }
 );
 impl NSScanner {
-    pub unsafe fn initWithString(&self, string: &NSString) -> Id<Self, Shared> {
-        msg_send_id![self, initWithString: string]
-    }
     pub unsafe fn string(&self) -> Id<NSString, Shared> {
         msg_send_id![self, string]
     }
@@ -43,6 +40,9 @@ impl NSScanner {
     }
     pub unsafe fn setLocale(&self, locale: Option<&Object>) {
         msg_send![self, setLocale: locale]
+    }
+    pub unsafe fn initWithString(&self, string: &NSString) -> Id<Self, Shared> {
+        msg_send_id![self, initWithString: string]
     }
 }
 #[doc = "NSExtendedScanner"]
@@ -105,13 +105,13 @@ impl NSScanner {
     ) -> bool {
         msg_send![self, scanUpToCharactersFromSet: set, intoString: result]
     }
+    pub unsafe fn isAtEnd(&self) -> bool {
+        msg_send![self, isAtEnd]
+    }
     pub unsafe fn scannerWithString(string: &NSString) -> Id<Self, Shared> {
         msg_send_id![Self::class(), scannerWithString: string]
     }
     pub unsafe fn localizedScannerWithString(string: &NSString) -> Id<Object, Shared> {
         msg_send_id![Self::class(), localizedScannerWithString: string]
-    }
-    pub unsafe fn isAtEnd(&self) -> bool {
-        msg_send![self, isAtEnd]
     }
 }

@@ -15,6 +15,15 @@ extern_class!(
     }
 );
 impl NSNotification {
+    pub unsafe fn name(&self) -> Id<NSNotificationName, Shared> {
+        msg_send_id![self, name]
+    }
+    pub unsafe fn object(&self) -> Option<Id<Object, Shared>> {
+        msg_send_id![self, object]
+    }
+    pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>> {
+        msg_send_id![self, userInfo]
+    }
     pub unsafe fn initWithName_object_userInfo(
         &self,
         name: &NSNotificationName,
@@ -25,15 +34,6 @@ impl NSNotification {
     }
     pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
         msg_send_id![self, initWithCoder: coder]
-    }
-    pub unsafe fn name(&self) -> Id<NSNotificationName, Shared> {
-        msg_send_id![self, name]
-    }
-    pub unsafe fn object(&self) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, object]
-    }
-    pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>> {
-        msg_send_id![self, userInfo]
     }
 }
 #[doc = "NSNotificationCreation"]
@@ -68,6 +68,9 @@ extern_class!(
     }
 );
 impl NSNotificationCenter {
+    pub unsafe fn defaultCenter() -> Id<NSNotificationCenter, Shared> {
+        msg_send_id![Self::class(), defaultCenter]
+    }
     pub unsafe fn addObserver_selector_name_object(
         &self,
         observer: &Object,
@@ -136,8 +139,5 @@ impl NSNotificationCenter {
             queue: queue,
             usingBlock: block
         ]
-    }
-    pub unsafe fn defaultCenter() -> Id<NSNotificationCenter, Shared> {
-        msg_send_id![Self::class(), defaultCenter]
     }
 }

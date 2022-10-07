@@ -45,6 +45,9 @@ impl NSItemProvider {
             loadHandler: loadHandler
         ]
     }
+    pub unsafe fn registeredTypeIdentifiers(&self) -> Id<NSArray<NSString>, Shared> {
+        msg_send_id![self, registeredTypeIdentifiers]
+    }
     pub unsafe fn registeredTypeIdentifiersWithFileOptions(
         &self,
         fileOptions: NSItemProviderFileOptions,
@@ -98,6 +101,12 @@ impl NSItemProvider {
             completionHandler: completionHandler
         ]
     }
+    pub unsafe fn suggestedName(&self) -> Option<Id<NSString, Shared>> {
+        msg_send_id![self, suggestedName]
+    }
+    pub unsafe fn setSuggestedName(&self, suggestedName: Option<&NSString>) {
+        msg_send![self, setSuggestedName: suggestedName]
+    }
     pub unsafe fn initWithObject(&self, object: &NSItemProviderWriting) -> Id<Self, Shared> {
         msg_send_id![self, initWithObject: object]
     }
@@ -145,18 +154,15 @@ impl NSItemProvider {
             completionHandler: completionHandler
         ]
     }
-    pub unsafe fn registeredTypeIdentifiers(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, registeredTypeIdentifiers]
-    }
-    pub unsafe fn suggestedName(&self) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, suggestedName]
-    }
-    pub unsafe fn setSuggestedName(&self, suggestedName: Option<&NSString>) {
-        msg_send![self, setSuggestedName: suggestedName]
-    }
 }
 #[doc = "NSPreviewSupport"]
 impl NSItemProvider {
+    pub unsafe fn previewImageHandler(&self) -> NSItemProviderLoadHandler {
+        msg_send![self, previewImageHandler]
+    }
+    pub unsafe fn setPreviewImageHandler(&self, previewImageHandler: NSItemProviderLoadHandler) {
+        msg_send![self, setPreviewImageHandler: previewImageHandler]
+    }
     pub unsafe fn loadPreviewImageWithOptions_completionHandler(
         &self,
         options: Option<&NSDictionary>,
@@ -167,11 +173,5 @@ impl NSItemProvider {
             loadPreviewImageWithOptions: options,
             completionHandler: completionHandler
         ]
-    }
-    pub unsafe fn previewImageHandler(&self) -> NSItemProviderLoadHandler {
-        msg_send![self, previewImageHandler]
-    }
-    pub unsafe fn setPreviewImageHandler(&self, previewImageHandler: NSItemProviderLoadHandler) {
-        msg_send![self, setPreviewImageHandler: previewImageHandler]
     }
 }

@@ -35,6 +35,15 @@ impl NSURLProtocol {
             client: client
         ]
     }
+    pub unsafe fn client(&self) -> Option<Id<NSURLProtocolClient, Shared>> {
+        msg_send_id![self, client]
+    }
+    pub unsafe fn request(&self) -> Id<NSURLRequest, Shared> {
+        msg_send_id![self, request]
+    }
+    pub unsafe fn cachedResponse(&self) -> Option<Id<NSCachedURLResponse, Shared>> {
+        msg_send_id![self, cachedResponse]
+    }
     pub unsafe fn canInitWithRequest(request: &NSURLRequest) -> bool {
         msg_send![Self::class(), canInitWithRequest: request]
     }
@@ -76,15 +85,6 @@ impl NSURLProtocol {
     }
     pub unsafe fn unregisterClass(protocolClass: &Class) {
         msg_send![Self::class(), unregisterClass: protocolClass]
-    }
-    pub unsafe fn client(&self) -> Option<Id<NSURLProtocolClient, Shared>> {
-        msg_send_id![self, client]
-    }
-    pub unsafe fn request(&self) -> Id<NSURLRequest, Shared> {
-        msg_send_id![self, request]
-    }
-    pub unsafe fn cachedResponse(&self) -> Option<Id<NSCachedURLResponse, Shared>> {
-        msg_send_id![self, cachedResponse]
     }
 }
 #[doc = "NSURLSessionTaskAdditions"]

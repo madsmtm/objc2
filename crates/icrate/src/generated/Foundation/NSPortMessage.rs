@@ -28,9 +28,6 @@ impl NSPortMessage {
             components: components
         ]
     }
-    pub unsafe fn sendBeforeDate(&self, date: &NSDate) -> bool {
-        msg_send![self, sendBeforeDate: date]
-    }
     pub unsafe fn components(&self) -> Option<Id<NSArray, Shared>> {
         msg_send_id![self, components]
     }
@@ -39,6 +36,9 @@ impl NSPortMessage {
     }
     pub unsafe fn sendPort(&self) -> Option<Id<NSPort, Shared>> {
         msg_send_id![self, sendPort]
+    }
+    pub unsafe fn sendBeforeDate(&self, date: &NSDate) -> bool {
+        msg_send![self, sendBeforeDate: date]
     }
     pub unsafe fn msgid(&self) -> u32 {
         msg_send![self, msgid]

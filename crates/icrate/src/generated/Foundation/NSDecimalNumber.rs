@@ -45,6 +45,9 @@ impl NSDecimalNumber {
     pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>) -> Id<NSString, Shared> {
         msg_send_id![self, descriptionWithLocale: locale]
     }
+    pub unsafe fn decimalValue(&self) -> NSDecimal {
+        msg_send![self, decimalValue]
+    }
     pub unsafe fn decimalNumberWithMantissa_exponent_isNegative(
         mantissa: c_ulonglong,
         exponent: c_short,
@@ -74,6 +77,21 @@ impl NSDecimalNumber {
             decimalNumberWithString: numberValue,
             locale: locale
         ]
+    }
+    pub unsafe fn zero() -> Id<NSDecimalNumber, Shared> {
+        msg_send_id![Self::class(), zero]
+    }
+    pub unsafe fn one() -> Id<NSDecimalNumber, Shared> {
+        msg_send_id![Self::class(), one]
+    }
+    pub unsafe fn minimumDecimalNumber() -> Id<NSDecimalNumber, Shared> {
+        msg_send_id![Self::class(), minimumDecimalNumber]
+    }
+    pub unsafe fn maximumDecimalNumber() -> Id<NSDecimalNumber, Shared> {
+        msg_send_id![Self::class(), maximumDecimalNumber]
+    }
+    pub unsafe fn notANumber() -> Id<NSDecimalNumber, Shared> {
+        msg_send_id![Self::class(), notANumber]
     }
     pub unsafe fn decimalNumberByAdding(
         &self,
@@ -186,24 +204,6 @@ impl NSDecimalNumber {
     pub unsafe fn compare(&self, decimalNumber: &NSNumber) -> NSComparisonResult {
         msg_send![self, compare: decimalNumber]
     }
-    pub unsafe fn decimalValue(&self) -> NSDecimal {
-        msg_send![self, decimalValue]
-    }
-    pub unsafe fn zero() -> Id<NSDecimalNumber, Shared> {
-        msg_send_id![Self::class(), zero]
-    }
-    pub unsafe fn one() -> Id<NSDecimalNumber, Shared> {
-        msg_send_id![Self::class(), one]
-    }
-    pub unsafe fn minimumDecimalNumber() -> Id<NSDecimalNumber, Shared> {
-        msg_send_id![Self::class(), minimumDecimalNumber]
-    }
-    pub unsafe fn maximumDecimalNumber() -> Id<NSDecimalNumber, Shared> {
-        msg_send_id![Self::class(), maximumDecimalNumber]
-    }
-    pub unsafe fn notANumber() -> Id<NSDecimalNumber, Shared> {
-        msg_send_id![Self::class(), notANumber]
-    }
     pub unsafe fn defaultBehavior() -> Id<NSDecimalNumberBehaviors, Shared> {
         msg_send_id![Self::class(), defaultBehavior]
     }
@@ -225,6 +225,9 @@ extern_class!(
     }
 );
 impl NSDecimalNumberHandler {
+    pub unsafe fn defaultDecimalNumberHandler() -> Id<NSDecimalNumberHandler, Shared> {
+        msg_send_id![Self::class(), defaultDecimalNumberHandler]
+    }
     pub unsafe fn initWithRoundingMode_scale_raiseOnExactness_raiseOnOverflow_raiseOnUnderflow_raiseOnDivideByZero(
         &self,
         roundingMode: NSRoundingMode,
@@ -261,9 +264,6 @@ impl NSDecimalNumberHandler {
             raiseOnUnderflow: underflow,
             raiseOnDivideByZero: divideByZero
         ]
-    }
-    pub unsafe fn defaultDecimalNumberHandler() -> Id<NSDecimalNumberHandler, Shared> {
-        msg_send_id![Self::class(), defaultDecimalNumberHandler]
     }
 }
 #[doc = "NSDecimalNumberExtensions"]
