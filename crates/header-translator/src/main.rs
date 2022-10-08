@@ -1,34 +1,12 @@
 use std::collections::{BTreeMap, HashSet};
 use std::fs;
-use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
 
 use clang::{Clang, Entity, EntityVisitResult, Index};
-use proc_macro2::{Ident, TokenStream};
+use proc_macro2::Ident;
 use quote::{format_ident, quote};
 
-use header_translator::{create_rust_file, Config};
-
-fn run_rustfmt(tokens: TokenStream) -> Vec<u8> {
-    let mut child = Command::new("rustfmt")
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("failed running rustfmt");
-
-    let mut stdin = child.stdin.take().expect("failed to open stdin");
-    write!(stdin, "{}", tokens).expect("failed writing");
-    drop(stdin);
-
-    let output = child.wait_with_output().expect("failed formatting");
-
-    if !output.status.success() {
-        panic!("failed running rustfmt with exit code {}", output.status)
-    }
-
-    output.stdout
-}
+use header_translator::{run_rustfmt, Config, RustFile, Stmt};
 
 fn main() {
     // let sysroot = Path::new("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk");
@@ -167,11 +145,13 @@ fn main() {
             continue;
         }
 
-        let (declared_types, tokens) = create_rust_file(&res, &config);
-
-        let formatted = run_rustfmt(tokens);
-
-        // println!("{}\n\n\n\n", res);
+        let mut f = RustFile::new();
+        res.iter().for_each(|entity| {
+            if let Some(stmt) = Stmt::parse(entity, &config) {
+                f.add_stmt(stmt);
+            }
+        });
+        let (declared_types, formatted) = f.finish();
 
         let mut path = output_path.join(path.file_name().expect("header file name"));
         path.set_extension("rs");
