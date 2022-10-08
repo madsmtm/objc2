@@ -2,7 +2,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSMethodSignature;
@@ -10,28 +10,30 @@ extern_class!(
         type Super = NSObject;
     }
 );
-impl NSMethodSignature {
-    pub unsafe fn signatureWithObjCTypes(
-        types: NonNull<c_char>,
-    ) -> Option<Id<NSMethodSignature, Shared>> {
-        msg_send_id![Self::class(), signatureWithObjCTypes: types]
+extern_methods!(
+    unsafe impl NSMethodSignature {
+        pub unsafe fn signatureWithObjCTypes(
+            types: NonNull<c_char>,
+        ) -> Option<Id<NSMethodSignature, Shared>> {
+            msg_send_id![Self::class(), signatureWithObjCTypes: types]
+        }
+        pub unsafe fn numberOfArguments(&self) -> NSUInteger {
+            msg_send![self, numberOfArguments]
+        }
+        pub unsafe fn getArgumentTypeAtIndex(&self, idx: NSUInteger) -> NonNull<c_char> {
+            msg_send![self, getArgumentTypeAtIndex: idx]
+        }
+        pub unsafe fn frameLength(&self) -> NSUInteger {
+            msg_send![self, frameLength]
+        }
+        pub unsafe fn isOneway(&self) -> bool {
+            msg_send![self, isOneway]
+        }
+        pub unsafe fn methodReturnType(&self) -> NonNull<c_char> {
+            msg_send![self, methodReturnType]
+        }
+        pub unsafe fn methodReturnLength(&self) -> NSUInteger {
+            msg_send![self, methodReturnLength]
+        }
     }
-    pub unsafe fn numberOfArguments(&self) -> NSUInteger {
-        msg_send![self, numberOfArguments]
-    }
-    pub unsafe fn getArgumentTypeAtIndex(&self, idx: NSUInteger) -> NonNull<c_char> {
-        msg_send![self, getArgumentTypeAtIndex: idx]
-    }
-    pub unsafe fn frameLength(&self) -> NSUInteger {
-        msg_send![self, frameLength]
-    }
-    pub unsafe fn isOneway(&self) -> bool {
-        msg_send![self, isOneway]
-    }
-    pub unsafe fn methodReturnType(&self) -> NonNull<c_char> {
-        msg_send![self, methodReturnType]
-    }
-    pub unsafe fn methodReturnLength(&self) -> NSUInteger {
-        msg_send![self, methodReturnLength]
-    }
-}
+);

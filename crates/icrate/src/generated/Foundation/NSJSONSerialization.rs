@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSJSONSerialization;
@@ -14,41 +14,43 @@ extern_class!(
         type Super = NSObject;
     }
 );
-impl NSJSONSerialization {
-    pub unsafe fn isValidJSONObject(obj: &Object) -> bool {
-        msg_send![Self::class(), isValidJSONObject: obj]
+extern_methods!(
+    unsafe impl NSJSONSerialization {
+        pub unsafe fn isValidJSONObject(obj: &Object) -> bool {
+            msg_send![Self::class(), isValidJSONObject: obj]
+        }
+        pub unsafe fn dataWithJSONObject_options_error(
+            obj: &Object,
+            opt: NSJSONWritingOptions,
+        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
+            msg_send_id![
+                Self::class(),
+                dataWithJSONObject: obj,
+                options: opt,
+                error: _
+            ]
+        }
+        pub unsafe fn JSONObjectWithData_options_error(
+            data: &NSData,
+            opt: NSJSONReadingOptions,
+        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
+            msg_send_id![
+                Self::class(),
+                JSONObjectWithData: data,
+                options: opt,
+                error: _
+            ]
+        }
+        pub unsafe fn JSONObjectWithStream_options_error(
+            stream: &NSInputStream,
+            opt: NSJSONReadingOptions,
+        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
+            msg_send_id![
+                Self::class(),
+                JSONObjectWithStream: stream,
+                options: opt,
+                error: _
+            ]
+        }
     }
-    pub unsafe fn dataWithJSONObject_options_error(
-        obj: &Object,
-        opt: NSJSONWritingOptions,
-    ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
-        msg_send_id![
-            Self::class(),
-            dataWithJSONObject: obj,
-            options: opt,
-            error: _
-        ]
-    }
-    pub unsafe fn JSONObjectWithData_options_error(
-        data: &NSData,
-        opt: NSJSONReadingOptions,
-    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
-        msg_send_id![
-            Self::class(),
-            JSONObjectWithData: data,
-            options: opt,
-            error: _
-        ]
-    }
-    pub unsafe fn JSONObjectWithStream_options_error(
-        stream: &NSInputStream,
-        opt: NSJSONReadingOptions,
-    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
-        msg_send_id![
-            Self::class(),
-            JSONObjectWithStream: stream,
-            options: opt,
-            error: _
-        ]
-    }
-}
+);

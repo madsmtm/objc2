@@ -7,7 +7,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSClassDescription;
@@ -15,59 +15,63 @@ extern_class!(
         type Super = NSObject;
     }
 );
-impl NSClassDescription {
-    pub unsafe fn registerClassDescription_forClass(
-        description: &NSClassDescription,
-        aClass: &Class,
-    ) {
-        msg_send![
-            Self::class(),
-            registerClassDescription: description,
-            forClass: aClass
-        ]
+extern_methods!(
+    unsafe impl NSClassDescription {
+        pub unsafe fn registerClassDescription_forClass(
+            description: &NSClassDescription,
+            aClass: &Class,
+        ) {
+            msg_send![
+                Self::class(),
+                registerClassDescription: description,
+                forClass: aClass
+            ]
+        }
+        pub unsafe fn invalidateClassDescriptionCache() {
+            msg_send![Self::class(), invalidateClassDescriptionCache]
+        }
+        pub unsafe fn classDescriptionForClass(
+            aClass: &Class,
+        ) -> Option<Id<NSClassDescription, Shared>> {
+            msg_send_id![Self::class(), classDescriptionForClass: aClass]
+        }
+        pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
+            msg_send_id![self, attributeKeys]
+        }
+        pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
+            msg_send_id![self, toOneRelationshipKeys]
+        }
+        pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
+            msg_send_id![self, toManyRelationshipKeys]
+        }
+        pub unsafe fn inverseForRelationshipKey(
+            &self,
+            relationshipKey: &NSString,
+        ) -> Option<Id<NSString, Shared>> {
+            msg_send_id![self, inverseForRelationshipKey: relationshipKey]
+        }
     }
-    pub unsafe fn invalidateClassDescriptionCache() {
-        msg_send![Self::class(), invalidateClassDescriptionCache]
+);
+extern_methods!(
+    #[doc = "NSClassDescriptionPrimitives"]
+    unsafe impl NSObject {
+        pub unsafe fn classDescription(&self) -> Id<NSClassDescription, Shared> {
+            msg_send_id![self, classDescription]
+        }
+        pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
+            msg_send_id![self, attributeKeys]
+        }
+        pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
+            msg_send_id![self, toOneRelationshipKeys]
+        }
+        pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
+            msg_send_id![self, toManyRelationshipKeys]
+        }
+        pub unsafe fn inverseForRelationshipKey(
+            &self,
+            relationshipKey: &NSString,
+        ) -> Option<Id<NSString, Shared>> {
+            msg_send_id![self, inverseForRelationshipKey: relationshipKey]
+        }
     }
-    pub unsafe fn classDescriptionForClass(
-        aClass: &Class,
-    ) -> Option<Id<NSClassDescription, Shared>> {
-        msg_send_id![Self::class(), classDescriptionForClass: aClass]
-    }
-    pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, attributeKeys]
-    }
-    pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, toOneRelationshipKeys]
-    }
-    pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, toManyRelationshipKeys]
-    }
-    pub unsafe fn inverseForRelationshipKey(
-        &self,
-        relationshipKey: &NSString,
-    ) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, inverseForRelationshipKey: relationshipKey]
-    }
-}
-#[doc = "NSClassDescriptionPrimitives"]
-impl NSObject {
-    pub unsafe fn classDescription(&self) -> Id<NSClassDescription, Shared> {
-        msg_send_id![self, classDescription]
-    }
-    pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, attributeKeys]
-    }
-    pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, toOneRelationshipKeys]
-    }
-    pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
-        msg_send_id![self, toManyRelationshipKeys]
-    }
-    pub unsafe fn inverseForRelationshipKey(
-        &self,
-        relationshipKey: &NSString,
-    ) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, inverseForRelationshipKey: relationshipKey]
-    }
-}
+);

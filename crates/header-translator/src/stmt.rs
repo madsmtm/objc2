@@ -442,9 +442,11 @@ impl ToTokens for Stmt {
                         }
                     );
 
-                    impl #generic_params #type_ {
-                        #(#methods)*
-                    }
+                    extern_methods!(
+                        unsafe impl #generic_params #type_ {
+                            #(#methods)*
+                        }
+                    );
                 }
             }
             Self::CategoryDecl {
@@ -468,10 +470,12 @@ impl ToTokens for Stmt {
                     .collect();
 
                 quote! {
-                    #meta
-                    impl<#(#generics: Message),*> #class_name<#(#generics),*> {
-                        #(#methods)*
-                    }
+                    extern_methods!(
+                        #meta
+                        unsafe impl<#(#generics: Message),*> #class_name<#(#generics),*> {
+                            #(#methods)*
+                        }
+                    );
                 }
             }
             Self::ProtocolDecl {

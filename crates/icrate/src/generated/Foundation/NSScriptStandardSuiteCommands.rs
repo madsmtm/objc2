@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSScriptCommand::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSCloneCommand;
@@ -14,14 +14,16 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSCloneCommand {
-    pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
-        msg_send![self, setReceiversSpecifier: receiversRef]
+extern_methods!(
+    unsafe impl NSCloneCommand {
+        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
+            msg_send![self, setReceiversSpecifier: receiversRef]
+        }
+        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
+            msg_send_id![self, keySpecifier]
+        }
     }
-    pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-        msg_send_id![self, keySpecifier]
-    }
-}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSCloseCommand;
@@ -29,11 +31,13 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSCloseCommand {
-    pub unsafe fn saveOptions(&self) -> NSSaveOptions {
-        msg_send![self, saveOptions]
+extern_methods!(
+    unsafe impl NSCloseCommand {
+        pub unsafe fn saveOptions(&self) -> NSSaveOptions {
+            msg_send![self, saveOptions]
+        }
     }
-}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSCountCommand;
@@ -41,7 +45,9 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSCountCommand {}
+extern_methods!(
+    unsafe impl NSCountCommand {}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSCreateCommand;
@@ -49,14 +55,16 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSCreateCommand {
-    pub unsafe fn createClassDescription(&self) -> Id<NSScriptClassDescription, Shared> {
-        msg_send_id![self, createClassDescription]
+extern_methods!(
+    unsafe impl NSCreateCommand {
+        pub unsafe fn createClassDescription(&self) -> Id<NSScriptClassDescription, Shared> {
+            msg_send_id![self, createClassDescription]
+        }
+        pub unsafe fn resolvedKeyDictionary(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
+            msg_send_id![self, resolvedKeyDictionary]
+        }
     }
-    pub unsafe fn resolvedKeyDictionary(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
-        msg_send_id![self, resolvedKeyDictionary]
-    }
-}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSDeleteCommand;
@@ -64,14 +72,16 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSDeleteCommand {
-    pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
-        msg_send![self, setReceiversSpecifier: receiversRef]
+extern_methods!(
+    unsafe impl NSDeleteCommand {
+        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
+            msg_send![self, setReceiversSpecifier: receiversRef]
+        }
+        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
+            msg_send_id![self, keySpecifier]
+        }
     }
-    pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-        msg_send_id![self, keySpecifier]
-    }
-}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSExistsCommand;
@@ -79,7 +89,9 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSExistsCommand {}
+extern_methods!(
+    unsafe impl NSExistsCommand {}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSGetCommand;
@@ -87,7 +99,9 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSGetCommand {}
+extern_methods!(
+    unsafe impl NSGetCommand {}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSMoveCommand;
@@ -95,14 +109,16 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSMoveCommand {
-    pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
-        msg_send![self, setReceiversSpecifier: receiversRef]
+extern_methods!(
+    unsafe impl NSMoveCommand {
+        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
+            msg_send![self, setReceiversSpecifier: receiversRef]
+        }
+        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
+            msg_send_id![self, keySpecifier]
+        }
     }
-    pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-        msg_send_id![self, keySpecifier]
-    }
-}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSQuitCommand;
@@ -110,11 +126,13 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSQuitCommand {
-    pub unsafe fn saveOptions(&self) -> NSSaveOptions {
-        msg_send![self, saveOptions]
+extern_methods!(
+    unsafe impl NSQuitCommand {
+        pub unsafe fn saveOptions(&self) -> NSSaveOptions {
+            msg_send![self, saveOptions]
+        }
     }
-}
+);
 extern_class!(
     #[derive(Debug)]
     pub struct NSSetCommand;
@@ -122,11 +140,13 @@ extern_class!(
         type Super = NSScriptCommand;
     }
 );
-impl NSSetCommand {
-    pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
-        msg_send![self, setReceiversSpecifier: receiversRef]
+extern_methods!(
+    unsafe impl NSSetCommand {
+        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
+            msg_send![self, setReceiversSpecifier: receiversRef]
+        }
+        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
+            msg_send_id![self, keySpecifier]
+        }
     }
-    pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-        msg_send_id![self, keySpecifier]
-    }
-}
+);

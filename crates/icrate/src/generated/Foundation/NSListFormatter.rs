@@ -4,7 +4,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSListFormatter;
@@ -12,31 +12,33 @@ extern_class!(
         type Super = NSFormatter;
     }
 );
-impl NSListFormatter {
-    pub unsafe fn locale(&self) -> Id<NSLocale, Shared> {
-        msg_send_id![self, locale]
+extern_methods!(
+    unsafe impl NSListFormatter {
+        pub unsafe fn locale(&self) -> Id<NSLocale, Shared> {
+            msg_send_id![self, locale]
+        }
+        pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
+            msg_send![self, setLocale: locale]
+        }
+        pub unsafe fn itemFormatter(&self) -> Option<Id<NSFormatter, Shared>> {
+            msg_send_id![self, itemFormatter]
+        }
+        pub unsafe fn setItemFormatter(&self, itemFormatter: Option<&NSFormatter>) {
+            msg_send![self, setItemFormatter: itemFormatter]
+        }
+        pub unsafe fn localizedStringByJoiningStrings(
+            strings: &NSArray<NSString>,
+        ) -> Id<NSString, Shared> {
+            msg_send_id![Self::class(), localizedStringByJoiningStrings: strings]
+        }
+        pub unsafe fn stringFromItems(&self, items: &NSArray) -> Option<Id<NSString, Shared>> {
+            msg_send_id![self, stringFromItems: items]
+        }
+        pub unsafe fn stringForObjectValue(
+            &self,
+            obj: Option<&Object>,
+        ) -> Option<Id<NSString, Shared>> {
+            msg_send_id![self, stringForObjectValue: obj]
+        }
     }
-    pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
-        msg_send![self, setLocale: locale]
-    }
-    pub unsafe fn itemFormatter(&self) -> Option<Id<NSFormatter, Shared>> {
-        msg_send_id![self, itemFormatter]
-    }
-    pub unsafe fn setItemFormatter(&self, itemFormatter: Option<&NSFormatter>) {
-        msg_send![self, setItemFormatter: itemFormatter]
-    }
-    pub unsafe fn localizedStringByJoiningStrings(
-        strings: &NSArray<NSString>,
-    ) -> Id<NSString, Shared> {
-        msg_send_id![Self::class(), localizedStringByJoiningStrings: strings]
-    }
-    pub unsafe fn stringFromItems(&self, items: &NSArray) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, stringFromItems: items]
-    }
-    pub unsafe fn stringForObjectValue(
-        &self,
-        obj: Option<&Object>,
-    ) -> Option<Id<NSString, Shared>> {
-        msg_send_id![self, stringForObjectValue: obj]
-    }
-}
+);

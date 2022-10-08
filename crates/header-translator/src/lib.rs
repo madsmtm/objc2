@@ -57,7 +57,7 @@ impl RustFile {
 
         let tokens = quote! {
             #[allow(unused_imports)]
-            use objc2::{ClassType, extern_class, msg_send, msg_send_id};
+            use objc2::{ClassType, extern_class, extern_methods, msg_send, msg_send_id};
             #[allow(unused_imports)]
             use objc2::rc::{Id, Shared};
 

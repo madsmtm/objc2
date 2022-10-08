@@ -7,7 +7,7 @@ use crate::Foundation::generated::NSTextCheckingResult::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSSpellServer;
@@ -15,29 +15,31 @@ extern_class!(
         type Super = NSObject;
     }
 );
-impl NSSpellServer {
-    pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>> {
-        msg_send_id![self, delegate]
+extern_methods!(
+    unsafe impl NSSpellServer {
+        pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>> {
+            msg_send_id![self, delegate]
+        }
+        pub unsafe fn setDelegate(&self, delegate: Option<&NSSpellServerDelegate>) {
+            msg_send![self, setDelegate: delegate]
+        }
+        pub unsafe fn registerLanguage_byVendor(
+            &self,
+            language: Option<&NSString>,
+            vendor: Option<&NSString>,
+        ) -> bool {
+            msg_send![self, registerLanguage: language, byVendor: vendor]
+        }
+        pub unsafe fn isWordInUserDictionaries_caseSensitive(
+            &self,
+            word: &NSString,
+            flag: bool,
+        ) -> bool {
+            msg_send![self, isWordInUserDictionaries: word, caseSensitive: flag]
+        }
+        pub unsafe fn run(&self) {
+            msg_send![self, run]
+        }
     }
-    pub unsafe fn setDelegate(&self, delegate: Option<&NSSpellServerDelegate>) {
-        msg_send![self, setDelegate: delegate]
-    }
-    pub unsafe fn registerLanguage_byVendor(
-        &self,
-        language: Option<&NSString>,
-        vendor: Option<&NSString>,
-    ) -> bool {
-        msg_send![self, registerLanguage: language, byVendor: vendor]
-    }
-    pub unsafe fn isWordInUserDictionaries_caseSensitive(
-        &self,
-        word: &NSString,
-        flag: bool,
-    ) -> bool {
-        msg_send![self, isWordInUserDictionaries: word, caseSensitive: flag]
-    }
-    pub unsafe fn run(&self) {
-        msg_send![self, run]
-    }
-}
+);
 pub type NSSpellServerDelegate = NSObject;
