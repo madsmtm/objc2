@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 use std::io::Write;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 use proc_macro2::TokenStream;
@@ -48,7 +49,7 @@ impl RustFile {
         self.stmts.push(stmt);
     }
 
-    pub fn finish(self) -> (HashSet<String>, Vec<u8>) {
+    pub fn finish(self) -> (HashSet<String>, TokenStream) {
         let iter = self.stmts.iter().filter(|stmt| match stmt {
             Stmt::ItemImport { name } => !self.declared_types.contains(name),
             _ => true,
@@ -63,8 +64,21 @@ impl RustFile {
             #(#iter)*
         };
 
-        (self.declared_types, run_rustfmt(tokens))
+        (self.declared_types, tokens)
     }
+}
+
+pub fn run_cargo_fmt() {
+    let status = Command::new("cargo")
+        .args(["fmt", "--package=icrate"])
+        .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap())
+        .status()
+        .expect("failed running cargo fmt");
+
+    assert!(
+        status.success(),
+        "failed running cargo fmt with exit code {status}"
+    );
 }
 
 pub fn run_rustfmt(tokens: TokenStream) -> Vec<u8> {

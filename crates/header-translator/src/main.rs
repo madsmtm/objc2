@@ -1,37 +1,26 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::io;
+use std::path::Path;
 
-use clang::{Clang, Entity, EntityVisitResult, Index};
-use proc_macro2::Ident;
+use clang::{Clang, EntityVisitResult, Index};
 use quote::{format_ident, quote};
 
 use header_translator::{run_rustfmt, Config, RustFile, Stmt};
 
 fn main() {
+    let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let workspace_dir = manifest_dir.parent().unwrap();
+    let crate_src = workspace_dir.join("icrate/src");
+
     // let sysroot = Path::new("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk");
-    let sysroot = Path::new("./ideas/MacOSX-SDK-changes/MacOSXA.B.C.sdk");
-    let framework_path = sysroot.join("System/Library/Frameworks");
+    let sysroot = workspace_dir.join("ideas/MacOSX-SDK-changes/MacOSXA.B.C.sdk");
+    let framework_dir = sysroot.join("System/Library/Frameworks");
 
     let clang = Clang::new().unwrap();
-
     let index = Index::new(&clang, true, true);
-
-    let _config =
-        dbg!(Config::from_file(Path::new("icrate/src/AppKit/translation-config.toml")).unwrap());
-
-    let _module_path = framework_path.join("module.map");
-
-    // for entry in framework_path.read_dir().unwrap() {
-    //     let dir = entry.unwrap();
-    //     println!("{:?}", dir.file_name());
-    //     if dir.file_type().unwrap().is_dir() {
-
-    let dir = framework_path.join("Foundation.framework").join("Headers");
-    let header = dir.join("Foundation.h");
-
     let tu = index
-        .parser(&header)
+        .parser(&manifest_dir.join("framework-includes.h"))
         .detailed_preprocessing_record(true)
         // .single_file_parse(true)
         .skip_function_bodies(true)
@@ -51,6 +40,8 @@ fn main() {
         ])
         .parse()
         .unwrap();
+
+    println!("status: initialized clang");
 
     dbg!(&tu);
     dbg!(tu.get_target());
@@ -78,113 +69,112 @@ fn main() {
     dbg!(&entity);
     dbg!(entity.get_availability());
 
-    let _entities_left = usize::MAX;
+    let configs: HashMap<String, Config> = crate_src
+        .read_dir()
+        .expect("read_dir")
+        .filter_map(|dir| {
+            let dir = dir.expect("dir");
+            if !dir.file_type().expect("file type").is_dir() {
+                return None;
+            }
+            let path = dir.path();
+            let file = path.join("translation-config.toml");
+            match Config::from_file(&file) {
+                Ok(config) => Some((
+                    path.file_name()
+                        .expect("framework name")
+                        .to_string_lossy()
+                        .to_string(),
+                    config,
+                )),
+                Err(err) if err.kind() == io::ErrorKind::NotFound => None,
+                Err(err) => panic!("{file:?}: {err}"),
+            }
+        })
+        .collect();
 
-    let mut result: BTreeMap<PathBuf, Vec<Entity<'_>>> = BTreeMap::new();
+    println!("status: loaded {} configs", configs.len());
+
+    let mut result: HashMap<String, BTreeMap<String, RustFile>> = HashMap::new();
 
     entity.visit_children(|entity, _parent| {
-        // EntityKind::InclusionDirective
-        // if let Some(file) = entity.get_file() {
-        //     let path = file.get_path();
-        //     if path.starts_with(&dir) {
-        //         result.entry(path).or_default().push(entity);
-        //     }
-        // }
         if let Some(location) = entity.get_location() {
             if let Some(file) = location.get_file_location().file {
                 let path = file.get_path();
-                if path.starts_with(&dir) {
-                    result.entry(path).or_default().push(entity);
+                if let Ok(path) = path.strip_prefix(&framework_dir) {
+                    let mut components = path.components();
+                    let library = components
+                        .next()
+                        .expect("components next")
+                        .as_os_str()
+                        .to_str()
+                        .expect("component to_str")
+                        .strip_suffix(".framework")
+                        .expect("framework fileending");
+                    let path = components.as_path();
+
+                    if let Some(config) = configs.get(library) {
+                        let name = path
+                            .file_stem()
+                            .expect("path file stem")
+                            .to_string_lossy()
+                            .to_owned();
+                        if name != library {
+                            let files = result.entry(library.to_string()).or_default();
+                            let file = files.entry(name.to_string()).or_insert_with(RustFile::new);
+                            if let Some(stmt) = Stmt::parse(&entity, &config) {
+                                file.add_stmt(stmt);
+                            }
+                        }
+                    } else {
+                        // println!("library not found {library}");
+                    }
                 }
-                // entities_left = 20;
-                // println!("{:?}: {}", entity.get_kind(), entity.get_display_name().unwrap_or_else(|| "`None`".to_string()));
-                // if entity.get_display_name().as_deref() == Some("TARGET_OS_IPHONE") {
-                // dbg!(&entity);
-                // dbg!(&entity.get_range());
-                // dbg!(&entity.get_children());
-                // }
             }
         }
-
-        // if entities_left < 100 {
-        //     dbg!(&entity);
-        // }
-
-        // if let Some(left) = entities_left.checked_sub(1) {
-        //     entities_left = left;
-        //     EntityVisitResult::Recurse
-        // } else {
-        //     EntityVisitResult::Break
-        // }
-        // if e.get_kind() == EntityKind::StructDecl {
-        //     // EntityVisitResult::Recurse
-        // } else {
-        //     EntityVisitResult::Break
-        // }
         EntityVisitResult::Continue
     });
 
-    // for entity in &result[&dir.join("NSCursor.h")] {
-    //     println!("{:?}: {}", entity.get_kind(), entity.get_display_name().unwrap_or_else(|| "`None`".to_string()));
-    //     if let Some(comment) = entity.get_comment() {
-    //         println!("{}", comment);
-    //     }
-    // }
+    println!("status: loaded data");
 
-    let output_path = Path::new("icrate/src/generated/Foundation");
+    for (library, files) in result.into_iter() {
+        let output_path = crate_src.join("generated").join(&library);
 
-    let config = dbg!(Config::from_file(Path::new(
-        "icrate/src/Foundation/translation-config.toml"
-    ))
-    .unwrap());
+        let declared: Vec<_> = files
+            .into_iter()
+            .map(|(name, file)| {
+                let (declared_types, tokens) = file.finish();
 
-    let mut declared: Vec<(Ident, HashSet<String>)> = Vec::new();
+                let mut path = output_path.join(&name);
+                path.set_extension("rs");
 
-    for (path, res) in result {
-        if path == header {
-            continue;
-        }
+                fs::write(&path, run_rustfmt(tokens)).unwrap();
 
-        let mut f = RustFile::new();
-        res.iter().for_each(|entity| {
-            if let Some(stmt) = Stmt::parse(entity, &config) {
-                f.add_stmt(stmt);
+                (format_ident!("{}", name), declared_types)
+            })
+            .collect();
+
+        let mod_names = declared.iter().map(|(name, _)| name);
+        let mod_imports = declared.iter().filter_map(|(name, declared_types)| {
+            if !declared_types.is_empty() {
+                let declared_types = declared_types.iter().map(|name| format_ident!("{}", name));
+                Some(quote!(super::#name::{#(#declared_types,)*}))
+            } else {
+                None
             }
         });
-        let (declared_types, formatted) = f.finish();
 
-        let mut path = output_path.join(path.file_name().expect("header file name"));
-        path.set_extension("rs");
+        let tokens = quote! {
+            #(pub(crate) mod #mod_names;)*
+
+            mod __exported {
+                #(pub use #mod_imports;)*
+            }
+        };
 
         // truncate if the file exists
-        fs::write(&path, formatted).unwrap();
+        fs::write(output_path.join("mod.rs"), run_rustfmt(tokens)).unwrap();
 
-        let name = format_ident!("{}", path.file_stem().unwrap().to_string_lossy());
-
-        declared.push((name, declared_types));
+        println!("status: written framework {library}");
     }
-
-    let mod_names = declared.iter().map(|(name, _)| name);
-    let mod_imports = declared.iter().filter_map(|(name, declared_types)| {
-        if !declared_types.is_empty() {
-            let declared_types = declared_types.iter().map(|name| format_ident!("{}", name));
-            Some(quote!(super::#name::{#(#declared_types,)*}))
-        } else {
-            None
-        }
-    });
-
-    let mod_tokens = quote! {
-        #(pub(crate) mod #mod_names;)*
-
-        mod __exported {
-            #(pub use #mod_imports;)*
-        }
-    };
-
-    // truncate if the file exists
-    fs::write(output_path.join("mod.rs"), run_rustfmt(mod_tokens)).unwrap();
-
-    //     }
-    // }
 }
