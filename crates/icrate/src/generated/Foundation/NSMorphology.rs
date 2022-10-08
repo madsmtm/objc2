@@ -45,13 +45,12 @@ impl NSMorphology {
         &self,
         features: Option<&NSMorphologyCustomPronoun>,
         language: &NSString,
-        error: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             self,
             setCustomPronoun: features,
             forLanguage: language,
-            error: error
+            error: _
         ]
     }
 }

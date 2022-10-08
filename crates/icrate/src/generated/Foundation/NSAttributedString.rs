@@ -249,14 +249,13 @@ impl NSAttributedString {
         markdownFile: &NSURL,
         options: Option<&NSAttributedStringMarkdownParsingOptions>,
         baseURL: Option<&NSURL>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             initWithContentsOfMarkdownFileAtURL: markdownFile,
             options: options,
             baseURL: baseURL,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn initWithMarkdown_options_baseURL_error(
@@ -264,14 +263,13 @@ impl NSAttributedString {
         markdown: &NSData,
         options: Option<&NSAttributedStringMarkdownParsingOptions>,
         baseURL: Option<&NSURL>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             initWithMarkdown: markdown,
             options: options,
             baseURL: baseURL,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn initWithMarkdownString_options_baseURL_error(
@@ -279,14 +277,13 @@ impl NSAttributedString {
         markdownString: &NSString,
         options: Option<&NSAttributedStringMarkdownParsingOptions>,
         baseURL: Option<&NSURL>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             initWithMarkdownString: markdownString,
             options: options,
             baseURL: baseURL,
-            error: error
+            error: _
         ]
     }
 }

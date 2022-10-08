@@ -59,11 +59,11 @@ impl NSBundle {
     pub unsafe fn unload(&self) -> bool {
         msg_send![self, unload]
     }
-    pub unsafe fn preflightAndReturnError(&self, error: *mut *mut NSError) -> bool {
-        msg_send![self, preflightAndReturnError: error]
+    pub unsafe fn preflightAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, preflightAndReturnError: _]
     }
-    pub unsafe fn loadAndReturnError(&self, error: *mut *mut NSError) -> bool {
-        msg_send![self, loadAndReturnError: error]
+    pub unsafe fn loadAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, loadAndReturnError: _]
     }
     pub unsafe fn bundleURL(&self) -> Id<NSURL, Shared> {
         msg_send_id![self, bundleURL]

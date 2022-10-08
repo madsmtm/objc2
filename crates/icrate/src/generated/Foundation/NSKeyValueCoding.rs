@@ -25,9 +25,8 @@ impl NSObject {
         &self,
         ioValue: &mut Option<Id<Object, Shared>>,
         inKey: &NSString,
-        outError: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, validateValue: ioValue, forKey: inKey, error: outError]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, validateValue: ioValue, forKey: inKey, error: _]
     }
     pub unsafe fn mutableArrayValueForKey(&self, key: &NSString) -> Id<NSMutableArray, Shared> {
         msg_send_id![self, mutableArrayValueForKey: key]
@@ -51,13 +50,12 @@ impl NSObject {
         &self,
         ioValue: &mut Option<Id<Object, Shared>>,
         inKeyPath: &NSString,
-        outError: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             self,
             validateValue: ioValue,
             forKeyPath: inKeyPath,
-            error: outError
+            error: _
         ]
     }
     pub unsafe fn mutableArrayValueForKeyPath(

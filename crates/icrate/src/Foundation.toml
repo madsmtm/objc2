@@ -41,3 +41,9 @@ getInputStream_outputStream = { skipped = true }
 [class.NSPropertyListSerialization.methods]
 dataFromPropertyList_format_errorDescription = { skipped = true }
 propertyListFromData_mutabilityOption_format_errorDescription = { skipped = true }
+
+# Has `error:` parameter, but returns NSInteger (where 0 means error)
+[class.NSJSONSerialization.methods.writeJSONObject_toStream_options_error]
+skipped = true
+[class.NSPropertyListSerialization.methods.writePropertyList_toStream_format_options_error]
+skipped = true

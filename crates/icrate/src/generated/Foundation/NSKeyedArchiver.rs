@@ -24,13 +24,12 @@ impl NSKeyedArchiver {
     pub unsafe fn archivedDataWithRootObject_requiringSecureCoding_error(
         object: &Object,
         requiresSecureCoding: bool,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSData, Shared>> {
+    ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             archivedDataWithRootObject: object,
             requiringSecureCoding: requiresSecureCoding,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
@@ -125,84 +124,77 @@ impl NSKeyedUnarchiver {
     pub unsafe fn initForReadingFromData_error(
         &self,
         data: &NSData,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, initForReadingFromData: data, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initForReadingFromData: data, error: _]
     }
     pub unsafe fn unarchivedObjectOfClass_fromData_error(
         cls: &Class,
         data: &NSData,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             unarchivedObjectOfClass: cls,
             fromData: data,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn unarchivedArrayOfObjectsOfClass_fromData_error(
         cls: &Class,
         data: &NSData,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSArray, Shared>> {
+    ) -> Result<Id<NSArray, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             unarchivedArrayOfObjectsOfClass: cls,
             fromData: data,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn unarchivedDictionaryWithKeysOfClass_objectsOfClass_fromData_error(
         keyCls: &Class,
         valueCls: &Class,
         data: &NSData,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSDictionary, Shared>> {
+    ) -> Result<Id<NSDictionary, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             unarchivedDictionaryWithKeysOfClass: keyCls,
             objectsOfClass: valueCls,
             fromData: data,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn unarchivedObjectOfClasses_fromData_error(
         classes: &NSSet<TodoClass>,
         data: &NSData,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             unarchivedObjectOfClasses: classes,
             fromData: data,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn unarchivedArrayOfObjectsOfClasses_fromData_error(
         classes: &NSSet<TodoClass>,
         data: &NSData,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSArray, Shared>> {
+    ) -> Result<Id<NSArray, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             unarchivedArrayOfObjectsOfClasses: classes,
             fromData: data,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn unarchivedDictionaryWithKeysOfClasses_objectsOfClasses_fromData_error(
         keyClasses: &NSSet<TodoClass>,
         valueClasses: &NSSet<TodoClass>,
         data: &NSData,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSDictionary, Shared>> {
+    ) -> Result<Id<NSDictionary, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             unarchivedDictionaryWithKeysOfClasses: keyClasses,
             objectsOfClasses: valueClasses,
             fromData: data,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn init(&self) -> Id<Self, Shared> {
@@ -216,12 +208,11 @@ impl NSKeyedUnarchiver {
     }
     pub unsafe fn unarchiveTopLevelObjectWithData_error(
         data: &NSData,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             unarchiveTopLevelObjectWithData: data,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn unarchiveObjectWithFile(path: &NSString) -> Option<Id<Object, Shared>> {

@@ -88,13 +88,12 @@ impl NSURLConnection {
     pub unsafe fn sendSynchronousRequest_returningResponse_error(
         request: &NSURLRequest,
         response: Option<&mut Option<Id<NSURLResponse, Shared>>>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSData, Shared>> {
+    ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             sendSynchronousRequest: request,
             returningResponse: response,
-            error: error
+            error: _
         ]
     }
 }

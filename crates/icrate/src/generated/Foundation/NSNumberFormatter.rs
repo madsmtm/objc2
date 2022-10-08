@@ -29,14 +29,13 @@ impl NSNumberFormatter {
         obj: Option<&mut Option<Id<Object, Shared>>>,
         string: &NSString,
         rangep: *mut NSRange,
-        error: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             self,
             getObjectValue: obj,
             forString: string,
             range: rangep,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn stringFromNumber(&self, number: &NSNumber) -> Option<Id<NSString, Shared>> {

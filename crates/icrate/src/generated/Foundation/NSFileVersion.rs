@@ -55,14 +55,13 @@ impl NSFileVersion {
         url: &NSURL,
         contentsURL: &NSURL,
         options: NSFileVersionAddingOptions,
-        outError: *mut *mut NSError,
-    ) -> Option<Id<NSFileVersion, Shared>> {
+    ) -> Result<Id<NSFileVersion, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             addVersionOfItemAtURL: url,
             withContentsOfURL: contentsURL,
             options: options,
-            error: outError
+            error: _
         ]
     }
     pub unsafe fn temporaryDirectoryURLForNewVersionOfItemAtURL(url: &NSURL) -> Id<NSURL, Shared> {
@@ -114,21 +113,15 @@ impl NSFileVersion {
         &self,
         url: &NSURL,
         options: NSFileVersionReplacingOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSURL, Shared>> {
-        msg_send_id![self, replaceItemAtURL: url, options: options, error: error]
+    ) -> Result<Id<NSURL, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, replaceItemAtURL: url, options: options, error: _]
     }
-    pub unsafe fn removeAndReturnError(&self, outError: *mut *mut NSError) -> bool {
-        msg_send![self, removeAndReturnError: outError]
+    pub unsafe fn removeAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, removeAndReturnError: _]
     }
     pub unsafe fn removeOtherVersionsOfItemAtURL_error(
         url: &NSURL,
-        outError: *mut *mut NSError,
-    ) -> bool {
-        msg_send![
-            Self::class(),
-            removeOtherVersionsOfItemAtURL: url,
-            error: outError
-        ]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![Self::class(), removeOtherVersionsOfItemAtURL: url, error: _]
     }
 }

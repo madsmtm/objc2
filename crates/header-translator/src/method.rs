@@ -309,15 +309,28 @@ impl ToTokens for Method {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let fn_name = format_ident!("{}", handle_reserved(&self.fn_name));
 
-        let arguments: Vec<_> = self
+        let mut arguments: Vec<_> = self
             .arguments
             .iter()
             .map(|(param, _qualifier, ty)| (format_ident!("{}", handle_reserved(param)), ty))
             .collect();
 
-        let fn_args = arguments
+        let is_error =
+            if self.selector.ends_with("error:") || self.selector.ends_with("AndReturnError:") {
+                let (_, ty) = arguments.last().expect("arguments last");
+                ty.is_error_out()
+            } else {
+                false
+            };
+
+        if is_error {
+            arguments.pop();
+        }
+
+        let fn_args: Vec<_> = arguments
             .iter()
-            .map(|(param, arg_ty)| quote!(#param: #arg_ty));
+            .map(|(param, arg_ty)| quote!(#param: #arg_ty))
+            .collect();
 
         let method_call = if self.selector.contains(':') {
             let split_selector: Vec<_> = self
@@ -325,18 +338,22 @@ impl ToTokens for Method {
                 .split(':')
                 .filter(|sel| !sel.is_empty())
                 .collect();
+
             assert!(
-                arguments.len() == split_selector.len(),
+                arguments.len() + (is_error as usize) == split_selector.len(),
                 "incorrect method argument length",
             );
 
             let iter = arguments
-                .iter()
+                .into_iter()
+                .map(|(param, _)| param)
+                .chain(is_error.then(|| format_ident!("_")))
                 .zip(split_selector)
-                .map(|((param, _), sel)| {
+                .map(|(param, sel)| {
                     let sel = format_ident!("{}", sel);
                     quote!(#sel: #param)
                 });
+
             quote!(#(#iter),*)
         } else {
             assert_eq!(arguments.len(), 0, "too many arguments");
@@ -344,7 +361,12 @@ impl ToTokens for Method {
             quote!(#sel)
         };
 
-        let ret = &self.result_type;
+        let ret = if is_error {
+            self.result_type.as_error()
+        } else {
+            let ret = &self.result_type;
+            quote!(#ret)
+        };
 
         let macro_name = if self.result_type.is_id() {
             format_ident!("msg_send_id")

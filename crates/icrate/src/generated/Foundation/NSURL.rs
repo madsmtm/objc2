@@ -250,8 +250,8 @@ impl NSURL {
     pub unsafe fn standardizedURL(&self) -> Option<Id<NSURL, Shared>> {
         msg_send_id![self, standardizedURL]
     }
-    pub unsafe fn checkResourceIsReachableAndReturnError(&self, error: *mut *mut NSError) -> bool {
-        msg_send![self, checkResourceIsReachableAndReturnError: error]
+    pub unsafe fn checkResourceIsReachableAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, checkResourceIsReachableAndReturnError: _]
     }
     pub unsafe fn isFileReferenceURL(&self) -> bool {
         msg_send![self, isFileReferenceURL]
@@ -266,31 +266,27 @@ impl NSURL {
         &self,
         value: &mut Option<Id<Object, Shared>>,
         key: &NSURLResourceKey,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, getResourceValue: value, forKey: key, error: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, getResourceValue: value, forKey: key, error: _]
     }
     pub unsafe fn resourceValuesForKeys_error(
         &self,
         keys: &NSArray<NSURLResourceKey>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSDictionary<NSURLResourceKey, Object>, Shared>> {
-        msg_send_id![self, resourceValuesForKeys: keys, error: error]
+    ) -> Result<Id<NSDictionary<NSURLResourceKey, Object>, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, resourceValuesForKeys: keys, error: _]
     }
     pub unsafe fn setResourceValue_forKey_error(
         &self,
         value: Option<&Object>,
         key: &NSURLResourceKey,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, setResourceValue: value, forKey: key, error: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, setResourceValue: value, forKey: key, error: _]
     }
     pub unsafe fn setResourceValues_error(
         &self,
         keyedValues: &NSDictionary<NSURLResourceKey, Object>,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, setResourceValues: keyedValues, error: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, setResourceValues: keyedValues, error: _]
     }
     pub unsafe fn removeCachedResourceValueForKey(&self, key: &NSURLResourceKey) {
         msg_send![self, removeCachedResourceValueForKey: key]
@@ -310,14 +306,13 @@ impl NSURL {
         options: NSURLBookmarkCreationOptions,
         keys: Option<&NSArray<NSURLResourceKey>>,
         relativeURL: Option<&NSURL>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSData, Shared>> {
+    ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             bookmarkDataWithOptions: options,
             includingResourceValuesForKeys: keys,
             relativeToURL: relativeURL,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn initByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error(
@@ -326,15 +321,14 @@ impl NSURL {
         options: NSURLBookmarkResolutionOptions,
         relativeURL: Option<&NSURL>,
         isStale: *mut bool,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             initByResolvingBookmarkData: bookmarkData,
             options: options,
             relativeToURL: relativeURL,
             bookmarkDataIsStale: isStale,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn URLByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error(
@@ -342,15 +336,14 @@ impl NSURL {
         options: NSURLBookmarkResolutionOptions,
         relativeURL: Option<&NSURL>,
         isStale: *mut bool,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             URLByResolvingBookmarkData: bookmarkData,
             options: options,
             relativeToURL: relativeURL,
             bookmarkDataIsStale: isStale,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn resourceValuesForKeys_fromBookmarkData(
@@ -367,36 +360,33 @@ impl NSURL {
         bookmarkData: &NSData,
         bookmarkFileURL: &NSURL,
         options: NSURLBookmarkFileCreationOptions,
-        error: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             Self::class(),
             writeBookmarkData: bookmarkData,
             toURL: bookmarkFileURL,
             options: options,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn bookmarkDataWithContentsOfURL_error(
         bookmarkFileURL: &NSURL,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSData, Shared>> {
+    ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             bookmarkDataWithContentsOfURL: bookmarkFileURL,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn URLByResolvingAliasFileAtURL_options_error(
         url: &NSURL,
         options: NSURLBookmarkResolutionOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             URLByResolvingAliasFileAtURL: url,
             options: options,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn startAccessingSecurityScopedResource(&self) -> bool {
@@ -412,27 +402,24 @@ impl NSURL {
         &self,
         value: &mut Option<Id<Object, Shared>>,
         key: &NSURLResourceKey,
-        error: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             self,
             getPromisedItemResourceValue: value,
             forKey: key,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn promisedItemResourceValuesForKeys_error(
         &self,
         keys: &NSArray<NSURLResourceKey>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSDictionary<NSURLResourceKey, Object>, Shared>> {
-        msg_send_id![self, promisedItemResourceValuesForKeys: keys, error: error]
+    ) -> Result<Id<NSDictionary<NSURLResourceKey, Object>, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, promisedItemResourceValuesForKeys: keys, error: _]
     }
     pub unsafe fn checkPromisedItemIsReachableAndReturnError(
         &self,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, checkPromisedItemIsReachableAndReturnError: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, checkPromisedItemIsReachableAndReturnError: _]
     }
 }
 #[doc = "NSItemProvider"]

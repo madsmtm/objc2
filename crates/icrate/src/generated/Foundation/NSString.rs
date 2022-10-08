@@ -485,14 +485,13 @@ impl NSString {
         url: &NSURL,
         useAuxiliaryFile: bool,
         enc: NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             self,
             writeToURL: url,
             atomically: useAuxiliaryFile,
             encoding: enc,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn writeToFile_atomically_encoding_error(
@@ -500,14 +499,13 @@ impl NSString {
         path: &NSString,
         useAuxiliaryFile: bool,
         enc: NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             self,
             writeToFile: path,
             atomically: useAuxiliaryFile,
             encoding: enc,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn description(&self) -> Id<NSString, Shared> {
@@ -665,100 +663,82 @@ impl NSString {
         &self,
         url: &NSURL,
         enc: NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![
-            self,
-            initWithContentsOfURL: url,
-            encoding: enc,
-            error: error
-        ]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithContentsOfURL: url, encoding: enc, error: _]
     }
     pub unsafe fn initWithContentsOfFile_encoding_error(
         &self,
         path: &NSString,
         enc: NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![
-            self,
-            initWithContentsOfFile: path,
-            encoding: enc,
-            error: error
-        ]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithContentsOfFile: path, encoding: enc, error: _]
     }
     pub unsafe fn stringWithContentsOfURL_encoding_error(
         url: &NSURL,
         enc: NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             stringWithContentsOfURL: url,
             encoding: enc,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn stringWithContentsOfFile_encoding_error(
         path: &NSString,
         enc: NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             stringWithContentsOfFile: path,
             encoding: enc,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn initWithContentsOfURL_usedEncoding_error(
         &self,
         url: &NSURL,
         enc: *mut NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             initWithContentsOfURL: url,
             usedEncoding: enc,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn initWithContentsOfFile_usedEncoding_error(
         &self,
         path: &NSString,
         enc: *mut NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             initWithContentsOfFile: path,
             usedEncoding: enc,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn stringWithContentsOfURL_usedEncoding_error(
         url: &NSURL,
         enc: *mut NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             stringWithContentsOfURL: url,
             usedEncoding: enc,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn stringWithContentsOfFile_usedEncoding_error(
         path: &NSString,
         enc: *mut NSStringEncoding,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             stringWithContentsOfFile: path,
             usedEncoding: enc,
-            error: error
+            error: _
         ]
     }
 }

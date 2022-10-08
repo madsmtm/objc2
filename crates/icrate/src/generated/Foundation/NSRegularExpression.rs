@@ -17,27 +17,20 @@ impl NSRegularExpression {
     pub unsafe fn regularExpressionWithPattern_options_error(
         pattern: &NSString,
         options: NSRegularExpressionOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSRegularExpression, Shared>> {
+    ) -> Result<Id<NSRegularExpression, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             regularExpressionWithPattern: pattern,
             options: options,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn initWithPattern_options_error(
         &self,
         pattern: &NSString,
         options: NSRegularExpressionOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![
-            self,
-            initWithPattern: pattern,
-            options: options,
-            error: error
-        ]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithPattern: pattern, options: options, error: _]
     }
     pub unsafe fn pattern(&self) -> Id<NSString, Shared> {
         msg_send_id![self, pattern]
@@ -183,20 +176,18 @@ extern_class!(
 impl NSDataDetector {
     pub unsafe fn dataDetectorWithTypes_error(
         checkingTypes: NSTextCheckingTypes,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSDataDetector, Shared>> {
+    ) -> Result<Id<NSDataDetector, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             dataDetectorWithTypes: checkingTypes,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn initWithTypes_error(
         &self,
         checkingTypes: NSTextCheckingTypes,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, initWithTypes: checkingTypes, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithTypes: checkingTypes, error: _]
     }
     pub unsafe fn checkingTypes(&self) -> NSTextCheckingTypes {
         msg_send![self, checkingTypes]

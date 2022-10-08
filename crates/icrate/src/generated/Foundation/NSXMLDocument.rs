@@ -22,30 +22,22 @@ impl NSXMLDocument {
         &self,
         string: &NSString,
         mask: NSXMLNodeOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, initWithXMLString: string, options: mask, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithXMLString: string, options: mask, error: _]
     }
     pub unsafe fn initWithContentsOfURL_options_error(
         &self,
         url: &NSURL,
         mask: NSXMLNodeOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![
-            self,
-            initWithContentsOfURL: url,
-            options: mask,
-            error: error
-        ]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithContentsOfURL: url, options: mask, error: _]
     }
     pub unsafe fn initWithData_options_error(
         &self,
         data: &NSData,
         mask: NSXMLNodeOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, initWithData: data, options: mask, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithData: data, options: mask, error: _]
     }
     pub unsafe fn initWithRootElement(&self, element: Option<&NSXMLElement>) -> Id<Self, Shared> {
         msg_send_id![self, initWithRootElement: element]
@@ -123,42 +115,39 @@ impl NSXMLDocument {
         &self,
         xslt: &NSData,
         arguments: Option<&NSDictionary<NSString, NSString>>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             objectByApplyingXSLT: xslt,
             arguments: arguments,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn objectByApplyingXSLTString_arguments_error(
         &self,
         xslt: &NSString,
         arguments: Option<&NSDictionary<NSString, NSString>>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             objectByApplyingXSLTString: xslt,
             arguments: arguments,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn objectByApplyingXSLTAtURL_arguments_error(
         &self,
         xsltURL: &NSURL,
         argument: Option<&NSDictionary<NSString, NSString>>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             objectByApplyingXSLTAtURL: xsltURL,
             arguments: argument,
-            error: error
+            error: _
         ]
     }
-    pub unsafe fn validateAndReturnError(&self, error: *mut *mut NSError) -> bool {
-        msg_send![self, validateAndReturnError: error]
+    pub unsafe fn validateAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, validateAndReturnError: _]
     }
 }

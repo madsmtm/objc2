@@ -20,9 +20,8 @@ impl NSFileWrapper {
         &self,
         url: &NSURL,
         options: NSFileWrapperReadingOptions,
-        outError: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, initWithURL: url, options: options, error: outError]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithURL: url, options: options, error: _]
     }
     pub unsafe fn initDirectoryWithFileWrappers(
         &self,
@@ -82,23 +81,21 @@ impl NSFileWrapper {
         &self,
         url: &NSURL,
         options: NSFileWrapperReadingOptions,
-        outError: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, readFromURL: url, options: options, error: outError]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, readFromURL: url, options: options, error: _]
     }
     pub unsafe fn writeToURL_options_originalContentsURL_error(
         &self,
         url: &NSURL,
         options: NSFileWrapperWritingOptions,
         originalContentsURL: Option<&NSURL>,
-        outError: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             self,
             writeToURL: url,
             options: options,
             originalContentsURL: originalContentsURL,
-            error: outError
+            error: _
         ]
     }
     pub unsafe fn serializedRepresentation(&self) -> Option<Id<NSData, Shared>> {

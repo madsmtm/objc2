@@ -83,8 +83,8 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     ) -> Id<NSArray<ObjectType>, Shared> {
         msg_send_id![self, objectsForKeys: keys, notFoundMarker: marker]
     }
-    pub unsafe fn writeToURL_error(&self, url: &NSURL, error: *mut *mut NSError) -> bool {
-        msg_send![self, writeToURL: url, error: error]
+    pub unsafe fn writeToURL_error(&self, url: &NSURL) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, writeToURL: url, error: _]
     }
     pub unsafe fn keysSortedByValueUsingSelector(
         &self,
@@ -239,19 +239,13 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     pub unsafe fn initWithContentsOfURL_error(
         &self,
         url: &NSURL,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSDictionary<NSString, ObjectType>, Shared>> {
-        msg_send_id![self, initWithContentsOfURL: url, error: error]
+    ) -> Result<Id<NSDictionary<NSString, ObjectType>, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithContentsOfURL: url, error: _]
     }
     pub unsafe fn dictionaryWithContentsOfURL_error(
         url: &NSURL,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSDictionary<NSString, ObjectType>, Shared>> {
-        msg_send_id![
-            Self::class(),
-            dictionaryWithContentsOfURL: url,
-            error: error
-        ]
+    ) -> Result<Id<NSDictionary<NSString, ObjectType>, Shared>, Id<NSError, Shared>> {
+        msg_send_id![Self::class(), dictionaryWithContentsOfURL: url, error: _]
     }
 }
 __inner_extern_class!(

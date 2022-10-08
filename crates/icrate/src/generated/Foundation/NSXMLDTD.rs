@@ -29,22 +29,15 @@ impl NSXMLDTD {
         &self,
         url: &NSURL,
         mask: NSXMLNodeOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![
-            self,
-            initWithContentsOfURL: url,
-            options: mask,
-            error: error
-        ]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithContentsOfURL: url, options: mask, error: _]
     }
     pub unsafe fn initWithData_options_error(
         &self,
         data: &NSData,
         mask: NSXMLNodeOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, initWithData: data, options: mask, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithData: data, options: mask, error: _]
     }
     pub unsafe fn publicID(&self) -> Option<Id<NSString, Shared>> {
         msg_send_id![self, publicID]

@@ -239,13 +239,12 @@ impl NSAppleEventDescriptor {
         &self,
         sendOptions: NSAppleEventSendOptions,
         timeoutInSeconds: NSTimeInterval,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSAppleEventDescriptor, Shared>> {
+    ) -> Result<Id<NSAppleEventDescriptor, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             sendEventWithOptions: sendOptions,
             timeout: timeoutInSeconds,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn isRecordDescriptor(&self) -> bool {

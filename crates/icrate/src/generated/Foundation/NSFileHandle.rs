@@ -34,49 +34,47 @@ impl NSFileHandle {
     }
     pub unsafe fn readDataToEndOfFileAndReturnError(
         &self,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSData, Shared>> {
-        msg_send_id![self, readDataToEndOfFileAndReturnError: error]
+    ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, readDataToEndOfFileAndReturnError: _]
     }
     pub unsafe fn readDataUpToLength_error(
         &self,
         length: NSUInteger,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSData, Shared>> {
-        msg_send_id![self, readDataUpToLength: length, error: error]
+    ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, readDataUpToLength: length, error: _]
     }
-    pub unsafe fn writeData_error(&self, data: &NSData, error: *mut *mut NSError) -> bool {
-        msg_send![self, writeData: data, error: error]
+    pub unsafe fn writeData_error(&self, data: &NSData) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, writeData: data, error: _]
     }
     pub unsafe fn getOffset_error(
         &self,
         offsetInFile: NonNull<c_ulonglong>,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, getOffset: offsetInFile, error: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, getOffset: offsetInFile, error: _]
     }
     pub unsafe fn seekToEndReturningOffset_error(
         &self,
         offsetInFile: *mut c_ulonglong,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, seekToEndReturningOffset: offsetInFile, error: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, seekToEndReturningOffset: offsetInFile, error: _]
     }
-    pub unsafe fn seekToOffset_error(&self, offset: c_ulonglong, error: *mut *mut NSError) -> bool {
-        msg_send![self, seekToOffset: offset, error: error]
+    pub unsafe fn seekToOffset_error(
+        &self,
+        offset: c_ulonglong,
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, seekToOffset: offset, error: _]
     }
     pub unsafe fn truncateAtOffset_error(
         &self,
         offset: c_ulonglong,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, truncateAtOffset: offset, error: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, truncateAtOffset: offset, error: _]
     }
-    pub unsafe fn synchronizeAndReturnError(&self, error: *mut *mut NSError) -> bool {
-        msg_send![self, synchronizeAndReturnError: error]
+    pub unsafe fn synchronizeAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, synchronizeAndReturnError: _]
     }
-    pub unsafe fn closeAndReturnError(&self, error: *mut *mut NSError) -> bool {
-        msg_send![self, closeAndReturnError: error]
+    pub unsafe fn closeAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, closeAndReturnError: _]
     }
 }
 #[doc = "NSFileHandleCreation"]
@@ -104,25 +102,18 @@ impl NSFileHandle {
     }
     pub unsafe fn fileHandleForReadingFromURL_error(
         url: &NSURL,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![
-            Self::class(),
-            fileHandleForReadingFromURL: url,
-            error: error
-        ]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![Self::class(), fileHandleForReadingFromURL: url, error: _]
     }
     pub unsafe fn fileHandleForWritingToURL_error(
         url: &NSURL,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![Self::class(), fileHandleForWritingToURL: url, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![Self::class(), fileHandleForWritingToURL: url, error: _]
     }
     pub unsafe fn fileHandleForUpdatingURL_error(
         url: &NSURL,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![Self::class(), fileHandleForUpdatingURL: url, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![Self::class(), fileHandleForUpdatingURL: url, error: _]
     }
 }
 #[doc = "NSFileHandleAsynchronousAccess"]

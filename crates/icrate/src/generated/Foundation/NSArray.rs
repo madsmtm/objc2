@@ -148,8 +148,8 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn subarrayWithRange(&self, range: NSRange) -> Id<NSArray<ObjectType>, Shared> {
         msg_send_id![self, subarrayWithRange: range]
     }
-    pub unsafe fn writeToURL_error(&self, url: &NSURL, error: *mut *mut NSError) -> bool {
-        msg_send![self, writeToURL: url, error: error]
+    pub unsafe fn writeToURL_error(&self, url: &NSURL) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, writeToURL: url, error: _]
     }
     pub unsafe fn makeObjectsPerformSelector(&self, aSelector: Sel) {
         msg_send![self, makeObjectsPerformSelector: aSelector]
@@ -303,15 +303,13 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     pub unsafe fn initWithContentsOfURL_error(
         &self,
         url: &NSURL,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSArray<ObjectType>, Shared>> {
-        msg_send_id![self, initWithContentsOfURL: url, error: error]
+    ) -> Result<Id<NSArray<ObjectType>, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithContentsOfURL: url, error: _]
     }
     pub unsafe fn arrayWithContentsOfURL_error(
         url: &NSURL,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSArray<ObjectType>, Shared>> {
-        msg_send_id![Self::class(), arrayWithContentsOfURL: url, error: error]
+    ) -> Result<Id<NSArray<ObjectType>, Shared>, Id<NSError, Shared>> {
+        msg_send_id![Self::class(), arrayWithContentsOfURL: url, error: _]
     }
 }
 #[doc = "NSArrayDiffing"]

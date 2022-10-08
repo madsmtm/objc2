@@ -31,14 +31,13 @@ impl NSDateFormatter {
         obj: Option<&mut Option<Id<Object, Shared>>>,
         string: &NSString,
         rangep: *mut NSRange,
-        error: *mut *mut NSError,
-    ) -> bool {
+    ) -> Result<(), Id<NSError, Shared>> {
         msg_send![
             self,
             getObjectValue: obj,
             forString: string,
             range: rangep,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn stringFromDate(&self, date: &NSDate) -> Id<NSString, Shared> {

@@ -49,27 +49,15 @@ impl NSData {
         &self,
         path: &NSString,
         writeOptionsMask: NSDataWritingOptions,
-        errorPtr: *mut *mut NSError,
-    ) -> bool {
-        msg_send![
-            self,
-            writeToFile: path,
-            options: writeOptionsMask,
-            error: errorPtr
-        ]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, writeToFile: path, options: writeOptionsMask, error: _]
     }
     pub unsafe fn writeToURL_options_error(
         &self,
         url: &NSURL,
         writeOptionsMask: NSDataWritingOptions,
-        errorPtr: *mut *mut NSError,
-    ) -> bool {
-        msg_send![
-            self,
-            writeToURL: url,
-            options: writeOptionsMask,
-            error: errorPtr
-        ]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, writeToURL: url, options: writeOptionsMask, error: _]
     }
     pub unsafe fn rangeOfData_options_range(
         &self,
@@ -117,25 +105,23 @@ impl NSData {
     pub unsafe fn dataWithContentsOfFile_options_error(
         path: &NSString,
         readOptionsMask: NSDataReadingOptions,
-        errorPtr: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             dataWithContentsOfFile: path,
             options: readOptionsMask,
-            error: errorPtr
+            error: _
         ]
     }
     pub unsafe fn dataWithContentsOfURL_options_error(
         url: &NSURL,
         readOptionsMask: NSDataReadingOptions,
-        errorPtr: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             dataWithContentsOfURL: url,
             options: readOptionsMask,
-            error: errorPtr
+            error: _
         ]
     }
     pub unsafe fn dataWithContentsOfFile(path: &NSString) -> Option<Id<Self, Shared>> {
@@ -188,26 +174,24 @@ impl NSData {
         &self,
         path: &NSString,
         readOptionsMask: NSDataReadingOptions,
-        errorPtr: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             initWithContentsOfFile: path,
             options: readOptionsMask,
-            error: errorPtr
+            error: _
         ]
     }
     pub unsafe fn initWithContentsOfURL_options_error(
         &self,
         url: &NSURL,
         readOptionsMask: NSDataReadingOptions,
-        errorPtr: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             initWithContentsOfURL: url,
             options: readOptionsMask,
-            error: errorPtr
+            error: _
         ]
     }
     pub unsafe fn initWithContentsOfFile(&self, path: &NSString) -> Option<Id<Self, Shared>> {
@@ -265,20 +249,14 @@ impl NSData {
     pub unsafe fn decompressedDataUsingAlgorithm_error(
         &self,
         algorithm: NSDataCompressionAlgorithm,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![
-            self,
-            decompressedDataUsingAlgorithm: algorithm,
-            error: error
-        ]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, decompressedDataUsingAlgorithm: algorithm, error: _]
     }
     pub unsafe fn compressedDataUsingAlgorithm_error(
         &self,
         algorithm: NSDataCompressionAlgorithm,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, compressedDataUsingAlgorithm: algorithm, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, compressedDataUsingAlgorithm: algorithm, error: _]
     }
 }
 #[doc = "NSDeprecated"]
@@ -377,16 +355,14 @@ impl NSMutableData {
     pub unsafe fn decompressUsingAlgorithm_error(
         &self,
         algorithm: NSDataCompressionAlgorithm,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, decompressUsingAlgorithm: algorithm, error: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, decompressUsingAlgorithm: algorithm, error: _]
     }
     pub unsafe fn compressUsingAlgorithm_error(
         &self,
         algorithm: NSDataCompressionAlgorithm,
-        error: *mut *mut NSError,
-    ) -> bool {
-        msg_send![self, compressUsingAlgorithm: algorithm, error: error]
+    ) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, compressUsingAlgorithm: algorithm, error: _]
     }
 }
 extern_class!(

@@ -29,58 +29,39 @@ impl NSPropertyListSerialization {
         plist: &Object,
         format: NSPropertyListFormat,
         opt: NSPropertyListWriteOptions,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSData, Shared>> {
+    ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             dataWithPropertyList: plist,
             format: format,
             options: opt,
-            error: error
-        ]
-    }
-    pub unsafe fn writePropertyList_toStream_format_options_error(
-        plist: &Object,
-        stream: &NSOutputStream,
-        format: NSPropertyListFormat,
-        opt: NSPropertyListWriteOptions,
-        error: *mut *mut NSError,
-    ) -> NSInteger {
-        msg_send![
-            Self::class(),
-            writePropertyList: plist,
-            toStream: stream,
-            format: format,
-            options: opt,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn propertyListWithData_options_format_error(
         data: &NSData,
         opt: NSPropertyListReadOptions,
         format: *mut NSPropertyListFormat,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             propertyListWithData: data,
             options: opt,
             format: format,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn propertyListWithStream_options_format_error(
         stream: &NSInputStream,
         opt: NSPropertyListReadOptions,
         format: *mut NSPropertyListFormat,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             Self::class(),
             propertyListWithStream: stream,
             options: opt,
             format: format,
-            error: error
+            error: _
         ]
     }
 }

@@ -36,9 +36,8 @@ impl NSXMLElement {
     pub unsafe fn initWithXMLString_error(
         &self,
         string: &NSString,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Self, Shared>> {
-        msg_send_id![self, initWithXMLString: string, error: error]
+    ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, initWithXMLString: string, error: _]
     }
     pub unsafe fn initWithKind_options(
         &self,

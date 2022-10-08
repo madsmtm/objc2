@@ -68,9 +68,8 @@ impl NSCoder {
     }
     pub unsafe fn decodeTopLevelObjectAndReturnError(
         &self,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, decodeTopLevelObjectAndReturnError: error]
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, decodeTopLevelObjectAndReturnError: _]
     }
     pub unsafe fn decodeArrayOfObjCType_count_at(
         &self,
@@ -150,9 +149,8 @@ impl NSCoder {
     pub unsafe fn decodeTopLevelObjectForKey_error(
         &self,
         key: &NSString,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
-        msg_send_id![self, decodeTopLevelObjectForKey: key, error: error]
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, decodeTopLevelObjectForKey: key, error: _]
     }
     pub unsafe fn decodeBoolForKey(&self, key: &NSString) -> bool {
         msg_send![self, decodeBoolForKey: key]
@@ -199,13 +197,12 @@ impl NSCoder {
         &self,
         aClass: &Class,
         key: &NSString,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             decodeTopLevelObjectOfClass: aClass,
             forKey: key,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn decodeArrayOfObjectsOfClass_forKey(
@@ -239,13 +236,12 @@ impl NSCoder {
         &self,
         classes: Option<&NSSet<TodoClass>>,
         key: &NSString,
-        error: *mut *mut NSError,
-    ) -> Option<Id<Object, Shared>> {
+    ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             decodeTopLevelObjectOfClasses: classes,
             forKey: key,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn decodeArrayOfObjectsOfClasses_forKey(

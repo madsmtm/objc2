@@ -295,6 +295,53 @@ pub enum RustType {
 }
 
 impl RustType {
+    pub fn is_error_out(&self) -> bool {
+        if let Self::Pointer {
+            nullability,
+            is_const,
+            pointee,
+        } = self
+        {
+            assert_eq!(
+                *nullability,
+                Nullability::Nullable,
+                "invalid error nullability {self:?}"
+            );
+            assert!(!is_const, "expected error not const {self:?}");
+            if let Self::Id {
+                type_,
+                is_const,
+                lifetime,
+                nullability,
+            } = &**pointee
+            {
+                if type_.name != "NSError" {
+                    return false;
+                }
+                assert!(
+                    type_.generics.is_empty(),
+                    "expected error generics to be empty {self:?}"
+                );
+                assert_eq!(
+                    *nullability,
+                    Nullability::Nullable,
+                    "invalid inner error nullability {self:?}"
+                );
+                assert!(!is_const, "expected inner error not const {self:?}");
+                assert_eq!(
+                    *lifetime,
+                    Lifetime::Unspecified,
+                    "invalid error lifetime {self:?}"
+                );
+                true
+            } else {
+                panic!("invalid error parameter {self:?}")
+            }
+        } else {
+            false
+        }
+    }
+
     fn parse(ty: Type<'_>, is_consumed: bool, mut nullability: Nullability) -> Self {
         use TypeKind::*;
 
@@ -649,6 +696,25 @@ impl RustTypeReturn {
 
     pub fn parse(ty: Type<'_>) -> Self {
         Self::new(RustType::parse(ty, false, Nullability::Unspecified))
+    }
+
+    pub fn as_error(&self) -> TokenStream {
+        match &self.inner {
+            RustType::Id {
+                type_,
+                lifetime: Lifetime::Unspecified,
+                is_const: false,
+                nullability: Nullability::Nullable,
+            } => {
+                // NULL -> error
+                quote!(-> Result<Id<#type_, Shared>, Id<NSError, Shared>>)
+            }
+            RustType::ObjcBool => {
+                // NO -> error
+                quote!(-> Result<(), Id<NSError, Shared>>)
+            }
+            _ => panic!("unknown error result type {self:?}"),
+        }
     }
 }
 

@@ -60,8 +60,8 @@ impl NSTask {
     pub unsafe fn setStandardError(&self, standardError: Option<&Object>) {
         msg_send![self, setStandardError: standardError]
     }
-    pub unsafe fn launchAndReturnError(&self, error: *mut *mut NSError) -> bool {
-        msg_send![self, launchAndReturnError: error]
+    pub unsafe fn launchAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
+        msg_send![self, launchAndReturnError: _]
     }
     pub unsafe fn interrupt(&self) {
         msg_send![self, interrupt]

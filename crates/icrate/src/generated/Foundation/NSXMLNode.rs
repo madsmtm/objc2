@@ -215,28 +215,25 @@ impl NSXMLNode {
     pub unsafe fn nodesForXPath_error(
         &self,
         xpath: &NSString,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSArray<NSXMLNode>, Shared>> {
-        msg_send_id![self, nodesForXPath: xpath, error: error]
+    ) -> Result<Id<NSArray<NSXMLNode>, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, nodesForXPath: xpath, error: _]
     }
     pub unsafe fn objectsForXQuery_constants_error(
         &self,
         xquery: &NSString,
         constants: Option<&NSDictionary<NSString, Object>>,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSArray, Shared>> {
+    ) -> Result<Id<NSArray, Shared>, Id<NSError, Shared>> {
         msg_send_id![
             self,
             objectsForXQuery: xquery,
             constants: constants,
-            error: error
+            error: _
         ]
     }
     pub unsafe fn objectsForXQuery_error(
         &self,
         xquery: &NSString,
-        error: *mut *mut NSError,
-    ) -> Option<Id<NSArray, Shared>> {
-        msg_send_id![self, objectsForXQuery: xquery, error: error]
+    ) -> Result<Id<NSArray, Shared>, Id<NSError, Shared>> {
+        msg_send_id![self, objectsForXQuery: xquery, error: _]
     }
 }
