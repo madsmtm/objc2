@@ -9,7 +9,7 @@ use crate::Foundation::generated::NSURL::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSFileAccessIntent;
@@ -19,21 +19,18 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileAccessIntent {
+        # [method_id (readingIntentWithURL : options :)]
         pub unsafe fn readingIntentWithURL_options(
             url: &NSURL,
             options: NSFileCoordinatorReadingOptions,
-        ) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), readingIntentWithURL: url, options: options]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (writingIntentWithURL : options :)]
         pub unsafe fn writingIntentWithURL_options(
             url: &NSURL,
             options: NSFileCoordinatorWritingOptions,
-        ) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), writingIntentWithURL: url, options: options]
-        }
-        pub unsafe fn URL(&self) -> Id<NSURL, Shared> {
-            msg_send_id![self, URL]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(URL)]
+        pub unsafe fn URL(&self) -> Id<NSURL, Shared>;
     }
 );
 extern_class!(
@@ -45,70 +42,45 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileCoordinator {
-        pub unsafe fn addFilePresenter(filePresenter: &NSFilePresenter) {
-            msg_send![Self::class(), addFilePresenter: filePresenter]
-        }
-        pub unsafe fn removeFilePresenter(filePresenter: &NSFilePresenter) {
-            msg_send![Self::class(), removeFilePresenter: filePresenter]
-        }
-        pub unsafe fn filePresenters() -> Id<NSArray<NSFilePresenter>, Shared> {
-            msg_send_id![Self::class(), filePresenters]
-        }
+        # [method (addFilePresenter :)]
+        pub unsafe fn addFilePresenter(filePresenter: &NSFilePresenter);
+        # [method (removeFilePresenter :)]
+        pub unsafe fn removeFilePresenter(filePresenter: &NSFilePresenter);
+        #[method_id(filePresenters)]
+        pub unsafe fn filePresenters() -> Id<NSArray<NSFilePresenter>, Shared>;
+        # [method_id (initWithFilePresenter :)]
         pub unsafe fn initWithFilePresenter(
             &self,
             filePresenterOrNil: Option<&NSFilePresenter>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithFilePresenter: filePresenterOrNil]
-        }
-        pub unsafe fn purposeIdentifier(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, purposeIdentifier]
-        }
-        pub unsafe fn setPurposeIdentifier(&self, purposeIdentifier: &NSString) {
-            msg_send![self, setPurposeIdentifier: purposeIdentifier]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(purposeIdentifier)]
+        pub unsafe fn purposeIdentifier(&self) -> Id<NSString, Shared>;
+        # [method (setPurposeIdentifier :)]
+        pub unsafe fn setPurposeIdentifier(&self, purposeIdentifier: &NSString);
+        # [method (coordinateAccessWithIntents : queue : byAccessor :)]
         pub unsafe fn coordinateAccessWithIntents_queue_byAccessor(
             &self,
             intents: &NSArray<NSFileAccessIntent>,
             queue: &NSOperationQueue,
             accessor: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                coordinateAccessWithIntents: intents,
-                queue: queue,
-                byAccessor: accessor
-            ]
-        }
+        );
+        # [method (coordinateReadingItemAtURL : options : error : byAccessor :)]
         pub unsafe fn coordinateReadingItemAtURL_options_error_byAccessor(
             &self,
             url: &NSURL,
             options: NSFileCoordinatorReadingOptions,
             outError: *mut *mut NSError,
             reader: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                coordinateReadingItemAtURL: url,
-                options: options,
-                error: outError,
-                byAccessor: reader
-            ]
-        }
+        );
+        # [method (coordinateWritingItemAtURL : options : error : byAccessor :)]
         pub unsafe fn coordinateWritingItemAtURL_options_error_byAccessor(
             &self,
             url: &NSURL,
             options: NSFileCoordinatorWritingOptions,
             outError: *mut *mut NSError,
             writer: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                coordinateWritingItemAtURL: url,
-                options: options,
-                error: outError,
-                byAccessor: writer
-            ]
-        }
+        );
+        # [method (coordinateReadingItemAtURL : options : writingItemAtURL : options : error : byAccessor :)]
         pub unsafe fn coordinateReadingItemAtURL_options_writingItemAtURL_options_error_byAccessor(
             &self,
             readingURL: &NSURL,
@@ -117,17 +89,8 @@ extern_methods!(
             writingOptions: NSFileCoordinatorWritingOptions,
             outError: *mut *mut NSError,
             readerWriter: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                coordinateReadingItemAtURL: readingURL,
-                options: readingOptions,
-                writingItemAtURL: writingURL,
-                options: writingOptions,
-                error: outError,
-                byAccessor: readerWriter
-            ]
-        }
+        );
+        # [method (coordinateWritingItemAtURL : options : writingItemAtURL : options : error : byAccessor :)]
         pub unsafe fn coordinateWritingItemAtURL_options_writingItemAtURL_options_error_byAccessor(
             &self,
             url1: &NSURL,
@@ -136,17 +99,8 @@ extern_methods!(
             options2: NSFileCoordinatorWritingOptions,
             outError: *mut *mut NSError,
             writer: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                coordinateWritingItemAtURL: url1,
-                options: options1,
-                writingItemAtURL: url2,
-                options: options2,
-                error: outError,
-                byAccessor: writer
-            ]
-        }
+        );
+        # [method (prepareForReadingItemsAtURLs : options : writingItemsAtURLs : options : error : byAccessor :)]
         pub unsafe fn prepareForReadingItemsAtURLs_options_writingItemsAtURLs_options_error_byAccessor(
             &self,
             readingURLs: &NSArray<NSURL>,
@@ -155,36 +109,18 @@ extern_methods!(
             writingOptions: NSFileCoordinatorWritingOptions,
             outError: *mut *mut NSError,
             batchAccessor: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                prepareForReadingItemsAtURLs: readingURLs,
-                options: readingOptions,
-                writingItemsAtURLs: writingURLs,
-                options: writingOptions,
-                error: outError,
-                byAccessor: batchAccessor
-            ]
-        }
-        pub unsafe fn itemAtURL_willMoveToURL(&self, oldURL: &NSURL, newURL: &NSURL) {
-            msg_send![self, itemAtURL: oldURL, willMoveToURL: newURL]
-        }
-        pub unsafe fn itemAtURL_didMoveToURL(&self, oldURL: &NSURL, newURL: &NSURL) {
-            msg_send![self, itemAtURL: oldURL, didMoveToURL: newURL]
-        }
+        );
+        # [method (itemAtURL : willMoveToURL :)]
+        pub unsafe fn itemAtURL_willMoveToURL(&self, oldURL: &NSURL, newURL: &NSURL);
+        # [method (itemAtURL : didMoveToURL :)]
+        pub unsafe fn itemAtURL_didMoveToURL(&self, oldURL: &NSURL, newURL: &NSURL);
+        # [method (itemAtURL : didChangeUbiquityAttributes :)]
         pub unsafe fn itemAtURL_didChangeUbiquityAttributes(
             &self,
             url: &NSURL,
             attributes: &NSSet<NSURLResourceKey>,
-        ) {
-            msg_send![
-                self,
-                itemAtURL: url,
-                didChangeUbiquityAttributes: attributes
-            ]
-        }
-        pub unsafe fn cancel(&self) {
-            msg_send![self, cancel]
-        }
+        );
+        #[method(cancel)]
+        pub unsafe fn cancel(&self);
     }
 );

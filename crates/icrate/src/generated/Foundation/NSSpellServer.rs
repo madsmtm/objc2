@@ -7,7 +7,7 @@ use crate::Foundation::generated::NSTextCheckingResult::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSSpellServer;
@@ -17,29 +17,24 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSSpellServer {
-        pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>> {
-            msg_send_id![self, delegate]
-        }
-        pub unsafe fn setDelegate(&self, delegate: Option<&NSSpellServerDelegate>) {
-            msg_send![self, setDelegate: delegate]
-        }
+        #[method_id(delegate)]
+        pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>>;
+        # [method (setDelegate :)]
+        pub unsafe fn setDelegate(&self, delegate: Option<&NSSpellServerDelegate>);
+        # [method (registerLanguage : byVendor :)]
         pub unsafe fn registerLanguage_byVendor(
             &self,
             language: Option<&NSString>,
             vendor: Option<&NSString>,
-        ) -> bool {
-            msg_send![self, registerLanguage: language, byVendor: vendor]
-        }
+        ) -> bool;
+        # [method (isWordInUserDictionaries : caseSensitive :)]
         pub unsafe fn isWordInUserDictionaries_caseSensitive(
             &self,
             word: &NSString,
             flag: bool,
-        ) -> bool {
-            msg_send![self, isWordInUserDictionaries: word, caseSensitive: flag]
-        }
-        pub unsafe fn run(&self) {
-            msg_send![self, run]
-        }
+        ) -> bool;
+        #[method(run)]
+        pub unsafe fn run(&self);
     }
 );
 pub type NSSpellServerDelegate = NSObject;

@@ -5,7 +5,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSAppleEventManager;
@@ -15,80 +15,51 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSAppleEventManager {
-        pub unsafe fn sharedAppleEventManager() -> Id<NSAppleEventManager, Shared> {
-            msg_send_id![Self::class(), sharedAppleEventManager]
-        }
+        #[method_id(sharedAppleEventManager)]
+        pub unsafe fn sharedAppleEventManager() -> Id<NSAppleEventManager, Shared>;
+        # [method (setEventHandler : andSelector : forEventClass : andEventID :)]
         pub unsafe fn setEventHandler_andSelector_forEventClass_andEventID(
             &self,
             handler: &Object,
             handleEventSelector: Sel,
             eventClass: AEEventClass,
             eventID: AEEventID,
-        ) {
-            msg_send![
-                self,
-                setEventHandler: handler,
-                andSelector: handleEventSelector,
-                forEventClass: eventClass,
-                andEventID: eventID
-            ]
-        }
+        );
+        # [method (removeEventHandlerForEventClass : andEventID :)]
         pub unsafe fn removeEventHandlerForEventClass_andEventID(
             &self,
             eventClass: AEEventClass,
             eventID: AEEventID,
-        ) {
-            msg_send![
-                self,
-                removeEventHandlerForEventClass: eventClass,
-                andEventID: eventID
-            ]
-        }
+        );
+        # [method (dispatchRawAppleEvent : withRawReply : handlerRefCon :)]
         pub unsafe fn dispatchRawAppleEvent_withRawReply_handlerRefCon(
             &self,
             theAppleEvent: NonNull<AppleEvent>,
             theReply: NonNull<AppleEvent>,
             handlerRefCon: SRefCon,
-        ) -> OSErr {
-            msg_send![
-                self,
-                dispatchRawAppleEvent: theAppleEvent,
-                withRawReply: theReply,
-                handlerRefCon: handlerRefCon
-            ]
-        }
-        pub unsafe fn currentAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>> {
-            msg_send_id![self, currentAppleEvent]
-        }
-        pub unsafe fn currentReplyAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>> {
-            msg_send_id![self, currentReplyAppleEvent]
-        }
-        pub unsafe fn suspendCurrentAppleEvent(&self) -> NSAppleEventManagerSuspensionID {
-            msg_send![self, suspendCurrentAppleEvent]
-        }
+        ) -> OSErr;
+        #[method_id(currentAppleEvent)]
+        pub unsafe fn currentAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>>;
+        #[method_id(currentReplyAppleEvent)]
+        pub unsafe fn currentReplyAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>>;
+        #[method(suspendCurrentAppleEvent)]
+        pub unsafe fn suspendCurrentAppleEvent(&self) -> NSAppleEventManagerSuspensionID;
+        # [method_id (appleEventForSuspensionID :)]
         pub unsafe fn appleEventForSuspensionID(
             &self,
             suspensionID: NSAppleEventManagerSuspensionID,
-        ) -> Id<NSAppleEventDescriptor, Shared> {
-            msg_send_id![self, appleEventForSuspensionID: suspensionID]
-        }
+        ) -> Id<NSAppleEventDescriptor, Shared>;
+        # [method_id (replyAppleEventForSuspensionID :)]
         pub unsafe fn replyAppleEventForSuspensionID(
             &self,
             suspensionID: NSAppleEventManagerSuspensionID,
-        ) -> Id<NSAppleEventDescriptor, Shared> {
-            msg_send_id![self, replyAppleEventForSuspensionID: suspensionID]
-        }
+        ) -> Id<NSAppleEventDescriptor, Shared>;
+        # [method (setCurrentAppleEventAndReplyEventWithSuspensionID :)]
         pub unsafe fn setCurrentAppleEventAndReplyEventWithSuspensionID(
             &self,
             suspensionID: NSAppleEventManagerSuspensionID,
-        ) {
-            msg_send![
-                self,
-                setCurrentAppleEventAndReplyEventWithSuspensionID: suspensionID
-            ]
-        }
-        pub unsafe fn resumeWithSuspensionID(&self, suspensionID: NSAppleEventManagerSuspensionID) {
-            msg_send![self, resumeWithSuspensionID: suspensionID]
-        }
+        );
+        # [method (resumeWithSuspensionID :)]
+        pub unsafe fn resumeWithSuspensionID(&self, suspensionID: NSAppleEventManagerSuspensionID);
     }
 );

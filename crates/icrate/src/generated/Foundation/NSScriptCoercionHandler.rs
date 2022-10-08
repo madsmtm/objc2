@@ -2,7 +2,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSScriptCoercionHandler;
@@ -12,30 +12,21 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSScriptCoercionHandler {
-        pub unsafe fn sharedCoercionHandler() -> Id<NSScriptCoercionHandler, Shared> {
-            msg_send_id![Self::class(), sharedCoercionHandler]
-        }
+        #[method_id(sharedCoercionHandler)]
+        pub unsafe fn sharedCoercionHandler() -> Id<NSScriptCoercionHandler, Shared>;
+        # [method_id (coerceValue : toClass :)]
         pub unsafe fn coerceValue_toClass(
             &self,
             value: &Object,
             toClass: &Class,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, coerceValue: value, toClass: toClass]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        # [method (registerCoercer : selector : toConvertFromClass : toClass :)]
         pub unsafe fn registerCoercer_selector_toConvertFromClass_toClass(
             &self,
             coercer: &Object,
             selector: Sel,
             fromClass: &Class,
             toClass: &Class,
-        ) {
-            msg_send![
-                self,
-                registerCoercer: coercer,
-                selector: selector,
-                toConvertFromClass: fromClass,
-                toClass: toClass
-            ]
-        }
+        );
     }
 );

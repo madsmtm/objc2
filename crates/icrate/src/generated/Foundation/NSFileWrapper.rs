@@ -7,7 +7,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSFileWrapper;
@@ -17,174 +17,116 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileWrapper {
+        # [method_id (initWithURL : options : error :)]
         pub unsafe fn initWithURL_options_error(
             &self,
             url: &NSURL,
             options: NSFileWrapperReadingOptions,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![self, initWithURL: url, options: options, error: _]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (initDirectoryWithFileWrappers :)]
         pub unsafe fn initDirectoryWithFileWrappers(
             &self,
             childrenByPreferredName: &NSDictionary<NSString, NSFileWrapper>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initDirectoryWithFileWrappers: childrenByPreferredName]
-        }
-        pub unsafe fn initRegularFileWithContents(&self, contents: &NSData) -> Id<Self, Shared> {
-            msg_send_id![self, initRegularFileWithContents: contents]
-        }
-        pub unsafe fn initSymbolicLinkWithDestinationURL(&self, url: &NSURL) -> Id<Self, Shared> {
-            msg_send_id![self, initSymbolicLinkWithDestinationURL: url]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initRegularFileWithContents :)]
+        pub unsafe fn initRegularFileWithContents(&self, contents: &NSData) -> Id<Self, Shared>;
+        # [method_id (initSymbolicLinkWithDestinationURL :)]
+        pub unsafe fn initSymbolicLinkWithDestinationURL(&self, url: &NSURL) -> Id<Self, Shared>;
+        # [method_id (initWithSerializedRepresentation :)]
         pub unsafe fn initWithSerializedRepresentation(
             &self,
             serializeRepresentation: &NSData,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![
-                self,
-                initWithSerializedRepresentation: serializeRepresentation
-            ]
-        }
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
-        pub unsafe fn isDirectory(&self) -> bool {
-            msg_send![self, isDirectory]
-        }
-        pub unsafe fn isRegularFile(&self) -> bool {
-            msg_send![self, isRegularFile]
-        }
-        pub unsafe fn isSymbolicLink(&self) -> bool {
-            msg_send![self, isSymbolicLink]
-        }
-        pub unsafe fn preferredFilename(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, preferredFilename]
-        }
-        pub unsafe fn setPreferredFilename(&self, preferredFilename: Option<&NSString>) {
-            msg_send![self, setPreferredFilename: preferredFilename]
-        }
-        pub unsafe fn filename(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, filename]
-        }
-        pub unsafe fn setFilename(&self, filename: Option<&NSString>) {
-            msg_send![self, setFilename: filename]
-        }
-        pub unsafe fn fileAttributes(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
-            msg_send_id![self, fileAttributes]
-        }
-        pub unsafe fn setFileAttributes(&self, fileAttributes: &NSDictionary<NSString, Object>) {
-            msg_send![self, setFileAttributes: fileAttributes]
-        }
-        pub unsafe fn matchesContentsOfURL(&self, url: &NSURL) -> bool {
-            msg_send![self, matchesContentsOfURL: url]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        #[method(isDirectory)]
+        pub unsafe fn isDirectory(&self) -> bool;
+        #[method(isRegularFile)]
+        pub unsafe fn isRegularFile(&self) -> bool;
+        #[method(isSymbolicLink)]
+        pub unsafe fn isSymbolicLink(&self) -> bool;
+        #[method_id(preferredFilename)]
+        pub unsafe fn preferredFilename(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPreferredFilename :)]
+        pub unsafe fn setPreferredFilename(&self, preferredFilename: Option<&NSString>);
+        #[method_id(filename)]
+        pub unsafe fn filename(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setFilename :)]
+        pub unsafe fn setFilename(&self, filename: Option<&NSString>);
+        #[method_id(fileAttributes)]
+        pub unsafe fn fileAttributes(&self) -> Id<NSDictionary<NSString, Object>, Shared>;
+        # [method (setFileAttributes :)]
+        pub unsafe fn setFileAttributes(&self, fileAttributes: &NSDictionary<NSString, Object>);
+        # [method (matchesContentsOfURL :)]
+        pub unsafe fn matchesContentsOfURL(&self, url: &NSURL) -> bool;
+        # [method (readFromURL : options : error :)]
         pub unsafe fn readFromURL_options_error(
             &self,
             url: &NSURL,
             options: NSFileWrapperReadingOptions,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, readFromURL: url, options: options, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (writeToURL : options : originalContentsURL : error :)]
         pub unsafe fn writeToURL_options_originalContentsURL_error(
             &self,
             url: &NSURL,
             options: NSFileWrapperWritingOptions,
             originalContentsURL: Option<&NSURL>,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                writeToURL: url,
-                options: options,
-                originalContentsURL: originalContentsURL,
-                error: _
-            ]
-        }
-        pub unsafe fn serializedRepresentation(&self) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, serializedRepresentation]
-        }
-        pub unsafe fn addFileWrapper(&self, child: &NSFileWrapper) -> Id<NSString, Shared> {
-            msg_send_id![self, addFileWrapper: child]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        #[method_id(serializedRepresentation)]
+        pub unsafe fn serializedRepresentation(&self) -> Option<Id<NSData, Shared>>;
+        # [method_id (addFileWrapper :)]
+        pub unsafe fn addFileWrapper(&self, child: &NSFileWrapper) -> Id<NSString, Shared>;
+        # [method_id (addRegularFileWithContents : preferredFilename :)]
         pub unsafe fn addRegularFileWithContents_preferredFilename(
             &self,
             data: &NSData,
             fileName: &NSString,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![
-                self,
-                addRegularFileWithContents: data,
-                preferredFilename: fileName
-            ]
-        }
-        pub unsafe fn removeFileWrapper(&self, child: &NSFileWrapper) {
-            msg_send![self, removeFileWrapper: child]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method (removeFileWrapper :)]
+        pub unsafe fn removeFileWrapper(&self, child: &NSFileWrapper);
+        #[method_id(fileWrappers)]
         pub unsafe fn fileWrappers(
             &self,
-        ) -> Option<Id<NSDictionary<NSString, NSFileWrapper>, Shared>> {
-            msg_send_id![self, fileWrappers]
-        }
+        ) -> Option<Id<NSDictionary<NSString, NSFileWrapper>, Shared>>;
+        # [method_id (keyForFileWrapper :)]
         pub unsafe fn keyForFileWrapper(
             &self,
             child: &NSFileWrapper,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, keyForFileWrapper: child]
-        }
-        pub unsafe fn regularFileContents(&self) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, regularFileContents]
-        }
-        pub unsafe fn symbolicLinkDestinationURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, symbolicLinkDestinationURL]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(regularFileContents)]
+        pub unsafe fn regularFileContents(&self) -> Option<Id<NSData, Shared>>;
+        #[method_id(symbolicLinkDestinationURL)]
+        pub unsafe fn symbolicLinkDestinationURL(&self) -> Option<Id<NSURL, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSDeprecated"]
     unsafe impl NSFileWrapper {
-        pub unsafe fn initWithPath(&self, path: &NSString) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, initWithPath: path]
-        }
-        pub unsafe fn initSymbolicLinkWithDestination(
-            &self,
-            path: &NSString,
-        ) -> Id<Object, Shared> {
-            msg_send_id![self, initSymbolicLinkWithDestination: path]
-        }
-        pub unsafe fn needsToBeUpdatedFromPath(&self, path: &NSString) -> bool {
-            msg_send![self, needsToBeUpdatedFromPath: path]
-        }
-        pub unsafe fn updateFromPath(&self, path: &NSString) -> bool {
-            msg_send![self, updateFromPath: path]
-        }
+        # [method_id (initWithPath :)]
+        pub unsafe fn initWithPath(&self, path: &NSString) -> Option<Id<Object, Shared>>;
+        # [method_id (initSymbolicLinkWithDestination :)]
+        pub unsafe fn initSymbolicLinkWithDestination(&self, path: &NSString)
+            -> Id<Object, Shared>;
+        # [method (needsToBeUpdatedFromPath :)]
+        pub unsafe fn needsToBeUpdatedFromPath(&self, path: &NSString) -> bool;
+        # [method (updateFromPath :)]
+        pub unsafe fn updateFromPath(&self, path: &NSString) -> bool;
+        # [method (writeToFile : atomically : updateFilenames :)]
         pub unsafe fn writeToFile_atomically_updateFilenames(
             &self,
             path: &NSString,
             atomicFlag: bool,
             updateFilenamesFlag: bool,
-        ) -> bool {
-            msg_send![
-                self,
-                writeToFile: path,
-                atomically: atomicFlag,
-                updateFilenames: updateFilenamesFlag
-            ]
-        }
-        pub unsafe fn addFileWithPath(&self, path: &NSString) -> Id<NSString, Shared> {
-            msg_send_id![self, addFileWithPath: path]
-        }
+        ) -> bool;
+        # [method_id (addFileWithPath :)]
+        pub unsafe fn addFileWithPath(&self, path: &NSString) -> Id<NSString, Shared>;
+        # [method_id (addSymbolicLinkWithDestination : preferredFilename :)]
         pub unsafe fn addSymbolicLinkWithDestination_preferredFilename(
             &self,
             path: &NSString,
             filename: &NSString,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![
-                self,
-                addSymbolicLinkWithDestination: path,
-                preferredFilename: filename
-            ]
-        }
-        pub unsafe fn symbolicLinkDestination(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, symbolicLinkDestination]
-        }
+        ) -> Id<NSString, Shared>;
+        #[method_id(symbolicLinkDestination)]
+        pub unsafe fn symbolicLinkDestination(&self) -> Id<NSString, Shared>;
     }
 );

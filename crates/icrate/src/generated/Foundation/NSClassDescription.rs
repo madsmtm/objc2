@@ -7,7 +7,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSClassDescription;
@@ -17,61 +17,45 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSClassDescription {
+        # [method (registerClassDescription : forClass :)]
         pub unsafe fn registerClassDescription_forClass(
             description: &NSClassDescription,
             aClass: &Class,
-        ) {
-            msg_send![
-                Self::class(),
-                registerClassDescription: description,
-                forClass: aClass
-            ]
-        }
-        pub unsafe fn invalidateClassDescriptionCache() {
-            msg_send![Self::class(), invalidateClassDescriptionCache]
-        }
+        );
+        #[method(invalidateClassDescriptionCache)]
+        pub unsafe fn invalidateClassDescriptionCache();
+        # [method_id (classDescriptionForClass :)]
         pub unsafe fn classDescriptionForClass(
             aClass: &Class,
-        ) -> Option<Id<NSClassDescription, Shared>> {
-            msg_send_id![Self::class(), classDescriptionForClass: aClass]
-        }
-        pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, attributeKeys]
-        }
-        pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, toOneRelationshipKeys]
-        }
-        pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, toManyRelationshipKeys]
-        }
+        ) -> Option<Id<NSClassDescription, Shared>>;
+        #[method_id(attributeKeys)]
+        pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared>;
+        #[method_id(toOneRelationshipKeys)]
+        pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
+        #[method_id(toManyRelationshipKeys)]
+        pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
+        # [method_id (inverseForRelationshipKey :)]
         pub unsafe fn inverseForRelationshipKey(
             &self,
             relationshipKey: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, inverseForRelationshipKey: relationshipKey]
-        }
+        ) -> Option<Id<NSString, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSClassDescriptionPrimitives"]
     unsafe impl NSObject {
-        pub unsafe fn classDescription(&self) -> Id<NSClassDescription, Shared> {
-            msg_send_id![self, classDescription]
-        }
-        pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, attributeKeys]
-        }
-        pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, toOneRelationshipKeys]
-        }
-        pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, toManyRelationshipKeys]
-        }
+        #[method_id(classDescription)]
+        pub unsafe fn classDescription(&self) -> Id<NSClassDescription, Shared>;
+        #[method_id(attributeKeys)]
+        pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared>;
+        #[method_id(toOneRelationshipKeys)]
+        pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
+        #[method_id(toManyRelationshipKeys)]
+        pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
+        # [method_id (inverseForRelationshipKey :)]
         pub unsafe fn inverseForRelationshipKey(
             &self,
             relationshipKey: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, inverseForRelationshipKey: relationshipKey]
-        }
+        ) -> Option<Id<NSString, Shared>>;
     }
 );

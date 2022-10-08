@@ -8,7 +8,7 @@ use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSDateIntervalFormatter;
@@ -18,54 +18,40 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDateIntervalFormatter {
-        pub unsafe fn locale(&self) -> Id<NSLocale, Shared> {
-            msg_send_id![self, locale]
-        }
-        pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
-            msg_send![self, setLocale: locale]
-        }
-        pub unsafe fn calendar(&self) -> Id<NSCalendar, Shared> {
-            msg_send_id![self, calendar]
-        }
-        pub unsafe fn setCalendar(&self, calendar: Option<&NSCalendar>) {
-            msg_send![self, setCalendar: calendar]
-        }
-        pub unsafe fn timeZone(&self) -> Id<NSTimeZone, Shared> {
-            msg_send_id![self, timeZone]
-        }
-        pub unsafe fn setTimeZone(&self, timeZone: Option<&NSTimeZone>) {
-            msg_send![self, setTimeZone: timeZone]
-        }
-        pub unsafe fn dateTemplate(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, dateTemplate]
-        }
-        pub unsafe fn setDateTemplate(&self, dateTemplate: Option<&NSString>) {
-            msg_send![self, setDateTemplate: dateTemplate]
-        }
-        pub unsafe fn dateStyle(&self) -> NSDateIntervalFormatterStyle {
-            msg_send![self, dateStyle]
-        }
-        pub unsafe fn setDateStyle(&self, dateStyle: NSDateIntervalFormatterStyle) {
-            msg_send![self, setDateStyle: dateStyle]
-        }
-        pub unsafe fn timeStyle(&self) -> NSDateIntervalFormatterStyle {
-            msg_send![self, timeStyle]
-        }
-        pub unsafe fn setTimeStyle(&self, timeStyle: NSDateIntervalFormatterStyle) {
-            msg_send![self, setTimeStyle: timeStyle]
-        }
+        #[method_id(locale)]
+        pub unsafe fn locale(&self) -> Id<NSLocale, Shared>;
+        # [method (setLocale :)]
+        pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
+        #[method_id(calendar)]
+        pub unsafe fn calendar(&self) -> Id<NSCalendar, Shared>;
+        # [method (setCalendar :)]
+        pub unsafe fn setCalendar(&self, calendar: Option<&NSCalendar>);
+        #[method_id(timeZone)]
+        pub unsafe fn timeZone(&self) -> Id<NSTimeZone, Shared>;
+        # [method (setTimeZone :)]
+        pub unsafe fn setTimeZone(&self, timeZone: Option<&NSTimeZone>);
+        #[method_id(dateTemplate)]
+        pub unsafe fn dateTemplate(&self) -> Id<NSString, Shared>;
+        # [method (setDateTemplate :)]
+        pub unsafe fn setDateTemplate(&self, dateTemplate: Option<&NSString>);
+        #[method(dateStyle)]
+        pub unsafe fn dateStyle(&self) -> NSDateIntervalFormatterStyle;
+        # [method (setDateStyle :)]
+        pub unsafe fn setDateStyle(&self, dateStyle: NSDateIntervalFormatterStyle);
+        #[method(timeStyle)]
+        pub unsafe fn timeStyle(&self) -> NSDateIntervalFormatterStyle;
+        # [method (setTimeStyle :)]
+        pub unsafe fn setTimeStyle(&self, timeStyle: NSDateIntervalFormatterStyle);
+        # [method_id (stringFromDate : toDate :)]
         pub unsafe fn stringFromDate_toDate(
             &self,
             fromDate: &NSDate,
             toDate: &NSDate,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, stringFromDate: fromDate, toDate: toDate]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (stringFromDateInterval :)]
         pub unsafe fn stringFromDateInterval(
             &self,
             dateInterval: &NSDateInterval,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, stringFromDateInterval: dateInterval]
-        }
+        ) -> Option<Id<NSString, Shared>>;
     }
 );

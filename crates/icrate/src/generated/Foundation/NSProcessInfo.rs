@@ -7,7 +7,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSProcessInfo;
@@ -17,160 +17,115 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSProcessInfo {
-        pub unsafe fn processInfo() -> Id<NSProcessInfo, Shared> {
-            msg_send_id![Self::class(), processInfo]
-        }
-        pub unsafe fn environment(&self) -> Id<NSDictionary<NSString, NSString>, Shared> {
-            msg_send_id![self, environment]
-        }
-        pub unsafe fn arguments(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, arguments]
-        }
-        pub unsafe fn hostName(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, hostName]
-        }
-        pub unsafe fn processName(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, processName]
-        }
-        pub unsafe fn setProcessName(&self, processName: &NSString) {
-            msg_send![self, setProcessName: processName]
-        }
-        pub unsafe fn processIdentifier(&self) -> c_int {
-            msg_send![self, processIdentifier]
-        }
-        pub unsafe fn globallyUniqueString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, globallyUniqueString]
-        }
-        pub unsafe fn operatingSystem(&self) -> NSUInteger {
-            msg_send![self, operatingSystem]
-        }
-        pub unsafe fn operatingSystemName(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, operatingSystemName]
-        }
-        pub unsafe fn operatingSystemVersionString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, operatingSystemVersionString]
-        }
-        pub unsafe fn operatingSystemVersion(&self) -> NSOperatingSystemVersion {
-            msg_send![self, operatingSystemVersion]
-        }
-        pub unsafe fn processorCount(&self) -> NSUInteger {
-            msg_send![self, processorCount]
-        }
-        pub unsafe fn activeProcessorCount(&self) -> NSUInteger {
-            msg_send![self, activeProcessorCount]
-        }
-        pub unsafe fn physicalMemory(&self) -> c_ulonglong {
-            msg_send![self, physicalMemory]
-        }
+        #[method_id(processInfo)]
+        pub unsafe fn processInfo() -> Id<NSProcessInfo, Shared>;
+        #[method_id(environment)]
+        pub unsafe fn environment(&self) -> Id<NSDictionary<NSString, NSString>, Shared>;
+        #[method_id(arguments)]
+        pub unsafe fn arguments(&self) -> Id<NSArray<NSString>, Shared>;
+        #[method_id(hostName)]
+        pub unsafe fn hostName(&self) -> Id<NSString, Shared>;
+        #[method_id(processName)]
+        pub unsafe fn processName(&self) -> Id<NSString, Shared>;
+        # [method (setProcessName :)]
+        pub unsafe fn setProcessName(&self, processName: &NSString);
+        #[method(processIdentifier)]
+        pub unsafe fn processIdentifier(&self) -> c_int;
+        #[method_id(globallyUniqueString)]
+        pub unsafe fn globallyUniqueString(&self) -> Id<NSString, Shared>;
+        #[method(operatingSystem)]
+        pub unsafe fn operatingSystem(&self) -> NSUInteger;
+        #[method_id(operatingSystemName)]
+        pub unsafe fn operatingSystemName(&self) -> Id<NSString, Shared>;
+        #[method_id(operatingSystemVersionString)]
+        pub unsafe fn operatingSystemVersionString(&self) -> Id<NSString, Shared>;
+        #[method(operatingSystemVersion)]
+        pub unsafe fn operatingSystemVersion(&self) -> NSOperatingSystemVersion;
+        #[method(processorCount)]
+        pub unsafe fn processorCount(&self) -> NSUInteger;
+        #[method(activeProcessorCount)]
+        pub unsafe fn activeProcessorCount(&self) -> NSUInteger;
+        #[method(physicalMemory)]
+        pub unsafe fn physicalMemory(&self) -> c_ulonglong;
+        # [method (isOperatingSystemAtLeastVersion :)]
         pub unsafe fn isOperatingSystemAtLeastVersion(
             &self,
             version: NSOperatingSystemVersion,
-        ) -> bool {
-            msg_send![self, isOperatingSystemAtLeastVersion: version]
-        }
-        pub unsafe fn systemUptime(&self) -> NSTimeInterval {
-            msg_send![self, systemUptime]
-        }
-        pub unsafe fn disableSuddenTermination(&self) {
-            msg_send![self, disableSuddenTermination]
-        }
-        pub unsafe fn enableSuddenTermination(&self) {
-            msg_send![self, enableSuddenTermination]
-        }
-        pub unsafe fn disableAutomaticTermination(&self, reason: &NSString) {
-            msg_send![self, disableAutomaticTermination: reason]
-        }
-        pub unsafe fn enableAutomaticTermination(&self, reason: &NSString) {
-            msg_send![self, enableAutomaticTermination: reason]
-        }
-        pub unsafe fn automaticTerminationSupportEnabled(&self) -> bool {
-            msg_send![self, automaticTerminationSupportEnabled]
-        }
+        ) -> bool;
+        #[method(systemUptime)]
+        pub unsafe fn systemUptime(&self) -> NSTimeInterval;
+        #[method(disableSuddenTermination)]
+        pub unsafe fn disableSuddenTermination(&self);
+        #[method(enableSuddenTermination)]
+        pub unsafe fn enableSuddenTermination(&self);
+        # [method (disableAutomaticTermination :)]
+        pub unsafe fn disableAutomaticTermination(&self, reason: &NSString);
+        # [method (enableAutomaticTermination :)]
+        pub unsafe fn enableAutomaticTermination(&self, reason: &NSString);
+        #[method(automaticTerminationSupportEnabled)]
+        pub unsafe fn automaticTerminationSupportEnabled(&self) -> bool;
+        # [method (setAutomaticTerminationSupportEnabled :)]
         pub unsafe fn setAutomaticTerminationSupportEnabled(
             &self,
             automaticTerminationSupportEnabled: bool,
-        ) {
-            msg_send![
-                self,
-                setAutomaticTerminationSupportEnabled: automaticTerminationSupportEnabled
-            ]
-        }
+        );
     }
 );
 extern_methods!(
     #[doc = "NSProcessInfoActivity"]
     unsafe impl NSProcessInfo {
+        # [method_id (beginActivityWithOptions : reason :)]
         pub unsafe fn beginActivityWithOptions_reason(
             &self,
             options: NSActivityOptions,
             reason: &NSString,
-        ) -> Id<NSObject, Shared> {
-            msg_send_id![self, beginActivityWithOptions: options, reason: reason]
-        }
-        pub unsafe fn endActivity(&self, activity: &NSObject) {
-            msg_send![self, endActivity: activity]
-        }
+        ) -> Id<NSObject, Shared>;
+        # [method (endActivity :)]
+        pub unsafe fn endActivity(&self, activity: &NSObject);
+        # [method (performActivityWithOptions : reason : usingBlock :)]
         pub unsafe fn performActivityWithOptions_reason_usingBlock(
             &self,
             options: NSActivityOptions,
             reason: &NSString,
             block: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                performActivityWithOptions: options,
-                reason: reason,
-                usingBlock: block
-            ]
-        }
+        );
+        # [method (performExpiringActivityWithReason : usingBlock :)]
         pub unsafe fn performExpiringActivityWithReason_usingBlock(
             &self,
             reason: &NSString,
             block: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                performExpiringActivityWithReason: reason,
-                usingBlock: block
-            ]
-        }
+        );
     }
 );
 extern_methods!(
     #[doc = "NSUserInformation"]
     unsafe impl NSProcessInfo {
-        pub unsafe fn userName(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, userName]
-        }
-        pub unsafe fn fullUserName(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, fullUserName]
-        }
+        #[method_id(userName)]
+        pub unsafe fn userName(&self) -> Id<NSString, Shared>;
+        #[method_id(fullUserName)]
+        pub unsafe fn fullUserName(&self) -> Id<NSString, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSProcessInfoThermalState"]
     unsafe impl NSProcessInfo {
-        pub unsafe fn thermalState(&self) -> NSProcessInfoThermalState {
-            msg_send![self, thermalState]
-        }
+        #[method(thermalState)]
+        pub unsafe fn thermalState(&self) -> NSProcessInfoThermalState;
     }
 );
 extern_methods!(
     #[doc = "NSProcessInfoPowerState"]
     unsafe impl NSProcessInfo {
-        pub unsafe fn isLowPowerModeEnabled(&self) -> bool {
-            msg_send![self, isLowPowerModeEnabled]
-        }
+        #[method(isLowPowerModeEnabled)]
+        pub unsafe fn isLowPowerModeEnabled(&self) -> bool;
     }
 );
 extern_methods!(
     #[doc = "NSProcessInfoPlatform"]
     unsafe impl NSProcessInfo {
-        pub unsafe fn isMacCatalystApp(&self) -> bool {
-            msg_send![self, isMacCatalystApp]
-        }
-        pub unsafe fn isiOSAppOnMac(&self) -> bool {
-            msg_send![self, isiOSAppOnMac]
-        }
+        #[method(isMacCatalystApp)]
+        pub unsafe fn isMacCatalystApp(&self) -> bool;
+        #[method(isiOSAppOnMac)]
+        pub unsafe fn isiOSAppOnMac(&self) -> bool;
     }
 );

@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSTask;
@@ -16,144 +16,95 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSTask {
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
-        pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, executableURL]
-        }
-        pub unsafe fn setExecutableURL(&self, executableURL: Option<&NSURL>) {
-            msg_send![self, setExecutableURL: executableURL]
-        }
-        pub unsafe fn arguments(&self) -> Option<Id<NSArray<NSString>, Shared>> {
-            msg_send_id![self, arguments]
-        }
-        pub unsafe fn setArguments(&self, arguments: Option<&NSArray<NSString>>) {
-            msg_send![self, setArguments: arguments]
-        }
-        pub unsafe fn environment(&self) -> Option<Id<NSDictionary<NSString, NSString>, Shared>> {
-            msg_send_id![self, environment]
-        }
-        pub unsafe fn setEnvironment(
-            &self,
-            environment: Option<&NSDictionary<NSString, NSString>>,
-        ) {
-            msg_send![self, setEnvironment: environment]
-        }
-        pub unsafe fn currentDirectoryURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, currentDirectoryURL]
-        }
-        pub unsafe fn setCurrentDirectoryURL(&self, currentDirectoryURL: Option<&NSURL>) {
-            msg_send![self, setCurrentDirectoryURL: currentDirectoryURL]
-        }
-        pub unsafe fn standardInput(&self) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, standardInput]
-        }
-        pub unsafe fn setStandardInput(&self, standardInput: Option<&Object>) {
-            msg_send![self, setStandardInput: standardInput]
-        }
-        pub unsafe fn standardOutput(&self) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, standardOutput]
-        }
-        pub unsafe fn setStandardOutput(&self, standardOutput: Option<&Object>) {
-            msg_send![self, setStandardOutput: standardOutput]
-        }
-        pub unsafe fn standardError(&self) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, standardError]
-        }
-        pub unsafe fn setStandardError(&self, standardError: Option<&Object>) {
-            msg_send![self, setStandardError: standardError]
-        }
-        pub unsafe fn launchAndReturnError(&self) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, launchAndReturnError: _]
-        }
-        pub unsafe fn interrupt(&self) {
-            msg_send![self, interrupt]
-        }
-        pub unsafe fn terminate(&self) {
-            msg_send![self, terminate]
-        }
-        pub unsafe fn suspend(&self) -> bool {
-            msg_send![self, suspend]
-        }
-        pub unsafe fn resume(&self) -> bool {
-            msg_send![self, resume]
-        }
-        pub unsafe fn processIdentifier(&self) -> c_int {
-            msg_send![self, processIdentifier]
-        }
-        pub unsafe fn isRunning(&self) -> bool {
-            msg_send![self, isRunning]
-        }
-        pub unsafe fn terminationStatus(&self) -> c_int {
-            msg_send![self, terminationStatus]
-        }
-        pub unsafe fn terminationReason(&self) -> NSTaskTerminationReason {
-            msg_send![self, terminationReason]
-        }
-        pub unsafe fn terminationHandler(&self) -> TodoBlock {
-            msg_send![self, terminationHandler]
-        }
-        pub unsafe fn setTerminationHandler(&self, terminationHandler: TodoBlock) {
-            msg_send![self, setTerminationHandler: terminationHandler]
-        }
-        pub unsafe fn qualityOfService(&self) -> NSQualityOfService {
-            msg_send![self, qualityOfService]
-        }
-        pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService) {
-            msg_send![self, setQualityOfService: qualityOfService]
-        }
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        #[method_id(executableURL)]
+        pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>>;
+        # [method (setExecutableURL :)]
+        pub unsafe fn setExecutableURL(&self, executableURL: Option<&NSURL>);
+        #[method_id(arguments)]
+        pub unsafe fn arguments(&self) -> Option<Id<NSArray<NSString>, Shared>>;
+        # [method (setArguments :)]
+        pub unsafe fn setArguments(&self, arguments: Option<&NSArray<NSString>>);
+        #[method_id(environment)]
+        pub unsafe fn environment(&self) -> Option<Id<NSDictionary<NSString, NSString>, Shared>>;
+        # [method (setEnvironment :)]
+        pub unsafe fn setEnvironment(&self, environment: Option<&NSDictionary<NSString, NSString>>);
+        #[method_id(currentDirectoryURL)]
+        pub unsafe fn currentDirectoryURL(&self) -> Option<Id<NSURL, Shared>>;
+        # [method (setCurrentDirectoryURL :)]
+        pub unsafe fn setCurrentDirectoryURL(&self, currentDirectoryURL: Option<&NSURL>);
+        #[method_id(standardInput)]
+        pub unsafe fn standardInput(&self) -> Option<Id<Object, Shared>>;
+        # [method (setStandardInput :)]
+        pub unsafe fn setStandardInput(&self, standardInput: Option<&Object>);
+        #[method_id(standardOutput)]
+        pub unsafe fn standardOutput(&self) -> Option<Id<Object, Shared>>;
+        # [method (setStandardOutput :)]
+        pub unsafe fn setStandardOutput(&self, standardOutput: Option<&Object>);
+        #[method_id(standardError)]
+        pub unsafe fn standardError(&self) -> Option<Id<Object, Shared>>;
+        # [method (setStandardError :)]
+        pub unsafe fn setStandardError(&self, standardError: Option<&Object>);
+        # [method (launchAndReturnError :)]
+        pub unsafe fn launchAndReturnError(&self) -> Result<(), Id<NSError, Shared>>;
+        #[method(interrupt)]
+        pub unsafe fn interrupt(&self);
+        #[method(terminate)]
+        pub unsafe fn terminate(&self);
+        #[method(suspend)]
+        pub unsafe fn suspend(&self) -> bool;
+        #[method(resume)]
+        pub unsafe fn resume(&self) -> bool;
+        #[method(processIdentifier)]
+        pub unsafe fn processIdentifier(&self) -> c_int;
+        #[method(isRunning)]
+        pub unsafe fn isRunning(&self) -> bool;
+        #[method(terminationStatus)]
+        pub unsafe fn terminationStatus(&self) -> c_int;
+        #[method(terminationReason)]
+        pub unsafe fn terminationReason(&self) -> NSTaskTerminationReason;
+        #[method(terminationHandler)]
+        pub unsafe fn terminationHandler(&self) -> TodoBlock;
+        # [method (setTerminationHandler :)]
+        pub unsafe fn setTerminationHandler(&self, terminationHandler: TodoBlock);
+        #[method(qualityOfService)]
+        pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
+        # [method (setQualityOfService :)]
+        pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
     }
 );
 extern_methods!(
     #[doc = "NSTaskConveniences"]
     unsafe impl NSTask {
+        # [method_id (launchedTaskWithExecutableURL : arguments : error : terminationHandler :)]
         pub unsafe fn launchedTaskWithExecutableURL_arguments_error_terminationHandler(
             url: &NSURL,
             arguments: &NSArray<NSString>,
             error: *mut *mut NSError,
             terminationHandler: TodoBlock,
-        ) -> Option<Id<NSTask, Shared>> {
-            msg_send_id![
-                Self::class(),
-                launchedTaskWithExecutableURL: url,
-                arguments: arguments,
-                error: error,
-                terminationHandler: terminationHandler
-            ]
-        }
-        pub unsafe fn waitUntilExit(&self) {
-            msg_send![self, waitUntilExit]
-        }
+        ) -> Option<Id<NSTask, Shared>>;
+        #[method(waitUntilExit)]
+        pub unsafe fn waitUntilExit(&self);
     }
 );
 extern_methods!(
     #[doc = "NSDeprecated"]
     unsafe impl NSTask {
-        pub unsafe fn launchPath(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, launchPath]
-        }
-        pub unsafe fn setLaunchPath(&self, launchPath: Option<&NSString>) {
-            msg_send![self, setLaunchPath: launchPath]
-        }
-        pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, currentDirectoryPath]
-        }
-        pub unsafe fn setCurrentDirectoryPath(&self, currentDirectoryPath: &NSString) {
-            msg_send![self, setCurrentDirectoryPath: currentDirectoryPath]
-        }
-        pub unsafe fn launch(&self) {
-            msg_send![self, launch]
-        }
+        #[method_id(launchPath)]
+        pub unsafe fn launchPath(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setLaunchPath :)]
+        pub unsafe fn setLaunchPath(&self, launchPath: Option<&NSString>);
+        #[method_id(currentDirectoryPath)]
+        pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared>;
+        # [method (setCurrentDirectoryPath :)]
+        pub unsafe fn setCurrentDirectoryPath(&self, currentDirectoryPath: &NSString);
+        #[method(launch)]
+        pub unsafe fn launch(&self);
+        # [method_id (launchedTaskWithLaunchPath : arguments :)]
         pub unsafe fn launchedTaskWithLaunchPath_arguments(
             path: &NSString,
             arguments: &NSArray<NSString>,
-        ) -> Id<NSTask, Shared> {
-            msg_send_id![
-                Self::class(),
-                launchedTaskWithLaunchPath: path,
-                arguments: arguments
-            ]
-        }
+        ) -> Id<NSTask, Shared>;
     }
 );

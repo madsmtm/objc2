@@ -3,7 +3,7 @@ use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSIndexPath;
@@ -13,54 +13,39 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSIndexPath {
-        pub unsafe fn indexPathWithIndex(index: NSUInteger) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), indexPathWithIndex: index]
-        }
+        # [method_id (indexPathWithIndex :)]
+        pub unsafe fn indexPathWithIndex(index: NSUInteger) -> Id<Self, Shared>;
+        # [method_id (indexPathWithIndexes : length :)]
         pub unsafe fn indexPathWithIndexes_length(
             indexes: TodoArray,
             length: NSUInteger,
-        ) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), indexPathWithIndexes: indexes, length: length]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithIndexes : length :)]
         pub unsafe fn initWithIndexes_length(
             &self,
             indexes: TodoArray,
             length: NSUInteger,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithIndexes: indexes, length: length]
-        }
-        pub unsafe fn initWithIndex(&self, index: NSUInteger) -> Id<Self, Shared> {
-            msg_send_id![self, initWithIndex: index]
-        }
-        pub unsafe fn indexPathByAddingIndex(&self, index: NSUInteger) -> Id<NSIndexPath, Shared> {
-            msg_send_id![self, indexPathByAddingIndex: index]
-        }
-        pub unsafe fn indexPathByRemovingLastIndex(&self) -> Id<NSIndexPath, Shared> {
-            msg_send_id![self, indexPathByRemovingLastIndex]
-        }
-        pub unsafe fn indexAtPosition(&self, position: NSUInteger) -> NSUInteger {
-            msg_send![self, indexAtPosition: position]
-        }
-        pub unsafe fn length(&self) -> NSUInteger {
-            msg_send![self, length]
-        }
-        pub unsafe fn getIndexes_range(
-            &self,
-            indexes: NonNull<NSUInteger>,
-            positionRange: NSRange,
-        ) {
-            msg_send![self, getIndexes: indexes, range: positionRange]
-        }
-        pub unsafe fn compare(&self, otherObject: &NSIndexPath) -> NSComparisonResult {
-            msg_send![self, compare: otherObject]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithIndex :)]
+        pub unsafe fn initWithIndex(&self, index: NSUInteger) -> Id<Self, Shared>;
+        # [method_id (indexPathByAddingIndex :)]
+        pub unsafe fn indexPathByAddingIndex(&self, index: NSUInteger) -> Id<NSIndexPath, Shared>;
+        #[method_id(indexPathByRemovingLastIndex)]
+        pub unsafe fn indexPathByRemovingLastIndex(&self) -> Id<NSIndexPath, Shared>;
+        # [method (indexAtPosition :)]
+        pub unsafe fn indexAtPosition(&self, position: NSUInteger) -> NSUInteger;
+        #[method(length)]
+        pub unsafe fn length(&self) -> NSUInteger;
+        # [method (getIndexes : range :)]
+        pub unsafe fn getIndexes_range(&self, indexes: NonNull<NSUInteger>, positionRange: NSRange);
+        # [method (compare :)]
+        pub unsafe fn compare(&self, otherObject: &NSIndexPath) -> NSComparisonResult;
     }
 );
 extern_methods!(
     #[doc = "NSDeprecated"]
     unsafe impl NSIndexPath {
-        pub unsafe fn getIndexes(&self, indexes: NonNull<NSUInteger>) {
-            msg_send![self, getIndexes: indexes]
-        }
+        # [method (getIndexes :)]
+        pub unsafe fn getIndexes(&self, indexes: NonNull<NSUInteger>);
     }
 );

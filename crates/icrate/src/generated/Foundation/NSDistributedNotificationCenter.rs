@@ -4,7 +4,7 @@ use crate::Foundation::generated::NSNotification::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSDistributedNotificationCenterType = NSString;
 extern_class!(
     #[derive(Debug)]
@@ -15,17 +15,13 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDistributedNotificationCenter {
+        # [method_id (notificationCenterForType :)]
         pub unsafe fn notificationCenterForType(
             notificationCenterType: &NSDistributedNotificationCenterType,
-        ) -> Id<NSDistributedNotificationCenter, Shared> {
-            msg_send_id![
-                Self::class(),
-                notificationCenterForType: notificationCenterType
-            ]
-        }
-        pub unsafe fn defaultCenter() -> Id<NSDistributedNotificationCenter, Shared> {
-            msg_send_id![Self::class(), defaultCenter]
-        }
+        ) -> Id<NSDistributedNotificationCenter, Shared>;
+        #[method_id(defaultCenter)]
+        pub unsafe fn defaultCenter() -> Id<NSDistributedNotificationCenter, Shared>;
+        # [method (addObserver : selector : name : object : suspensionBehavior :)]
         pub unsafe fn addObserver_selector_name_object_suspensionBehavior(
             &self,
             observer: &Object,
@@ -33,99 +29,54 @@ extern_methods!(
             name: Option<&NSNotificationName>,
             object: Option<&NSString>,
             suspensionBehavior: NSNotificationSuspensionBehavior,
-        ) {
-            msg_send![
-                self,
-                addObserver: observer,
-                selector: selector,
-                name: name,
-                object: object,
-                suspensionBehavior: suspensionBehavior
-            ]
-        }
+        );
+        # [method (postNotificationName : object : userInfo : deliverImmediately :)]
         pub unsafe fn postNotificationName_object_userInfo_deliverImmediately(
             &self,
             name: &NSNotificationName,
             object: Option<&NSString>,
             userInfo: Option<&NSDictionary>,
             deliverImmediately: bool,
-        ) {
-            msg_send![
-                self,
-                postNotificationName: name,
-                object: object,
-                userInfo: userInfo,
-                deliverImmediately: deliverImmediately
-            ]
-        }
+        );
+        # [method (postNotificationName : object : userInfo : options :)]
         pub unsafe fn postNotificationName_object_userInfo_options(
             &self,
             name: &NSNotificationName,
             object: Option<&NSString>,
             userInfo: Option<&NSDictionary>,
             options: NSDistributedNotificationOptions,
-        ) {
-            msg_send![
-                self,
-                postNotificationName: name,
-                object: object,
-                userInfo: userInfo,
-                options: options
-            ]
-        }
-        pub unsafe fn suspended(&self) -> bool {
-            msg_send![self, suspended]
-        }
-        pub unsafe fn setSuspended(&self, suspended: bool) {
-            msg_send![self, setSuspended: suspended]
-        }
+        );
+        #[method(suspended)]
+        pub unsafe fn suspended(&self) -> bool;
+        # [method (setSuspended :)]
+        pub unsafe fn setSuspended(&self, suspended: bool);
+        # [method (addObserver : selector : name : object :)]
         pub unsafe fn addObserver_selector_name_object(
             &self,
             observer: &Object,
             aSelector: Sel,
             aName: Option<&NSNotificationName>,
             anObject: Option<&NSString>,
-        ) {
-            msg_send![
-                self,
-                addObserver: observer,
-                selector: aSelector,
-                name: aName,
-                object: anObject
-            ]
-        }
+        );
+        # [method (postNotificationName : object :)]
         pub unsafe fn postNotificationName_object(
             &self,
             aName: &NSNotificationName,
             anObject: Option<&NSString>,
-        ) {
-            msg_send![self, postNotificationName: aName, object: anObject]
-        }
+        );
+        # [method (postNotificationName : object : userInfo :)]
         pub unsafe fn postNotificationName_object_userInfo(
             &self,
             aName: &NSNotificationName,
             anObject: Option<&NSString>,
             aUserInfo: Option<&NSDictionary>,
-        ) {
-            msg_send![
-                self,
-                postNotificationName: aName,
-                object: anObject,
-                userInfo: aUserInfo
-            ]
-        }
+        );
+        # [method (removeObserver : name : object :)]
         pub unsafe fn removeObserver_name_object(
             &self,
             observer: &Object,
             aName: Option<&NSNotificationName>,
             anObject: Option<&NSString>,
-        ) {
-            msg_send![
-                self,
-                removeObserver: observer,
-                name: aName,
-                object: anObject
-            ]
-        }
+        );
     }
 );

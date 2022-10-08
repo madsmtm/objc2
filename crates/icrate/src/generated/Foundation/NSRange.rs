@@ -4,15 +4,13 @@ use crate::Foundation::generated::NSValue::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_methods!(
     #[doc = "NSValueRangeExtensions"]
     unsafe impl NSValue {
-        pub unsafe fn valueWithRange(range: NSRange) -> Id<NSValue, Shared> {
-            msg_send_id![Self::class(), valueWithRange: range]
-        }
-        pub unsafe fn rangeValue(&self) -> NSRange {
-            msg_send![self, rangeValue]
-        }
+        # [method_id (valueWithRange :)]
+        pub unsafe fn valueWithRange(range: NSRange) -> Id<NSValue, Shared>;
+        #[method(rangeValue)]
+        pub unsafe fn rangeValue(&self) -> NSRange;
     }
 );

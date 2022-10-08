@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSScriptCommandDescription;
@@ -16,72 +16,51 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSScriptCommandDescription {
-        pub unsafe fn init(&self) -> Id<Object, Shared> {
-            msg_send_id![self, init]
-        }
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Object, Shared>;
+        # [method_id (initWithSuiteName : commandName : dictionary :)]
         pub unsafe fn initWithSuiteName_commandName_dictionary(
             &self,
             suiteName: &NSString,
             commandName: &NSString,
             commandDeclaration: Option<&NSDictionary>,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![
-                self,
-                initWithSuiteName: suiteName,
-                commandName: commandName,
-                dictionary: commandDeclaration
-            ]
-        }
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
-        pub unsafe fn suiteName(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, suiteName]
-        }
-        pub unsafe fn commandName(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, commandName]
-        }
-        pub unsafe fn appleEventClassCode(&self) -> FourCharCode {
-            msg_send![self, appleEventClassCode]
-        }
-        pub unsafe fn appleEventCode(&self) -> FourCharCode {
-            msg_send![self, appleEventCode]
-        }
-        pub unsafe fn commandClassName(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, commandClassName]
-        }
-        pub unsafe fn returnType(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, returnType]
-        }
-        pub unsafe fn appleEventCodeForReturnType(&self) -> FourCharCode {
-            msg_send![self, appleEventCodeForReturnType]
-        }
-        pub unsafe fn argumentNames(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, argumentNames]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        #[method_id(suiteName)]
+        pub unsafe fn suiteName(&self) -> Id<NSString, Shared>;
+        #[method_id(commandName)]
+        pub unsafe fn commandName(&self) -> Id<NSString, Shared>;
+        #[method(appleEventClassCode)]
+        pub unsafe fn appleEventClassCode(&self) -> FourCharCode;
+        #[method(appleEventCode)]
+        pub unsafe fn appleEventCode(&self) -> FourCharCode;
+        #[method_id(commandClassName)]
+        pub unsafe fn commandClassName(&self) -> Id<NSString, Shared>;
+        #[method_id(returnType)]
+        pub unsafe fn returnType(&self) -> Option<Id<NSString, Shared>>;
+        #[method(appleEventCodeForReturnType)]
+        pub unsafe fn appleEventCodeForReturnType(&self) -> FourCharCode;
+        #[method_id(argumentNames)]
+        pub unsafe fn argumentNames(&self) -> Id<NSArray<NSString>, Shared>;
+        # [method_id (typeForArgumentWithName :)]
         pub unsafe fn typeForArgumentWithName(
             &self,
             argumentName: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, typeForArgumentWithName: argumentName]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        # [method (appleEventCodeForArgumentWithName :)]
         pub unsafe fn appleEventCodeForArgumentWithName(
             &self,
             argumentName: &NSString,
-        ) -> FourCharCode {
-            msg_send![self, appleEventCodeForArgumentWithName: argumentName]
-        }
-        pub unsafe fn isOptionalArgumentWithName(&self, argumentName: &NSString) -> bool {
-            msg_send![self, isOptionalArgumentWithName: argumentName]
-        }
-        pub unsafe fn createCommandInstance(&self) -> Id<NSScriptCommand, Shared> {
-            msg_send_id![self, createCommandInstance]
-        }
+        ) -> FourCharCode;
+        # [method (isOptionalArgumentWithName :)]
+        pub unsafe fn isOptionalArgumentWithName(&self, argumentName: &NSString) -> bool;
+        #[method_id(createCommandInstance)]
+        pub unsafe fn createCommandInstance(&self) -> Id<NSScriptCommand, Shared>;
+        # [method_id (createCommandInstanceWithZone :)]
         pub unsafe fn createCommandInstanceWithZone(
             &self,
             zone: *mut NSZone,
-        ) -> Id<NSScriptCommand, Shared> {
-            msg_send_id![self, createCommandInstanceWithZone: zone]
-        }
+        ) -> Id<NSScriptCommand, Shared>;
     }
 );

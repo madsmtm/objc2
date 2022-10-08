@@ -5,7 +5,7 @@ use crate::Foundation::generated::NSOrderedCollectionChange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 __inner_extern_class!(
     #[derive(Debug)]
     pub struct NSOrderedCollectionDifference<ObjectType: Message>;
@@ -15,12 +15,12 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
+        # [method_id (initWithChanges :)]
         pub unsafe fn initWithChanges(
             &self,
             changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithChanges: changes]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithInsertIndexes : insertedObjects : removeIndexes : removedObjects : additionalChanges :)]
         pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects_additionalChanges(
             &self,
             inserts: &NSIndexSet,
@@ -28,52 +28,30 @@ extern_methods!(
             removes: &NSIndexSet,
             removedObjects: Option<&NSArray<ObjectType>>,
             changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithInsertIndexes: inserts,
-                insertedObjects: insertedObjects,
-                removeIndexes: removes,
-                removedObjects: removedObjects,
-                additionalChanges: changes
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithInsertIndexes : insertedObjects : removeIndexes : removedObjects :)]
         pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects(
             &self,
             inserts: &NSIndexSet,
             insertedObjects: Option<&NSArray<ObjectType>>,
             removes: &NSIndexSet,
             removedObjects: Option<&NSArray<ObjectType>>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithInsertIndexes: inserts,
-                insertedObjects: insertedObjects,
-                removeIndexes: removes,
-                removedObjects: removedObjects
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(insertions)]
         pub unsafe fn insertions(
             &self,
-        ) -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared> {
-            msg_send_id![self, insertions]
-        }
-        pub unsafe fn removals(
-            &self,
-        ) -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared> {
-            msg_send_id![self, removals]
-        }
-        pub unsafe fn hasChanges(&self) -> bool {
-            msg_send![self, hasChanges]
-        }
+        ) -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared>;
+        #[method_id(removals)]
+        pub unsafe fn removals(&self)
+            -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared>;
+        #[method(hasChanges)]
+        pub unsafe fn hasChanges(&self) -> bool;
+        # [method_id (differenceByTransformingChangesWithBlock :)]
         pub unsafe fn differenceByTransformingChangesWithBlock(
             &self,
             block: TodoBlock,
-        ) -> Id<NSOrderedCollectionDifference<Object>, Shared> {
-            msg_send_id![self, differenceByTransformingChangesWithBlock: block]
-        }
-        pub unsafe fn inverseDifference(&self) -> Id<Self, Shared> {
-            msg_send_id![self, inverseDifference]
-        }
+        ) -> Id<NSOrderedCollectionDifference<Object>, Shared>;
+        #[method_id(inverseDifference)]
+        pub unsafe fn inverseDifference(&self) -> Id<Self, Shared>;
     }
 );

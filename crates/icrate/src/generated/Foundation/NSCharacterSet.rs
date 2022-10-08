@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSCharacterSet;
@@ -16,90 +16,64 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSCharacterSet {
-        pub unsafe fn controlCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), controlCharacterSet]
-        }
-        pub unsafe fn whitespaceCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), whitespaceCharacterSet]
-        }
-        pub unsafe fn whitespaceAndNewlineCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), whitespaceAndNewlineCharacterSet]
-        }
-        pub unsafe fn decimalDigitCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), decimalDigitCharacterSet]
-        }
-        pub unsafe fn letterCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), letterCharacterSet]
-        }
-        pub unsafe fn lowercaseLetterCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), lowercaseLetterCharacterSet]
-        }
-        pub unsafe fn uppercaseLetterCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), uppercaseLetterCharacterSet]
-        }
-        pub unsafe fn nonBaseCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), nonBaseCharacterSet]
-        }
-        pub unsafe fn alphanumericCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), alphanumericCharacterSet]
-        }
-        pub unsafe fn decomposableCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), decomposableCharacterSet]
-        }
-        pub unsafe fn illegalCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), illegalCharacterSet]
-        }
-        pub unsafe fn punctuationCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), punctuationCharacterSet]
-        }
-        pub unsafe fn capitalizedLetterCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), capitalizedLetterCharacterSet]
-        }
-        pub unsafe fn symbolCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), symbolCharacterSet]
-        }
-        pub unsafe fn newlineCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), newlineCharacterSet]
-        }
-        pub unsafe fn characterSetWithRange(aRange: NSRange) -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), characterSetWithRange: aRange]
-        }
+        #[method_id(controlCharacterSet)]
+        pub unsafe fn controlCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(whitespaceCharacterSet)]
+        pub unsafe fn whitespaceCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(whitespaceAndNewlineCharacterSet)]
+        pub unsafe fn whitespaceAndNewlineCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(decimalDigitCharacterSet)]
+        pub unsafe fn decimalDigitCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(letterCharacterSet)]
+        pub unsafe fn letterCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(lowercaseLetterCharacterSet)]
+        pub unsafe fn lowercaseLetterCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(uppercaseLetterCharacterSet)]
+        pub unsafe fn uppercaseLetterCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(nonBaseCharacterSet)]
+        pub unsafe fn nonBaseCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(alphanumericCharacterSet)]
+        pub unsafe fn alphanumericCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(decomposableCharacterSet)]
+        pub unsafe fn decomposableCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(illegalCharacterSet)]
+        pub unsafe fn illegalCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(punctuationCharacterSet)]
+        pub unsafe fn punctuationCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(capitalizedLetterCharacterSet)]
+        pub unsafe fn capitalizedLetterCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(symbolCharacterSet)]
+        pub unsafe fn symbolCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(newlineCharacterSet)]
+        pub unsafe fn newlineCharacterSet() -> Id<NSCharacterSet, Shared>;
+        # [method_id (characterSetWithRange :)]
+        pub unsafe fn characterSetWithRange(aRange: NSRange) -> Id<NSCharacterSet, Shared>;
+        # [method_id (characterSetWithCharactersInString :)]
         pub unsafe fn characterSetWithCharactersInString(
             aString: &NSString,
-        ) -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), characterSetWithCharactersInString: aString]
-        }
+        ) -> Id<NSCharacterSet, Shared>;
+        # [method_id (characterSetWithBitmapRepresentation :)]
         pub unsafe fn characterSetWithBitmapRepresentation(
             data: &NSData,
-        ) -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), characterSetWithBitmapRepresentation: data]
-        }
+        ) -> Id<NSCharacterSet, Shared>;
+        # [method_id (characterSetWithContentsOfFile :)]
         pub unsafe fn characterSetWithContentsOfFile(
             fName: &NSString,
-        ) -> Option<Id<NSCharacterSet, Shared>> {
-            msg_send_id![Self::class(), characterSetWithContentsOfFile: fName]
-        }
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared> {
-            msg_send_id![self, initWithCoder: coder]
-        }
-        pub unsafe fn characterIsMember(&self, aCharacter: unichar) -> bool {
-            msg_send![self, characterIsMember: aCharacter]
-        }
-        pub unsafe fn bitmapRepresentation(&self) -> Id<NSData, Shared> {
-            msg_send_id![self, bitmapRepresentation]
-        }
-        pub unsafe fn invertedSet(&self) -> Id<NSCharacterSet, Shared> {
-            msg_send_id![self, invertedSet]
-        }
-        pub unsafe fn longCharacterIsMember(&self, theLongChar: UTF32Char) -> bool {
-            msg_send![self, longCharacterIsMember: theLongChar]
-        }
-        pub unsafe fn isSupersetOfSet(&self, theOtherSet: &NSCharacterSet) -> bool {
-            msg_send![self, isSupersetOfSet: theOtherSet]
-        }
-        pub unsafe fn hasMemberInPlane(&self, thePlane: u8) -> bool {
-            msg_send![self, hasMemberInPlane: thePlane]
-        }
+        ) -> Option<Id<NSCharacterSet, Shared>>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        # [method (characterIsMember :)]
+        pub unsafe fn characterIsMember(&self, aCharacter: unichar) -> bool;
+        #[method_id(bitmapRepresentation)]
+        pub unsafe fn bitmapRepresentation(&self) -> Id<NSData, Shared>;
+        #[method_id(invertedSet)]
+        pub unsafe fn invertedSet(&self) -> Id<NSCharacterSet, Shared>;
+        # [method (longCharacterIsMember :)]
+        pub unsafe fn longCharacterIsMember(&self, theLongChar: UTF32Char) -> bool;
+        # [method (isSupersetOfSet :)]
+        pub unsafe fn isSupersetOfSet(&self, theOtherSet: &NSCharacterSet) -> bool;
+        # [method (hasMemberInPlane :)]
+        pub unsafe fn hasMemberInPlane(&self, thePlane: u8) -> bool;
     }
 );
 extern_class!(
@@ -111,89 +85,63 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMutableCharacterSet {
-        pub unsafe fn addCharactersInRange(&self, aRange: NSRange) {
-            msg_send![self, addCharactersInRange: aRange]
-        }
-        pub unsafe fn removeCharactersInRange(&self, aRange: NSRange) {
-            msg_send![self, removeCharactersInRange: aRange]
-        }
-        pub unsafe fn addCharactersInString(&self, aString: &NSString) {
-            msg_send![self, addCharactersInString: aString]
-        }
-        pub unsafe fn removeCharactersInString(&self, aString: &NSString) {
-            msg_send![self, removeCharactersInString: aString]
-        }
-        pub unsafe fn formUnionWithCharacterSet(&self, otherSet: &NSCharacterSet) {
-            msg_send![self, formUnionWithCharacterSet: otherSet]
-        }
-        pub unsafe fn formIntersectionWithCharacterSet(&self, otherSet: &NSCharacterSet) {
-            msg_send![self, formIntersectionWithCharacterSet: otherSet]
-        }
-        pub unsafe fn invert(&self) {
-            msg_send![self, invert]
-        }
-        pub unsafe fn controlCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), controlCharacterSet]
-        }
-        pub unsafe fn whitespaceCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), whitespaceCharacterSet]
-        }
-        pub unsafe fn whitespaceAndNewlineCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), whitespaceAndNewlineCharacterSet]
-        }
-        pub unsafe fn decimalDigitCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), decimalDigitCharacterSet]
-        }
-        pub unsafe fn letterCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), letterCharacterSet]
-        }
-        pub unsafe fn lowercaseLetterCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), lowercaseLetterCharacterSet]
-        }
-        pub unsafe fn uppercaseLetterCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), uppercaseLetterCharacterSet]
-        }
-        pub unsafe fn nonBaseCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), nonBaseCharacterSet]
-        }
-        pub unsafe fn alphanumericCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), alphanumericCharacterSet]
-        }
-        pub unsafe fn decomposableCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), decomposableCharacterSet]
-        }
-        pub unsafe fn illegalCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), illegalCharacterSet]
-        }
-        pub unsafe fn punctuationCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), punctuationCharacterSet]
-        }
-        pub unsafe fn capitalizedLetterCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), capitalizedLetterCharacterSet]
-        }
-        pub unsafe fn symbolCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), symbolCharacterSet]
-        }
-        pub unsafe fn newlineCharacterSet() -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), newlineCharacterSet]
-        }
-        pub unsafe fn characterSetWithRange(aRange: NSRange) -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), characterSetWithRange: aRange]
-        }
+        # [method (addCharactersInRange :)]
+        pub unsafe fn addCharactersInRange(&self, aRange: NSRange);
+        # [method (removeCharactersInRange :)]
+        pub unsafe fn removeCharactersInRange(&self, aRange: NSRange);
+        # [method (addCharactersInString :)]
+        pub unsafe fn addCharactersInString(&self, aString: &NSString);
+        # [method (removeCharactersInString :)]
+        pub unsafe fn removeCharactersInString(&self, aString: &NSString);
+        # [method (formUnionWithCharacterSet :)]
+        pub unsafe fn formUnionWithCharacterSet(&self, otherSet: &NSCharacterSet);
+        # [method (formIntersectionWithCharacterSet :)]
+        pub unsafe fn formIntersectionWithCharacterSet(&self, otherSet: &NSCharacterSet);
+        #[method(invert)]
+        pub unsafe fn invert(&self);
+        #[method_id(controlCharacterSet)]
+        pub unsafe fn controlCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(whitespaceCharacterSet)]
+        pub unsafe fn whitespaceCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(whitespaceAndNewlineCharacterSet)]
+        pub unsafe fn whitespaceAndNewlineCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(decimalDigitCharacterSet)]
+        pub unsafe fn decimalDigitCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(letterCharacterSet)]
+        pub unsafe fn letterCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(lowercaseLetterCharacterSet)]
+        pub unsafe fn lowercaseLetterCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(uppercaseLetterCharacterSet)]
+        pub unsafe fn uppercaseLetterCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(nonBaseCharacterSet)]
+        pub unsafe fn nonBaseCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(alphanumericCharacterSet)]
+        pub unsafe fn alphanumericCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(decomposableCharacterSet)]
+        pub unsafe fn decomposableCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(illegalCharacterSet)]
+        pub unsafe fn illegalCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(punctuationCharacterSet)]
+        pub unsafe fn punctuationCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(capitalizedLetterCharacterSet)]
+        pub unsafe fn capitalizedLetterCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(symbolCharacterSet)]
+        pub unsafe fn symbolCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        #[method_id(newlineCharacterSet)]
+        pub unsafe fn newlineCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
+        # [method_id (characterSetWithRange :)]
+        pub unsafe fn characterSetWithRange(aRange: NSRange) -> Id<NSMutableCharacterSet, Shared>;
+        # [method_id (characterSetWithCharactersInString :)]
         pub unsafe fn characterSetWithCharactersInString(
             aString: &NSString,
-        ) -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), characterSetWithCharactersInString: aString]
-        }
+        ) -> Id<NSMutableCharacterSet, Shared>;
+        # [method_id (characterSetWithBitmapRepresentation :)]
         pub unsafe fn characterSetWithBitmapRepresentation(
             data: &NSData,
-        ) -> Id<NSMutableCharacterSet, Shared> {
-            msg_send_id![Self::class(), characterSetWithBitmapRepresentation: data]
-        }
+        ) -> Id<NSMutableCharacterSet, Shared>;
+        # [method_id (characterSetWithContentsOfFile :)]
         pub unsafe fn characterSetWithContentsOfFile(
             fName: &NSString,
-        ) -> Option<Id<NSMutableCharacterSet, Shared>> {
-            msg_send_id![Self::class(), characterSetWithContentsOfFile: fName]
-        }
+        ) -> Option<Id<NSMutableCharacterSet, Shared>>;
     }
 );

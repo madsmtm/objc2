@@ -4,7 +4,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSValueTransformerName = NSString;
 extern_class!(
     #[derive(Debug)]
@@ -15,42 +15,29 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSValueTransformer {
+        # [method (setValueTransformer : forName :)]
         pub unsafe fn setValueTransformer_forName(
             transformer: Option<&NSValueTransformer>,
             name: &NSValueTransformerName,
-        ) {
-            msg_send![
-                Self::class(),
-                setValueTransformer: transformer,
-                forName: name
-            ]
-        }
+        );
+        # [method_id (valueTransformerForName :)]
         pub unsafe fn valueTransformerForName(
             name: &NSValueTransformerName,
-        ) -> Option<Id<NSValueTransformer, Shared>> {
-            msg_send_id![Self::class(), valueTransformerForName: name]
-        }
-        pub unsafe fn valueTransformerNames() -> Id<NSArray<NSValueTransformerName>, Shared> {
-            msg_send_id![Self::class(), valueTransformerNames]
-        }
-        pub unsafe fn transformedValueClass() -> &Class {
-            msg_send![Self::class(), transformedValueClass]
-        }
-        pub unsafe fn allowsReverseTransformation() -> bool {
-            msg_send![Self::class(), allowsReverseTransformation]
-        }
-        pub unsafe fn transformedValue(
-            &self,
-            value: Option<&Object>,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, transformedValue: value]
-        }
+        ) -> Option<Id<NSValueTransformer, Shared>>;
+        #[method_id(valueTransformerNames)]
+        pub unsafe fn valueTransformerNames() -> Id<NSArray<NSValueTransformerName>, Shared>;
+        #[method(transformedValueClass)]
+        pub unsafe fn transformedValueClass() -> &Class;
+        #[method(allowsReverseTransformation)]
+        pub unsafe fn allowsReverseTransformation() -> bool;
+        # [method_id (transformedValue :)]
+        pub unsafe fn transformedValue(&self, value: Option<&Object>)
+            -> Option<Id<Object, Shared>>;
+        # [method_id (reverseTransformedValue :)]
         pub unsafe fn reverseTransformedValue(
             &self,
             value: Option<&Object>,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, reverseTransformedValue: value]
-        }
+        ) -> Option<Id<Object, Shared>>;
     }
 );
 extern_class!(
@@ -62,8 +49,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSSecureUnarchiveFromDataTransformer {
-        pub unsafe fn allowedTopLevelClasses() -> Id<NSArray<TodoClass>, Shared> {
-            msg_send_id![Self::class(), allowedTopLevelClasses]
-        }
+        #[method_id(allowedTopLevelClasses)]
+        pub unsafe fn allowedTopLevelClasses() -> Id<NSArray<TodoClass>, Shared>;
     }
 );

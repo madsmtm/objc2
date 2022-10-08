@@ -3,7 +3,7 @@ use crate::Foundation::generated::NSUnit::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 __inner_extern_class!(
     #[derive(Debug)]
     pub struct NSMeasurement<UnitType: Message>;
@@ -13,42 +13,34 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<UnitType: Message> NSMeasurement<UnitType> {
-        pub unsafe fn unit(&self) -> Id<UnitType, Shared> {
-            msg_send_id![self, unit]
-        }
-        pub unsafe fn doubleValue(&self) -> c_double {
-            msg_send![self, doubleValue]
-        }
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
+        #[method_id(unit)]
+        pub unsafe fn unit(&self) -> Id<UnitType, Shared>;
+        #[method(doubleValue)]
+        pub unsafe fn doubleValue(&self) -> c_double;
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        # [method_id (initWithDoubleValue : unit :)]
         pub unsafe fn initWithDoubleValue_unit(
             &self,
             doubleValue: c_double,
             unit: &UnitType,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithDoubleValue: doubleValue, unit: unit]
-        }
-        pub unsafe fn canBeConvertedToUnit(&self, unit: &NSUnit) -> bool {
-            msg_send![self, canBeConvertedToUnit: unit]
-        }
+        ) -> Id<Self, Shared>;
+        # [method (canBeConvertedToUnit :)]
+        pub unsafe fn canBeConvertedToUnit(&self, unit: &NSUnit) -> bool;
+        # [method_id (measurementByConvertingToUnit :)]
         pub unsafe fn measurementByConvertingToUnit(
             &self,
             unit: &NSUnit,
-        ) -> Id<NSMeasurement, Shared> {
-            msg_send_id![self, measurementByConvertingToUnit: unit]
-        }
+        ) -> Id<NSMeasurement, Shared>;
+        # [method_id (measurementByAddingMeasurement :)]
         pub unsafe fn measurementByAddingMeasurement(
             &self,
             measurement: &NSMeasurement<UnitType>,
-        ) -> Id<NSMeasurement<UnitType>, Shared> {
-            msg_send_id![self, measurementByAddingMeasurement: measurement]
-        }
+        ) -> Id<NSMeasurement<UnitType>, Shared>;
+        # [method_id (measurementBySubtractingMeasurement :)]
         pub unsafe fn measurementBySubtractingMeasurement(
             &self,
             measurement: &NSMeasurement<UnitType>,
-        ) -> Id<NSMeasurement<UnitType>, Shared> {
-            msg_send_id![self, measurementBySubtractingMeasurement: measurement]
-        }
+        ) -> Id<NSMeasurement<UnitType>, Shared>;
     }
 );

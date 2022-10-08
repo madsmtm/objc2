@@ -5,7 +5,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSScriptWhoseTest;
@@ -15,15 +15,12 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSScriptWhoseTest {
-        pub unsafe fn isTrue(&self) -> bool {
-            msg_send![self, isTrue]
-        }
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
+        #[method(isTrue)]
+        pub unsafe fn isTrue(&self) -> bool;
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
     }
 );
 extern_class!(
@@ -35,21 +32,18 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSLogicalTest {
+        # [method_id (initAndTestWithTests :)]
         pub unsafe fn initAndTestWithTests(
             &self,
             subTests: &NSArray<NSSpecifierTest>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initAndTestWithTests: subTests]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initOrTestWithTests :)]
         pub unsafe fn initOrTestWithTests(
             &self,
             subTests: &NSArray<NSSpecifierTest>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initOrTestWithTests: subTests]
-        }
-        pub unsafe fn initNotTestWithTest(&self, subTest: &NSScriptWhoseTest) -> Id<Self, Shared> {
-            msg_send_id![self, initNotTestWithTest: subTest]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initNotTestWithTest :)]
+        pub unsafe fn initNotTestWithTest(&self, subTest: &NSScriptWhoseTest) -> Id<Self, Shared>;
     }
 );
 extern_class!(
@@ -61,85 +55,60 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSSpecifierTest {
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithObjectSpecifier : comparisonOperator : testObject :)]
         pub unsafe fn initWithObjectSpecifier_comparisonOperator_testObject(
             &self,
             obj1: Option<&NSScriptObjectSpecifier>,
             compOp: NSTestComparisonOperation,
             obj2: Option<&Object>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithObjectSpecifier: obj1,
-                comparisonOperator: compOp,
-                testObject: obj2
-            ]
-        }
+        ) -> Id<Self, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSComparisonMethods"]
     unsafe impl NSObject {
-        pub unsafe fn isEqualTo(&self, object: Option<&Object>) -> bool {
-            msg_send![self, isEqualTo: object]
-        }
-        pub unsafe fn isLessThanOrEqualTo(&self, object: Option<&Object>) -> bool {
-            msg_send![self, isLessThanOrEqualTo: object]
-        }
-        pub unsafe fn isLessThan(&self, object: Option<&Object>) -> bool {
-            msg_send![self, isLessThan: object]
-        }
-        pub unsafe fn isGreaterThanOrEqualTo(&self, object: Option<&Object>) -> bool {
-            msg_send![self, isGreaterThanOrEqualTo: object]
-        }
-        pub unsafe fn isGreaterThan(&self, object: Option<&Object>) -> bool {
-            msg_send![self, isGreaterThan: object]
-        }
-        pub unsafe fn isNotEqualTo(&self, object: Option<&Object>) -> bool {
-            msg_send![self, isNotEqualTo: object]
-        }
-        pub unsafe fn doesContain(&self, object: &Object) -> bool {
-            msg_send![self, doesContain: object]
-        }
-        pub unsafe fn isLike(&self, object: &NSString) -> bool {
-            msg_send![self, isLike: object]
-        }
-        pub unsafe fn isCaseInsensitiveLike(&self, object: &NSString) -> bool {
-            msg_send![self, isCaseInsensitiveLike: object]
-        }
+        # [method (isEqualTo :)]
+        pub unsafe fn isEqualTo(&self, object: Option<&Object>) -> bool;
+        # [method (isLessThanOrEqualTo :)]
+        pub unsafe fn isLessThanOrEqualTo(&self, object: Option<&Object>) -> bool;
+        # [method (isLessThan :)]
+        pub unsafe fn isLessThan(&self, object: Option<&Object>) -> bool;
+        # [method (isGreaterThanOrEqualTo :)]
+        pub unsafe fn isGreaterThanOrEqualTo(&self, object: Option<&Object>) -> bool;
+        # [method (isGreaterThan :)]
+        pub unsafe fn isGreaterThan(&self, object: Option<&Object>) -> bool;
+        # [method (isNotEqualTo :)]
+        pub unsafe fn isNotEqualTo(&self, object: Option<&Object>) -> bool;
+        # [method (doesContain :)]
+        pub unsafe fn doesContain(&self, object: &Object) -> bool;
+        # [method (isLike :)]
+        pub unsafe fn isLike(&self, object: &NSString) -> bool;
+        # [method (isCaseInsensitiveLike :)]
+        pub unsafe fn isCaseInsensitiveLike(&self, object: &NSString) -> bool;
     }
 );
 extern_methods!(
     #[doc = "NSScriptingComparisonMethods"]
     unsafe impl NSObject {
-        pub unsafe fn scriptingIsEqualTo(&self, object: &Object) -> bool {
-            msg_send![self, scriptingIsEqualTo: object]
-        }
-        pub unsafe fn scriptingIsLessThanOrEqualTo(&self, object: &Object) -> bool {
-            msg_send![self, scriptingIsLessThanOrEqualTo: object]
-        }
-        pub unsafe fn scriptingIsLessThan(&self, object: &Object) -> bool {
-            msg_send![self, scriptingIsLessThan: object]
-        }
-        pub unsafe fn scriptingIsGreaterThanOrEqualTo(&self, object: &Object) -> bool {
-            msg_send![self, scriptingIsGreaterThanOrEqualTo: object]
-        }
-        pub unsafe fn scriptingIsGreaterThan(&self, object: &Object) -> bool {
-            msg_send![self, scriptingIsGreaterThan: object]
-        }
-        pub unsafe fn scriptingBeginsWith(&self, object: &Object) -> bool {
-            msg_send![self, scriptingBeginsWith: object]
-        }
-        pub unsafe fn scriptingEndsWith(&self, object: &Object) -> bool {
-            msg_send![self, scriptingEndsWith: object]
-        }
-        pub unsafe fn scriptingContains(&self, object: &Object) -> bool {
-            msg_send![self, scriptingContains: object]
-        }
+        # [method (scriptingIsEqualTo :)]
+        pub unsafe fn scriptingIsEqualTo(&self, object: &Object) -> bool;
+        # [method (scriptingIsLessThanOrEqualTo :)]
+        pub unsafe fn scriptingIsLessThanOrEqualTo(&self, object: &Object) -> bool;
+        # [method (scriptingIsLessThan :)]
+        pub unsafe fn scriptingIsLessThan(&self, object: &Object) -> bool;
+        # [method (scriptingIsGreaterThanOrEqualTo :)]
+        pub unsafe fn scriptingIsGreaterThanOrEqualTo(&self, object: &Object) -> bool;
+        # [method (scriptingIsGreaterThan :)]
+        pub unsafe fn scriptingIsGreaterThan(&self, object: &Object) -> bool;
+        # [method (scriptingBeginsWith :)]
+        pub unsafe fn scriptingBeginsWith(&self, object: &Object) -> bool;
+        # [method (scriptingEndsWith :)]
+        pub unsafe fn scriptingEndsWith(&self, object: &Object) -> bool;
+        # [method (scriptingContains :)]
+        pub unsafe fn scriptingContains(&self, object: &Object) -> bool;
     }
 );

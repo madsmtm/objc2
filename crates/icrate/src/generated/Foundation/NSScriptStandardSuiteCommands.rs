@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSScriptCommand::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSCloneCommand;
@@ -16,12 +16,10 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSCloneCommand {
-        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
-            msg_send![self, setReceiversSpecifier: receiversRef]
-        }
-        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-            msg_send_id![self, keySpecifier]
-        }
+        # [method (setReceiversSpecifier :)]
+        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
+        #[method_id(keySpecifier)]
+        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
     }
 );
 extern_class!(
@@ -33,9 +31,8 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSCloseCommand {
-        pub unsafe fn saveOptions(&self) -> NSSaveOptions {
-            msg_send![self, saveOptions]
-        }
+        #[method(saveOptions)]
+        pub unsafe fn saveOptions(&self) -> NSSaveOptions;
     }
 );
 extern_class!(
@@ -57,12 +54,10 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSCreateCommand {
-        pub unsafe fn createClassDescription(&self) -> Id<NSScriptClassDescription, Shared> {
-            msg_send_id![self, createClassDescription]
-        }
-        pub unsafe fn resolvedKeyDictionary(&self) -> Id<NSDictionary<NSString, Object>, Shared> {
-            msg_send_id![self, resolvedKeyDictionary]
-        }
+        #[method_id(createClassDescription)]
+        pub unsafe fn createClassDescription(&self) -> Id<NSScriptClassDescription, Shared>;
+        #[method_id(resolvedKeyDictionary)]
+        pub unsafe fn resolvedKeyDictionary(&self) -> Id<NSDictionary<NSString, Object>, Shared>;
     }
 );
 extern_class!(
@@ -74,12 +69,10 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDeleteCommand {
-        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
-            msg_send![self, setReceiversSpecifier: receiversRef]
-        }
-        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-            msg_send_id![self, keySpecifier]
-        }
+        # [method (setReceiversSpecifier :)]
+        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
+        #[method_id(keySpecifier)]
+        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
     }
 );
 extern_class!(
@@ -111,12 +104,10 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMoveCommand {
-        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
-            msg_send![self, setReceiversSpecifier: receiversRef]
-        }
-        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-            msg_send_id![self, keySpecifier]
-        }
+        # [method (setReceiversSpecifier :)]
+        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
+        #[method_id(keySpecifier)]
+        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
     }
 );
 extern_class!(
@@ -128,9 +119,8 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSQuitCommand {
-        pub unsafe fn saveOptions(&self) -> NSSaveOptions {
-            msg_send![self, saveOptions]
-        }
+        #[method(saveOptions)]
+        pub unsafe fn saveOptions(&self) -> NSSaveOptions;
     }
 );
 extern_class!(
@@ -142,11 +132,9 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSSetCommand {
-        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>) {
-            msg_send![self, setReceiversSpecifier: receiversRef]
-        }
-        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-            msg_send_id![self, keySpecifier]
-        }
+        # [method (setReceiversSpecifier :)]
+        pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
+        #[method_id(keySpecifier)]
+        pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
     }
 );

@@ -2,7 +2,7 @@ use crate::Foundation::generated::NSXMLNode::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSXMLDTDNode;
@@ -12,45 +12,33 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSXMLDTDNode {
-        pub unsafe fn initWithXMLString(&self, string: &NSString) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithXMLString: string]
-        }
+        # [method_id (initWithXMLString :)]
+        pub unsafe fn initWithXMLString(&self, string: &NSString) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithKind : options :)]
         pub unsafe fn initWithKind_options(
             &self,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithKind: kind, options: options]
-        }
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
-        pub unsafe fn DTDKind(&self) -> NSXMLDTDNodeKind {
-            msg_send![self, DTDKind]
-        }
-        pub unsafe fn setDTDKind(&self, DTDKind: NSXMLDTDNodeKind) {
-            msg_send![self, setDTDKind: DTDKind]
-        }
-        pub unsafe fn isExternal(&self) -> bool {
-            msg_send![self, isExternal]
-        }
-        pub unsafe fn publicID(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, publicID]
-        }
-        pub unsafe fn setPublicID(&self, publicID: Option<&NSString>) {
-            msg_send![self, setPublicID: publicID]
-        }
-        pub unsafe fn systemID(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, systemID]
-        }
-        pub unsafe fn setSystemID(&self, systemID: Option<&NSString>) {
-            msg_send![self, setSystemID: systemID]
-        }
-        pub unsafe fn notationName(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, notationName]
-        }
-        pub unsafe fn setNotationName(&self, notationName: Option<&NSString>) {
-            msg_send![self, setNotationName: notationName]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        #[method(DTDKind)]
+        pub unsafe fn DTDKind(&self) -> NSXMLDTDNodeKind;
+        # [method (setDTDKind :)]
+        pub unsafe fn setDTDKind(&self, DTDKind: NSXMLDTDNodeKind);
+        #[method(isExternal)]
+        pub unsafe fn isExternal(&self) -> bool;
+        #[method_id(publicID)]
+        pub unsafe fn publicID(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPublicID :)]
+        pub unsafe fn setPublicID(&self, publicID: Option<&NSString>);
+        #[method_id(systemID)]
+        pub unsafe fn systemID(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setSystemID :)]
+        pub unsafe fn setSystemID(&self, systemID: Option<&NSString>);
+        #[method_id(notationName)]
+        pub unsafe fn notationName(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setNotationName :)]
+        pub unsafe fn setNotationName(&self, notationName: Option<&NSString>);
     }
 );

@@ -9,7 +9,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSCachedURLResponse;
@@ -19,40 +19,28 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSCachedURLResponse {
+        # [method_id (initWithResponse : data :)]
         pub unsafe fn initWithResponse_data(
             &self,
             response: &NSURLResponse,
             data: &NSData,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithResponse: response, data: data]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithResponse : data : userInfo : storagePolicy :)]
         pub unsafe fn initWithResponse_data_userInfo_storagePolicy(
             &self,
             response: &NSURLResponse,
             data: &NSData,
             userInfo: Option<&NSDictionary>,
             storagePolicy: NSURLCacheStoragePolicy,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithResponse: response,
-                data: data,
-                userInfo: userInfo,
-                storagePolicy: storagePolicy
-            ]
-        }
-        pub unsafe fn response(&self) -> Id<NSURLResponse, Shared> {
-            msg_send_id![self, response]
-        }
-        pub unsafe fn data(&self) -> Id<NSData, Shared> {
-            msg_send_id![self, data]
-        }
-        pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>> {
-            msg_send_id![self, userInfo]
-        }
-        pub unsafe fn storagePolicy(&self) -> NSURLCacheStoragePolicy {
-            msg_send![self, storagePolicy]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(response)]
+        pub unsafe fn response(&self) -> Id<NSURLResponse, Shared>;
+        #[method_id(data)]
+        pub unsafe fn data(&self) -> Id<NSData, Shared>;
+        #[method_id(userInfo)]
+        pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>>;
+        #[method(storagePolicy)]
+        pub unsafe fn storagePolicy(&self) -> NSURLCacheStoragePolicy;
     }
 );
 use super::__exported::NSURLCacheInternal;
@@ -66,111 +54,71 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLCache {
-        pub unsafe fn sharedURLCache() -> Id<NSURLCache, Shared> {
-            msg_send_id![Self::class(), sharedURLCache]
-        }
-        pub unsafe fn setSharedURLCache(sharedURLCache: &NSURLCache) {
-            msg_send![Self::class(), setSharedURLCache: sharedURLCache]
-        }
+        #[method_id(sharedURLCache)]
+        pub unsafe fn sharedURLCache() -> Id<NSURLCache, Shared>;
+        # [method (setSharedURLCache :)]
+        pub unsafe fn setSharedURLCache(sharedURLCache: &NSURLCache);
+        # [method_id (initWithMemoryCapacity : diskCapacity : diskPath :)]
         pub unsafe fn initWithMemoryCapacity_diskCapacity_diskPath(
             &self,
             memoryCapacity: NSUInteger,
             diskCapacity: NSUInteger,
             path: Option<&NSString>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithMemoryCapacity: memoryCapacity,
-                diskCapacity: diskCapacity,
-                diskPath: path
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithMemoryCapacity : diskCapacity : directoryURL :)]
         pub unsafe fn initWithMemoryCapacity_diskCapacity_directoryURL(
             &self,
             memoryCapacity: NSUInteger,
             diskCapacity: NSUInteger,
             directoryURL: Option<&NSURL>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithMemoryCapacity: memoryCapacity,
-                diskCapacity: diskCapacity,
-                directoryURL: directoryURL
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (cachedResponseForRequest :)]
         pub unsafe fn cachedResponseForRequest(
             &self,
             request: &NSURLRequest,
-        ) -> Option<Id<NSCachedURLResponse, Shared>> {
-            msg_send_id![self, cachedResponseForRequest: request]
-        }
+        ) -> Option<Id<NSCachedURLResponse, Shared>>;
+        # [method (storeCachedResponse : forRequest :)]
         pub unsafe fn storeCachedResponse_forRequest(
             &self,
             cachedResponse: &NSCachedURLResponse,
             request: &NSURLRequest,
-        ) {
-            msg_send![
-                self,
-                storeCachedResponse: cachedResponse,
-                forRequest: request
-            ]
-        }
-        pub unsafe fn removeCachedResponseForRequest(&self, request: &NSURLRequest) {
-            msg_send![self, removeCachedResponseForRequest: request]
-        }
-        pub unsafe fn removeAllCachedResponses(&self) {
-            msg_send![self, removeAllCachedResponses]
-        }
-        pub unsafe fn removeCachedResponsesSinceDate(&self, date: &NSDate) {
-            msg_send![self, removeCachedResponsesSinceDate: date]
-        }
-        pub unsafe fn memoryCapacity(&self) -> NSUInteger {
-            msg_send![self, memoryCapacity]
-        }
-        pub unsafe fn setMemoryCapacity(&self, memoryCapacity: NSUInteger) {
-            msg_send![self, setMemoryCapacity: memoryCapacity]
-        }
-        pub unsafe fn diskCapacity(&self) -> NSUInteger {
-            msg_send![self, diskCapacity]
-        }
-        pub unsafe fn setDiskCapacity(&self, diskCapacity: NSUInteger) {
-            msg_send![self, setDiskCapacity: diskCapacity]
-        }
-        pub unsafe fn currentMemoryUsage(&self) -> NSUInteger {
-            msg_send![self, currentMemoryUsage]
-        }
-        pub unsafe fn currentDiskUsage(&self) -> NSUInteger {
-            msg_send![self, currentDiskUsage]
-        }
+        );
+        # [method (removeCachedResponseForRequest :)]
+        pub unsafe fn removeCachedResponseForRequest(&self, request: &NSURLRequest);
+        #[method(removeAllCachedResponses)]
+        pub unsafe fn removeAllCachedResponses(&self);
+        # [method (removeCachedResponsesSinceDate :)]
+        pub unsafe fn removeCachedResponsesSinceDate(&self, date: &NSDate);
+        #[method(memoryCapacity)]
+        pub unsafe fn memoryCapacity(&self) -> NSUInteger;
+        # [method (setMemoryCapacity :)]
+        pub unsafe fn setMemoryCapacity(&self, memoryCapacity: NSUInteger);
+        #[method(diskCapacity)]
+        pub unsafe fn diskCapacity(&self) -> NSUInteger;
+        # [method (setDiskCapacity :)]
+        pub unsafe fn setDiskCapacity(&self, diskCapacity: NSUInteger);
+        #[method(currentMemoryUsage)]
+        pub unsafe fn currentMemoryUsage(&self) -> NSUInteger;
+        #[method(currentDiskUsage)]
+        pub unsafe fn currentDiskUsage(&self) -> NSUInteger;
     }
 );
 extern_methods!(
     #[doc = "NSURLSessionTaskAdditions"]
     unsafe impl NSURLCache {
+        # [method (storeCachedResponse : forDataTask :)]
         pub unsafe fn storeCachedResponse_forDataTask(
             &self,
             cachedResponse: &NSCachedURLResponse,
             dataTask: &NSURLSessionDataTask,
-        ) {
-            msg_send![
-                self,
-                storeCachedResponse: cachedResponse,
-                forDataTask: dataTask
-            ]
-        }
+        );
+        # [method (getCachedResponseForDataTask : completionHandler :)]
         pub unsafe fn getCachedResponseForDataTask_completionHandler(
             &self,
             dataTask: &NSURLSessionDataTask,
             completionHandler: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                getCachedResponseForDataTask: dataTask,
-                completionHandler: completionHandler
-            ]
-        }
-        pub unsafe fn removeCachedResponseForDataTask(&self, dataTask: &NSURLSessionDataTask) {
-            msg_send![self, removeCachedResponseForDataTask: dataTask]
-        }
+        );
+        # [method (removeCachedResponseForDataTask :)]
+        pub unsafe fn removeCachedResponseForDataTask(&self, dataTask: &NSURLSessionDataTask);
     }
 );

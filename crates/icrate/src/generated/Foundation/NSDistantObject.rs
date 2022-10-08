@@ -5,7 +5,7 @@ use crate::Foundation::generated::NSProxy::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSDistantObject;
@@ -15,48 +15,33 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDistantObject {
+        # [method_id (proxyWithTarget : connection :)]
         pub unsafe fn proxyWithTarget_connection(
             target: &Object,
             connection: &NSConnection,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![
-                Self::class(),
-                proxyWithTarget: target,
-                connection: connection
-            ]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        # [method_id (initWithTarget : connection :)]
         pub unsafe fn initWithTarget_connection(
             &self,
             target: &Object,
             connection: &NSConnection,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithTarget: target, connection: connection]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (proxyWithLocal : connection :)]
         pub unsafe fn proxyWithLocal_connection(
             target: &Object,
             connection: &NSConnection,
-        ) -> Id<Object, Shared> {
-            msg_send_id![
-                Self::class(),
-                proxyWithLocal: target,
-                connection: connection
-            ]
-        }
+        ) -> Id<Object, Shared>;
+        # [method_id (initWithLocal : connection :)]
         pub unsafe fn initWithLocal_connection(
             &self,
             target: &Object,
             connection: &NSConnection,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithLocal: target, connection: connection]
-        }
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
-        pub unsafe fn setProtocolForProxy(&self, proto: Option<&Protocol>) {
-            msg_send![self, setProtocolForProxy: proto]
-        }
-        pub unsafe fn connectionForProxy(&self) -> Id<NSConnection, Shared> {
-            msg_send_id![self, connectionForProxy]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        # [method (setProtocolForProxy :)]
+        pub unsafe fn setProtocolForProxy(&self, proto: Option<&Protocol>);
+        #[method_id(connectionForProxy)]
+        pub unsafe fn connectionForProxy(&self) -> Id<NSConnection, Shared>;
     }
 );

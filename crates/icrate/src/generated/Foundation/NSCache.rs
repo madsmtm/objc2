@@ -3,7 +3,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 __inner_extern_class!(
     #[derive(Debug)]
     pub struct NSCache<KeyType: Message, ObjectType: Message>;
@@ -13,57 +13,39 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<KeyType: Message, ObjectType: Message> NSCache<KeyType, ObjectType> {
-        pub unsafe fn name(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, name]
-        }
-        pub unsafe fn setName(&self, name: &NSString) {
-            msg_send![self, setName: name]
-        }
-        pub unsafe fn delegate(&self) -> Option<Id<NSCacheDelegate, Shared>> {
-            msg_send_id![self, delegate]
-        }
-        pub unsafe fn setDelegate(&self, delegate: Option<&NSCacheDelegate>) {
-            msg_send![self, setDelegate: delegate]
-        }
-        pub unsafe fn objectForKey(&self, key: &KeyType) -> Option<Id<ObjectType, Shared>> {
-            msg_send_id![self, objectForKey: key]
-        }
-        pub unsafe fn setObject_forKey(&self, obj: &ObjectType, key: &KeyType) {
-            msg_send![self, setObject: obj, forKey: key]
-        }
-        pub unsafe fn setObject_forKey_cost(&self, obj: &ObjectType, key: &KeyType, g: NSUInteger) {
-            msg_send![self, setObject: obj, forKey: key, cost: g]
-        }
-        pub unsafe fn removeObjectForKey(&self, key: &KeyType) {
-            msg_send![self, removeObjectForKey: key]
-        }
-        pub unsafe fn removeAllObjects(&self) {
-            msg_send![self, removeAllObjects]
-        }
-        pub unsafe fn totalCostLimit(&self) -> NSUInteger {
-            msg_send![self, totalCostLimit]
-        }
-        pub unsafe fn setTotalCostLimit(&self, totalCostLimit: NSUInteger) {
-            msg_send![self, setTotalCostLimit: totalCostLimit]
-        }
-        pub unsafe fn countLimit(&self) -> NSUInteger {
-            msg_send![self, countLimit]
-        }
-        pub unsafe fn setCountLimit(&self, countLimit: NSUInteger) {
-            msg_send![self, setCountLimit: countLimit]
-        }
-        pub unsafe fn evictsObjectsWithDiscardedContent(&self) -> bool {
-            msg_send![self, evictsObjectsWithDiscardedContent]
-        }
+        #[method_id(name)]
+        pub unsafe fn name(&self) -> Id<NSString, Shared>;
+        # [method (setName :)]
+        pub unsafe fn setName(&self, name: &NSString);
+        #[method_id(delegate)]
+        pub unsafe fn delegate(&self) -> Option<Id<NSCacheDelegate, Shared>>;
+        # [method (setDelegate :)]
+        pub unsafe fn setDelegate(&self, delegate: Option<&NSCacheDelegate>);
+        # [method_id (objectForKey :)]
+        pub unsafe fn objectForKey(&self, key: &KeyType) -> Option<Id<ObjectType, Shared>>;
+        # [method (setObject : forKey :)]
+        pub unsafe fn setObject_forKey(&self, obj: &ObjectType, key: &KeyType);
+        # [method (setObject : forKey : cost :)]
+        pub unsafe fn setObject_forKey_cost(&self, obj: &ObjectType, key: &KeyType, g: NSUInteger);
+        # [method (removeObjectForKey :)]
+        pub unsafe fn removeObjectForKey(&self, key: &KeyType);
+        #[method(removeAllObjects)]
+        pub unsafe fn removeAllObjects(&self);
+        #[method(totalCostLimit)]
+        pub unsafe fn totalCostLimit(&self) -> NSUInteger;
+        # [method (setTotalCostLimit :)]
+        pub unsafe fn setTotalCostLimit(&self, totalCostLimit: NSUInteger);
+        #[method(countLimit)]
+        pub unsafe fn countLimit(&self) -> NSUInteger;
+        # [method (setCountLimit :)]
+        pub unsafe fn setCountLimit(&self, countLimit: NSUInteger);
+        #[method(evictsObjectsWithDiscardedContent)]
+        pub unsafe fn evictsObjectsWithDiscardedContent(&self) -> bool;
+        # [method (setEvictsObjectsWithDiscardedContent :)]
         pub unsafe fn setEvictsObjectsWithDiscardedContent(
             &self,
             evictsObjectsWithDiscardedContent: bool,
-        ) {
-            msg_send![
-                self,
-                setEvictsObjectsWithDiscardedContent: evictsObjectsWithDiscardedContent
-            ]
-        }
+        );
     }
 );
 pub type NSCacheDelegate = NSObject;

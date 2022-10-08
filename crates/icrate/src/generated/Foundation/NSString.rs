@@ -11,7 +11,7 @@ use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSStringEncoding = NSUInteger;
 extern_class!(
     #[derive(Debug)]
@@ -22,338 +22,223 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSString {
-        pub fn length(&self) -> NSUInteger {
-            msg_send![self, length]
-        }
-        pub unsafe fn characterAtIndex(&self, index: NSUInteger) -> unichar {
-            msg_send![self, characterAtIndex: index]
-        }
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: coder]
-        }
+        #[method(length)]
+        pub fn length(&self) -> NSUInteger;
+        # [method (characterAtIndex :)]
+        pub unsafe fn characterAtIndex(&self, index: NSUInteger) -> unichar;
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
     }
 );
 pub type NSStringTransform = NSString;
 extern_methods!(
     #[doc = "NSStringExtensionMethods"]
     unsafe impl NSString {
-        pub unsafe fn substringFromIndex(&self, from: NSUInteger) -> Id<NSString, Shared> {
-            msg_send_id![self, substringFromIndex: from]
-        }
-        pub unsafe fn substringToIndex(&self, to: NSUInteger) -> Id<NSString, Shared> {
-            msg_send_id![self, substringToIndex: to]
-        }
-        pub unsafe fn substringWithRange(&self, range: NSRange) -> Id<NSString, Shared> {
-            msg_send_id![self, substringWithRange: range]
-        }
-        pub unsafe fn getCharacters_range(&self, buffer: NonNull<unichar>, range: NSRange) {
-            msg_send![self, getCharacters: buffer, range: range]
-        }
-        pub unsafe fn compare(&self, string: &NSString) -> NSComparisonResult {
-            msg_send![self, compare: string]
-        }
+        # [method_id (substringFromIndex :)]
+        pub unsafe fn substringFromIndex(&self, from: NSUInteger) -> Id<NSString, Shared>;
+        # [method_id (substringToIndex :)]
+        pub unsafe fn substringToIndex(&self, to: NSUInteger) -> Id<NSString, Shared>;
+        # [method_id (substringWithRange :)]
+        pub unsafe fn substringWithRange(&self, range: NSRange) -> Id<NSString, Shared>;
+        # [method (getCharacters : range :)]
+        pub unsafe fn getCharacters_range(&self, buffer: NonNull<unichar>, range: NSRange);
+        # [method (compare :)]
+        pub unsafe fn compare(&self, string: &NSString) -> NSComparisonResult;
+        # [method (compare : options :)]
         pub unsafe fn compare_options(
             &self,
             string: &NSString,
             mask: NSStringCompareOptions,
-        ) -> NSComparisonResult {
-            msg_send![self, compare: string, options: mask]
-        }
+        ) -> NSComparisonResult;
+        # [method (compare : options : range :)]
         pub unsafe fn compare_options_range(
             &self,
             string: &NSString,
             mask: NSStringCompareOptions,
             rangeOfReceiverToCompare: NSRange,
-        ) -> NSComparisonResult {
-            msg_send![
-                self,
-                compare: string,
-                options: mask,
-                range: rangeOfReceiverToCompare
-            ]
-        }
+        ) -> NSComparisonResult;
+        # [method (compare : options : range : locale :)]
         pub unsafe fn compare_options_range_locale(
             &self,
             string: &NSString,
             mask: NSStringCompareOptions,
             rangeOfReceiverToCompare: NSRange,
             locale: Option<&Object>,
-        ) -> NSComparisonResult {
-            msg_send![
-                self,
-                compare: string,
-                options: mask,
-                range: rangeOfReceiverToCompare,
-                locale: locale
-            ]
-        }
-        pub unsafe fn caseInsensitiveCompare(&self, string: &NSString) -> NSComparisonResult {
-            msg_send![self, caseInsensitiveCompare: string]
-        }
-        pub unsafe fn localizedCompare(&self, string: &NSString) -> NSComparisonResult {
-            msg_send![self, localizedCompare: string]
-        }
+        ) -> NSComparisonResult;
+        # [method (caseInsensitiveCompare :)]
+        pub unsafe fn caseInsensitiveCompare(&self, string: &NSString) -> NSComparisonResult;
+        # [method (localizedCompare :)]
+        pub unsafe fn localizedCompare(&self, string: &NSString) -> NSComparisonResult;
+        # [method (localizedCaseInsensitiveCompare :)]
         pub unsafe fn localizedCaseInsensitiveCompare(
             &self,
             string: &NSString,
-        ) -> NSComparisonResult {
-            msg_send![self, localizedCaseInsensitiveCompare: string]
-        }
-        pub unsafe fn localizedStandardCompare(&self, string: &NSString) -> NSComparisonResult {
-            msg_send![self, localizedStandardCompare: string]
-        }
-        pub unsafe fn isEqualToString(&self, aString: &NSString) -> bool {
-            msg_send![self, isEqualToString: aString]
-        }
-        pub unsafe fn hasPrefix(&self, str: &NSString) -> bool {
-            msg_send![self, hasPrefix: str]
-        }
-        pub unsafe fn hasSuffix(&self, str: &NSString) -> bool {
-            msg_send![self, hasSuffix: str]
-        }
+        ) -> NSComparisonResult;
+        # [method (localizedStandardCompare :)]
+        pub unsafe fn localizedStandardCompare(&self, string: &NSString) -> NSComparisonResult;
+        # [method (isEqualToString :)]
+        pub unsafe fn isEqualToString(&self, aString: &NSString) -> bool;
+        # [method (hasPrefix :)]
+        pub unsafe fn hasPrefix(&self, str: &NSString) -> bool;
+        # [method (hasSuffix :)]
+        pub unsafe fn hasSuffix(&self, str: &NSString) -> bool;
+        # [method_id (commonPrefixWithString : options :)]
         pub unsafe fn commonPrefixWithString_options(
             &self,
             str: &NSString,
             mask: NSStringCompareOptions,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, commonPrefixWithString: str, options: mask]
-        }
-        pub unsafe fn containsString(&self, str: &NSString) -> bool {
-            msg_send![self, containsString: str]
-        }
-        pub unsafe fn localizedCaseInsensitiveContainsString(&self, str: &NSString) -> bool {
-            msg_send![self, localizedCaseInsensitiveContainsString: str]
-        }
-        pub unsafe fn localizedStandardContainsString(&self, str: &NSString) -> bool {
-            msg_send![self, localizedStandardContainsString: str]
-        }
-        pub unsafe fn localizedStandardRangeOfString(&self, str: &NSString) -> NSRange {
-            msg_send![self, localizedStandardRangeOfString: str]
-        }
-        pub unsafe fn rangeOfString(&self, searchString: &NSString) -> NSRange {
-            msg_send![self, rangeOfString: searchString]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method (containsString :)]
+        pub unsafe fn containsString(&self, str: &NSString) -> bool;
+        # [method (localizedCaseInsensitiveContainsString :)]
+        pub unsafe fn localizedCaseInsensitiveContainsString(&self, str: &NSString) -> bool;
+        # [method (localizedStandardContainsString :)]
+        pub unsafe fn localizedStandardContainsString(&self, str: &NSString) -> bool;
+        # [method (localizedStandardRangeOfString :)]
+        pub unsafe fn localizedStandardRangeOfString(&self, str: &NSString) -> NSRange;
+        # [method (rangeOfString :)]
+        pub unsafe fn rangeOfString(&self, searchString: &NSString) -> NSRange;
+        # [method (rangeOfString : options :)]
         pub unsafe fn rangeOfString_options(
             &self,
             searchString: &NSString,
             mask: NSStringCompareOptions,
-        ) -> NSRange {
-            msg_send![self, rangeOfString: searchString, options: mask]
-        }
+        ) -> NSRange;
+        # [method (rangeOfString : options : range :)]
         pub unsafe fn rangeOfString_options_range(
             &self,
             searchString: &NSString,
             mask: NSStringCompareOptions,
             rangeOfReceiverToSearch: NSRange,
-        ) -> NSRange {
-            msg_send![
-                self,
-                rangeOfString: searchString,
-                options: mask,
-                range: rangeOfReceiverToSearch
-            ]
-        }
+        ) -> NSRange;
+        # [method (rangeOfString : options : range : locale :)]
         pub unsafe fn rangeOfString_options_range_locale(
             &self,
             searchString: &NSString,
             mask: NSStringCompareOptions,
             rangeOfReceiverToSearch: NSRange,
             locale: Option<&NSLocale>,
-        ) -> NSRange {
-            msg_send![
-                self,
-                rangeOfString: searchString,
-                options: mask,
-                range: rangeOfReceiverToSearch,
-                locale: locale
-            ]
-        }
-        pub unsafe fn rangeOfCharacterFromSet(&self, searchSet: &NSCharacterSet) -> NSRange {
-            msg_send![self, rangeOfCharacterFromSet: searchSet]
-        }
+        ) -> NSRange;
+        # [method (rangeOfCharacterFromSet :)]
+        pub unsafe fn rangeOfCharacterFromSet(&self, searchSet: &NSCharacterSet) -> NSRange;
+        # [method (rangeOfCharacterFromSet : options :)]
         pub unsafe fn rangeOfCharacterFromSet_options(
             &self,
             searchSet: &NSCharacterSet,
             mask: NSStringCompareOptions,
-        ) -> NSRange {
-            msg_send![self, rangeOfCharacterFromSet: searchSet, options: mask]
-        }
+        ) -> NSRange;
+        # [method (rangeOfCharacterFromSet : options : range :)]
         pub unsafe fn rangeOfCharacterFromSet_options_range(
             &self,
             searchSet: &NSCharacterSet,
             mask: NSStringCompareOptions,
             rangeOfReceiverToSearch: NSRange,
-        ) -> NSRange {
-            msg_send![
-                self,
-                rangeOfCharacterFromSet: searchSet,
-                options: mask,
-                range: rangeOfReceiverToSearch
-            ]
-        }
-        pub unsafe fn rangeOfComposedCharacterSequenceAtIndex(&self, index: NSUInteger) -> NSRange {
-            msg_send![self, rangeOfComposedCharacterSequenceAtIndex: index]
-        }
-        pub unsafe fn rangeOfComposedCharacterSequencesForRange(&self, range: NSRange) -> NSRange {
-            msg_send![self, rangeOfComposedCharacterSequencesForRange: range]
-        }
-        pub fn stringByAppendingString(&self, aString: &NSString) -> Id<NSString, Shared> {
-            msg_send_id![self, stringByAppendingString: aString]
-        }
-        pub unsafe fn doubleValue(&self) -> c_double {
-            msg_send![self, doubleValue]
-        }
-        pub unsafe fn floatValue(&self) -> c_float {
-            msg_send![self, floatValue]
-        }
-        pub unsafe fn intValue(&self) -> c_int {
-            msg_send![self, intValue]
-        }
-        pub unsafe fn integerValue(&self) -> NSInteger {
-            msg_send![self, integerValue]
-        }
-        pub unsafe fn longLongValue(&self) -> c_longlong {
-            msg_send![self, longLongValue]
-        }
-        pub unsafe fn boolValue(&self) -> bool {
-            msg_send![self, boolValue]
-        }
-        pub unsafe fn uppercaseString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, uppercaseString]
-        }
-        pub unsafe fn lowercaseString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, lowercaseString]
-        }
-        pub unsafe fn capitalizedString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, capitalizedString]
-        }
-        pub unsafe fn localizedUppercaseString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, localizedUppercaseString]
-        }
-        pub unsafe fn localizedLowercaseString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, localizedLowercaseString]
-        }
-        pub unsafe fn localizedCapitalizedString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, localizedCapitalizedString]
-        }
+        ) -> NSRange;
+        # [method (rangeOfComposedCharacterSequenceAtIndex :)]
+        pub unsafe fn rangeOfComposedCharacterSequenceAtIndex(&self, index: NSUInteger) -> NSRange;
+        # [method (rangeOfComposedCharacterSequencesForRange :)]
+        pub unsafe fn rangeOfComposedCharacterSequencesForRange(&self, range: NSRange) -> NSRange;
+        # [method_id (stringByAppendingString :)]
+        pub fn stringByAppendingString(&self, aString: &NSString) -> Id<NSString, Shared>;
+        #[method(doubleValue)]
+        pub unsafe fn doubleValue(&self) -> c_double;
+        #[method(floatValue)]
+        pub unsafe fn floatValue(&self) -> c_float;
+        #[method(intValue)]
+        pub unsafe fn intValue(&self) -> c_int;
+        #[method(integerValue)]
+        pub unsafe fn integerValue(&self) -> NSInteger;
+        #[method(longLongValue)]
+        pub unsafe fn longLongValue(&self) -> c_longlong;
+        #[method(boolValue)]
+        pub unsafe fn boolValue(&self) -> bool;
+        #[method_id(uppercaseString)]
+        pub unsafe fn uppercaseString(&self) -> Id<NSString, Shared>;
+        #[method_id(lowercaseString)]
+        pub unsafe fn lowercaseString(&self) -> Id<NSString, Shared>;
+        #[method_id(capitalizedString)]
+        pub unsafe fn capitalizedString(&self) -> Id<NSString, Shared>;
+        #[method_id(localizedUppercaseString)]
+        pub unsafe fn localizedUppercaseString(&self) -> Id<NSString, Shared>;
+        #[method_id(localizedLowercaseString)]
+        pub unsafe fn localizedLowercaseString(&self) -> Id<NSString, Shared>;
+        #[method_id(localizedCapitalizedString)]
+        pub unsafe fn localizedCapitalizedString(&self) -> Id<NSString, Shared>;
+        # [method_id (uppercaseStringWithLocale :)]
         pub unsafe fn uppercaseStringWithLocale(
             &self,
             locale: Option<&NSLocale>,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, uppercaseStringWithLocale: locale]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (lowercaseStringWithLocale :)]
         pub unsafe fn lowercaseStringWithLocale(
             &self,
             locale: Option<&NSLocale>,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, lowercaseStringWithLocale: locale]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (capitalizedStringWithLocale :)]
         pub unsafe fn capitalizedStringWithLocale(
             &self,
             locale: Option<&NSLocale>,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, capitalizedStringWithLocale: locale]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method (getLineStart : end : contentsEnd : forRange :)]
         pub unsafe fn getLineStart_end_contentsEnd_forRange(
             &self,
             startPtr: *mut NSUInteger,
             lineEndPtr: *mut NSUInteger,
             contentsEndPtr: *mut NSUInteger,
             range: NSRange,
-        ) {
-            msg_send![
-                self,
-                getLineStart: startPtr,
-                end: lineEndPtr,
-                contentsEnd: contentsEndPtr,
-                forRange: range
-            ]
-        }
-        pub unsafe fn lineRangeForRange(&self, range: NSRange) -> NSRange {
-            msg_send![self, lineRangeForRange: range]
-        }
+        );
+        # [method (lineRangeForRange :)]
+        pub unsafe fn lineRangeForRange(&self, range: NSRange) -> NSRange;
+        # [method (getParagraphStart : end : contentsEnd : forRange :)]
         pub unsafe fn getParagraphStart_end_contentsEnd_forRange(
             &self,
             startPtr: *mut NSUInteger,
             parEndPtr: *mut NSUInteger,
             contentsEndPtr: *mut NSUInteger,
             range: NSRange,
-        ) {
-            msg_send![
-                self,
-                getParagraphStart: startPtr,
-                end: parEndPtr,
-                contentsEnd: contentsEndPtr,
-                forRange: range
-            ]
-        }
-        pub unsafe fn paragraphRangeForRange(&self, range: NSRange) -> NSRange {
-            msg_send![self, paragraphRangeForRange: range]
-        }
+        );
+        # [method (paragraphRangeForRange :)]
+        pub unsafe fn paragraphRangeForRange(&self, range: NSRange) -> NSRange;
+        # [method (enumerateSubstringsInRange : options : usingBlock :)]
         pub unsafe fn enumerateSubstringsInRange_options_usingBlock(
             &self,
             range: NSRange,
             opts: NSStringEnumerationOptions,
             block: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                enumerateSubstringsInRange: range,
-                options: opts,
-                usingBlock: block
-            ]
-        }
-        pub unsafe fn enumerateLinesUsingBlock(&self, block: TodoBlock) {
-            msg_send![self, enumerateLinesUsingBlock: block]
-        }
-        pub fn UTF8String(&self) -> *mut c_char {
-            msg_send![self, UTF8String]
-        }
-        pub unsafe fn fastestEncoding(&self) -> NSStringEncoding {
-            msg_send![self, fastestEncoding]
-        }
-        pub unsafe fn smallestEncoding(&self) -> NSStringEncoding {
-            msg_send![self, smallestEncoding]
-        }
+        );
+        # [method (enumerateLinesUsingBlock :)]
+        pub unsafe fn enumerateLinesUsingBlock(&self, block: TodoBlock);
+        #[method(UTF8String)]
+        pub fn UTF8String(&self) -> *mut c_char;
+        #[method(fastestEncoding)]
+        pub unsafe fn fastestEncoding(&self) -> NSStringEncoding;
+        #[method(smallestEncoding)]
+        pub unsafe fn smallestEncoding(&self) -> NSStringEncoding;
+        # [method_id (dataUsingEncoding : allowLossyConversion :)]
         pub unsafe fn dataUsingEncoding_allowLossyConversion(
             &self,
             encoding: NSStringEncoding,
             lossy: bool,
-        ) -> Option<Id<NSData, Shared>> {
-            msg_send_id![
-                self,
-                dataUsingEncoding: encoding,
-                allowLossyConversion: lossy
-            ]
-        }
+        ) -> Option<Id<NSData, Shared>>;
+        # [method_id (dataUsingEncoding :)]
         pub unsafe fn dataUsingEncoding(
             &self,
             encoding: NSStringEncoding,
-        ) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, dataUsingEncoding: encoding]
-        }
-        pub unsafe fn canBeConvertedToEncoding(&self, encoding: NSStringEncoding) -> bool {
-            msg_send![self, canBeConvertedToEncoding: encoding]
-        }
-        pub unsafe fn cStringUsingEncoding(&self, encoding: NSStringEncoding) -> *mut c_char {
-            msg_send![self, cStringUsingEncoding: encoding]
-        }
+        ) -> Option<Id<NSData, Shared>>;
+        # [method (canBeConvertedToEncoding :)]
+        pub unsafe fn canBeConvertedToEncoding(&self, encoding: NSStringEncoding) -> bool;
+        # [method (cStringUsingEncoding :)]
+        pub unsafe fn cStringUsingEncoding(&self, encoding: NSStringEncoding) -> *mut c_char;
+        # [method (getCString : maxLength : encoding :)]
         pub unsafe fn getCString_maxLength_encoding(
             &self,
             buffer: NonNull<c_char>,
             maxBufferCount: NSUInteger,
             encoding: NSStringEncoding,
-        ) -> bool {
-            msg_send![
-                self,
-                getCString: buffer,
-                maxLength: maxBufferCount,
-                encoding: encoding
-            ]
-        }
+        ) -> bool;
+        # [method (getBytes : maxLength : usedLength : encoding : options : range : remainingRange :)]
         pub unsafe fn getBytes_maxLength_usedLength_encoding_options_range_remainingRange(
             &self,
             buffer: *mut c_void,
@@ -363,413 +248,250 @@ extern_methods!(
             options: NSStringEncodingConversionOptions,
             range: NSRange,
             leftover: NSRangePointer,
-        ) -> bool {
-            msg_send![
-                self,
-                getBytes: buffer,
-                maxLength: maxBufferCount,
-                usedLength: usedBufferCount,
-                encoding: encoding,
-                options: options,
-                range: range,
-                remainingRange: leftover
-            ]
-        }
-        pub unsafe fn maximumLengthOfBytesUsingEncoding(
-            &self,
-            enc: NSStringEncoding,
-        ) -> NSUInteger {
-            msg_send![self, maximumLengthOfBytesUsingEncoding: enc]
-        }
-        pub fn lengthOfBytesUsingEncoding(&self, enc: NSStringEncoding) -> NSUInteger {
-            msg_send![self, lengthOfBytesUsingEncoding: enc]
-        }
-        pub unsafe fn availableStringEncodings() -> NonNull<NSStringEncoding> {
-            msg_send![Self::class(), availableStringEncodings]
-        }
+        ) -> bool;
+        # [method (maximumLengthOfBytesUsingEncoding :)]
+        pub unsafe fn maximumLengthOfBytesUsingEncoding(&self, enc: NSStringEncoding)
+            -> NSUInteger;
+        # [method (lengthOfBytesUsingEncoding :)]
+        pub fn lengthOfBytesUsingEncoding(&self, enc: NSStringEncoding) -> NSUInteger;
+        #[method(availableStringEncodings)]
+        pub unsafe fn availableStringEncodings() -> NonNull<NSStringEncoding>;
+        # [method_id (localizedNameOfStringEncoding :)]
         pub unsafe fn localizedNameOfStringEncoding(
             encoding: NSStringEncoding,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![Self::class(), localizedNameOfStringEncoding: encoding]
-        }
-        pub unsafe fn defaultCStringEncoding() -> NSStringEncoding {
-            msg_send![Self::class(), defaultCStringEncoding]
-        }
-        pub unsafe fn decomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, decomposedStringWithCanonicalMapping]
-        }
-        pub unsafe fn precomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, precomposedStringWithCanonicalMapping]
-        }
-        pub unsafe fn decomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, decomposedStringWithCompatibilityMapping]
-        }
-        pub unsafe fn precomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, precomposedStringWithCompatibilityMapping]
-        }
+        ) -> Id<NSString, Shared>;
+        #[method(defaultCStringEncoding)]
+        pub unsafe fn defaultCStringEncoding() -> NSStringEncoding;
+        #[method_id(decomposedStringWithCanonicalMapping)]
+        pub unsafe fn decomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared>;
+        #[method_id(precomposedStringWithCanonicalMapping)]
+        pub unsafe fn precomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared>;
+        #[method_id(decomposedStringWithCompatibilityMapping)]
+        pub unsafe fn decomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared>;
+        #[method_id(precomposedStringWithCompatibilityMapping)]
+        pub unsafe fn precomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared>;
+        # [method_id (componentsSeparatedByString :)]
         pub unsafe fn componentsSeparatedByString(
             &self,
             separator: &NSString,
-        ) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, componentsSeparatedByString: separator]
-        }
+        ) -> Id<NSArray<NSString>, Shared>;
+        # [method_id (componentsSeparatedByCharactersInSet :)]
         pub unsafe fn componentsSeparatedByCharactersInSet(
             &self,
             separator: &NSCharacterSet,
-        ) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, componentsSeparatedByCharactersInSet: separator]
-        }
+        ) -> Id<NSArray<NSString>, Shared>;
+        # [method_id (stringByTrimmingCharactersInSet :)]
         pub unsafe fn stringByTrimmingCharactersInSet(
             &self,
             set: &NSCharacterSet,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, stringByTrimmingCharactersInSet: set]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (stringByPaddingToLength : withString : startingAtIndex :)]
         pub unsafe fn stringByPaddingToLength_withString_startingAtIndex(
             &self,
             newLength: NSUInteger,
             padString: &NSString,
             padIndex: NSUInteger,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![
-                self,
-                stringByPaddingToLength: newLength,
-                withString: padString,
-                startingAtIndex: padIndex
-            ]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (stringByFoldingWithOptions : locale :)]
         pub unsafe fn stringByFoldingWithOptions_locale(
             &self,
             options: NSStringCompareOptions,
             locale: Option<&NSLocale>,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, stringByFoldingWithOptions: options, locale: locale]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (stringByReplacingOccurrencesOfString : withString : options : range :)]
         pub unsafe fn stringByReplacingOccurrencesOfString_withString_options_range(
             &self,
             target: &NSString,
             replacement: &NSString,
             options: NSStringCompareOptions,
             searchRange: NSRange,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![
-                self,
-                stringByReplacingOccurrencesOfString: target,
-                withString: replacement,
-                options: options,
-                range: searchRange
-            ]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (stringByReplacingOccurrencesOfString : withString :)]
         pub unsafe fn stringByReplacingOccurrencesOfString_withString(
             &self,
             target: &NSString,
             replacement: &NSString,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![
-                self,
-                stringByReplacingOccurrencesOfString: target,
-                withString: replacement
-            ]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (stringByReplacingCharactersInRange : withString :)]
         pub unsafe fn stringByReplacingCharactersInRange_withString(
             &self,
             range: NSRange,
             replacement: &NSString,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![
-                self,
-                stringByReplacingCharactersInRange: range,
-                withString: replacement
-            ]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (stringByApplyingTransform : reverse :)]
         pub unsafe fn stringByApplyingTransform_reverse(
             &self,
             transform: &NSStringTransform,
             reverse: bool,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, stringByApplyingTransform: transform, reverse: reverse]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        # [method (writeToURL : atomically : encoding : error :)]
         pub unsafe fn writeToURL_atomically_encoding_error(
             &self,
             url: &NSURL,
             useAuxiliaryFile: bool,
             enc: NSStringEncoding,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                writeToURL: url,
-                atomically: useAuxiliaryFile,
-                encoding: enc,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (writeToFile : atomically : encoding : error :)]
         pub unsafe fn writeToFile_atomically_encoding_error(
             &self,
             path: &NSString,
             useAuxiliaryFile: bool,
             enc: NSStringEncoding,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                writeToFile: path,
-                atomically: useAuxiliaryFile,
-                encoding: enc,
-                error: _
-            ]
-        }
-        pub unsafe fn description(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, description]
-        }
-        pub unsafe fn hash(&self) -> NSUInteger {
-            msg_send![self, hash]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        #[method_id(description)]
+        pub unsafe fn description(&self) -> Id<NSString, Shared>;
+        #[method(hash)]
+        pub unsafe fn hash(&self) -> NSUInteger;
+        # [method_id (initWithCharactersNoCopy : length : freeWhenDone :)]
         pub unsafe fn initWithCharactersNoCopy_length_freeWhenDone(
             &self,
             characters: NonNull<unichar>,
             length: NSUInteger,
             freeBuffer: bool,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithCharactersNoCopy: characters,
-                length: length,
-                freeWhenDone: freeBuffer
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithCharactersNoCopy : length : deallocator :)]
         pub unsafe fn initWithCharactersNoCopy_length_deallocator(
             &self,
             chars: NonNull<unichar>,
             len: NSUInteger,
             deallocator: TodoBlock,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithCharactersNoCopy: chars,
-                length: len,
-                deallocator: deallocator
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithCharacters : length :)]
         pub unsafe fn initWithCharacters_length(
             &self,
             characters: NonNull<unichar>,
             length: NSUInteger,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithCharacters: characters, length: length]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithUTF8String :)]
         pub unsafe fn initWithUTF8String(
             &self,
             nullTerminatedCString: NonNull<c_char>,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithUTF8String: nullTerminatedCString]
-        }
-        pub unsafe fn initWithString(&self, aString: &NSString) -> Id<Self, Shared> {
-            msg_send_id![self, initWithString: aString]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithString :)]
+        pub unsafe fn initWithString(&self, aString: &NSString) -> Id<Self, Shared>;
+        # [method_id (initWithFormat : arguments :)]
         pub unsafe fn initWithFormat_arguments(
             &self,
             format: &NSString,
             argList: va_list,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithFormat: format, arguments: argList]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithFormat : locale : arguments :)]
         pub unsafe fn initWithFormat_locale_arguments(
             &self,
             format: &NSString,
             locale: Option<&Object>,
             argList: va_list,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithFormat: format,
-                locale: locale,
-                arguments: argList
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithData : encoding :)]
         pub unsafe fn initWithData_encoding(
             &self,
             data: &NSData,
             encoding: NSStringEncoding,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithData: data, encoding: encoding]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithBytes : length : encoding :)]
         pub unsafe fn initWithBytes_length_encoding(
             &self,
             bytes: NonNull<c_void>,
             len: NSUInteger,
             encoding: NSStringEncoding,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithBytes: bytes, length: len, encoding: encoding]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithBytesNoCopy : length : encoding : freeWhenDone :)]
         pub unsafe fn initWithBytesNoCopy_length_encoding_freeWhenDone(
             &self,
             bytes: NonNull<c_void>,
             len: NSUInteger,
             encoding: NSStringEncoding,
             freeBuffer: bool,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![
-                self,
-                initWithBytesNoCopy: bytes,
-                length: len,
-                encoding: encoding,
-                freeWhenDone: freeBuffer
-            ]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithBytesNoCopy : length : encoding : deallocator :)]
         pub unsafe fn initWithBytesNoCopy_length_encoding_deallocator(
             &self,
             bytes: NonNull<c_void>,
             len: NSUInteger,
             encoding: NSStringEncoding,
             deallocator: TodoBlock,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![
-                self,
-                initWithBytesNoCopy: bytes,
-                length: len,
-                encoding: encoding,
-                deallocator: deallocator
-            ]
-        }
-        pub unsafe fn string() -> Id<Self, Shared> {
-            msg_send_id![Self::class(), string]
-        }
-        pub unsafe fn stringWithString(string: &NSString) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), stringWithString: string]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        #[method_id(string)]
+        pub unsafe fn string() -> Id<Self, Shared>;
+        # [method_id (stringWithString :)]
+        pub unsafe fn stringWithString(string: &NSString) -> Id<Self, Shared>;
+        # [method_id (stringWithCharacters : length :)]
         pub unsafe fn stringWithCharacters_length(
             characters: NonNull<unichar>,
             length: NSUInteger,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                Self::class(),
-                stringWithCharacters: characters,
-                length: length
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (stringWithUTF8String :)]
         pub unsafe fn stringWithUTF8String(
             nullTerminatedCString: NonNull<c_char>,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![Self::class(), stringWithUTF8String: nullTerminatedCString]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithCString : encoding :)]
         pub unsafe fn initWithCString_encoding(
             &self,
             nullTerminatedCString: NonNull<c_char>,
             encoding: NSStringEncoding,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![
-                self,
-                initWithCString: nullTerminatedCString,
-                encoding: encoding
-            ]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (stringWithCString : encoding :)]
         pub unsafe fn stringWithCString_encoding(
             cString: NonNull<c_char>,
             enc: NSStringEncoding,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![Self::class(), stringWithCString: cString, encoding: enc]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithContentsOfURL : encoding : error :)]
         pub unsafe fn initWithContentsOfURL_encoding_error(
             &self,
             url: &NSURL,
             enc: NSStringEncoding,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![self, initWithContentsOfURL: url, encoding: enc, error: _]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (initWithContentsOfFile : encoding : error :)]
         pub unsafe fn initWithContentsOfFile_encoding_error(
             &self,
             path: &NSString,
             enc: NSStringEncoding,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![self, initWithContentsOfFile: path, encoding: enc, error: _]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (stringWithContentsOfURL : encoding : error :)]
         pub unsafe fn stringWithContentsOfURL_encoding_error(
             url: &NSURL,
             enc: NSStringEncoding,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                stringWithContentsOfURL: url,
-                encoding: enc,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (stringWithContentsOfFile : encoding : error :)]
         pub unsafe fn stringWithContentsOfFile_encoding_error(
             path: &NSString,
             enc: NSStringEncoding,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                stringWithContentsOfFile: path,
-                encoding: enc,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (initWithContentsOfURL : usedEncoding : error :)]
         pub unsafe fn initWithContentsOfURL_usedEncoding_error(
             &self,
             url: &NSURL,
             enc: *mut NSStringEncoding,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                self,
-                initWithContentsOfURL: url,
-                usedEncoding: enc,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (initWithContentsOfFile : usedEncoding : error :)]
         pub unsafe fn initWithContentsOfFile_usedEncoding_error(
             &self,
             path: &NSString,
             enc: *mut NSStringEncoding,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                self,
-                initWithContentsOfFile: path,
-                usedEncoding: enc,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (stringWithContentsOfURL : usedEncoding : error :)]
         pub unsafe fn stringWithContentsOfURL_usedEncoding_error(
             url: &NSURL,
             enc: *mut NSStringEncoding,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                stringWithContentsOfURL: url,
-                usedEncoding: enc,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (stringWithContentsOfFile : usedEncoding : error :)]
         pub unsafe fn stringWithContentsOfFile_usedEncoding_error(
             path: &NSString,
             enc: *mut NSStringEncoding,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                stringWithContentsOfFile: path,
-                usedEncoding: enc,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
     }
 );
 pub type NSStringEncodingDetectionOptionsKey = NSString;
 extern_methods!(
     #[doc = "NSStringEncodingDetection"]
     unsafe impl NSString {
+        # [method (stringEncodingForData : encodingOptions : convertedString : usedLossyConversion :)]
         pub unsafe fn stringEncodingForData_encodingOptions_convertedString_usedLossyConversion(
             data: &NSData,
             opts: Option<&NSDictionary<NSStringEncodingDetectionOptionsKey, Object>>,
             string: Option<&mut Option<Id<NSString, Shared>>>,
             usedLossyConversion: *mut bool,
-        ) -> NSStringEncoding {
-            msg_send![
-                Self::class(),
-                stringEncodingForData: data,
-                encodingOptions: opts,
-                convertedString: string,
-                usedLossyConversion: usedLossyConversion
-            ]
-        }
+        ) -> NSStringEncoding;
     }
 );
 extern_methods!(
@@ -785,169 +507,117 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMutableString {
+        # [method (replaceCharactersInRange : withString :)]
         pub unsafe fn replaceCharactersInRange_withString(
             &self,
             range: NSRange,
             aString: &NSString,
-        ) {
-            msg_send![self, replaceCharactersInRange: range, withString: aString]
-        }
+        );
     }
 );
 extern_methods!(
     #[doc = "NSMutableStringExtensionMethods"]
     unsafe impl NSMutableString {
-        pub unsafe fn insertString_atIndex(&self, aString: &NSString, loc: NSUInteger) {
-            msg_send![self, insertString: aString, atIndex: loc]
-        }
-        pub unsafe fn deleteCharactersInRange(&self, range: NSRange) {
-            msg_send![self, deleteCharactersInRange: range]
-        }
-        pub unsafe fn appendString(&self, aString: &NSString) {
-            msg_send![self, appendString: aString]
-        }
-        pub unsafe fn setString(&self, aString: &NSString) {
-            msg_send![self, setString: aString]
-        }
+        # [method (insertString : atIndex :)]
+        pub unsafe fn insertString_atIndex(&self, aString: &NSString, loc: NSUInteger);
+        # [method (deleteCharactersInRange :)]
+        pub unsafe fn deleteCharactersInRange(&self, range: NSRange);
+        # [method (appendString :)]
+        pub unsafe fn appendString(&self, aString: &NSString);
+        # [method (setString :)]
+        pub unsafe fn setString(&self, aString: &NSString);
+        # [method (replaceOccurrencesOfString : withString : options : range :)]
         pub unsafe fn replaceOccurrencesOfString_withString_options_range(
             &self,
             target: &NSString,
             replacement: &NSString,
             options: NSStringCompareOptions,
             searchRange: NSRange,
-        ) -> NSUInteger {
-            msg_send![
-                self,
-                replaceOccurrencesOfString: target,
-                withString: replacement,
-                options: options,
-                range: searchRange
-            ]
-        }
+        ) -> NSUInteger;
+        # [method (applyTransform : reverse : range : updatedRange :)]
         pub unsafe fn applyTransform_reverse_range_updatedRange(
             &self,
             transform: &NSStringTransform,
             reverse: bool,
             range: NSRange,
             resultingRange: NSRangePointer,
-        ) -> bool {
-            msg_send![
-                self,
-                applyTransform: transform,
-                reverse: reverse,
-                range: range,
-                updatedRange: resultingRange
-            ]
-        }
-        pub unsafe fn initWithCapacity(&self, capacity: NSUInteger) -> Id<NSMutableString, Shared> {
-            msg_send_id![self, initWithCapacity: capacity]
-        }
-        pub unsafe fn stringWithCapacity(capacity: NSUInteger) -> Id<NSMutableString, Shared> {
-            msg_send_id![Self::class(), stringWithCapacity: capacity]
-        }
+        ) -> bool;
+        # [method_id (initWithCapacity :)]
+        pub unsafe fn initWithCapacity(&self, capacity: NSUInteger) -> Id<NSMutableString, Shared>;
+        # [method_id (stringWithCapacity :)]
+        pub unsafe fn stringWithCapacity(capacity: NSUInteger) -> Id<NSMutableString, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSExtendedStringPropertyListParsing"]
     unsafe impl NSString {
-        pub unsafe fn propertyList(&self) -> Id<Object, Shared> {
-            msg_send_id![self, propertyList]
-        }
-        pub unsafe fn propertyListFromStringsFileFormat(&self) -> Option<Id<NSDictionary, Shared>> {
-            msg_send_id![self, propertyListFromStringsFileFormat]
-        }
+        #[method_id(propertyList)]
+        pub unsafe fn propertyList(&self) -> Id<Object, Shared>;
+        #[method_id(propertyListFromStringsFileFormat)]
+        pub unsafe fn propertyListFromStringsFileFormat(&self) -> Option<Id<NSDictionary, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSStringDeprecated"]
     unsafe impl NSString {
-        pub unsafe fn cString(&self) -> *mut c_char {
-            msg_send![self, cString]
-        }
-        pub unsafe fn lossyCString(&self) -> *mut c_char {
-            msg_send![self, lossyCString]
-        }
-        pub unsafe fn cStringLength(&self) -> NSUInteger {
-            msg_send![self, cStringLength]
-        }
-        pub unsafe fn getCString(&self, bytes: NonNull<c_char>) {
-            msg_send![self, getCString: bytes]
-        }
-        pub unsafe fn getCString_maxLength(&self, bytes: NonNull<c_char>, maxLength: NSUInteger) {
-            msg_send![self, getCString: bytes, maxLength: maxLength]
-        }
+        #[method(cString)]
+        pub unsafe fn cString(&self) -> *mut c_char;
+        #[method(lossyCString)]
+        pub unsafe fn lossyCString(&self) -> *mut c_char;
+        #[method(cStringLength)]
+        pub unsafe fn cStringLength(&self) -> NSUInteger;
+        # [method (getCString :)]
+        pub unsafe fn getCString(&self, bytes: NonNull<c_char>);
+        # [method (getCString : maxLength :)]
+        pub unsafe fn getCString_maxLength(&self, bytes: NonNull<c_char>, maxLength: NSUInteger);
+        # [method (getCString : maxLength : range : remainingRange :)]
         pub unsafe fn getCString_maxLength_range_remainingRange(
             &self,
             bytes: NonNull<c_char>,
             maxLength: NSUInteger,
             aRange: NSRange,
             leftoverRange: NSRangePointer,
-        ) {
-            msg_send![
-                self,
-                getCString: bytes,
-                maxLength: maxLength,
-                range: aRange,
-                remainingRange: leftoverRange
-            ]
-        }
+        );
+        # [method (writeToFile : atomically :)]
         pub unsafe fn writeToFile_atomically(
             &self,
             path: &NSString,
             useAuxiliaryFile: bool,
-        ) -> bool {
-            msg_send![self, writeToFile: path, atomically: useAuxiliaryFile]
-        }
-        pub unsafe fn writeToURL_atomically(&self, url: &NSURL, atomically: bool) -> bool {
-            msg_send![self, writeToURL: url, atomically: atomically]
-        }
-        pub unsafe fn initWithContentsOfFile(&self, path: &NSString) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, initWithContentsOfFile: path]
-        }
-        pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, initWithContentsOfURL: url]
-        }
-        pub unsafe fn stringWithContentsOfFile(path: &NSString) -> Option<Id<Object, Shared>> {
-            msg_send_id![Self::class(), stringWithContentsOfFile: path]
-        }
-        pub unsafe fn stringWithContentsOfURL(url: &NSURL) -> Option<Id<Object, Shared>> {
-            msg_send_id![Self::class(), stringWithContentsOfURL: url]
-        }
+        ) -> bool;
+        # [method (writeToURL : atomically :)]
+        pub unsafe fn writeToURL_atomically(&self, url: &NSURL, atomically: bool) -> bool;
+        # [method_id (initWithContentsOfFile :)]
+        pub unsafe fn initWithContentsOfFile(&self, path: &NSString) -> Option<Id<Object, Shared>>;
+        # [method_id (initWithContentsOfURL :)]
+        pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> Option<Id<Object, Shared>>;
+        # [method_id (stringWithContentsOfFile :)]
+        pub unsafe fn stringWithContentsOfFile(path: &NSString) -> Option<Id<Object, Shared>>;
+        # [method_id (stringWithContentsOfURL :)]
+        pub unsafe fn stringWithContentsOfURL(url: &NSURL) -> Option<Id<Object, Shared>>;
+        # [method_id (initWithCStringNoCopy : length : freeWhenDone :)]
         pub unsafe fn initWithCStringNoCopy_length_freeWhenDone(
             &self,
             bytes: NonNull<c_char>,
             length: NSUInteger,
             freeBuffer: bool,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![
-                self,
-                initWithCStringNoCopy: bytes,
-                length: length,
-                freeWhenDone: freeBuffer
-            ]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        # [method_id (initWithCString : length :)]
         pub unsafe fn initWithCString_length(
             &self,
             bytes: NonNull<c_char>,
             length: NSUInteger,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, initWithCString: bytes, length: length]
-        }
-        pub unsafe fn initWithCString(&self, bytes: NonNull<c_char>) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, initWithCString: bytes]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        # [method_id (initWithCString :)]
+        pub unsafe fn initWithCString(&self, bytes: NonNull<c_char>) -> Option<Id<Object, Shared>>;
+        # [method_id (stringWithCString : length :)]
         pub unsafe fn stringWithCString_length(
             bytes: NonNull<c_char>,
             length: NSUInteger,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![Self::class(), stringWithCString: bytes, length: length]
-        }
-        pub unsafe fn stringWithCString(bytes: NonNull<c_char>) -> Option<Id<Object, Shared>> {
-            msg_send_id![Self::class(), stringWithCString: bytes]
-        }
-        pub unsafe fn getCharacters(&self, buffer: NonNull<unichar>) {
-            msg_send![self, getCharacters: buffer]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        # [method_id (stringWithCString :)]
+        pub unsafe fn stringWithCString(bytes: NonNull<c_char>) -> Option<Id<Object, Shared>>;
+        # [method (getCharacters :)]
+        pub unsafe fn getCharacters(&self, buffer: NonNull<unichar>);
     }
 );
 extern_class!(

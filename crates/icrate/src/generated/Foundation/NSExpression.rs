@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSExpression;
@@ -16,177 +16,112 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSExpression {
+        # [method_id (expressionWithFormat : argumentArray :)]
         pub unsafe fn expressionWithFormat_argumentArray(
             expressionFormat: &NSString,
             arguments: &NSArray,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![
-                Self::class(),
-                expressionWithFormat: expressionFormat,
-                argumentArray: arguments
-            ]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionWithFormat : arguments :)]
         pub unsafe fn expressionWithFormat_arguments(
             expressionFormat: &NSString,
             argList: va_list,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![
-                Self::class(),
-                expressionWithFormat: expressionFormat,
-                arguments: argList
-            ]
-        }
-        pub unsafe fn expressionForConstantValue(obj: Option<&Object>) -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForConstantValue: obj]
-        }
-        pub unsafe fn expressionForEvaluatedObject() -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForEvaluatedObject]
-        }
-        pub unsafe fn expressionForVariable(string: &NSString) -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForVariable: string]
-        }
-        pub unsafe fn expressionForKeyPath(keyPath: &NSString) -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForKeyPath: keyPath]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForConstantValue :)]
+        pub unsafe fn expressionForConstantValue(obj: Option<&Object>) -> Id<NSExpression, Shared>;
+        #[method_id(expressionForEvaluatedObject)]
+        pub unsafe fn expressionForEvaluatedObject() -> Id<NSExpression, Shared>;
+        # [method_id (expressionForVariable :)]
+        pub unsafe fn expressionForVariable(string: &NSString) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForKeyPath :)]
+        pub unsafe fn expressionForKeyPath(keyPath: &NSString) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForFunction : arguments :)]
         pub unsafe fn expressionForFunction_arguments(
             name: &NSString,
             parameters: &NSArray,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![
-                Self::class(),
-                expressionForFunction: name,
-                arguments: parameters
-            ]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForAggregate :)]
         pub unsafe fn expressionForAggregate(
             subexpressions: &NSArray<NSExpression>,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForAggregate: subexpressions]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForUnionSet : with :)]
         pub unsafe fn expressionForUnionSet_with(
             left: &NSExpression,
             right: &NSExpression,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForUnionSet: left, with: right]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForIntersectSet : with :)]
         pub unsafe fn expressionForIntersectSet_with(
             left: &NSExpression,
             right: &NSExpression,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForIntersectSet: left, with: right]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForMinusSet : with :)]
         pub unsafe fn expressionForMinusSet_with(
             left: &NSExpression,
             right: &NSExpression,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForMinusSet: left, with: right]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForSubquery : usingIteratorVariable : predicate :)]
         pub unsafe fn expressionForSubquery_usingIteratorVariable_predicate(
             expression: &NSExpression,
             variable: &NSString,
             predicate: &NSPredicate,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![
-                Self::class(),
-                expressionForSubquery: expression,
-                usingIteratorVariable: variable,
-                predicate: predicate
-            ]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForFunction : selectorName : arguments :)]
         pub unsafe fn expressionForFunction_selectorName_arguments(
             target: &NSExpression,
             name: &NSString,
             parameters: Option<&NSArray>,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![
-                Self::class(),
-                expressionForFunction: target,
-                selectorName: name,
-                arguments: parameters
-            ]
-        }
-        pub unsafe fn expressionForAnyKey() -> Id<NSExpression, Shared> {
-            msg_send_id![Self::class(), expressionForAnyKey]
-        }
+        ) -> Id<NSExpression, Shared>;
+        #[method_id(expressionForAnyKey)]
+        pub unsafe fn expressionForAnyKey() -> Id<NSExpression, Shared>;
+        # [method_id (expressionForBlock : arguments :)]
         pub unsafe fn expressionForBlock_arguments(
             block: TodoBlock,
             arguments: Option<&NSArray<NSExpression>>,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![
-                Self::class(),
-                expressionForBlock: block,
-                arguments: arguments
-            ]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (expressionForConditional : trueExpression : falseExpression :)]
         pub unsafe fn expressionForConditional_trueExpression_falseExpression(
             predicate: &NSPredicate,
             trueExpression: &NSExpression,
             falseExpression: &NSExpression,
-        ) -> Id<NSExpression, Shared> {
-            msg_send_id![
-                Self::class(),
-                expressionForConditional: predicate,
-                trueExpression: trueExpression,
-                falseExpression: falseExpression
-            ]
-        }
-        pub unsafe fn initWithExpressionType(&self, type_: NSExpressionType) -> Id<Self, Shared> {
-            msg_send_id![self, initWithExpressionType: type_]
-        }
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: coder]
-        }
-        pub unsafe fn expressionType(&self) -> NSExpressionType {
-            msg_send![self, expressionType]
-        }
-        pub unsafe fn constantValue(&self) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, constantValue]
-        }
-        pub unsafe fn keyPath(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, keyPath]
-        }
-        pub unsafe fn function(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, function]
-        }
-        pub unsafe fn variable(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, variable]
-        }
-        pub unsafe fn operand(&self) -> Id<NSExpression, Shared> {
-            msg_send_id![self, operand]
-        }
-        pub unsafe fn arguments(&self) -> Option<Id<NSArray<NSExpression>, Shared>> {
-            msg_send_id![self, arguments]
-        }
-        pub unsafe fn collection(&self) -> Id<Object, Shared> {
-            msg_send_id![self, collection]
-        }
-        pub unsafe fn predicate(&self) -> Id<NSPredicate, Shared> {
-            msg_send_id![self, predicate]
-        }
-        pub unsafe fn leftExpression(&self) -> Id<NSExpression, Shared> {
-            msg_send_id![self, leftExpression]
-        }
-        pub unsafe fn rightExpression(&self) -> Id<NSExpression, Shared> {
-            msg_send_id![self, rightExpression]
-        }
-        pub unsafe fn trueExpression(&self) -> Id<NSExpression, Shared> {
-            msg_send_id![self, trueExpression]
-        }
-        pub unsafe fn falseExpression(&self) -> Id<NSExpression, Shared> {
-            msg_send_id![self, falseExpression]
-        }
-        pub unsafe fn expressionBlock(&self) -> TodoBlock {
-            msg_send![self, expressionBlock]
-        }
+        ) -> Id<NSExpression, Shared>;
+        # [method_id (initWithExpressionType :)]
+        pub unsafe fn initWithExpressionType(&self, type_: NSExpressionType) -> Id<Self, Shared>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        #[method(expressionType)]
+        pub unsafe fn expressionType(&self) -> NSExpressionType;
+        #[method_id(constantValue)]
+        pub unsafe fn constantValue(&self) -> Option<Id<Object, Shared>>;
+        #[method_id(keyPath)]
+        pub unsafe fn keyPath(&self) -> Id<NSString, Shared>;
+        #[method_id(function)]
+        pub unsafe fn function(&self) -> Id<NSString, Shared>;
+        #[method_id(variable)]
+        pub unsafe fn variable(&self) -> Id<NSString, Shared>;
+        #[method_id(operand)]
+        pub unsafe fn operand(&self) -> Id<NSExpression, Shared>;
+        #[method_id(arguments)]
+        pub unsafe fn arguments(&self) -> Option<Id<NSArray<NSExpression>, Shared>>;
+        #[method_id(collection)]
+        pub unsafe fn collection(&self) -> Id<Object, Shared>;
+        #[method_id(predicate)]
+        pub unsafe fn predicate(&self) -> Id<NSPredicate, Shared>;
+        #[method_id(leftExpression)]
+        pub unsafe fn leftExpression(&self) -> Id<NSExpression, Shared>;
+        #[method_id(rightExpression)]
+        pub unsafe fn rightExpression(&self) -> Id<NSExpression, Shared>;
+        #[method_id(trueExpression)]
+        pub unsafe fn trueExpression(&self) -> Id<NSExpression, Shared>;
+        #[method_id(falseExpression)]
+        pub unsafe fn falseExpression(&self) -> Id<NSExpression, Shared>;
+        #[method(expressionBlock)]
+        pub unsafe fn expressionBlock(&self) -> TodoBlock;
+        # [method_id (expressionValueWithObject : context :)]
         pub unsafe fn expressionValueWithObject_context(
             &self,
             object: Option<&Object>,
             context: Option<&NSMutableDictionary>,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, expressionValueWithObject: object, context: context]
-        }
-        pub unsafe fn allowEvaluation(&self) {
-            msg_send![self, allowEvaluation]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        #[method(allowEvaluation)]
+        pub unsafe fn allowEvaluation(&self);
     }
 );

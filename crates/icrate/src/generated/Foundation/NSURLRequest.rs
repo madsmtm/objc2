@@ -9,7 +9,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLRequest;
@@ -19,70 +19,45 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLRequest {
-        pub unsafe fn requestWithURL(URL: &NSURL) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), requestWithURL: URL]
-        }
-        pub unsafe fn supportsSecureCoding() -> bool {
-            msg_send![Self::class(), supportsSecureCoding]
-        }
+        # [method_id (requestWithURL :)]
+        pub unsafe fn requestWithURL(URL: &NSURL) -> Id<Self, Shared>;
+        #[method(supportsSecureCoding)]
+        pub unsafe fn supportsSecureCoding() -> bool;
+        # [method_id (requestWithURL : cachePolicy : timeoutInterval :)]
         pub unsafe fn requestWithURL_cachePolicy_timeoutInterval(
             URL: &NSURL,
             cachePolicy: NSURLRequestCachePolicy,
             timeoutInterval: NSTimeInterval,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                Self::class(),
-                requestWithURL: URL,
-                cachePolicy: cachePolicy,
-                timeoutInterval: timeoutInterval
-            ]
-        }
-        pub unsafe fn initWithURL(&self, URL: &NSURL) -> Id<Self, Shared> {
-            msg_send_id![self, initWithURL: URL]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithURL :)]
+        pub unsafe fn initWithURL(&self, URL: &NSURL) -> Id<Self, Shared>;
+        # [method_id (initWithURL : cachePolicy : timeoutInterval :)]
         pub unsafe fn initWithURL_cachePolicy_timeoutInterval(
             &self,
             URL: &NSURL,
             cachePolicy: NSURLRequestCachePolicy,
             timeoutInterval: NSTimeInterval,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithURL: URL,
-                cachePolicy: cachePolicy,
-                timeoutInterval: timeoutInterval
-            ]
-        }
-        pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URL]
-        }
-        pub unsafe fn cachePolicy(&self) -> NSURLRequestCachePolicy {
-            msg_send![self, cachePolicy]
-        }
-        pub unsafe fn timeoutInterval(&self) -> NSTimeInterval {
-            msg_send![self, timeoutInterval]
-        }
-        pub unsafe fn mainDocumentURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, mainDocumentURL]
-        }
-        pub unsafe fn networkServiceType(&self) -> NSURLRequestNetworkServiceType {
-            msg_send![self, networkServiceType]
-        }
-        pub unsafe fn allowsCellularAccess(&self) -> bool {
-            msg_send![self, allowsCellularAccess]
-        }
-        pub unsafe fn allowsExpensiveNetworkAccess(&self) -> bool {
-            msg_send![self, allowsExpensiveNetworkAccess]
-        }
-        pub unsafe fn allowsConstrainedNetworkAccess(&self) -> bool {
-            msg_send![self, allowsConstrainedNetworkAccess]
-        }
-        pub unsafe fn assumesHTTP3Capable(&self) -> bool {
-            msg_send![self, assumesHTTP3Capable]
-        }
-        pub unsafe fn attribution(&self) -> NSURLRequestAttribution {
-            msg_send![self, attribution]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(URL)]
+        pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
+        #[method(cachePolicy)]
+        pub unsafe fn cachePolicy(&self) -> NSURLRequestCachePolicy;
+        #[method(timeoutInterval)]
+        pub unsafe fn timeoutInterval(&self) -> NSTimeInterval;
+        #[method_id(mainDocumentURL)]
+        pub unsafe fn mainDocumentURL(&self) -> Option<Id<NSURL, Shared>>;
+        #[method(networkServiceType)]
+        pub unsafe fn networkServiceType(&self) -> NSURLRequestNetworkServiceType;
+        #[method(allowsCellularAccess)]
+        pub unsafe fn allowsCellularAccess(&self) -> bool;
+        #[method(allowsExpensiveNetworkAccess)]
+        pub unsafe fn allowsExpensiveNetworkAccess(&self) -> bool;
+        #[method(allowsConstrainedNetworkAccess)]
+        pub unsafe fn allowsConstrainedNetworkAccess(&self) -> bool;
+        #[method(assumesHTTP3Capable)]
+        pub unsafe fn assumesHTTP3Capable(&self) -> bool;
+        #[method(attribution)]
+        pub unsafe fn attribution(&self) -> NSURLRequestAttribution;
     }
 );
 extern_class!(
@@ -94,164 +69,117 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMutableURLRequest {
-        pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URL]
-        }
-        pub unsafe fn setURL(&self, URL: Option<&NSURL>) {
-            msg_send![self, setURL: URL]
-        }
-        pub unsafe fn cachePolicy(&self) -> NSURLRequestCachePolicy {
-            msg_send![self, cachePolicy]
-        }
-        pub unsafe fn setCachePolicy(&self, cachePolicy: NSURLRequestCachePolicy) {
-            msg_send![self, setCachePolicy: cachePolicy]
-        }
-        pub unsafe fn timeoutInterval(&self) -> NSTimeInterval {
-            msg_send![self, timeoutInterval]
-        }
-        pub unsafe fn setTimeoutInterval(&self, timeoutInterval: NSTimeInterval) {
-            msg_send![self, setTimeoutInterval: timeoutInterval]
-        }
-        pub unsafe fn mainDocumentURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, mainDocumentURL]
-        }
-        pub unsafe fn setMainDocumentURL(&self, mainDocumentURL: Option<&NSURL>) {
-            msg_send![self, setMainDocumentURL: mainDocumentURL]
-        }
-        pub unsafe fn networkServiceType(&self) -> NSURLRequestNetworkServiceType {
-            msg_send![self, networkServiceType]
-        }
+        #[method_id(URL)]
+        pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
+        # [method (setURL :)]
+        pub unsafe fn setURL(&self, URL: Option<&NSURL>);
+        #[method(cachePolicy)]
+        pub unsafe fn cachePolicy(&self) -> NSURLRequestCachePolicy;
+        # [method (setCachePolicy :)]
+        pub unsafe fn setCachePolicy(&self, cachePolicy: NSURLRequestCachePolicy);
+        #[method(timeoutInterval)]
+        pub unsafe fn timeoutInterval(&self) -> NSTimeInterval;
+        # [method (setTimeoutInterval :)]
+        pub unsafe fn setTimeoutInterval(&self, timeoutInterval: NSTimeInterval);
+        #[method_id(mainDocumentURL)]
+        pub unsafe fn mainDocumentURL(&self) -> Option<Id<NSURL, Shared>>;
+        # [method (setMainDocumentURL :)]
+        pub unsafe fn setMainDocumentURL(&self, mainDocumentURL: Option<&NSURL>);
+        #[method(networkServiceType)]
+        pub unsafe fn networkServiceType(&self) -> NSURLRequestNetworkServiceType;
+        # [method (setNetworkServiceType :)]
         pub unsafe fn setNetworkServiceType(
             &self,
             networkServiceType: NSURLRequestNetworkServiceType,
-        ) {
-            msg_send![self, setNetworkServiceType: networkServiceType]
-        }
-        pub unsafe fn allowsCellularAccess(&self) -> bool {
-            msg_send![self, allowsCellularAccess]
-        }
-        pub unsafe fn setAllowsCellularAccess(&self, allowsCellularAccess: bool) {
-            msg_send![self, setAllowsCellularAccess: allowsCellularAccess]
-        }
-        pub unsafe fn allowsExpensiveNetworkAccess(&self) -> bool {
-            msg_send![self, allowsExpensiveNetworkAccess]
-        }
-        pub unsafe fn setAllowsExpensiveNetworkAccess(&self, allowsExpensiveNetworkAccess: bool) {
-            msg_send![
-                self,
-                setAllowsExpensiveNetworkAccess: allowsExpensiveNetworkAccess
-            ]
-        }
-        pub unsafe fn allowsConstrainedNetworkAccess(&self) -> bool {
-            msg_send![self, allowsConstrainedNetworkAccess]
-        }
+        );
+        #[method(allowsCellularAccess)]
+        pub unsafe fn allowsCellularAccess(&self) -> bool;
+        # [method (setAllowsCellularAccess :)]
+        pub unsafe fn setAllowsCellularAccess(&self, allowsCellularAccess: bool);
+        #[method(allowsExpensiveNetworkAccess)]
+        pub unsafe fn allowsExpensiveNetworkAccess(&self) -> bool;
+        # [method (setAllowsExpensiveNetworkAccess :)]
+        pub unsafe fn setAllowsExpensiveNetworkAccess(&self, allowsExpensiveNetworkAccess: bool);
+        #[method(allowsConstrainedNetworkAccess)]
+        pub unsafe fn allowsConstrainedNetworkAccess(&self) -> bool;
+        # [method (setAllowsConstrainedNetworkAccess :)]
         pub unsafe fn setAllowsConstrainedNetworkAccess(
             &self,
             allowsConstrainedNetworkAccess: bool,
-        ) {
-            msg_send![
-                self,
-                setAllowsConstrainedNetworkAccess: allowsConstrainedNetworkAccess
-            ]
-        }
-        pub unsafe fn assumesHTTP3Capable(&self) -> bool {
-            msg_send![self, assumesHTTP3Capable]
-        }
-        pub unsafe fn setAssumesHTTP3Capable(&self, assumesHTTP3Capable: bool) {
-            msg_send![self, setAssumesHTTP3Capable: assumesHTTP3Capable]
-        }
-        pub unsafe fn attribution(&self) -> NSURLRequestAttribution {
-            msg_send![self, attribution]
-        }
-        pub unsafe fn setAttribution(&self, attribution: NSURLRequestAttribution) {
-            msg_send![self, setAttribution: attribution]
-        }
+        );
+        #[method(assumesHTTP3Capable)]
+        pub unsafe fn assumesHTTP3Capable(&self) -> bool;
+        # [method (setAssumesHTTP3Capable :)]
+        pub unsafe fn setAssumesHTTP3Capable(&self, assumesHTTP3Capable: bool);
+        #[method(attribution)]
+        pub unsafe fn attribution(&self) -> NSURLRequestAttribution;
+        # [method (setAttribution :)]
+        pub unsafe fn setAttribution(&self, attribution: NSURLRequestAttribution);
     }
 );
 extern_methods!(
     #[doc = "NSHTTPURLRequest"]
     unsafe impl NSURLRequest {
-        pub unsafe fn HTTPMethod(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, HTTPMethod]
-        }
+        #[method_id(HTTPMethod)]
+        pub unsafe fn HTTPMethod(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(allHTTPHeaderFields)]
         pub unsafe fn allHTTPHeaderFields(
             &self,
-        ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>> {
-            msg_send_id![self, allHTTPHeaderFields]
-        }
+        ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>>;
+        # [method_id (valueForHTTPHeaderField :)]
         pub unsafe fn valueForHTTPHeaderField(
             &self,
             field: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, valueForHTTPHeaderField: field]
-        }
-        pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, HTTPBody]
-        }
-        pub unsafe fn HTTPBodyStream(&self) -> Option<Id<NSInputStream, Shared>> {
-            msg_send_id![self, HTTPBodyStream]
-        }
-        pub unsafe fn HTTPShouldHandleCookies(&self) -> bool {
-            msg_send![self, HTTPShouldHandleCookies]
-        }
-        pub unsafe fn HTTPShouldUsePipelining(&self) -> bool {
-            msg_send![self, HTTPShouldUsePipelining]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(HTTPBody)]
+        pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>>;
+        #[method_id(HTTPBodyStream)]
+        pub unsafe fn HTTPBodyStream(&self) -> Option<Id<NSInputStream, Shared>>;
+        #[method(HTTPShouldHandleCookies)]
+        pub unsafe fn HTTPShouldHandleCookies(&self) -> bool;
+        #[method(HTTPShouldUsePipelining)]
+        pub unsafe fn HTTPShouldUsePipelining(&self) -> bool;
     }
 );
 extern_methods!(
     #[doc = "NSMutableHTTPURLRequest"]
     unsafe impl NSMutableURLRequest {
-        pub unsafe fn HTTPMethod(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, HTTPMethod]
-        }
-        pub unsafe fn setHTTPMethod(&self, HTTPMethod: &NSString) {
-            msg_send![self, setHTTPMethod: HTTPMethod]
-        }
+        #[method_id(HTTPMethod)]
+        pub unsafe fn HTTPMethod(&self) -> Id<NSString, Shared>;
+        # [method (setHTTPMethod :)]
+        pub unsafe fn setHTTPMethod(&self, HTTPMethod: &NSString);
+        #[method_id(allHTTPHeaderFields)]
         pub unsafe fn allHTTPHeaderFields(
             &self,
-        ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>> {
-            msg_send_id![self, allHTTPHeaderFields]
-        }
+        ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>>;
+        # [method (setAllHTTPHeaderFields :)]
         pub unsafe fn setAllHTTPHeaderFields(
             &self,
             allHTTPHeaderFields: Option<&NSDictionary<NSString, NSString>>,
-        ) {
-            msg_send![self, setAllHTTPHeaderFields: allHTTPHeaderFields]
-        }
+        );
+        # [method (setValue : forHTTPHeaderField :)]
         pub unsafe fn setValue_forHTTPHeaderField(
             &self,
             value: Option<&NSString>,
             field: &NSString,
-        ) {
-            msg_send![self, setValue: value, forHTTPHeaderField: field]
-        }
-        pub unsafe fn addValue_forHTTPHeaderField(&self, value: &NSString, field: &NSString) {
-            msg_send![self, addValue: value, forHTTPHeaderField: field]
-        }
-        pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, HTTPBody]
-        }
-        pub unsafe fn setHTTPBody(&self, HTTPBody: Option<&NSData>) {
-            msg_send![self, setHTTPBody: HTTPBody]
-        }
-        pub unsafe fn HTTPBodyStream(&self) -> Option<Id<NSInputStream, Shared>> {
-            msg_send_id![self, HTTPBodyStream]
-        }
-        pub unsafe fn setHTTPBodyStream(&self, HTTPBodyStream: Option<&NSInputStream>) {
-            msg_send![self, setHTTPBodyStream: HTTPBodyStream]
-        }
-        pub unsafe fn HTTPShouldHandleCookies(&self) -> bool {
-            msg_send![self, HTTPShouldHandleCookies]
-        }
-        pub unsafe fn setHTTPShouldHandleCookies(&self, HTTPShouldHandleCookies: bool) {
-            msg_send![self, setHTTPShouldHandleCookies: HTTPShouldHandleCookies]
-        }
-        pub unsafe fn HTTPShouldUsePipelining(&self) -> bool {
-            msg_send![self, HTTPShouldUsePipelining]
-        }
-        pub unsafe fn setHTTPShouldUsePipelining(&self, HTTPShouldUsePipelining: bool) {
-            msg_send![self, setHTTPShouldUsePipelining: HTTPShouldUsePipelining]
-        }
+        );
+        # [method (addValue : forHTTPHeaderField :)]
+        pub unsafe fn addValue_forHTTPHeaderField(&self, value: &NSString, field: &NSString);
+        #[method_id(HTTPBody)]
+        pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>>;
+        # [method (setHTTPBody :)]
+        pub unsafe fn setHTTPBody(&self, HTTPBody: Option<&NSData>);
+        #[method_id(HTTPBodyStream)]
+        pub unsafe fn HTTPBodyStream(&self) -> Option<Id<NSInputStream, Shared>>;
+        # [method (setHTTPBodyStream :)]
+        pub unsafe fn setHTTPBodyStream(&self, HTTPBodyStream: Option<&NSInputStream>);
+        #[method(HTTPShouldHandleCookies)]
+        pub unsafe fn HTTPShouldHandleCookies(&self) -> bool;
+        # [method (setHTTPShouldHandleCookies :)]
+        pub unsafe fn setHTTPShouldHandleCookies(&self, HTTPShouldHandleCookies: bool);
+        #[method(HTTPShouldUsePipelining)]
+        pub unsafe fn HTTPShouldUsePipelining(&self) -> bool;
+        # [method (setHTTPShouldUsePipelining :)]
+        pub unsafe fn setHTTPShouldUsePipelining(&self, HTTPShouldUsePipelining: bool);
     }
 );

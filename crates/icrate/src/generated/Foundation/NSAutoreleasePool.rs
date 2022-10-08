@@ -2,7 +2,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSAutoreleasePool;
@@ -12,14 +12,11 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSAutoreleasePool {
-        pub unsafe fn addObject(anObject: &Object) {
-            msg_send![Self::class(), addObject: anObject]
-        }
-        pub unsafe fn addObject(&self, anObject: &Object) {
-            msg_send![self, addObject: anObject]
-        }
-        pub unsafe fn drain(&self) {
-            msg_send![self, drain]
-        }
+        # [method (addObject :)]
+        pub unsafe fn addObject(anObject: &Object);
+        # [method (addObject :)]
+        pub unsafe fn addObject(&self, anObject: &Object);
+        #[method(drain)]
+        pub unsafe fn drain(&self);
     }
 );

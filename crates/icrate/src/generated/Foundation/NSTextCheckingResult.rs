@@ -12,7 +12,7 @@ use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSTextCheckingTypes = u64;
 pub type NSTextCheckingKey = NSString;
 extern_class!(
@@ -24,227 +24,138 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSTextCheckingResult {
-        pub unsafe fn resultType(&self) -> NSTextCheckingType {
-            msg_send![self, resultType]
-        }
-        pub unsafe fn range(&self) -> NSRange {
-            msg_send![self, range]
-        }
+        #[method(resultType)]
+        pub unsafe fn resultType(&self) -> NSTextCheckingType;
+        #[method(range)]
+        pub unsafe fn range(&self) -> NSRange;
     }
 );
 extern_methods!(
     #[doc = "NSTextCheckingResultOptional"]
     unsafe impl NSTextCheckingResult {
-        pub unsafe fn orthography(&self) -> Option<Id<NSOrthography, Shared>> {
-            msg_send_id![self, orthography]
-        }
+        #[method_id(orthography)]
+        pub unsafe fn orthography(&self) -> Option<Id<NSOrthography, Shared>>;
+        #[method_id(grammarDetails)]
         pub unsafe fn grammarDetails(
             &self,
-        ) -> Option<Id<NSArray<NSDictionary<NSString, Object>>, Shared>> {
-            msg_send_id![self, grammarDetails]
-        }
-        pub unsafe fn date(&self) -> Option<Id<NSDate, Shared>> {
-            msg_send_id![self, date]
-        }
-        pub unsafe fn timeZone(&self) -> Option<Id<NSTimeZone, Shared>> {
-            msg_send_id![self, timeZone]
-        }
-        pub unsafe fn duration(&self) -> NSTimeInterval {
-            msg_send![self, duration]
-        }
+        ) -> Option<Id<NSArray<NSDictionary<NSString, Object>>, Shared>>;
+        #[method_id(date)]
+        pub unsafe fn date(&self) -> Option<Id<NSDate, Shared>>;
+        #[method_id(timeZone)]
+        pub unsafe fn timeZone(&self) -> Option<Id<NSTimeZone, Shared>>;
+        #[method(duration)]
+        pub unsafe fn duration(&self) -> NSTimeInterval;
+        #[method_id(components)]
         pub unsafe fn components(
             &self,
-        ) -> Option<Id<NSDictionary<NSTextCheckingKey, NSString>, Shared>> {
-            msg_send_id![self, components]
-        }
-        pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URL]
-        }
-        pub unsafe fn replacementString(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, replacementString]
-        }
-        pub unsafe fn alternativeStrings(&self) -> Option<Id<NSArray<NSString>, Shared>> {
-            msg_send_id![self, alternativeStrings]
-        }
-        pub unsafe fn regularExpression(&self) -> Option<Id<NSRegularExpression, Shared>> {
-            msg_send_id![self, regularExpression]
-        }
-        pub unsafe fn phoneNumber(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, phoneNumber]
-        }
-        pub unsafe fn numberOfRanges(&self) -> NSUInteger {
-            msg_send![self, numberOfRanges]
-        }
-        pub unsafe fn rangeAtIndex(&self, idx: NSUInteger) -> NSRange {
-            msg_send![self, rangeAtIndex: idx]
-        }
-        pub unsafe fn rangeWithName(&self, name: &NSString) -> NSRange {
-            msg_send![self, rangeWithName: name]
-        }
+        ) -> Option<Id<NSDictionary<NSTextCheckingKey, NSString>, Shared>>;
+        #[method_id(URL)]
+        pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
+        #[method_id(replacementString)]
+        pub unsafe fn replacementString(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(alternativeStrings)]
+        pub unsafe fn alternativeStrings(&self) -> Option<Id<NSArray<NSString>, Shared>>;
+        #[method_id(regularExpression)]
+        pub unsafe fn regularExpression(&self) -> Option<Id<NSRegularExpression, Shared>>;
+        #[method_id(phoneNumber)]
+        pub unsafe fn phoneNumber(&self) -> Option<Id<NSString, Shared>>;
+        #[method(numberOfRanges)]
+        pub unsafe fn numberOfRanges(&self) -> NSUInteger;
+        # [method (rangeAtIndex :)]
+        pub unsafe fn rangeAtIndex(&self, idx: NSUInteger) -> NSRange;
+        # [method (rangeWithName :)]
+        pub unsafe fn rangeWithName(&self, name: &NSString) -> NSRange;
+        # [method_id (resultByAdjustingRangesWithOffset :)]
         pub unsafe fn resultByAdjustingRangesWithOffset(
             &self,
             offset: NSInteger,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![self, resultByAdjustingRangesWithOffset: offset]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        #[method_id(addressComponents)]
         pub unsafe fn addressComponents(
             &self,
-        ) -> Option<Id<NSDictionary<NSTextCheckingKey, NSString>, Shared>> {
-            msg_send_id![self, addressComponents]
-        }
+        ) -> Option<Id<NSDictionary<NSTextCheckingKey, NSString>, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSTextCheckingResultCreation"]
     unsafe impl NSTextCheckingResult {
+        # [method_id (orthographyCheckingResultWithRange : orthography :)]
         pub unsafe fn orthographyCheckingResultWithRange_orthography(
             range: NSRange,
             orthography: &NSOrthography,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                orthographyCheckingResultWithRange: range,
-                orthography: orthography
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (spellCheckingResultWithRange :)]
         pub unsafe fn spellCheckingResultWithRange(
             range: NSRange,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![Self::class(), spellCheckingResultWithRange: range]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (grammarCheckingResultWithRange : details :)]
         pub unsafe fn grammarCheckingResultWithRange_details(
             range: NSRange,
             details: &NSArray<NSDictionary<NSString, Object>>,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                grammarCheckingResultWithRange: range,
-                details: details
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (dateCheckingResultWithRange : date :)]
         pub unsafe fn dateCheckingResultWithRange_date(
             range: NSRange,
             date: &NSDate,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                dateCheckingResultWithRange: range,
-                date: date
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (dateCheckingResultWithRange : date : timeZone : duration :)]
         pub unsafe fn dateCheckingResultWithRange_date_timeZone_duration(
             range: NSRange,
             date: &NSDate,
             timeZone: &NSTimeZone,
             duration: NSTimeInterval,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                dateCheckingResultWithRange: range,
-                date: date,
-                timeZone: timeZone,
-                duration: duration
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (addressCheckingResultWithRange : components :)]
         pub unsafe fn addressCheckingResultWithRange_components(
             range: NSRange,
             components: &NSDictionary<NSTextCheckingKey, NSString>,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                addressCheckingResultWithRange: range,
-                components: components
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (linkCheckingResultWithRange : URL :)]
         pub unsafe fn linkCheckingResultWithRange_URL(
             range: NSRange,
             url: &NSURL,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![Self::class(), linkCheckingResultWithRange: range, URL: url]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (quoteCheckingResultWithRange : replacementString :)]
         pub unsafe fn quoteCheckingResultWithRange_replacementString(
             range: NSRange,
             replacementString: &NSString,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                quoteCheckingResultWithRange: range,
-                replacementString: replacementString
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (dashCheckingResultWithRange : replacementString :)]
         pub unsafe fn dashCheckingResultWithRange_replacementString(
             range: NSRange,
             replacementString: &NSString,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                dashCheckingResultWithRange: range,
-                replacementString: replacementString
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (replacementCheckingResultWithRange : replacementString :)]
         pub unsafe fn replacementCheckingResultWithRange_replacementString(
             range: NSRange,
             replacementString: &NSString,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                replacementCheckingResultWithRange: range,
-                replacementString: replacementString
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (correctionCheckingResultWithRange : replacementString :)]
         pub unsafe fn correctionCheckingResultWithRange_replacementString(
             range: NSRange,
             replacementString: &NSString,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                correctionCheckingResultWithRange: range,
-                replacementString: replacementString
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (correctionCheckingResultWithRange : replacementString : alternativeStrings :)]
         pub unsafe fn correctionCheckingResultWithRange_replacementString_alternativeStrings(
             range: NSRange,
             replacementString: &NSString,
             alternativeStrings: &NSArray<NSString>,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                correctionCheckingResultWithRange: range,
-                replacementString: replacementString,
-                alternativeStrings: alternativeStrings
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (regularExpressionCheckingResultWithRanges : count : regularExpression :)]
         pub unsafe fn regularExpressionCheckingResultWithRanges_count_regularExpression(
             ranges: NSRangePointer,
             count: NSUInteger,
             regularExpression: &NSRegularExpression,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                regularExpressionCheckingResultWithRanges: ranges,
-                count: count,
-                regularExpression: regularExpression
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (phoneNumberCheckingResultWithRange : phoneNumber :)]
         pub unsafe fn phoneNumberCheckingResultWithRange_phoneNumber(
             range: NSRange,
             phoneNumber: &NSString,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                phoneNumberCheckingResultWithRange: range,
-                phoneNumber: phoneNumber
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
+        # [method_id (transitInformationCheckingResultWithRange : components :)]
         pub unsafe fn transitInformationCheckingResultWithRange_components(
             range: NSRange,
             components: &NSDictionary<NSTextCheckingKey, NSString>,
-        ) -> Id<NSTextCheckingResult, Shared> {
-            msg_send_id![
-                Self::class(),
-                transitInformationCheckingResultWithRange: range,
-                components: components
-            ]
-        }
+        ) -> Id<NSTextCheckingResult, Shared>;
     }
 );

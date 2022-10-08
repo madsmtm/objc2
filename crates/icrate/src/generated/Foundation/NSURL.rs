@@ -10,7 +10,7 @@ use crate::Foundation::generated::NSURLHandle::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSURLResourceKey = NSString;
 pub type NSURLFileResourceType = NSString;
 pub type NSURLThumbnailDictionaryItem = NSString;
@@ -28,409 +28,256 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURL {
+        # [method_id (initWithScheme : host : path :)]
         pub unsafe fn initWithScheme_host_path(
             &self,
             scheme: &NSString,
             host: Option<&NSString>,
             path: &NSString,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithScheme: scheme, host: host, path: path]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initFileURLWithPath : isDirectory : relativeToURL :)]
         pub unsafe fn initFileURLWithPath_isDirectory_relativeToURL(
             &self,
             path: &NSString,
             isDir: bool,
             baseURL: Option<&NSURL>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initFileURLWithPath: path,
-                isDirectory: isDir,
-                relativeToURL: baseURL
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initFileURLWithPath : relativeToURL :)]
         pub unsafe fn initFileURLWithPath_relativeToURL(
             &self,
             path: &NSString,
             baseURL: Option<&NSURL>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initFileURLWithPath: path, relativeToURL: baseURL]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initFileURLWithPath : isDirectory :)]
         pub unsafe fn initFileURLWithPath_isDirectory(
             &self,
             path: &NSString,
             isDir: bool,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initFileURLWithPath: path, isDirectory: isDir]
-        }
-        pub unsafe fn initFileURLWithPath(&self, path: &NSString) -> Id<Self, Shared> {
-            msg_send_id![self, initFileURLWithPath: path]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initFileURLWithPath :)]
+        pub unsafe fn initFileURLWithPath(&self, path: &NSString) -> Id<Self, Shared>;
+        # [method_id (fileURLWithPath : isDirectory : relativeToURL :)]
         pub unsafe fn fileURLWithPath_isDirectory_relativeToURL(
             path: &NSString,
             isDir: bool,
             baseURL: Option<&NSURL>,
-        ) -> Id<NSURL, Shared> {
-            msg_send_id![
-                Self::class(),
-                fileURLWithPath: path,
-                isDirectory: isDir,
-                relativeToURL: baseURL
-            ]
-        }
+        ) -> Id<NSURL, Shared>;
+        # [method_id (fileURLWithPath : relativeToURL :)]
         pub unsafe fn fileURLWithPath_relativeToURL(
             path: &NSString,
             baseURL: Option<&NSURL>,
-        ) -> Id<NSURL, Shared> {
-            msg_send_id![Self::class(), fileURLWithPath: path, relativeToURL: baseURL]
-        }
+        ) -> Id<NSURL, Shared>;
+        # [method_id (fileURLWithPath : isDirectory :)]
         pub unsafe fn fileURLWithPath_isDirectory(
             path: &NSString,
             isDir: bool,
-        ) -> Id<NSURL, Shared> {
-            msg_send_id![Self::class(), fileURLWithPath: path, isDirectory: isDir]
-        }
-        pub unsafe fn fileURLWithPath(path: &NSString) -> Id<NSURL, Shared> {
-            msg_send_id![Self::class(), fileURLWithPath: path]
-        }
+        ) -> Id<NSURL, Shared>;
+        # [method_id (fileURLWithPath :)]
+        pub unsafe fn fileURLWithPath(path: &NSString) -> Id<NSURL, Shared>;
+        # [method_id (initFileURLWithFileSystemRepresentation : isDirectory : relativeToURL :)]
         pub unsafe fn initFileURLWithFileSystemRepresentation_isDirectory_relativeToURL(
             &self,
             path: NonNull<c_char>,
             isDir: bool,
             baseURL: Option<&NSURL>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initFileURLWithFileSystemRepresentation: path,
-                isDirectory: isDir,
-                relativeToURL: baseURL
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (fileURLWithFileSystemRepresentation : isDirectory : relativeToURL :)]
         pub unsafe fn fileURLWithFileSystemRepresentation_isDirectory_relativeToURL(
             path: NonNull<c_char>,
             isDir: bool,
             baseURL: Option<&NSURL>,
-        ) -> Id<NSURL, Shared> {
-            msg_send_id![
-                Self::class(),
-                fileURLWithFileSystemRepresentation: path,
-                isDirectory: isDir,
-                relativeToURL: baseURL
-            ]
-        }
-        pub unsafe fn initWithString(&self, URLString: &NSString) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithString: URLString]
-        }
+        ) -> Id<NSURL, Shared>;
+        # [method_id (initWithString :)]
+        pub unsafe fn initWithString(&self, URLString: &NSString) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithString : relativeToURL :)]
         pub unsafe fn initWithString_relativeToURL(
             &self,
             URLString: &NSString,
             baseURL: Option<&NSURL>,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithString: URLString, relativeToURL: baseURL]
-        }
-        pub unsafe fn URLWithString(URLString: &NSString) -> Option<Id<Self, Shared>> {
-            msg_send_id![Self::class(), URLWithString: URLString]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (URLWithString :)]
+        pub unsafe fn URLWithString(URLString: &NSString) -> Option<Id<Self, Shared>>;
+        # [method_id (URLWithString : relativeToURL :)]
         pub unsafe fn URLWithString_relativeToURL(
             URLString: &NSString,
             baseURL: Option<&NSURL>,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![
-                Self::class(),
-                URLWithString: URLString,
-                relativeToURL: baseURL
-            ]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithDataRepresentation : relativeToURL :)]
         pub unsafe fn initWithDataRepresentation_relativeToURL(
             &self,
             data: &NSData,
             baseURL: Option<&NSURL>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithDataRepresentation: data,
-                relativeToURL: baseURL
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (URLWithDataRepresentation : relativeToURL :)]
         pub unsafe fn URLWithDataRepresentation_relativeToURL(
             data: &NSData,
             baseURL: Option<&NSURL>,
-        ) -> Id<NSURL, Shared> {
-            msg_send_id![
-                Self::class(),
-                URLWithDataRepresentation: data,
-                relativeToURL: baseURL
-            ]
-        }
+        ) -> Id<NSURL, Shared>;
+        # [method_id (initAbsoluteURLWithDataRepresentation : relativeToURL :)]
         pub unsafe fn initAbsoluteURLWithDataRepresentation_relativeToURL(
             &self,
             data: &NSData,
             baseURL: Option<&NSURL>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initAbsoluteURLWithDataRepresentation: data,
-                relativeToURL: baseURL
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (absoluteURLWithDataRepresentation : relativeToURL :)]
         pub unsafe fn absoluteURLWithDataRepresentation_relativeToURL(
             data: &NSData,
             baseURL: Option<&NSURL>,
-        ) -> Id<NSURL, Shared> {
-            msg_send_id![
-                Self::class(),
-                absoluteURLWithDataRepresentation: data,
-                relativeToURL: baseURL
-            ]
-        }
-        pub unsafe fn dataRepresentation(&self) -> Id<NSData, Shared> {
-            msg_send_id![self, dataRepresentation]
-        }
-        pub unsafe fn absoluteString(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, absoluteString]
-        }
-        pub unsafe fn relativeString(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, relativeString]
-        }
-        pub unsafe fn baseURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, baseURL]
-        }
-        pub unsafe fn absoluteURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, absoluteURL]
-        }
-        pub unsafe fn scheme(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, scheme]
-        }
-        pub unsafe fn resourceSpecifier(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, resourceSpecifier]
-        }
-        pub unsafe fn host(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, host]
-        }
-        pub unsafe fn port(&self) -> Option<Id<NSNumber, Shared>> {
-            msg_send_id![self, port]
-        }
-        pub unsafe fn user(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, user]
-        }
-        pub unsafe fn password(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, password]
-        }
-        pub unsafe fn path(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, path]
-        }
-        pub unsafe fn fragment(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, fragment]
-        }
-        pub unsafe fn parameterString(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, parameterString]
-        }
-        pub unsafe fn query(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, query]
-        }
-        pub unsafe fn relativePath(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, relativePath]
-        }
-        pub unsafe fn hasDirectoryPath(&self) -> bool {
-            msg_send![self, hasDirectoryPath]
-        }
+        ) -> Id<NSURL, Shared>;
+        #[method_id(dataRepresentation)]
+        pub unsafe fn dataRepresentation(&self) -> Id<NSData, Shared>;
+        #[method_id(absoluteString)]
+        pub unsafe fn absoluteString(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(relativeString)]
+        pub unsafe fn relativeString(&self) -> Id<NSString, Shared>;
+        #[method_id(baseURL)]
+        pub unsafe fn baseURL(&self) -> Option<Id<NSURL, Shared>>;
+        #[method_id(absoluteURL)]
+        pub unsafe fn absoluteURL(&self) -> Option<Id<NSURL, Shared>>;
+        #[method_id(scheme)]
+        pub unsafe fn scheme(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(resourceSpecifier)]
+        pub unsafe fn resourceSpecifier(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(host)]
+        pub unsafe fn host(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(port)]
+        pub unsafe fn port(&self) -> Option<Id<NSNumber, Shared>>;
+        #[method_id(user)]
+        pub unsafe fn user(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(password)]
+        pub unsafe fn password(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(path)]
+        pub unsafe fn path(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(fragment)]
+        pub unsafe fn fragment(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(parameterString)]
+        pub unsafe fn parameterString(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(query)]
+        pub unsafe fn query(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(relativePath)]
+        pub unsafe fn relativePath(&self) -> Option<Id<NSString, Shared>>;
+        #[method(hasDirectoryPath)]
+        pub unsafe fn hasDirectoryPath(&self) -> bool;
+        # [method (getFileSystemRepresentation : maxLength :)]
         pub unsafe fn getFileSystemRepresentation_maxLength(
             &self,
             buffer: NonNull<c_char>,
             maxBufferLength: NSUInteger,
-        ) -> bool {
-            msg_send![
-                self,
-                getFileSystemRepresentation: buffer,
-                maxLength: maxBufferLength
-            ]
-        }
-        pub unsafe fn fileSystemRepresentation(&self) -> NonNull<c_char> {
-            msg_send![self, fileSystemRepresentation]
-        }
-        pub unsafe fn isFileURL(&self) -> bool {
-            msg_send![self, isFileURL]
-        }
-        pub unsafe fn standardizedURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, standardizedURL]
-        }
+        ) -> bool;
+        #[method(fileSystemRepresentation)]
+        pub unsafe fn fileSystemRepresentation(&self) -> NonNull<c_char>;
+        #[method(isFileURL)]
+        pub unsafe fn isFileURL(&self) -> bool;
+        #[method_id(standardizedURL)]
+        pub unsafe fn standardizedURL(&self) -> Option<Id<NSURL, Shared>>;
+        # [method (checkResourceIsReachableAndReturnError :)]
         pub unsafe fn checkResourceIsReachableAndReturnError(
             &self,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, checkResourceIsReachableAndReturnError: _]
-        }
-        pub unsafe fn isFileReferenceURL(&self) -> bool {
-            msg_send![self, isFileReferenceURL]
-        }
-        pub unsafe fn fileReferenceURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, fileReferenceURL]
-        }
-        pub unsafe fn filePathURL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, filePathURL]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        #[method(isFileReferenceURL)]
+        pub unsafe fn isFileReferenceURL(&self) -> bool;
+        #[method_id(fileReferenceURL)]
+        pub unsafe fn fileReferenceURL(&self) -> Option<Id<NSURL, Shared>>;
+        #[method_id(filePathURL)]
+        pub unsafe fn filePathURL(&self) -> Option<Id<NSURL, Shared>>;
+        # [method (getResourceValue : forKey : error :)]
         pub unsafe fn getResourceValue_forKey_error(
             &self,
             value: &mut Option<Id<Object, Shared>>,
             key: &NSURLResourceKey,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, getResourceValue: value, forKey: key, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method_id (resourceValuesForKeys : error :)]
         pub unsafe fn resourceValuesForKeys_error(
             &self,
             keys: &NSArray<NSURLResourceKey>,
-        ) -> Result<Id<NSDictionary<NSURLResourceKey, Object>, Shared>, Id<NSError, Shared>>
-        {
-            msg_send_id![self, resourceValuesForKeys: keys, error: _]
-        }
+        ) -> Result<Id<NSDictionary<NSURLResourceKey, Object>, Shared>, Id<NSError, Shared>>;
+        # [method (setResourceValue : forKey : error :)]
         pub unsafe fn setResourceValue_forKey_error(
             &self,
             value: Option<&Object>,
             key: &NSURLResourceKey,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, setResourceValue: value, forKey: key, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (setResourceValues : error :)]
         pub unsafe fn setResourceValues_error(
             &self,
             keyedValues: &NSDictionary<NSURLResourceKey, Object>,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, setResourceValues: keyedValues, error: _]
-        }
-        pub unsafe fn removeCachedResourceValueForKey(&self, key: &NSURLResourceKey) {
-            msg_send![self, removeCachedResourceValueForKey: key]
-        }
-        pub unsafe fn removeAllCachedResourceValues(&self) {
-            msg_send![self, removeAllCachedResourceValues]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (removeCachedResourceValueForKey :)]
+        pub unsafe fn removeCachedResourceValueForKey(&self, key: &NSURLResourceKey);
+        #[method(removeAllCachedResourceValues)]
+        pub unsafe fn removeAllCachedResourceValues(&self);
+        # [method (setTemporaryResourceValue : forKey :)]
         pub unsafe fn setTemporaryResourceValue_forKey(
             &self,
             value: Option<&Object>,
             key: &NSURLResourceKey,
-        ) {
-            msg_send![self, setTemporaryResourceValue: value, forKey: key]
-        }
+        );
+        # [method_id (bookmarkDataWithOptions : includingResourceValuesForKeys : relativeToURL : error :)]
         pub unsafe fn bookmarkDataWithOptions_includingResourceValuesForKeys_relativeToURL_error(
             &self,
             options: NSURLBookmarkCreationOptions,
             keys: Option<&NSArray<NSURLResourceKey>>,
             relativeURL: Option<&NSURL>,
-        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                self,
-                bookmarkDataWithOptions: options,
-                includingResourceValuesForKeys: keys,
-                relativeToURL: relativeURL,
-                error: _
-            ]
-        }
+        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
+        # [method_id (initByResolvingBookmarkData : options : relativeToURL : bookmarkDataIsStale : error :)]
         pub unsafe fn initByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error(
             &self,
             bookmarkData: &NSData,
             options: NSURLBookmarkResolutionOptions,
             relativeURL: Option<&NSURL>,
             isStale: *mut bool,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                self,
-                initByResolvingBookmarkData: bookmarkData,
-                options: options,
-                relativeToURL: relativeURL,
-                bookmarkDataIsStale: isStale,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (URLByResolvingBookmarkData : options : relativeToURL : bookmarkDataIsStale : error :)]
         pub unsafe fn URLByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error(
             bookmarkData: &NSData,
             options: NSURLBookmarkResolutionOptions,
             relativeURL: Option<&NSURL>,
             isStale: *mut bool,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                URLByResolvingBookmarkData: bookmarkData,
-                options: options,
-                relativeToURL: relativeURL,
-                bookmarkDataIsStale: isStale,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        # [method_id (resourceValuesForKeys : fromBookmarkData :)]
         pub unsafe fn resourceValuesForKeys_fromBookmarkData(
             keys: &NSArray<NSURLResourceKey>,
             bookmarkData: &NSData,
-        ) -> Option<Id<NSDictionary<NSURLResourceKey, Object>, Shared>> {
-            msg_send_id![
-                Self::class(),
-                resourceValuesForKeys: keys,
-                fromBookmarkData: bookmarkData
-            ]
-        }
+        ) -> Option<Id<NSDictionary<NSURLResourceKey, Object>, Shared>>;
+        # [method (writeBookmarkData : toURL : options : error :)]
         pub unsafe fn writeBookmarkData_toURL_options_error(
             bookmarkData: &NSData,
             bookmarkFileURL: &NSURL,
             options: NSURLBookmarkFileCreationOptions,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                Self::class(),
-                writeBookmarkData: bookmarkData,
-                toURL: bookmarkFileURL,
-                options: options,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method_id (bookmarkDataWithContentsOfURL : error :)]
         pub unsafe fn bookmarkDataWithContentsOfURL_error(
             bookmarkFileURL: &NSURL,
-        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                bookmarkDataWithContentsOfURL: bookmarkFileURL,
-                error: _
-            ]
-        }
+        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
+        # [method_id (URLByResolvingAliasFileAtURL : options : error :)]
         pub unsafe fn URLByResolvingAliasFileAtURL_options_error(
             url: &NSURL,
             options: NSURLBookmarkResolutionOptions,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                URLByResolvingAliasFileAtURL: url,
-                options: options,
-                error: _
-            ]
-        }
-        pub unsafe fn startAccessingSecurityScopedResource(&self) -> bool {
-            msg_send![self, startAccessingSecurityScopedResource]
-        }
-        pub unsafe fn stopAccessingSecurityScopedResource(&self) {
-            msg_send![self, stopAccessingSecurityScopedResource]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        #[method(startAccessingSecurityScopedResource)]
+        pub unsafe fn startAccessingSecurityScopedResource(&self) -> bool;
+        #[method(stopAccessingSecurityScopedResource)]
+        pub unsafe fn stopAccessingSecurityScopedResource(&self);
     }
 );
 extern_methods!(
     #[doc = "NSPromisedItems"]
     unsafe impl NSURL {
+        # [method (getPromisedItemResourceValue : forKey : error :)]
         pub unsafe fn getPromisedItemResourceValue_forKey_error(
             &self,
             value: &mut Option<Id<Object, Shared>>,
             key: &NSURLResourceKey,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                getPromisedItemResourceValue: value,
-                forKey: key,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method_id (promisedItemResourceValuesForKeys : error :)]
         pub unsafe fn promisedItemResourceValuesForKeys_error(
             &self,
             keys: &NSArray<NSURLResourceKey>,
-        ) -> Result<Id<NSDictionary<NSURLResourceKey, Object>, Shared>, Id<NSError, Shared>>
-        {
-            msg_send_id![self, promisedItemResourceValuesForKeys: keys, error: _]
-        }
+        ) -> Result<Id<NSDictionary<NSURLResourceKey, Object>, Shared>, Id<NSError, Shared>>;
+        # [method (checkPromisedItemIsReachableAndReturnError :)]
         pub unsafe fn checkPromisedItemIsReachableAndReturnError(
             &self,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, checkPromisedItemIsReachableAndReturnError: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
     }
 );
 extern_methods!(
@@ -446,25 +293,21 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLQueryItem {
+        # [method_id (initWithName : value :)]
         pub unsafe fn initWithName_value(
             &self,
             name: &NSString,
             value: Option<&NSString>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithName: name, value: value]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (queryItemWithName : value :)]
         pub unsafe fn queryItemWithName_value(
             name: &NSString,
             value: Option<&NSString>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), queryItemWithName: name, value: value]
-        }
-        pub unsafe fn name(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, name]
-        }
-        pub unsafe fn value(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, value]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(name)]
+        pub unsafe fn name(&self) -> Id<NSString, Shared>;
+        #[method_id(value)]
+        pub unsafe fn value(&self) -> Option<Id<NSString, Shared>>;
     }
 );
 extern_class!(
@@ -476,275 +319,193 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLComponents {
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        # [method_id (initWithURL : resolvingAgainstBaseURL :)]
         pub unsafe fn initWithURL_resolvingAgainstBaseURL(
             &self,
             url: &NSURL,
             resolve: bool,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithURL: url, resolvingAgainstBaseURL: resolve]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (componentsWithURL : resolvingAgainstBaseURL :)]
         pub unsafe fn componentsWithURL_resolvingAgainstBaseURL(
             url: &NSURL,
             resolve: bool,
-        ) -> Option<Id<Self, Shared>> {
-            msg_send_id![
-                Self::class(),
-                componentsWithURL: url,
-                resolvingAgainstBaseURL: resolve
-            ]
-        }
-        pub unsafe fn initWithString(&self, URLString: &NSString) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithString: URLString]
-        }
-        pub unsafe fn componentsWithString(URLString: &NSString) -> Option<Id<Self, Shared>> {
-            msg_send_id![Self::class(), componentsWithString: URLString]
-        }
-        pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URL]
-        }
-        pub unsafe fn URLRelativeToURL(
-            &self,
-            baseURL: Option<&NSURL>,
-        ) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URLRelativeToURL: baseURL]
-        }
-        pub unsafe fn string(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, string]
-        }
-        pub unsafe fn scheme(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, scheme]
-        }
-        pub unsafe fn setScheme(&self, scheme: Option<&NSString>) {
-            msg_send![self, setScheme: scheme]
-        }
-        pub unsafe fn user(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, user]
-        }
-        pub unsafe fn setUser(&self, user: Option<&NSString>) {
-            msg_send![self, setUser: user]
-        }
-        pub unsafe fn password(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, password]
-        }
-        pub unsafe fn setPassword(&self, password: Option<&NSString>) {
-            msg_send![self, setPassword: password]
-        }
-        pub unsafe fn host(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, host]
-        }
-        pub unsafe fn setHost(&self, host: Option<&NSString>) {
-            msg_send![self, setHost: host]
-        }
-        pub unsafe fn port(&self) -> Option<Id<NSNumber, Shared>> {
-            msg_send_id![self, port]
-        }
-        pub unsafe fn setPort(&self, port: Option<&NSNumber>) {
-            msg_send![self, setPort: port]
-        }
-        pub unsafe fn path(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, path]
-        }
-        pub unsafe fn setPath(&self, path: Option<&NSString>) {
-            msg_send![self, setPath: path]
-        }
-        pub unsafe fn query(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, query]
-        }
-        pub unsafe fn setQuery(&self, query: Option<&NSString>) {
-            msg_send![self, setQuery: query]
-        }
-        pub unsafe fn fragment(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, fragment]
-        }
-        pub unsafe fn setFragment(&self, fragment: Option<&NSString>) {
-            msg_send![self, setFragment: fragment]
-        }
-        pub unsafe fn percentEncodedUser(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, percentEncodedUser]
-        }
-        pub unsafe fn setPercentEncodedUser(&self, percentEncodedUser: Option<&NSString>) {
-            msg_send![self, setPercentEncodedUser: percentEncodedUser]
-        }
-        pub unsafe fn percentEncodedPassword(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, percentEncodedPassword]
-        }
-        pub unsafe fn setPercentEncodedPassword(&self, percentEncodedPassword: Option<&NSString>) {
-            msg_send![self, setPercentEncodedPassword: percentEncodedPassword]
-        }
-        pub unsafe fn percentEncodedHost(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, percentEncodedHost]
-        }
-        pub unsafe fn setPercentEncodedHost(&self, percentEncodedHost: Option<&NSString>) {
-            msg_send![self, setPercentEncodedHost: percentEncodedHost]
-        }
-        pub unsafe fn percentEncodedPath(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, percentEncodedPath]
-        }
-        pub unsafe fn setPercentEncodedPath(&self, percentEncodedPath: Option<&NSString>) {
-            msg_send![self, setPercentEncodedPath: percentEncodedPath]
-        }
-        pub unsafe fn percentEncodedQuery(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, percentEncodedQuery]
-        }
-        pub unsafe fn setPercentEncodedQuery(&self, percentEncodedQuery: Option<&NSString>) {
-            msg_send![self, setPercentEncodedQuery: percentEncodedQuery]
-        }
-        pub unsafe fn percentEncodedFragment(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, percentEncodedFragment]
-        }
-        pub unsafe fn setPercentEncodedFragment(&self, percentEncodedFragment: Option<&NSString>) {
-            msg_send![self, setPercentEncodedFragment: percentEncodedFragment]
-        }
-        pub unsafe fn rangeOfScheme(&self) -> NSRange {
-            msg_send![self, rangeOfScheme]
-        }
-        pub unsafe fn rangeOfUser(&self) -> NSRange {
-            msg_send![self, rangeOfUser]
-        }
-        pub unsafe fn rangeOfPassword(&self) -> NSRange {
-            msg_send![self, rangeOfPassword]
-        }
-        pub unsafe fn rangeOfHost(&self) -> NSRange {
-            msg_send![self, rangeOfHost]
-        }
-        pub unsafe fn rangeOfPort(&self) -> NSRange {
-            msg_send![self, rangeOfPort]
-        }
-        pub unsafe fn rangeOfPath(&self) -> NSRange {
-            msg_send![self, rangeOfPath]
-        }
-        pub unsafe fn rangeOfQuery(&self) -> NSRange {
-            msg_send![self, rangeOfQuery]
-        }
-        pub unsafe fn rangeOfFragment(&self) -> NSRange {
-            msg_send![self, rangeOfFragment]
-        }
-        pub unsafe fn queryItems(&self) -> Option<Id<NSArray<NSURLQueryItem>, Shared>> {
-            msg_send_id![self, queryItems]
-        }
-        pub unsafe fn setQueryItems(&self, queryItems: Option<&NSArray<NSURLQueryItem>>) {
-            msg_send![self, setQueryItems: queryItems]
-        }
+        ) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithString :)]
+        pub unsafe fn initWithString(&self, URLString: &NSString) -> Option<Id<Self, Shared>>;
+        # [method_id (componentsWithString :)]
+        pub unsafe fn componentsWithString(URLString: &NSString) -> Option<Id<Self, Shared>>;
+        #[method_id(URL)]
+        pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
+        # [method_id (URLRelativeToURL :)]
+        pub unsafe fn URLRelativeToURL(&self, baseURL: Option<&NSURL>)
+            -> Option<Id<NSURL, Shared>>;
+        #[method_id(string)]
+        pub unsafe fn string(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(scheme)]
+        pub unsafe fn scheme(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setScheme :)]
+        pub unsafe fn setScheme(&self, scheme: Option<&NSString>);
+        #[method_id(user)]
+        pub unsafe fn user(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setUser :)]
+        pub unsafe fn setUser(&self, user: Option<&NSString>);
+        #[method_id(password)]
+        pub unsafe fn password(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPassword :)]
+        pub unsafe fn setPassword(&self, password: Option<&NSString>);
+        #[method_id(host)]
+        pub unsafe fn host(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setHost :)]
+        pub unsafe fn setHost(&self, host: Option<&NSString>);
+        #[method_id(port)]
+        pub unsafe fn port(&self) -> Option<Id<NSNumber, Shared>>;
+        # [method (setPort :)]
+        pub unsafe fn setPort(&self, port: Option<&NSNumber>);
+        #[method_id(path)]
+        pub unsafe fn path(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPath :)]
+        pub unsafe fn setPath(&self, path: Option<&NSString>);
+        #[method_id(query)]
+        pub unsafe fn query(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setQuery :)]
+        pub unsafe fn setQuery(&self, query: Option<&NSString>);
+        #[method_id(fragment)]
+        pub unsafe fn fragment(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setFragment :)]
+        pub unsafe fn setFragment(&self, fragment: Option<&NSString>);
+        #[method_id(percentEncodedUser)]
+        pub unsafe fn percentEncodedUser(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPercentEncodedUser :)]
+        pub unsafe fn setPercentEncodedUser(&self, percentEncodedUser: Option<&NSString>);
+        #[method_id(percentEncodedPassword)]
+        pub unsafe fn percentEncodedPassword(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPercentEncodedPassword :)]
+        pub unsafe fn setPercentEncodedPassword(&self, percentEncodedPassword: Option<&NSString>);
+        #[method_id(percentEncodedHost)]
+        pub unsafe fn percentEncodedHost(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPercentEncodedHost :)]
+        pub unsafe fn setPercentEncodedHost(&self, percentEncodedHost: Option<&NSString>);
+        #[method_id(percentEncodedPath)]
+        pub unsafe fn percentEncodedPath(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPercentEncodedPath :)]
+        pub unsafe fn setPercentEncodedPath(&self, percentEncodedPath: Option<&NSString>);
+        #[method_id(percentEncodedQuery)]
+        pub unsafe fn percentEncodedQuery(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPercentEncodedQuery :)]
+        pub unsafe fn setPercentEncodedQuery(&self, percentEncodedQuery: Option<&NSString>);
+        #[method_id(percentEncodedFragment)]
+        pub unsafe fn percentEncodedFragment(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setPercentEncodedFragment :)]
+        pub unsafe fn setPercentEncodedFragment(&self, percentEncodedFragment: Option<&NSString>);
+        #[method(rangeOfScheme)]
+        pub unsafe fn rangeOfScheme(&self) -> NSRange;
+        #[method(rangeOfUser)]
+        pub unsafe fn rangeOfUser(&self) -> NSRange;
+        #[method(rangeOfPassword)]
+        pub unsafe fn rangeOfPassword(&self) -> NSRange;
+        #[method(rangeOfHost)]
+        pub unsafe fn rangeOfHost(&self) -> NSRange;
+        #[method(rangeOfPort)]
+        pub unsafe fn rangeOfPort(&self) -> NSRange;
+        #[method(rangeOfPath)]
+        pub unsafe fn rangeOfPath(&self) -> NSRange;
+        #[method(rangeOfQuery)]
+        pub unsafe fn rangeOfQuery(&self) -> NSRange;
+        #[method(rangeOfFragment)]
+        pub unsafe fn rangeOfFragment(&self) -> NSRange;
+        #[method_id(queryItems)]
+        pub unsafe fn queryItems(&self) -> Option<Id<NSArray<NSURLQueryItem>, Shared>>;
+        # [method (setQueryItems :)]
+        pub unsafe fn setQueryItems(&self, queryItems: Option<&NSArray<NSURLQueryItem>>);
+        #[method_id(percentEncodedQueryItems)]
         pub unsafe fn percentEncodedQueryItems(
             &self,
-        ) -> Option<Id<NSArray<NSURLQueryItem>, Shared>> {
-            msg_send_id![self, percentEncodedQueryItems]
-        }
+        ) -> Option<Id<NSArray<NSURLQueryItem>, Shared>>;
+        # [method (setPercentEncodedQueryItems :)]
         pub unsafe fn setPercentEncodedQueryItems(
             &self,
             percentEncodedQueryItems: Option<&NSArray<NSURLQueryItem>>,
-        ) {
-            msg_send![self, setPercentEncodedQueryItems: percentEncodedQueryItems]
-        }
+        );
     }
 );
 extern_methods!(
     #[doc = "NSURLUtilities"]
     unsafe impl NSCharacterSet {
-        pub unsafe fn URLUserAllowedCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), URLUserAllowedCharacterSet]
-        }
-        pub unsafe fn URLPasswordAllowedCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), URLPasswordAllowedCharacterSet]
-        }
-        pub unsafe fn URLHostAllowedCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), URLHostAllowedCharacterSet]
-        }
-        pub unsafe fn URLPathAllowedCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), URLPathAllowedCharacterSet]
-        }
-        pub unsafe fn URLQueryAllowedCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), URLQueryAllowedCharacterSet]
-        }
-        pub unsafe fn URLFragmentAllowedCharacterSet() -> Id<NSCharacterSet, Shared> {
-            msg_send_id![Self::class(), URLFragmentAllowedCharacterSet]
-        }
+        #[method_id(URLUserAllowedCharacterSet)]
+        pub unsafe fn URLUserAllowedCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(URLPasswordAllowedCharacterSet)]
+        pub unsafe fn URLPasswordAllowedCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(URLHostAllowedCharacterSet)]
+        pub unsafe fn URLHostAllowedCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(URLPathAllowedCharacterSet)]
+        pub unsafe fn URLPathAllowedCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(URLQueryAllowedCharacterSet)]
+        pub unsafe fn URLQueryAllowedCharacterSet() -> Id<NSCharacterSet, Shared>;
+        #[method_id(URLFragmentAllowedCharacterSet)]
+        pub unsafe fn URLFragmentAllowedCharacterSet() -> Id<NSCharacterSet, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSURLUtilities"]
     unsafe impl NSString {
+        # [method_id (stringByAddingPercentEncodingWithAllowedCharacters :)]
         pub unsafe fn stringByAddingPercentEncodingWithAllowedCharacters(
             &self,
             allowedCharacters: &NSCharacterSet,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![
-                self,
-                stringByAddingPercentEncodingWithAllowedCharacters: allowedCharacters
-            ]
-        }
-        pub unsafe fn stringByRemovingPercentEncoding(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, stringByRemovingPercentEncoding]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(stringByRemovingPercentEncoding)]
+        pub unsafe fn stringByRemovingPercentEncoding(&self) -> Option<Id<NSString, Shared>>;
+        # [method_id (stringByAddingPercentEscapesUsingEncoding :)]
         pub unsafe fn stringByAddingPercentEscapesUsingEncoding(
             &self,
             enc: NSStringEncoding,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, stringByAddingPercentEscapesUsingEncoding: enc]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        # [method_id (stringByReplacingPercentEscapesUsingEncoding :)]
         pub unsafe fn stringByReplacingPercentEscapesUsingEncoding(
             &self,
             enc: NSStringEncoding,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, stringByReplacingPercentEscapesUsingEncoding: enc]
-        }
+        ) -> Option<Id<NSString, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSURLPathUtilities"]
     unsafe impl NSURL {
+        # [method_id (fileURLWithPathComponents :)]
         pub unsafe fn fileURLWithPathComponents(
             components: &NSArray<NSString>,
-        ) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![Self::class(), fileURLWithPathComponents: components]
-        }
-        pub unsafe fn pathComponents(&self) -> Option<Id<NSArray<NSString>, Shared>> {
-            msg_send_id![self, pathComponents]
-        }
-        pub unsafe fn lastPathComponent(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, lastPathComponent]
-        }
-        pub unsafe fn pathExtension(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, pathExtension]
-        }
+        ) -> Option<Id<NSURL, Shared>>;
+        #[method_id(pathComponents)]
+        pub unsafe fn pathComponents(&self) -> Option<Id<NSArray<NSString>, Shared>>;
+        #[method_id(lastPathComponent)]
+        pub unsafe fn lastPathComponent(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(pathExtension)]
+        pub unsafe fn pathExtension(&self) -> Option<Id<NSString, Shared>>;
+        # [method_id (URLByAppendingPathComponent :)]
         pub unsafe fn URLByAppendingPathComponent(
             &self,
             pathComponent: &NSString,
-        ) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URLByAppendingPathComponent: pathComponent]
-        }
+        ) -> Option<Id<NSURL, Shared>>;
+        # [method_id (URLByAppendingPathComponent : isDirectory :)]
         pub unsafe fn URLByAppendingPathComponent_isDirectory(
             &self,
             pathComponent: &NSString,
             isDirectory: bool,
-        ) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![
-                self,
-                URLByAppendingPathComponent: pathComponent,
-                isDirectory: isDirectory
-            ]
-        }
-        pub unsafe fn URLByDeletingLastPathComponent(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URLByDeletingLastPathComponent]
-        }
+        ) -> Option<Id<NSURL, Shared>>;
+        #[method_id(URLByDeletingLastPathComponent)]
+        pub unsafe fn URLByDeletingLastPathComponent(&self) -> Option<Id<NSURL, Shared>>;
+        # [method_id (URLByAppendingPathExtension :)]
         pub unsafe fn URLByAppendingPathExtension(
             &self,
             pathExtension: &NSString,
-        ) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URLByAppendingPathExtension: pathExtension]
-        }
-        pub unsafe fn URLByDeletingPathExtension(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URLByDeletingPathExtension]
-        }
-        pub unsafe fn URLByStandardizingPath(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URLByStandardizingPath]
-        }
-        pub unsafe fn URLByResolvingSymlinksInPath(&self) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URLByResolvingSymlinksInPath]
-        }
+        ) -> Option<Id<NSURL, Shared>>;
+        #[method_id(URLByDeletingPathExtension)]
+        pub unsafe fn URLByDeletingPathExtension(&self) -> Option<Id<NSURL, Shared>>;
+        #[method_id(URLByStandardizingPath)]
+        pub unsafe fn URLByStandardizingPath(&self) -> Option<Id<NSURL, Shared>>;
+        #[method_id(URLByResolvingSymlinksInPath)]
+        pub unsafe fn URLByResolvingSymlinksInPath(&self) -> Option<Id<NSURL, Shared>>;
     }
 );
 extern_class!(
@@ -756,66 +517,51 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileSecurity {
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: coder]
-        }
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSURLClient"]
     unsafe impl NSObject {
-        pub unsafe fn URL_resourceDataDidBecomeAvailable(&self, sender: &NSURL, newBytes: &NSData) {
-            msg_send![self, URL: sender, resourceDataDidBecomeAvailable: newBytes]
-        }
-        pub unsafe fn URLResourceDidFinishLoading(&self, sender: &NSURL) {
-            msg_send![self, URLResourceDidFinishLoading: sender]
-        }
-        pub unsafe fn URLResourceDidCancelLoading(&self, sender: &NSURL) {
-            msg_send![self, URLResourceDidCancelLoading: sender]
-        }
+        # [method (URL : resourceDataDidBecomeAvailable :)]
+        pub unsafe fn URL_resourceDataDidBecomeAvailable(&self, sender: &NSURL, newBytes: &NSData);
+        # [method (URLResourceDidFinishLoading :)]
+        pub unsafe fn URLResourceDidFinishLoading(&self, sender: &NSURL);
+        # [method (URLResourceDidCancelLoading :)]
+        pub unsafe fn URLResourceDidCancelLoading(&self, sender: &NSURL);
+        # [method (URL : resourceDidFailLoadingWithReason :)]
         pub unsafe fn URL_resourceDidFailLoadingWithReason(
             &self,
             sender: &NSURL,
             reason: &NSString,
-        ) {
-            msg_send![self, URL: sender, resourceDidFailLoadingWithReason: reason]
-        }
+        );
     }
 );
 extern_methods!(
     #[doc = "NSURLLoading"]
     unsafe impl NSURL {
+        # [method_id (resourceDataUsingCache :)]
         pub unsafe fn resourceDataUsingCache(
             &self,
             shouldUseCache: bool,
-        ) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, resourceDataUsingCache: shouldUseCache]
-        }
+        ) -> Option<Id<NSData, Shared>>;
+        # [method (loadResourceDataNotifyingClient : usingCache :)]
         pub unsafe fn loadResourceDataNotifyingClient_usingCache(
             &self,
             client: &Object,
             shouldUseCache: bool,
-        ) {
-            msg_send![
-                self,
-                loadResourceDataNotifyingClient: client,
-                usingCache: shouldUseCache
-            ]
-        }
-        pub unsafe fn propertyForKey(&self, propertyKey: &NSString) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, propertyForKey: propertyKey]
-        }
-        pub unsafe fn setResourceData(&self, data: &NSData) -> bool {
-            msg_send![self, setResourceData: data]
-        }
-        pub unsafe fn setProperty_forKey(&self, property: &Object, propertyKey: &NSString) -> bool {
-            msg_send![self, setProperty: property, forKey: propertyKey]
-        }
+        );
+        # [method_id (propertyForKey :)]
+        pub unsafe fn propertyForKey(&self, propertyKey: &NSString) -> Option<Id<Object, Shared>>;
+        # [method (setResourceData :)]
+        pub unsafe fn setResourceData(&self, data: &NSData) -> bool;
+        # [method (setProperty : forKey :)]
+        pub unsafe fn setProperty_forKey(&self, property: &Object, propertyKey: &NSString) -> bool;
+        # [method_id (URLHandleUsingCache :)]
         pub unsafe fn URLHandleUsingCache(
             &self,
             shouldUseCache: bool,
-        ) -> Option<Id<NSURLHandle, Shared>> {
-            msg_send_id![self, URLHandleUsingCache: shouldUseCache]
-        }
+        ) -> Option<Id<NSURLHandle, Shared>>;
     }
 );

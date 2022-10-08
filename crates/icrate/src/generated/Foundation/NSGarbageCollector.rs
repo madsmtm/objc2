@@ -2,7 +2,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSGarbageCollector;
@@ -12,35 +12,25 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSGarbageCollector {
-        pub unsafe fn defaultCollector() -> Id<Object, Shared> {
-            msg_send_id![Self::class(), defaultCollector]
-        }
-        pub unsafe fn isCollecting(&self) -> bool {
-            msg_send![self, isCollecting]
-        }
-        pub unsafe fn disable(&self) {
-            msg_send![self, disable]
-        }
-        pub unsafe fn enable(&self) {
-            msg_send![self, enable]
-        }
-        pub unsafe fn isEnabled(&self) -> bool {
-            msg_send![self, isEnabled]
-        }
-        pub unsafe fn collectIfNeeded(&self) {
-            msg_send![self, collectIfNeeded]
-        }
-        pub unsafe fn collectExhaustively(&self) {
-            msg_send![self, collectExhaustively]
-        }
-        pub unsafe fn disableCollectorForPointer(&self, ptr: NonNull<c_void>) {
-            msg_send![self, disableCollectorForPointer: ptr]
-        }
-        pub unsafe fn enableCollectorForPointer(&self, ptr: NonNull<c_void>) {
-            msg_send![self, enableCollectorForPointer: ptr]
-        }
-        pub unsafe fn zone(&self) -> NonNull<NSZone> {
-            msg_send![self, zone]
-        }
+        #[method_id(defaultCollector)]
+        pub unsafe fn defaultCollector() -> Id<Object, Shared>;
+        #[method(isCollecting)]
+        pub unsafe fn isCollecting(&self) -> bool;
+        #[method(disable)]
+        pub unsafe fn disable(&self);
+        #[method(enable)]
+        pub unsafe fn enable(&self);
+        #[method(isEnabled)]
+        pub unsafe fn isEnabled(&self) -> bool;
+        #[method(collectIfNeeded)]
+        pub unsafe fn collectIfNeeded(&self);
+        #[method(collectExhaustively)]
+        pub unsafe fn collectExhaustively(&self);
+        # [method (disableCollectorForPointer :)]
+        pub unsafe fn disableCollectorForPointer(&self, ptr: NonNull<c_void>);
+        # [method (enableCollectorForPointer :)]
+        pub unsafe fn enableCollectorForPointer(&self, ptr: NonNull<c_void>);
+        #[method(zone)]
+        pub unsafe fn zone(&self) -> NonNull<NSZone>;
     }
 );

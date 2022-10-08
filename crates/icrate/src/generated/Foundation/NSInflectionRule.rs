@@ -3,7 +3,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSInflectionRule;
@@ -13,12 +13,10 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSInflectionRule {
-        pub unsafe fn init(&self) -> Id<Object, Shared> {
-            msg_send_id![self, init]
-        }
-        pub unsafe fn automaticRule() -> Id<NSInflectionRule, Shared> {
-            msg_send_id![Self::class(), automaticRule]
-        }
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Object, Shared>;
+        #[method_id(automaticRule)]
+        pub unsafe fn automaticRule() -> Id<NSInflectionRule, Shared>;
     }
 );
 extern_class!(
@@ -30,22 +28,18 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSInflectionRuleExplicit {
-        pub unsafe fn initWithMorphology(&self, morphology: &NSMorphology) -> Id<Self, Shared> {
-            msg_send_id![self, initWithMorphology: morphology]
-        }
-        pub unsafe fn morphology(&self) -> Id<NSMorphology, Shared> {
-            msg_send_id![self, morphology]
-        }
+        # [method_id (initWithMorphology :)]
+        pub unsafe fn initWithMorphology(&self, morphology: &NSMorphology) -> Id<Self, Shared>;
+        #[method_id(morphology)]
+        pub unsafe fn morphology(&self) -> Id<NSMorphology, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSInflectionAvailability"]
     unsafe impl NSInflectionRule {
-        pub unsafe fn canInflectLanguage(language: &NSString) -> bool {
-            msg_send![Self::class(), canInflectLanguage: language]
-        }
-        pub unsafe fn canInflectPreferredLocalization() -> bool {
-            msg_send![Self::class(), canInflectPreferredLocalization]
-        }
+        # [method (canInflectLanguage :)]
+        pub unsafe fn canInflectLanguage(language: &NSString) -> bool;
+        #[method(canInflectPreferredLocalization)]
+        pub unsafe fn canInflectPreferredLocalization() -> bool;
     }
 );

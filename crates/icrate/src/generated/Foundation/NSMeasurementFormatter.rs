@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSMeasurementFormatter;
@@ -16,38 +16,28 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMeasurementFormatter {
-        pub unsafe fn unitOptions(&self) -> NSMeasurementFormatterUnitOptions {
-            msg_send![self, unitOptions]
-        }
-        pub unsafe fn setUnitOptions(&self, unitOptions: NSMeasurementFormatterUnitOptions) {
-            msg_send![self, setUnitOptions: unitOptions]
-        }
-        pub unsafe fn unitStyle(&self) -> NSFormattingUnitStyle {
-            msg_send![self, unitStyle]
-        }
-        pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle) {
-            msg_send![self, setUnitStyle: unitStyle]
-        }
-        pub unsafe fn locale(&self) -> Id<NSLocale, Shared> {
-            msg_send_id![self, locale]
-        }
-        pub unsafe fn setLocale(&self, locale: Option<&NSLocale>) {
-            msg_send![self, setLocale: locale]
-        }
-        pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared> {
-            msg_send_id![self, numberFormatter]
-        }
-        pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>) {
-            msg_send![self, setNumberFormatter: numberFormatter]
-        }
+        #[method(unitOptions)]
+        pub unsafe fn unitOptions(&self) -> NSMeasurementFormatterUnitOptions;
+        # [method (setUnitOptions :)]
+        pub unsafe fn setUnitOptions(&self, unitOptions: NSMeasurementFormatterUnitOptions);
+        #[method(unitStyle)]
+        pub unsafe fn unitStyle(&self) -> NSFormattingUnitStyle;
+        # [method (setUnitStyle :)]
+        pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle);
+        #[method_id(locale)]
+        pub unsafe fn locale(&self) -> Id<NSLocale, Shared>;
+        # [method (setLocale :)]
+        pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
+        #[method_id(numberFormatter)]
+        pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared>;
+        # [method (setNumberFormatter :)]
+        pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>);
+        # [method_id (stringFromMeasurement :)]
         pub unsafe fn stringFromMeasurement(
             &self,
             measurement: &NSMeasurement,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, stringFromMeasurement: measurement]
-        }
-        pub unsafe fn stringFromUnit(&self, unit: &NSUnit) -> Id<NSString, Shared> {
-            msg_send_id![self, stringFromUnit: unit]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (stringFromUnit :)]
+        pub unsafe fn stringFromUnit(&self, unit: &NSUnit) -> Id<NSString, Shared>;
     }
 );

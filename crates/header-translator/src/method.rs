@@ -332,31 +332,15 @@ impl ToTokens for Method {
             .map(|(param, arg_ty)| quote!(#param: #arg_ty))
             .collect();
 
-        let method_call = if self.selector.contains(':') {
-            let split_selector: Vec<_> = self
+        let selector = if self.selector.contains(':') {
+            let iter = self
                 .selector
                 .split(':')
                 .filter(|sel| !sel.is_empty())
-                .collect();
+                .map(|sel| format_ident!("{}", sel));
 
-            assert!(
-                arguments.len() + (is_error as usize) == split_selector.len(),
-                "incorrect method argument length",
-            );
-
-            let iter = arguments
-                .into_iter()
-                .map(|(param, _)| param)
-                .chain(is_error.then(|| format_ident!("_")))
-                .zip(split_selector)
-                .map(|(param, sel)| {
-                    let sel = format_ident!("{}", sel);
-                    quote!(#sel: #param)
-                });
-
-            quote!(#(#iter),*)
+            quote!(#(#iter:)*)
         } else {
-            assert_eq!(arguments.len(), 0, "too many arguments");
             let sel = format_ident!("{}", self.selector);
             quote!(#sel)
         };
@@ -369,24 +353,22 @@ impl ToTokens for Method {
         };
 
         let macro_name = if self.result_type.is_id() {
-            format_ident!("msg_send_id")
+            format_ident!("method_id")
         } else {
-            format_ident!("msg_send")
+            format_ident!("method")
         };
 
         let unsafe_ = if self.safe { quote!() } else { quote!(unsafe) };
 
         let result = if self.is_class {
             quote! {
-                pub #unsafe_ fn #fn_name(#(#fn_args),*) #ret {
-                    #macro_name![Self::class(), #method_call]
-                }
+                #[#macro_name(#selector)]
+                pub #unsafe_ fn #fn_name(#(#fn_args),*) #ret;
             }
         } else {
             quote! {
-                pub #unsafe_ fn #fn_name(&self #(, #fn_args)*) #ret {
-                    #macro_name![self, #method_call]
-                }
+                #[#macro_name(#selector)]
+                pub #unsafe_ fn #fn_name(&self #(, #fn_args)*) #ret;
             }
         };
         tokens.append_all(result);

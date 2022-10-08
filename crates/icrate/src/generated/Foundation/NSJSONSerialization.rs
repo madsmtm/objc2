@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSJSONSerialization;
@@ -16,41 +16,22 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSJSONSerialization {
-        pub unsafe fn isValidJSONObject(obj: &Object) -> bool {
-            msg_send![Self::class(), isValidJSONObject: obj]
-        }
+        # [method (isValidJSONObject :)]
+        pub unsafe fn isValidJSONObject(obj: &Object) -> bool;
+        # [method_id (dataWithJSONObject : options : error :)]
         pub unsafe fn dataWithJSONObject_options_error(
             obj: &Object,
             opt: NSJSONWritingOptions,
-        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                dataWithJSONObject: obj,
-                options: opt,
-                error: _
-            ]
-        }
+        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
+        # [method_id (JSONObjectWithData : options : error :)]
         pub unsafe fn JSONObjectWithData_options_error(
             data: &NSData,
             opt: NSJSONReadingOptions,
-        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                JSONObjectWithData: data,
-                options: opt,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
+        # [method_id (JSONObjectWithStream : options : error :)]
         pub unsafe fn JSONObjectWithStream_options_error(
             stream: &NSInputStream,
             opt: NSJSONReadingOptions,
-        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                JSONObjectWithStream: stream,
-                options: opt,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
     }
 );

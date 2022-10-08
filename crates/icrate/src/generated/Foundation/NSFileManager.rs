@@ -17,7 +17,7 @@ use crate::Foundation::generated::NSURL::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSFileAttributeKey = NSString;
 pub type NSFileAttributeType = NSString;
 pub type NSFileProtectionType = NSString;
@@ -31,439 +31,302 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileManager {
-        pub unsafe fn defaultManager() -> Id<NSFileManager, Shared> {
-            msg_send_id![Self::class(), defaultManager]
-        }
+        #[method_id(defaultManager)]
+        pub unsafe fn defaultManager() -> Id<NSFileManager, Shared>;
+        # [method_id (mountedVolumeURLsIncludingResourceValuesForKeys : options :)]
         pub unsafe fn mountedVolumeURLsIncludingResourceValuesForKeys_options(
             &self,
             propertyKeys: Option<&NSArray<NSURLResourceKey>>,
             options: NSVolumeEnumerationOptions,
-        ) -> Option<Id<NSArray<NSURL>, Shared>> {
-            msg_send_id![
-                self,
-                mountedVolumeURLsIncludingResourceValuesForKeys: propertyKeys,
-                options: options
-            ]
-        }
+        ) -> Option<Id<NSArray<NSURL>, Shared>>;
+        # [method (unmountVolumeAtURL : options : completionHandler :)]
         pub unsafe fn unmountVolumeAtURL_options_completionHandler(
             &self,
             url: &NSURL,
             mask: NSFileManagerUnmountOptions,
             completionHandler: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                unmountVolumeAtURL: url,
-                options: mask,
-                completionHandler: completionHandler
-            ]
-        }
+        );
+        # [method_id (contentsOfDirectoryAtURL : includingPropertiesForKeys : options : error :)]
         pub unsafe fn contentsOfDirectoryAtURL_includingPropertiesForKeys_options_error(
             &self,
             url: &NSURL,
             keys: Option<&NSArray<NSURLResourceKey>>,
             mask: NSDirectoryEnumerationOptions,
-        ) -> Result<Id<NSArray<NSURL>, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                self,
-                contentsOfDirectoryAtURL: url,
-                includingPropertiesForKeys: keys,
-                options: mask,
-                error: _
-            ]
-        }
+        ) -> Result<Id<NSArray<NSURL>, Shared>, Id<NSError, Shared>>;
+        # [method_id (URLsForDirectory : inDomains :)]
         pub unsafe fn URLsForDirectory_inDomains(
             &self,
             directory: NSSearchPathDirectory,
             domainMask: NSSearchPathDomainMask,
-        ) -> Id<NSArray<NSURL>, Shared> {
-            msg_send_id![self, URLsForDirectory: directory, inDomains: domainMask]
-        }
+        ) -> Id<NSArray<NSURL>, Shared>;
+        # [method_id (URLForDirectory : inDomain : appropriateForURL : create : error :)]
         pub unsafe fn URLForDirectory_inDomain_appropriateForURL_create_error(
             &self,
             directory: NSSearchPathDirectory,
             domain: NSSearchPathDomainMask,
             url: Option<&NSURL>,
             shouldCreate: bool,
-        ) -> Result<Id<NSURL, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                self,
-                URLForDirectory: directory,
-                inDomain: domain,
-                appropriateForURL: url,
-                create: shouldCreate,
-                error: _
-            ]
-        }
+        ) -> Result<Id<NSURL, Shared>, Id<NSError, Shared>>;
+        # [method (getRelationship : ofDirectoryAtURL : toItemAtURL : error :)]
         pub unsafe fn getRelationship_ofDirectoryAtURL_toItemAtURL_error(
             &self,
             outRelationship: NonNull<NSURLRelationship>,
             directoryURL: &NSURL,
             otherURL: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                getRelationship: outRelationship,
-                ofDirectoryAtURL: directoryURL,
-                toItemAtURL: otherURL,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (getRelationship : ofDirectory : inDomain : toItemAtURL : error :)]
         pub unsafe fn getRelationship_ofDirectory_inDomain_toItemAtURL_error(
             &self,
             outRelationship: NonNull<NSURLRelationship>,
             directory: NSSearchPathDirectory,
             domainMask: NSSearchPathDomainMask,
             url: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                getRelationship: outRelationship,
-                ofDirectory: directory,
-                inDomain: domainMask,
-                toItemAtURL: url,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (createDirectoryAtURL : withIntermediateDirectories : attributes : error :)]
         pub unsafe fn createDirectoryAtURL_withIntermediateDirectories_attributes_error(
             &self,
             url: &NSURL,
             createIntermediates: bool,
             attributes: Option<&NSDictionary<NSFileAttributeKey, Object>>,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                createDirectoryAtURL: url,
-                withIntermediateDirectories: createIntermediates,
-                attributes: attributes,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (createSymbolicLinkAtURL : withDestinationURL : error :)]
         pub unsafe fn createSymbolicLinkAtURL_withDestinationURL_error(
             &self,
             url: &NSURL,
             destURL: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                createSymbolicLinkAtURL: url,
-                withDestinationURL: destURL,
-                error: _
-            ]
-        }
-        pub unsafe fn delegate(&self) -> Option<Id<NSFileManagerDelegate, Shared>> {
-            msg_send_id![self, delegate]
-        }
-        pub unsafe fn setDelegate(&self, delegate: Option<&NSFileManagerDelegate>) {
-            msg_send![self, setDelegate: delegate]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        #[method_id(delegate)]
+        pub unsafe fn delegate(&self) -> Option<Id<NSFileManagerDelegate, Shared>>;
+        # [method (setDelegate :)]
+        pub unsafe fn setDelegate(&self, delegate: Option<&NSFileManagerDelegate>);
+        # [method (setAttributes : ofItemAtPath : error :)]
         pub unsafe fn setAttributes_ofItemAtPath_error(
             &self,
             attributes: &NSDictionary<NSFileAttributeKey, Object>,
             path: &NSString,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                setAttributes: attributes,
-                ofItemAtPath: path,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (createDirectoryAtPath : withIntermediateDirectories : attributes : error :)]
         pub unsafe fn createDirectoryAtPath_withIntermediateDirectories_attributes_error(
             &self,
             path: &NSString,
             createIntermediates: bool,
             attributes: Option<&NSDictionary<NSFileAttributeKey, Object>>,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                createDirectoryAtPath: path,
-                withIntermediateDirectories: createIntermediates,
-                attributes: attributes,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method_id (contentsOfDirectoryAtPath : error :)]
         pub unsafe fn contentsOfDirectoryAtPath_error(
             &self,
             path: &NSString,
-        ) -> Result<Id<NSArray<NSString>, Shared>, Id<NSError, Shared>> {
-            msg_send_id![self, contentsOfDirectoryAtPath: path, error: _]
-        }
+        ) -> Result<Id<NSArray<NSString>, Shared>, Id<NSError, Shared>>;
+        # [method_id (subpathsOfDirectoryAtPath : error :)]
         pub unsafe fn subpathsOfDirectoryAtPath_error(
             &self,
             path: &NSString,
-        ) -> Result<Id<NSArray<NSString>, Shared>, Id<NSError, Shared>> {
-            msg_send_id![self, subpathsOfDirectoryAtPath: path, error: _]
-        }
+        ) -> Result<Id<NSArray<NSString>, Shared>, Id<NSError, Shared>>;
+        # [method_id (attributesOfItemAtPath : error :)]
         pub unsafe fn attributesOfItemAtPath_error(
             &self,
             path: &NSString,
-        ) -> Result<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>, Id<NSError, Shared>>
-        {
-            msg_send_id![self, attributesOfItemAtPath: path, error: _]
-        }
+        ) -> Result<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>, Id<NSError, Shared>>;
+        # [method_id (attributesOfFileSystemForPath : error :)]
         pub unsafe fn attributesOfFileSystemForPath_error(
             &self,
             path: &NSString,
-        ) -> Result<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>, Id<NSError, Shared>>
-        {
-            msg_send_id![self, attributesOfFileSystemForPath: path, error: _]
-        }
+        ) -> Result<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>, Id<NSError, Shared>>;
+        # [method (createSymbolicLinkAtPath : withDestinationPath : error :)]
         pub unsafe fn createSymbolicLinkAtPath_withDestinationPath_error(
             &self,
             path: &NSString,
             destPath: &NSString,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                createSymbolicLinkAtPath: path,
-                withDestinationPath: destPath,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method_id (destinationOfSymbolicLinkAtPath : error :)]
         pub unsafe fn destinationOfSymbolicLinkAtPath_error(
             &self,
             path: &NSString,
-        ) -> Result<Id<NSString, Shared>, Id<NSError, Shared>> {
-            msg_send_id![self, destinationOfSymbolicLinkAtPath: path, error: _]
-        }
+        ) -> Result<Id<NSString, Shared>, Id<NSError, Shared>>;
+        # [method (copyItemAtPath : toPath : error :)]
         pub unsafe fn copyItemAtPath_toPath_error(
             &self,
             srcPath: &NSString,
             dstPath: &NSString,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, copyItemAtPath: srcPath, toPath: dstPath, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (moveItemAtPath : toPath : error :)]
         pub unsafe fn moveItemAtPath_toPath_error(
             &self,
             srcPath: &NSString,
             dstPath: &NSString,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, moveItemAtPath: srcPath, toPath: dstPath, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (linkItemAtPath : toPath : error :)]
         pub unsafe fn linkItemAtPath_toPath_error(
             &self,
             srcPath: &NSString,
             dstPath: &NSString,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, linkItemAtPath: srcPath, toPath: dstPath, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (removeItemAtPath : error :)]
         pub unsafe fn removeItemAtPath_error(
             &self,
             path: &NSString,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, removeItemAtPath: path, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (copyItemAtURL : toURL : error :)]
         pub unsafe fn copyItemAtURL_toURL_error(
             &self,
             srcURL: &NSURL,
             dstURL: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, copyItemAtURL: srcURL, toURL: dstURL, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (moveItemAtURL : toURL : error :)]
         pub unsafe fn moveItemAtURL_toURL_error(
             &self,
             srcURL: &NSURL,
             dstURL: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, moveItemAtURL: srcURL, toURL: dstURL, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (linkItemAtURL : toURL : error :)]
         pub unsafe fn linkItemAtURL_toURL_error(
             &self,
             srcURL: &NSURL,
             dstURL: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, linkItemAtURL: srcURL, toURL: dstURL, error: _]
-        }
-        pub unsafe fn removeItemAtURL_error(&self, URL: &NSURL) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, removeItemAtURL: URL, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (removeItemAtURL : error :)]
+        pub unsafe fn removeItemAtURL_error(&self, URL: &NSURL) -> Result<(), Id<NSError, Shared>>;
+        # [method (trashItemAtURL : resultingItemURL : error :)]
         pub unsafe fn trashItemAtURL_resultingItemURL_error(
             &self,
             url: &NSURL,
             outResultingURL: Option<&mut Option<Id<NSURL, Shared>>>,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                trashItemAtURL: url,
-                resultingItemURL: outResultingURL,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method_id (fileAttributesAtPath : traverseLink :)]
         pub unsafe fn fileAttributesAtPath_traverseLink(
             &self,
             path: &NSString,
             yorn: bool,
-        ) -> Option<Id<NSDictionary, Shared>> {
-            msg_send_id![self, fileAttributesAtPath: path, traverseLink: yorn]
-        }
+        ) -> Option<Id<NSDictionary, Shared>>;
+        # [method (changeFileAttributes : atPath :)]
         pub unsafe fn changeFileAttributes_atPath(
             &self,
             attributes: &NSDictionary,
             path: &NSString,
-        ) -> bool {
-            msg_send![self, changeFileAttributes: attributes, atPath: path]
-        }
+        ) -> bool;
+        # [method_id (directoryContentsAtPath :)]
         pub unsafe fn directoryContentsAtPath(
             &self,
             path: &NSString,
-        ) -> Option<Id<NSArray, Shared>> {
-            msg_send_id![self, directoryContentsAtPath: path]
-        }
+        ) -> Option<Id<NSArray, Shared>>;
+        # [method_id (fileSystemAttributesAtPath :)]
         pub unsafe fn fileSystemAttributesAtPath(
             &self,
             path: &NSString,
-        ) -> Option<Id<NSDictionary, Shared>> {
-            msg_send_id![self, fileSystemAttributesAtPath: path]
-        }
+        ) -> Option<Id<NSDictionary, Shared>>;
+        # [method_id (pathContentOfSymbolicLinkAtPath :)]
         pub unsafe fn pathContentOfSymbolicLinkAtPath(
             &self,
             path: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, pathContentOfSymbolicLinkAtPath: path]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        # [method (createSymbolicLinkAtPath : pathContent :)]
         pub unsafe fn createSymbolicLinkAtPath_pathContent(
             &self,
             path: &NSString,
             otherpath: &NSString,
-        ) -> bool {
-            msg_send![self, createSymbolicLinkAtPath: path, pathContent: otherpath]
-        }
+        ) -> bool;
+        # [method (createDirectoryAtPath : attributes :)]
         pub unsafe fn createDirectoryAtPath_attributes(
             &self,
             path: &NSString,
             attributes: &NSDictionary,
-        ) -> bool {
-            msg_send![self, createDirectoryAtPath: path, attributes: attributes]
-        }
+        ) -> bool;
+        # [method (linkPath : toPath : handler :)]
         pub unsafe fn linkPath_toPath_handler(
             &self,
             src: &NSString,
             dest: &NSString,
             handler: Option<&Object>,
-        ) -> bool {
-            msg_send![self, linkPath: src, toPath: dest, handler: handler]
-        }
+        ) -> bool;
+        # [method (copyPath : toPath : handler :)]
         pub unsafe fn copyPath_toPath_handler(
             &self,
             src: &NSString,
             dest: &NSString,
             handler: Option<&Object>,
-        ) -> bool {
-            msg_send![self, copyPath: src, toPath: dest, handler: handler]
-        }
+        ) -> bool;
+        # [method (movePath : toPath : handler :)]
         pub unsafe fn movePath_toPath_handler(
             &self,
             src: &NSString,
             dest: &NSString,
             handler: Option<&Object>,
-        ) -> bool {
-            msg_send![self, movePath: src, toPath: dest, handler: handler]
-        }
+        ) -> bool;
+        # [method (removeFileAtPath : handler :)]
         pub unsafe fn removeFileAtPath_handler(
             &self,
             path: &NSString,
             handler: Option<&Object>,
-        ) -> bool {
-            msg_send![self, removeFileAtPath: path, handler: handler]
-        }
-        pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, currentDirectoryPath]
-        }
-        pub unsafe fn changeCurrentDirectoryPath(&self, path: &NSString) -> bool {
-            msg_send![self, changeCurrentDirectoryPath: path]
-        }
-        pub unsafe fn fileExistsAtPath(&self, path: &NSString) -> bool {
-            msg_send![self, fileExistsAtPath: path]
-        }
+        ) -> bool;
+        #[method_id(currentDirectoryPath)]
+        pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared>;
+        # [method (changeCurrentDirectoryPath :)]
+        pub unsafe fn changeCurrentDirectoryPath(&self, path: &NSString) -> bool;
+        # [method (fileExistsAtPath :)]
+        pub unsafe fn fileExistsAtPath(&self, path: &NSString) -> bool;
+        # [method (fileExistsAtPath : isDirectory :)]
         pub unsafe fn fileExistsAtPath_isDirectory(
             &self,
             path: &NSString,
             isDirectory: *mut bool,
-        ) -> bool {
-            msg_send![self, fileExistsAtPath: path, isDirectory: isDirectory]
-        }
-        pub unsafe fn isReadableFileAtPath(&self, path: &NSString) -> bool {
-            msg_send![self, isReadableFileAtPath: path]
-        }
-        pub unsafe fn isWritableFileAtPath(&self, path: &NSString) -> bool {
-            msg_send![self, isWritableFileAtPath: path]
-        }
-        pub unsafe fn isExecutableFileAtPath(&self, path: &NSString) -> bool {
-            msg_send![self, isExecutableFileAtPath: path]
-        }
-        pub unsafe fn isDeletableFileAtPath(&self, path: &NSString) -> bool {
-            msg_send![self, isDeletableFileAtPath: path]
-        }
+        ) -> bool;
+        # [method (isReadableFileAtPath :)]
+        pub unsafe fn isReadableFileAtPath(&self, path: &NSString) -> bool;
+        # [method (isWritableFileAtPath :)]
+        pub unsafe fn isWritableFileAtPath(&self, path: &NSString) -> bool;
+        # [method (isExecutableFileAtPath :)]
+        pub unsafe fn isExecutableFileAtPath(&self, path: &NSString) -> bool;
+        # [method (isDeletableFileAtPath :)]
+        pub unsafe fn isDeletableFileAtPath(&self, path: &NSString) -> bool;
+        # [method (contentsEqualAtPath : andPath :)]
         pub unsafe fn contentsEqualAtPath_andPath(
             &self,
             path1: &NSString,
             path2: &NSString,
-        ) -> bool {
-            msg_send![self, contentsEqualAtPath: path1, andPath: path2]
-        }
-        pub unsafe fn displayNameAtPath(&self, path: &NSString) -> Id<NSString, Shared> {
-            msg_send_id![self, displayNameAtPath: path]
-        }
+        ) -> bool;
+        # [method_id (displayNameAtPath :)]
+        pub unsafe fn displayNameAtPath(&self, path: &NSString) -> Id<NSString, Shared>;
+        # [method_id (componentsToDisplayForPath :)]
         pub unsafe fn componentsToDisplayForPath(
             &self,
             path: &NSString,
-        ) -> Option<Id<NSArray<NSString>, Shared>> {
-            msg_send_id![self, componentsToDisplayForPath: path]
-        }
+        ) -> Option<Id<NSArray<NSString>, Shared>>;
+        # [method_id (enumeratorAtPath :)]
         pub unsafe fn enumeratorAtPath(
             &self,
             path: &NSString,
-        ) -> Option<Id<NSDirectoryEnumerator<NSString>, Shared>> {
-            msg_send_id![self, enumeratorAtPath: path]
-        }
+        ) -> Option<Id<NSDirectoryEnumerator<NSString>, Shared>>;
+        # [method_id (enumeratorAtURL : includingPropertiesForKeys : options : errorHandler :)]
         pub unsafe fn enumeratorAtURL_includingPropertiesForKeys_options_errorHandler(
             &self,
             url: &NSURL,
             keys: Option<&NSArray<NSURLResourceKey>>,
             mask: NSDirectoryEnumerationOptions,
             handler: TodoBlock,
-        ) -> Option<Id<NSDirectoryEnumerator<NSURL>, Shared>> {
-            msg_send_id![
-                self,
-                enumeratorAtURL: url,
-                includingPropertiesForKeys: keys,
-                options: mask,
-                errorHandler: handler
-            ]
-        }
+        ) -> Option<Id<NSDirectoryEnumerator<NSURL>, Shared>>;
+        # [method_id (subpathsAtPath :)]
         pub unsafe fn subpathsAtPath(
             &self,
             path: &NSString,
-        ) -> Option<Id<NSArray<NSString>, Shared>> {
-            msg_send_id![self, subpathsAtPath: path]
-        }
-        pub unsafe fn contentsAtPath(&self, path: &NSString) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, contentsAtPath: path]
-        }
+        ) -> Option<Id<NSArray<NSString>, Shared>>;
+        # [method_id (contentsAtPath :)]
+        pub unsafe fn contentsAtPath(&self, path: &NSString) -> Option<Id<NSData, Shared>>;
+        # [method (createFileAtPath : contents : attributes :)]
         pub unsafe fn createFileAtPath_contents_attributes(
             &self,
             path: &NSString,
             data: Option<&NSData>,
             attr: Option<&NSDictionary<NSFileAttributeKey, Object>>,
-        ) -> bool {
-            msg_send![
-                self,
-                createFileAtPath: path,
-                contents: data,
-                attributes: attr
-            ]
-        }
-        pub unsafe fn fileSystemRepresentationWithPath(&self, path: &NSString) -> NonNull<c_char> {
-            msg_send![self, fileSystemRepresentationWithPath: path]
-        }
+        ) -> bool;
+        # [method (fileSystemRepresentationWithPath :)]
+        pub unsafe fn fileSystemRepresentationWithPath(&self, path: &NSString) -> NonNull<c_char>;
+        # [method_id (stringWithFileSystemRepresentation : length :)]
         pub unsafe fn stringWithFileSystemRepresentation_length(
             &self,
             str: NonNull<c_char>,
             len: NSUInteger,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, stringWithFileSystemRepresentation: str, length: len]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method (replaceItemAtURL : withItemAtURL : backupItemName : options : resultingItemURL : error :)]
         pub unsafe fn replaceItemAtURL_withItemAtURL_backupItemName_options_resultingItemURL_error(
             &self,
             originalItemURL: &NSURL,
@@ -471,119 +334,75 @@ extern_methods!(
             backupItemName: Option<&NSString>,
             options: NSFileManagerItemReplacementOptions,
             resultingURL: Option<&mut Option<Id<NSURL, Shared>>>,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                replaceItemAtURL: originalItemURL,
-                withItemAtURL: newItemURL,
-                backupItemName: backupItemName,
-                options: options,
-                resultingItemURL: resultingURL,
-                error: _
-            ]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (setUbiquitous : itemAtURL : destinationURL : error :)]
         pub unsafe fn setUbiquitous_itemAtURL_destinationURL_error(
             &self,
             flag: bool,
             url: &NSURL,
             destinationURL: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![
-                self,
-                setUbiquitous: flag,
-                itemAtURL: url,
-                destinationURL: destinationURL,
-                error: _
-            ]
-        }
-        pub unsafe fn isUbiquitousItemAtURL(&self, url: &NSURL) -> bool {
-            msg_send![self, isUbiquitousItemAtURL: url]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (isUbiquitousItemAtURL :)]
+        pub unsafe fn isUbiquitousItemAtURL(&self, url: &NSURL) -> bool;
+        # [method (startDownloadingUbiquitousItemAtURL : error :)]
         pub unsafe fn startDownloadingUbiquitousItemAtURL_error(
             &self,
             url: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, startDownloadingUbiquitousItemAtURL: url, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method (evictUbiquitousItemAtURL : error :)]
         pub unsafe fn evictUbiquitousItemAtURL_error(
             &self,
             url: &NSURL,
-        ) -> Result<(), Id<NSError, Shared>> {
-            msg_send![self, evictUbiquitousItemAtURL: url, error: _]
-        }
+        ) -> Result<(), Id<NSError, Shared>>;
+        # [method_id (URLForUbiquityContainerIdentifier :)]
         pub unsafe fn URLForUbiquityContainerIdentifier(
             &self,
             containerIdentifier: Option<&NSString>,
-        ) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, URLForUbiquityContainerIdentifier: containerIdentifier]
-        }
+        ) -> Option<Id<NSURL, Shared>>;
+        # [method_id (URLForPublishingUbiquitousItemAtURL : expirationDate : error :)]
         pub unsafe fn URLForPublishingUbiquitousItemAtURL_expirationDate_error(
             &self,
             url: &NSURL,
             outDate: Option<&mut Option<Id<NSDate, Shared>>>,
-        ) -> Result<Id<NSURL, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                self,
-                URLForPublishingUbiquitousItemAtURL: url,
-                expirationDate: outDate,
-                error: _
-            ]
-        }
-        pub unsafe fn ubiquityIdentityToken(&self) -> Option<Id<TodoProtocols, Shared>> {
-            msg_send_id![self, ubiquityIdentityToken]
-        }
+        ) -> Result<Id<NSURL, Shared>, Id<NSError, Shared>>;
+        #[method_id(ubiquityIdentityToken)]
+        pub unsafe fn ubiquityIdentityToken(&self) -> Option<Id<TodoProtocols, Shared>>;
+        # [method (getFileProviderServicesForItemAtURL : completionHandler :)]
         pub unsafe fn getFileProviderServicesForItemAtURL_completionHandler(
             &self,
             url: &NSURL,
             completionHandler: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                getFileProviderServicesForItemAtURL: url,
-                completionHandler: completionHandler
-            ]
-        }
+        );
+        # [method_id (containerURLForSecurityApplicationGroupIdentifier :)]
         pub unsafe fn containerURLForSecurityApplicationGroupIdentifier(
             &self,
             groupIdentifier: &NSString,
-        ) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![
-                self,
-                containerURLForSecurityApplicationGroupIdentifier: groupIdentifier
-            ]
-        }
+        ) -> Option<Id<NSURL, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSUserInformation"]
     unsafe impl NSFileManager {
-        pub unsafe fn homeDirectoryForCurrentUser(&self) -> Id<NSURL, Shared> {
-            msg_send_id![self, homeDirectoryForCurrentUser]
-        }
-        pub unsafe fn temporaryDirectory(&self) -> Id<NSURL, Shared> {
-            msg_send_id![self, temporaryDirectory]
-        }
-        pub unsafe fn homeDirectoryForUser(
-            &self,
-            userName: &NSString,
-        ) -> Option<Id<NSURL, Shared>> {
-            msg_send_id![self, homeDirectoryForUser: userName]
-        }
+        #[method_id(homeDirectoryForCurrentUser)]
+        pub unsafe fn homeDirectoryForCurrentUser(&self) -> Id<NSURL, Shared>;
+        #[method_id(temporaryDirectory)]
+        pub unsafe fn temporaryDirectory(&self) -> Id<NSURL, Shared>;
+        # [method_id (homeDirectoryForUser :)]
+        pub unsafe fn homeDirectoryForUser(&self, userName: &NSString)
+            -> Option<Id<NSURL, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSCopyLinkMoveHandler"]
     unsafe impl NSObject {
+        # [method (fileManager : shouldProceedAfterError :)]
         pub unsafe fn fileManager_shouldProceedAfterError(
             &self,
             fm: &NSFileManager,
             errorInfo: &NSDictionary,
-        ) -> bool {
-            msg_send![self, fileManager: fm, shouldProceedAfterError: errorInfo]
-        }
-        pub unsafe fn fileManager_willProcessPath(&self, fm: &NSFileManager, path: &NSString) {
-            msg_send![self, fileManager: fm, willProcessPath: path]
-        }
+        ) -> bool;
+        # [method (fileManager : willProcessPath :)]
+        pub unsafe fn fileManager_willProcessPath(&self, fm: &NSFileManager, path: &NSString);
     }
 );
 pub type NSFileManagerDelegate = NSObject;
@@ -596,28 +415,22 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<ObjectType: Message> NSDirectoryEnumerator<ObjectType> {
+        #[method_id(fileAttributes)]
         pub unsafe fn fileAttributes(
             &self,
-        ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>> {
-            msg_send_id![self, fileAttributes]
-        }
+        ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>>;
+        #[method_id(directoryAttributes)]
         pub unsafe fn directoryAttributes(
             &self,
-        ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>> {
-            msg_send_id![self, directoryAttributes]
-        }
-        pub unsafe fn isEnumeratingDirectoryPostOrder(&self) -> bool {
-            msg_send![self, isEnumeratingDirectoryPostOrder]
-        }
-        pub unsafe fn skipDescendents(&self) {
-            msg_send![self, skipDescendents]
-        }
-        pub unsafe fn level(&self) -> NSUInteger {
-            msg_send![self, level]
-        }
-        pub unsafe fn skipDescendants(&self) {
-            msg_send![self, skipDescendants]
-        }
+        ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>>;
+        #[method(isEnumeratingDirectoryPostOrder)]
+        pub unsafe fn isEnumeratingDirectoryPostOrder(&self) -> bool;
+        #[method(skipDescendents)]
+        pub unsafe fn skipDescendents(&self);
+        #[method(level)]
+        pub unsafe fn level(&self) -> NSUInteger;
+        #[method(skipDescendants)]
+        pub unsafe fn skipDescendants(&self);
     }
 );
 extern_class!(
@@ -629,70 +442,49 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileProviderService {
+        # [method (getFileProviderConnectionWithCompletionHandler :)]
         pub unsafe fn getFileProviderConnectionWithCompletionHandler(
             &self,
             completionHandler: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                getFileProviderConnectionWithCompletionHandler: completionHandler
-            ]
-        }
-        pub unsafe fn name(&self) -> Id<NSFileProviderServiceName, Shared> {
-            msg_send_id![self, name]
-        }
+        );
+        #[method_id(name)]
+        pub unsafe fn name(&self) -> Id<NSFileProviderServiceName, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSFileAttributes"]
     unsafe impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
-        pub unsafe fn fileSize(&self) -> c_ulonglong {
-            msg_send![self, fileSize]
-        }
-        pub unsafe fn fileModificationDate(&self) -> Option<Id<NSDate, Shared>> {
-            msg_send_id![self, fileModificationDate]
-        }
-        pub unsafe fn fileType(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, fileType]
-        }
-        pub unsafe fn filePosixPermissions(&self) -> NSUInteger {
-            msg_send![self, filePosixPermissions]
-        }
-        pub unsafe fn fileOwnerAccountName(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, fileOwnerAccountName]
-        }
-        pub unsafe fn fileGroupOwnerAccountName(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, fileGroupOwnerAccountName]
-        }
-        pub unsafe fn fileSystemNumber(&self) -> NSInteger {
-            msg_send![self, fileSystemNumber]
-        }
-        pub unsafe fn fileSystemFileNumber(&self) -> NSUInteger {
-            msg_send![self, fileSystemFileNumber]
-        }
-        pub unsafe fn fileExtensionHidden(&self) -> bool {
-            msg_send![self, fileExtensionHidden]
-        }
-        pub unsafe fn fileHFSCreatorCode(&self) -> OSType {
-            msg_send![self, fileHFSCreatorCode]
-        }
-        pub unsafe fn fileHFSTypeCode(&self) -> OSType {
-            msg_send![self, fileHFSTypeCode]
-        }
-        pub unsafe fn fileIsImmutable(&self) -> bool {
-            msg_send![self, fileIsImmutable]
-        }
-        pub unsafe fn fileIsAppendOnly(&self) -> bool {
-            msg_send![self, fileIsAppendOnly]
-        }
-        pub unsafe fn fileCreationDate(&self) -> Option<Id<NSDate, Shared>> {
-            msg_send_id![self, fileCreationDate]
-        }
-        pub unsafe fn fileOwnerAccountID(&self) -> Option<Id<NSNumber, Shared>> {
-            msg_send_id![self, fileOwnerAccountID]
-        }
-        pub unsafe fn fileGroupOwnerAccountID(&self) -> Option<Id<NSNumber, Shared>> {
-            msg_send_id![self, fileGroupOwnerAccountID]
-        }
+        #[method(fileSize)]
+        pub unsafe fn fileSize(&self) -> c_ulonglong;
+        #[method_id(fileModificationDate)]
+        pub unsafe fn fileModificationDate(&self) -> Option<Id<NSDate, Shared>>;
+        #[method_id(fileType)]
+        pub unsafe fn fileType(&self) -> Option<Id<NSString, Shared>>;
+        #[method(filePosixPermissions)]
+        pub unsafe fn filePosixPermissions(&self) -> NSUInteger;
+        #[method_id(fileOwnerAccountName)]
+        pub unsafe fn fileOwnerAccountName(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(fileGroupOwnerAccountName)]
+        pub unsafe fn fileGroupOwnerAccountName(&self) -> Option<Id<NSString, Shared>>;
+        #[method(fileSystemNumber)]
+        pub unsafe fn fileSystemNumber(&self) -> NSInteger;
+        #[method(fileSystemFileNumber)]
+        pub unsafe fn fileSystemFileNumber(&self) -> NSUInteger;
+        #[method(fileExtensionHidden)]
+        pub unsafe fn fileExtensionHidden(&self) -> bool;
+        #[method(fileHFSCreatorCode)]
+        pub unsafe fn fileHFSCreatorCode(&self) -> OSType;
+        #[method(fileHFSTypeCode)]
+        pub unsafe fn fileHFSTypeCode(&self) -> OSType;
+        #[method(fileIsImmutable)]
+        pub unsafe fn fileIsImmutable(&self) -> bool;
+        #[method(fileIsAppendOnly)]
+        pub unsafe fn fileIsAppendOnly(&self) -> bool;
+        #[method_id(fileCreationDate)]
+        pub unsafe fn fileCreationDate(&self) -> Option<Id<NSDate, Shared>>;
+        #[method_id(fileOwnerAccountID)]
+        pub unsafe fn fileOwnerAccountID(&self) -> Option<Id<NSNumber, Shared>>;
+        #[method_id(fileGroupOwnerAccountID)]
+        pub unsafe fn fileGroupOwnerAccountID(&self) -> Option<Id<NSNumber, Shared>>;
     }
 );

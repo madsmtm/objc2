@@ -8,7 +8,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSScriptObjectSpecifier;
@@ -18,141 +18,97 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSScriptObjectSpecifier {
+        # [method_id (objectSpecifierWithDescriptor :)]
         pub unsafe fn objectSpecifierWithDescriptor(
             descriptor: &NSAppleEventDescriptor,
-        ) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-            msg_send_id![Self::class(), objectSpecifierWithDescriptor: descriptor]
-        }
+        ) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
+        # [method_id (initWithContainerSpecifier : key :)]
         pub unsafe fn initWithContainerSpecifier_key(
             &self,
             container: &NSScriptObjectSpecifier,
             property: &NSString,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithContainerSpecifier: container, key: property]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithContainerClassDescription : containerSpecifier : key :)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key(
             &self,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithContainerClassDescription: classDesc,
-                containerSpecifier: container,
-                key: property
-            ]
-        }
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
-        pub unsafe fn childSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-            msg_send_id![self, childSpecifier]
-        }
-        pub unsafe fn setChildSpecifier(&self, childSpecifier: Option<&NSScriptObjectSpecifier>) {
-            msg_send![self, setChildSpecifier: childSpecifier]
-        }
-        pub unsafe fn containerSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-            msg_send_id![self, containerSpecifier]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        #[method_id(childSpecifier)]
+        pub unsafe fn childSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
+        # [method (setChildSpecifier :)]
+        pub unsafe fn setChildSpecifier(&self, childSpecifier: Option<&NSScriptObjectSpecifier>);
+        #[method_id(containerSpecifier)]
+        pub unsafe fn containerSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
+        # [method (setContainerSpecifier :)]
         pub unsafe fn setContainerSpecifier(
             &self,
             containerSpecifier: Option<&NSScriptObjectSpecifier>,
-        ) {
-            msg_send![self, setContainerSpecifier: containerSpecifier]
-        }
-        pub unsafe fn containerIsObjectBeingTested(&self) -> bool {
-            msg_send![self, containerIsObjectBeingTested]
-        }
-        pub unsafe fn setContainerIsObjectBeingTested(&self, containerIsObjectBeingTested: bool) {
-            msg_send![
-                self,
-                setContainerIsObjectBeingTested: containerIsObjectBeingTested
-            ]
-        }
-        pub unsafe fn containerIsRangeContainerObject(&self) -> bool {
-            msg_send![self, containerIsRangeContainerObject]
-        }
+        );
+        #[method(containerIsObjectBeingTested)]
+        pub unsafe fn containerIsObjectBeingTested(&self) -> bool;
+        # [method (setContainerIsObjectBeingTested :)]
+        pub unsafe fn setContainerIsObjectBeingTested(&self, containerIsObjectBeingTested: bool);
+        #[method(containerIsRangeContainerObject)]
+        pub unsafe fn containerIsRangeContainerObject(&self) -> bool;
+        # [method (setContainerIsRangeContainerObject :)]
         pub unsafe fn setContainerIsRangeContainerObject(
             &self,
             containerIsRangeContainerObject: bool,
-        ) {
-            msg_send![
-                self,
-                setContainerIsRangeContainerObject: containerIsRangeContainerObject
-            ]
-        }
-        pub unsafe fn key(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, key]
-        }
-        pub unsafe fn setKey(&self, key: &NSString) {
-            msg_send![self, setKey: key]
-        }
+        );
+        #[method_id(key)]
+        pub unsafe fn key(&self) -> Id<NSString, Shared>;
+        # [method (setKey :)]
+        pub unsafe fn setKey(&self, key: &NSString);
+        #[method_id(containerClassDescription)]
         pub unsafe fn containerClassDescription(
             &self,
-        ) -> Option<Id<NSScriptClassDescription, Shared>> {
-            msg_send_id![self, containerClassDescription]
-        }
+        ) -> Option<Id<NSScriptClassDescription, Shared>>;
+        # [method (setContainerClassDescription :)]
         pub unsafe fn setContainerClassDescription(
             &self,
             containerClassDescription: Option<&NSScriptClassDescription>,
-        ) {
-            msg_send![
-                self,
-                setContainerClassDescription: containerClassDescription
-            ]
-        }
-        pub unsafe fn keyClassDescription(&self) -> Option<Id<NSScriptClassDescription, Shared>> {
-            msg_send_id![self, keyClassDescription]
-        }
+        );
+        #[method_id(keyClassDescription)]
+        pub unsafe fn keyClassDescription(&self) -> Option<Id<NSScriptClassDescription, Shared>>;
+        # [method (indicesOfObjectsByEvaluatingWithContainer : count :)]
         pub unsafe fn indicesOfObjectsByEvaluatingWithContainer_count(
             &self,
             container: &Object,
             count: NonNull<NSInteger>,
-        ) -> *mut NSInteger {
-            msg_send![
-                self,
-                indicesOfObjectsByEvaluatingWithContainer: container,
-                count: count
-            ]
-        }
+        ) -> *mut NSInteger;
+        # [method_id (objectsByEvaluatingWithContainers :)]
         pub unsafe fn objectsByEvaluatingWithContainers(
             &self,
             containers: &Object,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, objectsByEvaluatingWithContainers: containers]
-        }
-        pub unsafe fn objectsByEvaluatingSpecifier(&self) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, objectsByEvaluatingSpecifier]
-        }
-        pub unsafe fn evaluationErrorNumber(&self) -> NSInteger {
-            msg_send![self, evaluationErrorNumber]
-        }
-        pub unsafe fn setEvaluationErrorNumber(&self, evaluationErrorNumber: NSInteger) {
-            msg_send![self, setEvaluationErrorNumber: evaluationErrorNumber]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        #[method_id(objectsByEvaluatingSpecifier)]
+        pub unsafe fn objectsByEvaluatingSpecifier(&self) -> Option<Id<Object, Shared>>;
+        #[method(evaluationErrorNumber)]
+        pub unsafe fn evaluationErrorNumber(&self) -> NSInteger;
+        # [method (setEvaluationErrorNumber :)]
+        pub unsafe fn setEvaluationErrorNumber(&self, evaluationErrorNumber: NSInteger);
+        #[method_id(evaluationErrorSpecifier)]
         pub unsafe fn evaluationErrorSpecifier(
             &self,
-        ) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-            msg_send_id![self, evaluationErrorSpecifier]
-        }
-        pub unsafe fn descriptor(&self) -> Option<Id<NSAppleEventDescriptor, Shared>> {
-            msg_send_id![self, descriptor]
-        }
+        ) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
+        #[method_id(descriptor)]
+        pub unsafe fn descriptor(&self) -> Option<Id<NSAppleEventDescriptor, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSScriptObjectSpecifiers"]
     unsafe impl NSObject {
-        pub unsafe fn objectSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-            msg_send_id![self, objectSpecifier]
-        }
+        #[method_id(objectSpecifier)]
+        pub unsafe fn objectSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
+        # [method_id (indicesOfObjectsByEvaluatingObjectSpecifier :)]
         pub unsafe fn indicesOfObjectsByEvaluatingObjectSpecifier(
             &self,
             specifier: &NSScriptObjectSpecifier,
-        ) -> Option<Id<NSArray<NSNumber>, Shared>> {
-            msg_send_id![self, indicesOfObjectsByEvaluatingObjectSpecifier: specifier]
-        }
+        ) -> Option<Id<NSArray<NSNumber>, Shared>>;
     }
 );
 extern_class!(
@@ -164,27 +120,18 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSIndexSpecifier {
+        # [method_id (initWithContainerClassDescription : containerSpecifier : key : index :)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_index(
             &self,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
             index: NSInteger,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithContainerClassDescription: classDesc,
-                containerSpecifier: container,
-                key: property,
-                index: index
-            ]
-        }
-        pub unsafe fn index(&self) -> NSInteger {
-            msg_send![self, index]
-        }
-        pub unsafe fn setIndex(&self, index: NSInteger) {
-            msg_send![self, setIndex: index]
-        }
+        ) -> Id<Self, Shared>;
+        #[method(index)]
+        pub unsafe fn index(&self) -> NSInteger;
+        # [method (setIndex :)]
+        pub unsafe fn setIndex(&self, index: NSInteger);
     }
 );
 extern_class!(
@@ -206,30 +153,20 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSNameSpecifier {
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithContainerClassDescription : containerSpecifier : key : name :)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_name(
             &self,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
             name: &NSString,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithContainerClassDescription: classDesc,
-                containerSpecifier: container,
-                key: property,
-                name: name
-            ]
-        }
-        pub unsafe fn name(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, name]
-        }
-        pub unsafe fn setName(&self, name: &NSString) {
-            msg_send![self, setName: name]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(name)]
+        pub unsafe fn name(&self) -> Id<NSString, Shared>;
+        # [method (setName :)]
+        pub unsafe fn setName(&self, name: &NSString);
     }
 );
 extern_class!(
@@ -241,40 +178,31 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSPositionalSpecifier {
+        # [method_id (initWithPosition : objectSpecifier :)]
         pub unsafe fn initWithPosition_objectSpecifier(
             &self,
             position: NSInsertionPosition,
             specifier: &NSScriptObjectSpecifier,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithPosition: position, objectSpecifier: specifier]
-        }
-        pub unsafe fn position(&self) -> NSInsertionPosition {
-            msg_send![self, position]
-        }
-        pub unsafe fn objectSpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared> {
-            msg_send_id![self, objectSpecifier]
-        }
+        ) -> Id<Self, Shared>;
+        #[method(position)]
+        pub unsafe fn position(&self) -> NSInsertionPosition;
+        #[method_id(objectSpecifier)]
+        pub unsafe fn objectSpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
+        # [method (setInsertionClassDescription :)]
         pub unsafe fn setInsertionClassDescription(
             &self,
             classDescription: &NSScriptClassDescription,
-        ) {
-            msg_send![self, setInsertionClassDescription: classDescription]
-        }
-        pub unsafe fn evaluate(&self) {
-            msg_send![self, evaluate]
-        }
-        pub unsafe fn insertionContainer(&self) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, insertionContainer]
-        }
-        pub unsafe fn insertionKey(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, insertionKey]
-        }
-        pub unsafe fn insertionIndex(&self) -> NSInteger {
-            msg_send![self, insertionIndex]
-        }
-        pub unsafe fn insertionReplaces(&self) -> bool {
-            msg_send![self, insertionReplaces]
-        }
+        );
+        #[method(evaluate)]
+        pub unsafe fn evaluate(&self);
+        #[method_id(insertionContainer)]
+        pub unsafe fn insertionContainer(&self) -> Option<Id<Object, Shared>>;
+        #[method_id(insertionKey)]
+        pub unsafe fn insertionKey(&self) -> Option<Id<NSString, Shared>>;
+        #[method(insertionIndex)]
+        pub unsafe fn insertionIndex(&self) -> NSInteger;
+        #[method(insertionReplaces)]
+        pub unsafe fn insertionReplaces(&self) -> bool;
     }
 );
 extern_class!(
@@ -306,9 +234,9 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSRangeSpecifier {
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithContainerClassDescription : containerSpecifier : key : startSpecifier : endSpecifier :)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_startSpecifier_endSpecifier(
             &self,
             classDesc: &NSScriptClassDescription,
@@ -316,28 +244,15 @@ extern_methods!(
             property: &NSString,
             startSpec: Option<&NSScriptObjectSpecifier>,
             endSpec: Option<&NSScriptObjectSpecifier>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithContainerClassDescription: classDesc,
-                containerSpecifier: container,
-                key: property,
-                startSpecifier: startSpec,
-                endSpecifier: endSpec
-            ]
-        }
-        pub unsafe fn startSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-            msg_send_id![self, startSpecifier]
-        }
-        pub unsafe fn setStartSpecifier(&self, startSpecifier: Option<&NSScriptObjectSpecifier>) {
-            msg_send![self, setStartSpecifier: startSpecifier]
-        }
-        pub unsafe fn endSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-            msg_send_id![self, endSpecifier]
-        }
-        pub unsafe fn setEndSpecifier(&self, endSpecifier: Option<&NSScriptObjectSpecifier>) {
-            msg_send![self, setEndSpecifier: endSpecifier]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(startSpecifier)]
+        pub unsafe fn startSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
+        # [method (setStartSpecifier :)]
+        pub unsafe fn setStartSpecifier(&self, startSpecifier: Option<&NSScriptObjectSpecifier>);
+        #[method_id(endSpecifier)]
+        pub unsafe fn endSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
+        # [method (setEndSpecifier :)]
+        pub unsafe fn setEndSpecifier(&self, endSpecifier: Option<&NSScriptObjectSpecifier>);
     }
 );
 extern_class!(
@@ -349,9 +264,9 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSRelativeSpecifier {
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithContainerClassDescription : containerSpecifier : key : relativePosition : baseSpecifier :)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_relativePosition_baseSpecifier(
             &self,
             classDesc: &NSScriptClassDescription,
@@ -359,28 +274,15 @@ extern_methods!(
             property: &NSString,
             relPos: NSRelativePosition,
             baseSpecifier: Option<&NSScriptObjectSpecifier>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithContainerClassDescription: classDesc,
-                containerSpecifier: container,
-                key: property,
-                relativePosition: relPos,
-                baseSpecifier: baseSpecifier
-            ]
-        }
-        pub unsafe fn relativePosition(&self) -> NSRelativePosition {
-            msg_send![self, relativePosition]
-        }
-        pub unsafe fn setRelativePosition(&self, relativePosition: NSRelativePosition) {
-            msg_send![self, setRelativePosition: relativePosition]
-        }
-        pub unsafe fn baseSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>> {
-            msg_send_id![self, baseSpecifier]
-        }
-        pub unsafe fn setBaseSpecifier(&self, baseSpecifier: Option<&NSScriptObjectSpecifier>) {
-            msg_send![self, setBaseSpecifier: baseSpecifier]
-        }
+        ) -> Id<Self, Shared>;
+        #[method(relativePosition)]
+        pub unsafe fn relativePosition(&self) -> NSRelativePosition;
+        # [method (setRelativePosition :)]
+        pub unsafe fn setRelativePosition(&self, relativePosition: NSRelativePosition);
+        #[method_id(baseSpecifier)]
+        pub unsafe fn baseSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
+        # [method (setBaseSpecifier :)]
+        pub unsafe fn setBaseSpecifier(&self, baseSpecifier: Option<&NSScriptObjectSpecifier>);
     }
 );
 extern_class!(
@@ -392,30 +294,20 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUniqueIDSpecifier {
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithContainerClassDescription : containerSpecifier : key : uniqueID :)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_uniqueID(
             &self,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
             uniqueID: &Object,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithContainerClassDescription: classDesc,
-                containerSpecifier: container,
-                key: property,
-                uniqueID: uniqueID
-            ]
-        }
-        pub unsafe fn uniqueID(&self) -> Id<Object, Shared> {
-            msg_send_id![self, uniqueID]
-        }
-        pub unsafe fn setUniqueID(&self, uniqueID: &Object) {
-            msg_send![self, setUniqueID: uniqueID]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(uniqueID)]
+        pub unsafe fn uniqueID(&self) -> Id<Object, Shared>;
+        # [method (setUniqueID :)]
+        pub unsafe fn setUniqueID(&self, uniqueID: &Object);
     }
 );
 extern_class!(
@@ -427,62 +319,41 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSWhoseSpecifier {
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: inCoder]
-        }
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        # [method_id (initWithContainerClassDescription : containerSpecifier : key : test :)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_test(
             &self,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
             test: &NSScriptWhoseTest,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithContainerClassDescription: classDesc,
-                containerSpecifier: container,
-                key: property,
-                test: test
-            ]
-        }
-        pub unsafe fn test(&self) -> Id<NSScriptWhoseTest, Shared> {
-            msg_send_id![self, test]
-        }
-        pub unsafe fn setTest(&self, test: &NSScriptWhoseTest) {
-            msg_send![self, setTest: test]
-        }
-        pub unsafe fn startSubelementIdentifier(&self) -> NSWhoseSubelementIdentifier {
-            msg_send![self, startSubelementIdentifier]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(test)]
+        pub unsafe fn test(&self) -> Id<NSScriptWhoseTest, Shared>;
+        # [method (setTest :)]
+        pub unsafe fn setTest(&self, test: &NSScriptWhoseTest);
+        #[method(startSubelementIdentifier)]
+        pub unsafe fn startSubelementIdentifier(&self) -> NSWhoseSubelementIdentifier;
+        # [method (setStartSubelementIdentifier :)]
         pub unsafe fn setStartSubelementIdentifier(
             &self,
             startSubelementIdentifier: NSWhoseSubelementIdentifier,
-        ) {
-            msg_send![
-                self,
-                setStartSubelementIdentifier: startSubelementIdentifier
-            ]
-        }
-        pub unsafe fn startSubelementIndex(&self) -> NSInteger {
-            msg_send![self, startSubelementIndex]
-        }
-        pub unsafe fn setStartSubelementIndex(&self, startSubelementIndex: NSInteger) {
-            msg_send![self, setStartSubelementIndex: startSubelementIndex]
-        }
-        pub unsafe fn endSubelementIdentifier(&self) -> NSWhoseSubelementIdentifier {
-            msg_send![self, endSubelementIdentifier]
-        }
+        );
+        #[method(startSubelementIndex)]
+        pub unsafe fn startSubelementIndex(&self) -> NSInteger;
+        # [method (setStartSubelementIndex :)]
+        pub unsafe fn setStartSubelementIndex(&self, startSubelementIndex: NSInteger);
+        #[method(endSubelementIdentifier)]
+        pub unsafe fn endSubelementIdentifier(&self) -> NSWhoseSubelementIdentifier;
+        # [method (setEndSubelementIdentifier :)]
         pub unsafe fn setEndSubelementIdentifier(
             &self,
             endSubelementIdentifier: NSWhoseSubelementIdentifier,
-        ) {
-            msg_send![self, setEndSubelementIdentifier: endSubelementIdentifier]
-        }
-        pub unsafe fn endSubelementIndex(&self) -> NSInteger {
-            msg_send![self, endSubelementIndex]
-        }
-        pub unsafe fn setEndSubelementIndex(&self, endSubelementIndex: NSInteger) {
-            msg_send![self, setEndSubelementIndex: endSubelementIndex]
-        }
+        );
+        #[method(endSubelementIndex)]
+        pub unsafe fn endSubelementIndex(&self) -> NSInteger;
+        # [method (setEndSubelementIndex :)]
+        pub unsafe fn setEndSubelementIndex(&self, endSubelementIndex: NSInteger);
     }
 );

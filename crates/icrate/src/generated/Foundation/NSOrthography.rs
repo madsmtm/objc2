@@ -5,7 +5,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSOrthography;
@@ -15,65 +15,50 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSOrthography {
-        pub unsafe fn dominantScript(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, dominantScript]
-        }
-        pub unsafe fn languageMap(&self) -> Id<NSDictionary<NSString, NSArray<NSString>>, Shared> {
-            msg_send_id![self, languageMap]
-        }
+        #[method_id(dominantScript)]
+        pub unsafe fn dominantScript(&self) -> Id<NSString, Shared>;
+        #[method_id(languageMap)]
+        pub unsafe fn languageMap(&self) -> Id<NSDictionary<NSString, NSArray<NSString>>, Shared>;
+        # [method_id (initWithDominantScript : languageMap :)]
         pub unsafe fn initWithDominantScript_languageMap(
             &self,
             script: &NSString,
             map: &NSDictionary<NSString, NSArray<NSString>>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithDominantScript: script, languageMap: map]
-        }
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: coder]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSOrthographyExtended"]
     unsafe impl NSOrthography {
+        # [method_id (languagesForScript :)]
         pub unsafe fn languagesForScript(
             &self,
             script: &NSString,
-        ) -> Option<Id<NSArray<NSString>, Shared>> {
-            msg_send_id![self, languagesForScript: script]
-        }
+        ) -> Option<Id<NSArray<NSString>, Shared>>;
+        # [method_id (dominantLanguageForScript :)]
         pub unsafe fn dominantLanguageForScript(
             &self,
             script: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, dominantLanguageForScript: script]
-        }
-        pub unsafe fn dominantLanguage(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, dominantLanguage]
-        }
-        pub unsafe fn allScripts(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, allScripts]
-        }
-        pub unsafe fn allLanguages(&self) -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![self, allLanguages]
-        }
-        pub unsafe fn defaultOrthographyForLanguage(language: &NSString) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), defaultOrthographyForLanguage: language]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(dominantLanguage)]
+        pub unsafe fn dominantLanguage(&self) -> Id<NSString, Shared>;
+        #[method_id(allScripts)]
+        pub unsafe fn allScripts(&self) -> Id<NSArray<NSString>, Shared>;
+        #[method_id(allLanguages)]
+        pub unsafe fn allLanguages(&self) -> Id<NSArray<NSString>, Shared>;
+        # [method_id (defaultOrthographyForLanguage :)]
+        pub unsafe fn defaultOrthographyForLanguage(language: &NSString) -> Id<Self, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSOrthographyCreation"]
     unsafe impl NSOrthography {
+        # [method_id (orthographyWithDominantScript : languageMap :)]
         pub unsafe fn orthographyWithDominantScript_languageMap(
             script: &NSString,
             map: &NSDictionary<NSString, NSArray<NSString>>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                Self::class(),
-                orthographyWithDominantScript: script,
-                languageMap: map
-            ]
-        }
+        ) -> Id<Self, Shared>;
     }
 );

@@ -10,7 +10,7 @@ use crate::Foundation::generated::NSZone::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSCopying = NSObject;
 pub type NSMutableCopying = NSObject;
 pub type NSCoding = NSObject;
@@ -18,37 +18,31 @@ pub type NSSecureCoding = NSObject;
 extern_methods!(
     #[doc = "NSCoderMethods"]
     unsafe impl NSObject {
-        pub unsafe fn version() -> NSInteger {
-            msg_send![Self::class(), version]
-        }
-        pub unsafe fn setVersion(aVersion: NSInteger) {
-            msg_send![Self::class(), setVersion: aVersion]
-        }
-        pub unsafe fn classForCoder(&self) -> &Class {
-            msg_send![self, classForCoder]
-        }
+        #[method(version)]
+        pub unsafe fn version() -> NSInteger;
+        # [method (setVersion :)]
+        pub unsafe fn setVersion(aVersion: NSInteger);
+        #[method(classForCoder)]
+        pub unsafe fn classForCoder(&self) -> &Class;
+        # [method_id (replacementObjectForCoder :)]
         pub unsafe fn replacementObjectForCoder(
             &self,
             coder: &NSCoder,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, replacementObjectForCoder: coder]
-        }
+        ) -> Option<Id<Object, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSDeprecatedMethods"]
     unsafe impl NSObject {
-        pub unsafe fn poseAsClass(aClass: &Class) {
-            msg_send![Self::class(), poseAsClass: aClass]
-        }
+        # [method (poseAsClass :)]
+        pub unsafe fn poseAsClass(aClass: &Class);
     }
 );
 pub type NSDiscardableContent = NSObject;
 extern_methods!(
     #[doc = "NSDiscardableContentProxy"]
     unsafe impl NSObject {
-        pub unsafe fn autoContentAccessingProxy(&self) -> Id<Object, Shared> {
-            msg_send_id![self, autoContentAccessingProxy]
-        }
+        #[method_id(autoContentAccessingProxy)]
+        pub unsafe fn autoContentAccessingProxy(&self) -> Id<Object, Shared>;
     }
 );

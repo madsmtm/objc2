@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSURLHandleClient = NSObject;
 extern_class!(
     #[derive(Debug)]
@@ -17,91 +17,67 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLHandle {
-        pub unsafe fn registerURLHandleClass(anURLHandleSubclass: Option<&Class>) {
-            msg_send![Self::class(), registerURLHandleClass: anURLHandleSubclass]
-        }
-        pub unsafe fn URLHandleClassForURL(anURL: Option<&NSURL>) -> Option<&Class> {
-            msg_send![Self::class(), URLHandleClassForURL: anURL]
-        }
-        pub unsafe fn status(&self) -> NSURLHandleStatus {
-            msg_send![self, status]
-        }
-        pub unsafe fn failureReason(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, failureReason]
-        }
-        pub unsafe fn addClient(&self, client: Option<&NSURLHandleClient>) {
-            msg_send![self, addClient: client]
-        }
-        pub unsafe fn removeClient(&self, client: Option<&NSURLHandleClient>) {
-            msg_send![self, removeClient: client]
-        }
-        pub unsafe fn loadInBackground(&self) {
-            msg_send![self, loadInBackground]
-        }
-        pub unsafe fn cancelLoadInBackground(&self) {
-            msg_send![self, cancelLoadInBackground]
-        }
-        pub unsafe fn resourceData(&self) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, resourceData]
-        }
-        pub unsafe fn availableResourceData(&self) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, availableResourceData]
-        }
-        pub unsafe fn expectedResourceDataSize(&self) -> c_longlong {
-            msg_send![self, expectedResourceDataSize]
-        }
-        pub unsafe fn flushCachedData(&self) {
-            msg_send![self, flushCachedData]
-        }
-        pub unsafe fn backgroundLoadDidFailWithReason(&self, reason: Option<&NSString>) {
-            msg_send![self, backgroundLoadDidFailWithReason: reason]
-        }
-        pub unsafe fn didLoadBytes_loadComplete(&self, newBytes: Option<&NSData>, yorn: bool) {
-            msg_send![self, didLoadBytes: newBytes, loadComplete: yorn]
-        }
-        pub unsafe fn canInitWithURL(anURL: Option<&NSURL>) -> bool {
-            msg_send![Self::class(), canInitWithURL: anURL]
-        }
-        pub unsafe fn cachedHandleForURL(anURL: Option<&NSURL>) -> Option<Id<NSURLHandle, Shared>> {
-            msg_send_id![Self::class(), cachedHandleForURL: anURL]
-        }
+        # [method (registerURLHandleClass :)]
+        pub unsafe fn registerURLHandleClass(anURLHandleSubclass: Option<&Class>);
+        # [method (URLHandleClassForURL :)]
+        pub unsafe fn URLHandleClassForURL(anURL: Option<&NSURL>) -> Option<&Class>;
+        #[method(status)]
+        pub unsafe fn status(&self) -> NSURLHandleStatus;
+        #[method_id(failureReason)]
+        pub unsafe fn failureReason(&self) -> Option<Id<NSString, Shared>>;
+        # [method (addClient :)]
+        pub unsafe fn addClient(&self, client: Option<&NSURLHandleClient>);
+        # [method (removeClient :)]
+        pub unsafe fn removeClient(&self, client: Option<&NSURLHandleClient>);
+        #[method(loadInBackground)]
+        pub unsafe fn loadInBackground(&self);
+        #[method(cancelLoadInBackground)]
+        pub unsafe fn cancelLoadInBackground(&self);
+        #[method_id(resourceData)]
+        pub unsafe fn resourceData(&self) -> Option<Id<NSData, Shared>>;
+        #[method_id(availableResourceData)]
+        pub unsafe fn availableResourceData(&self) -> Option<Id<NSData, Shared>>;
+        #[method(expectedResourceDataSize)]
+        pub unsafe fn expectedResourceDataSize(&self) -> c_longlong;
+        #[method(flushCachedData)]
+        pub unsafe fn flushCachedData(&self);
+        # [method (backgroundLoadDidFailWithReason :)]
+        pub unsafe fn backgroundLoadDidFailWithReason(&self, reason: Option<&NSString>);
+        # [method (didLoadBytes : loadComplete :)]
+        pub unsafe fn didLoadBytes_loadComplete(&self, newBytes: Option<&NSData>, yorn: bool);
+        # [method (canInitWithURL :)]
+        pub unsafe fn canInitWithURL(anURL: Option<&NSURL>) -> bool;
+        # [method_id (cachedHandleForURL :)]
+        pub unsafe fn cachedHandleForURL(anURL: Option<&NSURL>) -> Option<Id<NSURLHandle, Shared>>;
+        # [method_id (initWithURL : cached :)]
         pub unsafe fn initWithURL_cached(
             &self,
             anURL: Option<&NSURL>,
             willCache: bool,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, initWithURL: anURL, cached: willCache]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        # [method_id (propertyForKey :)]
         pub unsafe fn propertyForKey(
             &self,
             propertyKey: Option<&NSString>,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, propertyForKey: propertyKey]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        # [method_id (propertyForKeyIfAvailable :)]
         pub unsafe fn propertyForKeyIfAvailable(
             &self,
             propertyKey: Option<&NSString>,
-        ) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, propertyForKeyIfAvailable: propertyKey]
-        }
+        ) -> Option<Id<Object, Shared>>;
+        # [method (writeProperty : forKey :)]
         pub unsafe fn writeProperty_forKey(
             &self,
             propertyValue: Option<&Object>,
             propertyKey: Option<&NSString>,
-        ) -> bool {
-            msg_send![self, writeProperty: propertyValue, forKey: propertyKey]
-        }
-        pub unsafe fn writeData(&self, data: Option<&NSData>) -> bool {
-            msg_send![self, writeData: data]
-        }
-        pub unsafe fn loadInForeground(&self) -> Option<Id<NSData, Shared>> {
-            msg_send_id![self, loadInForeground]
-        }
-        pub unsafe fn beginLoadInBackground(&self) {
-            msg_send![self, beginLoadInBackground]
-        }
-        pub unsafe fn endLoadInBackground(&self) {
-            msg_send![self, endLoadInBackground]
-        }
+        ) -> bool;
+        # [method (writeData :)]
+        pub unsafe fn writeData(&self, data: Option<&NSData>) -> bool;
+        #[method_id(loadInForeground)]
+        pub unsafe fn loadInForeground(&self) -> Option<Id<NSData, Shared>>;
+        #[method(beginLoadInBackground)]
+        pub unsafe fn beginLoadInBackground(&self);
+        #[method(endLoadInBackground)]
+        pub unsafe fn endLoadInBackground(&self);
     }
 );

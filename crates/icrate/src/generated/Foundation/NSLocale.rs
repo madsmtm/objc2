@@ -5,7 +5,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSLocaleKey = NSString;
 use super::__exported::NSArray;
 use super::__exported::NSDictionary;
@@ -19,227 +19,164 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSLocale {
-        pub unsafe fn objectForKey(&self, key: &NSLocaleKey) -> Option<Id<Object, Shared>> {
-            msg_send_id![self, objectForKey: key]
-        }
+        # [method_id (objectForKey :)]
+        pub unsafe fn objectForKey(&self, key: &NSLocaleKey) -> Option<Id<Object, Shared>>;
+        # [method_id (displayNameForKey : value :)]
         pub unsafe fn displayNameForKey_value(
             &self,
             key: &NSLocaleKey,
             value: &Object,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, displayNameForKey: key, value: value]
-        }
-        pub unsafe fn initWithLocaleIdentifier(&self, string: &NSString) -> Id<Self, Shared> {
-            msg_send_id![self, initWithLocaleIdentifier: string]
-        }
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>> {
-            msg_send_id![self, initWithCoder: coder]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        # [method_id (initWithLocaleIdentifier :)]
+        pub unsafe fn initWithLocaleIdentifier(&self, string: &NSString) -> Id<Self, Shared>;
+        # [method_id (initWithCoder :)]
+        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSExtendedLocale"]
     unsafe impl NSLocale {
-        pub unsafe fn localeIdentifier(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, localeIdentifier]
-        }
+        #[method_id(localeIdentifier)]
+        pub unsafe fn localeIdentifier(&self) -> Id<NSString, Shared>;
+        # [method_id (localizedStringForLocaleIdentifier :)]
         pub unsafe fn localizedStringForLocaleIdentifier(
             &self,
             localeIdentifier: &NSString,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, localizedStringForLocaleIdentifier: localeIdentifier]
-        }
-        pub unsafe fn languageCode(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, languageCode]
-        }
+        ) -> Id<NSString, Shared>;
+        #[method_id(languageCode)]
+        pub unsafe fn languageCode(&self) -> Id<NSString, Shared>;
+        # [method_id (localizedStringForLanguageCode :)]
         pub unsafe fn localizedStringForLanguageCode(
             &self,
             languageCode: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, localizedStringForLanguageCode: languageCode]
-        }
-        pub unsafe fn countryCode(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, countryCode]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(countryCode)]
+        pub unsafe fn countryCode(&self) -> Option<Id<NSString, Shared>>;
+        # [method_id (localizedStringForCountryCode :)]
         pub unsafe fn localizedStringForCountryCode(
             &self,
             countryCode: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, localizedStringForCountryCode: countryCode]
-        }
-        pub unsafe fn scriptCode(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, scriptCode]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(scriptCode)]
+        pub unsafe fn scriptCode(&self) -> Option<Id<NSString, Shared>>;
+        # [method_id (localizedStringForScriptCode :)]
         pub unsafe fn localizedStringForScriptCode(
             &self,
             scriptCode: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, localizedStringForScriptCode: scriptCode]
-        }
-        pub unsafe fn variantCode(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, variantCode]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(variantCode)]
+        pub unsafe fn variantCode(&self) -> Option<Id<NSString, Shared>>;
+        # [method_id (localizedStringForVariantCode :)]
         pub unsafe fn localizedStringForVariantCode(
             &self,
             variantCode: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, localizedStringForVariantCode: variantCode]
-        }
-        pub unsafe fn exemplarCharacterSet(&self) -> Id<NSCharacterSet, Shared> {
-            msg_send_id![self, exemplarCharacterSet]
-        }
-        pub unsafe fn calendarIdentifier(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, calendarIdentifier]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(exemplarCharacterSet)]
+        pub unsafe fn exemplarCharacterSet(&self) -> Id<NSCharacterSet, Shared>;
+        #[method_id(calendarIdentifier)]
+        pub unsafe fn calendarIdentifier(&self) -> Id<NSString, Shared>;
+        # [method_id (localizedStringForCalendarIdentifier :)]
         pub unsafe fn localizedStringForCalendarIdentifier(
             &self,
             calendarIdentifier: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![
-                self,
-                localizedStringForCalendarIdentifier: calendarIdentifier
-            ]
-        }
-        pub unsafe fn collationIdentifier(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, collationIdentifier]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(collationIdentifier)]
+        pub unsafe fn collationIdentifier(&self) -> Option<Id<NSString, Shared>>;
+        # [method_id (localizedStringForCollationIdentifier :)]
         pub unsafe fn localizedStringForCollationIdentifier(
             &self,
             collationIdentifier: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![
-                self,
-                localizedStringForCollationIdentifier: collationIdentifier
-            ]
-        }
-        pub unsafe fn usesMetricSystem(&self) -> bool {
-            msg_send![self, usesMetricSystem]
-        }
-        pub unsafe fn decimalSeparator(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, decimalSeparator]
-        }
-        pub unsafe fn groupingSeparator(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, groupingSeparator]
-        }
-        pub unsafe fn currencySymbol(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, currencySymbol]
-        }
-        pub unsafe fn currencyCode(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, currencyCode]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method(usesMetricSystem)]
+        pub unsafe fn usesMetricSystem(&self) -> bool;
+        #[method_id(decimalSeparator)]
+        pub unsafe fn decimalSeparator(&self) -> Id<NSString, Shared>;
+        #[method_id(groupingSeparator)]
+        pub unsafe fn groupingSeparator(&self) -> Id<NSString, Shared>;
+        #[method_id(currencySymbol)]
+        pub unsafe fn currencySymbol(&self) -> Id<NSString, Shared>;
+        #[method_id(currencyCode)]
+        pub unsafe fn currencyCode(&self) -> Option<Id<NSString, Shared>>;
+        # [method_id (localizedStringForCurrencyCode :)]
         pub unsafe fn localizedStringForCurrencyCode(
             &self,
             currencyCode: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, localizedStringForCurrencyCode: currencyCode]
-        }
-        pub unsafe fn collatorIdentifier(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, collatorIdentifier]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(collatorIdentifier)]
+        pub unsafe fn collatorIdentifier(&self) -> Id<NSString, Shared>;
+        # [method_id (localizedStringForCollatorIdentifier :)]
         pub unsafe fn localizedStringForCollatorIdentifier(
             &self,
             collatorIdentifier: &NSString,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![
-                self,
-                localizedStringForCollatorIdentifier: collatorIdentifier
-            ]
-        }
-        pub unsafe fn quotationBeginDelimiter(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, quotationBeginDelimiter]
-        }
-        pub unsafe fn quotationEndDelimiter(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, quotationEndDelimiter]
-        }
-        pub unsafe fn alternateQuotationBeginDelimiter(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, alternateQuotationBeginDelimiter]
-        }
-        pub unsafe fn alternateQuotationEndDelimiter(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, alternateQuotationEndDelimiter]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        #[method_id(quotationBeginDelimiter)]
+        pub unsafe fn quotationBeginDelimiter(&self) -> Id<NSString, Shared>;
+        #[method_id(quotationEndDelimiter)]
+        pub unsafe fn quotationEndDelimiter(&self) -> Id<NSString, Shared>;
+        #[method_id(alternateQuotationBeginDelimiter)]
+        pub unsafe fn alternateQuotationBeginDelimiter(&self) -> Id<NSString, Shared>;
+        #[method_id(alternateQuotationEndDelimiter)]
+        pub unsafe fn alternateQuotationEndDelimiter(&self) -> Id<NSString, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSLocaleCreation"]
     unsafe impl NSLocale {
-        pub unsafe fn autoupdatingCurrentLocale() -> Id<NSLocale, Shared> {
-            msg_send_id![Self::class(), autoupdatingCurrentLocale]
-        }
-        pub unsafe fn currentLocale() -> Id<NSLocale, Shared> {
-            msg_send_id![Self::class(), currentLocale]
-        }
-        pub unsafe fn systemLocale() -> Id<NSLocale, Shared> {
-            msg_send_id![Self::class(), systemLocale]
-        }
-        pub unsafe fn localeWithLocaleIdentifier(ident: &NSString) -> Id<Self, Shared> {
-            msg_send_id![Self::class(), localeWithLocaleIdentifier: ident]
-        }
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
+        #[method_id(autoupdatingCurrentLocale)]
+        pub unsafe fn autoupdatingCurrentLocale() -> Id<NSLocale, Shared>;
+        #[method_id(currentLocale)]
+        pub unsafe fn currentLocale() -> Id<NSLocale, Shared>;
+        #[method_id(systemLocale)]
+        pub unsafe fn systemLocale() -> Id<NSLocale, Shared>;
+        # [method_id (localeWithLocaleIdentifier :)]
+        pub unsafe fn localeWithLocaleIdentifier(ident: &NSString) -> Id<Self, Shared>;
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSLocaleGeneralInfo"]
     unsafe impl NSLocale {
-        pub unsafe fn availableLocaleIdentifiers() -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![Self::class(), availableLocaleIdentifiers]
-        }
-        pub unsafe fn ISOLanguageCodes() -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![Self::class(), ISOLanguageCodes]
-        }
-        pub unsafe fn ISOCountryCodes() -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![Self::class(), ISOCountryCodes]
-        }
-        pub unsafe fn ISOCurrencyCodes() -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![Self::class(), ISOCurrencyCodes]
-        }
-        pub unsafe fn commonISOCurrencyCodes() -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![Self::class(), commonISOCurrencyCodes]
-        }
-        pub unsafe fn preferredLanguages() -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![Self::class(), preferredLanguages]
-        }
+        #[method_id(availableLocaleIdentifiers)]
+        pub unsafe fn availableLocaleIdentifiers() -> Id<NSArray<NSString>, Shared>;
+        #[method_id(ISOLanguageCodes)]
+        pub unsafe fn ISOLanguageCodes() -> Id<NSArray<NSString>, Shared>;
+        #[method_id(ISOCountryCodes)]
+        pub unsafe fn ISOCountryCodes() -> Id<NSArray<NSString>, Shared>;
+        #[method_id(ISOCurrencyCodes)]
+        pub unsafe fn ISOCurrencyCodes() -> Id<NSArray<NSString>, Shared>;
+        #[method_id(commonISOCurrencyCodes)]
+        pub unsafe fn commonISOCurrencyCodes() -> Id<NSArray<NSString>, Shared>;
+        #[method_id(preferredLanguages)]
+        pub unsafe fn preferredLanguages() -> Id<NSArray<NSString>, Shared>;
+        # [method_id (componentsFromLocaleIdentifier :)]
         pub unsafe fn componentsFromLocaleIdentifier(
             string: &NSString,
-        ) -> Id<NSDictionary<NSString, NSString>, Shared> {
-            msg_send_id![Self::class(), componentsFromLocaleIdentifier: string]
-        }
+        ) -> Id<NSDictionary<NSString, NSString>, Shared>;
+        # [method_id (localeIdentifierFromComponents :)]
         pub unsafe fn localeIdentifierFromComponents(
             dict: &NSDictionary<NSString, NSString>,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![Self::class(), localeIdentifierFromComponents: dict]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (canonicalLocaleIdentifierFromString :)]
         pub unsafe fn canonicalLocaleIdentifierFromString(
             string: &NSString,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![Self::class(), canonicalLocaleIdentifierFromString: string]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (canonicalLanguageIdentifierFromString :)]
         pub unsafe fn canonicalLanguageIdentifierFromString(
             string: &NSString,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![Self::class(), canonicalLanguageIdentifierFromString: string]
-        }
+        ) -> Id<NSString, Shared>;
+        # [method_id (localeIdentifierFromWindowsLocaleCode :)]
         pub unsafe fn localeIdentifierFromWindowsLocaleCode(
             lcid: u32,
-        ) -> Option<Id<NSString, Shared>> {
-            msg_send_id![Self::class(), localeIdentifierFromWindowsLocaleCode: lcid]
-        }
-        pub unsafe fn windowsLocaleCodeFromLocaleIdentifier(localeIdentifier: &NSString) -> u32 {
-            msg_send![
-                Self::class(),
-                windowsLocaleCodeFromLocaleIdentifier: localeIdentifier
-            ]
-        }
+        ) -> Option<Id<NSString, Shared>>;
+        # [method (windowsLocaleCodeFromLocaleIdentifier :)]
+        pub unsafe fn windowsLocaleCodeFromLocaleIdentifier(localeIdentifier: &NSString) -> u32;
+        # [method (characterDirectionForLanguage :)]
         pub unsafe fn characterDirectionForLanguage(
             isoLangCode: &NSString,
-        ) -> NSLocaleLanguageDirection {
-            msg_send![Self::class(), characterDirectionForLanguage: isoLangCode]
-        }
-        pub unsafe fn lineDirectionForLanguage(
-            isoLangCode: &NSString,
-        ) -> NSLocaleLanguageDirection {
-            msg_send![Self::class(), lineDirectionForLanguage: isoLangCode]
-        }
+        ) -> NSLocaleLanguageDirection;
+        # [method (lineDirectionForLanguage :)]
+        pub unsafe fn lineDirectionForLanguage(isoLangCode: &NSString)
+            -> NSLocaleLanguageDirection;
     }
 );

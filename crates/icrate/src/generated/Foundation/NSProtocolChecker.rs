@@ -3,7 +3,7 @@ use crate::Foundation::generated::NSProxy::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSProtocolChecker;
@@ -13,33 +13,25 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSProtocolChecker {
-        pub unsafe fn protocol(&self) -> Id<Protocol, Shared> {
-            msg_send_id![self, protocol]
-        }
-        pub unsafe fn target(&self) -> Option<Id<NSObject, Shared>> {
-            msg_send_id![self, target]
-        }
+        #[method_id(protocol)]
+        pub unsafe fn protocol(&self) -> Id<Protocol, Shared>;
+        #[method_id(target)]
+        pub unsafe fn target(&self) -> Option<Id<NSObject, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSProtocolCheckerCreation"]
     unsafe impl NSProtocolChecker {
+        # [method_id (protocolCheckerWithTarget : protocol :)]
         pub unsafe fn protocolCheckerWithTarget_protocol(
             anObject: &NSObject,
             aProtocol: &Protocol,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                Self::class(),
-                protocolCheckerWithTarget: anObject,
-                protocol: aProtocol
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithTarget : protocol :)]
         pub unsafe fn initWithTarget_protocol(
             &self,
             anObject: &NSObject,
             aProtocol: &Protocol,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithTarget: anObject, protocol: aProtocol]
-        }
+        ) -> Id<Self, Shared>;
     }
 );

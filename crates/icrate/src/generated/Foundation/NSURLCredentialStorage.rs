@@ -9,7 +9,7 @@ use crate::Foundation::generated::NSURLProtectionSpace::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLCredentialStorage;
@@ -19,140 +19,87 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLCredentialStorage {
-        pub unsafe fn sharedCredentialStorage() -> Id<NSURLCredentialStorage, Shared> {
-            msg_send_id![Self::class(), sharedCredentialStorage]
-        }
+        #[method_id(sharedCredentialStorage)]
+        pub unsafe fn sharedCredentialStorage() -> Id<NSURLCredentialStorage, Shared>;
+        # [method_id (credentialsForProtectionSpace :)]
         pub unsafe fn credentialsForProtectionSpace(
             &self,
             space: &NSURLProtectionSpace,
-        ) -> Option<Id<NSDictionary<NSString, NSURLCredential>, Shared>> {
-            msg_send_id![self, credentialsForProtectionSpace: space]
-        }
+        ) -> Option<Id<NSDictionary<NSString, NSURLCredential>, Shared>>;
+        #[method_id(allCredentials)]
         pub unsafe fn allCredentials(
             &self,
-        ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary<NSString, NSURLCredential>>, Shared>
-        {
-            msg_send_id![self, allCredentials]
-        }
+        ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary<NSString, NSURLCredential>>, Shared>;
+        # [method (setCredential : forProtectionSpace :)]
         pub unsafe fn setCredential_forProtectionSpace(
             &self,
             credential: &NSURLCredential,
             space: &NSURLProtectionSpace,
-        ) {
-            msg_send![self, setCredential: credential, forProtectionSpace: space]
-        }
+        );
+        # [method (removeCredential : forProtectionSpace :)]
         pub unsafe fn removeCredential_forProtectionSpace(
             &self,
             credential: &NSURLCredential,
             space: &NSURLProtectionSpace,
-        ) {
-            msg_send![
-                self,
-                removeCredential: credential,
-                forProtectionSpace: space
-            ]
-        }
+        );
+        # [method (removeCredential : forProtectionSpace : options :)]
         pub unsafe fn removeCredential_forProtectionSpace_options(
             &self,
             credential: &NSURLCredential,
             space: &NSURLProtectionSpace,
             options: Option<&NSDictionary<NSString, Object>>,
-        ) {
-            msg_send![
-                self,
-                removeCredential: credential,
-                forProtectionSpace: space,
-                options: options
-            ]
-        }
+        );
+        # [method_id (defaultCredentialForProtectionSpace :)]
         pub unsafe fn defaultCredentialForProtectionSpace(
             &self,
             space: &NSURLProtectionSpace,
-        ) -> Option<Id<NSURLCredential, Shared>> {
-            msg_send_id![self, defaultCredentialForProtectionSpace: space]
-        }
+        ) -> Option<Id<NSURLCredential, Shared>>;
+        # [method (setDefaultCredential : forProtectionSpace :)]
         pub unsafe fn setDefaultCredential_forProtectionSpace(
             &self,
             credential: &NSURLCredential,
             space: &NSURLProtectionSpace,
-        ) {
-            msg_send![
-                self,
-                setDefaultCredential: credential,
-                forProtectionSpace: space
-            ]
-        }
+        );
     }
 );
 extern_methods!(
     #[doc = "NSURLSessionTaskAdditions"]
     unsafe impl NSURLCredentialStorage {
+        # [method (getCredentialsForProtectionSpace : task : completionHandler :)]
         pub unsafe fn getCredentialsForProtectionSpace_task_completionHandler(
             &self,
             protectionSpace: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
             completionHandler: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                getCredentialsForProtectionSpace: protectionSpace,
-                task: task,
-                completionHandler: completionHandler
-            ]
-        }
+        );
+        # [method (setCredential : forProtectionSpace : task :)]
         pub unsafe fn setCredential_forProtectionSpace_task(
             &self,
             credential: &NSURLCredential,
             protectionSpace: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
-        ) {
-            msg_send![
-                self,
-                setCredential: credential,
-                forProtectionSpace: protectionSpace,
-                task: task
-            ]
-        }
+        );
+        # [method (removeCredential : forProtectionSpace : options : task :)]
         pub unsafe fn removeCredential_forProtectionSpace_options_task(
             &self,
             credential: &NSURLCredential,
             protectionSpace: &NSURLProtectionSpace,
             options: Option<&NSDictionary<NSString, Object>>,
             task: &NSURLSessionTask,
-        ) {
-            msg_send![
-                self,
-                removeCredential: credential,
-                forProtectionSpace: protectionSpace,
-                options: options,
-                task: task
-            ]
-        }
+        );
+        # [method (getDefaultCredentialForProtectionSpace : task : completionHandler :)]
         pub unsafe fn getDefaultCredentialForProtectionSpace_task_completionHandler(
             &self,
             space: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
             completionHandler: TodoBlock,
-        ) {
-            msg_send![
-                self,
-                getDefaultCredentialForProtectionSpace: space,
-                task: task,
-                completionHandler: completionHandler
-            ]
-        }
+        );
+        # [method (setDefaultCredential : forProtectionSpace : task :)]
         pub unsafe fn setDefaultCredential_forProtectionSpace_task(
             &self,
             credential: &NSURLCredential,
             protectionSpace: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
-        ) {
-            msg_send![
-                self,
-                setDefaultCredential: credential,
-                forProtectionSpace: protectionSpace,
-                task: task
-            ]
-        }
+        );
     }
 );

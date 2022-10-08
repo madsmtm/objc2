@@ -9,7 +9,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSThread;
@@ -19,154 +19,100 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSThread {
-        pub unsafe fn currentThread() -> Id<NSThread, Shared> {
-            msg_send_id![Self::class(), currentThread]
-        }
-        pub unsafe fn detachNewThreadWithBlock(block: TodoBlock) {
-            msg_send![Self::class(), detachNewThreadWithBlock: block]
-        }
+        #[method_id(currentThread)]
+        pub unsafe fn currentThread() -> Id<NSThread, Shared>;
+        # [method (detachNewThreadWithBlock :)]
+        pub unsafe fn detachNewThreadWithBlock(block: TodoBlock);
+        # [method (detachNewThreadSelector : toTarget : withObject :)]
         pub unsafe fn detachNewThreadSelector_toTarget_withObject(
             selector: Sel,
             target: &Object,
             argument: Option<&Object>,
-        ) {
-            msg_send![
-                Self::class(),
-                detachNewThreadSelector: selector,
-                toTarget: target,
-                withObject: argument
-            ]
-        }
-        pub unsafe fn isMultiThreaded() -> bool {
-            msg_send![Self::class(), isMultiThreaded]
-        }
-        pub unsafe fn threadDictionary(&self) -> Id<NSMutableDictionary, Shared> {
-            msg_send_id![self, threadDictionary]
-        }
-        pub unsafe fn sleepUntilDate(date: &NSDate) {
-            msg_send![Self::class(), sleepUntilDate: date]
-        }
-        pub unsafe fn sleepForTimeInterval(ti: NSTimeInterval) {
-            msg_send![Self::class(), sleepForTimeInterval: ti]
-        }
-        pub unsafe fn exit() {
-            msg_send![Self::class(), exit]
-        }
-        pub unsafe fn threadPriority() -> c_double {
-            msg_send![Self::class(), threadPriority]
-        }
-        pub unsafe fn setThreadPriority(p: c_double) -> bool {
-            msg_send![Self::class(), setThreadPriority: p]
-        }
-        pub unsafe fn threadPriority(&self) -> c_double {
-            msg_send![self, threadPriority]
-        }
-        pub unsafe fn setThreadPriority(&self, threadPriority: c_double) {
-            msg_send![self, setThreadPriority: threadPriority]
-        }
-        pub unsafe fn qualityOfService(&self) -> NSQualityOfService {
-            msg_send![self, qualityOfService]
-        }
-        pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService) {
-            msg_send![self, setQualityOfService: qualityOfService]
-        }
-        pub unsafe fn callStackReturnAddresses() -> Id<NSArray<NSNumber>, Shared> {
-            msg_send_id![Self::class(), callStackReturnAddresses]
-        }
-        pub unsafe fn callStackSymbols() -> Id<NSArray<NSString>, Shared> {
-            msg_send_id![Self::class(), callStackSymbols]
-        }
-        pub unsafe fn name(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, name]
-        }
-        pub unsafe fn setName(&self, name: Option<&NSString>) {
-            msg_send![self, setName: name]
-        }
-        pub unsafe fn stackSize(&self) -> NSUInteger {
-            msg_send![self, stackSize]
-        }
-        pub unsafe fn setStackSize(&self, stackSize: NSUInteger) {
-            msg_send![self, setStackSize: stackSize]
-        }
-        pub unsafe fn isMainThread(&self) -> bool {
-            msg_send![self, isMainThread]
-        }
-        pub unsafe fn isMainThread() -> bool {
-            msg_send![Self::class(), isMainThread]
-        }
-        pub unsafe fn mainThread() -> Id<NSThread, Shared> {
-            msg_send_id![Self::class(), mainThread]
-        }
-        pub unsafe fn init(&self) -> Id<Self, Shared> {
-            msg_send_id![self, init]
-        }
+        );
+        #[method(isMultiThreaded)]
+        pub unsafe fn isMultiThreaded() -> bool;
+        #[method_id(threadDictionary)]
+        pub unsafe fn threadDictionary(&self) -> Id<NSMutableDictionary, Shared>;
+        # [method (sleepUntilDate :)]
+        pub unsafe fn sleepUntilDate(date: &NSDate);
+        # [method (sleepForTimeInterval :)]
+        pub unsafe fn sleepForTimeInterval(ti: NSTimeInterval);
+        #[method(exit)]
+        pub unsafe fn exit();
+        #[method(threadPriority)]
+        pub unsafe fn threadPriority() -> c_double;
+        # [method (setThreadPriority :)]
+        pub unsafe fn setThreadPriority(p: c_double) -> bool;
+        #[method(threadPriority)]
+        pub unsafe fn threadPriority(&self) -> c_double;
+        # [method (setThreadPriority :)]
+        pub unsafe fn setThreadPriority(&self, threadPriority: c_double);
+        #[method(qualityOfService)]
+        pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
+        # [method (setQualityOfService :)]
+        pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
+        #[method_id(callStackReturnAddresses)]
+        pub unsafe fn callStackReturnAddresses() -> Id<NSArray<NSNumber>, Shared>;
+        #[method_id(callStackSymbols)]
+        pub unsafe fn callStackSymbols() -> Id<NSArray<NSString>, Shared>;
+        #[method_id(name)]
+        pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
+        # [method (setName :)]
+        pub unsafe fn setName(&self, name: Option<&NSString>);
+        #[method(stackSize)]
+        pub unsafe fn stackSize(&self) -> NSUInteger;
+        # [method (setStackSize :)]
+        pub unsafe fn setStackSize(&self, stackSize: NSUInteger);
+        #[method(isMainThread)]
+        pub unsafe fn isMainThread(&self) -> bool;
+        #[method(isMainThread)]
+        pub unsafe fn isMainThread() -> bool;
+        #[method_id(mainThread)]
+        pub unsafe fn mainThread() -> Id<NSThread, Shared>;
+        #[method_id(init)]
+        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        # [method_id (initWithTarget : selector : object :)]
         pub unsafe fn initWithTarget_selector_object(
             &self,
             target: &Object,
             selector: Sel,
             argument: Option<&Object>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithTarget: target,
-                selector: selector,
-                object: argument
-            ]
-        }
-        pub unsafe fn initWithBlock(&self, block: TodoBlock) -> Id<Self, Shared> {
-            msg_send_id![self, initWithBlock: block]
-        }
-        pub unsafe fn isExecuting(&self) -> bool {
-            msg_send![self, isExecuting]
-        }
-        pub unsafe fn isFinished(&self) -> bool {
-            msg_send![self, isFinished]
-        }
-        pub unsafe fn isCancelled(&self) -> bool {
-            msg_send![self, isCancelled]
-        }
-        pub unsafe fn cancel(&self) {
-            msg_send![self, cancel]
-        }
-        pub unsafe fn start(&self) {
-            msg_send![self, start]
-        }
-        pub unsafe fn main(&self) {
-            msg_send![self, main]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithBlock :)]
+        pub unsafe fn initWithBlock(&self, block: TodoBlock) -> Id<Self, Shared>;
+        #[method(isExecuting)]
+        pub unsafe fn isExecuting(&self) -> bool;
+        #[method(isFinished)]
+        pub unsafe fn isFinished(&self) -> bool;
+        #[method(isCancelled)]
+        pub unsafe fn isCancelled(&self) -> bool;
+        #[method(cancel)]
+        pub unsafe fn cancel(&self);
+        #[method(start)]
+        pub unsafe fn start(&self);
+        #[method(main)]
+        pub unsafe fn main(&self);
     }
 );
 extern_methods!(
     #[doc = "NSThreadPerformAdditions"]
     unsafe impl NSObject {
+        # [method (performSelectorOnMainThread : withObject : waitUntilDone : modes :)]
         pub unsafe fn performSelectorOnMainThread_withObject_waitUntilDone_modes(
             &self,
             aSelector: Sel,
             arg: Option<&Object>,
             wait: bool,
             array: Option<&NSArray<NSString>>,
-        ) {
-            msg_send![
-                self,
-                performSelectorOnMainThread: aSelector,
-                withObject: arg,
-                waitUntilDone: wait,
-                modes: array
-            ]
-        }
+        );
+        # [method (performSelectorOnMainThread : withObject : waitUntilDone :)]
         pub unsafe fn performSelectorOnMainThread_withObject_waitUntilDone(
             &self,
             aSelector: Sel,
             arg: Option<&Object>,
             wait: bool,
-        ) {
-            msg_send![
-                self,
-                performSelectorOnMainThread: aSelector,
-                withObject: arg,
-                waitUntilDone: wait
-            ]
-        }
+        );
+        # [method (performSelector : onThread : withObject : waitUntilDone : modes :)]
         pub unsafe fn performSelector_onThread_withObject_waitUntilDone_modes(
             &self,
             aSelector: Sel,
@@ -174,41 +120,20 @@ extern_methods!(
             arg: Option<&Object>,
             wait: bool,
             array: Option<&NSArray<NSString>>,
-        ) {
-            msg_send![
-                self,
-                performSelector: aSelector,
-                onThread: thr,
-                withObject: arg,
-                waitUntilDone: wait,
-                modes: array
-            ]
-        }
+        );
+        # [method (performSelector : onThread : withObject : waitUntilDone :)]
         pub unsafe fn performSelector_onThread_withObject_waitUntilDone(
             &self,
             aSelector: Sel,
             thr: &NSThread,
             arg: Option<&Object>,
             wait: bool,
-        ) {
-            msg_send![
-                self,
-                performSelector: aSelector,
-                onThread: thr,
-                withObject: arg,
-                waitUntilDone: wait
-            ]
-        }
+        );
+        # [method (performSelectorInBackground : withObject :)]
         pub unsafe fn performSelectorInBackground_withObject(
             &self,
             aSelector: Sel,
             arg: Option<&Object>,
-        ) {
-            msg_send![
-                self,
-                performSelectorInBackground: aSelector,
-                withObject: arg
-            ]
-        }
+        );
     }
 );

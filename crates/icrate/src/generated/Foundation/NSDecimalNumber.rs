@@ -6,7 +6,7 @@ use crate::Foundation::generated::NSValue::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSDecimalNumberBehaviors = NSObject;
 extern_class!(
     #[derive(Debug)]
@@ -17,209 +17,136 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDecimalNumber {
+        # [method_id (initWithMantissa : exponent : isNegative :)]
         pub unsafe fn initWithMantissa_exponent_isNegative(
             &self,
             mantissa: c_ulonglong,
             exponent: c_short,
             flag: bool,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithMantissa: mantissa,
-                exponent: exponent,
-                isNegative: flag
-            ]
-        }
-        pub unsafe fn initWithDecimal(&self, dcm: NSDecimal) -> Id<Self, Shared> {
-            msg_send_id![self, initWithDecimal: dcm]
-        }
-        pub unsafe fn initWithString(&self, numberValue: Option<&NSString>) -> Id<Self, Shared> {
-            msg_send_id![self, initWithString: numberValue]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithDecimal :)]
+        pub unsafe fn initWithDecimal(&self, dcm: NSDecimal) -> Id<Self, Shared>;
+        # [method_id (initWithString :)]
+        pub unsafe fn initWithString(&self, numberValue: Option<&NSString>) -> Id<Self, Shared>;
+        # [method_id (initWithString : locale :)]
         pub unsafe fn initWithString_locale(
             &self,
             numberValue: Option<&NSString>,
             locale: Option<&Object>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![self, initWithString: numberValue, locale: locale]
-        }
-        pub unsafe fn descriptionWithLocale(
-            &self,
-            locale: Option<&Object>,
-        ) -> Id<NSString, Shared> {
-            msg_send_id![self, descriptionWithLocale: locale]
-        }
-        pub unsafe fn decimalValue(&self) -> NSDecimal {
-            msg_send![self, decimalValue]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (descriptionWithLocale :)]
+        pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
+            -> Id<NSString, Shared>;
+        #[method(decimalValue)]
+        pub unsafe fn decimalValue(&self) -> NSDecimal;
+        # [method_id (decimalNumberWithMantissa : exponent : isNegative :)]
         pub unsafe fn decimalNumberWithMantissa_exponent_isNegative(
             mantissa: c_ulonglong,
             exponent: c_short,
             flag: bool,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![
-                Self::class(),
-                decimalNumberWithMantissa: mantissa,
-                exponent: exponent,
-                isNegative: flag
-            ]
-        }
-        pub unsafe fn decimalNumberWithDecimal(dcm: NSDecimal) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![Self::class(), decimalNumberWithDecimal: dcm]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberWithDecimal :)]
+        pub unsafe fn decimalNumberWithDecimal(dcm: NSDecimal) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberWithString :)]
         pub unsafe fn decimalNumberWithString(
             numberValue: Option<&NSString>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![Self::class(), decimalNumberWithString: numberValue]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberWithString : locale :)]
         pub unsafe fn decimalNumberWithString_locale(
             numberValue: Option<&NSString>,
             locale: Option<&Object>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![
-                Self::class(),
-                decimalNumberWithString: numberValue,
-                locale: locale
-            ]
-        }
-        pub unsafe fn zero() -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![Self::class(), zero]
-        }
-        pub unsafe fn one() -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![Self::class(), one]
-        }
-        pub unsafe fn minimumDecimalNumber() -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![Self::class(), minimumDecimalNumber]
-        }
-        pub unsafe fn maximumDecimalNumber() -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![Self::class(), maximumDecimalNumber]
-        }
-        pub unsafe fn notANumber() -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![Self::class(), notANumber]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        #[method_id(zero)]
+        pub unsafe fn zero() -> Id<NSDecimalNumber, Shared>;
+        #[method_id(one)]
+        pub unsafe fn one() -> Id<NSDecimalNumber, Shared>;
+        #[method_id(minimumDecimalNumber)]
+        pub unsafe fn minimumDecimalNumber() -> Id<NSDecimalNumber, Shared>;
+        #[method_id(maximumDecimalNumber)]
+        pub unsafe fn maximumDecimalNumber() -> Id<NSDecimalNumber, Shared>;
+        #[method_id(notANumber)]
+        pub unsafe fn notANumber() -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByAdding :)]
         pub unsafe fn decimalNumberByAdding(
             &self,
             decimalNumber: &NSDecimalNumber,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![self, decimalNumberByAdding: decimalNumber]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByAdding : withBehavior :)]
         pub unsafe fn decimalNumberByAdding_withBehavior(
             &self,
             decimalNumber: &NSDecimalNumber,
             behavior: Option<&NSDecimalNumberBehaviors>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![
-                self,
-                decimalNumberByAdding: decimalNumber,
-                withBehavior: behavior
-            ]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberBySubtracting :)]
         pub unsafe fn decimalNumberBySubtracting(
             &self,
             decimalNumber: &NSDecimalNumber,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![self, decimalNumberBySubtracting: decimalNumber]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberBySubtracting : withBehavior :)]
         pub unsafe fn decimalNumberBySubtracting_withBehavior(
             &self,
             decimalNumber: &NSDecimalNumber,
             behavior: Option<&NSDecimalNumberBehaviors>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![
-                self,
-                decimalNumberBySubtracting: decimalNumber,
-                withBehavior: behavior
-            ]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByMultiplyingBy :)]
         pub unsafe fn decimalNumberByMultiplyingBy(
             &self,
             decimalNumber: &NSDecimalNumber,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![self, decimalNumberByMultiplyingBy: decimalNumber]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByMultiplyingBy : withBehavior :)]
         pub unsafe fn decimalNumberByMultiplyingBy_withBehavior(
             &self,
             decimalNumber: &NSDecimalNumber,
             behavior: Option<&NSDecimalNumberBehaviors>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![
-                self,
-                decimalNumberByMultiplyingBy: decimalNumber,
-                withBehavior: behavior
-            ]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByDividingBy :)]
         pub unsafe fn decimalNumberByDividingBy(
             &self,
             decimalNumber: &NSDecimalNumber,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![self, decimalNumberByDividingBy: decimalNumber]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByDividingBy : withBehavior :)]
         pub unsafe fn decimalNumberByDividingBy_withBehavior(
             &self,
             decimalNumber: &NSDecimalNumber,
             behavior: Option<&NSDecimalNumberBehaviors>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![
-                self,
-                decimalNumberByDividingBy: decimalNumber,
-                withBehavior: behavior
-            ]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByRaisingToPower :)]
         pub unsafe fn decimalNumberByRaisingToPower(
             &self,
             power: NSUInteger,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![self, decimalNumberByRaisingToPower: power]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByRaisingToPower : withBehavior :)]
         pub unsafe fn decimalNumberByRaisingToPower_withBehavior(
             &self,
             power: NSUInteger,
             behavior: Option<&NSDecimalNumberBehaviors>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![
-                self,
-                decimalNumberByRaisingToPower: power,
-                withBehavior: behavior
-            ]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByMultiplyingByPowerOf10 :)]
         pub unsafe fn decimalNumberByMultiplyingByPowerOf10(
             &self,
             power: c_short,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![self, decimalNumberByMultiplyingByPowerOf10: power]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByMultiplyingByPowerOf10 : withBehavior :)]
         pub unsafe fn decimalNumberByMultiplyingByPowerOf10_withBehavior(
             &self,
             power: c_short,
             behavior: Option<&NSDecimalNumberBehaviors>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![
-                self,
-                decimalNumberByMultiplyingByPowerOf10: power,
-                withBehavior: behavior
-            ]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method_id (decimalNumberByRoundingAccordingToBehavior :)]
         pub unsafe fn decimalNumberByRoundingAccordingToBehavior(
             &self,
             behavior: Option<&NSDecimalNumberBehaviors>,
-        ) -> Id<NSDecimalNumber, Shared> {
-            msg_send_id![self, decimalNumberByRoundingAccordingToBehavior: behavior]
-        }
-        pub unsafe fn compare(&self, decimalNumber: &NSNumber) -> NSComparisonResult {
-            msg_send![self, compare: decimalNumber]
-        }
-        pub unsafe fn defaultBehavior() -> Id<NSDecimalNumberBehaviors, Shared> {
-            msg_send_id![Self::class(), defaultBehavior]
-        }
-        pub unsafe fn setDefaultBehavior(defaultBehavior: &NSDecimalNumberBehaviors) {
-            msg_send![Self::class(), setDefaultBehavior: defaultBehavior]
-        }
-        pub unsafe fn objCType(&self) -> NonNull<c_char> {
-            msg_send![self, objCType]
-        }
-        pub unsafe fn doubleValue(&self) -> c_double {
-            msg_send![self, doubleValue]
-        }
+        ) -> Id<NSDecimalNumber, Shared>;
+        # [method (compare :)]
+        pub unsafe fn compare(&self, decimalNumber: &NSNumber) -> NSComparisonResult;
+        #[method_id(defaultBehavior)]
+        pub unsafe fn defaultBehavior() -> Id<NSDecimalNumberBehaviors, Shared>;
+        # [method (setDefaultBehavior :)]
+        pub unsafe fn setDefaultBehavior(defaultBehavior: &NSDecimalNumberBehaviors);
+        #[method(objCType)]
+        pub unsafe fn objCType(&self) -> NonNull<c_char>;
+        #[method(doubleValue)]
+        pub unsafe fn doubleValue(&self) -> c_double;
     }
 );
 extern_class!(
@@ -231,9 +158,9 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDecimalNumberHandler {
-        pub unsafe fn defaultDecimalNumberHandler() -> Id<NSDecimalNumberHandler, Shared> {
-            msg_send_id![Self::class(), defaultDecimalNumberHandler]
-        }
+        #[method_id(defaultDecimalNumberHandler)]
+        pub unsafe fn defaultDecimalNumberHandler() -> Id<NSDecimalNumberHandler, Shared>;
+        # [method_id (initWithRoundingMode : scale : raiseOnExactness : raiseOnOverflow : raiseOnUnderflow : raiseOnDivideByZero :)]
         pub unsafe fn initWithRoundingMode_scale_raiseOnExactness_raiseOnOverflow_raiseOnUnderflow_raiseOnDivideByZero(
             &self,
             roundingMode: NSRoundingMode,
@@ -242,17 +169,8 @@ extern_methods!(
             overflow: bool,
             underflow: bool,
             divideByZero: bool,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithRoundingMode: roundingMode,
-                scale: scale,
-                raiseOnExactness: exact,
-                raiseOnOverflow: overflow,
-                raiseOnUnderflow: underflow,
-                raiseOnDivideByZero: divideByZero
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (decimalNumberHandlerWithRoundingMode : scale : raiseOnExactness : raiseOnOverflow : raiseOnUnderflow : raiseOnDivideByZero :)]
         pub unsafe fn decimalNumberHandlerWithRoundingMode_scale_raiseOnExactness_raiseOnOverflow_raiseOnUnderflow_raiseOnDivideByZero(
             roundingMode: NSRoundingMode,
             scale: c_short,
@@ -260,32 +178,20 @@ extern_methods!(
             overflow: bool,
             underflow: bool,
             divideByZero: bool,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                Self::class(),
-                decimalNumberHandlerWithRoundingMode: roundingMode,
-                scale: scale,
-                raiseOnExactness: exact,
-                raiseOnOverflow: overflow,
-                raiseOnUnderflow: underflow,
-                raiseOnDivideByZero: divideByZero
-            ]
-        }
+        ) -> Id<Self, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSDecimalNumberExtensions"]
     unsafe impl NSNumber {
-        pub unsafe fn decimalValue(&self) -> NSDecimal {
-            msg_send![self, decimalValue]
-        }
+        #[method(decimalValue)]
+        pub unsafe fn decimalValue(&self) -> NSDecimal;
     }
 );
 extern_methods!(
     #[doc = "NSDecimalNumberScanning"]
     unsafe impl NSScanner {
-        pub unsafe fn scanDecimal(&self, dcm: *mut NSDecimal) -> bool {
-            msg_send![self, scanDecimal: dcm]
-        }
+        # [method (scanDecimal :)]
+        pub unsafe fn scanDecimal(&self, dcm: *mut NSDecimal) -> bool;
     }
 );

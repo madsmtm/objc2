@@ -7,7 +7,7 @@ use crate::Security::generated::Security::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLProtectionSpace;
@@ -17,6 +17,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLProtectionSpace {
+        # [method_id (initWithHost : port : protocol : realm : authenticationMethod :)]
         pub unsafe fn initWithHost_port_protocol_realm_authenticationMethod(
             &self,
             host: &NSString,
@@ -24,16 +25,8 @@ extern_methods!(
             protocol: Option<&NSString>,
             realm: Option<&NSString>,
             authenticationMethod: Option<&NSString>,
-        ) -> Id<Self, Shared> {
-            msg_send_id![
-                self,
-                initWithHost: host,
-                port: port,
-                protocol: protocol,
-                realm: realm,
-                authenticationMethod: authenticationMethod
-            ]
-        }
+        ) -> Id<Self, Shared>;
+        # [method_id (initWithProxyHost : port : type : realm : authenticationMethod :)]
         pub unsafe fn initWithProxyHost_port_type_realm_authenticationMethod(
             &self,
             host: &NSString,
@@ -41,48 +34,36 @@ extern_methods!(
             type_: Option<&NSString>,
             realm: Option<&NSString>,
             authenticationMethod: Option<&NSString>,
-        ) -> Id<Self, Shared> {
-            msg_send_id ! [self , initWithProxyHost : host , port : port , type : type_ , realm : realm , authenticationMethod : authenticationMethod]
-        }
-        pub unsafe fn realm(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, realm]
-        }
-        pub unsafe fn receivesCredentialSecurely(&self) -> bool {
-            msg_send![self, receivesCredentialSecurely]
-        }
-        pub unsafe fn isProxy(&self) -> bool {
-            msg_send![self, isProxy]
-        }
-        pub unsafe fn host(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, host]
-        }
-        pub unsafe fn port(&self) -> NSInteger {
-            msg_send![self, port]
-        }
-        pub unsafe fn proxyType(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, proxyType]
-        }
-        pub unsafe fn protocol(&self) -> Option<Id<NSString, Shared>> {
-            msg_send_id![self, protocol]
-        }
-        pub unsafe fn authenticationMethod(&self) -> Id<NSString, Shared> {
-            msg_send_id![self, authenticationMethod]
-        }
+        ) -> Id<Self, Shared>;
+        #[method_id(realm)]
+        pub unsafe fn realm(&self) -> Option<Id<NSString, Shared>>;
+        #[method(receivesCredentialSecurely)]
+        pub unsafe fn receivesCredentialSecurely(&self) -> bool;
+        #[method(isProxy)]
+        pub unsafe fn isProxy(&self) -> bool;
+        #[method_id(host)]
+        pub unsafe fn host(&self) -> Id<NSString, Shared>;
+        #[method(port)]
+        pub unsafe fn port(&self) -> NSInteger;
+        #[method_id(proxyType)]
+        pub unsafe fn proxyType(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(protocol)]
+        pub unsafe fn protocol(&self) -> Option<Id<NSString, Shared>>;
+        #[method_id(authenticationMethod)]
+        pub unsafe fn authenticationMethod(&self) -> Id<NSString, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSClientCertificateSpace"]
     unsafe impl NSURLProtectionSpace {
-        pub unsafe fn distinguishedNames(&self) -> Option<Id<NSArray<NSData>, Shared>> {
-            msg_send_id![self, distinguishedNames]
-        }
+        #[method_id(distinguishedNames)]
+        pub unsafe fn distinguishedNames(&self) -> Option<Id<NSArray<NSData>, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSServerTrustValidationSpace"]
     unsafe impl NSURLProtectionSpace {
-        pub unsafe fn serverTrust(&self) -> SecTrustRef {
-            msg_send![self, serverTrust]
-        }
+        #[method(serverTrust)]
+        pub unsafe fn serverTrust(&self) -> SecTrustRef;
     }
 );

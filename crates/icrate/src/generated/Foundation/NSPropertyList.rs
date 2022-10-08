@@ -8,7 +8,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSPropertyListReadOptions = NSPropertyListMutabilityOptions;
 pub type NSPropertyListWriteOptions = NSUInteger;
 extern_class!(
@@ -20,50 +20,28 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSPropertyListSerialization {
+        # [method (propertyList : isValidForFormat :)]
         pub unsafe fn propertyList_isValidForFormat(
             plist: &Object,
             format: NSPropertyListFormat,
-        ) -> bool {
-            msg_send![Self::class(), propertyList: plist, isValidForFormat: format]
-        }
+        ) -> bool;
+        # [method_id (dataWithPropertyList : format : options : error :)]
         pub unsafe fn dataWithPropertyList_format_options_error(
             plist: &Object,
             format: NSPropertyListFormat,
             opt: NSPropertyListWriteOptions,
-        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                dataWithPropertyList: plist,
-                format: format,
-                options: opt,
-                error: _
-            ]
-        }
+        ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
+        # [method_id (propertyListWithData : options : format : error :)]
         pub unsafe fn propertyListWithData_options_format_error(
             data: &NSData,
             opt: NSPropertyListReadOptions,
             format: *mut NSPropertyListFormat,
-        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                propertyListWithData: data,
-                options: opt,
-                format: format,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
+        # [method_id (propertyListWithStream : options : format : error :)]
         pub unsafe fn propertyListWithStream_options_format_error(
             stream: &NSInputStream,
             opt: NSPropertyListReadOptions,
             format: *mut NSPropertyListFormat,
-        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>> {
-            msg_send_id![
-                Self::class(),
-                propertyListWithStream: stream,
-                options: opt,
-                format: format,
-                error: _
-            ]
-        }
+        ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
     }
 );

@@ -10,7 +10,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 extern_class!(
     #[derive(Debug)]
     pub struct NSUserScriptTask;
@@ -20,21 +20,18 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUserScriptTask {
+        # [method_id (initWithURL : error :)]
         pub unsafe fn initWithURL_error(
             &self,
             url: &NSURL,
-        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>> {
-            msg_send_id![self, initWithURL: url, error: _]
-        }
-        pub unsafe fn scriptURL(&self) -> Id<NSURL, Shared> {
-            msg_send_id![self, scriptURL]
-        }
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+        #[method_id(scriptURL)]
+        pub unsafe fn scriptURL(&self) -> Id<NSURL, Shared>;
+        # [method (executeWithCompletionHandler :)]
         pub unsafe fn executeWithCompletionHandler(
             &self,
             handler: NSUserScriptTaskCompletionHandler,
-        ) {
-            msg_send![self, executeWithCompletionHandler: handler]
-        }
+        );
     }
 );
 extern_class!(
@@ -46,35 +43,24 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUserUnixTask {
-        pub unsafe fn standardInput(&self) -> Option<Id<NSFileHandle, Shared>> {
-            msg_send_id![self, standardInput]
-        }
-        pub unsafe fn setStandardInput(&self, standardInput: Option<&NSFileHandle>) {
-            msg_send![self, setStandardInput: standardInput]
-        }
-        pub unsafe fn standardOutput(&self) -> Option<Id<NSFileHandle, Shared>> {
-            msg_send_id![self, standardOutput]
-        }
-        pub unsafe fn setStandardOutput(&self, standardOutput: Option<&NSFileHandle>) {
-            msg_send![self, setStandardOutput: standardOutput]
-        }
-        pub unsafe fn standardError(&self) -> Option<Id<NSFileHandle, Shared>> {
-            msg_send_id![self, standardError]
-        }
-        pub unsafe fn setStandardError(&self, standardError: Option<&NSFileHandle>) {
-            msg_send![self, setStandardError: standardError]
-        }
+        #[method_id(standardInput)]
+        pub unsafe fn standardInput(&self) -> Option<Id<NSFileHandle, Shared>>;
+        # [method (setStandardInput :)]
+        pub unsafe fn setStandardInput(&self, standardInput: Option<&NSFileHandle>);
+        #[method_id(standardOutput)]
+        pub unsafe fn standardOutput(&self) -> Option<Id<NSFileHandle, Shared>>;
+        # [method (setStandardOutput :)]
+        pub unsafe fn setStandardOutput(&self, standardOutput: Option<&NSFileHandle>);
+        #[method_id(standardError)]
+        pub unsafe fn standardError(&self) -> Option<Id<NSFileHandle, Shared>>;
+        # [method (setStandardError :)]
+        pub unsafe fn setStandardError(&self, standardError: Option<&NSFileHandle>);
+        # [method (executeWithArguments : completionHandler :)]
         pub unsafe fn executeWithArguments_completionHandler(
             &self,
             arguments: Option<&NSArray<NSString>>,
             handler: NSUserUnixTaskCompletionHandler,
-        ) {
-            msg_send![
-                self,
-                executeWithArguments: arguments,
-                completionHandler: handler
-            ]
-        }
+        );
     }
 );
 extern_class!(
@@ -86,17 +72,12 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUserAppleScriptTask {
+        # [method (executeWithAppleEvent : completionHandler :)]
         pub unsafe fn executeWithAppleEvent_completionHandler(
             &self,
             event: Option<&NSAppleEventDescriptor>,
             handler: NSUserAppleScriptTaskCompletionHandler,
-        ) {
-            msg_send![
-                self,
-                executeWithAppleEvent: event,
-                completionHandler: handler
-            ]
-        }
+        );
     }
 );
 extern_class!(
@@ -108,18 +89,15 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUserAutomatorTask {
-        pub unsafe fn variables(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>> {
-            msg_send_id![self, variables]
-        }
-        pub unsafe fn setVariables(&self, variables: Option<&NSDictionary<NSString, Object>>) {
-            msg_send![self, setVariables: variables]
-        }
+        #[method_id(variables)]
+        pub unsafe fn variables(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
+        # [method (setVariables :)]
+        pub unsafe fn setVariables(&self, variables: Option<&NSDictionary<NSString, Object>>);
+        # [method (executeWithInput : completionHandler :)]
         pub unsafe fn executeWithInput_completionHandler(
             &self,
             input: Option<&NSSecureCoding>,
             handler: NSUserAutomatorTaskCompletionHandler,
-        ) {
-            msg_send![self, executeWithInput: input, completionHandler: handler]
-        }
+        );
     }
 );

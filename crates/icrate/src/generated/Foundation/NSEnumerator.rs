@@ -3,7 +3,7 @@ use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 pub type NSFastEnumeration = NSObject;
 __inner_extern_class!(
     #[derive(Debug)]
@@ -14,16 +14,14 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<ObjectType: Message> NSEnumerator<ObjectType> {
-        pub unsafe fn nextObject(&self) -> Option<Id<ObjectType, Shared>> {
-            msg_send_id![self, nextObject]
-        }
+        #[method_id(nextObject)]
+        pub unsafe fn nextObject(&self) -> Option<Id<ObjectType, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSExtendedEnumerator"]
     unsafe impl<ObjectType: Message> NSEnumerator<ObjectType> {
-        pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared> {
-            msg_send_id![self, allObjects]
-        }
+        #[method_id(allObjects)]
+        pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared>;
     }
 );
