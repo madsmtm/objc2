@@ -16,3 +16,4 @@ toml = "0.5.9"
 serde = { version = "1.0.144", features = ["derive"] }
 regex = { version = "1.6" }
 lazy_static = { version = "1.4.0" }
+apple-sdk = { version = "0.2.0" }
