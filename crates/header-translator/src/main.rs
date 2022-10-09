@@ -1,12 +1,14 @@
 use std::collections::{BTreeMap, HashMap};
 use std::fs;
-use std::io;
+use std::io::{self, Write};
 use std::path::Path;
 
 use clang::{Clang, EntityVisitResult, Index};
 use quote::{format_ident, quote};
 
-use header_translator::{run_rustfmt, Config, RustFile, Stmt};
+use header_translator::{format_method_macro, run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt};
+
+const FORMAT_INCREMENTALLY: bool = false;
 
 fn main() {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
@@ -31,6 +33,7 @@ fn main() {
             "-x",
             "objective-c",
             "-fobjc-arc",
+            "--target=x86_64-apple-macos",
             "-fobjc-abi-version=2", // 3??
             // "-mmacosx-version-min="
             "-fparse-all-comments",
@@ -148,7 +151,15 @@ fn main() {
                 let mut path = output_path.join(&name);
                 path.set_extension("rs");
 
-                fs::write(&path, run_rustfmt(tokens)).unwrap();
+                let output = if FORMAT_INCREMENTALLY {
+                    run_rustfmt(tokens)
+                } else {
+                    let mut buf = Vec::new();
+                    write!(buf, "{}", tokens).unwrap();
+                    format_method_macro(&buf)
+                };
+
+                fs::write(&path, output).unwrap();
 
                 (format_ident!("{}", name), declared_types)
             })
@@ -172,9 +183,22 @@ fn main() {
             }
         };
 
+        let output = if FORMAT_INCREMENTALLY {
+            run_rustfmt(tokens)
+        } else {
+            let mut buf = Vec::new();
+            write!(buf, "{}", tokens).unwrap();
+            buf
+        };
+
         // truncate if the file exists
-        fs::write(output_path.join("mod.rs"), run_rustfmt(tokens)).unwrap();
+        fs::write(output_path.join("mod.rs"), output).unwrap();
 
         println!("status: written framework {library}");
+    }
+
+    if !FORMAT_INCREMENTALLY {
+        println!("status: formatting");
+        run_cargo_fmt("icrate");
     }
 }

@@ -88,9 +88,9 @@ pub fn format_method_macro(code: &[u8]) -> Vec<u8> {
     .to_vec()
 }
 
-pub fn run_cargo_fmt() {
+pub fn run_cargo_fmt(package: &str) {
     let status = Command::new("cargo")
-        .args(["fmt", "--package=icrate"])
+        .args(["fmt", "--package", package])
         .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap())
         .status()
         .expect("failed running cargo fmt");
