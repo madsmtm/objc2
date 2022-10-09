@@ -21,20 +21,20 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSHTTPCookie {
-        # [method_id (initWithProperties :)]
+        #[method_id(initWithProperties:)]
         pub unsafe fn initWithProperties(
             &self,
             properties: &NSDictionary<NSHTTPCookiePropertyKey, Object>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (cookieWithProperties :)]
+        #[method_id(cookieWithProperties:)]
         pub unsafe fn cookieWithProperties(
             properties: &NSDictionary<NSHTTPCookiePropertyKey, Object>,
         ) -> Option<Id<NSHTTPCookie, Shared>>;
-        # [method_id (requestHeaderFieldsWithCookies :)]
+        #[method_id(requestHeaderFieldsWithCookies:)]
         pub unsafe fn requestHeaderFieldsWithCookies(
             cookies: &NSArray<NSHTTPCookie>,
         ) -> Id<NSDictionary<NSString, NSString>, Shared>;
-        # [method_id (cookiesWithResponseHeaderFields : forURL :)]
+        #[method_id(cookiesWithResponseHeaderFields:forURL:)]
         pub unsafe fn cookiesWithResponseHeaderFields_forURL(
             headerFields: &NSDictionary<NSString, NSString>,
             URL: &NSURL,

@@ -17,17 +17,17 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLHandle {
-        # [method (registerURLHandleClass :)]
+        #[method(registerURLHandleClass:)]
         pub unsafe fn registerURLHandleClass(anURLHandleSubclass: Option<&Class>);
-        # [method (URLHandleClassForURL :)]
+        #[method(URLHandleClassForURL:)]
         pub unsafe fn URLHandleClassForURL(anURL: Option<&NSURL>) -> Option<&Class>;
         #[method(status)]
         pub unsafe fn status(&self) -> NSURLHandleStatus;
         #[method_id(failureReason)]
         pub unsafe fn failureReason(&self) -> Option<Id<NSString, Shared>>;
-        # [method (addClient :)]
+        #[method(addClient:)]
         pub unsafe fn addClient(&self, client: Option<&NSURLHandleClient>);
-        # [method (removeClient :)]
+        #[method(removeClient:)]
         pub unsafe fn removeClient(&self, client: Option<&NSURLHandleClient>);
         #[method(loadInBackground)]
         pub unsafe fn loadInBackground(&self);
@@ -41,37 +41,37 @@ extern_methods!(
         pub unsafe fn expectedResourceDataSize(&self) -> c_longlong;
         #[method(flushCachedData)]
         pub unsafe fn flushCachedData(&self);
-        # [method (backgroundLoadDidFailWithReason :)]
+        #[method(backgroundLoadDidFailWithReason:)]
         pub unsafe fn backgroundLoadDidFailWithReason(&self, reason: Option<&NSString>);
-        # [method (didLoadBytes : loadComplete :)]
+        #[method(didLoadBytes:loadComplete:)]
         pub unsafe fn didLoadBytes_loadComplete(&self, newBytes: Option<&NSData>, yorn: bool);
-        # [method (canInitWithURL :)]
+        #[method(canInitWithURL:)]
         pub unsafe fn canInitWithURL(anURL: Option<&NSURL>) -> bool;
-        # [method_id (cachedHandleForURL :)]
+        #[method_id(cachedHandleForURL:)]
         pub unsafe fn cachedHandleForURL(anURL: Option<&NSURL>) -> Option<Id<NSURLHandle, Shared>>;
-        # [method_id (initWithURL : cached :)]
+        #[method_id(initWithURL:cached:)]
         pub unsafe fn initWithURL_cached(
             &self,
             anURL: Option<&NSURL>,
             willCache: bool,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (propertyForKey :)]
+        #[method_id(propertyForKey:)]
         pub unsafe fn propertyForKey(
             &self,
             propertyKey: Option<&NSString>,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (propertyForKeyIfAvailable :)]
+        #[method_id(propertyForKeyIfAvailable:)]
         pub unsafe fn propertyForKeyIfAvailable(
             &self,
             propertyKey: Option<&NSString>,
         ) -> Option<Id<Object, Shared>>;
-        # [method (writeProperty : forKey :)]
+        #[method(writeProperty:forKey:)]
         pub unsafe fn writeProperty_forKey(
             &self,
             propertyValue: Option<&Object>,
             propertyKey: Option<&NSString>,
         ) -> bool;
-        # [method (writeData :)]
+        #[method(writeData:)]
         pub unsafe fn writeData(&self, data: Option<&NSData>) -> bool;
         #[method_id(loadInForeground)]
         pub unsafe fn loadInForeground(&self) -> Option<Id<NSData, Shared>>;

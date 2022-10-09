@@ -17,41 +17,41 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDecimalNumber {
-        # [method_id (initWithMantissa : exponent : isNegative :)]
+        #[method_id(initWithMantissa:exponent:isNegative:)]
         pub unsafe fn initWithMantissa_exponent_isNegative(
             &self,
             mantissa: c_ulonglong,
             exponent: c_short,
             flag: bool,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithDecimal :)]
+        #[method_id(initWithDecimal:)]
         pub unsafe fn initWithDecimal(&self, dcm: NSDecimal) -> Id<Self, Shared>;
-        # [method_id (initWithString :)]
+        #[method_id(initWithString:)]
         pub unsafe fn initWithString(&self, numberValue: Option<&NSString>) -> Id<Self, Shared>;
-        # [method_id (initWithString : locale :)]
+        #[method_id(initWithString:locale:)]
         pub unsafe fn initWithString_locale(
             &self,
             numberValue: Option<&NSString>,
             locale: Option<&Object>,
         ) -> Id<Self, Shared>;
-        # [method_id (descriptionWithLocale :)]
+        #[method_id(descriptionWithLocale:)]
         pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
             -> Id<NSString, Shared>;
         #[method(decimalValue)]
         pub unsafe fn decimalValue(&self) -> NSDecimal;
-        # [method_id (decimalNumberWithMantissa : exponent : isNegative :)]
+        #[method_id(decimalNumberWithMantissa:exponent:isNegative:)]
         pub unsafe fn decimalNumberWithMantissa_exponent_isNegative(
             mantissa: c_ulonglong,
             exponent: c_short,
             flag: bool,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberWithDecimal :)]
+        #[method_id(decimalNumberWithDecimal:)]
         pub unsafe fn decimalNumberWithDecimal(dcm: NSDecimal) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberWithString :)]
+        #[method_id(decimalNumberWithString:)]
         pub unsafe fn decimalNumberWithString(
             numberValue: Option<&NSString>,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberWithString : locale :)]
+        #[method_id(decimalNumberWithString:locale:)]
         pub unsafe fn decimalNumberWithString_locale(
             numberValue: Option<&NSString>,
             locale: Option<&Object>,
@@ -66,56 +66,56 @@ extern_methods!(
         pub unsafe fn maximumDecimalNumber() -> Id<NSDecimalNumber, Shared>;
         #[method_id(notANumber)]
         pub unsafe fn notANumber() -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByAdding :)]
+        #[method_id(decimalNumberByAdding:)]
         pub unsafe fn decimalNumberByAdding(
             &self,
             decimalNumber: &NSDecimalNumber,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByAdding : withBehavior :)]
+        #[method_id(decimalNumberByAdding:withBehavior:)]
         pub unsafe fn decimalNumberByAdding_withBehavior(
             &self,
             decimalNumber: &NSDecimalNumber,
             behavior: Option<&NSDecimalNumberBehaviors>,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberBySubtracting :)]
+        #[method_id(decimalNumberBySubtracting:)]
         pub unsafe fn decimalNumberBySubtracting(
             &self,
             decimalNumber: &NSDecimalNumber,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberBySubtracting : withBehavior :)]
+        #[method_id(decimalNumberBySubtracting:withBehavior:)]
         pub unsafe fn decimalNumberBySubtracting_withBehavior(
             &self,
             decimalNumber: &NSDecimalNumber,
             behavior: Option<&NSDecimalNumberBehaviors>,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByMultiplyingBy :)]
+        #[method_id(decimalNumberByMultiplyingBy:)]
         pub unsafe fn decimalNumberByMultiplyingBy(
             &self,
             decimalNumber: &NSDecimalNumber,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByMultiplyingBy : withBehavior :)]
+        #[method_id(decimalNumberByMultiplyingBy:withBehavior:)]
         pub unsafe fn decimalNumberByMultiplyingBy_withBehavior(
             &self,
             decimalNumber: &NSDecimalNumber,
             behavior: Option<&NSDecimalNumberBehaviors>,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByDividingBy :)]
+        #[method_id(decimalNumberByDividingBy:)]
         pub unsafe fn decimalNumberByDividingBy(
             &self,
             decimalNumber: &NSDecimalNumber,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByDividingBy : withBehavior :)]
+        #[method_id(decimalNumberByDividingBy:withBehavior:)]
         pub unsafe fn decimalNumberByDividingBy_withBehavior(
             &self,
             decimalNumber: &NSDecimalNumber,
             behavior: Option<&NSDecimalNumberBehaviors>,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByRaisingToPower :)]
+        #[method_id(decimalNumberByRaisingToPower:)]
         pub unsafe fn decimalNumberByRaisingToPower(
             &self,
             power: NSUInteger,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByRaisingToPower : withBehavior :)]
+        #[method_id(decimalNumberByRaisingToPower:withBehavior:)]
         pub unsafe fn decimalNumberByRaisingToPower_withBehavior(
             &self,
             power: NSUInteger,
@@ -132,16 +132,16 @@ extern_methods!(
             power: c_short,
             behavior: Option<&NSDecimalNumberBehaviors>,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByRoundingAccordingToBehavior :)]
+        #[method_id(decimalNumberByRoundingAccordingToBehavior:)]
         pub unsafe fn decimalNumberByRoundingAccordingToBehavior(
             &self,
             behavior: Option<&NSDecimalNumberBehaviors>,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method (compare :)]
+        #[method(compare:)]
         pub unsafe fn compare(&self, decimalNumber: &NSNumber) -> NSComparisonResult;
         #[method_id(defaultBehavior)]
         pub unsafe fn defaultBehavior() -> Id<NSDecimalNumberBehaviors, Shared>;
-        # [method (setDefaultBehavior :)]
+        #[method(setDefaultBehavior:)]
         pub unsafe fn setDefaultBehavior(defaultBehavior: &NSDecimalNumberBehaviors);
         #[method(objCType)]
         pub unsafe fn objCType(&self) -> NonNull<c_char>;
@@ -160,7 +160,7 @@ extern_methods!(
     unsafe impl NSDecimalNumberHandler {
         #[method_id(defaultDecimalNumberHandler)]
         pub unsafe fn defaultDecimalNumberHandler() -> Id<NSDecimalNumberHandler, Shared>;
-        # [method_id (initWithRoundingMode : scale : raiseOnExactness : raiseOnOverflow : raiseOnUnderflow : raiseOnDivideByZero :)]
+        #[method_id(initWithRoundingMode:scale:raiseOnExactness:raiseOnOverflow:raiseOnUnderflow:raiseOnDivideByZero:)]
         pub unsafe fn initWithRoundingMode_scale_raiseOnExactness_raiseOnOverflow_raiseOnUnderflow_raiseOnDivideByZero(
             &self,
             roundingMode: NSRoundingMode,
@@ -170,7 +170,7 @@ extern_methods!(
             underflow: bool,
             divideByZero: bool,
         ) -> Id<Self, Shared>;
-        # [method_id (decimalNumberHandlerWithRoundingMode : scale : raiseOnExactness : raiseOnOverflow : raiseOnUnderflow : raiseOnDivideByZero :)]
+        #[method_id(decimalNumberHandlerWithRoundingMode:scale:raiseOnExactness:raiseOnOverflow:raiseOnUnderflow:raiseOnDivideByZero:)]
         pub unsafe fn decimalNumberHandlerWithRoundingMode_scale_raiseOnExactness_raiseOnOverflow_raiseOnUnderflow_raiseOnDivideByZero(
             roundingMode: NSRoundingMode,
             scale: c_short,
@@ -191,7 +191,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSDecimalNumberScanning"]
     unsafe impl NSScanner {
-        # [method (scanDecimal :)]
+        #[method(scanDecimal:)]
         pub unsafe fn scanDecimal(&self, dcm: *mut NSDecimal) -> bool;
     }
 );

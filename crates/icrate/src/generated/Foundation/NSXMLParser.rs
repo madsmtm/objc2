@@ -20,36 +20,36 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSXMLParser {
-        # [method_id (initWithContentsOfURL :)]
+        #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithData :)]
+        #[method_id(initWithData:)]
         pub unsafe fn initWithData(&self, data: &NSData) -> Id<Self, Shared>;
-        # [method_id (initWithStream :)]
+        #[method_id(initWithStream:)]
         pub unsafe fn initWithStream(&self, stream: &NSInputStream) -> Id<Self, Shared>;
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSXMLParserDelegate, Shared>>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSXMLParserDelegate>);
         #[method(shouldProcessNamespaces)]
         pub unsafe fn shouldProcessNamespaces(&self) -> bool;
-        # [method (setShouldProcessNamespaces :)]
+        #[method(setShouldProcessNamespaces:)]
         pub unsafe fn setShouldProcessNamespaces(&self, shouldProcessNamespaces: bool);
         #[method(shouldReportNamespacePrefixes)]
         pub unsafe fn shouldReportNamespacePrefixes(&self) -> bool;
-        # [method (setShouldReportNamespacePrefixes :)]
+        #[method(setShouldReportNamespacePrefixes:)]
         pub unsafe fn setShouldReportNamespacePrefixes(&self, shouldReportNamespacePrefixes: bool);
         #[method(externalEntityResolvingPolicy)]
         pub unsafe fn externalEntityResolvingPolicy(
             &self,
         ) -> NSXMLParserExternalEntityResolvingPolicy;
-        # [method (setExternalEntityResolvingPolicy :)]
+        #[method(setExternalEntityResolvingPolicy:)]
         pub unsafe fn setExternalEntityResolvingPolicy(
             &self,
             externalEntityResolvingPolicy: NSXMLParserExternalEntityResolvingPolicy,
         );
         #[method_id(allowedExternalEntityURLs)]
         pub unsafe fn allowedExternalEntityURLs(&self) -> Option<Id<NSSet<NSURL>, Shared>>;
-        # [method (setAllowedExternalEntityURLs :)]
+        #[method(setAllowedExternalEntityURLs:)]
         pub unsafe fn setAllowedExternalEntityURLs(
             &self,
             allowedExternalEntityURLs: Option<&NSSet<NSURL>>,
@@ -62,7 +62,7 @@ extern_methods!(
         pub unsafe fn parserError(&self) -> Option<Id<NSError, Shared>>;
         #[method(shouldResolveExternalEntities)]
         pub unsafe fn shouldResolveExternalEntities(&self) -> bool;
-        # [method (setShouldResolveExternalEntities :)]
+        #[method(setShouldResolveExternalEntities:)]
         pub unsafe fn setShouldResolveExternalEntities(&self, shouldResolveExternalEntities: bool);
     }
 );

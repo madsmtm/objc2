@@ -22,9 +22,9 @@ extern_methods!(
     unsafe impl NSXMLNode {
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithKind :)]
+        #[method_id(initWithKind:)]
         pub unsafe fn initWithKind(&self, kind: NSXMLNodeKind) -> Id<Self, Shared>;
-        # [method_id (initWithKind : options :)]
+        #[method_id(initWithKind:options:)]
         pub unsafe fn initWithKind_options(
             &self,
             kind: NSXMLNodeKind,
@@ -32,65 +32,65 @@ extern_methods!(
         ) -> Id<Self, Shared>;
         #[method_id(document)]
         pub unsafe fn document() -> Id<Object, Shared>;
-        # [method_id (documentWithRootElement :)]
+        #[method_id(documentWithRootElement:)]
         pub unsafe fn documentWithRootElement(element: &NSXMLElement) -> Id<Object, Shared>;
-        # [method_id (elementWithName :)]
+        #[method_id(elementWithName:)]
         pub unsafe fn elementWithName(name: &NSString) -> Id<Object, Shared>;
-        # [method_id (elementWithName : URI :)]
+        #[method_id(elementWithName:URI:)]
         pub unsafe fn elementWithName_URI(name: &NSString, URI: &NSString) -> Id<Object, Shared>;
-        # [method_id (elementWithName : stringValue :)]
+        #[method_id(elementWithName:stringValue:)]
         pub unsafe fn elementWithName_stringValue(
             name: &NSString,
             string: &NSString,
         ) -> Id<Object, Shared>;
-        # [method_id (elementWithName : children : attributes :)]
+        #[method_id(elementWithName:children:attributes:)]
         pub unsafe fn elementWithName_children_attributes(
             name: &NSString,
             children: Option<&NSArray<NSXMLNode>>,
             attributes: Option<&NSArray<NSXMLNode>>,
         ) -> Id<Object, Shared>;
-        # [method_id (attributeWithName : stringValue :)]
+        #[method_id(attributeWithName:stringValue:)]
         pub unsafe fn attributeWithName_stringValue(
             name: &NSString,
             stringValue: &NSString,
         ) -> Id<Object, Shared>;
-        # [method_id (attributeWithName : URI : stringValue :)]
+        #[method_id(attributeWithName:URI:stringValue:)]
         pub unsafe fn attributeWithName_URI_stringValue(
             name: &NSString,
             URI: &NSString,
             stringValue: &NSString,
         ) -> Id<Object, Shared>;
-        # [method_id (namespaceWithName : stringValue :)]
+        #[method_id(namespaceWithName:stringValue:)]
         pub unsafe fn namespaceWithName_stringValue(
             name: &NSString,
             stringValue: &NSString,
         ) -> Id<Object, Shared>;
-        # [method_id (processingInstructionWithName : stringValue :)]
+        #[method_id(processingInstructionWithName:stringValue:)]
         pub unsafe fn processingInstructionWithName_stringValue(
             name: &NSString,
             stringValue: &NSString,
         ) -> Id<Object, Shared>;
-        # [method_id (commentWithStringValue :)]
+        #[method_id(commentWithStringValue:)]
         pub unsafe fn commentWithStringValue(stringValue: &NSString) -> Id<Object, Shared>;
-        # [method_id (textWithStringValue :)]
+        #[method_id(textWithStringValue:)]
         pub unsafe fn textWithStringValue(stringValue: &NSString) -> Id<Object, Shared>;
-        # [method_id (DTDNodeWithXMLString :)]
+        #[method_id(DTDNodeWithXMLString:)]
         pub unsafe fn DTDNodeWithXMLString(string: &NSString) -> Option<Id<Object, Shared>>;
         #[method(kind)]
         pub unsafe fn kind(&self) -> NSXMLNodeKind;
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setName :)]
+        #[method(setName:)]
         pub unsafe fn setName(&self, name: Option<&NSString>);
         #[method_id(objectValue)]
         pub unsafe fn objectValue(&self) -> Option<Id<Object, Shared>>;
-        # [method (setObjectValue :)]
+        #[method(setObjectValue:)]
         pub unsafe fn setObjectValue(&self, objectValue: Option<&Object>);
         #[method_id(stringValue)]
         pub unsafe fn stringValue(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setStringValue :)]
+        #[method(setStringValue:)]
         pub unsafe fn setStringValue(&self, stringValue: Option<&NSString>);
-        # [method (setStringValue : resolvingEntities :)]
+        #[method(setStringValue:resolvingEntities:)]
         pub unsafe fn setStringValue_resolvingEntities(&self, string: &NSString, resolve: bool);
         #[method(index)]
         pub unsafe fn index(&self) -> NSUInteger;
@@ -104,7 +104,7 @@ extern_methods!(
         pub unsafe fn childCount(&self) -> NSUInteger;
         #[method_id(children)]
         pub unsafe fn children(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>>;
-        # [method_id (childAtIndex :)]
+        #[method_id(childAtIndex:)]
         pub unsafe fn childAtIndex(&self, index: NSUInteger) -> Option<Id<NSXMLNode, Shared>>;
         #[method_id(previousSibling)]
         pub unsafe fn previousSibling(&self) -> Option<Id<NSXMLNode, Shared>>;
@@ -124,13 +124,13 @@ extern_methods!(
         pub unsafe fn prefix(&self) -> Option<Id<NSString, Shared>>;
         #[method_id(URI)]
         pub unsafe fn URI(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setURI :)]
+        #[method(setURI:)]
         pub unsafe fn setURI(&self, URI: Option<&NSString>);
-        # [method_id (localNameForName :)]
+        #[method_id(localNameForName:)]
         pub unsafe fn localNameForName(name: &NSString) -> Id<NSString, Shared>;
-        # [method_id (prefixForName :)]
+        #[method_id(prefixForName:)]
         pub unsafe fn prefixForName(name: &NSString) -> Option<Id<NSString, Shared>>;
-        # [method_id (predefinedNamespaceForPrefix :)]
+        #[method_id(predefinedNamespaceForPrefix:)]
         pub unsafe fn predefinedNamespaceForPrefix(
             name: &NSString,
         ) -> Option<Id<NSXMLNode, Shared>>;
@@ -138,28 +138,28 @@ extern_methods!(
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
         #[method_id(XMLString)]
         pub unsafe fn XMLString(&self) -> Id<NSString, Shared>;
-        # [method_id (XMLStringWithOptions :)]
+        #[method_id(XMLStringWithOptions:)]
         pub unsafe fn XMLStringWithOptions(
             &self,
             options: NSXMLNodeOptions,
         ) -> Id<NSString, Shared>;
-        # [method_id (canonicalXMLStringPreservingComments :)]
+        #[method_id(canonicalXMLStringPreservingComments:)]
         pub unsafe fn canonicalXMLStringPreservingComments(
             &self,
             comments: bool,
         ) -> Id<NSString, Shared>;
-        # [method_id (nodesForXPath : error :)]
+        #[method_id(nodesForXPath:error:)]
         pub unsafe fn nodesForXPath_error(
             &self,
             xpath: &NSString,
         ) -> Result<Id<NSArray<NSXMLNode>, Shared>, Id<NSError, Shared>>;
-        # [method_id (objectsForXQuery : constants : error :)]
+        #[method_id(objectsForXQuery:constants:error:)]
         pub unsafe fn objectsForXQuery_constants_error(
             &self,
             xquery: &NSString,
             constants: Option<&NSDictionary<NSString, Object>>,
         ) -> Result<Id<NSArray, Shared>, Id<NSError, Shared>>;
-        # [method_id (objectsForXQuery : error :)]
+        #[method_id(objectsForXQuery:error:)]
         pub unsafe fn objectsForXQuery_error(
             &self,
             xquery: &NSString,

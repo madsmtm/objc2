@@ -18,19 +18,19 @@ extern_methods!(
     unsafe impl NSXMLDTD {
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithKind : options :)]
+        #[method_id(initWithKind:options:)]
         pub unsafe fn initWithKind_options(
             &self,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithContentsOfURL : options : error :)]
+        #[method_id(initWithContentsOfURL:options:error:)]
         pub unsafe fn initWithContentsOfURL_options_error(
             &self,
             url: &NSURL,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (initWithData : options : error :)]
+        #[method_id(initWithData:options:error:)]
         pub unsafe fn initWithData_options_error(
             &self,
             data: &NSData,
@@ -38,50 +38,50 @@ extern_methods!(
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
         #[method_id(publicID)]
         pub unsafe fn publicID(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setPublicID :)]
+        #[method(setPublicID:)]
         pub unsafe fn setPublicID(&self, publicID: Option<&NSString>);
         #[method_id(systemID)]
         pub unsafe fn systemID(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setSystemID :)]
+        #[method(setSystemID:)]
         pub unsafe fn setSystemID(&self, systemID: Option<&NSString>);
-        # [method (insertChild : atIndex :)]
+        #[method(insertChild:atIndex:)]
         pub unsafe fn insertChild_atIndex(&self, child: &NSXMLNode, index: NSUInteger);
-        # [method (insertChildren : atIndex :)]
+        #[method(insertChildren:atIndex:)]
         pub unsafe fn insertChildren_atIndex(
             &self,
             children: &NSArray<NSXMLNode>,
             index: NSUInteger,
         );
-        # [method (removeChildAtIndex :)]
+        #[method(removeChildAtIndex:)]
         pub unsafe fn removeChildAtIndex(&self, index: NSUInteger);
-        # [method (setChildren :)]
+        #[method(setChildren:)]
         pub unsafe fn setChildren(&self, children: Option<&NSArray<NSXMLNode>>);
-        # [method (addChild :)]
+        #[method(addChild:)]
         pub unsafe fn addChild(&self, child: &NSXMLNode);
-        # [method (replaceChildAtIndex : withNode :)]
+        #[method(replaceChildAtIndex:withNode:)]
         pub unsafe fn replaceChildAtIndex_withNode(&self, index: NSUInteger, node: &NSXMLNode);
-        # [method_id (entityDeclarationForName :)]
+        #[method_id(entityDeclarationForName:)]
         pub unsafe fn entityDeclarationForName(
             &self,
             name: &NSString,
         ) -> Option<Id<NSXMLDTDNode, Shared>>;
-        # [method_id (notationDeclarationForName :)]
+        #[method_id(notationDeclarationForName:)]
         pub unsafe fn notationDeclarationForName(
             &self,
             name: &NSString,
         ) -> Option<Id<NSXMLDTDNode, Shared>>;
-        # [method_id (elementDeclarationForName :)]
+        #[method_id(elementDeclarationForName:)]
         pub unsafe fn elementDeclarationForName(
             &self,
             name: &NSString,
         ) -> Option<Id<NSXMLDTDNode, Shared>>;
-        # [method_id (attributeDeclarationForName : elementName :)]
+        #[method_id(attributeDeclarationForName:elementName:)]
         pub unsafe fn attributeDeclarationForName_elementName(
             &self,
             name: &NSString,
             elementName: &NSString,
         ) -> Option<Id<NSXMLDTDNode, Shared>>;
-        # [method_id (predefinedEntityDeclarationForName :)]
+        #[method_id(predefinedEntityDeclarationForName:)]
         pub unsafe fn predefinedEntityDeclarationForName(
             name: &NSString,
         ) -> Option<Id<NSXMLDTDNode, Shared>>;

@@ -14,31 +14,31 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSSortDescriptor {
-        # [method_id (sortDescriptorWithKey : ascending :)]
+        #[method_id(sortDescriptorWithKey:ascending:)]
         pub unsafe fn sortDescriptorWithKey_ascending(
             key: Option<&NSString>,
             ascending: bool,
         ) -> Id<Self, Shared>;
-        # [method_id (sortDescriptorWithKey : ascending : selector :)]
+        #[method_id(sortDescriptorWithKey:ascending:selector:)]
         pub unsafe fn sortDescriptorWithKey_ascending_selector(
             key: Option<&NSString>,
             ascending: bool,
             selector: Option<Sel>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithKey : ascending :)]
+        #[method_id(initWithKey:ascending:)]
         pub unsafe fn initWithKey_ascending(
             &self,
             key: Option<&NSString>,
             ascending: bool,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithKey : ascending : selector :)]
+        #[method_id(initWithKey:ascending:selector:)]
         pub unsafe fn initWithKey_ascending_selector(
             &self,
             key: Option<&NSString>,
             ascending: bool,
             selector: Option<Sel>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
         #[method_id(key)]
         pub unsafe fn key(&self) -> Option<Id<NSString, Shared>>;
@@ -48,13 +48,13 @@ extern_methods!(
         pub unsafe fn selector(&self) -> Option<Sel>;
         #[method(allowEvaluation)]
         pub unsafe fn allowEvaluation(&self);
-        # [method_id (sortDescriptorWithKey : ascending : comparator :)]
+        #[method_id(sortDescriptorWithKey:ascending:comparator:)]
         pub unsafe fn sortDescriptorWithKey_ascending_comparator(
             key: Option<&NSString>,
             ascending: bool,
             cmptr: NSComparator,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithKey : ascending : comparator :)]
+        #[method_id(initWithKey:ascending:comparator:)]
         pub unsafe fn initWithKey_ascending_comparator(
             &self,
             key: Option<&NSString>,
@@ -63,7 +63,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
         #[method(comparator)]
         pub unsafe fn comparator(&self) -> NSComparator;
-        # [method (compareObject : toObject :)]
+        #[method(compareObject:toObject:)]
         pub unsafe fn compareObject_toObject(
             &self,
             object1: &Object,
@@ -76,7 +76,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSSortDescriptorSorting"]
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
-        # [method_id (sortedArrayUsingDescriptors :)]
+        #[method_id(sortedArrayUsingDescriptors:)]
         pub unsafe fn sortedArrayUsingDescriptors(
             &self,
             sortDescriptors: &NSArray<NSSortDescriptor>,
@@ -86,7 +86,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSSortDescriptorSorting"]
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        # [method_id (sortedArrayUsingDescriptors :)]
+        #[method_id(sortedArrayUsingDescriptors:)]
         pub unsafe fn sortedArrayUsingDescriptors(
             &self,
             sortDescriptors: &NSArray<NSSortDescriptor>,
@@ -96,14 +96,14 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSSortDescriptorSorting"]
     unsafe impl<ObjectType: Message> NSMutableArray<ObjectType> {
-        # [method (sortUsingDescriptors :)]
+        #[method(sortUsingDescriptors:)]
         pub unsafe fn sortUsingDescriptors(&self, sortDescriptors: &NSArray<NSSortDescriptor>);
     }
 );
 extern_methods!(
     #[doc = "NSKeyValueSorting"]
     unsafe impl<ObjectType: Message> NSOrderedSet<ObjectType> {
-        # [method_id (sortedArrayUsingDescriptors :)]
+        #[method_id(sortedArrayUsingDescriptors:)]
         pub unsafe fn sortedArrayUsingDescriptors(
             &self,
             sortDescriptors: &NSArray<NSSortDescriptor>,
@@ -113,7 +113,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSKeyValueSorting"]
     unsafe impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
-        # [method (sortUsingDescriptors :)]
+        #[method(sortUsingDescriptors:)]
         pub unsafe fn sortUsingDescriptors(&self, sortDescriptors: &NSArray<NSSortDescriptor>);
     }
 );

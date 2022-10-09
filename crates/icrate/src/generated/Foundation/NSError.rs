@@ -17,14 +17,14 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSError {
-        # [method_id (initWithDomain : code : userInfo :)]
+        #[method_id(initWithDomain:code:userInfo:)]
         pub unsafe fn initWithDomain_code_userInfo(
             &self,
             domain: &NSErrorDomain,
             code: NSInteger,
             dict: Option<&NSDictionary<NSErrorUserInfoKey, Object>>,
         ) -> Id<Self, Shared>;
-        # [method_id (errorWithDomain : code : userInfo :)]
+        #[method_id(errorWithDomain:code:userInfo:)]
         pub unsafe fn errorWithDomain_code_userInfo(
             domain: &NSErrorDomain,
             code: NSInteger,
@@ -50,19 +50,19 @@ extern_methods!(
         pub unsafe fn helpAnchor(&self) -> Option<Id<NSString, Shared>>;
         #[method_id(underlyingErrors)]
         pub unsafe fn underlyingErrors(&self) -> Id<NSArray<NSError>, Shared>;
-        # [method (setUserInfoValueProviderForDomain : provider :)]
+        #[method(setUserInfoValueProviderForDomain:provider:)]
         pub unsafe fn setUserInfoValueProviderForDomain_provider(
             errorDomain: &NSErrorDomain,
             provider: TodoBlock,
         );
-        # [method (userInfoValueProviderForDomain :)]
+        #[method(userInfoValueProviderForDomain:)]
         pub unsafe fn userInfoValueProviderForDomain(errorDomain: &NSErrorDomain) -> TodoBlock;
     }
 );
 extern_methods!(
     #[doc = "NSErrorRecoveryAttempting"]
     unsafe impl NSObject {
-        # [method (attemptRecoveryFromError : optionIndex : delegate : didRecoverSelector : contextInfo :)]
+        #[method(attemptRecoveryFromError:optionIndex:delegate:didRecoverSelector:contextInfo:)]
         pub unsafe fn attemptRecoveryFromError_optionIndex_delegate_didRecoverSelector_contextInfo(
             &self,
             error: &NSError,
@@ -71,7 +71,7 @@ extern_methods!(
             didRecoverSelector: Option<Sel>,
             contextInfo: *mut c_void,
         );
-        # [method (attemptRecoveryFromError : optionIndex :)]
+        #[method(attemptRecoveryFromError:optionIndex:)]
         pub unsafe fn attemptRecoveryFromError_optionIndex(
             &self,
             error: &NSError,

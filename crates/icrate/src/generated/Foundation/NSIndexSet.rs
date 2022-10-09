@@ -15,17 +15,17 @@ extern_methods!(
     unsafe impl NSIndexSet {
         #[method_id(indexSet)]
         pub unsafe fn indexSet() -> Id<Self, Shared>;
-        # [method_id (indexSetWithIndex :)]
+        #[method_id(indexSetWithIndex:)]
         pub unsafe fn indexSetWithIndex(value: NSUInteger) -> Id<Self, Shared>;
-        # [method_id (indexSetWithIndexesInRange :)]
+        #[method_id(indexSetWithIndexesInRange:)]
         pub unsafe fn indexSetWithIndexesInRange(range: NSRange) -> Id<Self, Shared>;
-        # [method_id (initWithIndexesInRange :)]
+        #[method_id(initWithIndexesInRange:)]
         pub unsafe fn initWithIndexesInRange(&self, range: NSRange) -> Id<Self, Shared>;
-        # [method_id (initWithIndexSet :)]
+        #[method_id(initWithIndexSet:)]
         pub unsafe fn initWithIndexSet(&self, indexSet: &NSIndexSet) -> Id<Self, Shared>;
-        # [method_id (initWithIndex :)]
+        #[method_id(initWithIndex:)]
         pub unsafe fn initWithIndex(&self, value: NSUInteger) -> Id<Self, Shared>;
-        # [method (isEqualToIndexSet :)]
+        #[method(isEqualToIndexSet:)]
         pub unsafe fn isEqualToIndexSet(&self, indexSet: &NSIndexSet) -> bool;
         #[method(count)]
         pub unsafe fn count(&self) -> NSUInteger;
@@ -33,85 +33,85 @@ extern_methods!(
         pub unsafe fn firstIndex(&self) -> NSUInteger;
         #[method(lastIndex)]
         pub unsafe fn lastIndex(&self) -> NSUInteger;
-        # [method (indexGreaterThanIndex :)]
+        #[method(indexGreaterThanIndex:)]
         pub unsafe fn indexGreaterThanIndex(&self, value: NSUInteger) -> NSUInteger;
-        # [method (indexLessThanIndex :)]
+        #[method(indexLessThanIndex:)]
         pub unsafe fn indexLessThanIndex(&self, value: NSUInteger) -> NSUInteger;
-        # [method (indexGreaterThanOrEqualToIndex :)]
+        #[method(indexGreaterThanOrEqualToIndex:)]
         pub unsafe fn indexGreaterThanOrEqualToIndex(&self, value: NSUInteger) -> NSUInteger;
-        # [method (indexLessThanOrEqualToIndex :)]
+        #[method(indexLessThanOrEqualToIndex:)]
         pub unsafe fn indexLessThanOrEqualToIndex(&self, value: NSUInteger) -> NSUInteger;
-        # [method (getIndexes : maxCount : inIndexRange :)]
+        #[method(getIndexes:maxCount:inIndexRange:)]
         pub unsafe fn getIndexes_maxCount_inIndexRange(
             &self,
             indexBuffer: NonNull<NSUInteger>,
             bufferSize: NSUInteger,
             range: NSRangePointer,
         ) -> NSUInteger;
-        # [method (countOfIndexesInRange :)]
+        #[method(countOfIndexesInRange:)]
         pub unsafe fn countOfIndexesInRange(&self, range: NSRange) -> NSUInteger;
-        # [method (containsIndex :)]
+        #[method(containsIndex:)]
         pub unsafe fn containsIndex(&self, value: NSUInteger) -> bool;
-        # [method (containsIndexesInRange :)]
+        #[method(containsIndexesInRange:)]
         pub unsafe fn containsIndexesInRange(&self, range: NSRange) -> bool;
-        # [method (containsIndexes :)]
+        #[method(containsIndexes:)]
         pub unsafe fn containsIndexes(&self, indexSet: &NSIndexSet) -> bool;
-        # [method (intersectsIndexesInRange :)]
+        #[method(intersectsIndexesInRange:)]
         pub unsafe fn intersectsIndexesInRange(&self, range: NSRange) -> bool;
-        # [method (enumerateIndexesUsingBlock :)]
+        #[method(enumerateIndexesUsingBlock:)]
         pub unsafe fn enumerateIndexesUsingBlock(&self, block: TodoBlock);
-        # [method (enumerateIndexesWithOptions : usingBlock :)]
+        #[method(enumerateIndexesWithOptions:usingBlock:)]
         pub unsafe fn enumerateIndexesWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
             block: TodoBlock,
         );
-        # [method (enumerateIndexesInRange : options : usingBlock :)]
+        #[method(enumerateIndexesInRange:options:usingBlock:)]
         pub unsafe fn enumerateIndexesInRange_options_usingBlock(
             &self,
             range: NSRange,
             opts: NSEnumerationOptions,
             block: TodoBlock,
         );
-        # [method (indexPassingTest :)]
+        #[method(indexPassingTest:)]
         pub unsafe fn indexPassingTest(&self, predicate: TodoBlock) -> NSUInteger;
-        # [method (indexWithOptions : passingTest :)]
+        #[method(indexWithOptions:passingTest:)]
         pub unsafe fn indexWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
             predicate: TodoBlock,
         ) -> NSUInteger;
-        # [method (indexInRange : options : passingTest :)]
+        #[method(indexInRange:options:passingTest:)]
         pub unsafe fn indexInRange_options_passingTest(
             &self,
             range: NSRange,
             opts: NSEnumerationOptions,
             predicate: TodoBlock,
         ) -> NSUInteger;
-        # [method_id (indexesPassingTest :)]
+        #[method_id(indexesPassingTest:)]
         pub unsafe fn indexesPassingTest(&self, predicate: TodoBlock) -> Id<NSIndexSet, Shared>;
-        # [method_id (indexesWithOptions : passingTest :)]
+        #[method_id(indexesWithOptions:passingTest:)]
         pub unsafe fn indexesWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
             predicate: TodoBlock,
         ) -> Id<NSIndexSet, Shared>;
-        # [method_id (indexesInRange : options : passingTest :)]
+        #[method_id(indexesInRange:options:passingTest:)]
         pub unsafe fn indexesInRange_options_passingTest(
             &self,
             range: NSRange,
             opts: NSEnumerationOptions,
             predicate: TodoBlock,
         ) -> Id<NSIndexSet, Shared>;
-        # [method (enumerateRangesUsingBlock :)]
+        #[method(enumerateRangesUsingBlock:)]
         pub unsafe fn enumerateRangesUsingBlock(&self, block: TodoBlock);
-        # [method (enumerateRangesWithOptions : usingBlock :)]
+        #[method(enumerateRangesWithOptions:usingBlock:)]
         pub unsafe fn enumerateRangesWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
             block: TodoBlock,
         );
-        # [method (enumerateRangesInRange : options : usingBlock :)]
+        #[method(enumerateRangesInRange:options:usingBlock:)]
         pub unsafe fn enumerateRangesInRange_options_usingBlock(
             &self,
             range: NSRange,
@@ -129,21 +129,21 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMutableIndexSet {
-        # [method (addIndexes :)]
+        #[method(addIndexes:)]
         pub unsafe fn addIndexes(&self, indexSet: &NSIndexSet);
-        # [method (removeIndexes :)]
+        #[method(removeIndexes:)]
         pub unsafe fn removeIndexes(&self, indexSet: &NSIndexSet);
         #[method(removeAllIndexes)]
         pub unsafe fn removeAllIndexes(&self);
-        # [method (addIndex :)]
+        #[method(addIndex:)]
         pub unsafe fn addIndex(&self, value: NSUInteger);
-        # [method (removeIndex :)]
+        #[method(removeIndex:)]
         pub unsafe fn removeIndex(&self, value: NSUInteger);
-        # [method (addIndexesInRange :)]
+        #[method(addIndexesInRange:)]
         pub unsafe fn addIndexesInRange(&self, range: NSRange);
-        # [method (removeIndexesInRange :)]
+        #[method(removeIndexesInRange:)]
         pub unsafe fn removeIndexesInRange(&self, range: NSRange);
-        # [method (shiftIndexesStartingAtIndex : by :)]
+        #[method(shiftIndexesStartingAtIndex:by:)]
         pub unsafe fn shiftIndexesStartingAtIndex_by(&self, index: NSUInteger, delta: NSInteger);
     }
 );

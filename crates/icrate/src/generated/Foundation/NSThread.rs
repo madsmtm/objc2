@@ -21,9 +21,9 @@ extern_methods!(
     unsafe impl NSThread {
         #[method_id(currentThread)]
         pub unsafe fn currentThread() -> Id<NSThread, Shared>;
-        # [method (detachNewThreadWithBlock :)]
+        #[method(detachNewThreadWithBlock:)]
         pub unsafe fn detachNewThreadWithBlock(block: TodoBlock);
-        # [method (detachNewThreadSelector : toTarget : withObject :)]
+        #[method(detachNewThreadSelector:toTarget:withObject:)]
         pub unsafe fn detachNewThreadSelector_toTarget_withObject(
             selector: Sel,
             target: &Object,
@@ -33,23 +33,23 @@ extern_methods!(
         pub unsafe fn isMultiThreaded() -> bool;
         #[method_id(threadDictionary)]
         pub unsafe fn threadDictionary(&self) -> Id<NSMutableDictionary, Shared>;
-        # [method (sleepUntilDate :)]
+        #[method(sleepUntilDate:)]
         pub unsafe fn sleepUntilDate(date: &NSDate);
-        # [method (sleepForTimeInterval :)]
+        #[method(sleepForTimeInterval:)]
         pub unsafe fn sleepForTimeInterval(ti: NSTimeInterval);
         #[method(exit)]
         pub unsafe fn exit();
         #[method(threadPriority)]
         pub unsafe fn threadPriority() -> c_double;
-        # [method (setThreadPriority :)]
+        #[method(setThreadPriority:)]
         pub unsafe fn setThreadPriority(p: c_double) -> bool;
         #[method(threadPriority)]
         pub unsafe fn threadPriority(&self) -> c_double;
-        # [method (setThreadPriority :)]
+        #[method(setThreadPriority:)]
         pub unsafe fn setThreadPriority(&self, threadPriority: c_double);
         #[method(qualityOfService)]
         pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
-        # [method (setQualityOfService :)]
+        #[method(setQualityOfService:)]
         pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
         #[method_id(callStackReturnAddresses)]
         pub unsafe fn callStackReturnAddresses() -> Id<NSArray<NSNumber>, Shared>;
@@ -57,11 +57,11 @@ extern_methods!(
         pub unsafe fn callStackSymbols() -> Id<NSArray<NSString>, Shared>;
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setName :)]
+        #[method(setName:)]
         pub unsafe fn setName(&self, name: Option<&NSString>);
         #[method(stackSize)]
         pub unsafe fn stackSize(&self) -> NSUInteger;
-        # [method (setStackSize :)]
+        #[method(setStackSize:)]
         pub unsafe fn setStackSize(&self, stackSize: NSUInteger);
         #[method(isMainThread)]
         pub unsafe fn isMainThread(&self) -> bool;
@@ -71,14 +71,14 @@ extern_methods!(
         pub unsafe fn mainThread() -> Id<NSThread, Shared>;
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithTarget : selector : object :)]
+        #[method_id(initWithTarget:selector:object:)]
         pub unsafe fn initWithTarget_selector_object(
             &self,
             target: &Object,
             selector: Sel,
             argument: Option<&Object>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithBlock :)]
+        #[method_id(initWithBlock:)]
         pub unsafe fn initWithBlock(&self, block: TodoBlock) -> Id<Self, Shared>;
         #[method(isExecuting)]
         pub unsafe fn isExecuting(&self) -> bool;
@@ -97,7 +97,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSThreadPerformAdditions"]
     unsafe impl NSObject {
-        # [method (performSelectorOnMainThread : withObject : waitUntilDone : modes :)]
+        #[method(performSelectorOnMainThread:withObject:waitUntilDone:modes:)]
         pub unsafe fn performSelectorOnMainThread_withObject_waitUntilDone_modes(
             &self,
             aSelector: Sel,
@@ -105,14 +105,14 @@ extern_methods!(
             wait: bool,
             array: Option<&NSArray<NSString>>,
         );
-        # [method (performSelectorOnMainThread : withObject : waitUntilDone :)]
+        #[method(performSelectorOnMainThread:withObject:waitUntilDone:)]
         pub unsafe fn performSelectorOnMainThread_withObject_waitUntilDone(
             &self,
             aSelector: Sel,
             arg: Option<&Object>,
             wait: bool,
         );
-        # [method (performSelector : onThread : withObject : waitUntilDone : modes :)]
+        #[method(performSelector:onThread:withObject:waitUntilDone:modes:)]
         pub unsafe fn performSelector_onThread_withObject_waitUntilDone_modes(
             &self,
             aSelector: Sel,
@@ -121,7 +121,7 @@ extern_methods!(
             wait: bool,
             array: Option<&NSArray<NSString>>,
         );
-        # [method (performSelector : onThread : withObject : waitUntilDone :)]
+        #[method(performSelector:onThread:withObject:waitUntilDone:)]
         pub unsafe fn performSelector_onThread_withObject_waitUntilDone(
             &self,
             aSelector: Sel,
@@ -129,7 +129,7 @@ extern_methods!(
             arg: Option<&Object>,
             wait: bool,
         );
-        # [method (performSelectorInBackground : withObject :)]
+        #[method(performSelectorInBackground:withObject:)]
         pub unsafe fn performSelectorInBackground_withObject(
             &self,
             aSelector: Sel,

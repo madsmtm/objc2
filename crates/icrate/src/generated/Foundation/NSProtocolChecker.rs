@@ -22,12 +22,12 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSProtocolCheckerCreation"]
     unsafe impl NSProtocolChecker {
-        # [method_id (protocolCheckerWithTarget : protocol :)]
+        #[method_id(protocolCheckerWithTarget:protocol:)]
         pub unsafe fn protocolCheckerWithTarget_protocol(
             anObject: &NSObject,
             aProtocol: &Protocol,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithTarget : protocol :)]
+        #[method_id(initWithTarget:protocol:)]
         pub unsafe fn initWithTarget_protocol(
             &self,
             anObject: &NSObject,

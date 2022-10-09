@@ -20,33 +20,33 @@ extern_methods!(
         pub unsafe fn init(&self) -> Id<Self, Shared>;
         #[method_id(executableURL)]
         pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>>;
-        # [method (setExecutableURL :)]
+        #[method(setExecutableURL:)]
         pub unsafe fn setExecutableURL(&self, executableURL: Option<&NSURL>);
         #[method_id(arguments)]
         pub unsafe fn arguments(&self) -> Option<Id<NSArray<NSString>, Shared>>;
-        # [method (setArguments :)]
+        #[method(setArguments:)]
         pub unsafe fn setArguments(&self, arguments: Option<&NSArray<NSString>>);
         #[method_id(environment)]
         pub unsafe fn environment(&self) -> Option<Id<NSDictionary<NSString, NSString>, Shared>>;
-        # [method (setEnvironment :)]
+        #[method(setEnvironment:)]
         pub unsafe fn setEnvironment(&self, environment: Option<&NSDictionary<NSString, NSString>>);
         #[method_id(currentDirectoryURL)]
         pub unsafe fn currentDirectoryURL(&self) -> Option<Id<NSURL, Shared>>;
-        # [method (setCurrentDirectoryURL :)]
+        #[method(setCurrentDirectoryURL:)]
         pub unsafe fn setCurrentDirectoryURL(&self, currentDirectoryURL: Option<&NSURL>);
         #[method_id(standardInput)]
         pub unsafe fn standardInput(&self) -> Option<Id<Object, Shared>>;
-        # [method (setStandardInput :)]
+        #[method(setStandardInput:)]
         pub unsafe fn setStandardInput(&self, standardInput: Option<&Object>);
         #[method_id(standardOutput)]
         pub unsafe fn standardOutput(&self) -> Option<Id<Object, Shared>>;
-        # [method (setStandardOutput :)]
+        #[method(setStandardOutput:)]
         pub unsafe fn setStandardOutput(&self, standardOutput: Option<&Object>);
         #[method_id(standardError)]
         pub unsafe fn standardError(&self) -> Option<Id<Object, Shared>>;
-        # [method (setStandardError :)]
+        #[method(setStandardError:)]
         pub unsafe fn setStandardError(&self, standardError: Option<&Object>);
-        # [method (launchAndReturnError :)]
+        #[method(launchAndReturnError:)]
         pub unsafe fn launchAndReturnError(&self) -> Result<(), Id<NSError, Shared>>;
         #[method(interrupt)]
         pub unsafe fn interrupt(&self);
@@ -66,18 +66,18 @@ extern_methods!(
         pub unsafe fn terminationReason(&self) -> NSTaskTerminationReason;
         #[method(terminationHandler)]
         pub unsafe fn terminationHandler(&self) -> TodoBlock;
-        # [method (setTerminationHandler :)]
+        #[method(setTerminationHandler:)]
         pub unsafe fn setTerminationHandler(&self, terminationHandler: TodoBlock);
         #[method(qualityOfService)]
         pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
-        # [method (setQualityOfService :)]
+        #[method(setQualityOfService:)]
         pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
     }
 );
 extern_methods!(
     #[doc = "NSTaskConveniences"]
     unsafe impl NSTask {
-        # [method_id (launchedTaskWithExecutableURL : arguments : error : terminationHandler :)]
+        #[method_id(launchedTaskWithExecutableURL:arguments:error:terminationHandler:)]
         pub unsafe fn launchedTaskWithExecutableURL_arguments_error_terminationHandler(
             url: &NSURL,
             arguments: &NSArray<NSString>,
@@ -93,15 +93,15 @@ extern_methods!(
     unsafe impl NSTask {
         #[method_id(launchPath)]
         pub unsafe fn launchPath(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setLaunchPath :)]
+        #[method(setLaunchPath:)]
         pub unsafe fn setLaunchPath(&self, launchPath: Option<&NSString>);
         #[method_id(currentDirectoryPath)]
         pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared>;
-        # [method (setCurrentDirectoryPath :)]
+        #[method(setCurrentDirectoryPath:)]
         pub unsafe fn setCurrentDirectoryPath(&self, currentDirectoryPath: &NSString);
         #[method(launch)]
         pub unsafe fn launch(&self);
-        # [method_id (launchedTaskWithLaunchPath : arguments :)]
+        #[method_id(launchedTaskWithLaunchPath:arguments:)]
         pub unsafe fn launchedTaskWithLaunchPath_arguments(
             path: &NSString,
             arguments: &NSArray<NSString>,

@@ -17,14 +17,14 @@ extern_methods!(
     unsafe impl NSItemProvider {
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method (registerDataRepresentationForTypeIdentifier : visibility : loadHandler :)]
+        #[method(registerDataRepresentationForTypeIdentifier:visibility:loadHandler:)]
         pub unsafe fn registerDataRepresentationForTypeIdentifier_visibility_loadHandler(
             &self,
             typeIdentifier: &NSString,
             visibility: NSItemProviderRepresentationVisibility,
             loadHandler: TodoBlock,
         );
-        # [method (registerFileRepresentationForTypeIdentifier : fileOptions : visibility : loadHandler :)]
+        #[method(registerFileRepresentationForTypeIdentifier:fileOptions:visibility:loadHandler:)]
         pub unsafe fn registerFileRepresentationForTypeIdentifier_fileOptions_visibility_loadHandler(
             &self,
             typeIdentifier: &NSString,
@@ -34,32 +34,32 @@ extern_methods!(
         );
         #[method_id(registeredTypeIdentifiers)]
         pub unsafe fn registeredTypeIdentifiers(&self) -> Id<NSArray<NSString>, Shared>;
-        # [method_id (registeredTypeIdentifiersWithFileOptions :)]
+        #[method_id(registeredTypeIdentifiersWithFileOptions:)]
         pub unsafe fn registeredTypeIdentifiersWithFileOptions(
             &self,
             fileOptions: NSItemProviderFileOptions,
         ) -> Id<NSArray<NSString>, Shared>;
-        # [method (hasItemConformingToTypeIdentifier :)]
+        #[method(hasItemConformingToTypeIdentifier:)]
         pub unsafe fn hasItemConformingToTypeIdentifier(&self, typeIdentifier: &NSString) -> bool;
-        # [method (hasRepresentationConformingToTypeIdentifier : fileOptions :)]
+        #[method(hasRepresentationConformingToTypeIdentifier:fileOptions:)]
         pub unsafe fn hasRepresentationConformingToTypeIdentifier_fileOptions(
             &self,
             typeIdentifier: &NSString,
             fileOptions: NSItemProviderFileOptions,
         ) -> bool;
-        # [method_id (loadDataRepresentationForTypeIdentifier : completionHandler :)]
+        #[method_id(loadDataRepresentationForTypeIdentifier:completionHandler:)]
         pub unsafe fn loadDataRepresentationForTypeIdentifier_completionHandler(
             &self,
             typeIdentifier: &NSString,
             completionHandler: TodoBlock,
         ) -> Id<NSProgress, Shared>;
-        # [method_id (loadFileRepresentationForTypeIdentifier : completionHandler :)]
+        #[method_id(loadFileRepresentationForTypeIdentifier:completionHandler:)]
         pub unsafe fn loadFileRepresentationForTypeIdentifier_completionHandler(
             &self,
             typeIdentifier: &NSString,
             completionHandler: TodoBlock,
         ) -> Id<NSProgress, Shared>;
-        # [method_id (loadInPlaceFileRepresentationForTypeIdentifier : completionHandler :)]
+        #[method_id(loadInPlaceFileRepresentationForTypeIdentifier:completionHandler:)]
         pub unsafe fn loadInPlaceFileRepresentationForTypeIdentifier_completionHandler(
             &self,
             typeIdentifier: &NSString,
@@ -67,34 +67,34 @@ extern_methods!(
         ) -> Id<NSProgress, Shared>;
         #[method_id(suggestedName)]
         pub unsafe fn suggestedName(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setSuggestedName :)]
+        #[method(setSuggestedName:)]
         pub unsafe fn setSuggestedName(&self, suggestedName: Option<&NSString>);
-        # [method_id (initWithObject :)]
+        #[method_id(initWithObject:)]
         pub unsafe fn initWithObject(&self, object: &NSItemProviderWriting) -> Id<Self, Shared>;
-        # [method (registerObject : visibility :)]
+        #[method(registerObject:visibility:)]
         pub unsafe fn registerObject_visibility(
             &self,
             object: &NSItemProviderWriting,
             visibility: NSItemProviderRepresentationVisibility,
         );
-        # [method_id (initWithItem : typeIdentifier :)]
+        #[method_id(initWithItem:typeIdentifier:)]
         pub unsafe fn initWithItem_typeIdentifier(
             &self,
             item: Option<&NSSecureCoding>,
             typeIdentifier: Option<&NSString>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithContentsOfURL :)]
+        #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             &self,
             fileURL: Option<&NSURL>,
         ) -> Option<Id<Self, Shared>>;
-        # [method (registerItemForTypeIdentifier : loadHandler :)]
+        #[method(registerItemForTypeIdentifier:loadHandler:)]
         pub unsafe fn registerItemForTypeIdentifier_loadHandler(
             &self,
             typeIdentifier: &NSString,
             loadHandler: NSItemProviderLoadHandler,
         );
-        # [method (loadItemForTypeIdentifier : options : completionHandler :)]
+        #[method(loadItemForTypeIdentifier:options:completionHandler:)]
         pub unsafe fn loadItemForTypeIdentifier_options_completionHandler(
             &self,
             typeIdentifier: &NSString,
@@ -108,9 +108,9 @@ extern_methods!(
     unsafe impl NSItemProvider {
         #[method(previewImageHandler)]
         pub unsafe fn previewImageHandler(&self) -> NSItemProviderLoadHandler;
-        # [method (setPreviewImageHandler :)]
+        #[method(setPreviewImageHandler:)]
         pub unsafe fn setPreviewImageHandler(&self, previewImageHandler: NSItemProviderLoadHandler);
-        # [method (loadPreviewImageWithOptions : completionHandler :)]
+        #[method(loadPreviewImageWithOptions:completionHandler:)]
         pub unsafe fn loadPreviewImageWithOptions_completionHandler(
             &self,
             options: Option<&NSDictionary>,

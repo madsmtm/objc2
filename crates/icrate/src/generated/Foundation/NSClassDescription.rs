@@ -17,14 +17,14 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSClassDescription {
-        # [method (registerClassDescription : forClass :)]
+        #[method(registerClassDescription:forClass:)]
         pub unsafe fn registerClassDescription_forClass(
             description: &NSClassDescription,
             aClass: &Class,
         );
         #[method(invalidateClassDescriptionCache)]
         pub unsafe fn invalidateClassDescriptionCache();
-        # [method_id (classDescriptionForClass :)]
+        #[method_id(classDescriptionForClass:)]
         pub unsafe fn classDescriptionForClass(
             aClass: &Class,
         ) -> Option<Id<NSClassDescription, Shared>>;
@@ -34,7 +34,7 @@ extern_methods!(
         pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
         #[method_id(toManyRelationshipKeys)]
         pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
-        # [method_id (inverseForRelationshipKey :)]
+        #[method_id(inverseForRelationshipKey:)]
         pub unsafe fn inverseForRelationshipKey(
             &self,
             relationshipKey: &NSString,
@@ -52,7 +52,7 @@ extern_methods!(
         pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
         #[method_id(toManyRelationshipKeys)]
         pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
-        # [method_id (inverseForRelationshipKey :)]
+        #[method_id(inverseForRelationshipKey:)]
         pub unsafe fn inverseForRelationshipKey(
             &self,
             relationshipKey: &NSString,

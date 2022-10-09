@@ -17,19 +17,19 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<ObjectType: Message> NSHashTable<ObjectType> {
-        # [method_id (initWithOptions : capacity :)]
+        #[method_id(initWithOptions:capacity:)]
         pub unsafe fn initWithOptions_capacity(
             &self,
             options: NSPointerFunctionsOptions,
             initialCapacity: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithPointerFunctions : capacity :)]
+        #[method_id(initWithPointerFunctions:capacity:)]
         pub unsafe fn initWithPointerFunctions_capacity(
             &self,
             functions: &NSPointerFunctions,
             initialCapacity: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (hashTableWithOptions :)]
+        #[method_id(hashTableWithOptions:)]
         pub unsafe fn hashTableWithOptions(
             options: NSPointerFunctionsOptions,
         ) -> Id<NSHashTable<ObjectType>, Shared>;
@@ -41,13 +41,13 @@ extern_methods!(
         pub unsafe fn pointerFunctions(&self) -> Id<NSPointerFunctions, Shared>;
         #[method(count)]
         pub unsafe fn count(&self) -> NSUInteger;
-        # [method_id (member :)]
+        #[method_id(member:)]
         pub unsafe fn member(&self, object: Option<&ObjectType>) -> Option<Id<ObjectType, Shared>>;
         #[method_id(objectEnumerator)]
         pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
-        # [method (addObject :)]
+        #[method(addObject:)]
         pub unsafe fn addObject(&self, object: Option<&ObjectType>);
-        # [method (removeObject :)]
+        #[method(removeObject:)]
         pub unsafe fn removeObject(&self, object: Option<&ObjectType>);
         #[method(removeAllObjects)]
         pub unsafe fn removeAllObjects(&self);
@@ -55,19 +55,19 @@ extern_methods!(
         pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared>;
         #[method_id(anyObject)]
         pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>>;
-        # [method (containsObject :)]
+        #[method(containsObject:)]
         pub unsafe fn containsObject(&self, anObject: Option<&ObjectType>) -> bool;
-        # [method (intersectsHashTable :)]
+        #[method(intersectsHashTable:)]
         pub unsafe fn intersectsHashTable(&self, other: &NSHashTable<ObjectType>) -> bool;
-        # [method (isEqualToHashTable :)]
+        #[method(isEqualToHashTable:)]
         pub unsafe fn isEqualToHashTable(&self, other: &NSHashTable<ObjectType>) -> bool;
-        # [method (isSubsetOfHashTable :)]
+        #[method(isSubsetOfHashTable:)]
         pub unsafe fn isSubsetOfHashTable(&self, other: &NSHashTable<ObjectType>) -> bool;
-        # [method (intersectHashTable :)]
+        #[method(intersectHashTable:)]
         pub unsafe fn intersectHashTable(&self, other: &NSHashTable<ObjectType>);
-        # [method (unionHashTable :)]
+        #[method(unionHashTable:)]
         pub unsafe fn unionHashTable(&self, other: &NSHashTable<ObjectType>);
-        # [method (minusHashTable :)]
+        #[method(minusHashTable:)]
         pub unsafe fn minusHashTable(&self, other: &NSHashTable<ObjectType>);
         #[method_id(setRepresentation)]
         pub unsafe fn setRepresentation(&self) -> Id<NSSet<ObjectType>, Shared>;

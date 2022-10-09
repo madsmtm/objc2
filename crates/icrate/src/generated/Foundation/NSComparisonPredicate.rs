@@ -14,7 +14,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSComparisonPredicate {
-        # [method_id (predicateWithLeftExpression : rightExpression : modifier : type : options :)]
+        #[method_id(predicateWithLeftExpression:rightExpression:modifier:type:options:)]
         pub unsafe fn predicateWithLeftExpression_rightExpression_modifier_type_options(
             lhs: &NSExpression,
             rhs: &NSExpression,
@@ -22,13 +22,13 @@ extern_methods!(
             type_: NSPredicateOperatorType,
             options: NSComparisonPredicateOptions,
         ) -> Id<NSComparisonPredicate, Shared>;
-        # [method_id (predicateWithLeftExpression : rightExpression : customSelector :)]
+        #[method_id(predicateWithLeftExpression:rightExpression:customSelector:)]
         pub unsafe fn predicateWithLeftExpression_rightExpression_customSelector(
             lhs: &NSExpression,
             rhs: &NSExpression,
             selector: Sel,
         ) -> Id<NSComparisonPredicate, Shared>;
-        # [method_id (initWithLeftExpression : rightExpression : modifier : type : options :)]
+        #[method_id(initWithLeftExpression:rightExpression:modifier:type:options:)]
         pub unsafe fn initWithLeftExpression_rightExpression_modifier_type_options(
             &self,
             lhs: &NSExpression,
@@ -37,14 +37,14 @@ extern_methods!(
             type_: NSPredicateOperatorType,
             options: NSComparisonPredicateOptions,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithLeftExpression : rightExpression : customSelector :)]
+        #[method_id(initWithLeftExpression:rightExpression:customSelector:)]
         pub unsafe fn initWithLeftExpression_rightExpression_customSelector(
             &self,
             lhs: &NSExpression,
             rhs: &NSExpression,
             selector: Sel,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
         #[method(predicateOperatorType)]
         pub unsafe fn predicateOperatorType(&self) -> NSPredicateOperatorType;

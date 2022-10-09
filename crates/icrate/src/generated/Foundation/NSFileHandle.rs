@@ -22,48 +22,48 @@ extern_methods!(
     unsafe impl NSFileHandle {
         #[method_id(availableData)]
         pub unsafe fn availableData(&self) -> Id<NSData, Shared>;
-        # [method_id (initWithFileDescriptor : closeOnDealloc :)]
+        #[method_id(initWithFileDescriptor:closeOnDealloc:)]
         pub unsafe fn initWithFileDescriptor_closeOnDealloc(
             &self,
             fd: c_int,
             closeopt: bool,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
-        # [method_id (readDataToEndOfFileAndReturnError :)]
+        #[method_id(readDataToEndOfFileAndReturnError:)]
         pub unsafe fn readDataToEndOfFileAndReturnError(
             &self,
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
-        # [method_id (readDataUpToLength : error :)]
+        #[method_id(readDataUpToLength:error:)]
         pub unsafe fn readDataUpToLength_error(
             &self,
             length: NSUInteger,
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
-        # [method (writeData : error :)]
+        #[method(writeData:error:)]
         pub unsafe fn writeData_error(&self, data: &NSData) -> Result<(), Id<NSError, Shared>>;
-        # [method (getOffset : error :)]
+        #[method(getOffset:error:)]
         pub unsafe fn getOffset_error(
             &self,
             offsetInFile: NonNull<c_ulonglong>,
         ) -> Result<(), Id<NSError, Shared>>;
-        # [method (seekToEndReturningOffset : error :)]
+        #[method(seekToEndReturningOffset:error:)]
         pub unsafe fn seekToEndReturningOffset_error(
             &self,
             offsetInFile: *mut c_ulonglong,
         ) -> Result<(), Id<NSError, Shared>>;
-        # [method (seekToOffset : error :)]
+        #[method(seekToOffset:error:)]
         pub unsafe fn seekToOffset_error(
             &self,
             offset: c_ulonglong,
         ) -> Result<(), Id<NSError, Shared>>;
-        # [method (truncateAtOffset : error :)]
+        #[method(truncateAtOffset:error:)]
         pub unsafe fn truncateAtOffset_error(
             &self,
             offset: c_ulonglong,
         ) -> Result<(), Id<NSError, Shared>>;
-        # [method (synchronizeAndReturnError :)]
+        #[method(synchronizeAndReturnError:)]
         pub unsafe fn synchronizeAndReturnError(&self) -> Result<(), Id<NSError, Shared>>;
-        # [method (closeAndReturnError :)]
+        #[method(closeAndReturnError:)]
         pub unsafe fn closeAndReturnError(&self) -> Result<(), Id<NSError, Shared>>;
     }
 );
@@ -78,21 +78,21 @@ extern_methods!(
         pub unsafe fn fileHandleWithStandardError() -> Id<NSFileHandle, Shared>;
         #[method_id(fileHandleWithNullDevice)]
         pub unsafe fn fileHandleWithNullDevice() -> Id<NSFileHandle, Shared>;
-        # [method_id (fileHandleForReadingAtPath :)]
+        #[method_id(fileHandleForReadingAtPath:)]
         pub unsafe fn fileHandleForReadingAtPath(path: &NSString) -> Option<Id<Self, Shared>>;
-        # [method_id (fileHandleForWritingAtPath :)]
+        #[method_id(fileHandleForWritingAtPath:)]
         pub unsafe fn fileHandleForWritingAtPath(path: &NSString) -> Option<Id<Self, Shared>>;
-        # [method_id (fileHandleForUpdatingAtPath :)]
+        #[method_id(fileHandleForUpdatingAtPath:)]
         pub unsafe fn fileHandleForUpdatingAtPath(path: &NSString) -> Option<Id<Self, Shared>>;
-        # [method_id (fileHandleForReadingFromURL : error :)]
+        #[method_id(fileHandleForReadingFromURL:error:)]
         pub unsafe fn fileHandleForReadingFromURL_error(
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (fileHandleForWritingToURL : error :)]
+        #[method_id(fileHandleForWritingToURL:error:)]
         pub unsafe fn fileHandleForWritingToURL_error(
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (fileHandleForUpdatingURL : error :)]
+        #[method_id(fileHandleForUpdatingURL:error:)]
         pub unsafe fn fileHandleForUpdatingURL_error(
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
@@ -101,28 +101,28 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSFileHandleAsynchronousAccess"]
     unsafe impl NSFileHandle {
-        # [method (readInBackgroundAndNotifyForModes :)]
+        #[method(readInBackgroundAndNotifyForModes:)]
         pub unsafe fn readInBackgroundAndNotifyForModes(
             &self,
             modes: Option<&NSArray<NSRunLoopMode>>,
         );
         #[method(readInBackgroundAndNotify)]
         pub unsafe fn readInBackgroundAndNotify(&self);
-        # [method (readToEndOfFileInBackgroundAndNotifyForModes :)]
+        #[method(readToEndOfFileInBackgroundAndNotifyForModes:)]
         pub unsafe fn readToEndOfFileInBackgroundAndNotifyForModes(
             &self,
             modes: Option<&NSArray<NSRunLoopMode>>,
         );
         #[method(readToEndOfFileInBackgroundAndNotify)]
         pub unsafe fn readToEndOfFileInBackgroundAndNotify(&self);
-        # [method (acceptConnectionInBackgroundAndNotifyForModes :)]
+        #[method(acceptConnectionInBackgroundAndNotifyForModes:)]
         pub unsafe fn acceptConnectionInBackgroundAndNotifyForModes(
             &self,
             modes: Option<&NSArray<NSRunLoopMode>>,
         );
         #[method(acceptConnectionInBackgroundAndNotify)]
         pub unsafe fn acceptConnectionInBackgroundAndNotify(&self);
-        # [method (waitForDataInBackgroundAndNotifyForModes :)]
+        #[method(waitForDataInBackgroundAndNotifyForModes:)]
         pub unsafe fn waitForDataInBackgroundAndNotifyForModes(
             &self,
             modes: Option<&NSArray<NSRunLoopMode>>,
@@ -131,18 +131,18 @@ extern_methods!(
         pub unsafe fn waitForDataInBackgroundAndNotify(&self);
         #[method(readabilityHandler)]
         pub unsafe fn readabilityHandler(&self) -> TodoBlock;
-        # [method (setReadabilityHandler :)]
+        #[method(setReadabilityHandler:)]
         pub unsafe fn setReadabilityHandler(&self, readabilityHandler: TodoBlock);
         #[method(writeabilityHandler)]
         pub unsafe fn writeabilityHandler(&self) -> TodoBlock;
-        # [method (setWriteabilityHandler :)]
+        #[method(setWriteabilityHandler:)]
         pub unsafe fn setWriteabilityHandler(&self, writeabilityHandler: TodoBlock);
     }
 );
 extern_methods!(
     #[doc = "NSFileHandlePlatformSpecific"]
     unsafe impl NSFileHandle {
-        # [method_id (initWithFileDescriptor :)]
+        #[method_id(initWithFileDescriptor:)]
         pub unsafe fn initWithFileDescriptor(&self, fd: c_int) -> Id<Self, Shared>;
         #[method(fileDescriptor)]
         pub unsafe fn fileDescriptor(&self) -> c_int;
@@ -152,17 +152,17 @@ extern_methods!(
     unsafe impl NSFileHandle {
         #[method_id(readDataToEndOfFile)]
         pub unsafe fn readDataToEndOfFile(&self) -> Id<NSData, Shared>;
-        # [method_id (readDataOfLength :)]
+        #[method_id(readDataOfLength:)]
         pub unsafe fn readDataOfLength(&self, length: NSUInteger) -> Id<NSData, Shared>;
-        # [method (writeData :)]
+        #[method(writeData:)]
         pub unsafe fn writeData(&self, data: &NSData);
         #[method(offsetInFile)]
         pub unsafe fn offsetInFile(&self) -> c_ulonglong;
         #[method(seekToEndOfFile)]
         pub unsafe fn seekToEndOfFile(&self) -> c_ulonglong;
-        # [method (seekToFileOffset :)]
+        #[method(seekToFileOffset:)]
         pub unsafe fn seekToFileOffset(&self, offset: c_ulonglong);
-        # [method (truncateFileAtOffset :)]
+        #[method(truncateFileAtOffset:)]
         pub unsafe fn truncateFileAtOffset(&self, offset: c_ulonglong);
         #[method(synchronizeFile)]
         pub unsafe fn synchronizeFile(&self);

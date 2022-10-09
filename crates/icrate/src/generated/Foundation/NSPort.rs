@@ -26,17 +26,17 @@ extern_methods!(
         pub unsafe fn invalidate(&self);
         #[method(isValid)]
         pub unsafe fn isValid(&self) -> bool;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, anObject: Option<&NSPortDelegate>);
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSPortDelegate, Shared>>;
-        # [method (scheduleInRunLoop : forMode :)]
+        #[method(scheduleInRunLoop:forMode:)]
         pub unsafe fn scheduleInRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode);
-        # [method (removeFromRunLoop : forMode :)]
+        #[method(removeFromRunLoop:forMode:)]
         pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode);
         #[method(reservedSpaceLength)]
         pub unsafe fn reservedSpaceLength(&self) -> NSUInteger;
-        # [method (sendBeforeDate : components : from : reserved :)]
+        #[method(sendBeforeDate:components:from:reserved:)]
         pub unsafe fn sendBeforeDate_components_from_reserved(
             &self,
             limitDate: &NSDate,
@@ -44,7 +44,7 @@ extern_methods!(
             receivePort: Option<&NSPort>,
             headerSpaceReserved: NSUInteger,
         ) -> bool;
-        # [method (sendBeforeDate : msgid : components : from : reserved :)]
+        #[method(sendBeforeDate:msgid:components:from:reserved:)]
         pub unsafe fn sendBeforeDate_msgid_components_from_reserved(
             &self,
             limitDate: &NSDate,
@@ -53,14 +53,14 @@ extern_methods!(
             receivePort: Option<&NSPort>,
             headerSpaceReserved: NSUInteger,
         ) -> bool;
-        # [method (addConnection : toRunLoop : forMode :)]
+        #[method(addConnection:toRunLoop:forMode:)]
         pub unsafe fn addConnection_toRunLoop_forMode(
             &self,
             conn: &NSConnection,
             runLoop: &NSRunLoop,
             mode: &NSRunLoopMode,
         );
-        # [method (removeConnection : fromRunLoop : forMode :)]
+        #[method(removeConnection:fromRunLoop:forMode:)]
         pub unsafe fn removeConnection_fromRunLoop_forMode(
             &self,
             conn: &NSConnection,
@@ -79,20 +79,20 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMachPort {
-        # [method_id (portWithMachPort :)]
+        #[method_id(portWithMachPort:)]
         pub unsafe fn portWithMachPort(machPort: u32) -> Id<NSPort, Shared>;
-        # [method_id (initWithMachPort :)]
+        #[method_id(initWithMachPort:)]
         pub unsafe fn initWithMachPort(&self, machPort: u32) -> Id<Self, Shared>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, anObject: Option<&NSMachPortDelegate>);
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSMachPortDelegate, Shared>>;
-        # [method_id (portWithMachPort : options :)]
+        #[method_id(portWithMachPort:options:)]
         pub unsafe fn portWithMachPort_options(
             machPort: u32,
             f: NSMachPortOptions,
         ) -> Id<NSPort, Shared>;
-        # [method_id (initWithMachPort : options :)]
+        #[method_id(initWithMachPort:options:)]
         pub unsafe fn initWithMachPort_options(
             &self,
             machPort: u32,
@@ -100,9 +100,9 @@ extern_methods!(
         ) -> Id<Self, Shared>;
         #[method(machPort)]
         pub unsafe fn machPort(&self) -> u32;
-        # [method (scheduleInRunLoop : forMode :)]
+        #[method(scheduleInRunLoop:forMode:)]
         pub unsafe fn scheduleInRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode);
-        # [method (removeFromRunLoop : forMode :)]
+        #[method(removeFromRunLoop:forMode:)]
         pub unsafe fn removeFromRunLoop_forMode(&self, runLoop: &NSRunLoop, mode: &NSRunLoopMode);
     }
 );
@@ -128,9 +128,9 @@ extern_methods!(
     unsafe impl NSSocketPort {
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithTCPPort :)]
+        #[method_id(initWithTCPPort:)]
         pub unsafe fn initWithTCPPort(&self, port: c_ushort) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithProtocolFamily : socketType : protocol : address :)]
+        #[method_id(initWithProtocolFamily:socketType:protocol:address:)]
         pub unsafe fn initWithProtocolFamily_socketType_protocol_address(
             &self,
             family: c_int,
@@ -138,7 +138,7 @@ extern_methods!(
             protocol: c_int,
             address: &NSData,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithProtocolFamily : socketType : protocol : socket :)]
+        #[method_id(initWithProtocolFamily:socketType:protocol:socket:)]
         pub unsafe fn initWithProtocolFamily_socketType_protocol_socket(
             &self,
             family: c_int,
@@ -146,13 +146,13 @@ extern_methods!(
             protocol: c_int,
             sock: NSSocketNativeHandle,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initRemoteWithTCPPort : host :)]
+        #[method_id(initRemoteWithTCPPort:host:)]
         pub unsafe fn initRemoteWithTCPPort_host(
             &self,
             port: c_ushort,
             hostName: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initRemoteWithProtocolFamily : socketType : protocol : address :)]
+        #[method_id(initRemoteWithProtocolFamily:socketType:protocol:address:)]
         pub unsafe fn initRemoteWithProtocolFamily_socketType_protocol_address(
             &self,
             family: c_int,

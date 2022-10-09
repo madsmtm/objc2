@@ -19,33 +19,33 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileVersion {
-        # [method_id (currentVersionOfItemAtURL :)]
+        #[method_id(currentVersionOfItemAtURL:)]
         pub unsafe fn currentVersionOfItemAtURL(url: &NSURL) -> Option<Id<NSFileVersion, Shared>>;
-        # [method_id (otherVersionsOfItemAtURL :)]
+        #[method_id(otherVersionsOfItemAtURL:)]
         pub unsafe fn otherVersionsOfItemAtURL(
             url: &NSURL,
         ) -> Option<Id<NSArray<NSFileVersion>, Shared>>;
-        # [method_id (unresolvedConflictVersionsOfItemAtURL :)]
+        #[method_id(unresolvedConflictVersionsOfItemAtURL:)]
         pub unsafe fn unresolvedConflictVersionsOfItemAtURL(
             url: &NSURL,
         ) -> Option<Id<NSArray<NSFileVersion>, Shared>>;
-        # [method (getNonlocalVersionsOfItemAtURL : completionHandler :)]
+        #[method(getNonlocalVersionsOfItemAtURL:completionHandler:)]
         pub unsafe fn getNonlocalVersionsOfItemAtURL_completionHandler(
             url: &NSURL,
             completionHandler: TodoBlock,
         );
-        # [method_id (versionOfItemAtURL : forPersistentIdentifier :)]
+        #[method_id(versionOfItemAtURL:forPersistentIdentifier:)]
         pub unsafe fn versionOfItemAtURL_forPersistentIdentifier(
             url: &NSURL,
             persistentIdentifier: &Object,
         ) -> Option<Id<NSFileVersion, Shared>>;
-        # [method_id (addVersionOfItemAtURL : withContentsOfURL : options : error :)]
+        #[method_id(addVersionOfItemAtURL:withContentsOfURL:options:error:)]
         pub unsafe fn addVersionOfItemAtURL_withContentsOfURL_options_error(
             url: &NSURL,
             contentsURL: &NSURL,
             options: NSFileVersionAddingOptions,
         ) -> Result<Id<NSFileVersion, Shared>, Id<NSError, Shared>>;
-        # [method_id (temporaryDirectoryURLForNewVersionOfItemAtURL :)]
+        #[method_id(temporaryDirectoryURLForNewVersionOfItemAtURL:)]
         pub unsafe fn temporaryDirectoryURLForNewVersionOfItemAtURL(
             url: &NSURL,
         ) -> Id<NSURL, Shared>;
@@ -66,25 +66,25 @@ extern_methods!(
         pub unsafe fn isConflict(&self) -> bool;
         #[method(isResolved)]
         pub unsafe fn isResolved(&self) -> bool;
-        # [method (setResolved :)]
+        #[method(setResolved:)]
         pub unsafe fn setResolved(&self, resolved: bool);
         #[method(isDiscardable)]
         pub unsafe fn isDiscardable(&self) -> bool;
-        # [method (setDiscardable :)]
+        #[method(setDiscardable:)]
         pub unsafe fn setDiscardable(&self, discardable: bool);
         #[method(hasLocalContents)]
         pub unsafe fn hasLocalContents(&self) -> bool;
         #[method(hasThumbnail)]
         pub unsafe fn hasThumbnail(&self) -> bool;
-        # [method_id (replaceItemAtURL : options : error :)]
+        #[method_id(replaceItemAtURL:options:error:)]
         pub unsafe fn replaceItemAtURL_options_error(
             &self,
             url: &NSURL,
             options: NSFileVersionReplacingOptions,
         ) -> Result<Id<NSURL, Shared>, Id<NSError, Shared>>;
-        # [method (removeAndReturnError :)]
+        #[method(removeAndReturnError:)]
         pub unsafe fn removeAndReturnError(&self) -> Result<(), Id<NSError, Shared>>;
-        # [method (removeOtherVersionsOfItemAtURL : error :)]
+        #[method(removeOtherVersionsOfItemAtURL:error:)]
         pub unsafe fn removeOtherVersionsOfItemAtURL_error(
             url: &NSURL,
         ) -> Result<(), Id<NSError, Shared>>;

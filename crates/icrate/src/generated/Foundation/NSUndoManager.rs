@@ -30,15 +30,15 @@ extern_methods!(
         pub unsafe fn isUndoRegistrationEnabled(&self) -> bool;
         #[method(groupsByEvent)]
         pub unsafe fn groupsByEvent(&self) -> bool;
-        # [method (setGroupsByEvent :)]
+        #[method(setGroupsByEvent:)]
         pub unsafe fn setGroupsByEvent(&self, groupsByEvent: bool);
         #[method(levelsOfUndo)]
         pub unsafe fn levelsOfUndo(&self) -> NSUInteger;
-        # [method (setLevelsOfUndo :)]
+        #[method(setLevelsOfUndo:)]
         pub unsafe fn setLevelsOfUndo(&self, levelsOfUndo: NSUInteger);
         #[method_id(runLoopModes)]
         pub unsafe fn runLoopModes(&self) -> Id<NSArray<NSRunLoopMode>, Shared>;
-        # [method (setRunLoopModes :)]
+        #[method(setRunLoopModes:)]
         pub unsafe fn setRunLoopModes(&self, runLoopModes: &NSArray<NSRunLoopMode>);
         #[method(undo)]
         pub unsafe fn undo(&self);
@@ -56,24 +56,24 @@ extern_methods!(
         pub unsafe fn isRedoing(&self) -> bool;
         #[method(removeAllActions)]
         pub unsafe fn removeAllActions(&self);
-        # [method (removeAllActionsWithTarget :)]
+        #[method(removeAllActionsWithTarget:)]
         pub unsafe fn removeAllActionsWithTarget(&self, target: &Object);
-        # [method (registerUndoWithTarget : selector : object :)]
+        #[method(registerUndoWithTarget:selector:object:)]
         pub unsafe fn registerUndoWithTarget_selector_object(
             &self,
             target: &Object,
             selector: Sel,
             anObject: Option<&Object>,
         );
-        # [method_id (prepareWithInvocationTarget :)]
+        #[method_id(prepareWithInvocationTarget:)]
         pub unsafe fn prepareWithInvocationTarget(&self, target: &Object) -> Id<Object, Shared>;
-        # [method (registerUndoWithTarget : handler :)]
+        #[method(registerUndoWithTarget:handler:)]
         pub unsafe fn registerUndoWithTarget_handler(
             &self,
             target: &Object,
             undoHandler: TodoBlock,
         );
-        # [method (setActionIsDiscardable :)]
+        #[method(setActionIsDiscardable:)]
         pub unsafe fn setActionIsDiscardable(&self, discardable: bool);
         #[method(undoActionIsDiscardable)]
         pub unsafe fn undoActionIsDiscardable(&self) -> bool;
@@ -83,18 +83,18 @@ extern_methods!(
         pub unsafe fn undoActionName(&self) -> Id<NSString, Shared>;
         #[method_id(redoActionName)]
         pub unsafe fn redoActionName(&self) -> Id<NSString, Shared>;
-        # [method (setActionName :)]
+        #[method(setActionName:)]
         pub unsafe fn setActionName(&self, actionName: &NSString);
         #[method_id(undoMenuItemTitle)]
         pub unsafe fn undoMenuItemTitle(&self) -> Id<NSString, Shared>;
         #[method_id(redoMenuItemTitle)]
         pub unsafe fn redoMenuItemTitle(&self) -> Id<NSString, Shared>;
-        # [method_id (undoMenuTitleForUndoActionName :)]
+        #[method_id(undoMenuTitleForUndoActionName:)]
         pub unsafe fn undoMenuTitleForUndoActionName(
             &self,
             actionName: &NSString,
         ) -> Id<NSString, Shared>;
-        # [method_id (redoMenuTitleForUndoActionName :)]
+        #[method_id(redoMenuTitleForUndoActionName:)]
         pub unsafe fn redoMenuTitleForUndoActionName(
             &self,
             actionName: &NSString,

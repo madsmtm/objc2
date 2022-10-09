@@ -17,13 +17,13 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSException {
-        # [method_id (exceptionWithName : reason : userInfo :)]
+        #[method_id(exceptionWithName:reason:userInfo:)]
         pub unsafe fn exceptionWithName_reason_userInfo(
             name: &NSExceptionName,
             reason: Option<&NSString>,
             userInfo: Option<&NSDictionary>,
         ) -> Id<NSException, Shared>;
-        # [method_id (initWithName : reason : userInfo :)]
+        #[method_id(initWithName:reason:userInfo:)]
         pub unsafe fn initWithName_reason_userInfo(
             &self,
             aName: &NSExceptionName,
@@ -47,7 +47,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSExceptionRaisingConveniences"]
     unsafe impl NSException {
-        # [method (raise : format : arguments :)]
+        #[method(raise:format:arguments:)]
         pub unsafe fn raise_format_arguments(
             name: &NSExceptionName,
             format: &NSString,

@@ -26,9 +26,9 @@ extern_methods!(
         pub unsafe fn collectIfNeeded(&self);
         #[method(collectExhaustively)]
         pub unsafe fn collectExhaustively(&self);
-        # [method (disableCollectorForPointer :)]
+        #[method(disableCollectorForPointer:)]
         pub unsafe fn disableCollectorForPointer(&self, ptr: NonNull<c_void>);
-        # [method (enableCollectorForPointer :)]
+        #[method(enableCollectorForPointer:)]
         pub unsafe fn enableCollectorForPointer(&self, ptr: NonNull<c_void>);
         #[method(zone)]
         pub unsafe fn zone(&self) -> NonNull<NSZone>;

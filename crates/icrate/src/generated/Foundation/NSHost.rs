@@ -17,11 +17,11 @@ extern_methods!(
     unsafe impl NSHost {
         #[method_id(currentHost)]
         pub unsafe fn currentHost() -> Id<Self, Shared>;
-        # [method_id (hostWithName :)]
+        #[method_id(hostWithName:)]
         pub unsafe fn hostWithName(name: Option<&NSString>) -> Id<Self, Shared>;
-        # [method_id (hostWithAddress :)]
+        #[method_id(hostWithAddress:)]
         pub unsafe fn hostWithAddress(address: &NSString) -> Id<Self, Shared>;
-        # [method (isEqualToHost :)]
+        #[method(isEqualToHost:)]
         pub unsafe fn isEqualToHost(&self, aHost: &NSHost) -> bool;
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
@@ -33,7 +33,7 @@ extern_methods!(
         pub unsafe fn addresses(&self) -> Id<NSArray<NSString>, Shared>;
         #[method_id(localizedName)]
         pub unsafe fn localizedName(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setHostCacheEnabled :)]
+        #[method(setHostCacheEnabled:)]
         pub unsafe fn setHostCacheEnabled(flag: bool);
         #[method(isHostCacheEnabled)]
         pub unsafe fn isHostCacheEnabled() -> bool;

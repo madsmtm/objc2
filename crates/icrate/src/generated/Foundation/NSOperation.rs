@@ -36,33 +36,33 @@ extern_methods!(
         pub unsafe fn isAsynchronous(&self) -> bool;
         #[method(isReady)]
         pub unsafe fn isReady(&self) -> bool;
-        # [method (addDependency :)]
+        #[method(addDependency:)]
         pub unsafe fn addDependency(&self, op: &NSOperation);
-        # [method (removeDependency :)]
+        #[method(removeDependency:)]
         pub unsafe fn removeDependency(&self, op: &NSOperation);
         #[method_id(dependencies)]
         pub unsafe fn dependencies(&self) -> Id<NSArray<NSOperation>, Shared>;
         #[method(queuePriority)]
         pub unsafe fn queuePriority(&self) -> NSOperationQueuePriority;
-        # [method (setQueuePriority :)]
+        #[method(setQueuePriority:)]
         pub unsafe fn setQueuePriority(&self, queuePriority: NSOperationQueuePriority);
         #[method(completionBlock)]
         pub unsafe fn completionBlock(&self) -> TodoBlock;
-        # [method (setCompletionBlock :)]
+        #[method(setCompletionBlock:)]
         pub unsafe fn setCompletionBlock(&self, completionBlock: TodoBlock);
         #[method(waitUntilFinished)]
         pub unsafe fn waitUntilFinished(&self);
         #[method(threadPriority)]
         pub unsafe fn threadPriority(&self) -> c_double;
-        # [method (setThreadPriority :)]
+        #[method(setThreadPriority:)]
         pub unsafe fn setThreadPriority(&self, threadPriority: c_double);
         #[method(qualityOfService)]
         pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
-        # [method (setQualityOfService :)]
+        #[method(setQualityOfService:)]
         pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setName :)]
+        #[method(setName:)]
         pub unsafe fn setName(&self, name: Option<&NSString>);
     }
 );
@@ -75,9 +75,9 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSBlockOperation {
-        # [method_id (blockOperationWithBlock :)]
+        #[method_id(blockOperationWithBlock:)]
         pub unsafe fn blockOperationWithBlock(block: TodoBlock) -> Id<Self, Shared>;
-        # [method (addExecutionBlock :)]
+        #[method(addExecutionBlock:)]
         pub unsafe fn addExecutionBlock(&self, block: TodoBlock);
     }
 );
@@ -90,14 +90,14 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSInvocationOperation {
-        # [method_id (initWithTarget : selector : object :)]
+        #[method_id(initWithTarget:selector:object:)]
         pub unsafe fn initWithTarget_selector_object(
             &self,
             target: &Object,
             sel: Sel,
             arg: Option<&Object>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithInvocation :)]
+        #[method_id(initWithInvocation:)]
         pub unsafe fn initWithInvocation(&self, inv: &NSInvocation) -> Id<Self, Shared>;
         #[method_id(invocation)]
         pub unsafe fn invocation(&self) -> Id<NSInvocation, Shared>;
@@ -116,37 +116,37 @@ extern_methods!(
     unsafe impl NSOperationQueue {
         #[method_id(progress)]
         pub unsafe fn progress(&self) -> Id<NSProgress, Shared>;
-        # [method (addOperation :)]
+        #[method(addOperation:)]
         pub unsafe fn addOperation(&self, op: &NSOperation);
-        # [method (addOperations : waitUntilFinished :)]
+        #[method(addOperations:waitUntilFinished:)]
         pub unsafe fn addOperations_waitUntilFinished(
             &self,
             ops: &NSArray<NSOperation>,
             wait: bool,
         );
-        # [method (addOperationWithBlock :)]
+        #[method(addOperationWithBlock:)]
         pub unsafe fn addOperationWithBlock(&self, block: TodoBlock);
-        # [method (addBarrierBlock :)]
+        #[method(addBarrierBlock:)]
         pub unsafe fn addBarrierBlock(&self, barrier: TodoBlock);
         #[method(maxConcurrentOperationCount)]
         pub unsafe fn maxConcurrentOperationCount(&self) -> NSInteger;
-        # [method (setMaxConcurrentOperationCount :)]
+        #[method(setMaxConcurrentOperationCount:)]
         pub unsafe fn setMaxConcurrentOperationCount(&self, maxConcurrentOperationCount: NSInteger);
         #[method(isSuspended)]
         pub unsafe fn isSuspended(&self) -> bool;
-        # [method (setSuspended :)]
+        #[method(setSuspended:)]
         pub unsafe fn setSuspended(&self, suspended: bool);
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setName :)]
+        #[method(setName:)]
         pub unsafe fn setName(&self, name: Option<&NSString>);
         #[method(qualityOfService)]
         pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
-        # [method (setQualityOfService :)]
+        #[method(setQualityOfService:)]
         pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
         #[method_id(underlyingQueue)]
         pub unsafe fn underlyingQueue(&self) -> Option<Id<dispatch_queue_t, Shared>>;
-        # [method (setUnderlyingQueue :)]
+        #[method(setUnderlyingQueue:)]
         pub unsafe fn setUnderlyingQueue(&self, underlyingQueue: Option<&dispatch_queue_t>);
         #[method(cancelAllOperations)]
         pub unsafe fn cancelAllOperations(&self);

@@ -13,13 +13,13 @@ use super::__exported::NSString;
 extern_methods!(
     #[doc = "NSValueGeometryExtensions"]
     unsafe impl NSValue {
-        # [method_id (valueWithPoint :)]
+        #[method_id(valueWithPoint:)]
         pub unsafe fn valueWithPoint(point: NSPoint) -> Id<NSValue, Shared>;
-        # [method_id (valueWithSize :)]
+        #[method_id(valueWithSize:)]
         pub unsafe fn valueWithSize(size: NSSize) -> Id<NSValue, Shared>;
-        # [method_id (valueWithRect :)]
+        #[method_id(valueWithRect:)]
         pub unsafe fn valueWithRect(rect: NSRect) -> Id<NSValue, Shared>;
-        # [method_id (valueWithEdgeInsets :)]
+        #[method_id(valueWithEdgeInsets:)]
         pub unsafe fn valueWithEdgeInsets(insets: NSEdgeInsets) -> Id<NSValue, Shared>;
         #[method(pointValue)]
         pub unsafe fn pointValue(&self) -> NSPoint;
@@ -34,15 +34,15 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSGeometryCoding"]
     unsafe impl NSCoder {
-        # [method (encodePoint :)]
+        #[method(encodePoint:)]
         pub unsafe fn encodePoint(&self, point: NSPoint);
         #[method(decodePoint)]
         pub unsafe fn decodePoint(&self) -> NSPoint;
-        # [method (encodeSize :)]
+        #[method(encodeSize:)]
         pub unsafe fn encodeSize(&self, size: NSSize);
         #[method(decodeSize)]
         pub unsafe fn decodeSize(&self) -> NSSize;
-        # [method (encodeRect :)]
+        #[method(encodeRect:)]
         pub unsafe fn encodeRect(&self, rect: NSRect);
         #[method(decodeRect)]
         pub unsafe fn decodeRect(&self) -> NSRect;
@@ -51,17 +51,17 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSGeometryKeyedCoding"]
     unsafe impl NSCoder {
-        # [method (encodePoint : forKey :)]
+        #[method(encodePoint:forKey:)]
         pub unsafe fn encodePoint_forKey(&self, point: NSPoint, key: &NSString);
-        # [method (encodeSize : forKey :)]
+        #[method(encodeSize:forKey:)]
         pub unsafe fn encodeSize_forKey(&self, size: NSSize, key: &NSString);
-        # [method (encodeRect : forKey :)]
+        #[method(encodeRect:forKey:)]
         pub unsafe fn encodeRect_forKey(&self, rect: NSRect, key: &NSString);
-        # [method (decodePointForKey :)]
+        #[method(decodePointForKey:)]
         pub unsafe fn decodePointForKey(&self, key: &NSString) -> NSPoint;
-        # [method (decodeSizeForKey :)]
+        #[method(decodeSizeForKey:)]
         pub unsafe fn decodeSizeForKey(&self, key: &NSString) -> NSSize;
-        # [method (decodeRectForKey :)]
+        #[method(decodeRectForKey:)]
         pub unsafe fn decodeRectForKey(&self, key: &NSString) -> NSRect;
     }
 );

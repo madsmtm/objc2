@@ -17,34 +17,34 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSPredicate {
-        # [method_id (predicateWithFormat : argumentArray :)]
+        #[method_id(predicateWithFormat:argumentArray:)]
         pub unsafe fn predicateWithFormat_argumentArray(
             predicateFormat: &NSString,
             arguments: Option<&NSArray>,
         ) -> Id<NSPredicate, Shared>;
-        # [method_id (predicateWithFormat : arguments :)]
+        #[method_id(predicateWithFormat:arguments:)]
         pub unsafe fn predicateWithFormat_arguments(
             predicateFormat: &NSString,
             argList: va_list,
         ) -> Id<NSPredicate, Shared>;
-        # [method_id (predicateFromMetadataQueryString :)]
+        #[method_id(predicateFromMetadataQueryString:)]
         pub unsafe fn predicateFromMetadataQueryString(
             queryString: &NSString,
         ) -> Option<Id<NSPredicate, Shared>>;
-        # [method_id (predicateWithValue :)]
+        #[method_id(predicateWithValue:)]
         pub unsafe fn predicateWithValue(value: bool) -> Id<NSPredicate, Shared>;
-        # [method_id (predicateWithBlock :)]
+        #[method_id(predicateWithBlock:)]
         pub unsafe fn predicateWithBlock(block: TodoBlock) -> Id<NSPredicate, Shared>;
         #[method_id(predicateFormat)]
         pub unsafe fn predicateFormat(&self) -> Id<NSString, Shared>;
-        # [method_id (predicateWithSubstitutionVariables :)]
+        #[method_id(predicateWithSubstitutionVariables:)]
         pub unsafe fn predicateWithSubstitutionVariables(
             &self,
             variables: &NSDictionary<NSString, Object>,
         ) -> Id<Self, Shared>;
-        # [method (evaluateWithObject :)]
+        #[method(evaluateWithObject:)]
         pub unsafe fn evaluateWithObject(&self, object: Option<&Object>) -> bool;
-        # [method (evaluateWithObject : substitutionVariables :)]
+        #[method(evaluateWithObject:substitutionVariables:)]
         pub unsafe fn evaluateWithObject_substitutionVariables(
             &self,
             object: Option<&Object>,
@@ -57,7 +57,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSPredicateSupport"]
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        # [method_id (filteredArrayUsingPredicate :)]
+        #[method_id(filteredArrayUsingPredicate:)]
         pub unsafe fn filteredArrayUsingPredicate(
             &self,
             predicate: &NSPredicate,
@@ -67,14 +67,14 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSPredicateSupport"]
     unsafe impl<ObjectType: Message> NSMutableArray<ObjectType> {
-        # [method (filterUsingPredicate :)]
+        #[method(filterUsingPredicate:)]
         pub unsafe fn filterUsingPredicate(&self, predicate: &NSPredicate);
     }
 );
 extern_methods!(
     #[doc = "NSPredicateSupport"]
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
-        # [method_id (filteredSetUsingPredicate :)]
+        #[method_id(filteredSetUsingPredicate:)]
         pub unsafe fn filteredSetUsingPredicate(
             &self,
             predicate: &NSPredicate,
@@ -84,14 +84,14 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSPredicateSupport"]
     unsafe impl<ObjectType: Message> NSMutableSet<ObjectType> {
-        # [method (filterUsingPredicate :)]
+        #[method(filterUsingPredicate:)]
         pub unsafe fn filterUsingPredicate(&self, predicate: &NSPredicate);
     }
 );
 extern_methods!(
     #[doc = "NSPredicateSupport"]
     unsafe impl<ObjectType: Message> NSOrderedSet<ObjectType> {
-        # [method_id (filteredOrderedSetUsingPredicate :)]
+        #[method_id(filteredOrderedSetUsingPredicate:)]
         pub unsafe fn filteredOrderedSetUsingPredicate(
             &self,
             p: &NSPredicate,
@@ -101,7 +101,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSPredicateSupport"]
     unsafe impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
-        # [method (filterUsingPredicate :)]
+        #[method(filterUsingPredicate:)]
         pub unsafe fn filterUsingPredicate(&self, p: &NSPredicate);
     }
 );

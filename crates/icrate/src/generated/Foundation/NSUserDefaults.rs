@@ -25,102 +25,102 @@ extern_methods!(
         pub unsafe fn resetStandardUserDefaults();
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithSuiteName :)]
+        #[method_id(initWithSuiteName:)]
         pub unsafe fn initWithSuiteName(
             &self,
             suitename: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithUser :)]
+        #[method_id(initWithUser:)]
         pub unsafe fn initWithUser(&self, username: &NSString) -> Option<Id<Object, Shared>>;
-        # [method_id (objectForKey :)]
+        #[method_id(objectForKey:)]
         pub unsafe fn objectForKey(&self, defaultName: &NSString) -> Option<Id<Object, Shared>>;
-        # [method (setObject : forKey :)]
+        #[method(setObject:forKey:)]
         pub unsafe fn setObject_forKey(&self, value: Option<&Object>, defaultName: &NSString);
-        # [method (removeObjectForKey :)]
+        #[method(removeObjectForKey:)]
         pub unsafe fn removeObjectForKey(&self, defaultName: &NSString);
-        # [method_id (stringForKey :)]
+        #[method_id(stringForKey:)]
         pub unsafe fn stringForKey(&self, defaultName: &NSString) -> Option<Id<NSString, Shared>>;
-        # [method_id (arrayForKey :)]
+        #[method_id(arrayForKey:)]
         pub unsafe fn arrayForKey(&self, defaultName: &NSString) -> Option<Id<NSArray, Shared>>;
-        # [method_id (dictionaryForKey :)]
+        #[method_id(dictionaryForKey:)]
         pub unsafe fn dictionaryForKey(
             &self,
             defaultName: &NSString,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
-        # [method_id (dataForKey :)]
+        #[method_id(dataForKey:)]
         pub unsafe fn dataForKey(&self, defaultName: &NSString) -> Option<Id<NSData, Shared>>;
-        # [method_id (stringArrayForKey :)]
+        #[method_id(stringArrayForKey:)]
         pub unsafe fn stringArrayForKey(
             &self,
             defaultName: &NSString,
         ) -> Option<Id<NSArray<NSString>, Shared>>;
-        # [method (integerForKey :)]
+        #[method(integerForKey:)]
         pub unsafe fn integerForKey(&self, defaultName: &NSString) -> NSInteger;
-        # [method (floatForKey :)]
+        #[method(floatForKey:)]
         pub unsafe fn floatForKey(&self, defaultName: &NSString) -> c_float;
-        # [method (doubleForKey :)]
+        #[method(doubleForKey:)]
         pub unsafe fn doubleForKey(&self, defaultName: &NSString) -> c_double;
-        # [method (boolForKey :)]
+        #[method(boolForKey:)]
         pub unsafe fn boolForKey(&self, defaultName: &NSString) -> bool;
-        # [method_id (URLForKey :)]
+        #[method_id(URLForKey:)]
         pub unsafe fn URLForKey(&self, defaultName: &NSString) -> Option<Id<NSURL, Shared>>;
-        # [method (setInteger : forKey :)]
+        #[method(setInteger:forKey:)]
         pub unsafe fn setInteger_forKey(&self, value: NSInteger, defaultName: &NSString);
-        # [method (setFloat : forKey :)]
+        #[method(setFloat:forKey:)]
         pub unsafe fn setFloat_forKey(&self, value: c_float, defaultName: &NSString);
-        # [method (setDouble : forKey :)]
+        #[method(setDouble:forKey:)]
         pub unsafe fn setDouble_forKey(&self, value: c_double, defaultName: &NSString);
-        # [method (setBool : forKey :)]
+        #[method(setBool:forKey:)]
         pub unsafe fn setBool_forKey(&self, value: bool, defaultName: &NSString);
-        # [method (setURL : forKey :)]
+        #[method(setURL:forKey:)]
         pub unsafe fn setURL_forKey(&self, url: Option<&NSURL>, defaultName: &NSString);
-        # [method (registerDefaults :)]
+        #[method(registerDefaults:)]
         pub unsafe fn registerDefaults(
             &self,
             registrationDictionary: &NSDictionary<NSString, Object>,
         );
-        # [method (addSuiteNamed :)]
+        #[method(addSuiteNamed:)]
         pub unsafe fn addSuiteNamed(&self, suiteName: &NSString);
-        # [method (removeSuiteNamed :)]
+        #[method(removeSuiteNamed:)]
         pub unsafe fn removeSuiteNamed(&self, suiteName: &NSString);
         #[method_id(dictionaryRepresentation)]
         pub unsafe fn dictionaryRepresentation(&self)
             -> Id<NSDictionary<NSString, Object>, Shared>;
         #[method_id(volatileDomainNames)]
         pub unsafe fn volatileDomainNames(&self) -> Id<NSArray<NSString>, Shared>;
-        # [method_id (volatileDomainForName :)]
+        #[method_id(volatileDomainForName:)]
         pub unsafe fn volatileDomainForName(
             &self,
             domainName: &NSString,
         ) -> Id<NSDictionary<NSString, Object>, Shared>;
-        # [method (setVolatileDomain : forName :)]
+        #[method(setVolatileDomain:forName:)]
         pub unsafe fn setVolatileDomain_forName(
             &self,
             domain: &NSDictionary<NSString, Object>,
             domainName: &NSString,
         );
-        # [method (removeVolatileDomainForName :)]
+        #[method(removeVolatileDomainForName:)]
         pub unsafe fn removeVolatileDomainForName(&self, domainName: &NSString);
         #[method_id(persistentDomainNames)]
         pub unsafe fn persistentDomainNames(&self) -> Id<NSArray, Shared>;
-        # [method_id (persistentDomainForName :)]
+        #[method_id(persistentDomainForName:)]
         pub unsafe fn persistentDomainForName(
             &self,
             domainName: &NSString,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
-        # [method (setPersistentDomain : forName :)]
+        #[method(setPersistentDomain:forName:)]
         pub unsafe fn setPersistentDomain_forName(
             &self,
             domain: &NSDictionary<NSString, Object>,
             domainName: &NSString,
         );
-        # [method (removePersistentDomainForName :)]
+        #[method(removePersistentDomainForName:)]
         pub unsafe fn removePersistentDomainForName(&self, domainName: &NSString);
         #[method(synchronize)]
         pub unsafe fn synchronize(&self) -> bool;
-        # [method (objectIsForcedForKey :)]
+        #[method(objectIsForcedForKey:)]
         pub unsafe fn objectIsForcedForKey(&self, key: &NSString) -> bool;
-        # [method (objectIsForcedForKey : inDomain :)]
+        #[method(objectIsForcedForKey:inDomain:)]
         pub unsafe fn objectIsForcedForKey_inDomain(
             &self,
             key: &NSString,

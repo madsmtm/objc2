@@ -13,7 +13,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSInvocation {
-        # [method_id (invocationWithMethodSignature :)]
+        #[method_id(invocationWithMethodSignature:)]
         pub unsafe fn invocationWithMethodSignature(
             sig: &NSMethodSignature,
         ) -> Id<NSInvocation, Shared>;
@@ -25,23 +25,23 @@ extern_methods!(
         pub unsafe fn argumentsRetained(&self) -> bool;
         #[method_id(target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
-        # [method (setTarget :)]
+        #[method(setTarget:)]
         pub unsafe fn setTarget(&self, target: Option<&Object>);
         #[method(selector)]
         pub unsafe fn selector(&self) -> Sel;
-        # [method (setSelector :)]
+        #[method(setSelector:)]
         pub unsafe fn setSelector(&self, selector: Sel);
-        # [method (getReturnValue :)]
+        #[method(getReturnValue:)]
         pub unsafe fn getReturnValue(&self, retLoc: NonNull<c_void>);
-        # [method (setReturnValue :)]
+        #[method(setReturnValue:)]
         pub unsafe fn setReturnValue(&self, retLoc: NonNull<c_void>);
-        # [method (getArgument : atIndex :)]
+        #[method(getArgument:atIndex:)]
         pub unsafe fn getArgument_atIndex(&self, argumentLocation: NonNull<c_void>, idx: NSInteger);
-        # [method (setArgument : atIndex :)]
+        #[method(setArgument:atIndex:)]
         pub unsafe fn setArgument_atIndex(&self, argumentLocation: NonNull<c_void>, idx: NSInteger);
         #[method(invoke)]
         pub unsafe fn invoke(&self);
-        # [method (invokeWithTarget :)]
+        #[method(invokeWithTarget:)]
         pub unsafe fn invokeWithTarget(&self, target: &Object);
     }
 );

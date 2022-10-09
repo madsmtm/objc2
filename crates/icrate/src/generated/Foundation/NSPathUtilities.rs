@@ -7,7 +7,7 @@ use objc2::{extern_class, extern_methods, ClassType};
 extern_methods!(
     #[doc = "NSStringPathExtensions"]
     unsafe impl NSString {
-        # [method_id (pathWithComponents :)]
+        #[method_id(pathWithComponents:)]
         pub unsafe fn pathWithComponents(components: &NSArray<NSString>) -> Id<NSString, Shared>;
         #[method_id(pathComponents)]
         pub unsafe fn pathComponents(&self) -> Id<NSArray<NSString>, Shared>;
@@ -17,13 +17,13 @@ extern_methods!(
         pub unsafe fn lastPathComponent(&self) -> Id<NSString, Shared>;
         #[method_id(stringByDeletingLastPathComponent)]
         pub unsafe fn stringByDeletingLastPathComponent(&self) -> Id<NSString, Shared>;
-        # [method_id (stringByAppendingPathComponent :)]
+        #[method_id(stringByAppendingPathComponent:)]
         pub fn stringByAppendingPathComponent(&self, str: &NSString) -> Id<NSString, Shared>;
         #[method_id(pathExtension)]
         pub unsafe fn pathExtension(&self) -> Id<NSString, Shared>;
         #[method_id(stringByDeletingPathExtension)]
         pub unsafe fn stringByDeletingPathExtension(&self) -> Id<NSString, Shared>;
-        # [method_id (stringByAppendingPathExtension :)]
+        #[method_id(stringByAppendingPathExtension:)]
         pub unsafe fn stringByAppendingPathExtension(
             &self,
             str: &NSString,
@@ -36,12 +36,12 @@ extern_methods!(
         pub unsafe fn stringByStandardizingPath(&self) -> Id<NSString, Shared>;
         #[method_id(stringByResolvingSymlinksInPath)]
         pub unsafe fn stringByResolvingSymlinksInPath(&self) -> Id<NSString, Shared>;
-        # [method_id (stringsByAppendingPaths :)]
+        #[method_id(stringsByAppendingPaths:)]
         pub unsafe fn stringsByAppendingPaths(
             &self,
             paths: &NSArray<NSString>,
         ) -> Id<NSArray<NSString>, Shared>;
-        # [method (completePathIntoString : caseSensitive : matchesIntoArray : filterTypes :)]
+        #[method(completePathIntoString:caseSensitive:matchesIntoArray:filterTypes:)]
         pub unsafe fn completePathIntoString_caseSensitive_matchesIntoArray_filterTypes(
             &self,
             outputName: Option<&mut Option<Id<NSString, Shared>>>,
@@ -51,7 +51,7 @@ extern_methods!(
         ) -> NSUInteger;
         #[method(fileSystemRepresentation)]
         pub unsafe fn fileSystemRepresentation(&self) -> NonNull<c_char>;
-        # [method (getFileSystemRepresentation : maxLength :)]
+        #[method(getFileSystemRepresentation:maxLength:)]
         pub unsafe fn getFileSystemRepresentation_maxLength(
             &self,
             cname: NonNull<c_char>,
@@ -62,7 +62,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSArrayPathExtensions"]
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        # [method_id (pathsMatchingExtensions :)]
+        #[method_id(pathsMatchingExtensions:)]
         pub unsafe fn pathsMatchingExtensions(
             &self,
             filterTypes: &NSArray<NSString>,

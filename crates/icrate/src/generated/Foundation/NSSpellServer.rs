@@ -19,15 +19,15 @@ extern_methods!(
     unsafe impl NSSpellServer {
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSSpellServerDelegate>);
-        # [method (registerLanguage : byVendor :)]
+        #[method(registerLanguage:byVendor:)]
         pub unsafe fn registerLanguage_byVendor(
             &self,
             language: Option<&NSString>,
             vendor: Option<&NSString>,
         ) -> bool;
-        # [method (isWordInUserDictionaries : caseSensitive :)]
+        #[method(isWordInUserDictionaries:caseSensitive:)]
         pub unsafe fn isWordInUserDictionaries_caseSensitive(
             &self,
             word: &NSString,

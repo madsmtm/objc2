@@ -24,35 +24,35 @@ extern_methods!(
         pub unsafe fn init(&self) -> Id<Self, Shared>;
         #[method_id(title)]
         pub unsafe fn title(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setTitle :)]
+        #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: Option<&NSString>);
         #[method_id(subtitle)]
         pub unsafe fn subtitle(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setSubtitle :)]
+        #[method(setSubtitle:)]
         pub unsafe fn setSubtitle(&self, subtitle: Option<&NSString>);
         #[method_id(informativeText)]
         pub unsafe fn informativeText(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setInformativeText :)]
+        #[method(setInformativeText:)]
         pub unsafe fn setInformativeText(&self, informativeText: Option<&NSString>);
         #[method_id(actionButtonTitle)]
         pub unsafe fn actionButtonTitle(&self) -> Id<NSString, Shared>;
-        # [method (setActionButtonTitle :)]
+        #[method(setActionButtonTitle:)]
         pub unsafe fn setActionButtonTitle(&self, actionButtonTitle: &NSString);
         #[method_id(userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
-        # [method (setUserInfo :)]
+        #[method(setUserInfo:)]
         pub unsafe fn setUserInfo(&self, userInfo: Option<&NSDictionary<NSString, Object>>);
         #[method_id(deliveryDate)]
         pub unsafe fn deliveryDate(&self) -> Option<Id<NSDate, Shared>>;
-        # [method (setDeliveryDate :)]
+        #[method(setDeliveryDate:)]
         pub unsafe fn setDeliveryDate(&self, deliveryDate: Option<&NSDate>);
         #[method_id(deliveryTimeZone)]
         pub unsafe fn deliveryTimeZone(&self) -> Option<Id<NSTimeZone, Shared>>;
-        # [method (setDeliveryTimeZone :)]
+        #[method(setDeliveryTimeZone:)]
         pub unsafe fn setDeliveryTimeZone(&self, deliveryTimeZone: Option<&NSTimeZone>);
         #[method_id(deliveryRepeatInterval)]
         pub unsafe fn deliveryRepeatInterval(&self) -> Option<Id<NSDateComponents, Shared>>;
-        # [method (setDeliveryRepeatInterval :)]
+        #[method(setDeliveryRepeatInterval:)]
         pub unsafe fn setDeliveryRepeatInterval(
             &self,
             deliveryRepeatInterval: Option<&NSDateComponents>,
@@ -65,33 +65,33 @@ extern_methods!(
         pub unsafe fn isRemote(&self) -> bool;
         #[method_id(soundName)]
         pub unsafe fn soundName(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setSoundName :)]
+        #[method(setSoundName:)]
         pub unsafe fn setSoundName(&self, soundName: Option<&NSString>);
         #[method(hasActionButton)]
         pub unsafe fn hasActionButton(&self) -> bool;
-        # [method (setHasActionButton :)]
+        #[method(setHasActionButton:)]
         pub unsafe fn setHasActionButton(&self, hasActionButton: bool);
         #[method(activationType)]
         pub unsafe fn activationType(&self) -> NSUserNotificationActivationType;
         #[method_id(otherButtonTitle)]
         pub unsafe fn otherButtonTitle(&self) -> Id<NSString, Shared>;
-        # [method (setOtherButtonTitle :)]
+        #[method(setOtherButtonTitle:)]
         pub unsafe fn setOtherButtonTitle(&self, otherButtonTitle: &NSString);
         #[method_id(identifier)]
         pub unsafe fn identifier(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setIdentifier :)]
+        #[method(setIdentifier:)]
         pub unsafe fn setIdentifier(&self, identifier: Option<&NSString>);
         #[method_id(contentImage)]
         pub unsafe fn contentImage(&self) -> Option<Id<NSImage, Shared>>;
-        # [method (setContentImage :)]
+        #[method(setContentImage:)]
         pub unsafe fn setContentImage(&self, contentImage: Option<&NSImage>);
         #[method(hasReplyButton)]
         pub unsafe fn hasReplyButton(&self) -> bool;
-        # [method (setHasReplyButton :)]
+        #[method(setHasReplyButton:)]
         pub unsafe fn setHasReplyButton(&self, hasReplyButton: bool);
         #[method_id(responsePlaceholder)]
         pub unsafe fn responsePlaceholder(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setResponsePlaceholder :)]
+        #[method(setResponsePlaceholder:)]
         pub unsafe fn setResponsePlaceholder(&self, responsePlaceholder: Option<&NSString>);
         #[method_id(response)]
         pub unsafe fn response(&self) -> Option<Id<NSAttributedString, Shared>>;
@@ -99,7 +99,7 @@ extern_methods!(
         pub unsafe fn additionalActions(
             &self,
         ) -> Option<Id<NSArray<NSUserNotificationAction>, Shared>>;
-        # [method (setAdditionalActions :)]
+        #[method(setAdditionalActions:)]
         pub unsafe fn setAdditionalActions(
             &self,
             additionalActions: Option<&NSArray<NSUserNotificationAction>>,
@@ -119,7 +119,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUserNotificationAction {
-        # [method_id (actionWithIdentifier : title :)]
+        #[method_id(actionWithIdentifier:title:)]
         pub unsafe fn actionWithIdentifier_title(
             identifier: Option<&NSString>,
             title: Option<&NSString>,
@@ -143,24 +143,24 @@ extern_methods!(
         pub unsafe fn defaultUserNotificationCenter() -> Id<NSUserNotificationCenter, Shared>;
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSUserNotificationCenterDelegate, Shared>>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSUserNotificationCenterDelegate>);
         #[method_id(scheduledNotifications)]
         pub unsafe fn scheduledNotifications(&self) -> Id<NSArray<NSUserNotification>, Shared>;
-        # [method (setScheduledNotifications :)]
+        #[method(setScheduledNotifications:)]
         pub unsafe fn setScheduledNotifications(
             &self,
             scheduledNotifications: &NSArray<NSUserNotification>,
         );
-        # [method (scheduleNotification :)]
+        #[method(scheduleNotification:)]
         pub unsafe fn scheduleNotification(&self, notification: &NSUserNotification);
-        # [method (removeScheduledNotification :)]
+        #[method(removeScheduledNotification:)]
         pub unsafe fn removeScheduledNotification(&self, notification: &NSUserNotification);
         #[method_id(deliveredNotifications)]
         pub unsafe fn deliveredNotifications(&self) -> Id<NSArray<NSUserNotification>, Shared>;
-        # [method (deliverNotification :)]
+        #[method(deliverNotification:)]
         pub unsafe fn deliverNotification(&self, notification: &NSUserNotification);
-        # [method (removeDeliveredNotification :)]
+        #[method(removeDeliveredNotification:)]
         pub unsafe fn removeDeliveredNotification(&self, notification: &NSUserNotification);
         #[method(removeAllDeliveredNotifications)]
         pub unsafe fn removeAllDeliveredNotifications(&self);

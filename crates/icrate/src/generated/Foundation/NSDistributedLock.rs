@@ -13,11 +13,11 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDistributedLock {
-        # [method_id (lockWithPath :)]
+        #[method_id(lockWithPath:)]
         pub unsafe fn lockWithPath(path: &NSString) -> Option<Id<NSDistributedLock, Shared>>;
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithPath :)]
+        #[method_id(initWithPath:)]
         pub unsafe fn initWithPath(&self, path: &NSString) -> Option<Id<Self, Shared>>;
         #[method(tryLock)]
         pub unsafe fn tryLock(&self) -> bool;

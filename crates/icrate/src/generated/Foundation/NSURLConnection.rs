@@ -26,20 +26,20 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLConnection {
-        # [method_id (initWithRequest : delegate : startImmediately :)]
+        #[method_id(initWithRequest:delegate:startImmediately:)]
         pub unsafe fn initWithRequest_delegate_startImmediately(
             &self,
             request: &NSURLRequest,
             delegate: Option<&Object>,
             startImmediately: bool,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithRequest : delegate :)]
+        #[method_id(initWithRequest:delegate:)]
         pub unsafe fn initWithRequest_delegate(
             &self,
             request: &NSURLRequest,
             delegate: Option<&Object>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (connectionWithRequest : delegate :)]
+        #[method_id(connectionWithRequest:delegate:)]
         pub unsafe fn connectionWithRequest_delegate(
             request: &NSURLRequest,
             delegate: Option<&Object>,
@@ -52,17 +52,17 @@ extern_methods!(
         pub unsafe fn start(&self);
         #[method(cancel)]
         pub unsafe fn cancel(&self);
-        # [method (scheduleInRunLoop : forMode :)]
+        #[method(scheduleInRunLoop:forMode:)]
         pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode);
-        # [method (unscheduleFromRunLoop : forMode :)]
+        #[method(unscheduleFromRunLoop:forMode:)]
         pub unsafe fn unscheduleFromRunLoop_forMode(
             &self,
             aRunLoop: &NSRunLoop,
             mode: &NSRunLoopMode,
         );
-        # [method (setDelegateQueue :)]
+        #[method(setDelegateQueue:)]
         pub unsafe fn setDelegateQueue(&self, queue: Option<&NSOperationQueue>);
-        # [method (canHandleRequest :)]
+        #[method(canHandleRequest:)]
         pub unsafe fn canHandleRequest(request: &NSURLRequest) -> bool;
     }
 );
@@ -72,7 +72,7 @@ pub type NSURLConnectionDownloadDelegate = NSObject;
 extern_methods!(
     #[doc = "NSURLConnectionSynchronousLoading"]
     unsafe impl NSURLConnection {
-        # [method_id (sendSynchronousRequest : returningResponse : error :)]
+        #[method_id(sendSynchronousRequest:returningResponse:error:)]
         pub unsafe fn sendSynchronousRequest_returningResponse_error(
             request: &NSURLRequest,
             response: Option<&mut Option<Id<NSURLResponse, Shared>>>,
@@ -82,7 +82,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSURLConnectionQueuedLoading"]
     unsafe impl NSURLConnection {
-        # [method (sendAsynchronousRequest : queue : completionHandler :)]
+        #[method(sendAsynchronousRequest:queue:completionHandler:)]
         pub unsafe fn sendAsynchronousRequest_queue_completionHandler(
             request: &NSURLRequest,
             queue: &NSOperationQueue,

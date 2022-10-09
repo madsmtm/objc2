@@ -14,3 +14,5 @@ quote = "1.0"
 proc-macro2 = "1.0"
 toml = "0.5.9"
 serde = { version = "1.0.144", features = ["derive"] }
+regex = { version = "1.6" }
+lazy_static = { version = "1.4.0" }

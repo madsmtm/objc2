@@ -16,17 +16,17 @@ extern_methods!(
     unsafe impl NSPortNameServer {
         #[method_id(systemDefaultPortNameServer)]
         pub unsafe fn systemDefaultPortNameServer() -> Id<NSPortNameServer, Shared>;
-        # [method_id (portForName :)]
+        #[method_id(portForName:)]
         pub unsafe fn portForName(&self, name: &NSString) -> Option<Id<NSPort, Shared>>;
-        # [method_id (portForName : host :)]
+        #[method_id(portForName:host:)]
         pub unsafe fn portForName_host(
             &self,
             name: &NSString,
             host: Option<&NSString>,
         ) -> Option<Id<NSPort, Shared>>;
-        # [method (registerPort : name :)]
+        #[method(registerPort:name:)]
         pub unsafe fn registerPort_name(&self, port: &NSPort, name: &NSString) -> bool;
-        # [method (removePortForName :)]
+        #[method(removePortForName:)]
         pub unsafe fn removePortForName(&self, name: &NSString) -> bool;
     }
 );
@@ -41,17 +41,17 @@ extern_methods!(
     unsafe impl NSMachBootstrapServer {
         #[method_id(sharedInstance)]
         pub unsafe fn sharedInstance() -> Id<Object, Shared>;
-        # [method_id (portForName :)]
+        #[method_id(portForName:)]
         pub unsafe fn portForName(&self, name: &NSString) -> Option<Id<NSPort, Shared>>;
-        # [method_id (portForName : host :)]
+        #[method_id(portForName:host:)]
         pub unsafe fn portForName_host(
             &self,
             name: &NSString,
             host: Option<&NSString>,
         ) -> Option<Id<NSPort, Shared>>;
-        # [method (registerPort : name :)]
+        #[method(registerPort:name:)]
         pub unsafe fn registerPort_name(&self, port: &NSPort, name: &NSString) -> bool;
-        # [method_id (servicePortWithName :)]
+        #[method_id(servicePortWithName:)]
         pub unsafe fn servicePortWithName(&self, name: &NSString) -> Option<Id<NSPort, Shared>>;
     }
 );
@@ -66,9 +66,9 @@ extern_methods!(
     unsafe impl NSMessagePortNameServer {
         #[method_id(sharedInstance)]
         pub unsafe fn sharedInstance() -> Id<Object, Shared>;
-        # [method_id (portForName :)]
+        #[method_id(portForName:)]
         pub unsafe fn portForName(&self, name: &NSString) -> Option<Id<NSPort, Shared>>;
-        # [method_id (portForName : host :)]
+        #[method_id(portForName:host:)]
         pub unsafe fn portForName_host(
             &self,
             name: &NSString,
@@ -87,26 +87,26 @@ extern_methods!(
     unsafe impl NSSocketPortNameServer {
         #[method_id(sharedInstance)]
         pub unsafe fn sharedInstance() -> Id<Object, Shared>;
-        # [method_id (portForName :)]
+        #[method_id(portForName:)]
         pub unsafe fn portForName(&self, name: &NSString) -> Option<Id<NSPort, Shared>>;
-        # [method_id (portForName : host :)]
+        #[method_id(portForName:host:)]
         pub unsafe fn portForName_host(
             &self,
             name: &NSString,
             host: Option<&NSString>,
         ) -> Option<Id<NSPort, Shared>>;
-        # [method (registerPort : name :)]
+        #[method(registerPort:name:)]
         pub unsafe fn registerPort_name(&self, port: &NSPort, name: &NSString) -> bool;
-        # [method (removePortForName :)]
+        #[method(removePortForName:)]
         pub unsafe fn removePortForName(&self, name: &NSString) -> bool;
-        # [method_id (portForName : host : nameServerPortNumber :)]
+        #[method_id(portForName:host:nameServerPortNumber:)]
         pub unsafe fn portForName_host_nameServerPortNumber(
             &self,
             name: &NSString,
             host: Option<&NSString>,
             portNumber: u16,
         ) -> Option<Id<NSPort, Shared>>;
-        # [method (registerPort : name : nameServerPortNumber :)]
+        #[method(registerPort:name:nameServerPortNumber:)]
         pub unsafe fn registerPort_name_nameServerPortNumber(
             &self,
             port: &NSPort,
@@ -115,7 +115,7 @@ extern_methods!(
         ) -> bool;
         #[method(defaultNameServerPortNumber)]
         pub unsafe fn defaultNameServerPortNumber(&self) -> u16;
-        # [method (setDefaultNameServerPortNumber :)]
+        #[method(setDefaultNameServerPortNumber:)]
         pub unsafe fn setDefaultNameServerPortNumber(&self, defaultNameServerPortNumber: u16);
     }
 );

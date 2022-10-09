@@ -14,27 +14,27 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSBackgroundActivityScheduler {
-        # [method_id (initWithIdentifier :)]
+        #[method_id(initWithIdentifier:)]
         pub unsafe fn initWithIdentifier(&self, identifier: &NSString) -> Id<Self, Shared>;
         #[method_id(identifier)]
         pub unsafe fn identifier(&self) -> Id<NSString, Shared>;
         #[method(qualityOfService)]
         pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
-        # [method (setQualityOfService :)]
+        #[method(setQualityOfService:)]
         pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
         #[method(repeats)]
         pub unsafe fn repeats(&self) -> bool;
-        # [method (setRepeats :)]
+        #[method(setRepeats:)]
         pub unsafe fn setRepeats(&self, repeats: bool);
         #[method(interval)]
         pub unsafe fn interval(&self) -> NSTimeInterval;
-        # [method (setInterval :)]
+        #[method(setInterval:)]
         pub unsafe fn setInterval(&self, interval: NSTimeInterval);
         #[method(tolerance)]
         pub unsafe fn tolerance(&self) -> NSTimeInterval;
-        # [method (setTolerance :)]
+        #[method(setTolerance:)]
         pub unsafe fn setTolerance(&self, tolerance: NSTimeInterval);
-        # [method (scheduleWithBlock :)]
+        #[method(scheduleWithBlock:)]
         pub unsafe fn scheduleWithBlock(&self, block: TodoBlock);
         #[method(invalidate)]
         pub unsafe fn invalidate(&self);

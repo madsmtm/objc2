@@ -8,7 +8,7 @@ use objc2::{extern_class, extern_methods, ClassType};
 extern_methods!(
     #[doc = "NSValueRangeExtensions"]
     unsafe impl NSValue {
-        # [method_id (valueWithRange :)]
+        #[method_id(valueWithRange:)]
         pub unsafe fn valueWithRange(range: NSRange) -> Id<NSValue, Shared>;
         #[method(rangeValue)]
         pub unsafe fn rangeValue(&self) -> NSRange;

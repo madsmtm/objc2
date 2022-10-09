@@ -17,104 +17,104 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSXMLElement {
-        # [method_id (initWithName :)]
+        #[method_id(initWithName:)]
         pub unsafe fn initWithName(&self, name: &NSString) -> Id<Self, Shared>;
-        # [method_id (initWithName : URI :)]
+        #[method_id(initWithName:URI:)]
         pub unsafe fn initWithName_URI(
             &self,
             name: &NSString,
             URI: Option<&NSString>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithName : stringValue :)]
+        #[method_id(initWithName:stringValue:)]
         pub unsafe fn initWithName_stringValue(
             &self,
             name: &NSString,
             string: Option<&NSString>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithXMLString : error :)]
+        #[method_id(initWithXMLString:error:)]
         pub unsafe fn initWithXMLString_error(
             &self,
             string: &NSString,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (initWithKind : options :)]
+        #[method_id(initWithKind:options:)]
         pub unsafe fn initWithKind_options(
             &self,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
         ) -> Id<Self, Shared>;
-        # [method_id (elementsForName :)]
+        #[method_id(elementsForName:)]
         pub unsafe fn elementsForName(&self, name: &NSString) -> Id<NSArray<NSXMLElement>, Shared>;
-        # [method_id (elementsForLocalName : URI :)]
+        #[method_id(elementsForLocalName:URI:)]
         pub unsafe fn elementsForLocalName_URI(
             &self,
             localName: &NSString,
             URI: Option<&NSString>,
         ) -> Id<NSArray<NSXMLElement>, Shared>;
-        # [method (addAttribute :)]
+        #[method(addAttribute:)]
         pub unsafe fn addAttribute(&self, attribute: &NSXMLNode);
-        # [method (removeAttributeForName :)]
+        #[method(removeAttributeForName:)]
         pub unsafe fn removeAttributeForName(&self, name: &NSString);
         #[method_id(attributes)]
         pub unsafe fn attributes(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>>;
-        # [method (setAttributes :)]
+        #[method(setAttributes:)]
         pub unsafe fn setAttributes(&self, attributes: Option<&NSArray<NSXMLNode>>);
-        # [method (setAttributesWithDictionary :)]
+        #[method(setAttributesWithDictionary:)]
         pub unsafe fn setAttributesWithDictionary(
             &self,
             attributes: &NSDictionary<NSString, NSString>,
         );
-        # [method_id (attributeForName :)]
+        #[method_id(attributeForName:)]
         pub unsafe fn attributeForName(&self, name: &NSString) -> Option<Id<NSXMLNode, Shared>>;
-        # [method_id (attributeForLocalName : URI :)]
+        #[method_id(attributeForLocalName:URI:)]
         pub unsafe fn attributeForLocalName_URI(
             &self,
             localName: &NSString,
             URI: Option<&NSString>,
         ) -> Option<Id<NSXMLNode, Shared>>;
-        # [method (addNamespace :)]
+        #[method(addNamespace:)]
         pub unsafe fn addNamespace(&self, aNamespace: &NSXMLNode);
-        # [method (removeNamespaceForPrefix :)]
+        #[method(removeNamespaceForPrefix:)]
         pub unsafe fn removeNamespaceForPrefix(&self, name: &NSString);
         #[method_id(namespaces)]
         pub unsafe fn namespaces(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>>;
-        # [method (setNamespaces :)]
+        #[method(setNamespaces:)]
         pub unsafe fn setNamespaces(&self, namespaces: Option<&NSArray<NSXMLNode>>);
-        # [method_id (namespaceForPrefix :)]
+        #[method_id(namespaceForPrefix:)]
         pub unsafe fn namespaceForPrefix(&self, name: &NSString) -> Option<Id<NSXMLNode, Shared>>;
-        # [method_id (resolveNamespaceForName :)]
+        #[method_id(resolveNamespaceForName:)]
         pub unsafe fn resolveNamespaceForName(
             &self,
             name: &NSString,
         ) -> Option<Id<NSXMLNode, Shared>>;
-        # [method_id (resolvePrefixForNamespaceURI :)]
+        #[method_id(resolvePrefixForNamespaceURI:)]
         pub unsafe fn resolvePrefixForNamespaceURI(
             &self,
             namespaceURI: &NSString,
         ) -> Option<Id<NSString, Shared>>;
-        # [method (insertChild : atIndex :)]
+        #[method(insertChild:atIndex:)]
         pub unsafe fn insertChild_atIndex(&self, child: &NSXMLNode, index: NSUInteger);
-        # [method (insertChildren : atIndex :)]
+        #[method(insertChildren:atIndex:)]
         pub unsafe fn insertChildren_atIndex(
             &self,
             children: &NSArray<NSXMLNode>,
             index: NSUInteger,
         );
-        # [method (removeChildAtIndex :)]
+        #[method(removeChildAtIndex:)]
         pub unsafe fn removeChildAtIndex(&self, index: NSUInteger);
-        # [method (setChildren :)]
+        #[method(setChildren:)]
         pub unsafe fn setChildren(&self, children: Option<&NSArray<NSXMLNode>>);
-        # [method (addChild :)]
+        #[method(addChild:)]
         pub unsafe fn addChild(&self, child: &NSXMLNode);
-        # [method (replaceChildAtIndex : withNode :)]
+        #[method(replaceChildAtIndex:withNode:)]
         pub unsafe fn replaceChildAtIndex_withNode(&self, index: NSUInteger, node: &NSXMLNode);
-        # [method (normalizeAdjacentTextNodesPreservingCDATA :)]
+        #[method(normalizeAdjacentTextNodesPreservingCDATA:)]
         pub unsafe fn normalizeAdjacentTextNodesPreservingCDATA(&self, preserve: bool);
     }
 );
 extern_methods!(
     #[doc = "NSDeprecated"]
     unsafe impl NSXMLElement {
-        # [method (setAttributesAsDictionary :)]
+        #[method(setAttributesAsDictionary:)]
         pub unsafe fn setAttributesAsDictionary(&self, attributes: &NSDictionary);
     }
 );

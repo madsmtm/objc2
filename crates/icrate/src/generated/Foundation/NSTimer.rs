@@ -13,19 +13,19 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSTimer {
-        # [method_id (timerWithTimeInterval : invocation : repeats :)]
+        #[method_id(timerWithTimeInterval:invocation:repeats:)]
         pub unsafe fn timerWithTimeInterval_invocation_repeats(
             ti: NSTimeInterval,
             invocation: &NSInvocation,
             yesOrNo: bool,
         ) -> Id<NSTimer, Shared>;
-        # [method_id (scheduledTimerWithTimeInterval : invocation : repeats :)]
+        #[method_id(scheduledTimerWithTimeInterval:invocation:repeats:)]
         pub unsafe fn scheduledTimerWithTimeInterval_invocation_repeats(
             ti: NSTimeInterval,
             invocation: &NSInvocation,
             yesOrNo: bool,
         ) -> Id<NSTimer, Shared>;
-        # [method_id (timerWithTimeInterval : target : selector : userInfo : repeats :)]
+        #[method_id(timerWithTimeInterval:target:selector:userInfo:repeats:)]
         pub unsafe fn timerWithTimeInterval_target_selector_userInfo_repeats(
             ti: NSTimeInterval,
             aTarget: &Object,
@@ -33,7 +33,7 @@ extern_methods!(
             userInfo: Option<&Object>,
             yesOrNo: bool,
         ) -> Id<NSTimer, Shared>;
-        # [method_id (scheduledTimerWithTimeInterval : target : selector : userInfo : repeats :)]
+        #[method_id(scheduledTimerWithTimeInterval:target:selector:userInfo:repeats:)]
         pub unsafe fn scheduledTimerWithTimeInterval_target_selector_userInfo_repeats(
             ti: NSTimeInterval,
             aTarget: &Object,
@@ -41,19 +41,19 @@ extern_methods!(
             userInfo: Option<&Object>,
             yesOrNo: bool,
         ) -> Id<NSTimer, Shared>;
-        # [method_id (timerWithTimeInterval : repeats : block :)]
+        #[method_id(timerWithTimeInterval:repeats:block:)]
         pub unsafe fn timerWithTimeInterval_repeats_block(
             interval: NSTimeInterval,
             repeats: bool,
             block: TodoBlock,
         ) -> Id<NSTimer, Shared>;
-        # [method_id (scheduledTimerWithTimeInterval : repeats : block :)]
+        #[method_id(scheduledTimerWithTimeInterval:repeats:block:)]
         pub unsafe fn scheduledTimerWithTimeInterval_repeats_block(
             interval: NSTimeInterval,
             repeats: bool,
             block: TodoBlock,
         ) -> Id<NSTimer, Shared>;
-        # [method_id (initWithFireDate : interval : repeats : block :)]
+        #[method_id(initWithFireDate:interval:repeats:block:)]
         pub unsafe fn initWithFireDate_interval_repeats_block(
             &self,
             date: &NSDate,
@@ -61,7 +61,7 @@ extern_methods!(
             repeats: bool,
             block: TodoBlock,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithFireDate : interval : target : selector : userInfo : repeats :)]
+        #[method_id(initWithFireDate:interval:target:selector:userInfo:repeats:)]
         pub unsafe fn initWithFireDate_interval_target_selector_userInfo_repeats(
             &self,
             date: &NSDate,
@@ -75,13 +75,13 @@ extern_methods!(
         pub unsafe fn fire(&self);
         #[method_id(fireDate)]
         pub unsafe fn fireDate(&self) -> Id<NSDate, Shared>;
-        # [method (setFireDate :)]
+        #[method(setFireDate:)]
         pub unsafe fn setFireDate(&self, fireDate: &NSDate);
         #[method(timeInterval)]
         pub unsafe fn timeInterval(&self) -> NSTimeInterval;
         #[method(tolerance)]
         pub unsafe fn tolerance(&self) -> NSTimeInterval;
-        # [method (setTolerance :)]
+        #[method(setTolerance:)]
         pub unsafe fn setTolerance(&self, tolerance: NSTimeInterval);
         #[method(invalidate)]
         pub unsafe fn invalidate(&self);

@@ -15,12 +15,12 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSValueTransformer {
-        # [method (setValueTransformer : forName :)]
+        #[method(setValueTransformer:forName:)]
         pub unsafe fn setValueTransformer_forName(
             transformer: Option<&NSValueTransformer>,
             name: &NSValueTransformerName,
         );
-        # [method_id (valueTransformerForName :)]
+        #[method_id(valueTransformerForName:)]
         pub unsafe fn valueTransformerForName(
             name: &NSValueTransformerName,
         ) -> Option<Id<NSValueTransformer, Shared>>;
@@ -30,10 +30,10 @@ extern_methods!(
         pub unsafe fn transformedValueClass() -> &Class;
         #[method(allowsReverseTransformation)]
         pub unsafe fn allowsReverseTransformation() -> bool;
-        # [method_id (transformedValue :)]
+        #[method_id(transformedValue:)]
         pub unsafe fn transformedValue(&self, value: Option<&Object>)
             -> Option<Id<Object, Shared>>;
-        # [method_id (reverseTransformedValue :)]
+        #[method_id(reverseTransformedValue:)]
         pub unsafe fn reverseTransformedValue(
             &self,
             value: Option<&Object>,

@@ -16,7 +16,7 @@ extern_methods!(
     unsafe impl NSAttributedString {
         #[method_id(string)]
         pub unsafe fn string(&self) -> Id<NSString, Shared>;
-        # [method_id (attributesAtIndex : effectiveRange :)]
+        #[method_id(attributesAtIndex:effectiveRange:)]
         pub unsafe fn attributesAtIndex_effectiveRange(
             &self,
             location: NSUInteger,
@@ -29,26 +29,26 @@ extern_methods!(
     unsafe impl NSAttributedString {
         #[method(length)]
         pub unsafe fn length(&self) -> NSUInteger;
-        # [method_id (attribute : atIndex : effectiveRange :)]
+        #[method_id(attribute:atIndex:effectiveRange:)]
         pub unsafe fn attribute_atIndex_effectiveRange(
             &self,
             attrName: &NSAttributedStringKey,
             location: NSUInteger,
             range: NSRangePointer,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (attributedSubstringFromRange :)]
+        #[method_id(attributedSubstringFromRange:)]
         pub unsafe fn attributedSubstringFromRange(
             &self,
             range: NSRange,
         ) -> Id<NSAttributedString, Shared>;
-        # [method_id (attributesAtIndex : longestEffectiveRange : inRange :)]
+        #[method_id(attributesAtIndex:longestEffectiveRange:inRange:)]
         pub unsafe fn attributesAtIndex_longestEffectiveRange_inRange(
             &self,
             location: NSUInteger,
             range: NSRangePointer,
             rangeLimit: NSRange,
         ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared>;
-        # [method_id (attribute : atIndex : longestEffectiveRange : inRange :)]
+        #[method_id(attribute:atIndex:longestEffectiveRange:inRange:)]
         pub unsafe fn attribute_atIndex_longestEffectiveRange_inRange(
             &self,
             attrName: &NSAttributedStringKey,
@@ -56,29 +56,29 @@ extern_methods!(
             range: NSRangePointer,
             rangeLimit: NSRange,
         ) -> Option<Id<Object, Shared>>;
-        # [method (isEqualToAttributedString :)]
+        #[method(isEqualToAttributedString:)]
         pub unsafe fn isEqualToAttributedString(&self, other: &NSAttributedString) -> bool;
-        # [method_id (initWithString :)]
+        #[method_id(initWithString:)]
         pub unsafe fn initWithString(&self, str: &NSString) -> Id<Self, Shared>;
-        # [method_id (initWithString : attributes :)]
+        #[method_id(initWithString:attributes:)]
         pub unsafe fn initWithString_attributes(
             &self,
             str: &NSString,
             attrs: Option<&NSDictionary<NSAttributedStringKey, Object>>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithAttributedString :)]
+        #[method_id(initWithAttributedString:)]
         pub unsafe fn initWithAttributedString(
             &self,
             attrStr: &NSAttributedString,
         ) -> Id<Self, Shared>;
-        # [method (enumerateAttributesInRange : options : usingBlock :)]
+        #[method(enumerateAttributesInRange:options:usingBlock:)]
         pub unsafe fn enumerateAttributesInRange_options_usingBlock(
             &self,
             enumerationRange: NSRange,
             opts: NSAttributedStringEnumerationOptions,
             block: TodoBlock,
         );
-        # [method (enumerateAttribute : inRange : options : usingBlock :)]
+        #[method(enumerateAttribute:inRange:options:usingBlock:)]
         pub unsafe fn enumerateAttribute_inRange_options_usingBlock(
             &self,
             attrName: &NSAttributedStringKey,
@@ -97,9 +97,9 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMutableAttributedString {
-        # [method (replaceCharactersInRange : withString :)]
+        #[method(replaceCharactersInRange:withString:)]
         pub unsafe fn replaceCharactersInRange_withString(&self, range: NSRange, str: &NSString);
-        # [method (setAttributes : range :)]
+        #[method(setAttributes:range:)]
         pub unsafe fn setAttributes_range(
             &self,
             attrs: Option<&NSDictionary<NSAttributedStringKey, Object>>,
@@ -112,38 +112,38 @@ extern_methods!(
     unsafe impl NSMutableAttributedString {
         #[method_id(mutableString)]
         pub unsafe fn mutableString(&self) -> Id<NSMutableString, Shared>;
-        # [method (addAttribute : value : range :)]
+        #[method(addAttribute:value:range:)]
         pub unsafe fn addAttribute_value_range(
             &self,
             name: &NSAttributedStringKey,
             value: &Object,
             range: NSRange,
         );
-        # [method (addAttributes : range :)]
+        #[method(addAttributes:range:)]
         pub unsafe fn addAttributes_range(
             &self,
             attrs: &NSDictionary<NSAttributedStringKey, Object>,
             range: NSRange,
         );
-        # [method (removeAttribute : range :)]
+        #[method(removeAttribute:range:)]
         pub unsafe fn removeAttribute_range(&self, name: &NSAttributedStringKey, range: NSRange);
-        # [method (replaceCharactersInRange : withAttributedString :)]
+        #[method(replaceCharactersInRange:withAttributedString:)]
         pub unsafe fn replaceCharactersInRange_withAttributedString(
             &self,
             range: NSRange,
             attrString: &NSAttributedString,
         );
-        # [method (insertAttributedString : atIndex :)]
+        #[method(insertAttributedString:atIndex:)]
         pub unsafe fn insertAttributedString_atIndex(
             &self,
             attrString: &NSAttributedString,
             loc: NSUInteger,
         );
-        # [method (appendAttributedString :)]
+        #[method(appendAttributedString:)]
         pub unsafe fn appendAttributedString(&self, attrString: &NSAttributedString);
-        # [method (deleteCharactersInRange :)]
+        #[method(deleteCharactersInRange:)]
         pub unsafe fn deleteCharactersInRange(&self, range: NSRange);
-        # [method (setAttributedString :)]
+        #[method(setAttributedString:)]
         pub unsafe fn setAttributedString(&self, attrString: &NSAttributedString);
         #[method(beginEditing)]
         pub unsafe fn beginEditing(&self);
@@ -164,46 +164,46 @@ extern_methods!(
         pub unsafe fn init(&self) -> Id<Self, Shared>;
         #[method(allowsExtendedAttributes)]
         pub unsafe fn allowsExtendedAttributes(&self) -> bool;
-        # [method (setAllowsExtendedAttributes :)]
+        #[method(setAllowsExtendedAttributes:)]
         pub unsafe fn setAllowsExtendedAttributes(&self, allowsExtendedAttributes: bool);
         #[method(interpretedSyntax)]
         pub unsafe fn interpretedSyntax(&self) -> NSAttributedStringMarkdownInterpretedSyntax;
-        # [method (setInterpretedSyntax :)]
+        #[method(setInterpretedSyntax:)]
         pub unsafe fn setInterpretedSyntax(
             &self,
             interpretedSyntax: NSAttributedStringMarkdownInterpretedSyntax,
         );
         #[method(failurePolicy)]
         pub unsafe fn failurePolicy(&self) -> NSAttributedStringMarkdownParsingFailurePolicy;
-        # [method (setFailurePolicy :)]
+        #[method(setFailurePolicy:)]
         pub unsafe fn setFailurePolicy(
             &self,
             failurePolicy: NSAttributedStringMarkdownParsingFailurePolicy,
         );
         #[method_id(languageCode)]
         pub unsafe fn languageCode(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setLanguageCode :)]
+        #[method(setLanguageCode:)]
         pub unsafe fn setLanguageCode(&self, languageCode: Option<&NSString>);
     }
 );
 extern_methods!(
     #[doc = "NSAttributedStringCreateFromMarkdown"]
     unsafe impl NSAttributedString {
-        # [method_id (initWithContentsOfMarkdownFileAtURL : options : baseURL : error :)]
+        #[method_id(initWithContentsOfMarkdownFileAtURL:options:baseURL:error:)]
         pub unsafe fn initWithContentsOfMarkdownFileAtURL_options_baseURL_error(
             &self,
             markdownFile: &NSURL,
             options: Option<&NSAttributedStringMarkdownParsingOptions>,
             baseURL: Option<&NSURL>,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (initWithMarkdown : options : baseURL : error :)]
+        #[method_id(initWithMarkdown:options:baseURL:error:)]
         pub unsafe fn initWithMarkdown_options_baseURL_error(
             &self,
             markdown: &NSData,
             options: Option<&NSAttributedStringMarkdownParsingOptions>,
             baseURL: Option<&NSURL>,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (initWithMarkdownString : options : baseURL : error :)]
+        #[method_id(initWithMarkdownString:options:baseURL:error:)]
         pub unsafe fn initWithMarkdownString_options_baseURL_error(
             &self,
             markdownString: &NSString,
@@ -215,7 +215,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSAttributedStringFormatting"]
     unsafe impl NSAttributedString {
-        # [method_id (initWithFormat : options : locale : arguments :)]
+        #[method_id(initWithFormat:options:locale:arguments:)]
         pub unsafe fn initWithFormat_options_locale_arguments(
             &self,
             format: &NSAttributedString,
@@ -251,68 +251,68 @@ extern_methods!(
         pub unsafe fn init(&self) -> Id<Self, Shared>;
         #[method_id(parentIntent)]
         pub unsafe fn parentIntent(&self) -> Option<Id<NSPresentationIntent, Shared>>;
-        # [method_id (paragraphIntentWithIdentity : nestedInsideIntent :)]
+        #[method_id(paragraphIntentWithIdentity:nestedInsideIntent:)]
         pub unsafe fn paragraphIntentWithIdentity_nestedInsideIntent(
             identity: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (headerIntentWithIdentity : level : nestedInsideIntent :)]
+        #[method_id(headerIntentWithIdentity:level:nestedInsideIntent:)]
         pub unsafe fn headerIntentWithIdentity_level_nestedInsideIntent(
             identity: NSInteger,
             level: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (codeBlockIntentWithIdentity : languageHint : nestedInsideIntent :)]
+        #[method_id(codeBlockIntentWithIdentity:languageHint:nestedInsideIntent:)]
         pub unsafe fn codeBlockIntentWithIdentity_languageHint_nestedInsideIntent(
             identity: NSInteger,
             languageHint: Option<&NSString>,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (thematicBreakIntentWithIdentity : nestedInsideIntent :)]
+        #[method_id(thematicBreakIntentWithIdentity:nestedInsideIntent:)]
         pub unsafe fn thematicBreakIntentWithIdentity_nestedInsideIntent(
             identity: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (orderedListIntentWithIdentity : nestedInsideIntent :)]
+        #[method_id(orderedListIntentWithIdentity:nestedInsideIntent:)]
         pub unsafe fn orderedListIntentWithIdentity_nestedInsideIntent(
             identity: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (unorderedListIntentWithIdentity : nestedInsideIntent :)]
+        #[method_id(unorderedListIntentWithIdentity:nestedInsideIntent:)]
         pub unsafe fn unorderedListIntentWithIdentity_nestedInsideIntent(
             identity: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (listItemIntentWithIdentity : ordinal : nestedInsideIntent :)]
+        #[method_id(listItemIntentWithIdentity:ordinal:nestedInsideIntent:)]
         pub unsafe fn listItemIntentWithIdentity_ordinal_nestedInsideIntent(
             identity: NSInteger,
             ordinal: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (blockQuoteIntentWithIdentity : nestedInsideIntent :)]
+        #[method_id(blockQuoteIntentWithIdentity:nestedInsideIntent:)]
         pub unsafe fn blockQuoteIntentWithIdentity_nestedInsideIntent(
             identity: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (tableIntentWithIdentity : columnCount : alignments : nestedInsideIntent :)]
+        #[method_id(tableIntentWithIdentity:columnCount:alignments:nestedInsideIntent:)]
         pub unsafe fn tableIntentWithIdentity_columnCount_alignments_nestedInsideIntent(
             identity: NSInteger,
             columnCount: NSInteger,
             alignments: &NSArray<NSNumber>,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (tableHeaderRowIntentWithIdentity : nestedInsideIntent :)]
+        #[method_id(tableHeaderRowIntentWithIdentity:nestedInsideIntent:)]
         pub unsafe fn tableHeaderRowIntentWithIdentity_nestedInsideIntent(
             identity: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (tableRowIntentWithIdentity : row : nestedInsideIntent :)]
+        #[method_id(tableRowIntentWithIdentity:row:nestedInsideIntent:)]
         pub unsafe fn tableRowIntentWithIdentity_row_nestedInsideIntent(
             identity: NSInteger,
             row: NSInteger,
             parent: Option<&NSPresentationIntent>,
         ) -> Id<NSPresentationIntent, Shared>;
-        # [method_id (tableCellIntentWithIdentity : column : nestedInsideIntent :)]
+        #[method_id(tableCellIntentWithIdentity:column:nestedInsideIntent:)]
         pub unsafe fn tableCellIntentWithIdentity_column_nestedInsideIntent(
             identity: NSInteger,
             column: NSInteger,
@@ -336,7 +336,7 @@ extern_methods!(
         pub unsafe fn row(&self) -> NSInteger;
         #[method(indentationLevel)]
         pub unsafe fn indentationLevel(&self) -> NSInteger;
-        # [method (isEquivalentToPresentationIntent :)]
+        #[method(isEquivalentToPresentationIntent:)]
         pub unsafe fn isEquivalentToPresentationIntent(&self, other: &NSPresentationIntent)
             -> bool;
     }

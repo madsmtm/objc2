@@ -17,42 +17,42 @@ extern_methods!(
     unsafe impl NSAppleEventDescriptor {
         #[method_id(nullDescriptor)]
         pub unsafe fn nullDescriptor() -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithDescriptorType : bytes : length :)]
+        #[method_id(descriptorWithDescriptorType:bytes:length:)]
         pub unsafe fn descriptorWithDescriptorType_bytes_length(
             descriptorType: DescType,
             bytes: *mut c_void,
             byteCount: NSUInteger,
         ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-        # [method_id (descriptorWithDescriptorType : data :)]
+        #[method_id(descriptorWithDescriptorType:data:)]
         pub unsafe fn descriptorWithDescriptorType_data(
             descriptorType: DescType,
             data: Option<&NSData>,
         ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-        # [method_id (descriptorWithBoolean :)]
+        #[method_id(descriptorWithBoolean:)]
         pub unsafe fn descriptorWithBoolean(boolean: Boolean)
             -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithEnumCode :)]
+        #[method_id(descriptorWithEnumCode:)]
         pub unsafe fn descriptorWithEnumCode(
             enumerator: OSType,
         ) -> Id<NSAppleEventDescriptor, Shared>;
         # [method_id (descriptorWithInt32 :)]
         pub unsafe fn descriptorWithInt32(signedInt: SInt32) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithDouble :)]
+        #[method_id(descriptorWithDouble:)]
         pub unsafe fn descriptorWithDouble(
             doubleValue: c_double,
         ) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithTypeCode :)]
+        #[method_id(descriptorWithTypeCode:)]
         pub unsafe fn descriptorWithTypeCode(
             typeCode: OSType,
         ) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithString :)]
+        #[method_id(descriptorWithString:)]
         pub unsafe fn descriptorWithString(string: &NSString)
             -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithDate :)]
+        #[method_id(descriptorWithDate:)]
         pub unsafe fn descriptorWithDate(date: &NSDate) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithFileURL :)]
+        #[method_id(descriptorWithFileURL:)]
         pub unsafe fn descriptorWithFileURL(fileURL: &NSURL) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (appleEventWithEventClass : eventID : targetDescriptor : returnID : transactionID :)]
+        #[method_id(appleEventWithEventClass:eventID:targetDescriptor:returnID:transactionID:)]
         pub unsafe fn appleEventWithEventClass_eventID_targetDescriptor_returnID_transactionID(
             eventClass: AEEventClass,
             eventID: AEEventID,
@@ -66,34 +66,34 @@ extern_methods!(
         pub unsafe fn recordDescriptor() -> Id<NSAppleEventDescriptor, Shared>;
         #[method_id(currentProcessDescriptor)]
         pub unsafe fn currentProcessDescriptor() -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithProcessIdentifier :)]
+        #[method_id(descriptorWithProcessIdentifier:)]
         pub unsafe fn descriptorWithProcessIdentifier(
             processIdentifier: pid_t,
         ) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithBundleIdentifier :)]
+        #[method_id(descriptorWithBundleIdentifier:)]
         pub unsafe fn descriptorWithBundleIdentifier(
             bundleIdentifier: &NSString,
         ) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithApplicationURL :)]
+        #[method_id(descriptorWithApplicationURL:)]
         pub unsafe fn descriptorWithApplicationURL(
             applicationURL: &NSURL,
         ) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (initWithAEDescNoCopy :)]
+        #[method_id(initWithAEDescNoCopy:)]
         pub unsafe fn initWithAEDescNoCopy(&self, aeDesc: NonNull<AEDesc>) -> Id<Self, Shared>;
-        # [method_id (initWithDescriptorType : bytes : length :)]
+        #[method_id(initWithDescriptorType:bytes:length:)]
         pub unsafe fn initWithDescriptorType_bytes_length(
             &self,
             descriptorType: DescType,
             bytes: *mut c_void,
             byteCount: NSUInteger,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithDescriptorType : data :)]
+        #[method_id(initWithDescriptorType:data:)]
         pub unsafe fn initWithDescriptorType_data(
             &self,
             descriptorType: DescType,
             data: Option<&NSData>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithEventClass : eventID : targetDescriptor : returnID : transactionID :)]
+        #[method_id(initWithEventClass:eventID:targetDescriptor:returnID:transactionID:)]
         pub unsafe fn initWithEventClass_eventID_targetDescriptor_returnID_transactionID(
             &self,
             eventClass: AEEventClass,
@@ -136,31 +136,31 @@ extern_methods!(
         pub unsafe fn returnID(&self) -> AEReturnID;
         #[method(transactionID)]
         pub unsafe fn transactionID(&self) -> AETransactionID;
-        # [method (setParamDescriptor : forKeyword :)]
+        #[method(setParamDescriptor:forKeyword:)]
         pub unsafe fn setParamDescriptor_forKeyword(
             &self,
             descriptor: &NSAppleEventDescriptor,
             keyword: AEKeyword,
         );
-        # [method_id (paramDescriptorForKeyword :)]
+        #[method_id(paramDescriptorForKeyword:)]
         pub unsafe fn paramDescriptorForKeyword(
             &self,
             keyword: AEKeyword,
         ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-        # [method (removeParamDescriptorWithKeyword :)]
+        #[method(removeParamDescriptorWithKeyword:)]
         pub unsafe fn removeParamDescriptorWithKeyword(&self, keyword: AEKeyword);
-        # [method (setAttributeDescriptor : forKeyword :)]
+        #[method(setAttributeDescriptor:forKeyword:)]
         pub unsafe fn setAttributeDescriptor_forKeyword(
             &self,
             descriptor: &NSAppleEventDescriptor,
             keyword: AEKeyword,
         );
-        # [method_id (attributeDescriptorForKeyword :)]
+        #[method_id(attributeDescriptorForKeyword:)]
         pub unsafe fn attributeDescriptorForKeyword(
             &self,
             keyword: AEKeyword,
         ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-        # [method_id (sendEventWithOptions : timeout : error :)]
+        #[method_id(sendEventWithOptions:timeout:error:)]
         pub unsafe fn sendEventWithOptions_timeout_error(
             &self,
             sendOptions: NSAppleEventSendOptions,
@@ -170,35 +170,35 @@ extern_methods!(
         pub unsafe fn isRecordDescriptor(&self) -> bool;
         #[method(numberOfItems)]
         pub unsafe fn numberOfItems(&self) -> NSInteger;
-        # [method (insertDescriptor : atIndex :)]
+        #[method(insertDescriptor:atIndex:)]
         pub unsafe fn insertDescriptor_atIndex(
             &self,
             descriptor: &NSAppleEventDescriptor,
             index: NSInteger,
         );
-        # [method_id (descriptorAtIndex :)]
+        #[method_id(descriptorAtIndex:)]
         pub unsafe fn descriptorAtIndex(
             &self,
             index: NSInteger,
         ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-        # [method (removeDescriptorAtIndex :)]
+        #[method(removeDescriptorAtIndex:)]
         pub unsafe fn removeDescriptorAtIndex(&self, index: NSInteger);
-        # [method (setDescriptor : forKeyword :)]
+        #[method(setDescriptor:forKeyword:)]
         pub unsafe fn setDescriptor_forKeyword(
             &self,
             descriptor: &NSAppleEventDescriptor,
             keyword: AEKeyword,
         );
-        # [method_id (descriptorForKeyword :)]
+        #[method_id(descriptorForKeyword:)]
         pub unsafe fn descriptorForKeyword(
             &self,
             keyword: AEKeyword,
         ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-        # [method (removeDescriptorWithKeyword :)]
+        #[method(removeDescriptorWithKeyword:)]
         pub unsafe fn removeDescriptorWithKeyword(&self, keyword: AEKeyword);
-        # [method (keywordForDescriptorAtIndex :)]
+        #[method(keywordForDescriptorAtIndex:)]
         pub unsafe fn keywordForDescriptorAtIndex(&self, index: NSInteger) -> AEKeyword;
-        # [method_id (coerceToDescriptorType :)]
+        #[method_id(coerceToDescriptorType:)]
         pub unsafe fn coerceToDescriptorType(
             &self,
             descriptorType: DescType,

@@ -28,7 +28,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSInflectionRuleExplicit {
-        # [method_id (initWithMorphology :)]
+        #[method_id(initWithMorphology:)]
         pub unsafe fn initWithMorphology(&self, morphology: &NSMorphology) -> Id<Self, Shared>;
         #[method_id(morphology)]
         pub unsafe fn morphology(&self) -> Id<NSMorphology, Shared>;
@@ -37,7 +37,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSInflectionAvailability"]
     unsafe impl NSInflectionRule {
-        # [method (canInflectLanguage :)]
+        #[method(canInflectLanguage:)]
         pub unsafe fn canInflectLanguage(language: &NSString) -> bool;
         #[method(canInflectPreferredLocalization)]
         pub unsafe fn canInflectPreferredLocalization() -> bool;

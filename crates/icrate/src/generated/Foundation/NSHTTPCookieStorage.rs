@@ -22,24 +22,24 @@ extern_methods!(
     unsafe impl NSHTTPCookieStorage {
         #[method_id(sharedHTTPCookieStorage)]
         pub unsafe fn sharedHTTPCookieStorage() -> Id<NSHTTPCookieStorage, Shared>;
-        # [method_id (sharedCookieStorageForGroupContainerIdentifier :)]
+        #[method_id(sharedCookieStorageForGroupContainerIdentifier:)]
         pub unsafe fn sharedCookieStorageForGroupContainerIdentifier(
             identifier: &NSString,
         ) -> Id<NSHTTPCookieStorage, Shared>;
         #[method_id(cookies)]
         pub unsafe fn cookies(&self) -> Option<Id<NSArray<NSHTTPCookie>, Shared>>;
-        # [method (setCookie :)]
+        #[method(setCookie:)]
         pub unsafe fn setCookie(&self, cookie: &NSHTTPCookie);
-        # [method (deleteCookie :)]
+        #[method(deleteCookie:)]
         pub unsafe fn deleteCookie(&self, cookie: &NSHTTPCookie);
-        # [method (removeCookiesSinceDate :)]
+        #[method(removeCookiesSinceDate:)]
         pub unsafe fn removeCookiesSinceDate(&self, date: &NSDate);
-        # [method_id (cookiesForURL :)]
+        #[method_id(cookiesForURL:)]
         pub unsafe fn cookiesForURL(
             &self,
             URL: &NSURL,
         ) -> Option<Id<NSArray<NSHTTPCookie>, Shared>>;
-        # [method (setCookies : forURL : mainDocumentURL :)]
+        #[method(setCookies:forURL:mainDocumentURL:)]
         pub unsafe fn setCookies_forURL_mainDocumentURL(
             &self,
             cookies: &NSArray<NSHTTPCookie>,
@@ -48,9 +48,9 @@ extern_methods!(
         );
         #[method(cookieAcceptPolicy)]
         pub unsafe fn cookieAcceptPolicy(&self) -> NSHTTPCookieAcceptPolicy;
-        # [method (setCookieAcceptPolicy :)]
+        #[method(setCookieAcceptPolicy:)]
         pub unsafe fn setCookieAcceptPolicy(&self, cookieAcceptPolicy: NSHTTPCookieAcceptPolicy);
-        # [method_id (sortedCookiesUsingDescriptors :)]
+        #[method_id(sortedCookiesUsingDescriptors:)]
         pub unsafe fn sortedCookiesUsingDescriptors(
             &self,
             sortOrder: &NSArray<NSSortDescriptor>,
@@ -60,13 +60,13 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSURLSessionTaskAdditions"]
     unsafe impl NSHTTPCookieStorage {
-        # [method (storeCookies : forTask :)]
+        #[method(storeCookies:forTask:)]
         pub unsafe fn storeCookies_forTask(
             &self,
             cookies: &NSArray<NSHTTPCookie>,
             task: &NSURLSessionTask,
         );
-        # [method (getCookiesForTask : completionHandler :)]
+        #[method(getCookiesForTask:completionHandler:)]
         pub unsafe fn getCookiesForTask_completionHandler(
             &self,
             task: &NSURLSessionTask,

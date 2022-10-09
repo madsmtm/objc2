@@ -23,7 +23,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLProtocol {
-        # [method_id (initWithRequest : cachedResponse : client :)]
+        #[method_id(initWithRequest:cachedResponse:client:)]
         pub unsafe fn initWithRequest_cachedResponse_client(
             &self,
             request: &NSURLRequest,
@@ -36,13 +36,13 @@ extern_methods!(
         pub unsafe fn request(&self) -> Id<NSURLRequest, Shared>;
         #[method_id(cachedResponse)]
         pub unsafe fn cachedResponse(&self) -> Option<Id<NSCachedURLResponse, Shared>>;
-        # [method (canInitWithRequest :)]
+        #[method(canInitWithRequest:)]
         pub unsafe fn canInitWithRequest(request: &NSURLRequest) -> bool;
-        # [method_id (canonicalRequestForRequest :)]
+        #[method_id(canonicalRequestForRequest:)]
         pub unsafe fn canonicalRequestForRequest(
             request: &NSURLRequest,
         ) -> Id<NSURLRequest, Shared>;
-        # [method (requestIsCacheEquivalent : toRequest :)]
+        #[method(requestIsCacheEquivalent:toRequest:)]
         pub unsafe fn requestIsCacheEquivalent_toRequest(
             a: &NSURLRequest,
             b: &NSURLRequest,
@@ -51,31 +51,31 @@ extern_methods!(
         pub unsafe fn startLoading(&self);
         #[method(stopLoading)]
         pub unsafe fn stopLoading(&self);
-        # [method_id (propertyForKey : inRequest :)]
+        #[method_id(propertyForKey:inRequest:)]
         pub unsafe fn propertyForKey_inRequest(
             key: &NSString,
             request: &NSURLRequest,
         ) -> Option<Id<Object, Shared>>;
-        # [method (setProperty : forKey : inRequest :)]
+        #[method(setProperty:forKey:inRequest:)]
         pub unsafe fn setProperty_forKey_inRequest(
             value: &Object,
             key: &NSString,
             request: &NSMutableURLRequest,
         );
-        # [method (removePropertyForKey : inRequest :)]
+        #[method(removePropertyForKey:inRequest:)]
         pub unsafe fn removePropertyForKey_inRequest(key: &NSString, request: &NSMutableURLRequest);
-        # [method (registerClass :)]
+        #[method(registerClass:)]
         pub unsafe fn registerClass(protocolClass: &Class) -> bool;
-        # [method (unregisterClass :)]
+        #[method(unregisterClass:)]
         pub unsafe fn unregisterClass(protocolClass: &Class);
     }
 );
 extern_methods!(
     #[doc = "NSURLSessionTaskAdditions"]
     unsafe impl NSURLProtocol {
-        # [method (canInitWithTask :)]
+        #[method(canInitWithTask:)]
         pub unsafe fn canInitWithTask(task: &NSURLSessionTask) -> bool;
-        # [method_id (initWithTask : cachedResponse : client :)]
+        #[method_id(initWithTask:cachedResponse:client:)]
         pub unsafe fn initWithTask_cachedResponse_client(
             &self,
             task: &NSURLSessionTask,

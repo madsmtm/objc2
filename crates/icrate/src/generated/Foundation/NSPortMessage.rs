@@ -16,7 +16,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSPortMessage {
-        # [method_id (initWithSendPort : receivePort : components :)]
+        #[method_id(initWithSendPort:receivePort:components:)]
         pub unsafe fn initWithSendPort_receivePort_components(
             &self,
             sendPort: Option<&NSPort>,
@@ -29,11 +29,11 @@ extern_methods!(
         pub unsafe fn receivePort(&self) -> Option<Id<NSPort, Shared>>;
         #[method_id(sendPort)]
         pub unsafe fn sendPort(&self) -> Option<Id<NSPort, Shared>>;
-        # [method (sendBeforeDate :)]
+        #[method(sendBeforeDate:)]
         pub unsafe fn sendBeforeDate(&self, date: &NSDate) -> bool;
         #[method(msgid)]
         pub unsafe fn msgid(&self) -> u32;
-        # [method (setMsgid :)]
+        #[method(setMsgid:)]
         pub unsafe fn setMsgid(&self, msgid: u32);
     }
 );

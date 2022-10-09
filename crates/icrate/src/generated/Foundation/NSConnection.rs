@@ -30,58 +30,58 @@ extern_methods!(
         pub unsafe fn allConnections() -> Id<NSArray<NSConnection>, Shared>;
         #[method_id(defaultConnection)]
         pub unsafe fn defaultConnection() -> Id<NSConnection, Shared>;
-        # [method_id (connectionWithRegisteredName : host :)]
+        #[method_id(connectionWithRegisteredName:host:)]
         pub unsafe fn connectionWithRegisteredName_host(
             name: &NSString,
             hostName: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (connectionWithRegisteredName : host : usingNameServer :)]
+        #[method_id(connectionWithRegisteredName:host:usingNameServer:)]
         pub unsafe fn connectionWithRegisteredName_host_usingNameServer(
             name: &NSString,
             hostName: Option<&NSString>,
             server: &NSPortNameServer,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (rootProxyForConnectionWithRegisteredName : host :)]
+        #[method_id(rootProxyForConnectionWithRegisteredName:host:)]
         pub unsafe fn rootProxyForConnectionWithRegisteredName_host(
             name: &NSString,
             hostName: Option<&NSString>,
         ) -> Option<Id<NSDistantObject, Shared>>;
-        # [method_id (rootProxyForConnectionWithRegisteredName : host : usingNameServer :)]
+        #[method_id(rootProxyForConnectionWithRegisteredName:host:usingNameServer:)]
         pub unsafe fn rootProxyForConnectionWithRegisteredName_host_usingNameServer(
             name: &NSString,
             hostName: Option<&NSString>,
             server: &NSPortNameServer,
         ) -> Option<Id<NSDistantObject, Shared>>;
-        # [method_id (serviceConnectionWithName : rootObject : usingNameServer :)]
+        #[method_id(serviceConnectionWithName:rootObject:usingNameServer:)]
         pub unsafe fn serviceConnectionWithName_rootObject_usingNameServer(
             name: &NSString,
             root: &Object,
             server: &NSPortNameServer,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (serviceConnectionWithName : rootObject :)]
+        #[method_id(serviceConnectionWithName:rootObject:)]
         pub unsafe fn serviceConnectionWithName_rootObject(
             name: &NSString,
             root: &Object,
         ) -> Option<Id<Self, Shared>>;
         #[method(requestTimeout)]
         pub unsafe fn requestTimeout(&self) -> NSTimeInterval;
-        # [method (setRequestTimeout :)]
+        #[method(setRequestTimeout:)]
         pub unsafe fn setRequestTimeout(&self, requestTimeout: NSTimeInterval);
         #[method(replyTimeout)]
         pub unsafe fn replyTimeout(&self) -> NSTimeInterval;
-        # [method (setReplyTimeout :)]
+        #[method(setReplyTimeout:)]
         pub unsafe fn setReplyTimeout(&self, replyTimeout: NSTimeInterval);
         #[method_id(rootObject)]
         pub unsafe fn rootObject(&self) -> Option<Id<Object, Shared>>;
-        # [method (setRootObject :)]
+        #[method(setRootObject:)]
         pub unsafe fn setRootObject(&self, rootObject: Option<&Object>);
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSConnectionDelegate, Shared>>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSConnectionDelegate>);
         #[method(independentConversationQueueing)]
         pub unsafe fn independentConversationQueueing(&self) -> bool;
-        # [method (setIndependentConversationQueueing :)]
+        #[method(setIndependentConversationQueueing:)]
         pub unsafe fn setIndependentConversationQueueing(
             &self,
             independentConversationQueueing: bool,
@@ -92,28 +92,28 @@ extern_methods!(
         pub unsafe fn rootProxy(&self) -> Id<NSDistantObject, Shared>;
         #[method(invalidate)]
         pub unsafe fn invalidate(&self);
-        # [method (addRequestMode :)]
+        #[method(addRequestMode:)]
         pub unsafe fn addRequestMode(&self, rmode: &NSString);
-        # [method (removeRequestMode :)]
+        #[method(removeRequestMode:)]
         pub unsafe fn removeRequestMode(&self, rmode: &NSString);
         #[method_id(requestModes)]
         pub unsafe fn requestModes(&self) -> Id<NSArray<NSString>, Shared>;
-        # [method (registerName :)]
+        #[method(registerName:)]
         pub unsafe fn registerName(&self, name: Option<&NSString>) -> bool;
-        # [method (registerName : withNameServer :)]
+        #[method(registerName:withNameServer:)]
         pub unsafe fn registerName_withNameServer(
             &self,
             name: Option<&NSString>,
             server: &NSPortNameServer,
         ) -> bool;
-        # [method_id (connectionWithReceivePort : sendPort :)]
+        #[method_id(connectionWithReceivePort:sendPort:)]
         pub unsafe fn connectionWithReceivePort_sendPort(
             receivePort: Option<&NSPort>,
             sendPort: Option<&NSPort>,
         ) -> Option<Id<Self, Shared>>;
         #[method_id(currentConversation)]
         pub unsafe fn currentConversation() -> Option<Id<Object, Shared>>;
-        # [method_id (initWithReceivePort : sendPort :)]
+        #[method_id(initWithReceivePort:sendPort:)]
         pub unsafe fn initWithReceivePort_sendPort(
             &self,
             receivePort: Option<&NSPort>,
@@ -127,9 +127,9 @@ extern_methods!(
         pub unsafe fn enableMultipleThreads(&self);
         #[method(multipleThreadsEnabled)]
         pub unsafe fn multipleThreadsEnabled(&self) -> bool;
-        # [method (addRunLoop :)]
+        #[method(addRunLoop:)]
         pub unsafe fn addRunLoop(&self, runloop: &NSRunLoop);
-        # [method (removeRunLoop :)]
+        #[method(removeRunLoop:)]
         pub unsafe fn removeRunLoop(&self, runloop: &NSRunLoop);
         #[method(runInNewThread)]
         pub unsafe fn runInNewThread(&self);
@@ -137,7 +137,7 @@ extern_methods!(
         pub unsafe fn remoteObjects(&self) -> Id<NSArray, Shared>;
         #[method_id(localObjects)]
         pub unsafe fn localObjects(&self) -> Id<NSArray, Shared>;
-        # [method (dispatchWithComponents :)]
+        #[method(dispatchWithComponents:)]
         pub unsafe fn dispatchWithComponents(&self, components: &NSArray);
     }
 );
@@ -157,7 +157,7 @@ extern_methods!(
         pub unsafe fn connection(&self) -> Id<NSConnection, Shared>;
         #[method_id(conversation)]
         pub unsafe fn conversation(&self) -> Id<Object, Shared>;
-        # [method (replyWithException :)]
+        #[method(replyWithException:)]
         pub unsafe fn replyWithException(&self, exception: Option<&NSException>);
     }
 );

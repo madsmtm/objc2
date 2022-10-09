@@ -15,12 +15,12 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
-        # [method_id (initWithChanges :)]
+        #[method_id(initWithChanges:)]
         pub unsafe fn initWithChanges(
             &self,
             changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithInsertIndexes : insertedObjects : removeIndexes : removedObjects : additionalChanges :)]
+        #[method_id(initWithInsertIndexes:insertedObjects:removeIndexes:removedObjects:additionalChanges:)]
         pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects_additionalChanges(
             &self,
             inserts: &NSIndexSet,
@@ -29,7 +29,7 @@ extern_methods!(
             removedObjects: Option<&NSArray<ObjectType>>,
             changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithInsertIndexes : insertedObjects : removeIndexes : removedObjects :)]
+        #[method_id(initWithInsertIndexes:insertedObjects:removeIndexes:removedObjects:)]
         pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects(
             &self,
             inserts: &NSIndexSet,
@@ -46,7 +46,7 @@ extern_methods!(
             -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared>;
         #[method(hasChanges)]
         pub unsafe fn hasChanges(&self) -> bool;
-        # [method_id (differenceByTransformingChangesWithBlock :)]
+        #[method_id(differenceByTransformingChangesWithBlock:)]
         pub unsafe fn differenceByTransformingChangesWithBlock(
             &self,
             block: TodoBlock,

@@ -18,19 +18,19 @@ extern_methods!(
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
         #[method(count)]
         pub unsafe fn count(&self) -> NSUInteger;
-        # [method_id (member :)]
+        #[method_id(member:)]
         pub unsafe fn member(&self, object: &ObjectType) -> Option<Id<ObjectType, Shared>>;
         #[method_id(objectEnumerator)]
         pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithObjects : count :)]
+        #[method_id(initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
             &self,
             objects: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
     }
 );
@@ -41,56 +41,56 @@ extern_methods!(
         pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared>;
         #[method_id(anyObject)]
         pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>>;
-        # [method (containsObject :)]
+        #[method(containsObject:)]
         pub unsafe fn containsObject(&self, anObject: &ObjectType) -> bool;
         #[method_id(description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
-        # [method_id (descriptionWithLocale :)]
+        #[method_id(descriptionWithLocale:)]
         pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
             -> Id<NSString, Shared>;
-        # [method (intersectsSet :)]
+        #[method(intersectsSet:)]
         pub unsafe fn intersectsSet(&self, otherSet: &NSSet<ObjectType>) -> bool;
-        # [method (isEqualToSet :)]
+        #[method(isEqualToSet:)]
         pub unsafe fn isEqualToSet(&self, otherSet: &NSSet<ObjectType>) -> bool;
-        # [method (isSubsetOfSet :)]
+        #[method(isSubsetOfSet:)]
         pub unsafe fn isSubsetOfSet(&self, otherSet: &NSSet<ObjectType>) -> bool;
-        # [method (makeObjectsPerformSelector :)]
+        #[method(makeObjectsPerformSelector:)]
         pub unsafe fn makeObjectsPerformSelector(&self, aSelector: Sel);
-        # [method (makeObjectsPerformSelector : withObject :)]
+        #[method(makeObjectsPerformSelector:withObject:)]
         pub unsafe fn makeObjectsPerformSelector_withObject(
             &self,
             aSelector: Sel,
             argument: Option<&Object>,
         );
-        # [method_id (setByAddingObject :)]
+        #[method_id(setByAddingObject:)]
         pub unsafe fn setByAddingObject(
             &self,
             anObject: &ObjectType,
         ) -> Id<NSSet<ObjectType>, Shared>;
-        # [method_id (setByAddingObjectsFromSet :)]
+        #[method_id(setByAddingObjectsFromSet:)]
         pub unsafe fn setByAddingObjectsFromSet(
             &self,
             other: &NSSet<ObjectType>,
         ) -> Id<NSSet<ObjectType>, Shared>;
-        # [method_id (setByAddingObjectsFromArray :)]
+        #[method_id(setByAddingObjectsFromArray:)]
         pub unsafe fn setByAddingObjectsFromArray(
             &self,
             other: &NSArray<ObjectType>,
         ) -> Id<NSSet<ObjectType>, Shared>;
-        # [method (enumerateObjectsUsingBlock :)]
+        #[method(enumerateObjectsUsingBlock:)]
         pub unsafe fn enumerateObjectsUsingBlock(&self, block: TodoBlock);
-        # [method (enumerateObjectsWithOptions : usingBlock :)]
+        #[method(enumerateObjectsWithOptions:usingBlock:)]
         pub unsafe fn enumerateObjectsWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
             block: TodoBlock,
         );
-        # [method_id (objectsPassingTest :)]
+        #[method_id(objectsPassingTest:)]
         pub unsafe fn objectsPassingTest(
             &self,
             predicate: TodoBlock,
         ) -> Id<NSSet<ObjectType>, Shared>;
-        # [method_id (objectsWithOptions : passingTest :)]
+        #[method_id(objectsWithOptions:passingTest:)]
         pub unsafe fn objectsWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
@@ -103,24 +103,24 @@ extern_methods!(
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
         #[method_id(set)]
         pub unsafe fn set() -> Id<Self, Shared>;
-        # [method_id (setWithObject :)]
+        #[method_id(setWithObject:)]
         pub unsafe fn setWithObject(object: &ObjectType) -> Id<Self, Shared>;
-        # [method_id (setWithObjects : count :)]
+        #[method_id(setWithObjects:count:)]
         pub unsafe fn setWithObjects_count(objects: TodoArray, cnt: NSUInteger)
             -> Id<Self, Shared>;
-        # [method_id (setWithSet :)]
+        #[method_id(setWithSet:)]
         pub unsafe fn setWithSet(set: &NSSet<ObjectType>) -> Id<Self, Shared>;
-        # [method_id (setWithArray :)]
+        #[method_id(setWithArray:)]
         pub unsafe fn setWithArray(array: &NSArray<ObjectType>) -> Id<Self, Shared>;
-        # [method_id (initWithSet :)]
+        #[method_id(initWithSet:)]
         pub unsafe fn initWithSet(&self, set: &NSSet<ObjectType>) -> Id<Self, Shared>;
-        # [method_id (initWithSet : copyItems :)]
+        #[method_id(initWithSet:copyItems:)]
         pub unsafe fn initWithSet_copyItems(
             &self,
             set: &NSSet<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithArray :)]
+        #[method_id(initWithArray:)]
         pub unsafe fn initWithArray(&self, array: &NSArray<ObjectType>) -> Id<Self, Shared>;
     }
 );
@@ -133,39 +133,39 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<ObjectType: Message> NSMutableSet<ObjectType> {
-        # [method (addObject :)]
+        #[method(addObject:)]
         pub unsafe fn addObject(&self, object: &ObjectType);
-        # [method (removeObject :)]
+        #[method(removeObject:)]
         pub unsafe fn removeObject(&self, object: &ObjectType);
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithCapacity :)]
+        #[method_id(initWithCapacity:)]
         pub unsafe fn initWithCapacity(&self, numItems: NSUInteger) -> Id<Self, Shared>;
     }
 );
 extern_methods!(
     #[doc = "NSExtendedMutableSet"]
     unsafe impl<ObjectType: Message> NSMutableSet<ObjectType> {
-        # [method (addObjectsFromArray :)]
+        #[method(addObjectsFromArray:)]
         pub unsafe fn addObjectsFromArray(&self, array: &NSArray<ObjectType>);
-        # [method (intersectSet :)]
+        #[method(intersectSet:)]
         pub unsafe fn intersectSet(&self, otherSet: &NSSet<ObjectType>);
-        # [method (minusSet :)]
+        #[method(minusSet:)]
         pub unsafe fn minusSet(&self, otherSet: &NSSet<ObjectType>);
         #[method(removeAllObjects)]
         pub unsafe fn removeAllObjects(&self);
-        # [method (unionSet :)]
+        #[method(unionSet:)]
         pub unsafe fn unionSet(&self, otherSet: &NSSet<ObjectType>);
-        # [method (setSet :)]
+        #[method(setSet:)]
         pub unsafe fn setSet(&self, otherSet: &NSSet<ObjectType>);
     }
 );
 extern_methods!(
     #[doc = "NSMutableSetCreation"]
     unsafe impl<ObjectType: Message> NSMutableSet<ObjectType> {
-        # [method_id (setWithCapacity :)]
+        #[method_id(setWithCapacity:)]
         pub unsafe fn setWithCapacity(numItems: NSUInteger) -> Id<Self, Shared>;
     }
 );
@@ -178,19 +178,19 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<ObjectType: Message> NSCountedSet<ObjectType> {
-        # [method_id (initWithCapacity :)]
+        #[method_id(initWithCapacity:)]
         pub unsafe fn initWithCapacity(&self, numItems: NSUInteger) -> Id<Self, Shared>;
-        # [method_id (initWithArray :)]
+        #[method_id(initWithArray:)]
         pub unsafe fn initWithArray(&self, array: &NSArray<ObjectType>) -> Id<Self, Shared>;
-        # [method_id (initWithSet :)]
+        #[method_id(initWithSet:)]
         pub unsafe fn initWithSet(&self, set: &NSSet<ObjectType>) -> Id<Self, Shared>;
-        # [method (countForObject :)]
+        #[method(countForObject:)]
         pub unsafe fn countForObject(&self, object: &ObjectType) -> NSUInteger;
         #[method_id(objectEnumerator)]
         pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
-        # [method (addObject :)]
+        #[method(addObject:)]
         pub unsafe fn addObject(&self, object: &ObjectType);
-        # [method (removeObject :)]
+        #[method(removeObject:)]
         pub unsafe fn removeObject(&self, object: &ObjectType);
     }
 );

@@ -12,9 +12,9 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUnitConverter {
-        # [method (baseUnitValueFromValue :)]
+        #[method(baseUnitValueFromValue:)]
         pub unsafe fn baseUnitValueFromValue(&self, value: c_double) -> c_double;
-        # [method (valueFromBaseUnitValue :)]
+        #[method(valueFromBaseUnitValue:)]
         pub unsafe fn valueFromBaseUnitValue(&self, baseUnitValue: c_double) -> c_double;
     }
 );
@@ -31,9 +31,9 @@ extern_methods!(
         pub unsafe fn coefficient(&self) -> c_double;
         #[method(constant)]
         pub unsafe fn constant(&self) -> c_double;
-        # [method_id (initWithCoefficient :)]
+        #[method_id(initWithCoefficient:)]
         pub unsafe fn initWithCoefficient(&self, coefficient: c_double) -> Id<Self, Shared>;
-        # [method_id (initWithCoefficient : constant :)]
+        #[method_id(initWithCoefficient:constant:)]
         pub unsafe fn initWithCoefficient_constant(
             &self,
             coefficient: c_double,
@@ -56,7 +56,7 @@ extern_methods!(
         pub unsafe fn init(&self) -> Id<Self, Shared>;
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
-        # [method_id (initWithSymbol :)]
+        #[method_id(initWithSymbol:)]
         pub unsafe fn initWithSymbol(&self, symbol: &NSString) -> Id<Self, Shared>;
     }
 );
@@ -71,7 +71,7 @@ extern_methods!(
     unsafe impl NSDimension {
         #[method_id(converter)]
         pub unsafe fn converter(&self) -> Id<NSUnitConverter, Shared>;
-        # [method_id (initWithSymbol : converter :)]
+        #[method_id(initWithSymbol:converter:)]
         pub unsafe fn initWithSymbol_converter(
             &self,
             symbol: &NSString,
@@ -171,7 +171,7 @@ extern_methods!(
         pub unsafe fn gramsPerLiter() -> Id<NSUnitConcentrationMass, Shared>;
         #[method_id(milligramsPerDeciliter)]
         pub unsafe fn milligramsPerDeciliter() -> Id<NSUnitConcentrationMass, Shared>;
-        # [method_id (millimolesPerLiterWithGramsPerMole :)]
+        #[method_id(millimolesPerLiterWithGramsPerMole:)]
         pub unsafe fn millimolesPerLiterWithGramsPerMole(
             gramsPerMole: c_double,
         ) -> Id<NSUnitConcentrationMass, Shared>;

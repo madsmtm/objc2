@@ -15,40 +15,40 @@ extern_methods!(
     unsafe impl NSMassFormatter {
         #[method_id(numberFormatter)]
         pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared>;
-        # [method (setNumberFormatter :)]
+        #[method(setNumberFormatter:)]
         pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>);
         #[method(unitStyle)]
         pub unsafe fn unitStyle(&self) -> NSFormattingUnitStyle;
-        # [method (setUnitStyle :)]
+        #[method(setUnitStyle:)]
         pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle);
         #[method(isForPersonMassUse)]
         pub unsafe fn isForPersonMassUse(&self) -> bool;
-        # [method (setForPersonMassUse :)]
+        #[method(setForPersonMassUse:)]
         pub unsafe fn setForPersonMassUse(&self, forPersonMassUse: bool);
-        # [method_id (stringFromValue : unit :)]
+        #[method_id(stringFromValue:unit:)]
         pub unsafe fn stringFromValue_unit(
             &self,
             value: c_double,
             unit: NSMassFormatterUnit,
         ) -> Id<NSString, Shared>;
-        # [method_id (stringFromKilograms :)]
+        #[method_id(stringFromKilograms:)]
         pub unsafe fn stringFromKilograms(
             &self,
             numberInKilograms: c_double,
         ) -> Id<NSString, Shared>;
-        # [method_id (unitStringFromValue : unit :)]
+        #[method_id(unitStringFromValue:unit:)]
         pub unsafe fn unitStringFromValue_unit(
             &self,
             value: c_double,
             unit: NSMassFormatterUnit,
         ) -> Id<NSString, Shared>;
-        # [method_id (unitStringFromKilograms : usedUnit :)]
+        #[method_id(unitStringFromKilograms:usedUnit:)]
         pub unsafe fn unitStringFromKilograms_usedUnit(
             &self,
             numberInKilograms: c_double,
             unitp: *mut NSMassFormatterUnit,
         ) -> Id<NSString, Shared>;
-        # [method (getObjectValue : forString : errorDescription :)]
+        #[method(getObjectValue:forString:errorDescription:)]
         pub unsafe fn getObjectValue_forString_errorDescription(
             &self,
             obj: Option<&mut Option<Id<Object, Shared>>>,

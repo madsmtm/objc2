@@ -20,15 +20,15 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLDownload {
-        # [method (canResumeDownloadDecodedWithEncodingMIMEType :)]
+        #[method(canResumeDownloadDecodedWithEncodingMIMEType:)]
         pub unsafe fn canResumeDownloadDecodedWithEncodingMIMEType(MIMEType: &NSString) -> bool;
-        # [method_id (initWithRequest : delegate :)]
+        #[method_id(initWithRequest:delegate:)]
         pub unsafe fn initWithRequest_delegate(
             &self,
             request: &NSURLRequest,
             delegate: Option<&NSURLDownloadDelegate>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithResumeData : delegate : path :)]
+        #[method_id(initWithResumeData:delegate:path:)]
         pub unsafe fn initWithResumeData_delegate_path(
             &self,
             resumeData: &NSData,
@@ -37,7 +37,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
         #[method(cancel)]
         pub unsafe fn cancel(&self);
-        # [method (setDestination : allowOverwrite :)]
+        #[method(setDestination:allowOverwrite:)]
         pub unsafe fn setDestination_allowOverwrite(&self, path: &NSString, allowOverwrite: bool);
         #[method_id(request)]
         pub unsafe fn request(&self) -> Id<NSURLRequest, Shared>;
@@ -45,7 +45,7 @@ extern_methods!(
         pub unsafe fn resumeData(&self) -> Option<Id<NSData, Shared>>;
         #[method(deletesFileUponFailure)]
         pub unsafe fn deletesFileUponFailure(&self) -> bool;
-        # [method (setDeletesFileUponFailure :)]
+        #[method(setDeletesFileUponFailure:)]
         pub unsafe fn setDeletesFileUponFailure(&self, deletesFileUponFailure: bool);
     }
 );

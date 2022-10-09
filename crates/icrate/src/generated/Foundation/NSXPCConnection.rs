@@ -24,17 +24,17 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSXPCConnection {
-        # [method_id (initWithServiceName :)]
+        #[method_id(initWithServiceName:)]
         pub unsafe fn initWithServiceName(&self, serviceName: &NSString) -> Id<Self, Shared>;
         #[method_id(serviceName)]
         pub unsafe fn serviceName(&self) -> Option<Id<NSString, Shared>>;
-        # [method_id (initWithMachServiceName : options :)]
+        #[method_id(initWithMachServiceName:options:)]
         pub unsafe fn initWithMachServiceName_options(
             &self,
             name: &NSString,
             options: NSXPCConnectionOptions,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithListenerEndpoint :)]
+        #[method_id(initWithListenerEndpoint:)]
         pub unsafe fn initWithListenerEndpoint(
             &self,
             endpoint: &NSXPCListenerEndpoint,
@@ -43,38 +43,38 @@ extern_methods!(
         pub unsafe fn endpoint(&self) -> Id<NSXPCListenerEndpoint, Shared>;
         #[method_id(exportedInterface)]
         pub unsafe fn exportedInterface(&self) -> Option<Id<NSXPCInterface, Shared>>;
-        # [method (setExportedInterface :)]
+        #[method(setExportedInterface:)]
         pub unsafe fn setExportedInterface(&self, exportedInterface: Option<&NSXPCInterface>);
         #[method_id(exportedObject)]
         pub unsafe fn exportedObject(&self) -> Option<Id<Object, Shared>>;
-        # [method (setExportedObject :)]
+        #[method(setExportedObject:)]
         pub unsafe fn setExportedObject(&self, exportedObject: Option<&Object>);
         #[method_id(remoteObjectInterface)]
         pub unsafe fn remoteObjectInterface(&self) -> Option<Id<NSXPCInterface, Shared>>;
-        # [method (setRemoteObjectInterface :)]
+        #[method(setRemoteObjectInterface:)]
         pub unsafe fn setRemoteObjectInterface(
             &self,
             remoteObjectInterface: Option<&NSXPCInterface>,
         );
         #[method_id(remoteObjectProxy)]
         pub unsafe fn remoteObjectProxy(&self) -> Id<Object, Shared>;
-        # [method_id (remoteObjectProxyWithErrorHandler :)]
+        #[method_id(remoteObjectProxyWithErrorHandler:)]
         pub unsafe fn remoteObjectProxyWithErrorHandler(
             &self,
             handler: TodoBlock,
         ) -> Id<Object, Shared>;
-        # [method_id (synchronousRemoteObjectProxyWithErrorHandler :)]
+        #[method_id(synchronousRemoteObjectProxyWithErrorHandler:)]
         pub unsafe fn synchronousRemoteObjectProxyWithErrorHandler(
             &self,
             handler: TodoBlock,
         ) -> Id<Object, Shared>;
         #[method(interruptionHandler)]
         pub unsafe fn interruptionHandler(&self) -> TodoBlock;
-        # [method (setInterruptionHandler :)]
+        #[method(setInterruptionHandler:)]
         pub unsafe fn setInterruptionHandler(&self, interruptionHandler: TodoBlock);
         #[method(invalidationHandler)]
         pub unsafe fn invalidationHandler(&self) -> TodoBlock;
-        # [method (setInvalidationHandler :)]
+        #[method(setInvalidationHandler:)]
         pub unsafe fn setInvalidationHandler(&self, invalidationHandler: TodoBlock);
         #[method(resume)]
         pub unsafe fn resume(&self);
@@ -92,7 +92,7 @@ extern_methods!(
         pub unsafe fn effectiveGroupIdentifier(&self) -> gid_t;
         #[method_id(currentConnection)]
         pub unsafe fn currentConnection() -> Option<Id<NSXPCConnection, Shared>>;
-        # [method (scheduleSendBarrierBlock :)]
+        #[method(scheduleSendBarrierBlock:)]
         pub unsafe fn scheduleSendBarrierBlock(&self, block: TodoBlock);
     }
 );
@@ -109,11 +109,11 @@ extern_methods!(
         pub unsafe fn serviceListener() -> Id<NSXPCListener, Shared>;
         #[method_id(anonymousListener)]
         pub unsafe fn anonymousListener() -> Id<NSXPCListener, Shared>;
-        # [method_id (initWithMachServiceName :)]
+        #[method_id(initWithMachServiceName:)]
         pub unsafe fn initWithMachServiceName(&self, name: &NSString) -> Id<Self, Shared>;
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSXPCListenerDelegate, Shared>>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSXPCListenerDelegate>);
         #[method_id(endpoint)]
         pub unsafe fn endpoint(&self) -> Id<NSXPCListenerEndpoint, Shared>;
@@ -135,13 +135,13 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSXPCInterface {
-        # [method_id (interfaceWithProtocol :)]
+        #[method_id(interfaceWithProtocol:)]
         pub unsafe fn interfaceWithProtocol(protocol: &Protocol) -> Id<NSXPCInterface, Shared>;
         #[method_id(protocol)]
         pub unsafe fn protocol(&self) -> Id<Protocol, Shared>;
-        # [method (setProtocol :)]
+        #[method(setProtocol:)]
         pub unsafe fn setProtocol(&self, protocol: &Protocol);
-        # [method (setClasses : forSelector : argumentIndex : ofReply :)]
+        #[method(setClasses:forSelector:argumentIndex:ofReply:)]
         pub unsafe fn setClasses_forSelector_argumentIndex_ofReply(
             &self,
             classes: &NSSet<TodoClass>,
@@ -149,14 +149,14 @@ extern_methods!(
             arg: NSUInteger,
             ofReply: bool,
         );
-        # [method_id (classesForSelector : argumentIndex : ofReply :)]
+        #[method_id(classesForSelector:argumentIndex:ofReply:)]
         pub unsafe fn classesForSelector_argumentIndex_ofReply(
             &self,
             sel: Sel,
             arg: NSUInteger,
             ofReply: bool,
         ) -> Id<NSSet<TodoClass>, Shared>;
-        # [method (setInterface : forSelector : argumentIndex : ofReply :)]
+        #[method(setInterface:forSelector:argumentIndex:ofReply:)]
         pub unsafe fn setInterface_forSelector_argumentIndex_ofReply(
             &self,
             ifc: &NSXPCInterface,
@@ -164,14 +164,14 @@ extern_methods!(
             arg: NSUInteger,
             ofReply: bool,
         );
-        # [method_id (interfaceForSelector : argumentIndex : ofReply :)]
+        #[method_id(interfaceForSelector:argumentIndex:ofReply:)]
         pub unsafe fn interfaceForSelector_argumentIndex_ofReply(
             &self,
             sel: Sel,
             arg: NSUInteger,
             ofReply: bool,
         ) -> Option<Id<NSXPCInterface, Shared>>;
-        # [method (setXPCType : forSelector : argumentIndex : ofReply :)]
+        #[method(setXPCType:forSelector:argumentIndex:ofReply:)]
         pub unsafe fn setXPCType_forSelector_argumentIndex_ofReply(
             &self,
             type_: xpc_type_t,
@@ -179,7 +179,7 @@ extern_methods!(
             arg: NSUInteger,
             ofReply: bool,
         );
-        # [method (XPCTypeForSelector : argumentIndex : ofReply :)]
+        #[method(XPCTypeForSelector:argumentIndex:ofReply:)]
         pub unsafe fn XPCTypeForSelector_argumentIndex_ofReply(
             &self,
             sel: Sel,
@@ -207,9 +207,9 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSXPCCoder {
-        # [method (encodeXPCObject : forKey :)]
+        #[method(encodeXPCObject:forKey:)]
         pub unsafe fn encodeXPCObject_forKey(&self, xpcObject: &xpc_object_t, key: &NSString);
-        # [method_id (decodeXPCObjectOfType : forKey :)]
+        #[method_id(decodeXPCObjectOfType:forKey:)]
         pub unsafe fn decodeXPCObjectOfType_forKey(
             &self,
             type_: xpc_type_t,
@@ -217,7 +217,7 @@ extern_methods!(
         ) -> Option<Id<xpc_object_t, Shared>>;
         #[method_id(userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSObject, Shared>>;
-        # [method (setUserInfo :)]
+        #[method(setUserInfo:)]
         pub unsafe fn setUserInfo(&self, userInfo: Option<&NSObject>);
         #[method_id(connection)]
         pub unsafe fn connection(&self) -> Option<Id<NSXPCConnection, Shared>>;

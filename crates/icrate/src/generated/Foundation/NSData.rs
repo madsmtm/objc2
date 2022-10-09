@@ -27,42 +27,42 @@ extern_methods!(
     unsafe impl NSData {
         #[method_id(description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
-        # [method (getBytes : length :)]
+        #[method(getBytes:length:)]
         pub unsafe fn getBytes_length(&self, buffer: NonNull<c_void>, length: NSUInteger);
-        # [method (getBytes : range :)]
+        #[method(getBytes:range:)]
         pub unsafe fn getBytes_range(&self, buffer: NonNull<c_void>, range: NSRange);
-        # [method (isEqualToData :)]
+        #[method(isEqualToData:)]
         pub unsafe fn isEqualToData(&self, other: &NSData) -> bool;
-        # [method_id (subdataWithRange :)]
+        #[method_id(subdataWithRange:)]
         pub unsafe fn subdataWithRange(&self, range: NSRange) -> Id<NSData, Shared>;
-        # [method (writeToFile : atomically :)]
+        #[method(writeToFile:atomically:)]
         pub unsafe fn writeToFile_atomically(
             &self,
             path: &NSString,
             useAuxiliaryFile: bool,
         ) -> bool;
-        # [method (writeToURL : atomically :)]
+        #[method(writeToURL:atomically:)]
         pub unsafe fn writeToURL_atomically(&self, url: &NSURL, atomically: bool) -> bool;
-        # [method (writeToFile : options : error :)]
+        #[method(writeToFile:options:error:)]
         pub unsafe fn writeToFile_options_error(
             &self,
             path: &NSString,
             writeOptionsMask: NSDataWritingOptions,
         ) -> Result<(), Id<NSError, Shared>>;
-        # [method (writeToURL : options : error :)]
+        #[method(writeToURL:options:error:)]
         pub unsafe fn writeToURL_options_error(
             &self,
             url: &NSURL,
             writeOptionsMask: NSDataWritingOptions,
         ) -> Result<(), Id<NSError, Shared>>;
-        # [method (rangeOfData : options : range :)]
+        #[method(rangeOfData:options:range:)]
         pub unsafe fn rangeOfData_options_range(
             &self,
             dataToFind: &NSData,
             mask: NSDataSearchOptions,
             searchRange: NSRange,
         ) -> NSRange;
-        # [method (enumerateByteRangesUsingBlock :)]
+        #[method(enumerateByteRangesUsingBlock:)]
         pub unsafe fn enumerateByteRangesUsingBlock(&self, block: TodoBlock);
     }
 );
@@ -71,81 +71,81 @@ extern_methods!(
     unsafe impl NSData {
         #[method_id(data)]
         pub unsafe fn data() -> Id<Self, Shared>;
-        # [method_id (dataWithBytes : length :)]
+        #[method_id(dataWithBytes:length:)]
         pub unsafe fn dataWithBytes_length(
             bytes: *mut c_void,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (dataWithBytesNoCopy : length :)]
+        #[method_id(dataWithBytesNoCopy:length:)]
         pub unsafe fn dataWithBytesNoCopy_length(
             bytes: NonNull<c_void>,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (dataWithBytesNoCopy : length : freeWhenDone :)]
+        #[method_id(dataWithBytesNoCopy:length:freeWhenDone:)]
         pub unsafe fn dataWithBytesNoCopy_length_freeWhenDone(
             bytes: NonNull<c_void>,
             length: NSUInteger,
             b: bool,
         ) -> Id<Self, Shared>;
-        # [method_id (dataWithContentsOfFile : options : error :)]
+        #[method_id(dataWithContentsOfFile:options:error:)]
         pub unsafe fn dataWithContentsOfFile_options_error(
             path: &NSString,
             readOptionsMask: NSDataReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (dataWithContentsOfURL : options : error :)]
+        #[method_id(dataWithContentsOfURL:options:error:)]
         pub unsafe fn dataWithContentsOfURL_options_error(
             url: &NSURL,
             readOptionsMask: NSDataReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (dataWithContentsOfFile :)]
+        #[method_id(dataWithContentsOfFile:)]
         pub unsafe fn dataWithContentsOfFile(path: &NSString) -> Option<Id<Self, Shared>>;
-        # [method_id (dataWithContentsOfURL :)]
+        #[method_id(dataWithContentsOfURL:)]
         pub unsafe fn dataWithContentsOfURL(url: &NSURL) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithBytes : length :)]
+        #[method_id(initWithBytes:length:)]
         pub unsafe fn initWithBytes_length(
             &self,
             bytes: *mut c_void,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithBytesNoCopy : length :)]
+        #[method_id(initWithBytesNoCopy:length:)]
         pub unsafe fn initWithBytesNoCopy_length(
             &self,
             bytes: NonNull<c_void>,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithBytesNoCopy : length : freeWhenDone :)]
+        #[method_id(initWithBytesNoCopy:length:freeWhenDone:)]
         pub unsafe fn initWithBytesNoCopy_length_freeWhenDone(
             &self,
             bytes: NonNull<c_void>,
             length: NSUInteger,
             b: bool,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithBytesNoCopy : length : deallocator :)]
+        #[method_id(initWithBytesNoCopy:length:deallocator:)]
         pub unsafe fn initWithBytesNoCopy_length_deallocator(
             &self,
             bytes: NonNull<c_void>,
             length: NSUInteger,
             deallocator: TodoBlock,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithContentsOfFile : options : error :)]
+        #[method_id(initWithContentsOfFile:options:error:)]
         pub unsafe fn initWithContentsOfFile_options_error(
             &self,
             path: &NSString,
             readOptionsMask: NSDataReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (initWithContentsOfURL : options : error :)]
+        #[method_id(initWithContentsOfURL:options:error:)]
         pub unsafe fn initWithContentsOfURL_options_error(
             &self,
             url: &NSURL,
             readOptionsMask: NSDataReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (initWithContentsOfFile :)]
+        #[method_id(initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(&self, path: &NSString) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithContentsOfURL :)]
+        #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithData :)]
+        #[method_id(initWithData:)]
         pub unsafe fn initWithData(&self, data: &NSData) -> Id<Self, Shared>;
-        # [method_id (dataWithData :)]
+        #[method_id(dataWithData:)]
         pub unsafe fn dataWithData(data: &NSData) -> Id<Self, Shared>;
     }
 );
@@ -179,12 +179,12 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSDataCompression"]
     unsafe impl NSData {
-        # [method_id (decompressedDataUsingAlgorithm : error :)]
+        #[method_id(decompressedDataUsingAlgorithm:error:)]
         pub unsafe fn decompressedDataUsingAlgorithm_error(
             &self,
             algorithm: NSDataCompressionAlgorithm,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (compressedDataUsingAlgorithm : error :)]
+        #[method_id(compressedDataUsingAlgorithm:error:)]
         pub unsafe fn compressedDataUsingAlgorithm_error(
             &self,
             algorithm: NSDataCompressionAlgorithm,
@@ -194,11 +194,11 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSDeprecated"]
     unsafe impl NSData {
-        # [method (getBytes :)]
+        #[method(getBytes:)]
         pub unsafe fn getBytes(&self, buffer: NonNull<c_void>);
-        # [method_id (dataWithContentsOfMappedFile :)]
+        #[method_id(dataWithContentsOfMappedFile:)]
         pub unsafe fn dataWithContentsOfMappedFile(path: &NSString) -> Option<Id<Object, Shared>>;
-        # [method_id (initWithContentsOfMappedFile :)]
+        #[method_id(initWithContentsOfMappedFile:)]
         pub unsafe fn initWithContentsOfMappedFile(
             &self,
             path: &NSString,
@@ -225,26 +225,26 @@ extern_methods!(
         pub unsafe fn mutableBytes(&self) -> NonNull<c_void>;
         #[method(length)]
         pub unsafe fn length(&self) -> NSUInteger;
-        # [method (setLength :)]
+        #[method(setLength:)]
         pub unsafe fn setLength(&self, length: NSUInteger);
     }
 );
 extern_methods!(
     #[doc = "NSExtendedMutableData"]
     unsafe impl NSMutableData {
-        # [method (appendBytes : length :)]
+        #[method(appendBytes:length:)]
         pub unsafe fn appendBytes_length(&self, bytes: NonNull<c_void>, length: NSUInteger);
-        # [method (appendData :)]
+        #[method(appendData:)]
         pub unsafe fn appendData(&self, other: &NSData);
-        # [method (increaseLengthBy :)]
+        #[method(increaseLengthBy:)]
         pub unsafe fn increaseLengthBy(&self, extraLength: NSUInteger);
-        # [method (replaceBytesInRange : withBytes :)]
+        #[method(replaceBytesInRange:withBytes:)]
         pub unsafe fn replaceBytesInRange_withBytes(&self, range: NSRange, bytes: NonNull<c_void>);
-        # [method (resetBytesInRange :)]
+        #[method(resetBytesInRange:)]
         pub unsafe fn resetBytesInRange(&self, range: NSRange);
-        # [method (setData :)]
+        #[method(setData:)]
         pub unsafe fn setData(&self, data: &NSData);
-        # [method (replaceBytesInRange : withBytes : length :)]
+        #[method(replaceBytesInRange:withBytes:length:)]
         pub unsafe fn replaceBytesInRange_withBytes_length(
             &self,
             range: NSRange,
@@ -256,25 +256,25 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSMutableDataCreation"]
     unsafe impl NSMutableData {
-        # [method_id (dataWithCapacity :)]
+        #[method_id(dataWithCapacity:)]
         pub unsafe fn dataWithCapacity(aNumItems: NSUInteger) -> Option<Id<Self, Shared>>;
-        # [method_id (dataWithLength :)]
+        #[method_id(dataWithLength:)]
         pub unsafe fn dataWithLength(length: NSUInteger) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithCapacity :)]
+        #[method_id(initWithCapacity:)]
         pub unsafe fn initWithCapacity(&self, capacity: NSUInteger) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithLength :)]
+        #[method_id(initWithLength:)]
         pub unsafe fn initWithLength(&self, length: NSUInteger) -> Option<Id<Self, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSMutableDataCompression"]
     unsafe impl NSMutableData {
-        # [method (decompressUsingAlgorithm : error :)]
+        #[method(decompressUsingAlgorithm:error:)]
         pub unsafe fn decompressUsingAlgorithm_error(
             &self,
             algorithm: NSDataCompressionAlgorithm,
         ) -> Result<(), Id<NSError, Shared>>;
-        # [method (compressUsingAlgorithm : error :)]
+        #[method(compressUsingAlgorithm:error:)]
         pub unsafe fn compressUsingAlgorithm_error(
             &self,
             algorithm: NSDataCompressionAlgorithm,

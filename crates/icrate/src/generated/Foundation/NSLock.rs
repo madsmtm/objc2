@@ -16,11 +16,11 @@ extern_methods!(
     unsafe impl NSLock {
         #[method(tryLock)]
         pub unsafe fn tryLock(&self) -> bool;
-        # [method (lockBeforeDate :)]
+        #[method(lockBeforeDate:)]
         pub unsafe fn lockBeforeDate(&self, limit: &NSDate) -> bool;
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setName :)]
+        #[method(setName:)]
         pub unsafe fn setName(&self, name: Option<&NSString>);
     }
 );
@@ -33,21 +33,21 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSConditionLock {
-        # [method_id (initWithCondition :)]
+        #[method_id(initWithCondition:)]
         pub unsafe fn initWithCondition(&self, condition: NSInteger) -> Id<Self, Shared>;
         #[method(condition)]
         pub unsafe fn condition(&self) -> NSInteger;
-        # [method (lockWhenCondition :)]
+        #[method(lockWhenCondition:)]
         pub unsafe fn lockWhenCondition(&self, condition: NSInteger);
         #[method(tryLock)]
         pub unsafe fn tryLock(&self) -> bool;
-        # [method (tryLockWhenCondition :)]
+        #[method(tryLockWhenCondition:)]
         pub unsafe fn tryLockWhenCondition(&self, condition: NSInteger) -> bool;
-        # [method (unlockWithCondition :)]
+        #[method(unlockWithCondition:)]
         pub unsafe fn unlockWithCondition(&self, condition: NSInteger);
-        # [method (lockBeforeDate :)]
+        #[method(lockBeforeDate:)]
         pub unsafe fn lockBeforeDate(&self, limit: &NSDate) -> bool;
-        # [method (lockWhenCondition : beforeDate :)]
+        #[method(lockWhenCondition:beforeDate:)]
         pub unsafe fn lockWhenCondition_beforeDate(
             &self,
             condition: NSInteger,
@@ -55,7 +55,7 @@ extern_methods!(
         ) -> bool;
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setName :)]
+        #[method(setName:)]
         pub unsafe fn setName(&self, name: Option<&NSString>);
     }
 );
@@ -70,11 +70,11 @@ extern_methods!(
     unsafe impl NSRecursiveLock {
         #[method(tryLock)]
         pub unsafe fn tryLock(&self) -> bool;
-        # [method (lockBeforeDate :)]
+        #[method(lockBeforeDate:)]
         pub unsafe fn lockBeforeDate(&self, limit: &NSDate) -> bool;
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setName :)]
+        #[method(setName:)]
         pub unsafe fn setName(&self, name: Option<&NSString>);
     }
 );
@@ -89,7 +89,7 @@ extern_methods!(
     unsafe impl NSCondition {
         #[method(wait)]
         pub unsafe fn wait(&self);
-        # [method (waitUntilDate :)]
+        #[method(waitUntilDate:)]
         pub unsafe fn waitUntilDate(&self, limit: &NSDate) -> bool;
         #[method(signal)]
         pub unsafe fn signal(&self);
@@ -97,7 +97,7 @@ extern_methods!(
         pub unsafe fn broadcast(&self);
         #[method_id(name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setName :)]
+        #[method(setName:)]
         pub unsafe fn setName(&self, name: Option<&NSString>);
     }
 );

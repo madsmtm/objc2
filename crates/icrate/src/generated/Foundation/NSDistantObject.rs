@@ -15,31 +15,31 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDistantObject {
-        # [method_id (proxyWithTarget : connection :)]
+        #[method_id(proxyWithTarget:connection:)]
         pub unsafe fn proxyWithTarget_connection(
             target: &Object,
             connection: &NSConnection,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (initWithTarget : connection :)]
+        #[method_id(initWithTarget:connection:)]
         pub unsafe fn initWithTarget_connection(
             &self,
             target: &Object,
             connection: &NSConnection,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (proxyWithLocal : connection :)]
+        #[method_id(proxyWithLocal:connection:)]
         pub unsafe fn proxyWithLocal_connection(
             target: &Object,
             connection: &NSConnection,
         ) -> Id<Object, Shared>;
-        # [method_id (initWithLocal : connection :)]
+        #[method_id(initWithLocal:connection:)]
         pub unsafe fn initWithLocal_connection(
             &self,
             target: &Object,
             connection: &NSConnection,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
-        # [method (setProtocolForProxy :)]
+        #[method(setProtocolForProxy:)]
         pub unsafe fn setProtocolForProxy(&self, proto: Option<&Protocol>);
         #[method_id(connectionForProxy)]
         pub unsafe fn connectionForProxy(&self) -> Id<NSConnection, Shared>;

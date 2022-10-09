@@ -25,13 +25,13 @@ extern_methods!(
         pub unsafe fn currentCalendar() -> Id<NSCalendar, Shared>;
         #[method_id(autoupdatingCurrentCalendar)]
         pub unsafe fn autoupdatingCurrentCalendar() -> Id<NSCalendar, Shared>;
-        # [method_id (calendarWithIdentifier :)]
+        #[method_id(calendarWithIdentifier:)]
         pub unsafe fn calendarWithIdentifier(
             calendarIdentifierConstant: &NSCalendarIdentifier,
         ) -> Option<Id<NSCalendar, Shared>>;
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithCalendarIdentifier :)]
+        #[method_id(initWithCalendarIdentifier:)]
         pub unsafe fn initWithCalendarIdentifier(
             &self,
             ident: &NSCalendarIdentifier,
@@ -40,19 +40,19 @@ extern_methods!(
         pub unsafe fn calendarIdentifier(&self) -> Id<NSCalendarIdentifier, Shared>;
         #[method_id(locale)]
         pub unsafe fn locale(&self) -> Option<Id<NSLocale, Shared>>;
-        # [method (setLocale :)]
+        #[method(setLocale:)]
         pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
         #[method_id(timeZone)]
         pub unsafe fn timeZone(&self) -> Id<NSTimeZone, Shared>;
-        # [method (setTimeZone :)]
+        #[method(setTimeZone:)]
         pub unsafe fn setTimeZone(&self, timeZone: &NSTimeZone);
         #[method(firstWeekday)]
         pub unsafe fn firstWeekday(&self) -> NSUInteger;
-        # [method (setFirstWeekday :)]
+        #[method(setFirstWeekday:)]
         pub unsafe fn setFirstWeekday(&self, firstWeekday: NSUInteger);
         #[method(minimumDaysInFirstWeek)]
         pub unsafe fn minimumDaysInFirstWeek(&self) -> NSUInteger;
-        # [method (setMinimumDaysInFirstWeek :)]
+        #[method(setMinimumDaysInFirstWeek:)]
         pub unsafe fn setMinimumDaysInFirstWeek(&self, minimumDaysInFirstWeek: NSUInteger);
         #[method_id(eraSymbols)]
         pub unsafe fn eraSymbols(&self) -> Id<NSArray<NSString>, Shared>;
@@ -94,25 +94,25 @@ extern_methods!(
         pub unsafe fn AMSymbol(&self) -> Id<NSString, Shared>;
         #[method_id(PMSymbol)]
         pub unsafe fn PMSymbol(&self) -> Id<NSString, Shared>;
-        # [method (minimumRangeOfUnit :)]
+        #[method(minimumRangeOfUnit:)]
         pub unsafe fn minimumRangeOfUnit(&self, unit: NSCalendarUnit) -> NSRange;
-        # [method (maximumRangeOfUnit :)]
+        #[method(maximumRangeOfUnit:)]
         pub unsafe fn maximumRangeOfUnit(&self, unit: NSCalendarUnit) -> NSRange;
-        # [method (rangeOfUnit : inUnit : forDate :)]
+        #[method(rangeOfUnit:inUnit:forDate:)]
         pub unsafe fn rangeOfUnit_inUnit_forDate(
             &self,
             smaller: NSCalendarUnit,
             larger: NSCalendarUnit,
             date: &NSDate,
         ) -> NSRange;
-        # [method (ordinalityOfUnit : inUnit : forDate :)]
+        #[method(ordinalityOfUnit:inUnit:forDate:)]
         pub unsafe fn ordinalityOfUnit_inUnit_forDate(
             &self,
             smaller: NSCalendarUnit,
             larger: NSCalendarUnit,
             date: &NSDate,
         ) -> NSUInteger;
-        # [method (rangeOfUnit : startDate : interval : forDate :)]
+        #[method(rangeOfUnit:startDate:interval:forDate:)]
         pub unsafe fn rangeOfUnit_startDate_interval_forDate(
             &self,
             unit: NSCalendarUnit,
@@ -120,25 +120,25 @@ extern_methods!(
             tip: *mut NSTimeInterval,
             date: &NSDate,
         ) -> bool;
-        # [method_id (dateFromComponents :)]
+        #[method_id(dateFromComponents:)]
         pub unsafe fn dateFromComponents(
             &self,
             comps: &NSDateComponents,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method_id (components : fromDate :)]
+        #[method_id(components:fromDate:)]
         pub unsafe fn components_fromDate(
             &self,
             unitFlags: NSCalendarUnit,
             date: &NSDate,
         ) -> Id<NSDateComponents, Shared>;
-        # [method_id (dateByAddingComponents : toDate : options :)]
+        #[method_id(dateByAddingComponents:toDate:options:)]
         pub unsafe fn dateByAddingComponents_toDate_options(
             &self,
             comps: &NSDateComponents,
             date: &NSDate,
             opts: NSCalendarOptions,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method_id (components : fromDate : toDate : options :)]
+        #[method_id(components:fromDate:toDate:options:)]
         pub unsafe fn components_fromDate_toDate_options(
             &self,
             unitFlags: NSCalendarUnit,
@@ -146,7 +146,7 @@ extern_methods!(
             resultDate: &NSDate,
             opts: NSCalendarOptions,
         ) -> Id<NSDateComponents, Shared>;
-        # [method (getEra : year : month : day : fromDate :)]
+        #[method(getEra:year:month:day:fromDate:)]
         pub unsafe fn getEra_year_month_day_fromDate(
             &self,
             eraValuePointer: *mut NSInteger,
@@ -155,7 +155,7 @@ extern_methods!(
             dayValuePointer: *mut NSInteger,
             date: &NSDate,
         );
-        # [method (getEra : yearForWeekOfYear : weekOfYear : weekday : fromDate :)]
+        #[method(getEra:yearForWeekOfYear:weekOfYear:weekday:fromDate:)]
         pub unsafe fn getEra_yearForWeekOfYear_weekOfYear_weekday_fromDate(
             &self,
             eraValuePointer: *mut NSInteger,
@@ -164,7 +164,7 @@ extern_methods!(
             weekdayValuePointer: *mut NSInteger,
             date: &NSDate,
         );
-        # [method (getHour : minute : second : nanosecond : fromDate :)]
+        #[method(getHour:minute:second:nanosecond:fromDate:)]
         pub unsafe fn getHour_minute_second_nanosecond_fromDate(
             &self,
             hourValuePointer: *mut NSInteger,
@@ -173,9 +173,9 @@ extern_methods!(
             nanosecondValuePointer: *mut NSInteger,
             date: &NSDate,
         );
-        # [method (component : fromDate :)]
+        #[method(component:fromDate:)]
         pub unsafe fn component_fromDate(&self, unit: NSCalendarUnit, date: &NSDate) -> NSInteger;
-        # [method_id (dateWithEra : year : month : day : hour : minute : second : nanosecond :)]
+        #[method_id(dateWithEra:year:month:day:hour:minute:second:nanosecond:)]
         pub unsafe fn dateWithEra_year_month_day_hour_minute_second_nanosecond(
             &self,
             eraValue: NSInteger,
@@ -187,7 +187,7 @@ extern_methods!(
             secondValue: NSInteger,
             nanosecondValue: NSInteger,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method_id (dateWithEra : yearForWeekOfYear : weekOfYear : weekday : hour : minute : second : nanosecond :)]
+        #[method_id(dateWithEra:yearForWeekOfYear:weekOfYear:weekday:hour:minute:second:nanosecond:)]
         pub unsafe fn dateWithEra_yearForWeekOfYear_weekOfYear_weekday_hour_minute_second_nanosecond(
             &self,
             eraValue: NSInteger,
@@ -199,46 +199,46 @@ extern_methods!(
             secondValue: NSInteger,
             nanosecondValue: NSInteger,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method_id (startOfDayForDate :)]
+        #[method_id(startOfDayForDate:)]
         pub unsafe fn startOfDayForDate(&self, date: &NSDate) -> Id<NSDate, Shared>;
-        # [method_id (componentsInTimeZone : fromDate :)]
+        #[method_id(componentsInTimeZone:fromDate:)]
         pub unsafe fn componentsInTimeZone_fromDate(
             &self,
             timezone: &NSTimeZone,
             date: &NSDate,
         ) -> Id<NSDateComponents, Shared>;
-        # [method (compareDate : toDate : toUnitGranularity :)]
+        #[method(compareDate:toDate:toUnitGranularity:)]
         pub unsafe fn compareDate_toDate_toUnitGranularity(
             &self,
             date1: &NSDate,
             date2: &NSDate,
             unit: NSCalendarUnit,
         ) -> NSComparisonResult;
-        # [method (isDate : equalToDate : toUnitGranularity :)]
+        #[method(isDate:equalToDate:toUnitGranularity:)]
         pub unsafe fn isDate_equalToDate_toUnitGranularity(
             &self,
             date1: &NSDate,
             date2: &NSDate,
             unit: NSCalendarUnit,
         ) -> bool;
-        # [method (isDate : inSameDayAsDate :)]
+        #[method(isDate:inSameDayAsDate:)]
         pub unsafe fn isDate_inSameDayAsDate(&self, date1: &NSDate, date2: &NSDate) -> bool;
-        # [method (isDateInToday :)]
+        #[method(isDateInToday:)]
         pub unsafe fn isDateInToday(&self, date: &NSDate) -> bool;
-        # [method (isDateInYesterday :)]
+        #[method(isDateInYesterday:)]
         pub unsafe fn isDateInYesterday(&self, date: &NSDate) -> bool;
-        # [method (isDateInTomorrow :)]
+        #[method(isDateInTomorrow:)]
         pub unsafe fn isDateInTomorrow(&self, date: &NSDate) -> bool;
-        # [method (isDateInWeekend :)]
+        #[method(isDateInWeekend:)]
         pub unsafe fn isDateInWeekend(&self, date: &NSDate) -> bool;
-        # [method (rangeOfWeekendStartDate : interval : containingDate :)]
+        #[method(rangeOfWeekendStartDate:interval:containingDate:)]
         pub unsafe fn rangeOfWeekendStartDate_interval_containingDate(
             &self,
             datep: Option<&mut Option<Id<NSDate, Shared>>>,
             tip: *mut NSTimeInterval,
             date: &NSDate,
         ) -> bool;
-        # [method (nextWeekendStartDate : interval : options : afterDate :)]
+        #[method(nextWeekendStartDate:interval:options:afterDate:)]
         pub unsafe fn nextWeekendStartDate_interval_options_afterDate(
             &self,
             datep: Option<&mut Option<Id<NSDate, Shared>>>,
@@ -246,7 +246,7 @@ extern_methods!(
             options: NSCalendarOptions,
             date: &NSDate,
         ) -> bool;
-        # [method_id (components : fromDateComponents : toDateComponents : options :)]
+        #[method_id(components:fromDateComponents:toDateComponents:options:)]
         pub unsafe fn components_fromDateComponents_toDateComponents_options(
             &self,
             unitFlags: NSCalendarUnit,
@@ -254,7 +254,7 @@ extern_methods!(
             resultDateComp: &NSDateComponents,
             options: NSCalendarOptions,
         ) -> Id<NSDateComponents, Shared>;
-        # [method_id (dateByAddingUnit : value : toDate : options :)]
+        #[method_id(dateByAddingUnit:value:toDate:options:)]
         pub unsafe fn dateByAddingUnit_value_toDate_options(
             &self,
             unit: NSCalendarUnit,
@@ -262,7 +262,7 @@ extern_methods!(
             date: &NSDate,
             options: NSCalendarOptions,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method (enumerateDatesStartingAfterDate : matchingComponents : options : usingBlock :)]
+        #[method(enumerateDatesStartingAfterDate:matchingComponents:options:usingBlock:)]
         pub unsafe fn enumerateDatesStartingAfterDate_matchingComponents_options_usingBlock(
             &self,
             start: &NSDate,
@@ -270,14 +270,14 @@ extern_methods!(
             opts: NSCalendarOptions,
             block: TodoBlock,
         );
-        # [method_id (nextDateAfterDate : matchingComponents : options :)]
+        #[method_id(nextDateAfterDate:matchingComponents:options:)]
         pub unsafe fn nextDateAfterDate_matchingComponents_options(
             &self,
             date: &NSDate,
             comps: &NSDateComponents,
             options: NSCalendarOptions,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method_id (nextDateAfterDate : matchingUnit : value : options :)]
+        #[method_id(nextDateAfterDate:matchingUnit:value:options:)]
         pub unsafe fn nextDateAfterDate_matchingUnit_value_options(
             &self,
             date: &NSDate,
@@ -285,7 +285,7 @@ extern_methods!(
             value: NSInteger,
             options: NSCalendarOptions,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method_id (nextDateAfterDate : matchingHour : minute : second : options :)]
+        #[method_id(nextDateAfterDate:matchingHour:minute:second:options:)]
         pub unsafe fn nextDateAfterDate_matchingHour_minute_second_options(
             &self,
             date: &NSDate,
@@ -294,7 +294,7 @@ extern_methods!(
             secondValue: NSInteger,
             options: NSCalendarOptions,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method_id (dateBySettingUnit : value : ofDate : options :)]
+        #[method_id(dateBySettingUnit:value:ofDate:options:)]
         pub unsafe fn dateBySettingUnit_value_ofDate_options(
             &self,
             unit: NSCalendarUnit,
@@ -302,7 +302,7 @@ extern_methods!(
             date: &NSDate,
             opts: NSCalendarOptions,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method_id (dateBySettingHour : minute : second : ofDate : options :)]
+        #[method_id(dateBySettingHour:minute:second:ofDate:options:)]
         pub unsafe fn dateBySettingHour_minute_second_ofDate_options(
             &self,
             h: NSInteger,
@@ -311,7 +311,7 @@ extern_methods!(
             date: &NSDate,
             opts: NSCalendarOptions,
         ) -> Option<Id<NSDate, Shared>>;
-        # [method (date : matchesComponents :)]
+        #[method(date:matchesComponents:)]
         pub unsafe fn date_matchesComponents(
             &self,
             date: &NSDate,
@@ -330,85 +330,85 @@ extern_methods!(
     unsafe impl NSDateComponents {
         #[method_id(calendar)]
         pub unsafe fn calendar(&self) -> Option<Id<NSCalendar, Shared>>;
-        # [method (setCalendar :)]
+        #[method(setCalendar:)]
         pub unsafe fn setCalendar(&self, calendar: Option<&NSCalendar>);
         #[method_id(timeZone)]
         pub unsafe fn timeZone(&self) -> Option<Id<NSTimeZone, Shared>>;
-        # [method (setTimeZone :)]
+        #[method(setTimeZone:)]
         pub unsafe fn setTimeZone(&self, timeZone: Option<&NSTimeZone>);
         #[method(era)]
         pub unsafe fn era(&self) -> NSInteger;
-        # [method (setEra :)]
+        #[method(setEra:)]
         pub unsafe fn setEra(&self, era: NSInteger);
         #[method(year)]
         pub unsafe fn year(&self) -> NSInteger;
-        # [method (setYear :)]
+        #[method(setYear:)]
         pub unsafe fn setYear(&self, year: NSInteger);
         #[method(month)]
         pub unsafe fn month(&self) -> NSInteger;
-        # [method (setMonth :)]
+        #[method(setMonth:)]
         pub unsafe fn setMonth(&self, month: NSInteger);
         #[method(day)]
         pub unsafe fn day(&self) -> NSInteger;
-        # [method (setDay :)]
+        #[method(setDay:)]
         pub unsafe fn setDay(&self, day: NSInteger);
         #[method(hour)]
         pub unsafe fn hour(&self) -> NSInteger;
-        # [method (setHour :)]
+        #[method(setHour:)]
         pub unsafe fn setHour(&self, hour: NSInteger);
         #[method(minute)]
         pub unsafe fn minute(&self) -> NSInteger;
-        # [method (setMinute :)]
+        #[method(setMinute:)]
         pub unsafe fn setMinute(&self, minute: NSInteger);
         #[method(second)]
         pub unsafe fn second(&self) -> NSInteger;
-        # [method (setSecond :)]
+        #[method(setSecond:)]
         pub unsafe fn setSecond(&self, second: NSInteger);
         #[method(nanosecond)]
         pub unsafe fn nanosecond(&self) -> NSInteger;
-        # [method (setNanosecond :)]
+        #[method(setNanosecond:)]
         pub unsafe fn setNanosecond(&self, nanosecond: NSInteger);
         #[method(weekday)]
         pub unsafe fn weekday(&self) -> NSInteger;
-        # [method (setWeekday :)]
+        #[method(setWeekday:)]
         pub unsafe fn setWeekday(&self, weekday: NSInteger);
         #[method(weekdayOrdinal)]
         pub unsafe fn weekdayOrdinal(&self) -> NSInteger;
-        # [method (setWeekdayOrdinal :)]
+        #[method(setWeekdayOrdinal:)]
         pub unsafe fn setWeekdayOrdinal(&self, weekdayOrdinal: NSInteger);
         #[method(quarter)]
         pub unsafe fn quarter(&self) -> NSInteger;
-        # [method (setQuarter :)]
+        #[method(setQuarter:)]
         pub unsafe fn setQuarter(&self, quarter: NSInteger);
         #[method(weekOfMonth)]
         pub unsafe fn weekOfMonth(&self) -> NSInteger;
-        # [method (setWeekOfMonth :)]
+        #[method(setWeekOfMonth:)]
         pub unsafe fn setWeekOfMonth(&self, weekOfMonth: NSInteger);
         #[method(weekOfYear)]
         pub unsafe fn weekOfYear(&self) -> NSInteger;
-        # [method (setWeekOfYear :)]
+        #[method(setWeekOfYear:)]
         pub unsafe fn setWeekOfYear(&self, weekOfYear: NSInteger);
         #[method(yearForWeekOfYear)]
         pub unsafe fn yearForWeekOfYear(&self) -> NSInteger;
-        # [method (setYearForWeekOfYear :)]
+        #[method(setYearForWeekOfYear:)]
         pub unsafe fn setYearForWeekOfYear(&self, yearForWeekOfYear: NSInteger);
         #[method(isLeapMonth)]
         pub unsafe fn isLeapMonth(&self) -> bool;
-        # [method (setLeapMonth :)]
+        #[method(setLeapMonth:)]
         pub unsafe fn setLeapMonth(&self, leapMonth: bool);
         #[method_id(date)]
         pub unsafe fn date(&self) -> Option<Id<NSDate, Shared>>;
         #[method(week)]
         pub unsafe fn week(&self) -> NSInteger;
-        # [method (setWeek :)]
+        #[method(setWeek:)]
         pub unsafe fn setWeek(&self, v: NSInteger);
-        # [method (setValue : forComponent :)]
+        #[method(setValue:forComponent:)]
         pub unsafe fn setValue_forComponent(&self, value: NSInteger, unit: NSCalendarUnit);
-        # [method (valueForComponent :)]
+        #[method(valueForComponent:)]
         pub unsafe fn valueForComponent(&self, unit: NSCalendarUnit) -> NSInteger;
         #[method(isValidDate)]
         pub unsafe fn isValidDate(&self) -> bool;
-        # [method (isValidDateInCalendar :)]
+        #[method(isValidDateInCalendar:)]
         pub unsafe fn isValidDateInCalendar(&self, calendar: &NSCalendar) -> bool;
     }
 );

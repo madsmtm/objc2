@@ -17,7 +17,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLProtectionSpace {
-        # [method_id (initWithHost : port : protocol : realm : authenticationMethod :)]
+        #[method_id(initWithHost:port:protocol:realm:authenticationMethod:)]
         pub unsafe fn initWithHost_port_protocol_realm_authenticationMethod(
             &self,
             host: &NSString,
@@ -26,7 +26,7 @@ extern_methods!(
             realm: Option<&NSString>,
             authenticationMethod: Option<&NSString>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithProxyHost : port : type : realm : authenticationMethod :)]
+        #[method_id(initWithProxyHost:port:type:realm:authenticationMethod:)]
         pub unsafe fn initWithProxyHost_port_type_realm_authenticationMethod(
             &self,
             host: &NSString,

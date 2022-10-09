@@ -24,15 +24,15 @@ extern_methods!(
         pub unsafe fn name(&self) -> Id<NSString, Shared>;
         #[method_id(data)]
         pub unsafe fn data(&self) -> Id<NSData, Shared>;
-        # [method (secondsFromGMTForDate :)]
+        #[method(secondsFromGMTForDate:)]
         pub unsafe fn secondsFromGMTForDate(&self, aDate: &NSDate) -> NSInteger;
-        # [method_id (abbreviationForDate :)]
+        #[method_id(abbreviationForDate:)]
         pub unsafe fn abbreviationForDate(&self, aDate: &NSDate) -> Option<Id<NSString, Shared>>;
-        # [method (isDaylightSavingTimeForDate :)]
+        #[method(isDaylightSavingTimeForDate:)]
         pub unsafe fn isDaylightSavingTimeForDate(&self, aDate: &NSDate) -> bool;
-        # [method (daylightSavingTimeOffsetForDate :)]
+        #[method(daylightSavingTimeOffsetForDate:)]
         pub unsafe fn daylightSavingTimeOffsetForDate(&self, aDate: &NSDate) -> NSTimeInterval;
-        # [method_id (nextDaylightSavingTimeTransitionAfterDate :)]
+        #[method_id(nextDaylightSavingTimeTransitionAfterDate:)]
         pub unsafe fn nextDaylightSavingTimeTransitionAfterDate(
             &self,
             aDate: &NSDate,
@@ -48,7 +48,7 @@ extern_methods!(
         pub unsafe fn resetSystemTimeZone();
         #[method_id(defaultTimeZone)]
         pub unsafe fn defaultTimeZone() -> Id<NSTimeZone, Shared>;
-        # [method (setDefaultTimeZone :)]
+        #[method(setDefaultTimeZone:)]
         pub unsafe fn setDefaultTimeZone(defaultTimeZone: &NSTimeZone);
         #[method_id(localTimeZone)]
         pub unsafe fn localTimeZone() -> Id<NSTimeZone, Shared>;
@@ -56,7 +56,7 @@ extern_methods!(
         pub unsafe fn knownTimeZoneNames() -> Id<NSArray<NSString>, Shared>;
         #[method_id(abbreviationDictionary)]
         pub unsafe fn abbreviationDictionary() -> Id<NSDictionary<NSString, NSString>, Shared>;
-        # [method (setAbbreviationDictionary :)]
+        #[method(setAbbreviationDictionary:)]
         pub unsafe fn setAbbreviationDictionary(
             abbreviationDictionary: &NSDictionary<NSString, NSString>,
         );
@@ -74,9 +74,9 @@ extern_methods!(
         pub unsafe fn nextDaylightSavingTimeTransition(&self) -> Option<Id<NSDate, Shared>>;
         #[method_id(description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
-        # [method (isEqualToTimeZone :)]
+        #[method(isEqualToTimeZone:)]
         pub unsafe fn isEqualToTimeZone(&self, aTimeZone: &NSTimeZone) -> bool;
-        # [method_id (localizedName : locale :)]
+        #[method_id(localizedName:locale:)]
         pub unsafe fn localizedName_locale(
             &self,
             style: NSTimeZoneNameStyle,
@@ -87,24 +87,24 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSTimeZoneCreation"]
     unsafe impl NSTimeZone {
-        # [method_id (timeZoneWithName :)]
+        #[method_id(timeZoneWithName:)]
         pub unsafe fn timeZoneWithName(tzName: &NSString) -> Option<Id<Self, Shared>>;
-        # [method_id (timeZoneWithName : data :)]
+        #[method_id(timeZoneWithName:data:)]
         pub unsafe fn timeZoneWithName_data(
             tzName: &NSString,
             aData: Option<&NSData>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithName :)]
+        #[method_id(initWithName:)]
         pub unsafe fn initWithName(&self, tzName: &NSString) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithName : data :)]
+        #[method_id(initWithName:data:)]
         pub unsafe fn initWithName_data(
             &self,
             tzName: &NSString,
             aData: Option<&NSData>,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (timeZoneForSecondsFromGMT :)]
+        #[method_id(timeZoneForSecondsFromGMT:)]
         pub unsafe fn timeZoneForSecondsFromGMT(seconds: NSInteger) -> Id<Self, Shared>;
-        # [method_id (timeZoneWithAbbreviation :)]
+        #[method_id(timeZoneWithAbbreviation:)]
         pub unsafe fn timeZoneWithAbbreviation(abbreviation: &NSString)
             -> Option<Id<Self, Shared>>;
     }

@@ -18,26 +18,26 @@ extern_methods!(
     unsafe impl NSMeasurementFormatter {
         #[method(unitOptions)]
         pub unsafe fn unitOptions(&self) -> NSMeasurementFormatterUnitOptions;
-        # [method (setUnitOptions :)]
+        #[method(setUnitOptions:)]
         pub unsafe fn setUnitOptions(&self, unitOptions: NSMeasurementFormatterUnitOptions);
         #[method(unitStyle)]
         pub unsafe fn unitStyle(&self) -> NSFormattingUnitStyle;
-        # [method (setUnitStyle :)]
+        #[method(setUnitStyle:)]
         pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle);
         #[method_id(locale)]
         pub unsafe fn locale(&self) -> Id<NSLocale, Shared>;
-        # [method (setLocale :)]
+        #[method(setLocale:)]
         pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
         #[method_id(numberFormatter)]
         pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared>;
-        # [method (setNumberFormatter :)]
+        #[method(setNumberFormatter:)]
         pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>);
-        # [method_id (stringFromMeasurement :)]
+        #[method_id(stringFromMeasurement:)]
         pub unsafe fn stringFromMeasurement(
             &self,
             measurement: &NSMeasurement,
         ) -> Id<NSString, Shared>;
-        # [method_id (stringFromUnit :)]
+        #[method_id(stringFromUnit:)]
         pub unsafe fn stringFromUnit(&self, unit: &NSUnit) -> Id<NSString, Shared>;
     }
 );

@@ -20,35 +20,35 @@ extern_methods!(
     unsafe impl NSDateIntervalFormatter {
         #[method_id(locale)]
         pub unsafe fn locale(&self) -> Id<NSLocale, Shared>;
-        # [method (setLocale :)]
+        #[method(setLocale:)]
         pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
         #[method_id(calendar)]
         pub unsafe fn calendar(&self) -> Id<NSCalendar, Shared>;
-        # [method (setCalendar :)]
+        #[method(setCalendar:)]
         pub unsafe fn setCalendar(&self, calendar: Option<&NSCalendar>);
         #[method_id(timeZone)]
         pub unsafe fn timeZone(&self) -> Id<NSTimeZone, Shared>;
-        # [method (setTimeZone :)]
+        #[method(setTimeZone:)]
         pub unsafe fn setTimeZone(&self, timeZone: Option<&NSTimeZone>);
         #[method_id(dateTemplate)]
         pub unsafe fn dateTemplate(&self) -> Id<NSString, Shared>;
-        # [method (setDateTemplate :)]
+        #[method(setDateTemplate:)]
         pub unsafe fn setDateTemplate(&self, dateTemplate: Option<&NSString>);
         #[method(dateStyle)]
         pub unsafe fn dateStyle(&self) -> NSDateIntervalFormatterStyle;
-        # [method (setDateStyle :)]
+        #[method(setDateStyle:)]
         pub unsafe fn setDateStyle(&self, dateStyle: NSDateIntervalFormatterStyle);
         #[method(timeStyle)]
         pub unsafe fn timeStyle(&self) -> NSDateIntervalFormatterStyle;
-        # [method (setTimeStyle :)]
+        #[method(setTimeStyle:)]
         pub unsafe fn setTimeStyle(&self, timeStyle: NSDateIntervalFormatterStyle);
-        # [method_id (stringFromDate : toDate :)]
+        #[method_id(stringFromDate:toDate:)]
         pub unsafe fn stringFromDate_toDate(
             &self,
             fromDate: &NSDate,
             toDate: &NSDate,
         ) -> Id<NSString, Shared>;
-        # [method_id (stringFromDateInterval :)]
+        #[method_id(stringFromDateInterval:)]
         pub unsafe fn stringFromDateInterval(
             &self,
             dateInterval: &NSDateInterval,

@@ -24,42 +24,42 @@ extern_methods!(
     unsafe impl NSMetadataQuery {
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSMetadataQueryDelegate, Shared>>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSMetadataQueryDelegate>);
         #[method_id(predicate)]
         pub unsafe fn predicate(&self) -> Option<Id<NSPredicate, Shared>>;
-        # [method (setPredicate :)]
+        #[method(setPredicate:)]
         pub unsafe fn setPredicate(&self, predicate: Option<&NSPredicate>);
         #[method_id(sortDescriptors)]
         pub unsafe fn sortDescriptors(&self) -> Id<NSArray<NSSortDescriptor>, Shared>;
-        # [method (setSortDescriptors :)]
+        #[method(setSortDescriptors:)]
         pub unsafe fn setSortDescriptors(&self, sortDescriptors: &NSArray<NSSortDescriptor>);
         #[method_id(valueListAttributes)]
         pub unsafe fn valueListAttributes(&self) -> Id<NSArray<NSString>, Shared>;
-        # [method (setValueListAttributes :)]
+        #[method(setValueListAttributes:)]
         pub unsafe fn setValueListAttributes(&self, valueListAttributes: &NSArray<NSString>);
         #[method_id(groupingAttributes)]
         pub unsafe fn groupingAttributes(&self) -> Option<Id<NSArray<NSString>, Shared>>;
-        # [method (setGroupingAttributes :)]
+        #[method(setGroupingAttributes:)]
         pub unsafe fn setGroupingAttributes(&self, groupingAttributes: Option<&NSArray<NSString>>);
         #[method(notificationBatchingInterval)]
         pub unsafe fn notificationBatchingInterval(&self) -> NSTimeInterval;
-        # [method (setNotificationBatchingInterval :)]
+        #[method(setNotificationBatchingInterval:)]
         pub unsafe fn setNotificationBatchingInterval(
             &self,
             notificationBatchingInterval: NSTimeInterval,
         );
         #[method_id(searchScopes)]
         pub unsafe fn searchScopes(&self) -> Id<NSArray, Shared>;
-        # [method (setSearchScopes :)]
+        #[method(setSearchScopes:)]
         pub unsafe fn setSearchScopes(&self, searchScopes: &NSArray);
         #[method_id(searchItems)]
         pub unsafe fn searchItems(&self) -> Option<Id<NSArray, Shared>>;
-        # [method (setSearchItems :)]
+        #[method(setSearchItems:)]
         pub unsafe fn setSearchItems(&self, searchItems: Option<&NSArray>);
         #[method_id(operationQueue)]
         pub unsafe fn operationQueue(&self) -> Option<Id<NSOperationQueue, Shared>>;
-        # [method (setOperationQueue :)]
+        #[method(setOperationQueue:)]
         pub unsafe fn setOperationQueue(&self, operationQueue: Option<&NSOperationQueue>);
         #[method(startQuery)]
         pub unsafe fn startQuery(&self) -> bool;
@@ -77,11 +77,11 @@ extern_methods!(
         pub unsafe fn enableUpdates(&self);
         #[method(resultCount)]
         pub unsafe fn resultCount(&self) -> NSUInteger;
-        # [method_id (resultAtIndex :)]
+        #[method_id(resultAtIndex:)]
         pub unsafe fn resultAtIndex(&self, idx: NSUInteger) -> Id<Object, Shared>;
-        # [method (enumerateResultsUsingBlock :)]
+        #[method(enumerateResultsUsingBlock:)]
         pub unsafe fn enumerateResultsUsingBlock(&self, block: TodoBlock);
-        # [method (enumerateResultsWithOptions : usingBlock :)]
+        #[method(enumerateResultsWithOptions:usingBlock:)]
         pub unsafe fn enumerateResultsWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
@@ -89,7 +89,7 @@ extern_methods!(
         );
         #[method_id(results)]
         pub unsafe fn results(&self) -> Id<NSArray, Shared>;
-        # [method (indexOfResult :)]
+        #[method(indexOfResult:)]
         pub unsafe fn indexOfResult(&self, result: &Object) -> NSUInteger;
         #[method_id(valueLists)]
         pub unsafe fn valueLists(
@@ -97,7 +97,7 @@ extern_methods!(
         ) -> Id<NSDictionary<NSString, NSArray<NSMetadataQueryAttributeValueTuple>>, Shared>;
         #[method_id(groupedResults)]
         pub unsafe fn groupedResults(&self) -> Id<NSArray<NSMetadataQueryResultGroup>, Shared>;
-        # [method_id (valueOfAttribute : forResultAtIndex :)]
+        #[method_id(valueOfAttribute:forResultAtIndex:)]
         pub unsafe fn valueOfAttribute_forResultAtIndex(
             &self,
             attrName: &NSString,
@@ -115,11 +115,11 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMetadataItem {
-        # [method_id (initWithURL :)]
+        #[method_id(initWithURL:)]
         pub unsafe fn initWithURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
-        # [method_id (valueForAttribute :)]
+        #[method_id(valueForAttribute:)]
         pub unsafe fn valueForAttribute(&self, key: &NSString) -> Option<Id<Object, Shared>>;
-        # [method_id (valuesForAttributes :)]
+        #[method_id(valuesForAttributes:)]
         pub unsafe fn valuesForAttributes(
             &self,
             keys: &NSArray<NSString>,
@@ -162,7 +162,7 @@ extern_methods!(
         pub unsafe fn subgroups(&self) -> Option<Id<NSArray<NSMetadataQueryResultGroup>, Shared>>;
         #[method(resultCount)]
         pub unsafe fn resultCount(&self) -> NSUInteger;
-        # [method_id (resultAtIndex :)]
+        #[method_id(resultAtIndex:)]
         pub unsafe fn resultAtIndex(&self, idx: NSUInteger) -> Id<Object, Shared>;
         #[method_id(results)]
         pub unsafe fn results(&self) -> Id<NSArray, Shared>;

@@ -20,14 +20,14 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUserScriptTask {
-        # [method_id (initWithURL : error :)]
+        #[method_id(initWithURL:error:)]
         pub unsafe fn initWithURL_error(
             &self,
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
         #[method_id(scriptURL)]
         pub unsafe fn scriptURL(&self) -> Id<NSURL, Shared>;
-        # [method (executeWithCompletionHandler :)]
+        #[method(executeWithCompletionHandler:)]
         pub unsafe fn executeWithCompletionHandler(
             &self,
             handler: NSUserScriptTaskCompletionHandler,
@@ -45,17 +45,17 @@ extern_methods!(
     unsafe impl NSUserUnixTask {
         #[method_id(standardInput)]
         pub unsafe fn standardInput(&self) -> Option<Id<NSFileHandle, Shared>>;
-        # [method (setStandardInput :)]
+        #[method(setStandardInput:)]
         pub unsafe fn setStandardInput(&self, standardInput: Option<&NSFileHandle>);
         #[method_id(standardOutput)]
         pub unsafe fn standardOutput(&self) -> Option<Id<NSFileHandle, Shared>>;
-        # [method (setStandardOutput :)]
+        #[method(setStandardOutput:)]
         pub unsafe fn setStandardOutput(&self, standardOutput: Option<&NSFileHandle>);
         #[method_id(standardError)]
         pub unsafe fn standardError(&self) -> Option<Id<NSFileHandle, Shared>>;
-        # [method (setStandardError :)]
+        #[method(setStandardError:)]
         pub unsafe fn setStandardError(&self, standardError: Option<&NSFileHandle>);
-        # [method (executeWithArguments : completionHandler :)]
+        #[method(executeWithArguments:completionHandler:)]
         pub unsafe fn executeWithArguments_completionHandler(
             &self,
             arguments: Option<&NSArray<NSString>>,
@@ -72,7 +72,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSUserAppleScriptTask {
-        # [method (executeWithAppleEvent : completionHandler :)]
+        #[method(executeWithAppleEvent:completionHandler:)]
         pub unsafe fn executeWithAppleEvent_completionHandler(
             &self,
             event: Option<&NSAppleEventDescriptor>,
@@ -91,9 +91,9 @@ extern_methods!(
     unsafe impl NSUserAutomatorTask {
         #[method_id(variables)]
         pub unsafe fn variables(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
-        # [method (setVariables :)]
+        #[method(setVariables:)]
         pub unsafe fn setVariables(&self, variables: Option<&NSDictionary<NSString, Object>>);
-        # [method (executeWithInput : completionHandler :)]
+        #[method(executeWithInput:completionHandler:)]
         pub unsafe fn executeWithInput_completionHandler(
             &self,
             input: Option<&NSSecureCoding>,

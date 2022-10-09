@@ -16,13 +16,13 @@ extern_methods!(
     unsafe impl NSProxy {
         #[method_id(alloc)]
         pub unsafe fn alloc() -> Id<Object, Shared>;
-        # [method_id (allocWithZone :)]
+        #[method_id(allocWithZone:)]
         pub unsafe fn allocWithZone(zone: *mut NSZone) -> Id<Object, Shared>;
         #[method(class)]
         pub unsafe fn class() -> &Class;
-        # [method (forwardInvocation :)]
+        #[method(forwardInvocation:)]
         pub unsafe fn forwardInvocation(&self, invocation: &NSInvocation);
-        # [method_id (methodSignatureForSelector :)]
+        #[method_id(methodSignatureForSelector:)]
         pub unsafe fn methodSignatureForSelector(
             &self,
             sel: Sel,
@@ -35,7 +35,7 @@ extern_methods!(
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
         #[method_id(debugDescription)]
         pub unsafe fn debugDescription(&self) -> Id<NSString, Shared>;
-        # [method (respondsToSelector :)]
+        #[method(respondsToSelector:)]
         pub unsafe fn respondsToSelector(aSelector: Sel) -> bool;
         #[method(allowsWeakReference)]
         pub unsafe fn allowsWeakReference(&self) -> bool;

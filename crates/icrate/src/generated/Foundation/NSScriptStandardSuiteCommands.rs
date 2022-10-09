@@ -16,7 +16,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSCloneCommand {
-        # [method (setReceiversSpecifier :)]
+        #[method(setReceiversSpecifier:)]
         pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
         #[method_id(keySpecifier)]
         pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
@@ -69,7 +69,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSDeleteCommand {
-        # [method (setReceiversSpecifier :)]
+        #[method(setReceiversSpecifier:)]
         pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
         #[method_id(keySpecifier)]
         pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
@@ -104,7 +104,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMoveCommand {
-        # [method (setReceiversSpecifier :)]
+        #[method(setReceiversSpecifier:)]
         pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
         #[method_id(keySpecifier)]
         pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
@@ -132,7 +132,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSSetCommand {
-        # [method (setReceiversSpecifier :)]
+        #[method(setReceiversSpecifier:)]
         pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
         #[method_id(keySpecifier)]
         pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;

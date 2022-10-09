@@ -14,13 +14,13 @@ extern_methods!(
     unsafe impl NSScriptCoercionHandler {
         #[method_id(sharedCoercionHandler)]
         pub unsafe fn sharedCoercionHandler() -> Id<NSScriptCoercionHandler, Shared>;
-        # [method_id (coerceValue : toClass :)]
+        #[method_id(coerceValue:toClass:)]
         pub unsafe fn coerceValue_toClass(
             &self,
             value: &Object,
             toClass: &Class,
         ) -> Option<Id<Object, Shared>>;
-        # [method (registerCoercer : selector : toConvertFromClass : toClass :)]
+        #[method(registerCoercer:selector:toConvertFromClass:toClass:)]
         pub unsafe fn registerCoercer_selector_toConvertFromClass_toClass(
             &self,
             coercer: &Object,

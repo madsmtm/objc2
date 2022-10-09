@@ -22,32 +22,32 @@ extern_methods!(
         pub unsafe fn duration(&self) -> NSTimeInterval;
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Self, Shared>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
-        # [method_id (initWithStartDate : duration :)]
+        #[method_id(initWithStartDate:duration:)]
         pub unsafe fn initWithStartDate_duration(
             &self,
             startDate: &NSDate,
             duration: NSTimeInterval,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithStartDate : endDate :)]
+        #[method_id(initWithStartDate:endDate:)]
         pub unsafe fn initWithStartDate_endDate(
             &self,
             startDate: &NSDate,
             endDate: &NSDate,
         ) -> Id<Self, Shared>;
-        # [method (compare :)]
+        #[method(compare:)]
         pub unsafe fn compare(&self, dateInterval: &NSDateInterval) -> NSComparisonResult;
-        # [method (isEqualToDateInterval :)]
+        #[method(isEqualToDateInterval:)]
         pub unsafe fn isEqualToDateInterval(&self, dateInterval: &NSDateInterval) -> bool;
-        # [method (intersectsDateInterval :)]
+        #[method(intersectsDateInterval:)]
         pub unsafe fn intersectsDateInterval(&self, dateInterval: &NSDateInterval) -> bool;
-        # [method_id (intersectionWithDateInterval :)]
+        #[method_id(intersectionWithDateInterval:)]
         pub unsafe fn intersectionWithDateInterval(
             &self,
             dateInterval: &NSDateInterval,
         ) -> Option<Id<NSDateInterval, Shared>>;
-        # [method (containsDate :)]
+        #[method(containsDate:)]
         pub unsafe fn containsDate(&self, date: &NSDate) -> bool;
     }
 );

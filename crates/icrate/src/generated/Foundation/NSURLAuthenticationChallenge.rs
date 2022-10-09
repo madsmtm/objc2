@@ -18,7 +18,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLAuthenticationChallenge {
-        # [method_id (initWithProtectionSpace : proposedCredential : previousFailureCount : failureResponse : error : sender :)]
+        #[method_id(initWithProtectionSpace:proposedCredential:previousFailureCount:failureResponse:error:sender:)]
         pub unsafe fn initWithProtectionSpace_proposedCredential_previousFailureCount_failureResponse_error_sender(
             &self,
             space: &NSURLProtectionSpace,
@@ -28,7 +28,7 @@ extern_methods!(
             error: Option<&NSError>,
             sender: &NSURLAuthenticationChallengeSender,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithAuthenticationChallenge : sender :)]
+        #[method_id(initWithAuthenticationChallenge:sender:)]
         pub unsafe fn initWithAuthenticationChallenge_sender(
             &self,
             challenge: &NSURLAuthenticationChallenge,

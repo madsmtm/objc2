@@ -14,35 +14,35 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSPointerArray {
-        # [method_id (initWithOptions :)]
+        #[method_id(initWithOptions:)]
         pub unsafe fn initWithOptions(
             &self,
             options: NSPointerFunctionsOptions,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithPointerFunctions :)]
+        #[method_id(initWithPointerFunctions:)]
         pub unsafe fn initWithPointerFunctions(
             &self,
             functions: &NSPointerFunctions,
         ) -> Id<Self, Shared>;
-        # [method_id (pointerArrayWithOptions :)]
+        #[method_id(pointerArrayWithOptions:)]
         pub unsafe fn pointerArrayWithOptions(
             options: NSPointerFunctionsOptions,
         ) -> Id<NSPointerArray, Shared>;
-        # [method_id (pointerArrayWithPointerFunctions :)]
+        #[method_id(pointerArrayWithPointerFunctions:)]
         pub unsafe fn pointerArrayWithPointerFunctions(
             functions: &NSPointerFunctions,
         ) -> Id<NSPointerArray, Shared>;
         #[method_id(pointerFunctions)]
         pub unsafe fn pointerFunctions(&self) -> Id<NSPointerFunctions, Shared>;
-        # [method (pointerAtIndex :)]
+        #[method(pointerAtIndex:)]
         pub unsafe fn pointerAtIndex(&self, index: NSUInteger) -> *mut c_void;
-        # [method (addPointer :)]
+        #[method(addPointer:)]
         pub unsafe fn addPointer(&self, pointer: *mut c_void);
-        # [method (removePointerAtIndex :)]
+        #[method(removePointerAtIndex:)]
         pub unsafe fn removePointerAtIndex(&self, index: NSUInteger);
-        # [method (insertPointer : atIndex :)]
+        #[method(insertPointer:atIndex:)]
         pub unsafe fn insertPointer_atIndex(&self, item: *mut c_void, index: NSUInteger);
-        # [method (replacePointerAtIndex : withPointer :)]
+        #[method(replacePointerAtIndex:withPointer:)]
         pub unsafe fn replacePointerAtIndex_withPointer(
             &self,
             index: NSUInteger,
@@ -52,7 +52,7 @@ extern_methods!(
         pub unsafe fn compact(&self);
         #[method(count)]
         pub unsafe fn count(&self) -> NSUInteger;
-        # [method (setCount :)]
+        #[method(setCount:)]
         pub unsafe fn setCount(&self, count: NSUInteger);
     }
 );

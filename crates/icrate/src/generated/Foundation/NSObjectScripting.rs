@@ -9,7 +9,7 @@ use objc2::{extern_class, extern_methods, ClassType};
 extern_methods!(
     #[doc = "NSScripting"]
     unsafe impl NSObject {
-        # [method_id (scriptingValueForSpecifier :)]
+        #[method_id(scriptingValueForSpecifier:)]
         pub unsafe fn scriptingValueForSpecifier(
             &self,
             objectSpecifier: &NSScriptObjectSpecifier,
@@ -18,19 +18,19 @@ extern_methods!(
         pub unsafe fn scriptingProperties(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
-        # [method (setScriptingProperties :)]
+        #[method(setScriptingProperties:)]
         pub unsafe fn setScriptingProperties(
             &self,
             scriptingProperties: Option<&NSDictionary<NSString, Object>>,
         );
-        # [method_id (copyScriptingValue : forKey : withProperties :)]
+        #[method_id(copyScriptingValue:forKey:withProperties:)]
         pub unsafe fn copyScriptingValue_forKey_withProperties(
             &self,
             value: &Object,
             key: &NSString,
             properties: &NSDictionary<NSString, Object>,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (newScriptingObjectOfClass : forValueForKey : withContentsValue : properties :)]
+        #[method_id(newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:)]
         pub unsafe fn newScriptingObjectOfClass_forValueForKey_withContentsValue_properties(
             &self,
             objectClass: &Class,

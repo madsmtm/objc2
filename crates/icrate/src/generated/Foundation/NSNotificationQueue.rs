@@ -19,18 +19,18 @@ extern_methods!(
     unsafe impl NSNotificationQueue {
         #[method_id(defaultQueue)]
         pub unsafe fn defaultQueue() -> Id<NSNotificationQueue, Shared>;
-        # [method_id (initWithNotificationCenter :)]
+        #[method_id(initWithNotificationCenter:)]
         pub unsafe fn initWithNotificationCenter(
             &self,
             notificationCenter: &NSNotificationCenter,
         ) -> Id<Self, Shared>;
-        # [method (enqueueNotification : postingStyle :)]
+        #[method(enqueueNotification:postingStyle:)]
         pub unsafe fn enqueueNotification_postingStyle(
             &self,
             notification: &NSNotification,
             postingStyle: NSPostingStyle,
         );
-        # [method (enqueueNotification : postingStyle : coalesceMask : forModes :)]
+        #[method(enqueueNotification:postingStyle:coalesceMask:forModes:)]
         pub unsafe fn enqueueNotification_postingStyle_coalesceMask_forModes(
             &self,
             notification: &NSNotification,
@@ -38,7 +38,7 @@ extern_methods!(
             coalesceMask: NSNotificationCoalescing,
             modes: Option<&NSArray<NSRunLoopMode>>,
         );
-        # [method (dequeueNotificationsMatching : coalesceMask :)]
+        #[method(dequeueNotificationsMatching:coalesceMask:)]
         pub unsafe fn dequeueNotificationsMatching_coalesceMask(
             &self,
             notification: &NSNotification,

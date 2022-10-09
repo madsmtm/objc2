@@ -19,12 +19,12 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileAccessIntent {
-        # [method_id (readingIntentWithURL : options :)]
+        #[method_id(readingIntentWithURL:options:)]
         pub unsafe fn readingIntentWithURL_options(
             url: &NSURL,
             options: NSFileCoordinatorReadingOptions,
         ) -> Id<Self, Shared>;
-        # [method_id (writingIntentWithURL : options :)]
+        #[method_id(writingIntentWithURL:options:)]
         pub unsafe fn writingIntentWithURL_options(
             url: &NSURL,
             options: NSFileCoordinatorWritingOptions,
@@ -42,29 +42,29 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileCoordinator {
-        # [method (addFilePresenter :)]
+        #[method(addFilePresenter:)]
         pub unsafe fn addFilePresenter(filePresenter: &NSFilePresenter);
-        # [method (removeFilePresenter :)]
+        #[method(removeFilePresenter:)]
         pub unsafe fn removeFilePresenter(filePresenter: &NSFilePresenter);
         #[method_id(filePresenters)]
         pub unsafe fn filePresenters() -> Id<NSArray<NSFilePresenter>, Shared>;
-        # [method_id (initWithFilePresenter :)]
+        #[method_id(initWithFilePresenter:)]
         pub unsafe fn initWithFilePresenter(
             &self,
             filePresenterOrNil: Option<&NSFilePresenter>,
         ) -> Id<Self, Shared>;
         #[method_id(purposeIdentifier)]
         pub unsafe fn purposeIdentifier(&self) -> Id<NSString, Shared>;
-        # [method (setPurposeIdentifier :)]
+        #[method(setPurposeIdentifier:)]
         pub unsafe fn setPurposeIdentifier(&self, purposeIdentifier: &NSString);
-        # [method (coordinateAccessWithIntents : queue : byAccessor :)]
+        #[method(coordinateAccessWithIntents:queue:byAccessor:)]
         pub unsafe fn coordinateAccessWithIntents_queue_byAccessor(
             &self,
             intents: &NSArray<NSFileAccessIntent>,
             queue: &NSOperationQueue,
             accessor: TodoBlock,
         );
-        # [method (coordinateReadingItemAtURL : options : error : byAccessor :)]
+        #[method(coordinateReadingItemAtURL:options:error:byAccessor:)]
         pub unsafe fn coordinateReadingItemAtURL_options_error_byAccessor(
             &self,
             url: &NSURL,
@@ -72,7 +72,7 @@ extern_methods!(
             outError: *mut *mut NSError,
             reader: TodoBlock,
         );
-        # [method (coordinateWritingItemAtURL : options : error : byAccessor :)]
+        #[method(coordinateWritingItemAtURL:options:error:byAccessor:)]
         pub unsafe fn coordinateWritingItemAtURL_options_error_byAccessor(
             &self,
             url: &NSURL,
@@ -80,7 +80,7 @@ extern_methods!(
             outError: *mut *mut NSError,
             writer: TodoBlock,
         );
-        # [method (coordinateReadingItemAtURL : options : writingItemAtURL : options : error : byAccessor :)]
+        #[method(coordinateReadingItemAtURL:options:writingItemAtURL:options:error:byAccessor:)]
         pub unsafe fn coordinateReadingItemAtURL_options_writingItemAtURL_options_error_byAccessor(
             &self,
             readingURL: &NSURL,
@@ -90,7 +90,7 @@ extern_methods!(
             outError: *mut *mut NSError,
             readerWriter: TodoBlock,
         );
-        # [method (coordinateWritingItemAtURL : options : writingItemAtURL : options : error : byAccessor :)]
+        #[method(coordinateWritingItemAtURL:options:writingItemAtURL:options:error:byAccessor:)]
         pub unsafe fn coordinateWritingItemAtURL_options_writingItemAtURL_options_error_byAccessor(
             &self,
             url1: &NSURL,
@@ -100,7 +100,7 @@ extern_methods!(
             outError: *mut *mut NSError,
             writer: TodoBlock,
         );
-        # [method (prepareForReadingItemsAtURLs : options : writingItemsAtURLs : options : error : byAccessor :)]
+        #[method(prepareForReadingItemsAtURLs:options:writingItemsAtURLs:options:error:byAccessor:)]
         pub unsafe fn prepareForReadingItemsAtURLs_options_writingItemsAtURLs_options_error_byAccessor(
             &self,
             readingURLs: &NSArray<NSURL>,
@@ -110,11 +110,11 @@ extern_methods!(
             outError: *mut *mut NSError,
             batchAccessor: TodoBlock,
         );
-        # [method (itemAtURL : willMoveToURL :)]
+        #[method(itemAtURL:willMoveToURL:)]
         pub unsafe fn itemAtURL_willMoveToURL(&self, oldURL: &NSURL, newURL: &NSURL);
-        # [method (itemAtURL : didMoveToURL :)]
+        #[method(itemAtURL:didMoveToURL:)]
         pub unsafe fn itemAtURL_didMoveToURL(&self, oldURL: &NSURL, newURL: &NSURL);
-        # [method (itemAtURL : didChangeUbiquityAttributes :)]
+        #[method(itemAtURL:didChangeUbiquityAttributes:)]
         pub unsafe fn itemAtURL_didChangeUbiquityAttributes(
             &self,
             url: &NSURL,

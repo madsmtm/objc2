@@ -23,14 +23,14 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSInternetPassword"]
     unsafe impl NSURLCredential {
-        # [method_id (initWithUser : password : persistence :)]
+        #[method_id(initWithUser:password:persistence:)]
         pub unsafe fn initWithUser_password_persistence(
             &self,
             user: &NSString,
             password: &NSString,
             persistence: NSURLCredentialPersistence,
         ) -> Id<Self, Shared>;
-        # [method_id (credentialWithUser : password : persistence :)]
+        #[method_id(credentialWithUser:password:persistence:)]
         pub unsafe fn credentialWithUser_password_persistence(
             user: &NSString,
             password: &NSString,
@@ -47,14 +47,14 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSClientCertificate"]
     unsafe impl NSURLCredential {
-        # [method_id (initWithIdentity : certificates : persistence :)]
+        #[method_id(initWithIdentity:certificates:persistence:)]
         pub unsafe fn initWithIdentity_certificates_persistence(
             &self,
             identity: SecIdentityRef,
             certArray: Option<&NSArray>,
             persistence: NSURLCredentialPersistence,
         ) -> Id<Self, Shared>;
-        # [method_id (credentialWithIdentity : certificates : persistence :)]
+        #[method_id(credentialWithIdentity:certificates:persistence:)]
         pub unsafe fn credentialWithIdentity_certificates_persistence(
             identity: SecIdentityRef,
             certArray: Option<&NSArray>,
@@ -69,9 +69,9 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSServerTrust"]
     unsafe impl NSURLCredential {
-        # [method_id (initWithTrust :)]
+        #[method_id(initWithTrust:)]
         pub unsafe fn initWithTrust(&self, trust: SecTrustRef) -> Id<Self, Shared>;
-        # [method_id (credentialForTrust :)]
+        #[method_id(credentialForTrust:)]
         pub unsafe fn credentialForTrust(trust: SecTrustRef) -> Id<NSURLCredential, Shared>;
     }
 );

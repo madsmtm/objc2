@@ -68,6 +68,26 @@ impl RustFile {
     }
 }
 
+pub fn format_method_macro(code: &[u8]) -> Vec<u8> {
+    use regex::bytes::{Captures, Regex};
+    use std::str;
+
+    lazy_static::lazy_static! {
+        static ref RE: Regex = Regex::new(r"# ?\[ ?(method_id|method) ?\((([a-zA-Z_]+ ?: ?)+)\) ?\]").unwrap();
+    }
+
+    RE.replace_all(code, |caps: &Captures| {
+        let method = str::from_utf8(caps.get(1).unwrap().as_bytes())
+            .unwrap()
+            .replace(" ", "");
+        let selector = str::from_utf8(caps.get(2).unwrap().as_bytes())
+            .unwrap()
+            .replace(" ", "");
+        format!("#[{method}({selector})]")
+    })
+    .to_vec()
+}
+
 pub fn run_cargo_fmt() {
     let status = Command::new("cargo")
         .args(["fmt", "--package=icrate"])
@@ -98,5 +118,35 @@ pub fn run_rustfmt(tokens: TokenStream) -> Vec<u8> {
         panic!("failed running rustfmt with exit code {}", output.status)
     }
 
-    output.stdout
+    format_method_macro(&output.stdout)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_format_method_macro() {
+        fn assert_returns(input: &str, expected_output: &str) {
+            let output = format_method_macro(input.as_bytes());
+            assert_eq!(output, expected_output.as_bytes());
+
+            // Check that running it through twice doesn't change the output
+            let output = format_method_macro(&output);
+            assert_eq!(output, expected_output.as_bytes());
+        }
+
+        assert_returns(
+            "# [method_id (descriptorWithDescriptorType : bytes : length :)]",
+            "#[method_id(descriptorWithDescriptorType:bytes:length:)]",
+        );
+        assert_returns(
+            "# [method (insertDescriptor : atIndex :)]",
+            "#[method(insertDescriptor:atIndex:)]",
+        );
+        assert_returns(
+            "# [method_id (descriptorAtIndex :)]",
+            "#[method_id(descriptorAtIndex:)]",
+        );
+    }
 }

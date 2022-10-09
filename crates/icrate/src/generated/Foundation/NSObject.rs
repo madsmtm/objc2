@@ -20,11 +20,11 @@ extern_methods!(
     unsafe impl NSObject {
         #[method(version)]
         pub unsafe fn version() -> NSInteger;
-        # [method (setVersion :)]
+        #[method(setVersion:)]
         pub unsafe fn setVersion(aVersion: NSInteger);
         #[method(classForCoder)]
         pub unsafe fn classForCoder(&self) -> &Class;
-        # [method_id (replacementObjectForCoder :)]
+        #[method_id(replacementObjectForCoder:)]
         pub unsafe fn replacementObjectForCoder(
             &self,
             coder: &NSCoder,
@@ -34,7 +34,7 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSDeprecatedMethods"]
     unsafe impl NSObject {
-        # [method (poseAsClass :)]
+        #[method(poseAsClass:)]
         pub unsafe fn poseAsClass(aClass: &Class);
     }
 );

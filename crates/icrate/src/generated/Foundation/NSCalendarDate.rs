@@ -17,18 +17,18 @@ extern_methods!(
     unsafe impl NSCalendarDate {
         #[method_id(calendarDate)]
         pub unsafe fn calendarDate() -> Id<Object, Shared>;
-        # [method_id (dateWithString : calendarFormat : locale :)]
+        #[method_id(dateWithString:calendarFormat:locale:)]
         pub unsafe fn dateWithString_calendarFormat_locale(
             description: &NSString,
             format: &NSString,
             locale: Option<&Object>,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (dateWithString : calendarFormat :)]
+        #[method_id(dateWithString:calendarFormat:)]
         pub unsafe fn dateWithString_calendarFormat(
             description: &NSString,
             format: &NSString,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (dateWithYear : month : day : hour : minute : second : timeZone :)]
+        #[method_id(dateWithYear:month:day:hour:minute:second:timeZone:)]
         pub unsafe fn dateWithYear_month_day_hour_minute_second_timeZone(
             year: NSInteger,
             month: NSUInteger,
@@ -38,7 +38,7 @@ extern_methods!(
             second: NSUInteger,
             aTimeZone: Option<&NSTimeZone>,
         ) -> Id<Object, Shared>;
-        # [method_id (dateByAddingYears : months : days : hours : minutes : seconds :)]
+        #[method_id(dateByAddingYears:months:days:hours:minutes:seconds:)]
         pub unsafe fn dateByAddingYears_months_days_hours_minutes_seconds(
             &self,
             year: NSInteger,
@@ -68,38 +68,38 @@ extern_methods!(
         pub unsafe fn yearOfCommonEra(&self) -> NSInteger;
         #[method_id(calendarFormat)]
         pub unsafe fn calendarFormat(&self) -> Id<NSString, Shared>;
-        # [method_id (descriptionWithCalendarFormat : locale :)]
+        #[method_id(descriptionWithCalendarFormat:locale:)]
         pub unsafe fn descriptionWithCalendarFormat_locale(
             &self,
             format: &NSString,
             locale: Option<&Object>,
         ) -> Id<NSString, Shared>;
-        # [method_id (descriptionWithCalendarFormat :)]
+        #[method_id(descriptionWithCalendarFormat:)]
         pub unsafe fn descriptionWithCalendarFormat(
             &self,
             format: &NSString,
         ) -> Id<NSString, Shared>;
-        # [method_id (descriptionWithLocale :)]
+        #[method_id(descriptionWithLocale:)]
         pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
             -> Id<NSString, Shared>;
         #[method_id(timeZone)]
         pub unsafe fn timeZone(&self) -> Id<NSTimeZone, Shared>;
-        # [method_id (initWithString : calendarFormat : locale :)]
+        #[method_id(initWithString:calendarFormat:locale:)]
         pub unsafe fn initWithString_calendarFormat_locale(
             &self,
             description: &NSString,
             format: &NSString,
             locale: Option<&Object>,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (initWithString : calendarFormat :)]
+        #[method_id(initWithString:calendarFormat:)]
         pub unsafe fn initWithString_calendarFormat(
             &self,
             description: &NSString,
             format: &NSString,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (initWithString :)]
+        #[method_id(initWithString:)]
         pub unsafe fn initWithString(&self, description: &NSString) -> Option<Id<Object, Shared>>;
-        # [method_id (initWithYear : month : day : hour : minute : second : timeZone :)]
+        #[method_id(initWithYear:month:day:hour:minute:second:timeZone:)]
         pub unsafe fn initWithYear_month_day_hour_minute_second_timeZone(
             &self,
             year: NSInteger,
@@ -110,11 +110,11 @@ extern_methods!(
             second: NSUInteger,
             aTimeZone: Option<&NSTimeZone>,
         ) -> Id<Object, Shared>;
-        # [method (setCalendarFormat :)]
+        #[method(setCalendarFormat:)]
         pub unsafe fn setCalendarFormat(&self, format: Option<&NSString>);
-        # [method (setTimeZone :)]
+        #[method(setTimeZone:)]
         pub unsafe fn setTimeZone(&self, aTimeZone: Option<&NSTimeZone>);
-        # [method (years : months : days : hours : minutes : seconds : sinceDate :)]
+        #[method(years:months:days:hours:minutes:seconds:sinceDate:)]
         pub unsafe fn years_months_days_hours_minutes_seconds_sinceDate(
             &self,
             yp: *mut NSInteger,
@@ -134,31 +134,31 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSCalendarDateExtras"]
     unsafe impl NSDate {
-        # [method_id (dateWithNaturalLanguageString : locale :)]
+        #[method_id(dateWithNaturalLanguageString:locale:)]
         pub unsafe fn dateWithNaturalLanguageString_locale(
             string: &NSString,
             locale: Option<&Object>,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (dateWithNaturalLanguageString :)]
+        #[method_id(dateWithNaturalLanguageString:)]
         pub unsafe fn dateWithNaturalLanguageString(
             string: &NSString,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (dateWithString :)]
+        #[method_id(dateWithString:)]
         pub unsafe fn dateWithString(aString: &NSString) -> Id<Object, Shared>;
-        # [method_id (dateWithCalendarFormat : timeZone :)]
+        #[method_id(dateWithCalendarFormat:timeZone:)]
         pub unsafe fn dateWithCalendarFormat_timeZone(
             &self,
             format: Option<&NSString>,
             aTimeZone: Option<&NSTimeZone>,
         ) -> Id<NSCalendarDate, Shared>;
-        # [method_id (descriptionWithCalendarFormat : timeZone : locale :)]
+        #[method_id(descriptionWithCalendarFormat:timeZone:locale:)]
         pub unsafe fn descriptionWithCalendarFormat_timeZone_locale(
             &self,
             format: Option<&NSString>,
             aTimeZone: Option<&NSTimeZone>,
             locale: Option<&Object>,
         ) -> Option<Id<NSString, Shared>>;
-        # [method_id (initWithString :)]
+        #[method_id(initWithString:)]
         pub unsafe fn initWithString(&self, description: &NSString) -> Option<Id<Object, Shared>>;
     }
 );

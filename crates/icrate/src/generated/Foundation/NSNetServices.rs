@@ -23,7 +23,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSNetService {
-        # [method_id (initWithDomain : type : name : port :)]
+        #[method_id(initWithDomain:type:name:port:)]
         pub unsafe fn initWithDomain_type_name_port(
             &self,
             domain: &NSString,
@@ -31,24 +31,24 @@ extern_methods!(
             name: &NSString,
             port: c_int,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithDomain : type : name :)]
+        #[method_id(initWithDomain:type:name:)]
         pub unsafe fn initWithDomain_type_name(
             &self,
             domain: &NSString,
             type_: &NSString,
             name: &NSString,
         ) -> Id<Self, Shared>;
-        # [method (scheduleInRunLoop : forMode :)]
+        #[method(scheduleInRunLoop:forMode:)]
         pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode);
-        # [method (removeFromRunLoop : forMode :)]
+        #[method(removeFromRunLoop:forMode:)]
         pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode);
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceDelegate, Shared>>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSNetServiceDelegate>);
         #[method(includesPeerToPeer)]
         pub unsafe fn includesPeerToPeer(&self) -> bool;
-        # [method (setIncludesPeerToPeer :)]
+        #[method(setIncludesPeerToPeer:)]
         pub unsafe fn setIncludesPeerToPeer(&self, includesPeerToPeer: bool);
         #[method_id(name)]
         pub unsafe fn name(&self) -> Id<NSString, Shared>;
@@ -64,23 +64,23 @@ extern_methods!(
         pub unsafe fn port(&self) -> NSInteger;
         #[method(publish)]
         pub unsafe fn publish(&self);
-        # [method (publishWithOptions :)]
+        #[method(publishWithOptions:)]
         pub unsafe fn publishWithOptions(&self, options: NSNetServiceOptions);
         #[method(resolve)]
         pub unsafe fn resolve(&self);
         #[method(stop)]
         pub unsafe fn stop(&self);
-        # [method_id (dictionaryFromTXTRecordData :)]
+        #[method_id(dictionaryFromTXTRecordData:)]
         pub unsafe fn dictionaryFromTXTRecordData(
             txtData: &NSData,
         ) -> Id<NSDictionary<NSString, NSData>, Shared>;
-        # [method_id (dataFromTXTRecordDictionary :)]
+        #[method_id(dataFromTXTRecordDictionary:)]
         pub unsafe fn dataFromTXTRecordDictionary(
             txtDictionary: &NSDictionary<NSString, NSData>,
         ) -> Id<NSData, Shared>;
-        # [method (resolveWithTimeout :)]
+        #[method(resolveWithTimeout:)]
         pub unsafe fn resolveWithTimeout(&self, timeout: NSTimeInterval);
-        # [method (setTXTRecordData :)]
+        #[method(setTXTRecordData:)]
         pub unsafe fn setTXTRecordData(&self, recordData: Option<&NSData>) -> bool;
         #[method_id(TXTRecordData)]
         pub unsafe fn TXTRecordData(&self) -> Option<Id<NSData, Shared>>;
@@ -103,21 +103,21 @@ extern_methods!(
         pub unsafe fn init(&self) -> Id<Self, Shared>;
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceBrowserDelegate, Shared>>;
-        # [method (setDelegate :)]
+        #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSNetServiceBrowserDelegate>);
         #[method(includesPeerToPeer)]
         pub unsafe fn includesPeerToPeer(&self) -> bool;
-        # [method (setIncludesPeerToPeer :)]
+        #[method(setIncludesPeerToPeer:)]
         pub unsafe fn setIncludesPeerToPeer(&self, includesPeerToPeer: bool);
-        # [method (scheduleInRunLoop : forMode :)]
+        #[method(scheduleInRunLoop:forMode:)]
         pub unsafe fn scheduleInRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode);
-        # [method (removeFromRunLoop : forMode :)]
+        #[method(removeFromRunLoop:forMode:)]
         pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode);
         #[method(searchForBrowsableDomains)]
         pub unsafe fn searchForBrowsableDomains(&self);
         #[method(searchForRegistrationDomains)]
         pub unsafe fn searchForRegistrationDomains(&self);
-        # [method (searchForServicesOfType : inDomain :)]
+        #[method(searchForServicesOfType:inDomain:)]
         pub unsafe fn searchForServicesOfType_inDomain(
             &self,
             type_: &NSString,

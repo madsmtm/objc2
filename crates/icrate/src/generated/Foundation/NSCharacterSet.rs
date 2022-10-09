@@ -46,33 +46,33 @@ extern_methods!(
         pub unsafe fn symbolCharacterSet() -> Id<NSCharacterSet, Shared>;
         #[method_id(newlineCharacterSet)]
         pub unsafe fn newlineCharacterSet() -> Id<NSCharacterSet, Shared>;
-        # [method_id (characterSetWithRange :)]
+        #[method_id(characterSetWithRange:)]
         pub unsafe fn characterSetWithRange(aRange: NSRange) -> Id<NSCharacterSet, Shared>;
-        # [method_id (characterSetWithCharactersInString :)]
+        #[method_id(characterSetWithCharactersInString:)]
         pub unsafe fn characterSetWithCharactersInString(
             aString: &NSString,
         ) -> Id<NSCharacterSet, Shared>;
-        # [method_id (characterSetWithBitmapRepresentation :)]
+        #[method_id(characterSetWithBitmapRepresentation:)]
         pub unsafe fn characterSetWithBitmapRepresentation(
             data: &NSData,
         ) -> Id<NSCharacterSet, Shared>;
-        # [method_id (characterSetWithContentsOfFile :)]
+        #[method_id(characterSetWithContentsOfFile:)]
         pub unsafe fn characterSetWithContentsOfFile(
             fName: &NSString,
         ) -> Option<Id<NSCharacterSet, Shared>>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
-        # [method (characterIsMember :)]
+        #[method(characterIsMember:)]
         pub unsafe fn characterIsMember(&self, aCharacter: unichar) -> bool;
         #[method_id(bitmapRepresentation)]
         pub unsafe fn bitmapRepresentation(&self) -> Id<NSData, Shared>;
         #[method_id(invertedSet)]
         pub unsafe fn invertedSet(&self) -> Id<NSCharacterSet, Shared>;
-        # [method (longCharacterIsMember :)]
+        #[method(longCharacterIsMember:)]
         pub unsafe fn longCharacterIsMember(&self, theLongChar: UTF32Char) -> bool;
-        # [method (isSupersetOfSet :)]
+        #[method(isSupersetOfSet:)]
         pub unsafe fn isSupersetOfSet(&self, theOtherSet: &NSCharacterSet) -> bool;
-        # [method (hasMemberInPlane :)]
+        #[method(hasMemberInPlane:)]
         pub unsafe fn hasMemberInPlane(&self, thePlane: u8) -> bool;
     }
 );
@@ -85,17 +85,17 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMutableCharacterSet {
-        # [method (addCharactersInRange :)]
+        #[method(addCharactersInRange:)]
         pub unsafe fn addCharactersInRange(&self, aRange: NSRange);
-        # [method (removeCharactersInRange :)]
+        #[method(removeCharactersInRange:)]
         pub unsafe fn removeCharactersInRange(&self, aRange: NSRange);
-        # [method (addCharactersInString :)]
+        #[method(addCharactersInString:)]
         pub unsafe fn addCharactersInString(&self, aString: &NSString);
-        # [method (removeCharactersInString :)]
+        #[method(removeCharactersInString:)]
         pub unsafe fn removeCharactersInString(&self, aString: &NSString);
-        # [method (formUnionWithCharacterSet :)]
+        #[method(formUnionWithCharacterSet:)]
         pub unsafe fn formUnionWithCharacterSet(&self, otherSet: &NSCharacterSet);
-        # [method (formIntersectionWithCharacterSet :)]
+        #[method(formIntersectionWithCharacterSet:)]
         pub unsafe fn formIntersectionWithCharacterSet(&self, otherSet: &NSCharacterSet);
         #[method(invert)]
         pub unsafe fn invert(&self);
@@ -129,17 +129,17 @@ extern_methods!(
         pub unsafe fn symbolCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
         #[method_id(newlineCharacterSet)]
         pub unsafe fn newlineCharacterSet() -> Id<NSMutableCharacterSet, Shared>;
-        # [method_id (characterSetWithRange :)]
+        #[method_id(characterSetWithRange:)]
         pub unsafe fn characterSetWithRange(aRange: NSRange) -> Id<NSMutableCharacterSet, Shared>;
-        # [method_id (characterSetWithCharactersInString :)]
+        #[method_id(characterSetWithCharactersInString:)]
         pub unsafe fn characterSetWithCharactersInString(
             aString: &NSString,
         ) -> Id<NSMutableCharacterSet, Shared>;
-        # [method_id (characterSetWithBitmapRepresentation :)]
+        #[method_id(characterSetWithBitmapRepresentation:)]
         pub unsafe fn characterSetWithBitmapRepresentation(
             data: &NSData,
         ) -> Id<NSMutableCharacterSet, Shared>;
-        # [method_id (characterSetWithContentsOfFile :)]
+        #[method_id(characterSetWithContentsOfFile:)]
         pub unsafe fn characterSetWithContentsOfFile(
             fName: &NSString,
         ) -> Option<Id<NSMutableCharacterSet, Shared>>;

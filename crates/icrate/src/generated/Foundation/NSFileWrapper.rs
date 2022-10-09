@@ -17,27 +17,27 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSFileWrapper {
-        # [method_id (initWithURL : options : error :)]
+        #[method_id(initWithURL:options:error:)]
         pub unsafe fn initWithURL_options_error(
             &self,
             url: &NSURL,
             options: NSFileWrapperReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
-        # [method_id (initDirectoryWithFileWrappers :)]
+        #[method_id(initDirectoryWithFileWrappers:)]
         pub unsafe fn initDirectoryWithFileWrappers(
             &self,
             childrenByPreferredName: &NSDictionary<NSString, NSFileWrapper>,
         ) -> Id<Self, Shared>;
-        # [method_id (initRegularFileWithContents :)]
+        #[method_id(initRegularFileWithContents:)]
         pub unsafe fn initRegularFileWithContents(&self, contents: &NSData) -> Id<Self, Shared>;
-        # [method_id (initSymbolicLinkWithDestinationURL :)]
+        #[method_id(initSymbolicLinkWithDestinationURL:)]
         pub unsafe fn initSymbolicLinkWithDestinationURL(&self, url: &NSURL) -> Id<Self, Shared>;
-        # [method_id (initWithSerializedRepresentation :)]
+        #[method_id(initWithSerializedRepresentation:)]
         pub unsafe fn initWithSerializedRepresentation(
             &self,
             serializeRepresentation: &NSData,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
         #[method(isDirectory)]
         pub unsafe fn isDirectory(&self) -> bool;
@@ -47,25 +47,25 @@ extern_methods!(
         pub unsafe fn isSymbolicLink(&self) -> bool;
         #[method_id(preferredFilename)]
         pub unsafe fn preferredFilename(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setPreferredFilename :)]
+        #[method(setPreferredFilename:)]
         pub unsafe fn setPreferredFilename(&self, preferredFilename: Option<&NSString>);
         #[method_id(filename)]
         pub unsafe fn filename(&self) -> Option<Id<NSString, Shared>>;
-        # [method (setFilename :)]
+        #[method(setFilename:)]
         pub unsafe fn setFilename(&self, filename: Option<&NSString>);
         #[method_id(fileAttributes)]
         pub unsafe fn fileAttributes(&self) -> Id<NSDictionary<NSString, Object>, Shared>;
-        # [method (setFileAttributes :)]
+        #[method(setFileAttributes:)]
         pub unsafe fn setFileAttributes(&self, fileAttributes: &NSDictionary<NSString, Object>);
-        # [method (matchesContentsOfURL :)]
+        #[method(matchesContentsOfURL:)]
         pub unsafe fn matchesContentsOfURL(&self, url: &NSURL) -> bool;
-        # [method (readFromURL : options : error :)]
+        #[method(readFromURL:options:error:)]
         pub unsafe fn readFromURL_options_error(
             &self,
             url: &NSURL,
             options: NSFileWrapperReadingOptions,
         ) -> Result<(), Id<NSError, Shared>>;
-        # [method (writeToURL : options : originalContentsURL : error :)]
+        #[method(writeToURL:options:originalContentsURL:error:)]
         pub unsafe fn writeToURL_options_originalContentsURL_error(
             &self,
             url: &NSURL,
@@ -74,21 +74,21 @@ extern_methods!(
         ) -> Result<(), Id<NSError, Shared>>;
         #[method_id(serializedRepresentation)]
         pub unsafe fn serializedRepresentation(&self) -> Option<Id<NSData, Shared>>;
-        # [method_id (addFileWrapper :)]
+        #[method_id(addFileWrapper:)]
         pub unsafe fn addFileWrapper(&self, child: &NSFileWrapper) -> Id<NSString, Shared>;
-        # [method_id (addRegularFileWithContents : preferredFilename :)]
+        #[method_id(addRegularFileWithContents:preferredFilename:)]
         pub unsafe fn addRegularFileWithContents_preferredFilename(
             &self,
             data: &NSData,
             fileName: &NSString,
         ) -> Id<NSString, Shared>;
-        # [method (removeFileWrapper :)]
+        #[method(removeFileWrapper:)]
         pub unsafe fn removeFileWrapper(&self, child: &NSFileWrapper);
         #[method_id(fileWrappers)]
         pub unsafe fn fileWrappers(
             &self,
         ) -> Option<Id<NSDictionary<NSString, NSFileWrapper>, Shared>>;
-        # [method_id (keyForFileWrapper :)]
+        #[method_id(keyForFileWrapper:)]
         pub unsafe fn keyForFileWrapper(
             &self,
             child: &NSFileWrapper,
@@ -102,25 +102,25 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSDeprecated"]
     unsafe impl NSFileWrapper {
-        # [method_id (initWithPath :)]
+        #[method_id(initWithPath:)]
         pub unsafe fn initWithPath(&self, path: &NSString) -> Option<Id<Object, Shared>>;
-        # [method_id (initSymbolicLinkWithDestination :)]
+        #[method_id(initSymbolicLinkWithDestination:)]
         pub unsafe fn initSymbolicLinkWithDestination(&self, path: &NSString)
             -> Id<Object, Shared>;
-        # [method (needsToBeUpdatedFromPath :)]
+        #[method(needsToBeUpdatedFromPath:)]
         pub unsafe fn needsToBeUpdatedFromPath(&self, path: &NSString) -> bool;
-        # [method (updateFromPath :)]
+        #[method(updateFromPath:)]
         pub unsafe fn updateFromPath(&self, path: &NSString) -> bool;
-        # [method (writeToFile : atomically : updateFilenames :)]
+        #[method(writeToFile:atomically:updateFilenames:)]
         pub unsafe fn writeToFile_atomically_updateFilenames(
             &self,
             path: &NSString,
             atomicFlag: bool,
             updateFilenamesFlag: bool,
         ) -> bool;
-        # [method_id (addFileWithPath :)]
+        #[method_id(addFileWithPath:)]
         pub unsafe fn addFileWithPath(&self, path: &NSString) -> Id<NSString, Shared>;
-        # [method_id (addSymbolicLinkWithDestination : preferredFilename :)]
+        #[method_id(addSymbolicLinkWithDestination:preferredFilename:)]
         pub unsafe fn addSymbolicLinkWithDestination_preferredFilename(
             &self,
             path: &NSString,

@@ -12,13 +12,13 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<ObjectType: Message> NSOrderedCollectionChange<ObjectType> {
-        # [method_id (changeWithObject : type : index :)]
+        #[method_id(changeWithObject:type:index:)]
         pub unsafe fn changeWithObject_type_index(
             anObject: Option<&ObjectType>,
             type_: NSCollectionChangeType,
             index: NSUInteger,
         ) -> Id<NSOrderedCollectionChange<ObjectType>, Shared>;
-        # [method_id (changeWithObject : type : index : associatedIndex :)]
+        #[method_id(changeWithObject:type:index:associatedIndex:)]
         pub unsafe fn changeWithObject_type_index_associatedIndex(
             anObject: Option<&ObjectType>,
             type_: NSCollectionChangeType,
@@ -35,14 +35,14 @@ extern_methods!(
         pub unsafe fn associatedIndex(&self) -> NSUInteger;
         #[method_id(init)]
         pub unsafe fn init(&self) -> Id<Object, Shared>;
-        # [method_id (initWithObject : type : index :)]
+        #[method_id(initWithObject:type:index:)]
         pub unsafe fn initWithObject_type_index(
             &self,
             anObject: Option<&ObjectType>,
             type_: NSCollectionChangeType,
             index: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithObject : type : index : associatedIndex :)]
+        #[method_id(initWithObject:type:index:associatedIndex:)]
         pub unsafe fn initWithObject_type_index_associatedIndex(
             &self,
             anObject: Option<&ObjectType>,

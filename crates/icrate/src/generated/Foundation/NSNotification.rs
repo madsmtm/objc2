@@ -22,26 +22,26 @@ extern_methods!(
         pub unsafe fn object(&self) -> Option<Id<Object, Shared>>;
         #[method_id(userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>>;
-        # [method_id (initWithName : object : userInfo :)]
+        #[method_id(initWithName:object:userInfo:)]
         pub unsafe fn initWithName_object_userInfo(
             &self,
             name: &NSNotificationName,
             object: Option<&Object>,
             userInfo: Option<&NSDictionary>,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithCoder :)]
+        #[method_id(initWithCoder:)]
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
     }
 );
 extern_methods!(
     #[doc = "NSNotificationCreation"]
     unsafe impl NSNotification {
-        # [method_id (notificationWithName : object :)]
+        #[method_id(notificationWithName:object:)]
         pub unsafe fn notificationWithName_object(
             aName: &NSNotificationName,
             anObject: Option<&Object>,
         ) -> Id<Self, Shared>;
-        # [method_id (notificationWithName : object : userInfo :)]
+        #[method_id(notificationWithName:object:userInfo:)]
         pub unsafe fn notificationWithName_object_userInfo(
             aName: &NSNotificationName,
             anObject: Option<&Object>,
@@ -62,7 +62,7 @@ extern_methods!(
     unsafe impl NSNotificationCenter {
         #[method_id(defaultCenter)]
         pub unsafe fn defaultCenter() -> Id<NSNotificationCenter, Shared>;
-        # [method (addObserver : selector : name : object :)]
+        #[method(addObserver:selector:name:object:)]
         pub unsafe fn addObserver_selector_name_object(
             &self,
             observer: &Object,
@@ -70,31 +70,31 @@ extern_methods!(
             aName: Option<&NSNotificationName>,
             anObject: Option<&Object>,
         );
-        # [method (postNotification :)]
+        #[method(postNotification:)]
         pub unsafe fn postNotification(&self, notification: &NSNotification);
-        # [method (postNotificationName : object :)]
+        #[method(postNotificationName:object:)]
         pub unsafe fn postNotificationName_object(
             &self,
             aName: &NSNotificationName,
             anObject: Option<&Object>,
         );
-        # [method (postNotificationName : object : userInfo :)]
+        #[method(postNotificationName:object:userInfo:)]
         pub unsafe fn postNotificationName_object_userInfo(
             &self,
             aName: &NSNotificationName,
             anObject: Option<&Object>,
             aUserInfo: Option<&NSDictionary>,
         );
-        # [method (removeObserver :)]
+        #[method(removeObserver:)]
         pub unsafe fn removeObserver(&self, observer: &Object);
-        # [method (removeObserver : name : object :)]
+        #[method(removeObserver:name:object:)]
         pub unsafe fn removeObserver_name_object(
             &self,
             observer: &Object,
             aName: Option<&NSNotificationName>,
             anObject: Option<&Object>,
         );
-        # [method_id (addObserverForName : object : queue : usingBlock :)]
+        #[method_id(addObserverForName:object:queue:usingBlock:)]
         pub unsafe fn addObserverForName_object_queue_usingBlock(
             &self,
             name: Option<&NSNotificationName>,

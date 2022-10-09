@@ -21,7 +21,7 @@ extern_methods!(
     unsafe impl NSURLCredentialStorage {
         #[method_id(sharedCredentialStorage)]
         pub unsafe fn sharedCredentialStorage() -> Id<NSURLCredentialStorage, Shared>;
-        # [method_id (credentialsForProtectionSpace :)]
+        #[method_id(credentialsForProtectionSpace:)]
         pub unsafe fn credentialsForProtectionSpace(
             &self,
             space: &NSURLProtectionSpace,
@@ -30,31 +30,31 @@ extern_methods!(
         pub unsafe fn allCredentials(
             &self,
         ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary<NSString, NSURLCredential>>, Shared>;
-        # [method (setCredential : forProtectionSpace :)]
+        #[method(setCredential:forProtectionSpace:)]
         pub unsafe fn setCredential_forProtectionSpace(
             &self,
             credential: &NSURLCredential,
             space: &NSURLProtectionSpace,
         );
-        # [method (removeCredential : forProtectionSpace :)]
+        #[method(removeCredential:forProtectionSpace:)]
         pub unsafe fn removeCredential_forProtectionSpace(
             &self,
             credential: &NSURLCredential,
             space: &NSURLProtectionSpace,
         );
-        # [method (removeCredential : forProtectionSpace : options :)]
+        #[method(removeCredential:forProtectionSpace:options:)]
         pub unsafe fn removeCredential_forProtectionSpace_options(
             &self,
             credential: &NSURLCredential,
             space: &NSURLProtectionSpace,
             options: Option<&NSDictionary<NSString, Object>>,
         );
-        # [method_id (defaultCredentialForProtectionSpace :)]
+        #[method_id(defaultCredentialForProtectionSpace:)]
         pub unsafe fn defaultCredentialForProtectionSpace(
             &self,
             space: &NSURLProtectionSpace,
         ) -> Option<Id<NSURLCredential, Shared>>;
-        # [method (setDefaultCredential : forProtectionSpace :)]
+        #[method(setDefaultCredential:forProtectionSpace:)]
         pub unsafe fn setDefaultCredential_forProtectionSpace(
             &self,
             credential: &NSURLCredential,
@@ -65,21 +65,21 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSURLSessionTaskAdditions"]
     unsafe impl NSURLCredentialStorage {
-        # [method (getCredentialsForProtectionSpace : task : completionHandler :)]
+        #[method(getCredentialsForProtectionSpace:task:completionHandler:)]
         pub unsafe fn getCredentialsForProtectionSpace_task_completionHandler(
             &self,
             protectionSpace: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
             completionHandler: TodoBlock,
         );
-        # [method (setCredential : forProtectionSpace : task :)]
+        #[method(setCredential:forProtectionSpace:task:)]
         pub unsafe fn setCredential_forProtectionSpace_task(
             &self,
             credential: &NSURLCredential,
             protectionSpace: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
         );
-        # [method (removeCredential : forProtectionSpace : options : task :)]
+        #[method(removeCredential:forProtectionSpace:options:task:)]
         pub unsafe fn removeCredential_forProtectionSpace_options_task(
             &self,
             credential: &NSURLCredential,
@@ -87,14 +87,14 @@ extern_methods!(
             options: Option<&NSDictionary<NSString, Object>>,
             task: &NSURLSessionTask,
         );
-        # [method (getDefaultCredentialForProtectionSpace : task : completionHandler :)]
+        #[method(getDefaultCredentialForProtectionSpace:task:completionHandler:)]
         pub unsafe fn getDefaultCredentialForProtectionSpace_task_completionHandler(
             &self,
             space: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
             completionHandler: TodoBlock,
         );
-        # [method (setDefaultCredential : forProtectionSpace : task :)]
+        #[method(setDefaultCredential:forProtectionSpace:task:)]
         pub unsafe fn setDefaultCredential_forProtectionSpace_task(
             &self,
             credential: &NSURLCredential,

@@ -17,21 +17,21 @@ __inner_extern_class!(
 );
 extern_methods!(
     unsafe impl<KeyType: Message, ObjectType: Message> NSMapTable<KeyType, ObjectType> {
-        # [method_id (initWithKeyOptions : valueOptions : capacity :)]
+        #[method_id(initWithKeyOptions:valueOptions:capacity:)]
         pub unsafe fn initWithKeyOptions_valueOptions_capacity(
             &self,
             keyOptions: NSPointerFunctionsOptions,
             valueOptions: NSPointerFunctionsOptions,
             initialCapacity: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithKeyPointerFunctions : valuePointerFunctions : capacity :)]
+        #[method_id(initWithKeyPointerFunctions:valuePointerFunctions:capacity:)]
         pub unsafe fn initWithKeyPointerFunctions_valuePointerFunctions_capacity(
             &self,
             keyFunctions: &NSPointerFunctions,
             valueFunctions: &NSPointerFunctions,
             initialCapacity: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (mapTableWithKeyOptions : valueOptions :)]
+        #[method_id(mapTableWithKeyOptions:valueOptions:)]
         pub unsafe fn mapTableWithKeyOptions_valueOptions(
             keyOptions: NSPointerFunctionsOptions,
             valueOptions: NSPointerFunctionsOptions,
@@ -56,12 +56,12 @@ extern_methods!(
         pub unsafe fn keyPointerFunctions(&self) -> Id<NSPointerFunctions, Shared>;
         #[method_id(valuePointerFunctions)]
         pub unsafe fn valuePointerFunctions(&self) -> Id<NSPointerFunctions, Shared>;
-        # [method_id (objectForKey :)]
+        #[method_id(objectForKey:)]
         pub unsafe fn objectForKey(&self, aKey: Option<&KeyType>)
             -> Option<Id<ObjectType, Shared>>;
-        # [method (removeObjectForKey :)]
+        #[method(removeObjectForKey:)]
         pub unsafe fn removeObjectForKey(&self, aKey: Option<&KeyType>);
-        # [method (setObject : forKey :)]
+        #[method(setObject:forKey:)]
         pub unsafe fn setObject_forKey(
             &self,
             anObject: Option<&ObjectType>,

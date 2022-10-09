@@ -12,13 +12,13 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSMethodSignature {
-        # [method_id (signatureWithObjCTypes :)]
+        #[method_id(signatureWithObjCTypes:)]
         pub unsafe fn signatureWithObjCTypes(
             types: NonNull<c_char>,
         ) -> Option<Id<NSMethodSignature, Shared>>;
         #[method(numberOfArguments)]
         pub unsafe fn numberOfArguments(&self) -> NSUInteger;
-        # [method (getArgumentTypeAtIndex :)]
+        #[method(getArgumentTypeAtIndex:)]
         pub unsafe fn getArgumentTypeAtIndex(&self, idx: NSUInteger) -> NonNull<c_char>;
         #[method(frameLength)]
         pub unsafe fn frameLength(&self) -> NSUInteger;

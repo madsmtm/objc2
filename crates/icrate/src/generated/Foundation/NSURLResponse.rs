@@ -17,7 +17,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSURLResponse {
-        # [method_id (initWithURL : MIMEType : expectedContentLength : textEncodingName :)]
+        #[method_id(initWithURL:MIMEType:expectedContentLength:textEncodingName:)]
         pub unsafe fn initWithURL_MIMEType_expectedContentLength_textEncodingName(
             &self,
             URL: &NSURL,
@@ -47,7 +47,7 @@ extern_class!(
 );
 extern_methods!(
     unsafe impl NSHTTPURLResponse {
-        # [method_id (initWithURL : statusCode : HTTPVersion : headerFields :)]
+        #[method_id(initWithURL:statusCode:HTTPVersion:headerFields:)]
         pub unsafe fn initWithURL_statusCode_HTTPVersion_headerFields(
             &self,
             url: &NSURL,
@@ -59,12 +59,12 @@ extern_methods!(
         pub unsafe fn statusCode(&self) -> NSInteger;
         #[method_id(allHeaderFields)]
         pub unsafe fn allHeaderFields(&self) -> Id<NSDictionary, Shared>;
-        # [method_id (valueForHTTPHeaderField :)]
+        #[method_id(valueForHTTPHeaderField:)]
         pub unsafe fn valueForHTTPHeaderField(
             &self,
             field: &NSString,
         ) -> Option<Id<NSString, Shared>>;
-        # [method_id (localizedStringForStatusCode :)]
+        #[method_id(localizedStringForStatusCode:)]
         pub unsafe fn localizedStringForStatusCode(statusCode: NSInteger) -> Id<NSString, Shared>;
     }
 );
