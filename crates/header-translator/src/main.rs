@@ -1,9 +1,9 @@
 use std::collections::BTreeMap;
 use std::fs;
 use std::io::{self, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
-use apple_sdk::{Platform, SdkPath};
+use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, EntityVisitResult, Index};
 use quote::{format_ident, quote};
 
@@ -23,16 +23,41 @@ fn main() {
     let clang = Clang::new().unwrap();
     let index = Index::new(&clang, true, true);
 
+    let developer_dir = DeveloperDirectory::from(PathBuf::from(
+        std::env::args_os()
+            .skip(1)
+            .next()
+            .expect("must specify developer directory as first argument"),
+    ));
+
+    let sdks = developer_dir
+        .platforms()
+        .expect("developer dir platforms")
+        .into_iter()
+        .filter_map(|platform| {
+            matches!(&*platform, Platform::MacOsX | Platform::IPhoneOs).then(|| {
+                let sdks: Vec<_> = platform
+                    .find_sdks::<SimpleSdk>()
+                    .expect("platform sdks")
+                    .into_iter()
+                    .filter(|sdk| !sdk.is_symlink() && sdk.platform() == &*platform)
+                    .collect();
+                if sdks.len() != 1 {
+                    panic!("found multiple sdks {sdks:?} in {:?}", &*platform);
+                }
+                sdks[0].sdk_path()
+            })
+        });
+
     let mut result = None;
 
-    // TODO: Parse multiple SDKs, and compare
-    for path in [
-        workspace_dir.join("ideas/MacOSX-SDK-changes/MacOSXA.B.C.sdk"),
-        // Path::new("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"),
-    ] {
-        let sdk = SdkPath::from_path(path).expect("sdk from path");
+    // TODO: Compare SDKs
+    for sdk in sdks {
         println!("status: parsing {:?}...", sdk.platform);
-        result = Some(parse(&index, &configs, &sdk));
+        let res = parse(&index, &configs, &sdk);
+        if sdk.platform == Platform::MacOsX {
+            result = Some(res);
+        }
         println!("status: done parsing {:?}", sdk.platform);
     }
 
@@ -82,8 +107,8 @@ fn parse(
 ) -> BTreeMap<String, BTreeMap<String, RustFile>> {
     let (target, version_min) = match &sdk.platform {
         Platform::MacOsX => ("--target=x86_64-apple-macos", "-mmacosx-version-min=10.7"),
-        Platform::IPhoneOs => ("--target=x86_64-apple-ios", "-miphoneos-version-min=7.0"),
-        _ => ("--target=x86_64-apple-macos", "-mmacosx-version-min=10.7"),
+        Platform::IPhoneOs => ("--target=arm64-apple-ios", "-miphoneos-version-min=7.0"),
+        _ => todo!(),
     };
 
     let tu = index
