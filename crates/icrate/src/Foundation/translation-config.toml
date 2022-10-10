@@ -47,3 +47,7 @@ propertyListFromData_mutabilityOption_format_errorDescription = { skipped = true
 skipped = true
 [class.NSPropertyListSerialization.methods.writePropertyList_toStream_format_options_error]
 skipped = true
+
+# Not supported on clang 11.0.0
+[class.NSBundle.methods.localizedAttributedStringForKey_value_table]
+skipped = true

@@ -191,13 +191,6 @@ extern_methods!(
             value: Option<&NSString>,
             tableName: Option<&NSString>,
         ) -> Id<NSString, Shared>;
-        #[method_id(localizedAttributedStringForKey:value:table:)]
-        pub unsafe fn localizedAttributedStringForKey_value_table(
-            &self,
-            key: &NSString,
-            value: Option<&NSString>,
-            tableName: Option<&NSString>,
-        ) -> Id<NSAttributedString, Shared>;
         #[method_id(bundleIdentifier)]
         pub unsafe fn bundleIdentifier(&self) -> Option<Id<NSString, Shared>>;
         #[method_id(infoDictionary)]
