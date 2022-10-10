@@ -208,13 +208,13 @@ extern_class!(
 extern_methods!(
     unsafe impl NSXPCCoder {
         #[method(encodeXPCObject:forKey:)]
-        pub unsafe fn encodeXPCObject_forKey(&self, xpcObject: &xpc_object_t, key: &NSString);
-        #[method_id(decodeXPCObjectOfType:forKey:)]
+        pub unsafe fn encodeXPCObject_forKey(&self, xpcObject: xpc_object_t, key: &NSString);
+        #[method(decodeXPCObjectOfType:forKey:)]
         pub unsafe fn decodeXPCObjectOfType_forKey(
             &self,
             type_: xpc_type_t,
             key: &NSString,
-        ) -> Option<Id<xpc_object_t, Shared>>;
+        ) -> xpc_object_t;
         #[method_id(userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSObject, Shared>>;
         #[method(setUserInfo:)]

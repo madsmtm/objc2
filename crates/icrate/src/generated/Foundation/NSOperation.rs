@@ -144,10 +144,10 @@ extern_methods!(
         pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
         #[method(setQualityOfService:)]
         pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
-        #[method_id(underlyingQueue)]
-        pub unsafe fn underlyingQueue(&self) -> Option<Id<dispatch_queue_t, Shared>>;
+        #[method(underlyingQueue)]
+        pub unsafe fn underlyingQueue(&self) -> dispatch_queue_t;
         #[method(setUnderlyingQueue:)]
-        pub unsafe fn setUnderlyingQueue(&self, underlyingQueue: Option<&dispatch_queue_t>);
+        pub unsafe fn setUnderlyingQueue(&self, underlyingQueue: dispatch_queue_t);
         #[method(cancelAllOperations)]
         pub unsafe fn cancelAllOperations(&self);
         #[method(waitUntilAllOperationsAreFinished)]

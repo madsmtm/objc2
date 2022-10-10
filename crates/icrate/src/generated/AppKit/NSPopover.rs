@@ -30,12 +30,10 @@ extern_methods!(
         pub unsafe fn delegate(&self) -> Option<Id<NSPopoverDelegate, Shared>>;
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSPopoverDelegate>);
-        #[method_id(appearance)]
-        pub unsafe fn appearance(&self) -> Option<Id<NSAppearance, Shared>>;
+        #[method(appearance)]
+        pub unsafe fn appearance(&self) -> NSPopoverAppearance;
         #[method(setAppearance:)]
-        pub unsafe fn setAppearance(&self, appearance: Option<&NSAppearance>);
-        #[method_id(effectiveAppearance)]
-        pub unsafe fn effectiveAppearance(&self) -> Id<NSAppearance, Shared>;
+        pub unsafe fn setAppearance(&self, appearance: NSPopoverAppearance);
         #[method(behavior)]
         pub unsafe fn behavior(&self) -> NSPopoverBehavior;
         #[method(setBehavior:)]

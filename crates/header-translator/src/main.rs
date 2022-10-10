@@ -81,9 +81,9 @@ fn parse(
     sdk: &SdkPath,
 ) -> BTreeMap<String, BTreeMap<String, RustFile>> {
     let (target, version_min) = match &sdk.platform {
-        Platform::MacOsX => ("--target=x86_64-apple-macos", "-mmacosx-version-min=10.14"),
-        Platform::IPhoneOs => ("--target=x86_64-apple-ios", "-miphoneos-version-min=10.14"),
-        _ => ("--target=x86_64-apple-macos", "-mmacosx-version-min=10.14"),
+        Platform::MacOsX => ("--target=x86_64-apple-macos", "-mmacosx-version-min=10.7"),
+        Platform::IPhoneOs => ("--target=x86_64-apple-ios", "-miphoneos-version-min=7.0"),
+        _ => ("--target=x86_64-apple-macos", "-mmacosx-version-min=10.7"),
     };
 
     let tu = index
