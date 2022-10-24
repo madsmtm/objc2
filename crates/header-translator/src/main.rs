@@ -4,7 +4,7 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
-use clang::{Clang, EntityVisitResult, Index};
+use clang::{Clang, Entity, EntityVisitResult, Index};
 use quote::{format_ident, quote};
 
 use header_translator::{format_method_macro, run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt};
@@ -49,19 +49,32 @@ fn main() {
             })
         });
 
-    let mut result = None;
+    let mut result: BTreeMap<String, BTreeMap<String, RustFile>> = BTreeMap::new();
 
     // TODO: Compare SDKs
     for sdk in sdks {
         println!("status: parsing {:?}...", sdk.platform);
-        let res = parse(&index, &configs, &sdk);
-        if sdk.platform == Platform::MacOsX {
-            result = Some(res);
-        }
+        parse_and_visit_stmts(&index, &sdk, |library, file_name, entity| {
+            if let Some(config) = configs.get(library) {
+                if file_name != library {
+                    let files = result.entry(library.to_string()).or_default();
+                    let file = files
+                        .entry(file_name.to_string())
+                        .or_insert_with(RustFile::new);
+                    if let Some(stmt) = Stmt::parse(&entity, &config) {
+                        if sdk.platform == Platform::MacOsX {
+                            file.add_stmt(stmt);
+                        }
+                    }
+                }
+            } else {
+                // println!("library not found {library}");
+            }
+        });
         println!("status: done parsing {:?}", sdk.platform);
     }
 
-    for (library, files) in result.unwrap() {
+    for (library, files) in result {
         println!("status: writing framework {library}...");
         let output_path = crate_src.join("generated").join(&library);
         output_files(&output_path, files, FORMAT_INCREMENTALLY);
@@ -100,11 +113,11 @@ fn load_configs(crate_src: &Path) -> BTreeMap<String, Config> {
         .collect()
 }
 
-fn parse(
+fn parse_and_visit_stmts(
     index: &Index<'_>,
-    configs: &BTreeMap<String, Config>,
     sdk: &SdkPath,
-) -> BTreeMap<String, BTreeMap<String, RustFile>> {
+    mut f: impl FnMut(&str, &str, Entity<'_>),
+) {
     let (target, version_min) = match &sdk.platform {
         Platform::MacOsX => ("--target=x86_64-apple-macos", "-mmacosx-version-min=10.7"),
         Platform::IPhoneOs => ("--target=arm64-apple-ios", "-miphoneos-version-min=7.0"),
@@ -168,8 +181,6 @@ fn parse(
     dbg!(&entity);
     dbg!(entity.get_availability());
 
-    let mut result: BTreeMap<String, BTreeMap<String, RustFile>> = BTreeMap::new();
-
     let framework_dir = sdk.path.join("System/Library/Frameworks");
     entity.visit_children(|entity, _parent| {
         if let Some(location) = entity.get_location() {
@@ -185,31 +196,20 @@ fn parse(
                         .expect("component to_str")
                         .strip_suffix(".framework")
                         .expect("framework fileending");
-                    let path = components.as_path();
 
-                    if let Some(config) = configs.get(library) {
-                        let name = path
-                            .file_stem()
-                            .expect("path file stem")
-                            .to_string_lossy()
-                            .to_owned();
-                        if name != library {
-                            let files = result.entry(library.to_string()).or_default();
-                            let file = files.entry(name.to_string()).or_insert_with(RustFile::new);
-                            if let Some(stmt) = Stmt::parse(&entity, &config) {
-                                file.add_stmt(stmt);
-                            }
-                        }
-                    } else {
-                        // println!("library not found {library}");
-                    }
+                    let path = components.as_path();
+                    let name = path
+                        .file_stem()
+                        .expect("path file stem")
+                        .to_string_lossy()
+                        .to_owned();
+
+                    f(&library, &name, entity);
                 }
             }
         }
         EntityVisitResult::Continue
     });
-
-    result
 }
 
 fn output_files(
