@@ -194,7 +194,7 @@ mod tests {
         } else {
             "abc{\n}"
         };
-        assert_eq!(format!("{:?}", s), expected);
+        assert_eq!(format!("{s:?}"), expected);
 
         let obj: Id<Object, Owned> = unsafe { Id::cast(NSObject::new()) };
         let ptr: *const Object = &*obj;
@@ -203,10 +203,10 @@ mod tests {
             &NSDictionary::from_keys_and_objects(&[&*NSString::from_str("test")], vec![obj]),
         );
         let expected = if cfg!(feature = "gnustep-1-7") {
-            format!("abc{{test = \"<NSObject: {:?}>\"; }}", ptr)
+            format!("abc{{test = \"<NSObject: {ptr:?}>\"; }}")
         } else {
-            format!("abc{{\n    test = \"<NSObject: {:?}>\";\n}}", ptr)
+            format!("abc{{\n    test = \"<NSObject: {ptr:?}>\";\n}}")
         };
-        assert_eq!(format!("{:?}", s), expected);
+        assert_eq!(format!("{s:?}"), expected);
     }
 }

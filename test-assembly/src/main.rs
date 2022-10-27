@@ -108,7 +108,7 @@ fn main() {
             fs::write(expected_file, actual).unwrap();
         } else if let Ok(expected) = fs::read_to_string(expected_file) {
             if expected != actual {
-                eprintln!("\n===Expected===\n{}\n===Actual===\n{}", expected, actual);
+                eprintln!("\n===Expected===\n{expected}\n===Actual===\n{actual}");
                 panic!("expected and actual did not match.");
             }
         } else {

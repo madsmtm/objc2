@@ -60,6 +60,6 @@ mod tests {
             "NSProcessInfo {{ process_name: {:?}, .. }}",
             info.process_name()
         );
-        assert_eq!(format!("{:?}", info), expected);
+        assert_eq!(format!("{info:?}"), expected);
     }
 }

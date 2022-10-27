@@ -258,7 +258,7 @@ fn display_fmt(this: &Encoding, f: &mut fmt::Formatter<'_>, level: NestingLevel)
         Primitive(primitive) => f.write_str(primitive.to_str()),
         BitField(b, _type) => {
             // TODO: Use the type on GNUStep (nesting level?)
-            write!(f, "b{}", b)
+            write!(f, "b{b}")
         }
         Indirection(kind, t) => {
             write!(f, "{}", kind.prefix())?;
@@ -266,13 +266,13 @@ fn display_fmt(this: &Encoding, f: &mut fmt::Formatter<'_>, level: NestingLevel)
         }
         Array(len, item) => {
             write!(f, "[")?;
-            write!(f, "{}", len)?;
+            write!(f, "{len}")?;
             display_fmt(item, f, level.array())?;
             write!(f, "]")
         }
         Container(kind, name, fields) => {
             write!(f, "{}", kind.start())?;
-            write!(f, "{}", name)?;
+            write!(f, "{name}")?;
             if let Some(level) = level.container() {
                 write!(f, "=")?;
                 for field in fields {

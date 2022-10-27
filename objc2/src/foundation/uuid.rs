@@ -161,8 +161,8 @@ mod tests {
     fn display_debug() {
         let uuid = NSUUID::from_bytes([10; 16]);
         let expected = "0A0A0A0A-0A0A-0A0A-0A0A-0A0A0A0A0A0A";
-        assert_eq!(format!("{}", uuid), expected);
-        assert_eq!(format!("{:?}", uuid), expected);
+        assert_eq!(format!("{uuid}"), expected);
+        assert_eq!(format!("{uuid:?}"), expected);
     }
 
     // #[test]

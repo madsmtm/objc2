@@ -269,6 +269,6 @@ mod tests {
     ..
 }}"
         );
-        assert_eq!(format!("{:#?}", NOOP_BLOCK), expected);
+        assert_eq!(format!("{NOOP_BLOCK:#?}"), expected);
     }
 }

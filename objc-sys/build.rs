@@ -46,11 +46,11 @@ enum Runtime {
 use Runtime::*;
 
 fn get_env(env: &str) -> Option<String> {
-    println!("cargo:rerun-if-env-changed={}", env);
+    println!("cargo:rerun-if-env-changed={env}");
     match env::var(env) {
         Ok(var) => Some(var),
         Err(env::VarError::NotPresent) => None,
-        Err(env::VarError::NotUnicode(var)) => panic!("Invalid unicode for {}: {:?}", env, var),
+        Err(env::VarError::NotUnicode(var)) => panic!("Invalid unicode for {env}: {var:?}"),
     }
 }
 
@@ -154,7 +154,7 @@ fn main() {
         GNUStep(_, _) | WinObjC => "gnustep",
         ObjFW(_) => "objfw",
     };
-    println!("cargo:rustc-cfg={}", runtime_cfg);
+    println!("cargo:rustc-cfg={runtime_cfg}");
 
     if let Apple(runtime) = &runtime {
         // A few things are defined differently depending on the __OBJC2__
@@ -182,7 +182,7 @@ fn main() {
             match runtime {
                 MacOS(version) | IOS(version) | WatchOS(version) | TvOS(version) => {
                     if let Some(version) = version {
-                        format!("{}-{}", clang_runtime_str, version)
+                        format!("{clang_runtime_str}-{version}")
                     } else {
                         clang_runtime_str.into()
                     }
@@ -191,13 +191,13 @@ fn main() {
         }
         // Default in clang is 1.6
         // GNUStep's own default is 1.8
-        GNUStep(major, minor) => format!("gnustep-{}.{}", major, minor),
+        GNUStep(major, minor) => format!("gnustep-{major}.{minor}"),
         // WinObjC's libobjc2 is just a fork of gnustep's from version 1.8
         WinObjC => "gnustep-1.8".into(),
         ObjFW(version) => {
             // Default in clang
             let version = version.as_deref().unwrap_or("0.8");
-            format!("objfw-{}", version)
+            format!("objfw-{version}")
         }
     };
 
@@ -229,7 +229,7 @@ fn main() {
         cc_args.push_str(compat_headers.to_str().unwrap());
     }
 
-    println!("cargo:cc_args={}", cc_args); // DEP_OBJC_[version]_CC_ARGS
+    println!("cargo:cc_args={cc_args}"); // DEP_OBJC_[version]_CC_ARGS
 
     if let Runtime::ObjFW(_) = &runtime {
         // Link to libobjfw-rt

@@ -400,8 +400,8 @@ mod tests {
     fn display_debug() {
         fn assert_display_debug<T: fmt::Debug + fmt::Display>(val: T, expected: &str) {
             // The two impls for these happen to be the same
-            assert_eq!(format!("{}", val), expected);
-            assert_eq!(format!("{:?}", val), expected);
+            assert_eq!(format!("{val}"), expected);
+            assert_eq!(format!("{val:?}"), expected);
         }
         assert_display_debug(NSNumber::new_u8(171), "171");
         assert_display_debug(NSNumber::new_i8(-12), "-12");

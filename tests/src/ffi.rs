@@ -70,7 +70,7 @@ extern "C" {
 extern "C" fn debug_block(layout: &ffi::Block_layout) {
     let block: &Block<(), ()> =
         unsafe { &*(layout as *const ffi::Block_layout as *const Block<(), ()>) };
-    std::println!("{:#?}", block);
+    std::println!("{block:#?}");
 }
 
 #[cfg(test)]

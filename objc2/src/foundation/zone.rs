@@ -22,7 +22,7 @@ pub struct NSZone {
 
 impl fmt::Debug for NSZone {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "<NSZone {:p}>", self)
+        write!(f, "<NSZone {self:p}>")
     }
 }
 

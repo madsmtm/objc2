@@ -223,6 +223,6 @@ mod tests {
     fn test_debug() {
         let bytes = [3, 7, 16, 52, 112, 19];
         let data = NSData::with_bytes(&bytes);
-        assert_eq!(format!("{:?}", data), "[3, 7, 16, 52, 112, 19]");
+        assert_eq!(format!("{data:?}"), "[3, 7, 16, 52, 112, 19]");
     }
 }

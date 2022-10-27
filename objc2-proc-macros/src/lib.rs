@@ -35,7 +35,7 @@ fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
                     if let TokenTree::Ident(ident) = token {
                         ident
                     } else {
-                        panic!("Expected ident, got {:?}", token)
+                        panic!("Expected ident, got {token:?}")
                     }
                 })
                 .collect::<Vec<_>>()
@@ -43,7 +43,7 @@ fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
         } else if let TokenTree::Ident(ident) = token {
             vec![ident].into_iter()
         } else {
-            panic!("Expected group or ident, got {:?}", token)
+            panic!("Expected group or ident, got {token:?}")
         }
     })
 }

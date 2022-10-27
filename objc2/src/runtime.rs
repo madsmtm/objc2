@@ -416,7 +416,7 @@ impl Class {
 
     /// Returns the size of instances of self.
     pub fn instance_size(&self) -> usize {
-        unsafe { ffi::class_getInstanceSize(self.as_ptr()) as usize }
+        unsafe { ffi::class_getInstanceSize(self.as_ptr()) }
     }
 
     /// Returns a specified instance method for self, or [`None`] if self and
@@ -1157,9 +1157,9 @@ mod tests {
     fn test_debug() {
         assert_eq!(format!("{:?}", sel!(abc:)), "abc:");
         let cls = test_utils::custom_class();
-        assert_eq!(format!("{:?}", cls), "CustomObject");
+        assert_eq!(format!("{cls:?}"), "CustomObject");
         let protocol = test_utils::custom_protocol();
-        assert_eq!(format!("{:?}", protocol), "CustomProtocol");
+        assert_eq!(format!("{protocol:?}"), "CustomProtocol");
 
         let object = test_utils::custom_object();
         assert_eq!(

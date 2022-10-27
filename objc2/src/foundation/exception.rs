@@ -147,9 +147,9 @@ impl alloc::borrow::ToOwned for NSException {
 impl fmt::Debug for NSException {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let obj: &Object = self.as_ref();
-        write!(f, "{:?} '{}'", obj, self.name())?;
+        write!(f, "{obj:?} '{}'", self.name())?;
         if let Some(reason) = self.reason() {
-            write!(f, " reason:{}", reason)?;
+            write!(f, " reason:{reason}")?;
         } else {
             write!(f, " reason:(NULL)")?;
         }
@@ -176,17 +176,17 @@ mod tests {
         assert_eq!(exc.reason().unwrap(), NSString::from_str("def"));
         assert!(exc.user_info().is_none());
 
-        let debug = format!("<NSException: {:p}> 'abc' reason:def", exc);
-        assert_eq!(format!("{:?}", exc), debug);
+        let debug = format!("<NSException: {exc:p}> 'abc' reason:def");
+        assert_eq!(format!("{exc:?}"), debug);
 
         let description = if cfg!(feature = "gnustep-1-7") {
-            format!("<NSException: {:p}> NAME:abc REASON:def", exc)
+            format!("<NSException: {exc:p}> NAME:abc REASON:def")
         } else {
             "def".into()
         };
 
         let exc: &NSObject = &exc;
-        assert_eq!(format!("{:?}", exc), description);
+        assert_eq!(format!("{exc:?}"), description);
     }
 
     #[test]

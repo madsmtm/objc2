@@ -48,11 +48,11 @@ fn main() {
     // Create an instance
     let obj = NSObject::new();
 
-    println!("NSObject address: {:p}", obj);
+    println!("NSObject address: {obj:p}");
 
     // Access an ivar of the object
     //
     // As before, you should not rely on the `isa` ivar being available!
     let isa = unsafe { *obj.ivar::<*const Class>("isa") };
-    println!("NSObject isa: {:?}", isa);
+    println!("NSObject isa: {isa:?}");
 }

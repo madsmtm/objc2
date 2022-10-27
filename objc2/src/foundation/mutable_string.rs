@@ -178,8 +178,8 @@ mod tests {
     #[test]
     fn display_debug() {
         let s = NSMutableString::from_str("test\"123");
-        assert_eq!(format!("{}", s), "test\"123");
-        assert_eq!(format!("{:?}", s), r#""test\"123""#);
+        assert_eq!(format!("{s}"), "test\"123");
+        assert_eq!(format!("{s:?}"), r#""test\"123""#);
     }
 
     #[test]

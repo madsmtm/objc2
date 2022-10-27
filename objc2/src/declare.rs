@@ -238,10 +238,10 @@ fn count_args(sel: Sel) -> usize {
 
 fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
-    let mut types = format!("{}{}{}", ret, <*mut Object>::ENCODING, Sel::ENCODING);
+    let mut types = format!("{ret}{}{}", <*mut Object>::ENCODING, Sel::ENCODING);
     for enc in args {
         use core::fmt::Write;
-        write!(&mut types, "{}", enc).unwrap();
+        write!(&mut types, "{enc}").unwrap();
     }
     CString::new(types).unwrap()
 }
@@ -402,7 +402,7 @@ impl ClassBuilder {
                 types.as_ptr(),
             )
         });
-        assert!(success.as_bool(), "Failed to add method {:?}", sel);
+        assert!(success.as_bool(), "Failed to add method {sel:?}");
     }
 
     fn metaclass_mut(&mut self) -> *mut ffi::objc_class {
@@ -469,7 +469,7 @@ impl ClassBuilder {
                 types.as_ptr(),
             )
         });
-        assert!(success.as_bool(), "Failed to add class method {:?}", sel);
+        assert!(success.as_bool(), "Failed to add class method {sel:?}");
     }
 
     /// Adds an ivar with type `T` and the provided name.
@@ -498,7 +498,7 @@ impl ClassBuilder {
                 encoding.as_ptr(),
             )
         });
-        assert!(success.as_bool(), "Failed to add ivar {}", name);
+        assert!(success.as_bool(), "Failed to add ivar {name}");
     }
 
     /// Adds an instance variable from an [`IvarType`].
@@ -525,7 +525,7 @@ impl ClassBuilder {
     pub fn add_protocol(&mut self, proto: &Protocol) {
         let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
         let success = Bool::from_raw(success).as_bool();
-        assert!(success, "Failed to add protocol {:?}", proto);
+        assert!(success, "Failed to add protocol {proto:?}");
     }
 
     // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
