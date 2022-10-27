@@ -4,7 +4,7 @@ use core::ptr;
 
 use super::{Id, Owned};
 use crate::foundation::{NSObject, NSZone};
-use crate::{declare_class, msg_send, ClassType};
+use crate::{declare_class, msg_send, msg_send_id, ClassType};
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub(crate) struct ThreadTestData {
@@ -74,7 +74,7 @@ declare_class!(
         }
 
         #[sel(alloc)]
-        fn alloc() -> *mut Self {
+        fn alloc_() -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
             let superclass = NSObject::class().metaclass();
             let zone: *const NSZone = ptr::null();
@@ -161,6 +161,106 @@ declare_class!(
         fn method_returning_null(&self) -> *const Self {
             ptr::null()
         }
+
+        #[sel(boolAndShouldError:error:)]
+        fn class_error_bool(should_error: bool, err: Option<&mut *mut RcTestObject>) -> bool {
+            if should_error {
+                if let Some(err) = err {
+                    *err = RcTestObject::new().autorelease_inner();
+                }
+                false
+            } else {
+                true
+            }
+        }
+
+        #[sel(boolAndShouldError:error:)]
+        fn instance_error_bool(
+            &self,
+            should_error: bool,
+            err: Option<&mut *mut RcTestObject>,
+        ) -> bool {
+            if should_error {
+                if let Some(err) = err {
+                    *err = RcTestObject::new().autorelease_inner();
+                }
+                false
+            } else {
+                true
+            }
+        }
+
+        #[sel(idAndShouldError:error:)]
+        fn class_error_id(
+            should_error: bool,
+            err: Option<&mut *mut RcTestObject>,
+        ) -> *mut RcTestObject {
+            if should_error {
+                if let Some(err) = err {
+                    *err = RcTestObject::new().autorelease_inner();
+                }
+                ptr::null_mut()
+            } else {
+                RcTestObject::new().autorelease_return()
+            }
+        }
+
+        #[sel(idAndShouldError:error:)]
+        fn instance_error_id(
+            &self,
+            should_error: bool,
+            err: Option<&mut *mut RcTestObject>,
+        ) -> *mut RcTestObject {
+            if should_error {
+                if let Some(err) = err {
+                    *err = RcTestObject::new().autorelease_inner();
+                }
+                ptr::null_mut()
+            } else {
+                RcTestObject::new().autorelease_return()
+            }
+        }
+
+        #[sel(newAndShouldError:error:)]
+        fn new_error(should_error: bool, err: Option<&mut *mut RcTestObject>) -> *mut Self {
+            if should_error {
+                if let Some(err) = err {
+                    *err = RcTestObject::new().autorelease_inner();
+                }
+                ptr::null_mut()
+            } else {
+                unsafe { msg_send![Self::class(), new] }
+            }
+        }
+
+        #[sel(allocAndShouldError:error:)]
+        fn alloc_error(should_error: bool, err: Option<&mut *mut RcTestObject>) -> *mut Self {
+            if should_error {
+                if let Some(err) = err {
+                    *err = RcTestObject::new().autorelease_inner();
+                }
+                ptr::null_mut()
+            } else {
+                unsafe { msg_send![Self::class(), alloc] }
+            }
+        }
+
+        #[sel(initAndShouldError:error:)]
+        fn init_error(
+            &mut self,
+            should_error: bool,
+            err: Option<&mut *mut RcTestObject>,
+        ) -> *mut Self {
+            if should_error {
+                if let Some(err) = err {
+                    *err = RcTestObject::new().autorelease_inner();
+                }
+                let _: () = unsafe { msg_send![self, release] };
+                ptr::null_mut()
+            } else {
+                unsafe { msg_send![self, init] }
+            }
+        }
     }
 );
 
@@ -174,12 +274,203 @@ impl RcTestObject {
     }
 }
 
+declare_class!(
+    #[derive(Debug, PartialEq)]
+    pub(crate) struct RcTestObjectSubclass {}
+
+    unsafe impl ClassType for RcTestObjectSubclass {
+        #[inherits(NSObject)]
+        type Super = RcTestObject;
+    }
+);
+
+impl RcTestObjectSubclass {
+    pub(crate) fn new() -> Id<Self, Owned> {
+        unsafe { msg_send_id![Self::class(), new] }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::rc::{autoreleasepool, Allocated, Shared};
 
     #[test]
     fn ensure_declared_name() {
         assert_eq!(RcTestObject::class().name(), RcTestObject::NAME);
+    }
+
+    macro_rules! test_error_bool {
+        ($expected:expr, $($obj:tt)*) => {
+            // Succeeds
+            let res: Result<(), Id<RcTestObject, Shared>> = unsafe {
+                msg_send![$($obj)*, boolAndShouldError: false, error: _]
+            };
+            assert_eq!(res, Ok(()));
+            $expected.assert_current();
+
+            // Errors
+            let res = autoreleasepool(|_pool| {
+                // `Ok` type is inferred to be `()`
+                let res: Id<RcTestObject, Shared> = unsafe {
+                    msg_send![$($obj)*, boolAndShouldError: true, error: _]
+                }.expect_err("not err");
+                $expected.alloc += 1;
+                $expected.init += 1;
+                $expected.autorelease += 1;
+                $expected.retain += 1;
+                $expected.assert_current();
+                res
+            });
+            $expected.release += 1;
+            $expected.assert_current();
+
+            drop(res);
+            $expected.release += 1;
+            $expected.dealloc += 1;
+            $expected.assert_current();
+        }
+    }
+
+    #[test]
+    fn test_error_bool() {
+        let mut expected = ThreadTestData::current();
+
+        let cls = RcTestObject::class();
+        test_error_bool!(expected, cls);
+
+        let obj = RcTestObject::new();
+        expected.alloc += 1;
+        expected.init += 1;
+        test_error_bool!(expected, &obj);
+
+        let obj = RcTestObjectSubclass::new();
+        expected.alloc += 1;
+        expected.init += 1;
+        test_error_bool!(expected, &obj);
+        test_error_bool!(expected, super(&obj));
+        test_error_bool!(expected, super(&obj, RcTestObjectSubclass::class()));
+        test_error_bool!(expected, super(&obj, RcTestObject::class()));
+    }
+
+    // This is imperfect, but will do for now.
+    // See also `tests/id_retain_autoreleased.rs`.
+    //
+    // Work around https://github.com/rust-lang/rust-clippy/issues/9737:
+    const IF_AUTORELEASE_NOT_SKIPPED: usize = if cfg!(feature = "gnustep-1-7") {
+        1
+    } else if cfg!(any(
+        debug_assertions,
+        feature = "exception",
+        feature = "verify_message"
+    )) {
+        2
+    } else {
+        1
+    } - 1;
+
+    macro_rules! test_error_id {
+        ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
+            // Succeeds
+            let res = autoreleasepool(|_pool| {
+                let res: Result<Id<RcTestObject, Owned>, Id<RcTestObject, Shared>> = unsafe {
+                    msg_send_id![$($obj)*, $sel: false, error: _]
+                };
+                let res = res.expect("not ok");
+                $expected.alloc += 1;
+                $expected.init += 1;
+                $expected.autorelease += $if_autorelease_not_skipped;
+                $expected.retain += $if_autorelease_not_skipped;
+                $expected.assert_current();
+                res
+            });
+            $expected.release += $if_autorelease_not_skipped;
+            $expected.assert_current();
+
+            drop(res);
+            $expected.release += 1;
+            $expected.dealloc += 1;
+            $expected.assert_current();
+
+            // Errors
+            let res = autoreleasepool(|_pool| {
+                let res: Result<Id<RcTestObject, Owned>, Id<RcTestObject, Shared>> = unsafe {
+                    msg_send_id![$($obj)*, $sel: true, error: _]
+                };
+                $expected.alloc += 1;
+                $expected.init += 1;
+                $expected.autorelease += 1;
+                $expected.retain += 1;
+                $expected.assert_current();
+                res.expect_err("not err")
+            });
+            $expected.release += 1;
+            $expected.assert_current();
+
+            drop(res);
+            $expected.release += 1;
+            $expected.dealloc += 1;
+            $expected.assert_current();
+        }
+    }
+
+    #[test]
+    fn test_error_id() {
+        let mut expected = ThreadTestData::current();
+
+        let cls = RcTestObject::class();
+        test_error_id!(expected, IF_AUTORELEASE_NOT_SKIPPED, idAndShouldError, cls);
+        test_error_id!(expected, 0, newAndShouldError, cls);
+
+        let obj = RcTestObject::new();
+        expected.alloc += 1;
+        expected.init += 1;
+        test_error_id!(expected, IF_AUTORELEASE_NOT_SKIPPED, idAndShouldError, &obj);
+
+        expected.alloc -= 1;
+        expected.release -= 1;
+        expected.dealloc -= 1;
+        test_error_id!(expected, 0, initAndShouldError, {
+            expected.alloc += 1;
+            expected.release += 1;
+            expected.dealloc += 1;
+            RcTestObject::alloc()
+        });
+    }
+
+    #[test]
+    fn test_error_alloc() {
+        let mut expected = ThreadTestData::current();
+
+        // Succeeds
+        let res: Result<Allocated<RcTestObject>, Id<RcTestObject, Shared>> =
+            unsafe { msg_send_id![RcTestObject::class(), allocAndShouldError: false, error: _] };
+        let res = res.expect("not ok");
+        expected.alloc += 1;
+        expected.assert_current();
+
+        drop(res);
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
+
+        // Errors
+        let res = autoreleasepool(|_pool| {
+            let res: Result<Allocated<RcTestObject>, Id<RcTestObject, Shared>> =
+                unsafe { msg_send_id![RcTestObject::class(), allocAndShouldError: true, error: _] };
+            expected.alloc += 1;
+            expected.init += 1;
+            expected.autorelease += 1;
+            expected.retain += 1;
+            expected.assert_current();
+            res.expect_err("not err")
+        });
+        expected.release += 1;
+        expected.assert_current();
+
+        drop(res);
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
     }
 }

@@ -4,7 +4,7 @@ error[E0282]: type annotations needed
   |         msg_send![cls, new];
   |         ^^^^^^^^^^^^^^^^^^^
   |
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider giving `result` an explicit type
  --> $WORKSPACE/objc2/src/macros.rs
   |

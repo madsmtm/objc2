@@ -1,12 +1,15 @@
 #[cfg(feature = "verify_message")]
 use alloc::vec::Vec;
+use core::ptr;
 #[cfg(feature = "verify_message")]
 use std::collections::HashSet;
 
 use crate::declare::ClassBuilder;
 #[cfg(feature = "verify_message")]
 use crate::declare::MethodImplementation;
-use crate::rc::{Allocated, Id, Ownership};
+use crate::encode::Encode;
+use crate::message::__TupleExtender;
+use crate::rc::{Allocated, Id, Ownership, Shared};
 #[cfg(feature = "verify_message")]
 use crate::runtime::MethodDescription;
 use crate::runtime::{Class, Object, Protocol, Sel};
@@ -103,6 +106,56 @@ pub trait MsgSendId<T, U> {
         sel: Sel,
         args: A,
     ) -> R;
+
+    /// Add an extra error argument to the argument list, call
+    /// `send_message_id` with that, and return an error if one occurred.
+    #[inline]
+    #[track_caller]
+    unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E, Shared>>
+    where
+        *mut *mut E: Encode,
+        A: __TupleExtender<*mut *mut E>,
+        <A as __TupleExtender<*mut *mut E>>::PlusOneArgument: MessageArguments,
+        E: Message,
+        Option<U>: MaybeUnwrap<Input = U>,
+    {
+        let mut err: *mut E = ptr::null_mut();
+        let args = args.add_argument(&mut err);
+        let res: Option<U> = unsafe { Self::send_message_id(obj, sel, args) };
+        // As per the Cocoa documentation:
+        // > Success or failure is indicated by the return value of the
+        // > method. Although Cocoa methods that indirectly return error
+        // > objects in the Cocoa error domain are guaranteed to return such
+        // > objects if the method indicates failure by directly returning
+        // > `nil` or `NO`, you should always check that the return value is
+        // > `nil` or `NO` before attempting to do anything with the `NSError`
+        // > object.
+        if let Some(res) = res {
+            // In this case, the error is likely not created. If it is, it is
+            // autoreleased anyhow, so it would be a waste to retain and
+            // release it.
+            Ok(res)
+        } else {
+            // In this case, the error has very likely been created, but has
+            // been autoreleased (as is common for "out parameters"). Hence we
+            // need to retain it if we want it to live across autorelease
+            // pools.
+            //
+            // SAFETY: The closure `f` is guaranteed to populate the error
+            // object, or leave it as NULL. The error is shared, and all
+            // holders of the error know this, so is safe to retain.
+            Err(unsafe { encountered_error(err) })
+        }
+    }
+}
+
+// Marked `cold` to tell the optimizer that errors are comparatively rare.
+// And intentionally not inlined, for much the same reason.
+#[cold]
+#[track_caller]
+unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E, Shared> {
+    // SAFETY: Ensured by caller
+    unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NULL")
 }
 
 impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>> for New {
@@ -555,6 +608,7 @@ impl Drop for ClassProtocolMethodsBuilder<'_, '_> {
 mod tests {
     use super::*;
 
+    use alloc::string::ToString;
     use alloc::vec;
     use core::ptr;
 
@@ -777,80 +831,92 @@ mod tests {
 
     #[test]
     fn test_in_selector_family() {
+        fn assert_in_family(selector: &str, family: &str) {
+            assert!(in_selector_family(selector.as_bytes(), family.as_bytes()));
+            let selector = selector.to_string() + "\0";
+            assert!(in_selector_family(selector.as_bytes(), family.as_bytes()));
+        }
+
+        fn assert_not_in_family(selector: &str, family: &str) {
+            assert!(!in_selector_family(selector.as_bytes(), family.as_bytes()));
+            let selector = selector.to_string() + "\0";
+            assert!(!in_selector_family(selector.as_bytes(), family.as_bytes()));
+        }
+
         // Common cases
 
-        assert!(in_selector_family(b"alloc", b"alloc"));
-        assert!(in_selector_family(b"allocWithZone:", b"alloc"));
-        assert!(!in_selector_family(b"dealloc", b"alloc"));
-        assert!(!in_selector_family(b"initialize", b"init"));
-        assert!(!in_selector_family(b"decimalNumberWithDecimal:", b"init"));
-        assert!(in_selector_family(b"initWithCapacity:", b"init"));
-        assert!(in_selector_family(b"_initButPrivate:withParam:", b"init"));
-        assert!(!in_selector_family(b"description", b"init"));
-        assert!(!in_selector_family(b"inIT", b"init"));
+        assert_in_family("alloc", "alloc");
+        assert_in_family("allocWithZone:", "alloc");
+        assert_not_in_family("dealloc", "alloc");
+        assert_not_in_family("initialize", "init");
+        assert_not_in_family("decimalNumberWithDecimal:", "init");
+        assert_in_family("initWithCapacity:", "init");
+        assert_in_family("_initButPrivate:withParam:", "init");
+        assert_not_in_family("description", "init");
+        assert_not_in_family("inIT", "init");
 
-        assert!(!in_selector_family(b"init", b"copy"));
-        assert!(!in_selector_family(b"copyingStuff:", b"copy"));
-        assert!(in_selector_family(b"copyWithZone:", b"copy"));
-        assert!(!in_selector_family(b"initWithArray:copyItems:", b"copy"));
-        assert!(in_selector_family(b"copyItemAtURL:toURL:error:", b"copy"));
+        assert_not_in_family("init", "copy");
+        assert_not_in_family("copyingStuff:", "copy");
+        assert_in_family("copyWithZone:", "copy");
+        assert_not_in_family("initWithArray:copyItems:", "copy");
+        assert_in_family("copyItemAtURL:toURL:error:", "copy");
 
-        assert!(!in_selector_family(b"mutableCopying", b"mutableCopy"));
-        assert!(in_selector_family(b"mutableCopyWithZone:", b"mutableCopy"));
-        assert!(in_selector_family(b"mutableCopyWithZone:", b"mutableCopy"));
+        assert_not_in_family("mutableCopying", "mutableCopy");
+        assert_in_family("mutableCopyWithZone:", "mutableCopy");
+        assert_in_family("mutableCopyWithZone:", "mutableCopy");
 
-        assert!(in_selector_family(
-            b"newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
-            b"new"
-        ));
-        assert!(in_selector_family(
-            b"newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
-            b"new"
-        ));
-        assert!(!in_selector_family(b"newsstandAssetDownload", b"new"));
+        assert_in_family(
+            "newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
+            "new",
+        );
+        assert_in_family(
+            "newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
+            "new",
+        );
+        assert_not_in_family("newsstandAssetDownload", "new");
 
         // Trying to weed out edge-cases:
 
-        assert!(in_selector_family(b"__abcDef", b"abc"));
-        assert!(in_selector_family(b"_abcDef", b"abc"));
-        assert!(in_selector_family(b"abcDef", b"abc"));
-        assert!(in_selector_family(b"___a", b"a"));
-        assert!(in_selector_family(b"__a", b"a"));
-        assert!(in_selector_family(b"_a", b"a"));
-        assert!(in_selector_family(b"a", b"a"));
+        assert_in_family("__abcDef", "abc");
+        assert_in_family("_abcDef", "abc");
+        assert_in_family("abcDef", "abc");
+        assert_in_family("___a", "a");
+        assert_in_family("__a", "a");
+        assert_in_family("_a", "a");
+        assert_in_family("a", "a");
 
-        assert!(!in_selector_family(b"_abcdef", b"abc"));
-        assert!(!in_selector_family(b"_abcdef", b"def"));
-        assert!(!in_selector_family(b"_bcdef", b"abc"));
-        assert!(!in_selector_family(b"a_bc", b"abc"));
-        assert!(!in_selector_family(b"abcdef", b"abc"));
-        assert!(!in_selector_family(b"abcdef", b"def"));
-        assert!(!in_selector_family(b"abcdef", b"abb"));
-        assert!(!in_selector_family(b"___", b"a"));
-        assert!(!in_selector_family(b"_", b"a"));
-        assert!(!in_selector_family(b"", b"a"));
+        assert_not_in_family("_abcdef", "abc");
+        assert_not_in_family("_abcdef", "def");
+        assert_not_in_family("_bcdef", "abc");
+        assert_not_in_family("a_bc", "abc");
+        assert_not_in_family("abcdef", "abc");
+        assert_not_in_family("abcdef", "def");
+        assert_not_in_family("abcdef", "abb");
+        assert_not_in_family("___", "a");
+        assert_not_in_family("_", "a");
+        assert_not_in_family("", "a");
 
-        assert!(in_selector_family(b"copy", b"copy"));
-        assert!(in_selector_family(b"copy:", b"copy"));
-        assert!(in_selector_family(b"copyMe", b"copy"));
-        assert!(in_selector_family(b"_copy", b"copy"));
-        assert!(in_selector_family(b"_copy:", b"copy"));
-        assert!(in_selector_family(b"_copyMe", b"copy"));
-        assert!(!in_selector_family(b"copying", b"copy"));
-        assert!(!in_selector_family(b"copying:", b"copy"));
-        assert!(!in_selector_family(b"_copying", b"copy"));
-        assert!(!in_selector_family(b"Copy", b"copy"));
-        assert!(!in_selector_family(b"COPY", b"copy"));
+        assert_in_family("copy", "copy");
+        assert_in_family("copy:", "copy");
+        assert_in_family("copyMe", "copy");
+        assert_in_family("_copy", "copy");
+        assert_in_family("_copy:", "copy");
+        assert_in_family("_copyMe", "copy");
+        assert_not_in_family("copying", "copy");
+        assert_not_in_family("copying:", "copy");
+        assert_not_in_family("_copying", "copy");
+        assert_not_in_family("Copy", "copy");
+        assert_not_in_family("COPY", "copy");
 
         // Empty family (not supported)
-        assert!(in_selector_family(b"___", b""));
-        assert!(in_selector_family(b"__", b""));
-        assert!(in_selector_family(b"_", b""));
-        assert!(in_selector_family(b"", b""));
-        assert!(!in_selector_family(b"_a", b""));
-        assert!(!in_selector_family(b"a", b""));
-        assert!(in_selector_family(b"_A", b""));
-        assert!(in_selector_family(b"A", b""));
+        assert_in_family("___", "");
+        assert_in_family("__", "");
+        assert_in_family("_", "");
+        assert_in_family("", "");
+        assert_not_in_family("_a", "");
+        assert_not_in_family("a", "");
+        assert_in_family("_A", "");
+        assert_in_family("A", "");
     }
 
     mod test_trait_disambugated {

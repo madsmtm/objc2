@@ -1,0 +1,84 @@
+error[E0282]: type annotations needed
+ --> ui/msg_send_underspecified_error.rs
+  |
+  |     let _: Result<(), _> = unsafe { msg_send![obj, a: _] };
+  |                                     ^^^^^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `E` declared on the associated function `__send_message_error`
+  |
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider specifying the generic arguments
+ --> $WORKSPACE/objc2/src/macros.rs
+  |
+  |             @(__send_message_error::<(), E>)
+  |                                   +++++++++
+
+error[E0283]: type annotations needed
+ --> ui/msg_send_underspecified_error.rs
+  |
+  |     let _: Result<(), _> = unsafe { msg_send![obj, a: _] };
+  |                                     ^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
+  |
+  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2_encode` crate:
+          - impl RefEncode for *mut c_void;
+          - impl<T> RefEncode for *mut T
+            where T: RefEncode, T: ?Sized;
+  = note: required for `*mut *mut _` to implement `Encode`
+note: required by a bound in `__send_message_error`
+ --> $WORKSPACE/objc2/src/message/mod.rs
+  |
+  |         *mut *mut E: Encode,
+  |                      ^^^^^^ required by this bound in `__send_message_error`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0283]: type annotations needed
+ --> ui/msg_send_underspecified_error.rs
+  |
+  |     let _: Result<_, _> = unsafe { msg_send_id![obj, b: _] };
+  |                                    ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
+  |
+  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2_encode` crate:
+          - impl RefEncode for *mut c_void;
+          - impl<T> RefEncode for *mut T
+            where T: RefEncode, T: ?Sized;
+  = note: required for `*mut *mut _` to implement `Encode`
+note: required by a bound in `send_message_id_error`
+ --> $WORKSPACE/objc2/src/__macro_helpers.rs
+  |
+  |         *mut *mut E: Encode,
+  |                      ^^^^^^ required by this bound in `send_message_id_error`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0283]: type annotations needed
+ --> ui/msg_send_underspecified_error.rs
+  |
+  |     let _: Result<Id<NSString, Shared>, _> = unsafe { msg_send_id![obj, c: _] };
+  |                                                       ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
+  |
+  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2_encode` crate:
+          - impl RefEncode for *mut c_void;
+          - impl<T> RefEncode for *mut T
+            where T: RefEncode, T: ?Sized;
+  = note: required for `*mut *mut _` to implement `Encode`
+note: required by a bound in `send_message_id_error`
+ --> $WORKSPACE/objc2/src/__macro_helpers.rs
+  |
+  |         *mut *mut E: Encode,
+  |                      ^^^^^^ required by this bound in `send_message_id_error`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0283]: type annotations needed
+ --> ui/msg_send_underspecified_error.rs
+  |
+  |     let _: Result<Id<NSString, Shared>, Id<_, Shared>> = unsafe { msg_send_id![obj, d: _] };
+  |                                                                   ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
+  |
+  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2_encode` crate:
+          - impl RefEncode for *mut c_void;
+          - impl<T> RefEncode for *mut T
+            where T: RefEncode, T: ?Sized;
+  = note: required for `*mut *mut _` to implement `Encode`
+note: required by a bound in `send_message_id_error`
+ --> $WORKSPACE/objc2/src/__macro_helpers.rs
+  |
+  |         *mut *mut E: Encode,
+  |                      ^^^^^^ required by this bound in `send_message_id_error`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

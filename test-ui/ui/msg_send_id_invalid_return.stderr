@@ -191,7 +191,7 @@ note: required by a bound in `send_message_id`
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap` is not satisfied
  --> ui/msg_send_id_invalid_return.rs
@@ -209,7 +209,7 @@ note: required by a bound in `send_message_id`
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Option<&objc2::runtime::Object>: MaybeUnwrap` is not satisfied
  --> ui/msg_send_id_invalid_return.rs
@@ -225,4 +225,4 @@ note: required by a bound in `send_message_id`
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

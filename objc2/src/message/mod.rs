@@ -1,9 +1,9 @@
 use core::mem;
 use core::mem::ManuallyDrop;
-use core::ptr::NonNull;
+use core::ptr::{self, NonNull};
 
 use crate::encode::{Encode, EncodeArguments, EncodeConvert, RefEncode};
-use crate::rc::{Id, Owned, Ownership};
+use crate::rc::{Id, Owned, Ownership, Shared};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::ClassType;
 
@@ -249,6 +249,90 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     {
         unsafe { self.send_super_message(<Self::__Inner as ClassType>::Super::class(), sel, args) }
     }
+
+    // Error functions below. See MsgSendId::send_message_id_error for further
+    // details.
+    //
+    // Some of this could be abstracted away using closures, but that would
+    // interfere with `#[track_caller]`, so we avoid doing that.
+
+    #[inline]
+    #[track_caller]
+    #[doc(hidden)]
+    unsafe fn __send_message_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E, Shared>>
+    where
+        *mut *mut E: Encode,
+        A: __TupleExtender<*mut *mut E>,
+        <A as __TupleExtender<*mut *mut E>>::PlusOneArgument: MessageArguments,
+        E: Message,
+    {
+        let mut err: *mut E = ptr::null_mut();
+        let args = args.add_argument(&mut err);
+        let res: bool = unsafe { self.send_message(sel, args) };
+        if res {
+            Ok(())
+        } else {
+            Err(unsafe { encountered_error(err) })
+        }
+    }
+
+    #[inline]
+    #[track_caller]
+    #[doc(hidden)]
+    unsafe fn __send_super_message_error<A, E>(
+        self,
+        superclass: &Class,
+        sel: Sel,
+        args: A,
+    ) -> Result<(), Id<E, Shared>>
+    where
+        *mut *mut E: Encode,
+        A: __TupleExtender<*mut *mut E>,
+        <A as __TupleExtender<*mut *mut E>>::PlusOneArgument: MessageArguments,
+        E: Message,
+    {
+        let mut err: *mut E = ptr::null_mut();
+        let args = args.add_argument(&mut err);
+        let res: bool = unsafe { self.send_super_message(superclass, sel, args) };
+        if res {
+            Ok(())
+        } else {
+            Err(unsafe { encountered_error(err) })
+        }
+    }
+
+    #[inline]
+    #[track_caller]
+    #[doc(hidden)]
+    unsafe fn __send_super_message_static_error<A, E>(
+        self,
+        sel: Sel,
+        args: A,
+    ) -> Result<(), Id<E, Shared>>
+    where
+        Self::__Inner: ClassType,
+        <Self::__Inner as ClassType>::Super: ClassType,
+        *mut *mut E: Encode,
+        A: __TupleExtender<*mut *mut E>,
+        <A as __TupleExtender<*mut *mut E>>::PlusOneArgument: MessageArguments,
+        E: Message,
+    {
+        let mut err: *mut E = ptr::null_mut();
+        let args = args.add_argument(&mut err);
+        let res: bool = unsafe { self.__send_super_message_static(sel, args) };
+        if res {
+            Ok(())
+        } else {
+            Err(unsafe { encountered_error(err) })
+        }
+    }
+}
+
+#[cold]
+#[track_caller]
+unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E, Shared> {
+    // SAFETY: Ensured by caller
+    unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NO")
 }
 
 // Note that we implement MessageReceiver for unsized types as well, this is
@@ -367,6 +451,13 @@ pub unsafe trait MessageArguments: EncodeArguments {
     unsafe fn __invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
 }
 
+pub trait __TupleExtender<T> {
+    #[doc(hidden)]
+    type PlusOneArgument;
+    #[doc(hidden)]
+    fn add_argument(self, arg: T) -> Self::PlusOneArgument;
+}
+
 macro_rules! message_args_impl {
     ($($a:ident: $t:ident),*) => (
         unsafe impl<$($t: EncodeConvert),*> MessageArguments for ($($t,)*) {
@@ -388,6 +479,15 @@ macro_rules! message_args_impl {
                 // entry here (e.g. adding `nonlazybind` in LLVM).
                 // Same can be said of e.g. `objc_retain` and `objc_release`.
                 unsafe { imp(obj, sel $(, EncodeConvert::__into_inner($a))*) }
+            }
+        }
+
+        impl<$($t,)* T> __TupleExtender<T> for ($($t,)*) {
+            type PlusOneArgument = ($($t,)* T,);
+
+            fn add_argument(self, arg: T) -> Self::PlusOneArgument {
+                let ($($a,)*) = self;
+                ($($a,)* arg,)
             }
         }
     );

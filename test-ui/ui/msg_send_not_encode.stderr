@@ -20,7 +20,7 @@ note: required by a bound in `send_message`
   |
   |         R: EncodeConvert,
   |            ^^^^^^^^^^^^^ required by this bound in `send_message`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
  --> ui/msg_send_not_encode.rs
@@ -48,4 +48,4 @@ note: required by a bound in `send_message`
   |
   |         A: MessageArguments,
   |            ^^^^^^^^^^^^^^^^ required by this bound in `send_message`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
