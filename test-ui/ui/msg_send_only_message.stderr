@@ -16,4 +16,4 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
             *const T
             *const objc2::runtime::Class
             *mut T
-          and 2 others
+          and $N others
