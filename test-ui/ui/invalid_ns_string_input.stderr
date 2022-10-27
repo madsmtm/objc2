@@ -4,15 +4,12 @@ error[E0308]: mismatched types
   |     let _ = ns_string!(1u8);
   |                        ^^^ expected `&str`, found `u8`
 
-error: any use of this value will cause an error
+error[E0080]: evaluation of constant value failed
  --> ui/invalid_ns_string_input.rs
   |
   |     let _ = ns_string!(1u8);
   |             ^^^^^^^^^^^^^^^ referenced constant has errors
   |
-  = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
-  = note: for more information, see issue #71800 <https://github.com/rust-lang/rust/issues/71800>
-  = note: `#[deny(const_err)]` on by default
   = note: this error originates in the macro `$crate::__ns_string_inner` which comes from the expansion of the macro `ns_string` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0080]: evaluation of constant value failed

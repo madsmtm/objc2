@@ -32,7 +32,10 @@ error[E0412]: cannot find type `c` in this scope
  --> ui/invalid_msg_send.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: b: c] };
-  |                                               ^ expecting a type here because of type ascription
+  |                                               ^
+  |                                               |
+  |                                               not found in this scope
+  |                                               help: maybe you meant to write an assignment here: `let c`
 
 error[E0412]: cannot find type `c` in this scope
  --> ui/invalid_msg_send.rs
