@@ -149,7 +149,7 @@ mod tests {
         } else {
             "MyDomain 42"
         };
-        assert_eq!(format!("{}", error), expected);
+        assert_eq!(format!("{error}"), expected);
     }
 
     #[test]
@@ -160,6 +160,6 @@ mod tests {
         } else {
             "NSURLErrorDomain -999"
         };
-        assert_eq!(format!("{}", error), expected);
+        assert_eq!(format!("{error}"), expected);
     }
 }

@@ -193,7 +193,7 @@ mod tests {
     fn test_debug() {
         let obj = NSObject::new();
         let expected = format!("<NSObject: {:p}>", &*obj);
-        assert_eq!(format!("{:?}", obj), expected);
+        assert_eq!(format!("{obj:?}"), expected);
     }
 
     #[test]

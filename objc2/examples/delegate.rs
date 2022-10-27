@@ -96,7 +96,7 @@ impl CustomAppDelegate {
 fn main() {
     let delegate = CustomAppDelegate::new(42, true);
 
-    println!("{:?}", delegate);
+    println!("{delegate:?}");
     println!("{:?}", delegate.ivar);
     println!("{:?}", delegate.another_ivar);
     println!("{:?}", delegate.box_ivar);

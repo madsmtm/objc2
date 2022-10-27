@@ -213,14 +213,14 @@ mod tests {
     fn test_debug() {
         let thread = NSThread::main();
 
-        let actual = format!("{:?}", thread);
+        let actual = format!("{thread:?}");
         let expected = [
             // macOS 11
-            format!("<NSThread: {:p}>{{number = 1, name = (null)}}", thread),
-            format!("<NSThread: {:p}>{{number = 1, name = main}}", thread),
+            format!("<NSThread: {thread:p}>{{number = 1, name = (null)}}"),
+            format!("<NSThread: {thread:p}>{{number = 1, name = main}}"),
             // macOS 12
-            format!("<_NSMainThread: {:p}>{{number = 1, name = (null)}}", thread),
-            format!("<_NSMainThread: {:p}>{{number = 1, name = main}}", thread),
+            format!("<_NSMainThread: {thread:p}>{{number = 1, name = (null)}}"),
+            format!("<_NSMainThread: {thread:p}>{{number = 1, name = main}}"),
         ];
         assert!(
             expected.contains(&actual),
@@ -232,6 +232,6 @@ mod tests {
         // SAFETY: We don't use the marker for anything other than its Debug
         // impl, so this test doesn't actually need to run on the main thread!
         let marker = unsafe { MainThreadMarker::new_unchecked() };
-        assert_eq!(format!("{:?}", marker), "MainThreadMarker");
+        assert_eq!(format!("{marker:?}"), "MainThreadMarker");
     }
 }

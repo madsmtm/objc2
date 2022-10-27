@@ -359,9 +359,9 @@ mod tests {
     #[test]
     fn test_debug() {
         let obj = sample_number_array(0);
-        assert_eq!(format!("{:?}", obj), "[]");
+        assert_eq!(format!("{obj:?}"), "[]");
         let obj = sample_number_array(3);
-        assert_eq!(format!("{:?}", obj), "[0, 1, 2]");
+        assert_eq!(format!("{obj:?}"), "[0, 1, 2]");
     }
 
     #[test]

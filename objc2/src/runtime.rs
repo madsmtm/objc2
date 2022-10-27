@@ -1157,9 +1157,9 @@ mod tests {
     fn test_debug() {
         assert_eq!(format!("{:?}", sel!(abc:)), "abc:");
         let cls = test_utils::custom_class();
-        assert_eq!(format!("{:?}", cls), "CustomObject");
+        assert_eq!(format!("{cls:?}"), "CustomObject");
         let protocol = test_utils::custom_protocol();
-        assert_eq!(format!("{:?}", protocol), "CustomProtocol");
+        assert_eq!(format!("{protocol:?}"), "CustomProtocol");
 
         let object = test_utils::custom_object();
         assert_eq!(

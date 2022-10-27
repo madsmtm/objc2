@@ -595,11 +595,11 @@ mod tests {
     #[test]
     fn test_debug() {
         let set = NSSet::<NSString>::new();
-        assert_eq!(format!("{:?}", set), "{}");
+        assert_eq!(format!("{set:?}"), "{}");
 
         let set = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
         assert!(matches!(
-            format!("{:?}", set).as_str(),
+            format!("{set:?}").as_str(),
             "{\"one\", \"two\"}" | "{\"two\", \"one\"}"
         ));
     }

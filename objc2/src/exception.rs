@@ -90,7 +90,7 @@ impl fmt::Debug for Exception {
                     .as_ref()
                     .unwrap()
             };
-            return write!(f, "{:?}", obj);
+            return write!(f, "{obj:?}");
         }
 
         // Fall back to `Object` Debug
@@ -110,7 +110,7 @@ impl fmt::Display for Exception {
                     .unwrap()
             };
             if let Some(reason) = obj.reason() {
-                return write!(f, "{}", reason);
+                return write!(f, "{reason}");
             }
         }
 

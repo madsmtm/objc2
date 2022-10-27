@@ -69,7 +69,7 @@ mod tests {
         // This is mostly empty since cargo doesn't bundle the application
         // before executing.
         let bundle = NSBundle::main();
-        println!("{:?}", bundle);
+        println!("{bundle:?}");
         assert_eq!(format!("{:?}", bundle.info()), "{}");
         assert_eq!(bundle.name(), None);
     }

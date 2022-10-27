@@ -257,6 +257,6 @@ mod tests {
         // TODO: Fix this
         let val = unsafe { Id::from_shared(NSString::from_str("b")) };
         let dict = NSDictionary::from_keys_and_objects(&[&*key], vec![val]);
-        assert_eq!(format!("{:?}", dict), r#"{"a": "b"}"#);
+        assert_eq!(format!("{dict:?}"), r#"{"a": "b"}"#);
     }
 }

@@ -7,17 +7,17 @@ fn main() {
     let obj = NSObject::new();
     #[allow(clippy::eq_op)]
     {
-        println!("{:?} == {:?}? {:?}", obj, obj, obj == obj);
+        println!("{obj:?} == {obj:?}? {:?}", obj == obj);
     }
 
     let obj2 = NSObject::new();
-    println!("{:?} == {:?}? {:?}", obj, obj2, obj == obj2);
+    println!("{obj:?} == {obj2:?}? {:?}", obj == obj2);
 
     // Create an NSArray from a Vec
     let objs = vec![obj, obj2];
     let array = NSArray::from_vec(objs);
     for obj in array.iter() {
-        println!("{:?}", obj);
+        println!("{obj:?}");
     }
     println!("{}", array.len());
 
@@ -33,7 +33,7 @@ fn main() {
     });
     // Or simply use the `Display` implementation
     let _s = string.to_string(); // Using ToString
-    println!("{}", string); // Or Display directly
+    println!("{string}"); // Or Display directly
 
     // Create a dictionary mapping strings to objects
     let keys = &[string];

@@ -128,13 +128,13 @@ fn main() {
     let pasteboard = NSPasteboard::general();
     let impl_1 = pasteboard.text_impl_1();
     let impl_2 = pasteboard.text_impl_2();
-    println!("Pasteboard text from implementation 1 was: {:?}", impl_1);
-    println!("Pasteboard text from implementation 2 was: {:?}", impl_2);
+    println!("Pasteboard text from implementation 1 was: {impl_1:?}");
+    println!("Pasteboard text from implementation 2 was: {impl_2:?}");
     assert_eq!(impl_1, impl_2);
 
     let s = NSString::from_str("Hello, world!");
     pasteboard.set_text(s.clone());
-    println!("Now the pasteboard text should be: {:?}", s);
+    println!("Now the pasteboard text should be: {s:?}");
     assert_eq!(s, pasteboard.text_impl_1());
 }
 

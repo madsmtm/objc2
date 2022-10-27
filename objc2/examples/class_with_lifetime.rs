@@ -135,5 +135,5 @@ fn main() {
 
     drop(obj);
     drop(obj2);
-    println!("Number: {}", number);
+    println!("Number: {number}");
 }

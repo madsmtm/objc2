@@ -71,5 +71,5 @@ fn main() {
     }
 
     // Add DEP_BLOCK_[version]_CC_ARGS
-    println!("cargo:cc_args={}", cc_args);
+    println!("cargo:cc_args={cc_args}");
 }

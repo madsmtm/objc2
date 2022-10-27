@@ -370,8 +370,8 @@ mod tests {
     #[test]
     fn display_debug() {
         let s = NSString::from_str("xyz\"123");
-        assert_eq!(format!("{}", s), "xyz\"123");
-        assert_eq!(format!("{:?}", s), r#""xyz\"123""#);
+        assert_eq!(format!("{s}"), "xyz\"123");
+        assert_eq!(format!("{s:?}"), r#""xyz\"123""#);
     }
 
     #[test]
