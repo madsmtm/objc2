@@ -96,7 +96,7 @@ jobs:
             runtime: gnustep-1-9
             libobjc2: "1.9"
           - name: Test iOS simulator x86 64bit
-            os: macos-latest
+            os: macos-11
             target: x86_64-apple-ios
             dinghy: true
           - name: Build iOS simulator ARM64
