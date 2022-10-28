@@ -5,11 +5,6 @@ error[E0282]: type annotations needed
   |                                     ^^^^^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `E` declared on the associated function `__send_message_error`
   |
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
-help: consider specifying the generic arguments
- --> $WORKSPACE/objc2/src/macros.rs
-  |
-  |             @(__send_message_error::<(), E>)
-  |                                   +++++++++
 
 error[E0283]: type annotations needed
  --> ui/msg_send_underspecified_error.rs

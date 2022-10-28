@@ -876,7 +876,9 @@ macro_rules! __msg_send_helper {
         let result;
         // Always add trailing comma after each argument, so that we get a
         // 1-tuple if there is only one.
-        result = $crate::MessageReceiver::$fn($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*));
+        //
+        // And use `::<_, _>` for better UI
+        result = $crate::MessageReceiver::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*));
         result
     });
 }
@@ -1135,7 +1137,7 @@ macro_rules! __msg_send_id_helper {
         let result;
         result = <$crate::__macro_helpers::RetainSemantics<{
             $crate::__macro_helpers::retain_semantics(__SELECTOR_DATA)
-        }> as $crate::__macro_helpers::MsgSendId<_, _>>::$fn(
+        }> as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
             $obj,
             $crate::__sel_inner!(
                 __SELECTOR_DATA,
