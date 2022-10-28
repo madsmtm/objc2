@@ -41,7 +41,7 @@ LBB1_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<1_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	4, 0x90
@@ -84,7 +84,7 @@ LBB3_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 1)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<2_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_init
 	.p2align	4, 0x90
@@ -127,7 +127,7 @@ LBB5_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 2)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
 	.p2align	4, 0x90
@@ -222,7 +222,7 @@ L10$pb:
 LBB10_2:
 	lea	eax, [esi + l_anon.[ID].4-L10$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 3)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<4_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
 	.p2align	4, 0x90
@@ -288,7 +288,7 @@ LBB12_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 4)
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.section	__TEXT,__const
 l_anon.[ID].0:
@@ -313,11 +313,11 @@ l_anon.[ID].3:
 	.p2align	2
 l_anon.[ID].4:
 	.long	l_anon.[ID].0
-	.asciz	",\000\000\000@\000\000\000\005\000\000"
+	.asciz	",\000\000\000>\000\000\000\005\000\000"
 
 	.p2align	2
 l_anon.[ID].5:
 	.long	l_anon.[ID].0
-	.asciz	",\000\000\000J\000\000\000\005\000\000"
+	.asciz	",\000\000\000H\000\000\000\005\000\000"
 
 .subsections_via_symbols

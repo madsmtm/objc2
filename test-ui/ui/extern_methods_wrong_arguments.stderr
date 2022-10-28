@@ -3,19 +3,6 @@ error: Number of arguments in function and selector did not match!
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[sel(a:)]
-  | |         fn a();
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: Number of arguments in function and selector did not match!
- --> ui/extern_methods_wrong_arguments.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
   | |         #[sel(b)]
   | |         fn b(arg: i32);
   | |     }
@@ -29,21 +16,8 @@ error: Number of arguments in function and selector did not match!
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[sel(c:d:e:)]
-  | |         fn c(arg1: i32, arg2: u32);
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: Number of arguments in function and selector did not match!
- --> ui/extern_methods_wrong_arguments.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
-  | |         #[sel(x:)]
-  | |         fn x(&self);
+  | |         #[sel(f:g:)]
+  | |         fn f();
   | |     }
   | | );
   | |_^
@@ -62,3 +36,57 @@ error: Number of arguments in function and selector did not match!
   | |_^
   |
   = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[sel(a:)]
+  | |         fn a();
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_expected `()`, found enum `Result`
+  |   expected `()` because of default return type
+  |
+  = note: expected unit type `()`
+                  found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[sel(c:d:e:)]
+  | |         fn c(arg1: i32, arg2: u32);
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_expected `()`, found enum `Result`
+  |   expected `()` because of default return type
+  |
+  = note: expected unit type `()`
+                  found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[sel(x:)]
+  | |         fn x(&self);
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_expected `()`, found enum `Result`
+  |   expected `()` because of default return type
+  |
+  = note: expected unit type `()`
+                  found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

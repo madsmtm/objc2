@@ -438,7 +438,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     }
 
     #[inline]
-    fn autorelease_inner(self) -> *mut T {
+    pub(super) fn autorelease_inner(self) -> *mut T {
         // Note that this (and the actual `autorelease`) is not an associated
         // function. This breaks the guideline that smart pointers shouldn't
         // add inherent methods, but since autoreleasing only works on already

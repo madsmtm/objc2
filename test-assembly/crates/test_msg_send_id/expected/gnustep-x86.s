@@ -67,7 +67,7 @@ handle_new_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<1_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end1:
@@ -140,7 +140,7 @@ handle_alloc_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 1)@PLT
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<2_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end3:
@@ -223,7 +223,7 @@ handle_init_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 2)@PLT
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end5:
@@ -420,7 +420,7 @@ handle_copy_fallible:
 .LBB10_1:
 	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 3)@PLT
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<4_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	ud2
 .Lfunc_end10:
 	.size	handle_copy_fallible, .Lfunc_end10-handle_copy_fallible
@@ -496,7 +496,7 @@ handle_autoreleased_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 4)@PLT
+	call	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end12:
@@ -537,7 +537,7 @@ handle_autoreleased_fallible:
 	.p2align	2
 .Lanon.[ID].4:
 	.long	.Lanon.[ID].0
-	.asciz	",\000\000\000@\000\000\000\005\000\000"
+	.asciz	",\000\000\000>\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 16
 
 	.type	.Lanon.[ID].5,@object
@@ -545,7 +545,7 @@ handle_autoreleased_fallible:
 	.p2align	2
 .Lanon.[ID].5:
 	.long	.Lanon.[ID].0
-	.asciz	",\000\000\000J\000\000\000\005\000\000"
+	.asciz	",\000\000\000H\000\000\000\005\000\000"
 	.size	.Lanon.[ID].5, 16
 
 	.section	".note.GNU-stack","",@progbits

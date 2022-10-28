@@ -1,5 +1,6 @@
 //! Test invalid msg_send syntax
 use objc2::msg_send;
+use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
 
 fn main() {
@@ -13,4 +14,7 @@ fn main() {
     let _: () = unsafe { msg_send![obj, a: b: c] };
     let _: () = unsafe { msg_send![obj, a: b, c d] };
     let _: () = unsafe { msg_send![obj, a: b: c] };
+    let _: () = unsafe { msg_send![obj, a: b c: d,] };
+
+    let _: Result<(), Id<Object, Shared>> = unsafe { msg_send![obj, a: _, b: _] };
 }

@@ -1,3 +1,4 @@
+mod __msg_send_parse;
 mod __rewrite_self_arg;
 mod declare_class;
 mod extern_class;
@@ -185,19 +186,32 @@ macro_rules! __class_inner {
 #[macro_export]
 macro_rules! sel {
     (alloc) => ({
-        $crate::__macro_helpers::alloc()
+        $crate::__macro_helpers::alloc_sel()
     });
     (init) => ({
-        $crate::__macro_helpers::init()
+        $crate::__macro_helpers::init_sel()
     });
     (new) => ({
-        $crate::__macro_helpers::new()
+        $crate::__macro_helpers::new_sel()
     });
     ($first:ident $(: $($rest:ident :)*)?) => ({
-        use $crate::__macro_helpers::{concat, stringify, str};
-        const SELECTOR_DATA: &str = concat!(stringify!($first), $(':', $(stringify!($rest), ':',)*)? '\0');
-        $crate::__sel_inner!(SELECTOR_DATA, $crate::__hash_idents!($first $($($rest)*)?))
+        $crate::__sel_inner!(
+            $crate::__sel_data!($first $(: $($rest :)*)?),
+            $crate::__hash_idents!($first $($($rest)*)?)
+        )
     });
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __sel_data {
+    ($first:ident $(: $($rest:ident :)*)?) => {
+        $crate::__macro_helpers::concat!(
+            $crate::__macro_helpers::stringify!($first),
+            $(':', $($crate::__macro_helpers::stringify!($rest), ':',)*)?
+            '\0',
+        )
+    };
 }
 
 #[doc(hidden)]
@@ -628,6 +642,9 @@ macro_rules! __class_inner {
 ///
 /// All arguments, and the return type, must implement [`Encode`].
 ///
+/// If the last argument is the special marker `_`, the macro will return a
+/// `Result<(), Id<E, Shared>>`, see below.
+///
 /// This macro translates into a call to [`sel!`], and afterwards a fully
 /// qualified call to [`MessageReceiver::send_message`]. Note that this means
 /// that auto-dereferencing of the receiver is not supported, and that the
@@ -662,6 +679,33 @@ macro_rules! __class_inner {
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
 ///
+/// # Errors
+///
+/// Many methods take an `NSError**` as their last parameter, which is used to
+/// communicate errors to the caller, see [Error Handling Programming Guide
+/// For Cocoa][cocoa-error].
+///
+/// Similar to Swift's [importing of error parameters][swift-error], this
+/// macro supports transforming methods whose last parameter is `NSError**`
+/// and returns `BOOL`, into the Rust equivalent, the [`Result`] type.
+///
+/// In particular, you can make the last argument the special marker `_`, and
+/// then the macro will return a `Result<(), Id<E, Shared>>` (where you must
+/// specify `E` yourself, usually you'd use [`foundation::NSError`]).
+///
+/// At runtime, a temporary error variable is created on the stack and sent as
+/// the last parameter. If the message send then returns `NO`/`false` (or in
+/// the case of `msg_send_id!`, `NULL`), the error variable is loaded and
+/// returned in [`Err`].
+///
+/// Do beware that this is only valid on methods that return `BOOL`, see
+/// [`msg_send_id!`] for methods that return instance types.
+///
+/// [cocoa-error]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ErrorHandlingCocoa/ErrorHandling/ErrorHandling.html
+/// [swift-error]: https://developer.apple.com/documentation/swift/about-imported-cocoa-error-parameters
+/// [`foundation::NSError`]: crate::foundation::NSError
+///
+///
 /// # Panics
 ///
 /// Panics if the `"catch-all"` feature is enabled and the Objective-C method
@@ -671,6 +715,9 @@ macro_rules! __class_inner {
 /// Panics if the `"verify_message"` feature is enabled and the Objective-C
 /// method's argument's encoding does not match the encoding of the given
 /// arguments. This is highly recommended to enable while testing!
+///
+/// And panics if the `NSError**` handling functionality described above is
+/// used, and the error object was unexpectedly `NULL`.
 ///
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 ///
@@ -757,45 +804,81 @@ macro_rules! __class_inner {
 /// # superclass = class!(NSObject);
 /// let arg3: u32 = unsafe { msg_send![super(obj, superclass), getArg3] };
 /// ```
+///
+/// Sending a message with automatic error handling.
+///
+/// ```no_run
+/// use objc2::msg_send;
+/// use objc2::runtime::Object;
+/// use objc2::rc::{Id, Shared};
+///
+/// let obj: *mut Object; // Let's assume an instance of `NSBundle`
+/// # obj = 0 as *mut Object;
+/// // The `_` tells the macro that the return type should be `Result`.
+/// let res: Result<(), Id<Object, Shared>> = unsafe {
+///     msg_send![obj, preflightAndReturnError: _]
+/// };
+/// ```
 #[macro_export]
 macro_rules! msg_send {
-    [super($obj:expr), $selector:ident $(,)?] => ({
-        let sel = $crate::sel!($selector);
+    [super($obj:expr), $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            ($crate::__msg_send_helper)
+            @(__send_super_message_static_error)
+            @()
+            @()
+            @($($selector_and_arguments)+)
+            @(__send_super_message_static)
+
+            @($obj)
+        }
+    };
+    [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            ($crate::__msg_send_helper)
+            @(__send_super_message_error)
+            @()
+            @()
+            @($($selector_and_arguments)+)
+            @(send_super_message)
+
+            @($obj, $superclass)
+        }
+    };
+    [$obj:expr, $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            ($crate::__msg_send_helper)
+            @(__send_message_error)
+            @()
+            @()
+            @($($selector_and_arguments)+)
+            @(send_message)
+
+            @($obj)
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __msg_send_helper {
+    {
+        @($fn:ident)
+        @($($fn_args:tt)+)
+        @($($selector:tt)*)
+        @($($argument:expr,)*)
+    } => ({
+        // Assign to intermediary variable for better UI, and to prevent
+        // miscompilation on older Rust versions.
+        //
+        // Note: This can be accessed from any expression in `fn_args` and
+        // `arguments` - we won't (yet) bother with preventing that though.
         let result;
-        // Note: `sel` and `result` can be accessed from the `obj` and
-        // `superclass` expressions - we won't (yet) bother with preventing
-        // that though.
-        result = $crate::MessageReceiver::__send_super_message_static($obj, sel, ());
-        result
-    });
-    [super($obj:expr), $($selector:ident : $argument:expr),+ $(,)?] => ({
-        let sel = $crate::sel!($($selector :)+);
-        let result;
-        result = $crate::MessageReceiver::__send_super_message_static($obj, sel, ($($argument,)+));
-        result
-    });
-    [super($obj:expr, $superclass:expr), $selector:ident $(,)?] => ({
-        let sel = $crate::sel!($selector);
-        let result;
-        result = $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ());
-        result
-    });
-    [super($obj:expr, $superclass:expr), $($selector:ident : $argument:expr $(,)?)+] => ({
-        let sel = $crate::sel!($($selector :)+);
-        let result;
-        result = $crate::MessageReceiver::send_super_message($obj, $superclass, sel, ($($argument,)+));
-        result
-    });
-    [$obj:expr, $selector:ident $(,)?] => ({
-        let sel = $crate::sel!($selector);
-        let result;
-        result = $crate::MessageReceiver::send_message($obj, sel, ());
-        result
-    });
-    [$obj:expr, $($selector:ident : $argument:expr $(,)?)+] => ({
-        let sel = $crate::sel!($($selector :)+);
-        let result;
-        result = $crate::MessageReceiver::send_message($obj, sel, ($($argument,)+));
+        // Always add trailing comma after each argument, so that we get a
+        // 1-tuple if there is only one.
+        //
+        // And use `::<_, _>` for better UI
+        result = $crate::MessageReceiver::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*));
         result
     });
 }
@@ -897,6 +980,9 @@ macro_rules! msg_send_bool {
 /// `Id / Allocated` this macro will automatically unwrap the object, or panic
 /// with an error message if it couldn't be retrieved.
 ///
+/// Though as a special case, if the last argument is the marker `_`, the
+/// macro will return a `Result<Id<T, O>, Id<E, Shared>>`, see below.
+///
 /// This macro doesn't support super methods yet, see [#173].
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
 /// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
@@ -909,6 +995,19 @@ macro_rules! msg_send_bool {
 /// [`Id::retain`]: crate::rc::Id::retain
 /// [`Id::drop`]: crate::rc::Id::drop
 /// [`Id::autorelease`]: crate::rc::Id::autorelease
+///
+///
+/// # Errors
+///
+/// Very similarly to [`msg_send!`], this macro supports transforming the
+/// return type of methods whose last parameter is `NSError**` into the Rust
+/// equivalent, the [`Result`] type.
+///
+/// In particular, you can make the last argument the special marker `_`, and
+/// then the macro will return a `Result<Id<T, O>, Id<E, Shared>>` (where you
+/// must specify `E` yourself, usually you'd use [`foundation::NSError`]).
+///
+/// [`foundation::NSError`]: crate::foundation::NSError
 ///
 ///
 /// # Panics
@@ -961,54 +1060,91 @@ macro_rules! msg_send_bool {
 /// ```
 #[macro_export]
 macro_rules! msg_send_id {
-    [$obj:expr, $selector:ident $(,)?] => ({
-        $crate::__msg_send_id_helper!(@verify $selector);
-        let sel = $crate::sel!($selector);
-        const NAME: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::stringify!($selector).as_bytes();
-        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
+    [$obj:expr, new $(,)?] => ({
+        let sel = $crate::sel!(new);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
-    [$obj:expr, $($selector:ident : $argument:expr),+ $(,)?] => ({
-        let sel = $crate::sel!($($selector:)+);
-        const NAME: &[$crate::__macro_helpers::u8] =
-            $crate::__macro_helpers::concat!($($crate::__macro_helpers::stringify!($selector), ':'),+).as_bytes();
-        $crate::__msg_send_id_helper!(@get_assert_consts NAME);
+    [$obj:expr, alloc $(,)?] => ({
+        let sel = $crate::sel!(alloc);
         let result;
-        result = <RS as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ($($argument,)+));
+        result = <$crate::__macro_helpers::Alloc as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
+    [$obj:expr, init $(,)?] => ({
+        let sel = $crate::sel!(init);
+        let result;
+        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result
+    });
+    [$obj:expr, $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            ($crate::__msg_send_id_helper)
+            @(send_message_id_error)
+            @()
+            @()
+            @($($selector_and_arguments)+)
+            @(send_message_id)
+
+            @($obj)
+        }
+    };
 }
 
 /// Helper macro to avoid exposing these in the docs for [`msg_send_id!`].
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __msg_send_id_helper {
-    (@verify retain) => {{
+    {
+        @($fn:ident)
+        @($obj:expr)
+        @(retain)
+        @()
+    } => {{
         $crate::__macro_helpers::compile_error!(
             "msg_send_id![obj, retain] is not supported. Use `Id::retain` instead"
         )
     }};
-    (@verify release) => {{
+    {
+        @($fn:ident)
+        @($obj:expr)
+        @(release)
+        @()
+    } => {{
         $crate::__macro_helpers::compile_error!(
             "msg_send_id![obj, release] is not supported. Drop an `Id` instead"
         )
     }};
-    (@verify autorelease) => {{
+    {
+        @($fn:ident)
+        @($obj:expr)
+        @(autorelease)
+        @()
+    } => {{
         $crate::__macro_helpers::compile_error!(
             "msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`"
         )
     }};
-    (@verify $selector:ident) => {{}};
-    (@get_assert_consts $selector:ident) => {
-        use $crate::__macro_helpers::{bool, in_selector_family, RetainSemantics};
-        const NEW: bool = in_selector_family($selector, b"new");
-        const ALLOC: bool = in_selector_family($selector, b"alloc");
-        const INIT: bool = in_selector_family($selector, b"init");
-        const COPY_OR_MUT_COPY: bool = {
-            in_selector_family($selector, b"copy") || in_selector_family($selector, b"mutableCopy")
-        };
-        type RS = RetainSemantics<NEW, ALLOC, INIT, COPY_OR_MUT_COPY>;
-    };
+    {
+        @($fn:ident)
+        @($obj:expr)
+        @($sel_first:ident $(: $($sel_rest:ident :)*)?)
+        @($($argument:expr,)*)
+    } => ({
+        // Don't use `sel!`, otherwise we'd end up with defining this data twice.
+        const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!($sel_first $(: $($sel_rest :)*)?);
+        let result;
+        result = <$crate::__macro_helpers::RetainSemantics<{
+            $crate::__macro_helpers::retain_semantics(__SELECTOR_DATA)
+        }> as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
+            $obj,
+            $crate::__sel_inner!(
+                __SELECTOR_DATA,
+                $crate::__hash_idents!($sel_first $($($sel_rest)*)?)
+            ),
+            ($($argument,)*),
+        );
+        result
+    });
 }

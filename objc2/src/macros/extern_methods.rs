@@ -37,8 +37,9 @@
 /// [`NSCalendar`]: https://developer.apple.com/documentation/foundation/nscalendar?language=objc
 ///
 /// ```
-/// use objc2::foundation::{NSObject, NSRange, NSString, NSUInteger};
+/// use objc2::foundation::{NSError, NSObject, NSRange, NSString, NSUInteger};
 /// use objc2::rc::{Id, Shared};
+/// use objc2::runtime::Object;
 /// use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
@@ -103,6 +104,16 @@
 ///
 ///         #[sel(maximumRangeOfUnit:)]
 ///         pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange;
+///
+///         // From `NSKeyValueCoding`
+///         #[sel(validateValue:forKey:error:)]
+///         pub unsafe fn validate_value_for_key(
+///             &self,
+///             value: &mut *mut Object,
+///             key: &NSString,
+///             // Since the selector specifies one more argument than we
+///             // have, the return type is assumed to be `Result`.
+///         ) -> Result<(), Id<NSError, Shared>>;
 ///     }
 /// );
 /// ```
@@ -110,8 +121,9 @@
 /// The `extern_methods!` declaration then becomes:
 ///
 /// ```
-/// # use objc2::foundation::{NSObject, NSRange, NSString, NSUInteger};
+/// # use objc2::foundation::{NSError, NSObject, NSRange, NSString, NSUInteger};
 /// # use objc2::rc::{Id, Shared};
+/// # use objc2::runtime::Object;
 /// # use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
@@ -174,6 +186,14 @@
 ///     pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange {
 ///         unsafe { msg_send![self, maximumRangeOfUnit: unit] }
 ///     }
+///
+///     pub unsafe fn validate_value_for_key(
+///         &self,
+///         value: &mut *mut Object,
+///         key: &NSString,
+///     ) -> Result<(), Id<NSError, Shared>> {
+///        unsafe { msg_send![self, validateValue: value, forKey: key, error: _] }
+///    }
 /// }
 /// ```
 #[macro_export]
@@ -319,12 +339,12 @@ macro_rules! __inner_extern_methods {
         @($($args_rest:tt)*)
         @($($sel:tt)*)
     } => {
-        $crate::__collect_msg_send!(
+        $crate::__collect_msg_send! {
             $crate::msg_send;
             $self;
             ($($sel)*);
             ($($args_rest)*);
-        )
+        }
     };
     {
         @unsafe_method_body
@@ -336,12 +356,12 @@ macro_rules! __inner_extern_methods {
         @($($args_rest:tt)*)
         @($($sel:tt)*)
     } => {
-        $crate::__collect_msg_send!(
+        $crate::__collect_msg_send! {
             $crate::msg_send;
             Self::class();
             ($($sel)*);
             ($($args_rest)*);
-        )
+        }
     };
 }
 
@@ -370,6 +390,23 @@ macro_rules! __collect_msg_send {
         $macro![$obj, $($output)+]
     }};
 
+    // Allow trailing `sel:` without a corresponding argument (for errors)
+    (
+        $macro:path;
+        $obj:expr;
+        ($sel:ident:);
+        ($(,)?);
+        $($output:tt)*
+    ) => {
+        $crate::__collect_msg_send! {
+            $macro;
+            $obj;
+            ();
+            ();
+            $($output)* $sel: _,
+        }
+    };
+
     // tt-munch each argument
     (
         $macro:path;
@@ -377,16 +414,15 @@ macro_rules! __collect_msg_send {
         ($sel:ident : $($sel_rest:tt)*);
         ($arg:ident: $arg_ty:ty $(, $($args_rest:tt)*)?);
         $($output:tt)*
-    ) => {{
-        $crate::__collect_msg_send!(
+    ) => {
+        $crate::__collect_msg_send! {
             $macro;
             $obj;
             ($($sel_rest)*);
             ($($($args_rest)*)?);
-            $($output)*
-            $sel: $arg,
-        )
-    }};
+            $($output)* $sel: $arg,
+        }
+    };
 
     // If couldn't zip selector and arguments, show useful error message
     ($($_any:tt)*) => {{

@@ -23,7 +23,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       msg_send_id![NSObject::alloc(), init]
   };
   ```
-* Add `Class::class_method`.
+* Added `Class::class_method`.
+* Added the ability to specify `error: _`, `somethingReturningError: _` and
+  so on at the end of `msg_send!`/`msg_send_id!`, and have it automatically
+  return a `Result<..., Id<NSError, Shared>>`.
+* Added the ability to specify an extra parameter at the end of the selector
+  in methods declared with `extern_methods!`, and let that be the `NSError**`
+  parameter.
 
 ### Changed
 * Allow other types than `&Class` as the receiver in `msg_send_id!` methods

@@ -9,7 +9,7 @@ use core::slice;
 use core::str;
 use std::os::raw::c_char;
 
-use super::{NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSObject};
+use super::{NSComparisonResult, NSCopying, NSError, NSMutableCopying, NSMutableString, NSObject};
 use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
 use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
@@ -272,6 +272,15 @@ extern_methods!(
 
         // pub fn from_nsrange(range: NSRange) -> Id<Self, Shared>
         // https://developer.apple.com/documentation/foundation/1415155-nsstringfromrange?language=objc
+
+        // TODO: Safety
+        #[sel(writeToFile:atomically:encoding:error:)]
+        pub unsafe fn write_to_file(
+            &self,
+            path: &NSString,
+            atomically: bool,
+            encoding: usize,
+        ) -> Result<(), Id<NSError, Shared>>;
     }
 );
 

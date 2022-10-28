@@ -1,0 +1,7 @@
+error[E0282]: type annotations needed
+ --> ui/msg_send_underspecified_error2.rs
+  |
+  |     let _: Result<Id<_, Shared>, Id<NSError, Shared>> = unsafe { msg_send_id![obj, a: _] };
+  |                                                                  ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `T` declared on the trait `MsgSendId`
+  |
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

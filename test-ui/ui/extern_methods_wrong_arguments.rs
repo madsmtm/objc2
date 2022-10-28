@@ -32,6 +32,13 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl MyObject {
+        #[sel(f:g:)]
+        fn f();
+    }
+);
+
+extern_methods!(
+    unsafe impl MyObject {
         #[sel(x:)]
         fn x(&self);
     }

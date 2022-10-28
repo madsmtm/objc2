@@ -42,7 +42,7 @@ Lloh9:
 	add	x2, x2, l_anon.[ID].1@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	bl	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpLdrGotLdr	Lloh5, Lloh6, Lloh7
 	.loh AdrpLdrGotLdr	Lloh2, Lloh3, Lloh4
 	.loh AdrpAdd	Lloh8, Lloh9
