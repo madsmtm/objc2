@@ -191,10 +191,8 @@ pub enum Stmt {
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, config: &Config) -> Option<Self> {
         match entity.get_kind() {
-            EntityKind::InclusionDirective => None,
             // These are inconsequential for us, since we resolve imports differently
             EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => None,
-            EntityKind::MacroExpansion | EntityKind::MacroDefinition => None,
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let name = entity.get_name().expect("class name");

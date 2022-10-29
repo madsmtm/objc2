@@ -4,7 +4,7 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
-use clang::{Clang, Entity, EntityVisitResult, Index};
+use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
 use quote::{format_ident, quote};
 
 use header_translator::{format_method_macro, run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt};
@@ -49,21 +49,59 @@ fn main() {
             })
         });
 
-    let mut result: BTreeMap<String, BTreeMap<String, RustFile>> = BTreeMap::new();
+    let mut result: BTreeMap<String, BTreeMap<String, RustFile>> = configs
+        .iter()
+        .map(|(library, _)| (library.clone(), BTreeMap::new()))
+        .collect();
 
     // TODO: Compare SDKs
     for sdk in sdks {
         println!("status: parsing {:?}...", sdk.platform);
+
+        let mut preprocessing = true;
+
         parse_and_visit_stmts(&index, &sdk, |library, file_name, entity| {
             if let Some(config) = configs.get(library) {
-                if file_name != library {
-                    let files = result.entry(library.to_string()).or_default();
-                    let file = files
-                        .entry(file_name.to_string())
-                        .or_insert_with(RustFile::new);
-                    if let Some(stmt) = Stmt::parse(&entity, &config) {
-                        if sdk.platform == Platform::MacOsX {
-                            file.add_stmt(stmt);
+                let files = result.get_mut(library).expect("files");
+                match entity.get_kind() {
+                    EntityKind::InclusionDirective if preprocessing => {
+                        // println!("{library}/{file_name}.h: {entity:?}");
+                        // If umbrella header
+                        let name = entity.get_name().expect("inclusion name");
+                        let mut iter = name.split('/');
+                        let framework = iter.next().expect("inclusion name has framework");
+                        if framework == library {
+                            let included = iter
+                                .next()
+                                .expect("inclusion name has file")
+                                .strip_suffix(".h")
+                                .expect("inclusion name file is header")
+                                .to_string();
+                            if iter.count() != 0 {
+                                panic!("invalid inclusion of {name:?}");
+                            }
+
+                            // If inclusion is not umbrella header
+                            if included != library {
+                                // The file is often included twice, even
+                                // within the same file, so insertion can fail
+                                files.entry(included).or_insert_with(RustFile::new);
+                            }
+                        }
+                    }
+                    EntityKind::MacroExpansion if preprocessing => {}
+                    EntityKind::MacroDefinition if preprocessing => {}
+                    _ => {
+                        if preprocessing {
+                            println!("status: preprocessed {:?}...", sdk.platform);
+                        }
+                        preprocessing = false;
+                        // No more includes / macro expansions after this line
+                        let file = files.get_mut(file_name).expect("file");
+                        if let Some(stmt) = Stmt::parse(&entity, &config) {
+                            if sdk.platform == Platform::MacOsX {
+                                file.add_stmt(stmt);
+                            }
                         }
                     }
                 }
