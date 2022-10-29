@@ -1,12 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSDate;
-use super::__exported::NSHTTPCookie;
-use super::__exported::NSHTTPCookieStorageInternal;
-use super::__exported::NSSortDescriptor;
-use super::__exported::NSURLSessionTask;
-use super::__exported::NSURL;
-use crate::Foundation::generated::NSNotification::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

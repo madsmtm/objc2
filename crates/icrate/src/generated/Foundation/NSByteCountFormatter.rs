@@ -1,5 +1,3 @@
-use crate::Foundation::generated::NSFormatter::*;
-use crate::Foundation::generated::NSMeasurement::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

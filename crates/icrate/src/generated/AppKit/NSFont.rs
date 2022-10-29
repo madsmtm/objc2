@@ -1,11 +1,3 @@
-use super::__exported::NSAffineTransform;
-use super::__exported::NSFontDescriptor;
-use super::__exported::NSGraphicsContext;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCell::*;
-use crate::AppKit::generated::NSFontDescriptor::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

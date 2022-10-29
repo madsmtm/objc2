@@ -1,7 +1,3 @@
-use super::__exported::NSTextBlock;
-use super::__exported::NSTextList;
-use crate::AppKit::generated::NSText::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

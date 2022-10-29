@@ -1,5 +1,3 @@
-use crate::Foundation::generated::Foundation::*;
-use crate::Foundation::generated::NSItemProvider::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

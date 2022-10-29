@@ -1,9 +1,3 @@
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSApplication::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -37,5 +31,4 @@ extern_methods!(
         pub unsafe fn owner(&self) -> Option<Id<Object, Shared>>;
     }
 );
-use super::__exported::NSMenu;
 pub type NSDockTilePlugIn = NSObject;

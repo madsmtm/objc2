@@ -1,8 +1,3 @@
-use super::__exported::NSBitmapImageRep;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSGraphics::*;
-use crate::AppKit::generated::NSImageRep::*;
-use crate::CoreImage::generated::CIImage::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

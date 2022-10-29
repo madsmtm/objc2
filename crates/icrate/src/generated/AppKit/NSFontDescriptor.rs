@@ -1,15 +1,8 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSSet::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSFontSymbolicTraits = u32;
-use super::__exported::NSAffineTransform;
 pub type NSFontDescriptorAttributeName = NSString;
 pub type NSFontDescriptorTraitKey = NSString;
 pub type NSFontDescriptorVariationKey = NSString;

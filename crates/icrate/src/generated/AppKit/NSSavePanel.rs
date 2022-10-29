@@ -1,15 +1,3 @@
-use super::__exported::NSBox;
-use super::__exported::NSControl;
-use super::__exported::NSProgressIndicator;
-use super::__exported::NSTextField;
-use super::__exported::NSTextView;
-use super::__exported::NSView;
-use super::__exported::UTType;
-use super::__exported::NSURL;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSNibDeclarations::*;
-use crate::AppKit::generated::NSPanel::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

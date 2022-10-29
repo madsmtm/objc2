@@ -1,8 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSOrthography;
-use super::__exported::NSValue;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

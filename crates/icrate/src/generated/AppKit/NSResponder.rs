@@ -1,14 +1,3 @@
-use super::__exported::NSError;
-use super::__exported::NSEvent;
-use super::__exported::NSMenu;
-use super::__exported::NSUndoManager;
-use super::__exported::NSWindow;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSAccessibilityProtocols::*;
-use crate::AppKit::generated::NSEvent::*;
-use crate::AppKit::generated::NSPasteboard::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

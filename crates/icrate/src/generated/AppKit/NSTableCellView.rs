@@ -1,13 +1,3 @@
-use super::__exported::NSDraggingImageComponent;
-use super::__exported::NSImageView;
-use super::__exported::NSTextField;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCell::*;
-use crate::AppKit::generated::NSNibDeclarations::*;
-use crate::AppKit::generated::NSTableView::*;
-use crate::AppKit::generated::NSView::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

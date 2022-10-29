@@ -1,18 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSCachedURLResponse;
-use super::__exported::NSData;
-use super::__exported::NSError;
-use super::__exported::NSInputStream;
-use super::__exported::NSOperationQueue;
-use super::__exported::NSRunLoop;
-use super::__exported::NSURLAuthenticationChallenge;
-use super::__exported::NSURLConnectionInternal;
-use super::__exported::NSURLProtectionSpace;
-use super::__exported::NSURLRequest;
-use super::__exported::NSURLResponse;
-use super::__exported::NSURL;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSRunLoop::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

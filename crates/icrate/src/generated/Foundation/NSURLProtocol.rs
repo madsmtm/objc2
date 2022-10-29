@@ -1,14 +1,3 @@
-use super::__exported::NSCachedURLResponse;
-use super::__exported::NSError;
-use super::__exported::NSMutableURLRequest;
-use super::__exported::NSURLAuthenticationChallenge;
-use super::__exported::NSURLConnection;
-use super::__exported::NSURLProtocolInternal;
-use super::__exported::NSURLRequest;
-use super::__exported::NSURLResponse;
-use super::__exported::NSURLSessionTask;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSURLCache::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

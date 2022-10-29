@@ -1,12 +1,3 @@
-use super::__exported::NSBitmapImageRep;
-use super::__exported::NSString;
-use super::__exported::NSWindow;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSGraphics::*;
-use crate::CoreGraphics::generated::CGContext::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -91,7 +82,6 @@ extern_methods!(
         pub unsafe fn setColorRenderingIntent(&self, colorRenderingIntent: NSColorRenderingIntent);
     }
 );
-use super::__exported::CIContext;
 extern_methods!(
     #[doc = "NSQuartzCoreAdditions"]
     unsafe impl NSGraphicsContext {

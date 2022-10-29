@@ -1,29 +1,3 @@
-use super::__exported::CKShareMetadata;
-use super::__exported::INIntent;
-use super::__exported::NSDate;
-use super::__exported::NSDictionary;
-use super::__exported::NSDockTile;
-use super::__exported::NSError;
-use super::__exported::NSException;
-use super::__exported::NSGraphicsContext;
-use super::__exported::NSImage;
-use super::__exported::NSNotification;
-use super::__exported::NSPasteboard;
-use super::__exported::NSUserActivity;
-use super::__exported::NSUserActivityRestoring;
-use super::__exported::NSWindow;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSAppearance::*;
-use crate::AppKit::generated::NSMenu::*;
-use crate::AppKit::generated::NSPasteboard::*;
-use crate::AppKit::generated::NSPrintInfo::*;
-use crate::AppKit::generated::NSResponder::*;
-use crate::AppKit::generated::NSRunningApplication::*;
-use crate::AppKit::generated::NSUserActivity::*;
-use crate::AppKit::generated::NSUserInterfaceLayout::*;
-use crate::AppKit::generated::NSUserInterfaceValidation::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

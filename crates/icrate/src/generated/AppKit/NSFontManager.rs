@@ -1,13 +1,3 @@
-use super::__exported::NSFont;
-use super::__exported::NSFontDescriptor;
-use super::__exported::NSFontPanel;
-use super::__exported::NSMenu;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSMenu::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

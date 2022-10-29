@@ -1,12 +1,3 @@
-use super::__exported::NSButtonCell;
-use super::__exported::NSImage;
-use super::__exported::NSMenu;
-use super::__exported::NSMutableArray;
-use super::__exported::NSTimer;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSSearchField::*;
-use crate::AppKit::generated::NSTextFieldCell::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

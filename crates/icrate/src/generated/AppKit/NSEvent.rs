@@ -1,14 +1,3 @@
-use super::__exported::NSGraphicsContext;
-use super::__exported::NSTrackingArea;
-use super::__exported::NSWindow;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSTouch::*;
-use crate::ApplicationServices::generated::ApplicationServices::*;
-use crate::Foundation::generated::NSDate::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObjCRuntime::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSSet::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

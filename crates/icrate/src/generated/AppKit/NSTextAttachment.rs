@@ -1,16 +1,3 @@
-use super::__exported::NSFileWrapper;
-use super::__exported::NSImage;
-use super::__exported::NSLayoutManager;
-use super::__exported::NSTextAttachmentCell;
-use super::__exported::NSTextAttachmentCell;
-use super::__exported::NSTextContainer;
-use super::__exported::NSTextLayoutManager;
-use super::__exported::NSTextLocation;
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSTextAttachmentCell::*;
-use crate::CoreGraphics::generated::CGGeometry::*;
-use crate::Foundation::generated::NSAttributedString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

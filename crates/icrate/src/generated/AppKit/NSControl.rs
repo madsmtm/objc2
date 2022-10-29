@@ -1,14 +1,3 @@
-use super::__exported::NSAttributedString;
-use super::__exported::NSCell;
-use super::__exported::NSFont;
-use super::__exported::NSFormatter;
-use super::__exported::NSNotification;
-use super::__exported::NSTextView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCell::*;
-use crate::AppKit::generated::NSText::*;
-use crate::AppKit::generated::NSView::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

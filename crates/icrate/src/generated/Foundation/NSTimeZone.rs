@@ -1,12 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSData;
-use super::__exported::NSDate;
-use super::__exported::NSDictionary;
-use super::__exported::NSLocale;
-use super::__exported::NSString;
-use crate::Foundation::generated::NSDate::*;
-use crate::Foundation::generated::NSNotification::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

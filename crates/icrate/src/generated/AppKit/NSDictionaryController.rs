@@ -1,7 +1,3 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSArrayController::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

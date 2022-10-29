@@ -1,13 +1,3 @@
-use super::__exported::NSTextElement;
-use super::__exported::NSTextLayoutManager;
-use super::__exported::NSTextLocation;
-use super::__exported::NSTextParagraph;
-use super::__exported::NSTextRange;
-use super::__exported::NSTextStorage;
-use super::__exported::NSTextStorageObserving;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSNotification::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

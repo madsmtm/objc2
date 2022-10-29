@@ -1,15 +1,8 @@
-use super::__exported::NSCalendar;
-use crate::CoreFoundation::generated::CFLocale::*;
-use crate::Foundation::generated::NSNotification::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSLocaleKey = NSString;
-use super::__exported::NSArray;
-use super::__exported::NSDictionary;
-use super::__exported::NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSLocale;

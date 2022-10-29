@@ -1,10 +1,3 @@
-use super::__exported::NSData;
-use super::__exported::NSScreen;
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::Foundation::*;
-use crate::OpenGL::generated::gltypes::*;
-use crate::OpenGL::generated::CGLTypes::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

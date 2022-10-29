@@ -1,11 +1,3 @@
-use super::__exported::NSCachedURLResponseInternal;
-use super::__exported::NSData;
-use super::__exported::NSDate;
-use super::__exported::NSDictionary;
-use super::__exported::NSURLRequest;
-use super::__exported::NSURLResponse;
-use super::__exported::NSURLSessionDataTask;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -43,8 +35,6 @@ extern_methods!(
         pub unsafe fn storagePolicy(&self) -> NSURLCacheStoragePolicy;
     }
 );
-use super::__exported::NSURLCacheInternal;
-use super::__exported::NSURLRequest;
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLCache;

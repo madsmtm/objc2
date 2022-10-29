@@ -1,14 +1,3 @@
-use super::__exported::NSButtonCell;
-use super::__exported::NSNotification;
-use super::__exported::NSString;
-use super::__exported::NSTableColumn;
-use super::__exported::NSTableHeaderView;
-use super::__exported::NSTableView;
-use super::__exported::NSTintConfiguration;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSTableView::*;
-use crate::CoreFoundation::generated::CFDictionary::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

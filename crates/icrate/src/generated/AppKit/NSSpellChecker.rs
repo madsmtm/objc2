@@ -1,16 +1,3 @@
-use super::__exported::NSMenu;
-use super::__exported::NSOrthography;
-use super::__exported::NSPanel;
-use super::__exported::NSString;
-use super::__exported::NSView;
-use super::__exported::NSViewController;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSRange::*;
-use crate::Foundation::generated::NSTextCheckingResult::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

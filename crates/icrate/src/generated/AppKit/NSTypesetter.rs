@@ -1,9 +1,3 @@
-use crate::AppKit::generated::NSLayoutManager::*;
-use crate::AppKit::generated::NSParagraphStyle::*;
-use crate::CoreFoundation::generated::CFCharacterSet::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

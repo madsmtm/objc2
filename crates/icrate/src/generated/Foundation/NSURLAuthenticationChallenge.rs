@@ -1,14 +1,8 @@
-use super::__exported::NSError;
-use super::__exported::NSURLCredential;
-use super::__exported::NSURLProtectionSpace;
-use super::__exported::NSURLResponse;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSURLAuthenticationChallengeSender = NSObject;
-use super::__exported::NSURLAuthenticationChallengeInternal;
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLAuthenticationChallenge;

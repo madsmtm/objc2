@@ -1,9 +1,3 @@
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::NSDate::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObjCRuntime::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

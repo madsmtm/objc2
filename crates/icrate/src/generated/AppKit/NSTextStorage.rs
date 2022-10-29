@@ -1,9 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSLayoutManager;
-use super::__exported::NSNotification;
-use crate::AppKit::generated::NSAttributedString::*;
-use crate::Foundation::generated::NSNotification::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

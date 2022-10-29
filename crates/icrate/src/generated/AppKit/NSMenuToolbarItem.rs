@@ -1,5 +1,3 @@
-use super::__exported::NSMenu;
-use crate::AppKit::generated::NSToolbarItem::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

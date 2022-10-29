@@ -1,11 +1,3 @@
-use super::__exported::NSAttributeDescription;
-use super::__exported::NSError;
-use super::__exported::NSString;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::CoreData::generated::NSManagedObjectContext::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

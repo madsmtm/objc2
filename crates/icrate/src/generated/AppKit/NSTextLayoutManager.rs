@@ -1,15 +1,3 @@
-use super::__exported::NSTextContainer;
-use super::__exported::NSTextContentManager;
-use super::__exported::NSTextElement;
-use super::__exported::NSTextLocation;
-use super::__exported::NSTextRange;
-use super::__exported::NSTextSelection;
-use super::__exported::NSTextSelectionDataSource;
-use super::__exported::NSTextSelectionNavigation;
-use super::__exported::NSTextViewportLayoutController;
-use crate::AppKit::generated::NSTextLayoutFragment::*;
-use crate::CoreGraphics::generated::CGGeometry::*;
-use crate::Foundation::generated::NSAttributedString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

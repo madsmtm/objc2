@@ -1,20 +1,3 @@
-use super::__exported::NSAppleEventDescriptor;
-use super::__exported::NSColor;
-use super::__exported::NSError;
-use super::__exported::NSImage;
-use super::__exported::NSNotificationCenter;
-use super::__exported::NSRunningApplication;
-use super::__exported::NSScreen;
-use super::__exported::NSView;
-use super::__exported::UTType;
-use super::__exported::NSURL;
-use crate::mach::generated::machine::*;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSFileManager::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

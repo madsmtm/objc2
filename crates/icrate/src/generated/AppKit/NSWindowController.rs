@@ -1,14 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSDocument;
-use super::__exported::NSStoryboard;
-use super::__exported::NSViewController;
-use super::__exported::NSWindow;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSNib::*;
-use crate::AppKit::generated::NSNibDeclarations::*;
-use crate::AppKit::generated::NSResponder::*;
-use crate::AppKit::generated::NSStoryboardSegue::*;
-use crate::AppKit::generated::NSWindow::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

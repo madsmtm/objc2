@@ -1,18 +1,8 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSEvent::*;
-use crate::Foundation::generated::Foundation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSStatusItemAutosaveName = NSString;
-use super::__exported::NSAttributedString;
-use super::__exported::NSImage;
-use super::__exported::NSMenu;
-use super::__exported::NSStatusBar;
-use super::__exported::NSStatusBarButton;
-use super::__exported::NSView;
-use super::__exported::NSWindow;
 extern_class!(
     #[derive(Debug)]
     pub struct NSStatusItem;

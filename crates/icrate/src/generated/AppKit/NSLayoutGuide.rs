@@ -1,12 +1,3 @@
-use super::__exported::NSLayoutConstraint;
-use super::__exported::NSLayoutDimension;
-use super::__exported::NSLayoutXAxisAnchor;
-use super::__exported::NSLayoutYAxisAnchor;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSLayoutAnchor::*;
-use crate::AppKit::generated::NSLayoutConstraint::*;
-use crate::AppKit::generated::NSUserInterfaceItemIdentification::*;
-use crate::AppKit::generated::NSView::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

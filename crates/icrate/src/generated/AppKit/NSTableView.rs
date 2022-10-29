@@ -1,18 +1,3 @@
-use super::__exported::NSIndexSet;
-use super::__exported::NSMutableIndexSet;
-use super::__exported::NSNib;
-use super::__exported::NSSortDescriptor;
-use super::__exported::NSTableColumn;
-use super::__exported::NSTableHeaderView;
-use super::__exported::NSTableRowView;
-use super::__exported::NSTableViewRowAction;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSControl::*;
-use crate::AppKit::generated::NSDragging::*;
-use crate::AppKit::generated::NSTextView::*;
-use crate::AppKit::generated::NSUserInterfaceValidation::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,9 +1,3 @@
-use super::__exported::NSMenu;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSButton::*;
-use crate::AppKit::generated::NSMenuItem::*;
-use crate::AppKit::generated::NSMenuItemCell::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

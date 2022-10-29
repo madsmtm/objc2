@@ -1,10 +1,3 @@
-use super::__exported::NSColor;
-use super::__exported::NSColorList;
-use super::__exported::NSColorSpace;
-use super::__exported::NSImage;
-use super::__exported::NSString;
-use super::__exported::NSViewController;
-use crate::AppKit::generated::NSTouchBarItem::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

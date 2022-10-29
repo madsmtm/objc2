@@ -1,6 +1,3 @@
-use super::__exported::NSAttributedString;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::NSAppleScript::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

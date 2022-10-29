@@ -1,9 +1,3 @@
-use super::__exported::NSColor;
-use super::__exported::NSCursor;
-use super::__exported::NSImage;
-use super::__exported::NSTableView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSView::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

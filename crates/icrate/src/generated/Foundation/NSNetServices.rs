@@ -1,15 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSData;
-use super::__exported::NSDictionary;
-use super::__exported::NSInputStream;
-use super::__exported::NSNumber;
-use super::__exported::NSOutputStream;
-use super::__exported::NSRunLoop;
-use super::__exported::NSString;
-use crate::Foundation::generated::NSDate::*;
-use crate::Foundation::generated::NSError::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSRunLoop::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

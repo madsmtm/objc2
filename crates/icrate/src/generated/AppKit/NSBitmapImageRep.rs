@@ -1,11 +1,3 @@
-use super::__exported::CIImage;
-use super::__exported::NSColor;
-use super::__exported::NSColorSpace;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSImageRep::*;
-use crate::ApplicationServices::generated::ApplicationServices::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

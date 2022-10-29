@@ -1,11 +1,3 @@
-use super::__exported::NSPrintInfo;
-use super::__exported::NSView;
-use super::__exported::NSViewController;
-use super::__exported::NSWindow;
-use super::__exported::NSWindowController;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSApplication::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

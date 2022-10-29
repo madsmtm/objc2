@@ -1,12 +1,8 @@
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSNotificationName = NSString;
-use super::__exported::NSDictionary;
-use super::__exported::NSOperationQueue;
-use super::__exported::NSString;
 extern_class!(
     #[derive(Debug)]
     pub struct NSNotification;

@@ -1,13 +1,3 @@
-use super::__exported::CKShare;
-use super::__exported::NSImage;
-use super::__exported::NSMenuItem;
-use super::__exported::NSView;
-use crate::AppKit::generated::NSMenu::*;
-use crate::AppKit::generated::NSText::*;
-use crate::AppKit::generated::NSToolbar::*;
-use crate::AppKit::generated::NSUserInterfaceValidation::*;
-use crate::Foundation::generated::Foundation::*;
-use crate::Foundation::generated::NSGeometry::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

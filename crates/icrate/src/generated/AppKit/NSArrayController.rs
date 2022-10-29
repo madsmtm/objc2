@@ -1,10 +1,3 @@
-use super::__exported::NSIndexSet;
-use super::__exported::NSMutableIndexSet;
-use super::__exported::NSSortDescriptor;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSObjectController::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSPredicate::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

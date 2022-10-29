@@ -1,12 +1,3 @@
-use super::__exported::NSCell;
-use super::__exported::NSImage;
-use super::__exported::NSSortDescriptor;
-use super::__exported::NSTableHeaderCell;
-use super::__exported::NSTableView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSUserInterfaceItemIdentification::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

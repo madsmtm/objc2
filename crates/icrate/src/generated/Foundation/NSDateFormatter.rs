@@ -1,13 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSCalendar;
-use super::__exported::NSDate;
-use super::__exported::NSError;
-use super::__exported::NSLocale;
-use super::__exported::NSMutableDictionary;
-use super::__exported::NSString;
-use super::__exported::NSTimeZone;
-use crate::CoreFoundation::generated::CFDateFormatter::*;
-use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

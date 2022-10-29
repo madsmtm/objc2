@@ -1,8 +1,3 @@
-use super::__exported::NSButtonCell;
-use super::__exported::NSTableView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSTextFieldCell::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

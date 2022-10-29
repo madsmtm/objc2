@@ -1,23 +1,8 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSDragging::*;
-use crate::AppKit::generated::NSView::*;
-use crate::AppKit::generated::NSViewController::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSCollectionViewSupplementaryElementKind = NSString;
-use super::__exported::NSButton;
-use super::__exported::NSCollectionViewLayout;
-use super::__exported::NSCollectionViewLayoutAttributes;
-use super::__exported::NSCollectionViewTransitionLayout;
-use super::__exported::NSDraggingImageComponent;
-use super::__exported::NSImageView;
-use super::__exported::NSIndexSet;
-use super::__exported::NSMutableIndexSet;
-use super::__exported::NSNib;
-use super::__exported::NSTextField;
 pub type NSCollectionViewElement = NSObject;
 pub type NSCollectionViewSectionHeaderView = NSObject;
 extern_class!(

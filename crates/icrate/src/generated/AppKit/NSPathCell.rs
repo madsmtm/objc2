@@ -1,17 +1,3 @@
-use super::__exported::NSAnimation;
-use super::__exported::NSImage;
-use super::__exported::NSNotification;
-use super::__exported::NSOpenPanel;
-use super::__exported::NSPathComponentCell;
-use super::__exported::NSPopUpButtonCell;
-use super::__exported::NSString;
-use super::__exported::NSURL;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSActionCell::*;
-use crate::AppKit::generated::NSMenu::*;
-use crate::AppKit::generated::NSSavePanel::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

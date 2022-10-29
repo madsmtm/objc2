@@ -1,16 +1,3 @@
-use super::__exported::NSAffineTransform;
-use super::__exported::NSBox;
-use super::__exported::NSColor;
-use super::__exported::NSGraphicsContext;
-use super::__exported::NSRulerMarker;
-use super::__exported::NSRulerView;
-use super::__exported::NSTextContainer;
-use super::__exported::NSTextView;
-use super::__exported::NSTypesetter;
-use crate::AppKit::generated::NSFont::*;
-use crate::AppKit::generated::NSGlyphGenerator::*;
-use crate::AppKit::generated::NSTextStorage::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

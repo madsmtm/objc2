@@ -1,6 +1,3 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCollectionView::*;
-use crate::AppKit::generated::NSCollectionViewLayout::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

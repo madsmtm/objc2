@@ -1,5 +1,3 @@
-use crate::AppKit::generated::NSParagraphStyle::*;
-use crate::AppKit::generated::NSTypesetter::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

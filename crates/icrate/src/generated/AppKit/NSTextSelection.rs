@@ -1,7 +1,3 @@
-use super::__exported::NSTextLocation;
-use super::__exported::NSTextRange;
-use crate::CoreGraphics::generated::CGGeometry::*;
-use crate::Foundation::generated::NSAttributedString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

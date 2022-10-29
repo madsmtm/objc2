@@ -1,6 +1,3 @@
-use crate::AppKit::generated::NSTouchBarItem::*;
-use crate::AppKit::generated::NSUserInterfaceCompression::*;
-use crate::AppKit::generated::NSUserInterfaceLayout::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

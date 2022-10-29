@@ -1,12 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSLocale;
-use super::__exported::NSString;
-use super::__exported::NSTimeZone;
-use crate::CoreFoundation::generated::CFCalendar::*;
-use crate::Foundation::generated::NSDate::*;
-use crate::Foundation::generated::NSNotification::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,16 +1,3 @@
-use super::__exported::NSDocument;
-use super::__exported::NSError;
-use super::__exported::NSMenuItem;
-use super::__exported::NSMutableDictionary;
-use super::__exported::NSOpenPanel;
-use super::__exported::NSWindow;
-use super::__exported::NSURL;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSMenu::*;
-use crate::AppKit::generated::NSNibDeclarations::*;
-use crate::AppKit::generated::NSUserInterfaceValidation::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDate::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

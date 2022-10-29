@@ -1,8 +1,3 @@
-use super::__exported::NSColor;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSControl::*;
-use crate::AppKit::generated::NSUserInterfaceValidation::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

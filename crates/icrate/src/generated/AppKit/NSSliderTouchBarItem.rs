@@ -1,7 +1,3 @@
-use super::__exported::NSSlider;
-use super::__exported::NSSliderAccessory;
-use crate::AppKit::generated::NSTouchBarItem::*;
-use crate::AppKit::generated::NSUserInterfaceCompression::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,7 +1,3 @@
-use super::__exported::NSArray;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSString::*;
-use crate::Foundation::generated::NSTextCheckingResult::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

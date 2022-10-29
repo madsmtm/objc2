@@ -1,9 +1,3 @@
-use super::__exported::NSTextLayoutFragment;
-use super::__exported::NSTextLayoutManager;
-use super::__exported::NSTextLocation;
-use super::__exported::NSTextRange;
-use crate::CoreGraphics::generated::CGGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

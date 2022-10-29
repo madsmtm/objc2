@@ -1,7 +1,3 @@
-use super::__exported::NSTextContainer;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSTextFieldCell::*;
-use crate::Foundation::generated::Foundation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

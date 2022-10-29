@@ -1,17 +1,3 @@
-use super::__exported::NSBundle;
-use super::__exported::NSExtensionRequestHandling;
-use super::__exported::NSPointerArray;
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSKeyValueBinding::*;
-use crate::AppKit::generated::NSNib::*;
-use crate::AppKit::generated::NSNibDeclarations::*;
-use crate::AppKit::generated::NSPopover::*;
-use crate::AppKit::generated::NSResponder::*;
-use crate::AppKit::generated::NSStoryboard::*;
-use crate::AppKit::generated::NSStoryboardSegue::*;
-use crate::AppKit::generated::NSUserInterfaceItemIdentification::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,16 +1,8 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::Foundation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSTouchBarItemIdentifier = NSString;
-use super::__exported::NSGestureRecognizer;
-use super::__exported::NSImage;
-use super::__exported::NSString;
-use super::__exported::NSTouchBar;
-use super::__exported::NSView;
-use super::__exported::NSViewController;
 extern_class!(
     #[derive(Debug)]
     pub struct NSTouchBarItem;

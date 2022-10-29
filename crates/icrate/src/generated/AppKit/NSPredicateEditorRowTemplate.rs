@@ -1,11 +1,3 @@
-use super::__exported::NSEntityDescription;
-use super::__exported::NSPredicate;
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::CoreData::generated::NSAttributeDescription::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSComparisonPredicate::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,8 +1,3 @@
-use super::__exported::NSError;
-use super::__exported::NSString;
-use super::__exported::NSURL;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

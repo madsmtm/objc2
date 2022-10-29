@@ -1,9 +1,3 @@
-use super::__exported::NSColor;
-use super::__exported::NSFont;
-use super::__exported::NSNotification;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSSpellProtocol::*;
-use crate::AppKit::generated::NSView::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,9 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSDictionary;
-use super::__exported::NSOrthography;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSRange::*;
-use crate::Foundation::generated::NSTextCheckingResult::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,9 +1,3 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSControl::*;
-use crate::AppKit::generated::NSParagraphStyle::*;
-use crate::AppKit::generated::NSTextContent::*;
-use crate::AppKit::generated::NSTextFieldCell::*;
-use crate::AppKit::generated::NSUserInterfaceValidation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,9 +1,3 @@
-use super::__exported::NSLayoutConstraint;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCell::*;
-use crate::AppKit::generated::NSTableView::*;
-use crate::AppKit::generated::NSView::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

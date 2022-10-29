@@ -1,19 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSData;
-use super::__exported::NSDate;
-use super::__exported::NSError;
-use super::__exported::NSLock;
-use super::__exported::NSNumber;
-use super::__exported::NSXPCConnection;
-use crate::dispatch::generated::dispatch::*;
-use crate::CoreFoundation::generated::CFBase::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSEnumerator::*;
-use crate::Foundation::generated::NSError::*;
-use crate::Foundation::generated::NSNotification::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSPathUtilities::*;
-use crate::Foundation::generated::NSURL::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

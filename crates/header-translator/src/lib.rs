@@ -33,8 +33,6 @@ impl RustFile {
 
     pub fn add_stmt(&mut self, stmt: Stmt) {
         match &stmt {
-            Stmt::FileImport { .. } => {}
-            Stmt::ItemImport { .. } => {}
             Stmt::ClassDecl { name, .. } => {
                 self.declared_types.insert(name.clone());
             }
@@ -50,10 +48,7 @@ impl RustFile {
     }
 
     pub fn finish(self) -> (HashSet<String>, TokenStream) {
-        let iter = self.stmts.iter().filter(|stmt| match stmt {
-            Stmt::ItemImport { name } => !self.declared_types.contains(name),
-            _ => true,
-        });
+        let iter = self.stmts.iter();
 
         let tokens = quote! {
             #[allow(unused_imports)]

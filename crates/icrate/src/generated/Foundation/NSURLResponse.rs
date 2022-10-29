@@ -1,9 +1,3 @@
-use super::__exported::NSDictionary;
-use super::__exported::NSString;
-use super::__exported::NSURLRequest;
-use super::__exported::NSURLResponseInternal;
-use super::__exported::NSURL;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -37,7 +31,6 @@ extern_methods!(
         pub unsafe fn suggestedFilename(&self) -> Option<Id<NSString, Shared>>;
     }
 );
-use super::__exported::NSHTTPURLResponseInternal;
 extern_class!(
     #[derive(Debug)]
     pub struct NSHTTPURLResponse;

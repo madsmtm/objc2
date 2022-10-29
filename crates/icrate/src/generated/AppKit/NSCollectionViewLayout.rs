@@ -1,16 +1,8 @@
-use super::__exported::NSIndexPath;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCollectionView::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSCollectionViewDecorationElementKind = NSString;
-use super::__exported::NSCollectionView;
-use super::__exported::NSNib;
 extern_class!(
     #[derive(Debug)]
     pub struct NSCollectionViewLayoutAttributes;

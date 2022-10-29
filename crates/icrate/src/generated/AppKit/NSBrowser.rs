@@ -1,17 +1,8 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSApplication::*;
-use crate::AppKit::generated::NSControl::*;
-use crate::AppKit::generated::NSDragging::*;
-use crate::AppKit::generated::NSViewController::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSBrowserColumnsAutosaveName = NSString;
-use super::__exported::NSIndexSet;
-use super::__exported::NSMatrix;
-use super::__exported::NSScroller;
 extern_class!(
     #[derive(Debug)]
     pub struct NSBrowser;

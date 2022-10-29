@@ -1,19 +1,3 @@
-use super::__exported::NSColor;
-use super::__exported::NSGraphicsContext;
-use super::__exported::NSImageRep;
-use super::__exported::NSURL;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSBitmapImageRep::*;
-use crate::AppKit::generated::NSFontDescriptor::*;
-use crate::AppKit::generated::NSGraphics::*;
-use crate::AppKit::generated::NSLayoutConstraint::*;
-use crate::AppKit::generated::NSPasteboard::*;
-use crate::ApplicationServices::generated::ApplicationServices::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSBundle::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

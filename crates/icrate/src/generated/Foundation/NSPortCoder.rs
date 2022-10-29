@@ -1,7 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSConnection;
-use super::__exported::NSPort;
-use crate::Foundation::generated::NSCoder::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

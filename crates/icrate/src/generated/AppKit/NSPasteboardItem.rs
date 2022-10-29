@@ -1,8 +1,3 @@
-use super::__exported::NSPasteboard;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSPasteboard::*;
-use crate::CoreFoundation::generated::CFBase::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,12 +1,3 @@
-use super::__exported::NSOpenPanel;
-use super::__exported::NSPathComponentCell;
-use super::__exported::NSPathControlItem;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSControl::*;
-use crate::AppKit::generated::NSDragging::*;
-use crate::AppKit::generated::NSPathCell::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

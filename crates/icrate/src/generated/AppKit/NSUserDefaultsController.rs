@@ -1,7 +1,3 @@
-use super::__exported::NSUserDefaults;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSController::*;
-use crate::Foundation::generated::NSDictionary::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,9 +1,3 @@
-use super::__exported::NSIndexPath;
-use super::__exported::NSSortDescriptor;
-use super::__exported::NSTreeController;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,7 +1,3 @@
-use super::__exported::NSImage;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSSharingService::*;
-use crate::AppKit::generated::NSTouchBarItem::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

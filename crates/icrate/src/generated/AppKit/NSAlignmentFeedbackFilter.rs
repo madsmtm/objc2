@@ -1,9 +1,3 @@
-use super::__exported::NSPanGestureRecognizer;
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSEvent::*;
-use crate::AppKit::generated::NSHapticFeedback::*;
-use crate::Foundation::generated::Foundation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

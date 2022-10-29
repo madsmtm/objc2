@@ -1,13 +1,3 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSAnimation::*;
-use crate::AppKit::generated::NSControl::*;
-use crate::AppKit::generated::NSLayoutAnchor::*;
-use crate::AppKit::generated::NSView::*;
-use crate::AppKit::generated::NSWindow::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

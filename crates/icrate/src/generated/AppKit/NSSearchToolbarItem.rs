@@ -1,7 +1,3 @@
-use super::__exported::NSSearchField;
-use super::__exported::NSView;
-use crate::AppKit::generated::NSToolbarItem::*;
-use crate::Foundation::generated::Foundation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

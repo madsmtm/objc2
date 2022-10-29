@@ -1,10 +1,3 @@
-use super::__exported::NSTextLineFragment;
-use super::__exported::NSTextLocation;
-use super::__exported::NSTextRange;
-use super::__exported::NSTextSelection;
-use crate::AppKit::generated::NSTextSelection::*;
-use crate::CoreGraphics::generated::CGGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

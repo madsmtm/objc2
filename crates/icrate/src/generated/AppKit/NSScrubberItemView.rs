@@ -1,10 +1,3 @@
-use super::__exported::NSImageView;
-use super::__exported::NSScrubberLayoutAttributes;
-use super::__exported::NSTextField;
-use crate::os::generated::lock::*;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSImageCell::*;
-use crate::AppKit::generated::NSView::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

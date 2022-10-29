@@ -1,8 +1,3 @@
-use super::__exported::NSData;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::ApplicationServices::generated::ApplicationServices::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

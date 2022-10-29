@@ -1,6 +1,3 @@
-use super::__exported::NSString;
-use crate::Foundation::generated::NSObjCRuntime::*;
-use crate::Foundation::generated::NSValue::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,12 +1,3 @@
-use super::__exported::NSClipView;
-use super::__exported::NSColor;
-use super::__exported::NSRulerView;
-use super::__exported::NSScroller;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSScroller::*;
-use crate::AppKit::generated::NSTextFinder::*;
-use crate::AppKit::generated::NSView::*;
-use crate::Foundation::generated::NSDate::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

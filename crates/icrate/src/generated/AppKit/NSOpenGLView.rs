@@ -1,8 +1,3 @@
-use super::__exported::NSOpenGLContext;
-use super::__exported::NSOpenGLPixelFormat;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSOpenGL::*;
-use crate::AppKit::generated::NSView::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

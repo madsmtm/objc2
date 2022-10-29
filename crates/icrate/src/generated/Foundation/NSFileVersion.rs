@@ -1,11 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSDate;
-use super::__exported::NSDictionary;
-use super::__exported::NSError;
-use super::__exported::NSPersonNameComponents;
-use super::__exported::NSString;
-use super::__exported::NSURL;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

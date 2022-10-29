@@ -154,11 +154,6 @@ fn parse_objc_decl(
 
 #[derive(Debug, Clone)]
 pub enum Stmt {
-    /// #import <framework/file.h>
-    FileImport { framework: String, file: String },
-    /// @class Name;
-    /// @protocol Name;
-    ItemImport { name: String },
     /// @interface name: superclass <protocols*>
     ClassDecl {
         name: String,
@@ -196,32 +191,9 @@ pub enum Stmt {
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, config: &Config) -> Option<Self> {
         match entity.get_kind() {
-            EntityKind::InclusionDirective => {
-                // let file = entity.get_file().expect("inclusion file");
-                let name = entity.get_name().expect("inclusion name");
-                let mut iter = name.split('/');
-                let framework = iter.next().expect("inclusion name has framework");
-                let file = iter.next()?;
-                if iter.count() != 0 {
-                    // TODO: Fix this
-                    println!("skipping inclusion of {name:?}");
-                    return None;
-                }
-
-                Some(Self::FileImport {
-                    framework: framework.to_string(),
-                    file: file
-                        .strip_suffix(".h")
-                        .expect("inclusion name file is header")
-                        .to_string(),
-                })
-            }
-            EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => {
-                let name = entity.get_name().expect("objc ref has name");
-
-                // We intentionally don't handle generics here
-                Some(Self::ItemImport { name })
-            }
+            EntityKind::InclusionDirective => None,
+            // These are inconsequential for us, since we resolve imports differently
+            EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => None,
             EntityKind::MacroExpansion | EntityKind::MacroDefinition => None,
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
@@ -380,21 +352,6 @@ impl Stmt {
 impl ToTokens for Stmt {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let result = match self {
-            Self::FileImport { framework, file } => {
-                let framework = format_ident!("{}", framework);
-                let file = format_ident!("{}", file);
-
-                quote! {
-                    use crate::#framework::generated::#file::*;
-                }
-            }
-            Self::ItemImport { name } => {
-                let name = format_ident!("{}", name);
-
-                quote! {
-                    use super::__exported::#name;
-                }
-            }
             Self::ClassDecl {
                 name,
                 availability: _,

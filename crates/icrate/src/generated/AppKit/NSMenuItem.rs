@@ -1,14 +1,3 @@
-use super::__exported::NSAttributedString;
-use super::__exported::NSImage;
-use super::__exported::NSMenu;
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCell::*;
-use crate::AppKit::generated::NSUserInterfaceItemIdentification::*;
-use crate::AppKit::generated::NSUserInterfaceValidation::*;
-use crate::AppKit::generated::NSView::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

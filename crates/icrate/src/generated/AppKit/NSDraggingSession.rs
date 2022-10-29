@@ -1,14 +1,3 @@
-use super::__exported::NSDraggingItem;
-use super::__exported::NSDraggingSource;
-use super::__exported::NSImage;
-use super::__exported::NSPasteboard;
-use super::__exported::NSPasteboardWriting;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSDragging::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

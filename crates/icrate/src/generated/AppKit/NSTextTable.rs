@@ -1,6 +1,3 @@
-use super::__exported::NSLayoutManager;
-use super::__exported::NSTextContainer;
-use crate::AppKit::generated::NSText::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

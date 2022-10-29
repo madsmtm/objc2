@@ -1,12 +1,3 @@
-use super::__exported::NSIndexSet;
-use super::__exported::NSPredicate;
-use super::__exported::NSString;
-use super::__exported::NSView;
-use super::__exported::NSViewAnimation;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSControl::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

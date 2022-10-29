@@ -1,13 +1,3 @@
-use super::__exported::NSData;
-use super::__exported::NSFileWrapper;
-use super::__exported::NSMutableDictionary;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::CoreFoundation::generated::CFBase::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSString::*;
-use crate::Foundation::generated::NSURL::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -15,7 +5,6 @@ use objc2::{extern_class, extern_methods, ClassType};
 pub type NSPasteboardType = NSString;
 pub type NSPasteboardName = NSString;
 pub type NSPasteboardReadingOptionKey = NSString;
-use super::__exported::NSPasteboardItem;
 extern_class!(
     #[derive(Debug)]
     pub struct NSPasteboard;

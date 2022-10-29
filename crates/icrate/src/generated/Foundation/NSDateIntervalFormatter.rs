@@ -1,10 +1,3 @@
-use super::__exported::NSCalendar;
-use super::__exported::NSDate;
-use super::__exported::NSLocale;
-use super::__exported::NSTimeZone;
-use crate::dispatch::generated::dispatch::*;
-use crate::Foundation::generated::NSDateInterval::*;
-use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

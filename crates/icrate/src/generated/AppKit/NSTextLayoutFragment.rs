@@ -1,13 +1,3 @@
-use super::__exported::NSOperationQueue;
-use super::__exported::NSTextAttachmentViewProvider;
-use super::__exported::NSTextElement;
-use super::__exported::NSTextLayoutManager;
-use super::__exported::NSTextLineFragment;
-use super::__exported::NSTextLocation;
-use super::__exported::NSTextParagraph;
-use super::__exported::NSTextRange;
-use crate::CoreGraphics::generated::CoreGraphics::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,11 +1,3 @@
-use super::__exported::NSError;
-use super::__exported::NSFetchRequest;
-use super::__exported::NSManagedObjectContext;
-use super::__exported::NSPredicate;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSController::*;
-use crate::AppKit::generated::NSUserInterfaceValidation::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,8 +1,3 @@
-use super::__exported::NSImage;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCell::*;
-use crate::AppKit::generated::NSControl::*;
-use crate::AppKit::generated::NSUserInterfaceCompression::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

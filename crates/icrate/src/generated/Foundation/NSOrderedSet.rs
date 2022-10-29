@@ -1,12 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSIndexSet;
-use super::__exported::NSSet;
-use super::__exported::NSString;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSEnumerator::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSOrderedCollectionDifference::*;
-use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

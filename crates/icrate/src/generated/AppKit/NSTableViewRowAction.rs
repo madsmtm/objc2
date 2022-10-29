@@ -1,8 +1,3 @@
-use super::__exported::NSButton;
-use super::__exported::NSColor;
-use super::__exported::NSImage;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::Foundation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,15 +1,3 @@
-use super::__exported::NSLock;
-use super::__exported::NSNotification;
-use super::__exported::NSView;
-use super::__exported::NSWindow;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSResponder::*;
-use crate::AppKit::generated::NSWindow::*;
-use crate::CoreFoundation::generated::CFDate::*;
-use crate::CoreFoundation::generated::CFRunLoop::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

@@ -1,9 +1,3 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSCell::*;
-use crate::AppKit::generated::NSImage::*;
-use crate::AppKit::generated::NSView::*;
-use crate::AppKit::generated::NSWindow::*;
-use crate::Foundation::generated::NSObjCRuntime::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

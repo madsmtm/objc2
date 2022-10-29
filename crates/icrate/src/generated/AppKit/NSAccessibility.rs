@@ -1,16 +1,3 @@
-use super::__exported::NSArray;
-use super::__exported::NSString;
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSAccessibilityConstants::*;
-use crate::AppKit::generated::NSAccessibilityCustomRotor::*;
-use crate::AppKit::generated::NSAccessibilityElement::*;
-use crate::AppKit::generated::NSAccessibilityProtocols::*;
-use crate::AppKit::generated::NSErrors::*;
-use crate::AppKit::generated::NSWorkspace::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

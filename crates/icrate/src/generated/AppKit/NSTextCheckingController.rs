@@ -1,15 +1,3 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSSpellChecker::*;
-use crate::AppKit::generated::NSTextCheckingClient::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSAttributedString::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
-use crate::Foundation::generated::NSRange::*;
-use crate::Foundation::generated::NSString::*;
-use crate::Foundation::generated::NSTextCheckingResult::*;
-use crate::Foundation::generated::NSValue::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

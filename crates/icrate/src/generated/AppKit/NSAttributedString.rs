@@ -1,14 +1,3 @@
-use super::__exported::NSFileWrapper;
-use super::__exported::NSTextBlock;
-use super::__exported::NSTextList;
-use super::__exported::NSTextTable;
-use super::__exported::NSURL;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSFontManager::*;
-use crate::AppKit::generated::NSPasteboard::*;
-use crate::AppKit::generated::NSText::*;
-use crate::Foundation::generated::NSAttributedString::*;
-use crate::Foundation::generated::NSItemProvider::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

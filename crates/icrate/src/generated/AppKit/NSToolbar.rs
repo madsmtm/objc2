@@ -1,14 +1,9 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::Foundation::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSToolbarIdentifier = NSString;
 pub type NSToolbarItemIdentifier = NSString;
-use super::__exported::NSToolbarItem;
-use super::__exported::NSView;
-use super::__exported::NSWindow;
 extern_class!(
     #[derive(Debug)]
     pub struct NSToolbar;

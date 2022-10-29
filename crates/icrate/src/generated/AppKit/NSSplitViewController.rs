@@ -1,9 +1,3 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSSplitView::*;
-use crate::AppKit::generated::NSSplitViewItem::*;
-use crate::AppKit::generated::NSViewController::*;
-use crate::Foundation::generated::NSArray::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

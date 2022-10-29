@@ -1,34 +1,3 @@
-use super::__exported::CALayer;
-use super::__exported::CIFilter;
-use super::__exported::NSAttributedString;
-use super::__exported::NSBitmapImageRep;
-use super::__exported::NSCursor;
-use super::__exported::NSDraggingSession;
-use super::__exported::NSDraggingSource;
-use super::__exported::NSGestureRecognizer;
-use super::__exported::NSGraphicsContext;
-use super::__exported::NSImage;
-use super::__exported::NSLayoutGuide;
-use super::__exported::NSScreen;
-use super::__exported::NSScrollView;
-use super::__exported::NSShadow;
-use super::__exported::NSTextInputContext;
-use super::__exported::NSTrackingArea;
-use super::__exported::NSWindow;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSAnimation::*;
-use crate::AppKit::generated::NSAppearance::*;
-use crate::AppKit::generated::NSDragging::*;
-use crate::AppKit::generated::NSGraphics::*;
-use crate::AppKit::generated::NSPasteboard::*;
-use crate::AppKit::generated::NSResponder::*;
-use crate::AppKit::generated::NSTouch::*;
-use crate::AppKit::generated::NSUserInterfaceItemIdentification::*;
-use crate::AppKit::generated::NSUserInterfaceLayout::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSDictionary::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSRange::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

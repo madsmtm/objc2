@@ -1,7 +1,3 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSDocument::*;
-use crate::AppKit::generated::NSResponder::*;
-use crate::Foundation::generated::NSUserActivity::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

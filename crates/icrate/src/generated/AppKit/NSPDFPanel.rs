@@ -1,10 +1,3 @@
-use super::__exported::NSMutableArray;
-use super::__exported::NSPDFInfo;
-use super::__exported::NSString;
-use super::__exported::NSViewController;
-use super::__exported::NSWindow;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

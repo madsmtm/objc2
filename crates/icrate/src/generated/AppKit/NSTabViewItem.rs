@@ -1,12 +1,3 @@
-use super::__exported::NSColor;
-use super::__exported::NSImage;
-use super::__exported::NSTabView;
-use super::__exported::NSView;
-use super::__exported::NSViewController;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSView::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

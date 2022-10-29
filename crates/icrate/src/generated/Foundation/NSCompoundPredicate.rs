@@ -1,5 +1,3 @@
-use super::__exported::NSArray;
-use crate::Foundation::generated::NSPredicate::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

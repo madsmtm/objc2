@@ -1,12 +1,8 @@
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSLayoutConstraint::*;
-use crate::AppKit::generated::NSView::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 pub type NSSplitViewAutosaveName = NSString;
-use super::__exported::NSNotification;
 extern_class!(
     #[derive(Debug)]
     pub struct NSSplitView;

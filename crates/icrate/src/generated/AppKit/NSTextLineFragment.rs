@@ -1,6 +1,3 @@
-use crate::CoreGraphics::generated::CoreGraphics::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSAttributedString::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

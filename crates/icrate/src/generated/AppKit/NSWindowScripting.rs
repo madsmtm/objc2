@@ -1,7 +1,3 @@
-use super::__exported::NSCloseCommand;
-use super::__exported::NSScriptCommand;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSWindow::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]

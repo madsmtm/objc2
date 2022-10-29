@@ -1,11 +1,3 @@
-use super::__exported::NSCache;
-use super::__exported::NSError;
-use super::__exported::NSLocale;
-use super::__exported::NSMutableDictionary;
-use super::__exported::NSRecursiveLock;
-use super::__exported::NSString;
-use crate::CoreFoundation::generated::CFNumberFormatter::*;
-use crate::Foundation::generated::NSFormatter::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
@@ -316,7 +308,6 @@ extern_methods!(
         );
     }
 );
-use super::__exported::NSDecimalNumberHandler;
 extern_methods!(
     #[doc = "NSNumberFormatterCompatibility"]
     unsafe impl NSNumberFormatter {

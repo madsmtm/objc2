@@ -1,21 +1,3 @@
-use super::__exported::NSAttributedString;
-use super::__exported::NSDraggingImageComponent;
-use super::__exported::NSEvent;
-use super::__exported::NSFont;
-use super::__exported::NSFormatter;
-use super::__exported::NSImage;
-use super::__exported::NSMenu;
-use super::__exported::NSText;
-use super::__exported::NSTextView;
-use super::__exported::NSView;
-use crate::AppKit::generated::AppKitDefines::*;
-use crate::AppKit::generated::NSAccessibilityProtocols::*;
-use crate::AppKit::generated::NSParagraphStyle::*;
-use crate::AppKit::generated::NSText::*;
-use crate::AppKit::generated::NSUserInterfaceItemIdentification::*;
-use crate::Foundation::generated::NSArray::*;
-use crate::Foundation::generated::NSGeometry::*;
-use crate::Foundation::generated::NSObject::*;
 #[allow(unused_imports)]
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
