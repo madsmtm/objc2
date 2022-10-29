@@ -147,24 +147,24 @@ extern_methods!(
 extern_methods!(
     #[doc = "NSDataBase64Encoding"]
     unsafe impl NSData {
-        # [method_id (initWithBase64EncodedString : options :)]
+        #[method_id(initWithBase64EncodedString:options:)]
         pub unsafe fn initWithBase64EncodedString_options(
             &self,
             base64String: &NSString,
             options: NSDataBase64DecodingOptions,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (base64EncodedStringWithOptions :)]
+        #[method_id(base64EncodedStringWithOptions:)]
         pub unsafe fn base64EncodedStringWithOptions(
             &self,
             options: NSDataBase64EncodingOptions,
         ) -> Id<NSString, Shared>;
-        # [method_id (initWithBase64EncodedData : options :)]
+        #[method_id(initWithBase64EncodedData:options:)]
         pub unsafe fn initWithBase64EncodedData_options(
             &self,
             base64Data: &NSData,
             options: NSDataBase64DecodingOptions,
         ) -> Option<Id<Self, Shared>>;
-        # [method_id (base64EncodedDataWithOptions :)]
+        #[method_id(base64EncodedDataWithOptions:)]
         pub unsafe fn base64EncodedDataWithOptions(
             &self,
             options: NSDataBase64EncodingOptions,
@@ -198,7 +198,7 @@ extern_methods!(
             &self,
             path: &NSString,
         ) -> Option<Id<Object, Shared>>;
-        # [method_id (initWithBase64Encoding :)]
+        #[method_id(initWithBase64Encoding:)]
         pub unsafe fn initWithBase64Encoding(
             &self,
             base64String: &NSString,

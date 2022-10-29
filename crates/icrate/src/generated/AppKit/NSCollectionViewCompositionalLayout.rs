@@ -131,7 +131,7 @@ extern_methods!(
         #[method(setVisibleItemsInvalidationHandler:)]
         pub unsafe fn setVisibleItemsInvalidationHandler(
             &self,
-            visibleItemsInvalidationHandler : NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
+            visibleItemsInvalidationHandler: NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
         );
         #[method_id(decorationItems)]
         pub unsafe fn decorationItems(

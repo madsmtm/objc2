@@ -101,7 +101,7 @@ extern_methods!(
         );
         #[method(assumesHTTP3Capable)]
         pub unsafe fn assumesHTTP3Capable(&self) -> bool;
-        # [method (setAssumesHTTP3Capable :)]
+        #[method(setAssumesHTTP3Capable:)]
         pub unsafe fn setAssumesHTTP3Capable(&self, assumesHTTP3Capable: bool);
         #[method(attribution)]
         pub unsafe fn attribution(&self) -> NSURLRequestAttribution;

@@ -1,6 +1,6 @@
+use std::fmt;
+
 use clang::{Entity, EntityKind, EntityVisitResult, Nullability, ObjCAttributes};
-use proc_macro2::TokenStream;
-use quote::ToTokens;
 
 use crate::availability::Availability;
 use crate::config::MethodData;
@@ -142,8 +142,8 @@ impl PartialProperty<'_> {
     }
 }
 
-impl ToTokens for Property {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
+impl fmt::Display for Property {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let method = Method {
             selector: self.getter_name.clone(),
             fn_name: self.getter_name.clone(),
@@ -156,8 +156,9 @@ impl ToTokens for Property {
             result_type: RustTypeReturn::new(self.type_out.clone()),
             safe: self.safe,
         };
-        method.to_tokens(tokens);
+        write!(f, "{method}")?;
         if let Some(setter_name) = &self.setter_name {
+            writeln!(f, "")?;
             let method = Method {
                 selector: setter_name.clone() + ":",
                 fn_name: setter_name.clone(),
@@ -170,7 +171,8 @@ impl ToTokens for Property {
                 result_type: RustTypeReturn::new(RustType::Void),
                 safe: self.safe,
             };
-            method.to_tokens(tokens);
+            write!(f, "{method}")?;
         }
+        Ok(())
     }
 }

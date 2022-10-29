@@ -96,9 +96,9 @@ extern_methods!(
         pub unsafe fn encodeBool_forKey(&self, value: bool, key: &NSString);
         #[method(encodeInt:forKey:)]
         pub unsafe fn encodeInt_forKey(&self, value: c_int, key: &NSString);
-        # [method (encodeInt32 : forKey :)]
+        #[method(encodeInt32:forKey:)]
         pub unsafe fn encodeInt32_forKey(&self, value: i32, key: &NSString);
-        # [method (encodeInt64 : forKey :)]
+        #[method(encodeInt64:forKey:)]
         pub unsafe fn encodeInt64_forKey(&self, value: int64_t, key: &NSString);
         #[method(encodeFloat:forKey:)]
         pub unsafe fn encodeFloat_forKey(&self, value: c_float, key: &NSString);
@@ -124,9 +124,9 @@ extern_methods!(
         pub unsafe fn decodeBoolForKey(&self, key: &NSString) -> bool;
         #[method(decodeIntForKey:)]
         pub unsafe fn decodeIntForKey(&self, key: &NSString) -> c_int;
-        # [method (decodeInt32ForKey :)]
+        #[method(decodeInt32ForKey:)]
         pub unsafe fn decodeInt32ForKey(&self, key: &NSString) -> i32;
-        # [method (decodeInt64ForKey :)]
+        #[method(decodeInt64ForKey:)]
         pub unsafe fn decodeInt64ForKey(&self, key: &NSString) -> int64_t;
         #[method(decodeFloatForKey:)]
         pub unsafe fn decodeFloatForKey(&self, key: &NSString) -> c_float;

@@ -427,7 +427,7 @@ extern_methods!(
         #[method(getRectsExposedDuringLiveResize:count:)]
         pub unsafe fn getRectsExposedDuringLiveResize_count(
             &self,
-            exposedRects: [NSRect; 4usize],
+            exposedRects: [NSRect; 4],
             count: NonNull<NSInteger>,
         );
         #[method_id(inputContext)]

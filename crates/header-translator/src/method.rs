@@ -1,6 +1,6 @@
+use std::fmt;
+
 use clang::{Entity, EntityKind, EntityVisitResult, ObjCQualifiers};
-use proc_macro2::TokenStream;
-use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
@@ -305,19 +305,13 @@ impl<'tu> PartialMethod<'tu> {
     }
 }
 
-impl ToTokens for Method {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        let fn_name = format_ident!("{}", handle_reserved(&self.fn_name));
-
-        let mut arguments: Vec<_> = self
-            .arguments
-            .iter()
-            .map(|(param, _qualifier, ty)| (format_ident!("{}", handle_reserved(param)), ty))
-            .collect();
+impl fmt::Display for Method {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut arguments = self.arguments.clone();
 
         let is_error =
             if self.selector.ends_with("error:") || self.selector.ends_with("AndReturnError:") {
-                let (_, ty) = arguments.last().expect("arguments last");
+                let (_, _, ty) = arguments.last().expect("arguments last");
                 ty.is_error_out()
             } else {
                 false
@@ -327,51 +321,32 @@ impl ToTokens for Method {
             arguments.pop();
         }
 
-        let fn_args: Vec<_> = arguments
-            .iter()
-            .map(|(param, arg_ty)| quote!(#param: #arg_ty))
-            .collect();
-
-        let selector = if self.selector.contains(':') {
-            let iter = self
-                .selector
-                .split(':')
-                .filter(|sel| !sel.is_empty())
-                .map(|sel| format_ident!("{}", sel));
-
-            quote!(#(#iter:)*)
+        if self.result_type.is_id() {
+            writeln!(f, "        #[method_id({})]", self.selector)?;
         } else {
-            let sel = format_ident!("{}", self.selector);
-            quote!(#sel)
+            writeln!(f, "        #[method({})]", self.selector)?;
         };
 
-        let ret = if is_error {
-            self.result_type.as_error()
+        write!(f, "        pub ")?;
+        if !self.safe {
+            write!(f, "unsafe ")?;
+        }
+        write!(f, "fn {}(", handle_reserved(&self.fn_name))?;
+        if !self.is_class {
+            write!(f, "&self, ")?;
+        }
+        for (param, _qualifier, arg_ty) in arguments {
+            write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
+        }
+        write!(f, ")")?;
+
+        if is_error {
+            write!(f, "{};", self.result_type.as_error())?;
         } else {
-            let ret = &self.result_type;
-            quote!(#ret)
+            write!(f, "{};", self.result_type)?;
         };
 
-        let macro_name = if self.result_type.is_id() {
-            format_ident!("method_id")
-        } else {
-            format_ident!("method")
-        };
-
-        let unsafe_ = if self.safe { quote!() } else { quote!(unsafe) };
-
-        let result = if self.is_class {
-            quote! {
-                #[#macro_name(#selector)]
-                pub #unsafe_ fn #fn_name(#(#fn_args),*) #ret;
-            }
-        } else {
-            quote! {
-                #[#macro_name(#selector)]
-                pub #unsafe_ fn #fn_name(&self #(, #fn_args)*) #ret;
-            }
-        };
-        tokens.append_all(result);
+        Ok(())
     }
 }
 

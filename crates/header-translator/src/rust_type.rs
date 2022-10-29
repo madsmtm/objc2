@@ -1,6 +1,6 @@
+use std::fmt;
+
 use clang::{Nullability, Type, TypeKind};
-use proc_macro2::TokenStream;
-use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct GenericType {
@@ -75,11 +75,17 @@ impl GenericType {
     }
 }
 
-impl ToTokens for GenericType {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        let name = format_ident!("{}", self.name);
-        let generics = &self.generics;
-        tokens.append_all(quote!(#name <#(#generics),*>));
+impl fmt::Display for GenericType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.name)?;
+        if !self.generics.is_empty() {
+            write!(f, "<")?;
+            for generic in &self.generics {
+                write!(f, "{generic},")?;
+            }
+            write!(f, ">")?;
+        }
+        Ok(())
     }
 }
 
@@ -535,34 +541,34 @@ impl RustType {
     }
 }
 
-impl ToTokens for RustType {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
+impl fmt::Display for RustType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         use RustType::*;
-        let result = match self {
+        match self {
             // Primitives
-            Void => quote!(c_void),
-            C99Bool => panic!("C99's bool is unsupported"), // quote!(bool)
-            Char => quote!(c_char),
-            SChar => quote!(c_schar),
-            UChar => quote!(c_uchar),
-            Short => quote!(c_short),
-            UShort => quote!(c_ushort),
-            Int => quote!(c_int),
-            UInt => quote!(c_uint),
-            Long => quote!(c_long),
-            ULong => quote!(c_ulong),
-            LongLong => quote!(c_longlong),
-            ULongLong => quote!(c_ulonglong),
-            Float => quote!(c_float),
-            Double => quote!(c_double),
-            I8 => quote!(i8),
-            U8 => quote!(u8),
-            I16 => quote!(i16),
-            U16 => quote!(u16),
-            I32 => quote!(i32),
-            U32 => quote!(u32),
-            I64 => quote!(i64),
-            U64 => quote!(u64),
+            Void => write!(f, "c_void"),
+            C99Bool => panic!("C99's bool is unsupported"), // write!(f, "bool")
+            Char => write!(f, "c_char"),
+            SChar => write!(f, "c_schar"),
+            UChar => write!(f, "c_uchar"),
+            Short => write!(f, "c_short"),
+            UShort => write!(f, "c_ushort"),
+            Int => write!(f, "c_int"),
+            UInt => write!(f, "c_uint"),
+            Long => write!(f, "c_long"),
+            ULong => write!(f, "c_ulong"),
+            LongLong => write!(f, "c_longlong"),
+            ULongLong => write!(f, "c_ulonglong"),
+            Float => write!(f, "c_float"),
+            Double => write!(f, "c_double"),
+            I8 => write!(f, "i8"),
+            U8 => write!(f, "u8"),
+            I16 => write!(f, "i16"),
+            U16 => write!(f, "u16"),
+            I32 => write!(f, "i32"),
+            U32 => write!(f, "u32"),
+            I64 => write!(f, "i64"),
+            U64 => write!(f, "u64"),
 
             // Objective-C
             Id {
@@ -573,28 +579,27 @@ impl ToTokens for RustType {
                 lifetime: _,
                 nullability,
             } => {
-                let tokens = quote!(&#type_);
                 if *nullability == Nullability::NonNull {
-                    tokens
+                    write!(f, "&{type_}")
                 } else {
-                    quote!(Option<#tokens>)
+                    write!(f, "Option<&{type_}>")
                 }
             }
             Class { nullability } => {
                 if *nullability == Nullability::NonNull {
-                    quote!(&Class)
+                    write!(f, "&Class")
                 } else {
-                    quote!(Option<&Class>)
+                    write!(f, "Option<&Class>")
                 }
             }
             Sel { nullability } => {
                 if *nullability == Nullability::NonNull {
-                    quote!(Sel)
+                    write!(f, "Sel")
                 } else {
-                    quote!(Option<Sel>)
+                    write!(f, "Option<Sel>")
                 }
             }
-            ObjcBool => quote!(bool),
+            ObjcBool => write!(f, "bool"),
 
             // Others
             Pointer {
@@ -603,27 +608,27 @@ impl ToTokens for RustType {
                 pointee,
             } => match &**pointee {
                 Self::Id {
-                    type_: tokens,
+                    type_,
                     is_const: false,
                     lifetime: Lifetime::Autoreleasing,
                     nullability: inner_nullability,
                 } => {
-                    let tokens = quote!(Id<#tokens, Shared>);
+                    let tokens = format!("Id<{type_}, Shared>");
                     let tokens = if *inner_nullability == Nullability::NonNull {
                         tokens
                     } else {
-                        quote!(Option<#tokens>)
+                        format!("Option<{tokens}>")
                     };
 
                     let tokens = if *is_const {
-                        quote!(&#tokens)
+                        format!("&{tokens}")
                     } else {
-                        quote!(&mut #tokens)
+                        format!("&mut {tokens}")
                     };
                     if *nullability == Nullability::NonNull {
-                        tokens
+                        write!(f, "{tokens}")
                     } else {
-                        quote!(Option<#tokens>)
+                        write!(f, "Option<{tokens}>")
                     }
                 }
                 Self::Id {
@@ -636,16 +641,16 @@ impl ToTokens for RustType {
                         println!("id*: {self:?}");
                     }
                     let tokens = if *inner_nullability == Nullability::NonNull {
-                        quote!(NonNull<#tokens>)
+                        format!("NonNull<{tokens}>")
                     } else {
-                        quote!(*mut #tokens)
+                        format!("*mut {tokens}")
                     };
                     if *nullability == Nullability::NonNull {
-                        quote!(NonNull<#tokens>)
+                        write!(f, "NonNull<{tokens}>")
                     } else if *is_const {
-                        quote!(*const #tokens)
+                        write!(f, "*const {tokens}")
                     } else {
-                        quote!(*mut #tokens)
+                        write!(f, "*mut {tokens}")
                     }
                 }
                 Self::Id { .. } => {
@@ -653,24 +658,20 @@ impl ToTokens for RustType {
                 }
                 pointee => {
                     if *nullability == Nullability::NonNull {
-                        quote!(NonNull<#pointee>)
+                        write!(f, "NonNull<{pointee}>")
                     } else if *is_const {
-                        quote!(*const #pointee)
+                        write!(f, "*const {pointee}")
                     } else {
-                        quote!(*mut #pointee)
+                        write!(f, "*mut {pointee}")
                     }
                 }
             },
             Array {
                 element_type,
                 num_elements,
-            } => quote!([#element_type; #num_elements]),
-            TypeDef { name } => {
-                let name = format_ident!("{}", name);
-                quote!(#name)
-            }
-        };
-        tokens.append_all(result);
+            } => write!(f, "[{element_type}; {num_elements}]"),
+            TypeDef { name } => write!(f, "{name}"),
+        }
     }
 }
 
@@ -698,7 +699,7 @@ impl RustTypeReturn {
         Self::new(RustType::parse(ty, false, Nullability::Unspecified))
     }
 
-    pub fn as_error(&self) -> TokenStream {
+    pub fn as_error(&self) -> String {
         match &self.inner {
             RustType::Id {
                 type_,
@@ -707,21 +708,21 @@ impl RustTypeReturn {
                 nullability: Nullability::Nullable,
             } => {
                 // NULL -> error
-                quote!(-> Result<Id<#type_, Shared>, Id<NSError, Shared>>)
+                format!(" -> Result<Id<{type_}, Shared>, Id<NSError, Shared>>")
             }
             RustType::ObjcBool => {
                 // NO -> error
-                quote!(-> Result<(), Id<NSError, Shared>>)
+                format!(" -> Result<(), Id<NSError, Shared>>")
             }
             _ => panic!("unknown error result type {self:?}"),
         }
     }
 }
 
-impl ToTokens for RustTypeReturn {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        let result = match &self.inner {
-            RustType::Void => return,
+impl fmt::Display for RustTypeReturn {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self.inner {
+            RustType::Void => Ok(()),
             RustType::Id {
                 type_,
                 // Ignore
@@ -731,13 +732,12 @@ impl ToTokens for RustTypeReturn {
                 nullability,
             } => {
                 if *nullability == Nullability::NonNull {
-                    quote!(Id<#type_, Shared>)
+                    write!(f, " -> Id<{type_}, Shared>")
                 } else {
-                    quote!(Option<Id<#type_, Shared>>)
+                    write!(f, " -> Option<Id<{type_}, Shared>>")
                 }
             }
-            type_ => quote!(#type_),
-        };
-        tokens.append_all(quote!(-> #result));
+            type_ => write!(f, " -> {type_}"),
+        }
     }
 }

@@ -270,6 +270,7 @@ pub(crate) mod NSWindowScripting;
 pub(crate) mod NSWindowTab;
 pub(crate) mod NSWindowTabGroup;
 pub(crate) mod NSWorkspace;
+
 mod __exported {
     pub use super::NSATSTypesetter::NSATSTypesetter;
     pub use super::NSAccessibilityConstants::{

@@ -205,7 +205,7 @@ extern_methods!(
             tNum: NSInteger,
             data: *mut c_void,
         ) -> Option<Id<NSEvent, Shared>>;
-        # [method_id (otherEventWithType : location : modifierFlags : timestamp : windowNumber : context : subtype : data1 : data2 :)]
+        #[method_id(otherEventWithType:location:modifierFlags:timestamp:windowNumber:context:subtype:data1:data2:)]
         pub unsafe fn otherEventWithType_location_modifierFlags_timestamp_windowNumber_context_subtype_data1_data2(
             type_: NSEventType,
             location: NSPoint,

@@ -116,12 +116,12 @@ extern_methods!(
             power: NSUInteger,
             behavior: Option<&NSDecimalNumberBehaviors>,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByMultiplyingByPowerOf10 :)]
+        #[method_id(decimalNumberByMultiplyingByPowerOf10:)]
         pub unsafe fn decimalNumberByMultiplyingByPowerOf10(
             &self,
             power: c_short,
         ) -> Id<NSDecimalNumber, Shared>;
-        # [method_id (decimalNumberByMultiplyingByPowerOf10 : withBehavior :)]
+        #[method_id(decimalNumberByMultiplyingByPowerOf10:withBehavior:)]
         pub unsafe fn decimalNumberByMultiplyingByPowerOf10_withBehavior(
             &self,
             power: c_short,

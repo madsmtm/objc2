@@ -31,7 +31,7 @@ extern_methods!(
         pub unsafe fn descriptorWithEnumCode(
             enumerator: OSType,
         ) -> Id<NSAppleEventDescriptor, Shared>;
-        # [method_id (descriptorWithInt32 :)]
+        #[method_id(descriptorWithInt32:)]
         pub unsafe fn descriptorWithInt32(signedInt: SInt32) -> Id<NSAppleEventDescriptor, Shared>;
         #[method_id(descriptorWithDouble:)]
         pub unsafe fn descriptorWithDouble(

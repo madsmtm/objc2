@@ -61,7 +61,7 @@ extern_methods!(
         pub unsafe fn moveToPoint(&self, point: NSPoint);
         #[method(lineToPoint:)]
         pub unsafe fn lineToPoint(&self, point: NSPoint);
-        # [method (curveToPoint : controlPoint1 : controlPoint2 :)]
+        #[method(curveToPoint:controlPoint1:controlPoint2:)]
         pub unsafe fn curveToPoint_controlPoint1_controlPoint2(
             &self,
             endPoint: NSPoint,
@@ -76,7 +76,7 @@ extern_methods!(
         pub unsafe fn relativeMoveToPoint(&self, point: NSPoint);
         #[method(relativeLineToPoint:)]
         pub unsafe fn relativeLineToPoint(&self, point: NSPoint);
-        # [method (relativeCurveToPoint : controlPoint1 : controlPoint2 :)]
+        #[method(relativeCurveToPoint:controlPoint1:controlPoint2:)]
         pub unsafe fn relativeCurveToPoint_controlPoint1_controlPoint2(
             &self,
             endPoint: NSPoint,

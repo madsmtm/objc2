@@ -28,12 +28,12 @@ extern_methods!(
             blue: CGFloat,
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
-        # [method_id (colorWithGenericGamma22White : alpha :)]
+        #[method_id(colorWithGenericGamma22White:alpha:)]
         pub unsafe fn colorWithGenericGamma22White_alpha(
             white: CGFloat,
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
-        # [method_id (colorWithDisplayP3Red : green : blue : alpha :)]
+        #[method_id(colorWithDisplayP3Red:green:blue:alpha:)]
         pub unsafe fn colorWithDisplayP3Red_green_blue_alpha(
             red: CGFloat,
             green: CGFloat,

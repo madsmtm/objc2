@@ -352,7 +352,7 @@ extern_methods!(
             characters: NonNull<unichar>,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (initWithUTF8String :)]
+        #[method_id(initWithUTF8String:)]
         pub unsafe fn initWithUTF8String(
             &self,
             nullTerminatedCString: NonNull<c_char>,
@@ -410,7 +410,7 @@ extern_methods!(
             characters: NonNull<unichar>,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
-        # [method_id (stringWithUTF8String :)]
+        #[method_id(stringWithUTF8String:)]
         pub unsafe fn stringWithUTF8String(
             nullTerminatedCString: NonNull<c_char>,
         ) -> Option<Id<Self, Shared>>;

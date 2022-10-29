@@ -1,8 +1,7 @@
 use std::collections::HashSet;
+use std::fmt;
 
 use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
-use proc_macro2::TokenStream;
-use quote::{format_ident, quote, ToTokens, TokenStreamExt};
 
 use crate::availability::Availability;
 use crate::config::{ClassData, Config};
@@ -16,11 +15,11 @@ pub enum MethodOrProperty {
     Property(Property),
 }
 
-impl ToTokens for MethodOrProperty {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
+impl fmt::Display for MethodOrProperty {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Method(method) => method.to_tokens(tokens),
-            Self::Property(property) => property.to_tokens(tokens),
+            Self::Method(method) => write!(f, "{method}"),
+            Self::Property(property) => write!(f, "{property}"),
         }
     }
 }
@@ -347,9 +346,9 @@ impl Stmt {
     }
 }
 
-impl ToTokens for Stmt {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        let result = match self {
+impl fmt::Display for Stmt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
             Self::ClassDecl {
                 name,
                 availability: _,
@@ -358,51 +357,45 @@ impl ToTokens for Stmt {
                 protocols: _,
                 methods,
             } => {
-                let name = format_ident!("{}", name);
-                let generics: Vec<_> = generics
-                    .iter()
-                    .map(|name| format_ident!("{}", name))
-                    .collect();
-
                 let generic_params = if generics.is_empty() {
-                    quote!()
+                    String::new()
                 } else {
-                    quote!(<#(#generics: Message),*>)
+                    format!("<{}: Message>", generics.join(": Message,"))
                 };
 
                 let type_ = if generics.is_empty() {
-                    quote!(#name)
+                    name.clone()
                 } else {
-                    quote!(#name<#(#generics),*>)
+                    format!("{name}<{}>", generics.join(","))
                 };
 
-                let superclass_name =
-                    format_ident!("{}", superclass.as_deref().unwrap_or("Object"));
+                let superclass_name = superclass.as_deref().unwrap_or("Object");
 
                 // TODO: Use ty.get_objc_protocol_declarations()
 
                 let macro_name = if generics.is_empty() {
-                    quote!(extern_class)
+                    "extern_class"
                 } else {
-                    quote!(__inner_extern_class)
+                    "__inner_extern_class"
                 };
 
-                quote! {
-                    #macro_name!(
-                        #[derive(Debug)]
-                        pub struct #name #generic_params;
-
-                        unsafe impl #generic_params ClassType for #type_ {
-                            type Super = #superclass_name;
-                        }
-                    );
-
-                    extern_methods!(
-                        unsafe impl #generic_params #type_ {
-                            #(#methods)*
-                        }
-                    );
+                writeln!(f, "{macro_name}!(")?;
+                writeln!(f, "    #[derive(Debug)]")?;
+                writeln!(f, "    pub struct {name}{generic_params};")?;
+                writeln!(
+                    f,
+                    "    unsafe impl{generic_params} ClassType for {type_} {{"
+                )?;
+                writeln!(f, "        type Super = {superclass_name};")?;
+                writeln!(f, "    }}")?;
+                writeln!(f, ");")?;
+                writeln!(f, "extern_methods!(")?;
+                writeln!(f, "    unsafe impl{generic_params} {type_} {{")?;
+                for method in methods {
+                    writeln!(f, "{method}")?;
                 }
+                writeln!(f, "    }}")?;
+                writeln!(f, ");")?;
             }
             Self::CategoryDecl {
                 class_name,
@@ -412,26 +405,28 @@ impl ToTokens for Stmt {
                 protocols: _,
                 methods,
             } => {
-                let meta = if let Some(name) = name {
-                    quote!(#[doc = #name])
+                let generic_params = if generics.is_empty() {
+                    String::new()
                 } else {
-                    quote!()
+                    format!("<{}: Message>", generics.join(": Message,"))
                 };
-                let class_name = format_ident!("{}", class_name);
 
-                let generics: Vec<_> = generics
-                    .iter()
-                    .map(|name| format_ident!("{}", name))
-                    .collect();
+                let type_ = if generics.is_empty() {
+                    class_name.clone()
+                } else {
+                    format!("{class_name}<{}>", generics.join(","))
+                };
 
-                quote! {
-                    extern_methods!(
-                        #meta
-                        unsafe impl<#(#generics: Message),*> #class_name<#(#generics),*> {
-                            #(#methods)*
-                        }
-                    );
+                writeln!(f, "extern_methods!(")?;
+                if let Some(name) = name {
+                    writeln!(f, "    #[doc = \"{name}\"]")?;
                 }
+                writeln!(f, "    unsafe impl{generic_params} {type_} {{")?;
+                for method in methods {
+                    writeln!(f, "{method}")?;
+                }
+                writeln!(f, "    }}")?;
+                writeln!(f, ");")?;
             }
             Self::ProtocolDecl {
                 name,
@@ -439,8 +434,6 @@ impl ToTokens for Stmt {
                 protocols: _,
                 methods: _,
             } => {
-                let name = format_ident!("{}", name);
-
                 // TODO
 
                 // quote! {
@@ -457,14 +450,12 @@ impl ToTokens for Stmt {
                 //         #(#methods)*
                 //     }
                 // }
-                quote!(pub type #name = NSObject;)
+                writeln!(f, "pub type {name} = NSObject;")?;
             }
             Self::AliasDecl { name, type_ } => {
-                let name = format_ident!("{}", name);
-
-                quote!(pub type #name = #type_;)
+                writeln!(f, "pub type {name} = {type_};")?;
             }
         };
-        tokens.append_all(result);
+        Ok(())
     }
 }

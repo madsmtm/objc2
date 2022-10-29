@@ -65,7 +65,7 @@ extern_methods!(
         pub unsafe fn dateWithTimeIntervalSinceReferenceDate(
             ti: NSTimeInterval,
         ) -> Id<Self, Shared>;
-        # [method_id (dateWithTimeIntervalSince1970 :)]
+        #[method_id(dateWithTimeIntervalSince1970:)]
         pub unsafe fn dateWithTimeIntervalSince1970(secs: NSTimeInterval) -> Id<Self, Shared>;
         #[method_id(dateWithTimeInterval:sinceDate:)]
         pub unsafe fn dateWithTimeInterval_sinceDate(
@@ -81,7 +81,7 @@ extern_methods!(
         #[method_id(initWithTimeIntervalSinceNow:)]
         pub unsafe fn initWithTimeIntervalSinceNow(&self, secs: NSTimeInterval)
             -> Id<Self, Shared>;
-        # [method_id (initWithTimeIntervalSince1970 :)]
+        #[method_id(initWithTimeIntervalSince1970:)]
         pub unsafe fn initWithTimeIntervalSince1970(
             &self,
             secs: NSTimeInterval,

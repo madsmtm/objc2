@@ -1,13 +1,13 @@
 use std::collections::BTreeMap;
+use std::fmt::{self, Write};
 use std::fs;
-use std::io::{self, Write};
+use std::io;
 use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
-use quote::{format_ident, quote};
 
-use header_translator::{format_method_macro, run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt};
+use header_translator::{run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt};
 
 const FORMAT_INCREMENTALLY: bool = false;
 
@@ -115,7 +115,7 @@ fn main() {
     for (library, files) in result {
         println!("status: writing framework {library}...");
         let output_path = crate_src.join("generated").join(&library);
-        output_files(&output_path, files, FORMAT_INCREMENTALLY);
+        output_files(&output_path, files, FORMAT_INCREMENTALLY).unwrap();
         println!("status: written framework {library}");
     }
 
@@ -254,7 +254,7 @@ fn output_files(
     output_path: &Path,
     files: impl IntoIterator<Item = (String, RustFile)>,
     format_incrementally: bool,
-) {
+) -> fmt::Result {
     let declared: Vec<_> = files
         .into_iter()
         .map(|(name, file)| {
@@ -266,43 +266,42 @@ fn output_files(
             let output = if format_incrementally {
                 run_rustfmt(tokens)
             } else {
-                let mut buf = Vec::new();
-                write!(buf, "{}", tokens).unwrap();
-                format_method_macro(&buf)
+                tokens.into()
             };
 
             fs::write(&path, output).unwrap();
 
-            (format_ident!("{}", name), declared_types)
+            (name, declared_types)
         })
         .collect();
 
-    let mod_names = declared.iter().map(|(name, _)| name);
-    let mod_imports = declared.iter().filter_map(|(name, declared_types)| {
+    let mut tokens = String::new();
+
+    for (name, _) in &declared {
+        writeln!(tokens, "pub(crate) mod {name};")?;
+    }
+    writeln!(tokens, "")?;
+    writeln!(tokens, "mod __exported {{")?;
+    for (name, declared_types) in declared {
         if !declared_types.is_empty() {
-            let declared_types = declared_types.iter().map(|name| format_ident!("{}", name));
-            Some(quote!(super::#name::{#(#declared_types,)*}))
-        } else {
-            None
+            let declared_types: Vec<_> = declared_types.into_iter().collect();
+            writeln!(
+                tokens,
+                "    pub use super::{name}::{{{}}};",
+                declared_types.join(",")
+            )?;
         }
-    });
-
-    let tokens = quote! {
-        #(pub(crate) mod #mod_names;)*
-
-        mod __exported {
-            #(pub use #mod_imports;)*
-        }
-    };
+    }
+    writeln!(tokens, "}}")?;
 
     let output = if format_incrementally {
         run_rustfmt(tokens)
     } else {
-        let mut buf = Vec::new();
-        write!(buf, "{}", tokens).unwrap();
-        buf
+        tokens.into()
     };
 
     // truncate if the file exists
     fs::write(output_path.join("mod.rs"), output).unwrap();
+
+    Ok(())
 }
