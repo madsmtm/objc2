@@ -382,6 +382,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[derive(Debug)]")?;
                 writeln!(f, "    pub struct {name}{generic_params};")?;
+                writeln!(f, "")?;
                 writeln!(
                     f,
                     "    unsafe impl{generic_params} ClassType for {type_} {{"
@@ -389,6 +390,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, "        type Super = {superclass_name};")?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
+                writeln!(f, "")?;
                 writeln!(f, "extern_methods!(")?;
                 writeln!(f, "    unsafe impl{generic_params} {type_} {{")?;
                 for method in methods {
@@ -419,7 +421,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, "extern_methods!(")?;
                 if let Some(name) = name {
-                    writeln!(f, "    #[doc = \"{name}\"]")?;
+                    writeln!(f, "    /// {name}")?;
                 }
                 writeln!(f, "    unsafe impl{generic_params} {type_} {{")?;
                 for method in methods {

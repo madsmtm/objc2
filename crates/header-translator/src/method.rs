@@ -341,9 +341,9 @@ impl fmt::Display for Method {
         write!(f, ")")?;
 
         if is_error {
-            write!(f, "{};", self.result_type.as_error())?;
+            writeln!(f, "{};", self.result_type.as_error())?;
         } else {
-            write!(f, "{};", self.result_type)?;
+            writeln!(f, "{};", self.result_type)?;
         };
 
         Ok(())
