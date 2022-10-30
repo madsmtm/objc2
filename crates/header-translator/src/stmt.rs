@@ -339,6 +339,10 @@ impl Stmt {
                 // TODO
                 None
             }
+            EntityKind::UnionDecl => {
+                // TODO
+                None
+            }
             _ => {
                 panic!("Unknown: {:?}", entity)
             }
