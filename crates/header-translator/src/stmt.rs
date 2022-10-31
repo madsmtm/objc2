@@ -8,7 +8,7 @@ use crate::config::{ClassData, Config};
 use crate::expr::Expr;
 use crate::method::Method;
 use crate::property::Property;
-use crate::rust_type::{GenericType, RustType, RustTypeStatic};
+use crate::rust_type::{GenericType, RustType, RustTypeReturn, RustTypeStatic};
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Debug, Clone)]
@@ -214,6 +214,18 @@ pub enum Stmt {
         name: String,
         ty: RustTypeStatic,
         value: Option<Option<Expr>>,
+    },
+    /// extern ret name(args*);
+    ///
+    /// static inline ret name(args*) {
+    ///     body
+    /// }
+    FnDecl {
+        name: String,
+        arguments: Vec<(String, RustType)>,
+        result_type: RustTypeReturn,
+        // Some -> inline function.
+        body: Option<()>,
     },
     /// typedef Type TypedefName;
     AliasDecl { name: String, type_: RustType },
@@ -519,16 +531,54 @@ impl Stmt {
                 Some(Self::VarDecl { name, ty, value })
             }
             EntityKind::FunctionDecl => {
-                // println!(
-                //     "function: {:?}, {:?}, {:?}, {:?}, {:#?}, {:#?}",
-                //     entity.get_display_name(),
-                //     entity.get_name(),
-                //     entity.is_static_method(),
-                //     entity.is_inline_function(),
-                //     entity.has_attributes(),
-                //     entity.get_children(),
-                // );
-                None
+                let name = entity.get_name().expect("function name");
+
+                if entity.is_variadic() {
+                    println!("can't handle variadic function {name}");
+                    return None;
+                }
+
+                let result_type = entity.get_result_type().expect("function result type");
+                let result_type = RustTypeReturn::parse(result_type);
+                let mut arguments = Vec::new();
+
+                assert!(
+                    !entity.is_static_method(),
+                    "unexpected static method {name}"
+                );
+
+                entity.visit_children(|entity, _parent| {
+                    match entity.get_kind() {
+                        EntityKind::UnexposedAttr => {
+                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                                panic!("unexpected function attribute: {macro_:?}");
+                            }
+                        }
+                        EntityKind::ObjCClassRef | EntityKind::TypeRef => {}
+                        EntityKind::ParmDecl => {
+                            // Could also be retrieved via. `get_arguments`
+                            let name = entity.get_name().unwrap_or_else(|| "_".into());
+                            let ty = entity.get_type().expect("function argument type");
+                            let ty = RustType::parse_argument(ty, false);
+                            arguments.push((name, ty))
+                        }
+                        _ => panic!("unknown function child in {name}: {entity:?}"),
+                    };
+                    EntityVisitResult::Continue
+                });
+
+                let body = if entity.is_inline_function() {
+                    Some(())
+                } else {
+                    None
+                };
+
+                Some(Self::FnDecl {
+                    name,
+                    arguments,
+                    result_type,
+                    body,
+                })
             }
             EntityKind::UnionDecl => {
                 // println!(
@@ -695,6 +745,36 @@ impl fmt::Display for Stmt {
                 value: Some(Some(expr)),
             } => {
                 writeln!(f, "static {name}: {ty} = {expr};")?;
+            }
+            Self::FnDecl {
+                name: _,
+                arguments: _,
+                result_type: _,
+                body: None,
+            } => {
+                // TODO
+                // writeln!(f, r#"extern "C" {{"#)?;
+                // write!(f, "    fn {name}(")?;
+                // for (param, arg_ty) in arguments {
+                //     write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
+                // }
+                // writeln!(f, "){result_type};")?;
+                // writeln!(f, "}}")?;
+            }
+            Self::FnDecl {
+                name: _,
+                arguments: _,
+                result_type: _,
+                body: Some(_body),
+            } => {
+                // TODO
+                // write!(f, "unsafe fn {name}(")?;
+                // for (param, arg_ty) in arguments {
+                //     write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
+                // }
+                // writeln!(f, "){result_type} {{")?;
+                // writeln!(f, "    todo!()")?;
+                // writeln!(f, "}}")?;
             }
             Self::AliasDecl { name, type_ } => {
                 writeln!(f, "pub type {name} = {type_};")?;
