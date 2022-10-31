@@ -6,6 +6,7 @@ use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::method::{MemoryManagement, Method, Qualifier};
 use crate::rust_type::{RustType, RustTypeReturn};
+use crate::unexposed_macro::UnexposedMacro;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
@@ -119,7 +120,11 @@ impl PartialProperty<'_> {
                 EntityKind::IbOutletAttr => {
                     // TODO: What is this?
                 }
-                EntityKind::UnexposedAttr => {}
+                EntityKind::UnexposedAttr => {
+                    if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                        println!("property {name}: {macro_:?}");
+                    }
+                }
                 _ => panic!("Unknown property child: {:?}, {:?}", entity, _parent),
             };
             EntityVisitResult::Continue

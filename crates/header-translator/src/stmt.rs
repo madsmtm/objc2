@@ -8,6 +8,7 @@ use crate::config::{ClassData, Config};
 use crate::method::Method;
 use crate::property::Property;
 use crate::rust_type::{GenericType, RustType};
+use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Debug, Clone)]
 pub enum MethodOrProperty {
@@ -134,7 +135,11 @@ fn parse_objc_decl(
             EntityKind::ObjCException if superclass.is_some() => {
                 // Maybe useful for knowing when to implement `Error` for the type
             }
-            EntityKind::UnexposedAttr => {}
+            EntityKind::UnexposedAttr => {
+                if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                    println!("objc decl {entity:?}: {macro_:?}");
+                }
+            }
             _ => panic!("unknown objc decl child {entity:?}"),
         };
         EntityVisitResult::Continue
@@ -180,6 +185,26 @@ pub enum Stmt {
         availability: Availability,
         protocols: Vec<String>,
         methods: Vec<MethodOrProperty>,
+    },
+    /// typedef NS_OPTIONS(type, name) {
+    ///     variants*
+    /// };
+    ///
+    /// typedef NS_ENUM(type, name) {
+    ///     variants*
+    /// };
+    ///
+    /// enum name {
+    ///     variants*
+    /// };
+    ///
+    /// enum {
+    ///     variants*
+    /// };
+    EnumDecl {
+        name: Option<String>,
+        kind: Option<UnexposedMacro>,
+        variants: Vec<(String, Option<String>)>,
     },
     /// typedef Type TypedefName;
     AliasDecl { name: String, type_: RustType },
@@ -332,15 +357,89 @@ impl Stmt {
                 }
             }
             EntityKind::StructDecl => {
-                // println!("struct: {:?}", entity.get_display_name());
+                // println!(
+                //     "struct: {:?}, {:?}, {:#?}, {:#?}",
+                //     entity.get_display_name(),
+                //     entity.get_name(),
+                //     entity.has_attributes(),
+                //     entity.get_children(),
+                // );
+                // EntityKind::FieldDecl | EntityKind::IntegerLiteral | EntityKind::ObjCBoxable => {}
                 None
             }
-            EntityKind::EnumDecl | EntityKind::VarDecl | EntityKind::FunctionDecl => {
-                // TODO
+            EntityKind::EnumDecl => {
+                let name = entity.get_name();
+                let mut kind = None;
+                let mut variants = Vec::new();
+
+                entity.visit_children(|entity, _parent| {
+                    match entity.get_kind() {
+                        EntityKind::EnumConstantDecl => {
+                            let name = entity.get_name().expect("enum constant name");
+                            // TODO
+                            variants.push((name, None));
+                        }
+                        EntityKind::UnexposedAttr => {
+                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                                if let Some(kind) = &kind {
+                                    assert_eq!(
+                                        kind, &macro_,
+                                        "got differing enum kinds in {name:?}"
+                                    );
+                                } else {
+                                    kind = Some(macro_);
+                                }
+                            }
+                        }
+                        EntityKind::FlagEnum => {
+                            let macro_ = UnexposedMacro::Options;
+                            if let Some(kind) = &kind {
+                                assert_eq!(kind, &macro_, "got differing enum kinds in {name:?}");
+                            } else {
+                                kind = Some(macro_);
+                            }
+                        }
+                        _ => {
+                            panic!("unknown enum child {entity:?} in {name:?}");
+                        }
+                    }
+                    EntityVisitResult::Continue
+                });
+
+                Some(Self::EnumDecl {
+                    name,
+                    kind,
+                    variants,
+                })
+            }
+            EntityKind::VarDecl => {
+                // println!(
+                //     "var: {:?}, {:?}, {:#?}, {:#?}",
+                //     entity.get_display_name(),
+                //     entity.get_name(),
+                //     entity.has_attributes(),
+                //     entity.get_children(),
+                // );
+                None
+            }
+            EntityKind::FunctionDecl => {
+                // println!(
+                //     "function: {:?}, {:?}, {:#?}, {:#?}",
+                //     entity.get_display_name(),
+                //     entity.get_name(),
+                //     entity.has_attributes(),
+                //     entity.get_children(),
+                // );
                 None
             }
             EntityKind::UnionDecl => {
-                // TODO
+                // println!(
+                //     "union: {:?}, {:?}, {:#?}, {:#?}",
+                //     entity.get_display_name(),
+                //     entity.get_name(),
+                //     entity.has_attributes(),
+                //     entity.get_children(),
+                // );
                 None
             }
             _ => {
@@ -457,6 +556,13 @@ impl fmt::Display for Stmt {
                 //     }
                 // }
                 writeln!(f, "pub type {name} = NSObject;")?;
+            }
+            Self::EnumDecl {
+                name,
+                kind,
+                variants,
+            } => {
+                // TODO
             }
             Self::AliasDecl { name, type_ } => {
                 writeln!(f, "pub type {name} = {type_};")?;

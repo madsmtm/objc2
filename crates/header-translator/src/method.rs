@@ -6,6 +6,7 @@ use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{RustType, RustTypeReturn};
+use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Qualifier {
@@ -202,7 +203,11 @@ impl<'tu> PartialMethod<'tu> {
                             }
                             is_consumed = true;
                         }
-                        EntityKind::UnexposedAttr => {}
+                        EntityKind::UnexposedAttr => {
+                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                                println!("method argument {fn_name}/{name}: {macro_:?}");
+                            }
+                        }
                         // For some reason we recurse into array types
                         EntityKind::IntegerLiteral => {}
                         _ => panic!("Unknown method argument child: {:?}, {:?}", entity, _parent),
@@ -271,7 +276,11 @@ impl<'tu> PartialMethod<'tu> {
                     // TODO: Can we use this for something?
                     // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
                 }
-                EntityKind::UnexposedAttr => {}
+                EntityKind::UnexposedAttr => {
+                    if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                        println!("method {fn_name}: {macro_:?}");
+                    }
+                }
                 _ => panic!("Unknown method child: {:?}, {:?}", entity, _parent),
             };
             // TODO: Verify that Continue is good enough

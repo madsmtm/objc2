@@ -10,6 +10,7 @@ mod objc2_utils;
 mod property;
 mod rust_type;
 mod stmt;
+mod unexposed_macro;
 
 pub use self::config::Config;
 pub use self::stmt::Stmt;
@@ -44,6 +45,9 @@ impl RustFile {
             Stmt::CategoryDecl { .. } => {}
             Stmt::ProtocolDecl { name, .. } => {
                 self.declared_types.insert(name.clone());
+            }
+            Stmt::EnumDecl { name, variants, .. } => {
+                // TODO
             }
             Stmt::AliasDecl { name, .. } => {
                 self.declared_types.insert(name.clone());
