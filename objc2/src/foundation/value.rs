@@ -188,7 +188,7 @@ extern_methods!(
             }
         }
 
-        #[sel(isEqualToValue:)]
+        #[method(isEqualToValue:)]
         fn is_equal_to_value(&self, other: &Self) -> bool;
     }
 );

@@ -59,7 +59,7 @@ extern_methods!(
             unsafe { msg_send_id![Self::class(), new] }
         }
 
-        #[sel(setDictionary:)]
+        #[method(setDictionary:)]
         fn set_dictionary(&mut self, dict: &NSDictionary<K, V>);
 
         /// Creates an [`NSMutableDictionary`] from a slice of keys and a
@@ -104,10 +104,10 @@ extern_methods!(
         /// println!("{:?}", dict.get_mut(ns_string!("one")));
         /// ```
         #[doc(alias = "objectForKey:")]
-        #[sel(objectForKey:)]
+        #[method(objectForKey:)]
         pub fn get_mut(&mut self, key: &K) -> Option<&mut V>;
 
-        #[sel(getObjects:andKeys:)]
+        #[method(getObjects:andKeys:)]
         unsafe fn get_objects_and_keys(&self, objects: *mut &mut V, keys: *mut &K);
 
         /// Returns a vector of mutable references to the values in the dictionary.
@@ -137,7 +137,7 @@ extern_methods!(
             vals
         }
 
-        #[sel(setObject:forKey:)]
+        #[method(setObject:forKey:)]
         fn set_object_for_key(&mut self, object: &V, key: &K);
 
         /// Inserts a key-value pair into the dictionary.
@@ -168,7 +168,7 @@ extern_methods!(
             obj
         }
 
-        #[sel(removeObjectForKey:)]
+        #[method(removeObjectForKey:)]
         fn remove_object_for_key(&mut self, key: &K);
 
         /// Removes a key from the dictionary, returning the value at the key
@@ -214,7 +214,7 @@ extern_methods!(
         /// assert!(dict.is_empty());
         /// ```
         #[doc(alias = "removeAllObjects")]
-        #[sel(removeAllObjects)]
+        #[method(removeAllObjects)]
         pub fn clear(&mut self);
 
         /// Returns an [`NSArray`] containing the dictionary's values,

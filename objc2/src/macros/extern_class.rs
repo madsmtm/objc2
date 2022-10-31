@@ -397,10 +397,10 @@ macro_rules! __inner_extern_class {
 #[macro_export]
 macro_rules! __attribute_helper {
     // Convert a set of attributes described with `@[...]` to `#[...]`, while
-    // parsing out the `sel(...)` attribute.
+    // parsing out the `method(...)` attribute.
     {
         @strip_sel
-        @[sel($($_sel_args:tt)*)]
+        @[method($($_sel_args:tt)*)]
         $(@[$($m_rest:tt)*])*
 
         $(#[$($m:tt)*])*
@@ -440,12 +440,12 @@ macro_rules! __attribute_helper {
         $($fn)*
     };
 
-    // Extract the `#[sel(...)]` attribute and send it to another macro
+    // Extract the `#[method(...)]` attribute and send it to another macro
     {
         @extract_sel
         ($out_macro:path)
         (
-            #[sel($($sel:tt)*)]
+            #[method($($sel:tt)*)]
             $($rest:tt)*
         )
         $($macro_args:tt)*
@@ -482,13 +482,13 @@ macro_rules! __attribute_helper {
         ()
         $($macro_args:tt)*
     } => {{
-        compile_error!("Must specify the desired selector using `#[sel(...)]`");
+        compile_error!("Must specify the desired selector using `#[method(...)]`");
     }};
 
     {
         @extract_sel_duplicate
         (
-            #[sel($($_sel_args:tt)*)]
+            #[method($($_sel_args:tt)*)]
             $($rest:tt)*
         )
         $($output:tt)*

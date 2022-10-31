@@ -62,10 +62,10 @@ extern_methods!(
     unsafe impl NSMutableData {
         /// Expands with zeroes, or truncates the buffer.
         #[doc(alias = "setLength:")]
-        #[sel(setLength:)]
+        #[method(setLength:)]
         pub fn set_len(&mut self, len: usize);
 
-        #[sel(mutableBytes)]
+        #[method(mutableBytes)]
         fn bytes_mut_raw(&mut self) -> *mut c_void;
 
         #[doc(alias = "mutableBytes")]
@@ -80,7 +80,7 @@ extern_methods!(
             }
         }
 
-        #[sel(appendBytes:length:)]
+        #[method(appendBytes:length:)]
         unsafe fn append_raw(&mut self, ptr: *const c_void, len: usize);
 
         #[doc(alias = "appendBytes:length:")]
@@ -93,7 +93,7 @@ extern_methods!(
             self.extend_from_slice(&[byte])
         }
 
-        #[sel(replaceBytesInRange:withBytes:length:)]
+        #[method(replaceBytesInRange:withBytes:length:)]
         unsafe fn replace_raw(&mut self, range: NSRange, ptr: *const c_void, len: usize);
 
         #[doc(alias = "replaceBytesInRange:withBytes:length:")]

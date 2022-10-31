@@ -84,7 +84,7 @@ extern_methods!(
 
         /// Alias for `self.string().len_utf16()`.
         #[doc(alias = "length")]
-        #[sel(length)]
+        #[method(length)]
         pub fn len_utf16(&self) -> usize;
 
         // /// TODO

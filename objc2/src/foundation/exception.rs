@@ -56,7 +56,7 @@ extern_methods!(
             }
         }
 
-        #[sel(raise)]
+        #[method(raise)]
         unsafe fn raise_raw(&self);
 
         /// Raises the exception, causing program flow to jump to the local

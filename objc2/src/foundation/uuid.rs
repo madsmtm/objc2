@@ -63,7 +63,7 @@ extern_methods!(
             unsafe { msg_send_id![Self::alloc(), initWithUUIDString: string] }
         }
 
-        #[sel(getUUIDBytes:)]
+        #[method(getUUIDBytes:)]
         fn get_bytes_raw(&self, bytes: &mut UuidBytes);
 
         pub fn as_bytes(&self) -> [u8; 16] {

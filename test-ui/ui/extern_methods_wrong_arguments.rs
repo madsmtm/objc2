@@ -11,42 +11,42 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[sel(a:)]
+        #[method(a:)]
         fn a();
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[sel(b)]
+        #[method(b)]
         fn b(arg: i32);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[sel(c:d:e:)]
+        #[method(c:d:e:)]
         fn c(arg1: i32, arg2: u32);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[sel(f:g:)]
+        #[method(f:g:)]
         fn f();
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[sel(x:)]
+        #[method(x:)]
         fn x(&self);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[sel(y)]
+        #[method(y)]
         fn y(&self, arg: i32);
     }
 );

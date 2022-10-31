@@ -47,7 +47,7 @@ extern_methods!(
 
         /// Replaces the entire attributed string.
         #[doc(alias = "setAttributedString:")]
-        #[sel(setAttributedString:)]
+        #[method(setAttributedString:)]
         pub fn replace(&mut self, attributed_string: &NSAttributedString);
     }
 );

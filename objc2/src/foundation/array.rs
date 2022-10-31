@@ -134,14 +134,14 @@ extern_methods!(
     /// Generic accessor methods.
     unsafe impl<T: Message, O: Ownership> NSArray<T, O> {
         #[doc(alias = "count")]
-        #[sel(count)]
+        #[method(count)]
         pub fn len(&self) -> usize;
 
         pub fn is_empty(&self) -> bool {
             self.len() == 0
         }
 
-        #[sel(objectAtIndex:)]
+        #[method(objectAtIndex:)]
         unsafe fn get_unchecked(&self, index: usize) -> &T;
 
         #[doc(alias = "objectAtIndex:")]
@@ -156,11 +156,11 @@ extern_methods!(
         }
 
         #[doc(alias = "firstObject")]
-        #[sel(firstObject)]
+        #[method(firstObject)]
         pub fn first(&self) -> Option<&T>;
 
         #[doc(alias = "lastObject")]
-        #[sel(lastObject)]
+        #[method(lastObject)]
         pub fn last(&self) -> Option<&T>;
 
         #[doc(alias = "objectEnumerator")]
@@ -171,7 +171,7 @@ extern_methods!(
             }
         }
 
-        #[sel(getObjects:range:)]
+        #[method(getObjects:range:)]
         unsafe fn get_objects(&self, ptr: *mut &T, range: NSRange);
 
         pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
@@ -229,11 +229,11 @@ extern_methods!(
         }
 
         #[doc(alias = "firstObject")]
-        #[sel(firstObject)]
+        #[method(firstObject)]
         pub fn first_mut(&mut self) -> Option<&mut T>;
 
         #[doc(alias = "lastObject")]
-        #[sel(lastObject)]
+        #[method(lastObject)]
         pub fn last_mut(&mut self) -> Option<&mut T>;
     }
 );

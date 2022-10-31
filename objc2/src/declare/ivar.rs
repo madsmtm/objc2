@@ -407,7 +407,7 @@ mod tests {
             }
 
             unsafe impl CustomDrop {
-                #[sel(dealloc)]
+                #[method(dealloc)]
                 fn dealloc(&mut self) {
                     HAS_RUN_DEALLOC.store(true, Ordering::SeqCst);
                     unsafe { msg_send![super(self), dealloc] }

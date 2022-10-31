@@ -118,7 +118,7 @@ extern_methods!(
         ///
         /// See also [`NSString::len`].
         #[doc(alias = "length")]
-        #[sel(length)]
+        #[method(length)]
         pub fn len_utf16(&self) -> usize;
 
         pub fn is_empty(&self) -> bool {
@@ -248,7 +248,7 @@ extern_methods!(
         /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1410309-hasprefix?language=objc).
         #[doc(alias = "hasPrefix")]
         #[doc(alias = "hasPrefix:")]
-        #[sel(hasPrefix:)]
+        #[method(hasPrefix:)]
         pub fn has_prefix(&self, prefix: &NSString) -> bool;
 
         /// Whether the given string matches the ending characters of this string.
@@ -256,7 +256,7 @@ extern_methods!(
         /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsstring/1416529-hassuffix?language=objc).
         #[doc(alias = "hasSuffix")]
         #[doc(alias = "hasSuffix:")]
-        #[sel(hasSuffix:)]
+        #[method(hasSuffix:)]
         pub fn has_suffix(&self, suffix: &NSString) -> bool;
 
         // TODO: Other comparison methods:
@@ -267,14 +267,14 @@ extern_methods!(
         // - caseInsensitiveCompare:
         // - localizedCaseInsensitiveCompare:
         // - localizedStandardCompare:
-        #[sel(compare:)]
+        #[method(compare:)]
         fn compare(&self, other: &Self) -> NSComparisonResult;
 
         // pub fn from_nsrange(range: NSRange) -> Id<Self, Shared>
         // https://developer.apple.com/documentation/foundation/1415155-nsstringfromrange?language=objc
 
         // TODO: Safety
-        #[sel(writeToFile:atomically:encoding:error:)]
+        #[method(writeToFile:atomically:encoding:error:)]
         pub unsafe fn write_to_file(
             &self,
             path: &NSString,

@@ -47,7 +47,7 @@
 /// particular, if you use `self` your method will be registered as an
 /// instance method, and if you don't it will be registered as a class method.
 ///
-/// The desired selector can be specified using the `#[sel(my:selector:)]`
+/// The desired selector can be specified using the `#[method(my:selector:)]`
 /// attribute, similar to the [`extern_methods!`] macro.
 ///
 /// A transformation step is performed on the functions (to make them have the
@@ -139,7 +139,7 @@
 ///     }
 ///
 ///     unsafe impl MyCustomObject {
-///         #[sel(initWithFoo:)]
+///         #[method(initWithFoo:)]
 ///         fn init_with(&mut self, foo: u8) -> Option<&mut Self> {
 ///             let this: Option<&mut Self> = unsafe {
 ///                 msg_send![super(self), init]
@@ -167,24 +167,24 @@
 ///             })
 ///         }
 ///
-///         #[sel(foo)]
+///         #[method(foo)]
 ///         fn __get_foo(&self) -> u8 {
 ///             *self.foo
 ///         }
 ///
-///         #[sel(string)]
+///         #[method(string)]
 ///         fn __get_string(&self) -> *mut NSString {
 ///             Id::autorelease_return((*self.string).copy())
 ///         }
 ///
-///         #[sel(myClassMethod)]
+///         #[method(myClassMethod)]
 ///         fn __my_class_method() -> bool {
 ///             true
 ///         }
 ///     }
 ///
 ///     unsafe impl Protocol<NSCopying> for MyCustomObject {
-///         #[sel(copyWithZone:)]
+///         #[method(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
 ///             let mut obj = Self::new(*self.foo);
 ///             *obj.bar = *self.bar;

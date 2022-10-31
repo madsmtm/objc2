@@ -58,22 +58,22 @@ declare_class!(
     }
 
     unsafe impl RcTestObject {
-        #[sel(newReturningNull)]
+        #[method(newReturningNull)]
         fn new_returning_null() -> *mut Self {
             ptr::null_mut()
         }
 
-        #[sel(newMethodOnInstance)]
+        #[method(newMethodOnInstance)]
         fn new_method_on_instance(&self) -> *mut Self {
             Id::consume_as_ptr(ManuallyDrop::new(Self::new()))
         }
 
-        #[sel(newMethodOnInstanceNull)]
+        #[method(newMethodOnInstanceNull)]
         fn new_method_on_instance_null(&self) -> *mut Self {
             ptr::null_mut()
         }
 
-        #[sel(alloc)]
+        #[method(alloc)]
         fn alloc_() -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
             let superclass = NSObject::class().metaclass();
@@ -81,55 +81,55 @@ declare_class!(
             unsafe { msg_send![super(Self::class(), superclass), allocWithZone: zone] }
         }
 
-        #[sel(allocWithZone:)]
+        #[method(allocWithZone:)]
         fn alloc_with_zone(zone: *const NSZone) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
             let superclass = NSObject::class().metaclass();
             unsafe { msg_send![super(Self::class(), superclass), allocWithZone: zone] }
         }
 
-        #[sel(allocReturningNull)]
+        #[method(allocReturningNull)]
         fn alloc_returning_null() -> *mut Self {
             ptr::null_mut()
         }
 
-        #[sel(init)]
+        #[method(init)]
         fn init(&mut self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
             unsafe { msg_send![super(self), init] }
         }
 
-        #[sel(initReturningNull)]
+        #[method(initReturningNull)]
         fn init_returning_null(&mut self) -> *mut Self {
             let _: () = unsafe { msg_send![self, release] };
             ptr::null_mut()
         }
 
-        #[sel(retain)]
+        #[method(retain)]
         fn retain(&self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().retain += 1);
             unsafe { msg_send![super(self), retain] }
         }
 
-        #[sel(release)]
+        #[method(release)]
         fn release(&self) {
             TEST_DATA.with(|data| data.borrow_mut().release += 1);
             unsafe { msg_send![super(self), release] }
         }
 
-        #[sel(autorelease)]
+        #[method(autorelease)]
         fn autorelease(&self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().autorelease += 1);
             unsafe { msg_send![super(self), autorelease] }
         }
 
-        #[sel(dealloc)]
+        #[method(dealloc)]
         unsafe fn dealloc(&mut self) {
             TEST_DATA.with(|data| data.borrow_mut().dealloc += 1);
             unsafe { msg_send![super(self), dealloc] }
         }
 
-        #[sel(_tryRetain)]
+        #[method(_tryRetain)]
         unsafe fn try_retain(&self) -> bool {
             TEST_DATA.with(|data| data.borrow_mut().try_retain += 1);
             let res: bool = unsafe { msg_send![super(self), _tryRetain] };
@@ -140,29 +140,29 @@ declare_class!(
             res
         }
 
-        #[sel(copyWithZone:)]
+        #[method(copyWithZone:)]
         fn copy_with_zone(&self, _zone: *const NSZone) -> *const Self {
             TEST_DATA.with(|data| data.borrow_mut().copy += 1);
             Id::consume_as_ptr(ManuallyDrop::new(Self::new()))
         }
 
-        #[sel(mutableCopyWithZone:)]
+        #[method(mutableCopyWithZone:)]
         fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> *const Self {
             TEST_DATA.with(|data| data.borrow_mut().mutable_copy += 1);
             Id::consume_as_ptr(ManuallyDrop::new(Self::new()))
         }
 
-        #[sel(copyReturningNull)]
+        #[method(copyReturningNull)]
         fn copy_returning_null(&self) -> *const Self {
             ptr::null()
         }
 
-        #[sel(methodReturningNull)]
+        #[method(methodReturningNull)]
         fn method_returning_null(&self) -> *const Self {
             ptr::null()
         }
 
-        #[sel(boolAndShouldError:error:)]
+        #[method(boolAndShouldError:error:)]
         fn class_error_bool(should_error: bool, err: Option<&mut *mut RcTestObject>) -> bool {
             if should_error {
                 if let Some(err) = err {
@@ -174,7 +174,7 @@ declare_class!(
             }
         }
 
-        #[sel(boolAndShouldError:error:)]
+        #[method(boolAndShouldError:error:)]
         fn instance_error_bool(
             &self,
             should_error: bool,
@@ -190,7 +190,7 @@ declare_class!(
             }
         }
 
-        #[sel(idAndShouldError:error:)]
+        #[method(idAndShouldError:error:)]
         fn class_error_id(
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,
@@ -205,7 +205,7 @@ declare_class!(
             }
         }
 
-        #[sel(idAndShouldError:error:)]
+        #[method(idAndShouldError:error:)]
         fn instance_error_id(
             &self,
             should_error: bool,
@@ -221,7 +221,7 @@ declare_class!(
             }
         }
 
-        #[sel(newAndShouldError:error:)]
+        #[method(newAndShouldError:error:)]
         fn new_error(should_error: bool, err: Option<&mut *mut RcTestObject>) -> *mut Self {
             if should_error {
                 if let Some(err) = err {
@@ -233,7 +233,7 @@ declare_class!(
             }
         }
 
-        #[sel(allocAndShouldError:error:)]
+        #[method(allocAndShouldError:error:)]
         fn alloc_error(should_error: bool, err: Option<&mut *mut RcTestObject>) -> *mut Self {
             if should_error {
                 if let Some(err) = err {
@@ -245,7 +245,7 @@ declare_class!(
             }
         }
 
-        #[sel(initAndShouldError:error:)]
+        #[method(initAndShouldError:error:)]
         fn init_error(
             &mut self,
             should_error: bool,

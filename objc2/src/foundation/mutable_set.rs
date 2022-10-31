@@ -84,7 +84,7 @@ extern_methods!(
         /// assert!(set.is_empty());
         /// ```
         #[doc(alias = "removeAllObjects")]
-        #[sel(removeAllObjects)]
+        #[method(removeAllObjects)]
         pub fn clear(&mut self);
 
         /// Returns a [`Vec`] containing the set's elements, consuming the set.
@@ -140,7 +140,7 @@ extern_methods!(
     // set compares the input value with elements in the set
     // For comparison: Rust's HashSet requires similar methods to be `Hash` + `Eq`
     unsafe impl<T: Message + PartialEq, O: Ownership> NSMutableSet<T, O> {
-        #[sel(addObject:)]
+        #[method(addObject:)]
         fn add_object(&mut self, value: &T);
 
         /// Adds a value to the set. Returns whether the value was
@@ -172,7 +172,7 @@ extern_methods!(
             !contains_value
         }
 
-        #[sel(removeObject:)]
+        #[method(removeObject:)]
         fn remove_object(&mut self, value: &T);
 
         /// Removes a value from the set. Returns whether the value was present

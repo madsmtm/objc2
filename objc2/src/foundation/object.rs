@@ -39,13 +39,13 @@ extern_methods!(
             unsafe { msg_send_id![Self::class(), new] }
         }
 
-        #[sel(isKindOfClass:)]
+        #[method(isKindOfClass:)]
         fn is_kind_of_inner(&self, cls: &Class) -> bool;
 
-        #[sel(isEqual:)]
+        #[method(isEqual:)]
         fn is_equal(&self, other: &Self) -> bool;
 
-        #[sel(hash)]
+        #[method(hash)]
         fn hash_code(&self) -> usize;
 
         /// Check if the object is an instance of the class, or one of it's

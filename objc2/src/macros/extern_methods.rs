@@ -13,7 +13,7 @@
 /// method will assumbed to be an instance method, and if you don't it will be
 /// assumed to be a class method.
 ///
-/// The desired selector can be specified using the `#[sel(my:selector:)]`
+/// The desired selector can be specified using the `#[method(my:selector:)]`
 /// attribute. The name of the function doesn't matter.
 ///
 /// If you specify a function/method with a body, the macro will simply ignore
@@ -25,7 +25,7 @@
 ///
 /// # Safety
 ///
-/// You must ensure that any methods you declare with the `#[sel(...)]`
+/// You must ensure that any methods you declare with the `#[method(...)]`
 /// attribute upholds the safety guarantees decribed in the
 /// [`msg_send!`][crate::msg_send] macro, _or_ are marked `unsafe`.
 ///
@@ -89,24 +89,24 @@
 ///     /// Accessor methods.
 ///     // SAFETY: `first_weekday` is correctly defined
 ///     unsafe impl NSCalendar {
-///         #[sel(firstWeekday)]
+///         #[method(firstWeekday)]
 ///         pub fn first_weekday(&self) -> NSUInteger;
 ///
 ///         pub fn am_symbol(&self) -> Id<NSString, Shared> {
 ///             unsafe { msg_send_id![self, amSymbol] }
 ///         }
 ///
-///         #[sel(date:matchesComponents:)]
+///         #[method(date:matchesComponents:)]
 ///         // `unsafe` because we don't have definitions for `NSDate` and
 ///         // `NSDateComponents` yet, so the user must ensure that is what's
 ///         // passed.
 ///         pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool;
 ///
-///         #[sel(maximumRangeOfUnit:)]
+///         #[method(maximumRangeOfUnit:)]
 ///         pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange;
 ///
 ///         // From `NSKeyValueCoding`
-///         #[sel(validateValue:forKey:error:)]
+///         #[method(validateValue:forKey:error:)]
 ///         pub unsafe fn validate_value_for_key(
 ///             &self,
 ///             value: &mut *mut Object,
