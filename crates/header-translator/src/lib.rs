@@ -5,6 +5,7 @@ use std::process::{Command, Stdio};
 
 mod availability;
 mod config;
+mod expr;
 mod method;
 mod objc2_utils;
 mod property;

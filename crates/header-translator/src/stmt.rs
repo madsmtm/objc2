@@ -5,6 +5,7 @@ use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
 
 use crate::availability::Availability;
 use crate::config::{ClassData, Config};
+use crate::expr::Expr;
 use crate::method::Method;
 use crate::property::Property;
 use crate::rust_type::{GenericType, RustType};
@@ -204,7 +205,7 @@ pub enum Stmt {
     EnumDecl {
         name: Option<String>,
         kind: Option<UnexposedMacro>,
-        variants: Vec<(String, Option<String>)>,
+        variants: Vec<(String, Option<Expr>)>,
     },
     /// typedef Type TypedefName;
     AliasDecl { name: String, type_: RustType },
@@ -376,8 +377,10 @@ impl Stmt {
                     match entity.get_kind() {
                         EntityKind::EnumConstantDecl => {
                             let name = entity.get_name().expect("enum constant name");
-                            // TODO
-                            variants.push((name, None));
+                            variants.push((
+                                name,
+                                Expr::parse(&entity, &std::collections::HashMap::new()),
+                            ));
                         }
                         EntityKind::UnexposedAttr => {
                             if let Some(macro_) = UnexposedMacro::parse(&entity) {
