@@ -5,7 +5,145 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSAppKitVersionNumber: NSAppKitVersion;
+}
+
+static NSAppKitVersionNumber10_0: NSAppKitVersion = 577;
+
+static NSAppKitVersionNumber10_1: NSAppKitVersion = 620;
+
+static NSAppKitVersionNumber10_2: NSAppKitVersion = 663;
+
+static NSAppKitVersionNumber10_2_3: NSAppKitVersion = 663.6;
+
+static NSAppKitVersionNumber10_3: NSAppKitVersion = 743;
+
+static NSAppKitVersionNumber10_3_2: NSAppKitVersion = 743.14;
+
+static NSAppKitVersionNumber10_3_3: NSAppKitVersion = 743.2;
+
+static NSAppKitVersionNumber10_3_5: NSAppKitVersion = 743.24;
+
+static NSAppKitVersionNumber10_3_7: NSAppKitVersion = 743.33;
+
+static NSAppKitVersionNumber10_3_9: NSAppKitVersion = 743.36;
+
+static NSAppKitVersionNumber10_4: NSAppKitVersion = 824;
+
+static NSAppKitVersionNumber10_4_1: NSAppKitVersion = 824.1;
+
+static NSAppKitVersionNumber10_4_3: NSAppKitVersion = 824.23;
+
+static NSAppKitVersionNumber10_4_4: NSAppKitVersion = 824.33;
+
+static NSAppKitVersionNumber10_4_7: NSAppKitVersion = 824.41;
+
+static NSAppKitVersionNumber10_5: NSAppKitVersion = 949;
+
+static NSAppKitVersionNumber10_5_2: NSAppKitVersion = 949.27;
+
+static NSAppKitVersionNumber10_5_3: NSAppKitVersion = 949.33;
+
+static NSAppKitVersionNumber10_6: NSAppKitVersion = 1038;
+
+static NSAppKitVersionNumber10_7: NSAppKitVersion = 1138;
+
+static NSAppKitVersionNumber10_7_2: NSAppKitVersion = 1138.23;
+
+static NSAppKitVersionNumber10_7_3: NSAppKitVersion = 1138.32;
+
+static NSAppKitVersionNumber10_7_4: NSAppKitVersion = 1138.47;
+
+static NSAppKitVersionNumber10_8: NSAppKitVersion = 1187;
+
+static NSAppKitVersionNumber10_9: NSAppKitVersion = 1265;
+
+static NSAppKitVersionNumber10_10: NSAppKitVersion = 1343;
+
+static NSAppKitVersionNumber10_10_2: NSAppKitVersion = 1344;
+
+static NSAppKitVersionNumber10_10_3: NSAppKitVersion = 1347;
+
+static NSAppKitVersionNumber10_10_4: NSAppKitVersion = 1348;
+
+static NSAppKitVersionNumber10_10_5: NSAppKitVersion = 1348;
+
+static NSAppKitVersionNumber10_10_Max: NSAppKitVersion = 1349;
+
+static NSAppKitVersionNumber10_11: NSAppKitVersion = 1404;
+
+static NSAppKitVersionNumber10_11_1: NSAppKitVersion = 1404.13;
+
+static NSAppKitVersionNumber10_11_2: NSAppKitVersion = 1404.34;
+
+static NSAppKitVersionNumber10_11_3: NSAppKitVersion = 1404.34;
+
+static NSAppKitVersionNumber10_12: NSAppKitVersion = 1504;
+
+static NSAppKitVersionNumber10_12_1: NSAppKitVersion = 1504.60;
+
+static NSAppKitVersionNumber10_12_2: NSAppKitVersion = 1504.76;
+
+static NSAppKitVersionNumber10_13: NSAppKitVersion = 1561;
+
+static NSAppKitVersionNumber10_13_1: NSAppKitVersion = 1561.1;
+
+static NSAppKitVersionNumber10_13_2: NSAppKitVersion = 1561.2;
+
+static NSAppKitVersionNumber10_13_4: NSAppKitVersion = 1561.4;
+
+static NSAppKitVersionNumber10_14: NSAppKitVersion = 1671;
+
+static NSAppKitVersionNumber10_14_1: NSAppKitVersion = 1671.1;
+
+static NSAppKitVersionNumber10_14_2: NSAppKitVersion = 1671.2;
+
+static NSAppKitVersionNumber10_14_3: NSAppKitVersion = 1671.3;
+
+static NSAppKitVersionNumber10_14_4: NSAppKitVersion = 1671.4;
+
+static NSAppKitVersionNumber10_14_5: NSAppKitVersion = 1671.5;
+
+static NSAppKitVersionNumber10_15: NSAppKitVersion = 1894;
+
+static NSAppKitVersionNumber10_15_1: NSAppKitVersion = 1894.1;
+
+static NSAppKitVersionNumber10_15_2: NSAppKitVersion = 1894.2;
+
+static NSAppKitVersionNumber10_15_3: NSAppKitVersion = 1894.3;
+
+static NSAppKitVersionNumber10_15_4: NSAppKitVersion = 1894.4;
+
+static NSAppKitVersionNumber10_15_5: NSAppKitVersion = 1894.5;
+
+static NSAppKitVersionNumber10_15_6: NSAppKitVersion = 1894.6;
+
+static NSAppKitVersionNumber11_0: NSAppKitVersion = 2022;
+
+static NSAppKitVersionNumber11_1: NSAppKitVersion = 2022.2;
+
+static NSAppKitVersionNumber11_2: NSAppKitVersion = 2022.3;
+
+static NSAppKitVersionNumber11_3: NSAppKitVersion = 2022.4;
+
+static NSAppKitVersionNumber11_4: NSAppKitVersion = 2022.5;
+
+extern "C" {
+    static NSModalPanelRunLoopMode: &'static NSRunLoopMode;
+}
+
+extern "C" {
+    static NSEventTrackingRunLoopMode: &'static NSRunLoopMode;
+}
+
 pub type NSModalResponse = NSInteger;
+
+static NSModalResponseStop: NSModalResponse = (-1000);
+
+static NSModalResponseAbort: NSModalResponse = (-1001);
+
+static NSModalResponseContinue: NSModalResponse = (-1002);
 
 pub const NSUpdateWindowsRunLoopOrdering: i32 = 500000;
 
@@ -35,6 +173,10 @@ pub const NSApplicationOcclusionStateVisible: NSApplicationOcclusionState = 1 <<
 
 pub type NSWindowListOptions = NSInteger;
 pub const NSWindowListOrderedFrontToBack: NSWindowListOptions = (1 << 0);
+
+extern "C" {
+    static NSApp: Option<&'static NSApplication>;
+}
 
 pub type NSRequestUserAttentionType = NSUInteger;
 pub const NSCriticalRequest: NSRequestUserAttentionType = 0;
@@ -411,6 +553,26 @@ extern_methods!(
 
 pub type NSAboutPanelOptionKey = NSString;
 
+extern "C" {
+    static NSAboutPanelOptionCredits: &'static NSAboutPanelOptionKey;
+}
+
+extern "C" {
+    static NSAboutPanelOptionApplicationName: &'static NSAboutPanelOptionKey;
+}
+
+extern "C" {
+    static NSAboutPanelOptionApplicationIcon: &'static NSAboutPanelOptionKey;
+}
+
+extern "C" {
+    static NSAboutPanelOptionVersion: &'static NSAboutPanelOptionKey;
+}
+
+extern "C" {
+    static NSAboutPanelOptionApplicationVersion: &'static NSAboutPanelOptionKey;
+}
+
 extern_methods!(
     /// NSStandardAboutPanel
     unsafe impl NSApplication {
@@ -471,6 +633,86 @@ extern_methods!(
 );
 
 pub type NSServiceProviderName = NSString;
+
+extern "C" {
+    static NSApplicationDidBecomeActiveNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationDidHideNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationDidFinishLaunchingNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationDidResignActiveNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationDidUnhideNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationDidUpdateNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationWillBecomeActiveNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationWillHideNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationWillFinishLaunchingNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationWillResignActiveNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationWillUnhideNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationWillUpdateNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationWillTerminateNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationDidChangeScreenParametersNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationProtectedDataWillBecomeUnavailableNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationProtectedDataDidBecomeAvailableNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSApplicationLaunchIsDefaultLaunchKey: &'static NSString;
+}
+
+extern "C" {
+    static NSApplicationLaunchUserNotificationKey: &'static NSString;
+}
+
+extern "C" {
+    static NSApplicationLaunchRemoteNotificationKey: &'static NSString;
+}
+
+extern "C" {
+    static NSApplicationDidChangeOcclusionStateNotification: &'static NSNotificationName;
+}
 
 pub const NSRunStoppedResponse: i32 = (-1000);
 pub const NSRunAbortedResponse: i32 = (-1001);

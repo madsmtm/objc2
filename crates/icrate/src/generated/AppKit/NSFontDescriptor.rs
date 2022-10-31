@@ -164,6 +164,194 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSFontFamilyAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontNameAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontFaceAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontSizeAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontVisibleNameAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontMatrixAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontVariationAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontCharacterSetAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontCascadeListAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontTraitsAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontFixedAdvanceAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontFeatureSettingsAttribute: &'static NSFontDescriptorAttributeName;
+}
+
+extern "C" {
+    static NSFontSymbolicTrait: &'static NSFontDescriptorTraitKey;
+}
+
+extern "C" {
+    static NSFontWeightTrait: &'static NSFontDescriptorTraitKey;
+}
+
+extern "C" {
+    static NSFontWidthTrait: &'static NSFontDescriptorTraitKey;
+}
+
+extern "C" {
+    static NSFontSlantTrait: &'static NSFontDescriptorTraitKey;
+}
+
+extern "C" {
+    static NSFontVariationAxisIdentifierKey: &'static NSFontDescriptorVariationKey;
+}
+
+extern "C" {
+    static NSFontVariationAxisMinimumValueKey: &'static NSFontDescriptorVariationKey;
+}
+
+extern "C" {
+    static NSFontVariationAxisMaximumValueKey: &'static NSFontDescriptorVariationKey;
+}
+
+extern "C" {
+    static NSFontVariationAxisDefaultValueKey: &'static NSFontDescriptorVariationKey;
+}
+
+extern "C" {
+    static NSFontVariationAxisNameKey: &'static NSFontDescriptorVariationKey;
+}
+
+extern "C" {
+    static NSFontFeatureTypeIdentifierKey: &'static NSFontDescriptorFeatureKey;
+}
+
+extern "C" {
+    static NSFontFeatureSelectorIdentifierKey: &'static NSFontDescriptorFeatureKey;
+}
+
+extern "C" {
+    static NSFontWeightUltraLight: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontWeightThin: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontWeightLight: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontWeightRegular: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontWeightMedium: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontWeightSemibold: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontWeightBold: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontWeightHeavy: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontWeightBlack: NSFontWeight;
+}
+
+extern "C" {
+    static NSFontDescriptorSystemDesignDefault: &'static NSFontDescriptorSystemDesign;
+}
+
+extern "C" {
+    static NSFontDescriptorSystemDesignSerif: &'static NSFontDescriptorSystemDesign;
+}
+
+extern "C" {
+    static NSFontDescriptorSystemDesignMonospaced: &'static NSFontDescriptorSystemDesign;
+}
+
+extern "C" {
+    static NSFontDescriptorSystemDesignRounded: &'static NSFontDescriptorSystemDesign;
+}
+
+extern "C" {
+    static NSFontTextStyleLargeTitle: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleTitle1: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleTitle2: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleTitle3: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleHeadline: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleSubheadline: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleBody: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleCallout: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleFootnote: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleCaption1: &'static NSFontTextStyle;
+}
+
+extern "C" {
+    static NSFontTextStyleCaption2: &'static NSFontTextStyle;
+}
+
 pub type NSFontFamilyClass = u32;
 
 pub const NSFontUnknownClass: i32 = 0 << 28;
@@ -187,6 +375,10 @@ pub const NSFontCondensedTrait: i32 = (1 << 6);
 pub const NSFontMonoSpaceTrait: i32 = (1 << 10);
 pub const NSFontVerticalTrait: i32 = (1 << 11);
 pub const NSFontUIOptimizedTrait: i32 = (1 << 12);
+
+extern "C" {
+    static NSFontColorAttribute: &'static NSString;
+}
 
 extern_methods!(
     /// NSFontDescriptor_TextStyles

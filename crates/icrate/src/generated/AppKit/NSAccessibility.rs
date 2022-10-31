@@ -120,6 +120,10 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     /// NSAccessibilityAdditions
     unsafe impl NSObject {

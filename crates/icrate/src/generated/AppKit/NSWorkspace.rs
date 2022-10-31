@@ -311,6 +311,18 @@ extern_methods!(
 
 pub type NSWorkspaceDesktopImageOptionKey = NSString;
 
+extern "C" {
+    static NSWorkspaceDesktopImageScalingKey: &'static NSWorkspaceDesktopImageOptionKey;
+}
+
+extern "C" {
+    static NSWorkspaceDesktopImageAllowClippingKey: &'static NSWorkspaceDesktopImageOptionKey;
+}
+
+extern "C" {
+    static NSWorkspaceDesktopImageFillColorKey: &'static NSWorkspaceDesktopImageOptionKey;
+}
+
 extern_methods!(
     /// NSDesktopImages
     unsafe impl NSWorkspace {
@@ -376,6 +388,106 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSWorkspaceApplicationKey: &'static NSString;
+}
+
+extern "C" {
+    static NSWorkspaceWillLaunchApplicationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidLaunchApplicationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidTerminateApplicationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidHideApplicationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidUnhideApplicationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidActivateApplicationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidDeactivateApplicationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceVolumeLocalizedNameKey: &'static NSString;
+}
+
+extern "C" {
+    static NSWorkspaceVolumeURLKey: &'static NSString;
+}
+
+extern "C" {
+    static NSWorkspaceVolumeOldLocalizedNameKey: &'static NSString;
+}
+
+extern "C" {
+    static NSWorkspaceVolumeOldURLKey: &'static NSString;
+}
+
+extern "C" {
+    static NSWorkspaceDidMountNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidUnmountNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceWillUnmountNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidRenameVolumeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceWillPowerOffNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceWillSleepNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidWakeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceScreensDidSleepNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceScreensDidWakeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceSessionDidBecomeActiveNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceSessionDidResignActiveNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidChangeFileLabelsNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWorkspaceActiveSpaceDidChangeNotification: &'static NSNotificationName;
+}
+
 pub type NSWorkspaceFileOperationName = NSString;
 
 pub type NSWorkspaceLaunchOptions = NSUInteger;
@@ -393,6 +505,22 @@ pub const NSWorkspaceLaunchAllowingClassicStartup: NSWorkspaceLaunchOptions = 0x
 pub const NSWorkspaceLaunchPreferringClassic: NSWorkspaceLaunchOptions = 0x00040000;
 
 pub type NSWorkspaceLaunchConfigurationKey = NSString;
+
+extern "C" {
+    static NSWorkspaceLaunchConfigurationAppleEvent: &'static NSWorkspaceLaunchConfigurationKey;
+}
+
+extern "C" {
+    static NSWorkspaceLaunchConfigurationArguments: &'static NSWorkspaceLaunchConfigurationKey;
+}
+
+extern "C" {
+    static NSWorkspaceLaunchConfigurationEnvironment: &'static NSWorkspaceLaunchConfigurationKey;
+}
+
+extern "C" {
+    static NSWorkspaceLaunchConfigurationArchitecture: &'static NSWorkspaceLaunchConfigurationKey;
+}
 
 extern_methods!(
     /// NSDeprecated
@@ -589,3 +717,67 @@ extern_methods!(
         ) -> bool;
     }
 );
+
+extern "C" {
+    static NSWorkspaceMoveOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceCopyOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceLinkOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceCompressOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceDecompressOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceEncryptOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceDecryptOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceDestroyOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceRecycleOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceDuplicateOperation: &'static NSWorkspaceFileOperationName;
+}
+
+extern "C" {
+    static NSWorkspaceDidPerformFileOperationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSPlainFileType: &'static NSString;
+}
+
+extern "C" {
+    static NSDirectoryFileType: &'static NSString;
+}
+
+extern "C" {
+    static NSApplicationFileType: &'static NSString;
+}
+
+extern "C" {
+    static NSFilesystemFileType: &'static NSString;
+}
+
+extern "C" {
+    static NSShellCommandFileType: &'static NSString;
+}

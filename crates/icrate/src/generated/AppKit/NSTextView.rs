@@ -14,6 +14,10 @@ pub type NSSelectionAffinity = NSUInteger;
 pub const NSSelectionAffinityUpstream: NSSelectionAffinity = 0;
 pub const NSSelectionAffinityDownstream: NSSelectionAffinity = 1;
 
+extern "C" {
+    static NSAllRomanInputSourcesLocaleIdentifier: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextView;
@@ -941,6 +945,50 @@ extern_methods!(
 
 pub type NSTextViewDelegate = NSObject;
 
+extern "C" {
+    static NSTouchBarItemIdentifierCharacterPicker: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTouchBarItemIdentifierTextColorPicker: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTouchBarItemIdentifierTextStyle: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTouchBarItemIdentifierTextAlignment: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTouchBarItemIdentifierTextList: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTouchBarItemIdentifierTextFormat: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTextViewWillChangeNotifyingTextViewNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTextViewDidChangeSelectionNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTextViewDidChangeTypingAttributesNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTextViewWillSwitchToNSLayoutManagerNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTextViewDidSwitchToNSLayoutManagerNotification: &'static NSNotificationName;
+}
+
 pub type NSFindPanelAction = NSUInteger;
 pub const NSFindPanelActionShowFindPanel: NSFindPanelAction = 1;
 pub const NSFindPanelActionNext: NSFindPanelAction = 2;
@@ -953,7 +1001,19 @@ pub const NSFindPanelActionReplaceAllInSelection: NSFindPanelAction = 8;
 pub const NSFindPanelActionSelectAll: NSFindPanelAction = 9;
 pub const NSFindPanelActionSelectAllInSelection: NSFindPanelAction = 10;
 
+extern "C" {
+    static NSFindPanelSearchOptionsPboardType: &'static NSPasteboardType;
+}
+
 pub type NSPasteboardTypeFindPanelSearchOptionKey = NSString;
+
+extern "C" {
+    static NSFindPanelCaseInsensitiveSearch: &'static NSPasteboardTypeFindPanelSearchOptionKey;
+}
+
+extern "C" {
+    static NSFindPanelSubstringMatch: &'static NSPasteboardTypeFindPanelSearchOptionKey;
+}
 
 pub type NSFindPanelSubstringMatchType = NSUInteger;
 pub const NSFindPanelSubstringMatchTypeContains: NSFindPanelSubstringMatchType = 0;

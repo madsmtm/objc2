@@ -69,3 +69,7 @@ extern_methods!(
         ) -> Option<Id<NSString, Shared>>;
     }
 );
+
+extern "C" {
+    static NSClassDescriptionNeededForClassNotification: &'static NSNotificationName;
+}

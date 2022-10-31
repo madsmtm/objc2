@@ -18,6 +18,10 @@ pub const NSSplitViewItemCollapseBehaviorPreferResizingSiblingsWithFixedSplitVie
     NSSplitViewItemCollapseBehavior = 2;
 pub const NSSplitViewItemCollapseBehaviorUseConstraints: NSSplitViewItemCollapseBehavior = 3;
 
+extern "C" {
+    static NSSplitViewItemUnspecifiedDimension: CGFloat;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSplitViewItem;

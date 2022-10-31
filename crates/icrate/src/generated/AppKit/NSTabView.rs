@@ -5,6 +5,8 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSAppKitVersionNumberWithDirectionalTabs: NSAppKitVersion = 631.0;
+
 pub type NSTabViewType = NSUInteger;
 pub const NSTopTabsBezelBorder: NSTabViewType = 0;
 pub const NSLeftTabsBezelBorder: NSTabViewType = 1;

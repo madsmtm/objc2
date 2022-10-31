@@ -16,6 +16,14 @@ pub const NSAnimationBlocking: NSAnimationBlockingMode = 0;
 pub const NSAnimationNonblocking: NSAnimationBlockingMode = 1;
 pub const NSAnimationNonblockingThreaded: NSAnimationBlockingMode = 2;
 
+extern "C" {
+    static NSAnimationProgressMarkNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSAnimationProgressMark: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAnimation;
@@ -130,7 +138,31 @@ pub type NSAnimationDelegate = NSObject;
 
 pub type NSViewAnimationKey = NSString;
 
+extern "C" {
+    static NSViewAnimationTargetKey: &'static NSViewAnimationKey;
+}
+
+extern "C" {
+    static NSViewAnimationStartFrameKey: &'static NSViewAnimationKey;
+}
+
+extern "C" {
+    static NSViewAnimationEndFrameKey: &'static NSViewAnimationKey;
+}
+
+extern "C" {
+    static NSViewAnimationEffectKey: &'static NSViewAnimationKey;
+}
+
 pub type NSViewAnimationEffectName = NSString;
+
+extern "C" {
+    static NSViewAnimationFadeInEffect: &'static NSViewAnimationEffectName;
+}
+
+extern "C" {
+    static NSViewAnimationFadeOutEffect: &'static NSViewAnimationEffectName;
+}
 
 extern_class!(
     #[derive(Debug)]
@@ -165,3 +197,11 @@ extern_methods!(
 pub type NSAnimatablePropertyKey = NSString;
 
 pub type NSAnimatablePropertyContainer = NSObject;
+
+extern "C" {
+    static NSAnimationTriggerOrderIn: &'static NSAnimatablePropertyKey;
+}
+
+extern "C" {
+    static NSAnimationTriggerOrderOut: &'static NSAnimatablePropertyKey;
+}

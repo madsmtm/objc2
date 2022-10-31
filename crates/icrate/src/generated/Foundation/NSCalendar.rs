@@ -7,6 +7,70 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSCalendarIdentifier = NSString;
 
+extern "C" {
+    static NSCalendarIdentifierGregorian: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierBuddhist: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierChinese: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierCoptic: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierEthiopicAmeteMihret: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierEthiopicAmeteAlem: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierHebrew: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierISO8601: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierIndian: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierIslamic: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierIslamicCivil: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierJapanese: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierPersian: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierRepublicOfChina: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierIslamicTabular: &'static NSCalendarIdentifier;
+}
+
+extern "C" {
+    static NSCalendarIdentifierIslamicUmmAlQura: &'static NSCalendarIdentifier;
+}
+
 pub type NSCalendarUnit = NSUInteger;
 pub const NSCalendarUnitEra: NSCalendarUnit = kCFCalendarUnitEra;
 pub const NSCalendarUnitYear: NSCalendarUnit = kCFCalendarUnitYear;
@@ -430,6 +494,10 @@ extern_methods!(
         ) -> bool;
     }
 );
+
+extern "C" {
+    static NSCalendarDayChangedNotification: &'static NSNotificationName;
+}
 
 pub const NSDateComponentUndefined: i32 = 9223372036854775807;
 pub const NSUndefinedDateComponent: i32 = NSDateComponentUndefined;

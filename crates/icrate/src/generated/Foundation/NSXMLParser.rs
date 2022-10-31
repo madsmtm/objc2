@@ -106,6 +106,10 @@ extern_methods!(
 
 pub type NSXMLParserDelegate = NSObject;
 
+extern "C" {
+    static NSXMLParserErrorDomain: &'static NSErrorDomain;
+}
+
 pub type NSXMLParserError = NSInteger;
 pub const NSXMLParserInternalError: NSXMLParserError = 1;
 pub const NSXMLParserOutOfMemoryError: NSXMLParserError = 2;

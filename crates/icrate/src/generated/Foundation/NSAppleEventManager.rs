@@ -5,6 +5,18 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSAppleEventTimeOutDefault: c_double;
+}
+
+extern "C" {
+    static NSAppleEventTimeOutNone: c_double;
+}
+
+extern "C" {
+    static NSAppleEventManagerWillProcessFirstEventNotification: &'static NSNotificationName;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAppleEventManager;

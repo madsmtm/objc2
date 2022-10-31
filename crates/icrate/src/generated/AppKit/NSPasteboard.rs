@@ -7,12 +7,104 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSPasteboardType = NSString;
 
+extern "C" {
+    static NSPasteboardTypeString: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypePDF: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeTIFF: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypePNG: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeRTF: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeRTFD: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeHTML: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeTabularText: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeFont: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeRuler: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeColor: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeSound: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeMultipleTextSelection: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeTextFinderOptions: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeURL: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeFileURL: &'static NSPasteboardType;
+}
+
 pub type NSPasteboardName = NSString;
+
+extern "C" {
+    static NSPasteboardNameGeneral: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSPasteboardNameFont: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSPasteboardNameRuler: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSPasteboardNameFind: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSPasteboardNameDrag: &'static NSPasteboardName;
+}
 
 pub type NSPasteboardContentsOptions = NSUInteger;
 pub const NSPasteboardContentsCurrentHostOnly: NSPasteboardContentsOptions = 1 << 0;
 
 pub type NSPasteboardReadingOptionKey = NSString;
+
+extern "C" {
+    static NSPasteboardURLReadingFileURLsOnlyKey: &'static NSPasteboardReadingOptionKey;
+}
+
+extern "C" {
+    static NSPasteboardURLReadingContentsConformToTypesKey: &'static NSPasteboardReadingOptionKey;
+}
 
 extern_class!(
     #[derive(Debug)]
@@ -231,3 +323,103 @@ extern_methods!(
         pub unsafe fn readFileWrapper(&self) -> Option<Id<NSFileWrapper, Shared>>;
     }
 );
+
+extern "C" {
+    static NSFileContentsPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSStringPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSFilenamesPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSTIFFPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSRTFPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSTabularTextPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSFontPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSRulerPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSColorPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSRTFDPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSHTMLPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSURLPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPDFPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSMultipleTextSelectionPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPostScriptPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSVCardPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSInkTextPboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSFilesPromisePboardType: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSPasteboardTypeFindPanelSearchOptions: &'static NSPasteboardType;
+}
+
+extern "C" {
+    static NSGeneralPboard: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSFontPboard: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSRulerPboard: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSFindPboard: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSDragPboard: &'static NSPasteboardName;
+}
+
+extern "C" {
+    static NSPICTPboardType: &'static NSPasteboardType;
+}

@@ -5,6 +5,20 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSLayoutPriorityRequired: NSLayoutPriority = 1000;
+
+static NSLayoutPriorityDefaultHigh: NSLayoutPriority = 750;
+
+static NSLayoutPriorityDragThatCanResizeWindow: NSLayoutPriority = 510;
+
+static NSLayoutPriorityWindowSizeStayPut: NSLayoutPriority = 500;
+
+static NSLayoutPriorityDragThatCannotResizeWindow: NSLayoutPriority = 490;
+
+static NSLayoutPriorityDefaultLow: NSLayoutPriority = 250;
+
+static NSLayoutPriorityFittingSizeCompression: NSLayoutPriority = 50;
+
 pub type NSLayoutConstraintOrientation = NSInteger;
 pub const NSLayoutConstraintOrientationHorizontal: NSLayoutConstraintOrientation = 0;
 pub const NSLayoutConstraintOrientationVertical: NSLayoutConstraintOrientation = 1;
@@ -252,6 +266,14 @@ extern_methods!(
         pub unsafe fn requiresConstraintBasedLayout() -> bool;
     }
 );
+
+extern "C" {
+    static NSViewNoInstrinsicMetric: CGFloat;
+}
+
+extern "C" {
+    static NSViewNoIntrinsicMetric: CGFloat;
+}
 
 extern_methods!(
     /// NSConstraintBasedLayoutLayering

@@ -5,6 +5,26 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSAppleScriptErrorMessage: &'static NSString;
+}
+
+extern "C" {
+    static NSAppleScriptErrorNumber: &'static NSString;
+}
+
+extern "C" {
+    static NSAppleScriptErrorAppName: &'static NSString;
+}
+
+extern "C" {
+    static NSAppleScriptErrorBriefMessage: &'static NSString;
+}
+
+extern "C" {
+    static NSAppleScriptErrorRange: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAppleScript;

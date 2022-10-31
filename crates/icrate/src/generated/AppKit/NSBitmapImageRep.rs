@@ -42,6 +42,66 @@ pub const NSBitmapFormatThirtyTwoBitBigEndian: NSBitmapFormat = (1 << 11);
 
 pub type NSBitmapImageRepPropertyKey = NSString;
 
+extern "C" {
+    static NSImageCompressionMethod: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageCompressionFactor: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageDitherTransparency: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageRGBColorTable: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageInterlaced: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageColorSyncProfileData: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageFrameCount: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageCurrentFrame: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageCurrentFrameDuration: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageLoopCount: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageGamma: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageProgressive: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageEXIFData: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageIPTCData: &'static NSBitmapImageRepPropertyKey;
+}
+
+extern "C" {
+    static NSImageFallbackBackgroundColor: &'static NSBitmapImageRepPropertyKey;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSBitmapImageRep;
@@ -258,3 +318,29 @@ extern_methods!(
         ) -> Option<Id<Object, Shared>>;
     }
 );
+
+static NSTIFFFileType: NSBitmapImageFileType = NSBitmapImageFileTypeTIFF;
+
+static NSBMPFileType: NSBitmapImageFileType = NSBitmapImageFileTypeBMP;
+
+static NSGIFFileType: NSBitmapImageFileType = NSBitmapImageFileTypeGIF;
+
+static NSJPEGFileType: NSBitmapImageFileType = NSBitmapImageFileTypeJPEG;
+
+static NSPNGFileType: NSBitmapImageFileType = NSBitmapImageFileTypePNG;
+
+static NSJPEG2000FileType: NSBitmapImageFileType = NSBitmapImageFileTypeJPEG2000;
+
+static NSAlphaFirstBitmapFormat: NSBitmapFormat = NSBitmapFormatAlphaFirst;
+
+static NSAlphaNonpremultipliedBitmapFormat: NSBitmapFormat = NSBitmapFormatAlphaNonpremultiplied;
+
+static NSFloatingPointSamplesBitmapFormat: NSBitmapFormat = NSBitmapFormatFloatingPointSamples;
+
+static NS16BitLittleEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatSixteenBitLittleEndian;
+
+static NS32BitLittleEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatThirtyTwoBitLittleEndian;
+
+static NS16BitBigEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatSixteenBitBigEndian;
+
+static NS32BitBigEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatThirtyTwoBitBigEndian;

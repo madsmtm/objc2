@@ -13,6 +13,11 @@ pub const NSCollectionElementCategoryInterItemGap: NSCollectionElementCategory =
 
 pub type NSCollectionViewDecorationElementKind = NSString;
 
+extern "C" {
+    static NSCollectionElementKindInterItemGapIndicator:
+        &'static NSCollectionViewSupplementaryElementKind;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCollectionViewLayoutAttributes;

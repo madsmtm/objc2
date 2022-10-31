@@ -7,7 +7,75 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSErrorDomain = NSString;
 
+extern "C" {
+    static NSCocoaErrorDomain: &'static NSErrorDomain;
+}
+
+extern "C" {
+    static NSPOSIXErrorDomain: &'static NSErrorDomain;
+}
+
+extern "C" {
+    static NSOSStatusErrorDomain: &'static NSErrorDomain;
+}
+
+extern "C" {
+    static NSMachErrorDomain: &'static NSErrorDomain;
+}
+
 pub type NSErrorUserInfoKey = NSString;
+
+extern "C" {
+    static NSUnderlyingErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSMultipleUnderlyingErrorsKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSLocalizedDescriptionKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSLocalizedFailureReasonErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSLocalizedRecoverySuggestionErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSLocalizedRecoveryOptionsErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSRecoveryAttempterErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSHelpAnchorErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSDebugDescriptionErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSLocalizedFailureErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSStringEncodingErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSURLErrorKey: &'static NSErrorUserInfoKey;
+}
+
+extern "C" {
+    static NSFilePathErrorKey: &'static NSErrorUserInfoKey;
+}
 
 extern_class!(
     #[derive(Debug)]

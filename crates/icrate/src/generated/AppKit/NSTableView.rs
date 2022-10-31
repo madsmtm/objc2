@@ -604,6 +604,26 @@ extern_methods!(
 
 pub type NSTableViewDelegate = NSObject;
 
+extern "C" {
+    static NSTableViewSelectionDidChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTableViewColumnDidMoveNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTableViewColumnDidResizeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTableViewSelectionIsChangingNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTableViewRowViewKey: &'static NSUserInterfaceItemIdentifier;
+}
+
 pub type NSTableViewDataSource = NSObject;
 
 extern_methods!(

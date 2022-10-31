@@ -217,6 +217,10 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSMenuItemImportFromDeviceIdentifier: &'static NSUserInterfaceItemIdentifier;
+}
+
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSMenuItem {

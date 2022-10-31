@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSAppKitVersionNumberWithContinuousScrollingBrowser: NSAppKitVersion = 680.0;
+
+static NSAppKitVersionNumberWithColumnResizingBrowser: NSAppKitVersion = 685.0;
+
 pub type NSBrowserColumnsAutosaveName = NSString;
 
 pub type NSBrowserColumnResizingType = NSUInteger;
@@ -412,6 +416,10 @@ extern_methods!(
         );
     }
 );
+
+extern "C" {
+    static NSBrowserColumnConfigurationDidChangeNotification: &'static NSNotificationName;
+}
 
 pub type NSBrowserDelegate = NSObject;
 

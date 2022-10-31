@@ -48,6 +48,22 @@ pub const NSAlignAllEdgesOutward: NSAlignmentOptions =
 pub const NSAlignAllEdgesNearest: NSAlignmentOptions =
     NSAlignMinXNearest | NSAlignMaxXNearest | NSAlignMinYNearest | NSAlignMaxYNearest;
 
+extern "C" {
+    static NSZeroPoint: NSPoint;
+}
+
+extern "C" {
+    static NSZeroSize: NSSize;
+}
+
+extern "C" {
+    static NSZeroRect: NSRect;
+}
+
+extern "C" {
+    static NSEdgeInsetsZero: NSEdgeInsets;
+}
+
 extern_methods!(
     /// NSValueGeometryExtensions
     unsafe impl NSValue {

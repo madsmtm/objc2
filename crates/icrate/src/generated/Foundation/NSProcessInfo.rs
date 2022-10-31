@@ -176,6 +176,14 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSProcessInfoThermalStateDidChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSProcessInfoPowerStateDidChangeNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     /// NSProcessInfoPlatform
     unsafe impl NSProcessInfo {

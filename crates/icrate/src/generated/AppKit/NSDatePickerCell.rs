@@ -129,3 +129,30 @@ extern_methods!(
 );
 
 pub type NSDatePickerCellDelegate = NSObject;
+
+static NSTextFieldAndStepperDatePickerStyle: NSDatePickerStyle =
+    NSDatePickerStyleTextFieldAndStepper;
+
+static NSClockAndCalendarDatePickerStyle: NSDatePickerStyle = NSDatePickerStyleClockAndCalendar;
+
+static NSTextFieldDatePickerStyle: NSDatePickerStyle = NSDatePickerStyleTextField;
+
+static NSSingleDateMode: NSDatePickerMode = NSDatePickerModeSingle;
+
+static NSRangeDateMode: NSDatePickerMode = NSDatePickerModeRange;
+
+static NSHourMinuteDatePickerElementFlag: NSDatePickerElementFlags =
+    NSDatePickerElementFlagHourMinute;
+
+static NSHourMinuteSecondDatePickerElementFlag: NSDatePickerElementFlags =
+    NSDatePickerElementFlagHourMinuteSecond;
+
+static NSTimeZoneDatePickerElementFlag: NSDatePickerElementFlags = NSDatePickerElementFlagTimeZone;
+
+static NSYearMonthDatePickerElementFlag: NSDatePickerElementFlags =
+    NSDatePickerElementFlagYearMonth;
+
+static NSYearMonthDayDatePickerElementFlag: NSDatePickerElementFlags =
+    NSDatePickerElementFlagYearMonthDay;
+
+static NSEraDatePickerElementFlag: NSDatePickerElementFlags = NSDatePickerElementFlagEra;

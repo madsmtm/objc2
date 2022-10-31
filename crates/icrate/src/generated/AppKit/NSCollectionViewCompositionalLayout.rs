@@ -16,6 +16,10 @@ pub const NSDirectionalRectEdgeAll: NSDirectionalRectEdge = NSDirectionalRectEdg
     | NSDirectionalRectEdgeBottom
     | NSDirectionalRectEdgeTrailing;
 
+extern "C" {
+    static NSDirectionalEdgeInsetsZero: NSDirectionalEdgeInsets;
+}
+
 pub type NSRectAlignment = NSInteger;
 pub const NSRectAlignmentNone: NSRectAlignment = 0;
 pub const NSRectAlignmentTop: NSRectAlignment = 1;

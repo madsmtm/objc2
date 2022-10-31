@@ -81,6 +81,10 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSScreenColorSpaceDidChangeNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     unsafe impl NSScreen {
         #[method(maximumExtendedDynamicRangeColorComponentValue)]

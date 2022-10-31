@@ -178,6 +178,10 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSUserNotificationDefaultSoundName: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSUserNotificationCenter;

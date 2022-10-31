@@ -112,3 +112,11 @@ extern_methods!(
         );
     }
 );
+
+extern "C" {
+    static NSURLCredentialStorageChangedNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSURLCredentialStorageRemoveSynchronizableCredentials: &'static NSString;
+}

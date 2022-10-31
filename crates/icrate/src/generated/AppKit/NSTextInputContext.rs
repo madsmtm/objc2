@@ -82,3 +82,7 @@ extern_methods!(
         ) -> Option<Id<NSString, Shared>>;
     }
 );
+
+extern "C" {
+    static NSTextInputContextKeyboardSelectionDidChangeNotification: &'static NSNotificationName;
+}

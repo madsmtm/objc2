@@ -11,6 +11,22 @@ pub const NSVerticalRuler: NSRulerOrientation = 1;
 
 pub type NSRulerViewUnitName = NSString;
 
+extern "C" {
+    static NSRulerViewUnitInches: &'static NSRulerViewUnitName;
+}
+
+extern "C" {
+    static NSRulerViewUnitCentimeters: &'static NSRulerViewUnitName;
+}
+
+extern "C" {
+    static NSRulerViewUnitPoints: &'static NSRulerViewUnitName;
+}
+
+extern "C" {
+    static NSRulerViewUnitPicas: &'static NSRulerViewUnitName;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSRulerView;

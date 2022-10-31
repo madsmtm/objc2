@@ -8,7 +8,7 @@ use crate::config::{ClassData, Config};
 use crate::expr::Expr;
 use crate::method::Method;
 use crate::property::Property;
-use crate::rust_type::{GenericType, RustType};
+use crate::rust_type::{GenericType, RustType, RustTypeStatic};
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Debug, Clone)]
@@ -207,6 +207,13 @@ pub enum Stmt {
         ty: RustType,
         kind: Option<UnexposedMacro>,
         variants: Vec<(String, Expr)>,
+    },
+    /// static const ty name = expr;
+    /// extern const ty name;
+    VarDecl {
+        name: String,
+        ty: RustTypeStatic,
+        value: Option<Option<Expr>>,
     },
     /// typedef Type TypedefName;
     AliasDecl { name: String, type_: RustType },
@@ -429,20 +436,41 @@ impl Stmt {
                 })
             }
             EntityKind::VarDecl => {
-                // println!(
-                //     "var: {:?}, {:?}, {:#?}, {:#?}",
-                //     entity.get_display_name(),
-                //     entity.get_name(),
-                //     entity.has_attributes(),
-                //     entity.get_children(),
-                // );
-                None
+                let name = entity.get_name().expect("var decl name");
+                let ty = entity.get_type().expect("var type");
+                let ty = RustTypeStatic::parse(ty);
+                let mut value = None;
+
+                entity.visit_children(|entity, _parent| {
+                    match entity.get_kind() {
+                        EntityKind::UnexposedAttr => {
+                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                                panic!("unexpected attribute: {macro_:?}");
+                            }
+                        }
+                        EntityKind::ObjCClassRef => {}
+                        EntityKind::TypeRef => {}
+                        _ if entity.is_expression() => {
+                            if value.is_none() {
+                                value = Some(Expr::parse_var(&entity));
+                            } else {
+                                panic!("got variable value twice")
+                            }
+                        }
+                        _ => panic!("unknown typedef child in {name}: {entity:?}"),
+                    };
+                    EntityVisitResult::Continue
+                });
+
+                Some(Self::VarDecl { name, ty, value })
             }
             EntityKind::FunctionDecl => {
                 // println!(
-                //     "function: {:?}, {:?}, {:#?}, {:#?}",
+                //     "function: {:?}, {:?}, {:?}, {:?}, {:#?}, {:#?}",
                 //     entity.get_display_name(),
                 //     entity.get_name(),
+                //     entity.is_static_method(),
+                //     entity.is_inline_function(),
                 //     entity.has_attributes(),
                 //     entity.get_children(),
                 // );
@@ -590,6 +618,29 @@ impl fmt::Display for Stmt {
                         writeln!(f, "pub const {variant_name}: i32 = {expr};")?;
                     }
                 }
+            }
+            Self::VarDecl {
+                name,
+                ty,
+                value: None,
+            } => {
+                writeln!(f, r#"extern "C" {{"#)?;
+                writeln!(f, "    static {name}: {ty};")?;
+                writeln!(f, "}}")?;
+            }
+            Self::VarDecl {
+                name,
+                ty,
+                value: Some(None),
+            } => {
+                writeln!(f, "static {name}: {ty} = todo;")?;
+            }
+            Self::VarDecl {
+                name,
+                ty,
+                value: Some(Some(expr)),
+            } => {
+                writeln!(f, "static {name}: {ty} = {expr};")?;
             }
             Self::AliasDecl { name, type_ } => {
                 writeln!(f, "pub type {name} = {type_};")?;

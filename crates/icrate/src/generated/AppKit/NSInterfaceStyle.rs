@@ -22,3 +22,7 @@ extern_methods!(
         pub unsafe fn setInterfaceStyle(&self, interfaceStyle: NSInterfaceStyle);
     }
 );
+
+extern "C" {
+    static NSInterfaceStyleDefault: Option<&'static NSString>;
+}

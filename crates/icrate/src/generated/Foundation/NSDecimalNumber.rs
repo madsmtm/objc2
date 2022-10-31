@@ -5,6 +5,22 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSDecimalNumberExactnessException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSDecimalNumberOverflowException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSDecimalNumberUnderflowException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSDecimalNumberDivideByZeroException: &'static NSExceptionName;
+}
+
 pub type NSDecimalNumberBehaviors = NSObject;
 
 extern_class!(

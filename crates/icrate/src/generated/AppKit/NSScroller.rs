@@ -101,6 +101,10 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSPreferredScrollerStyleDidChangeNotification: &'static NSNotificationName;
+}
+
 pub type NSScrollArrowPosition = NSUInteger;
 pub const NSScrollerArrowsMaxEnd: NSScrollArrowPosition = 0;
 pub const NSScrollerArrowsMinEnd: NSScrollArrowPosition = 1;

@@ -7,6 +7,30 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSValueTransformerName = NSString;
 
+extern "C" {
+    static NSNegateBooleanTransformerName: &'static NSValueTransformerName;
+}
+
+extern "C" {
+    static NSIsNilTransformerName: &'static NSValueTransformerName;
+}
+
+extern "C" {
+    static NSIsNotNilTransformerName: &'static NSValueTransformerName;
+}
+
+extern "C" {
+    static NSUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
+}
+
+extern "C" {
+    static NSKeyedUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
+}
+
+extern "C" {
+    static NSSecureUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSValueTransformer;

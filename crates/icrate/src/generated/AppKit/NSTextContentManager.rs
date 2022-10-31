@@ -156,3 +156,7 @@ extern_methods!(
         ) -> Option<Id<NSTextRange, Shared>>;
     }
 );
+
+extern "C" {
+    static NSTextContentStorageUnsupportedAttributeAddedNotification: &'static NSNotificationName;
+}

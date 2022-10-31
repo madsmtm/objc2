@@ -5,6 +5,14 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSSearchFieldRecentsTitleMenuItemTag: NSInteger = 1000;
+
+static NSSearchFieldRecentsMenuItemTag: NSInteger = 1001;
+
+static NSSearchFieldClearRecentsMenuItemTag: NSInteger = 1002;
+
+static NSSearchFieldNoRecentsMenuItemTag: NSInteger = 1003;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSearchFieldCell;

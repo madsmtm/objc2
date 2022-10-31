@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSVariableStatusItemLength: CGFloat = -1.0;
+
+static NSSquareStatusItemLength: CGFloat = -2.0;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSStatusBar;

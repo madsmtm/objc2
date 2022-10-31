@@ -751,3 +751,43 @@ impl fmt::Display for RustTypeReturn {
         }
     }
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct RustTypeStatic {
+    inner: RustType,
+}
+
+impl RustTypeStatic {
+    pub fn parse(ty: Type<'_>) -> Self {
+        let inner = RustType::parse(ty, false, Nullability::Unspecified);
+
+        inner.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in var {inner:?}");
+            }
+        });
+
+        Self { inner }
+    }
+}
+
+impl fmt::Display for RustTypeStatic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self.inner {
+            RustType::Id {
+                type_,
+                is_const: false,
+                lifetime: Lifetime::Strong | Lifetime::Unspecified,
+                nullability,
+            } => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&'static {type_}")
+                } else {
+                    write!(f, "Option<&'static {type_}>")
+                }
+            }
+            ty @ RustType::Id { .. } => panic!("invalid static {ty:?}"),
+            ty => write!(f, "{ty}"),
+        }
+    }
+}

@@ -5,9 +5,37 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSURLErrorDomain: &'static NSErrorDomain;
+}
+
+extern "C" {
+    static NSURLErrorFailingURLErrorKey: &'static NSString;
+}
+
+extern "C" {
+    static NSURLErrorFailingURLStringErrorKey: &'static NSString;
+}
+
+extern "C" {
+    static NSErrorFailingURLStringKey: &'static NSString;
+}
+
+extern "C" {
+    static NSURLErrorFailingURLPeerTrustErrorKey: &'static NSString;
+}
+
+extern "C" {
+    static NSURLErrorBackgroundTaskCancelledReasonKey: &'static NSString;
+}
+
 pub const NSURLErrorCancelledReasonUserForceQuitApplication: i32 = 0;
 pub const NSURLErrorCancelledReasonBackgroundUpdatesDisabled: i32 = 1;
 pub const NSURLErrorCancelledReasonInsufficientSystemResources: i32 = 2;
+
+extern "C" {
+    static NSURLErrorNetworkUnavailableReasonKey: &'static NSErrorUserInfoKey;
+}
 
 pub type NSURLErrorNetworkUnavailableReason = NSInteger;
 pub const NSURLErrorNetworkUnavailableReasonCellular: NSURLErrorNetworkUnavailableReason = 0;

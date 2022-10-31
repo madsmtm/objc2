@@ -7,6 +7,46 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSTextCheckingOptionKey = NSString;
 
+extern "C" {
+    static NSTextCheckingOrthographyKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingQuotesKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingReplacementsKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingReferenceDateKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingReferenceTimeZoneKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingDocumentURLKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingDocumentTitleKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingDocumentAuthorKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingRegularExpressionsKey: &'static NSTextCheckingOptionKey;
+}
+
+extern "C" {
+    static NSTextCheckingSelectedRangeKey: &'static NSTextCheckingOptionKey;
+}
+
 pub type NSCorrectionResponse = NSInteger;
 pub const NSCorrectionResponseNone: NSCorrectionResponse = 0;
 pub const NSCorrectionResponseAccepted: NSCorrectionResponse = 1;
@@ -319,6 +359,38 @@ extern_methods!(
         pub unsafe fn setLanguage(&self, language: &NSString) -> bool;
     }
 );
+
+extern "C" {
+    static NSSpellCheckerDidChangeAutomaticSpellingCorrectionNotification:
+        &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSSpellCheckerDidChangeAutomaticTextReplacementNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSSpellCheckerDidChangeAutomaticQuoteSubstitutionNotification:
+        &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSSpellCheckerDidChangeAutomaticDashSubstitutionNotification:
+        &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSSpellCheckerDidChangeAutomaticCapitalizationNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSSpellCheckerDidChangeAutomaticPeriodSubstitutionNotification:
+        &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSSpellCheckerDidChangeAutomaticTextCompletionNotification: &'static NSNotificationName;
+}
 
 extern_methods!(
     /// NSDeprecated

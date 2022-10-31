@@ -25,6 +25,26 @@ pub const NSKeyValueSetSetMutation: NSKeyValueSetMutationKind = 4;
 
 pub type NSKeyValueChangeKey = NSString;
 
+extern "C" {
+    static NSKeyValueChangeKindKey: &'static NSKeyValueChangeKey;
+}
+
+extern "C" {
+    static NSKeyValueChangeNewKey: &'static NSKeyValueChangeKey;
+}
+
+extern "C" {
+    static NSKeyValueChangeOldKey: &'static NSKeyValueChangeKey;
+}
+
+extern "C" {
+    static NSKeyValueChangeIndexesKey: &'static NSKeyValueChangeKey;
+}
+
+extern "C" {
+    static NSKeyValueChangeNotificationIsPriorKey: &'static NSKeyValueChangeKey;
+}
+
 extern_methods!(
     /// NSKeyValueObserving
     unsafe impl NSObject {

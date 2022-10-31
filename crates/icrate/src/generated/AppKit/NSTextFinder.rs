@@ -22,6 +22,14 @@ pub const NSTextFinderActionHideReplaceInterface: NSTextFinderAction = 13;
 
 pub type NSPasteboardTypeTextFinderOptionKey = NSString;
 
+extern "C" {
+    static NSTextFinderCaseInsensitiveKey: &'static NSPasteboardTypeTextFinderOptionKey;
+}
+
+extern "C" {
+    static NSTextFinderMatchingTypeKey: &'static NSPasteboardTypeTextFinderOptionKey;
+}
+
 pub type NSTextFinderMatchingType = NSInteger;
 pub const NSTextFinderMatchingTypeContains: NSTextFinderMatchingType = 0;
 pub const NSTextFinderMatchingTypeStartsWith: NSTextFinderMatchingType = 1;

@@ -86,6 +86,18 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSUbiquitousKeyValueStoreDidChangeExternallyNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUbiquitousKeyValueStoreChangeReasonKey: &'static NSString;
+}
+
+extern "C" {
+    static NSUbiquitousKeyValueStoreChangedKeysKey: &'static NSString;
+}
+
 pub const NSUbiquitousKeyValueStoreServerChange: i32 = 0;
 pub const NSUbiquitousKeyValueStoreInitialSyncChange: i32 = 1;
 pub const NSUbiquitousKeyValueStoreQuotaViolationChange: i32 = 2;

@@ -142,3 +142,7 @@ extern_methods!(
             -> Option<Id<Self, Shared>>;
     }
 );
+
+extern "C" {
+    static NSSystemTimeZoneDidChangeNotification: &'static NSNotificationName;
+}

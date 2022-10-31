@@ -20,6 +20,14 @@ pub const NSStackViewDistributionFillProportionally: NSStackViewDistribution = 2
 pub const NSStackViewDistributionEqualSpacing: NSStackViewDistribution = 3;
 pub const NSStackViewDistributionEqualCentering: NSStackViewDistribution = 4;
 
+static NSStackViewVisibilityPriorityMustHold: NSStackViewVisibilityPriority = 1000;
+
+static NSStackViewVisibilityPriorityDetachOnlyIfNecessary: NSStackViewVisibilityPriority = 900;
+
+static NSStackViewVisibilityPriorityNotVisible: NSStackViewVisibilityPriority = 0;
+
+static NSStackViewSpacingUseDefault: CGFloat = todo;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSStackView;

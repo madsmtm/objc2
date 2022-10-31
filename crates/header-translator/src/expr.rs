@@ -55,7 +55,11 @@ impl Expr {
         res
     }
 
-    pub fn parse(entity: &Entity<'_>, declaration_references: &[String]) -> Option<Self> {
+    pub fn parse_var(entity: &Entity<'_>) -> Option<Self> {
+        Self::parse(entity, &[])
+    }
+
+    fn parse(entity: &Entity<'_>, declaration_references: &[String]) -> Option<Self> {
         let range = entity.get_range().expect("expr range");
         let tokens = range.tokenize();
 
@@ -97,6 +101,13 @@ impl Expr {
                 (kind, spelling) => panic!("unknown expr token {kind:?}/{spelling}"),
             }
         }
+
+        s = s
+            .trim_start_matches("(NSBoxType)")
+            .trim_start_matches("(NSBezelStyle)")
+            .trim_start_matches("(NSEventSubtype)")
+            .trim_start_matches("(NSWindowButton)")
+            .to_string();
 
         Some(Self { s })
     }

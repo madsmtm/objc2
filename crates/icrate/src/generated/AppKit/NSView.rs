@@ -881,6 +881,22 @@ extern_methods!(
 
 pub type NSViewFullScreenModeOptionKey = NSString;
 
+extern "C" {
+    static NSFullScreenModeAllScreens: &'static NSViewFullScreenModeOptionKey;
+}
+
+extern "C" {
+    static NSFullScreenModeSetting: &'static NSViewFullScreenModeOptionKey;
+}
+
+extern "C" {
+    static NSFullScreenModeWindowLevel: &'static NSViewFullScreenModeOptionKey;
+}
+
+extern "C" {
+    static NSFullScreenModeApplicationPresentationOptions: &'static NSViewFullScreenModeOptionKey;
+}
+
 extern_methods!(
     /// NSFullScreenMode
     unsafe impl NSView {
@@ -904,7 +920,19 @@ extern_methods!(
 
 pub type NSDefinitionOptionKey = NSString;
 
+extern "C" {
+    static NSDefinitionPresentationTypeKey: &'static NSDefinitionOptionKey;
+}
+
 pub type NSDefinitionPresentationType = NSString;
+
+extern "C" {
+    static NSDefinitionPresentationTypeOverlay: &'static NSDefinitionPresentationType;
+}
+
+extern "C" {
+    static NSDefinitionPresentationTypeDictionaryApplication: &'static NSDefinitionPresentationType;
+}
 
 extern_methods!(
     /// NSDefinition
@@ -1060,3 +1088,23 @@ extern_methods!(
         pub unsafe fn renewGState(&self);
     }
 );
+
+extern "C" {
+    static NSViewFrameDidChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSViewFocusDidChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSViewBoundsDidChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSViewGlobalFrameDidChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSViewDidUpdateTrackingAreasNotification: &'static NSNotificationName;
+}

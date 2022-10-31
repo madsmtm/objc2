@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSFoundationVersionNumber: c_double;
+}
+
 pub type NSExceptionName = NSString;
 
 pub type NSRunLoopMode = NSString;
@@ -28,3 +32,5 @@ pub const NSQualityOfServiceUserInitiated: NSQualityOfService = 0x19;
 pub const NSQualityOfServiceUtility: NSQualityOfService = 0x11;
 pub const NSQualityOfServiceBackground: NSQualityOfService = 0x09;
 pub const NSQualityOfServiceDefault: NSQualityOfService = -1;
+
+static NSNotFound: NSInteger = todo;

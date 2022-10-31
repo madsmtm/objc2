@@ -7,7 +7,24 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSGraphicsContextAttributeKey = NSString;
 
+extern "C" {
+    static NSGraphicsContextDestinationAttributeName: &'static NSGraphicsContextAttributeKey;
+}
+
+extern "C" {
+    static NSGraphicsContextRepresentationFormatAttributeName:
+        &'static NSGraphicsContextAttributeKey;
+}
+
 pub type NSGraphicsContextRepresentationFormatName = NSString;
+
+extern "C" {
+    static NSGraphicsContextPSFormat: &'static NSGraphicsContextRepresentationFormatName;
+}
+
+extern "C" {
+    static NSGraphicsContextPDFFormat: &'static NSGraphicsContextRepresentationFormatName;
+}
 
 pub type NSImageInterpolation = NSUInteger;
 pub const NSImageInterpolationDefault: NSImageInterpolation = 0;

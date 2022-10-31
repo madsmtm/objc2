@@ -85,6 +85,70 @@ pub const NSStringEnumerationLocalized: NSStringEnumerationOptions = 1 << 10;
 
 pub type NSStringTransform = NSString;
 
+extern "C" {
+    static NSStringTransformLatinToKatakana: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformLatinToHiragana: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformLatinToHangul: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformLatinToArabic: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformLatinToHebrew: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformLatinToThai: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformLatinToCyrillic: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformLatinToGreek: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformToLatin: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformMandarinToLatin: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformHiraganaToKatakana: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformFullwidthToHalfwidth: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformToXMLHex: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformToUnicodeName: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformStripCombiningMarks: &'static NSStringTransform;
+}
+
+extern "C" {
+    static NSStringTransformStripDiacritics: &'static NSStringTransform;
+}
+
 extern_methods!(
     /// NSStringExtensionMethods
     unsafe impl NSString {
@@ -642,6 +706,38 @@ extern_methods!(
 
 pub type NSStringEncodingDetectionOptionsKey = NSString;
 
+extern "C" {
+    static NSStringEncodingDetectionSuggestedEncodingsKey:
+        &'static NSStringEncodingDetectionOptionsKey;
+}
+
+extern "C" {
+    static NSStringEncodingDetectionDisallowedEncodingsKey:
+        &'static NSStringEncodingDetectionOptionsKey;
+}
+
+extern "C" {
+    static NSStringEncodingDetectionUseOnlySuggestedEncodingsKey:
+        &'static NSStringEncodingDetectionOptionsKey;
+}
+
+extern "C" {
+    static NSStringEncodingDetectionAllowLossyKey: &'static NSStringEncodingDetectionOptionsKey;
+}
+
+extern "C" {
+    static NSStringEncodingDetectionFromWindowsKey: &'static NSStringEncodingDetectionOptionsKey;
+}
+
+extern "C" {
+    static NSStringEncodingDetectionLossySubstitutionKey:
+        &'static NSStringEncodingDetectionOptionsKey;
+}
+
+extern "C" {
+    static NSStringEncodingDetectionLikelyLanguageKey: &'static NSStringEncodingDetectionOptionsKey;
+}
+
 extern_methods!(
     /// NSStringEncodingDetection
     unsafe impl NSString {
@@ -720,6 +816,14 @@ extern_methods!(
         pub unsafe fn stringWithCapacity(capacity: NSUInteger) -> Id<NSMutableString, Shared>;
     }
 );
+
+extern "C" {
+    static NSCharacterConversionException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSParseErrorException: &'static NSExceptionName;
+}
 
 extern_methods!(
     /// NSExtendedStringPropertyListParsing

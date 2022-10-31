@@ -5,6 +5,66 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSURLProtectionSpaceHTTP: &'static NSString;
+}
+
+extern "C" {
+    static NSURLProtectionSpaceHTTPS: &'static NSString;
+}
+
+extern "C" {
+    static NSURLProtectionSpaceFTP: &'static NSString;
+}
+
+extern "C" {
+    static NSURLProtectionSpaceHTTPProxy: &'static NSString;
+}
+
+extern "C" {
+    static NSURLProtectionSpaceHTTPSProxy: &'static NSString;
+}
+
+extern "C" {
+    static NSURLProtectionSpaceFTPProxy: &'static NSString;
+}
+
+extern "C" {
+    static NSURLProtectionSpaceSOCKSProxy: &'static NSString;
+}
+
+extern "C" {
+    static NSURLAuthenticationMethodDefault: &'static NSString;
+}
+
+extern "C" {
+    static NSURLAuthenticationMethodHTTPBasic: &'static NSString;
+}
+
+extern "C" {
+    static NSURLAuthenticationMethodHTTPDigest: &'static NSString;
+}
+
+extern "C" {
+    static NSURLAuthenticationMethodHTMLForm: &'static NSString;
+}
+
+extern "C" {
+    static NSURLAuthenticationMethodNTLM: &'static NSString;
+}
+
+extern "C" {
+    static NSURLAuthenticationMethodNegotiate: &'static NSString;
+}
+
+extern "C" {
+    static NSURLAuthenticationMethodClientCertificate: &'static NSString;
+}
+
+extern "C" {
+    static NSURLAuthenticationMethodServerTrust: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLProtectionSpace;

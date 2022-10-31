@@ -209,15 +209,22 @@ mod __exported {
         NSAppleEventSendNeverInteract, NSAppleEventSendNoReply, NSAppleEventSendOptions,
         NSAppleEventSendQueueReply, NSAppleEventSendWaitForReply,
     };
-    pub use super::NSAppleEventManager::NSAppleEventManager;
-    pub use super::NSAppleScript::NSAppleScript;
+    pub use super::NSAppleEventManager::{
+        NSAppleEventManager, NSAppleEventManagerWillProcessFirstEventNotification,
+        NSAppleEventTimeOutDefault, NSAppleEventTimeOutNone,
+    };
+    pub use super::NSAppleScript::{
+        NSAppleScript, NSAppleScriptErrorAppName, NSAppleScriptErrorBriefMessage,
+        NSAppleScriptErrorMessage, NSAppleScriptErrorNumber, NSAppleScriptErrorRange,
+    };
     pub use super::NSArchiver::{NSArchiver, NSUnarchiver};
     pub use super::NSArray::{
         NSArray, NSBinarySearchingFirstEqual, NSBinarySearchingInsertionIndex,
         NSBinarySearchingLastEqual, NSBinarySearchingOptions, NSMutableArray,
     };
     pub use super::NSAttributedString::{
-        NSAttributedString, NSAttributedStringEnumerationLongestEffectiveRangeNotRequired,
+        NSAlternateDescriptionAttributeName, NSAttributedString,
+        NSAttributedStringEnumerationLongestEffectiveRangeNotRequired,
         NSAttributedStringEnumerationOptions, NSAttributedStringEnumerationReverse,
         NSAttributedStringFormattingApplyReplacementIndexAttribute,
         NSAttributedStringFormattingInsertArgumentAttributesWithoutMerging,
@@ -229,12 +236,15 @@ mod __exported {
         NSAttributedStringMarkdownParsingFailurePolicy,
         NSAttributedStringMarkdownParsingFailureReturnError,
         NSAttributedStringMarkdownParsingFailureReturnPartiallyParsedIfPossible,
-        NSAttributedStringMarkdownParsingOptions, NSInlinePresentationIntent,
+        NSAttributedStringMarkdownParsingOptions, NSImageURLAttributeName,
+        NSInflectionAlternativeAttributeName, NSInflectionRuleAttributeName,
+        NSInlinePresentationIntent, NSInlinePresentationIntentAttributeName,
         NSInlinePresentationIntentBlockHTML, NSInlinePresentationIntentCode,
         NSInlinePresentationIntentEmphasized, NSInlinePresentationIntentInlineHTML,
         NSInlinePresentationIntentLineBreak, NSInlinePresentationIntentSoftBreak,
         NSInlinePresentationIntentStrikethrough, NSInlinePresentationIntentStronglyEmphasized,
-        NSMutableAttributedString, NSPresentationIntent, NSPresentationIntentKind,
+        NSLanguageIdentifierAttributeName, NSMorphologyAttributeName, NSMutableAttributedString,
+        NSPresentationIntent, NSPresentationIntentAttributeName, NSPresentationIntentKind,
         NSPresentationIntentKindBlockQuote, NSPresentationIntentKindCodeBlock,
         NSPresentationIntentKindHeader, NSPresentationIntentKindListItem,
         NSPresentationIntentKindOrderedList, NSPresentationIntentKindParagraph,
@@ -243,7 +253,7 @@ mod __exported {
         NSPresentationIntentKindThematicBreak, NSPresentationIntentKindUnorderedList,
         NSPresentationIntentTableColumnAlignment, NSPresentationIntentTableColumnAlignmentCenter,
         NSPresentationIntentTableColumnAlignmentLeft,
-        NSPresentationIntentTableColumnAlignmentRight,
+        NSPresentationIntentTableColumnAlignmentRight, NSReplacementIndexAttributeName,
     };
     pub use super::NSAutoreleasePool::NSAutoreleasePool;
     pub use super::NSBackgroundActivityScheduler::{
@@ -251,9 +261,11 @@ mod __exported {
         NSBackgroundActivityResultFinished, NSBackgroundActivityScheduler,
     };
     pub use super::NSBundle::{
-        NSBundle, NSBundleExecutableArchitectureARM64, NSBundleExecutableArchitectureI386,
-        NSBundleExecutableArchitecturePPC, NSBundleExecutableArchitecturePPC64,
-        NSBundleExecutableArchitectureX86_64, NSBundleResourceRequest,
+        NSBundle, NSBundleDidLoadNotification, NSBundleExecutableArchitectureARM64,
+        NSBundleExecutableArchitectureI386, NSBundleExecutableArchitecturePPC,
+        NSBundleExecutableArchitecturePPC64, NSBundleExecutableArchitectureX86_64,
+        NSBundleResourceRequest, NSBundleResourceRequestLoadingPriorityUrgent,
+        NSBundleResourceRequestLowDiskSpaceNotification, NSLoadedClasses,
     };
     pub use super::NSByteCountFormatter::{
         NSByteCountFormatter, NSByteCountFormatterCountStyle, NSByteCountFormatterCountStyleBinary,
@@ -267,9 +279,15 @@ mod __exported {
     pub use super::NSByteOrder::{NS_BigEndian, NS_LittleEndian, NS_UnknownByteOrder};
     pub use super::NSCache::{NSCache, NSCacheDelegate};
     pub use super::NSCalendar::{
-        NSCalendar, NSCalendarCalendarUnit, NSCalendarIdentifier, NSCalendarMatchFirst,
-        NSCalendarMatchLast, NSCalendarMatchNextTime,
-        NSCalendarMatchNextTimePreservingSmallerUnits,
+        NSCalendar, NSCalendarCalendarUnit, NSCalendarDayChangedNotification, NSCalendarIdentifier,
+        NSCalendarIdentifierBuddhist, NSCalendarIdentifierChinese, NSCalendarIdentifierCoptic,
+        NSCalendarIdentifierEthiopicAmeteAlem, NSCalendarIdentifierEthiopicAmeteMihret,
+        NSCalendarIdentifierGregorian, NSCalendarIdentifierHebrew, NSCalendarIdentifierISO8601,
+        NSCalendarIdentifierIndian, NSCalendarIdentifierIslamic, NSCalendarIdentifierIslamicCivil,
+        NSCalendarIdentifierIslamicTabular, NSCalendarIdentifierIslamicUmmAlQura,
+        NSCalendarIdentifierJapanese, NSCalendarIdentifierPersian,
+        NSCalendarIdentifierRepublicOfChina, NSCalendarMatchFirst, NSCalendarMatchLast,
+        NSCalendarMatchNextTime, NSCalendarMatchNextTimePreservingSmallerUnits,
         NSCalendarMatchPreviousTimePreservingSmallerUnits, NSCalendarMatchStrictly,
         NSCalendarOptions, NSCalendarSearchBackwards, NSCalendarUnit, NSCalendarUnitCalendar,
         NSCalendarUnitDay, NSCalendarUnitEra, NSCalendarUnitHour, NSCalendarUnitMinute,
@@ -288,7 +306,9 @@ mod __exported {
     pub use super::NSCharacterSet::{
         NSCharacterSet, NSMutableCharacterSet, NSOpenStepUnicodeReservedBase,
     };
-    pub use super::NSClassDescription::NSClassDescription;
+    pub use super::NSClassDescription::{
+        NSClassDescription, NSClassDescriptionNeededForClassNotification,
+    };
     pub use super::NSCoder::{
         NSCoder, NSDecodingFailurePolicy, NSDecodingFailurePolicyRaiseException,
         NSDecodingFailurePolicySetErrorAndReturn,
@@ -310,7 +330,11 @@ mod __exported {
         NSAndPredicateType, NSCompoundPredicate, NSCompoundPredicateType, NSNotPredicateType,
         NSOrPredicateType,
     };
-    pub use super::NSConnection::{NSConnection, NSConnectionDelegate, NSDistantObjectRequest};
+    pub use super::NSConnection::{
+        NSConnection, NSConnectionDelegate, NSConnectionDidDieNotification,
+        NSConnectionDidInitializeNotification, NSConnectionReplyMode, NSDistantObjectRequest,
+        NSFailedAuthenticationException,
+    };
     pub use super::NSData::{
         NSAtomicWrite, NSData, NSDataBase64DecodingIgnoreUnknownCharacters,
         NSDataBase64DecodingOptions, NSDataBase64Encoding64CharacterLineLength,
@@ -327,7 +351,7 @@ mod __exported {
         NSDataWritingWithoutOverwriting, NSMappedRead, NSMutableData, NSPurgeableData,
         NSUncachedRead,
     };
-    pub use super::NSDate::NSDate;
+    pub use super::NSDate::{NSDate, NSSystemClockDidChangeNotification};
     pub use super::NSDateComponentsFormatter::{
         NSDateComponentsFormatter, NSDateComponentsFormatterUnitsStyle,
         NSDateComponentsFormatterUnitsStyleAbbreviated, NSDateComponentsFormatterUnitsStyleBrief,
@@ -361,7 +385,9 @@ mod __exported {
         NSRoundDown, NSRoundPlain, NSRoundUp, NSRoundingMode,
     };
     pub use super::NSDecimalNumber::{
-        NSDecimalNumber, NSDecimalNumberBehaviors, NSDecimalNumberHandler,
+        NSDecimalNumber, NSDecimalNumberBehaviors, NSDecimalNumberDivideByZeroException,
+        NSDecimalNumberExactnessException, NSDecimalNumberHandler,
+        NSDecimalNumberOverflowException, NSDecimalNumberUnderflowException,
     };
     pub use super::NSDictionary::{NSDictionary, NSMutableDictionary};
     pub use super::NSDistantObject::NSDistantObject;
@@ -369,8 +395,9 @@ mod __exported {
     pub use super::NSDistributedNotificationCenter::{
         NSDistributedNotificationCenter, NSDistributedNotificationCenterType,
         NSDistributedNotificationDeliverImmediately, NSDistributedNotificationOptions,
-        NSDistributedNotificationPostToAllSessions, NSNotificationSuspensionBehavior,
-        NSNotificationSuspensionBehaviorCoalesce,
+        NSDistributedNotificationPostToAllSessions, NSLocalNotificationCenterType,
+        NSNotificationDeliverImmediately, NSNotificationPostToAllSessions,
+        NSNotificationSuspensionBehavior, NSNotificationSuspensionBehaviorCoalesce,
         NSNotificationSuspensionBehaviorDeliverImmediately, NSNotificationSuspensionBehaviorDrop,
         NSNotificationSuspensionBehaviorHold,
     };
@@ -380,8 +407,23 @@ mod __exported {
         NSEnergyFormatterUnitKilojoule,
     };
     pub use super::NSEnumerator::{NSEnumerator, NSFastEnumeration};
-    pub use super::NSError::{NSError, NSErrorDomain, NSErrorUserInfoKey};
-    pub use super::NSException::{NSAssertionHandler, NSException};
+    pub use super::NSError::{
+        NSCocoaErrorDomain, NSDebugDescriptionErrorKey, NSError, NSErrorDomain, NSErrorUserInfoKey,
+        NSFilePathErrorKey, NSHelpAnchorErrorKey, NSLocalizedDescriptionKey,
+        NSLocalizedFailureErrorKey, NSLocalizedFailureReasonErrorKey,
+        NSLocalizedRecoveryOptionsErrorKey, NSLocalizedRecoverySuggestionErrorKey,
+        NSMachErrorDomain, NSMultipleUnderlyingErrorsKey, NSOSStatusErrorDomain,
+        NSPOSIXErrorDomain, NSRecoveryAttempterErrorKey, NSStringEncodingErrorKey, NSURLErrorKey,
+        NSUnderlyingErrorKey,
+    };
+    pub use super::NSException::{
+        NSAssertionHandler, NSAssertionHandlerKey, NSDestinationInvalidException, NSException,
+        NSGenericException, NSInconsistentArchiveException, NSInternalInconsistencyException,
+        NSInvalidArgumentException, NSInvalidReceivePortException, NSInvalidSendPortException,
+        NSMallocException, NSObjectInaccessibleException, NSObjectNotAvailableException,
+        NSOldStyleException, NSPortReceiveException, NSPortSendException, NSPortTimeoutException,
+        NSRangeException,
+    };
     pub use super::NSExpression::{
         NSAggregateExpressionType, NSAnyKeyExpressionType, NSBlockExpressionType,
         NSConditionalExpressionType, NSConstantValueExpressionType,
@@ -389,8 +431,16 @@ mod __exported {
         NSIntersectSetExpressionType, NSKeyPathExpressionType, NSMinusSetExpressionType,
         NSSubqueryExpressionType, NSUnionSetExpressionType, NSVariableExpressionType,
     };
-    pub use super::NSExtensionContext::NSExtensionContext;
-    pub use super::NSExtensionItem::NSExtensionItem;
+    pub use super::NSExtensionContext::{
+        NSExtensionContext, NSExtensionHostDidBecomeActiveNotification,
+        NSExtensionHostDidEnterBackgroundNotification,
+        NSExtensionHostWillEnterForegroundNotification,
+        NSExtensionHostWillResignActiveNotification, NSExtensionItemsAndErrorsKey,
+    };
+    pub use super::NSExtensionItem::{
+        NSExtensionItem, NSExtensionItemAttachmentsKey, NSExtensionItemAttributedContentTextKey,
+        NSExtensionItemAttributedTitleKey,
+    };
     pub use super::NSExtensionRequestHandling::NSExtensionRequestHandling;
     pub use super::NSFileCoordinator::{
         NSFileAccessIntent, NSFileCoordinator, NSFileCoordinatorReadingForUploading,
@@ -401,19 +451,36 @@ mod __exported {
         NSFileCoordinatorWritingForMoving, NSFileCoordinatorWritingForReplacing,
         NSFileCoordinatorWritingOptions,
     };
-    pub use super::NSFileHandle::{NSFileHandle, NSPipe};
+    pub use super::NSFileHandle::{
+        NSFileHandle, NSFileHandleConnectionAcceptedNotification,
+        NSFileHandleDataAvailableNotification, NSFileHandleNotificationDataItem,
+        NSFileHandleNotificationFileHandleItem, NSFileHandleNotificationMonitorModes,
+        NSFileHandleOperationException, NSFileHandleReadCompletionNotification,
+        NSFileHandleReadToEndOfFileCompletionNotification, NSPipe,
+    };
     pub use super::NSFileManager::{
         NSDirectoryEnumerationIncludesDirectoriesPostOrder, NSDirectoryEnumerationOptions,
         NSDirectoryEnumerationProducesRelativePathURLs, NSDirectoryEnumerationSkipsHiddenFiles,
         NSDirectoryEnumerationSkipsPackageDescendants,
         NSDirectoryEnumerationSkipsSubdirectoryDescendants, NSDirectoryEnumerator,
-        NSFileAttributeKey, NSFileAttributeType, NSFileManager, NSFileManagerDelegate,
-        NSFileManagerItemReplacementOptions, NSFileManagerItemReplacementUsingNewMetadataOnly,
+        NSFileAppendOnly, NSFileAttributeKey, NSFileAttributeType, NSFileBusy, NSFileCreationDate,
+        NSFileDeviceIdentifier, NSFileExtensionHidden, NSFileGroupOwnerAccountID,
+        NSFileGroupOwnerAccountName, NSFileHFSCreatorCode, NSFileHFSTypeCode, NSFileImmutable,
+        NSFileManager, NSFileManagerDelegate, NSFileManagerItemReplacementOptions,
+        NSFileManagerItemReplacementUsingNewMetadataOnly,
         NSFileManagerItemReplacementWithoutDeletingBackupItem,
-        NSFileManagerUnmountAllPartitionsAndEjectDisk, NSFileManagerUnmountOptions,
-        NSFileManagerUnmountWithoutUI, NSFileProtectionType, NSFileProviderService,
-        NSFileProviderServiceName, NSURLRelationship, NSURLRelationshipContains,
-        NSURLRelationshipOther, NSURLRelationshipSame, NSVolumeEnumerationOptions,
+        NSFileManagerUnmountAllPartitionsAndEjectDisk,
+        NSFileManagerUnmountDissentingProcessIdentifierErrorKey, NSFileManagerUnmountOptions,
+        NSFileManagerUnmountWithoutUI, NSFileModificationDate, NSFileOwnerAccountID,
+        NSFileOwnerAccountName, NSFilePosixPermissions, NSFileProtectionComplete,
+        NSFileProtectionCompleteUnlessOpen, NSFileProtectionCompleteUntilFirstUserAuthentication,
+        NSFileProtectionKey, NSFileProtectionNone, NSFileProtectionType, NSFileProviderService,
+        NSFileProviderServiceName, NSFileReferenceCount, NSFileSize, NSFileSystemFileNumber,
+        NSFileSystemFreeNodes, NSFileSystemFreeSize, NSFileSystemNodes, NSFileSystemNumber,
+        NSFileSystemSize, NSFileType, NSFileTypeBlockSpecial, NSFileTypeCharacterSpecial,
+        NSFileTypeDirectory, NSFileTypeRegular, NSFileTypeSocket, NSFileTypeSymbolicLink,
+        NSFileTypeUnknown, NSURLRelationship, NSURLRelationshipContains, NSURLRelationshipOther,
+        NSURLRelationshipSame, NSUbiquityIdentityDidChangeNotification, NSVolumeEnumerationOptions,
         NSVolumeEnumerationProduceFileReferenceURLs, NSVolumeEnumerationSkipHiddenVolumes,
     };
     pub use super::NSFilePresenter::NSFilePresenter;
@@ -440,18 +507,32 @@ mod __exported {
         NSAlignMaxXOutward, NSAlignMaxYInward, NSAlignMaxYNearest, NSAlignMaxYOutward,
         NSAlignMinXInward, NSAlignMinXNearest, NSAlignMinXOutward, NSAlignMinYInward,
         NSAlignMinYNearest, NSAlignMinYOutward, NSAlignRectFlipped, NSAlignWidthInward,
-        NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSMaxXEdge, NSMaxYEdge,
-        NSMinXEdge, NSMinYEdge, NSPoint, NSRect, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY,
-        NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
+        NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSEdgeInsetsZero, NSMaxXEdge,
+        NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect, NSRectEdge, NSRectEdgeMaxX,
+        NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize, NSZeroPoint, NSZeroRect,
+        NSZeroSize,
     };
     pub use super::NSHTTPCookie::{
-        NSHTTPCookie, NSHTTPCookiePropertyKey, NSHTTPCookieStringPolicy,
+        NSHTTPCookie, NSHTTPCookieComment, NSHTTPCookieCommentURL, NSHTTPCookieDiscard,
+        NSHTTPCookieDomain, NSHTTPCookieExpires, NSHTTPCookieMaximumAge, NSHTTPCookieName,
+        NSHTTPCookieOriginURL, NSHTTPCookiePath, NSHTTPCookiePort, NSHTTPCookiePropertyKey,
+        NSHTTPCookieSameSiteLax, NSHTTPCookieSameSitePolicy, NSHTTPCookieSameSiteStrict,
+        NSHTTPCookieSecure, NSHTTPCookieStringPolicy, NSHTTPCookieValue, NSHTTPCookieVersion,
     };
     pub use super::NSHTTPCookieStorage::{
         NSHTTPCookieAcceptPolicy, NSHTTPCookieAcceptPolicyAlways, NSHTTPCookieAcceptPolicyNever,
-        NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, NSHTTPCookieStorage,
+        NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain,
+        NSHTTPCookieManagerAcceptPolicyChangedNotification,
+        NSHTTPCookieManagerCookiesChangedNotification, NSHTTPCookieStorage,
     };
-    pub use super::NSHashTable::{NSHashTable, NSHashTableOptions};
+    pub use super::NSHashTable::{
+        NSHashTable, NSHashTableCopyIn, NSHashTableObjectPointerPersonality, NSHashTableOptions,
+        NSHashTableStrongMemory, NSHashTableWeakMemory, NSHashTableZeroingWeakMemory,
+        NSIntHashCallBacks, NSIntegerHashCallBacks, NSNonOwnedPointerHashCallBacks,
+        NSNonRetainedObjectHashCallBacks, NSObjectHashCallBacks,
+        NSOwnedObjectIdentityHashCallBacks, NSOwnedPointerHashCallBacks,
+        NSPointerToStructHashCallBacks,
+    };
     pub use super::NSHost::NSHost;
     pub use super::NSISO8601DateFormatter::{
         NSISO8601DateFormatOptions, NSISO8601DateFormatWithColonSeparatorInTime,
@@ -468,10 +549,12 @@ mod __exported {
     pub use super::NSInflectionRule::{NSInflectionRule, NSInflectionRuleExplicit};
     pub use super::NSInvocation::NSInvocation;
     pub use super::NSItemProvider::{
-        NSItemProvider, NSItemProviderErrorCode, NSItemProviderFileOptionOpenInPlace,
-        NSItemProviderFileOptions, NSItemProviderItemUnavailableError, NSItemProviderReading,
-        NSItemProviderRepresentationVisibility, NSItemProviderRepresentationVisibilityAll,
-        NSItemProviderRepresentationVisibilityGroup,
+        NSExtensionJavaScriptFinalizeArgumentKey, NSExtensionJavaScriptPreprocessingResultsKey,
+        NSItemProvider, NSItemProviderErrorCode, NSItemProviderErrorDomain,
+        NSItemProviderFileOptionOpenInPlace, NSItemProviderFileOptions,
+        NSItemProviderItemUnavailableError, NSItemProviderPreferredImageSizeKey,
+        NSItemProviderReading, NSItemProviderRepresentationVisibility,
+        NSItemProviderRepresentationVisibilityAll, NSItemProviderRepresentationVisibilityGroup,
         NSItemProviderRepresentationVisibilityOwnProcess,
         NSItemProviderRepresentationVisibilityTeam, NSItemProviderUnavailableCoercionError,
         NSItemProviderUnexpectedValueClassError, NSItemProviderUnknownError, NSItemProviderWriting,
@@ -483,16 +566,27 @@ mod __exported {
         NSJSONWritingOptions, NSJSONWritingPrettyPrinted, NSJSONWritingSortedKeys,
         NSJSONWritingWithoutEscapingSlashes,
     };
-    pub use super::NSKeyValueCoding::NSKeyValueOperator;
+    pub use super::NSKeyValueCoding::{
+        NSAverageKeyValueOperator, NSCountKeyValueOperator,
+        NSDistinctUnionOfArraysKeyValueOperator, NSDistinctUnionOfObjectsKeyValueOperator,
+        NSDistinctUnionOfSetsKeyValueOperator, NSKeyValueOperator, NSMaximumKeyValueOperator,
+        NSMinimumKeyValueOperator, NSSumKeyValueOperator, NSUndefinedKeyException,
+        NSUnionOfArraysKeyValueOperator, NSUnionOfObjectsKeyValueOperator,
+        NSUnionOfSetsKeyValueOperator,
+    };
     pub use super::NSKeyValueObserving::{
-        NSKeyValueChange, NSKeyValueChangeInsertion, NSKeyValueChangeKey, NSKeyValueChangeRemoval,
+        NSKeyValueChange, NSKeyValueChangeIndexesKey, NSKeyValueChangeInsertion,
+        NSKeyValueChangeKey, NSKeyValueChangeKindKey, NSKeyValueChangeNewKey,
+        NSKeyValueChangeNotificationIsPriorKey, NSKeyValueChangeOldKey, NSKeyValueChangeRemoval,
         NSKeyValueChangeReplacement, NSKeyValueChangeSetting, NSKeyValueIntersectSetMutation,
         NSKeyValueMinusSetMutation, NSKeyValueObservingOptionInitial, NSKeyValueObservingOptionNew,
         NSKeyValueObservingOptionOld, NSKeyValueObservingOptionPrior, NSKeyValueObservingOptions,
         NSKeyValueSetMutationKind, NSKeyValueSetSetMutation, NSKeyValueUnionSetMutation,
     };
     pub use super::NSKeyedArchiver::{
-        NSKeyedArchiver, NSKeyedArchiverDelegate, NSKeyedUnarchiver, NSKeyedUnarchiverDelegate,
+        NSInvalidArchiveOperationException, NSInvalidUnarchiveOperationException,
+        NSKeyedArchiveRootObjectKey, NSKeyedArchiver, NSKeyedArchiverDelegate, NSKeyedUnarchiver,
+        NSKeyedUnarchiverDelegate,
     };
     pub use super::NSLengthFormatter::{
         NSLengthFormatter, NSLengthFormatterUnit, NSLengthFormatterUnitCentimeter,
@@ -501,20 +595,54 @@ mod __exported {
         NSLengthFormatterUnitYard,
     };
     pub use super::NSLinguisticTagger::{
-        NSLinguisticTag, NSLinguisticTagScheme, NSLinguisticTagger, NSLinguisticTaggerJoinNames,
-        NSLinguisticTaggerOmitOther, NSLinguisticTaggerOmitPunctuation,
-        NSLinguisticTaggerOmitWhitespace, NSLinguisticTaggerOmitWords, NSLinguisticTaggerOptions,
-        NSLinguisticTaggerUnit, NSLinguisticTaggerUnitDocument, NSLinguisticTaggerUnitParagraph,
+        NSLinguisticTag, NSLinguisticTagAdjective, NSLinguisticTagAdverb,
+        NSLinguisticTagClassifier, NSLinguisticTagCloseParenthesis, NSLinguisticTagCloseQuote,
+        NSLinguisticTagConjunction, NSLinguisticTagDash, NSLinguisticTagDeterminer,
+        NSLinguisticTagIdiom, NSLinguisticTagInterjection, NSLinguisticTagNoun,
+        NSLinguisticTagNumber, NSLinguisticTagOpenParenthesis, NSLinguisticTagOpenQuote,
+        NSLinguisticTagOrganizationName, NSLinguisticTagOther, NSLinguisticTagOtherPunctuation,
+        NSLinguisticTagOtherWhitespace, NSLinguisticTagOtherWord, NSLinguisticTagParagraphBreak,
+        NSLinguisticTagParticle, NSLinguisticTagPersonalName, NSLinguisticTagPlaceName,
+        NSLinguisticTagPreposition, NSLinguisticTagPronoun, NSLinguisticTagPunctuation,
+        NSLinguisticTagScheme, NSLinguisticTagSchemeLanguage, NSLinguisticTagSchemeLemma,
+        NSLinguisticTagSchemeLexicalClass, NSLinguisticTagSchemeNameType,
+        NSLinguisticTagSchemeNameTypeOrLexicalClass, NSLinguisticTagSchemeScript,
+        NSLinguisticTagSchemeTokenType, NSLinguisticTagSentenceTerminator, NSLinguisticTagVerb,
+        NSLinguisticTagWhitespace, NSLinguisticTagWord, NSLinguisticTagWordJoiner,
+        NSLinguisticTagger, NSLinguisticTaggerJoinNames, NSLinguisticTaggerOmitOther,
+        NSLinguisticTaggerOmitPunctuation, NSLinguisticTaggerOmitWhitespace,
+        NSLinguisticTaggerOmitWords, NSLinguisticTaggerOptions, NSLinguisticTaggerUnit,
+        NSLinguisticTaggerUnitDocument, NSLinguisticTaggerUnitParagraph,
         NSLinguisticTaggerUnitSentence, NSLinguisticTaggerUnitWord,
     };
     pub use super::NSListFormatter::NSListFormatter;
     pub use super::NSLocale::{
-        NSLocale, NSLocaleKey, NSLocaleLanguageDirection, NSLocaleLanguageDirectionBottomToTop,
-        NSLocaleLanguageDirectionLeftToRight, NSLocaleLanguageDirectionRightToLeft,
-        NSLocaleLanguageDirectionTopToBottom, NSLocaleLanguageDirectionUnknown,
+        NSBuddhistCalendar, NSChineseCalendar, NSCurrentLocaleDidChangeNotification,
+        NSGregorianCalendar, NSHebrewCalendar, NSISO8601Calendar, NSIndianCalendar,
+        NSIslamicCalendar, NSIslamicCivilCalendar, NSJapaneseCalendar, NSLocale,
+        NSLocaleAlternateQuotationBeginDelimiterKey, NSLocaleAlternateQuotationEndDelimiterKey,
+        NSLocaleCalendar, NSLocaleCollationIdentifier, NSLocaleCollatorIdentifier,
+        NSLocaleCountryCode, NSLocaleCurrencyCode, NSLocaleCurrencySymbol,
+        NSLocaleDecimalSeparator, NSLocaleExemplarCharacterSet, NSLocaleGroupingSeparator,
+        NSLocaleIdentifier, NSLocaleKey, NSLocaleLanguageCode, NSLocaleLanguageDirection,
+        NSLocaleLanguageDirectionBottomToTop, NSLocaleLanguageDirectionLeftToRight,
+        NSLocaleLanguageDirectionRightToLeft, NSLocaleLanguageDirectionTopToBottom,
+        NSLocaleLanguageDirectionUnknown, NSLocaleMeasurementSystem,
+        NSLocaleQuotationBeginDelimiterKey, NSLocaleQuotationEndDelimiterKey, NSLocaleScriptCode,
+        NSLocaleUsesMetricSystem, NSLocaleVariantCode, NSPersianCalendar,
+        NSRepublicOfChinaCalendar,
     };
     pub use super::NSLock::{NSCondition, NSConditionLock, NSLock, NSLocking, NSRecursiveLock};
-    pub use super::NSMapTable::{NSMapTable, NSMapTableOptions};
+    pub use super::NSMapTable::{
+        NSIntMapKeyCallBacks, NSIntMapValueCallBacks, NSIntegerMapKeyCallBacks,
+        NSIntegerMapValueCallBacks, NSMapTable, NSMapTableCopyIn,
+        NSMapTableObjectPointerPersonality, NSMapTableOptions, NSMapTableStrongMemory,
+        NSMapTableWeakMemory, NSMapTableZeroingWeakMemory, NSNonOwnedPointerMapKeyCallBacks,
+        NSNonOwnedPointerMapValueCallBacks, NSNonOwnedPointerOrNullMapKeyCallBacks,
+        NSNonRetainedObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,
+        NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, NSOwnedPointerMapKeyCallBacks,
+        NSOwnedPointerMapValueCallBacks,
+    };
     pub use super::NSMassFormatter::{
         NSMassFormatter, NSMassFormatterUnit, NSMassFormatterUnitGram, NSMassFormatterUnitKilogram,
         NSMassFormatterUnitOunce, NSMassFormatterUnitPound, NSMassFormatterUnitStone,
@@ -527,8 +655,102 @@ mod __exported {
         NSMeasurementFormatterUnitOptionsTemperatureWithoutUnit,
     };
     pub use super::NSMetadata::{
-        NSMetadataItem, NSMetadataQuery, NSMetadataQueryAttributeValueTuple,
-        NSMetadataQueryDelegate, NSMetadataQueryResultGroup,
+        NSMetadataItem, NSMetadataQuery, NSMetadataQueryAccessibleUbiquitousExternalDocumentsScope,
+        NSMetadataQueryAttributeValueTuple, NSMetadataQueryDelegate,
+        NSMetadataQueryDidFinishGatheringNotification,
+        NSMetadataQueryDidStartGatheringNotification, NSMetadataQueryDidUpdateNotification,
+        NSMetadataQueryGatheringProgressNotification, NSMetadataQueryIndexedLocalComputerScope,
+        NSMetadataQueryIndexedNetworkScope, NSMetadataQueryLocalComputerScope,
+        NSMetadataQueryNetworkScope, NSMetadataQueryResultContentRelevanceAttribute,
+        NSMetadataQueryResultGroup, NSMetadataQueryUbiquitousDataScope,
+        NSMetadataQueryUbiquitousDocumentsScope, NSMetadataQueryUpdateAddedItemsKey,
+        NSMetadataQueryUpdateChangedItemsKey, NSMetadataQueryUpdateRemovedItemsKey,
+        NSMetadataQueryUserHomeScope,
+    };
+    pub use super::NSMetadataAttributes::{
+        NSMetadataItemAcquisitionMakeKey, NSMetadataItemAcquisitionModelKey,
+        NSMetadataItemAlbumKey, NSMetadataItemAltitudeKey, NSMetadataItemApertureKey,
+        NSMetadataItemAppleLoopDescriptorsKey, NSMetadataItemAppleLoopsKeyFilterTypeKey,
+        NSMetadataItemAppleLoopsLoopModeKey, NSMetadataItemAppleLoopsRootKeyKey,
+        NSMetadataItemApplicationCategoriesKey, NSMetadataItemAttributeChangeDateKey,
+        NSMetadataItemAudiencesKey, NSMetadataItemAudioBitRateKey,
+        NSMetadataItemAudioChannelCountKey, NSMetadataItemAudioEncodingApplicationKey,
+        NSMetadataItemAudioSampleRateKey, NSMetadataItemAudioTrackNumberKey,
+        NSMetadataItemAuthorAddressesKey, NSMetadataItemAuthorEmailAddressesKey,
+        NSMetadataItemAuthorsKey, NSMetadataItemBitsPerSampleKey,
+        NSMetadataItemCFBundleIdentifierKey, NSMetadataItemCameraOwnerKey, NSMetadataItemCityKey,
+        NSMetadataItemCodecsKey, NSMetadataItemColorSpaceKey, NSMetadataItemCommentKey,
+        NSMetadataItemComposerKey, NSMetadataItemContactKeywordsKey,
+        NSMetadataItemContentCreationDateKey, NSMetadataItemContentModificationDateKey,
+        NSMetadataItemContentTypeKey, NSMetadataItemContentTypeTreeKey,
+        NSMetadataItemContributorsKey, NSMetadataItemCopyrightKey, NSMetadataItemCountryKey,
+        NSMetadataItemCoverageKey, NSMetadataItemCreatorKey, NSMetadataItemDateAddedKey,
+        NSMetadataItemDeliveryTypeKey, NSMetadataItemDescriptionKey, NSMetadataItemDirectorKey,
+        NSMetadataItemDisplayNameKey, NSMetadataItemDownloadedDateKey, NSMetadataItemDueDateKey,
+        NSMetadataItemDurationSecondsKey, NSMetadataItemEXIFGPSVersionKey,
+        NSMetadataItemEXIFVersionKey, NSMetadataItemEditorsKey, NSMetadataItemEmailAddressesKey,
+        NSMetadataItemEncodingApplicationsKey, NSMetadataItemExecutableArchitecturesKey,
+        NSMetadataItemExecutablePlatformKey, NSMetadataItemExposureModeKey,
+        NSMetadataItemExposureProgramKey, NSMetadataItemExposureTimeSecondsKey,
+        NSMetadataItemExposureTimeStringKey, NSMetadataItemFNumberKey,
+        NSMetadataItemFSContentChangeDateKey, NSMetadataItemFSCreationDateKey,
+        NSMetadataItemFSNameKey, NSMetadataItemFSSizeKey, NSMetadataItemFinderCommentKey,
+        NSMetadataItemFlashOnOffKey, NSMetadataItemFocalLength35mmKey,
+        NSMetadataItemFocalLengthKey, NSMetadataItemFontsKey, NSMetadataItemGPSAreaInformationKey,
+        NSMetadataItemGPSDOPKey, NSMetadataItemGPSDateStampKey, NSMetadataItemGPSDestBearingKey,
+        NSMetadataItemGPSDestDistanceKey, NSMetadataItemGPSDestLatitudeKey,
+        NSMetadataItemGPSDestLongitudeKey, NSMetadataItemGPSDifferentalKey,
+        NSMetadataItemGPSMapDatumKey, NSMetadataItemGPSMeasureModeKey,
+        NSMetadataItemGPSProcessingMethodKey, NSMetadataItemGPSStatusKey,
+        NSMetadataItemGPSTrackKey, NSMetadataItemGenreKey, NSMetadataItemHasAlphaChannelKey,
+        NSMetadataItemHeadlineKey, NSMetadataItemISOSpeedKey, NSMetadataItemIdentifierKey,
+        NSMetadataItemImageDirectionKey, NSMetadataItemInformationKey,
+        NSMetadataItemInstantMessageAddressesKey, NSMetadataItemInstructionsKey,
+        NSMetadataItemIsApplicationManagedKey, NSMetadataItemIsGeneralMIDISequenceKey,
+        NSMetadataItemIsLikelyJunkKey, NSMetadataItemIsUbiquitousKey,
+        NSMetadataItemKeySignatureKey, NSMetadataItemKeywordsKey, NSMetadataItemKindKey,
+        NSMetadataItemLanguagesKey, NSMetadataItemLastUsedDateKey, NSMetadataItemLatitudeKey,
+        NSMetadataItemLayerNamesKey, NSMetadataItemLensModelKey, NSMetadataItemLongitudeKey,
+        NSMetadataItemLyricistKey, NSMetadataItemMaxApertureKey, NSMetadataItemMediaTypesKey,
+        NSMetadataItemMeteringModeKey, NSMetadataItemMusicalGenreKey,
+        NSMetadataItemMusicalInstrumentCategoryKey, NSMetadataItemMusicalInstrumentNameKey,
+        NSMetadataItemNamedLocationKey, NSMetadataItemNumberOfPagesKey,
+        NSMetadataItemOrganizationsKey, NSMetadataItemOrientationKey,
+        NSMetadataItemOriginalFormatKey, NSMetadataItemOriginalSourceKey,
+        NSMetadataItemPageHeightKey, NSMetadataItemPageWidthKey, NSMetadataItemParticipantsKey,
+        NSMetadataItemPathKey, NSMetadataItemPerformersKey, NSMetadataItemPhoneNumbersKey,
+        NSMetadataItemPixelCountKey, NSMetadataItemPixelHeightKey, NSMetadataItemPixelWidthKey,
+        NSMetadataItemProducerKey, NSMetadataItemProfileNameKey, NSMetadataItemProjectsKey,
+        NSMetadataItemPublishersKey, NSMetadataItemRecipientAddressesKey,
+        NSMetadataItemRecipientEmailAddressesKey, NSMetadataItemRecipientsKey,
+        NSMetadataItemRecordingDateKey, NSMetadataItemRecordingYearKey,
+        NSMetadataItemRedEyeOnOffKey, NSMetadataItemResolutionHeightDPIKey,
+        NSMetadataItemResolutionWidthDPIKey, NSMetadataItemRightsKey,
+        NSMetadataItemSecurityMethodKey, NSMetadataItemSpeedKey, NSMetadataItemStarRatingKey,
+        NSMetadataItemStateOrProvinceKey, NSMetadataItemStreamableKey, NSMetadataItemSubjectKey,
+        NSMetadataItemTempoKey, NSMetadataItemTextContentKey, NSMetadataItemThemeKey,
+        NSMetadataItemTimeSignatureKey, NSMetadataItemTimestampKey, NSMetadataItemTitleKey,
+        NSMetadataItemTotalBitRateKey, NSMetadataItemURLKey, NSMetadataItemVersionKey,
+        NSMetadataItemVideoBitRateKey, NSMetadataItemWhereFromsKey, NSMetadataItemWhiteBalanceKey,
+        NSMetadataUbiquitousItemContainerDisplayNameKey,
+        NSMetadataUbiquitousItemDownloadRequestedKey, NSMetadataUbiquitousItemDownloadingErrorKey,
+        NSMetadataUbiquitousItemDownloadingStatusCurrent,
+        NSMetadataUbiquitousItemDownloadingStatusDownloaded,
+        NSMetadataUbiquitousItemDownloadingStatusKey,
+        NSMetadataUbiquitousItemDownloadingStatusNotDownloaded,
+        NSMetadataUbiquitousItemHasUnresolvedConflictsKey, NSMetadataUbiquitousItemIsDownloadedKey,
+        NSMetadataUbiquitousItemIsDownloadingKey, NSMetadataUbiquitousItemIsExternalDocumentKey,
+        NSMetadataUbiquitousItemIsSharedKey, NSMetadataUbiquitousItemIsUploadedKey,
+        NSMetadataUbiquitousItemIsUploadingKey, NSMetadataUbiquitousItemPercentDownloadedKey,
+        NSMetadataUbiquitousItemPercentUploadedKey, NSMetadataUbiquitousItemURLInLocalContainerKey,
+        NSMetadataUbiquitousItemUploadingErrorKey,
+        NSMetadataUbiquitousSharedItemCurrentUserPermissionsKey,
+        NSMetadataUbiquitousSharedItemCurrentUserRoleKey,
+        NSMetadataUbiquitousSharedItemMostRecentEditorNameComponentsKey,
+        NSMetadataUbiquitousSharedItemOwnerNameComponentsKey,
+        NSMetadataUbiquitousSharedItemPermissionsReadOnly,
+        NSMetadataUbiquitousSharedItemPermissionsReadWrite,
+        NSMetadataUbiquitousSharedItemRoleOwner, NSMetadataUbiquitousSharedItemRoleParticipant,
     };
     pub use super::NSMethodSignature::NSMethodSignature;
     pub use super::NSMorphology::{
@@ -551,8 +773,9 @@ mod __exported {
         NSNetServiceListenForConnections, NSNetServiceNoAutoRename, NSNetServiceOptions,
         NSNetServicesActivityInProgress, NSNetServicesBadArgumentError,
         NSNetServicesCancelledError, NSNetServicesCollisionError, NSNetServicesError,
-        NSNetServicesInvalidError, NSNetServicesMissingRequiredConfigurationError,
-        NSNetServicesNotFoundError, NSNetServicesTimeoutError, NSNetServicesUnknownError,
+        NSNetServicesErrorCode, NSNetServicesErrorDomain, NSNetServicesInvalidError,
+        NSNetServicesMissingRequiredConfigurationError, NSNetServicesNotFoundError,
+        NSNetServicesTimeoutError, NSNetServicesUnknownError,
     };
     pub use super::NSNotification::{NSNotification, NSNotificationCenter, NSNotificationName};
     pub use super::NSNotificationQueue::{
@@ -577,19 +800,21 @@ mod __exported {
     };
     pub use super::NSObjCRuntime::{
         NSComparisonResult, NSEnumerationConcurrent, NSEnumerationOptions, NSEnumerationReverse,
-        NSExceptionName, NSOrderedAscending, NSOrderedDescending, NSOrderedSame,
-        NSQualityOfService, NSQualityOfServiceBackground, NSQualityOfServiceDefault,
-        NSQualityOfServiceUserInitiated, NSQualityOfServiceUserInteractive,
-        NSQualityOfServiceUtility, NSRunLoopMode, NSSortConcurrent, NSSortOptions, NSSortStable,
+        NSExceptionName, NSFoundationVersionNumber, NSNotFound, NSOrderedAscending,
+        NSOrderedDescending, NSOrderedSame, NSQualityOfService, NSQualityOfServiceBackground,
+        NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated,
+        NSQualityOfServiceUserInteractive, NSQualityOfServiceUtility, NSRunLoopMode,
+        NSSortConcurrent, NSSortOptions, NSSortStable,
     };
     pub use super::NSObject::{
         NSCoding, NSCopying, NSDiscardableContent, NSMutableCopying, NSSecureCoding,
     };
     pub use super::NSOperation::{
-        NSBlockOperation, NSInvocationOperation, NSOperation, NSOperationQueue,
-        NSOperationQueuePriority, NSOperationQueuePriorityHigh, NSOperationQueuePriorityLow,
-        NSOperationQueuePriorityNormal, NSOperationQueuePriorityVeryHigh,
-        NSOperationQueuePriorityVeryLow,
+        NSBlockOperation, NSInvocationOperation, NSInvocationOperationCancelledException,
+        NSInvocationOperationVoidResultException, NSOperation, NSOperationQueue,
+        NSOperationQueueDefaultMaxConcurrentOperationCount, NSOperationQueuePriority,
+        NSOperationQueuePriorityHigh, NSOperationQueuePriorityLow, NSOperationQueuePriorityNormal,
+        NSOperationQueuePriorityVeryHigh, NSOperationQueuePriorityVeryLow,
     };
     pub use super::NSOrderedCollectionChange::{
         NSCollectionChangeInsert, NSCollectionChangeRemove, NSCollectionChangeType,
@@ -618,6 +843,9 @@ mod __exported {
     };
     pub use super::NSPersonNameComponents::NSPersonNameComponents;
     pub use super::NSPersonNameComponentsFormatter::{
+        NSPersonNameComponentDelimiter, NSPersonNameComponentFamilyName,
+        NSPersonNameComponentGivenName, NSPersonNameComponentKey, NSPersonNameComponentMiddleName,
+        NSPersonNameComponentNickname, NSPersonNameComponentPrefix, NSPersonNameComponentSuffix,
         NSPersonNameComponentsFormatter, NSPersonNameComponentsFormatterOptions,
         NSPersonNameComponentsFormatterPhonetic, NSPersonNameComponentsFormatterStyle,
         NSPersonNameComponentsFormatterStyleAbbreviated,
@@ -637,7 +865,7 @@ mod __exported {
     pub use super::NSPort::{
         NSMachPort, NSMachPortDeallocateNone, NSMachPortDeallocateReceiveRight,
         NSMachPortDeallocateSendRight, NSMachPortDelegate, NSMachPortOptions, NSMessagePort,
-        NSPort, NSPortDelegate, NSSocketPort,
+        NSPort, NSPortDelegate, NSPortDidBecomeInvalidNotification, NSSocketPort,
     };
     pub use super::NSPortCoder::NSPortCoder;
     pub use super::NSPortMessage::NSPortMessage;
@@ -651,13 +879,21 @@ mod __exported {
         NSActivityLatencyCritical, NSActivityOptions, NSActivitySuddenTerminationDisabled,
         NSActivityUserInitiated, NSActivityUserInitiatedAllowingIdleSystemSleep,
         NSHPUXOperatingSystem, NSMACHOperatingSystem, NSOSF1OperatingSystem, NSProcessInfo,
-        NSProcessInfoThermalState, NSProcessInfoThermalStateCritical,
+        NSProcessInfoPowerStateDidChangeNotification, NSProcessInfoThermalState,
+        NSProcessInfoThermalStateCritical, NSProcessInfoThermalStateDidChangeNotification,
         NSProcessInfoThermalStateFair, NSProcessInfoThermalStateNominal,
         NSProcessInfoThermalStateSerious, NSSolarisOperatingSystem, NSSunOSOperatingSystem,
         NSWindows95OperatingSystem, NSWindowsNTOperatingSystem,
     };
     pub use super::NSProgress::{
-        NSProgress, NSProgressFileOperationKind, NSProgressKind, NSProgressReporting,
+        NSProgress, NSProgressEstimatedTimeRemainingKey, NSProgressFileAnimationImageKey,
+        NSProgressFileAnimationImageOriginalRectKey, NSProgressFileCompletedCountKey,
+        NSProgressFileIconKey, NSProgressFileOperationKind, NSProgressFileOperationKindCopying,
+        NSProgressFileOperationKindDecompressingAfterDownloading,
+        NSProgressFileOperationKindDownloading, NSProgressFileOperationKindDuplicating,
+        NSProgressFileOperationKindKey, NSProgressFileOperationKindReceiving,
+        NSProgressFileOperationKindUploading, NSProgressFileTotalCountKey, NSProgressFileURLKey,
+        NSProgressKind, NSProgressKindFile, NSProgressReporting, NSProgressThroughputKey,
         NSProgressUserInfoKey,
     };
     pub use super::NSPropertyList::{
@@ -686,7 +922,7 @@ mod __exported {
         NSRelativeDateTimeFormatterUnitsStyleFull, NSRelativeDateTimeFormatterUnitsStyleShort,
         NSRelativeDateTimeFormatterUnitsStyleSpellOut,
     };
-    pub use super::NSRunLoop::NSRunLoop;
+    pub use super::NSRunLoop::{NSDefaultRunLoopMode, NSRunLoop, NSRunLoopCommonModes};
     pub use super::NSScanner::NSScanner;
     pub use super::NSScriptClassDescription::NSScriptClassDescription;
     pub use super::NSScriptCoercionHandler::NSScriptCoercionHandler;
@@ -700,6 +936,7 @@ mod __exported {
     };
     pub use super::NSScriptCommandDescription::NSScriptCommandDescription;
     pub use super::NSScriptExecutionContext::NSScriptExecutionContext;
+    pub use super::NSScriptKeyValueCoding::NSOperationNotSupportedForKeyException;
     pub use super::NSScriptObjectSpecifiers::{
         NSContainerSpecifierError, NSEverySubelement, NSIndexSpecifier, NSIndexSubelement,
         NSInsertionPosition, NSInternalSpecifierError, NSInvalidIndexSpecifierError,
@@ -725,57 +962,89 @@ mod __exported {
     };
     pub use super::NSSet::{NSCountedSet, NSMutableSet, NSSet};
     pub use super::NSSortDescriptor::NSSortDescriptor;
-    pub use super::NSSpellServer::{NSSpellServer, NSSpellServerDelegate};
+    pub use super::NSSpellServer::{
+        NSGrammarCorrections, NSGrammarRange, NSGrammarUserDescription, NSSpellServer,
+        NSSpellServerDelegate,
+    };
     pub use super::NSStream::{
-        NSInputStream, NSOutputStream, NSStream, NSStreamDelegate, NSStreamEvent,
-        NSStreamEventEndEncountered, NSStreamEventErrorOccurred, NSStreamEventHasBytesAvailable,
-        NSStreamEventHasSpaceAvailable, NSStreamEventNone, NSStreamEventOpenCompleted,
-        NSStreamNetworkServiceTypeValue, NSStreamPropertyKey, NSStreamSOCKSProxyConfiguration,
-        NSStreamSOCKSProxyVersion, NSStreamSocketSecurityLevel, NSStreamStatus,
+        NSInputStream, NSOutputStream, NSStream, NSStreamDataWrittenToMemoryStreamKey,
+        NSStreamDelegate, NSStreamEvent, NSStreamEventEndEncountered, NSStreamEventErrorOccurred,
+        NSStreamEventHasBytesAvailable, NSStreamEventHasSpaceAvailable, NSStreamEventNone,
+        NSStreamEventOpenCompleted, NSStreamFileCurrentOffsetKey, NSStreamNetworkServiceType,
+        NSStreamNetworkServiceTypeBackground, NSStreamNetworkServiceTypeCallSignaling,
+        NSStreamNetworkServiceTypeValue, NSStreamNetworkServiceTypeVideo,
+        NSStreamNetworkServiceTypeVoIP, NSStreamNetworkServiceTypeVoice, NSStreamPropertyKey,
+        NSStreamSOCKSErrorDomain, NSStreamSOCKSProxyConfiguration,
+        NSStreamSOCKSProxyConfigurationKey, NSStreamSOCKSProxyHostKey,
+        NSStreamSOCKSProxyPasswordKey, NSStreamSOCKSProxyPortKey, NSStreamSOCKSProxyUserKey,
+        NSStreamSOCKSProxyVersion, NSStreamSOCKSProxyVersion4, NSStreamSOCKSProxyVersion5,
+        NSStreamSOCKSProxyVersionKey, NSStreamSocketSSLErrorDomain, NSStreamSocketSecurityLevel,
+        NSStreamSocketSecurityLevelKey, NSStreamSocketSecurityLevelNegotiatedSSL,
+        NSStreamSocketSecurityLevelNone, NSStreamSocketSecurityLevelSSLv2,
+        NSStreamSocketSecurityLevelSSLv3, NSStreamSocketSecurityLevelTLSv1, NSStreamStatus,
         NSStreamStatusAtEnd, NSStreamStatusClosed, NSStreamStatusError, NSStreamStatusNotOpen,
         NSStreamStatusOpen, NSStreamStatusOpening, NSStreamStatusReading, NSStreamStatusWriting,
     };
     pub use super::NSString::{
         NSASCIIStringEncoding, NSAnchoredSearch, NSBackwardsSearch, NSCaseInsensitiveSearch,
-        NSConstantString, NSDiacriticInsensitiveSearch, NSForcedOrderingSearch,
-        NSISO2022JPStringEncoding, NSISOLatin1StringEncoding, NSISOLatin2StringEncoding,
-        NSJapaneseEUCStringEncoding, NSLiteralSearch, NSMacOSRomanStringEncoding, NSMutableString,
-        NSNEXTSTEPStringEncoding, NSNonLossyASCIIStringEncoding, NSNumericSearch,
+        NSCharacterConversionException, NSConstantString, NSDiacriticInsensitiveSearch,
+        NSForcedOrderingSearch, NSISO2022JPStringEncoding, NSISOLatin1StringEncoding,
+        NSISOLatin2StringEncoding, NSJapaneseEUCStringEncoding, NSLiteralSearch,
+        NSMacOSRomanStringEncoding, NSMutableString, NSNEXTSTEPStringEncoding,
+        NSNonLossyASCIIStringEncoding, NSNumericSearch, NSParseErrorException,
         NSProprietaryStringEncoding, NSRegularExpressionSearch, NSShiftJISStringEncoding,
         NSSimpleCString, NSString, NSStringCompareOptions, NSStringEncoding,
         NSStringEncodingConversionAllowLossy, NSStringEncodingConversionExternalRepresentation,
-        NSStringEncodingConversionOptions, NSStringEncodingDetectionOptionsKey,
-        NSStringEnumerationByCaretPositions, NSStringEnumerationByComposedCharacterSequences,
-        NSStringEnumerationByDeletionClusters, NSStringEnumerationByLines,
-        NSStringEnumerationByParagraphs, NSStringEnumerationBySentences,
-        NSStringEnumerationByWords, NSStringEnumerationLocalized, NSStringEnumerationOptions,
-        NSStringEnumerationReverse, NSStringEnumerationSubstringNotRequired, NSStringTransform,
-        NSSymbolStringEncoding, NSUTF16BigEndianStringEncoding, NSUTF16LittleEndianStringEncoding,
-        NSUTF16StringEncoding, NSUTF32BigEndianStringEncoding, NSUTF32LittleEndianStringEncoding,
-        NSUTF32StringEncoding, NSUTF8StringEncoding, NSUnicodeStringEncoding,
-        NSWidthInsensitiveSearch, NSWindowsCP1250StringEncoding, NSWindowsCP1251StringEncoding,
-        NSWindowsCP1252StringEncoding, NSWindowsCP1253StringEncoding,
-        NSWindowsCP1254StringEncoding,
+        NSStringEncodingConversionOptions, NSStringEncodingDetectionAllowLossyKey,
+        NSStringEncodingDetectionDisallowedEncodingsKey, NSStringEncodingDetectionFromWindowsKey,
+        NSStringEncodingDetectionLikelyLanguageKey, NSStringEncodingDetectionLossySubstitutionKey,
+        NSStringEncodingDetectionOptionsKey, NSStringEncodingDetectionSuggestedEncodingsKey,
+        NSStringEncodingDetectionUseOnlySuggestedEncodingsKey, NSStringEnumerationByCaretPositions,
+        NSStringEnumerationByComposedCharacterSequences, NSStringEnumerationByDeletionClusters,
+        NSStringEnumerationByLines, NSStringEnumerationByParagraphs,
+        NSStringEnumerationBySentences, NSStringEnumerationByWords, NSStringEnumerationLocalized,
+        NSStringEnumerationOptions, NSStringEnumerationReverse,
+        NSStringEnumerationSubstringNotRequired, NSStringTransform,
+        NSStringTransformFullwidthToHalfwidth, NSStringTransformHiraganaToKatakana,
+        NSStringTransformLatinToArabic, NSStringTransformLatinToCyrillic,
+        NSStringTransformLatinToGreek, NSStringTransformLatinToHangul,
+        NSStringTransformLatinToHebrew, NSStringTransformLatinToHiragana,
+        NSStringTransformLatinToKatakana, NSStringTransformLatinToThai,
+        NSStringTransformMandarinToLatin, NSStringTransformStripCombiningMarks,
+        NSStringTransformStripDiacritics, NSStringTransformToLatin, NSStringTransformToUnicodeName,
+        NSStringTransformToXMLHex, NSSymbolStringEncoding, NSUTF16BigEndianStringEncoding,
+        NSUTF16LittleEndianStringEncoding, NSUTF16StringEncoding, NSUTF32BigEndianStringEncoding,
+        NSUTF32LittleEndianStringEncoding, NSUTF32StringEncoding, NSUTF8StringEncoding,
+        NSUnicodeStringEncoding, NSWidthInsensitiveSearch, NSWindowsCP1250StringEncoding,
+        NSWindowsCP1251StringEncoding, NSWindowsCP1252StringEncoding,
+        NSWindowsCP1253StringEncoding, NSWindowsCP1254StringEncoding,
     };
     pub use super::NSTask::{
-        NSTask, NSTaskTerminationReason, NSTaskTerminationReasonExit,
-        NSTaskTerminationReasonUncaughtSignal,
+        NSTask, NSTaskDidTerminateNotification, NSTaskTerminationReason,
+        NSTaskTerminationReasonExit, NSTaskTerminationReasonUncaughtSignal,
     };
     pub use super::NSTextCheckingResult::{
-        NSTextCheckingAllCustomTypes, NSTextCheckingAllSystemTypes, NSTextCheckingAllTypes,
-        NSTextCheckingKey, NSTextCheckingResult, NSTextCheckingType, NSTextCheckingTypeAddress,
-        NSTextCheckingTypeCorrection, NSTextCheckingTypeDash, NSTextCheckingTypeDate,
-        NSTextCheckingTypeGrammar, NSTextCheckingTypeLink, NSTextCheckingTypeOrthography,
-        NSTextCheckingTypePhoneNumber, NSTextCheckingTypeQuote,
+        NSTextCheckingAirlineKey, NSTextCheckingAllCustomTypes, NSTextCheckingAllSystemTypes,
+        NSTextCheckingAllTypes, NSTextCheckingCityKey, NSTextCheckingCountryKey,
+        NSTextCheckingFlightKey, NSTextCheckingJobTitleKey, NSTextCheckingKey,
+        NSTextCheckingNameKey, NSTextCheckingOrganizationKey, NSTextCheckingPhoneKey,
+        NSTextCheckingResult, NSTextCheckingStateKey, NSTextCheckingStreetKey, NSTextCheckingType,
+        NSTextCheckingTypeAddress, NSTextCheckingTypeCorrection, NSTextCheckingTypeDash,
+        NSTextCheckingTypeDate, NSTextCheckingTypeGrammar, NSTextCheckingTypeLink,
+        NSTextCheckingTypeOrthography, NSTextCheckingTypePhoneNumber, NSTextCheckingTypeQuote,
         NSTextCheckingTypeRegularExpression, NSTextCheckingTypeReplacement,
         NSTextCheckingTypeSpelling, NSTextCheckingTypeTransitInformation, NSTextCheckingTypes,
+        NSTextCheckingZIPKey,
     };
-    pub use super::NSThread::NSThread;
+    pub use super::NSThread::{
+        NSDidBecomeSingleThreadedNotification, NSThread, NSThreadWillExitNotification,
+        NSWillBecomeMultiThreadedNotification,
+    };
     pub use super::NSTimeZone::{
-        NSTimeZone, NSTimeZoneNameStyle, NSTimeZoneNameStyleDaylightSaving,
-        NSTimeZoneNameStyleGeneric, NSTimeZoneNameStyleShortDaylightSaving,
-        NSTimeZoneNameStyleShortGeneric, NSTimeZoneNameStyleShortStandard,
-        NSTimeZoneNameStyleStandard,
+        NSSystemTimeZoneDidChangeNotification, NSTimeZone, NSTimeZoneNameStyle,
+        NSTimeZoneNameStyleDaylightSaving, NSTimeZoneNameStyleGeneric,
+        NSTimeZoneNameStyleShortDaylightSaving, NSTimeZoneNameStyleShortGeneric,
+        NSTimeZoneNameStyleShortStandard, NSTimeZoneNameStyleStandard,
     };
     pub use super::NSTimer::NSTimer;
     pub use super::NSURLAuthenticationChallenge::{
@@ -794,14 +1063,17 @@ mod __exported {
         NSURLCredentialPersistenceNone, NSURLCredentialPersistencePermanent,
         NSURLCredentialPersistenceSynchronizable,
     };
-    pub use super::NSURLCredentialStorage::NSURLCredentialStorage;
+    pub use super::NSURLCredentialStorage::{
+        NSURLCredentialStorage, NSURLCredentialStorageChangedNotification,
+        NSURLCredentialStorageRemoveSynchronizableCredentials,
+    };
     pub use super::NSURLDownload::{NSURLDownload, NSURLDownloadDelegate};
     pub use super::NSURLError::{
-        NSURLErrorAppTransportSecurityRequiresSecureConnection,
+        NSErrorFailingURLStringKey, NSURLErrorAppTransportSecurityRequiresSecureConnection,
         NSURLErrorBackgroundSessionInUseByAnotherProcess,
         NSURLErrorBackgroundSessionRequiresSharedContainer,
-        NSURLErrorBackgroundSessionWasDisconnected, NSURLErrorBadServerResponse, NSURLErrorBadURL,
-        NSURLErrorCallIsActive, NSURLErrorCancelled,
+        NSURLErrorBackgroundSessionWasDisconnected, NSURLErrorBackgroundTaskCancelledReasonKey,
+        NSURLErrorBadServerResponse, NSURLErrorBadURL, NSURLErrorCallIsActive, NSURLErrorCancelled,
         NSURLErrorCancelledReasonBackgroundUpdatesDisabled,
         NSURLErrorCancelledReasonInsufficientSystemResources,
         NSURLErrorCancelledReasonUserForceQuitApplication, NSURLErrorCannotCloseFile,
@@ -811,25 +1083,41 @@ mod __exported {
         NSURLErrorCannotParseResponse, NSURLErrorCannotRemoveFile, NSURLErrorCannotWriteToFile,
         NSURLErrorClientCertificateRejected, NSURLErrorClientCertificateRequired,
         NSURLErrorDNSLookupFailed, NSURLErrorDataLengthExceedsMaximum, NSURLErrorDataNotAllowed,
-        NSURLErrorDownloadDecodingFailedMidStream, NSURLErrorDownloadDecodingFailedToComplete,
+        NSURLErrorDomain, NSURLErrorDownloadDecodingFailedMidStream,
+        NSURLErrorDownloadDecodingFailedToComplete, NSURLErrorFailingURLErrorKey,
+        NSURLErrorFailingURLPeerTrustErrorKey, NSURLErrorFailingURLStringErrorKey,
         NSURLErrorFileDoesNotExist, NSURLErrorFileIsDirectory, NSURLErrorFileOutsideSafeArea,
         NSURLErrorHTTPTooManyRedirects, NSURLErrorInternationalRoamingOff,
         NSURLErrorNetworkConnectionLost, NSURLErrorNetworkUnavailableReason,
         NSURLErrorNetworkUnavailableReasonCellular, NSURLErrorNetworkUnavailableReasonConstrained,
-        NSURLErrorNetworkUnavailableReasonExpensive, NSURLErrorNoPermissionsToReadFile,
-        NSURLErrorNotConnectedToInternet, NSURLErrorRedirectToNonExistentLocation,
-        NSURLErrorRequestBodyStreamExhausted, NSURLErrorResourceUnavailable,
-        NSURLErrorSecureConnectionFailed, NSURLErrorServerCertificateHasBadDate,
-        NSURLErrorServerCertificateHasUnknownRoot, NSURLErrorServerCertificateNotYetValid,
-        NSURLErrorServerCertificateUntrusted, NSURLErrorTimedOut, NSURLErrorUnknown,
-        NSURLErrorUnsupportedURL, NSURLErrorUserAuthenticationRequired,
-        NSURLErrorUserCancelledAuthentication, NSURLErrorZeroByteResource,
+        NSURLErrorNetworkUnavailableReasonExpensive, NSURLErrorNetworkUnavailableReasonKey,
+        NSURLErrorNoPermissionsToReadFile, NSURLErrorNotConnectedToInternet,
+        NSURLErrorRedirectToNonExistentLocation, NSURLErrorRequestBodyStreamExhausted,
+        NSURLErrorResourceUnavailable, NSURLErrorSecureConnectionFailed,
+        NSURLErrorServerCertificateHasBadDate, NSURLErrorServerCertificateHasUnknownRoot,
+        NSURLErrorServerCertificateNotYetValid, NSURLErrorServerCertificateUntrusted,
+        NSURLErrorTimedOut, NSURLErrorUnknown, NSURLErrorUnsupportedURL,
+        NSURLErrorUserAuthenticationRequired, NSURLErrorUserCancelledAuthentication,
+        NSURLErrorZeroByteResource,
     };
     pub use super::NSURLHandle::{
-        NSURLHandle, NSURLHandleClient, NSURLHandleLoadFailed, NSURLHandleLoadInProgress,
-        NSURLHandleLoadSucceeded, NSURLHandleNotLoaded, NSURLHandleStatus,
+        NSFTPPropertyActiveTransferModeKey, NSFTPPropertyFTPProxy, NSFTPPropertyFileOffsetKey,
+        NSFTPPropertyUserLoginKey, NSFTPPropertyUserPasswordKey, NSHTTPPropertyErrorPageDataKey,
+        NSHTTPPropertyHTTPProxy, NSHTTPPropertyRedirectionHeadersKey,
+        NSHTTPPropertyServerHTTPVersionKey, NSHTTPPropertyStatusCodeKey,
+        NSHTTPPropertyStatusReasonKey, NSURLHandle, NSURLHandleClient, NSURLHandleLoadFailed,
+        NSURLHandleLoadInProgress, NSURLHandleLoadSucceeded, NSURLHandleNotLoaded,
+        NSURLHandleStatus,
     };
-    pub use super::NSURLProtectionSpace::NSURLProtectionSpace;
+    pub use super::NSURLProtectionSpace::{
+        NSURLAuthenticationMethodClientCertificate, NSURLAuthenticationMethodDefault,
+        NSURLAuthenticationMethodHTMLForm, NSURLAuthenticationMethodHTTPBasic,
+        NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
+        NSURLAuthenticationMethodNegotiate, NSURLAuthenticationMethodServerTrust,
+        NSURLProtectionSpace, NSURLProtectionSpaceFTP, NSURLProtectionSpaceFTPProxy,
+        NSURLProtectionSpaceHTTP, NSURLProtectionSpaceHTTPProxy, NSURLProtectionSpaceHTTPS,
+        NSURLProtectionSpaceHTTPSProxy, NSURLProtectionSpaceSOCKSProxy,
+    };
     pub use super::NSURLProtocol::{NSURLProtocol, NSURLProtocolClient};
     pub use super::NSURLRequest::{
         NSMutableURLRequest, NSURLNetworkServiceTypeAVStreaming, NSURLNetworkServiceTypeBackground,
@@ -852,13 +1140,14 @@ mod __exported {
         NSURLSessionDelayedRequestCancel, NSURLSessionDelayedRequestContinueLoading,
         NSURLSessionDelayedRequestDisposition, NSURLSessionDelayedRequestUseNewRequest,
         NSURLSessionDelegate, NSURLSessionDownloadDelegate, NSURLSessionDownloadTask,
-        NSURLSessionMultipathServiceType, NSURLSessionMultipathServiceTypeAggregate,
-        NSURLSessionMultipathServiceTypeHandover, NSURLSessionMultipathServiceTypeInteractive,
-        NSURLSessionMultipathServiceTypeNone, NSURLSessionResponseAllow,
-        NSURLSessionResponseBecomeDownload, NSURLSessionResponseBecomeStream,
-        NSURLSessionResponseCancel, NSURLSessionResponseDisposition, NSURLSessionStreamDelegate,
-        NSURLSessionStreamTask, NSURLSessionTask, NSURLSessionTaskDelegate,
-        NSURLSessionTaskMetrics, NSURLSessionTaskMetricsDomainResolutionProtocol,
+        NSURLSessionDownloadTaskResumeData, NSURLSessionMultipathServiceType,
+        NSURLSessionMultipathServiceTypeAggregate, NSURLSessionMultipathServiceTypeHandover,
+        NSURLSessionMultipathServiceTypeInteractive, NSURLSessionMultipathServiceTypeNone,
+        NSURLSessionResponseAllow, NSURLSessionResponseBecomeDownload,
+        NSURLSessionResponseBecomeStream, NSURLSessionResponseCancel,
+        NSURLSessionResponseDisposition, NSURLSessionStreamDelegate, NSURLSessionStreamTask,
+        NSURLSessionTask, NSURLSessionTaskDelegate, NSURLSessionTaskMetrics,
+        NSURLSessionTaskMetricsDomainResolutionProtocol,
         NSURLSessionTaskMetricsDomainResolutionProtocolHTTPS,
         NSURLSessionTaskMetricsDomainResolutionProtocolTCP,
         NSURLSessionTaskMetricsDomainResolutionProtocolTLS,
@@ -868,10 +1157,12 @@ mod __exported {
         NSURLSessionTaskMetricsResourceFetchTypeLocalCache,
         NSURLSessionTaskMetricsResourceFetchTypeNetworkLoad,
         NSURLSessionTaskMetricsResourceFetchTypeServerPush,
-        NSURLSessionTaskMetricsResourceFetchTypeUnknown, NSURLSessionTaskState,
+        NSURLSessionTaskMetricsResourceFetchTypeUnknown, NSURLSessionTaskPriorityDefault,
+        NSURLSessionTaskPriorityHigh, NSURLSessionTaskPriorityLow, NSURLSessionTaskState,
         NSURLSessionTaskStateCanceling, NSURLSessionTaskStateCompleted,
         NSURLSessionTaskStateRunning, NSURLSessionTaskStateSuspended,
-        NSURLSessionTaskTransactionMetrics, NSURLSessionUploadTask, NSURLSessionWebSocketCloseCode,
+        NSURLSessionTaskTransactionMetrics, NSURLSessionTransferSizeUnknown,
+        NSURLSessionUploadTask, NSURLSessionWebSocketCloseCode,
         NSURLSessionWebSocketCloseCodeAbnormalClosure, NSURLSessionWebSocketCloseCodeGoingAway,
         NSURLSessionWebSocketCloseCodeInternalServerError, NSURLSessionWebSocketCloseCodeInvalid,
         NSURLSessionWebSocketCloseCodeInvalidFramePayloadData,
@@ -888,10 +1179,18 @@ mod __exported {
     };
     pub use super::NSUbiquitousKeyValueStore::{
         NSUbiquitousKeyValueStore, NSUbiquitousKeyValueStoreAccountChange,
+        NSUbiquitousKeyValueStoreChangeReasonKey, NSUbiquitousKeyValueStoreChangedKeysKey,
+        NSUbiquitousKeyValueStoreDidChangeExternallyNotification,
         NSUbiquitousKeyValueStoreInitialSyncChange, NSUbiquitousKeyValueStoreQuotaViolationChange,
         NSUbiquitousKeyValueStoreServerChange,
     };
-    pub use super::NSUndoManager::NSUndoManager;
+    pub use super::NSUndoManager::{
+        NSUndoCloseGroupingRunLoopOrdering, NSUndoManager, NSUndoManagerCheckpointNotification,
+        NSUndoManagerDidCloseUndoGroupNotification, NSUndoManagerDidOpenUndoGroupNotification,
+        NSUndoManagerDidRedoChangeNotification, NSUndoManagerDidUndoChangeNotification,
+        NSUndoManagerGroupIsDiscardableKey, NSUndoManagerWillCloseUndoGroupNotification,
+        NSUndoManagerWillRedoChangeNotification, NSUndoManagerWillUndoChangeNotification,
+    };
     pub use super::NSUnit::{
         NSDimension, NSUnit, NSUnitAcceleration, NSUnitAngle, NSUnitArea, NSUnitConcentrationMass,
         NSUnitConverter, NSUnitConverterLinear, NSUnitDispersion, NSUnitDuration,
@@ -902,22 +1201,40 @@ mod __exported {
     };
     pub use super::NSUserActivity::{
         NSUserActivity, NSUserActivityDelegate, NSUserActivityPersistentIdentifier,
+        NSUserActivityTypeBrowsingWeb,
     };
-    pub use super::NSUserDefaults::NSUserDefaults;
+    pub use super::NSUserDefaults::{
+        NSAMPMDesignation, NSArgumentDomain, NSCurrencySymbol, NSDateFormatString,
+        NSDateTimeOrdering, NSDecimalDigits, NSDecimalSeparator, NSEarlierTimeDesignations,
+        NSGlobalDomain, NSHourNameDesignations, NSInternationalCurrencyString,
+        NSLaterTimeDesignations, NSMonthNameArray, NSNegativeCurrencyFormatString,
+        NSNextDayDesignations, NSNextNextDayDesignations, NSPositiveCurrencyFormatString,
+        NSPriorDayDesignations, NSRegistrationDomain, NSShortDateFormatString,
+        NSShortMonthNameArray, NSShortTimeDateFormatString, NSShortWeekDayNameArray,
+        NSThisDayDesignations, NSThousandsSeparator, NSTimeDateFormatString, NSTimeFormatString,
+        NSUbiquitousUserDefaultsCompletedInitialSyncNotification,
+        NSUbiquitousUserDefaultsDidChangeAccountsNotification,
+        NSUbiquitousUserDefaultsNoCloudAccountNotification, NSUserDefaults,
+        NSUserDefaultsDidChangeNotification, NSUserDefaultsSizeLimitExceededNotification,
+        NSWeekDayNameArray, NSYearMonthWeekDesignations,
+    };
     pub use super::NSUserNotification::{
         NSUserNotification, NSUserNotificationAction, NSUserNotificationActivationType,
         NSUserNotificationActivationTypeActionButtonClicked,
         NSUserNotificationActivationTypeAdditionalActionClicked,
         NSUserNotificationActivationTypeContentsClicked, NSUserNotificationActivationTypeNone,
         NSUserNotificationActivationTypeReplied, NSUserNotificationCenter,
-        NSUserNotificationCenterDelegate,
+        NSUserNotificationCenterDelegate, NSUserNotificationDefaultSoundName,
     };
     pub use super::NSUserScriptTask::{
         NSUserAppleScriptTask, NSUserAutomatorTask, NSUserScriptTask, NSUserUnixTask,
     };
     pub use super::NSValue::{NSNumber, NSValue};
     pub use super::NSValueTransformer::{
-        NSSecureUnarchiveFromDataTransformer, NSValueTransformer, NSValueTransformerName,
+        NSIsNilTransformerName, NSIsNotNilTransformerName, NSKeyedUnarchiveFromDataTransformerName,
+        NSNegateBooleanTransformerName, NSSecureUnarchiveFromDataTransformer,
+        NSSecureUnarchiveFromDataTransformerName, NSUnarchiveFromDataTransformerName,
+        NSValueTransformer, NSValueTransformerName,
     };
     pub use super::NSXMLDTDNode::{
         NSXMLAttributeCDATAKind, NSXMLAttributeEntitiesKind, NSXMLAttributeEntityKind,
@@ -971,14 +1288,15 @@ mod __exported {
         NSXMLParserEntityRefInEpilogError, NSXMLParserEntityRefInPrologError,
         NSXMLParserEntityRefLoopError, NSXMLParserEntityReferenceMissingSemiError,
         NSXMLParserEntityReferenceWithoutNameError, NSXMLParserEntityValueRequiredError,
-        NSXMLParserEqualExpectedError, NSXMLParserError, NSXMLParserExternalEntityResolvingPolicy,
-        NSXMLParserExternalStandaloneEntityError, NSXMLParserExternalSubsetNotFinishedError,
-        NSXMLParserExtraContentError, NSXMLParserGTRequiredError, NSXMLParserInternalError,
-        NSXMLParserInvalidCharacterError, NSXMLParserInvalidCharacterInEntityError,
-        NSXMLParserInvalidCharacterRefError, NSXMLParserInvalidConditionalSectionError,
-        NSXMLParserInvalidDecimalCharacterRefError, NSXMLParserInvalidEncodingError,
-        NSXMLParserInvalidEncodingNameError, NSXMLParserInvalidHexCharacterRefError,
-        NSXMLParserInvalidURIError, NSXMLParserLTRequiredError, NSXMLParserLTSlashRequiredError,
+        NSXMLParserEqualExpectedError, NSXMLParserError, NSXMLParserErrorDomain,
+        NSXMLParserExternalEntityResolvingPolicy, NSXMLParserExternalStandaloneEntityError,
+        NSXMLParserExternalSubsetNotFinishedError, NSXMLParserExtraContentError,
+        NSXMLParserGTRequiredError, NSXMLParserInternalError, NSXMLParserInvalidCharacterError,
+        NSXMLParserInvalidCharacterInEntityError, NSXMLParserInvalidCharacterRefError,
+        NSXMLParserInvalidConditionalSectionError, NSXMLParserInvalidDecimalCharacterRefError,
+        NSXMLParserInvalidEncodingError, NSXMLParserInvalidEncodingNameError,
+        NSXMLParserInvalidHexCharacterRefError, NSXMLParserInvalidURIError,
+        NSXMLParserLTRequiredError, NSXMLParserLTSlashRequiredError,
         NSXMLParserLessThanSymbolInAttributeError, NSXMLParserLiteralNotFinishedError,
         NSXMLParserLiteralNotStartedError, NSXMLParserMisplacedCDATAEndStringError,
         NSXMLParserMisplacedXMLDeclarationError, NSXMLParserMixedContentDeclNotFinishedError,
@@ -1010,17 +1328,77 @@ mod __exported {
     };
     pub use super::NSZone::{NSCollectorDisabledOption, NSScannedOption};
     pub use super::NSURL::{
-        NSFileSecurity, NSURLBookmarkCreationMinimalBookmark, NSURLBookmarkCreationOptions,
+        NSFileSecurity, NSThumbnail1024x1024SizeKey, NSURLAddedToDirectoryDateKey,
+        NSURLApplicationIsScriptableKey, NSURLAttributeModificationDateKey,
+        NSURLBookmarkCreationMinimalBookmark, NSURLBookmarkCreationOptions,
         NSURLBookmarkCreationPreferFileIDResolution,
         NSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess,
         NSURLBookmarkCreationSuitableForBookmarkFile, NSURLBookmarkCreationWithSecurityScope,
         NSURLBookmarkCreationWithoutImplicitSecurityScope, NSURLBookmarkFileCreationOptions,
         NSURLBookmarkResolutionOptions, NSURLBookmarkResolutionWithSecurityScope,
         NSURLBookmarkResolutionWithoutImplicitStartAccessing,
-        NSURLBookmarkResolutionWithoutMounting, NSURLBookmarkResolutionWithoutUI, NSURLComponents,
-        NSURLFileProtectionType, NSURLFileResourceType, NSURLQueryItem, NSURLResourceKey,
-        NSURLThumbnailDictionaryItem, NSURLUbiquitousItemDownloadingStatus,
-        NSURLUbiquitousSharedItemPermissions, NSURLUbiquitousSharedItemRole, NSURL,
+        NSURLBookmarkResolutionWithoutMounting, NSURLBookmarkResolutionWithoutUI,
+        NSURLCanonicalPathKey, NSURLComponents, NSURLContentAccessDateKey,
+        NSURLContentModificationDateKey, NSURLContentTypeKey, NSURLCreationDateKey,
+        NSURLCustomIconKey, NSURLDocumentIdentifierKey, NSURLEffectiveIconKey,
+        NSURLFileAllocatedSizeKey, NSURLFileContentIdentifierKey, NSURLFileProtectionComplete,
+        NSURLFileProtectionCompleteUnlessOpen,
+        NSURLFileProtectionCompleteUntilFirstUserAuthentication, NSURLFileProtectionKey,
+        NSURLFileProtectionNone, NSURLFileProtectionType, NSURLFileResourceIdentifierKey,
+        NSURLFileResourceType, NSURLFileResourceTypeBlockSpecial,
+        NSURLFileResourceTypeCharacterSpecial, NSURLFileResourceTypeDirectory,
+        NSURLFileResourceTypeKey, NSURLFileResourceTypeNamedPipe, NSURLFileResourceTypeRegular,
+        NSURLFileResourceTypeSocket, NSURLFileResourceTypeSymbolicLink,
+        NSURLFileResourceTypeUnknown, NSURLFileScheme, NSURLFileSecurityKey, NSURLFileSizeKey,
+        NSURLGenerationIdentifierKey, NSURLHasHiddenExtensionKey, NSURLIsAliasFileKey,
+        NSURLIsApplicationKey, NSURLIsDirectoryKey, NSURLIsExcludedFromBackupKey,
+        NSURLIsExecutableKey, NSURLIsHiddenKey, NSURLIsMountTriggerKey, NSURLIsPackageKey,
+        NSURLIsPurgeableKey, NSURLIsReadableKey, NSURLIsRegularFileKey, NSURLIsSparseKey,
+        NSURLIsSymbolicLinkKey, NSURLIsSystemImmutableKey, NSURLIsUbiquitousItemKey,
+        NSURLIsUserImmutableKey, NSURLIsVolumeKey, NSURLIsWritableKey, NSURLKeysOfUnsetValuesKey,
+        NSURLLabelColorKey, NSURLLabelNumberKey, NSURLLinkCountKey, NSURLLocalizedLabelKey,
+        NSURLLocalizedNameKey, NSURLLocalizedTypeDescriptionKey, NSURLMayHaveExtendedAttributesKey,
+        NSURLMayShareFileContentKey, NSURLNameKey, NSURLParentDirectoryURLKey, NSURLPathKey,
+        NSURLPreferredIOBlockSizeKey, NSURLQuarantinePropertiesKey, NSURLQueryItem,
+        NSURLResourceKey, NSURLTagNamesKey, NSURLThumbnailDictionaryItem,
+        NSURLThumbnailDictionaryKey, NSURLThumbnailKey, NSURLTotalFileAllocatedSizeKey,
+        NSURLTotalFileSizeKey, NSURLTypeIdentifierKey, NSURLUbiquitousItemContainerDisplayNameKey,
+        NSURLUbiquitousItemDownloadRequestedKey, NSURLUbiquitousItemDownloadingErrorKey,
+        NSURLUbiquitousItemDownloadingStatus, NSURLUbiquitousItemDownloadingStatusCurrent,
+        NSURLUbiquitousItemDownloadingStatusDownloaded, NSURLUbiquitousItemDownloadingStatusKey,
+        NSURLUbiquitousItemDownloadingStatusNotDownloaded,
+        NSURLUbiquitousItemHasUnresolvedConflictsKey, NSURLUbiquitousItemIsDownloadedKey,
+        NSURLUbiquitousItemIsDownloadingKey, NSURLUbiquitousItemIsExcludedFromSyncKey,
+        NSURLUbiquitousItemIsSharedKey, NSURLUbiquitousItemIsUploadedKey,
+        NSURLUbiquitousItemIsUploadingKey, NSURLUbiquitousItemPercentDownloadedKey,
+        NSURLUbiquitousItemPercentUploadedKey, NSURLUbiquitousItemUploadingErrorKey,
+        NSURLUbiquitousSharedItemCurrentUserPermissionsKey,
+        NSURLUbiquitousSharedItemCurrentUserRoleKey,
+        NSURLUbiquitousSharedItemMostRecentEditorNameComponentsKey,
+        NSURLUbiquitousSharedItemOwnerNameComponentsKey, NSURLUbiquitousSharedItemPermissions,
+        NSURLUbiquitousSharedItemPermissionsReadOnly,
+        NSURLUbiquitousSharedItemPermissionsReadWrite, NSURLUbiquitousSharedItemRole,
+        NSURLUbiquitousSharedItemRoleOwner, NSURLUbiquitousSharedItemRoleParticipant,
+        NSURLVolumeAvailableCapacityForImportantUsageKey,
+        NSURLVolumeAvailableCapacityForOpportunisticUsageKey, NSURLVolumeAvailableCapacityKey,
+        NSURLVolumeCreationDateKey, NSURLVolumeIdentifierKey, NSURLVolumeIsAutomountedKey,
+        NSURLVolumeIsBrowsableKey, NSURLVolumeIsEjectableKey, NSURLVolumeIsEncryptedKey,
+        NSURLVolumeIsInternalKey, NSURLVolumeIsJournalingKey, NSURLVolumeIsLocalKey,
+        NSURLVolumeIsReadOnlyKey, NSURLVolumeIsRemovableKey, NSURLVolumeIsRootFileSystemKey,
+        NSURLVolumeLocalizedFormatDescriptionKey, NSURLVolumeLocalizedNameKey,
+        NSURLVolumeMaximumFileSizeKey, NSURLVolumeNameKey, NSURLVolumeResourceCountKey,
+        NSURLVolumeSupportsAccessPermissionsKey, NSURLVolumeSupportsAdvisoryFileLockingKey,
+        NSURLVolumeSupportsCasePreservedNamesKey, NSURLVolumeSupportsCaseSensitiveNamesKey,
+        NSURLVolumeSupportsCompressionKey, NSURLVolumeSupportsExclusiveRenamingKey,
+        NSURLVolumeSupportsExtendedSecurityKey, NSURLVolumeSupportsFileCloningKey,
+        NSURLVolumeSupportsFileProtectionKey, NSURLVolumeSupportsHardLinksKey,
+        NSURLVolumeSupportsImmutableFilesKey, NSURLVolumeSupportsJournalingKey,
+        NSURLVolumeSupportsPersistentIDsKey, NSURLVolumeSupportsRenamingKey,
+        NSURLVolumeSupportsRootDirectoryDatesKey, NSURLVolumeSupportsSparseFilesKey,
+        NSURLVolumeSupportsSwapRenamingKey, NSURLVolumeSupportsSymbolicLinksKey,
+        NSURLVolumeSupportsVolumeSizesKey, NSURLVolumeSupportsZeroRunsKey,
+        NSURLVolumeTotalCapacityKey, NSURLVolumeURLForRemountingKey, NSURLVolumeURLKey,
+        NSURLVolumeUUIDStringKey, NSURL,
     };
     pub use super::NSUUID::NSUUID;
     pub use super::NSXMLDTD::NSXMLDTD;

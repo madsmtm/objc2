@@ -100,6 +100,11 @@ pub const NSProgressIndicatorPreferredSmallThickness: NSProgressIndicatorThickne
 pub const NSProgressIndicatorPreferredLargeThickness: NSProgressIndicatorThickness = 18;
 pub const NSProgressIndicatorPreferredAquaThickness: NSProgressIndicatorThickness = 12;
 
+static NSProgressIndicatorBarStyle: NSProgressIndicatorStyle = NSProgressIndicatorStyleBar;
+
+static NSProgressIndicatorSpinningStyle: NSProgressIndicatorStyle =
+    NSProgressIndicatorStyleSpinning;
+
 extern_methods!(
     /// NSProgressIndicatorDeprecated
     unsafe impl NSProgressIndicator {

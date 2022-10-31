@@ -12,6 +12,18 @@ pub const NSFontCollectionVisibilityComputer: NSFontCollectionVisibility = (1 <<
 
 pub type NSFontCollectionMatchingOptionKey = NSString;
 
+extern "C" {
+    static NSFontCollectionIncludeDisabledFontsOption: &'static NSFontCollectionMatchingOptionKey;
+}
+
+extern "C" {
+    static NSFontCollectionRemoveDuplicatesOption: &'static NSFontCollectionMatchingOptionKey;
+}
+
+extern "C" {
+    static NSFontCollectionDisallowAutoActivationOption: &'static NSFontCollectionMatchingOptionKey;
+}
+
 pub type NSFontCollectionName = NSString;
 
 extern_class!(
@@ -164,6 +176,54 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSFontCollectionDidChangeNotification: &'static NSNotificationName;
+}
+
 pub type NSFontCollectionUserInfoKey = NSString;
 
+extern "C" {
+    static NSFontCollectionActionKey: &'static NSFontCollectionUserInfoKey;
+}
+
+extern "C" {
+    static NSFontCollectionNameKey: &'static NSFontCollectionUserInfoKey;
+}
+
+extern "C" {
+    static NSFontCollectionOldNameKey: &'static NSFontCollectionUserInfoKey;
+}
+
+extern "C" {
+    static NSFontCollectionVisibilityKey: &'static NSFontCollectionUserInfoKey;
+}
+
 pub type NSFontCollectionActionTypeKey = NSString;
+
+extern "C" {
+    static NSFontCollectionWasShown: &'static NSFontCollectionActionTypeKey;
+}
+
+extern "C" {
+    static NSFontCollectionWasHidden: &'static NSFontCollectionActionTypeKey;
+}
+
+extern "C" {
+    static NSFontCollectionWasRenamed: &'static NSFontCollectionActionTypeKey;
+}
+
+extern "C" {
+    static NSFontCollectionAllFonts: &'static NSFontCollectionName;
+}
+
+extern "C" {
+    static NSFontCollectionUser: &'static NSFontCollectionName;
+}
+
+extern "C" {
+    static NSFontCollectionFavorites: &'static NSFontCollectionName;
+}
+
+extern "C" {
+    static NSFontCollectionRecentlyUsed: &'static NSFontCollectionName;
+}

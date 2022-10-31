@@ -136,3 +136,7 @@ extern_methods!(
         pub unsafe fn titleOfSelectedItem(&self) -> Option<Id<NSString, Shared>>;
     }
 );
+
+extern "C" {
+    static NSPopUpButtonWillPopUpNotification: &'static NSNotificationName;
+}

@@ -7,6 +7,86 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSSharingServiceName = NSString;
 
+extern "C" {
+    static NSSharingServiceNameComposeEmail: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameComposeMessage: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameSendViaAirDrop: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameAddToSafariReadingList: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameAddToIPhoto: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameAddToAperture: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameUseAsDesktopPicture: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostOnFacebook: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostOnTwitter: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostOnSinaWeibo: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostOnTencentWeibo: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostOnLinkedIn: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameUseAsTwitterProfileImage: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameUseAsFacebookProfileImage: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameUseAsLinkedInProfileImage: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostImageOnFlickr: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostVideoOnVimeo: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostVideoOnYouku: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNamePostVideoOnTudou: &'static NSSharingServiceName;
+}
+
+extern "C" {
+    static NSSharingServiceNameCloudSharing: &'static NSSharingServiceName;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSharingService;

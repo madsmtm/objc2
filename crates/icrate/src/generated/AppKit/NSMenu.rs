@@ -249,6 +249,34 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSMenuWillSendActionNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMenuDidSendActionNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMenuDidAddItemNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMenuDidRemoveItemNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMenuDidChangeItemNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMenuDidBeginTrackingNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMenuDidEndTrackingNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSMenu {

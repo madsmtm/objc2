@@ -147,3 +147,7 @@ extern_methods!(
         ) -> Id<NSTask, Shared>;
     }
 );
+
+extern "C" {
+    static NSTaskDidTerminateNotification: &'static NSNotificationName;
+}

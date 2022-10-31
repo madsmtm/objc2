@@ -87,3 +87,11 @@ extern_methods!(
         );
     }
 );
+
+extern "C" {
+    static NSHTTPCookieManagerAcceptPolicyChangedNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSHTTPCookieManagerCookiesChangedNotification: &'static NSNotificationName;
+}

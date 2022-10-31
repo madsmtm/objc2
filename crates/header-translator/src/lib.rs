@@ -55,6 +55,9 @@ impl RustFile {
                     self.declared_types.insert(name.clone());
                 }
             }
+            Stmt::VarDecl { name, .. } => {
+                self.declared_types.insert(name.clone());
+            }
             Stmt::AliasDecl { name, .. } => {
                 self.declared_types.insert(name.clone());
             }

@@ -5,7 +5,55 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSUndefinedKeyException: &'static NSExceptionName;
+}
+
 pub type NSKeyValueOperator = NSString;
+
+extern "C" {
+    static NSAverageKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSCountKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSDistinctUnionOfArraysKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSDistinctUnionOfObjectsKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSDistinctUnionOfSetsKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSMaximumKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSMinimumKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSSumKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSUnionOfArraysKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSUnionOfObjectsKeyValueOperator: &'static NSKeyValueOperator;
+}
+
+extern "C" {
+    static NSUnionOfSetsKeyValueOperator: &'static NSKeyValueOperator;
+}
 
 extern_methods!(
     /// NSKeyValueCoding

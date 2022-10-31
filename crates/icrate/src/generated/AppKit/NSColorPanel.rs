@@ -121,3 +121,25 @@ extern_methods!(
         pub unsafe fn changeColor(&self, sender: Option<&Object>);
     }
 );
+
+extern "C" {
+    static NSColorPanelColorDidChangeNotification: &'static NSNotificationName;
+}
+
+static NSNoModeColorPanel: NSColorPanelMode = NSColorPanelModeNone;
+
+static NSGrayModeColorPanel: NSColorPanelMode = NSColorPanelModeGray;
+
+static NSRGBModeColorPanel: NSColorPanelMode = NSColorPanelModeRGB;
+
+static NSCMYKModeColorPanel: NSColorPanelMode = NSColorPanelModeCMYK;
+
+static NSHSBModeColorPanel: NSColorPanelMode = NSColorPanelModeHSB;
+
+static NSCustomPaletteModeColorPanel: NSColorPanelMode = NSColorPanelModeCustomPalette;
+
+static NSColorListModeColorPanel: NSColorPanelMode = NSColorPanelModeColorList;
+
+static NSWheelModeColorPanel: NSColorPanelMode = NSColorPanelModeWheel;
+
+static NSCrayonModeColorPanel: NSColorPanelMode = NSColorPanelModeCrayon;

@@ -7,6 +7,14 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSToolbarItemVisibilityPriority = NSInteger;
 
+static NSToolbarItemVisibilityPriorityStandard: NSToolbarItemVisibilityPriority = 0;
+
+static NSToolbarItemVisibilityPriorityLow: NSToolbarItemVisibilityPriority = -1000;
+
+static NSToolbarItemVisibilityPriorityHigh: NSToolbarItemVisibilityPriority = 1000;
+
+static NSToolbarItemVisibilityPriorityUser: NSToolbarItemVisibilityPriority = 2000;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSToolbarItem;
@@ -158,3 +166,43 @@ extern_methods!(
 );
 
 pub type NSCloudSharingValidation = NSObject;
+
+extern "C" {
+    static NSToolbarSeparatorItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarSpaceItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarFlexibleSpaceItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarShowColorsItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarShowFontsItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarCustomizeToolbarItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarPrintItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarToggleSidebarItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarCloudSharingItemIdentifier: &'static NSToolbarItemIdentifier;
+}
+
+extern "C" {
+    static NSToolbarSidebarTrackingSeparatorItemIdentifier: &'static NSToolbarItemIdentifier;
+}

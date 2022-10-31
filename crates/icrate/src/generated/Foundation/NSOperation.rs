@@ -143,6 +143,16 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSInvocationOperationVoidResultException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSInvocationOperationCancelledException: &'static NSExceptionName;
+}
+
+static NSOperationQueueDefaultMaxConcurrentOperationCount: NSInteger = -1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSOperationQueue;

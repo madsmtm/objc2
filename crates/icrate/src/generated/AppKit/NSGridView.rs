@@ -21,6 +21,10 @@ pub const NSGridRowAlignmentNone: NSGridRowAlignment = 1;
 pub const NSGridRowAlignmentFirstBaseline: NSGridRowAlignment = 2;
 pub const NSGridRowAlignmentLastBaseline: NSGridRowAlignment = 3;
 
+extern "C" {
+    static NSGridViewSizeForContent: CGFloat;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSGridView;

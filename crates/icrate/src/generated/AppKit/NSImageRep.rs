@@ -181,3 +181,7 @@ extern_methods!(
         ) -> CGImageRef;
     }
 );
+
+extern "C" {
+    static NSImageRepRegistryDidChangeNotification: &'static NSNotificationName;
+}

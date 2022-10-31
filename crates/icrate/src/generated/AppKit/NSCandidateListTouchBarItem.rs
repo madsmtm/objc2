@@ -94,3 +94,7 @@ extern_methods!(
         ) -> Option<Id<NSCandidateListTouchBarItem, Shared>>;
     }
 );
+
+extern "C" {
+    static NSTouchBarItemIdentifierCandidateList: &'static NSTouchBarItemIdentifier;
+}

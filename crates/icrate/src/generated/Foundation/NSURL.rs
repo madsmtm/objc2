@@ -7,17 +7,587 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSURLResourceKey = NSString;
 
+extern "C" {
+    static NSURLFileScheme: &'static NSString;
+}
+
+extern "C" {
+    static NSURLKeysOfUnsetValuesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLNameKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLLocalizedNameKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsRegularFileKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsDirectoryKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsSymbolicLinkKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsVolumeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsPackageKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsApplicationKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLApplicationIsScriptableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsSystemImmutableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsUserImmutableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsHiddenKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLHasHiddenExtensionKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLCreationDateKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLContentAccessDateKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLContentModificationDateKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLAttributeModificationDateKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLLinkCountKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLParentDirectoryURLKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeURLKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLTypeIdentifierKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLContentTypeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLLocalizedTypeDescriptionKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLLabelNumberKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLLabelColorKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLLocalizedLabelKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLEffectiveIconKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLCustomIconKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLFileResourceIdentifierKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIdentifierKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLPreferredIOBlockSizeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsReadableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsWritableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsExecutableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLFileSecurityKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsExcludedFromBackupKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLTagNamesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLPathKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLCanonicalPathKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsMountTriggerKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLGenerationIdentifierKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLDocumentIdentifierKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLAddedToDirectoryDateKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLQuarantinePropertiesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLFileResourceTypeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLFileContentIdentifierKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLMayShareFileContentKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLMayHaveExtendedAttributesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsPurgeableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsSparseKey: &'static NSURLResourceKey;
+}
+
 pub type NSURLFileResourceType = NSString;
+
+extern "C" {
+    static NSURLFileResourceTypeNamedPipe: &'static NSURLFileResourceType;
+}
+
+extern "C" {
+    static NSURLFileResourceTypeCharacterSpecial: &'static NSURLFileResourceType;
+}
+
+extern "C" {
+    static NSURLFileResourceTypeDirectory: &'static NSURLFileResourceType;
+}
+
+extern "C" {
+    static NSURLFileResourceTypeBlockSpecial: &'static NSURLFileResourceType;
+}
+
+extern "C" {
+    static NSURLFileResourceTypeRegular: &'static NSURLFileResourceType;
+}
+
+extern "C" {
+    static NSURLFileResourceTypeSymbolicLink: &'static NSURLFileResourceType;
+}
+
+extern "C" {
+    static NSURLFileResourceTypeSocket: &'static NSURLFileResourceType;
+}
+
+extern "C" {
+    static NSURLFileResourceTypeUnknown: &'static NSURLFileResourceType;
+}
+
+extern "C" {
+    static NSURLThumbnailDictionaryKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLThumbnailKey: &'static NSURLResourceKey;
+}
 
 pub type NSURLThumbnailDictionaryItem = NSString;
 
+extern "C" {
+    static NSThumbnail1024x1024SizeKey: &'static NSURLThumbnailDictionaryItem;
+}
+
+extern "C" {
+    static NSURLFileSizeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLFileAllocatedSizeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLTotalFileSizeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLTotalFileAllocatedSizeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsAliasFileKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLFileProtectionKey: &'static NSURLResourceKey;
+}
+
 pub type NSURLFileProtectionType = NSString;
+
+extern "C" {
+    static NSURLFileProtectionNone: &'static NSURLFileProtectionType;
+}
+
+extern "C" {
+    static NSURLFileProtectionComplete: &'static NSURLFileProtectionType;
+}
+
+extern "C" {
+    static NSURLFileProtectionCompleteUnlessOpen: &'static NSURLFileProtectionType;
+}
+
+extern "C" {
+    static NSURLFileProtectionCompleteUntilFirstUserAuthentication:
+        &'static NSURLFileProtectionType;
+}
+
+extern "C" {
+    static NSURLVolumeLocalizedFormatDescriptionKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeTotalCapacityKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeAvailableCapacityKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeResourceCountKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsPersistentIDsKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsSymbolicLinksKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsHardLinksKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsJournalingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsJournalingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsSparseFilesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsZeroRunsKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsCaseSensitiveNamesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsCasePreservedNamesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsRootDirectoryDatesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsVolumeSizesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsRenamingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsAdvisoryFileLockingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsExtendedSecurityKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsBrowsableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeMaximumFileSizeKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsEjectableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsRemovableKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsInternalKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsAutomountedKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsLocalKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsReadOnlyKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeCreationDateKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeURLForRemountingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeUUIDStringKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeNameKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeLocalizedNameKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsEncryptedKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeIsRootFileSystemKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsCompressionKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsFileCloningKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsSwapRenamingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsExclusiveRenamingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsImmutableFilesKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsAccessPermissionsKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeSupportsFileProtectionKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeAvailableCapacityForImportantUsageKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLVolumeAvailableCapacityForOpportunisticUsageKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLIsUbiquitousItemKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemHasUnresolvedConflictsKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemIsDownloadedKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemIsDownloadingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemIsUploadedKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemIsUploadingKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemPercentDownloadedKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemPercentUploadedKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemDownloadingStatusKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemDownloadingErrorKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemUploadingErrorKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemDownloadRequestedKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemContainerDisplayNameKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemIsExcludedFromSyncKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemIsSharedKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousSharedItemCurrentUserRoleKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousSharedItemCurrentUserPermissionsKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousSharedItemOwnerNameComponentsKey: &'static NSURLResourceKey;
+}
+
+extern "C" {
+    static NSURLUbiquitousSharedItemMostRecentEditorNameComponentsKey: &'static NSURLResourceKey;
+}
 
 pub type NSURLUbiquitousItemDownloadingStatus = NSString;
 
+extern "C" {
+    static NSURLUbiquitousItemDownloadingStatusNotDownloaded:
+        &'static NSURLUbiquitousItemDownloadingStatus;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemDownloadingStatusDownloaded:
+        &'static NSURLUbiquitousItemDownloadingStatus;
+}
+
+extern "C" {
+    static NSURLUbiquitousItemDownloadingStatusCurrent:
+        &'static NSURLUbiquitousItemDownloadingStatus;
+}
+
 pub type NSURLUbiquitousSharedItemRole = NSString;
 
+extern "C" {
+    static NSURLUbiquitousSharedItemRoleOwner: &'static NSURLUbiquitousSharedItemRole;
+}
+
+extern "C" {
+    static NSURLUbiquitousSharedItemRoleParticipant: &'static NSURLUbiquitousSharedItemRole;
+}
+
 pub type NSURLUbiquitousSharedItemPermissions = NSString;
+
+extern "C" {
+    static NSURLUbiquitousSharedItemPermissionsReadOnly:
+        &'static NSURLUbiquitousSharedItemPermissions;
+}
+
+extern "C" {
+    static NSURLUbiquitousSharedItemPermissionsReadWrite:
+        &'static NSURLUbiquitousSharedItemPermissions;
+}
 
 pub type NSURLBookmarkCreationOptions = NSUInteger;
 pub const NSURLBookmarkCreationPreferFileIDResolution: NSURLBookmarkCreationOptions = (1 << 8);

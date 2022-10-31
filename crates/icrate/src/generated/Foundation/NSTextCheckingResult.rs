@@ -110,6 +110,50 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSTextCheckingNameKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingJobTitleKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingOrganizationKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingStreetKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingCityKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingStateKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingZIPKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingCountryKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingPhoneKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingAirlineKey: &'static NSTextCheckingKey;
+}
+
+extern "C" {
+    static NSTextCheckingFlightKey: &'static NSTextCheckingKey;
+}
+
 extern_methods!(
     /// NSTextCheckingResultCreation
     unsafe impl NSTextCheckingResult {

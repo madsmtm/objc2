@@ -123,6 +123,18 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSWillBecomeMultiThreadedNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSDidBecomeSingleThreadedNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSThreadWillExitNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     /// NSThreadPerformAdditions
     unsafe impl NSObject {

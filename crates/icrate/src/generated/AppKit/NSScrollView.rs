@@ -285,6 +285,26 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSScrollViewWillStartLiveMagnifyNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSScrollViewDidEndLiveMagnifyNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSScrollViewWillStartLiveScrollNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSScrollViewDidLiveScrollNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSScrollViewDidEndLiveScrollNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     /// NSRulerSupport
     unsafe impl NSScrollView {

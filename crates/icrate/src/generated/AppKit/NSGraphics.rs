@@ -36,6 +36,64 @@ pub const NSCompositingOperationSaturation: NSCompositingOperation = 26;
 pub const NSCompositingOperationColor: NSCompositingOperation = 27;
 pub const NSCompositingOperationLuminosity: NSCompositingOperation = 28;
 
+static NSCompositeClear: NSCompositingOperation = NSCompositingOperationClear;
+
+static NSCompositeCopy: NSCompositingOperation = NSCompositingOperationCopy;
+
+static NSCompositeSourceOver: NSCompositingOperation = NSCompositingOperationSourceOver;
+
+static NSCompositeSourceIn: NSCompositingOperation = NSCompositingOperationSourceIn;
+
+static NSCompositeSourceOut: NSCompositingOperation = NSCompositingOperationSourceOut;
+
+static NSCompositeSourceAtop: NSCompositingOperation = NSCompositingOperationSourceAtop;
+
+static NSCompositeDestinationOver: NSCompositingOperation = NSCompositingOperationDestinationOver;
+
+static NSCompositeDestinationIn: NSCompositingOperation = NSCompositingOperationDestinationIn;
+
+static NSCompositeDestinationOut: NSCompositingOperation = NSCompositingOperationDestinationOut;
+
+static NSCompositeDestinationAtop: NSCompositingOperation = NSCompositingOperationDestinationAtop;
+
+static NSCompositeXOR: NSCompositingOperation = NSCompositingOperationXOR;
+
+static NSCompositePlusDarker: NSCompositingOperation = NSCompositingOperationPlusDarker;
+
+static NSCompositeHighlight: NSCompositingOperation = NSCompositingOperationHighlight;
+
+static NSCompositePlusLighter: NSCompositingOperation = NSCompositingOperationPlusLighter;
+
+static NSCompositeMultiply: NSCompositingOperation = NSCompositingOperationMultiply;
+
+static NSCompositeScreen: NSCompositingOperation = NSCompositingOperationScreen;
+
+static NSCompositeOverlay: NSCompositingOperation = NSCompositingOperationOverlay;
+
+static NSCompositeDarken: NSCompositingOperation = NSCompositingOperationDarken;
+
+static NSCompositeLighten: NSCompositingOperation = NSCompositingOperationLighten;
+
+static NSCompositeColorDodge: NSCompositingOperation = NSCompositingOperationColorDodge;
+
+static NSCompositeColorBurn: NSCompositingOperation = NSCompositingOperationColorBurn;
+
+static NSCompositeSoftLight: NSCompositingOperation = NSCompositingOperationSoftLight;
+
+static NSCompositeHardLight: NSCompositingOperation = NSCompositingOperationHardLight;
+
+static NSCompositeDifference: NSCompositingOperation = NSCompositingOperationDifference;
+
+static NSCompositeExclusion: NSCompositingOperation = NSCompositingOperationExclusion;
+
+static NSCompositeHue: NSCompositingOperation = NSCompositingOperationHue;
+
+static NSCompositeSaturation: NSCompositingOperation = NSCompositingOperationSaturation;
+
+static NSCompositeColor: NSCompositingOperation = NSCompositingOperationColor;
+
+static NSCompositeLuminosity: NSCompositingOperation = NSCompositingOperationLuminosity;
+
 pub type NSBackingStoreType = NSUInteger;
 pub const NSBackingStoreRetained: NSBackingStoreType = 0;
 pub const NSBackingStoreNonretained: NSBackingStoreType = 1;
@@ -65,16 +123,96 @@ pub const NSColorRenderingIntentSaturation: NSColorRenderingIntent = 4;
 
 pub type NSColorSpaceName = NSString;
 
+extern "C" {
+    static NSCalibratedWhiteColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSCalibratedRGBColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSDeviceWhiteColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSDeviceRGBColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSDeviceCMYKColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSNamedColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSPatternColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSCustomColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSCalibratedBlackColorSpace: &'static NSColorSpaceName;
+}
+
+extern "C" {
+    static NSDeviceBlackColorSpace: &'static NSColorSpaceName;
+}
+
 pub type NSWindowDepth = i32;
 pub const NSWindowDepthTwentyfourBitRGB: NSWindowDepth = 0x208;
 pub const NSWindowDepthSixtyfourBitRGB: NSWindowDepth = 0x210;
 pub const NSWindowDepthOnehundredtwentyeightBitRGB: NSWindowDepth = 0x220;
+
+extern "C" {
+    static NSWhite: CGFloat;
+}
+
+extern "C" {
+    static NSLightGray: CGFloat;
+}
+
+extern "C" {
+    static NSDarkGray: CGFloat;
+}
+
+extern "C" {
+    static NSBlack: CGFloat;
+}
 
 pub type NSDisplayGamut = NSInteger;
 pub const NSDisplayGamutSRGB: NSDisplayGamut = 1;
 pub const NSDisplayGamutP3: NSDisplayGamut = 2;
 
 pub type NSDeviceDescriptionKey = NSString;
+
+extern "C" {
+    static NSDeviceResolution: &'static NSDeviceDescriptionKey;
+}
+
+extern "C" {
+    static NSDeviceColorSpaceName: &'static NSDeviceDescriptionKey;
+}
+
+extern "C" {
+    static NSDeviceBitsPerSample: &'static NSDeviceDescriptionKey;
+}
+
+extern "C" {
+    static NSDeviceIsScreen: &'static NSDeviceDescriptionKey;
+}
+
+extern "C" {
+    static NSDeviceIsPrinter: &'static NSDeviceDescriptionKey;
+}
+
+extern "C" {
+    static NSDeviceSize: &'static NSDeviceDescriptionKey;
+}
 
 pub type NSAnimationEffect = NSUInteger;
 pub const NSAnimationEffectDisappearingItemDefault: NSAnimationEffect = 0;

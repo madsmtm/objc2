@@ -165,3 +165,15 @@ extern_methods!(
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
     }
 );
+
+static NSTickMarkBelow: NSTickMarkPosition = NSTickMarkPositionBelow;
+
+static NSTickMarkAbove: NSTickMarkPosition = NSTickMarkPositionAbove;
+
+static NSTickMarkLeft: NSTickMarkPosition = NSTickMarkPositionLeading;
+
+static NSTickMarkRight: NSTickMarkPosition = NSTickMarkPositionTrailing;
+
+static NSLinearSlider: NSSliderType = NSSliderTypeLinear;
+
+static NSCircularSlider: NSSliderType = NSSliderTypeCircular;

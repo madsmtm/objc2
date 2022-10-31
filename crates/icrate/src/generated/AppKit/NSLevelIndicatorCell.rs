@@ -83,3 +83,13 @@ extern_methods!(
         pub unsafe fn tickMarkValueAtIndex(&self, index: NSInteger) -> c_double;
     }
 );
+
+static NSRelevancyLevelIndicatorStyle: NSLevelIndicatorStyle = NSLevelIndicatorStyleRelevancy;
+
+static NSContinuousCapacityLevelIndicatorStyle: NSLevelIndicatorStyle =
+    NSLevelIndicatorStyleContinuousCapacity;
+
+static NSDiscreteCapacityLevelIndicatorStyle: NSLevelIndicatorStyle =
+    NSLevelIndicatorStyleDiscreteCapacity;
+
+static NSRatingLevelIndicatorStyle: NSLevelIndicatorStyle = NSLevelIndicatorStyleRating;

@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSFontIdentityMatrix: NonNull<CGFloat>;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSFont;
@@ -213,6 +217,14 @@ extern_methods!(
         pub unsafe fn isVertical(&self) -> bool;
     }
 );
+
+extern "C" {
+    static NSAntialiasThresholdChangedNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSFontSetChangedNotification: &'static NSNotificationName;
+}
 
 pub const NSControlGlyph: i32 = 0x00FFFFFF;
 pub const NSNullGlyph: i32 = 0x0;

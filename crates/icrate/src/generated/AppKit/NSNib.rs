@@ -64,3 +64,11 @@ extern_methods!(
         ) -> bool;
     }
 );
+
+extern "C" {
+    static NSNibOwner: &'static NSString;
+}
+
+extern "C" {
+    static NSNibTopLevelObjects: &'static NSString;
+}

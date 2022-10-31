@@ -75,3 +75,7 @@ extern_methods!(
         pub unsafe fn removeFile(&self);
     }
 );
+
+extern "C" {
+    static NSColorListDidChangeNotification: &'static NSNotificationName;
+}

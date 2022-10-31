@@ -41,6 +41,14 @@ pub type NSFileManagerUnmountOptions = NSUInteger;
 pub const NSFileManagerUnmountAllPartitionsAndEjectDisk: NSFileManagerUnmountOptions = 1 << 0;
 pub const NSFileManagerUnmountWithoutUI: NSFileManagerUnmountOptions = 1 << 1;
 
+extern "C" {
+    static NSFileManagerUnmountDissentingProcessIdentifierErrorKey: &'static NSString;
+}
+
+extern "C" {
+    static NSUbiquityIdentityDidChangeNotification: &'static NSNotificationName;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSFileManager;
@@ -557,6 +565,146 @@ extern_methods!(
         pub unsafe fn name(&self) -> Id<NSFileProviderServiceName, Shared>;
     }
 );
+
+extern "C" {
+    static NSFileType: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileTypeDirectory: &'static NSFileAttributeType;
+}
+
+extern "C" {
+    static NSFileTypeRegular: &'static NSFileAttributeType;
+}
+
+extern "C" {
+    static NSFileTypeSymbolicLink: &'static NSFileAttributeType;
+}
+
+extern "C" {
+    static NSFileTypeSocket: &'static NSFileAttributeType;
+}
+
+extern "C" {
+    static NSFileTypeCharacterSpecial: &'static NSFileAttributeType;
+}
+
+extern "C" {
+    static NSFileTypeBlockSpecial: &'static NSFileAttributeType;
+}
+
+extern "C" {
+    static NSFileTypeUnknown: &'static NSFileAttributeType;
+}
+
+extern "C" {
+    static NSFileSize: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileModificationDate: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileReferenceCount: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileDeviceIdentifier: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileOwnerAccountName: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileGroupOwnerAccountName: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFilePosixPermissions: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileSystemNumber: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileSystemFileNumber: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileExtensionHidden: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileHFSCreatorCode: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileHFSTypeCode: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileImmutable: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileAppendOnly: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileCreationDate: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileOwnerAccountID: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileGroupOwnerAccountID: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileBusy: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileProtectionKey: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileProtectionNone: &'static NSFileProtectionType;
+}
+
+extern "C" {
+    static NSFileProtectionComplete: &'static NSFileProtectionType;
+}
+
+extern "C" {
+    static NSFileProtectionCompleteUnlessOpen: &'static NSFileProtectionType;
+}
+
+extern "C" {
+    static NSFileProtectionCompleteUntilFirstUserAuthentication: &'static NSFileProtectionType;
+}
+
+extern "C" {
+    static NSFileSystemSize: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileSystemFreeSize: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileSystemNodes: &'static NSFileAttributeKey;
+}
+
+extern "C" {
+    static NSFileSystemFreeNodes: &'static NSFileAttributeKey;
+}
 
 extern_methods!(
     /// NSFileAttributes

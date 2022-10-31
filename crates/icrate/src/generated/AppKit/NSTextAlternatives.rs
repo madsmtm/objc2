@@ -33,3 +33,7 @@ extern_methods!(
         pub unsafe fn noteSelectedAlternativeString(&self, alternativeString: &NSString);
     }
 );
+
+extern "C" {
+    static NSTextAlternativesSelectedAlternativeStringNotification: &'static NSNotificationName;
+}

@@ -16,7 +16,143 @@ pub const NSPrintingPaginationModeClip: NSPrintingPaginationMode = 2;
 
 pub type NSPrintInfoAttributeKey = NSString;
 
+extern "C" {
+    static NSPrintPaperName: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintPaperSize: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintOrientation: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintScalingFactor: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintLeftMargin: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintRightMargin: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintTopMargin: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintBottomMargin: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintHorizontallyCentered: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintVerticallyCentered: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintHorizontalPagination: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintVerticalPagination: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintPrinter: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintCopies: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintAllPages: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintFirstPage: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintLastPage: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintMustCollate: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintReversePageOrder: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintJobDisposition: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintPagesAcross: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintPagesDown: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintTime: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintDetailedErrorReporting: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintFaxNumber: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintPrinterName: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintSelectionOnly: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintJobSavingURL: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintJobSavingFileNameExtensionHidden: &'static NSPrintInfoAttributeKey;
+}
+
+extern "C" {
+    static NSPrintHeaderAndFooter: &'static NSPrintInfoAttributeKey;
+}
+
 pub type NSPrintJobDispositionValue = NSString;
+
+extern "C" {
+    static NSPrintSpoolJob: &'static NSPrintJobDispositionValue;
+}
+
+extern "C" {
+    static NSPrintPreviewJob: &'static NSPrintJobDispositionValue;
+}
+
+extern "C" {
+    static NSPrintSaveJob: &'static NSPrintJobDispositionValue;
+}
+
+extern "C" {
+    static NSPrintCancelJob: &'static NSPrintJobDispositionValue;
+}
 
 pub type NSPrintInfoSettingKey = NSString;
 
@@ -195,6 +331,36 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSPrintFormName: &'static NSString;
+}
+
+extern "C" {
+    static NSPrintJobFeatures: &'static NSString;
+}
+
+extern "C" {
+    static NSPrintManualFeed: &'static NSString;
+}
+
+extern "C" {
+    static NSPrintPagesPerSheet: &'static NSString;
+}
+
+extern "C" {
+    static NSPrintPaperFeed: &'static NSString;
+}
+
+extern "C" {
+    static NSPrintSavePath: &'static NSString;
+}
+
 pub type NSPrintingOrientation = NSUInteger;
 pub const NSPortraitOrientation: NSPrintingOrientation = 0;
 pub const NSLandscapeOrientation: NSPrintingOrientation = 1;
+
+static NSAutoPagination: NSPrintingPaginationMode = NSPrintingPaginationModeAutomatic;
+
+static NSFitPagination: NSPrintingPaginationMode = NSPrintingPaginationModeFit;
+
+static NSClipPagination: NSPrintingPaginationMode = NSPrintingPaginationModeClip;

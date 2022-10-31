@@ -5,6 +5,22 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSComboBoxWillPopUpNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSComboBoxWillDismissNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSComboBoxSelectionDidChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSComboBoxSelectionIsChangingNotification: &'static NSNotificationName;
+}
+
 pub type NSComboBoxDataSource = NSObject;
 
 pub type NSComboBoxDelegate = NSObject;

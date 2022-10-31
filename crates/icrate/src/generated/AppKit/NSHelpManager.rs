@@ -69,6 +69,14 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSContextHelpModeDidActivateNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSContextHelpModeDidDeactivateNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     /// NSBundleHelpExtension
     unsafe impl NSBundle {

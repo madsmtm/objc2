@@ -116,6 +116,38 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSFileHandleOperationException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSFileHandleReadCompletionNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSFileHandleReadToEndOfFileCompletionNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSFileHandleConnectionAcceptedNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSFileHandleDataAvailableNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSFileHandleNotificationDataItem: &'static NSString;
+}
+
+extern "C" {
+    static NSFileHandleNotificationFileHandleItem: &'static NSString;
+}
+
+extern "C" {
+    static NSFileHandleNotificationMonitorModes: &'static NSString;
+}
+
 extern_methods!(
     /// NSFileHandleAsynchronousAccess
     unsafe impl NSFileHandle {

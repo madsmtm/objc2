@@ -7,6 +7,12 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSTouchBarItemIdentifier = NSString;
 
+static NSTouchBarItemPriorityHigh: NSTouchBarItemPriority = 1000;
+
+static NSTouchBarItemPriorityNormal: NSTouchBarItemPriority = 0;
+
+static NSTouchBarItemPriorityLow: NSTouchBarItemPriority = -1000;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTouchBarItem;
@@ -52,3 +58,19 @@ extern_methods!(
         pub unsafe fn isVisible(&self) -> bool;
     }
 );
+
+extern "C" {
+    static NSTouchBarItemIdentifierFixedSpaceSmall: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTouchBarItemIdentifierFixedSpaceLarge: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTouchBarItemIdentifierFlexibleSpace: &'static NSTouchBarItemIdentifier;
+}
+
+extern "C" {
+    static NSTouchBarItemIdentifierOtherItemsProxy: &'static NSTouchBarItemIdentifier;
+}

@@ -294,6 +294,14 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSBundleDidLoadNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSLoadedClasses: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSBundleResourceRequest;
@@ -364,3 +372,11 @@ extern_methods!(
         pub unsafe fn preservationPriorityForTag(&self, tag: &NSString) -> c_double;
     }
 );
+
+extern "C" {
+    static NSBundleResourceRequestLowDiskSpaceNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSBundleResourceRequestLoadingPriorityUrgent: c_double;
+}

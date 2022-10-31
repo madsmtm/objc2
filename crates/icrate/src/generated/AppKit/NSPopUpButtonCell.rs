@@ -168,3 +168,7 @@ extern_methods!(
         pub unsafe fn setArrowPosition(&self, arrowPosition: NSPopUpArrowPosition);
     }
 );
+
+extern "C" {
+    static NSPopUpButtonCellWillPopUpNotification: &'static NSNotificationName;
+}

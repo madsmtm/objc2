@@ -9,6 +9,14 @@ pub type NSCollectionViewScrollDirection = NSInteger;
 pub const NSCollectionViewScrollDirectionVertical: NSCollectionViewScrollDirection = 0;
 pub const NSCollectionViewScrollDirectionHorizontal: NSCollectionViewScrollDirection = 1;
 
+extern "C" {
+    static NSCollectionElementKindSectionHeader: &'static NSCollectionViewSupplementaryElementKind;
+}
+
+extern "C" {
+    static NSCollectionElementKindSectionFooter: &'static NSCollectionViewSupplementaryElementKind;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCollectionViewFlowLayoutInvalidationContext;

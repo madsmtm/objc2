@@ -79,3 +79,35 @@ extern_methods!(
         ) -> bool;
     }
 );
+
+extern "C" {
+    static NSPersonNameComponentKey: &'static NSString;
+}
+
+extern "C" {
+    static NSPersonNameComponentGivenName: &'static NSString;
+}
+
+extern "C" {
+    static NSPersonNameComponentFamilyName: &'static NSString;
+}
+
+extern "C" {
+    static NSPersonNameComponentMiddleName: &'static NSString;
+}
+
+extern "C" {
+    static NSPersonNameComponentPrefix: &'static NSString;
+}
+
+extern "C" {
+    static NSPersonNameComponentSuffix: &'static NSString;
+}
+
+extern "C" {
+    static NSPersonNameComponentNickname: &'static NSString;
+}
+
+extern "C" {
+    static NSPersonNameComponentDelimiter: &'static NSString;
+}

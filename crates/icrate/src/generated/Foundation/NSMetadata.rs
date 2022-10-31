@@ -135,6 +135,70 @@ extern_methods!(
 
 pub type NSMetadataQueryDelegate = NSObject;
 
+extern "C" {
+    static NSMetadataQueryDidStartGatheringNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMetadataQueryGatheringProgressNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMetadataQueryDidFinishGatheringNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMetadataQueryDidUpdateNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSMetadataQueryUpdateAddedItemsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryUpdateChangedItemsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryUpdateRemovedItemsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryResultContentRelevanceAttribute: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryUserHomeScope: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryLocalComputerScope: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryNetworkScope: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryIndexedLocalComputerScope: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryIndexedNetworkScope: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryUbiquitousDocumentsScope: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryUbiquitousDataScope: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataQueryAccessibleUbiquitousExternalDocumentsScope: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSMetadataItem;

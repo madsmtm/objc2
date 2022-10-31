@@ -25,6 +25,10 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSApplicationDidFinishRestoringWindowsNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     /// NSUserInterfaceRestoration
     unsafe impl NSWindow {

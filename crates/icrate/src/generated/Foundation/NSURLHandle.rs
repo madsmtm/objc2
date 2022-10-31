@@ -5,6 +5,50 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSHTTPPropertyStatusCodeKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSHTTPPropertyStatusReasonKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSHTTPPropertyServerHTTPVersionKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSHTTPPropertyRedirectionHeadersKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSHTTPPropertyErrorPageDataKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSHTTPPropertyHTTPProxy: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSFTPPropertyUserLoginKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSFTPPropertyUserPasswordKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSFTPPropertyActiveTransferModeKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSFTPPropertyFileOffsetKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSFTPPropertyFTPProxy: Option<&'static NSString>;
+}
+
 pub type NSURLHandleStatus = NSUInteger;
 pub const NSURLHandleNotLoaded: NSURLHandleStatus = 0;
 pub const NSURLHandleLoadSucceeded: NSURLHandleStatus = 1;

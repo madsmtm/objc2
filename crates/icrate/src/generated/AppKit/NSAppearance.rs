@@ -57,4 +57,40 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSAppearanceNameAqua: &'static NSAppearanceName;
+}
+
+extern "C" {
+    static NSAppearanceNameDarkAqua: &'static NSAppearanceName;
+}
+
+extern "C" {
+    static NSAppearanceNameLightContent: &'static NSAppearanceName;
+}
+
+extern "C" {
+    static NSAppearanceNameVibrantDark: &'static NSAppearanceName;
+}
+
+extern "C" {
+    static NSAppearanceNameVibrantLight: &'static NSAppearanceName;
+}
+
+extern "C" {
+    static NSAppearanceNameAccessibilityHighContrastAqua: &'static NSAppearanceName;
+}
+
+extern "C" {
+    static NSAppearanceNameAccessibilityHighContrastDarkAqua: &'static NSAppearanceName;
+}
+
+extern "C" {
+    static NSAppearanceNameAccessibilityHighContrastVibrantLight: &'static NSAppearanceName;
+}
+
+extern "C" {
+    static NSAppearanceNameAccessibilityHighContrastVibrantDark: &'static NSAppearanceName;
+}
+
 pub type NSAppearanceCustomization = NSObject;

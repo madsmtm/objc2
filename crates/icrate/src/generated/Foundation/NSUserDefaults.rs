@@ -5,6 +5,18 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSGlobalDomain: &'static NSString;
+}
+
+extern "C" {
+    static NSArgumentDomain: &'static NSString;
+}
+
+extern "C" {
+    static NSRegistrationDomain: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSUserDefaults;
@@ -162,3 +174,127 @@ extern_methods!(
         ) -> bool;
     }
 );
+
+extern "C" {
+    static NSUserDefaultsSizeLimitExceededNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUbiquitousUserDefaultsNoCloudAccountNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUbiquitousUserDefaultsDidChangeAccountsNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUbiquitousUserDefaultsCompletedInitialSyncNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUserDefaultsDidChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSWeekDayNameArray: &'static NSString;
+}
+
+extern "C" {
+    static NSShortWeekDayNameArray: &'static NSString;
+}
+
+extern "C" {
+    static NSMonthNameArray: &'static NSString;
+}
+
+extern "C" {
+    static NSShortMonthNameArray: &'static NSString;
+}
+
+extern "C" {
+    static NSTimeFormatString: &'static NSString;
+}
+
+extern "C" {
+    static NSDateFormatString: &'static NSString;
+}
+
+extern "C" {
+    static NSTimeDateFormatString: &'static NSString;
+}
+
+extern "C" {
+    static NSShortTimeDateFormatString: &'static NSString;
+}
+
+extern "C" {
+    static NSCurrencySymbol: &'static NSString;
+}
+
+extern "C" {
+    static NSDecimalSeparator: &'static NSString;
+}
+
+extern "C" {
+    static NSThousandsSeparator: &'static NSString;
+}
+
+extern "C" {
+    static NSDecimalDigits: &'static NSString;
+}
+
+extern "C" {
+    static NSAMPMDesignation: &'static NSString;
+}
+
+extern "C" {
+    static NSHourNameDesignations: &'static NSString;
+}
+
+extern "C" {
+    static NSYearMonthWeekDesignations: &'static NSString;
+}
+
+extern "C" {
+    static NSEarlierTimeDesignations: &'static NSString;
+}
+
+extern "C" {
+    static NSLaterTimeDesignations: &'static NSString;
+}
+
+extern "C" {
+    static NSThisDayDesignations: &'static NSString;
+}
+
+extern "C" {
+    static NSNextDayDesignations: &'static NSString;
+}
+
+extern "C" {
+    static NSNextNextDayDesignations: &'static NSString;
+}
+
+extern "C" {
+    static NSPriorDayDesignations: &'static NSString;
+}
+
+extern "C" {
+    static NSDateTimeOrdering: &'static NSString;
+}
+
+extern "C" {
+    static NSInternationalCurrencyString: &'static NSString;
+}
+
+extern "C" {
+    static NSShortDateFormatString: &'static NSString;
+}
+
+extern "C" {
+    static NSPositiveCurrencyFormatString: &'static NSString;
+}
+
+extern "C" {
+    static NSNegativeCurrencyFormatString: &'static NSString;
+}

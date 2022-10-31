@@ -7,6 +7,74 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSTextListMarkerFormat = NSString;
 
+extern "C" {
+    static NSTextListMarkerBox: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerCheck: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerCircle: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerDiamond: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerDisc: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerHyphen: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerSquare: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerLowercaseHexadecimal: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerUppercaseHexadecimal: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerOctal: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerLowercaseAlpha: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerUppercaseAlpha: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerLowercaseLatin: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerUppercaseLatin: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerLowercaseRoman: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerUppercaseRoman: &'static NSTextListMarkerFormat;
+}
+
+extern "C" {
+    static NSTextListMarkerDecimal: &'static NSTextListMarkerFormat;
+}
+
 pub type NSTextListOptions = NSUInteger;
 pub const NSTextListPrependEnclosingMarker: NSTextListOptions = (1 << 0);
 

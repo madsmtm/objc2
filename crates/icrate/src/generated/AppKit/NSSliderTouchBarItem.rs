@@ -7,6 +7,14 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSSliderAccessoryWidth = CGFloat;
 
+extern "C" {
+    static NSSliderAccessoryWidthDefault: NSSliderAccessoryWidth;
+}
+
+extern "C" {
+    static NSSliderAccessoryWidthWide: NSSliderAccessoryWidth;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSliderTouchBarItem;

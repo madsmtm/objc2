@@ -101,3 +101,19 @@ extern_methods!(
         ) -> Id<NSArray<NSColorSpace>, Shared>;
     }
 );
+
+static NSUnknownColorSpaceModel: NSColorSpaceModel = NSColorSpaceModelUnknown;
+
+static NSGrayColorSpaceModel: NSColorSpaceModel = NSColorSpaceModelGray;
+
+static NSRGBColorSpaceModel: NSColorSpaceModel = NSColorSpaceModelRGB;
+
+static NSCMYKColorSpaceModel: NSColorSpaceModel = NSColorSpaceModelCMYK;
+
+static NSLABColorSpaceModel: NSColorSpaceModel = NSColorSpaceModelLAB;
+
+static NSDeviceNColorSpaceModel: NSColorSpaceModel = NSColorSpaceModelDeviceN;
+
+static NSIndexedColorSpaceModel: NSColorSpaceModel = NSColorSpaceModelIndexed;
+
+static NSPatternColorSpaceModel: NSColorSpaceModel = NSColorSpaceModelPatterned;

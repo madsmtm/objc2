@@ -9,6 +9,70 @@ pub type NSHTTPCookiePropertyKey = NSString;
 
 pub type NSHTTPCookieStringPolicy = NSString;
 
+extern "C" {
+    static NSHTTPCookieName: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieValue: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieOriginURL: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieVersion: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieDomain: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookiePath: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieSecure: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieExpires: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieComment: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieCommentURL: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieDiscard: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieMaximumAge: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookiePort: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieSameSitePolicy: &'static NSHTTPCookiePropertyKey;
+}
+
+extern "C" {
+    static NSHTTPCookieSameSiteLax: &'static NSHTTPCookieStringPolicy;
+}
+
+extern "C" {
+    static NSHTTPCookieSameSiteStrict: &'static NSHTTPCookieStringPolicy;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSHTTPCookie;

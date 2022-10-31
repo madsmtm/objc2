@@ -329,3 +329,27 @@ extern_methods!(
         pub unsafe fn appendBezierPathWithPackedGlyphs(&self, packedGlyphs: NonNull<c_char>);
     }
 );
+
+static NSButtLineCapStyle: NSLineCapStyle = NSLineCapStyleButt;
+
+static NSRoundLineCapStyle: NSLineCapStyle = NSLineCapStyleRound;
+
+static NSSquareLineCapStyle: NSLineCapStyle = NSLineCapStyleSquare;
+
+static NSMiterLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleMiter;
+
+static NSRoundLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleRound;
+
+static NSBevelLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleBevel;
+
+static NSNonZeroWindingRule: NSWindingRule = NSWindingRuleNonZero;
+
+static NSEvenOddWindingRule: NSWindingRule = NSWindingRuleEvenOdd;
+
+static NSMoveToBezierPathElement: NSBezierPathElement = NSBezierPathElementMoveTo;
+
+static NSLineToBezierPathElement: NSBezierPathElement = NSBezierPathElementLineTo;
+
+static NSCurveToBezierPathElement: NSBezierPathElement = NSBezierPathElementCurveTo;
+
+static NSClosePathBezierPathElement: NSBezierPathElement = NSBezierPathElementClosePath;

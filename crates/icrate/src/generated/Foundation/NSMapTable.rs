@@ -5,6 +5,17 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSMapTableStrongMemory: NSPointerFunctionsOptions = NSPointerFunctionsStrongMemory;
+
+static NSMapTableZeroingWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsZeroingWeakMemory;
+
+static NSMapTableCopyIn: NSPointerFunctionsOptions = NSPointerFunctionsCopyIn;
+
+static NSMapTableObjectPointerPersonality: NSPointerFunctionsOptions =
+    NSPointerFunctionsObjectPointerPersonality;
+
+static NSMapTableWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsWeakMemory;
+
 pub type NSMapTableOptions = NSUInteger;
 
 __inner_extern_class!(
@@ -102,3 +113,55 @@ extern_methods!(
         ) -> Id<NSDictionary<KeyType, ObjectType>, Shared>;
     }
 );
+
+extern "C" {
+    static NSIntegerMapKeyCallBacks: NSMapTableKeyCallBacks;
+}
+
+extern "C" {
+    static NSNonOwnedPointerMapKeyCallBacks: NSMapTableKeyCallBacks;
+}
+
+extern "C" {
+    static NSNonOwnedPointerOrNullMapKeyCallBacks: NSMapTableKeyCallBacks;
+}
+
+extern "C" {
+    static NSNonRetainedObjectMapKeyCallBacks: NSMapTableKeyCallBacks;
+}
+
+extern "C" {
+    static NSObjectMapKeyCallBacks: NSMapTableKeyCallBacks;
+}
+
+extern "C" {
+    static NSOwnedPointerMapKeyCallBacks: NSMapTableKeyCallBacks;
+}
+
+extern "C" {
+    static NSIntMapKeyCallBacks: NSMapTableKeyCallBacks;
+}
+
+extern "C" {
+    static NSIntegerMapValueCallBacks: NSMapTableValueCallBacks;
+}
+
+extern "C" {
+    static NSNonOwnedPointerMapValueCallBacks: NSMapTableValueCallBacks;
+}
+
+extern "C" {
+    static NSObjectMapValueCallBacks: NSMapTableValueCallBacks;
+}
+
+extern "C" {
+    static NSNonRetainedObjectMapValueCallBacks: NSMapTableValueCallBacks;
+}
+
+extern "C" {
+    static NSOwnedPointerMapValueCallBacks: NSMapTableValueCallBacks;
+}
+
+extern "C" {
+    static NSIntMapValueCallBacks: NSMapTableValueCallBacks;
+}

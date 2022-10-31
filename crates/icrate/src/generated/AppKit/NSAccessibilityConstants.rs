@@ -5,11 +5,401 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSAccessibilityErrorCodeExceptionInfo: &'static NSString;
+}
+
 pub type NSAccessibilityAttributeName = NSString;
+
+extern "C" {
+    static NSAccessibilityRoleAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRoleDescriptionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySubroleAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityHelpAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityValueAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMinValueAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMaxValueAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityEnabledAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityFocusedAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityParentAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityChildrenAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityWindowAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityTopLevelUIElementAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedChildrenAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityVisibleChildrenAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityPositionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySizeAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityContentsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityTitleAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityDescriptionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityShownMenuAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityValueDescriptionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySharedFocusElementsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityPreviousContentsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityNextContentsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityHeaderAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityEditedAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityTabsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityHorizontalScrollBarAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityVerticalScrollBarAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityOverflowButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityIncrementButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityDecrementButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityFilenameAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityExpandedAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySplittersAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityDocumentAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityActivationPointAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityURLAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityIndexAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRowCountAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityColumnCountAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityOrderedByRowAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityWarningValueAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityCriticalValueAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityPlaceholderValueAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityContainsProtectedContentAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityAlternateUIVisibleAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRequiredAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityTitleUIElementAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityServesAsTitleForUIElementsAttribute:
+        &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityLinkedUIElementsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedTextAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedTextRangeAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityNumberOfCharactersAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityVisibleCharacterRangeAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySharedTextUIElementsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySharedCharacterRangeAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityInsertionPointLineNumberAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedTextRangesAttribute: &'static NSAccessibilityAttributeName;
+}
 
 pub type NSAccessibilityParameterizedAttributeName = NSString;
 
+extern "C" {
+    static NSAccessibilityLineForIndexParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRangeForLineParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityStringForRangeParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRangeForPositionParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRangeForIndexParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityBoundsForRangeParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRTFForRangeParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityStyleRangeForIndexParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityAttributedStringForRangeParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityFontTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityForegroundColorTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityBackgroundColorTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityUnderlineColorTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityStrikethroughColorTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityUnderlineTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilitySuperscriptTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityStrikethroughTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityShadowTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityAttachmentTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityLinkTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityAutocorrectedTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityTextAlignmentAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityListItemPrefixTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityListItemIndexTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityListItemLevelTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityMisspelledTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityMarkedMisspelledTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityLanguageTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityCustomTextAttribute: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAccessibilityAnnotationTextAttribute: &'static NSAttributedStringKey;
+}
+
 pub type NSAccessibilityAnnotationAttributeKey = NSString;
+
+extern "C" {
+    static NSAccessibilityAnnotationLabel: &'static NSAccessibilityAnnotationAttributeKey;
+}
+
+extern "C" {
+    static NSAccessibilityAnnotationElement: &'static NSAccessibilityAnnotationAttributeKey;
+}
+
+extern "C" {
+    static NSAccessibilityAnnotationLocation: &'static NSAccessibilityAnnotationAttributeKey;
+}
 
 pub type NSAccessibilityAnnotationPosition = NSInteger;
 pub const NSAccessibilityAnnotationPositionFullRange: NSAccessibilityAnnotationPosition = 0;
@@ -18,21 +408,361 @@ pub const NSAccessibilityAnnotationPositionEnd: NSAccessibilityAnnotationPositio
 
 pub type NSAccessibilityFontAttributeKey = NSString;
 
+extern "C" {
+    static NSAccessibilityFontNameKey: &'static NSAccessibilityFontAttributeKey;
+}
+
+extern "C" {
+    static NSAccessibilityFontFamilyKey: &'static NSAccessibilityFontAttributeKey;
+}
+
+extern "C" {
+    static NSAccessibilityVisibleNameKey: &'static NSAccessibilityFontAttributeKey;
+}
+
+extern "C" {
+    static NSAccessibilityFontSizeKey: &'static NSAccessibilityFontAttributeKey;
+}
+
+extern "C" {
+    static NSAccessibilityMainAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMinimizedAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityCloseButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityZoomButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMinimizeButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityToolbarButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityProxyAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityGrowAreaAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityModalAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityDefaultButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityCancelButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityFullScreenButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMenuBarAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityWindowsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityFrontmostAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityHiddenAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMainWindowAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityFocusedWindowAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityFocusedUIElementAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityExtrasMenuBarAttribute: &'static NSAccessibilityAttributeName;
+}
+
 pub type NSAccessibilityOrientation = NSInteger;
 pub const NSAccessibilityOrientationUnknown: NSAccessibilityOrientation = 0;
 pub const NSAccessibilityOrientationVertical: NSAccessibilityOrientation = 1;
 pub const NSAccessibilityOrientationHorizontal: NSAccessibilityOrientation = 2;
 
+extern "C" {
+    static NSAccessibilityOrientationAttribute: &'static NSAccessibilityAttributeName;
+}
+
 pub type NSAccessibilityOrientationValue = NSString;
 
+extern "C" {
+    static NSAccessibilityVerticalOrientationValue: &'static NSAccessibilityOrientationValue;
+}
+
+extern "C" {
+    static NSAccessibilityHorizontalOrientationValue: &'static NSAccessibilityOrientationValue;
+}
+
+extern "C" {
+    static NSAccessibilityUnknownOrientationValue: &'static NSAccessibilityOrientationValue;
+}
+
+extern "C" {
+    static NSAccessibilityColumnTitlesAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySearchButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySearchMenuAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityClearButtonAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRowsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityVisibleRowsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedRowsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityColumnsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityVisibleColumnsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedColumnsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySortDirectionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedCellsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityVisibleCellsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRowHeaderUIElementsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityColumnHeaderUIElementsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityCellForColumnAndRowParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityRowIndexRangeAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityColumnIndexRangeAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityHorizontalUnitsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityVerticalUnitsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityHorizontalUnitDescriptionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityVerticalUnitDescriptionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityLayoutPointForScreenPointParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityLayoutSizeForScreenSizeParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityScreenPointForLayoutPointParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityScreenSizeForLayoutSizeParameterizedAttribute:
+        &'static NSAccessibilityParameterizedAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityHandlesAttribute: &'static NSAccessibilityAttributeName;
+}
+
 pub type NSAccessibilitySortDirectionValue = NSString;
+
+extern "C" {
+    static NSAccessibilityAscendingSortDirectionValue: &'static NSAccessibilitySortDirectionValue;
+}
+
+extern "C" {
+    static NSAccessibilityDescendingSortDirectionValue: &'static NSAccessibilitySortDirectionValue;
+}
+
+extern "C" {
+    static NSAccessibilityUnknownSortDirectionValue: &'static NSAccessibilitySortDirectionValue;
+}
 
 pub type NSAccessibilitySortDirection = NSInteger;
 pub const NSAccessibilitySortDirectionUnknown: NSAccessibilitySortDirection = 0;
 pub const NSAccessibilitySortDirectionAscending: NSAccessibilitySortDirection = 1;
 pub const NSAccessibilitySortDirectionDescending: NSAccessibilitySortDirection = 2;
 
+extern "C" {
+    static NSAccessibilityDisclosingAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityDisclosedRowsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityDisclosedByRowAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityDisclosureLevelAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityAllowedValuesAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityLabelUIElementsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityLabelValueAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMatteHoleAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMatteContentUIElementAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMarkerUIElementsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMarkerValuesAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMarkerGroupUIElementAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityUnitsAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityUnitDescriptionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMarkerTypeAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityMarkerTypeDescriptionAttribute: &'static NSAccessibilityAttributeName;
+}
+
+extern "C" {
+    static NSAccessibilityIdentifierAttribute: &'static NSAccessibilityAttributeName;
+}
+
 pub type NSAccessibilityRulerMarkerTypeValue = NSString;
+
+extern "C" {
+    static NSAccessibilityLeftTabStopMarkerTypeValue: &'static NSAccessibilityRulerMarkerTypeValue;
+}
+
+extern "C" {
+    static NSAccessibilityRightTabStopMarkerTypeValue: &'static NSAccessibilityRulerMarkerTypeValue;
+}
+
+extern "C" {
+    static NSAccessibilityCenterTabStopMarkerTypeValue:
+        &'static NSAccessibilityRulerMarkerTypeValue;
+}
+
+extern "C" {
+    static NSAccessibilityDecimalTabStopMarkerTypeValue:
+        &'static NSAccessibilityRulerMarkerTypeValue;
+}
+
+extern "C" {
+    static NSAccessibilityHeadIndentMarkerTypeValue: &'static NSAccessibilityRulerMarkerTypeValue;
+}
+
+extern "C" {
+    static NSAccessibilityTailIndentMarkerTypeValue: &'static NSAccessibilityRulerMarkerTypeValue;
+}
+
+extern "C" {
+    static NSAccessibilityFirstLineIndentMarkerTypeValue:
+        &'static NSAccessibilityRulerMarkerTypeValue;
+}
+
+extern "C" {
+    static NSAccessibilityUnknownMarkerTypeValue: &'static NSAccessibilityRulerMarkerTypeValue;
+}
 
 pub type NSAccessibilityRulerMarkerType = NSInteger;
 pub const NSAccessibilityRulerMarkerTypeUnknown: NSAccessibilityRulerMarkerType = 0;
@@ -46,6 +776,26 @@ pub const NSAccessibilityRulerMarkerTypeIndentFirstLine: NSAccessibilityRulerMar
 
 pub type NSAccessibilityRulerUnitValue = NSString;
 
+extern "C" {
+    static NSAccessibilityInchesUnitValue: &'static NSAccessibilityRulerUnitValue;
+}
+
+extern "C" {
+    static NSAccessibilityCentimetersUnitValue: &'static NSAccessibilityRulerUnitValue;
+}
+
+extern "C" {
+    static NSAccessibilityPointsUnitValue: &'static NSAccessibilityRulerUnitValue;
+}
+
+extern "C" {
+    static NSAccessibilityPicasUnitValue: &'static NSAccessibilityRulerUnitValue;
+}
+
+extern "C" {
+    static NSAccessibilityUnknownUnitValue: &'static NSAccessibilityRulerUnitValue;
+}
+
 pub type NSAccessibilityUnits = NSInteger;
 pub const NSAccessibilityUnitsUnknown: NSAccessibilityUnits = 0;
 pub const NSAccessibilityUnitsInches: NSAccessibilityUnits = 1;
@@ -55,13 +805,563 @@ pub const NSAccessibilityUnitsPicas: NSAccessibilityUnits = 4;
 
 pub type NSAccessibilityActionName = NSString;
 
+extern "C" {
+    static NSAccessibilityPressAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityIncrementAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityDecrementAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityConfirmAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityPickAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityCancelAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityRaiseAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityShowMenuAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityDeleteAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityShowAlternateUIAction: &'static NSAccessibilityActionName;
+}
+
+extern "C" {
+    static NSAccessibilityShowDefaultUIAction: &'static NSAccessibilityActionName;
+}
+
 pub type NSAccessibilityNotificationName = NSString;
+
+extern "C" {
+    static NSAccessibilityMainWindowChangedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityFocusedWindowChangedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityFocusedUIElementChangedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityApplicationActivatedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityApplicationDeactivatedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityApplicationHiddenNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityApplicationShownNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityWindowCreatedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityWindowMovedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityWindowResizedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityWindowMiniaturizedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityWindowDeminiaturizedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityDrawerCreatedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilitySheetCreatedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityUIElementDestroyedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityValueChangedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityTitleChangedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityResizedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityMovedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityCreatedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityLayoutChangedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityHelpTagCreatedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedTextChangedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityRowCountChangedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedChildrenChangedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedRowsChangedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedColumnsChangedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityRowExpandedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityRowCollapsedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedCellsChangedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityUnitsChangedNotification: &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilitySelectedChildrenMovedNotification:
+        &'static NSAccessibilityNotificationName;
+}
+
+extern "C" {
+    static NSAccessibilityAnnouncementRequestedNotification:
+        &'static NSAccessibilityNotificationName;
+}
 
 pub type NSAccessibilityRole = NSString;
 
+extern "C" {
+    static NSAccessibilityUnknownRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityButtonRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityRadioButtonRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityCheckBoxRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilitySliderRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityTabGroupRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityTextFieldRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityStaticTextRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityTextAreaRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityScrollAreaRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityPopUpButtonRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityMenuButtonRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityTableRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityApplicationRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityGroupRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityRadioGroupRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityListRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityScrollBarRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityValueIndicatorRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityImageRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityMenuBarRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityMenuBarItemRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityMenuRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityMenuItemRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityColumnRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityRowRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityToolbarRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityBusyIndicatorRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityProgressIndicatorRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityWindowRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityDrawerRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilitySystemWideRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityOutlineRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityIncrementorRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityBrowserRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityComboBoxRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilitySplitGroupRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilitySplitterRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityColorWellRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityGrowAreaRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilitySheetRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityHelpTagRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityMatteRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityRulerRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityRulerMarkerRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityLinkRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityDisclosureTriangleRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityGridRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityRelevanceIndicatorRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityLevelIndicatorRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityCellRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityPopoverRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityPageRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityLayoutAreaRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityLayoutItemRole: &'static NSAccessibilityRole;
+}
+
+extern "C" {
+    static NSAccessibilityHandleRole: &'static NSAccessibilityRole;
+}
+
 pub type NSAccessibilitySubrole = NSString;
 
+extern "C" {
+    static NSAccessibilityUnknownSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityCloseButtonSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityZoomButtonSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityMinimizeButtonSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityToolbarButtonSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityTableRowSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityOutlineRowSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilitySecureTextFieldSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityStandardWindowSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityDialogSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilitySystemDialogSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityFloatingWindowSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilitySystemFloatingWindowSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityIncrementArrowSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityDecrementArrowSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityIncrementPageSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityDecrementPageSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilitySearchFieldSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityTextAttachmentSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityTextLinkSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityTimelineSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilitySortButtonSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityRatingIndicatorSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityContentListSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityDefinitionListSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityFullScreenButtonSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityToggleSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilitySwitchSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityDescriptionListSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityTabButtonSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilityCollectionListSubrole: &'static NSAccessibilitySubrole;
+}
+
+extern "C" {
+    static NSAccessibilitySectionListSubrole: &'static NSAccessibilitySubrole;
+}
+
 pub type NSAccessibilityNotificationUserInfoKey = NSString;
+
+extern "C" {
+    static NSAccessibilityUIElementsKey: &'static NSAccessibilityNotificationUserInfoKey;
+}
+
+extern "C" {
+    static NSAccessibilityPriorityKey: &'static NSAccessibilityNotificationUserInfoKey;
+}
+
+extern "C" {
+    static NSAccessibilityAnnouncementKey: &'static NSAccessibilityNotificationUserInfoKey;
+}
 
 pub type NSAccessibilityPriorityLevel = NSInteger;
 pub const NSAccessibilityPriorityLow: NSAccessibilityPriorityLevel = 10;
@@ -69,3 +1369,7 @@ pub const NSAccessibilityPriorityMedium: NSAccessibilityPriorityLevel = 50;
 pub const NSAccessibilityPriorityHigh: NSAccessibilityPriorityLevel = 90;
 
 pub type NSAccessibilityLoadingToken = TodoProtocols;
+
+extern "C" {
+    static NSAccessibilitySortButtonRole: &'static NSAccessibilityRole;
+}

@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSURLSessionTransferSizeUnknown: int64_t;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLSession;
@@ -321,6 +325,18 @@ extern_methods!(
         pub unsafe fn new() -> Id<Self, Shared>;
     }
 );
+
+extern "C" {
+    static NSURLSessionTaskPriorityDefault: c_float;
+}
+
+extern "C" {
+    static NSURLSessionTaskPriorityLow: c_float;
+}
+
+extern "C" {
+    static NSURLSessionTaskPriorityHigh: c_float;
+}
 
 extern_class!(
     #[derive(Debug)]
@@ -814,6 +830,10 @@ pub type NSURLSessionDownloadDelegate = NSObject;
 pub type NSURLSessionStreamDelegate = NSObject;
 
 pub type NSURLSessionWebSocketDelegate = NSObject;
+
+extern "C" {
+    static NSURLSessionDownloadTaskResumeData: &'static NSString;
+}
 
 extern_methods!(
     /// NSURLSessionDeprecated

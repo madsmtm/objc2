@@ -147,6 +147,14 @@ extern_methods!(
 
 pub type NSToolbarDelegate = NSObject;
 
+extern "C" {
+    static NSToolbarWillAddItemNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSToolbarDidRemoveItemNotification: &'static NSNotificationName;
+}
+
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSToolbar {

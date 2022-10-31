@@ -15,6 +15,10 @@ pub type NSPrintRenderingQuality = NSInteger;
 pub const NSPrintRenderingQualityBest: NSPrintRenderingQuality = 0;
 pub const NSPrintRenderingQualityResponsive: NSPrintRenderingQuality = 1;
 
+extern "C" {
+    static NSPrintOperationExistsException: &'static NSExceptionName;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPrintOperation;

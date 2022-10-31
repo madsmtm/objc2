@@ -7,6 +7,10 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSDistributedNotificationCenterType = NSString;
 
+extern "C" {
+    static NSLocalNotificationCenterType: &'static NSDistributedNotificationCenterType;
+}
+
 pub type NSNotificationSuspensionBehavior = NSUInteger;
 pub const NSNotificationSuspensionBehaviorDrop: NSNotificationSuspensionBehavior = 1;
 pub const NSNotificationSuspensionBehaviorCoalesce: NSNotificationSuspensionBehavior = 2;
@@ -16,6 +20,12 @@ pub const NSNotificationSuspensionBehaviorDeliverImmediately: NSNotificationSusp
 pub type NSDistributedNotificationOptions = NSUInteger;
 pub const NSDistributedNotificationDeliverImmediately: NSDistributedNotificationOptions = (1 << 0);
 pub const NSDistributedNotificationPostToAllSessions: NSDistributedNotificationOptions = (1 << 1);
+
+static NSNotificationDeliverImmediately: NSDistributedNotificationOptions =
+    NSDistributedNotificationDeliverImmediately;
+
+static NSNotificationPostToAllSessions: NSDistributedNotificationOptions =
+    NSDistributedNotificationPostToAllSessions;
 
 extern_class!(
     #[derive(Debug)]

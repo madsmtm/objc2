@@ -198,6 +198,22 @@ pub const NSInlinePresentationIntentLineBreak: NSInlinePresentationIntent = 1 <<
 pub const NSInlinePresentationIntentInlineHTML: NSInlinePresentationIntent = 1 << 8;
 pub const NSInlinePresentationIntentBlockHTML: NSInlinePresentationIntent = 1 << 9;
 
+extern "C" {
+    static NSInlinePresentationIntentAttributeName: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSAlternateDescriptionAttributeName: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSImageURLAttributeName: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSLanguageIdentifierAttributeName: &'static NSAttributedStringKey;
+}
+
 pub type NSAttributedStringMarkdownParsingFailurePolicy = NSInteger;
 pub const NSAttributedStringMarkdownParsingFailureReturnError:
     NSAttributedStringMarkdownParsingFailurePolicy = 0;
@@ -312,6 +328,10 @@ extern_methods!(
     unsafe impl NSMutableAttributedString {}
 );
 
+extern "C" {
+    static NSReplacementIndexAttributeName: &'static NSAttributedStringKey;
+}
+
 extern_methods!(
     /// NSMorphology
     unsafe impl NSAttributedString {
@@ -319,6 +339,22 @@ extern_methods!(
         pub unsafe fn attributedStringByInflectingString(&self) -> Id<NSAttributedString, Shared>;
     }
 );
+
+extern "C" {
+    static NSMorphologyAttributeName: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSInflectionRuleAttributeName: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSInflectionAlternativeAttributeName: &'static NSAttributedStringKey;
+}
+
+extern "C" {
+    static NSPresentationIntentAttributeName: &'static NSAttributedStringKey;
+}
 
 pub type NSPresentationIntentKind = NSInteger;
 pub const NSPresentationIntentKindParagraph: NSPresentationIntentKind = 0;

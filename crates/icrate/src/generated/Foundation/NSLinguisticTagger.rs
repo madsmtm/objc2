@@ -7,7 +7,159 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSLinguisticTagScheme = NSString;
 
+extern "C" {
+    static NSLinguisticTagSchemeTokenType: &'static NSLinguisticTagScheme;
+}
+
+extern "C" {
+    static NSLinguisticTagSchemeLexicalClass: &'static NSLinguisticTagScheme;
+}
+
+extern "C" {
+    static NSLinguisticTagSchemeNameType: &'static NSLinguisticTagScheme;
+}
+
+extern "C" {
+    static NSLinguisticTagSchemeNameTypeOrLexicalClass: &'static NSLinguisticTagScheme;
+}
+
+extern "C" {
+    static NSLinguisticTagSchemeLemma: &'static NSLinguisticTagScheme;
+}
+
+extern "C" {
+    static NSLinguisticTagSchemeLanguage: &'static NSLinguisticTagScheme;
+}
+
+extern "C" {
+    static NSLinguisticTagSchemeScript: &'static NSLinguisticTagScheme;
+}
+
 pub type NSLinguisticTag = NSString;
+
+extern "C" {
+    static NSLinguisticTagWord: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagPunctuation: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagWhitespace: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagOther: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagNoun: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagVerb: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagAdjective: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagAdverb: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagPronoun: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagDeterminer: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagParticle: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagPreposition: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagNumber: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagConjunction: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagInterjection: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagClassifier: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagIdiom: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagOtherWord: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagSentenceTerminator: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagOpenQuote: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagCloseQuote: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagOpenParenthesis: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagCloseParenthesis: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagWordJoiner: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagDash: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagOtherPunctuation: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagParagraphBreak: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagOtherWhitespace: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagPersonalName: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagPlaceName: &'static NSLinguisticTag;
+}
+
+extern "C" {
+    static NSLinguisticTagOrganizationName: &'static NSLinguisticTag;
+}
 
 pub type NSLinguisticTaggerUnit = NSInteger;
 pub const NSLinguisticTaggerUnitWord: NSLinguisticTaggerUnit = 0;

@@ -59,3 +59,9 @@ extern_methods!(
 );
 
 pub type NSTokenFieldCellDelegate = NSObject;
+
+static NSDefaultTokenStyle: NSTokenStyle = NSTokenStyleDefault;
+
+static NSPlainTextTokenStyle: NSTokenStyle = NSTokenStyleNone;
+
+static NSRoundedTokenStyle: NSTokenStyle = NSTokenStyleRounded;

@@ -136,6 +136,10 @@ extern_methods!(
     }
 );
 
+extern "C" {
+    static NSItemProviderPreferredImageSizeKey: &'static NSString;
+}
+
 extern_methods!(
     /// NSPreviewSupport
     unsafe impl NSItemProvider {
@@ -153,6 +157,18 @@ extern_methods!(
         );
     }
 );
+
+extern "C" {
+    static NSExtensionJavaScriptPreprocessingResultsKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSExtensionJavaScriptFinalizeArgumentKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSItemProviderErrorDomain: &'static NSString;
+}
 
 pub type NSItemProviderErrorCode = NSInteger;
 pub const NSItemProviderUnknownError: NSItemProviderErrorCode = -1;

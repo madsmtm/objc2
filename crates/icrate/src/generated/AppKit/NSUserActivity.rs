@@ -34,3 +34,7 @@ extern_methods!(
         pub unsafe fn updateUserActivityState(&self, activity: &NSUserActivity);
     }
 );
+
+extern "C" {
+    static NSUserActivityDocumentURLKey: &'static NSString;
+}

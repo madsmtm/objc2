@@ -33,3 +33,23 @@ extern_methods!(
         pub unsafe fn openURL_completionHandler(&self, URL: &NSURL, completionHandler: TodoBlock);
     }
 );
+
+extern "C" {
+    static NSExtensionItemsAndErrorsKey: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSExtensionHostWillEnterForegroundNotification: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSExtensionHostDidEnterBackgroundNotification: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSExtensionHostWillResignActiveNotification: Option<&'static NSString>;
+}
+
+extern "C" {
+    static NSExtensionHostDidBecomeActiveNotification: Option<&'static NSString>;
+}

@@ -5,6 +5,14 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSNetServicesErrorCode: &'static NSString;
+}
+
+extern "C" {
+    static NSNetServicesErrorDomain: &'static NSErrorDomain;
+}
+
 pub type NSNetServicesError = NSInteger;
 pub const NSNetServicesUnknownError: NSNetServicesError = -72000;
 pub const NSNetServicesCollisionError: NSNetServicesError = -72001;

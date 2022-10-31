@@ -5,6 +5,14 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+extern "C" {
+    static NSDefaultRunLoopMode: &'static NSRunLoopMode;
+}
+
+extern "C" {
+    static NSRunLoopCommonModes: &'static NSRunLoopMode;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSRunLoop;

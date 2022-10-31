@@ -118,3 +118,19 @@ extern_methods!(
 );
 
 pub type NSDrawerDelegate = NSObject;
+
+extern "C" {
+    static NSDrawerWillOpenNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSDrawerDidOpenNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSDrawerWillCloseNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSDrawerDidCloseNotification: &'static NSNotificationName;
+}

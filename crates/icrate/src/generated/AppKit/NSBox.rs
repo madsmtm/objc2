@@ -126,3 +126,7 @@ extern_methods!(
         pub unsafe fn setTitleWithMnemonic(&self, stringWithAmpersand: Option<&NSString>);
     }
 );
+
+static NSBoxSecondary: NSBoxType = 1;
+
+static NSBoxOldStyle: NSBoxType = 3;

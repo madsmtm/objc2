@@ -77,6 +77,14 @@ extern_methods!(
 
 pub type NSTextStorageDelegate = NSObject;
 
+extern "C" {
+    static NSTextStorageWillProcessEditingNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSTextStorageDidProcessEditingNotification: &'static NSNotificationName;
+}
+
 pub type NSTextStorageObserving = NSObject;
 
 pub type NSTextStorageEditedOptions = NSUInteger;

@@ -18,3 +18,19 @@ extern_methods!(
         pub unsafe fn preferredPresentationSize(&self) -> NSSize;
     }
 );
+
+extern "C" {
+    static NSTypeIdentifierDateText: &'static NSString;
+}
+
+extern "C" {
+    static NSTypeIdentifierAddressText: &'static NSString;
+}
+
+extern "C" {
+    static NSTypeIdentifierPhoneNumberText: &'static NSString;
+}
+
+extern "C" {
+    static NSTypeIdentifierTransitInformationText: &'static NSString;
+}

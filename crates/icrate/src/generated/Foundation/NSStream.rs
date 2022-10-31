@@ -228,10 +228,106 @@ extern_methods!(
 
 pub type NSStreamDelegate = NSObject;
 
+extern "C" {
+    static NSStreamSocketSecurityLevelKey: &'static NSStreamPropertyKey;
+}
+
 pub type NSStreamSocketSecurityLevel = NSString;
+
+extern "C" {
+    static NSStreamSocketSecurityLevelNone: &'static NSStreamSocketSecurityLevel;
+}
+
+extern "C" {
+    static NSStreamSocketSecurityLevelSSLv2: &'static NSStreamSocketSecurityLevel;
+}
+
+extern "C" {
+    static NSStreamSocketSecurityLevelSSLv3: &'static NSStreamSocketSecurityLevel;
+}
+
+extern "C" {
+    static NSStreamSocketSecurityLevelTLSv1: &'static NSStreamSocketSecurityLevel;
+}
+
+extern "C" {
+    static NSStreamSocketSecurityLevelNegotiatedSSL: &'static NSStreamSocketSecurityLevel;
+}
+
+extern "C" {
+    static NSStreamSOCKSProxyConfigurationKey: &'static NSStreamPropertyKey;
+}
 
 pub type NSStreamSOCKSProxyConfiguration = NSString;
 
+extern "C" {
+    static NSStreamSOCKSProxyHostKey: &'static NSStreamSOCKSProxyConfiguration;
+}
+
+extern "C" {
+    static NSStreamSOCKSProxyPortKey: &'static NSStreamSOCKSProxyConfiguration;
+}
+
+extern "C" {
+    static NSStreamSOCKSProxyVersionKey: &'static NSStreamSOCKSProxyConfiguration;
+}
+
+extern "C" {
+    static NSStreamSOCKSProxyUserKey: &'static NSStreamSOCKSProxyConfiguration;
+}
+
+extern "C" {
+    static NSStreamSOCKSProxyPasswordKey: &'static NSStreamSOCKSProxyConfiguration;
+}
+
 pub type NSStreamSOCKSProxyVersion = NSString;
 
+extern "C" {
+    static NSStreamSOCKSProxyVersion4: &'static NSStreamSOCKSProxyVersion;
+}
+
+extern "C" {
+    static NSStreamSOCKSProxyVersion5: &'static NSStreamSOCKSProxyVersion;
+}
+
+extern "C" {
+    static NSStreamDataWrittenToMemoryStreamKey: &'static NSStreamPropertyKey;
+}
+
+extern "C" {
+    static NSStreamFileCurrentOffsetKey: &'static NSStreamPropertyKey;
+}
+
+extern "C" {
+    static NSStreamSocketSSLErrorDomain: &'static NSErrorDomain;
+}
+
+extern "C" {
+    static NSStreamSOCKSErrorDomain: &'static NSErrorDomain;
+}
+
+extern "C" {
+    static NSStreamNetworkServiceType: &'static NSStreamPropertyKey;
+}
+
 pub type NSStreamNetworkServiceTypeValue = NSString;
+
+extern "C" {
+    static NSStreamNetworkServiceTypeVoIP: &'static NSStreamNetworkServiceTypeValue;
+}
+
+extern "C" {
+    static NSStreamNetworkServiceTypeVideo: &'static NSStreamNetworkServiceTypeValue;
+}
+
+extern "C" {
+    static NSStreamNetworkServiceTypeBackground: &'static NSStreamNetworkServiceTypeValue;
+}
+
+extern "C" {
+    static NSStreamNetworkServiceTypeVoice: &'static NSStreamNetworkServiceTypeValue;
+}
+
+extern "C" {
+    static NSStreamNetworkServiceTypeCallSignaling: &'static NSStreamNetworkServiceTypeValue;
+}

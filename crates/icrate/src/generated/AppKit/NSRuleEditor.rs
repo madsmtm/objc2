@@ -7,6 +7,34 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSRuleEditorPredicatePartKey = NSString;
 
+extern "C" {
+    static NSRuleEditorPredicateLeftExpression: &'static NSRuleEditorPredicatePartKey;
+}
+
+extern "C" {
+    static NSRuleEditorPredicateRightExpression: &'static NSRuleEditorPredicatePartKey;
+}
+
+extern "C" {
+    static NSRuleEditorPredicateComparisonModifier: &'static NSRuleEditorPredicatePartKey;
+}
+
+extern "C" {
+    static NSRuleEditorPredicateOptions: &'static NSRuleEditorPredicatePartKey;
+}
+
+extern "C" {
+    static NSRuleEditorPredicateOperatorType: &'static NSRuleEditorPredicatePartKey;
+}
+
+extern "C" {
+    static NSRuleEditorPredicateCustomSelector: &'static NSRuleEditorPredicatePartKey;
+}
+
+extern "C" {
+    static NSRuleEditorPredicateCompoundType: &'static NSRuleEditorPredicatePartKey;
+}
+
 pub type NSRuleEditorNestingMode = NSUInteger;
 pub const NSRuleEditorNestingModeSingle: NSRuleEditorNestingMode = 0;
 pub const NSRuleEditorNestingModeList: NSRuleEditorNestingMode = 1;
@@ -184,3 +212,7 @@ extern_methods!(
 );
 
 pub type NSRuleEditorDelegate = NSObject;
+
+extern "C" {
+    static NSRuleEditorRowsDidChangeNotification: &'static NSNotificationName;
+}

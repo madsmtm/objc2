@@ -4,3 +4,147 @@
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
+
+extern "C" {
+    static NSTextLineTooLongException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSTextNoSelectionException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSWordTablesWriteException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSWordTablesReadException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSTextReadException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSTextWriteException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSPasteboardCommunicationException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSPrintingCommunicationException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSAbortModalException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSAbortPrintingException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSIllegalSelectorException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSAppKitVirtualMemoryException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSBadRTFDirectiveException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSBadRTFFontTableException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSBadRTFStyleSheetException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSTypedStreamVersionException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSTIFFException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSPrintPackageException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSBadRTFColorTableException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSDraggingException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSColorListIOException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSColorListNotEditableException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSBadBitmapParametersException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSWindowServerCommunicationException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSFontUnavailableException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSPPDIncludeNotFoundException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSPPDParseException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSPPDIncludeStackOverflowException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSPPDIncludeStackUnderflowException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSRTFPropertyStackOverflowException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSAppKitIgnoredException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSBadComparisonException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSImageCacheException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSNibLoadingException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSBrowserIllegalDelegateException: &'static NSExceptionName;
+}
+
+extern "C" {
+    static NSAccessibilityException: &'static NSExceptionName;
+}

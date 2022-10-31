@@ -5,6 +5,18 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSHashTableStrongMemory: NSPointerFunctionsOptions = NSPointerFunctionsStrongMemory;
+
+static NSHashTableZeroingWeakMemory: NSPointerFunctionsOptions =
+    NSPointerFunctionsZeroingWeakMemory;
+
+static NSHashTableCopyIn: NSPointerFunctionsOptions = NSPointerFunctionsCopyIn;
+
+static NSHashTableObjectPointerPersonality: NSPointerFunctionsOptions =
+    NSPointerFunctionsObjectPointerPersonality;
+
+static NSHashTableWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsWeakMemory;
+
 pub type NSHashTableOptions = NSUInteger;
 
 __inner_extern_class!(
@@ -95,3 +107,35 @@ extern_methods!(
         pub unsafe fn setRepresentation(&self) -> Id<NSSet<ObjectType>, Shared>;
     }
 );
+
+extern "C" {
+    static NSIntegerHashCallBacks: NSHashTableCallBacks;
+}
+
+extern "C" {
+    static NSNonOwnedPointerHashCallBacks: NSHashTableCallBacks;
+}
+
+extern "C" {
+    static NSNonRetainedObjectHashCallBacks: NSHashTableCallBacks;
+}
+
+extern "C" {
+    static NSObjectHashCallBacks: NSHashTableCallBacks;
+}
+
+extern "C" {
+    static NSOwnedObjectIdentityHashCallBacks: NSHashTableCallBacks;
+}
+
+extern "C" {
+    static NSOwnedPointerHashCallBacks: NSHashTableCallBacks;
+}
+
+extern "C" {
+    static NSPointerToStructHashCallBacks: NSHashTableCallBacks;
+}
+
+extern "C" {
+    static NSIntHashCallBacks: NSHashTableCallBacks;
+}

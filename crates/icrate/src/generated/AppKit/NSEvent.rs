@@ -41,6 +41,52 @@ pub const NSEventTypePressure: NSEventType = 34;
 pub const NSEventTypeDirectTouch: NSEventType = 37;
 pub const NSEventTypeChangeMode: NSEventType = 38;
 
+static NSLeftMouseDown: NSEventType = NSEventTypeLeftMouseDown;
+
+static NSLeftMouseUp: NSEventType = NSEventTypeLeftMouseUp;
+
+static NSRightMouseDown: NSEventType = NSEventTypeRightMouseDown;
+
+static NSRightMouseUp: NSEventType = NSEventTypeRightMouseUp;
+
+static NSMouseMoved: NSEventType = NSEventTypeMouseMoved;
+
+static NSLeftMouseDragged: NSEventType = NSEventTypeLeftMouseDragged;
+
+static NSRightMouseDragged: NSEventType = NSEventTypeRightMouseDragged;
+
+static NSMouseEntered: NSEventType = NSEventTypeMouseEntered;
+
+static NSMouseExited: NSEventType = NSEventTypeMouseExited;
+
+static NSKeyDown: NSEventType = NSEventTypeKeyDown;
+
+static NSKeyUp: NSEventType = NSEventTypeKeyUp;
+
+static NSFlagsChanged: NSEventType = NSEventTypeFlagsChanged;
+
+static NSAppKitDefined: NSEventType = NSEventTypeAppKitDefined;
+
+static NSSystemDefined: NSEventType = NSEventTypeSystemDefined;
+
+static NSApplicationDefined: NSEventType = NSEventTypeApplicationDefined;
+
+static NSPeriodic: NSEventType = NSEventTypePeriodic;
+
+static NSCursorUpdate: NSEventType = NSEventTypeCursorUpdate;
+
+static NSScrollWheel: NSEventType = NSEventTypeScrollWheel;
+
+static NSTabletPoint: NSEventType = NSEventTypeTabletPoint;
+
+static NSTabletProximity: NSEventType = NSEventTypeTabletProximity;
+
+static NSOtherMouseDown: NSEventType = NSEventTypeOtherMouseDown;
+
+static NSOtherMouseUp: NSEventType = NSEventTypeOtherMouseUp;
+
+static NSOtherMouseDragged: NSEventType = NSEventTypeOtherMouseDragged;
+
 pub type NSEventMask = c_ulonglong;
 pub const NSEventMaskLeftMouseDown: NSEventMask = 1 << NSEventTypeLeftMouseDown;
 pub const NSEventMaskLeftMouseUp: NSEventMask = 1 << NSEventTypeLeftMouseUp;
@@ -77,6 +123,54 @@ pub const NSEventMaskDirectTouch: NSEventMask = 1 << NSEventTypeDirectTouch;
 pub const NSEventMaskChangeMode: NSEventMask = 1 << NSEventTypeChangeMode;
 pub const NSEventMaskAny: NSEventMask = 18446744073709551615;
 
+static NSLeftMouseDownMask: NSEventMask = NSEventMaskLeftMouseDown;
+
+static NSLeftMouseUpMask: NSEventMask = NSEventMaskLeftMouseUp;
+
+static NSRightMouseDownMask: NSEventMask = NSEventMaskRightMouseDown;
+
+static NSRightMouseUpMask: NSEventMask = NSEventMaskRightMouseUp;
+
+static NSMouseMovedMask: NSEventMask = NSEventMaskMouseMoved;
+
+static NSLeftMouseDraggedMask: NSEventMask = NSEventMaskLeftMouseDragged;
+
+static NSRightMouseDraggedMask: NSEventMask = NSEventMaskRightMouseDragged;
+
+static NSMouseEnteredMask: NSEventMask = NSEventMaskMouseEntered;
+
+static NSMouseExitedMask: NSEventMask = NSEventMaskMouseExited;
+
+static NSKeyDownMask: NSEventMask = NSEventMaskKeyDown;
+
+static NSKeyUpMask: NSEventMask = NSEventMaskKeyUp;
+
+static NSFlagsChangedMask: NSEventMask = NSEventMaskFlagsChanged;
+
+static NSAppKitDefinedMask: NSEventMask = NSEventMaskAppKitDefined;
+
+static NSSystemDefinedMask: NSEventMask = NSEventMaskSystemDefined;
+
+static NSApplicationDefinedMask: NSEventMask = NSEventMaskApplicationDefined;
+
+static NSPeriodicMask: NSEventMask = NSEventMaskPeriodic;
+
+static NSCursorUpdateMask: NSEventMask = NSEventMaskCursorUpdate;
+
+static NSScrollWheelMask: NSEventMask = NSEventMaskScrollWheel;
+
+static NSTabletPointMask: NSEventMask = NSEventMaskTabletPoint;
+
+static NSTabletProximityMask: NSEventMask = NSEventMaskTabletProximity;
+
+static NSOtherMouseDownMask: NSEventMask = NSEventMaskOtherMouseDown;
+
+static NSOtherMouseUpMask: NSEventMask = NSEventMaskOtherMouseUp;
+
+static NSOtherMouseDraggedMask: NSEventMask = NSEventMaskOtherMouseDragged;
+
+static NSAnyEventMask: NSEventMask = todo;
+
 pub type NSEventModifierFlags = NSUInteger;
 pub const NSEventModifierFlagCapsLock: NSEventModifierFlags = 1 << 16;
 pub const NSEventModifierFlagShift: NSEventModifierFlags = 1 << 17;
@@ -88,16 +182,49 @@ pub const NSEventModifierFlagHelp: NSEventModifierFlags = 1 << 22;
 pub const NSEventModifierFlagFunction: NSEventModifierFlags = 1 << 23;
 pub const NSEventModifierFlagDeviceIndependentFlagsMask: NSEventModifierFlags = 0xffff0000;
 
+static NSAlphaShiftKeyMask: NSEventModifierFlags = NSEventModifierFlagCapsLock;
+
+static NSShiftKeyMask: NSEventModifierFlags = NSEventModifierFlagShift;
+
+static NSControlKeyMask: NSEventModifierFlags = NSEventModifierFlagControl;
+
+static NSAlternateKeyMask: NSEventModifierFlags = NSEventModifierFlagOption;
+
+static NSCommandKeyMask: NSEventModifierFlags = NSEventModifierFlagCommand;
+
+static NSNumericPadKeyMask: NSEventModifierFlags = NSEventModifierFlagNumericPad;
+
+static NSHelpKeyMask: NSEventModifierFlags = NSEventModifierFlagHelp;
+
+static NSFunctionKeyMask: NSEventModifierFlags = NSEventModifierFlagFunction;
+
+static NSDeviceIndependentModifierFlagsMask: NSEventModifierFlags =
+    NSEventModifierFlagDeviceIndependentFlagsMask;
+
 pub type NSPointingDeviceType = NSUInteger;
 pub const NSPointingDeviceTypeUnknown: NSPointingDeviceType = 0;
 pub const NSPointingDeviceTypePen: NSPointingDeviceType = 1;
 pub const NSPointingDeviceTypeCursor: NSPointingDeviceType = 2;
 pub const NSPointingDeviceTypeEraser: NSPointingDeviceType = 3;
 
+static NSUnknownPointingDevice: NSPointingDeviceType = NSPointingDeviceTypeUnknown;
+
+static NSPenPointingDevice: NSPointingDeviceType = NSPointingDeviceTypePen;
+
+static NSCursorPointingDevice: NSPointingDeviceType = NSPointingDeviceTypeCursor;
+
+static NSEraserPointingDevice: NSPointingDeviceType = NSPointingDeviceTypeEraser;
+
 pub type NSEventButtonMask = NSUInteger;
 pub const NSEventButtonMaskPenTip: NSEventButtonMask = 1;
 pub const NSEventButtonMaskPenLowerSide: NSEventButtonMask = 2;
 pub const NSEventButtonMaskPenUpperSide: NSEventButtonMask = 4;
+
+static NSPenTipMask: NSEventButtonMask = NSEventButtonMaskPenTip;
+
+static NSPenLowerSideMask: NSEventButtonMask = NSEventButtonMaskPenLowerSide;
+
+static NSPenUpperSideMask: NSEventButtonMask = NSEventButtonMaskPenUpperSide;
 
 pub type NSEventPhase = NSUInteger;
 pub const NSEventPhaseNone: NSEventPhase = 0;
@@ -128,6 +255,28 @@ pub const NSEventSubtypeMouseEvent: NSEventSubtype = 0;
 pub const NSEventSubtypeTabletPoint: NSEventSubtype = 1;
 pub const NSEventSubtypeTabletProximity: NSEventSubtype = 2;
 pub const NSEventSubtypeTouch: NSEventSubtype = 3;
+
+static NSWindowExposedEventType: NSEventSubtype = NSEventSubtypeWindowExposed;
+
+static NSApplicationActivatedEventType: NSEventSubtype = NSEventSubtypeApplicationActivated;
+
+static NSApplicationDeactivatedEventType: NSEventSubtype = NSEventSubtypeApplicationDeactivated;
+
+static NSWindowMovedEventType: NSEventSubtype = NSEventSubtypeWindowMoved;
+
+static NSScreenChangedEventType: NSEventSubtype = NSEventSubtypeScreenChanged;
+
+static NSAWTEventType: NSEventSubtype = 16;
+
+static NSPowerOffEventType: NSEventSubtype = NSEventSubtypePowerOff;
+
+static NSMouseEventSubtype: NSEventSubtype = NSEventSubtypeMouseEvent;
+
+static NSTabletPointEventSubtype: NSEventSubtype = NSEventSubtypeTabletPoint;
+
+static NSTabletProximityEventSubtype: NSEventSubtype = NSEventSubtypeTabletProximity;
+
+static NSTouchEventSubtype: NSEventSubtype = NSEventSubtypeTouch;
 
 pub type NSPressureBehavior = NSInteger;
 pub const NSPressureBehaviorUnknown: NSPressureBehavior = -1;

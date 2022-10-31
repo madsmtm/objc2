@@ -5,6 +5,8 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSAppKitVersionNumberWithPatternColorLeakFix: NSAppKitVersion = 641.0;
+
 pub type NSColorType = NSInteger;
 pub const NSColorTypeComponentBased: NSColorType = 0;
 pub const NSColorTypePattern: NSColorType = 1;
@@ -604,3 +606,7 @@ extern_methods!(
         pub unsafe fn decodeNXColor(&self) -> Option<Id<NSColor, Shared>>;
     }
 );
+
+extern "C" {
+    static NSSystemColorsDidChangeNotification: &'static NSNotificationName;
+}

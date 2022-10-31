@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+static NSUndoCloseGroupingRunLoopOrdering: NSUInteger = 350000;
+
+extern "C" {
+    static NSUndoManagerGroupIsDiscardableKey: &'static NSString;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSUndoManager;
@@ -134,3 +140,35 @@ extern_methods!(
         ) -> Id<NSString, Shared>;
     }
 );
+
+extern "C" {
+    static NSUndoManagerCheckpointNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUndoManagerWillUndoChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUndoManagerWillRedoChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUndoManagerDidUndoChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUndoManagerDidRedoChangeNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUndoManagerDidOpenUndoGroupNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUndoManagerWillCloseUndoGroupNotification: &'static NSNotificationName;
+}
+
+extern "C" {
+    static NSUndoManagerDidCloseUndoGroupNotification: &'static NSNotificationName;
+}

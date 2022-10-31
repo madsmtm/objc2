@@ -4,3 +4,727 @@
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
+
+extern "C" {
+    static NSMetadataItemFSNameKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemDisplayNameKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemURLKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPathKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFSSizeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFSCreationDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFSContentChangeDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemContentTypeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemContentTypeTreeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemIsUbiquitousKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemHasUnresolvedConflictsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemIsDownloadedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemDownloadingStatusKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemDownloadingStatusNotDownloaded: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemDownloadingStatusDownloaded: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemDownloadingStatusCurrent: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemIsDownloadingKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemIsUploadedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemIsUploadingKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemPercentDownloadedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemPercentUploadedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemDownloadingErrorKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemUploadingErrorKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemDownloadRequestedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemIsExternalDocumentKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemContainerDisplayNameKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemURLInLocalContainerKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousItemIsSharedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousSharedItemCurrentUserRoleKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousSharedItemCurrentUserPermissionsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousSharedItemOwnerNameComponentsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousSharedItemMostRecentEditorNameComponentsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousSharedItemRoleOwner: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousSharedItemRoleParticipant: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousSharedItemPermissionsReadOnly: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataUbiquitousSharedItemPermissionsReadWrite: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAttributeChangeDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemKeywordsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemTitleKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAuthorsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemEditorsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemParticipantsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemProjectsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemDownloadedDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemWhereFromsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCommentKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCopyrightKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemLastUsedDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemContentCreationDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemContentModificationDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemDateAddedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemDurationSecondsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemContactKeywordsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemVersionKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPixelHeightKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPixelWidthKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPixelCountKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemColorSpaceKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemBitsPerSampleKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFlashOnOffKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFocalLengthKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAcquisitionMakeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAcquisitionModelKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemISOSpeedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemOrientationKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemLayerNamesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemWhiteBalanceKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemApertureKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemProfileNameKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemResolutionWidthDPIKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemResolutionHeightDPIKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemExposureModeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemExposureTimeSecondsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemEXIFVersionKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCameraOwnerKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFocalLength35mmKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemLensModelKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemEXIFGPSVersionKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAltitudeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemLatitudeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemLongitudeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemSpeedKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemTimestampKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSTrackKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemImageDirectionKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemNamedLocationKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSStatusKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSMeasureModeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSDOPKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSMapDatumKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSDestLatitudeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSDestLongitudeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSDestBearingKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSDestDistanceKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSProcessingMethodKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSAreaInformationKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSDateStampKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGPSDifferentalKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCodecsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemMediaTypesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemStreamableKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemTotalBitRateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemVideoBitRateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAudioBitRateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemDeliveryTypeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAlbumKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemHasAlphaChannelKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemRedEyeOnOffKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemMeteringModeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemMaxApertureKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFNumberKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemExposureProgramKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemExposureTimeStringKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemHeadlineKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemInstructionsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCityKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemStateOrProvinceKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCountryKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemTextContentKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAudioSampleRateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAudioChannelCountKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemTempoKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemKeySignatureKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemTimeSignatureKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAudioEncodingApplicationKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemComposerKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemLyricistKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAudioTrackNumberKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemRecordingDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemMusicalGenreKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemIsGeneralMIDISequenceKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemRecordingYearKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemOrganizationsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemLanguagesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemRightsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPublishersKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemContributorsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCoverageKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemSubjectKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemThemeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemDescriptionKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemIdentifierKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAudiencesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemNumberOfPagesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPageWidthKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPageHeightKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemSecurityMethodKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCreatorKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemEncodingApplicationsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemDueDateKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemStarRatingKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPhoneNumbersKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemEmailAddressesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemInstantMessageAddressesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemKindKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemRecipientsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFinderCommentKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemFontsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAppleLoopsRootKeyKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAppleLoopsKeyFilterTypeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAppleLoopsLoopModeKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAppleLoopDescriptorsKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemMusicalInstrumentCategoryKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemMusicalInstrumentNameKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemCFBundleIdentifierKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemInformationKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemDirectorKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemProducerKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemGenreKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemPerformersKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemOriginalFormatKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemOriginalSourceKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAuthorEmailAddressesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemRecipientEmailAddressesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemAuthorAddressesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemRecipientAddressesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemIsLikelyJunkKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemExecutableArchitecturesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemExecutablePlatformKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemApplicationCategoriesKey: &'static NSString;
+}
+
+extern "C" {
+    static NSMetadataItemIsApplicationManagedKey: &'static NSString;
+}

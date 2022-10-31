@@ -7,6 +7,14 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSDraggingImageComponentKey = NSString;
 
+extern "C" {
+    static NSDraggingImageComponentIconKey: &'static NSDraggingImageComponentKey;
+}
+
+extern "C" {
+    static NSDraggingImageComponentLabelKey: &'static NSDraggingImageComponentKey;
+}
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSDraggingImageComponent;
