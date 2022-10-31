@@ -90,7 +90,11 @@ fn main() {
                         }
                     }
                     EntityKind::MacroExpansion if preprocessing => {}
-                    EntityKind::MacroDefinition if preprocessing => {}
+                    EntityKind::MacroDefinition if preprocessing => {
+                        // let name = entity.get_name().expect("macro def name");
+                        // entity.is_function_like_macro();
+                        // println!("macrodef in {library}/{file_name}.h: {}", name);
+                    }
                     _ => {
                         if preprocessing {
                             println!("status: preprocessed {:?}...", sdk.platform);

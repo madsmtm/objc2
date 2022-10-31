@@ -314,6 +314,27 @@ impl Stmt {
             }
             EntityKind::TypedefDecl => {
                 let name = entity.get_name().expect("typedef name");
+
+                entity.visit_children(|entity, _parent| {
+                    match entity.get_kind() {
+                        // TODO: Parse NS_TYPED_EXTENSIBLE_ENUM vs. NS_TYPED_ENUM
+                        EntityKind::UnexposedAttr => {
+                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                                panic!("unexpected attribute: {macro_:?}");
+                            }
+                        }
+                        EntityKind::StructDecl => {
+                            // TODO?
+                        }
+                        EntityKind::ObjCClassRef
+                        | EntityKind::ObjCProtocolRef
+                        | EntityKind::TypeRef
+                        | EntityKind::ParmDecl => {}
+                        _ => panic!("unknown typedef child in {name}: {entity:?}"),
+                    };
+                    EntityVisitResult::Continue
+                });
+
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
@@ -350,15 +371,48 @@ impl Stmt {
                         })
                     }
                     TypeKind::Typedef => {
+                        // println!(
+                        //     "typedef: {:?}, {:?}, {:#?}, {:#?}, {:#?}",
+                        //     entity.get_display_name(),
+                        //     entity.get_name(),
+                        //     entity.has_attributes(),
+                        //     entity.get_children(),
+                        //     ty,
+                        // );
                         let type_ = RustType::parse_typedef(ty);
                         Some(Self::AliasDecl { name, type_ })
                     }
+                    TypeKind::Elaborated => {
+                        let ty = ty.get_elaborated_type().expect("elaborated");
+                        match ty.get_kind() {
+                            TypeKind::Enum => {
+                                // Handled below
+                                None
+                            }
+                            _ => {
+                                // println!(
+                                //     "elaborated: {:?}, {:?}, {:?}, {:#?}, {:#?}, {:?}, {:#?}",
+                                //     entity.get_kind(),
+                                //     entity.get_display_name(),
+                                //     entity.get_name(),
+                                //     entity.has_attributes(),
+                                //     entity.get_children(),
+                                //     ty.get_kind(),
+                                //     ty,
+                                // );
+                                None
+                            }
+                        }
+                    }
                     _ => {
                         // println!(
-                        //     "typedef: {:#?}, {:#?}, {:#?}, {:#?}",
+                        //     "typedef2: {:?}, {:?}, {:?}, {:#?}, {:#?}, {:?}, {:#?}",
+                        //     entity.get_kind(),
                         //     entity.get_display_name(),
+                        //     entity.get_name(),
                         //     entity.has_attributes(),
                         //     entity.get_children(),
+                        //     ty.get_kind(),
                         //     ty,
                         // );
                         None
