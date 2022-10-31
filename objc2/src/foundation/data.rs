@@ -64,7 +64,7 @@ extern_methods!(
 
     /// Accessor methods.
     unsafe impl NSData {
-        #[sel(length)]
+        #[method(length)]
         #[doc(alias = "length")]
         pub fn len(&self) -> usize;
 
@@ -72,7 +72,7 @@ extern_methods!(
             self.len() == 0
         }
 
-        #[sel(bytes)]
+        #[method(bytes)]
         fn bytes_raw(&self) -> *const c_void;
 
         pub fn bytes(&self) -> &[u8] {

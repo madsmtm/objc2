@@ -37,7 +37,7 @@ extern_methods!(
         }
 
         #[doc(alias = "count")]
-        #[sel(count)]
+        #[method(count)]
         pub fn len(&self) -> usize;
 
         pub fn is_empty(&self) -> bool {
@@ -45,10 +45,10 @@ extern_methods!(
         }
 
         #[doc(alias = "objectForKey:")]
-        #[sel(objectForKey:)]
+        #[method(objectForKey:)]
         pub fn get(&self, key: &K) -> Option<&V>;
 
-        #[sel(getObjects:andKeys:)]
+        #[method(getObjects:andKeys:)]
         unsafe fn get_objects_and_keys(&self, objects: *mut &V, keys: *mut &K);
 
         #[doc(alias = "getObjects:andKeys:")]

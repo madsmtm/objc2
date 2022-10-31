@@ -109,7 +109,7 @@ extern_methods!(
         /// assert_eq!(set.len(), 3);
         /// ```
         #[doc(alias = "count")]
-        #[sel(count)]
+        #[method(count)]
         pub fn len(&self) -> usize;
 
         /// Returns `true` if the set contains no elements.
@@ -144,7 +144,7 @@ extern_methods!(
         /// assert!(any == &*strs[0] || any == &*strs[1] || any == &*strs[2]);
         /// ```
         #[doc(alias = "anyObject")]
-        #[sel(anyObject)]
+        #[method(anyObject)]
         pub fn get_any(&self) -> Option<&T>;
 
         /// An iterator visiting all elements in arbitrary order.
@@ -262,7 +262,7 @@ extern_methods!(
         /// assert!(set.contains(ns_string!("one")));
         /// ```
         #[doc(alias = "containsObject:")]
-        #[sel(containsObject:)]
+        #[method(containsObject:)]
         pub fn contains(&self, value: &T) -> bool;
 
         /// Returns a reference to the value in the set, if any, that is equal
@@ -282,7 +282,7 @@ extern_methods!(
         /// assert_eq!(set.get(ns_string!("four")), None);
         /// ```
         #[doc(alias = "member:")]
-        #[sel(member:)]
+        #[method(member:)]
         pub fn get(&self, value: &T) -> Option<&T>;
 
         /// Returns `true` if the set is a subset of another, i.e., `other`
@@ -302,7 +302,7 @@ extern_methods!(
         /// assert!(!set2.is_subset(&set1));
         /// ```
         #[doc(alias = "isSubsetOfSet:")]
-        #[sel(isSubsetOfSet:)]
+        #[method(isSubsetOfSet:)]
         pub fn is_subset(&self, other: &NSSet<T, O>) -> bool;
 
         /// Returns `true` if the set is a superset of another, i.e., `self`
@@ -325,7 +325,7 @@ extern_methods!(
             other.is_subset(self)
         }
 
-        #[sel(intersectsSet:)]
+        #[method(intersectsSet:)]
         fn intersects_set(&self, other: &NSSet<T, O>) -> bool;
 
         /// Returns `true` if `self` has no elements in common with `other`.

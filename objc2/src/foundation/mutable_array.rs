@@ -104,7 +104,7 @@ extern_methods!(
             old_obj
         }
 
-        #[sel(removeObjectAtIndex:)]
+        #[method(removeObjectAtIndex:)]
         unsafe fn remove_at(&mut self, index: usize);
 
         #[doc(alias = "removeObjectAtIndex:")]
@@ -118,7 +118,7 @@ extern_methods!(
             obj
         }
 
-        #[sel(removeLastObject)]
+        #[method(removeLastObject)]
         unsafe fn remove_last(&mut self);
 
         #[doc(alias = "removeLastObject")]
@@ -133,7 +133,7 @@ extern_methods!(
         }
 
         #[doc(alias = "removeAllObjects")]
-        #[sel(removeAllObjects)]
+        #[method(removeAllObjects)]
         pub fn clear(&mut self);
 
         #[doc(alias = "sortUsingFunction:context:")]

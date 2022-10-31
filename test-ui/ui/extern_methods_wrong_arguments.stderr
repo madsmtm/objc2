@@ -3,7 +3,7 @@ error: Number of arguments in function and selector did not match!
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[sel(b)]
+  | |         #[method(b)]
   | |         fn b(arg: i32);
   | |     }
   | | );
@@ -16,7 +16,7 @@ error: Number of arguments in function and selector did not match!
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[sel(f:g:)]
+  | |         #[method(f:g:)]
   | |         fn f();
   | |     }
   | | );
@@ -29,7 +29,7 @@ error: Number of arguments in function and selector did not match!
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[sel(y)]
+  | |         #[method(y)]
   | |         fn y(&self, arg: i32);
   | |     }
   | | );
@@ -42,7 +42,7 @@ error[E0308]: mismatched types
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[sel(a:)]
+  | |         #[method(a:)]
   | |         fn a();
   | |     }
   | | );
@@ -60,7 +60,7 @@ error[E0308]: mismatched types
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[sel(c:d:e:)]
+  | |         #[method(c:d:e:)]
   | |         fn c(arg1: i32, arg2: u32);
   | |     }
   | | );
@@ -78,7 +78,7 @@ error[E0308]: mismatched types
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[sel(x:)]
+  | |         #[method(x:)]
   | |         fn x(&self);
   | |     }
   | | );

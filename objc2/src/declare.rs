@@ -832,7 +832,7 @@ mod tests {
 
             // Implementing this should work
             unsafe impl Protocol<NSCopying> for Custom {
-                #[sel(copyWithZone:)]
+                #[method(copyWithZone:)]
                 #[allow(unreachable_code)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
                     unimplemented!()
@@ -862,7 +862,7 @@ mod tests {
 
             unsafe impl Custom {
                 // Override `description` with a bad return type
-                #[sel(description)]
+                #[method(description)]
                 fn description(&self) {}
             }
         );
@@ -905,7 +905,7 @@ mod tests {
 
             unsafe impl Protocol<NSCopying> for Custom {
                 // Override with a bad return type
-                #[sel(copyWithZone:)]
+                #[method(copyWithZone:)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> u8 {
                     42
                 }
@@ -928,14 +928,14 @@ mod tests {
             }
 
             unsafe impl Protocol<NSCopying> for Custom {
-                #[sel(copyWithZone:)]
+                #[method(copyWithZone:)]
                 #[allow(unreachable_code)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
                     unimplemented!()
                 }
 
                 // This doesn't exist on the protocol
-                #[sel(someOtherMethod)]
+                #[method(someOtherMethod)]
                 fn some_other_method(&self) {}
             }
         );

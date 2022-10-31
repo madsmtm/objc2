@@ -40,7 +40,7 @@ extern_methods!(
         }
 
         /// Returns `true` if the thread is the main thread.
-        #[sel(isMainThread)]
+        #[method(isMainThread)]
         pub fn is_main(&self) -> bool;
 
         /// The name of the thread.
@@ -52,13 +52,13 @@ extern_methods!(
             unsafe { msg_send_id![Self::class(), new] }
         }
 
-        #[sel(start)]
+        #[method(start)]
         unsafe fn start(&self);
 
-        #[sel(isMainThread)]
+        #[method(isMainThread)]
         fn is_current_main() -> bool;
 
-        #[sel(isMultiThreaded)]
+        #[method(isMultiThreaded)]
         fn is_global_multi() -> bool;
     }
 );

@@ -238,10 +238,10 @@ impl NSNumber {
 
 extern_methods!(
     unsafe impl NSNumber {
-        #[sel(compare:)]
+        #[method(compare:)]
         fn compare(&self, other: &Self) -> NSComparisonResult;
 
-        #[sel(isEqualToNumber:)]
+        #[method(isEqualToNumber:)]
         fn is_equal_to_number(&self, other: &Self) -> bool;
 
         fn string(&self) -> Id<NSString, Shared> {

@@ -67,7 +67,7 @@ extern_methods!(
             unsafe { msg_send_id![self, domain] }
         }
 
-        #[sel(code)]
+        #[method(code)]
         pub fn code(&self) -> NSInteger;
 
         pub fn user_info(&self) -> Option<Id<NSDictionary<NSErrorUserInfoKey, NSObject>, Shared>> {

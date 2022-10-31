@@ -38,7 +38,7 @@ declare_class!(
     }
 
     unsafe impl CustomAppDelegate {
-        #[sel(initWith:another:)]
+        #[method(initWith:another:)]
         fn init_with(self: &mut Self, ivar: u8, another_ivar: bool) -> Option<&mut Self> {
             let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
 
@@ -56,7 +56,7 @@ declare_class!(
             })
         }
 
-        #[sel(myClassMethod)]
+        #[method(myClassMethod)]
         fn my_class_method() {
             println!("A class method!");
         }
@@ -69,7 +69,7 @@ declare_class!(
     // TODO: Investigate this!
     unsafe impl CustomAppDelegate {
         /// This is `unsafe` because it expects `sender` to be valid
-        #[sel(applicationDidFinishLaunching:)]
+        #[method(applicationDidFinishLaunching:)]
         unsafe fn did_finish_launching(&self, sender: *mut Object) {
             println!("Did finish launching!");
             // Do something with `sender`
@@ -77,7 +77,7 @@ declare_class!(
         }
 
         /// Some comment before `sel`.
-        #[sel(applicationWillTerminate:)]
+        #[method(applicationWillTerminate:)]
         /// Some comment after `sel`.
         fn will_terminate(&self, _: *mut Object) {
             println!("Will terminate!");

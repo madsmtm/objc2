@@ -55,13 +55,13 @@ extern_methods!(
         /// Appends the given [`NSString`] onto the end of this.
         #[doc(alias = "appendString:")]
         // SAFETY: The string is not nil
-        #[sel(appendString:)]
+        #[method(appendString:)]
         pub fn push_nsstring(&mut self, nsstring: &NSString);
 
         /// Replaces the entire string.
         #[doc(alias = "setString:")]
         // SAFETY: The string is not nil
-        #[sel(setString:)]
+        #[method(setString:)]
         pub fn replace(&mut self, nsstring: &NSString);
 
         // TODO:

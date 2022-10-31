@@ -252,7 +252,7 @@ mod tests {
         }
 
         unsafe impl IvarTester {
-            #[sel(init)]
+            #[method(init)]
             fn init(&mut self) -> Option<&mut Self> {
                 let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
                 this.map(|this| {
@@ -264,7 +264,7 @@ mod tests {
                 })
             }
 
-            #[sel(initInvalid)]
+            #[method(initInvalid)]
             fn init_invalid(&mut self) -> Option<&mut Self> {
                 // Don't actually initialize anything here; this creates an
                 // invalid instance, where accessing the two ivars `ivar1`
