@@ -85,3 +85,8 @@ extern_methods!(
         pub unsafe fn synchronize(&self) -> bool;
     }
 );
+
+pub const NSUbiquitousKeyValueStoreServerChange: i32 = 0;
+pub const NSUbiquitousKeyValueStoreInitialSyncChange: i32 = 1;
+pub const NSUbiquitousKeyValueStoreQuotaViolationChange: i32 = 2;
+pub const NSUbiquitousKeyValueStoreAccountChange: i32 = 3;

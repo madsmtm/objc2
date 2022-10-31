@@ -5,6 +5,22 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSGridCellPlacement = NSInteger;
+pub const NSGridCellPlacementInherited: NSGridCellPlacement = 0;
+pub const NSGridCellPlacementNone: NSGridCellPlacement = 1;
+pub const NSGridCellPlacementLeading: NSGridCellPlacement = 2;
+pub const NSGridCellPlacementTop: NSGridCellPlacement = 2;
+pub const NSGridCellPlacementTrailing: NSGridCellPlacement = 3;
+pub const NSGridCellPlacementBottom: NSGridCellPlacement = 3;
+pub const NSGridCellPlacementCenter: NSGridCellPlacement = 4;
+pub const NSGridCellPlacementFill: NSGridCellPlacement = 5;
+
+pub type NSGridRowAlignment = NSInteger;
+pub const NSGridRowAlignmentInherited: NSGridRowAlignment = 0;
+pub const NSGridRowAlignmentNone: NSGridRowAlignment = 1;
+pub const NSGridRowAlignmentFirstBaseline: NSGridRowAlignment = 2;
+pub const NSGridRowAlignmentLastBaseline: NSGridRowAlignment = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSGridView;

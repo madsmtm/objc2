@@ -5,6 +5,17 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSAnimationCurve = NSUInteger;
+pub const NSAnimationEaseInOut: NSAnimationCurve = 0;
+pub const NSAnimationEaseIn: NSAnimationCurve = 1;
+pub const NSAnimationEaseOut: NSAnimationCurve = 2;
+pub const NSAnimationLinear: NSAnimationCurve = 3;
+
+pub type NSAnimationBlockingMode = NSUInteger;
+pub const NSAnimationBlocking: NSAnimationBlockingMode = 0;
+pub const NSAnimationNonblocking: NSAnimationBlockingMode = 1;
+pub const NSAnimationNonblockingThreaded: NSAnimationBlockingMode = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAnimation;

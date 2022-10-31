@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSColorSpaceModel = NSInteger;
+pub const NSColorSpaceModelUnknown: NSColorSpaceModel = -1;
+pub const NSColorSpaceModelGray: NSColorSpaceModel = 0;
+pub const NSColorSpaceModelRGB: NSColorSpaceModel = 1;
+pub const NSColorSpaceModelCMYK: NSColorSpaceModel = 2;
+pub const NSColorSpaceModelLAB: NSColorSpaceModel = 3;
+pub const NSColorSpaceModelDeviceN: NSColorSpaceModel = 4;
+pub const NSColorSpaceModelIndexed: NSColorSpaceModel = 5;
+pub const NSColorSpaceModelPatterned: NSColorSpaceModel = 6;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSColorSpace;

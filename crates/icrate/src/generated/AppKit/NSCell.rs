@@ -5,7 +5,70 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSCellType = NSUInteger;
+pub const NSNullCellType: NSCellType = 0;
+pub const NSTextCellType: NSCellType = 1;
+pub const NSImageCellType: NSCellType = 2;
+
+pub type NSCellAttribute = NSUInteger;
+pub const NSCellDisabled: NSCellAttribute = 0;
+pub const NSCellState: NSCellAttribute = 1;
+pub const NSPushInCell: NSCellAttribute = 2;
+pub const NSCellEditable: NSCellAttribute = 3;
+pub const NSChangeGrayCell: NSCellAttribute = 4;
+pub const NSCellHighlighted: NSCellAttribute = 5;
+pub const NSCellLightsByContents: NSCellAttribute = 6;
+pub const NSCellLightsByGray: NSCellAttribute = 7;
+pub const NSChangeBackgroundCell: NSCellAttribute = 8;
+pub const NSCellLightsByBackground: NSCellAttribute = 9;
+pub const NSCellIsBordered: NSCellAttribute = 10;
+pub const NSCellHasOverlappingImage: NSCellAttribute = 11;
+pub const NSCellHasImageHorizontal: NSCellAttribute = 12;
+pub const NSCellHasImageOnLeftOrBottom: NSCellAttribute = 13;
+pub const NSCellChangesContents: NSCellAttribute = 14;
+pub const NSCellIsInsetButton: NSCellAttribute = 15;
+pub const NSCellAllowsMixedState: NSCellAttribute = 16;
+
+pub type NSCellImagePosition = NSUInteger;
+pub const NSNoImage: NSCellImagePosition = 0;
+pub const NSImageOnly: NSCellImagePosition = 1;
+pub const NSImageLeft: NSCellImagePosition = 2;
+pub const NSImageRight: NSCellImagePosition = 3;
+pub const NSImageBelow: NSCellImagePosition = 4;
+pub const NSImageAbove: NSCellImagePosition = 5;
+pub const NSImageOverlaps: NSCellImagePosition = 6;
+pub const NSImageLeading: NSCellImagePosition = 7;
+pub const NSImageTrailing: NSCellImagePosition = 8;
+
+pub type NSImageScaling = NSUInteger;
+pub const NSImageScaleProportionallyDown: NSImageScaling = 0;
+pub const NSImageScaleAxesIndependently: NSImageScaling = 1;
+pub const NSImageScaleNone: NSImageScaling = 2;
+pub const NSImageScaleProportionallyUpOrDown: NSImageScaling = 3;
+pub const NSScaleProportionally: NSImageScaling = 0;
+pub const NSScaleToFit: NSImageScaling = 1;
+pub const NSScaleNone: NSImageScaling = 2;
+
 pub type NSControlStateValue = NSInteger;
+
+pub type NSCellStyleMask = NSUInteger;
+pub const NSNoCellMask: NSCellStyleMask = 0;
+pub const NSContentsCellMask: NSCellStyleMask = 1;
+pub const NSPushInCellMask: NSCellStyleMask = 2;
+pub const NSChangeGrayCellMask: NSCellStyleMask = 4;
+pub const NSChangeBackgroundCellMask: NSCellStyleMask = 8;
+
+pub type NSControlTint = NSUInteger;
+pub const NSDefaultControlTint: NSControlTint = 0;
+pub const NSBlueControlTint: NSControlTint = 1;
+pub const NSGraphiteControlTint: NSControlTint = 6;
+pub const NSClearControlTint: NSControlTint = 7;
+
+pub type NSControlSize = NSUInteger;
+pub const NSControlSizeRegular: NSControlSize = 0;
+pub const NSControlSizeSmall: NSControlSize = 1;
+pub const NSControlSizeMini: NSControlSize = 2;
+pub const NSControlSizeLarge: NSControlSize = 3;
 
 extern_class!(
     #[derive(Debug)]
@@ -518,6 +581,12 @@ extern_methods!(
     }
 );
 
+pub type NSCellHitResult = NSUInteger;
+pub const NSCellHitNone: NSCellHitResult = 0;
+pub const NSCellHitContentArea: NSCellHitResult = 1;
+pub const NSCellHitEditableTextArea: NSCellHitResult = 2;
+pub const NSCellHitTrackableArea: NSCellHitResult = 4;
+
 extern_methods!(
     /// NSCellHitTest
     unsafe impl NSCell {
@@ -545,6 +614,12 @@ extern_methods!(
         pub unsafe fn drawWithExpansionFrame_inView(&self, cellFrame: NSRect, view: &NSView);
     }
 );
+
+pub type NSBackgroundStyle = NSInteger;
+pub const NSBackgroundStyleNormal: NSBackgroundStyle = 0;
+pub const NSBackgroundStyleEmphasized: NSBackgroundStyle = 1;
+pub const NSBackgroundStyleRaised: NSBackgroundStyle = 2;
+pub const NSBackgroundStyleLowered: NSBackgroundStyle = 3;
 
 extern_methods!(
     /// NSCellBackgroundStyle
@@ -601,3 +676,11 @@ extern_methods!(
 );
 
 pub type NSCellStateValue = NSControlStateValue;
+
+pub const NSAnyType: i32 = 0;
+pub const NSIntType: i32 = 1;
+pub const NSPositiveIntType: i32 = 2;
+pub const NSFloatType: i32 = 3;
+pub const NSPositiveFloatType: i32 = 4;
+pub const NSDoubleType: i32 = 6;
+pub const NSPositiveDoubleType: i32 = 7;

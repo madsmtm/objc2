@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTableViewRowActionStyle = NSInteger;
+pub const NSTableViewRowActionStyleRegular: NSTableViewRowActionStyle = 0;
+pub const NSTableViewRowActionStyleDestructive: NSTableViewRowActionStyle = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTableViewRowAction;

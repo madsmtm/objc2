@@ -19,6 +19,23 @@ pub type NSURLUbiquitousSharedItemRole = NSString;
 
 pub type NSURLUbiquitousSharedItemPermissions = NSString;
 
+pub type NSURLBookmarkCreationOptions = NSUInteger;
+pub const NSURLBookmarkCreationPreferFileIDResolution: NSURLBookmarkCreationOptions = 256;
+pub const NSURLBookmarkCreationMinimalBookmark: NSURLBookmarkCreationOptions = 512;
+pub const NSURLBookmarkCreationSuitableForBookmarkFile: NSURLBookmarkCreationOptions = 1024;
+pub const NSURLBookmarkCreationWithSecurityScope: NSURLBookmarkCreationOptions = 2048;
+pub const NSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess: NSURLBookmarkCreationOptions =
+    4096;
+pub const NSURLBookmarkCreationWithoutImplicitSecurityScope: NSURLBookmarkCreationOptions =
+    536870912;
+
+pub type NSURLBookmarkResolutionOptions = NSUInteger;
+pub const NSURLBookmarkResolutionWithoutUI: NSURLBookmarkResolutionOptions = 256;
+pub const NSURLBookmarkResolutionWithoutMounting: NSURLBookmarkResolutionOptions = 512;
+pub const NSURLBookmarkResolutionWithSecurityScope: NSURLBookmarkResolutionOptions = 1024;
+pub const NSURLBookmarkResolutionWithoutImplicitStartAccessing: NSURLBookmarkResolutionOptions =
+    32768;
+
 pub type NSURLBookmarkFileCreationOptions = NSUInteger;
 
 extern_class!(

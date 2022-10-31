@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPostingStyle = NSUInteger;
+pub const NSPostWhenIdle: NSPostingStyle = 1;
+pub const NSPostASAP: NSPostingStyle = 2;
+pub const NSPostNow: NSPostingStyle = 3;
+
+pub type NSNotificationCoalescing = NSUInteger;
+pub const NSNotificationNoCoalescing: NSNotificationCoalescing = 0;
+pub const NSNotificationCoalescingOnName: NSNotificationCoalescing = 1;
+pub const NSNotificationCoalescingOnSender: NSNotificationCoalescing = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSNotificationQueue;

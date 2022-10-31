@@ -5,6 +5,13 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSMassFormatterUnit = NSInteger;
+pub const NSMassFormatterUnitGram: NSMassFormatterUnit = 11;
+pub const NSMassFormatterUnitKilogram: NSMassFormatterUnit = 14;
+pub const NSMassFormatterUnitOunce: NSMassFormatterUnit = 1537;
+pub const NSMassFormatterUnitPound: NSMassFormatterUnit = 1538;
+pub const NSMassFormatterUnitStone: NSMassFormatterUnit = 1539;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSMassFormatter;

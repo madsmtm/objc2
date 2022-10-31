@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSEnergyFormatterUnit = NSInteger;
+pub const NSEnergyFormatterUnitJoule: NSEnergyFormatterUnit = 11;
+pub const NSEnergyFormatterUnitKilojoule: NSEnergyFormatterUnit = 14;
+pub const NSEnergyFormatterUnitCalorie: NSEnergyFormatterUnit = 1793;
+pub const NSEnergyFormatterUnitKilocalorie: NSEnergyFormatterUnit = 1794;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSEnergyFormatter;

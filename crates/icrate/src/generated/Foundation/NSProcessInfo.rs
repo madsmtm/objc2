@@ -5,6 +5,14 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub const NSWindowsNTOperatingSystem: i32 = 1;
+pub const NSWindows95OperatingSystem: i32 = 2;
+pub const NSSolarisOperatingSystem: i32 = 3;
+pub const NSHPUXOperatingSystem: i32 = 4;
+pub const NSMACHOperatingSystem: i32 = 5;
+pub const NSSunOSOperatingSystem: i32 = 6;
+pub const NSOSF1OperatingSystem: i32 = 7;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSProcessInfo;
@@ -93,6 +101,16 @@ extern_methods!(
     }
 );
 
+pub type NSActivityOptions = u64;
+pub const NSActivityIdleDisplaySleepDisabled: NSActivityOptions = 1099511627776;
+pub const NSActivityIdleSystemSleepDisabled: NSActivityOptions = 1048576;
+pub const NSActivitySuddenTerminationDisabled: NSActivityOptions = 16384;
+pub const NSActivityAutomaticTerminationDisabled: NSActivityOptions = 32768;
+pub const NSActivityUserInitiated: NSActivityOptions = 16777215;
+pub const NSActivityUserInitiatedAllowingIdleSystemSleep: NSActivityOptions = 15728639;
+pub const NSActivityBackground: NSActivityOptions = 255;
+pub const NSActivityLatencyCritical: NSActivityOptions = 1095216660480;
+
 extern_methods!(
     /// NSProcessInfoActivity
     unsafe impl NSProcessInfo {
@@ -133,6 +151,12 @@ extern_methods!(
         pub unsafe fn fullUserName(&self) -> Id<NSString, Shared>;
     }
 );
+
+pub type NSProcessInfoThermalState = NSInteger;
+pub const NSProcessInfoThermalStateNominal: NSProcessInfoThermalState = 0;
+pub const NSProcessInfoThermalStateFair: NSProcessInfoThermalState = 1;
+pub const NSProcessInfoThermalStateSerious: NSProcessInfoThermalState = 2;
+pub const NSProcessInfoThermalStateCritical: NSProcessInfoThermalState = 3;
 
 extern_methods!(
     /// NSProcessInfoThermalState

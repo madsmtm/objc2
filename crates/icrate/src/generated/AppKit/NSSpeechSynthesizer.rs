@@ -15,6 +15,11 @@ pub type NSVoiceGenderName = NSString;
 
 pub type NSSpeechPropertyKey = NSString;
 
+pub type NSSpeechBoundary = NSUInteger;
+pub const NSSpeechImmediateBoundary: NSSpeechBoundary = 0;
+pub const NSSpeechWordBoundary: NSSpeechBoundary = 1;
+pub const NSSpeechSentenceBoundary: NSSpeechBoundary = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSpeechSynthesizer;

@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSFileVersionAddingOptions = NSUInteger;
+pub const NSFileVersionAddingByMoving: NSFileVersionAddingOptions = 1;
+
+pub type NSFileVersionReplacingOptions = NSUInteger;
+pub const NSFileVersionReplacingByMoving: NSFileVersionReplacingOptions = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSFileVersion;

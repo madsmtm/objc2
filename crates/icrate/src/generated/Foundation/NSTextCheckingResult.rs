@@ -5,7 +5,26 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextCheckingType = u64;
+pub const NSTextCheckingTypeOrthography: NSTextCheckingType = 1;
+pub const NSTextCheckingTypeSpelling: NSTextCheckingType = 2;
+pub const NSTextCheckingTypeGrammar: NSTextCheckingType = 4;
+pub const NSTextCheckingTypeDate: NSTextCheckingType = 8;
+pub const NSTextCheckingTypeAddress: NSTextCheckingType = 16;
+pub const NSTextCheckingTypeLink: NSTextCheckingType = 32;
+pub const NSTextCheckingTypeQuote: NSTextCheckingType = 64;
+pub const NSTextCheckingTypeDash: NSTextCheckingType = 128;
+pub const NSTextCheckingTypeReplacement: NSTextCheckingType = 256;
+pub const NSTextCheckingTypeCorrection: NSTextCheckingType = 512;
+pub const NSTextCheckingTypeRegularExpression: NSTextCheckingType = 1024;
+pub const NSTextCheckingTypePhoneNumber: NSTextCheckingType = 2048;
+pub const NSTextCheckingTypeTransitInformation: NSTextCheckingType = 4096;
+
 pub type NSTextCheckingTypes = u64;
+
+pub const NSTextCheckingAllSystemTypes: i32 = 4294967295;
+pub const NSTextCheckingAllCustomTypes: i32 = -4294967296;
+pub const NSTextCheckingAllTypes: i32 = -1;
 
 pub type NSTextCheckingKey = NSString;
 

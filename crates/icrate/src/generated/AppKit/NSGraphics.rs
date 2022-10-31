@@ -5,6 +5,77 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSCompositingOperation = NSUInteger;
+pub const NSCompositingOperationClear: NSCompositingOperation = 0;
+pub const NSCompositingOperationCopy: NSCompositingOperation = 1;
+pub const NSCompositingOperationSourceOver: NSCompositingOperation = 2;
+pub const NSCompositingOperationSourceIn: NSCompositingOperation = 3;
+pub const NSCompositingOperationSourceOut: NSCompositingOperation = 4;
+pub const NSCompositingOperationSourceAtop: NSCompositingOperation = 5;
+pub const NSCompositingOperationDestinationOver: NSCompositingOperation = 6;
+pub const NSCompositingOperationDestinationIn: NSCompositingOperation = 7;
+pub const NSCompositingOperationDestinationOut: NSCompositingOperation = 8;
+pub const NSCompositingOperationDestinationAtop: NSCompositingOperation = 9;
+pub const NSCompositingOperationXOR: NSCompositingOperation = 10;
+pub const NSCompositingOperationPlusDarker: NSCompositingOperation = 11;
+pub const NSCompositingOperationHighlight: NSCompositingOperation = 12;
+pub const NSCompositingOperationPlusLighter: NSCompositingOperation = 13;
+pub const NSCompositingOperationMultiply: NSCompositingOperation = 14;
+pub const NSCompositingOperationScreen: NSCompositingOperation = 15;
+pub const NSCompositingOperationOverlay: NSCompositingOperation = 16;
+pub const NSCompositingOperationDarken: NSCompositingOperation = 17;
+pub const NSCompositingOperationLighten: NSCompositingOperation = 18;
+pub const NSCompositingOperationColorDodge: NSCompositingOperation = 19;
+pub const NSCompositingOperationColorBurn: NSCompositingOperation = 20;
+pub const NSCompositingOperationSoftLight: NSCompositingOperation = 21;
+pub const NSCompositingOperationHardLight: NSCompositingOperation = 22;
+pub const NSCompositingOperationDifference: NSCompositingOperation = 23;
+pub const NSCompositingOperationExclusion: NSCompositingOperation = 24;
+pub const NSCompositingOperationHue: NSCompositingOperation = 25;
+pub const NSCompositingOperationSaturation: NSCompositingOperation = 26;
+pub const NSCompositingOperationColor: NSCompositingOperation = 27;
+pub const NSCompositingOperationLuminosity: NSCompositingOperation = 28;
+
+pub type NSBackingStoreType = NSUInteger;
+pub const NSBackingStoreRetained: NSBackingStoreType = 0;
+pub const NSBackingStoreNonretained: NSBackingStoreType = 1;
+pub const NSBackingStoreBuffered: NSBackingStoreType = 2;
+
+pub type NSWindowOrderingMode = NSInteger;
+pub const NSWindowAbove: NSWindowOrderingMode = 1;
+pub const NSWindowBelow: NSWindowOrderingMode = -1;
+pub const NSWindowOut: NSWindowOrderingMode = 0;
+
+pub type NSFocusRingPlacement = NSUInteger;
+pub const NSFocusRingOnly: NSFocusRingPlacement = 0;
+pub const NSFocusRingBelow: NSFocusRingPlacement = 1;
+pub const NSFocusRingAbove: NSFocusRingPlacement = 2;
+
+pub type NSFocusRingType = NSUInteger;
+pub const NSFocusRingTypeDefault: NSFocusRingType = 0;
+pub const NSFocusRingTypeNone: NSFocusRingType = 1;
+pub const NSFocusRingTypeExterior: NSFocusRingType = 2;
+
+pub type NSColorRenderingIntent = NSInteger;
+pub const NSColorRenderingIntentDefault: NSColorRenderingIntent = 0;
+pub const NSColorRenderingIntentAbsoluteColorimetric: NSColorRenderingIntent = 1;
+pub const NSColorRenderingIntentRelativeColorimetric: NSColorRenderingIntent = 2;
+pub const NSColorRenderingIntentPerceptual: NSColorRenderingIntent = 3;
+pub const NSColorRenderingIntentSaturation: NSColorRenderingIntent = 4;
+
 pub type NSColorSpaceName = NSString;
 
+pub type NSWindowDepth = i32;
+pub const NSWindowDepthTwentyfourBitRGB: NSWindowDepth = 520;
+pub const NSWindowDepthSixtyfourBitRGB: NSWindowDepth = 528;
+pub const NSWindowDepthOnehundredtwentyeightBitRGB: NSWindowDepth = 544;
+
+pub type NSDisplayGamut = NSInteger;
+pub const NSDisplayGamutSRGB: NSDisplayGamut = 1;
+pub const NSDisplayGamutP3: NSDisplayGamut = 2;
+
 pub type NSDeviceDescriptionKey = NSString;
+
+pub type NSAnimationEffect = NSUInteger;
+pub const NSAnimationEffectDisappearingItemDefault: NSAnimationEffect = 0;
+pub const NSAnimationEffectPoof: NSAnimationEffect = 10;

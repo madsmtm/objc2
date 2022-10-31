@@ -5,6 +5,29 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSCollectionViewDropOperation = NSInteger;
+pub const NSCollectionViewDropOn: NSCollectionViewDropOperation = 0;
+pub const NSCollectionViewDropBefore: NSCollectionViewDropOperation = 1;
+
+pub type NSCollectionViewItemHighlightState = NSInteger;
+pub const NSCollectionViewItemHighlightNone: NSCollectionViewItemHighlightState = 0;
+pub const NSCollectionViewItemHighlightForSelection: NSCollectionViewItemHighlightState = 1;
+pub const NSCollectionViewItemHighlightForDeselection: NSCollectionViewItemHighlightState = 2;
+pub const NSCollectionViewItemHighlightAsDropTarget: NSCollectionViewItemHighlightState = 3;
+
+pub type NSCollectionViewScrollPosition = NSUInteger;
+pub const NSCollectionViewScrollPositionNone: NSCollectionViewScrollPosition = 0;
+pub const NSCollectionViewScrollPositionTop: NSCollectionViewScrollPosition = 1;
+pub const NSCollectionViewScrollPositionCenteredVertically: NSCollectionViewScrollPosition = 2;
+pub const NSCollectionViewScrollPositionBottom: NSCollectionViewScrollPosition = 4;
+pub const NSCollectionViewScrollPositionNearestHorizontalEdge: NSCollectionViewScrollPosition = 512;
+pub const NSCollectionViewScrollPositionLeft: NSCollectionViewScrollPosition = 8;
+pub const NSCollectionViewScrollPositionCenteredHorizontally: NSCollectionViewScrollPosition = 16;
+pub const NSCollectionViewScrollPositionRight: NSCollectionViewScrollPosition = 32;
+pub const NSCollectionViewScrollPositionLeadingEdge: NSCollectionViewScrollPosition = 64;
+pub const NSCollectionViewScrollPositionTrailingEdge: NSCollectionViewScrollPosition = 128;
+pub const NSCollectionViewScrollPositionNearestVerticalEdge: NSCollectionViewScrollPosition = 256;
+
 pub type NSCollectionViewSupplementaryElementKind = NSString;
 
 pub type NSCollectionViewElement = NSObject;

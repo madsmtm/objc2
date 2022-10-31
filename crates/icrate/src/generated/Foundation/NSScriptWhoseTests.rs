@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTestComparisonOperation = NSUInteger;
+pub const NSEqualToComparison: NSTestComparisonOperation = 0;
+pub const NSLessThanOrEqualToComparison: NSTestComparisonOperation = 1;
+pub const NSLessThanComparison: NSTestComparisonOperation = 2;
+pub const NSGreaterThanOrEqualToComparison: NSTestComparisonOperation = 3;
+pub const NSGreaterThanComparison: NSTestComparisonOperation = 4;
+pub const NSBeginsWithComparison: NSTestComparisonOperation = 5;
+pub const NSEndsWithComparison: NSTestComparisonOperation = 6;
+pub const NSContainsComparison: NSTestComparisonOperation = 7;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSScriptWhoseTest;

@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSHapticFeedbackPattern = NSInteger;
+pub const NSHapticFeedbackPatternGeneric: NSHapticFeedbackPattern = 0;
+pub const NSHapticFeedbackPatternAlignment: NSHapticFeedbackPattern = 1;
+pub const NSHapticFeedbackPatternLevelChange: NSHapticFeedbackPattern = 2;
+
+pub type NSHapticFeedbackPerformanceTime = NSUInteger;
+pub const NSHapticFeedbackPerformanceTimeDefault: NSHapticFeedbackPerformanceTime = 0;
+pub const NSHapticFeedbackPerformanceTimeNow: NSHapticFeedbackPerformanceTime = 1;
+pub const NSHapticFeedbackPerformanceTimeDrawCompleted: NSHapticFeedbackPerformanceTime = 2;
+
 pub type NSHapticFeedbackPerformer = NSObject;
 
 extern_class!(

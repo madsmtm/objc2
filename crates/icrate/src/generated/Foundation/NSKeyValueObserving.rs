@@ -5,6 +5,24 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSKeyValueObservingOptions = NSUInteger;
+pub const NSKeyValueObservingOptionNew: NSKeyValueObservingOptions = 1;
+pub const NSKeyValueObservingOptionOld: NSKeyValueObservingOptions = 2;
+pub const NSKeyValueObservingOptionInitial: NSKeyValueObservingOptions = 4;
+pub const NSKeyValueObservingOptionPrior: NSKeyValueObservingOptions = 8;
+
+pub type NSKeyValueChange = NSUInteger;
+pub const NSKeyValueChangeSetting: NSKeyValueChange = 1;
+pub const NSKeyValueChangeInsertion: NSKeyValueChange = 2;
+pub const NSKeyValueChangeRemoval: NSKeyValueChange = 3;
+pub const NSKeyValueChangeReplacement: NSKeyValueChange = 4;
+
+pub type NSKeyValueSetMutationKind = NSUInteger;
+pub const NSKeyValueUnionSetMutation: NSKeyValueSetMutationKind = 1;
+pub const NSKeyValueMinusSetMutation: NSKeyValueSetMutationKind = 2;
+pub const NSKeyValueIntersectSetMutation: NSKeyValueSetMutationKind = 3;
+pub const NSKeyValueSetSetMutation: NSKeyValueSetMutationKind = 4;
+
 pub type NSKeyValueChangeKey = NSString;
 
 extern_methods!(

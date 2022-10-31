@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPathStyle = NSInteger;
+pub const NSPathStyleStandard: NSPathStyle = 0;
+pub const NSPathStylePopUp: NSPathStyle = 2;
+pub const NSPathStyleNavigationBar: NSPathStyle = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPathCell;

@@ -5,6 +5,19 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPickerTouchBarItemSelectionMode = NSInteger;
+pub const NSPickerTouchBarItemSelectionModeSelectOne: NSPickerTouchBarItemSelectionMode = 0;
+pub const NSPickerTouchBarItemSelectionModeSelectAny: NSPickerTouchBarItemSelectionMode = 1;
+pub const NSPickerTouchBarItemSelectionModeMomentary: NSPickerTouchBarItemSelectionMode = 2;
+
+pub type NSPickerTouchBarItemControlRepresentation = NSInteger;
+pub const NSPickerTouchBarItemControlRepresentationAutomatic:
+    NSPickerTouchBarItemControlRepresentation = 0;
+pub const NSPickerTouchBarItemControlRepresentationExpanded:
+    NSPickerTouchBarItemControlRepresentation = 1;
+pub const NSPickerTouchBarItemControlRepresentationCollapsed:
+    NSPickerTouchBarItemControlRepresentation = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPickerTouchBarItem;

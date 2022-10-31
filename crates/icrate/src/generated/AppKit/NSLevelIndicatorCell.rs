@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSLevelIndicatorStyle = NSUInteger;
+pub const NSLevelIndicatorStyleRelevancy: NSLevelIndicatorStyle = 0;
+pub const NSLevelIndicatorStyleContinuousCapacity: NSLevelIndicatorStyle = 1;
+pub const NSLevelIndicatorStyleDiscreteCapacity: NSLevelIndicatorStyle = 2;
+pub const NSLevelIndicatorStyleRating: NSLevelIndicatorStyle = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSLevelIndicatorCell;

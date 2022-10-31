@@ -5,6 +5,22 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSISO8601DateFormatOptions = NSUInteger;
+pub const NSISO8601DateFormatWithYear: NSISO8601DateFormatOptions = 1;
+pub const NSISO8601DateFormatWithMonth: NSISO8601DateFormatOptions = 2;
+pub const NSISO8601DateFormatWithWeekOfYear: NSISO8601DateFormatOptions = 4;
+pub const NSISO8601DateFormatWithDay: NSISO8601DateFormatOptions = 16;
+pub const NSISO8601DateFormatWithTime: NSISO8601DateFormatOptions = 32;
+pub const NSISO8601DateFormatWithTimeZone: NSISO8601DateFormatOptions = 64;
+pub const NSISO8601DateFormatWithSpaceBetweenDateAndTime: NSISO8601DateFormatOptions = 128;
+pub const NSISO8601DateFormatWithDashSeparatorInDate: NSISO8601DateFormatOptions = 256;
+pub const NSISO8601DateFormatWithColonSeparatorInTime: NSISO8601DateFormatOptions = 512;
+pub const NSISO8601DateFormatWithColonSeparatorInTimeZone: NSISO8601DateFormatOptions = 1024;
+pub const NSISO8601DateFormatWithFractionalSeconds: NSISO8601DateFormatOptions = 2048;
+pub const NSISO8601DateFormatWithFullDate: NSISO8601DateFormatOptions = 275;
+pub const NSISO8601DateFormatWithFullTime: NSISO8601DateFormatOptions = 1632;
+pub const NSISO8601DateFormatWithInternetDateTime: NSISO8601DateFormatOptions = 1907;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSISO8601DateFormatter;

@@ -306,6 +306,14 @@ extern_methods!(
     }
 );
 
+pub type NSTypesetterControlCharacterAction = NSUInteger;
+pub const NSTypesetterZeroAdvancementAction: NSTypesetterControlCharacterAction = 1;
+pub const NSTypesetterWhitespaceAction: NSTypesetterControlCharacterAction = 2;
+pub const NSTypesetterHorizontalTabAction: NSTypesetterControlCharacterAction = 4;
+pub const NSTypesetterLineBreakAction: NSTypesetterControlCharacterAction = 8;
+pub const NSTypesetterParagraphBreakAction: NSTypesetterControlCharacterAction = 16;
+pub const NSTypesetterContainerBreakAction: NSTypesetterControlCharacterAction = 32;
+
 extern_methods!(
     /// NSTypesetter_Deprecated
     unsafe impl NSTypesetter {

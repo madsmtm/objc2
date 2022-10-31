@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextInputTraitType = NSInteger;
+pub const NSTextInputTraitTypeDefault: NSTextInputTraitType = 0;
+pub const NSTextInputTraitTypeNo: NSTextInputTraitType = 1;
+pub const NSTextInputTraitTypeYes: NSTextInputTraitType = 2;
+
 pub type NSTextInputTraits = NSObject;
 
 pub type NSTextCheckingClient = NSObject;

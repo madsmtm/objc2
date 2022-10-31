@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSURLCacheStoragePolicy = NSUInteger;
+pub const NSURLCacheStorageAllowed: NSURLCacheStoragePolicy = 0;
+pub const NSURLCacheStorageAllowedInMemoryOnly: NSURLCacheStoragePolicy = 1;
+pub const NSURLCacheStorageNotAllowed: NSURLCacheStoragePolicy = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCachedURLResponse;

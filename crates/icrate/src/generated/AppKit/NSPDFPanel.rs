@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPDFPanelOptions = NSInteger;
+pub const NSPDFPanelShowsPaperSize: NSPDFPanelOptions = 4;
+pub const NSPDFPanelShowsOrientation: NSPDFPanelOptions = 8;
+pub const NSPDFPanelRequestsParentDirectory: NSPDFPanelOptions = 16777216;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPDFPanel;

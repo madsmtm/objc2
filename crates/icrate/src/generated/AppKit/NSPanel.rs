@@ -35,3 +35,6 @@ extern_methods!(
         pub unsafe fn setWorksWhenModal(&self, worksWhenModal: bool);
     }
 );
+
+pub const NSOKButton: i32 = 1;
+pub const NSCancelButton: i32 = 0;

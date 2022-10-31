@@ -9,6 +9,13 @@ pub type NSGraphicsContextAttributeKey = NSString;
 
 pub type NSGraphicsContextRepresentationFormatName = NSString;
 
+pub type NSImageInterpolation = NSUInteger;
+pub const NSImageInterpolationDefault: NSImageInterpolation = 0;
+pub const NSImageInterpolationNone: NSImageInterpolation = 1;
+pub const NSImageInterpolationLow: NSImageInterpolation = 2;
+pub const NSImageInterpolationMedium: NSImageInterpolation = 4;
+pub const NSImageInterpolationHigh: NSImageInterpolation = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSGraphicsContext;

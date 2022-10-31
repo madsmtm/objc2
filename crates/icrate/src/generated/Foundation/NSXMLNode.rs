@@ -5,6 +5,21 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSXMLNodeKind = NSUInteger;
+pub const NSXMLInvalidKind: NSXMLNodeKind = 0;
+pub const NSXMLDocumentKind: NSXMLNodeKind = 1;
+pub const NSXMLElementKind: NSXMLNodeKind = 2;
+pub const NSXMLAttributeKind: NSXMLNodeKind = 3;
+pub const NSXMLNamespaceKind: NSXMLNodeKind = 4;
+pub const NSXMLProcessingInstructionKind: NSXMLNodeKind = 5;
+pub const NSXMLCommentKind: NSXMLNodeKind = 6;
+pub const NSXMLTextKind: NSXMLNodeKind = 7;
+pub const NSXMLDTDKind: NSXMLNodeKind = 8;
+pub const NSXMLEntityDeclarationKind: NSXMLNodeKind = 9;
+pub const NSXMLAttributeDeclarationKind: NSXMLNodeKind = 10;
+pub const NSXMLElementDeclarationKind: NSXMLNodeKind = 11;
+pub const NSXMLNotationDeclarationKind: NSXMLNodeKind = 12;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSXMLNode;

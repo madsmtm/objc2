@@ -7,6 +7,30 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSFontSymbolicTraits = u32;
 
+pub type NSFontDescriptorSymbolicTraits = u32;
+pub const NSFontDescriptorTraitItalic: NSFontDescriptorSymbolicTraits = 1;
+pub const NSFontDescriptorTraitBold: NSFontDescriptorSymbolicTraits = 2;
+pub const NSFontDescriptorTraitExpanded: NSFontDescriptorSymbolicTraits = 32;
+pub const NSFontDescriptorTraitCondensed: NSFontDescriptorSymbolicTraits = 64;
+pub const NSFontDescriptorTraitMonoSpace: NSFontDescriptorSymbolicTraits = 1024;
+pub const NSFontDescriptorTraitVertical: NSFontDescriptorSymbolicTraits = 2048;
+pub const NSFontDescriptorTraitUIOptimized: NSFontDescriptorSymbolicTraits = 4096;
+pub const NSFontDescriptorTraitTightLeading: NSFontDescriptorSymbolicTraits = 32768;
+pub const NSFontDescriptorTraitLooseLeading: NSFontDescriptorSymbolicTraits = 65536;
+pub const NSFontDescriptorTraitEmphasized: NSFontDescriptorSymbolicTraits = 2;
+pub const NSFontDescriptorClassMask: NSFontDescriptorSymbolicTraits = -268435456;
+pub const NSFontDescriptorClassUnknown: NSFontDescriptorSymbolicTraits = 0;
+pub const NSFontDescriptorClassOldStyleSerifs: NSFontDescriptorSymbolicTraits = 268435456;
+pub const NSFontDescriptorClassTransitionalSerifs: NSFontDescriptorSymbolicTraits = 536870912;
+pub const NSFontDescriptorClassModernSerifs: NSFontDescriptorSymbolicTraits = 805306368;
+pub const NSFontDescriptorClassClarendonSerifs: NSFontDescriptorSymbolicTraits = 1073741824;
+pub const NSFontDescriptorClassSlabSerifs: NSFontDescriptorSymbolicTraits = 1342177280;
+pub const NSFontDescriptorClassFreeformSerifs: NSFontDescriptorSymbolicTraits = 1879048192;
+pub const NSFontDescriptorClassSansSerif: NSFontDescriptorSymbolicTraits = -2147483648;
+pub const NSFontDescriptorClassOrnamentals: NSFontDescriptorSymbolicTraits = -1879048192;
+pub const NSFontDescriptorClassScripts: NSFontDescriptorSymbolicTraits = -1610612736;
+pub const NSFontDescriptorClassSymbolic: NSFontDescriptorSymbolicTraits = -1073741824;
+
 pub type NSFontDescriptorAttributeName = NSString;
 
 pub type NSFontDescriptorTraitKey = NSString;
@@ -140,6 +164,14 @@ extern_methods!(
 );
 
 pub type NSFontFamilyClass = u32;
+
+pub const NSFontItalicTrait: i32 = 1;
+pub const NSFontBoldTrait: i32 = 2;
+pub const NSFontExpandedTrait: i32 = 32;
+pub const NSFontCondensedTrait: i32 = 64;
+pub const NSFontMonoSpaceTrait: i32 = 1024;
+pub const NSFontVerticalTrait: i32 = 2048;
+pub const NSFontUIOptimizedTrait: i32 = 4096;
 
 extern_methods!(
     /// NSFontDescriptor_TextStyles

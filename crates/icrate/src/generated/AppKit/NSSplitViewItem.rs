@@ -5,6 +5,19 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSSplitViewItemBehavior = NSInteger;
+pub const NSSplitViewItemBehaviorDefault: NSSplitViewItemBehavior = 0;
+pub const NSSplitViewItemBehaviorSidebar: NSSplitViewItemBehavior = 1;
+pub const NSSplitViewItemBehaviorContentList: NSSplitViewItemBehavior = 2;
+
+pub type NSSplitViewItemCollapseBehavior = NSInteger;
+pub const NSSplitViewItemCollapseBehaviorDefault: NSSplitViewItemCollapseBehavior = 0;
+pub const NSSplitViewItemCollapseBehaviorPreferResizingSplitViewWithFixedSiblings:
+    NSSplitViewItemCollapseBehavior = 1;
+pub const NSSplitViewItemCollapseBehaviorPreferResizingSiblingsWithFixedSplitView:
+    NSSplitViewItemCollapseBehavior = 2;
+pub const NSSplitViewItemCollapseBehaviorUseConstraints: NSSplitViewItemCollapseBehavior = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSplitViewItem;

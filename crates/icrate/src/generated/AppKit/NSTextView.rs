@@ -5,6 +5,15 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSSelectionGranularity = NSUInteger;
+pub const NSSelectByCharacter: NSSelectionGranularity = 0;
+pub const NSSelectByWord: NSSelectionGranularity = 1;
+pub const NSSelectByParagraph: NSSelectionGranularity = 2;
+
+pub type NSSelectionAffinity = NSUInteger;
+pub const NSSelectionAffinityUpstream: NSSelectionAffinity = 0;
+pub const NSSelectionAffinityDownstream: NSSelectionAffinity = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextView;
@@ -932,4 +941,22 @@ extern_methods!(
 
 pub type NSTextViewDelegate = NSObject;
 
+pub type NSFindPanelAction = NSUInteger;
+pub const NSFindPanelActionShowFindPanel: NSFindPanelAction = 1;
+pub const NSFindPanelActionNext: NSFindPanelAction = 2;
+pub const NSFindPanelActionPrevious: NSFindPanelAction = 3;
+pub const NSFindPanelActionReplaceAll: NSFindPanelAction = 4;
+pub const NSFindPanelActionReplace: NSFindPanelAction = 5;
+pub const NSFindPanelActionReplaceAndFind: NSFindPanelAction = 6;
+pub const NSFindPanelActionSetFindString: NSFindPanelAction = 7;
+pub const NSFindPanelActionReplaceAllInSelection: NSFindPanelAction = 8;
+pub const NSFindPanelActionSelectAll: NSFindPanelAction = 9;
+pub const NSFindPanelActionSelectAllInSelection: NSFindPanelAction = 10;
+
 pub type NSPasteboardTypeFindPanelSearchOptionKey = NSString;
+
+pub type NSFindPanelSubstringMatchType = NSUInteger;
+pub const NSFindPanelSubstringMatchTypeContains: NSFindPanelSubstringMatchType = 0;
+pub const NSFindPanelSubstringMatchTypeStartsWith: NSFindPanelSubstringMatchType = 1;
+pub const NSFindPanelSubstringMatchTypeFullWord: NSFindPanelSubstringMatchType = 2;
+pub const NSFindPanelSubstringMatchTypeEndsWith: NSFindPanelSubstringMatchType = 3;

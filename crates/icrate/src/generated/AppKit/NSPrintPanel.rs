@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPrintPanelOptions = NSUInteger;
+pub const NSPrintPanelShowsCopies: NSPrintPanelOptions = 1;
+pub const NSPrintPanelShowsPageRange: NSPrintPanelOptions = 2;
+pub const NSPrintPanelShowsPaperSize: NSPrintPanelOptions = 4;
+pub const NSPrintPanelShowsOrientation: NSPrintPanelOptions = 8;
+pub const NSPrintPanelShowsScaling: NSPrintPanelOptions = 16;
+pub const NSPrintPanelShowsPrintSelection: NSPrintPanelOptions = 32;
+pub const NSPrintPanelShowsPageSetupAccessory: NSPrintPanelOptions = 256;
+pub const NSPrintPanelShowsPreview: NSPrintPanelOptions = 131072;
+
 pub type NSPrintPanelJobStyleHint = NSString;
 
 pub type NSPrintPanelAccessorySummaryKey = NSString;

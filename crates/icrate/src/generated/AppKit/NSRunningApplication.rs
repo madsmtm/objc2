@@ -5,6 +5,15 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSApplicationActivationOptions = NSUInteger;
+pub const NSApplicationActivateAllWindows: NSApplicationActivationOptions = 1;
+pub const NSApplicationActivateIgnoringOtherApps: NSApplicationActivationOptions = 2;
+
+pub type NSApplicationActivationPolicy = NSInteger;
+pub const NSApplicationActivationPolicyRegular: NSApplicationActivationPolicy = 0;
+pub const NSApplicationActivationPolicyAccessory: NSApplicationActivationPolicy = 1;
+pub const NSApplicationActivationPolicyProhibited: NSApplicationActivationPolicy = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSRunningApplication;

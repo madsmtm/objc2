@@ -5,6 +5,30 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDateComponentsFormatterUnitsStyle = NSInteger;
+pub const NSDateComponentsFormatterUnitsStylePositional: NSDateComponentsFormatterUnitsStyle = 0;
+pub const NSDateComponentsFormatterUnitsStyleAbbreviated: NSDateComponentsFormatterUnitsStyle = 1;
+pub const NSDateComponentsFormatterUnitsStyleShort: NSDateComponentsFormatterUnitsStyle = 2;
+pub const NSDateComponentsFormatterUnitsStyleFull: NSDateComponentsFormatterUnitsStyle = 3;
+pub const NSDateComponentsFormatterUnitsStyleSpellOut: NSDateComponentsFormatterUnitsStyle = 4;
+pub const NSDateComponentsFormatterUnitsStyleBrief: NSDateComponentsFormatterUnitsStyle = 5;
+
+pub type NSDateComponentsFormatterZeroFormattingBehavior = NSUInteger;
+pub const NSDateComponentsFormatterZeroFormattingBehaviorNone:
+    NSDateComponentsFormatterZeroFormattingBehavior = 0;
+pub const NSDateComponentsFormatterZeroFormattingBehaviorDefault:
+    NSDateComponentsFormatterZeroFormattingBehavior = 1;
+pub const NSDateComponentsFormatterZeroFormattingBehaviorDropLeading:
+    NSDateComponentsFormatterZeroFormattingBehavior = 2;
+pub const NSDateComponentsFormatterZeroFormattingBehaviorDropMiddle:
+    NSDateComponentsFormatterZeroFormattingBehavior = 4;
+pub const NSDateComponentsFormatterZeroFormattingBehaviorDropTrailing:
+    NSDateComponentsFormatterZeroFormattingBehavior = 8;
+pub const NSDateComponentsFormatterZeroFormattingBehaviorDropAll:
+    NSDateComponentsFormatterZeroFormattingBehavior = 14;
+pub const NSDateComponentsFormatterZeroFormattingBehaviorPad:
+    NSDateComponentsFormatterZeroFormattingBehavior = 65536;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSDateComponentsFormatter;

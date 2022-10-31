@@ -5,6 +5,42 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSAutoresizingMaskOptions = NSUInteger;
+pub const NSViewNotSizable: NSAutoresizingMaskOptions = 0;
+pub const NSViewMinXMargin: NSAutoresizingMaskOptions = 1;
+pub const NSViewWidthSizable: NSAutoresizingMaskOptions = 2;
+pub const NSViewMaxXMargin: NSAutoresizingMaskOptions = 4;
+pub const NSViewMinYMargin: NSAutoresizingMaskOptions = 8;
+pub const NSViewHeightSizable: NSAutoresizingMaskOptions = 16;
+pub const NSViewMaxYMargin: NSAutoresizingMaskOptions = 32;
+
+pub type NSBorderType = NSUInteger;
+pub const NSNoBorder: NSBorderType = 0;
+pub const NSLineBorder: NSBorderType = 1;
+pub const NSBezelBorder: NSBorderType = 2;
+pub const NSGrooveBorder: NSBorderType = 3;
+
+pub type NSViewLayerContentsRedrawPolicy = NSInteger;
+pub const NSViewLayerContentsRedrawNever: NSViewLayerContentsRedrawPolicy = 0;
+pub const NSViewLayerContentsRedrawOnSetNeedsDisplay: NSViewLayerContentsRedrawPolicy = 1;
+pub const NSViewLayerContentsRedrawDuringViewResize: NSViewLayerContentsRedrawPolicy = 2;
+pub const NSViewLayerContentsRedrawBeforeViewResize: NSViewLayerContentsRedrawPolicy = 3;
+pub const NSViewLayerContentsRedrawCrossfade: NSViewLayerContentsRedrawPolicy = 4;
+
+pub type NSViewLayerContentsPlacement = NSInteger;
+pub const NSViewLayerContentsPlacementScaleAxesIndependently: NSViewLayerContentsPlacement = 0;
+pub const NSViewLayerContentsPlacementScaleProportionallyToFit: NSViewLayerContentsPlacement = 1;
+pub const NSViewLayerContentsPlacementScaleProportionallyToFill: NSViewLayerContentsPlacement = 2;
+pub const NSViewLayerContentsPlacementCenter: NSViewLayerContentsPlacement = 3;
+pub const NSViewLayerContentsPlacementTop: NSViewLayerContentsPlacement = 4;
+pub const NSViewLayerContentsPlacementTopRight: NSViewLayerContentsPlacement = 5;
+pub const NSViewLayerContentsPlacementRight: NSViewLayerContentsPlacement = 6;
+pub const NSViewLayerContentsPlacementBottomRight: NSViewLayerContentsPlacement = 7;
+pub const NSViewLayerContentsPlacementBottom: NSViewLayerContentsPlacement = 8;
+pub const NSViewLayerContentsPlacementBottomLeft: NSViewLayerContentsPlacement = 9;
+pub const NSViewLayerContentsPlacementLeft: NSViewLayerContentsPlacement = 10;
+pub const NSViewLayerContentsPlacementTopLeft: NSViewLayerContentsPlacement = 11;
+
 pub type NSTrackingRectTag = NSInteger;
 
 pub type NSToolTipTag = NSInteger;

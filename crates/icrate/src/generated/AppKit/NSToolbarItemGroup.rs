@@ -5,6 +5,19 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSToolbarItemGroupSelectionMode = NSInteger;
+pub const NSToolbarItemGroupSelectionModeSelectOne: NSToolbarItemGroupSelectionMode = 0;
+pub const NSToolbarItemGroupSelectionModeSelectAny: NSToolbarItemGroupSelectionMode = 1;
+pub const NSToolbarItemGroupSelectionModeMomentary: NSToolbarItemGroupSelectionMode = 2;
+
+pub type NSToolbarItemGroupControlRepresentation = NSInteger;
+pub const NSToolbarItemGroupControlRepresentationAutomatic:
+    NSToolbarItemGroupControlRepresentation = 0;
+pub const NSToolbarItemGroupControlRepresentationExpanded: NSToolbarItemGroupControlRepresentation =
+    1;
+pub const NSToolbarItemGroupControlRepresentationCollapsed:
+    NSToolbarItemGroupControlRepresentation = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSToolbarItemGroup;

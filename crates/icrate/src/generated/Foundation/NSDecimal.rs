@@ -4,3 +4,16 @@
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
+
+pub type NSRoundingMode = NSUInteger;
+pub const NSRoundPlain: NSRoundingMode = 0;
+pub const NSRoundDown: NSRoundingMode = 1;
+pub const NSRoundUp: NSRoundingMode = 2;
+pub const NSRoundBankers: NSRoundingMode = 3;
+
+pub type NSCalculationError = NSUInteger;
+pub const NSCalculationNoError: NSCalculationError = 0;
+pub const NSCalculationLossOfPrecision: NSCalculationError = 1;
+pub const NSCalculationUnderflow: NSCalculationError = 2;
+pub const NSCalculationOverflow: NSCalculationError = 3;
+pub const NSCalculationDivideByZero: NSCalculationError = 4;

@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPrintingPageOrder = NSInteger;
+pub const NSDescendingPageOrder: NSPrintingPageOrder = -1;
+pub const NSSpecialPageOrder: NSPrintingPageOrder = 0;
+pub const NSAscendingPageOrder: NSPrintingPageOrder = 1;
+pub const NSUnknownPageOrder: NSPrintingPageOrder = 2;
+
+pub type NSPrintRenderingQuality = NSInteger;
+pub const NSPrintRenderingQualityBest: NSPrintRenderingQuality = 0;
+pub const NSPrintRenderingQualityResponsive: NSPrintRenderingQuality = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPrintOperation;

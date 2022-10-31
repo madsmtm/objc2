@@ -5,6 +5,13 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDateIntervalFormatterStyle = NSUInteger;
+pub const NSDateIntervalFormatterNoStyle: NSDateIntervalFormatterStyle = 0;
+pub const NSDateIntervalFormatterShortStyle: NSDateIntervalFormatterStyle = 1;
+pub const NSDateIntervalFormatterMediumStyle: NSDateIntervalFormatterStyle = 2;
+pub const NSDateIntervalFormatterLongStyle: NSDateIntervalFormatterStyle = 3;
+pub const NSDateIntervalFormatterFullStyle: NSDateIntervalFormatterStyle = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSDateIntervalFormatter;

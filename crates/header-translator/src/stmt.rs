@@ -204,8 +204,9 @@ pub enum Stmt {
     /// };
     EnumDecl {
         name: Option<String>,
+        ty: RustType,
         kind: Option<UnexposedMacro>,
-        variants: Vec<(String, Option<Expr>)>,
+        variants: Vec<(String, (i64, u64))>,
     },
     /// typedef Type TypedefName;
     AliasDecl { name: String, type_: RustType },
@@ -370,6 +371,8 @@ impl Stmt {
             }
             EntityKind::EnumDecl => {
                 let name = entity.get_name();
+                let ty =
+                    RustType::parse_enum(entity.get_enum_underlying_type().expect("enum type"));
                 let mut kind = None;
                 let mut variants = Vec::new();
 
@@ -377,10 +380,11 @@ impl Stmt {
                     match entity.get_kind() {
                         EntityKind::EnumConstantDecl => {
                             let name = entity.get_name().expect("enum constant name");
-                            variants.push((
-                                name,
-                                Expr::parse(&entity, &std::collections::HashMap::new()),
-                            ));
+                            let val = entity
+                                .get_enum_constant_value()
+                                .expect("enum constant value");
+                            let _expr = Expr::parse(&entity, &std::collections::HashMap::new());
+                            variants.push((name, val));
                         }
                         EntityKind::UnexposedAttr => {
                             if let Some(macro_) = UnexposedMacro::parse(&entity) {
@@ -411,6 +415,7 @@ impl Stmt {
 
                 Some(Self::EnumDecl {
                     name,
+                    ty,
                     kind,
                     variants,
                 })
@@ -562,10 +567,21 @@ impl fmt::Display for Stmt {
             }
             Self::EnumDecl {
                 name,
-                kind,
+                ty,
+                // TODO: Use the enum kind
+                kind: _,
                 variants,
             } => {
-                // TODO
+                if let Some(name) = name {
+                    writeln!(f, "pub type {name} = {ty};")?;
+                    for (variant_name, (signed_val, _unsigned_val)) in variants {
+                        writeln!(f, "pub const {variant_name}: {name} = {signed_val};")?;
+                    }
+                } else {
+                    for (variant_name, (signed_val, _unsigned_val)) in variants {
+                        writeln!(f, "pub const {variant_name}: i32 = {signed_val};")?;
+                    }
+                }
             }
             Self::AliasDecl { name, type_ } => {
                 writeln!(f, "pub type {name} = {type_};")?;

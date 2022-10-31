@@ -7,6 +7,16 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSRuleEditorPredicatePartKey = NSString;
 
+pub type NSRuleEditorNestingMode = NSUInteger;
+pub const NSRuleEditorNestingModeSingle: NSRuleEditorNestingMode = 0;
+pub const NSRuleEditorNestingModeList: NSRuleEditorNestingMode = 1;
+pub const NSRuleEditorNestingModeCompound: NSRuleEditorNestingMode = 2;
+pub const NSRuleEditorNestingModeSimple: NSRuleEditorNestingMode = 3;
+
+pub type NSRuleEditorRowType = NSUInteger;
+pub const NSRuleEditorRowTypeSimple: NSRuleEditorRowType = 0;
+pub const NSRuleEditorRowTypeCompound: NSRuleEditorRowType = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSRuleEditor;

@@ -5,6 +5,24 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDocumentChangeType = NSUInteger;
+pub const NSChangeDone: NSDocumentChangeType = 0;
+pub const NSChangeUndone: NSDocumentChangeType = 1;
+pub const NSChangeRedone: NSDocumentChangeType = 5;
+pub const NSChangeCleared: NSDocumentChangeType = 2;
+pub const NSChangeReadOtherContents: NSDocumentChangeType = 3;
+pub const NSChangeAutosaved: NSDocumentChangeType = 4;
+pub const NSChangeDiscardable: NSDocumentChangeType = 256;
+
+pub type NSSaveOperationType = NSUInteger;
+pub const NSSaveOperation: NSSaveOperationType = 0;
+pub const NSSaveAsOperation: NSSaveOperationType = 1;
+pub const NSSaveToOperation: NSSaveOperationType = 2;
+pub const NSAutosaveInPlaceOperation: NSSaveOperationType = 4;
+pub const NSAutosaveElsewhereOperation: NSSaveOperationType = 3;
+pub const NSAutosaveAsOperation: NSSaveOperationType = 5;
+pub const NSAutosaveOperation: NSSaveOperationType = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSDocument;

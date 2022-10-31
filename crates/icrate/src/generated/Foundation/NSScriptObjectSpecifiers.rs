@@ -5,6 +5,32 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub const NSNoSpecifierError: i32 = 0;
+pub const NSNoTopLevelContainersSpecifierError: i32 = 1;
+pub const NSContainerSpecifierError: i32 = 2;
+pub const NSUnknownKeySpecifierError: i32 = 3;
+pub const NSInvalidIndexSpecifierError: i32 = 4;
+pub const NSInternalSpecifierError: i32 = 5;
+pub const NSOperationNotSupportedForKeySpecifierError: i32 = 6;
+
+pub type NSInsertionPosition = NSUInteger;
+pub const NSPositionAfter: NSInsertionPosition = 0;
+pub const NSPositionBefore: NSInsertionPosition = 1;
+pub const NSPositionBeginning: NSInsertionPosition = 2;
+pub const NSPositionEnd: NSInsertionPosition = 3;
+pub const NSPositionReplace: NSInsertionPosition = 4;
+
+pub type NSRelativePosition = NSUInteger;
+pub const NSRelativeAfter: NSRelativePosition = 0;
+pub const NSRelativeBefore: NSRelativePosition = 1;
+
+pub type NSWhoseSubelementIdentifier = NSUInteger;
+pub const NSIndexSubelement: NSWhoseSubelementIdentifier = 0;
+pub const NSEverySubelement: NSWhoseSubelementIdentifier = 1;
+pub const NSMiddleSubelement: NSWhoseSubelementIdentifier = 2;
+pub const NSRandomSubelement: NSWhoseSubelementIdentifier = 3;
+pub const NSNoSubelement: NSWhoseSubelementIdentifier = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSScriptObjectSpecifier;

@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSMatrixMode = NSUInteger;
+pub const NSRadioModeMatrix: NSMatrixMode = 0;
+pub const NSHighlightModeMatrix: NSMatrixMode = 1;
+pub const NSListModeMatrix: NSMatrixMode = 2;
+pub const NSTrackModeMatrix: NSMatrixMode = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSMatrix;

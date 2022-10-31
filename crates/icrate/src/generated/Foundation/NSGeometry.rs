@@ -11,6 +11,40 @@ pub type NSSize = CGSize;
 
 pub type NSRect = CGRect;
 
+pub type NSRectEdge = NSUInteger;
+pub const NSRectEdgeMinX: NSRectEdge = 0;
+pub const NSRectEdgeMinY: NSRectEdge = 1;
+pub const NSRectEdgeMaxX: NSRectEdge = 2;
+pub const NSRectEdgeMaxY: NSRectEdge = 3;
+pub const NSMinXEdge: NSRectEdge = 0;
+pub const NSMinYEdge: NSRectEdge = 1;
+pub const NSMaxXEdge: NSRectEdge = 2;
+pub const NSMaxYEdge: NSRectEdge = 3;
+
+pub type NSAlignmentOptions = c_ulonglong;
+pub const NSAlignMinXInward: NSAlignmentOptions = 1;
+pub const NSAlignMinYInward: NSAlignmentOptions = 2;
+pub const NSAlignMaxXInward: NSAlignmentOptions = 4;
+pub const NSAlignMaxYInward: NSAlignmentOptions = 8;
+pub const NSAlignWidthInward: NSAlignmentOptions = 16;
+pub const NSAlignHeightInward: NSAlignmentOptions = 32;
+pub const NSAlignMinXOutward: NSAlignmentOptions = 256;
+pub const NSAlignMinYOutward: NSAlignmentOptions = 512;
+pub const NSAlignMaxXOutward: NSAlignmentOptions = 1024;
+pub const NSAlignMaxYOutward: NSAlignmentOptions = 2048;
+pub const NSAlignWidthOutward: NSAlignmentOptions = 4096;
+pub const NSAlignHeightOutward: NSAlignmentOptions = 8192;
+pub const NSAlignMinXNearest: NSAlignmentOptions = 65536;
+pub const NSAlignMinYNearest: NSAlignmentOptions = 131072;
+pub const NSAlignMaxXNearest: NSAlignmentOptions = 262144;
+pub const NSAlignMaxYNearest: NSAlignmentOptions = 524288;
+pub const NSAlignWidthNearest: NSAlignmentOptions = 1048576;
+pub const NSAlignHeightNearest: NSAlignmentOptions = 2097152;
+pub const NSAlignRectFlipped: NSAlignmentOptions = -9223372036854775808;
+pub const NSAlignAllEdgesInward: NSAlignmentOptions = 15;
+pub const NSAlignAllEdgesOutward: NSAlignmentOptions = 3840;
+pub const NSAlignAllEdgesNearest: NSAlignmentOptions = 983040;
+
 extern_methods!(
     /// NSValueGeometryExtensions
     unsafe impl NSValue {

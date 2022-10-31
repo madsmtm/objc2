@@ -5,7 +5,33 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextLayoutOrientation = NSInteger;
+pub const NSTextLayoutOrientationHorizontal: NSTextLayoutOrientation = 0;
+pub const NSTextLayoutOrientationVertical: NSTextLayoutOrientation = 1;
+
+pub type NSGlyphProperty = NSInteger;
+pub const NSGlyphPropertyNull: NSGlyphProperty = 1;
+pub const NSGlyphPropertyControlCharacter: NSGlyphProperty = 2;
+pub const NSGlyphPropertyElastic: NSGlyphProperty = 4;
+pub const NSGlyphPropertyNonBaseCharacter: NSGlyphProperty = 8;
+
+pub type NSControlCharacterAction = NSInteger;
+pub const NSControlCharacterActionZeroAdvancement: NSControlCharacterAction = 1;
+pub const NSControlCharacterActionWhitespace: NSControlCharacterAction = 2;
+pub const NSControlCharacterActionHorizontalTab: NSControlCharacterAction = 4;
+pub const NSControlCharacterActionLineBreak: NSControlCharacterAction = 8;
+pub const NSControlCharacterActionParagraphBreak: NSControlCharacterAction = 16;
+pub const NSControlCharacterActionContainerBreak: NSControlCharacterAction = 32;
+
 pub type NSTextLayoutOrientationProvider = NSObject;
+
+pub type NSTypesetterBehavior = NSInteger;
+pub const NSTypesetterLatestBehavior: NSTypesetterBehavior = -1;
+pub const NSTypesetterOriginalBehavior: NSTypesetterBehavior = 0;
+pub const NSTypesetterBehavior_10_2_WithCompatibility: NSTypesetterBehavior = 1;
+pub const NSTypesetterBehavior_10_2: NSTypesetterBehavior = 2;
+pub const NSTypesetterBehavior_10_3: NSTypesetterBehavior = 3;
+pub const NSTypesetterBehavior_10_4: NSTypesetterBehavior = 4;
 
 extern_class!(
     #[derive(Debug)]
@@ -699,6 +725,18 @@ extern_methods!(
 );
 
 pub type NSLayoutManagerDelegate = NSObject;
+
+pub const NSGlyphAttributeSoft: i32 = 0;
+pub const NSGlyphAttributeElastic: i32 = 1;
+pub const NSGlyphAttributeBidiLevel: i32 = 2;
+pub const NSGlyphAttributeInscribe: i32 = 5;
+
+pub type NSGlyphInscription = NSUInteger;
+pub const NSGlyphInscribeBase: NSGlyphInscription = 0;
+pub const NSGlyphInscribeBelow: NSGlyphInscription = 1;
+pub const NSGlyphInscribeAbove: NSGlyphInscription = 2;
+pub const NSGlyphInscribeOverstrike: NSGlyphInscription = 3;
+pub const NSGlyphInscribeOverBelow: NSGlyphInscription = 4;
 
 extern_methods!(
     /// NSLayoutManagerDeprecated

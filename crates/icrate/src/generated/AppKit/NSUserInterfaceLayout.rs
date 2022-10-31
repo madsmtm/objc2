@@ -4,3 +4,11 @@
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
+
+pub type NSUserInterfaceLayoutDirection = NSInteger;
+pub const NSUserInterfaceLayoutDirectionLeftToRight: NSUserInterfaceLayoutDirection = 0;
+pub const NSUserInterfaceLayoutDirectionRightToLeft: NSUserInterfaceLayoutDirection = 1;
+
+pub type NSUserInterfaceLayoutOrientation = NSInteger;
+pub const NSUserInterfaceLayoutOrientationHorizontal: NSUserInterfaceLayoutOrientation = 0;
+pub const NSUserInterfaceLayoutOrientationVertical: NSUserInterfaceLayoutOrientation = 1;

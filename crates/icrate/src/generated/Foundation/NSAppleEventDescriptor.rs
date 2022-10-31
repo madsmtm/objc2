@@ -5,6 +5,19 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSAppleEventSendOptions = NSUInteger;
+pub const NSAppleEventSendNoReply: NSAppleEventSendOptions = 1;
+pub const NSAppleEventSendQueueReply: NSAppleEventSendOptions = 2;
+pub const NSAppleEventSendWaitForReply: NSAppleEventSendOptions = 3;
+pub const NSAppleEventSendNeverInteract: NSAppleEventSendOptions = 16;
+pub const NSAppleEventSendCanInteract: NSAppleEventSendOptions = 32;
+pub const NSAppleEventSendAlwaysInteract: NSAppleEventSendOptions = 48;
+pub const NSAppleEventSendCanSwitchLayer: NSAppleEventSendOptions = 64;
+pub const NSAppleEventSendDontRecord: NSAppleEventSendOptions = 4096;
+pub const NSAppleEventSendDontExecute: NSAppleEventSendOptions = 8192;
+pub const NSAppleEventSendDontAnnotate: NSAppleEventSendOptions = 65536;
+pub const NSAppleEventSendDefaultOptions: NSAppleEventSendOptions = 35;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAppleEventDescriptor;

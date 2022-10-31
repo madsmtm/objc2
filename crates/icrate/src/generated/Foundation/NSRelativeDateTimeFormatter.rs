@@ -5,6 +5,17 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSRelativeDateTimeFormatterStyle = NSInteger;
+pub const NSRelativeDateTimeFormatterStyleNumeric: NSRelativeDateTimeFormatterStyle = 0;
+pub const NSRelativeDateTimeFormatterStyleNamed: NSRelativeDateTimeFormatterStyle = 1;
+
+pub type NSRelativeDateTimeFormatterUnitsStyle = NSInteger;
+pub const NSRelativeDateTimeFormatterUnitsStyleFull: NSRelativeDateTimeFormatterUnitsStyle = 0;
+pub const NSRelativeDateTimeFormatterUnitsStyleSpellOut: NSRelativeDateTimeFormatterUnitsStyle = 1;
+pub const NSRelativeDateTimeFormatterUnitsStyleShort: NSRelativeDateTimeFormatterUnitsStyle = 2;
+pub const NSRelativeDateTimeFormatterUnitsStyleAbbreviated: NSRelativeDateTimeFormatterUnitsStyle =
+    3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSRelativeDateTimeFormatter;

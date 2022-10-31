@@ -5,6 +5,28 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSColorPanelMode = NSInteger;
+pub const NSColorPanelModeNone: NSColorPanelMode = -1;
+pub const NSColorPanelModeGray: NSColorPanelMode = 0;
+pub const NSColorPanelModeRGB: NSColorPanelMode = 1;
+pub const NSColorPanelModeCMYK: NSColorPanelMode = 2;
+pub const NSColorPanelModeHSB: NSColorPanelMode = 3;
+pub const NSColorPanelModeCustomPalette: NSColorPanelMode = 4;
+pub const NSColorPanelModeColorList: NSColorPanelMode = 5;
+pub const NSColorPanelModeWheel: NSColorPanelMode = 6;
+pub const NSColorPanelModeCrayon: NSColorPanelMode = 7;
+
+pub type NSColorPanelOptions = NSUInteger;
+pub const NSColorPanelGrayModeMask: NSColorPanelOptions = 1;
+pub const NSColorPanelRGBModeMask: NSColorPanelOptions = 2;
+pub const NSColorPanelCMYKModeMask: NSColorPanelOptions = 4;
+pub const NSColorPanelHSBModeMask: NSColorPanelOptions = 8;
+pub const NSColorPanelCustomPaletteModeMask: NSColorPanelOptions = 16;
+pub const NSColorPanelColorListModeMask: NSColorPanelOptions = 32;
+pub const NSColorPanelWheelModeMask: NSColorPanelOptions = 64;
+pub const NSColorPanelCrayonModeMask: NSColorPanelOptions = 128;
+pub const NSColorPanelAllModesMask: NSColorPanelOptions = 65535;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSColorPanel;

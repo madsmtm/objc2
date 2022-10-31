@@ -7,6 +7,10 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSStatusItemAutosaveName = NSString;
 
+pub type NSStatusItemBehavior = NSUInteger;
+pub const NSStatusItemBehaviorRemovalAllowed: NSStatusItemBehavior = 2;
+pub const NSStatusItemBehaviorTerminationOnRemoval: NSStatusItemBehavior = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSStatusItem;

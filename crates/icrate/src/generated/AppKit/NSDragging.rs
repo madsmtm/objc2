@@ -5,11 +5,50 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDragOperation = NSUInteger;
+pub const NSDragOperationNone: NSDragOperation = 0;
+pub const NSDragOperationCopy: NSDragOperation = 1;
+pub const NSDragOperationLink: NSDragOperation = 2;
+pub const NSDragOperationGeneric: NSDragOperation = 4;
+pub const NSDragOperationPrivate: NSDragOperation = 8;
+pub const NSDragOperationMove: NSDragOperation = 16;
+pub const NSDragOperationDelete: NSDragOperation = 32;
+pub const NSDragOperationEvery: NSDragOperation = -1;
+pub const NSDragOperationAll_Obsolete: NSDragOperation = 15;
+pub const NSDragOperationAll: NSDragOperation = 15;
+
+pub type NSDraggingFormation = NSInteger;
+pub const NSDraggingFormationDefault: NSDraggingFormation = 0;
+pub const NSDraggingFormationNone: NSDraggingFormation = 1;
+pub const NSDraggingFormationPile: NSDraggingFormation = 2;
+pub const NSDraggingFormationList: NSDraggingFormation = 3;
+pub const NSDraggingFormationStack: NSDraggingFormation = 4;
+
+pub type NSDraggingContext = NSInteger;
+pub const NSDraggingContextOutsideApplication: NSDraggingContext = 0;
+pub const NSDraggingContextWithinApplication: NSDraggingContext = 1;
+
+pub type NSDraggingItemEnumerationOptions = NSUInteger;
+pub const NSDraggingItemEnumerationConcurrent: NSDraggingItemEnumerationOptions = 1;
+pub const NSDraggingItemEnumerationClearNonenumeratedImages: NSDraggingItemEnumerationOptions =
+    65536;
+
+pub type NSSpringLoadingHighlight = NSInteger;
+pub const NSSpringLoadingHighlightNone: NSSpringLoadingHighlight = 0;
+pub const NSSpringLoadingHighlightStandard: NSSpringLoadingHighlight = 1;
+pub const NSSpringLoadingHighlightEmphasized: NSSpringLoadingHighlight = 2;
+
 pub type NSDraggingInfo = NSObject;
 
 pub type NSDraggingDestination = NSObject;
 
 pub type NSDraggingSource = NSObject;
+
+pub type NSSpringLoadingOptions = NSUInteger;
+pub const NSSpringLoadingDisabled: NSSpringLoadingOptions = 0;
+pub const NSSpringLoadingEnabled: NSSpringLoadingOptions = 1;
+pub const NSSpringLoadingContinuousActivation: NSSpringLoadingOptions = 2;
+pub const NSSpringLoadingNoHover: NSSpringLoadingOptions = 8;
 
 pub type NSSpringLoadingDestination = NSObject;
 

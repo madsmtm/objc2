@@ -5,6 +5,15 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSGestureRecognizerState = NSInteger;
+pub const NSGestureRecognizerStatePossible: NSGestureRecognizerState = 0;
+pub const NSGestureRecognizerStateBegan: NSGestureRecognizerState = 1;
+pub const NSGestureRecognizerStateChanged: NSGestureRecognizerState = 2;
+pub const NSGestureRecognizerStateEnded: NSGestureRecognizerState = 3;
+pub const NSGestureRecognizerStateCancelled: NSGestureRecognizerState = 4;
+pub const NSGestureRecognizerStateFailed: NSGestureRecognizerState = 5;
+pub const NSGestureRecognizerStateRecognized: NSGestureRecognizerState = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSGestureRecognizer;

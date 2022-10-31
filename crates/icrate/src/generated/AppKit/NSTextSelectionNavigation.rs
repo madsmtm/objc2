@@ -5,6 +5,40 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextSelectionNavigationDirection = NSInteger;
+pub const NSTextSelectionNavigationDirectionForward: NSTextSelectionNavigationDirection = 0;
+pub const NSTextSelectionNavigationDirectionBackward: NSTextSelectionNavigationDirection = 1;
+pub const NSTextSelectionNavigationDirectionRight: NSTextSelectionNavigationDirection = 2;
+pub const NSTextSelectionNavigationDirectionLeft: NSTextSelectionNavigationDirection = 3;
+pub const NSTextSelectionNavigationDirectionUp: NSTextSelectionNavigationDirection = 4;
+pub const NSTextSelectionNavigationDirectionDown: NSTextSelectionNavigationDirection = 5;
+
+pub type NSTextSelectionNavigationDestination = NSInteger;
+pub const NSTextSelectionNavigationDestinationCharacter: NSTextSelectionNavigationDestination = 0;
+pub const NSTextSelectionNavigationDestinationWord: NSTextSelectionNavigationDestination = 1;
+pub const NSTextSelectionNavigationDestinationLine: NSTextSelectionNavigationDestination = 2;
+pub const NSTextSelectionNavigationDestinationSentence: NSTextSelectionNavigationDestination = 3;
+pub const NSTextSelectionNavigationDestinationParagraph: NSTextSelectionNavigationDestination = 4;
+pub const NSTextSelectionNavigationDestinationContainer: NSTextSelectionNavigationDestination = 5;
+pub const NSTextSelectionNavigationDestinationDocument: NSTextSelectionNavigationDestination = 6;
+
+pub type NSTextSelectionNavigationModifier = NSUInteger;
+pub const NSTextSelectionNavigationModifierExtend: NSTextSelectionNavigationModifier = 1;
+pub const NSTextSelectionNavigationModifierVisual: NSTextSelectionNavigationModifier = 2;
+pub const NSTextSelectionNavigationModifierMultiple: NSTextSelectionNavigationModifier = 4;
+
+pub type NSTextSelectionNavigationWritingDirection = NSInteger;
+pub const NSTextSelectionNavigationWritingDirectionLeftToRight:
+    NSTextSelectionNavigationWritingDirection = 0;
+pub const NSTextSelectionNavigationWritingDirectionRightToLeft:
+    NSTextSelectionNavigationWritingDirection = 1;
+
+pub type NSTextSelectionNavigationLayoutOrientation = NSInteger;
+pub const NSTextSelectionNavigationLayoutOrientationHorizontal:
+    NSTextSelectionNavigationLayoutOrientation = 0;
+pub const NSTextSelectionNavigationLayoutOrientationVertical:
+    NSTextSelectionNavigationLayoutOrientation = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextSelectionNavigation;

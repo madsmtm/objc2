@@ -5,6 +5,14 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSOrderedCollectionDifferenceCalculationOptions = NSUInteger;
+pub const NSOrderedCollectionDifferenceCalculationOmitInsertedObjects:
+    NSOrderedCollectionDifferenceCalculationOptions = 1;
+pub const NSOrderedCollectionDifferenceCalculationOmitRemovedObjects:
+    NSOrderedCollectionDifferenceCalculationOptions = 2;
+pub const NSOrderedCollectionDifferenceCalculationInferMoves:
+    NSOrderedCollectionDifferenceCalculationOptions = 4;
+
 __inner_extern_class!(
     #[derive(Debug)]
     pub struct NSOrderedCollectionDifference<ObjectType: Message>;

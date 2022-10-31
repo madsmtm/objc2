@@ -5,6 +5,18 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSColorType = NSInteger;
+pub const NSColorTypeComponentBased: NSColorType = 0;
+pub const NSColorTypePattern: NSColorType = 1;
+pub const NSColorTypeCatalog: NSColorType = 2;
+
+pub type NSColorSystemEffect = NSInteger;
+pub const NSColorSystemEffectNone: NSColorSystemEffect = 0;
+pub const NSColorSystemEffectPressed: NSColorSystemEffect = 1;
+pub const NSColorSystemEffectDeepPressed: NSColorSystemEffect = 2;
+pub const NSColorSystemEffectDisabled: NSColorSystemEffect = 3;
+pub const NSColorSystemEffectRollover: NSColorSystemEffect = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSColor;

@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSAlertStyle = NSUInteger;
+pub const NSAlertStyleWarning: NSAlertStyle = 0;
+pub const NSAlertStyleInformational: NSAlertStyle = 1;
+pub const NSAlertStyleCritical: NSAlertStyle = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAlert;

@@ -7,6 +7,42 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSModalResponse = NSInteger;
 
+pub const NSUpdateWindowsRunLoopOrdering: i32 = 500000;
+
+pub type NSApplicationPresentationOptions = NSUInteger;
+pub const NSApplicationPresentationDefault: NSApplicationPresentationOptions = 0;
+pub const NSApplicationPresentationAutoHideDock: NSApplicationPresentationOptions = 1;
+pub const NSApplicationPresentationHideDock: NSApplicationPresentationOptions = 2;
+pub const NSApplicationPresentationAutoHideMenuBar: NSApplicationPresentationOptions = 4;
+pub const NSApplicationPresentationHideMenuBar: NSApplicationPresentationOptions = 8;
+pub const NSApplicationPresentationDisableAppleMenu: NSApplicationPresentationOptions = 16;
+pub const NSApplicationPresentationDisableProcessSwitching: NSApplicationPresentationOptions = 32;
+pub const NSApplicationPresentationDisableForceQuit: NSApplicationPresentationOptions = 64;
+pub const NSApplicationPresentationDisableSessionTermination: NSApplicationPresentationOptions =
+    128;
+pub const NSApplicationPresentationDisableHideApplication: NSApplicationPresentationOptions = 256;
+pub const NSApplicationPresentationDisableMenuBarTransparency: NSApplicationPresentationOptions =
+    512;
+pub const NSApplicationPresentationFullScreen: NSApplicationPresentationOptions = 1024;
+pub const NSApplicationPresentationAutoHideToolbar: NSApplicationPresentationOptions = 2048;
+pub const NSApplicationPresentationDisableCursorLocationAssistance:
+    NSApplicationPresentationOptions = 4096;
+
+pub type NSApplicationOcclusionState = NSUInteger;
+pub const NSApplicationOcclusionStateVisible: NSApplicationOcclusionState = 2;
+
+pub type NSWindowListOptions = NSInteger;
+pub const NSWindowListOrderedFrontToBack: NSWindowListOptions = 1;
+
+pub type NSRequestUserAttentionType = NSUInteger;
+pub const NSCriticalRequest: NSRequestUserAttentionType = 0;
+pub const NSInformationalRequest: NSRequestUserAttentionType = 10;
+
+pub type NSApplicationDelegateReply = NSUInteger;
+pub const NSApplicationDelegateReplySuccess: NSApplicationDelegateReply = 0;
+pub const NSApplicationDelegateReplyCancel: NSApplicationDelegateReply = 1;
+pub const NSApplicationDelegateReplyFailure: NSApplicationDelegateReply = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSApplication;
@@ -327,6 +363,17 @@ extern_methods!(
     }
 );
 
+pub type NSApplicationTerminateReply = NSUInteger;
+pub const NSTerminateCancel: NSApplicationTerminateReply = 0;
+pub const NSTerminateNow: NSApplicationTerminateReply = 1;
+pub const NSTerminateLater: NSApplicationTerminateReply = 2;
+
+pub type NSApplicationPrintReply = NSUInteger;
+pub const NSPrintingCancelled: NSApplicationPrintReply = 0;
+pub const NSPrintingSuccess: NSApplicationPrintReply = 1;
+pub const NSPrintingFailure: NSApplicationPrintReply = 3;
+pub const NSPrintingReplyLater: NSApplicationPrintReply = 2;
+
 pub type NSApplicationDelegate = NSObject;
 
 extern_methods!(
@@ -395,6 +442,12 @@ extern_methods!(
     }
 );
 
+pub type NSRemoteNotificationType = NSUInteger;
+pub const NSRemoteNotificationTypeNone: NSRemoteNotificationType = 0;
+pub const NSRemoteNotificationTypeBadge: NSRemoteNotificationType = 1;
+pub const NSRemoteNotificationTypeSound: NSRemoteNotificationType = 2;
+pub const NSRemoteNotificationTypeAlert: NSRemoteNotificationType = 4;
+
 extern_methods!(
     /// NSRemoteNotifications
     unsafe impl NSApplication {
@@ -416,6 +469,10 @@ extern_methods!(
 );
 
 pub type NSServiceProviderName = NSString;
+
+pub const NSRunStoppedResponse: i32 = -1000;
+pub const NSRunAbortedResponse: i32 = -1001;
+pub const NSRunContinuesResponse: i32 = -1002;
 
 extern_methods!(
     /// NSDeprecated

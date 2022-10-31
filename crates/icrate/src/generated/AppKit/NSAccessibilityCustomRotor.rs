@@ -5,6 +5,36 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSAccessibilityCustomRotorSearchDirection = NSInteger;
+pub const NSAccessibilityCustomRotorSearchDirectionPrevious:
+    NSAccessibilityCustomRotorSearchDirection = 0;
+pub const NSAccessibilityCustomRotorSearchDirectionNext: NSAccessibilityCustomRotorSearchDirection =
+    1;
+
+pub type NSAccessibilityCustomRotorType = NSInteger;
+pub const NSAccessibilityCustomRotorTypeCustom: NSAccessibilityCustomRotorType = 0;
+pub const NSAccessibilityCustomRotorTypeAny: NSAccessibilityCustomRotorType = 1;
+pub const NSAccessibilityCustomRotorTypeAnnotation: NSAccessibilityCustomRotorType = 2;
+pub const NSAccessibilityCustomRotorTypeBoldText: NSAccessibilityCustomRotorType = 3;
+pub const NSAccessibilityCustomRotorTypeHeading: NSAccessibilityCustomRotorType = 4;
+pub const NSAccessibilityCustomRotorTypeHeadingLevel1: NSAccessibilityCustomRotorType = 5;
+pub const NSAccessibilityCustomRotorTypeHeadingLevel2: NSAccessibilityCustomRotorType = 6;
+pub const NSAccessibilityCustomRotorTypeHeadingLevel3: NSAccessibilityCustomRotorType = 7;
+pub const NSAccessibilityCustomRotorTypeHeadingLevel4: NSAccessibilityCustomRotorType = 8;
+pub const NSAccessibilityCustomRotorTypeHeadingLevel5: NSAccessibilityCustomRotorType = 9;
+pub const NSAccessibilityCustomRotorTypeHeadingLevel6: NSAccessibilityCustomRotorType = 10;
+pub const NSAccessibilityCustomRotorTypeImage: NSAccessibilityCustomRotorType = 11;
+pub const NSAccessibilityCustomRotorTypeItalicText: NSAccessibilityCustomRotorType = 12;
+pub const NSAccessibilityCustomRotorTypeLandmark: NSAccessibilityCustomRotorType = 13;
+pub const NSAccessibilityCustomRotorTypeLink: NSAccessibilityCustomRotorType = 14;
+pub const NSAccessibilityCustomRotorTypeList: NSAccessibilityCustomRotorType = 15;
+pub const NSAccessibilityCustomRotorTypeMisspelledWord: NSAccessibilityCustomRotorType = 16;
+pub const NSAccessibilityCustomRotorTypeTable: NSAccessibilityCustomRotorType = 17;
+pub const NSAccessibilityCustomRotorTypeTextField: NSAccessibilityCustomRotorType = 18;
+pub const NSAccessibilityCustomRotorTypeUnderlinedText: NSAccessibilityCustomRotorType = 19;
+pub const NSAccessibilityCustomRotorTypeVisitedLink: NSAccessibilityCustomRotorType = 20;
+pub const NSAccessibilityCustomRotorTypeAudiograph: NSAccessibilityCustomRotorType = 21;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAccessibilityCustomRotor;

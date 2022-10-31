@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSMeasurementFormatterUnitOptions = NSUInteger;
+pub const NSMeasurementFormatterUnitOptionsProvidedUnit: NSMeasurementFormatterUnitOptions = 1;
+pub const NSMeasurementFormatterUnitOptionsNaturalScale: NSMeasurementFormatterUnitOptions = 2;
+pub const NSMeasurementFormatterUnitOptionsTemperatureWithoutUnit:
+    NSMeasurementFormatterUnitOptions = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSMeasurementFormatter;

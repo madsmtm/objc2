@@ -5,6 +5,15 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPaperOrientation = NSInteger;
+pub const NSPaperOrientationPortrait: NSPaperOrientation = 0;
+pub const NSPaperOrientationLandscape: NSPaperOrientation = 1;
+
+pub type NSPrintingPaginationMode = NSUInteger;
+pub const NSPrintingPaginationModeAutomatic: NSPrintingPaginationMode = 0;
+pub const NSPrintingPaginationModeFit: NSPrintingPaginationMode = 1;
+pub const NSPrintingPaginationModeClip: NSPrintingPaginationMode = 2;
+
 pub type NSPrintInfoAttributeKey = NSString;
 
 pub type NSPrintJobDispositionValue = NSString;
@@ -185,3 +194,7 @@ extern_methods!(
         pub unsafe fn sizeForPaperName(name: Option<&NSPrinterPaperName>) -> NSSize;
     }
 );
+
+pub type NSPrintingOrientation = NSUInteger;
+pub const NSPortraitOrientation: NSPrintingOrientation = 0;
+pub const NSLandscapeOrientation: NSPrintingOrientation = 1;

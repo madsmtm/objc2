@@ -5,6 +5,13 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTokenStyle = NSUInteger;
+pub const NSTokenStyleDefault: NSTokenStyle = 0;
+pub const NSTokenStyleNone: NSTokenStyle = 1;
+pub const NSTokenStyleRounded: NSTokenStyle = 2;
+pub const NSTokenStyleSquared: NSTokenStyle = 3;
+pub const NSTokenStylePlainSquared: NSTokenStyle = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTokenFieldCell;

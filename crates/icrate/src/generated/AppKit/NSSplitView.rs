@@ -7,6 +7,11 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSSplitViewAutosaveName = NSString;
 
+pub type NSSplitViewDividerStyle = NSInteger;
+pub const NSSplitViewDividerStyleThick: NSSplitViewDividerStyle = 1;
+pub const NSSplitViewDividerStyleThin: NSSplitViewDividerStyle = 2;
+pub const NSSplitViewDividerStylePaneSplitter: NSSplitViewDividerStyle = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSplitView;

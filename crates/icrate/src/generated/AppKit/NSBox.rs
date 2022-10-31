@@ -5,6 +5,20 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTitlePosition = NSUInteger;
+pub const NSNoTitle: NSTitlePosition = 0;
+pub const NSAboveTop: NSTitlePosition = 1;
+pub const NSAtTop: NSTitlePosition = 2;
+pub const NSBelowTop: NSTitlePosition = 3;
+pub const NSAboveBottom: NSTitlePosition = 4;
+pub const NSAtBottom: NSTitlePosition = 5;
+pub const NSBelowBottom: NSTitlePosition = 6;
+
+pub type NSBoxType = NSUInteger;
+pub const NSBoxPrimary: NSBoxType = 0;
+pub const NSBoxSeparator: NSBoxType = 2;
+pub const NSBoxCustom: NSBoxType = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSBox;

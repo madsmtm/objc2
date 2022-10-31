@@ -5,7 +5,99 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSWindowStyleMask = NSUInteger;
+pub const NSWindowStyleMaskBorderless: NSWindowStyleMask = 0;
+pub const NSWindowStyleMaskTitled: NSWindowStyleMask = 1;
+pub const NSWindowStyleMaskClosable: NSWindowStyleMask = 2;
+pub const NSWindowStyleMaskMiniaturizable: NSWindowStyleMask = 4;
+pub const NSWindowStyleMaskResizable: NSWindowStyleMask = 8;
+pub const NSWindowStyleMaskTexturedBackground: NSWindowStyleMask = 256;
+pub const NSWindowStyleMaskUnifiedTitleAndToolbar: NSWindowStyleMask = 4096;
+pub const NSWindowStyleMaskFullScreen: NSWindowStyleMask = 16384;
+pub const NSWindowStyleMaskFullSizeContentView: NSWindowStyleMask = 32768;
+pub const NSWindowStyleMaskUtilityWindow: NSWindowStyleMask = 16;
+pub const NSWindowStyleMaskDocModalWindow: NSWindowStyleMask = 64;
+pub const NSWindowStyleMaskNonactivatingPanel: NSWindowStyleMask = 128;
+pub const NSWindowStyleMaskHUDWindow: NSWindowStyleMask = 8192;
+
+pub const NSDisplayWindowRunLoopOrdering: i32 = 600000;
+pub const NSResetCursorRectsRunLoopOrdering: i32 = 700000;
+
+pub type NSWindowSharingType = NSUInteger;
+pub const NSWindowSharingNone: NSWindowSharingType = 0;
+pub const NSWindowSharingReadOnly: NSWindowSharingType = 1;
+pub const NSWindowSharingReadWrite: NSWindowSharingType = 2;
+
+pub type NSWindowCollectionBehavior = NSUInteger;
+pub const NSWindowCollectionBehaviorDefault: NSWindowCollectionBehavior = 0;
+pub const NSWindowCollectionBehaviorCanJoinAllSpaces: NSWindowCollectionBehavior = 1;
+pub const NSWindowCollectionBehaviorMoveToActiveSpace: NSWindowCollectionBehavior = 2;
+pub const NSWindowCollectionBehaviorManaged: NSWindowCollectionBehavior = 4;
+pub const NSWindowCollectionBehaviorTransient: NSWindowCollectionBehavior = 8;
+pub const NSWindowCollectionBehaviorStationary: NSWindowCollectionBehavior = 16;
+pub const NSWindowCollectionBehaviorParticipatesInCycle: NSWindowCollectionBehavior = 32;
+pub const NSWindowCollectionBehaviorIgnoresCycle: NSWindowCollectionBehavior = 64;
+pub const NSWindowCollectionBehaviorFullScreenPrimary: NSWindowCollectionBehavior = 128;
+pub const NSWindowCollectionBehaviorFullScreenAuxiliary: NSWindowCollectionBehavior = 256;
+pub const NSWindowCollectionBehaviorFullScreenNone: NSWindowCollectionBehavior = 512;
+pub const NSWindowCollectionBehaviorFullScreenAllowsTiling: NSWindowCollectionBehavior = 2048;
+pub const NSWindowCollectionBehaviorFullScreenDisallowsTiling: NSWindowCollectionBehavior = 4096;
+
+pub type NSWindowAnimationBehavior = NSInteger;
+pub const NSWindowAnimationBehaviorDefault: NSWindowAnimationBehavior = 0;
+pub const NSWindowAnimationBehaviorNone: NSWindowAnimationBehavior = 2;
+pub const NSWindowAnimationBehaviorDocumentWindow: NSWindowAnimationBehavior = 3;
+pub const NSWindowAnimationBehaviorUtilityWindow: NSWindowAnimationBehavior = 4;
+pub const NSWindowAnimationBehaviorAlertPanel: NSWindowAnimationBehavior = 5;
+
+pub type NSWindowNumberListOptions = NSUInteger;
+pub const NSWindowNumberListAllApplications: NSWindowNumberListOptions = 1;
+pub const NSWindowNumberListAllSpaces: NSWindowNumberListOptions = 16;
+
+pub type NSWindowOcclusionState = NSUInteger;
+pub const NSWindowOcclusionStateVisible: NSWindowOcclusionState = 2;
+
 pub type NSWindowLevel = NSInteger;
+
+pub type NSSelectionDirection = NSUInteger;
+pub const NSDirectSelection: NSSelectionDirection = 0;
+pub const NSSelectingNext: NSSelectionDirection = 1;
+pub const NSSelectingPrevious: NSSelectionDirection = 2;
+
+pub type NSWindowButton = NSUInteger;
+pub const NSWindowCloseButton: NSWindowButton = 0;
+pub const NSWindowMiniaturizeButton: NSWindowButton = 1;
+pub const NSWindowZoomButton: NSWindowButton = 2;
+pub const NSWindowToolbarButton: NSWindowButton = 3;
+pub const NSWindowDocumentIconButton: NSWindowButton = 4;
+pub const NSWindowDocumentVersionsButton: NSWindowButton = 6;
+
+pub type NSWindowTitleVisibility = NSInteger;
+pub const NSWindowTitleVisible: NSWindowTitleVisibility = 0;
+pub const NSWindowTitleHidden: NSWindowTitleVisibility = 1;
+
+pub type NSWindowToolbarStyle = NSInteger;
+pub const NSWindowToolbarStyleAutomatic: NSWindowToolbarStyle = 0;
+pub const NSWindowToolbarStyleExpanded: NSWindowToolbarStyle = 1;
+pub const NSWindowToolbarStylePreference: NSWindowToolbarStyle = 2;
+pub const NSWindowToolbarStyleUnified: NSWindowToolbarStyle = 3;
+pub const NSWindowToolbarStyleUnifiedCompact: NSWindowToolbarStyle = 4;
+
+pub type NSWindowUserTabbingPreference = NSInteger;
+pub const NSWindowUserTabbingPreferenceManual: NSWindowUserTabbingPreference = 0;
+pub const NSWindowUserTabbingPreferenceAlways: NSWindowUserTabbingPreference = 1;
+pub const NSWindowUserTabbingPreferenceInFullScreen: NSWindowUserTabbingPreference = 2;
+
+pub type NSWindowTabbingMode = NSInteger;
+pub const NSWindowTabbingModeAutomatic: NSWindowTabbingMode = 0;
+pub const NSWindowTabbingModePreferred: NSWindowTabbingMode = 1;
+pub const NSWindowTabbingModeDisallowed: NSWindowTabbingMode = 2;
+
+pub type NSTitlebarSeparatorStyle = NSInteger;
+pub const NSTitlebarSeparatorStyleAutomatic: NSTitlebarSeparatorStyle = 0;
+pub const NSTitlebarSeparatorStyleNone: NSTitlebarSeparatorStyle = 1;
+pub const NSTitlebarSeparatorStyleLine: NSTitlebarSeparatorStyle = 2;
+pub const NSTitlebarSeparatorStyleShadow: NSTitlebarSeparatorStyle = 3;
 
 pub type NSWindowFrameAutosaveName = NSString;
 
@@ -1061,6 +1153,11 @@ extern_methods!(
 );
 
 pub type NSWindowDelegate = NSObject;
+
+pub type NSWindowBackingLocation = NSUInteger;
+pub const NSWindowBackingLocationDefault: NSWindowBackingLocation = 0;
+pub const NSWindowBackingLocationVideoMemory: NSWindowBackingLocation = 1;
+pub const NSWindowBackingLocationMainMemory: NSWindowBackingLocation = 2;
 
 extern_methods!(
     /// NSDeprecated

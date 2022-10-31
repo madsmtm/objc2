@@ -37,6 +37,11 @@ extern_methods!(
     }
 );
 
+pub type NSBinarySearchingOptions = NSUInteger;
+pub const NSBinarySearchingFirstEqual: NSBinarySearchingOptions = 256;
+pub const NSBinarySearchingLastEqual: NSBinarySearchingOptions = 512;
+pub const NSBinarySearchingInsertionIndex: NSBinarySearchingOptions = 1024;
+
 extern_methods!(
     /// NSExtendedArray
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {

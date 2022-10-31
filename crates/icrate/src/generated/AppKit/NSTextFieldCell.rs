@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextFieldBezelStyle = NSUInteger;
+pub const NSTextFieldSquareBezel: NSTextFieldBezelStyle = 0;
+pub const NSTextFieldRoundedBezel: NSTextFieldBezelStyle = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextFieldCell;

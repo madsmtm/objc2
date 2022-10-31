@@ -9,6 +9,17 @@ pub type NSToolbarIdentifier = NSString;
 
 pub type NSToolbarItemIdentifier = NSString;
 
+pub type NSToolbarDisplayMode = NSUInteger;
+pub const NSToolbarDisplayModeDefault: NSToolbarDisplayMode = 0;
+pub const NSToolbarDisplayModeIconAndLabel: NSToolbarDisplayMode = 1;
+pub const NSToolbarDisplayModeIconOnly: NSToolbarDisplayMode = 2;
+pub const NSToolbarDisplayModeLabelOnly: NSToolbarDisplayMode = 3;
+
+pub type NSToolbarSizeMode = NSUInteger;
+pub const NSToolbarSizeModeDefault: NSToolbarSizeMode = 0;
+pub const NSToolbarSizeModeRegular: NSToolbarSizeMode = 1;
+pub const NSToolbarSizeModeSmall: NSToolbarSizeMode = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSToolbar;

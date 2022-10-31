@@ -5,6 +5,23 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDatePickerStyle = NSUInteger;
+pub const NSDatePickerStyleTextFieldAndStepper: NSDatePickerStyle = 0;
+pub const NSDatePickerStyleClockAndCalendar: NSDatePickerStyle = 1;
+pub const NSDatePickerStyleTextField: NSDatePickerStyle = 2;
+
+pub type NSDatePickerMode = NSUInteger;
+pub const NSDatePickerModeSingle: NSDatePickerMode = 0;
+pub const NSDatePickerModeRange: NSDatePickerMode = 1;
+
+pub type NSDatePickerElementFlags = NSUInteger;
+pub const NSDatePickerElementFlagHourMinute: NSDatePickerElementFlags = 12;
+pub const NSDatePickerElementFlagHourMinuteSecond: NSDatePickerElementFlags = 14;
+pub const NSDatePickerElementFlagTimeZone: NSDatePickerElementFlags = 16;
+pub const NSDatePickerElementFlagYearMonth: NSDatePickerElementFlags = 192;
+pub const NSDatePickerElementFlagYearMonthDay: NSDatePickerElementFlags = 224;
+pub const NSDatePickerElementFlagEra: NSDatePickerElementFlags = 256;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSDatePickerCell;

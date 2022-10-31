@@ -5,6 +5,9 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub const NSFileHandlingPanelCancelButton: i32 = 0;
+pub const NSFileHandlingPanelOKButton: i32 = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSavePanel;

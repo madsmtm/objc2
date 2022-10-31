@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSRulerOrientation = NSUInteger;
+pub const NSHorizontalRuler: NSRulerOrientation = 0;
+pub const NSVerticalRuler: NSRulerOrientation = 1;
+
 pub type NSRulerViewUnitName = NSString;
 
 extern_class!(

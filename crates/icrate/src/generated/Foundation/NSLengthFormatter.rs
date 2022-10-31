@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSLengthFormatterUnit = NSInteger;
+pub const NSLengthFormatterUnitMillimeter: NSLengthFormatterUnit = 8;
+pub const NSLengthFormatterUnitCentimeter: NSLengthFormatterUnit = 9;
+pub const NSLengthFormatterUnitMeter: NSLengthFormatterUnit = 11;
+pub const NSLengthFormatterUnitKilometer: NSLengthFormatterUnit = 14;
+pub const NSLengthFormatterUnitInch: NSLengthFormatterUnit = 1281;
+pub const NSLengthFormatterUnitFoot: NSLengthFormatterUnit = 1282;
+pub const NSLengthFormatterUnitYard: NSLengthFormatterUnit = 1283;
+pub const NSLengthFormatterUnitMile: NSLengthFormatterUnit = 1284;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSLengthFormatter;

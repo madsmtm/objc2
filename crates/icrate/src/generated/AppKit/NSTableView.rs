@@ -5,7 +5,68 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTableViewDropOperation = NSUInteger;
+pub const NSTableViewDropOn: NSTableViewDropOperation = 0;
+pub const NSTableViewDropAbove: NSTableViewDropOperation = 1;
+
+pub type NSTableViewColumnAutoresizingStyle = NSUInteger;
+pub const NSTableViewNoColumnAutoresizing: NSTableViewColumnAutoresizingStyle = 0;
+pub const NSTableViewUniformColumnAutoresizingStyle: NSTableViewColumnAutoresizingStyle = 1;
+pub const NSTableViewSequentialColumnAutoresizingStyle: NSTableViewColumnAutoresizingStyle = 2;
+pub const NSTableViewReverseSequentialColumnAutoresizingStyle: NSTableViewColumnAutoresizingStyle =
+    3;
+pub const NSTableViewLastColumnOnlyAutoresizingStyle: NSTableViewColumnAutoresizingStyle = 4;
+pub const NSTableViewFirstColumnOnlyAutoresizingStyle: NSTableViewColumnAutoresizingStyle = 5;
+
+pub type NSTableViewGridLineStyle = NSUInteger;
+pub const NSTableViewGridNone: NSTableViewGridLineStyle = 0;
+pub const NSTableViewSolidVerticalGridLineMask: NSTableViewGridLineStyle = 1;
+pub const NSTableViewSolidHorizontalGridLineMask: NSTableViewGridLineStyle = 2;
+pub const NSTableViewDashedHorizontalGridLineMask: NSTableViewGridLineStyle = 8;
+
+pub type NSTableViewRowSizeStyle = NSInteger;
+pub const NSTableViewRowSizeStyleDefault: NSTableViewRowSizeStyle = -1;
+pub const NSTableViewRowSizeStyleCustom: NSTableViewRowSizeStyle = 0;
+pub const NSTableViewRowSizeStyleSmall: NSTableViewRowSizeStyle = 1;
+pub const NSTableViewRowSizeStyleMedium: NSTableViewRowSizeStyle = 2;
+pub const NSTableViewRowSizeStyleLarge: NSTableViewRowSizeStyle = 3;
+
+pub type NSTableViewStyle = NSInteger;
+pub const NSTableViewStyleAutomatic: NSTableViewStyle = 0;
+pub const NSTableViewStyleFullWidth: NSTableViewStyle = 1;
+pub const NSTableViewStyleInset: NSTableViewStyle = 2;
+pub const NSTableViewStyleSourceList: NSTableViewStyle = 3;
+pub const NSTableViewStylePlain: NSTableViewStyle = 4;
+
+pub type NSTableViewSelectionHighlightStyle = NSInteger;
+pub const NSTableViewSelectionHighlightStyleNone: NSTableViewSelectionHighlightStyle = -1;
+pub const NSTableViewSelectionHighlightStyleRegular: NSTableViewSelectionHighlightStyle = 0;
+pub const NSTableViewSelectionHighlightStyleSourceList: NSTableViewSelectionHighlightStyle = 1;
+
+pub type NSTableViewDraggingDestinationFeedbackStyle = NSInteger;
+pub const NSTableViewDraggingDestinationFeedbackStyleNone:
+    NSTableViewDraggingDestinationFeedbackStyle = -1;
+pub const NSTableViewDraggingDestinationFeedbackStyleRegular:
+    NSTableViewDraggingDestinationFeedbackStyle = 0;
+pub const NSTableViewDraggingDestinationFeedbackStyleSourceList:
+    NSTableViewDraggingDestinationFeedbackStyle = 1;
+pub const NSTableViewDraggingDestinationFeedbackStyleGap:
+    NSTableViewDraggingDestinationFeedbackStyle = 2;
+
+pub type NSTableRowActionEdge = NSInteger;
+pub const NSTableRowActionEdgeLeading: NSTableRowActionEdge = 0;
+pub const NSTableRowActionEdgeTrailing: NSTableRowActionEdge = 1;
+
 pub type NSTableViewAutosaveName = NSString;
+
+pub type NSTableViewAnimationOptions = NSUInteger;
+pub const NSTableViewAnimationEffectNone: NSTableViewAnimationOptions = 0;
+pub const NSTableViewAnimationEffectFade: NSTableViewAnimationOptions = 1;
+pub const NSTableViewAnimationEffectGap: NSTableViewAnimationOptions = 2;
+pub const NSTableViewAnimationSlideUp: NSTableViewAnimationOptions = 16;
+pub const NSTableViewAnimationSlideDown: NSTableViewAnimationOptions = 32;
+pub const NSTableViewAnimationSlideLeft: NSTableViewAnimationOptions = 48;
+pub const NSTableViewAnimationSlideRight: NSTableViewAnimationOptions = 64;
 
 extern_class!(
     #[derive(Debug)]

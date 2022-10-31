@@ -5,6 +5,21 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPointerFunctionsOptions = NSUInteger;
+pub const NSPointerFunctionsStrongMemory: NSPointerFunctionsOptions = 0;
+pub const NSPointerFunctionsZeroingWeakMemory: NSPointerFunctionsOptions = 1;
+pub const NSPointerFunctionsOpaqueMemory: NSPointerFunctionsOptions = 2;
+pub const NSPointerFunctionsMallocMemory: NSPointerFunctionsOptions = 3;
+pub const NSPointerFunctionsMachVirtualMemory: NSPointerFunctionsOptions = 4;
+pub const NSPointerFunctionsWeakMemory: NSPointerFunctionsOptions = 5;
+pub const NSPointerFunctionsObjectPersonality: NSPointerFunctionsOptions = 0;
+pub const NSPointerFunctionsOpaquePersonality: NSPointerFunctionsOptions = 256;
+pub const NSPointerFunctionsObjectPointerPersonality: NSPointerFunctionsOptions = 512;
+pub const NSPointerFunctionsCStringPersonality: NSPointerFunctionsOptions = 768;
+pub const NSPointerFunctionsStructPersonality: NSPointerFunctionsOptions = 1024;
+pub const NSPointerFunctionsIntegerPersonality: NSPointerFunctionsOptions = 1280;
+pub const NSPointerFunctionsCopyIn: NSPointerFunctionsOptions = 65536;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPointerFunctions;

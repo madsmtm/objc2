@@ -9,6 +9,16 @@ pub type NSScrubberDataSource = NSObject;
 
 pub type NSScrubberDelegate = NSObject;
 
+pub type NSScrubberMode = NSInteger;
+pub const NSScrubberModeFixed: NSScrubberMode = 0;
+pub const NSScrubberModeFree: NSScrubberMode = 1;
+
+pub type NSScrubberAlignment = NSInteger;
+pub const NSScrubberAlignmentNone: NSScrubberAlignment = 0;
+pub const NSScrubberAlignmentLeading: NSScrubberAlignment = 1;
+pub const NSScrubberAlignmentTrailing: NSScrubberAlignment = 2;
+pub const NSScrubberAlignmentCenter: NSScrubberAlignment = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSScrubberSelectionStyle;

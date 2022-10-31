@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSItemProviderRepresentationVisibility = NSInteger;
+pub const NSItemProviderRepresentationVisibilityAll: NSItemProviderRepresentationVisibility = 0;
+pub const NSItemProviderRepresentationVisibilityTeam: NSItemProviderRepresentationVisibility = 1;
+pub const NSItemProviderRepresentationVisibilityGroup: NSItemProviderRepresentationVisibility = 2;
+pub const NSItemProviderRepresentationVisibilityOwnProcess: NSItemProviderRepresentationVisibility =
+    3;
+
+pub type NSItemProviderFileOptions = NSInteger;
+pub const NSItemProviderFileOptionOpenInPlace: NSItemProviderFileOptions = 1;
+
 pub type NSItemProviderWriting = NSObject;
 
 pub type NSItemProviderReading = NSObject;
@@ -143,3 +153,9 @@ extern_methods!(
         );
     }
 );
+
+pub type NSItemProviderErrorCode = NSInteger;
+pub const NSItemProviderUnknownError: NSItemProviderErrorCode = -1;
+pub const NSItemProviderItemUnavailableError: NSItemProviderErrorCode = -1000;
+pub const NSItemProviderUnexpectedValueClassError: NSItemProviderErrorCode = -1100;
+pub const NSItemProviderUnavailableCoercionError: NSItemProviderErrorCode = -1200;

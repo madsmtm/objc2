@@ -539,6 +539,16 @@ impl RustType {
 
         this
     }
+
+    pub fn parse_enum(ty: Type<'_>) -> Self {
+        let this = Self::parse(ty, false, Nullability::Unspecified);
+
+        this.visit_lifetime(|_lifetime| {
+            panic!("unexpected lifetime in enum {this:?}");
+        });
+
+        this
+    }
 }
 
 impl fmt::Display for RustType {

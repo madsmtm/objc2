@@ -5,6 +5,19 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSFontPanelModeMask = NSUInteger;
+pub const NSFontPanelModeMaskFace: NSFontPanelModeMask = 1;
+pub const NSFontPanelModeMaskSize: NSFontPanelModeMask = 2;
+pub const NSFontPanelModeMaskCollection: NSFontPanelModeMask = 4;
+pub const NSFontPanelModeMaskUnderlineEffect: NSFontPanelModeMask = 256;
+pub const NSFontPanelModeMaskStrikethroughEffect: NSFontPanelModeMask = 512;
+pub const NSFontPanelModeMaskTextColorEffect: NSFontPanelModeMask = 1024;
+pub const NSFontPanelModeMaskDocumentColorEffect: NSFontPanelModeMask = 2048;
+pub const NSFontPanelModeMaskShadowEffect: NSFontPanelModeMask = 4096;
+pub const NSFontPanelModeMaskAllEffects: NSFontPanelModeMask = 1048320;
+pub const NSFontPanelModesMaskStandardModes: NSFontPanelModeMask = 65535;
+pub const NSFontPanelModesMaskAllModes: NSFontPanelModeMask = 4294967295;
+
 pub type NSFontChanging = NSObject;
 
 extern_methods!(
@@ -61,3 +74,11 @@ extern_methods!(
         pub unsafe fn reloadDefaultFontFamilies(&self);
     }
 );
+
+pub const NSFPPreviewButton: i32 = 131;
+pub const NSFPRevertButton: i32 = 130;
+pub const NSFPSetButton: i32 = 132;
+pub const NSFPPreviewField: i32 = 128;
+pub const NSFPSizeField: i32 = 129;
+pub const NSFPSizeTitle: i32 = 133;
+pub const NSFPCurrentField: i32 = 134;

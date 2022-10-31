@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPopUpArrowPosition = NSUInteger;
+pub const NSPopUpNoArrow: NSPopUpArrowPosition = 0;
+pub const NSPopUpArrowAtCenter: NSPopUpArrowPosition = 1;
+pub const NSPopUpArrowAtBottom: NSPopUpArrowPosition = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPopUpButtonCell;

@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSSaveOptions = NSUInteger;
+pub const NSSaveOptionsYes: NSSaveOptions = 0;
+pub const NSSaveOptionsNo: NSSaveOptions = 1;
+pub const NSSaveOptionsAsk: NSSaveOptions = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCloneCommand;

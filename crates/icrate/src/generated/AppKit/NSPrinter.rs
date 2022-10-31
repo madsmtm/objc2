@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPrinterTableStatus = NSUInteger;
+pub const NSPrinterTableOK: NSPrinterTableStatus = 0;
+pub const NSPrinterTableNotFound: NSPrinterTableStatus = 1;
+pub const NSPrinterTableError: NSPrinterTableStatus = 2;
+
 pub type NSPrinterTypeName = NSString;
 
 pub type NSPrinterPaperName = NSString;

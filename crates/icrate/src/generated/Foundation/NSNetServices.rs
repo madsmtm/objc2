@@ -5,6 +5,21 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSNetServicesError = NSInteger;
+pub const NSNetServicesUnknownError: NSNetServicesError = -72000;
+pub const NSNetServicesCollisionError: NSNetServicesError = -72001;
+pub const NSNetServicesNotFoundError: NSNetServicesError = -72002;
+pub const NSNetServicesActivityInProgress: NSNetServicesError = -72003;
+pub const NSNetServicesBadArgumentError: NSNetServicesError = -72004;
+pub const NSNetServicesCancelledError: NSNetServicesError = -72005;
+pub const NSNetServicesInvalidError: NSNetServicesError = -72006;
+pub const NSNetServicesTimeoutError: NSNetServicesError = -72007;
+pub const NSNetServicesMissingRequiredConfigurationError: NSNetServicesError = -72008;
+
+pub type NSNetServiceOptions = NSUInteger;
+pub const NSNetServiceNoAutoRename: NSNetServiceOptions = 1;
+pub const NSNetServiceListenForConnections: NSNetServiceOptions = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSNetService;

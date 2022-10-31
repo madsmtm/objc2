@@ -5,6 +5,15 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSRegularExpressionOptions = NSUInteger;
+pub const NSRegularExpressionCaseInsensitive: NSRegularExpressionOptions = 1;
+pub const NSRegularExpressionAllowCommentsAndWhitespace: NSRegularExpressionOptions = 2;
+pub const NSRegularExpressionIgnoreMetacharacters: NSRegularExpressionOptions = 4;
+pub const NSRegularExpressionDotMatchesLineSeparators: NSRegularExpressionOptions = 8;
+pub const NSRegularExpressionAnchorsMatchLines: NSRegularExpressionOptions = 16;
+pub const NSRegularExpressionUseUnixLineSeparators: NSRegularExpressionOptions = 32;
+pub const NSRegularExpressionUseUnicodeWordBoundaries: NSRegularExpressionOptions = 64;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSRegularExpression;
@@ -42,6 +51,20 @@ extern_methods!(
         pub unsafe fn escapedPatternForString(string: &NSString) -> Id<NSString, Shared>;
     }
 );
+
+pub type NSMatchingOptions = NSUInteger;
+pub const NSMatchingReportProgress: NSMatchingOptions = 1;
+pub const NSMatchingReportCompletion: NSMatchingOptions = 2;
+pub const NSMatchingAnchored: NSMatchingOptions = 4;
+pub const NSMatchingWithTransparentBounds: NSMatchingOptions = 8;
+pub const NSMatchingWithoutAnchoringBounds: NSMatchingOptions = 16;
+
+pub type NSMatchingFlags = NSUInteger;
+pub const NSMatchingProgress: NSMatchingFlags = 1;
+pub const NSMatchingCompleted: NSMatchingFlags = 2;
+pub const NSMatchingHitEnd: NSMatchingFlags = 4;
+pub const NSMatchingRequiredEnd: NSMatchingFlags = 8;
+pub const NSMatchingInternalError: NSMatchingFlags = 16;
 
 extern_methods!(
     /// NSMatching

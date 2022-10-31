@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDecodingFailurePolicy = NSInteger;
+pub const NSDecodingFailurePolicyRaiseException: NSDecodingFailurePolicy = 0;
+pub const NSDecodingFailurePolicySetErrorAndReturn: NSDecodingFailurePolicy = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCoder;

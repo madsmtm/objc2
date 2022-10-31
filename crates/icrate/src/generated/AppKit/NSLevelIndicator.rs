@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSLevelIndicatorPlaceholderVisibility = NSInteger;
+pub const NSLevelIndicatorPlaceholderVisibilityAutomatic: NSLevelIndicatorPlaceholderVisibility = 0;
+pub const NSLevelIndicatorPlaceholderVisibilityAlways: NSLevelIndicatorPlaceholderVisibility = 1;
+pub const NSLevelIndicatorPlaceholderVisibilityWhileEditing: NSLevelIndicatorPlaceholderVisibility =
+    2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSLevelIndicator;

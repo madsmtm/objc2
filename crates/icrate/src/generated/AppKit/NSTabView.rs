@@ -5,6 +5,27 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTabViewType = NSUInteger;
+pub const NSTopTabsBezelBorder: NSTabViewType = 0;
+pub const NSLeftTabsBezelBorder: NSTabViewType = 1;
+pub const NSBottomTabsBezelBorder: NSTabViewType = 2;
+pub const NSRightTabsBezelBorder: NSTabViewType = 3;
+pub const NSNoTabsBezelBorder: NSTabViewType = 4;
+pub const NSNoTabsLineBorder: NSTabViewType = 5;
+pub const NSNoTabsNoBorder: NSTabViewType = 6;
+
+pub type NSTabPosition = NSUInteger;
+pub const NSTabPositionNone: NSTabPosition = 0;
+pub const NSTabPositionTop: NSTabPosition = 1;
+pub const NSTabPositionLeft: NSTabPosition = 2;
+pub const NSTabPositionBottom: NSTabPosition = 3;
+pub const NSTabPositionRight: NSTabPosition = 4;
+
+pub type NSTabViewBorderType = NSUInteger;
+pub const NSTabViewBorderTypeNone: NSTabViewBorderType = 0;
+pub const NSTabViewBorderTypeLine: NSTabViewBorderType = 1;
+pub const NSTabViewBorderTypeBezel: NSTabViewBorderType = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTabView;

@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSCollectionElementCategory = NSInteger;
+pub const NSCollectionElementCategoryItem: NSCollectionElementCategory = 0;
+pub const NSCollectionElementCategorySupplementaryView: NSCollectionElementCategory = 1;
+pub const NSCollectionElementCategoryDecorationView: NSCollectionElementCategory = 2;
+pub const NSCollectionElementCategoryInterItemGap: NSCollectionElementCategory = 3;
+
 pub type NSCollectionViewDecorationElementKind = NSString;
 
 extern_class!(
@@ -83,6 +89,13 @@ extern_methods!(
         ) -> Id<Self, Shared>;
     }
 );
+
+pub type NSCollectionUpdateAction = NSInteger;
+pub const NSCollectionUpdateActionInsert: NSCollectionUpdateAction = 0;
+pub const NSCollectionUpdateActionDelete: NSCollectionUpdateAction = 1;
+pub const NSCollectionUpdateActionReload: NSCollectionUpdateAction = 2;
+pub const NSCollectionUpdateActionMove: NSCollectionUpdateAction = 3;
+pub const NSCollectionUpdateActionNone: NSCollectionUpdateAction = 4;
 
 extern_class!(
     #[derive(Debug)]

@@ -69,6 +69,14 @@ extern_methods!(
     }
 );
 
+pub type NSStringDrawingOptions = NSInteger;
+pub const NSStringDrawingUsesLineFragmentOrigin: NSStringDrawingOptions = 1;
+pub const NSStringDrawingUsesFontLeading: NSStringDrawingOptions = 2;
+pub const NSStringDrawingUsesDeviceMetrics: NSStringDrawingOptions = 8;
+pub const NSStringDrawingTruncatesLastVisibleLine: NSStringDrawingOptions = 32;
+pub const NSStringDrawingDisableScreenFontSubstitution: NSStringDrawingOptions = 4;
+pub const NSStringDrawingOneShot: NSStringDrawingOptions = 16;
+
 extern_methods!(
     /// NSExtendedStringDrawing
     unsafe impl NSString {

@@ -7,6 +7,19 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSTextCheckingOptionKey = NSString;
 
+pub type NSCorrectionResponse = NSInteger;
+pub const NSCorrectionResponseNone: NSCorrectionResponse = 0;
+pub const NSCorrectionResponseAccepted: NSCorrectionResponse = 1;
+pub const NSCorrectionResponseRejected: NSCorrectionResponse = 2;
+pub const NSCorrectionResponseIgnored: NSCorrectionResponse = 3;
+pub const NSCorrectionResponseEdited: NSCorrectionResponse = 4;
+pub const NSCorrectionResponseReverted: NSCorrectionResponse = 5;
+
+pub type NSCorrectionIndicatorType = NSInteger;
+pub const NSCorrectionIndicatorTypeDefault: NSCorrectionIndicatorType = 0;
+pub const NSCorrectionIndicatorTypeReversion: NSCorrectionIndicatorType = 1;
+pub const NSCorrectionIndicatorTypeGuesses: NSCorrectionIndicatorType = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSpellChecker;

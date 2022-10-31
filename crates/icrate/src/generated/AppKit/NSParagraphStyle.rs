@@ -5,6 +5,20 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSLineBreakMode = NSUInteger;
+pub const NSLineBreakByWordWrapping: NSLineBreakMode = 0;
+pub const NSLineBreakByCharWrapping: NSLineBreakMode = 1;
+pub const NSLineBreakByClipping: NSLineBreakMode = 2;
+pub const NSLineBreakByTruncatingHead: NSLineBreakMode = 3;
+pub const NSLineBreakByTruncatingTail: NSLineBreakMode = 4;
+pub const NSLineBreakByTruncatingMiddle: NSLineBreakMode = 5;
+
+pub type NSLineBreakStrategy = NSUInteger;
+pub const NSLineBreakStrategyNone: NSLineBreakStrategy = 0;
+pub const NSLineBreakStrategyPushOut: NSLineBreakStrategy = 1;
+pub const NSLineBreakStrategyHangulWordPriority: NSLineBreakStrategy = 2;
+pub const NSLineBreakStrategyStandard: NSLineBreakStrategy = 65535;
+
 pub type NSTextTabOptionKey = NSString;
 
 extern_class!(
@@ -288,6 +302,12 @@ extern_methods!(
         pub unsafe fn setLineBreakStrategy(&self, lineBreakStrategy: NSLineBreakStrategy);
     }
 );
+
+pub type NSTextTabType = NSUInteger;
+pub const NSLeftTabStopType: NSTextTabType = 0;
+pub const NSRightTabStopType: NSTextTabType = 1;
+pub const NSCenterTabStopType: NSTextTabType = 2;
+pub const NSDecimalTabStopType: NSTextTabType = 3;
 
 extern_methods!(
     /// NSTextTabDeprecated

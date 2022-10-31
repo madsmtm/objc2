@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPropertyListMutabilityOptions = NSUInteger;
+pub const NSPropertyListImmutable: NSPropertyListMutabilityOptions = 0;
+pub const NSPropertyListMutableContainers: NSPropertyListMutabilityOptions = 1;
+pub const NSPropertyListMutableContainersAndLeaves: NSPropertyListMutabilityOptions = 2;
+
+pub type NSPropertyListFormat = NSUInteger;
+pub const NSPropertyListOpenStepFormat: NSPropertyListFormat = 1;
+pub const NSPropertyListXMLFormat_v1_0: NSPropertyListFormat = 100;
+pub const NSPropertyListBinaryFormat_v1_0: NSPropertyListFormat = 200;
+
 pub type NSPropertyListReadOptions = NSPropertyListMutabilityOptions;
 
 pub type NSPropertyListWriteOptions = NSUInteger;

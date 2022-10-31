@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPersonNameComponentsFormatterStyle = NSInteger;
+pub const NSPersonNameComponentsFormatterStyleDefault: NSPersonNameComponentsFormatterStyle = 0;
+pub const NSPersonNameComponentsFormatterStyleShort: NSPersonNameComponentsFormatterStyle = 1;
+pub const NSPersonNameComponentsFormatterStyleMedium: NSPersonNameComponentsFormatterStyle = 2;
+pub const NSPersonNameComponentsFormatterStyleLong: NSPersonNameComponentsFormatterStyle = 3;
+pub const NSPersonNameComponentsFormatterStyleAbbreviated: NSPersonNameComponentsFormatterStyle = 4;
+
+pub type NSPersonNameComponentsFormatterOptions = NSUInteger;
+pub const NSPersonNameComponentsFormatterPhonetic: NSPersonNameComponentsFormatterOptions = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPersonNameComponentsFormatter;

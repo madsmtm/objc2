@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTableColumnResizingOptions = NSUInteger;
+pub const NSTableColumnNoResizing: NSTableColumnResizingOptions = 0;
+pub const NSTableColumnAutoresizingMask: NSTableColumnResizingOptions = 1;
+pub const NSTableColumnUserResizingMask: NSTableColumnResizingOptions = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTableColumn;

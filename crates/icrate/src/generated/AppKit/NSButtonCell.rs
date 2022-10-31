@@ -5,6 +5,33 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSButtonType = NSUInteger;
+pub const NSButtonTypeMomentaryLight: NSButtonType = 0;
+pub const NSButtonTypePushOnPushOff: NSButtonType = 1;
+pub const NSButtonTypeToggle: NSButtonType = 2;
+pub const NSButtonTypeSwitch: NSButtonType = 3;
+pub const NSButtonTypeRadio: NSButtonType = 4;
+pub const NSButtonTypeMomentaryChange: NSButtonType = 5;
+pub const NSButtonTypeOnOff: NSButtonType = 6;
+pub const NSButtonTypeMomentaryPushIn: NSButtonType = 7;
+pub const NSButtonTypeAccelerator: NSButtonType = 8;
+pub const NSButtonTypeMultiLevelAccelerator: NSButtonType = 9;
+
+pub type NSBezelStyle = NSUInteger;
+pub const NSBezelStyleRounded: NSBezelStyle = 1;
+pub const NSBezelStyleRegularSquare: NSBezelStyle = 2;
+pub const NSBezelStyleDisclosure: NSBezelStyle = 5;
+pub const NSBezelStyleShadowlessSquare: NSBezelStyle = 6;
+pub const NSBezelStyleCircular: NSBezelStyle = 7;
+pub const NSBezelStyleTexturedSquare: NSBezelStyle = 8;
+pub const NSBezelStyleHelpButton: NSBezelStyle = 9;
+pub const NSBezelStyleSmallSquare: NSBezelStyle = 10;
+pub const NSBezelStyleTexturedRounded: NSBezelStyle = 11;
+pub const NSBezelStyleRoundRect: NSBezelStyle = 12;
+pub const NSBezelStyleRecessed: NSBezelStyle = 13;
+pub const NSBezelStyleRoundedDisclosure: NSBezelStyle = 14;
+pub const NSBezelStyleInline: NSBezelStyle = 15;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSButtonCell;
@@ -181,6 +208,13 @@ extern_methods!(
         ) -> NSRect;
     }
 );
+
+pub type NSGradientType = NSUInteger;
+pub const NSGradientNone: NSGradientType = 0;
+pub const NSGradientConcaveWeak: NSGradientType = 1;
+pub const NSGradientConcaveStrong: NSGradientType = 2;
+pub const NSGradientConvexWeak: NSGradientType = 3;
+pub const NSGradientConvexStrong: NSGradientType = 4;
 
 extern_methods!(
     /// NSDeprecated

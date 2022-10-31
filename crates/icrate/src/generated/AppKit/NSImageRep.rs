@@ -7,6 +7,13 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSImageHintKey = NSString;
 
+pub const NSImageRepMatchesDevice: i32 = 0;
+
+pub type NSImageLayoutDirection = NSInteger;
+pub const NSImageLayoutDirectionUnspecified: NSImageLayoutDirection = -1;
+pub const NSImageLayoutDirectionLeftToRight: NSImageLayoutDirection = 2;
+pub const NSImageLayoutDirectionRightToLeft: NSImageLayoutDirection = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSImageRep;

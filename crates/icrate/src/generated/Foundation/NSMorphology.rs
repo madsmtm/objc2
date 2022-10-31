@@ -5,6 +5,38 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSGrammaticalGender = NSInteger;
+pub const NSGrammaticalGenderNotSet: NSGrammaticalGender = 0;
+pub const NSGrammaticalGenderFeminine: NSGrammaticalGender = 1;
+pub const NSGrammaticalGenderMasculine: NSGrammaticalGender = 2;
+pub const NSGrammaticalGenderNeuter: NSGrammaticalGender = 3;
+
+pub type NSGrammaticalPartOfSpeech = NSInteger;
+pub const NSGrammaticalPartOfSpeechNotSet: NSGrammaticalPartOfSpeech = 0;
+pub const NSGrammaticalPartOfSpeechDeterminer: NSGrammaticalPartOfSpeech = 1;
+pub const NSGrammaticalPartOfSpeechPronoun: NSGrammaticalPartOfSpeech = 2;
+pub const NSGrammaticalPartOfSpeechLetter: NSGrammaticalPartOfSpeech = 3;
+pub const NSGrammaticalPartOfSpeechAdverb: NSGrammaticalPartOfSpeech = 4;
+pub const NSGrammaticalPartOfSpeechParticle: NSGrammaticalPartOfSpeech = 5;
+pub const NSGrammaticalPartOfSpeechAdjective: NSGrammaticalPartOfSpeech = 6;
+pub const NSGrammaticalPartOfSpeechAdposition: NSGrammaticalPartOfSpeech = 7;
+pub const NSGrammaticalPartOfSpeechVerb: NSGrammaticalPartOfSpeech = 8;
+pub const NSGrammaticalPartOfSpeechNoun: NSGrammaticalPartOfSpeech = 9;
+pub const NSGrammaticalPartOfSpeechConjunction: NSGrammaticalPartOfSpeech = 10;
+pub const NSGrammaticalPartOfSpeechNumeral: NSGrammaticalPartOfSpeech = 11;
+pub const NSGrammaticalPartOfSpeechInterjection: NSGrammaticalPartOfSpeech = 12;
+pub const NSGrammaticalPartOfSpeechPreposition: NSGrammaticalPartOfSpeech = 13;
+pub const NSGrammaticalPartOfSpeechAbbreviation: NSGrammaticalPartOfSpeech = 14;
+
+pub type NSGrammaticalNumber = NSInteger;
+pub const NSGrammaticalNumberNotSet: NSGrammaticalNumber = 0;
+pub const NSGrammaticalNumberSingular: NSGrammaticalNumber = 1;
+pub const NSGrammaticalNumberZero: NSGrammaticalNumber = 2;
+pub const NSGrammaticalNumberPlural: NSGrammaticalNumber = 3;
+pub const NSGrammaticalNumberPluralTwo: NSGrammaticalNumber = 4;
+pub const NSGrammaticalNumberPluralFew: NSGrammaticalNumber = 5;
+pub const NSGrammaticalNumberPluralMany: NSGrammaticalNumber = 6;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSMorphology;

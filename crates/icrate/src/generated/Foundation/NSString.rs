@@ -5,7 +5,46 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSStringCompareOptions = NSUInteger;
+pub const NSCaseInsensitiveSearch: NSStringCompareOptions = 1;
+pub const NSLiteralSearch: NSStringCompareOptions = 2;
+pub const NSBackwardsSearch: NSStringCompareOptions = 4;
+pub const NSAnchoredSearch: NSStringCompareOptions = 8;
+pub const NSNumericSearch: NSStringCompareOptions = 64;
+pub const NSDiacriticInsensitiveSearch: NSStringCompareOptions = 128;
+pub const NSWidthInsensitiveSearch: NSStringCompareOptions = 256;
+pub const NSForcedOrderingSearch: NSStringCompareOptions = 512;
+pub const NSRegularExpressionSearch: NSStringCompareOptions = 1024;
+
 pub type NSStringEncoding = NSUInteger;
+
+pub const NSASCIIStringEncoding: i32 = 1;
+pub const NSNEXTSTEPStringEncoding: i32 = 2;
+pub const NSJapaneseEUCStringEncoding: i32 = 3;
+pub const NSUTF8StringEncoding: i32 = 4;
+pub const NSISOLatin1StringEncoding: i32 = 5;
+pub const NSSymbolStringEncoding: i32 = 6;
+pub const NSNonLossyASCIIStringEncoding: i32 = 7;
+pub const NSShiftJISStringEncoding: i32 = 8;
+pub const NSISOLatin2StringEncoding: i32 = 9;
+pub const NSUnicodeStringEncoding: i32 = 10;
+pub const NSWindowsCP1251StringEncoding: i32 = 11;
+pub const NSWindowsCP1252StringEncoding: i32 = 12;
+pub const NSWindowsCP1253StringEncoding: i32 = 13;
+pub const NSWindowsCP1254StringEncoding: i32 = 14;
+pub const NSWindowsCP1250StringEncoding: i32 = 15;
+pub const NSISO2022JPStringEncoding: i32 = 21;
+pub const NSMacOSRomanStringEncoding: i32 = 30;
+pub const NSUTF16StringEncoding: i32 = 10;
+pub const NSUTF16BigEndianStringEncoding: i32 = 2415919360;
+pub const NSUTF16LittleEndianStringEncoding: i32 = 2483028224;
+pub const NSUTF32StringEncoding: i32 = 2348810496;
+pub const NSUTF32BigEndianStringEncoding: i32 = 2550137088;
+pub const NSUTF32LittleEndianStringEncoding: i32 = 2617245952;
+
+pub type NSStringEncodingConversionOptions = NSUInteger;
+pub const NSStringEncodingConversionAllowLossy: NSStringEncodingConversionOptions = 1;
+pub const NSStringEncodingConversionExternalRepresentation: NSStringEncodingConversionOptions = 2;
 
 extern_class!(
     #[derive(Debug)]
@@ -31,6 +70,18 @@ extern_methods!(
         pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
     }
 );
+
+pub type NSStringEnumerationOptions = NSUInteger;
+pub const NSStringEnumerationByLines: NSStringEnumerationOptions = 0;
+pub const NSStringEnumerationByParagraphs: NSStringEnumerationOptions = 1;
+pub const NSStringEnumerationByComposedCharacterSequences: NSStringEnumerationOptions = 2;
+pub const NSStringEnumerationByWords: NSStringEnumerationOptions = 3;
+pub const NSStringEnumerationBySentences: NSStringEnumerationOptions = 4;
+pub const NSStringEnumerationByCaretPositions: NSStringEnumerationOptions = 5;
+pub const NSStringEnumerationByDeletionClusters: NSStringEnumerationOptions = 6;
+pub const NSStringEnumerationReverse: NSStringEnumerationOptions = 256;
+pub const NSStringEnumerationSubstringNotRequired: NSStringEnumerationOptions = 512;
+pub const NSStringEnumerationLocalized: NSStringEnumerationOptions = 1024;
 
 pub type NSStringTransform = NSString;
 
@@ -761,6 +812,8 @@ extern_methods!(
         pub unsafe fn getCharacters(&self, buffer: NonNull<unichar>);
     }
 );
+
+pub const NSProprietaryStringEncoding: i32 = 65536;
 
 extern_class!(
     #[derive(Debug)]

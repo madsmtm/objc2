@@ -5,6 +5,22 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextLayoutManagerSegmentType = NSInteger;
+pub const NSTextLayoutManagerSegmentTypeStandard: NSTextLayoutManagerSegmentType = 0;
+pub const NSTextLayoutManagerSegmentTypeSelection: NSTextLayoutManagerSegmentType = 1;
+pub const NSTextLayoutManagerSegmentTypeHighlight: NSTextLayoutManagerSegmentType = 2;
+
+pub type NSTextLayoutManagerSegmentOptions = NSUInteger;
+pub const NSTextLayoutManagerSegmentOptionsNone: NSTextLayoutManagerSegmentOptions = 0;
+pub const NSTextLayoutManagerSegmentOptionsRangeNotRequired: NSTextLayoutManagerSegmentOptions = 1;
+pub const NSTextLayoutManagerSegmentOptionsMiddleFragmentsExcluded:
+    NSTextLayoutManagerSegmentOptions = 2;
+pub const NSTextLayoutManagerSegmentOptionsHeadSegmentExtended: NSTextLayoutManagerSegmentOptions =
+    4;
+pub const NSTextLayoutManagerSegmentOptionsTailSegmentExtended: NSTextLayoutManagerSegmentOptions =
+    8;
+pub const NSTextLayoutManagerSegmentOptionsUpstreamAffinity: NSTextLayoutManagerSegmentOptions = 16;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextLayoutManager;

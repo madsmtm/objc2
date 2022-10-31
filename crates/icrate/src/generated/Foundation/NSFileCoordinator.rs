@@ -5,6 +5,21 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSFileCoordinatorReadingOptions = NSUInteger;
+pub const NSFileCoordinatorReadingWithoutChanges: NSFileCoordinatorReadingOptions = 1;
+pub const NSFileCoordinatorReadingResolvesSymbolicLink: NSFileCoordinatorReadingOptions = 2;
+pub const NSFileCoordinatorReadingImmediatelyAvailableMetadataOnly:
+    NSFileCoordinatorReadingOptions = 4;
+pub const NSFileCoordinatorReadingForUploading: NSFileCoordinatorReadingOptions = 8;
+
+pub type NSFileCoordinatorWritingOptions = NSUInteger;
+pub const NSFileCoordinatorWritingForDeleting: NSFileCoordinatorWritingOptions = 1;
+pub const NSFileCoordinatorWritingForMoving: NSFileCoordinatorWritingOptions = 2;
+pub const NSFileCoordinatorWritingForMerging: NSFileCoordinatorWritingOptions = 4;
+pub const NSFileCoordinatorWritingForReplacing: NSFileCoordinatorWritingOptions = 8;
+pub const NSFileCoordinatorWritingContentIndependentMetadataOnly: NSFileCoordinatorWritingOptions =
+    16;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSFileAccessIntent;

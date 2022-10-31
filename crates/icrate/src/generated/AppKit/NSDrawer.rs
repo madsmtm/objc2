@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDrawerState = NSUInteger;
+pub const NSDrawerClosedState: NSDrawerState = 0;
+pub const NSDrawerOpeningState: NSDrawerState = 1;
+pub const NSDrawerOpenState: NSDrawerState = 2;
+pub const NSDrawerClosingState: NSDrawerState = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSDrawer;

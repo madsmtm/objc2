@@ -233,6 +233,14 @@ extern_methods!(
 
 pub type NSMenuDelegate = NSObject;
 
+pub type NSMenuProperties = NSUInteger;
+pub const NSMenuPropertyItemTitle: NSMenuProperties = 1;
+pub const NSMenuPropertyItemAttributedTitle: NSMenuProperties = 2;
+pub const NSMenuPropertyItemKeyEquivalent: NSMenuProperties = 4;
+pub const NSMenuPropertyItemImage: NSMenuProperties = 8;
+pub const NSMenuPropertyItemEnabled: NSMenuProperties = 16;
+pub const NSMenuPropertyItemAccessibilityDescription: NSMenuProperties = 32;
+
 extern_methods!(
     /// NSMenuPropertiesToUpdate
     unsafe impl NSMenu {

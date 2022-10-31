@@ -169,6 +169,13 @@ extern_methods!(
     }
 );
 
+pub type NSLocaleLanguageDirection = NSUInteger;
+pub const NSLocaleLanguageDirectionUnknown: NSLocaleLanguageDirection = 0;
+pub const NSLocaleLanguageDirectionLeftToRight: NSLocaleLanguageDirection = 1;
+pub const NSLocaleLanguageDirectionRightToLeft: NSLocaleLanguageDirection = 2;
+pub const NSLocaleLanguageDirectionTopToBottom: NSLocaleLanguageDirection = 3;
+pub const NSLocaleLanguageDirectionBottomToTop: NSLocaleLanguageDirection = 4;
+
 extern_methods!(
     /// NSLocaleGeneralInfo
     unsafe impl NSLocale {

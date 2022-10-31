@@ -5,6 +5,49 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSLayoutConstraintOrientation = NSInteger;
+pub const NSLayoutConstraintOrientationHorizontal: NSLayoutConstraintOrientation = 0;
+pub const NSLayoutConstraintOrientationVertical: NSLayoutConstraintOrientation = 1;
+
+pub type NSLayoutRelation = NSInteger;
+pub const NSLayoutRelationLessThanOrEqual: NSLayoutRelation = -1;
+pub const NSLayoutRelationEqual: NSLayoutRelation = 0;
+pub const NSLayoutRelationGreaterThanOrEqual: NSLayoutRelation = 1;
+
+pub type NSLayoutAttribute = NSInteger;
+pub const NSLayoutAttributeLeft: NSLayoutAttribute = 1;
+pub const NSLayoutAttributeRight: NSLayoutAttribute = 2;
+pub const NSLayoutAttributeTop: NSLayoutAttribute = 3;
+pub const NSLayoutAttributeBottom: NSLayoutAttribute = 4;
+pub const NSLayoutAttributeLeading: NSLayoutAttribute = 5;
+pub const NSLayoutAttributeTrailing: NSLayoutAttribute = 6;
+pub const NSLayoutAttributeWidth: NSLayoutAttribute = 7;
+pub const NSLayoutAttributeHeight: NSLayoutAttribute = 8;
+pub const NSLayoutAttributeCenterX: NSLayoutAttribute = 9;
+pub const NSLayoutAttributeCenterY: NSLayoutAttribute = 10;
+pub const NSLayoutAttributeLastBaseline: NSLayoutAttribute = 11;
+pub const NSLayoutAttributeBaseline: NSLayoutAttribute = 11;
+pub const NSLayoutAttributeFirstBaseline: NSLayoutAttribute = 12;
+pub const NSLayoutAttributeNotAnAttribute: NSLayoutAttribute = 0;
+
+pub type NSLayoutFormatOptions = NSUInteger;
+pub const NSLayoutFormatAlignAllLeft: NSLayoutFormatOptions = 2;
+pub const NSLayoutFormatAlignAllRight: NSLayoutFormatOptions = 4;
+pub const NSLayoutFormatAlignAllTop: NSLayoutFormatOptions = 8;
+pub const NSLayoutFormatAlignAllBottom: NSLayoutFormatOptions = 16;
+pub const NSLayoutFormatAlignAllLeading: NSLayoutFormatOptions = 32;
+pub const NSLayoutFormatAlignAllTrailing: NSLayoutFormatOptions = 64;
+pub const NSLayoutFormatAlignAllCenterX: NSLayoutFormatOptions = 512;
+pub const NSLayoutFormatAlignAllCenterY: NSLayoutFormatOptions = 1024;
+pub const NSLayoutFormatAlignAllLastBaseline: NSLayoutFormatOptions = 2048;
+pub const NSLayoutFormatAlignAllFirstBaseline: NSLayoutFormatOptions = 4096;
+pub const NSLayoutFormatAlignAllBaseline: NSLayoutFormatOptions = 2048;
+pub const NSLayoutFormatAlignmentMask: NSLayoutFormatOptions = 65535;
+pub const NSLayoutFormatDirectionLeadingToTrailing: NSLayoutFormatOptions = 0;
+pub const NSLayoutFormatDirectionLeftToRight: NSLayoutFormatOptions = 65536;
+pub const NSLayoutFormatDirectionRightToLeft: NSLayoutFormatOptions = 131072;
+pub const NSLayoutFormatDirectionMask: NSLayoutFormatOptions = 196608;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSLayoutConstraint;

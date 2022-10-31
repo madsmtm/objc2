@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSURLHandleStatus = NSUInteger;
+pub const NSURLHandleNotLoaded: NSURLHandleStatus = 0;
+pub const NSURLHandleLoadSucceeded: NSURLHandleStatus = 1;
+pub const NSURLHandleLoadInProgress: NSURLHandleStatus = 2;
+pub const NSURLHandleLoadFailed: NSURLHandleStatus = 3;
+
 pub type NSURLHandleClient = NSObject;
 
 extern_class!(

@@ -5,6 +5,14 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSFileWrapperReadingOptions = NSUInteger;
+pub const NSFileWrapperReadingImmediate: NSFileWrapperReadingOptions = 1;
+pub const NSFileWrapperReadingWithoutMapping: NSFileWrapperReadingOptions = 2;
+
+pub type NSFileWrapperWritingOptions = NSUInteger;
+pub const NSFileWrapperWritingAtomic: NSFileWrapperWritingOptions = 1;
+pub const NSFileWrapperWritingWithNameUpdating: NSFileWrapperWritingOptions = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSFileWrapper;

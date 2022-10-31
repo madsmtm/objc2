@@ -5,6 +5,16 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTickMarkPosition = NSUInteger;
+pub const NSTickMarkPositionBelow: NSTickMarkPosition = 0;
+pub const NSTickMarkPositionAbove: NSTickMarkPosition = 1;
+pub const NSTickMarkPositionLeading: NSTickMarkPosition = 1;
+pub const NSTickMarkPositionTrailing: NSTickMarkPosition = 0;
+
+pub type NSSliderType = NSUInteger;
+pub const NSSliderTypeLinear: NSSliderType = 0;
+pub const NSSliderTypeCircular: NSSliderType = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSSliderCell;

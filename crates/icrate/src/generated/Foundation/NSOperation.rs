@@ -5,6 +5,13 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSOperationQueuePriority = NSInteger;
+pub const NSOperationQueuePriorityVeryLow: NSOperationQueuePriority = -8;
+pub const NSOperationQueuePriorityLow: NSOperationQueuePriority = -4;
+pub const NSOperationQueuePriorityNormal: NSOperationQueuePriority = 0;
+pub const NSOperationQueuePriorityHigh: NSOperationQueuePriority = 4;
+pub const NSOperationQueuePriorityVeryHigh: NSOperationQueuePriority = 8;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSOperation;

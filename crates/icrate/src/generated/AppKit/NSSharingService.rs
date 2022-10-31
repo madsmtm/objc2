@@ -93,7 +93,19 @@ extern_methods!(
     }
 );
 
+pub type NSSharingContentScope = NSInteger;
+pub const NSSharingContentScopeItem: NSSharingContentScope = 0;
+pub const NSSharingContentScopePartial: NSSharingContentScope = 1;
+pub const NSSharingContentScopeFull: NSSharingContentScope = 2;
+
 pub type NSSharingServiceDelegate = NSObject;
+
+pub type NSCloudKitSharingServiceOptions = NSUInteger;
+pub const NSCloudKitSharingServiceStandard: NSCloudKitSharingServiceOptions = 0;
+pub const NSCloudKitSharingServiceAllowPublic: NSCloudKitSharingServiceOptions = 1;
+pub const NSCloudKitSharingServiceAllowPrivate: NSCloudKitSharingServiceOptions = 2;
+pub const NSCloudKitSharingServiceAllowReadOnly: NSCloudKitSharingServiceOptions = 16;
+pub const NSCloudKitSharingServiceAllowReadWrite: NSCloudKitSharingServiceOptions = 32;
 
 pub type NSCloudSharingServiceDelegate = NSObject;
 

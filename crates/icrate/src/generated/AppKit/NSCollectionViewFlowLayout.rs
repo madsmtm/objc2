@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSCollectionViewScrollDirection = NSInteger;
+pub const NSCollectionViewScrollDirectionVertical: NSCollectionViewScrollDirection = 0;
+pub const NSCollectionViewScrollDirectionHorizontal: NSCollectionViewScrollDirection = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCollectionViewFlowLayoutInvalidationContext;

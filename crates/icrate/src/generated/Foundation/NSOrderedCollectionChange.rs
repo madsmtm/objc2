@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSCollectionChangeType = NSInteger;
+pub const NSCollectionChangeInsert: NSCollectionChangeType = 0;
+pub const NSCollectionChangeRemove: NSCollectionChangeType = 1;
+
 __inner_extern_class!(
     #[derive(Debug)]
     pub struct NSOrderedCollectionChange<ObjectType: Message>;

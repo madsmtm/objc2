@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTabViewControllerTabStyle = NSInteger;
+pub const NSTabViewControllerTabStyleSegmentedControlOnTop: NSTabViewControllerTabStyle = 0;
+pub const NSTabViewControllerTabStyleSegmentedControlOnBottom: NSTabViewControllerTabStyle = 1;
+pub const NSTabViewControllerTabStyleToolbar: NSTabViewControllerTabStyle = 2;
+pub const NSTabViewControllerTabStyleUnspecified: NSTabViewControllerTabStyle = -1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTabViewController;

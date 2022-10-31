@@ -214,6 +214,18 @@ extern_methods!(
     }
 );
 
+pub const NSControlGlyph: i32 = 16777215;
+pub const NSNullGlyph: i32 = 0;
+
+pub type NSFontRenderingMode = NSUInteger;
+pub const NSFontDefaultRenderingMode: NSFontRenderingMode = 0;
+pub const NSFontAntialiasedRenderingMode: NSFontRenderingMode = 1;
+pub const NSFontIntegerAdvancementsRenderingMode: NSFontRenderingMode = 2;
+pub const NSFontAntialiasedIntegerAdvancementsRenderingMode: NSFontRenderingMode = 3;
+
+pub type NSMultibyteGlyphPacking = NSUInteger;
+pub const NSNativeShortGlyphPacking: NSMultibyteGlyphPacking = 5;
+
 extern_methods!(
     /// NSFont_Deprecated
     unsafe impl NSFont {

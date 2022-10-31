@@ -5,6 +5,18 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDateFormatterStyle = NSUInteger;
+pub const NSDateFormatterNoStyle: NSDateFormatterStyle = 0;
+pub const NSDateFormatterShortStyle: NSDateFormatterStyle = 1;
+pub const NSDateFormatterMediumStyle: NSDateFormatterStyle = 2;
+pub const NSDateFormatterLongStyle: NSDateFormatterStyle = 3;
+pub const NSDateFormatterFullStyle: NSDateFormatterStyle = 4;
+
+pub type NSDateFormatterBehavior = NSUInteger;
+pub const NSDateFormatterBehaviorDefault: NSDateFormatterBehavior = 0;
+pub const NSDateFormatterBehavior10_0: NSDateFormatterBehavior = 1000;
+pub const NSDateFormatterBehavior10_4: NSDateFormatterBehavior = 1040;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSDateFormatter;

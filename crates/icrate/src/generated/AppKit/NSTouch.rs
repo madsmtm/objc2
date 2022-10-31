@@ -5,6 +5,23 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTouchPhase = NSUInteger;
+pub const NSTouchPhaseBegan: NSTouchPhase = 1;
+pub const NSTouchPhaseMoved: NSTouchPhase = 2;
+pub const NSTouchPhaseStationary: NSTouchPhase = 4;
+pub const NSTouchPhaseEnded: NSTouchPhase = 8;
+pub const NSTouchPhaseCancelled: NSTouchPhase = 16;
+pub const NSTouchPhaseTouching: NSTouchPhase = 7;
+pub const NSTouchPhaseAny: NSTouchPhase = -1;
+
+pub type NSTouchType = NSInteger;
+pub const NSTouchTypeDirect: NSTouchType = 0;
+pub const NSTouchTypeIndirect: NSTouchType = 1;
+
+pub type NSTouchTypeMask = NSUInteger;
+pub const NSTouchTypeMaskDirect: NSTouchTypeMask = 1;
+pub const NSTouchTypeMaskIndirect: NSTouchTypeMask = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTouch;

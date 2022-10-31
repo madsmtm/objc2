@@ -5,7 +5,28 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextFinderAction = NSInteger;
+pub const NSTextFinderActionShowFindInterface: NSTextFinderAction = 1;
+pub const NSTextFinderActionNextMatch: NSTextFinderAction = 2;
+pub const NSTextFinderActionPreviousMatch: NSTextFinderAction = 3;
+pub const NSTextFinderActionReplaceAll: NSTextFinderAction = 4;
+pub const NSTextFinderActionReplace: NSTextFinderAction = 5;
+pub const NSTextFinderActionReplaceAndFind: NSTextFinderAction = 6;
+pub const NSTextFinderActionSetSearchString: NSTextFinderAction = 7;
+pub const NSTextFinderActionReplaceAllInSelection: NSTextFinderAction = 8;
+pub const NSTextFinderActionSelectAll: NSTextFinderAction = 9;
+pub const NSTextFinderActionSelectAllInSelection: NSTextFinderAction = 10;
+pub const NSTextFinderActionHideFindInterface: NSTextFinderAction = 11;
+pub const NSTextFinderActionShowReplaceInterface: NSTextFinderAction = 12;
+pub const NSTextFinderActionHideReplaceInterface: NSTextFinderAction = 13;
+
 pub type NSPasteboardTypeTextFinderOptionKey = NSString;
+
+pub type NSTextFinderMatchingType = NSInteger;
+pub const NSTextFinderMatchingTypeContains: NSTextFinderMatchingType = 0;
+pub const NSTextFinderMatchingTypeStartsWith: NSTextFinderMatchingType = 1;
+pub const NSTextFinderMatchingTypeFullWord: NSTextFinderMatchingType = 2;
+pub const NSTextFinderMatchingTypeEndsWith: NSTextFinderMatchingType = 3;
 
 extern_class!(
     #[derive(Debug)]

@@ -5,7 +5,27 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSUnderlineStyle = NSInteger;
+pub const NSUnderlineStyleNone: NSUnderlineStyle = 0;
+pub const NSUnderlineStyleSingle: NSUnderlineStyle = 1;
+pub const NSUnderlineStyleThick: NSUnderlineStyle = 2;
+pub const NSUnderlineStyleDouble: NSUnderlineStyle = 9;
+pub const NSUnderlineStylePatternSolid: NSUnderlineStyle = 0;
+pub const NSUnderlineStylePatternDot: NSUnderlineStyle = 256;
+pub const NSUnderlineStylePatternDash: NSUnderlineStyle = 512;
+pub const NSUnderlineStylePatternDashDot: NSUnderlineStyle = 768;
+pub const NSUnderlineStylePatternDashDotDot: NSUnderlineStyle = 1024;
+pub const NSUnderlineStyleByWord: NSUnderlineStyle = 32768;
+
+pub type NSWritingDirectionFormatType = NSInteger;
+pub const NSWritingDirectionEmbedding: NSWritingDirectionFormatType = 0;
+pub const NSWritingDirectionOverride: NSWritingDirectionFormatType = 2;
+
 pub type NSTextEffectStyle = NSString;
+
+pub type NSSpellingState = NSInteger;
+pub const NSSpellingStateSpellingFlag: NSSpellingState = 1;
+pub const NSSpellingStateGrammarFlag: NSSpellingState = 2;
 
 extern_methods!(
     /// NSAttributedStringAttributeFixing
@@ -27,6 +47,10 @@ extern_methods!(
 pub type NSAttributedStringDocumentType = NSString;
 
 pub type NSTextLayoutSectionKey = NSString;
+
+pub type NSTextScalingType = NSInteger;
+pub const NSTextScalingStandard: NSTextScalingType = 0;
+pub const NSTextScalingiOS: NSTextScalingType = 1;
 
 pub type NSAttributedStringDocumentAttributeKey = NSString;
 
@@ -320,6 +344,9 @@ extern_methods!(
         );
     }
 );
+
+pub const NSNoUnderlineStyle: i32 = 0;
+pub const NSSingleUnderlineStyle: i32 = 1;
 
 extern_methods!(
     /// NSDeprecatedKitAdditions

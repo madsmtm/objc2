@@ -5,6 +5,38 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDataReadingOptions = NSUInteger;
+pub const NSDataReadingMappedIfSafe: NSDataReadingOptions = 1;
+pub const NSDataReadingUncached: NSDataReadingOptions = 2;
+pub const NSDataReadingMappedAlways: NSDataReadingOptions = 8;
+pub const NSDataReadingMapped: NSDataReadingOptions = 1;
+pub const NSMappedRead: NSDataReadingOptions = 1;
+pub const NSUncachedRead: NSDataReadingOptions = 2;
+
+pub type NSDataWritingOptions = NSUInteger;
+pub const NSDataWritingAtomic: NSDataWritingOptions = 1;
+pub const NSDataWritingWithoutOverwriting: NSDataWritingOptions = 2;
+pub const NSDataWritingFileProtectionNone: NSDataWritingOptions = 268435456;
+pub const NSDataWritingFileProtectionComplete: NSDataWritingOptions = 536870912;
+pub const NSDataWritingFileProtectionCompleteUnlessOpen: NSDataWritingOptions = 805306368;
+pub const NSDataWritingFileProtectionCompleteUntilFirstUserAuthentication: NSDataWritingOptions =
+    1073741824;
+pub const NSDataWritingFileProtectionMask: NSDataWritingOptions = 4026531840;
+pub const NSAtomicWrite: NSDataWritingOptions = 1;
+
+pub type NSDataSearchOptions = NSUInteger;
+pub const NSDataSearchBackwards: NSDataSearchOptions = 1;
+pub const NSDataSearchAnchored: NSDataSearchOptions = 2;
+
+pub type NSDataBase64EncodingOptions = NSUInteger;
+pub const NSDataBase64Encoding64CharacterLineLength: NSDataBase64EncodingOptions = 1;
+pub const NSDataBase64Encoding76CharacterLineLength: NSDataBase64EncodingOptions = 2;
+pub const NSDataBase64EncodingEndLineWithCarriageReturn: NSDataBase64EncodingOptions = 16;
+pub const NSDataBase64EncodingEndLineWithLineFeed: NSDataBase64EncodingOptions = 32;
+
+pub type NSDataBase64DecodingOptions = NSUInteger;
+pub const NSDataBase64DecodingIgnoreUnknownCharacters: NSDataBase64DecodingOptions = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSData;
@@ -210,6 +242,12 @@ extern_methods!(
         ) -> Id<NSData, Shared>;
     }
 );
+
+pub type NSDataCompressionAlgorithm = NSInteger;
+pub const NSDataCompressionAlgorithmLZFSE: NSDataCompressionAlgorithm = 0;
+pub const NSDataCompressionAlgorithmLZ4: NSDataCompressionAlgorithm = 1;
+pub const NSDataCompressionAlgorithmLZMA: NSDataCompressionAlgorithm = 2;
+pub const NSDataCompressionAlgorithmZlib: NSDataCompressionAlgorithm = 3;
 
 extern_methods!(
     /// NSDataCompression

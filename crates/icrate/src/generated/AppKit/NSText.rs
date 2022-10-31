@@ -5,6 +5,18 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextAlignment = NSInteger;
+pub const NSTextAlignmentLeft: NSTextAlignment = 0;
+pub const NSTextAlignmentRight: NSTextAlignment = 1;
+pub const NSTextAlignmentCenter: NSTextAlignment = 2;
+pub const NSTextAlignmentJustified: NSTextAlignment = 3;
+pub const NSTextAlignmentNatural: NSTextAlignment = 4;
+
+pub type NSWritingDirection = NSInteger;
+pub const NSWritingDirectionNatural: NSWritingDirection = -1;
+pub const NSWritingDirectionLeftToRight: NSWritingDirection = 0;
+pub const NSWritingDirectionRightToLeft: NSWritingDirection = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSText;
@@ -234,4 +246,40 @@ extern_methods!(
     }
 );
 
+pub const NSEnterCharacter: i32 = 3;
+pub const NSBackspaceCharacter: i32 = 8;
+pub const NSTabCharacter: i32 = 9;
+pub const NSNewlineCharacter: i32 = 10;
+pub const NSFormFeedCharacter: i32 = 12;
+pub const NSCarriageReturnCharacter: i32 = 13;
+pub const NSBackTabCharacter: i32 = 25;
+pub const NSDeleteCharacter: i32 = 127;
+pub const NSLineSeparatorCharacter: i32 = 8232;
+pub const NSParagraphSeparatorCharacter: i32 = 8233;
+
+pub type NSTextMovement = NSInteger;
+pub const NSTextMovementReturn: NSTextMovement = 16;
+pub const NSTextMovementTab: NSTextMovement = 17;
+pub const NSTextMovementBacktab: NSTextMovement = 18;
+pub const NSTextMovementLeft: NSTextMovement = 19;
+pub const NSTextMovementRight: NSTextMovement = 20;
+pub const NSTextMovementUp: NSTextMovement = 21;
+pub const NSTextMovementDown: NSTextMovement = 22;
+pub const NSTextMovementCancel: NSTextMovement = 23;
+pub const NSTextMovementOther: NSTextMovement = 0;
+
+pub const NSIllegalTextMovement: i32 = 0;
+pub const NSReturnTextMovement: i32 = 16;
+pub const NSTabTextMovement: i32 = 17;
+pub const NSBacktabTextMovement: i32 = 18;
+pub const NSLeftTextMovement: i32 = 19;
+pub const NSRightTextMovement: i32 = 20;
+pub const NSUpTextMovement: i32 = 21;
+pub const NSDownTextMovement: i32 = 22;
+pub const NSCancelTextMovement: i32 = 23;
+pub const NSOtherTextMovement: i32 = 0;
+
 pub type NSTextDelegate = NSObject;
+
+pub const NSTextWritingDirectionEmbedding: i32 = 0;
+pub const NSTextWritingDirectionOverride: i32 = 2;

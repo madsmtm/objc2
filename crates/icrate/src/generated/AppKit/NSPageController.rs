@@ -7,6 +7,11 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSPageControllerObjectIdentifier = NSString;
 
+pub type NSPageControllerTransitionStyle = NSInteger;
+pub const NSPageControllerTransitionStyleStackHistory: NSPageControllerTransitionStyle = 0;
+pub const NSPageControllerTransitionStyleStackBook: NSPageControllerTransitionStyle = 1;
+pub const NSPageControllerTransitionStyleHorizontalStrip: NSPageControllerTransitionStyle = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPageController;

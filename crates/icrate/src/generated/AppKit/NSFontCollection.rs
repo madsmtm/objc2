@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSFontCollectionVisibility = NSUInteger;
+pub const NSFontCollectionVisibilityProcess: NSFontCollectionVisibility = 1;
+pub const NSFontCollectionVisibilityUser: NSFontCollectionVisibility = 2;
+pub const NSFontCollectionVisibilityComputer: NSFontCollectionVisibility = 4;
+
 pub type NSFontCollectionMatchingOptionKey = NSString;
 
 pub type NSFontCollectionName = NSString;

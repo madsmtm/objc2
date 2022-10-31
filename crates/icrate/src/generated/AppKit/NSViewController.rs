@@ -5,6 +5,17 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSViewControllerTransitionOptions = NSUInteger;
+pub const NSViewControllerTransitionNone: NSViewControllerTransitionOptions = 0;
+pub const NSViewControllerTransitionCrossfade: NSViewControllerTransitionOptions = 1;
+pub const NSViewControllerTransitionSlideUp: NSViewControllerTransitionOptions = 16;
+pub const NSViewControllerTransitionSlideDown: NSViewControllerTransitionOptions = 32;
+pub const NSViewControllerTransitionSlideLeft: NSViewControllerTransitionOptions = 64;
+pub const NSViewControllerTransitionSlideRight: NSViewControllerTransitionOptions = 128;
+pub const NSViewControllerTransitionSlideForward: NSViewControllerTransitionOptions = 320;
+pub const NSViewControllerTransitionSlideBackward: NSViewControllerTransitionOptions = 384;
+pub const NSViewControllerTransitionAllowUserInteraction: NSViewControllerTransitionOptions = 4096;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSViewController;

@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSXMLDocumentContentKind = NSUInteger;
+pub const NSXMLDocumentXMLKind: NSXMLDocumentContentKind = 0;
+pub const NSXMLDocumentXHTMLKind: NSXMLDocumentContentKind = 1;
+pub const NSXMLDocumentHTMLKind: NSXMLDocumentContentKind = 2;
+pub const NSXMLDocumentTextKind: NSXMLDocumentContentKind = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSXMLDocument;

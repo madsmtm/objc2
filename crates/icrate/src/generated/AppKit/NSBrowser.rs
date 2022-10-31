@@ -7,6 +7,15 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSBrowserColumnsAutosaveName = NSString;
 
+pub type NSBrowserColumnResizingType = NSUInteger;
+pub const NSBrowserNoColumnResizing: NSBrowserColumnResizingType = 0;
+pub const NSBrowserAutoColumnResizing: NSBrowserColumnResizingType = 1;
+pub const NSBrowserUserColumnResizing: NSBrowserColumnResizingType = 2;
+
+pub type NSBrowserDropOperation = NSUInteger;
+pub const NSBrowserDropOn: NSBrowserDropOperation = 0;
+pub const NSBrowserDropAbove: NSBrowserDropOperation = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSBrowser;

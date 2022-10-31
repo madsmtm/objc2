@@ -13,6 +13,31 @@ pub type NSFileProtectionType = NSString;
 
 pub type NSFileProviderServiceName = NSString;
 
+pub type NSVolumeEnumerationOptions = NSUInteger;
+pub const NSVolumeEnumerationSkipHiddenVolumes: NSVolumeEnumerationOptions = 2;
+pub const NSVolumeEnumerationProduceFileReferenceURLs: NSVolumeEnumerationOptions = 4;
+
+pub type NSDirectoryEnumerationOptions = NSUInteger;
+pub const NSDirectoryEnumerationSkipsSubdirectoryDescendants: NSDirectoryEnumerationOptions = 1;
+pub const NSDirectoryEnumerationSkipsPackageDescendants: NSDirectoryEnumerationOptions = 2;
+pub const NSDirectoryEnumerationSkipsHiddenFiles: NSDirectoryEnumerationOptions = 4;
+pub const NSDirectoryEnumerationIncludesDirectoriesPostOrder: NSDirectoryEnumerationOptions = 8;
+pub const NSDirectoryEnumerationProducesRelativePathURLs: NSDirectoryEnumerationOptions = 16;
+
+pub type NSFileManagerItemReplacementOptions = NSUInteger;
+pub const NSFileManagerItemReplacementUsingNewMetadataOnly: NSFileManagerItemReplacementOptions = 1;
+pub const NSFileManagerItemReplacementWithoutDeletingBackupItem:
+    NSFileManagerItemReplacementOptions = 2;
+
+pub type NSURLRelationship = NSInteger;
+pub const NSURLRelationshipContains: NSURLRelationship = 0;
+pub const NSURLRelationshipSame: NSURLRelationship = 1;
+pub const NSURLRelationshipOther: NSURLRelationship = 2;
+
+pub type NSFileManagerUnmountOptions = NSUInteger;
+pub const NSFileManagerUnmountAllPartitionsAndEjectDisk: NSFileManagerUnmountOptions = 1;
+pub const NSFileManagerUnmountWithoutUI: NSFileManagerUnmountOptions = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSFileManager;

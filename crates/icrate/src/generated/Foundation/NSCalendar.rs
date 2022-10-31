@@ -7,6 +7,52 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSCalendarIdentifier = NSString;
 
+pub type NSCalendarUnit = NSUInteger;
+pub const NSCalendarUnitEra: NSCalendarUnit = 2;
+pub const NSCalendarUnitYear: NSCalendarUnit = 4;
+pub const NSCalendarUnitMonth: NSCalendarUnit = 8;
+pub const NSCalendarUnitDay: NSCalendarUnit = 16;
+pub const NSCalendarUnitHour: NSCalendarUnit = 32;
+pub const NSCalendarUnitMinute: NSCalendarUnit = 64;
+pub const NSCalendarUnitSecond: NSCalendarUnit = 128;
+pub const NSCalendarUnitWeekday: NSCalendarUnit = 512;
+pub const NSCalendarUnitWeekdayOrdinal: NSCalendarUnit = 1024;
+pub const NSCalendarUnitQuarter: NSCalendarUnit = 2048;
+pub const NSCalendarUnitWeekOfMonth: NSCalendarUnit = 4096;
+pub const NSCalendarUnitWeekOfYear: NSCalendarUnit = 8192;
+pub const NSCalendarUnitYearForWeekOfYear: NSCalendarUnit = 16384;
+pub const NSCalendarUnitNanosecond: NSCalendarUnit = 32768;
+pub const NSCalendarUnitCalendar: NSCalendarUnit = 1048576;
+pub const NSCalendarUnitTimeZone: NSCalendarUnit = 2097152;
+pub const NSEraCalendarUnit: NSCalendarUnit = 2;
+pub const NSYearCalendarUnit: NSCalendarUnit = 4;
+pub const NSMonthCalendarUnit: NSCalendarUnit = 8;
+pub const NSDayCalendarUnit: NSCalendarUnit = 16;
+pub const NSHourCalendarUnit: NSCalendarUnit = 32;
+pub const NSMinuteCalendarUnit: NSCalendarUnit = 64;
+pub const NSSecondCalendarUnit: NSCalendarUnit = 128;
+pub const NSWeekCalendarUnit: NSCalendarUnit = 256;
+pub const NSWeekdayCalendarUnit: NSCalendarUnit = 512;
+pub const NSWeekdayOrdinalCalendarUnit: NSCalendarUnit = 1024;
+pub const NSQuarterCalendarUnit: NSCalendarUnit = 2048;
+pub const NSWeekOfMonthCalendarUnit: NSCalendarUnit = 4096;
+pub const NSWeekOfYearCalendarUnit: NSCalendarUnit = 8192;
+pub const NSYearForWeekOfYearCalendarUnit: NSCalendarUnit = 16384;
+pub const NSCalendarCalendarUnit: NSCalendarUnit = 1048576;
+pub const NSTimeZoneCalendarUnit: NSCalendarUnit = 2097152;
+
+pub type NSCalendarOptions = NSUInteger;
+pub const NSCalendarWrapComponents: NSCalendarOptions = 1;
+pub const NSCalendarMatchStrictly: NSCalendarOptions = 2;
+pub const NSCalendarSearchBackwards: NSCalendarOptions = 4;
+pub const NSCalendarMatchPreviousTimePreservingSmallerUnits: NSCalendarOptions = 256;
+pub const NSCalendarMatchNextTimePreservingSmallerUnits: NSCalendarOptions = 512;
+pub const NSCalendarMatchNextTime: NSCalendarOptions = 1024;
+pub const NSCalendarMatchFirst: NSCalendarOptions = 4096;
+pub const NSCalendarMatchLast: NSCalendarOptions = 8192;
+
+pub const NSWrapCalendarComponents: i32 = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCalendar;
@@ -384,6 +430,9 @@ extern_methods!(
         ) -> bool;
     }
 );
+
+pub const NSDateComponentUndefined: i32 = 9223372036854775807;
+pub const NSUndefinedDateComponent: i32 = 9223372036854775807;
 
 extern_class!(
     #[derive(Debug)]

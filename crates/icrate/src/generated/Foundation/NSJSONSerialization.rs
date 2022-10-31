@@ -5,6 +5,20 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSJSONReadingOptions = NSUInteger;
+pub const NSJSONReadingMutableContainers: NSJSONReadingOptions = 1;
+pub const NSJSONReadingMutableLeaves: NSJSONReadingOptions = 2;
+pub const NSJSONReadingFragmentsAllowed: NSJSONReadingOptions = 4;
+pub const NSJSONReadingJSON5Allowed: NSJSONReadingOptions = 8;
+pub const NSJSONReadingTopLevelDictionaryAssumed: NSJSONReadingOptions = 16;
+pub const NSJSONReadingAllowFragments: NSJSONReadingOptions = 4;
+
+pub type NSJSONWritingOptions = NSUInteger;
+pub const NSJSONWritingPrettyPrinted: NSJSONWritingOptions = 1;
+pub const NSJSONWritingSortedKeys: NSJSONWritingOptions = 2;
+pub const NSJSONWritingFragmentsAllowed: NSJSONWritingOptions = 4;
+pub const NSJSONWritingWithoutEscapingSlashes: NSJSONWritingOptions = 8;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSJSONSerialization;

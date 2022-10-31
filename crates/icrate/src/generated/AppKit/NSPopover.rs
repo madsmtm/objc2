@@ -5,6 +5,15 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSPopoverAppearance = NSInteger;
+pub const NSPopoverAppearanceMinimal: NSPopoverAppearance = 0;
+pub const NSPopoverAppearanceHUD: NSPopoverAppearance = 1;
+
+pub type NSPopoverBehavior = NSInteger;
+pub const NSPopoverBehaviorApplicationDefined: NSPopoverBehavior = 0;
+pub const NSPopoverBehaviorTransient: NSPopoverBehavior = 1;
+pub const NSPopoverBehaviorSemitransient: NSPopoverBehavior = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSPopover;

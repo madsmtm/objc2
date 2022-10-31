@@ -5,6 +5,29 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSUsableScrollerParts = NSUInteger;
+pub const NSNoScrollerParts: NSUsableScrollerParts = 0;
+pub const NSOnlyScrollerArrows: NSUsableScrollerParts = 1;
+pub const NSAllScrollerParts: NSUsableScrollerParts = 2;
+
+pub type NSScrollerPart = NSUInteger;
+pub const NSScrollerNoPart: NSScrollerPart = 0;
+pub const NSScrollerDecrementPage: NSScrollerPart = 1;
+pub const NSScrollerKnob: NSScrollerPart = 2;
+pub const NSScrollerIncrementPage: NSScrollerPart = 3;
+pub const NSScrollerDecrementLine: NSScrollerPart = 4;
+pub const NSScrollerIncrementLine: NSScrollerPart = 5;
+pub const NSScrollerKnobSlot: NSScrollerPart = 6;
+
+pub type NSScrollerStyle = NSInteger;
+pub const NSScrollerStyleLegacy: NSScrollerStyle = 0;
+pub const NSScrollerStyleOverlay: NSScrollerStyle = 1;
+
+pub type NSScrollerKnobStyle = NSInteger;
+pub const NSScrollerKnobStyleDefault: NSScrollerKnobStyle = 0;
+pub const NSScrollerKnobStyleDark: NSScrollerKnobStyle = 1;
+pub const NSScrollerKnobStyleLight: NSScrollerKnobStyle = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSScroller;
@@ -77,6 +100,16 @@ extern_methods!(
         pub unsafe fn setKnobProportion(&self, knobProportion: CGFloat);
     }
 );
+
+pub type NSScrollArrowPosition = NSUInteger;
+pub const NSScrollerArrowsMaxEnd: NSScrollArrowPosition = 0;
+pub const NSScrollerArrowsMinEnd: NSScrollArrowPosition = 1;
+pub const NSScrollerArrowsDefaultSetting: NSScrollArrowPosition = 0;
+pub const NSScrollerArrowsNone: NSScrollArrowPosition = 2;
+
+pub type NSScrollerArrow = NSUInteger;
+pub const NSScrollerIncrementArrow: NSScrollerArrow = 0;
+pub const NSScrollerDecrementArrow: NSScrollerArrow = 1;
 
 extern_methods!(
     /// NSDeprecated

@@ -7,6 +7,9 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSXPCProxyCreating = NSObject;
 
+pub type NSXPCConnectionOptions = NSUInteger;
+pub const NSXPCConnectionPrivileged: NSXPCConnectionOptions = 4096;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSXPCConnection;

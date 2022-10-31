@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSWorkspaceIconCreationOptions = NSUInteger;
+pub const NSExcludeQuickDrawElementsIconCreationOption: NSWorkspaceIconCreationOptions = 2;
+pub const NSExclude10_4ElementsIconCreationOption: NSWorkspaceIconCreationOptions = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSWorkspace;
@@ -332,6 +336,11 @@ extern_methods!(
     }
 );
 
+pub type NSWorkspaceAuthorizationType = NSInteger;
+pub const NSWorkspaceAuthorizationTypeCreateSymbolicLink: NSWorkspaceAuthorizationType = 0;
+pub const NSWorkspaceAuthorizationTypeSetAttributes: NSWorkspaceAuthorizationType = 1;
+pub const NSWorkspaceAuthorizationTypeReplaceFile: NSWorkspaceAuthorizationType = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSWorkspaceAuthorization;
@@ -368,6 +377,20 @@ extern_methods!(
 );
 
 pub type NSWorkspaceFileOperationName = NSString;
+
+pub type NSWorkspaceLaunchOptions = NSUInteger;
+pub const NSWorkspaceLaunchAndPrint: NSWorkspaceLaunchOptions = 2;
+pub const NSWorkspaceLaunchWithErrorPresentation: NSWorkspaceLaunchOptions = 64;
+pub const NSWorkspaceLaunchInhibitingBackgroundOnly: NSWorkspaceLaunchOptions = 128;
+pub const NSWorkspaceLaunchWithoutAddingToRecents: NSWorkspaceLaunchOptions = 256;
+pub const NSWorkspaceLaunchWithoutActivation: NSWorkspaceLaunchOptions = 512;
+pub const NSWorkspaceLaunchAsync: NSWorkspaceLaunchOptions = 65536;
+pub const NSWorkspaceLaunchNewInstance: NSWorkspaceLaunchOptions = 524288;
+pub const NSWorkspaceLaunchAndHide: NSWorkspaceLaunchOptions = 1048576;
+pub const NSWorkspaceLaunchAndHideOthers: NSWorkspaceLaunchOptions = 2097152;
+pub const NSWorkspaceLaunchDefault: NSWorkspaceLaunchOptions = 65536;
+pub const NSWorkspaceLaunchAllowingClassicStartup: NSWorkspaceLaunchOptions = 131072;
+pub const NSWorkspaceLaunchPreferringClassic: NSWorkspaceLaunchOptions = 262144;
 
 pub type NSWorkspaceLaunchConfigurationKey = NSString;
 

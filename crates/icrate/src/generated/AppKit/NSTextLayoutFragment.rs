@@ -5,6 +5,22 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextLayoutFragmentEnumerationOptions = NSUInteger;
+pub const NSTextLayoutFragmentEnumerationOptionsNone: NSTextLayoutFragmentEnumerationOptions = 0;
+pub const NSTextLayoutFragmentEnumerationOptionsReverse: NSTextLayoutFragmentEnumerationOptions = 1;
+pub const NSTextLayoutFragmentEnumerationOptionsEstimatesSize:
+    NSTextLayoutFragmentEnumerationOptions = 2;
+pub const NSTextLayoutFragmentEnumerationOptionsEnsuresLayout:
+    NSTextLayoutFragmentEnumerationOptions = 4;
+pub const NSTextLayoutFragmentEnumerationOptionsEnsuresExtraLineFragment:
+    NSTextLayoutFragmentEnumerationOptions = 8;
+
+pub type NSTextLayoutFragmentState = NSUInteger;
+pub const NSTextLayoutFragmentStateNone: NSTextLayoutFragmentState = 0;
+pub const NSTextLayoutFragmentStateEstimatedUsageBounds: NSTextLayoutFragmentState = 1;
+pub const NSTextLayoutFragmentStateCalculatedUsageBounds: NSTextLayoutFragmentState = 2;
+pub const NSTextLayoutFragmentStateLayoutAvailable: NSTextLayoutFragmentState = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextLayoutFragment;

@@ -5,7 +5,58 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSOpenGLGlobalOption = u32;
+pub const NSOpenGLGOFormatCacheSize: NSOpenGLGlobalOption = 501;
+pub const NSOpenGLGOClearFormatCache: NSOpenGLGlobalOption = 502;
+pub const NSOpenGLGORetainRenderers: NSOpenGLGlobalOption = 503;
+pub const NSOpenGLGOUseBuildCache: NSOpenGLGlobalOption = 506;
+pub const NSOpenGLGOResetLibrary: NSOpenGLGlobalOption = 504;
+
+pub const NSOpenGLPFAAllRenderers: i32 = 1;
+pub const NSOpenGLPFATripleBuffer: i32 = 3;
+pub const NSOpenGLPFADoubleBuffer: i32 = 5;
+pub const NSOpenGLPFAAuxBuffers: i32 = 7;
+pub const NSOpenGLPFAColorSize: i32 = 8;
+pub const NSOpenGLPFAAlphaSize: i32 = 11;
+pub const NSOpenGLPFADepthSize: i32 = 12;
+pub const NSOpenGLPFAStencilSize: i32 = 13;
+pub const NSOpenGLPFAAccumSize: i32 = 14;
+pub const NSOpenGLPFAMinimumPolicy: i32 = 51;
+pub const NSOpenGLPFAMaximumPolicy: i32 = 52;
+pub const NSOpenGLPFASampleBuffers: i32 = 55;
+pub const NSOpenGLPFASamples: i32 = 56;
+pub const NSOpenGLPFAAuxDepthStencil: i32 = 57;
+pub const NSOpenGLPFAColorFloat: i32 = 58;
+pub const NSOpenGLPFAMultisample: i32 = 59;
+pub const NSOpenGLPFASupersample: i32 = 60;
+pub const NSOpenGLPFASampleAlpha: i32 = 61;
+pub const NSOpenGLPFARendererID: i32 = 70;
+pub const NSOpenGLPFANoRecovery: i32 = 72;
+pub const NSOpenGLPFAAccelerated: i32 = 73;
+pub const NSOpenGLPFAClosestPolicy: i32 = 74;
+pub const NSOpenGLPFABackingStore: i32 = 76;
+pub const NSOpenGLPFAScreenMask: i32 = 84;
+pub const NSOpenGLPFAAllowOfflineRenderers: i32 = 96;
+pub const NSOpenGLPFAAcceleratedCompute: i32 = 97;
+pub const NSOpenGLPFAOpenGLProfile: i32 = 99;
+pub const NSOpenGLPFAVirtualScreenCount: i32 = 128;
+pub const NSOpenGLPFAStereo: i32 = 6;
+pub const NSOpenGLPFAOffScreen: i32 = 53;
+pub const NSOpenGLPFAFullScreen: i32 = 54;
+pub const NSOpenGLPFASingleRenderer: i32 = 71;
+pub const NSOpenGLPFARobust: i32 = 75;
+pub const NSOpenGLPFAMPSafe: i32 = 78;
+pub const NSOpenGLPFAWindow: i32 = 80;
+pub const NSOpenGLPFAMultiScreen: i32 = 81;
+pub const NSOpenGLPFACompliant: i32 = 83;
+pub const NSOpenGLPFAPixelBuffer: i32 = 90;
+pub const NSOpenGLPFARemotePixelBuffer: i32 = 91;
+
 pub type NSOpenGLPixelFormatAttribute = u32;
+
+pub const NSOpenGLProfileVersionLegacy: i32 = 4096;
+pub const NSOpenGLProfileVersion3_2Core: i32 = 12800;
+pub const NSOpenGLProfileVersion4_1Core: i32 = 16640;
 
 extern_class!(
     #[derive(Debug)]
@@ -101,6 +152,23 @@ extern_methods!(
         pub unsafe fn textureMaxMipMapLevel(&self) -> GLint;
     }
 );
+
+pub type NSOpenGLContextParameter = NSInteger;
+pub const NSOpenGLContextParameterSwapInterval: NSOpenGLContextParameter = 222;
+pub const NSOpenGLContextParameterSurfaceOrder: NSOpenGLContextParameter = 235;
+pub const NSOpenGLContextParameterSurfaceOpacity: NSOpenGLContextParameter = 236;
+pub const NSOpenGLContextParameterSurfaceBackingSize: NSOpenGLContextParameter = 304;
+pub const NSOpenGLContextParameterReclaimResources: NSOpenGLContextParameter = 308;
+pub const NSOpenGLContextParameterCurrentRendererID: NSOpenGLContextParameter = 309;
+pub const NSOpenGLContextParameterGPUVertexProcessing: NSOpenGLContextParameter = 310;
+pub const NSOpenGLContextParameterGPUFragmentProcessing: NSOpenGLContextParameter = 311;
+pub const NSOpenGLContextParameterHasDrawable: NSOpenGLContextParameter = 314;
+pub const NSOpenGLContextParameterMPSwapsInFlight: NSOpenGLContextParameter = 315;
+pub const NSOpenGLContextParameterSwapRectangle: NSOpenGLContextParameter = 200;
+pub const NSOpenGLContextParameterSwapRectangleEnable: NSOpenGLContextParameter = 201;
+pub const NSOpenGLContextParameterRasterizationEnable: NSOpenGLContextParameter = 221;
+pub const NSOpenGLContextParameterStateValidation: NSOpenGLContextParameter = 301;
+pub const NSOpenGLContextParameterSurfaceSurfaceVolatile: NSOpenGLContextParameter = 306;
 
 extern_class!(
     #[derive(Debug)]

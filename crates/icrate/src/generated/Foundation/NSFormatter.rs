@@ -5,6 +5,19 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSFormattingContext = NSInteger;
+pub const NSFormattingContextUnknown: NSFormattingContext = 0;
+pub const NSFormattingContextDynamic: NSFormattingContext = 1;
+pub const NSFormattingContextStandalone: NSFormattingContext = 2;
+pub const NSFormattingContextListItem: NSFormattingContext = 3;
+pub const NSFormattingContextBeginningOfSentence: NSFormattingContext = 4;
+pub const NSFormattingContextMiddleOfSentence: NSFormattingContext = 5;
+
+pub type NSFormattingUnitStyle = NSInteger;
+pub const NSFormattingUnitStyleShort: NSFormattingUnitStyle = 1;
+pub const NSFormattingUnitStyleMedium: NSFormattingUnitStyle = 2;
+pub const NSFormattingUnitStyleLong: NSFormattingUnitStyle = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSFormatter;

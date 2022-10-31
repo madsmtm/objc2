@@ -5,6 +5,25 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSDirectionalRectEdge = NSUInteger;
+pub const NSDirectionalRectEdgeNone: NSDirectionalRectEdge = 0;
+pub const NSDirectionalRectEdgeTop: NSDirectionalRectEdge = 1;
+pub const NSDirectionalRectEdgeLeading: NSDirectionalRectEdge = 2;
+pub const NSDirectionalRectEdgeBottom: NSDirectionalRectEdge = 4;
+pub const NSDirectionalRectEdgeTrailing: NSDirectionalRectEdge = 8;
+pub const NSDirectionalRectEdgeAll: NSDirectionalRectEdge = 15;
+
+pub type NSRectAlignment = NSInteger;
+pub const NSRectAlignmentNone: NSRectAlignment = 0;
+pub const NSRectAlignmentTop: NSRectAlignment = 1;
+pub const NSRectAlignmentTopLeading: NSRectAlignment = 2;
+pub const NSRectAlignmentLeading: NSRectAlignment = 3;
+pub const NSRectAlignmentBottomLeading: NSRectAlignment = 4;
+pub const NSRectAlignmentBottom: NSRectAlignment = 5;
+pub const NSRectAlignmentBottomTrailing: NSRectAlignment = 6;
+pub const NSRectAlignmentTrailing: NSRectAlignment = 7;
+pub const NSRectAlignmentTopTrailing: NSRectAlignment = 8;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCollectionViewCompositionalLayoutConfiguration;
@@ -96,6 +115,20 @@ extern_methods!(
         );
     }
 );
+
+pub type NSCollectionLayoutSectionOrthogonalScrollingBehavior = NSInteger;
+pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorNone:
+    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 0;
+pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorContinuous:
+    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 1;
+pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorContinuousGroupLeadingBoundary:
+    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 2;
+pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorPaging:
+    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 3;
+pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPaging:
+    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 4;
+pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPagingCentered:
+    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 5;
 
 extern_class!(
     #[derive(Debug)]

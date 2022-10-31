@@ -42,6 +42,14 @@ extern_methods!(
     }
 );
 
+pub type NSTimeZoneNameStyle = NSInteger;
+pub const NSTimeZoneNameStyleStandard: NSTimeZoneNameStyle = 0;
+pub const NSTimeZoneNameStyleShortStandard: NSTimeZoneNameStyle = 1;
+pub const NSTimeZoneNameStyleDaylightSaving: NSTimeZoneNameStyle = 2;
+pub const NSTimeZoneNameStyleShortDaylightSaving: NSTimeZoneNameStyle = 3;
+pub const NSTimeZoneNameStyleGeneric: NSTimeZoneNameStyle = 4;
+pub const NSTimeZoneNameStyleShortGeneric: NSTimeZoneNameStyle = 5;
+
 extern_methods!(
     /// NSExtendedTimeZone
     unsafe impl NSTimeZone {

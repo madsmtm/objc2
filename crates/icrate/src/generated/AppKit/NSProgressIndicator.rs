@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSProgressIndicatorStyle = NSUInteger;
+pub const NSProgressIndicatorStyleBar: NSProgressIndicatorStyle = 0;
+pub const NSProgressIndicatorStyleSpinning: NSProgressIndicatorStyle = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSProgressIndicator;
@@ -89,6 +93,12 @@ extern_methods!(
         pub unsafe fn setDisplayedWhenStopped(&self, displayedWhenStopped: bool);
     }
 );
+
+pub type NSProgressIndicatorThickness = NSUInteger;
+pub const NSProgressIndicatorPreferredThickness: NSProgressIndicatorThickness = 14;
+pub const NSProgressIndicatorPreferredSmallThickness: NSProgressIndicatorThickness = 10;
+pub const NSProgressIndicatorPreferredLargeThickness: NSProgressIndicatorThickness = 18;
+pub const NSProgressIndicatorPreferredAquaThickness: NSProgressIndicatorThickness = 12;
 
 extern_methods!(
     /// NSProgressIndicatorDeprecated

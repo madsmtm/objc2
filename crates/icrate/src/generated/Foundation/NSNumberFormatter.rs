@@ -5,6 +5,38 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSNumberFormatterBehavior = NSUInteger;
+pub const NSNumberFormatterBehaviorDefault: NSNumberFormatterBehavior = 0;
+pub const NSNumberFormatterBehavior10_0: NSNumberFormatterBehavior = 1000;
+pub const NSNumberFormatterBehavior10_4: NSNumberFormatterBehavior = 1040;
+
+pub type NSNumberFormatterStyle = NSUInteger;
+pub const NSNumberFormatterNoStyle: NSNumberFormatterStyle = 0;
+pub const NSNumberFormatterDecimalStyle: NSNumberFormatterStyle = 1;
+pub const NSNumberFormatterCurrencyStyle: NSNumberFormatterStyle = 2;
+pub const NSNumberFormatterPercentStyle: NSNumberFormatterStyle = 3;
+pub const NSNumberFormatterScientificStyle: NSNumberFormatterStyle = 4;
+pub const NSNumberFormatterSpellOutStyle: NSNumberFormatterStyle = 5;
+pub const NSNumberFormatterOrdinalStyle: NSNumberFormatterStyle = 6;
+pub const NSNumberFormatterCurrencyISOCodeStyle: NSNumberFormatterStyle = 8;
+pub const NSNumberFormatterCurrencyPluralStyle: NSNumberFormatterStyle = 9;
+pub const NSNumberFormatterCurrencyAccountingStyle: NSNumberFormatterStyle = 10;
+
+pub type NSNumberFormatterPadPosition = NSUInteger;
+pub const NSNumberFormatterPadBeforePrefix: NSNumberFormatterPadPosition = 0;
+pub const NSNumberFormatterPadAfterPrefix: NSNumberFormatterPadPosition = 1;
+pub const NSNumberFormatterPadBeforeSuffix: NSNumberFormatterPadPosition = 2;
+pub const NSNumberFormatterPadAfterSuffix: NSNumberFormatterPadPosition = 3;
+
+pub type NSNumberFormatterRoundingMode = NSUInteger;
+pub const NSNumberFormatterRoundCeiling: NSNumberFormatterRoundingMode = 0;
+pub const NSNumberFormatterRoundFloor: NSNumberFormatterRoundingMode = 1;
+pub const NSNumberFormatterRoundDown: NSNumberFormatterRoundingMode = 2;
+pub const NSNumberFormatterRoundUp: NSNumberFormatterRoundingMode = 3;
+pub const NSNumberFormatterRoundHalfEven: NSNumberFormatterRoundingMode = 4;
+pub const NSNumberFormatterRoundHalfDown: NSNumberFormatterRoundingMode = 5;
+pub const NSNumberFormatterRoundHalfUp: NSNumberFormatterRoundingMode = 6;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSNumberFormatter;

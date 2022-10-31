@@ -30,6 +30,11 @@ extern_methods!(
     }
 );
 
+pub type NSAttributedStringEnumerationOptions = NSUInteger;
+pub const NSAttributedStringEnumerationReverse: NSAttributedStringEnumerationOptions = 2;
+pub const NSAttributedStringEnumerationLongestEffectiveRangeNotRequired:
+    NSAttributedStringEnumerationOptions = 1048576;
+
 extern_methods!(
     /// NSExtendedAttributedString
     unsafe impl NSAttributedString {
@@ -183,6 +188,30 @@ extern_methods!(
     }
 );
 
+pub type NSInlinePresentationIntent = NSUInteger;
+pub const NSInlinePresentationIntentEmphasized: NSInlinePresentationIntent = 1;
+pub const NSInlinePresentationIntentStronglyEmphasized: NSInlinePresentationIntent = 2;
+pub const NSInlinePresentationIntentCode: NSInlinePresentationIntent = 4;
+pub const NSInlinePresentationIntentStrikethrough: NSInlinePresentationIntent = 32;
+pub const NSInlinePresentationIntentSoftBreak: NSInlinePresentationIntent = 64;
+pub const NSInlinePresentationIntentLineBreak: NSInlinePresentationIntent = 128;
+pub const NSInlinePresentationIntentInlineHTML: NSInlinePresentationIntent = 256;
+pub const NSInlinePresentationIntentBlockHTML: NSInlinePresentationIntent = 512;
+
+pub type NSAttributedStringMarkdownParsingFailurePolicy = NSInteger;
+pub const NSAttributedStringMarkdownParsingFailureReturnError:
+    NSAttributedStringMarkdownParsingFailurePolicy = 0;
+pub const NSAttributedStringMarkdownParsingFailureReturnPartiallyParsedIfPossible:
+    NSAttributedStringMarkdownParsingFailurePolicy = 1;
+
+pub type NSAttributedStringMarkdownInterpretedSyntax = NSInteger;
+pub const NSAttributedStringMarkdownInterpretedSyntaxFull:
+    NSAttributedStringMarkdownInterpretedSyntax = 0;
+pub const NSAttributedStringMarkdownInterpretedSyntaxInlineOnly:
+    NSAttributedStringMarkdownInterpretedSyntax = 1;
+pub const NSAttributedStringMarkdownInterpretedSyntaxInlineOnlyPreservingWhitespace:
+    NSAttributedStringMarkdownInterpretedSyntax = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAttributedStringMarkdownParsingOptions;
@@ -258,6 +287,12 @@ extern_methods!(
     }
 );
 
+pub type NSAttributedStringFormattingOptions = NSUInteger;
+pub const NSAttributedStringFormattingInsertArgumentAttributesWithoutMerging:
+    NSAttributedStringFormattingOptions = 1;
+pub const NSAttributedStringFormattingApplyReplacementIndexAttribute:
+    NSAttributedStringFormattingOptions = 2;
+
 extern_methods!(
     /// NSAttributedStringFormatting
     unsafe impl NSAttributedString {
@@ -284,6 +319,28 @@ extern_methods!(
         pub unsafe fn attributedStringByInflectingString(&self) -> Id<NSAttributedString, Shared>;
     }
 );
+
+pub type NSPresentationIntentKind = NSInteger;
+pub const NSPresentationIntentKindParagraph: NSPresentationIntentKind = 0;
+pub const NSPresentationIntentKindHeader: NSPresentationIntentKind = 1;
+pub const NSPresentationIntentKindOrderedList: NSPresentationIntentKind = 2;
+pub const NSPresentationIntentKindUnorderedList: NSPresentationIntentKind = 3;
+pub const NSPresentationIntentKindListItem: NSPresentationIntentKind = 4;
+pub const NSPresentationIntentKindCodeBlock: NSPresentationIntentKind = 5;
+pub const NSPresentationIntentKindBlockQuote: NSPresentationIntentKind = 6;
+pub const NSPresentationIntentKindThematicBreak: NSPresentationIntentKind = 7;
+pub const NSPresentationIntentKindTable: NSPresentationIntentKind = 8;
+pub const NSPresentationIntentKindTableHeaderRow: NSPresentationIntentKind = 9;
+pub const NSPresentationIntentKindTableRow: NSPresentationIntentKind = 10;
+pub const NSPresentationIntentKindTableCell: NSPresentationIntentKind = 11;
+
+pub type NSPresentationIntentTableColumnAlignment = NSInteger;
+pub const NSPresentationIntentTableColumnAlignmentLeft: NSPresentationIntentTableColumnAlignment =
+    0;
+pub const NSPresentationIntentTableColumnAlignmentCenter: NSPresentationIntentTableColumnAlignment =
+    1;
+pub const NSPresentationIntentTableColumnAlignmentRight: NSPresentationIntentTableColumnAlignment =
+    2;
 
 extern_class!(
     #[derive(Debug)]

@@ -5,6 +5,12 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSURLCredentialPersistence = NSUInteger;
+pub const NSURLCredentialPersistenceNone: NSURLCredentialPersistence = 0;
+pub const NSURLCredentialPersistenceForSession: NSURLCredentialPersistence = 1;
+pub const NSURLCredentialPersistencePermanent: NSURLCredentialPersistence = 2;
+pub const NSURLCredentialPersistenceSynchronizable: NSURLCredentialPersistence = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLCredential;

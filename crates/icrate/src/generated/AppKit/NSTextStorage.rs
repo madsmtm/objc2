@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextStorageEditActions = NSUInteger;
+pub const NSTextStorageEditedAttributes: NSTextStorageEditActions = 1;
+pub const NSTextStorageEditedCharacters: NSTextStorageEditActions = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextStorage;

@@ -11,15 +11,47 @@ pub type NSAccessibilityParameterizedAttributeName = NSString;
 
 pub type NSAccessibilityAnnotationAttributeKey = NSString;
 
+pub type NSAccessibilityAnnotationPosition = NSInteger;
+pub const NSAccessibilityAnnotationPositionFullRange: NSAccessibilityAnnotationPosition = 0;
+pub const NSAccessibilityAnnotationPositionStart: NSAccessibilityAnnotationPosition = 1;
+pub const NSAccessibilityAnnotationPositionEnd: NSAccessibilityAnnotationPosition = 2;
+
 pub type NSAccessibilityFontAttributeKey = NSString;
+
+pub type NSAccessibilityOrientation = NSInteger;
+pub const NSAccessibilityOrientationUnknown: NSAccessibilityOrientation = 0;
+pub const NSAccessibilityOrientationVertical: NSAccessibilityOrientation = 1;
+pub const NSAccessibilityOrientationHorizontal: NSAccessibilityOrientation = 2;
 
 pub type NSAccessibilityOrientationValue = NSString;
 
 pub type NSAccessibilitySortDirectionValue = NSString;
 
+pub type NSAccessibilitySortDirection = NSInteger;
+pub const NSAccessibilitySortDirectionUnknown: NSAccessibilitySortDirection = 0;
+pub const NSAccessibilitySortDirectionAscending: NSAccessibilitySortDirection = 1;
+pub const NSAccessibilitySortDirectionDescending: NSAccessibilitySortDirection = 2;
+
 pub type NSAccessibilityRulerMarkerTypeValue = NSString;
 
+pub type NSAccessibilityRulerMarkerType = NSInteger;
+pub const NSAccessibilityRulerMarkerTypeUnknown: NSAccessibilityRulerMarkerType = 0;
+pub const NSAccessibilityRulerMarkerTypeTabStopLeft: NSAccessibilityRulerMarkerType = 1;
+pub const NSAccessibilityRulerMarkerTypeTabStopRight: NSAccessibilityRulerMarkerType = 2;
+pub const NSAccessibilityRulerMarkerTypeTabStopCenter: NSAccessibilityRulerMarkerType = 3;
+pub const NSAccessibilityRulerMarkerTypeTabStopDecimal: NSAccessibilityRulerMarkerType = 4;
+pub const NSAccessibilityRulerMarkerTypeIndentHead: NSAccessibilityRulerMarkerType = 5;
+pub const NSAccessibilityRulerMarkerTypeIndentTail: NSAccessibilityRulerMarkerType = 6;
+pub const NSAccessibilityRulerMarkerTypeIndentFirstLine: NSAccessibilityRulerMarkerType = 7;
+
 pub type NSAccessibilityRulerUnitValue = NSString;
+
+pub type NSAccessibilityUnits = NSInteger;
+pub const NSAccessibilityUnitsUnknown: NSAccessibilityUnits = 0;
+pub const NSAccessibilityUnitsInches: NSAccessibilityUnits = 1;
+pub const NSAccessibilityUnitsCentimeters: NSAccessibilityUnits = 2;
+pub const NSAccessibilityUnitsPoints: NSAccessibilityUnits = 3;
+pub const NSAccessibilityUnitsPicas: NSAccessibilityUnits = 4;
 
 pub type NSAccessibilityActionName = NSString;
 
@@ -30,5 +62,10 @@ pub type NSAccessibilityRole = NSString;
 pub type NSAccessibilitySubrole = NSString;
 
 pub type NSAccessibilityNotificationUserInfoKey = NSString;
+
+pub type NSAccessibilityPriorityLevel = NSInteger;
+pub const NSAccessibilityPriorityLow: NSAccessibilityPriorityLevel = 10;
+pub const NSAccessibilityPriorityMedium: NSAccessibilityPriorityLevel = 50;
+pub const NSAccessibilityPriorityHigh: NSAccessibilityPriorityLevel = 90;
 
 pub type NSAccessibilityLoadingToken = TodoProtocols;

@@ -9,6 +9,9 @@ pub type NSPasteboardType = NSString;
 
 pub type NSPasteboardName = NSString;
 
+pub type NSPasteboardContentsOptions = NSUInteger;
+pub const NSPasteboardContentsCurrentHostOnly: NSPasteboardContentsOptions = 1;
+
 pub type NSPasteboardReadingOptionKey = NSString;
 
 extern_class!(
@@ -179,7 +182,16 @@ extern_methods!(
     }
 );
 
+pub type NSPasteboardWritingOptions = NSUInteger;
+pub const NSPasteboardWritingPromised: NSPasteboardWritingOptions = 512;
+
 pub type NSPasteboardWriting = NSObject;
+
+pub type NSPasteboardReadingOptions = NSUInteger;
+pub const NSPasteboardReadingAsData: NSPasteboardReadingOptions = 0;
+pub const NSPasteboardReadingAsString: NSPasteboardReadingOptions = 1;
+pub const NSPasteboardReadingAsPropertyList: NSPasteboardReadingOptions = 2;
+pub const NSPasteboardReadingAsKeyedArchive: NSPasteboardReadingOptions = 4;
 
 pub type NSPasteboardReading = NSObject;
 

@@ -5,6 +5,33 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSFontTraitMask = NSUInteger;
+pub const NSItalicFontMask: NSFontTraitMask = 1;
+pub const NSBoldFontMask: NSFontTraitMask = 2;
+pub const NSUnboldFontMask: NSFontTraitMask = 4;
+pub const NSNonStandardCharacterSetFontMask: NSFontTraitMask = 8;
+pub const NSNarrowFontMask: NSFontTraitMask = 16;
+pub const NSExpandedFontMask: NSFontTraitMask = 32;
+pub const NSCondensedFontMask: NSFontTraitMask = 64;
+pub const NSSmallCapsFontMask: NSFontTraitMask = 128;
+pub const NSPosterFontMask: NSFontTraitMask = 256;
+pub const NSCompressedFontMask: NSFontTraitMask = 512;
+pub const NSFixedPitchFontMask: NSFontTraitMask = 1024;
+pub const NSUnitalicFontMask: NSFontTraitMask = 16777216;
+
+pub type NSFontCollectionOptions = NSUInteger;
+pub const NSFontCollectionApplicationOnlyMask: NSFontCollectionOptions = 1;
+
+pub type NSFontAction = NSUInteger;
+pub const NSNoFontChangeAction: NSFontAction = 0;
+pub const NSViaPanelFontAction: NSFontAction = 1;
+pub const NSAddTraitFontAction: NSFontAction = 2;
+pub const NSSizeUpFontAction: NSFontAction = 3;
+pub const NSSizeDownFontAction: NSFontAction = 4;
+pub const NSHeavierFontAction: NSFontAction = 5;
+pub const NSLighterFontAction: NSFontAction = 6;
+pub const NSRemoveTraitFontAction: NSFontAction = 7;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSFontManager;

@@ -5,6 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTabState = NSUInteger;
+pub const NSSelectedTab: NSTabState = 0;
+pub const NSBackgroundTab: NSTabState = 1;
+pub const NSPressedTab: NSTabState = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTabViewItem;

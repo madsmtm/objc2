@@ -5,6 +5,17 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTextSelectionGranularity = NSInteger;
+pub const NSTextSelectionGranularityCharacter: NSTextSelectionGranularity = 0;
+pub const NSTextSelectionGranularityWord: NSTextSelectionGranularity = 1;
+pub const NSTextSelectionGranularityParagraph: NSTextSelectionGranularity = 2;
+pub const NSTextSelectionGranularityLine: NSTextSelectionGranularity = 3;
+pub const NSTextSelectionGranularitySentence: NSTextSelectionGranularity = 4;
+
+pub type NSTextSelectionAffinity = NSInteger;
+pub const NSTextSelectionAffinityUpstream: NSTextSelectionAffinity = 0;
+pub const NSTextSelectionAffinityDownstream: NSTextSelectionAffinity = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTextSelection;

@@ -5,6 +5,21 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSStackViewGravity = NSInteger;
+pub const NSStackViewGravityTop: NSStackViewGravity = 1;
+pub const NSStackViewGravityLeading: NSStackViewGravity = 1;
+pub const NSStackViewGravityCenter: NSStackViewGravity = 2;
+pub const NSStackViewGravityBottom: NSStackViewGravity = 3;
+pub const NSStackViewGravityTrailing: NSStackViewGravity = 3;
+
+pub type NSStackViewDistribution = NSInteger;
+pub const NSStackViewDistributionGravityAreas: NSStackViewDistribution = -1;
+pub const NSStackViewDistributionFill: NSStackViewDistribution = 0;
+pub const NSStackViewDistributionFillEqually: NSStackViewDistribution = 1;
+pub const NSStackViewDistributionFillProportionally: NSStackViewDistribution = 2;
+pub const NSStackViewDistributionEqualSpacing: NSStackViewDistribution = 3;
+pub const NSStackViewDistributionEqualCentering: NSStackViewDistribution = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSStackView;

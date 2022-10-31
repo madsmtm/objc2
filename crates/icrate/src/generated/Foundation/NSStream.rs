@@ -7,6 +7,24 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSStreamPropertyKey = NSString;
 
+pub type NSStreamStatus = NSUInteger;
+pub const NSStreamStatusNotOpen: NSStreamStatus = 0;
+pub const NSStreamStatusOpening: NSStreamStatus = 1;
+pub const NSStreamStatusOpen: NSStreamStatus = 2;
+pub const NSStreamStatusReading: NSStreamStatus = 3;
+pub const NSStreamStatusWriting: NSStreamStatus = 4;
+pub const NSStreamStatusAtEnd: NSStreamStatus = 5;
+pub const NSStreamStatusClosed: NSStreamStatus = 6;
+pub const NSStreamStatusError: NSStreamStatus = 7;
+
+pub type NSStreamEvent = NSUInteger;
+pub const NSStreamEventNone: NSStreamEvent = 0;
+pub const NSStreamEventOpenCompleted: NSStreamEvent = 1;
+pub const NSStreamEventHasBytesAvailable: NSStreamEvent = 2;
+pub const NSStreamEventHasSpaceAvailable: NSStreamEvent = 4;
+pub const NSStreamEventErrorOccurred: NSStreamEvent = 8;
+pub const NSStreamEventEndEncountered: NSStreamEvent = 16;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSStream;

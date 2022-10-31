@@ -5,6 +5,8 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub const NSOutlineViewDropOnItemIndex: i32 = -1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSOutlineView;

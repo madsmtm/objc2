@@ -7,6 +7,23 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSImageName = NSString;
 
+pub type NSImageLoadStatus = NSUInteger;
+pub const NSImageLoadStatusCompleted: NSImageLoadStatus = 0;
+pub const NSImageLoadStatusCancelled: NSImageLoadStatus = 1;
+pub const NSImageLoadStatusInvalidData: NSImageLoadStatus = 2;
+pub const NSImageLoadStatusUnexpectedEOF: NSImageLoadStatus = 3;
+pub const NSImageLoadStatusReadError: NSImageLoadStatus = 4;
+
+pub type NSImageCacheMode = NSUInteger;
+pub const NSImageCacheDefault: NSImageCacheMode = 0;
+pub const NSImageCacheAlways: NSImageCacheMode = 1;
+pub const NSImageCacheBySize: NSImageCacheMode = 2;
+pub const NSImageCacheNever: NSImageCacheMode = 3;
+
+pub type NSImageResizingMode = NSInteger;
+pub const NSImageResizingModeStretch: NSImageResizingMode = 0;
+pub const NSImageResizingModeTile: NSImageResizingMode = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSImage;
@@ -418,6 +435,11 @@ extern_methods!(
         pub unsafe fn cacheDepthMatchesImageDepth(&self) -> bool;
     }
 );
+
+pub type NSImageSymbolScale = NSInteger;
+pub const NSImageSymbolScaleSmall: NSImageSymbolScale = 1;
+pub const NSImageSymbolScaleMedium: NSImageSymbolScale = 2;
+pub const NSImageSymbolScaleLarge: NSImageSymbolScale = 3;
 
 extern_class!(
     #[derive(Debug)]

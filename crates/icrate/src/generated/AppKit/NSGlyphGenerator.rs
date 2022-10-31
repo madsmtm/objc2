@@ -5,6 +5,10 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub const NSShowControlGlyphs: i32 = 1;
+pub const NSShowInvisibleGlyphs: i32 = 2;
+pub const NSWantsBidiLevels: i32 = 4;
+
 pub type NSGlyphStorage = NSObject;
 
 extern_class!(

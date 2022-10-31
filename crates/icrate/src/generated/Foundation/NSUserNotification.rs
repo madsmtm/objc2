@@ -5,6 +5,14 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSUserNotificationActivationType = NSInteger;
+pub const NSUserNotificationActivationTypeNone: NSUserNotificationActivationType = 0;
+pub const NSUserNotificationActivationTypeContentsClicked: NSUserNotificationActivationType = 1;
+pub const NSUserNotificationActivationTypeActionButtonClicked: NSUserNotificationActivationType = 2;
+pub const NSUserNotificationActivationTypeReplied: NSUserNotificationActivationType = 3;
+pub const NSUserNotificationActivationTypeAdditionalActionClicked:
+    NSUserNotificationActivationType = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSUserNotification;

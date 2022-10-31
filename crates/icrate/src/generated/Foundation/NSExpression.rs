@@ -5,6 +5,21 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSExpressionType = NSUInteger;
+pub const NSConstantValueExpressionType: NSExpressionType = 0;
+pub const NSEvaluatedObjectExpressionType: NSExpressionType = 1;
+pub const NSVariableExpressionType: NSExpressionType = 2;
+pub const NSKeyPathExpressionType: NSExpressionType = 3;
+pub const NSFunctionExpressionType: NSExpressionType = 4;
+pub const NSUnionSetExpressionType: NSExpressionType = 5;
+pub const NSIntersectSetExpressionType: NSExpressionType = 6;
+pub const NSMinusSetExpressionType: NSExpressionType = 7;
+pub const NSSubqueryExpressionType: NSExpressionType = 13;
+pub const NSAggregateExpressionType: NSExpressionType = 14;
+pub const NSAnyKeyExpressionType: NSExpressionType = 15;
+pub const NSBlockExpressionType: NSExpressionType = 19;
+pub const NSConditionalExpressionType: NSExpressionType = 20;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSExpression;

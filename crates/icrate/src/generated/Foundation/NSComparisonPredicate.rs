@@ -5,6 +5,32 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSComparisonPredicateOptions = NSUInteger;
+pub const NSCaseInsensitivePredicateOption: NSComparisonPredicateOptions = 1;
+pub const NSDiacriticInsensitivePredicateOption: NSComparisonPredicateOptions = 2;
+pub const NSNormalizedPredicateOption: NSComparisonPredicateOptions = 4;
+
+pub type NSComparisonPredicateModifier = NSUInteger;
+pub const NSDirectPredicateModifier: NSComparisonPredicateModifier = 0;
+pub const NSAllPredicateModifier: NSComparisonPredicateModifier = 1;
+pub const NSAnyPredicateModifier: NSComparisonPredicateModifier = 2;
+
+pub type NSPredicateOperatorType = NSUInteger;
+pub const NSLessThanPredicateOperatorType: NSPredicateOperatorType = 0;
+pub const NSLessThanOrEqualToPredicateOperatorType: NSPredicateOperatorType = 1;
+pub const NSGreaterThanPredicateOperatorType: NSPredicateOperatorType = 2;
+pub const NSGreaterThanOrEqualToPredicateOperatorType: NSPredicateOperatorType = 3;
+pub const NSEqualToPredicateOperatorType: NSPredicateOperatorType = 4;
+pub const NSNotEqualToPredicateOperatorType: NSPredicateOperatorType = 5;
+pub const NSMatchesPredicateOperatorType: NSPredicateOperatorType = 6;
+pub const NSLikePredicateOperatorType: NSPredicateOperatorType = 7;
+pub const NSBeginsWithPredicateOperatorType: NSPredicateOperatorType = 8;
+pub const NSEndsWithPredicateOperatorType: NSPredicateOperatorType = 9;
+pub const NSInPredicateOperatorType: NSPredicateOperatorType = 10;
+pub const NSCustomSelectorPredicateOperatorType: NSPredicateOperatorType = 11;
+pub const NSContainsPredicateOperatorType: NSPredicateOperatorType = 99;
+pub const NSBetweenPredicateOperatorType: NSPredicateOperatorType = 100;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSComparisonPredicate;

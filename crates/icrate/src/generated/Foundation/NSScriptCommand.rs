@@ -5,6 +5,18 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub const NSNoScriptError: i32 = 0;
+pub const NSReceiverEvaluationScriptError: i32 = 1;
+pub const NSKeySpecifierEvaluationScriptError: i32 = 2;
+pub const NSArgumentEvaluationScriptError: i32 = 3;
+pub const NSReceiversCantHandleCommandScriptError: i32 = 4;
+pub const NSRequiredArgumentsMissingScriptError: i32 = 5;
+pub const NSArgumentsWrongScriptError: i32 = 6;
+pub const NSUnknownKeyScriptError: i32 = 7;
+pub const NSInternalScriptError: i32 = 8;
+pub const NSOperationNotSupportedForKeyScriptError: i32 = 9;
+pub const NSCannotCreateScriptCommandError: i32 = 10;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSScriptCommand;

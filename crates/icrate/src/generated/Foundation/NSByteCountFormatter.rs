@@ -5,6 +5,25 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSByteCountFormatterUnits = NSUInteger;
+pub const NSByteCountFormatterUseDefault: NSByteCountFormatterUnits = 0;
+pub const NSByteCountFormatterUseBytes: NSByteCountFormatterUnits = 1;
+pub const NSByteCountFormatterUseKB: NSByteCountFormatterUnits = 2;
+pub const NSByteCountFormatterUseMB: NSByteCountFormatterUnits = 4;
+pub const NSByteCountFormatterUseGB: NSByteCountFormatterUnits = 8;
+pub const NSByteCountFormatterUseTB: NSByteCountFormatterUnits = 16;
+pub const NSByteCountFormatterUsePB: NSByteCountFormatterUnits = 32;
+pub const NSByteCountFormatterUseEB: NSByteCountFormatterUnits = 64;
+pub const NSByteCountFormatterUseZB: NSByteCountFormatterUnits = 128;
+pub const NSByteCountFormatterUseYBOrHigher: NSByteCountFormatterUnits = 65280;
+pub const NSByteCountFormatterUseAll: NSByteCountFormatterUnits = 65535;
+
+pub type NSByteCountFormatterCountStyle = NSInteger;
+pub const NSByteCountFormatterCountStyleFile: NSByteCountFormatterCountStyle = 0;
+pub const NSByteCountFormatterCountStyleMemory: NSByteCountFormatterCountStyle = 1;
+pub const NSByteCountFormatterCountStyleDecimal: NSByteCountFormatterCountStyle = 2;
+pub const NSByteCountFormatterCountStyleBinary: NSByteCountFormatterCountStyle = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSByteCountFormatter;

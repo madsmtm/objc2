@@ -207,6 +207,12 @@ extern_methods!(
     }
 );
 
+pub type NSURLSessionTaskState = NSInteger;
+pub const NSURLSessionTaskStateRunning: NSURLSessionTaskState = 0;
+pub const NSURLSessionTaskStateSuspended: NSURLSessionTaskState = 1;
+pub const NSURLSessionTaskStateCanceling: NSURLSessionTaskState = 2;
+pub const NSURLSessionTaskStateCompleted: NSURLSessionTaskState = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLSessionTask;
@@ -427,6 +433,10 @@ extern_methods!(
     }
 );
 
+pub type NSURLSessionWebSocketMessageType = NSInteger;
+pub const NSURLSessionWebSocketMessageTypeData: NSURLSessionWebSocketMessageType = 0;
+pub const NSURLSessionWebSocketMessageTypeString: NSURLSessionWebSocketMessageType = 1;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSURLSessionWebSocketMessage;
@@ -460,6 +470,23 @@ extern_methods!(
         pub unsafe fn new() -> Id<Self, Shared>;
     }
 );
+
+pub type NSURLSessionWebSocketCloseCode = NSInteger;
+pub const NSURLSessionWebSocketCloseCodeInvalid: NSURLSessionWebSocketCloseCode = 0;
+pub const NSURLSessionWebSocketCloseCodeNormalClosure: NSURLSessionWebSocketCloseCode = 1000;
+pub const NSURLSessionWebSocketCloseCodeGoingAway: NSURLSessionWebSocketCloseCode = 1001;
+pub const NSURLSessionWebSocketCloseCodeProtocolError: NSURLSessionWebSocketCloseCode = 1002;
+pub const NSURLSessionWebSocketCloseCodeUnsupportedData: NSURLSessionWebSocketCloseCode = 1003;
+pub const NSURLSessionWebSocketCloseCodeNoStatusReceived: NSURLSessionWebSocketCloseCode = 1005;
+pub const NSURLSessionWebSocketCloseCodeAbnormalClosure: NSURLSessionWebSocketCloseCode = 1006;
+pub const NSURLSessionWebSocketCloseCodeInvalidFramePayloadData: NSURLSessionWebSocketCloseCode =
+    1007;
+pub const NSURLSessionWebSocketCloseCodePolicyViolation: NSURLSessionWebSocketCloseCode = 1008;
+pub const NSURLSessionWebSocketCloseCodeMessageTooBig: NSURLSessionWebSocketCloseCode = 1009;
+pub const NSURLSessionWebSocketCloseCodeMandatoryExtensionMissing: NSURLSessionWebSocketCloseCode =
+    1010;
+pub const NSURLSessionWebSocketCloseCodeInternalServerError: NSURLSessionWebSocketCloseCode = 1011;
+pub const NSURLSessionWebSocketCloseCodeTLSHandshakeFailure: NSURLSessionWebSocketCloseCode = 1015;
 
 extern_class!(
     #[derive(Debug)]
@@ -511,6 +538,12 @@ extern_methods!(
         pub unsafe fn new() -> Id<Self, Shared>;
     }
 );
+
+pub type NSURLSessionMultipathServiceType = NSInteger;
+pub const NSURLSessionMultipathServiceTypeNone: NSURLSessionMultipathServiceType = 0;
+pub const NSURLSessionMultipathServiceTypeHandover: NSURLSessionMultipathServiceType = 1;
+pub const NSURLSessionMultipathServiceTypeInteractive: NSURLSessionMultipathServiceType = 2;
+pub const NSURLSessionMultipathServiceTypeAggregate: NSURLSessionMultipathServiceType = 3;
 
 extern_class!(
     #[derive(Debug)]
@@ -752,6 +785,24 @@ extern_methods!(
     }
 );
 
+pub type NSURLSessionDelayedRequestDisposition = NSInteger;
+pub const NSURLSessionDelayedRequestContinueLoading: NSURLSessionDelayedRequestDisposition = 0;
+pub const NSURLSessionDelayedRequestUseNewRequest: NSURLSessionDelayedRequestDisposition = 1;
+pub const NSURLSessionDelayedRequestCancel: NSURLSessionDelayedRequestDisposition = 2;
+
+pub type NSURLSessionAuthChallengeDisposition = NSInteger;
+pub const NSURLSessionAuthChallengeUseCredential: NSURLSessionAuthChallengeDisposition = 0;
+pub const NSURLSessionAuthChallengePerformDefaultHandling: NSURLSessionAuthChallengeDisposition = 1;
+pub const NSURLSessionAuthChallengeCancelAuthenticationChallenge:
+    NSURLSessionAuthChallengeDisposition = 2;
+pub const NSURLSessionAuthChallengeRejectProtectionSpace: NSURLSessionAuthChallengeDisposition = 3;
+
+pub type NSURLSessionResponseDisposition = NSInteger;
+pub const NSURLSessionResponseCancel: NSURLSessionResponseDisposition = 0;
+pub const NSURLSessionResponseAllow: NSURLSessionResponseDisposition = 1;
+pub const NSURLSessionResponseBecomeDownload: NSURLSessionResponseDisposition = 2;
+pub const NSURLSessionResponseBecomeStream: NSURLSessionResponseDisposition = 3;
+
 pub type NSURLSessionDelegate = NSObject;
 
 pub type NSURLSessionTaskDelegate = NSObject;
@@ -773,6 +824,28 @@ extern_methods!(
         ) -> Id<NSURLSessionConfiguration, Shared>;
     }
 );
+
+pub type NSURLSessionTaskMetricsResourceFetchType = NSInteger;
+pub const NSURLSessionTaskMetricsResourceFetchTypeUnknown:
+    NSURLSessionTaskMetricsResourceFetchType = 0;
+pub const NSURLSessionTaskMetricsResourceFetchTypeNetworkLoad:
+    NSURLSessionTaskMetricsResourceFetchType = 1;
+pub const NSURLSessionTaskMetricsResourceFetchTypeServerPush:
+    NSURLSessionTaskMetricsResourceFetchType = 2;
+pub const NSURLSessionTaskMetricsResourceFetchTypeLocalCache:
+    NSURLSessionTaskMetricsResourceFetchType = 3;
+
+pub type NSURLSessionTaskMetricsDomainResolutionProtocol = NSInteger;
+pub const NSURLSessionTaskMetricsDomainResolutionProtocolUnknown:
+    NSURLSessionTaskMetricsDomainResolutionProtocol = 0;
+pub const NSURLSessionTaskMetricsDomainResolutionProtocolUDP:
+    NSURLSessionTaskMetricsDomainResolutionProtocol = 1;
+pub const NSURLSessionTaskMetricsDomainResolutionProtocolTCP:
+    NSURLSessionTaskMetricsDomainResolutionProtocol = 2;
+pub const NSURLSessionTaskMetricsDomainResolutionProtocolTLS:
+    NSURLSessionTaskMetricsDomainResolutionProtocol = 3;
+pub const NSURLSessionTaskMetricsDomainResolutionProtocolHTTPS:
+    NSURLSessionTaskMetricsDomainResolutionProtocol = 4;
 
 extern_class!(
     #[derive(Debug)]

@@ -5,6 +5,28 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSXMLDTDNodeKind = NSUInteger;
+pub const NSXMLEntityGeneralKind: NSXMLDTDNodeKind = 1;
+pub const NSXMLEntityParsedKind: NSXMLDTDNodeKind = 2;
+pub const NSXMLEntityUnparsedKind: NSXMLDTDNodeKind = 3;
+pub const NSXMLEntityParameterKind: NSXMLDTDNodeKind = 4;
+pub const NSXMLEntityPredefined: NSXMLDTDNodeKind = 5;
+pub const NSXMLAttributeCDATAKind: NSXMLDTDNodeKind = 6;
+pub const NSXMLAttributeIDKind: NSXMLDTDNodeKind = 7;
+pub const NSXMLAttributeIDRefKind: NSXMLDTDNodeKind = 8;
+pub const NSXMLAttributeIDRefsKind: NSXMLDTDNodeKind = 9;
+pub const NSXMLAttributeEntityKind: NSXMLDTDNodeKind = 10;
+pub const NSXMLAttributeEntitiesKind: NSXMLDTDNodeKind = 11;
+pub const NSXMLAttributeNMTokenKind: NSXMLDTDNodeKind = 12;
+pub const NSXMLAttributeNMTokensKind: NSXMLDTDNodeKind = 13;
+pub const NSXMLAttributeEnumerationKind: NSXMLDTDNodeKind = 14;
+pub const NSXMLAttributeNotationKind: NSXMLDTDNodeKind = 15;
+pub const NSXMLElementDeclarationUndefinedKind: NSXMLDTDNodeKind = 16;
+pub const NSXMLElementDeclarationEmptyKind: NSXMLDTDNodeKind = 17;
+pub const NSXMLElementDeclarationAnyKind: NSXMLDTDNodeKind = 18;
+pub const NSXMLElementDeclarationMixedKind: NSXMLDTDNodeKind = 19;
+pub const NSXMLElementDeclarationElementKind: NSXMLDTDNodeKind = 20;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSXMLDTDNode;

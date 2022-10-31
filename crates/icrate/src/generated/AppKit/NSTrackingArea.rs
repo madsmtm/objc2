@@ -5,6 +5,18 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTrackingAreaOptions = NSUInteger;
+pub const NSTrackingMouseEnteredAndExited: NSTrackingAreaOptions = 1;
+pub const NSTrackingMouseMoved: NSTrackingAreaOptions = 2;
+pub const NSTrackingCursorUpdate: NSTrackingAreaOptions = 4;
+pub const NSTrackingActiveWhenFirstResponder: NSTrackingAreaOptions = 16;
+pub const NSTrackingActiveInKeyWindow: NSTrackingAreaOptions = 32;
+pub const NSTrackingActiveInActiveApp: NSTrackingAreaOptions = 64;
+pub const NSTrackingActiveAlways: NSTrackingAreaOptions = 128;
+pub const NSTrackingAssumeInside: NSTrackingAreaOptions = 256;
+pub const NSTrackingInVisibleRect: NSTrackingAreaOptions = 512;
+pub const NSTrackingEnabledDuringMouseDrag: NSTrackingAreaOptions = 1024;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTrackingArea;

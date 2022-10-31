@@ -5,6 +5,41 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSTIFFCompression = NSUInteger;
+pub const NSTIFFCompressionNone: NSTIFFCompression = 1;
+pub const NSTIFFCompressionCCITTFAX3: NSTIFFCompression = 3;
+pub const NSTIFFCompressionCCITTFAX4: NSTIFFCompression = 4;
+pub const NSTIFFCompressionLZW: NSTIFFCompression = 5;
+pub const NSTIFFCompressionJPEG: NSTIFFCompression = 6;
+pub const NSTIFFCompressionNEXT: NSTIFFCompression = 32766;
+pub const NSTIFFCompressionPackBits: NSTIFFCompression = 32773;
+pub const NSTIFFCompressionOldJPEG: NSTIFFCompression = 32865;
+
+pub type NSBitmapImageFileType = NSUInteger;
+pub const NSBitmapImageFileTypeTIFF: NSBitmapImageFileType = 0;
+pub const NSBitmapImageFileTypeBMP: NSBitmapImageFileType = 1;
+pub const NSBitmapImageFileTypeGIF: NSBitmapImageFileType = 2;
+pub const NSBitmapImageFileTypeJPEG: NSBitmapImageFileType = 3;
+pub const NSBitmapImageFileTypePNG: NSBitmapImageFileType = 4;
+pub const NSBitmapImageFileTypeJPEG2000: NSBitmapImageFileType = 5;
+
+pub type NSImageRepLoadStatus = NSInteger;
+pub const NSImageRepLoadStatusUnknownType: NSImageRepLoadStatus = -1;
+pub const NSImageRepLoadStatusReadingHeader: NSImageRepLoadStatus = -2;
+pub const NSImageRepLoadStatusWillNeedAllData: NSImageRepLoadStatus = -3;
+pub const NSImageRepLoadStatusInvalidData: NSImageRepLoadStatus = -4;
+pub const NSImageRepLoadStatusUnexpectedEOF: NSImageRepLoadStatus = -5;
+pub const NSImageRepLoadStatusCompleted: NSImageRepLoadStatus = -6;
+
+pub type NSBitmapFormat = NSUInteger;
+pub const NSBitmapFormatAlphaFirst: NSBitmapFormat = 1;
+pub const NSBitmapFormatAlphaNonpremultiplied: NSBitmapFormat = 2;
+pub const NSBitmapFormatFloatingPointSamples: NSBitmapFormat = 4;
+pub const NSBitmapFormatSixteenBitLittleEndian: NSBitmapFormat = 256;
+pub const NSBitmapFormatThirtyTwoBitLittleEndian: NSBitmapFormat = 512;
+pub const NSBitmapFormatSixteenBitBigEndian: NSBitmapFormat = 1024;
+pub const NSBitmapFormatThirtyTwoBitBigEndian: NSBitmapFormat = 2048;
+
 pub type NSBitmapImageRepPropertyKey = NSString;
 
 extern_class!(

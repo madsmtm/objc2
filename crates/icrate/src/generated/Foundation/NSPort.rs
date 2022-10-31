@@ -79,6 +79,11 @@ extern_methods!(
 
 pub type NSPortDelegate = NSObject;
 
+pub type NSMachPortOptions = NSUInteger;
+pub const NSMachPortDeallocateNone: NSMachPortOptions = 0;
+pub const NSMachPortDeallocateSendRight: NSMachPortOptions = 1;
+pub const NSMachPortDeallocateReceiveRight: NSMachPortOptions = 2;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSMachPort;

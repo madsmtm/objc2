@@ -9,6 +9,19 @@ pub type NSLinguisticTagScheme = NSString;
 
 pub type NSLinguisticTag = NSString;
 
+pub type NSLinguisticTaggerUnit = NSInteger;
+pub const NSLinguisticTaggerUnitWord: NSLinguisticTaggerUnit = 0;
+pub const NSLinguisticTaggerUnitSentence: NSLinguisticTaggerUnit = 1;
+pub const NSLinguisticTaggerUnitParagraph: NSLinguisticTaggerUnit = 2;
+pub const NSLinguisticTaggerUnitDocument: NSLinguisticTaggerUnit = 3;
+
+pub type NSLinguisticTaggerOptions = NSUInteger;
+pub const NSLinguisticTaggerOmitWords: NSLinguisticTaggerOptions = 1;
+pub const NSLinguisticTaggerOmitPunctuation: NSLinguisticTaggerOptions = 2;
+pub const NSLinguisticTaggerOmitWhitespace: NSLinguisticTaggerOptions = 4;
+pub const NSLinguisticTaggerOmitOther: NSLinguisticTaggerOptions = 8;
+pub const NSLinguisticTaggerJoinNames: NSLinguisticTaggerOptions = 16;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSLinguisticTagger;

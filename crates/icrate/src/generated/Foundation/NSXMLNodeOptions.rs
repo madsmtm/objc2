@@ -4,3 +4,33 @@
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
+
+pub type NSXMLNodeOptions = NSUInteger;
+pub const NSXMLNodeOptionsNone: NSXMLNodeOptions = 0;
+pub const NSXMLNodeIsCDATA: NSXMLNodeOptions = 1;
+pub const NSXMLNodeExpandEmptyElement: NSXMLNodeOptions = 2;
+pub const NSXMLNodeCompactEmptyElement: NSXMLNodeOptions = 4;
+pub const NSXMLNodeUseSingleQuotes: NSXMLNodeOptions = 8;
+pub const NSXMLNodeUseDoubleQuotes: NSXMLNodeOptions = 16;
+pub const NSXMLNodeNeverEscapeContents: NSXMLNodeOptions = 32;
+pub const NSXMLDocumentTidyHTML: NSXMLNodeOptions = 512;
+pub const NSXMLDocumentTidyXML: NSXMLNodeOptions = 1024;
+pub const NSXMLDocumentValidate: NSXMLNodeOptions = 8192;
+pub const NSXMLNodeLoadExternalEntitiesAlways: NSXMLNodeOptions = 16384;
+pub const NSXMLNodeLoadExternalEntitiesSameOriginOnly: NSXMLNodeOptions = 32768;
+pub const NSXMLNodeLoadExternalEntitiesNever: NSXMLNodeOptions = 524288;
+pub const NSXMLDocumentXInclude: NSXMLNodeOptions = 65536;
+pub const NSXMLNodePrettyPrint: NSXMLNodeOptions = 131072;
+pub const NSXMLDocumentIncludeContentTypeDeclaration: NSXMLNodeOptions = 262144;
+pub const NSXMLNodePreserveNamespaceOrder: NSXMLNodeOptions = 1048576;
+pub const NSXMLNodePreserveAttributeOrder: NSXMLNodeOptions = 2097152;
+pub const NSXMLNodePreserveEntities: NSXMLNodeOptions = 4194304;
+pub const NSXMLNodePreservePrefixes: NSXMLNodeOptions = 8388608;
+pub const NSXMLNodePreserveCDATA: NSXMLNodeOptions = 16777216;
+pub const NSXMLNodePreserveWhitespace: NSXMLNodeOptions = 33554432;
+pub const NSXMLNodePreserveDTD: NSXMLNodeOptions = 67108864;
+pub const NSXMLNodePreserveCharacterReferences: NSXMLNodeOptions = 134217728;
+pub const NSXMLNodePromoteSignificantWhitespace: NSXMLNodeOptions = 268435456;
+pub const NSXMLNodePreserveEmptyElements: NSXMLNodeOptions = 6;
+pub const NSXMLNodePreserveQuotes: NSXMLNodeOptions = 24;
+pub const NSXMLNodePreserveAll: NSXMLNodeOptions = 4293918750;

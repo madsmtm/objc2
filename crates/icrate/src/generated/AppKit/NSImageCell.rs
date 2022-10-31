@@ -5,6 +5,24 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSImageAlignment = NSUInteger;
+pub const NSImageAlignCenter: NSImageAlignment = 0;
+pub const NSImageAlignTop: NSImageAlignment = 1;
+pub const NSImageAlignTopLeft: NSImageAlignment = 2;
+pub const NSImageAlignTopRight: NSImageAlignment = 3;
+pub const NSImageAlignLeft: NSImageAlignment = 4;
+pub const NSImageAlignBottom: NSImageAlignment = 5;
+pub const NSImageAlignBottomLeft: NSImageAlignment = 6;
+pub const NSImageAlignBottomRight: NSImageAlignment = 7;
+pub const NSImageAlignRight: NSImageAlignment = 8;
+
+pub type NSImageFrameStyle = NSUInteger;
+pub const NSImageFrameNone: NSImageFrameStyle = 0;
+pub const NSImageFramePhoto: NSImageFrameStyle = 1;
+pub const NSImageFrameGrayBezel: NSImageFrameStyle = 2;
+pub const NSImageFrameGroove: NSImageFrameStyle = 3;
+pub const NSImageFrameButton: NSImageFrameStyle = 4;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSImageCell;

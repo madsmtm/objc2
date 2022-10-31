@@ -5,6 +5,26 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
+pub type NSLineCapStyle = NSUInteger;
+pub const NSLineCapStyleButt: NSLineCapStyle = 0;
+pub const NSLineCapStyleRound: NSLineCapStyle = 1;
+pub const NSLineCapStyleSquare: NSLineCapStyle = 2;
+
+pub type NSLineJoinStyle = NSUInteger;
+pub const NSLineJoinStyleMiter: NSLineJoinStyle = 0;
+pub const NSLineJoinStyleRound: NSLineJoinStyle = 1;
+pub const NSLineJoinStyleBevel: NSLineJoinStyle = 2;
+
+pub type NSWindingRule = NSUInteger;
+pub const NSWindingRuleNonZero: NSWindingRule = 0;
+pub const NSWindingRuleEvenOdd: NSWindingRule = 1;
+
+pub type NSBezierPathElement = NSUInteger;
+pub const NSBezierPathElementMoveTo: NSBezierPathElement = 0;
+pub const NSBezierPathElementLineTo: NSBezierPathElement = 1;
+pub const NSBezierPathElementCurveTo: NSBezierPathElement = 2;
+pub const NSBezierPathElementClosePath: NSBezierPathElement = 3;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSBezierPath;

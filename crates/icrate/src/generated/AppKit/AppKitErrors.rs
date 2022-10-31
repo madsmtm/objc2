@@ -4,3 +4,25 @@
 use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
+
+pub const NSTextReadInapplicableDocumentTypeError: i32 = 65806;
+pub const NSTextWriteInapplicableDocumentTypeError: i32 = 66062;
+pub const NSTextReadWriteErrorMinimum: i32 = 65792;
+pub const NSTextReadWriteErrorMaximum: i32 = 66303;
+pub const NSFontAssetDownloadError: i32 = 66304;
+pub const NSFontErrorMinimum: i32 = 66304;
+pub const NSFontErrorMaximum: i32 = 66335;
+pub const NSServiceApplicationNotFoundError: i32 = 66560;
+pub const NSServiceApplicationLaunchFailedError: i32 = 66561;
+pub const NSServiceRequestTimedOutError: i32 = 66562;
+pub const NSServiceInvalidPasteboardDataError: i32 = 66563;
+pub const NSServiceMalformedServiceDictionaryError: i32 = 66564;
+pub const NSServiceMiscellaneousError: i32 = 66800;
+pub const NSServiceErrorMinimum: i32 = 66560;
+pub const NSServiceErrorMaximum: i32 = 66817;
+pub const NSSharingServiceNotConfiguredError: i32 = 67072;
+pub const NSSharingServiceErrorMinimum: i32 = 67072;
+pub const NSSharingServiceErrorMaximum: i32 = 67327;
+pub const NSWorkspaceAuthorizationInvalidError: i32 = 67328;
+pub const NSWorkspaceErrorMinimum: i32 = 67328;
+pub const NSWorkspaceErrorMaximum: i32 = 67455;
