@@ -6,8 +6,8 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSApplicationActivationOptions = NSUInteger;
-pub const NSApplicationActivateAllWindows: NSApplicationActivationOptions = 1;
-pub const NSApplicationActivateIgnoringOtherApps: NSApplicationActivationOptions = 2;
+pub const NSApplicationActivateAllWindows: NSApplicationActivationOptions = 1 << 0;
+pub const NSApplicationActivateIgnoringOtherApps: NSApplicationActivationOptions = 1 << 1;
 
 pub type NSApplicationActivationPolicy = NSInteger;
 pub const NSApplicationActivationPolicyRegular: NSApplicationActivationPolicy = 0;

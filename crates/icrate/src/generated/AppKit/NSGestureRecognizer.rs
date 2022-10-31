@@ -12,7 +12,8 @@ pub const NSGestureRecognizerStateChanged: NSGestureRecognizerState = 2;
 pub const NSGestureRecognizerStateEnded: NSGestureRecognizerState = 3;
 pub const NSGestureRecognizerStateCancelled: NSGestureRecognizerState = 4;
 pub const NSGestureRecognizerStateFailed: NSGestureRecognizerState = 5;
-pub const NSGestureRecognizerStateRecognized: NSGestureRecognizerState = 3;
+pub const NSGestureRecognizerStateRecognized: NSGestureRecognizerState =
+    NSGestureRecognizerStateEnded;
 
 extern_class!(
     #[derive(Debug)]

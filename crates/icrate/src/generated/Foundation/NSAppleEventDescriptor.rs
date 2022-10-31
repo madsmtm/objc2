@@ -6,17 +6,19 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSAppleEventSendOptions = NSUInteger;
-pub const NSAppleEventSendNoReply: NSAppleEventSendOptions = 1;
-pub const NSAppleEventSendQueueReply: NSAppleEventSendOptions = 2;
-pub const NSAppleEventSendWaitForReply: NSAppleEventSendOptions = 3;
-pub const NSAppleEventSendNeverInteract: NSAppleEventSendOptions = 16;
-pub const NSAppleEventSendCanInteract: NSAppleEventSendOptions = 32;
-pub const NSAppleEventSendAlwaysInteract: NSAppleEventSendOptions = 48;
-pub const NSAppleEventSendCanSwitchLayer: NSAppleEventSendOptions = 64;
-pub const NSAppleEventSendDontRecord: NSAppleEventSendOptions = 4096;
-pub const NSAppleEventSendDontExecute: NSAppleEventSendOptions = 8192;
-pub const NSAppleEventSendDontAnnotate: NSAppleEventSendOptions = 65536;
-pub const NSAppleEventSendDefaultOptions: NSAppleEventSendOptions = 35;
+pub const NSAppleEventSendNoReply: NSAppleEventSendOptions = kAENoReply;
+pub const NSAppleEventSendQueueReply: NSAppleEventSendOptions = kAEQueueReply;
+pub const NSAppleEventSendWaitForReply: NSAppleEventSendOptions = kAEWaitReply;
+pub const NSAppleEventSendNeverInteract: NSAppleEventSendOptions = kAENeverInteract;
+pub const NSAppleEventSendCanInteract: NSAppleEventSendOptions = kAECanInteract;
+pub const NSAppleEventSendAlwaysInteract: NSAppleEventSendOptions = kAEAlwaysInteract;
+pub const NSAppleEventSendCanSwitchLayer: NSAppleEventSendOptions = kAECanSwitchLayer;
+pub const NSAppleEventSendDontRecord: NSAppleEventSendOptions = kAEDontRecord;
+pub const NSAppleEventSendDontExecute: NSAppleEventSendOptions = kAEDontExecute;
+pub const NSAppleEventSendDontAnnotate: NSAppleEventSendOptions =
+    kAEDoNotAutomaticallyAddAnnotationsToEvent;
+pub const NSAppleEventSendDefaultOptions: NSAppleEventSendOptions =
+    NSAppleEventSendWaitForReply | NSAppleEventSendCanInteract;
 
 extern_class!(
     #[derive(Debug)]

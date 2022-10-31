@@ -6,16 +6,16 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSTrackingAreaOptions = NSUInteger;
-pub const NSTrackingMouseEnteredAndExited: NSTrackingAreaOptions = 1;
-pub const NSTrackingMouseMoved: NSTrackingAreaOptions = 2;
-pub const NSTrackingCursorUpdate: NSTrackingAreaOptions = 4;
-pub const NSTrackingActiveWhenFirstResponder: NSTrackingAreaOptions = 16;
-pub const NSTrackingActiveInKeyWindow: NSTrackingAreaOptions = 32;
-pub const NSTrackingActiveInActiveApp: NSTrackingAreaOptions = 64;
-pub const NSTrackingActiveAlways: NSTrackingAreaOptions = 128;
-pub const NSTrackingAssumeInside: NSTrackingAreaOptions = 256;
-pub const NSTrackingInVisibleRect: NSTrackingAreaOptions = 512;
-pub const NSTrackingEnabledDuringMouseDrag: NSTrackingAreaOptions = 1024;
+pub const NSTrackingMouseEnteredAndExited: NSTrackingAreaOptions = 0x01;
+pub const NSTrackingMouseMoved: NSTrackingAreaOptions = 0x02;
+pub const NSTrackingCursorUpdate: NSTrackingAreaOptions = 0x04;
+pub const NSTrackingActiveWhenFirstResponder: NSTrackingAreaOptions = 0x10;
+pub const NSTrackingActiveInKeyWindow: NSTrackingAreaOptions = 0x20;
+pub const NSTrackingActiveInActiveApp: NSTrackingAreaOptions = 0x40;
+pub const NSTrackingActiveAlways: NSTrackingAreaOptions = 0x80;
+pub const NSTrackingAssumeInside: NSTrackingAreaOptions = 0x100;
+pub const NSTrackingInVisibleRect: NSTrackingAreaOptions = 0x200;
+pub const NSTrackingEnabledDuringMouseDrag: NSTrackingAreaOptions = 0x400;
 
 extern_class!(
     #[derive(Debug)]

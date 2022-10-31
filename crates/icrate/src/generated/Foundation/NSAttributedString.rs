@@ -31,9 +31,9 @@ extern_methods!(
 );
 
 pub type NSAttributedStringEnumerationOptions = NSUInteger;
-pub const NSAttributedStringEnumerationReverse: NSAttributedStringEnumerationOptions = 2;
+pub const NSAttributedStringEnumerationReverse: NSAttributedStringEnumerationOptions = (1 << 1);
 pub const NSAttributedStringEnumerationLongestEffectiveRangeNotRequired:
-    NSAttributedStringEnumerationOptions = 1048576;
+    NSAttributedStringEnumerationOptions = (1 << 20);
 
 extern_methods!(
     /// NSExtendedAttributedString
@@ -189,14 +189,14 @@ extern_methods!(
 );
 
 pub type NSInlinePresentationIntent = NSUInteger;
-pub const NSInlinePresentationIntentEmphasized: NSInlinePresentationIntent = 1;
-pub const NSInlinePresentationIntentStronglyEmphasized: NSInlinePresentationIntent = 2;
-pub const NSInlinePresentationIntentCode: NSInlinePresentationIntent = 4;
-pub const NSInlinePresentationIntentStrikethrough: NSInlinePresentationIntent = 32;
-pub const NSInlinePresentationIntentSoftBreak: NSInlinePresentationIntent = 64;
-pub const NSInlinePresentationIntentLineBreak: NSInlinePresentationIntent = 128;
-pub const NSInlinePresentationIntentInlineHTML: NSInlinePresentationIntent = 256;
-pub const NSInlinePresentationIntentBlockHTML: NSInlinePresentationIntent = 512;
+pub const NSInlinePresentationIntentEmphasized: NSInlinePresentationIntent = 1 << 0;
+pub const NSInlinePresentationIntentStronglyEmphasized: NSInlinePresentationIntent = 1 << 1;
+pub const NSInlinePresentationIntentCode: NSInlinePresentationIntent = 1 << 2;
+pub const NSInlinePresentationIntentStrikethrough: NSInlinePresentationIntent = 1 << 5;
+pub const NSInlinePresentationIntentSoftBreak: NSInlinePresentationIntent = 1 << 6;
+pub const NSInlinePresentationIntentLineBreak: NSInlinePresentationIntent = 1 << 7;
+pub const NSInlinePresentationIntentInlineHTML: NSInlinePresentationIntent = 1 << 8;
+pub const NSInlinePresentationIntentBlockHTML: NSInlinePresentationIntent = 1 << 9;
 
 pub type NSAttributedStringMarkdownParsingFailurePolicy = NSInteger;
 pub const NSAttributedStringMarkdownParsingFailureReturnError:
@@ -289,9 +289,9 @@ extern_methods!(
 
 pub type NSAttributedStringFormattingOptions = NSUInteger;
 pub const NSAttributedStringFormattingInsertArgumentAttributesWithoutMerging:
-    NSAttributedStringFormattingOptions = 1;
+    NSAttributedStringFormattingOptions = 1 << 0;
 pub const NSAttributedStringFormattingApplyReplacementIndexAttribute:
-    NSAttributedStringFormattingOptions = 2;
+    NSAttributedStringFormattingOptions = 1 << 1;
 
 extern_methods!(
     /// NSAttributedStringFormatting

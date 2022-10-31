@@ -6,8 +6,8 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSWorkspaceIconCreationOptions = NSUInteger;
-pub const NSExcludeQuickDrawElementsIconCreationOption: NSWorkspaceIconCreationOptions = 2;
-pub const NSExclude10_4ElementsIconCreationOption: NSWorkspaceIconCreationOptions = 4;
+pub const NSExcludeQuickDrawElementsIconCreationOption: NSWorkspaceIconCreationOptions = 1 << 1;
+pub const NSExclude10_4ElementsIconCreationOption: NSWorkspaceIconCreationOptions = 1 << 2;
 
 extern_class!(
     #[derive(Debug)]
@@ -379,18 +379,18 @@ extern_methods!(
 pub type NSWorkspaceFileOperationName = NSString;
 
 pub type NSWorkspaceLaunchOptions = NSUInteger;
-pub const NSWorkspaceLaunchAndPrint: NSWorkspaceLaunchOptions = 2;
-pub const NSWorkspaceLaunchWithErrorPresentation: NSWorkspaceLaunchOptions = 64;
-pub const NSWorkspaceLaunchInhibitingBackgroundOnly: NSWorkspaceLaunchOptions = 128;
-pub const NSWorkspaceLaunchWithoutAddingToRecents: NSWorkspaceLaunchOptions = 256;
-pub const NSWorkspaceLaunchWithoutActivation: NSWorkspaceLaunchOptions = 512;
-pub const NSWorkspaceLaunchAsync: NSWorkspaceLaunchOptions = 65536;
-pub const NSWorkspaceLaunchNewInstance: NSWorkspaceLaunchOptions = 524288;
-pub const NSWorkspaceLaunchAndHide: NSWorkspaceLaunchOptions = 1048576;
-pub const NSWorkspaceLaunchAndHideOthers: NSWorkspaceLaunchOptions = 2097152;
-pub const NSWorkspaceLaunchDefault: NSWorkspaceLaunchOptions = 65536;
-pub const NSWorkspaceLaunchAllowingClassicStartup: NSWorkspaceLaunchOptions = 131072;
-pub const NSWorkspaceLaunchPreferringClassic: NSWorkspaceLaunchOptions = 262144;
+pub const NSWorkspaceLaunchAndPrint: NSWorkspaceLaunchOptions = 0x00000002;
+pub const NSWorkspaceLaunchWithErrorPresentation: NSWorkspaceLaunchOptions = 0x00000040;
+pub const NSWorkspaceLaunchInhibitingBackgroundOnly: NSWorkspaceLaunchOptions = 0x00000080;
+pub const NSWorkspaceLaunchWithoutAddingToRecents: NSWorkspaceLaunchOptions = 0x00000100;
+pub const NSWorkspaceLaunchWithoutActivation: NSWorkspaceLaunchOptions = 0x00000200;
+pub const NSWorkspaceLaunchAsync: NSWorkspaceLaunchOptions = 0x00010000;
+pub const NSWorkspaceLaunchNewInstance: NSWorkspaceLaunchOptions = 0x00080000;
+pub const NSWorkspaceLaunchAndHide: NSWorkspaceLaunchOptions = 0x00100000;
+pub const NSWorkspaceLaunchAndHideOthers: NSWorkspaceLaunchOptions = 0x00200000;
+pub const NSWorkspaceLaunchDefault: NSWorkspaceLaunchOptions = NSWorkspaceLaunchAsync;
+pub const NSWorkspaceLaunchAllowingClassicStartup: NSWorkspaceLaunchOptions = 0x00020000;
+pub const NSWorkspaceLaunchPreferringClassic: NSWorkspaceLaunchOptions = 0x00040000;
 
 pub type NSWorkspaceLaunchConfigurationKey = NSString;
 

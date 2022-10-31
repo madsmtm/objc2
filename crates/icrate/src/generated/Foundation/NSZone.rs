@@ -5,5 +5,5 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
-pub const NSScannedOption: i32 = 1;
-pub const NSCollectorDisabledOption: i32 = 2;
+pub const NSScannedOption: i32 = (1 << 0);
+pub const NSCollectorDisabledOption: i32 = (1 << 1);

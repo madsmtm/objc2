@@ -234,12 +234,12 @@ extern_methods!(
 pub type NSMenuDelegate = NSObject;
 
 pub type NSMenuProperties = NSUInteger;
-pub const NSMenuPropertyItemTitle: NSMenuProperties = 1;
-pub const NSMenuPropertyItemAttributedTitle: NSMenuProperties = 2;
-pub const NSMenuPropertyItemKeyEquivalent: NSMenuProperties = 4;
-pub const NSMenuPropertyItemImage: NSMenuProperties = 8;
-pub const NSMenuPropertyItemEnabled: NSMenuProperties = 16;
-pub const NSMenuPropertyItemAccessibilityDescription: NSMenuProperties = 32;
+pub const NSMenuPropertyItemTitle: NSMenuProperties = 1 << 0;
+pub const NSMenuPropertyItemAttributedTitle: NSMenuProperties = 1 << 1;
+pub const NSMenuPropertyItemKeyEquivalent: NSMenuProperties = 1 << 2;
+pub const NSMenuPropertyItemImage: NSMenuProperties = 1 << 3;
+pub const NSMenuPropertyItemEnabled: NSMenuProperties = 1 << 4;
+pub const NSMenuPropertyItemAccessibilityDescription: NSMenuProperties = 1 << 5;
 
 extern_methods!(
     /// NSMenuPropertiesToUpdate

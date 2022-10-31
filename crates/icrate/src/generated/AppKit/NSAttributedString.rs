@@ -6,26 +6,26 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSUnderlineStyle = NSInteger;
-pub const NSUnderlineStyleNone: NSUnderlineStyle = 0;
-pub const NSUnderlineStyleSingle: NSUnderlineStyle = 1;
-pub const NSUnderlineStyleThick: NSUnderlineStyle = 2;
-pub const NSUnderlineStyleDouble: NSUnderlineStyle = 9;
-pub const NSUnderlineStylePatternSolid: NSUnderlineStyle = 0;
-pub const NSUnderlineStylePatternDot: NSUnderlineStyle = 256;
-pub const NSUnderlineStylePatternDash: NSUnderlineStyle = 512;
-pub const NSUnderlineStylePatternDashDot: NSUnderlineStyle = 768;
-pub const NSUnderlineStylePatternDashDotDot: NSUnderlineStyle = 1024;
-pub const NSUnderlineStyleByWord: NSUnderlineStyle = 32768;
+pub const NSUnderlineStyleNone: NSUnderlineStyle = 0x00;
+pub const NSUnderlineStyleSingle: NSUnderlineStyle = 0x01;
+pub const NSUnderlineStyleThick: NSUnderlineStyle = 0x02;
+pub const NSUnderlineStyleDouble: NSUnderlineStyle = 0x09;
+pub const NSUnderlineStylePatternSolid: NSUnderlineStyle = 0x0000;
+pub const NSUnderlineStylePatternDot: NSUnderlineStyle = 0x0100;
+pub const NSUnderlineStylePatternDash: NSUnderlineStyle = 0x0200;
+pub const NSUnderlineStylePatternDashDot: NSUnderlineStyle = 0x0300;
+pub const NSUnderlineStylePatternDashDotDot: NSUnderlineStyle = 0x0400;
+pub const NSUnderlineStyleByWord: NSUnderlineStyle = 0x8000;
 
 pub type NSWritingDirectionFormatType = NSInteger;
-pub const NSWritingDirectionEmbedding: NSWritingDirectionFormatType = 0;
-pub const NSWritingDirectionOverride: NSWritingDirectionFormatType = 2;
+pub const NSWritingDirectionEmbedding: NSWritingDirectionFormatType = (0 << 1);
+pub const NSWritingDirectionOverride: NSWritingDirectionFormatType = (1 << 1);
 
 pub type NSTextEffectStyle = NSString;
 
 pub type NSSpellingState = NSInteger;
-pub const NSSpellingStateSpellingFlag: NSSpellingState = 1;
-pub const NSSpellingStateGrammarFlag: NSSpellingState = 2;
+pub const NSSpellingStateSpellingFlag: NSSpellingState = (1 << 0);
+pub const NSSpellingStateGrammarFlag: NSSpellingState = (1 << 1);
 
 extern_methods!(
     /// NSAttributedStringAttributeFixing

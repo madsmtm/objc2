@@ -26,27 +26,30 @@ pub const NSLayoutAttributeHeight: NSLayoutAttribute = 8;
 pub const NSLayoutAttributeCenterX: NSLayoutAttribute = 9;
 pub const NSLayoutAttributeCenterY: NSLayoutAttribute = 10;
 pub const NSLayoutAttributeLastBaseline: NSLayoutAttribute = 11;
-pub const NSLayoutAttributeBaseline: NSLayoutAttribute = 11;
+pub const NSLayoutAttributeBaseline: NSLayoutAttribute = NSLayoutAttributeLastBaseline;
 pub const NSLayoutAttributeFirstBaseline: NSLayoutAttribute = 12;
 pub const NSLayoutAttributeNotAnAttribute: NSLayoutAttribute = 0;
 
 pub type NSLayoutFormatOptions = NSUInteger;
-pub const NSLayoutFormatAlignAllLeft: NSLayoutFormatOptions = 2;
-pub const NSLayoutFormatAlignAllRight: NSLayoutFormatOptions = 4;
-pub const NSLayoutFormatAlignAllTop: NSLayoutFormatOptions = 8;
-pub const NSLayoutFormatAlignAllBottom: NSLayoutFormatOptions = 16;
-pub const NSLayoutFormatAlignAllLeading: NSLayoutFormatOptions = 32;
-pub const NSLayoutFormatAlignAllTrailing: NSLayoutFormatOptions = 64;
-pub const NSLayoutFormatAlignAllCenterX: NSLayoutFormatOptions = 512;
-pub const NSLayoutFormatAlignAllCenterY: NSLayoutFormatOptions = 1024;
-pub const NSLayoutFormatAlignAllLastBaseline: NSLayoutFormatOptions = 2048;
-pub const NSLayoutFormatAlignAllFirstBaseline: NSLayoutFormatOptions = 4096;
-pub const NSLayoutFormatAlignAllBaseline: NSLayoutFormatOptions = 2048;
-pub const NSLayoutFormatAlignmentMask: NSLayoutFormatOptions = 65535;
-pub const NSLayoutFormatDirectionLeadingToTrailing: NSLayoutFormatOptions = 0;
-pub const NSLayoutFormatDirectionLeftToRight: NSLayoutFormatOptions = 65536;
-pub const NSLayoutFormatDirectionRightToLeft: NSLayoutFormatOptions = 131072;
-pub const NSLayoutFormatDirectionMask: NSLayoutFormatOptions = 196608;
+pub const NSLayoutFormatAlignAllLeft: NSLayoutFormatOptions = (1 << NSLayoutAttributeLeft);
+pub const NSLayoutFormatAlignAllRight: NSLayoutFormatOptions = (1 << NSLayoutAttributeRight);
+pub const NSLayoutFormatAlignAllTop: NSLayoutFormatOptions = (1 << NSLayoutAttributeTop);
+pub const NSLayoutFormatAlignAllBottom: NSLayoutFormatOptions = (1 << NSLayoutAttributeBottom);
+pub const NSLayoutFormatAlignAllLeading: NSLayoutFormatOptions = (1 << NSLayoutAttributeLeading);
+pub const NSLayoutFormatAlignAllTrailing: NSLayoutFormatOptions = (1 << NSLayoutAttributeTrailing);
+pub const NSLayoutFormatAlignAllCenterX: NSLayoutFormatOptions = (1 << NSLayoutAttributeCenterX);
+pub const NSLayoutFormatAlignAllCenterY: NSLayoutFormatOptions = (1 << NSLayoutAttributeCenterY);
+pub const NSLayoutFormatAlignAllLastBaseline: NSLayoutFormatOptions =
+    (1 << NSLayoutAttributeLastBaseline);
+pub const NSLayoutFormatAlignAllFirstBaseline: NSLayoutFormatOptions =
+    (1 << NSLayoutAttributeFirstBaseline);
+pub const NSLayoutFormatAlignAllBaseline: NSLayoutFormatOptions =
+    NSLayoutFormatAlignAllLastBaseline;
+pub const NSLayoutFormatAlignmentMask: NSLayoutFormatOptions = 0xFFFF;
+pub const NSLayoutFormatDirectionLeadingToTrailing: NSLayoutFormatOptions = 0 << 16;
+pub const NSLayoutFormatDirectionLeftToRight: NSLayoutFormatOptions = 1 << 16;
+pub const NSLayoutFormatDirectionRightToLeft: NSLayoutFormatOptions = 2 << 16;
+pub const NSLayoutFormatDirectionMask: NSLayoutFormatOptions = 0x3 << 16;
 
 extern_class!(
     #[derive(Debug)]

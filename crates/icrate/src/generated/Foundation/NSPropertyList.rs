@@ -6,14 +6,16 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSPropertyListMutabilityOptions = NSUInteger;
-pub const NSPropertyListImmutable: NSPropertyListMutabilityOptions = 0;
-pub const NSPropertyListMutableContainers: NSPropertyListMutabilityOptions = 1;
-pub const NSPropertyListMutableContainersAndLeaves: NSPropertyListMutabilityOptions = 2;
+pub const NSPropertyListImmutable: NSPropertyListMutabilityOptions = kCFPropertyListImmutable;
+pub const NSPropertyListMutableContainers: NSPropertyListMutabilityOptions =
+    kCFPropertyListMutableContainers;
+pub const NSPropertyListMutableContainersAndLeaves: NSPropertyListMutabilityOptions =
+    kCFPropertyListMutableContainersAndLeaves;
 
 pub type NSPropertyListFormat = NSUInteger;
-pub const NSPropertyListOpenStepFormat: NSPropertyListFormat = 1;
-pub const NSPropertyListXMLFormat_v1_0: NSPropertyListFormat = 100;
-pub const NSPropertyListBinaryFormat_v1_0: NSPropertyListFormat = 200;
+pub const NSPropertyListOpenStepFormat: NSPropertyListFormat = kCFPropertyListOpenStepFormat;
+pub const NSPropertyListXMLFormat_v1_0: NSPropertyListFormat = kCFPropertyListXMLFormat_v1_0;
+pub const NSPropertyListBinaryFormat_v1_0: NSPropertyListFormat = kCFPropertyListBinaryFormat_v1_0;
 
 pub type NSPropertyListReadOptions = NSPropertyListMutabilityOptions;
 

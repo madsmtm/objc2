@@ -35,12 +35,12 @@ pub const NSWindowsCP1254StringEncoding: i32 = 14;
 pub const NSWindowsCP1250StringEncoding: i32 = 15;
 pub const NSISO2022JPStringEncoding: i32 = 21;
 pub const NSMacOSRomanStringEncoding: i32 = 30;
-pub const NSUTF16StringEncoding: i32 = 10;
-pub const NSUTF16BigEndianStringEncoding: i32 = 2415919360;
-pub const NSUTF16LittleEndianStringEncoding: i32 = 2483028224;
-pub const NSUTF32StringEncoding: i32 = 2348810496;
-pub const NSUTF32BigEndianStringEncoding: i32 = 2550137088;
-pub const NSUTF32LittleEndianStringEncoding: i32 = 2617245952;
+pub const NSUTF16StringEncoding: i32 = NSUnicodeStringEncoding;
+pub const NSUTF16BigEndianStringEncoding: i32 = 0x90000100;
+pub const NSUTF16LittleEndianStringEncoding: i32 = 0x94000100;
+pub const NSUTF32StringEncoding: i32 = 0x8c000100;
+pub const NSUTF32BigEndianStringEncoding: i32 = 0x98000100;
+pub const NSUTF32LittleEndianStringEncoding: i32 = 0x9c000100;
 
 pub type NSStringEncodingConversionOptions = NSUInteger;
 pub const NSStringEncodingConversionAllowLossy: NSStringEncodingConversionOptions = 1;
@@ -79,9 +79,9 @@ pub const NSStringEnumerationByWords: NSStringEnumerationOptions = 3;
 pub const NSStringEnumerationBySentences: NSStringEnumerationOptions = 4;
 pub const NSStringEnumerationByCaretPositions: NSStringEnumerationOptions = 5;
 pub const NSStringEnumerationByDeletionClusters: NSStringEnumerationOptions = 6;
-pub const NSStringEnumerationReverse: NSStringEnumerationOptions = 256;
-pub const NSStringEnumerationSubstringNotRequired: NSStringEnumerationOptions = 512;
-pub const NSStringEnumerationLocalized: NSStringEnumerationOptions = 1024;
+pub const NSStringEnumerationReverse: NSStringEnumerationOptions = 1 << 8;
+pub const NSStringEnumerationSubstringNotRequired: NSStringEnumerationOptions = 1 << 9;
+pub const NSStringEnumerationLocalized: NSStringEnumerationOptions = 1 << 10;
 
 pub type NSStringTransform = NSString;
 

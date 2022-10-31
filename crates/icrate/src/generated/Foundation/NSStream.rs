@@ -19,11 +19,11 @@ pub const NSStreamStatusError: NSStreamStatus = 7;
 
 pub type NSStreamEvent = NSUInteger;
 pub const NSStreamEventNone: NSStreamEvent = 0;
-pub const NSStreamEventOpenCompleted: NSStreamEvent = 1;
-pub const NSStreamEventHasBytesAvailable: NSStreamEvent = 2;
-pub const NSStreamEventHasSpaceAvailable: NSStreamEvent = 4;
-pub const NSStreamEventErrorOccurred: NSStreamEvent = 8;
-pub const NSStreamEventEndEncountered: NSStreamEvent = 16;
+pub const NSStreamEventOpenCompleted: NSStreamEvent = 1 << 0;
+pub const NSStreamEventHasBytesAvailable: NSStreamEvent = 1 << 1;
+pub const NSStreamEventHasSpaceAvailable: NSStreamEvent = 1 << 2;
+pub const NSStreamEventErrorOccurred: NSStreamEvent = 1 << 3;
+pub const NSStreamEventEndEncountered: NSStreamEvent = 1 << 4;
 
 extern_class!(
     #[derive(Debug)]

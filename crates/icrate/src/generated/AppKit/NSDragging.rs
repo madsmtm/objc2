@@ -13,9 +13,9 @@ pub const NSDragOperationGeneric: NSDragOperation = 4;
 pub const NSDragOperationPrivate: NSDragOperation = 8;
 pub const NSDragOperationMove: NSDragOperation = 16;
 pub const NSDragOperationDelete: NSDragOperation = 32;
-pub const NSDragOperationEvery: NSDragOperation = -1;
+pub const NSDragOperationEvery: NSDragOperation = 18446744073709551615;
 pub const NSDragOperationAll_Obsolete: NSDragOperation = 15;
-pub const NSDragOperationAll: NSDragOperation = 15;
+pub const NSDragOperationAll: NSDragOperation = NSDragOperationAll_Obsolete;
 
 pub type NSDraggingFormation = NSInteger;
 pub const NSDraggingFormationDefault: NSDraggingFormation = 0;
@@ -29,9 +29,10 @@ pub const NSDraggingContextOutsideApplication: NSDraggingContext = 0;
 pub const NSDraggingContextWithinApplication: NSDraggingContext = 1;
 
 pub type NSDraggingItemEnumerationOptions = NSUInteger;
-pub const NSDraggingItemEnumerationConcurrent: NSDraggingItemEnumerationOptions = 1;
+pub const NSDraggingItemEnumerationConcurrent: NSDraggingItemEnumerationOptions =
+    NSEnumerationConcurrent;
 pub const NSDraggingItemEnumerationClearNonenumeratedImages: NSDraggingItemEnumerationOptions =
-    65536;
+    (1 << 16);
 
 pub type NSSpringLoadingHighlight = NSInteger;
 pub const NSSpringLoadingHighlightNone: NSSpringLoadingHighlight = 0;
@@ -46,9 +47,9 @@ pub type NSDraggingSource = NSObject;
 
 pub type NSSpringLoadingOptions = NSUInteger;
 pub const NSSpringLoadingDisabled: NSSpringLoadingOptions = 0;
-pub const NSSpringLoadingEnabled: NSSpringLoadingOptions = 1;
-pub const NSSpringLoadingContinuousActivation: NSSpringLoadingOptions = 2;
-pub const NSSpringLoadingNoHover: NSSpringLoadingOptions = 8;
+pub const NSSpringLoadingEnabled: NSSpringLoadingOptions = 1 << 0;
+pub const NSSpringLoadingContinuousActivation: NSSpringLoadingOptions = 1 << 1;
+pub const NSSpringLoadingNoHover: NSSpringLoadingOptions = 1 << 3;
 
 pub type NSSpringLoadingDestination = NSObject;
 

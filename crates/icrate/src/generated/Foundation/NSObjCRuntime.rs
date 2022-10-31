@@ -15,16 +15,16 @@ pub const NSOrderedSame: NSComparisonResult = 0;
 pub const NSOrderedDescending: NSComparisonResult = 1;
 
 pub type NSEnumerationOptions = NSUInteger;
-pub const NSEnumerationConcurrent: NSEnumerationOptions = 1;
-pub const NSEnumerationReverse: NSEnumerationOptions = 2;
+pub const NSEnumerationConcurrent: NSEnumerationOptions = (1 << 0);
+pub const NSEnumerationReverse: NSEnumerationOptions = (1 << 1);
 
 pub type NSSortOptions = NSUInteger;
-pub const NSSortConcurrent: NSSortOptions = 1;
-pub const NSSortStable: NSSortOptions = 16;
+pub const NSSortConcurrent: NSSortOptions = (1 << 0);
+pub const NSSortStable: NSSortOptions = (1 << 4);
 
 pub type NSQualityOfService = NSInteger;
-pub const NSQualityOfServiceUserInteractive: NSQualityOfService = 33;
-pub const NSQualityOfServiceUserInitiated: NSQualityOfService = 25;
-pub const NSQualityOfServiceUtility: NSQualityOfService = 17;
-pub const NSQualityOfServiceBackground: NSQualityOfService = 9;
+pub const NSQualityOfServiceUserInteractive: NSQualityOfService = 0x21;
+pub const NSQualityOfServiceUserInitiated: NSQualityOfService = 0x19;
+pub const NSQualityOfServiceUtility: NSQualityOfService = 0x11;
+pub const NSQualityOfServiceBackground: NSQualityOfService = 0x09;
 pub const NSQualityOfServiceDefault: NSQualityOfService = -1;

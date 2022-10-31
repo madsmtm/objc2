@@ -38,9 +38,9 @@ extern_methods!(
 );
 
 pub type NSBinarySearchingOptions = NSUInteger;
-pub const NSBinarySearchingFirstEqual: NSBinarySearchingOptions = 256;
-pub const NSBinarySearchingLastEqual: NSBinarySearchingOptions = 512;
-pub const NSBinarySearchingInsertionIndex: NSBinarySearchingOptions = 1024;
+pub const NSBinarySearchingFirstEqual: NSBinarySearchingOptions = (1 << 8);
+pub const NSBinarySearchingLastEqual: NSBinarySearchingOptions = (1 << 9);
+pub const NSBinarySearchingInsertionIndex: NSBinarySearchingOptions = (1 << 10);
 
 extern_methods!(
     /// NSExtendedArray

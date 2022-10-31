@@ -14,20 +14,23 @@ pub type NSFileProtectionType = NSString;
 pub type NSFileProviderServiceName = NSString;
 
 pub type NSVolumeEnumerationOptions = NSUInteger;
-pub const NSVolumeEnumerationSkipHiddenVolumes: NSVolumeEnumerationOptions = 2;
-pub const NSVolumeEnumerationProduceFileReferenceURLs: NSVolumeEnumerationOptions = 4;
+pub const NSVolumeEnumerationSkipHiddenVolumes: NSVolumeEnumerationOptions = 1 << 1;
+pub const NSVolumeEnumerationProduceFileReferenceURLs: NSVolumeEnumerationOptions = 1 << 2;
 
 pub type NSDirectoryEnumerationOptions = NSUInteger;
-pub const NSDirectoryEnumerationSkipsSubdirectoryDescendants: NSDirectoryEnumerationOptions = 1;
-pub const NSDirectoryEnumerationSkipsPackageDescendants: NSDirectoryEnumerationOptions = 2;
-pub const NSDirectoryEnumerationSkipsHiddenFiles: NSDirectoryEnumerationOptions = 4;
-pub const NSDirectoryEnumerationIncludesDirectoriesPostOrder: NSDirectoryEnumerationOptions = 8;
-pub const NSDirectoryEnumerationProducesRelativePathURLs: NSDirectoryEnumerationOptions = 16;
+pub const NSDirectoryEnumerationSkipsSubdirectoryDescendants: NSDirectoryEnumerationOptions =
+    1 << 0;
+pub const NSDirectoryEnumerationSkipsPackageDescendants: NSDirectoryEnumerationOptions = 1 << 1;
+pub const NSDirectoryEnumerationSkipsHiddenFiles: NSDirectoryEnumerationOptions = 1 << 2;
+pub const NSDirectoryEnumerationIncludesDirectoriesPostOrder: NSDirectoryEnumerationOptions =
+    1 << 3;
+pub const NSDirectoryEnumerationProducesRelativePathURLs: NSDirectoryEnumerationOptions = 1 << 4;
 
 pub type NSFileManagerItemReplacementOptions = NSUInteger;
-pub const NSFileManagerItemReplacementUsingNewMetadataOnly: NSFileManagerItemReplacementOptions = 1;
+pub const NSFileManagerItemReplacementUsingNewMetadataOnly: NSFileManagerItemReplacementOptions =
+    1 << 0;
 pub const NSFileManagerItemReplacementWithoutDeletingBackupItem:
-    NSFileManagerItemReplacementOptions = 2;
+    NSFileManagerItemReplacementOptions = 1 << 1;
 
 pub type NSURLRelationship = NSInteger;
 pub const NSURLRelationshipContains: NSURLRelationship = 0;
@@ -35,8 +38,8 @@ pub const NSURLRelationshipSame: NSURLRelationship = 1;
 pub const NSURLRelationshipOther: NSURLRelationship = 2;
 
 pub type NSFileManagerUnmountOptions = NSUInteger;
-pub const NSFileManagerUnmountAllPartitionsAndEjectDisk: NSFileManagerUnmountOptions = 1;
-pub const NSFileManagerUnmountWithoutUI: NSFileManagerUnmountOptions = 2;
+pub const NSFileManagerUnmountAllPartitionsAndEjectDisk: NSFileManagerUnmountOptions = 1 << 0;
+pub const NSFileManagerUnmountWithoutUI: NSFileManagerUnmountOptions = 1 << 1;
 
 extern_class!(
     #[derive(Debug)]

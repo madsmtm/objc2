@@ -5,7 +5,7 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
-pub const NSAttachmentCharacter: i32 = 65532;
+pub const NSAttachmentCharacter: i32 = 0xFFFC;
 
 pub type NSTextAttachmentContainer = NSObject;
 

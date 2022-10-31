@@ -6,36 +6,36 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSDataReadingOptions = NSUInteger;
-pub const NSDataReadingMappedIfSafe: NSDataReadingOptions = 1;
-pub const NSDataReadingUncached: NSDataReadingOptions = 2;
-pub const NSDataReadingMappedAlways: NSDataReadingOptions = 8;
-pub const NSDataReadingMapped: NSDataReadingOptions = 1;
-pub const NSMappedRead: NSDataReadingOptions = 1;
-pub const NSUncachedRead: NSDataReadingOptions = 2;
+pub const NSDataReadingMappedIfSafe: NSDataReadingOptions = 1 << 0;
+pub const NSDataReadingUncached: NSDataReadingOptions = 1 << 1;
+pub const NSDataReadingMappedAlways: NSDataReadingOptions = 1 << 3;
+pub const NSDataReadingMapped: NSDataReadingOptions = NSDataReadingMappedIfSafe;
+pub const NSMappedRead: NSDataReadingOptions = NSDataReadingMapped;
+pub const NSUncachedRead: NSDataReadingOptions = NSDataReadingUncached;
 
 pub type NSDataWritingOptions = NSUInteger;
-pub const NSDataWritingAtomic: NSDataWritingOptions = 1;
-pub const NSDataWritingWithoutOverwriting: NSDataWritingOptions = 2;
-pub const NSDataWritingFileProtectionNone: NSDataWritingOptions = 268435456;
-pub const NSDataWritingFileProtectionComplete: NSDataWritingOptions = 536870912;
-pub const NSDataWritingFileProtectionCompleteUnlessOpen: NSDataWritingOptions = 805306368;
+pub const NSDataWritingAtomic: NSDataWritingOptions = 1 << 0;
+pub const NSDataWritingWithoutOverwriting: NSDataWritingOptions = 1 << 1;
+pub const NSDataWritingFileProtectionNone: NSDataWritingOptions = 0x10000000;
+pub const NSDataWritingFileProtectionComplete: NSDataWritingOptions = 0x20000000;
+pub const NSDataWritingFileProtectionCompleteUnlessOpen: NSDataWritingOptions = 0x30000000;
 pub const NSDataWritingFileProtectionCompleteUntilFirstUserAuthentication: NSDataWritingOptions =
-    1073741824;
-pub const NSDataWritingFileProtectionMask: NSDataWritingOptions = 4026531840;
-pub const NSAtomicWrite: NSDataWritingOptions = 1;
+    0x40000000;
+pub const NSDataWritingFileProtectionMask: NSDataWritingOptions = 0xf0000000;
+pub const NSAtomicWrite: NSDataWritingOptions = NSDataWritingAtomic;
 
 pub type NSDataSearchOptions = NSUInteger;
-pub const NSDataSearchBackwards: NSDataSearchOptions = 1;
-pub const NSDataSearchAnchored: NSDataSearchOptions = 2;
+pub const NSDataSearchBackwards: NSDataSearchOptions = 1 << 0;
+pub const NSDataSearchAnchored: NSDataSearchOptions = 1 << 1;
 
 pub type NSDataBase64EncodingOptions = NSUInteger;
-pub const NSDataBase64Encoding64CharacterLineLength: NSDataBase64EncodingOptions = 1;
-pub const NSDataBase64Encoding76CharacterLineLength: NSDataBase64EncodingOptions = 2;
-pub const NSDataBase64EncodingEndLineWithCarriageReturn: NSDataBase64EncodingOptions = 16;
-pub const NSDataBase64EncodingEndLineWithLineFeed: NSDataBase64EncodingOptions = 32;
+pub const NSDataBase64Encoding64CharacterLineLength: NSDataBase64EncodingOptions = 1 << 0;
+pub const NSDataBase64Encoding76CharacterLineLength: NSDataBase64EncodingOptions = 1 << 1;
+pub const NSDataBase64EncodingEndLineWithCarriageReturn: NSDataBase64EncodingOptions = 1 << 4;
+pub const NSDataBase64EncodingEndLineWithLineFeed: NSDataBase64EncodingOptions = 1 << 5;
 
 pub type NSDataBase64DecodingOptions = NSUInteger;
-pub const NSDataBase64DecodingIgnoreUnknownCharacters: NSDataBase64DecodingOptions = 1;
+pub const NSDataBase64DecodingIgnoreUnknownCharacters: NSDataBase64DecodingOptions = 1 << 0;
 
 extern_class!(
     #[derive(Debug)]

@@ -54,9 +54,9 @@ pub const NSOpenGLPFARemotePixelBuffer: i32 = 91;
 
 pub type NSOpenGLPixelFormatAttribute = u32;
 
-pub const NSOpenGLProfileVersionLegacy: i32 = 4096;
-pub const NSOpenGLProfileVersion3_2Core: i32 = 12800;
-pub const NSOpenGLProfileVersion4_1Core: i32 = 16640;
+pub const NSOpenGLProfileVersionLegacy: i32 = 0x1000;
+pub const NSOpenGLProfileVersion3_2Core: i32 = 0x3200;
+pub const NSOpenGLProfileVersion4_1Core: i32 = 0x4100;
 
 extern_class!(
     #[derive(Debug)]

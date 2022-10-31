@@ -170,11 +170,16 @@ extern_methods!(
 );
 
 pub type NSLocaleLanguageDirection = NSUInteger;
-pub const NSLocaleLanguageDirectionUnknown: NSLocaleLanguageDirection = 0;
-pub const NSLocaleLanguageDirectionLeftToRight: NSLocaleLanguageDirection = 1;
-pub const NSLocaleLanguageDirectionRightToLeft: NSLocaleLanguageDirection = 2;
-pub const NSLocaleLanguageDirectionTopToBottom: NSLocaleLanguageDirection = 3;
-pub const NSLocaleLanguageDirectionBottomToTop: NSLocaleLanguageDirection = 4;
+pub const NSLocaleLanguageDirectionUnknown: NSLocaleLanguageDirection =
+    kCFLocaleLanguageDirectionUnknown;
+pub const NSLocaleLanguageDirectionLeftToRight: NSLocaleLanguageDirection =
+    kCFLocaleLanguageDirectionLeftToRight;
+pub const NSLocaleLanguageDirectionRightToLeft: NSLocaleLanguageDirection =
+    kCFLocaleLanguageDirectionRightToLeft;
+pub const NSLocaleLanguageDirectionTopToBottom: NSLocaleLanguageDirection =
+    kCFLocaleLanguageDirectionTopToBottom;
+pub const NSLocaleLanguageDirectionBottomToTop: NSLocaleLanguageDirection =
+    kCFLocaleLanguageDirectionBottomToTop;
 
 extern_methods!(
     /// NSLocaleGeneralInfo

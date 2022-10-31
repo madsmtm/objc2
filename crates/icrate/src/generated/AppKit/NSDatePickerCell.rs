@@ -15,12 +15,12 @@ pub const NSDatePickerModeSingle: NSDatePickerMode = 0;
 pub const NSDatePickerModeRange: NSDatePickerMode = 1;
 
 pub type NSDatePickerElementFlags = NSUInteger;
-pub const NSDatePickerElementFlagHourMinute: NSDatePickerElementFlags = 12;
-pub const NSDatePickerElementFlagHourMinuteSecond: NSDatePickerElementFlags = 14;
-pub const NSDatePickerElementFlagTimeZone: NSDatePickerElementFlags = 16;
-pub const NSDatePickerElementFlagYearMonth: NSDatePickerElementFlags = 192;
-pub const NSDatePickerElementFlagYearMonthDay: NSDatePickerElementFlags = 224;
-pub const NSDatePickerElementFlagEra: NSDatePickerElementFlags = 256;
+pub const NSDatePickerElementFlagHourMinute: NSDatePickerElementFlags = 0x000c;
+pub const NSDatePickerElementFlagHourMinuteSecond: NSDatePickerElementFlags = 0x000e;
+pub const NSDatePickerElementFlagTimeZone: NSDatePickerElementFlags = 0x0010;
+pub const NSDatePickerElementFlagYearMonth: NSDatePickerElementFlags = 0x00c0;
+pub const NSDatePickerElementFlagYearMonthDay: NSDatePickerElementFlags = 0x00e0;
+pub const NSDatePickerElementFlagEra: NSDatePickerElementFlags = 0x0100;
 
 extern_class!(
     #[derive(Debug)]

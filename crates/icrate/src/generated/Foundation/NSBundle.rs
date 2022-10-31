@@ -5,11 +5,11 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
-pub const NSBundleExecutableArchitectureI386: i32 = 7;
-pub const NSBundleExecutableArchitecturePPC: i32 = 18;
-pub const NSBundleExecutableArchitectureX86_64: i32 = 16777223;
-pub const NSBundleExecutableArchitecturePPC64: i32 = 16777234;
-pub const NSBundleExecutableArchitectureARM64: i32 = 16777228;
+pub const NSBundleExecutableArchitectureI386: i32 = 0x00000007;
+pub const NSBundleExecutableArchitecturePPC: i32 = 0x00000012;
+pub const NSBundleExecutableArchitectureX86_64: i32 = 0x01000007;
+pub const NSBundleExecutableArchitecturePPC64: i32 = 0x01000012;
+pub const NSBundleExecutableArchitectureARM64: i32 = 0x0100000c;
 
 extern_class!(
     #[derive(Debug)]

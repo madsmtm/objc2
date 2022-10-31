@@ -10,7 +10,7 @@ pub type NSPasteboardType = NSString;
 pub type NSPasteboardName = NSString;
 
 pub type NSPasteboardContentsOptions = NSUInteger;
-pub const NSPasteboardContentsCurrentHostOnly: NSPasteboardContentsOptions = 1;
+pub const NSPasteboardContentsCurrentHostOnly: NSPasteboardContentsOptions = 1 << 0;
 
 pub type NSPasteboardReadingOptionKey = NSString;
 
@@ -183,15 +183,15 @@ extern_methods!(
 );
 
 pub type NSPasteboardWritingOptions = NSUInteger;
-pub const NSPasteboardWritingPromised: NSPasteboardWritingOptions = 512;
+pub const NSPasteboardWritingPromised: NSPasteboardWritingOptions = 1 << 9;
 
 pub type NSPasteboardWriting = NSObject;
 
 pub type NSPasteboardReadingOptions = NSUInteger;
 pub const NSPasteboardReadingAsData: NSPasteboardReadingOptions = 0;
-pub const NSPasteboardReadingAsString: NSPasteboardReadingOptions = 1;
-pub const NSPasteboardReadingAsPropertyList: NSPasteboardReadingOptions = 2;
-pub const NSPasteboardReadingAsKeyedArchive: NSPasteboardReadingOptions = 4;
+pub const NSPasteboardReadingAsString: NSPasteboardReadingOptions = 1 << 0;
+pub const NSPasteboardReadingAsPropertyList: NSPasteboardReadingOptions = 1 << 1;
+pub const NSPasteboardReadingAsKeyedArchive: NSPasteboardReadingOptions = 1 << 2;
 
 pub type NSPasteboardReading = NSObject;
 

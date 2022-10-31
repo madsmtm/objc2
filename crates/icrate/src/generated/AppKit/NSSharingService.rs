@@ -102,10 +102,10 @@ pub type NSSharingServiceDelegate = NSObject;
 
 pub type NSCloudKitSharingServiceOptions = NSUInteger;
 pub const NSCloudKitSharingServiceStandard: NSCloudKitSharingServiceOptions = 0;
-pub const NSCloudKitSharingServiceAllowPublic: NSCloudKitSharingServiceOptions = 1;
-pub const NSCloudKitSharingServiceAllowPrivate: NSCloudKitSharingServiceOptions = 2;
-pub const NSCloudKitSharingServiceAllowReadOnly: NSCloudKitSharingServiceOptions = 16;
-pub const NSCloudKitSharingServiceAllowReadWrite: NSCloudKitSharingServiceOptions = 32;
+pub const NSCloudKitSharingServiceAllowPublic: NSCloudKitSharingServiceOptions = 1 << 0;
+pub const NSCloudKitSharingServiceAllowPrivate: NSCloudKitSharingServiceOptions = 1 << 1;
+pub const NSCloudKitSharingServiceAllowReadOnly: NSCloudKitSharingServiceOptions = 1 << 4;
+pub const NSCloudKitSharingServiceAllowReadWrite: NSCloudKitSharingServiceOptions = 1 << 5;
 
 pub type NSCloudSharingServiceDelegate = NSObject;
 

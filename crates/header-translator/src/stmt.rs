@@ -206,7 +206,7 @@ pub enum Stmt {
         name: Option<String>,
         ty: RustType,
         kind: Option<UnexposedMacro>,
-        variants: Vec<(String, (i64, u64))>,
+        variants: Vec<(String, Expr)>,
     },
     /// typedef Type TypedefName;
     AliasDecl { name: String, type_: RustType },
@@ -377,8 +377,9 @@ impl Stmt {
                 }
 
                 let name = entity.get_name();
-                let ty =
-                    RustType::parse_enum(entity.get_enum_underlying_type().expect("enum type"));
+                let ty = entity.get_enum_underlying_type().expect("enum type");
+                let is_signed = ty.is_signed_integer();
+                let ty = RustType::parse_enum(ty);
                 let mut kind = None;
                 let mut variants = Vec::new();
 
@@ -389,8 +390,9 @@ impl Stmt {
                             let val = entity
                                 .get_enum_constant_value()
                                 .expect("enum constant value");
-                            let _expr = Expr::parse(&entity, &std::collections::HashMap::new());
-                            variants.push((name, val));
+                            let expr = Expr::parse_enum_constant(&entity)
+                                .unwrap_or_else(|| Expr::from_val(val, is_signed));
+                            variants.push((name, expr));
                         }
                         EntityKind::UnexposedAttr => {
                             if let Some(macro_) = UnexposedMacro::parse(&entity) {
@@ -580,12 +582,12 @@ impl fmt::Display for Stmt {
             } => {
                 if let Some(name) = name {
                     writeln!(f, "pub type {name} = {ty};")?;
-                    for (variant_name, (signed_val, _unsigned_val)) in variants {
-                        writeln!(f, "pub const {variant_name}: {name} = {signed_val};")?;
+                    for (variant_name, expr) in variants {
+                        writeln!(f, "pub const {variant_name}: {name} = {expr};")?;
                     }
                 } else {
-                    for (variant_name, (signed_val, _unsigned_val)) in variants {
-                        writeln!(f, "pub const {variant_name}: i32 = {signed_val};")?;
+                    for (variant_name, expr) in variants {
+                        writeln!(f, "pub const {variant_name}: i32 = {expr};")?;
                     }
                 }
             }

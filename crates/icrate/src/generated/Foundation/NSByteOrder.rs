@@ -5,6 +5,6 @@ use objc2::rc::{Id, Shared};
 #[allow(unused_imports)]
 use objc2::{extern_class, extern_methods, ClassType};
 
-pub const NS_UnknownByteOrder: i32 = 0;
-pub const NS_LittleEndian: i32 = 1;
-pub const NS_BigEndian: i32 = 2;
+pub const NS_UnknownByteOrder: i32 = CFByteOrderUnknown;
+pub const NS_LittleEndian: i32 = CFByteOrderLittleEndian;
+pub const NS_BigEndian: i32 = CFByteOrderBigEndian;

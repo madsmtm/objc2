@@ -6,12 +6,12 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSFileWrapperReadingOptions = NSUInteger;
-pub const NSFileWrapperReadingImmediate: NSFileWrapperReadingOptions = 1;
-pub const NSFileWrapperReadingWithoutMapping: NSFileWrapperReadingOptions = 2;
+pub const NSFileWrapperReadingImmediate: NSFileWrapperReadingOptions = 1 << 0;
+pub const NSFileWrapperReadingWithoutMapping: NSFileWrapperReadingOptions = 1 << 1;
 
 pub type NSFileWrapperWritingOptions = NSUInteger;
-pub const NSFileWrapperWritingAtomic: NSFileWrapperWritingOptions = 1;
-pub const NSFileWrapperWritingWithNameUpdating: NSFileWrapperWritingOptions = 2;
+pub const NSFileWrapperWritingAtomic: NSFileWrapperWritingOptions = 1 << 0;
+pub const NSFileWrapperWritingWithNameUpdating: NSFileWrapperWritingOptions = 1 << 1;
 
 extern_class!(
     #[derive(Debug)]

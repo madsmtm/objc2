@@ -122,4 +122,4 @@ pub const NSUserDomainMask: NSSearchPathDomainMask = 1;
 pub const NSLocalDomainMask: NSSearchPathDomainMask = 2;
 pub const NSNetworkDomainMask: NSSearchPathDomainMask = 4;
 pub const NSSystemDomainMask: NSSearchPathDomainMask = 8;
-pub const NSAllDomainsMask: NSSearchPathDomainMask = 65535;
+pub const NSAllDomainsMask: NSSearchPathDomainMask = 0x0ffff;

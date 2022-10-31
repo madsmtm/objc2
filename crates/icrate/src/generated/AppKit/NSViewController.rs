@@ -6,15 +6,16 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSViewControllerTransitionOptions = NSUInteger;
-pub const NSViewControllerTransitionNone: NSViewControllerTransitionOptions = 0;
-pub const NSViewControllerTransitionCrossfade: NSViewControllerTransitionOptions = 1;
-pub const NSViewControllerTransitionSlideUp: NSViewControllerTransitionOptions = 16;
-pub const NSViewControllerTransitionSlideDown: NSViewControllerTransitionOptions = 32;
-pub const NSViewControllerTransitionSlideLeft: NSViewControllerTransitionOptions = 64;
-pub const NSViewControllerTransitionSlideRight: NSViewControllerTransitionOptions = 128;
-pub const NSViewControllerTransitionSlideForward: NSViewControllerTransitionOptions = 320;
-pub const NSViewControllerTransitionSlideBackward: NSViewControllerTransitionOptions = 384;
-pub const NSViewControllerTransitionAllowUserInteraction: NSViewControllerTransitionOptions = 4096;
+pub const NSViewControllerTransitionNone: NSViewControllerTransitionOptions = 0x0;
+pub const NSViewControllerTransitionCrossfade: NSViewControllerTransitionOptions = 0x1;
+pub const NSViewControllerTransitionSlideUp: NSViewControllerTransitionOptions = 0x10;
+pub const NSViewControllerTransitionSlideDown: NSViewControllerTransitionOptions = 0x20;
+pub const NSViewControllerTransitionSlideLeft: NSViewControllerTransitionOptions = 0x40;
+pub const NSViewControllerTransitionSlideRight: NSViewControllerTransitionOptions = 0x80;
+pub const NSViewControllerTransitionSlideForward: NSViewControllerTransitionOptions = 0x140;
+pub const NSViewControllerTransitionSlideBackward: NSViewControllerTransitionOptions = 0x180;
+pub const NSViewControllerTransitionAllowUserInteraction: NSViewControllerTransitionOptions =
+    0x1000;
 
 extern_class!(
     #[derive(Debug)]

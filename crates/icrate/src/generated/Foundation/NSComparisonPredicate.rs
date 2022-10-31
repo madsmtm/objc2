@@ -6,9 +6,9 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSComparisonPredicateOptions = NSUInteger;
-pub const NSCaseInsensitivePredicateOption: NSComparisonPredicateOptions = 1;
-pub const NSDiacriticInsensitivePredicateOption: NSComparisonPredicateOptions = 2;
-pub const NSNormalizedPredicateOption: NSComparisonPredicateOptions = 4;
+pub const NSCaseInsensitivePredicateOption: NSComparisonPredicateOptions = 0x01;
+pub const NSDiacriticInsensitivePredicateOption: NSComparisonPredicateOptions = 0x02;
+pub const NSNormalizedPredicateOption: NSComparisonPredicateOptions = 0x04;
 
 pub type NSComparisonPredicateModifier = NSUInteger;
 pub const NSDirectPredicateModifier: NSComparisonPredicateModifier = 0;

@@ -6,10 +6,10 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSFileVersionAddingOptions = NSUInteger;
-pub const NSFileVersionAddingByMoving: NSFileVersionAddingOptions = 1;
+pub const NSFileVersionAddingByMoving: NSFileVersionAddingOptions = 1 << 0;
 
 pub type NSFileVersionReplacingOptions = NSUInteger;
-pub const NSFileVersionReplacingByMoving: NSFileVersionReplacingOptions = 1;
+pub const NSFileVersionReplacingByMoving: NSFileVersionReplacingOptions = 1 << 0;
 
 extern_class!(
     #[derive(Debug)]

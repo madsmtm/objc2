@@ -6,9 +6,9 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSPDFPanelOptions = NSInteger;
-pub const NSPDFPanelShowsPaperSize: NSPDFPanelOptions = 4;
-pub const NSPDFPanelShowsOrientation: NSPDFPanelOptions = 8;
-pub const NSPDFPanelRequestsParentDirectory: NSPDFPanelOptions = 16777216;
+pub const NSPDFPanelShowsPaperSize: NSPDFPanelOptions = 1 << 2;
+pub const NSPDFPanelShowsOrientation: NSPDFPanelOptions = 1 << 3;
+pub const NSPDFPanelRequestsParentDirectory: NSPDFPanelOptions = 1 << 24;
 
 extern_class!(
     #[derive(Debug)]

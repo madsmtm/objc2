@@ -6,11 +6,11 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSDateFormatterStyle = NSUInteger;
-pub const NSDateFormatterNoStyle: NSDateFormatterStyle = 0;
-pub const NSDateFormatterShortStyle: NSDateFormatterStyle = 1;
-pub const NSDateFormatterMediumStyle: NSDateFormatterStyle = 2;
-pub const NSDateFormatterLongStyle: NSDateFormatterStyle = 3;
-pub const NSDateFormatterFullStyle: NSDateFormatterStyle = 4;
+pub const NSDateFormatterNoStyle: NSDateFormatterStyle = kCFDateFormatterNoStyle;
+pub const NSDateFormatterShortStyle: NSDateFormatterStyle = kCFDateFormatterShortStyle;
+pub const NSDateFormatterMediumStyle: NSDateFormatterStyle = kCFDateFormatterMediumStyle;
+pub const NSDateFormatterLongStyle: NSDateFormatterStyle = kCFDateFormatterLongStyle;
+pub const NSDateFormatterFullStyle: NSDateFormatterStyle = kCFDateFormatterFullStyle;
 
 pub type NSDateFormatterBehavior = NSUInteger;
 pub const NSDateFormatterBehaviorDefault: NSDateFormatterBehavior = 0;

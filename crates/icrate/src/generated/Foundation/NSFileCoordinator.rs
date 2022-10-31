@@ -6,19 +6,19 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSFileCoordinatorReadingOptions = NSUInteger;
-pub const NSFileCoordinatorReadingWithoutChanges: NSFileCoordinatorReadingOptions = 1;
-pub const NSFileCoordinatorReadingResolvesSymbolicLink: NSFileCoordinatorReadingOptions = 2;
+pub const NSFileCoordinatorReadingWithoutChanges: NSFileCoordinatorReadingOptions = 1 << 0;
+pub const NSFileCoordinatorReadingResolvesSymbolicLink: NSFileCoordinatorReadingOptions = 1 << 1;
 pub const NSFileCoordinatorReadingImmediatelyAvailableMetadataOnly:
-    NSFileCoordinatorReadingOptions = 4;
-pub const NSFileCoordinatorReadingForUploading: NSFileCoordinatorReadingOptions = 8;
+    NSFileCoordinatorReadingOptions = 1 << 2;
+pub const NSFileCoordinatorReadingForUploading: NSFileCoordinatorReadingOptions = 1 << 3;
 
 pub type NSFileCoordinatorWritingOptions = NSUInteger;
-pub const NSFileCoordinatorWritingForDeleting: NSFileCoordinatorWritingOptions = 1;
-pub const NSFileCoordinatorWritingForMoving: NSFileCoordinatorWritingOptions = 2;
-pub const NSFileCoordinatorWritingForMerging: NSFileCoordinatorWritingOptions = 4;
-pub const NSFileCoordinatorWritingForReplacing: NSFileCoordinatorWritingOptions = 8;
+pub const NSFileCoordinatorWritingForDeleting: NSFileCoordinatorWritingOptions = 1 << 0;
+pub const NSFileCoordinatorWritingForMoving: NSFileCoordinatorWritingOptions = 1 << 1;
+pub const NSFileCoordinatorWritingForMerging: NSFileCoordinatorWritingOptions = 1 << 2;
+pub const NSFileCoordinatorWritingForReplacing: NSFileCoordinatorWritingOptions = 1 << 3;
 pub const NSFileCoordinatorWritingContentIndependentMetadataOnly: NSFileCoordinatorWritingOptions =
-    16;
+    1 << 4;
 
 extern_class!(
     #[derive(Debug)]

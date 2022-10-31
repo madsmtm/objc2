@@ -6,10 +6,10 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSKeyValueObservingOptions = NSUInteger;
-pub const NSKeyValueObservingOptionNew: NSKeyValueObservingOptions = 1;
-pub const NSKeyValueObservingOptionOld: NSKeyValueObservingOptions = 2;
-pub const NSKeyValueObservingOptionInitial: NSKeyValueObservingOptions = 4;
-pub const NSKeyValueObservingOptionPrior: NSKeyValueObservingOptions = 8;
+pub const NSKeyValueObservingOptionNew: NSKeyValueObservingOptions = 0x01;
+pub const NSKeyValueObservingOptionOld: NSKeyValueObservingOptions = 0x02;
+pub const NSKeyValueObservingOptionInitial: NSKeyValueObservingOptions = 0x04;
+pub const NSKeyValueObservingOptionPrior: NSKeyValueObservingOptions = 0x08;
 
 pub type NSKeyValueChange = NSUInteger;
 pub const NSKeyValueChangeSetting: NSKeyValueChange = 1;

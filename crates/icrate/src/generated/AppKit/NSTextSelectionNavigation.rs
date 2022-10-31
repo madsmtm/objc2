@@ -23,9 +23,9 @@ pub const NSTextSelectionNavigationDestinationContainer: NSTextSelectionNavigati
 pub const NSTextSelectionNavigationDestinationDocument: NSTextSelectionNavigationDestination = 6;
 
 pub type NSTextSelectionNavigationModifier = NSUInteger;
-pub const NSTextSelectionNavigationModifierExtend: NSTextSelectionNavigationModifier = 1;
-pub const NSTextSelectionNavigationModifierVisual: NSTextSelectionNavigationModifier = 2;
-pub const NSTextSelectionNavigationModifierMultiple: NSTextSelectionNavigationModifier = 4;
+pub const NSTextSelectionNavigationModifierExtend: NSTextSelectionNavigationModifier = (1 << 0);
+pub const NSTextSelectionNavigationModifierVisual: NSTextSelectionNavigationModifier = (1 << 1);
+pub const NSTextSelectionNavigationModifierMultiple: NSTextSelectionNavigationModifier = (1 << 2);
 
 pub type NSTextSelectionNavigationWritingDirection = NSInteger;
 pub const NSTextSelectionNavigationWritingDirectionLeftToRight:

@@ -13,7 +13,8 @@ pub const NSPersonNameComponentsFormatterStyleLong: NSPersonNameComponentsFormat
 pub const NSPersonNameComponentsFormatterStyleAbbreviated: NSPersonNameComponentsFormatterStyle = 4;
 
 pub type NSPersonNameComponentsFormatterOptions = NSUInteger;
-pub const NSPersonNameComponentsFormatterPhonetic: NSPersonNameComponentsFormatterOptions = 2;
+pub const NSPersonNameComponentsFormatterPhonetic: NSPersonNameComponentsFormatterOptions =
+    (1 << 1);
 
 extern_class!(
     #[derive(Debug)]

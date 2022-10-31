@@ -10,10 +10,10 @@ pub const NSLengthFormatterUnitMillimeter: NSLengthFormatterUnit = 8;
 pub const NSLengthFormatterUnitCentimeter: NSLengthFormatterUnit = 9;
 pub const NSLengthFormatterUnitMeter: NSLengthFormatterUnit = 11;
 pub const NSLengthFormatterUnitKilometer: NSLengthFormatterUnit = 14;
-pub const NSLengthFormatterUnitInch: NSLengthFormatterUnit = 1281;
-pub const NSLengthFormatterUnitFoot: NSLengthFormatterUnit = 1282;
-pub const NSLengthFormatterUnitYard: NSLengthFormatterUnit = 1283;
-pub const NSLengthFormatterUnitMile: NSLengthFormatterUnit = 1284;
+pub const NSLengthFormatterUnitInch: NSLengthFormatterUnit = (5 << 8) + 1;
+pub const NSLengthFormatterUnitFoot: NSLengthFormatterUnit = (5 << 8) + 2;
+pub const NSLengthFormatterUnitYard: NSLengthFormatterUnit = (5 << 8) + 3;
+pub const NSLengthFormatterUnitMile: NSLengthFormatterUnit = (5 << 8) + 4;
 
 extern_class!(
     #[derive(Debug)]

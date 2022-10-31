@@ -246,40 +246,40 @@ extern_methods!(
     }
 );
 
-pub const NSEnterCharacter: i32 = 3;
-pub const NSBackspaceCharacter: i32 = 8;
-pub const NSTabCharacter: i32 = 9;
-pub const NSNewlineCharacter: i32 = 10;
-pub const NSFormFeedCharacter: i32 = 12;
-pub const NSCarriageReturnCharacter: i32 = 13;
-pub const NSBackTabCharacter: i32 = 25;
-pub const NSDeleteCharacter: i32 = 127;
-pub const NSLineSeparatorCharacter: i32 = 8232;
-pub const NSParagraphSeparatorCharacter: i32 = 8233;
+pub const NSEnterCharacter: i32 = 0x0003;
+pub const NSBackspaceCharacter: i32 = 0x0008;
+pub const NSTabCharacter: i32 = 0x0009;
+pub const NSNewlineCharacter: i32 = 0x000a;
+pub const NSFormFeedCharacter: i32 = 0x000c;
+pub const NSCarriageReturnCharacter: i32 = 0x000d;
+pub const NSBackTabCharacter: i32 = 0x0019;
+pub const NSDeleteCharacter: i32 = 0x007f;
+pub const NSLineSeparatorCharacter: i32 = 0x2028;
+pub const NSParagraphSeparatorCharacter: i32 = 0x2029;
 
 pub type NSTextMovement = NSInteger;
-pub const NSTextMovementReturn: NSTextMovement = 16;
-pub const NSTextMovementTab: NSTextMovement = 17;
-pub const NSTextMovementBacktab: NSTextMovement = 18;
-pub const NSTextMovementLeft: NSTextMovement = 19;
-pub const NSTextMovementRight: NSTextMovement = 20;
-pub const NSTextMovementUp: NSTextMovement = 21;
-pub const NSTextMovementDown: NSTextMovement = 22;
-pub const NSTextMovementCancel: NSTextMovement = 23;
+pub const NSTextMovementReturn: NSTextMovement = 0x10;
+pub const NSTextMovementTab: NSTextMovement = 0x11;
+pub const NSTextMovementBacktab: NSTextMovement = 0x12;
+pub const NSTextMovementLeft: NSTextMovement = 0x13;
+pub const NSTextMovementRight: NSTextMovement = 0x14;
+pub const NSTextMovementUp: NSTextMovement = 0x15;
+pub const NSTextMovementDown: NSTextMovement = 0x16;
+pub const NSTextMovementCancel: NSTextMovement = 0x17;
 pub const NSTextMovementOther: NSTextMovement = 0;
 
 pub const NSIllegalTextMovement: i32 = 0;
-pub const NSReturnTextMovement: i32 = 16;
-pub const NSTabTextMovement: i32 = 17;
-pub const NSBacktabTextMovement: i32 = 18;
-pub const NSLeftTextMovement: i32 = 19;
-pub const NSRightTextMovement: i32 = 20;
-pub const NSUpTextMovement: i32 = 21;
-pub const NSDownTextMovement: i32 = 22;
-pub const NSCancelTextMovement: i32 = 23;
+pub const NSReturnTextMovement: i32 = 0x10;
+pub const NSTabTextMovement: i32 = 0x11;
+pub const NSBacktabTextMovement: i32 = 0x12;
+pub const NSLeftTextMovement: i32 = 0x13;
+pub const NSRightTextMovement: i32 = 0x14;
+pub const NSUpTextMovement: i32 = 0x15;
+pub const NSDownTextMovement: i32 = 0x16;
+pub const NSCancelTextMovement: i32 = 0x17;
 pub const NSOtherTextMovement: i32 = 0;
 
 pub type NSTextDelegate = NSObject;
 
-pub const NSTextWritingDirectionEmbedding: i32 = 0;
-pub const NSTextWritingDirectionOverride: i32 = 2;
+pub const NSTextWritingDirectionEmbedding: i32 = (0 << 1);
+pub const NSTextWritingDirectionOverride: i32 = (1 << 1);

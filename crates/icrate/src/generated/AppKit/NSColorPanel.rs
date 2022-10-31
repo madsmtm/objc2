@@ -17,15 +17,15 @@ pub const NSColorPanelModeWheel: NSColorPanelMode = 6;
 pub const NSColorPanelModeCrayon: NSColorPanelMode = 7;
 
 pub type NSColorPanelOptions = NSUInteger;
-pub const NSColorPanelGrayModeMask: NSColorPanelOptions = 1;
-pub const NSColorPanelRGBModeMask: NSColorPanelOptions = 2;
-pub const NSColorPanelCMYKModeMask: NSColorPanelOptions = 4;
-pub const NSColorPanelHSBModeMask: NSColorPanelOptions = 8;
-pub const NSColorPanelCustomPaletteModeMask: NSColorPanelOptions = 16;
-pub const NSColorPanelColorListModeMask: NSColorPanelOptions = 32;
-pub const NSColorPanelWheelModeMask: NSColorPanelOptions = 64;
-pub const NSColorPanelCrayonModeMask: NSColorPanelOptions = 128;
-pub const NSColorPanelAllModesMask: NSColorPanelOptions = 65535;
+pub const NSColorPanelGrayModeMask: NSColorPanelOptions = 0x00000001;
+pub const NSColorPanelRGBModeMask: NSColorPanelOptions = 0x00000002;
+pub const NSColorPanelCMYKModeMask: NSColorPanelOptions = 0x00000004;
+pub const NSColorPanelHSBModeMask: NSColorPanelOptions = 0x00000008;
+pub const NSColorPanelCustomPaletteModeMask: NSColorPanelOptions = 0x00000010;
+pub const NSColorPanelColorListModeMask: NSColorPanelOptions = 0x00000020;
+pub const NSColorPanelWheelModeMask: NSColorPanelOptions = 0x00000040;
+pub const NSColorPanelCrayonModeMask: NSColorPanelOptions = 0x00000080;
+pub const NSColorPanelAllModesMask: NSColorPanelOptions = 0x0000ffff;
 
 extern_class!(
     #[derive(Debug)]

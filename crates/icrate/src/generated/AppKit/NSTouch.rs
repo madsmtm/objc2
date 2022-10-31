@@ -6,21 +6,22 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSTouchPhase = NSUInteger;
-pub const NSTouchPhaseBegan: NSTouchPhase = 1;
-pub const NSTouchPhaseMoved: NSTouchPhase = 2;
-pub const NSTouchPhaseStationary: NSTouchPhase = 4;
-pub const NSTouchPhaseEnded: NSTouchPhase = 8;
-pub const NSTouchPhaseCancelled: NSTouchPhase = 16;
-pub const NSTouchPhaseTouching: NSTouchPhase = 7;
-pub const NSTouchPhaseAny: NSTouchPhase = -1;
+pub const NSTouchPhaseBegan: NSTouchPhase = 1 << 0;
+pub const NSTouchPhaseMoved: NSTouchPhase = 1 << 1;
+pub const NSTouchPhaseStationary: NSTouchPhase = 1 << 2;
+pub const NSTouchPhaseEnded: NSTouchPhase = 1 << 3;
+pub const NSTouchPhaseCancelled: NSTouchPhase = 1 << 4;
+pub const NSTouchPhaseTouching: NSTouchPhase =
+    NSTouchPhaseBegan | NSTouchPhaseMoved | NSTouchPhaseStationary;
+pub const NSTouchPhaseAny: NSTouchPhase = 18446744073709551615;
 
 pub type NSTouchType = NSInteger;
 pub const NSTouchTypeDirect: NSTouchType = 0;
 pub const NSTouchTypeIndirect: NSTouchType = 1;
 
 pub type NSTouchTypeMask = NSUInteger;
-pub const NSTouchTypeMaskDirect: NSTouchTypeMask = 1;
-pub const NSTouchTypeMaskIndirect: NSTouchTypeMask = 2;
+pub const NSTouchTypeMaskDirect: NSTouchTypeMask = (1 << NSTouchTypeDirect);
+pub const NSTouchTypeMaskIndirect: NSTouchTypeMask = (1 << NSTouchTypeIndirect);
 
 extern_class!(
     #[derive(Debug)]

@@ -8,9 +8,9 @@ use objc2::{extern_class, extern_methods, ClassType};
 pub type NSMassFormatterUnit = NSInteger;
 pub const NSMassFormatterUnitGram: NSMassFormatterUnit = 11;
 pub const NSMassFormatterUnitKilogram: NSMassFormatterUnit = 14;
-pub const NSMassFormatterUnitOunce: NSMassFormatterUnit = 1537;
-pub const NSMassFormatterUnitPound: NSMassFormatterUnit = 1538;
-pub const NSMassFormatterUnitStone: NSMassFormatterUnit = 1539;
+pub const NSMassFormatterUnitOunce: NSMassFormatterUnit = (6 << 8) + 1;
+pub const NSMassFormatterUnitPound: NSMassFormatterUnit = (6 << 8) + 2;
+pub const NSMassFormatterUnitStone: NSMassFormatterUnit = (6 << 8) + 3;
 
 extern_class!(
     #[derive(Debug)]

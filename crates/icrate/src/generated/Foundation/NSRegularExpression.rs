@@ -6,13 +6,13 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSRegularExpressionOptions = NSUInteger;
-pub const NSRegularExpressionCaseInsensitive: NSRegularExpressionOptions = 1;
-pub const NSRegularExpressionAllowCommentsAndWhitespace: NSRegularExpressionOptions = 2;
-pub const NSRegularExpressionIgnoreMetacharacters: NSRegularExpressionOptions = 4;
-pub const NSRegularExpressionDotMatchesLineSeparators: NSRegularExpressionOptions = 8;
-pub const NSRegularExpressionAnchorsMatchLines: NSRegularExpressionOptions = 16;
-pub const NSRegularExpressionUseUnixLineSeparators: NSRegularExpressionOptions = 32;
-pub const NSRegularExpressionUseUnicodeWordBoundaries: NSRegularExpressionOptions = 64;
+pub const NSRegularExpressionCaseInsensitive: NSRegularExpressionOptions = 1 << 0;
+pub const NSRegularExpressionAllowCommentsAndWhitespace: NSRegularExpressionOptions = 1 << 1;
+pub const NSRegularExpressionIgnoreMetacharacters: NSRegularExpressionOptions = 1 << 2;
+pub const NSRegularExpressionDotMatchesLineSeparators: NSRegularExpressionOptions = 1 << 3;
+pub const NSRegularExpressionAnchorsMatchLines: NSRegularExpressionOptions = 1 << 4;
+pub const NSRegularExpressionUseUnixLineSeparators: NSRegularExpressionOptions = 1 << 5;
+pub const NSRegularExpressionUseUnicodeWordBoundaries: NSRegularExpressionOptions = 1 << 6;
 
 extern_class!(
     #[derive(Debug)]
@@ -53,18 +53,18 @@ extern_methods!(
 );
 
 pub type NSMatchingOptions = NSUInteger;
-pub const NSMatchingReportProgress: NSMatchingOptions = 1;
-pub const NSMatchingReportCompletion: NSMatchingOptions = 2;
-pub const NSMatchingAnchored: NSMatchingOptions = 4;
-pub const NSMatchingWithTransparentBounds: NSMatchingOptions = 8;
-pub const NSMatchingWithoutAnchoringBounds: NSMatchingOptions = 16;
+pub const NSMatchingReportProgress: NSMatchingOptions = 1 << 0;
+pub const NSMatchingReportCompletion: NSMatchingOptions = 1 << 1;
+pub const NSMatchingAnchored: NSMatchingOptions = 1 << 2;
+pub const NSMatchingWithTransparentBounds: NSMatchingOptions = 1 << 3;
+pub const NSMatchingWithoutAnchoringBounds: NSMatchingOptions = 1 << 4;
 
 pub type NSMatchingFlags = NSUInteger;
-pub const NSMatchingProgress: NSMatchingFlags = 1;
-pub const NSMatchingCompleted: NSMatchingFlags = 2;
-pub const NSMatchingHitEnd: NSMatchingFlags = 4;
-pub const NSMatchingRequiredEnd: NSMatchingFlags = 8;
-pub const NSMatchingInternalError: NSMatchingFlags = 16;
+pub const NSMatchingProgress: NSMatchingFlags = 1 << 0;
+pub const NSMatchingCompleted: NSMatchingFlags = 1 << 1;
+pub const NSMatchingHitEnd: NSMatchingFlags = 1 << 2;
+pub const NSMatchingRequiredEnd: NSMatchingFlags = 1 << 3;
+pub const NSMatchingInternalError: NSMatchingFlags = 1 << 4;
 
 extern_methods!(
     /// NSMatching

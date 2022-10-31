@@ -583,9 +583,9 @@ extern_methods!(
 
 pub type NSCellHitResult = NSUInteger;
 pub const NSCellHitNone: NSCellHitResult = 0;
-pub const NSCellHitContentArea: NSCellHitResult = 1;
-pub const NSCellHitEditableTextArea: NSCellHitResult = 2;
-pub const NSCellHitTrackableArea: NSCellHitResult = 4;
+pub const NSCellHitContentArea: NSCellHitResult = 1 << 0;
+pub const NSCellHitEditableTextArea: NSCellHitResult = 1 << 1;
+pub const NSCellHitTrackableArea: NSCellHitResult = 1 << 2;
 
 extern_methods!(
     /// NSCellHitTest

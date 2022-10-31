@@ -6,25 +6,26 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSTextCheckingType = u64;
-pub const NSTextCheckingTypeOrthography: NSTextCheckingType = 1;
-pub const NSTextCheckingTypeSpelling: NSTextCheckingType = 2;
-pub const NSTextCheckingTypeGrammar: NSTextCheckingType = 4;
-pub const NSTextCheckingTypeDate: NSTextCheckingType = 8;
-pub const NSTextCheckingTypeAddress: NSTextCheckingType = 16;
-pub const NSTextCheckingTypeLink: NSTextCheckingType = 32;
-pub const NSTextCheckingTypeQuote: NSTextCheckingType = 64;
-pub const NSTextCheckingTypeDash: NSTextCheckingType = 128;
-pub const NSTextCheckingTypeReplacement: NSTextCheckingType = 256;
-pub const NSTextCheckingTypeCorrection: NSTextCheckingType = 512;
-pub const NSTextCheckingTypeRegularExpression: NSTextCheckingType = 1024;
-pub const NSTextCheckingTypePhoneNumber: NSTextCheckingType = 2048;
-pub const NSTextCheckingTypeTransitInformation: NSTextCheckingType = 4096;
+pub const NSTextCheckingTypeOrthography: NSTextCheckingType = 1 << 0;
+pub const NSTextCheckingTypeSpelling: NSTextCheckingType = 1 << 1;
+pub const NSTextCheckingTypeGrammar: NSTextCheckingType = 1 << 2;
+pub const NSTextCheckingTypeDate: NSTextCheckingType = 1 << 3;
+pub const NSTextCheckingTypeAddress: NSTextCheckingType = 1 << 4;
+pub const NSTextCheckingTypeLink: NSTextCheckingType = 1 << 5;
+pub const NSTextCheckingTypeQuote: NSTextCheckingType = 1 << 6;
+pub const NSTextCheckingTypeDash: NSTextCheckingType = 1 << 7;
+pub const NSTextCheckingTypeReplacement: NSTextCheckingType = 1 << 8;
+pub const NSTextCheckingTypeCorrection: NSTextCheckingType = 1 << 9;
+pub const NSTextCheckingTypeRegularExpression: NSTextCheckingType = 1 << 10;
+pub const NSTextCheckingTypePhoneNumber: NSTextCheckingType = 1 << 11;
+pub const NSTextCheckingTypeTransitInformation: NSTextCheckingType = 1 << 12;
 
 pub type NSTextCheckingTypes = u64;
 
-pub const NSTextCheckingAllSystemTypes: i32 = 4294967295;
-pub const NSTextCheckingAllCustomTypes: i32 = -4294967296;
-pub const NSTextCheckingAllTypes: i32 = -1;
+pub const NSTextCheckingAllSystemTypes: i32 = 0xffffffff;
+pub const NSTextCheckingAllCustomTypes: i32 = 0xffffffff << 32;
+pub const NSTextCheckingAllTypes: i32 =
+    (NSTextCheckingAllSystemTypes | NSTextCheckingAllCustomTypes);
 
 pub type NSTextCheckingKey = NSString;
 

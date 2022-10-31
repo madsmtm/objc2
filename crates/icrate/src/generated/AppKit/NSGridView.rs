@@ -9,9 +9,9 @@ pub type NSGridCellPlacement = NSInteger;
 pub const NSGridCellPlacementInherited: NSGridCellPlacement = 0;
 pub const NSGridCellPlacementNone: NSGridCellPlacement = 1;
 pub const NSGridCellPlacementLeading: NSGridCellPlacement = 2;
-pub const NSGridCellPlacementTop: NSGridCellPlacement = 2;
+pub const NSGridCellPlacementTop: NSGridCellPlacement = NSGridCellPlacementLeading;
 pub const NSGridCellPlacementTrailing: NSGridCellPlacement = 3;
-pub const NSGridCellPlacementBottom: NSGridCellPlacement = 3;
+pub const NSGridCellPlacementBottom: NSGridCellPlacement = NSGridCellPlacementTrailing;
 pub const NSGridCellPlacementCenter: NSGridCellPlacement = 4;
 pub const NSGridCellPlacementFill: NSGridCellPlacement = 5;
 

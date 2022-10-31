@@ -8,7 +8,7 @@ use objc2::{extern_class, extern_methods, ClassType};
 pub type NSTextListMarkerFormat = NSString;
 
 pub type NSTextListOptions = NSUInteger;
-pub const NSTextListPrependEnclosingMarker: NSTextListOptions = 1;
+pub const NSTextListPrependEnclosingMarker: NSTextListOptions = (1 << 0);
 
 extern_class!(
     #[derive(Debug)]

@@ -17,8 +17,8 @@ pub const NSNetServicesTimeoutError: NSNetServicesError = -72007;
 pub const NSNetServicesMissingRequiredConfigurationError: NSNetServicesError = -72008;
 
 pub type NSNetServiceOptions = NSUInteger;
-pub const NSNetServiceNoAutoRename: NSNetServiceOptions = 1;
-pub const NSNetServiceListenForConnections: NSNetServiceOptions = 2;
+pub const NSNetServiceNoAutoRename: NSNetServiceOptions = 1 << 0;
+pub const NSNetServiceListenForConnections: NSNetServiceOptions = 1 << 1;
 
 extern_class!(
     #[derive(Debug)]

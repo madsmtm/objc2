@@ -8,8 +8,8 @@ use objc2::{extern_class, extern_methods, ClassType};
 pub type NSTickMarkPosition = NSUInteger;
 pub const NSTickMarkPositionBelow: NSTickMarkPosition = 0;
 pub const NSTickMarkPositionAbove: NSTickMarkPosition = 1;
-pub const NSTickMarkPositionLeading: NSTickMarkPosition = 1;
-pub const NSTickMarkPositionTrailing: NSTickMarkPosition = 0;
+pub const NSTickMarkPositionLeading: NSTickMarkPosition = NSTickMarkPositionAbove;
+pub const NSTickMarkPositionTrailing: NSTickMarkPosition = NSTickMarkPositionBelow;
 
 pub type NSSliderType = NSUInteger;
 pub const NSSliderTypeLinear: NSSliderType = 0;

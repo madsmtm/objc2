@@ -16,11 +16,11 @@ pub const NSLinguisticTaggerUnitParagraph: NSLinguisticTaggerUnit = 2;
 pub const NSLinguisticTaggerUnitDocument: NSLinguisticTaggerUnit = 3;
 
 pub type NSLinguisticTaggerOptions = NSUInteger;
-pub const NSLinguisticTaggerOmitWords: NSLinguisticTaggerOptions = 1;
-pub const NSLinguisticTaggerOmitPunctuation: NSLinguisticTaggerOptions = 2;
-pub const NSLinguisticTaggerOmitWhitespace: NSLinguisticTaggerOptions = 4;
-pub const NSLinguisticTaggerOmitOther: NSLinguisticTaggerOptions = 8;
-pub const NSLinguisticTaggerJoinNames: NSLinguisticTaggerOptions = 16;
+pub const NSLinguisticTaggerOmitWords: NSLinguisticTaggerOptions = 1 << 0;
+pub const NSLinguisticTaggerOmitPunctuation: NSLinguisticTaggerOptions = 1 << 1;
+pub const NSLinguisticTaggerOmitWhitespace: NSLinguisticTaggerOptions = 1 << 2;
+pub const NSLinguisticTaggerOmitOther: NSLinguisticTaggerOptions = 1 << 3;
+pub const NSLinguisticTaggerJoinNames: NSLinguisticTaggerOptions = 1 << 4;
 
 extern_class!(
     #[derive(Debug)]

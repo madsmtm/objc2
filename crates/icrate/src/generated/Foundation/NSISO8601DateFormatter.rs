@@ -6,20 +6,30 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSISO8601DateFormatOptions = NSUInteger;
-pub const NSISO8601DateFormatWithYear: NSISO8601DateFormatOptions = 1;
-pub const NSISO8601DateFormatWithMonth: NSISO8601DateFormatOptions = 2;
-pub const NSISO8601DateFormatWithWeekOfYear: NSISO8601DateFormatOptions = 4;
-pub const NSISO8601DateFormatWithDay: NSISO8601DateFormatOptions = 16;
-pub const NSISO8601DateFormatWithTime: NSISO8601DateFormatOptions = 32;
-pub const NSISO8601DateFormatWithTimeZone: NSISO8601DateFormatOptions = 64;
-pub const NSISO8601DateFormatWithSpaceBetweenDateAndTime: NSISO8601DateFormatOptions = 128;
-pub const NSISO8601DateFormatWithDashSeparatorInDate: NSISO8601DateFormatOptions = 256;
-pub const NSISO8601DateFormatWithColonSeparatorInTime: NSISO8601DateFormatOptions = 512;
-pub const NSISO8601DateFormatWithColonSeparatorInTimeZone: NSISO8601DateFormatOptions = 1024;
-pub const NSISO8601DateFormatWithFractionalSeconds: NSISO8601DateFormatOptions = 2048;
-pub const NSISO8601DateFormatWithFullDate: NSISO8601DateFormatOptions = 275;
-pub const NSISO8601DateFormatWithFullTime: NSISO8601DateFormatOptions = 1632;
-pub const NSISO8601DateFormatWithInternetDateTime: NSISO8601DateFormatOptions = 1907;
+pub const NSISO8601DateFormatWithYear: NSISO8601DateFormatOptions = kCFISO8601DateFormatWithYear;
+pub const NSISO8601DateFormatWithMonth: NSISO8601DateFormatOptions = kCFISO8601DateFormatWithMonth;
+pub const NSISO8601DateFormatWithWeekOfYear: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithWeekOfYear;
+pub const NSISO8601DateFormatWithDay: NSISO8601DateFormatOptions = kCFISO8601DateFormatWithDay;
+pub const NSISO8601DateFormatWithTime: NSISO8601DateFormatOptions = kCFISO8601DateFormatWithTime;
+pub const NSISO8601DateFormatWithTimeZone: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithTimeZone;
+pub const NSISO8601DateFormatWithSpaceBetweenDateAndTime: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithSpaceBetweenDateAndTime;
+pub const NSISO8601DateFormatWithDashSeparatorInDate: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithDashSeparatorInDate;
+pub const NSISO8601DateFormatWithColonSeparatorInTime: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithColonSeparatorInTime;
+pub const NSISO8601DateFormatWithColonSeparatorInTimeZone: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithColonSeparatorInTimeZone;
+pub const NSISO8601DateFormatWithFractionalSeconds: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithFractionalSeconds;
+pub const NSISO8601DateFormatWithFullDate: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithFullDate;
+pub const NSISO8601DateFormatWithFullTime: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithFullTime;
+pub const NSISO8601DateFormatWithInternetDateTime: NSISO8601DateFormatOptions =
+    kCFISO8601DateFormatWithInternetDateTime;
 
 extern_class!(
     #[derive(Debug)]

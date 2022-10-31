@@ -1,24 +1,37 @@
-use std::collections::HashMap;
 use std::fmt;
-use std::num::Wrapping;
+use std::fmt::Write;
 
-use cexpr::expr::EvalResult;
-use clang::token::{Token, TokenKind};
+use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum Expr {
-    Parsed(EvalResult),
-    DeclRef(String),
-    Todo,
+pub struct Expr {
+    s: String,
 }
 
-pub type Identifiers = HashMap<Vec<u8>, EvalResult>;
-
 impl Expr {
-    pub fn parse(entity: &Entity<'_>, identifiers: &Identifiers) -> Option<Self> {
+    pub fn from_val((signed, unsigned): (i64, u64), is_signed: bool) -> Self {
+        let s = if is_signed {
+            format!("{}", signed)
+        } else {
+            format!("{}", unsigned)
+        };
+        Expr { s }
+    }
+
+    pub fn parse_enum_constant(entity: &Entity<'_>) -> Option<Self> {
+        let mut declaration_references = Vec::new();
+
+        entity.visit_children(|entity, _parent| {
+            if let EntityKind::DeclRefExpr = entity.get_kind() {
+                let name = entity.get_name().expect("expr decl ref name");
+                declaration_references.push(name);
+            }
+            EntityVisitResult::Recurse
+        });
+
         let mut res = None;
 
         entity.visit_children(|entity, _parent| {
@@ -28,77 +41,69 @@ impl Expr {
                         panic!("parsed macro in expr: {macro_:?}, {entity:?}");
                     }
                 }
-                EntityKind::UnexposedExpr => {
-                    return EntityVisitResult::Recurse;
-                }
-                EntityKind::UnaryOperator
-                | EntityKind::IntegerLiteral
-                | EntityKind::ParenExpr
-                | EntityKind::BinaryOperator => {
-                    if res.is_some() {
-                        panic!("found multiple matching children in expr");
-                    }
-                    let range = entity.get_range().expect("expr range");
-                    let tokens = range.tokenize();
-                    let tokens: Vec<_> = tokens.into_iter().filter_map(as_cexpr_token).collect();
-                    let parser = cexpr::expr::IdentifierParser::new(identifiers);
-                    match parser.expr(&tokens) {
-                        Ok((remaining_tokens, evaluated)) if remaining_tokens.is_empty() => {
-                            res = Some(Self::Parsed(evaluated));
-                        }
-                        _ => res = Some(Self::Todo),
+                _ => {
+                    if res.is_none() {
+                        res = Self::parse(&entity, &declaration_references);
+                    } else {
+                        panic!("found multiple expressions where one was expected");
                     }
                 }
-                EntityKind::DeclRefExpr => {
-                    if res.is_some() {
-                        panic!("found multiple matching children in expr");
-                    }
-                    let name = entity.get_name().expect("expr decl ref");
-                    res = Some(Self::DeclRef(name));
-                }
-                kind => panic!("unknown expr kind {kind:?}"),
             }
             EntityVisitResult::Continue
         });
 
         res
     }
+
+    pub fn parse(entity: &Entity<'_>, declaration_references: &[String]) -> Option<Self> {
+        let range = entity.get_range().expect("expr range");
+        let tokens = range.tokenize();
+
+        if tokens.is_empty() {
+            // TODO: Find a better way to parse macros
+            return None;
+        }
+
+        let mut s = String::new();
+
+        for token in &tokens {
+            match (token.get_kind(), token.get_spelling()) {
+                (TokenKind::Identifier, ident) => {
+                    if declaration_references.contains(&ident) {
+                        // TODO: Handle these specially when we need to
+                    }
+                    write!(s, "{}", ident).unwrap();
+                }
+                (TokenKind::Literal, lit) => {
+                    let lit = lit
+                        .trim_end_matches("UL")
+                        .trim_end_matches("L")
+                        .trim_end_matches("u")
+                        .trim_end_matches("U");
+                    let lit = lit.replace("0X", "0x");
+                    write!(s, "{}", lit).unwrap();
+                }
+                (TokenKind::Punctuation, punct) => {
+                    match &*punct {
+                        // These have the same semantics in C and Rust
+                        "(" | ")" | "<<" | "-" | "+" | "|" | "&" | "^" => {
+                            write!(s, "{}", punct).unwrap()
+                        }
+                        // Bitwise not
+                        "~" => write!(s, "!").unwrap(),
+                        punct => panic!("unknown expr punctuation {punct}"),
+                    }
+                }
+                (kind, spelling) => panic!("unknown expr token {kind:?}/{spelling}"),
+            }
+        }
+
+        Some(Self { s })
+    }
 }
 
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Parsed(evaluated) => match evaluated {
-                EvalResult::Int(Wrapping(n)) => write!(f, "{n}"),
-                EvalResult::Float(n) => write!(f, "{n}"),
-                rest => panic!("invalid expr eval result {rest:?}"),
-            },
-            Self::DeclRef(s) => write!(f, "Self::{}", s),
-            Self::Todo => write!(f, "todo"),
-        }
+        write!(f, "{}", self.s)
     }
-}
-
-/// Converts a clang::Token to a `cexpr` token if possible.
-///
-/// Taken from `bindgen`.
-pub fn as_cexpr_token(t: Token<'_>) -> Option<cexpr::token::Token> {
-    use cexpr::token;
-
-    let kind = match t.get_kind() {
-        TokenKind::Punctuation => token::Kind::Punctuation,
-        TokenKind::Literal => token::Kind::Literal,
-        TokenKind::Identifier => token::Kind::Identifier,
-        TokenKind::Keyword => token::Kind::Keyword,
-        // NB: cexpr is not too happy about comments inside
-        // expressions, so we strip them down here.
-        TokenKind::Comment => return None,
-    };
-
-    let spelling: Vec<u8> = t.get_spelling().into();
-
-    Some(token::Token {
-        kind,
-        raw: spelling.into_boxed_slice(),
-    })
 }

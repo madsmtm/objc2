@@ -6,9 +6,9 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSMediaLibrary = NSUInteger;
-pub const NSMediaLibraryAudio: NSMediaLibrary = 1;
-pub const NSMediaLibraryImage: NSMediaLibrary = 2;
-pub const NSMediaLibraryMovie: NSMediaLibrary = 4;
+pub const NSMediaLibraryAudio: NSMediaLibrary = 1 << 0;
+pub const NSMediaLibraryImage: NSMediaLibrary = 1 << 1;
+pub const NSMediaLibraryMovie: NSMediaLibrary = 1 << 2;
 
 extern_class!(
     #[derive(Debug)]

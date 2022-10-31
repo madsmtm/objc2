@@ -6,21 +6,21 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSFontTraitMask = NSUInteger;
-pub const NSItalicFontMask: NSFontTraitMask = 1;
-pub const NSBoldFontMask: NSFontTraitMask = 2;
-pub const NSUnboldFontMask: NSFontTraitMask = 4;
-pub const NSNonStandardCharacterSetFontMask: NSFontTraitMask = 8;
-pub const NSNarrowFontMask: NSFontTraitMask = 16;
-pub const NSExpandedFontMask: NSFontTraitMask = 32;
-pub const NSCondensedFontMask: NSFontTraitMask = 64;
-pub const NSSmallCapsFontMask: NSFontTraitMask = 128;
-pub const NSPosterFontMask: NSFontTraitMask = 256;
-pub const NSCompressedFontMask: NSFontTraitMask = 512;
-pub const NSFixedPitchFontMask: NSFontTraitMask = 1024;
-pub const NSUnitalicFontMask: NSFontTraitMask = 16777216;
+pub const NSItalicFontMask: NSFontTraitMask = 0x00000001;
+pub const NSBoldFontMask: NSFontTraitMask = 0x00000002;
+pub const NSUnboldFontMask: NSFontTraitMask = 0x00000004;
+pub const NSNonStandardCharacterSetFontMask: NSFontTraitMask = 0x00000008;
+pub const NSNarrowFontMask: NSFontTraitMask = 0x00000010;
+pub const NSExpandedFontMask: NSFontTraitMask = 0x00000020;
+pub const NSCondensedFontMask: NSFontTraitMask = 0x00000040;
+pub const NSSmallCapsFontMask: NSFontTraitMask = 0x00000080;
+pub const NSPosterFontMask: NSFontTraitMask = 0x00000100;
+pub const NSCompressedFontMask: NSFontTraitMask = 0x00000200;
+pub const NSFixedPitchFontMask: NSFontTraitMask = 0x00000400;
+pub const NSUnitalicFontMask: NSFontTraitMask = 0x01000000;
 
 pub type NSFontCollectionOptions = NSUInteger;
-pub const NSFontCollectionApplicationOnlyMask: NSFontCollectionOptions = 1;
+pub const NSFontCollectionApplicationOnlyMask: NSFontCollectionOptions = 1 << 0;
 
 pub type NSFontAction = NSUInteger;
 pub const NSNoFontChangeAction: NSFontAction = 0;

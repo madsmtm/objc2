@@ -6,7 +6,7 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSFontAssetRequestOptions = NSUInteger;
-pub const NSFontAssetRequestOptionUsesStandardUI: NSFontAssetRequestOptions = 1;
+pub const NSFontAssetRequestOptionUsesStandardUI: NSFontAssetRequestOptions = 1 << 0;
 
 extern_class!(
     #[derive(Debug)]

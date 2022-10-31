@@ -6,14 +6,14 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSPrintPanelOptions = NSUInteger;
-pub const NSPrintPanelShowsCopies: NSPrintPanelOptions = 1;
-pub const NSPrintPanelShowsPageRange: NSPrintPanelOptions = 2;
-pub const NSPrintPanelShowsPaperSize: NSPrintPanelOptions = 4;
-pub const NSPrintPanelShowsOrientation: NSPrintPanelOptions = 8;
-pub const NSPrintPanelShowsScaling: NSPrintPanelOptions = 16;
-pub const NSPrintPanelShowsPrintSelection: NSPrintPanelOptions = 32;
-pub const NSPrintPanelShowsPageSetupAccessory: NSPrintPanelOptions = 256;
-pub const NSPrintPanelShowsPreview: NSPrintPanelOptions = 131072;
+pub const NSPrintPanelShowsCopies: NSPrintPanelOptions = 1 << 0;
+pub const NSPrintPanelShowsPageRange: NSPrintPanelOptions = 1 << 1;
+pub const NSPrintPanelShowsPaperSize: NSPrintPanelOptions = 1 << 2;
+pub const NSPrintPanelShowsOrientation: NSPrintPanelOptions = 1 << 3;
+pub const NSPrintPanelShowsScaling: NSPrintPanelOptions = 1 << 4;
+pub const NSPrintPanelShowsPrintSelection: NSPrintPanelOptions = 1 << 5;
+pub const NSPrintPanelShowsPageSetupAccessory: NSPrintPanelOptions = 1 << 8;
+pub const NSPrintPanelShowsPreview: NSPrintPanelOptions = 1 << 17;
 
 pub type NSPrintPanelJobStyleHint = NSString;
 

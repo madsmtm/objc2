@@ -20,9 +20,9 @@ pub const NSTableViewFirstColumnOnlyAutoresizingStyle: NSTableViewColumnAutoresi
 
 pub type NSTableViewGridLineStyle = NSUInteger;
 pub const NSTableViewGridNone: NSTableViewGridLineStyle = 0;
-pub const NSTableViewSolidVerticalGridLineMask: NSTableViewGridLineStyle = 1;
-pub const NSTableViewSolidHorizontalGridLineMask: NSTableViewGridLineStyle = 2;
-pub const NSTableViewDashedHorizontalGridLineMask: NSTableViewGridLineStyle = 8;
+pub const NSTableViewSolidVerticalGridLineMask: NSTableViewGridLineStyle = 1 << 0;
+pub const NSTableViewSolidHorizontalGridLineMask: NSTableViewGridLineStyle = 1 << 1;
+pub const NSTableViewDashedHorizontalGridLineMask: NSTableViewGridLineStyle = 1 << 3;
 
 pub type NSTableViewRowSizeStyle = NSInteger;
 pub const NSTableViewRowSizeStyleDefault: NSTableViewRowSizeStyle = -1;
@@ -60,13 +60,13 @@ pub const NSTableRowActionEdgeTrailing: NSTableRowActionEdge = 1;
 pub type NSTableViewAutosaveName = NSString;
 
 pub type NSTableViewAnimationOptions = NSUInteger;
-pub const NSTableViewAnimationEffectNone: NSTableViewAnimationOptions = 0;
-pub const NSTableViewAnimationEffectFade: NSTableViewAnimationOptions = 1;
-pub const NSTableViewAnimationEffectGap: NSTableViewAnimationOptions = 2;
-pub const NSTableViewAnimationSlideUp: NSTableViewAnimationOptions = 16;
-pub const NSTableViewAnimationSlideDown: NSTableViewAnimationOptions = 32;
-pub const NSTableViewAnimationSlideLeft: NSTableViewAnimationOptions = 48;
-pub const NSTableViewAnimationSlideRight: NSTableViewAnimationOptions = 64;
+pub const NSTableViewAnimationEffectNone: NSTableViewAnimationOptions = 0x0;
+pub const NSTableViewAnimationEffectFade: NSTableViewAnimationOptions = 0x1;
+pub const NSTableViewAnimationEffectGap: NSTableViewAnimationOptions = 0x2;
+pub const NSTableViewAnimationSlideUp: NSTableViewAnimationOptions = 0x10;
+pub const NSTableViewAnimationSlideDown: NSTableViewAnimationOptions = 0x20;
+pub const NSTableViewAnimationSlideLeft: NSTableViewAnimationOptions = 0x30;
+pub const NSTableViewAnimationSlideRight: NSTableViewAnimationOptions = 0x40;
 
 extern_class!(
     #[derive(Debug)]

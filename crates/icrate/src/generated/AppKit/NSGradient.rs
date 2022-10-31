@@ -6,8 +6,8 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSGradientDrawingOptions = NSUInteger;
-pub const NSGradientDrawsBeforeStartingLocation: NSGradientDrawingOptions = 1;
-pub const NSGradientDrawsAfterEndingLocation: NSGradientDrawingOptions = 2;
+pub const NSGradientDrawsBeforeStartingLocation: NSGradientDrawingOptions = (1 << 0);
+pub const NSGradientDrawsAfterEndingLocation: NSGradientDrawingOptions = (1 << 1);
 
 extern_class!(
     #[derive(Debug)]

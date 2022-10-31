@@ -15,9 +15,9 @@ pub const NSLineBreakByTruncatingMiddle: NSLineBreakMode = 5;
 
 pub type NSLineBreakStrategy = NSUInteger;
 pub const NSLineBreakStrategyNone: NSLineBreakStrategy = 0;
-pub const NSLineBreakStrategyPushOut: NSLineBreakStrategy = 1;
-pub const NSLineBreakStrategyHangulWordPriority: NSLineBreakStrategy = 2;
-pub const NSLineBreakStrategyStandard: NSLineBreakStrategy = 65535;
+pub const NSLineBreakStrategyPushOut: NSLineBreakStrategy = 1 << 0;
+pub const NSLineBreakStrategyHangulWordPriority: NSLineBreakStrategy = 1 << 1;
+pub const NSLineBreakStrategyStandard: NSLineBreakStrategy = 0xFFFF;
 
 pub type NSTextTabOptionKey = NSString;
 

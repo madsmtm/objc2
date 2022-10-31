@@ -11,28 +11,30 @@ pub const NSUpdateWindowsRunLoopOrdering: i32 = 500000;
 
 pub type NSApplicationPresentationOptions = NSUInteger;
 pub const NSApplicationPresentationDefault: NSApplicationPresentationOptions = 0;
-pub const NSApplicationPresentationAutoHideDock: NSApplicationPresentationOptions = 1;
-pub const NSApplicationPresentationHideDock: NSApplicationPresentationOptions = 2;
-pub const NSApplicationPresentationAutoHideMenuBar: NSApplicationPresentationOptions = 4;
-pub const NSApplicationPresentationHideMenuBar: NSApplicationPresentationOptions = 8;
-pub const NSApplicationPresentationDisableAppleMenu: NSApplicationPresentationOptions = 16;
-pub const NSApplicationPresentationDisableProcessSwitching: NSApplicationPresentationOptions = 32;
-pub const NSApplicationPresentationDisableForceQuit: NSApplicationPresentationOptions = 64;
+pub const NSApplicationPresentationAutoHideDock: NSApplicationPresentationOptions = (1 << 0);
+pub const NSApplicationPresentationHideDock: NSApplicationPresentationOptions = (1 << 1);
+pub const NSApplicationPresentationAutoHideMenuBar: NSApplicationPresentationOptions = (1 << 2);
+pub const NSApplicationPresentationHideMenuBar: NSApplicationPresentationOptions = (1 << 3);
+pub const NSApplicationPresentationDisableAppleMenu: NSApplicationPresentationOptions = (1 << 4);
+pub const NSApplicationPresentationDisableProcessSwitching: NSApplicationPresentationOptions =
+    (1 << 5);
+pub const NSApplicationPresentationDisableForceQuit: NSApplicationPresentationOptions = (1 << 6);
 pub const NSApplicationPresentationDisableSessionTermination: NSApplicationPresentationOptions =
-    128;
-pub const NSApplicationPresentationDisableHideApplication: NSApplicationPresentationOptions = 256;
+    (1 << 7);
+pub const NSApplicationPresentationDisableHideApplication: NSApplicationPresentationOptions =
+    (1 << 8);
 pub const NSApplicationPresentationDisableMenuBarTransparency: NSApplicationPresentationOptions =
-    512;
-pub const NSApplicationPresentationFullScreen: NSApplicationPresentationOptions = 1024;
-pub const NSApplicationPresentationAutoHideToolbar: NSApplicationPresentationOptions = 2048;
+    (1 << 9);
+pub const NSApplicationPresentationFullScreen: NSApplicationPresentationOptions = (1 << 10);
+pub const NSApplicationPresentationAutoHideToolbar: NSApplicationPresentationOptions = (1 << 11);
 pub const NSApplicationPresentationDisableCursorLocationAssistance:
-    NSApplicationPresentationOptions = 4096;
+    NSApplicationPresentationOptions = (1 << 12);
 
 pub type NSApplicationOcclusionState = NSUInteger;
-pub const NSApplicationOcclusionStateVisible: NSApplicationOcclusionState = 2;
+pub const NSApplicationOcclusionStateVisible: NSApplicationOcclusionState = 1 << 1;
 
 pub type NSWindowListOptions = NSInteger;
-pub const NSWindowListOrderedFrontToBack: NSWindowListOptions = 1;
+pub const NSWindowListOrderedFrontToBack: NSWindowListOptions = (1 << 0);
 
 pub type NSRequestUserAttentionType = NSUInteger;
 pub const NSCriticalRequest: NSRequestUserAttentionType = 0;
@@ -444,9 +446,9 @@ extern_methods!(
 
 pub type NSRemoteNotificationType = NSUInteger;
 pub const NSRemoteNotificationTypeNone: NSRemoteNotificationType = 0;
-pub const NSRemoteNotificationTypeBadge: NSRemoteNotificationType = 1;
-pub const NSRemoteNotificationTypeSound: NSRemoteNotificationType = 2;
-pub const NSRemoteNotificationTypeAlert: NSRemoteNotificationType = 4;
+pub const NSRemoteNotificationTypeBadge: NSRemoteNotificationType = 1 << 0;
+pub const NSRemoteNotificationTypeSound: NSRemoteNotificationType = 1 << 1;
+pub const NSRemoteNotificationTypeAlert: NSRemoteNotificationType = 1 << 2;
 
 extern_methods!(
     /// NSRemoteNotifications
@@ -470,9 +472,9 @@ extern_methods!(
 
 pub type NSServiceProviderName = NSString;
 
-pub const NSRunStoppedResponse: i32 = -1000;
-pub const NSRunAbortedResponse: i32 = -1001;
-pub const NSRunContinuesResponse: i32 = -1002;
+pub const NSRunStoppedResponse: i32 = (-1000);
+pub const NSRunAbortedResponse: i32 = (-1001);
+pub const NSRunContinuesResponse: i32 = (-1002);
 
 extern_methods!(
     /// NSDeprecated

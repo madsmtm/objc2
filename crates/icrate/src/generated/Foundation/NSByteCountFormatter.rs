@@ -7,16 +7,16 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSByteCountFormatterUnits = NSUInteger;
 pub const NSByteCountFormatterUseDefault: NSByteCountFormatterUnits = 0;
-pub const NSByteCountFormatterUseBytes: NSByteCountFormatterUnits = 1;
-pub const NSByteCountFormatterUseKB: NSByteCountFormatterUnits = 2;
-pub const NSByteCountFormatterUseMB: NSByteCountFormatterUnits = 4;
-pub const NSByteCountFormatterUseGB: NSByteCountFormatterUnits = 8;
-pub const NSByteCountFormatterUseTB: NSByteCountFormatterUnits = 16;
-pub const NSByteCountFormatterUsePB: NSByteCountFormatterUnits = 32;
-pub const NSByteCountFormatterUseEB: NSByteCountFormatterUnits = 64;
-pub const NSByteCountFormatterUseZB: NSByteCountFormatterUnits = 128;
-pub const NSByteCountFormatterUseYBOrHigher: NSByteCountFormatterUnits = 65280;
-pub const NSByteCountFormatterUseAll: NSByteCountFormatterUnits = 65535;
+pub const NSByteCountFormatterUseBytes: NSByteCountFormatterUnits = 1 << 0;
+pub const NSByteCountFormatterUseKB: NSByteCountFormatterUnits = 1 << 1;
+pub const NSByteCountFormatterUseMB: NSByteCountFormatterUnits = 1 << 2;
+pub const NSByteCountFormatterUseGB: NSByteCountFormatterUnits = 1 << 3;
+pub const NSByteCountFormatterUseTB: NSByteCountFormatterUnits = 1 << 4;
+pub const NSByteCountFormatterUsePB: NSByteCountFormatterUnits = 1 << 5;
+pub const NSByteCountFormatterUseEB: NSByteCountFormatterUnits = 1 << 6;
+pub const NSByteCountFormatterUseZB: NSByteCountFormatterUnits = 1 << 7;
+pub const NSByteCountFormatterUseYBOrHigher: NSByteCountFormatterUnits = 0x0FF << 8;
+pub const NSByteCountFormatterUseAll: NSByteCountFormatterUnits = 0x0FFFF;
 
 pub type NSByteCountFormatterCountStyle = NSInteger;
 pub const NSByteCountFormatterCountStyleFile: NSByteCountFormatterCountStyle = 0;

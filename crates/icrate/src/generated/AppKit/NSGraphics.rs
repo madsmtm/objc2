@@ -66,9 +66,9 @@ pub const NSColorRenderingIntentSaturation: NSColorRenderingIntent = 4;
 pub type NSColorSpaceName = NSString;
 
 pub type NSWindowDepth = i32;
-pub const NSWindowDepthTwentyfourBitRGB: NSWindowDepth = 520;
-pub const NSWindowDepthSixtyfourBitRGB: NSWindowDepth = 528;
-pub const NSWindowDepthOnehundredtwentyeightBitRGB: NSWindowDepth = 544;
+pub const NSWindowDepthTwentyfourBitRGB: NSWindowDepth = 0x208;
+pub const NSWindowDepthSixtyfourBitRGB: NSWindowDepth = 0x210;
+pub const NSWindowDepthOnehundredtwentyeightBitRGB: NSWindowDepth = 0x220;
 
 pub type NSDisplayGamut = NSInteger;
 pub const NSDisplayGamutSRGB: NSDisplayGamut = 1;

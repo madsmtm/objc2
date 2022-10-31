@@ -7,18 +7,18 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSWindowStyleMask = NSUInteger;
 pub const NSWindowStyleMaskBorderless: NSWindowStyleMask = 0;
-pub const NSWindowStyleMaskTitled: NSWindowStyleMask = 1;
-pub const NSWindowStyleMaskClosable: NSWindowStyleMask = 2;
-pub const NSWindowStyleMaskMiniaturizable: NSWindowStyleMask = 4;
-pub const NSWindowStyleMaskResizable: NSWindowStyleMask = 8;
-pub const NSWindowStyleMaskTexturedBackground: NSWindowStyleMask = 256;
-pub const NSWindowStyleMaskUnifiedTitleAndToolbar: NSWindowStyleMask = 4096;
-pub const NSWindowStyleMaskFullScreen: NSWindowStyleMask = 16384;
-pub const NSWindowStyleMaskFullSizeContentView: NSWindowStyleMask = 32768;
-pub const NSWindowStyleMaskUtilityWindow: NSWindowStyleMask = 16;
-pub const NSWindowStyleMaskDocModalWindow: NSWindowStyleMask = 64;
-pub const NSWindowStyleMaskNonactivatingPanel: NSWindowStyleMask = 128;
-pub const NSWindowStyleMaskHUDWindow: NSWindowStyleMask = 8192;
+pub const NSWindowStyleMaskTitled: NSWindowStyleMask = 1 << 0;
+pub const NSWindowStyleMaskClosable: NSWindowStyleMask = 1 << 1;
+pub const NSWindowStyleMaskMiniaturizable: NSWindowStyleMask = 1 << 2;
+pub const NSWindowStyleMaskResizable: NSWindowStyleMask = 1 << 3;
+pub const NSWindowStyleMaskTexturedBackground: NSWindowStyleMask = 1 << 8;
+pub const NSWindowStyleMaskUnifiedTitleAndToolbar: NSWindowStyleMask = 1 << 12;
+pub const NSWindowStyleMaskFullScreen: NSWindowStyleMask = 1 << 14;
+pub const NSWindowStyleMaskFullSizeContentView: NSWindowStyleMask = 1 << 15;
+pub const NSWindowStyleMaskUtilityWindow: NSWindowStyleMask = 1 << 4;
+pub const NSWindowStyleMaskDocModalWindow: NSWindowStyleMask = 1 << 6;
+pub const NSWindowStyleMaskNonactivatingPanel: NSWindowStyleMask = 1 << 7;
+pub const NSWindowStyleMaskHUDWindow: NSWindowStyleMask = 1 << 13;
 
 pub const NSDisplayWindowRunLoopOrdering: i32 = 600000;
 pub const NSResetCursorRectsRunLoopOrdering: i32 = 700000;
@@ -30,18 +30,18 @@ pub const NSWindowSharingReadWrite: NSWindowSharingType = 2;
 
 pub type NSWindowCollectionBehavior = NSUInteger;
 pub const NSWindowCollectionBehaviorDefault: NSWindowCollectionBehavior = 0;
-pub const NSWindowCollectionBehaviorCanJoinAllSpaces: NSWindowCollectionBehavior = 1;
-pub const NSWindowCollectionBehaviorMoveToActiveSpace: NSWindowCollectionBehavior = 2;
-pub const NSWindowCollectionBehaviorManaged: NSWindowCollectionBehavior = 4;
-pub const NSWindowCollectionBehaviorTransient: NSWindowCollectionBehavior = 8;
-pub const NSWindowCollectionBehaviorStationary: NSWindowCollectionBehavior = 16;
-pub const NSWindowCollectionBehaviorParticipatesInCycle: NSWindowCollectionBehavior = 32;
-pub const NSWindowCollectionBehaviorIgnoresCycle: NSWindowCollectionBehavior = 64;
-pub const NSWindowCollectionBehaviorFullScreenPrimary: NSWindowCollectionBehavior = 128;
-pub const NSWindowCollectionBehaviorFullScreenAuxiliary: NSWindowCollectionBehavior = 256;
-pub const NSWindowCollectionBehaviorFullScreenNone: NSWindowCollectionBehavior = 512;
-pub const NSWindowCollectionBehaviorFullScreenAllowsTiling: NSWindowCollectionBehavior = 2048;
-pub const NSWindowCollectionBehaviorFullScreenDisallowsTiling: NSWindowCollectionBehavior = 4096;
+pub const NSWindowCollectionBehaviorCanJoinAllSpaces: NSWindowCollectionBehavior = 1 << 0;
+pub const NSWindowCollectionBehaviorMoveToActiveSpace: NSWindowCollectionBehavior = 1 << 1;
+pub const NSWindowCollectionBehaviorManaged: NSWindowCollectionBehavior = 1 << 2;
+pub const NSWindowCollectionBehaviorTransient: NSWindowCollectionBehavior = 1 << 3;
+pub const NSWindowCollectionBehaviorStationary: NSWindowCollectionBehavior = 1 << 4;
+pub const NSWindowCollectionBehaviorParticipatesInCycle: NSWindowCollectionBehavior = 1 << 5;
+pub const NSWindowCollectionBehaviorIgnoresCycle: NSWindowCollectionBehavior = 1 << 6;
+pub const NSWindowCollectionBehaviorFullScreenPrimary: NSWindowCollectionBehavior = 1 << 7;
+pub const NSWindowCollectionBehaviorFullScreenAuxiliary: NSWindowCollectionBehavior = 1 << 8;
+pub const NSWindowCollectionBehaviorFullScreenNone: NSWindowCollectionBehavior = 1 << 9;
+pub const NSWindowCollectionBehaviorFullScreenAllowsTiling: NSWindowCollectionBehavior = 1 << 11;
+pub const NSWindowCollectionBehaviorFullScreenDisallowsTiling: NSWindowCollectionBehavior = 1 << 12;
 
 pub type NSWindowAnimationBehavior = NSInteger;
 pub const NSWindowAnimationBehaviorDefault: NSWindowAnimationBehavior = 0;
@@ -51,11 +51,11 @@ pub const NSWindowAnimationBehaviorUtilityWindow: NSWindowAnimationBehavior = 4;
 pub const NSWindowAnimationBehaviorAlertPanel: NSWindowAnimationBehavior = 5;
 
 pub type NSWindowNumberListOptions = NSUInteger;
-pub const NSWindowNumberListAllApplications: NSWindowNumberListOptions = 1;
-pub const NSWindowNumberListAllSpaces: NSWindowNumberListOptions = 16;
+pub const NSWindowNumberListAllApplications: NSWindowNumberListOptions = 1 << 0;
+pub const NSWindowNumberListAllSpaces: NSWindowNumberListOptions = 1 << 4;
 
 pub type NSWindowOcclusionState = NSUInteger;
-pub const NSWindowOcclusionStateVisible: NSWindowOcclusionState = 2;
+pub const NSWindowOcclusionStateVisible: NSWindowOcclusionState = 1 << 1;
 
 pub type NSWindowLevel = NSInteger;
 

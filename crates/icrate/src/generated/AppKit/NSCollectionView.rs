@@ -17,16 +17,19 @@ pub const NSCollectionViewItemHighlightAsDropTarget: NSCollectionViewItemHighlig
 
 pub type NSCollectionViewScrollPosition = NSUInteger;
 pub const NSCollectionViewScrollPositionNone: NSCollectionViewScrollPosition = 0;
-pub const NSCollectionViewScrollPositionTop: NSCollectionViewScrollPosition = 1;
-pub const NSCollectionViewScrollPositionCenteredVertically: NSCollectionViewScrollPosition = 2;
-pub const NSCollectionViewScrollPositionBottom: NSCollectionViewScrollPosition = 4;
-pub const NSCollectionViewScrollPositionNearestHorizontalEdge: NSCollectionViewScrollPosition = 512;
-pub const NSCollectionViewScrollPositionLeft: NSCollectionViewScrollPosition = 8;
-pub const NSCollectionViewScrollPositionCenteredHorizontally: NSCollectionViewScrollPosition = 16;
-pub const NSCollectionViewScrollPositionRight: NSCollectionViewScrollPosition = 32;
-pub const NSCollectionViewScrollPositionLeadingEdge: NSCollectionViewScrollPosition = 64;
-pub const NSCollectionViewScrollPositionTrailingEdge: NSCollectionViewScrollPosition = 128;
-pub const NSCollectionViewScrollPositionNearestVerticalEdge: NSCollectionViewScrollPosition = 256;
+pub const NSCollectionViewScrollPositionTop: NSCollectionViewScrollPosition = 1 << 0;
+pub const NSCollectionViewScrollPositionCenteredVertically: NSCollectionViewScrollPosition = 1 << 1;
+pub const NSCollectionViewScrollPositionBottom: NSCollectionViewScrollPosition = 1 << 2;
+pub const NSCollectionViewScrollPositionNearestHorizontalEdge: NSCollectionViewScrollPosition =
+    1 << 9;
+pub const NSCollectionViewScrollPositionLeft: NSCollectionViewScrollPosition = 1 << 3;
+pub const NSCollectionViewScrollPositionCenteredHorizontally: NSCollectionViewScrollPosition =
+    1 << 4;
+pub const NSCollectionViewScrollPositionRight: NSCollectionViewScrollPosition = 1 << 5;
+pub const NSCollectionViewScrollPositionLeadingEdge: NSCollectionViewScrollPosition = 1 << 6;
+pub const NSCollectionViewScrollPositionTrailingEdge: NSCollectionViewScrollPosition = 1 << 7;
+pub const NSCollectionViewScrollPositionNearestVerticalEdge: NSCollectionViewScrollPosition =
+    1 << 8;
 
 pub type NSCollectionViewSupplementaryElementKind = NSString;
 

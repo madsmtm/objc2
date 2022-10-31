@@ -9,7 +9,8 @@ pub type NSURLRequestCachePolicy = NSUInteger;
 pub const NSURLRequestUseProtocolCachePolicy: NSURLRequestCachePolicy = 0;
 pub const NSURLRequestReloadIgnoringLocalCacheData: NSURLRequestCachePolicy = 1;
 pub const NSURLRequestReloadIgnoringLocalAndRemoteCacheData: NSURLRequestCachePolicy = 4;
-pub const NSURLRequestReloadIgnoringCacheData: NSURLRequestCachePolicy = 1;
+pub const NSURLRequestReloadIgnoringCacheData: NSURLRequestCachePolicy =
+    NSURLRequestReloadIgnoringLocalCacheData;
 pub const NSURLRequestReturnCacheDataElseLoad: NSURLRequestCachePolicy = 2;
 pub const NSURLRequestReturnCacheDataDontLoad: NSURLRequestCachePolicy = 3;
 pub const NSURLRequestReloadRevalidatingCacheData: NSURLRequestCachePolicy = 5;

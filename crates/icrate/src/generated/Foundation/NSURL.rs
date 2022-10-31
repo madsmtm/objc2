@@ -20,21 +20,21 @@ pub type NSURLUbiquitousSharedItemRole = NSString;
 pub type NSURLUbiquitousSharedItemPermissions = NSString;
 
 pub type NSURLBookmarkCreationOptions = NSUInteger;
-pub const NSURLBookmarkCreationPreferFileIDResolution: NSURLBookmarkCreationOptions = 256;
-pub const NSURLBookmarkCreationMinimalBookmark: NSURLBookmarkCreationOptions = 512;
-pub const NSURLBookmarkCreationSuitableForBookmarkFile: NSURLBookmarkCreationOptions = 1024;
-pub const NSURLBookmarkCreationWithSecurityScope: NSURLBookmarkCreationOptions = 2048;
+pub const NSURLBookmarkCreationPreferFileIDResolution: NSURLBookmarkCreationOptions = (1 << 8);
+pub const NSURLBookmarkCreationMinimalBookmark: NSURLBookmarkCreationOptions = (1 << 9);
+pub const NSURLBookmarkCreationSuitableForBookmarkFile: NSURLBookmarkCreationOptions = (1 << 10);
+pub const NSURLBookmarkCreationWithSecurityScope: NSURLBookmarkCreationOptions = (1 << 11);
 pub const NSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess: NSURLBookmarkCreationOptions =
-    4096;
+    (1 << 12);
 pub const NSURLBookmarkCreationWithoutImplicitSecurityScope: NSURLBookmarkCreationOptions =
-    536870912;
+    (1 << 29);
 
 pub type NSURLBookmarkResolutionOptions = NSUInteger;
-pub const NSURLBookmarkResolutionWithoutUI: NSURLBookmarkResolutionOptions = 256;
-pub const NSURLBookmarkResolutionWithoutMounting: NSURLBookmarkResolutionOptions = 512;
-pub const NSURLBookmarkResolutionWithSecurityScope: NSURLBookmarkResolutionOptions = 1024;
+pub const NSURLBookmarkResolutionWithoutUI: NSURLBookmarkResolutionOptions = (1 << 8);
+pub const NSURLBookmarkResolutionWithoutMounting: NSURLBookmarkResolutionOptions = (1 << 9);
+pub const NSURLBookmarkResolutionWithSecurityScope: NSURLBookmarkResolutionOptions = (1 << 10);
 pub const NSURLBookmarkResolutionWithoutImplicitStartAccessing: NSURLBookmarkResolutionOptions =
-    32768;
+    (1 << 15);
 
 pub type NSURLBookmarkFileCreationOptions = NSUInteger;
 

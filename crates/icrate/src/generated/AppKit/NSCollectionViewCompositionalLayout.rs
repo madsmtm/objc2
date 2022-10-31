@@ -7,11 +7,14 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSDirectionalRectEdge = NSUInteger;
 pub const NSDirectionalRectEdgeNone: NSDirectionalRectEdge = 0;
-pub const NSDirectionalRectEdgeTop: NSDirectionalRectEdge = 1;
-pub const NSDirectionalRectEdgeLeading: NSDirectionalRectEdge = 2;
-pub const NSDirectionalRectEdgeBottom: NSDirectionalRectEdge = 4;
-pub const NSDirectionalRectEdgeTrailing: NSDirectionalRectEdge = 8;
-pub const NSDirectionalRectEdgeAll: NSDirectionalRectEdge = 15;
+pub const NSDirectionalRectEdgeTop: NSDirectionalRectEdge = 1 << 0;
+pub const NSDirectionalRectEdgeLeading: NSDirectionalRectEdge = 1 << 1;
+pub const NSDirectionalRectEdgeBottom: NSDirectionalRectEdge = 1 << 2;
+pub const NSDirectionalRectEdgeTrailing: NSDirectionalRectEdge = 1 << 3;
+pub const NSDirectionalRectEdgeAll: NSDirectionalRectEdge = NSDirectionalRectEdgeTop
+    | NSDirectionalRectEdgeLeading
+    | NSDirectionalRectEdgeBottom
+    | NSDirectionalRectEdgeTrailing;
 
 pub type NSRectAlignment = NSInteger;
 pub const NSRectAlignmentNone: NSRectAlignment = 0;
