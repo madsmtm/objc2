@@ -48,16 +48,6 @@ impl RustFile {
                 self.declared_types.insert(name.clone());
             }
             Stmt::EnumDecl { name, variants, .. } => {
-                // Fix weirdness with enums, they're found twice for some reason
-                if let Some(Stmt::EnumDecl {
-                    name: last_name, ..
-                }) = self.stmts.last()
-                {
-                    if last_name == name {
-                        self.stmts.pop();
-                    }
-                }
-
                 if let Some(name) = name {
                     self.declared_types.insert(name.clone());
                 }

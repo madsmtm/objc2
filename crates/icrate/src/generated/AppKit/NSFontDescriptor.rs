@@ -165,6 +165,20 @@ extern_methods!(
 
 pub type NSFontFamilyClass = u32;
 
+pub const NSFontUnknownClass: i32 = 0;
+pub const NSFontOldStyleSerifsClass: i32 = 268435456;
+pub const NSFontTransitionalSerifsClass: i32 = 536870912;
+pub const NSFontModernSerifsClass: i32 = 805306368;
+pub const NSFontClarendonSerifsClass: i32 = 1073741824;
+pub const NSFontSlabSerifsClass: i32 = 1342177280;
+pub const NSFontFreeformSerifsClass: i32 = 1879048192;
+pub const NSFontSansSerifClass: i32 = -2147483648;
+pub const NSFontOrnamentalsClass: i32 = -1879048192;
+pub const NSFontScriptsClass: i32 = -1610612736;
+pub const NSFontSymbolicClass: i32 = -1073741824;
+
+pub const NSFontFamilyClassMask: i32 = -268435456;
+
 pub const NSFontItalicTrait: i32 = 1;
 pub const NSFontBoldTrait: i32 = 2;
 pub const NSFontExpandedTrait: i32 = 32;

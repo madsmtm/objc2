@@ -370,6 +370,12 @@ impl Stmt {
                 None
             }
             EntityKind::EnumDecl => {
+                // Enum declarations show up twice for some reason, but
+                // luckily this flag is set on the least descriptive entity.
+                if !entity.is_definition() {
+                    return None;
+                }
+
                 let name = entity.get_name();
                 let ty =
                     RustType::parse_enum(entity.get_enum_underlying_type().expect("enum type"));

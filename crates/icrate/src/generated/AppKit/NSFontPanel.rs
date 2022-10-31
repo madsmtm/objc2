@@ -75,6 +75,18 @@ extern_methods!(
     }
 );
 
+pub const NSFontPanelFaceModeMask: i32 = 1;
+pub const NSFontPanelSizeModeMask: i32 = 2;
+pub const NSFontPanelCollectionModeMask: i32 = 4;
+pub const NSFontPanelUnderlineEffectModeMask: i32 = 256;
+pub const NSFontPanelStrikethroughEffectModeMask: i32 = 512;
+pub const NSFontPanelTextColorEffectModeMask: i32 = 1024;
+pub const NSFontPanelDocumentColorEffectModeMask: i32 = 2048;
+pub const NSFontPanelShadowEffectModeMask: i32 = 4096;
+pub const NSFontPanelAllEffectsModeMask: i32 = 1048320;
+pub const NSFontPanelStandardModesMask: i32 = 65535;
+pub const NSFontPanelAllModesMask: i32 = -1;
+
 pub const NSFPPreviewButton: i32 = 131;
 pub const NSFPRevertButton: i32 = 130;
 pub const NSFPSetButton: i32 = 132;
