@@ -347,23 +347,25 @@ unsafe impl<T: RefEncode> RefEncode for atomic::AtomicPtr<T> {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
-/// [`Encode`] is implemented manually for `*const c_void`, instead of
-/// implementing [`RefEncode`], to discourage creating `&c_void`.
+/// [`Encode`] is implemented manually for `*const c_void`, `*mut c_void` and
+/// `NonNull<c_void>`, instead of implementing [`RefEncode`], to discourage
+/// creating `&c_void`/`&mut c_void`.
 unsafe impl Encode for *const c_void {
     const ENCODING: Encoding = Encoding::Pointer(&Encoding::Void);
 }
-
 unsafe impl RefEncode for *const c_void {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
-
-/// [`Encode`] is implemented manually for `*mut c_void`, instead of
-/// implementing [`RefEncode`], to discourage creating `&mut c_void`.
 unsafe impl Encode for *mut c_void {
     const ENCODING: Encoding = Encoding::Pointer(&Encoding::Void);
 }
-
 unsafe impl RefEncode for *mut c_void {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+}
+unsafe impl Encode for NonNull<c_void> {
+    const ENCODING: Encoding = Encoding::Pointer(&Encoding::Void);
+}
+unsafe impl RefEncode for NonNull<c_void> {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
