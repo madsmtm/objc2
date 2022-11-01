@@ -50,12 +50,6 @@ extern_methods!(
         #[method(setThreadPriority:)]
         pub unsafe fn setThreadPriority(p: c_double) -> bool;
 
-        #[method(threadPriority)]
-        pub unsafe fn threadPriority(&self) -> c_double;
-
-        #[method(setThreadPriority:)]
-        pub unsafe fn setThreadPriority(&self, threadPriority: c_double);
-
         #[method(qualityOfService)]
         pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
 
@@ -79,12 +73,6 @@ extern_methods!(
 
         #[method(setStackSize:)]
         pub unsafe fn setStackSize(&self, stackSize: NSUInteger);
-
-        #[method(isMainThread)]
-        pub unsafe fn isMainThread(&self) -> bool;
-
-        #[method(isMainThread)]
-        pub unsafe fn isMainThread() -> bool;
 
         #[method_id(mainThread)]
         pub unsafe fn mainThread() -> Id<NSThread, Shared>;

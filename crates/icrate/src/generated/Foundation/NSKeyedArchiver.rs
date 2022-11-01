@@ -73,18 +73,6 @@ extern_methods!(
         #[method(finishEncoding)]
         pub unsafe fn finishEncoding(&self);
 
-        #[method(setClassName:forClass:)]
-        pub unsafe fn setClassName_forClass(codedName: Option<&NSString>, cls: &Class);
-
-        #[method(setClassName:forClass:)]
-        pub unsafe fn setClassName_forClass(&self, codedName: Option<&NSString>, cls: &Class);
-
-        #[method_id(classNameForClass:)]
-        pub unsafe fn classNameForClass(cls: &Class) -> Option<Id<NSString, Shared>>;
-
-        #[method_id(classNameForClass:)]
-        pub unsafe fn classNameForClass(&self, cls: &Class) -> Option<Id<NSString, Shared>>;
-
         #[method(encodeObject:forKey:)]
         pub unsafe fn encodeObject_forKey(&self, object: Option<&Object>, key: &NSString);
 
@@ -209,18 +197,6 @@ extern_methods!(
 
         #[method(finishDecoding)]
         pub unsafe fn finishDecoding(&self);
-
-        #[method(setClass:forClassName:)]
-        pub unsafe fn setClass_forClassName(cls: Option<&Class>, codedName: &NSString);
-
-        #[method(setClass:forClassName:)]
-        pub unsafe fn setClass_forClassName(&self, cls: Option<&Class>, codedName: &NSString);
-
-        #[method(classForClassName:)]
-        pub unsafe fn classForClassName(codedName: &NSString) -> Option<&'static Class>;
-
-        #[method(classForClassName:)]
-        pub unsafe fn classForClassName(&self, codedName: &NSString) -> Option<&'static Class>;
 
         #[method(containsValueForKey:)]
         pub unsafe fn containsValueForKey(&self, key: &NSString) -> bool;

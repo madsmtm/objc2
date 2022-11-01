@@ -175,32 +175,11 @@ extern_methods!(
             localizationName: Option<&NSString>,
         ) -> Option<Id<NSArray<NSURL>, Shared>>;
 
-        #[method_id(pathForResource:ofType:inDirectory:)]
-        pub unsafe fn pathForResource_ofType_inDirectory(
-            name: Option<&NSString>,
-            ext: Option<&NSString>,
-            bundlePath: &NSString,
-        ) -> Option<Id<NSString, Shared>>;
-
-        #[method_id(pathsForResourcesOfType:inDirectory:)]
-        pub unsafe fn pathsForResourcesOfType_inDirectory(
-            ext: Option<&NSString>,
-            bundlePath: &NSString,
-        ) -> Id<NSArray<NSString>, Shared>;
-
         #[method_id(pathForResource:ofType:)]
         pub unsafe fn pathForResource_ofType(
             &self,
             name: Option<&NSString>,
             ext: Option<&NSString>,
-        ) -> Option<Id<NSString, Shared>>;
-
-        #[method_id(pathForResource:ofType:inDirectory:)]
-        pub unsafe fn pathForResource_ofType_inDirectory(
-            &self,
-            name: Option<&NSString>,
-            ext: Option<&NSString>,
-            subpath: Option<&NSString>,
         ) -> Option<Id<NSString, Shared>>;
 
         #[method_id(pathForResource:ofType:inDirectory:forLocalization:)]
@@ -211,13 +190,6 @@ extern_methods!(
             subpath: Option<&NSString>,
             localizationName: Option<&NSString>,
         ) -> Option<Id<NSString, Shared>>;
-
-        #[method_id(pathsForResourcesOfType:inDirectory:)]
-        pub unsafe fn pathsForResourcesOfType_inDirectory(
-            &self,
-            ext: Option<&NSString>,
-            subpath: Option<&NSString>,
-        ) -> Id<NSArray<NSString>, Shared>;
 
         #[method_id(pathsForResourcesOfType:inDirectory:forLocalization:)]
         pub unsafe fn pathsForResourcesOfType_inDirectory_forLocalization(

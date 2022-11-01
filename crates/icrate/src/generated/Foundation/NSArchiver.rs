@@ -87,27 +87,6 @@ extern_methods!(
         #[method_id(unarchiveObjectWithFile:)]
         pub unsafe fn unarchiveObjectWithFile(path: &NSString) -> Option<Id<Object, Shared>>;
 
-        #[method(decodeClassName:asClassName:)]
-        pub unsafe fn decodeClassName_asClassName(inArchiveName: &NSString, trueName: &NSString);
-
-        #[method(decodeClassName:asClassName:)]
-        pub unsafe fn decodeClassName_asClassName(
-            &self,
-            inArchiveName: &NSString,
-            trueName: &NSString,
-        );
-
-        #[method_id(classNameDecodedForArchiveClassName:)]
-        pub unsafe fn classNameDecodedForArchiveClassName(
-            inArchiveName: &NSString,
-        ) -> Id<NSString, Shared>;
-
-        #[method_id(classNameDecodedForArchiveClassName:)]
-        pub unsafe fn classNameDecodedForArchiveClassName(
-            &self,
-            inArchiveName: &NSString,
-        ) -> Id<NSString, Shared>;
-
         #[method(replaceObject:withObject:)]
         pub unsafe fn replaceObject_withObject(&self, object: &Object, newObject: &Object);
     }
