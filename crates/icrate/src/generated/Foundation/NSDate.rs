@@ -18,9 +18,6 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDate {
-        #[method(timeIntervalSinceReferenceDate)]
-        pub unsafe fn timeIntervalSinceReferenceDate(&self) -> NSTimeInterval;
-
         #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
@@ -74,9 +71,6 @@ extern_methods!(
         #[method_id(@__retain_semantics Other descriptionWithLocale:)]
         pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
             -> Id<NSString, Shared>;
-
-        #[method(timeIntervalSinceReferenceDate)]
-        pub unsafe fn timeIntervalSinceReferenceDate() -> NSTimeInterval;
     }
 );
 

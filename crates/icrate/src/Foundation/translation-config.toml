@@ -77,5 +77,9 @@ skipped = true
 skipped = true
 [class.NSThread.properties.isMainThread]
 skipped = true
-[class.NSDate.methods.timeIntervalSinceReferenceDate]
+[class.NSDate.properties.timeIntervalSinceReferenceDate]
+skipped = true
+
+# Root class
+[class.NSProxy]
 skipped = true

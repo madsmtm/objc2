@@ -904,7 +904,6 @@ mod __exported {
         NSPropertyListXMLFormat_v1_0,
     };
     pub use super::NSProtocolChecker::NSProtocolChecker;
-    pub use super::NSProxy::NSProxy;
     pub use super::NSRegularExpression::{
         NSDataDetector, NSMatchingAnchored, NSMatchingCompleted, NSMatchingFlags, NSMatchingHitEnd,
         NSMatchingInternalError, NSMatchingOptions, NSMatchingProgress, NSMatchingReportCompletion,
