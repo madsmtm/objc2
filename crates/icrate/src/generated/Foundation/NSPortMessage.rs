@@ -16,7 +16,7 @@ extern_methods!(
     unsafe impl NSPortMessage {
         #[method_id(initWithSendPort:receivePort:components:)]
         pub unsafe fn initWithSendPort_receivePort_components(
-            &self,
+            this: Option<Allocated<Self>>,
             sendPort: Option<&NSPort>,
             replyPort: Option<&NSPort>,
             components: Option<&NSArray>,

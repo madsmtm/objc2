@@ -40,11 +40,14 @@ extern_methods!(
         pub unsafe fn constant(&self) -> c_double;
 
         #[method_id(initWithCoefficient:)]
-        pub unsafe fn initWithCoefficient(&self, coefficient: c_double) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoefficient(
+            this: Option<Allocated<Self>>,
+            coefficient: c_double,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoefficient:constant:)]
         pub unsafe fn initWithCoefficient_constant(
-            &self,
+            this: Option<Allocated<Self>>,
             coefficient: c_double,
             constant: c_double,
         ) -> Id<Self, Shared>;
@@ -66,13 +69,16 @@ extern_methods!(
         pub unsafe fn symbol(&self) -> Id<NSString, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method_id(initWithSymbol:)]
-        pub unsafe fn initWithSymbol(&self, symbol: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithSymbol(
+            this: Option<Allocated<Self>>,
+            symbol: &NSString,
+        ) -> Id<Self, Shared>;
     }
 );
 
@@ -92,7 +98,7 @@ extern_methods!(
 
         #[method_id(initWithSymbol:converter:)]
         pub unsafe fn initWithSymbol_converter(
-            &self,
+            this: Option<Allocated<Self>>,
             symbol: &NSString,
             converter: &NSUnitConverter,
         ) -> Id<Self, Shared>;

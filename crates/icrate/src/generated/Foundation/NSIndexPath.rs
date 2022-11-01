@@ -25,13 +25,16 @@ extern_methods!(
 
         #[method_id(initWithIndexes:length:)]
         pub unsafe fn initWithIndexes_length(
-            &self,
+            this: Option<Allocated<Self>>,
             indexes: TodoArray,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithIndex:)]
-        pub unsafe fn initWithIndex(&self, index: NSUInteger) -> Id<Self, Shared>;
+        pub unsafe fn initWithIndex(
+            this: Option<Allocated<Self>>,
+            index: NSUInteger,
+        ) -> Id<Self, Shared>;
 
         #[method_id(indexPathByAddingIndex:)]
         pub unsafe fn indexPathByAddingIndex(&self, index: NSUInteger) -> Id<NSIndexPath, Shared>;

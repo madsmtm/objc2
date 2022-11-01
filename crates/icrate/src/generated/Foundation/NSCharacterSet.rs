@@ -80,7 +80,10 @@ extern_methods!(
         ) -> Option<Id<NSCharacterSet, Shared>>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method(characterIsMember:)]
         pub unsafe fn characterIsMember(&self, aCharacter: unichar) -> bool;

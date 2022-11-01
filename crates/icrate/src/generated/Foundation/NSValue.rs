@@ -22,13 +22,16 @@ extern_methods!(
 
         #[method_id(initWithBytes:objCType:)]
         pub unsafe fn initWithBytes_objCType(
-            &self,
+            this: Option<Allocated<Self>>,
             value: NonNull<c_void>,
             type_: NonNull<c_char>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -81,52 +84,100 @@ extern_class!(
 extern_methods!(
     unsafe impl NSNumber {
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithChar:)]
-        pub unsafe fn initWithChar(&self, value: c_char) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithChar(
+            this: Option<Allocated<Self>>,
+            value: c_char,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithUnsignedChar:)]
-        pub unsafe fn initWithUnsignedChar(&self, value: c_uchar) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithUnsignedChar(
+            this: Option<Allocated<Self>>,
+            value: c_uchar,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithShort:)]
-        pub unsafe fn initWithShort(&self, value: c_short) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithShort(
+            this: Option<Allocated<Self>>,
+            value: c_short,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithUnsignedShort:)]
-        pub unsafe fn initWithUnsignedShort(&self, value: c_ushort) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithUnsignedShort(
+            this: Option<Allocated<Self>>,
+            value: c_ushort,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithInt:)]
-        pub unsafe fn initWithInt(&self, value: c_int) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithInt(
+            this: Option<Allocated<Self>>,
+            value: c_int,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithUnsignedInt:)]
-        pub unsafe fn initWithUnsignedInt(&self, value: c_uint) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithUnsignedInt(
+            this: Option<Allocated<Self>>,
+            value: c_uint,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithLong:)]
-        pub unsafe fn initWithLong(&self, value: c_long) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithLong(
+            this: Option<Allocated<Self>>,
+            value: c_long,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithUnsignedLong:)]
-        pub unsafe fn initWithUnsignedLong(&self, value: c_ulong) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithUnsignedLong(
+            this: Option<Allocated<Self>>,
+            value: c_ulong,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithLongLong:)]
-        pub unsafe fn initWithLongLong(&self, value: c_longlong) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithLongLong(
+            this: Option<Allocated<Self>>,
+            value: c_longlong,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithUnsignedLongLong:)]
-        pub unsafe fn initWithUnsignedLongLong(&self, value: c_ulonglong) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithUnsignedLongLong(
+            this: Option<Allocated<Self>>,
+            value: c_ulonglong,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithFloat:)]
-        pub unsafe fn initWithFloat(&self, value: c_float) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithFloat(
+            this: Option<Allocated<Self>>,
+            value: c_float,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithDouble:)]
-        pub unsafe fn initWithDouble(&self, value: c_double) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithDouble(
+            this: Option<Allocated<Self>>,
+            value: c_double,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithBool:)]
-        pub unsafe fn initWithBool(&self, value: bool) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithBool(
+            this: Option<Allocated<Self>>,
+            value: bool,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithInteger:)]
-        pub unsafe fn initWithInteger(&self, value: NSInteger) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithInteger(
+            this: Option<Allocated<Self>>,
+            value: NSInteger,
+        ) -> Id<NSNumber, Shared>;
 
         #[method_id(initWithUnsignedInteger:)]
-        pub unsafe fn initWithUnsignedInteger(&self, value: NSUInteger) -> Id<NSNumber, Shared>;
+        pub unsafe fn initWithUnsignedInteger(
+            this: Option<Allocated<Self>>,
+            value: NSUInteger,
+        ) -> Id<NSNumber, Shared>;
 
         #[method(charValue)]
         pub unsafe fn charValue(&self) -> c_char;

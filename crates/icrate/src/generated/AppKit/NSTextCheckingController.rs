@@ -16,10 +16,13 @@ extern_class!(
 extern_methods!(
     unsafe impl NSTextCheckingController {
         #[method_id(initWithClient:)]
-        pub unsafe fn initWithClient(&self, client: &NSTextCheckingClient) -> Id<Self, Shared>;
+        pub unsafe fn initWithClient(
+            this: Option<Allocated<Self>>,
+            client: &NSTextCheckingClient,
+        ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(client)]
         pub unsafe fn client(&self) -> Id<NSTextCheckingClient, Shared>;

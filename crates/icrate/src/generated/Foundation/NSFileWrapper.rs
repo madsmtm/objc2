@@ -24,31 +24,40 @@ extern_methods!(
     unsafe impl NSFileWrapper {
         #[method_id(initWithURL:options:error:)]
         pub unsafe fn initWithURL_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             options: NSFileWrapperReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initDirectoryWithFileWrappers:)]
         pub unsafe fn initDirectoryWithFileWrappers(
-            &self,
+            this: Option<Allocated<Self>>,
             childrenByPreferredName: &NSDictionary<NSString, NSFileWrapper>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initRegularFileWithContents:)]
-        pub unsafe fn initRegularFileWithContents(&self, contents: &NSData) -> Id<Self, Shared>;
+        pub unsafe fn initRegularFileWithContents(
+            this: Option<Allocated<Self>>,
+            contents: &NSData,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initSymbolicLinkWithDestinationURL:)]
-        pub unsafe fn initSymbolicLinkWithDestinationURL(&self, url: &NSURL) -> Id<Self, Shared>;
+        pub unsafe fn initSymbolicLinkWithDestinationURL(
+            this: Option<Allocated<Self>>,
+            url: &NSURL,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithSerializedRepresentation:)]
         pub unsafe fn initWithSerializedRepresentation(
-            &self,
+            this: Option<Allocated<Self>>,
             serializeRepresentation: &NSData,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(isDirectory)]
         pub unsafe fn isDirectory(&self) -> bool;
@@ -134,11 +143,16 @@ extern_methods!(
     /// NSDeprecated
     unsafe impl NSFileWrapper {
         #[method_id(initWithPath:)]
-        pub unsafe fn initWithPath(&self, path: &NSString) -> Option<Id<Object, Shared>>;
+        pub unsafe fn initWithPath(
+            this: Option<Allocated<Self>>,
+            path: &NSString,
+        ) -> Option<Id<Object, Shared>>;
 
         #[method_id(initSymbolicLinkWithDestination:)]
-        pub unsafe fn initSymbolicLinkWithDestination(&self, path: &NSString)
-            -> Id<Object, Shared>;
+        pub unsafe fn initSymbolicLinkWithDestination(
+            this: Option<Allocated<Self>>,
+            path: &NSString,
+        ) -> Id<Object, Shared>;
 
         #[method(needsToBeUpdatedFromPath:)]
         pub unsafe fn needsToBeUpdatedFromPath(&self, path: &NSString) -> bool;

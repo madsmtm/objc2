@@ -16,7 +16,7 @@ extern_methods!(
     unsafe impl NSURLConnection {
         #[method_id(initWithRequest:delegate:startImmediately:)]
         pub unsafe fn initWithRequest_delegate_startImmediately(
-            &self,
+            this: Option<Allocated<Self>>,
             request: &NSURLRequest,
             delegate: Option<&Object>,
             startImmediately: bool,
@@ -24,7 +24,7 @@ extern_methods!(
 
         #[method_id(initWithRequest:delegate:)]
         pub unsafe fn initWithRequest_delegate(
-            &self,
+            this: Option<Allocated<Self>>,
             request: &NSURLRequest,
             delegate: Option<&Object>,
         ) -> Option<Id<Self, Shared>>;

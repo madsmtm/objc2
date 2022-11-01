@@ -42,7 +42,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSConditionLock {
         #[method_id(initWithCondition:)]
-        pub unsafe fn initWithCondition(&self, condition: NSInteger) -> Id<Self, Shared>;
+        pub unsafe fn initWithCondition(
+            this: Option<Allocated<Self>>,
+            condition: NSInteger,
+        ) -> Id<Self, Shared>;
 
         #[method(condition)]
         pub unsafe fn condition(&self) -> NSInteger;

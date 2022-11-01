@@ -17,14 +17,14 @@ extern_methods!(
     unsafe impl NSCachedImageRep {
         #[method_id(initWithWindow:rect:)]
         pub unsafe fn initWithWindow_rect(
-            &self,
+            this: Option<Allocated<Self>>,
             win: Option<&NSWindow>,
             rect: NSRect,
         ) -> Option<Id<Object, Shared>>;
 
         #[method_id(initWithSize:depth:separate:alpha:)]
         pub unsafe fn initWithSize_depth_separate_alpha(
-            &self,
+            this: Option<Allocated<Self>>,
             size: NSSize,
             depth: NSWindowDepth,
             flag: bool,

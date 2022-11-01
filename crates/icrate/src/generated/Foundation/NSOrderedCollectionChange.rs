@@ -48,11 +48,11 @@ extern_methods!(
         pub unsafe fn associatedIndex(&self) -> NSUInteger;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Object, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Object, Shared>;
 
         #[method_id(initWithObject:type:index:)]
         pub unsafe fn initWithObject_type_index(
-            &self,
+            this: Option<Allocated<Self>>,
             anObject: Option<&ObjectType>,
             type_: NSCollectionChangeType,
             index: NSUInteger,
@@ -60,7 +60,7 @@ extern_methods!(
 
         #[method_id(initWithObject:type:index:associatedIndex:)]
         pub unsafe fn initWithObject_type_index_associatedIndex(
-            &self,
+            this: Option<Allocated<Self>>,
             anObject: Option<&ObjectType>,
             type_: NSCollectionChangeType,
             index: NSUInteger,

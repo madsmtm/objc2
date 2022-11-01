@@ -68,7 +68,7 @@ extern_methods!(
 
         #[method_id(initWithFilePresenter:)]
         pub unsafe fn initWithFilePresenter(
-            &self,
+            this: Option<Allocated<Self>>,
             filePresenterOrNil: Option<&NSFilePresenter>,
         ) -> Id<Self, Shared>;
 

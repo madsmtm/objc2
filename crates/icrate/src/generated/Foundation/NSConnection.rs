@@ -134,7 +134,7 @@ extern_methods!(
 
         #[method_id(initWithReceivePort:sendPort:)]
         pub unsafe fn initWithReceivePort_sendPort(
-            &self,
+            this: Option<Allocated<Self>>,
             receivePort: Option<&NSPort>,
             sendPort: Option<&NSPort>,
         ) -> Option<Id<Self, Shared>>;

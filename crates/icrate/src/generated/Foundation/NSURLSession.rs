@@ -146,7 +146,7 @@ extern_methods!(
         ) -> Id<NSURLSessionWebSocketTask, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -317,7 +317,7 @@ extern_methods!(
         pub unsafe fn setPrefersIncrementalDelivery(&self, prefersIncrementalDelivery: bool);
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -348,7 +348,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSURLSessionDataTask {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -367,7 +367,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSURLSessionUploadTask {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -389,7 +389,7 @@ extern_methods!(
         pub unsafe fn cancelByProducingResumeData(&self, completionHandler: TodoBlock);
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -440,7 +440,7 @@ extern_methods!(
         pub unsafe fn stopSecureConnection(&self);
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -463,10 +463,16 @@ extern_class!(
 extern_methods!(
     unsafe impl NSURLSessionWebSocketMessage {
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, data: &NSData) -> Id<Self, Shared>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithString:)]
-        pub unsafe fn initWithString(&self, string: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithString(
+            this: Option<Allocated<Self>>,
+            string: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method(type)]
         pub unsafe fn type_(&self) -> NSURLSessionWebSocketMessageType;
@@ -478,7 +484,7 @@ extern_methods!(
         pub unsafe fn string(&self) -> Option<Id<NSString, Shared>>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -546,7 +552,7 @@ extern_methods!(
         pub unsafe fn closeReason(&self) -> Option<Id<NSData, Shared>>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -792,7 +798,7 @@ extern_methods!(
         );
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -981,7 +987,7 @@ extern_methods!(
         ) -> NSURLSessionTaskMetricsDomainResolutionProtocol;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -1011,7 +1017,7 @@ extern_methods!(
         pub unsafe fn redirectCount(&self) -> NSUInteger;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;

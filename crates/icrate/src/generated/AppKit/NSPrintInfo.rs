@@ -174,15 +174,18 @@ extern_methods!(
 
         #[method_id(initWithDictionary:)]
         pub unsafe fn initWithDictionary(
-            &self,
+            this: Option<Allocated<Self>>,
             attributes: &NSDictionary<NSPrintInfoAttributeKey, Object>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(dictionary)]
         pub unsafe fn dictionary(

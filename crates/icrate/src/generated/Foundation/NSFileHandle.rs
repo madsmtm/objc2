@@ -19,13 +19,16 @@ extern_methods!(
 
         #[method_id(initWithFileDescriptor:closeOnDealloc:)]
         pub unsafe fn initWithFileDescriptor_closeOnDealloc(
-            &self,
+            this: Option<Allocated<Self>>,
             fd: c_int,
             closeopt: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(readDataToEndOfFileAndReturnError:)]
         pub unsafe fn readDataToEndOfFileAndReturnError(
@@ -203,7 +206,10 @@ extern_methods!(
     /// NSFileHandlePlatformSpecific
     unsafe impl NSFileHandle {
         #[method_id(initWithFileDescriptor:)]
-        pub unsafe fn initWithFileDescriptor(&self, fd: c_int) -> Id<Self, Shared>;
+        pub unsafe fn initWithFileDescriptor(
+            this: Option<Allocated<Self>>,
+            fd: c_int,
+        ) -> Id<Self, Shared>;
 
         #[method(fileDescriptor)]
         pub unsafe fn fileDescriptor(&self) -> c_int;

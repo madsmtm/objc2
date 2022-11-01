@@ -38,7 +38,7 @@ extern_methods!(
 
         #[method_id(initWithReceivePort:sendPort:components:)]
         pub unsafe fn initWithReceivePort_sendPort_components(
-            &self,
+            this: Option<Allocated<Self>>,
             rcvPort: Option<&NSPort>,
             sndPort: Option<&NSPort>,
             comps: Option<&NSArray>,

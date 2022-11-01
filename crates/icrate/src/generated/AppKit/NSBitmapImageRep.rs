@@ -113,11 +113,14 @@ extern_class!(
 extern_methods!(
     unsafe impl NSBitmapImageRep {
         #[method_id(initWithFocusedViewRect:)]
-        pub unsafe fn initWithFocusedViewRect(&self, rect: NSRect) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithFocusedViewRect(
+            this: Option<Allocated<Self>>,
+            rect: NSRect,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bytesPerRow:bitsPerPixel:)]
         pub unsafe fn initWithBitmapDataPlanes_pixelsWide_pixelsHigh_bitsPerSample_samplesPerPixel_hasAlpha_isPlanar_colorSpaceName_bytesPerRow_bitsPerPixel(
-            &self,
+            this: Option<Allocated<Self>>,
             planes: *mut *mut c_uchar,
             width: NSInteger,
             height: NSInteger,
@@ -132,7 +135,7 @@ extern_methods!(
 
         #[method_id(initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bitmapFormat:bytesPerRow:bitsPerPixel:)]
         pub unsafe fn initWithBitmapDataPlanes_pixelsWide_pixelsHigh_bitsPerSample_samplesPerPixel_hasAlpha_isPlanar_colorSpaceName_bitmapFormat_bytesPerRow_bitsPerPixel(
-            &self,
+            this: Option<Allocated<Self>>,
             planes: *mut *mut c_uchar,
             width: NSInteger,
             height: NSInteger,
@@ -147,10 +150,16 @@ extern_methods!(
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithCGImage:)]
-        pub unsafe fn initWithCGImage(&self, cgImage: CGImageRef) -> Id<Self, Shared>;
+        pub unsafe fn initWithCGImage(
+            this: Option<Allocated<Self>>,
+            cgImage: CGImageRef,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCIImage:)]
-        pub unsafe fn initWithCIImage(&self, ciImage: &CIImage) -> Id<Self, Shared>;
+        pub unsafe fn initWithCIImage(
+            this: Option<Allocated<Self>>,
+            ciImage: &CIImage,
+        ) -> Id<Self, Shared>;
 
         #[method_id(imageRepsWithData:)]
         pub unsafe fn imageRepsWithData(data: &NSData) -> Id<NSArray<NSImageRep>, Shared>;
@@ -159,7 +168,10 @@ extern_methods!(
         pub unsafe fn imageRepWithData(data: &NSData) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, data: &NSData) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(bitmapData)]
         pub unsafe fn bitmapData(&self) -> *mut c_uchar;
@@ -244,7 +256,7 @@ extern_methods!(
         );
 
         #[method_id(initForIncrementalLoad)]
-        pub unsafe fn initForIncrementalLoad(&self) -> Id<Self, Shared>;
+        pub unsafe fn initForIncrementalLoad(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(incrementalLoadFromData:complete:)]
         pub unsafe fn incrementalLoadFromData_complete(

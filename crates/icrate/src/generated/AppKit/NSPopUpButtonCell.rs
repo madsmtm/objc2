@@ -22,13 +22,16 @@ extern_methods!(
     unsafe impl NSPopUpButtonCell {
         #[method_id(initTextCell:pullsDown:)]
         pub unsafe fn initTextCell_pullsDown(
-            &self,
+            this: Option<Allocated<Self>>,
             stringValue: &NSString,
             pullDown: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(menu)]
         pub unsafe fn menu(&self) -> Option<Id<NSMenu, Shared>>;

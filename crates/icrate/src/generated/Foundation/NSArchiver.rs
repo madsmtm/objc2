@@ -16,7 +16,7 @@ extern_methods!(
     unsafe impl NSArchiver {
         #[method_id(initForWritingWithMutableData:)]
         pub unsafe fn initForWritingWithMutableData(
-            &self,
+            this: Option<Allocated<Self>>,
             mdata: &NSMutableData,
         ) -> Id<Self, Shared>;
 
@@ -65,7 +65,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSUnarchiver {
         #[method_id(initForReadingWithData:)]
-        pub unsafe fn initForReadingWithData(&self, data: &NSData) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initForReadingWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(setObjectZone:)]
         pub unsafe fn setObjectZone(&self, zone: *mut NSZone);

@@ -33,7 +33,7 @@ extern_methods!(
     unsafe impl<KeyType: Message, ObjectType: Message> NSMapTable<KeyType, ObjectType> {
         #[method_id(initWithKeyOptions:valueOptions:capacity:)]
         pub unsafe fn initWithKeyOptions_valueOptions_capacity(
-            &self,
+            this: Option<Allocated<Self>>,
             keyOptions: NSPointerFunctionsOptions,
             valueOptions: NSPointerFunctionsOptions,
             initialCapacity: NSUInteger,
@@ -41,7 +41,7 @@ extern_methods!(
 
         #[method_id(initWithKeyPointerFunctions:valuePointerFunctions:capacity:)]
         pub unsafe fn initWithKeyPointerFunctions_valuePointerFunctions_capacity(
-            &self,
+            this: Option<Allocated<Self>>,
             keyFunctions: &NSPointerFunctions,
             valueFunctions: &NSPointerFunctions,
             initialCapacity: NSUInteger,

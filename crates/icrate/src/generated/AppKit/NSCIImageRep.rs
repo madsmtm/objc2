@@ -19,7 +19,10 @@ extern_methods!(
         pub unsafe fn imageRepWithCIImage(image: &CIImage) -> Id<Self, Shared>;
 
         #[method_id(initWithCIImage:)]
-        pub unsafe fn initWithCIImage(&self, image: &CIImage) -> Id<Self, Shared>;
+        pub unsafe fn initWithCIImage(
+            this: Option<Allocated<Self>>,
+            image: &CIImage,
+        ) -> Id<Self, Shared>;
 
         #[method_id(CIImage)]
         pub unsafe fn CIImage(&self) -> Id<CIImage, Shared>;
@@ -31,7 +34,7 @@ extern_methods!(
     unsafe impl CIImage {
         #[method_id(initWithBitmapImageRep:)]
         pub unsafe fn initWithBitmapImageRep(
-            &self,
+            this: Option<Allocated<Self>>,
             bitmapImageRep: &NSBitmapImageRep,
         ) -> Option<Id<Self, Shared>>;
 

@@ -22,7 +22,7 @@ extern_methods!(
 
         #[method_id(initWithRepresentedObject:)]
         pub unsafe fn initWithRepresentedObject(
-            &self,
+            this: Option<Allocated<Self>>,
             modelObject: Option<&Object>,
         ) -> Id<Self, Shared>;
 

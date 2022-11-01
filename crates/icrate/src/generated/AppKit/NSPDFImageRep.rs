@@ -19,7 +19,10 @@ extern_methods!(
         pub unsafe fn imageRepWithData(pdfData: &NSData) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, pdfData: &NSData) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            pdfData: &NSData,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(PDFRepresentation)]
         pub unsafe fn PDFRepresentation(&self) -> Id<NSData, Shared>;

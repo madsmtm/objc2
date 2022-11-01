@@ -43,7 +43,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSTextBlock {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(setValue:type:forDimension:)]
         pub unsafe fn setValue_type_forDimension(
@@ -165,7 +165,7 @@ extern_methods!(
     unsafe impl NSTextTableBlock {
         #[method_id(initWithTable:startingRow:rowSpan:startingColumn:columnSpan:)]
         pub unsafe fn initWithTable_startingRow_rowSpan_startingColumn_columnSpan(
-            &self,
+            this: Option<Allocated<Self>>,
             table: &NSTextTable,
             row: NSInteger,
             rowSpan: NSInteger,

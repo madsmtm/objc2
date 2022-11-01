@@ -113,10 +113,16 @@ extern_methods!(
         ) -> Id<NSExpression, Shared>;
 
         #[method_id(initWithExpressionType:)]
-        pub unsafe fn initWithExpressionType(&self, type_: NSExpressionType) -> Id<Self, Shared>;
+        pub unsafe fn initWithExpressionType(
+            this: Option<Allocated<Self>>,
+            type_: NSExpressionType,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(expressionType)]
         pub unsafe fn expressionType(&self) -> NSExpressionType;

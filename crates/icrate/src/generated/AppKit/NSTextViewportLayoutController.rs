@@ -19,7 +19,7 @@ extern_methods!(
     unsafe impl NSTextViewportLayoutController {
         #[method_id(initWithTextLayoutManager:)]
         pub unsafe fn initWithTextLayoutManager(
-            &self,
+            this: Option<Allocated<Self>>,
             textLayoutManager: &NSTextLayoutManager,
         ) -> Id<Self, Shared>;
 
@@ -27,7 +27,7 @@ extern_methods!(
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(delegate)]
         pub unsafe fn delegate(&self)

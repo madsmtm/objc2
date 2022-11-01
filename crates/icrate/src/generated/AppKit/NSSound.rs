@@ -28,20 +28,23 @@ extern_methods!(
 
         #[method_id(initWithContentsOfURL:byReference:)]
         pub unsafe fn initWithContentsOfURL_byReference(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             byRef: bool,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContentsOfFile:byReference:)]
         pub unsafe fn initWithContentsOfFile_byReference(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
             byRef: bool,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, data: &NSData) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(setName:)]
         pub unsafe fn setName(&self, string: Option<&NSSoundName>) -> bool;
@@ -57,7 +60,7 @@ extern_methods!(
 
         #[method_id(initWithPasteboard:)]
         pub unsafe fn initWithPasteboard(
-            &self,
+            this: Option<Allocated<Self>>,
             pasteboard: &NSPasteboard,
         ) -> Option<Id<Self, Shared>>;
 

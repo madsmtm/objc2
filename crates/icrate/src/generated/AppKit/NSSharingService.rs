@@ -154,7 +154,7 @@ extern_methods!(
 
         #[method_id(initWithTitle:image:alternateImage:handler:)]
         pub unsafe fn initWithTitle_image_alternateImage_handler(
-            &self,
+            this: Option<Allocated<Self>>,
             title: &NSString,
             image: &NSImage,
             alternateImage: Option<&NSImage>,
@@ -162,7 +162,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(canPerformWithItems:)]
         pub unsafe fn canPerformWithItems(&self, items: Option<&NSArray>) -> bool;
@@ -224,10 +224,13 @@ extern_methods!(
         pub unsafe fn setDelegate(&self, delegate: Option<&NSSharingServicePickerDelegate>);
 
         #[method_id(initWithItems:)]
-        pub unsafe fn initWithItems(&self, items: &NSArray) -> Id<Self, Shared>;
+        pub unsafe fn initWithItems(
+            this: Option<Allocated<Self>>,
+            items: &NSArray,
+        ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(showRelativeToRect:ofView:preferredEdge:)]
         pub unsafe fn showRelativeToRect_ofView_preferredEdge(

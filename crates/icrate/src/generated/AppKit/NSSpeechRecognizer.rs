@@ -16,7 +16,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSSpeechRecognizer {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Option<Id<Self, Shared>>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Option<Id<Self, Shared>>;
 
         #[method(startListening)]
         pub unsafe fn startListening(&self);

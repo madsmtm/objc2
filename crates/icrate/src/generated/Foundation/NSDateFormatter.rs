@@ -312,7 +312,7 @@ extern_methods!(
     unsafe impl NSDateFormatter {
         #[method_id(initWithDateFormat:allowNaturalLanguage:)]
         pub unsafe fn initWithDateFormat_allowNaturalLanguage(
-            &self,
+            this: Option<Allocated<Self>>,
             format: &NSString,
             flag: bool,
         ) -> Id<Object, Shared>;

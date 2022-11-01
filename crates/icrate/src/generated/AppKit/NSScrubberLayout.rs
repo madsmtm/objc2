@@ -59,10 +59,13 @@ extern_methods!(
         pub unsafe fn visibleRect(&self) -> NSRect;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method(invalidateLayout)]
         pub unsafe fn invalidateLayout(&self);
@@ -152,11 +155,14 @@ extern_methods!(
 
         #[method_id(initWithNumberOfVisibleItems:)]
         pub unsafe fn initWithNumberOfVisibleItems(
-            &self,
+            this: Option<Allocated<Self>>,
             numberOfVisibleItems: NSInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
     }
 );

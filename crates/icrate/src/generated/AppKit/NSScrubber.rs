@@ -36,10 +36,13 @@ extern_methods!(
         pub unsafe fn roundedBackgroundStyle() -> Id<NSScrubberSelectionStyle, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(makeSelectionView)]
         pub unsafe fn makeSelectionView(&self) -> Option<Id<NSScrubberSelectionView, Shared>>;
@@ -159,10 +162,16 @@ extern_methods!(
         pub unsafe fn setBackgroundView(&self, backgroundView: Option<&NSView>);
 
         #[method_id(initWithFrame:)]
-        pub unsafe fn initWithFrame(&self, frameRect: NSRect) -> Id<Self, Shared>;
+        pub unsafe fn initWithFrame(
+            this: Option<Allocated<Self>>,
+            frameRect: NSRect,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method(reloadData)]
         pub unsafe fn reloadData(&self);

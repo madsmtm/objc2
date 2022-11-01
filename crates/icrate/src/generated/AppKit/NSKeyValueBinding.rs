@@ -20,7 +20,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSBindingSelectionMarker {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(multipleValuesSelectionMarker)]
         pub unsafe fn multipleValuesSelectionMarker() -> Id<NSBindingSelectionMarker, Shared>;

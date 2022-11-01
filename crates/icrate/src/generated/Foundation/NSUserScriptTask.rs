@@ -16,7 +16,7 @@ extern_methods!(
     unsafe impl NSUserScriptTask {
         #[method_id(initWithURL:error:)]
         pub unsafe fn initWithURL_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 

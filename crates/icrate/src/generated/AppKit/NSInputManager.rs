@@ -28,7 +28,7 @@ extern_methods!(
 
         #[method_id(initWithName:host:)]
         pub unsafe fn initWithName_host(
-            &self,
+            this: Option<Allocated<Self>>,
             inputServerName: Option<&NSString>,
             hostName: Option<&NSString>,
         ) -> Option<Id<NSInputManager, Shared>>;

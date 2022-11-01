@@ -17,7 +17,7 @@ extern_methods!(
     unsafe impl NSTextElement {
         #[method_id(initWithTextContentManager:)]
         pub unsafe fn initWithTextContentManager(
-            &self,
+            this: Option<Allocated<Self>>,
             textContentManager: Option<&NSTextContentManager>,
         ) -> Id<Self, Shared>;
 
@@ -51,7 +51,7 @@ extern_methods!(
     unsafe impl NSTextParagraph {
         #[method_id(initWithAttributedString:)]
         pub unsafe fn initWithAttributedString(
-            &self,
+            this: Option<Allocated<Self>>,
             attributedString: Option<&NSAttributedString>,
         ) -> Id<Self, Shared>;
 

@@ -51,7 +51,7 @@ extern_methods!(
     unsafe impl NSTextSelectionNavigation {
         #[method_id(initWithDataSource:)]
         pub unsafe fn initWithDataSource(
-            &self,
+            this: Option<Allocated<Self>>,
             dataSource: &NSTextSelectionDataSource,
         ) -> Id<Self, Shared>;
 
@@ -59,7 +59,7 @@ extern_methods!(
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(textSelectionDataSource)]
         pub unsafe fn textSelectionDataSource(

@@ -21,32 +21,32 @@ extern_class!(
 extern_methods!(
     unsafe impl NSXMLDocument {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithXMLString:options:error:)]
         pub unsafe fn initWithXMLString_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             string: &NSString,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initWithContentsOfURL:options:error:)]
         pub unsafe fn initWithContentsOfURL_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initWithData:options:error:)]
         pub unsafe fn initWithData_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initWithRootElement:)]
         pub unsafe fn initWithRootElement(
-            &self,
+            this: Option<Allocated<Self>>,
             element: Option<&NSXMLElement>,
         ) -> Id<Self, Shared>;
 

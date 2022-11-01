@@ -27,13 +27,19 @@ extern_methods!(
         pub unsafe fn bundleWithPath(path: &NSString) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithPath:)]
-        pub unsafe fn initWithPath(&self, path: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithPath(
+            this: Option<Allocated<Self>>,
+            path: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(bundleWithURL:)]
         pub unsafe fn bundleWithURL(url: &NSURL) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithURL:)]
-        pub unsafe fn initWithURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithURL(
+            this: Option<Allocated<Self>>,
+            url: &NSURL,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(bundleForClass:)]
         pub unsafe fn bundleForClass(aClass: &Class) -> Id<NSBundle, Shared>;
@@ -284,14 +290,17 @@ extern_class!(
 extern_methods!(
     unsafe impl NSBundleResourceRequest {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithTags:)]
-        pub unsafe fn initWithTags(&self, tags: &NSSet<NSString>) -> Id<Self, Shared>;
+        pub unsafe fn initWithTags(
+            this: Option<Allocated<Self>>,
+            tags: &NSSet<NSString>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithTags:bundle:)]
         pub unsafe fn initWithTags_bundle(
-            &self,
+            this: Option<Allocated<Self>>,
             tags: &NSSet<NSString>,
             bundle: &NSBundle,
         ) -> Id<Self, Shared>;

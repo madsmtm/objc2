@@ -74,18 +74,21 @@ extern_methods!(
         pub unsafe fn isEqualToAttributedString(&self, other: &NSAttributedString) -> bool;
 
         #[method_id(initWithString:)]
-        pub unsafe fn initWithString(&self, str: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithString(
+            this: Option<Allocated<Self>>,
+            str: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithString:attributes:)]
         pub unsafe fn initWithString_attributes(
-            &self,
+            this: Option<Allocated<Self>>,
             str: &NSString,
             attrs: Option<&NSDictionary<NSAttributedStringKey, Object>>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithAttributedString:)]
         pub unsafe fn initWithAttributedString(
-            &self,
+            this: Option<Allocated<Self>>,
             attrStr: &NSAttributedString,
         ) -> Id<Self, Shared>;
 
@@ -238,7 +241,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSAttributedStringMarkdownParsingOptions {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(allowsExtendedAttributes)]
         pub unsafe fn allowsExtendedAttributes(&self) -> bool;
@@ -277,7 +280,7 @@ extern_methods!(
     unsafe impl NSAttributedString {
         #[method_id(initWithContentsOfMarkdownFileAtURL:options:baseURL:error:)]
         pub unsafe fn initWithContentsOfMarkdownFileAtURL_options_baseURL_error(
-            &self,
+            this: Option<Allocated<Self>>,
             markdownFile: &NSURL,
             options: Option<&NSAttributedStringMarkdownParsingOptions>,
             baseURL: Option<&NSURL>,
@@ -285,7 +288,7 @@ extern_methods!(
 
         #[method_id(initWithMarkdown:options:baseURL:error:)]
         pub unsafe fn initWithMarkdown_options_baseURL_error(
-            &self,
+            this: Option<Allocated<Self>>,
             markdown: &NSData,
             options: Option<&NSAttributedStringMarkdownParsingOptions>,
             baseURL: Option<&NSURL>,
@@ -293,7 +296,7 @@ extern_methods!(
 
         #[method_id(initWithMarkdownString:options:baseURL:error:)]
         pub unsafe fn initWithMarkdownString_options_baseURL_error(
-            &self,
+            this: Option<Allocated<Self>>,
             markdownString: &NSString,
             options: Option<&NSAttributedStringMarkdownParsingOptions>,
             baseURL: Option<&NSURL>,
@@ -312,7 +315,7 @@ extern_methods!(
     unsafe impl NSAttributedString {
         #[method_id(initWithFormat:options:locale:arguments:)]
         pub unsafe fn initWithFormat_options_locale_arguments(
-            &self,
+            this: Option<Allocated<Self>>,
             format: &NSAttributedString,
             options: NSAttributedStringFormattingOptions,
             locale: Option<&NSLocale>,
@@ -391,7 +394,7 @@ extern_methods!(
         pub unsafe fn intentKind(&self) -> NSPresentationIntentKind;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(parentIntent)]
         pub unsafe fn parentIntent(&self) -> Option<Id<NSPresentationIntent, Shared>>;

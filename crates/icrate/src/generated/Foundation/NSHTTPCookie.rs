@@ -84,7 +84,7 @@ extern_methods!(
     unsafe impl NSHTTPCookie {
         #[method_id(initWithProperties:)]
         pub unsafe fn initWithProperties(
-            &self,
+            this: Option<Allocated<Self>>,
             properties: &NSDictionary<NSHTTPCookiePropertyKey, Object>,
         ) -> Option<Id<Self, Shared>>;
 

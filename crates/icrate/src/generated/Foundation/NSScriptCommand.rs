@@ -28,12 +28,15 @@ extern_methods!(
     unsafe impl NSScriptCommand {
         #[method_id(initWithCommandDescription:)]
         pub unsafe fn initWithCommandDescription(
-            &self,
+            this: Option<Allocated<Self>>,
             commandDef: &NSScriptCommandDescription,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(commandDescription)]
         pub unsafe fn commandDescription(&self) -> Id<NSScriptCommandDescription, Shared>;

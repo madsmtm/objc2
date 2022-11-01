@@ -31,7 +31,7 @@ extern_methods!(
 
         #[method_id(initWithCurrentLayout:nextLayout:)]
         pub unsafe fn initWithCurrentLayout_nextLayout(
-            &self,
+            this: Option<Allocated<Self>>,
             currentLayout: &NSCollectionViewLayout,
             newLayout: &NSCollectionViewLayout,
         ) -> Id<Self, Shared>;

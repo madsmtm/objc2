@@ -21,10 +21,13 @@ extern_methods!(
         pub unsafe fn currentInputContext() -> Option<Id<NSTextInputContext, Shared>>;
 
         #[method_id(initWithClient:)]
-        pub unsafe fn initWithClient(&self, client: &NSTextInputClient) -> Id<Self, Shared>;
+        pub unsafe fn initWithClient(
+            this: Option<Allocated<Self>>,
+            client: &NSTextInputClient,
+        ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(client)]
         pub unsafe fn client(&self) -> Id<NSTextInputClient, Shared>;

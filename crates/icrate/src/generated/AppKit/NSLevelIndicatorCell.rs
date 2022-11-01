@@ -23,7 +23,7 @@ extern_methods!(
     unsafe impl NSLevelIndicatorCell {
         #[method_id(initWithLevelIndicatorStyle:)]
         pub unsafe fn initWithLevelIndicatorStyle(
-            &self,
+            this: Option<Allocated<Self>>,
             levelIndicatorStyle: NSLevelIndicatorStyle,
         ) -> Id<Self, Shared>;
 

@@ -24,13 +24,22 @@ extern_methods!(
         pub unsafe fn indexSetWithIndexesInRange(range: NSRange) -> Id<Self, Shared>;
 
         #[method_id(initWithIndexesInRange:)]
-        pub unsafe fn initWithIndexesInRange(&self, range: NSRange) -> Id<Self, Shared>;
+        pub unsafe fn initWithIndexesInRange(
+            this: Option<Allocated<Self>>,
+            range: NSRange,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithIndexSet:)]
-        pub unsafe fn initWithIndexSet(&self, indexSet: &NSIndexSet) -> Id<Self, Shared>;
+        pub unsafe fn initWithIndexSet(
+            this: Option<Allocated<Self>>,
+            indexSet: &NSIndexSet,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithIndex:)]
-        pub unsafe fn initWithIndex(&self, value: NSUInteger) -> Id<Self, Shared>;
+        pub unsafe fn initWithIndex(
+            this: Option<Allocated<Self>>,
+            value: NSUInteger,
+        ) -> Id<Self, Shared>;
 
         #[method(isEqualToIndexSet:)]
         pub unsafe fn isEqualToIndexSet(&self, indexSet: &NSIndexSet) -> bool;

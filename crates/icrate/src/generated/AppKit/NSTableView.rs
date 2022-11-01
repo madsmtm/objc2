@@ -79,10 +79,16 @@ extern_class!(
 extern_methods!(
     unsafe impl NSTableView {
         #[method_id(initWithFrame:)]
-        pub unsafe fn initWithFrame(&self, frameRect: NSRect) -> Id<Self, Shared>;
+        pub unsafe fn initWithFrame(
+            this: Option<Allocated<Self>>,
+            frameRect: NSRect,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(dataSource)]
         pub unsafe fn dataSource(&self) -> Option<Id<NSTableViewDataSource, Shared>>;

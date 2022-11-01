@@ -16,10 +16,16 @@ extern_class!(
 extern_methods!(
     unsafe impl NSObjectController {
         #[method_id(initWithContent:)]
-        pub unsafe fn initWithContent(&self, content: Option<&Object>) -> Id<Self, Shared>;
+        pub unsafe fn initWithContent(
+            this: Option<Allocated<Self>>,
+            content: Option<&Object>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(content)]
         pub unsafe fn content(&self) -> Option<Id<Object, Shared>>;

@@ -26,7 +26,10 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithIdentifier:)]
-        pub unsafe fn initWithIdentifier(&self, identifier: Option<&Object>) -> Id<Self, Shared>;
+        pub unsafe fn initWithIdentifier(
+            this: Option<Allocated<Self>>,
+            identifier: Option<&Object>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(identifier)]
         pub unsafe fn identifier(&self) -> Option<Id<Object, Shared>>;

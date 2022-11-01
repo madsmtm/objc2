@@ -15,25 +15,25 @@ extern_class!(
 extern_methods!(
     unsafe impl NSXMLDTD {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithKind:options:)]
         pub unsafe fn initWithKind_options(
-            &self,
+            this: Option<Allocated<Self>>,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithContentsOfURL:options:error:)]
         pub unsafe fn initWithContentsOfURL_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initWithData:options:error:)]
         pub unsafe fn initWithData_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;

@@ -47,21 +47,24 @@ extern_methods!(
 
         #[method_id(initWithContainerSpecifier:key:)]
         pub unsafe fn initWithContainerSpecifier_key(
-            &self,
+            this: Option<Allocated<Self>>,
             container: &NSScriptObjectSpecifier,
             property: &NSString,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithContainerClassDescription:containerSpecifier:key:)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key(
-            &self,
+            this: Option<Allocated<Self>>,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(childSpecifier)]
         pub unsafe fn childSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
@@ -172,7 +175,7 @@ extern_methods!(
     unsafe impl NSIndexSpecifier {
         #[method_id(initWithContainerClassDescription:containerSpecifier:key:index:)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_index(
-            &self,
+            this: Option<Allocated<Self>>,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
@@ -212,11 +215,14 @@ extern_class!(
 extern_methods!(
     unsafe impl NSNameSpecifier {
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContainerClassDescription:containerSpecifier:key:name:)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_name(
-            &self,
+            this: Option<Allocated<Self>>,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
@@ -244,7 +250,7 @@ extern_methods!(
     unsafe impl NSPositionalSpecifier {
         #[method_id(initWithPosition:objectSpecifier:)]
         pub unsafe fn initWithPosition_objectSpecifier(
-            &self,
+            this: Option<Allocated<Self>>,
             position: NSInsertionPosition,
             specifier: &NSScriptObjectSpecifier,
         ) -> Id<Self, Shared>;
@@ -316,11 +322,14 @@ extern_class!(
 extern_methods!(
     unsafe impl NSRangeSpecifier {
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContainerClassDescription:containerSpecifier:key:startSpecifier:endSpecifier:)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_startSpecifier_endSpecifier(
-            &self,
+            this: Option<Allocated<Self>>,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
@@ -354,11 +363,14 @@ extern_class!(
 extern_methods!(
     unsafe impl NSRelativeSpecifier {
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContainerClassDescription:containerSpecifier:key:relativePosition:baseSpecifier:)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_relativePosition_baseSpecifier(
-            &self,
+            this: Option<Allocated<Self>>,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
@@ -392,11 +404,14 @@ extern_class!(
 extern_methods!(
     unsafe impl NSUniqueIDSpecifier {
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContainerClassDescription:containerSpecifier:key:uniqueID:)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_uniqueID(
-            &self,
+            this: Option<Allocated<Self>>,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,
@@ -423,11 +438,14 @@ extern_class!(
 extern_methods!(
     unsafe impl NSWhoseSpecifier {
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContainerClassDescription:containerSpecifier:key:test:)]
         pub unsafe fn initWithContainerClassDescription_containerSpecifier_key_test(
-            &self,
+            this: Option<Allocated<Self>>,
             classDesc: &NSScriptClassDescription,
             container: Option<&NSScriptObjectSpecifier>,
             property: &NSString,

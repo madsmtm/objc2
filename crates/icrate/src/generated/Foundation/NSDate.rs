@@ -22,16 +22,19 @@ extern_methods!(
         pub unsafe fn timeIntervalSinceReferenceDate(&self) -> NSTimeInterval;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithTimeIntervalSinceReferenceDate:)]
         pub unsafe fn initWithTimeIntervalSinceReferenceDate(
-            &self,
+            this: Option<Allocated<Self>>,
             ti: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -110,18 +113,20 @@ extern_methods!(
         pub unsafe fn now() -> Id<NSDate, Shared>;
 
         #[method_id(initWithTimeIntervalSinceNow:)]
-        pub unsafe fn initWithTimeIntervalSinceNow(&self, secs: NSTimeInterval)
-            -> Id<Self, Shared>;
+        pub unsafe fn initWithTimeIntervalSinceNow(
+            this: Option<Allocated<Self>>,
+            secs: NSTimeInterval,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithTimeIntervalSince1970:)]
         pub unsafe fn initWithTimeIntervalSince1970(
-            &self,
+            this: Option<Allocated<Self>>,
             secs: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithTimeInterval:sinceDate:)]
         pub unsafe fn initWithTimeInterval_sinceDate(
-            &self,
+            this: Option<Allocated<Self>>,
             secsToBeAdded: NSTimeInterval,
             date: &NSDate,
         ) -> Id<Self, Shared>;

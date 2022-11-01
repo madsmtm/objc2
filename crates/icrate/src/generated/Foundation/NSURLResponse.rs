@@ -16,7 +16,7 @@ extern_methods!(
     unsafe impl NSURLResponse {
         #[method_id(initWithURL:MIMEType:expectedContentLength:textEncodingName:)]
         pub unsafe fn initWithURL_MIMEType_expectedContentLength_textEncodingName(
-            &self,
+            this: Option<Allocated<Self>>,
             URL: &NSURL,
             MIMEType: Option<&NSString>,
             length: NSInteger,
@@ -53,7 +53,7 @@ extern_methods!(
     unsafe impl NSHTTPURLResponse {
         #[method_id(initWithURL:statusCode:HTTPVersion:headerFields:)]
         pub unsafe fn initWithURL_statusCode_HTTPVersion_headerFields(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             statusCode: NSInteger,
             HTTPVersion: Option<&NSString>,

@@ -36,13 +36,16 @@ extern_methods!(
     unsafe impl NSAnimation {
         #[method_id(initWithDuration:animationCurve:)]
         pub unsafe fn initWithDuration_animationCurve(
-            &self,
+            this: Option<Allocated<Self>>,
             duration: NSTimeInterval,
             animationCurve: NSAnimationCurve,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(startAnimation)]
         pub unsafe fn startAnimation(&self);
@@ -176,7 +179,7 @@ extern_methods!(
     unsafe impl NSViewAnimation {
         #[method_id(initWithViewAnimations:)]
         pub unsafe fn initWithViewAnimations(
-            &self,
+            this: Option<Allocated<Self>>,
             viewAnimations: &NSArray<NSDictionary<NSViewAnimationKey, Object>>,
         ) -> Id<Self, Shared>;
 

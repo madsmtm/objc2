@@ -19,7 +19,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSTask {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(executableURL)]
         pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>>;

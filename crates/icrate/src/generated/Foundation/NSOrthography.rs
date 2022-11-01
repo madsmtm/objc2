@@ -22,13 +22,16 @@ extern_methods!(
 
         #[method_id(initWithDominantScript:languageMap:)]
         pub unsafe fn initWithDominantScript_languageMap(
-            &self,
+            this: Option<Allocated<Self>>,
             script: &NSString,
             map: &NSDictionary<NSString, NSArray<NSString>>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 

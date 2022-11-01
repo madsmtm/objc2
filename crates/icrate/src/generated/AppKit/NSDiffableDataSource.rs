@@ -182,13 +182,13 @@ extern_methods!(
     {
         #[method_id(initWithCollectionView:itemProvider:)]
         pub unsafe fn initWithCollectionView_itemProvider(
-            &self,
+            this: Option<Allocated<Self>>,
             collectionView: &NSCollectionView,
             itemProvider: NSCollectionViewDiffableDataSourceItemProvider,
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;

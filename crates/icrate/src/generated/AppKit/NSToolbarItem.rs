@@ -27,7 +27,7 @@ extern_methods!(
     unsafe impl NSToolbarItem {
         #[method_id(initWithItemIdentifier:)]
         pub unsafe fn initWithItemIdentifier(
-            &self,
+            this: Option<Allocated<Self>>,
             itemIdentifier: &NSToolbarItemIdentifier,
         ) -> Id<Self, Shared>;
 

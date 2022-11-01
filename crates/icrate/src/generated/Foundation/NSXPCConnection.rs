@@ -20,21 +20,24 @@ extern_class!(
 extern_methods!(
     unsafe impl NSXPCConnection {
         #[method_id(initWithServiceName:)]
-        pub unsafe fn initWithServiceName(&self, serviceName: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithServiceName(
+            this: Option<Allocated<Self>>,
+            serviceName: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(serviceName)]
         pub unsafe fn serviceName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method_id(initWithMachServiceName:options:)]
         pub unsafe fn initWithMachServiceName_options(
-            &self,
+            this: Option<Allocated<Self>>,
             name: &NSString,
             options: NSXPCConnectionOptions,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithListenerEndpoint:)]
         pub unsafe fn initWithListenerEndpoint(
-            &self,
+            this: Option<Allocated<Self>>,
             endpoint: &NSXPCListenerEndpoint,
         ) -> Id<Self, Shared>;
 
@@ -136,7 +139,10 @@ extern_methods!(
         pub unsafe fn anonymousListener() -> Id<NSXPCListener, Shared>;
 
         #[method_id(initWithMachServiceName:)]
-        pub unsafe fn initWithMachServiceName(&self, name: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithMachServiceName(
+            this: Option<Allocated<Self>>,
+            name: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSXPCListenerDelegate, Shared>>;

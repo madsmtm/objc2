@@ -101,7 +101,10 @@ extern_methods!(
         pub unsafe fn portWithMachPort(machPort: u32) -> Id<NSPort, Shared>;
 
         #[method_id(initWithMachPort:)]
-        pub unsafe fn initWithMachPort(&self, machPort: u32) -> Id<Self, Shared>;
+        pub unsafe fn initWithMachPort(
+            this: Option<Allocated<Self>>,
+            machPort: u32,
+        ) -> Id<Self, Shared>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, anObject: Option<&NSMachPortDelegate>);
@@ -117,7 +120,7 @@ extern_methods!(
 
         #[method_id(initWithMachPort:options:)]
         pub unsafe fn initWithMachPort_options(
-            &self,
+            this: Option<Allocated<Self>>,
             machPort: u32,
             f: NSMachPortOptions,
         ) -> Id<Self, Shared>;
@@ -160,14 +163,17 @@ extern_class!(
 extern_methods!(
     unsafe impl NSSocketPort {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithTCPPort:)]
-        pub unsafe fn initWithTCPPort(&self, port: c_ushort) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithTCPPort(
+            this: Option<Allocated<Self>>,
+            port: c_ushort,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithProtocolFamily:socketType:protocol:address:)]
         pub unsafe fn initWithProtocolFamily_socketType_protocol_address(
-            &self,
+            this: Option<Allocated<Self>>,
             family: c_int,
             type_: c_int,
             protocol: c_int,
@@ -176,7 +182,7 @@ extern_methods!(
 
         #[method_id(initWithProtocolFamily:socketType:protocol:socket:)]
         pub unsafe fn initWithProtocolFamily_socketType_protocol_socket(
-            &self,
+            this: Option<Allocated<Self>>,
             family: c_int,
             type_: c_int,
             protocol: c_int,
@@ -185,14 +191,14 @@ extern_methods!(
 
         #[method_id(initRemoteWithTCPPort:host:)]
         pub unsafe fn initRemoteWithTCPPort_host(
-            &self,
+            this: Option<Allocated<Self>>,
             port: c_ushort,
             hostName: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initRemoteWithProtocolFamily:socketType:protocol:address:)]
         pub unsafe fn initRemoteWithProtocolFamily_socketType_protocol_address(
-            &self,
+            this: Option<Allocated<Self>>,
             family: c_int,
             type_: c_int,
             protocol: c_int,

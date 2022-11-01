@@ -34,21 +34,27 @@ extern_methods!(
     unsafe impl NSDecimalNumber {
         #[method_id(initWithMantissa:exponent:isNegative:)]
         pub unsafe fn initWithMantissa_exponent_isNegative(
-            &self,
+            this: Option<Allocated<Self>>,
             mantissa: c_ulonglong,
             exponent: c_short,
             flag: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithDecimal:)]
-        pub unsafe fn initWithDecimal(&self, dcm: NSDecimal) -> Id<Self, Shared>;
+        pub unsafe fn initWithDecimal(
+            this: Option<Allocated<Self>>,
+            dcm: NSDecimal,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithString:)]
-        pub unsafe fn initWithString(&self, numberValue: Option<&NSString>) -> Id<Self, Shared>;
+        pub unsafe fn initWithString(
+            this: Option<Allocated<Self>>,
+            numberValue: Option<&NSString>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithString:locale:)]
         pub unsafe fn initWithString_locale(
-            &self,
+            this: Option<Allocated<Self>>,
             numberValue: Option<&NSString>,
             locale: Option<&Object>,
         ) -> Id<Self, Shared>;
@@ -213,7 +219,7 @@ extern_methods!(
 
         #[method_id(initWithRoundingMode:scale:raiseOnExactness:raiseOnOverflow:raiseOnUnderflow:raiseOnDivideByZero:)]
         pub unsafe fn initWithRoundingMode_scale_raiseOnExactness_raiseOnOverflow_raiseOnUnderflow_raiseOnDivideByZero(
-            &self,
+            this: Option<Allocated<Self>>,
             roundingMode: NSRoundingMode,
             scale: c_short,
             exact: bool,

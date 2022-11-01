@@ -17,7 +17,7 @@ extern_methods!(
     unsafe impl NSPopUpButton {
         #[method_id(initWithFrame:pullsDown:)]
         pub unsafe fn initWithFrame_pullsDown(
-            &self,
+            this: Option<Allocated<Self>>,
             buttonFrame: NSRect,
             flag: bool,
         ) -> Id<Self, Shared>;

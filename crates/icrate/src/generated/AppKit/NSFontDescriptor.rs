@@ -103,7 +103,7 @@ extern_methods!(
 
         #[method_id(initWithFontAttributes:)]
         pub unsafe fn initWithFontAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             attributes: Option<&NSDictionary<NSFontDescriptorAttributeName, Object>>,
         ) -> Id<Self, Shared>;
 

@@ -17,7 +17,7 @@ extern_methods!(
     unsafe impl NSTextAlternatives {
         #[method_id(initWithPrimaryString:alternativeStrings:)]
         pub unsafe fn initWithPrimaryString_alternativeStrings(
-            &self,
+            this: Option<Allocated<Self>>,
             primaryString: &NSString,
             alternativeStrings: &NSArray<NSString>,
         ) -> Id<Self, Shared>;

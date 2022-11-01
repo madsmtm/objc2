@@ -21,14 +21,14 @@ extern_methods!(
     unsafe impl NSCachedURLResponse {
         #[method_id(initWithResponse:data:)]
         pub unsafe fn initWithResponse_data(
-            &self,
+            this: Option<Allocated<Self>>,
             response: &NSURLResponse,
             data: &NSData,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithResponse:data:userInfo:storagePolicy:)]
         pub unsafe fn initWithResponse_data_userInfo_storagePolicy(
-            &self,
+            this: Option<Allocated<Self>>,
             response: &NSURLResponse,
             data: &NSData,
             userInfo: Option<&NSDictionary>,
@@ -68,7 +68,7 @@ extern_methods!(
 
         #[method_id(initWithMemoryCapacity:diskCapacity:diskPath:)]
         pub unsafe fn initWithMemoryCapacity_diskCapacity_diskPath(
-            &self,
+            this: Option<Allocated<Self>>,
             memoryCapacity: NSUInteger,
             diskCapacity: NSUInteger,
             path: Option<&NSString>,
@@ -76,7 +76,7 @@ extern_methods!(
 
         #[method_id(initWithMemoryCapacity:diskCapacity:directoryURL:)]
         pub unsafe fn initWithMemoryCapacity_diskCapacity_directoryURL(
-            &self,
+            this: Option<Allocated<Self>>,
             memoryCapacity: NSUInteger,
             diskCapacity: NSUInteger,
             directoryURL: Option<&NSURL>,

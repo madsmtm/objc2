@@ -30,14 +30,17 @@ extern_class!(
 extern_methods!(
     unsafe impl NSXMLNode {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithKind:)]
-        pub unsafe fn initWithKind(&self, kind: NSXMLNodeKind) -> Id<Self, Shared>;
+        pub unsafe fn initWithKind(
+            this: Option<Allocated<Self>>,
+            kind: NSXMLNodeKind,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithKind:options:)]
         pub unsafe fn initWithKind_options(
-            &self,
+            this: Option<Allocated<Self>>,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
         ) -> Id<Self, Shared>;

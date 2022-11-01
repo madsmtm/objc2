@@ -22,13 +22,22 @@ extern_class!(
 extern_methods!(
     unsafe impl NSXMLParser {
         #[method_id(initWithContentsOfURL:)]
-        pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithContentsOfURL(
+            this: Option<Allocated<Self>>,
+            url: &NSURL,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, data: &NSData) -> Id<Self, Shared>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithStream:)]
-        pub unsafe fn initWithStream(&self, stream: &NSInputStream) -> Id<Self, Shared>;
+        pub unsafe fn initWithStream(
+            this: Option<Allocated<Self>>,
+            stream: &NSInputStream,
+        ) -> Id<Self, Shared>;
 
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSXMLParserDelegate, Shared>>;

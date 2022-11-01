@@ -26,17 +26,20 @@ extern_methods!(
         pub unsafe fn indexOfObject(&self, object: &ObjectType) -> NSUInteger;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
-            &self,
+            this: Option<Allocated<Self>>,
             objects: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -234,51 +237,62 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithObject:)]
-        pub unsafe fn initWithObject(&self, object: &ObjectType) -> Id<Self, Shared>;
+        pub unsafe fn initWithObject(
+            this: Option<Allocated<Self>>,
+            object: &ObjectType,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithOrderedSet:)]
-        pub unsafe fn initWithOrderedSet(&self, set: &NSOrderedSet<ObjectType>)
-            -> Id<Self, Shared>;
+        pub unsafe fn initWithOrderedSet(
+            this: Option<Allocated<Self>>,
+            set: &NSOrderedSet<ObjectType>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithOrderedSet:copyItems:)]
         pub unsafe fn initWithOrderedSet_copyItems(
-            &self,
+            this: Option<Allocated<Self>>,
             set: &NSOrderedSet<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithOrderedSet:range:copyItems:)]
         pub unsafe fn initWithOrderedSet_range_copyItems(
-            &self,
+            this: Option<Allocated<Self>>,
             set: &NSOrderedSet<ObjectType>,
             range: NSRange,
             flag: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithArray:)]
-        pub unsafe fn initWithArray(&self, array: &NSArray<ObjectType>) -> Id<Self, Shared>;
+        pub unsafe fn initWithArray(
+            this: Option<Allocated<Self>>,
+            array: &NSArray<ObjectType>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithArray:copyItems:)]
         pub unsafe fn initWithArray_copyItems(
-            &self,
+            this: Option<Allocated<Self>>,
             set: &NSArray<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithArray:range:copyItems:)]
         pub unsafe fn initWithArray_range_copyItems(
-            &self,
+            this: Option<Allocated<Self>>,
             set: &NSArray<ObjectType>,
             range: NSRange,
             flag: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithSet:)]
-        pub unsafe fn initWithSet(&self, set: &NSSet<ObjectType>) -> Id<Self, Shared>;
+        pub unsafe fn initWithSet(
+            this: Option<Allocated<Self>>,
+            set: &NSSet<ObjectType>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithSet:copyItems:)]
         pub unsafe fn initWithSet_copyItems(
-            &self,
+            this: Option<Allocated<Self>>,
             set: &NSSet<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
@@ -340,13 +354,19 @@ extern_methods!(
         pub unsafe fn replaceObjectAtIndex_withObject(&self, idx: NSUInteger, object: &ObjectType);
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCapacity:)]
-        pub unsafe fn initWithCapacity(&self, numItems: NSUInteger) -> Id<Self, Shared>;
+        pub unsafe fn initWithCapacity(
+            this: Option<Allocated<Self>>,
+            numItems: NSUInteger,
+        ) -> Id<Self, Shared>;
     }
 );
 

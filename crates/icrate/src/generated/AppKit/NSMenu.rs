@@ -16,10 +16,16 @@ extern_class!(
 extern_methods!(
     unsafe impl NSMenu {
         #[method_id(initWithTitle:)]
-        pub unsafe fn initWithTitle(&self, title: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithTitle(
+            this: Option<Allocated<Self>>,
+            title: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;

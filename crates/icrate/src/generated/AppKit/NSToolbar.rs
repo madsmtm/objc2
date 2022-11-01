@@ -32,12 +32,12 @@ extern_methods!(
     unsafe impl NSToolbar {
         #[method_id(initWithIdentifier:)]
         pub unsafe fn initWithIdentifier(
-            &self,
+            this: Option<Allocated<Self>>,
             identifier: &NSToolbarIdentifier,
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(insertItemWithItemIdentifier:atIndex:)]
         pub unsafe fn insertItemWithItemIdentifier_atIndex(

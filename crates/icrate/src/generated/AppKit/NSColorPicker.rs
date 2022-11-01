@@ -17,7 +17,7 @@ extern_methods!(
     unsafe impl NSColorPicker {
         #[method_id(initWithPickerMask:colorPanel:)]
         pub unsafe fn initWithPickerMask_colorPanel(
-            &self,
+            this: Option<Allocated<Self>>,
             mask: NSUInteger,
             owningColorPanel: &NSColorPanel,
         ) -> Option<Id<Self, Shared>>;

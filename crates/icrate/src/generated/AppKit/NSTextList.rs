@@ -90,7 +90,7 @@ extern_methods!(
     unsafe impl NSTextList {
         #[method_id(initWithMarkerFormat:options:)]
         pub unsafe fn initWithMarkerFormat_options(
-            &self,
+            this: Option<Allocated<Self>>,
             format: &NSTextListMarkerFormat,
             mask: NSUInteger,
         ) -> Id<Self, Shared>;

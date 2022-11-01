@@ -16,7 +16,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSDictionaryControllerKeyValuePair {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(key)]
         pub unsafe fn key(&self) -> Option<Id<NSString, Shared>>;

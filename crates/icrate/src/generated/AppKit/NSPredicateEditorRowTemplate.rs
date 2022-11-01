@@ -38,7 +38,7 @@ extern_methods!(
 
         #[method_id(initWithLeftExpressions:rightExpressions:modifier:operators:options:)]
         pub unsafe fn initWithLeftExpressions_rightExpressions_modifier_operators_options(
-            &self,
+            this: Option<Allocated<Self>>,
             leftExpressions: &NSArray<NSExpression>,
             rightExpressions: &NSArray<NSExpression>,
             modifier: NSComparisonPredicateModifier,
@@ -48,7 +48,7 @@ extern_methods!(
 
         #[method_id(initWithLeftExpressions:rightExpressionAttributeType:modifier:operators:options:)]
         pub unsafe fn initWithLeftExpressions_rightExpressionAttributeType_modifier_operators_options(
-            &self,
+            this: Option<Allocated<Self>>,
             leftExpressions: &NSArray<NSExpression>,
             attributeType: NSAttributeType,
             modifier: NSComparisonPredicateModifier,
@@ -58,7 +58,7 @@ extern_methods!(
 
         #[method_id(initWithCompoundTypes:)]
         pub unsafe fn initWithCompoundTypes(
-            &self,
+            this: Option<Allocated<Self>>,
             compoundTypes: &NSArray<NSNumber>,
         ) -> Id<Self, Shared>;
 

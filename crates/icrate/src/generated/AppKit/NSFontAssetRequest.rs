@@ -19,11 +19,11 @@ extern_class!(
 extern_methods!(
     unsafe impl NSFontAssetRequest {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithFontDescriptors:options:)]
         pub unsafe fn initWithFontDescriptors_options(
-            &self,
+            this: Option<Allocated<Self>>,
             fontDescriptors: &NSArray<NSFontDescriptor>,
             options: NSFontAssetRequestOptions,
         ) -> Id<Self, Shared>;

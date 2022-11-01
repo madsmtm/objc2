@@ -20,13 +20,16 @@ extern_methods!(
 
         #[method_id(initWithDefaults:initialValues:)]
         pub unsafe fn initWithDefaults_initialValues(
-            &self,
+            this: Option<Allocated<Self>>,
             defaults: Option<&NSUserDefaults>,
             initialValues: Option<&NSDictionary<NSString, Object>>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(defaults)]
         pub unsafe fn defaults(&self) -> Id<NSUserDefaults, Shared>;

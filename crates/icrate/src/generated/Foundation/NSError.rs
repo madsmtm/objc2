@@ -88,7 +88,7 @@ extern_methods!(
     unsafe impl NSError {
         #[method_id(initWithDomain:code:userInfo:)]
         pub unsafe fn initWithDomain_code_userInfo(
-            &self,
+            this: Option<Allocated<Self>>,
             domain: &NSErrorDomain,
             code: NSInteger,
             dict: Option<&NSDictionary<NSErrorUserInfoKey, Object>>,

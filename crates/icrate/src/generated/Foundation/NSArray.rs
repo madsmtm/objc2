@@ -23,17 +23,20 @@ extern_methods!(
         pub unsafe fn objectAtIndex(&self, index: NSUInteger) -> Id<ObjectType, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
-            &self,
+            this: Option<Allocated<Self>>,
             objects: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -271,18 +274,21 @@ extern_methods!(
         pub unsafe fn arrayWithArray(array: &NSArray<ObjectType>) -> Id<Self, Shared>;
 
         #[method_id(initWithArray:)]
-        pub unsafe fn initWithArray(&self, array: &NSArray<ObjectType>) -> Id<Self, Shared>;
+        pub unsafe fn initWithArray(
+            this: Option<Allocated<Self>>,
+            array: &NSArray<ObjectType>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithArray:copyItems:)]
         pub unsafe fn initWithArray_copyItems(
-            &self,
+            this: Option<Allocated<Self>>,
             array: &NSArray<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithContentsOfURL:error:)]
         pub unsafe fn initWithContentsOfURL_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Result<Id<NSArray<ObjectType>, Shared>, Id<NSError, Shared>>;
 
@@ -343,13 +349,13 @@ extern_methods!(
 
         #[method_id(initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<NSArray<ObjectType>, Shared>>;
 
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Option<Id<NSArray<ObjectType>, Shared>>;
 
@@ -398,13 +404,19 @@ extern_methods!(
         );
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCapacity:)]
-        pub unsafe fn initWithCapacity(&self, numItems: NSUInteger) -> Id<Self, Shared>;
+        pub unsafe fn initWithCapacity(
+            this: Option<Allocated<Self>>,
+            numItems: NSUInteger,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -527,13 +539,13 @@ extern_methods!(
 
         #[method_id(initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<NSMutableArray<ObjectType>, Shared>>;
 
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Option<Id<NSMutableArray<ObjectType>, Shared>>;
     }

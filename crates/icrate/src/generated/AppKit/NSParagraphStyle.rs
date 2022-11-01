@@ -42,7 +42,7 @@ extern_methods!(
 
         #[method_id(initWithTextAlignment:location:options:)]
         pub unsafe fn initWithTextAlignment_location_options(
-            &self,
+            this: Option<Allocated<Self>>,
             alignment: NSTextAlignment,
             loc: CGFloat,
             options: &NSDictionary<NSTextTabOptionKey, Object>,
@@ -317,7 +317,7 @@ extern_methods!(
     unsafe impl NSTextTab {
         #[method_id(initWithType:location:)]
         pub unsafe fn initWithType_location(
-            &self,
+            this: Option<Allocated<Self>>,
             type_: NSTextTabType,
             loc: CGFloat,
         ) -> Id<Self, Shared>;

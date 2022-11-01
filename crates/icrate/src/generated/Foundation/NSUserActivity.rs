@@ -17,10 +17,13 @@ extern_class!(
 extern_methods!(
     unsafe impl NSUserActivity {
         #[method_id(initWithActivityType:)]
-        pub unsafe fn initWithActivityType(&self, activityType: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithActivityType(
+            this: Option<Allocated<Self>>,
+            activityType: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(activityType)]
         pub unsafe fn activityType(&self) -> Id<NSString, Shared>;

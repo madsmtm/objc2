@@ -172,7 +172,7 @@ extern_methods!(
     unsafe impl NSSpeechSynthesizer {
         #[method_id(initWithVoice:)]
         pub unsafe fn initWithVoice(
-            &self,
+            this: Option<Allocated<Self>>,
             voice: Option<&NSSpeechSynthesizerVoiceName>,
         ) -> Option<Id<Self, Shared>>;
 

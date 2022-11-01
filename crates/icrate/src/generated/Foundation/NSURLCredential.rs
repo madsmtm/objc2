@@ -30,7 +30,7 @@ extern_methods!(
     unsafe impl NSURLCredential {
         #[method_id(initWithUser:password:persistence:)]
         pub unsafe fn initWithUser_password_persistence(
-            &self,
+            this: Option<Allocated<Self>>,
             user: &NSString,
             password: &NSString,
             persistence: NSURLCredentialPersistence,
@@ -59,7 +59,7 @@ extern_methods!(
     unsafe impl NSURLCredential {
         #[method_id(initWithIdentity:certificates:persistence:)]
         pub unsafe fn initWithIdentity_certificates_persistence(
-            &self,
+            this: Option<Allocated<Self>>,
             identity: SecIdentityRef,
             certArray: Option<&NSArray>,
             persistence: NSURLCredentialPersistence,
@@ -84,7 +84,10 @@ extern_methods!(
     /// NSServerTrust
     unsafe impl NSURLCredential {
         #[method_id(initWithTrust:)]
-        pub unsafe fn initWithTrust(&self, trust: SecTrustRef) -> Id<Self, Shared>;
+        pub unsafe fn initWithTrust(
+            this: Option<Allocated<Self>>,
+            trust: SecTrustRef,
+        ) -> Id<Self, Shared>;
 
         #[method_id(credentialForTrust:)]
         pub unsafe fn credentialForTrust(trust: SecTrustRef) -> Id<NSURLCredential, Shared>;

@@ -36,13 +36,16 @@ extern_methods!(
     unsafe impl NSAppleScript {
         #[method_id(initWithContentsOfURL:error:)]
         pub unsafe fn initWithContentsOfURL_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             errorInfo: Option<&mut Option<Id<NSDictionary<NSString, Object>, Shared>>>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithSource:)]
-        pub unsafe fn initWithSource(&self, source: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithSource(
+            this: Option<Allocated<Self>>,
+            source: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(source)]
         pub unsafe fn source(&self) -> Option<Id<NSString, Shared>>;

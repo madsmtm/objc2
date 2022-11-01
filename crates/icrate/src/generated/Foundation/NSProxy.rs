@@ -15,10 +15,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSProxy {
         #[method_id(alloc)]
-        pub unsafe fn alloc() -> Id<Object, Shared>;
+        pub unsafe fn alloc() -> Option<Allocated<Object>>;
 
         #[method_id(allocWithZone:)]
-        pub unsafe fn allocWithZone(zone: *mut NSZone) -> Id<Object, Shared>;
+        pub unsafe fn allocWithZone(zone: *mut NSZone) -> Option<Allocated<Object>>;
 
         #[method(class)]
         pub unsafe fn class() -> &'static Class;

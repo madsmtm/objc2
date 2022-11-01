@@ -62,7 +62,7 @@ extern_methods!(
 
         #[method_id(initWithFireDate:interval:repeats:block:)]
         pub unsafe fn initWithFireDate_interval_repeats_block(
-            &self,
+            this: Option<Allocated<Self>>,
             date: &NSDate,
             interval: NSTimeInterval,
             repeats: bool,
@@ -71,7 +71,7 @@ extern_methods!(
 
         #[method_id(initWithFireDate:interval:target:selector:userInfo:repeats:)]
         pub unsafe fn initWithFireDate_interval_target_selector_userInfo_repeats(
-            &self,
+            this: Option<Allocated<Self>>,
             date: &NSDate,
             ti: NSTimeInterval,
             t: &Object,

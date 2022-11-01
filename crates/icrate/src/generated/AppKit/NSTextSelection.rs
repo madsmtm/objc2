@@ -28,18 +28,21 @@ extern_methods!(
     unsafe impl NSTextSelection {
         #[method_id(initWithRanges:affinity:granularity:)]
         pub unsafe fn initWithRanges_affinity_granularity(
-            &self,
+            this: Option<Allocated<Self>>,
             textRanges: &NSArray<NSTextRange>,
             affinity: NSTextSelectionAffinity,
             granularity: NSTextSelectionGranularity,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithRange:affinity:granularity:)]
         pub unsafe fn initWithRange_affinity_granularity(
-            &self,
+            this: Option<Allocated<Self>>,
             range: &NSTextRange,
             affinity: NSTextSelectionAffinity,
             granularity: NSTextSelectionGranularity,
@@ -47,13 +50,13 @@ extern_methods!(
 
         #[method_id(initWithLocation:affinity:)]
         pub unsafe fn initWithLocation_affinity(
-            &self,
+            this: Option<Allocated<Self>>,
             location: &NSTextLocation,
             affinity: NSTextSelectionAffinity,
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(textRanges)]
         pub unsafe fn textRanges(&self) -> Id<NSArray<NSTextRange>, Shared>;

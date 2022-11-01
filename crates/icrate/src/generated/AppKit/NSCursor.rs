@@ -77,13 +77,16 @@ extern_methods!(
 
         #[method_id(initWithImage:hotSpot:)]
         pub unsafe fn initWithImage_hotSpot(
-            &self,
+            this: Option<Allocated<Self>>,
             newImage: &NSImage,
             point: NSPoint,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method(hide)]
         pub unsafe fn hide();
@@ -121,7 +124,7 @@ extern_methods!(
     unsafe impl NSCursor {
         #[method_id(initWithImage:foregroundColorHint:backgroundColorHint:hotSpot:)]
         pub unsafe fn initWithImage_foregroundColorHint_backgroundColorHint_hotSpot(
-            &self,
+            this: Option<Allocated<Self>>,
             newImage: &NSImage,
             fg: Option<&NSColor>,
             bg: Option<&NSColor>,

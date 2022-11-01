@@ -21,7 +21,7 @@ extern_methods!(
 
         #[method_id(initWithSuiteName:className:dictionary:)]
         pub unsafe fn initWithSuiteName_className_dictionary(
-            &self,
+            this: Option<Allocated<Self>>,
             suiteName: &NSString,
             className: &NSString,
             classDeclaration: Option<&NSDictionary>,

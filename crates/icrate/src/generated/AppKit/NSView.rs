@@ -56,10 +56,16 @@ extern_class!(
 extern_methods!(
     unsafe impl NSView {
         #[method_id(initWithFrame:)]
-        pub unsafe fn initWithFrame(&self, frameRect: NSRect) -> Id<Self, Shared>;
+        pub unsafe fn initWithFrame(
+            this: Option<Allocated<Self>>,
+            frameRect: NSRect,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(window)]
         pub unsafe fn window(&self) -> Option<Id<NSWindow, Shared>>;

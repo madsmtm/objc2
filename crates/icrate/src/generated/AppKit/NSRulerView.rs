@@ -47,11 +47,14 @@ extern_methods!(
         );
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithScrollView:orientation:)]
         pub unsafe fn initWithScrollView_orientation(
-            &self,
+            this: Option<Allocated<Self>>,
             scrollView: Option<&NSScrollView>,
             orientation: NSRulerOrientation,
         ) -> Id<Self, Shared>;

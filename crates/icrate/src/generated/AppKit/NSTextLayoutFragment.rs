@@ -34,16 +34,19 @@ extern_methods!(
     unsafe impl NSTextLayoutFragment {
         #[method_id(initWithTextElement:range:)]
         pub unsafe fn initWithTextElement_range(
-            &self,
+            this: Option<Allocated<Self>>,
             textElement: &NSTextElement,
             rangeInElement: Option<&NSTextRange>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(textLayoutManager)]
         pub unsafe fn textLayoutManager(&self) -> Option<Id<NSTextLayoutManager, Shared>>;

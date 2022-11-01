@@ -70,18 +70,21 @@ extern_methods!(
     unsafe impl NSOpenGLPixelFormat {
         #[method_id(initWithCGLPixelFormatObj:)]
         pub unsafe fn initWithCGLPixelFormatObj(
-            &self,
+            this: Option<Allocated<Self>>,
             format: CGLPixelFormatObj,
         ) -> Option<Id<NSOpenGLPixelFormat, Shared>>;
 
         #[method_id(initWithAttributes:)]
         pub unsafe fn initWithAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             attribs: NonNull<NSOpenGLPixelFormatAttribute>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, attribs: Option<&NSData>) -> Option<Id<Object, Shared>>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            attribs: Option<&NSData>,
+        ) -> Option<Id<Object, Shared>>;
 
         #[method_id(attributes)]
         pub unsafe fn attributes(&self) -> Option<Id<NSData, Shared>>;
@@ -118,7 +121,7 @@ extern_methods!(
     unsafe impl NSOpenGLPixelBuffer {
         #[method_id(initWithTextureTarget:textureInternalFormat:textureMaxMipMapLevel:pixelsWide:pixelsHigh:)]
         pub unsafe fn initWithTextureTarget_textureInternalFormat_textureMaxMipMapLevel_pixelsWide_pixelsHigh(
-            &self,
+            this: Option<Allocated<Self>>,
             target: GLenum,
             format: GLenum,
             maxLevel: GLint,
@@ -128,7 +131,7 @@ extern_methods!(
 
         #[method_id(initWithCGLPBufferObj:)]
         pub unsafe fn initWithCGLPBufferObj(
-            &self,
+            this: Option<Allocated<Self>>,
             pbuffer: CGLPBufferObj,
         ) -> Option<Id<NSOpenGLPixelBuffer, Shared>>;
 
@@ -182,14 +185,14 @@ extern_methods!(
     unsafe impl NSOpenGLContext {
         #[method_id(initWithFormat:shareContext:)]
         pub unsafe fn initWithFormat_shareContext(
-            &self,
+            this: Option<Allocated<Self>>,
             format: &NSOpenGLPixelFormat,
             share: Option<&NSOpenGLContext>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithCGLContextObj:)]
         pub unsafe fn initWithCGLContextObj(
-            &self,
+            this: Option<Allocated<Self>>,
             context: CGLContextObj,
         ) -> Option<Id<NSOpenGLContext, Shared>>;
 

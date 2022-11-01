@@ -138,11 +138,11 @@ extern_methods!(
         ) -> Option<Id<NSCalendar, Shared>>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCalendarIdentifier:)]
         pub unsafe fn initWithCalendarIdentifier(
-            &self,
+            this: Option<Allocated<Self>>,
             ident: &NSCalendarIdentifier,
         ) -> Option<Id<Object, Shared>>;
 

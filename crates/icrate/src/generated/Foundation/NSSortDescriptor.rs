@@ -29,21 +29,24 @@ extern_methods!(
 
         #[method_id(initWithKey:ascending:)]
         pub unsafe fn initWithKey_ascending(
-            &self,
+            this: Option<Allocated<Self>>,
             key: Option<&NSString>,
             ascending: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithKey:ascending:selector:)]
         pub unsafe fn initWithKey_ascending_selector(
-            &self,
+            this: Option<Allocated<Self>>,
             key: Option<&NSString>,
             ascending: bool,
             selector: Option<Sel>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(key)]
         pub unsafe fn key(&self) -> Option<Id<NSString, Shared>>;
@@ -66,7 +69,7 @@ extern_methods!(
 
         #[method_id(initWithKey:ascending:comparator:)]
         pub unsafe fn initWithKey_ascending_comparator(
-            &self,
+            this: Option<Allocated<Self>>,
             key: Option<&NSString>,
             ascending: bool,
             cmptr: NSComparator,

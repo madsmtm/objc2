@@ -26,14 +26,17 @@ extern_class!(
 extern_methods!(
     unsafe impl NSColorSpace {
         #[method_id(initWithICCProfileData:)]
-        pub unsafe fn initWithICCProfileData(&self, iccData: &NSData) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithICCProfileData(
+            this: Option<Allocated<Self>>,
+            iccData: &NSData,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(ICCProfileData)]
         pub unsafe fn ICCProfileData(&self) -> Option<Id<NSData, Shared>>;
 
         #[method_id(initWithColorSyncProfile:)]
         pub unsafe fn initWithColorSyncProfile(
-            &self,
+            this: Option<Allocated<Self>>,
             prof: NonNull<c_void>,
         ) -> Option<Id<Self, Shared>>;
 
@@ -42,7 +45,7 @@ extern_methods!(
 
         #[method_id(initWithCGColorSpace:)]
         pub unsafe fn initWithCGColorSpace(
-            &self,
+            this: Option<Allocated<Self>>,
             cgColorSpace: CGColorSpaceRef,
         ) -> Option<Id<Self, Shared>>;
 

@@ -23,11 +23,11 @@ extern_methods!(
         pub unsafe fn doubleValue(&self) -> c_double;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithDoubleValue:unit:)]
         pub unsafe fn initWithDoubleValue_unit(
-            &self,
+            this: Option<Allocated<Self>>,
             doubleValue: c_double,
             unit: &UnitType,
         ) -> Id<Self, Shared>;

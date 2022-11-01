@@ -619,7 +619,7 @@ extern_methods!(
     unsafe impl NSURL {
         #[method_id(initWithScheme:host:path:)]
         pub unsafe fn initWithScheme_host_path(
-            &self,
+            this: Option<Allocated<Self>>,
             scheme: &NSString,
             host: Option<&NSString>,
             path: &NSString,
@@ -627,7 +627,7 @@ extern_methods!(
 
         #[method_id(initFileURLWithPath:isDirectory:relativeToURL:)]
         pub unsafe fn initFileURLWithPath_isDirectory_relativeToURL(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
             isDir: bool,
             baseURL: Option<&NSURL>,
@@ -635,20 +635,23 @@ extern_methods!(
 
         #[method_id(initFileURLWithPath:relativeToURL:)]
         pub unsafe fn initFileURLWithPath_relativeToURL(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
             baseURL: Option<&NSURL>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initFileURLWithPath:isDirectory:)]
         pub unsafe fn initFileURLWithPath_isDirectory(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
             isDir: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initFileURLWithPath:)]
-        pub unsafe fn initFileURLWithPath(&self, path: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initFileURLWithPath(
+            this: Option<Allocated<Self>>,
+            path: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(fileURLWithPath:isDirectory:relativeToURL:)]
         pub unsafe fn fileURLWithPath_isDirectory_relativeToURL(
@@ -674,7 +677,7 @@ extern_methods!(
 
         #[method_id(initFileURLWithFileSystemRepresentation:isDirectory:relativeToURL:)]
         pub unsafe fn initFileURLWithFileSystemRepresentation_isDirectory_relativeToURL(
-            &self,
+            this: Option<Allocated<Self>>,
             path: NonNull<c_char>,
             isDir: bool,
             baseURL: Option<&NSURL>,
@@ -688,11 +691,14 @@ extern_methods!(
         ) -> Id<NSURL, Shared>;
 
         #[method_id(initWithString:)]
-        pub unsafe fn initWithString(&self, URLString: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithString(
+            this: Option<Allocated<Self>>,
+            URLString: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithString:relativeToURL:)]
         pub unsafe fn initWithString_relativeToURL(
-            &self,
+            this: Option<Allocated<Self>>,
             URLString: &NSString,
             baseURL: Option<&NSURL>,
         ) -> Option<Id<Self, Shared>>;
@@ -708,7 +714,7 @@ extern_methods!(
 
         #[method_id(initWithDataRepresentation:relativeToURL:)]
         pub unsafe fn initWithDataRepresentation_relativeToURL(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             baseURL: Option<&NSURL>,
         ) -> Id<Self, Shared>;
@@ -721,7 +727,7 @@ extern_methods!(
 
         #[method_id(initAbsoluteURLWithDataRepresentation:relativeToURL:)]
         pub unsafe fn initAbsoluteURLWithDataRepresentation_relativeToURL(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             baseURL: Option<&NSURL>,
         ) -> Id<Self, Shared>;
@@ -862,7 +868,7 @@ extern_methods!(
 
         #[method_id(initByResolvingBookmarkData:options:relativeToURL:bookmarkDataIsStale:error:)]
         pub unsafe fn initByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error(
-            &self,
+            this: Option<Allocated<Self>>,
             bookmarkData: &NSData,
             options: NSURLBookmarkResolutionOptions,
             relativeURL: Option<&NSURL>,
@@ -950,7 +956,7 @@ extern_methods!(
     unsafe impl NSURLQueryItem {
         #[method_id(initWithName:value:)]
         pub unsafe fn initWithName_value(
-            &self,
+            this: Option<Allocated<Self>>,
             name: &NSString,
             value: Option<&NSString>,
         ) -> Id<Self, Shared>;
@@ -981,11 +987,11 @@ extern_class!(
 extern_methods!(
     unsafe impl NSURLComponents {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithURL:resolvingAgainstBaseURL:)]
         pub unsafe fn initWithURL_resolvingAgainstBaseURL(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             resolve: bool,
         ) -> Option<Id<Self, Shared>>;
@@ -997,7 +1003,10 @@ extern_methods!(
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithString:)]
-        pub unsafe fn initWithString(&self, URLString: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithString(
+            this: Option<Allocated<Self>>,
+            URLString: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(componentsWithString:)]
         pub unsafe fn componentsWithString(URLString: &NSString) -> Option<Id<Self, Shared>>;
@@ -1250,7 +1259,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSFileSecurity {
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 

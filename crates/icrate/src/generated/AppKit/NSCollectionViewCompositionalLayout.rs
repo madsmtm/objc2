@@ -79,32 +79,32 @@ extern_methods!(
     unsafe impl NSCollectionViewCompositionalLayout {
         #[method_id(initWithSection:)]
         pub unsafe fn initWithSection(
-            &self,
+            this: Option<Allocated<Self>>,
             section: &NSCollectionLayoutSection,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithSection:configuration:)]
         pub unsafe fn initWithSection_configuration(
-            &self,
+            this: Option<Allocated<Self>>,
             section: &NSCollectionLayoutSection,
             configuration: &NSCollectionViewCompositionalLayoutConfiguration,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithSectionProvider:)]
         pub unsafe fn initWithSectionProvider(
-            &self,
+            this: Option<Allocated<Self>>,
             sectionProvider: NSCollectionViewCompositionalLayoutSectionProvider,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithSectionProvider:configuration:)]
         pub unsafe fn initWithSectionProvider_configuration(
-            &self,
+            this: Option<Allocated<Self>>,
             sectionProvider: NSCollectionViewCompositionalLayoutSectionProvider,
             configuration: &NSCollectionViewCompositionalLayoutConfiguration,
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -151,7 +151,7 @@ extern_methods!(
         pub unsafe fn sectionWithGroup(group: &NSCollectionLayoutGroup) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -244,7 +244,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -292,7 +292,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -349,7 +349,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -406,7 +406,7 @@ extern_methods!(
         pub unsafe fn estimatedDimension(estimatedDimension: CGFloat) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -446,7 +446,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -477,7 +477,7 @@ extern_methods!(
         pub unsafe fn fixedSpacing(fixedSpacing: CGFloat) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -513,7 +513,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -559,7 +559,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -608,7 +608,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -650,7 +650,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;
@@ -693,7 +693,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;

@@ -185,7 +185,7 @@ extern_methods!(
     unsafe impl NSLinguisticTagger {
         #[method_id(initWithTagSchemes:options:)]
         pub unsafe fn initWithTagSchemes_options(
-            &self,
+            this: Option<Allocated<Self>>,
             tagSchemes: &NSArray<NSLinguisticTagScheme>,
             opts: NSUInteger,
         ) -> Id<Self, Shared>;

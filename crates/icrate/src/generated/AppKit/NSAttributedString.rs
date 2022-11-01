@@ -436,7 +436,7 @@ extern_methods!(
     unsafe impl NSAttributedString {
         #[method_id(initWithURL:options:documentAttributes:error:)]
         pub unsafe fn initWithURL_options_documentAttributes_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             options: &NSDictionary<NSAttributedStringDocumentReadingOptionKey, Object>,
             dict: Option<
@@ -448,7 +448,7 @@ extern_methods!(
 
         #[method_id(initWithData:options:documentAttributes:error:)]
         pub unsafe fn initWithData_options_documentAttributes_error(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             options: &NSDictionary<NSAttributedStringDocumentReadingOptionKey, Object>,
             dict: Option<
@@ -474,7 +474,7 @@ extern_methods!(
 
         #[method_id(initWithRTF:documentAttributes:)]
         pub unsafe fn initWithRTF_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             dict: Option<
                 &mut Option<
@@ -485,7 +485,7 @@ extern_methods!(
 
         #[method_id(initWithRTFD:documentAttributes:)]
         pub unsafe fn initWithRTFD_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             dict: Option<
                 &mut Option<
@@ -496,7 +496,7 @@ extern_methods!(
 
         #[method_id(initWithHTML:documentAttributes:)]
         pub unsafe fn initWithHTML_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             dict: Option<
                 &mut Option<
@@ -507,7 +507,7 @@ extern_methods!(
 
         #[method_id(initWithHTML:baseURL:documentAttributes:)]
         pub unsafe fn initWithHTML_baseURL_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             base: &NSURL,
             dict: Option<
@@ -519,7 +519,7 @@ extern_methods!(
 
         #[method_id(initWithDocFormat:documentAttributes:)]
         pub unsafe fn initWithDocFormat_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             dict: Option<
                 &mut Option<
@@ -530,7 +530,7 @@ extern_methods!(
 
         #[method_id(initWithHTML:options:documentAttributes:)]
         pub unsafe fn initWithHTML_options_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
             options: &NSDictionary<NSAttributedStringDocumentReadingOptionKey, Object>,
             dict: Option<
@@ -542,7 +542,7 @@ extern_methods!(
 
         #[method_id(initWithRTFDFileWrapper:documentAttributes:)]
         pub unsafe fn initWithRTFDFileWrapper_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             wrapper: &NSFileWrapper,
             dict: Option<
                 &mut Option<
@@ -771,14 +771,14 @@ extern_methods!(
 
         #[method_id(initWithURL:documentAttributes:)]
         pub unsafe fn initWithURL_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             dict: Option<&mut Option<Id<NSDictionary, Shared>>>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithPath:documentAttributes:)]
         pub unsafe fn initWithPath_documentAttributes(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
             dict: Option<&mut Option<Id<NSDictionary, Shared>>>,
         ) -> Option<Id<Self, Shared>>;

@@ -123,11 +123,14 @@ extern_methods!(
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithName:)]
-        pub unsafe fn initWithName(&self, tzName: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithName(
+            this: Option<Allocated<Self>>,
+            tzName: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithName:data:)]
         pub unsafe fn initWithName_data(
-            &self,
+            this: Option<Allocated<Self>>,
             tzName: &NSString,
             aData: Option<&NSData>,
         ) -> Option<Id<Self, Shared>>;

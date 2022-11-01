@@ -24,21 +24,24 @@ extern_methods!(
         pub unsafe fn duration(&self) -> NSTimeInterval;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithStartDate:duration:)]
         pub unsafe fn initWithStartDate_duration(
-            &self,
+            this: Option<Allocated<Self>>,
             startDate: &NSDate,
             duration: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithStartDate:endDate:)]
         pub unsafe fn initWithStartDate_endDate(
-            &self,
+            this: Option<Allocated<Self>>,
             startDate: &NSDate,
             endDate: &NSDate,
         ) -> Id<Self, Shared>;

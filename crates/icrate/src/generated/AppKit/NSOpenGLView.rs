@@ -20,7 +20,7 @@ extern_methods!(
 
         #[method_id(initWithFrame:pixelFormat:)]
         pub unsafe fn initWithFrame_pixelFormat(
-            &self,
+            this: Option<Allocated<Self>>,
             frameRect: NSRect,
             format: Option<&NSOpenGLPixelFormat>,
         ) -> Option<Id<Self, Shared>>;

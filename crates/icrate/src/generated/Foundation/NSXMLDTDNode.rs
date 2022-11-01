@@ -37,17 +37,20 @@ extern_class!(
 extern_methods!(
     unsafe impl NSXMLDTDNode {
         #[method_id(initWithXMLString:)]
-        pub unsafe fn initWithXMLString(&self, string: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithXMLString(
+            this: Option<Allocated<Self>>,
+            string: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithKind:options:)]
         pub unsafe fn initWithKind_options(
-            &self,
+            this: Option<Allocated<Self>>,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(DTDKind)]
         pub unsafe fn DTDKind(&self) -> NSXMLDTDNodeKind;

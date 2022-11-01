@@ -18,10 +18,13 @@ extern_methods!(
         pub unsafe fn transform() -> Id<NSAffineTransform, Shared>;
 
         #[method_id(initWithTransform:)]
-        pub unsafe fn initWithTransform(&self, transform: &NSAffineTransform) -> Id<Self, Shared>;
+        pub unsafe fn initWithTransform(
+            this: Option<Allocated<Self>>,
+            transform: &NSAffineTransform,
+        ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(translateXBy:yBy:)]
         pub unsafe fn translateXBy_yBy(&self, deltaX: CGFloat, deltaY: CGFloat);

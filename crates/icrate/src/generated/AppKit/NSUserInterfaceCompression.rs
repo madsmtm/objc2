@@ -16,17 +16,23 @@ extern_class!(
 extern_methods!(
     unsafe impl NSUserInterfaceCompressionOptions {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithIdentifier:)]
-        pub unsafe fn initWithIdentifier(&self, identifier: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithIdentifier(
+            this: Option<Allocated<Self>>,
+            identifier: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCompressionOptions:)]
         pub unsafe fn initWithCompressionOptions(
-            &self,
+            this: Option<Allocated<Self>>,
             options: &NSSet<NSUserInterfaceCompressionOptions>,
         ) -> Id<Self, Shared>;
 

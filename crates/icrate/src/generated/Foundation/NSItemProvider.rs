@@ -29,7 +29,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSItemProvider {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(registerDataRepresentationForTypeIdentifier:visibility:loadHandler:)]
         pub unsafe fn registerDataRepresentationForTypeIdentifier_visibility_loadHandler(
@@ -95,7 +95,10 @@ extern_methods!(
         pub unsafe fn setSuggestedName(&self, suggestedName: Option<&NSString>);
 
         #[method_id(initWithObject:)]
-        pub unsafe fn initWithObject(&self, object: &NSItemProviderWriting) -> Id<Self, Shared>;
+        pub unsafe fn initWithObject(
+            this: Option<Allocated<Self>>,
+            object: &NSItemProviderWriting,
+        ) -> Id<Self, Shared>;
 
         #[method(registerObject:visibility:)]
         pub unsafe fn registerObject_visibility(
@@ -106,14 +109,14 @@ extern_methods!(
 
         #[method_id(initWithItem:typeIdentifier:)]
         pub unsafe fn initWithItem_typeIdentifier(
-            &self,
+            this: Option<Allocated<Self>>,
             item: Option<&NSSecureCoding>,
             typeIdentifier: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
-            &self,
+            this: Option<Allocated<Self>>,
             fileURL: Option<&NSURL>,
         ) -> Option<Id<Self, Shared>>;
 

@@ -98,10 +98,16 @@ extern_methods!(
         pub unsafe fn hasBytesAvailable(&self) -> bool;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, data: &NSData) -> Id<Self, Shared>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithURL:)]
-        pub unsafe fn initWithURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithURL(
+            this: Option<Allocated<Self>>,
+            url: &NSURL,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -123,18 +129,18 @@ extern_methods!(
         pub unsafe fn hasSpaceAvailable(&self) -> bool;
 
         #[method_id(initToMemory)]
-        pub unsafe fn initToMemory(&self) -> Id<Self, Shared>;
+        pub unsafe fn initToMemory(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initToBuffer:capacity:)]
         pub unsafe fn initToBuffer_capacity(
-            &self,
+            this: Option<Allocated<Self>>,
             buffer: NonNull<u8>,
             capacity: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithURL:append:)]
         pub unsafe fn initWithURL_append(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             shouldAppend: bool,
         ) -> Option<Id<Self, Shared>>;
@@ -178,7 +184,10 @@ extern_methods!(
     /// NSInputStreamExtensions
     unsafe impl NSInputStream {
         #[method_id(initWithFileAtPath:)]
-        pub unsafe fn initWithFileAtPath(&self, path: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithFileAtPath(
+            this: Option<Allocated<Self>>,
+            path: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(inputStreamWithData:)]
         pub unsafe fn inputStreamWithData(data: &NSData) -> Option<Id<Self, Shared>>;
@@ -196,7 +205,7 @@ extern_methods!(
     unsafe impl NSOutputStream {
         #[method_id(initToFileAtPath:append:)]
         pub unsafe fn initToFileAtPath_append(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
             shouldAppend: bool,
         ) -> Option<Id<Self, Shared>>;

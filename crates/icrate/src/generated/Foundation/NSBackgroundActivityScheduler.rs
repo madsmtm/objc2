@@ -19,7 +19,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSBackgroundActivityScheduler {
         #[method_id(initWithIdentifier:)]
-        pub unsafe fn initWithIdentifier(&self, identifier: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithIdentifier(
+            this: Option<Allocated<Self>>,
+            identifier: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(identifier)]
         pub unsafe fn identifier(&self) -> Id<NSString, Shared>;

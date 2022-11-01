@@ -32,14 +32,14 @@ extern_methods!(
     unsafe impl<ObjectType: Message> NSHashTable<ObjectType> {
         #[method_id(initWithOptions:capacity:)]
         pub unsafe fn initWithOptions_capacity(
-            &self,
+            this: Option<Allocated<Self>>,
             options: NSPointerFunctionsOptions,
             initialCapacity: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithPointerFunctions:capacity:)]
         pub unsafe fn initWithPointerFunctions_capacity(
-            &self,
+            this: Option<Allocated<Self>>,
             functions: &NSPointerFunctions,
             initialCapacity: NSUInteger,
         ) -> Id<Self, Shared>;

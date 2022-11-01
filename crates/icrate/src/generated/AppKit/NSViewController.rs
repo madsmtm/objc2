@@ -29,13 +29,16 @@ extern_methods!(
     unsafe impl NSViewController {
         #[method_id(initWithNibName:bundle:)]
         pub unsafe fn initWithNibName_bundle(
-            &self,
+            this: Option<Allocated<Self>>,
             nibNameOrNil: Option<&NSNibName>,
             nibBundleOrNil: Option<&NSBundle>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(nibName)]
         pub unsafe fn nibName(&self) -> Option<Id<NSNibName, Shared>>;

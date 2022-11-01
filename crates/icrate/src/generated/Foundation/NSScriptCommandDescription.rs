@@ -15,18 +15,21 @@ extern_class!(
 extern_methods!(
     unsafe impl NSScriptCommandDescription {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Object, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Object, Shared>;
 
         #[method_id(initWithSuiteName:commandName:dictionary:)]
         pub unsafe fn initWithSuiteName_commandName_dictionary(
-            &self,
+            this: Option<Allocated<Self>>,
             suiteName: &NSString,
             commandName: &NSString,
             commandDeclaration: Option<&NSDictionary>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(suiteName)]
         pub unsafe fn suiteName(&self) -> Id<NSString, Shared>;

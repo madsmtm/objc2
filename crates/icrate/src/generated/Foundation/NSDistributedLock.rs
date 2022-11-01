@@ -18,10 +18,13 @@ extern_methods!(
         pub unsafe fn lockWithPath(path: &NSString) -> Option<Id<NSDistributedLock, Shared>>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithPath:)]
-        pub unsafe fn initWithPath(&self, path: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithPath(
+            this: Option<Allocated<Self>>,
+            path: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(tryLock)]
         pub unsafe fn tryLock(&self) -> bool;

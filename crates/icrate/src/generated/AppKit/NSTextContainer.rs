@@ -16,10 +16,14 @@ extern_class!(
 extern_methods!(
     unsafe impl NSTextContainer {
         #[method_id(initWithSize:)]
-        pub unsafe fn initWithSize(&self, size: NSSize) -> Id<Self, Shared>;
+        pub unsafe fn initWithSize(this: Option<Allocated<Self>>, size: NSSize)
+            -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(layoutManager)]
         pub unsafe fn layoutManager(&self) -> Option<Id<NSLayoutManager, Shared>>;
@@ -112,7 +116,10 @@ extern_methods!(
     /// NSTextContainerDeprecated
     unsafe impl NSTextContainer {
         #[method_id(initWithContainerSize:)]
-        pub unsafe fn initWithContainerSize(&self, aContainerSize: NSSize) -> Id<Self, Shared>;
+        pub unsafe fn initWithContainerSize(
+            this: Option<Allocated<Self>>,
+            aContainerSize: NSSize,
+        ) -> Id<Self, Shared>;
 
         #[method(containerSize)]
         pub unsafe fn containerSize(&self) -> NSSize;

@@ -22,7 +22,7 @@ extern_methods!(
 
         #[method_id(initWithTarget:connection:)]
         pub unsafe fn initWithTarget_connection(
-            &self,
+            this: Option<Allocated<Self>>,
             target: &Object,
             connection: &NSConnection,
         ) -> Option<Id<Self, Shared>>;
@@ -35,13 +35,16 @@ extern_methods!(
 
         #[method_id(initWithLocal:connection:)]
         pub unsafe fn initWithLocal_connection(
-            &self,
+            this: Option<Allocated<Self>>,
             target: &Object,
             connection: &NSConnection,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(setProtocolForProxy:)]
         pub unsafe fn setProtocolForProxy(&self, proto: Option<&Protocol>);

@@ -21,13 +21,16 @@ extern_methods!(
     unsafe impl NSCompoundPredicate {
         #[method_id(initWithType:subpredicates:)]
         pub unsafe fn initWithType_subpredicates(
-            &self,
+            this: Option<Allocated<Self>>,
             type_: NSCompoundPredicateType,
             subpredicates: &NSArray<NSPredicate>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(compoundPredicateType)]
         pub unsafe fn compoundPredicateType(&self) -> NSCompoundPredicateType;

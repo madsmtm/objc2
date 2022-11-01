@@ -87,16 +87,25 @@ extern_class!(
 extern_methods!(
     unsafe impl NSCell {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initTextCell:)]
-        pub unsafe fn initTextCell(&self, string: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initTextCell(
+            this: Option<Allocated<Self>>,
+            string: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initImageCell:)]
-        pub unsafe fn initImageCell(&self, image: Option<&NSImage>) -> Id<Self, Shared>;
+        pub unsafe fn initImageCell(
+            this: Option<Allocated<Self>>,
+            image: Option<&NSImage>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method(prefersTrackingUntilMouseUp)]
         pub unsafe fn prefersTrackingUntilMouseUp() -> bool;

@@ -28,10 +28,13 @@ extern_methods!(
         pub unsafe fn isTrue(&self) -> bool;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -48,18 +51,21 @@ extern_methods!(
     unsafe impl NSLogicalTest {
         #[method_id(initAndTestWithTests:)]
         pub unsafe fn initAndTestWithTests(
-            &self,
+            this: Option<Allocated<Self>>,
             subTests: &NSArray<NSSpecifierTest>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initOrTestWithTests:)]
         pub unsafe fn initOrTestWithTests(
-            &self,
+            this: Option<Allocated<Self>>,
             subTests: &NSArray<NSSpecifierTest>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initNotTestWithTest:)]
-        pub unsafe fn initNotTestWithTest(&self, subTest: &NSScriptWhoseTest) -> Id<Self, Shared>;
+        pub unsafe fn initNotTestWithTest(
+            this: Option<Allocated<Self>>,
+            subTest: &NSScriptWhoseTest,
+        ) -> Id<Self, Shared>;
     }
 );
 
@@ -75,14 +81,17 @@ extern_class!(
 extern_methods!(
     unsafe impl NSSpecifierTest {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, inCoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            inCoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithObjectSpecifier:comparisonOperator:testObject:)]
         pub unsafe fn initWithObjectSpecifier_comparisonOperator_testObject(
-            &self,
+            this: Option<Allocated<Self>>,
             obj1: Option<&NSScriptObjectSpecifier>,
             compOp: NSTestComparisonOperation,
             obj2: Option<&Object>,

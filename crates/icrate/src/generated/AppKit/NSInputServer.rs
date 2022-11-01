@@ -21,7 +21,7 @@ extern_methods!(
     unsafe impl NSInputServer {
         #[method_id(initWithDelegate:name:)]
         pub unsafe fn initWithDelegate_name(
-            &self,
+            this: Option<Allocated<Self>>,
             delegate: Option<&Object>,
             name: Option<&NSString>,
         ) -> Id<Self, Shared>;

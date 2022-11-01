@@ -37,13 +37,16 @@ extern_methods!(
 
         #[method_id(initWithAppearanceNamed:bundle:)]
         pub unsafe fn initWithAppearanceNamed_bundle(
-            &self,
+            this: Option<Allocated<Self>>,
             name: &NSAppearanceName,
             bundle: Option<&NSBundle>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(allowsVibrancy)]
         pub unsafe fn allowsVibrancy(&self) -> bool;

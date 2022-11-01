@@ -17,24 +17,27 @@ extern_methods!(
     unsafe impl NSTextLineFragment {
         #[method_id(initWithAttributedString:range:)]
         pub unsafe fn initWithAttributedString_range(
-            &self,
+            this: Option<Allocated<Self>>,
             attributedString: &NSAttributedString,
             range: NSRange,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, aDecoder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            aDecoder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithString:attributes:range:)]
         pub unsafe fn initWithString_attributes_range(
-            &self,
+            this: Option<Allocated<Self>>,
             string: &NSString,
             attributes: &NSDictionary<NSAttributedStringKey, Object>,
             range: NSRange,
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(attributedString)]
         pub unsafe fn attributedString(&self) -> Id<NSAttributedString, Shared>;

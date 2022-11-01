@@ -33,7 +33,7 @@ extern_methods!(
 
         #[method_id(initWithTarget:protocol:)]
         pub unsafe fn initWithTarget_protocol(
-            &self,
+            this: Option<Allocated<Self>>,
             anObject: &NSObject,
             aProtocol: &Protocol,
         ) -> Id<Self, Shared>;

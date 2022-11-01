@@ -33,16 +33,19 @@ extern_methods!(
         pub unsafe fn resetStandardUserDefaults();
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithSuiteName:)]
         pub unsafe fn initWithSuiteName(
-            &self,
+            this: Option<Allocated<Self>>,
             suitename: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithUser:)]
-        pub unsafe fn initWithUser(&self, username: &NSString) -> Option<Id<Object, Shared>>;
+        pub unsafe fn initWithUser(
+            this: Option<Allocated<Self>>,
+            username: &NSString,
+        ) -> Option<Id<Object, Shared>>;
 
         #[method_id(objectForKey:)]
         pub unsafe fn objectForKey(&self, defaultName: &NSString) -> Option<Id<Object, Shared>>;

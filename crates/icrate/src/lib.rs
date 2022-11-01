@@ -35,7 +35,7 @@ mod common {
     pub(crate) use std::ptr::NonNull;
 
     pub(crate) use objc2::ffi::{NSInteger, NSUInteger};
-    pub(crate) use objc2::rc::{Id, Shared};
+    pub(crate) use objc2::rc::{Allocated, Id, Shared};
     pub(crate) use objc2::runtime::{Class, Object, Sel};
     pub(crate) use objc2::{
         __inner_extern_class, extern_class, extern_methods, ClassType, Message,

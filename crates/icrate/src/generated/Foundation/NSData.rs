@@ -154,21 +154,21 @@ extern_methods!(
 
         #[method_id(initWithBytes:length:)]
         pub unsafe fn initWithBytes_length(
-            &self,
+            this: Option<Allocated<Self>>,
             bytes: *mut c_void,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithBytesNoCopy:length:)]
         pub unsafe fn initWithBytesNoCopy_length(
-            &self,
+            this: Option<Allocated<Self>>,
             bytes: NonNull<c_void>,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithBytesNoCopy:length:freeWhenDone:)]
         pub unsafe fn initWithBytesNoCopy_length_freeWhenDone(
-            &self,
+            this: Option<Allocated<Self>>,
             bytes: NonNull<c_void>,
             length: NSUInteger,
             b: bool,
@@ -176,7 +176,7 @@ extern_methods!(
 
         #[method_id(initWithBytesNoCopy:length:deallocator:)]
         pub unsafe fn initWithBytesNoCopy_length_deallocator(
-            &self,
+            this: Option<Allocated<Self>>,
             bytes: NonNull<c_void>,
             length: NSUInteger,
             deallocator: TodoBlock,
@@ -184,26 +184,35 @@ extern_methods!(
 
         #[method_id(initWithContentsOfFile:options:error:)]
         pub unsafe fn initWithContentsOfFile_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
             readOptionsMask: NSDataReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initWithContentsOfURL:options:error:)]
         pub unsafe fn initWithContentsOfURL_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             readOptionsMask: NSDataReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initWithContentsOfFile:)]
-        pub unsafe fn initWithContentsOfFile(&self, path: &NSString) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithContentsOfFile(
+            this: Option<Allocated<Self>>,
+            path: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContentsOfURL:)]
-        pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithContentsOfURL(
+            this: Option<Allocated<Self>>,
+            url: &NSURL,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, data: &NSData) -> Id<Self, Shared>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Id<Self, Shared>;
 
         #[method_id(dataWithData:)]
         pub unsafe fn dataWithData(data: &NSData) -> Id<Self, Shared>;
@@ -215,7 +224,7 @@ extern_methods!(
     unsafe impl NSData {
         #[method_id(initWithBase64EncodedString:options:)]
         pub unsafe fn initWithBase64EncodedString_options(
-            &self,
+            this: Option<Allocated<Self>>,
             base64String: &NSString,
             options: NSDataBase64DecodingOptions,
         ) -> Option<Id<Self, Shared>>;
@@ -228,7 +237,7 @@ extern_methods!(
 
         #[method_id(initWithBase64EncodedData:options:)]
         pub unsafe fn initWithBase64EncodedData_options(
-            &self,
+            this: Option<Allocated<Self>>,
             base64Data: &NSData,
             options: NSDataBase64DecodingOptions,
         ) -> Option<Id<Self, Shared>>;
@@ -275,13 +284,13 @@ extern_methods!(
 
         #[method_id(initWithContentsOfMappedFile:)]
         pub unsafe fn initWithContentsOfMappedFile(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
         #[method_id(initWithBase64Encoding:)]
         pub unsafe fn initWithBase64Encoding(
-            &self,
+            this: Option<Allocated<Self>>,
             base64String: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
@@ -353,10 +362,16 @@ extern_methods!(
         pub unsafe fn dataWithLength(length: NSUInteger) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithCapacity:)]
-        pub unsafe fn initWithCapacity(&self, capacity: NSUInteger) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCapacity(
+            this: Option<Allocated<Self>>,
+            capacity: NSUInteger,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithLength:)]
-        pub unsafe fn initWithLength(&self, length: NSUInteger) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithLength(
+            this: Option<Allocated<Self>>,
+            length: NSUInteger,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 

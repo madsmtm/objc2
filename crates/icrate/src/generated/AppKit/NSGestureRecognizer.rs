@@ -27,13 +27,16 @@ extern_methods!(
     unsafe impl NSGestureRecognizer {
         #[method_id(initWithTarget:action:)]
         pub unsafe fn initWithTarget_action(
-            &self,
+            this: Option<Allocated<Self>>,
             target: Option<&Object>,
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;

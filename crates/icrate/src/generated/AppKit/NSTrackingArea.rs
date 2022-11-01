@@ -29,7 +29,7 @@ extern_methods!(
     unsafe impl NSTrackingArea {
         #[method_id(initWithRect:options:owner:userInfo:)]
         pub unsafe fn initWithRect_options_owner_userInfo(
-            &self,
+            this: Option<Allocated<Self>>,
             rect: NSRect,
             options: NSTrackingAreaOptions,
             owner: Option<&Object>,

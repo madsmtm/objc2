@@ -17,14 +17,14 @@ extern_methods!(
     unsafe impl NSAccessibilityCustomAction {
         #[method_id(initWithName:handler:)]
         pub unsafe fn initWithName_handler(
-            &self,
+            this: Option<Allocated<Self>>,
             name: &NSString,
             handler: TodoBlock,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithName:target:selector:)]
         pub unsafe fn initWithName_target_selector(
-            &self,
+            this: Option<Allocated<Self>>,
             name: &NSString,
             target: &NSObject,
             selector: Sel,

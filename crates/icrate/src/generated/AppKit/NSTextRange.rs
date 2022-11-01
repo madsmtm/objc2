@@ -19,16 +19,19 @@ extern_methods!(
     unsafe impl NSTextRange {
         #[method_id(initWithLocation:endLocation:)]
         pub unsafe fn initWithLocation_endLocation(
-            &self,
+            this: Option<Allocated<Self>>,
             location: &NSTextLocation,
             endLocation: Option<&NSTextLocation>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithLocation:)]
-        pub unsafe fn initWithLocation(&self, location: &NSTextLocation) -> Id<Self, Shared>;
+        pub unsafe fn initWithLocation(
+            this: Option<Allocated<Self>>,
+            location: &NSTextLocation,
+        ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;

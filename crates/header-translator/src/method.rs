@@ -108,6 +108,14 @@ impl MemoryManagement {
             assert!(self == Self::Normal, "{:?} did not match {}", self, sel);
         }
     }
+
+    fn is_init(sel: &str) -> bool {
+        in_selector_family(sel.as_bytes(), b"init")
+    }
+
+    fn is_alloc(sel: &str) -> bool {
+        in_selector_family(sel.as_bytes(), b"alloc")
+    }
 }
 
 #[allow(dead_code)]
@@ -342,7 +350,11 @@ impl fmt::Display for Method {
         }
         write!(f, "fn {}(", handle_reserved(&self.fn_name))?;
         if !self.is_class {
-            write!(f, "&self, ")?;
+            if MemoryManagement::is_init(&self.selector) {
+                write!(f, "this: Option<Allocated<Self>>, ")?;
+            } else {
+                write!(f, "&self, ")?;
+            }
         }
         for (param, _qualifier, arg_ty) in arguments {
             write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
@@ -352,7 +364,17 @@ impl fmt::Display for Method {
         if is_error {
             writeln!(f, "{};", self.result_type.as_error())?;
         } else {
-            writeln!(f, "{};", self.result_type)?;
+            if MemoryManagement::is_alloc(&self.selector) {
+                assert!(
+                    self.result_type.is_alloc(),
+                    "{:?}, {:?}",
+                    self.result_type,
+                    self.fn_name
+                );
+                writeln!(f, "-> Option<Allocated<Object>>;")?;
+            } else {
+                writeln!(f, "{};", self.result_type)?;
+            }
         };
 
         Ok(())

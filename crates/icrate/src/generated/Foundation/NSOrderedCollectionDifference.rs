@@ -26,13 +26,13 @@ extern_methods!(
     unsafe impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
         #[method_id(initWithChanges:)]
         pub unsafe fn initWithChanges(
-            &self,
+            this: Option<Allocated<Self>>,
             changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithInsertIndexes:insertedObjects:removeIndexes:removedObjects:additionalChanges:)]
         pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects_additionalChanges(
-            &self,
+            this: Option<Allocated<Self>>,
             inserts: &NSIndexSet,
             insertedObjects: Option<&NSArray<ObjectType>>,
             removes: &NSIndexSet,
@@ -42,7 +42,7 @@ extern_methods!(
 
         #[method_id(initWithInsertIndexes:insertedObjects:removeIndexes:removedObjects:)]
         pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects(
-            &self,
+            this: Option<Allocated<Self>>,
             inserts: &NSIndexSet,
             insertedObjects: Option<&NSArray<ObjectType>>,
             removes: &NSIndexSet,

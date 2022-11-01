@@ -111,11 +111,14 @@ extern_methods!(
         ) -> Id<NSAppleEventDescriptor, Shared>;
 
         #[method_id(initWithAEDescNoCopy:)]
-        pub unsafe fn initWithAEDescNoCopy(&self, aeDesc: NonNull<AEDesc>) -> Id<Self, Shared>;
+        pub unsafe fn initWithAEDescNoCopy(
+            this: Option<Allocated<Self>>,
+            aeDesc: NonNull<AEDesc>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithDescriptorType:bytes:length:)]
         pub unsafe fn initWithDescriptorType_bytes_length(
-            &self,
+            this: Option<Allocated<Self>>,
             descriptorType: DescType,
             bytes: *mut c_void,
             byteCount: NSUInteger,
@@ -123,14 +126,14 @@ extern_methods!(
 
         #[method_id(initWithDescriptorType:data:)]
         pub unsafe fn initWithDescriptorType_data(
-            &self,
+            this: Option<Allocated<Self>>,
             descriptorType: DescType,
             data: Option<&NSData>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithEventClass:eventID:targetDescriptor:returnID:transactionID:)]
         pub unsafe fn initWithEventClass_eventID_targetDescriptor_returnID_transactionID(
-            &self,
+            this: Option<Allocated<Self>>,
             eventClass: AEEventClass,
             eventID: AEEventID,
             targetDescriptor: Option<&NSAppleEventDescriptor>,
@@ -139,10 +142,10 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(initListDescriptor)]
-        pub unsafe fn initListDescriptor(&self) -> Id<Self, Shared>;
+        pub unsafe fn initListDescriptor(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initRecordDescriptor)]
-        pub unsafe fn initRecordDescriptor(&self) -> Id<Self, Shared>;
+        pub unsafe fn initRecordDescriptor(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(aeDesc)]
         pub unsafe fn aeDesc(&self) -> *mut AEDesc;

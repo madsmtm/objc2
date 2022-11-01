@@ -19,7 +19,10 @@ extern_methods!(
         pub unsafe fn imageRepWithData(epsData: &NSData) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, epsData: &NSData) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            epsData: &NSData,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(prepareGState)]
         pub unsafe fn prepareGState(&self);

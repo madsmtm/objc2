@@ -23,7 +23,7 @@ extern_methods!(
     unsafe impl NSDrawer {
         #[method_id(initWithContentSize:preferredEdge:)]
         pub unsafe fn initWithContentSize_preferredEdge(
-            &self,
+            this: Option<Allocated<Self>>,
             contentSize: NSSize,
             edge: NSRectEdge,
         ) -> Id<Self, Shared>;

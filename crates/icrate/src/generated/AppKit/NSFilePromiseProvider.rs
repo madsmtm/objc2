@@ -35,13 +35,13 @@ extern_methods!(
 
         #[method_id(initWithFileType:delegate:)]
         pub unsafe fn initWithFileType_delegate(
-            &self,
+            this: Option<Allocated<Self>>,
             fileType: &NSString,
             delegate: &NSFilePromiseProviderDelegate,
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
     }
 );
 

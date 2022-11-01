@@ -27,10 +27,16 @@ extern_methods!(
         ) -> Option<Id<NSString, Shared>>;
 
         #[method_id(initWithLocaleIdentifier:)]
-        pub unsafe fn initWithLocaleIdentifier(&self, string: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithLocaleIdentifier(
+            this: Option<Allocated<Self>>,
+            string: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -163,7 +169,7 @@ extern_methods!(
         pub unsafe fn localeWithLocaleIdentifier(ident: &NSString) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
     }
 );
 

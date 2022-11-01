@@ -76,18 +76,21 @@ extern_methods!(
         pub unsafe fn mainThread() -> Id<NSThread, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithTarget:selector:object:)]
         pub unsafe fn initWithTarget_selector_object(
-            &self,
+            this: Option<Allocated<Self>>,
             target: &Object,
             selector: Sel,
             argument: Option<&Object>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithBlock:)]
-        pub unsafe fn initWithBlock(&self, block: TodoBlock) -> Id<Self, Shared>;
+        pub unsafe fn initWithBlock(
+            this: Option<Allocated<Self>>,
+            block: TodoBlock,
+        ) -> Id<Self, Shared>;
 
         #[method(isExecuting)]
         pub unsafe fn isExecuting(&self) -> bool;

@@ -18,7 +18,7 @@ extern_methods!(
     unsafe impl NSURLProtocol {
         #[method_id(initWithRequest:cachedResponse:client:)]
         pub unsafe fn initWithRequest_cachedResponse_client(
-            &self,
+            this: Option<Allocated<Self>>,
             request: &NSURLRequest,
             cachedResponse: Option<&NSCachedURLResponse>,
             client: Option<&NSURLProtocolClient>,
@@ -85,7 +85,7 @@ extern_methods!(
 
         #[method_id(initWithTask:cachedResponse:client:)]
         pub unsafe fn initWithTask_cachedResponse_client(
-            &self,
+            this: Option<Allocated<Self>>,
             task: &NSURLSessionTask,
             cachedResponse: Option<&NSCachedURLResponse>,
             client: Option<&NSURLProtocolClient>,

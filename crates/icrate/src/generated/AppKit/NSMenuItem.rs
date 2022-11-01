@@ -26,14 +26,17 @@ extern_methods!(
 
         #[method_id(initWithTitle:action:keyEquivalent:)]
         pub unsafe fn initWithTitle_action_keyEquivalent(
-            &self,
+            this: Option<Allocated<Self>>,
             string: &NSString,
             selector: Option<Sel>,
             charCode: &NSString,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(menu)]
         pub unsafe fn menu(&self) -> Option<Id<NSMenu, Shared>>;

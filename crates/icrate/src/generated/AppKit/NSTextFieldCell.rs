@@ -20,13 +20,22 @@ extern_class!(
 extern_methods!(
     unsafe impl NSTextFieldCell {
         #[method_id(initTextCell:)]
-        pub unsafe fn initTextCell(&self, string: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initTextCell(
+            this: Option<Allocated<Self>>,
+            string: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initImageCell:)]
-        pub unsafe fn initImageCell(&self, image: Option<&NSImage>) -> Id<Self, Shared>;
+        pub unsafe fn initImageCell(
+            this: Option<Allocated<Self>>,
+            image: Option<&NSImage>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;

@@ -47,14 +47,14 @@ extern_methods!(
     unsafe impl NSAccessibilityCustomRotor {
         #[method_id(initWithLabel:itemSearchDelegate:)]
         pub unsafe fn initWithLabel_itemSearchDelegate(
-            &self,
+            this: Option<Allocated<Self>>,
             label: &NSString,
             itemSearchDelegate: &NSAccessibilityCustomRotorItemSearchDelegate,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithRotorType:itemSearchDelegate:)]
         pub unsafe fn initWithRotorType_itemSearchDelegate(
-            &self,
+            this: Option<Allocated<Self>>,
             rotorType: NSAccessibilityCustomRotorType,
             itemSearchDelegate: &NSAccessibilityCustomRotorItemSearchDelegate,
         ) -> Id<Self, Shared>;
@@ -149,17 +149,17 @@ extern_methods!(
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithTargetElement:)]
         pub unsafe fn initWithTargetElement(
-            &self,
+            this: Option<Allocated<Self>>,
             targetElement: &NSAccessibilityElement,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithItemLoadingToken:customLabel:)]
         pub unsafe fn initWithItemLoadingToken_customLabel(
-            &self,
+            this: Option<Allocated<Self>>,
             itemLoadingToken: &NSAccessibilityLoadingToken,
             customLabel: &NSString,
         ) -> Id<Self, Shared>;

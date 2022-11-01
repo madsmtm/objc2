@@ -45,7 +45,10 @@ extern_methods!(
         pub unsafe fn setLocale(&self, locale: Option<&Object>);
 
         #[method_id(initWithString:)]
-        pub unsafe fn initWithString(&self, string: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithString(
+            this: Option<Allocated<Self>>,
+            string: &NSString,
+        ) -> Id<Self, Shared>;
     }
 );
 

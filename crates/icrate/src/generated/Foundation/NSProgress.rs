@@ -38,7 +38,7 @@ extern_methods!(
 
         #[method_id(initWithParent:userInfo:)]
         pub unsafe fn initWithParent_userInfo(
-            &self,
+            this: Option<Allocated<Self>>,
             parentProgressOrNil: Option<&NSProgress>,
             userInfoOrNil: Option<&NSDictionary<NSProgressUserInfoKey, Object>>,
         ) -> Id<Self, Shared>;

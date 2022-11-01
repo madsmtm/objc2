@@ -83,7 +83,7 @@ extern_methods!(
 
         #[method_id(initWithName:reason:userInfo:)]
         pub unsafe fn initWithName_reason_userInfo(
-            &self,
+            this: Option<Allocated<Self>>,
             aName: &NSExceptionName,
             aReason: Option<&NSString>,
             aUserInfo: Option<&NSDictionary>,

@@ -27,7 +27,7 @@ extern_methods!(
 
         #[method_id(initWithIdentifier:source:destination:)]
         pub unsafe fn initWithIdentifier_source_destination(
-            &self,
+            this: Option<Allocated<Self>>,
             identifier: &NSStoryboardSegueIdentifier,
             sourceController: &Object,
             destinationController: &Object,

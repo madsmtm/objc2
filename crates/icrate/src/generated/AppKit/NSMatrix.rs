@@ -22,11 +22,14 @@ extern_class!(
 extern_methods!(
     unsafe impl NSMatrix {
         #[method_id(initWithFrame:)]
-        pub unsafe fn initWithFrame(&self, frameRect: NSRect) -> Id<Self, Shared>;
+        pub unsafe fn initWithFrame(
+            this: Option<Allocated<Self>>,
+            frameRect: NSRect,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithFrame:mode:prototype:numberOfRows:numberOfColumns:)]
         pub unsafe fn initWithFrame_mode_prototype_numberOfRows_numberOfColumns(
-            &self,
+            this: Option<Allocated<Self>>,
             frameRect: NSRect,
             mode: NSMatrixMode,
             cell: &NSCell,
@@ -36,7 +39,7 @@ extern_methods!(
 
         #[method_id(initWithFrame:mode:cellClass:numberOfRows:numberOfColumns:)]
         pub unsafe fn initWithFrame_mode_cellClass_numberOfRows_numberOfColumns(
-            &self,
+            this: Option<Allocated<Self>>,
             frameRect: NSRect,
             mode: NSMatrixMode,
             factoryId: Option<&Class>,

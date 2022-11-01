@@ -30,10 +30,13 @@ extern_class!(
 extern_methods!(
     unsafe impl NSColor {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(colorWithColorSpace:components:count:)]
         pub unsafe fn colorWithColorSpace_components_count(
@@ -594,7 +597,10 @@ extern_methods!(
     /// NSAppKitAdditions
     unsafe impl CIColor {
         #[method_id(initWithColor:)]
-        pub unsafe fn initWithColor(&self, color: &NSColor) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithColor(
+            this: Option<Allocated<Self>>,
+            color: &NSColor,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 

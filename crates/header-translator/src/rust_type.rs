@@ -747,6 +747,18 @@ impl RustTypeReturn {
             _ => panic!("unknown error result type {self:?}"),
         }
     }
+
+    pub fn is_alloc(&self) -> bool {
+        match &self.inner {
+            RustType::Id {
+                type_,
+                lifetime: Lifetime::Unspecified,
+                is_const: false,
+                nullability: Nullability::NonNull,
+            } => type_.name == "Object" && type_.generics.is_empty(),
+            _ => false,
+        }
+    }
 }
 
 impl fmt::Display for RustTypeReturn {

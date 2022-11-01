@@ -22,12 +22,15 @@ extern_methods!(
     unsafe impl NSTableColumn {
         #[method_id(initWithIdentifier:)]
         pub unsafe fn initWithIdentifier(
-            &self,
+            this: Option<Allocated<Self>>,
             identifier: &NSUserInterfaceItemIdentifier,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(identifier)]
         pub unsafe fn identifier(&self) -> Id<NSUserInterfaceItemIdentifier, Shared>;

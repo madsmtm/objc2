@@ -15,31 +15,34 @@ extern_class!(
 extern_methods!(
     unsafe impl NSXMLElement {
         #[method_id(initWithName:)]
-        pub unsafe fn initWithName(&self, name: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initWithName(
+            this: Option<Allocated<Self>>,
+            name: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithName:URI:)]
         pub unsafe fn initWithName_URI(
-            &self,
+            this: Option<Allocated<Self>>,
             name: &NSString,
             URI: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithName:stringValue:)]
         pub unsafe fn initWithName_stringValue(
-            &self,
+            this: Option<Allocated<Self>>,
             name: &NSString,
             string: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithXMLString:error:)]
         pub unsafe fn initWithXMLString_error(
-            &self,
+            this: Option<Allocated<Self>>,
             string: &NSString,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initWithKind:options:)]
         pub unsafe fn initWithKind_options(
-            &self,
+            this: Option<Allocated<Self>>,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
         ) -> Id<Self, Shared>;

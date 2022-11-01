@@ -58,7 +58,7 @@ extern_methods!(
 
         #[method_id(initWithLeftExpression:rightExpression:modifier:type:options:)]
         pub unsafe fn initWithLeftExpression_rightExpression_modifier_type_options(
-            &self,
+            this: Option<Allocated<Self>>,
             lhs: &NSExpression,
             rhs: &NSExpression,
             modifier: NSComparisonPredicateModifier,
@@ -68,14 +68,17 @@ extern_methods!(
 
         #[method_id(initWithLeftExpression:rightExpression:customSelector:)]
         pub unsafe fn initWithLeftExpression_rightExpression_customSelector(
-            &self,
+            this: Option<Allocated<Self>>,
             lhs: &NSExpression,
             rhs: &NSExpression,
             selector: Sel,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(predicateOperatorType)]
         pub unsafe fn predicateOperatorType(&self) -> NSPredicateOperatorType;

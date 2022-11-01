@@ -16,10 +16,16 @@ extern_class!(
 extern_methods!(
     unsafe impl NSMenuItemCell {
         #[method_id(initTextCell:)]
-        pub unsafe fn initTextCell(&self, string: &NSString) -> Id<Self, Shared>;
+        pub unsafe fn initTextCell(
+            this: Option<Allocated<Self>>,
+            string: &NSString,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(menuItem)]
         pub unsafe fn menuItem(&self) -> Option<Id<NSMenuItem, Shared>>;

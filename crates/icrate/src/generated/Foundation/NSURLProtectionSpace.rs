@@ -76,7 +76,7 @@ extern_methods!(
     unsafe impl NSURLProtectionSpace {
         #[method_id(initWithHost:port:protocol:realm:authenticationMethod:)]
         pub unsafe fn initWithHost_port_protocol_realm_authenticationMethod(
-            &self,
+            this: Option<Allocated<Self>>,
             host: &NSString,
             port: NSInteger,
             protocol: Option<&NSString>,
@@ -86,7 +86,7 @@ extern_methods!(
 
         #[method_id(initWithProxyHost:port:type:realm:authenticationMethod:)]
         pub unsafe fn initWithProxyHost_port_type_realm_authenticationMethod(
-            &self,
+            this: Option<Allocated<Self>>,
             host: &NSString,
             port: NSInteger,
             type_: Option<&NSString>,

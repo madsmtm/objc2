@@ -28,7 +28,7 @@ extern_methods!(
     unsafe impl NSKeyedArchiver {
         #[method_id(initRequiringSecureCoding:)]
         pub unsafe fn initRequiringSecureCoding(
-            &self,
+            this: Option<Allocated<Self>>,
             requiresSecureCoding: bool,
         ) -> Id<Self, Shared>;
 
@@ -39,11 +39,11 @@ extern_methods!(
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initForWritingWithMutableData:)]
         pub unsafe fn initForWritingWithMutableData(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSMutableData,
         ) -> Id<Self, Shared>;
 
@@ -128,7 +128,7 @@ extern_methods!(
     unsafe impl NSKeyedUnarchiver {
         #[method_id(initForReadingFromData:error:)]
         pub unsafe fn initForReadingFromData_error(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
@@ -171,10 +171,13 @@ extern_methods!(
         ) -> Result<Id<NSDictionary, Shared>, Id<NSError, Shared>>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initForReadingWithData:)]
-        pub unsafe fn initForReadingWithData(&self, data: &NSData) -> Id<Self, Shared>;
+        pub unsafe fn initForReadingWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Id<Self, Shared>;
 
         #[method_id(unarchiveObjectWithData:)]
         pub unsafe fn unarchiveObjectWithData(data: &NSData) -> Option<Id<Object, Shared>>;

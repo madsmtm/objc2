@@ -104,7 +104,7 @@ extern_methods!(
 
         #[method_id(initWithString:calendarFormat:locale:)]
         pub unsafe fn initWithString_calendarFormat_locale(
-            &self,
+            this: Option<Allocated<Self>>,
             description: &NSString,
             format: &NSString,
             locale: Option<&Object>,
@@ -112,17 +112,20 @@ extern_methods!(
 
         #[method_id(initWithString:calendarFormat:)]
         pub unsafe fn initWithString_calendarFormat(
-            &self,
+            this: Option<Allocated<Self>>,
             description: &NSString,
             format: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
         #[method_id(initWithString:)]
-        pub unsafe fn initWithString(&self, description: &NSString) -> Option<Id<Object, Shared>>;
+        pub unsafe fn initWithString(
+            this: Option<Allocated<Self>>,
+            description: &NSString,
+        ) -> Option<Id<Object, Shared>>;
 
         #[method_id(initWithYear:month:day:hour:minute:second:timeZone:)]
         pub unsafe fn initWithYear_month_day_hour_minute_second_timeZone(
-            &self,
+            this: Option<Allocated<Self>>,
             year: NSInteger,
             month: NSUInteger,
             day: NSUInteger,
@@ -191,6 +194,9 @@ extern_methods!(
         ) -> Option<Id<NSString, Shared>>;
 
         #[method_id(initWithString:)]
-        pub unsafe fn initWithString(&self, description: &NSString) -> Option<Id<Object, Shared>>;
+        pub unsafe fn initWithString(
+            this: Option<Allocated<Self>>,
+            description: &NSString,
+        ) -> Option<Id<Object, Shared>>;
     }
 );

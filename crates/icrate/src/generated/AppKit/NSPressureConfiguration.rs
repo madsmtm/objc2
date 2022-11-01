@@ -20,7 +20,7 @@ extern_methods!(
 
         #[method_id(initWithPressureBehavior:)]
         pub unsafe fn initWithPressureBehavior(
-            &self,
+            this: Option<Allocated<Self>>,
             pressureBehavior: NSPressureBehavior,
         ) -> Id<Self, Shared>;
 

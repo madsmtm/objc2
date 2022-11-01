@@ -116,7 +116,7 @@ extern_methods!(
 
         #[method_id(initWithURL:cached:)]
         pub unsafe fn initWithURL_cached(
-            &self,
+            this: Option<Allocated<Self>>,
             anURL: Option<&NSURL>,
             willCache: bool,
         ) -> Option<Id<Object, Shared>>;

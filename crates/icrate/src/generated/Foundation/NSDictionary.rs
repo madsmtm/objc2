@@ -27,18 +27,21 @@ extern_methods!(
         pub unsafe fn keyEnumerator(&self) -> Id<NSEnumerator<KeyType>, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithObjects:forKeys:count:)]
         pub unsafe fn initWithObjects_forKeys_count(
-            &self,
+            this: Option<Allocated<Self>>,
             objects: TodoArray,
             keys: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -169,13 +172,13 @@ extern_methods!(
 
         #[method_id(initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<NSDictionary<KeyType, ObjectType>, Shared>>;
 
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Option<Id<NSDictionary<KeyType, ObjectType>, Shared>>;
 
@@ -223,27 +226,27 @@ extern_methods!(
 
         #[method_id(initWithDictionary:)]
         pub unsafe fn initWithDictionary(
-            &self,
+            this: Option<Allocated<Self>>,
             otherDictionary: &NSDictionary<KeyType, ObjectType>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithDictionary:copyItems:)]
         pub unsafe fn initWithDictionary_copyItems(
-            &self,
+            this: Option<Allocated<Self>>,
             otherDictionary: &NSDictionary<KeyType, ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithObjects:forKeys:)]
         pub unsafe fn initWithObjects_forKeys(
-            &self,
+            this: Option<Allocated<Self>>,
             objects: &NSArray<ObjectType>,
             keys: &NSArray<NSCopying>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithContentsOfURL:error:)]
         pub unsafe fn initWithContentsOfURL_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Result<Id<NSDictionary<NSString, ObjectType>, Shared>, Id<NSError, Shared>>;
 
@@ -277,13 +280,19 @@ extern_methods!(
         pub unsafe fn setObject_forKey(&self, anObject: &ObjectType, aKey: &NSCopying);
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithCapacity:)]
-        pub unsafe fn initWithCapacity(&self, numItems: NSUInteger) -> Id<Self, Shared>;
+        pub unsafe fn initWithCapacity(
+            this: Option<Allocated<Self>>,
+            numItems: NSUInteger,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
     }
 );
 
@@ -328,13 +337,13 @@ extern_methods!(
 
         #[method_id(initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(
-            &self,
+            this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<NSMutableDictionary<KeyType, ObjectType>, Shared>>;
 
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Option<Id<NSMutableDictionary<KeyType, ObjectType>, Shared>>;
     }

@@ -16,24 +16,33 @@ extern_class!(
 extern_methods!(
     unsafe impl NSWindowController {
         #[method_id(initWithWindow:)]
-        pub unsafe fn initWithWindow(&self, window: Option<&NSWindow>) -> Id<Self, Shared>;
+        pub unsafe fn initWithWindow(
+            this: Option<Allocated<Self>>,
+            window: Option<&NSWindow>,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithWindowNibName:)]
-        pub unsafe fn initWithWindowNibName(&self, windowNibName: &NSNibName) -> Id<Self, Shared>;
+        pub unsafe fn initWithWindowNibName(
+            this: Option<Allocated<Self>>,
+            windowNibName: &NSNibName,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithWindowNibName:owner:)]
         pub unsafe fn initWithWindowNibName_owner(
-            &self,
+            this: Option<Allocated<Self>>,
             windowNibName: &NSNibName,
             owner: &Object,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithWindowNibPath:owner:)]
         pub unsafe fn initWithWindowNibPath_owner(
-            &self,
+            this: Option<Allocated<Self>>,
             windowNibPath: &NSString,
             owner: &Object,
         ) -> Id<Self, Shared>;

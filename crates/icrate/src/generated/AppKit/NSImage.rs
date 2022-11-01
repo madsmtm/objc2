@@ -56,39 +56,54 @@ extern_methods!(
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithSize:)]
-        pub unsafe fn initWithSize(&self, size: NSSize) -> Id<Self, Shared>;
+        pub unsafe fn initWithSize(this: Option<Allocated<Self>>, size: NSSize)
+            -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithData:)]
-        pub unsafe fn initWithData(&self, data: &NSData) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithData(
+            this: Option<Allocated<Self>>,
+            data: &NSData,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(
-            &self,
+            this: Option<Allocated<Self>>,
             fileName: &NSString,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithContentsOfURL:)]
-        pub unsafe fn initWithContentsOfURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithContentsOfURL(
+            this: Option<Allocated<Self>>,
+            url: &NSURL,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initByReferencingFile:)]
-        pub unsafe fn initByReferencingFile(&self, fileName: &NSString)
-            -> Option<Id<Self, Shared>>;
+        pub unsafe fn initByReferencingFile(
+            this: Option<Allocated<Self>>,
+            fileName: &NSString,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initByReferencingURL:)]
-        pub unsafe fn initByReferencingURL(&self, url: &NSURL) -> Id<Self, Shared>;
+        pub unsafe fn initByReferencingURL(
+            this: Option<Allocated<Self>>,
+            url: &NSURL,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithPasteboard:)]
         pub unsafe fn initWithPasteboard(
-            &self,
+            this: Option<Allocated<Self>>,
             pasteboard: &NSPasteboard,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithDataIgnoringOrientation:)]
         pub unsafe fn initWithDataIgnoringOrientation(
-            &self,
+            this: Option<Allocated<Self>>,
             data: &NSData,
         ) -> Option<Id<Self, Shared>>;
 
@@ -261,7 +276,7 @@ extern_methods!(
 
         #[method_id(initWithCGImage:size:)]
         pub unsafe fn initWithCGImage_size(
-            &self,
+            this: Option<Allocated<Self>>,
             cgImage: CGImageRef,
             size: NSSize,
         ) -> Id<Self, Shared>;
@@ -371,7 +386,10 @@ extern_methods!(
         pub unsafe fn imagePasteboardTypes() -> Id<NSArray<NSPasteboardType>, Shared>;
 
         #[method_id(initWithIconRef:)]
-        pub unsafe fn initWithIconRef(&self, iconRef: IconRef) -> Id<Self, Shared>;
+        pub unsafe fn initWithIconRef(
+            this: Option<Allocated<Self>>,
+            iconRef: IconRef,
+        ) -> Id<Self, Shared>;
 
         #[method(setFlipped:)]
         pub unsafe fn setFlipped(&self, flag: bool);

@@ -26,11 +26,14 @@ extern_methods!(
         pub unsafe fn colorListNamed(name: &NSColorListName) -> Option<Id<NSColorList, Shared>>;
 
         #[method_id(initWithName:)]
-        pub unsafe fn initWithName(&self, name: &NSColorListName) -> Id<Self, Shared>;
+        pub unsafe fn initWithName(
+            this: Option<Allocated<Self>>,
+            name: &NSColorListName,
+        ) -> Id<Self, Shared>;
 
         #[method_id(initWithName:fromFile:)]
         pub unsafe fn initWithName_fromFile(
-            &self,
+            this: Option<Allocated<Self>>,
             name: &NSColorListName,
             path: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;

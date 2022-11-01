@@ -53,11 +53,11 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithURL:)]
-        pub unsafe fn initWithURL(&self, URL: &NSURL) -> Id<Self, Shared>;
+        pub unsafe fn initWithURL(this: Option<Allocated<Self>>, URL: &NSURL) -> Id<Self, Shared>;
 
         #[method_id(initWithURL:cachePolicy:timeoutInterval:)]
         pub unsafe fn initWithURL_cachePolicy_timeoutInterval(
-            &self,
+            this: Option<Allocated<Self>>,
             URL: &NSURL,
             cachePolicy: NSURLRequestCachePolicy,
             timeoutInterval: NSTimeInterval,

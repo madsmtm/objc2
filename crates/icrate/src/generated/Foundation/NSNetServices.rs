@@ -39,7 +39,7 @@ extern_methods!(
     unsafe impl NSNetService {
         #[method_id(initWithDomain:type:name:port:)]
         pub unsafe fn initWithDomain_type_name_port(
-            &self,
+            this: Option<Allocated<Self>>,
             domain: &NSString,
             type_: &NSString,
             name: &NSString,
@@ -48,7 +48,7 @@ extern_methods!(
 
         #[method_id(initWithDomain:type:name:)]
         pub unsafe fn initWithDomain_type_name(
-            &self,
+            this: Option<Allocated<Self>>,
             domain: &NSString,
             type_: &NSString,
             name: &NSString,
@@ -141,7 +141,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSNetServiceBrowser {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceBrowserDelegate, Shared>>;

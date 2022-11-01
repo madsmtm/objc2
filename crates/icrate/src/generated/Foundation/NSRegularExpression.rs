@@ -31,7 +31,7 @@ extern_methods!(
 
         #[method_id(initWithPattern:options:error:)]
         pub unsafe fn initWithPattern_options_error(
-            &self,
+            this: Option<Allocated<Self>>,
             pattern: &NSString,
             options: NSRegularExpressionOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
@@ -163,7 +163,7 @@ extern_methods!(
 
         #[method_id(initWithTypes:error:)]
         pub unsafe fn initWithTypes_error(
-            &self,
+            this: Option<Allocated<Self>>,
             checkingTypes: NSTextCheckingTypes,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 

@@ -19,14 +19,14 @@ extern_methods!(
 
         #[method_id(initWithRequest:delegate:)]
         pub unsafe fn initWithRequest_delegate(
-            &self,
+            this: Option<Allocated<Self>>,
             request: &NSURLRequest,
             delegate: Option<&NSURLDownloadDelegate>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithResumeData:delegate:path:)]
         pub unsafe fn initWithResumeData_delegate_path(
-            &self,
+            this: Option<Allocated<Self>>,
             resumeData: &NSData,
             delegate: Option<&NSURLDownloadDelegate>,
             path: &NSString,

@@ -29,7 +29,7 @@ extern_methods!(
 
         #[method_id(initWithNotificationCenter:)]
         pub unsafe fn initWithNotificationCenter(
-            &self,
+            this: Option<Allocated<Self>>,
             notificationCenter: &NSNotificationCenter,
         ) -> Id<Self, Shared>;
 

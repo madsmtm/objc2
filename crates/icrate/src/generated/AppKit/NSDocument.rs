@@ -34,11 +34,11 @@ extern_class!(
 extern_methods!(
     unsafe impl NSDocument {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(initWithType:error:)]
         pub unsafe fn initWithType_error(
-            &self,
+            this: Option<Allocated<Self>>,
             typeName: &NSString,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
@@ -47,14 +47,14 @@ extern_methods!(
 
         #[method_id(initWithContentsOfURL:ofType:error:)]
         pub unsafe fn initWithContentsOfURL_ofType_error(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             typeName: &NSString,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(initForURL:withContentsOfURL:ofType:error:)]
         pub unsafe fn initForURL_withContentsOfURL_ofType_error(
-            &self,
+            this: Option<Allocated<Self>>,
             urlOrNil: Option<&NSURL>,
             contentsURL: &NSURL,
             typeName: &NSString,
@@ -620,14 +620,14 @@ extern_methods!(
 
         #[method_id(initWithContentsOfFile:ofType:)]
         pub unsafe fn initWithContentsOfFile_ofType(
-            &self,
+            this: Option<Allocated<Self>>,
             absolutePath: &NSString,
             typeName: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
         #[method_id(initWithContentsOfURL:ofType:)]
         pub unsafe fn initWithContentsOfURL_ofType(
-            &self,
+            this: Option<Allocated<Self>>,
             url: &NSURL,
             typeName: &NSString,
         ) -> Option<Id<Object, Shared>>;

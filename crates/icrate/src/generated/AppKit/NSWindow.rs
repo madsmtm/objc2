@@ -172,7 +172,7 @@ extern_methods!(
 
         #[method_id(initWithContentRect:styleMask:backing:defer:)]
         pub unsafe fn initWithContentRect_styleMask_backing_defer(
-            &self,
+            this: Option<Allocated<Self>>,
             contentRect: NSRect,
             style: NSWindowStyleMask,
             backingStoreType: NSBackingStoreType,
@@ -181,7 +181,7 @@ extern_methods!(
 
         #[method_id(initWithContentRect:styleMask:backing:defer:screen:)]
         pub unsafe fn initWithContentRect_styleMask_backing_defer_screen(
-            &self,
+            this: Option<Allocated<Self>>,
             contentRect: NSRect,
             style: NSWindowStyleMask,
             backingStoreType: NSBackingStoreType,
@@ -190,7 +190,10 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method_id(title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
@@ -1170,7 +1173,7 @@ extern_methods!(
     unsafe impl NSWindow {
         #[method_id(initWithWindowRef:)]
         pub unsafe fn initWithWindowRef(
-            &self,
+            this: Option<Allocated<Self>>,
             windowRef: NonNull<c_void>,
         ) -> Option<Id<NSWindow, Shared>>;
 

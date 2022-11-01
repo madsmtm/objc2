@@ -209,7 +209,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSMetadataItem {
         #[method_id(initWithURL:)]
-        pub unsafe fn initWithURL(&self, url: &NSURL) -> Option<Id<Self, Shared>>;
+        pub unsafe fn initWithURL(
+            this: Option<Allocated<Self>>,
+            url: &NSURL,
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(valueForAttribute:)]
         pub unsafe fn valueForAttribute(&self, key: &NSString) -> Option<Id<Object, Shared>>;

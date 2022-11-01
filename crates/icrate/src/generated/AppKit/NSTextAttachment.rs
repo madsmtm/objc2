@@ -23,14 +23,14 @@ extern_methods!(
     unsafe impl NSTextAttachment {
         #[method_id(initWithData:ofType:)]
         pub unsafe fn initWithData_ofType(
-            &self,
+            this: Option<Allocated<Self>>,
             contentData: Option<&NSData>,
             uti: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithFileWrapper:)]
         pub unsafe fn initWithFileWrapper(
-            &self,
+            this: Option<Allocated<Self>>,
             fileWrapper: Option<&NSFileWrapper>,
         ) -> Id<Self, Shared>;
 
@@ -121,7 +121,7 @@ extern_methods!(
     unsafe impl NSTextAttachmentViewProvider {
         #[method_id(initWithTextAttachment:parentView:textLayoutManager:location:)]
         pub unsafe fn initWithTextAttachment_parentView_textLayoutManager_location(
-            &self,
+            this: Option<Allocated<Self>>,
             textAttachment: &NSTextAttachment,
             parentView: Option<&NSView>,
             textLayoutManager: Option<&NSTextLayoutManager>,
@@ -129,7 +129,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Self, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(new)]
         pub unsafe fn new() -> Id<Self, Shared>;

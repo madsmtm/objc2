@@ -21,27 +21,30 @@ extern_methods!(
     unsafe impl NSGradient {
         #[method_id(initWithStartingColor:endingColor:)]
         pub unsafe fn initWithStartingColor_endingColor(
-            &self,
+            this: Option<Allocated<Self>>,
             startingColor: &NSColor,
             endingColor: &NSColor,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithColors:)]
         pub unsafe fn initWithColors(
-            &self,
+            this: Option<Allocated<Self>>,
             colorArray: &NSArray<NSColor>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithColors:atLocations:colorSpace:)]
         pub unsafe fn initWithColors_atLocations_colorSpace(
-            &self,
+            this: Option<Allocated<Self>>,
             colorArray: &NSArray<NSColor>,
             locations: *mut CGFloat,
             colorSpace: &NSColorSpace,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithCoder:)]
-        pub unsafe fn initWithCoder(&self, coder: &NSCoder) -> Id<Self, Shared>;
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Id<Self, Shared>;
 
         #[method(drawFromPoint:toPoint:options:)]
         pub unsafe fn drawFromPoint_toPoint_options(

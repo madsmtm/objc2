@@ -124,14 +124,17 @@ extern_methods!(
     unsafe impl NSInvocationOperation {
         #[method_id(initWithTarget:selector:object:)]
         pub unsafe fn initWithTarget_selector_object(
-            &self,
+            this: Option<Allocated<Self>>,
             target: &Object,
             sel: Sel,
             arg: Option<&Object>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithInvocation:)]
-        pub unsafe fn initWithInvocation(&self, inv: &NSInvocation) -> Id<Self, Shared>;
+        pub unsafe fn initWithInvocation(
+            this: Option<Allocated<Self>>,
+            inv: &NSInvocation,
+        ) -> Id<Self, Shared>;
 
         #[method_id(invocation)]
         pub unsafe fn invocation(&self) -> Id<NSInvocation, Shared>;

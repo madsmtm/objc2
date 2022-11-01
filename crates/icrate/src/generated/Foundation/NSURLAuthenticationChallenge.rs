@@ -18,7 +18,7 @@ extern_methods!(
     unsafe impl NSURLAuthenticationChallenge {
         #[method_id(initWithProtectionSpace:proposedCredential:previousFailureCount:failureResponse:error:sender:)]
         pub unsafe fn initWithProtectionSpace_proposedCredential_previousFailureCount_failureResponse_error_sender(
-            &self,
+            this: Option<Allocated<Self>>,
             space: &NSURLProtectionSpace,
             credential: Option<&NSURLCredential>,
             previousFailureCount: NSInteger,
@@ -29,7 +29,7 @@ extern_methods!(
 
         #[method_id(initWithAuthenticationChallenge:sender:)]
         pub unsafe fn initWithAuthenticationChallenge_sender(
-            &self,
+            this: Option<Allocated<Self>>,
             challenge: &NSURLAuthenticationChallenge,
             sender: &NSURLAuthenticationChallengeSender,
         ) -> Id<Self, Shared>;

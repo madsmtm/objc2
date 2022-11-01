@@ -15,7 +15,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSInflectionRule {
         #[method_id(init)]
-        pub unsafe fn init(&self) -> Id<Object, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Object, Shared>;
 
         #[method_id(automaticRule)]
         pub unsafe fn automaticRule() -> Id<NSInflectionRule, Shared>;
@@ -34,7 +34,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSInflectionRuleExplicit {
         #[method_id(initWithMorphology:)]
-        pub unsafe fn initWithMorphology(&self, morphology: &NSMorphology) -> Id<Self, Shared>;
+        pub unsafe fn initWithMorphology(
+            this: Option<Allocated<Self>>,
+            morphology: &NSMorphology,
+        ) -> Id<Self, Shared>;
 
         #[method_id(morphology)]
         pub unsafe fn morphology(&self) -> Id<NSMorphology, Shared>;

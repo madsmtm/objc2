@@ -19,14 +19,14 @@ extern_methods!(
     unsafe impl NSNib {
         #[method_id(initWithNibNamed:bundle:)]
         pub unsafe fn initWithNibNamed_bundle(
-            &self,
+            this: Option<Allocated<Self>>,
             nibName: &NSNibName,
             bundle: Option<&NSBundle>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(initWithNibData:bundle:)]
         pub unsafe fn initWithNibData_bundle(
-            &self,
+            this: Option<Allocated<Self>>,
             nibData: &NSData,
             bundle: Option<&NSBundle>,
         ) -> Id<Self, Shared>;
@@ -45,7 +45,7 @@ extern_methods!(
     unsafe impl NSNib {
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
-            &self,
+            this: Option<Allocated<Self>>,
             nibFileURL: Option<&NSURL>,
         ) -> Option<Id<Object, Shared>>;
 

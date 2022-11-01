@@ -16,13 +16,13 @@ extern_methods!(
     unsafe impl NSPointerArray {
         #[method_id(initWithOptions:)]
         pub unsafe fn initWithOptions(
-            &self,
+            this: Option<Allocated<Self>>,
             options: NSPointerFunctionsOptions,
         ) -> Id<Self, Shared>;
 
         #[method_id(initWithPointerFunctions:)]
         pub unsafe fn initWithPointerFunctions(
-            &self,
+            this: Option<Allocated<Self>>,
             functions: &NSPointerFunctions,
         ) -> Id<Self, Shared>;
 
