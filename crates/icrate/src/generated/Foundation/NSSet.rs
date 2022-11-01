@@ -7,7 +7,7 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSSet<ObjectType: Message> {
+    pub struct NSSet<ObjectType: Message = Object> {
         _inner0: PhantomData<*mut ObjectType>,
     }
 
@@ -159,7 +159,7 @@ extern_methods!(
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMutableSet<ObjectType: Message> {
+    pub struct NSMutableSet<ObjectType: Message = Object> {
         _inner0: PhantomData<*mut ObjectType>,
     }
 
@@ -220,7 +220,7 @@ extern_methods!(
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSCountedSet<ObjectType: Message> {
+    pub struct NSCountedSet<ObjectType: Message = Object> {
         _inner0: PhantomData<*mut ObjectType>,
     }
 

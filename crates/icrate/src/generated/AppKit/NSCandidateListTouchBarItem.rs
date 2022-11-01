@@ -7,7 +7,7 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSCandidateListTouchBarItem<CandidateType: Message> {
+    pub struct NSCandidateListTouchBarItem<CandidateType: Message = Object> {
         _inner0: PhantomData<*mut CandidateType>,
     }
 

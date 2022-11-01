@@ -7,7 +7,7 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSCache<KeyType: Message, ObjectType: Message> {
+    pub struct NSCache<KeyType: Message = Object, ObjectType: Message = Object> {
         _inner0: PhantomData<*mut KeyType>,
         _inner1: PhantomData<*mut ObjectType>,
     }

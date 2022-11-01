@@ -511,7 +511,7 @@ pub type NSFileManagerDelegate = NSObject;
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSDirectoryEnumerator<ObjectType: Message> {
+    pub struct NSDirectoryEnumerator<ObjectType: Message = Object> {
         _inner0: PhantomData<*mut ObjectType>,
     }
 

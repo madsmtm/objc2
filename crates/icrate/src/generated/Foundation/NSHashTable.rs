@@ -21,7 +21,7 @@ pub type NSHashTableOptions = NSUInteger;
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSHashTable<ObjectType: Message> {
+    pub struct NSHashTable<ObjectType: Message = Object> {
         _inner0: PhantomData<*mut ObjectType>,
     }
 

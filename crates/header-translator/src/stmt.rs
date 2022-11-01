@@ -608,6 +608,15 @@ impl fmt::Display for Stmt {
                 protocols: _,
                 methods,
             } => {
+                let struct_generic = if generics.is_empty() {
+                    name.clone()
+                } else {
+                    format!(
+                        "{name}<{}: Message = Object>",
+                        generics.join(": Message = Object,")
+                    )
+                };
+
                 let generic_params = if generics.is_empty() {
                     String::new()
                 } else {
@@ -632,7 +641,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[derive(Debug)]")?;
-                write!(f, "    pub struct {name}{generic_params}")?;
+                write!(f, "    pub struct {struct_generic}")?;
                 if generics.is_empty() {
                     writeln!(f, ";")?;
                 } else {

@@ -7,7 +7,7 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSOrderedSet<ObjectType: Message> {
+    pub struct NSOrderedSet<ObjectType: Message = Object> {
         _inner0: PhantomData<*mut ObjectType>,
     }
 
@@ -321,7 +321,7 @@ extern_methods!(
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMutableOrderedSet<ObjectType: Message> {
+    pub struct NSMutableOrderedSet<ObjectType: Message = Object> {
         _inner0: PhantomData<*mut ObjectType>,
     }
 

@@ -8,8 +8,8 @@ use objc2::{extern_class, extern_methods, ClassType};
 __inner_extern_class!(
     #[derive(Debug)]
     pub struct NSTableViewDiffableDataSource<
-        SectionIdentifierType: Message,
-        ItemIdentifierType: Message,
+        SectionIdentifierType: Message = Object,
+        ItemIdentifierType: Message = Object,
     > {
         _inner0: PhantomData<*mut SectionIdentifierType>,
         _inner1: PhantomData<*mut ItemIdentifierType>,

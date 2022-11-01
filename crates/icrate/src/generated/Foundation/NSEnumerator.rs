@@ -9,7 +9,7 @@ pub type NSFastEnumeration = NSObject;
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSEnumerator<ObjectType: Message> {
+    pub struct NSEnumerator<ObjectType: Message = Object> {
         _inner0: PhantomData<*mut ObjectType>,
     }
 
