@@ -7,3 +7,9 @@ skipped = true
 # Works weirdly since it's defined both as a property, and as a method.
 [class.NSDocument.methods.setDisplayName]
 skipped = true
+
+# Both protocols and classes
+[protocol.NSTextAttachmentCell]
+skipped = true
+[protocol.NSAccessibilityElement]
+skipped = true

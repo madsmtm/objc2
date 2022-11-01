@@ -2,7 +2,7 @@
 # Uses NS_REPLACES_RECEIVER
 awakeAfterUsingCoder = { skipped = true }
 
-[class.NSKeyedUnarchiverDelegate.methods]
+[protocol.NSKeyedUnarchiverDelegate.methods]
 # Uses NS_RELEASES_ARGUMENT and NS_RETURNS_RETAINED
 unarchiver_didDecodeObject = { skipped = true }
 

@@ -11,11 +11,16 @@ pub struct Config {
     #[serde(rename = "class")]
     #[serde(default)]
     pub class_data: HashMap<String, ClassData>,
+    #[serde(rename = "protocol")]
+    #[serde(default)]
+    pub protocol_data: HashMap<String, ClassData>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ClassData {
+    #[serde(default)]
+    pub skipped: bool,
     #[serde(default)]
     pub methods: HashMap<String, MethodData>,
     #[serde(default)]

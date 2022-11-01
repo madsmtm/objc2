@@ -494,12 +494,12 @@ mod __exported {
     pub use super::NSAccessibilityElement::NSAccessibilityElement;
     pub use super::NSAccessibilityProtocols::{
         NSAccessibility, NSAccessibilityButton, NSAccessibilityCheckBox,
-        NSAccessibilityContainsTransientUI, NSAccessibilityElement, NSAccessibilityElementLoading,
-        NSAccessibilityGroup, NSAccessibilityImage, NSAccessibilityLayoutArea,
-        NSAccessibilityLayoutItem, NSAccessibilityList, NSAccessibilityNavigableStaticText,
-        NSAccessibilityOutline, NSAccessibilityProgressIndicator, NSAccessibilityRadioButton,
-        NSAccessibilityRow, NSAccessibilitySlider, NSAccessibilityStaticText,
-        NSAccessibilityStepper, NSAccessibilitySwitch, NSAccessibilityTable,
+        NSAccessibilityContainsTransientUI, NSAccessibilityElementLoading, NSAccessibilityGroup,
+        NSAccessibilityImage, NSAccessibilityLayoutArea, NSAccessibilityLayoutItem,
+        NSAccessibilityList, NSAccessibilityNavigableStaticText, NSAccessibilityOutline,
+        NSAccessibilityProgressIndicator, NSAccessibilityRadioButton, NSAccessibilityRow,
+        NSAccessibilitySlider, NSAccessibilityStaticText, NSAccessibilityStepper,
+        NSAccessibilitySwitch, NSAccessibilityTable,
     };
     pub use super::NSActionCell::NSActionCell;
     pub use super::NSAlert::{

@@ -34,7 +34,7 @@ fn parse_objc_decl(
     entity: &Entity<'_>,
     mut superclass: Option<&mut Option<Option<String>>>,
     mut generics: Option<&mut Vec<String>>,
-    class_data: Option<&ClassData>,
+    data: Option<&ClassData>,
 ) -> (Vec<String>, Vec<MethodOrProperty>) {
     let mut protocols = Vec::new();
     let mut methods = Vec::new();
@@ -86,10 +86,9 @@ fn parse_objc_decl(
                 let partial = Method::partial(entity);
 
                 if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
-                    let data = class_data
-                        .map(|class_data| {
-                            class_data
-                                .methods
+                    let data = data
+                        .map(|data| {
+                            data.methods
                                 .get(&partial.fn_name)
                                 .copied()
                                 .unwrap_or_default()
@@ -102,10 +101,9 @@ fn parse_objc_decl(
             }
             EntityKind::ObjCPropertyDecl => {
                 let partial = Property::partial(entity);
-                let data = class_data
-                    .map(|class_data| {
-                        class_data
-                            .properties
+                let data = data
+                    .map(|data| {
+                        data.properties
                             .get(&partial.name)
                             .copied()
                             .unwrap_or_default()
@@ -242,6 +240,11 @@ impl Stmt {
                 // entity.get_mangled_objc_names()
                 let name = entity.get_name().expect("class name");
                 let class_data = config.class_data.get(&name);
+
+                if class_data.map(|data| data.skipped).unwrap_or_default() {
+                    return None;
+                }
+
                 let availability = Availability::parse(
                     entity
                         .get_platform_availability()
@@ -292,6 +295,10 @@ impl Stmt {
                 let class_name = class_name.expect("could not find category class");
                 let class_data = config.class_data.get(&class_name);
 
+                if class_data.map(|data| data.skipped).unwrap_or_default() {
+                    return None;
+                }
+
                 let mut generics = Vec::new();
 
                 let (protocols, methods) =
@@ -308,14 +315,19 @@ impl Stmt {
             }
             EntityKind::ObjCProtocolDecl => {
                 let name = entity.get_name().expect("protocol name");
-                let class_data = config.class_data.get(&name);
+                let protocol_data = config.protocol_data.get(&name);
+
+                if protocol_data.map(|data| data.skipped).unwrap_or_default() {
+                    return None;
+                }
+
                 let availability = Availability::parse(
                     entity
                         .get_platform_availability()
                         .expect("protocol availability"),
                 );
 
-                let (protocols, methods) = parse_objc_decl(&entity, None, None, class_data);
+                let (protocols, methods) = parse_objc_decl(&entity, None, None, protocol_data);
 
                 Some(Self::ProtocolDecl {
                     name,
