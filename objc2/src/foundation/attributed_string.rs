@@ -4,9 +4,9 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use super::{
     NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
 };
-use crate::rc::{DefaultId, Id, Shared};
+use crate::rc::{Allocated, DefaultId, Id, Shared};
 use crate::runtime::Object;
-use crate::{extern_class, extern_methods, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, ClassType};
 
 extern_class!(
     /// A string that has associated attributes for portions of its text.
@@ -45,9 +45,18 @@ extern_methods!(
     /// Creating attributed strings.
     unsafe impl NSAttributedString {
         /// Construct an empty attributed string.
-        pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Shared>;
+
+        #[method_id(initWithString:attributes:)]
+        fn init_with_attributes(
+            this: Option<Allocated<Self>>,
+            string: &NSString,
+            attributes: &NSDictionary<NSAttributedStringKey, Object>,
+        ) -> Id<Self, Shared>;
+
+        #[method_id(initWithString:)]
+        fn init_with_string(this: Option<Allocated<Self>>, string: &NSString) -> Id<Self, Shared>;
 
         /// Creates a new attributed string from the given string and attributes.
         ///
@@ -59,28 +68,21 @@ extern_methods!(
             // TODO: Mutability of the dictionary should be (Shared, Shared)
             attributes: &NSDictionary<NSAttributedStringKey, Object>,
         ) -> Id<Self, Shared> {
-            unsafe {
-                msg_send_id![
-                    Self::alloc(),
-                    initWithString: string,
-                    attributes: attributes,
-                ]
-            }
+            Self::init_with_attributes(Self::alloc(), string, attributes)
         }
 
         /// Creates a new attributed string without any attributes.
         #[doc(alias = "initWithString:")]
         pub fn from_nsstring(string: &NSString) -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::alloc(), initWithString: string] }
+            Self::init_with_string(Self::alloc(), string)
         }
     }
 
     /// Querying.
     unsafe impl NSAttributedString {
         // TODO: Lifetimes?
-        pub fn string(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, string] }
-        }
+        #[method_id(string)]
+        pub fn string(&self) -> Id<NSString, Shared>;
 
         /// Alias for `self.string().len_utf16()`.
         #[doc(alias = "length")]

@@ -3,7 +3,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSCopying, NSDictionary, NSObject, NSString};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, ClassType};
 
 extern_class!(
     /// A representation of the code and resources stored in a bundle
@@ -27,13 +27,11 @@ impl RefUnwindSafe for NSBundle {}
 
 extern_methods!(
     unsafe impl NSBundle {
-        pub fn main() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), mainBundle] }
-        }
+        #[method_id(mainBundle)]
+        pub fn main() -> Id<Self, Shared>;
 
-        pub fn info(&self) -> Id<NSDictionary<NSString, NSObject>, Shared> {
-            unsafe { msg_send_id![self, infoDictionary] }
-        }
+        #[method_id(infoDictionary)]
+        pub fn info(&self) -> Id<NSDictionary<NSString, NSObject>, Shared>;
 
         pub fn name(&self) -> Option<Id<NSString, Shared>> {
             // TODO: Use ns_string!

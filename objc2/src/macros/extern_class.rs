@@ -397,7 +397,9 @@ macro_rules! __inner_extern_class {
 #[macro_export]
 macro_rules! __attribute_helper {
     // Convert a set of attributes described with `@[...]` to `#[...]`, while
-    // parsing out the `method(...)` attribute.
+    // parsing out the `method(...)` or `method_id(...)` attribute.
+
+    // method
     {
         @strip_sel
         @[method($($_sel_args:tt)*)]
@@ -414,6 +416,24 @@ macro_rules! __attribute_helper {
             ($($fn)*)
         }
     };
+    // method_id
+    {
+        @strip_sel
+        @[method_id($($_sel_args:tt)*)]
+        $(@[$($m_rest:tt)*])*
+
+        $(#[$($m:tt)*])*
+        ($($fn:tt)*)
+    } => {
+        $crate::__attribute_helper! {
+            @strip_sel
+            $(@[$($m_rest)*])*
+
+            $(#[$($m)*])*
+            ($($fn)*)
+        }
+    };
+    // Others
     {
         @strip_sel
         @[$($m_checked:tt)*]
@@ -431,6 +451,7 @@ macro_rules! __attribute_helper {
             ($($fn)*)
         }
     };
+    // Final output
     {
         @strip_sel
         $(#[$($m:tt)*])*
@@ -440,7 +461,8 @@ macro_rules! __attribute_helper {
         $($fn)*
     };
 
-    // Extract the `#[method(...)]` attribute and send it to another macro
+    // Extract the `#[method(...)]` and `#[method_id(...)]` attribute and send
+    // it to another macro
     {
         @extract_sel
         ($out_macro:path)
@@ -455,8 +477,29 @@ macro_rules! __attribute_helper {
             ($($rest)*)
             $out_macro!(
                 $($macro_args)*
-                // Append selector to the end of the macro arguments
+                // Append selector and macro name to the end of the macro arguments
                 @($($sel)*)
+                @(msg_send)
+            )
+        }
+    };
+    {
+        @extract_sel
+        ($out_macro:path)
+        (
+            #[method_id($($sel:tt)*)]
+            $($rest:tt)*
+        )
+        $($macro_args:tt)*
+    } => {
+        $crate::__attribute_helper! {
+            @extract_sel_duplicate
+            ($($rest)*)
+            $out_macro!(
+                $($macro_args)*
+
+                @($($sel)*)
+                @(msg_send_id)
             )
         }
     };
@@ -482,13 +525,24 @@ macro_rules! __attribute_helper {
         ()
         $($macro_args:tt)*
     } => {{
-        compile_error!("Must specify the desired selector using `#[method(...)]`");
+        compile_error!("Must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`");
     }};
 
+    // Duplicate checking
     {
         @extract_sel_duplicate
         (
             #[method($($_sel_args:tt)*)]
+            $($rest:tt)*
+        )
+        $($output:tt)*
+    } => {{
+        compile_error!("Cannot not specify a selector twice!");
+    }};
+    {
+        @extract_sel_duplicate
+        (
+            #[method_id($($_sel_args:tt)*)]
             $($rest:tt)*
         )
         $($output:tt)*
@@ -505,7 +559,7 @@ macro_rules! __attribute_helper {
     } => {
         $crate::__attribute_helper! {
             @extract_sel_duplicate
-            ($($rest:tt)*)
+            ($($rest)*)
             $($output)*
         }
     };

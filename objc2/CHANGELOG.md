@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added the ability to specify an extra parameter at the end of the selector
   in methods declared with `extern_methods!`, and let that be the `NSError**`
   parameter.
+* Added `#[method_id(...)]` attribute to `extern_methods!`.
 
 ### Changed
 * Allow other types than `&Class` as the receiver in `msg_send_id!` methods
@@ -44,6 +45,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Changed `extern_methods!` and `declare_class!` such that
   associated functions whoose first parameter is called `this`, is treated as
   instance methods instead of class methods.
+
+### Fixed
+* Fixed duplicate selector extraction in `extern_methods!`.
 
 
 ## 0.3.0-beta.3 - 2022-09-01

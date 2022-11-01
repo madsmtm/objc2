@@ -24,9 +24,8 @@ extern_methods!(
     /// Creating mutable strings.
     unsafe impl NSMutableString {
         /// Construct an empty [`NSMutableString`].
-        pub fn new() -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Owned>;
 
         /// Creates a new [`NSMutableString`] by copying the given string slice.
         #[doc(alias = "initWithBytes:length:encoding:")]

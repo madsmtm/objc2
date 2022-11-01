@@ -64,15 +64,14 @@ extern_methods!(
         ///
         /// let set = NSSet::<NSString>::new();
         /// ```
-        pub fn new() -> Id<Self, Shared> {
-            // SAFETY:
-            // - `new` may not create a new object, but instead return a shared
-            //   instance. We remedy this by returning `Id<Self, Shared>`.
-            // - `O` don't actually matter here! E.g. `NSSet<T, Owned>` is
-            //   perfectly legal, since the set doesn't have any elements, and
-            //   hence the notion of ownership over the elements is void.
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        // SAFETY:
+        // - `new` may not create a new object, but instead return a shared
+        //   instance. We remedy this by returning `Id<Self, Shared>`.
+        // - `O` don't actually matter here! E.g. `NSSet<T, Owned>` is
+        //   perfectly legal, since the set doesn't have any elements, and
+        //   hence the notion of ownership over the elements is void.
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Shared>;
 
         /// Creates an [`NSSet`] from a vector.
         ///
@@ -234,13 +233,12 @@ extern_methods!(
         /// assert_eq!(set.to_array().len(), 3);
         /// assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
         /// ```
+        // SAFETY:
+        // We only define this method for sets with shared elements
+        // because we can't return copies of owned elements.
+        #[method_id(allObjects)]
         #[doc(alias = "allObjects")]
-        pub fn to_array(&self) -> Id<NSArray<T, Shared>, Shared> {
-            // SAFETY:
-            // We only define this method for sets with shared elements
-            // because we can't return copies of owned elements.
-            unsafe { msg_send_id![self, allObjects] }
-        }
+        pub fn to_array(&self) -> Id<NSArray<T, Shared>, Shared>;
     }
 
     // We're explicit about `T` being `PartialEq` for these methods because the

@@ -21,9 +21,8 @@ extern_methods!(
     /// Creating mutable attributed strings.
     unsafe impl NSMutableAttributedString {
         /// Construct an empty mutable attributed string.
-        pub fn new() -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Owned>;
 
         // TODO: new_with_attributes
 

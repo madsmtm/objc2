@@ -83,20 +83,17 @@ extern_methods!(
         /// can take.
         ///
         /// [doc]: https://developer.apple.com/documentation/foundation/nsexceptionname?language=objc
-        pub fn name(&self) -> Id<NSExceptionName, Shared> {
-            // Nullability not documented, but a name is expected in most places.
-            unsafe { msg_send_id![self, name] }
-        }
+        #[method_id(name)]
+        // Nullability not documented, but a name is expected in most places.
+        pub fn name(&self) -> Id<NSExceptionName, Shared>;
 
         /// A human-readable message summarizing the reason for the exception.
-        pub fn reason(&self) -> Option<Id<NSString, Shared>> {
-            unsafe { msg_send_id![self, reason] }
-        }
+        #[method_id(reason)]
+        pub fn reason(&self) -> Option<Id<NSString, Shared>>;
 
         /// Application-specific data pertaining to the exception.
-        pub fn user_info(&self) -> Option<Id<NSDictionary<Object, Object>, Shared>> {
-            unsafe { msg_send_id![self, userInfo] }
-        }
+        #[method_id(userInfo)]
+        pub fn user_info(&self) -> Option<Id<NSDictionary<Object, Object>, Shared>>;
 
         /// Convert this into an [`Exception`] object.
         pub fn into_exception(this: Id<Self, Shared>) -> Id<Exception, Shared> {

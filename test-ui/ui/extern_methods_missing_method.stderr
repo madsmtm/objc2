@@ -1,4 +1,4 @@
-error: Must specify the desired selector using `#[method(...)]`
+error: Must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`
  --> ui/extern_methods_missing_method.rs
   |
   | / extern_methods!(

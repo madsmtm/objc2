@@ -12,7 +12,7 @@ use std::os::raw::c_char;
 use super::{NSComparisonResult, NSCopying, NSError, NSMutableCopying, NSMutableString, NSObject};
 use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use crate::runtime::{Class, Object};
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, msg_send, ClassType};
 
 #[cfg(feature = "apple")]
 const UTF8_ENCODING: usize = 4;
@@ -52,9 +52,8 @@ impl RefUnwindSafe for NSString {}
 extern_methods!(
     unsafe impl NSString {
         /// Construct an empty NSString.
-        pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Shared>;
 
         /// Create a new string by appending the given string to self.
         ///
@@ -70,13 +69,12 @@ extern_methods!(
         /// let error_message = error_tag.concat(error_string);
         /// assert_eq!(&*error_message, ns_string!("Error: premature end of file."));
         /// ```
+        // SAFETY: The other string is non-null, and won't be retained by the
+        // function.
+        #[method_id(stringByAppendingString:)]
         #[doc(alias = "stringByAppendingString")]
         #[doc(alias = "stringByAppendingString:")]
-        pub fn concat(&self, other: &Self) -> Id<Self, Shared> {
-            // SAFETY: The other string is non-null, and won't be retained
-            // by the function.
-            unsafe { msg_send_id![self, stringByAppendingString: other] }
-        }
+        pub fn concat(&self, other: &Self) -> Id<Self, Shared>;
 
         /// Create a new string by appending the given string, separated by
         /// a path separator.
@@ -100,12 +98,11 @@ extern_methods!(
         /// assert_eq!(&*ns_string!("/").join_path(extension), ns_string!("/scratch.tiff"));
         /// assert_eq!(&*ns_string!("").join_path(extension), ns_string!("scratch.tiff"));
         /// ```
+        // SAFETY: Same as `Self::concat`.
+        #[method_id(stringByAppendingPathComponent:)]
         #[doc(alias = "stringByAppendingPathComponent")]
         #[doc(alias = "stringByAppendingPathComponent:")]
-        pub fn join_path(&self, other: &Self) -> Id<Self, Shared> {
-            // SAFETY: Same as `Self::concat`.
-            unsafe { msg_send_id![self, stringByAppendingPathComponent: other] }
-        }
+        pub fn join_path(&self, other: &Self) -> Id<Self, Shared>;
 
         /// The number of UTF-8 code units in `self`.
         #[doc(alias = "lengthOfBytesUsingEncoding")]

@@ -828,6 +828,10 @@ macro_rules! __declare_class_register_out {
                 ($crate::__declare_class_register_out)
                 ($(#[$($m)*])*)
                 @call_sel
+
+                // Will add
+                // @(sel)
+                // @(output macro)
             },
             Self::$name as $crate::__fn_ptr! {
                 @($($qualifiers)*) $($args_start)* $($args_rest)*
@@ -853,6 +857,10 @@ macro_rules! __declare_class_register_out {
                 ($crate::__declare_class_register_out)
                 ($(#[$($m)*])*)
                 @call_sel
+
+                // Will add
+                // @(sel)
+                // @(output macro)
             },
             Self::$name as $crate::__fn_ptr! {
                 @($($qualifiers)*) $($args_start)* $($args_rest)*
@@ -863,8 +871,17 @@ macro_rules! __declare_class_register_out {
     {
         @call_sel
         @($($sel:tt)*)
+        @(msg_send)
     } => {
         $crate::sel!($($sel)*)
+    };
+
+    {
+        @call_sel
+        @($($sel:tt)*)
+        @(msg_send_id)
+    } => {
+        compile_error!("`#[method_id(...)]` is not supported in `declare_class!` yet");
     };
 }
 

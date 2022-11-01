@@ -244,9 +244,8 @@ extern_methods!(
         #[method(isEqualToNumber:)]
         fn is_equal_to_number(&self, other: &Self) -> bool;
 
-        fn string(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, stringValue] }
-        }
+        #[method_id(stringValue)]
+        fn string(&self) -> Id<NSString, Shared>;
     }
 );
 
