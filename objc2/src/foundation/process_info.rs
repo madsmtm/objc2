@@ -3,7 +3,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSObject, NSString};
 use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send_id, ClassType};
+use crate::{extern_class, extern_methods, ClassType};
 
 extern_class!(
     /// A collection of information about the current process.
@@ -27,13 +27,11 @@ impl RefUnwindSafe for NSProcessInfo {}
 
 extern_methods!(
     unsafe impl NSProcessInfo {
-        pub fn process_info() -> Id<NSProcessInfo, Shared> {
-            unsafe { msg_send_id![Self::class(), processInfo] }
-        }
+        #[method_id(processInfo)]
+        pub fn process_info() -> Id<NSProcessInfo, Shared>;
 
-        pub fn process_name(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, processName] }
-        }
+        #[method_id(processName)]
+        pub fn process_name(&self) -> Id<NSString, Shared>;
 
         // TODO: This contains a lot more important functionality!
     }

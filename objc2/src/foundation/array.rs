@@ -90,15 +90,14 @@ extern_methods!(
     /// Generic creation methods.
     unsafe impl<T: Message, O: Ownership> NSArray<T, O> {
         /// Get an empty array.
-        pub fn new() -> Id<Self, Shared> {
-            // SAFETY:
-            // - `new` may not create a new object, but instead return a shared
-            //   instance. We remedy this by returning `Id<Self, Shared>`.
-            // - `O` don't actually matter here! E.g. `NSArray<T, Owned>` is
-            //   perfectly legal, since the array doesn't have any elements, and
-            //   hence the notion of ownership over the elements is void.
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        // SAFETY:
+        // - `new` may not create a new object, but instead return a shared
+        //   instance. We remedy this by returning `Id<Self, Shared>`.
+        // - `O` don't actually matter here! E.g. `NSArray<T, Owned>` is
+        //   perfectly legal, since the array doesn't have any elements, and
+        //   hence the notion of ownership over the elements is void.
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Shared>;
 
         pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, O> {
             // SAFETY:

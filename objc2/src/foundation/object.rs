@@ -35,9 +35,8 @@ unsafe impl ClassType for NSObject {
 
 extern_methods!(
     unsafe impl NSObject {
-        pub fn new() -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Owned>;
 
         #[method(isKindOfClass:)]
         fn is_kind_of_inner(&self, cls: &Class) -> bool;

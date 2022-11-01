@@ -11,7 +11,7 @@ use super::{
     NSObject,
 };
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
+use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send};
 
 __inner_extern_class!(
     /// A growable ordered collection of objects.
@@ -42,11 +42,10 @@ unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
 extern_methods!(
     /// Generic creation methods.
     unsafe impl<T: Message, O: Ownership> NSMutableArray<T, O> {
-        pub fn new() -> Id<Self, Owned> {
-            // SAFETY: Same as `NSArray::new`, except mutable arrays are always
-            // unique.
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        // SAFETY: Same as `NSArray::new`, except mutable arrays are always
+        // unique.
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Owned>;
 
         pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
             // SAFETY: Same as `NSArray::from_vec`, except mutable arrays are

@@ -27,9 +27,8 @@ impl RefUnwindSafe for NSThread {}
 extern_methods!(
     unsafe impl NSThread {
         /// Returns the [`NSThread`] object representing the current thread.
-        pub fn current() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), currentThread] }
-        }
+        #[method_id(currentThread)]
+        pub fn current() -> Id<Self, Shared>;
 
         /// Returns the [`NSThread`] object representing the main thread.
         pub fn main() -> Id<NSThread, Shared> {
@@ -44,13 +43,11 @@ extern_methods!(
         pub fn is_main(&self) -> bool;
 
         /// The name of the thread.
-        pub fn name(&self) -> Option<Id<NSString, Shared>> {
-            unsafe { msg_send_id![self, name] }
-        }
+        #[method_id(name)]
+        pub fn name(&self) -> Option<Id<NSString, Shared>>;
 
-        unsafe fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        unsafe fn new() -> Id<Self, Shared>;
 
         #[method(start)]
         unsafe fn start(&self);

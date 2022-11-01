@@ -45,9 +45,8 @@ impl RefUnwindSafe for NSUUID {}
 
 extern_methods!(
     unsafe impl NSUUID {
-        pub fn new_v4() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new_v4() -> Id<Self, Shared>;
 
         /// The 'nil UUID'.
         pub fn nil() -> Id<Self, Shared> {
@@ -72,9 +71,8 @@ extern_methods!(
             bytes.0
         }
 
-        pub fn string(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, UUIDString] }
-        }
+        #[method_id(UUIDString)]
+        pub fn string(&self) -> Id<NSString, Shared>;
     }
 );
 

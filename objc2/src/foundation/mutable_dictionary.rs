@@ -52,12 +52,11 @@ extern_methods!(
         ///
         /// let dict = NSMutableDictionary::<NSString, NSObject>::new();
         /// ```
-        pub fn new() -> Id<Self, Owned> {
-            // SAFETY:
-            // Mutable dictionaries are always unique, so it's safe to return
-            // `Id<Self, Owned>`
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        // SAFETY:
+        // Mutable dictionaries are always unique, so it's safe to return
+        // `Id<Self, Owned>`
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Owned>;
 
         #[method(setDictionary:)]
         fn set_dictionary(&mut self, dict: &NSDictionary<K, V>);

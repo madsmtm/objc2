@@ -63,16 +63,14 @@ extern_methods!(
 
     /// Accessor methods.
     unsafe impl NSError {
-        pub fn domain(&self) -> Id<NSString, Shared> {
-            unsafe { msg_send_id![self, domain] }
-        }
+        #[method_id(domain)]
+        pub fn domain(&self) -> Id<NSString, Shared>;
 
         #[method(code)]
         pub fn code(&self) -> NSInteger;
 
-        pub fn user_info(&self) -> Option<Id<NSDictionary<NSErrorUserInfoKey, NSObject>, Shared>> {
-            unsafe { msg_send_id![self, userInfo] }
-        }
+        #[method_id(userInfo)]
+        pub fn user_info(&self) -> Option<Id<NSDictionary<NSErrorUserInfoKey, NSObject>, Shared>>;
 
         pub fn localized_description(&self) -> Id<NSString, Shared> {
             // TODO: For some reason this leaks a lot?

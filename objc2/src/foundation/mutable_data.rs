@@ -31,9 +31,8 @@ extern_class!(
 extern_methods!(
     /// Creation methods
     unsafe impl NSMutableData {
-        pub fn new() -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Owned>;
 
         pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
             unsafe { Id::from_shared(Id::cast(with_slice(Self::class(), bytes))) }

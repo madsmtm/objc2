@@ -5,7 +5,7 @@ use core::marker::PhantomData;
 use super::set::with_objects;
 use super::{NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying, NSObject, NSSet};
 use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send_id};
+use crate::{ClassType, Message, __inner_extern_class, extern_methods};
 
 __inner_extern_class!(
     /// A growable unordered collection of unique objects.
@@ -44,11 +44,10 @@ extern_methods!(
         ///
         /// let set = NSMutableSet::<NSString>::new();
         /// ```
-        pub fn new() -> Id<Self, Owned> {
-            // SAFETY:
-            // Same as `NSSet::new`, except mutable sets are always unique.
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        // SAFETY:
+        // Same as `NSSet::new`, except mutable sets are always unique.
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Owned>;
 
         /// Creates an [`NSMutableSet`] from a vector.
         ///

@@ -36,9 +36,8 @@ impl RefUnwindSafe for NSData {}
 extern_methods!(
     /// Creation methods.
     unsafe impl NSData {
-        pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Shared>;
 
         pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
             unsafe { Id::cast(with_slice(Self::class(), bytes)) }

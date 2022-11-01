@@ -32,9 +32,8 @@ impl<K: Message + UnwindSafe, V: Message + UnwindSafe> UnwindSafe for NSDictiona
 impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
-        pub fn new() -> Id<Self, Shared> {
-            unsafe { msg_send_id![Self::class(), new] }
-        }
+        #[method_id(new)]
+        pub fn new() -> Id<Self, Shared>;
 
         #[doc(alias = "count")]
         #[method(count)]
@@ -102,9 +101,8 @@ extern_methods!(
             }
         }
 
-        pub fn keys_array(&self) -> Id<NSArray<K, Shared>, Shared> {
-            unsafe { msg_send_id![self, allKeys] }
-        }
+        #[method_id(allKeys)]
+        pub fn keys_array(&self) -> Id<NSArray<K, Shared>, Shared>;
 
         pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Shared>
         where
