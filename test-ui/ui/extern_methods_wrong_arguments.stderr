@@ -37,6 +37,19 @@ error: Number of arguments in function and selector did not match!
   |
   = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error: Number of arguments in function and selector did not match!
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(w)]
+  | |         fn w(this: &Self, arg: i32);
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
 error[E0308]: mismatched types
  --> ui/extern_methods_wrong_arguments.rs
   |
@@ -80,6 +93,24 @@ error[E0308]: mismatched types
   | |     unsafe impl MyObject {
   | |         #[method(x:)]
   | |         fn x(&self);
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_expected `()`, found enum `Result`
+  |   expected `()` because of default return type
+  |
+  = note: expected unit type `()`
+                  found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/extern_methods_wrong_arguments.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(z:)]
+  | |         fn z(this: &Self);
   | |     }
   | | );
   | | ^

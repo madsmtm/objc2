@@ -82,6 +82,74 @@ macro_rules! __rewrite_self_arg {
         }
     };
 
+    // `this: Type` or `_this: Type` instance method
+    // Workaround for arbitary self types being unstable
+    // https://doc.rust-lang.org/nightly/unstable-book/language-features/arbitrary-self-types.html
+    {
+        ($out_macro:path)
+        @(mut this: $__self_ty:ty $(, $($__rest_args:tt)*)?)
+        @(mut $this:ident: $this_ty:ty $(, $($rest:tt)*)?)
+        $($macro_args:tt)*
+    } => {
+        $out_macro! {
+            $($macro_args)*
+            @(instance_method)
+            @(
+                mut $this: $this_ty,
+                _: $crate::runtime::Sel,
+            )
+            @($($($rest)*)?)
+        }
+    };
+    {
+        ($out_macro:path)
+        @(this: $__self_ty:ty $(, $($__rest_args:tt)*)?)
+        @($this:ident: $this_ty:ty $(, $($rest:tt)*)?)
+        $($macro_args:tt)*
+    } => {
+        $out_macro! {
+            $($macro_args)*
+            @(instance_method)
+            @(
+                $this: $this_ty,
+                _: $crate::runtime::Sel,
+            )
+            @($($($rest)*)?)
+        }
+    };
+    {
+        ($out_macro:path)
+        @(mut _this: $__self_ty:ty $(, $($__rest_args:tt)*)?)
+        @(mut $this:ident: $this_ty:ty $(, $($rest:tt)*)?)
+        $($macro_args:tt)*
+    } => {
+        $out_macro! {
+            $($macro_args)*
+            @(instance_method)
+            @(
+                mut $this: $this_ty,
+                _: $crate::runtime::Sel,
+            )
+            @($($($rest)*)?)
+        }
+    };
+    {
+        ($out_macro:path)
+        @(_this: $__self_ty:ty $(, $($__rest_args:tt)*)?)
+        @($this:ident: $this_ty:ty $(, $($rest:tt)*)?)
+        $($macro_args:tt)*
+    } => {
+        $out_macro! {
+            $($macro_args)*
+            @(instance_method)
+            @(
+                $this: $this_ty,
+                _: $crate::runtime::Sel,
+            )
+            @($($($rest)*)?)
+        }
+    };
+
     // Class method
     {
         ($out_macro:path)

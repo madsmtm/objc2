@@ -51,4 +51,18 @@ extern_methods!(
     }
 );
 
+extern_methods!(
+    unsafe impl MyObject {
+        #[method(z:)]
+        fn z(this: &Self);
+    }
+);
+
+extern_methods!(
+    unsafe impl MyObject {
+        #[method(w)]
+        fn w(this: &Self, arg: i32);
+    }
+);
+
 fn main() {}

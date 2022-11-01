@@ -41,6 +41,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Verify in `declare_class!` that protocols are implemented correctly.
 * **BREAKING**: Changed the name of the attribute macro in `extern_methods`
   from `#[sel(...)]` to `#[method(...)]`.
+* **BREAKING**: Changed `extern_methods!` and `declare_class!` such that
+  associated functions whoose first parameter is called `this`, is treated as
+  instance methods instead of class methods.
 
 
 ## 0.3.0-beta.3 - 2022-09-01
