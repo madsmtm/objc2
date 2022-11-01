@@ -22,7 +22,7 @@ extern_methods!(
         #[method(lockBeforeDate:)]
         pub unsafe fn lockBeforeDate(&self, limit: &NSDate) -> bool;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setName:)]
@@ -41,7 +41,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSConditionLock {
-        #[method_id(initWithCondition:)]
+        #[method_id(@__retain_semantics Init initWithCondition:)]
         pub unsafe fn initWithCondition(
             this: Option<Allocated<Self>>,
             condition: NSInteger,
@@ -72,7 +72,7 @@ extern_methods!(
             limit: &NSDate,
         ) -> bool;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setName:)]
@@ -97,7 +97,7 @@ extern_methods!(
         #[method(lockBeforeDate:)]
         pub unsafe fn lockBeforeDate(&self, limit: &NSDate) -> bool;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setName:)]
@@ -128,7 +128,7 @@ extern_methods!(
         #[method(broadcast)]
         pub unsafe fn broadcast(&self);
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setName:)]

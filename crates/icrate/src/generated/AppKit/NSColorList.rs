@@ -19,26 +19,26 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSColorList {
-        #[method_id(availableColorLists)]
+        #[method_id(@__retain_semantics Other availableColorLists)]
         pub unsafe fn availableColorLists() -> Id<NSArray<NSColorList>, Shared>;
 
-        #[method_id(colorListNamed:)]
+        #[method_id(@__retain_semantics Other colorListNamed:)]
         pub unsafe fn colorListNamed(name: &NSColorListName) -> Option<Id<NSColorList, Shared>>;
 
-        #[method_id(initWithName:)]
+        #[method_id(@__retain_semantics Init initWithName:)]
         pub unsafe fn initWithName(
             this: Option<Allocated<Self>>,
             name: &NSColorListName,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithName:fromFile:)]
+        #[method_id(@__retain_semantics Init initWithName:fromFile:)]
         pub unsafe fn initWithName_fromFile(
             this: Option<Allocated<Self>>,
             name: &NSColorListName,
             path: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSColorListName, Shared>>;
 
         #[method(setColor:forKey:)]
@@ -55,10 +55,10 @@ extern_methods!(
         #[method(removeColorWithKey:)]
         pub unsafe fn removeColorWithKey(&self, key: &NSColorName);
 
-        #[method_id(colorWithKey:)]
+        #[method_id(@__retain_semantics Other colorWithKey:)]
         pub unsafe fn colorWithKey(&self, key: &NSColorName) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(allKeys)]
+        #[method_id(@__retain_semantics Other allKeys)]
         pub unsafe fn allKeys(&self) -> Id<NSArray<NSColorName>, Shared>;
 
         #[method(isEditable)]

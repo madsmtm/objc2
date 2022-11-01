@@ -27,38 +27,38 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSViewController {
-        #[method_id(initWithNibName:bundle:)]
+        #[method_id(@__retain_semantics Init initWithNibName:bundle:)]
         pub unsafe fn initWithNibName_bundle(
             this: Option<Allocated<Self>>,
             nibNameOrNil: Option<&NSNibName>,
             nibBundleOrNil: Option<&NSBundle>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(nibName)]
+        #[method_id(@__retain_semantics Other nibName)]
         pub unsafe fn nibName(&self) -> Option<Id<NSNibName, Shared>>;
 
-        #[method_id(nibBundle)]
+        #[method_id(@__retain_semantics Other nibBundle)]
         pub unsafe fn nibBundle(&self) -> Option<Id<NSBundle, Shared>>;
 
-        #[method_id(representedObject)]
+        #[method_id(@__retain_semantics Other representedObject)]
         pub unsafe fn representedObject(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setRepresentedObject:)]
         pub unsafe fn setRepresentedObject(&self, representedObject: Option<&Object>);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: Option<&NSString>);
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Id<NSView, Shared>;
 
         #[method(setView:)]
@@ -132,12 +132,12 @@ extern_methods!(
         #[method(dismissController:)]
         pub unsafe fn dismissController(&self, sender: Option<&Object>);
 
-        #[method_id(presentedViewControllers)]
+        #[method_id(@__retain_semantics Other presentedViewControllers)]
         pub unsafe fn presentedViewControllers(
             &self,
         ) -> Option<Id<NSArray<NSViewController>, Shared>>;
 
-        #[method_id(presentingViewController)]
+        #[method_id(@__retain_semantics Other presentingViewController)]
         pub unsafe fn presentingViewController(&self) -> Option<Id<NSViewController, Shared>>;
     }
 );
@@ -175,10 +175,10 @@ extern_methods!(
 extern_methods!(
     /// NSViewControllerContainer
     unsafe impl NSViewController {
-        #[method_id(parentViewController)]
+        #[method_id(@__retain_semantics Other parentViewController)]
         pub unsafe fn parentViewController(&self) -> Option<Id<NSViewController, Shared>>;
 
-        #[method_id(childViewControllers)]
+        #[method_id(@__retain_semantics Other childViewControllers)]
         pub unsafe fn childViewControllers(&self) -> Id<NSArray<NSViewController>, Shared>;
 
         #[method(setChildViewControllers:)]
@@ -219,7 +219,7 @@ pub type NSViewControllerPresentationAnimator = NSObject;
 extern_methods!(
     /// NSViewControllerStoryboardingMethods
     unsafe impl NSViewController {
-        #[method_id(storyboard)]
+        #[method_id(@__retain_semantics Other storyboard)]
         pub unsafe fn storyboard(&self) -> Option<Id<NSStoryboard, Shared>>;
     }
 );
@@ -227,10 +227,10 @@ extern_methods!(
 extern_methods!(
     /// NSExtensionAdditions
     unsafe impl NSViewController {
-        #[method_id(extensionContext)]
+        #[method_id(@__retain_semantics Other extensionContext)]
         pub unsafe fn extensionContext(&self) -> Option<Id<NSExtensionContext, Shared>>;
 
-        #[method_id(sourceItemView)]
+        #[method_id(@__retain_semantics Other sourceItemView)]
         pub unsafe fn sourceItemView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setSourceItemView:)]

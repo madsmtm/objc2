@@ -69,10 +69,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScrubberTextItemView {
-        #[method_id(textField)]
+        #[method_id(@__retain_semantics Other textField)]
         pub unsafe fn textField(&self) -> Id<NSTextField, Shared>;
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
@@ -91,10 +91,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScrubberImageItemView {
-        #[method_id(imageView)]
+        #[method_id(@__retain_semantics Other imageView)]
         pub unsafe fn imageView(&self) -> Id<NSImageView, Shared>;
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Id<NSImage, Shared>;
 
         #[method(setImage:)]

@@ -17,7 +17,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSInputManager {
-        #[method_id(currentInputManager)]
+        #[method_id(@__retain_semantics Other currentInputManager)]
         pub unsafe fn currentInputManager() -> Option<Id<NSInputManager, Shared>>;
 
         #[method(cycleToNextInputLanguage:)]
@@ -26,14 +26,14 @@ extern_methods!(
         #[method(cycleToNextInputServerInLanguage:)]
         pub unsafe fn cycleToNextInputServerInLanguage(sender: Option<&Object>);
 
-        #[method_id(initWithName:host:)]
+        #[method_id(@__retain_semantics Init initWithName:host:)]
         pub unsafe fn initWithName_host(
             this: Option<Allocated<Self>>,
             inputServerName: Option<&NSString>,
             hostName: Option<&NSString>,
         ) -> Option<Id<NSInputManager, Shared>>;
 
-        #[method_id(localizedInputManagerName)]
+        #[method_id(@__retain_semantics Other localizedInputManagerName)]
         pub unsafe fn localizedInputManagerName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(markedTextAbandoned:)]
@@ -49,13 +49,13 @@ extern_methods!(
         #[method(wantsToInterpretAllKeystrokes)]
         pub unsafe fn wantsToInterpretAllKeystrokes(&self) -> bool;
 
-        #[method_id(language)]
+        #[method_id(@__retain_semantics Other language)]
         pub unsafe fn language(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
-        #[method_id(server)]
+        #[method_id(@__retain_semantics Other server)]
         pub unsafe fn server(&self) -> Option<Id<NSInputServer, Shared>>;
 
         #[method(wantsToHandleMouseEvents)]

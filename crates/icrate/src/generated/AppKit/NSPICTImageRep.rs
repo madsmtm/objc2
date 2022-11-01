@@ -15,16 +15,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPICTImageRep {
-        #[method_id(imageRepWithData:)]
+        #[method_id(@__retain_semantics Other imageRepWithData:)]
         pub unsafe fn imageRepWithData(pictData: &NSData) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithData:)]
+        #[method_id(@__retain_semantics Init initWithData:)]
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             pictData: &NSData,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(PICTRepresentation)]
+        #[method_id(@__retain_semantics Other PICTRepresentation)]
         pub unsafe fn PICTRepresentation(&self) -> Id<NSData, Shared>;
 
         #[method(boundingBox)]

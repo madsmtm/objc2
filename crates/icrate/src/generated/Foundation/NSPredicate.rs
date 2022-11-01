@@ -14,33 +14,33 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPredicate {
-        #[method_id(predicateWithFormat:argumentArray:)]
+        #[method_id(@__retain_semantics Other predicateWithFormat:argumentArray:)]
         pub unsafe fn predicateWithFormat_argumentArray(
             predicateFormat: &NSString,
             arguments: Option<&NSArray>,
         ) -> Id<NSPredicate, Shared>;
 
-        #[method_id(predicateWithFormat:arguments:)]
+        #[method_id(@__retain_semantics Other predicateWithFormat:arguments:)]
         pub unsafe fn predicateWithFormat_arguments(
             predicateFormat: &NSString,
             argList: va_list,
         ) -> Id<NSPredicate, Shared>;
 
-        #[method_id(predicateFromMetadataQueryString:)]
+        #[method_id(@__retain_semantics Other predicateFromMetadataQueryString:)]
         pub unsafe fn predicateFromMetadataQueryString(
             queryString: &NSString,
         ) -> Option<Id<NSPredicate, Shared>>;
 
-        #[method_id(predicateWithValue:)]
+        #[method_id(@__retain_semantics Other predicateWithValue:)]
         pub unsafe fn predicateWithValue(value: bool) -> Id<NSPredicate, Shared>;
 
-        #[method_id(predicateWithBlock:)]
+        #[method_id(@__retain_semantics Other predicateWithBlock:)]
         pub unsafe fn predicateWithBlock(block: TodoBlock) -> Id<NSPredicate, Shared>;
 
-        #[method_id(predicateFormat)]
+        #[method_id(@__retain_semantics Other predicateFormat)]
         pub unsafe fn predicateFormat(&self) -> Id<NSString, Shared>;
 
-        #[method_id(predicateWithSubstitutionVariables:)]
+        #[method_id(@__retain_semantics Other predicateWithSubstitutionVariables:)]
         pub unsafe fn predicateWithSubstitutionVariables(
             &self,
             variables: &NSDictionary<NSString, Object>,
@@ -64,7 +64,7 @@ extern_methods!(
 extern_methods!(
     /// NSPredicateSupport
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        #[method_id(filteredArrayUsingPredicate:)]
+        #[method_id(@__retain_semantics Other filteredArrayUsingPredicate:)]
         pub unsafe fn filteredArrayUsingPredicate(
             &self,
             predicate: &NSPredicate,
@@ -83,7 +83,7 @@ extern_methods!(
 extern_methods!(
     /// NSPredicateSupport
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
-        #[method_id(filteredSetUsingPredicate:)]
+        #[method_id(@__retain_semantics Other filteredSetUsingPredicate:)]
         pub unsafe fn filteredSetUsingPredicate(
             &self,
             predicate: &NSPredicate,
@@ -102,7 +102,7 @@ extern_methods!(
 extern_methods!(
     /// NSPredicateSupport
     unsafe impl<ObjectType: Message> NSOrderedSet<ObjectType> {
-        #[method_id(filteredOrderedSetUsingPredicate:)]
+        #[method_id(@__retain_semantics Other filteredOrderedSetUsingPredicate:)]
         pub unsafe fn filteredOrderedSetUsingPredicate(
             &self,
             p: &NSPredicate,

@@ -6,49 +6,49 @@ use crate::Foundation::*;
 extern_methods!(
     /// NSStringPathExtensions
     unsafe impl NSString {
-        #[method_id(pathWithComponents:)]
+        #[method_id(@__retain_semantics Other pathWithComponents:)]
         pub unsafe fn pathWithComponents(components: &NSArray<NSString>) -> Id<NSString, Shared>;
 
-        #[method_id(pathComponents)]
+        #[method_id(@__retain_semantics Other pathComponents)]
         pub unsafe fn pathComponents(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(isAbsolutePath)]
         pub unsafe fn isAbsolutePath(&self) -> bool;
 
-        #[method_id(lastPathComponent)]
+        #[method_id(@__retain_semantics Other lastPathComponent)]
         pub unsafe fn lastPathComponent(&self) -> Id<NSString, Shared>;
 
-        #[method_id(stringByDeletingLastPathComponent)]
+        #[method_id(@__retain_semantics Other stringByDeletingLastPathComponent)]
         pub unsafe fn stringByDeletingLastPathComponent(&self) -> Id<NSString, Shared>;
 
-        #[method_id(stringByAppendingPathComponent:)]
+        #[method_id(@__retain_semantics Other stringByAppendingPathComponent:)]
         pub fn stringByAppendingPathComponent(&self, str: &NSString) -> Id<NSString, Shared>;
 
-        #[method_id(pathExtension)]
+        #[method_id(@__retain_semantics Other pathExtension)]
         pub unsafe fn pathExtension(&self) -> Id<NSString, Shared>;
 
-        #[method_id(stringByDeletingPathExtension)]
+        #[method_id(@__retain_semantics Other stringByDeletingPathExtension)]
         pub unsafe fn stringByDeletingPathExtension(&self) -> Id<NSString, Shared>;
 
-        #[method_id(stringByAppendingPathExtension:)]
+        #[method_id(@__retain_semantics Other stringByAppendingPathExtension:)]
         pub unsafe fn stringByAppendingPathExtension(
             &self,
             str: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(stringByAbbreviatingWithTildeInPath)]
+        #[method_id(@__retain_semantics Other stringByAbbreviatingWithTildeInPath)]
         pub unsafe fn stringByAbbreviatingWithTildeInPath(&self) -> Id<NSString, Shared>;
 
-        #[method_id(stringByExpandingTildeInPath)]
+        #[method_id(@__retain_semantics Other stringByExpandingTildeInPath)]
         pub unsafe fn stringByExpandingTildeInPath(&self) -> Id<NSString, Shared>;
 
-        #[method_id(stringByStandardizingPath)]
+        #[method_id(@__retain_semantics Other stringByStandardizingPath)]
         pub unsafe fn stringByStandardizingPath(&self) -> Id<NSString, Shared>;
 
-        #[method_id(stringByResolvingSymlinksInPath)]
+        #[method_id(@__retain_semantics Other stringByResolvingSymlinksInPath)]
         pub unsafe fn stringByResolvingSymlinksInPath(&self) -> Id<NSString, Shared>;
 
-        #[method_id(stringsByAppendingPaths:)]
+        #[method_id(@__retain_semantics Other stringsByAppendingPaths:)]
         pub unsafe fn stringsByAppendingPaths(
             &self,
             paths: &NSArray<NSString>,
@@ -78,7 +78,7 @@ extern_methods!(
 extern_methods!(
     /// NSArrayPathExtensions
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        #[method_id(pathsMatchingExtensions:)]
+        #[method_id(@__retain_semantics Other pathsMatchingExtensions:)]
         pub unsafe fn pathsMatchingExtensions(
             &self,
             filterTypes: &NSArray<NSString>,

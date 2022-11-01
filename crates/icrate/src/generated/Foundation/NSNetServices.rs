@@ -37,7 +37,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSNetService {
-        #[method_id(initWithDomain:type:name:port:)]
+        #[method_id(@__retain_semantics Init initWithDomain:type:name:port:)]
         pub unsafe fn initWithDomain_type_name_port(
             this: Option<Allocated<Self>>,
             domain: &NSString,
@@ -46,7 +46,7 @@ extern_methods!(
             port: c_int,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithDomain:type:name:)]
+        #[method_id(@__retain_semantics Init initWithDomain:type:name:)]
         pub unsafe fn initWithDomain_type_name(
             this: Option<Allocated<Self>>,
             domain: &NSString,
@@ -60,7 +60,7 @@ extern_methods!(
         #[method(removeFromRunLoop:forMode:)]
         pub unsafe fn removeFromRunLoop_forMode(&self, aRunLoop: &NSRunLoop, mode: &NSRunLoopMode);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -72,19 +72,19 @@ extern_methods!(
         #[method(setIncludesPeerToPeer:)]
         pub unsafe fn setIncludesPeerToPeer(&self, includesPeerToPeer: bool);
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Id<NSString, Shared>;
 
-        #[method_id(type)]
+        #[method_id(@__retain_semantics Other type)]
         pub unsafe fn type_(&self) -> Id<NSString, Shared>;
 
-        #[method_id(domain)]
+        #[method_id(@__retain_semantics Other domain)]
         pub unsafe fn domain(&self) -> Id<NSString, Shared>;
 
-        #[method_id(hostName)]
+        #[method_id(@__retain_semantics Other hostName)]
         pub unsafe fn hostName(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(addresses)]
+        #[method_id(@__retain_semantics Other addresses)]
         pub unsafe fn addresses(&self) -> Option<Id<NSArray<NSData>, Shared>>;
 
         #[method(port)]
@@ -102,12 +102,12 @@ extern_methods!(
         #[method(stop)]
         pub unsafe fn stop(&self);
 
-        #[method_id(dictionaryFromTXTRecordData:)]
+        #[method_id(@__retain_semantics Other dictionaryFromTXTRecordData:)]
         pub unsafe fn dictionaryFromTXTRecordData(
             txtData: &NSData,
         ) -> Id<NSDictionary<NSString, NSData>, Shared>;
 
-        #[method_id(dataFromTXTRecordDictionary:)]
+        #[method_id(@__retain_semantics Other dataFromTXTRecordDictionary:)]
         pub unsafe fn dataFromTXTRecordDictionary(
             txtDictionary: &NSDictionary<NSString, NSData>,
         ) -> Id<NSData, Shared>;
@@ -118,7 +118,7 @@ extern_methods!(
         #[method(setTXTRecordData:)]
         pub unsafe fn setTXTRecordData(&self, recordData: Option<&NSData>) -> bool;
 
-        #[method_id(TXTRecordData)]
+        #[method_id(@__retain_semantics Other TXTRecordData)]
         pub unsafe fn TXTRecordData(&self) -> Option<Id<NSData, Shared>>;
 
         #[method(startMonitoring)]
@@ -140,10 +140,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSNetServiceBrowser {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSNetServiceBrowserDelegate, Shared>>;
 
         #[method(setDelegate:)]

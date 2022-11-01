@@ -30,7 +30,7 @@ extern_methods!(
             charIndex: *mut NSUInteger,
         );
 
-        #[method_id(sharedGlyphGenerator)]
+        #[method_id(@__retain_semantics Other sharedGlyphGenerator)]
         pub unsafe fn sharedGlyphGenerator() -> Id<NSGlyphGenerator, Shared>;
     }
 );

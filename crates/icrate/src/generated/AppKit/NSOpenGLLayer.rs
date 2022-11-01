@@ -15,31 +15,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOpenGLLayer {
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setView:)]
         pub unsafe fn setView(&self, view: Option<&NSView>);
 
-        #[method_id(openGLPixelFormat)]
+        #[method_id(@__retain_semantics Other openGLPixelFormat)]
         pub unsafe fn openGLPixelFormat(&self) -> Option<Id<NSOpenGLPixelFormat, Shared>>;
 
         #[method(setOpenGLPixelFormat:)]
         pub unsafe fn setOpenGLPixelFormat(&self, openGLPixelFormat: Option<&NSOpenGLPixelFormat>);
 
-        #[method_id(openGLContext)]
+        #[method_id(@__retain_semantics Other openGLContext)]
         pub unsafe fn openGLContext(&self) -> Option<Id<NSOpenGLContext, Shared>>;
 
         #[method(setOpenGLContext:)]
         pub unsafe fn setOpenGLContext(&self, openGLContext: Option<&NSOpenGLContext>);
 
-        #[method_id(openGLPixelFormatForDisplayMask:)]
+        #[method_id(@__retain_semantics Other openGLPixelFormatForDisplayMask:)]
         pub unsafe fn openGLPixelFormatForDisplayMask(
             &self,
             mask: u32,
         ) -> Id<NSOpenGLPixelFormat, Shared>;
 
-        #[method_id(openGLContextForPixelFormat:)]
+        #[method_id(@__retain_semantics Other openGLContextForPixelFormat:)]
         pub unsafe fn openGLContextForPixelFormat(
             &self,
             pixelFormat: &NSOpenGLPixelFormat,

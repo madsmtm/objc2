@@ -88,20 +88,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextList {
-        #[method_id(initWithMarkerFormat:options:)]
+        #[method_id(@__retain_semantics Init initWithMarkerFormat:options:)]
         pub unsafe fn initWithMarkerFormat_options(
             this: Option<Allocated<Self>>,
             format: &NSTextListMarkerFormat,
             mask: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(markerFormat)]
+        #[method_id(@__retain_semantics Other markerFormat)]
         pub unsafe fn markerFormat(&self) -> Id<NSTextListMarkerFormat, Shared>;
 
         #[method(listOptions)]
         pub unsafe fn listOptions(&self) -> NSTextListOptions;
 
-        #[method_id(markerForItemNumber:)]
+        #[method_id(@__retain_semantics Other markerForItemNumber:)]
         pub unsafe fn markerForItemNumber(&self, itemNum: NSInteger) -> Id<NSString, Shared>;
 
         #[method(startingItemNumber)]

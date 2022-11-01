@@ -48,13 +48,13 @@ extern_methods!(
         #[method(setCellClass:)]
         pub unsafe fn setCellClass(&self, factoryId: &Class);
 
-        #[method_id(cellPrototype)]
+        #[method_id(@__retain_semantics Other cellPrototype)]
         pub unsafe fn cellPrototype(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setCellPrototype:)]
         pub unsafe fn setCellPrototype(&self, cellPrototype: Option<&Object>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSBrowserDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -132,18 +132,18 @@ extern_methods!(
         #[method(setSendsActionOnArrowKeys:)]
         pub unsafe fn setSendsActionOnArrowKeys(&self, sendsActionOnArrowKeys: bool);
 
-        #[method_id(itemAtIndexPath:)]
+        #[method_id(@__retain_semantics Other itemAtIndexPath:)]
         pub unsafe fn itemAtIndexPath(&self, indexPath: &NSIndexPath)
             -> Option<Id<Object, Shared>>;
 
-        #[method_id(itemAtRow:inColumn:)]
+        #[method_id(@__retain_semantics Other itemAtRow:inColumn:)]
         pub unsafe fn itemAtRow_inColumn(
             &self,
             row: NSInteger,
             column: NSInteger,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(indexPathForColumn:)]
+        #[method_id(@__retain_semantics Other indexPathForColumn:)]
         pub unsafe fn indexPathForColumn(&self, column: NSInteger) -> Id<NSIndexPath, Shared>;
 
         #[method(isLeafItem:)]
@@ -156,7 +156,7 @@ extern_methods!(
             column: NSInteger,
         );
 
-        #[method_id(parentForItemsInColumn:)]
+        #[method_id(@__retain_semantics Other parentForItemsInColumn:)]
         pub unsafe fn parentForItemsInColumn(
             &self,
             column: NSInteger,
@@ -168,10 +168,10 @@ extern_methods!(
         #[method(setTitle:ofColumn:)]
         pub unsafe fn setTitle_ofColumn(&self, string: &NSString, column: NSInteger);
 
-        #[method_id(titleOfColumn:)]
+        #[method_id(@__retain_semantics Other titleOfColumn:)]
         pub unsafe fn titleOfColumn(&self, column: NSInteger) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(pathSeparator)]
+        #[method_id(@__retain_semantics Other pathSeparator)]
         pub unsafe fn pathSeparator(&self) -> Id<NSString, Shared>;
 
         #[method(setPathSeparator:)]
@@ -180,10 +180,10 @@ extern_methods!(
         #[method(setPath:)]
         pub unsafe fn setPath(&self, path: &NSString) -> bool;
 
-        #[method_id(path)]
+        #[method_id(@__retain_semantics Other path)]
         pub unsafe fn path(&self) -> Id<NSString, Shared>;
 
-        #[method_id(pathToColumn:)]
+        #[method_id(@__retain_semantics Other pathToColumn:)]
         pub unsafe fn pathToColumn(&self, column: NSInteger) -> Id<NSString, Shared>;
 
         #[method(clickedColumn)]
@@ -195,13 +195,13 @@ extern_methods!(
         #[method(selectedColumn)]
         pub unsafe fn selectedColumn(&self) -> NSInteger;
 
-        #[method_id(selectedCell)]
+        #[method_id(@__retain_semantics Other selectedCell)]
         pub unsafe fn selectedCell(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(selectedCellInColumn:)]
+        #[method_id(@__retain_semantics Other selectedCellInColumn:)]
         pub unsafe fn selectedCellInColumn(&self, column: NSInteger) -> Option<Id<Object, Shared>>;
 
-        #[method_id(selectedCells)]
+        #[method_id(@__retain_semantics Other selectedCells)]
         pub unsafe fn selectedCells(&self) -> Option<Id<NSArray<NSCell>, Shared>>;
 
         #[method(selectRow:inColumn:)]
@@ -210,13 +210,13 @@ extern_methods!(
         #[method(selectedRowInColumn:)]
         pub unsafe fn selectedRowInColumn(&self, column: NSInteger) -> NSInteger;
 
-        #[method_id(selectionIndexPath)]
+        #[method_id(@__retain_semantics Other selectionIndexPath)]
         pub unsafe fn selectionIndexPath(&self) -> Option<Id<NSIndexPath, Shared>>;
 
         #[method(setSelectionIndexPath:)]
         pub unsafe fn setSelectionIndexPath(&self, selectionIndexPath: Option<&NSIndexPath>);
 
-        #[method_id(selectionIndexPaths)]
+        #[method_id(@__retain_semantics Other selectionIndexPaths)]
         pub unsafe fn selectionIndexPaths(&self) -> Id<NSArray<NSIndexPath>, Shared>;
 
         #[method(setSelectionIndexPaths:)]
@@ -225,7 +225,7 @@ extern_methods!(
         #[method(selectRowIndexes:inColumn:)]
         pub unsafe fn selectRowIndexes_inColumn(&self, indexes: &NSIndexSet, column: NSInteger);
 
-        #[method_id(selectedRowIndexesInColumn:)]
+        #[method_id(@__retain_semantics Other selectedRowIndexesInColumn:)]
         pub unsafe fn selectedRowIndexesInColumn(
             &self,
             column: NSInteger,
@@ -264,7 +264,7 @@ extern_methods!(
         #[method(lastVisibleColumn)]
         pub unsafe fn lastVisibleColumn(&self) -> NSInteger;
 
-        #[method_id(loadedCellAtRow:column:)]
+        #[method_id(@__retain_semantics Other loadedCellAtRow:column:)]
         pub unsafe fn loadedCellAtRow_column(
             &self,
             row: NSInteger,
@@ -358,7 +358,7 @@ extern_methods!(
         #[method(defaultColumnWidth)]
         pub unsafe fn defaultColumnWidth(&self) -> CGFloat;
 
-        #[method_id(columnsAutosaveName)]
+        #[method_id(@__retain_semantics Other columnsAutosaveName)]
         pub unsafe fn columnsAutosaveName(&self) -> Id<NSBrowserColumnsAutosaveName, Shared>;
 
         #[method(setColumnsAutosaveName:)]
@@ -378,7 +378,7 @@ extern_methods!(
             event: &NSEvent,
         ) -> bool;
 
-        #[method_id(draggingImageForRowsWithIndexes:inColumn:withEvent:offset:)]
+        #[method_id(@__retain_semantics Other draggingImageForRowsWithIndexes:inColumn:withEvent:offset:)]
         pub unsafe fn draggingImageForRowsWithIndexes_inColumn_withEvent_offset(
             &self,
             rowIndexes: &NSIndexSet,
@@ -400,7 +400,7 @@ extern_methods!(
         #[method(setAllowsTypeSelect:)]
         pub unsafe fn setAllowsTypeSelect(&self, allowsTypeSelect: bool);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
@@ -452,7 +452,7 @@ extern_methods!(
         #[method(columnOfMatrix:)]
         pub unsafe fn columnOfMatrix(&self, matrix: &NSMatrix) -> NSInteger;
 
-        #[method_id(matrixInColumn:)]
+        #[method_id(@__retain_semantics Other matrixInColumn:)]
         pub unsafe fn matrixInColumn(&self, column: NSInteger) -> Option<Id<NSMatrix, Shared>>;
     }
 );

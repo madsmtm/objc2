@@ -23,31 +23,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSearchFieldCell {
-        #[method_id(initTextCell:)]
+        #[method_id(@__retain_semantics Init initTextCell:)]
         pub unsafe fn initTextCell(
             this: Option<Allocated<Self>>,
             string: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initImageCell:)]
+        #[method_id(@__retain_semantics Init initImageCell:)]
         pub unsafe fn initImageCell(
             this: Option<Allocated<Self>>,
             image: Option<&NSImage>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(searchButtonCell)]
+        #[method_id(@__retain_semantics Other searchButtonCell)]
         pub unsafe fn searchButtonCell(&self) -> Option<Id<NSButtonCell, Shared>>;
 
         #[method(setSearchButtonCell:)]
         pub unsafe fn setSearchButtonCell(&self, searchButtonCell: Option<&NSButtonCell>);
 
-        #[method_id(cancelButtonCell)]
+        #[method_id(@__retain_semantics Other cancelButtonCell)]
         pub unsafe fn cancelButtonCell(&self) -> Option<Id<NSButtonCell, Shared>>;
 
         #[method(setCancelButtonCell:)]
@@ -68,7 +68,7 @@ extern_methods!(
         #[method(cancelButtonRectForBounds:)]
         pub unsafe fn cancelButtonRectForBounds(&self, rect: NSRect) -> NSRect;
 
-        #[method_id(searchMenuTemplate)]
+        #[method_id(@__retain_semantics Other searchMenuTemplate)]
         pub unsafe fn searchMenuTemplate(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setSearchMenuTemplate:)]
@@ -86,13 +86,13 @@ extern_methods!(
         #[method(setMaximumRecents:)]
         pub unsafe fn setMaximumRecents(&self, maximumRecents: NSInteger);
 
-        #[method_id(recentSearches)]
+        #[method_id(@__retain_semantics Other recentSearches)]
         pub unsafe fn recentSearches(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(setRecentSearches:)]
         pub unsafe fn setRecentSearches(&self, recentSearches: Option<&NSArray<NSString>>);
 
-        #[method_id(recentsAutosaveName)]
+        #[method_id(@__retain_semantics Other recentsAutosaveName)]
         pub unsafe fn recentsAutosaveName(
             &self,
         ) -> Option<Id<NSSearchFieldRecentsAutosaveName, Shared>>;

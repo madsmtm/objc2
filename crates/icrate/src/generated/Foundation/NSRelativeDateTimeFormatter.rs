@@ -43,38 +43,38 @@ extern_methods!(
         #[method(setFormattingContext:)]
         pub unsafe fn setFormattingContext(&self, formattingContext: NSFormattingContext);
 
-        #[method_id(calendar)]
+        #[method_id(@__retain_semantics Other calendar)]
         pub unsafe fn calendar(&self) -> Id<NSCalendar, Shared>;
 
         #[method(setCalendar:)]
         pub unsafe fn setCalendar(&self, calendar: Option<&NSCalendar>);
 
-        #[method_id(locale)]
+        #[method_id(@__retain_semantics Other locale)]
         pub unsafe fn locale(&self) -> Id<NSLocale, Shared>;
 
         #[method(setLocale:)]
         pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
 
-        #[method_id(localizedStringFromDateComponents:)]
+        #[method_id(@__retain_semantics Other localizedStringFromDateComponents:)]
         pub unsafe fn localizedStringFromDateComponents(
             &self,
             dateComponents: &NSDateComponents,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(localizedStringFromTimeInterval:)]
+        #[method_id(@__retain_semantics Other localizedStringFromTimeInterval:)]
         pub unsafe fn localizedStringFromTimeInterval(
             &self,
             timeInterval: NSTimeInterval,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(localizedStringForDate:relativeToDate:)]
+        #[method_id(@__retain_semantics Other localizedStringForDate:relativeToDate:)]
         pub unsafe fn localizedStringForDate_relativeToDate(
             &self,
             date: &NSDate,
             referenceDate: &NSDate,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringForObjectValue:)]
+        #[method_id(@__retain_semantics Other stringForObjectValue:)]
         pub unsafe fn stringForObjectValue(
             &self,
             obj: Option<&Object>,

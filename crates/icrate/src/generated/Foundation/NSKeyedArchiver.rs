@@ -26,34 +26,34 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSKeyedArchiver {
-        #[method_id(initRequiringSecureCoding:)]
+        #[method_id(@__retain_semantics Init initRequiringSecureCoding:)]
         pub unsafe fn initRequiringSecureCoding(
             this: Option<Allocated<Self>>,
             requiresSecureCoding: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(archivedDataWithRootObject:requiringSecureCoding:error:)]
+        #[method_id(@__retain_semantics Other archivedDataWithRootObject:requiringSecureCoding:error:)]
         pub unsafe fn archivedDataWithRootObject_requiringSecureCoding_error(
             object: &Object,
             requiresSecureCoding: bool,
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initForWritingWithMutableData:)]
+        #[method_id(@__retain_semantics Init initForWritingWithMutableData:)]
         pub unsafe fn initForWritingWithMutableData(
             this: Option<Allocated<Self>>,
             data: &NSMutableData,
         ) -> Id<Self, Shared>;
 
-        #[method_id(archivedDataWithRootObject:)]
+        #[method_id(@__retain_semantics Other archivedDataWithRootObject:)]
         pub unsafe fn archivedDataWithRootObject(rootObject: &Object) -> Id<NSData, Shared>;
 
         #[method(archiveRootObject:toFile:)]
         pub unsafe fn archiveRootObject_toFile(rootObject: &Object, path: &NSString) -> bool;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSKeyedArchiverDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -65,7 +65,7 @@ extern_methods!(
         #[method(setOutputFormat:)]
         pub unsafe fn setOutputFormat(&self, outputFormat: NSPropertyListFormat);
 
-        #[method_id(encodedData)]
+        #[method_id(@__retain_semantics Other encodedData)]
         pub unsafe fn encodedData(&self) -> Id<NSData, Shared>;
 
         #[method(finishEncoding)]
@@ -126,71 +126,71 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSKeyedUnarchiver {
-        #[method_id(initForReadingFromData:error:)]
+        #[method_id(@__retain_semantics Init initForReadingFromData:error:)]
         pub unsafe fn initForReadingFromData_error(
             this: Option<Allocated<Self>>,
             data: &NSData,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(unarchivedObjectOfClass:fromData:error:)]
+        #[method_id(@__retain_semantics Other unarchivedObjectOfClass:fromData:error:)]
         pub unsafe fn unarchivedObjectOfClass_fromData_error(
             cls: &Class,
             data: &NSData,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(unarchivedArrayOfObjectsOfClass:fromData:error:)]
+        #[method_id(@__retain_semantics Other unarchivedArrayOfObjectsOfClass:fromData:error:)]
         pub unsafe fn unarchivedArrayOfObjectsOfClass_fromData_error(
             cls: &Class,
             data: &NSData,
         ) -> Result<Id<NSArray, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(unarchivedDictionaryWithKeysOfClass:objectsOfClass:fromData:error:)]
+        #[method_id(@__retain_semantics Other unarchivedDictionaryWithKeysOfClass:objectsOfClass:fromData:error:)]
         pub unsafe fn unarchivedDictionaryWithKeysOfClass_objectsOfClass_fromData_error(
             keyCls: &Class,
             valueCls: &Class,
             data: &NSData,
         ) -> Result<Id<NSDictionary, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(unarchivedObjectOfClasses:fromData:error:)]
+        #[method_id(@__retain_semantics Other unarchivedObjectOfClasses:fromData:error:)]
         pub unsafe fn unarchivedObjectOfClasses_fromData_error(
             classes: &NSSet<TodoClass>,
             data: &NSData,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(unarchivedArrayOfObjectsOfClasses:fromData:error:)]
+        #[method_id(@__retain_semantics Other unarchivedArrayOfObjectsOfClasses:fromData:error:)]
         pub unsafe fn unarchivedArrayOfObjectsOfClasses_fromData_error(
             classes: &NSSet<TodoClass>,
             data: &NSData,
         ) -> Result<Id<NSArray, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(unarchivedDictionaryWithKeysOfClasses:objectsOfClasses:fromData:error:)]
+        #[method_id(@__retain_semantics Other unarchivedDictionaryWithKeysOfClasses:objectsOfClasses:fromData:error:)]
         pub unsafe fn unarchivedDictionaryWithKeysOfClasses_objectsOfClasses_fromData_error(
             keyClasses: &NSSet<TodoClass>,
             valueClasses: &NSSet<TodoClass>,
             data: &NSData,
         ) -> Result<Id<NSDictionary, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initForReadingWithData:)]
+        #[method_id(@__retain_semantics Init initForReadingWithData:)]
         pub unsafe fn initForReadingWithData(
             this: Option<Allocated<Self>>,
             data: &NSData,
         ) -> Id<Self, Shared>;
 
-        #[method_id(unarchiveObjectWithData:)]
+        #[method_id(@__retain_semantics Other unarchiveObjectWithData:)]
         pub unsafe fn unarchiveObjectWithData(data: &NSData) -> Option<Id<Object, Shared>>;
 
-        #[method_id(unarchiveTopLevelObjectWithData:error:)]
+        #[method_id(@__retain_semantics Other unarchiveTopLevelObjectWithData:error:)]
         pub unsafe fn unarchiveTopLevelObjectWithData_error(
             data: &NSData,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(unarchiveObjectWithFile:)]
+        #[method_id(@__retain_semantics Other unarchiveObjectWithFile:)]
         pub unsafe fn unarchiveObjectWithFile(path: &NSString) -> Option<Id<Object, Shared>>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSKeyedUnarchiverDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -202,7 +202,7 @@ extern_methods!(
         #[method(containsValueForKey:)]
         pub unsafe fn containsValueForKey(&self, key: &NSString) -> bool;
 
-        #[method_id(decodeObjectForKey:)]
+        #[method_id(@__retain_semantics Other decodeObjectForKey:)]
         pub unsafe fn decodeObjectForKey(&self, key: &NSString) -> Option<Id<Object, Shared>>;
 
         #[method(decodeBoolForKey:)]
@@ -257,13 +257,13 @@ extern_methods!(
         #[method(classForKeyedArchiver)]
         pub unsafe fn classForKeyedArchiver(&self) -> Option<&'static Class>;
 
-        #[method_id(replacementObjectForKeyedArchiver:)]
+        #[method_id(@__retain_semantics Other replacementObjectForKeyedArchiver:)]
         pub unsafe fn replacementObjectForKeyedArchiver(
             &self,
             archiver: &NSKeyedArchiver,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(classFallbacksForKeyedArchiver)]
+        #[method_id(@__retain_semantics Other classFallbacksForKeyedArchiver)]
         pub unsafe fn classFallbacksForKeyedArchiver() -> Id<NSArray<NSString>, Shared>;
     }
 );

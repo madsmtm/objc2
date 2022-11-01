@@ -30,7 +30,7 @@ extern_methods!(
         #[method(endGrouping)]
         pub unsafe fn endGrouping();
 
-        #[method_id(currentContext)]
+        #[method_id(@__retain_semantics Other currentContext)]
         pub unsafe fn currentContext() -> Id<NSAnimationContext, Shared>;
 
         #[method(duration)]
@@ -39,7 +39,7 @@ extern_methods!(
         #[method(setDuration:)]
         pub unsafe fn setDuration(&self, duration: NSTimeInterval);
 
-        #[method_id(timingFunction)]
+        #[method_id(@__retain_semantics Other timingFunction)]
         pub unsafe fn timingFunction(&self) -> Option<Id<CAMediaTimingFunction, Shared>>;
 
         #[method(setTimingFunction:)]

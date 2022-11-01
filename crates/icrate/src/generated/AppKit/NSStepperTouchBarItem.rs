@@ -15,13 +15,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSStepperTouchBarItem {
-        #[method_id(stepperTouchBarItemWithIdentifier:formatter:)]
+        #[method_id(@__retain_semantics Other stepperTouchBarItemWithIdentifier:formatter:)]
         pub unsafe fn stepperTouchBarItemWithIdentifier_formatter(
             identifier: &NSTouchBarItemIdentifier,
             formatter: &NSFormatter,
         ) -> Id<Self, Shared>;
 
-        #[method_id(stepperTouchBarItemWithIdentifier:drawingHandler:)]
+        #[method_id(@__retain_semantics Other stepperTouchBarItemWithIdentifier:drawingHandler:)]
         pub unsafe fn stepperTouchBarItemWithIdentifier_drawingHandler(
             identifier: &NSTouchBarItemIdentifier,
             drawingHandler: TodoBlock,
@@ -51,7 +51,7 @@ extern_methods!(
         #[method(setValue:)]
         pub unsafe fn setValue(&self, value: c_double);
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -63,7 +63,7 @@ extern_methods!(
         #[method(setAction:)]
         pub unsafe fn setAction(&self, action: Option<Sel>);
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]

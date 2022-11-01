@@ -19,31 +19,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSStoryboard {
-        #[method_id(mainStoryboard)]
+        #[method_id(@__retain_semantics Other mainStoryboard)]
         pub unsafe fn mainStoryboard() -> Option<Id<NSStoryboard, Shared>>;
 
-        #[method_id(storyboardWithName:bundle:)]
+        #[method_id(@__retain_semantics Other storyboardWithName:bundle:)]
         pub unsafe fn storyboardWithName_bundle(
             name: &NSStoryboardName,
             storyboardBundleOrNil: Option<&NSBundle>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(instantiateInitialController)]
+        #[method_id(@__retain_semantics Other instantiateInitialController)]
         pub unsafe fn instantiateInitialController(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(instantiateInitialControllerWithCreator:)]
+        #[method_id(@__retain_semantics Other instantiateInitialControllerWithCreator:)]
         pub unsafe fn instantiateInitialControllerWithCreator(
             &self,
             block: NSStoryboardControllerCreator,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(instantiateControllerWithIdentifier:)]
+        #[method_id(@__retain_semantics Other instantiateControllerWithIdentifier:)]
         pub unsafe fn instantiateControllerWithIdentifier(
             &self,
             identifier: &NSStoryboardSceneIdentifier,
         ) -> Id<Object, Shared>;
 
-        #[method_id(instantiateControllerWithIdentifier:creator:)]
+        #[method_id(@__retain_semantics Other instantiateControllerWithIdentifier:creator:)]
         pub unsafe fn instantiateControllerWithIdentifier_creator(
             &self,
             identifier: &NSStoryboardSceneIdentifier,

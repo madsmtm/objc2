@@ -197,10 +197,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSApplication {
-        #[method_id(sharedApplication)]
+        #[method_id(@__retain_semantics Other sharedApplication)]
         pub unsafe fn sharedApplication() -> Id<NSApplication, Shared>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSApplicationDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -215,16 +215,16 @@ extern_methods!(
         #[method(unhideWithoutActivation)]
         pub unsafe fn unhideWithoutActivation(&self);
 
-        #[method_id(windowWithWindowNumber:)]
+        #[method_id(@__retain_semantics Other windowWithWindowNumber:)]
         pub unsafe fn windowWithWindowNumber(
             &self,
             windowNum: NSInteger,
         ) -> Option<Id<NSWindow, Shared>>;
 
-        #[method_id(mainWindow)]
+        #[method_id(@__retain_semantics Other mainWindow)]
         pub unsafe fn mainWindow(&self) -> Option<Id<NSWindow, Shared>>;
 
-        #[method_id(keyWindow)]
+        #[method_id(@__retain_semantics Other keyWindow)]
         pub unsafe fn keyWindow(&self) -> Option<Id<NSWindow, Shared>>;
 
         #[method(isActive)]
@@ -269,7 +269,7 @@ extern_methods!(
         #[method(abortModal)]
         pub unsafe fn abortModal(&self);
 
-        #[method_id(modalWindow)]
+        #[method_id(@__retain_semantics Other modalWindow)]
         pub unsafe fn modalWindow(&self) -> Option<Id<NSWindow, Shared>>;
 
         #[method(beginModalSessionForWindow:)]
@@ -303,7 +303,7 @@ extern_methods!(
         #[method(preventWindowOrdering)]
         pub unsafe fn preventWindowOrdering(&self);
 
-        #[method_id(windows)]
+        #[method_id(@__retain_semantics Other windows)]
         pub unsafe fn windows(&self) -> Id<NSArray<NSWindow>, Shared>;
 
         #[method(setWindowsNeedUpdate:)]
@@ -312,19 +312,19 @@ extern_methods!(
         #[method(updateWindows)]
         pub unsafe fn updateWindows(&self);
 
-        #[method_id(mainMenu)]
+        #[method_id(@__retain_semantics Other mainMenu)]
         pub unsafe fn mainMenu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setMainMenu:)]
         pub unsafe fn setMainMenu(&self, mainMenu: Option<&NSMenu>);
 
-        #[method_id(helpMenu)]
+        #[method_id(@__retain_semantics Other helpMenu)]
         pub unsafe fn helpMenu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setHelpMenu:)]
         pub unsafe fn setHelpMenu(&self, helpMenu: Option<&NSMenu>);
 
-        #[method_id(applicationIconImage)]
+        #[method_id(@__retain_semantics Other applicationIconImage)]
         pub unsafe fn applicationIconImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setApplicationIconImage:)]
@@ -339,7 +339,7 @@ extern_methods!(
             activationPolicy: NSApplicationActivationPolicy,
         ) -> bool;
 
-        #[method_id(dockTile)]
+        #[method_id(@__retain_semantics Other dockTile)]
         pub unsafe fn dockTile(&self) -> Id<NSDockTile, Shared>;
 
         #[method(reportException:)]
@@ -384,13 +384,13 @@ extern_methods!(
 extern_methods!(
     /// NSAppearanceCustomization
     unsafe impl NSApplication {
-        #[method_id(appearance)]
+        #[method_id(@__retain_semantics Other appearance)]
         pub unsafe fn appearance(&self) -> Option<Id<NSAppearance, Shared>>;
 
         #[method(setAppearance:)]
         pub unsafe fn setAppearance(&self, appearance: Option<&NSAppearance>);
 
-        #[method_id(effectiveAppearance)]
+        #[method_id(@__retain_semantics Other effectiveAppearance)]
         pub unsafe fn effectiveAppearance(&self) -> Id<NSAppearance, Shared>;
     }
 );
@@ -404,10 +404,10 @@ extern_methods!(
         #[method(postEvent:atStart:)]
         pub unsafe fn postEvent_atStart(&self, event: &NSEvent, flag: bool);
 
-        #[method_id(currentEvent)]
+        #[method_id(@__retain_semantics Other currentEvent)]
         pub unsafe fn currentEvent(&self) -> Option<Id<NSEvent, Shared>>;
 
-        #[method_id(nextEventMatchingMask:untilDate:inMode:dequeue:)]
+        #[method_id(@__retain_semantics Other nextEventMatchingMask:untilDate:inMode:dequeue:)]
         pub unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue(
             &self,
             mask: NSEventMask,
@@ -436,10 +436,10 @@ extern_methods!(
             sender: Option<&Object>,
         ) -> bool;
 
-        #[method_id(targetForAction:)]
+        #[method_id(@__retain_semantics Other targetForAction:)]
         pub unsafe fn targetForAction(&self, action: Sel) -> Option<Id<Object, Shared>>;
 
-        #[method_id(targetForAction:to:from:)]
+        #[method_id(@__retain_semantics Other targetForAction:to:from:)]
         pub unsafe fn targetForAction_to_from(
             &self,
             action: Sel,
@@ -450,7 +450,7 @@ extern_methods!(
         #[method(tryToPerform:with:)]
         pub unsafe fn tryToPerform_with(&self, action: Sel, object: Option<&Object>) -> bool;
 
-        #[method_id(validRequestorForSendType:returnType:)]
+        #[method_id(@__retain_semantics Other validRequestorForSendType:returnType:)]
         pub unsafe fn validRequestorForSendType_returnType(
             &self,
             sendType: Option<&NSPasteboardType>,
@@ -462,7 +462,7 @@ extern_methods!(
 extern_methods!(
     /// NSWindowsMenu
     unsafe impl NSApplication {
-        #[method_id(windowsMenu)]
+        #[method_id(@__retain_semantics Other windowsMenu)]
         pub unsafe fn windowsMenu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setWindowsMenu:)]
@@ -522,7 +522,7 @@ pub type NSApplicationDelegate = NSObject;
 extern_methods!(
     /// NSServicesMenu
     unsafe impl NSApplication {
-        #[method_id(servicesMenu)]
+        #[method_id(@__retain_semantics Other servicesMenu)]
         pub unsafe fn servicesMenu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setServicesMenu:)]
@@ -542,7 +542,7 @@ pub type NSServicesMenuRequestor = NSObject;
 extern_methods!(
     /// NSServicesHandling
     unsafe impl NSApplication {
-        #[method_id(servicesProvider)]
+        #[method_id(@__retain_semantics Other servicesProvider)]
         pub unsafe fn servicesProvider(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setServicesProvider:)]
@@ -759,14 +759,14 @@ extern_methods!(
         #[method(endSheet:returnCode:)]
         pub unsafe fn endSheet_returnCode(&self, sheet: &NSWindow, returnCode: NSInteger);
 
-        #[method_id(makeWindowsPerform:inOrder:)]
+        #[method_id(@__retain_semantics Other makeWindowsPerform:inOrder:)]
         pub unsafe fn makeWindowsPerform_inOrder(
             &self,
             selector: Sel,
             flag: bool,
         ) -> Option<Id<NSWindow, Shared>>;
 
-        #[method_id(context)]
+        #[method_id(@__retain_semantics Other context)]
         pub unsafe fn context(&self) -> Option<Id<NSGraphicsContext, Shared>>;
     }
 );

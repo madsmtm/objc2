@@ -36,12 +36,12 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDistributedNotificationCenter {
-        #[method_id(notificationCenterForType:)]
+        #[method_id(@__retain_semantics Other notificationCenterForType:)]
         pub unsafe fn notificationCenterForType(
             notificationCenterType: &NSDistributedNotificationCenterType,
         ) -> Id<NSDistributedNotificationCenter, Shared>;
 
-        #[method_id(defaultCenter)]
+        #[method_id(@__retain_semantics Other defaultCenter)]
         pub unsafe fn defaultCenter() -> Id<NSDistributedNotificationCenter, Shared>;
 
         #[method(addObserver:selector:name:object:suspensionBehavior:)]

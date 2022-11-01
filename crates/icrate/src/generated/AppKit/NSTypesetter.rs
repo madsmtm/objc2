@@ -39,10 +39,10 @@ extern_methods!(
         #[method(setLineFragmentPadding:)]
         pub unsafe fn setLineFragmentPadding(&self, lineFragmentPadding: CGFloat);
 
-        #[method_id(substituteFontForFont:)]
+        #[method_id(@__retain_semantics Other substituteFontForFont:)]
         pub unsafe fn substituteFontForFont(&self, originalFont: &NSFont) -> Id<NSFont, Shared>;
 
-        #[method_id(textTabForGlyphLocation:writingDirection:maxLocation:)]
+        #[method_id(@__retain_semantics Other textTabForGlyphLocation:writingDirection:maxLocation:)]
         pub unsafe fn textTabForGlyphLocation_writingDirection_maxLocation(
             &self,
             glyphLocation: CGFloat,
@@ -56,7 +56,7 @@ extern_methods!(
         #[method(setBidiProcessingEnabled:)]
         pub unsafe fn setBidiProcessingEnabled(&self, bidiProcessingEnabled: bool);
 
-        #[method_id(attributedString)]
+        #[method_id(@__retain_semantics Other attributedString)]
         pub unsafe fn attributedString(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setAttributedString:)]
@@ -129,21 +129,21 @@ extern_methods!(
             lineOrigin: NSPoint,
         );
 
-        #[method_id(attributesForExtraLineFragment)]
+        #[method_id(@__retain_semantics Other attributesForExtraLineFragment)]
         pub unsafe fn attributesForExtraLineFragment(
             &self,
         ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared>;
 
-        #[method_id(layoutManager)]
+        #[method_id(@__retain_semantics Other layoutManager)]
         pub unsafe fn layoutManager(&self) -> Option<Id<NSLayoutManager, Shared>>;
 
-        #[method_id(textContainers)]
+        #[method_id(@__retain_semantics Other textContainers)]
         pub unsafe fn textContainers(&self) -> Option<Id<NSArray<NSTextContainer>, Shared>>;
 
-        #[method_id(currentTextContainer)]
+        #[method_id(@__retain_semantics Other currentTextContainer)]
         pub unsafe fn currentTextContainer(&self) -> Option<Id<NSTextContainer, Shared>>;
 
-        #[method_id(currentParagraphStyle)]
+        #[method_id(@__retain_semantics Other currentParagraphStyle)]
         pub unsafe fn currentParagraphStyle(&self) -> Option<Id<NSParagraphStyle, Shared>>;
 
         #[method(setHardInvalidation:forGlyphRange:)]
@@ -181,10 +181,10 @@ extern_methods!(
             glyphIndex: NSUInteger,
         ) -> CGFloat;
 
-        #[method_id(sharedSystemTypesetter)]
+        #[method_id(@__retain_semantics Other sharedSystemTypesetter)]
         pub unsafe fn sharedSystemTypesetter() -> Id<NSTypesetter, Shared>;
 
-        #[method_id(sharedSystemTypesetterForBehavior:)]
+        #[method_id(@__retain_semantics Other sharedSystemTypesetterForBehavior:)]
         pub unsafe fn sharedSystemTypesetterForBehavior(
             behavior: NSTypesetterBehavior,
         ) -> Id<Object, Shared>;

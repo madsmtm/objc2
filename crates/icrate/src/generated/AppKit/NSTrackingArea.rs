@@ -27,7 +27,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTrackingArea {
-        #[method_id(initWithRect:options:owner:userInfo:)]
+        #[method_id(@__retain_semantics Init initWithRect:options:owner:userInfo:)]
         pub unsafe fn initWithRect_options_owner_userInfo(
             this: Option<Allocated<Self>>,
             rect: NSRect,
@@ -42,10 +42,10 @@ extern_methods!(
         #[method(options)]
         pub unsafe fn options(&self) -> NSTrackingAreaOptions;
 
-        #[method_id(owner)]
+        #[method_id(@__retain_semantics Other owner)]
         pub unsafe fn owner(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(userInfo)]
+        #[method_id(@__retain_semantics Other userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary<Object, Object>, Shared>>;
     }
 );

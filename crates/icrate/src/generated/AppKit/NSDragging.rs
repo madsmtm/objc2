@@ -55,7 +55,7 @@ pub type NSSpringLoadingDestination = NSObject;
 extern_methods!(
     /// NSDraggingSourceDeprecated
     unsafe impl NSObject {
-        #[method_id(namesOfPromisedFilesDroppedAtDestination:)]
+        #[method_id(@__retain_semantics Other namesOfPromisedFilesDroppedAtDestination:)]
         pub unsafe fn namesOfPromisedFilesDroppedAtDestination(
             &self,
             dropDestination: &NSURL,

@@ -86,7 +86,7 @@ extern_methods!(
         #[method(interiorBackgroundStyle)]
         pub unsafe fn interiorBackgroundStyle(&self) -> NSBackgroundStyle;
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
@@ -104,7 +104,7 @@ extern_methods!(
         #[method(drawDraggingDestinationFeedbackInRect:)]
         pub unsafe fn drawDraggingDestinationFeedbackInRect(&self, dirtyRect: NSRect);
 
-        #[method_id(viewAtColumn:)]
+        #[method_id(@__retain_semantics Other viewAtColumn:)]
         pub unsafe fn viewAtColumn(&self, column: NSInteger) -> Option<Id<Object, Shared>>;
 
         #[method(numberOfColumns)]

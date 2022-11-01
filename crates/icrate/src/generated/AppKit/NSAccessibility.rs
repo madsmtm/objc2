@@ -7,12 +7,12 @@ use crate::Foundation::*;
 extern_methods!(
     /// NSAccessibility
     unsafe impl NSObject {
-        #[method_id(accessibilityAttributeNames)]
+        #[method_id(@__retain_semantics Other accessibilityAttributeNames)]
         pub unsafe fn accessibilityAttributeNames(
             &self,
         ) -> Id<NSArray<NSAccessibilityAttributeName>, Shared>;
 
-        #[method_id(accessibilityAttributeValue:)]
+        #[method_id(@__retain_semantics Other accessibilityAttributeValue:)]
         pub unsafe fn accessibilityAttributeValue(
             &self,
             attribute: &NSAccessibilityAttributeName,
@@ -31,24 +31,24 @@ extern_methods!(
             attribute: &NSAccessibilityAttributeName,
         );
 
-        #[method_id(accessibilityParameterizedAttributeNames)]
+        #[method_id(@__retain_semantics Other accessibilityParameterizedAttributeNames)]
         pub unsafe fn accessibilityParameterizedAttributeNames(
             &self,
         ) -> Id<NSArray<NSAccessibilityParameterizedAttributeName>, Shared>;
 
-        #[method_id(accessibilityAttributeValue:forParameter:)]
+        #[method_id(@__retain_semantics Other accessibilityAttributeValue:forParameter:)]
         pub unsafe fn accessibilityAttributeValue_forParameter(
             &self,
             attribute: &NSAccessibilityParameterizedAttributeName,
             parameter: Option<&Object>,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(accessibilityActionNames)]
+        #[method_id(@__retain_semantics Other accessibilityActionNames)]
         pub unsafe fn accessibilityActionNames(
             &self,
         ) -> Id<NSArray<NSAccessibilityActionName>, Shared>;
 
-        #[method_id(accessibilityActionDescription:)]
+        #[method_id(@__retain_semantics Other accessibilityActionDescription:)]
         pub unsafe fn accessibilityActionDescription(
             &self,
             action: &NSAccessibilityActionName,
@@ -60,10 +60,10 @@ extern_methods!(
         #[method(accessibilityIsIgnored)]
         pub unsafe fn accessibilityIsIgnored(&self) -> bool;
 
-        #[method_id(accessibilityHitTest:)]
+        #[method_id(@__retain_semantics Other accessibilityHitTest:)]
         pub unsafe fn accessibilityHitTest(&self, point: NSPoint) -> Option<Id<Object, Shared>>;
 
-        #[method_id(accessibilityFocusedUIElement)]
+        #[method_id(@__retain_semantics Other accessibilityFocusedUIElement)]
         pub unsafe fn accessibilityFocusedUIElement(&self) -> Option<Id<Object, Shared>>;
 
         #[method(accessibilityIndexOfChild:)]
@@ -75,7 +75,7 @@ extern_methods!(
             attribute: &NSAccessibilityAttributeName,
         ) -> NSUInteger;
 
-        #[method_id(accessibilityArrayAttributeValues:index:maxCount:)]
+        #[method_id(@__retain_semantics Other accessibilityArrayAttributeValues:index:maxCount:)]
         pub unsafe fn accessibilityArrayAttributeValues_index_maxCount(
             &self,
             attribute: &NSAccessibilityAttributeName,

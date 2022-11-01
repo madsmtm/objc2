@@ -26,7 +26,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAppleEventManager {
-        #[method_id(sharedAppleEventManager)]
+        #[method_id(@__retain_semantics Other sharedAppleEventManager)]
         pub unsafe fn sharedAppleEventManager() -> Id<NSAppleEventManager, Shared>;
 
         #[method(setEventHandler:andSelector:forEventClass:andEventID:)]
@@ -53,22 +53,22 @@ extern_methods!(
             handlerRefCon: SRefCon,
         ) -> OSErr;
 
-        #[method_id(currentAppleEvent)]
+        #[method_id(@__retain_semantics Other currentAppleEvent)]
         pub unsafe fn currentAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>>;
 
-        #[method_id(currentReplyAppleEvent)]
+        #[method_id(@__retain_semantics Other currentReplyAppleEvent)]
         pub unsafe fn currentReplyAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>>;
 
         #[method(suspendCurrentAppleEvent)]
         pub unsafe fn suspendCurrentAppleEvent(&self) -> NSAppleEventManagerSuspensionID;
 
-        #[method_id(appleEventForSuspensionID:)]
+        #[method_id(@__retain_semantics Other appleEventForSuspensionID:)]
         pub unsafe fn appleEventForSuspensionID(
             &self,
             suspensionID: NSAppleEventManagerSuspensionID,
         ) -> Id<NSAppleEventDescriptor, Shared>;
 
-        #[method_id(replyAppleEventForSuspensionID:)]
+        #[method_id(@__retain_semantics Other replyAppleEventForSuspensionID:)]
         pub unsafe fn replyAppleEventForSuspensionID(
             &self,
             suspensionID: NSAppleEventManagerSuspensionID,

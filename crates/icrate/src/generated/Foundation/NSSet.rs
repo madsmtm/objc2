@@ -19,23 +19,23 @@ extern_methods!(
         #[method(count)]
         pub unsafe fn count(&self) -> NSUInteger;
 
-        #[method_id(member:)]
+        #[method_id(@__retain_semantics Other member:)]
         pub unsafe fn member(&self, object: &ObjectType) -> Option<Id<ObjectType, Shared>>;
 
-        #[method_id(objectEnumerator)]
+        #[method_id(@__retain_semantics Other objectEnumerator)]
         pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithObjects:count:)]
+        #[method_id(@__retain_semantics Init initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
             this: Option<Allocated<Self>>,
             objects: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -46,19 +46,19 @@ extern_methods!(
 extern_methods!(
     /// NSExtendedSet
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
-        #[method_id(allObjects)]
+        #[method_id(@__retain_semantics Other allObjects)]
         pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(anyObject)]
+        #[method_id(@__retain_semantics Other anyObject)]
         pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>>;
 
         #[method(containsObject:)]
         pub unsafe fn containsObject(&self, anObject: &ObjectType) -> bool;
 
-        #[method_id(description)]
+        #[method_id(@__retain_semantics Other description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
 
-        #[method_id(descriptionWithLocale:)]
+        #[method_id(@__retain_semantics Other descriptionWithLocale:)]
         pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
             -> Id<NSString, Shared>;
 
@@ -81,19 +81,19 @@ extern_methods!(
             argument: Option<&Object>,
         );
 
-        #[method_id(setByAddingObject:)]
+        #[method_id(@__retain_semantics Other setByAddingObject:)]
         pub unsafe fn setByAddingObject(
             &self,
             anObject: &ObjectType,
         ) -> Id<NSSet<ObjectType>, Shared>;
 
-        #[method_id(setByAddingObjectsFromSet:)]
+        #[method_id(@__retain_semantics Other setByAddingObjectsFromSet:)]
         pub unsafe fn setByAddingObjectsFromSet(
             &self,
             other: &NSSet<ObjectType>,
         ) -> Id<NSSet<ObjectType>, Shared>;
 
-        #[method_id(setByAddingObjectsFromArray:)]
+        #[method_id(@__retain_semantics Other setByAddingObjectsFromArray:)]
         pub unsafe fn setByAddingObjectsFromArray(
             &self,
             other: &NSArray<ObjectType>,
@@ -109,13 +109,13 @@ extern_methods!(
             block: TodoBlock,
         );
 
-        #[method_id(objectsPassingTest:)]
+        #[method_id(@__retain_semantics Other objectsPassingTest:)]
         pub unsafe fn objectsPassingTest(
             &self,
             predicate: TodoBlock,
         ) -> Id<NSSet<ObjectType>, Shared>;
 
-        #[method_id(objectsWithOptions:passingTest:)]
+        #[method_id(@__retain_semantics Other objectsWithOptions:passingTest:)]
         pub unsafe fn objectsWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
@@ -127,36 +127,36 @@ extern_methods!(
 extern_methods!(
     /// NSSetCreation
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
-        #[method_id(set)]
+        #[method_id(@__retain_semantics Other set)]
         pub unsafe fn set() -> Id<Self, Shared>;
 
-        #[method_id(setWithObject:)]
+        #[method_id(@__retain_semantics Other setWithObject:)]
         pub unsafe fn setWithObject(object: &ObjectType) -> Id<Self, Shared>;
 
-        #[method_id(setWithObjects:count:)]
+        #[method_id(@__retain_semantics Other setWithObjects:count:)]
         pub unsafe fn setWithObjects_count(objects: TodoArray, cnt: NSUInteger)
             -> Id<Self, Shared>;
 
-        #[method_id(setWithSet:)]
+        #[method_id(@__retain_semantics Other setWithSet:)]
         pub unsafe fn setWithSet(set: &NSSet<ObjectType>) -> Id<Self, Shared>;
 
-        #[method_id(setWithArray:)]
+        #[method_id(@__retain_semantics Other setWithArray:)]
         pub unsafe fn setWithArray(array: &NSArray<ObjectType>) -> Id<Self, Shared>;
 
-        #[method_id(initWithSet:)]
+        #[method_id(@__retain_semantics Init initWithSet:)]
         pub unsafe fn initWithSet(
             this: Option<Allocated<Self>>,
             set: &NSSet<ObjectType>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithSet:copyItems:)]
+        #[method_id(@__retain_semantics Init initWithSet:copyItems:)]
         pub unsafe fn initWithSet_copyItems(
             this: Option<Allocated<Self>>,
             set: &NSSet<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithArray:)]
+        #[method_id(@__retain_semantics Init initWithArray:)]
         pub unsafe fn initWithArray(
             this: Option<Allocated<Self>>,
             array: &NSArray<ObjectType>,
@@ -183,16 +183,16 @@ extern_methods!(
         #[method(removeObject:)]
         pub unsafe fn removeObject(&self, object: &ObjectType);
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCapacity:)]
+        #[method_id(@__retain_semantics Init initWithCapacity:)]
         pub unsafe fn initWithCapacity(
             this: Option<Allocated<Self>>,
             numItems: NSUInteger,
@@ -226,7 +226,7 @@ extern_methods!(
 extern_methods!(
     /// NSMutableSetCreation
     unsafe impl<ObjectType: Message> NSMutableSet<ObjectType> {
-        #[method_id(setWithCapacity:)]
+        #[method_id(@__retain_semantics Other setWithCapacity:)]
         pub unsafe fn setWithCapacity(numItems: NSUInteger) -> Id<Self, Shared>;
     }
 );
@@ -244,19 +244,19 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<ObjectType: Message> NSCountedSet<ObjectType> {
-        #[method_id(initWithCapacity:)]
+        #[method_id(@__retain_semantics Init initWithCapacity:)]
         pub unsafe fn initWithCapacity(
             this: Option<Allocated<Self>>,
             numItems: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithArray:)]
+        #[method_id(@__retain_semantics Init initWithArray:)]
         pub unsafe fn initWithArray(
             this: Option<Allocated<Self>>,
             array: &NSArray<ObjectType>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithSet:)]
+        #[method_id(@__retain_semantics Init initWithSet:)]
         pub unsafe fn initWithSet(
             this: Option<Allocated<Self>>,
             set: &NSSet<ObjectType>,
@@ -265,7 +265,7 @@ extern_methods!(
         #[method(countForObject:)]
         pub unsafe fn countForObject(&self, object: &ObjectType) -> NSUInteger;
 
-        #[method_id(objectEnumerator)]
+        #[method_id(@__retain_semantics Other objectEnumerator)]
         pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
 
         #[method(addObject:)]

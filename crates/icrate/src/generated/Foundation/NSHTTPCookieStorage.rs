@@ -19,15 +19,15 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSHTTPCookieStorage {
-        #[method_id(sharedHTTPCookieStorage)]
+        #[method_id(@__retain_semantics Other sharedHTTPCookieStorage)]
         pub unsafe fn sharedHTTPCookieStorage() -> Id<NSHTTPCookieStorage, Shared>;
 
-        #[method_id(sharedCookieStorageForGroupContainerIdentifier:)]
+        #[method_id(@__retain_semantics Other sharedCookieStorageForGroupContainerIdentifier:)]
         pub unsafe fn sharedCookieStorageForGroupContainerIdentifier(
             identifier: &NSString,
         ) -> Id<NSHTTPCookieStorage, Shared>;
 
-        #[method_id(cookies)]
+        #[method_id(@__retain_semantics Other cookies)]
         pub unsafe fn cookies(&self) -> Option<Id<NSArray<NSHTTPCookie>, Shared>>;
 
         #[method(setCookie:)]
@@ -39,7 +39,7 @@ extern_methods!(
         #[method(removeCookiesSinceDate:)]
         pub unsafe fn removeCookiesSinceDate(&self, date: &NSDate);
 
-        #[method_id(cookiesForURL:)]
+        #[method_id(@__retain_semantics Other cookiesForURL:)]
         pub unsafe fn cookiesForURL(
             &self,
             URL: &NSURL,
@@ -59,7 +59,7 @@ extern_methods!(
         #[method(setCookieAcceptPolicy:)]
         pub unsafe fn setCookieAcceptPolicy(&self, cookieAcceptPolicy: NSHTTPCookieAcceptPolicy);
 
-        #[method_id(sortedCookiesUsingDescriptors:)]
+        #[method_id(@__retain_semantics Other sortedCookiesUsingDescriptors:)]
         pub unsafe fn sortedCookiesUsingDescriptors(
             &self,
             sortOrder: &NSArray<NSSortDescriptor>,

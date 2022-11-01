@@ -42,19 +42,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSButtonCell {
-        #[method_id(initTextCell:)]
+        #[method_id(@__retain_semantics Init initTextCell:)]
         pub unsafe fn initTextCell(
             this: Option<Allocated<Self>>,
             string: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initImageCell:)]
+        #[method_id(@__retain_semantics Init initImageCell:)]
         pub unsafe fn initImageCell(
             this: Option<Allocated<Self>>,
             image: Option<&NSImage>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -81,25 +81,25 @@ extern_methods!(
         #[method(setShowsStateBy:)]
         pub unsafe fn setShowsStateBy(&self, showsStateBy: NSCellStyleMask);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: Option<&NSString>);
 
-        #[method_id(attributedTitle)]
+        #[method_id(@__retain_semantics Other attributedTitle)]
         pub unsafe fn attributedTitle(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedTitle:)]
         pub unsafe fn setAttributedTitle(&self, attributedTitle: &NSAttributedString);
 
-        #[method_id(alternateTitle)]
+        #[method_id(@__retain_semantics Other alternateTitle)]
         pub unsafe fn alternateTitle(&self) -> Id<NSString, Shared>;
 
         #[method(setAlternateTitle:)]
         pub unsafe fn setAlternateTitle(&self, alternateTitle: &NSString);
 
-        #[method_id(attributedAlternateTitle)]
+        #[method_id(@__retain_semantics Other attributedAlternateTitle)]
         pub unsafe fn attributedAlternateTitle(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedAlternateTitle:)]
@@ -108,7 +108,7 @@ extern_methods!(
             attributedAlternateTitle: &NSAttributedString,
         );
 
-        #[method_id(alternateImage)]
+        #[method_id(@__retain_semantics Other alternateImage)]
         pub unsafe fn alternateImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setAlternateImage:)]
@@ -126,7 +126,7 @@ extern_methods!(
         #[method(setImageScaling:)]
         pub unsafe fn setImageScaling(&self, imageScaling: NSImageScaling);
 
-        #[method_id(keyEquivalent)]
+        #[method_id(@__retain_semantics Other keyEquivalent)]
         pub unsafe fn keyEquivalent(&self) -> Id<NSString, Shared>;
 
         #[method(setKeyEquivalent:)]
@@ -165,13 +165,13 @@ extern_methods!(
             showsBorderOnlyWhileMouseInside: bool,
         );
 
-        #[method_id(sound)]
+        #[method_id(@__retain_semantics Other sound)]
         pub unsafe fn sound(&self) -> Option<Id<NSSound, Shared>>;
 
         #[method(setSound:)]
         pub unsafe fn setSound(&self, sound: Option<&NSSound>);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBackgroundColor:)]
@@ -301,10 +301,10 @@ extern_methods!(
         #[method(alternateMnemonicLocation)]
         pub unsafe fn alternateMnemonicLocation(&self) -> NSUInteger;
 
-        #[method_id(alternateMnemonic)]
+        #[method_id(@__retain_semantics Other alternateMnemonic)]
         pub unsafe fn alternateMnemonic(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(keyEquivalentFont)]
+        #[method_id(@__retain_semantics Other keyEquivalentFont)]
         pub unsafe fn keyEquivalentFont(&self) -> Option<Id<NSFont, Shared>>;
 
         #[method(setKeyEquivalentFont:)]

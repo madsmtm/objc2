@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSpeechRecognizer {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Option<Id<Self, Shared>>;
 
         #[method(startListening)]
@@ -24,19 +24,19 @@ extern_methods!(
         #[method(stopListening)]
         pub unsafe fn stopListening(&self);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSpeechRecognizerDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSSpeechRecognizerDelegate>);
 
-        #[method_id(commands)]
+        #[method_id(@__retain_semantics Other commands)]
         pub unsafe fn commands(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setCommands:)]
         pub unsafe fn setCommands(&self, commands: Option<&NSArray<NSString>>);
 
-        #[method_id(displayedCommandsTitle)]
+        #[method_id(@__retain_semantics Other displayedCommandsTitle)]
         pub unsafe fn displayedCommandsTitle(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setDisplayedCommandsTitle:)]

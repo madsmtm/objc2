@@ -43,16 +43,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSLayoutManager {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(textStorage)]
+        #[method_id(@__retain_semantics Other textStorage)]
         pub unsafe fn textStorage(&self) -> Option<Id<NSTextStorage, Shared>>;
 
         #[method(setTextStorage:)]
@@ -61,7 +61,7 @@ extern_methods!(
         #[method(replaceTextStorage:)]
         pub unsafe fn replaceTextStorage(&self, newTextStorage: &NSTextStorage);
 
-        #[method_id(textContainers)]
+        #[method_id(@__retain_semantics Other textContainers)]
         pub unsafe fn textContainers(&self) -> Id<NSArray<NSTextContainer>, Shared>;
 
         #[method(addTextContainer:)]
@@ -83,7 +83,7 @@ extern_methods!(
         #[method(textContainerChangedTextView:)]
         pub unsafe fn textContainerChangedTextView(&self, container: &NSTextContainer);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSLayoutManagerDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -143,7 +143,7 @@ extern_methods!(
         #[method(setDefaultAttachmentScaling:)]
         pub unsafe fn setDefaultAttachmentScaling(&self, defaultAttachmentScaling: NSImageScaling);
 
-        #[method_id(typesetter)]
+        #[method_id(@__retain_semantics Other typesetter)]
         pub unsafe fn typesetter(&self) -> Id<NSTypesetter, Shared>;
 
         #[method(setTypesetter:)]
@@ -317,14 +317,14 @@ extern_methods!(
         #[method(firstUnlaidGlyphIndex)]
         pub unsafe fn firstUnlaidGlyphIndex(&self) -> NSUInteger;
 
-        #[method_id(textContainerForGlyphAtIndex:effectiveRange:)]
+        #[method_id(@__retain_semantics Other textContainerForGlyphAtIndex:effectiveRange:)]
         pub unsafe fn textContainerForGlyphAtIndex_effectiveRange(
             &self,
             glyphIndex: NSUInteger,
             effectiveGlyphRange: NSRangePointer,
         ) -> Option<Id<NSTextContainer, Shared>>;
 
-        #[method_id(textContainerForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:)]
+        #[method_id(@__retain_semantics Other textContainerForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:)]
         pub unsafe fn textContainerForGlyphAtIndex_effectiveRange_withoutAdditionalLayout(
             &self,
             glyphIndex: NSUInteger,
@@ -371,7 +371,7 @@ extern_methods!(
         #[method(extraLineFragmentUsedRect)]
         pub unsafe fn extraLineFragmentUsedRect(&self) -> NSRect;
 
-        #[method_id(extraLineFragmentTextContainer)]
+        #[method_id(@__retain_semantics Other extraLineFragmentTextContainer)]
         pub unsafe fn extraLineFragmentTextContainer(&self) -> Option<Id<NSTextContainer, Shared>>;
 
         #[method(locationForGlyphAtIndex:)]
@@ -626,7 +626,7 @@ extern_methods!(
             effectiveGlyphRange: NSRangePointer,
         ) -> NSRect;
 
-        #[method_id(temporaryAttributesAtCharacterIndex:effectiveRange:)]
+        #[method_id(@__retain_semantics Other temporaryAttributesAtCharacterIndex:effectiveRange:)]
         pub unsafe fn temporaryAttributesAtCharacterIndex_effectiveRange(
             &self,
             charIndex: NSUInteger,
@@ -654,7 +654,7 @@ extern_methods!(
             charRange: NSRange,
         );
 
-        #[method_id(temporaryAttribute:atCharacterIndex:effectiveRange:)]
+        #[method_id(@__retain_semantics Other temporaryAttribute:atCharacterIndex:effectiveRange:)]
         pub unsafe fn temporaryAttribute_atCharacterIndex_effectiveRange(
             &self,
             attrName: &NSAttributedStringKey,
@@ -662,7 +662,7 @@ extern_methods!(
             range: NSRangePointer,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(temporaryAttribute:atCharacterIndex:longestEffectiveRange:inRange:)]
+        #[method_id(@__retain_semantics Other temporaryAttribute:atCharacterIndex:longestEffectiveRange:inRange:)]
         pub unsafe fn temporaryAttribute_atCharacterIndex_longestEffectiveRange_inRange(
             &self,
             attrName: &NSAttributedStringKey,
@@ -671,7 +671,7 @@ extern_methods!(
             rangeLimit: NSRange,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(temporaryAttributesAtCharacterIndex:longestEffectiveRange:inRange:)]
+        #[method_id(@__retain_semantics Other temporaryAttributesAtCharacterIndex:longestEffectiveRange:inRange:)]
         pub unsafe fn temporaryAttributesAtCharacterIndex_longestEffectiveRange_inRange(
             &self,
             location: NSUInteger,
@@ -698,7 +698,7 @@ extern_methods!(
 extern_methods!(
     /// NSTextViewSupport
     unsafe impl NSLayoutManager {
-        #[method_id(rulerMarkersForTextView:paragraphStyle:ruler:)]
+        #[method_id(@__retain_semantics Other rulerMarkersForTextView:paragraphStyle:ruler:)]
         pub unsafe fn rulerMarkersForTextView_paragraphStyle_ruler(
             &self,
             view: &NSTextView,
@@ -706,7 +706,7 @@ extern_methods!(
             ruler: &NSRulerView,
         ) -> Id<NSArray<NSRulerMarker>, Shared>;
 
-        #[method_id(rulerAccessoryViewForTextView:paragraphStyle:ruler:enabled:)]
+        #[method_id(@__retain_semantics Other rulerAccessoryViewForTextView:paragraphStyle:ruler:enabled:)]
         pub unsafe fn rulerAccessoryViewForTextView_paragraphStyle_ruler_enabled(
             &self,
             view: &NSTextView,
@@ -718,10 +718,10 @@ extern_methods!(
         #[method(layoutManagerOwnsFirstResponderInWindow:)]
         pub unsafe fn layoutManagerOwnsFirstResponderInWindow(&self, window: &NSWindow) -> bool;
 
-        #[method_id(firstTextView)]
+        #[method_id(@__retain_semantics Other firstTextView)]
         pub unsafe fn firstTextView(&self) -> Option<Id<NSTextView, Shared>>;
 
-        #[method_id(textViewForBeginningOfSelection)]
+        #[method_id(@__retain_semantics Other textViewForBeginningOfSelection)]
         pub unsafe fn textViewForBeginningOfSelection(&self) -> Option<Id<NSTextView, Shared>>;
     }
 );
@@ -777,7 +777,7 @@ extern_methods!(
         #[method(setUsesScreenFonts:)]
         pub unsafe fn setUsesScreenFonts(&self, usesScreenFonts: bool);
 
-        #[method_id(substituteFontForFont:)]
+        #[method_id(@__retain_semantics Other substituteFontForFont:)]
         pub unsafe fn substituteFontForFont(&self, originalFont: &NSFont) -> Id<NSFont, Shared>;
 
         #[method(insertGlyphs:length:forStartingGlyphAtIndex:characterIndex:)]
@@ -922,7 +922,7 @@ extern_methods!(
 extern_methods!(
     /// NSGlyphGeneration
     unsafe impl NSLayoutManager {
-        #[method_id(glyphGenerator)]
+        #[method_id(@__retain_semantics Other glyphGenerator)]
         pub unsafe fn glyphGenerator(&self) -> Id<NSGlyphGenerator, Shared>;
 
         #[method(setGlyphGenerator:)]

@@ -26,7 +26,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextSelection {
-        #[method_id(initWithRanges:affinity:granularity:)]
+        #[method_id(@__retain_semantics Init initWithRanges:affinity:granularity:)]
         pub unsafe fn initWithRanges_affinity_granularity(
             this: Option<Allocated<Self>>,
             textRanges: &NSArray<NSTextRange>,
@@ -34,13 +34,13 @@ extern_methods!(
             granularity: NSTextSelectionGranularity,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithRange:affinity:granularity:)]
+        #[method_id(@__retain_semantics Init initWithRange:affinity:granularity:)]
         pub unsafe fn initWithRange_affinity_granularity(
             this: Option<Allocated<Self>>,
             range: &NSTextRange,
@@ -48,17 +48,17 @@ extern_methods!(
             granularity: NSTextSelectionGranularity,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithLocation:affinity:)]
+        #[method_id(@__retain_semantics Init initWithLocation:affinity:)]
         pub unsafe fn initWithLocation_affinity(
             this: Option<Allocated<Self>>,
             location: &NSTextLocation,
             affinity: NSTextSelectionAffinity,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(textRanges)]
+        #[method_id(@__retain_semantics Other textRanges)]
         pub unsafe fn textRanges(&self) -> Id<NSArray<NSTextRange>, Shared>;
 
         #[method(granularity)]
@@ -82,7 +82,7 @@ extern_methods!(
         #[method(setLogical:)]
         pub unsafe fn setLogical(&self, logical: bool);
 
-        #[method_id(secondarySelectionLocation)]
+        #[method_id(@__retain_semantics Other secondarySelectionLocation)]
         pub unsafe fn secondarySelectionLocation(&self) -> Option<Id<NSTextLocation, Shared>>;
 
         #[method(setSecondarySelectionLocation:)]
@@ -91,7 +91,7 @@ extern_methods!(
             secondarySelectionLocation: Option<&NSTextLocation>,
         );
 
-        #[method_id(typingAttributes)]
+        #[method_id(@__retain_semantics Other typingAttributes)]
         pub unsafe fn typingAttributes(
             &self,
         ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared>;
@@ -102,7 +102,7 @@ extern_methods!(
             typingAttributes: &NSDictionary<NSAttributedStringKey, Object>,
         );
 
-        #[method_id(textSelectionWithTextRanges:)]
+        #[method_id(@__retain_semantics Other textSelectionWithTextRanges:)]
         pub unsafe fn textSelectionWithTextRanges(
             &self,
             textRanges: &NSArray<NSTextRange>,

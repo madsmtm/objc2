@@ -17,19 +17,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextInputContext {
-        #[method_id(currentInputContext)]
+        #[method_id(@__retain_semantics Other currentInputContext)]
         pub unsafe fn currentInputContext() -> Option<Id<NSTextInputContext, Shared>>;
 
-        #[method_id(initWithClient:)]
+        #[method_id(@__retain_semantics Init initWithClient:)]
         pub unsafe fn initWithClient(
             this: Option<Allocated<Self>>,
             client: &NSTextInputClient,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(client)]
+        #[method_id(@__retain_semantics Other client)]
         pub unsafe fn client(&self) -> Id<NSTextInputClient, Shared>;
 
         #[method(acceptsGlyphInfo)]
@@ -38,7 +38,7 @@ extern_methods!(
         #[method(setAcceptsGlyphInfo:)]
         pub unsafe fn setAcceptsGlyphInfo(&self, acceptsGlyphInfo: bool);
 
-        #[method_id(allowedInputSourceLocales)]
+        #[method_id(@__retain_semantics Other allowedInputSourceLocales)]
         pub unsafe fn allowedInputSourceLocales(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setAllowedInputSourceLocales:)]
@@ -62,12 +62,12 @@ extern_methods!(
         #[method(invalidateCharacterCoordinates)]
         pub unsafe fn invalidateCharacterCoordinates(&self);
 
-        #[method_id(keyboardInputSources)]
+        #[method_id(@__retain_semantics Other keyboardInputSources)]
         pub unsafe fn keyboardInputSources(
             &self,
         ) -> Option<Id<NSArray<NSTextInputSourceIdentifier>, Shared>>;
 
-        #[method_id(selectedKeyboardInputSource)]
+        #[method_id(@__retain_semantics Other selectedKeyboardInputSource)]
         pub unsafe fn selectedKeyboardInputSource(
             &self,
         ) -> Option<Id<NSTextInputSourceIdentifier, Shared>>;
@@ -78,7 +78,7 @@ extern_methods!(
             selectedKeyboardInputSource: Option<&NSTextInputSourceIdentifier>,
         );
 
-        #[method_id(localizedNameForInputSource:)]
+        #[method_id(@__retain_semantics Other localizedNameForInputSource:)]
         pub unsafe fn localizedNameForInputSource(
             inputSourceIdentifier: &NSTextInputSourceIdentifier,
         ) -> Option<Id<NSString, Shared>>;

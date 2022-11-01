@@ -69,7 +69,7 @@ extern_methods!(
 extern_methods!(
     /// NSCustomPronouns
     unsafe impl NSMorphology {
-        #[method_id(customPronounForLanguage:)]
+        #[method_id(@__retain_semantics Other customPronounForLanguage:)]
         pub unsafe fn customPronounForLanguage(
             &self,
             language: &NSString,
@@ -98,35 +98,35 @@ extern_methods!(
         #[method(isSupportedForLanguage:)]
         pub unsafe fn isSupportedForLanguage(language: &NSString) -> bool;
 
-        #[method_id(requiredKeysForLanguage:)]
+        #[method_id(@__retain_semantics Other requiredKeysForLanguage:)]
         pub unsafe fn requiredKeysForLanguage(language: &NSString)
             -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(subjectForm)]
+        #[method_id(@__retain_semantics Other subjectForm)]
         pub unsafe fn subjectForm(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setSubjectForm:)]
         pub unsafe fn setSubjectForm(&self, subjectForm: Option<&NSString>);
 
-        #[method_id(objectForm)]
+        #[method_id(@__retain_semantics Other objectForm)]
         pub unsafe fn objectForm(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setObjectForm:)]
         pub unsafe fn setObjectForm(&self, objectForm: Option<&NSString>);
 
-        #[method_id(possessiveForm)]
+        #[method_id(@__retain_semantics Other possessiveForm)]
         pub unsafe fn possessiveForm(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setPossessiveForm:)]
         pub unsafe fn setPossessiveForm(&self, possessiveForm: Option<&NSString>);
 
-        #[method_id(possessiveAdjectiveForm)]
+        #[method_id(@__retain_semantics Other possessiveAdjectiveForm)]
         pub unsafe fn possessiveAdjectiveForm(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setPossessiveAdjectiveForm:)]
         pub unsafe fn setPossessiveAdjectiveForm(&self, possessiveAdjectiveForm: Option<&NSString>);
 
-        #[method_id(reflexiveForm)]
+        #[method_id(@__retain_semantics Other reflexiveForm)]
         pub unsafe fn reflexiveForm(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setReflexiveForm:)]
@@ -140,7 +140,7 @@ extern_methods!(
         #[method(isUnspecified)]
         pub unsafe fn isUnspecified(&self) -> bool;
 
-        #[method_id(userMorphology)]
+        #[method_id(@__retain_semantics Other userMorphology)]
         pub unsafe fn userMorphology() -> Id<NSMorphology, Shared>;
     }
 );

@@ -40,7 +40,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSISO8601DateFormatter {
-        #[method_id(timeZone)]
+        #[method_id(@__retain_semantics Other timeZone)]
         pub unsafe fn timeZone(&self) -> Id<NSTimeZone, Shared>;
 
         #[method(setTimeZone:)]
@@ -52,16 +52,16 @@ extern_methods!(
         #[method(setFormatOptions:)]
         pub unsafe fn setFormatOptions(&self, formatOptions: NSISO8601DateFormatOptions);
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(stringFromDate:)]
+        #[method_id(@__retain_semantics Other stringFromDate:)]
         pub unsafe fn stringFromDate(&self, date: &NSDate) -> Id<NSString, Shared>;
 
-        #[method_id(dateFromString:)]
+        #[method_id(@__retain_semantics Other dateFromString:)]
         pub unsafe fn dateFromString(&self, string: &NSString) -> Option<Id<NSDate, Shared>>;
 
-        #[method_id(stringFromDate:timeZone:formatOptions:)]
+        #[method_id(@__retain_semantics Other stringFromDate:timeZone:formatOptions:)]
         pub unsafe fn stringFromDate_timeZone_formatOptions(
             date: &NSDate,
             timeZone: &NSTimeZone,

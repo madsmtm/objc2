@@ -41,32 +41,32 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDateComponentsFormatter {
-        #[method_id(stringForObjectValue:)]
+        #[method_id(@__retain_semantics Other stringForObjectValue:)]
         pub unsafe fn stringForObjectValue(
             &self,
             obj: Option<&Object>,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(stringFromDateComponents:)]
+        #[method_id(@__retain_semantics Other stringFromDateComponents:)]
         pub unsafe fn stringFromDateComponents(
             &self,
             components: &NSDateComponents,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(stringFromDate:toDate:)]
+        #[method_id(@__retain_semantics Other stringFromDate:toDate:)]
         pub unsafe fn stringFromDate_toDate(
             &self,
             startDate: &NSDate,
             endDate: &NSDate,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(stringFromTimeInterval:)]
+        #[method_id(@__retain_semantics Other stringFromTimeInterval:)]
         pub unsafe fn stringFromTimeInterval(
             &self,
             ti: NSTimeInterval,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(localizedStringFromDateComponents:unitsStyle:)]
+        #[method_id(@__retain_semantics Other localizedStringFromDateComponents:unitsStyle:)]
         pub unsafe fn localizedStringFromDateComponents_unitsStyle(
             components: &NSDateComponents,
             unitsStyle: NSDateComponentsFormatterUnitsStyle,
@@ -95,13 +95,13 @@ extern_methods!(
             zeroFormattingBehavior: NSDateComponentsFormatterZeroFormattingBehavior,
         );
 
-        #[method_id(calendar)]
+        #[method_id(@__retain_semantics Other calendar)]
         pub unsafe fn calendar(&self) -> Option<Id<NSCalendar, Shared>>;
 
         #[method(setCalendar:)]
         pub unsafe fn setCalendar(&self, calendar: Option<&NSCalendar>);
 
-        #[method_id(referenceDate)]
+        #[method_id(@__retain_semantics Other referenceDate)]
         pub unsafe fn referenceDate(&self) -> Option<Id<NSDate, Shared>>;
 
         #[method(setReferenceDate:)]

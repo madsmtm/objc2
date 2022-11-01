@@ -15,19 +15,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSControl {
-        #[method_id(initWithFrame:)]
+        #[method_id(@__retain_semantics Init initWithFrame:)]
         pub unsafe fn initWithFrame(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -81,25 +81,25 @@ extern_methods!(
         #[method(setControlSize:)]
         pub unsafe fn setControlSize(&self, controlSize: NSControlSize);
 
-        #[method_id(formatter)]
+        #[method_id(@__retain_semantics Other formatter)]
         pub unsafe fn formatter(&self) -> Option<Id<NSFormatter, Shared>>;
 
         #[method(setFormatter:)]
         pub unsafe fn setFormatter(&self, formatter: Option<&NSFormatter>);
 
-        #[method_id(objectValue)]
+        #[method_id(@__retain_semantics Other objectValue)]
         pub unsafe fn objectValue(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setObjectValue:)]
         pub unsafe fn setObjectValue(&self, objectValue: Option<&Object>);
 
-        #[method_id(stringValue)]
+        #[method_id(@__retain_semantics Other stringValue)]
         pub unsafe fn stringValue(&self) -> Id<NSString, Shared>;
 
         #[method(setStringValue:)]
         pub unsafe fn setStringValue(&self, stringValue: &NSString);
 
-        #[method_id(attributedStringValue)]
+        #[method_id(@__retain_semantics Other attributedStringValue)]
         pub unsafe fn attributedStringValue(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedStringValue:)]
@@ -165,7 +165,7 @@ extern_methods!(
         #[method(performClick:)]
         pub unsafe fn performClick(&self, sender: Option<&Object>);
 
-        #[method_id(font)]
+        #[method_id(@__retain_semantics Other font)]
         pub unsafe fn font(&self) -> Option<Id<NSFont, Shared>>;
 
         #[method(setFont:)]
@@ -212,7 +212,7 @@ extern_methods!(
 extern_methods!(
     /// NSControlEditableTextMethods
     unsafe impl NSControl {
-        #[method_id(currentEditor)]
+        #[method_id(@__retain_semantics Other currentEditor)]
         pub unsafe fn currentEditor(&self) -> Option<Id<NSText, Shared>>;
 
         #[method(abortEditing)]
@@ -276,13 +276,13 @@ extern_methods!(
         #[method(setCellClass:)]
         pub unsafe fn setCellClass(cellClass: Option<&Class>);
 
-        #[method_id(cell)]
+        #[method_id(@__retain_semantics Other cell)]
         pub unsafe fn cell(&self) -> Option<Id<NSCell, Shared>>;
 
         #[method(setCell:)]
         pub unsafe fn setCell(&self, cell: Option<&NSCell>);
 
-        #[method_id(selectedCell)]
+        #[method_id(@__retain_semantics Other selectedCell)]
         pub unsafe fn selectedCell(&self) -> Option<Id<NSCell, Shared>>;
 
         #[method(selectedTag)]

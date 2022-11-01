@@ -15,22 +15,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDictionaryControllerKeyValuePair {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(key)]
+        #[method_id(@__retain_semantics Other key)]
         pub unsafe fn key(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setKey:)]
         pub unsafe fn setKey(&self, key: Option<&NSString>);
 
-        #[method_id(value)]
+        #[method_id(@__retain_semantics Other value)]
         pub unsafe fn value(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setValue:)]
         pub unsafe fn setValue(&self, value: Option<&Object>);
 
-        #[method_id(localizedKey)]
+        #[method_id(@__retain_semantics Other localizedKey)]
         pub unsafe fn localizedKey(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setLocalizedKey:)]
@@ -52,34 +52,34 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDictionaryController {
-        #[method_id(newObject)]
+        #[method_id(@__retain_semantics New newObject)]
         pub unsafe fn newObject(&self) -> Id<NSDictionaryControllerKeyValuePair, Shared>;
 
-        #[method_id(initialKey)]
+        #[method_id(@__retain_semantics Other initialKey)]
         pub unsafe fn initialKey(&self) -> Id<NSString, Shared>;
 
         #[method(setInitialKey:)]
         pub unsafe fn setInitialKey(&self, initialKey: &NSString);
 
-        #[method_id(initialValue)]
+        #[method_id(@__retain_semantics Other initialValue)]
         pub unsafe fn initialValue(&self) -> Id<Object, Shared>;
 
         #[method(setInitialValue:)]
         pub unsafe fn setInitialValue(&self, initialValue: &Object);
 
-        #[method_id(includedKeys)]
+        #[method_id(@__retain_semantics Other includedKeys)]
         pub unsafe fn includedKeys(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(setIncludedKeys:)]
         pub unsafe fn setIncludedKeys(&self, includedKeys: &NSArray<NSString>);
 
-        #[method_id(excludedKeys)]
+        #[method_id(@__retain_semantics Other excludedKeys)]
         pub unsafe fn excludedKeys(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(setExcludedKeys:)]
         pub unsafe fn setExcludedKeys(&self, excludedKeys: &NSArray<NSString>);
 
-        #[method_id(localizedKeyDictionary)]
+        #[method_id(@__retain_semantics Other localizedKeyDictionary)]
         pub unsafe fn localizedKeyDictionary(&self)
             -> Id<NSDictionary<NSString, NSString>, Shared>;
 
@@ -89,7 +89,7 @@ extern_methods!(
             localizedKeyDictionary: &NSDictionary<NSString, NSString>,
         );
 
-        #[method_id(localizedKeyTable)]
+        #[method_id(@__retain_semantics Other localizedKeyTable)]
         pub unsafe fn localizedKeyTable(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setLocalizedKeyTable:)]

@@ -26,28 +26,28 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUserDefaults {
-        #[method_id(standardUserDefaults)]
+        #[method_id(@__retain_semantics Other standardUserDefaults)]
         pub unsafe fn standardUserDefaults() -> Id<NSUserDefaults, Shared>;
 
         #[method(resetStandardUserDefaults)]
         pub unsafe fn resetStandardUserDefaults();
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithSuiteName:)]
+        #[method_id(@__retain_semantics Init initWithSuiteName:)]
         pub unsafe fn initWithSuiteName(
             this: Option<Allocated<Self>>,
             suitename: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithUser:)]
+        #[method_id(@__retain_semantics Init initWithUser:)]
         pub unsafe fn initWithUser(
             this: Option<Allocated<Self>>,
             username: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(objectForKey:)]
+        #[method_id(@__retain_semantics Other objectForKey:)]
         pub unsafe fn objectForKey(&self, defaultName: &NSString) -> Option<Id<Object, Shared>>;
 
         #[method(setObject:forKey:)]
@@ -56,22 +56,22 @@ extern_methods!(
         #[method(removeObjectForKey:)]
         pub unsafe fn removeObjectForKey(&self, defaultName: &NSString);
 
-        #[method_id(stringForKey:)]
+        #[method_id(@__retain_semantics Other stringForKey:)]
         pub unsafe fn stringForKey(&self, defaultName: &NSString) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(arrayForKey:)]
+        #[method_id(@__retain_semantics Other arrayForKey:)]
         pub unsafe fn arrayForKey(&self, defaultName: &NSString) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(dictionaryForKey:)]
+        #[method_id(@__retain_semantics Other dictionaryForKey:)]
         pub unsafe fn dictionaryForKey(
             &self,
             defaultName: &NSString,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
 
-        #[method_id(dataForKey:)]
+        #[method_id(@__retain_semantics Other dataForKey:)]
         pub unsafe fn dataForKey(&self, defaultName: &NSString) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(stringArrayForKey:)]
+        #[method_id(@__retain_semantics Other stringArrayForKey:)]
         pub unsafe fn stringArrayForKey(
             &self,
             defaultName: &NSString,
@@ -89,7 +89,7 @@ extern_methods!(
         #[method(boolForKey:)]
         pub unsafe fn boolForKey(&self, defaultName: &NSString) -> bool;
 
-        #[method_id(URLForKey:)]
+        #[method_id(@__retain_semantics Other URLForKey:)]
         pub unsafe fn URLForKey(&self, defaultName: &NSString) -> Option<Id<NSURL, Shared>>;
 
         #[method(setInteger:forKey:)]
@@ -119,14 +119,14 @@ extern_methods!(
         #[method(removeSuiteNamed:)]
         pub unsafe fn removeSuiteNamed(&self, suiteName: &NSString);
 
-        #[method_id(dictionaryRepresentation)]
+        #[method_id(@__retain_semantics Other dictionaryRepresentation)]
         pub unsafe fn dictionaryRepresentation(&self)
             -> Id<NSDictionary<NSString, Object>, Shared>;
 
-        #[method_id(volatileDomainNames)]
+        #[method_id(@__retain_semantics Other volatileDomainNames)]
         pub unsafe fn volatileDomainNames(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(volatileDomainForName:)]
+        #[method_id(@__retain_semantics Other volatileDomainForName:)]
         pub unsafe fn volatileDomainForName(
             &self,
             domainName: &NSString,
@@ -142,10 +142,10 @@ extern_methods!(
         #[method(removeVolatileDomainForName:)]
         pub unsafe fn removeVolatileDomainForName(&self, domainName: &NSString);
 
-        #[method_id(persistentDomainNames)]
+        #[method_id(@__retain_semantics Other persistentDomainNames)]
         pub unsafe fn persistentDomainNames(&self) -> Id<NSArray, Shared>;
 
-        #[method_id(persistentDomainForName:)]
+        #[method_id(@__retain_semantics Other persistentDomainForName:)]
         pub unsafe fn persistentDomainForName(
             &self,
             domainName: &NSString,

@@ -14,27 +14,27 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSListFormatter {
-        #[method_id(locale)]
+        #[method_id(@__retain_semantics Other locale)]
         pub unsafe fn locale(&self) -> Id<NSLocale, Shared>;
 
         #[method(setLocale:)]
         pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
 
-        #[method_id(itemFormatter)]
+        #[method_id(@__retain_semantics Other itemFormatter)]
         pub unsafe fn itemFormatter(&self) -> Option<Id<NSFormatter, Shared>>;
 
         #[method(setItemFormatter:)]
         pub unsafe fn setItemFormatter(&self, itemFormatter: Option<&NSFormatter>);
 
-        #[method_id(localizedStringByJoiningStrings:)]
+        #[method_id(@__retain_semantics Other localizedStringByJoiningStrings:)]
         pub unsafe fn localizedStringByJoiningStrings(
             strings: &NSArray<NSString>,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringFromItems:)]
+        #[method_id(@__retain_semantics Other stringFromItems:)]
         pub unsafe fn stringFromItems(&self, items: &NSArray) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(stringForObjectValue:)]
+        #[method_id(@__retain_semantics Other stringForObjectValue:)]
         pub unsafe fn stringForObjectValue(
             &self,
             obj: Option<&Object>,

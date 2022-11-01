@@ -49,19 +49,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextSelectionNavigation {
-        #[method_id(initWithDataSource:)]
+        #[method_id(@__retain_semantics Init initWithDataSource:)]
         pub unsafe fn initWithDataSource(
             this: Option<Allocated<Self>>,
             dataSource: &NSTextSelectionDataSource,
         ) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(textSelectionDataSource)]
+        #[method_id(@__retain_semantics Other textSelectionDataSource)]
         pub unsafe fn textSelectionDataSource(
             &self,
         ) -> Option<Id<NSTextSelectionDataSource, Shared>>;
@@ -84,7 +84,7 @@ extern_methods!(
         #[method(flushLayoutCache)]
         pub unsafe fn flushLayoutCache(&self);
 
-        #[method_id(destinationSelectionForTextSelection:direction:destination:extending:confined:)]
+        #[method_id(@__retain_semantics Other destinationSelectionForTextSelection:direction:destination:extending:confined:)]
         pub unsafe fn destinationSelectionForTextSelection_direction_destination_extending_confined(
             &self,
             textSelection: &NSTextSelection,
@@ -94,7 +94,7 @@ extern_methods!(
             confined: bool,
         ) -> Option<Id<NSTextSelection, Shared>>;
 
-        #[method_id(textSelectionsInteractingAtPoint:inContainerAtLocation:anchors:modifiers:selecting:bounds:)]
+        #[method_id(@__retain_semantics Other textSelectionsInteractingAtPoint:inContainerAtLocation:anchors:modifiers:selecting:bounds:)]
         pub unsafe fn textSelectionsInteractingAtPoint_inContainerAtLocation_anchors_modifiers_selecting_bounds(
             &self,
             point: CGPoint,
@@ -105,14 +105,14 @@ extern_methods!(
             bounds: CGRect,
         ) -> Id<NSArray<NSTextSelection>, Shared>;
 
-        #[method_id(textSelectionForSelectionGranularity:enclosingTextSelection:)]
+        #[method_id(@__retain_semantics Other textSelectionForSelectionGranularity:enclosingTextSelection:)]
         pub unsafe fn textSelectionForSelectionGranularity_enclosingTextSelection(
             &self,
             selectionGranularity: NSTextSelectionGranularity,
             textSelection: &NSTextSelection,
         ) -> Id<NSTextSelection, Shared>;
 
-        #[method_id(textSelectionForSelectionGranularity:enclosingPoint:inContainerAtLocation:)]
+        #[method_id(@__retain_semantics Other textSelectionForSelectionGranularity:enclosingPoint:inContainerAtLocation:)]
         pub unsafe fn textSelectionForSelectionGranularity_enclosingPoint_inContainerAtLocation(
             &self,
             selectionGranularity: NSTextSelectionGranularity,
@@ -120,14 +120,14 @@ extern_methods!(
             location: &NSTextLocation,
         ) -> Option<Id<NSTextSelection, Shared>>;
 
-        #[method_id(resolvedInsertionLocationForTextSelection:writingDirection:)]
+        #[method_id(@__retain_semantics Other resolvedInsertionLocationForTextSelection:writingDirection:)]
         pub unsafe fn resolvedInsertionLocationForTextSelection_writingDirection(
             &self,
             textSelection: &NSTextSelection,
             writingDirection: NSTextSelectionNavigationWritingDirection,
         ) -> Option<Id<NSTextLocation, Shared>>;
 
-        #[method_id(deletionRangesForTextSelection:direction:destination:allowsDecomposition:)]
+        #[method_id(@__retain_semantics Other deletionRangesForTextSelection:direction:destination:allowsDecomposition:)]
         pub unsafe fn deletionRangesForTextSelection_direction_destination_allowsDecomposition(
             &self,
             textSelection: &NSTextSelection,

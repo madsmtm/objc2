@@ -15,19 +15,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTableCellView {
-        #[method_id(objectValue)]
+        #[method_id(@__retain_semantics Other objectValue)]
         pub unsafe fn objectValue(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setObjectValue:)]
         pub unsafe fn setObjectValue(&self, objectValue: Option<&Object>);
 
-        #[method_id(textField)]
+        #[method_id(@__retain_semantics Other textField)]
         pub unsafe fn textField(&self) -> Option<Id<NSTextField, Shared>>;
 
         #[method(setTextField:)]
         pub unsafe fn setTextField(&self, textField: Option<&NSTextField>);
 
-        #[method_id(imageView)]
+        #[method_id(@__retain_semantics Other imageView)]
         pub unsafe fn imageView(&self) -> Option<Id<NSImageView, Shared>>;
 
         #[method(setImageView:)]
@@ -45,7 +45,7 @@ extern_methods!(
         #[method(setRowSizeStyle:)]
         pub unsafe fn setRowSizeStyle(&self, rowSizeStyle: NSTableViewRowSizeStyle);
 
-        #[method_id(draggingImageComponents)]
+        #[method_id(@__retain_semantics Other draggingImageComponents)]
         pub unsafe fn draggingImageComponents(
             &self,
         ) -> Id<NSArray<NSDraggingImageComponent>, Shared>;

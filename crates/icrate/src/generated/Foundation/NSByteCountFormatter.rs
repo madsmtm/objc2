@@ -33,28 +33,28 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSByteCountFormatter {
-        #[method_id(stringFromByteCount:countStyle:)]
+        #[method_id(@__retain_semantics Other stringFromByteCount:countStyle:)]
         pub unsafe fn stringFromByteCount_countStyle(
             byteCount: c_longlong,
             countStyle: NSByteCountFormatterCountStyle,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringFromByteCount:)]
+        #[method_id(@__retain_semantics Other stringFromByteCount:)]
         pub unsafe fn stringFromByteCount(&self, byteCount: c_longlong) -> Id<NSString, Shared>;
 
-        #[method_id(stringFromMeasurement:countStyle:)]
+        #[method_id(@__retain_semantics Other stringFromMeasurement:countStyle:)]
         pub unsafe fn stringFromMeasurement_countStyle(
             measurement: &NSMeasurement<NSUnitInformationStorage>,
             countStyle: NSByteCountFormatterCountStyle,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringFromMeasurement:)]
+        #[method_id(@__retain_semantics Other stringFromMeasurement:)]
         pub unsafe fn stringFromMeasurement(
             &self,
             measurement: &NSMeasurement<NSUnitInformationStorage>,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringForObjectValue:)]
+        #[method_id(@__retain_semantics Other stringForObjectValue:)]
         pub unsafe fn stringForObjectValue(
             &self,
             obj: Option<&Object>,

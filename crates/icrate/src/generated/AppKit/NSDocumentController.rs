@@ -15,31 +15,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDocumentController {
-        #[method_id(sharedDocumentController)]
+        #[method_id(@__retain_semantics Other sharedDocumentController)]
         pub unsafe fn sharedDocumentController() -> Id<NSDocumentController, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(documents)]
+        #[method_id(@__retain_semantics Other documents)]
         pub unsafe fn documents(&self) -> Id<NSArray<NSDocument>, Shared>;
 
-        #[method_id(currentDocument)]
+        #[method_id(@__retain_semantics Other currentDocument)]
         pub unsafe fn currentDocument(&self) -> Option<Id<NSDocument, Shared>>;
 
-        #[method_id(currentDirectory)]
+        #[method_id(@__retain_semantics Other currentDirectory)]
         pub unsafe fn currentDirectory(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(documentForURL:)]
+        #[method_id(@__retain_semantics Other documentForURL:)]
         pub unsafe fn documentForURL(&self, url: &NSURL) -> Option<Id<NSDocument, Shared>>;
 
-        #[method_id(documentForWindow:)]
+        #[method_id(@__retain_semantics Other documentForWindow:)]
         pub unsafe fn documentForWindow(&self, window: &NSWindow)
             -> Option<Id<NSDocument, Shared>>;
 
@@ -52,13 +52,13 @@ extern_methods!(
         #[method(newDocument:)]
         pub unsafe fn newDocument(&self, sender: Option<&Object>);
 
-        #[method_id(openUntitledDocumentAndDisplay:error:)]
+        #[method_id(@__retain_semantics Other openUntitledDocumentAndDisplay:error:)]
         pub unsafe fn openUntitledDocumentAndDisplay_error(
             &self,
             displayDocument: bool,
         ) -> Result<Id<NSDocument, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(makeUntitledDocumentOfType:error:)]
+        #[method_id(@__retain_semantics Other makeUntitledDocumentOfType:error:)]
         pub unsafe fn makeUntitledDocumentOfType_error(
             &self,
             typeName: &NSString,
@@ -67,7 +67,7 @@ extern_methods!(
         #[method(openDocument:)]
         pub unsafe fn openDocument(&self, sender: Option<&Object>);
 
-        #[method_id(URLsFromRunningOpenPanel)]
+        #[method_id(@__retain_semantics Other URLsFromRunningOpenPanel)]
         pub unsafe fn URLsFromRunningOpenPanel(&self) -> Option<Id<NSArray<NSURL>, Shared>>;
 
         #[method(runModalOpenPanel:forTypes:)]
@@ -96,7 +96,7 @@ extern_methods!(
             completionHandler: TodoBlock,
         );
 
-        #[method_id(makeDocumentWithContentsOfURL:ofType:error:)]
+        #[method_id(@__retain_semantics Other makeDocumentWithContentsOfURL:ofType:error:)]
         pub unsafe fn makeDocumentWithContentsOfURL_ofType_error(
             &self,
             url: &NSURL,
@@ -112,7 +112,7 @@ extern_methods!(
             completionHandler: TodoBlock,
         );
 
-        #[method_id(makeDocumentForURL:withContentsOfURL:ofType:error:)]
+        #[method_id(@__retain_semantics Other makeDocumentForURL:withContentsOfURL:ofType:error:)]
         pub unsafe fn makeDocumentForURL_withContentsOfURL_ofType_error(
             &self,
             urlOrNil: Option<&NSURL>,
@@ -150,7 +150,7 @@ extern_methods!(
             contextInfo: *mut c_void,
         );
 
-        #[method_id(duplicateDocumentWithContentsOfURL:copying:displayName:error:)]
+        #[method_id(@__retain_semantics Other duplicateDocumentWithContentsOfURL:copying:displayName:error:)]
         pub unsafe fn duplicateDocumentWithContentsOfURL_copying_displayName_error(
             &self,
             url: &NSURL,
@@ -161,7 +161,7 @@ extern_methods!(
         #[method(allowsAutomaticShareMenu)]
         pub unsafe fn allowsAutomaticShareMenu(&self) -> bool;
 
-        #[method_id(standardShareMenuItem)]
+        #[method_id(@__retain_semantics Other standardShareMenuItem)]
         pub unsafe fn standardShareMenuItem(&self) -> Id<NSMenuItem, Shared>;
 
         #[method(presentError:modalForWindow:delegate:didPresentSelector:contextInfo:)]
@@ -177,7 +177,7 @@ extern_methods!(
         #[method(presentError:)]
         pub unsafe fn presentError(&self, error: &NSError) -> bool;
 
-        #[method_id(willPresentError:)]
+        #[method_id(@__retain_semantics Other willPresentError:)]
         pub unsafe fn willPresentError(&self, error: &NSError) -> Id<NSError, Shared>;
 
         #[method(maximumRecentDocumentCount)]
@@ -192,25 +192,25 @@ extern_methods!(
         #[method(noteNewRecentDocumentURL:)]
         pub unsafe fn noteNewRecentDocumentURL(&self, url: &NSURL);
 
-        #[method_id(recentDocumentURLs)]
+        #[method_id(@__retain_semantics Other recentDocumentURLs)]
         pub unsafe fn recentDocumentURLs(&self) -> Id<NSArray<NSURL>, Shared>;
 
-        #[method_id(defaultType)]
+        #[method_id(@__retain_semantics Other defaultType)]
         pub unsafe fn defaultType(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(typeForContentsOfURL:error:)]
+        #[method_id(@__retain_semantics Other typeForContentsOfURL:error:)]
         pub unsafe fn typeForContentsOfURL_error(
             &self,
             url: &NSURL,
         ) -> Result<Id<NSString, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(documentClassNames)]
+        #[method_id(@__retain_semantics Other documentClassNames)]
         pub unsafe fn documentClassNames(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(documentClassForType:)]
         pub unsafe fn documentClassForType(&self, typeName: &NSString) -> Option<&'static Class>;
 
-        #[method_id(displayNameForType:)]
+        #[method_id(@__retain_semantics Other displayNameForType:)]
         pub unsafe fn displayNameForType(
             &self,
             typeName: &NSString,
@@ -225,7 +225,7 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSDocumentController {
-        #[method_id(openDocumentWithContentsOfURL:display:error:)]
+        #[method_id(@__retain_semantics Other openDocumentWithContentsOfURL:display:error:)]
         pub unsafe fn openDocumentWithContentsOfURL_display_error(
             &self,
             url: &NSURL,
@@ -239,60 +239,60 @@ extern_methods!(
             contentsURL: &NSURL,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(fileExtensionsFromType:)]
+        #[method_id(@__retain_semantics Other fileExtensionsFromType:)]
         pub unsafe fn fileExtensionsFromType(
             &self,
             typeName: &NSString,
         ) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(typeFromFileExtension:)]
+        #[method_id(@__retain_semantics Other typeFromFileExtension:)]
         pub unsafe fn typeFromFileExtension(
             &self,
             fileNameExtensionOrHFSFileType: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(documentForFileName:)]
+        #[method_id(@__retain_semantics Other documentForFileName:)]
         pub unsafe fn documentForFileName(&self, fileName: &NSString)
             -> Option<Id<Object, Shared>>;
 
-        #[method_id(fileNamesFromRunningOpenPanel)]
+        #[method_id(@__retain_semantics Other fileNamesFromRunningOpenPanel)]
         pub unsafe fn fileNamesFromRunningOpenPanel(&self) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(makeDocumentWithContentsOfFile:ofType:)]
+        #[method_id(@__retain_semantics Other makeDocumentWithContentsOfFile:ofType:)]
         pub unsafe fn makeDocumentWithContentsOfFile_ofType(
             &self,
             fileName: &NSString,
             type_: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(makeDocumentWithContentsOfURL:ofType:)]
+        #[method_id(@__retain_semantics Other makeDocumentWithContentsOfURL:ofType:)]
         pub unsafe fn makeDocumentWithContentsOfURL_ofType(
             &self,
             url: &NSURL,
             type_: Option<&NSString>,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(makeUntitledDocumentOfType:)]
+        #[method_id(@__retain_semantics Other makeUntitledDocumentOfType:)]
         pub unsafe fn makeUntitledDocumentOfType(
             &self,
             type_: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(openDocumentWithContentsOfFile:display:)]
+        #[method_id(@__retain_semantics Other openDocumentWithContentsOfFile:display:)]
         pub unsafe fn openDocumentWithContentsOfFile_display(
             &self,
             fileName: &NSString,
             display: bool,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(openDocumentWithContentsOfURL:display:)]
+        #[method_id(@__retain_semantics Other openDocumentWithContentsOfURL:display:)]
         pub unsafe fn openDocumentWithContentsOfURL_display(
             &self,
             url: &NSURL,
             display: bool,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(openUntitledDocumentOfType:display:)]
+        #[method_id(@__retain_semantics Other openUntitledDocumentOfType:display:)]
         pub unsafe fn openUntitledDocumentOfType_display(
             &self,
             type_: &NSString,

@@ -39,23 +39,23 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSURLRequest {
-        #[method_id(requestWithURL:)]
+        #[method_id(@__retain_semantics Other requestWithURL:)]
         pub unsafe fn requestWithURL(URL: &NSURL) -> Id<Self, Shared>;
 
         #[method(supportsSecureCoding)]
         pub unsafe fn supportsSecureCoding() -> bool;
 
-        #[method_id(requestWithURL:cachePolicy:timeoutInterval:)]
+        #[method_id(@__retain_semantics Other requestWithURL:cachePolicy:timeoutInterval:)]
         pub unsafe fn requestWithURL_cachePolicy_timeoutInterval(
             URL: &NSURL,
             cachePolicy: NSURLRequestCachePolicy,
             timeoutInterval: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithURL:)]
+        #[method_id(@__retain_semantics Init initWithURL:)]
         pub unsafe fn initWithURL(this: Option<Allocated<Self>>, URL: &NSURL) -> Id<Self, Shared>;
 
-        #[method_id(initWithURL:cachePolicy:timeoutInterval:)]
+        #[method_id(@__retain_semantics Init initWithURL:cachePolicy:timeoutInterval:)]
         pub unsafe fn initWithURL_cachePolicy_timeoutInterval(
             this: Option<Allocated<Self>>,
             URL: &NSURL,
@@ -63,7 +63,7 @@ extern_methods!(
             timeoutInterval: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(cachePolicy)]
@@ -72,7 +72,7 @@ extern_methods!(
         #[method(timeoutInterval)]
         pub unsafe fn timeoutInterval(&self) -> NSTimeInterval;
 
-        #[method_id(mainDocumentURL)]
+        #[method_id(@__retain_semantics Other mainDocumentURL)]
         pub unsafe fn mainDocumentURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(networkServiceType)]
@@ -106,7 +106,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSMutableURLRequest {
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setURL:)]
@@ -124,7 +124,7 @@ extern_methods!(
         #[method(setTimeoutInterval:)]
         pub unsafe fn setTimeoutInterval(&self, timeoutInterval: NSTimeInterval);
 
-        #[method_id(mainDocumentURL)]
+        #[method_id(@__retain_semantics Other mainDocumentURL)]
         pub unsafe fn mainDocumentURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setMainDocumentURL:)]
@@ -177,24 +177,24 @@ extern_methods!(
 extern_methods!(
     /// NSHTTPURLRequest
     unsafe impl NSURLRequest {
-        #[method_id(HTTPMethod)]
+        #[method_id(@__retain_semantics Other HTTPMethod)]
         pub unsafe fn HTTPMethod(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(allHTTPHeaderFields)]
+        #[method_id(@__retain_semantics Other allHTTPHeaderFields)]
         pub unsafe fn allHTTPHeaderFields(
             &self,
         ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>>;
 
-        #[method_id(valueForHTTPHeaderField:)]
+        #[method_id(@__retain_semantics Other valueForHTTPHeaderField:)]
         pub unsafe fn valueForHTTPHeaderField(
             &self,
             field: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(HTTPBody)]
+        #[method_id(@__retain_semantics Other HTTPBody)]
         pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(HTTPBodyStream)]
+        #[method_id(@__retain_semantics Other HTTPBodyStream)]
         pub unsafe fn HTTPBodyStream(&self) -> Option<Id<NSInputStream, Shared>>;
 
         #[method(HTTPShouldHandleCookies)]
@@ -208,13 +208,13 @@ extern_methods!(
 extern_methods!(
     /// NSMutableHTTPURLRequest
     unsafe impl NSMutableURLRequest {
-        #[method_id(HTTPMethod)]
+        #[method_id(@__retain_semantics Other HTTPMethod)]
         pub unsafe fn HTTPMethod(&self) -> Id<NSString, Shared>;
 
         #[method(setHTTPMethod:)]
         pub unsafe fn setHTTPMethod(&self, HTTPMethod: &NSString);
 
-        #[method_id(allHTTPHeaderFields)]
+        #[method_id(@__retain_semantics Other allHTTPHeaderFields)]
         pub unsafe fn allHTTPHeaderFields(
             &self,
         ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>>;
@@ -235,13 +235,13 @@ extern_methods!(
         #[method(addValue:forHTTPHeaderField:)]
         pub unsafe fn addValue_forHTTPHeaderField(&self, value: &NSString, field: &NSString);
 
-        #[method_id(HTTPBody)]
+        #[method_id(@__retain_semantics Other HTTPBody)]
         pub unsafe fn HTTPBody(&self) -> Option<Id<NSData, Shared>>;
 
         #[method(setHTTPBody:)]
         pub unsafe fn setHTTPBody(&self, HTTPBody: Option<&NSData>);
 
-        #[method_id(HTTPBodyStream)]
+        #[method_id(@__retain_semantics Other HTTPBodyStream)]
         pub unsafe fn HTTPBodyStream(&self) -> Option<Id<NSInputStream, Shared>>;
 
         #[method(setHTTPBodyStream:)]

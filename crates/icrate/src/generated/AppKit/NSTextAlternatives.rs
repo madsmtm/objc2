@@ -15,17 +15,17 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextAlternatives {
-        #[method_id(initWithPrimaryString:alternativeStrings:)]
+        #[method_id(@__retain_semantics Init initWithPrimaryString:alternativeStrings:)]
         pub unsafe fn initWithPrimaryString_alternativeStrings(
             this: Option<Allocated<Self>>,
             primaryString: &NSString,
             alternativeStrings: &NSArray<NSString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(primaryString)]
+        #[method_id(@__retain_semantics Other primaryString)]
         pub unsafe fn primaryString(&self) -> Id<NSString, Shared>;
 
-        #[method_id(alternativeStrings)]
+        #[method_id(@__retain_semantics Other alternativeStrings)]
         pub unsafe fn alternativeStrings(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(noteSelectedAlternativeString:)]

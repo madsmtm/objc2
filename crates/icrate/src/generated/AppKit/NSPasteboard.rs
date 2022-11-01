@@ -117,16 +117,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPasteboard {
-        #[method_id(generalPasteboard)]
+        #[method_id(@__retain_semantics Other generalPasteboard)]
         pub unsafe fn generalPasteboard() -> Id<NSPasteboard, Shared>;
 
-        #[method_id(pasteboardWithName:)]
+        #[method_id(@__retain_semantics Other pasteboardWithName:)]
         pub unsafe fn pasteboardWithName(name: &NSPasteboardName) -> Id<NSPasteboard, Shared>;
 
-        #[method_id(pasteboardWithUniqueName)]
+        #[method_id(@__retain_semantics Other pasteboardWithUniqueName)]
         pub unsafe fn pasteboardWithUniqueName() -> Id<NSPasteboard, Shared>;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Id<NSPasteboardName, Shared>;
 
         #[method(changeCount)]
@@ -144,14 +144,14 @@ extern_methods!(
         #[method(writeObjects:)]
         pub unsafe fn writeObjects(&self, objects: &NSArray<NSPasteboardWriting>) -> bool;
 
-        #[method_id(readObjectsForClasses:options:)]
+        #[method_id(@__retain_semantics Other readObjectsForClasses:options:)]
         pub unsafe fn readObjectsForClasses_options(
             &self,
             classArray: &NSArray<TodoClass>,
             options: Option<&NSDictionary<NSPasteboardReadingOptionKey, Object>>,
         ) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(pasteboardItems)]
+        #[method_id(@__retain_semantics Other pasteboardItems)]
         pub unsafe fn pasteboardItems(&self) -> Option<Id<NSArray<NSPasteboardItem>, Shared>>;
 
         #[method(indexOfPasteboardItem:)]
@@ -185,10 +185,10 @@ extern_methods!(
             newOwner: Option<&Object>,
         ) -> NSInteger;
 
-        #[method_id(types)]
+        #[method_id(@__retain_semantics Other types)]
         pub unsafe fn types(&self) -> Option<Id<NSArray<NSPasteboardType>, Shared>>;
 
-        #[method_id(availableTypeFromArray:)]
+        #[method_id(@__retain_semantics Other availableTypeFromArray:)]
         pub unsafe fn availableTypeFromArray(
             &self,
             types: &NSArray<NSPasteboardType>,
@@ -215,17 +215,17 @@ extern_methods!(
             dataType: &NSPasteboardType,
         ) -> bool;
 
-        #[method_id(dataForType:)]
+        #[method_id(@__retain_semantics Other dataForType:)]
         pub unsafe fn dataForType(&self, dataType: &NSPasteboardType)
             -> Option<Id<NSData, Shared>>;
 
-        #[method_id(propertyListForType:)]
+        #[method_id(@__retain_semantics Other propertyListForType:)]
         pub unsafe fn propertyListForType(
             &self,
             dataType: &NSPasteboardType,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(stringForType:)]
+        #[method_id(@__retain_semantics Other stringForType:)]
         pub unsafe fn stringForType(
             &self,
             dataType: &NSPasteboardType,
@@ -236,21 +236,21 @@ extern_methods!(
 extern_methods!(
     /// FilterServices
     unsafe impl NSPasteboard {
-        #[method_id(typesFilterableTo:)]
+        #[method_id(@__retain_semantics Other typesFilterableTo:)]
         pub unsafe fn typesFilterableTo(
             type_: &NSPasteboardType,
         ) -> Id<NSArray<NSPasteboardType>, Shared>;
 
-        #[method_id(pasteboardByFilteringFile:)]
+        #[method_id(@__retain_semantics Other pasteboardByFilteringFile:)]
         pub unsafe fn pasteboardByFilteringFile(filename: &NSString) -> Id<NSPasteboard, Shared>;
 
-        #[method_id(pasteboardByFilteringData:ofType:)]
+        #[method_id(@__retain_semantics Other pasteboardByFilteringData:ofType:)]
         pub unsafe fn pasteboardByFilteringData_ofType(
             data: &NSData,
             type_: &NSPasteboardType,
         ) -> Id<NSPasteboard, Shared>;
 
-        #[method_id(pasteboardByFilteringTypesInPasteboard:)]
+        #[method_id(@__retain_semantics Other pasteboardByFilteringTypesInPasteboard:)]
         pub unsafe fn pasteboardByFilteringTypesInPasteboard(
             pboard: &NSPasteboard,
         ) -> Id<NSPasteboard, Shared>;
@@ -290,7 +290,7 @@ pub type NSPasteboardReading = NSObject;
 extern_methods!(
     /// NSPasteboardSupport
     unsafe impl NSURL {
-        #[method_id(URLFromPasteboard:)]
+        #[method_id(@__retain_semantics Other URLFromPasteboard:)]
         pub unsafe fn URLFromPasteboard(pasteBoard: &NSPasteboard) -> Option<Id<NSURL, Shared>>;
 
         #[method(writeToPasteboard:)]
@@ -309,7 +309,7 @@ extern_methods!(
         #[method(writeFileContents:)]
         pub unsafe fn writeFileContents(&self, filename: &NSString) -> bool;
 
-        #[method_id(readFileContentsType:toFile:)]
+        #[method_id(@__retain_semantics Other readFileContentsType:toFile:)]
         pub unsafe fn readFileContentsType_toFile(
             &self,
             type_: Option<&NSPasteboardType>,
@@ -319,7 +319,7 @@ extern_methods!(
         #[method(writeFileWrapper:)]
         pub unsafe fn writeFileWrapper(&self, wrapper: &NSFileWrapper) -> bool;
 
-        #[method_id(readFileWrapper)]
+        #[method_id(@__retain_semantics Other readFileWrapper)]
         pub unsafe fn readFileWrapper(&self) -> Option<Id<NSFileWrapper, Shared>>;
     }
 );

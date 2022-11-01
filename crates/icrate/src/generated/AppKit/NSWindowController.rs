@@ -15,48 +15,48 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSWindowController {
-        #[method_id(initWithWindow:)]
+        #[method_id(@__retain_semantics Init initWithWindow:)]
         pub unsafe fn initWithWindow(
             this: Option<Allocated<Self>>,
             window: Option<&NSWindow>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithWindowNibName:)]
+        #[method_id(@__retain_semantics Init initWithWindowNibName:)]
         pub unsafe fn initWithWindowNibName(
             this: Option<Allocated<Self>>,
             windowNibName: &NSNibName,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithWindowNibName:owner:)]
+        #[method_id(@__retain_semantics Init initWithWindowNibName:owner:)]
         pub unsafe fn initWithWindowNibName_owner(
             this: Option<Allocated<Self>>,
             windowNibName: &NSNibName,
             owner: &Object,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithWindowNibPath:owner:)]
+        #[method_id(@__retain_semantics Init initWithWindowNibPath:owner:)]
         pub unsafe fn initWithWindowNibPath_owner(
             this: Option<Allocated<Self>>,
             windowNibPath: &NSString,
             owner: &Object,
         ) -> Id<Self, Shared>;
 
-        #[method_id(windowNibName)]
+        #[method_id(@__retain_semantics Other windowNibName)]
         pub unsafe fn windowNibName(&self) -> Option<Id<NSNibName, Shared>>;
 
-        #[method_id(windowNibPath)]
+        #[method_id(@__retain_semantics Other windowNibPath)]
         pub unsafe fn windowNibPath(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(owner)]
+        #[method_id(@__retain_semantics Other owner)]
         pub unsafe fn owner(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(windowFrameAutosaveName)]
+        #[method_id(@__retain_semantics Other windowFrameAutosaveName)]
         pub unsafe fn windowFrameAutosaveName(&self) -> Id<NSWindowFrameAutosaveName, Shared>;
 
         #[method(setWindowFrameAutosaveName:)]
@@ -71,7 +71,7 @@ extern_methods!(
         #[method(setShouldCascadeWindows:)]
         pub unsafe fn setShouldCascadeWindows(&self, shouldCascadeWindows: bool);
 
-        #[method_id(document)]
+        #[method_id(@__retain_semantics Other document)]
         pub unsafe fn document(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setDocument:)]
@@ -89,13 +89,13 @@ extern_methods!(
         #[method(synchronizeWindowTitleWithDocumentName)]
         pub unsafe fn synchronizeWindowTitleWithDocumentName(&self);
 
-        #[method_id(windowTitleForDocumentDisplayName:)]
+        #[method_id(@__retain_semantics Other windowTitleForDocumentDisplayName:)]
         pub unsafe fn windowTitleForDocumentDisplayName(
             &self,
             displayName: &NSString,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(contentViewController)]
+        #[method_id(@__retain_semantics Other contentViewController)]
         pub unsafe fn contentViewController(&self) -> Option<Id<NSViewController, Shared>>;
 
         #[method(setContentViewController:)]
@@ -104,7 +104,7 @@ extern_methods!(
             contentViewController: Option<&NSViewController>,
         );
 
-        #[method_id(window)]
+        #[method_id(@__retain_semantics Other window)]
         pub unsafe fn window(&self) -> Option<Id<NSWindow, Shared>>;
 
         #[method(setWindow:)]
@@ -133,7 +133,7 @@ extern_methods!(
 extern_methods!(
     /// NSWindowControllerStoryboardingMethods
     unsafe impl NSWindowController {
-        #[method_id(storyboard)]
+        #[method_id(@__retain_semantics Other storyboard)]
         pub unsafe fn storyboard(&self) -> Option<Id<NSStoryboard, Shared>>;
     }
 );

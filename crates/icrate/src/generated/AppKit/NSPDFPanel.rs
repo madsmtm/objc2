@@ -20,10 +20,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPDFPanel {
-        #[method_id(panel)]
+        #[method_id(@__retain_semantics Other panel)]
         pub unsafe fn panel() -> Id<NSPDFPanel, Shared>;
 
-        #[method_id(accessoryController)]
+        #[method_id(@__retain_semantics Other accessoryController)]
         pub unsafe fn accessoryController(&self) -> Option<Id<NSViewController, Shared>>;
 
         #[method(setAccessoryController:)]
@@ -35,7 +35,7 @@ extern_methods!(
         #[method(setOptions:)]
         pub unsafe fn setOptions(&self, options: NSPDFPanelOptions);
 
-        #[method_id(defaultFileName)]
+        #[method_id(@__retain_semantics Other defaultFileName)]
         pub unsafe fn defaultFileName(&self) -> Id<NSString, Shared>;
 
         #[method(setDefaultFileName:)]

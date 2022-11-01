@@ -54,7 +54,7 @@ extern_methods!(
         #[method(removeDependency:)]
         pub unsafe fn removeDependency(&self, op: &NSOperation);
 
-        #[method_id(dependencies)]
+        #[method_id(@__retain_semantics Other dependencies)]
         pub unsafe fn dependencies(&self) -> Id<NSArray<NSOperation>, Shared>;
 
         #[method(queuePriority)]
@@ -84,7 +84,7 @@ extern_methods!(
         #[method(setQualityOfService:)]
         pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setName:)]
@@ -103,7 +103,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSBlockOperation {
-        #[method_id(blockOperationWithBlock:)]
+        #[method_id(@__retain_semantics Other blockOperationWithBlock:)]
         pub unsafe fn blockOperationWithBlock(block: TodoBlock) -> Id<Self, Shared>;
 
         #[method(addExecutionBlock:)]
@@ -122,7 +122,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSInvocationOperation {
-        #[method_id(initWithTarget:selector:object:)]
+        #[method_id(@__retain_semantics Init initWithTarget:selector:object:)]
         pub unsafe fn initWithTarget_selector_object(
             this: Option<Allocated<Self>>,
             target: &Object,
@@ -130,16 +130,16 @@ extern_methods!(
             arg: Option<&Object>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithInvocation:)]
+        #[method_id(@__retain_semantics Init initWithInvocation:)]
         pub unsafe fn initWithInvocation(
             this: Option<Allocated<Self>>,
             inv: &NSInvocation,
         ) -> Id<Self, Shared>;
 
-        #[method_id(invocation)]
+        #[method_id(@__retain_semantics Other invocation)]
         pub unsafe fn invocation(&self) -> Id<NSInvocation, Shared>;
 
-        #[method_id(result)]
+        #[method_id(@__retain_semantics Other result)]
         pub unsafe fn result(&self) -> Option<Id<Object, Shared>>;
     }
 );
@@ -165,7 +165,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOperationQueue {
-        #[method_id(progress)]
+        #[method_id(@__retain_semantics Other progress)]
         pub unsafe fn progress(&self) -> Id<NSProgress, Shared>;
 
         #[method(addOperation:)]
@@ -196,7 +196,7 @@ extern_methods!(
         #[method(setSuspended:)]
         pub unsafe fn setSuspended(&self, suspended: bool);
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setName:)]
@@ -220,10 +220,10 @@ extern_methods!(
         #[method(waitUntilAllOperationsAreFinished)]
         pub unsafe fn waitUntilAllOperationsAreFinished(&self);
 
-        #[method_id(currentQueue)]
+        #[method_id(@__retain_semantics Other currentQueue)]
         pub unsafe fn currentQueue() -> Option<Id<NSOperationQueue, Shared>>;
 
-        #[method_id(mainQueue)]
+        #[method_id(@__retain_semantics Other mainQueue)]
         pub unsafe fn mainQueue() -> Id<NSOperationQueue, Shared>;
     }
 );
@@ -231,7 +231,7 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSOperationQueue {
-        #[method_id(operations)]
+        #[method_id(@__retain_semantics Other operations)]
         pub unsafe fn operations(&self) -> Id<NSArray<NSOperation>, Shared>;
 
         #[method(operationCount)]

@@ -46,20 +46,20 @@ extern_methods!(
             stepDownCycle: &NSArray<NSNumber>,
         );
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithScrollView:orientation:)]
+        #[method_id(@__retain_semantics Init initWithScrollView:orientation:)]
         pub unsafe fn initWithScrollView_orientation(
             this: Option<Allocated<Self>>,
             scrollView: Option<&NSScrollView>,
             orientation: NSRulerOrientation,
         ) -> Id<Self, Shared>;
 
-        #[method_id(scrollView)]
+        #[method_id(@__retain_semantics Other scrollView)]
         pub unsafe fn scrollView(&self) -> Option<Id<NSScrollView, Shared>>;
 
         #[method(setScrollView:)]
@@ -98,7 +98,7 @@ extern_methods!(
             reservedThicknessForAccessoryView: CGFloat,
         );
 
-        #[method_id(measurementUnits)]
+        #[method_id(@__retain_semantics Other measurementUnits)]
         pub unsafe fn measurementUnits(&self) -> Id<NSRulerViewUnitName, Shared>;
 
         #[method(setMeasurementUnits:)]
@@ -110,7 +110,7 @@ extern_methods!(
         #[method(setOriginOffset:)]
         pub unsafe fn setOriginOffset(&self, originOffset: CGFloat);
 
-        #[method_id(clientView)]
+        #[method_id(@__retain_semantics Other clientView)]
         pub unsafe fn clientView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setClientView:)]
@@ -122,7 +122,7 @@ extern_methods!(
         #[method(removeMarker:)]
         pub unsafe fn removeMarker(&self, marker: &NSRulerMarker);
 
-        #[method_id(markers)]
+        #[method_id(@__retain_semantics Other markers)]
         pub unsafe fn markers(&self) -> Option<Id<NSArray<NSRulerMarker>, Shared>>;
 
         #[method(setMarkers:)]
@@ -135,7 +135,7 @@ extern_methods!(
             event: &NSEvent,
         ) -> bool;
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setAccessoryView:)]

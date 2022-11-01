@@ -23,20 +23,20 @@ extern_methods!(
         #[method(encodePortObject:)]
         pub unsafe fn encodePortObject(&self, aport: &NSPort);
 
-        #[method_id(decodePortObject)]
+        #[method_id(@__retain_semantics Other decodePortObject)]
         pub unsafe fn decodePortObject(&self) -> Option<Id<NSPort, Shared>>;
 
-        #[method_id(connection)]
+        #[method_id(@__retain_semantics Other connection)]
         pub unsafe fn connection(&self) -> Option<Id<NSConnection, Shared>>;
 
-        #[method_id(portCoderWithReceivePort:sendPort:components:)]
+        #[method_id(@__retain_semantics Other portCoderWithReceivePort:sendPort:components:)]
         pub unsafe fn portCoderWithReceivePort_sendPort_components(
             rcvPort: Option<&NSPort>,
             sndPort: Option<&NSPort>,
             comps: Option<&NSArray>,
         ) -> Id<Object, Shared>;
 
-        #[method_id(initWithReceivePort:sendPort:components:)]
+        #[method_id(@__retain_semantics Init initWithReceivePort:sendPort:components:)]
         pub unsafe fn initWithReceivePort_sendPort_components(
             this: Option<Allocated<Self>>,
             rcvPort: Option<&NSPort>,
@@ -55,7 +55,7 @@ extern_methods!(
         #[method(classForPortCoder)]
         pub unsafe fn classForPortCoder(&self) -> &'static Class;
 
-        #[method_id(replacementObjectForPortCoder:)]
+        #[method_id(@__retain_semantics Other replacementObjectForPortCoder:)]
         pub unsafe fn replacementObjectForPortCoder(
             &self,
             coder: &NSPortCoder,

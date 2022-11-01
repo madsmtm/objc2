@@ -15,39 +15,39 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTreeNode {
-        #[method_id(treeNodeWithRepresentedObject:)]
+        #[method_id(@__retain_semantics Other treeNodeWithRepresentedObject:)]
         pub unsafe fn treeNodeWithRepresentedObject(
             modelObject: Option<&Object>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithRepresentedObject:)]
+        #[method_id(@__retain_semantics Init initWithRepresentedObject:)]
         pub unsafe fn initWithRepresentedObject(
             this: Option<Allocated<Self>>,
             modelObject: Option<&Object>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(representedObject)]
+        #[method_id(@__retain_semantics Other representedObject)]
         pub unsafe fn representedObject(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(indexPath)]
+        #[method_id(@__retain_semantics Other indexPath)]
         pub unsafe fn indexPath(&self) -> Id<NSIndexPath, Shared>;
 
         #[method(isLeaf)]
         pub unsafe fn isLeaf(&self) -> bool;
 
-        #[method_id(childNodes)]
+        #[method_id(@__retain_semantics Other childNodes)]
         pub unsafe fn childNodes(&self) -> Option<Id<NSArray<NSTreeNode>, Shared>>;
 
-        #[method_id(mutableChildNodes)]
+        #[method_id(@__retain_semantics Other mutableChildNodes)]
         pub unsafe fn mutableChildNodes(&self) -> Id<NSMutableArray<NSTreeNode>, Shared>;
 
-        #[method_id(descendantNodeAtIndexPath:)]
+        #[method_id(@__retain_semantics Other descendantNodeAtIndexPath:)]
         pub unsafe fn descendantNodeAtIndexPath(
             &self,
             indexPath: &NSIndexPath,
         ) -> Option<Id<NSTreeNode, Shared>>;
 
-        #[method_id(parentNode)]
+        #[method_id(@__retain_semantics Other parentNode)]
         pub unsafe fn parentNode(&self) -> Option<Id<NSTreeNode, Shared>>;
 
         #[method(sortWithSortDescriptors:recursively:)]

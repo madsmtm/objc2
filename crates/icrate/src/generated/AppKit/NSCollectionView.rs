@@ -47,7 +47,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionViewItem {
-        #[method_id(collectionView)]
+        #[method_id(@__retain_semantics Other collectionView)]
         pub unsafe fn collectionView(&self) -> Option<Id<NSCollectionView, Shared>>;
 
         #[method(isSelected)]
@@ -62,19 +62,19 @@ extern_methods!(
         #[method(setHighlightState:)]
         pub unsafe fn setHighlightState(&self, highlightState: NSCollectionViewItemHighlightState);
 
-        #[method_id(imageView)]
+        #[method_id(@__retain_semantics Other imageView)]
         pub unsafe fn imageView(&self) -> Option<Id<NSImageView, Shared>>;
 
         #[method(setImageView:)]
         pub unsafe fn setImageView(&self, imageView: Option<&NSImageView>);
 
-        #[method_id(textField)]
+        #[method_id(@__retain_semantics Other textField)]
         pub unsafe fn textField(&self) -> Option<Id<NSTextField, Shared>>;
 
         #[method(setTextField:)]
         pub unsafe fn setTextField(&self, textField: Option<&NSTextField>);
 
-        #[method_id(draggingImageComponents)]
+        #[method_id(@__retain_semantics Other draggingImageComponents)]
         pub unsafe fn draggingImageComponents(
             &self,
         ) -> Id<NSArray<NSDraggingImageComponent>, Shared>;
@@ -92,13 +92,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionView {
-        #[method_id(dataSource)]
+        #[method_id(@__retain_semantics Other dataSource)]
         pub unsafe fn dataSource(&self) -> Option<Id<NSCollectionViewDataSource, Shared>>;
 
         #[method(setDataSource:)]
         pub unsafe fn setDataSource(&self, dataSource: Option<&NSCollectionViewDataSource>);
 
-        #[method_id(prefetchDataSource)]
+        #[method_id(@__retain_semantics Other prefetchDataSource)]
         pub unsafe fn prefetchDataSource(&self) -> Option<Id<NSCollectionViewPrefetching, Shared>>;
 
         #[method(setPrefetchDataSource:)]
@@ -107,7 +107,7 @@ extern_methods!(
             prefetchDataSource: Option<&NSCollectionViewPrefetching>,
         );
 
-        #[method_id(content)]
+        #[method_id(@__retain_semantics Other content)]
         pub unsafe fn content(&self) -> Id<NSArray<Object>, Shared>;
 
         #[method(setContent:)]
@@ -116,13 +116,13 @@ extern_methods!(
         #[method(reloadData)]
         pub unsafe fn reloadData(&self);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSCollectionViewDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSCollectionViewDelegate>);
 
-        #[method_id(backgroundView)]
+        #[method_id(@__retain_semantics Other backgroundView)]
         pub unsafe fn backgroundView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setBackgroundView:)]
@@ -137,7 +137,7 @@ extern_methods!(
             backgroundViewScrollsWithContent: bool,
         );
 
-        #[method_id(collectionViewLayout)]
+        #[method_id(@__retain_semantics Other collectionViewLayout)]
         pub unsafe fn collectionViewLayout(&self) -> Option<Id<NSCollectionViewLayout, Shared>>;
 
         #[method(setCollectionViewLayout:)]
@@ -146,13 +146,13 @@ extern_methods!(
             collectionViewLayout: Option<&NSCollectionViewLayout>,
         );
 
-        #[method_id(layoutAttributesForItemAtIndexPath:)]
+        #[method_id(@__retain_semantics Other layoutAttributesForItemAtIndexPath:)]
         pub unsafe fn layoutAttributesForItemAtIndexPath(
             &self,
             indexPath: &NSIndexPath,
         ) -> Option<Id<NSCollectionViewLayoutAttributes, Shared>>;
 
-        #[method_id(layoutAttributesForSupplementaryElementOfKind:atIndexPath:)]
+        #[method_id(@__retain_semantics Other layoutAttributesForSupplementaryElementOfKind:atIndexPath:)]
         pub unsafe fn layoutAttributesForSupplementaryElementOfKind_atIndexPath(
             &self,
             kind: &NSCollectionViewSupplementaryElementKind,
@@ -169,7 +169,7 @@ extern_methods!(
             numberOfItems: NSUInteger,
         ) -> NSRect;
 
-        #[method_id(backgroundColors)]
+        #[method_id(@__retain_semantics Other backgroundColors)]
         pub unsafe fn backgroundColors(&self) -> Id<NSArray<NSColor>, Shared>;
 
         #[method(setBackgroundColors:)]
@@ -202,13 +202,13 @@ extern_methods!(
         #[method(setAllowsMultipleSelection:)]
         pub unsafe fn setAllowsMultipleSelection(&self, allowsMultipleSelection: bool);
 
-        #[method_id(selectionIndexes)]
+        #[method_id(@__retain_semantics Other selectionIndexes)]
         pub unsafe fn selectionIndexes(&self) -> Id<NSIndexSet, Shared>;
 
         #[method(setSelectionIndexes:)]
         pub unsafe fn setSelectionIndexes(&self, selectionIndexes: &NSIndexSet);
 
-        #[method_id(selectionIndexPaths)]
+        #[method_id(@__retain_semantics Other selectionIndexPaths)]
         pub unsafe fn selectionIndexPaths(&self) -> Id<NSSet<NSIndexPath>, Shared>;
 
         #[method(setSelectionIndexPaths:)]
@@ -260,14 +260,14 @@ extern_methods!(
             identifier: &NSUserInterfaceItemIdentifier,
         );
 
-        #[method_id(makeItemWithIdentifier:forIndexPath:)]
+        #[method_id(@__retain_semantics Other makeItemWithIdentifier:forIndexPath:)]
         pub unsafe fn makeItemWithIdentifier_forIndexPath(
             &self,
             identifier: &NSUserInterfaceItemIdentifier,
             indexPath: &NSIndexPath,
         ) -> Id<NSCollectionViewItem, Shared>;
 
-        #[method_id(makeSupplementaryViewOfKind:withIdentifier:forIndexPath:)]
+        #[method_id(@__retain_semantics Other makeSupplementaryViewOfKind:withIdentifier:forIndexPath:)]
         pub unsafe fn makeSupplementaryViewOfKind_withIdentifier_forIndexPath(
             &self,
             elementKind: &NSCollectionViewSupplementaryElementKind,
@@ -275,50 +275,50 @@ extern_methods!(
             indexPath: &NSIndexPath,
         ) -> Id<NSView, Shared>;
 
-        #[method_id(itemAtIndex:)]
+        #[method_id(@__retain_semantics Other itemAtIndex:)]
         pub unsafe fn itemAtIndex(
             &self,
             index: NSUInteger,
         ) -> Option<Id<NSCollectionViewItem, Shared>>;
 
-        #[method_id(itemAtIndexPath:)]
+        #[method_id(@__retain_semantics Other itemAtIndexPath:)]
         pub unsafe fn itemAtIndexPath(
             &self,
             indexPath: &NSIndexPath,
         ) -> Option<Id<NSCollectionViewItem, Shared>>;
 
-        #[method_id(visibleItems)]
+        #[method_id(@__retain_semantics Other visibleItems)]
         pub unsafe fn visibleItems(&self) -> Id<NSArray<NSCollectionViewItem>, Shared>;
 
-        #[method_id(indexPathsForVisibleItems)]
+        #[method_id(@__retain_semantics Other indexPathsForVisibleItems)]
         pub unsafe fn indexPathsForVisibleItems(&self) -> Id<NSSet<NSIndexPath>, Shared>;
 
-        #[method_id(indexPathForItem:)]
+        #[method_id(@__retain_semantics Other indexPathForItem:)]
         pub unsafe fn indexPathForItem(
             &self,
             item: &NSCollectionViewItem,
         ) -> Option<Id<NSIndexPath, Shared>>;
 
-        #[method_id(indexPathForItemAtPoint:)]
+        #[method_id(@__retain_semantics Other indexPathForItemAtPoint:)]
         pub unsafe fn indexPathForItemAtPoint(
             &self,
             point: NSPoint,
         ) -> Option<Id<NSIndexPath, Shared>>;
 
-        #[method_id(supplementaryViewForElementKind:atIndexPath:)]
+        #[method_id(@__retain_semantics Other supplementaryViewForElementKind:atIndexPath:)]
         pub unsafe fn supplementaryViewForElementKind_atIndexPath(
             &self,
             elementKind: &NSCollectionViewSupplementaryElementKind,
             indexPath: &NSIndexPath,
         ) -> Option<Id<TodoProtocols, Shared>>;
 
-        #[method_id(visibleSupplementaryViewsOfKind:)]
+        #[method_id(@__retain_semantics Other visibleSupplementaryViewsOfKind:)]
         pub unsafe fn visibleSupplementaryViewsOfKind(
             &self,
             elementKind: &NSCollectionViewSupplementaryElementKind,
         ) -> Id<NSArray<TodoProtocols>, Shared>;
 
-        #[method_id(indexPathsForVisibleSupplementaryElementsOfKind:)]
+        #[method_id(@__retain_semantics Other indexPathsForVisibleSupplementaryElementsOfKind:)]
         pub unsafe fn indexPathsForVisibleSupplementaryElementsOfKind(
             &self,
             elementKind: &NSCollectionViewSupplementaryElementKind,
@@ -376,7 +376,7 @@ extern_methods!(
             localDestination: bool,
         );
 
-        #[method_id(draggingImageForItemsAtIndexPaths:withEvent:offset:)]
+        #[method_id(@__retain_semantics Other draggingImageForItemsAtIndexPaths:withEvent:offset:)]
         pub unsafe fn draggingImageForItemsAtIndexPaths_withEvent_offset(
             &self,
             indexPaths: &NSSet<NSIndexPath>,
@@ -384,7 +384,7 @@ extern_methods!(
             dragImageOffset: NSPointPointer,
         ) -> Id<NSImage, Shared>;
 
-        #[method_id(draggingImageForItemsAtIndexes:withEvent:offset:)]
+        #[method_id(@__retain_semantics Other draggingImageForItemsAtIndexes:withEvent:offset:)]
         pub unsafe fn draggingImageForItemsAtIndexes_withEvent_offset(
             &self,
             indexes: &NSIndexSet,
@@ -403,7 +403,7 @@ pub type NSCollectionViewDelegate = NSObject;
 extern_methods!(
     /// NSCollectionViewAdditions
     unsafe impl NSIndexPath {
-        #[method_id(indexPathForItem:inSection:)]
+        #[method_id(@__retain_semantics Other indexPathForItem:inSection:)]
         pub unsafe fn indexPathForItem_inSection(
             item: NSInteger,
             section: NSInteger,
@@ -420,10 +420,10 @@ extern_methods!(
 extern_methods!(
     /// NSCollectionViewAdditions
     unsafe impl NSSet {
-        #[method_id(setWithCollectionViewIndexPath:)]
+        #[method_id(@__retain_semantics Other setWithCollectionViewIndexPath:)]
         pub unsafe fn setWithCollectionViewIndexPath(indexPath: &NSIndexPath) -> Id<Self, Shared>;
 
-        #[method_id(setWithCollectionViewIndexPaths:)]
+        #[method_id(@__retain_semantics Other setWithCollectionViewIndexPaths:)]
         pub unsafe fn setWithCollectionViewIndexPaths(
             indexPaths: &NSArray<NSIndexPath>,
         ) -> Id<Self, Shared>;
@@ -440,13 +440,13 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSCollectionView {
-        #[method_id(newItemForRepresentedObject:)]
+        #[method_id(@__retain_semantics New newItemForRepresentedObject:)]
         pub unsafe fn newItemForRepresentedObject(
             &self,
             object: &Object,
         ) -> Id<NSCollectionViewItem, Shared>;
 
-        #[method_id(itemPrototype)]
+        #[method_id(@__retain_semantics Other itemPrototype)]
         pub unsafe fn itemPrototype(&self) -> Option<Id<NSCollectionViewItem, Shared>>;
 
         #[method(setItemPrototype:)]

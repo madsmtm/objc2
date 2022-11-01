@@ -15,16 +15,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSResponder {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(nextResponder)]
+        #[method_id(@__retain_semantics Other nextResponder)]
         pub unsafe fn nextResponder(&self) -> Option<Id<NSResponder, Shared>>;
 
         #[method(setNextResponder:)]
@@ -36,7 +36,7 @@ extern_methods!(
         #[method(performKeyEquivalent:)]
         pub unsafe fn performKeyEquivalent(&self, event: &NSEvent) -> bool;
 
-        #[method_id(validRequestorForSendType:returnType:)]
+        #[method_id(@__retain_semantics Other validRequestorForSendType:returnType:)]
         pub unsafe fn validRequestorForSendType_returnType(
             &self,
             sendType: Option<&NSPasteboardType>,
@@ -157,7 +157,7 @@ extern_methods!(
         #[method(flushBufferedKeyEvents)]
         pub unsafe fn flushBufferedKeyEvents(&self);
 
-        #[method_id(menu)]
+        #[method_id(@__retain_semantics Other menu)]
         pub unsafe fn menu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setMenu:)]
@@ -181,7 +181,7 @@ extern_methods!(
         #[method(wantsForwardedScrollEventsForAxis:)]
         pub unsafe fn wantsForwardedScrollEventsForAxis(&self, axis: NSEventGestureAxis) -> bool;
 
-        #[method_id(supplementalTargetForAction:sender:)]
+        #[method_id(@__retain_semantics Other supplementalTargetForAction:sender:)]
         pub unsafe fn supplementalTargetForAction_sender(
             &self,
             action: Sel,
@@ -200,7 +200,7 @@ extern_methods!(
 extern_methods!(
     /// NSUndoSupport
     unsafe impl NSResponder {
-        #[method_id(undoManager)]
+        #[method_id(@__retain_semantics Other undoManager)]
         pub unsafe fn undoManager(&self) -> Option<Id<NSUndoManager, Shared>>;
     }
 );
@@ -233,7 +233,7 @@ extern_methods!(
         #[method(presentError:)]
         pub unsafe fn presentError(&self, error: &NSError) -> bool;
 
-        #[method_id(willPresentError:)]
+        #[method_id(@__retain_semantics Other willPresentError:)]
         pub unsafe fn willPresentError(&self, error: &NSError) -> Id<NSError, Shared>;
     }
 );

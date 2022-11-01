@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSActionCell {
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]

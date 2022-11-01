@@ -17,19 +17,19 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<KeyType: Message, ObjectType: Message> NSCache<KeyType, ObjectType> {
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Id<NSString, Shared>;
 
         #[method(setName:)]
         pub unsafe fn setName(&self, name: &NSString);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSCacheDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSCacheDelegate>);
 
-        #[method_id(objectForKey:)]
+        #[method_id(@__retain_semantics Other objectForKey:)]
         pub unsafe fn objectForKey(&self, key: &KeyType) -> Option<Id<ObjectType, Shared>>;
 
         #[method(setObject:forKey:)]

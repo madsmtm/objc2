@@ -230,7 +230,7 @@ extern_methods!(
 extern_methods!(
     /// NSKeyValueObservingCustomization
     unsafe impl NSObject {
-        #[method_id(keyPathsForValuesAffectingValueForKey:)]
+        #[method_id(@__retain_semantics Other keyPathsForValuesAffectingValueForKey:)]
         pub unsafe fn keyPathsForValuesAffectingValueForKey(
             key: &NSString,
         ) -> Id<NSSet<NSString>, Shared>;

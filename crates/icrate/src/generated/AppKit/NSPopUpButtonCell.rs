@@ -20,20 +20,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPopUpButtonCell {
-        #[method_id(initTextCell:pullsDown:)]
+        #[method_id(@__retain_semantics Init initTextCell:pullsDown:)]
         pub unsafe fn initTextCell_pullsDown(
             this: Option<Allocated<Self>>,
             stringValue: &NSString,
             pullDown: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(menu)]
+        #[method_id(@__retain_semantics Other menu)]
         pub unsafe fn menu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setMenu:)]
@@ -87,7 +87,7 @@ extern_methods!(
         #[method(removeAllItems)]
         pub unsafe fn removeAllItems(&self);
 
-        #[method_id(itemArray)]
+        #[method_id(@__retain_semantics Other itemArray)]
         pub unsafe fn itemArray(&self) -> Id<NSArray<NSMenuItem>, Shared>;
 
         #[method(numberOfItems)]
@@ -112,13 +112,13 @@ extern_methods!(
             actionSelector: Option<Sel>,
         ) -> NSInteger;
 
-        #[method_id(itemAtIndex:)]
+        #[method_id(@__retain_semantics Other itemAtIndex:)]
         pub unsafe fn itemAtIndex(&self, index: NSInteger) -> Option<Id<NSMenuItem, Shared>>;
 
-        #[method_id(itemWithTitle:)]
+        #[method_id(@__retain_semantics Other itemWithTitle:)]
         pub unsafe fn itemWithTitle(&self, title: &NSString) -> Option<Id<NSMenuItem, Shared>>;
 
-        #[method_id(lastItem)]
+        #[method_id(@__retain_semantics Other lastItem)]
         pub unsafe fn lastItem(&self) -> Option<Id<NSMenuItem, Shared>>;
 
         #[method(selectItem:)]
@@ -136,7 +136,7 @@ extern_methods!(
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, string: Option<&NSString>);
 
-        #[method_id(selectedItem)]
+        #[method_id(@__retain_semantics Other selectedItem)]
         pub unsafe fn selectedItem(&self) -> Option<Id<NSMenuItem, Shared>>;
 
         #[method(indexOfSelectedItem)]
@@ -145,13 +145,13 @@ extern_methods!(
         #[method(synchronizeTitleAndSelectedItem)]
         pub unsafe fn synchronizeTitleAndSelectedItem(&self);
 
-        #[method_id(itemTitleAtIndex:)]
+        #[method_id(@__retain_semantics Other itemTitleAtIndex:)]
         pub unsafe fn itemTitleAtIndex(&self, index: NSInteger) -> Id<NSString, Shared>;
 
-        #[method_id(itemTitles)]
+        #[method_id(@__retain_semantics Other itemTitles)]
         pub unsafe fn itemTitles(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(titleOfSelectedItem)]
+        #[method_id(@__retain_semantics Other titleOfSelectedItem)]
         pub unsafe fn titleOfSelectedItem(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(attachPopUpWithFrame:inView:)]

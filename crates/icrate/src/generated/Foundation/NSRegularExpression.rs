@@ -23,20 +23,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSRegularExpression {
-        #[method_id(regularExpressionWithPattern:options:error:)]
+        #[method_id(@__retain_semantics Other regularExpressionWithPattern:options:error:)]
         pub unsafe fn regularExpressionWithPattern_options_error(
             pattern: &NSString,
             options: NSRegularExpressionOptions,
         ) -> Result<Id<NSRegularExpression, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithPattern:options:error:)]
+        #[method_id(@__retain_semantics Init initWithPattern:options:error:)]
         pub unsafe fn initWithPattern_options_error(
             this: Option<Allocated<Self>>,
             pattern: &NSString,
             options: NSRegularExpressionOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(pattern)]
+        #[method_id(@__retain_semantics Other pattern)]
         pub unsafe fn pattern(&self) -> Id<NSString, Shared>;
 
         #[method(options)]
@@ -45,7 +45,7 @@ extern_methods!(
         #[method(numberOfCaptureGroups)]
         pub unsafe fn numberOfCaptureGroups(&self) -> NSUInteger;
 
-        #[method_id(escapedPatternForString:)]
+        #[method_id(@__retain_semantics Other escapedPatternForString:)]
         pub unsafe fn escapedPatternForString(string: &NSString) -> Id<NSString, Shared>;
     }
 );
@@ -76,7 +76,7 @@ extern_methods!(
             block: TodoBlock,
         );
 
-        #[method_id(matchesInString:options:range:)]
+        #[method_id(@__retain_semantics Other matchesInString:options:range:)]
         pub unsafe fn matchesInString_options_range(
             &self,
             string: &NSString,
@@ -92,7 +92,7 @@ extern_methods!(
             range: NSRange,
         ) -> NSUInteger;
 
-        #[method_id(firstMatchInString:options:range:)]
+        #[method_id(@__retain_semantics Other firstMatchInString:options:range:)]
         pub unsafe fn firstMatchInString_options_range(
             &self,
             string: &NSString,
@@ -113,7 +113,7 @@ extern_methods!(
 extern_methods!(
     /// NSReplacement
     unsafe impl NSRegularExpression {
-        #[method_id(stringByReplacingMatchesInString:options:range:withTemplate:)]
+        #[method_id(@__retain_semantics Other stringByReplacingMatchesInString:options:range:withTemplate:)]
         pub unsafe fn stringByReplacingMatchesInString_options_range_withTemplate(
             &self,
             string: &NSString,
@@ -131,7 +131,7 @@ extern_methods!(
             templ: &NSString,
         ) -> NSUInteger;
 
-        #[method_id(replacementStringForResult:inString:offset:template:)]
+        #[method_id(@__retain_semantics Other replacementStringForResult:inString:offset:template:)]
         pub unsafe fn replacementStringForResult_inString_offset_template(
             &self,
             result: &NSTextCheckingResult,
@@ -140,7 +140,7 @@ extern_methods!(
             templ: &NSString,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(escapedTemplateForString:)]
+        #[method_id(@__retain_semantics Other escapedTemplateForString:)]
         pub unsafe fn escapedTemplateForString(string: &NSString) -> Id<NSString, Shared>;
     }
 );
@@ -156,12 +156,12 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDataDetector {
-        #[method_id(dataDetectorWithTypes:error:)]
+        #[method_id(@__retain_semantics Other dataDetectorWithTypes:error:)]
         pub unsafe fn dataDetectorWithTypes_error(
             checkingTypes: NSTextCheckingTypes,
         ) -> Result<Id<NSDataDetector, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithTypes:error:)]
+        #[method_id(@__retain_semantics Init initWithTypes:error:)]
         pub unsafe fn initWithTypes_error(
             this: Option<Allocated<Self>>,
             checkingTypes: NSTextCheckingTypes,

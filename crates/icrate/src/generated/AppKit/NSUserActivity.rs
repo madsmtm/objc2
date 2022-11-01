@@ -9,7 +9,7 @@ pub type NSUserActivityRestoring = NSObject;
 extern_methods!(
     /// NSUserActivity
     unsafe impl NSResponder {
-        #[method_id(userActivity)]
+        #[method_id(@__retain_semantics Other userActivity)]
         pub unsafe fn userActivity(&self) -> Option<Id<NSUserActivity, Shared>>;
 
         #[method(setUserActivity:)]
@@ -23,7 +23,7 @@ extern_methods!(
 extern_methods!(
     /// NSUserActivity
     unsafe impl NSDocument {
-        #[method_id(userActivity)]
+        #[method_id(@__retain_semantics Other userActivity)]
         pub unsafe fn userActivity(&self) -> Option<Id<NSUserActivity, Shared>>;
 
         #[method(setUserActivity:)]

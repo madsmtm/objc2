@@ -75,7 +75,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSLayoutConstraint {
-        #[method_id(constraintsWithVisualFormat:options:metrics:views:)]
+        #[method_id(@__retain_semantics Other constraintsWithVisualFormat:options:metrics:views:)]
         pub unsafe fn constraintsWithVisualFormat_options_metrics_views(
             format: &NSString,
             opts: NSLayoutFormatOptions,
@@ -83,7 +83,7 @@ extern_methods!(
             views: &NSDictionary<NSString, Object>,
         ) -> Id<NSArray<NSLayoutConstraint>, Shared>;
 
-        #[method_id(constraintWithItem:attribute:relatedBy:toItem:attribute:multiplier:constant:)]
+        #[method_id(@__retain_semantics Other constraintWithItem:attribute:relatedBy:toItem:attribute:multiplier:constant:)]
         pub unsafe fn constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant(
             view1: &Object,
             attr1: NSLayoutAttribute,
@@ -106,10 +106,10 @@ extern_methods!(
         #[method(setShouldBeArchived:)]
         pub unsafe fn setShouldBeArchived(&self, shouldBeArchived: bool);
 
-        #[method_id(firstItem)]
+        #[method_id(@__retain_semantics Other firstItem)]
         pub unsafe fn firstItem(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(secondItem)]
+        #[method_id(@__retain_semantics Other secondItem)]
         pub unsafe fn secondItem(&self) -> Option<Id<Object, Shared>>;
 
         #[method(firstAttribute)]
@@ -118,10 +118,10 @@ extern_methods!(
         #[method(secondAttribute)]
         pub unsafe fn secondAttribute(&self) -> NSLayoutAttribute;
 
-        #[method_id(firstAnchor)]
+        #[method_id(@__retain_semantics Other firstAnchor)]
         pub unsafe fn firstAnchor(&self) -> Id<NSLayoutAnchor, Shared>;
 
-        #[method_id(secondAnchor)]
+        #[method_id(@__retain_semantics Other secondAnchor)]
         pub unsafe fn secondAnchor(&self) -> Option<Id<NSLayoutAnchor, Shared>>;
 
         #[method(relation)]
@@ -153,7 +153,7 @@ extern_methods!(
 extern_methods!(
     /// NSIdentifier
     unsafe impl NSLayoutConstraint {
-        #[method_id(identifier)]
+        #[method_id(@__retain_semantics Other identifier)]
         pub unsafe fn identifier(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setIdentifier:)]
@@ -168,43 +168,43 @@ extern_methods!(
 extern_methods!(
     /// NSConstraintBasedLayoutInstallingConstraints
     unsafe impl NSView {
-        #[method_id(leadingAnchor)]
+        #[method_id(@__retain_semantics Other leadingAnchor)]
         pub unsafe fn leadingAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(trailingAnchor)]
+        #[method_id(@__retain_semantics Other trailingAnchor)]
         pub unsafe fn trailingAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(leftAnchor)]
+        #[method_id(@__retain_semantics Other leftAnchor)]
         pub unsafe fn leftAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(rightAnchor)]
+        #[method_id(@__retain_semantics Other rightAnchor)]
         pub unsafe fn rightAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(topAnchor)]
+        #[method_id(@__retain_semantics Other topAnchor)]
         pub unsafe fn topAnchor(&self) -> Id<NSLayoutYAxisAnchor, Shared>;
 
-        #[method_id(bottomAnchor)]
+        #[method_id(@__retain_semantics Other bottomAnchor)]
         pub unsafe fn bottomAnchor(&self) -> Id<NSLayoutYAxisAnchor, Shared>;
 
-        #[method_id(widthAnchor)]
+        #[method_id(@__retain_semantics Other widthAnchor)]
         pub unsafe fn widthAnchor(&self) -> Id<NSLayoutDimension, Shared>;
 
-        #[method_id(heightAnchor)]
+        #[method_id(@__retain_semantics Other heightAnchor)]
         pub unsafe fn heightAnchor(&self) -> Id<NSLayoutDimension, Shared>;
 
-        #[method_id(centerXAnchor)]
+        #[method_id(@__retain_semantics Other centerXAnchor)]
         pub unsafe fn centerXAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(centerYAnchor)]
+        #[method_id(@__retain_semantics Other centerYAnchor)]
         pub unsafe fn centerYAnchor(&self) -> Id<NSLayoutYAxisAnchor, Shared>;
 
-        #[method_id(firstBaselineAnchor)]
+        #[method_id(@__retain_semantics Other firstBaselineAnchor)]
         pub unsafe fn firstBaselineAnchor(&self) -> Id<NSLayoutYAxisAnchor, Shared>;
 
-        #[method_id(lastBaselineAnchor)]
+        #[method_id(@__retain_semantics Other lastBaselineAnchor)]
         pub unsafe fn lastBaselineAnchor(&self) -> Id<NSLayoutYAxisAnchor, Shared>;
 
-        #[method_id(constraints)]
+        #[method_id(@__retain_semantics Other constraints)]
         pub unsafe fn constraints(&self) -> Id<NSArray<NSLayoutConstraint>, Shared>;
 
         #[method(addConstraint:)]
@@ -384,7 +384,7 @@ extern_methods!(
 extern_methods!(
     /// NSConstraintBasedLayoutDebugging
     unsafe impl NSView {
-        #[method_id(constraintsAffectingLayoutForOrientation:)]
+        #[method_id(@__retain_semantics Other constraintsAffectingLayoutForOrientation:)]
         pub unsafe fn constraintsAffectingLayoutForOrientation(
             &self,
             orientation: NSLayoutConstraintOrientation,

@@ -29,13 +29,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPrintOperation {
-        #[method_id(printOperationWithView:printInfo:)]
+        #[method_id(@__retain_semantics Other printOperationWithView:printInfo:)]
         pub unsafe fn printOperationWithView_printInfo(
             view: &NSView,
             printInfo: &NSPrintInfo,
         ) -> Id<NSPrintOperation, Shared>;
 
-        #[method_id(PDFOperationWithView:insideRect:toData:printInfo:)]
+        #[method_id(@__retain_semantics Other PDFOperationWithView:insideRect:toData:printInfo:)]
         pub unsafe fn PDFOperationWithView_insideRect_toData_printInfo(
             view: &NSView,
             rect: NSRect,
@@ -43,7 +43,7 @@ extern_methods!(
             printInfo: &NSPrintInfo,
         ) -> Id<NSPrintOperation, Shared>;
 
-        #[method_id(PDFOperationWithView:insideRect:toPath:printInfo:)]
+        #[method_id(@__retain_semantics Other PDFOperationWithView:insideRect:toPath:printInfo:)]
         pub unsafe fn PDFOperationWithView_insideRect_toPath_printInfo(
             view: &NSView,
             rect: NSRect,
@@ -51,7 +51,7 @@ extern_methods!(
             printInfo: &NSPrintInfo,
         ) -> Id<NSPrintOperation, Shared>;
 
-        #[method_id(EPSOperationWithView:insideRect:toData:printInfo:)]
+        #[method_id(@__retain_semantics Other EPSOperationWithView:insideRect:toData:printInfo:)]
         pub unsafe fn EPSOperationWithView_insideRect_toData_printInfo(
             view: &NSView,
             rect: NSRect,
@@ -59,7 +59,7 @@ extern_methods!(
             printInfo: &NSPrintInfo,
         ) -> Id<NSPrintOperation, Shared>;
 
-        #[method_id(EPSOperationWithView:insideRect:toPath:printInfo:)]
+        #[method_id(@__retain_semantics Other EPSOperationWithView:insideRect:toPath:printInfo:)]
         pub unsafe fn EPSOperationWithView_insideRect_toPath_printInfo(
             view: &NSView,
             rect: NSRect,
@@ -67,24 +67,24 @@ extern_methods!(
             printInfo: &NSPrintInfo,
         ) -> Id<NSPrintOperation, Shared>;
 
-        #[method_id(printOperationWithView:)]
+        #[method_id(@__retain_semantics Other printOperationWithView:)]
         pub unsafe fn printOperationWithView(view: &NSView) -> Id<NSPrintOperation, Shared>;
 
-        #[method_id(PDFOperationWithView:insideRect:toData:)]
+        #[method_id(@__retain_semantics Other PDFOperationWithView:insideRect:toData:)]
         pub unsafe fn PDFOperationWithView_insideRect_toData(
             view: &NSView,
             rect: NSRect,
             data: &NSMutableData,
         ) -> Id<NSPrintOperation, Shared>;
 
-        #[method_id(EPSOperationWithView:insideRect:toData:)]
+        #[method_id(@__retain_semantics Other EPSOperationWithView:insideRect:toData:)]
         pub unsafe fn EPSOperationWithView_insideRect_toData(
             view: &NSView,
             rect: NSRect,
             data: Option<&NSMutableData>,
         ) -> Id<NSPrintOperation, Shared>;
 
-        #[method_id(currentOperation)]
+        #[method_id(@__retain_semantics Other currentOperation)]
         pub unsafe fn currentOperation() -> Option<Id<NSPrintOperation, Shared>>;
 
         #[method(setCurrentOperation:)]
@@ -96,7 +96,7 @@ extern_methods!(
         #[method(preferredRenderingQuality)]
         pub unsafe fn preferredRenderingQuality(&self) -> NSPrintRenderingQuality;
 
-        #[method_id(jobTitle)]
+        #[method_id(@__retain_semantics Other jobTitle)]
         pub unsafe fn jobTitle(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setJobTitle:)]
@@ -114,13 +114,13 @@ extern_methods!(
         #[method(setShowsProgressPanel:)]
         pub unsafe fn setShowsProgressPanel(&self, showsProgressPanel: bool);
 
-        #[method_id(printPanel)]
+        #[method_id(@__retain_semantics Other printPanel)]
         pub unsafe fn printPanel(&self) -> Id<NSPrintPanel, Shared>;
 
         #[method(setPrintPanel:)]
         pub unsafe fn setPrintPanel(&self, printPanel: &NSPrintPanel);
 
-        #[method_id(PDFPanel)]
+        #[method_id(@__retain_semantics Other PDFPanel)]
         pub unsafe fn PDFPanel(&self) -> Id<NSPDFPanel, Shared>;
 
         #[method(setPDFPanel:)]
@@ -150,16 +150,16 @@ extern_methods!(
         #[method(runOperation)]
         pub unsafe fn runOperation(&self) -> bool;
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
-        #[method_id(printInfo)]
+        #[method_id(@__retain_semantics Other printInfo)]
         pub unsafe fn printInfo(&self) -> Id<NSPrintInfo, Shared>;
 
         #[method(setPrintInfo:)]
         pub unsafe fn setPrintInfo(&self, printInfo: &NSPrintInfo);
 
-        #[method_id(context)]
+        #[method_id(@__retain_semantics Other context)]
         pub unsafe fn context(&self) -> Option<Id<NSGraphicsContext, Shared>>;
 
         #[method(pageRange)]
@@ -168,7 +168,7 @@ extern_methods!(
         #[method(currentPage)]
         pub unsafe fn currentPage(&self) -> NSInteger;
 
-        #[method_id(createContext)]
+        #[method_id(@__retain_semantics Other createContext)]
         pub unsafe fn createContext(&self) -> Option<Id<NSGraphicsContext, Shared>>;
 
         #[method(destroyContext)]
@@ -188,13 +188,13 @@ extern_methods!(
         #[method(setAccessoryView:)]
         pub unsafe fn setAccessoryView(&self, view: Option<&NSView>);
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setJobStyleHint:)]
         pub unsafe fn setJobStyleHint(&self, hint: Option<&NSString>);
 
-        #[method_id(jobStyleHint)]
+        #[method_id(@__retain_semantics Other jobStyleHint)]
         pub unsafe fn jobStyleHint(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setShowPanels:)]

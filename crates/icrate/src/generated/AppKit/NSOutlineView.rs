@@ -17,19 +17,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOutlineView {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSOutlineViewDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSOutlineViewDelegate>);
 
-        #[method_id(dataSource)]
+        #[method_id(@__retain_semantics Other dataSource)]
         pub unsafe fn dataSource(&self) -> Option<Id<NSOutlineViewDataSource, Shared>>;
 
         #[method(setDataSource:)]
         pub unsafe fn setDataSource(&self, dataSource: Option<&NSOutlineViewDataSource>);
 
-        #[method_id(outlineTableColumn)]
+        #[method_id(@__retain_semantics Other outlineTableColumn)]
         pub unsafe fn outlineTableColumn(&self) -> Option<Id<NSTableColumn, Shared>>;
 
         #[method(setOutlineTableColumn:)]
@@ -41,7 +41,7 @@ extern_methods!(
         #[method(numberOfChildrenOfItem:)]
         pub unsafe fn numberOfChildrenOfItem(&self, item: Option<&Object>) -> NSInteger;
 
-        #[method_id(child:ofItem:)]
+        #[method_id(@__retain_semantics Other child:ofItem:)]
         pub unsafe fn child_ofItem(
             &self,
             index: NSInteger,
@@ -70,13 +70,13 @@ extern_methods!(
         #[method(reloadItem:)]
         pub unsafe fn reloadItem(&self, item: Option<&Object>);
 
-        #[method_id(parentForItem:)]
+        #[method_id(@__retain_semantics Other parentForItem:)]
         pub unsafe fn parentForItem(&self, item: Option<&Object>) -> Option<Id<Object, Shared>>;
 
         #[method(childIndexForItem:)]
         pub unsafe fn childIndexForItem(&self, item: &Object) -> NSInteger;
 
-        #[method_id(itemAtRow:)]
+        #[method_id(@__retain_semantics Other itemAtRow:)]
         pub unsafe fn itemAtRow(&self, row: NSInteger) -> Option<Id<Object, Shared>>;
 
         #[method(rowForItem:)]

@@ -14,43 +14,43 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPersonNameComponents {
-        #[method_id(namePrefix)]
+        #[method_id(@__retain_semantics Other namePrefix)]
         pub unsafe fn namePrefix(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setNamePrefix:)]
         pub unsafe fn setNamePrefix(&self, namePrefix: Option<&NSString>);
 
-        #[method_id(givenName)]
+        #[method_id(@__retain_semantics Other givenName)]
         pub unsafe fn givenName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setGivenName:)]
         pub unsafe fn setGivenName(&self, givenName: Option<&NSString>);
 
-        #[method_id(middleName)]
+        #[method_id(@__retain_semantics Other middleName)]
         pub unsafe fn middleName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setMiddleName:)]
         pub unsafe fn setMiddleName(&self, middleName: Option<&NSString>);
 
-        #[method_id(familyName)]
+        #[method_id(@__retain_semantics Other familyName)]
         pub unsafe fn familyName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setFamilyName:)]
         pub unsafe fn setFamilyName(&self, familyName: Option<&NSString>);
 
-        #[method_id(nameSuffix)]
+        #[method_id(@__retain_semantics Other nameSuffix)]
         pub unsafe fn nameSuffix(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setNameSuffix:)]
         pub unsafe fn setNameSuffix(&self, nameSuffix: Option<&NSString>);
 
-        #[method_id(nickname)]
+        #[method_id(@__retain_semantics Other nickname)]
         pub unsafe fn nickname(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setNickname:)]
         pub unsafe fn setNickname(&self, nickname: Option<&NSString>);
 
-        #[method_id(phoneticRepresentation)]
+        #[method_id(@__retain_semantics Other phoneticRepresentation)]
         pub unsafe fn phoneticRepresentation(&self) -> Option<Id<NSPersonNameComponents, Shared>>;
 
         #[method(setPhoneticRepresentation:)]

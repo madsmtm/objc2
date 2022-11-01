@@ -27,7 +27,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSHapticFeedbackManager {
-        #[method_id(defaultPerformer)]
+        #[method_id(@__retain_semantics Other defaultPerformer)]
         pub unsafe fn defaultPerformer() -> Id<NSHapticFeedbackPerformer, Shared>;
     }
 );

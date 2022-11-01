@@ -24,22 +24,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPrinter {
-        #[method_id(printerNames)]
+        #[method_id(@__retain_semantics Other printerNames)]
         pub unsafe fn printerNames() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(printerTypes)]
+        #[method_id(@__retain_semantics Other printerTypes)]
         pub unsafe fn printerTypes() -> Id<NSArray<NSPrinterTypeName>, Shared>;
 
-        #[method_id(printerWithName:)]
+        #[method_id(@__retain_semantics Other printerWithName:)]
         pub unsafe fn printerWithName(name: &NSString) -> Option<Id<NSPrinter, Shared>>;
 
-        #[method_id(printerWithType:)]
+        #[method_id(@__retain_semantics Other printerWithType:)]
         pub unsafe fn printerWithType(type_: &NSPrinterTypeName) -> Option<Id<NSPrinter, Shared>>;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Id<NSString, Shared>;
 
-        #[method_id(type)]
+        #[method_id(@__retain_semantics Other type)]
         pub unsafe fn type_(&self) -> Id<NSPrinterTypeName, Shared>;
 
         #[method(languageLevel)]
@@ -48,7 +48,7 @@ extern_methods!(
         #[method(pageSizeForPaper:)]
         pub unsafe fn pageSizeForPaper(&self, paperName: &NSPrinterPaperName) -> NSSize;
 
-        #[method_id(deviceDescription)]
+        #[method_id(@__retain_semantics Other deviceDescription)]
         pub unsafe fn deviceDescription(
             &self,
         ) -> Id<NSDictionary<NSDeviceDescriptionKey, Object>, Shared>;
@@ -89,14 +89,14 @@ extern_methods!(
         pub unsafe fn sizeForKey_inTable(&self, key: Option<&NSString>, table: &NSString)
             -> NSSize;
 
-        #[method_id(stringForKey:inTable:)]
+        #[method_id(@__retain_semantics Other stringForKey:inTable:)]
         pub unsafe fn stringForKey_inTable(
             &self,
             key: Option<&NSString>,
             table: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(stringListForKey:inTable:)]
+        #[method_id(@__retain_semantics Other stringListForKey:inTable:)]
         pub unsafe fn stringListForKey_inTable(
             &self,
             key: Option<&NSString>,
@@ -118,20 +118,20 @@ extern_methods!(
         #[method(isOutputStackInReverseOrder)]
         pub unsafe fn isOutputStackInReverseOrder(&self) -> bool;
 
-        #[method_id(printerWithName:domain:includeUnavailable:)]
+        #[method_id(@__retain_semantics Other printerWithName:domain:includeUnavailable:)]
         pub unsafe fn printerWithName_domain_includeUnavailable(
             name: &NSString,
             domain: Option<&NSString>,
             flag: bool,
         ) -> Option<Id<NSPrinter, Shared>>;
 
-        #[method_id(domain)]
+        #[method_id(@__retain_semantics Other domain)]
         pub unsafe fn domain(&self) -> Id<NSString, Shared>;
 
-        #[method_id(host)]
+        #[method_id(@__retain_semantics Other host)]
         pub unsafe fn host(&self) -> Id<NSString, Shared>;
 
-        #[method_id(note)]
+        #[method_id(@__retain_semantics Other note)]
         pub unsafe fn note(&self) -> Id<NSString, Shared>;
     }
 );

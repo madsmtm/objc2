@@ -20,13 +20,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScrollView {
-        #[method_id(initWithFrame:)]
+        #[method_id(@__retain_semantics Init initWithFrame:)]
         pub unsafe fn initWithFrame(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -74,19 +74,19 @@ extern_methods!(
         #[method(contentSize)]
         pub unsafe fn contentSize(&self) -> NSSize;
 
-        #[method_id(documentView)]
+        #[method_id(@__retain_semantics Other documentView)]
         pub unsafe fn documentView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setDocumentView:)]
         pub unsafe fn setDocumentView(&self, documentView: Option<&NSView>);
 
-        #[method_id(contentView)]
+        #[method_id(@__retain_semantics Other contentView)]
         pub unsafe fn contentView(&self) -> Id<NSClipView, Shared>;
 
         #[method(setContentView:)]
         pub unsafe fn setContentView(&self, contentView: &NSClipView);
 
-        #[method_id(documentCursor)]
+        #[method_id(@__retain_semantics Other documentCursor)]
         pub unsafe fn documentCursor(&self) -> Option<Id<NSCursor, Shared>>;
 
         #[method(setDocumentCursor:)]
@@ -98,7 +98,7 @@ extern_methods!(
         #[method(setBorderType:)]
         pub unsafe fn setBorderType(&self, borderType: NSBorderType);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
@@ -122,13 +122,13 @@ extern_methods!(
         #[method(setHasHorizontalScroller:)]
         pub unsafe fn setHasHorizontalScroller(&self, hasHorizontalScroller: bool);
 
-        #[method_id(verticalScroller)]
+        #[method_id(@__retain_semantics Other verticalScroller)]
         pub unsafe fn verticalScroller(&self) -> Option<Id<NSScroller, Shared>>;
 
         #[method(setVerticalScroller:)]
         pub unsafe fn setVerticalScroller(&self, verticalScroller: Option<&NSScroller>);
 
-        #[method_id(horizontalScroller)]
+        #[method_id(@__retain_semantics Other horizontalScroller)]
         pub unsafe fn horizontalScroller(&self) -> Option<Id<NSScroller, Shared>>;
 
         #[method(setHorizontalScroller:)]
@@ -337,13 +337,13 @@ extern_methods!(
         #[method(setHasVerticalRuler:)]
         pub unsafe fn setHasVerticalRuler(&self, hasVerticalRuler: bool);
 
-        #[method_id(horizontalRulerView)]
+        #[method_id(@__retain_semantics Other horizontalRulerView)]
         pub unsafe fn horizontalRulerView(&self) -> Option<Id<NSRulerView, Shared>>;
 
         #[method(setHorizontalRulerView:)]
         pub unsafe fn setHorizontalRulerView(&self, horizontalRulerView: Option<&NSRulerView>);
 
-        #[method_id(verticalRulerView)]
+        #[method_id(@__retain_semantics Other verticalRulerView)]
         pub unsafe fn verticalRulerView(&self) -> Option<Id<NSRulerView, Shared>>;
 
         #[method(setVerticalRulerView:)]

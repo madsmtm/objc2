@@ -53,7 +53,7 @@ extern_methods!(
         #[method(setInterSectionSpacing:)]
         pub unsafe fn setInterSectionSpacing(&self, interSectionSpacing: CGFloat);
 
-        #[method_id(boundarySupplementaryItems)]
+        #[method_id(@__retain_semantics Other boundarySupplementaryItems)]
         pub unsafe fn boundarySupplementaryItems(
             &self,
         ) -> Id<NSArray<NSCollectionLayoutBoundarySupplementaryItem>, Shared>;
@@ -77,39 +77,39 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionViewCompositionalLayout {
-        #[method_id(initWithSection:)]
+        #[method_id(@__retain_semantics Init initWithSection:)]
         pub unsafe fn initWithSection(
             this: Option<Allocated<Self>>,
             section: &NSCollectionLayoutSection,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithSection:configuration:)]
+        #[method_id(@__retain_semantics Init initWithSection:configuration:)]
         pub unsafe fn initWithSection_configuration(
             this: Option<Allocated<Self>>,
             section: &NSCollectionLayoutSection,
             configuration: &NSCollectionViewCompositionalLayoutConfiguration,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithSectionProvider:)]
+        #[method_id(@__retain_semantics Init initWithSectionProvider:)]
         pub unsafe fn initWithSectionProvider(
             this: Option<Allocated<Self>>,
             sectionProvider: NSCollectionViewCompositionalLayoutSectionProvider,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithSectionProvider:configuration:)]
+        #[method_id(@__retain_semantics Init initWithSectionProvider:configuration:)]
         pub unsafe fn initWithSectionProvider_configuration(
             this: Option<Allocated<Self>>,
             sectionProvider: NSCollectionViewCompositionalLayoutSectionProvider,
             configuration: &NSCollectionViewCompositionalLayoutConfiguration,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(configuration)]
+        #[method_id(@__retain_semantics Other configuration)]
         pub unsafe fn configuration(
             &self,
         ) -> Id<NSCollectionViewCompositionalLayoutConfiguration, Shared>;
@@ -147,13 +147,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutSection {
-        #[method_id(sectionWithGroup:)]
+        #[method_id(@__retain_semantics Other sectionWithGroup:)]
         pub unsafe fn sectionWithGroup(group: &NSCollectionLayoutGroup) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(contentInsets)]
@@ -179,7 +179,7 @@ extern_methods!(
             orthogonalScrollingBehavior: NSCollectionLayoutSectionOrthogonalScrollingBehavior,
         );
 
-        #[method_id(boundarySupplementaryItems)]
+        #[method_id(@__retain_semantics Other boundarySupplementaryItems)]
         pub unsafe fn boundarySupplementaryItems(
             &self,
         ) -> Id<NSArray<NSCollectionLayoutBoundarySupplementaryItem>, Shared>;
@@ -210,7 +210,7 @@ extern_methods!(
             visibleItemsInvalidationHandler: NSCollectionLayoutSectionVisibleItemsInvalidationHandler,
         );
 
-        #[method_id(decorationItems)]
+        #[method_id(@__retain_semantics Other decorationItems)]
         pub unsafe fn decorationItems(
             &self,
         ) -> Id<NSArray<NSCollectionLayoutDecorationItem>, Shared>;
@@ -234,19 +234,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutItem {
-        #[method_id(itemWithLayoutSize:)]
+        #[method_id(@__retain_semantics Other itemWithLayoutSize:)]
         pub unsafe fn itemWithLayoutSize(layoutSize: &NSCollectionLayoutSize) -> Id<Self, Shared>;
 
-        #[method_id(itemWithLayoutSize:supplementaryItems:)]
+        #[method_id(@__retain_semantics Other itemWithLayoutSize:supplementaryItems:)]
         pub unsafe fn itemWithLayoutSize_supplementaryItems(
             layoutSize: &NSCollectionLayoutSize,
             supplementaryItems: &NSArray<NSCollectionLayoutSupplementaryItem>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(contentInsets)]
@@ -255,16 +255,16 @@ extern_methods!(
         #[method(setContentInsets:)]
         pub unsafe fn setContentInsets(&self, contentInsets: NSDirectionalEdgeInsets);
 
-        #[method_id(edgeSpacing)]
+        #[method_id(@__retain_semantics Other edgeSpacing)]
         pub unsafe fn edgeSpacing(&self) -> Option<Id<NSCollectionLayoutEdgeSpacing, Shared>>;
 
         #[method(setEdgeSpacing:)]
         pub unsafe fn setEdgeSpacing(&self, edgeSpacing: Option<&NSCollectionLayoutEdgeSpacing>);
 
-        #[method_id(layoutSize)]
+        #[method_id(@__retain_semantics Other layoutSize)]
         pub unsafe fn layoutSize(&self) -> Id<NSCollectionLayoutSize, Shared>;
 
-        #[method_id(supplementaryItems)]
+        #[method_id(@__retain_semantics Other supplementaryItems)]
         pub unsafe fn supplementaryItems(
             &self,
         ) -> Id<NSArray<NSCollectionLayoutSupplementaryItem>, Shared>;
@@ -282,19 +282,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutGroupCustomItem {
-        #[method_id(customItemWithFrame:)]
+        #[method_id(@__retain_semantics Other customItemWithFrame:)]
         pub unsafe fn customItemWithFrame(frame: NSRect) -> Id<Self, Shared>;
 
-        #[method_id(customItemWithFrame:zIndex:)]
+        #[method_id(@__retain_semantics Other customItemWithFrame:zIndex:)]
         pub unsafe fn customItemWithFrame_zIndex(
             frame: NSRect,
             zIndex: NSInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(frame)]
@@ -316,45 +316,45 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutGroup {
-        #[method_id(horizontalGroupWithLayoutSize:subitem:count:)]
+        #[method_id(@__retain_semantics Other horizontalGroupWithLayoutSize:subitem:count:)]
         pub unsafe fn horizontalGroupWithLayoutSize_subitem_count(
             layoutSize: &NSCollectionLayoutSize,
             subitem: &NSCollectionLayoutItem,
             count: NSInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(horizontalGroupWithLayoutSize:subitems:)]
+        #[method_id(@__retain_semantics Other horizontalGroupWithLayoutSize:subitems:)]
         pub unsafe fn horizontalGroupWithLayoutSize_subitems(
             layoutSize: &NSCollectionLayoutSize,
             subitems: &NSArray<NSCollectionLayoutItem>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(verticalGroupWithLayoutSize:subitem:count:)]
+        #[method_id(@__retain_semantics Other verticalGroupWithLayoutSize:subitem:count:)]
         pub unsafe fn verticalGroupWithLayoutSize_subitem_count(
             layoutSize: &NSCollectionLayoutSize,
             subitem: &NSCollectionLayoutItem,
             count: NSInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(verticalGroupWithLayoutSize:subitems:)]
+        #[method_id(@__retain_semantics Other verticalGroupWithLayoutSize:subitems:)]
         pub unsafe fn verticalGroupWithLayoutSize_subitems(
             layoutSize: &NSCollectionLayoutSize,
             subitems: &NSArray<NSCollectionLayoutItem>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(customGroupWithLayoutSize:itemProvider:)]
+        #[method_id(@__retain_semantics Other customGroupWithLayoutSize:itemProvider:)]
         pub unsafe fn customGroupWithLayoutSize_itemProvider(
             layoutSize: &NSCollectionLayoutSize,
             itemProvider: NSCollectionLayoutGroupCustomItemProvider,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(supplementaryItems)]
+        #[method_id(@__retain_semantics Other supplementaryItems)]
         pub unsafe fn supplementaryItems(
             &self,
         ) -> Id<NSArray<NSCollectionLayoutSupplementaryItem>, Shared>;
@@ -365,7 +365,7 @@ extern_methods!(
             supplementaryItems: &NSArray<NSCollectionLayoutSupplementaryItem>,
         );
 
-        #[method_id(interItemSpacing)]
+        #[method_id(@__retain_semantics Other interItemSpacing)]
         pub unsafe fn interItemSpacing(&self) -> Option<Id<NSCollectionLayoutSpacing, Shared>>;
 
         #[method(setInterItemSpacing:)]
@@ -374,10 +374,10 @@ extern_methods!(
             interItemSpacing: Option<&NSCollectionLayoutSpacing>,
         );
 
-        #[method_id(subitems)]
+        #[method_id(@__retain_semantics Other subitems)]
         pub unsafe fn subitems(&self) -> Id<NSArray<NSCollectionLayoutItem>, Shared>;
 
-        #[method_id(visualDescription)]
+        #[method_id(@__retain_semantics Other visualDescription)]
         pub unsafe fn visualDescription(&self) -> Id<NSString, Shared>;
     }
 );
@@ -393,22 +393,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutDimension {
-        #[method_id(fractionalWidthDimension:)]
+        #[method_id(@__retain_semantics Other fractionalWidthDimension:)]
         pub unsafe fn fractionalWidthDimension(fractionalWidth: CGFloat) -> Id<Self, Shared>;
 
-        #[method_id(fractionalHeightDimension:)]
+        #[method_id(@__retain_semantics Other fractionalHeightDimension:)]
         pub unsafe fn fractionalHeightDimension(fractionalHeight: CGFloat) -> Id<Self, Shared>;
 
-        #[method_id(absoluteDimension:)]
+        #[method_id(@__retain_semantics Other absoluteDimension:)]
         pub unsafe fn absoluteDimension(absoluteDimension: CGFloat) -> Id<Self, Shared>;
 
-        #[method_id(estimatedDimension:)]
+        #[method_id(@__retain_semantics Other estimatedDimension:)]
         pub unsafe fn estimatedDimension(estimatedDimension: CGFloat) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(isFractionalWidth)]
@@ -439,22 +439,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutSize {
-        #[method_id(sizeWithWidthDimension:heightDimension:)]
+        #[method_id(@__retain_semantics Other sizeWithWidthDimension:heightDimension:)]
         pub unsafe fn sizeWithWidthDimension_heightDimension(
             width: &NSCollectionLayoutDimension,
             height: &NSCollectionLayoutDimension,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(widthDimension)]
+        #[method_id(@__retain_semantics Other widthDimension)]
         pub unsafe fn widthDimension(&self) -> Id<NSCollectionLayoutDimension, Shared>;
 
-        #[method_id(heightDimension)]
+        #[method_id(@__retain_semantics Other heightDimension)]
         pub unsafe fn heightDimension(&self) -> Id<NSCollectionLayoutDimension, Shared>;
     }
 );
@@ -470,16 +470,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutSpacing {
-        #[method_id(flexibleSpacing:)]
+        #[method_id(@__retain_semantics Other flexibleSpacing:)]
         pub unsafe fn flexibleSpacing(flexibleSpacing: CGFloat) -> Id<Self, Shared>;
 
-        #[method_id(fixedSpacing:)]
+        #[method_id(@__retain_semantics Other fixedSpacing:)]
         pub unsafe fn fixedSpacing(fixedSpacing: CGFloat) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(spacing)]
@@ -504,7 +504,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutEdgeSpacing {
-        #[method_id(spacingForLeading:top:trailing:bottom:)]
+        #[method_id(@__retain_semantics Other spacingForLeading:top:trailing:bottom:)]
         pub unsafe fn spacingForLeading_top_trailing_bottom(
             leading: Option<&NSCollectionLayoutSpacing>,
             top: Option<&NSCollectionLayoutSpacing>,
@@ -512,22 +512,22 @@ extern_methods!(
             bottom: Option<&NSCollectionLayoutSpacing>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(leading)]
+        #[method_id(@__retain_semantics Other leading)]
         pub unsafe fn leading(&self) -> Option<Id<NSCollectionLayoutSpacing, Shared>>;
 
-        #[method_id(top)]
+        #[method_id(@__retain_semantics Other top)]
         pub unsafe fn top(&self) -> Option<Id<NSCollectionLayoutSpacing, Shared>>;
 
-        #[method_id(trailing)]
+        #[method_id(@__retain_semantics Other trailing)]
         pub unsafe fn trailing(&self) -> Option<Id<NSCollectionLayoutSpacing, Shared>>;
 
-        #[method_id(bottom)]
+        #[method_id(@__retain_semantics Other bottom)]
         pub unsafe fn bottom(&self) -> Option<Id<NSCollectionLayoutSpacing, Shared>>;
     }
 );
@@ -543,14 +543,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutSupplementaryItem {
-        #[method_id(supplementaryItemWithLayoutSize:elementKind:containerAnchor:)]
+        #[method_id(@__retain_semantics Other supplementaryItemWithLayoutSize:elementKind:containerAnchor:)]
         pub unsafe fn supplementaryItemWithLayoutSize_elementKind_containerAnchor(
             layoutSize: &NSCollectionLayoutSize,
             elementKind: &NSString,
             containerAnchor: &NSCollectionLayoutAnchor,
         ) -> Id<Self, Shared>;
 
-        #[method_id(supplementaryItemWithLayoutSize:elementKind:containerAnchor:itemAnchor:)]
+        #[method_id(@__retain_semantics Other supplementaryItemWithLayoutSize:elementKind:containerAnchor:itemAnchor:)]
         pub unsafe fn supplementaryItemWithLayoutSize_elementKind_containerAnchor_itemAnchor(
             layoutSize: &NSCollectionLayoutSize,
             elementKind: &NSString,
@@ -558,10 +558,10 @@ extern_methods!(
             itemAnchor: &NSCollectionLayoutAnchor,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(zIndex)]
@@ -570,13 +570,13 @@ extern_methods!(
         #[method(setZIndex:)]
         pub unsafe fn setZIndex(&self, zIndex: NSInteger);
 
-        #[method_id(elementKind)]
+        #[method_id(@__retain_semantics Other elementKind)]
         pub unsafe fn elementKind(&self) -> Id<NSString, Shared>;
 
-        #[method_id(containerAnchor)]
+        #[method_id(@__retain_semantics Other containerAnchor)]
         pub unsafe fn containerAnchor(&self) -> Id<NSCollectionLayoutAnchor, Shared>;
 
-        #[method_id(itemAnchor)]
+        #[method_id(@__retain_semantics Other itemAnchor)]
         pub unsafe fn itemAnchor(&self) -> Option<Id<NSCollectionLayoutAnchor, Shared>>;
     }
 );
@@ -592,14 +592,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutBoundarySupplementaryItem {
-        #[method_id(boundarySupplementaryItemWithLayoutSize:elementKind:alignment:)]
+        #[method_id(@__retain_semantics Other boundarySupplementaryItemWithLayoutSize:elementKind:alignment:)]
         pub unsafe fn boundarySupplementaryItemWithLayoutSize_elementKind_alignment(
             layoutSize: &NSCollectionLayoutSize,
             elementKind: &NSString,
             alignment: NSRectAlignment,
         ) -> Id<Self, Shared>;
 
-        #[method_id(boundarySupplementaryItemWithLayoutSize:elementKind:alignment:absoluteOffset:)]
+        #[method_id(@__retain_semantics Other boundarySupplementaryItemWithLayoutSize:elementKind:alignment:absoluteOffset:)]
         pub unsafe fn boundarySupplementaryItemWithLayoutSize_elementKind_alignment_absoluteOffset(
             layoutSize: &NSCollectionLayoutSize,
             elementKind: &NSString,
@@ -607,10 +607,10 @@ extern_methods!(
             absoluteOffset: NSPoint,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(extendsBoundary)]
@@ -644,15 +644,15 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutDecorationItem {
-        #[method_id(backgroundDecorationItemWithElementKind:)]
+        #[method_id(@__retain_semantics Other backgroundDecorationItemWithElementKind:)]
         pub unsafe fn backgroundDecorationItemWithElementKind(
             elementKind: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(zIndex)]
@@ -661,7 +661,7 @@ extern_methods!(
         #[method(setZIndex:)]
         pub unsafe fn setZIndex(&self, zIndex: NSInteger);
 
-        #[method_id(elementKind)]
+        #[method_id(@__retain_semantics Other elementKind)]
         pub unsafe fn elementKind(&self) -> Id<NSString, Shared>;
     }
 );
@@ -677,25 +677,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCollectionLayoutAnchor {
-        #[method_id(layoutAnchorWithEdges:)]
+        #[method_id(@__retain_semantics Other layoutAnchorWithEdges:)]
         pub unsafe fn layoutAnchorWithEdges(edges: NSDirectionalRectEdge) -> Id<Self, Shared>;
 
-        #[method_id(layoutAnchorWithEdges:absoluteOffset:)]
+        #[method_id(@__retain_semantics Other layoutAnchorWithEdges:absoluteOffset:)]
         pub unsafe fn layoutAnchorWithEdges_absoluteOffset(
             edges: NSDirectionalRectEdge,
             absoluteOffset: NSPoint,
         ) -> Id<Self, Shared>;
 
-        #[method_id(layoutAnchorWithEdges:fractionalOffset:)]
+        #[method_id(@__retain_semantics Other layoutAnchorWithEdges:fractionalOffset:)]
         pub unsafe fn layoutAnchorWithEdges_fractionalOffset(
             edges: NSDirectionalRectEdge,
             fractionalOffset: NSPoint,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(edges)]

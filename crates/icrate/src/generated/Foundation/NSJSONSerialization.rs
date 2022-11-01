@@ -31,19 +31,19 @@ extern_methods!(
         #[method(isValidJSONObject:)]
         pub unsafe fn isValidJSONObject(obj: &Object) -> bool;
 
-        #[method_id(dataWithJSONObject:options:error:)]
+        #[method_id(@__retain_semantics Other dataWithJSONObject:options:error:)]
         pub unsafe fn dataWithJSONObject_options_error(
             obj: &Object,
             opt: NSJSONWritingOptions,
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(JSONObjectWithData:options:error:)]
+        #[method_id(@__retain_semantics Other JSONObjectWithData:options:error:)]
         pub unsafe fn JSONObjectWithData_options_error(
             data: &NSData,
             opt: NSJSONReadingOptions,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(JSONObjectWithStream:options:error:)]
+        #[method_id(@__retain_semantics Other JSONObjectWithStream:options:error:)]
         pub unsafe fn JSONObjectWithStream_options_error(
             stream: &NSInputStream,
             opt: NSJSONReadingOptions,

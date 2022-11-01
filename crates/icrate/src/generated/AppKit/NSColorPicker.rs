@@ -15,17 +15,17 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSColorPicker {
-        #[method_id(initWithPickerMask:colorPanel:)]
+        #[method_id(@__retain_semantics Init initWithPickerMask:colorPanel:)]
         pub unsafe fn initWithPickerMask_colorPanel(
             this: Option<Allocated<Self>>,
             mask: NSUInteger,
             owningColorPanel: &NSColorPanel,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(colorPanel)]
+        #[method_id(@__retain_semantics Other colorPanel)]
         pub unsafe fn colorPanel(&self) -> Id<NSColorPanel, Shared>;
 
-        #[method_id(provideNewButtonImage)]
+        #[method_id(@__retain_semantics Other provideNewButtonImage)]
         pub unsafe fn provideNewButtonImage(&self) -> Id<NSImage, Shared>;
 
         #[method(insertNewButtonImage:in:)]
@@ -47,7 +47,7 @@ extern_methods!(
         #[method(setMode:)]
         pub unsafe fn setMode(&self, mode: NSColorPanelMode);
 
-        #[method_id(buttonToolTip)]
+        #[method_id(@__retain_semantics Other buttonToolTip)]
         pub unsafe fn buttonToolTip(&self) -> Id<NSString, Shared>;
 
         #[method(minContentSize)]

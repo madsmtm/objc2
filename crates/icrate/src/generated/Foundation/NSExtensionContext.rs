@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSExtensionContext {
-        #[method_id(inputItems)]
+        #[method_id(@__retain_semantics Other inputItems)]
         pub unsafe fn inputItems(&self) -> Id<NSArray, Shared>;
 
         #[method(completeRequestReturningItems:completionHandler:)]

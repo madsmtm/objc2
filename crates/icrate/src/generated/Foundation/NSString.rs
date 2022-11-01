@@ -61,10 +61,10 @@ extern_methods!(
         #[method(characterAtIndex:)]
         pub unsafe fn characterAtIndex(&self, index: NSUInteger) -> unichar;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -153,13 +153,13 @@ extern "C" {
 extern_methods!(
     /// NSStringExtensionMethods
     unsafe impl NSString {
-        #[method_id(substringFromIndex:)]
+        #[method_id(@__retain_semantics Other substringFromIndex:)]
         pub unsafe fn substringFromIndex(&self, from: NSUInteger) -> Id<NSString, Shared>;
 
-        #[method_id(substringToIndex:)]
+        #[method_id(@__retain_semantics Other substringToIndex:)]
         pub unsafe fn substringToIndex(&self, to: NSUInteger) -> Id<NSString, Shared>;
 
-        #[method_id(substringWithRange:)]
+        #[method_id(@__retain_semantics Other substringWithRange:)]
         pub unsafe fn substringWithRange(&self, range: NSRange) -> Id<NSString, Shared>;
 
         #[method(getCharacters:range:)]
@@ -216,7 +216,7 @@ extern_methods!(
         #[method(hasSuffix:)]
         pub unsafe fn hasSuffix(&self, str: &NSString) -> bool;
 
-        #[method_id(commonPrefixWithString:options:)]
+        #[method_id(@__retain_semantics Other commonPrefixWithString:options:)]
         pub unsafe fn commonPrefixWithString_options(
             &self,
             str: &NSString,
@@ -286,7 +286,7 @@ extern_methods!(
         #[method(rangeOfComposedCharacterSequencesForRange:)]
         pub unsafe fn rangeOfComposedCharacterSequencesForRange(&self, range: NSRange) -> NSRange;
 
-        #[method_id(stringByAppendingString:)]
+        #[method_id(@__retain_semantics Other stringByAppendingString:)]
         pub fn stringByAppendingString(&self, aString: &NSString) -> Id<NSString, Shared>;
 
         #[method(doubleValue)]
@@ -307,37 +307,37 @@ extern_methods!(
         #[method(boolValue)]
         pub unsafe fn boolValue(&self) -> bool;
 
-        #[method_id(uppercaseString)]
+        #[method_id(@__retain_semantics Other uppercaseString)]
         pub unsafe fn uppercaseString(&self) -> Id<NSString, Shared>;
 
-        #[method_id(lowercaseString)]
+        #[method_id(@__retain_semantics Other lowercaseString)]
         pub unsafe fn lowercaseString(&self) -> Id<NSString, Shared>;
 
-        #[method_id(capitalizedString)]
+        #[method_id(@__retain_semantics Other capitalizedString)]
         pub unsafe fn capitalizedString(&self) -> Id<NSString, Shared>;
 
-        #[method_id(localizedUppercaseString)]
+        #[method_id(@__retain_semantics Other localizedUppercaseString)]
         pub unsafe fn localizedUppercaseString(&self) -> Id<NSString, Shared>;
 
-        #[method_id(localizedLowercaseString)]
+        #[method_id(@__retain_semantics Other localizedLowercaseString)]
         pub unsafe fn localizedLowercaseString(&self) -> Id<NSString, Shared>;
 
-        #[method_id(localizedCapitalizedString)]
+        #[method_id(@__retain_semantics Other localizedCapitalizedString)]
         pub unsafe fn localizedCapitalizedString(&self) -> Id<NSString, Shared>;
 
-        #[method_id(uppercaseStringWithLocale:)]
+        #[method_id(@__retain_semantics Other uppercaseStringWithLocale:)]
         pub unsafe fn uppercaseStringWithLocale(
             &self,
             locale: Option<&NSLocale>,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(lowercaseStringWithLocale:)]
+        #[method_id(@__retain_semantics Other lowercaseStringWithLocale:)]
         pub unsafe fn lowercaseStringWithLocale(
             &self,
             locale: Option<&NSLocale>,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(capitalizedStringWithLocale:)]
+        #[method_id(@__retain_semantics Other capitalizedStringWithLocale:)]
         pub unsafe fn capitalizedStringWithLocale(
             &self,
             locale: Option<&NSLocale>,
@@ -387,14 +387,14 @@ extern_methods!(
         #[method(smallestEncoding)]
         pub unsafe fn smallestEncoding(&self) -> NSStringEncoding;
 
-        #[method_id(dataUsingEncoding:allowLossyConversion:)]
+        #[method_id(@__retain_semantics Other dataUsingEncoding:allowLossyConversion:)]
         pub unsafe fn dataUsingEncoding_allowLossyConversion(
             &self,
             encoding: NSStringEncoding,
             lossy: bool,
         ) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(dataUsingEncoding:)]
+        #[method_id(@__retain_semantics Other dataUsingEncoding:)]
         pub unsafe fn dataUsingEncoding(
             &self,
             encoding: NSStringEncoding,
@@ -436,7 +436,7 @@ extern_methods!(
         #[method(availableStringEncodings)]
         pub unsafe fn availableStringEncodings() -> NonNull<NSStringEncoding>;
 
-        #[method_id(localizedNameOfStringEncoding:)]
+        #[method_id(@__retain_semantics Other localizedNameOfStringEncoding:)]
         pub unsafe fn localizedNameOfStringEncoding(
             encoding: NSStringEncoding,
         ) -> Id<NSString, Shared>;
@@ -444,37 +444,37 @@ extern_methods!(
         #[method(defaultCStringEncoding)]
         pub unsafe fn defaultCStringEncoding() -> NSStringEncoding;
 
-        #[method_id(decomposedStringWithCanonicalMapping)]
+        #[method_id(@__retain_semantics Other decomposedStringWithCanonicalMapping)]
         pub unsafe fn decomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared>;
 
-        #[method_id(precomposedStringWithCanonicalMapping)]
+        #[method_id(@__retain_semantics Other precomposedStringWithCanonicalMapping)]
         pub unsafe fn precomposedStringWithCanonicalMapping(&self) -> Id<NSString, Shared>;
 
-        #[method_id(decomposedStringWithCompatibilityMapping)]
+        #[method_id(@__retain_semantics Other decomposedStringWithCompatibilityMapping)]
         pub unsafe fn decomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared>;
 
-        #[method_id(precomposedStringWithCompatibilityMapping)]
+        #[method_id(@__retain_semantics Other precomposedStringWithCompatibilityMapping)]
         pub unsafe fn precomposedStringWithCompatibilityMapping(&self) -> Id<NSString, Shared>;
 
-        #[method_id(componentsSeparatedByString:)]
+        #[method_id(@__retain_semantics Other componentsSeparatedByString:)]
         pub unsafe fn componentsSeparatedByString(
             &self,
             separator: &NSString,
         ) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(componentsSeparatedByCharactersInSet:)]
+        #[method_id(@__retain_semantics Other componentsSeparatedByCharactersInSet:)]
         pub unsafe fn componentsSeparatedByCharactersInSet(
             &self,
             separator: &NSCharacterSet,
         ) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(stringByTrimmingCharactersInSet:)]
+        #[method_id(@__retain_semantics Other stringByTrimmingCharactersInSet:)]
         pub unsafe fn stringByTrimmingCharactersInSet(
             &self,
             set: &NSCharacterSet,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringByPaddingToLength:withString:startingAtIndex:)]
+        #[method_id(@__retain_semantics Other stringByPaddingToLength:withString:startingAtIndex:)]
         pub unsafe fn stringByPaddingToLength_withString_startingAtIndex(
             &self,
             newLength: NSUInteger,
@@ -482,14 +482,14 @@ extern_methods!(
             padIndex: NSUInteger,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringByFoldingWithOptions:locale:)]
+        #[method_id(@__retain_semantics Other stringByFoldingWithOptions:locale:)]
         pub unsafe fn stringByFoldingWithOptions_locale(
             &self,
             options: NSStringCompareOptions,
             locale: Option<&NSLocale>,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringByReplacingOccurrencesOfString:withString:options:range:)]
+        #[method_id(@__retain_semantics Other stringByReplacingOccurrencesOfString:withString:options:range:)]
         pub unsafe fn stringByReplacingOccurrencesOfString_withString_options_range(
             &self,
             target: &NSString,
@@ -498,21 +498,21 @@ extern_methods!(
             searchRange: NSRange,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringByReplacingOccurrencesOfString:withString:)]
+        #[method_id(@__retain_semantics Other stringByReplacingOccurrencesOfString:withString:)]
         pub unsafe fn stringByReplacingOccurrencesOfString_withString(
             &self,
             target: &NSString,
             replacement: &NSString,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringByReplacingCharactersInRange:withString:)]
+        #[method_id(@__retain_semantics Other stringByReplacingCharactersInRange:withString:)]
         pub unsafe fn stringByReplacingCharactersInRange_withString(
             &self,
             range: NSRange,
             replacement: &NSString,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringByApplyingTransform:reverse:)]
+        #[method_id(@__retain_semantics Other stringByApplyingTransform:reverse:)]
         pub unsafe fn stringByApplyingTransform_reverse(
             &self,
             transform: &NSStringTransform,
@@ -535,13 +535,13 @@ extern_methods!(
             enc: NSStringEncoding,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(description)]
+        #[method_id(@__retain_semantics Other description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
 
         #[method(hash)]
         pub unsafe fn hash(&self) -> NSUInteger;
 
-        #[method_id(initWithCharactersNoCopy:length:freeWhenDone:)]
+        #[method_id(@__retain_semantics Init initWithCharactersNoCopy:length:freeWhenDone:)]
         pub unsafe fn initWithCharactersNoCopy_length_freeWhenDone(
             this: Option<Allocated<Self>>,
             characters: NonNull<unichar>,
@@ -549,7 +549,7 @@ extern_methods!(
             freeBuffer: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCharactersNoCopy:length:deallocator:)]
+        #[method_id(@__retain_semantics Init initWithCharactersNoCopy:length:deallocator:)]
         pub unsafe fn initWithCharactersNoCopy_length_deallocator(
             this: Option<Allocated<Self>>,
             chars: NonNull<unichar>,
@@ -557,33 +557,33 @@ extern_methods!(
             deallocator: TodoBlock,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCharacters:length:)]
+        #[method_id(@__retain_semantics Init initWithCharacters:length:)]
         pub unsafe fn initWithCharacters_length(
             this: Option<Allocated<Self>>,
             characters: NonNull<unichar>,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithUTF8String:)]
+        #[method_id(@__retain_semantics Init initWithUTF8String:)]
         pub unsafe fn initWithUTF8String(
             this: Option<Allocated<Self>>,
             nullTerminatedCString: NonNull<c_char>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithString:)]
+        #[method_id(@__retain_semantics Init initWithString:)]
         pub unsafe fn initWithString(
             this: Option<Allocated<Self>>,
             aString: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithFormat:arguments:)]
+        #[method_id(@__retain_semantics Init initWithFormat:arguments:)]
         pub unsafe fn initWithFormat_arguments(
             this: Option<Allocated<Self>>,
             format: &NSString,
             argList: va_list,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithFormat:locale:arguments:)]
+        #[method_id(@__retain_semantics Init initWithFormat:locale:arguments:)]
         pub unsafe fn initWithFormat_locale_arguments(
             this: Option<Allocated<Self>>,
             format: &NSString,
@@ -591,14 +591,14 @@ extern_methods!(
             argList: va_list,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithData:encoding:)]
+        #[method_id(@__retain_semantics Init initWithData:encoding:)]
         pub unsafe fn initWithData_encoding(
             this: Option<Allocated<Self>>,
             data: &NSData,
             encoding: NSStringEncoding,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithBytes:length:encoding:)]
+        #[method_id(@__retain_semantics Init initWithBytes:length:encoding:)]
         pub unsafe fn initWithBytes_length_encoding(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_void>,
@@ -606,7 +606,7 @@ extern_methods!(
             encoding: NSStringEncoding,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithBytesNoCopy:length:encoding:freeWhenDone:)]
+        #[method_id(@__retain_semantics Init initWithBytesNoCopy:length:encoding:freeWhenDone:)]
         pub unsafe fn initWithBytesNoCopy_length_encoding_freeWhenDone(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_void>,
@@ -615,7 +615,7 @@ extern_methods!(
             freeBuffer: bool,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithBytesNoCopy:length:encoding:deallocator:)]
+        #[method_id(@__retain_semantics Init initWithBytesNoCopy:length:encoding:deallocator:)]
         pub unsafe fn initWithBytesNoCopy_length_encoding_deallocator(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_void>,
@@ -624,83 +624,83 @@ extern_methods!(
             deallocator: TodoBlock,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(string)]
+        #[method_id(@__retain_semantics Other string)]
         pub unsafe fn string() -> Id<Self, Shared>;
 
-        #[method_id(stringWithString:)]
+        #[method_id(@__retain_semantics Other stringWithString:)]
         pub unsafe fn stringWithString(string: &NSString) -> Id<Self, Shared>;
 
-        #[method_id(stringWithCharacters:length:)]
+        #[method_id(@__retain_semantics Other stringWithCharacters:length:)]
         pub unsafe fn stringWithCharacters_length(
             characters: NonNull<unichar>,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(stringWithUTF8String:)]
+        #[method_id(@__retain_semantics Other stringWithUTF8String:)]
         pub unsafe fn stringWithUTF8String(
             nullTerminatedCString: NonNull<c_char>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithCString:encoding:)]
+        #[method_id(@__retain_semantics Init initWithCString:encoding:)]
         pub unsafe fn initWithCString_encoding(
             this: Option<Allocated<Self>>,
             nullTerminatedCString: NonNull<c_char>,
             encoding: NSStringEncoding,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(stringWithCString:encoding:)]
+        #[method_id(@__retain_semantics Other stringWithCString:encoding:)]
         pub unsafe fn stringWithCString_encoding(
             cString: NonNull<c_char>,
             enc: NSStringEncoding,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithContentsOfURL:encoding:error:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:encoding:error:)]
         pub unsafe fn initWithContentsOfURL_encoding_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             enc: NSStringEncoding,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithContentsOfFile:encoding:error:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfFile:encoding:error:)]
         pub unsafe fn initWithContentsOfFile_encoding_error(
             this: Option<Allocated<Self>>,
             path: &NSString,
             enc: NSStringEncoding,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(stringWithContentsOfURL:encoding:error:)]
+        #[method_id(@__retain_semantics Other stringWithContentsOfURL:encoding:error:)]
         pub unsafe fn stringWithContentsOfURL_encoding_error(
             url: &NSURL,
             enc: NSStringEncoding,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(stringWithContentsOfFile:encoding:error:)]
+        #[method_id(@__retain_semantics Other stringWithContentsOfFile:encoding:error:)]
         pub unsafe fn stringWithContentsOfFile_encoding_error(
             path: &NSString,
             enc: NSStringEncoding,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithContentsOfURL:usedEncoding:error:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:usedEncoding:error:)]
         pub unsafe fn initWithContentsOfURL_usedEncoding_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             enc: *mut NSStringEncoding,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithContentsOfFile:usedEncoding:error:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfFile:usedEncoding:error:)]
         pub unsafe fn initWithContentsOfFile_usedEncoding_error(
             this: Option<Allocated<Self>>,
             path: &NSString,
             enc: *mut NSStringEncoding,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(stringWithContentsOfURL:usedEncoding:error:)]
+        #[method_id(@__retain_semantics Other stringWithContentsOfURL:usedEncoding:error:)]
         pub unsafe fn stringWithContentsOfURL_usedEncoding_error(
             url: &NSURL,
             enc: *mut NSStringEncoding,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(stringWithContentsOfFile:usedEncoding:error:)]
+        #[method_id(@__retain_semantics Other stringWithContentsOfFile:usedEncoding:error:)]
         pub unsafe fn stringWithContentsOfFile_usedEncoding_error(
             path: &NSString,
             enc: *mut NSStringEncoding,
@@ -815,13 +815,13 @@ extern_methods!(
             resultingRange: NSRangePointer,
         ) -> bool;
 
-        #[method_id(initWithCapacity:)]
+        #[method_id(@__retain_semantics Init initWithCapacity:)]
         pub unsafe fn initWithCapacity(
             this: Option<Allocated<Self>>,
             capacity: NSUInteger,
         ) -> Id<NSMutableString, Shared>;
 
-        #[method_id(stringWithCapacity:)]
+        #[method_id(@__retain_semantics Other stringWithCapacity:)]
         pub unsafe fn stringWithCapacity(capacity: NSUInteger) -> Id<NSMutableString, Shared>;
     }
 );
@@ -837,10 +837,10 @@ extern "C" {
 extern_methods!(
     /// NSExtendedStringPropertyListParsing
     unsafe impl NSString {
-        #[method_id(propertyList)]
+        #[method_id(@__retain_semantics Other propertyList)]
         pub unsafe fn propertyList(&self) -> Id<Object, Shared>;
 
-        #[method_id(propertyListFromStringsFileFormat)]
+        #[method_id(@__retain_semantics Other propertyListFromStringsFileFormat)]
         pub unsafe fn propertyListFromStringsFileFormat(&self) -> Option<Id<NSDictionary, Shared>>;
     }
 );
@@ -882,25 +882,25 @@ extern_methods!(
         #[method(writeToURL:atomically:)]
         pub unsafe fn writeToURL_atomically(&self, url: &NSURL, atomically: bool) -> bool;
 
-        #[method_id(initWithContentsOfFile:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(
             this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(initWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(stringWithContentsOfFile:)]
+        #[method_id(@__retain_semantics Other stringWithContentsOfFile:)]
         pub unsafe fn stringWithContentsOfFile(path: &NSString) -> Option<Id<Object, Shared>>;
 
-        #[method_id(stringWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Other stringWithContentsOfURL:)]
         pub unsafe fn stringWithContentsOfURL(url: &NSURL) -> Option<Id<Object, Shared>>;
 
-        #[method_id(initWithCStringNoCopy:length:freeWhenDone:)]
+        #[method_id(@__retain_semantics Init initWithCStringNoCopy:length:freeWhenDone:)]
         pub unsafe fn initWithCStringNoCopy_length_freeWhenDone(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_char>,
@@ -908,26 +908,26 @@ extern_methods!(
             freeBuffer: bool,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(initWithCString:length:)]
+        #[method_id(@__retain_semantics Init initWithCString:length:)]
         pub unsafe fn initWithCString_length(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_char>,
             length: NSUInteger,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(initWithCString:)]
+        #[method_id(@__retain_semantics Init initWithCString:)]
         pub unsafe fn initWithCString(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_char>,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(stringWithCString:length:)]
+        #[method_id(@__retain_semantics Other stringWithCString:length:)]
         pub unsafe fn stringWithCString_length(
             bytes: NonNull<c_char>,
             length: NSUInteger,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(stringWithCString:)]
+        #[method_id(@__retain_semantics Other stringWithCString:)]
         pub unsafe fn stringWithCString(bytes: NonNull<c_char>) -> Option<Id<Object, Shared>>;
 
         #[method(getCharacters:)]

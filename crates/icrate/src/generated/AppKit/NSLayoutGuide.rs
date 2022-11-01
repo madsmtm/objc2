@@ -18,52 +18,52 @@ extern_methods!(
         #[method(frame)]
         pub unsafe fn frame(&self) -> NSRect;
 
-        #[method_id(owningView)]
+        #[method_id(@__retain_semantics Other owningView)]
         pub unsafe fn owningView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setOwningView:)]
         pub unsafe fn setOwningView(&self, owningView: Option<&NSView>);
 
-        #[method_id(identifier)]
+        #[method_id(@__retain_semantics Other identifier)]
         pub unsafe fn identifier(&self) -> Id<NSUserInterfaceItemIdentifier, Shared>;
 
         #[method(setIdentifier:)]
         pub unsafe fn setIdentifier(&self, identifier: &NSUserInterfaceItemIdentifier);
 
-        #[method_id(leadingAnchor)]
+        #[method_id(@__retain_semantics Other leadingAnchor)]
         pub unsafe fn leadingAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(trailingAnchor)]
+        #[method_id(@__retain_semantics Other trailingAnchor)]
         pub unsafe fn trailingAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(leftAnchor)]
+        #[method_id(@__retain_semantics Other leftAnchor)]
         pub unsafe fn leftAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(rightAnchor)]
+        #[method_id(@__retain_semantics Other rightAnchor)]
         pub unsafe fn rightAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(topAnchor)]
+        #[method_id(@__retain_semantics Other topAnchor)]
         pub unsafe fn topAnchor(&self) -> Id<NSLayoutYAxisAnchor, Shared>;
 
-        #[method_id(bottomAnchor)]
+        #[method_id(@__retain_semantics Other bottomAnchor)]
         pub unsafe fn bottomAnchor(&self) -> Id<NSLayoutYAxisAnchor, Shared>;
 
-        #[method_id(widthAnchor)]
+        #[method_id(@__retain_semantics Other widthAnchor)]
         pub unsafe fn widthAnchor(&self) -> Id<NSLayoutDimension, Shared>;
 
-        #[method_id(heightAnchor)]
+        #[method_id(@__retain_semantics Other heightAnchor)]
         pub unsafe fn heightAnchor(&self) -> Id<NSLayoutDimension, Shared>;
 
-        #[method_id(centerXAnchor)]
+        #[method_id(@__retain_semantics Other centerXAnchor)]
         pub unsafe fn centerXAnchor(&self) -> Id<NSLayoutXAxisAnchor, Shared>;
 
-        #[method_id(centerYAnchor)]
+        #[method_id(@__retain_semantics Other centerYAnchor)]
         pub unsafe fn centerYAnchor(&self) -> Id<NSLayoutYAxisAnchor, Shared>;
 
         #[method(hasAmbiguousLayout)]
         pub unsafe fn hasAmbiguousLayout(&self) -> bool;
 
-        #[method_id(constraintsAffectingLayoutForOrientation:)]
+        #[method_id(@__retain_semantics Other constraintsAffectingLayoutForOrientation:)]
         pub unsafe fn constraintsAffectingLayoutForOrientation(
             &self,
             orientation: NSLayoutConstraintOrientation,
@@ -80,7 +80,7 @@ extern_methods!(
         #[method(removeLayoutGuide:)]
         pub unsafe fn removeLayoutGuide(&self, guide: &NSLayoutGuide);
 
-        #[method_id(layoutGuides)]
+        #[method_id(@__retain_semantics Other layoutGuides)]
         pub unsafe fn layoutGuides(&self) -> Id<NSArray<NSLayoutGuide>, Shared>;
     }
 );

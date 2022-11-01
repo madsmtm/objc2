@@ -170,7 +170,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSpeechSynthesizer {
-        #[method_id(initWithVoice:)]
+        #[method_id(@__retain_semantics Init initWithVoice:)]
         pub unsafe fn initWithVoice(
             this: Option<Allocated<Self>>,
             voice: Option<&NSSpeechSynthesizerVoiceName>,
@@ -197,13 +197,13 @@ extern_methods!(
         #[method(continueSpeaking)]
         pub unsafe fn continueSpeaking(&self);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSpeechSynthesizerDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSSpeechSynthesizerDelegate>);
 
-        #[method_id(voice)]
+        #[method_id(@__retain_semantics Other voice)]
         pub unsafe fn voice(&self) -> Option<Id<NSSpeechSynthesizerVoiceName, Shared>>;
 
         #[method(setVoice:)]
@@ -233,10 +233,10 @@ extern_methods!(
             speechDictionary: &NSDictionary<NSSpeechDictionaryKey, Object>,
         );
 
-        #[method_id(phonemesFromText:)]
+        #[method_id(@__retain_semantics Other phonemesFromText:)]
         pub unsafe fn phonemesFromText(&self, text: &NSString) -> Id<NSString, Shared>;
 
-        #[method_id(objectForProperty:error:)]
+        #[method_id(@__retain_semantics Other objectForProperty:error:)]
         pub unsafe fn objectForProperty_error(
             &self,
             property: &NSSpeechPropertyKey,
@@ -252,13 +252,13 @@ extern_methods!(
         #[method(isAnyApplicationSpeaking)]
         pub unsafe fn isAnyApplicationSpeaking() -> bool;
 
-        #[method_id(defaultVoice)]
+        #[method_id(@__retain_semantics Other defaultVoice)]
         pub unsafe fn defaultVoice() -> Id<NSSpeechSynthesizerVoiceName, Shared>;
 
-        #[method_id(availableVoices)]
+        #[method_id(@__retain_semantics Other availableVoices)]
         pub unsafe fn availableVoices() -> Id<NSArray<NSSpeechSynthesizerVoiceName>, Shared>;
 
-        #[method_id(attributesForVoice:)]
+        #[method_id(@__retain_semantics Other attributesForVoice:)]
         pub unsafe fn attributesForVoice(
             voice: &NSSpeechSynthesizerVoiceName,
         ) -> Id<NSDictionary<NSVoiceAttributeKey, Object>, Shared>;

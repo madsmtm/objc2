@@ -19,20 +19,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGradient {
-        #[method_id(initWithStartingColor:endingColor:)]
+        #[method_id(@__retain_semantics Init initWithStartingColor:endingColor:)]
         pub unsafe fn initWithStartingColor_endingColor(
             this: Option<Allocated<Self>>,
             startingColor: &NSColor,
             endingColor: &NSColor,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithColors:)]
+        #[method_id(@__retain_semantics Init initWithColors:)]
         pub unsafe fn initWithColors(
             this: Option<Allocated<Self>>,
             colorArray: &NSArray<NSColor>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithColors:atLocations:colorSpace:)]
+        #[method_id(@__retain_semantics Init initWithColors:atLocations:colorSpace:)]
         pub unsafe fn initWithColors_atLocations_colorSpace(
             this: Option<Allocated<Self>>,
             colorArray: &NSArray<NSColor>,
@@ -40,7 +40,7 @@ extern_methods!(
             colorSpace: &NSColorSpace,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -84,7 +84,7 @@ extern_methods!(
             relativeCenterPosition: NSPoint,
         );
 
-        #[method_id(colorSpace)]
+        #[method_id(@__retain_semantics Other colorSpace)]
         pub unsafe fn colorSpace(&self) -> Id<NSColorSpace, Shared>;
 
         #[method(numberOfColorStops)]
@@ -98,7 +98,7 @@ extern_methods!(
             index: NSInteger,
         );
 
-        #[method_id(interpolatedColorAtLocation:)]
+        #[method_id(@__retain_semantics Other interpolatedColorAtLocation:)]
         pub unsafe fn interpolatedColorAtLocation(&self, location: CGFloat) -> Id<NSColor, Shared>;
     }
 );

@@ -14,12 +14,12 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSInvocation {
-        #[method_id(invocationWithMethodSignature:)]
+        #[method_id(@__retain_semantics Other invocationWithMethodSignature:)]
         pub unsafe fn invocationWithMethodSignature(
             sig: &NSMethodSignature,
         ) -> Id<NSInvocation, Shared>;
 
-        #[method_id(methodSignature)]
+        #[method_id(@__retain_semantics Other methodSignature)]
         pub unsafe fn methodSignature(&self) -> Id<NSMethodSignature, Shared>;
 
         #[method(retainArguments)]
@@ -28,7 +28,7 @@ extern_methods!(
         #[method(argumentsRetained)]
         pub unsafe fn argumentsRetained(&self) -> bool;
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]

@@ -15,14 +15,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTrackingSeparatorToolbarItem {
-        #[method_id(trackingSeparatorToolbarItemWithIdentifier:splitView:dividerIndex:)]
+        #[method_id(@__retain_semantics Other trackingSeparatorToolbarItemWithIdentifier:splitView:dividerIndex:)]
         pub unsafe fn trackingSeparatorToolbarItemWithIdentifier_splitView_dividerIndex(
             identifier: &NSToolbarItemIdentifier,
             splitView: &NSSplitView,
             dividerIndex: NSInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(splitView)]
+        #[method_id(@__retain_semantics Other splitView)]
         pub unsafe fn splitView(&self) -> Id<NSSplitView, Shared>;
 
         #[method(setSplitView:)]

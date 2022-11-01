@@ -25,27 +25,27 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDraggingImageComponent {
-        #[method_id(draggingImageComponentWithKey:)]
+        #[method_id(@__retain_semantics Other draggingImageComponentWithKey:)]
         pub unsafe fn draggingImageComponentWithKey(
             key: &NSDraggingImageComponentKey,
         ) -> Id<NSDraggingImageComponent, Shared>;
 
-        #[method_id(initWithKey:)]
+        #[method_id(@__retain_semantics Init initWithKey:)]
         pub unsafe fn initWithKey(
             this: Option<Allocated<Self>>,
             key: &NSDraggingImageComponentKey,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(key)]
+        #[method_id(@__retain_semantics Other key)]
         pub unsafe fn key(&self) -> Id<NSDraggingImageComponentKey, Shared>;
 
         #[method(setKey:)]
         pub unsafe fn setKey(&self, key: &NSDraggingImageComponentKey);
 
-        #[method_id(contents)]
+        #[method_id(@__retain_semantics Other contents)]
         pub unsafe fn contents(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setContents:)]
@@ -70,16 +70,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDraggingItem {
-        #[method_id(initWithPasteboardWriter:)]
+        #[method_id(@__retain_semantics Init initWithPasteboardWriter:)]
         pub unsafe fn initWithPasteboardWriter(
             this: Option<Allocated<Self>>,
             pasteboardWriter: &NSPasteboardWriting,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(item)]
+        #[method_id(@__retain_semantics Other item)]
         pub unsafe fn item(&self) -> Id<Object, Shared>;
 
         #[method(draggingFrame)]
@@ -97,7 +97,7 @@ extern_methods!(
         #[method(setDraggingFrame:contents:)]
         pub unsafe fn setDraggingFrame_contents(&self, frame: NSRect, contents: Option<&Object>);
 
-        #[method_id(imageComponents)]
+        #[method_id(@__retain_semantics Other imageComponents)]
         pub unsafe fn imageComponents(
             &self,
         ) -> Option<Id<NSArray<NSDraggingImageComponent>, Shared>>;

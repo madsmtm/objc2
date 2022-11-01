@@ -14,28 +14,28 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFileHandle {
-        #[method_id(availableData)]
+        #[method_id(@__retain_semantics Other availableData)]
         pub unsafe fn availableData(&self) -> Id<NSData, Shared>;
 
-        #[method_id(initWithFileDescriptor:closeOnDealloc:)]
+        #[method_id(@__retain_semantics Init initWithFileDescriptor:closeOnDealloc:)]
         pub unsafe fn initWithFileDescriptor_closeOnDealloc(
             this: Option<Allocated<Self>>,
             fd: c_int,
             closeopt: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(readDataToEndOfFileAndReturnError:)]
+        #[method_id(@__retain_semantics Other readDataToEndOfFileAndReturnError:)]
         pub unsafe fn readDataToEndOfFileAndReturnError(
             &self,
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(readDataUpToLength:error:)]
+        #[method_id(@__retain_semantics Other readDataUpToLength:error:)]
         pub unsafe fn readDataUpToLength_error(
             &self,
             length: NSUInteger,
@@ -79,38 +79,38 @@ extern_methods!(
 extern_methods!(
     /// NSFileHandleCreation
     unsafe impl NSFileHandle {
-        #[method_id(fileHandleWithStandardInput)]
+        #[method_id(@__retain_semantics Other fileHandleWithStandardInput)]
         pub unsafe fn fileHandleWithStandardInput() -> Id<NSFileHandle, Shared>;
 
-        #[method_id(fileHandleWithStandardOutput)]
+        #[method_id(@__retain_semantics Other fileHandleWithStandardOutput)]
         pub unsafe fn fileHandleWithStandardOutput() -> Id<NSFileHandle, Shared>;
 
-        #[method_id(fileHandleWithStandardError)]
+        #[method_id(@__retain_semantics Other fileHandleWithStandardError)]
         pub unsafe fn fileHandleWithStandardError() -> Id<NSFileHandle, Shared>;
 
-        #[method_id(fileHandleWithNullDevice)]
+        #[method_id(@__retain_semantics Other fileHandleWithNullDevice)]
         pub unsafe fn fileHandleWithNullDevice() -> Id<NSFileHandle, Shared>;
 
-        #[method_id(fileHandleForReadingAtPath:)]
+        #[method_id(@__retain_semantics Other fileHandleForReadingAtPath:)]
         pub unsafe fn fileHandleForReadingAtPath(path: &NSString) -> Option<Id<Self, Shared>>;
 
-        #[method_id(fileHandleForWritingAtPath:)]
+        #[method_id(@__retain_semantics Other fileHandleForWritingAtPath:)]
         pub unsafe fn fileHandleForWritingAtPath(path: &NSString) -> Option<Id<Self, Shared>>;
 
-        #[method_id(fileHandleForUpdatingAtPath:)]
+        #[method_id(@__retain_semantics Other fileHandleForUpdatingAtPath:)]
         pub unsafe fn fileHandleForUpdatingAtPath(path: &NSString) -> Option<Id<Self, Shared>>;
 
-        #[method_id(fileHandleForReadingFromURL:error:)]
+        #[method_id(@__retain_semantics Other fileHandleForReadingFromURL:error:)]
         pub unsafe fn fileHandleForReadingFromURL_error(
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(fileHandleForWritingToURL:error:)]
+        #[method_id(@__retain_semantics Other fileHandleForWritingToURL:error:)]
         pub unsafe fn fileHandleForWritingToURL_error(
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(fileHandleForUpdatingURL:error:)]
+        #[method_id(@__retain_semantics Other fileHandleForUpdatingURL:error:)]
         pub unsafe fn fileHandleForUpdatingURL_error(
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
@@ -205,7 +205,7 @@ extern_methods!(
 extern_methods!(
     /// NSFileHandlePlatformSpecific
     unsafe impl NSFileHandle {
-        #[method_id(initWithFileDescriptor:)]
+        #[method_id(@__retain_semantics Init initWithFileDescriptor:)]
         pub unsafe fn initWithFileDescriptor(
             this: Option<Allocated<Self>>,
             fd: c_int,
@@ -218,10 +218,10 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl NSFileHandle {
-        #[method_id(readDataToEndOfFile)]
+        #[method_id(@__retain_semantics Other readDataToEndOfFile)]
         pub unsafe fn readDataToEndOfFile(&self) -> Id<NSData, Shared>;
 
-        #[method_id(readDataOfLength:)]
+        #[method_id(@__retain_semantics Other readDataOfLength:)]
         pub unsafe fn readDataOfLength(&self, length: NSUInteger) -> Id<NSData, Shared>;
 
         #[method(writeData:)]
@@ -258,13 +258,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPipe {
-        #[method_id(fileHandleForReading)]
+        #[method_id(@__retain_semantics Other fileHandleForReading)]
         pub unsafe fn fileHandleForReading(&self) -> Id<NSFileHandle, Shared>;
 
-        #[method_id(fileHandleForWriting)]
+        #[method_id(@__retain_semantics Other fileHandleForWriting)]
         pub unsafe fn fileHandleForWriting(&self) -> Id<NSFileHandle, Shared>;
 
-        #[method_id(pipe)]
+        #[method_id(@__retain_semantics Other pipe)]
         pub unsafe fn pipe() -> Id<NSPipe, Shared>;
     }
 );

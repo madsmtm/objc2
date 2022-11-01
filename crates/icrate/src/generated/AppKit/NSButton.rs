@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSButton {
-        #[method_id(buttonWithTitle:image:target:action:)]
+        #[method_id(@__retain_semantics Other buttonWithTitle:image:target:action:)]
         pub unsafe fn buttonWithTitle_image_target_action(
             title: &NSString,
             image: &NSImage,
@@ -23,28 +23,28 @@ extern_methods!(
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(buttonWithTitle:target:action:)]
+        #[method_id(@__retain_semantics Other buttonWithTitle:target:action:)]
         pub unsafe fn buttonWithTitle_target_action(
             title: &NSString,
             target: Option<&Object>,
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(buttonWithImage:target:action:)]
+        #[method_id(@__retain_semantics Other buttonWithImage:target:action:)]
         pub unsafe fn buttonWithImage_target_action(
             image: &NSImage,
             target: Option<&Object>,
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(checkboxWithTitle:target:action:)]
+        #[method_id(@__retain_semantics Other checkboxWithTitle:target:action:)]
         pub unsafe fn checkboxWithTitle_target_action(
             title: &NSString,
             target: Option<&Object>,
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(radioButtonWithTitle:target:action:)]
+        #[method_id(@__retain_semantics Other radioButtonWithTitle:target:action:)]
         pub unsafe fn radioButtonWithTitle_target_action(
             title: &NSString,
             target: Option<&Object>,
@@ -54,25 +54,25 @@ extern_methods!(
         #[method(setButtonType:)]
         pub unsafe fn setButtonType(&self, type_: NSButtonType);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: &NSString);
 
-        #[method_id(attributedTitle)]
+        #[method_id(@__retain_semantics Other attributedTitle)]
         pub unsafe fn attributedTitle(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedTitle:)]
         pub unsafe fn setAttributedTitle(&self, attributedTitle: &NSAttributedString);
 
-        #[method_id(alternateTitle)]
+        #[method_id(@__retain_semantics Other alternateTitle)]
         pub unsafe fn alternateTitle(&self) -> Id<NSString, Shared>;
 
         #[method(setAlternateTitle:)]
         pub unsafe fn setAlternateTitle(&self, alternateTitle: &NSString);
 
-        #[method_id(attributedAlternateTitle)]
+        #[method_id(@__retain_semantics Other attributedAlternateTitle)]
         pub unsafe fn attributedAlternateTitle(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedAlternateTitle:)]
@@ -87,7 +87,7 @@ extern_methods!(
         #[method(setHasDestructiveAction:)]
         pub unsafe fn setHasDestructiveAction(&self, hasDestructiveAction: bool);
 
-        #[method_id(sound)]
+        #[method_id(@__retain_semantics Other sound)]
         pub unsafe fn sound(&self) -> Option<Id<NSSound, Shared>>;
 
         #[method(setSound:)]
@@ -142,13 +142,13 @@ extern_methods!(
             showsBorderOnlyWhileMouseInside: bool,
         );
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
         pub unsafe fn setImage(&self, image: Option<&NSImage>);
 
-        #[method_id(alternateImage)]
+        #[method_id(@__retain_semantics Other alternateImage)]
         pub unsafe fn alternateImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setAlternateImage:)]
@@ -172,7 +172,7 @@ extern_methods!(
         #[method(setImageHugsTitle:)]
         pub unsafe fn setImageHugsTitle(&self, imageHugsTitle: bool);
 
-        #[method_id(symbolConfiguration)]
+        #[method_id(@__retain_semantics Other symbolConfiguration)]
         pub unsafe fn symbolConfiguration(&self) -> Option<Id<NSImageSymbolConfiguration, Shared>>;
 
         #[method(setSymbolConfiguration:)]
@@ -181,13 +181,13 @@ extern_methods!(
             symbolConfiguration: Option<&NSImageSymbolConfiguration>,
         );
 
-        #[method_id(bezelColor)]
+        #[method_id(@__retain_semantics Other bezelColor)]
         pub unsafe fn bezelColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBezelColor:)]
         pub unsafe fn setBezelColor(&self, bezelColor: Option<&NSColor>);
 
-        #[method_id(contentTintColor)]
+        #[method_id(@__retain_semantics Other contentTintColor)]
         pub unsafe fn contentTintColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setContentTintColor:)]
@@ -211,7 +211,7 @@ extern_methods!(
         #[method(highlight:)]
         pub unsafe fn highlight(&self, flag: bool);
 
-        #[method_id(keyEquivalent)]
+        #[method_id(@__retain_semantics Other keyEquivalent)]
         pub unsafe fn keyEquivalent(&self) -> Id<NSString, Shared>;
 
         #[method(setKeyEquivalent:)]
@@ -241,7 +241,7 @@ extern_methods!(
             prioritizedOptions: &NSArray<NSUserInterfaceCompressionOptions>,
         ) -> NSSize;
 
-        #[method_id(activeCompressionOptions)]
+        #[method_id(@__retain_semantics Other activeCompressionOptions)]
         pub unsafe fn activeCompressionOptions(
             &self,
         ) -> Id<NSUserInterfaceCompressionOptions, Shared>;

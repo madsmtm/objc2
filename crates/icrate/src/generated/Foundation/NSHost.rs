@@ -14,31 +14,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSHost {
-        #[method_id(currentHost)]
+        #[method_id(@__retain_semantics Other currentHost)]
         pub unsafe fn currentHost() -> Id<Self, Shared>;
 
-        #[method_id(hostWithName:)]
+        #[method_id(@__retain_semantics Other hostWithName:)]
         pub unsafe fn hostWithName(name: Option<&NSString>) -> Id<Self, Shared>;
 
-        #[method_id(hostWithAddress:)]
+        #[method_id(@__retain_semantics Other hostWithAddress:)]
         pub unsafe fn hostWithAddress(address: &NSString) -> Id<Self, Shared>;
 
         #[method(isEqualToHost:)]
         pub unsafe fn isEqualToHost(&self, aHost: &NSHost) -> bool;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(names)]
+        #[method_id(@__retain_semantics Other names)]
         pub unsafe fn names(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(address)]
+        #[method_id(@__retain_semantics Other address)]
         pub unsafe fn address(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(addresses)]
+        #[method_id(@__retain_semantics Other addresses)]
         pub unsafe fn addresses(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(localizedName)]
+        #[method_id(@__retain_semantics Other localizedName)]
         pub unsafe fn localizedName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setHostCacheEnabled:)]

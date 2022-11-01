@@ -29,19 +29,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFileAccessIntent {
-        #[method_id(readingIntentWithURL:options:)]
+        #[method_id(@__retain_semantics Other readingIntentWithURL:options:)]
         pub unsafe fn readingIntentWithURL_options(
             url: &NSURL,
             options: NSFileCoordinatorReadingOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(writingIntentWithURL:options:)]
+        #[method_id(@__retain_semantics Other writingIntentWithURL:options:)]
         pub unsafe fn writingIntentWithURL_options(
             url: &NSURL,
             options: NSFileCoordinatorWritingOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Id<NSURL, Shared>;
     }
 );
@@ -63,16 +63,16 @@ extern_methods!(
         #[method(removeFilePresenter:)]
         pub unsafe fn removeFilePresenter(filePresenter: &NSFilePresenter);
 
-        #[method_id(filePresenters)]
+        #[method_id(@__retain_semantics Other filePresenters)]
         pub unsafe fn filePresenters() -> Id<NSArray<NSFilePresenter>, Shared>;
 
-        #[method_id(initWithFilePresenter:)]
+        #[method_id(@__retain_semantics Init initWithFilePresenter:)]
         pub unsafe fn initWithFilePresenter(
             this: Option<Allocated<Self>>,
             filePresenterOrNil: Option<&NSFilePresenter>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(purposeIdentifier)]
+        #[method_id(@__retain_semantics Other purposeIdentifier)]
         pub unsafe fn purposeIdentifier(&self) -> Id<NSString, Shared>;
 
         #[method(setPurposeIdentifier:)]

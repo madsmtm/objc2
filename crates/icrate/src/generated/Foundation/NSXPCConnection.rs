@@ -19,44 +19,44 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSXPCConnection {
-        #[method_id(initWithServiceName:)]
+        #[method_id(@__retain_semantics Init initWithServiceName:)]
         pub unsafe fn initWithServiceName(
             this: Option<Allocated<Self>>,
             serviceName: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(serviceName)]
+        #[method_id(@__retain_semantics Other serviceName)]
         pub unsafe fn serviceName(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(initWithMachServiceName:options:)]
+        #[method_id(@__retain_semantics Init initWithMachServiceName:options:)]
         pub unsafe fn initWithMachServiceName_options(
             this: Option<Allocated<Self>>,
             name: &NSString,
             options: NSXPCConnectionOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithListenerEndpoint:)]
+        #[method_id(@__retain_semantics Init initWithListenerEndpoint:)]
         pub unsafe fn initWithListenerEndpoint(
             this: Option<Allocated<Self>>,
             endpoint: &NSXPCListenerEndpoint,
         ) -> Id<Self, Shared>;
 
-        #[method_id(endpoint)]
+        #[method_id(@__retain_semantics Other endpoint)]
         pub unsafe fn endpoint(&self) -> Id<NSXPCListenerEndpoint, Shared>;
 
-        #[method_id(exportedInterface)]
+        #[method_id(@__retain_semantics Other exportedInterface)]
         pub unsafe fn exportedInterface(&self) -> Option<Id<NSXPCInterface, Shared>>;
 
         #[method(setExportedInterface:)]
         pub unsafe fn setExportedInterface(&self, exportedInterface: Option<&NSXPCInterface>);
 
-        #[method_id(exportedObject)]
+        #[method_id(@__retain_semantics Other exportedObject)]
         pub unsafe fn exportedObject(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setExportedObject:)]
         pub unsafe fn setExportedObject(&self, exportedObject: Option<&Object>);
 
-        #[method_id(remoteObjectInterface)]
+        #[method_id(@__retain_semantics Other remoteObjectInterface)]
         pub unsafe fn remoteObjectInterface(&self) -> Option<Id<NSXPCInterface, Shared>>;
 
         #[method(setRemoteObjectInterface:)]
@@ -65,16 +65,16 @@ extern_methods!(
             remoteObjectInterface: Option<&NSXPCInterface>,
         );
 
-        #[method_id(remoteObjectProxy)]
+        #[method_id(@__retain_semantics Other remoteObjectProxy)]
         pub unsafe fn remoteObjectProxy(&self) -> Id<Object, Shared>;
 
-        #[method_id(remoteObjectProxyWithErrorHandler:)]
+        #[method_id(@__retain_semantics Other remoteObjectProxyWithErrorHandler:)]
         pub unsafe fn remoteObjectProxyWithErrorHandler(
             &self,
             handler: TodoBlock,
         ) -> Id<Object, Shared>;
 
-        #[method_id(synchronousRemoteObjectProxyWithErrorHandler:)]
+        #[method_id(@__retain_semantics Other synchronousRemoteObjectProxyWithErrorHandler:)]
         pub unsafe fn synchronousRemoteObjectProxyWithErrorHandler(
             &self,
             handler: TodoBlock,
@@ -113,7 +113,7 @@ extern_methods!(
         #[method(effectiveGroupIdentifier)]
         pub unsafe fn effectiveGroupIdentifier(&self) -> gid_t;
 
-        #[method_id(currentConnection)]
+        #[method_id(@__retain_semantics Other currentConnection)]
         pub unsafe fn currentConnection() -> Option<Id<NSXPCConnection, Shared>>;
 
         #[method(scheduleSendBarrierBlock:)]
@@ -132,25 +132,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSXPCListener {
-        #[method_id(serviceListener)]
+        #[method_id(@__retain_semantics Other serviceListener)]
         pub unsafe fn serviceListener() -> Id<NSXPCListener, Shared>;
 
-        #[method_id(anonymousListener)]
+        #[method_id(@__retain_semantics Other anonymousListener)]
         pub unsafe fn anonymousListener() -> Id<NSXPCListener, Shared>;
 
-        #[method_id(initWithMachServiceName:)]
+        #[method_id(@__retain_semantics Init initWithMachServiceName:)]
         pub unsafe fn initWithMachServiceName(
             this: Option<Allocated<Self>>,
             name: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSXPCListenerDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSXPCListenerDelegate>);
 
-        #[method_id(endpoint)]
+        #[method_id(@__retain_semantics Other endpoint)]
         pub unsafe fn endpoint(&self) -> Id<NSXPCListenerEndpoint, Shared>;
 
         #[method(resume)]
@@ -177,10 +177,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSXPCInterface {
-        #[method_id(interfaceWithProtocol:)]
+        #[method_id(@__retain_semantics Other interfaceWithProtocol:)]
         pub unsafe fn interfaceWithProtocol(protocol: &Protocol) -> Id<NSXPCInterface, Shared>;
 
-        #[method_id(protocol)]
+        #[method_id(@__retain_semantics Other protocol)]
         pub unsafe fn protocol(&self) -> Id<Protocol, Shared>;
 
         #[method(setProtocol:)]
@@ -195,7 +195,7 @@ extern_methods!(
             ofReply: bool,
         );
 
-        #[method_id(classesForSelector:argumentIndex:ofReply:)]
+        #[method_id(@__retain_semantics Other classesForSelector:argumentIndex:ofReply:)]
         pub unsafe fn classesForSelector_argumentIndex_ofReply(
             &self,
             sel: Sel,
@@ -212,7 +212,7 @@ extern_methods!(
             ofReply: bool,
         );
 
-        #[method_id(interfaceForSelector:argumentIndex:ofReply:)]
+        #[method_id(@__retain_semantics Other interfaceForSelector:argumentIndex:ofReply:)]
         pub unsafe fn interfaceForSelector_argumentIndex_ofReply(
             &self,
             sel: Sel,
@@ -273,13 +273,13 @@ extern_methods!(
             key: &NSString,
         ) -> xpc_object_t;
 
-        #[method_id(userInfo)]
+        #[method_id(@__retain_semantics Other userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSObject, Shared>>;
 
         #[method(setUserInfo:)]
         pub unsafe fn setUserInfo(&self, userInfo: Option<&NSObject>);
 
-        #[method_id(connection)]
+        #[method_id(@__retain_semantics Other connection)]
         pub unsafe fn connection(&self) -> Option<Id<NSXPCConnection, Shared>>;
     }
 );

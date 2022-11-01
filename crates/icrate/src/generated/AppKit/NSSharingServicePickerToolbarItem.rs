@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSharingServicePickerToolbarItem {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(
             &self,
         ) -> Option<Id<NSSharingServicePickerToolbarItemDelegate, Shared>>;

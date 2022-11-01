@@ -57,7 +57,7 @@ extern_methods!(
         #[method(setMaximumItemSize:)]
         pub unsafe fn setMaximumItemSize(&self, maximumItemSize: NSSize);
 
-        #[method_id(backgroundColors)]
+        #[method_id(@__retain_semantics Other backgroundColors)]
         pub unsafe fn backgroundColors(&self) -> Id<NSArray<NSColor>, Shared>;
 
         #[method(setBackgroundColors:)]

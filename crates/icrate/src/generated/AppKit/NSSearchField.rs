@@ -28,13 +28,13 @@ extern_methods!(
         #[method(cancelButtonBounds)]
         pub unsafe fn cancelButtonBounds(&self) -> NSRect;
 
-        #[method_id(recentSearches)]
+        #[method_id(@__retain_semantics Other recentSearches)]
         pub unsafe fn recentSearches(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(setRecentSearches:)]
         pub unsafe fn setRecentSearches(&self, recentSearches: &NSArray<NSString>);
 
-        #[method_id(recentsAutosaveName)]
+        #[method_id(@__retain_semantics Other recentsAutosaveName)]
         pub unsafe fn recentsAutosaveName(
             &self,
         ) -> Option<Id<NSSearchFieldRecentsAutosaveName, Shared>>;
@@ -45,7 +45,7 @@ extern_methods!(
             recentsAutosaveName: Option<&NSSearchFieldRecentsAutosaveName>,
         );
 
-        #[method_id(searchMenuTemplate)]
+        #[method_id(@__retain_semantics Other searchMenuTemplate)]
         pub unsafe fn searchMenuTemplate(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setSearchMenuTemplate:)]
@@ -69,7 +69,7 @@ extern_methods!(
         #[method(setSendsSearchStringImmediately:)]
         pub unsafe fn setSendsSearchStringImmediately(&self, sendsSearchStringImmediately: bool);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSearchFieldDelegate, Shared>>;
 
         #[method(setDelegate:)]

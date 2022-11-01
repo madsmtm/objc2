@@ -14,10 +14,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSProxy {
-        #[method_id(alloc)]
+        #[method_id(@__retain_semantics Alloc alloc)]
         pub unsafe fn alloc() -> Option<Allocated<Object>>;
 
-        #[method_id(allocWithZone:)]
+        #[method_id(@__retain_semantics Alloc allocWithZone:)]
         pub unsafe fn allocWithZone(zone: *mut NSZone) -> Option<Allocated<Object>>;
 
         #[method(class)]
@@ -26,7 +26,7 @@ extern_methods!(
         #[method(forwardInvocation:)]
         pub unsafe fn forwardInvocation(&self, invocation: &NSInvocation);
 
-        #[method_id(methodSignatureForSelector:)]
+        #[method_id(@__retain_semantics Other methodSignatureForSelector:)]
         pub unsafe fn methodSignatureForSelector(
             &self,
             sel: Sel,
@@ -38,10 +38,10 @@ extern_methods!(
         #[method(finalize)]
         pub unsafe fn finalize(&self);
 
-        #[method_id(description)]
+        #[method_id(@__retain_semantics Other description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
 
-        #[method_id(debugDescription)]
+        #[method_id(@__retain_semantics Other debugDescription)]
         pub unsafe fn debugDescription(&self) -> Id<NSString, Shared>;
 
         #[method(respondsToSelector:)]

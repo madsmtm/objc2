@@ -45,14 +45,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAccessibilityCustomRotor {
-        #[method_id(initWithLabel:itemSearchDelegate:)]
+        #[method_id(@__retain_semantics Init initWithLabel:itemSearchDelegate:)]
         pub unsafe fn initWithLabel_itemSearchDelegate(
             this: Option<Allocated<Self>>,
             label: &NSString,
             itemSearchDelegate: &NSAccessibilityCustomRotorItemSearchDelegate,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithRotorType:itemSearchDelegate:)]
+        #[method_id(@__retain_semantics Init initWithRotorType:itemSearchDelegate:)]
         pub unsafe fn initWithRotorType_itemSearchDelegate(
             this: Option<Allocated<Self>>,
             rotorType: NSAccessibilityCustomRotorType,
@@ -65,13 +65,13 @@ extern_methods!(
         #[method(setType:)]
         pub unsafe fn setType(&self, type_: NSAccessibilityCustomRotorType);
 
-        #[method_id(label)]
+        #[method_id(@__retain_semantics Other label)]
         pub unsafe fn label(&self) -> Id<NSString, Shared>;
 
         #[method(setLabel:)]
         pub unsafe fn setLabel(&self, label: &NSString);
 
-        #[method_id(itemSearchDelegate)]
+        #[method_id(@__retain_semantics Other itemSearchDelegate)]
         pub unsafe fn itemSearchDelegate(
             &self,
         ) -> Option<Id<NSAccessibilityCustomRotorItemSearchDelegate, Shared>>;
@@ -82,7 +82,7 @@ extern_methods!(
             itemSearchDelegate: Option<&NSAccessibilityCustomRotorItemSearchDelegate>,
         );
 
-        #[method_id(itemLoadingDelegate)]
+        #[method_id(@__retain_semantics Other itemLoadingDelegate)]
         pub unsafe fn itemLoadingDelegate(
             &self,
         ) -> Option<Id<NSAccessibilityElementLoading, Shared>>;
@@ -106,7 +106,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAccessibilityCustomRotorSearchParameters {
-        #[method_id(currentItem)]
+        #[method_id(@__retain_semantics Other currentItem)]
         pub unsafe fn currentItem(
             &self,
         ) -> Option<Id<NSAccessibilityCustomRotorItemResult, Shared>>;
@@ -126,7 +126,7 @@ extern_methods!(
             searchDirection: NSAccessibilityCustomRotorSearchDirection,
         );
 
-        #[method_id(filterString)]
+        #[method_id(@__retain_semantics Other filterString)]
         pub unsafe fn filterString(&self) -> Id<NSString, Shared>;
 
         #[method(setFilterString:)]
@@ -145,29 +145,29 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAccessibilityCustomRotorItemResult {
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithTargetElement:)]
+        #[method_id(@__retain_semantics Init initWithTargetElement:)]
         pub unsafe fn initWithTargetElement(
             this: Option<Allocated<Self>>,
             targetElement: &NSAccessibilityElement,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithItemLoadingToken:customLabel:)]
+        #[method_id(@__retain_semantics Init initWithItemLoadingToken:customLabel:)]
         pub unsafe fn initWithItemLoadingToken_customLabel(
             this: Option<Allocated<Self>>,
             itemLoadingToken: &NSAccessibilityLoadingToken,
             customLabel: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(targetElement)]
+        #[method_id(@__retain_semantics Other targetElement)]
         pub unsafe fn targetElement(&self) -> Option<Id<NSAccessibilityElement, Shared>>;
 
-        #[method_id(itemLoadingToken)]
+        #[method_id(@__retain_semantics Other itemLoadingToken)]
         pub unsafe fn itemLoadingToken(&self) -> Option<Id<NSAccessibilityLoadingToken, Shared>>;
 
         #[method(targetRange)]
@@ -176,7 +176,7 @@ extern_methods!(
         #[method(setTargetRange:)]
         pub unsafe fn setTargetRange(&self, targetRange: NSRange);
 
-        #[method_id(customLabel)]
+        #[method_id(@__retain_semantics Other customLabel)]
         pub unsafe fn customLabel(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setCustomLabel:)]

@@ -15,13 +15,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextField {
-        #[method_id(placeholderString)]
+        #[method_id(@__retain_semantics Other placeholderString)]
         pub unsafe fn placeholderString(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setPlaceholderString:)]
         pub unsafe fn setPlaceholderString(&self, placeholderString: Option<&NSString>);
 
-        #[method_id(placeholderAttributedString)]
+        #[method_id(@__retain_semantics Other placeholderAttributedString)]
         pub unsafe fn placeholderAttributedString(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setPlaceholderAttributedString:)]
@@ -30,7 +30,7 @@ extern_methods!(
             placeholderAttributedString: Option<&NSAttributedString>,
         );
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBackgroundColor:)]
@@ -42,7 +42,7 @@ extern_methods!(
         #[method(setDrawsBackground:)]
         pub unsafe fn setDrawsBackground(&self, drawsBackground: bool);
 
-        #[method_id(textColor)]
+        #[method_id(@__retain_semantics Other textColor)]
         pub unsafe fn textColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setTextColor:)]
@@ -75,7 +75,7 @@ extern_methods!(
         #[method(selectText:)]
         pub unsafe fn selectText(&self, sender: Option<&Object>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTextFieldDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -160,18 +160,18 @@ extern_methods!(
 extern_methods!(
     /// NSTextFieldConvenience
     unsafe impl NSTextField {
-        #[method_id(labelWithString:)]
+        #[method_id(@__retain_semantics Other labelWithString:)]
         pub unsafe fn labelWithString(stringValue: &NSString) -> Id<Self, Shared>;
 
-        #[method_id(wrappingLabelWithString:)]
+        #[method_id(@__retain_semantics Other wrappingLabelWithString:)]
         pub unsafe fn wrappingLabelWithString(stringValue: &NSString) -> Id<Self, Shared>;
 
-        #[method_id(labelWithAttributedString:)]
+        #[method_id(@__retain_semantics Other labelWithAttributedString:)]
         pub unsafe fn labelWithAttributedString(
             attributedStringValue: &NSAttributedString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(textFieldWithString:)]
+        #[method_id(@__retain_semantics Other textFieldWithString:)]
         pub unsafe fn textFieldWithString(stringValue: &NSString) -> Id<Self, Shared>;
     }
 );

@@ -14,10 +14,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScriptCommandDescription {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Object, Shared>;
 
-        #[method_id(initWithSuiteName:commandName:dictionary:)]
+        #[method_id(@__retain_semantics Init initWithSuiteName:commandName:dictionary:)]
         pub unsafe fn initWithSuiteName_commandName_dictionary(
             this: Option<Allocated<Self>>,
             suiteName: &NSString,
@@ -25,16 +25,16 @@ extern_methods!(
             commandDeclaration: Option<&NSDictionary>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             inCoder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(suiteName)]
+        #[method_id(@__retain_semantics Other suiteName)]
         pub unsafe fn suiteName(&self) -> Id<NSString, Shared>;
 
-        #[method_id(commandName)]
+        #[method_id(@__retain_semantics Other commandName)]
         pub unsafe fn commandName(&self) -> Id<NSString, Shared>;
 
         #[method(appleEventClassCode)]
@@ -43,19 +43,19 @@ extern_methods!(
         #[method(appleEventCode)]
         pub unsafe fn appleEventCode(&self) -> FourCharCode;
 
-        #[method_id(commandClassName)]
+        #[method_id(@__retain_semantics Other commandClassName)]
         pub unsafe fn commandClassName(&self) -> Id<NSString, Shared>;
 
-        #[method_id(returnType)]
+        #[method_id(@__retain_semantics Other returnType)]
         pub unsafe fn returnType(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(appleEventCodeForReturnType)]
         pub unsafe fn appleEventCodeForReturnType(&self) -> FourCharCode;
 
-        #[method_id(argumentNames)]
+        #[method_id(@__retain_semantics Other argumentNames)]
         pub unsafe fn argumentNames(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(typeForArgumentWithName:)]
+        #[method_id(@__retain_semantics Other typeForArgumentWithName:)]
         pub unsafe fn typeForArgumentWithName(
             &self,
             argumentName: &NSString,
@@ -70,10 +70,10 @@ extern_methods!(
         #[method(isOptionalArgumentWithName:)]
         pub unsafe fn isOptionalArgumentWithName(&self, argumentName: &NSString) -> bool;
 
-        #[method_id(createCommandInstance)]
+        #[method_id(@__retain_semantics Other createCommandInstance)]
         pub unsafe fn createCommandInstance(&self) -> Id<NSScriptCommand, Shared>;
 
-        #[method_id(createCommandInstanceWithZone:)]
+        #[method_id(@__retain_semantics Other createCommandInstanceWithZone:)]
         pub unsafe fn createCommandInstanceWithZone(
             &self,
             zone: *mut NSZone,

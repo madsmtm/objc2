@@ -25,37 +25,37 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSToolbarItem {
-        #[method_id(initWithItemIdentifier:)]
+        #[method_id(@__retain_semantics Init initWithItemIdentifier:)]
         pub unsafe fn initWithItemIdentifier(
             this: Option<Allocated<Self>>,
             itemIdentifier: &NSToolbarItemIdentifier,
         ) -> Id<Self, Shared>;
 
-        #[method_id(itemIdentifier)]
+        #[method_id(@__retain_semantics Other itemIdentifier)]
         pub unsafe fn itemIdentifier(&self) -> Id<NSToolbarItemIdentifier, Shared>;
 
-        #[method_id(toolbar)]
+        #[method_id(@__retain_semantics Other toolbar)]
         pub unsafe fn toolbar(&self) -> Option<Id<NSToolbar, Shared>>;
 
-        #[method_id(label)]
+        #[method_id(@__retain_semantics Other label)]
         pub unsafe fn label(&self) -> Id<NSString, Shared>;
 
         #[method(setLabel:)]
         pub unsafe fn setLabel(&self, label: &NSString);
 
-        #[method_id(paletteLabel)]
+        #[method_id(@__retain_semantics Other paletteLabel)]
         pub unsafe fn paletteLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setPaletteLabel:)]
         pub unsafe fn setPaletteLabel(&self, paletteLabel: &NSString);
 
-        #[method_id(toolTip)]
+        #[method_id(@__retain_semantics Other toolTip)]
         pub unsafe fn toolTip(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setToolTip:)]
         pub unsafe fn setToolTip(&self, toolTip: Option<&NSString>);
 
-        #[method_id(menuFormRepresentation)]
+        #[method_id(@__retain_semantics Other menuFormRepresentation)]
         pub unsafe fn menuFormRepresentation(&self) -> Option<Id<NSMenuItem, Shared>>;
 
         #[method(setMenuFormRepresentation:)]
@@ -67,7 +67,7 @@ extern_methods!(
         #[method(setTag:)]
         pub unsafe fn setTag(&self, tag: NSInteger);
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -85,13 +85,13 @@ extern_methods!(
         #[method(setEnabled:)]
         pub unsafe fn setEnabled(&self, enabled: bool);
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
         pub unsafe fn setImage(&self, image: Option<&NSImage>);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
@@ -109,7 +109,7 @@ extern_methods!(
         #[method(setNavigational:)]
         pub unsafe fn setNavigational(&self, navigational: bool);
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setView:)]

@@ -22,22 +22,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextContentManager {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTextContentManagerDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSTextContentManagerDelegate>);
 
-        #[method_id(textLayoutManagers)]
+        #[method_id(@__retain_semantics Other textLayoutManagers)]
         pub unsafe fn textLayoutManagers(&self) -> Id<NSArray<NSTextLayoutManager>, Shared>;
 
         #[method(addTextLayoutManager:)]
@@ -46,7 +46,7 @@ extern_methods!(
         #[method(removeTextLayoutManager:)]
         pub unsafe fn removeTextLayoutManager(&self, textLayoutManager: &NSTextLayoutManager);
 
-        #[method_id(primaryTextLayoutManager)]
+        #[method_id(@__retain_semantics Other primaryTextLayoutManager)]
         pub unsafe fn primaryTextLayoutManager(&self) -> Option<Id<NSTextLayoutManager, Shared>>;
 
         #[method(setPrimaryTextLayoutManager:)]
@@ -58,7 +58,7 @@ extern_methods!(
         #[method(synchronizeTextLayoutManagers:)]
         pub unsafe fn synchronizeTextLayoutManagers(&self, completionHandler: TodoBlock);
 
-        #[method_id(textElementsForRange:)]
+        #[method_id(@__retain_semantics Other textElementsForRange:)]
         pub unsafe fn textElementsForRange(
             &self,
             range: &NSTextRange,
@@ -112,31 +112,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextContentStorage {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTextContentStorageDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSTextContentStorageDelegate>);
 
-        #[method_id(attributedString)]
+        #[method_id(@__retain_semantics Other attributedString)]
         pub unsafe fn attributedString(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setAttributedString:)]
         pub unsafe fn setAttributedString(&self, attributedString: Option<&NSAttributedString>);
 
-        #[method_id(attributedStringForTextElement:)]
+        #[method_id(@__retain_semantics Other attributedStringForTextElement:)]
         pub unsafe fn attributedStringForTextElement(
             &self,
             textElement: &NSTextElement,
         ) -> Option<Id<NSAttributedString, Shared>>;
 
-        #[method_id(textElementForAttributedString:)]
+        #[method_id(@__retain_semantics Other textElementForAttributedString:)]
         pub unsafe fn textElementForAttributedString(
             &self,
             attributedString: &NSAttributedString,
         ) -> Option<Id<NSTextElement, Shared>>;
 
-        #[method_id(locationFromLocation:withOffset:)]
+        #[method_id(@__retain_semantics Other locationFromLocation:withOffset:)]
         pub unsafe fn locationFromLocation_withOffset(
             &self,
             location: &NSTextLocation,
@@ -150,7 +150,7 @@ extern_methods!(
             to: &NSTextLocation,
         ) -> NSInteger;
 
-        #[method_id(adjustedRangeFromRange:forEditingTextSelection:)]
+        #[method_id(@__retain_semantics Other adjustedRangeFromRange:forEditingTextSelection:)]
         pub unsafe fn adjustedRangeFromRange_forEditingTextSelection(
             &self,
             textRange: &NSTextRange,

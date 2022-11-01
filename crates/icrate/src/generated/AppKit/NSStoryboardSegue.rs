@@ -17,7 +17,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSStoryboardSegue {
-        #[method_id(segueWithIdentifier:source:destination:performHandler:)]
+        #[method_id(@__retain_semantics Other segueWithIdentifier:source:destination:performHandler:)]
         pub unsafe fn segueWithIdentifier_source_destination_performHandler(
             identifier: &NSStoryboardSegueIdentifier,
             sourceController: &Object,
@@ -25,7 +25,7 @@ extern_methods!(
             performHandler: TodoBlock,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithIdentifier:source:destination:)]
+        #[method_id(@__retain_semantics Init initWithIdentifier:source:destination:)]
         pub unsafe fn initWithIdentifier_source_destination(
             this: Option<Allocated<Self>>,
             identifier: &NSStoryboardSegueIdentifier,
@@ -33,13 +33,13 @@ extern_methods!(
             destinationController: &Object,
         ) -> Id<Self, Shared>;
 
-        #[method_id(identifier)]
+        #[method_id(@__retain_semantics Other identifier)]
         pub unsafe fn identifier(&self) -> Option<Id<NSStoryboardSegueIdentifier, Shared>>;
 
-        #[method_id(sourceController)]
+        #[method_id(@__retain_semantics Other sourceController)]
         pub unsafe fn sourceController(&self) -> Id<Object, Shared>;
 
-        #[method_id(destinationController)]
+        #[method_id(@__retain_semantics Other destinationController)]
         pub unsafe fn destinationController(&self) -> Id<Object, Shared>;
 
         #[method(perform)]

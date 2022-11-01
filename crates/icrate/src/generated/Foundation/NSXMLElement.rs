@@ -14,43 +14,43 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSXMLElement {
-        #[method_id(initWithName:)]
+        #[method_id(@__retain_semantics Init initWithName:)]
         pub unsafe fn initWithName(
             this: Option<Allocated<Self>>,
             name: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithName:URI:)]
+        #[method_id(@__retain_semantics Init initWithName:URI:)]
         pub unsafe fn initWithName_URI(
             this: Option<Allocated<Self>>,
             name: &NSString,
             URI: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithName:stringValue:)]
+        #[method_id(@__retain_semantics Init initWithName:stringValue:)]
         pub unsafe fn initWithName_stringValue(
             this: Option<Allocated<Self>>,
             name: &NSString,
             string: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithXMLString:error:)]
+        #[method_id(@__retain_semantics Init initWithXMLString:error:)]
         pub unsafe fn initWithXMLString_error(
             this: Option<Allocated<Self>>,
             string: &NSString,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithKind:options:)]
+        #[method_id(@__retain_semantics Init initWithKind:options:)]
         pub unsafe fn initWithKind_options(
             this: Option<Allocated<Self>>,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(elementsForName:)]
+        #[method_id(@__retain_semantics Other elementsForName:)]
         pub unsafe fn elementsForName(&self, name: &NSString) -> Id<NSArray<NSXMLElement>, Shared>;
 
-        #[method_id(elementsForLocalName:URI:)]
+        #[method_id(@__retain_semantics Other elementsForLocalName:URI:)]
         pub unsafe fn elementsForLocalName_URI(
             &self,
             localName: &NSString,
@@ -63,7 +63,7 @@ extern_methods!(
         #[method(removeAttributeForName:)]
         pub unsafe fn removeAttributeForName(&self, name: &NSString);
 
-        #[method_id(attributes)]
+        #[method_id(@__retain_semantics Other attributes)]
         pub unsafe fn attributes(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>>;
 
         #[method(setAttributes:)]
@@ -75,10 +75,10 @@ extern_methods!(
             attributes: &NSDictionary<NSString, NSString>,
         );
 
-        #[method_id(attributeForName:)]
+        #[method_id(@__retain_semantics Other attributeForName:)]
         pub unsafe fn attributeForName(&self, name: &NSString) -> Option<Id<NSXMLNode, Shared>>;
 
-        #[method_id(attributeForLocalName:URI:)]
+        #[method_id(@__retain_semantics Other attributeForLocalName:URI:)]
         pub unsafe fn attributeForLocalName_URI(
             &self,
             localName: &NSString,
@@ -91,22 +91,22 @@ extern_methods!(
         #[method(removeNamespaceForPrefix:)]
         pub unsafe fn removeNamespaceForPrefix(&self, name: &NSString);
 
-        #[method_id(namespaces)]
+        #[method_id(@__retain_semantics Other namespaces)]
         pub unsafe fn namespaces(&self) -> Option<Id<NSArray<NSXMLNode>, Shared>>;
 
         #[method(setNamespaces:)]
         pub unsafe fn setNamespaces(&self, namespaces: Option<&NSArray<NSXMLNode>>);
 
-        #[method_id(namespaceForPrefix:)]
+        #[method_id(@__retain_semantics Other namespaceForPrefix:)]
         pub unsafe fn namespaceForPrefix(&self, name: &NSString) -> Option<Id<NSXMLNode, Shared>>;
 
-        #[method_id(resolveNamespaceForName:)]
+        #[method_id(@__retain_semantics Other resolveNamespaceForName:)]
         pub unsafe fn resolveNamespaceForName(
             &self,
             name: &NSString,
         ) -> Option<Id<NSXMLNode, Shared>>;
 
-        #[method_id(resolvePrefixForNamespaceURI:)]
+        #[method_id(@__retain_semantics Other resolvePrefixForNamespaceURI:)]
         pub unsafe fn resolvePrefixForNamespaceURI(
             &self,
             namespaceURI: &NSString,

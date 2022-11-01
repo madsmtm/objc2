@@ -15,13 +15,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScreen {
-        #[method_id(screens)]
+        #[method_id(@__retain_semantics Other screens)]
         pub unsafe fn screens() -> Id<NSArray<NSScreen>, Shared>;
 
-        #[method_id(mainScreen)]
+        #[method_id(@__retain_semantics Other mainScreen)]
         pub unsafe fn mainScreen() -> Option<Id<NSScreen, Shared>>;
 
-        #[method_id(deepestScreen)]
+        #[method_id(@__retain_semantics Other deepestScreen)]
         pub unsafe fn deepestScreen() -> Option<Id<NSScreen, Shared>>;
 
         #[method(screensHaveSeparateSpaces)]
@@ -36,12 +36,12 @@ extern_methods!(
         #[method(visibleFrame)]
         pub unsafe fn visibleFrame(&self) -> NSRect;
 
-        #[method_id(deviceDescription)]
+        #[method_id(@__retain_semantics Other deviceDescription)]
         pub unsafe fn deviceDescription(
             &self,
         ) -> Id<NSDictionary<NSDeviceDescriptionKey, Object>, Shared>;
 
-        #[method_id(colorSpace)]
+        #[method_id(@__retain_semantics Other colorSpace)]
         pub unsafe fn colorSpace(&self) -> Option<Id<NSColorSpace, Shared>>;
 
         #[method(supportedWindowDepths)]
@@ -66,7 +66,7 @@ extern_methods!(
         #[method(backingScaleFactor)]
         pub unsafe fn backingScaleFactor(&self) -> CGFloat;
 
-        #[method_id(localizedName)]
+        #[method_id(@__retain_semantics Other localizedName)]
         pub unsafe fn localizedName(&self) -> Id<NSString, Shared>;
 
         #[method(safeAreaInsets)]

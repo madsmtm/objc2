@@ -51,7 +51,7 @@ extern_methods!(
         #[method(setVertical:)]
         pub unsafe fn setVertical(&self, vertical: bool);
 
-        #[method_id(trackFillColor)]
+        #[method_id(@__retain_semantics Other trackFillColor)]
         pub unsafe fn trackFillColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setTrackFillColor:)]
@@ -105,13 +105,13 @@ extern_methods!(
 extern_methods!(
     /// NSSliderConvenience
     unsafe impl NSSlider {
-        #[method_id(sliderWithTarget:action:)]
+        #[method_id(@__retain_semantics Other sliderWithTarget:action:)]
         pub unsafe fn sliderWithTarget_action(
             target: Option<&Object>,
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(sliderWithValue:minValue:maxValue:target:action:)]
+        #[method_id(@__retain_semantics Other sliderWithValue:minValue:maxValue:target:action:)]
         pub unsafe fn sliderWithValue_minValue_maxValue_target_action(
             value: c_double,
             minValue: c_double,
@@ -128,22 +128,22 @@ extern_methods!(
         #[method(setTitleCell:)]
         pub unsafe fn setTitleCell(&self, cell: Option<&NSCell>);
 
-        #[method_id(titleCell)]
+        #[method_id(@__retain_semantics Other titleCell)]
         pub unsafe fn titleCell(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTitleColor:)]
         pub unsafe fn setTitleColor(&self, newColor: Option<&NSColor>);
 
-        #[method_id(titleColor)]
+        #[method_id(@__retain_semantics Other titleColor)]
         pub unsafe fn titleColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setTitleFont:)]
         pub unsafe fn setTitleFont(&self, fontObj: Option<&NSFont>);
 
-        #[method_id(titleFont)]
+        #[method_id(@__retain_semantics Other titleFont)]
         pub unsafe fn titleFont(&self) -> Option<Id<NSFont, Shared>>;
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setTitle:)]
@@ -155,7 +155,7 @@ extern_methods!(
         #[method(setImage:)]
         pub unsafe fn setImage(&self, backgroundImage: Option<&NSImage>);
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
     }
 );

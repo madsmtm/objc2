@@ -19,7 +19,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextStorage {
-        #[method_id(layoutManagers)]
+        #[method_id(@__retain_semantics Other layoutManagers)]
         pub unsafe fn layoutManagers(&self) -> Id<NSArray<NSLayoutManager>, Shared>;
 
         #[method(addLayoutManager:)]
@@ -37,7 +37,7 @@ extern_methods!(
         #[method(changeInLength)]
         pub unsafe fn changeInLength(&self) -> NSInteger;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTextStorageDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -63,7 +63,7 @@ extern_methods!(
         #[method(ensureAttributesAreFixedInRange:)]
         pub unsafe fn ensureAttributesAreFixedInRange(&self, range: NSRange);
 
-        #[method_id(textStorageObserver)]
+        #[method_id(@__retain_semantics Other textStorageObserver)]
         pub unsafe fn textStorageObserver(&self) -> Option<Id<NSTextStorageObserving, Shared>>;
 
         #[method(setTextStorageObserver:)]

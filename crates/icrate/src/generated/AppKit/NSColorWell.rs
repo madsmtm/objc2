@@ -36,7 +36,7 @@ extern_methods!(
         #[method(takeColorFrom:)]
         pub unsafe fn takeColorFrom(&self, sender: Option<&Object>);
 
-        #[method_id(color)]
+        #[method_id(@__retain_semantics Other color)]
         pub unsafe fn color(&self) -> Id<NSColor, Shared>;
 
         #[method(setColor:)]

@@ -19,23 +19,23 @@ extern_methods!(
         #[method(count)]
         pub unsafe fn count(&self) -> NSUInteger;
 
-        #[method_id(objectAtIndex:)]
+        #[method_id(@__retain_semantics Other objectAtIndex:)]
         pub unsafe fn objectAtIndex(&self, idx: NSUInteger) -> Id<ObjectType, Shared>;
 
         #[method(indexOfObject:)]
         pub unsafe fn indexOfObject(&self, object: &ObjectType) -> NSUInteger;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithObjects:count:)]
+        #[method_id(@__retain_semantics Init initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
             this: Option<Allocated<Self>>,
             objects: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -49,16 +49,16 @@ extern_methods!(
         #[method(getObjects:range:)]
         pub unsafe fn getObjects_range(&self, objects: TodoArray, range: NSRange);
 
-        #[method_id(objectsAtIndexes:)]
+        #[method_id(@__retain_semantics Other objectsAtIndexes:)]
         pub unsafe fn objectsAtIndexes(
             &self,
             indexes: &NSIndexSet,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(firstObject)]
+        #[method_id(@__retain_semantics Other firstObject)]
         pub unsafe fn firstObject(&self) -> Option<Id<ObjectType, Shared>>;
 
-        #[method_id(lastObject)]
+        #[method_id(@__retain_semantics Other lastObject)]
         pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>>;
 
         #[method(isEqualToOrderedSet:)]
@@ -79,22 +79,22 @@ extern_methods!(
         #[method(isSubsetOfSet:)]
         pub unsafe fn isSubsetOfSet(&self, set: &NSSet<ObjectType>) -> bool;
 
-        #[method_id(objectAtIndexedSubscript:)]
+        #[method_id(@__retain_semantics Other objectAtIndexedSubscript:)]
         pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> Id<ObjectType, Shared>;
 
-        #[method_id(objectEnumerator)]
+        #[method_id(@__retain_semantics Other objectEnumerator)]
         pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
 
-        #[method_id(reverseObjectEnumerator)]
+        #[method_id(@__retain_semantics Other reverseObjectEnumerator)]
         pub unsafe fn reverseObjectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
 
-        #[method_id(reversedOrderedSet)]
+        #[method_id(@__retain_semantics Other reversedOrderedSet)]
         pub unsafe fn reversedOrderedSet(&self) -> Id<NSOrderedSet<ObjectType>, Shared>;
 
-        #[method_id(array)]
+        #[method_id(@__retain_semantics Other array)]
         pub unsafe fn array(&self) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(set)]
+        #[method_id(@__retain_semantics Other set)]
         pub unsafe fn set(&self) -> Id<NSSet<ObjectType>, Shared>;
 
         #[method(enumerateObjectsUsingBlock:)]
@@ -133,20 +133,20 @@ extern_methods!(
             predicate: TodoBlock,
         ) -> NSUInteger;
 
-        #[method_id(indexesOfObjectsPassingTest:)]
+        #[method_id(@__retain_semantics Other indexesOfObjectsPassingTest:)]
         pub unsafe fn indexesOfObjectsPassingTest(
             &self,
             predicate: TodoBlock,
         ) -> Id<NSIndexSet, Shared>;
 
-        #[method_id(indexesOfObjectsWithOptions:passingTest:)]
+        #[method_id(@__retain_semantics Other indexesOfObjectsWithOptions:passingTest:)]
         pub unsafe fn indexesOfObjectsWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
             predicate: TodoBlock,
         ) -> Id<NSIndexSet, Shared>;
 
-        #[method_id(indexesOfObjectsAtIndexes:options:passingTest:)]
+        #[method_id(@__retain_semantics Other indexesOfObjectsAtIndexes:options:passingTest:)]
         pub unsafe fn indexesOfObjectsAtIndexes_options_passingTest(
             &self,
             s: &NSIndexSet,
@@ -163,27 +163,27 @@ extern_methods!(
             cmp: NSComparator,
         ) -> NSUInteger;
 
-        #[method_id(sortedArrayUsingComparator:)]
+        #[method_id(@__retain_semantics Other sortedArrayUsingComparator:)]
         pub unsafe fn sortedArrayUsingComparator(
             &self,
             cmptr: NSComparator,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(sortedArrayWithOptions:usingComparator:)]
+        #[method_id(@__retain_semantics Other sortedArrayWithOptions:usingComparator:)]
         pub unsafe fn sortedArrayWithOptions_usingComparator(
             &self,
             opts: NSSortOptions,
             cmptr: NSComparator,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(description)]
+        #[method_id(@__retain_semantics Other description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
 
-        #[method_id(descriptionWithLocale:)]
+        #[method_id(@__retain_semantics Other descriptionWithLocale:)]
         pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
             -> Id<NSString, Shared>;
 
-        #[method_id(descriptionWithLocale:indent:)]
+        #[method_id(@__retain_semantics Other descriptionWithLocale:indent:)]
         pub unsafe fn descriptionWithLocale_indent(
             &self,
             locale: Option<&Object>,
@@ -195,67 +195,67 @@ extern_methods!(
 extern_methods!(
     /// NSOrderedSetCreation
     unsafe impl<ObjectType: Message> NSOrderedSet<ObjectType> {
-        #[method_id(orderedSet)]
+        #[method_id(@__retain_semantics Other orderedSet)]
         pub unsafe fn orderedSet() -> Id<Self, Shared>;
 
-        #[method_id(orderedSetWithObject:)]
+        #[method_id(@__retain_semantics Other orderedSetWithObject:)]
         pub unsafe fn orderedSetWithObject(object: &ObjectType) -> Id<Self, Shared>;
 
-        #[method_id(orderedSetWithObjects:count:)]
+        #[method_id(@__retain_semantics Other orderedSetWithObjects:count:)]
         pub unsafe fn orderedSetWithObjects_count(
             objects: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(orderedSetWithOrderedSet:)]
+        #[method_id(@__retain_semantics Other orderedSetWithOrderedSet:)]
         pub unsafe fn orderedSetWithOrderedSet(set: &NSOrderedSet<ObjectType>) -> Id<Self, Shared>;
 
-        #[method_id(orderedSetWithOrderedSet:range:copyItems:)]
+        #[method_id(@__retain_semantics Other orderedSetWithOrderedSet:range:copyItems:)]
         pub unsafe fn orderedSetWithOrderedSet_range_copyItems(
             set: &NSOrderedSet<ObjectType>,
             range: NSRange,
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(orderedSetWithArray:)]
+        #[method_id(@__retain_semantics Other orderedSetWithArray:)]
         pub unsafe fn orderedSetWithArray(array: &NSArray<ObjectType>) -> Id<Self, Shared>;
 
-        #[method_id(orderedSetWithArray:range:copyItems:)]
+        #[method_id(@__retain_semantics Other orderedSetWithArray:range:copyItems:)]
         pub unsafe fn orderedSetWithArray_range_copyItems(
             array: &NSArray<ObjectType>,
             range: NSRange,
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(orderedSetWithSet:)]
+        #[method_id(@__retain_semantics Other orderedSetWithSet:)]
         pub unsafe fn orderedSetWithSet(set: &NSSet<ObjectType>) -> Id<Self, Shared>;
 
-        #[method_id(orderedSetWithSet:copyItems:)]
+        #[method_id(@__retain_semantics Other orderedSetWithSet:copyItems:)]
         pub unsafe fn orderedSetWithSet_copyItems(
             set: &NSSet<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithObject:)]
+        #[method_id(@__retain_semantics Init initWithObject:)]
         pub unsafe fn initWithObject(
             this: Option<Allocated<Self>>,
             object: &ObjectType,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithOrderedSet:)]
+        #[method_id(@__retain_semantics Init initWithOrderedSet:)]
         pub unsafe fn initWithOrderedSet(
             this: Option<Allocated<Self>>,
             set: &NSOrderedSet<ObjectType>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithOrderedSet:copyItems:)]
+        #[method_id(@__retain_semantics Init initWithOrderedSet:copyItems:)]
         pub unsafe fn initWithOrderedSet_copyItems(
             this: Option<Allocated<Self>>,
             set: &NSOrderedSet<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithOrderedSet:range:copyItems:)]
+        #[method_id(@__retain_semantics Init initWithOrderedSet:range:copyItems:)]
         pub unsafe fn initWithOrderedSet_range_copyItems(
             this: Option<Allocated<Self>>,
             set: &NSOrderedSet<ObjectType>,
@@ -263,20 +263,20 @@ extern_methods!(
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithArray:)]
+        #[method_id(@__retain_semantics Init initWithArray:)]
         pub unsafe fn initWithArray(
             this: Option<Allocated<Self>>,
             array: &NSArray<ObjectType>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithArray:copyItems:)]
+        #[method_id(@__retain_semantics Init initWithArray:copyItems:)]
         pub unsafe fn initWithArray_copyItems(
             this: Option<Allocated<Self>>,
             set: &NSArray<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithArray:range:copyItems:)]
+        #[method_id(@__retain_semantics Init initWithArray:range:copyItems:)]
         pub unsafe fn initWithArray_range_copyItems(
             this: Option<Allocated<Self>>,
             set: &NSArray<ObjectType>,
@@ -284,13 +284,13 @@ extern_methods!(
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithSet:)]
+        #[method_id(@__retain_semantics Init initWithSet:)]
         pub unsafe fn initWithSet(
             this: Option<Allocated<Self>>,
             set: &NSSet<ObjectType>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithSet:copyItems:)]
+        #[method_id(@__retain_semantics Init initWithSet:copyItems:)]
         pub unsafe fn initWithSet_copyItems(
             this: Option<Allocated<Self>>,
             set: &NSSet<ObjectType>,
@@ -302,7 +302,7 @@ extern_methods!(
 extern_methods!(
     /// NSOrderedSetDiffing
     unsafe impl<ObjectType: Message> NSOrderedSet<ObjectType> {
-        #[method_id(differenceFromOrderedSet:withOptions:usingEquivalenceTest:)]
+        #[method_id(@__retain_semantics Other differenceFromOrderedSet:withOptions:usingEquivalenceTest:)]
         pub unsafe fn differenceFromOrderedSet_withOptions_usingEquivalenceTest(
             &self,
             other: &NSOrderedSet<ObjectType>,
@@ -310,20 +310,20 @@ extern_methods!(
             block: TodoBlock,
         ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared>;
 
-        #[method_id(differenceFromOrderedSet:withOptions:)]
+        #[method_id(@__retain_semantics Other differenceFromOrderedSet:withOptions:)]
         pub unsafe fn differenceFromOrderedSet_withOptions(
             &self,
             other: &NSOrderedSet<ObjectType>,
             options: NSOrderedCollectionDifferenceCalculationOptions,
         ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared>;
 
-        #[method_id(differenceFromOrderedSet:)]
+        #[method_id(@__retain_semantics Other differenceFromOrderedSet:)]
         pub unsafe fn differenceFromOrderedSet(
             &self,
             other: &NSOrderedSet<ObjectType>,
         ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared>;
 
-        #[method_id(orderedSetByApplyingDifference:)]
+        #[method_id(@__retain_semantics Other orderedSetByApplyingDifference:)]
         pub unsafe fn orderedSetByApplyingDifference(
             &self,
             difference: &NSOrderedCollectionDifference<ObjectType>,
@@ -353,16 +353,16 @@ extern_methods!(
         #[method(replaceObjectAtIndex:withObject:)]
         pub unsafe fn replaceObjectAtIndex_withObject(&self, idx: NSUInteger, object: &ObjectType);
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCapacity:)]
+        #[method_id(@__retain_semantics Init initWithCapacity:)]
         pub unsafe fn initWithCapacity(
             this: Option<Allocated<Self>>,
             numItems: NSUInteger,
@@ -476,7 +476,7 @@ extern_methods!(
 extern_methods!(
     /// NSMutableOrderedSetCreation
     unsafe impl<ObjectType: Message> NSMutableOrderedSet<ObjectType> {
-        #[method_id(orderedSetWithCapacity:)]
+        #[method_id(@__retain_semantics Other orderedSetWithCapacity:)]
         pub unsafe fn orderedSetWithCapacity(numItems: NSUInteger) -> Id<Self, Shared>;
     }
 );

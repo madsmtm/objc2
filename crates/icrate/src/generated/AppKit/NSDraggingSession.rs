@@ -36,7 +36,7 @@ extern_methods!(
         #[method(setDraggingLeaderIndex:)]
         pub unsafe fn setDraggingLeaderIndex(&self, draggingLeaderIndex: NSInteger);
 
-        #[method_id(draggingPasteboard)]
+        #[method_id(@__retain_semantics Other draggingPasteboard)]
         pub unsafe fn draggingPasteboard(&self) -> Id<NSPasteboard, Shared>;
 
         #[method(draggingSequenceNumber)]

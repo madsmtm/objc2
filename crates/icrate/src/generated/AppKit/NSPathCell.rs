@@ -26,7 +26,7 @@ extern_methods!(
         #[method(setPathStyle:)]
         pub unsafe fn setPathStyle(&self, pathStyle: NSPathStyle);
 
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setURL:)]
@@ -35,13 +35,13 @@ extern_methods!(
         #[method(setObjectValue:)]
         pub unsafe fn setObjectValue(&self, obj: Option<&NSCopying>);
 
-        #[method_id(allowedTypes)]
+        #[method_id(@__retain_semantics Other allowedTypes)]
         pub unsafe fn allowedTypes(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setAllowedTypes:)]
         pub unsafe fn setAllowedTypes(&self, allowedTypes: Option<&NSArray<NSString>>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSPathCellDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -50,7 +50,7 @@ extern_methods!(
         #[method(pathComponentCellClass)]
         pub unsafe fn pathComponentCellClass() -> &'static Class;
 
-        #[method_id(pathComponentCells)]
+        #[method_id(@__retain_semantics Other pathComponentCells)]
         pub unsafe fn pathComponentCells(&self) -> Id<NSArray<NSPathComponentCell>, Shared>;
 
         #[method(setPathComponentCells:)]
@@ -67,7 +67,7 @@ extern_methods!(
             view: &NSView,
         ) -> NSRect;
 
-        #[method_id(pathComponentCellAtPoint:withFrame:inView:)]
+        #[method_id(@__retain_semantics Other pathComponentCellAtPoint:withFrame:inView:)]
         pub unsafe fn pathComponentCellAtPoint_withFrame_inView(
             &self,
             point: NSPoint,
@@ -75,7 +75,7 @@ extern_methods!(
             view: &NSView,
         ) -> Option<Id<NSPathComponentCell, Shared>>;
 
-        #[method_id(clickedPathComponentCell)]
+        #[method_id(@__retain_semantics Other clickedPathComponentCell)]
         pub unsafe fn clickedPathComponentCell(&self) -> Option<Id<NSPathComponentCell, Shared>>;
 
         #[method(mouseEntered:withFrame:inView:)]
@@ -100,19 +100,19 @@ extern_methods!(
         #[method(setDoubleAction:)]
         pub unsafe fn setDoubleAction(&self, doubleAction: Option<Sel>);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBackgroundColor:)]
         pub unsafe fn setBackgroundColor(&self, backgroundColor: Option<&NSColor>);
 
-        #[method_id(placeholderString)]
+        #[method_id(@__retain_semantics Other placeholderString)]
         pub unsafe fn placeholderString(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setPlaceholderString:)]
         pub unsafe fn setPlaceholderString(&self, placeholderString: Option<&NSString>);
 
-        #[method_id(placeholderAttributedString)]
+        #[method_id(@__retain_semantics Other placeholderAttributedString)]
         pub unsafe fn placeholderAttributedString(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setPlaceholderAttributedString:)]

@@ -15,28 +15,28 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSColorPickerTouchBarItem {
-        #[method_id(colorPickerWithIdentifier:)]
+        #[method_id(@__retain_semantics Other colorPickerWithIdentifier:)]
         pub unsafe fn colorPickerWithIdentifier(
             identifier: &NSTouchBarItemIdentifier,
         ) -> Id<Self, Shared>;
 
-        #[method_id(textColorPickerWithIdentifier:)]
+        #[method_id(@__retain_semantics Other textColorPickerWithIdentifier:)]
         pub unsafe fn textColorPickerWithIdentifier(
             identifier: &NSTouchBarItemIdentifier,
         ) -> Id<Self, Shared>;
 
-        #[method_id(strokeColorPickerWithIdentifier:)]
+        #[method_id(@__retain_semantics Other strokeColorPickerWithIdentifier:)]
         pub unsafe fn strokeColorPickerWithIdentifier(
             identifier: &NSTouchBarItemIdentifier,
         ) -> Id<Self, Shared>;
 
-        #[method_id(colorPickerWithIdentifier:buttonImage:)]
+        #[method_id(@__retain_semantics Other colorPickerWithIdentifier:buttonImage:)]
         pub unsafe fn colorPickerWithIdentifier_buttonImage(
             identifier: &NSTouchBarItemIdentifier,
             image: &NSImage,
         ) -> Id<Self, Shared>;
 
-        #[method_id(color)]
+        #[method_id(@__retain_semantics Other color)]
         pub unsafe fn color(&self) -> Id<NSColor, Shared>;
 
         #[method(setColor:)]
@@ -48,7 +48,7 @@ extern_methods!(
         #[method(setShowsAlpha:)]
         pub unsafe fn setShowsAlpha(&self, showsAlpha: bool);
 
-        #[method_id(allowedColorSpaces)]
+        #[method_id(@__retain_semantics Other allowedColorSpaces)]
         pub unsafe fn allowedColorSpaces(&self) -> Option<Id<NSArray<NSColorSpace>, Shared>>;
 
         #[method(setAllowedColorSpaces:)]
@@ -57,19 +57,19 @@ extern_methods!(
             allowedColorSpaces: Option<&NSArray<NSColorSpace>>,
         );
 
-        #[method_id(colorList)]
+        #[method_id(@__retain_semantics Other colorList)]
         pub unsafe fn colorList(&self) -> Option<Id<NSColorList, Shared>>;
 
         #[method(setColorList:)]
         pub unsafe fn setColorList(&self, colorList: Option<&NSColorList>);
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]
         pub unsafe fn setCustomizationLabel(&self, customizationLabel: Option<&NSString>);
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]

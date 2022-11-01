@@ -18,46 +18,46 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTask {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(executableURL)]
+        #[method_id(@__retain_semantics Other executableURL)]
         pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setExecutableURL:)]
         pub unsafe fn setExecutableURL(&self, executableURL: Option<&NSURL>);
 
-        #[method_id(arguments)]
+        #[method_id(@__retain_semantics Other arguments)]
         pub unsafe fn arguments(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setArguments:)]
         pub unsafe fn setArguments(&self, arguments: Option<&NSArray<NSString>>);
 
-        #[method_id(environment)]
+        #[method_id(@__retain_semantics Other environment)]
         pub unsafe fn environment(&self) -> Option<Id<NSDictionary<NSString, NSString>, Shared>>;
 
         #[method(setEnvironment:)]
         pub unsafe fn setEnvironment(&self, environment: Option<&NSDictionary<NSString, NSString>>);
 
-        #[method_id(currentDirectoryURL)]
+        #[method_id(@__retain_semantics Other currentDirectoryURL)]
         pub unsafe fn currentDirectoryURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setCurrentDirectoryURL:)]
         pub unsafe fn setCurrentDirectoryURL(&self, currentDirectoryURL: Option<&NSURL>);
 
-        #[method_id(standardInput)]
+        #[method_id(@__retain_semantics Other standardInput)]
         pub unsafe fn standardInput(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setStandardInput:)]
         pub unsafe fn setStandardInput(&self, standardInput: Option<&Object>);
 
-        #[method_id(standardOutput)]
+        #[method_id(@__retain_semantics Other standardOutput)]
         pub unsafe fn standardOutput(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setStandardOutput:)]
         pub unsafe fn setStandardOutput(&self, standardOutput: Option<&Object>);
 
-        #[method_id(standardError)]
+        #[method_id(@__retain_semantics Other standardError)]
         pub unsafe fn standardError(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setStandardError:)]
@@ -107,7 +107,7 @@ extern_methods!(
 extern_methods!(
     /// NSTaskConveniences
     unsafe impl NSTask {
-        #[method_id(launchedTaskWithExecutableURL:arguments:error:terminationHandler:)]
+        #[method_id(@__retain_semantics Other launchedTaskWithExecutableURL:arguments:error:terminationHandler:)]
         pub unsafe fn launchedTaskWithExecutableURL_arguments_error_terminationHandler(
             url: &NSURL,
             arguments: &NSArray<NSString>,
@@ -123,13 +123,13 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSTask {
-        #[method_id(launchPath)]
+        #[method_id(@__retain_semantics Other launchPath)]
         pub unsafe fn launchPath(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setLaunchPath:)]
         pub unsafe fn setLaunchPath(&self, launchPath: Option<&NSString>);
 
-        #[method_id(currentDirectoryPath)]
+        #[method_id(@__retain_semantics Other currentDirectoryPath)]
         pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared>;
 
         #[method(setCurrentDirectoryPath:)]
@@ -138,7 +138,7 @@ extern_methods!(
         #[method(launch)]
         pub unsafe fn launch(&self);
 
-        #[method_id(launchedTaskWithLaunchPath:arguments:)]
+        #[method_id(@__retain_semantics Other launchedTaskWithLaunchPath:arguments:)]
         pub unsafe fn launchedTaskWithLaunchPath_arguments(
             path: &NSString,
             arguments: &NSArray<NSString>,

@@ -24,16 +24,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPopover {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSPopoverDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -57,7 +57,7 @@ extern_methods!(
         #[method(setAnimates:)]
         pub unsafe fn setAnimates(&self, animates: bool);
 
-        #[method_id(contentViewController)]
+        #[method_id(@__retain_semantics Other contentViewController)]
         pub unsafe fn contentViewController(&self) -> Option<Id<NSViewController, Shared>>;
 
         #[method(setContentViewController:)]

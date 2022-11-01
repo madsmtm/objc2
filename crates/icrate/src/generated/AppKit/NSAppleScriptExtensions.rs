@@ -7,7 +7,7 @@ use crate::Foundation::*;
 extern_methods!(
     /// NSExtensions
     unsafe impl NSAppleScript {
-        #[method_id(richTextSource)]
+        #[method_id(@__retain_semantics Other richTextSource)]
         pub unsafe fn richTextSource(&self) -> Option<Id<NSAttributedString, Shared>>;
     }
 );

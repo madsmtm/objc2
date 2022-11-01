@@ -15,31 +15,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGroupTouchBarItem {
-        #[method_id(groupItemWithIdentifier:items:)]
+        #[method_id(@__retain_semantics Other groupItemWithIdentifier:items:)]
         pub unsafe fn groupItemWithIdentifier_items(
             identifier: &NSTouchBarItemIdentifier,
             items: &NSArray<NSTouchBarItem>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(groupItemWithIdentifier:items:allowedCompressionOptions:)]
+        #[method_id(@__retain_semantics Other groupItemWithIdentifier:items:allowedCompressionOptions:)]
         pub unsafe fn groupItemWithIdentifier_items_allowedCompressionOptions(
             identifier: &NSTouchBarItemIdentifier,
             items: &NSArray<NSTouchBarItem>,
             allowedCompressionOptions: &NSUserInterfaceCompressionOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(alertStyleGroupItemWithIdentifier:)]
+        #[method_id(@__retain_semantics Other alertStyleGroupItemWithIdentifier:)]
         pub unsafe fn alertStyleGroupItemWithIdentifier(
             identifier: &NSTouchBarItemIdentifier,
         ) -> Id<Self, Shared>;
 
-        #[method_id(groupTouchBar)]
+        #[method_id(@__retain_semantics Other groupTouchBar)]
         pub unsafe fn groupTouchBar(&self) -> Id<NSTouchBar, Shared>;
 
         #[method(setGroupTouchBar:)]
         pub unsafe fn setGroupTouchBar(&self, groupTouchBar: &NSTouchBar);
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]
@@ -66,12 +66,12 @@ extern_methods!(
         #[method(setPreferredItemWidth:)]
         pub unsafe fn setPreferredItemWidth(&self, preferredItemWidth: CGFloat);
 
-        #[method_id(effectiveCompressionOptions)]
+        #[method_id(@__retain_semantics Other effectiveCompressionOptions)]
         pub unsafe fn effectiveCompressionOptions(
             &self,
         ) -> Id<NSUserInterfaceCompressionOptions, Shared>;
 
-        #[method_id(prioritizedCompressionOptions)]
+        #[method_id(@__retain_semantics Other prioritizedCompressionOptions)]
         pub unsafe fn prioritizedCompressionOptions(
             &self,
         ) -> Id<NSArray<NSUserInterfaceCompressionOptions>, Shared>;

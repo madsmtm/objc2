@@ -58,10 +58,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFileManager {
-        #[method_id(defaultManager)]
+        #[method_id(@__retain_semantics Other defaultManager)]
         pub unsafe fn defaultManager() -> Id<NSFileManager, Shared>;
 
-        #[method_id(mountedVolumeURLsIncludingResourceValuesForKeys:options:)]
+        #[method_id(@__retain_semantics Other mountedVolumeURLsIncludingResourceValuesForKeys:options:)]
         pub unsafe fn mountedVolumeURLsIncludingResourceValuesForKeys_options(
             &self,
             propertyKeys: Option<&NSArray<NSURLResourceKey>>,
@@ -76,7 +76,7 @@ extern_methods!(
             completionHandler: TodoBlock,
         );
 
-        #[method_id(contentsOfDirectoryAtURL:includingPropertiesForKeys:options:error:)]
+        #[method_id(@__retain_semantics Other contentsOfDirectoryAtURL:includingPropertiesForKeys:options:error:)]
         pub unsafe fn contentsOfDirectoryAtURL_includingPropertiesForKeys_options_error(
             &self,
             url: &NSURL,
@@ -84,14 +84,14 @@ extern_methods!(
             mask: NSDirectoryEnumerationOptions,
         ) -> Result<Id<NSArray<NSURL>, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(URLsForDirectory:inDomains:)]
+        #[method_id(@__retain_semantics Other URLsForDirectory:inDomains:)]
         pub unsafe fn URLsForDirectory_inDomains(
             &self,
             directory: NSSearchPathDirectory,
             domainMask: NSSearchPathDomainMask,
         ) -> Id<NSArray<NSURL>, Shared>;
 
-        #[method_id(URLForDirectory:inDomain:appropriateForURL:create:error:)]
+        #[method_id(@__retain_semantics Other URLForDirectory:inDomain:appropriateForURL:create:error:)]
         pub unsafe fn URLForDirectory_inDomain_appropriateForURL_create_error(
             &self,
             directory: NSSearchPathDirectory,
@@ -132,7 +132,7 @@ extern_methods!(
             destURL: &NSURL,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSFileManagerDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -153,25 +153,25 @@ extern_methods!(
             attributes: Option<&NSDictionary<NSFileAttributeKey, Object>>,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(contentsOfDirectoryAtPath:error:)]
+        #[method_id(@__retain_semantics Other contentsOfDirectoryAtPath:error:)]
         pub unsafe fn contentsOfDirectoryAtPath_error(
             &self,
             path: &NSString,
         ) -> Result<Id<NSArray<NSString>, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(subpathsOfDirectoryAtPath:error:)]
+        #[method_id(@__retain_semantics Other subpathsOfDirectoryAtPath:error:)]
         pub unsafe fn subpathsOfDirectoryAtPath_error(
             &self,
             path: &NSString,
         ) -> Result<Id<NSArray<NSString>, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(attributesOfItemAtPath:error:)]
+        #[method_id(@__retain_semantics Other attributesOfItemAtPath:error:)]
         pub unsafe fn attributesOfItemAtPath_error(
             &self,
             path: &NSString,
         ) -> Result<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(attributesOfFileSystemForPath:error:)]
+        #[method_id(@__retain_semantics Other attributesOfFileSystemForPath:error:)]
         pub unsafe fn attributesOfFileSystemForPath_error(
             &self,
             path: &NSString,
@@ -184,7 +184,7 @@ extern_methods!(
             destPath: &NSString,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(destinationOfSymbolicLinkAtPath:error:)]
+        #[method_id(@__retain_semantics Other destinationOfSymbolicLinkAtPath:error:)]
         pub unsafe fn destinationOfSymbolicLinkAtPath_error(
             &self,
             path: &NSString,
@@ -248,7 +248,7 @@ extern_methods!(
             outResultingURL: Option<&mut Option<Id<NSURL, Shared>>>,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(fileAttributesAtPath:traverseLink:)]
+        #[method_id(@__retain_semantics Other fileAttributesAtPath:traverseLink:)]
         pub unsafe fn fileAttributesAtPath_traverseLink(
             &self,
             path: &NSString,
@@ -262,19 +262,19 @@ extern_methods!(
             path: &NSString,
         ) -> bool;
 
-        #[method_id(directoryContentsAtPath:)]
+        #[method_id(@__retain_semantics Other directoryContentsAtPath:)]
         pub unsafe fn directoryContentsAtPath(
             &self,
             path: &NSString,
         ) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(fileSystemAttributesAtPath:)]
+        #[method_id(@__retain_semantics Other fileSystemAttributesAtPath:)]
         pub unsafe fn fileSystemAttributesAtPath(
             &self,
             path: &NSString,
         ) -> Option<Id<NSDictionary, Shared>>;
 
-        #[method_id(pathContentOfSymbolicLinkAtPath:)]
+        #[method_id(@__retain_semantics Other pathContentOfSymbolicLinkAtPath:)]
         pub unsafe fn pathContentOfSymbolicLinkAtPath(
             &self,
             path: &NSString,
@@ -325,7 +325,7 @@ extern_methods!(
             handler: Option<&Object>,
         ) -> bool;
 
-        #[method_id(currentDirectoryPath)]
+        #[method_id(@__retain_semantics Other currentDirectoryPath)]
         pub unsafe fn currentDirectoryPath(&self) -> Id<NSString, Shared>;
 
         #[method(changeCurrentDirectoryPath:)]
@@ -360,22 +360,22 @@ extern_methods!(
             path2: &NSString,
         ) -> bool;
 
-        #[method_id(displayNameAtPath:)]
+        #[method_id(@__retain_semantics Other displayNameAtPath:)]
         pub unsafe fn displayNameAtPath(&self, path: &NSString) -> Id<NSString, Shared>;
 
-        #[method_id(componentsToDisplayForPath:)]
+        #[method_id(@__retain_semantics Other componentsToDisplayForPath:)]
         pub unsafe fn componentsToDisplayForPath(
             &self,
             path: &NSString,
         ) -> Option<Id<NSArray<NSString>, Shared>>;
 
-        #[method_id(enumeratorAtPath:)]
+        #[method_id(@__retain_semantics Other enumeratorAtPath:)]
         pub unsafe fn enumeratorAtPath(
             &self,
             path: &NSString,
         ) -> Option<Id<NSDirectoryEnumerator<NSString>, Shared>>;
 
-        #[method_id(enumeratorAtURL:includingPropertiesForKeys:options:errorHandler:)]
+        #[method_id(@__retain_semantics Other enumeratorAtURL:includingPropertiesForKeys:options:errorHandler:)]
         pub unsafe fn enumeratorAtURL_includingPropertiesForKeys_options_errorHandler(
             &self,
             url: &NSURL,
@@ -384,13 +384,13 @@ extern_methods!(
             handler: TodoBlock,
         ) -> Option<Id<NSDirectoryEnumerator<NSURL>, Shared>>;
 
-        #[method_id(subpathsAtPath:)]
+        #[method_id(@__retain_semantics Other subpathsAtPath:)]
         pub unsafe fn subpathsAtPath(
             &self,
             path: &NSString,
         ) -> Option<Id<NSArray<NSString>, Shared>>;
 
-        #[method_id(contentsAtPath:)]
+        #[method_id(@__retain_semantics Other contentsAtPath:)]
         pub unsafe fn contentsAtPath(&self, path: &NSString) -> Option<Id<NSData, Shared>>;
 
         #[method(createFileAtPath:contents:attributes:)]
@@ -404,7 +404,7 @@ extern_methods!(
         #[method(fileSystemRepresentationWithPath:)]
         pub unsafe fn fileSystemRepresentationWithPath(&self, path: &NSString) -> NonNull<c_char>;
 
-        #[method_id(stringWithFileSystemRepresentation:length:)]
+        #[method_id(@__retain_semantics Other stringWithFileSystemRepresentation:length:)]
         pub unsafe fn stringWithFileSystemRepresentation_length(
             &self,
             str: NonNull<c_char>,
@@ -444,20 +444,20 @@ extern_methods!(
             url: &NSURL,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(URLForUbiquityContainerIdentifier:)]
+        #[method_id(@__retain_semantics Other URLForUbiquityContainerIdentifier:)]
         pub unsafe fn URLForUbiquityContainerIdentifier(
             &self,
             containerIdentifier: Option<&NSString>,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLForPublishingUbiquitousItemAtURL:expirationDate:error:)]
+        #[method_id(@__retain_semantics Other URLForPublishingUbiquitousItemAtURL:expirationDate:error:)]
         pub unsafe fn URLForPublishingUbiquitousItemAtURL_expirationDate_error(
             &self,
             url: &NSURL,
             outDate: Option<&mut Option<Id<NSDate, Shared>>>,
         ) -> Result<Id<NSURL, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(ubiquityIdentityToken)]
+        #[method_id(@__retain_semantics Other ubiquityIdentityToken)]
         pub unsafe fn ubiquityIdentityToken(&self) -> Option<Id<TodoProtocols, Shared>>;
 
         #[method(getFileProviderServicesForItemAtURL:completionHandler:)]
@@ -467,7 +467,7 @@ extern_methods!(
             completionHandler: TodoBlock,
         );
 
-        #[method_id(containerURLForSecurityApplicationGroupIdentifier:)]
+        #[method_id(@__retain_semantics Other containerURLForSecurityApplicationGroupIdentifier:)]
         pub unsafe fn containerURLForSecurityApplicationGroupIdentifier(
             &self,
             groupIdentifier: &NSString,
@@ -478,13 +478,13 @@ extern_methods!(
 extern_methods!(
     /// NSUserInformation
     unsafe impl NSFileManager {
-        #[method_id(homeDirectoryForCurrentUser)]
+        #[method_id(@__retain_semantics Other homeDirectoryForCurrentUser)]
         pub unsafe fn homeDirectoryForCurrentUser(&self) -> Id<NSURL, Shared>;
 
-        #[method_id(temporaryDirectory)]
+        #[method_id(@__retain_semantics Other temporaryDirectory)]
         pub unsafe fn temporaryDirectory(&self) -> Id<NSURL, Shared>;
 
-        #[method_id(homeDirectoryForUser:)]
+        #[method_id(@__retain_semantics Other homeDirectoryForUser:)]
         pub unsafe fn homeDirectoryForUser(&self, userName: &NSString)
             -> Option<Id<NSURL, Shared>>;
     }
@@ -520,12 +520,12 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<ObjectType: Message> NSDirectoryEnumerator<ObjectType> {
-        #[method_id(fileAttributes)]
+        #[method_id(@__retain_semantics Other fileAttributes)]
         pub unsafe fn fileAttributes(
             &self,
         ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>>;
 
-        #[method_id(directoryAttributes)]
+        #[method_id(@__retain_semantics Other directoryAttributes)]
         pub unsafe fn directoryAttributes(
             &self,
         ) -> Option<Id<NSDictionary<NSFileAttributeKey, Object>, Shared>>;
@@ -561,7 +561,7 @@ extern_methods!(
             completionHandler: TodoBlock,
         );
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Id<NSFileProviderServiceName, Shared>;
     }
 );
@@ -712,19 +712,19 @@ extern_methods!(
         #[method(fileSize)]
         pub unsafe fn fileSize(&self) -> c_ulonglong;
 
-        #[method_id(fileModificationDate)]
+        #[method_id(@__retain_semantics Other fileModificationDate)]
         pub unsafe fn fileModificationDate(&self) -> Option<Id<NSDate, Shared>>;
 
-        #[method_id(fileType)]
+        #[method_id(@__retain_semantics Other fileType)]
         pub unsafe fn fileType(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(filePosixPermissions)]
         pub unsafe fn filePosixPermissions(&self) -> NSUInteger;
 
-        #[method_id(fileOwnerAccountName)]
+        #[method_id(@__retain_semantics Other fileOwnerAccountName)]
         pub unsafe fn fileOwnerAccountName(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(fileGroupOwnerAccountName)]
+        #[method_id(@__retain_semantics Other fileGroupOwnerAccountName)]
         pub unsafe fn fileGroupOwnerAccountName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(fileSystemNumber)]
@@ -748,13 +748,13 @@ extern_methods!(
         #[method(fileIsAppendOnly)]
         pub unsafe fn fileIsAppendOnly(&self) -> bool;
 
-        #[method_id(fileCreationDate)]
+        #[method_id(@__retain_semantics Other fileCreationDate)]
         pub unsafe fn fileCreationDate(&self) -> Option<Id<NSDate, Shared>>;
 
-        #[method_id(fileOwnerAccountID)]
+        #[method_id(@__retain_semantics Other fileOwnerAccountID)]
         pub unsafe fn fileOwnerAccountID(&self) -> Option<Id<NSNumber, Shared>>;
 
-        #[method_id(fileGroupOwnerAccountID)]
+        #[method_id(@__retain_semantics Other fileGroupOwnerAccountID)]
         pub unsafe fn fileGroupOwnerAccountID(&self) -> Option<Id<NSNumber, Shared>>;
     }
 );

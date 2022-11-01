@@ -37,7 +37,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSColorPanel {
-        #[method_id(sharedColorPanel)]
+        #[method_id(@__retain_semantics Other sharedColorPanel)]
         pub unsafe fn sharedColorPanel() -> Id<NSColorPanel, Shared>;
 
         #[method(sharedColorPanelExists)]
@@ -56,7 +56,7 @@ extern_methods!(
         #[method(setPickerMode:)]
         pub unsafe fn setPickerMode(mode: NSColorPanelMode);
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setAccessoryView:)]
@@ -80,7 +80,7 @@ extern_methods!(
         #[method(setMode:)]
         pub unsafe fn setMode(&self, mode: NSColorPanelMode);
 
-        #[method_id(color)]
+        #[method_id(@__retain_semantics Other color)]
         pub unsafe fn color(&self) -> Id<NSColor, Shared>;
 
         #[method(setColor:)]

@@ -38,10 +38,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSStackView {
-        #[method_id(stackViewWithViews:)]
+        #[method_id(@__retain_semantics Other stackViewWithViews:)]
         pub unsafe fn stackViewWithViews(views: &NSArray<NSView>) -> Id<Self, Shared>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSStackViewDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -89,7 +89,7 @@ extern_methods!(
         #[method(setDetachesHiddenViews:)]
         pub unsafe fn setDetachesHiddenViews(&self, detachesHiddenViews: bool);
 
-        #[method_id(arrangedSubviews)]
+        #[method_id(@__retain_semantics Other arrangedSubviews)]
         pub unsafe fn arrangedSubviews(&self) -> Id<NSArray<NSView>, Shared>;
 
         #[method(addArrangedSubview:)]
@@ -101,7 +101,7 @@ extern_methods!(
         #[method(removeArrangedSubview:)]
         pub unsafe fn removeArrangedSubview(&self, view: &NSView);
 
-        #[method_id(detachedViews)]
+        #[method_id(@__retain_semantics Other detachedViews)]
         pub unsafe fn detachedViews(&self) -> Id<NSArray<NSView>, Shared>;
 
         #[method(setVisibilityPriority:forView:)]
@@ -164,7 +164,7 @@ extern_methods!(
         #[method(removeView:)]
         pub unsafe fn removeView(&self, view: &NSView);
 
-        #[method_id(viewsInGravity:)]
+        #[method_id(@__retain_semantics Other viewsInGravity:)]
         pub unsafe fn viewsInGravity(
             &self,
             gravity: NSStackViewGravity,
@@ -177,7 +177,7 @@ extern_methods!(
             gravity: NSStackViewGravity,
         );
 
-        #[method_id(views)]
+        #[method_id(@__retain_semantics Other views)]
         pub unsafe fn views(&self) -> Id<NSArray<NSView>, Shared>;
     }
 );

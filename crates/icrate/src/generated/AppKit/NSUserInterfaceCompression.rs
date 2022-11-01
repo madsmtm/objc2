@@ -15,22 +15,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUserInterfaceCompressionOptions {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithIdentifier:)]
+        #[method_id(@__retain_semantics Init initWithIdentifier:)]
         pub unsafe fn initWithIdentifier(
             this: Option<Allocated<Self>>,
             identifier: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCompressionOptions:)]
+        #[method_id(@__retain_semantics Init initWithCompressionOptions:)]
         pub unsafe fn initWithCompressionOptions(
             this: Option<Allocated<Self>>,
             options: &NSSet<NSUserInterfaceCompressionOptions>,
@@ -46,31 +46,31 @@ extern_methods!(
         #[method(isEmpty)]
         pub unsafe fn isEmpty(&self) -> bool;
 
-        #[method_id(optionsByAddingOptions:)]
+        #[method_id(@__retain_semantics Other optionsByAddingOptions:)]
         pub unsafe fn optionsByAddingOptions(
             &self,
             options: &NSUserInterfaceCompressionOptions,
         ) -> Id<NSUserInterfaceCompressionOptions, Shared>;
 
-        #[method_id(optionsByRemovingOptions:)]
+        #[method_id(@__retain_semantics Other optionsByRemovingOptions:)]
         pub unsafe fn optionsByRemovingOptions(
             &self,
             options: &NSUserInterfaceCompressionOptions,
         ) -> Id<NSUserInterfaceCompressionOptions, Shared>;
 
-        #[method_id(hideImagesOption)]
+        #[method_id(@__retain_semantics Other hideImagesOption)]
         pub unsafe fn hideImagesOption() -> Id<NSUserInterfaceCompressionOptions, Shared>;
 
-        #[method_id(hideTextOption)]
+        #[method_id(@__retain_semantics Other hideTextOption)]
         pub unsafe fn hideTextOption() -> Id<NSUserInterfaceCompressionOptions, Shared>;
 
-        #[method_id(reduceMetricsOption)]
+        #[method_id(@__retain_semantics Other reduceMetricsOption)]
         pub unsafe fn reduceMetricsOption() -> Id<NSUserInterfaceCompressionOptions, Shared>;
 
-        #[method_id(breakEqualWidthsOption)]
+        #[method_id(@__retain_semantics Other breakEqualWidthsOption)]
         pub unsafe fn breakEqualWidthsOption() -> Id<NSUserInterfaceCompressionOptions, Shared>;
 
-        #[method_id(standardOptions)]
+        #[method_id(@__retain_semantics Other standardOptions)]
         pub unsafe fn standardOptions() -> Id<NSUserInterfaceCompressionOptions, Shared>;
     }
 );

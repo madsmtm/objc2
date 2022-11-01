@@ -15,10 +15,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSEPSImageRep {
-        #[method_id(imageRepWithData:)]
+        #[method_id(@__retain_semantics Other imageRepWithData:)]
         pub unsafe fn imageRepWithData(epsData: &NSData) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithData:)]
+        #[method_id(@__retain_semantics Init initWithData:)]
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             epsData: &NSData,
@@ -27,7 +27,7 @@ extern_methods!(
         #[method(prepareGState)]
         pub unsafe fn prepareGState(&self);
 
-        #[method_id(EPSRepresentation)]
+        #[method_id(@__retain_semantics Other EPSRepresentation)]
         pub unsafe fn EPSRepresentation(&self) -> Id<NSData, Shared>;
 
         #[method(boundingBox)]

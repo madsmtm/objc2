@@ -20,7 +20,7 @@ extern_methods!(
         #[method(size)]
         pub unsafe fn size(&self) -> NSSize;
 
-        #[method_id(contentView)]
+        #[method_id(@__retain_semantics Other contentView)]
         pub unsafe fn contentView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setContentView:)]
@@ -35,13 +35,13 @@ extern_methods!(
         #[method(setShowsApplicationBadge:)]
         pub unsafe fn setShowsApplicationBadge(&self, showsApplicationBadge: bool);
 
-        #[method_id(badgeLabel)]
+        #[method_id(@__retain_semantics Other badgeLabel)]
         pub unsafe fn badgeLabel(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setBadgeLabel:)]
         pub unsafe fn setBadgeLabel(&self, badgeLabel: Option<&NSString>);
 
-        #[method_id(owner)]
+        #[method_id(@__retain_semantics Other owner)]
         pub unsafe fn owner(&self) -> Option<Id<Object, Shared>>;
     }
 );

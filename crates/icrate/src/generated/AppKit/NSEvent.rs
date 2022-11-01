@@ -306,13 +306,13 @@ extern_methods!(
         #[method(timestamp)]
         pub unsafe fn timestamp(&self) -> NSTimeInterval;
 
-        #[method_id(window)]
+        #[method_id(@__retain_semantics Other window)]
         pub unsafe fn window(&self) -> Option<Id<NSWindow, Shared>>;
 
         #[method(windowNumber)]
         pub unsafe fn windowNumber(&self) -> NSInteger;
 
-        #[method_id(context)]
+        #[method_id(@__retain_semantics Other context)]
         pub unsafe fn context(&self) -> Option<Id<NSGraphicsContext, Shared>>;
 
         #[method(clickCount)]
@@ -354,13 +354,13 @@ extern_methods!(
         #[method(isDirectionInvertedFromDevice)]
         pub unsafe fn isDirectionInvertedFromDevice(&self) -> bool;
 
-        #[method_id(characters)]
+        #[method_id(@__retain_semantics Other characters)]
         pub unsafe fn characters(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(charactersIgnoringModifiers)]
+        #[method_id(@__retain_semantics Other charactersIgnoringModifiers)]
         pub unsafe fn charactersIgnoringModifiers(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(charactersByApplyingModifiers:)]
+        #[method_id(@__retain_semantics Other charactersByApplyingModifiers:)]
         pub unsafe fn charactersByApplyingModifiers(
             &self,
             modifiers: NSEventModifierFlags,
@@ -378,7 +378,7 @@ extern_methods!(
         #[method(userData)]
         pub unsafe fn userData(&self) -> *mut c_void;
 
-        #[method_id(trackingArea)]
+        #[method_id(@__retain_semantics Other trackingArea)]
         pub unsafe fn trackingArea(&self) -> Option<Id<NSTrackingArea, Shared>>;
 
         #[method(subtype)]
@@ -393,13 +393,13 @@ extern_methods!(
         #[method(eventRef)]
         pub unsafe fn eventRef(&self) -> *mut c_void;
 
-        #[method_id(eventWithEventRef:)]
+        #[method_id(@__retain_semantics Other eventWithEventRef:)]
         pub unsafe fn eventWithEventRef(eventRef: NonNull<c_void>) -> Option<Id<NSEvent, Shared>>;
 
         #[method(CGEvent)]
         pub unsafe fn CGEvent(&self) -> CGEventRef;
 
-        #[method_id(eventWithCGEvent:)]
+        #[method_id(@__retain_semantics Other eventWithCGEvent:)]
         pub unsafe fn eventWithCGEvent(cgEvent: CGEventRef) -> Option<Id<NSEvent, Shared>>;
 
         #[method(isMouseCoalescingEnabled)]
@@ -435,7 +435,7 @@ extern_methods!(
         #[method(tangentialPressure)]
         pub unsafe fn tangentialPressure(&self) -> c_float;
 
-        #[method_id(vendorDefined)]
+        #[method_id(@__retain_semantics Other vendorDefined)]
         pub unsafe fn vendorDefined(&self) -> Id<Object, Shared>;
 
         #[method(vendorID)]
@@ -468,20 +468,20 @@ extern_methods!(
         #[method(isEnteringProximity)]
         pub unsafe fn isEnteringProximity(&self) -> bool;
 
-        #[method_id(touchesMatchingPhase:inView:)]
+        #[method_id(@__retain_semantics Other touchesMatchingPhase:inView:)]
         pub unsafe fn touchesMatchingPhase_inView(
             &self,
             phase: NSTouchPhase,
             view: Option<&NSView>,
         ) -> Id<NSSet<NSTouch>, Shared>;
 
-        #[method_id(allTouches)]
+        #[method_id(@__retain_semantics Other allTouches)]
         pub unsafe fn allTouches(&self) -> Id<NSSet<NSTouch>, Shared>;
 
-        #[method_id(touchesForView:)]
+        #[method_id(@__retain_semantics Other touchesForView:)]
         pub unsafe fn touchesForView(&self, view: &NSView) -> Id<NSSet<NSTouch>, Shared>;
 
-        #[method_id(coalescedTouchesForTouch:)]
+        #[method_id(@__retain_semantics Other coalescedTouchesForTouch:)]
         pub unsafe fn coalescedTouchesForTouch(
             &self,
             touch: &NSTouch,
@@ -523,7 +523,7 @@ extern_methods!(
         #[method(stopPeriodicEvents)]
         pub unsafe fn stopPeriodicEvents();
 
-        #[method_id(mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:)]
+        #[method_id(@__retain_semantics Other mouseEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:clickCount:pressure:)]
         pub unsafe fn mouseEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_clickCount_pressure(
             type_: NSEventType,
             location: NSPoint,
@@ -536,7 +536,7 @@ extern_methods!(
             pressure: c_float,
         ) -> Option<Id<NSEvent, Shared>>;
 
-        #[method_id(keyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:charactersIgnoringModifiers:isARepeat:keyCode:)]
+        #[method_id(@__retain_semantics Other keyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:charactersIgnoringModifiers:isARepeat:keyCode:)]
         pub unsafe fn keyEventWithType_location_modifierFlags_timestamp_windowNumber_context_characters_charactersIgnoringModifiers_isARepeat_keyCode(
             type_: NSEventType,
             location: NSPoint,
@@ -550,7 +550,7 @@ extern_methods!(
             code: c_ushort,
         ) -> Option<Id<NSEvent, Shared>>;
 
-        #[method_id(enterExitEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:trackingNumber:userData:)]
+        #[method_id(@__retain_semantics Other enterExitEventWithType:location:modifierFlags:timestamp:windowNumber:context:eventNumber:trackingNumber:userData:)]
         pub unsafe fn enterExitEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_trackingNumber_userData(
             type_: NSEventType,
             location: NSPoint,
@@ -563,7 +563,7 @@ extern_methods!(
             data: *mut c_void,
         ) -> Option<Id<NSEvent, Shared>>;
 
-        #[method_id(otherEventWithType:location:modifierFlags:timestamp:windowNumber:context:subtype:data1:data2:)]
+        #[method_id(@__retain_semantics Other otherEventWithType:location:modifierFlags:timestamp:windowNumber:context:subtype:data1:data2:)]
         pub unsafe fn otherEventWithType_location_modifierFlags_timestamp_windowNumber_context_subtype_data1_data2(
             type_: NSEventType,
             location: NSPoint,
@@ -594,13 +594,13 @@ extern_methods!(
         #[method(keyRepeatInterval)]
         pub unsafe fn keyRepeatInterval() -> NSTimeInterval;
 
-        #[method_id(addGlobalMonitorForEventsMatchingMask:handler:)]
+        #[method_id(@__retain_semantics Other addGlobalMonitorForEventsMatchingMask:handler:)]
         pub unsafe fn addGlobalMonitorForEventsMatchingMask_handler(
             mask: NSEventMask,
             block: TodoBlock,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(addLocalMonitorForEventsMatchingMask:handler:)]
+        #[method_id(@__retain_semantics Other addLocalMonitorForEventsMatchingMask:handler:)]
         pub unsafe fn addLocalMonitorForEventsMatchingMask_handler(
             mask: NSEventMask,
             block: TodoBlock,

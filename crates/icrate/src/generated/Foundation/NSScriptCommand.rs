@@ -26,28 +26,28 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScriptCommand {
-        #[method_id(initWithCommandDescription:)]
+        #[method_id(@__retain_semantics Init initWithCommandDescription:)]
         pub unsafe fn initWithCommandDescription(
             this: Option<Allocated<Self>>,
             commandDef: &NSScriptCommandDescription,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             inCoder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(commandDescription)]
+        #[method_id(@__retain_semantics Other commandDescription)]
         pub unsafe fn commandDescription(&self) -> Id<NSScriptCommandDescription, Shared>;
 
-        #[method_id(directParameter)]
+        #[method_id(@__retain_semantics Other directParameter)]
         pub unsafe fn directParameter(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setDirectParameter:)]
         pub unsafe fn setDirectParameter(&self, directParameter: Option<&Object>);
 
-        #[method_id(receiversSpecifier)]
+        #[method_id(@__retain_semantics Other receiversSpecifier)]
         pub unsafe fn receiversSpecifier(&self) -> Option<Id<NSScriptObjectSpecifier, Shared>>;
 
         #[method(setReceiversSpecifier:)]
@@ -56,16 +56,16 @@ extern_methods!(
             receiversSpecifier: Option<&NSScriptObjectSpecifier>,
         );
 
-        #[method_id(evaluatedReceivers)]
+        #[method_id(@__retain_semantics Other evaluatedReceivers)]
         pub unsafe fn evaluatedReceivers(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(arguments)]
+        #[method_id(@__retain_semantics Other arguments)]
         pub unsafe fn arguments(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
 
         #[method(setArguments:)]
         pub unsafe fn setArguments(&self, arguments: Option<&NSDictionary<NSString, Object>>);
 
-        #[method_id(evaluatedArguments)]
+        #[method_id(@__retain_semantics Other evaluatedArguments)]
         pub unsafe fn evaluatedArguments(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -73,10 +73,10 @@ extern_methods!(
         #[method(isWellFormed)]
         pub unsafe fn isWellFormed(&self) -> bool;
 
-        #[method_id(performDefaultImplementation)]
+        #[method_id(@__retain_semantics Other performDefaultImplementation)]
         pub unsafe fn performDefaultImplementation(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(executeCommand)]
+        #[method_id(@__retain_semantics Other executeCommand)]
         pub unsafe fn executeCommand(&self) -> Option<Id<Object, Shared>>;
 
         #[method(scriptErrorNumber)]
@@ -85,7 +85,7 @@ extern_methods!(
         #[method(setScriptErrorNumber:)]
         pub unsafe fn setScriptErrorNumber(&self, scriptErrorNumber: NSInteger);
 
-        #[method_id(scriptErrorOffendingObjectDescriptor)]
+        #[method_id(@__retain_semantics Other scriptErrorOffendingObjectDescriptor)]
         pub unsafe fn scriptErrorOffendingObjectDescriptor(
             &self,
         ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
@@ -96,7 +96,7 @@ extern_methods!(
             scriptErrorOffendingObjectDescriptor: Option<&NSAppleEventDescriptor>,
         );
 
-        #[method_id(scriptErrorExpectedTypeDescriptor)]
+        #[method_id(@__retain_semantics Other scriptErrorExpectedTypeDescriptor)]
         pub unsafe fn scriptErrorExpectedTypeDescriptor(
             &self,
         ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
@@ -107,16 +107,16 @@ extern_methods!(
             scriptErrorExpectedTypeDescriptor: Option<&NSAppleEventDescriptor>,
         );
 
-        #[method_id(scriptErrorString)]
+        #[method_id(@__retain_semantics Other scriptErrorString)]
         pub unsafe fn scriptErrorString(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setScriptErrorString:)]
         pub unsafe fn setScriptErrorString(&self, scriptErrorString: Option<&NSString>);
 
-        #[method_id(currentCommand)]
+        #[method_id(@__retain_semantics Other currentCommand)]
         pub unsafe fn currentCommand() -> Option<Id<NSScriptCommand, Shared>>;
 
-        #[method_id(appleEvent)]
+        #[method_id(@__retain_semantics Other appleEvent)]
         pub unsafe fn appleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>>;
 
         #[method(suspendExecution)]

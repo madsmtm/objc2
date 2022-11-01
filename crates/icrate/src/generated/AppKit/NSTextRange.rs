@@ -17,32 +17,32 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextRange {
-        #[method_id(initWithLocation:endLocation:)]
+        #[method_id(@__retain_semantics Init initWithLocation:endLocation:)]
         pub unsafe fn initWithLocation_endLocation(
             this: Option<Allocated<Self>>,
             location: &NSTextLocation,
             endLocation: Option<&NSTextLocation>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithLocation:)]
+        #[method_id(@__retain_semantics Init initWithLocation:)]
         pub unsafe fn initWithLocation(
             this: Option<Allocated<Self>>,
             location: &NSTextLocation,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
         #[method(isEmpty)]
         pub unsafe fn isEmpty(&self) -> bool;
 
-        #[method_id(location)]
+        #[method_id(@__retain_semantics Other location)]
         pub unsafe fn location(&self) -> Id<NSTextLocation, Shared>;
 
-        #[method_id(endLocation)]
+        #[method_id(@__retain_semantics Other endLocation)]
         pub unsafe fn endLocation(&self) -> Id<NSTextLocation, Shared>;
 
         #[method(isEqualToTextRange:)]
@@ -57,13 +57,13 @@ extern_methods!(
         #[method(intersectsWithTextRange:)]
         pub unsafe fn intersectsWithTextRange(&self, textRange: &NSTextRange) -> bool;
 
-        #[method_id(textRangeByIntersectingWithTextRange:)]
+        #[method_id(@__retain_semantics Other textRangeByIntersectingWithTextRange:)]
         pub unsafe fn textRangeByIntersectingWithTextRange(
             &self,
             textRange: &NSTextRange,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(textRangeByFormingUnionWithTextRange:)]
+        #[method_id(@__retain_semantics Other textRangeByFormingUnionWithTextRange:)]
         pub unsafe fn textRangeByFormingUnionWithTextRange(
             &self,
             textRange: &NSTextRange,

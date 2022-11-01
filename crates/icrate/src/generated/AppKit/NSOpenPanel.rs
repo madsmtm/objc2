@@ -15,10 +15,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOpenPanel {
-        #[method_id(openPanel)]
+        #[method_id(@__retain_semantics Other openPanel)]
         pub unsafe fn openPanel() -> Id<NSOpenPanel, Shared>;
 
-        #[method_id(URLs)]
+        #[method_id(@__retain_semantics Other URLs)]
         pub unsafe fn URLs(&self) -> Id<NSArray<NSURL>, Shared>;
 
         #[method(resolvesAliases)]
@@ -68,7 +68,7 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSOpenPanel {
-        #[method_id(filenames)]
+        #[method_id(@__retain_semantics Other filenames)]
         pub unsafe fn filenames(&self) -> Id<NSArray, Shared>;
 
         #[method(beginSheetForDirectory:file:types:modalForWindow:modalDelegate:didEndSelector:contextInfo:)]

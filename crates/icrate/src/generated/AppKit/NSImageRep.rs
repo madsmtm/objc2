@@ -24,10 +24,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSImageRep {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -71,7 +71,7 @@ extern_methods!(
         #[method(setOpaque:)]
         pub unsafe fn setOpaque(&self, opaque: bool);
 
-        #[method_id(colorSpaceName)]
+        #[method_id(@__retain_semantics Other colorSpaceName)]
         pub unsafe fn colorSpaceName(&self) -> Id<NSColorSpaceName, Shared>;
 
         #[method(setColorSpaceName:)]
@@ -107,7 +107,7 @@ extern_methods!(
         #[method(unregisterImageRepClass:)]
         pub unsafe fn unregisterImageRepClass(imageRepClass: &Class);
 
-        #[method_id(registeredImageRepClasses)]
+        #[method_id(@__retain_semantics Other registeredImageRepClasses)]
         pub unsafe fn registeredImageRepClasses() -> Id<NSArray<TodoClass>, Shared>;
 
         #[method(imageRepClassForFileType:)]
@@ -127,51 +127,51 @@ extern_methods!(
         #[method(canInitWithData:)]
         pub unsafe fn canInitWithData(data: &NSData) -> bool;
 
-        #[method_id(imageUnfilteredFileTypes)]
+        #[method_id(@__retain_semantics Other imageUnfilteredFileTypes)]
         pub unsafe fn imageUnfilteredFileTypes() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(imageUnfilteredPasteboardTypes)]
+        #[method_id(@__retain_semantics Other imageUnfilteredPasteboardTypes)]
         pub unsafe fn imageUnfilteredPasteboardTypes() -> Id<NSArray<NSPasteboardType>, Shared>;
 
-        #[method_id(imageFileTypes)]
+        #[method_id(@__retain_semantics Other imageFileTypes)]
         pub unsafe fn imageFileTypes() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(imagePasteboardTypes)]
+        #[method_id(@__retain_semantics Other imagePasteboardTypes)]
         pub unsafe fn imagePasteboardTypes() -> Id<NSArray<NSPasteboardType>, Shared>;
 
-        #[method_id(imageUnfilteredTypes)]
+        #[method_id(@__retain_semantics Other imageUnfilteredTypes)]
         pub unsafe fn imageUnfilteredTypes() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(imageTypes)]
+        #[method_id(@__retain_semantics Other imageTypes)]
         pub unsafe fn imageTypes() -> Id<NSArray<NSString>, Shared>;
 
         #[method(canInitWithPasteboard:)]
         pub unsafe fn canInitWithPasteboard(pasteboard: &NSPasteboard) -> bool;
 
-        #[method_id(imageRepsWithContentsOfFile:)]
+        #[method_id(@__retain_semantics Other imageRepsWithContentsOfFile:)]
         pub unsafe fn imageRepsWithContentsOfFile(
             filename: &NSString,
         ) -> Option<Id<NSArray<NSImageRep>, Shared>>;
 
-        #[method_id(imageRepWithContentsOfFile:)]
+        #[method_id(@__retain_semantics Other imageRepWithContentsOfFile:)]
         pub unsafe fn imageRepWithContentsOfFile(
             filename: &NSString,
         ) -> Option<Id<NSImageRep, Shared>>;
 
-        #[method_id(imageRepsWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Other imageRepsWithContentsOfURL:)]
         pub unsafe fn imageRepsWithContentsOfURL(
             url: &NSURL,
         ) -> Option<Id<NSArray<NSImageRep>, Shared>>;
 
-        #[method_id(imageRepWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Other imageRepWithContentsOfURL:)]
         pub unsafe fn imageRepWithContentsOfURL(url: &NSURL) -> Option<Id<NSImageRep, Shared>>;
 
-        #[method_id(imageRepsWithPasteboard:)]
+        #[method_id(@__retain_semantics Other imageRepsWithPasteboard:)]
         pub unsafe fn imageRepsWithPasteboard(
             pasteboard: &NSPasteboard,
         ) -> Option<Id<NSArray<NSImageRep>, Shared>>;
 
-        #[method_id(imageRepWithPasteboard:)]
+        #[method_id(@__retain_semantics Other imageRepWithPasteboard:)]
         pub unsafe fn imageRepWithPasteboard(
             pasteboard: &NSPasteboard,
         ) -> Option<Id<NSImageRep, Shared>>;

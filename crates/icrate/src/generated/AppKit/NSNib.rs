@@ -17,14 +17,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSNib {
-        #[method_id(initWithNibNamed:bundle:)]
+        #[method_id(@__retain_semantics Init initWithNibNamed:bundle:)]
         pub unsafe fn initWithNibNamed_bundle(
             this: Option<Allocated<Self>>,
             nibName: &NSNibName,
             bundle: Option<&NSBundle>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithNibData:bundle:)]
+        #[method_id(@__retain_semantics Init initWithNibData:bundle:)]
         pub unsafe fn initWithNibData_bundle(
             this: Option<Allocated<Self>>,
             nibData: &NSData,
@@ -43,7 +43,7 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSNib {
-        #[method_id(initWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             nibFileURL: Option<&NSURL>,

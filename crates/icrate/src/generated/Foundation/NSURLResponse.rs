@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSURLResponse {
-        #[method_id(initWithURL:MIMEType:expectedContentLength:textEncodingName:)]
+        #[method_id(@__retain_semantics Init initWithURL:MIMEType:expectedContentLength:textEncodingName:)]
         pub unsafe fn initWithURL_MIMEType_expectedContentLength_textEncodingName(
             this: Option<Allocated<Self>>,
             URL: &NSURL,
@@ -23,19 +23,19 @@ extern_methods!(
             name: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(MIMEType)]
+        #[method_id(@__retain_semantics Other MIMEType)]
         pub unsafe fn MIMEType(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(expectedContentLength)]
         pub unsafe fn expectedContentLength(&self) -> c_longlong;
 
-        #[method_id(textEncodingName)]
+        #[method_id(@__retain_semantics Other textEncodingName)]
         pub unsafe fn textEncodingName(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(suggestedFilename)]
+        #[method_id(@__retain_semantics Other suggestedFilename)]
         pub unsafe fn suggestedFilename(&self) -> Option<Id<NSString, Shared>>;
     }
 );
@@ -51,7 +51,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSHTTPURLResponse {
-        #[method_id(initWithURL:statusCode:HTTPVersion:headerFields:)]
+        #[method_id(@__retain_semantics Init initWithURL:statusCode:HTTPVersion:headerFields:)]
         pub unsafe fn initWithURL_statusCode_HTTPVersion_headerFields(
             this: Option<Allocated<Self>>,
             url: &NSURL,
@@ -63,16 +63,16 @@ extern_methods!(
         #[method(statusCode)]
         pub unsafe fn statusCode(&self) -> NSInteger;
 
-        #[method_id(allHeaderFields)]
+        #[method_id(@__retain_semantics Other allHeaderFields)]
         pub unsafe fn allHeaderFields(&self) -> Id<NSDictionary, Shared>;
 
-        #[method_id(valueForHTTPHeaderField:)]
+        #[method_id(@__retain_semantics Other valueForHTTPHeaderField:)]
         pub unsafe fn valueForHTTPHeaderField(
             &self,
             field: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(localizedStringForStatusCode:)]
+        #[method_id(@__retain_semantics Other localizedStringForStatusCode:)]
         pub unsafe fn localizedStringForStatusCode(statusCode: NSInteger) -> Id<NSString, Shared>;
     }
 );

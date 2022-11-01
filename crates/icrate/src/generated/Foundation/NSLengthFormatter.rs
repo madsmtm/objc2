@@ -24,7 +24,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSLengthFormatter {
-        #[method_id(numberFormatter)]
+        #[method_id(@__retain_semantics Other numberFormatter)]
         pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared>;
 
         #[method(setNumberFormatter:)]
@@ -42,24 +42,24 @@ extern_methods!(
         #[method(setForPersonHeightUse:)]
         pub unsafe fn setForPersonHeightUse(&self, forPersonHeightUse: bool);
 
-        #[method_id(stringFromValue:unit:)]
+        #[method_id(@__retain_semantics Other stringFromValue:unit:)]
         pub unsafe fn stringFromValue_unit(
             &self,
             value: c_double,
             unit: NSLengthFormatterUnit,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringFromMeters:)]
+        #[method_id(@__retain_semantics Other stringFromMeters:)]
         pub unsafe fn stringFromMeters(&self, numberInMeters: c_double) -> Id<NSString, Shared>;
 
-        #[method_id(unitStringFromValue:unit:)]
+        #[method_id(@__retain_semantics Other unitStringFromValue:unit:)]
         pub unsafe fn unitStringFromValue_unit(
             &self,
             value: c_double,
             unit: NSLengthFormatterUnit,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(unitStringFromMeters:usedUnit:)]
+        #[method_id(@__retain_semantics Other unitStringFromMeters:usedUnit:)]
         pub unsafe fn unitStringFromMeters_usedUnit(
             &self,
             numberInMeters: c_double,

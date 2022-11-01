@@ -20,15 +20,15 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFileVersion {
-        #[method_id(currentVersionOfItemAtURL:)]
+        #[method_id(@__retain_semantics Other currentVersionOfItemAtURL:)]
         pub unsafe fn currentVersionOfItemAtURL(url: &NSURL) -> Option<Id<NSFileVersion, Shared>>;
 
-        #[method_id(otherVersionsOfItemAtURL:)]
+        #[method_id(@__retain_semantics Other otherVersionsOfItemAtURL:)]
         pub unsafe fn otherVersionsOfItemAtURL(
             url: &NSURL,
         ) -> Option<Id<NSArray<NSFileVersion>, Shared>>;
 
-        #[method_id(unresolvedConflictVersionsOfItemAtURL:)]
+        #[method_id(@__retain_semantics Other unresolvedConflictVersionsOfItemAtURL:)]
         pub unsafe fn unresolvedConflictVersionsOfItemAtURL(
             url: &NSURL,
         ) -> Option<Id<NSArray<NSFileVersion>, Shared>>;
@@ -39,41 +39,41 @@ extern_methods!(
             completionHandler: TodoBlock,
         );
 
-        #[method_id(versionOfItemAtURL:forPersistentIdentifier:)]
+        #[method_id(@__retain_semantics Other versionOfItemAtURL:forPersistentIdentifier:)]
         pub unsafe fn versionOfItemAtURL_forPersistentIdentifier(
             url: &NSURL,
             persistentIdentifier: &Object,
         ) -> Option<Id<NSFileVersion, Shared>>;
 
-        #[method_id(addVersionOfItemAtURL:withContentsOfURL:options:error:)]
+        #[method_id(@__retain_semantics Other addVersionOfItemAtURL:withContentsOfURL:options:error:)]
         pub unsafe fn addVersionOfItemAtURL_withContentsOfURL_options_error(
             url: &NSURL,
             contentsURL: &NSURL,
             options: NSFileVersionAddingOptions,
         ) -> Result<Id<NSFileVersion, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(temporaryDirectoryURLForNewVersionOfItemAtURL:)]
+        #[method_id(@__retain_semantics Other temporaryDirectoryURLForNewVersionOfItemAtURL:)]
         pub unsafe fn temporaryDirectoryURLForNewVersionOfItemAtURL(
             url: &NSURL,
         ) -> Id<NSURL, Shared>;
 
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Id<NSURL, Shared>;
 
-        #[method_id(localizedName)]
+        #[method_id(@__retain_semantics Other localizedName)]
         pub unsafe fn localizedName(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(localizedNameOfSavingComputer)]
+        #[method_id(@__retain_semantics Other localizedNameOfSavingComputer)]
         pub unsafe fn localizedNameOfSavingComputer(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(originatorNameComponents)]
+        #[method_id(@__retain_semantics Other originatorNameComponents)]
         pub unsafe fn originatorNameComponents(&self)
             -> Option<Id<NSPersonNameComponents, Shared>>;
 
-        #[method_id(modificationDate)]
+        #[method_id(@__retain_semantics Other modificationDate)]
         pub unsafe fn modificationDate(&self) -> Option<Id<NSDate, Shared>>;
 
-        #[method_id(persistentIdentifier)]
+        #[method_id(@__retain_semantics Other persistentIdentifier)]
         pub unsafe fn persistentIdentifier(&self) -> Id<NSCoding, Shared>;
 
         #[method(isConflict)]
@@ -97,7 +97,7 @@ extern_methods!(
         #[method(hasThumbnail)]
         pub unsafe fn hasThumbnail(&self) -> bool;
 
-        #[method_id(replaceItemAtURL:options:error:)]
+        #[method_id(@__retain_semantics Other replaceItemAtURL:options:error:)]
         pub unsafe fn replaceItemAtURL_options_error(
             &self,
             url: &NSURL,

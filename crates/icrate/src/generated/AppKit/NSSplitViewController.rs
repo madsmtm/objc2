@@ -19,13 +19,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSplitViewController {
-        #[method_id(splitView)]
+        #[method_id(@__retain_semantics Other splitView)]
         pub unsafe fn splitView(&self) -> Id<NSSplitView, Shared>;
 
         #[method(setSplitView:)]
         pub unsafe fn setSplitView(&self, splitView: &NSSplitView);
 
-        #[method_id(splitViewItems)]
+        #[method_id(@__retain_semantics Other splitViewItems)]
         pub unsafe fn splitViewItems(&self) -> Id<NSArray<NSSplitViewItem>, Shared>;
 
         #[method(setSplitViewItems:)]
@@ -44,7 +44,7 @@ extern_methods!(
         #[method(removeSplitViewItem:)]
         pub unsafe fn removeSplitViewItem(&self, splitViewItem: &NSSplitViewItem);
 
-        #[method_id(splitViewItemForViewController:)]
+        #[method_id(@__retain_semantics Other splitViewItemForViewController:)]
         pub unsafe fn splitViewItemForViewController(
             &self,
             viewController: &NSViewController,

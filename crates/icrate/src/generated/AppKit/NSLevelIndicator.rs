@@ -81,19 +81,19 @@ extern_methods!(
         #[method(rectOfTickMarkAtIndex:)]
         pub unsafe fn rectOfTickMarkAtIndex(&self, index: NSInteger) -> NSRect;
 
-        #[method_id(fillColor)]
+        #[method_id(@__retain_semantics Other fillColor)]
         pub unsafe fn fillColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setFillColor:)]
         pub unsafe fn setFillColor(&self, fillColor: Option<&NSColor>);
 
-        #[method_id(warningFillColor)]
+        #[method_id(@__retain_semantics Other warningFillColor)]
         pub unsafe fn warningFillColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setWarningFillColor:)]
         pub unsafe fn setWarningFillColor(&self, warningFillColor: Option<&NSColor>);
 
-        #[method_id(criticalFillColor)]
+        #[method_id(@__retain_semantics Other criticalFillColor)]
         pub unsafe fn criticalFillColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setCriticalFillColor:)]
@@ -114,13 +114,13 @@ extern_methods!(
             placeholderVisibility: NSLevelIndicatorPlaceholderVisibility,
         );
 
-        #[method_id(ratingImage)]
+        #[method_id(@__retain_semantics Other ratingImage)]
         pub unsafe fn ratingImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setRatingImage:)]
         pub unsafe fn setRatingImage(&self, ratingImage: Option<&NSImage>);
 
-        #[method_id(ratingPlaceholderImage)]
+        #[method_id(@__retain_semantics Other ratingPlaceholderImage)]
         pub unsafe fn ratingPlaceholderImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setRatingPlaceholderImage:)]

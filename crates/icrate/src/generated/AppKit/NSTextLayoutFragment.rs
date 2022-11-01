@@ -32,35 +32,35 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextLayoutFragment {
-        #[method_id(initWithTextElement:range:)]
+        #[method_id(@__retain_semantics Init initWithTextElement:range:)]
         pub unsafe fn initWithTextElement_range(
             this: Option<Allocated<Self>>,
             textElement: &NSTextElement,
             rangeInElement: Option<&NSTextRange>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(textLayoutManager)]
+        #[method_id(@__retain_semantics Other textLayoutManager)]
         pub unsafe fn textLayoutManager(&self) -> Option<Id<NSTextLayoutManager, Shared>>;
 
-        #[method_id(textElement)]
+        #[method_id(@__retain_semantics Other textElement)]
         pub unsafe fn textElement(&self) -> Option<Id<NSTextElement, Shared>>;
 
-        #[method_id(rangeInElement)]
+        #[method_id(@__retain_semantics Other rangeInElement)]
         pub unsafe fn rangeInElement(&self) -> Id<NSTextRange, Shared>;
 
-        #[method_id(textLineFragments)]
+        #[method_id(@__retain_semantics Other textLineFragments)]
         pub unsafe fn textLineFragments(&self) -> Id<NSArray<NSTextLineFragment>, Shared>;
 
-        #[method_id(layoutQueue)]
+        #[method_id(@__retain_semantics Other layoutQueue)]
         pub unsafe fn layoutQueue(&self) -> Option<Id<NSOperationQueue, Shared>>;
 
         #[method(setLayoutQueue:)]
@@ -93,7 +93,7 @@ extern_methods!(
         #[method(drawAtPoint:inContext:)]
         pub unsafe fn drawAtPoint_inContext(&self, point: CGPoint, context: CGContextRef);
 
-        #[method_id(textAttachmentViewProviders)]
+        #[method_id(@__retain_semantics Other textAttachmentViewProviders)]
         pub unsafe fn textAttachmentViewProviders(
             &self,
         ) -> Id<NSArray<NSTextAttachmentViewProvider>, Shared>;

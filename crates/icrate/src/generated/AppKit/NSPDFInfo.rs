@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPDFInfo {
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setURL:)]
@@ -27,7 +27,7 @@ extern_methods!(
         #[method(setFileExtensionHidden:)]
         pub unsafe fn setFileExtensionHidden(&self, fileExtensionHidden: bool);
 
-        #[method_id(tagNames)]
+        #[method_id(@__retain_semantics Other tagNames)]
         pub unsafe fn tagNames(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(setTagNames:)]
@@ -45,7 +45,7 @@ extern_methods!(
         #[method(setPaperSize:)]
         pub unsafe fn setPaperSize(&self, paperSize: NSSize);
 
-        #[method_id(attributes)]
+        #[method_id(@__retain_semantics Other attributes)]
         pub unsafe fn attributes(
             &self,
         ) -> Id<NSMutableDictionary<NSPrintInfoAttributeKey, Object>, Shared>;

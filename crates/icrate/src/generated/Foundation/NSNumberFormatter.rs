@@ -72,13 +72,13 @@ extern_methods!(
             rangep: *mut NSRange,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(stringFromNumber:)]
+        #[method_id(@__retain_semantics Other stringFromNumber:)]
         pub unsafe fn stringFromNumber(&self, number: &NSNumber) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(numberFromString:)]
+        #[method_id(@__retain_semantics Other numberFromString:)]
         pub unsafe fn numberFromString(&self, string: &NSString) -> Option<Id<NSNumber, Shared>>;
 
-        #[method_id(localizedStringFromNumber:numberStyle:)]
+        #[method_id(@__retain_semantics Other localizedStringFromNumber:numberStyle:)]
         pub unsafe fn localizedStringFromNumber_numberStyle(
             num: &NSNumber,
             nstyle: NSNumberFormatterStyle,
@@ -96,7 +96,7 @@ extern_methods!(
         #[method(setNumberStyle:)]
         pub unsafe fn setNumberStyle(&self, numberStyle: NSNumberFormatterStyle);
 
-        #[method_id(locale)]
+        #[method_id(@__retain_semantics Other locale)]
         pub unsafe fn locale(&self) -> Id<NSLocale, Shared>;
 
         #[method(setLocale:)]
@@ -114,13 +114,13 @@ extern_methods!(
         #[method(setFormatterBehavior:)]
         pub unsafe fn setFormatterBehavior(&self, formatterBehavior: NSNumberFormatterBehavior);
 
-        #[method_id(negativeFormat)]
+        #[method_id(@__retain_semantics Other negativeFormat)]
         pub unsafe fn negativeFormat(&self) -> Id<NSString, Shared>;
 
         #[method(setNegativeFormat:)]
         pub unsafe fn setNegativeFormat(&self, negativeFormat: Option<&NSString>);
 
-        #[method_id(textAttributesForNegativeValues)]
+        #[method_id(@__retain_semantics Other textAttributesForNegativeValues)]
         pub unsafe fn textAttributesForNegativeValues(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -131,13 +131,13 @@ extern_methods!(
             textAttributesForNegativeValues: Option<&NSDictionary<NSString, Object>>,
         );
 
-        #[method_id(positiveFormat)]
+        #[method_id(@__retain_semantics Other positiveFormat)]
         pub unsafe fn positiveFormat(&self) -> Id<NSString, Shared>;
 
         #[method(setPositiveFormat:)]
         pub unsafe fn setPositiveFormat(&self, positiveFormat: Option<&NSString>);
 
-        #[method_id(textAttributesForPositiveValues)]
+        #[method_id(@__retain_semantics Other textAttributesForPositiveValues)]
         pub unsafe fn textAttributesForPositiveValues(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -154,7 +154,7 @@ extern_methods!(
         #[method(setAllowsFloats:)]
         pub unsafe fn setAllowsFloats(&self, allowsFloats: bool);
 
-        #[method_id(decimalSeparator)]
+        #[method_id(@__retain_semantics Other decimalSeparator)]
         pub unsafe fn decimalSeparator(&self) -> Id<NSString, Shared>;
 
         #[method(setDecimalSeparator:)]
@@ -166,7 +166,7 @@ extern_methods!(
         #[method(setAlwaysShowsDecimalSeparator:)]
         pub unsafe fn setAlwaysShowsDecimalSeparator(&self, alwaysShowsDecimalSeparator: bool);
 
-        #[method_id(currencyDecimalSeparator)]
+        #[method_id(@__retain_semantics Other currencyDecimalSeparator)]
         pub unsafe fn currencyDecimalSeparator(&self) -> Id<NSString, Shared>;
 
         #[method(setCurrencyDecimalSeparator:)]
@@ -181,19 +181,19 @@ extern_methods!(
         #[method(setUsesGroupingSeparator:)]
         pub unsafe fn setUsesGroupingSeparator(&self, usesGroupingSeparator: bool);
 
-        #[method_id(groupingSeparator)]
+        #[method_id(@__retain_semantics Other groupingSeparator)]
         pub unsafe fn groupingSeparator(&self) -> Id<NSString, Shared>;
 
         #[method(setGroupingSeparator:)]
         pub unsafe fn setGroupingSeparator(&self, groupingSeparator: Option<&NSString>);
 
-        #[method_id(zeroSymbol)]
+        #[method_id(@__retain_semantics Other zeroSymbol)]
         pub unsafe fn zeroSymbol(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setZeroSymbol:)]
         pub unsafe fn setZeroSymbol(&self, zeroSymbol: Option<&NSString>);
 
-        #[method_id(textAttributesForZero)]
+        #[method_id(@__retain_semantics Other textAttributesForZero)]
         pub unsafe fn textAttributesForZero(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -204,13 +204,13 @@ extern_methods!(
             textAttributesForZero: Option<&NSDictionary<NSString, Object>>,
         );
 
-        #[method_id(nilSymbol)]
+        #[method_id(@__retain_semantics Other nilSymbol)]
         pub unsafe fn nilSymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setNilSymbol:)]
         pub unsafe fn setNilSymbol(&self, nilSymbol: &NSString);
 
-        #[method_id(textAttributesForNil)]
+        #[method_id(@__retain_semantics Other textAttributesForNil)]
         pub unsafe fn textAttributesForNil(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -221,13 +221,13 @@ extern_methods!(
             textAttributesForNil: Option<&NSDictionary<NSString, Object>>,
         );
 
-        #[method_id(notANumberSymbol)]
+        #[method_id(@__retain_semantics Other notANumberSymbol)]
         pub unsafe fn notANumberSymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setNotANumberSymbol:)]
         pub unsafe fn setNotANumberSymbol(&self, notANumberSymbol: Option<&NSString>);
 
-        #[method_id(textAttributesForNotANumber)]
+        #[method_id(@__retain_semantics Other textAttributesForNotANumber)]
         pub unsafe fn textAttributesForNotANumber(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -238,13 +238,13 @@ extern_methods!(
             textAttributesForNotANumber: Option<&NSDictionary<NSString, Object>>,
         );
 
-        #[method_id(positiveInfinitySymbol)]
+        #[method_id(@__retain_semantics Other positiveInfinitySymbol)]
         pub unsafe fn positiveInfinitySymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setPositiveInfinitySymbol:)]
         pub unsafe fn setPositiveInfinitySymbol(&self, positiveInfinitySymbol: &NSString);
 
-        #[method_id(textAttributesForPositiveInfinity)]
+        #[method_id(@__retain_semantics Other textAttributesForPositiveInfinity)]
         pub unsafe fn textAttributesForPositiveInfinity(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -255,13 +255,13 @@ extern_methods!(
             textAttributesForPositiveInfinity: Option<&NSDictionary<NSString, Object>>,
         );
 
-        #[method_id(negativeInfinitySymbol)]
+        #[method_id(@__retain_semantics Other negativeInfinitySymbol)]
         pub unsafe fn negativeInfinitySymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setNegativeInfinitySymbol:)]
         pub unsafe fn setNegativeInfinitySymbol(&self, negativeInfinitySymbol: &NSString);
 
-        #[method_id(textAttributesForNegativeInfinity)]
+        #[method_id(@__retain_semantics Other textAttributesForNegativeInfinity)]
         pub unsafe fn textAttributesForNegativeInfinity(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -272,43 +272,43 @@ extern_methods!(
             textAttributesForNegativeInfinity: Option<&NSDictionary<NSString, Object>>,
         );
 
-        #[method_id(positivePrefix)]
+        #[method_id(@__retain_semantics Other positivePrefix)]
         pub unsafe fn positivePrefix(&self) -> Id<NSString, Shared>;
 
         #[method(setPositivePrefix:)]
         pub unsafe fn setPositivePrefix(&self, positivePrefix: Option<&NSString>);
 
-        #[method_id(positiveSuffix)]
+        #[method_id(@__retain_semantics Other positiveSuffix)]
         pub unsafe fn positiveSuffix(&self) -> Id<NSString, Shared>;
 
         #[method(setPositiveSuffix:)]
         pub unsafe fn setPositiveSuffix(&self, positiveSuffix: Option<&NSString>);
 
-        #[method_id(negativePrefix)]
+        #[method_id(@__retain_semantics Other negativePrefix)]
         pub unsafe fn negativePrefix(&self) -> Id<NSString, Shared>;
 
         #[method(setNegativePrefix:)]
         pub unsafe fn setNegativePrefix(&self, negativePrefix: Option<&NSString>);
 
-        #[method_id(negativeSuffix)]
+        #[method_id(@__retain_semantics Other negativeSuffix)]
         pub unsafe fn negativeSuffix(&self) -> Id<NSString, Shared>;
 
         #[method(setNegativeSuffix:)]
         pub unsafe fn setNegativeSuffix(&self, negativeSuffix: Option<&NSString>);
 
-        #[method_id(currencyCode)]
+        #[method_id(@__retain_semantics Other currencyCode)]
         pub unsafe fn currencyCode(&self) -> Id<NSString, Shared>;
 
         #[method(setCurrencyCode:)]
         pub unsafe fn setCurrencyCode(&self, currencyCode: Option<&NSString>);
 
-        #[method_id(currencySymbol)]
+        #[method_id(@__retain_semantics Other currencySymbol)]
         pub unsafe fn currencySymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setCurrencySymbol:)]
         pub unsafe fn setCurrencySymbol(&self, currencySymbol: Option<&NSString>);
 
-        #[method_id(internationalCurrencySymbol)]
+        #[method_id(@__retain_semantics Other internationalCurrencySymbol)]
         pub unsafe fn internationalCurrencySymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setInternationalCurrencySymbol:)]
@@ -317,31 +317,31 @@ extern_methods!(
             internationalCurrencySymbol: Option<&NSString>,
         );
 
-        #[method_id(percentSymbol)]
+        #[method_id(@__retain_semantics Other percentSymbol)]
         pub unsafe fn percentSymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setPercentSymbol:)]
         pub unsafe fn setPercentSymbol(&self, percentSymbol: Option<&NSString>);
 
-        #[method_id(perMillSymbol)]
+        #[method_id(@__retain_semantics Other perMillSymbol)]
         pub unsafe fn perMillSymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setPerMillSymbol:)]
         pub unsafe fn setPerMillSymbol(&self, perMillSymbol: Option<&NSString>);
 
-        #[method_id(minusSign)]
+        #[method_id(@__retain_semantics Other minusSign)]
         pub unsafe fn minusSign(&self) -> Id<NSString, Shared>;
 
         #[method(setMinusSign:)]
         pub unsafe fn setMinusSign(&self, minusSign: Option<&NSString>);
 
-        #[method_id(plusSign)]
+        #[method_id(@__retain_semantics Other plusSign)]
         pub unsafe fn plusSign(&self) -> Id<NSString, Shared>;
 
         #[method(setPlusSign:)]
         pub unsafe fn setPlusSign(&self, plusSign: Option<&NSString>);
 
-        #[method_id(exponentSymbol)]
+        #[method_id(@__retain_semantics Other exponentSymbol)]
         pub unsafe fn exponentSymbol(&self) -> Id<NSString, Shared>;
 
         #[method(setExponentSymbol:)]
@@ -359,7 +359,7 @@ extern_methods!(
         #[method(setSecondaryGroupingSize:)]
         pub unsafe fn setSecondaryGroupingSize(&self, secondaryGroupingSize: NSUInteger);
 
-        #[method_id(multiplier)]
+        #[method_id(@__retain_semantics Other multiplier)]
         pub unsafe fn multiplier(&self) -> Option<Id<NSNumber, Shared>>;
 
         #[method(setMultiplier:)]
@@ -371,7 +371,7 @@ extern_methods!(
         #[method(setFormatWidth:)]
         pub unsafe fn setFormatWidth(&self, formatWidth: NSUInteger);
 
-        #[method_id(paddingCharacter)]
+        #[method_id(@__retain_semantics Other paddingCharacter)]
         pub unsafe fn paddingCharacter(&self) -> Id<NSString, Shared>;
 
         #[method(setPaddingCharacter:)]
@@ -389,7 +389,7 @@ extern_methods!(
         #[method(setRoundingMode:)]
         pub unsafe fn setRoundingMode(&self, roundingMode: NSNumberFormatterRoundingMode);
 
-        #[method_id(roundingIncrement)]
+        #[method_id(@__retain_semantics Other roundingIncrement)]
         pub unsafe fn roundingIncrement(&self) -> Id<NSNumber, Shared>;
 
         #[method(setRoundingIncrement:)]
@@ -419,19 +419,19 @@ extern_methods!(
         #[method(setMaximumFractionDigits:)]
         pub unsafe fn setMaximumFractionDigits(&self, maximumFractionDigits: NSUInteger);
 
-        #[method_id(minimum)]
+        #[method_id(@__retain_semantics Other minimum)]
         pub unsafe fn minimum(&self) -> Option<Id<NSNumber, Shared>>;
 
         #[method(setMinimum:)]
         pub unsafe fn setMinimum(&self, minimum: Option<&NSNumber>);
 
-        #[method_id(maximum)]
+        #[method_id(@__retain_semantics Other maximum)]
         pub unsafe fn maximum(&self) -> Option<Id<NSNumber, Shared>>;
 
         #[method(setMaximum:)]
         pub unsafe fn setMaximum(&self, maximum: Option<&NSNumber>);
 
-        #[method_id(currencyGroupingSeparator)]
+        #[method_id(@__retain_semantics Other currencyGroupingSeparator)]
         pub unsafe fn currencyGroupingSeparator(&self) -> Id<NSString, Shared>;
 
         #[method(setCurrencyGroupingSeparator:)]
@@ -484,7 +484,7 @@ extern_methods!(
         #[method(setHasThousandSeparators:)]
         pub unsafe fn setHasThousandSeparators(&self, hasThousandSeparators: bool);
 
-        #[method_id(thousandSeparator)]
+        #[method_id(@__retain_semantics Other thousandSeparator)]
         pub unsafe fn thousandSeparator(&self) -> Id<NSString, Shared>;
 
         #[method(setThousandSeparator:)]
@@ -496,13 +496,13 @@ extern_methods!(
         #[method(setLocalizesFormat:)]
         pub unsafe fn setLocalizesFormat(&self, localizesFormat: bool);
 
-        #[method_id(format)]
+        #[method_id(@__retain_semantics Other format)]
         pub unsafe fn format(&self) -> Id<NSString, Shared>;
 
         #[method(setFormat:)]
         pub unsafe fn setFormat(&self, format: &NSString);
 
-        #[method_id(attributedStringForZero)]
+        #[method_id(@__retain_semantics Other attributedStringForZero)]
         pub unsafe fn attributedStringForZero(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedStringForZero:)]
@@ -511,13 +511,13 @@ extern_methods!(
             attributedStringForZero: &NSAttributedString,
         );
 
-        #[method_id(attributedStringForNil)]
+        #[method_id(@__retain_semantics Other attributedStringForNil)]
         pub unsafe fn attributedStringForNil(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedStringForNil:)]
         pub unsafe fn setAttributedStringForNil(&self, attributedStringForNil: &NSAttributedString);
 
-        #[method_id(attributedStringForNotANumber)]
+        #[method_id(@__retain_semantics Other attributedStringForNotANumber)]
         pub unsafe fn attributedStringForNotANumber(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedStringForNotANumber:)]
@@ -526,7 +526,7 @@ extern_methods!(
             attributedStringForNotANumber: &NSAttributedString,
         );
 
-        #[method_id(roundingBehavior)]
+        #[method_id(@__retain_semantics Other roundingBehavior)]
         pub unsafe fn roundingBehavior(&self) -> Id<NSDecimalNumberHandler, Shared>;
 
         #[method(setRoundingBehavior:)]

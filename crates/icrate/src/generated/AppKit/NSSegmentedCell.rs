@@ -51,7 +51,7 @@ extern_methods!(
         #[method(setImage:forSegment:)]
         pub unsafe fn setImage_forSegment(&self, image: Option<&NSImage>, segment: NSInteger);
 
-        #[method_id(imageForSegment:)]
+        #[method_id(@__retain_semantics Other imageForSegment:)]
         pub unsafe fn imageForSegment(&self, segment: NSInteger) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImageScaling:forSegment:)]
@@ -67,7 +67,7 @@ extern_methods!(
         #[method(setLabel:forSegment:)]
         pub unsafe fn setLabel_forSegment(&self, label: &NSString, segment: NSInteger);
 
-        #[method_id(labelForSegment:)]
+        #[method_id(@__retain_semantics Other labelForSegment:)]
         pub unsafe fn labelForSegment(&self, segment: NSInteger) -> Option<Id<NSString, Shared>>;
 
         #[method(setSelected:forSegment:)]
@@ -85,13 +85,13 @@ extern_methods!(
         #[method(setMenu:forSegment:)]
         pub unsafe fn setMenu_forSegment(&self, menu: Option<&NSMenu>, segment: NSInteger);
 
-        #[method_id(menuForSegment:)]
+        #[method_id(@__retain_semantics Other menuForSegment:)]
         pub unsafe fn menuForSegment(&self, segment: NSInteger) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setToolTip:forSegment:)]
         pub unsafe fn setToolTip_forSegment(&self, toolTip: Option<&NSString>, segment: NSInteger);
 
-        #[method_id(toolTipForSegment:)]
+        #[method_id(@__retain_semantics Other toolTipForSegment:)]
         pub unsafe fn toolTipForSegment(&self, segment: NSInteger) -> Option<Id<NSString, Shared>>;
 
         #[method(setTag:forSegment:)]

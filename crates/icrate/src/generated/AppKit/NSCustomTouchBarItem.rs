@@ -15,19 +15,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCustomTouchBarItem {
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Id<NSView, Shared>;
 
         #[method(setView:)]
         pub unsafe fn setView(&self, view: &NSView);
 
-        #[method_id(viewController)]
+        #[method_id(@__retain_semantics Other viewController)]
         pub unsafe fn viewController(&self) -> Option<Id<NSViewController, Shared>>;
 
         #[method(setViewController:)]
         pub unsafe fn setViewController(&self, viewController: Option<&NSViewController>);
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]

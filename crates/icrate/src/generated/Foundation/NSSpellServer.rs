@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSpellServer {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSpellServerDelegate, Shared>>;
 
         #[method(setDelegate:)]

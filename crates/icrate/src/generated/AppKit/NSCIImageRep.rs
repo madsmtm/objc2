@@ -15,16 +15,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCIImageRep {
-        #[method_id(imageRepWithCIImage:)]
+        #[method_id(@__retain_semantics Other imageRepWithCIImage:)]
         pub unsafe fn imageRepWithCIImage(image: &CIImage) -> Id<Self, Shared>;
 
-        #[method_id(initWithCIImage:)]
+        #[method_id(@__retain_semantics Init initWithCIImage:)]
         pub unsafe fn initWithCIImage(
             this: Option<Allocated<Self>>,
             image: &CIImage,
         ) -> Id<Self, Shared>;
 
-        #[method_id(CIImage)]
+        #[method_id(@__retain_semantics Other CIImage)]
         pub unsafe fn CIImage(&self) -> Id<CIImage, Shared>;
     }
 );
@@ -32,7 +32,7 @@ extern_methods!(
 extern_methods!(
     /// NSAppKitAdditions
     unsafe impl CIImage {
-        #[method_id(initWithBitmapImageRep:)]
+        #[method_id(@__retain_semantics Init initWithBitmapImageRep:)]
         pub unsafe fn initWithBitmapImageRep(
             this: Option<Allocated<Self>>,
             bitmapImageRep: &NSBitmapImageRep,

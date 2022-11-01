@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPredicateEditor {
-        #[method_id(rowTemplates)]
+        #[method_id(@__retain_semantics Other rowTemplates)]
         pub unsafe fn rowTemplates(&self) -> Id<NSArray<NSPredicateEditorRowTemplate>, Shared>;
 
         #[method(setRowTemplates:)]

@@ -20,7 +20,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSEnergyFormatter {
-        #[method_id(numberFormatter)]
+        #[method_id(@__retain_semantics Other numberFormatter)]
         pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared>;
 
         #[method(setNumberFormatter:)]
@@ -38,24 +38,24 @@ extern_methods!(
         #[method(setForFoodEnergyUse:)]
         pub unsafe fn setForFoodEnergyUse(&self, forFoodEnergyUse: bool);
 
-        #[method_id(stringFromValue:unit:)]
+        #[method_id(@__retain_semantics Other stringFromValue:unit:)]
         pub unsafe fn stringFromValue_unit(
             &self,
             value: c_double,
             unit: NSEnergyFormatterUnit,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringFromJoules:)]
+        #[method_id(@__retain_semantics Other stringFromJoules:)]
         pub unsafe fn stringFromJoules(&self, numberInJoules: c_double) -> Id<NSString, Shared>;
 
-        #[method_id(unitStringFromValue:unit:)]
+        #[method_id(@__retain_semantics Other unitStringFromValue:unit:)]
         pub unsafe fn unitStringFromValue_unit(
             &self,
             value: c_double,
             unit: NSEnergyFormatterUnit,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(unitStringFromJoules:usedUnit:)]
+        #[method_id(@__retain_semantics Other unitStringFromJoules:usedUnit:)]
         pub unsafe fn unitStringFromJoules_usedUnit(
             &self,
             numberInJoules: c_double,

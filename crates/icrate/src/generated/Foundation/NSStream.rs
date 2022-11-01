@@ -40,13 +40,13 @@ extern_methods!(
         #[method(close)]
         pub unsafe fn close(&self);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSStreamDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSStreamDelegate>);
 
-        #[method_id(propertyForKey:)]
+        #[method_id(@__retain_semantics Other propertyForKey:)]
         pub unsafe fn propertyForKey(
             &self,
             key: &NSStreamPropertyKey,
@@ -68,7 +68,7 @@ extern_methods!(
         #[method(streamStatus)]
         pub unsafe fn streamStatus(&self) -> NSStreamStatus;
 
-        #[method_id(streamError)]
+        #[method_id(@__retain_semantics Other streamError)]
         pub unsafe fn streamError(&self) -> Option<Id<NSError, Shared>>;
     }
 );
@@ -97,13 +97,13 @@ extern_methods!(
         #[method(hasBytesAvailable)]
         pub unsafe fn hasBytesAvailable(&self) -> bool;
 
-        #[method_id(initWithData:)]
+        #[method_id(@__retain_semantics Init initWithData:)]
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             data: &NSData,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithURL:)]
+        #[method_id(@__retain_semantics Init initWithURL:)]
         pub unsafe fn initWithURL(
             this: Option<Allocated<Self>>,
             url: &NSURL,
@@ -128,17 +128,17 @@ extern_methods!(
         #[method(hasSpaceAvailable)]
         pub unsafe fn hasSpaceAvailable(&self) -> bool;
 
-        #[method_id(initToMemory)]
+        #[method_id(@__retain_semantics Init initToMemory)]
         pub unsafe fn initToMemory(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initToBuffer:capacity:)]
+        #[method_id(@__retain_semantics Init initToBuffer:capacity:)]
         pub unsafe fn initToBuffer_capacity(
             this: Option<Allocated<Self>>,
             buffer: NonNull<u8>,
             capacity: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithURL:append:)]
+        #[method_id(@__retain_semantics Init initWithURL:append:)]
         pub unsafe fn initWithURL_append(
             this: Option<Allocated<Self>>,
             url: &NSURL,
@@ -183,19 +183,19 @@ extern_methods!(
 extern_methods!(
     /// NSInputStreamExtensions
     unsafe impl NSInputStream {
-        #[method_id(initWithFileAtPath:)]
+        #[method_id(@__retain_semantics Init initWithFileAtPath:)]
         pub unsafe fn initWithFileAtPath(
             this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(inputStreamWithData:)]
+        #[method_id(@__retain_semantics Other inputStreamWithData:)]
         pub unsafe fn inputStreamWithData(data: &NSData) -> Option<Id<Self, Shared>>;
 
-        #[method_id(inputStreamWithFileAtPath:)]
+        #[method_id(@__retain_semantics Other inputStreamWithFileAtPath:)]
         pub unsafe fn inputStreamWithFileAtPath(path: &NSString) -> Option<Id<Self, Shared>>;
 
-        #[method_id(inputStreamWithURL:)]
+        #[method_id(@__retain_semantics Other inputStreamWithURL:)]
         pub unsafe fn inputStreamWithURL(url: &NSURL) -> Option<Id<Self, Shared>>;
     }
 );
@@ -203,29 +203,29 @@ extern_methods!(
 extern_methods!(
     /// NSOutputStreamExtensions
     unsafe impl NSOutputStream {
-        #[method_id(initToFileAtPath:append:)]
+        #[method_id(@__retain_semantics Init initToFileAtPath:append:)]
         pub unsafe fn initToFileAtPath_append(
             this: Option<Allocated<Self>>,
             path: &NSString,
             shouldAppend: bool,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(outputStreamToMemory)]
+        #[method_id(@__retain_semantics Other outputStreamToMemory)]
         pub unsafe fn outputStreamToMemory() -> Id<Self, Shared>;
 
-        #[method_id(outputStreamToBuffer:capacity:)]
+        #[method_id(@__retain_semantics Other outputStreamToBuffer:capacity:)]
         pub unsafe fn outputStreamToBuffer_capacity(
             buffer: NonNull<u8>,
             capacity: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(outputStreamToFileAtPath:append:)]
+        #[method_id(@__retain_semantics Other outputStreamToFileAtPath:append:)]
         pub unsafe fn outputStreamToFileAtPath_append(
             path: &NSString,
             shouldAppend: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(outputStreamWithURL:append:)]
+        #[method_id(@__retain_semantics Other outputStreamWithURL:append:)]
         pub unsafe fn outputStreamWithURL_append(
             url: &NSURL,
             shouldAppend: bool,

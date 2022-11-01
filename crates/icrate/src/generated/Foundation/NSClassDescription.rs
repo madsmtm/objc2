@@ -23,21 +23,21 @@ extern_methods!(
         #[method(invalidateClassDescriptionCache)]
         pub unsafe fn invalidateClassDescriptionCache();
 
-        #[method_id(classDescriptionForClass:)]
+        #[method_id(@__retain_semantics Other classDescriptionForClass:)]
         pub unsafe fn classDescriptionForClass(
             aClass: &Class,
         ) -> Option<Id<NSClassDescription, Shared>>;
 
-        #[method_id(attributeKeys)]
+        #[method_id(@__retain_semantics Other attributeKeys)]
         pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(toOneRelationshipKeys)]
+        #[method_id(@__retain_semantics Other toOneRelationshipKeys)]
         pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(toManyRelationshipKeys)]
+        #[method_id(@__retain_semantics Other toManyRelationshipKeys)]
         pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(inverseForRelationshipKey:)]
+        #[method_id(@__retain_semantics Other inverseForRelationshipKey:)]
         pub unsafe fn inverseForRelationshipKey(
             &self,
             relationshipKey: &NSString,
@@ -48,19 +48,19 @@ extern_methods!(
 extern_methods!(
     /// NSClassDescriptionPrimitives
     unsafe impl NSObject {
-        #[method_id(classDescription)]
+        #[method_id(@__retain_semantics Other classDescription)]
         pub unsafe fn classDescription(&self) -> Id<NSClassDescription, Shared>;
 
-        #[method_id(attributeKeys)]
+        #[method_id(@__retain_semantics Other attributeKeys)]
         pub unsafe fn attributeKeys(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(toOneRelationshipKeys)]
+        #[method_id(@__retain_semantics Other toOneRelationshipKeys)]
         pub unsafe fn toOneRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(toManyRelationshipKeys)]
+        #[method_id(@__retain_semantics Other toManyRelationshipKeys)]
         pub unsafe fn toManyRelationshipKeys(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(inverseForRelationshipKey:)]
+        #[method_id(@__retain_semantics Other inverseForRelationshipKey:)]
         pub unsafe fn inverseForRelationshipKey(
             &self,
             relationshipKey: &NSString,

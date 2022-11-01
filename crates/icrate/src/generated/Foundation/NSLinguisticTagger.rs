@@ -183,29 +183,29 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSLinguisticTagger {
-        #[method_id(initWithTagSchemes:options:)]
+        #[method_id(@__retain_semantics Init initWithTagSchemes:options:)]
         pub unsafe fn initWithTagSchemes_options(
             this: Option<Allocated<Self>>,
             tagSchemes: &NSArray<NSLinguisticTagScheme>,
             opts: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(tagSchemes)]
+        #[method_id(@__retain_semantics Other tagSchemes)]
         pub unsafe fn tagSchemes(&self) -> Id<NSArray<NSLinguisticTagScheme>, Shared>;
 
-        #[method_id(string)]
+        #[method_id(@__retain_semantics Other string)]
         pub unsafe fn string(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setString:)]
         pub unsafe fn setString(&self, string: Option<&NSString>);
 
-        #[method_id(availableTagSchemesForUnit:language:)]
+        #[method_id(@__retain_semantics Other availableTagSchemesForUnit:language:)]
         pub unsafe fn availableTagSchemesForUnit_language(
             unit: NSLinguisticTaggerUnit,
             language: &NSString,
         ) -> Id<NSArray<NSLinguisticTagScheme>, Shared>;
 
-        #[method_id(availableTagSchemesForLanguage:)]
+        #[method_id(@__retain_semantics Other availableTagSchemesForLanguage:)]
         pub unsafe fn availableTagSchemesForLanguage(
             language: &NSString,
         ) -> Id<NSArray<NSLinguisticTagScheme>, Shared>;
@@ -217,7 +217,7 @@ extern_methods!(
             range: NSRange,
         );
 
-        #[method_id(orthographyAtIndex:effectiveRange:)]
+        #[method_id(@__retain_semantics Other orthographyAtIndex:effectiveRange:)]
         pub unsafe fn orthographyAtIndex_effectiveRange(
             &self,
             charIndex: NSUInteger,
@@ -251,7 +251,7 @@ extern_methods!(
             block: TodoBlock,
         );
 
-        #[method_id(tagAtIndex:unit:scheme:tokenRange:)]
+        #[method_id(@__retain_semantics Other tagAtIndex:unit:scheme:tokenRange:)]
         pub unsafe fn tagAtIndex_unit_scheme_tokenRange(
             &self,
             charIndex: NSUInteger,
@@ -260,7 +260,7 @@ extern_methods!(
             tokenRange: NSRangePointer,
         ) -> Option<Id<NSLinguisticTag, Shared>>;
 
-        #[method_id(tagsInRange:unit:scheme:options:tokenRanges:)]
+        #[method_id(@__retain_semantics Other tagsInRange:unit:scheme:options:tokenRanges:)]
         pub unsafe fn tagsInRange_unit_scheme_options_tokenRanges(
             &self,
             range: NSRange,
@@ -279,7 +279,7 @@ extern_methods!(
             block: TodoBlock,
         );
 
-        #[method_id(tagAtIndex:scheme:tokenRange:sentenceRange:)]
+        #[method_id(@__retain_semantics Other tagAtIndex:scheme:tokenRange:sentenceRange:)]
         pub unsafe fn tagAtIndex_scheme_tokenRange_sentenceRange(
             &self,
             charIndex: NSUInteger,
@@ -288,7 +288,7 @@ extern_methods!(
             sentenceRange: NSRangePointer,
         ) -> Option<Id<NSLinguisticTag, Shared>>;
 
-        #[method_id(tagsInRange:scheme:options:tokenRanges:)]
+        #[method_id(@__retain_semantics Other tagsInRange:scheme:options:tokenRanges:)]
         pub unsafe fn tagsInRange_scheme_options_tokenRanges(
             &self,
             range: NSRange,
@@ -297,13 +297,13 @@ extern_methods!(
             tokenRanges: Option<&mut Option<Id<NSArray<NSValue>, Shared>>>,
         ) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(dominantLanguage)]
+        #[method_id(@__retain_semantics Other dominantLanguage)]
         pub unsafe fn dominantLanguage(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(dominantLanguageForString:)]
+        #[method_id(@__retain_semantics Other dominantLanguageForString:)]
         pub unsafe fn dominantLanguageForString(string: &NSString) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(tagForString:atIndex:unit:scheme:orthography:tokenRange:)]
+        #[method_id(@__retain_semantics Other tagForString:atIndex:unit:scheme:orthography:tokenRange:)]
         pub unsafe fn tagForString_atIndex_unit_scheme_orthography_tokenRange(
             string: &NSString,
             charIndex: NSUInteger,
@@ -313,7 +313,7 @@ extern_methods!(
             tokenRange: NSRangePointer,
         ) -> Option<Id<NSLinguisticTag, Shared>>;
 
-        #[method_id(tagsForString:range:unit:scheme:options:orthography:tokenRanges:)]
+        #[method_id(@__retain_semantics Other tagsForString:range:unit:scheme:options:orthography:tokenRanges:)]
         pub unsafe fn tagsForString_range_unit_scheme_options_orthography_tokenRanges(
             string: &NSString,
             range: NSRange,
@@ -335,7 +335,7 @@ extern_methods!(
             block: TodoBlock,
         );
 
-        #[method_id(possibleTagsAtIndex:scheme:tokenRange:sentenceRange:scores:)]
+        #[method_id(@__retain_semantics Other possibleTagsAtIndex:scheme:tokenRange:sentenceRange:scores:)]
         pub unsafe fn possibleTagsAtIndex_scheme_tokenRange_sentenceRange_scores(
             &self,
             charIndex: NSUInteger,
@@ -350,7 +350,7 @@ extern_methods!(
 extern_methods!(
     /// NSLinguisticAnalysis
     unsafe impl NSString {
-        #[method_id(linguisticTagsInRange:scheme:options:orthography:tokenRanges:)]
+        #[method_id(@__retain_semantics Other linguisticTagsInRange:scheme:options:orthography:tokenRanges:)]
         pub unsafe fn linguisticTagsInRange_scheme_options_orthography_tokenRanges(
             &self,
             range: NSRange,

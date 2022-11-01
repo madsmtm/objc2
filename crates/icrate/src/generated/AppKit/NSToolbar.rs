@@ -30,13 +30,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSToolbar {
-        #[method_id(initWithIdentifier:)]
+        #[method_id(@__retain_semantics Init initWithIdentifier:)]
         pub unsafe fn initWithIdentifier(
             this: Option<Allocated<Self>>,
             identifier: &NSToolbarIdentifier,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(insertItemWithItemIdentifier:atIndex:)]
@@ -49,7 +49,7 @@ extern_methods!(
         #[method(removeItemAtIndex:)]
         pub unsafe fn removeItemAtIndex(&self, index: NSInteger);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSToolbarDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -73,7 +73,7 @@ extern_methods!(
         #[method(setDisplayMode:)]
         pub unsafe fn setDisplayMode(&self, displayMode: NSToolbarDisplayMode);
 
-        #[method_id(selectedItemIdentifier)]
+        #[method_id(@__retain_semantics Other selectedItemIdentifier)]
         pub unsafe fn selectedItemIdentifier(&self) -> Option<Id<NSToolbarItemIdentifier, Shared>>;
 
         #[method(setSelectedItemIdentifier:)]
@@ -100,16 +100,16 @@ extern_methods!(
         #[method(setAllowsUserCustomization:)]
         pub unsafe fn setAllowsUserCustomization(&self, allowsUserCustomization: bool);
 
-        #[method_id(identifier)]
+        #[method_id(@__retain_semantics Other identifier)]
         pub unsafe fn identifier(&self) -> Id<NSToolbarIdentifier, Shared>;
 
-        #[method_id(items)]
+        #[method_id(@__retain_semantics Other items)]
         pub unsafe fn items(&self) -> Id<NSArray<NSToolbarItem>, Shared>;
 
-        #[method_id(visibleItems)]
+        #[method_id(@__retain_semantics Other visibleItems)]
         pub unsafe fn visibleItems(&self) -> Option<Id<NSArray<NSToolbarItem>, Shared>>;
 
-        #[method_id(centeredItemIdentifier)]
+        #[method_id(@__retain_semantics Other centeredItemIdentifier)]
         pub unsafe fn centeredItemIdentifier(&self) -> Option<Id<NSToolbarItemIdentifier, Shared>>;
 
         #[method(setCenteredItemIdentifier:)]
@@ -130,7 +130,7 @@ extern_methods!(
             configDict: &NSDictionary<NSString, Object>,
         );
 
-        #[method_id(configurationDictionary)]
+        #[method_id(@__retain_semantics Other configurationDictionary)]
         pub unsafe fn configurationDictionary(&self) -> Id<NSDictionary<NSString, Object>, Shared>;
 
         #[method(validateVisibleItems)]
@@ -157,7 +157,7 @@ extern "C" {
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSToolbar {
-        #[method_id(fullScreenAccessoryView)]
+        #[method_id(@__retain_semantics Other fullScreenAccessoryView)]
         pub unsafe fn fullScreenAccessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setFullScreenAccessoryView:)]

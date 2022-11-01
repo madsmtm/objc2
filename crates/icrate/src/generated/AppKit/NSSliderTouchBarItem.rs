@@ -25,10 +25,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSliderTouchBarItem {
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Id<TodoProtocols, Shared>;
 
-        #[method_id(slider)]
+        #[method_id(@__retain_semantics Other slider)]
         pub unsafe fn slider(&self) -> Id<NSSlider, Shared>;
 
         #[method(setSlider:)]
@@ -52,13 +52,13 @@ extern_methods!(
         #[method(setMaximumSliderWidth:)]
         pub unsafe fn setMaximumSliderWidth(&self, maximumSliderWidth: CGFloat);
 
-        #[method_id(label)]
+        #[method_id(@__retain_semantics Other label)]
         pub unsafe fn label(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setLabel:)]
         pub unsafe fn setLabel(&self, label: Option<&NSString>);
 
-        #[method_id(minimumValueAccessory)]
+        #[method_id(@__retain_semantics Other minimumValueAccessory)]
         pub unsafe fn minimumValueAccessory(&self) -> Option<Id<NSSliderAccessory, Shared>>;
 
         #[method(setMinimumValueAccessory:)]
@@ -67,7 +67,7 @@ extern_methods!(
             minimumValueAccessory: Option<&NSSliderAccessory>,
         );
 
-        #[method_id(maximumValueAccessory)]
+        #[method_id(@__retain_semantics Other maximumValueAccessory)]
         pub unsafe fn maximumValueAccessory(&self) -> Option<Id<NSSliderAccessory, Shared>>;
 
         #[method(setMaximumValueAccessory:)]
@@ -82,7 +82,7 @@ extern_methods!(
         #[method(setValueAccessoryWidth:)]
         pub unsafe fn setValueAccessoryWidth(&self, valueAccessoryWidth: NSSliderAccessoryWidth);
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -94,7 +94,7 @@ extern_methods!(
         #[method(setAction:)]
         pub unsafe fn setAction(&self, action: Option<Sel>);
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]

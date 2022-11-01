@@ -33,16 +33,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextLayoutManager {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTextLayoutManagerDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -69,13 +69,13 @@ extern_methods!(
         #[method(setUsesHyphenation:)]
         pub unsafe fn setUsesHyphenation(&self, usesHyphenation: bool);
 
-        #[method_id(textContentManager)]
+        #[method_id(@__retain_semantics Other textContentManager)]
         pub unsafe fn textContentManager(&self) -> Option<Id<NSTextContentManager, Shared>>;
 
         #[method(replaceTextContentManager:)]
         pub unsafe fn replaceTextContentManager(&self, textContentManager: &NSTextContentManager);
 
-        #[method_id(textContainer)]
+        #[method_id(@__retain_semantics Other textContainer)]
         pub unsafe fn textContainer(&self) -> Option<Id<NSTextContainer, Shared>>;
 
         #[method(setTextContainer:)]
@@ -84,12 +84,12 @@ extern_methods!(
         #[method(usageBoundsForTextContainer)]
         pub unsafe fn usageBoundsForTextContainer(&self) -> CGRect;
 
-        #[method_id(textViewportLayoutController)]
+        #[method_id(@__retain_semantics Other textViewportLayoutController)]
         pub unsafe fn textViewportLayoutController(
             &self,
         ) -> Id<NSTextViewportLayoutController, Shared>;
 
-        #[method_id(layoutQueue)]
+        #[method_id(@__retain_semantics Other layoutQueue)]
         pub unsafe fn layoutQueue(&self) -> Option<Id<NSOperationQueue, Shared>>;
 
         #[method(setLayoutQueue:)]
@@ -104,19 +104,19 @@ extern_methods!(
         #[method(invalidateLayoutForRange:)]
         pub unsafe fn invalidateLayoutForRange(&self, range: &NSTextRange);
 
-        #[method_id(textLayoutFragmentForPosition:)]
+        #[method_id(@__retain_semantics Other textLayoutFragmentForPosition:)]
         pub unsafe fn textLayoutFragmentForPosition(
             &self,
             position: CGPoint,
         ) -> Option<Id<NSTextLayoutFragment, Shared>>;
 
-        #[method_id(textLayoutFragmentForLocation:)]
+        #[method_id(@__retain_semantics Other textLayoutFragmentForLocation:)]
         pub unsafe fn textLayoutFragmentForLocation(
             &self,
             location: &NSTextLocation,
         ) -> Option<Id<NSTextLayoutFragment, Shared>>;
 
-        #[method_id(enumerateTextLayoutFragmentsFromLocation:options:usingBlock:)]
+        #[method_id(@__retain_semantics Other enumerateTextLayoutFragmentsFromLocation:options:usingBlock:)]
         pub unsafe fn enumerateTextLayoutFragmentsFromLocation_options_usingBlock(
             &self,
             location: Option<&NSTextLocation>,
@@ -124,13 +124,13 @@ extern_methods!(
             block: TodoBlock,
         ) -> Option<Id<NSTextLocation, Shared>>;
 
-        #[method_id(textSelections)]
+        #[method_id(@__retain_semantics Other textSelections)]
         pub unsafe fn textSelections(&self) -> Id<NSArray<NSTextSelection>, Shared>;
 
         #[method(setTextSelections:)]
         pub unsafe fn setTextSelections(&self, textSelections: &NSArray<NSTextSelection>);
 
-        #[method_id(textSelectionNavigation)]
+        #[method_id(@__retain_semantics Other textSelectionNavigation)]
         pub unsafe fn textSelectionNavigation(&self) -> Id<NSTextSelectionNavigation, Shared>;
 
         #[method(setTextSelectionNavigation:)]
@@ -181,11 +181,11 @@ extern_methods!(
             renderingAttributesValidator: TodoBlock,
         );
 
-        #[method_id(linkRenderingAttributes)]
+        #[method_id(@__retain_semantics Other linkRenderingAttributes)]
         pub unsafe fn linkRenderingAttributes(
         ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared>;
 
-        #[method_id(renderingAttributesForLink:atLocation:)]
+        #[method_id(@__retain_semantics Other renderingAttributesForLink:atLocation:)]
         pub unsafe fn renderingAttributesForLink_atLocation(
             &self,
             link: &Object,

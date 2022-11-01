@@ -22,7 +22,7 @@ extern_methods!(
         #[method(setReceiversSpecifier:)]
         pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
 
-        #[method_id(keySpecifier)]
+        #[method_id(@__retain_semantics Other keySpecifier)]
         pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
     }
 );
@@ -67,10 +67,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCreateCommand {
-        #[method_id(createClassDescription)]
+        #[method_id(@__retain_semantics Other createClassDescription)]
         pub unsafe fn createClassDescription(&self) -> Id<NSScriptClassDescription, Shared>;
 
-        #[method_id(resolvedKeyDictionary)]
+        #[method_id(@__retain_semantics Other resolvedKeyDictionary)]
         pub unsafe fn resolvedKeyDictionary(&self) -> Id<NSDictionary<NSString, Object>, Shared>;
     }
 );
@@ -89,7 +89,7 @@ extern_methods!(
         #[method(setReceiversSpecifier:)]
         pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
 
-        #[method_id(keySpecifier)]
+        #[method_id(@__retain_semantics Other keySpecifier)]
         pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
     }
 );
@@ -134,7 +134,7 @@ extern_methods!(
         #[method(setReceiversSpecifier:)]
         pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
 
-        #[method_id(keySpecifier)]
+        #[method_id(@__retain_semantics Other keySpecifier)]
         pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
     }
 );
@@ -169,7 +169,7 @@ extern_methods!(
         #[method(setReceiversSpecifier:)]
         pub unsafe fn setReceiversSpecifier(&self, receiversRef: Option<&NSScriptObjectSpecifier>);
 
-        #[method_id(keySpecifier)]
+        #[method_id(@__retain_semantics Other keySpecifier)]
         pub unsafe fn keySpecifier(&self) -> Id<NSScriptObjectSpecifier, Shared>;
     }
 );

@@ -20,37 +20,37 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSBundle {
-        #[method_id(mainBundle)]
+        #[method_id(@__retain_semantics Other mainBundle)]
         pub unsafe fn mainBundle() -> Id<NSBundle, Shared>;
 
-        #[method_id(bundleWithPath:)]
+        #[method_id(@__retain_semantics Other bundleWithPath:)]
         pub unsafe fn bundleWithPath(path: &NSString) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithPath:)]
+        #[method_id(@__retain_semantics Init initWithPath:)]
         pub unsafe fn initWithPath(
             this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(bundleWithURL:)]
+        #[method_id(@__retain_semantics Other bundleWithURL:)]
         pub unsafe fn bundleWithURL(url: &NSURL) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithURL:)]
+        #[method_id(@__retain_semantics Init initWithURL:)]
         pub unsafe fn initWithURL(
             this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(bundleForClass:)]
+        #[method_id(@__retain_semantics Other bundleForClass:)]
         pub unsafe fn bundleForClass(aClass: &Class) -> Id<NSBundle, Shared>;
 
-        #[method_id(bundleWithIdentifier:)]
+        #[method_id(@__retain_semantics Other bundleWithIdentifier:)]
         pub unsafe fn bundleWithIdentifier(identifier: &NSString) -> Option<Id<NSBundle, Shared>>;
 
-        #[method_id(allBundles)]
+        #[method_id(@__retain_semantics Other allBundles)]
         pub unsafe fn allBundles() -> Id<NSArray<NSBundle>, Shared>;
 
-        #[method_id(allFrameworks)]
+        #[method_id(@__retain_semantics Other allFrameworks)]
         pub unsafe fn allFrameworks() -> Id<NSArray<NSBundle>, Shared>;
 
         #[method(load)]
@@ -68,64 +68,64 @@ extern_methods!(
         #[method(loadAndReturnError:)]
         pub unsafe fn loadAndReturnError(&self) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(bundleURL)]
+        #[method_id(@__retain_semantics Other bundleURL)]
         pub unsafe fn bundleURL(&self) -> Id<NSURL, Shared>;
 
-        #[method_id(resourceURL)]
+        #[method_id(@__retain_semantics Other resourceURL)]
         pub unsafe fn resourceURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(executableURL)]
+        #[method_id(@__retain_semantics Other executableURL)]
         pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLForAuxiliaryExecutable:)]
+        #[method_id(@__retain_semantics Other URLForAuxiliaryExecutable:)]
         pub unsafe fn URLForAuxiliaryExecutable(
             &self,
             executableName: &NSString,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(privateFrameworksURL)]
+        #[method_id(@__retain_semantics Other privateFrameworksURL)]
         pub unsafe fn privateFrameworksURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(sharedFrameworksURL)]
+        #[method_id(@__retain_semantics Other sharedFrameworksURL)]
         pub unsafe fn sharedFrameworksURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(sharedSupportURL)]
+        #[method_id(@__retain_semantics Other sharedSupportURL)]
         pub unsafe fn sharedSupportURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(builtInPlugInsURL)]
+        #[method_id(@__retain_semantics Other builtInPlugInsURL)]
         pub unsafe fn builtInPlugInsURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(appStoreReceiptURL)]
+        #[method_id(@__retain_semantics Other appStoreReceiptURL)]
         pub unsafe fn appStoreReceiptURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(bundlePath)]
+        #[method_id(@__retain_semantics Other bundlePath)]
         pub unsafe fn bundlePath(&self) -> Id<NSString, Shared>;
 
-        #[method_id(resourcePath)]
+        #[method_id(@__retain_semantics Other resourcePath)]
         pub unsafe fn resourcePath(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(executablePath)]
+        #[method_id(@__retain_semantics Other executablePath)]
         pub unsafe fn executablePath(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(pathForAuxiliaryExecutable:)]
+        #[method_id(@__retain_semantics Other pathForAuxiliaryExecutable:)]
         pub unsafe fn pathForAuxiliaryExecutable(
             &self,
             executableName: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(privateFrameworksPath)]
+        #[method_id(@__retain_semantics Other privateFrameworksPath)]
         pub unsafe fn privateFrameworksPath(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(sharedFrameworksPath)]
+        #[method_id(@__retain_semantics Other sharedFrameworksPath)]
         pub unsafe fn sharedFrameworksPath(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(sharedSupportPath)]
+        #[method_id(@__retain_semantics Other sharedSupportPath)]
         pub unsafe fn sharedSupportPath(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(builtInPlugInsPath)]
+        #[method_id(@__retain_semantics Other builtInPlugInsPath)]
         pub unsafe fn builtInPlugInsPath(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(URLForResource:withExtension:subdirectory:inBundleWithURL:)]
+        #[method_id(@__retain_semantics Other URLForResource:withExtension:subdirectory:inBundleWithURL:)]
         pub unsafe fn URLForResource_withExtension_subdirectory_inBundleWithURL(
             name: Option<&NSString>,
             ext: Option<&NSString>,
@@ -133,21 +133,21 @@ extern_methods!(
             bundleURL: &NSURL,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLsForResourcesWithExtension:subdirectory:inBundleWithURL:)]
+        #[method_id(@__retain_semantics Other URLsForResourcesWithExtension:subdirectory:inBundleWithURL:)]
         pub unsafe fn URLsForResourcesWithExtension_subdirectory_inBundleWithURL(
             ext: Option<&NSString>,
             subpath: Option<&NSString>,
             bundleURL: &NSURL,
         ) -> Option<Id<NSArray<NSURL>, Shared>>;
 
-        #[method_id(URLForResource:withExtension:)]
+        #[method_id(@__retain_semantics Other URLForResource:withExtension:)]
         pub unsafe fn URLForResource_withExtension(
             &self,
             name: Option<&NSString>,
             ext: Option<&NSString>,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLForResource:withExtension:subdirectory:)]
+        #[method_id(@__retain_semantics Other URLForResource:withExtension:subdirectory:)]
         pub unsafe fn URLForResource_withExtension_subdirectory(
             &self,
             name: Option<&NSString>,
@@ -155,7 +155,7 @@ extern_methods!(
             subpath: Option<&NSString>,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLForResource:withExtension:subdirectory:localization:)]
+        #[method_id(@__retain_semantics Other URLForResource:withExtension:subdirectory:localization:)]
         pub unsafe fn URLForResource_withExtension_subdirectory_localization(
             &self,
             name: Option<&NSString>,
@@ -164,14 +164,14 @@ extern_methods!(
             localizationName: Option<&NSString>,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLsForResourcesWithExtension:subdirectory:)]
+        #[method_id(@__retain_semantics Other URLsForResourcesWithExtension:subdirectory:)]
         pub unsafe fn URLsForResourcesWithExtension_subdirectory(
             &self,
             ext: Option<&NSString>,
             subpath: Option<&NSString>,
         ) -> Option<Id<NSArray<NSURL>, Shared>>;
 
-        #[method_id(URLsForResourcesWithExtension:subdirectory:localization:)]
+        #[method_id(@__retain_semantics Other URLsForResourcesWithExtension:subdirectory:localization:)]
         pub unsafe fn URLsForResourcesWithExtension_subdirectory_localization(
             &self,
             ext: Option<&NSString>,
@@ -179,14 +179,14 @@ extern_methods!(
             localizationName: Option<&NSString>,
         ) -> Option<Id<NSArray<NSURL>, Shared>>;
 
-        #[method_id(pathForResource:ofType:)]
+        #[method_id(@__retain_semantics Other pathForResource:ofType:)]
         pub unsafe fn pathForResource_ofType(
             &self,
             name: Option<&NSString>,
             ext: Option<&NSString>,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(pathForResource:ofType:inDirectory:forLocalization:)]
+        #[method_id(@__retain_semantics Other pathForResource:ofType:inDirectory:forLocalization:)]
         pub unsafe fn pathForResource_ofType_inDirectory_forLocalization(
             &self,
             name: Option<&NSString>,
@@ -195,7 +195,7 @@ extern_methods!(
             localizationName: Option<&NSString>,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(pathsForResourcesOfType:inDirectory:forLocalization:)]
+        #[method_id(@__retain_semantics Other pathsForResourcesOfType:inDirectory:forLocalization:)]
         pub unsafe fn pathsForResourcesOfType_inDirectory_forLocalization(
             &self,
             ext: Option<&NSString>,
@@ -203,7 +203,7 @@ extern_methods!(
             localizationName: Option<&NSString>,
         ) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(localizedStringForKey:value:table:)]
+        #[method_id(@__retain_semantics Other localizedStringForKey:value:table:)]
         pub unsafe fn localizedStringForKey_value_table(
             &self,
             key: &NSString,
@@ -211,18 +211,18 @@ extern_methods!(
             tableName: Option<&NSString>,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(bundleIdentifier)]
+        #[method_id(@__retain_semantics Other bundleIdentifier)]
         pub unsafe fn bundleIdentifier(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(infoDictionary)]
+        #[method_id(@__retain_semantics Other infoDictionary)]
         pub unsafe fn infoDictionary(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
 
-        #[method_id(localizedInfoDictionary)]
+        #[method_id(@__retain_semantics Other localizedInfoDictionary)]
         pub unsafe fn localizedInfoDictionary(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
 
-        #[method_id(objectForInfoDictionaryKey:)]
+        #[method_id(@__retain_semantics Other objectForInfoDictionaryKey:)]
         pub unsafe fn objectForInfoDictionaryKey(
             &self,
             key: &NSString,
@@ -234,27 +234,27 @@ extern_methods!(
         #[method(principalClass)]
         pub unsafe fn principalClass(&self) -> Option<&'static Class>;
 
-        #[method_id(preferredLocalizations)]
+        #[method_id(@__retain_semantics Other preferredLocalizations)]
         pub unsafe fn preferredLocalizations(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(localizations)]
+        #[method_id(@__retain_semantics Other localizations)]
         pub unsafe fn localizations(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(developmentLocalization)]
+        #[method_id(@__retain_semantics Other developmentLocalization)]
         pub unsafe fn developmentLocalization(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(preferredLocalizationsFromArray:)]
+        #[method_id(@__retain_semantics Other preferredLocalizationsFromArray:)]
         pub unsafe fn preferredLocalizationsFromArray(
             localizationsArray: &NSArray<NSString>,
         ) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(preferredLocalizationsFromArray:forPreferences:)]
+        #[method_id(@__retain_semantics Other preferredLocalizationsFromArray:forPreferences:)]
         pub unsafe fn preferredLocalizationsFromArray_forPreferences(
             localizationsArray: &NSArray<NSString>,
             preferencesArray: Option<&NSArray<NSString>>,
         ) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(executableArchitectures)]
+        #[method_id(@__retain_semantics Other executableArchitectures)]
         pub unsafe fn executableArchitectures(&self) -> Option<Id<NSArray<NSNumber>, Shared>>;
     }
 );
@@ -262,7 +262,7 @@ extern_methods!(
 extern_methods!(
     /// NSBundleExtensionMethods
     unsafe impl NSString {
-        #[method_id(variantFittingPresentationWidth:)]
+        #[method_id(@__retain_semantics Other variantFittingPresentationWidth:)]
         pub unsafe fn variantFittingPresentationWidth(
             &self,
             width: NSInteger,
@@ -289,16 +289,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSBundleResourceRequest {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithTags:)]
+        #[method_id(@__retain_semantics Init initWithTags:)]
         pub unsafe fn initWithTags(
             this: Option<Allocated<Self>>,
             tags: &NSSet<NSString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithTags:bundle:)]
+        #[method_id(@__retain_semantics Init initWithTags:bundle:)]
         pub unsafe fn initWithTags_bundle(
             this: Option<Allocated<Self>>,
             tags: &NSSet<NSString>,
@@ -311,10 +311,10 @@ extern_methods!(
         #[method(setLoadingPriority:)]
         pub unsafe fn setLoadingPriority(&self, loadingPriority: c_double);
 
-        #[method_id(tags)]
+        #[method_id(@__retain_semantics Other tags)]
         pub unsafe fn tags(&self) -> Id<NSSet<NSString>, Shared>;
 
-        #[method_id(bundle)]
+        #[method_id(@__retain_semantics Other bundle)]
         pub unsafe fn bundle(&self) -> Id<NSBundle, Shared>;
 
         #[method(beginAccessingResourcesWithCompletionHandler:)]
@@ -332,7 +332,7 @@ extern_methods!(
         #[method(endAccessingResources)]
         pub unsafe fn endAccessingResources(&self);
 
-        #[method_id(progress)]
+        #[method_id(@__retain_semantics Other progress)]
         pub unsafe fn progress(&self) -> Id<NSProgress, Shared>;
     }
 );

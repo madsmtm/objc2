@@ -14,13 +14,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSArchiver {
-        #[method_id(initForWritingWithMutableData:)]
+        #[method_id(@__retain_semantics Init initForWritingWithMutableData:)]
         pub unsafe fn initForWritingWithMutableData(
             this: Option<Allocated<Self>>,
             mdata: &NSMutableData,
         ) -> Id<Self, Shared>;
 
-        #[method_id(archiverData)]
+        #[method_id(@__retain_semantics Other archiverData)]
         pub unsafe fn archiverData(&self) -> Id<NSMutableData, Shared>;
 
         #[method(encodeRootObject:)]
@@ -29,7 +29,7 @@ extern_methods!(
         #[method(encodeConditionalObject:)]
         pub unsafe fn encodeConditionalObject(&self, object: Option<&Object>);
 
-        #[method_id(archivedDataWithRootObject:)]
+        #[method_id(@__retain_semantics Other archivedDataWithRootObject:)]
         pub unsafe fn archivedDataWithRootObject(rootObject: &Object) -> Id<NSData, Shared>;
 
         #[method(archiveRootObject:toFile:)]
@@ -42,7 +42,7 @@ extern_methods!(
             inArchiveName: &NSString,
         );
 
-        #[method_id(classNameEncodedForTrueClassName:)]
+        #[method_id(@__retain_semantics Other classNameEncodedForTrueClassName:)]
         pub unsafe fn classNameEncodedForTrueClassName(
             &self,
             trueName: &NSString,
@@ -64,7 +64,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnarchiver {
-        #[method_id(initForReadingWithData:)]
+        #[method_id(@__retain_semantics Init initForReadingWithData:)]
         pub unsafe fn initForReadingWithData(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -82,10 +82,10 @@ extern_methods!(
         #[method(systemVersion)]
         pub unsafe fn systemVersion(&self) -> c_uint;
 
-        #[method_id(unarchiveObjectWithData:)]
+        #[method_id(@__retain_semantics Other unarchiveObjectWithData:)]
         pub unsafe fn unarchiveObjectWithData(data: &NSData) -> Option<Id<Object, Shared>>;
 
-        #[method_id(unarchiveObjectWithFile:)]
+        #[method_id(@__retain_semantics Other unarchiveObjectWithFile:)]
         pub unsafe fn unarchiveObjectWithFile(path: &NSString) -> Option<Id<Object, Shared>>;
 
         #[method(replaceObject:withObject:)]
@@ -99,7 +99,7 @@ extern_methods!(
         #[method(classForArchiver)]
         pub unsafe fn classForArchiver(&self) -> Option<&'static Class>;
 
-        #[method_id(replacementObjectForArchiver:)]
+        #[method_id(@__retain_semantics Other replacementObjectForArchiver:)]
         pub unsafe fn replacementObjectForArchiver(
             &self,
             archiver: &NSArchiver,

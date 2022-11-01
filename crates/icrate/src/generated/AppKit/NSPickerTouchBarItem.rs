@@ -28,7 +28,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPickerTouchBarItem {
-        #[method_id(pickerTouchBarItemWithIdentifier:labels:selectionMode:target:action:)]
+        #[method_id(@__retain_semantics Other pickerTouchBarItemWithIdentifier:labels:selectionMode:target:action:)]
         pub unsafe fn pickerTouchBarItemWithIdentifier_labels_selectionMode_target_action(
             identifier: &NSTouchBarItemIdentifier,
             labels: &NSArray<NSString>,
@@ -37,7 +37,7 @@ extern_methods!(
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(pickerTouchBarItemWithIdentifier:images:selectionMode:target:action:)]
+        #[method_id(@__retain_semantics Other pickerTouchBarItemWithIdentifier:images:selectionMode:target:action:)]
         pub unsafe fn pickerTouchBarItemWithIdentifier_images_selectionMode_target_action(
             identifier: &NSTouchBarItemIdentifier,
             images: &NSArray<NSImage>,
@@ -55,7 +55,7 @@ extern_methods!(
             controlRepresentation: NSPickerTouchBarItemControlRepresentation,
         );
 
-        #[method_id(collapsedRepresentationLabel)]
+        #[method_id(@__retain_semantics Other collapsedRepresentationLabel)]
         pub unsafe fn collapsedRepresentationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCollapsedRepresentationLabel:)]
@@ -64,7 +64,7 @@ extern_methods!(
             collapsedRepresentationLabel: &NSString,
         );
 
-        #[method_id(collapsedRepresentationImage)]
+        #[method_id(@__retain_semantics Other collapsedRepresentationImage)]
         pub unsafe fn collapsedRepresentationImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setCollapsedRepresentationImage:)]
@@ -79,7 +79,7 @@ extern_methods!(
         #[method(setSelectedIndex:)]
         pub unsafe fn setSelectedIndex(&self, selectedIndex: NSInteger);
 
-        #[method_id(selectionColor)]
+        #[method_id(@__retain_semantics Other selectionColor)]
         pub unsafe fn selectionColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setSelectionColor:)]
@@ -100,16 +100,16 @@ extern_methods!(
         #[method(setImage:atIndex:)]
         pub unsafe fn setImage_atIndex(&self, image: Option<&NSImage>, index: NSInteger);
 
-        #[method_id(imageAtIndex:)]
+        #[method_id(@__retain_semantics Other imageAtIndex:)]
         pub unsafe fn imageAtIndex(&self, index: NSInteger) -> Option<Id<NSImage, Shared>>;
 
         #[method(setLabel:atIndex:)]
         pub unsafe fn setLabel_atIndex(&self, label: &NSString, index: NSInteger);
 
-        #[method_id(labelAtIndex:)]
+        #[method_id(@__retain_semantics Other labelAtIndex:)]
         pub unsafe fn labelAtIndex(&self, index: NSInteger) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -133,7 +133,7 @@ extern_methods!(
         #[method(isEnabledAtIndex:)]
         pub unsafe fn isEnabledAtIndex(&self, index: NSInteger) -> bool;
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]

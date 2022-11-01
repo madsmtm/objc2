@@ -27,20 +27,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFormatter {
-        #[method_id(stringForObjectValue:)]
+        #[method_id(@__retain_semantics Other stringForObjectValue:)]
         pub unsafe fn stringForObjectValue(
             &self,
             obj: Option<&Object>,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(attributedStringForObjectValue:withDefaultAttributes:)]
+        #[method_id(@__retain_semantics Other attributedStringForObjectValue:withDefaultAttributes:)]
         pub unsafe fn attributedStringForObjectValue_withDefaultAttributes(
             &self,
             obj: &Object,
             attrs: Option<&NSDictionary<NSAttributedStringKey, Object>>,
         ) -> Option<Id<NSAttributedString, Shared>>;
 
-        #[method_id(editingStringForObjectValue:)]
+        #[method_id(@__retain_semantics Other editingStringForObjectValue:)]
         pub unsafe fn editingStringForObjectValue(
             &self,
             obj: &Object,

@@ -29,13 +29,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPointerFunctions {
-        #[method_id(initWithOptions:)]
+        #[method_id(@__retain_semantics Init initWithOptions:)]
         pub unsafe fn initWithOptions(
             this: Option<Allocated<Self>>,
             options: NSPointerFunctionsOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(pointerFunctionsWithOptions:)]
+        #[method_id(@__retain_semantics Other pointerFunctionsWithOptions:)]
         pub unsafe fn pointerFunctionsWithOptions(
             options: NSPointerFunctionsOptions,
         ) -> Id<NSPointerFunctions, Shared>;

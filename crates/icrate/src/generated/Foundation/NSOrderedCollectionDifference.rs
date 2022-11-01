@@ -24,13 +24,13 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<ObjectType: Message> NSOrderedCollectionDifference<ObjectType> {
-        #[method_id(initWithChanges:)]
+        #[method_id(@__retain_semantics Init initWithChanges:)]
         pub unsafe fn initWithChanges(
             this: Option<Allocated<Self>>,
             changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithInsertIndexes:insertedObjects:removeIndexes:removedObjects:additionalChanges:)]
+        #[method_id(@__retain_semantics Init initWithInsertIndexes:insertedObjects:removeIndexes:removedObjects:additionalChanges:)]
         pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects_additionalChanges(
             this: Option<Allocated<Self>>,
             inserts: &NSIndexSet,
@@ -40,7 +40,7 @@ extern_methods!(
             changes: &NSArray<NSOrderedCollectionChange<ObjectType>>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithInsertIndexes:insertedObjects:removeIndexes:removedObjects:)]
+        #[method_id(@__retain_semantics Init initWithInsertIndexes:insertedObjects:removeIndexes:removedObjects:)]
         pub unsafe fn initWithInsertIndexes_insertedObjects_removeIndexes_removedObjects(
             this: Option<Allocated<Self>>,
             inserts: &NSIndexSet,
@@ -49,25 +49,25 @@ extern_methods!(
             removedObjects: Option<&NSArray<ObjectType>>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(insertions)]
+        #[method_id(@__retain_semantics Other insertions)]
         pub unsafe fn insertions(
             &self,
         ) -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared>;
 
-        #[method_id(removals)]
+        #[method_id(@__retain_semantics Other removals)]
         pub unsafe fn removals(&self)
             -> Id<NSArray<NSOrderedCollectionChange<ObjectType>>, Shared>;
 
         #[method(hasChanges)]
         pub unsafe fn hasChanges(&self) -> bool;
 
-        #[method_id(differenceByTransformingChangesWithBlock:)]
+        #[method_id(@__retain_semantics Other differenceByTransformingChangesWithBlock:)]
         pub unsafe fn differenceByTransformingChangesWithBlock(
             &self,
             block: TodoBlock,
         ) -> Id<NSOrderedCollectionDifference<Object>, Shared>;
 
-        #[method_id(inverseDifference)]
+        #[method_id(@__retain_semantics Other inverseDifference)]
         pub unsafe fn inverseDifference(&self) -> Id<Self, Shared>;
     }
 );

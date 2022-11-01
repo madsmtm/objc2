@@ -19,7 +19,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTableViewRowAction {
-        #[method_id(rowActionWithStyle:title:handler:)]
+        #[method_id(@__retain_semantics Other rowActionWithStyle:title:handler:)]
         pub unsafe fn rowActionWithStyle_title_handler(
             style: NSTableViewRowActionStyle,
             title: &NSString,
@@ -29,19 +29,19 @@ extern_methods!(
         #[method(style)]
         pub unsafe fn style(&self) -> NSTableViewRowActionStyle;
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: &NSString);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
         pub unsafe fn setBackgroundColor(&self, backgroundColor: Option<&NSColor>);
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]

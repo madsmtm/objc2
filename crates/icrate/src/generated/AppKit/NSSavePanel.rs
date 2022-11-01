@@ -18,19 +18,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSavePanel {
-        #[method_id(savePanel)]
+        #[method_id(@__retain_semantics Other savePanel)]
         pub unsafe fn savePanel() -> Id<NSSavePanel, Shared>;
 
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(directoryURL)]
+        #[method_id(@__retain_semantics Other directoryURL)]
         pub unsafe fn directoryURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setDirectoryURL:)]
         pub unsafe fn setDirectoryURL(&self, directoryURL: Option<&NSURL>);
 
-        #[method_id(allowedContentTypes)]
+        #[method_id(@__retain_semantics Other allowedContentTypes)]
         pub unsafe fn allowedContentTypes(&self) -> Id<NSArray<UTType>, Shared>;
 
         #[method(setAllowedContentTypes:)]
@@ -42,13 +42,13 @@ extern_methods!(
         #[method(setAllowsOtherFileTypes:)]
         pub unsafe fn setAllowsOtherFileTypes(&self, allowsOtherFileTypes: bool);
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setAccessoryView:)]
         pub unsafe fn setAccessoryView(&self, accessoryView: Option<&NSView>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSOpenSavePanelDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -84,31 +84,31 @@ extern_methods!(
             treatsFilePackagesAsDirectories: bool,
         );
 
-        #[method_id(prompt)]
+        #[method_id(@__retain_semantics Other prompt)]
         pub unsafe fn prompt(&self) -> Id<NSString, Shared>;
 
         #[method(setPrompt:)]
         pub unsafe fn setPrompt(&self, prompt: Option<&NSString>);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: Option<&NSString>);
 
-        #[method_id(nameFieldLabel)]
+        #[method_id(@__retain_semantics Other nameFieldLabel)]
         pub unsafe fn nameFieldLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setNameFieldLabel:)]
         pub unsafe fn setNameFieldLabel(&self, nameFieldLabel: Option<&NSString>);
 
-        #[method_id(nameFieldStringValue)]
+        #[method_id(@__retain_semantics Other nameFieldStringValue)]
         pub unsafe fn nameFieldStringValue(&self) -> Id<NSString, Shared>;
 
         #[method(setNameFieldStringValue:)]
         pub unsafe fn setNameFieldStringValue(&self, nameFieldStringValue: &NSString);
 
-        #[method_id(message)]
+        #[method_id(@__retain_semantics Other message)]
         pub unsafe fn message(&self) -> Id<NSString, Shared>;
 
         #[method(setMessage:)]
@@ -129,7 +129,7 @@ extern_methods!(
         #[method(setShowsTagField:)]
         pub unsafe fn setShowsTagField(&self, showsTagField: bool);
 
-        #[method_id(tagNames)]
+        #[method_id(@__retain_semantics Other tagNames)]
         pub unsafe fn tagNames(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setTagNames:)]
@@ -185,16 +185,16 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSSavePanel {
-        #[method_id(filename)]
+        #[method_id(@__retain_semantics Other filename)]
         pub unsafe fn filename(&self) -> Id<NSString, Shared>;
 
-        #[method_id(directory)]
+        #[method_id(@__retain_semantics Other directory)]
         pub unsafe fn directory(&self) -> Id<NSString, Shared>;
 
         #[method(setDirectory:)]
         pub unsafe fn setDirectory(&self, path: Option<&NSString>);
 
-        #[method_id(requiredFileType)]
+        #[method_id(@__retain_semantics Other requiredFileType)]
         pub unsafe fn requiredFileType(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setRequiredFileType:)]
@@ -221,7 +221,7 @@ extern_methods!(
         #[method(selectText:)]
         pub unsafe fn selectText(&self, sender: Option<&Object>);
 
-        #[method_id(allowedFileTypes)]
+        #[method_id(@__retain_semantics Other allowedFileTypes)]
         pub unsafe fn allowedFileTypes(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setAllowedFileTypes:)]

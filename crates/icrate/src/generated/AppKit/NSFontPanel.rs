@@ -39,13 +39,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFontPanel {
-        #[method_id(sharedFontPanel)]
+        #[method_id(@__retain_semantics Other sharedFontPanel)]
         pub unsafe fn sharedFontPanel() -> Id<NSFontPanel, Shared>;
 
         #[method(sharedFontPanelExists)]
         pub unsafe fn sharedFontPanelExists() -> bool;
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setAccessoryView:)]
@@ -54,7 +54,7 @@ extern_methods!(
         #[method(setPanelFont:isMultiple:)]
         pub unsafe fn setPanelFont_isMultiple(&self, fontObj: &NSFont, flag: bool);
 
-        #[method_id(panelConvertFont:)]
+        #[method_id(@__retain_semantics Other panelConvertFont:)]
         pub unsafe fn panelConvertFont(&self, fontObj: &NSFont) -> Id<NSFont, Shared>;
 
         #[method(worksWhenModal)]

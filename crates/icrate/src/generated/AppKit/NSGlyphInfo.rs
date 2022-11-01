@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGlyphInfo {
-        #[method_id(glyphInfoWithCGGlyph:forFont:baseString:)]
+        #[method_id(@__retain_semantics Other glyphInfoWithCGGlyph:forFont:baseString:)]
         pub unsafe fn glyphInfoWithCGGlyph_forFont_baseString(
             glyph: CGGlyph,
             font: &NSFont,
@@ -25,7 +25,7 @@ extern_methods!(
         #[method(glyphID)]
         pub unsafe fn glyphID(&self) -> CGGlyph;
 
-        #[method_id(baseString)]
+        #[method_id(@__retain_semantics Other baseString)]
         pub unsafe fn baseString(&self) -> Id<NSString, Shared>;
     }
 );
@@ -41,28 +41,28 @@ pub const NSAdobeKorea1CharacterCollection: NSCharacterCollection = 5;
 extern_methods!(
     /// NSGlyphInfo_Deprecated
     unsafe impl NSGlyphInfo {
-        #[method_id(glyphInfoWithGlyphName:forFont:baseString:)]
+        #[method_id(@__retain_semantics Other glyphInfoWithGlyphName:forFont:baseString:)]
         pub unsafe fn glyphInfoWithGlyphName_forFont_baseString(
             glyphName: &NSString,
             font: &NSFont,
             string: &NSString,
         ) -> Option<Id<NSGlyphInfo, Shared>>;
 
-        #[method_id(glyphInfoWithGlyph:forFont:baseString:)]
+        #[method_id(@__retain_semantics Other glyphInfoWithGlyph:forFont:baseString:)]
         pub unsafe fn glyphInfoWithGlyph_forFont_baseString(
             glyph: NSGlyph,
             font: &NSFont,
             string: &NSString,
         ) -> Option<Id<NSGlyphInfo, Shared>>;
 
-        #[method_id(glyphInfoWithCharacterIdentifier:collection:baseString:)]
+        #[method_id(@__retain_semantics Other glyphInfoWithCharacterIdentifier:collection:baseString:)]
         pub unsafe fn glyphInfoWithCharacterIdentifier_collection_baseString(
             cid: NSUInteger,
             characterCollection: NSCharacterCollection,
             string: &NSString,
         ) -> Option<Id<NSGlyphInfo, Shared>>;
 
-        #[method_id(glyphName)]
+        #[method_id(@__retain_semantics Other glyphName)]
         pub unsafe fn glyphName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(characterIdentifier)]

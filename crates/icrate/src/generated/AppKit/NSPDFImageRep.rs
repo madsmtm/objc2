@@ -15,16 +15,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPDFImageRep {
-        #[method_id(imageRepWithData:)]
+        #[method_id(@__retain_semantics Other imageRepWithData:)]
         pub unsafe fn imageRepWithData(pdfData: &NSData) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithData:)]
+        #[method_id(@__retain_semantics Init initWithData:)]
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             pdfData: &NSData,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(PDFRepresentation)]
+        #[method_id(@__retain_semantics Other PDFRepresentation)]
         pub unsafe fn PDFRepresentation(&self) -> Id<NSData, Shared>;
 
         #[method(bounds)]

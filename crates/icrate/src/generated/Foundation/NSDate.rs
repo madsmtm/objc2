@@ -21,16 +21,16 @@ extern_methods!(
         #[method(timeIntervalSinceReferenceDate)]
         pub unsafe fn timeIntervalSinceReferenceDate(&self) -> NSTimeInterval;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithTimeIntervalSinceReferenceDate:)]
+        #[method_id(@__retain_semantics Init initWithTimeIntervalSinceReferenceDate:)]
         pub unsafe fn initWithTimeIntervalSinceReferenceDate(
             this: Option<Allocated<Self>>,
             ti: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -50,16 +50,16 @@ extern_methods!(
         #[method(timeIntervalSince1970)]
         pub unsafe fn timeIntervalSince1970(&self) -> NSTimeInterval;
 
-        #[method_id(addTimeInterval:)]
+        #[method_id(@__retain_semantics Other addTimeInterval:)]
         pub unsafe fn addTimeInterval(&self, seconds: NSTimeInterval) -> Id<Object, Shared>;
 
-        #[method_id(dateByAddingTimeInterval:)]
+        #[method_id(@__retain_semantics Other dateByAddingTimeInterval:)]
         pub unsafe fn dateByAddingTimeInterval(&self, ti: NSTimeInterval) -> Id<Self, Shared>;
 
-        #[method_id(earlierDate:)]
+        #[method_id(@__retain_semantics Other earlierDate:)]
         pub unsafe fn earlierDate(&self, anotherDate: &NSDate) -> Id<NSDate, Shared>;
 
-        #[method_id(laterDate:)]
+        #[method_id(@__retain_semantics Other laterDate:)]
         pub unsafe fn laterDate(&self, anotherDate: &NSDate) -> Id<NSDate, Shared>;
 
         #[method(compare:)]
@@ -68,10 +68,10 @@ extern_methods!(
         #[method(isEqualToDate:)]
         pub unsafe fn isEqualToDate(&self, otherDate: &NSDate) -> bool;
 
-        #[method_id(description)]
+        #[method_id(@__retain_semantics Other description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
 
-        #[method_id(descriptionWithLocale:)]
+        #[method_id(@__retain_semantics Other descriptionWithLocale:)]
         pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
             -> Id<NSString, Shared>;
 
@@ -83,48 +83,48 @@ extern_methods!(
 extern_methods!(
     /// NSDateCreation
     unsafe impl NSDate {
-        #[method_id(date)]
+        #[method_id(@__retain_semantics Other date)]
         pub unsafe fn date() -> Id<Self, Shared>;
 
-        #[method_id(dateWithTimeIntervalSinceNow:)]
+        #[method_id(@__retain_semantics Other dateWithTimeIntervalSinceNow:)]
         pub unsafe fn dateWithTimeIntervalSinceNow(secs: NSTimeInterval) -> Id<Self, Shared>;
 
-        #[method_id(dateWithTimeIntervalSinceReferenceDate:)]
+        #[method_id(@__retain_semantics Other dateWithTimeIntervalSinceReferenceDate:)]
         pub unsafe fn dateWithTimeIntervalSinceReferenceDate(
             ti: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
-        #[method_id(dateWithTimeIntervalSince1970:)]
+        #[method_id(@__retain_semantics Other dateWithTimeIntervalSince1970:)]
         pub unsafe fn dateWithTimeIntervalSince1970(secs: NSTimeInterval) -> Id<Self, Shared>;
 
-        #[method_id(dateWithTimeInterval:sinceDate:)]
+        #[method_id(@__retain_semantics Other dateWithTimeInterval:sinceDate:)]
         pub unsafe fn dateWithTimeInterval_sinceDate(
             secsToBeAdded: NSTimeInterval,
             date: &NSDate,
         ) -> Id<Self, Shared>;
 
-        #[method_id(distantFuture)]
+        #[method_id(@__retain_semantics Other distantFuture)]
         pub unsafe fn distantFuture() -> Id<NSDate, Shared>;
 
-        #[method_id(distantPast)]
+        #[method_id(@__retain_semantics Other distantPast)]
         pub unsafe fn distantPast() -> Id<NSDate, Shared>;
 
-        #[method_id(now)]
+        #[method_id(@__retain_semantics Other now)]
         pub unsafe fn now() -> Id<NSDate, Shared>;
 
-        #[method_id(initWithTimeIntervalSinceNow:)]
+        #[method_id(@__retain_semantics Init initWithTimeIntervalSinceNow:)]
         pub unsafe fn initWithTimeIntervalSinceNow(
             this: Option<Allocated<Self>>,
             secs: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithTimeIntervalSince1970:)]
+        #[method_id(@__retain_semantics Init initWithTimeIntervalSince1970:)]
         pub unsafe fn initWithTimeIntervalSince1970(
             this: Option<Allocated<Self>>,
             secs: NSTimeInterval,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithTimeInterval:sinceDate:)]
+        #[method_id(@__retain_semantics Init initWithTimeInterval:sinceDate:)]
         pub unsafe fn initWithTimeInterval_sinceDate(
             this: Option<Allocated<Self>>,
             secsToBeAdded: NSTimeInterval,

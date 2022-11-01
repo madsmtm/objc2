@@ -18,20 +18,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFontAssetRequest {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithFontDescriptors:options:)]
+        #[method_id(@__retain_semantics Init initWithFontDescriptors:options:)]
         pub unsafe fn initWithFontDescriptors_options(
             this: Option<Allocated<Self>>,
             fontDescriptors: &NSArray<NSFontDescriptor>,
             options: NSFontAssetRequestOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(downloadedFontDescriptors)]
+        #[method_id(@__retain_semantics Other downloadedFontDescriptors)]
         pub unsafe fn downloadedFontDescriptors(&self) -> Id<NSArray<NSFontDescriptor>, Shared>;
 
-        #[method_id(progress)]
+        #[method_id(@__retain_semantics Other progress)]
         pub unsafe fn progress(&self) -> Id<NSProgress, Shared>;
 
         #[method(downloadFontAssetsWithCompletionHandler:)]

@@ -39,13 +39,13 @@ extern_methods!(
         #[method(constant)]
         pub unsafe fn constant(&self) -> c_double;
 
-        #[method_id(initWithCoefficient:)]
+        #[method_id(@__retain_semantics Init initWithCoefficient:)]
         pub unsafe fn initWithCoefficient(
             this: Option<Allocated<Self>>,
             coefficient: c_double,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoefficient:constant:)]
+        #[method_id(@__retain_semantics Init initWithCoefficient:constant:)]
         pub unsafe fn initWithCoefficient_constant(
             this: Option<Allocated<Self>>,
             coefficient: c_double,
@@ -65,16 +65,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnit {
-        #[method_id(symbol)]
+        #[method_id(@__retain_semantics Other symbol)]
         pub unsafe fn symbol(&self) -> Id<NSString, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(initWithSymbol:)]
+        #[method_id(@__retain_semantics Init initWithSymbol:)]
         pub unsafe fn initWithSymbol(
             this: Option<Allocated<Self>>,
             symbol: &NSString,
@@ -93,17 +93,17 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDimension {
-        #[method_id(converter)]
+        #[method_id(@__retain_semantics Other converter)]
         pub unsafe fn converter(&self) -> Id<NSUnitConverter, Shared>;
 
-        #[method_id(initWithSymbol:converter:)]
+        #[method_id(@__retain_semantics Init initWithSymbol:converter:)]
         pub unsafe fn initWithSymbol_converter(
             this: Option<Allocated<Self>>,
             symbol: &NSString,
             converter: &NSUnitConverter,
         ) -> Id<Self, Shared>;
 
-        #[method_id(baseUnit)]
+        #[method_id(@__retain_semantics Other baseUnit)]
         pub unsafe fn baseUnit() -> Id<Self, Shared>;
     }
 );
@@ -119,10 +119,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitAcceleration {
-        #[method_id(metersPerSecondSquared)]
+        #[method_id(@__retain_semantics Other metersPerSecondSquared)]
         pub unsafe fn metersPerSecondSquared() -> Id<NSUnitAcceleration, Shared>;
 
-        #[method_id(gravity)]
+        #[method_id(@__retain_semantics Other gravity)]
         pub unsafe fn gravity() -> Id<NSUnitAcceleration, Shared>;
     }
 );
@@ -138,22 +138,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitAngle {
-        #[method_id(degrees)]
+        #[method_id(@__retain_semantics Other degrees)]
         pub unsafe fn degrees() -> Id<NSUnitAngle, Shared>;
 
-        #[method_id(arcMinutes)]
+        #[method_id(@__retain_semantics Other arcMinutes)]
         pub unsafe fn arcMinutes() -> Id<NSUnitAngle, Shared>;
 
-        #[method_id(arcSeconds)]
+        #[method_id(@__retain_semantics Other arcSeconds)]
         pub unsafe fn arcSeconds() -> Id<NSUnitAngle, Shared>;
 
-        #[method_id(radians)]
+        #[method_id(@__retain_semantics Other radians)]
         pub unsafe fn radians() -> Id<NSUnitAngle, Shared>;
 
-        #[method_id(gradians)]
+        #[method_id(@__retain_semantics Other gradians)]
         pub unsafe fn gradians() -> Id<NSUnitAngle, Shared>;
 
-        #[method_id(revolutions)]
+        #[method_id(@__retain_semantics Other revolutions)]
         pub unsafe fn revolutions() -> Id<NSUnitAngle, Shared>;
     }
 );
@@ -169,46 +169,46 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitArea {
-        #[method_id(squareMegameters)]
+        #[method_id(@__retain_semantics Other squareMegameters)]
         pub unsafe fn squareMegameters() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareKilometers)]
+        #[method_id(@__retain_semantics Other squareKilometers)]
         pub unsafe fn squareKilometers() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareMeters)]
+        #[method_id(@__retain_semantics Other squareMeters)]
         pub unsafe fn squareMeters() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareCentimeters)]
+        #[method_id(@__retain_semantics Other squareCentimeters)]
         pub unsafe fn squareCentimeters() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareMillimeters)]
+        #[method_id(@__retain_semantics Other squareMillimeters)]
         pub unsafe fn squareMillimeters() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareMicrometers)]
+        #[method_id(@__retain_semantics Other squareMicrometers)]
         pub unsafe fn squareMicrometers() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareNanometers)]
+        #[method_id(@__retain_semantics Other squareNanometers)]
         pub unsafe fn squareNanometers() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareInches)]
+        #[method_id(@__retain_semantics Other squareInches)]
         pub unsafe fn squareInches() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareFeet)]
+        #[method_id(@__retain_semantics Other squareFeet)]
         pub unsafe fn squareFeet() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareYards)]
+        #[method_id(@__retain_semantics Other squareYards)]
         pub unsafe fn squareYards() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(squareMiles)]
+        #[method_id(@__retain_semantics Other squareMiles)]
         pub unsafe fn squareMiles() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(acres)]
+        #[method_id(@__retain_semantics Other acres)]
         pub unsafe fn acres() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(ares)]
+        #[method_id(@__retain_semantics Other ares)]
         pub unsafe fn ares() -> Id<NSUnitArea, Shared>;
 
-        #[method_id(hectares)]
+        #[method_id(@__retain_semantics Other hectares)]
         pub unsafe fn hectares() -> Id<NSUnitArea, Shared>;
     }
 );
@@ -224,13 +224,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitConcentrationMass {
-        #[method_id(gramsPerLiter)]
+        #[method_id(@__retain_semantics Other gramsPerLiter)]
         pub unsafe fn gramsPerLiter() -> Id<NSUnitConcentrationMass, Shared>;
 
-        #[method_id(milligramsPerDeciliter)]
+        #[method_id(@__retain_semantics Other milligramsPerDeciliter)]
         pub unsafe fn milligramsPerDeciliter() -> Id<NSUnitConcentrationMass, Shared>;
 
-        #[method_id(millimolesPerLiterWithGramsPerMole:)]
+        #[method_id(@__retain_semantics Other millimolesPerLiterWithGramsPerMole:)]
         pub unsafe fn millimolesPerLiterWithGramsPerMole(
             gramsPerMole: c_double,
         ) -> Id<NSUnitConcentrationMass, Shared>;
@@ -248,7 +248,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitDispersion {
-        #[method_id(partsPerMillion)]
+        #[method_id(@__retain_semantics Other partsPerMillion)]
         pub unsafe fn partsPerMillion() -> Id<NSUnitDispersion, Shared>;
     }
 );
@@ -264,25 +264,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitDuration {
-        #[method_id(hours)]
+        #[method_id(@__retain_semantics Other hours)]
         pub unsafe fn hours() -> Id<NSUnitDuration, Shared>;
 
-        #[method_id(minutes)]
+        #[method_id(@__retain_semantics Other minutes)]
         pub unsafe fn minutes() -> Id<NSUnitDuration, Shared>;
 
-        #[method_id(seconds)]
+        #[method_id(@__retain_semantics Other seconds)]
         pub unsafe fn seconds() -> Id<NSUnitDuration, Shared>;
 
-        #[method_id(milliseconds)]
+        #[method_id(@__retain_semantics Other milliseconds)]
         pub unsafe fn milliseconds() -> Id<NSUnitDuration, Shared>;
 
-        #[method_id(microseconds)]
+        #[method_id(@__retain_semantics Other microseconds)]
         pub unsafe fn microseconds() -> Id<NSUnitDuration, Shared>;
 
-        #[method_id(nanoseconds)]
+        #[method_id(@__retain_semantics Other nanoseconds)]
         pub unsafe fn nanoseconds() -> Id<NSUnitDuration, Shared>;
 
-        #[method_id(picoseconds)]
+        #[method_id(@__retain_semantics Other picoseconds)]
         pub unsafe fn picoseconds() -> Id<NSUnitDuration, Shared>;
     }
 );
@@ -298,22 +298,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitElectricCharge {
-        #[method_id(coulombs)]
+        #[method_id(@__retain_semantics Other coulombs)]
         pub unsafe fn coulombs() -> Id<NSUnitElectricCharge, Shared>;
 
-        #[method_id(megaampereHours)]
+        #[method_id(@__retain_semantics Other megaampereHours)]
         pub unsafe fn megaampereHours() -> Id<NSUnitElectricCharge, Shared>;
 
-        #[method_id(kiloampereHours)]
+        #[method_id(@__retain_semantics Other kiloampereHours)]
         pub unsafe fn kiloampereHours() -> Id<NSUnitElectricCharge, Shared>;
 
-        #[method_id(ampereHours)]
+        #[method_id(@__retain_semantics Other ampereHours)]
         pub unsafe fn ampereHours() -> Id<NSUnitElectricCharge, Shared>;
 
-        #[method_id(milliampereHours)]
+        #[method_id(@__retain_semantics Other milliampereHours)]
         pub unsafe fn milliampereHours() -> Id<NSUnitElectricCharge, Shared>;
 
-        #[method_id(microampereHours)]
+        #[method_id(@__retain_semantics Other microampereHours)]
         pub unsafe fn microampereHours() -> Id<NSUnitElectricCharge, Shared>;
     }
 );
@@ -329,19 +329,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitElectricCurrent {
-        #[method_id(megaamperes)]
+        #[method_id(@__retain_semantics Other megaamperes)]
         pub unsafe fn megaamperes() -> Id<NSUnitElectricCurrent, Shared>;
 
-        #[method_id(kiloamperes)]
+        #[method_id(@__retain_semantics Other kiloamperes)]
         pub unsafe fn kiloamperes() -> Id<NSUnitElectricCurrent, Shared>;
 
-        #[method_id(amperes)]
+        #[method_id(@__retain_semantics Other amperes)]
         pub unsafe fn amperes() -> Id<NSUnitElectricCurrent, Shared>;
 
-        #[method_id(milliamperes)]
+        #[method_id(@__retain_semantics Other milliamperes)]
         pub unsafe fn milliamperes() -> Id<NSUnitElectricCurrent, Shared>;
 
-        #[method_id(microamperes)]
+        #[method_id(@__retain_semantics Other microamperes)]
         pub unsafe fn microamperes() -> Id<NSUnitElectricCurrent, Shared>;
     }
 );
@@ -357,19 +357,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitElectricPotentialDifference {
-        #[method_id(megavolts)]
+        #[method_id(@__retain_semantics Other megavolts)]
         pub unsafe fn megavolts() -> Id<NSUnitElectricPotentialDifference, Shared>;
 
-        #[method_id(kilovolts)]
+        #[method_id(@__retain_semantics Other kilovolts)]
         pub unsafe fn kilovolts() -> Id<NSUnitElectricPotentialDifference, Shared>;
 
-        #[method_id(volts)]
+        #[method_id(@__retain_semantics Other volts)]
         pub unsafe fn volts() -> Id<NSUnitElectricPotentialDifference, Shared>;
 
-        #[method_id(millivolts)]
+        #[method_id(@__retain_semantics Other millivolts)]
         pub unsafe fn millivolts() -> Id<NSUnitElectricPotentialDifference, Shared>;
 
-        #[method_id(microvolts)]
+        #[method_id(@__retain_semantics Other microvolts)]
         pub unsafe fn microvolts() -> Id<NSUnitElectricPotentialDifference, Shared>;
     }
 );
@@ -385,19 +385,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitElectricResistance {
-        #[method_id(megaohms)]
+        #[method_id(@__retain_semantics Other megaohms)]
         pub unsafe fn megaohms() -> Id<NSUnitElectricResistance, Shared>;
 
-        #[method_id(kiloohms)]
+        #[method_id(@__retain_semantics Other kiloohms)]
         pub unsafe fn kiloohms() -> Id<NSUnitElectricResistance, Shared>;
 
-        #[method_id(ohms)]
+        #[method_id(@__retain_semantics Other ohms)]
         pub unsafe fn ohms() -> Id<NSUnitElectricResistance, Shared>;
 
-        #[method_id(milliohms)]
+        #[method_id(@__retain_semantics Other milliohms)]
         pub unsafe fn milliohms() -> Id<NSUnitElectricResistance, Shared>;
 
-        #[method_id(microohms)]
+        #[method_id(@__retain_semantics Other microohms)]
         pub unsafe fn microohms() -> Id<NSUnitElectricResistance, Shared>;
     }
 );
@@ -413,19 +413,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitEnergy {
-        #[method_id(kilojoules)]
+        #[method_id(@__retain_semantics Other kilojoules)]
         pub unsafe fn kilojoules() -> Id<NSUnitEnergy, Shared>;
 
-        #[method_id(joules)]
+        #[method_id(@__retain_semantics Other joules)]
         pub unsafe fn joules() -> Id<NSUnitEnergy, Shared>;
 
-        #[method_id(kilocalories)]
+        #[method_id(@__retain_semantics Other kilocalories)]
         pub unsafe fn kilocalories() -> Id<NSUnitEnergy, Shared>;
 
-        #[method_id(calories)]
+        #[method_id(@__retain_semantics Other calories)]
         pub unsafe fn calories() -> Id<NSUnitEnergy, Shared>;
 
-        #[method_id(kilowattHours)]
+        #[method_id(@__retain_semantics Other kilowattHours)]
         pub unsafe fn kilowattHours() -> Id<NSUnitEnergy, Shared>;
     }
 );
@@ -441,31 +441,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitFrequency {
-        #[method_id(terahertz)]
+        #[method_id(@__retain_semantics Other terahertz)]
         pub unsafe fn terahertz() -> Id<NSUnitFrequency, Shared>;
 
-        #[method_id(gigahertz)]
+        #[method_id(@__retain_semantics Other gigahertz)]
         pub unsafe fn gigahertz() -> Id<NSUnitFrequency, Shared>;
 
-        #[method_id(megahertz)]
+        #[method_id(@__retain_semantics Other megahertz)]
         pub unsafe fn megahertz() -> Id<NSUnitFrequency, Shared>;
 
-        #[method_id(kilohertz)]
+        #[method_id(@__retain_semantics Other kilohertz)]
         pub unsafe fn kilohertz() -> Id<NSUnitFrequency, Shared>;
 
-        #[method_id(hertz)]
+        #[method_id(@__retain_semantics Other hertz)]
         pub unsafe fn hertz() -> Id<NSUnitFrequency, Shared>;
 
-        #[method_id(millihertz)]
+        #[method_id(@__retain_semantics Other millihertz)]
         pub unsafe fn millihertz() -> Id<NSUnitFrequency, Shared>;
 
-        #[method_id(microhertz)]
+        #[method_id(@__retain_semantics Other microhertz)]
         pub unsafe fn microhertz() -> Id<NSUnitFrequency, Shared>;
 
-        #[method_id(nanohertz)]
+        #[method_id(@__retain_semantics Other nanohertz)]
         pub unsafe fn nanohertz() -> Id<NSUnitFrequency, Shared>;
 
-        #[method_id(framesPerSecond)]
+        #[method_id(@__retain_semantics Other framesPerSecond)]
         pub unsafe fn framesPerSecond() -> Id<NSUnitFrequency, Shared>;
     }
 );
@@ -481,13 +481,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitFuelEfficiency {
-        #[method_id(litersPer100Kilometers)]
+        #[method_id(@__retain_semantics Other litersPer100Kilometers)]
         pub unsafe fn litersPer100Kilometers() -> Id<NSUnitFuelEfficiency, Shared>;
 
-        #[method_id(milesPerImperialGallon)]
+        #[method_id(@__retain_semantics Other milesPerImperialGallon)]
         pub unsafe fn milesPerImperialGallon() -> Id<NSUnitFuelEfficiency, Shared>;
 
-        #[method_id(milesPerGallon)]
+        #[method_id(@__retain_semantics Other milesPerGallon)]
         pub unsafe fn milesPerGallon() -> Id<NSUnitFuelEfficiency, Shared>;
     }
 );
@@ -503,109 +503,109 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitInformationStorage {
-        #[method_id(bytes)]
+        #[method_id(@__retain_semantics Other bytes)]
         pub unsafe fn bytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(bits)]
+        #[method_id(@__retain_semantics Other bits)]
         pub unsafe fn bits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(nibbles)]
+        #[method_id(@__retain_semantics Other nibbles)]
         pub unsafe fn nibbles() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(yottabytes)]
+        #[method_id(@__retain_semantics Other yottabytes)]
         pub unsafe fn yottabytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(zettabytes)]
+        #[method_id(@__retain_semantics Other zettabytes)]
         pub unsafe fn zettabytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(exabytes)]
+        #[method_id(@__retain_semantics Other exabytes)]
         pub unsafe fn exabytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(petabytes)]
+        #[method_id(@__retain_semantics Other petabytes)]
         pub unsafe fn petabytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(terabytes)]
+        #[method_id(@__retain_semantics Other terabytes)]
         pub unsafe fn terabytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(gigabytes)]
+        #[method_id(@__retain_semantics Other gigabytes)]
         pub unsafe fn gigabytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(megabytes)]
+        #[method_id(@__retain_semantics Other megabytes)]
         pub unsafe fn megabytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(kilobytes)]
+        #[method_id(@__retain_semantics Other kilobytes)]
         pub unsafe fn kilobytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(yottabits)]
+        #[method_id(@__retain_semantics Other yottabits)]
         pub unsafe fn yottabits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(zettabits)]
+        #[method_id(@__retain_semantics Other zettabits)]
         pub unsafe fn zettabits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(exabits)]
+        #[method_id(@__retain_semantics Other exabits)]
         pub unsafe fn exabits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(petabits)]
+        #[method_id(@__retain_semantics Other petabits)]
         pub unsafe fn petabits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(terabits)]
+        #[method_id(@__retain_semantics Other terabits)]
         pub unsafe fn terabits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(gigabits)]
+        #[method_id(@__retain_semantics Other gigabits)]
         pub unsafe fn gigabits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(megabits)]
+        #[method_id(@__retain_semantics Other megabits)]
         pub unsafe fn megabits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(kilobits)]
+        #[method_id(@__retain_semantics Other kilobits)]
         pub unsafe fn kilobits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(yobibytes)]
+        #[method_id(@__retain_semantics Other yobibytes)]
         pub unsafe fn yobibytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(zebibytes)]
+        #[method_id(@__retain_semantics Other zebibytes)]
         pub unsafe fn zebibytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(exbibytes)]
+        #[method_id(@__retain_semantics Other exbibytes)]
         pub unsafe fn exbibytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(pebibytes)]
+        #[method_id(@__retain_semantics Other pebibytes)]
         pub unsafe fn pebibytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(tebibytes)]
+        #[method_id(@__retain_semantics Other tebibytes)]
         pub unsafe fn tebibytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(gibibytes)]
+        #[method_id(@__retain_semantics Other gibibytes)]
         pub unsafe fn gibibytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(mebibytes)]
+        #[method_id(@__retain_semantics Other mebibytes)]
         pub unsafe fn mebibytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(kibibytes)]
+        #[method_id(@__retain_semantics Other kibibytes)]
         pub unsafe fn kibibytes() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(yobibits)]
+        #[method_id(@__retain_semantics Other yobibits)]
         pub unsafe fn yobibits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(zebibits)]
+        #[method_id(@__retain_semantics Other zebibits)]
         pub unsafe fn zebibits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(exbibits)]
+        #[method_id(@__retain_semantics Other exbibits)]
         pub unsafe fn exbibits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(pebibits)]
+        #[method_id(@__retain_semantics Other pebibits)]
         pub unsafe fn pebibits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(tebibits)]
+        #[method_id(@__retain_semantics Other tebibits)]
         pub unsafe fn tebibits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(gibibits)]
+        #[method_id(@__retain_semantics Other gibibits)]
         pub unsafe fn gibibits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(mebibits)]
+        #[method_id(@__retain_semantics Other mebibits)]
         pub unsafe fn mebibits() -> Id<NSUnitInformationStorage, Shared>;
 
-        #[method_id(kibibits)]
+        #[method_id(@__retain_semantics Other kibibits)]
         pub unsafe fn kibibits() -> Id<NSUnitInformationStorage, Shared>;
     }
 );
@@ -621,70 +621,70 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitLength {
-        #[method_id(megameters)]
+        #[method_id(@__retain_semantics Other megameters)]
         pub unsafe fn megameters() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(kilometers)]
+        #[method_id(@__retain_semantics Other kilometers)]
         pub unsafe fn kilometers() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(hectometers)]
+        #[method_id(@__retain_semantics Other hectometers)]
         pub unsafe fn hectometers() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(decameters)]
+        #[method_id(@__retain_semantics Other decameters)]
         pub unsafe fn decameters() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(meters)]
+        #[method_id(@__retain_semantics Other meters)]
         pub unsafe fn meters() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(decimeters)]
+        #[method_id(@__retain_semantics Other decimeters)]
         pub unsafe fn decimeters() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(centimeters)]
+        #[method_id(@__retain_semantics Other centimeters)]
         pub unsafe fn centimeters() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(millimeters)]
+        #[method_id(@__retain_semantics Other millimeters)]
         pub unsafe fn millimeters() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(micrometers)]
+        #[method_id(@__retain_semantics Other micrometers)]
         pub unsafe fn micrometers() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(nanometers)]
+        #[method_id(@__retain_semantics Other nanometers)]
         pub unsafe fn nanometers() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(picometers)]
+        #[method_id(@__retain_semantics Other picometers)]
         pub unsafe fn picometers() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(inches)]
+        #[method_id(@__retain_semantics Other inches)]
         pub unsafe fn inches() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(feet)]
+        #[method_id(@__retain_semantics Other feet)]
         pub unsafe fn feet() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(yards)]
+        #[method_id(@__retain_semantics Other yards)]
         pub unsafe fn yards() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(miles)]
+        #[method_id(@__retain_semantics Other miles)]
         pub unsafe fn miles() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(scandinavianMiles)]
+        #[method_id(@__retain_semantics Other scandinavianMiles)]
         pub unsafe fn scandinavianMiles() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(lightyears)]
+        #[method_id(@__retain_semantics Other lightyears)]
         pub unsafe fn lightyears() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(nauticalMiles)]
+        #[method_id(@__retain_semantics Other nauticalMiles)]
         pub unsafe fn nauticalMiles() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(fathoms)]
+        #[method_id(@__retain_semantics Other fathoms)]
         pub unsafe fn fathoms() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(furlongs)]
+        #[method_id(@__retain_semantics Other furlongs)]
         pub unsafe fn furlongs() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(astronomicalUnits)]
+        #[method_id(@__retain_semantics Other astronomicalUnits)]
         pub unsafe fn astronomicalUnits() -> Id<NSUnitLength, Shared>;
 
-        #[method_id(parsecs)]
+        #[method_id(@__retain_semantics Other parsecs)]
         pub unsafe fn parsecs() -> Id<NSUnitLength, Shared>;
     }
 );
@@ -700,7 +700,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitIlluminance {
-        #[method_id(lux)]
+        #[method_id(@__retain_semantics Other lux)]
         pub unsafe fn lux() -> Id<NSUnitIlluminance, Shared>;
     }
 );
@@ -716,52 +716,52 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitMass {
-        #[method_id(kilograms)]
+        #[method_id(@__retain_semantics Other kilograms)]
         pub unsafe fn kilograms() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(grams)]
+        #[method_id(@__retain_semantics Other grams)]
         pub unsafe fn grams() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(decigrams)]
+        #[method_id(@__retain_semantics Other decigrams)]
         pub unsafe fn decigrams() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(centigrams)]
+        #[method_id(@__retain_semantics Other centigrams)]
         pub unsafe fn centigrams() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(milligrams)]
+        #[method_id(@__retain_semantics Other milligrams)]
         pub unsafe fn milligrams() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(micrograms)]
+        #[method_id(@__retain_semantics Other micrograms)]
         pub unsafe fn micrograms() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(nanograms)]
+        #[method_id(@__retain_semantics Other nanograms)]
         pub unsafe fn nanograms() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(picograms)]
+        #[method_id(@__retain_semantics Other picograms)]
         pub unsafe fn picograms() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(ounces)]
+        #[method_id(@__retain_semantics Other ounces)]
         pub unsafe fn ounces() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(poundsMass)]
+        #[method_id(@__retain_semantics Other poundsMass)]
         pub unsafe fn poundsMass() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(stones)]
+        #[method_id(@__retain_semantics Other stones)]
         pub unsafe fn stones() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(metricTons)]
+        #[method_id(@__retain_semantics Other metricTons)]
         pub unsafe fn metricTons() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(shortTons)]
+        #[method_id(@__retain_semantics Other shortTons)]
         pub unsafe fn shortTons() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(carats)]
+        #[method_id(@__retain_semantics Other carats)]
         pub unsafe fn carats() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(ouncesTroy)]
+        #[method_id(@__retain_semantics Other ouncesTroy)]
         pub unsafe fn ouncesTroy() -> Id<NSUnitMass, Shared>;
 
-        #[method_id(slugs)]
+        #[method_id(@__retain_semantics Other slugs)]
         pub unsafe fn slugs() -> Id<NSUnitMass, Shared>;
     }
 );
@@ -777,37 +777,37 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitPower {
-        #[method_id(terawatts)]
+        #[method_id(@__retain_semantics Other terawatts)]
         pub unsafe fn terawatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(gigawatts)]
+        #[method_id(@__retain_semantics Other gigawatts)]
         pub unsafe fn gigawatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(megawatts)]
+        #[method_id(@__retain_semantics Other megawatts)]
         pub unsafe fn megawatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(kilowatts)]
+        #[method_id(@__retain_semantics Other kilowatts)]
         pub unsafe fn kilowatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(watts)]
+        #[method_id(@__retain_semantics Other watts)]
         pub unsafe fn watts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(milliwatts)]
+        #[method_id(@__retain_semantics Other milliwatts)]
         pub unsafe fn milliwatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(microwatts)]
+        #[method_id(@__retain_semantics Other microwatts)]
         pub unsafe fn microwatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(nanowatts)]
+        #[method_id(@__retain_semantics Other nanowatts)]
         pub unsafe fn nanowatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(picowatts)]
+        #[method_id(@__retain_semantics Other picowatts)]
         pub unsafe fn picowatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(femtowatts)]
+        #[method_id(@__retain_semantics Other femtowatts)]
         pub unsafe fn femtowatts() -> Id<NSUnitPower, Shared>;
 
-        #[method_id(horsepower)]
+        #[method_id(@__retain_semantics Other horsepower)]
         pub unsafe fn horsepower() -> Id<NSUnitPower, Shared>;
     }
 );
@@ -823,34 +823,34 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitPressure {
-        #[method_id(newtonsPerMetersSquared)]
+        #[method_id(@__retain_semantics Other newtonsPerMetersSquared)]
         pub unsafe fn newtonsPerMetersSquared() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(gigapascals)]
+        #[method_id(@__retain_semantics Other gigapascals)]
         pub unsafe fn gigapascals() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(megapascals)]
+        #[method_id(@__retain_semantics Other megapascals)]
         pub unsafe fn megapascals() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(kilopascals)]
+        #[method_id(@__retain_semantics Other kilopascals)]
         pub unsafe fn kilopascals() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(hectopascals)]
+        #[method_id(@__retain_semantics Other hectopascals)]
         pub unsafe fn hectopascals() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(inchesOfMercury)]
+        #[method_id(@__retain_semantics Other inchesOfMercury)]
         pub unsafe fn inchesOfMercury() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(bars)]
+        #[method_id(@__retain_semantics Other bars)]
         pub unsafe fn bars() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(millibars)]
+        #[method_id(@__retain_semantics Other millibars)]
         pub unsafe fn millibars() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(millimetersOfMercury)]
+        #[method_id(@__retain_semantics Other millimetersOfMercury)]
         pub unsafe fn millimetersOfMercury() -> Id<NSUnitPressure, Shared>;
 
-        #[method_id(poundsForcePerSquareInch)]
+        #[method_id(@__retain_semantics Other poundsForcePerSquareInch)]
         pub unsafe fn poundsForcePerSquareInch() -> Id<NSUnitPressure, Shared>;
     }
 );
@@ -866,16 +866,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitSpeed {
-        #[method_id(metersPerSecond)]
+        #[method_id(@__retain_semantics Other metersPerSecond)]
         pub unsafe fn metersPerSecond() -> Id<NSUnitSpeed, Shared>;
 
-        #[method_id(kilometersPerHour)]
+        #[method_id(@__retain_semantics Other kilometersPerHour)]
         pub unsafe fn kilometersPerHour() -> Id<NSUnitSpeed, Shared>;
 
-        #[method_id(milesPerHour)]
+        #[method_id(@__retain_semantics Other milesPerHour)]
         pub unsafe fn milesPerHour() -> Id<NSUnitSpeed, Shared>;
 
-        #[method_id(knots)]
+        #[method_id(@__retain_semantics Other knots)]
         pub unsafe fn knots() -> Id<NSUnitSpeed, Shared>;
     }
 );
@@ -891,13 +891,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitTemperature {
-        #[method_id(kelvin)]
+        #[method_id(@__retain_semantics Other kelvin)]
         pub unsafe fn kelvin() -> Id<NSUnitTemperature, Shared>;
 
-        #[method_id(celsius)]
+        #[method_id(@__retain_semantics Other celsius)]
         pub unsafe fn celsius() -> Id<NSUnitTemperature, Shared>;
 
-        #[method_id(fahrenheit)]
+        #[method_id(@__retain_semantics Other fahrenheit)]
         pub unsafe fn fahrenheit() -> Id<NSUnitTemperature, Shared>;
     }
 );
@@ -913,97 +913,97 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUnitVolume {
-        #[method_id(megaliters)]
+        #[method_id(@__retain_semantics Other megaliters)]
         pub unsafe fn megaliters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(kiloliters)]
+        #[method_id(@__retain_semantics Other kiloliters)]
         pub unsafe fn kiloliters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(liters)]
+        #[method_id(@__retain_semantics Other liters)]
         pub unsafe fn liters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(deciliters)]
+        #[method_id(@__retain_semantics Other deciliters)]
         pub unsafe fn deciliters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(centiliters)]
+        #[method_id(@__retain_semantics Other centiliters)]
         pub unsafe fn centiliters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(milliliters)]
+        #[method_id(@__retain_semantics Other milliliters)]
         pub unsafe fn milliliters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicKilometers)]
+        #[method_id(@__retain_semantics Other cubicKilometers)]
         pub unsafe fn cubicKilometers() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicMeters)]
+        #[method_id(@__retain_semantics Other cubicMeters)]
         pub unsafe fn cubicMeters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicDecimeters)]
+        #[method_id(@__retain_semantics Other cubicDecimeters)]
         pub unsafe fn cubicDecimeters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicCentimeters)]
+        #[method_id(@__retain_semantics Other cubicCentimeters)]
         pub unsafe fn cubicCentimeters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicMillimeters)]
+        #[method_id(@__retain_semantics Other cubicMillimeters)]
         pub unsafe fn cubicMillimeters() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicInches)]
+        #[method_id(@__retain_semantics Other cubicInches)]
         pub unsafe fn cubicInches() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicFeet)]
+        #[method_id(@__retain_semantics Other cubicFeet)]
         pub unsafe fn cubicFeet() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicYards)]
+        #[method_id(@__retain_semantics Other cubicYards)]
         pub unsafe fn cubicYards() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cubicMiles)]
+        #[method_id(@__retain_semantics Other cubicMiles)]
         pub unsafe fn cubicMiles() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(acreFeet)]
+        #[method_id(@__retain_semantics Other acreFeet)]
         pub unsafe fn acreFeet() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(bushels)]
+        #[method_id(@__retain_semantics Other bushels)]
         pub unsafe fn bushels() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(teaspoons)]
+        #[method_id(@__retain_semantics Other teaspoons)]
         pub unsafe fn teaspoons() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(tablespoons)]
+        #[method_id(@__retain_semantics Other tablespoons)]
         pub unsafe fn tablespoons() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(fluidOunces)]
+        #[method_id(@__retain_semantics Other fluidOunces)]
         pub unsafe fn fluidOunces() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(cups)]
+        #[method_id(@__retain_semantics Other cups)]
         pub unsafe fn cups() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(pints)]
+        #[method_id(@__retain_semantics Other pints)]
         pub unsafe fn pints() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(quarts)]
+        #[method_id(@__retain_semantics Other quarts)]
         pub unsafe fn quarts() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(gallons)]
+        #[method_id(@__retain_semantics Other gallons)]
         pub unsafe fn gallons() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(imperialTeaspoons)]
+        #[method_id(@__retain_semantics Other imperialTeaspoons)]
         pub unsafe fn imperialTeaspoons() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(imperialTablespoons)]
+        #[method_id(@__retain_semantics Other imperialTablespoons)]
         pub unsafe fn imperialTablespoons() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(imperialFluidOunces)]
+        #[method_id(@__retain_semantics Other imperialFluidOunces)]
         pub unsafe fn imperialFluidOunces() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(imperialPints)]
+        #[method_id(@__retain_semantics Other imperialPints)]
         pub unsafe fn imperialPints() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(imperialQuarts)]
+        #[method_id(@__retain_semantics Other imperialQuarts)]
         pub unsafe fn imperialQuarts() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(imperialGallons)]
+        #[method_id(@__retain_semantics Other imperialGallons)]
         pub unsafe fn imperialGallons() -> Id<NSUnitVolume, Shared>;
 
-        #[method_id(metricCups)]
+        #[method_id(@__retain_semantics Other metricCups)]
         pub unsafe fn metricCups() -> Id<NSUnitVolume, Shared>;
     }
 );

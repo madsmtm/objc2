@@ -36,20 +36,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSXMLDTDNode {
-        #[method_id(initWithXMLString:)]
+        #[method_id(@__retain_semantics Init initWithXMLString:)]
         pub unsafe fn initWithXMLString(
             this: Option<Allocated<Self>>,
             string: &NSString,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithKind:options:)]
+        #[method_id(@__retain_semantics Init initWithKind:options:)]
         pub unsafe fn initWithKind_options(
             this: Option<Allocated<Self>>,
             kind: NSXMLNodeKind,
             options: NSXMLNodeOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(DTDKind)]
@@ -61,19 +61,19 @@ extern_methods!(
         #[method(isExternal)]
         pub unsafe fn isExternal(&self) -> bool;
 
-        #[method_id(publicID)]
+        #[method_id(@__retain_semantics Other publicID)]
         pub unsafe fn publicID(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setPublicID:)]
         pub unsafe fn setPublicID(&self, publicID: Option<&NSString>);
 
-        #[method_id(systemID)]
+        #[method_id(@__retain_semantics Other systemID)]
         pub unsafe fn systemID(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setSystemID:)]
         pub unsafe fn setSystemID(&self, systemID: Option<&NSString>);
 
-        #[method_id(notationName)]
+        #[method_id(@__retain_semantics Other notationName)]
         pub unsafe fn notationName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setNotationName:)]

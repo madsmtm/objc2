@@ -35,25 +35,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGridView {
-        #[method_id(initWithFrame:)]
+        #[method_id(@__retain_semantics Init initWithFrame:)]
         pub unsafe fn initWithFrame(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(gridViewWithNumberOfColumns:rows:)]
+        #[method_id(@__retain_semantics Other gridViewWithNumberOfColumns:rows:)]
         pub unsafe fn gridViewWithNumberOfColumns_rows(
             columnCount: NSInteger,
             rowCount: NSInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(gridViewWithViews:)]
+        #[method_id(@__retain_semantics Other gridViewWithViews:)]
         pub unsafe fn gridViewWithViews(rows: &NSArray<NSArray<NSView>>) -> Id<Self, Shared>;
 
         #[method(numberOfRows)]
@@ -62,32 +62,32 @@ extern_methods!(
         #[method(numberOfColumns)]
         pub unsafe fn numberOfColumns(&self) -> NSInteger;
 
-        #[method_id(rowAtIndex:)]
+        #[method_id(@__retain_semantics Other rowAtIndex:)]
         pub unsafe fn rowAtIndex(&self, index: NSInteger) -> Id<NSGridRow, Shared>;
 
         #[method(indexOfRow:)]
         pub unsafe fn indexOfRow(&self, row: &NSGridRow) -> NSInteger;
 
-        #[method_id(columnAtIndex:)]
+        #[method_id(@__retain_semantics Other columnAtIndex:)]
         pub unsafe fn columnAtIndex(&self, index: NSInteger) -> Id<NSGridColumn, Shared>;
 
         #[method(indexOfColumn:)]
         pub unsafe fn indexOfColumn(&self, column: &NSGridColumn) -> NSInteger;
 
-        #[method_id(cellAtColumnIndex:rowIndex:)]
+        #[method_id(@__retain_semantics Other cellAtColumnIndex:rowIndex:)]
         pub unsafe fn cellAtColumnIndex_rowIndex(
             &self,
             columnIndex: NSInteger,
             rowIndex: NSInteger,
         ) -> Id<NSGridCell, Shared>;
 
-        #[method_id(cellForView:)]
+        #[method_id(@__retain_semantics Other cellForView:)]
         pub unsafe fn cellForView(&self, view: &NSView) -> Option<Id<NSGridCell, Shared>>;
 
-        #[method_id(addRowWithViews:)]
+        #[method_id(@__retain_semantics Other addRowWithViews:)]
         pub unsafe fn addRowWithViews(&self, views: &NSArray<NSView>) -> Id<NSGridRow, Shared>;
 
-        #[method_id(insertRowAtIndex:withViews:)]
+        #[method_id(@__retain_semantics Other insertRowAtIndex:withViews:)]
         pub unsafe fn insertRowAtIndex_withViews(
             &self,
             index: NSInteger,
@@ -100,13 +100,13 @@ extern_methods!(
         #[method(removeRowAtIndex:)]
         pub unsafe fn removeRowAtIndex(&self, index: NSInteger);
 
-        #[method_id(addColumnWithViews:)]
+        #[method_id(@__retain_semantics Other addColumnWithViews:)]
         pub unsafe fn addColumnWithViews(
             &self,
             views: &NSArray<NSView>,
         ) -> Id<NSGridColumn, Shared>;
 
-        #[method_id(insertColumnAtIndex:withViews:)]
+        #[method_id(@__retain_semantics Other insertColumnAtIndex:withViews:)]
         pub unsafe fn insertColumnAtIndex_withViews(
             &self,
             index: NSInteger,
@@ -169,13 +169,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGridRow {
-        #[method_id(gridView)]
+        #[method_id(@__retain_semantics Other gridView)]
         pub unsafe fn gridView(&self) -> Option<Id<NSGridView, Shared>>;
 
         #[method(numberOfCells)]
         pub unsafe fn numberOfCells(&self) -> NSInteger;
 
-        #[method_id(cellAtIndex:)]
+        #[method_id(@__retain_semantics Other cellAtIndex:)]
         pub unsafe fn cellAtIndex(&self, index: NSInteger) -> Id<NSGridCell, Shared>;
 
         #[method(yPlacement)]
@@ -230,13 +230,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGridColumn {
-        #[method_id(gridView)]
+        #[method_id(@__retain_semantics Other gridView)]
         pub unsafe fn gridView(&self) -> Option<Id<NSGridView, Shared>>;
 
         #[method(numberOfCells)]
         pub unsafe fn numberOfCells(&self) -> NSInteger;
 
-        #[method_id(cellAtIndex:)]
+        #[method_id(@__retain_semantics Other cellAtIndex:)]
         pub unsafe fn cellAtIndex(&self, index: NSInteger) -> Id<NSGridCell, Shared>;
 
         #[method(xPlacement)]
@@ -285,19 +285,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGridCell {
-        #[method_id(contentView)]
+        #[method_id(@__retain_semantics Other contentView)]
         pub unsafe fn contentView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setContentView:)]
         pub unsafe fn setContentView(&self, contentView: Option<&NSView>);
 
-        #[method_id(emptyContentView)]
+        #[method_id(@__retain_semantics Other emptyContentView)]
         pub unsafe fn emptyContentView() -> Id<NSView, Shared>;
 
-        #[method_id(row)]
+        #[method_id(@__retain_semantics Other row)]
         pub unsafe fn row(&self) -> Option<Id<NSGridRow, Shared>>;
 
-        #[method_id(column)]
+        #[method_id(@__retain_semantics Other column)]
         pub unsafe fn column(&self) -> Option<Id<NSGridColumn, Shared>>;
 
         #[method(xPlacement)]
@@ -318,7 +318,7 @@ extern_methods!(
         #[method(setRowAlignment:)]
         pub unsafe fn setRowAlignment(&self, rowAlignment: NSGridRowAlignment);
 
-        #[method_id(customPlacementConstraints)]
+        #[method_id(@__retain_semantics Other customPlacementConstraints)]
         pub unsafe fn customPlacementConstraints(&self) -> Id<NSArray<NSLayoutConstraint>, Shared>;
 
         #[method(setCustomPlacementConstraints:)]

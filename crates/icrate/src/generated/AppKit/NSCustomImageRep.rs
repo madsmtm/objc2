@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCustomImageRep {
-        #[method_id(initWithSize:flipped:drawingHandler:)]
+        #[method_id(@__retain_semantics Init initWithSize:flipped:drawingHandler:)]
         pub unsafe fn initWithSize_flipped_drawingHandler(
             this: Option<Allocated<Self>>,
             size: NSSize,
@@ -26,7 +26,7 @@ extern_methods!(
         #[method(drawingHandler)]
         pub unsafe fn drawingHandler(&self) -> TodoBlock;
 
-        #[method_id(initWithDrawSelector:delegate:)]
+        #[method_id(@__retain_semantics Init initWithDrawSelector:delegate:)]
         pub unsafe fn initWithDrawSelector_delegate(
             this: Option<Allocated<Self>>,
             selector: Sel,
@@ -36,7 +36,7 @@ extern_methods!(
         #[method(drawSelector)]
         pub unsafe fn drawSelector(&self) -> Option<Sel>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<Object, Shared>>;
     }
 );

@@ -21,32 +21,32 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextAttachment {
-        #[method_id(initWithData:ofType:)]
+        #[method_id(@__retain_semantics Init initWithData:ofType:)]
         pub unsafe fn initWithData_ofType(
             this: Option<Allocated<Self>>,
             contentData: Option<&NSData>,
             uti: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithFileWrapper:)]
+        #[method_id(@__retain_semantics Init initWithFileWrapper:)]
         pub unsafe fn initWithFileWrapper(
             this: Option<Allocated<Self>>,
             fileWrapper: Option<&NSFileWrapper>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(contents)]
+        #[method_id(@__retain_semantics Other contents)]
         pub unsafe fn contents(&self) -> Option<Id<NSData, Shared>>;
 
         #[method(setContents:)]
         pub unsafe fn setContents(&self, contents: Option<&NSData>);
 
-        #[method_id(fileType)]
+        #[method_id(@__retain_semantics Other fileType)]
         pub unsafe fn fileType(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setFileType:)]
         pub unsafe fn setFileType(&self, fileType: Option<&NSString>);
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
@@ -58,13 +58,13 @@ extern_methods!(
         #[method(setBounds:)]
         pub unsafe fn setBounds(&self, bounds: CGRect);
 
-        #[method_id(fileWrapper)]
+        #[method_id(@__retain_semantics Other fileWrapper)]
         pub unsafe fn fileWrapper(&self) -> Option<Id<NSFileWrapper, Shared>>;
 
         #[method(setFileWrapper:)]
         pub unsafe fn setFileWrapper(&self, fileWrapper: Option<&NSFileWrapper>);
 
-        #[method_id(attachmentCell)]
+        #[method_id(@__retain_semantics Other attachmentCell)]
         pub unsafe fn attachmentCell(&self) -> Option<Id<NSTextAttachmentCell, Shared>>;
 
         #[method(setAttachmentCell:)]
@@ -101,7 +101,7 @@ extern_methods!(
 extern_methods!(
     /// NSAttributedStringAttachmentConveniences
     unsafe impl NSAttributedString {
-        #[method_id(attributedStringWithAttachment:)]
+        #[method_id(@__retain_semantics Other attributedStringWithAttachment:)]
         pub unsafe fn attributedStringWithAttachment(
             attachment: &NSTextAttachment,
         ) -> Id<NSAttributedString, Shared>;
@@ -119,7 +119,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextAttachmentViewProvider {
-        #[method_id(initWithTextAttachment:parentView:textLayoutManager:location:)]
+        #[method_id(@__retain_semantics Init initWithTextAttachment:parentView:textLayoutManager:location:)]
         pub unsafe fn initWithTextAttachment_parentView_textLayoutManager_location(
             this: Option<Allocated<Self>>,
             textAttachment: &NSTextAttachment,
@@ -128,22 +128,22 @@ extern_methods!(
             location: &NSTextLocation,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(textAttachment)]
+        #[method_id(@__retain_semantics Other textAttachment)]
         pub unsafe fn textAttachment(&self) -> Option<Id<NSTextAttachment, Shared>>;
 
-        #[method_id(textLayoutManager)]
+        #[method_id(@__retain_semantics Other textLayoutManager)]
         pub unsafe fn textLayoutManager(&self) -> Option<Id<NSTextLayoutManager, Shared>>;
 
-        #[method_id(location)]
+        #[method_id(@__retain_semantics Other location)]
         pub unsafe fn location(&self) -> Id<NSTextLocation, Shared>;
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setView:)]

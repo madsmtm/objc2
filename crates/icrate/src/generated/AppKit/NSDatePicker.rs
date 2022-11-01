@@ -39,13 +39,13 @@ extern_methods!(
         #[method(setDrawsBackground:)]
         pub unsafe fn setDrawsBackground(&self, drawsBackground: bool);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
         pub unsafe fn setBackgroundColor(&self, backgroundColor: &NSColor);
 
-        #[method_id(textColor)]
+        #[method_id(@__retain_semantics Other textColor)]
         pub unsafe fn textColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setTextColor:)]
@@ -63,25 +63,25 @@ extern_methods!(
         #[method(setDatePickerElements:)]
         pub unsafe fn setDatePickerElements(&self, datePickerElements: NSDatePickerElementFlags);
 
-        #[method_id(calendar)]
+        #[method_id(@__retain_semantics Other calendar)]
         pub unsafe fn calendar(&self) -> Option<Id<NSCalendar, Shared>>;
 
         #[method(setCalendar:)]
         pub unsafe fn setCalendar(&self, calendar: Option<&NSCalendar>);
 
-        #[method_id(locale)]
+        #[method_id(@__retain_semantics Other locale)]
         pub unsafe fn locale(&self) -> Option<Id<NSLocale, Shared>>;
 
         #[method(setLocale:)]
         pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
 
-        #[method_id(timeZone)]
+        #[method_id(@__retain_semantics Other timeZone)]
         pub unsafe fn timeZone(&self) -> Option<Id<NSTimeZone, Shared>>;
 
         #[method(setTimeZone:)]
         pub unsafe fn setTimeZone(&self, timeZone: Option<&NSTimeZone>);
 
-        #[method_id(dateValue)]
+        #[method_id(@__retain_semantics Other dateValue)]
         pub unsafe fn dateValue(&self) -> Id<NSDate, Shared>;
 
         #[method(setDateValue:)]
@@ -93,13 +93,13 @@ extern_methods!(
         #[method(setTimeInterval:)]
         pub unsafe fn setTimeInterval(&self, timeInterval: NSTimeInterval);
 
-        #[method_id(minDate)]
+        #[method_id(@__retain_semantics Other minDate)]
         pub unsafe fn minDate(&self) -> Option<Id<NSDate, Shared>>;
 
         #[method(setMinDate:)]
         pub unsafe fn setMinDate(&self, minDate: Option<&NSDate>);
 
-        #[method_id(maxDate)]
+        #[method_id(@__retain_semantics Other maxDate)]
         pub unsafe fn maxDate(&self) -> Option<Id<NSDate, Shared>>;
 
         #[method(setMaxDate:)]
@@ -111,7 +111,7 @@ extern_methods!(
         #[method(setPresentsCalendarOverlay:)]
         pub unsafe fn setPresentsCalendarOverlay(&self, presentsCalendarOverlay: bool);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSDatePickerCellDelegate, Shared>>;
 
         #[method(setDelegate:)]

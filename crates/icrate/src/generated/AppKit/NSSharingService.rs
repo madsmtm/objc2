@@ -97,62 +97,62 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSharingService {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSharingServiceDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSSharingServiceDelegate>);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Id<NSImage, Shared>;
 
-        #[method_id(alternateImage)]
+        #[method_id(@__retain_semantics Other alternateImage)]
         pub unsafe fn alternateImage(&self) -> Option<Id<NSImage, Shared>>;
 
-        #[method_id(menuItemTitle)]
+        #[method_id(@__retain_semantics Other menuItemTitle)]
         pub unsafe fn menuItemTitle(&self) -> Id<NSString, Shared>;
 
         #[method(setMenuItemTitle:)]
         pub unsafe fn setMenuItemTitle(&self, menuItemTitle: &NSString);
 
-        #[method_id(recipients)]
+        #[method_id(@__retain_semantics Other recipients)]
         pub unsafe fn recipients(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setRecipients:)]
         pub unsafe fn setRecipients(&self, recipients: Option<&NSArray<NSString>>);
 
-        #[method_id(subject)]
+        #[method_id(@__retain_semantics Other subject)]
         pub unsafe fn subject(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setSubject:)]
         pub unsafe fn setSubject(&self, subject: Option<&NSString>);
 
-        #[method_id(messageBody)]
+        #[method_id(@__retain_semantics Other messageBody)]
         pub unsafe fn messageBody(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(permanentLink)]
+        #[method_id(@__retain_semantics Other permanentLink)]
         pub unsafe fn permanentLink(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(accountName)]
+        #[method_id(@__retain_semantics Other accountName)]
         pub unsafe fn accountName(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(attachmentFileURLs)]
+        #[method_id(@__retain_semantics Other attachmentFileURLs)]
         pub unsafe fn attachmentFileURLs(&self) -> Option<Id<NSArray<NSURL>, Shared>>;
 
-        #[method_id(sharingServicesForItems:)]
+        #[method_id(@__retain_semantics Other sharingServicesForItems:)]
         pub unsafe fn sharingServicesForItems(
             items: &NSArray,
         ) -> Id<NSArray<NSSharingService>, Shared>;
 
-        #[method_id(sharingServiceNamed:)]
+        #[method_id(@__retain_semantics Other sharingServiceNamed:)]
         pub unsafe fn sharingServiceNamed(
             serviceName: &NSSharingServiceName,
         ) -> Option<Id<NSSharingService, Shared>>;
 
-        #[method_id(initWithTitle:image:alternateImage:handler:)]
+        #[method_id(@__retain_semantics Init initWithTitle:image:alternateImage:handler:)]
         pub unsafe fn initWithTitle_image_alternateImage_handler(
             this: Option<Allocated<Self>>,
             title: &NSString,
@@ -161,7 +161,7 @@ extern_methods!(
             block: TodoBlock,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(canPerformWithItems:)]
@@ -217,19 +217,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSharingServicePicker {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSharingServicePickerDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSSharingServicePickerDelegate>);
 
-        #[method_id(initWithItems:)]
+        #[method_id(@__retain_semantics Init initWithItems:)]
         pub unsafe fn initWithItems(
             this: Option<Allocated<Self>>,
             items: &NSArray,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(showRelativeToRect:ofView:preferredEdge:)]

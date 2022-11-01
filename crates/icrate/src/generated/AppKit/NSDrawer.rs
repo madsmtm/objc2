@@ -21,20 +21,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDrawer {
-        #[method_id(initWithContentSize:preferredEdge:)]
+        #[method_id(@__retain_semantics Init initWithContentSize:preferredEdge:)]
         pub unsafe fn initWithContentSize_preferredEdge(
             this: Option<Allocated<Self>>,
             contentSize: NSSize,
             edge: NSRectEdge,
         ) -> Id<Self, Shared>;
 
-        #[method_id(parentWindow)]
+        #[method_id(@__retain_semantics Other parentWindow)]
         pub unsafe fn parentWindow(&self) -> Option<Id<NSWindow, Shared>>;
 
         #[method(setParentWindow:)]
         pub unsafe fn setParentWindow(&self, parentWindow: Option<&NSWindow>);
 
-        #[method_id(contentView)]
+        #[method_id(@__retain_semantics Other contentView)]
         pub unsafe fn contentView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setContentView:)]
@@ -46,7 +46,7 @@ extern_methods!(
         #[method(setPreferredEdge:)]
         pub unsafe fn setPreferredEdge(&self, preferredEdge: NSRectEdge);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSDrawerDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -111,7 +111,7 @@ extern_methods!(
 extern_methods!(
     /// NSDrawers
     unsafe impl NSWindow {
-        #[method_id(drawers)]
+        #[method_id(@__retain_semantics Other drawers)]
         pub unsafe fn drawers(&self) -> Option<Id<NSArray<NSDrawer>, Shared>>;
     }
 );

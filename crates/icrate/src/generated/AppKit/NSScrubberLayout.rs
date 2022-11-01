@@ -33,7 +33,7 @@ extern_methods!(
         #[method(setAlpha:)]
         pub unsafe fn setAlpha(&self, alpha: CGFloat);
 
-        #[method_id(layoutAttributesForItemAtIndex:)]
+        #[method_id(@__retain_semantics Other layoutAttributesForItemAtIndex:)]
         pub unsafe fn layoutAttributesForItemAtIndex(index: NSInteger) -> Id<Self, Shared>;
     }
 );
@@ -52,16 +52,16 @@ extern_methods!(
         #[method(layoutAttributesClass)]
         pub unsafe fn layoutAttributesClass() -> &'static Class;
 
-        #[method_id(scrubber)]
+        #[method_id(@__retain_semantics Other scrubber)]
         pub unsafe fn scrubber(&self) -> Option<Id<NSScrubber, Shared>>;
 
         #[method(visibleRect)]
         pub unsafe fn visibleRect(&self) -> NSRect;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -76,13 +76,13 @@ extern_methods!(
         #[method(scrubberContentSize)]
         pub unsafe fn scrubberContentSize(&self) -> NSSize;
 
-        #[method_id(layoutAttributesForItemAtIndex:)]
+        #[method_id(@__retain_semantics Other layoutAttributesForItemAtIndex:)]
         pub unsafe fn layoutAttributesForItemAtIndex(
             &self,
             index: NSInteger,
         ) -> Option<Id<NSScrubberLayoutAttributes, Shared>>;
 
-        #[method_id(layoutAttributesForItemsInRect:)]
+        #[method_id(@__retain_semantics Other layoutAttributesForItemsInRect:)]
         pub unsafe fn layoutAttributesForItemsInRect(
             &self,
             rect: NSRect,
@@ -153,13 +153,13 @@ extern_methods!(
         #[method(setNumberOfVisibleItems:)]
         pub unsafe fn setNumberOfVisibleItems(&self, numberOfVisibleItems: NSInteger);
 
-        #[method_id(initWithNumberOfVisibleItems:)]
+        #[method_id(@__retain_semantics Init initWithNumberOfVisibleItems:)]
         pub unsafe fn initWithNumberOfVisibleItems(
             this: Option<Allocated<Self>>,
             numberOfVisibleItems: NSInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,

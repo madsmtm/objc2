@@ -20,31 +20,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSXMLDocument {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithXMLString:options:error:)]
+        #[method_id(@__retain_semantics Init initWithXMLString:options:error:)]
         pub unsafe fn initWithXMLString_options_error(
             this: Option<Allocated<Self>>,
             string: &NSString,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithContentsOfURL:options:error:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:options:error:)]
         pub unsafe fn initWithContentsOfURL_options_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithData:options:error:)]
+        #[method_id(@__retain_semantics Init initWithData:options:error:)]
         pub unsafe fn initWithData_options_error(
             this: Option<Allocated<Self>>,
             data: &NSData,
             mask: NSXMLNodeOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithRootElement:)]
+        #[method_id(@__retain_semantics Init initWithRootElement:)]
         pub unsafe fn initWithRootElement(
             this: Option<Allocated<Self>>,
             element: Option<&NSXMLElement>,
@@ -53,13 +53,13 @@ extern_methods!(
         #[method(replacementClassForClass:)]
         pub unsafe fn replacementClassForClass(cls: &Class) -> &'static Class;
 
-        #[method_id(characterEncoding)]
+        #[method_id(@__retain_semantics Other characterEncoding)]
         pub unsafe fn characterEncoding(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setCharacterEncoding:)]
         pub unsafe fn setCharacterEncoding(&self, characterEncoding: Option<&NSString>);
 
-        #[method_id(version)]
+        #[method_id(@__retain_semantics Other version)]
         pub unsafe fn version(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setVersion:)]
@@ -77,13 +77,13 @@ extern_methods!(
         #[method(setDocumentContentKind:)]
         pub unsafe fn setDocumentContentKind(&self, documentContentKind: NSXMLDocumentContentKind);
 
-        #[method_id(MIMEType)]
+        #[method_id(@__retain_semantics Other MIMEType)]
         pub unsafe fn MIMEType(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setMIMEType:)]
         pub unsafe fn setMIMEType(&self, MIMEType: Option<&NSString>);
 
-        #[method_id(DTD)]
+        #[method_id(@__retain_semantics Other DTD)]
         pub unsafe fn DTD(&self) -> Option<Id<NSXMLDTD, Shared>>;
 
         #[method(setDTD:)]
@@ -92,7 +92,7 @@ extern_methods!(
         #[method(setRootElement:)]
         pub unsafe fn setRootElement(&self, root: &NSXMLElement);
 
-        #[method_id(rootElement)]
+        #[method_id(@__retain_semantics Other rootElement)]
         pub unsafe fn rootElement(&self) -> Option<Id<NSXMLElement, Shared>>;
 
         #[method(insertChild:atIndex:)]
@@ -117,27 +117,27 @@ extern_methods!(
         #[method(replaceChildAtIndex:withNode:)]
         pub unsafe fn replaceChildAtIndex_withNode(&self, index: NSUInteger, node: &NSXMLNode);
 
-        #[method_id(XMLData)]
+        #[method_id(@__retain_semantics Other XMLData)]
         pub unsafe fn XMLData(&self) -> Id<NSData, Shared>;
 
-        #[method_id(XMLDataWithOptions:)]
+        #[method_id(@__retain_semantics Other XMLDataWithOptions:)]
         pub unsafe fn XMLDataWithOptions(&self, options: NSXMLNodeOptions) -> Id<NSData, Shared>;
 
-        #[method_id(objectByApplyingXSLT:arguments:error:)]
+        #[method_id(@__retain_semantics Other objectByApplyingXSLT:arguments:error:)]
         pub unsafe fn objectByApplyingXSLT_arguments_error(
             &self,
             xslt: &NSData,
             arguments: Option<&NSDictionary<NSString, NSString>>,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(objectByApplyingXSLTString:arguments:error:)]
+        #[method_id(@__retain_semantics Other objectByApplyingXSLTString:arguments:error:)]
         pub unsafe fn objectByApplyingXSLTString_arguments_error(
             &self,
             xslt: &NSString,
             arguments: Option<&NSDictionary<NSString, NSString>>,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(objectByApplyingXSLTAtURL:arguments:error:)]
+        #[method_id(@__retain_semantics Other objectByApplyingXSLTAtURL:arguments:error:)]
         pub unsafe fn objectByApplyingXSLTAtURL_arguments_error(
             &self,
             xsltURL: &NSURL,

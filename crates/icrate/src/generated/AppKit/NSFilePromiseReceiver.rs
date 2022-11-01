@@ -15,13 +15,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFilePromiseReceiver {
-        #[method_id(readableDraggedTypes)]
+        #[method_id(@__retain_semantics Other readableDraggedTypes)]
         pub unsafe fn readableDraggedTypes() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(fileTypes)]
+        #[method_id(@__retain_semantics Other fileTypes)]
         pub unsafe fn fileTypes(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(fileNames)]
+        #[method_id(@__retain_semantics Other fileNames)]
         pub unsafe fn fileNames(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(receivePromisedFilesAtDestination:options:operationQueue:reader:)]

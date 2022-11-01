@@ -15,10 +15,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSWindowTabGroup {
-        #[method_id(identifier)]
+        #[method_id(@__retain_semantics Other identifier)]
         pub unsafe fn identifier(&self) -> Id<NSWindowTabbingIdentifier, Shared>;
 
-        #[method_id(windows)]
+        #[method_id(@__retain_semantics Other windows)]
         pub unsafe fn windows(&self) -> Id<NSArray<NSWindow>, Shared>;
 
         #[method(isOverviewVisible)]
@@ -30,7 +30,7 @@ extern_methods!(
         #[method(isTabBarVisible)]
         pub unsafe fn isTabBarVisible(&self) -> bool;
 
-        #[method_id(selectedWindow)]
+        #[method_id(@__retain_semantics Other selectedWindow)]
         pub unsafe fn selectedWindow(&self) -> Option<Id<NSWindow, Shared>>;
 
         #[method(setSelectedWindow:)]

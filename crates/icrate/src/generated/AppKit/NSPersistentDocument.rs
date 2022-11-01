@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPersistentDocument {
-        #[method_id(managedObjectContext)]
+        #[method_id(@__retain_semantics Other managedObjectContext)]
         pub unsafe fn managedObjectContext(&self) -> Option<Id<NSManagedObjectContext, Shared>>;
 
         #[method(setManagedObjectContext:)]
@@ -24,7 +24,7 @@ extern_methods!(
             managedObjectContext: Option<&NSManagedObjectContext>,
         );
 
-        #[method_id(managedObjectModel)]
+        #[method_id(@__retain_semantics Other managedObjectModel)]
         pub unsafe fn managedObjectModel(&self) -> Option<Id<NSManagedObjectModel, Shared>>;
 
         #[method(configurePersistentStoreCoordinatorForURL:ofType:modelConfiguration:storeOptions:error:)]
@@ -36,7 +36,7 @@ extern_methods!(
             storeOptions: Option<&NSDictionary<NSString, Object>>,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(persistentStoreTypeForFileType:)]
+        #[method_id(@__retain_semantics Other persistentStoreTypeForFileType:)]
         pub unsafe fn persistentStoreTypeForFileType(
             &self,
             fileType: &NSString,

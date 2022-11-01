@@ -14,16 +14,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSURLCredentialStorage {
-        #[method_id(sharedCredentialStorage)]
+        #[method_id(@__retain_semantics Other sharedCredentialStorage)]
         pub unsafe fn sharedCredentialStorage() -> Id<NSURLCredentialStorage, Shared>;
 
-        #[method_id(credentialsForProtectionSpace:)]
+        #[method_id(@__retain_semantics Other credentialsForProtectionSpace:)]
         pub unsafe fn credentialsForProtectionSpace(
             &self,
             space: &NSURLProtectionSpace,
         ) -> Option<Id<NSDictionary<NSString, NSURLCredential>, Shared>>;
 
-        #[method_id(allCredentials)]
+        #[method_id(@__retain_semantics Other allCredentials)]
         pub unsafe fn allCredentials(
             &self,
         ) -> Id<NSDictionary<NSURLProtectionSpace, NSDictionary<NSString, NSURLCredential>>, Shared>;
@@ -50,7 +50,7 @@ extern_methods!(
             options: Option<&NSDictionary<NSString, Object>>,
         );
 
-        #[method_id(defaultCredentialForProtectionSpace:)]
+        #[method_id(@__retain_semantics Other defaultCredentialForProtectionSpace:)]
         pub unsafe fn defaultCredentialForProtectionSpace(
             &self,
             space: &NSURLProtectionSpace,

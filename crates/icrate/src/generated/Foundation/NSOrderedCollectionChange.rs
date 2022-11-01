@@ -20,14 +20,14 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<ObjectType: Message> NSOrderedCollectionChange<ObjectType> {
-        #[method_id(changeWithObject:type:index:)]
+        #[method_id(@__retain_semantics Other changeWithObject:type:index:)]
         pub unsafe fn changeWithObject_type_index(
             anObject: Option<&ObjectType>,
             type_: NSCollectionChangeType,
             index: NSUInteger,
         ) -> Id<NSOrderedCollectionChange<ObjectType>, Shared>;
 
-        #[method_id(changeWithObject:type:index:associatedIndex:)]
+        #[method_id(@__retain_semantics Other changeWithObject:type:index:associatedIndex:)]
         pub unsafe fn changeWithObject_type_index_associatedIndex(
             anObject: Option<&ObjectType>,
             type_: NSCollectionChangeType,
@@ -35,7 +35,7 @@ extern_methods!(
             associatedIndex: NSUInteger,
         ) -> Id<NSOrderedCollectionChange<ObjectType>, Shared>;
 
-        #[method_id(object)]
+        #[method_id(@__retain_semantics Other object)]
         pub unsafe fn object(&self) -> Option<Id<ObjectType, Shared>>;
 
         #[method(changeType)]
@@ -47,10 +47,10 @@ extern_methods!(
         #[method(associatedIndex)]
         pub unsafe fn associatedIndex(&self) -> NSUInteger;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Object, Shared>;
 
-        #[method_id(initWithObject:type:index:)]
+        #[method_id(@__retain_semantics Init initWithObject:type:index:)]
         pub unsafe fn initWithObject_type_index(
             this: Option<Allocated<Self>>,
             anObject: Option<&ObjectType>,
@@ -58,7 +58,7 @@ extern_methods!(
             index: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithObject:type:index:associatedIndex:)]
+        #[method_id(@__retain_semantics Init initWithObject:type:index:associatedIndex:)]
         pub unsafe fn initWithObject_type_index_associatedIndex(
             this: Option<Allocated<Self>>,
             anObject: Option<&ObjectType>,

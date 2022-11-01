@@ -16,16 +16,16 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<UnitType: Message> NSMeasurement<UnitType> {
-        #[method_id(unit)]
+        #[method_id(@__retain_semantics Other unit)]
         pub unsafe fn unit(&self) -> Id<UnitType, Shared>;
 
         #[method(doubleValue)]
         pub unsafe fn doubleValue(&self) -> c_double;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithDoubleValue:unit:)]
+        #[method_id(@__retain_semantics Init initWithDoubleValue:unit:)]
         pub unsafe fn initWithDoubleValue_unit(
             this: Option<Allocated<Self>>,
             doubleValue: c_double,
@@ -35,19 +35,19 @@ extern_methods!(
         #[method(canBeConvertedToUnit:)]
         pub unsafe fn canBeConvertedToUnit(&self, unit: &NSUnit) -> bool;
 
-        #[method_id(measurementByConvertingToUnit:)]
+        #[method_id(@__retain_semantics Other measurementByConvertingToUnit:)]
         pub unsafe fn measurementByConvertingToUnit(
             &self,
             unit: &NSUnit,
         ) -> Id<NSMeasurement, Shared>;
 
-        #[method_id(measurementByAddingMeasurement:)]
+        #[method_id(@__retain_semantics Other measurementByAddingMeasurement:)]
         pub unsafe fn measurementByAddingMeasurement(
             &self,
             measurement: &NSMeasurement<UnitType>,
         ) -> Id<NSMeasurement<UnitType>, Shared>;
 
-        #[method_id(measurementBySubtractingMeasurement:)]
+        #[method_id(@__retain_semantics Other measurementBySubtractingMeasurement:)]
         pub unsafe fn measurementBySubtractingMeasurement(
             &self,
             measurement: &NSMeasurement<UnitType>,

@@ -59,7 +59,7 @@ extern_methods!(
         #[method(accessInstanceVariablesDirectly)]
         pub unsafe fn accessInstanceVariablesDirectly() -> bool;
 
-        #[method_id(valueForKey:)]
+        #[method_id(@__retain_semantics Other valueForKey:)]
         pub unsafe fn valueForKey(&self, key: &NSString) -> Option<Id<Object, Shared>>;
 
         #[method(setValue:forKey:)]
@@ -72,19 +72,19 @@ extern_methods!(
             inKey: &NSString,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(mutableArrayValueForKey:)]
+        #[method_id(@__retain_semantics Other mutableArrayValueForKey:)]
         pub unsafe fn mutableArrayValueForKey(&self, key: &NSString) -> Id<NSMutableArray, Shared>;
 
-        #[method_id(mutableOrderedSetValueForKey:)]
+        #[method_id(@__retain_semantics Other mutableOrderedSetValueForKey:)]
         pub unsafe fn mutableOrderedSetValueForKey(
             &self,
             key: &NSString,
         ) -> Id<NSMutableOrderedSet, Shared>;
 
-        #[method_id(mutableSetValueForKey:)]
+        #[method_id(@__retain_semantics Other mutableSetValueForKey:)]
         pub unsafe fn mutableSetValueForKey(&self, key: &NSString) -> Id<NSMutableSet, Shared>;
 
-        #[method_id(valueForKeyPath:)]
+        #[method_id(@__retain_semantics Other valueForKeyPath:)]
         pub unsafe fn valueForKeyPath(&self, keyPath: &NSString) -> Option<Id<Object, Shared>>;
 
         #[method(setValue:forKeyPath:)]
@@ -97,25 +97,25 @@ extern_methods!(
             inKeyPath: &NSString,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(mutableArrayValueForKeyPath:)]
+        #[method_id(@__retain_semantics Other mutableArrayValueForKeyPath:)]
         pub unsafe fn mutableArrayValueForKeyPath(
             &self,
             keyPath: &NSString,
         ) -> Id<NSMutableArray, Shared>;
 
-        #[method_id(mutableOrderedSetValueForKeyPath:)]
+        #[method_id(@__retain_semantics Other mutableOrderedSetValueForKeyPath:)]
         pub unsafe fn mutableOrderedSetValueForKeyPath(
             &self,
             keyPath: &NSString,
         ) -> Id<NSMutableOrderedSet, Shared>;
 
-        #[method_id(mutableSetValueForKeyPath:)]
+        #[method_id(@__retain_semantics Other mutableSetValueForKeyPath:)]
         pub unsafe fn mutableSetValueForKeyPath(
             &self,
             keyPath: &NSString,
         ) -> Id<NSMutableSet, Shared>;
 
-        #[method_id(valueForUndefinedKey:)]
+        #[method_id(@__retain_semantics Other valueForUndefinedKey:)]
         pub unsafe fn valueForUndefinedKey(&self, key: &NSString) -> Option<Id<Object, Shared>>;
 
         #[method(setValue:forUndefinedKey:)]
@@ -124,7 +124,7 @@ extern_methods!(
         #[method(setNilValueForKey:)]
         pub unsafe fn setNilValueForKey(&self, key: &NSString);
 
-        #[method_id(dictionaryWithValuesForKeys:)]
+        #[method_id(@__retain_semantics Other dictionaryWithValuesForKeys:)]
         pub unsafe fn dictionaryWithValuesForKeys(
             &self,
             keys: &NSArray<NSString>,
@@ -141,7 +141,7 @@ extern_methods!(
 extern_methods!(
     /// NSKeyValueCoding
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        #[method_id(valueForKey:)]
+        #[method_id(@__retain_semantics Other valueForKey:)]
         pub unsafe fn valueForKey(&self, key: &NSString) -> Id<Object, Shared>;
 
         #[method(setValue:forKey:)]
@@ -152,7 +152,7 @@ extern_methods!(
 extern_methods!(
     /// NSKeyValueCoding
     unsafe impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
-        #[method_id(valueForKey:)]
+        #[method_id(@__retain_semantics Other valueForKey:)]
         pub unsafe fn valueForKey(&self, key: &NSString) -> Option<Id<ObjectType, Shared>>;
     }
 );
@@ -168,7 +168,7 @@ extern_methods!(
 extern_methods!(
     /// NSKeyValueCoding
     unsafe impl<ObjectType: Message> NSOrderedSet<ObjectType> {
-        #[method_id(valueForKey:)]
+        #[method_id(@__retain_semantics Other valueForKey:)]
         pub unsafe fn valueForKey(&self, key: &NSString) -> Id<Object, Shared>;
 
         #[method(setValue:forKey:)]
@@ -179,7 +179,7 @@ extern_methods!(
 extern_methods!(
     /// NSKeyValueCoding
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
-        #[method_id(valueForKey:)]
+        #[method_id(@__retain_semantics Other valueForKey:)]
         pub unsafe fn valueForKey(&self, key: &NSString) -> Id<Object, Shared>;
 
         #[method(setValue:forKey:)]
@@ -193,7 +193,7 @@ extern_methods!(
         #[method(useStoredAccessor)]
         pub unsafe fn useStoredAccessor() -> bool;
 
-        #[method_id(storedValueForKey:)]
+        #[method_id(@__retain_semantics Other storedValueForKey:)]
         pub unsafe fn storedValueForKey(&self, key: &NSString) -> Option<Id<Object, Shared>>;
 
         #[method(takeStoredValue:forKey:)]
@@ -205,7 +205,7 @@ extern_methods!(
         #[method(takeValue:forKeyPath:)]
         pub unsafe fn takeValue_forKeyPath(&self, value: Option<&Object>, keyPath: &NSString);
 
-        #[method_id(handleQueryWithUnboundKey:)]
+        #[method_id(@__retain_semantics Other handleQueryWithUnboundKey:)]
         pub unsafe fn handleQueryWithUnboundKey(
             &self,
             key: &NSString,
@@ -217,7 +217,7 @@ extern_methods!(
         #[method(unableToSetNilForKey:)]
         pub unsafe fn unableToSetNilForKey(&self, key: &NSString);
 
-        #[method_id(valuesForKeys:)]
+        #[method_id(@__retain_semantics Other valuesForKeys:)]
         pub unsafe fn valuesForKeys(&self, keys: &NSArray) -> Id<NSDictionary, Shared>;
 
         #[method(takeValuesFromDictionary:)]

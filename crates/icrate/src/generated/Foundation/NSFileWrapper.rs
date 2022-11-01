@@ -22,38 +22,38 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFileWrapper {
-        #[method_id(initWithURL:options:error:)]
+        #[method_id(@__retain_semantics Init initWithURL:options:error:)]
         pub unsafe fn initWithURL_options_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             options: NSFileWrapperReadingOptions,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initDirectoryWithFileWrappers:)]
+        #[method_id(@__retain_semantics Init initDirectoryWithFileWrappers:)]
         pub unsafe fn initDirectoryWithFileWrappers(
             this: Option<Allocated<Self>>,
             childrenByPreferredName: &NSDictionary<NSString, NSFileWrapper>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initRegularFileWithContents:)]
+        #[method_id(@__retain_semantics Init initRegularFileWithContents:)]
         pub unsafe fn initRegularFileWithContents(
             this: Option<Allocated<Self>>,
             contents: &NSData,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initSymbolicLinkWithDestinationURL:)]
+        #[method_id(@__retain_semantics Init initSymbolicLinkWithDestinationURL:)]
         pub unsafe fn initSymbolicLinkWithDestinationURL(
             this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithSerializedRepresentation:)]
+        #[method_id(@__retain_semantics Init initWithSerializedRepresentation:)]
         pub unsafe fn initWithSerializedRepresentation(
             this: Option<Allocated<Self>>,
             serializeRepresentation: &NSData,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             inCoder: &NSCoder,
@@ -68,19 +68,19 @@ extern_methods!(
         #[method(isSymbolicLink)]
         pub unsafe fn isSymbolicLink(&self) -> bool;
 
-        #[method_id(preferredFilename)]
+        #[method_id(@__retain_semantics Other preferredFilename)]
         pub unsafe fn preferredFilename(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setPreferredFilename:)]
         pub unsafe fn setPreferredFilename(&self, preferredFilename: Option<&NSString>);
 
-        #[method_id(filename)]
+        #[method_id(@__retain_semantics Other filename)]
         pub unsafe fn filename(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setFilename:)]
         pub unsafe fn setFilename(&self, filename: Option<&NSString>);
 
-        #[method_id(fileAttributes)]
+        #[method_id(@__retain_semantics Other fileAttributes)]
         pub unsafe fn fileAttributes(&self) -> Id<NSDictionary<NSString, Object>, Shared>;
 
         #[method(setFileAttributes:)]
@@ -104,13 +104,13 @@ extern_methods!(
             originalContentsURL: Option<&NSURL>,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(serializedRepresentation)]
+        #[method_id(@__retain_semantics Other serializedRepresentation)]
         pub unsafe fn serializedRepresentation(&self) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(addFileWrapper:)]
+        #[method_id(@__retain_semantics Other addFileWrapper:)]
         pub unsafe fn addFileWrapper(&self, child: &NSFileWrapper) -> Id<NSString, Shared>;
 
-        #[method_id(addRegularFileWithContents:preferredFilename:)]
+        #[method_id(@__retain_semantics Other addRegularFileWithContents:preferredFilename:)]
         pub unsafe fn addRegularFileWithContents_preferredFilename(
             &self,
             data: &NSData,
@@ -120,21 +120,21 @@ extern_methods!(
         #[method(removeFileWrapper:)]
         pub unsafe fn removeFileWrapper(&self, child: &NSFileWrapper);
 
-        #[method_id(fileWrappers)]
+        #[method_id(@__retain_semantics Other fileWrappers)]
         pub unsafe fn fileWrappers(
             &self,
         ) -> Option<Id<NSDictionary<NSString, NSFileWrapper>, Shared>>;
 
-        #[method_id(keyForFileWrapper:)]
+        #[method_id(@__retain_semantics Other keyForFileWrapper:)]
         pub unsafe fn keyForFileWrapper(
             &self,
             child: &NSFileWrapper,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(regularFileContents)]
+        #[method_id(@__retain_semantics Other regularFileContents)]
         pub unsafe fn regularFileContents(&self) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(symbolicLinkDestinationURL)]
+        #[method_id(@__retain_semantics Other symbolicLinkDestinationURL)]
         pub unsafe fn symbolicLinkDestinationURL(&self) -> Option<Id<NSURL, Shared>>;
     }
 );
@@ -142,13 +142,13 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSFileWrapper {
-        #[method_id(initWithPath:)]
+        #[method_id(@__retain_semantics Init initWithPath:)]
         pub unsafe fn initWithPath(
             this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(initSymbolicLinkWithDestination:)]
+        #[method_id(@__retain_semantics Init initSymbolicLinkWithDestination:)]
         pub unsafe fn initSymbolicLinkWithDestination(
             this: Option<Allocated<Self>>,
             path: &NSString,
@@ -168,17 +168,17 @@ extern_methods!(
             updateFilenamesFlag: bool,
         ) -> bool;
 
-        #[method_id(addFileWithPath:)]
+        #[method_id(@__retain_semantics Other addFileWithPath:)]
         pub unsafe fn addFileWithPath(&self, path: &NSString) -> Id<NSString, Shared>;
 
-        #[method_id(addSymbolicLinkWithDestination:preferredFilename:)]
+        #[method_id(@__retain_semantics Other addSymbolicLinkWithDestination:preferredFilename:)]
         pub unsafe fn addSymbolicLinkWithDestination_preferredFilename(
             &self,
             path: &NSString,
             filename: &NSString,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(symbolicLinkDestination)]
+        #[method_id(@__retain_semantics Other symbolicLinkDestination)]
         pub unsafe fn symbolicLinkDestination(&self) -> Id<NSString, Shared>;
     }
 );

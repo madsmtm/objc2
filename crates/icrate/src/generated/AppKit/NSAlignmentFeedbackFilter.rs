@@ -26,7 +26,7 @@ extern_methods!(
         #[method(updateWithPanRecognizer:)]
         pub unsafe fn updateWithPanRecognizer(&self, panRecognizer: &NSPanGestureRecognizer);
 
-        #[method_id(alignmentFeedbackTokenForMovementInView:previousPoint:alignedPoint:defaultPoint:)]
+        #[method_id(@__retain_semantics Other alignmentFeedbackTokenForMovementInView:previousPoint:alignedPoint:defaultPoint:)]
         pub unsafe fn alignmentFeedbackTokenForMovementInView_previousPoint_alignedPoint_defaultPoint(
             &self,
             view: Option<&NSView>,
@@ -35,7 +35,7 @@ extern_methods!(
             defaultPoint: NSPoint,
         ) -> Option<Id<NSAlignmentFeedbackToken, Shared>>;
 
-        #[method_id(alignmentFeedbackTokenForHorizontalMovementInView:previousX:alignedX:defaultX:)]
+        #[method_id(@__retain_semantics Other alignmentFeedbackTokenForHorizontalMovementInView:previousX:alignedX:defaultX:)]
         pub unsafe fn alignmentFeedbackTokenForHorizontalMovementInView_previousX_alignedX_defaultX(
             &self,
             view: Option<&NSView>,
@@ -44,7 +44,7 @@ extern_methods!(
             defaultX: CGFloat,
         ) -> Option<Id<NSAlignmentFeedbackToken, Shared>>;
 
-        #[method_id(alignmentFeedbackTokenForVerticalMovementInView:previousY:alignedY:defaultY:)]
+        #[method_id(@__retain_semantics Other alignmentFeedbackTokenForVerticalMovementInView:previousY:alignedY:defaultY:)]
         pub unsafe fn alignmentFeedbackTokenForVerticalMovementInView_previousY_alignedY_defaultY(
             &self,
             view: Option<&NSView>,

@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSButtonTouchBarItem {
-        #[method_id(buttonTouchBarItemWithIdentifier:title:target:action:)]
+        #[method_id(@__retain_semantics Other buttonTouchBarItemWithIdentifier:title:target:action:)]
         pub unsafe fn buttonTouchBarItemWithIdentifier_title_target_action(
             identifier: &NSTouchBarItemIdentifier,
             title: &NSString,
@@ -23,7 +23,7 @@ extern_methods!(
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(buttonTouchBarItemWithIdentifier:image:target:action:)]
+        #[method_id(@__retain_semantics Other buttonTouchBarItemWithIdentifier:image:target:action:)]
         pub unsafe fn buttonTouchBarItemWithIdentifier_image_target_action(
             identifier: &NSTouchBarItemIdentifier,
             image: &NSImage,
@@ -31,7 +31,7 @@ extern_methods!(
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(buttonTouchBarItemWithIdentifier:title:image:target:action:)]
+        #[method_id(@__retain_semantics Other buttonTouchBarItemWithIdentifier:title:image:target:action:)]
         pub unsafe fn buttonTouchBarItemWithIdentifier_title_image_target_action(
             identifier: &NSTouchBarItemIdentifier,
             title: &NSString,
@@ -40,25 +40,25 @@ extern_methods!(
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: &NSString);
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
         pub unsafe fn setImage(&self, image: Option<&NSImage>);
 
-        #[method_id(bezelColor)]
+        #[method_id(@__retain_semantics Other bezelColor)]
         pub unsafe fn bezelColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBezelColor:)]
         pub unsafe fn setBezelColor(&self, bezelColor: Option<&NSColor>);
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -76,7 +76,7 @@ extern_methods!(
         #[method(setEnabled:)]
         pub unsafe fn setEnabled(&self, enabled: bool);
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]

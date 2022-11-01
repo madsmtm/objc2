@@ -28,7 +28,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSToolbarItemGroup {
-        #[method_id(groupWithItemIdentifier:titles:selectionMode:labels:target:action:)]
+        #[method_id(@__retain_semantics Other groupWithItemIdentifier:titles:selectionMode:labels:target:action:)]
         pub unsafe fn groupWithItemIdentifier_titles_selectionMode_labels_target_action(
             itemIdentifier: &NSToolbarItemIdentifier,
             titles: &NSArray<NSString>,
@@ -38,7 +38,7 @@ extern_methods!(
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(groupWithItemIdentifier:images:selectionMode:labels:target:action:)]
+        #[method_id(@__retain_semantics Other groupWithItemIdentifier:images:selectionMode:labels:target:action:)]
         pub unsafe fn groupWithItemIdentifier_images_selectionMode_labels_target_action(
             itemIdentifier: &NSToolbarItemIdentifier,
             images: &NSArray<NSImage>,
@@ -48,7 +48,7 @@ extern_methods!(
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(subitems)]
+        #[method_id(@__retain_semantics Other subitems)]
         pub unsafe fn subitems(&self) -> Id<NSArray<NSToolbarItem>, Shared>;
 
         #[method(setSubitems:)]

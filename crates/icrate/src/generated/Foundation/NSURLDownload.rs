@@ -17,14 +17,14 @@ extern_methods!(
         #[method(canResumeDownloadDecodedWithEncodingMIMEType:)]
         pub unsafe fn canResumeDownloadDecodedWithEncodingMIMEType(MIMEType: &NSString) -> bool;
 
-        #[method_id(initWithRequest:delegate:)]
+        #[method_id(@__retain_semantics Init initWithRequest:delegate:)]
         pub unsafe fn initWithRequest_delegate(
             this: Option<Allocated<Self>>,
             request: &NSURLRequest,
             delegate: Option<&NSURLDownloadDelegate>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithResumeData:delegate:path:)]
+        #[method_id(@__retain_semantics Init initWithResumeData:delegate:path:)]
         pub unsafe fn initWithResumeData_delegate_path(
             this: Option<Allocated<Self>>,
             resumeData: &NSData,
@@ -38,10 +38,10 @@ extern_methods!(
         #[method(setDestination:allowOverwrite:)]
         pub unsafe fn setDestination_allowOverwrite(&self, path: &NSString, allowOverwrite: bool);
 
-        #[method_id(request)]
+        #[method_id(@__retain_semantics Other request)]
         pub unsafe fn request(&self) -> Id<NSURLRequest, Shared>;
 
-        #[method_id(resumeData)]
+        #[method_id(@__retain_semantics Other resumeData)]
         pub unsafe fn resumeData(&self) -> Option<Id<NSData, Shared>>;
 
         #[method(deletesFileUponFailure)]

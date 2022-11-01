@@ -27,19 +27,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSText {
-        #[method_id(initWithFrame:)]
+        #[method_id(@__retain_semantics Init initWithFrame:)]
         pub unsafe fn initWithFrame(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(string)]
+        #[method_id(@__retain_semantics Other string)]
         pub unsafe fn string(&self) -> Id<NSString, Shared>;
 
         #[method(setString:)]
@@ -54,10 +54,10 @@ extern_methods!(
         #[method(replaceCharactersInRange:withRTFD:)]
         pub unsafe fn replaceCharactersInRange_withRTFD(&self, range: NSRange, rtfdData: &NSData);
 
-        #[method_id(RTFFromRange:)]
+        #[method_id(@__retain_semantics Other RTFFromRange:)]
         pub unsafe fn RTFFromRange(&self, range: NSRange) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(RTFDFromRange:)]
+        #[method_id(@__retain_semantics Other RTFDFromRange:)]
         pub unsafe fn RTFDFromRange(&self, range: NSRange) -> Option<Id<NSData, Shared>>;
 
         #[method(writeRTFDToFile:atomically:)]
@@ -66,7 +66,7 @@ extern_methods!(
         #[method(readRTFDFromFile:)]
         pub unsafe fn readRTFDFromFile(&self, path: &NSString) -> bool;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTextDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -114,7 +114,7 @@ extern_methods!(
         #[method(setDrawsBackground:)]
         pub unsafe fn setDrawsBackground(&self, drawsBackground: bool);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBackgroundColor:)]
@@ -132,13 +132,13 @@ extern_methods!(
         #[method(scrollRangeToVisible:)]
         pub unsafe fn scrollRangeToVisible(&self, range: NSRange);
 
-        #[method_id(font)]
+        #[method_id(@__retain_semantics Other font)]
         pub unsafe fn font(&self) -> Option<Id<NSFont, Shared>>;
 
         #[method(setFont:)]
         pub unsafe fn setFont(&self, font: Option<&NSFont>);
 
-        #[method_id(textColor)]
+        #[method_id(@__retain_semantics Other textColor)]
         pub unsafe fn textColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setTextColor:)]

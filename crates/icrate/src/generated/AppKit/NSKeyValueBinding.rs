@@ -19,16 +19,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSBindingSelectionMarker {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(multipleValuesSelectionMarker)]
+        #[method_id(@__retain_semantics Other multipleValuesSelectionMarker)]
         pub unsafe fn multipleValuesSelectionMarker() -> Id<NSBindingSelectionMarker, Shared>;
 
-        #[method_id(noSelectionMarker)]
+        #[method_id(@__retain_semantics Other noSelectionMarker)]
         pub unsafe fn noSelectionMarker() -> Id<NSBindingSelectionMarker, Shared>;
 
-        #[method_id(notApplicableSelectionMarker)]
+        #[method_id(@__retain_semantics Other notApplicableSelectionMarker)]
         pub unsafe fn notApplicableSelectionMarker() -> Id<NSBindingSelectionMarker, Shared>;
 
         #[method(setDefaultPlaceholder:forMarker:onClass:withBinding:)]
@@ -39,7 +39,7 @@ extern_methods!(
             binding: &NSBindingName,
         );
 
-        #[method_id(defaultPlaceholderForMarker:onClass:withBinding:)]
+        #[method_id(@__retain_semantics Other defaultPlaceholderForMarker:onClass:withBinding:)]
         pub unsafe fn defaultPlaceholderForMarker_onClass_withBinding(
             marker: Option<&NSBindingSelectionMarker>,
             objectClass: &Class,
@@ -80,7 +80,7 @@ extern_methods!(
         #[method(exposeBinding:)]
         pub unsafe fn exposeBinding(binding: &NSBindingName);
 
-        #[method_id(exposedBindings)]
+        #[method_id(@__retain_semantics Other exposedBindings)]
         pub unsafe fn exposedBindings(&self) -> Id<NSArray<NSBindingName>, Shared>;
 
         #[method(valueClassForBinding:)]
@@ -101,13 +101,13 @@ extern_methods!(
         #[method(unbind:)]
         pub unsafe fn unbind(&self, binding: &NSBindingName);
 
-        #[method_id(infoForBinding:)]
+        #[method_id(@__retain_semantics Other infoForBinding:)]
         pub unsafe fn infoForBinding(
             &self,
             binding: &NSBindingName,
         ) -> Option<Id<NSDictionary<NSBindingInfoKey, Object>, Shared>>;
 
-        #[method_id(optionDescriptionsForBinding:)]
+        #[method_id(@__retain_semantics Other optionDescriptionsForBinding:)]
         pub unsafe fn optionDescriptionsForBinding(
             &self,
             binding: &NSBindingName,
@@ -125,7 +125,7 @@ extern_methods!(
             binding: &NSBindingName,
         );
 
-        #[method_id(defaultPlaceholderForMarker:withBinding:)]
+        #[method_id(@__retain_semantics Other defaultPlaceholderForMarker:withBinding:)]
         pub unsafe fn defaultPlaceholderForMarker_withBinding(
             marker: Option<&Object>,
             binding: &NSBindingName,

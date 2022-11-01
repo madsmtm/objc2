@@ -23,24 +23,24 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSound {
-        #[method_id(soundNamed:)]
+        #[method_id(@__retain_semantics Other soundNamed:)]
         pub unsafe fn soundNamed(name: &NSSoundName) -> Option<Id<NSSound, Shared>>;
 
-        #[method_id(initWithContentsOfURL:byReference:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:byReference:)]
         pub unsafe fn initWithContentsOfURL_byReference(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             byRef: bool,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithContentsOfFile:byReference:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfFile:byReference:)]
         pub unsafe fn initWithContentsOfFile_byReference(
             this: Option<Allocated<Self>>,
             path: &NSString,
             byRef: bool,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithData:)]
+        #[method_id(@__retain_semantics Init initWithData:)]
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -49,16 +49,16 @@ extern_methods!(
         #[method(setName:)]
         pub unsafe fn setName(&self, string: Option<&NSSoundName>) -> bool;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSSoundName, Shared>>;
 
         #[method(canInitWithPasteboard:)]
         pub unsafe fn canInitWithPasteboard(pasteboard: &NSPasteboard) -> bool;
 
-        #[method_id(soundUnfilteredTypes)]
+        #[method_id(@__retain_semantics Other soundUnfilteredTypes)]
         pub unsafe fn soundUnfilteredTypes() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(initWithPasteboard:)]
+        #[method_id(@__retain_semantics Init initWithPasteboard:)]
         pub unsafe fn initWithPasteboard(
             this: Option<Allocated<Self>>,
             pasteboard: &NSPasteboard,
@@ -82,7 +82,7 @@ extern_methods!(
         #[method(isPlaying)]
         pub unsafe fn isPlaying(&self) -> bool;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSoundDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -109,7 +109,7 @@ extern_methods!(
         #[method(setLoops:)]
         pub unsafe fn setLoops(&self, loops: bool);
 
-        #[method_id(playbackDeviceIdentifier)]
+        #[method_id(@__retain_semantics Other playbackDeviceIdentifier)]
         pub unsafe fn playbackDeviceIdentifier(
             &self,
         ) -> Option<Id<NSSoundPlaybackDeviceIdentifier, Shared>>;
@@ -123,7 +123,7 @@ extern_methods!(
         #[method(setChannelMapping:)]
         pub unsafe fn setChannelMapping(&self, channelMapping: Option<&NSArray>);
 
-        #[method_id(channelMapping)]
+        #[method_id(@__retain_semantics Other channelMapping)]
         pub unsafe fn channelMapping(&self) -> Option<Id<NSArray, Shared>>;
     }
 );
@@ -131,10 +131,10 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSSound {
-        #[method_id(soundUnfilteredFileTypes)]
+        #[method_id(@__retain_semantics Other soundUnfilteredFileTypes)]
         pub unsafe fn soundUnfilteredFileTypes() -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(soundUnfilteredPasteboardTypes)]
+        #[method_id(@__retain_semantics Other soundUnfilteredPasteboardTypes)]
         pub unsafe fn soundUnfilteredPasteboardTypes() -> Option<Id<NSArray, Shared>>;
     }
 );
@@ -144,7 +144,7 @@ pub type NSSoundDelegate = NSObject;
 extern_methods!(
     /// NSBundleSoundExtensions
     unsafe impl NSBundle {
-        #[method_id(pathForSoundResource:)]
+        #[method_id(@__retain_semantics Other pathForSoundResource:)]
         pub unsafe fn pathForSoundResource(
             &self,
             name: &NSSoundName,

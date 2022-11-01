@@ -112,13 +112,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSBitmapImageRep {
-        #[method_id(initWithFocusedViewRect:)]
+        #[method_id(@__retain_semantics Init initWithFocusedViewRect:)]
         pub unsafe fn initWithFocusedViewRect(
             this: Option<Allocated<Self>>,
             rect: NSRect,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bytesPerRow:bitsPerPixel:)]
+        #[method_id(@__retain_semantics Init initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bytesPerRow:bitsPerPixel:)]
         pub unsafe fn initWithBitmapDataPlanes_pixelsWide_pixelsHigh_bitsPerSample_samplesPerPixel_hasAlpha_isPlanar_colorSpaceName_bytesPerRow_bitsPerPixel(
             this: Option<Allocated<Self>>,
             planes: *mut *mut c_uchar,
@@ -133,7 +133,7 @@ extern_methods!(
             pBits: NSInteger,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bitmapFormat:bytesPerRow:bitsPerPixel:)]
+        #[method_id(@__retain_semantics Init initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bitmapFormat:bytesPerRow:bitsPerPixel:)]
         pub unsafe fn initWithBitmapDataPlanes_pixelsWide_pixelsHigh_bitsPerSample_samplesPerPixel_hasAlpha_isPlanar_colorSpaceName_bitmapFormat_bytesPerRow_bitsPerPixel(
             this: Option<Allocated<Self>>,
             planes: *mut *mut c_uchar,
@@ -149,25 +149,25 @@ extern_methods!(
             pBits: NSInteger,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithCGImage:)]
+        #[method_id(@__retain_semantics Init initWithCGImage:)]
         pub unsafe fn initWithCGImage(
             this: Option<Allocated<Self>>,
             cgImage: CGImageRef,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCIImage:)]
+        #[method_id(@__retain_semantics Init initWithCIImage:)]
         pub unsafe fn initWithCIImage(
             this: Option<Allocated<Self>>,
             ciImage: &CIImage,
         ) -> Id<Self, Shared>;
 
-        #[method_id(imageRepsWithData:)]
+        #[method_id(@__retain_semantics Other imageRepsWithData:)]
         pub unsafe fn imageRepsWithData(data: &NSData) -> Id<NSArray<NSImageRep>, Shared>;
 
-        #[method_id(imageRepWithData:)]
+        #[method_id(@__retain_semantics Other imageRepWithData:)]
         pub unsafe fn imageRepWithData(data: &NSData) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithData:)]
+        #[method_id(@__retain_semantics Init initWithData:)]
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -210,22 +210,22 @@ extern_methods!(
         #[method(setCompression:factor:)]
         pub unsafe fn setCompression_factor(&self, compression: NSTIFFCompression, factor: c_float);
 
-        #[method_id(TIFFRepresentation)]
+        #[method_id(@__retain_semantics Other TIFFRepresentation)]
         pub unsafe fn TIFFRepresentation(&self) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(TIFFRepresentationUsingCompression:factor:)]
+        #[method_id(@__retain_semantics Other TIFFRepresentationUsingCompression:factor:)]
         pub unsafe fn TIFFRepresentationUsingCompression_factor(
             &self,
             comp: NSTIFFCompression,
             factor: c_float,
         ) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(TIFFRepresentationOfImageRepsInArray:)]
+        #[method_id(@__retain_semantics Other TIFFRepresentationOfImageRepsInArray:)]
         pub unsafe fn TIFFRepresentationOfImageRepsInArray(
             array: &NSArray<NSImageRep>,
         ) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(TIFFRepresentationOfImageRepsInArray:usingCompression:factor:)]
+        #[method_id(@__retain_semantics Other TIFFRepresentationOfImageRepsInArray:usingCompression:factor:)]
         pub unsafe fn TIFFRepresentationOfImageRepsInArray_usingCompression_factor(
             array: &NSArray<NSImageRep>,
             comp: NSTIFFCompression,
@@ -238,7 +238,7 @@ extern_methods!(
             numTypes: NonNull<NSInteger>,
         );
 
-        #[method_id(localizedNameForTIFFCompressionType:)]
+        #[method_id(@__retain_semantics Other localizedNameForTIFFCompressionType:)]
         pub unsafe fn localizedNameForTIFFCompressionType(
             compression: NSTIFFCompression,
         ) -> Option<Id<NSString, Shared>>;
@@ -255,7 +255,7 @@ extern_methods!(
             lightColor: Option<&NSColor>,
         );
 
-        #[method_id(initForIncrementalLoad)]
+        #[method_id(@__retain_semantics Init initForIncrementalLoad)]
         pub unsafe fn initForIncrementalLoad(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(incrementalLoadFromData:complete:)]
@@ -268,7 +268,7 @@ extern_methods!(
         #[method(setColor:atX:y:)]
         pub unsafe fn setColor_atX_y(&self, color: &NSColor, x: NSInteger, y: NSInteger);
 
-        #[method_id(colorAtX:y:)]
+        #[method_id(@__retain_semantics Other colorAtX:y:)]
         pub unsafe fn colorAtX_y(&self, x: NSInteger, y: NSInteger) -> Option<Id<NSColor, Shared>>;
 
         #[method(getPixel:atX:y:)]
@@ -280,17 +280,17 @@ extern_methods!(
         #[method(CGImage)]
         pub unsafe fn CGImage(&self) -> CGImageRef;
 
-        #[method_id(colorSpace)]
+        #[method_id(@__retain_semantics Other colorSpace)]
         pub unsafe fn colorSpace(&self) -> Id<NSColorSpace, Shared>;
 
-        #[method_id(bitmapImageRepByConvertingToColorSpace:renderingIntent:)]
+        #[method_id(@__retain_semantics Other bitmapImageRepByConvertingToColorSpace:renderingIntent:)]
         pub unsafe fn bitmapImageRepByConvertingToColorSpace_renderingIntent(
             &self,
             targetSpace: &NSColorSpace,
             renderingIntent: NSColorRenderingIntent,
         ) -> Option<Id<NSBitmapImageRep, Shared>>;
 
-        #[method_id(bitmapImageRepByRetaggingWithColorSpace:)]
+        #[method_id(@__retain_semantics Other bitmapImageRepByRetaggingWithColorSpace:)]
         pub unsafe fn bitmapImageRepByRetaggingWithColorSpace(
             &self,
             newSpace: &NSColorSpace,
@@ -301,14 +301,14 @@ extern_methods!(
 extern_methods!(
     /// NSBitmapImageFileTypeExtensions
     unsafe impl NSBitmapImageRep {
-        #[method_id(representationOfImageRepsInArray:usingType:properties:)]
+        #[method_id(@__retain_semantics Other representationOfImageRepsInArray:usingType:properties:)]
         pub unsafe fn representationOfImageRepsInArray_usingType_properties(
             imageReps: &NSArray<NSImageRep>,
             storageType: NSBitmapImageFileType,
             properties: &NSDictionary<NSBitmapImageRepPropertyKey, Object>,
         ) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(representationUsingType:properties:)]
+        #[method_id(@__retain_semantics Other representationUsingType:properties:)]
         pub unsafe fn representationUsingType_properties(
             &self,
             storageType: NSBitmapImageFileType,
@@ -322,7 +322,7 @@ extern_methods!(
             value: Option<&Object>,
         );
 
-        #[method_id(valueForProperty:)]
+        #[method_id(@__retain_semantics Other valueForProperty:)]
         pub unsafe fn valueForProperty(
             &self,
             property: &NSBitmapImageRepPropertyKey,

@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSMenuToolbarItem {
-        #[method_id(menu)]
+        #[method_id(@__retain_semantics Other menu)]
         pub unsafe fn menu(&self) -> Id<NSMenu, Shared>;
 
         #[method(setMenu:)]

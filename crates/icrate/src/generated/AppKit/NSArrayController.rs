@@ -27,7 +27,7 @@ extern_methods!(
             automaticallyRearrangesObjects: bool,
         );
 
-        #[method_id(automaticRearrangementKeyPaths)]
+        #[method_id(@__retain_semantics Other automaticRearrangementKeyPaths)]
         pub unsafe fn automaticRearrangementKeyPaths(
             &self,
         ) -> Option<Id<NSArray<NSString>, Shared>>;
@@ -35,13 +35,13 @@ extern_methods!(
         #[method(didChangeArrangementCriteria)]
         pub unsafe fn didChangeArrangementCriteria(&self);
 
-        #[method_id(sortDescriptors)]
+        #[method_id(@__retain_semantics Other sortDescriptors)]
         pub unsafe fn sortDescriptors(&self) -> Id<NSArray<NSSortDescriptor>, Shared>;
 
         #[method(setSortDescriptors:)]
         pub unsafe fn setSortDescriptors(&self, sortDescriptors: &NSArray<NSSortDescriptor>);
 
-        #[method_id(filterPredicate)]
+        #[method_id(@__retain_semantics Other filterPredicate)]
         pub unsafe fn filterPredicate(&self) -> Option<Id<NSPredicate, Shared>>;
 
         #[method(setFilterPredicate:)]
@@ -56,10 +56,10 @@ extern_methods!(
             clearsFilterPredicateOnInsertion: bool,
         );
 
-        #[method_id(arrangeObjects:)]
+        #[method_id(@__retain_semantics Other arrangeObjects:)]
         pub unsafe fn arrangeObjects(&self, objects: &NSArray) -> Id<NSArray, Shared>;
 
-        #[method_id(arrangedObjects)]
+        #[method_id(@__retain_semantics Other arrangedObjects)]
         pub unsafe fn arrangedObjects(&self) -> Id<Object, Shared>;
 
         #[method(avoidsEmptySelection)]
@@ -92,7 +92,7 @@ extern_methods!(
         #[method(setSelectionIndexes:)]
         pub unsafe fn setSelectionIndexes(&self, indexes: &NSIndexSet) -> bool;
 
-        #[method_id(selectionIndexes)]
+        #[method_id(@__retain_semantics Other selectionIndexes)]
         pub unsafe fn selectionIndexes(&self) -> Id<NSIndexSet, Shared>;
 
         #[method(setSelectionIndex:)]
@@ -110,7 +110,7 @@ extern_methods!(
         #[method(setSelectedObjects:)]
         pub unsafe fn setSelectedObjects(&self, objects: &NSArray) -> bool;
 
-        #[method_id(selectedObjects)]
+        #[method_id(@__retain_semantics Other selectedObjects)]
         pub unsafe fn selectedObjects(&self) -> Id<NSArray, Shared>;
 
         #[method(addSelectedObjects:)]

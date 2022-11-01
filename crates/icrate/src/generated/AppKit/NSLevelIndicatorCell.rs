@@ -21,7 +21,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSLevelIndicatorCell {
-        #[method_id(initWithLevelIndicatorStyle:)]
+        #[method_id(@__retain_semantics Init initWithLevelIndicatorStyle:)]
         pub unsafe fn initWithLevelIndicatorStyle(
             this: Option<Allocated<Self>>,
             levelIndicatorStyle: NSLevelIndicatorStyle,

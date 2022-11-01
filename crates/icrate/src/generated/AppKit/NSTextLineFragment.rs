@@ -15,20 +15,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextLineFragment {
-        #[method_id(initWithAttributedString:range:)]
+        #[method_id(@__retain_semantics Init initWithAttributedString:range:)]
         pub unsafe fn initWithAttributedString_range(
             this: Option<Allocated<Self>>,
             attributedString: &NSAttributedString,
             range: NSRange,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             aDecoder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithString:attributes:range:)]
+        #[method_id(@__retain_semantics Init initWithString:attributes:range:)]
         pub unsafe fn initWithString_attributes_range(
             this: Option<Allocated<Self>>,
             string: &NSString,
@@ -36,10 +36,10 @@ extern_methods!(
             range: NSRange,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(attributedString)]
+        #[method_id(@__retain_semantics Other attributedString)]
         pub unsafe fn attributedString(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(characterRange)]

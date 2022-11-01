@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSShadow {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(shadowOffset)]
@@ -30,7 +30,7 @@ extern_methods!(
         #[method(setShadowBlurRadius:)]
         pub unsafe fn setShadowBlurRadius(&self, shadowBlurRadius: CGFloat);
 
-        #[method_id(shadowColor)]
+        #[method_id(@__retain_semantics Other shadowColor)]
         pub unsafe fn shadowColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setShadowColor:)]

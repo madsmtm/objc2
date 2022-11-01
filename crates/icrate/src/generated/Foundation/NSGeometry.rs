@@ -65,16 +65,16 @@ extern "C" {
 extern_methods!(
     /// NSValueGeometryExtensions
     unsafe impl NSValue {
-        #[method_id(valueWithPoint:)]
+        #[method_id(@__retain_semantics Other valueWithPoint:)]
         pub unsafe fn valueWithPoint(point: NSPoint) -> Id<NSValue, Shared>;
 
-        #[method_id(valueWithSize:)]
+        #[method_id(@__retain_semantics Other valueWithSize:)]
         pub unsafe fn valueWithSize(size: NSSize) -> Id<NSValue, Shared>;
 
-        #[method_id(valueWithRect:)]
+        #[method_id(@__retain_semantics Other valueWithRect:)]
         pub unsafe fn valueWithRect(rect: NSRect) -> Id<NSValue, Shared>;
 
-        #[method_id(valueWithEdgeInsets:)]
+        #[method_id(@__retain_semantics Other valueWithEdgeInsets:)]
         pub unsafe fn valueWithEdgeInsets(insets: NSEdgeInsets) -> Id<NSValue, Shared>;
 
         #[method(pointValue)]

@@ -15,25 +15,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPopoverTouchBarItem {
-        #[method_id(popoverTouchBar)]
+        #[method_id(@__retain_semantics Other popoverTouchBar)]
         pub unsafe fn popoverTouchBar(&self) -> Id<NSTouchBar, Shared>;
 
         #[method(setPopoverTouchBar:)]
         pub unsafe fn setPopoverTouchBar(&self, popoverTouchBar: &NSTouchBar);
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]
         pub unsafe fn setCustomizationLabel(&self, customizationLabel: Option<&NSString>);
 
-        #[method_id(collapsedRepresentation)]
+        #[method_id(@__retain_semantics Other collapsedRepresentation)]
         pub unsafe fn collapsedRepresentation(&self) -> Id<NSView, Shared>;
 
         #[method(setCollapsedRepresentation:)]
         pub unsafe fn setCollapsedRepresentation(&self, collapsedRepresentation: &NSView);
 
-        #[method_id(collapsedRepresentationImage)]
+        #[method_id(@__retain_semantics Other collapsedRepresentationImage)]
         pub unsafe fn collapsedRepresentationImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setCollapsedRepresentationImage:)]
@@ -42,7 +42,7 @@ extern_methods!(
             collapsedRepresentationImage: Option<&NSImage>,
         );
 
-        #[method_id(collapsedRepresentationLabel)]
+        #[method_id(@__retain_semantics Other collapsedRepresentationLabel)]
         pub unsafe fn collapsedRepresentationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCollapsedRepresentationLabel:)]
@@ -51,7 +51,7 @@ extern_methods!(
             collapsedRepresentationLabel: &NSString,
         );
 
-        #[method_id(pressAndHoldTouchBar)]
+        #[method_id(@__retain_semantics Other pressAndHoldTouchBar)]
         pub unsafe fn pressAndHoldTouchBar(&self) -> Option<Id<NSTouchBar, Shared>>;
 
         #[method(setPressAndHoldTouchBar:)]
@@ -69,7 +69,7 @@ extern_methods!(
         #[method(dismissPopover:)]
         pub unsafe fn dismissPopover(&self, sender: Option<&Object>);
 
-        #[method_id(makeStandardActivatePopoverGestureRecognizer)]
+        #[method_id(@__retain_semantics Other makeStandardActivatePopoverGestureRecognizer)]
         pub unsafe fn makeStandardActivatePopoverGestureRecognizer(
             &self,
         ) -> Id<NSGestureRecognizer, Shared>;

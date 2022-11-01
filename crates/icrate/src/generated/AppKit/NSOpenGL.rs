@@ -68,25 +68,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOpenGLPixelFormat {
-        #[method_id(initWithCGLPixelFormatObj:)]
+        #[method_id(@__retain_semantics Init initWithCGLPixelFormatObj:)]
         pub unsafe fn initWithCGLPixelFormatObj(
             this: Option<Allocated<Self>>,
             format: CGLPixelFormatObj,
         ) -> Option<Id<NSOpenGLPixelFormat, Shared>>;
 
-        #[method_id(initWithAttributes:)]
+        #[method_id(@__retain_semantics Init initWithAttributes:)]
         pub unsafe fn initWithAttributes(
             this: Option<Allocated<Self>>,
             attribs: NonNull<NSOpenGLPixelFormatAttribute>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithData:)]
+        #[method_id(@__retain_semantics Init initWithData:)]
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             attribs: Option<&NSData>,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(attributes)]
+        #[method_id(@__retain_semantics Other attributes)]
         pub unsafe fn attributes(&self) -> Option<Id<NSData, Shared>>;
 
         #[method(setAttributes:)]
@@ -119,7 +119,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOpenGLPixelBuffer {
-        #[method_id(initWithTextureTarget:textureInternalFormat:textureMaxMipMapLevel:pixelsWide:pixelsHigh:)]
+        #[method_id(@__retain_semantics Init initWithTextureTarget:textureInternalFormat:textureMaxMipMapLevel:pixelsWide:pixelsHigh:)]
         pub unsafe fn initWithTextureTarget_textureInternalFormat_textureMaxMipMapLevel_pixelsWide_pixelsHigh(
             this: Option<Allocated<Self>>,
             target: GLenum,
@@ -129,7 +129,7 @@ extern_methods!(
             pixelsHigh: GLsizei,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithCGLPBufferObj:)]
+        #[method_id(@__retain_semantics Init initWithCGLPBufferObj:)]
         pub unsafe fn initWithCGLPBufferObj(
             this: Option<Allocated<Self>>,
             pbuffer: CGLPBufferObj,
@@ -183,23 +183,23 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOpenGLContext {
-        #[method_id(initWithFormat:shareContext:)]
+        #[method_id(@__retain_semantics Init initWithFormat:shareContext:)]
         pub unsafe fn initWithFormat_shareContext(
             this: Option<Allocated<Self>>,
             format: &NSOpenGLPixelFormat,
             share: Option<&NSOpenGLContext>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithCGLContextObj:)]
+        #[method_id(@__retain_semantics Init initWithCGLContextObj:)]
         pub unsafe fn initWithCGLContextObj(
             this: Option<Allocated<Self>>,
             context: CGLContextObj,
         ) -> Option<Id<NSOpenGLContext, Shared>>;
 
-        #[method_id(pixelFormat)]
+        #[method_id(@__retain_semantics Other pixelFormat)]
         pub unsafe fn pixelFormat(&self) -> Id<NSOpenGLPixelFormat, Shared>;
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setView:)]
@@ -232,7 +232,7 @@ extern_methods!(
         #[method(clearCurrentContext)]
         pub unsafe fn clearCurrentContext();
 
-        #[method_id(currentContext)]
+        #[method_id(@__retain_semantics Other currentContext)]
         pub unsafe fn currentContext() -> Option<Id<NSOpenGLContext, Shared>>;
 
         #[method(copyAttributesFromContext:withMask:)]
@@ -287,7 +287,7 @@ extern_methods!(
             screen: GLint,
         );
 
-        #[method_id(pixelBuffer)]
+        #[method_id(@__retain_semantics Other pixelBuffer)]
         pub unsafe fn pixelBuffer(&self) -> Option<Id<NSOpenGLPixelBuffer, Shared>>;
 
         #[method(pixelBufferCubeMapFace)]

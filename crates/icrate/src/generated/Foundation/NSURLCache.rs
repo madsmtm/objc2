@@ -19,14 +19,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCachedURLResponse {
-        #[method_id(initWithResponse:data:)]
+        #[method_id(@__retain_semantics Init initWithResponse:data:)]
         pub unsafe fn initWithResponse_data(
             this: Option<Allocated<Self>>,
             response: &NSURLResponse,
             data: &NSData,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithResponse:data:userInfo:storagePolicy:)]
+        #[method_id(@__retain_semantics Init initWithResponse:data:userInfo:storagePolicy:)]
         pub unsafe fn initWithResponse_data_userInfo_storagePolicy(
             this: Option<Allocated<Self>>,
             response: &NSURLResponse,
@@ -35,13 +35,13 @@ extern_methods!(
             storagePolicy: NSURLCacheStoragePolicy,
         ) -> Id<Self, Shared>;
 
-        #[method_id(response)]
+        #[method_id(@__retain_semantics Other response)]
         pub unsafe fn response(&self) -> Id<NSURLResponse, Shared>;
 
-        #[method_id(data)]
+        #[method_id(@__retain_semantics Other data)]
         pub unsafe fn data(&self) -> Id<NSData, Shared>;
 
-        #[method_id(userInfo)]
+        #[method_id(@__retain_semantics Other userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>>;
 
         #[method(storagePolicy)]
@@ -60,13 +60,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSURLCache {
-        #[method_id(sharedURLCache)]
+        #[method_id(@__retain_semantics Other sharedURLCache)]
         pub unsafe fn sharedURLCache() -> Id<NSURLCache, Shared>;
 
         #[method(setSharedURLCache:)]
         pub unsafe fn setSharedURLCache(sharedURLCache: &NSURLCache);
 
-        #[method_id(initWithMemoryCapacity:diskCapacity:diskPath:)]
+        #[method_id(@__retain_semantics Init initWithMemoryCapacity:diskCapacity:diskPath:)]
         pub unsafe fn initWithMemoryCapacity_diskCapacity_diskPath(
             this: Option<Allocated<Self>>,
             memoryCapacity: NSUInteger,
@@ -74,7 +74,7 @@ extern_methods!(
             path: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithMemoryCapacity:diskCapacity:directoryURL:)]
+        #[method_id(@__retain_semantics Init initWithMemoryCapacity:diskCapacity:directoryURL:)]
         pub unsafe fn initWithMemoryCapacity_diskCapacity_directoryURL(
             this: Option<Allocated<Self>>,
             memoryCapacity: NSUInteger,
@@ -82,7 +82,7 @@ extern_methods!(
             directoryURL: Option<&NSURL>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(cachedResponseForRequest:)]
+        #[method_id(@__retain_semantics Other cachedResponseForRequest:)]
         pub unsafe fn cachedResponseForRequest(
             &self,
             request: &NSURLRequest,

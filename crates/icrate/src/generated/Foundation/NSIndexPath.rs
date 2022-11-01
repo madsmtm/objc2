@@ -14,32 +14,32 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSIndexPath {
-        #[method_id(indexPathWithIndex:)]
+        #[method_id(@__retain_semantics Other indexPathWithIndex:)]
         pub unsafe fn indexPathWithIndex(index: NSUInteger) -> Id<Self, Shared>;
 
-        #[method_id(indexPathWithIndexes:length:)]
+        #[method_id(@__retain_semantics Other indexPathWithIndexes:length:)]
         pub unsafe fn indexPathWithIndexes_length(
             indexes: TodoArray,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithIndexes:length:)]
+        #[method_id(@__retain_semantics Init initWithIndexes:length:)]
         pub unsafe fn initWithIndexes_length(
             this: Option<Allocated<Self>>,
             indexes: TodoArray,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithIndex:)]
+        #[method_id(@__retain_semantics Init initWithIndex:)]
         pub unsafe fn initWithIndex(
             this: Option<Allocated<Self>>,
             index: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(indexPathByAddingIndex:)]
+        #[method_id(@__retain_semantics Other indexPathByAddingIndex:)]
         pub unsafe fn indexPathByAddingIndex(&self, index: NSUInteger) -> Id<NSIndexPath, Shared>;
 
-        #[method_id(indexPathByRemovingLastIndex)]
+        #[method_id(@__retain_semantics Other indexPathByRemovingLastIndex)]
         pub unsafe fn indexPathByRemovingLastIndex(&self) -> Id<NSIndexPath, Shared>;
 
         #[method(indexAtPosition:)]

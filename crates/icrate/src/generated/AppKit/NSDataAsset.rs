@@ -17,29 +17,29 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDataAsset {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithName:)]
+        #[method_id(@__retain_semantics Init initWithName:)]
         pub unsafe fn initWithName(
             this: Option<Allocated<Self>>,
             name: &NSDataAssetName,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithName:bundle:)]
+        #[method_id(@__retain_semantics Init initWithName:bundle:)]
         pub unsafe fn initWithName_bundle(
             this: Option<Allocated<Self>>,
             name: &NSDataAssetName,
             bundle: &NSBundle,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Id<NSDataAssetName, Shared>;
 
-        #[method_id(data)]
+        #[method_id(@__retain_semantics Other data)]
         pub unsafe fn data(&self) -> Id<NSData, Shared>;
 
-        #[method_id(typeIdentifier)]
+        #[method_id(@__retain_semantics Other typeIdentifier)]
         pub unsafe fn typeIdentifier(&self) -> Id<NSString, Shared>;
     }
 );

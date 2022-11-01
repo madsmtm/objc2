@@ -1079,6 +1079,20 @@ macro_rules! msg_send_id {
         result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
+    [$obj:expr, @__retain_semantics $retain_semantics:ident $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            ($crate::__msg_send_id_helper)
+            @(send_message_id_error)
+            @()
+            @()
+            @($($selector_and_arguments)+)
+            @(send_message_id)
+
+            @($obj)
+            @($retain_semantics)
+        }
+        // compile_error!(stringify!($($selector_and_arguments)*))
+    };
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
             ($crate::__msg_send_id_helper)
@@ -1089,6 +1103,7 @@ macro_rules! msg_send_id {
             @(send_message_id)
 
             @($obj)
+            @()
         }
     };
 }
@@ -1100,6 +1115,7 @@ macro_rules! __msg_send_id_helper {
     {
         @($fn:ident)
         @($obj:expr)
+        @($($retain_semantics:ident)?)
         @(retain)
         @()
     } => {{
@@ -1110,6 +1126,7 @@ macro_rules! __msg_send_id_helper {
     {
         @($fn:ident)
         @($obj:expr)
+        @($($retain_semantics:ident)?)
         @(release)
         @()
     } => {{
@@ -1120,6 +1137,7 @@ macro_rules! __msg_send_id_helper {
     {
         @($fn:ident)
         @($obj:expr)
+        @($($retain_semantics:ident)?)
         @(autorelease)
         @()
     } => {{
@@ -1130,6 +1148,7 @@ macro_rules! __msg_send_id_helper {
     {
         @($fn:ident)
         @($obj:expr)
+        @($($retain_semantics:ident)?)
         @(dealloc)
         @()
     } => {{
@@ -1140,6 +1159,20 @@ macro_rules! __msg_send_id_helper {
     {
         @($fn:ident)
         @($obj:expr)
+        @($retain_semantics:ident)
+        @($sel_first:ident $(: $($sel_rest:ident :)*)?)
+        @($($argument:expr,)*)
+    } => ({
+        <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
+            $obj,
+            $crate::sel!($sel_first $(: $($sel_rest :)*)?),
+            ($($argument,)*),
+        )
+    });
+    {
+        @($fn:ident)
+        @($obj:expr)
+        @()
         @($sel_first:ident $(: $($sel_rest:ident :)*)?)
         @($($argument:expr,)*)
     } => ({

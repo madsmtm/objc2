@@ -14,10 +14,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUbiquitousKeyValueStore {
-        #[method_id(defaultStore)]
+        #[method_id(@__retain_semantics Other defaultStore)]
         pub unsafe fn defaultStore() -> Id<NSUbiquitousKeyValueStore, Shared>;
 
-        #[method_id(objectForKey:)]
+        #[method_id(@__retain_semantics Other objectForKey:)]
         pub unsafe fn objectForKey(&self, aKey: &NSString) -> Option<Id<Object, Shared>>;
 
         #[method(setObject:forKey:)]
@@ -26,19 +26,19 @@ extern_methods!(
         #[method(removeObjectForKey:)]
         pub unsafe fn removeObjectForKey(&self, aKey: &NSString);
 
-        #[method_id(stringForKey:)]
+        #[method_id(@__retain_semantics Other stringForKey:)]
         pub unsafe fn stringForKey(&self, aKey: &NSString) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(arrayForKey:)]
+        #[method_id(@__retain_semantics Other arrayForKey:)]
         pub unsafe fn arrayForKey(&self, aKey: &NSString) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(dictionaryForKey:)]
+        #[method_id(@__retain_semantics Other dictionaryForKey:)]
         pub unsafe fn dictionaryForKey(
             &self,
             aKey: &NSString,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
 
-        #[method_id(dataForKey:)]
+        #[method_id(@__retain_semantics Other dataForKey:)]
         pub unsafe fn dataForKey(&self, aKey: &NSString) -> Option<Id<NSData, Shared>>;
 
         #[method(longLongForKey:)]
@@ -75,7 +75,7 @@ extern_methods!(
         #[method(setBool:forKey:)]
         pub unsafe fn setBool_forKey(&self, value: bool, aKey: &NSString);
 
-        #[method_id(dictionaryRepresentation)]
+        #[method_id(@__retain_semantics Other dictionaryRepresentation)]
         pub unsafe fn dictionaryRepresentation(&self)
             -> Id<NSDictionary<NSString, Object>, Shared>;
 

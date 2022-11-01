@@ -18,7 +18,7 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<ObjectType: Message> NSEnumerator<ObjectType> {
-        #[method_id(nextObject)]
+        #[method_id(@__retain_semantics Other nextObject)]
         pub unsafe fn nextObject(&self) -> Option<Id<ObjectType, Shared>>;
     }
 );
@@ -26,7 +26,7 @@ extern_methods!(
 extern_methods!(
     /// NSExtendedEnumerator
     unsafe impl<ObjectType: Message> NSEnumerator<ObjectType> {
-        #[method_id(allObjects)]
+        #[method_id(@__retain_semantics Other allObjects)]
         pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared>;
     }
 );

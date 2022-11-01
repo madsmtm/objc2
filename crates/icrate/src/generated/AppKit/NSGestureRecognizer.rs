@@ -25,20 +25,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGestureRecognizer {
-        #[method_id(initWithTarget:action:)]
+        #[method_id(@__retain_semantics Init initWithTarget:action:)]
         pub unsafe fn initWithTarget_action(
             this: Option<Allocated<Self>>,
             target: Option<&Object>,
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -53,7 +53,7 @@ extern_methods!(
         #[method(state)]
         pub unsafe fn state(&self) -> NSGestureRecognizerState;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSGestureRecognizerDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -65,10 +65,10 @@ extern_methods!(
         #[method(setEnabled:)]
         pub unsafe fn setEnabled(&self, enabled: bool);
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
-        #[method_id(pressureConfiguration)]
+        #[method_id(@__retain_semantics Other pressureConfiguration)]
         pub unsafe fn pressureConfiguration(&self) -> Id<NSPressureConfiguration, Shared>;
 
         #[method(setPressureConfiguration:)]

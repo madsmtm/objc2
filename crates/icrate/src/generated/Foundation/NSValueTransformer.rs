@@ -46,12 +46,12 @@ extern_methods!(
             name: &NSValueTransformerName,
         );
 
-        #[method_id(valueTransformerForName:)]
+        #[method_id(@__retain_semantics Other valueTransformerForName:)]
         pub unsafe fn valueTransformerForName(
             name: &NSValueTransformerName,
         ) -> Option<Id<NSValueTransformer, Shared>>;
 
-        #[method_id(valueTransformerNames)]
+        #[method_id(@__retain_semantics Other valueTransformerNames)]
         pub unsafe fn valueTransformerNames() -> Id<NSArray<NSValueTransformerName>, Shared>;
 
         #[method(transformedValueClass)]
@@ -60,11 +60,11 @@ extern_methods!(
         #[method(allowsReverseTransformation)]
         pub unsafe fn allowsReverseTransformation() -> bool;
 
-        #[method_id(transformedValue:)]
+        #[method_id(@__retain_semantics Other transformedValue:)]
         pub unsafe fn transformedValue(&self, value: Option<&Object>)
             -> Option<Id<Object, Shared>>;
 
-        #[method_id(reverseTransformedValue:)]
+        #[method_id(@__retain_semantics Other reverseTransformedValue:)]
         pub unsafe fn reverseTransformedValue(
             &self,
             value: Option<&Object>,
@@ -83,7 +83,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSecureUnarchiveFromDataTransformer {
-        #[method_id(allowedTopLevelClasses)]
+        #[method_id(@__retain_semantics Other allowedTopLevelClasses)]
         pub unsafe fn allowedTopLevelClasses() -> Id<NSArray<TodoClass>, Shared>;
     }
 );

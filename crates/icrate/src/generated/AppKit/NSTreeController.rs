@@ -18,34 +18,34 @@ extern_methods!(
         #[method(rearrangeObjects)]
         pub unsafe fn rearrangeObjects(&self);
 
-        #[method_id(arrangedObjects)]
+        #[method_id(@__retain_semantics Other arrangedObjects)]
         pub unsafe fn arrangedObjects(&self) -> Id<NSTreeNode, Shared>;
 
-        #[method_id(childrenKeyPath)]
+        #[method_id(@__retain_semantics Other childrenKeyPath)]
         pub unsafe fn childrenKeyPath(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setChildrenKeyPath:)]
         pub unsafe fn setChildrenKeyPath(&self, childrenKeyPath: Option<&NSString>);
 
-        #[method_id(countKeyPath)]
+        #[method_id(@__retain_semantics Other countKeyPath)]
         pub unsafe fn countKeyPath(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setCountKeyPath:)]
         pub unsafe fn setCountKeyPath(&self, countKeyPath: Option<&NSString>);
 
-        #[method_id(leafKeyPath)]
+        #[method_id(@__retain_semantics Other leafKeyPath)]
         pub unsafe fn leafKeyPath(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setLeafKeyPath:)]
         pub unsafe fn setLeafKeyPath(&self, leafKeyPath: Option<&NSString>);
 
-        #[method_id(sortDescriptors)]
+        #[method_id(@__retain_semantics Other sortDescriptors)]
         pub unsafe fn sortDescriptors(&self) -> Id<NSArray<NSSortDescriptor>, Shared>;
 
         #[method(setSortDescriptors:)]
         pub unsafe fn setSortDescriptors(&self, sortDescriptors: &NSArray<NSSortDescriptor>);
 
-        #[method_id(content)]
+        #[method_id(@__retain_semantics Other content)]
         pub unsafe fn content(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setContent:)]
@@ -125,19 +125,19 @@ extern_methods!(
             alwaysUsesMultipleValuesMarker: bool,
         );
 
-        #[method_id(selectedObjects)]
+        #[method_id(@__retain_semantics Other selectedObjects)]
         pub unsafe fn selectedObjects(&self) -> Id<NSArray, Shared>;
 
         #[method(setSelectionIndexPaths:)]
         pub unsafe fn setSelectionIndexPaths(&self, indexPaths: &NSArray<NSIndexPath>) -> bool;
 
-        #[method_id(selectionIndexPaths)]
+        #[method_id(@__retain_semantics Other selectionIndexPaths)]
         pub unsafe fn selectionIndexPaths(&self) -> Id<NSArray<NSIndexPath>, Shared>;
 
         #[method(setSelectionIndexPath:)]
         pub unsafe fn setSelectionIndexPath(&self, indexPath: Option<&NSIndexPath>) -> bool;
 
-        #[method_id(selectionIndexPath)]
+        #[method_id(@__retain_semantics Other selectionIndexPath)]
         pub unsafe fn selectionIndexPath(&self) -> Option<Id<NSIndexPath, Shared>>;
 
         #[method(addSelectionIndexPaths:)]
@@ -146,7 +146,7 @@ extern_methods!(
         #[method(removeSelectionIndexPaths:)]
         pub unsafe fn removeSelectionIndexPaths(&self, indexPaths: &NSArray<NSIndexPath>) -> bool;
 
-        #[method_id(selectedNodes)]
+        #[method_id(@__retain_semantics Other selectedNodes)]
         pub unsafe fn selectedNodes(&self) -> Id<NSArray<NSTreeNode>, Shared>;
 
         #[method(moveNode:toIndexPath:)]
@@ -159,17 +159,17 @@ extern_methods!(
             startingIndexPath: &NSIndexPath,
         );
 
-        #[method_id(childrenKeyPathForNode:)]
+        #[method_id(@__retain_semantics Other childrenKeyPathForNode:)]
         pub unsafe fn childrenKeyPathForNode(
             &self,
             node: &NSTreeNode,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(countKeyPathForNode:)]
+        #[method_id(@__retain_semantics Other countKeyPathForNode:)]
         pub unsafe fn countKeyPathForNode(&self, node: &NSTreeNode)
             -> Option<Id<NSString, Shared>>;
 
-        #[method_id(leafKeyPathForNode:)]
+        #[method_id(@__retain_semantics Other leafKeyPathForNode:)]
         pub unsafe fn leafKeyPathForNode(&self, node: &NSTreeNode) -> Option<Id<NSString, Shared>>;
     }
 );

@@ -52,7 +52,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPrintPanel {
-        #[method_id(printPanel)]
+        #[method_id(@__retain_semantics Other printPanel)]
         pub unsafe fn printPanel() -> Id<NSPrintPanel, Shared>;
 
         #[method(addAccessoryController:)]
@@ -61,7 +61,7 @@ extern_methods!(
         #[method(removeAccessoryController:)]
         pub unsafe fn removeAccessoryController(&self, accessoryController: &TodoProtocols);
 
-        #[method_id(accessoryControllers)]
+        #[method_id(@__retain_semantics Other accessoryControllers)]
         pub unsafe fn accessoryControllers(&self) -> Id<NSArray<NSViewController>, Shared>;
 
         #[method(options)]
@@ -73,16 +73,16 @@ extern_methods!(
         #[method(setDefaultButtonTitle:)]
         pub unsafe fn setDefaultButtonTitle(&self, defaultButtonTitle: Option<&NSString>);
 
-        #[method_id(defaultButtonTitle)]
+        #[method_id(@__retain_semantics Other defaultButtonTitle)]
         pub unsafe fn defaultButtonTitle(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(helpAnchor)]
+        #[method_id(@__retain_semantics Other helpAnchor)]
         pub unsafe fn helpAnchor(&self) -> Option<Id<NSHelpAnchorName, Shared>>;
 
         #[method(setHelpAnchor:)]
         pub unsafe fn setHelpAnchor(&self, helpAnchor: Option<&NSHelpAnchorName>);
 
-        #[method_id(jobStyleHint)]
+        #[method_id(@__retain_semantics Other jobStyleHint)]
         pub unsafe fn jobStyleHint(&self) -> Option<Id<NSPrintPanelJobStyleHint, Shared>>;
 
         #[method(setJobStyleHint:)]
@@ -104,7 +104,7 @@ extern_methods!(
         #[method(runModal)]
         pub unsafe fn runModal(&self) -> NSInteger;
 
-        #[method_id(printInfo)]
+        #[method_id(@__retain_semantics Other printInfo)]
         pub unsafe fn printInfo(&self) -> Id<NSPrintInfo, Shared>;
     }
 );
@@ -115,7 +115,7 @@ extern_methods!(
         #[method(setAccessoryView:)]
         pub unsafe fn setAccessoryView(&self, accessoryView: Option<&NSView>);
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(updateFromPrintInfo)]

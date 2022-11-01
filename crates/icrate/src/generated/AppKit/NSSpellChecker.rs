@@ -70,7 +70,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSpellChecker {
-        #[method_id(sharedSpellChecker)]
+        #[method_id(@__retain_semantics Other sharedSpellChecker)]
         pub unsafe fn sharedSpellChecker() -> Id<NSSpellChecker, Shared>;
 
         #[method(sharedSpellCheckerExists)]
@@ -115,7 +115,7 @@ extern_methods!(
             details: Option<&mut Option<Id<NSArray<NSDictionary<NSString, Object>>, Shared>>>,
         ) -> NSRange;
 
-        #[method_id(checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:)]
+        #[method_id(@__retain_semantics Other checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:)]
         pub unsafe fn checkString_range_types_options_inSpellDocumentWithTag_orthography_wordCount(
             &self,
             stringToCheck: &NSString,
@@ -149,7 +149,7 @@ extern_methods!(
             completionHandler: TodoBlock,
         ) -> NSInteger;
 
-        #[method_id(menuForResult:string:options:atLocation:inView:)]
+        #[method_id(@__retain_semantics Other menuForResult:string:options:atLocation:inView:)]
         pub unsafe fn menuForResult_string_options_atLocation_inView(
             &self,
             result: &NSTextCheckingResult,
@@ -159,13 +159,13 @@ extern_methods!(
             view: &NSView,
         ) -> Option<Id<NSMenu, Shared>>;
 
-        #[method_id(userQuotesArrayForLanguage:)]
+        #[method_id(@__retain_semantics Other userQuotesArrayForLanguage:)]
         pub unsafe fn userQuotesArrayForLanguage(
             &self,
             language: &NSString,
         ) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(userReplacementsDictionary)]
+        #[method_id(@__retain_semantics Other userReplacementsDictionary)]
         pub unsafe fn userReplacementsDictionary(
             &self,
         ) -> Id<NSDictionary<NSString, NSString>, Shared>;
@@ -180,19 +180,19 @@ extern_methods!(
             detail: &NSDictionary<NSString, Object>,
         );
 
-        #[method_id(spellingPanel)]
+        #[method_id(@__retain_semantics Other spellingPanel)]
         pub unsafe fn spellingPanel(&self) -> Id<NSPanel, Shared>;
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setAccessoryView:)]
         pub unsafe fn setAccessoryView(&self, accessoryView: Option<&NSView>);
 
-        #[method_id(substitutionsPanel)]
+        #[method_id(@__retain_semantics Other substitutionsPanel)]
         pub unsafe fn substitutionsPanel(&self) -> Id<NSPanel, Shared>;
 
-        #[method_id(substitutionsPanelAccessoryViewController)]
+        #[method_id(@__retain_semantics Other substitutionsPanelAccessoryViewController)]
         pub unsafe fn substitutionsPanelAccessoryViewController(
             &self,
         ) -> Option<Id<NSViewController, Shared>>;
@@ -213,7 +213,7 @@ extern_methods!(
             tag: NSInteger,
         );
 
-        #[method_id(ignoredWordsInSpellDocumentWithTag:)]
+        #[method_id(@__retain_semantics Other ignoredWordsInSpellDocumentWithTag:)]
         pub unsafe fn ignoredWordsInSpellDocumentWithTag(
             &self,
             tag: NSInteger,
@@ -226,7 +226,7 @@ extern_methods!(
             tag: NSInteger,
         );
 
-        #[method_id(guessesForWordRange:inString:language:inSpellDocumentWithTag:)]
+        #[method_id(@__retain_semantics Other guessesForWordRange:inString:language:inSpellDocumentWithTag:)]
         pub unsafe fn guessesForWordRange_inString_language_inSpellDocumentWithTag(
             &self,
             range: NSRange,
@@ -235,7 +235,7 @@ extern_methods!(
             tag: NSInteger,
         ) -> Option<Id<NSArray<NSString>, Shared>>;
 
-        #[method_id(correctionForWordRange:inString:language:inSpellDocumentWithTag:)]
+        #[method_id(@__retain_semantics Other correctionForWordRange:inString:language:inSpellDocumentWithTag:)]
         pub unsafe fn correctionForWordRange_inString_language_inSpellDocumentWithTag(
             &self,
             range: NSRange,
@@ -244,7 +244,7 @@ extern_methods!(
             tag: NSInteger,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(completionsForPartialWordRange:inString:language:inSpellDocumentWithTag:)]
+        #[method_id(@__retain_semantics Other completionsForPartialWordRange:inString:language:inSpellDocumentWithTag:)]
         pub unsafe fn completionsForPartialWordRange_inString_language_inSpellDocumentWithTag(
             &self,
             range: NSRange,
@@ -253,7 +253,7 @@ extern_methods!(
             tag: NSInteger,
         ) -> Option<Id<NSArray<NSString>, Shared>>;
 
-        #[method_id(languageForWordRange:inString:orthography:)]
+        #[method_id(@__retain_semantics Other languageForWordRange:inString:orthography:)]
         pub unsafe fn languageForWordRange_inString_orthography(
             &self,
             range: NSRange,
@@ -303,10 +303,10 @@ extern_methods!(
             language: Option<&NSString>,
         ) -> bool;
 
-        #[method_id(availableLanguages)]
+        #[method_id(@__retain_semantics Other availableLanguages)]
         pub unsafe fn availableLanguages(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(userPreferredLanguages)]
+        #[method_id(@__retain_semantics Other userPreferredLanguages)]
         pub unsafe fn userPreferredLanguages(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(automaticallyIdentifiesLanguages)]
@@ -351,7 +351,7 @@ extern_methods!(
         #[method(isAutomaticTextCompletionEnabled)]
         pub unsafe fn isAutomaticTextCompletionEnabled() -> bool;
 
-        #[method_id(language)]
+        #[method_id(@__retain_semantics Other language)]
         pub unsafe fn language(&self) -> Id<NSString, Shared>;
 
         #[method(setLanguage:)]
@@ -397,7 +397,7 @@ extern "C" {
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSSpellChecker {
-        #[method_id(guessesForWord:)]
+        #[method_id(@__retain_semantics Other guessesForWord:)]
         pub unsafe fn guessesForWord(&self, word: Option<&NSString>)
             -> Option<Id<NSArray, Shared>>;
 

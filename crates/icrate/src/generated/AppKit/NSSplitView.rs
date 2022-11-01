@@ -34,13 +34,13 @@ extern_methods!(
         #[method(setDividerStyle:)]
         pub unsafe fn setDividerStyle(&self, dividerStyle: NSSplitViewDividerStyle);
 
-        #[method_id(autosaveName)]
+        #[method_id(@__retain_semantics Other autosaveName)]
         pub unsafe fn autosaveName(&self) -> Option<Id<NSSplitViewAutosaveName, Shared>>;
 
         #[method(setAutosaveName:)]
         pub unsafe fn setAutosaveName(&self, autosaveName: Option<&NSSplitViewAutosaveName>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSSplitViewDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -49,7 +49,7 @@ extern_methods!(
         #[method(drawDividerInRect:)]
         pub unsafe fn drawDividerInRect(&self, rect: NSRect);
 
-        #[method_id(dividerColor)]
+        #[method_id(@__retain_semantics Other dividerColor)]
         pub unsafe fn dividerColor(&self) -> Id<NSColor, Shared>;
 
         #[method(dividerThickness)]
@@ -104,7 +104,7 @@ extern_methods!(
         #[method(setArrangesAllSubviews:)]
         pub unsafe fn setArrangesAllSubviews(&self, arrangesAllSubviews: bool);
 
-        #[method_id(arrangedSubviews)]
+        #[method_id(@__retain_semantics Other arrangedSubviews)]
         pub unsafe fn arrangedSubviews(&self) -> Id<NSArray<NSView>, Shared>;
 
         #[method(addArrangedSubview:)]

@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSClipView {
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
@@ -27,7 +27,7 @@ extern_methods!(
         #[method(setDrawsBackground:)]
         pub unsafe fn setDrawsBackground(&self, drawsBackground: bool);
 
-        #[method_id(documentView)]
+        #[method_id(@__retain_semantics Other documentView)]
         pub unsafe fn documentView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setDocumentView:)]
@@ -36,7 +36,7 @@ extern_methods!(
         #[method(documentRect)]
         pub unsafe fn documentRect(&self) -> NSRect;
 
-        #[method_id(documentCursor)]
+        #[method_id(@__retain_semantics Other documentCursor)]
         pub unsafe fn documentCursor(&self) -> Option<Id<NSCursor, Shared>>;
 
         #[method(setDocumentCursor:)]

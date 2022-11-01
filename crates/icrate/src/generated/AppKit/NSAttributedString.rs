@@ -434,7 +434,7 @@ extern "C" {
 extern_methods!(
     /// NSAttributedStringDocumentFormats
     unsafe impl NSAttributedString {
-        #[method_id(initWithURL:options:documentAttributes:error:)]
+        #[method_id(@__retain_semantics Init initWithURL:options:documentAttributes:error:)]
         pub unsafe fn initWithURL_options_documentAttributes_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,
@@ -446,7 +446,7 @@ extern_methods!(
             >,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithData:options:documentAttributes:error:)]
+        #[method_id(@__retain_semantics Init initWithData:options:documentAttributes:error:)]
         pub unsafe fn initWithData_options_documentAttributes_error(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -458,21 +458,21 @@ extern_methods!(
             >,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(dataFromRange:documentAttributes:error:)]
+        #[method_id(@__retain_semantics Other dataFromRange:documentAttributes:error:)]
         pub unsafe fn dataFromRange_documentAttributes_error(
             &self,
             range: NSRange,
             dict: &NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(fileWrapperFromRange:documentAttributes:error:)]
+        #[method_id(@__retain_semantics Other fileWrapperFromRange:documentAttributes:error:)]
         pub unsafe fn fileWrapperFromRange_documentAttributes_error(
             &self,
             range: NSRange,
             dict: &NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Result<Id<NSFileWrapper, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initWithRTF:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithRTF:documentAttributes:)]
         pub unsafe fn initWithRTF_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -483,7 +483,7 @@ extern_methods!(
             >,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithRTFD:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithRTFD:documentAttributes:)]
         pub unsafe fn initWithRTFD_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -494,7 +494,7 @@ extern_methods!(
             >,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithHTML:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithHTML:documentAttributes:)]
         pub unsafe fn initWithHTML_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -505,7 +505,7 @@ extern_methods!(
             >,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithHTML:baseURL:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithHTML:baseURL:documentAttributes:)]
         pub unsafe fn initWithHTML_baseURL_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -517,7 +517,7 @@ extern_methods!(
             >,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithDocFormat:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithDocFormat:documentAttributes:)]
         pub unsafe fn initWithDocFormat_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -528,7 +528,7 @@ extern_methods!(
             >,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithHTML:options:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithHTML:options:documentAttributes:)]
         pub unsafe fn initWithHTML_options_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
@@ -540,7 +540,7 @@ extern_methods!(
             >,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithRTFDFileWrapper:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithRTFDFileWrapper:documentAttributes:)]
         pub unsafe fn initWithRTFDFileWrapper_documentAttributes(
             this: Option<Allocated<Self>>,
             wrapper: &NSFileWrapper,
@@ -551,28 +551,28 @@ extern_methods!(
             >,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(RTFFromRange:documentAttributes:)]
+        #[method_id(@__retain_semantics Other RTFFromRange:documentAttributes:)]
         pub unsafe fn RTFFromRange_documentAttributes(
             &self,
             range: NSRange,
             dict: &NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(RTFDFromRange:documentAttributes:)]
+        #[method_id(@__retain_semantics Other RTFDFromRange:documentAttributes:)]
         pub unsafe fn RTFDFromRange_documentAttributes(
             &self,
             range: NSRange,
             dict: &NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(RTFDFileWrapperFromRange:documentAttributes:)]
+        #[method_id(@__retain_semantics Other RTFDFileWrapperFromRange:documentAttributes:)]
         pub unsafe fn RTFDFileWrapperFromRange_documentAttributes(
             &self,
             range: NSRange,
             dict: &NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<NSFileWrapper, Shared>>;
 
-        #[method_id(docFormatFromRange:documentAttributes:)]
+        #[method_id(@__retain_semantics Other docFormatFromRange:documentAttributes:)]
         pub unsafe fn docFormatFromRange_documentAttributes(
             &self,
             range: NSRange,
@@ -613,13 +613,13 @@ extern_methods!(
 extern_methods!(
     /// NSAttributedStringKitAdditions
     unsafe impl NSAttributedString {
-        #[method_id(fontAttributesInRange:)]
+        #[method_id(@__retain_semantics Other fontAttributesInRange:)]
         pub unsafe fn fontAttributesInRange(
             &self,
             range: NSRange,
         ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared>;
 
-        #[method_id(rulerAttributesInRange:)]
+        #[method_id(@__retain_semantics Other rulerAttributesInRange:)]
         pub unsafe fn rulerAttributesInRange(
             &self,
             range: NSRange,
@@ -685,10 +685,10 @@ extern_methods!(
 extern_methods!(
     /// NSAttributedStringPasteboardAdditions
     unsafe impl NSAttributedString {
-        #[method_id(textTypes)]
+        #[method_id(@__retain_semantics Other textTypes)]
         pub unsafe fn textTypes() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(textUnfilteredTypes)]
+        #[method_id(@__retain_semantics Other textUnfilteredTypes)]
         pub unsafe fn textUnfilteredTypes() -> Id<NSArray<NSString>, Shared>;
     }
 );
@@ -757,33 +757,33 @@ extern_methods!(
         #[method(containsAttachments)]
         pub unsafe fn containsAttachments(&self) -> bool;
 
-        #[method_id(textFileTypes)]
+        #[method_id(@__retain_semantics Other textFileTypes)]
         pub unsafe fn textFileTypes() -> Id<NSArray, Shared>;
 
-        #[method_id(textPasteboardTypes)]
+        #[method_id(@__retain_semantics Other textPasteboardTypes)]
         pub unsafe fn textPasteboardTypes() -> Id<NSArray, Shared>;
 
-        #[method_id(textUnfilteredFileTypes)]
+        #[method_id(@__retain_semantics Other textUnfilteredFileTypes)]
         pub unsafe fn textUnfilteredFileTypes() -> Id<NSArray, Shared>;
 
-        #[method_id(textUnfilteredPasteboardTypes)]
+        #[method_id(@__retain_semantics Other textUnfilteredPasteboardTypes)]
         pub unsafe fn textUnfilteredPasteboardTypes() -> Id<NSArray, Shared>;
 
-        #[method_id(initWithURL:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithURL:documentAttributes:)]
         pub unsafe fn initWithURL_documentAttributes(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             dict: Option<&mut Option<Id<NSDictionary, Shared>>>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithPath:documentAttributes:)]
+        #[method_id(@__retain_semantics Init initWithPath:documentAttributes:)]
         pub unsafe fn initWithPath_documentAttributes(
             this: Option<Allocated<Self>>,
             path: &NSString,
             dict: Option<&mut Option<Id<NSDictionary, Shared>>>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(URLAtIndex:effectiveRange:)]
+        #[method_id(@__retain_semantics Other URLAtIndex:effectiveRange:)]
         pub unsafe fn URLAtIndex_effectiveRange(
             &self,
             location: NSUInteger,

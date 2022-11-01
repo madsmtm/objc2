@@ -15,32 +15,32 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFilePromiseProvider {
-        #[method_id(fileType)]
+        #[method_id(@__retain_semantics Other fileType)]
         pub unsafe fn fileType(&self) -> Id<NSString, Shared>;
 
         #[method(setFileType:)]
         pub unsafe fn setFileType(&self, fileType: &NSString);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSFilePromiseProviderDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSFilePromiseProviderDelegate>);
 
-        #[method_id(userInfo)]
+        #[method_id(@__retain_semantics Other userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setUserInfo:)]
         pub unsafe fn setUserInfo(&self, userInfo: Option<&Object>);
 
-        #[method_id(initWithFileType:delegate:)]
+        #[method_id(@__retain_semantics Init initWithFileType:delegate:)]
         pub unsafe fn initWithFileType_delegate(
             this: Option<Allocated<Self>>,
             fileType: &NSString,
             delegate: &NSFilePromiseProviderDelegate,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
     }
 );

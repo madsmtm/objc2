@@ -21,25 +21,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSXMLParser {
-        #[method_id(initWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithData:)]
+        #[method_id(@__retain_semantics Init initWithData:)]
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             data: &NSData,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithStream:)]
+        #[method_id(@__retain_semantics Init initWithStream:)]
         pub unsafe fn initWithStream(
             this: Option<Allocated<Self>>,
             stream: &NSInputStream,
         ) -> Id<Self, Shared>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSXMLParserDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -68,7 +68,7 @@ extern_methods!(
             externalEntityResolvingPolicy: NSXMLParserExternalEntityResolvingPolicy,
         );
 
-        #[method_id(allowedExternalEntityURLs)]
+        #[method_id(@__retain_semantics Other allowedExternalEntityURLs)]
         pub unsafe fn allowedExternalEntityURLs(&self) -> Option<Id<NSSet<NSURL>, Shared>>;
 
         #[method(setAllowedExternalEntityURLs:)]
@@ -83,7 +83,7 @@ extern_methods!(
         #[method(abortParsing)]
         pub unsafe fn abortParsing(&self);
 
-        #[method_id(parserError)]
+        #[method_id(@__retain_semantics Other parserError)]
         pub unsafe fn parserError(&self) -> Option<Id<NSError, Shared>>;
 
         #[method(shouldResolveExternalEntities)]
@@ -97,10 +97,10 @@ extern_methods!(
 extern_methods!(
     /// NSXMLParserLocatorAdditions
     unsafe impl NSXMLParser {
-        #[method_id(publicID)]
+        #[method_id(@__retain_semantics Other publicID)]
         pub unsafe fn publicID(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(systemID)]
+        #[method_id(@__retain_semantics Other systemID)]
         pub unsafe fn systemID(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(lineNumber)]

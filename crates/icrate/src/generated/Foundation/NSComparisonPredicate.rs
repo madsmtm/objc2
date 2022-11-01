@@ -40,7 +40,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSComparisonPredicate {
-        #[method_id(predicateWithLeftExpression:rightExpression:modifier:type:options:)]
+        #[method_id(@__retain_semantics Other predicateWithLeftExpression:rightExpression:modifier:type:options:)]
         pub unsafe fn predicateWithLeftExpression_rightExpression_modifier_type_options(
             lhs: &NSExpression,
             rhs: &NSExpression,
@@ -49,14 +49,14 @@ extern_methods!(
             options: NSComparisonPredicateOptions,
         ) -> Id<NSComparisonPredicate, Shared>;
 
-        #[method_id(predicateWithLeftExpression:rightExpression:customSelector:)]
+        #[method_id(@__retain_semantics Other predicateWithLeftExpression:rightExpression:customSelector:)]
         pub unsafe fn predicateWithLeftExpression_rightExpression_customSelector(
             lhs: &NSExpression,
             rhs: &NSExpression,
             selector: Sel,
         ) -> Id<NSComparisonPredicate, Shared>;
 
-        #[method_id(initWithLeftExpression:rightExpression:modifier:type:options:)]
+        #[method_id(@__retain_semantics Init initWithLeftExpression:rightExpression:modifier:type:options:)]
         pub unsafe fn initWithLeftExpression_rightExpression_modifier_type_options(
             this: Option<Allocated<Self>>,
             lhs: &NSExpression,
@@ -66,7 +66,7 @@ extern_methods!(
             options: NSComparisonPredicateOptions,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithLeftExpression:rightExpression:customSelector:)]
+        #[method_id(@__retain_semantics Init initWithLeftExpression:rightExpression:customSelector:)]
         pub unsafe fn initWithLeftExpression_rightExpression_customSelector(
             this: Option<Allocated<Self>>,
             lhs: &NSExpression,
@@ -74,7 +74,7 @@ extern_methods!(
             selector: Sel,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -86,10 +86,10 @@ extern_methods!(
         #[method(comparisonPredicateModifier)]
         pub unsafe fn comparisonPredicateModifier(&self) -> NSComparisonPredicateModifier;
 
-        #[method_id(leftExpression)]
+        #[method_id(@__retain_semantics Other leftExpression)]
         pub unsafe fn leftExpression(&self) -> Id<NSExpression, Shared>;
 
-        #[method_id(rightExpression)]
+        #[method_id(@__retain_semantics Other rightExpression)]
         pub unsafe fn rightExpression(&self) -> Id<NSExpression, Shared>;
 
         #[method(customSelector)]

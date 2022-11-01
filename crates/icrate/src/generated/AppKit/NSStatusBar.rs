@@ -19,10 +19,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSStatusBar {
-        #[method_id(systemStatusBar)]
+        #[method_id(@__retain_semantics Other systemStatusBar)]
         pub unsafe fn systemStatusBar() -> Id<NSStatusBar, Shared>;
 
-        #[method_id(statusItemWithLength:)]
+        #[method_id(@__retain_semantics Other statusItemWithLength:)]
         pub unsafe fn statusItemWithLength(&self, length: CGFloat) -> Id<NSStatusItem, Shared>;
 
         #[method(removeStatusItem:)]

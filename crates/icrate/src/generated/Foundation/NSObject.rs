@@ -23,7 +23,7 @@ extern_methods!(
         #[method(classForCoder)]
         pub unsafe fn classForCoder(&self) -> &'static Class;
 
-        #[method_id(replacementObjectForCoder:)]
+        #[method_id(@__retain_semantics Other replacementObjectForCoder:)]
         pub unsafe fn replacementObjectForCoder(
             &self,
             coder: &NSCoder,
@@ -44,7 +44,7 @@ pub type NSDiscardableContent = NSObject;
 extern_methods!(
     /// NSDiscardableContentProxy
     unsafe impl NSObject {
-        #[method_id(autoContentAccessingProxy)]
+        #[method_id(@__retain_semantics Other autoContentAccessingProxy)]
         pub unsafe fn autoContentAccessingProxy(&self) -> Id<Object, Shared>;
     }
 );

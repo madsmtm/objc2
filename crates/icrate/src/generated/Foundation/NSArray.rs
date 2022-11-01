@@ -19,20 +19,20 @@ extern_methods!(
         #[method(count)]
         pub unsafe fn count(&self) -> NSUInteger;
 
-        #[method_id(objectAtIndex:)]
+        #[method_id(@__retain_semantics Other objectAtIndex:)]
         pub unsafe fn objectAtIndex(&self, index: NSUInteger) -> Id<ObjectType, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithObjects:count:)]
+        #[method_id(@__retain_semantics Init initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
             this: Option<Allocated<Self>>,
             objects: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -48,40 +48,40 @@ pub const NSBinarySearchingInsertionIndex: NSBinarySearchingOptions = 1 << 10;
 extern_methods!(
     /// NSExtendedArray
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        #[method_id(arrayByAddingObject:)]
+        #[method_id(@__retain_semantics Other arrayByAddingObject:)]
         pub unsafe fn arrayByAddingObject(
             &self,
             anObject: &ObjectType,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(arrayByAddingObjectsFromArray:)]
+        #[method_id(@__retain_semantics Other arrayByAddingObjectsFromArray:)]
         pub unsafe fn arrayByAddingObjectsFromArray(
             &self,
             otherArray: &NSArray<ObjectType>,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(componentsJoinedByString:)]
+        #[method_id(@__retain_semantics Other componentsJoinedByString:)]
         pub unsafe fn componentsJoinedByString(&self, separator: &NSString)
             -> Id<NSString, Shared>;
 
         #[method(containsObject:)]
         pub unsafe fn containsObject(&self, anObject: &ObjectType) -> bool;
 
-        #[method_id(description)]
+        #[method_id(@__retain_semantics Other description)]
         pub unsafe fn description(&self) -> Id<NSString, Shared>;
 
-        #[method_id(descriptionWithLocale:)]
+        #[method_id(@__retain_semantics Other descriptionWithLocale:)]
         pub unsafe fn descriptionWithLocale(&self, locale: Option<&Object>)
             -> Id<NSString, Shared>;
 
-        #[method_id(descriptionWithLocale:indent:)]
+        #[method_id(@__retain_semantics Other descriptionWithLocale:indent:)]
         pub unsafe fn descriptionWithLocale_indent(
             &self,
             locale: Option<&Object>,
             level: NSUInteger,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(firstObjectCommonWithArray:)]
+        #[method_id(@__retain_semantics Other firstObjectCommonWithArray:)]
         pub unsafe fn firstObjectCommonWithArray(
             &self,
             otherArray: &NSArray<ObjectType>,
@@ -113,29 +113,29 @@ extern_methods!(
         #[method(isEqualToArray:)]
         pub unsafe fn isEqualToArray(&self, otherArray: &NSArray<ObjectType>) -> bool;
 
-        #[method_id(firstObject)]
+        #[method_id(@__retain_semantics Other firstObject)]
         pub unsafe fn firstObject(&self) -> Option<Id<ObjectType, Shared>>;
 
-        #[method_id(lastObject)]
+        #[method_id(@__retain_semantics Other lastObject)]
         pub unsafe fn lastObject(&self) -> Option<Id<ObjectType, Shared>>;
 
-        #[method_id(objectEnumerator)]
+        #[method_id(@__retain_semantics Other objectEnumerator)]
         pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
 
-        #[method_id(reverseObjectEnumerator)]
+        #[method_id(@__retain_semantics Other reverseObjectEnumerator)]
         pub unsafe fn reverseObjectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
 
-        #[method_id(sortedArrayHint)]
+        #[method_id(@__retain_semantics Other sortedArrayHint)]
         pub unsafe fn sortedArrayHint(&self) -> Id<NSData, Shared>;
 
-        #[method_id(sortedArrayUsingFunction:context:)]
+        #[method_id(@__retain_semantics Other sortedArrayUsingFunction:context:)]
         pub unsafe fn sortedArrayUsingFunction_context(
             &self,
             comparator: NonNull<TodoFunction>,
             context: *mut c_void,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(sortedArrayUsingFunction:context:hint:)]
+        #[method_id(@__retain_semantics Other sortedArrayUsingFunction:context:hint:)]
         pub unsafe fn sortedArrayUsingFunction_context_hint(
             &self,
             comparator: NonNull<TodoFunction>,
@@ -143,13 +143,13 @@ extern_methods!(
             hint: Option<&NSData>,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(sortedArrayUsingSelector:)]
+        #[method_id(@__retain_semantics Other sortedArrayUsingSelector:)]
         pub unsafe fn sortedArrayUsingSelector(
             &self,
             comparator: Sel,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(subarrayWithRange:)]
+        #[method_id(@__retain_semantics Other subarrayWithRange:)]
         pub unsafe fn subarrayWithRange(&self, range: NSRange) -> Id<NSArray<ObjectType>, Shared>;
 
         #[method(writeToURL:error:)]
@@ -165,13 +165,13 @@ extern_methods!(
             argument: Option<&Object>,
         );
 
-        #[method_id(objectsAtIndexes:)]
+        #[method_id(@__retain_semantics Other objectsAtIndexes:)]
         pub unsafe fn objectsAtIndexes(
             &self,
             indexes: &NSIndexSet,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(objectAtIndexedSubscript:)]
+        #[method_id(@__retain_semantics Other objectAtIndexedSubscript:)]
         pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> Id<ObjectType, Shared>;
 
         #[method(enumerateObjectsUsingBlock:)]
@@ -210,20 +210,20 @@ extern_methods!(
             predicate: TodoBlock,
         ) -> NSUInteger;
 
-        #[method_id(indexesOfObjectsPassingTest:)]
+        #[method_id(@__retain_semantics Other indexesOfObjectsPassingTest:)]
         pub unsafe fn indexesOfObjectsPassingTest(
             &self,
             predicate: TodoBlock,
         ) -> Id<NSIndexSet, Shared>;
 
-        #[method_id(indexesOfObjectsWithOptions:passingTest:)]
+        #[method_id(@__retain_semantics Other indexesOfObjectsWithOptions:passingTest:)]
         pub unsafe fn indexesOfObjectsWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
             predicate: TodoBlock,
         ) -> Id<NSIndexSet, Shared>;
 
-        #[method_id(indexesOfObjectsAtIndexes:options:passingTest:)]
+        #[method_id(@__retain_semantics Other indexesOfObjectsAtIndexes:options:passingTest:)]
         pub unsafe fn indexesOfObjectsAtIndexes_options_passingTest(
             &self,
             s: &NSIndexSet,
@@ -231,13 +231,13 @@ extern_methods!(
             predicate: TodoBlock,
         ) -> Id<NSIndexSet, Shared>;
 
-        #[method_id(sortedArrayUsingComparator:)]
+        #[method_id(@__retain_semantics Other sortedArrayUsingComparator:)]
         pub unsafe fn sortedArrayUsingComparator(
             &self,
             cmptr: NSComparator,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(sortedArrayWithOptions:usingComparator:)]
+        #[method_id(@__retain_semantics Other sortedArrayWithOptions:usingComparator:)]
         pub unsafe fn sortedArrayWithOptions_usingComparator(
             &self,
             opts: NSSortOptions,
@@ -258,41 +258,41 @@ extern_methods!(
 extern_methods!(
     /// NSArrayCreation
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        #[method_id(array)]
+        #[method_id(@__retain_semantics Other array)]
         pub unsafe fn array() -> Id<Self, Shared>;
 
-        #[method_id(arrayWithObject:)]
+        #[method_id(@__retain_semantics Other arrayWithObject:)]
         pub unsafe fn arrayWithObject(anObject: &ObjectType) -> Id<Self, Shared>;
 
-        #[method_id(arrayWithObjects:count:)]
+        #[method_id(@__retain_semantics Other arrayWithObjects:count:)]
         pub unsafe fn arrayWithObjects_count(
             objects: TodoArray,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(arrayWithArray:)]
+        #[method_id(@__retain_semantics Other arrayWithArray:)]
         pub unsafe fn arrayWithArray(array: &NSArray<ObjectType>) -> Id<Self, Shared>;
 
-        #[method_id(initWithArray:)]
+        #[method_id(@__retain_semantics Init initWithArray:)]
         pub unsafe fn initWithArray(
             this: Option<Allocated<Self>>,
             array: &NSArray<ObjectType>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithArray:copyItems:)]
+        #[method_id(@__retain_semantics Init initWithArray:copyItems:)]
         pub unsafe fn initWithArray_copyItems(
             this: Option<Allocated<Self>>,
             array: &NSArray<ObjectType>,
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithContentsOfURL:error:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:error:)]
         pub unsafe fn initWithContentsOfURL_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Result<Id<NSArray<ObjectType>, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(arrayWithContentsOfURL:error:)]
+        #[method_id(@__retain_semantics Other arrayWithContentsOfURL:error:)]
         pub unsafe fn arrayWithContentsOfURL_error(
             url: &NSURL,
         ) -> Result<Id<NSArray<ObjectType>, Shared>, Id<NSError, Shared>>;
@@ -302,7 +302,7 @@ extern_methods!(
 extern_methods!(
     /// NSArrayDiffing
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        #[method_id(differenceFromArray:withOptions:usingEquivalenceTest:)]
+        #[method_id(@__retain_semantics Other differenceFromArray:withOptions:usingEquivalenceTest:)]
         pub unsafe fn differenceFromArray_withOptions_usingEquivalenceTest(
             &self,
             other: &NSArray<ObjectType>,
@@ -310,20 +310,20 @@ extern_methods!(
             block: TodoBlock,
         ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared>;
 
-        #[method_id(differenceFromArray:withOptions:)]
+        #[method_id(@__retain_semantics Other differenceFromArray:withOptions:)]
         pub unsafe fn differenceFromArray_withOptions(
             &self,
             other: &NSArray<ObjectType>,
             options: NSOrderedCollectionDifferenceCalculationOptions,
         ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared>;
 
-        #[method_id(differenceFromArray:)]
+        #[method_id(@__retain_semantics Other differenceFromArray:)]
         pub unsafe fn differenceFromArray(
             &self,
             other: &NSArray<ObjectType>,
         ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared>;
 
-        #[method_id(arrayByApplyingDifference:)]
+        #[method_id(@__retain_semantics Other arrayByApplyingDifference:)]
         pub unsafe fn arrayByApplyingDifference(
             &self,
             difference: &NSOrderedCollectionDifference<ObjectType>,
@@ -337,23 +337,23 @@ extern_methods!(
         #[method(getObjects:)]
         pub unsafe fn getObjects(&self, objects: TodoArray);
 
-        #[method_id(arrayWithContentsOfFile:)]
+        #[method_id(@__retain_semantics Other arrayWithContentsOfFile:)]
         pub unsafe fn arrayWithContentsOfFile(
             path: &NSString,
         ) -> Option<Id<NSArray<ObjectType>, Shared>>;
 
-        #[method_id(arrayWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Other arrayWithContentsOfURL:)]
         pub unsafe fn arrayWithContentsOfURL(
             url: &NSURL,
         ) -> Option<Id<NSArray<ObjectType>, Shared>>;
 
-        #[method_id(initWithContentsOfFile:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(
             this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<NSArray<ObjectType>, Shared>>;
 
-        #[method_id(initWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &NSURL,
@@ -403,16 +403,16 @@ extern_methods!(
             anObject: &ObjectType,
         );
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCapacity:)]
+        #[method_id(@__retain_semantics Init initWithCapacity:)]
         pub unsafe fn initWithCapacity(
             this: Option<Allocated<Self>>,
             numItems: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -524,26 +524,26 @@ extern_methods!(
 extern_methods!(
     /// NSMutableArrayCreation
     unsafe impl<ObjectType: Message> NSMutableArray<ObjectType> {
-        #[method_id(arrayWithCapacity:)]
+        #[method_id(@__retain_semantics Other arrayWithCapacity:)]
         pub unsafe fn arrayWithCapacity(numItems: NSUInteger) -> Id<Self, Shared>;
 
-        #[method_id(arrayWithContentsOfFile:)]
+        #[method_id(@__retain_semantics Other arrayWithContentsOfFile:)]
         pub unsafe fn arrayWithContentsOfFile(
             path: &NSString,
         ) -> Option<Id<NSMutableArray<ObjectType>, Shared>>;
 
-        #[method_id(arrayWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Other arrayWithContentsOfURL:)]
         pub unsafe fn arrayWithContentsOfURL(
             url: &NSURL,
         ) -> Option<Id<NSMutableArray<ObjectType>, Shared>>;
 
-        #[method_id(initWithContentsOfFile:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfFile:)]
         pub unsafe fn initWithContentsOfFile(
             this: Option<Allocated<Self>>,
             path: &NSString,
         ) -> Option<Id<NSMutableArray<ObjectType>, Shared>>;
 
-        #[method_id(initWithContentsOfURL:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &NSURL,

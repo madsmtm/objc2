@@ -35,16 +35,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSBezierPath {
-        #[method_id(bezierPath)]
+        #[method_id(@__retain_semantics Other bezierPath)]
         pub unsafe fn bezierPath() -> Id<NSBezierPath, Shared>;
 
-        #[method_id(bezierPathWithRect:)]
+        #[method_id(@__retain_semantics Other bezierPathWithRect:)]
         pub unsafe fn bezierPathWithRect(rect: NSRect) -> Id<NSBezierPath, Shared>;
 
-        #[method_id(bezierPathWithOvalInRect:)]
+        #[method_id(@__retain_semantics Other bezierPathWithOvalInRect:)]
         pub unsafe fn bezierPathWithOvalInRect(rect: NSRect) -> Id<NSBezierPath, Shared>;
 
-        #[method_id(bezierPathWithRoundedRect:xRadius:yRadius:)]
+        #[method_id(@__retain_semantics Other bezierPathWithRoundedRect:xRadius:yRadius:)]
         pub unsafe fn bezierPathWithRoundedRect_xRadius_yRadius(
             rect: NSRect,
             xRadius: CGFloat,
@@ -200,10 +200,10 @@ extern_methods!(
         #[method(setClip)]
         pub unsafe fn setClip(&self);
 
-        #[method_id(bezierPathByFlatteningPath)]
+        #[method_id(@__retain_semantics Other bezierPathByFlatteningPath)]
         pub unsafe fn bezierPathByFlatteningPath(&self) -> Id<NSBezierPath, Shared>;
 
-        #[method_id(bezierPathByReversingPath)]
+        #[method_id(@__retain_semantics Other bezierPathByReversingPath)]
         pub unsafe fn bezierPathByReversingPath(&self) -> Id<NSBezierPath, Shared>;
 
         #[method(transformUsingAffineTransform:)]

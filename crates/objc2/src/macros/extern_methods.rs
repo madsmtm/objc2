@@ -433,10 +433,10 @@ macro_rules! __collect_msg_send {
     (
         $macro:path;
         $obj:expr;
-        ($sel:ident);
+        ($(@__retain_semantics $retain_semantics:ident )? $sel:ident);
         ();
     ) => {{
-        $macro![$obj, $sel]
+        $macro![$obj, $(@__retain_semantics $retain_semantics )? $sel]
     }};
 
     // Base case
@@ -454,7 +454,7 @@ macro_rules! __collect_msg_send {
     (
         $macro:path;
         $obj:expr;
-        ($sel:ident:);
+        ($(@__retain_semantics $retain_semantics:ident )? $sel:ident:);
         ($(,)?);
         $($output:tt)*
     ) => {
@@ -463,7 +463,7 @@ macro_rules! __collect_msg_send {
             $obj;
             ();
             ();
-            $($output)* $sel: _,
+            $($output)* $(@__retain_semantics $retain_semantics )? $sel: _,
         }
     };
 
@@ -471,7 +471,7 @@ macro_rules! __collect_msg_send {
     (
         $macro:path;
         $obj:expr;
-        ($sel:ident : $($sel_rest:tt)*);
+        ($(@__retain_semantics $retain_semantics:ident )? $sel:ident : $($sel_rest:tt)*);
         ($arg:ident: $arg_ty:ty $(, $($args_rest:tt)*)?);
         $($output:tt)*
     ) => {
@@ -480,7 +480,7 @@ macro_rules! __collect_msg_send {
             $obj;
             ($($sel_rest)*);
             ($($($args_rest)*)?);
-            $($output)* $sel: $arg,
+            $($output)* $(@__retain_semantics $retain_semantics )? $sel: $arg,
         }
     };
 

@@ -75,7 +75,7 @@ extern_methods!(
         #[method(status)]
         pub unsafe fn status(&self) -> NSURLHandleStatus;
 
-        #[method_id(failureReason)]
+        #[method_id(@__retain_semantics Other failureReason)]
         pub unsafe fn failureReason(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(addClient:)]
@@ -90,10 +90,10 @@ extern_methods!(
         #[method(cancelLoadInBackground)]
         pub unsafe fn cancelLoadInBackground(&self);
 
-        #[method_id(resourceData)]
+        #[method_id(@__retain_semantics Other resourceData)]
         pub unsafe fn resourceData(&self) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(availableResourceData)]
+        #[method_id(@__retain_semantics Other availableResourceData)]
         pub unsafe fn availableResourceData(&self) -> Option<Id<NSData, Shared>>;
 
         #[method(expectedResourceDataSize)]
@@ -111,23 +111,23 @@ extern_methods!(
         #[method(canInitWithURL:)]
         pub unsafe fn canInitWithURL(anURL: Option<&NSURL>) -> bool;
 
-        #[method_id(cachedHandleForURL:)]
+        #[method_id(@__retain_semantics Other cachedHandleForURL:)]
         pub unsafe fn cachedHandleForURL(anURL: Option<&NSURL>) -> Option<Id<NSURLHandle, Shared>>;
 
-        #[method_id(initWithURL:cached:)]
+        #[method_id(@__retain_semantics Init initWithURL:cached:)]
         pub unsafe fn initWithURL_cached(
             this: Option<Allocated<Self>>,
             anURL: Option<&NSURL>,
             willCache: bool,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(propertyForKey:)]
+        #[method_id(@__retain_semantics Other propertyForKey:)]
         pub unsafe fn propertyForKey(
             &self,
             propertyKey: Option<&NSString>,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(propertyForKeyIfAvailable:)]
+        #[method_id(@__retain_semantics Other propertyForKeyIfAvailable:)]
         pub unsafe fn propertyForKeyIfAvailable(
             &self,
             propertyKey: Option<&NSString>,
@@ -143,7 +143,7 @@ extern_methods!(
         #[method(writeData:)]
         pub unsafe fn writeData(&self, data: Option<&NSData>) -> bool;
 
-        #[method_id(loadInForeground)]
+        #[method_id(@__retain_semantics Other loadInForeground)]
         pub unsafe fn loadInForeground(&self) -> Option<Id<NSData, Shared>>;
 
         #[method(beginLoadInBackground)]

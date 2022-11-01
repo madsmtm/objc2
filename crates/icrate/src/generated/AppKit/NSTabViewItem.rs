@@ -20,48 +20,48 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTabViewItem {
-        #[method_id(tabViewItemWithViewController:)]
+        #[method_id(@__retain_semantics Other tabViewItemWithViewController:)]
         pub unsafe fn tabViewItemWithViewController(
             viewController: &NSViewController,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithIdentifier:)]
+        #[method_id(@__retain_semantics Init initWithIdentifier:)]
         pub unsafe fn initWithIdentifier(
             this: Option<Allocated<Self>>,
             identifier: Option<&Object>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(identifier)]
+        #[method_id(@__retain_semantics Other identifier)]
         pub unsafe fn identifier(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setIdentifier:)]
         pub unsafe fn setIdentifier(&self, identifier: Option<&Object>);
 
-        #[method_id(color)]
+        #[method_id(@__retain_semantics Other color)]
         pub unsafe fn color(&self) -> Id<NSColor, Shared>;
 
         #[method(setColor:)]
         pub unsafe fn setColor(&self, color: &NSColor);
 
-        #[method_id(label)]
+        #[method_id(@__retain_semantics Other label)]
         pub unsafe fn label(&self) -> Id<NSString, Shared>;
 
         #[method(setLabel:)]
         pub unsafe fn setLabel(&self, label: &NSString);
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
         pub unsafe fn setImage(&self, image: Option<&NSImage>);
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setView:)]
         pub unsafe fn setView(&self, view: Option<&NSView>);
 
-        #[method_id(viewController)]
+        #[method_id(@__retain_semantics Other viewController)]
         pub unsafe fn viewController(&self) -> Option<Id<NSViewController, Shared>>;
 
         #[method(setViewController:)]
@@ -70,16 +70,16 @@ extern_methods!(
         #[method(tabState)]
         pub unsafe fn tabState(&self) -> NSTabState;
 
-        #[method_id(tabView)]
+        #[method_id(@__retain_semantics Other tabView)]
         pub unsafe fn tabView(&self) -> Option<Id<NSTabView, Shared>>;
 
-        #[method_id(initialFirstResponder)]
+        #[method_id(@__retain_semantics Other initialFirstResponder)]
         pub unsafe fn initialFirstResponder(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setInitialFirstResponder:)]
         pub unsafe fn setInitialFirstResponder(&self, initialFirstResponder: Option<&NSView>);
 
-        #[method_id(toolTip)]
+        #[method_id(@__retain_semantics Other toolTip)]
         pub unsafe fn toolTip(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setToolTip:)]

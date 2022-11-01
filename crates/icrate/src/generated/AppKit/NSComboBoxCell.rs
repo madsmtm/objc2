@@ -81,10 +81,10 @@ extern_methods!(
         #[method(setCompletes:)]
         pub unsafe fn setCompletes(&self, completes: bool);
 
-        #[method_id(completedString:)]
+        #[method_id(@__retain_semantics Other completedString:)]
         pub unsafe fn completedString(&self, string: &NSString) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(dataSource)]
+        #[method_id(@__retain_semantics Other dataSource)]
         pub unsafe fn dataSource(&self) -> Option<Id<NSComboBoxCellDataSource, Shared>>;
 
         #[method(setDataSource:)]
@@ -111,16 +111,16 @@ extern_methods!(
         #[method(selectItemWithObjectValue:)]
         pub unsafe fn selectItemWithObjectValue(&self, object: Option<&Object>);
 
-        #[method_id(itemObjectValueAtIndex:)]
+        #[method_id(@__retain_semantics Other itemObjectValueAtIndex:)]
         pub unsafe fn itemObjectValueAtIndex(&self, index: NSInteger) -> Id<Object, Shared>;
 
-        #[method_id(objectValueOfSelectedItem)]
+        #[method_id(@__retain_semantics Other objectValueOfSelectedItem)]
         pub unsafe fn objectValueOfSelectedItem(&self) -> Option<Id<Object, Shared>>;
 
         #[method(indexOfItemWithObjectValue:)]
         pub unsafe fn indexOfItemWithObjectValue(&self, object: &Object) -> NSInteger;
 
-        #[method_id(objectValues)]
+        #[method_id(@__retain_semantics Other objectValues)]
         pub unsafe fn objectValues(&self) -> Id<NSArray, Shared>;
     }
 );

@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPageLayout {
-        #[method_id(pageLayout)]
+        #[method_id(@__retain_semantics Other pageLayout)]
         pub unsafe fn pageLayout() -> Id<NSPageLayout, Shared>;
 
         #[method(addAccessoryController:)]
@@ -24,7 +24,7 @@ extern_methods!(
         #[method(removeAccessoryController:)]
         pub unsafe fn removeAccessoryController(&self, accessoryController: &NSViewController);
 
-        #[method_id(accessoryControllers)]
+        #[method_id(@__retain_semantics Other accessoryControllers)]
         pub unsafe fn accessoryControllers(&self) -> Id<NSArray<NSViewController>, Shared>;
 
         #[method(beginSheetWithPrintInfo:modalForWindow:delegate:didEndSelector:contextInfo:)]
@@ -43,7 +43,7 @@ extern_methods!(
         #[method(runModal)]
         pub unsafe fn runModal(&self) -> NSInteger;
 
-        #[method_id(printInfo)]
+        #[method_id(@__retain_semantics Other printInfo)]
         pub unsafe fn printInfo(&self) -> Option<Id<NSPrintInfo, Shared>>;
     }
 );
@@ -54,7 +54,7 @@ extern_methods!(
         #[method(setAccessoryView:)]
         pub unsafe fn setAccessoryView(&self, accessoryView: Option<&NSView>);
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(readPrintInfo)]

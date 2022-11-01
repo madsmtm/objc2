@@ -30,41 +30,41 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<ObjectType: Message> NSHashTable<ObjectType> {
-        #[method_id(initWithOptions:capacity:)]
+        #[method_id(@__retain_semantics Init initWithOptions:capacity:)]
         pub unsafe fn initWithOptions_capacity(
             this: Option<Allocated<Self>>,
             options: NSPointerFunctionsOptions,
             initialCapacity: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithPointerFunctions:capacity:)]
+        #[method_id(@__retain_semantics Init initWithPointerFunctions:capacity:)]
         pub unsafe fn initWithPointerFunctions_capacity(
             this: Option<Allocated<Self>>,
             functions: &NSPointerFunctions,
             initialCapacity: NSUInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(hashTableWithOptions:)]
+        #[method_id(@__retain_semantics Other hashTableWithOptions:)]
         pub unsafe fn hashTableWithOptions(
             options: NSPointerFunctionsOptions,
         ) -> Id<NSHashTable<ObjectType>, Shared>;
 
-        #[method_id(hashTableWithWeakObjects)]
+        #[method_id(@__retain_semantics Other hashTableWithWeakObjects)]
         pub unsafe fn hashTableWithWeakObjects() -> Id<Object, Shared>;
 
-        #[method_id(weakObjectsHashTable)]
+        #[method_id(@__retain_semantics Other weakObjectsHashTable)]
         pub unsafe fn weakObjectsHashTable() -> Id<NSHashTable<ObjectType>, Shared>;
 
-        #[method_id(pointerFunctions)]
+        #[method_id(@__retain_semantics Other pointerFunctions)]
         pub unsafe fn pointerFunctions(&self) -> Id<NSPointerFunctions, Shared>;
 
         #[method(count)]
         pub unsafe fn count(&self) -> NSUInteger;
 
-        #[method_id(member:)]
+        #[method_id(@__retain_semantics Other member:)]
         pub unsafe fn member(&self, object: Option<&ObjectType>) -> Option<Id<ObjectType, Shared>>;
 
-        #[method_id(objectEnumerator)]
+        #[method_id(@__retain_semantics Other objectEnumerator)]
         pub unsafe fn objectEnumerator(&self) -> Id<NSEnumerator<ObjectType>, Shared>;
 
         #[method(addObject:)]
@@ -76,10 +76,10 @@ extern_methods!(
         #[method(removeAllObjects)]
         pub unsafe fn removeAllObjects(&self);
 
-        #[method_id(allObjects)]
+        #[method_id(@__retain_semantics Other allObjects)]
         pub unsafe fn allObjects(&self) -> Id<NSArray<ObjectType>, Shared>;
 
-        #[method_id(anyObject)]
+        #[method_id(@__retain_semantics Other anyObject)]
         pub unsafe fn anyObject(&self) -> Option<Id<ObjectType, Shared>>;
 
         #[method(containsObject:)]
@@ -103,7 +103,7 @@ extern_methods!(
         #[method(minusHashTable:)]
         pub unsafe fn minusHashTable(&self, other: &NSHashTable<ObjectType>);
 
-        #[method_id(setRepresentation)]
+        #[method_id(@__retain_semantics Other setRepresentation)]
         pub unsafe fn setRepresentation(&self) -> Id<NSSet<ObjectType>, Shared>;
     }
 );

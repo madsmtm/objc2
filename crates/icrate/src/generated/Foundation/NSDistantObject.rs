@@ -14,33 +14,33 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDistantObject {
-        #[method_id(proxyWithTarget:connection:)]
+        #[method_id(@__retain_semantics Other proxyWithTarget:connection:)]
         pub unsafe fn proxyWithTarget_connection(
             target: &Object,
             connection: &NSConnection,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(initWithTarget:connection:)]
+        #[method_id(@__retain_semantics Init initWithTarget:connection:)]
         pub unsafe fn initWithTarget_connection(
             this: Option<Allocated<Self>>,
             target: &Object,
             connection: &NSConnection,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(proxyWithLocal:connection:)]
+        #[method_id(@__retain_semantics Other proxyWithLocal:connection:)]
         pub unsafe fn proxyWithLocal_connection(
             target: &Object,
             connection: &NSConnection,
         ) -> Id<Object, Shared>;
 
-        #[method_id(initWithLocal:connection:)]
+        #[method_id(@__retain_semantics Init initWithLocal:connection:)]
         pub unsafe fn initWithLocal_connection(
             this: Option<Allocated<Self>>,
             target: &Object,
             connection: &NSConnection,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             inCoder: &NSCoder,
@@ -49,7 +49,7 @@ extern_methods!(
         #[method(setProtocolForProxy:)]
         pub unsafe fn setProtocolForProxy(&self, proto: Option<&Protocol>);
 
-        #[method_id(connectionForProxy)]
+        #[method_id(@__retain_semantics Other connectionForProxy)]
         pub unsafe fn connectionForProxy(&self) -> Id<NSConnection, Shared>;
     }
 );

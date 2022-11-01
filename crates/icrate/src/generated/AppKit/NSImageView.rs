@@ -15,10 +15,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSImageView {
-        #[method_id(imageViewWithImage:)]
+        #[method_id(@__retain_semantics Other imageViewWithImage:)]
         pub unsafe fn imageViewWithImage(image: &NSImage) -> Id<Self, Shared>;
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
@@ -48,7 +48,7 @@ extern_methods!(
         #[method(setImageFrameStyle:)]
         pub unsafe fn setImageFrameStyle(&self, imageFrameStyle: NSImageFrameStyle);
 
-        #[method_id(symbolConfiguration)]
+        #[method_id(@__retain_semantics Other symbolConfiguration)]
         pub unsafe fn symbolConfiguration(&self) -> Option<Id<NSImageSymbolConfiguration, Shared>>;
 
         #[method(setSymbolConfiguration:)]
@@ -57,7 +57,7 @@ extern_methods!(
             symbolConfiguration: Option<&NSImageSymbolConfiguration>,
         );
 
-        #[method_id(contentTintColor)]
+        #[method_id(@__retain_semantics Other contentTintColor)]
         pub unsafe fn contentTintColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setContentTintColor:)]

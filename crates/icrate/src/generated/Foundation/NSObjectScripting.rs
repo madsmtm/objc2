@@ -6,13 +6,13 @@ use crate::Foundation::*;
 extern_methods!(
     /// NSScripting
     unsafe impl NSObject {
-        #[method_id(scriptingValueForSpecifier:)]
+        #[method_id(@__retain_semantics Other scriptingValueForSpecifier:)]
         pub unsafe fn scriptingValueForSpecifier(
             &self,
             objectSpecifier: &NSScriptObjectSpecifier,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(scriptingProperties)]
+        #[method_id(@__retain_semantics Other scriptingProperties)]
         pub unsafe fn scriptingProperties(
             &self,
         ) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
@@ -23,7 +23,7 @@ extern_methods!(
             scriptingProperties: Option<&NSDictionary<NSString, Object>>,
         );
 
-        #[method_id(copyScriptingValue:forKey:withProperties:)]
+        #[method_id(@__retain_semantics CopyOrMutCopy copyScriptingValue:forKey:withProperties:)]
         pub unsafe fn copyScriptingValue_forKey_withProperties(
             &self,
             value: &Object,
@@ -31,7 +31,7 @@ extern_methods!(
             properties: &NSDictionary<NSString, Object>,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:)]
+        #[method_id(@__retain_semantics New newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:)]
         pub unsafe fn newScriptingObjectOfClass_forValueForKey_withContentsValue_properties(
             &self,
             objectClass: &Class,

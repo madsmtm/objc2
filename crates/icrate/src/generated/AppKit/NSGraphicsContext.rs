@@ -43,27 +43,27 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGraphicsContext {
-        #[method_id(graphicsContextWithAttributes:)]
+        #[method_id(@__retain_semantics Other graphicsContextWithAttributes:)]
         pub unsafe fn graphicsContextWithAttributes(
             attributes: &NSDictionary<NSGraphicsContextAttributeKey, Object>,
         ) -> Option<Id<NSGraphicsContext, Shared>>;
 
-        #[method_id(graphicsContextWithWindow:)]
+        #[method_id(@__retain_semantics Other graphicsContextWithWindow:)]
         pub unsafe fn graphicsContextWithWindow(window: &NSWindow)
             -> Id<NSGraphicsContext, Shared>;
 
-        #[method_id(graphicsContextWithBitmapImageRep:)]
+        #[method_id(@__retain_semantics Other graphicsContextWithBitmapImageRep:)]
         pub unsafe fn graphicsContextWithBitmapImageRep(
             bitmapRep: &NSBitmapImageRep,
         ) -> Option<Id<NSGraphicsContext, Shared>>;
 
-        #[method_id(graphicsContextWithCGContext:flipped:)]
+        #[method_id(@__retain_semantics Other graphicsContextWithCGContext:flipped:)]
         pub unsafe fn graphicsContextWithCGContext_flipped(
             graphicsPort: CGContextRef,
             initialFlippedState: bool,
         ) -> Id<NSGraphicsContext, Shared>;
 
-        #[method_id(currentContext)]
+        #[method_id(@__retain_semantics Other currentContext)]
         pub unsafe fn currentContext() -> Option<Id<NSGraphicsContext, Shared>>;
 
         #[method(setCurrentContext:)]
@@ -78,7 +78,7 @@ extern_methods!(
         #[method(restoreGraphicsState)]
         pub unsafe fn restoreGraphicsState();
 
-        #[method_id(attributes)]
+        #[method_id(@__retain_semantics Other attributes)]
         pub unsafe fn attributes(
             &self,
         ) -> Option<Id<NSDictionary<NSGraphicsContextAttributeKey, Object>, Shared>>;
@@ -141,7 +141,7 @@ extern_methods!(
 extern_methods!(
     /// NSQuartzCoreAdditions
     unsafe impl NSGraphicsContext {
-        #[method_id(CIContext)]
+        #[method_id(@__retain_semantics Other CIContext)]
         pub unsafe fn CIContext(&self) -> Option<Id<CIContext, Shared>>;
     }
 );
@@ -152,13 +152,13 @@ extern_methods!(
         #[method(setGraphicsState:)]
         pub unsafe fn setGraphicsState(gState: NSInteger);
 
-        #[method_id(focusStack)]
+        #[method_id(@__retain_semantics Other focusStack)]
         pub unsafe fn focusStack(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setFocusStack:)]
         pub unsafe fn setFocusStack(&self, stack: Option<&Object>);
 
-        #[method_id(graphicsContextWithGraphicsPort:flipped:)]
+        #[method_id(@__retain_semantics Other graphicsContextWithGraphicsPort:flipped:)]
         pub unsafe fn graphicsContextWithGraphicsPort_flipped(
             graphicsPort: NonNull<c_void>,
             initialFlippedState: bool,

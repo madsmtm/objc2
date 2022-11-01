@@ -21,19 +21,19 @@ extern_methods!(
         #[method(setEditable:)]
         pub unsafe fn setEditable(&self, editable: bool);
 
-        #[method_id(allowedTypes)]
+        #[method_id(@__retain_semantics Other allowedTypes)]
         pub unsafe fn allowedTypes(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setAllowedTypes:)]
         pub unsafe fn setAllowedTypes(&self, allowedTypes: Option<&NSArray<NSString>>);
 
-        #[method_id(placeholderString)]
+        #[method_id(@__retain_semantics Other placeholderString)]
         pub unsafe fn placeholderString(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setPlaceholderString:)]
         pub unsafe fn setPlaceholderString(&self, placeholderString: Option<&NSString>);
 
-        #[method_id(placeholderAttributedString)]
+        #[method_id(@__retain_semantics Other placeholderAttributedString)]
         pub unsafe fn placeholderAttributedString(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setPlaceholderAttributedString:)]
@@ -42,7 +42,7 @@ extern_methods!(
             placeholderAttributedString: Option<&NSAttributedString>,
         );
 
-        #[method_id(URL)]
+        #[method_id(@__retain_semantics Other URL)]
         pub unsafe fn URL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setURL:)]
@@ -60,22 +60,22 @@ extern_methods!(
         #[method(setPathStyle:)]
         pub unsafe fn setPathStyle(&self, pathStyle: NSPathStyle);
 
-        #[method_id(clickedPathItem)]
+        #[method_id(@__retain_semantics Other clickedPathItem)]
         pub unsafe fn clickedPathItem(&self) -> Option<Id<NSPathControlItem, Shared>>;
 
-        #[method_id(pathItems)]
+        #[method_id(@__retain_semantics Other pathItems)]
         pub unsafe fn pathItems(&self) -> Id<NSArray<NSPathControlItem>, Shared>;
 
         #[method(setPathItems:)]
         pub unsafe fn setPathItems(&self, pathItems: &NSArray<NSPathControlItem>);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBackgroundColor:)]
         pub unsafe fn setBackgroundColor(&self, backgroundColor: Option<&NSColor>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSPathControlDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -88,7 +88,7 @@ extern_methods!(
             isLocal: bool,
         );
 
-        #[method_id(menu)]
+        #[method_id(@__retain_semantics Other menu)]
         pub unsafe fn menu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setMenu:)]
@@ -101,10 +101,10 @@ pub type NSPathControlDelegate = NSObject;
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSPathControl {
-        #[method_id(clickedPathComponentCell)]
+        #[method_id(@__retain_semantics Other clickedPathComponentCell)]
         pub unsafe fn clickedPathComponentCell(&self) -> Option<Id<NSPathComponentCell, Shared>>;
 
-        #[method_id(pathComponentCells)]
+        #[method_id(@__retain_semantics Other pathComponentCells)]
         pub unsafe fn pathComponentCells(&self) -> Id<NSArray<NSPathComponentCell>, Shared>;
 
         #[method(setPathComponentCells:)]

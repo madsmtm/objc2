@@ -34,14 +34,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAnimation {
-        #[method_id(initWithDuration:animationCurve:)]
+        #[method_id(@__retain_semantics Init initWithDuration:animationCurve:)]
         pub unsafe fn initWithDuration_animationCurve(
             this: Option<Allocated<Self>>,
             duration: NSTimeInterval,
             animationCurve: NSAnimationCurve,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -92,13 +92,13 @@ extern_methods!(
         #[method(currentValue)]
         pub unsafe fn currentValue(&self) -> c_float;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSAnimationDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSAnimationDelegate>);
 
-        #[method_id(progressMarks)]
+        #[method_id(@__retain_semantics Other progressMarks)]
         pub unsafe fn progressMarks(&self) -> Id<NSArray<NSNumber>, Shared>;
 
         #[method(setProgressMarks:)]
@@ -130,7 +130,7 @@ extern_methods!(
         #[method(clearStopAnimation)]
         pub unsafe fn clearStopAnimation(&self);
 
-        #[method_id(runLoopModesForAnimating)]
+        #[method_id(@__retain_semantics Other runLoopModesForAnimating)]
         pub unsafe fn runLoopModesForAnimating(&self)
             -> Option<Id<NSArray<NSRunLoopMode>, Shared>>;
     }
@@ -177,13 +177,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSViewAnimation {
-        #[method_id(initWithViewAnimations:)]
+        #[method_id(@__retain_semantics Init initWithViewAnimations:)]
         pub unsafe fn initWithViewAnimations(
             this: Option<Allocated<Self>>,
             viewAnimations: &NSArray<NSDictionary<NSViewAnimationKey, Object>>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(viewAnimations)]
+        #[method_id(@__retain_semantics Other viewAnimations)]
         pub unsafe fn viewAnimations(
             &self,
         ) -> Id<NSArray<NSDictionary<NSViewAnimationKey, Object>>, Shared>;

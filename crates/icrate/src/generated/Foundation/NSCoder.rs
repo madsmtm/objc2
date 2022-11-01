@@ -28,7 +28,7 @@ extern_methods!(
         #[method(encodeDataObject:)]
         pub unsafe fn encodeDataObject(&self, data: &NSData);
 
-        #[method_id(decodeDataObject)]
+        #[method_id(@__retain_semantics Other decodeDataObject)]
         pub unsafe fn decodeDataObject(&self) -> Option<Id<NSData, Shared>>;
 
         #[method(decodeValueOfObjCType:at:size:)]
@@ -73,10 +73,10 @@ extern_methods!(
         #[method(encodeBytes:length:)]
         pub unsafe fn encodeBytes_length(&self, byteaddr: *mut c_void, length: NSUInteger);
 
-        #[method_id(decodeObject)]
+        #[method_id(@__retain_semantics Other decodeObject)]
         pub unsafe fn decodeObject(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(decodeTopLevelObjectAndReturnError:)]
+        #[method_id(@__retain_semantics Other decodeTopLevelObjectAndReturnError:)]
         pub unsafe fn decodeTopLevelObjectAndReturnError(
             &self,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
@@ -98,7 +98,7 @@ extern_methods!(
         #[method(encodePropertyList:)]
         pub unsafe fn encodePropertyList(&self, aPropertyList: &Object);
 
-        #[method_id(decodePropertyList)]
+        #[method_id(@__retain_semantics Other decodePropertyList)]
         pub unsafe fn decodePropertyList(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setObjectZone:)]
@@ -152,10 +152,10 @@ extern_methods!(
         #[method(containsValueForKey:)]
         pub unsafe fn containsValueForKey(&self, key: &NSString) -> bool;
 
-        #[method_id(decodeObjectForKey:)]
+        #[method_id(@__retain_semantics Other decodeObjectForKey:)]
         pub unsafe fn decodeObjectForKey(&self, key: &NSString) -> Option<Id<Object, Shared>>;
 
-        #[method_id(decodeTopLevelObjectForKey:error:)]
+        #[method_id(@__retain_semantics Other decodeTopLevelObjectForKey:error:)]
         pub unsafe fn decodeTopLevelObjectForKey_error(
             &self,
             key: &NSString,
@@ -195,28 +195,28 @@ extern_methods!(
         #[method(requiresSecureCoding)]
         pub unsafe fn requiresSecureCoding(&self) -> bool;
 
-        #[method_id(decodeObjectOfClass:forKey:)]
+        #[method_id(@__retain_semantics Other decodeObjectOfClass:forKey:)]
         pub unsafe fn decodeObjectOfClass_forKey(
             &self,
             aClass: &Class,
             key: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(decodeTopLevelObjectOfClass:forKey:error:)]
+        #[method_id(@__retain_semantics Other decodeTopLevelObjectOfClass:forKey:error:)]
         pub unsafe fn decodeTopLevelObjectOfClass_forKey_error(
             &self,
             aClass: &Class,
             key: &NSString,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(decodeArrayOfObjectsOfClass:forKey:)]
+        #[method_id(@__retain_semantics Other decodeArrayOfObjectsOfClass:forKey:)]
         pub unsafe fn decodeArrayOfObjectsOfClass_forKey(
             &self,
             cls: &Class,
             key: &NSString,
         ) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(decodeDictionaryWithKeysOfClass:objectsOfClass:forKey:)]
+        #[method_id(@__retain_semantics Other decodeDictionaryWithKeysOfClass:objectsOfClass:forKey:)]
         pub unsafe fn decodeDictionaryWithKeysOfClass_objectsOfClass_forKey(
             &self,
             keyCls: &Class,
@@ -224,28 +224,28 @@ extern_methods!(
             key: &NSString,
         ) -> Option<Id<NSDictionary, Shared>>;
 
-        #[method_id(decodeObjectOfClasses:forKey:)]
+        #[method_id(@__retain_semantics Other decodeObjectOfClasses:forKey:)]
         pub unsafe fn decodeObjectOfClasses_forKey(
             &self,
             classes: Option<&NSSet<TodoClass>>,
             key: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(decodeTopLevelObjectOfClasses:forKey:error:)]
+        #[method_id(@__retain_semantics Other decodeTopLevelObjectOfClasses:forKey:error:)]
         pub unsafe fn decodeTopLevelObjectOfClasses_forKey_error(
             &self,
             classes: Option<&NSSet<TodoClass>>,
             key: &NSString,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(decodeArrayOfObjectsOfClasses:forKey:)]
+        #[method_id(@__retain_semantics Other decodeArrayOfObjectsOfClasses:forKey:)]
         pub unsafe fn decodeArrayOfObjectsOfClasses_forKey(
             &self,
             classes: &NSSet<TodoClass>,
             key: &NSString,
         ) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(decodeDictionaryWithKeysOfClasses:objectsOfClasses:forKey:)]
+        #[method_id(@__retain_semantics Other decodeDictionaryWithKeysOfClasses:objectsOfClasses:forKey:)]
         pub unsafe fn decodeDictionaryWithKeysOfClasses_objectsOfClasses_forKey(
             &self,
             keyClasses: &NSSet<TodoClass>,
@@ -253,11 +253,11 @@ extern_methods!(
             key: &NSString,
         ) -> Option<Id<NSDictionary, Shared>>;
 
-        #[method_id(decodePropertyListForKey:)]
+        #[method_id(@__retain_semantics Other decodePropertyListForKey:)]
         pub unsafe fn decodePropertyListForKey(&self, key: &NSString)
             -> Option<Id<Object, Shared>>;
 
-        #[method_id(allowedClasses)]
+        #[method_id(@__retain_semantics Other allowedClasses)]
         pub unsafe fn allowedClasses(&self) -> Option<Id<NSSet<TodoClass>, Shared>>;
 
         #[method(failWithError:)]
@@ -266,7 +266,7 @@ extern_methods!(
         #[method(decodingFailurePolicy)]
         pub unsafe fn decodingFailurePolicy(&self) -> NSDecodingFailurePolicy;
 
-        #[method_id(error)]
+        #[method_id(@__retain_semantics Other error)]
         pub unsafe fn error(&self) -> Option<Id<NSError, Shared>>;
     }
 );
@@ -277,7 +277,7 @@ extern_methods!(
         #[method(encodeNXObject:)]
         pub unsafe fn encodeNXObject(&self, object: &Object);
 
-        #[method_id(decodeNXObject)]
+        #[method_id(@__retain_semantics Other decodeNXObject)]
         pub unsafe fn decodeNXObject(&self) -> Option<Id<Object, Shared>>;
     }
 );

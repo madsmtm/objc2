@@ -29,23 +29,23 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSColor {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(colorWithColorSpace:components:count:)]
+        #[method_id(@__retain_semantics Other colorWithColorSpace:components:count:)]
         pub unsafe fn colorWithColorSpace_components_count(
             space: &NSColorSpace,
             components: NonNull<CGFloat>,
             numberOfComponents: NSInteger,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithSRGBRed:green:blue:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithSRGBRed:green:blue:alpha:)]
         pub unsafe fn colorWithSRGBRed_green_blue_alpha(
             red: CGFloat,
             green: CGFloat,
@@ -53,13 +53,13 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithGenericGamma22White:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithGenericGamma22White:alpha:)]
         pub unsafe fn colorWithGenericGamma22White_alpha(
             white: CGFloat,
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithDisplayP3Red:green:blue:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithDisplayP3Red:green:blue:alpha:)]
         pub unsafe fn colorWithDisplayP3Red_green_blue_alpha(
             red: CGFloat,
             green: CGFloat,
@@ -67,10 +67,10 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithWhite:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithWhite:alpha:)]
         pub unsafe fn colorWithWhite_alpha(white: CGFloat, alpha: CGFloat) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithRed:green:blue:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithRed:green:blue:alpha:)]
         pub unsafe fn colorWithRed_green_blue_alpha(
             red: CGFloat,
             green: CGFloat,
@@ -78,7 +78,7 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithHue:saturation:brightness:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithHue:saturation:brightness:alpha:)]
         pub unsafe fn colorWithHue_saturation_brightness_alpha(
             hue: CGFloat,
             saturation: CGFloat,
@@ -86,7 +86,7 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithColorSpace:hue:saturation:brightness:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithColorSpace:hue:saturation:brightness:alpha:)]
         pub unsafe fn colorWithColorSpace_hue_saturation_brightness_alpha(
             space: &NSColorSpace,
             hue: CGFloat,
@@ -95,34 +95,34 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithCatalogName:colorName:)]
+        #[method_id(@__retain_semantics Other colorWithCatalogName:colorName:)]
         pub unsafe fn colorWithCatalogName_colorName(
             listName: &NSColorListName,
             colorName: &NSColorName,
         ) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(colorNamed:bundle:)]
+        #[method_id(@__retain_semantics Other colorNamed:bundle:)]
         pub unsafe fn colorNamed_bundle(
             name: &NSColorName,
             bundle: Option<&NSBundle>,
         ) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(colorNamed:)]
+        #[method_id(@__retain_semantics Other colorNamed:)]
         pub unsafe fn colorNamed(name: &NSColorName) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(colorWithName:dynamicProvider:)]
+        #[method_id(@__retain_semantics Other colorWithName:dynamicProvider:)]
         pub unsafe fn colorWithName_dynamicProvider(
             colorName: Option<&NSColorName>,
             dynamicProvider: TodoBlock,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithDeviceWhite:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithDeviceWhite:alpha:)]
         pub unsafe fn colorWithDeviceWhite_alpha(
             white: CGFloat,
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithDeviceRed:green:blue:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithDeviceRed:green:blue:alpha:)]
         pub unsafe fn colorWithDeviceRed_green_blue_alpha(
             red: CGFloat,
             green: CGFloat,
@@ -130,7 +130,7 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithDeviceHue:saturation:brightness:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithDeviceHue:saturation:brightness:alpha:)]
         pub unsafe fn colorWithDeviceHue_saturation_brightness_alpha(
             hue: CGFloat,
             saturation: CGFloat,
@@ -138,7 +138,7 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithDeviceCyan:magenta:yellow:black:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithDeviceCyan:magenta:yellow:black:alpha:)]
         pub unsafe fn colorWithDeviceCyan_magenta_yellow_black_alpha(
             cyan: CGFloat,
             magenta: CGFloat,
@@ -147,13 +147,13 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithCalibratedWhite:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithCalibratedWhite:alpha:)]
         pub unsafe fn colorWithCalibratedWhite_alpha(
             white: CGFloat,
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithCalibratedRed:green:blue:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithCalibratedRed:green:blue:alpha:)]
         pub unsafe fn colorWithCalibratedRed_green_blue_alpha(
             red: CGFloat,
             green: CGFloat,
@@ -161,7 +161,7 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithCalibratedHue:saturation:brightness:alpha:)]
+        #[method_id(@__retain_semantics Other colorWithCalibratedHue:saturation:brightness:alpha:)]
         pub unsafe fn colorWithCalibratedHue_saturation_brightness_alpha(
             hue: CGFloat,
             saturation: CGFloat,
@@ -169,223 +169,223 @@ extern_methods!(
             alpha: CGFloat,
         ) -> Id<NSColor, Shared>;
 
-        #[method_id(colorWithPatternImage:)]
+        #[method_id(@__retain_semantics Other colorWithPatternImage:)]
         pub unsafe fn colorWithPatternImage(image: &NSImage) -> Id<NSColor, Shared>;
 
         #[method(type)]
         pub unsafe fn type_(&self) -> NSColorType;
 
-        #[method_id(colorUsingType:)]
+        #[method_id(@__retain_semantics Other colorUsingType:)]
         pub unsafe fn colorUsingType(&self, type_: NSColorType) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(colorUsingColorSpace:)]
+        #[method_id(@__retain_semantics Other colorUsingColorSpace:)]
         pub unsafe fn colorUsingColorSpace(
             &self,
             space: &NSColorSpace,
         ) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(blackColor)]
+        #[method_id(@__retain_semantics Other blackColor)]
         pub unsafe fn blackColor() -> Id<NSColor, Shared>;
 
-        #[method_id(darkGrayColor)]
+        #[method_id(@__retain_semantics Other darkGrayColor)]
         pub unsafe fn darkGrayColor() -> Id<NSColor, Shared>;
 
-        #[method_id(lightGrayColor)]
+        #[method_id(@__retain_semantics Other lightGrayColor)]
         pub unsafe fn lightGrayColor() -> Id<NSColor, Shared>;
 
-        #[method_id(whiteColor)]
+        #[method_id(@__retain_semantics Other whiteColor)]
         pub unsafe fn whiteColor() -> Id<NSColor, Shared>;
 
-        #[method_id(grayColor)]
+        #[method_id(@__retain_semantics Other grayColor)]
         pub unsafe fn grayColor() -> Id<NSColor, Shared>;
 
-        #[method_id(redColor)]
+        #[method_id(@__retain_semantics Other redColor)]
         pub unsafe fn redColor() -> Id<NSColor, Shared>;
 
-        #[method_id(greenColor)]
+        #[method_id(@__retain_semantics Other greenColor)]
         pub unsafe fn greenColor() -> Id<NSColor, Shared>;
 
-        #[method_id(blueColor)]
+        #[method_id(@__retain_semantics Other blueColor)]
         pub unsafe fn blueColor() -> Id<NSColor, Shared>;
 
-        #[method_id(cyanColor)]
+        #[method_id(@__retain_semantics Other cyanColor)]
         pub unsafe fn cyanColor() -> Id<NSColor, Shared>;
 
-        #[method_id(yellowColor)]
+        #[method_id(@__retain_semantics Other yellowColor)]
         pub unsafe fn yellowColor() -> Id<NSColor, Shared>;
 
-        #[method_id(magentaColor)]
+        #[method_id(@__retain_semantics Other magentaColor)]
         pub unsafe fn magentaColor() -> Id<NSColor, Shared>;
 
-        #[method_id(orangeColor)]
+        #[method_id(@__retain_semantics Other orangeColor)]
         pub unsafe fn orangeColor() -> Id<NSColor, Shared>;
 
-        #[method_id(purpleColor)]
+        #[method_id(@__retain_semantics Other purpleColor)]
         pub unsafe fn purpleColor() -> Id<NSColor, Shared>;
 
-        #[method_id(brownColor)]
+        #[method_id(@__retain_semantics Other brownColor)]
         pub unsafe fn brownColor() -> Id<NSColor, Shared>;
 
-        #[method_id(clearColor)]
+        #[method_id(@__retain_semantics Other clearColor)]
         pub unsafe fn clearColor() -> Id<NSColor, Shared>;
 
-        #[method_id(labelColor)]
+        #[method_id(@__retain_semantics Other labelColor)]
         pub unsafe fn labelColor() -> Id<NSColor, Shared>;
 
-        #[method_id(secondaryLabelColor)]
+        #[method_id(@__retain_semantics Other secondaryLabelColor)]
         pub unsafe fn secondaryLabelColor() -> Id<NSColor, Shared>;
 
-        #[method_id(tertiaryLabelColor)]
+        #[method_id(@__retain_semantics Other tertiaryLabelColor)]
         pub unsafe fn tertiaryLabelColor() -> Id<NSColor, Shared>;
 
-        #[method_id(quaternaryLabelColor)]
+        #[method_id(@__retain_semantics Other quaternaryLabelColor)]
         pub unsafe fn quaternaryLabelColor() -> Id<NSColor, Shared>;
 
-        #[method_id(linkColor)]
+        #[method_id(@__retain_semantics Other linkColor)]
         pub unsafe fn linkColor() -> Id<NSColor, Shared>;
 
-        #[method_id(placeholderTextColor)]
+        #[method_id(@__retain_semantics Other placeholderTextColor)]
         pub unsafe fn placeholderTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(windowFrameTextColor)]
+        #[method_id(@__retain_semantics Other windowFrameTextColor)]
         pub unsafe fn windowFrameTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(selectedMenuItemTextColor)]
+        #[method_id(@__retain_semantics Other selectedMenuItemTextColor)]
         pub unsafe fn selectedMenuItemTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(alternateSelectedControlTextColor)]
+        #[method_id(@__retain_semantics Other alternateSelectedControlTextColor)]
         pub unsafe fn alternateSelectedControlTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(headerTextColor)]
+        #[method_id(@__retain_semantics Other headerTextColor)]
         pub unsafe fn headerTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(separatorColor)]
+        #[method_id(@__retain_semantics Other separatorColor)]
         pub unsafe fn separatorColor() -> Id<NSColor, Shared>;
 
-        #[method_id(gridColor)]
+        #[method_id(@__retain_semantics Other gridColor)]
         pub unsafe fn gridColor() -> Id<NSColor, Shared>;
 
-        #[method_id(windowBackgroundColor)]
+        #[method_id(@__retain_semantics Other windowBackgroundColor)]
         pub unsafe fn windowBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(underPageBackgroundColor)]
+        #[method_id(@__retain_semantics Other underPageBackgroundColor)]
         pub unsafe fn underPageBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(controlBackgroundColor)]
+        #[method_id(@__retain_semantics Other controlBackgroundColor)]
         pub unsafe fn controlBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(selectedContentBackgroundColor)]
+        #[method_id(@__retain_semantics Other selectedContentBackgroundColor)]
         pub unsafe fn selectedContentBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(unemphasizedSelectedContentBackgroundColor)]
+        #[method_id(@__retain_semantics Other unemphasizedSelectedContentBackgroundColor)]
         pub unsafe fn unemphasizedSelectedContentBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(alternatingContentBackgroundColors)]
+        #[method_id(@__retain_semantics Other alternatingContentBackgroundColors)]
         pub unsafe fn alternatingContentBackgroundColors() -> Id<NSArray<NSColor>, Shared>;
 
-        #[method_id(findHighlightColor)]
+        #[method_id(@__retain_semantics Other findHighlightColor)]
         pub unsafe fn findHighlightColor() -> Id<NSColor, Shared>;
 
-        #[method_id(textColor)]
+        #[method_id(@__retain_semantics Other textColor)]
         pub unsafe fn textColor() -> Id<NSColor, Shared>;
 
-        #[method_id(textBackgroundColor)]
+        #[method_id(@__retain_semantics Other textBackgroundColor)]
         pub unsafe fn textBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(selectedTextColor)]
+        #[method_id(@__retain_semantics Other selectedTextColor)]
         pub unsafe fn selectedTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(selectedTextBackgroundColor)]
+        #[method_id(@__retain_semantics Other selectedTextBackgroundColor)]
         pub unsafe fn selectedTextBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(unemphasizedSelectedTextBackgroundColor)]
+        #[method_id(@__retain_semantics Other unemphasizedSelectedTextBackgroundColor)]
         pub unsafe fn unemphasizedSelectedTextBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(unemphasizedSelectedTextColor)]
+        #[method_id(@__retain_semantics Other unemphasizedSelectedTextColor)]
         pub unsafe fn unemphasizedSelectedTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(controlColor)]
+        #[method_id(@__retain_semantics Other controlColor)]
         pub unsafe fn controlColor() -> Id<NSColor, Shared>;
 
-        #[method_id(controlTextColor)]
+        #[method_id(@__retain_semantics Other controlTextColor)]
         pub unsafe fn controlTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(selectedControlColor)]
+        #[method_id(@__retain_semantics Other selectedControlColor)]
         pub unsafe fn selectedControlColor() -> Id<NSColor, Shared>;
 
-        #[method_id(selectedControlTextColor)]
+        #[method_id(@__retain_semantics Other selectedControlTextColor)]
         pub unsafe fn selectedControlTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(disabledControlTextColor)]
+        #[method_id(@__retain_semantics Other disabledControlTextColor)]
         pub unsafe fn disabledControlTextColor() -> Id<NSColor, Shared>;
 
-        #[method_id(keyboardFocusIndicatorColor)]
+        #[method_id(@__retain_semantics Other keyboardFocusIndicatorColor)]
         pub unsafe fn keyboardFocusIndicatorColor() -> Id<NSColor, Shared>;
 
-        #[method_id(scrubberTexturedBackgroundColor)]
+        #[method_id(@__retain_semantics Other scrubberTexturedBackgroundColor)]
         pub unsafe fn scrubberTexturedBackgroundColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemRedColor)]
+        #[method_id(@__retain_semantics Other systemRedColor)]
         pub unsafe fn systemRedColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemGreenColor)]
+        #[method_id(@__retain_semantics Other systemGreenColor)]
         pub unsafe fn systemGreenColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemBlueColor)]
+        #[method_id(@__retain_semantics Other systemBlueColor)]
         pub unsafe fn systemBlueColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemOrangeColor)]
+        #[method_id(@__retain_semantics Other systemOrangeColor)]
         pub unsafe fn systemOrangeColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemYellowColor)]
+        #[method_id(@__retain_semantics Other systemYellowColor)]
         pub unsafe fn systemYellowColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemBrownColor)]
+        #[method_id(@__retain_semantics Other systemBrownColor)]
         pub unsafe fn systemBrownColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemPinkColor)]
+        #[method_id(@__retain_semantics Other systemPinkColor)]
         pub unsafe fn systemPinkColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemPurpleColor)]
+        #[method_id(@__retain_semantics Other systemPurpleColor)]
         pub unsafe fn systemPurpleColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemGrayColor)]
+        #[method_id(@__retain_semantics Other systemGrayColor)]
         pub unsafe fn systemGrayColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemTealColor)]
+        #[method_id(@__retain_semantics Other systemTealColor)]
         pub unsafe fn systemTealColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemIndigoColor)]
+        #[method_id(@__retain_semantics Other systemIndigoColor)]
         pub unsafe fn systemIndigoColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemMintColor)]
+        #[method_id(@__retain_semantics Other systemMintColor)]
         pub unsafe fn systemMintColor() -> Id<NSColor, Shared>;
 
-        #[method_id(systemCyanColor)]
+        #[method_id(@__retain_semantics Other systemCyanColor)]
         pub unsafe fn systemCyanColor() -> Id<NSColor, Shared>;
 
-        #[method_id(controlAccentColor)]
+        #[method_id(@__retain_semantics Other controlAccentColor)]
         pub unsafe fn controlAccentColor() -> Id<NSColor, Shared>;
 
         #[method(currentControlTint)]
         pub unsafe fn currentControlTint() -> NSControlTint;
 
-        #[method_id(colorForControlTint:)]
+        #[method_id(@__retain_semantics Other colorForControlTint:)]
         pub unsafe fn colorForControlTint(controlTint: NSControlTint) -> Id<NSColor, Shared>;
 
-        #[method_id(highlightColor)]
+        #[method_id(@__retain_semantics Other highlightColor)]
         pub unsafe fn highlightColor() -> Id<NSColor, Shared>;
 
-        #[method_id(shadowColor)]
+        #[method_id(@__retain_semantics Other shadowColor)]
         pub unsafe fn shadowColor() -> Id<NSColor, Shared>;
 
-        #[method_id(highlightWithLevel:)]
+        #[method_id(@__retain_semantics Other highlightWithLevel:)]
         pub unsafe fn highlightWithLevel(&self, val: CGFloat) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(shadowWithLevel:)]
+        #[method_id(@__retain_semantics Other shadowWithLevel:)]
         pub unsafe fn shadowWithLevel(&self, val: CGFloat) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(colorWithSystemEffect:)]
+        #[method_id(@__retain_semantics Other colorWithSystemEffect:)]
         pub unsafe fn colorWithSystemEffect(
             &self,
             systemEffect: NSColorSystemEffect,
@@ -400,26 +400,26 @@ extern_methods!(
         #[method(setStroke)]
         pub unsafe fn setStroke(&self);
 
-        #[method_id(blendedColorWithFraction:ofColor:)]
+        #[method_id(@__retain_semantics Other blendedColorWithFraction:ofColor:)]
         pub unsafe fn blendedColorWithFraction_ofColor(
             &self,
             fraction: CGFloat,
             color: &NSColor,
         ) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(colorWithAlphaComponent:)]
+        #[method_id(@__retain_semantics Other colorWithAlphaComponent:)]
         pub unsafe fn colorWithAlphaComponent(&self, alpha: CGFloat) -> Id<NSColor, Shared>;
 
-        #[method_id(catalogNameComponent)]
+        #[method_id(@__retain_semantics Other catalogNameComponent)]
         pub unsafe fn catalogNameComponent(&self) -> Id<NSColorListName, Shared>;
 
-        #[method_id(colorNameComponent)]
+        #[method_id(@__retain_semantics Other colorNameComponent)]
         pub unsafe fn colorNameComponent(&self) -> Id<NSColorName, Shared>;
 
-        #[method_id(localizedCatalogNameComponent)]
+        #[method_id(@__retain_semantics Other localizedCatalogNameComponent)]
         pub unsafe fn localizedCatalogNameComponent(&self) -> Id<NSString, Shared>;
 
-        #[method_id(localizedColorNameComponent)]
+        #[method_id(@__retain_semantics Other localizedColorNameComponent)]
         pub unsafe fn localizedColorNameComponent(&self) -> Id<NSString, Shared>;
 
         #[method(redComponent)]
@@ -486,7 +486,7 @@ extern_methods!(
             alpha: *mut CGFloat,
         );
 
-        #[method_id(colorSpace)]
+        #[method_id(@__retain_semantics Other colorSpace)]
         pub unsafe fn colorSpace(&self) -> Id<NSColorSpace, Shared>;
 
         #[method(numberOfComponents)]
@@ -495,13 +495,13 @@ extern_methods!(
         #[method(getComponents:)]
         pub unsafe fn getComponents(&self, components: NonNull<CGFloat>);
 
-        #[method_id(patternImage)]
+        #[method_id(@__retain_semantics Other patternImage)]
         pub unsafe fn patternImage(&self) -> Id<NSImage, Shared>;
 
         #[method(alphaComponent)]
         pub unsafe fn alphaComponent(&self) -> CGFloat;
 
-        #[method_id(colorFromPasteboard:)]
+        #[method_id(@__retain_semantics Other colorFromPasteboard:)]
         pub unsafe fn colorFromPasteboard(pasteBoard: &NSPasteboard)
             -> Option<Id<NSColor, Shared>>;
 
@@ -511,7 +511,7 @@ extern_methods!(
         #[method(drawSwatchInRect:)]
         pub unsafe fn drawSwatchInRect(&self, rect: NSRect);
 
-        #[method_id(colorWithCGColor:)]
+        #[method_id(@__retain_semantics Other colorWithCGColor:)]
         pub unsafe fn colorWithCGColor(cgColor: CGColorRef) -> Option<Id<NSColor, Shared>>;
 
         #[method(CGColor)]
@@ -528,56 +528,56 @@ extern_methods!(
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSColor {
-        #[method_id(controlHighlightColor)]
+        #[method_id(@__retain_semantics Other controlHighlightColor)]
         pub unsafe fn controlHighlightColor() -> Id<NSColor, Shared>;
 
-        #[method_id(controlLightHighlightColor)]
+        #[method_id(@__retain_semantics Other controlLightHighlightColor)]
         pub unsafe fn controlLightHighlightColor() -> Id<NSColor, Shared>;
 
-        #[method_id(controlShadowColor)]
+        #[method_id(@__retain_semantics Other controlShadowColor)]
         pub unsafe fn controlShadowColor() -> Id<NSColor, Shared>;
 
-        #[method_id(controlDarkShadowColor)]
+        #[method_id(@__retain_semantics Other controlDarkShadowColor)]
         pub unsafe fn controlDarkShadowColor() -> Id<NSColor, Shared>;
 
-        #[method_id(scrollBarColor)]
+        #[method_id(@__retain_semantics Other scrollBarColor)]
         pub unsafe fn scrollBarColor() -> Id<NSColor, Shared>;
 
-        #[method_id(knobColor)]
+        #[method_id(@__retain_semantics Other knobColor)]
         pub unsafe fn knobColor() -> Id<NSColor, Shared>;
 
-        #[method_id(selectedKnobColor)]
+        #[method_id(@__retain_semantics Other selectedKnobColor)]
         pub unsafe fn selectedKnobColor() -> Id<NSColor, Shared>;
 
-        #[method_id(windowFrameColor)]
+        #[method_id(@__retain_semantics Other windowFrameColor)]
         pub unsafe fn windowFrameColor() -> Id<NSColor, Shared>;
 
-        #[method_id(selectedMenuItemColor)]
+        #[method_id(@__retain_semantics Other selectedMenuItemColor)]
         pub unsafe fn selectedMenuItemColor() -> Id<NSColor, Shared>;
 
-        #[method_id(headerColor)]
+        #[method_id(@__retain_semantics Other headerColor)]
         pub unsafe fn headerColor() -> Id<NSColor, Shared>;
 
-        #[method_id(secondarySelectedControlColor)]
+        #[method_id(@__retain_semantics Other secondarySelectedControlColor)]
         pub unsafe fn secondarySelectedControlColor() -> Id<NSColor, Shared>;
 
-        #[method_id(alternateSelectedControlColor)]
+        #[method_id(@__retain_semantics Other alternateSelectedControlColor)]
         pub unsafe fn alternateSelectedControlColor() -> Id<NSColor, Shared>;
 
-        #[method_id(controlAlternatingRowBackgroundColors)]
+        #[method_id(@__retain_semantics Other controlAlternatingRowBackgroundColors)]
         pub unsafe fn controlAlternatingRowBackgroundColors() -> Id<NSArray<NSColor>, Shared>;
 
-        #[method_id(colorSpaceName)]
+        #[method_id(@__retain_semantics Other colorSpaceName)]
         pub unsafe fn colorSpaceName(&self) -> Id<NSColorSpaceName, Shared>;
 
-        #[method_id(colorUsingColorSpaceName:device:)]
+        #[method_id(@__retain_semantics Other colorUsingColorSpaceName:device:)]
         pub unsafe fn colorUsingColorSpaceName_device(
             &self,
             name: Option<&NSColorSpaceName>,
             deviceDescription: Option<&NSDictionary<NSDeviceDescriptionKey, Object>>,
         ) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(colorUsingColorSpaceName:)]
+        #[method_id(@__retain_semantics Other colorUsingColorSpaceName:)]
         pub unsafe fn colorUsingColorSpaceName(
             &self,
             name: &NSColorSpaceName,
@@ -588,7 +588,7 @@ extern_methods!(
 extern_methods!(
     /// NSQuartzCoreAdditions
     unsafe impl NSColor {
-        #[method_id(colorWithCIColor:)]
+        #[method_id(@__retain_semantics Other colorWithCIColor:)]
         pub unsafe fn colorWithCIColor(color: &CIColor) -> Id<NSColor, Shared>;
     }
 );
@@ -596,7 +596,7 @@ extern_methods!(
 extern_methods!(
     /// NSAppKitAdditions
     unsafe impl CIColor {
-        #[method_id(initWithColor:)]
+        #[method_id(@__retain_semantics Init initWithColor:)]
         pub unsafe fn initWithColor(
             this: Option<Allocated<Self>>,
             color: &NSColor,
@@ -607,7 +607,7 @@ extern_methods!(
 extern_methods!(
     /// NSAppKitColorExtensions
     unsafe impl NSCoder {
-        #[method_id(decodeNXColor)]
+        #[method_id(@__retain_semantics Other decodeNXColor)]
         pub unsafe fn decodeNXColor(&self) -> Option<Id<NSColor, Shared>>;
     }
 );

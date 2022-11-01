@@ -14,20 +14,20 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOrthography {
-        #[method_id(dominantScript)]
+        #[method_id(@__retain_semantics Other dominantScript)]
         pub unsafe fn dominantScript(&self) -> Id<NSString, Shared>;
 
-        #[method_id(languageMap)]
+        #[method_id(@__retain_semantics Other languageMap)]
         pub unsafe fn languageMap(&self) -> Id<NSDictionary<NSString, NSArray<NSString>>, Shared>;
 
-        #[method_id(initWithDominantScript:languageMap:)]
+        #[method_id(@__retain_semantics Init initWithDominantScript:languageMap:)]
         pub unsafe fn initWithDominantScript_languageMap(
             this: Option<Allocated<Self>>,
             script: &NSString,
             map: &NSDictionary<NSString, NSArray<NSString>>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -38,28 +38,28 @@ extern_methods!(
 extern_methods!(
     /// NSOrthographyExtended
     unsafe impl NSOrthography {
-        #[method_id(languagesForScript:)]
+        #[method_id(@__retain_semantics Other languagesForScript:)]
         pub unsafe fn languagesForScript(
             &self,
             script: &NSString,
         ) -> Option<Id<NSArray<NSString>, Shared>>;
 
-        #[method_id(dominantLanguageForScript:)]
+        #[method_id(@__retain_semantics Other dominantLanguageForScript:)]
         pub unsafe fn dominantLanguageForScript(
             &self,
             script: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(dominantLanguage)]
+        #[method_id(@__retain_semantics Other dominantLanguage)]
         pub unsafe fn dominantLanguage(&self) -> Id<NSString, Shared>;
 
-        #[method_id(allScripts)]
+        #[method_id(@__retain_semantics Other allScripts)]
         pub unsafe fn allScripts(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(allLanguages)]
+        #[method_id(@__retain_semantics Other allLanguages)]
         pub unsafe fn allLanguages(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(defaultOrthographyForLanguage:)]
+        #[method_id(@__retain_semantics Other defaultOrthographyForLanguage:)]
         pub unsafe fn defaultOrthographyForLanguage(language: &NSString) -> Id<Self, Shared>;
     }
 );
@@ -67,7 +67,7 @@ extern_methods!(
 extern_methods!(
     /// NSOrthographyCreation
     unsafe impl NSOrthography {
-        #[method_id(orthographyWithDominantScript:languageMap:)]
+        #[method_id(@__retain_semantics Other orthographyWithDominantScript:languageMap:)]
         pub unsafe fn orthographyWithDominantScript_languageMap(
             script: &NSString,
             map: &NSDictionary<NSString, NSArray<NSString>>,

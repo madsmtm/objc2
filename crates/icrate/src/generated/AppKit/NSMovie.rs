@@ -15,22 +15,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSMovie {
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithMovie:)]
+        #[method_id(@__retain_semantics Init initWithMovie:)]
         pub unsafe fn initWithMovie(
             this: Option<Allocated<Self>>,
             movie: &QTMovie,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(QTMovie)]
+        #[method_id(@__retain_semantics Other QTMovie)]
         pub unsafe fn QTMovie(&self) -> Option<Id<QTMovie, Shared>>;
     }
 );

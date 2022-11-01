@@ -17,13 +17,13 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<CandidateType: Message> NSCandidateListTouchBarItem<CandidateType> {
-        #[method_id(client)]
+        #[method_id(@__retain_semantics Other client)]
         pub unsafe fn client(&self) -> Option<Id<TodoProtocols, Shared>>;
 
         #[method(setClient:)]
         pub unsafe fn setClient(&self, client: Option<&TodoProtocols>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSCandidateListTouchBarItemDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -65,7 +65,7 @@ extern_methods!(
             attributedStringForCandidate: TodoBlock,
         );
 
-        #[method_id(candidates)]
+        #[method_id(@__retain_semantics Other candidates)]
         pub unsafe fn candidates(&self) -> Id<NSArray<CandidateType>, Shared>;
 
         #[method(setCandidates:forSelectedRange:inString:)]
@@ -76,7 +76,7 @@ extern_methods!(
             originalString: Option<&NSString>,
         );
 
-        #[method_id(customizationLabel)]
+        #[method_id(@__retain_semantics Other customizationLabel)]
         pub unsafe fn customizationLabel(&self) -> Id<NSString, Shared>;
 
         #[method(setCustomizationLabel:)]
@@ -89,7 +89,7 @@ pub type NSCandidateListTouchBarItemDelegate = NSObject;
 extern_methods!(
     /// NSCandidateListTouchBarItem
     unsafe impl NSView {
-        #[method_id(candidateListTouchBarItem)]
+        #[method_id(@__retain_semantics Other candidateListTouchBarItem)]
         pub unsafe fn candidateListTouchBarItem(
             &self,
         ) -> Option<Id<NSCandidateListTouchBarItem, Shared>>;

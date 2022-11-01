@@ -15,19 +15,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSFormCell {
-        #[method_id(initTextCell:)]
+        #[method_id(@__retain_semantics Init initTextCell:)]
         pub unsafe fn initTextCell(
             this: Option<Allocated<Self>>,
             string: Option<&NSString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initImageCell:)]
+        #[method_id(@__retain_semantics Init initImageCell:)]
         pub unsafe fn initImageCell(
             this: Option<Allocated<Self>>,
             image: Option<&NSImage>,
@@ -42,13 +42,13 @@ extern_methods!(
         #[method(setTitleWidth:)]
         pub unsafe fn setTitleWidth(&self, titleWidth: CGFloat);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: &NSString);
 
-        #[method_id(titleFont)]
+        #[method_id(@__retain_semantics Other titleFont)]
         pub unsafe fn titleFont(&self) -> Id<NSFont, Shared>;
 
         #[method(setTitleFont:)]
@@ -57,13 +57,13 @@ extern_methods!(
         #[method(isOpaque)]
         pub unsafe fn isOpaque(&self) -> bool;
 
-        #[method_id(placeholderString)]
+        #[method_id(@__retain_semantics Other placeholderString)]
         pub unsafe fn placeholderString(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setPlaceholderString:)]
         pub unsafe fn setPlaceholderString(&self, placeholderString: Option<&NSString>);
 
-        #[method_id(placeholderAttributedString)]
+        #[method_id(@__retain_semantics Other placeholderAttributedString)]
         pub unsafe fn placeholderAttributedString(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setPlaceholderAttributedString:)]
@@ -106,7 +106,7 @@ extern_methods!(
 extern_methods!(
     /// NSFormCellAttributedStringMethods
     unsafe impl NSFormCell {
-        #[method_id(attributedTitle)]
+        #[method_id(@__retain_semantics Other attributedTitle)]
         pub unsafe fn attributedTitle(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedTitle:)]

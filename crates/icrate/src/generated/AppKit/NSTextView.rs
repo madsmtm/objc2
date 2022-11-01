@@ -28,26 +28,26 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextView {
-        #[method_id(initWithFrame:textContainer:)]
+        #[method_id(@__retain_semantics Init initWithFrame:textContainer:)]
         pub unsafe fn initWithFrame_textContainer(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
             container: Option<&NSTextContainer>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithFrame:)]
+        #[method_id(@__retain_semantics Init initWithFrame:)]
         pub unsafe fn initWithFrame(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
         ) -> Id<Self, Shared>;
 
-        #[method_id(textContainer)]
+        #[method_id(@__retain_semantics Other textContainer)]
         pub unsafe fn textContainer(&self) -> Option<Id<NSTextContainer, Shared>>;
 
         #[method(setTextContainer:)]
@@ -68,16 +68,16 @@ extern_methods!(
         #[method(invalidateTextContainerOrigin)]
         pub unsafe fn invalidateTextContainerOrigin(&self);
 
-        #[method_id(layoutManager)]
+        #[method_id(@__retain_semantics Other layoutManager)]
         pub unsafe fn layoutManager(&self) -> Option<Id<NSLayoutManager, Shared>>;
 
-        #[method_id(textStorage)]
+        #[method_id(@__retain_semantics Other textStorage)]
         pub unsafe fn textStorage(&self) -> Option<Id<NSTextStorage, Shared>>;
 
-        #[method_id(textLayoutManager)]
+        #[method_id(@__retain_semantics Other textLayoutManager)]
         pub unsafe fn textLayoutManager(&self) -> Option<Id<NSTextLayoutManager, Shared>>;
 
-        #[method_id(textContentStorage)]
+        #[method_id(@__retain_semantics Other textContentStorage)]
         pub unsafe fn textContentStorage(&self) -> Option<Id<NSTextContentStorage, Shared>>;
 
         #[method(insertText:)]
@@ -286,7 +286,7 @@ extern_methods!(
         #[method(rangeForUserCompletion)]
         pub unsafe fn rangeForUserCompletion(&self) -> NSRange;
 
-        #[method_id(completionsForPartialWordRange:indexOfSelectedItem:)]
+        #[method_id(@__retain_semantics Other completionsForPartialWordRange:indexOfSelectedItem:)]
         pub unsafe fn completionsForPartialWordRange_indexOfSelectedItem(
             &self,
             charRange: NSRange,
@@ -307,7 +307,7 @@ extern_methods!(
 extern_methods!(
     /// NSPasteboard
     unsafe impl NSTextView {
-        #[method_id(writablePasteboardTypes)]
+        #[method_id(@__retain_semantics Other writablePasteboardTypes)]
         pub unsafe fn writablePasteboardTypes(&self) -> Id<NSArray<NSPasteboardType>, Shared>;
 
         #[method(writeSelectionToPasteboard:type:)]
@@ -324,10 +324,10 @@ extern_methods!(
             types: &NSArray<NSPasteboardType>,
         ) -> bool;
 
-        #[method_id(readablePasteboardTypes)]
+        #[method_id(@__retain_semantics Other readablePasteboardTypes)]
         pub unsafe fn readablePasteboardTypes(&self) -> Id<NSArray<NSPasteboardType>, Shared>;
 
-        #[method_id(preferredPasteboardTypeFromArray:restrictedToTypesFromArray:)]
+        #[method_id(@__retain_semantics Other preferredPasteboardTypeFromArray:restrictedToTypesFromArray:)]
         pub unsafe fn preferredPasteboardTypeFromArray_restrictedToTypesFromArray(
             &self,
             availableTypes: &NSArray<NSPasteboardType>,
@@ -347,7 +347,7 @@ extern_methods!(
         #[method(registerForServices)]
         pub unsafe fn registerForServices();
 
-        #[method_id(validRequestorForSendType:returnType:)]
+        #[method_id(@__retain_semantics Other validRequestorForSendType:returnType:)]
         pub unsafe fn validRequestorForSendType_returnType(
             &self,
             sendType: Option<&NSPasteboardType>,
@@ -373,14 +373,14 @@ extern_methods!(
             slideBack: bool,
         ) -> bool;
 
-        #[method_id(dragImageForSelectionWithEvent:origin:)]
+        #[method_id(@__retain_semantics Other dragImageForSelectionWithEvent:origin:)]
         pub unsafe fn dragImageForSelectionWithEvent_origin(
             &self,
             event: &NSEvent,
             origin: NSPointPointer,
         ) -> Option<Id<NSImage, Shared>>;
 
-        #[method_id(acceptableDragTypes)]
+        #[method_id(@__retain_semantics Other acceptableDragTypes)]
         pub unsafe fn acceptableDragTypes(&self) -> Id<NSArray<NSPasteboardType>, Shared>;
 
         #[method(dragOperationForDraggingInfo:type:)]
@@ -398,7 +398,7 @@ extern_methods!(
 extern_methods!(
     /// NSSharing
     unsafe impl NSTextView {
-        #[method_id(selectedRanges)]
+        #[method_id(@__retain_semantics Other selectedRanges)]
         pub unsafe fn selectedRanges(&self) -> Id<NSArray<NSValue>, Shared>;
 
         #[method(setSelectedRanges:)]
@@ -429,7 +429,7 @@ extern_methods!(
         #[method(setSelectionGranularity:)]
         pub unsafe fn setSelectionGranularity(&self, selectionGranularity: NSSelectionGranularity);
 
-        #[method_id(selectedTextAttributes)]
+        #[method_id(@__retain_semantics Other selectedTextAttributes)]
         pub unsafe fn selectedTextAttributes(
             &self,
         ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared>;
@@ -440,7 +440,7 @@ extern_methods!(
             selectedTextAttributes: &NSDictionary<NSAttributedStringKey, Object>,
         );
 
-        #[method_id(insertionPointColor)]
+        #[method_id(@__retain_semantics Other insertionPointColor)]
         pub unsafe fn insertionPointColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setInsertionPointColor:)]
@@ -449,7 +449,7 @@ extern_methods!(
         #[method(updateInsertionPointStateAndRestartTimer:)]
         pub unsafe fn updateInsertionPointStateAndRestartTimer(&self, restartFlag: bool);
 
-        #[method_id(markedTextAttributes)]
+        #[method_id(@__retain_semantics Other markedTextAttributes)]
         pub unsafe fn markedTextAttributes(
             &self,
         ) -> Option<Id<NSDictionary<NSAttributedStringKey, Object>, Shared>>;
@@ -460,7 +460,7 @@ extern_methods!(
             markedTextAttributes: Option<&NSDictionary<NSAttributedStringKey, Object>>,
         );
 
-        #[method_id(linkTextAttributes)]
+        #[method_id(@__retain_semantics Other linkTextAttributes)]
         pub unsafe fn linkTextAttributes(
             &self,
         ) -> Option<Id<NSDictionary<NSAttributedStringKey, Object>, Shared>>;
@@ -522,7 +522,7 @@ extern_methods!(
         #[method(setSpellingState:range:)]
         pub unsafe fn setSpellingState_range(&self, value: NSInteger, charRange: NSRange);
 
-        #[method_id(typingAttributes)]
+        #[method_id(@__retain_semantics Other typingAttributes)]
         pub unsafe fn typingAttributes(
             &self,
         ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared>;
@@ -540,15 +540,15 @@ extern_methods!(
             replacementStrings: Option<&NSArray<NSString>>,
         ) -> bool;
 
-        #[method_id(rangesForUserTextChange)]
+        #[method_id(@__retain_semantics Other rangesForUserTextChange)]
         pub unsafe fn rangesForUserTextChange(&self) -> Option<Id<NSArray<NSValue>, Shared>>;
 
-        #[method_id(rangesForUserCharacterAttributeChange)]
+        #[method_id(@__retain_semantics Other rangesForUserCharacterAttributeChange)]
         pub unsafe fn rangesForUserCharacterAttributeChange(
             &self,
         ) -> Option<Id<NSArray<NSValue>, Shared>>;
 
-        #[method_id(rangesForUserParagraphAttributeChange)]
+        #[method_id(@__retain_semantics Other rangesForUserParagraphAttributeChange)]
         pub unsafe fn rangesForUserParagraphAttributeChange(
             &self,
         ) -> Option<Id<NSArray<NSValue>, Shared>>;
@@ -581,7 +581,7 @@ extern_methods!(
             allowsDocumentBackgroundColorChange: bool,
         );
 
-        #[method_id(defaultParagraphStyle)]
+        #[method_id(@__retain_semantics Other defaultParagraphStyle)]
         pub unsafe fn defaultParagraphStyle(&self) -> Option<Id<NSParagraphStyle, Shared>>;
 
         #[method(setDefaultParagraphStyle:)]
@@ -620,7 +620,7 @@ extern_methods!(
             usesRolloverButtonForSelection: bool,
         );
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTextViewDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -656,7 +656,7 @@ extern_methods!(
         #[method(setDrawsBackground:)]
         pub unsafe fn setDrawsBackground(&self, drawsBackground: bool);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
@@ -683,7 +683,7 @@ extern_methods!(
         #[method(setSelectedRange:)]
         pub unsafe fn setSelectedRange(&self, charRange: NSRange);
 
-        #[method_id(allowedInputSourceLocales)]
+        #[method_id(@__retain_semantics Other allowedInputSourceLocales)]
         pub unsafe fn allowedInputSourceLocales(&self) -> Option<Id<NSArray<NSString>, Shared>>;
 
         #[method(setAllowedInputSourceLocales:)]
@@ -721,14 +721,14 @@ extern_methods!(
             afterString: Option<&mut Option<Id<NSString, Shared>>>,
         );
 
-        #[method_id(smartInsertBeforeStringForString:replacingRange:)]
+        #[method_id(@__retain_semantics Other smartInsertBeforeStringForString:replacingRange:)]
         pub unsafe fn smartInsertBeforeStringForString_replacingRange(
             &self,
             pasteString: &NSString,
             charRangeToReplace: NSRange,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(smartInsertAfterStringForString:replacingRange:)]
+        #[method_id(@__retain_semantics Other smartInsertAfterStringForString:replacingRange:)]
         pub unsafe fn smartInsertAfterStringForString_replacingRange(
             &self,
             pasteString: &NSString,
@@ -864,7 +864,7 @@ extern_methods!(
         #[method(toggleQuickLookPreviewPanel:)]
         pub unsafe fn toggleQuickLookPreviewPanel(&self, sender: Option<&Object>);
 
-        #[method_id(quickLookPreviewableItemsInRanges:)]
+        #[method_id(@__retain_semantics Other quickLookPreviewableItemsInRanges:)]
         pub unsafe fn quickLookPreviewableItemsInRanges(
             &self,
             ranges: &NSArray<NSValue>,
@@ -916,7 +916,7 @@ extern_methods!(
         #[method(updateCandidates)]
         pub unsafe fn updateCandidates(&self);
 
-        #[method_id(candidateListTouchBarItem)]
+        #[method_id(@__retain_semantics Other candidateListTouchBarItem)]
         pub unsafe fn candidateListTouchBarItem(
             &self,
         ) -> Option<Id<NSCandidateListTouchBarItem, Shared>>;
@@ -926,16 +926,16 @@ extern_methods!(
 extern_methods!(
     /// NSTextView_Factory
     unsafe impl NSTextView {
-        #[method_id(scrollableTextView)]
+        #[method_id(@__retain_semantics Other scrollableTextView)]
         pub unsafe fn scrollableTextView() -> Id<NSScrollView, Shared>;
 
-        #[method_id(fieldEditor)]
+        #[method_id(@__retain_semantics Other fieldEditor)]
         pub unsafe fn fieldEditor() -> Id<Self, Shared>;
 
-        #[method_id(scrollableDocumentContentTextView)]
+        #[method_id(@__retain_semantics Other scrollableDocumentContentTextView)]
         pub unsafe fn scrollableDocumentContentTextView() -> Id<NSScrollView, Shared>;
 
-        #[method_id(scrollablePlainDocumentContentTextView)]
+        #[method_id(@__retain_semantics Other scrollablePlainDocumentContentTextView)]
         pub unsafe fn scrollablePlainDocumentContentTextView() -> Id<NSScrollView, Shared>;
     }
 );

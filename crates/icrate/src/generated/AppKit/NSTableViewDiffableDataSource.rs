@@ -25,20 +25,20 @@ extern_methods!(
     unsafe impl<SectionIdentifierType: Message, ItemIdentifierType: Message>
         NSTableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>
     {
-        #[method_id(initWithTableView:cellProvider:)]
+        #[method_id(@__retain_semantics Init initWithTableView:cellProvider:)]
         pub unsafe fn initWithTableView_cellProvider(
             this: Option<Allocated<Self>>,
             tableView: &NSTableView,
             cellProvider: NSTableViewDiffableDataSourceCellProvider,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(new)]
+        #[method_id(@__retain_semantics New new)]
         pub unsafe fn new() -> Id<Self, Shared>;
 
-        #[method_id(snapshot)]
+        #[method_id(@__retain_semantics Other snapshot)]
         pub unsafe fn snapshot(
             &self,
         ) -> Id<NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>, Shared>;
@@ -58,7 +58,7 @@ extern_methods!(
             completion: TodoBlock,
         );
 
-        #[method_id(itemIdentifierForRow:)]
+        #[method_id(@__retain_semantics Other itemIdentifierForRow:)]
         pub unsafe fn itemIdentifierForRow(
             &self,
             row: NSInteger,
@@ -67,7 +67,7 @@ extern_methods!(
         #[method(rowForItemIdentifier:)]
         pub unsafe fn rowForItemIdentifier(&self, identifier: &ItemIdentifierType) -> NSInteger;
 
-        #[method_id(sectionIdentifierForRow:)]
+        #[method_id(@__retain_semantics Other sectionIdentifierForRow:)]
         pub unsafe fn sectionIdentifierForRow(
             &self,
             row: NSInteger,

@@ -15,26 +15,26 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUserDefaultsController {
-        #[method_id(sharedUserDefaultsController)]
+        #[method_id(@__retain_semantics Other sharedUserDefaultsController)]
         pub unsafe fn sharedUserDefaultsController() -> Id<NSUserDefaultsController, Shared>;
 
-        #[method_id(initWithDefaults:initialValues:)]
+        #[method_id(@__retain_semantics Init initWithDefaults:initialValues:)]
         pub unsafe fn initWithDefaults_initialValues(
             this: Option<Allocated<Self>>,
             defaults: Option<&NSUserDefaults>,
             initialValues: Option<&NSDictionary<NSString, Object>>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(defaults)]
+        #[method_id(@__retain_semantics Other defaults)]
         pub unsafe fn defaults(&self) -> Id<NSUserDefaults, Shared>;
 
-        #[method_id(initialValues)]
+        #[method_id(@__retain_semantics Other initialValues)]
         pub unsafe fn initialValues(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
 
         #[method(setInitialValues:)]
@@ -52,7 +52,7 @@ extern_methods!(
         #[method(hasUnappliedChanges)]
         pub unsafe fn hasUnappliedChanges(&self) -> bool;
 
-        #[method_id(values)]
+        #[method_id(@__retain_semantics Other values)]
         pub unsafe fn values(&self) -> Id<Object, Shared>;
 
         #[method(revert:)]

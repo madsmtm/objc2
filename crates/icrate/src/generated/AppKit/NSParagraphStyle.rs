@@ -35,12 +35,12 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextTab {
-        #[method_id(columnTerminatorsForLocale:)]
+        #[method_id(@__retain_semantics Other columnTerminatorsForLocale:)]
         pub unsafe fn columnTerminatorsForLocale(
             aLocale: Option<&NSLocale>,
         ) -> Id<NSCharacterSet, Shared>;
 
-        #[method_id(initWithTextAlignment:location:options:)]
+        #[method_id(@__retain_semantics Init initWithTextAlignment:location:options:)]
         pub unsafe fn initWithTextAlignment_location_options(
             this: Option<Allocated<Self>>,
             alignment: NSTextAlignment,
@@ -54,7 +54,7 @@ extern_methods!(
         #[method(location)]
         pub unsafe fn location(&self) -> CGFloat;
 
-        #[method_id(options)]
+        #[method_id(@__retain_semantics Other options)]
         pub unsafe fn options(&self) -> Id<NSDictionary<NSTextTabOptionKey, Object>, Shared>;
     }
 );
@@ -70,7 +70,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSParagraphStyle {
-        #[method_id(defaultParagraphStyle)]
+        #[method_id(@__retain_semantics Other defaultParagraphStyle)]
         pub unsafe fn defaultParagraphStyle() -> Id<NSParagraphStyle, Shared>;
 
         #[method(defaultWritingDirectionForLanguage:)]
@@ -120,7 +120,7 @@ extern_methods!(
         #[method(usesDefaultHyphenation)]
         pub unsafe fn usesDefaultHyphenation(&self) -> bool;
 
-        #[method_id(tabStops)]
+        #[method_id(@__retain_semantics Other tabStops)]
         pub unsafe fn tabStops(&self) -> Id<NSArray<NSTextTab>, Shared>;
 
         #[method(defaultTabInterval)]
@@ -132,10 +132,10 @@ extern_methods!(
         #[method(tighteningFactorForTruncation)]
         pub unsafe fn tighteningFactorForTruncation(&self) -> c_float;
 
-        #[method_id(textBlocks)]
+        #[method_id(@__retain_semantics Other textBlocks)]
         pub unsafe fn textBlocks(&self) -> Id<NSArray<NSTextBlock>, Shared>;
 
-        #[method_id(textLists)]
+        #[method_id(@__retain_semantics Other textLists)]
         pub unsafe fn textLists(&self) -> Id<NSArray<NSTextList>, Shared>;
 
         #[method(headerLevel)]
@@ -241,7 +241,7 @@ extern_methods!(
         #[method(setUsesDefaultHyphenation:)]
         pub unsafe fn setUsesDefaultHyphenation(&self, usesDefaultHyphenation: bool);
 
-        #[method_id(tabStops)]
+        #[method_id(@__retain_semantics Other tabStops)]
         pub unsafe fn tabStops(&self) -> Id<NSArray<NSTextTab>, Shared>;
 
         #[method(setTabStops:)]
@@ -280,13 +280,13 @@ extern_methods!(
             tighteningFactorForTruncation: c_float,
         );
 
-        #[method_id(textBlocks)]
+        #[method_id(@__retain_semantics Other textBlocks)]
         pub unsafe fn textBlocks(&self) -> Id<NSArray<NSTextBlock>, Shared>;
 
         #[method(setTextBlocks:)]
         pub unsafe fn setTextBlocks(&self, textBlocks: &NSArray<NSTextBlock>);
 
-        #[method_id(textLists)]
+        #[method_id(@__retain_semantics Other textLists)]
         pub unsafe fn textLists(&self) -> Id<NSArray<NSTextList>, Shared>;
 
         #[method(setTextLists:)]
@@ -315,7 +315,7 @@ pub const NSDecimalTabStopType: NSTextTabType = 3;
 extern_methods!(
     /// NSTextTabDeprecated
     unsafe impl NSTextTab {
-        #[method_id(initWithType:location:)]
+        #[method_id(@__retain_semantics Init initWithType:location:)]
         pub unsafe fn initWithType_location(
             this: Option<Allocated<Self>>,
             type_: NSTextTabType,

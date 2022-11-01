@@ -32,25 +32,25 @@ extern_methods!(
         #[method(setUnitStyle:)]
         pub unsafe fn setUnitStyle(&self, unitStyle: NSFormattingUnitStyle);
 
-        #[method_id(locale)]
+        #[method_id(@__retain_semantics Other locale)]
         pub unsafe fn locale(&self) -> Id<NSLocale, Shared>;
 
         #[method(setLocale:)]
         pub unsafe fn setLocale(&self, locale: Option<&NSLocale>);
 
-        #[method_id(numberFormatter)]
+        #[method_id(@__retain_semantics Other numberFormatter)]
         pub unsafe fn numberFormatter(&self) -> Id<NSNumberFormatter, Shared>;
 
         #[method(setNumberFormatter:)]
         pub unsafe fn setNumberFormatter(&self, numberFormatter: Option<&NSNumberFormatter>);
 
-        #[method_id(stringFromMeasurement:)]
+        #[method_id(@__retain_semantics Other stringFromMeasurement:)]
         pub unsafe fn stringFromMeasurement(
             &self,
             measurement: &NSMeasurement,
         ) -> Id<NSString, Shared>;
 
-        #[method_id(stringFromUnit:)]
+        #[method_id(@__retain_semantics Other stringFromUnit:)]
         pub unsafe fn stringFromUnit(&self, unit: &NSUnit) -> Id<NSString, Shared>;
     }
 );

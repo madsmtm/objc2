@@ -14,27 +14,27 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSortDescriptor {
-        #[method_id(sortDescriptorWithKey:ascending:)]
+        #[method_id(@__retain_semantics Other sortDescriptorWithKey:ascending:)]
         pub unsafe fn sortDescriptorWithKey_ascending(
             key: Option<&NSString>,
             ascending: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(sortDescriptorWithKey:ascending:selector:)]
+        #[method_id(@__retain_semantics Other sortDescriptorWithKey:ascending:selector:)]
         pub unsafe fn sortDescriptorWithKey_ascending_selector(
             key: Option<&NSString>,
             ascending: bool,
             selector: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithKey:ascending:)]
+        #[method_id(@__retain_semantics Init initWithKey:ascending:)]
         pub unsafe fn initWithKey_ascending(
             this: Option<Allocated<Self>>,
             key: Option<&NSString>,
             ascending: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithKey:ascending:selector:)]
+        #[method_id(@__retain_semantics Init initWithKey:ascending:selector:)]
         pub unsafe fn initWithKey_ascending_selector(
             this: Option<Allocated<Self>>,
             key: Option<&NSString>,
@@ -42,13 +42,13 @@ extern_methods!(
             selector: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(key)]
+        #[method_id(@__retain_semantics Other key)]
         pub unsafe fn key(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(ascending)]
@@ -60,14 +60,14 @@ extern_methods!(
         #[method(allowEvaluation)]
         pub unsafe fn allowEvaluation(&self);
 
-        #[method_id(sortDescriptorWithKey:ascending:comparator:)]
+        #[method_id(@__retain_semantics Other sortDescriptorWithKey:ascending:comparator:)]
         pub unsafe fn sortDescriptorWithKey_ascending_comparator(
             key: Option<&NSString>,
             ascending: bool,
             cmptr: NSComparator,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithKey:ascending:comparator:)]
+        #[method_id(@__retain_semantics Init initWithKey:ascending:comparator:)]
         pub unsafe fn initWithKey_ascending_comparator(
             this: Option<Allocated<Self>>,
             key: Option<&NSString>,
@@ -85,7 +85,7 @@ extern_methods!(
             object2: &Object,
         ) -> NSComparisonResult;
 
-        #[method_id(reversedSortDescriptor)]
+        #[method_id(@__retain_semantics Other reversedSortDescriptor)]
         pub unsafe fn reversedSortDescriptor(&self) -> Id<Object, Shared>;
     }
 );
@@ -93,7 +93,7 @@ extern_methods!(
 extern_methods!(
     /// NSSortDescriptorSorting
     unsafe impl<ObjectType: Message> NSSet<ObjectType> {
-        #[method_id(sortedArrayUsingDescriptors:)]
+        #[method_id(@__retain_semantics Other sortedArrayUsingDescriptors:)]
         pub unsafe fn sortedArrayUsingDescriptors(
             &self,
             sortDescriptors: &NSArray<NSSortDescriptor>,
@@ -104,7 +104,7 @@ extern_methods!(
 extern_methods!(
     /// NSSortDescriptorSorting
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
-        #[method_id(sortedArrayUsingDescriptors:)]
+        #[method_id(@__retain_semantics Other sortedArrayUsingDescriptors:)]
         pub unsafe fn sortedArrayUsingDescriptors(
             &self,
             sortDescriptors: &NSArray<NSSortDescriptor>,
@@ -123,7 +123,7 @@ extern_methods!(
 extern_methods!(
     /// NSKeyValueSorting
     unsafe impl<ObjectType: Message> NSOrderedSet<ObjectType> {
-        #[method_id(sortedArrayUsingDescriptors:)]
+        #[method_id(@__retain_semantics Other sortedArrayUsingDescriptors:)]
         pub unsafe fn sortedArrayUsingDescriptors(
             &self,
             sortDescriptors: &NSArray<NSSortDescriptor>,

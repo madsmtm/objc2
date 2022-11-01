@@ -15,19 +15,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSMenu {
-        #[method_id(initWithTitle:)]
+        #[method_id(@__retain_semantics Init initWithTitle:)]
         pub unsafe fn initWithTitle(
             this: Option<Allocated<Self>>,
             title: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
@@ -62,7 +62,7 @@ extern_methods!(
         #[method(menuBarVisible)]
         pub unsafe fn menuBarVisible() -> bool;
 
-        #[method_id(supermenu)]
+        #[method_id(@__retain_semantics Other supermenu)]
         pub unsafe fn supermenu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setSupermenu:)]
@@ -74,7 +74,7 @@ extern_methods!(
         #[method(addItem:)]
         pub unsafe fn addItem(&self, newItem: &NSMenuItem);
 
-        #[method_id(insertItemWithTitle:action:keyEquivalent:atIndex:)]
+        #[method_id(@__retain_semantics Other insertItemWithTitle:action:keyEquivalent:atIndex:)]
         pub unsafe fn insertItemWithTitle_action_keyEquivalent_atIndex(
             &self,
             string: &NSString,
@@ -83,7 +83,7 @@ extern_methods!(
             index: NSInteger,
         ) -> Id<NSMenuItem, Shared>;
 
-        #[method_id(addItemWithTitle:action:keyEquivalent:)]
+        #[method_id(@__retain_semantics Other addItemWithTitle:action:keyEquivalent:)]
         pub unsafe fn addItemWithTitle_action_keyEquivalent(
             &self,
             string: &NSString,
@@ -103,7 +103,7 @@ extern_methods!(
         #[method(removeAllItems)]
         pub unsafe fn removeAllItems(&self);
 
-        #[method_id(itemArray)]
+        #[method_id(@__retain_semantics Other itemArray)]
         pub unsafe fn itemArray(&self) -> Id<NSArray<NSMenuItem>, Shared>;
 
         #[method(setItemArray:)]
@@ -112,7 +112,7 @@ extern_methods!(
         #[method(numberOfItems)]
         pub unsafe fn numberOfItems(&self) -> NSInteger;
 
-        #[method_id(itemAtIndex:)]
+        #[method_id(@__retain_semantics Other itemAtIndex:)]
         pub unsafe fn itemAtIndex(&self, index: NSInteger) -> Option<Id<NSMenuItem, Shared>>;
 
         #[method(indexOfItem:)]
@@ -138,10 +138,10 @@ extern_methods!(
             actionSelector: Option<Sel>,
         ) -> NSInteger;
 
-        #[method_id(itemWithTitle:)]
+        #[method_id(@__retain_semantics Other itemWithTitle:)]
         pub unsafe fn itemWithTitle(&self, title: &NSString) -> Option<Id<NSMenuItem, Shared>>;
 
-        #[method_id(itemWithTag:)]
+        #[method_id(@__retain_semantics Other itemWithTag:)]
         pub unsafe fn itemWithTag(&self, tag: NSInteger) -> Option<Id<NSMenuItem, Shared>>;
 
         #[method(autoenablesItems)]
@@ -162,7 +162,7 @@ extern_methods!(
         #[method(performActionForItemAtIndex:)]
         pub unsafe fn performActionForItemAtIndex(&self, index: NSInteger);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSMenuDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -177,7 +177,7 @@ extern_methods!(
         #[method(cancelTrackingWithoutAnimation)]
         pub unsafe fn cancelTrackingWithoutAnimation(&self);
 
-        #[method_id(highlightedItem)]
+        #[method_id(@__retain_semantics Other highlightedItem)]
         pub unsafe fn highlightedItem(&self) -> Option<Id<NSMenuItem, Shared>>;
 
         #[method(minimumWidth)]
@@ -189,7 +189,7 @@ extern_methods!(
         #[method(size)]
         pub unsafe fn size(&self) -> NSSize;
 
-        #[method_id(font)]
+        #[method_id(@__retain_semantics Other font)]
         pub unsafe fn font(&self) -> Option<Id<NSFont, Shared>>;
 
         #[method(setFont:)]
@@ -288,19 +288,19 @@ extern_methods!(
         #[method(setMenuRepresentation:)]
         pub unsafe fn setMenuRepresentation(&self, menuRep: Option<&Object>);
 
-        #[method_id(menuRepresentation)]
+        #[method_id(@__retain_semantics Other menuRepresentation)]
         pub unsafe fn menuRepresentation(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setContextMenuRepresentation:)]
         pub unsafe fn setContextMenuRepresentation(&self, menuRep: Option<&Object>);
 
-        #[method_id(contextMenuRepresentation)]
+        #[method_id(@__retain_semantics Other contextMenuRepresentation)]
         pub unsafe fn contextMenuRepresentation(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTearOffMenuRepresentation:)]
         pub unsafe fn setTearOffMenuRepresentation(&self, menuRep: Option<&Object>);
 
-        #[method_id(tearOffMenuRepresentation)]
+        #[method_id(@__retain_semantics Other tearOffMenuRepresentation)]
         pub unsafe fn tearOffMenuRepresentation(&self) -> Option<Id<Object, Shared>>;
 
         #[method(menuZone)]
@@ -309,7 +309,7 @@ extern_methods!(
         #[method(setMenuZone:)]
         pub unsafe fn setMenuZone(zone: *mut NSZone);
 
-        #[method_id(attachedMenu)]
+        #[method_id(@__retain_semantics Other attachedMenu)]
         pub unsafe fn attachedMenu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(isAttached)]

@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSThread {
-        #[method_id(currentThread)]
+        #[method_id(@__retain_semantics Other currentThread)]
         pub unsafe fn currentThread() -> Id<NSThread, Shared>;
 
         #[method(detachNewThreadWithBlock:)]
@@ -30,7 +30,7 @@ extern_methods!(
         #[method(isMultiThreaded)]
         pub unsafe fn isMultiThreaded() -> bool;
 
-        #[method_id(threadDictionary)]
+        #[method_id(@__retain_semantics Other threadDictionary)]
         pub unsafe fn threadDictionary(&self) -> Id<NSMutableDictionary, Shared>;
 
         #[method(sleepUntilDate:)]
@@ -54,13 +54,13 @@ extern_methods!(
         #[method(setQualityOfService:)]
         pub unsafe fn setQualityOfService(&self, qualityOfService: NSQualityOfService);
 
-        #[method_id(callStackReturnAddresses)]
+        #[method_id(@__retain_semantics Other callStackReturnAddresses)]
         pub unsafe fn callStackReturnAddresses() -> Id<NSArray<NSNumber>, Shared>;
 
-        #[method_id(callStackSymbols)]
+        #[method_id(@__retain_semantics Other callStackSymbols)]
         pub unsafe fn callStackSymbols() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setName:)]
@@ -72,13 +72,13 @@ extern_methods!(
         #[method(setStackSize:)]
         pub unsafe fn setStackSize(&self, stackSize: NSUInteger);
 
-        #[method_id(mainThread)]
+        #[method_id(@__retain_semantics Other mainThread)]
         pub unsafe fn mainThread() -> Id<NSThread, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithTarget:selector:object:)]
+        #[method_id(@__retain_semantics Init initWithTarget:selector:object:)]
         pub unsafe fn initWithTarget_selector_object(
             this: Option<Allocated<Self>>,
             target: &Object,
@@ -86,7 +86,7 @@ extern_methods!(
             argument: Option<&Object>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithBlock:)]
+        #[method_id(@__retain_semantics Init initWithBlock:)]
         pub unsafe fn initWithBlock(
             this: Option<Allocated<Self>>,
             block: TodoBlock,

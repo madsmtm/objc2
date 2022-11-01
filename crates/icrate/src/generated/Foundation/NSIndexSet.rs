@@ -14,28 +14,28 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSIndexSet {
-        #[method_id(indexSet)]
+        #[method_id(@__retain_semantics Other indexSet)]
         pub unsafe fn indexSet() -> Id<Self, Shared>;
 
-        #[method_id(indexSetWithIndex:)]
+        #[method_id(@__retain_semantics Other indexSetWithIndex:)]
         pub unsafe fn indexSetWithIndex(value: NSUInteger) -> Id<Self, Shared>;
 
-        #[method_id(indexSetWithIndexesInRange:)]
+        #[method_id(@__retain_semantics Other indexSetWithIndexesInRange:)]
         pub unsafe fn indexSetWithIndexesInRange(range: NSRange) -> Id<Self, Shared>;
 
-        #[method_id(initWithIndexesInRange:)]
+        #[method_id(@__retain_semantics Init initWithIndexesInRange:)]
         pub unsafe fn initWithIndexesInRange(
             this: Option<Allocated<Self>>,
             range: NSRange,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithIndexSet:)]
+        #[method_id(@__retain_semantics Init initWithIndexSet:)]
         pub unsafe fn initWithIndexSet(
             this: Option<Allocated<Self>>,
             indexSet: &NSIndexSet,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithIndex:)]
+        #[method_id(@__retain_semantics Init initWithIndex:)]
         pub unsafe fn initWithIndex(
             this: Option<Allocated<Self>>,
             value: NSUInteger,
@@ -124,17 +124,17 @@ extern_methods!(
             predicate: TodoBlock,
         ) -> NSUInteger;
 
-        #[method_id(indexesPassingTest:)]
+        #[method_id(@__retain_semantics Other indexesPassingTest:)]
         pub unsafe fn indexesPassingTest(&self, predicate: TodoBlock) -> Id<NSIndexSet, Shared>;
 
-        #[method_id(indexesWithOptions:passingTest:)]
+        #[method_id(@__retain_semantics Other indexesWithOptions:passingTest:)]
         pub unsafe fn indexesWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
             predicate: TodoBlock,
         ) -> Id<NSIndexSet, Shared>;
 
-        #[method_id(indexesInRange:options:passingTest:)]
+        #[method_id(@__retain_semantics Other indexesInRange:options:passingTest:)]
         pub unsafe fn indexesInRange_options_passingTest(
             &self,
             range: NSRange,

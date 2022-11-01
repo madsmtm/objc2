@@ -21,7 +21,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSHelpManager {
-        #[method_id(sharedHelpManager)]
+        #[method_id(@__retain_semantics Other sharedHelpManager)]
         pub unsafe fn sharedHelpManager() -> Id<NSHelpManager, Shared>;
 
         #[method(isContextHelpModeActive)]
@@ -40,7 +40,7 @@ extern_methods!(
         #[method(removeContextHelpForObject:)]
         pub unsafe fn removeContextHelpForObject(&self, object: &Object);
 
-        #[method_id(contextHelpForObject:)]
+        #[method_id(@__retain_semantics Other contextHelpForObject:)]
         pub unsafe fn contextHelpForObject(
             &self,
             object: &Object,
@@ -79,7 +79,7 @@ extern "C" {
 extern_methods!(
     /// NSBundleHelpExtension
     unsafe impl NSBundle {
-        #[method_id(contextHelpForKey:)]
+        #[method_id(@__retain_semantics Other contextHelpForKey:)]
         pub unsafe fn contextHelpForKey(
             &self,
             key: &NSHelpManagerContextHelpKey,

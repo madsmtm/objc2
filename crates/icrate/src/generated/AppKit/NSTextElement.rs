@@ -15,13 +15,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextElement {
-        #[method_id(initWithTextContentManager:)]
+        #[method_id(@__retain_semantics Init initWithTextContentManager:)]
         pub unsafe fn initWithTextContentManager(
             this: Option<Allocated<Self>>,
             textContentManager: Option<&NSTextContentManager>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(textContentManager)]
+        #[method_id(@__retain_semantics Other textContentManager)]
         pub unsafe fn textContentManager(&self) -> Option<Id<NSTextContentManager, Shared>>;
 
         #[method(setTextContentManager:)]
@@ -30,7 +30,7 @@ extern_methods!(
             textContentManager: Option<&NSTextContentManager>,
         );
 
-        #[method_id(elementRange)]
+        #[method_id(@__retain_semantics Other elementRange)]
         pub unsafe fn elementRange(&self) -> Option<Id<NSTextRange, Shared>>;
 
         #[method(setElementRange:)]
@@ -49,19 +49,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextParagraph {
-        #[method_id(initWithAttributedString:)]
+        #[method_id(@__retain_semantics Init initWithAttributedString:)]
         pub unsafe fn initWithAttributedString(
             this: Option<Allocated<Self>>,
             attributedString: Option<&NSAttributedString>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(attributedString)]
+        #[method_id(@__retain_semantics Other attributedString)]
         pub unsafe fn attributedString(&self) -> Id<NSAttributedString, Shared>;
 
-        #[method_id(paragraphContentRange)]
+        #[method_id(@__retain_semantics Other paragraphContentRange)]
         pub unsafe fn paragraphContentRange(&self) -> Option<Id<NSTextRange, Shared>>;
 
-        #[method_id(paragraphSeparatorRange)]
+        #[method_id(@__retain_semantics Other paragraphSeparatorRange)]
         pub unsafe fn paragraphSeparatorRange(&self) -> Option<Id<NSTextRange, Shared>>;
     }
 );

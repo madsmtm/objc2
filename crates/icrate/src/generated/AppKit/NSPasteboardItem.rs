@@ -15,10 +15,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPasteboardItem {
-        #[method_id(types)]
+        #[method_id(@__retain_semantics Other types)]
         pub unsafe fn types(&self) -> Id<NSArray<NSPasteboardType>, Shared>;
 
-        #[method_id(availableTypeFromArray:)]
+        #[method_id(@__retain_semantics Other availableTypeFromArray:)]
         pub unsafe fn availableTypeFromArray(
             &self,
             types: &NSArray<NSPasteboardType>,
@@ -45,16 +45,16 @@ extern_methods!(
             type_: &NSPasteboardType,
         ) -> bool;
 
-        #[method_id(dataForType:)]
+        #[method_id(@__retain_semantics Other dataForType:)]
         pub unsafe fn dataForType(&self, type_: &NSPasteboardType) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(stringForType:)]
+        #[method_id(@__retain_semantics Other stringForType:)]
         pub unsafe fn stringForType(
             &self,
             type_: &NSPasteboardType,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(propertyListForType:)]
+        #[method_id(@__retain_semantics Other propertyListForType:)]
         pub unsafe fn propertyListForType(
             &self,
             type_: &NSPasteboardType,

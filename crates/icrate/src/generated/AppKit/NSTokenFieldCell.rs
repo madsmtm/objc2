@@ -37,7 +37,7 @@ extern_methods!(
         #[method(defaultCompletionDelay)]
         pub unsafe fn defaultCompletionDelay() -> NSTimeInterval;
 
-        #[method_id(tokenizingCharacterSet)]
+        #[method_id(@__retain_semantics Other tokenizingCharacterSet)]
         pub unsafe fn tokenizingCharacterSet(&self) -> Id<NSCharacterSet, Shared>;
 
         #[method(setTokenizingCharacterSet:)]
@@ -46,10 +46,10 @@ extern_methods!(
             tokenizingCharacterSet: Option<&NSCharacterSet>,
         );
 
-        #[method_id(defaultTokenizingCharacterSet)]
+        #[method_id(@__retain_semantics Other defaultTokenizingCharacterSet)]
         pub unsafe fn defaultTokenizingCharacterSet() -> Id<NSCharacterSet, Shared>;
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTokenFieldCellDelegate, Shared>>;
 
         #[method(setDelegate:)]

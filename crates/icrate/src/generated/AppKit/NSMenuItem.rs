@@ -21,10 +21,10 @@ extern_methods!(
         #[method(setUsesUserKeyEquivalents:)]
         pub unsafe fn setUsesUserKeyEquivalents(usesUserKeyEquivalents: bool);
 
-        #[method_id(separatorItem)]
+        #[method_id(@__retain_semantics Other separatorItem)]
         pub unsafe fn separatorItem() -> Id<NSMenuItem, Shared>;
 
-        #[method_id(initWithTitle:action:keyEquivalent:)]
+        #[method_id(@__retain_semantics Init initWithTitle:action:keyEquivalent:)]
         pub unsafe fn initWithTitle_action_keyEquivalent(
             this: Option<Allocated<Self>>,
             string: &NSString,
@@ -32,13 +32,13 @@ extern_methods!(
             charCode: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(menu)]
+        #[method_id(@__retain_semantics Other menu)]
         pub unsafe fn menu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setMenu:)]
@@ -47,22 +47,22 @@ extern_methods!(
         #[method(hasSubmenu)]
         pub unsafe fn hasSubmenu(&self) -> bool;
 
-        #[method_id(submenu)]
+        #[method_id(@__retain_semantics Other submenu)]
         pub unsafe fn submenu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setSubmenu:)]
         pub unsafe fn setSubmenu(&self, submenu: Option<&NSMenu>);
 
-        #[method_id(parentItem)]
+        #[method_id(@__retain_semantics Other parentItem)]
         pub unsafe fn parentItem(&self) -> Option<Id<NSMenuItem, Shared>>;
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: &NSString);
 
-        #[method_id(attributedTitle)]
+        #[method_id(@__retain_semantics Other attributedTitle)]
         pub unsafe fn attributedTitle(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setAttributedTitle:)]
@@ -71,7 +71,7 @@ extern_methods!(
         #[method(isSeparatorItem)]
         pub unsafe fn isSeparatorItem(&self) -> bool;
 
-        #[method_id(keyEquivalent)]
+        #[method_id(@__retain_semantics Other keyEquivalent)]
         pub unsafe fn keyEquivalent(&self) -> Id<NSString, Shared>;
 
         #[method(setKeyEquivalent:)]
@@ -86,7 +86,7 @@ extern_methods!(
             keyEquivalentModifierMask: NSEventModifierFlags,
         );
 
-        #[method_id(userKeyEquivalent)]
+        #[method_id(@__retain_semantics Other userKeyEquivalent)]
         pub unsafe fn userKeyEquivalent(&self) -> Id<NSString, Shared>;
 
         #[method(allowsKeyEquivalentWhenHidden)]
@@ -113,7 +113,7 @@ extern_methods!(
             allowsAutomaticKeyEquivalentMirroring: bool,
         );
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
@@ -125,19 +125,19 @@ extern_methods!(
         #[method(setState:)]
         pub unsafe fn setState(&self, state: NSControlStateValue);
 
-        #[method_id(onStateImage)]
+        #[method_id(@__retain_semantics Other onStateImage)]
         pub unsafe fn onStateImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setOnStateImage:)]
         pub unsafe fn setOnStateImage(&self, onStateImage: Option<&NSImage>);
 
-        #[method_id(offStateImage)]
+        #[method_id(@__retain_semantics Other offStateImage)]
         pub unsafe fn offStateImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setOffStateImage:)]
         pub unsafe fn setOffStateImage(&self, offStateImage: Option<&NSImage>);
 
-        #[method_id(mixedStateImage)]
+        #[method_id(@__retain_semantics Other mixedStateImage)]
         pub unsafe fn mixedStateImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setMixedStateImage:)]
@@ -161,7 +161,7 @@ extern_methods!(
         #[method(setIndentationLevel:)]
         pub unsafe fn setIndentationLevel(&self, indentationLevel: NSInteger);
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -179,13 +179,13 @@ extern_methods!(
         #[method(setTag:)]
         pub unsafe fn setTag(&self, tag: NSInteger);
 
-        #[method_id(representedObject)]
+        #[method_id(@__retain_semantics Other representedObject)]
         pub unsafe fn representedObject(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setRepresentedObject:)]
         pub unsafe fn setRepresentedObject(&self, representedObject: Option<&Object>);
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setView:)]
@@ -203,7 +203,7 @@ extern_methods!(
         #[method(isHiddenOrHasHiddenAncestor)]
         pub unsafe fn isHiddenOrHasHiddenAncestor(&self) -> bool;
 
-        #[method_id(toolTip)]
+        #[method_id(@__retain_semantics Other toolTip)]
         pub unsafe fn toolTip(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setToolTip:)]
@@ -214,7 +214,7 @@ extern_methods!(
 extern_methods!(
     /// NSViewEnclosingMenuItem
     unsafe impl NSView {
-        #[method_id(enclosingMenuItem)]
+        #[method_id(@__retain_semantics Other enclosingMenuItem)]
         pub unsafe fn enclosingMenuItem(&self) -> Option<Id<NSMenuItem, Shared>>;
     }
 );
@@ -232,7 +232,7 @@ extern_methods!(
         #[method(mnemonicLocation)]
         pub unsafe fn mnemonicLocation(&self) -> NSUInteger;
 
-        #[method_id(mnemonic)]
+        #[method_id(@__retain_semantics Other mnemonic)]
         pub unsafe fn mnemonic(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setTitleWithMnemonic:)]

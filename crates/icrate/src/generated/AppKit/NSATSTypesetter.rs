@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSATSTypesetter {
-        #[method_id(sharedTypesetter)]
+        #[method_id(@__retain_semantics Other sharedTypesetter)]
         pub unsafe fn sharedTypesetter() -> Id<NSATSTypesetter, Shared>;
     }
 );
@@ -59,10 +59,10 @@ extern_methods!(
         #[method(setLineFragmentPadding:)]
         pub unsafe fn setLineFragmentPadding(&self, lineFragmentPadding: CGFloat);
 
-        #[method_id(substituteFontForFont:)]
+        #[method_id(@__retain_semantics Other substituteFontForFont:)]
         pub unsafe fn substituteFontForFont(&self, originalFont: &NSFont) -> Id<NSFont, Shared>;
 
-        #[method_id(textTabForGlyphLocation:writingDirection:maxLocation:)]
+        #[method_id(@__retain_semantics Other textTabForGlyphLocation:writingDirection:maxLocation:)]
         pub unsafe fn textTabForGlyphLocation_writingDirection_maxLocation(
             &self,
             glyphLocation: CGFloat,
@@ -76,7 +76,7 @@ extern_methods!(
         #[method(setBidiProcessingEnabled:)]
         pub unsafe fn setBidiProcessingEnabled(&self, bidiProcessingEnabled: bool);
 
-        #[method_id(attributedString)]
+        #[method_id(@__retain_semantics Other attributedString)]
         pub unsafe fn attributedString(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setAttributedString:)]
@@ -122,10 +122,10 @@ extern_methods!(
             rect: NSRect,
         ) -> CGFloat;
 
-        #[method_id(layoutManager)]
+        #[method_id(@__retain_semantics Other layoutManager)]
         pub unsafe fn layoutManager(&self) -> Option<Id<NSLayoutManager, Shared>>;
 
-        #[method_id(currentTextContainer)]
+        #[method_id(@__retain_semantics Other currentTextContainer)]
         pub unsafe fn currentTextContainer(&self) -> Option<Id<NSTextContainer, Shared>>;
 
         #[method(setHardInvalidation:forGlyphRange:)]

@@ -74,14 +74,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSException {
-        #[method_id(exceptionWithName:reason:userInfo:)]
+        #[method_id(@__retain_semantics Other exceptionWithName:reason:userInfo:)]
         pub unsafe fn exceptionWithName_reason_userInfo(
             name: &NSExceptionName,
             reason: Option<&NSString>,
             userInfo: Option<&NSDictionary>,
         ) -> Id<NSException, Shared>;
 
-        #[method_id(initWithName:reason:userInfo:)]
+        #[method_id(@__retain_semantics Init initWithName:reason:userInfo:)]
         pub unsafe fn initWithName_reason_userInfo(
             this: Option<Allocated<Self>>,
             aName: &NSExceptionName,
@@ -89,19 +89,19 @@ extern_methods!(
             aUserInfo: Option<&NSDictionary>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Id<NSExceptionName, Shared>;
 
-        #[method_id(reason)]
+        #[method_id(@__retain_semantics Other reason)]
         pub unsafe fn reason(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(userInfo)]
+        #[method_id(@__retain_semantics Other userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>>;
 
-        #[method_id(callStackReturnAddresses)]
+        #[method_id(@__retain_semantics Other callStackReturnAddresses)]
         pub unsafe fn callStackReturnAddresses(&self) -> Id<NSArray<NSNumber>, Shared>;
 
-        #[method_id(callStackSymbols)]
+        #[method_id(@__retain_semantics Other callStackSymbols)]
         pub unsafe fn callStackSymbols(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(raise)]
@@ -136,7 +136,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAssertionHandler {
-        #[method_id(currentHandler)]
+        #[method_id(@__retain_semantics Other currentHandler)]
         pub unsafe fn currentHandler() -> Id<NSAssertionHandler, Shared>;
     }
 );

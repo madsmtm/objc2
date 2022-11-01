@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScriptSuiteRegistry {
-        #[method_id(sharedScriptSuiteRegistry)]
+        #[method_id(@__retain_semantics Other sharedScriptSuiteRegistry)]
         pub unsafe fn sharedScriptSuiteRegistry() -> Id<NSScriptSuiteRegistry, Shared>;
 
         #[method(setSharedScriptSuiteRegistry:)]
@@ -39,47 +39,47 @@ extern_methods!(
             commandDescription: &NSScriptCommandDescription,
         );
 
-        #[method_id(suiteNames)]
+        #[method_id(@__retain_semantics Other suiteNames)]
         pub unsafe fn suiteNames(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(appleEventCodeForSuite:)]
         pub unsafe fn appleEventCodeForSuite(&self, suiteName: &NSString) -> FourCharCode;
 
-        #[method_id(bundleForSuite:)]
+        #[method_id(@__retain_semantics Other bundleForSuite:)]
         pub unsafe fn bundleForSuite(&self, suiteName: &NSString) -> Option<Id<NSBundle, Shared>>;
 
-        #[method_id(classDescriptionsInSuite:)]
+        #[method_id(@__retain_semantics Other classDescriptionsInSuite:)]
         pub unsafe fn classDescriptionsInSuite(
             &self,
             suiteName: &NSString,
         ) -> Option<Id<NSDictionary<NSString, NSScriptClassDescription>, Shared>>;
 
-        #[method_id(commandDescriptionsInSuite:)]
+        #[method_id(@__retain_semantics Other commandDescriptionsInSuite:)]
         pub unsafe fn commandDescriptionsInSuite(
             &self,
             suiteName: &NSString,
         ) -> Option<Id<NSDictionary<NSString, NSScriptCommandDescription>, Shared>>;
 
-        #[method_id(suiteForAppleEventCode:)]
+        #[method_id(@__retain_semantics Other suiteForAppleEventCode:)]
         pub unsafe fn suiteForAppleEventCode(
             &self,
             appleEventCode: FourCharCode,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(classDescriptionWithAppleEventCode:)]
+        #[method_id(@__retain_semantics Other classDescriptionWithAppleEventCode:)]
         pub unsafe fn classDescriptionWithAppleEventCode(
             &self,
             appleEventCode: FourCharCode,
         ) -> Option<Id<NSScriptClassDescription, Shared>>;
 
-        #[method_id(commandDescriptionWithAppleEventClass:andAppleEventCode:)]
+        #[method_id(@__retain_semantics Other commandDescriptionWithAppleEventClass:andAppleEventCode:)]
         pub unsafe fn commandDescriptionWithAppleEventClass_andAppleEventCode(
             &self,
             appleEventClassCode: FourCharCode,
             appleEventIDCode: FourCharCode,
         ) -> Option<Id<NSScriptCommandDescription, Shared>>;
 
-        #[method_id(aeteResource:)]
+        #[method_id(@__retain_semantics Other aeteResource:)]
         pub unsafe fn aeteResource(&self, languageName: &NSString) -> Option<Id<NSData, Shared>>;
     }
 );

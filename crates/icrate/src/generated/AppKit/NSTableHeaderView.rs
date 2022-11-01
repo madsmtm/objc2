@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTableHeaderView {
-        #[method_id(tableView)]
+        #[method_id(@__retain_semantics Other tableView)]
         pub unsafe fn tableView(&self) -> Option<Id<NSTableView, Shared>>;
 
         #[method(setTableView:)]

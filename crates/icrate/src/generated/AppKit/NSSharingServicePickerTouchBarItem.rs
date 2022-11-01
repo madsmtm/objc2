@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSharingServicePickerTouchBarItem {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(
             &self,
         ) -> Option<Id<NSSharingServicePickerTouchBarItemDelegate, Shared>>;
@@ -32,13 +32,13 @@ extern_methods!(
         #[method(setEnabled:)]
         pub unsafe fn setEnabled(&self, enabled: bool);
 
-        #[method_id(buttonTitle)]
+        #[method_id(@__retain_semantics Other buttonTitle)]
         pub unsafe fn buttonTitle(&self) -> Id<NSString, Shared>;
 
         #[method(setButtonTitle:)]
         pub unsafe fn setButtonTitle(&self, buttonTitle: &NSString);
 
-        #[method_id(buttonImage)]
+        #[method_id(@__retain_semantics Other buttonImage)]
         pub unsafe fn buttonImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setButtonImage:)]

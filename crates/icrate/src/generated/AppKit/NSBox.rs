@@ -41,13 +41,13 @@ extern_methods!(
         #[method(setTitlePosition:)]
         pub unsafe fn setTitlePosition(&self, titlePosition: NSTitlePosition);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: &NSString);
 
-        #[method_id(titleFont)]
+        #[method_id(@__retain_semantics Other titleFont)]
         pub unsafe fn titleFont(&self) -> Id<NSFont, Shared>;
 
         #[method(setTitleFont:)]
@@ -59,7 +59,7 @@ extern_methods!(
         #[method(titleRect)]
         pub unsafe fn titleRect(&self) -> NSRect;
 
-        #[method_id(titleCell)]
+        #[method_id(@__retain_semantics Other titleCell)]
         pub unsafe fn titleCell(&self) -> Id<Object, Shared>;
 
         #[method(contentViewMargins)]
@@ -74,7 +74,7 @@ extern_methods!(
         #[method(setFrameFromContentFrame:)]
         pub unsafe fn setFrameFromContentFrame(&self, contentFrame: NSRect);
 
-        #[method_id(contentView)]
+        #[method_id(@__retain_semantics Other contentView)]
         pub unsafe fn contentView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setContentView:)]
@@ -98,13 +98,13 @@ extern_methods!(
         #[method(setCornerRadius:)]
         pub unsafe fn setCornerRadius(&self, cornerRadius: CGFloat);
 
-        #[method_id(borderColor)]
+        #[method_id(@__retain_semantics Other borderColor)]
         pub unsafe fn borderColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBorderColor:)]
         pub unsafe fn setBorderColor(&self, borderColor: &NSColor);
 
-        #[method_id(fillColor)]
+        #[method_id(@__retain_semantics Other fillColor)]
         pub unsafe fn fillColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setFillColor:)]

@@ -20,25 +20,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTableColumn {
-        #[method_id(initWithIdentifier:)]
+        #[method_id(@__retain_semantics Init initWithIdentifier:)]
         pub unsafe fn initWithIdentifier(
             this: Option<Allocated<Self>>,
             identifier: &NSUserInterfaceItemIdentifier,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(identifier)]
+        #[method_id(@__retain_semantics Other identifier)]
         pub unsafe fn identifier(&self) -> Id<NSUserInterfaceItemIdentifier, Shared>;
 
         #[method(setIdentifier:)]
         pub unsafe fn setIdentifier(&self, identifier: &NSUserInterfaceItemIdentifier);
 
-        #[method_id(tableView)]
+        #[method_id(@__retain_semantics Other tableView)]
         pub unsafe fn tableView(&self) -> Option<Id<NSTableView, Shared>>;
 
         #[method(setTableView:)]
@@ -62,13 +62,13 @@ extern_methods!(
         #[method(setMaxWidth:)]
         pub unsafe fn setMaxWidth(&self, maxWidth: CGFloat);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: &NSString);
 
-        #[method_id(headerCell)]
+        #[method_id(@__retain_semantics Other headerCell)]
         pub unsafe fn headerCell(&self) -> Id<NSTableHeaderCell, Shared>;
 
         #[method(setHeaderCell:)]
@@ -83,7 +83,7 @@ extern_methods!(
         #[method(sizeToFit)]
         pub unsafe fn sizeToFit(&self);
 
-        #[method_id(sortDescriptorPrototype)]
+        #[method_id(@__retain_semantics Other sortDescriptorPrototype)]
         pub unsafe fn sortDescriptorPrototype(&self) -> Option<Id<NSSortDescriptor, Shared>>;
 
         #[method(setSortDescriptorPrototype:)]
@@ -98,7 +98,7 @@ extern_methods!(
         #[method(setResizingMask:)]
         pub unsafe fn setResizingMask(&self, resizingMask: NSTableColumnResizingOptions);
 
-        #[method_id(headerToolTip)]
+        #[method_id(@__retain_semantics Other headerToolTip)]
         pub unsafe fn headerToolTip(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setHeaderToolTip:)]
@@ -121,13 +121,13 @@ extern_methods!(
         #[method(isResizable)]
         pub unsafe fn isResizable(&self) -> bool;
 
-        #[method_id(dataCell)]
+        #[method_id(@__retain_semantics Other dataCell)]
         pub unsafe fn dataCell(&self) -> Id<Object, Shared>;
 
         #[method(setDataCell:)]
         pub unsafe fn setDataCell(&self, dataCell: &Object);
 
-        #[method_id(dataCellForRow:)]
+        #[method_id(@__retain_semantics Other dataCellForRow:)]
         pub unsafe fn dataCellForRow(&self, row: NSInteger) -> Id<Object, Shared>;
     }
 );

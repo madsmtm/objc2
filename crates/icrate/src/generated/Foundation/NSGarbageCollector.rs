@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGarbageCollector {
-        #[method_id(defaultCollector)]
+        #[method_id(@__retain_semantics Other defaultCollector)]
         pub unsafe fn defaultCollector() -> Id<Object, Shared>;
 
         #[method(isCollecting)]

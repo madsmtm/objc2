@@ -14,13 +14,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDistributedLock {
-        #[method_id(lockWithPath:)]
+        #[method_id(@__retain_semantics Other lockWithPath:)]
         pub unsafe fn lockWithPath(path: &NSString) -> Option<Id<NSDistributedLock, Shared>>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithPath:)]
+        #[method_id(@__retain_semantics Init initWithPath:)]
         pub unsafe fn initWithPath(
             this: Option<Allocated<Self>>,
             path: &NSString,
@@ -35,7 +35,7 @@ extern_methods!(
         #[method(breakLock)]
         pub unsafe fn breakLock(&self);
 
-        #[method_id(lockDate)]
+        #[method_id(@__retain_semantics Other lockDate)]
         pub unsafe fn lockDate(&self) -> Id<NSDate, Shared>;
     }
 );

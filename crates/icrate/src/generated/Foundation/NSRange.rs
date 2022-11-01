@@ -6,7 +6,7 @@ use crate::Foundation::*;
 extern_methods!(
     /// NSValueRangeExtensions
     unsafe impl NSValue {
-        #[method_id(valueWithRange:)]
+        #[method_id(@__retain_semantics Other valueWithRange:)]
         pub unsafe fn valueWithRange(range: NSRange) -> Id<NSValue, Shared>;
 
         #[method(rangeValue)]

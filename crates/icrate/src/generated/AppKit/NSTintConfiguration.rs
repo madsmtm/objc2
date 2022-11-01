@@ -15,22 +15,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTintConfiguration {
-        #[method_id(defaultTintConfiguration)]
+        #[method_id(@__retain_semantics Other defaultTintConfiguration)]
         pub unsafe fn defaultTintConfiguration() -> Id<NSTintConfiguration, Shared>;
 
-        #[method_id(monochromeTintConfiguration)]
+        #[method_id(@__retain_semantics Other monochromeTintConfiguration)]
         pub unsafe fn monochromeTintConfiguration() -> Id<NSTintConfiguration, Shared>;
 
-        #[method_id(tintConfigurationWithPreferredColor:)]
+        #[method_id(@__retain_semantics Other tintConfigurationWithPreferredColor:)]
         pub unsafe fn tintConfigurationWithPreferredColor(color: &NSColor) -> Id<Self, Shared>;
 
-        #[method_id(tintConfigurationWithFixedColor:)]
+        #[method_id(@__retain_semantics Other tintConfigurationWithFixedColor:)]
         pub unsafe fn tintConfigurationWithFixedColor(color: &NSColor) -> Id<Self, Shared>;
 
-        #[method_id(baseTintColor)]
+        #[method_id(@__retain_semantics Other baseTintColor)]
         pub unsafe fn baseTintColor(&self) -> Option<Id<NSColor, Shared>>;
 
-        #[method_id(equivalentContentTintColor)]
+        #[method_id(@__retain_semantics Other equivalentContentTintColor)]
         pub unsafe fn equivalentContentTintColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(adaptsToUserAccentColor)]

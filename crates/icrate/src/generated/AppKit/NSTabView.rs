@@ -62,10 +62,10 @@ extern_methods!(
         #[method(selectPreviousTabViewItem:)]
         pub unsafe fn selectPreviousTabViewItem(&self, sender: Option<&Object>);
 
-        #[method_id(selectedTabViewItem)]
+        #[method_id(@__retain_semantics Other selectedTabViewItem)]
         pub unsafe fn selectedTabViewItem(&self) -> Option<Id<NSTabViewItem, Shared>>;
 
-        #[method_id(font)]
+        #[method_id(@__retain_semantics Other font)]
         pub unsafe fn font(&self) -> Id<NSFont, Shared>;
 
         #[method(setFont:)]
@@ -89,7 +89,7 @@ extern_methods!(
         #[method(setTabViewBorderType:)]
         pub unsafe fn setTabViewBorderType(&self, tabViewBorderType: NSTabViewBorderType);
 
-        #[method_id(tabViewItems)]
+        #[method_id(@__retain_semantics Other tabViewItems)]
         pub unsafe fn tabViewItems(&self) -> Id<NSArray<NSTabViewItem>, Shared>;
 
         #[method(setTabViewItems:)]
@@ -129,13 +129,13 @@ extern_methods!(
         #[method(removeTabViewItem:)]
         pub unsafe fn removeTabViewItem(&self, tabViewItem: &NSTabViewItem);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTabViewDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSTabViewDelegate>);
 
-        #[method_id(tabViewItemAtPoint:)]
+        #[method_id(@__retain_semantics Other tabViewItemAtPoint:)]
         pub unsafe fn tabViewItemAtPoint(
             &self,
             point: NSPoint,
@@ -150,7 +150,7 @@ extern_methods!(
         #[method(indexOfTabViewItem:)]
         pub unsafe fn indexOfTabViewItem(&self, tabViewItem: &NSTabViewItem) -> NSInteger;
 
-        #[method_id(tabViewItemAtIndex:)]
+        #[method_id(@__retain_semantics Other tabViewItemAtIndex:)]
         pub unsafe fn tabViewItemAtIndex(&self, index: NSInteger) -> Id<NSTabViewItem, Shared>;
 
         #[method(indexOfTabViewItemWithIdentifier:)]

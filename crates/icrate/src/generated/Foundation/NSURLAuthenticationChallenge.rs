@@ -16,7 +16,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSURLAuthenticationChallenge {
-        #[method_id(initWithProtectionSpace:proposedCredential:previousFailureCount:failureResponse:error:sender:)]
+        #[method_id(@__retain_semantics Init initWithProtectionSpace:proposedCredential:previousFailureCount:failureResponse:error:sender:)]
         pub unsafe fn initWithProtectionSpace_proposedCredential_previousFailureCount_failureResponse_error_sender(
             this: Option<Allocated<Self>>,
             space: &NSURLProtectionSpace,
@@ -27,29 +27,29 @@ extern_methods!(
             sender: &NSURLAuthenticationChallengeSender,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithAuthenticationChallenge:sender:)]
+        #[method_id(@__retain_semantics Init initWithAuthenticationChallenge:sender:)]
         pub unsafe fn initWithAuthenticationChallenge_sender(
             this: Option<Allocated<Self>>,
             challenge: &NSURLAuthenticationChallenge,
             sender: &NSURLAuthenticationChallengeSender,
         ) -> Id<Self, Shared>;
 
-        #[method_id(protectionSpace)]
+        #[method_id(@__retain_semantics Other protectionSpace)]
         pub unsafe fn protectionSpace(&self) -> Id<NSURLProtectionSpace, Shared>;
 
-        #[method_id(proposedCredential)]
+        #[method_id(@__retain_semantics Other proposedCredential)]
         pub unsafe fn proposedCredential(&self) -> Option<Id<NSURLCredential, Shared>>;
 
         #[method(previousFailureCount)]
         pub unsafe fn previousFailureCount(&self) -> NSInteger;
 
-        #[method_id(failureResponse)]
+        #[method_id(@__retain_semantics Other failureResponse)]
         pub unsafe fn failureResponse(&self) -> Option<Id<NSURLResponse, Shared>>;
 
-        #[method_id(error)]
+        #[method_id(@__retain_semantics Other error)]
         pub unsafe fn error(&self) -> Option<Id<NSError, Shared>>;
 
-        #[method_id(sender)]
+        #[method_id(@__retain_semantics Other sender)]
         pub unsafe fn sender(&self) -> Option<Id<NSURLAuthenticationChallengeSender, Shared>>;
     }
 );

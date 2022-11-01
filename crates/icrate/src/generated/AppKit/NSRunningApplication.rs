@@ -42,25 +42,25 @@ extern_methods!(
         #[method(activationPolicy)]
         pub unsafe fn activationPolicy(&self) -> NSApplicationActivationPolicy;
 
-        #[method_id(localizedName)]
+        #[method_id(@__retain_semantics Other localizedName)]
         pub unsafe fn localizedName(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(bundleIdentifier)]
+        #[method_id(@__retain_semantics Other bundleIdentifier)]
         pub unsafe fn bundleIdentifier(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(bundleURL)]
+        #[method_id(@__retain_semantics Other bundleURL)]
         pub unsafe fn bundleURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(executableURL)]
+        #[method_id(@__retain_semantics Other executableURL)]
         pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(processIdentifier)]
         pub unsafe fn processIdentifier(&self) -> pid_t;
 
-        #[method_id(launchDate)]
+        #[method_id(@__retain_semantics Other launchDate)]
         pub unsafe fn launchDate(&self) -> Option<Id<NSDate, Shared>>;
 
-        #[method_id(icon)]
+        #[method_id(@__retain_semantics Other icon)]
         pub unsafe fn icon(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(executableArchitecture)]
@@ -81,17 +81,17 @@ extern_methods!(
         #[method(forceTerminate)]
         pub unsafe fn forceTerminate(&self) -> bool;
 
-        #[method_id(runningApplicationsWithBundleIdentifier:)]
+        #[method_id(@__retain_semantics Other runningApplicationsWithBundleIdentifier:)]
         pub unsafe fn runningApplicationsWithBundleIdentifier(
             bundleIdentifier: &NSString,
         ) -> Id<NSArray<NSRunningApplication>, Shared>;
 
-        #[method_id(runningApplicationWithProcessIdentifier:)]
+        #[method_id(@__retain_semantics Other runningApplicationWithProcessIdentifier:)]
         pub unsafe fn runningApplicationWithProcessIdentifier(
             pid: pid_t,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(currentApplication)]
+        #[method_id(@__retain_semantics Other currentApplication)]
         pub unsafe fn currentApplication() -> Id<NSRunningApplication, Shared>;
 
         #[method(terminateAutomaticallyTerminableApplications)]
@@ -102,7 +102,7 @@ extern_methods!(
 extern_methods!(
     /// NSWorkspaceRunningApplications
     unsafe impl NSWorkspace {
-        #[method_id(runningApplications)]
+        #[method_id(@__retain_semantics Other runningApplications)]
         pub unsafe fn runningApplications(&self) -> Id<NSArray<NSRunningApplication>, Shared>;
     }
 );

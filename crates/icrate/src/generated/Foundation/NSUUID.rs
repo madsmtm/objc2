@@ -14,19 +14,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUUID {
-        #[method_id(UUID)]
+        #[method_id(@__retain_semantics Other UUID)]
         pub unsafe fn UUID() -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithUUIDString:)]
+        #[method_id(@__retain_semantics Init initWithUUIDString:)]
         pub unsafe fn initWithUUIDString(
             this: Option<Allocated<Self>>,
             string: &NSString,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithUUIDBytes:)]
+        #[method_id(@__retain_semantics Init initWithUUIDBytes:)]
         pub unsafe fn initWithUUIDBytes(
             this: Option<Allocated<Self>>,
             bytes: uuid_t,
@@ -38,7 +38,7 @@ extern_methods!(
         #[method(compare:)]
         pub unsafe fn compare(&self, otherUUID: &NSUUID) -> NSComparisonResult;
 
-        #[method_id(UUIDString)]
+        #[method_id(@__retain_semantics Other UUIDString)]
         pub unsafe fn UUIDString(&self) -> Id<NSString, Shared>;
     }
 );

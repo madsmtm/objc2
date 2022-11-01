@@ -86,22 +86,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSCell {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initTextCell:)]
+        #[method_id(@__retain_semantics Init initTextCell:)]
         pub unsafe fn initTextCell(
             this: Option<Allocated<Self>>,
             string: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initImageCell:)]
+        #[method_id(@__retain_semantics Init initImageCell:)]
         pub unsafe fn initImageCell(
             this: Option<Allocated<Self>>,
             image: Option<&NSImage>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -110,7 +110,7 @@ extern_methods!(
         #[method(prefersTrackingUntilMouseUp)]
         pub unsafe fn prefersTrackingUntilMouseUp() -> bool;
 
-        #[method_id(controlView)]
+        #[method_id(@__retain_semantics Other controlView)]
         pub unsafe fn controlView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setControlView:)]
@@ -128,7 +128,7 @@ extern_methods!(
         #[method(setState:)]
         pub unsafe fn setState(&self, state: NSControlStateValue);
 
-        #[method_id(target)]
+        #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setTarget:)]
@@ -146,7 +146,7 @@ extern_methods!(
         #[method(setTag:)]
         pub unsafe fn setTag(&self, tag: NSInteger);
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
@@ -218,22 +218,22 @@ extern_methods!(
         #[method(setWraps:)]
         pub unsafe fn setWraps(&self, wraps: bool);
 
-        #[method_id(font)]
+        #[method_id(@__retain_semantics Other font)]
         pub unsafe fn font(&self) -> Option<Id<NSFont, Shared>>;
 
         #[method(setFont:)]
         pub unsafe fn setFont(&self, font: Option<&NSFont>);
 
-        #[method_id(keyEquivalent)]
+        #[method_id(@__retain_semantics Other keyEquivalent)]
         pub unsafe fn keyEquivalent(&self) -> Id<NSString, Shared>;
 
-        #[method_id(formatter)]
+        #[method_id(@__retain_semantics Other formatter)]
         pub unsafe fn formatter(&self) -> Option<Id<NSFormatter, Shared>>;
 
         #[method(setFormatter:)]
         pub unsafe fn setFormatter(&self, formatter: Option<&NSFormatter>);
 
-        #[method_id(objectValue)]
+        #[method_id(@__retain_semantics Other objectValue)]
         pub unsafe fn objectValue(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setObjectValue:)]
@@ -242,7 +242,7 @@ extern_methods!(
         #[method(hasValidObjectValue)]
         pub unsafe fn hasValidObjectValue(&self) -> bool;
 
-        #[method_id(stringValue)]
+        #[method_id(@__retain_semantics Other stringValue)]
         pub unsafe fn stringValue(&self) -> Id<NSString, Shared>;
 
         #[method(setStringValue:)]
@@ -293,7 +293,7 @@ extern_methods!(
         #[method(takeIntegerValueFrom:)]
         pub unsafe fn takeIntegerValueFrom(&self, sender: Option<&Object>);
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
@@ -305,7 +305,7 @@ extern_methods!(
         #[method(setControlSize:)]
         pub unsafe fn setControlSize(&self, controlSize: NSControlSize);
 
-        #[method_id(representedObject)]
+        #[method_id(@__retain_semantics Other representedObject)]
         pub unsafe fn representedObject(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setRepresentedObject:)]
@@ -332,7 +332,7 @@ extern_methods!(
         #[method(cellSizeForBounds:)]
         pub unsafe fn cellSizeForBounds(&self, rect: NSRect) -> NSSize;
 
-        #[method_id(highlightColorWithFrame:inView:)]
+        #[method_id(@__retain_semantics Other highlightColorWithFrame:inView:)]
         pub unsafe fn highlightColorWithFrame_inView(
             &self,
             cellFrame: NSRect,
@@ -342,7 +342,7 @@ extern_methods!(
         #[method(calcDrawInfo:)]
         pub unsafe fn calcDrawInfo(&self, rect: NSRect);
 
-        #[method_id(setUpFieldEditorAttributes:)]
+        #[method_id(@__retain_semantics Other setUpFieldEditorAttributes:)]
         pub unsafe fn setUpFieldEditorAttributes(&self, textObj: &NSText) -> Id<NSText, Shared>;
 
         #[method(drawInteriorWithFrame:inView:)]
@@ -429,13 +429,13 @@ extern_methods!(
         #[method(resetCursorRect:inView:)]
         pub unsafe fn resetCursorRect_inView(&self, cellFrame: NSRect, controlView: &NSView);
 
-        #[method_id(menu)]
+        #[method_id(@__retain_semantics Other menu)]
         pub unsafe fn menu(&self) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setMenu:)]
         pub unsafe fn setMenu(&self, menu: Option<&NSMenu>);
 
-        #[method_id(menuForEvent:inRect:ofView:)]
+        #[method_id(@__retain_semantics Other menuForEvent:inRect:ofView:)]
         pub unsafe fn menuForEvent_inRect_ofView(
             &self,
             event: &NSEvent,
@@ -443,7 +443,7 @@ extern_methods!(
             view: &NSView,
         ) -> Option<Id<NSMenu, Shared>>;
 
-        #[method_id(defaultMenu)]
+        #[method_id(@__retain_semantics Other defaultMenu)]
         pub unsafe fn defaultMenu() -> Option<Id<NSMenu, Shared>>;
 
         #[method(sendsActionOnEndEditing)]
@@ -485,7 +485,7 @@ extern_methods!(
             userInterfaceLayoutDirection: NSUserInterfaceLayoutDirection,
         );
 
-        #[method_id(fieldEditorForView:)]
+        #[method_id(@__retain_semantics Other fieldEditorForView:)]
         pub unsafe fn fieldEditorForView(
             &self,
             controlView: &NSView,
@@ -497,7 +497,7 @@ extern_methods!(
         #[method(setUsesSingleLineMode:)]
         pub unsafe fn setUsesSingleLineMode(&self, usesSingleLineMode: bool);
 
-        #[method_id(draggingImageComponentsWithFrame:inView:)]
+        #[method_id(@__retain_semantics Other draggingImageComponentsWithFrame:inView:)]
         pub unsafe fn draggingImageComponentsWithFrame_inView(
             &self,
             frame: NSRect,
@@ -558,7 +558,7 @@ extern_methods!(
 extern_methods!(
     /// NSCellAttributedStringMethods
     unsafe impl NSCell {
-        #[method_id(attributedStringValue)]
+        #[method_id(@__retain_semantics Other attributedStringValue)]
         pub unsafe fn attributedStringValue(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(setAttributedStringValue:)]
@@ -681,7 +681,7 @@ extern_methods!(
         #[method(mnemonicLocation)]
         pub unsafe fn mnemonicLocation(&self) -> NSUInteger;
 
-        #[method_id(mnemonic)]
+        #[method_id(@__retain_semantics Other mnemonic)]
         pub unsafe fn mnemonic(&self) -> Id<NSString, Shared>;
 
         #[method(setTitleWithMnemonic:)]

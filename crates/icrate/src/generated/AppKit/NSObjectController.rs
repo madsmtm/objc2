@@ -15,28 +15,28 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSObjectController {
-        #[method_id(initWithContent:)]
+        #[method_id(@__retain_semantics Init initWithContent:)]
         pub unsafe fn initWithContent(
             this: Option<Allocated<Self>>,
             content: Option<&Object>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(content)]
+        #[method_id(@__retain_semantics Other content)]
         pub unsafe fn content(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setContent:)]
         pub unsafe fn setContent(&self, content: Option<&Object>);
 
-        #[method_id(selection)]
+        #[method_id(@__retain_semantics Other selection)]
         pub unsafe fn selection(&self) -> Id<Object, Shared>;
 
-        #[method_id(selectedObjects)]
+        #[method_id(@__retain_semantics Other selectedObjects)]
         pub unsafe fn selectedObjects(&self) -> Id<NSArray, Shared>;
 
         #[method(automaticallyPreparesContent)]
@@ -54,7 +54,7 @@ extern_methods!(
         #[method(setObjectClass:)]
         pub unsafe fn setObjectClass(&self, objectClass: Option<&Class>);
 
-        #[method_id(newObject)]
+        #[method_id(@__retain_semantics New newObject)]
         pub unsafe fn newObject(&self) -> Id<Object, Shared>;
 
         #[method(addObject:)]
@@ -90,7 +90,7 @@ extern_methods!(
 extern_methods!(
     /// NSManagedController
     unsafe impl NSObjectController {
-        #[method_id(managedObjectContext)]
+        #[method_id(@__retain_semantics Other managedObjectContext)]
         pub unsafe fn managedObjectContext(&self) -> Option<Id<NSManagedObjectContext, Shared>>;
 
         #[method(setManagedObjectContext:)]
@@ -99,13 +99,13 @@ extern_methods!(
             managedObjectContext: Option<&NSManagedObjectContext>,
         );
 
-        #[method_id(entityName)]
+        #[method_id(@__retain_semantics Other entityName)]
         pub unsafe fn entityName(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setEntityName:)]
         pub unsafe fn setEntityName(&self, entityName: Option<&NSString>);
 
-        #[method_id(fetchPredicate)]
+        #[method_id(@__retain_semantics Other fetchPredicate)]
         pub unsafe fn fetchPredicate(&self) -> Option<Id<NSPredicate, Shared>>;
 
         #[method(setFetchPredicate:)]
@@ -127,7 +127,7 @@ extern_methods!(
         #[method(setUsesLazyFetching:)]
         pub unsafe fn setUsesLazyFetching(&self, usesLazyFetching: bool);
 
-        #[method_id(defaultFetchRequest)]
+        #[method_id(@__retain_semantics Other defaultFetchRequest)]
         pub unsafe fn defaultFetchRequest(&self) -> Id<NSFetchRequest, Shared>;
     }
 );

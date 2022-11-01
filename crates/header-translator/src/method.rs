@@ -109,6 +109,26 @@ impl MemoryManagement {
         }
     }
 
+    /// Matches `objc2::__macro_helpers::retain_semantics`.
+    fn get_memory_management_name(sel: &str) -> &'static str {
+        let bytes = sel.as_bytes();
+        match (
+            in_selector_family(bytes, b"new"),
+            in_selector_family(bytes, b"alloc"),
+            in_selector_family(bytes, b"init"),
+            in_selector_family(bytes, b"copy"),
+            in_selector_family(bytes, b"mutableCopy"),
+        ) {
+            (true, false, false, false, false) => "New",
+            (false, true, false, false, false) => "Alloc",
+            (false, false, true, false, false) => "Init",
+            (false, false, false, true, false) => "CopyOrMutCopy",
+            (false, false, false, false, true) => "CopyOrMutCopy",
+            (false, false, false, false, false) => "Other",
+            _ => unreachable!(),
+        }
+    }
+
     fn is_init(sel: &str) -> bool {
         in_selector_family(sel.as_bytes(), b"init")
     }
@@ -339,7 +359,12 @@ impl fmt::Display for Method {
         }
 
         if self.result_type.is_id() {
-            writeln!(f, "        #[method_id({})]", self.selector)?;
+            writeln!(
+                f,
+                "        #[method_id(@__retain_semantics {} {})]",
+                MemoryManagement::get_memory_management_name(&self.selector),
+                self.selector
+            )?;
         } else {
             writeln!(f, "        #[method({})]", self.selector)?;
         };

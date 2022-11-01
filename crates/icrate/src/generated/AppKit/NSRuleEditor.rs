@@ -55,13 +55,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSRuleEditor {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSRuleEditorDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSRuleEditorDelegate>);
 
-        #[method_id(formattingStringsFilename)]
+        #[method_id(@__retain_semantics Other formattingStringsFilename)]
         pub unsafe fn formattingStringsFilename(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setFormattingStringsFilename:)]
@@ -70,7 +70,7 @@ extern_methods!(
             formattingStringsFilename: Option<&NSString>,
         );
 
-        #[method_id(formattingDictionary)]
+        #[method_id(@__retain_semantics Other formattingDictionary)]
         pub unsafe fn formattingDictionary(
             &self,
         ) -> Option<Id<NSDictionary<NSString, NSString>, Shared>>;
@@ -108,25 +108,25 @@ extern_methods!(
         #[method(setCanRemoveAllRows:)]
         pub unsafe fn setCanRemoveAllRows(&self, canRemoveAllRows: bool);
 
-        #[method_id(predicate)]
+        #[method_id(@__retain_semantics Other predicate)]
         pub unsafe fn predicate(&self) -> Option<Id<NSPredicate, Shared>>;
 
         #[method(reloadPredicate)]
         pub unsafe fn reloadPredicate(&self);
 
-        #[method_id(predicateForRow:)]
+        #[method_id(@__retain_semantics Other predicateForRow:)]
         pub unsafe fn predicateForRow(&self, row: NSInteger) -> Option<Id<NSPredicate, Shared>>;
 
         #[method(numberOfRows)]
         pub unsafe fn numberOfRows(&self) -> NSInteger;
 
-        #[method_id(subrowIndexesForRow:)]
+        #[method_id(@__retain_semantics Other subrowIndexesForRow:)]
         pub unsafe fn subrowIndexesForRow(&self, rowIndex: NSInteger) -> Id<NSIndexSet, Shared>;
 
-        #[method_id(criteriaForRow:)]
+        #[method_id(@__retain_semantics Other criteriaForRow:)]
         pub unsafe fn criteriaForRow(&self, row: NSInteger) -> Id<NSArray, Shared>;
 
-        #[method_id(displayValuesForRow:)]
+        #[method_id(@__retain_semantics Other displayValuesForRow:)]
         pub unsafe fn displayValuesForRow(&self, row: NSInteger) -> Id<NSArray, Shared>;
 
         #[method(rowForDisplayValue:)]
@@ -168,7 +168,7 @@ extern_methods!(
             includeSubrows: bool,
         );
 
-        #[method_id(selectedRowIndexes)]
+        #[method_id(@__retain_semantics Other selectedRowIndexes)]
         pub unsafe fn selectedRowIndexes(&self) -> Id<NSIndexSet, Shared>;
 
         #[method(selectRowIndexes:byExtendingSelection:)]
@@ -184,25 +184,25 @@ extern_methods!(
         #[method(setRowClass:)]
         pub unsafe fn setRowClass(&self, rowClass: &Class);
 
-        #[method_id(rowTypeKeyPath)]
+        #[method_id(@__retain_semantics Other rowTypeKeyPath)]
         pub unsafe fn rowTypeKeyPath(&self) -> Id<NSString, Shared>;
 
         #[method(setRowTypeKeyPath:)]
         pub unsafe fn setRowTypeKeyPath(&self, rowTypeKeyPath: &NSString);
 
-        #[method_id(subrowsKeyPath)]
+        #[method_id(@__retain_semantics Other subrowsKeyPath)]
         pub unsafe fn subrowsKeyPath(&self) -> Id<NSString, Shared>;
 
         #[method(setSubrowsKeyPath:)]
         pub unsafe fn setSubrowsKeyPath(&self, subrowsKeyPath: &NSString);
 
-        #[method_id(criteriaKeyPath)]
+        #[method_id(@__retain_semantics Other criteriaKeyPath)]
         pub unsafe fn criteriaKeyPath(&self) -> Id<NSString, Shared>;
 
         #[method(setCriteriaKeyPath:)]
         pub unsafe fn setCriteriaKeyPath(&self, criteriaKeyPath: &NSString);
 
-        #[method_id(displayValuesKeyPath)]
+        #[method_id(@__retain_semantics Other displayValuesKeyPath)]
         pub unsafe fn displayValuesKeyPath(&self) -> Id<NSString, Shared>;
 
         #[method(setDisplayValuesKeyPath:)]

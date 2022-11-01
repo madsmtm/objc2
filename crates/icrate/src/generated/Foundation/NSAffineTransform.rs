@@ -14,16 +14,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAffineTransform {
-        #[method_id(transform)]
+        #[method_id(@__retain_semantics Other transform)]
         pub unsafe fn transform() -> Id<NSAffineTransform, Shared>;
 
-        #[method_id(initWithTransform:)]
+        #[method_id(@__retain_semantics Init initWithTransform:)]
         pub unsafe fn initWithTransform(
             this: Option<Allocated<Self>>,
             transform: &NSAffineTransform,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(translateXBy:yBy:)]

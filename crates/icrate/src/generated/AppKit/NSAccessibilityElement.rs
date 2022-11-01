@@ -15,7 +15,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAccessibilityElement {
-        #[method_id(accessibilityElementWithRole:frame:label:parent:)]
+        #[method_id(@__retain_semantics Other accessibilityElementWithRole:frame:label:parent:)]
         pub unsafe fn accessibilityElementWithRole_frame_label_parent(
             role: &NSAccessibilityRole,
             frame: NSRect,

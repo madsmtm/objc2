@@ -14,13 +14,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUserScriptTask {
-        #[method_id(initWithURL:error:)]
+        #[method_id(@__retain_semantics Init initWithURL:error:)]
         pub unsafe fn initWithURL_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(scriptURL)]
+        #[method_id(@__retain_semantics Other scriptURL)]
         pub unsafe fn scriptURL(&self) -> Id<NSURL, Shared>;
 
         #[method(executeWithCompletionHandler:)]
@@ -42,19 +42,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUserUnixTask {
-        #[method_id(standardInput)]
+        #[method_id(@__retain_semantics Other standardInput)]
         pub unsafe fn standardInput(&self) -> Option<Id<NSFileHandle, Shared>>;
 
         #[method(setStandardInput:)]
         pub unsafe fn setStandardInput(&self, standardInput: Option<&NSFileHandle>);
 
-        #[method_id(standardOutput)]
+        #[method_id(@__retain_semantics Other standardOutput)]
         pub unsafe fn standardOutput(&self) -> Option<Id<NSFileHandle, Shared>>;
 
         #[method(setStandardOutput:)]
         pub unsafe fn setStandardOutput(&self, standardOutput: Option<&NSFileHandle>);
 
-        #[method_id(standardError)]
+        #[method_id(@__retain_semantics Other standardError)]
         pub unsafe fn standardError(&self) -> Option<Id<NSFileHandle, Shared>>;
 
         #[method(setStandardError:)]
@@ -100,7 +100,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSUserAutomatorTask {
-        #[method_id(variables)]
+        #[method_id(@__retain_semantics Other variables)]
         pub unsafe fn variables(&self) -> Option<Id<NSDictionary<NSString, Object>, Shared>>;
 
         #[method(setVariables:)]

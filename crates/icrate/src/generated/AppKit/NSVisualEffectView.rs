@@ -66,7 +66,7 @@ extern_methods!(
         #[method(setState:)]
         pub unsafe fn setState(&self, state: NSVisualEffectState);
 
-        #[method_id(maskImage)]
+        #[method_id(@__retain_semantics Other maskImage)]
         pub unsafe fn maskImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setMaskImage:)]

@@ -14,13 +14,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSExtensionItem {
-        #[method_id(attributedTitle)]
+        #[method_id(@__retain_semantics Other attributedTitle)]
         pub unsafe fn attributedTitle(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setAttributedTitle:)]
         pub unsafe fn setAttributedTitle(&self, attributedTitle: Option<&NSAttributedString>);
 
-        #[method_id(attributedContentText)]
+        #[method_id(@__retain_semantics Other attributedContentText)]
         pub unsafe fn attributedContentText(&self) -> Option<Id<NSAttributedString, Shared>>;
 
         #[method(setAttributedContentText:)]
@@ -29,13 +29,13 @@ extern_methods!(
             attributedContentText: Option<&NSAttributedString>,
         );
 
-        #[method_id(attachments)]
+        #[method_id(@__retain_semantics Other attachments)]
         pub unsafe fn attachments(&self) -> Option<Id<NSArray<NSItemProvider>, Shared>>;
 
         #[method(setAttachments:)]
         pub unsafe fn setAttachments(&self, attachments: Option<&NSArray<NSItemProvider>>);
 
-        #[method_id(userInfo)]
+        #[method_id(@__retain_semantics Other userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSDictionary, Shared>>;
 
         #[method(setUserInfo:)]

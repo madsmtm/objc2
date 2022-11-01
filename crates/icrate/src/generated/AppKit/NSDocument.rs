@@ -33,10 +33,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDocument {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithType:error:)]
+        #[method_id(@__retain_semantics Init initWithType:error:)]
         pub unsafe fn initWithType_error(
             this: Option<Allocated<Self>>,
             typeName: &NSString,
@@ -45,14 +45,14 @@ extern_methods!(
         #[method(canConcurrentlyReadDocumentsOfType:)]
         pub unsafe fn canConcurrentlyReadDocumentsOfType(typeName: &NSString) -> bool;
 
-        #[method_id(initWithContentsOfURL:ofType:error:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:ofType:error:)]
         pub unsafe fn initWithContentsOfURL_ofType_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             typeName: &NSString,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(initForURL:withContentsOfURL:ofType:error:)]
+        #[method_id(@__retain_semantics Init initForURL:withContentsOfURL:ofType:error:)]
         pub unsafe fn initForURL_withContentsOfURL_ofType_error(
             this: Option<Allocated<Self>>,
             urlOrNil: Option<&NSURL>,
@@ -60,19 +60,19 @@ extern_methods!(
             typeName: &NSString,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(fileType)]
+        #[method_id(@__retain_semantics Other fileType)]
         pub unsafe fn fileType(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setFileType:)]
         pub unsafe fn setFileType(&self, fileType: Option<&NSString>);
 
-        #[method_id(fileURL)]
+        #[method_id(@__retain_semantics Other fileURL)]
         pub unsafe fn fileURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setFileURL:)]
         pub unsafe fn setFileURL(&self, fileURL: Option<&NSURL>);
 
-        #[method_id(fileModificationDate)]
+        #[method_id(@__retain_semantics Other fileModificationDate)]
         pub unsafe fn fileModificationDate(&self) -> Option<Id<NSDate, Shared>>;
 
         #[method(setFileModificationDate:)]
@@ -144,13 +144,13 @@ extern_methods!(
             typeName: &NSString,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(fileWrapperOfType:error:)]
+        #[method_id(@__retain_semantics Other fileWrapperOfType:error:)]
         pub unsafe fn fileWrapperOfType_error(
             &self,
             typeName: &NSString,
         ) -> Result<Id<NSFileWrapper, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(dataOfType:error:)]
+        #[method_id(@__retain_semantics Other dataOfType:error:)]
         pub unsafe fn dataOfType_error(
             &self,
             typeName: &NSString,
@@ -179,7 +179,7 @@ extern_methods!(
             absoluteOriginalContentsURL: Option<&NSURL>,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(fileAttributesToWriteToURL:ofType:forSaveOperation:originalContentsURL:error:)]
+        #[method_id(@__retain_semantics Other fileAttributesToWriteToURL:ofType:forSaveOperation:originalContentsURL:error:)]
         pub unsafe fn fileAttributesToWriteToURL_ofType_forSaveOperation_originalContentsURL_error(
             &self,
             url: &NSURL,
@@ -191,7 +191,7 @@ extern_methods!(
         #[method(keepBackupFile)]
         pub unsafe fn keepBackupFile(&self) -> bool;
 
-        #[method_id(backupFileURL)]
+        #[method_id(@__retain_semantics Other backupFileURL)]
         pub unsafe fn backupFileURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(saveDocument:)]
@@ -229,7 +229,7 @@ extern_methods!(
         #[method(fileNameExtensionWasHiddenInLastRunSavePanel)]
         pub unsafe fn fileNameExtensionWasHiddenInLastRunSavePanel(&self) -> bool;
 
-        #[method_id(fileTypeFromLastRunSavePanel)]
+        #[method_id(@__retain_semantics Other fileTypeFromLastRunSavePanel)]
         pub unsafe fn fileTypeFromLastRunSavePanel(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(saveToURL:ofType:forSaveOperation:delegate:didSaveSelector:contextInfo:)]
@@ -306,10 +306,10 @@ extern_methods!(
         #[method(autosavesDrafts)]
         pub unsafe fn autosavesDrafts() -> bool;
 
-        #[method_id(autosavingFileType)]
+        #[method_id(@__retain_semantics Other autosavingFileType)]
         pub unsafe fn autosavingFileType(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(autosavedContentsFileURL)]
+        #[method_id(@__retain_semantics Other autosavedContentsFileURL)]
         pub unsafe fn autosavedContentsFileURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setAutosavedContentsFileURL:)]
@@ -337,7 +337,7 @@ extern_methods!(
             contextInfo: *mut c_void,
         );
 
-        #[method_id(duplicateAndReturnError:)]
+        #[method_id(@__retain_semantics Other duplicateAndReturnError:)]
         pub unsafe fn duplicateAndReturnError(
             &self,
         ) -> Result<Id<NSDocument, Shared>, Id<NSError, Shared>>;
@@ -396,7 +396,7 @@ extern_methods!(
         #[method(shouldChangePrintInfo:)]
         pub unsafe fn shouldChangePrintInfo(&self, newPrintInfo: &NSPrintInfo) -> bool;
 
-        #[method_id(printInfo)]
+        #[method_id(@__retain_semantics Other printInfo)]
         pub unsafe fn printInfo(&self) -> Id<NSPrintInfo, Shared>;
 
         #[method(setPrintInfo:)]
@@ -415,7 +415,7 @@ extern_methods!(
             contextInfo: *mut c_void,
         );
 
-        #[method_id(printOperationWithSettings:error:)]
+        #[method_id(@__retain_semantics Other printOperationWithSettings:error:)]
         pub unsafe fn printOperationWithSettings_error(
             &self,
             printSettings: &NSDictionary<NSPrintInfoAttributeKey, Object>,
@@ -433,7 +433,7 @@ extern_methods!(
         #[method(saveDocumentToPDF:)]
         pub unsafe fn saveDocumentToPDF(&self, sender: Option<&Object>);
 
-        #[method_id(PDFPrintOperation)]
+        #[method_id(@__retain_semantics Other PDFPrintOperation)]
         pub unsafe fn PDFPrintOperation(&self) -> Id<NSPrintOperation, Shared>;
 
         #[method(allowsDocumentSharing)]
@@ -461,7 +461,7 @@ extern_methods!(
         #[method(updateChangeCount:)]
         pub unsafe fn updateChangeCount(&self, change: NSDocumentChangeType);
 
-        #[method_id(changeCountTokenForSaveOperation:)]
+        #[method_id(@__retain_semantics Other changeCountTokenForSaveOperation:)]
         pub unsafe fn changeCountTokenForSaveOperation(
             &self,
             saveOperation: NSSaveOperationType,
@@ -474,7 +474,7 @@ extern_methods!(
             saveOperation: NSSaveOperationType,
         );
 
-        #[method_id(undoManager)]
+        #[method_id(@__retain_semantics Other undoManager)]
         pub unsafe fn undoManager(&self) -> Option<Id<NSUndoManager, Shared>>;
 
         #[method(setUndoManager:)]
@@ -499,7 +499,7 @@ extern_methods!(
         #[method(presentError:)]
         pub unsafe fn presentError(&self, error: &NSError) -> bool;
 
-        #[method_id(willPresentError:)]
+        #[method_id(@__retain_semantics Other willPresentError:)]
         pub unsafe fn willPresentError(&self, error: &NSError) -> Id<NSError, Shared>;
 
         #[method(willNotPresentError:)]
@@ -508,7 +508,7 @@ extern_methods!(
         #[method(makeWindowControllers)]
         pub unsafe fn makeWindowControllers(&self);
 
-        #[method_id(windowNibName)]
+        #[method_id(@__retain_semantics Other windowNibName)]
         pub unsafe fn windowNibName(&self) -> Option<Id<NSNibName, Shared>>;
 
         #[method(windowControllerWillLoadNib:)]
@@ -529,7 +529,7 @@ extern_methods!(
         #[method(showWindows)]
         pub unsafe fn showWindows(&self);
 
-        #[method_id(windowControllers)]
+        #[method_id(@__retain_semantics Other windowControllers)]
         pub unsafe fn windowControllers(&self) -> Id<NSArray<NSWindowController>, Shared>;
 
         #[method(shouldCloseWindowController:delegate:shouldCloseSelector:contextInfo:)]
@@ -541,34 +541,34 @@ extern_methods!(
             contextInfo: *mut c_void,
         );
 
-        #[method_id(displayName)]
+        #[method_id(@__retain_semantics Other displayName)]
         pub unsafe fn displayName(&self) -> Id<NSString, Shared>;
 
         #[method(setDisplayName:)]
         pub unsafe fn setDisplayName(&self, displayName: Option<&NSString>);
 
-        #[method_id(defaultDraftName)]
+        #[method_id(@__retain_semantics Other defaultDraftName)]
         pub unsafe fn defaultDraftName(&self) -> Id<NSString, Shared>;
 
-        #[method_id(windowForSheet)]
+        #[method_id(@__retain_semantics Other windowForSheet)]
         pub unsafe fn windowForSheet(&self) -> Option<Id<NSWindow, Shared>>;
 
-        #[method_id(readableTypes)]
+        #[method_id(@__retain_semantics Other readableTypes)]
         pub unsafe fn readableTypes() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(writableTypes)]
+        #[method_id(@__retain_semantics Other writableTypes)]
         pub unsafe fn writableTypes() -> Id<NSArray<NSString>, Shared>;
 
         #[method(isNativeType:)]
         pub unsafe fn isNativeType(type_: &NSString) -> bool;
 
-        #[method_id(writableTypesForSaveOperation:)]
+        #[method_id(@__retain_semantics Other writableTypesForSaveOperation:)]
         pub unsafe fn writableTypesForSaveOperation(
             &self,
             saveOperation: NSSaveOperationType,
         ) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(fileNameExtensionForType:saveOperation:)]
+        #[method_id(@__retain_semantics Other fileNameExtensionForType:saveOperation:)]
         pub unsafe fn fileNameExtensionForType_saveOperation(
             &self,
             typeName: &NSString,
@@ -595,13 +595,13 @@ extern_methods!(
             saveOperation: NSSaveOperationType,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(dataRepresentationOfType:)]
+        #[method_id(@__retain_semantics Other dataRepresentationOfType:)]
         pub unsafe fn dataRepresentationOfType(
             &self,
             type_: &NSString,
         ) -> Option<Id<NSData, Shared>>;
 
-        #[method_id(fileAttributesToWriteToFile:ofType:saveOperation:)]
+        #[method_id(@__retain_semantics Other fileAttributesToWriteToFile:ofType:saveOperation:)]
         pub unsafe fn fileAttributesToWriteToFile_ofType_saveOperation(
             &self,
             fullDocumentPath: &NSString,
@@ -609,23 +609,23 @@ extern_methods!(
             saveOperationType: NSSaveOperationType,
         ) -> Option<Id<NSDictionary, Shared>>;
 
-        #[method_id(fileName)]
+        #[method_id(@__retain_semantics Other fileName)]
         pub unsafe fn fileName(&self) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(fileWrapperRepresentationOfType:)]
+        #[method_id(@__retain_semantics Other fileWrapperRepresentationOfType:)]
         pub unsafe fn fileWrapperRepresentationOfType(
             &self,
             type_: &NSString,
         ) -> Option<Id<NSFileWrapper, Shared>>;
 
-        #[method_id(initWithContentsOfFile:ofType:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfFile:ofType:)]
         pub unsafe fn initWithContentsOfFile_ofType(
             this: Option<Allocated<Self>>,
             absolutePath: &NSString,
             typeName: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(initWithContentsOfURL:ofType:)]
+        #[method_id(@__retain_semantics Init initWithContentsOfURL:ofType:)]
         pub unsafe fn initWithContentsOfURL_ofType(
             this: Option<Allocated<Self>>,
             url: &NSURL,

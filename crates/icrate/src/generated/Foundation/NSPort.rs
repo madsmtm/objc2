@@ -18,7 +18,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPort {
-        #[method_id(port)]
+        #[method_id(@__retain_semantics Other port)]
         pub unsafe fn port() -> Id<NSPort, Shared>;
 
         #[method(invalidate)]
@@ -30,7 +30,7 @@ extern_methods!(
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, anObject: Option<&NSPortDelegate>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSPortDelegate, Shared>>;
 
         #[method(scheduleInRunLoop:forMode:)]
@@ -97,10 +97,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSMachPort {
-        #[method_id(portWithMachPort:)]
+        #[method_id(@__retain_semantics Other portWithMachPort:)]
         pub unsafe fn portWithMachPort(machPort: u32) -> Id<NSPort, Shared>;
 
-        #[method_id(initWithMachPort:)]
+        #[method_id(@__retain_semantics Init initWithMachPort:)]
         pub unsafe fn initWithMachPort(
             this: Option<Allocated<Self>>,
             machPort: u32,
@@ -109,16 +109,16 @@ extern_methods!(
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, anObject: Option<&NSMachPortDelegate>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSMachPortDelegate, Shared>>;
 
-        #[method_id(portWithMachPort:options:)]
+        #[method_id(@__retain_semantics Other portWithMachPort:options:)]
         pub unsafe fn portWithMachPort_options(
             machPort: u32,
             f: NSMachPortOptions,
         ) -> Id<NSPort, Shared>;
 
-        #[method_id(initWithMachPort:options:)]
+        #[method_id(@__retain_semantics Init initWithMachPort:options:)]
         pub unsafe fn initWithMachPort_options(
             this: Option<Allocated<Self>>,
             machPort: u32,
@@ -162,16 +162,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSocketPort {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithTCPPort:)]
+        #[method_id(@__retain_semantics Init initWithTCPPort:)]
         pub unsafe fn initWithTCPPort(
             this: Option<Allocated<Self>>,
             port: c_ushort,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithProtocolFamily:socketType:protocol:address:)]
+        #[method_id(@__retain_semantics Init initWithProtocolFamily:socketType:protocol:address:)]
         pub unsafe fn initWithProtocolFamily_socketType_protocol_address(
             this: Option<Allocated<Self>>,
             family: c_int,
@@ -180,7 +180,7 @@ extern_methods!(
             address: &NSData,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initWithProtocolFamily:socketType:protocol:socket:)]
+        #[method_id(@__retain_semantics Init initWithProtocolFamily:socketType:protocol:socket:)]
         pub unsafe fn initWithProtocolFamily_socketType_protocol_socket(
             this: Option<Allocated<Self>>,
             family: c_int,
@@ -189,14 +189,14 @@ extern_methods!(
             sock: NSSocketNativeHandle,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initRemoteWithTCPPort:host:)]
+        #[method_id(@__retain_semantics Init initRemoteWithTCPPort:host:)]
         pub unsafe fn initRemoteWithTCPPort_host(
             this: Option<Allocated<Self>>,
             port: c_ushort,
             hostName: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(initRemoteWithProtocolFamily:socketType:protocol:address:)]
+        #[method_id(@__retain_semantics Init initRemoteWithProtocolFamily:socketType:protocol:address:)]
         pub unsafe fn initRemoteWithProtocolFamily_socketType_protocol_address(
             this: Option<Allocated<Self>>,
             family: c_int,
@@ -214,7 +214,7 @@ extern_methods!(
         #[method(protocol)]
         pub unsafe fn protocol(&self) -> c_int;
 
-        #[method_id(address)]
+        #[method_id(@__retain_semantics Other address)]
         pub unsafe fn address(&self) -> Id<NSData, Shared>;
 
         #[method(socket)]

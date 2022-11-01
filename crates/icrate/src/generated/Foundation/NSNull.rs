@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSNull {
-        #[method_id(null)]
+        #[method_id(@__retain_semantics Other null)]
         pub unsafe fn null() -> Id<NSNull, Shared>;
     }
 );

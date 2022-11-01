@@ -22,19 +22,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSProcessInfo {
-        #[method_id(processInfo)]
+        #[method_id(@__retain_semantics Other processInfo)]
         pub unsafe fn processInfo() -> Id<NSProcessInfo, Shared>;
 
-        #[method_id(environment)]
+        #[method_id(@__retain_semantics Other environment)]
         pub unsafe fn environment(&self) -> Id<NSDictionary<NSString, NSString>, Shared>;
 
-        #[method_id(arguments)]
+        #[method_id(@__retain_semantics Other arguments)]
         pub unsafe fn arguments(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(hostName)]
+        #[method_id(@__retain_semantics Other hostName)]
         pub unsafe fn hostName(&self) -> Id<NSString, Shared>;
 
-        #[method_id(processName)]
+        #[method_id(@__retain_semantics Other processName)]
         pub unsafe fn processName(&self) -> Id<NSString, Shared>;
 
         #[method(setProcessName:)]
@@ -43,16 +43,16 @@ extern_methods!(
         #[method(processIdentifier)]
         pub unsafe fn processIdentifier(&self) -> c_int;
 
-        #[method_id(globallyUniqueString)]
+        #[method_id(@__retain_semantics Other globallyUniqueString)]
         pub unsafe fn globallyUniqueString(&self) -> Id<NSString, Shared>;
 
         #[method(operatingSystem)]
         pub unsafe fn operatingSystem(&self) -> NSUInteger;
 
-        #[method_id(operatingSystemName)]
+        #[method_id(@__retain_semantics Other operatingSystemName)]
         pub unsafe fn operatingSystemName(&self) -> Id<NSString, Shared>;
 
-        #[method_id(operatingSystemVersionString)]
+        #[method_id(@__retain_semantics Other operatingSystemVersionString)]
         pub unsafe fn operatingSystemVersionString(&self) -> Id<NSString, Shared>;
 
         #[method(operatingSystemVersion)]
@@ -114,7 +114,7 @@ pub const NSActivityLatencyCritical: NSActivityOptions = 0xFF00000000;
 extern_methods!(
     /// NSProcessInfoActivity
     unsafe impl NSProcessInfo {
-        #[method_id(beginActivityWithOptions:reason:)]
+        #[method_id(@__retain_semantics Other beginActivityWithOptions:reason:)]
         pub unsafe fn beginActivityWithOptions_reason(
             &self,
             options: NSActivityOptions,
@@ -144,10 +144,10 @@ extern_methods!(
 extern_methods!(
     /// NSUserInformation
     unsafe impl NSProcessInfo {
-        #[method_id(userName)]
+        #[method_id(@__retain_semantics Other userName)]
         pub unsafe fn userName(&self) -> Id<NSString, Shared>;
 
-        #[method_id(fullUserName)]
+        #[method_id(@__retain_semantics Other fullUserName)]
         pub unsafe fn fullUserName(&self) -> Id<NSString, Shared>;
     }
 );

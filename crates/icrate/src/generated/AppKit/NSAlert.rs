@@ -26,31 +26,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSAlert {
-        #[method_id(alertWithError:)]
+        #[method_id(@__retain_semantics Other alertWithError:)]
         pub unsafe fn alertWithError(error: &NSError) -> Id<NSAlert, Shared>;
 
-        #[method_id(messageText)]
+        #[method_id(@__retain_semantics Other messageText)]
         pub unsafe fn messageText(&self) -> Id<NSString, Shared>;
 
         #[method(setMessageText:)]
         pub unsafe fn setMessageText(&self, messageText: &NSString);
 
-        #[method_id(informativeText)]
+        #[method_id(@__retain_semantics Other informativeText)]
         pub unsafe fn informativeText(&self) -> Id<NSString, Shared>;
 
         #[method(setInformativeText:)]
         pub unsafe fn setInformativeText(&self, informativeText: &NSString);
 
-        #[method_id(icon)]
+        #[method_id(@__retain_semantics Other icon)]
         pub unsafe fn icon(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setIcon:)]
         pub unsafe fn setIcon(&self, icon: Option<&NSImage>);
 
-        #[method_id(addButtonWithTitle:)]
+        #[method_id(@__retain_semantics Other addButtonWithTitle:)]
         pub unsafe fn addButtonWithTitle(&self, title: &NSString) -> Id<NSButton, Shared>;
 
-        #[method_id(buttons)]
+        #[method_id(@__retain_semantics Other buttons)]
         pub unsafe fn buttons(&self) -> Id<NSArray<NSButton>, Shared>;
 
         #[method(showsHelp)]
@@ -59,7 +59,7 @@ extern_methods!(
         #[method(setShowsHelp:)]
         pub unsafe fn setShowsHelp(&self, showsHelp: bool);
 
-        #[method_id(helpAnchor)]
+        #[method_id(@__retain_semantics Other helpAnchor)]
         pub unsafe fn helpAnchor(&self) -> Option<Id<NSHelpAnchorName, Shared>>;
 
         #[method(setHelpAnchor:)]
@@ -71,7 +71,7 @@ extern_methods!(
         #[method(setAlertStyle:)]
         pub unsafe fn setAlertStyle(&self, alertStyle: NSAlertStyle);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSAlertDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -83,10 +83,10 @@ extern_methods!(
         #[method(setShowsSuppressionButton:)]
         pub unsafe fn setShowsSuppressionButton(&self, showsSuppressionButton: bool);
 
-        #[method_id(suppressionButton)]
+        #[method_id(@__retain_semantics Other suppressionButton)]
         pub unsafe fn suppressionButton(&self) -> Option<Id<NSButton, Shared>>;
 
-        #[method_id(accessoryView)]
+        #[method_id(@__retain_semantics Other accessoryView)]
         pub unsafe fn accessoryView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setAccessoryView:)]
@@ -105,7 +105,7 @@ extern_methods!(
             handler: TodoBlock,
         );
 
-        #[method_id(window)]
+        #[method_id(@__retain_semantics Other window)]
         pub unsafe fn window(&self) -> Id<NSWindow, Shared>;
     }
 );

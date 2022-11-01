@@ -15,16 +15,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextCheckingController {
-        #[method_id(initWithClient:)]
+        #[method_id(@__retain_semantics Init initWithClient:)]
         pub unsafe fn initWithClient(
             this: Option<Allocated<Self>>,
             client: &NSTextCheckingClient,
         ) -> Id<Self, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(client)]
+        #[method_id(@__retain_semantics Other client)]
         pub unsafe fn client(&self) -> Id<NSTextCheckingClient, Shared>;
 
         #[method(invalidate)]
@@ -74,10 +74,10 @@ extern_methods!(
         #[method(updateCandidates)]
         pub unsafe fn updateCandidates(&self);
 
-        #[method_id(validAnnotations)]
+        #[method_id(@__retain_semantics Other validAnnotations)]
         pub unsafe fn validAnnotations(&self) -> Id<NSArray<NSAttributedStringKey>, Shared>;
 
-        #[method_id(menuAtIndex:clickedOnSelection:effectiveRange:)]
+        #[method_id(@__retain_semantics Other menuAtIndex:clickedOnSelection:effectiveRange:)]
         pub unsafe fn menuAtIndex_clickedOnSelection_effectiveRange(
             &self,
             location: NSUInteger,

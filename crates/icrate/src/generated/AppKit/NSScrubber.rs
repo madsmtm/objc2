@@ -29,22 +29,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScrubberSelectionStyle {
-        #[method_id(outlineOverlayStyle)]
+        #[method_id(@__retain_semantics Other outlineOverlayStyle)]
         pub unsafe fn outlineOverlayStyle() -> Id<NSScrubberSelectionStyle, Shared>;
 
-        #[method_id(roundedBackgroundStyle)]
+        #[method_id(@__retain_semantics Other roundedBackgroundStyle)]
         pub unsafe fn roundedBackgroundStyle() -> Id<NSScrubberSelectionStyle, Shared>;
 
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(makeSelectionView)]
+        #[method_id(@__retain_semantics Other makeSelectionView)]
         pub unsafe fn makeSelectionView(&self) -> Option<Id<NSScrubberSelectionView, Shared>>;
     }
 );
@@ -60,19 +60,19 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScrubber {
-        #[method_id(dataSource)]
+        #[method_id(@__retain_semantics Other dataSource)]
         pub unsafe fn dataSource(&self) -> Option<Id<NSScrubberDataSource, Shared>>;
 
         #[method(setDataSource:)]
         pub unsafe fn setDataSource(&self, dataSource: Option<&NSScrubberDataSource>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSScrubberDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSScrubberDelegate>);
 
-        #[method_id(scrubberLayout)]
+        #[method_id(@__retain_semantics Other scrubberLayout)]
         pub unsafe fn scrubberLayout(&self) -> Id<NSScrubberLayout, Shared>;
 
         #[method(setScrubberLayout:)]
@@ -114,7 +114,7 @@ extern_methods!(
         #[method(setFloatsSelectionViews:)]
         pub unsafe fn setFloatsSelectionViews(&self, floatsSelectionViews: bool);
 
-        #[method_id(selectionBackgroundStyle)]
+        #[method_id(@__retain_semantics Other selectionBackgroundStyle)]
         pub unsafe fn selectionBackgroundStyle(
             &self,
         ) -> Option<Id<NSScrubberSelectionStyle, Shared>>;
@@ -125,7 +125,7 @@ extern_methods!(
             selectionBackgroundStyle: Option<&NSScrubberSelectionStyle>,
         );
 
-        #[method_id(selectionOverlayStyle)]
+        #[method_id(@__retain_semantics Other selectionOverlayStyle)]
         pub unsafe fn selectionOverlayStyle(&self) -> Option<Id<NSScrubberSelectionStyle, Shared>>;
 
         #[method(setSelectionOverlayStyle:)]
@@ -149,25 +149,25 @@ extern_methods!(
             showsAdditionalContentIndicators: bool,
         );
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBackgroundColor:)]
         pub unsafe fn setBackgroundColor(&self, backgroundColor: Option<&NSColor>);
 
-        #[method_id(backgroundView)]
+        #[method_id(@__retain_semantics Other backgroundView)]
         pub unsafe fn backgroundView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setBackgroundView:)]
         pub unsafe fn setBackgroundView(&self, backgroundView: Option<&NSView>);
 
-        #[method_id(initWithFrame:)]
+        #[method_id(@__retain_semantics Init initWithFrame:)]
         pub unsafe fn initWithFrame(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
@@ -198,7 +198,7 @@ extern_methods!(
             alignment: NSScrubberAlignment,
         );
 
-        #[method_id(itemViewForItemAtIndex:)]
+        #[method_id(@__retain_semantics Other itemViewForItemAtIndex:)]
         pub unsafe fn itemViewForItemAtIndex(
             &self,
             index: NSInteger,
@@ -218,7 +218,7 @@ extern_methods!(
             itemIdentifier: &NSUserInterfaceItemIdentifier,
         );
 
-        #[method_id(makeItemWithIdentifier:owner:)]
+        #[method_id(@__retain_semantics Other makeItemWithIdentifier:owner:)]
         pub unsafe fn makeItemWithIdentifier_owner(
             &self,
             itemIdentifier: &NSUserInterfaceItemIdentifier,

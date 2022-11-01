@@ -7,7 +7,7 @@ use crate::Foundation::*;
 extern_methods!(
     /// NSAppKitAdditions
     unsafe impl NSAffineTransform {
-        #[method_id(transformBezierPath:)]
+        #[method_id(@__retain_semantics Other transformBezierPath:)]
         pub unsafe fn transformBezierPath(&self, path: &NSBezierPath) -> Id<NSBezierPath, Shared>;
 
         #[method(set)]

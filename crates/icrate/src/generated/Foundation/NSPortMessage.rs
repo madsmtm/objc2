@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPortMessage {
-        #[method_id(initWithSendPort:receivePort:components:)]
+        #[method_id(@__retain_semantics Init initWithSendPort:receivePort:components:)]
         pub unsafe fn initWithSendPort_receivePort_components(
             this: Option<Allocated<Self>>,
             sendPort: Option<&NSPort>,
@@ -22,13 +22,13 @@ extern_methods!(
             components: Option<&NSArray>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(components)]
+        #[method_id(@__retain_semantics Other components)]
         pub unsafe fn components(&self) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(receivePort)]
+        #[method_id(@__retain_semantics Other receivePort)]
         pub unsafe fn receivePort(&self) -> Option<Id<NSPort, Shared>>;
 
-        #[method_id(sendPort)]
+        #[method_id(@__retain_semantics Other sendPort)]
         pub unsafe fn sendPort(&self) -> Option<Id<NSPort, Shared>>;
 
         #[method(sendBeforeDate:)]

@@ -15,10 +15,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSliderAccessory {
-        #[method_id(accessoryWithImage:)]
+        #[method_id(@__retain_semantics Other accessoryWithImage:)]
         pub unsafe fn accessoryWithImage(image: &NSImage) -> Id<NSSliderAccessory, Shared>;
 
-        #[method_id(behavior)]
+        #[method_id(@__retain_semantics Other behavior)]
         pub unsafe fn behavior(&self) -> Id<NSSliderAccessoryBehavior, Shared>;
 
         #[method(setBehavior:)]
@@ -47,22 +47,22 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSliderAccessoryBehavior {
-        #[method_id(automaticBehavior)]
+        #[method_id(@__retain_semantics Other automaticBehavior)]
         pub unsafe fn automaticBehavior() -> Id<NSSliderAccessoryBehavior, Shared>;
 
-        #[method_id(valueStepBehavior)]
+        #[method_id(@__retain_semantics Other valueStepBehavior)]
         pub unsafe fn valueStepBehavior() -> Id<NSSliderAccessoryBehavior, Shared>;
 
-        #[method_id(valueResetBehavior)]
+        #[method_id(@__retain_semantics Other valueResetBehavior)]
         pub unsafe fn valueResetBehavior() -> Id<NSSliderAccessoryBehavior, Shared>;
 
-        #[method_id(behaviorWithTarget:action:)]
+        #[method_id(@__retain_semantics Other behaviorWithTarget:action:)]
         pub unsafe fn behaviorWithTarget_action(
             target: Option<&Object>,
             action: Sel,
         ) -> Id<NSSliderAccessoryBehavior, Shared>;
 
-        #[method_id(behaviorWithHandler:)]
+        #[method_id(@__retain_semantics Other behaviorWithHandler:)]
         pub unsafe fn behaviorWithHandler(
             handler: TodoBlock,
         ) -> Id<NSSliderAccessoryBehavior, Shared>;

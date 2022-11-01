@@ -7,10 +7,10 @@ use crate::Foundation::*;
 extern_methods!(
     /// NSScripting
     unsafe impl NSApplication {
-        #[method_id(orderedDocuments)]
+        #[method_id(@__retain_semantics Other orderedDocuments)]
         pub unsafe fn orderedDocuments(&self) -> Id<NSArray<NSDocument>, Shared>;
 
-        #[method_id(orderedWindows)]
+        #[method_id(@__retain_semantics Other orderedWindows)]
         pub unsafe fn orderedWindows(&self) -> Id<NSArray<NSWindow>, Shared>;
     }
 );

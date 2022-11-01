@@ -15,13 +15,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSSearchToolbarItem {
-        #[method_id(searchField)]
+        #[method_id(@__retain_semantics Other searchField)]
         pub unsafe fn searchField(&self) -> Id<NSSearchField, Shared>;
 
         #[method(setSearchField:)]
         pub unsafe fn setSearchField(&self, searchField: &NSSearchField);
 
-        #[method_id(view)]
+        #[method_id(@__retain_semantics Other view)]
         pub unsafe fn view(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setView:)]

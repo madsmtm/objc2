@@ -17,55 +17,55 @@ __inner_extern_class!(
 
 extern_methods!(
     unsafe impl<AnchorType: Message> NSLayoutAnchor<AnchorType> {
-        #[method_id(constraintEqualToAnchor:)]
+        #[method_id(@__retain_semantics Other constraintEqualToAnchor:)]
         pub unsafe fn constraintEqualToAnchor(
             &self,
             anchor: &NSLayoutAnchor<AnchorType>,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintGreaterThanOrEqualToAnchor:)]
+        #[method_id(@__retain_semantics Other constraintGreaterThanOrEqualToAnchor:)]
         pub unsafe fn constraintGreaterThanOrEqualToAnchor(
             &self,
             anchor: &NSLayoutAnchor<AnchorType>,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintLessThanOrEqualToAnchor:)]
+        #[method_id(@__retain_semantics Other constraintLessThanOrEqualToAnchor:)]
         pub unsafe fn constraintLessThanOrEqualToAnchor(
             &self,
             anchor: &NSLayoutAnchor<AnchorType>,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintEqualToAnchor:constant:)]
+        #[method_id(@__retain_semantics Other constraintEqualToAnchor:constant:)]
         pub unsafe fn constraintEqualToAnchor_constant(
             &self,
             anchor: &NSLayoutAnchor<AnchorType>,
             c: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintGreaterThanOrEqualToAnchor:constant:)]
+        #[method_id(@__retain_semantics Other constraintGreaterThanOrEqualToAnchor:constant:)]
         pub unsafe fn constraintGreaterThanOrEqualToAnchor_constant(
             &self,
             anchor: &NSLayoutAnchor<AnchorType>,
             c: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintLessThanOrEqualToAnchor:constant:)]
+        #[method_id(@__retain_semantics Other constraintLessThanOrEqualToAnchor:constant:)]
         pub unsafe fn constraintLessThanOrEqualToAnchor_constant(
             &self,
             anchor: &NSLayoutAnchor<AnchorType>,
             c: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(name)]
+        #[method_id(@__retain_semantics Other name)]
         pub unsafe fn name(&self) -> Id<NSString, Shared>;
 
-        #[method_id(item)]
+        #[method_id(@__retain_semantics Other item)]
         pub unsafe fn item(&self) -> Option<Id<Object, Shared>>;
 
         #[method(hasAmbiguousLayout)]
         pub unsafe fn hasAmbiguousLayout(&self) -> bool;
 
-        #[method_id(constraintsAffectingLayout)]
+        #[method_id(@__retain_semantics Other constraintsAffectingLayout)]
         pub unsafe fn constraintsAffectingLayout(&self) -> Id<NSArray<NSLayoutConstraint>, Shared>;
     }
 );
@@ -81,27 +81,27 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSLayoutXAxisAnchor {
-        #[method_id(anchorWithOffsetToAnchor:)]
+        #[method_id(@__retain_semantics Other anchorWithOffsetToAnchor:)]
         pub unsafe fn anchorWithOffsetToAnchor(
             &self,
             otherAnchor: &NSLayoutXAxisAnchor,
         ) -> Id<NSLayoutDimension, Shared>;
 
-        #[method_id(constraintEqualToSystemSpacingAfterAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintEqualToSystemSpacingAfterAnchor:multiplier:)]
         pub unsafe fn constraintEqualToSystemSpacingAfterAnchor_multiplier(
             &self,
             anchor: &NSLayoutXAxisAnchor,
             multiplier: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintGreaterThanOrEqualToSystemSpacingAfterAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintGreaterThanOrEqualToSystemSpacingAfterAnchor:multiplier:)]
         pub unsafe fn constraintGreaterThanOrEqualToSystemSpacingAfterAnchor_multiplier(
             &self,
             anchor: &NSLayoutXAxisAnchor,
             multiplier: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintLessThanOrEqualToSystemSpacingAfterAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintLessThanOrEqualToSystemSpacingAfterAnchor:multiplier:)]
         pub unsafe fn constraintLessThanOrEqualToSystemSpacingAfterAnchor_multiplier(
             &self,
             anchor: &NSLayoutXAxisAnchor,
@@ -121,27 +121,27 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSLayoutYAxisAnchor {
-        #[method_id(anchorWithOffsetToAnchor:)]
+        #[method_id(@__retain_semantics Other anchorWithOffsetToAnchor:)]
         pub unsafe fn anchorWithOffsetToAnchor(
             &self,
             otherAnchor: &NSLayoutYAxisAnchor,
         ) -> Id<NSLayoutDimension, Shared>;
 
-        #[method_id(constraintEqualToSystemSpacingBelowAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintEqualToSystemSpacingBelowAnchor:multiplier:)]
         pub unsafe fn constraintEqualToSystemSpacingBelowAnchor_multiplier(
             &self,
             anchor: &NSLayoutYAxisAnchor,
             multiplier: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintGreaterThanOrEqualToSystemSpacingBelowAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintGreaterThanOrEqualToSystemSpacingBelowAnchor:multiplier:)]
         pub unsafe fn constraintGreaterThanOrEqualToSystemSpacingBelowAnchor_multiplier(
             &self,
             anchor: &NSLayoutYAxisAnchor,
             multiplier: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintLessThanOrEqualToSystemSpacingBelowAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintLessThanOrEqualToSystemSpacingBelowAnchor:multiplier:)]
         pub unsafe fn constraintLessThanOrEqualToSystemSpacingBelowAnchor_multiplier(
             &self,
             anchor: &NSLayoutYAxisAnchor,
@@ -161,46 +161,46 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSLayoutDimension {
-        #[method_id(constraintEqualToConstant:)]
+        #[method_id(@__retain_semantics Other constraintEqualToConstant:)]
         pub unsafe fn constraintEqualToConstant(
             &self,
             c: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintGreaterThanOrEqualToConstant:)]
+        #[method_id(@__retain_semantics Other constraintGreaterThanOrEqualToConstant:)]
         pub unsafe fn constraintGreaterThanOrEqualToConstant(
             &self,
             c: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintLessThanOrEqualToConstant:)]
+        #[method_id(@__retain_semantics Other constraintLessThanOrEqualToConstant:)]
         pub unsafe fn constraintLessThanOrEqualToConstant(
             &self,
             c: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintEqualToAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintEqualToAnchor:multiplier:)]
         pub unsafe fn constraintEqualToAnchor_multiplier(
             &self,
             anchor: &NSLayoutDimension,
             m: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintGreaterThanOrEqualToAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintGreaterThanOrEqualToAnchor:multiplier:)]
         pub unsafe fn constraintGreaterThanOrEqualToAnchor_multiplier(
             &self,
             anchor: &NSLayoutDimension,
             m: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintLessThanOrEqualToAnchor:multiplier:)]
+        #[method_id(@__retain_semantics Other constraintLessThanOrEqualToAnchor:multiplier:)]
         pub unsafe fn constraintLessThanOrEqualToAnchor_multiplier(
             &self,
             anchor: &NSLayoutDimension,
             m: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintEqualToAnchor:multiplier:constant:)]
+        #[method_id(@__retain_semantics Other constraintEqualToAnchor:multiplier:constant:)]
         pub unsafe fn constraintEqualToAnchor_multiplier_constant(
             &self,
             anchor: &NSLayoutDimension,
@@ -208,7 +208,7 @@ extern_methods!(
             c: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintGreaterThanOrEqualToAnchor:multiplier:constant:)]
+        #[method_id(@__retain_semantics Other constraintGreaterThanOrEqualToAnchor:multiplier:constant:)]
         pub unsafe fn constraintGreaterThanOrEqualToAnchor_multiplier_constant(
             &self,
             anchor: &NSLayoutDimension,
@@ -216,7 +216,7 @@ extern_methods!(
             c: CGFloat,
         ) -> Id<NSLayoutConstraint, Shared>;
 
-        #[method_id(constraintLessThanOrEqualToAnchor:multiplier:constant:)]
+        #[method_id(@__retain_semantics Other constraintLessThanOrEqualToAnchor:multiplier:constant:)]
         pub unsafe fn constraintLessThanOrEqualToAnchor_multiplier_constant(
             &self,
             anchor: &NSLayoutDimension,

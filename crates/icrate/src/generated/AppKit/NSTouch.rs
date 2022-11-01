@@ -33,7 +33,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTouch {
-        #[method_id(identity)]
+        #[method_id(@__retain_semantics Other identity)]
         pub unsafe fn identity(&self) -> Id<TodoProtocols, Shared>;
 
         #[method(phase)]
@@ -45,7 +45,7 @@ extern_methods!(
         #[method(isResting)]
         pub unsafe fn isResting(&self) -> bool;
 
-        #[method_id(device)]
+        #[method_id(@__retain_semantics Other device)]
         pub unsafe fn device(&self) -> Option<Id<Object, Shared>>;
 
         #[method(deviceSize)]

@@ -21,13 +21,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSMatrix {
-        #[method_id(initWithFrame:)]
+        #[method_id(@__retain_semantics Init initWithFrame:)]
         pub unsafe fn initWithFrame(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithFrame:mode:prototype:numberOfRows:numberOfColumns:)]
+        #[method_id(@__retain_semantics Init initWithFrame:mode:prototype:numberOfRows:numberOfColumns:)]
         pub unsafe fn initWithFrame_mode_prototype_numberOfRows_numberOfColumns(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
@@ -37,7 +37,7 @@ extern_methods!(
             colsWide: NSInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithFrame:mode:cellClass:numberOfRows:numberOfColumns:)]
+        #[method_id(@__retain_semantics Init initWithFrame:mode:cellClass:numberOfRows:numberOfColumns:)]
         pub unsafe fn initWithFrame_mode_cellClass_numberOfRows_numberOfColumns(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
@@ -53,13 +53,13 @@ extern_methods!(
         #[method(setCellClass:)]
         pub unsafe fn setCellClass(&self, cellClass: &Class);
 
-        #[method_id(prototype)]
+        #[method_id(@__retain_semantics Other prototype)]
         pub unsafe fn prototype(&self) -> Option<Id<NSCell, Shared>>;
 
         #[method(setPrototype:)]
         pub unsafe fn setPrototype(&self, prototype: Option<&NSCell>);
 
-        #[method_id(makeCellAtRow:column:)]
+        #[method_id(@__retain_semantics Other makeCellAtRow:column:)]
         pub unsafe fn makeCellAtRow_column(
             &self,
             row: NSInteger,
@@ -81,7 +81,7 @@ extern_methods!(
         #[method(sendAction:to:forAllCells:)]
         pub unsafe fn sendAction_to_forAllCells(&self, selector: Sel, object: &Object, flag: bool);
 
-        #[method_id(cells)]
+        #[method_id(@__retain_semantics Other cells)]
         pub unsafe fn cells(&self) -> Id<NSArray<NSCell>, Shared>;
 
         #[method(sortUsingSelector:)]
@@ -94,10 +94,10 @@ extern_methods!(
             context: *mut c_void,
         );
 
-        #[method_id(selectedCell)]
+        #[method_id(@__retain_semantics Other selectedCell)]
         pub unsafe fn selectedCell(&self) -> Option<Id<NSCell, Shared>>;
 
-        #[method_id(selectedCells)]
+        #[method_id(@__retain_semantics Other selectedCells)]
         pub unsafe fn selectedCells(&self) -> Id<NSArray<NSCell>, Shared>;
 
         #[method(selectedRow)]
@@ -151,13 +151,13 @@ extern_methods!(
         #[method(setScrollable:)]
         pub unsafe fn setScrollable(&self, flag: bool);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
         pub unsafe fn setBackgroundColor(&self, backgroundColor: &NSColor);
 
-        #[method_id(cellBackgroundColor)]
+        #[method_id(@__retain_semantics Other cellBackgroundColor)]
         pub unsafe fn cellBackgroundColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setCellBackgroundColor:)]
@@ -196,7 +196,7 @@ extern_methods!(
         #[method(numberOfColumns)]
         pub unsafe fn numberOfColumns(&self) -> NSInteger;
 
-        #[method_id(cellAtRow:column:)]
+        #[method_id(@__retain_semantics Other cellAtRow:column:)]
         pub unsafe fn cellAtRow_column(
             &self,
             row: NSInteger,
@@ -266,7 +266,7 @@ extern_methods!(
         #[method(removeColumn:)]
         pub unsafe fn removeColumn(&self, col: NSInteger);
 
-        #[method_id(cellWithTag:)]
+        #[method_id(@__retain_semantics Other cellWithTag:)]
         pub unsafe fn cellWithTag(&self, tag: NSInteger) -> Option<Id<NSCell, Shared>>;
 
         #[method(doubleAction)]
@@ -317,7 +317,7 @@ extern_methods!(
         #[method(sendDoubleAction)]
         pub unsafe fn sendDoubleAction(&self);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSMatrixDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -341,7 +341,7 @@ extern_methods!(
         #[method(selectText:)]
         pub unsafe fn selectText(&self, sender: Option<&Object>);
 
-        #[method_id(selectTextAtRow:column:)]
+        #[method_id(@__retain_semantics Other selectTextAtRow:column:)]
         pub unsafe fn selectTextAtRow_column(
             &self,
             row: NSInteger,
@@ -357,7 +357,7 @@ extern_methods!(
         #[method(setToolTip:forCell:)]
         pub unsafe fn setToolTip_forCell(&self, toolTipString: Option<&NSString>, cell: &NSCell);
 
-        #[method_id(toolTipForCell:)]
+        #[method_id(@__retain_semantics Other toolTipForCell:)]
         pub unsafe fn toolTipForCell(&self, cell: &NSCell) -> Option<Id<NSString, Shared>>;
 
         #[method(autorecalculatesCellSize)]
@@ -377,7 +377,7 @@ extern_methods!(
         #[method(setTabKeyTraversesCells:)]
         pub unsafe fn setTabKeyTraversesCells(&self, tabKeyTraversesCells: bool);
 
-        #[method_id(keyCell)]
+        #[method_id(@__retain_semantics Other keyCell)]
         pub unsafe fn keyCell(&self) -> Option<Id<NSCell, Shared>>;
 
         #[method(setKeyCell:)]

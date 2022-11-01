@@ -14,21 +14,21 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTimer {
-        #[method_id(timerWithTimeInterval:invocation:repeats:)]
+        #[method_id(@__retain_semantics Other timerWithTimeInterval:invocation:repeats:)]
         pub unsafe fn timerWithTimeInterval_invocation_repeats(
             ti: NSTimeInterval,
             invocation: &NSInvocation,
             yesOrNo: bool,
         ) -> Id<NSTimer, Shared>;
 
-        #[method_id(scheduledTimerWithTimeInterval:invocation:repeats:)]
+        #[method_id(@__retain_semantics Other scheduledTimerWithTimeInterval:invocation:repeats:)]
         pub unsafe fn scheduledTimerWithTimeInterval_invocation_repeats(
             ti: NSTimeInterval,
             invocation: &NSInvocation,
             yesOrNo: bool,
         ) -> Id<NSTimer, Shared>;
 
-        #[method_id(timerWithTimeInterval:target:selector:userInfo:repeats:)]
+        #[method_id(@__retain_semantics Other timerWithTimeInterval:target:selector:userInfo:repeats:)]
         pub unsafe fn timerWithTimeInterval_target_selector_userInfo_repeats(
             ti: NSTimeInterval,
             aTarget: &Object,
@@ -37,7 +37,7 @@ extern_methods!(
             yesOrNo: bool,
         ) -> Id<NSTimer, Shared>;
 
-        #[method_id(scheduledTimerWithTimeInterval:target:selector:userInfo:repeats:)]
+        #[method_id(@__retain_semantics Other scheduledTimerWithTimeInterval:target:selector:userInfo:repeats:)]
         pub unsafe fn scheduledTimerWithTimeInterval_target_selector_userInfo_repeats(
             ti: NSTimeInterval,
             aTarget: &Object,
@@ -46,21 +46,21 @@ extern_methods!(
             yesOrNo: bool,
         ) -> Id<NSTimer, Shared>;
 
-        #[method_id(timerWithTimeInterval:repeats:block:)]
+        #[method_id(@__retain_semantics Other timerWithTimeInterval:repeats:block:)]
         pub unsafe fn timerWithTimeInterval_repeats_block(
             interval: NSTimeInterval,
             repeats: bool,
             block: TodoBlock,
         ) -> Id<NSTimer, Shared>;
 
-        #[method_id(scheduledTimerWithTimeInterval:repeats:block:)]
+        #[method_id(@__retain_semantics Other scheduledTimerWithTimeInterval:repeats:block:)]
         pub unsafe fn scheduledTimerWithTimeInterval_repeats_block(
             interval: NSTimeInterval,
             repeats: bool,
             block: TodoBlock,
         ) -> Id<NSTimer, Shared>;
 
-        #[method_id(initWithFireDate:interval:repeats:block:)]
+        #[method_id(@__retain_semantics Init initWithFireDate:interval:repeats:block:)]
         pub unsafe fn initWithFireDate_interval_repeats_block(
             this: Option<Allocated<Self>>,
             date: &NSDate,
@@ -69,7 +69,7 @@ extern_methods!(
             block: TodoBlock,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithFireDate:interval:target:selector:userInfo:repeats:)]
+        #[method_id(@__retain_semantics Init initWithFireDate:interval:target:selector:userInfo:repeats:)]
         pub unsafe fn initWithFireDate_interval_target_selector_userInfo_repeats(
             this: Option<Allocated<Self>>,
             date: &NSDate,
@@ -83,7 +83,7 @@ extern_methods!(
         #[method(fire)]
         pub unsafe fn fire(&self);
 
-        #[method_id(fireDate)]
+        #[method_id(@__retain_semantics Other fireDate)]
         pub unsafe fn fireDate(&self) -> Id<NSDate, Shared>;
 
         #[method(setFireDate:)]
@@ -104,7 +104,7 @@ extern_methods!(
         #[method(isValid)]
         pub unsafe fn isValid(&self) -> bool;
 
-        #[method_id(userInfo)]
+        #[method_id(@__retain_semantics Other userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<Object, Shared>>;
     }
 );

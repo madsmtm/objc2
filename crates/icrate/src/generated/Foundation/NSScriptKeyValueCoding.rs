@@ -10,21 +10,21 @@ extern "C" {
 extern_methods!(
     /// NSScriptKeyValueCoding
     unsafe impl NSObject {
-        #[method_id(valueAtIndex:inPropertyWithKey:)]
+        #[method_id(@__retain_semantics Other valueAtIndex:inPropertyWithKey:)]
         pub unsafe fn valueAtIndex_inPropertyWithKey(
             &self,
             index: NSUInteger,
             key: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(valueWithName:inPropertyWithKey:)]
+        #[method_id(@__retain_semantics Other valueWithName:inPropertyWithKey:)]
         pub unsafe fn valueWithName_inPropertyWithKey(
             &self,
             name: &NSString,
             key: &NSString,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(valueWithUniqueID:inPropertyWithKey:)]
+        #[method_id(@__retain_semantics Other valueWithUniqueID:inPropertyWithKey:)]
         pub unsafe fn valueWithUniqueID_inPropertyWithKey(
             &self,
             uniqueID: &Object,
@@ -57,7 +57,7 @@ extern_methods!(
         #[method(insertValue:inPropertyWithKey:)]
         pub unsafe fn insertValue_inPropertyWithKey(&self, value: &Object, key: &NSString);
 
-        #[method_id(coerceValue:forKey:)]
+        #[method_id(@__retain_semantics Other coerceValue:forKey:)]
         pub unsafe fn coerceValue_forKey(
             &self,
             value: Option<&Object>,

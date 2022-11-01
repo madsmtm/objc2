@@ -22,13 +22,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSPageController {
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSPageControllerDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSPageControllerDelegate>);
 
-        #[method_id(selectedViewController)]
+        #[method_id(@__retain_semantics Other selectedViewController)]
         pub unsafe fn selectedViewController(&self) -> Option<Id<NSViewController, Shared>>;
 
         #[method(transitionStyle)]
@@ -37,7 +37,7 @@ extern_methods!(
         #[method(setTransitionStyle:)]
         pub unsafe fn setTransitionStyle(&self, transitionStyle: NSPageControllerTransitionStyle);
 
-        #[method_id(arrangedObjects)]
+        #[method_id(@__retain_semantics Other arrangedObjects)]
         pub unsafe fn arrangedObjects(&self) -> Id<NSArray, Shared>;
 
         #[method(setArrangedObjects:)]

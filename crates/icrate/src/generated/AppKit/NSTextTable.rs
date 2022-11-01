@@ -42,7 +42,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextBlock {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(setValue:type:forDimension:)]
@@ -108,7 +108,7 @@ extern_methods!(
         #[method(setVerticalAlignment:)]
         pub unsafe fn setVerticalAlignment(&self, verticalAlignment: NSTextBlockVerticalAlignment);
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setBackgroundColor:)]
@@ -120,7 +120,7 @@ extern_methods!(
         #[method(setBorderColor:)]
         pub unsafe fn setBorderColor(&self, color: Option<&NSColor>);
 
-        #[method_id(borderColorForEdge:)]
+        #[method_id(@__retain_semantics Other borderColorForEdge:)]
         pub unsafe fn borderColorForEdge(&self, edge: NSRectEdge) -> Option<Id<NSColor, Shared>>;
 
         #[method(rectForLayoutAtPoint:inRect:textContainer:characterRange:)]
@@ -163,7 +163,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextTableBlock {
-        #[method_id(initWithTable:startingRow:rowSpan:startingColumn:columnSpan:)]
+        #[method_id(@__retain_semantics Init initWithTable:startingRow:rowSpan:startingColumn:columnSpan:)]
         pub unsafe fn initWithTable_startingRow_rowSpan_startingColumn_columnSpan(
             this: Option<Allocated<Self>>,
             table: &NSTextTable,
@@ -173,7 +173,7 @@ extern_methods!(
             colSpan: NSInteger,
         ) -> Id<Self, Shared>;
 
-        #[method_id(table)]
+        #[method_id(@__retain_semantics Other table)]
         pub unsafe fn table(&self) -> Id<NSTextTable, Shared>;
 
         #[method(startingRow)]

@@ -17,16 +17,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTouchBar {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(customizationIdentifier)]
+        #[method_id(@__retain_semantics Other customizationIdentifier)]
         pub unsafe fn customizationIdentifier(
             &self,
         ) -> Option<Id<NSTouchBarCustomizationIdentifier, Shared>>;
@@ -37,7 +37,7 @@ extern_methods!(
             customizationIdentifier: Option<&NSTouchBarCustomizationIdentifier>,
         );
 
-        #[method_id(customizationAllowedItemIdentifiers)]
+        #[method_id(@__retain_semantics Other customizationAllowedItemIdentifiers)]
         pub unsafe fn customizationAllowedItemIdentifiers(
             &self,
         ) -> Id<NSArray<NSTouchBarItemIdentifier>, Shared>;
@@ -48,7 +48,7 @@ extern_methods!(
             customizationAllowedItemIdentifiers: &NSArray<NSTouchBarItemIdentifier>,
         );
 
-        #[method_id(customizationRequiredItemIdentifiers)]
+        #[method_id(@__retain_semantics Other customizationRequiredItemIdentifiers)]
         pub unsafe fn customizationRequiredItemIdentifiers(
             &self,
         ) -> Id<NSArray<NSTouchBarItemIdentifier>, Shared>;
@@ -59,7 +59,7 @@ extern_methods!(
             customizationRequiredItemIdentifiers: &NSArray<NSTouchBarItemIdentifier>,
         );
 
-        #[method_id(defaultItemIdentifiers)]
+        #[method_id(@__retain_semantics Other defaultItemIdentifiers)]
         pub unsafe fn defaultItemIdentifiers(
             &self,
         ) -> Id<NSArray<NSTouchBarItemIdentifier>, Shared>;
@@ -70,10 +70,10 @@ extern_methods!(
             defaultItemIdentifiers: &NSArray<NSTouchBarItemIdentifier>,
         );
 
-        #[method_id(itemIdentifiers)]
+        #[method_id(@__retain_semantics Other itemIdentifiers)]
         pub unsafe fn itemIdentifiers(&self) -> Id<NSArray<NSTouchBarItemIdentifier>, Shared>;
 
-        #[method_id(principalItemIdentifier)]
+        #[method_id(@__retain_semantics Other principalItemIdentifier)]
         pub unsafe fn principalItemIdentifier(
             &self,
         ) -> Option<Id<NSTouchBarItemIdentifier, Shared>>;
@@ -84,7 +84,7 @@ extern_methods!(
             principalItemIdentifier: Option<&NSTouchBarItemIdentifier>,
         );
 
-        #[method_id(escapeKeyReplacementItemIdentifier)]
+        #[method_id(@__retain_semantics Other escapeKeyReplacementItemIdentifier)]
         pub unsafe fn escapeKeyReplacementItemIdentifier(
             &self,
         ) -> Option<Id<NSTouchBarItemIdentifier, Shared>>;
@@ -95,19 +95,19 @@ extern_methods!(
             escapeKeyReplacementItemIdentifier: Option<&NSTouchBarItemIdentifier>,
         );
 
-        #[method_id(templateItems)]
+        #[method_id(@__retain_semantics Other templateItems)]
         pub unsafe fn templateItems(&self) -> Id<NSSet<NSTouchBarItem>, Shared>;
 
         #[method(setTemplateItems:)]
         pub unsafe fn setTemplateItems(&self, templateItems: &NSSet<NSTouchBarItem>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSTouchBarDelegate, Shared>>;
 
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSTouchBarDelegate>);
 
-        #[method_id(itemForIdentifier:)]
+        #[method_id(@__retain_semantics Other itemForIdentifier:)]
         pub unsafe fn itemForIdentifier(
             &self,
             identifier: &NSTouchBarItemIdentifier,
@@ -133,13 +133,13 @@ pub type NSTouchBarProvider = NSObject;
 extern_methods!(
     /// NSTouchBarProvider
     unsafe impl NSResponder {
-        #[method_id(touchBar)]
+        #[method_id(@__retain_semantics Other touchBar)]
         pub unsafe fn touchBar(&self) -> Option<Id<NSTouchBar, Shared>>;
 
         #[method(setTouchBar:)]
         pub unsafe fn setTouchBar(&self, touchBar: Option<&NSTouchBar>);
 
-        #[method_id(makeTouchBar)]
+        #[method_id(@__retain_semantics Other makeTouchBar)]
         pub unsafe fn makeTouchBar(&self) -> Option<Id<NSTouchBar, Shared>>;
     }
 );

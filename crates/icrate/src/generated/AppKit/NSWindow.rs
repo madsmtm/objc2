@@ -170,7 +170,7 @@ extern_methods!(
         #[method(contentRectForFrameRect:)]
         pub unsafe fn contentRectForFrameRect(&self, frameRect: NSRect) -> NSRect;
 
-        #[method_id(initWithContentRect:styleMask:backing:defer:)]
+        #[method_id(@__retain_semantics Init initWithContentRect:styleMask:backing:defer:)]
         pub unsafe fn initWithContentRect_styleMask_backing_defer(
             this: Option<Allocated<Self>>,
             contentRect: NSRect,
@@ -179,7 +179,7 @@ extern_methods!(
             flag: bool,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithContentRect:styleMask:backing:defer:screen:)]
+        #[method_id(@__retain_semantics Init initWithContentRect:styleMask:backing:defer:screen:)]
         pub unsafe fn initWithContentRect_styleMask_backing_defer_screen(
             this: Option<Allocated<Self>>,
             contentRect: NSRect,
@@ -189,19 +189,19 @@ extern_methods!(
             screen: Option<&NSScreen>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(title)]
+        #[method_id(@__retain_semantics Other title)]
         pub unsafe fn title(&self) -> Id<NSString, Shared>;
 
         #[method(setTitle:)]
         pub unsafe fn setTitle(&self, title: &NSString);
 
-        #[method_id(subtitle)]
+        #[method_id(@__retain_semantics Other subtitle)]
         pub unsafe fn subtitle(&self) -> Id<NSString, Shared>;
 
         #[method(setSubtitle:)]
@@ -228,10 +228,10 @@ extern_methods!(
         #[method(contentLayoutRect)]
         pub unsafe fn contentLayoutRect(&self) -> NSRect;
 
-        #[method_id(contentLayoutGuide)]
+        #[method_id(@__retain_semantics Other contentLayoutGuide)]
         pub unsafe fn contentLayoutGuide(&self) -> Option<Id<Object, Shared>>;
 
-        #[method_id(titlebarAccessoryViewControllers)]
+        #[method_id(@__retain_semantics Other titlebarAccessoryViewControllers)]
         pub unsafe fn titlebarAccessoryViewControllers(
             &self,
         ) -> Id<NSArray<NSTitlebarAccessoryViewController>, Shared>;
@@ -258,13 +258,13 @@ extern_methods!(
         #[method(removeTitlebarAccessoryViewControllerAtIndex:)]
         pub unsafe fn removeTitlebarAccessoryViewControllerAtIndex(&self, index: NSInteger);
 
-        #[method_id(representedURL)]
+        #[method_id(@__retain_semantics Other representedURL)]
         pub unsafe fn representedURL(&self) -> Option<Id<NSURL, Shared>>;
 
         #[method(setRepresentedURL:)]
         pub unsafe fn setRepresentedURL(&self, representedURL: Option<&NSURL>);
 
-        #[method_id(representedFilename)]
+        #[method_id(@__retain_semantics Other representedFilename)]
         pub unsafe fn representedFilename(&self) -> Id<NSString, Shared>;
 
         #[method(setRepresentedFilename:)]
@@ -279,13 +279,13 @@ extern_methods!(
         #[method(setExcludedFromWindowsMenu:)]
         pub unsafe fn setExcludedFromWindowsMenu(&self, excludedFromWindowsMenu: bool);
 
-        #[method_id(contentView)]
+        #[method_id(@__retain_semantics Other contentView)]
         pub unsafe fn contentView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setContentView:)]
         pub unsafe fn setContentView(&self, contentView: Option<&NSView>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSWindowDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -300,7 +300,7 @@ extern_methods!(
         #[method(setStyleMask:)]
         pub unsafe fn setStyleMask(&self, styleMask: NSWindowStyleMask);
 
-        #[method_id(fieldEditor:forObject:)]
+        #[method_id(@__retain_semantics Other fieldEditor:forObject:)]
         pub unsafe fn fieldEditor_forObject(
             &self,
             createFlag: bool,
@@ -400,7 +400,7 @@ extern_methods!(
         #[method(makeFirstResponder:)]
         pub unsafe fn makeFirstResponder(&self, responder: Option<&NSResponder>) -> bool;
 
-        #[method_id(firstResponder)]
+        #[method_id(@__retain_semantics Other firstResponder)]
         pub unsafe fn firstResponder(&self) -> Option<Id<NSResponder, Shared>>;
 
         #[method(resizeFlags)]
@@ -433,14 +433,14 @@ extern_methods!(
         #[method(tryToPerform:with:)]
         pub unsafe fn tryToPerform_with(&self, action: Sel, object: Option<&Object>) -> bool;
 
-        #[method_id(validRequestorForSendType:returnType:)]
+        #[method_id(@__retain_semantics Other validRequestorForSendType:returnType:)]
         pub unsafe fn validRequestorForSendType_returnType(
             &self,
             sendType: Option<&NSPasteboardType>,
             returnType: Option<&NSPasteboardType>,
         ) -> Option<Id<Object, Shared>>;
 
-        #[method_id(backgroundColor)]
+        #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Id<NSColor, Shared>;
 
         #[method(setBackgroundColor:)]
@@ -518,19 +518,19 @@ extern_methods!(
         #[method(orderFrontRegardless)]
         pub unsafe fn orderFrontRegardless(&self);
 
-        #[method_id(miniwindowImage)]
+        #[method_id(@__retain_semantics Other miniwindowImage)]
         pub unsafe fn miniwindowImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setMiniwindowImage:)]
         pub unsafe fn setMiniwindowImage(&self, miniwindowImage: Option<&NSImage>);
 
-        #[method_id(miniwindowTitle)]
+        #[method_id(@__retain_semantics Other miniwindowTitle)]
         pub unsafe fn miniwindowTitle(&self) -> Id<NSString, Shared>;
 
         #[method(setMiniwindowTitle:)]
         pub unsafe fn setMiniwindowTitle(&self, miniwindowTitle: Option<&NSString>);
 
-        #[method_id(dockTile)]
+        #[method_id(@__retain_semantics Other dockTile)]
         pub unsafe fn dockTile(&self) -> Id<NSDockTile, Shared>;
 
         #[method(isDocumentEdited)]
@@ -627,10 +627,10 @@ extern_methods!(
         #[method(performZoom:)]
         pub unsafe fn performZoom(&self, sender: Option<&Object>);
 
-        #[method_id(dataWithEPSInsideRect:)]
+        #[method_id(@__retain_semantics Other dataWithEPSInsideRect:)]
         pub unsafe fn dataWithEPSInsideRect(&self, rect: NSRect) -> Id<NSData, Shared>;
 
-        #[method_id(dataWithPDFInsideRect:)]
+        #[method_id(@__retain_semantics Other dataWithPDFInsideRect:)]
         pub unsafe fn dataWithPDFInsideRect(&self, rect: NSRect) -> Id<NSData, Shared>;
 
         #[method(print:)]
@@ -669,10 +669,10 @@ extern_methods!(
         #[method(hasDynamicDepthLimit)]
         pub unsafe fn hasDynamicDepthLimit(&self) -> bool;
 
-        #[method_id(screen)]
+        #[method_id(@__retain_semantics Other screen)]
         pub unsafe fn screen(&self) -> Option<Id<NSScreen, Shared>>;
 
-        #[method_id(deepestScreen)]
+        #[method_id(@__retain_semantics Other deepestScreen)]
         pub unsafe fn deepestScreen(&self) -> Option<Id<NSScreen, Shared>>;
 
         #[method(hasShadow)]
@@ -744,7 +744,7 @@ extern_methods!(
         #[method(toggleFullScreen:)]
         pub unsafe fn toggleFullScreen(&self, sender: Option<&Object>);
 
-        #[method_id(stringWithSavedFrame)]
+        #[method_id(@__retain_semantics Other stringWithSavedFrame)]
         pub unsafe fn stringWithSavedFrame(&self)
             -> Id<NSWindowPersistableFrameDescriptor, Shared>;
 
@@ -767,7 +767,7 @@ extern_methods!(
         #[method(setFrameAutosaveName:)]
         pub unsafe fn setFrameAutosaveName(&self, name: &NSWindowFrameAutosaveName) -> bool;
 
-        #[method_id(frameAutosaveName)]
+        #[method_id(@__retain_semantics Other frameAutosaveName)]
         pub unsafe fn frameAutosaveName(&self) -> Id<NSWindowFrameAutosaveName, Shared>;
 
         #[method(removeFrameUsingName:)]
@@ -809,12 +809,12 @@ extern_methods!(
         #[method(setMaxFullScreenContentSize:)]
         pub unsafe fn setMaxFullScreenContentSize(&self, maxFullScreenContentSize: NSSize);
 
-        #[method_id(deviceDescription)]
+        #[method_id(@__retain_semantics Other deviceDescription)]
         pub unsafe fn deviceDescription(
             &self,
         ) -> Id<NSDictionary<NSDeviceDescriptionKey, Object>, Shared>;
 
-        #[method_id(windowController)]
+        #[method_id(@__retain_semantics Other windowController)]
         pub unsafe fn windowController(&self) -> Option<Id<NSWindowController, Shared>>;
 
         #[method(setWindowController:)]
@@ -844,25 +844,25 @@ extern_methods!(
             returnCode: NSModalResponse,
         );
 
-        #[method_id(sheets)]
+        #[method_id(@__retain_semantics Other sheets)]
         pub unsafe fn sheets(&self) -> Id<NSArray<NSWindow>, Shared>;
 
-        #[method_id(attachedSheet)]
+        #[method_id(@__retain_semantics Other attachedSheet)]
         pub unsafe fn attachedSheet(&self) -> Option<Id<NSWindow, Shared>>;
 
         #[method(isSheet)]
         pub unsafe fn isSheet(&self) -> bool;
 
-        #[method_id(sheetParent)]
+        #[method_id(@__retain_semantics Other sheetParent)]
         pub unsafe fn sheetParent(&self) -> Option<Id<NSWindow, Shared>>;
 
-        #[method_id(standardWindowButton:forStyleMask:)]
+        #[method_id(@__retain_semantics Other standardWindowButton:forStyleMask:)]
         pub unsafe fn standardWindowButton_forStyleMask(
             b: NSWindowButton,
             styleMask: NSWindowStyleMask,
         ) -> Option<Id<NSButton, Shared>>;
 
-        #[method_id(standardWindowButton:)]
+        #[method_id(@__retain_semantics Other standardWindowButton:)]
         pub unsafe fn standardWindowButton(
             &self,
             b: NSWindowButton,
@@ -878,22 +878,22 @@ extern_methods!(
         #[method(removeChildWindow:)]
         pub unsafe fn removeChildWindow(&self, childWin: &NSWindow);
 
-        #[method_id(childWindows)]
+        #[method_id(@__retain_semantics Other childWindows)]
         pub unsafe fn childWindows(&self) -> Option<Id<NSArray<NSWindow>, Shared>>;
 
-        #[method_id(parentWindow)]
+        #[method_id(@__retain_semantics Other parentWindow)]
         pub unsafe fn parentWindow(&self) -> Option<Id<NSWindow, Shared>>;
 
         #[method(setParentWindow:)]
         pub unsafe fn setParentWindow(&self, parentWindow: Option<&NSWindow>);
 
-        #[method_id(appearanceSource)]
+        #[method_id(@__retain_semantics Other appearanceSource)]
         pub unsafe fn appearanceSource(&self) -> Option<Id<TodoProtocols, Shared>>;
 
         #[method(setAppearanceSource:)]
         pub unsafe fn setAppearanceSource(&self, appearanceSource: Option<&TodoProtocols>);
 
-        #[method_id(colorSpace)]
+        #[method_id(@__retain_semantics Other colorSpace)]
         pub unsafe fn colorSpace(&self) -> Option<Id<NSColorSpace, Shared>>;
 
         #[method(setColorSpace:)]
@@ -902,7 +902,7 @@ extern_methods!(
         #[method(canRepresentDisplayGamut:)]
         pub unsafe fn canRepresentDisplayGamut(&self, displayGamut: NSDisplayGamut) -> bool;
 
-        #[method_id(windowNumbersWithOptions:)]
+        #[method_id(@__retain_semantics Other windowNumbersWithOptions:)]
         pub unsafe fn windowNumbersWithOptions(
             options: NSWindowNumberListOptions,
         ) -> Option<Id<NSArray<NSNumber>, Shared>>;
@@ -925,7 +925,7 @@ extern_methods!(
             titlebarSeparatorStyle: NSTitlebarSeparatorStyle,
         );
 
-        #[method_id(contentViewController)]
+        #[method_id(@__retain_semantics Other contentViewController)]
         pub unsafe fn contentViewController(&self) -> Option<Id<NSViewController, Shared>>;
 
         #[method(setContentViewController:)]
@@ -934,7 +934,7 @@ extern_methods!(
             contentViewController: Option<&NSViewController>,
         );
 
-        #[method_id(windowWithContentViewController:)]
+        #[method_id(@__retain_semantics Other windowWithContentViewController:)]
         pub unsafe fn windowWithContentViewController(
             contentViewController: &NSViewController,
         ) -> Id<Self, Shared>;
@@ -942,7 +942,7 @@ extern_methods!(
         #[method(performWindowDragWithEvent:)]
         pub unsafe fn performWindowDragWithEvent(&self, event: &NSEvent);
 
-        #[method_id(initialFirstResponder)]
+        #[method_id(@__retain_semantics Other initialFirstResponder)]
         pub unsafe fn initialFirstResponder(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setInitialFirstResponder:)]
@@ -963,7 +963,7 @@ extern_methods!(
         #[method(keyViewSelectionDirection)]
         pub unsafe fn keyViewSelectionDirection(&self) -> NSSelectionDirection;
 
-        #[method_id(defaultButtonCell)]
+        #[method_id(@__retain_semantics Other defaultButtonCell)]
         pub unsafe fn defaultButtonCell(&self) -> Option<Id<NSButtonCell, Shared>>;
 
         #[method(setDefaultButtonCell:)]
@@ -984,7 +984,7 @@ extern_methods!(
         #[method(recalculateKeyViewLoop)]
         pub unsafe fn recalculateKeyViewLoop(&self);
 
-        #[method_id(toolbar)]
+        #[method_id(@__retain_semantics Other toolbar)]
         pub unsafe fn toolbar(&self) -> Option<Id<NSToolbar, Shared>>;
 
         #[method(setToolbar:)]
@@ -1017,7 +1017,7 @@ extern_methods!(
         #[method(setTabbingMode:)]
         pub unsafe fn setTabbingMode(&self, tabbingMode: NSWindowTabbingMode);
 
-        #[method_id(tabbingIdentifier)]
+        #[method_id(@__retain_semantics Other tabbingIdentifier)]
         pub unsafe fn tabbingIdentifier(&self) -> Id<NSWindowTabbingIdentifier, Shared>;
 
         #[method(setTabbingIdentifier:)]
@@ -1041,7 +1041,7 @@ extern_methods!(
         #[method(toggleTabOverview:)]
         pub unsafe fn toggleTabOverview(&self, sender: Option<&Object>);
 
-        #[method_id(tabbedWindows)]
+        #[method_id(@__retain_semantics Other tabbedWindows)]
         pub unsafe fn tabbedWindows(&self) -> Option<Id<NSArray<NSWindow>, Shared>>;
 
         #[method(addTabbedWindow:ordered:)]
@@ -1051,10 +1051,10 @@ extern_methods!(
             ordered: NSWindowOrderingMode,
         );
 
-        #[method_id(tab)]
+        #[method_id(@__retain_semantics Other tab)]
         pub unsafe fn tab(&self) -> Id<NSWindowTab, Shared>;
 
-        #[method_id(tabGroup)]
+        #[method_id(@__retain_semantics Other tabGroup)]
         pub unsafe fn tabGroup(&self) -> Option<Id<NSWindowTabGroup, Shared>>;
 
         #[method(windowTitlebarLayoutDirection)]
@@ -1074,13 +1074,13 @@ extern_methods!(
             trackingHandler: TodoBlock,
         );
 
-        #[method_id(nextEventMatchingMask:)]
+        #[method_id(@__retain_semantics Other nextEventMatchingMask:)]
         pub unsafe fn nextEventMatchingMask(
             &self,
             mask: NSEventMask,
         ) -> Option<Id<NSEvent, Shared>>;
 
-        #[method_id(nextEventMatchingMask:untilDate:inMode:dequeue:)]
+        #[method_id(@__retain_semantics Other nextEventMatchingMask:untilDate:inMode:dequeue:)]
         pub unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue(
             &self,
             mask: NSEventMask,
@@ -1102,7 +1102,7 @@ extern_methods!(
         #[method(sendEvent:)]
         pub unsafe fn sendEvent(&self, event: &NSEvent);
 
-        #[method_id(currentEvent)]
+        #[method_id(@__retain_semantics Other currentEvent)]
         pub unsafe fn currentEvent(&self) -> Option<Id<NSEvent, Shared>>;
 
         #[method(acceptsMouseMovedEvents)]
@@ -1171,7 +1171,7 @@ extern_methods!(
 extern_methods!(
     /// NSCarbonExtensions
     unsafe impl NSWindow {
-        #[method_id(initWithWindowRef:)]
+        #[method_id(@__retain_semantics Init initWithWindowRef:)]
         pub unsafe fn initWithWindowRef(
             this: Option<Allocated<Self>>,
             windowRef: NonNull<c_void>,
@@ -1367,7 +1367,7 @@ extern_methods!(
         #[method(setAutodisplay:)]
         pub unsafe fn setAutodisplay(&self, autodisplay: bool);
 
-        #[method_id(graphicsContext)]
+        #[method_id(@__retain_semantics Other graphicsContext)]
         pub unsafe fn graphicsContext(&self) -> Option<Id<NSGraphicsContext, Shared>>;
 
         #[method(isOneShot)]

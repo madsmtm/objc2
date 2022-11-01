@@ -14,49 +14,49 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSConnection {
-        #[method_id(statistics)]
+        #[method_id(@__retain_semantics Other statistics)]
         pub unsafe fn statistics(&self) -> Id<NSDictionary<NSString, NSNumber>, Shared>;
 
-        #[method_id(allConnections)]
+        #[method_id(@__retain_semantics Other allConnections)]
         pub unsafe fn allConnections() -> Id<NSArray<NSConnection>, Shared>;
 
-        #[method_id(defaultConnection)]
+        #[method_id(@__retain_semantics Other defaultConnection)]
         pub unsafe fn defaultConnection() -> Id<NSConnection, Shared>;
 
-        #[method_id(connectionWithRegisteredName:host:)]
+        #[method_id(@__retain_semantics Other connectionWithRegisteredName:host:)]
         pub unsafe fn connectionWithRegisteredName_host(
             name: &NSString,
             hostName: Option<&NSString>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(connectionWithRegisteredName:host:usingNameServer:)]
+        #[method_id(@__retain_semantics Other connectionWithRegisteredName:host:usingNameServer:)]
         pub unsafe fn connectionWithRegisteredName_host_usingNameServer(
             name: &NSString,
             hostName: Option<&NSString>,
             server: &NSPortNameServer,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(rootProxyForConnectionWithRegisteredName:host:)]
+        #[method_id(@__retain_semantics Other rootProxyForConnectionWithRegisteredName:host:)]
         pub unsafe fn rootProxyForConnectionWithRegisteredName_host(
             name: &NSString,
             hostName: Option<&NSString>,
         ) -> Option<Id<NSDistantObject, Shared>>;
 
-        #[method_id(rootProxyForConnectionWithRegisteredName:host:usingNameServer:)]
+        #[method_id(@__retain_semantics Other rootProxyForConnectionWithRegisteredName:host:usingNameServer:)]
         pub unsafe fn rootProxyForConnectionWithRegisteredName_host_usingNameServer(
             name: &NSString,
             hostName: Option<&NSString>,
             server: &NSPortNameServer,
         ) -> Option<Id<NSDistantObject, Shared>>;
 
-        #[method_id(serviceConnectionWithName:rootObject:usingNameServer:)]
+        #[method_id(@__retain_semantics Other serviceConnectionWithName:rootObject:usingNameServer:)]
         pub unsafe fn serviceConnectionWithName_rootObject_usingNameServer(
             name: &NSString,
             root: &Object,
             server: &NSPortNameServer,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(serviceConnectionWithName:rootObject:)]
+        #[method_id(@__retain_semantics Other serviceConnectionWithName:rootObject:)]
         pub unsafe fn serviceConnectionWithName_rootObject(
             name: &NSString,
             root: &Object,
@@ -74,13 +74,13 @@ extern_methods!(
         #[method(setReplyTimeout:)]
         pub unsafe fn setReplyTimeout(&self, replyTimeout: NSTimeInterval);
 
-        #[method_id(rootObject)]
+        #[method_id(@__retain_semantics Other rootObject)]
         pub unsafe fn rootObject(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setRootObject:)]
         pub unsafe fn setRootObject(&self, rootObject: Option<&Object>);
 
-        #[method_id(delegate)]
+        #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSConnectionDelegate, Shared>>;
 
         #[method(setDelegate:)]
@@ -98,7 +98,7 @@ extern_methods!(
         #[method(isValid)]
         pub unsafe fn isValid(&self) -> bool;
 
-        #[method_id(rootProxy)]
+        #[method_id(@__retain_semantics Other rootProxy)]
         pub unsafe fn rootProxy(&self) -> Id<NSDistantObject, Shared>;
 
         #[method(invalidate)]
@@ -110,7 +110,7 @@ extern_methods!(
         #[method(removeRequestMode:)]
         pub unsafe fn removeRequestMode(&self, rmode: &NSString);
 
-        #[method_id(requestModes)]
+        #[method_id(@__retain_semantics Other requestModes)]
         pub unsafe fn requestModes(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(registerName:)]
@@ -123,26 +123,26 @@ extern_methods!(
             server: &NSPortNameServer,
         ) -> bool;
 
-        #[method_id(connectionWithReceivePort:sendPort:)]
+        #[method_id(@__retain_semantics Other connectionWithReceivePort:sendPort:)]
         pub unsafe fn connectionWithReceivePort_sendPort(
             receivePort: Option<&NSPort>,
             sendPort: Option<&NSPort>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(currentConversation)]
+        #[method_id(@__retain_semantics Other currentConversation)]
         pub unsafe fn currentConversation() -> Option<Id<Object, Shared>>;
 
-        #[method_id(initWithReceivePort:sendPort:)]
+        #[method_id(@__retain_semantics Init initWithReceivePort:sendPort:)]
         pub unsafe fn initWithReceivePort_sendPort(
             this: Option<Allocated<Self>>,
             receivePort: Option<&NSPort>,
             sendPort: Option<&NSPort>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(sendPort)]
+        #[method_id(@__retain_semantics Other sendPort)]
         pub unsafe fn sendPort(&self) -> Id<NSPort, Shared>;
 
-        #[method_id(receivePort)]
+        #[method_id(@__retain_semantics Other receivePort)]
         pub unsafe fn receivePort(&self) -> Id<NSPort, Shared>;
 
         #[method(enableMultipleThreads)]
@@ -160,10 +160,10 @@ extern_methods!(
         #[method(runInNewThread)]
         pub unsafe fn runInNewThread(&self);
 
-        #[method_id(remoteObjects)]
+        #[method_id(@__retain_semantics Other remoteObjects)]
         pub unsafe fn remoteObjects(&self) -> Id<NSArray, Shared>;
 
-        #[method_id(localObjects)]
+        #[method_id(@__retain_semantics Other localObjects)]
         pub unsafe fn localObjects(&self) -> Id<NSArray, Shared>;
 
         #[method(dispatchWithComponents:)]
@@ -200,13 +200,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSDistantObjectRequest {
-        #[method_id(invocation)]
+        #[method_id(@__retain_semantics Other invocation)]
         pub unsafe fn invocation(&self) -> Id<NSInvocation, Shared>;
 
-        #[method_id(connection)]
+        #[method_id(@__retain_semantics Other connection)]
         pub unsafe fn connection(&self) -> Id<NSConnection, Shared>;
 
-        #[method_id(conversation)]
+        #[method_id(@__retain_semantics Other conversation)]
         pub unsafe fn conversation(&self) -> Id<Object, Shared>;
 
         #[method(replyWithException:)]

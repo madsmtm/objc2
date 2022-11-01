@@ -46,16 +46,16 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextFinder {
-        #[method_id(init)]
+        #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(client)]
+        #[method_id(@__retain_semantics Other client)]
         pub unsafe fn client(&self) -> Option<Id<NSTextFinderClient, Shared>>;
 
         #[method(setClient:)]
@@ -67,7 +67,7 @@ extern_methods!(
         #[method(validateAction:)]
         pub unsafe fn validateAction(&self, op: NSTextFinderAction) -> bool;
 
-        #[method_id(findBarContainer)]
+        #[method_id(@__retain_semantics Other findBarContainer)]
         pub unsafe fn findBarContainer(&self) -> Option<Id<NSTextFinderBarContainer, Shared>>;
 
         #[method(setFindBarContainer:)]
@@ -100,7 +100,7 @@ extern_methods!(
             incrementalSearchingShouldDimContentView: bool,
         );
 
-        #[method_id(incrementalMatchRanges)]
+        #[method_id(@__retain_semantics Other incrementalMatchRanges)]
         pub unsafe fn incrementalMatchRanges(&self) -> Id<NSArray<NSValue>, Shared>;
 
         #[method(drawIncrementalMatchHighlightInRect:)]

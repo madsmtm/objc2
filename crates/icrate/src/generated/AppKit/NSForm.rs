@@ -42,16 +42,16 @@ extern_methods!(
         #[method(setTextFont:)]
         pub unsafe fn setTextFont(&self, fontObj: &NSFont);
 
-        #[method_id(cellAtIndex:)]
+        #[method_id(@__retain_semantics Other cellAtIndex:)]
         pub unsafe fn cellAtIndex(&self, index: NSInteger) -> Option<Id<Object, Shared>>;
 
         #[method(drawCellAtIndex:)]
         pub unsafe fn drawCellAtIndex(&self, index: NSInteger);
 
-        #[method_id(addEntry:)]
+        #[method_id(@__retain_semantics Other addEntry:)]
         pub unsafe fn addEntry(&self, title: &NSString) -> Id<NSFormCell, Shared>;
 
-        #[method_id(insertEntry:atIndex:)]
+        #[method_id(@__retain_semantics Other insertEntry:atIndex:)]
         pub unsafe fn insertEntry_atIndex(
             &self,
             title: &NSString,

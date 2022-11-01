@@ -15,17 +15,17 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSOpenGLView {
-        #[method_id(defaultPixelFormat)]
+        #[method_id(@__retain_semantics Other defaultPixelFormat)]
         pub unsafe fn defaultPixelFormat() -> Id<NSOpenGLPixelFormat, Shared>;
 
-        #[method_id(initWithFrame:pixelFormat:)]
+        #[method_id(@__retain_semantics Init initWithFrame:pixelFormat:)]
         pub unsafe fn initWithFrame_pixelFormat(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
             format: Option<&NSOpenGLPixelFormat>,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(openGLContext)]
+        #[method_id(@__retain_semantics Other openGLContext)]
         pub unsafe fn openGLContext(&self) -> Option<Id<NSOpenGLContext, Shared>>;
 
         #[method(setOpenGLContext:)]
@@ -40,7 +40,7 @@ extern_methods!(
         #[method(reshape)]
         pub unsafe fn reshape(&self);
 
-        #[method_id(pixelFormat)]
+        #[method_id(@__retain_semantics Other pixelFormat)]
         pub unsafe fn pixelFormat(&self) -> Option<Id<NSOpenGLPixelFormat, Shared>>;
 
         #[method(setPixelFormat:)]

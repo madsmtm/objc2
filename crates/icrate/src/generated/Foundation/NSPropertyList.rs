@@ -36,21 +36,21 @@ extern_methods!(
             format: NSPropertyListFormat,
         ) -> bool;
 
-        #[method_id(dataWithPropertyList:format:options:error:)]
+        #[method_id(@__retain_semantics Other dataWithPropertyList:format:options:error:)]
         pub unsafe fn dataWithPropertyList_format_options_error(
             plist: &Object,
             format: NSPropertyListFormat,
             opt: NSPropertyListWriteOptions,
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(propertyListWithData:options:format:error:)]
+        #[method_id(@__retain_semantics Other propertyListWithData:options:format:error:)]
         pub unsafe fn propertyListWithData_options_format_error(
             data: &NSData,
             opt: NSPropertyListReadOptions,
             format: *mut NSPropertyListFormat,
         ) -> Result<Id<Object, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(propertyListWithStream:options:format:error:)]
+        #[method_id(@__retain_semantics Other propertyListWithStream:options:format:error:)]
         pub unsafe fn propertyListWithStream_options_format_error(
             stream: &NSInputStream,
             opt: NSPropertyListReadOptions,

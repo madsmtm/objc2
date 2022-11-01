@@ -55,25 +55,25 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSView {
-        #[method_id(initWithFrame:)]
+        #[method_id(@__retain_semantics Init initWithFrame:)]
         pub unsafe fn initWithFrame(
             this: Option<Allocated<Self>>,
             frameRect: NSRect,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(window)]
+        #[method_id(@__retain_semantics Other window)]
         pub unsafe fn window(&self) -> Option<Id<NSWindow, Shared>>;
 
-        #[method_id(superview)]
+        #[method_id(@__retain_semantics Other superview)]
         pub unsafe fn superview(&self) -> Option<Id<NSView, Shared>>;
 
-        #[method_id(subviews)]
+        #[method_id(@__retain_semantics Other subviews)]
         pub unsafe fn subviews(&self) -> Id<NSArray<NSView>, Shared>;
 
         #[method(setSubviews:)]
@@ -82,10 +82,10 @@ extern_methods!(
         #[method(isDescendantOf:)]
         pub unsafe fn isDescendantOf(&self, view: &NSView) -> bool;
 
-        #[method_id(ancestorSharedWithView:)]
+        #[method_id(@__retain_semantics Other ancestorSharedWithView:)]
         pub unsafe fn ancestorSharedWithView(&self, view: &NSView) -> Option<Id<NSView, Shared>>;
 
-        #[method_id(opaqueAncestor)]
+        #[method_id(@__retain_semantics Other opaqueAncestor)]
         pub unsafe fn opaqueAncestor(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(isHidden)]
@@ -352,7 +352,7 @@ extern_methods!(
         #[method(lockFocusIfCanDrawInContext:)]
         pub unsafe fn lockFocusIfCanDrawInContext(&self, context: &NSGraphicsContext) -> bool;
 
-        #[method_id(focusView)]
+        #[method_id(@__retain_semantics Other focusView)]
         pub unsafe fn focusView() -> Option<Id<NSView, Shared>>;
 
         #[method(visibleRect)]
@@ -389,7 +389,7 @@ extern_methods!(
             context: &NSGraphicsContext,
         );
 
-        #[method_id(bitmapImageRepForCachingDisplayInRect:)]
+        #[method_id(@__retain_semantics Other bitmapImageRepForCachingDisplayInRect:)]
         pub unsafe fn bitmapImageRepForCachingDisplayInRect(
             &self,
             rect: NSRect,
@@ -423,13 +423,13 @@ extern_methods!(
         #[method(translateRectsNeedingDisplayInRect:by:)]
         pub unsafe fn translateRectsNeedingDisplayInRect_by(&self, clipRect: NSRect, delta: NSSize);
 
-        #[method_id(hitTest:)]
+        #[method_id(@__retain_semantics Other hitTest:)]
         pub unsafe fn hitTest(&self, point: NSPoint) -> Option<Id<NSView, Shared>>;
 
         #[method(mouse:inRect:)]
         pub unsafe fn mouse_inRect(&self, point: NSPoint, rect: NSRect) -> bool;
 
-        #[method_id(viewWithTag:)]
+        #[method_id(@__retain_semantics Other viewWithTag:)]
         pub unsafe fn viewWithTag(&self, tag: NSInteger) -> Option<Id<NSView, Shared>>;
 
         #[method(tag)]
@@ -486,7 +486,7 @@ extern_methods!(
         #[method(removeTrackingRect:)]
         pub unsafe fn removeTrackingRect(&self, tag: NSTrackingRectTag);
 
-        #[method_id(makeBackingLayer)]
+        #[method_id(@__retain_semantics Other makeBackingLayer)]
         pub unsafe fn makeBackingLayer(&self) -> Id<CALayer, Shared>;
 
         #[method(layerContentsRedrawPolicy)]
@@ -513,7 +513,7 @@ extern_methods!(
         #[method(setWantsLayer:)]
         pub unsafe fn setWantsLayer(&self, wantsLayer: bool);
 
-        #[method_id(layer)]
+        #[method_id(@__retain_semantics Other layer)]
         pub unsafe fn layer(&self) -> Option<Id<CALayer, Shared>>;
 
         #[method(setLayer:)]
@@ -555,25 +555,25 @@ extern_methods!(
         #[method(setLayerUsesCoreImageFilters:)]
         pub unsafe fn setLayerUsesCoreImageFilters(&self, layerUsesCoreImageFilters: bool);
 
-        #[method_id(backgroundFilters)]
+        #[method_id(@__retain_semantics Other backgroundFilters)]
         pub unsafe fn backgroundFilters(&self) -> Id<NSArray<CIFilter>, Shared>;
 
         #[method(setBackgroundFilters:)]
         pub unsafe fn setBackgroundFilters(&self, backgroundFilters: &NSArray<CIFilter>);
 
-        #[method_id(compositingFilter)]
+        #[method_id(@__retain_semantics Other compositingFilter)]
         pub unsafe fn compositingFilter(&self) -> Option<Id<CIFilter, Shared>>;
 
         #[method(setCompositingFilter:)]
         pub unsafe fn setCompositingFilter(&self, compositingFilter: Option<&CIFilter>);
 
-        #[method_id(contentFilters)]
+        #[method_id(@__retain_semantics Other contentFilters)]
         pub unsafe fn contentFilters(&self) -> Id<NSArray<CIFilter>, Shared>;
 
         #[method(setContentFilters:)]
         pub unsafe fn setContentFilters(&self, contentFilters: &NSArray<CIFilter>);
 
-        #[method_id(shadow)]
+        #[method_id(@__retain_semantics Other shadow)]
         pub unsafe fn shadow(&self) -> Option<Id<NSShadow, Shared>>;
 
         #[method(setShadow:)]
@@ -585,7 +585,7 @@ extern_methods!(
         #[method(removeTrackingArea:)]
         pub unsafe fn removeTrackingArea(&self, trackingArea: &NSTrackingArea);
 
-        #[method_id(trackingAreas)]
+        #[method_id(@__retain_semantics Other trackingAreas)]
         pub unsafe fn trackingAreas(&self) -> Id<NSArray<NSTrackingArea>, Shared>;
 
         #[method(updateTrackingAreas)]
@@ -600,13 +600,13 @@ extern_methods!(
             postsBoundsChangedNotifications: bool,
         );
 
-        #[method_id(enclosingScrollView)]
+        #[method_id(@__retain_semantics Other enclosingScrollView)]
         pub unsafe fn enclosingScrollView(&self) -> Option<Id<NSScrollView, Shared>>;
 
-        #[method_id(menuForEvent:)]
+        #[method_id(@__retain_semantics Other menuForEvent:)]
         pub unsafe fn menuForEvent(&self, event: &NSEvent) -> Option<Id<NSMenu, Shared>>;
 
-        #[method_id(defaultMenu)]
+        #[method_id(@__retain_semantics Other defaultMenu)]
         pub unsafe fn defaultMenu() -> Option<Id<NSMenu, Shared>>;
 
         #[method(willOpenMenu:withEvent:)]
@@ -615,7 +615,7 @@ extern_methods!(
         #[method(didCloseMenu:withEvent:)]
         pub unsafe fn didCloseMenu_withEvent(&self, menu: &NSMenu, event: Option<&NSEvent>);
 
-        #[method_id(toolTip)]
+        #[method_id(@__retain_semantics Other toolTip)]
         pub unsafe fn toolTip(&self) -> Option<Id<NSString, Shared>>;
 
         #[method(setToolTip:)]
@@ -657,7 +657,7 @@ extern_methods!(
             count: NonNull<NSInteger>,
         );
 
-        #[method_id(inputContext)]
+        #[method_id(@__retain_semantics Other inputContext)]
         pub unsafe fn inputContext(&self) -> Option<Id<NSTextInputContext, Shared>>;
 
         #[method(rectForSmartMagnificationAtPoint:inRect:)]
@@ -719,7 +719,7 @@ pub type NSViewToolTipOwner = NSObject;
 extern_methods!(
     /// NSToolTipOwner
     unsafe impl NSObject {
-        #[method_id(view:stringForToolTip:point:userData:)]
+        #[method_id(@__retain_semantics Other view:stringForToolTip:point:userData:)]
         pub unsafe fn view_stringForToolTip_point_userData(
             &self,
             view: &NSView,
@@ -733,19 +733,19 @@ extern_methods!(
 extern_methods!(
     /// NSKeyboardUI
     unsafe impl NSView {
-        #[method_id(nextKeyView)]
+        #[method_id(@__retain_semantics Other nextKeyView)]
         pub unsafe fn nextKeyView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(setNextKeyView:)]
         pub unsafe fn setNextKeyView(&self, nextKeyView: Option<&NSView>);
 
-        #[method_id(previousKeyView)]
+        #[method_id(@__retain_semantics Other previousKeyView)]
         pub unsafe fn previousKeyView(&self) -> Option<Id<NSView, Shared>>;
 
-        #[method_id(nextValidKeyView)]
+        #[method_id(@__retain_semantics Other nextValidKeyView)]
         pub unsafe fn nextValidKeyView(&self) -> Option<Id<NSView, Shared>>;
 
-        #[method_id(previousValidKeyView)]
+        #[method_id(@__retain_semantics Other previousValidKeyView)]
         pub unsafe fn previousValidKeyView(&self) -> Option<Id<NSView, Shared>>;
 
         #[method(canBecomeKeyView)]
@@ -784,7 +784,7 @@ extern_methods!(
             pasteboard: &NSPasteboard,
         );
 
-        #[method_id(dataWithEPSInsideRect:)]
+        #[method_id(@__retain_semantics Other dataWithEPSInsideRect:)]
         pub unsafe fn dataWithEPSInsideRect(&self, rect: NSRect) -> Id<NSData, Shared>;
 
         #[method(writePDFInsideRect:toPasteboard:)]
@@ -794,7 +794,7 @@ extern_methods!(
             pasteboard: &NSPasteboard,
         );
 
-        #[method_id(dataWithPDFInsideRect:)]
+        #[method_id(@__retain_semantics Other dataWithPDFInsideRect:)]
         pub unsafe fn dataWithPDFInsideRect(&self, rect: NSRect) -> Id<NSData, Shared>;
 
         #[method(print:)]
@@ -836,16 +836,16 @@ extern_methods!(
         #[method(drawPageBorderWithSize:)]
         pub unsafe fn drawPageBorderWithSize(&self, borderSize: NSSize);
 
-        #[method_id(pageHeader)]
+        #[method_id(@__retain_semantics Other pageHeader)]
         pub unsafe fn pageHeader(&self) -> Id<NSAttributedString, Shared>;
 
-        #[method_id(pageFooter)]
+        #[method_id(@__retain_semantics Other pageFooter)]
         pub unsafe fn pageFooter(&self) -> Id<NSAttributedString, Shared>;
 
         #[method(drawSheetBorderWithSize:)]
         pub unsafe fn drawSheetBorderWithSize(&self, borderSize: NSSize);
 
-        #[method_id(printJobTitle)]
+        #[method_id(@__retain_semantics Other printJobTitle)]
         pub unsafe fn printJobTitle(&self) -> Id<NSString, Shared>;
 
         #[method(beginDocument)]
@@ -865,7 +865,7 @@ extern_methods!(
 extern_methods!(
     /// NSDrag
     unsafe impl NSView {
-        #[method_id(beginDraggingSessionWithItems:event:source:)]
+        #[method_id(@__retain_semantics Other beginDraggingSessionWithItems:event:source:)]
         pub unsafe fn beginDraggingSessionWithItems_event_source(
             &self,
             items: &NSArray<NSDraggingItem>,
@@ -873,7 +873,7 @@ extern_methods!(
             source: &NSDraggingSource,
         ) -> Id<NSDraggingSession, Shared>;
 
-        #[method_id(registeredDraggedTypes)]
+        #[method_id(@__retain_semantics Other registeredDraggedTypes)]
         pub unsafe fn registeredDraggedTypes(&self) -> Id<NSArray<NSPasteboardType>, Shared>;
 
         #[method(registerForDraggedTypes:)]
@@ -973,7 +973,7 @@ extern_methods!(
 extern_methods!(
     /// NSGestureRecognizer
     unsafe impl NSView {
-        #[method_id(gestureRecognizers)]
+        #[method_id(@__retain_semantics Other gestureRecognizers)]
         pub unsafe fn gestureRecognizers(&self) -> Id<NSArray<NSGestureRecognizer>, Shared>;
 
         #[method(setGestureRecognizers:)]
@@ -1013,13 +1013,13 @@ extern_methods!(
         #[method(setAdditionalSafeAreaInsets:)]
         pub unsafe fn setAdditionalSafeAreaInsets(&self, additionalSafeAreaInsets: NSEdgeInsets);
 
-        #[method_id(safeAreaLayoutGuide)]
+        #[method_id(@__retain_semantics Other safeAreaLayoutGuide)]
         pub unsafe fn safeAreaLayoutGuide(&self) -> Id<NSLayoutGuide, Shared>;
 
         #[method(safeAreaRect)]
         pub unsafe fn safeAreaRect(&self) -> NSRect;
 
-        #[method_id(layoutMarginsGuide)]
+        #[method_id(@__retain_semantics Other layoutMarginsGuide)]
         pub unsafe fn layoutMarginsGuide(&self) -> Id<NSLayoutGuide, Shared>;
     }
 );

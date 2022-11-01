@@ -15,31 +15,31 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSBrowserCell {
-        #[method_id(initTextCell:)]
+        #[method_id(@__retain_semantics Init initTextCell:)]
         pub unsafe fn initTextCell(
             this: Option<Allocated<Self>>,
             string: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initImageCell:)]
+        #[method_id(@__retain_semantics Init initImageCell:)]
         pub unsafe fn initImageCell(
             this: Option<Allocated<Self>>,
             image: Option<&NSImage>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(branchImage)]
+        #[method_id(@__retain_semantics Other branchImage)]
         pub unsafe fn branchImage() -> Option<Id<NSImage, Shared>>;
 
-        #[method_id(highlightedBranchImage)]
+        #[method_id(@__retain_semantics Other highlightedBranchImage)]
         pub unsafe fn highlightedBranchImage() -> Option<Id<NSImage, Shared>>;
 
-        #[method_id(highlightColorInView:)]
+        #[method_id(@__retain_semantics Other highlightColorInView:)]
         pub unsafe fn highlightColorInView(
             &self,
             controlView: &NSView,
@@ -63,13 +63,13 @@ extern_methods!(
         #[method(set)]
         pub unsafe fn set(&self);
 
-        #[method_id(image)]
+        #[method_id(@__retain_semantics Other image)]
         pub unsafe fn image(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImage:)]
         pub unsafe fn setImage(&self, image: Option<&NSImage>);
 
-        #[method_id(alternateImage)]
+        #[method_id(@__retain_semantics Other alternateImage)]
         pub unsafe fn alternateImage(&self) -> Option<Id<NSImage, Shared>>;
 
         #[method(setAlternateImage:)]

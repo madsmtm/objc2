@@ -24,10 +24,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSNotificationQueue {
-        #[method_id(defaultQueue)]
+        #[method_id(@__retain_semantics Other defaultQueue)]
         pub unsafe fn defaultQueue() -> Id<NSNotificationQueue, Shared>;
 
-        #[method_id(initWithNotificationCenter:)]
+        #[method_id(@__retain_semantics Init initWithNotificationCenter:)]
         pub unsafe fn initWithNotificationCenter(
             this: Option<Allocated<Self>>,
             notificationCenter: &NSNotificationCenter,

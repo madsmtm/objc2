@@ -37,7 +37,7 @@ extern_methods!(
         #[method(setRestorable:)]
         pub unsafe fn setRestorable(&self, restorable: bool);
 
-        #[method_id(restorationClass)]
+        #[method_id(@__retain_semantics Other restorationClass)]
         pub unsafe fn restorationClass(&self) -> Option<Id<TodoProtocols, Shared>>;
 
         #[method(setRestorationClass:)]
@@ -70,10 +70,10 @@ extern_methods!(
         #[method(invalidateRestorableState)]
         pub unsafe fn invalidateRestorableState(&self);
 
-        #[method_id(restorableStateKeyPaths)]
+        #[method_id(@__retain_semantics Other restorableStateKeyPaths)]
         pub unsafe fn restorableStateKeyPaths() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(allowedClassesForRestorableStateKeyPath:)]
+        #[method_id(@__retain_semantics Other allowedClassesForRestorableStateKeyPath:)]
         pub unsafe fn allowedClassesForRestorableStateKeyPath(
             keyPath: &NSString,
         ) -> Id<NSArray<TodoClass>, Shared>;
@@ -118,10 +118,10 @@ extern_methods!(
         #[method(invalidateRestorableState)]
         pub unsafe fn invalidateRestorableState(&self);
 
-        #[method_id(restorableStateKeyPaths)]
+        #[method_id(@__retain_semantics Other restorableStateKeyPaths)]
         pub unsafe fn restorableStateKeyPaths() -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(allowedClassesForRestorableStateKeyPath:)]
+        #[method_id(@__retain_semantics Other allowedClassesForRestorableStateKeyPath:)]
         pub unsafe fn allowedClassesForRestorableStateKeyPath(
             keyPath: &NSString,
         ) -> Id<NSArray<TodoClass>, Shared>;

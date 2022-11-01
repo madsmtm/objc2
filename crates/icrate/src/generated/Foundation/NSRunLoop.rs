@@ -22,13 +22,13 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSRunLoop {
-        #[method_id(currentRunLoop)]
+        #[method_id(@__retain_semantics Other currentRunLoop)]
         pub unsafe fn currentRunLoop() -> Id<NSRunLoop, Shared>;
 
-        #[method_id(mainRunLoop)]
+        #[method_id(@__retain_semantics Other mainRunLoop)]
         pub unsafe fn mainRunLoop() -> Id<NSRunLoop, Shared>;
 
-        #[method_id(currentMode)]
+        #[method_id(@__retain_semantics Other currentMode)]
         pub unsafe fn currentMode(&self) -> Option<Id<NSRunLoopMode, Shared>>;
 
         #[method(getCFRunLoop)]
@@ -43,7 +43,7 @@ extern_methods!(
         #[method(removePort:forMode:)]
         pub unsafe fn removePort_forMode(&self, aPort: &NSPort, mode: &NSRunLoopMode);
 
-        #[method_id(limitDateForMode:)]
+        #[method_id(@__retain_semantics Other limitDateForMode:)]
         pub unsafe fn limitDateForMode(&self, mode: &NSRunLoopMode) -> Option<Id<NSDate, Shared>>;
 
         #[method(acceptInputForMode:beforeDate:)]

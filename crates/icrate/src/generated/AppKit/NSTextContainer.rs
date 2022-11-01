@@ -15,17 +15,17 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSTextContainer {
-        #[method_id(initWithSize:)]
+        #[method_id(@__retain_semantics Init initWithSize:)]
         pub unsafe fn initWithSize(this: Option<Allocated<Self>>, size: NSSize)
             -> Id<Self, Shared>;
 
-        #[method_id(initWithCoder:)]
+        #[method_id(@__retain_semantics Init initWithCoder:)]
         pub unsafe fn initWithCoder(
             this: Option<Allocated<Self>>,
             coder: &NSCoder,
         ) -> Id<Self, Shared>;
 
-        #[method_id(layoutManager)]
+        #[method_id(@__retain_semantics Other layoutManager)]
         pub unsafe fn layoutManager(&self) -> Option<Id<NSLayoutManager, Shared>>;
 
         #[method(setLayoutManager:)]
@@ -34,7 +34,7 @@ extern_methods!(
         #[method(replaceLayoutManager:)]
         pub unsafe fn replaceLayoutManager(&self, newLayoutManager: &NSLayoutManager);
 
-        #[method_id(textLayoutManager)]
+        #[method_id(@__retain_semantics Other textLayoutManager)]
         pub unsafe fn textLayoutManager(&self) -> Option<Id<NSTextLayoutManager, Shared>>;
 
         #[method(size)]
@@ -43,7 +43,7 @@ extern_methods!(
         #[method(setSize:)]
         pub unsafe fn setSize(&self, size: NSSize);
 
-        #[method_id(exclusionPaths)]
+        #[method_id(@__retain_semantics Other exclusionPaths)]
         pub unsafe fn exclusionPaths(&self) -> Id<NSArray<NSBezierPath>, Shared>;
 
         #[method(setExclusionPaths:)]
@@ -91,7 +91,7 @@ extern_methods!(
         #[method(setHeightTracksTextView:)]
         pub unsafe fn setHeightTracksTextView(&self, heightTracksTextView: bool);
 
-        #[method_id(textView)]
+        #[method_id(@__retain_semantics Other textView)]
         pub unsafe fn textView(&self) -> Option<Id<NSTextView, Shared>>;
 
         #[method(setTextView:)]
@@ -115,7 +115,7 @@ pub const NSLineMovesUp: NSLineMovementDirection = 4;
 extern_methods!(
     /// NSTextContainerDeprecated
     unsafe impl NSTextContainer {
-        #[method_id(initWithContainerSize:)]
+        #[method_id(@__retain_semantics Init initWithContainerSize:)]
         pub unsafe fn initWithContainerSize(
             this: Option<Allocated<Self>>,
             aContainerSize: NSSize,

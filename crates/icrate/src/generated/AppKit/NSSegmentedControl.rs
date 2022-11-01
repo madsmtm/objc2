@@ -61,7 +61,7 @@ extern_methods!(
         #[method(setImage:forSegment:)]
         pub unsafe fn setImage_forSegment(&self, image: Option<&NSImage>, segment: NSInteger);
 
-        #[method_id(imageForSegment:)]
+        #[method_id(@__retain_semantics Other imageForSegment:)]
         pub unsafe fn imageForSegment(&self, segment: NSInteger) -> Option<Id<NSImage, Shared>>;
 
         #[method(setImageScaling:forSegment:)]
@@ -77,13 +77,13 @@ extern_methods!(
         #[method(setLabel:forSegment:)]
         pub unsafe fn setLabel_forSegment(&self, label: &NSString, segment: NSInteger);
 
-        #[method_id(labelForSegment:)]
+        #[method_id(@__retain_semantics Other labelForSegment:)]
         pub unsafe fn labelForSegment(&self, segment: NSInteger) -> Option<Id<NSString, Shared>>;
 
         #[method(setMenu:forSegment:)]
         pub unsafe fn setMenu_forSegment(&self, menu: Option<&NSMenu>, segment: NSInteger);
 
-        #[method_id(menuForSegment:)]
+        #[method_id(@__retain_semantics Other menuForSegment:)]
         pub unsafe fn menuForSegment(&self, segment: NSInteger) -> Option<Id<NSMenu, Shared>>;
 
         #[method(setSelected:forSegment:)]
@@ -101,7 +101,7 @@ extern_methods!(
         #[method(setToolTip:forSegment:)]
         pub unsafe fn setToolTip_forSegment(&self, toolTip: Option<&NSString>, segment: NSInteger);
 
-        #[method_id(toolTipForSegment:)]
+        #[method_id(@__retain_semantics Other toolTipForSegment:)]
         pub unsafe fn toolTipForSegment(&self, segment: NSInteger) -> Option<Id<NSString, Shared>>;
 
         #[method(setTag:forSegment:)]
@@ -141,7 +141,7 @@ extern_methods!(
         #[method(doubleValueForSelectedSegment)]
         pub unsafe fn doubleValueForSelectedSegment(&self) -> c_double;
 
-        #[method_id(selectedSegmentBezelColor)]
+        #[method_id(@__retain_semantics Other selectedSegmentBezelColor)]
         pub unsafe fn selectedSegmentBezelColor(&self) -> Option<Id<NSColor, Shared>>;
 
         #[method(setSelectedSegmentBezelColor:)]
@@ -181,7 +181,7 @@ extern_methods!(
             prioritizedOptions: &NSArray<NSUserInterfaceCompressionOptions>,
         ) -> NSSize;
 
-        #[method_id(activeCompressionOptions)]
+        #[method_id(@__retain_semantics Other activeCompressionOptions)]
         pub unsafe fn activeCompressionOptions(
             &self,
         ) -> Id<NSUserInterfaceCompressionOptions, Shared>;
@@ -191,7 +191,7 @@ extern_methods!(
 extern_methods!(
     /// NSSegmentedControlConvenience
     unsafe impl NSSegmentedControl {
-        #[method_id(segmentedControlWithLabels:trackingMode:target:action:)]
+        #[method_id(@__retain_semantics Other segmentedControlWithLabels:trackingMode:target:action:)]
         pub unsafe fn segmentedControlWithLabels_trackingMode_target_action(
             labels: &NSArray<NSString>,
             trackingMode: NSSegmentSwitchTracking,
@@ -199,7 +199,7 @@ extern_methods!(
             action: Option<Sel>,
         ) -> Id<Self, Shared>;
 
-        #[method_id(segmentedControlWithImages:trackingMode:target:action:)]
+        #[method_id(@__retain_semantics Other segmentedControlWithImages:trackingMode:target:action:)]
         pub unsafe fn segmentedControlWithImages_trackingMode_target_action(
             images: &NSArray<NSImage>,
             trackingMode: NSSegmentSwitchTracking,

@@ -19,10 +19,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSWorkspace {
-        #[method_id(sharedWorkspace)]
+        #[method_id(@__retain_semantics Other sharedWorkspace)]
         pub unsafe fn sharedWorkspace() -> Id<NSWorkspace, Shared>;
 
-        #[method_id(notificationCenter)]
+        #[method_id(@__retain_semantics Other notificationCenter)]
         pub unsafe fn notificationCenter(&self) -> Id<NSNotificationCenter, Shared>;
 
         #[method(openURL:)]
@@ -72,16 +72,16 @@ extern_methods!(
         #[method(isFilePackageAtPath:)]
         pub unsafe fn isFilePackageAtPath(&self, fullPath: &NSString) -> bool;
 
-        #[method_id(iconForFile:)]
+        #[method_id(@__retain_semantics Other iconForFile:)]
         pub unsafe fn iconForFile(&self, fullPath: &NSString) -> Id<NSImage, Shared>;
 
-        #[method_id(iconForFiles:)]
+        #[method_id(@__retain_semantics Other iconForFiles:)]
         pub unsafe fn iconForFiles(
             &self,
             fullPaths: &NSArray<NSString>,
         ) -> Option<Id<NSImage, Shared>>;
 
-        #[method_id(iconForContentType:)]
+        #[method_id(@__retain_semantics Other iconForContentType:)]
         pub unsafe fn iconForContentType(&self, contentType: &UTType) -> Id<NSImage, Shared>;
 
         #[method(setIcon:forFile:options:)]
@@ -92,10 +92,10 @@ extern_methods!(
             options: NSWorkspaceIconCreationOptions,
         ) -> bool;
 
-        #[method_id(fileLabels)]
+        #[method_id(@__retain_semantics Other fileLabels)]
         pub unsafe fn fileLabels(&self) -> Id<NSArray<NSString>, Shared>;
 
-        #[method_id(fileLabelColors)]
+        #[method_id(@__retain_semantics Other fileLabelColors)]
         pub unsafe fn fileLabelColors(&self) -> Id<NSArray<NSColor>, Shared>;
 
         #[method(recycleURLs:completionHandler:)]
@@ -138,22 +138,22 @@ extern_methods!(
         #[method(hideOtherApplications)]
         pub unsafe fn hideOtherApplications(&self);
 
-        #[method_id(URLForApplicationWithBundleIdentifier:)]
+        #[method_id(@__retain_semantics Other URLForApplicationWithBundleIdentifier:)]
         pub unsafe fn URLForApplicationWithBundleIdentifier(
             &self,
             bundleIdentifier: &NSString,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLsForApplicationsWithBundleIdentifier:)]
+        #[method_id(@__retain_semantics Other URLsForApplicationsWithBundleIdentifier:)]
         pub unsafe fn URLsForApplicationsWithBundleIdentifier(
             &self,
             bundleIdentifier: &NSString,
         ) -> Id<NSArray<NSURL>, Shared>;
 
-        #[method_id(URLForApplicationToOpenURL:)]
+        #[method_id(@__retain_semantics Other URLForApplicationToOpenURL:)]
         pub unsafe fn URLForApplicationToOpenURL(&self, url: &NSURL) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLsForApplicationsToOpenURL:)]
+        #[method_id(@__retain_semantics Other URLsForApplicationsToOpenURL:)]
         pub unsafe fn URLsForApplicationsToOpenURL(
             &self,
             url: &NSURL,
@@ -183,13 +183,13 @@ extern_methods!(
             completionHandler: TodoBlock,
         );
 
-        #[method_id(URLForApplicationToOpenContentType:)]
+        #[method_id(@__retain_semantics Other URLForApplicationToOpenContentType:)]
         pub unsafe fn URLForApplicationToOpenContentType(
             &self,
             contentType: &UTType,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(URLsForApplicationsToOpenContentType:)]
+        #[method_id(@__retain_semantics Other URLsForApplicationsToOpenContentType:)]
         pub unsafe fn URLsForApplicationsToOpenContentType(
             &self,
             contentType: &UTType,
@@ -203,10 +203,10 @@ extern_methods!(
             completionHandler: TodoBlock,
         );
 
-        #[method_id(frontmostApplication)]
+        #[method_id(@__retain_semantics Other frontmostApplication)]
         pub unsafe fn frontmostApplication(&self) -> Option<Id<NSRunningApplication, Shared>>;
 
-        #[method_id(menuBarOwningApplication)]
+        #[method_id(@__retain_semantics Other menuBarOwningApplication)]
         pub unsafe fn menuBarOwningApplication(&self) -> Option<Id<NSRunningApplication, Shared>>;
     }
 );
@@ -222,7 +222,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSWorkspaceOpenConfiguration {
-        #[method_id(configuration)]
+        #[method_id(@__retain_semantics Other configuration)]
         pub unsafe fn configuration() -> Id<Self, Shared>;
 
         #[method(promptsUserIfNeeded)]
@@ -276,19 +276,19 @@ extern_methods!(
             allowsRunningApplicationSubstitution: bool,
         );
 
-        #[method_id(arguments)]
+        #[method_id(@__retain_semantics Other arguments)]
         pub unsafe fn arguments(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(setArguments:)]
         pub unsafe fn setArguments(&self, arguments: &NSArray<NSString>);
 
-        #[method_id(environment)]
+        #[method_id(@__retain_semantics Other environment)]
         pub unsafe fn environment(&self) -> Id<NSDictionary<NSString, NSString>, Shared>;
 
         #[method(setEnvironment:)]
         pub unsafe fn setEnvironment(&self, environment: &NSDictionary<NSString, NSString>);
 
-        #[method_id(appleEvent)]
+        #[method_id(@__retain_semantics Other appleEvent)]
         pub unsafe fn appleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>>;
 
         #[method(setAppleEvent:)]
@@ -333,13 +333,13 @@ extern_methods!(
             options: &NSDictionary<NSWorkspaceDesktopImageOptionKey, Object>,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(desktopImageURLForScreen:)]
+        #[method_id(@__retain_semantics Other desktopImageURLForScreen:)]
         pub unsafe fn desktopImageURLForScreen(
             &self,
             screen: &NSScreen,
         ) -> Option<Id<NSURL, Shared>>;
 
-        #[method_id(desktopImageOptionsForScreen:)]
+        #[method_id(@__retain_semantics Other desktopImageOptionsForScreen:)]
         pub unsafe fn desktopImageOptionsForScreen(
             &self,
             screen: &NSScreen,
@@ -380,7 +380,7 @@ extern_methods!(
 extern_methods!(
     /// NSWorkspaceAuthorization
     unsafe impl NSFileManager {
-        #[method_id(fileManagerWithAuthorization:)]
+        #[method_id(@__retain_semantics Other fileManagerWithAuthorization:)]
         pub unsafe fn fileManagerWithAuthorization(
             authorization: &NSWorkspaceAuthorization,
         ) -> Id<Self, Shared>;
@@ -547,7 +547,7 @@ extern_methods!(
         #[method(launchApplication:)]
         pub unsafe fn launchApplication(&self, appName: &NSString) -> bool;
 
-        #[method_id(launchApplicationAtURL:options:configuration:error:)]
+        #[method_id(@__retain_semantics Other launchApplicationAtURL:options:configuration:error:)]
         pub unsafe fn launchApplicationAtURL_options_configuration_error(
             &self,
             url: &NSURL,
@@ -555,7 +555,7 @@ extern_methods!(
             configuration: &NSDictionary<NSWorkspaceLaunchConfigurationKey, Object>,
         ) -> Result<Id<NSRunningApplication, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(openURL:options:configuration:error:)]
+        #[method_id(@__retain_semantics Other openURL:options:configuration:error:)]
         pub unsafe fn openURL_options_configuration_error(
             &self,
             url: &NSURL,
@@ -563,7 +563,7 @@ extern_methods!(
             configuration: &NSDictionary<NSWorkspaceLaunchConfigurationKey, Object>,
         ) -> Result<Id<NSRunningApplication, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(openURLs:withApplicationAtURL:options:configuration:error:)]
+        #[method_id(@__retain_semantics Other openURLs:withApplicationAtURL:options:configuration:error:)]
         pub unsafe fn openURLs_withApplicationAtURL_options_configuration_error(
             &self,
             urls: &NSArray<NSURL>,
@@ -580,13 +580,13 @@ extern_methods!(
             autolaunch: bool,
         ) -> bool;
 
-        #[method_id(fullPathForApplication:)]
+        #[method_id(@__retain_semantics Other fullPathForApplication:)]
         pub unsafe fn fullPathForApplication(
             &self,
             appName: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(absolutePathForAppBundleWithIdentifier:)]
+        #[method_id(@__retain_semantics Other absolutePathForAppBundleWithIdentifier:)]
         pub unsafe fn absolutePathForAppBundleWithIdentifier(
             &self,
             bundleIdentifier: &NSString,
@@ -640,19 +640,19 @@ extern_methods!(
         #[method(userDefaultsChanged)]
         pub unsafe fn userDefaultsChanged(&self) -> bool;
 
-        #[method_id(mountNewRemovableMedia)]
+        #[method_id(@__retain_semantics Other mountNewRemovableMedia)]
         pub unsafe fn mountNewRemovableMedia(&self) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(activeApplication)]
+        #[method_id(@__retain_semantics Other activeApplication)]
         pub unsafe fn activeApplication(&self) -> Option<Id<NSDictionary, Shared>>;
 
-        #[method_id(mountedLocalVolumePaths)]
+        #[method_id(@__retain_semantics Other mountedLocalVolumePaths)]
         pub unsafe fn mountedLocalVolumePaths(&self) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(mountedRemovableMedia)]
+        #[method_id(@__retain_semantics Other mountedRemovableMedia)]
         pub unsafe fn mountedRemovableMedia(&self) -> Option<Id<NSArray, Shared>>;
 
-        #[method_id(launchedApplications)]
+        #[method_id(@__retain_semantics Other launchedApplications)]
         pub unsafe fn launchedApplications(&self) -> Option<Id<NSArray, Shared>>;
 
         #[method(openFile:fromImage:at:inView:)]
@@ -682,22 +682,22 @@ extern_methods!(
             type_: Option<&mut Option<Id<NSString, Shared>>>,
         ) -> bool;
 
-        #[method_id(iconForFileType:)]
+        #[method_id(@__retain_semantics Other iconForFileType:)]
         pub unsafe fn iconForFileType(&self, fileType: &NSString) -> Id<NSImage, Shared>;
 
-        #[method_id(typeOfFile:error:)]
+        #[method_id(@__retain_semantics Other typeOfFile:error:)]
         pub unsafe fn typeOfFile_error(
             &self,
             absoluteFilePath: &NSString,
         ) -> Result<Id<NSString, Shared>, Id<NSError, Shared>>;
 
-        #[method_id(localizedDescriptionForType:)]
+        #[method_id(@__retain_semantics Other localizedDescriptionForType:)]
         pub unsafe fn localizedDescriptionForType(
             &self,
             typeName: &NSString,
         ) -> Option<Id<NSString, Shared>>;
 
-        #[method_id(preferredFilenameExtensionForType:)]
+        #[method_id(@__retain_semantics Other preferredFilenameExtensionForType:)]
         pub unsafe fn preferredFilenameExtensionForType(
             &self,
             typeName: &NSString,

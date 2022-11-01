@@ -14,7 +14,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSScanner {
-        #[method_id(string)]
+        #[method_id(@__retain_semantics Other string)]
         pub unsafe fn string(&self) -> Id<NSString, Shared>;
 
         #[method(scanLocation)]
@@ -23,7 +23,7 @@ extern_methods!(
         #[method(setScanLocation:)]
         pub unsafe fn setScanLocation(&self, scanLocation: NSUInteger);
 
-        #[method_id(charactersToBeSkipped)]
+        #[method_id(@__retain_semantics Other charactersToBeSkipped)]
         pub unsafe fn charactersToBeSkipped(&self) -> Option<Id<NSCharacterSet, Shared>>;
 
         #[method(setCharactersToBeSkipped:)]
@@ -38,13 +38,13 @@ extern_methods!(
         #[method(setCaseSensitive:)]
         pub unsafe fn setCaseSensitive(&self, caseSensitive: bool);
 
-        #[method_id(locale)]
+        #[method_id(@__retain_semantics Other locale)]
         pub unsafe fn locale(&self) -> Option<Id<Object, Shared>>;
 
         #[method(setLocale:)]
         pub unsafe fn setLocale(&self, locale: Option<&Object>);
 
-        #[method_id(initWithString:)]
+        #[method_id(@__retain_semantics Init initWithString:)]
         pub unsafe fn initWithString(
             this: Option<Allocated<Self>>,
             string: &NSString,
@@ -116,10 +116,10 @@ extern_methods!(
         #[method(isAtEnd)]
         pub unsafe fn isAtEnd(&self) -> bool;
 
-        #[method_id(scannerWithString:)]
+        #[method_id(@__retain_semantics Other scannerWithString:)]
         pub unsafe fn scannerWithString(string: &NSString) -> Id<Self, Shared>;
 
-        #[method_id(localizedScannerWithString:)]
+        #[method_id(@__retain_semantics Other localizedScannerWithString:)]
         pub unsafe fn localizedScannerWithString(string: &NSString) -> Id<Object, Shared>;
     }
 );
