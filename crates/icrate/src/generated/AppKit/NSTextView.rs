@@ -14,7 +14,7 @@ pub const NSSelectionAffinityUpstream: NSSelectionAffinity = 0;
 pub const NSSelectionAffinityDownstream: NSSelectionAffinity = 1;
 
 extern "C" {
-    static NSAllRomanInputSourcesLocaleIdentifier: &'static NSString;
+    pub static NSAllRomanInputSourcesLocaleIdentifier: &'static NSString;
 }
 
 extern_class!(
@@ -945,47 +945,47 @@ extern_methods!(
 pub type NSTextViewDelegate = NSObject;
 
 extern "C" {
-    static NSTouchBarItemIdentifierCharacterPicker: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierCharacterPicker: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTouchBarItemIdentifierTextColorPicker: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierTextColorPicker: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTouchBarItemIdentifierTextStyle: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierTextStyle: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTouchBarItemIdentifierTextAlignment: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierTextAlignment: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTouchBarItemIdentifierTextList: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierTextList: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTouchBarItemIdentifierTextFormat: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierTextFormat: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTextViewWillChangeNotifyingTextViewNotification: &'static NSNotificationName;
+    pub static NSTextViewWillChangeNotifyingTextViewNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTextViewDidChangeSelectionNotification: &'static NSNotificationName;
+    pub static NSTextViewDidChangeSelectionNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTextViewDidChangeTypingAttributesNotification: &'static NSNotificationName;
+    pub static NSTextViewDidChangeTypingAttributesNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTextViewWillSwitchToNSLayoutManagerNotification: &'static NSNotificationName;
+    pub static NSTextViewWillSwitchToNSLayoutManagerNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTextViewDidSwitchToNSLayoutManagerNotification: &'static NSNotificationName;
+    pub static NSTextViewDidSwitchToNSLayoutManagerNotification: &'static NSNotificationName;
 }
 
 pub type NSFindPanelAction = NSUInteger;
@@ -1001,17 +1001,17 @@ pub const NSFindPanelActionSelectAll: NSFindPanelAction = 9;
 pub const NSFindPanelActionSelectAllInSelection: NSFindPanelAction = 10;
 
 extern "C" {
-    static NSFindPanelSearchOptionsPboardType: &'static NSPasteboardType;
+    pub static NSFindPanelSearchOptionsPboardType: &'static NSPasteboardType;
 }
 
 pub type NSPasteboardTypeFindPanelSearchOptionKey = NSString;
 
 extern "C" {
-    static NSFindPanelCaseInsensitiveSearch: &'static NSPasteboardTypeFindPanelSearchOptionKey;
+    pub static NSFindPanelCaseInsensitiveSearch: &'static NSPasteboardTypeFindPanelSearchOptionKey;
 }
 
 extern "C" {
-    static NSFindPanelSubstringMatch: &'static NSPasteboardTypeFindPanelSearchOptionKey;
+    pub static NSFindPanelSubstringMatch: &'static NSPasteboardTypeFindPanelSearchOptionKey;
 }
 
 pub type NSFindPanelSubstringMatchType = NSUInteger;

@@ -44,13 +44,13 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSExtensionItemAttributedTitleKey: Option<&'static NSString>;
+    pub static NSExtensionItemAttributedTitleKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSExtensionItemAttributedContentTextKey: Option<&'static NSString>;
+    pub static NSExtensionItemAttributedContentTextKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSExtensionItemAttachmentsKey: Option<&'static NSString>;
+    pub static NSExtensionItemAttachmentsKey: Option<&'static NSString>;
 }

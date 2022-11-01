@@ -108,47 +108,47 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSTextCheckingNameKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingNameKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingJobTitleKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingJobTitleKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingOrganizationKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingOrganizationKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingStreetKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingStreetKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingCityKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingCityKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingStateKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingStateKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingZIPKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingZIPKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingCountryKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingCountryKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingPhoneKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingPhoneKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingAirlineKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingAirlineKey: &'static NSTextCheckingKey;
 }
 
 extern "C" {
-    static NSTextCheckingFlightKey: &'static NSTextCheckingKey;
+    pub static NSTextCheckingFlightKey: &'static NSTextCheckingKey;
 }
 
 extern_methods!(

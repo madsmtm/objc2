@@ -604,23 +604,23 @@ extern_methods!(
 pub type NSTableViewDelegate = NSObject;
 
 extern "C" {
-    static NSTableViewSelectionDidChangeNotification: &'static NSNotificationName;
+    pub static NSTableViewSelectionDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTableViewColumnDidMoveNotification: &'static NSNotificationName;
+    pub static NSTableViewColumnDidMoveNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTableViewColumnDidResizeNotification: &'static NSNotificationName;
+    pub static NSTableViewColumnDidResizeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTableViewSelectionIsChangingNotification: &'static NSNotificationName;
+    pub static NSTableViewSelectionIsChangingNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTableViewRowViewKey: &'static NSUserInterfaceItemIdentifier;
+    pub static NSTableViewRowViewKey: &'static NSUserInterfaceItemIdentifier;
 }
 
 pub type NSTableViewDataSource = NSObject;

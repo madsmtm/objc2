@@ -17,25 +17,26 @@ pub const NSPrintPanelShowsPreview: NSPrintPanelOptions = 1 << 17;
 pub type NSPrintPanelJobStyleHint = NSString;
 
 extern "C" {
-    static NSPrintPhotoJobStyleHint: &'static NSPrintPanelJobStyleHint;
+    pub static NSPrintPhotoJobStyleHint: &'static NSPrintPanelJobStyleHint;
 }
 
 extern "C" {
-    static NSPrintAllPresetsJobStyleHint: &'static NSPrintPanelJobStyleHint;
+    pub static NSPrintAllPresetsJobStyleHint: &'static NSPrintPanelJobStyleHint;
 }
 
 extern "C" {
-    static NSPrintNoPresetsJobStyleHint: &'static NSPrintPanelJobStyleHint;
+    pub static NSPrintNoPresetsJobStyleHint: &'static NSPrintPanelJobStyleHint;
 }
 
 pub type NSPrintPanelAccessorySummaryKey = NSString;
 
 extern "C" {
-    static NSPrintPanelAccessorySummaryItemNameKey: &'static NSPrintPanelAccessorySummaryKey;
+    pub static NSPrintPanelAccessorySummaryItemNameKey: &'static NSPrintPanelAccessorySummaryKey;
 }
 
 extern "C" {
-    static NSPrintPanelAccessorySummaryItemDescriptionKey: &'static NSPrintPanelAccessorySummaryKey;
+    pub static NSPrintPanelAccessorySummaryItemDescriptionKey:
+        &'static NSPrintPanelAccessorySummaryKey;
 }
 
 pub type NSPrintPanelAccessorizing = NSObject;

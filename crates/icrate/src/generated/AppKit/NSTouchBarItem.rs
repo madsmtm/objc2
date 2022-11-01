@@ -6,11 +6,11 @@ use crate::Foundation::*;
 
 pub type NSTouchBarItemIdentifier = NSString;
 
-static NSTouchBarItemPriorityHigh: NSTouchBarItemPriority = 1000;
+pub static NSTouchBarItemPriorityHigh: NSTouchBarItemPriority = 1000;
 
-static NSTouchBarItemPriorityNormal: NSTouchBarItemPriority = 0;
+pub static NSTouchBarItemPriorityNormal: NSTouchBarItemPriority = 0;
 
-static NSTouchBarItemPriorityLow: NSTouchBarItemPriority = -1000;
+pub static NSTouchBarItemPriorityLow: NSTouchBarItemPriority = -1000;
 
 extern_class!(
     #[derive(Debug)]
@@ -59,17 +59,17 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSTouchBarItemIdentifierFixedSpaceSmall: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierFixedSpaceSmall: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTouchBarItemIdentifierFixedSpaceLarge: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierFixedSpaceLarge: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTouchBarItemIdentifierFlexibleSpace: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierFlexibleSpace: &'static NSTouchBarItemIdentifier;
 }
 
 extern "C" {
-    static NSTouchBarItemIdentifierOtherItemsProxy: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierOtherItemsProxy: &'static NSTouchBarItemIdentifier;
 }

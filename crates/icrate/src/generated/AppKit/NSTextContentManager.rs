@@ -157,5 +157,6 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSTextContentStorageUnsupportedAttributeAddedNotification: &'static NSNotificationName;
+    pub static NSTextContentStorageUnsupportedAttributeAddedNotification:
+        &'static NSNotificationName;
 }

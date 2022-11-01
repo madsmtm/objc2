@@ -881,19 +881,20 @@ extern_methods!(
 pub type NSViewFullScreenModeOptionKey = NSString;
 
 extern "C" {
-    static NSFullScreenModeAllScreens: &'static NSViewFullScreenModeOptionKey;
+    pub static NSFullScreenModeAllScreens: &'static NSViewFullScreenModeOptionKey;
 }
 
 extern "C" {
-    static NSFullScreenModeSetting: &'static NSViewFullScreenModeOptionKey;
+    pub static NSFullScreenModeSetting: &'static NSViewFullScreenModeOptionKey;
 }
 
 extern "C" {
-    static NSFullScreenModeWindowLevel: &'static NSViewFullScreenModeOptionKey;
+    pub static NSFullScreenModeWindowLevel: &'static NSViewFullScreenModeOptionKey;
 }
 
 extern "C" {
-    static NSFullScreenModeApplicationPresentationOptions: &'static NSViewFullScreenModeOptionKey;
+    pub static NSFullScreenModeApplicationPresentationOptions:
+        &'static NSViewFullScreenModeOptionKey;
 }
 
 extern_methods!(
@@ -920,17 +921,18 @@ extern_methods!(
 pub type NSDefinitionOptionKey = NSString;
 
 extern "C" {
-    static NSDefinitionPresentationTypeKey: &'static NSDefinitionOptionKey;
+    pub static NSDefinitionPresentationTypeKey: &'static NSDefinitionOptionKey;
 }
 
 pub type NSDefinitionPresentationType = NSString;
 
 extern "C" {
-    static NSDefinitionPresentationTypeOverlay: &'static NSDefinitionPresentationType;
+    pub static NSDefinitionPresentationTypeOverlay: &'static NSDefinitionPresentationType;
 }
 
 extern "C" {
-    static NSDefinitionPresentationTypeDictionaryApplication: &'static NSDefinitionPresentationType;
+    pub static NSDefinitionPresentationTypeDictionaryApplication:
+        &'static NSDefinitionPresentationType;
 }
 
 extern_methods!(
@@ -1089,21 +1091,21 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSViewFrameDidChangeNotification: &'static NSNotificationName;
+    pub static NSViewFrameDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSViewFocusDidChangeNotification: &'static NSNotificationName;
+    pub static NSViewFocusDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSViewBoundsDidChangeNotification: &'static NSNotificationName;
+    pub static NSViewBoundsDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSViewGlobalFrameDidChangeNotification: &'static NSNotificationName;
+    pub static NSViewGlobalFrameDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSViewDidUpdateTrackingAreasNotification: &'static NSNotificationName;
+    pub static NSViewDidUpdateTrackingAreasNotification: &'static NSNotificationName;
 }

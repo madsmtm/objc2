@@ -101,7 +101,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSPreferredScrollerStyleDidChangeNotification: &'static NSNotificationName;
+    pub static NSPreferredScrollerStyleDidChangeNotification: &'static NSNotificationName;
 }
 
 pub type NSScrollArrowPosition = NSUInteger;

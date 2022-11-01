@@ -135,7 +135,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSItemProviderPreferredImageSizeKey: &'static NSString;
+    pub static NSItemProviderPreferredImageSizeKey: &'static NSString;
 }
 
 extern_methods!(
@@ -157,15 +157,15 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSExtensionJavaScriptPreprocessingResultsKey: Option<&'static NSString>;
+    pub static NSExtensionJavaScriptPreprocessingResultsKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSExtensionJavaScriptFinalizeArgumentKey: Option<&'static NSString>;
+    pub static NSExtensionJavaScriptFinalizeArgumentKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSItemProviderErrorDomain: &'static NSString;
+    pub static NSItemProviderErrorDomain: &'static NSString;
 }
 
 pub type NSItemProviderErrorCode = NSInteger;

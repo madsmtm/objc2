@@ -97,5 +97,5 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSTouchBarItemIdentifierCandidateList: &'static NSTouchBarItemIdentifier;
+    pub static NSTouchBarItemIdentifierCandidateList: &'static NSTouchBarItemIdentifier;
 }

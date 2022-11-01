@@ -137,5 +137,5 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSPopUpButtonWillPopUpNotification: &'static NSNotificationName;
+    pub static NSPopUpButtonWillPopUpNotification: &'static NSNotificationName;
 }

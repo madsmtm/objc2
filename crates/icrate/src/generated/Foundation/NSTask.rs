@@ -147,5 +147,5 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSTaskDidTerminateNotification: &'static NSNotificationName;
+    pub static NSTaskDidTerminateNotification: &'static NSNotificationName;
 }

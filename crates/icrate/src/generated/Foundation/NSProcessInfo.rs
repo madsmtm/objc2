@@ -175,11 +175,11 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSProcessInfoThermalStateDidChangeNotification: &'static NSNotificationName;
+    pub static NSProcessInfoThermalStateDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSProcessInfoPowerStateDidChangeNotification: &'static NSNotificationName;
+    pub static NSProcessInfoPowerStateDidChangeNotification: &'static NSNotificationName;
 }
 
 extern_methods!(

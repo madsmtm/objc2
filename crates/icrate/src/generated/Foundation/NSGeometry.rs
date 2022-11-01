@@ -47,19 +47,19 @@ pub const NSAlignAllEdgesNearest: NSAlignmentOptions =
     NSAlignMinXNearest | NSAlignMaxXNearest | NSAlignMinYNearest | NSAlignMaxYNearest;
 
 extern "C" {
-    static NSZeroPoint: NSPoint;
+    pub static NSZeroPoint: NSPoint;
 }
 
 extern "C" {
-    static NSZeroSize: NSSize;
+    pub static NSZeroSize: NSSize;
 }
 
 extern "C" {
-    static NSZeroRect: NSRect;
+    pub static NSZeroRect: NSRect;
 }
 
 extern "C" {
-    static NSEdgeInsetsZero: NSEdgeInsets;
+    pub static NSEdgeInsetsZero: NSEdgeInsets;
 }
 
 extern_methods!(

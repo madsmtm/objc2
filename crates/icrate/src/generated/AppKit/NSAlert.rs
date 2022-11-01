@@ -9,11 +9,11 @@ pub const NSAlertStyleWarning: NSAlertStyle = 0;
 pub const NSAlertStyleInformational: NSAlertStyle = 1;
 pub const NSAlertStyleCritical: NSAlertStyle = 2;
 
-static NSAlertFirstButtonReturn: NSModalResponse = 1000;
+pub static NSAlertFirstButtonReturn: NSModalResponse = 1000;
 
-static NSAlertSecondButtonReturn: NSModalResponse = 1001;
+pub static NSAlertSecondButtonReturn: NSModalResponse = 1001;
 
-static NSAlertThirdButtonReturn: NSModalResponse = 1002;
+pub static NSAlertThirdButtonReturn: NSModalResponse = 1002;
 
 extern_class!(
     #[derive(Debug)]
@@ -126,8 +126,8 @@ extern_methods!(
     }
 );
 
-static NSWarningAlertStyle: NSAlertStyle = NSAlertStyleWarning;
+pub static NSWarningAlertStyle: NSAlertStyle = NSAlertStyleWarning;
 
-static NSInformationalAlertStyle: NSAlertStyle = NSAlertStyleInformational;
+pub static NSInformationalAlertStyle: NSAlertStyle = NSAlertStyleInformational;
 
-static NSCriticalAlertStyle: NSAlertStyle = NSAlertStyleCritical;
+pub static NSCriticalAlertStyle: NSAlertStyle = NSAlertStyleCritical;

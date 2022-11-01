@@ -265,11 +265,11 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSBundleDidLoadNotification: &'static NSNotificationName;
+    pub static NSBundleDidLoadNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSLoadedClasses: &'static NSString;
+    pub static NSLoadedClasses: &'static NSString;
 }
 
 extern_class!(
@@ -344,9 +344,9 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSBundleResourceRequestLowDiskSpaceNotification: &'static NSNotificationName;
+    pub static NSBundleResourceRequestLowDiskSpaceNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSBundleResourceRequestLoadingPriorityUrgent: c_double;
+    pub static NSBundleResourceRequestLoadingPriorityUrgent: c_double;
 }

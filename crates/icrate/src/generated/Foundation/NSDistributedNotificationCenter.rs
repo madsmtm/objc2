@@ -6,7 +6,7 @@ use crate::Foundation::*;
 pub type NSDistributedNotificationCenterType = NSString;
 
 extern "C" {
-    static NSLocalNotificationCenterType: &'static NSDistributedNotificationCenterType;
+    pub static NSLocalNotificationCenterType: &'static NSDistributedNotificationCenterType;
 }
 
 pub type NSNotificationSuspensionBehavior = NSUInteger;
@@ -19,10 +19,10 @@ pub type NSDistributedNotificationOptions = NSUInteger;
 pub const NSDistributedNotificationDeliverImmediately: NSDistributedNotificationOptions = 1 << 0;
 pub const NSDistributedNotificationPostToAllSessions: NSDistributedNotificationOptions = 1 << 1;
 
-static NSNotificationDeliverImmediately: NSDistributedNotificationOptions =
+pub static NSNotificationDeliverImmediately: NSDistributedNotificationOptions =
     NSDistributedNotificationDeliverImmediately;
 
-static NSNotificationPostToAllSessions: NSDistributedNotificationOptions =
+pub static NSNotificationPostToAllSessions: NSDistributedNotificationOptions =
     NSDistributedNotificationPostToAllSessions;
 
 extern_class!(

@@ -4,19 +4,19 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSDecimalNumberExactnessException: &'static NSExceptionName;
+    pub static NSDecimalNumberExactnessException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSDecimalNumberOverflowException: &'static NSExceptionName;
+    pub static NSDecimalNumberOverflowException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSDecimalNumberUnderflowException: &'static NSExceptionName;
+    pub static NSDecimalNumberUnderflowException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSDecimalNumberDivideByZeroException: &'static NSExceptionName;
+    pub static NSDecimalNumberDivideByZeroException: &'static NSExceptionName;
 }
 
 pub type NSDecimalNumberBehaviors = NSObject;

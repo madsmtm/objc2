@@ -7,11 +7,11 @@ use crate::Foundation::*;
 pub type NSDraggingImageComponentKey = NSString;
 
 extern "C" {
-    static NSDraggingImageComponentIconKey: &'static NSDraggingImageComponentKey;
+    pub static NSDraggingImageComponentIconKey: &'static NSDraggingImageComponentKey;
 }
 
 extern "C" {
-    static NSDraggingImageComponentLabelKey: &'static NSDraggingImageComponentKey;
+    pub static NSDraggingImageComponentLabelKey: &'static NSDraggingImageComponentKey;
 }
 
 extern_class!(

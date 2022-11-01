@@ -4,9 +4,9 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-static NSAppKitVersionNumberWithContinuousScrollingBrowser: NSAppKitVersion = 680.0;
+pub static NSAppKitVersionNumberWithContinuousScrollingBrowser: NSAppKitVersion = 680.0;
 
-static NSAppKitVersionNumberWithColumnResizingBrowser: NSAppKitVersion = 685.0;
+pub static NSAppKitVersionNumberWithColumnResizingBrowser: NSAppKitVersion = 685.0;
 
 pub type NSBrowserColumnsAutosaveName = NSString;
 
@@ -417,7 +417,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSBrowserColumnConfigurationDidChangeNotification: &'static NSNotificationName;
+    pub static NSBrowserColumnConfigurationDidChangeNotification: &'static NSNotificationName;
 }
 
 pub type NSBrowserDelegate = NSObject;

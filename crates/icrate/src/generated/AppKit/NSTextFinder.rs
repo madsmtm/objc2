@@ -22,11 +22,11 @@ pub const NSTextFinderActionHideReplaceInterface: NSTextFinderAction = 13;
 pub type NSPasteboardTypeTextFinderOptionKey = NSString;
 
 extern "C" {
-    static NSTextFinderCaseInsensitiveKey: &'static NSPasteboardTypeTextFinderOptionKey;
+    pub static NSTextFinderCaseInsensitiveKey: &'static NSPasteboardTypeTextFinderOptionKey;
 }
 
 extern "C" {
-    static NSTextFinderMatchingTypeKey: &'static NSPasteboardTypeTextFinderOptionKey;
+    pub static NSTextFinderMatchingTypeKey: &'static NSPasteboardTypeTextFinderOptionKey;
 }
 
 pub type NSTextFinderMatchingType = NSInteger;

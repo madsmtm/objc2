@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSPortDidBecomeInvalidNotification: &'static NSNotificationName;
+    pub static NSPortDidBecomeInvalidNotification: &'static NSNotificationName;
 }
 
 extern_class!(

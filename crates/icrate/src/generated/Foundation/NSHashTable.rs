@@ -3,17 +3,17 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-static NSHashTableStrongMemory: NSPointerFunctionsOptions = NSPointerFunctionsStrongMemory;
+pub static NSHashTableStrongMemory: NSPointerFunctionsOptions = NSPointerFunctionsStrongMemory;
 
-static NSHashTableZeroingWeakMemory: NSPointerFunctionsOptions =
+pub static NSHashTableZeroingWeakMemory: NSPointerFunctionsOptions =
     NSPointerFunctionsZeroingWeakMemory;
 
-static NSHashTableCopyIn: NSPointerFunctionsOptions = NSPointerFunctionsCopyIn;
+pub static NSHashTableCopyIn: NSPointerFunctionsOptions = NSPointerFunctionsCopyIn;
 
-static NSHashTableObjectPointerPersonality: NSPointerFunctionsOptions =
+pub static NSHashTableObjectPointerPersonality: NSPointerFunctionsOptions =
     NSPointerFunctionsObjectPointerPersonality;
 
-static NSHashTableWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsWeakMemory;
+pub static NSHashTableWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsWeakMemory;
 
 pub type NSHashTableOptions = NSUInteger;
 
@@ -109,33 +109,33 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSIntegerHashCallBacks: NSHashTableCallBacks;
+    pub static NSIntegerHashCallBacks: NSHashTableCallBacks;
 }
 
 extern "C" {
-    static NSNonOwnedPointerHashCallBacks: NSHashTableCallBacks;
+    pub static NSNonOwnedPointerHashCallBacks: NSHashTableCallBacks;
 }
 
 extern "C" {
-    static NSNonRetainedObjectHashCallBacks: NSHashTableCallBacks;
+    pub static NSNonRetainedObjectHashCallBacks: NSHashTableCallBacks;
 }
 
 extern "C" {
-    static NSObjectHashCallBacks: NSHashTableCallBacks;
+    pub static NSObjectHashCallBacks: NSHashTableCallBacks;
 }
 
 extern "C" {
-    static NSOwnedObjectIdentityHashCallBacks: NSHashTableCallBacks;
+    pub static NSOwnedObjectIdentityHashCallBacks: NSHashTableCallBacks;
 }
 
 extern "C" {
-    static NSOwnedPointerHashCallBacks: NSHashTableCallBacks;
+    pub static NSOwnedPointerHashCallBacks: NSHashTableCallBacks;
 }
 
 extern "C" {
-    static NSPointerToStructHashCallBacks: NSHashTableCallBacks;
+    pub static NSPointerToStructHashCallBacks: NSHashTableCallBacks;
 }
 
 extern "C" {
-    static NSIntHashCallBacks: NSHashTableCallBacks;
+    pub static NSIntHashCallBacks: NSHashTableCallBacks;
 }

@@ -5,119 +5,119 @@ use crate::AppKit::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSFontAttributeName: &'static NSAttributedStringKey;
+    pub static NSFontAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSParagraphStyleAttributeName: &'static NSAttributedStringKey;
+    pub static NSParagraphStyleAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSForegroundColorAttributeName: &'static NSAttributedStringKey;
+    pub static NSForegroundColorAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSBackgroundColorAttributeName: &'static NSAttributedStringKey;
+    pub static NSBackgroundColorAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSLigatureAttributeName: &'static NSAttributedStringKey;
+    pub static NSLigatureAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSKernAttributeName: &'static NSAttributedStringKey;
+    pub static NSKernAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSTrackingAttributeName: &'static NSAttributedStringKey;
+    pub static NSTrackingAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSStrikethroughStyleAttributeName: &'static NSAttributedStringKey;
+    pub static NSStrikethroughStyleAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSUnderlineStyleAttributeName: &'static NSAttributedStringKey;
+    pub static NSUnderlineStyleAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSStrokeColorAttributeName: &'static NSAttributedStringKey;
+    pub static NSStrokeColorAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSStrokeWidthAttributeName: &'static NSAttributedStringKey;
+    pub static NSStrokeWidthAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSShadowAttributeName: &'static NSAttributedStringKey;
+    pub static NSShadowAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSTextEffectAttributeName: &'static NSAttributedStringKey;
+    pub static NSTextEffectAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSAttachmentAttributeName: &'static NSAttributedStringKey;
+    pub static NSAttachmentAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSLinkAttributeName: &'static NSAttributedStringKey;
+    pub static NSLinkAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSBaselineOffsetAttributeName: &'static NSAttributedStringKey;
+    pub static NSBaselineOffsetAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSUnderlineColorAttributeName: &'static NSAttributedStringKey;
+    pub static NSUnderlineColorAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSStrikethroughColorAttributeName: &'static NSAttributedStringKey;
+    pub static NSStrikethroughColorAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSObliquenessAttributeName: &'static NSAttributedStringKey;
+    pub static NSObliquenessAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSExpansionAttributeName: &'static NSAttributedStringKey;
+    pub static NSExpansionAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSWritingDirectionAttributeName: &'static NSAttributedStringKey;
+    pub static NSWritingDirectionAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSVerticalGlyphFormAttributeName: &'static NSAttributedStringKey;
+    pub static NSVerticalGlyphFormAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSCursorAttributeName: &'static NSAttributedStringKey;
+    pub static NSCursorAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSToolTipAttributeName: &'static NSAttributedStringKey;
+    pub static NSToolTipAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSMarkedClauseSegmentAttributeName: &'static NSAttributedStringKey;
+    pub static NSMarkedClauseSegmentAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSTextAlternativesAttributeName: &'static NSAttributedStringKey;
+    pub static NSTextAlternativesAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSSpellingStateAttributeName: &'static NSAttributedStringKey;
+    pub static NSSpellingStateAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSSuperscriptAttributeName: &'static NSAttributedStringKey;
+    pub static NSSuperscriptAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSGlyphInfoAttributeName: &'static NSAttributedStringKey;
+    pub static NSGlyphInfoAttributeName: &'static NSAttributedStringKey;
 }
 
 pub type NSUnderlineStyle = NSInteger;
@@ -139,7 +139,7 @@ pub const NSWritingDirectionOverride: NSWritingDirectionFormatType = 1 << 1;
 pub type NSTextEffectStyle = NSString;
 
 extern "C" {
-    static NSTextEffectLetterpressStyle: &'static NSTextEffectStyle;
+    pub static NSTextEffectLetterpressStyle: &'static NSTextEffectStyle;
 }
 
 pub type NSSpellingState = NSInteger;
@@ -166,53 +166,53 @@ extern_methods!(
 pub type NSAttributedStringDocumentType = NSString;
 
 extern "C" {
-    static NSPlainTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSPlainTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSRTFTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSRTFTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSRTFDTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSRTFDTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSHTMLTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSHTMLTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSMacSimpleTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSMacSimpleTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSDocFormatTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSDocFormatTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSWordMLTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSWordMLTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSWebArchiveTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSWebArchiveTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSOfficeOpenXMLTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSOfficeOpenXMLTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 extern "C" {
-    static NSOpenDocumentTextDocumentType: &'static NSAttributedStringDocumentType;
+    pub static NSOpenDocumentTextDocumentType: &'static NSAttributedStringDocumentType;
 }
 
 pub type NSTextLayoutSectionKey = NSString;
 
 extern "C" {
-    static NSTextLayoutSectionOrientation: &'static NSTextLayoutSectionKey;
+    pub static NSTextLayoutSectionOrientation: &'static NSTextLayoutSectionKey;
 }
 
 extern "C" {
-    static NSTextLayoutSectionRange: &'static NSTextLayoutSectionKey;
+    pub static NSTextLayoutSectionRange: &'static NSTextLayoutSectionKey;
 }
 
 pub type NSTextScalingType = NSInteger;
@@ -222,202 +222,213 @@ pub const NSTextScalingiOS: NSTextScalingType = 1;
 pub type NSAttributedStringDocumentAttributeKey = NSString;
 
 extern "C" {
-    static NSDocumentTypeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSDocumentTypeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSConvertedDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSConvertedDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSCocoaVersionDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSCocoaVersionDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSFileTypeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSFileTypeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSTitleDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSTitleDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSCompanyDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSCompanyDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSCopyrightDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSCopyrightDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSSubjectDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSSubjectDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSAuthorDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSAuthorDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSKeywordsDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSKeywordsDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSCommentDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSCommentDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSEditorDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSEditorDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSCreationTimeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSCreationTimeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSModificationTimeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSModificationTimeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSManagerDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSManagerDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSCategoryDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSCategoryDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSAppearanceDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSAppearanceDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSCharacterEncodingDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSCharacterEncodingDocumentAttribute:
+        &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSDefaultAttributesDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSDefaultAttributesDocumentAttribute:
+        &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSPaperSizeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSPaperSizeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSLeftMarginDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSLeftMarginDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSRightMarginDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSRightMarginDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSTopMarginDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSTopMarginDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSBottomMarginDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSBottomMarginDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSViewSizeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSViewSizeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSViewZoomDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSViewZoomDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSViewModeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSViewModeDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSReadOnlyDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSReadOnlyDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSBackgroundColorDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSBackgroundColorDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSHyphenationFactorDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSHyphenationFactorDocumentAttribute:
+        &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSDefaultTabIntervalDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSDefaultTabIntervalDocumentAttribute:
+        &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSTextLayoutSectionsAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSTextLayoutSectionsAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSExcludedElementsDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSExcludedElementsDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSTextEncodingNameDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSTextEncodingNameDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSPrefixSpacesDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSPrefixSpacesDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSTextScalingDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSTextScalingDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
 }
 
 extern "C" {
-    static NSSourceTextScalingDocumentAttribute: &'static NSAttributedStringDocumentAttributeKey;
+    pub static NSSourceTextScalingDocumentAttribute:
+        &'static NSAttributedStringDocumentAttributeKey;
 }
 
 pub type NSAttributedStringDocumentReadingOptionKey = NSString;
 
 extern "C" {
-    static NSDocumentTypeDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
+    pub static NSDocumentTypeDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
 }
 
 extern "C" {
-    static NSDefaultAttributesDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
-}
-
-extern "C" {
-    static NSCharacterEncodingDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
-}
-
-extern "C" {
-    static NSTextEncodingNameDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
-}
-
-extern "C" {
-    static NSBaseURLDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
-}
-
-extern "C" {
-    static NSTimeoutDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
-}
-
-extern "C" {
-    static NSWebPreferencesDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
-}
-
-extern "C" {
-    static NSWebResourceLoadDelegateDocumentOption:
+    pub static NSDefaultAttributesDocumentOption:
         &'static NSAttributedStringDocumentReadingOptionKey;
 }
 
 extern "C" {
-    static NSTextSizeMultiplierDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
+    pub static NSCharacterEncodingDocumentOption:
+        &'static NSAttributedStringDocumentReadingOptionKey;
 }
 
 extern "C" {
-    static NSFileTypeDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
+    pub static NSTextEncodingNameDocumentOption:
+        &'static NSAttributedStringDocumentReadingOptionKey;
 }
 
 extern "C" {
-    static NSTargetTextScalingDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
+    pub static NSBaseURLDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
 }
 
 extern "C" {
-    static NSSourceTextScalingDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
+    pub static NSTimeoutDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
+}
+
+extern "C" {
+    pub static NSWebPreferencesDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
+}
+
+extern "C" {
+    pub static NSWebResourceLoadDelegateDocumentOption:
+        &'static NSAttributedStringDocumentReadingOptionKey;
+}
+
+extern "C" {
+    pub static NSTextSizeMultiplierDocumentOption:
+        &'static NSAttributedStringDocumentReadingOptionKey;
+}
+
+extern "C" {
+    pub static NSFileTypeDocumentOption: &'static NSAttributedStringDocumentReadingOptionKey;
+}
+
+extern "C" {
+    pub static NSTargetTextScalingDocumentOption:
+        &'static NSAttributedStringDocumentReadingOptionKey;
+}
+
+extern "C" {
+    pub static NSSourceTextScalingDocumentOption:
+        &'static NSAttributedStringDocumentReadingOptionKey;
 }
 
 extern_methods!(
@@ -709,35 +720,35 @@ extern_methods!(
     }
 );
 
-static NSUnderlinePatternSolid: NSUnderlineStyle = NSUnderlineStylePatternSolid;
+pub static NSUnderlinePatternSolid: NSUnderlineStyle = NSUnderlineStylePatternSolid;
 
-static NSUnderlinePatternDot: NSUnderlineStyle = NSUnderlineStylePatternDot;
+pub static NSUnderlinePatternDot: NSUnderlineStyle = NSUnderlineStylePatternDot;
 
-static NSUnderlinePatternDash: NSUnderlineStyle = NSUnderlineStylePatternDash;
+pub static NSUnderlinePatternDash: NSUnderlineStyle = NSUnderlineStylePatternDash;
 
-static NSUnderlinePatternDashDot: NSUnderlineStyle = NSUnderlineStylePatternDashDot;
+pub static NSUnderlinePatternDashDot: NSUnderlineStyle = NSUnderlineStylePatternDashDot;
 
-static NSUnderlinePatternDashDotDot: NSUnderlineStyle = NSUnderlineStylePatternDashDotDot;
+pub static NSUnderlinePatternDashDotDot: NSUnderlineStyle = NSUnderlineStylePatternDashDotDot;
 
-static NSUnderlineByWord: NSUnderlineStyle = NSUnderlineStyleByWord;
+pub static NSUnderlineByWord: NSUnderlineStyle = NSUnderlineStyleByWord;
 
 extern "C" {
-    static NSCharacterShapeAttributeName: &'static NSAttributedStringKey;
+    pub static NSCharacterShapeAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSUsesScreenFontsDocumentAttribute: &'static NSAttributedStringKey;
+    pub static NSUsesScreenFontsDocumentAttribute: &'static NSAttributedStringKey;
 }
 
 pub const NSNoUnderlineStyle: i32 = 0;
 pub const NSSingleUnderlineStyle: i32 = 1;
 
 extern "C" {
-    static NSUnderlineStrikethroughMask: NSUInteger;
+    pub static NSUnderlineStrikethroughMask: NSUInteger;
 }
 
 extern "C" {
-    static NSUnderlineByWordMask: NSUInteger;
+    pub static NSUnderlineByWordMask: NSUInteger;
 }
 
 extern_methods!(

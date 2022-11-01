@@ -217,7 +217,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSMenuItemImportFromDeviceIdentifier: &'static NSUserInterfaceItemIdentifier;
+    pub static NSMenuItemImportFromDeviceIdentifier: &'static NSUserInterfaceItemIdentifier;
 }
 
 extern_methods!(

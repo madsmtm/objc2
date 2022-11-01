@@ -34,5 +34,5 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSTextAlternativesSelectedAlternativeStringNotification: &'static NSNotificationName;
+    pub static NSTextAlternativesSelectedAlternativeStringNotification: &'static NSNotificationName;
 }

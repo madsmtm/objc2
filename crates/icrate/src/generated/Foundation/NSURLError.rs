@@ -4,27 +4,27 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSURLErrorDomain: &'static NSErrorDomain;
+    pub static NSURLErrorDomain: &'static NSErrorDomain;
 }
 
 extern "C" {
-    static NSURLErrorFailingURLErrorKey: &'static NSString;
+    pub static NSURLErrorFailingURLErrorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSURLErrorFailingURLStringErrorKey: &'static NSString;
+    pub static NSURLErrorFailingURLStringErrorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSErrorFailingURLStringKey: &'static NSString;
+    pub static NSErrorFailingURLStringKey: &'static NSString;
 }
 
 extern "C" {
-    static NSURLErrorFailingURLPeerTrustErrorKey: &'static NSString;
+    pub static NSURLErrorFailingURLPeerTrustErrorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSURLErrorBackgroundTaskCancelledReasonKey: &'static NSString;
+    pub static NSURLErrorBackgroundTaskCancelledReasonKey: &'static NSString;
 }
 
 pub const NSURLErrorCancelledReasonUserForceQuitApplication: i32 = 0;
@@ -32,7 +32,7 @@ pub const NSURLErrorCancelledReasonBackgroundUpdatesDisabled: i32 = 1;
 pub const NSURLErrorCancelledReasonInsufficientSystemResources: i32 = 2;
 
 extern "C" {
-    static NSURLErrorNetworkUnavailableReasonKey: &'static NSErrorUserInfoKey;
+    pub static NSURLErrorNetworkUnavailableReasonKey: &'static NSErrorUserInfoKey;
 }
 
 pub type NSURLErrorNetworkUnavailableReason = NSInteger;

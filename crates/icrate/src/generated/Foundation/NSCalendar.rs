@@ -6,67 +6,67 @@ use crate::Foundation::*;
 pub type NSCalendarIdentifier = NSString;
 
 extern "C" {
-    static NSCalendarIdentifierGregorian: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierGregorian: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierBuddhist: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierBuddhist: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierChinese: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierChinese: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierCoptic: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierCoptic: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierEthiopicAmeteMihret: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierEthiopicAmeteMihret: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierEthiopicAmeteAlem: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierEthiopicAmeteAlem: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierHebrew: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierHebrew: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierISO8601: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierISO8601: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierIndian: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierIndian: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierIslamic: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierIslamic: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierIslamicCivil: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierIslamicCivil: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierJapanese: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierJapanese: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierPersian: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierPersian: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierRepublicOfChina: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierRepublicOfChina: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierIslamicTabular: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierIslamicTabular: &'static NSCalendarIdentifier;
 }
 
 extern "C" {
-    static NSCalendarIdentifierIslamicUmmAlQura: &'static NSCalendarIdentifier;
+    pub static NSCalendarIdentifierIslamicUmmAlQura: &'static NSCalendarIdentifier;
 }
 
 pub type NSCalendarUnit = NSUInteger;
@@ -494,7 +494,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSCalendarDayChangedNotification: &'static NSNotificationName;
+    pub static NSCalendarDayChangedNotification: &'static NSNotificationName;
 }
 
 pub const NSDateComponentUndefined: i32 = 9223372036854775807;

@@ -21,7 +21,7 @@ pub const NSLineBreakStrategyStandard: NSLineBreakStrategy = 0xFFFF;
 pub type NSTextTabOptionKey = NSString;
 
 extern "C" {
-    static NSTabColumnTerminatorsAttributeName: &'static NSTextTabOptionKey;
+    pub static NSTabColumnTerminatorsAttributeName: &'static NSTextTabOptionKey;
 }
 
 extern_class!(

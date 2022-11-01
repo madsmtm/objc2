@@ -84,67 +84,67 @@ pub const NSStringEnumerationLocalized: NSStringEnumerationOptions = 1 << 10;
 pub type NSStringTransform = NSString;
 
 extern "C" {
-    static NSStringTransformLatinToKatakana: &'static NSStringTransform;
+    pub static NSStringTransformLatinToKatakana: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformLatinToHiragana: &'static NSStringTransform;
+    pub static NSStringTransformLatinToHiragana: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformLatinToHangul: &'static NSStringTransform;
+    pub static NSStringTransformLatinToHangul: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformLatinToArabic: &'static NSStringTransform;
+    pub static NSStringTransformLatinToArabic: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformLatinToHebrew: &'static NSStringTransform;
+    pub static NSStringTransformLatinToHebrew: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformLatinToThai: &'static NSStringTransform;
+    pub static NSStringTransformLatinToThai: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformLatinToCyrillic: &'static NSStringTransform;
+    pub static NSStringTransformLatinToCyrillic: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformLatinToGreek: &'static NSStringTransform;
+    pub static NSStringTransformLatinToGreek: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformToLatin: &'static NSStringTransform;
+    pub static NSStringTransformToLatin: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformMandarinToLatin: &'static NSStringTransform;
+    pub static NSStringTransformMandarinToLatin: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformHiraganaToKatakana: &'static NSStringTransform;
+    pub static NSStringTransformHiraganaToKatakana: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformFullwidthToHalfwidth: &'static NSStringTransform;
+    pub static NSStringTransformFullwidthToHalfwidth: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformToXMLHex: &'static NSStringTransform;
+    pub static NSStringTransformToXMLHex: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformToUnicodeName: &'static NSStringTransform;
+    pub static NSStringTransformToUnicodeName: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformStripCombiningMarks: &'static NSStringTransform;
+    pub static NSStringTransformStripCombiningMarks: &'static NSStringTransform;
 }
 
 extern "C" {
-    static NSStringTransformStripDiacritics: &'static NSStringTransform;
+    pub static NSStringTransformStripDiacritics: &'static NSStringTransform;
 }
 
 extern_methods!(
@@ -705,35 +705,37 @@ extern_methods!(
 pub type NSStringEncodingDetectionOptionsKey = NSString;
 
 extern "C" {
-    static NSStringEncodingDetectionSuggestedEncodingsKey:
+    pub static NSStringEncodingDetectionSuggestedEncodingsKey:
         &'static NSStringEncodingDetectionOptionsKey;
 }
 
 extern "C" {
-    static NSStringEncodingDetectionDisallowedEncodingsKey:
+    pub static NSStringEncodingDetectionDisallowedEncodingsKey:
         &'static NSStringEncodingDetectionOptionsKey;
 }
 
 extern "C" {
-    static NSStringEncodingDetectionUseOnlySuggestedEncodingsKey:
+    pub static NSStringEncodingDetectionUseOnlySuggestedEncodingsKey:
         &'static NSStringEncodingDetectionOptionsKey;
 }
 
 extern "C" {
-    static NSStringEncodingDetectionAllowLossyKey: &'static NSStringEncodingDetectionOptionsKey;
+    pub static NSStringEncodingDetectionAllowLossyKey: &'static NSStringEncodingDetectionOptionsKey;
 }
 
 extern "C" {
-    static NSStringEncodingDetectionFromWindowsKey: &'static NSStringEncodingDetectionOptionsKey;
-}
-
-extern "C" {
-    static NSStringEncodingDetectionLossySubstitutionKey:
+    pub static NSStringEncodingDetectionFromWindowsKey:
         &'static NSStringEncodingDetectionOptionsKey;
 }
 
 extern "C" {
-    static NSStringEncodingDetectionLikelyLanguageKey: &'static NSStringEncodingDetectionOptionsKey;
+    pub static NSStringEncodingDetectionLossySubstitutionKey:
+        &'static NSStringEncodingDetectionOptionsKey;
+}
+
+extern "C" {
+    pub static NSStringEncodingDetectionLikelyLanguageKey:
+        &'static NSStringEncodingDetectionOptionsKey;
 }
 
 extern_methods!(
@@ -816,11 +818,11 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSCharacterConversionException: &'static NSExceptionName;
+    pub static NSCharacterConversionException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSParseErrorException: &'static NSExceptionName;
+    pub static NSParseErrorException: &'static NSExceptionName;
 }
 
 extern_methods!(

@@ -9,11 +9,13 @@ pub const NSCollectionViewScrollDirectionVertical: NSCollectionViewScrollDirecti
 pub const NSCollectionViewScrollDirectionHorizontal: NSCollectionViewScrollDirection = 1;
 
 extern "C" {
-    static NSCollectionElementKindSectionHeader: &'static NSCollectionViewSupplementaryElementKind;
+    pub static NSCollectionElementKindSectionHeader:
+        &'static NSCollectionViewSupplementaryElementKind;
 }
 
 extern "C" {
-    static NSCollectionElementKindSectionFooter: &'static NSCollectionViewSupplementaryElementKind;
+    pub static NSCollectionElementKindSectionFooter:
+        &'static NSCollectionViewSupplementaryElementKind;
 }
 
 extern_class!(

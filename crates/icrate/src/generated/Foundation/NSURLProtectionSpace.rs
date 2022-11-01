@@ -4,63 +4,63 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSURLProtectionSpaceHTTP: &'static NSString;
+    pub static NSURLProtectionSpaceHTTP: &'static NSString;
 }
 
 extern "C" {
-    static NSURLProtectionSpaceHTTPS: &'static NSString;
+    pub static NSURLProtectionSpaceHTTPS: &'static NSString;
 }
 
 extern "C" {
-    static NSURLProtectionSpaceFTP: &'static NSString;
+    pub static NSURLProtectionSpaceFTP: &'static NSString;
 }
 
 extern "C" {
-    static NSURLProtectionSpaceHTTPProxy: &'static NSString;
+    pub static NSURLProtectionSpaceHTTPProxy: &'static NSString;
 }
 
 extern "C" {
-    static NSURLProtectionSpaceHTTPSProxy: &'static NSString;
+    pub static NSURLProtectionSpaceHTTPSProxy: &'static NSString;
 }
 
 extern "C" {
-    static NSURLProtectionSpaceFTPProxy: &'static NSString;
+    pub static NSURLProtectionSpaceFTPProxy: &'static NSString;
 }
 
 extern "C" {
-    static NSURLProtectionSpaceSOCKSProxy: &'static NSString;
+    pub static NSURLProtectionSpaceSOCKSProxy: &'static NSString;
 }
 
 extern "C" {
-    static NSURLAuthenticationMethodDefault: &'static NSString;
+    pub static NSURLAuthenticationMethodDefault: &'static NSString;
 }
 
 extern "C" {
-    static NSURLAuthenticationMethodHTTPBasic: &'static NSString;
+    pub static NSURLAuthenticationMethodHTTPBasic: &'static NSString;
 }
 
 extern "C" {
-    static NSURLAuthenticationMethodHTTPDigest: &'static NSString;
+    pub static NSURLAuthenticationMethodHTTPDigest: &'static NSString;
 }
 
 extern "C" {
-    static NSURLAuthenticationMethodHTMLForm: &'static NSString;
+    pub static NSURLAuthenticationMethodHTMLForm: &'static NSString;
 }
 
 extern "C" {
-    static NSURLAuthenticationMethodNTLM: &'static NSString;
+    pub static NSURLAuthenticationMethodNTLM: &'static NSString;
 }
 
 extern "C" {
-    static NSURLAuthenticationMethodNegotiate: &'static NSString;
+    pub static NSURLAuthenticationMethodNegotiate: &'static NSString;
 }
 
 extern "C" {
-    static NSURLAuthenticationMethodClientCertificate: &'static NSString;
+    pub static NSURLAuthenticationMethodClientCertificate: &'static NSString;
 }
 
 extern "C" {
-    static NSURLAuthenticationMethodServerTrust: &'static NSString;
+    pub static NSURLAuthenticationMethodServerTrust: &'static NSString;
 }
 
 extern_class!(

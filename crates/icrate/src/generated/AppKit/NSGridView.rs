@@ -21,7 +21,7 @@ pub const NSGridRowAlignmentFirstBaseline: NSGridRowAlignment = 2;
 pub const NSGridRowAlignmentLastBaseline: NSGridRowAlignment = 3;
 
 extern "C" {
-    static NSGridViewSizeForContent: CGFloat;
+    pub static NSGridViewSizeForContent: CGFloat;
 }
 
 extern_class!(

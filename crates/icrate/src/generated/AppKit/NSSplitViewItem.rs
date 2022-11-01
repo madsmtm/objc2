@@ -18,7 +18,7 @@ pub const NSSplitViewItemCollapseBehaviorPreferResizingSiblingsWithFixedSplitVie
 pub const NSSplitViewItemCollapseBehaviorUseConstraints: NSSplitViewItemCollapseBehavior = 3;
 
 extern "C" {
-    static NSSplitViewItemUnspecifiedDimension: CGFloat;
+    pub static NSSplitViewItemUnspecifiedDimension: CGFloat;
 }
 
 extern_class!(

@@ -5,145 +5,145 @@ use crate::AppKit::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSTextLineTooLongException: &'static NSExceptionName;
+    pub static NSTextLineTooLongException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSTextNoSelectionException: &'static NSExceptionName;
+    pub static NSTextNoSelectionException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSWordTablesWriteException: &'static NSExceptionName;
+    pub static NSWordTablesWriteException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSWordTablesReadException: &'static NSExceptionName;
+    pub static NSWordTablesReadException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSTextReadException: &'static NSExceptionName;
+    pub static NSTextReadException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSTextWriteException: &'static NSExceptionName;
+    pub static NSTextWriteException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPasteboardCommunicationException: &'static NSExceptionName;
+    pub static NSPasteboardCommunicationException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPrintingCommunicationException: &'static NSExceptionName;
+    pub static NSPrintingCommunicationException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSAbortModalException: &'static NSExceptionName;
+    pub static NSAbortModalException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSAbortPrintingException: &'static NSExceptionName;
+    pub static NSAbortPrintingException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSIllegalSelectorException: &'static NSExceptionName;
+    pub static NSIllegalSelectorException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSAppKitVirtualMemoryException: &'static NSExceptionName;
+    pub static NSAppKitVirtualMemoryException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSBadRTFDirectiveException: &'static NSExceptionName;
+    pub static NSBadRTFDirectiveException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSBadRTFFontTableException: &'static NSExceptionName;
+    pub static NSBadRTFFontTableException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSBadRTFStyleSheetException: &'static NSExceptionName;
+    pub static NSBadRTFStyleSheetException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSTypedStreamVersionException: &'static NSExceptionName;
+    pub static NSTypedStreamVersionException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSTIFFException: &'static NSExceptionName;
+    pub static NSTIFFException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPrintPackageException: &'static NSExceptionName;
+    pub static NSPrintPackageException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSBadRTFColorTableException: &'static NSExceptionName;
+    pub static NSBadRTFColorTableException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSDraggingException: &'static NSExceptionName;
+    pub static NSDraggingException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSColorListIOException: &'static NSExceptionName;
+    pub static NSColorListIOException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSColorListNotEditableException: &'static NSExceptionName;
+    pub static NSColorListNotEditableException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSBadBitmapParametersException: &'static NSExceptionName;
+    pub static NSBadBitmapParametersException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSWindowServerCommunicationException: &'static NSExceptionName;
+    pub static NSWindowServerCommunicationException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSFontUnavailableException: &'static NSExceptionName;
+    pub static NSFontUnavailableException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPPDIncludeNotFoundException: &'static NSExceptionName;
+    pub static NSPPDIncludeNotFoundException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPPDParseException: &'static NSExceptionName;
+    pub static NSPPDParseException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPPDIncludeStackOverflowException: &'static NSExceptionName;
+    pub static NSPPDIncludeStackOverflowException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPPDIncludeStackUnderflowException: &'static NSExceptionName;
+    pub static NSPPDIncludeStackUnderflowException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSRTFPropertyStackOverflowException: &'static NSExceptionName;
+    pub static NSRTFPropertyStackOverflowException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSAppKitIgnoredException: &'static NSExceptionName;
+    pub static NSAppKitIgnoredException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSBadComparisonException: &'static NSExceptionName;
+    pub static NSBadComparisonException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSImageCacheException: &'static NSExceptionName;
+    pub static NSImageCacheException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSNibLoadingException: &'static NSExceptionName;
+    pub static NSNibLoadingException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSBrowserIllegalDelegateException: &'static NSExceptionName;
+    pub static NSBrowserIllegalDelegateException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSAccessibilityException: &'static NSExceptionName;
+    pub static NSAccessibilityException: &'static NSExceptionName;
 }

@@ -81,7 +81,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSScreenColorSpaceDidChangeNotification: &'static NSNotificationName;
+    pub static NSScreenColorSpaceDidChangeNotification: &'static NSNotificationName;
 }
 
 extern_methods!(

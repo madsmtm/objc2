@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSOperationNotSupportedForKeyException: &'static NSString;
+    pub static NSOperationNotSupportedForKeyException: &'static NSString;
 }
 
 extern_methods!(

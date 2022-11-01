@@ -85,15 +85,16 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSUbiquitousKeyValueStoreDidChangeExternallyNotification: &'static NSNotificationName;
+    pub static NSUbiquitousKeyValueStoreDidChangeExternallyNotification:
+        &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSUbiquitousKeyValueStoreChangeReasonKey: &'static NSString;
+    pub static NSUbiquitousKeyValueStoreChangeReasonKey: &'static NSString;
 }
 
 extern "C" {
-    static NSUbiquitousKeyValueStoreChangedKeysKey: &'static NSString;
+    pub static NSUbiquitousKeyValueStoreChangedKeysKey: &'static NSString;
 }
 
 pub const NSUbiquitousKeyValueStoreServerChange: i32 = 0;

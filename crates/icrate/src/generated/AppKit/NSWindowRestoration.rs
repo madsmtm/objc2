@@ -25,7 +25,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSApplicationDidFinishRestoringWindowsNotification: &'static NSNotificationName;
+    pub static NSApplicationDidFinishRestoringWindowsNotification: &'static NSNotificationName;
 }
 
 extern_methods!(

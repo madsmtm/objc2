@@ -40,11 +40,11 @@ pub const NSFileManagerUnmountAllPartitionsAndEjectDisk: NSFileManagerUnmountOpt
 pub const NSFileManagerUnmountWithoutUI: NSFileManagerUnmountOptions = 1 << 1;
 
 extern "C" {
-    static NSFileManagerUnmountDissentingProcessIdentifierErrorKey: &'static NSString;
+    pub static NSFileManagerUnmountDissentingProcessIdentifierErrorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSUbiquityIdentityDidChangeNotification: &'static NSNotificationName;
+    pub static NSUbiquityIdentityDidChangeNotification: &'static NSNotificationName;
 }
 
 extern_class!(
@@ -567,143 +567,143 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSFileType: &'static NSFileAttributeKey;
+    pub static NSFileType: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileTypeDirectory: &'static NSFileAttributeType;
+    pub static NSFileTypeDirectory: &'static NSFileAttributeType;
 }
 
 extern "C" {
-    static NSFileTypeRegular: &'static NSFileAttributeType;
+    pub static NSFileTypeRegular: &'static NSFileAttributeType;
 }
 
 extern "C" {
-    static NSFileTypeSymbolicLink: &'static NSFileAttributeType;
+    pub static NSFileTypeSymbolicLink: &'static NSFileAttributeType;
 }
 
 extern "C" {
-    static NSFileTypeSocket: &'static NSFileAttributeType;
+    pub static NSFileTypeSocket: &'static NSFileAttributeType;
 }
 
 extern "C" {
-    static NSFileTypeCharacterSpecial: &'static NSFileAttributeType;
+    pub static NSFileTypeCharacterSpecial: &'static NSFileAttributeType;
 }
 
 extern "C" {
-    static NSFileTypeBlockSpecial: &'static NSFileAttributeType;
+    pub static NSFileTypeBlockSpecial: &'static NSFileAttributeType;
 }
 
 extern "C" {
-    static NSFileTypeUnknown: &'static NSFileAttributeType;
+    pub static NSFileTypeUnknown: &'static NSFileAttributeType;
 }
 
 extern "C" {
-    static NSFileSize: &'static NSFileAttributeKey;
+    pub static NSFileSize: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileModificationDate: &'static NSFileAttributeKey;
+    pub static NSFileModificationDate: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileReferenceCount: &'static NSFileAttributeKey;
+    pub static NSFileReferenceCount: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileDeviceIdentifier: &'static NSFileAttributeKey;
+    pub static NSFileDeviceIdentifier: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileOwnerAccountName: &'static NSFileAttributeKey;
+    pub static NSFileOwnerAccountName: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileGroupOwnerAccountName: &'static NSFileAttributeKey;
+    pub static NSFileGroupOwnerAccountName: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFilePosixPermissions: &'static NSFileAttributeKey;
+    pub static NSFilePosixPermissions: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileSystemNumber: &'static NSFileAttributeKey;
+    pub static NSFileSystemNumber: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileSystemFileNumber: &'static NSFileAttributeKey;
+    pub static NSFileSystemFileNumber: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileExtensionHidden: &'static NSFileAttributeKey;
+    pub static NSFileExtensionHidden: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileHFSCreatorCode: &'static NSFileAttributeKey;
+    pub static NSFileHFSCreatorCode: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileHFSTypeCode: &'static NSFileAttributeKey;
+    pub static NSFileHFSTypeCode: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileImmutable: &'static NSFileAttributeKey;
+    pub static NSFileImmutable: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileAppendOnly: &'static NSFileAttributeKey;
+    pub static NSFileAppendOnly: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileCreationDate: &'static NSFileAttributeKey;
+    pub static NSFileCreationDate: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileOwnerAccountID: &'static NSFileAttributeKey;
+    pub static NSFileOwnerAccountID: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileGroupOwnerAccountID: &'static NSFileAttributeKey;
+    pub static NSFileGroupOwnerAccountID: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileBusy: &'static NSFileAttributeKey;
+    pub static NSFileBusy: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileProtectionKey: &'static NSFileAttributeKey;
+    pub static NSFileProtectionKey: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileProtectionNone: &'static NSFileProtectionType;
+    pub static NSFileProtectionNone: &'static NSFileProtectionType;
 }
 
 extern "C" {
-    static NSFileProtectionComplete: &'static NSFileProtectionType;
+    pub static NSFileProtectionComplete: &'static NSFileProtectionType;
 }
 
 extern "C" {
-    static NSFileProtectionCompleteUnlessOpen: &'static NSFileProtectionType;
+    pub static NSFileProtectionCompleteUnlessOpen: &'static NSFileProtectionType;
 }
 
 extern "C" {
-    static NSFileProtectionCompleteUntilFirstUserAuthentication: &'static NSFileProtectionType;
+    pub static NSFileProtectionCompleteUntilFirstUserAuthentication: &'static NSFileProtectionType;
 }
 
 extern "C" {
-    static NSFileSystemSize: &'static NSFileAttributeKey;
+    pub static NSFileSystemSize: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileSystemFreeSize: &'static NSFileAttributeKey;
+    pub static NSFileSystemFreeSize: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileSystemNodes: &'static NSFileAttributeKey;
+    pub static NSFileSystemNodes: &'static NSFileAttributeKey;
 }
 
 extern "C" {
-    static NSFileSystemFreeNodes: &'static NSFileAttributeKey;
+    pub static NSFileSystemFreeNodes: &'static NSFileAttributeKey;
 }
 
 extern_methods!(

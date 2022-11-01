@@ -240,125 +240,125 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSCurrentLocaleDidChangeNotification: &'static NSNotificationName;
+    pub static NSCurrentLocaleDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSLocaleIdentifier: &'static NSLocaleKey;
+    pub static NSLocaleIdentifier: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleLanguageCode: &'static NSLocaleKey;
+    pub static NSLocaleLanguageCode: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleCountryCode: &'static NSLocaleKey;
+    pub static NSLocaleCountryCode: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleScriptCode: &'static NSLocaleKey;
+    pub static NSLocaleScriptCode: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleVariantCode: &'static NSLocaleKey;
+    pub static NSLocaleVariantCode: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleExemplarCharacterSet: &'static NSLocaleKey;
+    pub static NSLocaleExemplarCharacterSet: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleCalendar: &'static NSLocaleKey;
+    pub static NSLocaleCalendar: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleCollationIdentifier: &'static NSLocaleKey;
+    pub static NSLocaleCollationIdentifier: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleUsesMetricSystem: &'static NSLocaleKey;
+    pub static NSLocaleUsesMetricSystem: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleMeasurementSystem: &'static NSLocaleKey;
+    pub static NSLocaleMeasurementSystem: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleDecimalSeparator: &'static NSLocaleKey;
+    pub static NSLocaleDecimalSeparator: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleGroupingSeparator: &'static NSLocaleKey;
+    pub static NSLocaleGroupingSeparator: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleCurrencySymbol: &'static NSLocaleKey;
+    pub static NSLocaleCurrencySymbol: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleCurrencyCode: &'static NSLocaleKey;
+    pub static NSLocaleCurrencyCode: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleCollatorIdentifier: &'static NSLocaleKey;
+    pub static NSLocaleCollatorIdentifier: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleQuotationBeginDelimiterKey: &'static NSLocaleKey;
+    pub static NSLocaleQuotationBeginDelimiterKey: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleQuotationEndDelimiterKey: &'static NSLocaleKey;
+    pub static NSLocaleQuotationEndDelimiterKey: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleAlternateQuotationBeginDelimiterKey: &'static NSLocaleKey;
+    pub static NSLocaleAlternateQuotationBeginDelimiterKey: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSLocaleAlternateQuotationEndDelimiterKey: &'static NSLocaleKey;
+    pub static NSLocaleAlternateQuotationEndDelimiterKey: &'static NSLocaleKey;
 }
 
 extern "C" {
-    static NSGregorianCalendar: &'static NSString;
+    pub static NSGregorianCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSBuddhistCalendar: &'static NSString;
+    pub static NSBuddhistCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSChineseCalendar: &'static NSString;
+    pub static NSChineseCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSHebrewCalendar: &'static NSString;
+    pub static NSHebrewCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSIslamicCalendar: &'static NSString;
+    pub static NSIslamicCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSIslamicCivilCalendar: &'static NSString;
+    pub static NSIslamicCivilCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSJapaneseCalendar: &'static NSString;
+    pub static NSJapaneseCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSRepublicOfChinaCalendar: &'static NSString;
+    pub static NSRepublicOfChinaCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSPersianCalendar: &'static NSString;
+    pub static NSPersianCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSIndianCalendar: &'static NSString;
+    pub static NSIndianCalendar: &'static NSString;
 }
 
 extern "C" {
-    static NSISO8601Calendar: &'static NSString;
+    pub static NSISO8601Calendar: &'static NSString;
 }

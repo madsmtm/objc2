@@ -5,7 +5,7 @@ use crate::AppKit::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSFontIdentityMatrix: NonNull<CGFloat>;
+    pub static NSFontIdentityMatrix: NonNull<CGFloat>;
 }
 
 extern_class!(
@@ -218,11 +218,11 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSAntialiasThresholdChangedNotification: &'static NSNotificationName;
+    pub static NSAntialiasThresholdChangedNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSFontSetChangedNotification: &'static NSNotificationName;
+    pub static NSFontSetChangedNotification: &'static NSNotificationName;
 }
 
 pub const NSControlGlyph: i32 = 0x00FFFFFF;

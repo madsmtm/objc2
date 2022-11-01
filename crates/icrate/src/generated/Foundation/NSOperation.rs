@@ -142,14 +142,14 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSInvocationOperationVoidResultException: &'static NSExceptionName;
+    pub static NSInvocationOperationVoidResultException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSInvocationOperationCancelledException: &'static NSExceptionName;
+    pub static NSInvocationOperationCancelledException: &'static NSExceptionName;
 }
 
-static NSOperationQueueDefaultMaxConcurrentOperationCount: NSInteger = -1;
+pub static NSOperationQueueDefaultMaxConcurrentOperationCount: NSInteger = -1;
 
 extern_class!(
     #[derive(Debug)]

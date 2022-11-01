@@ -57,39 +57,39 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSAppearanceNameAqua: &'static NSAppearanceName;
+    pub static NSAppearanceNameAqua: &'static NSAppearanceName;
 }
 
 extern "C" {
-    static NSAppearanceNameDarkAqua: &'static NSAppearanceName;
+    pub static NSAppearanceNameDarkAqua: &'static NSAppearanceName;
 }
 
 extern "C" {
-    static NSAppearanceNameLightContent: &'static NSAppearanceName;
+    pub static NSAppearanceNameLightContent: &'static NSAppearanceName;
 }
 
 extern "C" {
-    static NSAppearanceNameVibrantDark: &'static NSAppearanceName;
+    pub static NSAppearanceNameVibrantDark: &'static NSAppearanceName;
 }
 
 extern "C" {
-    static NSAppearanceNameVibrantLight: &'static NSAppearanceName;
+    pub static NSAppearanceNameVibrantLight: &'static NSAppearanceName;
 }
 
 extern "C" {
-    static NSAppearanceNameAccessibilityHighContrastAqua: &'static NSAppearanceName;
+    pub static NSAppearanceNameAccessibilityHighContrastAqua: &'static NSAppearanceName;
 }
 
 extern "C" {
-    static NSAppearanceNameAccessibilityHighContrastDarkAqua: &'static NSAppearanceName;
+    pub static NSAppearanceNameAccessibilityHighContrastDarkAqua: &'static NSAppearanceName;
 }
 
 extern "C" {
-    static NSAppearanceNameAccessibilityHighContrastVibrantLight: &'static NSAppearanceName;
+    pub static NSAppearanceNameAccessibilityHighContrastVibrantLight: &'static NSAppearanceName;
 }
 
 extern "C" {
-    static NSAppearanceNameAccessibilityHighContrastVibrantDark: &'static NSAppearanceName;
+    pub static NSAppearanceNameAccessibilityHighContrastVibrantDark: &'static NSAppearanceName;
 }
 
 pub type NSAppearanceCustomization = NSObject;

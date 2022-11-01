@@ -4,9 +4,9 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-static NSVariableStatusItemLength: CGFloat = -1.0;
+pub static NSVariableStatusItemLength: CGFloat = -1.0;
 
-static NSSquareStatusItemLength: CGFloat = -2.0;
+pub static NSSquareStatusItemLength: CGFloat = -2.0;
 
 extern_class!(
     #[derive(Debug)]

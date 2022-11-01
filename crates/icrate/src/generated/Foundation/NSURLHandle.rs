@@ -4,47 +4,47 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSHTTPPropertyStatusCodeKey: Option<&'static NSString>;
+    pub static NSHTTPPropertyStatusCodeKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSHTTPPropertyStatusReasonKey: Option<&'static NSString>;
+    pub static NSHTTPPropertyStatusReasonKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSHTTPPropertyServerHTTPVersionKey: Option<&'static NSString>;
+    pub static NSHTTPPropertyServerHTTPVersionKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSHTTPPropertyRedirectionHeadersKey: Option<&'static NSString>;
+    pub static NSHTTPPropertyRedirectionHeadersKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSHTTPPropertyErrorPageDataKey: Option<&'static NSString>;
+    pub static NSHTTPPropertyErrorPageDataKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSHTTPPropertyHTTPProxy: Option<&'static NSString>;
+    pub static NSHTTPPropertyHTTPProxy: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSFTPPropertyUserLoginKey: Option<&'static NSString>;
+    pub static NSFTPPropertyUserLoginKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSFTPPropertyUserPasswordKey: Option<&'static NSString>;
+    pub static NSFTPPropertyUserPasswordKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSFTPPropertyActiveTransferModeKey: Option<&'static NSString>;
+    pub static NSFTPPropertyActiveTransferModeKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSFTPPropertyFileOffsetKey: Option<&'static NSString>;
+    pub static NSFTPPropertyFileOffsetKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSFTPPropertyFTPProxy: Option<&'static NSString>;
+    pub static NSFTPPropertyFTPProxy: Option<&'static NSString>;
 }
 
 pub type NSURLHandleStatus = NSUInteger;

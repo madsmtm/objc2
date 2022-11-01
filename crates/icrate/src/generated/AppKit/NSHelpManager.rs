@@ -69,11 +69,11 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSContextHelpModeDidActivateNotification: &'static NSNotificationName;
+    pub static NSContextHelpModeDidActivateNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSContextHelpModeDidDeactivateNotification: &'static NSNotificationName;
+    pub static NSContextHelpModeDidDeactivateNotification: &'static NSNotificationName;
 }
 
 extern_methods!(

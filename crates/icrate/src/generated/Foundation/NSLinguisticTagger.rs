@@ -6,157 +6,157 @@ use crate::Foundation::*;
 pub type NSLinguisticTagScheme = NSString;
 
 extern "C" {
-    static NSLinguisticTagSchemeTokenType: &'static NSLinguisticTagScheme;
+    pub static NSLinguisticTagSchemeTokenType: &'static NSLinguisticTagScheme;
 }
 
 extern "C" {
-    static NSLinguisticTagSchemeLexicalClass: &'static NSLinguisticTagScheme;
+    pub static NSLinguisticTagSchemeLexicalClass: &'static NSLinguisticTagScheme;
 }
 
 extern "C" {
-    static NSLinguisticTagSchemeNameType: &'static NSLinguisticTagScheme;
+    pub static NSLinguisticTagSchemeNameType: &'static NSLinguisticTagScheme;
 }
 
 extern "C" {
-    static NSLinguisticTagSchemeNameTypeOrLexicalClass: &'static NSLinguisticTagScheme;
+    pub static NSLinguisticTagSchemeNameTypeOrLexicalClass: &'static NSLinguisticTagScheme;
 }
 
 extern "C" {
-    static NSLinguisticTagSchemeLemma: &'static NSLinguisticTagScheme;
+    pub static NSLinguisticTagSchemeLemma: &'static NSLinguisticTagScheme;
 }
 
 extern "C" {
-    static NSLinguisticTagSchemeLanguage: &'static NSLinguisticTagScheme;
+    pub static NSLinguisticTagSchemeLanguage: &'static NSLinguisticTagScheme;
 }
 
 extern "C" {
-    static NSLinguisticTagSchemeScript: &'static NSLinguisticTagScheme;
+    pub static NSLinguisticTagSchemeScript: &'static NSLinguisticTagScheme;
 }
 
 pub type NSLinguisticTag = NSString;
 
 extern "C" {
-    static NSLinguisticTagWord: &'static NSLinguisticTag;
+    pub static NSLinguisticTagWord: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagPunctuation: &'static NSLinguisticTag;
+    pub static NSLinguisticTagPunctuation: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagWhitespace: &'static NSLinguisticTag;
+    pub static NSLinguisticTagWhitespace: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagOther: &'static NSLinguisticTag;
+    pub static NSLinguisticTagOther: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagNoun: &'static NSLinguisticTag;
+    pub static NSLinguisticTagNoun: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagVerb: &'static NSLinguisticTag;
+    pub static NSLinguisticTagVerb: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagAdjective: &'static NSLinguisticTag;
+    pub static NSLinguisticTagAdjective: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagAdverb: &'static NSLinguisticTag;
+    pub static NSLinguisticTagAdverb: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagPronoun: &'static NSLinguisticTag;
+    pub static NSLinguisticTagPronoun: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagDeterminer: &'static NSLinguisticTag;
+    pub static NSLinguisticTagDeterminer: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagParticle: &'static NSLinguisticTag;
+    pub static NSLinguisticTagParticle: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagPreposition: &'static NSLinguisticTag;
+    pub static NSLinguisticTagPreposition: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagNumber: &'static NSLinguisticTag;
+    pub static NSLinguisticTagNumber: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagConjunction: &'static NSLinguisticTag;
+    pub static NSLinguisticTagConjunction: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagInterjection: &'static NSLinguisticTag;
+    pub static NSLinguisticTagInterjection: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagClassifier: &'static NSLinguisticTag;
+    pub static NSLinguisticTagClassifier: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagIdiom: &'static NSLinguisticTag;
+    pub static NSLinguisticTagIdiom: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagOtherWord: &'static NSLinguisticTag;
+    pub static NSLinguisticTagOtherWord: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagSentenceTerminator: &'static NSLinguisticTag;
+    pub static NSLinguisticTagSentenceTerminator: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagOpenQuote: &'static NSLinguisticTag;
+    pub static NSLinguisticTagOpenQuote: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagCloseQuote: &'static NSLinguisticTag;
+    pub static NSLinguisticTagCloseQuote: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagOpenParenthesis: &'static NSLinguisticTag;
+    pub static NSLinguisticTagOpenParenthesis: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagCloseParenthesis: &'static NSLinguisticTag;
+    pub static NSLinguisticTagCloseParenthesis: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagWordJoiner: &'static NSLinguisticTag;
+    pub static NSLinguisticTagWordJoiner: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagDash: &'static NSLinguisticTag;
+    pub static NSLinguisticTagDash: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagOtherPunctuation: &'static NSLinguisticTag;
+    pub static NSLinguisticTagOtherPunctuation: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagParagraphBreak: &'static NSLinguisticTag;
+    pub static NSLinguisticTagParagraphBreak: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagOtherWhitespace: &'static NSLinguisticTag;
+    pub static NSLinguisticTagOtherWhitespace: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagPersonalName: &'static NSLinguisticTag;
+    pub static NSLinguisticTagPersonalName: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagPlaceName: &'static NSLinguisticTag;
+    pub static NSLinguisticTagPlaceName: &'static NSLinguisticTag;
 }
 
 extern "C" {
-    static NSLinguisticTagOrganizationName: &'static NSLinguisticTag;
+    pub static NSLinguisticTagOrganizationName: &'static NSLinguisticTag;
 }
 
 pub type NSLinguisticTaggerUnit = NSInteger;

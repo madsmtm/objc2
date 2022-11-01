@@ -7,43 +7,43 @@ use crate::Foundation::*;
 pub type NSTextCheckingOptionKey = NSString;
 
 extern "C" {
-    static NSTextCheckingOrthographyKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingOrthographyKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingQuotesKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingQuotesKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingReplacementsKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingReplacementsKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingReferenceDateKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingReferenceDateKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingReferenceTimeZoneKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingReferenceTimeZoneKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingDocumentURLKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingDocumentURLKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingDocumentTitleKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingDocumentTitleKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingDocumentAuthorKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingDocumentAuthorKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingRegularExpressionsKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingRegularExpressionsKey: &'static NSTextCheckingOptionKey;
 }
 
 extern "C" {
-    static NSTextCheckingSelectedRangeKey: &'static NSTextCheckingOptionKey;
+    pub static NSTextCheckingSelectedRangeKey: &'static NSTextCheckingOptionKey;
 }
 
 pub type NSCorrectionResponse = NSInteger;
@@ -360,35 +360,38 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSSpellCheckerDidChangeAutomaticSpellingCorrectionNotification:
+    pub static NSSpellCheckerDidChangeAutomaticSpellingCorrectionNotification:
         &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSSpellCheckerDidChangeAutomaticTextReplacementNotification: &'static NSNotificationName;
-}
-
-extern "C" {
-    static NSSpellCheckerDidChangeAutomaticQuoteSubstitutionNotification:
+    pub static NSSpellCheckerDidChangeAutomaticTextReplacementNotification:
         &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSSpellCheckerDidChangeAutomaticDashSubstitutionNotification:
+    pub static NSSpellCheckerDidChangeAutomaticQuoteSubstitutionNotification:
         &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSSpellCheckerDidChangeAutomaticCapitalizationNotification: &'static NSNotificationName;
-}
-
-extern "C" {
-    static NSSpellCheckerDidChangeAutomaticPeriodSubstitutionNotification:
+    pub static NSSpellCheckerDidChangeAutomaticDashSubstitutionNotification:
         &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSSpellCheckerDidChangeAutomaticTextCompletionNotification: &'static NSNotificationName;
+    pub static NSSpellCheckerDidChangeAutomaticCapitalizationNotification:
+        &'static NSNotificationName;
+}
+
+extern "C" {
+    pub static NSSpellCheckerDidChangeAutomaticPeriodSubstitutionNotification:
+        &'static NSNotificationName;
+}
+
+extern "C" {
+    pub static NSSpellCheckerDidChangeAutomaticTextCompletionNotification:
+        &'static NSNotificationName;
 }
 
 extern_methods!(

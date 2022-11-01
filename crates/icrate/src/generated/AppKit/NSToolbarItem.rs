@@ -6,13 +6,13 @@ use crate::Foundation::*;
 
 pub type NSToolbarItemVisibilityPriority = NSInteger;
 
-static NSToolbarItemVisibilityPriorityStandard: NSToolbarItemVisibilityPriority = 0;
+pub static NSToolbarItemVisibilityPriorityStandard: NSToolbarItemVisibilityPriority = 0;
 
-static NSToolbarItemVisibilityPriorityLow: NSToolbarItemVisibilityPriority = -1000;
+pub static NSToolbarItemVisibilityPriorityLow: NSToolbarItemVisibilityPriority = -1000;
 
-static NSToolbarItemVisibilityPriorityHigh: NSToolbarItemVisibilityPriority = 1000;
+pub static NSToolbarItemVisibilityPriorityHigh: NSToolbarItemVisibilityPriority = 1000;
 
-static NSToolbarItemVisibilityPriorityUser: NSToolbarItemVisibilityPriority = 2000;
+pub static NSToolbarItemVisibilityPriorityUser: NSToolbarItemVisibilityPriority = 2000;
 
 extern_class!(
     #[derive(Debug)]
@@ -167,41 +167,41 @@ extern_methods!(
 pub type NSCloudSharingValidation = NSObject;
 
 extern "C" {
-    static NSToolbarSeparatorItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarSeparatorItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarSpaceItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarSpaceItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarFlexibleSpaceItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarFlexibleSpaceItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarShowColorsItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarShowColorsItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarShowFontsItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarShowFontsItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarCustomizeToolbarItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarCustomizeToolbarItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarPrintItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarPrintItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarToggleSidebarItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarToggleSidebarItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarCloudSharingItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarCloudSharingItemIdentifier: &'static NSToolbarItemIdentifier;
 }
 
 extern "C" {
-    static NSToolbarSidebarTrackingSeparatorItemIdentifier: &'static NSToolbarItemIdentifier;
+    pub static NSToolbarSidebarTrackingSeparatorItemIdentifier: &'static NSToolbarItemIdentifier;
 }

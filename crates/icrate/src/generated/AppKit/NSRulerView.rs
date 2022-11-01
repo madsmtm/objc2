@@ -11,19 +11,19 @@ pub const NSVerticalRuler: NSRulerOrientation = 1;
 pub type NSRulerViewUnitName = NSString;
 
 extern "C" {
-    static NSRulerViewUnitInches: &'static NSRulerViewUnitName;
+    pub static NSRulerViewUnitInches: &'static NSRulerViewUnitName;
 }
 
 extern "C" {
-    static NSRulerViewUnitCentimeters: &'static NSRulerViewUnitName;
+    pub static NSRulerViewUnitCentimeters: &'static NSRulerViewUnitName;
 }
 
 extern "C" {
-    static NSRulerViewUnitPoints: &'static NSRulerViewUnitName;
+    pub static NSRulerViewUnitPoints: &'static NSRulerViewUnitName;
 }
 
 extern "C" {
-    static NSRulerViewUnitPicas: &'static NSRulerViewUnitName;
+    pub static NSRulerViewUnitPicas: &'static NSRulerViewUnitName;
 }
 
 extern_class!(

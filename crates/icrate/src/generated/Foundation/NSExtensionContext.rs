@@ -33,21 +33,21 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSExtensionItemsAndErrorsKey: Option<&'static NSString>;
+    pub static NSExtensionItemsAndErrorsKey: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSExtensionHostWillEnterForegroundNotification: Option<&'static NSString>;
+    pub static NSExtensionHostWillEnterForegroundNotification: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSExtensionHostDidEnterBackgroundNotification: Option<&'static NSString>;
+    pub static NSExtensionHostDidEnterBackgroundNotification: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSExtensionHostWillResignActiveNotification: Option<&'static NSString>;
+    pub static NSExtensionHostWillResignActiveNotification: Option<&'static NSString>;
 }
 
 extern "C" {
-    static NSExtensionHostDidBecomeActiveNotification: Option<&'static NSString>;
+    pub static NSExtensionHostDidBecomeActiveNotification: Option<&'static NSString>;
 }

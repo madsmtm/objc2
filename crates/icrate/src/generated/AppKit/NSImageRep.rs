@@ -184,5 +184,5 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSImageRepRegistryDidChangeNotification: &'static NSNotificationName;
+    pub static NSImageRepRegistryDidChangeNotification: &'static NSNotificationName;
 }

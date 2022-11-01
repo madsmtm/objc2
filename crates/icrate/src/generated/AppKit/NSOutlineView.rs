@@ -188,41 +188,41 @@ pub type NSOutlineViewDataSource = NSObject;
 pub type NSOutlineViewDelegate = NSObject;
 
 extern "C" {
-    static NSOutlineViewDisclosureButtonKey: &'static NSUserInterfaceItemIdentifier;
+    pub static NSOutlineViewDisclosureButtonKey: &'static NSUserInterfaceItemIdentifier;
 }
 
 extern "C" {
-    static NSOutlineViewShowHideButtonKey: &'static NSUserInterfaceItemIdentifier;
+    pub static NSOutlineViewShowHideButtonKey: &'static NSUserInterfaceItemIdentifier;
 }
 
 extern "C" {
-    static NSOutlineViewSelectionDidChangeNotification: &'static NSNotificationName;
+    pub static NSOutlineViewSelectionDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSOutlineViewColumnDidMoveNotification: &'static NSNotificationName;
+    pub static NSOutlineViewColumnDidMoveNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSOutlineViewColumnDidResizeNotification: &'static NSNotificationName;
+    pub static NSOutlineViewColumnDidResizeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSOutlineViewSelectionIsChangingNotification: &'static NSNotificationName;
+    pub static NSOutlineViewSelectionIsChangingNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSOutlineViewItemWillExpandNotification: &'static NSNotificationName;
+    pub static NSOutlineViewItemWillExpandNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSOutlineViewItemDidExpandNotification: &'static NSNotificationName;
+    pub static NSOutlineViewItemDidExpandNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSOutlineViewItemWillCollapseNotification: &'static NSNotificationName;
+    pub static NSOutlineViewItemWillCollapseNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSOutlineViewItemDidCollapseNotification: &'static NSNotificationName;
+    pub static NSOutlineViewItemDidCollapseNotification: &'static NSNotificationName;
 }

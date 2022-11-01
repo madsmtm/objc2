@@ -6,584 +6,585 @@ use crate::Foundation::*;
 pub type NSURLResourceKey = NSString;
 
 extern "C" {
-    static NSURLFileScheme: &'static NSString;
+    pub static NSURLFileScheme: &'static NSString;
 }
 
 extern "C" {
-    static NSURLKeysOfUnsetValuesKey: &'static NSURLResourceKey;
+    pub static NSURLKeysOfUnsetValuesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLNameKey: &'static NSURLResourceKey;
+    pub static NSURLNameKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLLocalizedNameKey: &'static NSURLResourceKey;
+    pub static NSURLLocalizedNameKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsRegularFileKey: &'static NSURLResourceKey;
+    pub static NSURLIsRegularFileKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsDirectoryKey: &'static NSURLResourceKey;
+    pub static NSURLIsDirectoryKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsSymbolicLinkKey: &'static NSURLResourceKey;
+    pub static NSURLIsSymbolicLinkKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsVolumeKey: &'static NSURLResourceKey;
+    pub static NSURLIsVolumeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsPackageKey: &'static NSURLResourceKey;
+    pub static NSURLIsPackageKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsApplicationKey: &'static NSURLResourceKey;
+    pub static NSURLIsApplicationKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLApplicationIsScriptableKey: &'static NSURLResourceKey;
+    pub static NSURLApplicationIsScriptableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsSystemImmutableKey: &'static NSURLResourceKey;
+    pub static NSURLIsSystemImmutableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsUserImmutableKey: &'static NSURLResourceKey;
+    pub static NSURLIsUserImmutableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsHiddenKey: &'static NSURLResourceKey;
+    pub static NSURLIsHiddenKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLHasHiddenExtensionKey: &'static NSURLResourceKey;
+    pub static NSURLHasHiddenExtensionKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLCreationDateKey: &'static NSURLResourceKey;
+    pub static NSURLCreationDateKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLContentAccessDateKey: &'static NSURLResourceKey;
+    pub static NSURLContentAccessDateKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLContentModificationDateKey: &'static NSURLResourceKey;
+    pub static NSURLContentModificationDateKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLAttributeModificationDateKey: &'static NSURLResourceKey;
+    pub static NSURLAttributeModificationDateKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLLinkCountKey: &'static NSURLResourceKey;
+    pub static NSURLLinkCountKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLParentDirectoryURLKey: &'static NSURLResourceKey;
+    pub static NSURLParentDirectoryURLKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeURLKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeURLKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLTypeIdentifierKey: &'static NSURLResourceKey;
+    pub static NSURLTypeIdentifierKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLContentTypeKey: &'static NSURLResourceKey;
+    pub static NSURLContentTypeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLLocalizedTypeDescriptionKey: &'static NSURLResourceKey;
+    pub static NSURLLocalizedTypeDescriptionKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLLabelNumberKey: &'static NSURLResourceKey;
+    pub static NSURLLabelNumberKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLLabelColorKey: &'static NSURLResourceKey;
+    pub static NSURLLabelColorKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLLocalizedLabelKey: &'static NSURLResourceKey;
+    pub static NSURLLocalizedLabelKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLEffectiveIconKey: &'static NSURLResourceKey;
+    pub static NSURLEffectiveIconKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLCustomIconKey: &'static NSURLResourceKey;
+    pub static NSURLCustomIconKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLFileResourceIdentifierKey: &'static NSURLResourceKey;
+    pub static NSURLFileResourceIdentifierKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIdentifierKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIdentifierKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLPreferredIOBlockSizeKey: &'static NSURLResourceKey;
+    pub static NSURLPreferredIOBlockSizeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsReadableKey: &'static NSURLResourceKey;
+    pub static NSURLIsReadableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsWritableKey: &'static NSURLResourceKey;
+    pub static NSURLIsWritableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsExecutableKey: &'static NSURLResourceKey;
+    pub static NSURLIsExecutableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLFileSecurityKey: &'static NSURLResourceKey;
+    pub static NSURLFileSecurityKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsExcludedFromBackupKey: &'static NSURLResourceKey;
+    pub static NSURLIsExcludedFromBackupKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLTagNamesKey: &'static NSURLResourceKey;
+    pub static NSURLTagNamesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLPathKey: &'static NSURLResourceKey;
+    pub static NSURLPathKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLCanonicalPathKey: &'static NSURLResourceKey;
+    pub static NSURLCanonicalPathKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsMountTriggerKey: &'static NSURLResourceKey;
+    pub static NSURLIsMountTriggerKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLGenerationIdentifierKey: &'static NSURLResourceKey;
+    pub static NSURLGenerationIdentifierKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLDocumentIdentifierKey: &'static NSURLResourceKey;
+    pub static NSURLDocumentIdentifierKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLAddedToDirectoryDateKey: &'static NSURLResourceKey;
+    pub static NSURLAddedToDirectoryDateKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLQuarantinePropertiesKey: &'static NSURLResourceKey;
+    pub static NSURLQuarantinePropertiesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLFileResourceTypeKey: &'static NSURLResourceKey;
+    pub static NSURLFileResourceTypeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLFileContentIdentifierKey: &'static NSURLResourceKey;
+    pub static NSURLFileContentIdentifierKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLMayShareFileContentKey: &'static NSURLResourceKey;
+    pub static NSURLMayShareFileContentKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLMayHaveExtendedAttributesKey: &'static NSURLResourceKey;
+    pub static NSURLMayHaveExtendedAttributesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsPurgeableKey: &'static NSURLResourceKey;
+    pub static NSURLIsPurgeableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsSparseKey: &'static NSURLResourceKey;
+    pub static NSURLIsSparseKey: &'static NSURLResourceKey;
 }
 
 pub type NSURLFileResourceType = NSString;
 
 extern "C" {
-    static NSURLFileResourceTypeNamedPipe: &'static NSURLFileResourceType;
+    pub static NSURLFileResourceTypeNamedPipe: &'static NSURLFileResourceType;
 }
 
 extern "C" {
-    static NSURLFileResourceTypeCharacterSpecial: &'static NSURLFileResourceType;
+    pub static NSURLFileResourceTypeCharacterSpecial: &'static NSURLFileResourceType;
 }
 
 extern "C" {
-    static NSURLFileResourceTypeDirectory: &'static NSURLFileResourceType;
+    pub static NSURLFileResourceTypeDirectory: &'static NSURLFileResourceType;
 }
 
 extern "C" {
-    static NSURLFileResourceTypeBlockSpecial: &'static NSURLFileResourceType;
+    pub static NSURLFileResourceTypeBlockSpecial: &'static NSURLFileResourceType;
 }
 
 extern "C" {
-    static NSURLFileResourceTypeRegular: &'static NSURLFileResourceType;
+    pub static NSURLFileResourceTypeRegular: &'static NSURLFileResourceType;
 }
 
 extern "C" {
-    static NSURLFileResourceTypeSymbolicLink: &'static NSURLFileResourceType;
+    pub static NSURLFileResourceTypeSymbolicLink: &'static NSURLFileResourceType;
 }
 
 extern "C" {
-    static NSURLFileResourceTypeSocket: &'static NSURLFileResourceType;
+    pub static NSURLFileResourceTypeSocket: &'static NSURLFileResourceType;
 }
 
 extern "C" {
-    static NSURLFileResourceTypeUnknown: &'static NSURLFileResourceType;
+    pub static NSURLFileResourceTypeUnknown: &'static NSURLFileResourceType;
 }
 
 extern "C" {
-    static NSURLThumbnailDictionaryKey: &'static NSURLResourceKey;
+    pub static NSURLThumbnailDictionaryKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLThumbnailKey: &'static NSURLResourceKey;
+    pub static NSURLThumbnailKey: &'static NSURLResourceKey;
 }
 
 pub type NSURLThumbnailDictionaryItem = NSString;
 
 extern "C" {
-    static NSThumbnail1024x1024SizeKey: &'static NSURLThumbnailDictionaryItem;
+    pub static NSThumbnail1024x1024SizeKey: &'static NSURLThumbnailDictionaryItem;
 }
 
 extern "C" {
-    static NSURLFileSizeKey: &'static NSURLResourceKey;
+    pub static NSURLFileSizeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLFileAllocatedSizeKey: &'static NSURLResourceKey;
+    pub static NSURLFileAllocatedSizeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLTotalFileSizeKey: &'static NSURLResourceKey;
+    pub static NSURLTotalFileSizeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLTotalFileAllocatedSizeKey: &'static NSURLResourceKey;
+    pub static NSURLTotalFileAllocatedSizeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsAliasFileKey: &'static NSURLResourceKey;
+    pub static NSURLIsAliasFileKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLFileProtectionKey: &'static NSURLResourceKey;
+    pub static NSURLFileProtectionKey: &'static NSURLResourceKey;
 }
 
 pub type NSURLFileProtectionType = NSString;
 
 extern "C" {
-    static NSURLFileProtectionNone: &'static NSURLFileProtectionType;
+    pub static NSURLFileProtectionNone: &'static NSURLFileProtectionType;
 }
 
 extern "C" {
-    static NSURLFileProtectionComplete: &'static NSURLFileProtectionType;
+    pub static NSURLFileProtectionComplete: &'static NSURLFileProtectionType;
 }
 
 extern "C" {
-    static NSURLFileProtectionCompleteUnlessOpen: &'static NSURLFileProtectionType;
+    pub static NSURLFileProtectionCompleteUnlessOpen: &'static NSURLFileProtectionType;
 }
 
 extern "C" {
-    static NSURLFileProtectionCompleteUntilFirstUserAuthentication:
+    pub static NSURLFileProtectionCompleteUntilFirstUserAuthentication:
         &'static NSURLFileProtectionType;
 }
 
 extern "C" {
-    static NSURLVolumeLocalizedFormatDescriptionKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeLocalizedFormatDescriptionKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeTotalCapacityKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeTotalCapacityKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeAvailableCapacityKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeAvailableCapacityKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeResourceCountKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeResourceCountKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsPersistentIDsKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsPersistentIDsKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsSymbolicLinksKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsSymbolicLinksKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsHardLinksKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsHardLinksKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsJournalingKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsJournalingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsJournalingKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsJournalingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsSparseFilesKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsSparseFilesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsZeroRunsKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsZeroRunsKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsCaseSensitiveNamesKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsCaseSensitiveNamesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsCasePreservedNamesKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsCasePreservedNamesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsRootDirectoryDatesKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsRootDirectoryDatesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsVolumeSizesKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsVolumeSizesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsRenamingKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsRenamingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsAdvisoryFileLockingKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsAdvisoryFileLockingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsExtendedSecurityKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsExtendedSecurityKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsBrowsableKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsBrowsableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeMaximumFileSizeKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeMaximumFileSizeKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsEjectableKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsEjectableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsRemovableKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsRemovableKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsInternalKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsInternalKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsAutomountedKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsAutomountedKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsLocalKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsLocalKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsReadOnlyKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsReadOnlyKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeCreationDateKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeCreationDateKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeURLForRemountingKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeURLForRemountingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeUUIDStringKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeUUIDStringKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeNameKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeNameKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeLocalizedNameKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeLocalizedNameKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsEncryptedKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsEncryptedKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeIsRootFileSystemKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeIsRootFileSystemKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsCompressionKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsCompressionKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsFileCloningKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsFileCloningKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsSwapRenamingKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsSwapRenamingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsExclusiveRenamingKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsExclusiveRenamingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsImmutableFilesKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsImmutableFilesKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsAccessPermissionsKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsAccessPermissionsKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeSupportsFileProtectionKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeSupportsFileProtectionKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeAvailableCapacityForImportantUsageKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeAvailableCapacityForImportantUsageKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLVolumeAvailableCapacityForOpportunisticUsageKey: &'static NSURLResourceKey;
+    pub static NSURLVolumeAvailableCapacityForOpportunisticUsageKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLIsUbiquitousItemKey: &'static NSURLResourceKey;
+    pub static NSURLIsUbiquitousItemKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemHasUnresolvedConflictsKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemHasUnresolvedConflictsKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemIsDownloadedKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemIsDownloadedKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemIsDownloadingKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemIsDownloadingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemIsUploadedKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemIsUploadedKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemIsUploadingKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemIsUploadingKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemPercentDownloadedKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemPercentDownloadedKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemPercentUploadedKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemPercentUploadedKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemDownloadingStatusKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemDownloadingStatusKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemDownloadingErrorKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemDownloadingErrorKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemUploadingErrorKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemUploadingErrorKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemDownloadRequestedKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemDownloadRequestedKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemContainerDisplayNameKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemContainerDisplayNameKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemIsExcludedFromSyncKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemIsExcludedFromSyncKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemIsSharedKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousItemIsSharedKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousSharedItemCurrentUserRoleKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousSharedItemCurrentUserRoleKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousSharedItemCurrentUserPermissionsKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousSharedItemCurrentUserPermissionsKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousSharedItemOwnerNameComponentsKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousSharedItemOwnerNameComponentsKey: &'static NSURLResourceKey;
 }
 
 extern "C" {
-    static NSURLUbiquitousSharedItemMostRecentEditorNameComponentsKey: &'static NSURLResourceKey;
+    pub static NSURLUbiquitousSharedItemMostRecentEditorNameComponentsKey:
+        &'static NSURLResourceKey;
 }
 
 pub type NSURLUbiquitousItemDownloadingStatus = NSString;
 
 extern "C" {
-    static NSURLUbiquitousItemDownloadingStatusNotDownloaded:
+    pub static NSURLUbiquitousItemDownloadingStatusNotDownloaded:
         &'static NSURLUbiquitousItemDownloadingStatus;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemDownloadingStatusDownloaded:
+    pub static NSURLUbiquitousItemDownloadingStatusDownloaded:
         &'static NSURLUbiquitousItemDownloadingStatus;
 }
 
 extern "C" {
-    static NSURLUbiquitousItemDownloadingStatusCurrent:
+    pub static NSURLUbiquitousItemDownloadingStatusCurrent:
         &'static NSURLUbiquitousItemDownloadingStatus;
 }
 
 pub type NSURLUbiquitousSharedItemRole = NSString;
 
 extern "C" {
-    static NSURLUbiquitousSharedItemRoleOwner: &'static NSURLUbiquitousSharedItemRole;
+    pub static NSURLUbiquitousSharedItemRoleOwner: &'static NSURLUbiquitousSharedItemRole;
 }
 
 extern "C" {
-    static NSURLUbiquitousSharedItemRoleParticipant: &'static NSURLUbiquitousSharedItemRole;
+    pub static NSURLUbiquitousSharedItemRoleParticipant: &'static NSURLUbiquitousSharedItemRole;
 }
 
 pub type NSURLUbiquitousSharedItemPermissions = NSString;
 
 extern "C" {
-    static NSURLUbiquitousSharedItemPermissionsReadOnly:
+    pub static NSURLUbiquitousSharedItemPermissionsReadOnly:
         &'static NSURLUbiquitousSharedItemPermissions;
 }
 
 extern "C" {
-    static NSURLUbiquitousSharedItemPermissionsReadWrite:
+    pub static NSURLUbiquitousSharedItemPermissionsReadWrite:
         &'static NSURLUbiquitousSharedItemPermissions;
 }
 

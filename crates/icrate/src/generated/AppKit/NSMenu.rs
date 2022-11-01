@@ -249,31 +249,31 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSMenuWillSendActionNotification: &'static NSNotificationName;
+    pub static NSMenuWillSendActionNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSMenuDidSendActionNotification: &'static NSNotificationName;
+    pub static NSMenuDidSendActionNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSMenuDidAddItemNotification: &'static NSNotificationName;
+    pub static NSMenuDidAddItemNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSMenuDidRemoveItemNotification: &'static NSNotificationName;
+    pub static NSMenuDidRemoveItemNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSMenuDidChangeItemNotification: &'static NSNotificationName;
+    pub static NSMenuDidChangeItemNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSMenuDidBeginTrackingNotification: &'static NSNotificationName;
+    pub static NSMenuDidBeginTrackingNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSMenuDidEndTrackingNotification: &'static NSNotificationName;
+    pub static NSMenuDidEndTrackingNotification: &'static NSNotificationName;
 }
 
 extern_methods!(

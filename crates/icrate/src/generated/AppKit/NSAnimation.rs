@@ -16,11 +16,11 @@ pub const NSAnimationNonblocking: NSAnimationBlockingMode = 1;
 pub const NSAnimationNonblockingThreaded: NSAnimationBlockingMode = 2;
 
 extern "C" {
-    static NSAnimationProgressMarkNotification: &'static NSNotificationName;
+    pub static NSAnimationProgressMarkNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSAnimationProgressMark: &'static NSString;
+    pub static NSAnimationProgressMark: &'static NSString;
 }
 
 extern_class!(
@@ -138,29 +138,29 @@ pub type NSAnimationDelegate = NSObject;
 pub type NSViewAnimationKey = NSString;
 
 extern "C" {
-    static NSViewAnimationTargetKey: &'static NSViewAnimationKey;
+    pub static NSViewAnimationTargetKey: &'static NSViewAnimationKey;
 }
 
 extern "C" {
-    static NSViewAnimationStartFrameKey: &'static NSViewAnimationKey;
+    pub static NSViewAnimationStartFrameKey: &'static NSViewAnimationKey;
 }
 
 extern "C" {
-    static NSViewAnimationEndFrameKey: &'static NSViewAnimationKey;
+    pub static NSViewAnimationEndFrameKey: &'static NSViewAnimationKey;
 }
 
 extern "C" {
-    static NSViewAnimationEffectKey: &'static NSViewAnimationKey;
+    pub static NSViewAnimationEffectKey: &'static NSViewAnimationKey;
 }
 
 pub type NSViewAnimationEffectName = NSString;
 
 extern "C" {
-    static NSViewAnimationFadeInEffect: &'static NSViewAnimationEffectName;
+    pub static NSViewAnimationFadeInEffect: &'static NSViewAnimationEffectName;
 }
 
 extern "C" {
-    static NSViewAnimationFadeOutEffect: &'static NSViewAnimationEffectName;
+    pub static NSViewAnimationFadeOutEffect: &'static NSViewAnimationEffectName;
 }
 
 extern_class!(
@@ -198,9 +198,9 @@ pub type NSAnimatablePropertyKey = NSString;
 pub type NSAnimatablePropertyContainer = NSObject;
 
 extern "C" {
-    static NSAnimationTriggerOrderIn: &'static NSAnimatablePropertyKey;
+    pub static NSAnimationTriggerOrderIn: &'static NSAnimatablePropertyKey;
 }
 
 extern "C" {
-    static NSAnimationTriggerOrderOut: &'static NSAnimatablePropertyKey;
+    pub static NSAnimationTriggerOrderOut: &'static NSAnimatablePropertyKey;
 }

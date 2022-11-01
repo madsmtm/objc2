@@ -7,31 +7,31 @@ use crate::Foundation::*;
 pub type NSRuleEditorPredicatePartKey = NSString;
 
 extern "C" {
-    static NSRuleEditorPredicateLeftExpression: &'static NSRuleEditorPredicatePartKey;
+    pub static NSRuleEditorPredicateLeftExpression: &'static NSRuleEditorPredicatePartKey;
 }
 
 extern "C" {
-    static NSRuleEditorPredicateRightExpression: &'static NSRuleEditorPredicatePartKey;
+    pub static NSRuleEditorPredicateRightExpression: &'static NSRuleEditorPredicatePartKey;
 }
 
 extern "C" {
-    static NSRuleEditorPredicateComparisonModifier: &'static NSRuleEditorPredicatePartKey;
+    pub static NSRuleEditorPredicateComparisonModifier: &'static NSRuleEditorPredicatePartKey;
 }
 
 extern "C" {
-    static NSRuleEditorPredicateOptions: &'static NSRuleEditorPredicatePartKey;
+    pub static NSRuleEditorPredicateOptions: &'static NSRuleEditorPredicatePartKey;
 }
 
 extern "C" {
-    static NSRuleEditorPredicateOperatorType: &'static NSRuleEditorPredicatePartKey;
+    pub static NSRuleEditorPredicateOperatorType: &'static NSRuleEditorPredicatePartKey;
 }
 
 extern "C" {
-    static NSRuleEditorPredicateCustomSelector: &'static NSRuleEditorPredicatePartKey;
+    pub static NSRuleEditorPredicateCustomSelector: &'static NSRuleEditorPredicatePartKey;
 }
 
 extern "C" {
-    static NSRuleEditorPredicateCompoundType: &'static NSRuleEditorPredicatePartKey;
+    pub static NSRuleEditorPredicateCompoundType: &'static NSRuleEditorPredicatePartKey;
 }
 
 pub type NSRuleEditorNestingMode = NSUInteger;
@@ -213,5 +213,5 @@ extern_methods!(
 pub type NSRuleEditorDelegate = NSObject;
 
 extern "C" {
-    static NSRuleEditorRowsDidChangeNotification: &'static NSNotificationName;
+    pub static NSRuleEditorRowsDidChangeNotification: &'static NSNotificationName;
 }

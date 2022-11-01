@@ -122,23 +122,23 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSColorPanelColorDidChangeNotification: &'static NSNotificationName;
+    pub static NSColorPanelColorDidChangeNotification: &'static NSNotificationName;
 }
 
-static NSNoModeColorPanel: NSColorPanelMode = NSColorPanelModeNone;
+pub static NSNoModeColorPanel: NSColorPanelMode = NSColorPanelModeNone;
 
-static NSGrayModeColorPanel: NSColorPanelMode = NSColorPanelModeGray;
+pub static NSGrayModeColorPanel: NSColorPanelMode = NSColorPanelModeGray;
 
-static NSRGBModeColorPanel: NSColorPanelMode = NSColorPanelModeRGB;
+pub static NSRGBModeColorPanel: NSColorPanelMode = NSColorPanelModeRGB;
 
-static NSCMYKModeColorPanel: NSColorPanelMode = NSColorPanelModeCMYK;
+pub static NSCMYKModeColorPanel: NSColorPanelMode = NSColorPanelModeCMYK;
 
-static NSHSBModeColorPanel: NSColorPanelMode = NSColorPanelModeHSB;
+pub static NSHSBModeColorPanel: NSColorPanelMode = NSColorPanelModeHSB;
 
-static NSCustomPaletteModeColorPanel: NSColorPanelMode = NSColorPanelModeCustomPalette;
+pub static NSCustomPaletteModeColorPanel: NSColorPanelMode = NSColorPanelModeCustomPalette;
 
-static NSColorListModeColorPanel: NSColorPanelMode = NSColorPanelModeColorList;
+pub static NSColorListModeColorPanel: NSColorPanelMode = NSColorPanelModeColorList;
 
-static NSWheelModeColorPanel: NSColorPanelMode = NSColorPanelModeWheel;
+pub static NSWheelModeColorPanel: NSColorPanelMode = NSColorPanelModeWheel;
 
-static NSCrayonModeColorPanel: NSColorPanelMode = NSColorPanelModeCrayon;
+pub static NSCrayonModeColorPanel: NSColorPanelMode = NSColorPanelModeCrayon;

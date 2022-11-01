@@ -13,7 +13,7 @@ pub const NSCollectionElementCategoryInterItemGap: NSCollectionElementCategory =
 pub type NSCollectionViewDecorationElementKind = NSString;
 
 extern "C" {
-    static NSCollectionElementKindInterItemGapIndicator:
+    pub static NSCollectionElementKindInterItemGapIndicator:
         &'static NSCollectionViewSupplementaryElementKind;
 }
 

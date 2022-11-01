@@ -4,63 +4,63 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSGenericException: &'static NSExceptionName;
+    pub static NSGenericException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSRangeException: &'static NSExceptionName;
+    pub static NSRangeException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSInvalidArgumentException: &'static NSExceptionName;
+    pub static NSInvalidArgumentException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSInternalInconsistencyException: &'static NSExceptionName;
+    pub static NSInternalInconsistencyException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSMallocException: &'static NSExceptionName;
+    pub static NSMallocException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSObjectInaccessibleException: &'static NSExceptionName;
+    pub static NSObjectInaccessibleException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSObjectNotAvailableException: &'static NSExceptionName;
+    pub static NSObjectNotAvailableException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSDestinationInvalidException: &'static NSExceptionName;
+    pub static NSDestinationInvalidException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPortTimeoutException: &'static NSExceptionName;
+    pub static NSPortTimeoutException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSInvalidSendPortException: &'static NSExceptionName;
+    pub static NSInvalidSendPortException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSInvalidReceivePortException: &'static NSExceptionName;
+    pub static NSInvalidReceivePortException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPortSendException: &'static NSExceptionName;
+    pub static NSPortSendException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSPortReceiveException: &'static NSExceptionName;
+    pub static NSPortReceiveException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSOldStyleException: &'static NSExceptionName;
+    pub static NSOldStyleException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSInconsistentArchiveException: &'static NSExceptionName;
+    pub static NSInconsistentArchiveException: &'static NSExceptionName;
 }
 
 extern_class!(
@@ -122,7 +122,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSAssertionHandlerKey: &'static NSString;
+    pub static NSAssertionHandlerKey: &'static NSString;
 }
 
 extern_class!(

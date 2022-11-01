@@ -4,23 +4,23 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSAppleScriptErrorMessage: &'static NSString;
+    pub static NSAppleScriptErrorMessage: &'static NSString;
 }
 
 extern "C" {
-    static NSAppleScriptErrorNumber: &'static NSString;
+    pub static NSAppleScriptErrorNumber: &'static NSString;
 }
 
 extern "C" {
-    static NSAppleScriptErrorAppName: &'static NSString;
+    pub static NSAppleScriptErrorAppName: &'static NSString;
 }
 
 extern "C" {
-    static NSAppleScriptErrorBriefMessage: &'static NSString;
+    pub static NSAppleScriptErrorBriefMessage: &'static NSString;
 }
 
 extern "C" {
-    static NSAppleScriptErrorRange: &'static NSString;
+    pub static NSAppleScriptErrorRange: &'static NSString;
 }
 
 extern_class!(

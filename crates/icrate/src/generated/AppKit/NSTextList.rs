@@ -7,71 +7,71 @@ use crate::Foundation::*;
 pub type NSTextListMarkerFormat = NSString;
 
 extern "C" {
-    static NSTextListMarkerBox: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerBox: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerCheck: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerCheck: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerCircle: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerCircle: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerDiamond: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerDiamond: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerDisc: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerDisc: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerHyphen: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerHyphen: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerSquare: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerSquare: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerLowercaseHexadecimal: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerLowercaseHexadecimal: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerUppercaseHexadecimal: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerUppercaseHexadecimal: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerOctal: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerOctal: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerLowercaseAlpha: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerLowercaseAlpha: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerUppercaseAlpha: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerUppercaseAlpha: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerLowercaseLatin: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerLowercaseLatin: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerUppercaseLatin: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerUppercaseLatin: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerLowercaseRoman: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerLowercaseRoman: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerUppercaseRoman: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerUppercaseRoman: &'static NSTextListMarkerFormat;
 }
 
 extern "C" {
-    static NSTextListMarkerDecimal: &'static NSTextListMarkerFormat;
+    pub static NSTextListMarkerDecimal: &'static NSTextListMarkerFormat;
 }
 
 pub type NSTextListOptions = NSUInteger;

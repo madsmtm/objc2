@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSFoundationVersionNumber: c_double;
+    pub static NSFoundationVersionNumber: c_double;
 }
 
 pub type NSExceptionName = NSString;
@@ -31,4 +31,4 @@ pub const NSQualityOfServiceUtility: NSQualityOfService = 0x11;
 pub const NSQualityOfServiceBackground: NSQualityOfService = 0x09;
 pub const NSQualityOfServiceDefault: NSQualityOfService = -1;
 
-static NSNotFound: NSInteger = todo;
+pub static NSNotFound: NSInteger = todo;

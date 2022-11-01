@@ -4,725 +4,725 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSMetadataItemFSNameKey: &'static NSString;
+    pub static NSMetadataItemFSNameKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemDisplayNameKey: &'static NSString;
+    pub static NSMetadataItemDisplayNameKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemURLKey: &'static NSString;
+    pub static NSMetadataItemURLKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPathKey: &'static NSString;
+    pub static NSMetadataItemPathKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFSSizeKey: &'static NSString;
+    pub static NSMetadataItemFSSizeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFSCreationDateKey: &'static NSString;
+    pub static NSMetadataItemFSCreationDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFSContentChangeDateKey: &'static NSString;
+    pub static NSMetadataItemFSContentChangeDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemContentTypeKey: &'static NSString;
+    pub static NSMetadataItemContentTypeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemContentTypeTreeKey: &'static NSString;
+    pub static NSMetadataItemContentTypeTreeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemIsUbiquitousKey: &'static NSString;
+    pub static NSMetadataItemIsUbiquitousKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemHasUnresolvedConflictsKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemHasUnresolvedConflictsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemIsDownloadedKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemIsDownloadedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemDownloadingStatusKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemDownloadingStatusKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemDownloadingStatusNotDownloaded: &'static NSString;
+    pub static NSMetadataUbiquitousItemDownloadingStatusNotDownloaded: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemDownloadingStatusDownloaded: &'static NSString;
+    pub static NSMetadataUbiquitousItemDownloadingStatusDownloaded: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemDownloadingStatusCurrent: &'static NSString;
+    pub static NSMetadataUbiquitousItemDownloadingStatusCurrent: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemIsDownloadingKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemIsDownloadingKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemIsUploadedKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemIsUploadedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemIsUploadingKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemIsUploadingKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemPercentDownloadedKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemPercentDownloadedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemPercentUploadedKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemPercentUploadedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemDownloadingErrorKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemDownloadingErrorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemUploadingErrorKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemUploadingErrorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemDownloadRequestedKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemDownloadRequestedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemIsExternalDocumentKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemIsExternalDocumentKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemContainerDisplayNameKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemContainerDisplayNameKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemURLInLocalContainerKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemURLInLocalContainerKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousItemIsSharedKey: &'static NSString;
+    pub static NSMetadataUbiquitousItemIsSharedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousSharedItemCurrentUserRoleKey: &'static NSString;
+    pub static NSMetadataUbiquitousSharedItemCurrentUserRoleKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousSharedItemCurrentUserPermissionsKey: &'static NSString;
+    pub static NSMetadataUbiquitousSharedItemCurrentUserPermissionsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousSharedItemOwnerNameComponentsKey: &'static NSString;
+    pub static NSMetadataUbiquitousSharedItemOwnerNameComponentsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousSharedItemMostRecentEditorNameComponentsKey: &'static NSString;
+    pub static NSMetadataUbiquitousSharedItemMostRecentEditorNameComponentsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousSharedItemRoleOwner: &'static NSString;
+    pub static NSMetadataUbiquitousSharedItemRoleOwner: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousSharedItemRoleParticipant: &'static NSString;
+    pub static NSMetadataUbiquitousSharedItemRoleParticipant: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousSharedItemPermissionsReadOnly: &'static NSString;
+    pub static NSMetadataUbiquitousSharedItemPermissionsReadOnly: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataUbiquitousSharedItemPermissionsReadWrite: &'static NSString;
+    pub static NSMetadataUbiquitousSharedItemPermissionsReadWrite: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAttributeChangeDateKey: &'static NSString;
+    pub static NSMetadataItemAttributeChangeDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemKeywordsKey: &'static NSString;
+    pub static NSMetadataItemKeywordsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemTitleKey: &'static NSString;
+    pub static NSMetadataItemTitleKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAuthorsKey: &'static NSString;
+    pub static NSMetadataItemAuthorsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemEditorsKey: &'static NSString;
+    pub static NSMetadataItemEditorsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemParticipantsKey: &'static NSString;
+    pub static NSMetadataItemParticipantsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemProjectsKey: &'static NSString;
+    pub static NSMetadataItemProjectsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemDownloadedDateKey: &'static NSString;
+    pub static NSMetadataItemDownloadedDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemWhereFromsKey: &'static NSString;
+    pub static NSMetadataItemWhereFromsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCommentKey: &'static NSString;
+    pub static NSMetadataItemCommentKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCopyrightKey: &'static NSString;
+    pub static NSMetadataItemCopyrightKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemLastUsedDateKey: &'static NSString;
+    pub static NSMetadataItemLastUsedDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemContentCreationDateKey: &'static NSString;
+    pub static NSMetadataItemContentCreationDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemContentModificationDateKey: &'static NSString;
+    pub static NSMetadataItemContentModificationDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemDateAddedKey: &'static NSString;
+    pub static NSMetadataItemDateAddedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemDurationSecondsKey: &'static NSString;
+    pub static NSMetadataItemDurationSecondsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemContactKeywordsKey: &'static NSString;
+    pub static NSMetadataItemContactKeywordsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemVersionKey: &'static NSString;
+    pub static NSMetadataItemVersionKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPixelHeightKey: &'static NSString;
+    pub static NSMetadataItemPixelHeightKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPixelWidthKey: &'static NSString;
+    pub static NSMetadataItemPixelWidthKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPixelCountKey: &'static NSString;
+    pub static NSMetadataItemPixelCountKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemColorSpaceKey: &'static NSString;
+    pub static NSMetadataItemColorSpaceKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemBitsPerSampleKey: &'static NSString;
+    pub static NSMetadataItemBitsPerSampleKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFlashOnOffKey: &'static NSString;
+    pub static NSMetadataItemFlashOnOffKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFocalLengthKey: &'static NSString;
+    pub static NSMetadataItemFocalLengthKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAcquisitionMakeKey: &'static NSString;
+    pub static NSMetadataItemAcquisitionMakeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAcquisitionModelKey: &'static NSString;
+    pub static NSMetadataItemAcquisitionModelKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemISOSpeedKey: &'static NSString;
+    pub static NSMetadataItemISOSpeedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemOrientationKey: &'static NSString;
+    pub static NSMetadataItemOrientationKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemLayerNamesKey: &'static NSString;
+    pub static NSMetadataItemLayerNamesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemWhiteBalanceKey: &'static NSString;
+    pub static NSMetadataItemWhiteBalanceKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemApertureKey: &'static NSString;
+    pub static NSMetadataItemApertureKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemProfileNameKey: &'static NSString;
+    pub static NSMetadataItemProfileNameKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemResolutionWidthDPIKey: &'static NSString;
+    pub static NSMetadataItemResolutionWidthDPIKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemResolutionHeightDPIKey: &'static NSString;
+    pub static NSMetadataItemResolutionHeightDPIKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemExposureModeKey: &'static NSString;
+    pub static NSMetadataItemExposureModeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemExposureTimeSecondsKey: &'static NSString;
+    pub static NSMetadataItemExposureTimeSecondsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemEXIFVersionKey: &'static NSString;
+    pub static NSMetadataItemEXIFVersionKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCameraOwnerKey: &'static NSString;
+    pub static NSMetadataItemCameraOwnerKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFocalLength35mmKey: &'static NSString;
+    pub static NSMetadataItemFocalLength35mmKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemLensModelKey: &'static NSString;
+    pub static NSMetadataItemLensModelKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemEXIFGPSVersionKey: &'static NSString;
+    pub static NSMetadataItemEXIFGPSVersionKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAltitudeKey: &'static NSString;
+    pub static NSMetadataItemAltitudeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemLatitudeKey: &'static NSString;
+    pub static NSMetadataItemLatitudeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemLongitudeKey: &'static NSString;
+    pub static NSMetadataItemLongitudeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemSpeedKey: &'static NSString;
+    pub static NSMetadataItemSpeedKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemTimestampKey: &'static NSString;
+    pub static NSMetadataItemTimestampKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSTrackKey: &'static NSString;
+    pub static NSMetadataItemGPSTrackKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemImageDirectionKey: &'static NSString;
+    pub static NSMetadataItemImageDirectionKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemNamedLocationKey: &'static NSString;
+    pub static NSMetadataItemNamedLocationKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSStatusKey: &'static NSString;
+    pub static NSMetadataItemGPSStatusKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSMeasureModeKey: &'static NSString;
+    pub static NSMetadataItemGPSMeasureModeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSDOPKey: &'static NSString;
+    pub static NSMetadataItemGPSDOPKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSMapDatumKey: &'static NSString;
+    pub static NSMetadataItemGPSMapDatumKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSDestLatitudeKey: &'static NSString;
+    pub static NSMetadataItemGPSDestLatitudeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSDestLongitudeKey: &'static NSString;
+    pub static NSMetadataItemGPSDestLongitudeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSDestBearingKey: &'static NSString;
+    pub static NSMetadataItemGPSDestBearingKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSDestDistanceKey: &'static NSString;
+    pub static NSMetadataItemGPSDestDistanceKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSProcessingMethodKey: &'static NSString;
+    pub static NSMetadataItemGPSProcessingMethodKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSAreaInformationKey: &'static NSString;
+    pub static NSMetadataItemGPSAreaInformationKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSDateStampKey: &'static NSString;
+    pub static NSMetadataItemGPSDateStampKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGPSDifferentalKey: &'static NSString;
+    pub static NSMetadataItemGPSDifferentalKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCodecsKey: &'static NSString;
+    pub static NSMetadataItemCodecsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemMediaTypesKey: &'static NSString;
+    pub static NSMetadataItemMediaTypesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemStreamableKey: &'static NSString;
+    pub static NSMetadataItemStreamableKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemTotalBitRateKey: &'static NSString;
+    pub static NSMetadataItemTotalBitRateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemVideoBitRateKey: &'static NSString;
+    pub static NSMetadataItemVideoBitRateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAudioBitRateKey: &'static NSString;
+    pub static NSMetadataItemAudioBitRateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemDeliveryTypeKey: &'static NSString;
+    pub static NSMetadataItemDeliveryTypeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAlbumKey: &'static NSString;
+    pub static NSMetadataItemAlbumKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemHasAlphaChannelKey: &'static NSString;
+    pub static NSMetadataItemHasAlphaChannelKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemRedEyeOnOffKey: &'static NSString;
+    pub static NSMetadataItemRedEyeOnOffKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemMeteringModeKey: &'static NSString;
+    pub static NSMetadataItemMeteringModeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemMaxApertureKey: &'static NSString;
+    pub static NSMetadataItemMaxApertureKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFNumberKey: &'static NSString;
+    pub static NSMetadataItemFNumberKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemExposureProgramKey: &'static NSString;
+    pub static NSMetadataItemExposureProgramKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemExposureTimeStringKey: &'static NSString;
+    pub static NSMetadataItemExposureTimeStringKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemHeadlineKey: &'static NSString;
+    pub static NSMetadataItemHeadlineKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemInstructionsKey: &'static NSString;
+    pub static NSMetadataItemInstructionsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCityKey: &'static NSString;
+    pub static NSMetadataItemCityKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemStateOrProvinceKey: &'static NSString;
+    pub static NSMetadataItemStateOrProvinceKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCountryKey: &'static NSString;
+    pub static NSMetadataItemCountryKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemTextContentKey: &'static NSString;
+    pub static NSMetadataItemTextContentKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAudioSampleRateKey: &'static NSString;
+    pub static NSMetadataItemAudioSampleRateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAudioChannelCountKey: &'static NSString;
+    pub static NSMetadataItemAudioChannelCountKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemTempoKey: &'static NSString;
+    pub static NSMetadataItemTempoKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemKeySignatureKey: &'static NSString;
+    pub static NSMetadataItemKeySignatureKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemTimeSignatureKey: &'static NSString;
+    pub static NSMetadataItemTimeSignatureKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAudioEncodingApplicationKey: &'static NSString;
+    pub static NSMetadataItemAudioEncodingApplicationKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemComposerKey: &'static NSString;
+    pub static NSMetadataItemComposerKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemLyricistKey: &'static NSString;
+    pub static NSMetadataItemLyricistKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAudioTrackNumberKey: &'static NSString;
+    pub static NSMetadataItemAudioTrackNumberKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemRecordingDateKey: &'static NSString;
+    pub static NSMetadataItemRecordingDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemMusicalGenreKey: &'static NSString;
+    pub static NSMetadataItemMusicalGenreKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemIsGeneralMIDISequenceKey: &'static NSString;
+    pub static NSMetadataItemIsGeneralMIDISequenceKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemRecordingYearKey: &'static NSString;
+    pub static NSMetadataItemRecordingYearKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemOrganizationsKey: &'static NSString;
+    pub static NSMetadataItemOrganizationsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemLanguagesKey: &'static NSString;
+    pub static NSMetadataItemLanguagesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemRightsKey: &'static NSString;
+    pub static NSMetadataItemRightsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPublishersKey: &'static NSString;
+    pub static NSMetadataItemPublishersKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemContributorsKey: &'static NSString;
+    pub static NSMetadataItemContributorsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCoverageKey: &'static NSString;
+    pub static NSMetadataItemCoverageKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemSubjectKey: &'static NSString;
+    pub static NSMetadataItemSubjectKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemThemeKey: &'static NSString;
+    pub static NSMetadataItemThemeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemDescriptionKey: &'static NSString;
+    pub static NSMetadataItemDescriptionKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemIdentifierKey: &'static NSString;
+    pub static NSMetadataItemIdentifierKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAudiencesKey: &'static NSString;
+    pub static NSMetadataItemAudiencesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemNumberOfPagesKey: &'static NSString;
+    pub static NSMetadataItemNumberOfPagesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPageWidthKey: &'static NSString;
+    pub static NSMetadataItemPageWidthKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPageHeightKey: &'static NSString;
+    pub static NSMetadataItemPageHeightKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemSecurityMethodKey: &'static NSString;
+    pub static NSMetadataItemSecurityMethodKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCreatorKey: &'static NSString;
+    pub static NSMetadataItemCreatorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemEncodingApplicationsKey: &'static NSString;
+    pub static NSMetadataItemEncodingApplicationsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemDueDateKey: &'static NSString;
+    pub static NSMetadataItemDueDateKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemStarRatingKey: &'static NSString;
+    pub static NSMetadataItemStarRatingKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPhoneNumbersKey: &'static NSString;
+    pub static NSMetadataItemPhoneNumbersKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemEmailAddressesKey: &'static NSString;
+    pub static NSMetadataItemEmailAddressesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemInstantMessageAddressesKey: &'static NSString;
+    pub static NSMetadataItemInstantMessageAddressesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemKindKey: &'static NSString;
+    pub static NSMetadataItemKindKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemRecipientsKey: &'static NSString;
+    pub static NSMetadataItemRecipientsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFinderCommentKey: &'static NSString;
+    pub static NSMetadataItemFinderCommentKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemFontsKey: &'static NSString;
+    pub static NSMetadataItemFontsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAppleLoopsRootKeyKey: &'static NSString;
+    pub static NSMetadataItemAppleLoopsRootKeyKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAppleLoopsKeyFilterTypeKey: &'static NSString;
+    pub static NSMetadataItemAppleLoopsKeyFilterTypeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAppleLoopsLoopModeKey: &'static NSString;
+    pub static NSMetadataItemAppleLoopsLoopModeKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAppleLoopDescriptorsKey: &'static NSString;
+    pub static NSMetadataItemAppleLoopDescriptorsKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemMusicalInstrumentCategoryKey: &'static NSString;
+    pub static NSMetadataItemMusicalInstrumentCategoryKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemMusicalInstrumentNameKey: &'static NSString;
+    pub static NSMetadataItemMusicalInstrumentNameKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemCFBundleIdentifierKey: &'static NSString;
+    pub static NSMetadataItemCFBundleIdentifierKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemInformationKey: &'static NSString;
+    pub static NSMetadataItemInformationKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemDirectorKey: &'static NSString;
+    pub static NSMetadataItemDirectorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemProducerKey: &'static NSString;
+    pub static NSMetadataItemProducerKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemGenreKey: &'static NSString;
+    pub static NSMetadataItemGenreKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemPerformersKey: &'static NSString;
+    pub static NSMetadataItemPerformersKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemOriginalFormatKey: &'static NSString;
+    pub static NSMetadataItemOriginalFormatKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemOriginalSourceKey: &'static NSString;
+    pub static NSMetadataItemOriginalSourceKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAuthorEmailAddressesKey: &'static NSString;
+    pub static NSMetadataItemAuthorEmailAddressesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemRecipientEmailAddressesKey: &'static NSString;
+    pub static NSMetadataItemRecipientEmailAddressesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemAuthorAddressesKey: &'static NSString;
+    pub static NSMetadataItemAuthorAddressesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemRecipientAddressesKey: &'static NSString;
+    pub static NSMetadataItemRecipientAddressesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemIsLikelyJunkKey: &'static NSString;
+    pub static NSMetadataItemIsLikelyJunkKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemExecutableArchitecturesKey: &'static NSString;
+    pub static NSMetadataItemExecutableArchitecturesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemExecutablePlatformKey: &'static NSString;
+    pub static NSMetadataItemExecutablePlatformKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemApplicationCategoriesKey: &'static NSString;
+    pub static NSMetadataItemApplicationCategoriesKey: &'static NSString;
 }
 
 extern "C" {
-    static NSMetadataItemIsApplicationManagedKey: &'static NSString;
+    pub static NSMetadataItemIsApplicationManagedKey: &'static NSString;
 }

@@ -19,13 +19,13 @@ pub const NSStackViewDistributionFillProportionally: NSStackViewDistribution = 2
 pub const NSStackViewDistributionEqualSpacing: NSStackViewDistribution = 3;
 pub const NSStackViewDistributionEqualCentering: NSStackViewDistribution = 4;
 
-static NSStackViewVisibilityPriorityMustHold: NSStackViewVisibilityPriority = 1000;
+pub static NSStackViewVisibilityPriorityMustHold: NSStackViewVisibilityPriority = 1000;
 
-static NSStackViewVisibilityPriorityDetachOnlyIfNecessary: NSStackViewVisibilityPriority = 900;
+pub static NSStackViewVisibilityPriorityDetachOnlyIfNecessary: NSStackViewVisibilityPriority = 900;
 
-static NSStackViewVisibilityPriorityNotVisible: NSStackViewVisibilityPriority = 0;
+pub static NSStackViewVisibilityPriorityNotVisible: NSStackViewVisibilityPriority = 0;
 
-static NSStackViewSpacingUseDefault: CGFloat = todo;
+pub static NSStackViewSpacingUseDefault: CGFloat = todo;
 
 extern_class!(
     #[derive(Debug)]

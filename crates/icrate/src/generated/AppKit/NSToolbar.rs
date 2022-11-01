@@ -147,11 +147,11 @@ extern_methods!(
 pub type NSToolbarDelegate = NSObject;
 
 extern "C" {
-    static NSToolbarWillAddItemNotification: &'static NSNotificationName;
+    pub static NSToolbarWillAddItemNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSToolbarDidRemoveItemNotification: &'static NSNotificationName;
+    pub static NSToolbarDidRemoveItemNotification: &'static NSNotificationName;
 }
 
 extern_methods!(

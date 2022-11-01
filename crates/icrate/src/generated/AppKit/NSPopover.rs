@@ -98,33 +98,33 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSPopoverCloseReasonKey: &'static NSString;
+    pub static NSPopoverCloseReasonKey: &'static NSString;
 }
 
 pub type NSPopoverCloseReasonValue = NSString;
 
 extern "C" {
-    static NSPopoverCloseReasonStandard: &'static NSPopoverCloseReasonValue;
+    pub static NSPopoverCloseReasonStandard: &'static NSPopoverCloseReasonValue;
 }
 
 extern "C" {
-    static NSPopoverCloseReasonDetachToWindow: &'static NSPopoverCloseReasonValue;
+    pub static NSPopoverCloseReasonDetachToWindow: &'static NSPopoverCloseReasonValue;
 }
 
 extern "C" {
-    static NSPopoverWillShowNotification: &'static NSNotificationName;
+    pub static NSPopoverWillShowNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSPopoverDidShowNotification: &'static NSNotificationName;
+    pub static NSPopoverDidShowNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSPopoverWillCloseNotification: &'static NSNotificationName;
+    pub static NSPopoverWillCloseNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSPopoverDidCloseNotification: &'static NSNotificationName;
+    pub static NSPopoverDidCloseNotification: &'static NSNotificationName;
 }
 
 pub type NSPopoverDelegate = NSObject;

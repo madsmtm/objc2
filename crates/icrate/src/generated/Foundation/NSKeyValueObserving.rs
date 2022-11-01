@@ -24,23 +24,23 @@ pub const NSKeyValueSetSetMutation: NSKeyValueSetMutationKind = 4;
 pub type NSKeyValueChangeKey = NSString;
 
 extern "C" {
-    static NSKeyValueChangeKindKey: &'static NSKeyValueChangeKey;
+    pub static NSKeyValueChangeKindKey: &'static NSKeyValueChangeKey;
 }
 
 extern "C" {
-    static NSKeyValueChangeNewKey: &'static NSKeyValueChangeKey;
+    pub static NSKeyValueChangeNewKey: &'static NSKeyValueChangeKey;
 }
 
 extern "C" {
-    static NSKeyValueChangeOldKey: &'static NSKeyValueChangeKey;
+    pub static NSKeyValueChangeOldKey: &'static NSKeyValueChangeKey;
 }
 
 extern "C" {
-    static NSKeyValueChangeIndexesKey: &'static NSKeyValueChangeKey;
+    pub static NSKeyValueChangeIndexesKey: &'static NSKeyValueChangeKey;
 }
 
 extern "C" {
-    static NSKeyValueChangeNotificationIsPriorKey: &'static NSKeyValueChangeKey;
+    pub static NSKeyValueChangeNotificationIsPriorKey: &'static NSKeyValueChangeKey;
 }
 
 extern_methods!(

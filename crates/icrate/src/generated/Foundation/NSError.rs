@@ -6,73 +6,73 @@ use crate::Foundation::*;
 pub type NSErrorDomain = NSString;
 
 extern "C" {
-    static NSCocoaErrorDomain: &'static NSErrorDomain;
+    pub static NSCocoaErrorDomain: &'static NSErrorDomain;
 }
 
 extern "C" {
-    static NSPOSIXErrorDomain: &'static NSErrorDomain;
+    pub static NSPOSIXErrorDomain: &'static NSErrorDomain;
 }
 
 extern "C" {
-    static NSOSStatusErrorDomain: &'static NSErrorDomain;
+    pub static NSOSStatusErrorDomain: &'static NSErrorDomain;
 }
 
 extern "C" {
-    static NSMachErrorDomain: &'static NSErrorDomain;
+    pub static NSMachErrorDomain: &'static NSErrorDomain;
 }
 
 pub type NSErrorUserInfoKey = NSString;
 
 extern "C" {
-    static NSUnderlyingErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSUnderlyingErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSMultipleUnderlyingErrorsKey: &'static NSErrorUserInfoKey;
+    pub static NSMultipleUnderlyingErrorsKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSLocalizedDescriptionKey: &'static NSErrorUserInfoKey;
+    pub static NSLocalizedDescriptionKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSLocalizedFailureReasonErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSLocalizedFailureReasonErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSLocalizedRecoverySuggestionErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSLocalizedRecoverySuggestionErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSLocalizedRecoveryOptionsErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSLocalizedRecoveryOptionsErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSRecoveryAttempterErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSRecoveryAttempterErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSHelpAnchorErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSHelpAnchorErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSDebugDescriptionErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSDebugDescriptionErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSLocalizedFailureErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSLocalizedFailureErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSStringEncodingErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSStringEncodingErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSURLErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSURLErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern "C" {
-    static NSFilePathErrorKey: &'static NSErrorUserInfoKey;
+    pub static NSFilePathErrorKey: &'static NSErrorUserInfoKey;
 }
 
 extern_class!(

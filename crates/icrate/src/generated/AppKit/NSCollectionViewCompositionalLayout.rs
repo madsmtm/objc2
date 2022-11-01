@@ -16,7 +16,7 @@ pub const NSDirectionalRectEdgeAll: NSDirectionalRectEdge = NSDirectionalRectEdg
     | NSDirectionalRectEdgeTrailing;
 
 extern "C" {
-    static NSDirectionalEdgeInsetsZero: NSDirectionalEdgeInsets;
+    pub static NSDirectionalEdgeInsetsZero: NSDirectionalEdgeInsets;
 }
 
 pub type NSRectAlignment = NSInteger;

@@ -23,5 +23,5 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSInterfaceStyleDefault: Option<&'static NSString>;
+    pub static NSInterfaceStyleDefault: Option<&'static NSString>;
 }

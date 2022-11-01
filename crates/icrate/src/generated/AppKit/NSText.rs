@@ -268,19 +268,19 @@ pub const NSTextMovementCancel: NSTextMovement = 0x17;
 pub const NSTextMovementOther: NSTextMovement = 0;
 
 extern "C" {
-    static NSTextDidBeginEditingNotification: &'static NSNotificationName;
+    pub static NSTextDidBeginEditingNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTextDidEndEditingNotification: &'static NSNotificationName;
+    pub static NSTextDidEndEditingNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTextDidChangeNotification: &'static NSNotificationName;
+    pub static NSTextDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSTextMovementUserInfoKey: &'static NSString;
+    pub static NSTextMovementUserInfoKey: &'static NSString;
 }
 
 pub const NSIllegalTextMovement: i32 = 0;
@@ -299,12 +299,12 @@ pub type NSTextDelegate = NSObject;
 pub const NSTextWritingDirectionEmbedding: i32 = 0 << 1;
 pub const NSTextWritingDirectionOverride: i32 = 1 << 1;
 
-static NSLeftTextAlignment: NSTextAlignment = NSTextAlignmentLeft;
+pub static NSLeftTextAlignment: NSTextAlignment = NSTextAlignmentLeft;
 
-static NSRightTextAlignment: NSTextAlignment = NSTextAlignmentRight;
+pub static NSRightTextAlignment: NSTextAlignment = NSTextAlignmentRight;
 
-static NSCenterTextAlignment: NSTextAlignment = NSTextAlignmentCenter;
+pub static NSCenterTextAlignment: NSTextAlignment = NSTextAlignmentCenter;
 
-static NSJustifiedTextAlignment: NSTextAlignment = NSTextAlignmentJustified;
+pub static NSJustifiedTextAlignment: NSTextAlignment = NSTextAlignmentJustified;
 
-static NSNaturalTextAlignment: NSTextAlignment = NSTextAlignmentNatural;
+pub static NSNaturalTextAlignment: NSTextAlignment = NSTextAlignmentNatural;

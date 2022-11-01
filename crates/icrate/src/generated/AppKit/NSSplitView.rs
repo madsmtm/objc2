@@ -121,11 +121,11 @@ extern_methods!(
 pub type NSSplitViewDelegate = NSObject;
 
 extern "C" {
-    static NSSplitViewWillResizeSubviewsNotification: &'static NSNotificationName;
+    pub static NSSplitViewWillResizeSubviewsNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSSplitViewDidResizeSubviewsNotification: &'static NSNotificationName;
+    pub static NSSplitViewDidResizeSubviewsNotification: &'static NSNotificationName;
 }
 
 extern_methods!(

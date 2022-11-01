@@ -5,19 +5,19 @@ use crate::AppKit::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSComboBoxWillPopUpNotification: &'static NSNotificationName;
+    pub static NSComboBoxWillPopUpNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSComboBoxWillDismissNotification: &'static NSNotificationName;
+    pub static NSComboBoxWillDismissNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSComboBoxSelectionDidChangeNotification: &'static NSNotificationName;
+    pub static NSComboBoxSelectionDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSComboBoxSelectionIsChangingNotification: &'static NSNotificationName;
+    pub static NSComboBoxSelectionIsChangingNotification: &'static NSNotificationName;
 }
 
 pub type NSComboBoxDataSource = NSObject;

@@ -142,5 +142,5 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSSystemTimeZoneDidChangeNotification: &'static NSNotificationName;
+    pub static NSSystemTimeZoneDidChangeNotification: &'static NSNotificationName;
 }

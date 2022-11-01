@@ -42,63 +42,63 @@ pub const NSBitmapFormatThirtyTwoBitBigEndian: NSBitmapFormat = 1 << 11;
 pub type NSBitmapImageRepPropertyKey = NSString;
 
 extern "C" {
-    static NSImageCompressionMethod: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageCompressionMethod: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageCompressionFactor: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageCompressionFactor: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageDitherTransparency: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageDitherTransparency: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageRGBColorTable: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageRGBColorTable: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageInterlaced: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageInterlaced: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageColorSyncProfileData: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageColorSyncProfileData: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageFrameCount: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageFrameCount: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageCurrentFrame: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageCurrentFrame: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageCurrentFrameDuration: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageCurrentFrameDuration: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageLoopCount: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageLoopCount: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageGamma: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageGamma: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageProgressive: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageProgressive: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageEXIFData: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageEXIFData: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageIPTCData: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageIPTCData: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern "C" {
-    static NSImageFallbackBackgroundColor: &'static NSBitmapImageRepPropertyKey;
+    pub static NSImageFallbackBackgroundColor: &'static NSBitmapImageRepPropertyKey;
 }
 
 extern_class!(
@@ -318,28 +318,29 @@ extern_methods!(
     }
 );
 
-static NSTIFFFileType: NSBitmapImageFileType = NSBitmapImageFileTypeTIFF;
+pub static NSTIFFFileType: NSBitmapImageFileType = NSBitmapImageFileTypeTIFF;
 
-static NSBMPFileType: NSBitmapImageFileType = NSBitmapImageFileTypeBMP;
+pub static NSBMPFileType: NSBitmapImageFileType = NSBitmapImageFileTypeBMP;
 
-static NSGIFFileType: NSBitmapImageFileType = NSBitmapImageFileTypeGIF;
+pub static NSGIFFileType: NSBitmapImageFileType = NSBitmapImageFileTypeGIF;
 
-static NSJPEGFileType: NSBitmapImageFileType = NSBitmapImageFileTypeJPEG;
+pub static NSJPEGFileType: NSBitmapImageFileType = NSBitmapImageFileTypeJPEG;
 
-static NSPNGFileType: NSBitmapImageFileType = NSBitmapImageFileTypePNG;
+pub static NSPNGFileType: NSBitmapImageFileType = NSBitmapImageFileTypePNG;
 
-static NSJPEG2000FileType: NSBitmapImageFileType = NSBitmapImageFileTypeJPEG2000;
+pub static NSJPEG2000FileType: NSBitmapImageFileType = NSBitmapImageFileTypeJPEG2000;
 
-static NSAlphaFirstBitmapFormat: NSBitmapFormat = NSBitmapFormatAlphaFirst;
+pub static NSAlphaFirstBitmapFormat: NSBitmapFormat = NSBitmapFormatAlphaFirst;
 
-static NSAlphaNonpremultipliedBitmapFormat: NSBitmapFormat = NSBitmapFormatAlphaNonpremultiplied;
+pub static NSAlphaNonpremultipliedBitmapFormat: NSBitmapFormat =
+    NSBitmapFormatAlphaNonpremultiplied;
 
-static NSFloatingPointSamplesBitmapFormat: NSBitmapFormat = NSBitmapFormatFloatingPointSamples;
+pub static NSFloatingPointSamplesBitmapFormat: NSBitmapFormat = NSBitmapFormatFloatingPointSamples;
 
-static NS16BitLittleEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatSixteenBitLittleEndian;
+pub static NS16BitLittleEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatSixteenBitLittleEndian;
 
-static NS32BitLittleEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatThirtyTwoBitLittleEndian;
+pub static NS32BitLittleEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatThirtyTwoBitLittleEndian;
 
-static NS16BitBigEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatSixteenBitBigEndian;
+pub static NS16BitBigEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatSixteenBitBigEndian;
 
-static NS32BitBigEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatThirtyTwoBitBigEndian;
+pub static NS32BitBigEndianBitmapFormat: NSBitmapFormat = NSBitmapFormatThirtyTwoBitBigEndian;

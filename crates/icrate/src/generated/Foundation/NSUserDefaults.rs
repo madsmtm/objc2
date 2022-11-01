@@ -4,15 +4,15 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSGlobalDomain: &'static NSString;
+    pub static NSGlobalDomain: &'static NSString;
 }
 
 extern "C" {
-    static NSArgumentDomain: &'static NSString;
+    pub static NSArgumentDomain: &'static NSString;
 }
 
 extern "C" {
-    static NSRegistrationDomain: &'static NSString;
+    pub static NSRegistrationDomain: &'static NSString;
 }
 
 extern_class!(
@@ -174,125 +174,126 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSUserDefaultsSizeLimitExceededNotification: &'static NSNotificationName;
+    pub static NSUserDefaultsSizeLimitExceededNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSUbiquitousUserDefaultsNoCloudAccountNotification: &'static NSNotificationName;
+    pub static NSUbiquitousUserDefaultsNoCloudAccountNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSUbiquitousUserDefaultsDidChangeAccountsNotification: &'static NSNotificationName;
+    pub static NSUbiquitousUserDefaultsDidChangeAccountsNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSUbiquitousUserDefaultsCompletedInitialSyncNotification: &'static NSNotificationName;
+    pub static NSUbiquitousUserDefaultsCompletedInitialSyncNotification:
+        &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSUserDefaultsDidChangeNotification: &'static NSNotificationName;
+    pub static NSUserDefaultsDidChangeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWeekDayNameArray: &'static NSString;
+    pub static NSWeekDayNameArray: &'static NSString;
 }
 
 extern "C" {
-    static NSShortWeekDayNameArray: &'static NSString;
+    pub static NSShortWeekDayNameArray: &'static NSString;
 }
 
 extern "C" {
-    static NSMonthNameArray: &'static NSString;
+    pub static NSMonthNameArray: &'static NSString;
 }
 
 extern "C" {
-    static NSShortMonthNameArray: &'static NSString;
+    pub static NSShortMonthNameArray: &'static NSString;
 }
 
 extern "C" {
-    static NSTimeFormatString: &'static NSString;
+    pub static NSTimeFormatString: &'static NSString;
 }
 
 extern "C" {
-    static NSDateFormatString: &'static NSString;
+    pub static NSDateFormatString: &'static NSString;
 }
 
 extern "C" {
-    static NSTimeDateFormatString: &'static NSString;
+    pub static NSTimeDateFormatString: &'static NSString;
 }
 
 extern "C" {
-    static NSShortTimeDateFormatString: &'static NSString;
+    pub static NSShortTimeDateFormatString: &'static NSString;
 }
 
 extern "C" {
-    static NSCurrencySymbol: &'static NSString;
+    pub static NSCurrencySymbol: &'static NSString;
 }
 
 extern "C" {
-    static NSDecimalSeparator: &'static NSString;
+    pub static NSDecimalSeparator: &'static NSString;
 }
 
 extern "C" {
-    static NSThousandsSeparator: &'static NSString;
+    pub static NSThousandsSeparator: &'static NSString;
 }
 
 extern "C" {
-    static NSDecimalDigits: &'static NSString;
+    pub static NSDecimalDigits: &'static NSString;
 }
 
 extern "C" {
-    static NSAMPMDesignation: &'static NSString;
+    pub static NSAMPMDesignation: &'static NSString;
 }
 
 extern "C" {
-    static NSHourNameDesignations: &'static NSString;
+    pub static NSHourNameDesignations: &'static NSString;
 }
 
 extern "C" {
-    static NSYearMonthWeekDesignations: &'static NSString;
+    pub static NSYearMonthWeekDesignations: &'static NSString;
 }
 
 extern "C" {
-    static NSEarlierTimeDesignations: &'static NSString;
+    pub static NSEarlierTimeDesignations: &'static NSString;
 }
 
 extern "C" {
-    static NSLaterTimeDesignations: &'static NSString;
+    pub static NSLaterTimeDesignations: &'static NSString;
 }
 
 extern "C" {
-    static NSThisDayDesignations: &'static NSString;
+    pub static NSThisDayDesignations: &'static NSString;
 }
 
 extern "C" {
-    static NSNextDayDesignations: &'static NSString;
+    pub static NSNextDayDesignations: &'static NSString;
 }
 
 extern "C" {
-    static NSNextNextDayDesignations: &'static NSString;
+    pub static NSNextNextDayDesignations: &'static NSString;
 }
 
 extern "C" {
-    static NSPriorDayDesignations: &'static NSString;
+    pub static NSPriorDayDesignations: &'static NSString;
 }
 
 extern "C" {
-    static NSDateTimeOrdering: &'static NSString;
+    pub static NSDateTimeOrdering: &'static NSString;
 }
 
 extern "C" {
-    static NSInternationalCurrencyString: &'static NSString;
+    pub static NSInternationalCurrencyString: &'static NSString;
 }
 
 extern "C" {
-    static NSShortDateFormatString: &'static NSString;
+    pub static NSShortDateFormatString: &'static NSString;
 }
 
 extern "C" {
-    static NSPositiveCurrencyFormatString: &'static NSString;
+    pub static NSPositiveCurrencyFormatString: &'static NSString;
 }
 
 extern "C" {
-    static NSNegativeCurrencyFormatString: &'static NSString;
+    pub static NSNegativeCurrencyFormatString: &'static NSString;
 }

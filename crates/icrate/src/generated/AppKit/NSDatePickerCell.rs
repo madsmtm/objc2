@@ -129,29 +129,30 @@ extern_methods!(
 
 pub type NSDatePickerCellDelegate = NSObject;
 
-static NSTextFieldAndStepperDatePickerStyle: NSDatePickerStyle =
+pub static NSTextFieldAndStepperDatePickerStyle: NSDatePickerStyle =
     NSDatePickerStyleTextFieldAndStepper;
 
-static NSClockAndCalendarDatePickerStyle: NSDatePickerStyle = NSDatePickerStyleClockAndCalendar;
+pub static NSClockAndCalendarDatePickerStyle: NSDatePickerStyle = NSDatePickerStyleClockAndCalendar;
 
-static NSTextFieldDatePickerStyle: NSDatePickerStyle = NSDatePickerStyleTextField;
+pub static NSTextFieldDatePickerStyle: NSDatePickerStyle = NSDatePickerStyleTextField;
 
-static NSSingleDateMode: NSDatePickerMode = NSDatePickerModeSingle;
+pub static NSSingleDateMode: NSDatePickerMode = NSDatePickerModeSingle;
 
-static NSRangeDateMode: NSDatePickerMode = NSDatePickerModeRange;
+pub static NSRangeDateMode: NSDatePickerMode = NSDatePickerModeRange;
 
-static NSHourMinuteDatePickerElementFlag: NSDatePickerElementFlags =
+pub static NSHourMinuteDatePickerElementFlag: NSDatePickerElementFlags =
     NSDatePickerElementFlagHourMinute;
 
-static NSHourMinuteSecondDatePickerElementFlag: NSDatePickerElementFlags =
+pub static NSHourMinuteSecondDatePickerElementFlag: NSDatePickerElementFlags =
     NSDatePickerElementFlagHourMinuteSecond;
 
-static NSTimeZoneDatePickerElementFlag: NSDatePickerElementFlags = NSDatePickerElementFlagTimeZone;
+pub static NSTimeZoneDatePickerElementFlag: NSDatePickerElementFlags =
+    NSDatePickerElementFlagTimeZone;
 
-static NSYearMonthDatePickerElementFlag: NSDatePickerElementFlags =
+pub static NSYearMonthDatePickerElementFlag: NSDatePickerElementFlags =
     NSDatePickerElementFlagYearMonth;
 
-static NSYearMonthDayDatePickerElementFlag: NSDatePickerElementFlags =
+pub static NSYearMonthDayDatePickerElementFlag: NSDatePickerElementFlags =
     NSDatePickerElementFlagYearMonthDay;
 
-static NSEraDatePickerElementFlag: NSDatePickerElementFlags = NSDatePickerElementFlagEra;
+pub static NSEraDatePickerElementFlag: NSDatePickerElementFlags = NSDatePickerElementFlagEra;

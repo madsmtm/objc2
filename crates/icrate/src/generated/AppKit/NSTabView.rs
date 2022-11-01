@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-static NSAppKitVersionNumberWithDirectionalTabs: NSAppKitVersion = 631.0;
+pub static NSAppKitVersionNumberWithDirectionalTabs: NSAppKitVersion = 631.0;
 
 pub type NSTabViewType = NSUInteger;
 pub const NSTopTabsBezelBorder: NSTabViewType = 0;

@@ -7,11 +7,11 @@ use crate::Foundation::*;
 pub type NSSliderAccessoryWidth = CGFloat;
 
 extern "C" {
-    static NSSliderAccessoryWidthDefault: NSSliderAccessoryWidth;
+    pub static NSSliderAccessoryWidthDefault: NSSliderAccessoryWidth;
 }
 
 extern "C" {
-    static NSSliderAccessoryWidthWide: NSSliderAccessoryWidth;
+    pub static NSSliderAccessoryWidthWide: NSSliderAccessoryWidth;
 }
 
 extern_class!(

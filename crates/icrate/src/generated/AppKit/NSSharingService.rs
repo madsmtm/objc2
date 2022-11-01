@@ -7,83 +7,83 @@ use crate::Foundation::*;
 pub type NSSharingServiceName = NSString;
 
 extern "C" {
-    static NSSharingServiceNameComposeEmail: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameComposeEmail: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameComposeMessage: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameComposeMessage: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameSendViaAirDrop: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameSendViaAirDrop: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameAddToSafariReadingList: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameAddToSafariReadingList: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameAddToIPhoto: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameAddToIPhoto: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameAddToAperture: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameAddToAperture: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameUseAsDesktopPicture: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameUseAsDesktopPicture: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostOnFacebook: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostOnFacebook: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostOnTwitter: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostOnTwitter: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostOnSinaWeibo: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostOnSinaWeibo: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostOnTencentWeibo: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostOnTencentWeibo: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostOnLinkedIn: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostOnLinkedIn: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameUseAsTwitterProfileImage: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameUseAsTwitterProfileImage: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameUseAsFacebookProfileImage: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameUseAsFacebookProfileImage: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameUseAsLinkedInProfileImage: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameUseAsLinkedInProfileImage: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostImageOnFlickr: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostImageOnFlickr: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostVideoOnVimeo: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostVideoOnVimeo: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostVideoOnYouku: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostVideoOnYouku: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNamePostVideoOnTudou: &'static NSSharingServiceName;
+    pub static NSSharingServiceNamePostVideoOnTudou: &'static NSSharingServiceName;
 }
 
 extern "C" {
-    static NSSharingServiceNameCloudSharing: &'static NSSharingServiceName;
+    pub static NSSharingServiceNameCloudSharing: &'static NSSharingServiceName;
 }
 
 extern_class!(

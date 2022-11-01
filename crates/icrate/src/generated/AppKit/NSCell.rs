@@ -50,11 +50,11 @@ pub const NSScaleNone: NSImageScaling = 2;
 
 pub type NSControlStateValue = NSInteger;
 
-static NSControlStateValueMixed: NSControlStateValue = -1;
+pub static NSControlStateValueMixed: NSControlStateValue = -1;
 
-static NSControlStateValueOff: NSControlStateValue = 0;
+pub static NSControlStateValueOff: NSControlStateValue = 0;
 
-static NSControlStateValueOn: NSControlStateValue = 1;
+pub static NSControlStateValueOn: NSControlStateValue = 1;
 
 pub type NSCellStyleMask = NSUInteger;
 pub const NSNoCellMask: NSCellStyleMask = 0;
@@ -680,26 +680,26 @@ extern_methods!(
     }
 );
 
-static NSBackgroundStyleLight: NSBackgroundStyle = NSBackgroundStyleNormal;
+pub static NSBackgroundStyleLight: NSBackgroundStyle = NSBackgroundStyleNormal;
 
-static NSBackgroundStyleDark: NSBackgroundStyle = NSBackgroundStyleEmphasized;
+pub static NSBackgroundStyleDark: NSBackgroundStyle = NSBackgroundStyleEmphasized;
 
 pub type NSCellStateValue = NSControlStateValue;
 
-static NSMixedState: NSControlStateValue = NSControlStateValueMixed;
+pub static NSMixedState: NSControlStateValue = NSControlStateValueMixed;
 
-static NSOffState: NSControlStateValue = NSControlStateValueOff;
+pub static NSOffState: NSControlStateValue = NSControlStateValueOff;
 
-static NSOnState: NSControlStateValue = NSControlStateValueOn;
+pub static NSOnState: NSControlStateValue = NSControlStateValueOn;
 
-static NSRegularControlSize: NSControlSize = NSControlSizeRegular;
+pub static NSRegularControlSize: NSControlSize = NSControlSizeRegular;
 
-static NSSmallControlSize: NSControlSize = NSControlSizeSmall;
+pub static NSSmallControlSize: NSControlSize = NSControlSizeSmall;
 
-static NSMiniControlSize: NSControlSize = NSControlSizeMini;
+pub static NSMiniControlSize: NSControlSize = NSControlSizeMini;
 
 extern "C" {
-    static NSControlTintDidChangeNotification: &'static NSNotificationName;
+    pub static NSControlTintDidChangeNotification: &'static NSNotificationName;
 }
 
 pub const NSAnyType: i32 = 0;

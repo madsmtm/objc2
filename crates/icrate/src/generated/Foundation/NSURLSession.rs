@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSURLSessionTransferSizeUnknown: i64;
+    pub static NSURLSessionTransferSizeUnknown: i64;
 }
 
 extern_class!(
@@ -325,15 +325,15 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSURLSessionTaskPriorityDefault: c_float;
+    pub static NSURLSessionTaskPriorityDefault: c_float;
 }
 
 extern "C" {
-    static NSURLSessionTaskPriorityLow: c_float;
+    pub static NSURLSessionTaskPriorityLow: c_float;
 }
 
 extern "C" {
-    static NSURLSessionTaskPriorityHigh: c_float;
+    pub static NSURLSessionTaskPriorityHigh: c_float;
 }
 
 extern_class!(
@@ -830,7 +830,7 @@ pub type NSURLSessionStreamDelegate = NSObject;
 pub type NSURLSessionWebSocketDelegate = NSObject;
 
 extern "C" {
-    static NSURLSessionDownloadTaskResumeData: &'static NSString;
+    pub static NSURLSessionDownloadTaskResumeData: &'static NSString;
 }
 
 extern_methods!(

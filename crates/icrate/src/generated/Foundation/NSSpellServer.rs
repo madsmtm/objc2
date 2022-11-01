@@ -40,15 +40,15 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSGrammarRange: &'static NSString;
+    pub static NSGrammarRange: &'static NSString;
 }
 
 extern "C" {
-    static NSGrammarUserDescription: &'static NSString;
+    pub static NSGrammarUserDescription: &'static NSString;
 }
 
 extern "C" {
-    static NSGrammarCorrections: &'static NSString;
+    pub static NSGrammarCorrections: &'static NSString;
 }
 
 pub type NSSpellServerDelegate = NSObject;

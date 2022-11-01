@@ -197,19 +197,19 @@ pub const NSInlinePresentationIntentInlineHTML: NSInlinePresentationIntent = 1 <
 pub const NSInlinePresentationIntentBlockHTML: NSInlinePresentationIntent = 1 << 9;
 
 extern "C" {
-    static NSInlinePresentationIntentAttributeName: &'static NSAttributedStringKey;
+    pub static NSInlinePresentationIntentAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSAlternateDescriptionAttributeName: &'static NSAttributedStringKey;
+    pub static NSAlternateDescriptionAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSImageURLAttributeName: &'static NSAttributedStringKey;
+    pub static NSImageURLAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSLanguageIdentifierAttributeName: &'static NSAttributedStringKey;
+    pub static NSLanguageIdentifierAttributeName: &'static NSAttributedStringKey;
 }
 
 pub type NSAttributedStringMarkdownParsingFailurePolicy = NSInteger;
@@ -327,7 +327,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSReplacementIndexAttributeName: &'static NSAttributedStringKey;
+    pub static NSReplacementIndexAttributeName: &'static NSAttributedStringKey;
 }
 
 extern_methods!(
@@ -339,19 +339,19 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSMorphologyAttributeName: &'static NSAttributedStringKey;
+    pub static NSMorphologyAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSInflectionRuleAttributeName: &'static NSAttributedStringKey;
+    pub static NSInflectionRuleAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSInflectionAlternativeAttributeName: &'static NSAttributedStringKey;
+    pub static NSInflectionAlternativeAttributeName: &'static NSAttributedStringKey;
 }
 
 extern "C" {
-    static NSPresentationIntentAttributeName: &'static NSAttributedStringKey;
+    pub static NSPresentationIntentAttributeName: &'static NSAttributedStringKey;
 }
 
 pub type NSPresentationIntentKind = NSInteger;

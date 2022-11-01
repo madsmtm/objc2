@@ -110,15 +110,15 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSWillBecomeMultiThreadedNotification: &'static NSNotificationName;
+    pub static NSWillBecomeMultiThreadedNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSDidBecomeSingleThreadedNotification: &'static NSNotificationName;
+    pub static NSDidBecomeSingleThreadedNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSThreadWillExitNotification: &'static NSNotificationName;
+    pub static NSThreadWillExitNotification: &'static NSNotificationName;
 }
 
 extern_methods!(

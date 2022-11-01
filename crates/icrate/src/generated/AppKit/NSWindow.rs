@@ -4,9 +4,9 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-static NSAppKitVersionNumberWithCustomSheetPosition: NSAppKitVersion = 686.0;
+pub static NSAppKitVersionNumberWithCustomSheetPosition: NSAppKitVersion = 686.0;
 
-static NSAppKitVersionNumberWithDeferredWindowDisplaySupport: NSAppKitVersion = 1019.0;
+pub static NSAppKitVersionNumberWithDeferredWindowDisplaySupport: NSAppKitVersion = 1019.0;
 
 pub type NSWindowStyleMask = NSUInteger;
 pub const NSWindowStyleMaskBorderless: NSWindowStyleMask = 0;
@@ -23,9 +23,9 @@ pub const NSWindowStyleMaskDocModalWindow: NSWindowStyleMask = 1 << 6;
 pub const NSWindowStyleMaskNonactivatingPanel: NSWindowStyleMask = 1 << 7;
 pub const NSWindowStyleMaskHUDWindow: NSWindowStyleMask = 1 << 13;
 
-static NSModalResponseOK: NSModalResponse = 1;
+pub static NSModalResponseOK: NSModalResponse = 1;
 
-static NSModalResponseCancel: NSModalResponse = 0;
+pub static NSModalResponseCancel: NSModalResponse = 0;
 
 pub const NSDisplayWindowRunLoopOrdering: i32 = 600000;
 pub const NSResetCursorRectsRunLoopOrdering: i32 = 700000;
@@ -66,23 +66,23 @@ pub const NSWindowOcclusionStateVisible: NSWindowOcclusionState = 1 << 1;
 
 pub type NSWindowLevel = NSInteger;
 
-static NSNormalWindowLevel: NSWindowLevel = todo;
+pub static NSNormalWindowLevel: NSWindowLevel = todo;
 
-static NSFloatingWindowLevel: NSWindowLevel = todo;
+pub static NSFloatingWindowLevel: NSWindowLevel = todo;
 
-static NSSubmenuWindowLevel: NSWindowLevel = todo;
+pub static NSSubmenuWindowLevel: NSWindowLevel = todo;
 
-static NSTornOffMenuWindowLevel: NSWindowLevel = todo;
+pub static NSTornOffMenuWindowLevel: NSWindowLevel = todo;
 
-static NSMainMenuWindowLevel: NSWindowLevel = todo;
+pub static NSMainMenuWindowLevel: NSWindowLevel = todo;
 
-static NSStatusWindowLevel: NSWindowLevel = todo;
+pub static NSStatusWindowLevel: NSWindowLevel = todo;
 
-static NSModalPanelWindowLevel: NSWindowLevel = todo;
+pub static NSModalPanelWindowLevel: NSWindowLevel = todo;
 
-static NSPopUpMenuWindowLevel: NSWindowLevel = todo;
+pub static NSPopUpMenuWindowLevel: NSWindowLevel = todo;
 
-static NSScreenSaverWindowLevel: NSWindowLevel = todo;
+pub static NSScreenSaverWindowLevel: NSWindowLevel = todo;
 
 pub type NSSelectionDirection = NSUInteger;
 pub const NSDirectSelection: NSSelectionDirection = 0;
@@ -108,7 +108,7 @@ pub const NSWindowToolbarStylePreference: NSWindowToolbarStyle = 2;
 pub const NSWindowToolbarStyleUnified: NSWindowToolbarStyle = 3;
 pub const NSWindowToolbarStyleUnifiedCompact: NSWindowToolbarStyle = 4;
 
-static NSEventDurationForever: NSTimeInterval = todo;
+pub static NSEventDurationForever: NSTimeInterval = todo;
 
 pub type NSWindowUserTabbingPreference = NSInteger;
 pub const NSWindowUserTabbingPreferenceManual: NSWindowUserTabbingPreference = 0;
@@ -1182,127 +1182,127 @@ extern_methods!(
 pub type NSWindowDelegate = NSObject;
 
 extern "C" {
-    static NSWindowDidBecomeKeyNotification: &'static NSNotificationName;
+    pub static NSWindowDidBecomeKeyNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidBecomeMainNotification: &'static NSNotificationName;
+    pub static NSWindowDidBecomeMainNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidChangeScreenNotification: &'static NSNotificationName;
+    pub static NSWindowDidChangeScreenNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidDeminiaturizeNotification: &'static NSNotificationName;
+    pub static NSWindowDidDeminiaturizeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidExposeNotification: &'static NSNotificationName;
+    pub static NSWindowDidExposeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidMiniaturizeNotification: &'static NSNotificationName;
+    pub static NSWindowDidMiniaturizeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidMoveNotification: &'static NSNotificationName;
+    pub static NSWindowDidMoveNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidResignKeyNotification: &'static NSNotificationName;
+    pub static NSWindowDidResignKeyNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidResignMainNotification: &'static NSNotificationName;
+    pub static NSWindowDidResignMainNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidResizeNotification: &'static NSNotificationName;
+    pub static NSWindowDidResizeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidUpdateNotification: &'static NSNotificationName;
+    pub static NSWindowDidUpdateNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillCloseNotification: &'static NSNotificationName;
+    pub static NSWindowWillCloseNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillMiniaturizeNotification: &'static NSNotificationName;
+    pub static NSWindowWillMiniaturizeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillMoveNotification: &'static NSNotificationName;
+    pub static NSWindowWillMoveNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillBeginSheetNotification: &'static NSNotificationName;
+    pub static NSWindowWillBeginSheetNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidEndSheetNotification: &'static NSNotificationName;
+    pub static NSWindowDidEndSheetNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidChangeBackingPropertiesNotification: &'static NSNotificationName;
+    pub static NSWindowDidChangeBackingPropertiesNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSBackingPropertyOldScaleFactorKey: &'static NSString;
+    pub static NSBackingPropertyOldScaleFactorKey: &'static NSString;
 }
 
 extern "C" {
-    static NSBackingPropertyOldColorSpaceKey: &'static NSString;
+    pub static NSBackingPropertyOldColorSpaceKey: &'static NSString;
 }
 
 extern "C" {
-    static NSWindowDidChangeScreenProfileNotification: &'static NSNotificationName;
+    pub static NSWindowDidChangeScreenProfileNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillStartLiveResizeNotification: &'static NSNotificationName;
+    pub static NSWindowWillStartLiveResizeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidEndLiveResizeNotification: &'static NSNotificationName;
+    pub static NSWindowDidEndLiveResizeNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillEnterFullScreenNotification: &'static NSNotificationName;
+    pub static NSWindowWillEnterFullScreenNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidEnterFullScreenNotification: &'static NSNotificationName;
+    pub static NSWindowDidEnterFullScreenNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillExitFullScreenNotification: &'static NSNotificationName;
+    pub static NSWindowWillExitFullScreenNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidExitFullScreenNotification: &'static NSNotificationName;
+    pub static NSWindowDidExitFullScreenNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillEnterVersionBrowserNotification: &'static NSNotificationName;
+    pub static NSWindowWillEnterVersionBrowserNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidEnterVersionBrowserNotification: &'static NSNotificationName;
+    pub static NSWindowDidEnterVersionBrowserNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowWillExitVersionBrowserNotification: &'static NSNotificationName;
+    pub static NSWindowWillExitVersionBrowserNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidExitVersionBrowserNotification: &'static NSNotificationName;
+    pub static NSWindowDidExitVersionBrowserNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSWindowDidChangeOcclusionStateNotification: &'static NSNotificationName;
+    pub static NSWindowDidChangeOcclusionStateNotification: &'static NSNotificationName;
 }
 
 pub type NSWindowBackingLocation = NSUInteger;
@@ -1393,35 +1393,36 @@ extern_methods!(
     }
 );
 
-static NSBorderlessWindowMask: NSWindowStyleMask = NSWindowStyleMaskBorderless;
+pub static NSBorderlessWindowMask: NSWindowStyleMask = NSWindowStyleMaskBorderless;
 
-static NSTitledWindowMask: NSWindowStyleMask = NSWindowStyleMaskTitled;
+pub static NSTitledWindowMask: NSWindowStyleMask = NSWindowStyleMaskTitled;
 
-static NSClosableWindowMask: NSWindowStyleMask = NSWindowStyleMaskClosable;
+pub static NSClosableWindowMask: NSWindowStyleMask = NSWindowStyleMaskClosable;
 
-static NSMiniaturizableWindowMask: NSWindowStyleMask = NSWindowStyleMaskMiniaturizable;
+pub static NSMiniaturizableWindowMask: NSWindowStyleMask = NSWindowStyleMaskMiniaturizable;
 
-static NSResizableWindowMask: NSWindowStyleMask = NSWindowStyleMaskResizable;
+pub static NSResizableWindowMask: NSWindowStyleMask = NSWindowStyleMaskResizable;
 
-static NSTexturedBackgroundWindowMask: NSWindowStyleMask = NSWindowStyleMaskTexturedBackground;
+pub static NSTexturedBackgroundWindowMask: NSWindowStyleMask = NSWindowStyleMaskTexturedBackground;
 
-static NSUnifiedTitleAndToolbarWindowMask: NSWindowStyleMask =
+pub static NSUnifiedTitleAndToolbarWindowMask: NSWindowStyleMask =
     NSWindowStyleMaskUnifiedTitleAndToolbar;
 
-static NSFullScreenWindowMask: NSWindowStyleMask = NSWindowStyleMaskFullScreen;
+pub static NSFullScreenWindowMask: NSWindowStyleMask = NSWindowStyleMaskFullScreen;
 
-static NSFullSizeContentViewWindowMask: NSWindowStyleMask = NSWindowStyleMaskFullSizeContentView;
+pub static NSFullSizeContentViewWindowMask: NSWindowStyleMask =
+    NSWindowStyleMaskFullSizeContentView;
 
-static NSUtilityWindowMask: NSWindowStyleMask = NSWindowStyleMaskUtilityWindow;
+pub static NSUtilityWindowMask: NSWindowStyleMask = NSWindowStyleMaskUtilityWindow;
 
-static NSDocModalWindowMask: NSWindowStyleMask = NSWindowStyleMaskDocModalWindow;
+pub static NSDocModalWindowMask: NSWindowStyleMask = NSWindowStyleMaskDocModalWindow;
 
-static NSNonactivatingPanelMask: NSWindowStyleMask = NSWindowStyleMaskNonactivatingPanel;
+pub static NSNonactivatingPanelMask: NSWindowStyleMask = NSWindowStyleMaskNonactivatingPanel;
 
-static NSHUDWindowMask: NSWindowStyleMask = NSWindowStyleMaskHUDWindow;
+pub static NSHUDWindowMask: NSWindowStyleMask = NSWindowStyleMaskHUDWindow;
 
-static NSUnscaledWindowMask: NSWindowStyleMask = 1 << 11;
+pub static NSUnscaledWindowMask: NSWindowStyleMask = 1 << 11;
 
-static NSWindowFullScreenButton: NSWindowButton = 7;
+pub static NSWindowFullScreenButton: NSWindowButton = 7;
 
-static NSDockWindowLevel: NSWindowLevel = todo;
+pub static NSDockWindowLevel: NSWindowLevel = todo;

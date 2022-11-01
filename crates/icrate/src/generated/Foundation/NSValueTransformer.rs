@@ -6,27 +6,27 @@ use crate::Foundation::*;
 pub type NSValueTransformerName = NSString;
 
 extern "C" {
-    static NSNegateBooleanTransformerName: &'static NSValueTransformerName;
+    pub static NSNegateBooleanTransformerName: &'static NSValueTransformerName;
 }
 
 extern "C" {
-    static NSIsNilTransformerName: &'static NSValueTransformerName;
+    pub static NSIsNilTransformerName: &'static NSValueTransformerName;
 }
 
 extern "C" {
-    static NSIsNotNilTransformerName: &'static NSValueTransformerName;
+    pub static NSIsNotNilTransformerName: &'static NSValueTransformerName;
 }
 
 extern "C" {
-    static NSUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
+    pub static NSUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
 }
 
 extern "C" {
-    static NSKeyedUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
+    pub static NSKeyedUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
 }
 
 extern "C" {
-    static NSSecureUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
+    pub static NSSecureUnarchiveFromDataTransformerName: &'static NSValueTransformerName;
 }
 
 extern_class!(

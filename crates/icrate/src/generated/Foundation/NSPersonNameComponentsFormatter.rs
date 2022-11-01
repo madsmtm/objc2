@@ -78,33 +78,33 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSPersonNameComponentKey: &'static NSString;
+    pub static NSPersonNameComponentKey: &'static NSString;
 }
 
 extern "C" {
-    static NSPersonNameComponentGivenName: &'static NSString;
+    pub static NSPersonNameComponentGivenName: &'static NSString;
 }
 
 extern "C" {
-    static NSPersonNameComponentFamilyName: &'static NSString;
+    pub static NSPersonNameComponentFamilyName: &'static NSString;
 }
 
 extern "C" {
-    static NSPersonNameComponentMiddleName: &'static NSString;
+    pub static NSPersonNameComponentMiddleName: &'static NSString;
 }
 
 extern "C" {
-    static NSPersonNameComponentPrefix: &'static NSString;
+    pub static NSPersonNameComponentPrefix: &'static NSString;
 }
 
 extern "C" {
-    static NSPersonNameComponentSuffix: &'static NSString;
+    pub static NSPersonNameComponentSuffix: &'static NSString;
 }
 
 extern "C" {
-    static NSPersonNameComponentNickname: &'static NSString;
+    pub static NSPersonNameComponentNickname: &'static NSString;
 }
 
 extern "C" {
-    static NSPersonNameComponentDelimiter: &'static NSString;
+    pub static NSPersonNameComponentDelimiter: &'static NSString;
 }

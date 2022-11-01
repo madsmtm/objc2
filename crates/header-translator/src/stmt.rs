@@ -760,7 +760,7 @@ impl fmt::Display for Stmt {
                 value: None,
             } => {
                 writeln!(f, r#"extern "C" {{"#)?;
-                writeln!(f, "    static {name}: {ty};")?;
+                writeln!(f, "    pub static {name}: {ty};")?;
                 writeln!(f, "}}")?;
             }
             Self::VarDecl {
@@ -768,14 +768,14 @@ impl fmt::Display for Stmt {
                 ty,
                 value: Some(None),
             } => {
-                writeln!(f, "static {name}: {ty} = todo;")?;
+                writeln!(f, "pub static {name}: {ty} = todo;")?;
             }
             Self::VarDecl {
                 name,
                 ty,
                 value: Some(Some(expr)),
             } => {
-                writeln!(f, "static {name}: {ty} = {expr};")?;
+                writeln!(f, "pub static {name}: {ty} = {expr};")?;
             }
             Self::FnDecl {
                 name: _,

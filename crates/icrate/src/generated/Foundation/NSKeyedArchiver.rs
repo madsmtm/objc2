@@ -4,15 +4,15 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSInvalidArchiveOperationException: &'static NSExceptionName;
+    pub static NSInvalidArchiveOperationException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSInvalidUnarchiveOperationException: &'static NSExceptionName;
+    pub static NSInvalidUnarchiveOperationException: &'static NSExceptionName;
 }
 
 extern "C" {
-    static NSKeyedArchiveRootObjectKey: &'static NSString;
+    pub static NSKeyedArchiveRootObjectKey: &'static NSString;
 }
 
 extern_class!(

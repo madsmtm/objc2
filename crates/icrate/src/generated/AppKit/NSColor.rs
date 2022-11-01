@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-static NSAppKitVersionNumberWithPatternColorLeakFix: NSAppKitVersion = 641.0;
+pub static NSAppKitVersionNumberWithPatternColorLeakFix: NSAppKitVersion = 641.0;
 
 pub type NSColorType = NSInteger;
 pub const NSColorTypeComponentBased: NSColorType = 0;
@@ -607,5 +607,5 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSSystemColorsDidChangeNotification: &'static NSNotificationName;
+    pub static NSSystemColorsDidChangeNotification: &'static NSNotificationName;
 }

@@ -177,7 +177,7 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSUserNotificationDefaultSoundName: &'static NSString;
+    pub static NSUserNotificationDefaultSoundName: &'static NSString;
 }
 
 extern_class!(

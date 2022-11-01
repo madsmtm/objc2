@@ -4,19 +4,19 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-static NSLayoutPriorityRequired: NSLayoutPriority = 1000;
+pub static NSLayoutPriorityRequired: NSLayoutPriority = 1000;
 
-static NSLayoutPriorityDefaultHigh: NSLayoutPriority = 750;
+pub static NSLayoutPriorityDefaultHigh: NSLayoutPriority = 750;
 
-static NSLayoutPriorityDragThatCanResizeWindow: NSLayoutPriority = 510;
+pub static NSLayoutPriorityDragThatCanResizeWindow: NSLayoutPriority = 510;
 
-static NSLayoutPriorityWindowSizeStayPut: NSLayoutPriority = 500;
+pub static NSLayoutPriorityWindowSizeStayPut: NSLayoutPriority = 500;
 
-static NSLayoutPriorityDragThatCannotResizeWindow: NSLayoutPriority = 490;
+pub static NSLayoutPriorityDragThatCannotResizeWindow: NSLayoutPriority = 490;
 
-static NSLayoutPriorityDefaultLow: NSLayoutPriority = 250;
+pub static NSLayoutPriorityDefaultLow: NSLayoutPriority = 250;
 
-static NSLayoutPriorityFittingSizeCompression: NSLayoutPriority = 50;
+pub static NSLayoutPriorityFittingSizeCompression: NSLayoutPriority = 50;
 
 pub type NSLayoutConstraintOrientation = NSInteger;
 pub const NSLayoutConstraintOrientationHorizontal: NSLayoutConstraintOrientation = 0;
@@ -267,11 +267,11 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSViewNoInstrinsicMetric: CGFloat;
+    pub static NSViewNoInstrinsicMetric: CGFloat;
 }
 
 extern "C" {
-    static NSViewNoIntrinsicMetric: CGFloat;
+    pub static NSViewNoIntrinsicMetric: CGFloat;
 }
 
 extern_methods!(

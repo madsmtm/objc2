@@ -4,11 +4,11 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSNetServicesErrorCode: &'static NSString;
+    pub static NSNetServicesErrorCode: &'static NSString;
 }
 
 extern "C" {
-    static NSNetServicesErrorDomain: &'static NSErrorDomain;
+    pub static NSNetServicesErrorDomain: &'static NSErrorDomain;
 }
 
 pub type NSNetServicesError = NSInteger;

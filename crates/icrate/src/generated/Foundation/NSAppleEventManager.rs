@@ -4,15 +4,15 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSAppleEventTimeOutDefault: c_double;
+    pub static NSAppleEventTimeOutDefault: c_double;
 }
 
 extern "C" {
-    static NSAppleEventTimeOutNone: c_double;
+    pub static NSAppleEventTimeOutNone: c_double;
 }
 
 extern "C" {
-    static NSAppleEventManagerWillProcessFirstEventNotification: &'static NSNotificationName;
+    pub static NSAppleEventManagerWillProcessFirstEventNotification: &'static NSNotificationName;
 }
 
 extern_class!(

@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSSystemClockDidChangeNotification: &'static NSNotificationName;
+    pub static NSSystemClockDidChangeNotification: &'static NSNotificationName;
 }
 
 extern_class!(

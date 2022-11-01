@@ -87,9 +87,9 @@ extern_methods!(
 );
 
 extern "C" {
-    static NSHTTPCookieManagerAcceptPolicyChangedNotification: &'static NSNotificationName;
+    pub static NSHTTPCookieManagerAcceptPolicyChangedNotification: &'static NSNotificationName;
 }
 
 extern "C" {
-    static NSHTTPCookieManagerCookiesChangedNotification: &'static NSNotificationName;
+    pub static NSHTTPCookieManagerCookiesChangedNotification: &'static NSNotificationName;
 }

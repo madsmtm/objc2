@@ -4,11 +4,11 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSDefaultRunLoopMode: &'static NSRunLoopMode;
+    pub static NSDefaultRunLoopMode: &'static NSRunLoopMode;
 }
 
 extern "C" {
-    static NSRunLoopCommonModes: &'static NSRunLoopMode;
+    pub static NSRunLoopCommonModes: &'static NSRunLoopMode;
 }
 
 extern_class!(
