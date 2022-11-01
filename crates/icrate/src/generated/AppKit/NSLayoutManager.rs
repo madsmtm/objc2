@@ -10,18 +10,18 @@ pub const NSTextLayoutOrientationHorizontal: NSTextLayoutOrientation = 0;
 pub const NSTextLayoutOrientationVertical: NSTextLayoutOrientation = 1;
 
 pub type NSGlyphProperty = NSInteger;
-pub const NSGlyphPropertyNull: NSGlyphProperty = (1 << 0);
-pub const NSGlyphPropertyControlCharacter: NSGlyphProperty = (1 << 1);
-pub const NSGlyphPropertyElastic: NSGlyphProperty = (1 << 2);
-pub const NSGlyphPropertyNonBaseCharacter: NSGlyphProperty = (1 << 3);
+pub const NSGlyphPropertyNull: NSGlyphProperty = 1 << 0;
+pub const NSGlyphPropertyControlCharacter: NSGlyphProperty = 1 << 1;
+pub const NSGlyphPropertyElastic: NSGlyphProperty = 1 << 2;
+pub const NSGlyphPropertyNonBaseCharacter: NSGlyphProperty = 1 << 3;
 
 pub type NSControlCharacterAction = NSInteger;
-pub const NSControlCharacterActionZeroAdvancement: NSControlCharacterAction = (1 << 0);
-pub const NSControlCharacterActionWhitespace: NSControlCharacterAction = (1 << 1);
-pub const NSControlCharacterActionHorizontalTab: NSControlCharacterAction = (1 << 2);
-pub const NSControlCharacterActionLineBreak: NSControlCharacterAction = (1 << 3);
-pub const NSControlCharacterActionParagraphBreak: NSControlCharacterAction = (1 << 4);
-pub const NSControlCharacterActionContainerBreak: NSControlCharacterAction = (1 << 5);
+pub const NSControlCharacterActionZeroAdvancement: NSControlCharacterAction = 1 << 0;
+pub const NSControlCharacterActionWhitespace: NSControlCharacterAction = 1 << 1;
+pub const NSControlCharacterActionHorizontalTab: NSControlCharacterAction = 1 << 2;
+pub const NSControlCharacterActionLineBreak: NSControlCharacterAction = 1 << 3;
+pub const NSControlCharacterActionParagraphBreak: NSControlCharacterAction = 1 << 4;
+pub const NSControlCharacterActionContainerBreak: NSControlCharacterAction = 1 << 5;
 
 pub type NSTextLayoutOrientationProvider = NSObject;
 

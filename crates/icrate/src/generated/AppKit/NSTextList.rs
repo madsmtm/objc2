@@ -76,7 +76,7 @@ extern "C" {
 }
 
 pub type NSTextListOptions = NSUInteger;
-pub const NSTextListPrependEnclosingMarker: NSTextListOptions = (1 << 0);
+pub const NSTextListPrependEnclosingMarker: NSTextListOptions = 1 << 0;
 
 extern_class!(
     #[derive(Debug)]

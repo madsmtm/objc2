@@ -20,8 +20,8 @@ pub const NSTouchTypeDirect: NSTouchType = 0;
 pub const NSTouchTypeIndirect: NSTouchType = 1;
 
 pub type NSTouchTypeMask = NSUInteger;
-pub const NSTouchTypeMaskDirect: NSTouchTypeMask = (1 << NSTouchTypeDirect);
-pub const NSTouchTypeMaskIndirect: NSTouchTypeMask = (1 << NSTouchTypeIndirect);
+pub const NSTouchTypeMaskDirect: NSTouchTypeMask = 1 << NSTouchTypeDirect;
+pub const NSTouchTypeMaskIndirect: NSTouchTypeMask = 1 << NSTouchTypeIndirect;
 
 extern_class!(
     #[derive(Debug)]

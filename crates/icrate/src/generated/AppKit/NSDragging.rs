@@ -32,7 +32,7 @@ pub type NSDraggingItemEnumerationOptions = NSUInteger;
 pub const NSDraggingItemEnumerationConcurrent: NSDraggingItemEnumerationOptions =
     NSEnumerationConcurrent;
 pub const NSDraggingItemEnumerationClearNonenumeratedImages: NSDraggingItemEnumerationOptions =
-    (1 << 16);
+    1 << 16;
 
 pub type NSSpringLoadingHighlight = NSInteger;
 pub const NSSpringLoadingHighlightNone: NSSpringLoadingHighlight = 0;

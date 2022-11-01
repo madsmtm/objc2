@@ -85,9 +85,9 @@ pub const NSCalendarUnitQuarter: NSCalendarUnit = kCFCalendarUnitQuarter;
 pub const NSCalendarUnitWeekOfMonth: NSCalendarUnit = kCFCalendarUnitWeekOfMonth;
 pub const NSCalendarUnitWeekOfYear: NSCalendarUnit = kCFCalendarUnitWeekOfYear;
 pub const NSCalendarUnitYearForWeekOfYear: NSCalendarUnit = kCFCalendarUnitYearForWeekOfYear;
-pub const NSCalendarUnitNanosecond: NSCalendarUnit = (1 << 15);
-pub const NSCalendarUnitCalendar: NSCalendarUnit = (1 << 20);
-pub const NSCalendarUnitTimeZone: NSCalendarUnit = (1 << 21);
+pub const NSCalendarUnitNanosecond: NSCalendarUnit = 1 << 15;
+pub const NSCalendarUnitCalendar: NSCalendarUnit = 1 << 20;
+pub const NSCalendarUnitTimeZone: NSCalendarUnit = 1 << 21;
 pub const NSEraCalendarUnit: NSCalendarUnit = NSCalendarUnitEra;
 pub const NSYearCalendarUnit: NSCalendarUnit = NSCalendarUnitYear;
 pub const NSMonthCalendarUnit: NSCalendarUnit = NSCalendarUnitMonth;
@@ -106,14 +106,14 @@ pub const NSCalendarCalendarUnit: NSCalendarUnit = NSCalendarUnitCalendar;
 pub const NSTimeZoneCalendarUnit: NSCalendarUnit = NSCalendarUnitTimeZone;
 
 pub type NSCalendarOptions = NSUInteger;
-pub const NSCalendarWrapComponents: NSCalendarOptions = (1 << 0);
-pub const NSCalendarMatchStrictly: NSCalendarOptions = (1 << 1);
-pub const NSCalendarSearchBackwards: NSCalendarOptions = (1 << 2);
-pub const NSCalendarMatchPreviousTimePreservingSmallerUnits: NSCalendarOptions = (1 << 8);
-pub const NSCalendarMatchNextTimePreservingSmallerUnits: NSCalendarOptions = (1 << 9);
-pub const NSCalendarMatchNextTime: NSCalendarOptions = (1 << 10);
-pub const NSCalendarMatchFirst: NSCalendarOptions = (1 << 12);
-pub const NSCalendarMatchLast: NSCalendarOptions = (1 << 13);
+pub const NSCalendarWrapComponents: NSCalendarOptions = 1 << 0;
+pub const NSCalendarMatchStrictly: NSCalendarOptions = 1 << 1;
+pub const NSCalendarSearchBackwards: NSCalendarOptions = 1 << 2;
+pub const NSCalendarMatchPreviousTimePreservingSmallerUnits: NSCalendarOptions = 1 << 8;
+pub const NSCalendarMatchNextTimePreservingSmallerUnits: NSCalendarOptions = 1 << 9;
+pub const NSCalendarMatchNextTime: NSCalendarOptions = 1 << 10;
+pub const NSCalendarMatchFirst: NSCalendarOptions = 1 << 12;
+pub const NSCalendarMatchLast: NSCalendarOptions = 1 << 13;
 
 pub const NSWrapCalendarComponents: i32 = NSCalendarWrapComponents;
 

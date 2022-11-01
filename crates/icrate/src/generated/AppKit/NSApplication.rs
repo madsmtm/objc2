@@ -139,40 +139,40 @@ extern "C" {
 
 pub type NSModalResponse = NSInteger;
 
-static NSModalResponseStop: NSModalResponse = (-1000);
+static NSModalResponseStop: NSModalResponse = -1000;
 
-static NSModalResponseAbort: NSModalResponse = (-1001);
+static NSModalResponseAbort: NSModalResponse = -1001;
 
-static NSModalResponseContinue: NSModalResponse = (-1002);
+static NSModalResponseContinue: NSModalResponse = -1002;
 
 pub const NSUpdateWindowsRunLoopOrdering: i32 = 500000;
 
 pub type NSApplicationPresentationOptions = NSUInteger;
 pub const NSApplicationPresentationDefault: NSApplicationPresentationOptions = 0;
-pub const NSApplicationPresentationAutoHideDock: NSApplicationPresentationOptions = (1 << 0);
-pub const NSApplicationPresentationHideDock: NSApplicationPresentationOptions = (1 << 1);
-pub const NSApplicationPresentationAutoHideMenuBar: NSApplicationPresentationOptions = (1 << 2);
-pub const NSApplicationPresentationHideMenuBar: NSApplicationPresentationOptions = (1 << 3);
-pub const NSApplicationPresentationDisableAppleMenu: NSApplicationPresentationOptions = (1 << 4);
+pub const NSApplicationPresentationAutoHideDock: NSApplicationPresentationOptions = 1 << 0;
+pub const NSApplicationPresentationHideDock: NSApplicationPresentationOptions = 1 << 1;
+pub const NSApplicationPresentationAutoHideMenuBar: NSApplicationPresentationOptions = 1 << 2;
+pub const NSApplicationPresentationHideMenuBar: NSApplicationPresentationOptions = 1 << 3;
+pub const NSApplicationPresentationDisableAppleMenu: NSApplicationPresentationOptions = 1 << 4;
 pub const NSApplicationPresentationDisableProcessSwitching: NSApplicationPresentationOptions =
-    (1 << 5);
-pub const NSApplicationPresentationDisableForceQuit: NSApplicationPresentationOptions = (1 << 6);
+    1 << 5;
+pub const NSApplicationPresentationDisableForceQuit: NSApplicationPresentationOptions = 1 << 6;
 pub const NSApplicationPresentationDisableSessionTermination: NSApplicationPresentationOptions =
-    (1 << 7);
+    1 << 7;
 pub const NSApplicationPresentationDisableHideApplication: NSApplicationPresentationOptions =
-    (1 << 8);
+    1 << 8;
 pub const NSApplicationPresentationDisableMenuBarTransparency: NSApplicationPresentationOptions =
-    (1 << 9);
-pub const NSApplicationPresentationFullScreen: NSApplicationPresentationOptions = (1 << 10);
-pub const NSApplicationPresentationAutoHideToolbar: NSApplicationPresentationOptions = (1 << 11);
+    1 << 9;
+pub const NSApplicationPresentationFullScreen: NSApplicationPresentationOptions = 1 << 10;
+pub const NSApplicationPresentationAutoHideToolbar: NSApplicationPresentationOptions = 1 << 11;
 pub const NSApplicationPresentationDisableCursorLocationAssistance:
-    NSApplicationPresentationOptions = (1 << 12);
+    NSApplicationPresentationOptions = 1 << 12;
 
 pub type NSApplicationOcclusionState = NSUInteger;
 pub const NSApplicationOcclusionStateVisible: NSApplicationOcclusionState = 1 << 1;
 
 pub type NSWindowListOptions = NSInteger;
-pub const NSWindowListOrderedFrontToBack: NSWindowListOptions = (1 << 0);
+pub const NSWindowListOrderedFrontToBack: NSWindowListOptions = 1 << 0;
 
 extern "C" {
     static NSApp: Option<&'static NSApplication>;
@@ -714,9 +714,9 @@ extern "C" {
     static NSApplicationDidChangeOcclusionStateNotification: &'static NSNotificationName;
 }
 
-pub const NSRunStoppedResponse: i32 = (-1000);
-pub const NSRunAbortedResponse: i32 = (-1001);
-pub const NSRunContinuesResponse: i32 = (-1002);
+pub const NSRunStoppedResponse: i32 = -1000;
+pub const NSRunAbortedResponse: i32 = -1001;
+pub const NSRunContinuesResponse: i32 = -1002;
 
 extern_methods!(
     /// NSDeprecated

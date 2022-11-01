@@ -368,13 +368,13 @@ pub const NSFontSymbolicClass: i32 = 12 << 28;
 
 pub const NSFontFamilyClassMask: i32 = 0xF0000000;
 
-pub const NSFontItalicTrait: i32 = (1 << 0);
-pub const NSFontBoldTrait: i32 = (1 << 1);
-pub const NSFontExpandedTrait: i32 = (1 << 5);
-pub const NSFontCondensedTrait: i32 = (1 << 6);
-pub const NSFontMonoSpaceTrait: i32 = (1 << 10);
-pub const NSFontVerticalTrait: i32 = (1 << 11);
-pub const NSFontUIOptimizedTrait: i32 = (1 << 12);
+pub const NSFontItalicTrait: i32 = 1 << 0;
+pub const NSFontBoldTrait: i32 = 1 << 1;
+pub const NSFontExpandedTrait: i32 = 1 << 5;
+pub const NSFontCondensedTrait: i32 = 1 << 6;
+pub const NSFontMonoSpaceTrait: i32 = 1 << 10;
+pub const NSFontVerticalTrait: i32 = 1 << 11;
+pub const NSFontUIOptimizedTrait: i32 = 1 << 12;
 
 extern "C" {
     static NSFontColorAttribute: &'static NSString;

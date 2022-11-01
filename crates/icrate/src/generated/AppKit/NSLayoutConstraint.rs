@@ -45,18 +45,18 @@ pub const NSLayoutAttributeFirstBaseline: NSLayoutAttribute = 12;
 pub const NSLayoutAttributeNotAnAttribute: NSLayoutAttribute = 0;
 
 pub type NSLayoutFormatOptions = NSUInteger;
-pub const NSLayoutFormatAlignAllLeft: NSLayoutFormatOptions = (1 << NSLayoutAttributeLeft);
-pub const NSLayoutFormatAlignAllRight: NSLayoutFormatOptions = (1 << NSLayoutAttributeRight);
-pub const NSLayoutFormatAlignAllTop: NSLayoutFormatOptions = (1 << NSLayoutAttributeTop);
-pub const NSLayoutFormatAlignAllBottom: NSLayoutFormatOptions = (1 << NSLayoutAttributeBottom);
-pub const NSLayoutFormatAlignAllLeading: NSLayoutFormatOptions = (1 << NSLayoutAttributeLeading);
-pub const NSLayoutFormatAlignAllTrailing: NSLayoutFormatOptions = (1 << NSLayoutAttributeTrailing);
-pub const NSLayoutFormatAlignAllCenterX: NSLayoutFormatOptions = (1 << NSLayoutAttributeCenterX);
-pub const NSLayoutFormatAlignAllCenterY: NSLayoutFormatOptions = (1 << NSLayoutAttributeCenterY);
+pub const NSLayoutFormatAlignAllLeft: NSLayoutFormatOptions = 1 << NSLayoutAttributeLeft;
+pub const NSLayoutFormatAlignAllRight: NSLayoutFormatOptions = 1 << NSLayoutAttributeRight;
+pub const NSLayoutFormatAlignAllTop: NSLayoutFormatOptions = 1 << NSLayoutAttributeTop;
+pub const NSLayoutFormatAlignAllBottom: NSLayoutFormatOptions = 1 << NSLayoutAttributeBottom;
+pub const NSLayoutFormatAlignAllLeading: NSLayoutFormatOptions = 1 << NSLayoutAttributeLeading;
+pub const NSLayoutFormatAlignAllTrailing: NSLayoutFormatOptions = 1 << NSLayoutAttributeTrailing;
+pub const NSLayoutFormatAlignAllCenterX: NSLayoutFormatOptions = 1 << NSLayoutAttributeCenterX;
+pub const NSLayoutFormatAlignAllCenterY: NSLayoutFormatOptions = 1 << NSLayoutAttributeCenterY;
 pub const NSLayoutFormatAlignAllLastBaseline: NSLayoutFormatOptions =
-    (1 << NSLayoutAttributeLastBaseline);
+    1 << NSLayoutAttributeLastBaseline;
 pub const NSLayoutFormatAlignAllFirstBaseline: NSLayoutFormatOptions =
-    (1 << NSLayoutAttributeFirstBaseline);
+    1 << NSLayoutAttributeFirstBaseline;
 pub const NSLayoutFormatAlignAllBaseline: NSLayoutFormatOptions =
     NSLayoutFormatAlignAllLastBaseline;
 pub const NSLayoutFormatAlignmentMask: NSLayoutFormatOptions = 0xFFFF;

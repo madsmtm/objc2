@@ -8,13 +8,13 @@ use objc2::{extern_class, extern_methods, ClassType};
 pub type NSTextLayoutFragmentEnumerationOptions = NSUInteger;
 pub const NSTextLayoutFragmentEnumerationOptionsNone: NSTextLayoutFragmentEnumerationOptions = 0;
 pub const NSTextLayoutFragmentEnumerationOptionsReverse: NSTextLayoutFragmentEnumerationOptions =
-    (1 << 0);
+    1 << 0;
 pub const NSTextLayoutFragmentEnumerationOptionsEstimatesSize:
-    NSTextLayoutFragmentEnumerationOptions = (1 << 1);
+    NSTextLayoutFragmentEnumerationOptions = 1 << 1;
 pub const NSTextLayoutFragmentEnumerationOptionsEnsuresLayout:
-    NSTextLayoutFragmentEnumerationOptions = (1 << 2);
+    NSTextLayoutFragmentEnumerationOptions = 1 << 2;
 pub const NSTextLayoutFragmentEnumerationOptionsEnsuresExtraLineFragment:
-    NSTextLayoutFragmentEnumerationOptions = (1 << 3);
+    NSTextLayoutFragmentEnumerationOptions = 1 << 3;
 
 pub type NSTextLayoutFragmentState = NSUInteger;
 pub const NSTextLayoutFragmentStateNone: NSTextLayoutFragmentState = 0;

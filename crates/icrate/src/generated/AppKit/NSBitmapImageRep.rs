@@ -35,10 +35,10 @@ pub type NSBitmapFormat = NSUInteger;
 pub const NSBitmapFormatAlphaFirst: NSBitmapFormat = 1 << 0;
 pub const NSBitmapFormatAlphaNonpremultiplied: NSBitmapFormat = 1 << 1;
 pub const NSBitmapFormatFloatingPointSamples: NSBitmapFormat = 1 << 2;
-pub const NSBitmapFormatSixteenBitLittleEndian: NSBitmapFormat = (1 << 8);
-pub const NSBitmapFormatThirtyTwoBitLittleEndian: NSBitmapFormat = (1 << 9);
-pub const NSBitmapFormatSixteenBitBigEndian: NSBitmapFormat = (1 << 10);
-pub const NSBitmapFormatThirtyTwoBitBigEndian: NSBitmapFormat = (1 << 11);
+pub const NSBitmapFormatSixteenBitLittleEndian: NSBitmapFormat = 1 << 8;
+pub const NSBitmapFormatThirtyTwoBitLittleEndian: NSBitmapFormat = 1 << 9;
+pub const NSBitmapFormatSixteenBitBigEndian: NSBitmapFormat = 1 << 10;
+pub const NSBitmapFormatThirtyTwoBitBigEndian: NSBitmapFormat = 1 << 11;
 
 pub type NSBitmapImageRepPropertyKey = NSString;
 

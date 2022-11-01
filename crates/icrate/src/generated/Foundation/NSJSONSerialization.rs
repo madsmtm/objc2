@@ -6,18 +6,18 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSJSONReadingOptions = NSUInteger;
-pub const NSJSONReadingMutableContainers: NSJSONReadingOptions = (1 << 0);
-pub const NSJSONReadingMutableLeaves: NSJSONReadingOptions = (1 << 1);
-pub const NSJSONReadingFragmentsAllowed: NSJSONReadingOptions = (1 << 2);
-pub const NSJSONReadingJSON5Allowed: NSJSONReadingOptions = (1 << 3);
-pub const NSJSONReadingTopLevelDictionaryAssumed: NSJSONReadingOptions = (1 << 4);
+pub const NSJSONReadingMutableContainers: NSJSONReadingOptions = 1 << 0;
+pub const NSJSONReadingMutableLeaves: NSJSONReadingOptions = 1 << 1;
+pub const NSJSONReadingFragmentsAllowed: NSJSONReadingOptions = 1 << 2;
+pub const NSJSONReadingJSON5Allowed: NSJSONReadingOptions = 1 << 3;
+pub const NSJSONReadingTopLevelDictionaryAssumed: NSJSONReadingOptions = 1 << 4;
 pub const NSJSONReadingAllowFragments: NSJSONReadingOptions = NSJSONReadingFragmentsAllowed;
 
 pub type NSJSONWritingOptions = NSUInteger;
-pub const NSJSONWritingPrettyPrinted: NSJSONWritingOptions = (1 << 0);
-pub const NSJSONWritingSortedKeys: NSJSONWritingOptions = (1 << 1);
-pub const NSJSONWritingFragmentsAllowed: NSJSONWritingOptions = (1 << 2);
-pub const NSJSONWritingWithoutEscapingSlashes: NSJSONWritingOptions = (1 << 3);
+pub const NSJSONWritingPrettyPrinted: NSJSONWritingOptions = 1 << 0;
+pub const NSJSONWritingSortedKeys: NSJSONWritingOptions = 1 << 1;
+pub const NSJSONWritingFragmentsAllowed: NSJSONWritingOptions = 1 << 2;
+pub const NSJSONWritingWithoutEscapingSlashes: NSJSONWritingOptions = 1 << 3;
 
 extern_class!(
     #[derive(Debug)]

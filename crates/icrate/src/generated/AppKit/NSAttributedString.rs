@@ -134,8 +134,8 @@ pub const NSUnderlineStylePatternDashDotDot: NSUnderlineStyle = 0x0400;
 pub const NSUnderlineStyleByWord: NSUnderlineStyle = 0x8000;
 
 pub type NSWritingDirectionFormatType = NSInteger;
-pub const NSWritingDirectionEmbedding: NSWritingDirectionFormatType = (0 << 1);
-pub const NSWritingDirectionOverride: NSWritingDirectionFormatType = (1 << 1);
+pub const NSWritingDirectionEmbedding: NSWritingDirectionFormatType = 0 << 1;
+pub const NSWritingDirectionOverride: NSWritingDirectionFormatType = 1 << 1;
 
 pub type NSTextEffectStyle = NSString;
 
@@ -144,8 +144,8 @@ extern "C" {
 }
 
 pub type NSSpellingState = NSInteger;
-pub const NSSpellingStateSpellingFlag: NSSpellingState = (1 << 0);
-pub const NSSpellingStateGrammarFlag: NSSpellingState = (1 << 1);
+pub const NSSpellingStateSpellingFlag: NSSpellingState = 1 << 0;
+pub const NSSpellingStateGrammarFlag: NSSpellingState = 1 << 1;
 
 extern_methods!(
     /// NSAttributedStringAttributeFixing

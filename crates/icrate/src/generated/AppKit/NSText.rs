@@ -297,8 +297,8 @@ pub const NSOtherTextMovement: i32 = 0;
 
 pub type NSTextDelegate = NSObject;
 
-pub const NSTextWritingDirectionEmbedding: i32 = (0 << 1);
-pub const NSTextWritingDirectionOverride: i32 = (1 << 1);
+pub const NSTextWritingDirectionEmbedding: i32 = 0 << 1;
+pub const NSTextWritingDirectionOverride: i32 = 1 << 1;
 
 static NSLeftTextAlignment: NSTextAlignment = NSTextAlignmentLeft;
 

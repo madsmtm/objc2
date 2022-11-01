@@ -15,22 +15,22 @@ pub const NSDateComponentsFormatterUnitsStyleBrief: NSDateComponentsFormatterUni
 
 pub type NSDateComponentsFormatterZeroFormattingBehavior = NSUInteger;
 pub const NSDateComponentsFormatterZeroFormattingBehaviorNone:
-    NSDateComponentsFormatterZeroFormattingBehavior = (0);
+    NSDateComponentsFormatterZeroFormattingBehavior = 0;
 pub const NSDateComponentsFormatterZeroFormattingBehaviorDefault:
-    NSDateComponentsFormatterZeroFormattingBehavior = (1 << 0);
+    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 0;
 pub const NSDateComponentsFormatterZeroFormattingBehaviorDropLeading:
-    NSDateComponentsFormatterZeroFormattingBehavior = (1 << 1);
+    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 1;
 pub const NSDateComponentsFormatterZeroFormattingBehaviorDropMiddle:
-    NSDateComponentsFormatterZeroFormattingBehavior = (1 << 2);
+    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 2;
 pub const NSDateComponentsFormatterZeroFormattingBehaviorDropTrailing:
-    NSDateComponentsFormatterZeroFormattingBehavior = (1 << 3);
+    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 3;
 pub const NSDateComponentsFormatterZeroFormattingBehaviorDropAll:
     NSDateComponentsFormatterZeroFormattingBehavior =
-    (NSDateComponentsFormatterZeroFormattingBehaviorDropLeading
+    NSDateComponentsFormatterZeroFormattingBehaviorDropLeading
         | NSDateComponentsFormatterZeroFormattingBehaviorDropMiddle
-        | NSDateComponentsFormatterZeroFormattingBehaviorDropTrailing);
+        | NSDateComponentsFormatterZeroFormattingBehaviorDropTrailing;
 pub const NSDateComponentsFormatterZeroFormattingBehaviorPad:
-    NSDateComponentsFormatterZeroFormattingBehavior = (1 << 16);
+    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 16;
 
 extern_class!(
     #[derive(Debug)]

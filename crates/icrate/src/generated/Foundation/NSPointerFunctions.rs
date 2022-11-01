@@ -6,19 +6,19 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSPointerFunctionsOptions = NSUInteger;
-pub const NSPointerFunctionsStrongMemory: NSPointerFunctionsOptions = (0 << 0);
-pub const NSPointerFunctionsZeroingWeakMemory: NSPointerFunctionsOptions = (1 << 0);
-pub const NSPointerFunctionsOpaqueMemory: NSPointerFunctionsOptions = (2 << 0);
-pub const NSPointerFunctionsMallocMemory: NSPointerFunctionsOptions = (3 << 0);
-pub const NSPointerFunctionsMachVirtualMemory: NSPointerFunctionsOptions = (4 << 0);
-pub const NSPointerFunctionsWeakMemory: NSPointerFunctionsOptions = (5 << 0);
-pub const NSPointerFunctionsObjectPersonality: NSPointerFunctionsOptions = (0 << 8);
-pub const NSPointerFunctionsOpaquePersonality: NSPointerFunctionsOptions = (1 << 8);
-pub const NSPointerFunctionsObjectPointerPersonality: NSPointerFunctionsOptions = (2 << 8);
-pub const NSPointerFunctionsCStringPersonality: NSPointerFunctionsOptions = (3 << 8);
-pub const NSPointerFunctionsStructPersonality: NSPointerFunctionsOptions = (4 << 8);
-pub const NSPointerFunctionsIntegerPersonality: NSPointerFunctionsOptions = (5 << 8);
-pub const NSPointerFunctionsCopyIn: NSPointerFunctionsOptions = (1 << 16);
+pub const NSPointerFunctionsStrongMemory: NSPointerFunctionsOptions = 0 << 0;
+pub const NSPointerFunctionsZeroingWeakMemory: NSPointerFunctionsOptions = 1 << 0;
+pub const NSPointerFunctionsOpaqueMemory: NSPointerFunctionsOptions = 2 << 0;
+pub const NSPointerFunctionsMallocMemory: NSPointerFunctionsOptions = 3 << 0;
+pub const NSPointerFunctionsMachVirtualMemory: NSPointerFunctionsOptions = 4 << 0;
+pub const NSPointerFunctionsWeakMemory: NSPointerFunctionsOptions = 5 << 0;
+pub const NSPointerFunctionsObjectPersonality: NSPointerFunctionsOptions = 0 << 8;
+pub const NSPointerFunctionsOpaquePersonality: NSPointerFunctionsOptions = 1 << 8;
+pub const NSPointerFunctionsObjectPointerPersonality: NSPointerFunctionsOptions = 2 << 8;
+pub const NSPointerFunctionsCStringPersonality: NSPointerFunctionsOptions = 3 << 8;
+pub const NSPointerFunctionsStructPersonality: NSPointerFunctionsOptions = 4 << 8;
+pub const NSPointerFunctionsIntegerPersonality: NSPointerFunctionsOptions = 5 << 8;
+pub const NSPointerFunctionsCopyIn: NSPointerFunctionsOptions = 1 << 16;
 
 extern_class!(
     #[derive(Debug)]

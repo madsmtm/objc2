@@ -6,9 +6,9 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSFontCollectionVisibility = NSUInteger;
-pub const NSFontCollectionVisibilityProcess: NSFontCollectionVisibility = (1 << 0);
-pub const NSFontCollectionVisibilityUser: NSFontCollectionVisibility = (1 << 1);
-pub const NSFontCollectionVisibilityComputer: NSFontCollectionVisibility = (1 << 2);
+pub const NSFontCollectionVisibilityProcess: NSFontCollectionVisibility = 1 << 0;
+pub const NSFontCollectionVisibilityUser: NSFontCollectionVisibility = 1 << 1;
+pub const NSFontCollectionVisibilityComputer: NSFontCollectionVisibility = 1 << 2;
 
 pub type NSFontCollectionMatchingOptionKey = NSString;
 

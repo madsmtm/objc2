@@ -74,8 +74,8 @@ pub const NSStringDrawingUsesLineFragmentOrigin: NSStringDrawingOptions = 1 << 0
 pub const NSStringDrawingUsesFontLeading: NSStringDrawingOptions = 1 << 1;
 pub const NSStringDrawingUsesDeviceMetrics: NSStringDrawingOptions = 1 << 3;
 pub const NSStringDrawingTruncatesLastVisibleLine: NSStringDrawingOptions = 1 << 5;
-pub const NSStringDrawingDisableScreenFontSubstitution: NSStringDrawingOptions = (1 << 2);
-pub const NSStringDrawingOneShot: NSStringDrawingOptions = (1 << 4);
+pub const NSStringDrawingDisableScreenFontSubstitution: NSStringDrawingOptions = 1 << 2;
+pub const NSStringDrawingOneShot: NSStringDrawingOptions = 1 << 4;
 
 extern_methods!(
     /// NSExtendedStringDrawing

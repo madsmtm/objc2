@@ -13,15 +13,15 @@ pub const NSTextLayoutManagerSegmentTypeHighlight: NSTextLayoutManagerSegmentTyp
 pub type NSTextLayoutManagerSegmentOptions = NSUInteger;
 pub const NSTextLayoutManagerSegmentOptionsNone: NSTextLayoutManagerSegmentOptions = 0;
 pub const NSTextLayoutManagerSegmentOptionsRangeNotRequired: NSTextLayoutManagerSegmentOptions =
-    (1 << 0);
+    1 << 0;
 pub const NSTextLayoutManagerSegmentOptionsMiddleFragmentsExcluded:
-    NSTextLayoutManagerSegmentOptions = (1 << 1);
+    NSTextLayoutManagerSegmentOptions = 1 << 1;
 pub const NSTextLayoutManagerSegmentOptionsHeadSegmentExtended: NSTextLayoutManagerSegmentOptions =
-    (1 << 2);
+    1 << 2;
 pub const NSTextLayoutManagerSegmentOptionsTailSegmentExtended: NSTextLayoutManagerSegmentOptions =
-    (1 << 3);
+    1 << 3;
 pub const NSTextLayoutManagerSegmentOptionsUpstreamAffinity: NSTextLayoutManagerSegmentOptions =
-    (1 << 4);
+    1 << 4;
 
 extern_class!(
     #[derive(Debug)]

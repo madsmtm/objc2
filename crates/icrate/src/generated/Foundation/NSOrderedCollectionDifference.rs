@@ -7,11 +7,11 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSOrderedCollectionDifferenceCalculationOptions = NSUInteger;
 pub const NSOrderedCollectionDifferenceCalculationOmitInsertedObjects:
-    NSOrderedCollectionDifferenceCalculationOptions = (1 << 0);
+    NSOrderedCollectionDifferenceCalculationOptions = 1 << 0;
 pub const NSOrderedCollectionDifferenceCalculationOmitRemovedObjects:
-    NSOrderedCollectionDifferenceCalculationOptions = (1 << 1);
+    NSOrderedCollectionDifferenceCalculationOptions = 1 << 1;
 pub const NSOrderedCollectionDifferenceCalculationInferMoves:
-    NSOrderedCollectionDifferenceCalculationOptions = (1 << 2);
+    NSOrderedCollectionDifferenceCalculationOptions = 1 << 2;
 
 __inner_extern_class!(
     #[derive(Debug)]

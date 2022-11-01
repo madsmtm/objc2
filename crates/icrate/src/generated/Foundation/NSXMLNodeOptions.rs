@@ -32,10 +32,10 @@ pub const NSXMLNodePreserveDTD: NSXMLNodeOptions = 1 << 26;
 pub const NSXMLNodePreserveCharacterReferences: NSXMLNodeOptions = 1 << 27;
 pub const NSXMLNodePromoteSignificantWhitespace: NSXMLNodeOptions = 1 << 28;
 pub const NSXMLNodePreserveEmptyElements: NSXMLNodeOptions =
-    (NSXMLNodeExpandEmptyElement | NSXMLNodeCompactEmptyElement);
+    NSXMLNodeExpandEmptyElement | NSXMLNodeCompactEmptyElement;
 pub const NSXMLNodePreserveQuotes: NSXMLNodeOptions =
-    (NSXMLNodeUseSingleQuotes | NSXMLNodeUseDoubleQuotes);
-pub const NSXMLNodePreserveAll: NSXMLNodeOptions = (NSXMLNodePreserveNamespaceOrder
+    NSXMLNodeUseSingleQuotes | NSXMLNodeUseDoubleQuotes;
+pub const NSXMLNodePreserveAll: NSXMLNodeOptions = NSXMLNodePreserveNamespaceOrder
     | NSXMLNodePreserveAttributeOrder
     | NSXMLNodePreserveEntities
     | NSXMLNodePreservePrefixes
@@ -45,4 +45,4 @@ pub const NSXMLNodePreserveAll: NSXMLNodeOptions = (NSXMLNodePreserveNamespaceOr
     | NSXMLNodePreserveWhitespace
     | NSXMLNodePreserveDTD
     | NSXMLNodePreserveCharacterReferences
-    | 0xFFF00000);
+    | 0xFFF00000;

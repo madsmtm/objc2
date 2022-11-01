@@ -85,8 +85,8 @@ pub type NSPortDelegate = NSObject;
 
 pub type NSMachPortOptions = NSUInteger;
 pub const NSMachPortDeallocateNone: NSMachPortOptions = 0;
-pub const NSMachPortDeallocateSendRight: NSMachPortOptions = (1 << 0);
-pub const NSMachPortDeallocateReceiveRight: NSMachPortOptions = (1 << 1);
+pub const NSMachPortDeallocateSendRight: NSMachPortOptions = 1 << 0;
+pub const NSMachPortDeallocateReceiveRight: NSMachPortOptions = 1 << 1;
 
 extern_class!(
     #[derive(Debug)]

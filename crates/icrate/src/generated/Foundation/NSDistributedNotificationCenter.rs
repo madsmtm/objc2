@@ -18,8 +18,8 @@ pub const NSNotificationSuspensionBehaviorHold: NSNotificationSuspensionBehavior
 pub const NSNotificationSuspensionBehaviorDeliverImmediately: NSNotificationSuspensionBehavior = 4;
 
 pub type NSDistributedNotificationOptions = NSUInteger;
-pub const NSDistributedNotificationDeliverImmediately: NSDistributedNotificationOptions = (1 << 0);
-pub const NSDistributedNotificationPostToAllSessions: NSDistributedNotificationOptions = (1 << 1);
+pub const NSDistributedNotificationDeliverImmediately: NSDistributedNotificationOptions = 1 << 0;
+pub const NSDistributedNotificationPostToAllSessions: NSDistributedNotificationOptions = 1 << 1;
 
 static NSNotificationDeliverImmediately: NSDistributedNotificationOptions =
     NSDistributedNotificationDeliverImmediately;

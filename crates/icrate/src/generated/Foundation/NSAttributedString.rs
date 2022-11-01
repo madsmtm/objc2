@@ -31,9 +31,9 @@ extern_methods!(
 );
 
 pub type NSAttributedStringEnumerationOptions = NSUInteger;
-pub const NSAttributedStringEnumerationReverse: NSAttributedStringEnumerationOptions = (1 << 1);
+pub const NSAttributedStringEnumerationReverse: NSAttributedStringEnumerationOptions = 1 << 1;
 pub const NSAttributedStringEnumerationLongestEffectiveRangeNotRequired:
-    NSAttributedStringEnumerationOptions = (1 << 20);
+    NSAttributedStringEnumerationOptions = 1 << 20;
 
 extern_methods!(
     /// NSExtendedAttributedString

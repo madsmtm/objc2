@@ -6,8 +6,8 @@ use objc2::rc::{Id, Shared};
 use objc2::{extern_class, extern_methods, ClassType};
 
 pub type NSTextStorageEditActions = NSUInteger;
-pub const NSTextStorageEditedAttributes: NSTextStorageEditActions = (1 << 0);
-pub const NSTextStorageEditedCharacters: NSTextStorageEditActions = (1 << 1);
+pub const NSTextStorageEditedAttributes: NSTextStorageEditActions = 1 << 0;
+pub const NSTextStorageEditedCharacters: NSTextStorageEditActions = 1 << 1;
 
 extern_class!(
     #[derive(Debug)]

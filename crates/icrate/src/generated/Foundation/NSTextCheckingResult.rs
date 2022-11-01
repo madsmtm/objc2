@@ -24,8 +24,7 @@ pub type NSTextCheckingTypes = u64;
 
 pub const NSTextCheckingAllSystemTypes: i32 = 0xffffffff;
 pub const NSTextCheckingAllCustomTypes: i32 = 0xffffffff << 32;
-pub const NSTextCheckingAllTypes: i32 =
-    (NSTextCheckingAllSystemTypes | NSTextCheckingAllCustomTypes);
+pub const NSTextCheckingAllTypes: i32 = NSTextCheckingAllSystemTypes | NSTextCheckingAllCustomTypes;
 
 pub type NSTextCheckingKey = NSString;
 

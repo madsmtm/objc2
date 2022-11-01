@@ -102,12 +102,21 @@ impl Expr {
             }
         }
 
+        // Trim casts
         s = s
             .trim_start_matches("(NSBoxType)")
             .trim_start_matches("(NSBezelStyle)")
             .trim_start_matches("(NSEventSubtype)")
             .trim_start_matches("(NSWindowButton)")
             .to_string();
+
+        // Trim unnecessary parentheses
+        if s.starts_with('(')
+            && s.ends_with(')')
+            && s.chars().filter(|&c| c == '(' || c == ')').count() == 2
+        {
+            s = s.trim_start_matches("(").trim_end_matches(")").to_string();
+        }
 
         Some(Self { s })
     }

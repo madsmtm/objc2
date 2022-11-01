@@ -102,14 +102,14 @@ extern_methods!(
 );
 
 pub type NSActivityOptions = u64;
-pub const NSActivityIdleDisplaySleepDisabled: NSActivityOptions = (1 << 40);
-pub const NSActivityIdleSystemSleepDisabled: NSActivityOptions = (1 << 20);
-pub const NSActivitySuddenTerminationDisabled: NSActivityOptions = (1 << 14);
-pub const NSActivityAutomaticTerminationDisabled: NSActivityOptions = (1 << 15);
+pub const NSActivityIdleDisplaySleepDisabled: NSActivityOptions = 1 << 40;
+pub const NSActivityIdleSystemSleepDisabled: NSActivityOptions = 1 << 20;
+pub const NSActivitySuddenTerminationDisabled: NSActivityOptions = 1 << 14;
+pub const NSActivityAutomaticTerminationDisabled: NSActivityOptions = 1 << 15;
 pub const NSActivityUserInitiated: NSActivityOptions =
-    (0x00FFFFFF | NSActivityIdleSystemSleepDisabled);
+    0x00FFFFFF | NSActivityIdleSystemSleepDisabled;
 pub const NSActivityUserInitiatedAllowingIdleSystemSleep: NSActivityOptions =
-    (NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled);
+    NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled;
 pub const NSActivityBackground: NSActivityOptions = 0x000000FF;
 pub const NSActivityLatencyCritical: NSActivityOptions = 0xFF00000000;
 
