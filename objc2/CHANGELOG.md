@@ -46,6 +46,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   associated functions whoose first parameter is called `this`, is treated as
   instance methods instead of class methods.
 
+### Fixed
+* Fixed duplicate selector extraction in `extern_methods!`.
+
 
 ## 0.3.0-beta.3 - 2022-09-01
 

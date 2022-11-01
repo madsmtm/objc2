@@ -559,7 +559,7 @@ macro_rules! __attribute_helper {
     } => {
         $crate::__attribute_helper! {
             @extract_sel_duplicate
-            ($($rest:tt)*)
+            ($($rest)*)
             $($output)*
         }
     };
