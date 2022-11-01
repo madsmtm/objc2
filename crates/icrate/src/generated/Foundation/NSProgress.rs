@@ -24,18 +24,16 @@ extern_methods!(
         pub unsafe fn currentProgress() -> Option<Id<NSProgress, Shared>>;
 
         #[method_id(progressWithTotalUnitCount:)]
-        pub unsafe fn progressWithTotalUnitCount(unitCount: int64_t) -> Id<NSProgress, Shared>;
+        pub unsafe fn progressWithTotalUnitCount(unitCount: i64) -> Id<NSProgress, Shared>;
 
         #[method_id(discreteProgressWithTotalUnitCount:)]
-        pub unsafe fn discreteProgressWithTotalUnitCount(
-            unitCount: int64_t,
-        ) -> Id<NSProgress, Shared>;
+        pub unsafe fn discreteProgressWithTotalUnitCount(unitCount: i64) -> Id<NSProgress, Shared>;
 
         #[method_id(progressWithTotalUnitCount:parent:pendingUnitCount:)]
         pub unsafe fn progressWithTotalUnitCount_parent_pendingUnitCount(
-            unitCount: int64_t,
+            unitCount: i64,
             parent: &NSProgress,
-            portionOfParentTotalUnitCount: int64_t,
+            portionOfParentTotalUnitCount: i64,
         ) -> Id<NSProgress, Shared>;
 
         #[method_id(initWithParent:userInfo:)]
@@ -46,12 +44,12 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method(becomeCurrentWithPendingUnitCount:)]
-        pub unsafe fn becomeCurrentWithPendingUnitCount(&self, unitCount: int64_t);
+        pub unsafe fn becomeCurrentWithPendingUnitCount(&self, unitCount: i64);
 
         #[method(performAsCurrentWithPendingUnitCount:usingBlock:)]
         pub unsafe fn performAsCurrentWithPendingUnitCount_usingBlock(
             &self,
-            unitCount: int64_t,
+            unitCount: i64,
             work: TodoBlock,
         );
 
@@ -59,23 +57,19 @@ extern_methods!(
         pub unsafe fn resignCurrent(&self);
 
         #[method(addChild:withPendingUnitCount:)]
-        pub unsafe fn addChild_withPendingUnitCount(
-            &self,
-            child: &NSProgress,
-            inUnitCount: int64_t,
-        );
+        pub unsafe fn addChild_withPendingUnitCount(&self, child: &NSProgress, inUnitCount: i64);
 
         #[method(totalUnitCount)]
-        pub unsafe fn totalUnitCount(&self) -> int64_t;
+        pub unsafe fn totalUnitCount(&self) -> i64;
 
         #[method(setTotalUnitCount:)]
-        pub unsafe fn setTotalUnitCount(&self, totalUnitCount: int64_t);
+        pub unsafe fn setTotalUnitCount(&self, totalUnitCount: i64);
 
         #[method(completedUnitCount)]
-        pub unsafe fn completedUnitCount(&self) -> int64_t;
+        pub unsafe fn completedUnitCount(&self) -> i64;
 
         #[method(setCompletedUnitCount:)]
-        pub unsafe fn setCompletedUnitCount(&self, completedUnitCount: int64_t);
+        pub unsafe fn setCompletedUnitCount(&self, completedUnitCount: i64);
 
         #[method_id(localizedDescription)]
         pub unsafe fn localizedDescription(&self) -> Id<NSString, Shared>;

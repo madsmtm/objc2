@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::Foundation::*;
 
 extern "C" {
-    static NSURLSessionTransferSizeUnknown: int64_t;
+    static NSURLSessionTransferSizeUnknown: i64;
 }
 
 extern_class!(
@@ -254,34 +254,34 @@ extern_methods!(
         pub unsafe fn setEarliestBeginDate(&self, earliestBeginDate: Option<&NSDate>);
 
         #[method(countOfBytesClientExpectsToSend)]
-        pub unsafe fn countOfBytesClientExpectsToSend(&self) -> int64_t;
+        pub unsafe fn countOfBytesClientExpectsToSend(&self) -> i64;
 
         #[method(setCountOfBytesClientExpectsToSend:)]
         pub unsafe fn setCountOfBytesClientExpectsToSend(
             &self,
-            countOfBytesClientExpectsToSend: int64_t,
+            countOfBytesClientExpectsToSend: i64,
         );
 
         #[method(countOfBytesClientExpectsToReceive)]
-        pub unsafe fn countOfBytesClientExpectsToReceive(&self) -> int64_t;
+        pub unsafe fn countOfBytesClientExpectsToReceive(&self) -> i64;
 
         #[method(setCountOfBytesClientExpectsToReceive:)]
         pub unsafe fn setCountOfBytesClientExpectsToReceive(
             &self,
-            countOfBytesClientExpectsToReceive: int64_t,
+            countOfBytesClientExpectsToReceive: i64,
         );
 
         #[method(countOfBytesSent)]
-        pub unsafe fn countOfBytesSent(&self) -> int64_t;
+        pub unsafe fn countOfBytesSent(&self) -> i64;
 
         #[method(countOfBytesReceived)]
-        pub unsafe fn countOfBytesReceived(&self) -> int64_t;
+        pub unsafe fn countOfBytesReceived(&self) -> i64;
 
         #[method(countOfBytesExpectedToSend)]
-        pub unsafe fn countOfBytesExpectedToSend(&self) -> int64_t;
+        pub unsafe fn countOfBytesExpectedToSend(&self) -> i64;
 
         #[method(countOfBytesExpectedToReceive)]
-        pub unsafe fn countOfBytesExpectedToReceive(&self) -> int64_t;
+        pub unsafe fn countOfBytesExpectedToReceive(&self) -> i64;
 
         #[method_id(taskDescription)]
         pub unsafe fn taskDescription(&self) -> Option<Id<NSString, Shared>>;
@@ -928,22 +928,22 @@ extern_methods!(
         pub unsafe fn resourceFetchType(&self) -> NSURLSessionTaskMetricsResourceFetchType;
 
         #[method(countOfRequestHeaderBytesSent)]
-        pub unsafe fn countOfRequestHeaderBytesSent(&self) -> int64_t;
+        pub unsafe fn countOfRequestHeaderBytesSent(&self) -> i64;
 
         #[method(countOfRequestBodyBytesSent)]
-        pub unsafe fn countOfRequestBodyBytesSent(&self) -> int64_t;
+        pub unsafe fn countOfRequestBodyBytesSent(&self) -> i64;
 
         #[method(countOfRequestBodyBytesBeforeEncoding)]
-        pub unsafe fn countOfRequestBodyBytesBeforeEncoding(&self) -> int64_t;
+        pub unsafe fn countOfRequestBodyBytesBeforeEncoding(&self) -> i64;
 
         #[method(countOfResponseHeaderBytesReceived)]
-        pub unsafe fn countOfResponseHeaderBytesReceived(&self) -> int64_t;
+        pub unsafe fn countOfResponseHeaderBytesReceived(&self) -> i64;
 
         #[method(countOfResponseBodyBytesReceived)]
-        pub unsafe fn countOfResponseBodyBytesReceived(&self) -> int64_t;
+        pub unsafe fn countOfResponseBodyBytesReceived(&self) -> i64;
 
         #[method(countOfResponseBodyBytesAfterDecoding)]
-        pub unsafe fn countOfResponseBodyBytesAfterDecoding(&self) -> int64_t;
+        pub unsafe fn countOfResponseBodyBytesAfterDecoding(&self) -> i64;
 
         #[method_id(localAddress)]
         pub unsafe fn localAddress(&self) -> Option<Id<NSString, Shared>>;

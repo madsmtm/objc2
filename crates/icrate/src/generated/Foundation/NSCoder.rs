@@ -133,7 +133,7 @@ extern_methods!(
         pub unsafe fn encodeInt32_forKey(&self, value: i32, key: &NSString);
 
         #[method(encodeInt64:forKey:)]
-        pub unsafe fn encodeInt64_forKey(&self, value: int64_t, key: &NSString);
+        pub unsafe fn encodeInt64_forKey(&self, value: i64, key: &NSString);
 
         #[method(encodeFloat:forKey:)]
         pub unsafe fn encodeFloat_forKey(&self, value: c_float, key: &NSString);
@@ -171,7 +171,7 @@ extern_methods!(
         pub unsafe fn decodeInt32ForKey(&self, key: &NSString) -> i32;
 
         #[method(decodeInt64ForKey:)]
-        pub unsafe fn decodeInt64ForKey(&self, key: &NSString) -> int64_t;
+        pub unsafe fn decodeInt64ForKey(&self, key: &NSString) -> i64;
 
         #[method(decodeFloatForKey:)]
         pub unsafe fn decodeFloatForKey(&self, key: &NSString) -> c_float;

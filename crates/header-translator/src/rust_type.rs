@@ -423,7 +423,7 @@ impl RustType {
                     "uint16_t" => Self::U16,
                     "int32_t" => Self::I32,
                     "uint32_t" => Self::U32,
-                    "int164_t" => Self::I64,
+                    "int64_t" => Self::I64,
                     "uint64_t" => Self::U64,
 
                     // MacTypes.h
