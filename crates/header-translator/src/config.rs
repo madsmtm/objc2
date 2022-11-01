@@ -14,6 +14,8 @@ pub struct Config {
     #[serde(rename = "protocol")]
     #[serde(default)]
     pub protocol_data: HashMap<String, ClassData>,
+    #[serde(default)]
+    pub imports: Vec<String>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

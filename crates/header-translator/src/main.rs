@@ -119,7 +119,8 @@ fn main() {
     for (library, files) in result {
         println!("status: writing framework {library}...");
         let output_path = crate_src.join("generated").join(&library);
-        output_files(&output_path, files, FORMAT_INCREMENTALLY).unwrap();
+        let config = configs.get(&library).expect("configs get library");
+        output_files(&output_path, files, FORMAT_INCREMENTALLY, config).unwrap();
         println!("status: written framework {library}");
     }
 
@@ -258,11 +259,12 @@ fn output_files(
     output_path: &Path,
     files: impl IntoIterator<Item = (String, RustFile)>,
     format_incrementally: bool,
+    config: &Config,
 ) -> fmt::Result {
     let declared: Vec<_> = files
         .into_iter()
         .map(|(name, file)| {
-            let (declared_types, tokens) = file.finish();
+            let (declared_types, tokens) = file.finish(config);
 
             let mut path = output_path.join(&name);
             path.set_extension("rs");

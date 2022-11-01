@@ -1,3 +1,5 @@
+imports = ["Foundation", "AppKit"]
+
 # These return `oneway void`, which is a bit tricky to handle.
 [class.NSPasteboard.methods.releaseGlobally]
 skipped = true

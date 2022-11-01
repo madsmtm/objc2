@@ -1,3 +1,5 @@
+imports = ["Foundation"]
+
 [class.NSObject.methods]
 # Uses NS_REPLACES_RECEIVER
 awakeAfterUsingCoder = { skipped = true }
