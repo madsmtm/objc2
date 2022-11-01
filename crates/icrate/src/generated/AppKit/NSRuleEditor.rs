@@ -180,7 +180,7 @@ extern_methods!(
         );
 
         #[method(rowClass)]
-        pub unsafe fn rowClass(&self) -> &Class;
+        pub unsafe fn rowClass(&self) -> &'static Class;
 
         #[method(setRowClass:)]
         pub unsafe fn setRowClass(&self, rowClass: &Class);

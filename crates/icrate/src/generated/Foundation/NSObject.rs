@@ -23,7 +23,7 @@ extern_methods!(
         pub unsafe fn setVersion(aVersion: NSInteger);
 
         #[method(classForCoder)]
-        pub unsafe fn classForCoder(&self) -> &Class;
+        pub unsafe fn classForCoder(&self) -> &'static Class;
 
         #[method_id(replacementObjectForCoder:)]
         pub unsafe fn replacementObjectForCoder(

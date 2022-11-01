@@ -23,7 +23,7 @@ extern_methods!(
         pub unsafe fn allocWithZone(zone: *mut NSZone) -> Id<Object, Shared>;
 
         #[method(class)]
-        pub unsafe fn class() -> &Class;
+        pub unsafe fn class() -> &'static Class;
 
         #[method(forwardInvocation:)]
         pub unsafe fn forwardInvocation(&self, invocation: &NSInvocation);

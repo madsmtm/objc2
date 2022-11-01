@@ -206,7 +206,7 @@ extern_methods!(
         pub unsafe fn documentClassNames(&self) -> Id<NSArray<NSString>, Shared>;
 
         #[method(documentClassForType:)]
-        pub unsafe fn documentClassForType(&self, typeName: &NSString) -> Option<&Class>;
+        pub unsafe fn documentClassForType(&self, typeName: &NSString) -> Option<&'static Class>;
 
         #[method_id(displayNameForType:)]
         pub unsafe fn displayNameForType(

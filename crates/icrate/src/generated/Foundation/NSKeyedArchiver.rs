@@ -217,10 +217,10 @@ extern_methods!(
         pub unsafe fn setClass_forClassName(&self, cls: Option<&Class>, codedName: &NSString);
 
         #[method(classForClassName:)]
-        pub unsafe fn classForClassName(codedName: &NSString) -> Option<&Class>;
+        pub unsafe fn classForClassName(codedName: &NSString) -> Option<&'static Class>;
 
         #[method(classForClassName:)]
-        pub unsafe fn classForClassName(&self, codedName: &NSString) -> Option<&Class>;
+        pub unsafe fn classForClassName(&self, codedName: &NSString) -> Option<&'static Class>;
 
         #[method(containsValueForKey:)]
         pub unsafe fn containsValueForKey(&self, key: &NSString) -> bool;
@@ -278,7 +278,7 @@ extern_methods!(
     /// NSKeyedArchiverObjectSubstitution
     unsafe impl NSObject {
         #[method(classForKeyedArchiver)]
-        pub unsafe fn classForKeyedArchiver(&self) -> Option<&Class>;
+        pub unsafe fn classForKeyedArchiver(&self) -> Option<&'static Class>;
 
         #[method_id(replacementObjectForKeyedArchiver:)]
         pub unsafe fn replacementObjectForKeyedArchiver(
@@ -295,6 +295,6 @@ extern_methods!(
     /// NSKeyedUnarchiverObjectSubstitution
     unsafe impl NSObject {
         #[method(classForKeyedUnarchiver)]
-        pub unsafe fn classForKeyedUnarchiver() -> &Class;
+        pub unsafe fn classForKeyedUnarchiver() -> &'static Class;
     }
 );

@@ -253,10 +253,10 @@ extern_methods!(
         ) -> Option<Id<Object, Shared>>;
 
         #[method(classNamed:)]
-        pub unsafe fn classNamed(&self, className: &NSString) -> Option<&Class>;
+        pub unsafe fn classNamed(&self, className: &NSString) -> Option<&'static Class>;
 
         #[method(principalClass)]
-        pub unsafe fn principalClass(&self) -> Option<&Class>;
+        pub unsafe fn principalClass(&self) -> Option<&'static Class>;
 
         #[method_id(preferredLocalizations)]
         pub unsafe fn preferredLocalizations(&self) -> Id<NSArray<NSString>, Shared>;

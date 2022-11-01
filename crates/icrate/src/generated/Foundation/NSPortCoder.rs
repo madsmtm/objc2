@@ -55,7 +55,7 @@ extern_methods!(
     /// NSDistributedObjects
     unsafe impl NSObject {
         #[method(classForPortCoder)]
-        pub unsafe fn classForPortCoder(&self) -> &Class;
+        pub unsafe fn classForPortCoder(&self) -> &'static Class;
 
         #[method_id(replacementObjectForPortCoder:)]
         pub unsafe fn replacementObjectForPortCoder(

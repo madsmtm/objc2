@@ -51,7 +51,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSScrubberLayout {
         #[method(layoutAttributesClass)]
-        pub unsafe fn layoutAttributesClass() -> &Class;
+        pub unsafe fn layoutAttributesClass() -> &'static Class;
 
         #[method_id(scrubber)]
         pub unsafe fn scrubber(&self) -> Option<Id<NSScrubber, Shared>>;

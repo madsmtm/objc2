@@ -57,7 +57,7 @@ extern_methods!(
         pub unsafe fn valueTransformerNames() -> Id<NSArray<NSValueTransformerName>, Shared>;
 
         #[method(transformedValueClass)]
-        pub unsafe fn transformedValueClass() -> &Class;
+        pub unsafe fn transformedValueClass() -> &'static Class;
 
         #[method(allowsReverseTransformation)]
         pub unsafe fn allowsReverseTransformation() -> bool;

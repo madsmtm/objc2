@@ -309,7 +309,7 @@ extern_methods!(
     /// NSRulerSupport
     unsafe impl NSScrollView {
         #[method(rulerViewClass)]
-        pub unsafe fn rulerViewClass() -> Option<&Class>;
+        pub unsafe fn rulerViewClass() -> Option<&'static Class>;
 
         #[method(setRulerViewClass:)]
         pub unsafe fn setRulerViewClass(rulerViewClass: Option<&Class>);

@@ -44,7 +44,7 @@ extern_methods!(
         pub unsafe fn prepareContent(&self);
 
         #[method(objectClass)]
-        pub unsafe fn objectClass(&self) -> Option<&Class>;
+        pub unsafe fn objectClass(&self) -> Option<&'static Class>;
 
         #[method(setObjectClass:)]
         pub unsafe fn setObjectClass(&self, objectClass: Option<&Class>);

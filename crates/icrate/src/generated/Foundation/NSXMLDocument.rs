@@ -53,7 +53,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method(replacementClassForClass:)]
-        pub unsafe fn replacementClassForClass(cls: &Class) -> &Class;
+        pub unsafe fn replacementClassForClass(cls: &Class) -> &'static Class;
 
         #[method_id(characterEncoding)]
         pub unsafe fn characterEncoding(&self) -> Option<Id<NSString, Shared>>;

@@ -80,7 +80,7 @@ extern_methods!(
         #[method(textAttachmentViewProviderClassForFileType:)]
         pub unsafe fn textAttachmentViewProviderClassForFileType(
             fileType: &NSString,
-        ) -> Option<&Class>;
+        ) -> Option<&'static Class>;
 
         #[method(registerTextAttachmentViewProviderClass:forFileType:)]
         pub unsafe fn registerTextAttachmentViewProviderClass_forFileType(

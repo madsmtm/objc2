@@ -32,7 +32,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSBrowser {
         #[method(cellClass)]
-        pub unsafe fn cellClass() -> &Class;
+        pub unsafe fn cellClass() -> &'static Class;
 
         #[method(loadColumnZero)]
         pub unsafe fn loadColumnZero(&self);
@@ -448,7 +448,7 @@ extern_methods!(
         pub unsafe fn setMatrixClass(&self, factoryId: &Class);
 
         #[method(matrixClass)]
-        pub unsafe fn matrixClass(&self) -> &Class;
+        pub unsafe fn matrixClass(&self) -> &'static Class;
 
         #[method(columnOfMatrix:)]
         pub unsafe fn columnOfMatrix(&self, matrix: &NSMatrix) -> NSInteger;

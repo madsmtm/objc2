@@ -85,7 +85,10 @@ extern_methods!(
         pub unsafe fn exposedBindings(&self) -> Id<NSArray<NSBindingName>, Shared>;
 
         #[method(valueClassForBinding:)]
-        pub unsafe fn valueClassForBinding(&self, binding: &NSBindingName) -> Option<&Class>;
+        pub unsafe fn valueClassForBinding(
+            &self,
+            binding: &NSBindingName,
+        ) -> Option<&'static Class>;
 
         #[method(bind:toObject:withKeyPath:options:)]
         pub unsafe fn bind_toObject_withKeyPath_options(

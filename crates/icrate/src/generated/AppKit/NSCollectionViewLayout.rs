@@ -232,10 +232,10 @@ extern_methods!(
     /// NSSubclassingHooks
     unsafe impl NSCollectionViewLayout {
         #[method(layoutAttributesClass)]
-        pub unsafe fn layoutAttributesClass() -> &Class;
+        pub unsafe fn layoutAttributesClass() -> &'static Class;
 
         #[method(invalidationContextClass)]
-        pub unsafe fn invalidationContextClass() -> &Class;
+        pub unsafe fn invalidationContextClass() -> &'static Class;
 
         #[method(prepareLayout)]
         pub unsafe fn prepareLayout(&self);

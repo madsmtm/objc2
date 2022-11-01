@@ -109,16 +109,18 @@ extern_methods!(
         pub unsafe fn registeredImageRepClasses() -> Id<NSArray<TodoClass>, Shared>;
 
         #[method(imageRepClassForFileType:)]
-        pub unsafe fn imageRepClassForFileType(type_: &NSString) -> Option<&Class>;
+        pub unsafe fn imageRepClassForFileType(type_: &NSString) -> Option<&'static Class>;
 
         #[method(imageRepClassForPasteboardType:)]
-        pub unsafe fn imageRepClassForPasteboardType(type_: &NSPasteboardType) -> Option<&Class>;
+        pub unsafe fn imageRepClassForPasteboardType(
+            type_: &NSPasteboardType,
+        ) -> Option<&'static Class>;
 
         #[method(imageRepClassForType:)]
-        pub unsafe fn imageRepClassForType(type_: &NSString) -> Option<&Class>;
+        pub unsafe fn imageRepClassForType(type_: &NSString) -> Option<&'static Class>;
 
         #[method(imageRepClassForData:)]
-        pub unsafe fn imageRepClassForData(data: &NSData) -> Option<&Class>;
+        pub unsafe fn imageRepClassForData(data: &NSData) -> Option<&'static Class>;
 
         #[method(canInitWithData:)]
         pub unsafe fn canInitWithData(data: &NSData) -> bool;

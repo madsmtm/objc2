@@ -747,6 +747,14 @@ impl fmt::Display for RustTypeReturn {
                     write!(f, " -> Option<Id<{type_}, Shared>>")
                 }
             }
+            RustType::Class { nullability } => {
+                // SAFETY: TODO
+                if *nullability == Nullability::NonNull {
+                    write!(f, "-> &'static Class")
+                } else {
+                    write!(f, "-> Option<&'static Class>")
+                }
+            }
             type_ => write!(f, " -> {type_}"),
         }
     }

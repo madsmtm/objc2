@@ -266,7 +266,7 @@ extern_methods!(
         );
 
         #[method(cellClass)]
-        pub unsafe fn cellClass() -> Option<&Class>;
+        pub unsafe fn cellClass() -> Option<&'static Class>;
 
         #[method(setCellClass:)]
         pub unsafe fn setCellClass(cellClass: Option<&Class>);

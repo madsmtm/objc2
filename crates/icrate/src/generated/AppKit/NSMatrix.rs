@@ -46,7 +46,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method(cellClass)]
-        pub unsafe fn cellClass(&self) -> &Class;
+        pub unsafe fn cellClass(&self) -> &'static Class;
 
         #[method(setCellClass:)]
         pub unsafe fn setCellClass(&self, cellClass: &Class);

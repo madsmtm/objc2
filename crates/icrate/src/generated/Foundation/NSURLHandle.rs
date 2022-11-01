@@ -72,7 +72,7 @@ extern_methods!(
         pub unsafe fn registerURLHandleClass(anURLHandleSubclass: Option<&Class>);
 
         #[method(URLHandleClassForURL:)]
-        pub unsafe fn URLHandleClassForURL(anURL: Option<&NSURL>) -> Option<&Class>;
+        pub unsafe fn URLHandleClassForURL(anURL: Option<&NSURL>) -> Option<&'static Class>;
 
         #[method(status)]
         pub unsafe fn status(&self) -> NSURLHandleStatus;

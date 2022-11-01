@@ -49,7 +49,7 @@ extern_methods!(
         pub unsafe fn setDelegate(&self, delegate: Option<&NSPathCellDelegate>);
 
         #[method(pathComponentCellClass)]
-        pub unsafe fn pathComponentCellClass() -> &Class;
+        pub unsafe fn pathComponentCellClass() -> &'static Class;
 
         #[method_id(pathComponentCells)]
         pub unsafe fn pathComponentCells(&self) -> Id<NSArray<NSPathComponentCell>, Shared>;

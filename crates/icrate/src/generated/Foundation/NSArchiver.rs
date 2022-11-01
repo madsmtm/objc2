@@ -117,7 +117,7 @@ extern_methods!(
     /// NSArchiverCallback
     unsafe impl NSObject {
         #[method(classForArchiver)]
-        pub unsafe fn classForArchiver(&self) -> Option<&Class>;
+        pub unsafe fn classForArchiver(&self) -> Option<&'static Class>;
 
         #[method_id(replacementObjectForArchiver:)]
         pub unsafe fn replacementObjectForArchiver(
