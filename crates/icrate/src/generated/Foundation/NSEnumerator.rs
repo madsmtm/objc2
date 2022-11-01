@@ -9,7 +9,9 @@ pub type NSFastEnumeration = NSObject;
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSEnumerator<ObjectType: Message>;
+    pub struct NSEnumerator<ObjectType: Message> {
+        _inner0: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<ObjectType: Message> ClassType for NSEnumerator<ObjectType> {
         type Super = NSObject;

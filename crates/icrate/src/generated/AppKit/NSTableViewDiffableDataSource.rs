@@ -10,7 +10,10 @@ __inner_extern_class!(
     pub struct NSTableViewDiffableDataSource<
         SectionIdentifierType: Message,
         ItemIdentifierType: Message,
-    >;
+    > {
+        _inner0: PhantomData<*mut SectionIdentifierType>,
+        _inner1: PhantomData<*mut ItemIdentifierType>,
+    }
 
     unsafe impl<SectionIdentifierType: Message, ItemIdentifierType: Message> ClassType
         for NSTableViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>

@@ -11,7 +11,9 @@ pub const NSCollectionChangeRemove: NSCollectionChangeType = 1;
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSOrderedCollectionChange<ObjectType: Message>;
+    pub struct NSOrderedCollectionChange<ObjectType: Message> {
+        _inner0: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<ObjectType: Message> ClassType for NSOrderedCollectionChange<ObjectType> {
         type Super = NSObject;

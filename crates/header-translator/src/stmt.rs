@@ -632,7 +632,17 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[derive(Debug)]")?;
-                writeln!(f, "    pub struct {name}{generic_params};")?;
+                write!(f, "    pub struct {name}{generic_params}")?;
+                if generics.is_empty() {
+                    writeln!(f, ";")?;
+                } else {
+                    writeln!(f, " {{")?;
+                    for (i, generic) in generics.iter().enumerate() {
+                        // Invariant over the generic (for now)
+                        writeln!(f, "_inner{i}: PhantomData<*mut {generic}>,")?;
+                    }
+                    writeln!(f, "}}")?;
+                }
                 writeln!(f, "")?;
                 writeln!(
                     f,

@@ -15,7 +15,9 @@ pub const NSOrderedCollectionDifferenceCalculationInferMoves:
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSOrderedCollectionDifference<ObjectType: Message>;
+    pub struct NSOrderedCollectionDifference<ObjectType: Message> {
+        _inner0: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<ObjectType: Message> ClassType for NSOrderedCollectionDifference<ObjectType> {
         type Super = NSObject;

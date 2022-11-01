@@ -7,7 +7,9 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSLayoutAnchor<AnchorType: Message>;
+    pub struct NSLayoutAnchor<AnchorType: Message> {
+        _inner0: PhantomData<*mut AnchorType>,
+    }
 
     unsafe impl<AnchorType: Message> ClassType for NSLayoutAnchor<AnchorType> {
         type Super = NSObject;

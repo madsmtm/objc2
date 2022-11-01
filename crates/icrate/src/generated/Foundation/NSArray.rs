@@ -7,7 +7,9 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSArray<ObjectType: Message>;
+    pub struct NSArray<ObjectType: Message> {
+        _inner0: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<ObjectType: Message> ClassType for NSArray<ObjectType> {
         type Super = NSObject;
@@ -367,7 +369,9 @@ extern_methods!(
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMutableArray<ObjectType: Message>;
+    pub struct NSMutableArray<ObjectType: Message> {
+        _inner0: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<ObjectType: Message> ClassType for NSMutableArray<ObjectType> {
         type Super = NSArray;

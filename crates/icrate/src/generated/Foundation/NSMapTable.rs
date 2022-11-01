@@ -20,7 +20,10 @@ pub type NSMapTableOptions = NSUInteger;
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMapTable<KeyType: Message, ObjectType: Message>;
+    pub struct NSMapTable<KeyType: Message, ObjectType: Message> {
+        _inner0: PhantomData<*mut KeyType>,
+        _inner1: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<KeyType: Message, ObjectType: Message> ClassType for NSMapTable<KeyType, ObjectType> {
         type Super = NSObject;

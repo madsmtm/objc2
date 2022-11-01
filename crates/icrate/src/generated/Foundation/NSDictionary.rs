@@ -7,7 +7,10 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSDictionary<KeyType: Message, ObjectType: Message>;
+    pub struct NSDictionary<KeyType: Message, ObjectType: Message> {
+        _inner0: PhantomData<*mut KeyType>,
+        _inner1: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<KeyType: Message, ObjectType: Message> ClassType for NSDictionary<KeyType, ObjectType> {
         type Super = NSObject;
@@ -255,7 +258,10 @@ extern_methods!(
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMutableDictionary<KeyType: Message, ObjectType: Message>;
+    pub struct NSMutableDictionary<KeyType: Message, ObjectType: Message> {
+        _inner0: PhantomData<*mut KeyType>,
+        _inner1: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<KeyType: Message, ObjectType: Message> ClassType
         for NSMutableDictionary<KeyType, ObjectType>

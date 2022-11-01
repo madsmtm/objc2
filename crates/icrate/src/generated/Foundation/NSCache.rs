@@ -7,7 +7,10 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSCache<KeyType: Message, ObjectType: Message>;
+    pub struct NSCache<KeyType: Message, ObjectType: Message> {
+        _inner0: PhantomData<*mut KeyType>,
+        _inner1: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<KeyType: Message, ObjectType: Message> ClassType for NSCache<KeyType, ObjectType> {
         type Super = NSObject;

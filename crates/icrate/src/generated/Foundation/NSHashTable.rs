@@ -21,7 +21,9 @@ pub type NSHashTableOptions = NSUInteger;
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSHashTable<ObjectType: Message>;
+    pub struct NSHashTable<ObjectType: Message> {
+        _inner0: PhantomData<*mut ObjectType>,
+    }
 
     unsafe impl<ObjectType: Message> ClassType for NSHashTable<ObjectType> {
         type Super = NSObject;

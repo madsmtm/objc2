@@ -7,7 +7,9 @@ use objc2::{extern_class, extern_methods, ClassType};
 
 __inner_extern_class!(
     #[derive(Debug)]
-    pub struct NSMeasurement<UnitType: Message>;
+    pub struct NSMeasurement<UnitType: Message> {
+        _inner0: PhantomData<*mut UnitType>,
+    }
 
     unsafe impl<UnitType: Message> ClassType for NSMeasurement<UnitType> {
         type Super = NSObject;
